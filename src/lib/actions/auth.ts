@@ -25,7 +25,7 @@ export async function loginAction(_prev: AuthState, formData: FormData): Promise
     whatsapp: formData.get("whatsapp"),
     senha: formData.get("senha"),
   });
-  if (!parsed.success) return { error: parsed.error.errors[0].message };
+  if (!parsed.success) return { error: parsed.error.issues[0].message };
 
   const { whatsapp, senha } = parsed.data;
   const usuario = await prisma.usuario.findUnique({ where: { whatsapp } });
@@ -55,7 +55,7 @@ export async function registroAction(_prev: AuthState, formData: FormData): Prom
     senha: formData.get("senha"),
     cpf: formData.get("cpf") || undefined,
   });
-  if (!parsed.success) return { error: parsed.error.errors[0].message };
+  if (!parsed.success) return { error: parsed.error.issues[0].message };
 
   const { nome, whatsapp, senha, cpf } = parsed.data;
   const existe = await prisma.usuario.findUnique({ where: { whatsapp } });
