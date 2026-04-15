@@ -1,9 +1,9 @@
 import bcrypt from "bcryptjs";
 import { cookies } from "next/headers";
 import { prisma } from "./prisma";
-import { verificarToken, type JWTPayload, COOKIE_NAME } from "./jwt";
+import { verificarToken, COOKIE_NAME, type JWTPayload } from "./jwt";
 
-export { gerarToken, verificarToken, type JWTPayload, COOKIE_NAME } from "./jwt";
+export * from "./jwt";
 
 export async function hashSenha(senha: string) {
   return bcrypt.hash(senha, 12);
@@ -15,7 +15,7 @@ export async function verificarSenha(senha: string, hash: string) {
 
 export async function getSession(): Promise<JWTPayload | null> {
   const cookieStore = await cookies();
-  const token = cookieStore.get(COOKIE_NAME)?.value;
+  const token = (await cookieStore).get(COOKIE_NAME)?.value;
   if (!token) return null;
   return verificarToken(token);
 }
