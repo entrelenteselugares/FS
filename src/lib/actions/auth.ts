@@ -34,7 +34,7 @@ export async function loginAction(_prev: AuthState, formData: FormData): Promise
   if (!await verificarSenha(senha, usuario.senhaHash)) return { error: "WhatsApp ou senha incorretos." };
   if (!usuario.ativo) return { error: "Conta desativada. Entre em contato com o suporte." };
 
-  const token = gerarToken({ usuarioId: usuario.id, role: usuario.role, whatsapp: usuario.whatsapp });
+  const token = await gerarToken({ usuarioId: usuario.id, role: usuario.role, whatsapp: usuario.whatsapp });
   const cookieStore = await cookies();
   cookieStore.set({ ...COOKIE_CONFIG, value: token });
 
@@ -66,7 +66,7 @@ export async function registroAction(_prev: AuthState, formData: FormData): Prom
     data: { nome, whatsapp, senhaHash, cpf, role: "CLIENTE" },
   });
 
-  const token = gerarToken({ usuarioId: usuario.id, role: usuario.role, whatsapp: usuario.whatsapp });
+  const token = await gerarToken({ usuarioId: usuario.id, role: usuario.role, whatsapp: usuario.whatsapp });
   const cookieStore = await cookies();
   cookieStore.set({ ...COOKIE_CONFIG, value: token });
 

@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
-import { verificarToken } from "@/lib/auth";
+import { verificarToken } from "@/lib/jwt";
 import { createSupabaseMiddlewareClient } from "@/utils/supabase/middleware";
 
 const ROTAS_PROTEGIDAS: Record<string, string[]> = {
@@ -10,7 +10,7 @@ const ROTAS_PROTEGIDAS: Record<string, string[]> = {
   "/minha-conta": ["ADMIN", "CLIENTE", "TITULAR", "EDITOR", "OPERADOR"],
 };
 
-export async function middleware(request: NextRequest) {
+export async function proxy(request: NextRequest) {
   // Mantém a sessão Supabase sempre atualizada
   const { supabaseResponse } = createSupabaseMiddlewareClient(request);
 
@@ -28,7 +28,7 @@ export async function middleware(request: NextRequest) {
     return NextResponse.redirect(url);
   }
 
-  const payload = verificarToken(token);
+  const payload = await verificarToken(token);
   if (!payload) {
     const url = new URL("/login", request.url);
     const response = NextResponse.redirect(url);

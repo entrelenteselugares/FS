@@ -1,16 +1,9 @@
-import jwt from "jsonwebtoken";
 import bcrypt from "bcryptjs";
 import { cookies } from "next/headers";
 import { prisma } from "./prisma";
+import { verificarToken, type JWTPayload, COOKIE_NAME } from "./jwt";
 
-const JWT_SECRET = process.env.JWT_SECRET!;
-export const COOKIE_NAME = "fs_token";
-
-export interface JWTPayload {
-  usuarioId: string;
-  role: string;
-  whatsapp: string;
-}
+export { gerarToken, verificarToken, type JWTPayload, COOKIE_NAME } from "./jwt";
 
 export async function hashSenha(senha: string) {
   return bcrypt.hash(senha, 12);
@@ -18,18 +11,6 @@ export async function hashSenha(senha: string) {
 
 export async function verificarSenha(senha: string, hash: string) {
   return bcrypt.compare(senha, hash);
-}
-
-export function gerarToken(payload: JWTPayload) {
-  return jwt.sign(payload, JWT_SECRET, { expiresIn: "7d" });
-}
-
-export function verificarToken(token: string): JWTPayload | null {
-  try {
-    return jwt.verify(token, JWT_SECRET) as JWTPayload;
-  } catch {
-    return null;
-  }
 }
 
 export async function getSession(): Promise<JWTPayload | null> {
