@@ -1,6 +1,7 @@
 import * as jose from "jose";
 
 const JWT_SECRET = new TextEncoder().encode(process.env.JWT_SECRET!);
+export const COOKIE_NAME = "fs_token";
 
 export interface JWTPayload {
   usuarioId: string;
