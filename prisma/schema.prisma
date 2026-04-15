@@ -1,0 +1,210 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+}
+
+enum Role {
+  CLIENTE
+  TITULAR
+  EDITOR
+  OPERADOR
+  ADMIN
+}
+
+enum StatusPedido {
+  PENDENTE
+  PAGO
+  EM_PRODUCAO
+  CONCLUIDO
+  ESTORNADO
+}
+
+enum TipoEntrega {
+  DIGITAL_IMEDIATA
+  FISICA_LOCAL
+  FISICA_POSTAL
+}
+
+enum StatusIndicacao {
+  QUARENTENA
+  DISPONIVEL
+  CANCELADA
+}
+
+enum StatusRecompensa {
+  PENDENTE
+  PRODUZINDO
+  ENTREGUE
+  CANCELADA
+}
+
+model Usuario {
+  id            String   @id @default(cuid())
+  nome          String
+  email         String?  @unique
+  whatsapp      String   @unique
+  cpf           String?  @unique
+  senhaHash     String?
+  role          Role     @default(CLIENTE)
+  saldoComissao Decimal  @default(0) @db.Decimal(10, 2)
+  avatarUrl     String?
+  ativo         Boolean  @default(true)
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+
+  eventosProprios  Evento[]     @relation("TitularEvento")
+  pedidos          Pedido[]
+  indicacoesFeitas Indicacao[]  @relation("QuemIndicou")
+  recompensas      Recompensa[]
+  sessoes          Sessao[]
+
+  @@map("usuarios")
+}
+
+model Sessao {
+  id        String   @id @default(cuid())
+  usuarioId String
+  usuario   Usuario  @relation(fields: [usuarioId], references: [id], onDelete: Cascade)
+  token     String   @unique
+  expiresAt DateTime
+  createdAt DateTime @default(now())
+
+  @@map("sessoes")
+}
+
+model Evento {
+  id          String   @id @default(cuid())
+  nome        String
+  slug        String   @unique
+  descricao   String?
+  dataEvento  DateTime
+  local       String
+  linkExterno String?
+  coverUrl    String?
+  ativo       Boolean  @default(true)
+  titularId   String?
+  titular     Usuario? @relation("TitularEvento", fields: [titularId], references: [id])
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  pedidos     Pedido[]
+  indicacoes  Indicacao[]
+  recompensas Recompensa[]
+  produtos    ProdutoEvento[]
+
+  @@map("eventos")
+}
+
+model Produto {
+  id           String      @id @default(cuid())
+  nome         String
+  descricao    String?
+  tipo         TipoEntrega
+  preco        Decimal     @db.Decimal(10, 2)
+  prazoMinutos Int?
+  ativo        Boolean     @default(true)
+  createdAt    DateTime    @default(now())
+
+  itensPedido       ItemPedido[]
+  eventosVinculados ProdutoEvento[]
+
+  @@map("produtos")
+}
+
+model ProdutoEvento {
+  id          String   @id @default(cuid())
+  eventoId    String
+  evento      Evento   @relation(fields: [eventoId], references: [id], onDelete: Cascade)
+  produtoId   String
+  produto     Produto  @relation(fields: [produtoId], references: [id])
+  precoCustom Decimal? @db.Decimal(10, 2)
+  ativo       Boolean  @default(true)
+
+  @@unique([eventoId, produtoId])
+  @@map("produtos_eventos")
+}
+
+model Pedido {
+  id             String       @id @default(cuid())
+  status         StatusPedido @default(PENDENTE)
+  valorTotal     Decimal      @db.Decimal(10, 2)
+  linkAcesso     String?
+  signedUrlToken String?
+  dataExpiracao  DateTime?
+  mpPaymentId    String?
+  mpStatus       String?
+  observacoes    String?
+  usuarioId      String
+  usuario        Usuario      @relation(fields: [usuarioId], references: [id])
+  eventoId       String
+  evento         Evento       @relation(fields: [eventoId], references: [id])
+  createdAt      DateTime     @default(now())
+  updatedAt      DateTime     @updatedAt
+
+  itens     ItemPedido[]
+  indicacao Indicacao?
+
+  @@map("pedidos")
+}
+
+model ItemPedido {
+  id         String  @id @default(cuid())
+  pedidoId   String
+  pedido     Pedido  @relation(fields: [pedidoId], references: [id], onDelete: Cascade)
+  produtoId  String
+  produto    Produto @relation(fields: [produtoId], references: [id])
+  midiaUrl   String?
+  quantidade Int     @default(1)
+  precoUnit  Decimal @db.Decimal(10, 2)
+
+  @@map("itens_pedido")
+}
+
+model Indicacao {
+  id            String          @id @default(cuid())
+  quemIndicouId String
+  quemIndicou   Usuario         @relation("QuemIndicou", fields: [quemIndicouId], references: [id])
+  eventoId      String
+  evento        Evento          @relation(fields: [eventoId], references: [id])
+  pedidoId      String          @unique
+  pedido        Pedido          @relation(fields: [pedidoId], references: [id])
+  status        StatusIndicacao @default(QUARENTENA)
+  valorComissao Decimal         @db.Decimal(10, 2)
+  liberadaEm    DateTime?
+  createdAt     DateTime        @default(now())
+
+  @@map("indicacoes")
+}
+
+model Recompensa {
+  id                String           @id @default(cuid())
+  usuarioId         String
+  usuario           Usuario          @relation(fields: [usuarioId], references: [id])
+  eventoId          String
+  evento            Evento           @relation(fields: [eventoId], references: [id])
+  tipo              String
+  status            StatusRecompensa @default(PENDENTE)
+  midiaParaProducao String?
+  valorPix          Decimal?         @db.Decimal(10, 2)
+  observacoes       String?
+  createdAt         DateTime         @default(now())
+  updatedAt         DateTime         @updatedAt
+
+  @@map("recompensas")
+}
+
+model CobrancaAnual {
+  id        String    @id @default(cuid())
+  pedidoId  String
+  valor     Decimal   @db.Decimal(10, 2)
+  status    String    @default("PENDENTE")
+  enviadoEm DateTime?
+  pagoEm    DateTime?
+  expiresAt DateTime
+  createdAt DateTime  @default(now())
+
+  @@map("cobrancas_anuais")
+}
