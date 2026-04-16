@@ -1,6 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
-import { verificarToken } from "@/lib/jwt";
-import { createSupabaseMiddlewareClient } from "@/utils/supabase/middleware";
+import { verificarToken, COOKIE_NAME } from "@/lib/jwt";
 
 const ROTAS_PROTEGIDAS: Record<string, string[]> = {
   "/admin":       ["ADMIN"],
@@ -11,17 +10,20 @@ const ROTAS_PROTEGIDAS: Record<string, string[]> = {
 };
 
 export async function middleware(request: NextRequest) {
-  // Mantém a sessão Supabase sempre atualizada
-  const { supabaseResponse } = createSupabaseMiddlewareClient(request);
-
   const { pathname } = request.nextUrl;
+  
+  // Encontrar se a rota atual é protegida
   const rotaProtegida = Object.keys(ROTAS_PROTEGIDAS).find((r) =>
     pathname.startsWith(r)
   );
 
-  if (!rotaProtegida) return supabaseResponse;
+  // Se não for protegida, continua normalmente
+  if (!rotaProtegida) {
+    return NextResponse.next();
+  }
 
-  const token = request.cookies.get("fs_token")?.value;
+  // Verificar token
+  const token = request.cookies.get(COOKIE_NAME)?.value;
   if (!token) {
     const url = new URL("/login", request.url);
     url.searchParams.set("redirect", pathname);
@@ -32,19 +34,25 @@ export async function middleware(request: NextRequest) {
   if (!payload) {
     const url = new URL("/login", request.url);
     const response = NextResponse.redirect(url);
-    response.cookies.delete("fs_token");
+    response.cookies.delete(COOKIE_NAME);
     return response;
   }
 
+  // Verificar permissão
   if (!ROTAS_PROTEGIDAS[rotaProtegida].includes(payload.role)) {
-    return NextResponse.redirect(new URL("/acesso-negado", request.url));
+    return NextResponse.redirect(new URL("/", request.url));
   }
 
+  // Passar dados do usuário nos headers (útil para Server Components)
   const requestHeaders = new Headers(request.headers);
   requestHeaders.set("x-usuario-id", payload.usuarioId);
   requestHeaders.set("x-usuario-role", payload.role);
 
-  return NextResponse.next({ request: { headers: requestHeaders } });
+  return NextResponse.next({
+    request: {
+      headers: requestHeaders,
+    },
+  });
 }
 
 export const config = {
