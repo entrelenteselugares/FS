@@ -9,20 +9,17 @@ const ROTAS_PROTEGIDAS: Record<string, string[]> = {
   "/minha-conta": ["ADMIN", "CLIENTE", "TITULAR", "EDITOR", "OPERADOR"],
 };
 
-export async function middleware(request: NextRequest) {
+export async function proxy(request: NextRequest) {
   const { pathname } = request.nextUrl;
   
-  // Encontrar se a rota atual é protegida
   const rotaProtegida = Object.keys(ROTAS_PROTEGIDAS).find((r) =>
     pathname.startsWith(r)
   );
 
-  // Se não for protegida, continua normalmente
   if (!rotaProtegida) {
     return NextResponse.next();
   }
 
-  // Verificar token
   const token = request.cookies.get(COOKIE_NAME)?.value;
   if (!token) {
     const url = new URL("/login", request.url);
@@ -38,12 +35,10 @@ export async function middleware(request: NextRequest) {
     return response;
   }
 
-  // Verificar permissão
   if (!ROTAS_PROTEGIDAS[rotaProtegida].includes(payload.role)) {
     return NextResponse.redirect(new URL("/", request.url));
   }
 
-  // Passar dados do usuário nos headers (útil para Server Components)
   const requestHeaders = new Headers(request.headers);
   requestHeaders.set("x-usuario-id", payload.usuarioId);
   requestHeaders.set("x-usuario-role", payload.role);
