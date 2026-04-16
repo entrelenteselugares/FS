@@ -6,17 +6,7 @@ import { z } from "zod";
 import { prisma } from "@/lib/prisma";
 import { hashSenha, verificarSenha, gerarToken, COOKIE_CONFIG } from "@/lib/auth";
 
-const loginSchema = z.object({
-  whatsapp: z.string().min(10).transform((v) => v.replace(/\D/g, "")),
-  senha: z.string().min(6, "Senha deve ter ao menos 6 caracteres"),
-});
-
-const registroSchema = z.object({
-  nome: z.string().min(2, "Nome muito curto"),
-  whatsapp: z.string().min(10).transform((v) => v.replace(/\D/g, "")),
-  senha: z.string().min(6, "Senha deve ter ao menos 6 caracteres"),
-  cpf: z.string().optional(),
-});
+import { loginSchema, registroSchema } from "@/lib/schemas";
 
 export type AuthState = { error?: string; success?: boolean };
 
