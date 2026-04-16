@@ -6,7 +6,17 @@ import { z } from "zod";
 import { prisma } from "@/lib/prisma";
 import { hashSenha, verificarSenha, gerarToken, COOKIE_CONFIG } from "@/lib/auth";
 
-import { loginSchema, registroSchema } from "@/lib/schemas";
+const loginSchema = z.object({
+  whatsapp: z.string().min(10).transform((v) => v.replace(/\D/g, "")),
+  senha: z.string().min(6, "Senha deve ter ao menos 6 caracteres"),
+});
+
+const registroSchema = z.object({
+  nome: z.string().min(2, "Nome muito curto"),
+  whatsapp: z.string().min(10).transform((v) => v.replace(/\D/g, "")),
+  senha: z.string().min(6, "Senha deve ter ao menos 6 caracteres"),
+  cpf: z.string().optional(),
+});
 
 export type AuthState = { error?: string; success?: boolean };
 
@@ -24,7 +34,7 @@ export async function loginAction(_prev: AuthState, formData: FormData): Promise
   if (!await verificarSenha(senha, usuario.senhaHash)) return { error: "WhatsApp ou senha incorretos." };
   if (!usuario.ativo) return { error: "Conta desativada. Entre em contato com o suporte." };
 
-  const token = await gerarToken({ usuarioId: usuario.id, role: usuario.role, whatsapp: usuario.whatsapp });
+  const token = gerarToken({ usuarioId: usuario.id, role: usuario.role, whatsapp: usuario.whatsapp });
   const cookieStore = await cookies();
   cookieStore.set({ ...COOKIE_CONFIG, value: token });
 
@@ -56,7 +66,7 @@ export async function registroAction(_prev: AuthState, formData: FormData): Prom
     data: { nome, whatsapp, senhaHash, cpf, role: "CLIENTE" },
   });
 
-  const token = await gerarToken({ usuarioId: usuario.id, role: usuario.role, whatsapp: usuario.whatsapp });
+  const token = gerarToken({ usuarioId: usuario.id, role: usuario.role, whatsapp: usuario.whatsapp });
   const cookieStore = await cookies();
   cookieStore.set({ ...COOKIE_CONFIG, value: token });
 

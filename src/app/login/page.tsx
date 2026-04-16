@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import { loginAction, registroAction } from "@/lib/actions/auth";
+import { loginAction, registroAction } from "@/lib/actions/auth.actions";
 
 export default function LoginPage() {
   const [isLogin, setIsLogin] = useState(true);
