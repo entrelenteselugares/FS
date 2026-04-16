@@ -10,7 +10,7 @@ const ROTAS_PROTEGIDAS: Record<string, string[]> = {
   "/minha-conta": ["ADMIN", "CLIENTE", "TITULAR", "EDITOR", "OPERADOR"],
 };
 
-export async function middleware(request: NextRequest) {
+export async function proxy(request: NextRequest) {
   // Mantém a sessão Supabase sempre atualizada
   const { supabaseResponse } = createSupabaseMiddlewareClient(request);
 

@@ -1,6 +1,5 @@
 import bcrypt from "bcryptjs";
 import { cookies } from "next/headers";
-import { prisma } from "./prisma";
 import { verificarToken, COOKIE_NAME, type JWTPayload } from "./jwt";
 
 export * from "./jwt";
@@ -15,26 +14,9 @@ export async function verificarSenha(senha: string, hash: string) {
 
 export async function getSession(): Promise<JWTPayload | null> {
   const cookieStore = await cookies();
-  const token = (await cookieStore).get(COOKIE_NAME)?.value;
+  const token = cookieStore.get(COOKIE_NAME)?.value;
   if (!token) return null;
   return verificarToken(token);
-}
-
-export async function getUsuarioLogado() {
-  const session = await getSession();
-  if (!session) return null;
-  return prisma.usuario.findUnique({
-    where: { id: session.usuarioId },
-    select: {
-      id: true,
-      nome: true,
-      email: true,
-      whatsapp: true,
-      role: true,
-      saldoComissao: true,
-      avatarUrl: true,
-    },
-  });
 }
 
 export const COOKIE_CONFIG = {
