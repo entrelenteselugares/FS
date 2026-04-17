@@ -3,42 +3,28 @@
   "version": "0.1.0",
   "private": true,
   "scripts": {
-    "dev": "next dev --webpack",
-    "build": "next build",
-    "start": "next start",
-    "lint": "eslint",
-    "postinstall": "prisma generate"
+    "dev:backend": "npm run dev --prefix backend",
+    "dev:frontend": "npm run dev --prefix frontend",
+    "dev": "npx concurrently \"npm run dev:backend\" \"npm run dev:frontend\"",
+    "build": "npx prisma generate && npm run build --prefix frontend",
+    "vercel-build": "npx prisma generate && npm run build --prefix frontend",
+    "start": "node api/index.js",
+    "postinstall": "npx prisma generate"
   },
   "dependencies": {
     "@prisma/adapter-pg": "^7.7.0",
     "@prisma/client": "^7.7.0",
-    "@supabase/ssr": "^0.10.2",
-    "@supabase/supabase-js": "^2.103.2",
     "bcryptjs": "^3.0.3",
-    "clsx": "^2.1.1",
     "jose": "^6.2.2",
     "jsonwebtoken": "^9.0.3",
-    "lucide-react": "^1.8.0",
     "mercadopago": "^2.12.0",
-    "next": "16.2.3",
     "pg": "^8.20.0",
+    "prisma": "^7.7.0",
     "react": "19.2.4",
-    "react-dom": "19.2.4",
-    "tailwind-merge": "^3.5.0",
-    "zod": "^4.3.6"
+    "react-dom": "19.2.4"
   },
   "devDependencies": {
-    "@tailwindcss/postcss": "^4",
-    "@types/bcryptjs": "^2.4.6",
-    "@types/jsonwebtoken": "^9.0.10",
     "@types/node": "^20",
-    "@types/pg": "^8.20.0",
-    "@types/react": "^19",
-    "@types/react-dom": "^19",
-    "eslint": "^9",
-    "eslint-config-next": "16.2.3",
-    "prisma": "^7.7.0",
-    "tailwindcss": "^4",
     "typescript": "^5"
   }
 }
