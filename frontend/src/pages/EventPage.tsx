@@ -1,6 +1,12 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useCallback } from "react";
 import { useParams, useNavigate, useSearchParams } from "react-router-dom";
 import { API } from "../lib/api";
+
+declare global {
+  interface Window {
+    MercadoPago: any;
+  }
+}
 
 interface EventData {
   id: string;
@@ -28,7 +34,7 @@ function formatDate(d: string) {
     return new Intl.DateTimeFormat("pt-BR", {
       weekday: "long", day: "2-digit", month: "long", year: "numeric",
     }).format(new Date(d));
-  } catch (e) {
+  } catch {
     return "Data indisponível";
   }
 }
@@ -115,33 +121,34 @@ export const EventPage = () => {
       localStorage.setItem(`fs_order_${id}`, oid);
       checkAccess(oid);
     }
-  }, [id, searchParams]);
+  }, [id, searchParams, checkAccess]);
 
   useEffect(() => {
-    if ((window as any).MercadoPago) { setMpLoaded(true); return; }
+    if (window.MercadoPago) { setMpLoaded(true); return; }
     const s = document.createElement("script");
     s.src = "https://sdk.mercadopago.com/js/v2";
     s.onload = () => setMpLoaded(true);
     document.head.appendChild(s);
   }, []);
 
-  const checkAccess = async (oid: string) => {
+  const checkAccess = useCallback(async (oid: string) => {
     try {
       const { data } = await API.get(`/public/events/${id}/access?orderId=${oid}`);
       setAccess(data);
       setHasPaid(true);
       setStep("success");
-    } catch (err: any) { 
-      if (err.response?.status === 403 || err.response?.status === 401) {
+    } catch (err: unknown) { 
+      const error = err as { response?: { status: number } };
+      if (error.response?.status === 403 || error.response?.status === 401) {
         console.warn("[Access] Token/Pedido inválido ou expirado. Limpando...");
         localStorage.removeItem(`fs_order_${id}`);
         setOrderId(null);
       }
     }
-  };
+  }, [id]);
 
   const handleTokenize = async () => {
-    if (!(window as any).MercadoPago || !mpLoaded) return;
+    if (!window.MercadoPago || !mpLoaded) return;
     setTokenizing(true);
     setCheckoutError("");
     try {
@@ -153,7 +160,7 @@ export const EventPage = () => {
         return;
       }
 
-      const mp = new (window as any).MercadoPago(publicKey);
+      const mp = new window.MercadoPago(publicKey);
       const result = await mp.createCardToken({
         cardNumber: cardData.number.replace(/\s/g, ""),
         cardholderName: cardData.name,
@@ -168,8 +175,10 @@ export const EventPage = () => {
         const errorMsg = result.cause?.[0]?.description || "Dados do cartão incorretos.";
         throw new Error(errorMsg);
       }
-    } catch (err: any) {
+    } catch (err: unknown) {
       console.error("[MercadoPago Error]:", err);
+      
+      const error = err as Error;
       
       // Bypass para Localhost (SSL Restriction) ou modo desenvolvimento
       if (window.location.hostname === "localhost" || window.location.hostname === "127.0.0.1") {
@@ -178,7 +187,7 @@ export const EventPage = () => {
         return;
       }
 
-      setCheckoutError(err.message || "Dados do cartão inválidos. Verifique e tente novamente.");
+      setCheckoutError(error.message || "Dados do cartão inválidos. Verifique e tente novamente.");
     } finally {
       setTokenizing(false);
     }
@@ -209,8 +218,9 @@ export const EventPage = () => {
       } else {
         pollPaymentStatus(data.orderId);
       }
-    } catch (err: any) {
-      setCheckoutError(err.response?.data?.error ?? "Erro ao processar pagamento.");
+    } catch (err: unknown) {
+      const error = err as { response?: { data?: { error?: string } } };
+      setCheckoutError(error.response?.data?.error ?? "Erro ao processar pagamento.");
       setStep("checkout");
     }
   };
@@ -378,7 +388,7 @@ export const EventPage = () => {
   );
 }
 
-function PaywallCard({ event, onCheckout }: any) {
+function PaywallCard({ event, onCheckout }: { event: EventData; onCheckout: () => void }) {
   return (
     <div style={{ ...S.card, border: "1px solid rgba(201, 169, 110, 0.15)", background: "rgba(201, 169, 110, 0.02)" }}>
       <p style={{ fontSize: 10, letterSpacing: 3, textTransform: "uppercase", color: "#666", marginBottom: "1rem", fontWeight: 700 }}>Exclusive Collection</p>
@@ -396,8 +406,10 @@ function PaywallCard({ event, onCheckout }: any) {
   );
 }
 
-function CheckoutCard({ event, cardData, setCardData, cardToken, tokenizing, mpLoaded, error, onTokenize, onPay, onBack }: any) {
-  const set = (k: string) => (e: any) => setCardData((p: any) => ({ ...p, [k]: e.target.value }));
+function CheckoutCard({ event, cardData, setCardData, cardToken, tokenizing, mpLoaded, error, onTokenize, onPay, onBack }: {
+  event: EventData; cardData: any; setCardData: any; cardToken: string; tokenizing: boolean; mpLoaded: boolean; error: string; onTokenize: () => void; onPay: () => void; onBack: () => void;
+}) {
+  const set = (k: string) => (e: React.ChangeEvent<HTMLInputElement>) => setCardData((p: any) => ({ ...p, [k]: e.target.value }));
   return (
     <div style={S.card}>
       <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "2rem" }}>
@@ -437,7 +449,7 @@ function CheckoutCard({ event, cardData, setCardData, cardToken, tokenizing, mpL
 //   return <div style={{ ...S.card, textAlign: "center", padding: "5rem 2rem" }}><div style={{ width: 32, height: 32, border: "1px solid #c9a96e", borderTopColor: "transparent", borderRadius: "50%", margin: "0 auto 24px", animation: "spin 0.8s linear infinite" }} /><p style={{ fontSize: 10, color: "#fff", textTransform: "uppercase", letterSpacing: 3, fontWeight: 700 }}>Processando Pagamento</p><p style={{ fontSize: 11, color: "#444", marginTop: 8 }}>Não feche esta janela.</p></div>;
 // }
 
-function SuccessCard({ onViewFiles }: any) {
+function SuccessCard({ onViewFiles }: { onViewFiles: () => void }) {
   return (
     <div style={{ ...S.card, textAlign: "center", padding: "4rem 2rem", background: "rgba(74, 222, 128, 0.02)", border: "1px solid rgba(74, 222, 128, 0.1)" }}>
       <div style={{ width: 56, height: 56, border: "1px solid #4ade80", borderRadius: "50%", margin: "0 auto 20px", display: "flex", alignItems: "center", justifyContent: "center", color: "#4ade80", fontSize: 24 }}>✓</div>
@@ -452,6 +464,6 @@ function LoadingScreen() {
   return <div style={{ background: "#050505", minHeight: "100vh", display: "flex", alignItems: "center", justifyContent: "center" }}><div style={{ width: 32, height: 32, border: "1px solid #c9a96e", borderTopColor: "transparent", borderRadius: "50%", animation: "spin 0.8s linear infinite" }} /></div>;
 }
 
-function NotFoundScreen({ onBack }: any) {
+function NotFoundScreen({ onBack }: { onBack: () => void }) {
   return <div style={{ background: "#050505", minHeight: "100vh", display: "flex", alignItems: "center", justifyContent: "center", flexDirection: "column", gap: "1rem" }}><p style={{ fontFamily: "'Playfair Display', serif", fontSize: 24, color: "#fff" }}>Link Expirado ou Inválido</p><button onClick={onBack} style={{ background: "none", border: "none", color: "#c9a96e", cursor: "pointer", textTransform: "uppercase", fontSize: 10, letterSpacing: 2 }}>Voltar à Vitrine</button></div>;
 }
