@@ -7,10 +7,15 @@ interface EventItem {
   id: string;
   nomeNoivos: string;
   dataEvento: string;
+  createdAt: string;
   cartorio: string | null;
   coverPhotoUrl: string | null;
   lightroomUrl: string | null;
   driveUrl: string | null;
+  temFoto: boolean;
+  temVideo: boolean;
+  temReels: boolean;
+  temFotoImpressa: boolean;
   _count: { pedidos: number };
 }
 
@@ -26,11 +31,54 @@ function formatDate(d: string) {
   }
 }
 
+// Componente de Cronômetro de Entrega
+function DeadlineTimer({ event, type }: { event: EventItem; type: "FOTO" | "VIDEO" }) {
+  const [timeLeft, setTimeLeft] = useState<number>(0);
+  const isDelivered = type === "FOTO" ? !!event.lightroomUrl : !!event.driveUrl;
+  const targetMinutes = type === "FOTO" ? 30 : 48 * 60; // 30min ou 48h
+  
+  useEffect(() => {
+    if (isDelivered) return;
+
+    const timer = setInterval(() => {
+      const start = new Date(event.dataEvento).getTime();
+      const target = start + (targetMinutes * 60 * 1000);
+      const now = new Date().getTime();
+      setTimeLeft(target - now);
+    }, 1000);
+
+    return () => clearInterval(timer);
+  }, [event.dataEvento, targetMinutes, isDelivered]);
+
+  if (isDelivered) {
+    return (
+      <div style={{ display: "flex", alignItems: "center", gap: 5, color: "#4ade80", fontSize: 10, fontWeight: 700, textTransform: "uppercase" }}>
+        <span style={{ fontSize: 14 }}>✓</span> {type === "FOTO" ? "Fotos OK" : "Vídeo OK"}
+      </div>
+    );
+  }
+
+  const isOverdue = timeLeft < 0;
+  const absTime = Math.abs(timeLeft);
+  const h = Math.floor(absTime / (1000 * 60 * 60));
+  const m = Math.floor((absTime % (1000 * 60 * 60)) / (1000 * 60));
+  const s = Math.floor((absTime % (1000 * 60)) / 1000);
+
+  const timeStr = h > 0 ? `${h}h ${m}m` : `${m}m ${s}s`;
+
+  return (
+    <div style={{ color: isOverdue ? "#ef4444" : "#eab308", fontSize: 10, fontWeight: 600 }}>
+      {type === "FOTO" ? "📸 Foto: " : "🎬 Vídeo: "}
+      {isOverdue ? `Atrasado ${timeStr}` : `Faltam ${timeStr}`}
+    </div>
+  );
+}
+
 const S = {
   page: { fontFamily: "'Outfit', sans-serif", background: "#050505", color: "#e8e4dc", minHeight: "100vh" } as React.CSSProperties,
   input: { width: "100%", background: "#0d0d0d", border: "0.5px solid #2a2a2a", borderRadius: 6, padding: "12px 14px", fontSize: 13, color: "#e8e4dc", outline: "none", transition: "border-color .2s" } as React.CSSProperties,
   label: { fontSize: 11, color: "#888", display: "block", marginBottom: 6, letterSpacing: "1px", textTransform: "uppercase" as const } as React.CSSProperties,
-  card: { background: "#0a0a0a", border: "0.5px solid #1a1a1a", borderRadius: 12, overflow: "hidden" as const } as React.CSSProperties,
+  card: { background: "#0a0a0a", border: "0.5px solid #1a1a1a", borderRadius: 12, overflow: "hidden" as const, transition: "transform 0.2s" } as React.CSSProperties,
 };
 
 export default function ProfissionalDashboard() {
@@ -57,10 +105,10 @@ export default function ProfissionalDashboard() {
   return (
     <div style={S.page}>
       <style>{`
-        @import url('https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700;900&family=Outfit:wght@300;400;500&display=swap');
+        @import url('https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700;900&family=Outfit:wght@300;400;500;700&display=swap');
         * { box-sizing: border-box; }
         input:focus { border-color: #c9a96e !important; }
-        .hover-row:hover { background: #0f100a !important; }
+        .hover-row:hover { background: #0f100a !important; transform: translateY(-2px); }
         .spin { animation: spin 0.8s linear infinite; }
         @keyframes spin { to { transform: rotate(360deg); } }
       `}</style>
@@ -97,13 +145,15 @@ export default function ProfissionalDashboard() {
       }}>
         {/* LISTA DE EVENTOS */}
         <div>
-          <header style={{ marginBottom: "2rem" }}>
-            <h1 style={{ fontFamily: "'Playfair Display', serif", fontSize: 32, fontWeight: 700, color: "#fff", marginBottom: 8 }}>
-              Meus eventos
-            </h1>
-            <p style={{ fontSize: 14, color: "#666" }}>
-              {events.length} evento{events.length !== 1 ? "s" : ""} gerenciado{events.length !== 1 ? "s" : ""} por você
-            </p>
+          <header style={{ marginBottom: "2rem", display: "flex", justifyContent: "space-between", alignItems: "flex-end" }}>
+            <div>
+              <h1 style={{ fontFamily: "'Playfair Display', serif", fontSize: 32, fontWeight: 700, color: "#fff", marginBottom: 8 }}>
+                Meus eventos
+              </h1>
+              <p style={{ fontSize: 14, color: "#666" }}>
+                {events.length} evento{events.length !== 1 ? "s" : ""} gerenciado{events.length !== 1 ? "s" : ""} por você
+              </p>
+            </div>
           </header>
 
           {loading ? (
@@ -119,59 +169,74 @@ export default function ProfissionalDashboard() {
             </div>
           ) : (
             <div style={{ display: "flex", flexDirection: "column", gap: 12 }}>
-              {events.map((event) => (
-                <div
-                  key={event.id}
-                  className="hover-row"
-                  onClick={() => setSelected(selected?.id === event.id ? null : event)}
-                  style={{
-                    ...S.card,
-                    background: selected?.id === event.id ? "#0f100a" : "#0a0a0a",
-                    borderColor: selected?.id === event.id ? "#c9a96e44" : "#1a1a1a",
-                    padding: "1.25rem",
-                    cursor: "pointer",
-                    display: "flex",
-                    alignItems: "center",
-                    gap: "1.5rem",
-                    transition: "all .2s",
-                  }}
-                >
-                  {/* Thumbnail */}
-                  <div style={{ width: 80, height: 80, background: "#050505", borderRadius: 8, flexShrink: 0, overflow: "hidden", border: "1px solid #222" }}>
-                    {event.coverPhotoUrl ? (
-                      <img src={event.coverPhotoUrl} alt="" style={{ width: "100%", height: "100%", objectFit: "cover" }} />
-                    ) : (
-                      <div style={{ width: "100%", height: "100%", display: "flex", alignItems: "center", justifyContent: "center", color: "#333" }}>
-                        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5">
-                          <rect x="3" y="3" width="18" height="18" rx="2" />
-                          <circle cx="8.5" cy="8.5" r="1.5" />
-                          <polyline points="21,15 16,10 5,21" />
-                        </svg>
+              {events.map((event) => {
+                const isNew = (new Date().getTime() - new Date(event.createdAt).getTime()) < 24 * 60 * 60 * 1000;
+                
+                return (
+                  <div
+                    key={event.id}
+                    className="hover-row"
+                    onClick={() => setSelected(selected?.id === event.id ? null : event)}
+                    style={{
+                      ...S.card,
+                      background: selected?.id === event.id ? "#0f100a" : "#0a0a0a",
+                      borderColor: selected?.id === event.id ? "#c9a96e44" : "#1a1a1a",
+                      padding: "1.25rem",
+                      cursor: "pointer",
+                      display: "flex",
+                      alignItems: "center",
+                      gap: "1.5rem",
+                      transition: "all .2s",
+                      position: "relative"
+                    }}
+                  >
+                    {isNew && (
+                      <div style={{ position: "absolute", top: 0, left: 0, background: "#c9a96e", color: "#000", fontSize: 8, fontWeight: 900, padding: "3px 8px", borderRadius: "0 0 6px 0", textTransform: "uppercase", letterSpacing: 0.5 }}>
+                        Novo
                       </div>
                     )}
-                  </div>
 
-                  {/* Info */}
-                  <div style={{ flex: 1, minWidth: 0 }}>
-                    <div style={{ fontSize: 16, fontWeight: 500, color: "#fff", marginBottom: 4, overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>{event.nomeNoivos}</div>
-                    <div style={{ fontSize: 13, color: "#666", marginBottom: 8 }}>
-                      {formatDate(event.dataEvento)} · {event.cartorio || "Sem cartório"}
+                    {/* Thumbnail */}
+                    <div style={{ width: 80, height: 80, background: "#050505", borderRadius: 8, flexShrink: 0, overflow: "hidden", border: "1px solid #222" }}>
+                      {event.coverPhotoUrl ? (
+                        <img src={event.coverPhotoUrl} alt="" style={{ width: "100%", height: "100%", objectFit: "cover" }} />
+                      ) : (
+                        <div style={{ width: "100%", height: "100%", display: "flex", alignItems: "center", justifyContent: "center", color: "#333" }}>
+                          <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5">
+                            <rect x="3" y="3" width="18" height="18" rx="2" />
+                            <circle cx="8.5" cy="8.5" r="1.5" />
+                            <polyline points="21,15 16,10 5,21" />
+                          </svg>
+                        </div>
+                      )}
                     </div>
-                    <div style={{ display: "flex", gap: 8 }}>
-                      <StatusPill ok={!!event.coverPhotoUrl} label="Capa" />
-                      <StatusPill ok={!!(event.lightroomUrl || event.driveUrl)} label="Links" />
-                    </div>
-                  </div>
 
-                  {/* Pedidos */}
-                  <div style={{ textAlign: "right", paddingLeft: 20, borderLeft: "1px solid #1a1a1a", flexShrink: 0 }}>
-                    <div style={{ fontSize: 24, fontWeight: 700, color: event._count.pedidos > 0 ? "#c9a96e" : "#333", fontFamily: "'Playfair Display', serif" }}>
-                      {event._count.pedidos}
+                    {/* Info */}
+                    <div style={{ flex: 1, minWidth: 0 }}>
+                      <div style={{ fontSize: 16, fontWeight: 600, color: "#fff", marginBottom: 4, overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>{event.nomeNoivos}</div>
+                      <div style={{ fontSize: 12, color: "#555", marginBottom: 8 }}>
+                        {formatDate(event.dataEvento)} · {event.cartorio || "Sem cartório"}
+                      </div>
+                      
+                      <div style={{ display: "flex", gap: "1.5rem", alignItems: "center" }}>
+                        {event.temFoto && <DeadlineTimer event={event} type="FOTO" />}
+                        {event.temVideo && <DeadlineTimer event={event} type="VIDEO" />}
+                      </div>
                     </div>
-                    <div style={{ fontSize: 10, color: "#444", textTransform: "uppercase", letterSpacing: 1 }}>pedidos</div>
+
+                    {/* Vendas (Prominent) */}
+                    <div style={{ textAlign: "right", paddingLeft: 20, borderLeft: "1px solid #1a1a1a", flexShrink: 0 }}>
+                      <div style={{ display: "flex", alignItems: "center", gap: 4, justifyContent: "flex-end" }}>
+                        {event._count.pedidos > 5 && <span style={{ fontSize: 12 }}>🔥</span>}
+                        <div style={{ fontSize: 24, fontWeight: 700, color: event._count.pedidos > 0 ? "#c9a96e" : "#333", fontFamily: "'Playfair Display', serif" }}>
+                          {event._count.pedidos}
+                        </div>
+                      </div>
+                      <div style={{ fontSize: 9, color: "#444", textTransform: "uppercase", letterSpacing: 1.5, fontWeight: 700 }}>Vendas</div>
+                    </div>
                   </div>
-                </div>
-              ))}
+                );
+              })}
             </div>
           )}
         </div>
