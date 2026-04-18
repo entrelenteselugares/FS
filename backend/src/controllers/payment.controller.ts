@@ -133,11 +133,15 @@ export class PaymentController {
         ? Number(event.priceEarly ?? 190) 
         : Number(event.priceBase ?? 200);
 
-      // 3. Criar Pedido
+      // 3. Criar Pedido (Identidade Obrigatória)
+      if (!userId) {
+        return res.status(401).json({ error: "Identificação obrigatória para realizar o pagamento." });
+      }
+
       const order = await prisma.order.create({
         data: {
           eventId,
-          clienteId: userId || null, // Se não houver userId, fica null (permitido pelo schema)
+          clienteId: userId,
           valor: preco,
           status: "PENDENTE"
         }

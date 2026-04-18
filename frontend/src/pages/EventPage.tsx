@@ -90,6 +90,7 @@ const S = {
 export const EventPage = () => {
   const { id } = useParams<{ id: string }>();
   const navigate = useNavigate();
+  const { user } = useAuth();
 
   const [event, setEvent] = useState<EventData | null>(null);
   const [loading, setLoading] = useState(true);
@@ -101,12 +102,13 @@ export const EventPage = () => {
   const [access, setAccess] = useState<AccessData | null>(null);
   const [, setOrderId] = useState<string | null>(null);
 
-  const [step, setStep] = useState<"paywall" | "checkout" | "processing" | "success">("paywall");
+  const [step, setStep] = useState<"paywall" | "identify" | "checkout" | "processing" | "success">("paywall");
   const [checkoutError, setCheckoutError] = useState("");
 
   const [cardData, setCardData] = useState({
     number: "", name: "", month: "", year: "", cvv: "",
-    email: "", cpf: "",
+    email: user?.email || "", 
+    cpf: "",
   });
   const [mpLoaded, setMpLoaded] = useState(false);
   const [cardToken, setCardToken] = useState("");
@@ -218,6 +220,7 @@ export const EventPage = () => {
     try {
       const { data } = await API.post("/checkout/payment", {
         eventId: event.id,
+        userId: user?.userId,
         cardToken,
         email: cardData.email,
         cpf: cardData.cpf,
@@ -260,6 +263,16 @@ export const EventPage = () => {
     }, 3000);
   };
 
+  const handleDesbloquear = () => {
+    if (!user) {
+      // Salva intenção de compra
+      localStorage.setItem("pending_purchase_event_id", id!);
+      setStep("identify");
+    } else {
+      setStep("checkout");
+    }
+  };
+
   if (loading) return <LoadingScreen />;
   if (notFound || !event) return <NotFoundScreen onBack={() => navigate("/")} />;
 
@@ -272,7 +285,13 @@ export const EventPage = () => {
           ← Vitrine
         </button>
         <div style={{ fontFamily: "'Playfair Display', serif", fontSize: 18, fontWeight: 700, color: "#fff" }}>FOTO SEGUNDO.</div>
-        <div style={{ width: 60 }} />
+        <div style={{ display: "flex", alignItems: "center", gap: 15 }}>
+          {user ? (
+            <span style={{ fontSize: 9, color: "#444", textTransform: "uppercase", letterSpacing: 1 }}>{user.nome || user.email}</span>
+          ) : (
+            <button onClick={() => navigate("/login")} style={{ background: "none", border: "none", color: "#666", fontSize: 10, cursor: "pointer", textTransform: "uppercase" }}>Login</button>
+          )}
+        </div>
       </nav>
 
       <div className="event-grid" style={{ maxWidth: 1100, margin: "0 auto", padding: "3rem 1rem", display: "grid", gridTemplateColumns: "1fr 400px", gap: "3rem", alignItems: "start" }}>
@@ -369,27 +388,32 @@ export const EventPage = () => {
           )}
         </div>
 
-        {/* Coluna Paywall */}
+        {/* Coluna Centralizada de Checkout */}
         <div style={{ position: "sticky", top: "6.5rem" }}>
-          {step === "paywall" && <PaywallCard event={event} onCheckout={() => setStep("checkout")} />}
-          {step === "checkout" && (
-            <CheckoutCard
-              event={event} cardData={cardData} setCardData={setCardData}
-              cardToken={cardToken} tokenizing={tokenizing} mpLoaded={mpLoaded} error={checkoutError}
-              onTokenize={handleTokenize} onPay={handlePay} onBack={() => setStep("paywall")}
-            />
-          )}
-          {step === "success" && (
-            <SuccessCard 
-              onViewFiles={() => {
-                document.getElementById("access-area")?.scrollIntoView({ behavior: "smooth", block: "center" });
-              }}
-            />
-          )}
+          <div className="checkout-step-container" style={{ position: "relative" }}>
+            {step === "paywall" && <PaywallCard event={event} onCheckout={handleDesbloquear} />}
+            {step === "identify" && <IdentifyCard onLogin={() => navigate("/login")} onRegister={() => navigate("/register?role=CLIENTE")} onBack={() => setStep("paywall")} />}
+            {step === "checkout" && (
+              <CheckoutCard
+                event={event} cardData={cardData} setCardData={setCardData}
+                cardToken={cardToken} tokenizing={tokenizing} mpLoaded={mpLoaded} error={checkoutError}
+                onTokenize={handleTokenize} onPay={handlePay} onBack={() => setStep("paywall")}
+              />
+            )}
+            {step === "processing" && <ProcessingCard />}
+            {step === "success" && (
+              <SuccessCard 
+                onViewFiles={() => {
+                  document.getElementById("access-area")?.scrollIntoView({ behavior: "smooth", block: "center" });
+                }}
+              />
+            )}
+          </div>
         </div>
       </div>
       <style>{`
         @keyframes spin { to { transform: rotate(360deg); } }
+        @keyframes pulse-slow { 0%, 100% { opacity: 0.3; } 50% { opacity: 0.6; } }
         .access-btn:hover {
           background: rgba(201, 169, 110, 0.05) !important;
           border-color: rgba(201, 169, 110, 0.3) !important;
@@ -418,6 +442,24 @@ function PaywallCard({ event, onCheckout }: { event: EventData; onCheckout: () =
         <div style={{ width: 1, height: 8, background: "#fff" }} />
         <span style={{ fontSize: 9, color: "#fff", letterSpacing: 1, textTransform: "uppercase" }}>Instant Access</span>
       </div>
+    </div>
+  );
+}
+
+function IdentifyCard({ onLogin, onRegister, onBack }: { onLogin: () => void; onRegister: () => void; onBack: () => void }) {
+  return (
+    <div style={S.card}>
+      <button onClick={onBack} style={{ background: "none", border: "none", color: "#444", fontSize: 9, cursor: "pointer", textTransform: "uppercase", letterSpacing: 2, marginBottom: "1.5rem" }}>← Cancelar</button>
+      <div style={{ textAlign: "center", marginBottom: "2.5rem" }}>
+        <div style={{ fontSize: 24, marginBottom: 15, opacity: 0.5 }}>✧</div>
+        <h3 style={{ fontFamily: "'Playfair Display', serif", fontSize: 24, color: "#fff", marginBottom: 8 }}>Identifique-se</h3>
+        <p style={{ fontSize: 11, color: "#555", lineHeight: 1.5 }}>Para vincular suas memórias de forma segura, acesse sua conta ou cadastre-se no coletivo.</p>
+      </div>
+      <div style={{ display: "flex", flexDirection: "column", gap: 12 }}>
+        <button style={S.btnGold} onClick={onLogin}>Já possuo conta</button>
+        <button style={S.btnOutline} onClick={onRegister}>Criar novo registro</button>
+      </div>
+      <p style={{ fontSize: 9, color: "#333", textAlign: "center", marginTop: "1.5rem", textTransform: "uppercase", letterSpacing: 1 }}>Auth Protocol 2.0 · Private Access</p>
     </div>
   );
 }
@@ -455,7 +497,7 @@ function CheckoutCard({ event, cardData, setCardData, cardToken, tokenizing, mpL
           <div><label style={S.label}>CVV</label><input style={S.input} maxLength={4} placeholder="000" value={cardData.cvv} onChange={set("cvv")} /></div>
         </div>
         <div style={{ display: "grid", gridTemplateColumns: "1.2fr 1fr", gap: 12 }}>
-          <div><label style={S.label}>E-mail p/ recibo</label><input style={S.input} type="email" value={cardData.email} onChange={set("email")} /></div>
+          <div><label style={S.label}>E-mail p/ recibo</label><input style={S.input} type="email" value={cardData.email} onChange={set("email")} disabled={!!cardData.email} /></div>
           <div><label style={S.label}>CPF do titular</label><input style={S.input} value={cardData.cpf} onChange={set("cpf")} /></div>
         </div>
       </div>
@@ -471,9 +513,17 @@ function CheckoutCard({ event, cardData, setCardData, cardToken, tokenizing, mpL
   );
 }
 
-// function ProcessingCard() {
-//   return <div style={{ ...S.card, textAlign: "center", padding: "5rem 2rem" }}><div style={{ width: 32, height: 32, border: "1px solid #c9a96e", borderTopColor: "transparent", borderRadius: "50%", margin: "0 auto 24px", animation: "spin 0.8s linear infinite" }} /><p style={{ fontSize: 10, color: "#fff", textTransform: "uppercase", letterSpacing: 3, fontWeight: 700 }}>Processando Pagamento</p><p style={{ fontSize: 11, color: "#444", marginTop: 8 }}>Não feche esta janela.</p></div>;
-// }
+function ProcessingCard() {
+  return (
+    <div style={{ ...S.card, textAlign: "center", padding: "5rem 2rem", position: "relative", overflow: "hidden" }}>
+      <div style={{ position: "absolute", inset: 0, background: "radial-gradient(circle at center, rgba(201, 169, 110, 0.05) 0%, transparent 70%)", animation: "pulse-slow 3s infinite" }} />
+      <div style={{ width: 40, height: 40, border: "1.5px solid #c9a96e", borderTopColor: "transparent", borderRadius: "50%", margin: "0 auto 30px", animation: "spin 1s linear infinite" }} />
+      <p style={{ fontFamily: "'Playfair Display', serif", fontSize: 20, color: "#fff", marginBottom: 8, letterSpacing: 1 }}>Revelando Memórias</p>
+      <p style={{ fontSize: 10, color: "#444", textTransform: "uppercase", letterSpacing: 3 }}>Processando seu acesso exclusivo...</p>
+      <p style={{ fontSize: 9, color: "#222", marginTop: 20, fontStyle: "italic" }}>Aguarde. A segurança do coletivo está validando sua transação.</p>
+    </div>
+  );
+}
 
 function SuccessCard({ onViewFiles }: { onViewFiles: () => void }) {
   return (
