@@ -145,7 +145,15 @@ export const EventPage = () => {
     setTokenizing(true);
     setCheckoutError("");
     try {
-      const mp = new (window as any).MercadoPago(import.meta.env.VITE_MP_PUBLIC_KEY?.trim());
+      const publicKey = (import.meta.env.VITE_MP_PUBLIC_KEY ?? "").trim();
+      
+      if (!publicKey) {
+        setCheckoutError("Chave de pagamento não configurada.");
+        setTokenizing(false);
+        return;
+      }
+
+      const mp = new (window as any).MercadoPago(publicKey);
       const result = await mp.createCardToken({
         cardNumber: cardData.number.replace(/\s/g, ""),
         cardholderName: cardData.name,
