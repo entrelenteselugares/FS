@@ -1,6 +1,7 @@
 import { Request, Response } from "express";
 import prisma from "../lib/prisma";
 import { MercadoPagoService } from "../services/mercadopago.service";
+import { NotificationService } from "../services/notification.service";
 
 export class PaymentController {
   /**
@@ -97,12 +98,31 @@ export class PaymentController {
         const paymentData = await MercadoPagoService.getPaymentStatus(data.id);
         
         if (paymentData.status === "approved") {
-          // Atualiza o pedido vinculado
-          await prisma.order.updateMany({
+          // 1. Atualiza o pedido vinculado
+          const updatedOrders = await prisma.order.findMany({ 
             where: { paymentId: String(data.id) },
-            data: { status: "APROVADO" }
+            include: { event: true, cliente: true }
           });
-          console.log(`✅ Pagamento ${data.id} aprovado e pedido liberado.`);
+
+          for (const order of updatedOrders) {
+            await prisma.order.update({
+              where: { id: order.id },
+              data: { status: "APROVADO" }
+            });
+
+            // 2. Dispara e-mail automático
+            const recipientEmail = order.buyerEmail || order.cliente?.email || paymentData.payer?.email;
+            if (recipientEmail) {
+              NotificationService.sendAccessEmail({
+                to: recipientEmail,
+                buyerName: order.cliente?.nome || "Cliente",
+                eventTitle: order.event.nomeNoivos,
+                orderId: order.id,
+                accessLink: `${process.env.FRONTEND_URL || "http://localhost:5173"}/e/${order.eventId}`
+              }).catch(e => console.error("Erro ao enviar e-mail via Webhook:", e));
+            }
+          }
+          console.log(`✅ Pagamento ${data.id} aprovado e notificação enviada.`);
         }
       } catch (error: unknown) {
         const msg = error instanceof Error ? error.message : "Erro desconhecido";
@@ -122,18 +142,35 @@ export class PaymentController {
     const { eventId, userId, email, cpf, cardToken, installments, paymentMethodId } = req.body;
 
     try {
-      // 1. Buscar evento
-      const event = await prisma.event.findUnique({ where: { id: eventId } });
+      // 1. Buscar evento com parceiros para cálculo de split
+      const event = await prisma.event.findUnique({ 
+        where: { id: eventId },
+        include: {
+          captacao: { include: { profissional: true } },
+          edicao: { include: { profissional: true } },
+          cartorioUser: { include: { cartorio: true } }
+        }
+      });
       if (!event) return res.status(404).json({ error: "Evento não encontrado" });
 
-      // 2. Lógica de Precificação (Igual ao checkout Pro)
+      // 2. Lógica de Precificação
       const now = new Date();
       const eventDate = new Date(event.dataEvento);
       const preco = now.getTime() < eventDate.getTime() 
         ? Number(event.priceEarly ?? 190) 
         : Number(event.priceBase ?? 200);
 
-      // 3. Criar Pedido (Identidade Obrigatória)
+      // 3. Cálculo de Split (Matriz Fee)
+      // Buscamos as porcentagens dos parceiros para definir quanto sobra para a Matriz
+      const pctCapt = event.captacao?.profissional?.captPct ?? 30;
+      const pctEdit = event.edicao?.profissional?.editPct ?? 20;
+      const pctCart = event.cartorioUser?.cartorio?.splitPct ?? 10;
+      
+      const totalPartnersPct = (pctCapt + pctEdit + pctCart) / 100;
+      const matrizPct = 1 - totalPartnersPct; // O que sobra é a comissão da plataforma
+      const applicationFee = preco * matrizPct;
+
+      // 4. Criar Pedido (Identidade Obrigatória)
       if (!userId) {
         return res.status(401).json({ error: "Identificação obrigatória para realizar o pagamento." });
       }
@@ -143,7 +180,12 @@ export class PaymentController {
           eventId,
           clienteId: userId,
           valor: preco,
-          status: "PENDENTE"
+          status: "PENDENTE",
+          // Salva snapshot dos splits para auditoria interna
+          splitMatriz: applicationFee,
+          splitCaptacao: preco * (pctCapt / 100),
+          splitEdicao: preco * (pctEdit / 100),
+          splitCartorio: preco * (pctCart / 100)
         }
       });
 
@@ -168,12 +210,14 @@ export class PaymentController {
           email: email,
           identification: cpf ? { type: "CPF", number: cpf } : undefined
         },
-        external_reference: order.id
+        external_reference: order.id,
+        application_fee: applicationFee // Aqui acontece o Split
       });
 
       // 6. Atualizar Pedido com Status Real
+      const isApproved = mpResponse.status === "approved";
       let finalStatus = "PENDENTE";
-      if (mpResponse.status === "approved") finalStatus = "APROVADO";
+      if (isApproved) finalStatus = "APROVADO";
       if (mpResponse.status === "rejected") finalStatus = "REJEITADO";
 
       await prisma.order.update({
@@ -183,6 +227,17 @@ export class PaymentController {
           paymentId: String(mpResponse.id)
         }
       });
+
+      // 7. Notificar Cliente IMEDIATAMENTE se aprovado (Checkout Transparente)
+      if (isApproved) {
+        NotificationService.sendAccessEmail({
+          to: email,
+          buyerName: event.nomeNoivos, // Ou buscar nome real do user se houver
+          eventTitle: event.nomeNoivos,
+          orderId: order.id,
+          accessLink: `${process.env.FRONTEND_URL || "http://localhost:5173"}/e/${event.id}`
+        }).catch(e => console.error("Erro ao enviar e-mail no checkout:", e));
+      }
 
       return res.json({
         orderId: order.id,

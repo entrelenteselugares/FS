@@ -159,6 +159,7 @@ export class MercadoPagoService {
     };
     notification_url?: string;
     external_reference?: string;
+    application_fee?: number;
   }) {
     try {
       const response = await axios.post(
@@ -172,6 +173,7 @@ export class MercadoPagoService {
           payer: data.payer,
           notification_url: data.notification_url,
           external_reference: data.external_reference,
+          application_fee: data.application_fee ? Number(data.application_fee.toFixed(2)) : undefined,
         },
         {
           headers: {
