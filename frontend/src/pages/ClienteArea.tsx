@@ -313,7 +313,7 @@ function PedidoDetalhe({ pedido, loading, onClose, onGoToEvent }: {
             <p style={{ fontSize: 11, fontWeight: 600, color: "#555", textTransform: "uppercase", letterSpacing: 1 }}>Links de Acesso</p>
             
             {pedido.event.lightroomUrl ? (
-                
+              <a
                 href={pedido.event.lightroomUrl}
                 target="_blank"
                 rel="noopener noreferrer"
@@ -334,7 +334,7 @@ function PedidoDetalhe({ pedido, loading, onClose, onGoToEvent }: {
             )}
 
             {pedido.event.driveUrl ? (
-                
+              <a
                 href={pedido.event.driveUrl}
                 target="_blank"
                 rel="noopener noreferrer"
