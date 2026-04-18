@@ -71,9 +71,7 @@ export class CartorioController {
       });
 
       const eventosProcessados = events.map(ev => {
-        // Pega o percentual de split do perfil do cartório (default 10%)
         const splitPct = Number(ev.cartorioUser?.cartorio?.splitPct ?? 10) / 100;
-        
         const receitaEvento = ev.pedidos.reduce((sum, p) => sum + Number(p.valor), 0);
         const repasseEvento = receitaEvento * splitPct;
 
@@ -82,20 +80,30 @@ export class CartorioController {
 
         return {
           id: ev.id,
-          nomeNoivos: ev.nomeNoivos,
-          dataEvento: ev.dataEvento,
+          title: ev.nomeNoivos,
+          date: ev.dataEvento,
+          location: ev.city || ev.location,
           receita: receitaEvento,
           repasse: repasseEvento,
-          pedidos: ev.pedidos.map(p => ({ status: p.status, valor: p.valor }))
+          _count: { orders: ev.pedidos.length },
+          captacao: null // Futuro: vincular profissional
         };
       });
 
+      // Cálculo do mês atual
+      const dataMes = new Date();
+      const eventosMes = events.filter(e => {
+          const d = new Date(e.dataEvento);
+          return d.getMonth() === dataMes.getMonth() && d.getFullYear() === dataMes.getFullYear();
+      }).length;
+
       res.json({
-        eventos: eventosProcessados,
-        eventosHoje: eventosHoje.map(e => ({ id: e.id, nomeNoivos: e.nomeNoivos, dataEvento: e.dataEvento })),
-        totalRevenue,
-        estimativaRepasse,
-        count: events.length
+        totalEventos: events.length,
+        totalVendas: events.reduce((acc, ev) => acc + ev.pedidos.length, 0),
+        repasseEstimado: estimativaRepasse,
+        eventosMes,
+        razaoSocial: events[0]?.cartorioUser?.cartorio?.razaoSocial || "Sua Unidade",
+        events: eventosProcessados // Compatibilidade com a listagem
       });
 
     } catch (error) {
