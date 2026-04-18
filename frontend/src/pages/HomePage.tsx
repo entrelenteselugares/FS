@@ -311,15 +311,33 @@ function EventCard({ event, onClick }: { event: Event; onClick: () => void }) {
           <img 
             src={event.coverPhotoUrl} 
             alt={event.nomeNoivos} 
+            onError={(e) => {
+              (e.currentTarget as HTMLImageElement).style.display = "none";
+              const parent = (e.currentTarget as HTMLImageElement).parentElement;
+              if (parent) {
+                const placeholder = parent.querySelector(".image-placeholder");
+                if (placeholder) (placeholder as HTMLElement).style.display = "flex";
+              }
+            }}
             style={{ width: "100%", height: "100%", objectFit: "cover", opacity: 0.8, transition: "transform 0.8s cubic-bezier(0.16, 1, 0.3, 1)" }} 
             onMouseOver={(e) => (e.currentTarget.style.transform = "scale(1.05)")}
             onMouseOut={(e) => (e.currentTarget.style.transform = "scale(1)")}
           />
-        ) : (
-          <div style={{ width: "100%", height: "100%", display: "flex", alignItems: "center", justifyContent: "center" }}>
-            <span style={{ fontSize: 10, color: "#222", letterSpacing: 2, textTransform: "uppercase" }}>Private Archive</span>
+        ) : null}
+
+        <div className="image-placeholder" style={{ 
+          width: "100%", height: "100%", 
+          display: event.coverPhotoUrl ? "none" : "flex", 
+          alignItems: "center", justifyContent: "center",
+          background: "linear-gradient(135deg, #050505 0%, #0d0d0d 100%)"
+        }}>
+          <div style={{ textAlign: "center" }}>
+             <div style={{ width: 30, height: 30, border: "0.5px solid #222", transform: "rotate(45deg)", display: "flex", alignItems: "center", justifyContent: "center", margin: "0 auto 12px" }}>
+                <div style={{ width: 4, height: 4, background: "#c9a96e" }} />
+             </div>
+             <span style={{ fontSize: 8, color: "#222", letterSpacing: 2, textTransform: "uppercase", fontWeight: 700 }}>Private Archive</span>
           </div>
-        )}
+        </div>
         
         {isNew && (
           <span style={{

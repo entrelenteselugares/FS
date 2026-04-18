@@ -310,15 +310,30 @@ export const EventPage = () => {
         <div>
           <div style={{ width: "100%", aspectRatio: "16/9", background: "#0d0d0d", borderRadius: 0, overflow: "hidden", marginBottom: "2.5rem", position: "relative", border: "1px solid rgba(255,255,255,0.03)" }}>
             {event.coverPhotoUrl ? (
-              <img src={event.coverPhotoUrl} alt={event.nomeNoivos} style={{ width: "100%", height: "100%", objectFit: "cover", filter: hasPaid ? "none" : "blur(8px) brightness(0.7)" }} />
-            ) : (
-              <div style={{ width: "100%", height: "100%", display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center", background: "linear-gradient(135deg, #050505 0%, #0d0d0d 100%)" }}>
-                <div style={{ width: 40, height: 40, border: "0.5px solid #222", transform: "rotate(45deg)", display: "flex", alignItems: "center", justifyContent: "center", marginBottom: 15 }}>
-                  <div style={{ width: 4, height: 4, background: "#c9a96e" }} />
-                </div>
-                <span style={{ fontSize: 9, color: "#333", textTransform: "uppercase", letterSpacing: 4, fontWeight: 700 }}>Exclusive Collective</span>
-              </div>
-            )}
+              <img 
+                src={event.coverPhotoUrl} 
+                alt={event.nomeNoivos} 
+                onError={(e) => {
+                  (e.currentTarget as HTMLImageElement).style.display = "none";
+                  const ph = (e.currentTarget as HTMLImageElement).parentElement?.querySelector(".cover-placeholder") as HTMLElement;
+                  if (ph) ph.style.display = "flex";
+                }}
+                style={{ width: "100%", height: "100%", objectFit: "cover", filter: hasPaid ? "none" : "blur(8px) brightness(0.7)" }} 
+              />
+            ) : null}
+            <div className="cover-placeholder" style={{ 
+              display: event.coverPhotoUrl ? "none" : "flex", 
+              width: "100%", height: "100%", 
+              alignItems: "center", justifyContent: "center",
+              background: "linear-gradient(180deg, #050505 0%, #0a0a0a 100%)" 
+            }}>
+               <div style={{ textAlign: "center" }}>
+                  <div style={{ width: 40, height: 40, border: "0.5px solid #222", transform: "rotate(45deg)", display: "flex", alignItems: "center", justifyContent: "center", margin: "0 auto 16px" }}>
+                    <div style={{ width: 6, height: 6, background: "#c9a96e" }} />
+                  </div>
+                  <span style={{ fontSize: 10, color: "#333", letterSpacing: 3, textTransform: "uppercase" }}>Archive</span>
+               </div>
+            </div>
             {!hasPaid && (
               <div style={{ position: "absolute", inset: 0, display: "flex", alignItems: "center", justifyContent: "center", background: "rgba(0,0,0,0.5)", backdropFilter: "blur(2px)" }}>
                 <div style={{ textAlign: "center" }}>
