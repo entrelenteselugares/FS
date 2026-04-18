@@ -4,7 +4,7 @@ import { API } from "../lib/api";
 
 declare global {
   interface Window {
-    MercadoPago: any;
+    MercadoPago: new (key: string) => any;
   }
 }
 
@@ -94,6 +94,22 @@ export const EventPage = () => {
   const [cardToken, setCardToken] = useState("");
   const [tokenizing, setTokenizing] = useState(false);
 
+  const checkAccess = useCallback(async (oid: string) => {
+    try {
+      const { data } = await API.get(`/public/events/${id}/access?orderId=${oid}`);
+      setAccess(data);
+      setHasPaid(true);
+      setStep("success");
+    } catch (err: unknown) { 
+      const error = err as { response?: { status: number } };
+      if (error.response?.status === 403 || error.response?.status === 401) {
+        console.warn("[Access] Token/Pedido inválido ou expirado. Limpando...");
+        localStorage.removeItem(`fs_order_${id}`);
+        setOrderId(null);
+      }
+    }
+  }, [id]);
+
   useEffect(() => {
     if (!id) return;
     API.get(`/public/events/${id}`)
@@ -130,22 +146,6 @@ export const EventPage = () => {
     s.onload = () => setMpLoaded(true);
     document.head.appendChild(s);
   }, []);
-
-  const checkAccess = useCallback(async (oid: string) => {
-    try {
-      const { data } = await API.get(`/public/events/${id}/access?orderId=${oid}`);
-      setAccess(data);
-      setHasPaid(true);
-      setStep("success");
-    } catch (err: unknown) { 
-      const error = err as { response?: { status: number } };
-      if (error.response?.status === 403 || error.response?.status === 401) {
-        console.warn("[Access] Token/Pedido inválido ou expirado. Limpando...");
-        localStorage.removeItem(`fs_order_${id}`);
-        setOrderId(null);
-      }
-    }
-  }, [id]);
 
   const handleTokenize = async () => {
     if (!window.MercadoPago || !mpLoaded) return;
@@ -406,10 +406,20 @@ function PaywallCard({ event, onCheckout }: { event: EventData; onCheckout: () =
   );
 }
 
+interface CardData {
+  number: string;
+  name: string;
+  month: string;
+  year: string;
+  cvv: string;
+  email: string;
+  cpf: string;
+}
+
 function CheckoutCard({ event, cardData, setCardData, cardToken, tokenizing, mpLoaded, error, onTokenize, onPay, onBack }: {
-  event: EventData; cardData: any; setCardData: any; cardToken: string; tokenizing: boolean; mpLoaded: boolean; error: string; onTokenize: () => void; onPay: () => void; onBack: () => void;
+  event: EventData; cardData: CardData; setCardData: React.Dispatch<React.SetStateAction<CardData>>; cardToken: string; tokenizing: boolean; mpLoaded: boolean; error: string; onTokenize: () => void; onPay: () => void; onBack: () => void;
 }) {
-  const set = (k: string) => (e: React.ChangeEvent<HTMLInputElement>) => setCardData((p: any) => ({ ...p, [k]: e.target.value }));
+  const set = (k: keyof CardData) => (e: React.ChangeEvent<HTMLInputElement>) => setCardData((p: CardData) => ({ ...p, [k]: e.target.value }));
   return (
     <div style={S.card}>
       <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "2rem" }}>
@@ -449,7 +459,7 @@ function CheckoutCard({ event, cardData, setCardData, cardToken, tokenizing, mpL
 //   return <div style={{ ...S.card, textAlign: "center", padding: "5rem 2rem" }}><div style={{ width: 32, height: 32, border: "1px solid #c9a96e", borderTopColor: "transparent", borderRadius: "50%", margin: "0 auto 24px", animation: "spin 0.8s linear infinite" }} /><p style={{ fontSize: 10, color: "#fff", textTransform: "uppercase", letterSpacing: 3, fontWeight: 700 }}>Processando Pagamento</p><p style={{ fontSize: 11, color: "#444", marginTop: 8 }}>Não feche esta janela.</p></div>;
 // }
 
-function SuccessCard({ onViewFiles }: { onViewFiles: () => void }) {
+function SuccessCard({ event, orderId, onViewFiles }: { event: EventData; orderId: string | null; onViewFiles: () => void }) {
   return (
     <div style={{ ...S.card, textAlign: "center", padding: "4rem 2rem", background: "rgba(74, 222, 128, 0.02)", border: "1px solid rgba(74, 222, 128, 0.1)" }}>
       <div style={{ width: 56, height: 56, border: "1px solid #4ade80", borderRadius: "50%", margin: "0 auto 20px", display: "flex", alignItems: "center", justifyContent: "center", color: "#4ade80", fontSize: 24 }}>✓</div>
