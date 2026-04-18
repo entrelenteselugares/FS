@@ -171,12 +171,15 @@ export class PaymentController {
         external_reference: order.id
       });
 
-      // 6. Atualizar Pedido
-      const isApproved = mpResponse.status === "approved";
+      // 6. Atualizar Pedido com Status Real
+      let finalStatus = "PENDENTE";
+      if (mpResponse.status === "approved") finalStatus = "APROVADO";
+      if (mpResponse.status === "rejected") finalStatus = "REJEITADO";
+
       await prisma.order.update({
         where: { id: order.id },
         data: { 
-          status: isApproved ? "APROVADO" : "PENDENTE",
+          status: finalStatus,
           paymentId: String(mpResponse.id)
         }
       });

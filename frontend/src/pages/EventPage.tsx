@@ -125,13 +125,16 @@ export const EventPage = () => {
       setStep("success");
     } catch (err: unknown) { 
       const error = err as { response?: { status: number } };
-      if (error.response?.status === 403 || error.response?.status === 401) {
-        console.warn("[Access] Token/Pedido inválido ou expirado. Limpando...");
+      // ATENÇÃO: 403 significa "Aguardando Aprovação". NÃO limpar o orderId.
+      if (error.response?.status === 401) {
+        console.warn("[Access] Sessão expirada. Limpando...");
         localStorage.removeItem(`fs_order_${id}`);
         setOrderId(null);
       }
+      // Repassar erro para quem chamou tratar (ex: polling)
+      throw err;
     }
-  }, [id]);
+  }, [id, id]);
 
   useEffect(() => {
     if (!id) return;
@@ -237,9 +240,13 @@ export const EventPage = () => {
       // Atualiza URL com orderId para persistir em refresh
       navigate(`/e/${id}?orderId=${data.orderId}`, { replace: true });
 
-      if (data.status === "APROVADO" || data.hasPaid) {
+      if (data.status === "APROVADO" || data.status === "approved" || data.hasPaid) {
         await checkAccess(data.orderId);
+      } else if (data.status === "rejected") {
+        setCheckoutError("Pagamento recusado pelo cartão. Verifique os dados ou tente outro cartão.");
+        setStep("checkout");
       } else {
+        // Status: in_process, pending, etc.
         pollPaymentStatus(data.orderId);
       }
     } catch (err: unknown) {
