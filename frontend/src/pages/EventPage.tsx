@@ -3,7 +3,7 @@ import { useParams, useNavigate, useSearchParams } from "react-router-dom";
 import { API } from "../lib/api";
 
 interface MercadoPagoInstance {
-  createCardToken: (data: any) => Promise<{ id: string; cause?: Array<{ description: string }> }>;
+  createCardToken: (data: Record<string, string>) => Promise<{ id: string; cause?: Array<{ description: string }> }>;
 }
 
 interface MercadoPagoConstructor {
@@ -89,7 +89,7 @@ export const EventPage = () => {
   const [searchParams] = useSearchParams();
   const [hasPaid, setHasPaid] = useState(false);
   const [access, setAccess] = useState<AccessData | null>(null);
-  const [_orderId, setOrderId] = useState<string | null>(null);
+  const [, setOrderId] = useState<string | null>(null);
 
   const [step, setStep] = useState<"paywall" | "checkout" | "processing" | "success">("paywall");
   const [checkoutError, setCheckoutError] = useState("");
