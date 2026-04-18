@@ -23,7 +23,8 @@ export const MercadoPagoController = {
       }
 
       const url = MercadoPagoService.getAuthorizationUrl(userId);
-      res.json({ url });
+      console.log(`[MP Connect] Redirecionando usuário ${userId} para: ${url}`);
+      res.redirect(url);
     } catch (error: unknown) {
       const msg = error instanceof Error ? error.message : "Erro desconhecido";
       console.error("[MP Connect Error]:", msg);
