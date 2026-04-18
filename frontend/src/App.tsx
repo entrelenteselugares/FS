@@ -9,6 +9,7 @@ import { AdminDashboard } from "./pages/admin/AdminDashboard";
 import { CartorioDashboard } from "./pages/CartorioDashboard";
 import { AuthSelectionPage } from "./pages/AuthSelectionPage";
 import { RegisterPage } from "./pages/RegisterPage";
+import ClienteArea from "./pages/ClienteArea";
 
 /** Redireciona /dashboard para o painel correto baseado no role */
 const DashboardRedirect = () => {
@@ -18,7 +19,7 @@ const DashboardRedirect = () => {
     ADMIN: "/admin",
     CARTORIO: "/cartorio",
     PROFISSIONAL: "/profissional",
-    CLIENTE: "/",
+    CLIENTE: "/minha-conta",
   };
   return <Navigate to={map[user.role] || "/"} replace />;
 };
@@ -60,6 +61,13 @@ function App() {
           <Route path="/cartorio" element={
             <ProtectedRoute roles={["CARTORIO", "ADMIN"]}>
               <CartorioDashboard />
+            </ProtectedRoute>
+          } />
+
+          {/* Área do Cliente */}
+          <Route path="/minha-conta" element={
+            <ProtectedRoute roles={["CLIENTE", "ADMIN", "PROFISSIONAL", "CARTORIO"]}>
+              <ClienteArea />
             </ProtectedRoute>
           } />
 

@@ -17,6 +17,7 @@ import {
 } from "../controllers/admin.controller";
 import { MercadoPagoController } from "../controllers/mercadopago.controller";
 import { getMeusEventos, updateEventLinks, uploadEventCover } from "../controllers/profissional.controller";
+import { getMeusPedidos, getMeuPedidoDetalhe } from "../controllers/cliente.controller";
 import { requireAuth, requireRole } from "../lib/auth";
 
 const router = Router();
@@ -57,6 +58,10 @@ router.patch("/admin/users/:id", requireAuth, requireRole("ADMIN"), adminUpdateU
 
 // ── Admin: Gestão de Pedidos ─────────────────────────────────────
 router.get("/admin/orders", requireAuth, requireRole("ADMIN"), adminListOrders);
+
+// ── Cliente: Meus Pedidos & Arquivos ─────────────────────────────
+router.get("/cliente/pedidos", requireAuth, getMeusPedidos);
+router.get("/cliente/pedidos/:id", requireAuth, getMeuPedidoDetalhe);
 
 // ── Profissional: Gestão de Entregas ─────────────────────────────
 router.get("/profissional/events", requireAuth, requireRole("ADMIN", "PROFISSIONAL"), getMeusEventos);

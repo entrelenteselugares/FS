@@ -33,10 +33,15 @@ export const LoginPage: React.FC = () => {
         return;
       }
 
-      if (authUser && (authUser as any).role === "ADMIN") navigate("/admin");
-      else if (authUser && (authUser as any).role === "PROFISSIONAL") navigate("/profissional");
-      else if (authUser && (authUser as any).role === "CARTORIO") navigate("/cartorio");
-      else navigate("/");
+      // Redirecionamento por Role
+      const destinos: Record<string, string> = {
+        ADMIN: "/admin",
+        PROFISSIONAL: "/profissional",
+        CARTORIO: "/cartorio",
+        CLIENTE: "/minha-conta",
+      };
+
+      navigate(destinos[authUser.role] || "/");
 
     } catch (err: any) {
       const errorMsg = err.response?.data?.error;
