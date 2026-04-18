@@ -1,6 +1,5 @@
 // ─────────────────────────────────────────────────────────────────────────────
-// Foto Segundo — Prisma Schema v2.0
-// Gerado e validado pela auditoria estática de 2026-04-17
+// Foto Segundo — Prisma Schema v4.0 (Aligned with Backend Code)
 // ─────────────────────────────────────────────────────────────────────────────
 
 generator client {
@@ -10,6 +9,7 @@ generator client {
 
 datasource db {
   provider  = "postgresql"
+  url       = env("DATABASE_URL")
 }
 
 // ─── Enums ────────────────────────────────────────────────────────────────────
@@ -21,105 +21,137 @@ enum Role {
   CLIENTE
 }
 
-enum OrderStatus {
-  PENDENTE
-  APROVADO
-  RECUSADO
-  ESTORNADO
-}
-
 // ─── Model: User ─────────────────────────────────────────────────────────────
-// Usado para: Admin, Cartório, Profissional (Fotógrafo/Editor), Cliente
 
 model User {
-  id       String @id @default(cuid())
-  email    String @unique
-  senha    String
-  nome     String
-  role     Role   @default(CLIENTE)
-  whatsapp String?
+  id             String   @id @default(cuid())
+  email          String   @unique
+  senha          String
+  nome           String
+  role           Role     @default(CLIENTE)
+  whatsapp       String?
+  active         Boolean  @default(true)
+  createdAt      DateTime @default(now())
+  updatedAt      DateTime @updatedAt
 
-  // ── Credenciais OAuth Mercado Pago ────────────────────────────────────────
-  // Preenchidas quando o profissional conecta sua conta via /api/mercadopago/connect
+  // Mercado Pago OAuth (armazenado diretamente no user)
+  mpUserId       String?
   mpAccessToken  String?
   mpPublicKey    String?
   mpRefreshToken String?
-  mpUserId       String?
 
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
+  // Relações
+  pedidos        Order[]  @relation("ClienteOrders")
 
-  // ── Relações ──────────────────────────────────────────────────────────────
-  eventosComoFotografo Event[] @relation("Fotografo")
-  eventosComoEditor    Event[] @relation("Editor")
-  eventosComoCartorio  Event[] @relation("CartorioUser")
+  // Profissional atribuído como fotógrafo/captação em eventos
+  eventsCaptacao  Event[] @relation("CaptacaoEvents")
+  // Profissional atribuído como editor em eventos
+  eventsEdicao    Event[] @relation("EdicaoEvents")
+  // Cartório atribuído a eventos (via relação direta com o usuário de role CARTORIO)
+  eventsCartorio  Event[] @relation("CartorioUserEvents")
 
-  @@map("fs_users")
+  // Perfis estendidos (Opcionais based on Role)
+  profissional   Profissional?
+  cartorio       Cartorio?
+
+  @@map("users")
 }
 
 // ─── Model: Event ────────────────────────────────────────────────────────────
-// Um evento de casamento. Criado pelo Admin/Profissional.
 
 model Event {
-  id        String   @id @default(cuid())
-  nomeNoivos String
-  dataEvento DateTime
-  cartorio   String?
-  temFoto         Boolean @default(false)
-  temFotoImpressa Boolean @default(false)
+  id              String    @id @default(cuid())
+  nomeNoivos      String
+  slug            String?   @unique
+  dataEvento      DateTime
+  location        String?   // Nome do local/texto livre
+  city            String?
+  description     String?
+  cartorio        String?   // Nome do cartório legado (texto livre)
+  coverPhotoUrl   String?
+  lightroomUrl    String?
+  driveUrl        String?
+  priceBase       Decimal   @default(200) @db.Decimal(10, 2)
+  priceEarly      Decimal   @default(190) @db.Decimal(10, 2)
+  active          Boolean   @default(true)
+  createdAt       DateTime  @default(now())
+  updatedAt       DateTime  @updatedAt
 
-  // ── URLs de Entrega (liberadas após pagamento aprovado) ───────────────────
-  lightroomUrl  String? // URL do álbum Adobe Lightroom (fotos)
-  driveUrl      String? // URL da pasta Google Drive (vídeos)
-  coverPhotoUrl String? // URL da foto de capa (imagem do evento)
+  // Metadados de serviço
+  temFoto         Boolean   @default(true)
+  temVideo        Boolean   @default(false)
+  temReels        Boolean   @default(false)
+  temFotoImpressa Boolean   @default(false)
 
-  // ── Equipe do Evento (parceiros que recebem split) ────────────────────────
-  fotografoId    String?
-  editorId       String?
-  cartorioUserId String?
+  // Profissionais atribuídos
+  captacaoId     String?
+  captacao       User?     @relation("CaptacaoEvents", fields: [captacaoId], references: [id])
+  edicaoId       String?
+  edicao         User?     @relation("EdicaoEvents", fields: [edicaoId], references: [id])
+  cartorioUserId  String?
+  cartorioUser    User?     @relation("CartorioUserEvents", fields: [cartorioUserId], references: [id])
 
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
+  // Pedidos vinculados
+  pedidos         Order[]
 
-  // ── Relações ──────────────────────────────────────────────────────────────
-  fotografo    User? @relation("Fotografo", fields: [fotografoId], references: [id])
-  editor       User? @relation("Editor", fields: [editorId], references: [id])
-  cartorioUser User? @relation("CartorioUser", fields: [cartorioUserId], references: [id])
-  pedidos      Order[]
-  midias       MediaFile[]
-
-  @@map("fs_events")
+  @@map("events")
 }
 
-model MediaFile {
-  id           String  @id @default(cuid())
-  url          String
-  tipo         String  @default("FOTO")
-  isCoverPhoto Boolean @default(false)
-  eventId      String
-  event        Event   @relation(fields: [eventId], references: [id])
+// ─── Model: Profissional ─────────────────────────────────────────────────────
 
-  @@map("fs_media_files")
+model Profissional {
+  id        String   @id @default(cuid())
+  userId    String   @unique
+  user      User     @relation(fields: [userId], references: [id])
+  services  String[] // ["FOTO", "VIDEO", etc]
+  cameras   String[]
+  lenses    String[]
+  lighting  String[]
+  captPct   Float    @default(30)
+  editPct   Float    @default(20)
+
+  @@map("profissionais")
+}
+
+// ─── Model: Cartorio ─────────────────────────────────────────────────────────
+
+model Cartorio {
+  id          String   @id @default(cuid())
+  userId      String   @unique
+  user        User     @relation(fields: [userId], references: [id])
+  razaoSocial String
+  cnpj        String?
+  splitPct    Float    @default(10)
+
+  @@map("cartorios")
 }
 
 // ─── Model: Order ────────────────────────────────────────────────────────────
-// Representa uma tentativa de compra de acesso a um evento.
-// clienteId é um ID temporário (localStorage) — NOT a FK para User,
-// pois o cliente pode ser não-autenticado no momento da compra.
 
 model Order {
-  id        String      @id @default(cuid())
-  eventId   String
-  clienteId String      // ID temporário do comprador (localStorage UUID)
-  valor     Decimal     @db.Decimal(10, 2)
-  status    OrderStatus @default(PENDENTE)
-  paymentId String?     // ID do pagamento no Mercado Pago
+  id            String   @id @default(cuid())
+  valor         Decimal  @db.Decimal(10, 2)
+  status        String   @default("PENDENTE") // PENDENTE, APROVADO, CANCELADO
+  paymentId     String?  @unique              // ID do pagamento no Mercado Pago
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
 
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
+  // Buyer Info (Redundância para facilitar relatórios)
+  buyerEmail    String?
 
-  // ── Relações ──────────────────────────────────────────────────────────────
-  event Event @relation(fields: [eventId], references: [id])
+  // Split values (Snapshot do momento da compra)
+  splitMatriz   Decimal? @db.Decimal(10, 2)
+  splitCartorio Decimal? @db.Decimal(10, 2)
+  splitCaptacao Decimal? @db.Decimal(10, 2)
+  splitEdicao   Decimal? @db.Decimal(10, 2)
 
-  @@map("fs_orders")
+  // Comprador (Opcional se for checkout de convidado)
+  clienteId     String?
+  cliente       User?    @relation("ClienteOrders", fields: [clienteId], references: [id])
+
+  // Evento
+  eventId       String
+  event         Event    @relation(fields: [eventId], references: [id])
+
+  @@map("orders")
 }

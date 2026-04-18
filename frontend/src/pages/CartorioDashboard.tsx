@@ -1,6 +1,6 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useCallback } from "react";
 import { useSearchParams } from "react-router-dom";
-import { API } from "../contexts/AuthContext";
+import { API } from "../lib/api";
 import { useAuth } from "../contexts/AuthContext";
 import { DashboardLayout } from "../components/DashboardLayout";
 import type { NavItem } from "../components/DashboardLayout";
@@ -15,7 +15,7 @@ const IconAgenda = () => (
 );
 
 const CARTORIO_NAV: NavItem[] = [
-  { label: "Agenda & Repasse", to: "/cartorio", exact: true, icon: <IconAgenda /> },
+  { label: "Agenda & Ativos", to: "/cartorio", exact: true, icon: <IconAgenda /> },
 ];
 
 // ── Types ──────────────────────────────────────────────────────────────
@@ -42,18 +42,12 @@ export const CartorioDashboard: React.FC = () => {
   const [startDate, setStartDate] = useState("");
   const [endDate, setEndDate] = useState("");
   const [cartorioName, setCartorioName] = useState("");
-  const [success, setSuccess] = useState("");
-
-  useEffect(() => {
+  const [success, setSuccess] = useState(() => {
     const mpConnected = searchParams.get("mp_connected");
-    if (mpConnected) {
-      // Usar um timeout pequeno para evitar renderização em cascata imediata se necessário,
-      // mas o principal é remover a dependência direta do valor mutável se possível.
-      setSuccess("Mercado Pago conectado com sucesso! ✅");
-    }
-  }, [searchParams]);
+    return mpConnected ? "Mercado Pago conectado com sucesso! ✅" : "";
+  });
 
-  const fetchStats = React.useCallback(() => {
+  const fetchStats = useCallback(() => {
     setLoading(true);
     const params: Record<string, string> = {};
     if (startDate) params.startDate = startDate;
@@ -63,55 +57,54 @@ export const CartorioDashboard: React.FC = () => {
       .then((r) => setStats(r.data))
       .catch(console.error)
       .finally(() => setLoading(false));
-  }, [startDate, endDate, cartorioName]);
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   useEffect(() => {
     fetchStats();
   }, [fetchStats]);
 
   return (
-    <DashboardLayout title="Painel do Cartório" navItems={CARTORIO_NAV} variant="emerald">
-      <div className="p-6 lg:p-8 max-w-5xl mx-auto">
-        {/* Page Header */}
-        <div className="mb-8">
-          <div className="text-[10px] font-black uppercase tracking-[0.4em] text-brand-emerald mb-2">
-            Visão Financeira
+    <DashboardLayout title="Repasses Unidade" navItems={CARTORIO_NAV} variant={"olive" as any}>
+      <div className="p-10 max-w-6xl mx-auto min-h-screen">
+        {/* Page Header Editorial */}
+        <div className="mb-20">
+          <div className="flex items-center gap-4 mb-6">
+            <div className="w-[1px] h-6 bg-brand-olive" />
+            <div className="text-[10px] font-bold uppercase tracking-[0.5em] text-zinc-500">
+              Gestão de Unidade
+            </div>
           </div>
-          <h1 id="cartorio-dashboard-title" className="text-3xl font-black italic uppercase tracking-tighter">
-            Agenda & Repasse
+          <h1 id="cartorio-dashboard-title" className="text-5xl md:text-7xl font-serif tracking-tight text-white mb-6 italic">
+            Agenda & Receita
           </h1>
-          <p className="text-zinc-500 text-sm mt-1.5">
-            Transparência sobre eventos e estimativa de recebimento da sua unidade
+          <p className="text-zinc-600 text-sm font-light uppercase tracking-[0.2em]">
+            Transparência analítica sobre eventos e fluxos de repasse.
           </p>
         </div>
 
-        {/* ── Mercado Pago Connection Banner ── */}
+        {/* ── Mercado Pago Connection Banner Editorial ── */}
         <div
           id="cartorio-mp-connection"
-          className={`glass rounded-2xl p-5 mb-8 flex items-center justify-between gap-4 border-l-4 ${
-            user?.mpUserId ? "border-brand-emerald" : "border-red-500/60"
+          className={`border p-8 mb-16 flex flex-col md:flex-row items-start md:items-center justify-between gap-8 bg-white/[0.01] ${
+            user?.mpUserId ? "border-brand-olive/20" : "border-red-900/20"
           }`}
         >
-          <div>
-            <div className="flex items-center gap-2 mb-1">
-              <span className="text-sm font-black italic uppercase tracking-tight">Vincular Conta de Repasse</span>
-              <span className={`flex items-center gap-1.5 text-[9px] px-2.5 py-1 rounded-full font-black uppercase tracking-widest border ${
+          <div className="max-w-xl">
+            <div className="flex items-center gap-4 mb-4">
+              <span className="text-[10px] font-bold uppercase tracking-[0.3em] text-white">Vínculo de Ativos</span>
+              <span className={`text-[8px] px-3 py-1 font-bold uppercase tracking-[0.2em] border ${
                 user?.mpUserId
-                  ? "bg-brand-emerald/10 text-brand-emerald border-brand-emerald/20 animate-fade-in"
-                  : "bg-red-500/10 text-red-500 border-red-500/20"
+                  ? "border-brand-olive text-brand-olive bg-brand-olive/5"
+                  : "border-red-900 text-red-700 bg-red-900/5"
               }`}>
-                {user?.mpUserId && (
-                  <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="4">
-                    <polyline points="20 6 9 17 4 12" />
-                  </svg>
-                )}
-                {user?.mpUserId ? "Conta Verificada" : "Pendente"}
+                {user?.mpUserId ? "PROTOCOLO ATIVO" : "PENDÊNCIA FISCAL"}
               </span>
             </div>
-            <p className="text-xs text-zinc-400 max-w-md">
+            <p className="text-xs text-zinc-500 font-light leading-relaxed uppercase tracking-widest">
               {user?.mpUserId
-                ? "Sua conta Mercado Pago está pronta para receber os 10% de repasse."
-                : "Conecte sua conta para automatizar o recebimento das suas comissões."}
+                ? "Sua conta Mercado Pago está devidamente vinculada para o recebimento de royalties de 10% sobre vendas."
+                : "É necessária a vinculação de uma conta Mercado Pago para a automação de repasses financeiros."}
             </p>
           </div>
           {!user?.mpUserId && (
@@ -121,60 +114,61 @@ export const CartorioDashboard: React.FC = () => {
                 const base = import.meta.env.VITE_API_URL || "";
                 window.location.href = `${base}/api/mercadopago/connect`;
               }}
-              className="flex-shrink-0 bg-white text-zinc-900 hover:bg-zinc-100 font-bold text-[10px] uppercase tracking-widest px-4 py-2.5 rounded-xl transition-all whitespace-nowrap"
+              className="bg-white text-black hover:bg-zinc-200 font-bold text-[10px] uppercase tracking-[0.3em] px-8 py-4 transition-all"
             >
-              Conectar Agora
+              Vincular Conta
             </button>
           )}
         </div>
 
         {/* ── Success banner ── */}
         {success && (
-          <div className="mb-6 p-4 bg-brand-emerald/10 border border-brand-emerald/20 rounded-2xl text-brand-emerald text-sm font-medium animate-fade-in flex items-center gap-2">
-            <span>✅</span> {success}
-            <button onClick={() => setSuccess("")} className="ml-auto text-brand-emerald/60 hover:text-brand-emerald">✕</button>
+          <div className="mb-12 p-6 border border-brand-olive/20 bg-brand-olive/5 text-brand-olive text-[10px] font-bold uppercase tracking-[0.3em] flex items-center gap-4">
+            <div className="w-2 h-2 rounded-full bg-brand-olive animate-pulse" />
+            {success}
+            <button onClick={() => setSuccess("")} className="ml-auto opacity-40 hover:opacity-100">FECHAR</button>
           </div>
         )}
 
-        {/* ── Filters ── */}
-        <div className="glass rounded-2xl p-5 mb-8">
-          <div className="text-[9px] font-black uppercase tracking-[0.4em] text-zinc-500 mb-4">Filtros</div>
-          <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
+        {/* ── Filters Editorial ── */}
+        <div className="border border-white/5 p-8 mb-16 bg-white/[0.01]">
+          <div className="text-[10px] font-bold uppercase tracking-[0.4em] text-zinc-600 mb-8 border-b border-white/5 pb-4">Parâmetros</div>
+          <div className="grid grid-cols-1 md:grid-cols-4 gap-8">
             <div>
-              <label className="block text-[9px] font-bold uppercase tracking-widest text-zinc-600 mb-1.5">De</label>
+              <label className="block text-[9px] font-bold uppercase tracking-[0.3em] text-zinc-700 mb-3">Início</label>
               <input
                 id="cartorio-filter-start"
                 type="date"
                 value={startDate}
                 onChange={(e) => setStartDate(e.target.value)}
-                className="w-full bg-white/5 border border-white/10 rounded-xl px-3 py-2 text-xs text-white focus:outline-none focus:border-brand-emerald/60 transition-colors"
+                className="w-full bg-transparent border-b border-white/10 py-2 text-[10px] text-white focus:outline-none focus:border-brand-olive transition-all invert brightness-200 opacity-60"
               />
             </div>
             <div>
-              <label className="block text-[9px] font-bold uppercase tracking-widest text-zinc-600 mb-1.5">Até</label>
+              <label className="block text-[9px] font-bold uppercase tracking-[0.3em] text-zinc-700 mb-3">Término</label>
               <input
                 id="cartorio-filter-end"
                 type="date"
                 value={endDate}
                 onChange={(e) => setEndDate(e.target.value)}
-                className="w-full bg-white/5 border border-white/10 rounded-xl px-3 py-2 text-xs text-white focus:outline-none focus:border-brand-emerald/60 transition-colors"
+                className="w-full bg-transparent border-b border-white/10 py-2 text-[10px] text-white focus:outline-none focus:border-brand-olive transition-all invert brightness-200 opacity-60"
               />
             </div>
             <div>
-              <label className="block text-[9px] font-bold uppercase tracking-widest text-zinc-600 mb-1.5">Unidade</label>
+              <label className="block text-[9px] font-bold uppercase tracking-[0.3em] text-zinc-700 mb-3">Nome da Unidade</label>
               <input
                 id="cartorio-filter-name"
                 value={cartorioName}
                 onChange={(e) => setCartorioName(e.target.value)}
-                placeholder="Nome do Cartório"
-                className="w-full bg-white/5 border border-white/10 rounded-xl px-3 py-2 text-xs text-white placeholder-zinc-700 focus:outline-none focus:border-brand-emerald/60 transition-colors"
+                placeholder="PROCURAR UNIDADE..."
+                className="w-full bg-transparent border-b border-white/10 py-2 text-[10px] text-white placeholder-zinc-800 focus:outline-none focus:border-brand-olive transition-all"
               />
             </div>
             <div className="flex items-end">
               <button
                 id="btn-cartorio-filter"
                 onClick={fetchStats}
-                className="w-full bg-brand-emerald hover:bg-brand-emerald/80 text-white font-black uppercase tracking-widest text-[10px] px-4 py-2 rounded-xl transition-all"
+                className="w-full bg-white text-black hover:bg-zinc-200 font-bold uppercase tracking-[0.3em] text-[10px] py-4 transition-all"
               >
                 Filtrar
               </button>
@@ -183,59 +177,55 @@ export const CartorioDashboard: React.FC = () => {
         </div>
 
         {loading ? (
-          <div className="flex flex-col items-center justify-center py-24 gap-4">
-            <div className="w-10 h-10 border-2 border-brand-emerald border-t-transparent rounded-full animate-spin" />
-            <div className="text-xs text-zinc-600 uppercase tracking-widest">Carregando agenda...</div>
+          <div className="flex flex-col items-center justify-center py-40 gap-8">
+            <div className="w-[1px] h-20 bg-white/10 animate-pulse" />
+            <div className="text-[9px] text-zinc-700 uppercase tracking-[0.5em] font-bold">Acessando Arquivos...</div>
           </div>
         ) : (
           <>
-            {/* ── KPI Cards ── */}
-            <div id="cartorio-kpi-cards" className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-8">
-              {/* Repasse highlight card */}
-              <div className="glass rounded-2xl p-6 border-l-4 border-brand-emerald relative overflow-hidden">
-                <div className="absolute inset-0 bg-gradient-to-br from-brand-emerald/5 to-transparent pointer-events-none" />
-                <div className="relative">
-                  <div className="text-[9px] font-black uppercase tracking-[0.4em] text-zinc-500 mb-3">
-                    Estimativa de Repasse
-                  </div>
-                  <div className="text-3xl font-black italic text-brand-emerald mb-1">
-                    R$ {(stats?.estimativaRepasse ?? 0).toFixed(2)}
-                  </div>
-                  <div className="text-[10px] text-zinc-600">10% sobre vendas aprovadas</div>
+            {/* ── KPI Cards Editorial ── */}
+            <div id="cartorio-kpi-cards" className="grid grid-cols-1 md:grid-cols-3 gap-px bg-white/5 border border-white/5 mb-16">
+              <div className="p-8 bg-white/[0.01]">
+                <div className="text-[9px] font-bold uppercase tracking-[0.4em] text-zinc-500 mb-4">
+                  Royalties de Repasse
                 </div>
+                <div className="text-4xl font-serif italic text-brand-olive mb-2">
+                  R$ {(stats?.estimativaRepasse ?? 0).toFixed(2)}
+                </div>
+                <div className="text-[9px] text-zinc-700 uppercase tracking-widest font-bold">Quota Master (10%)</div>
               </div>
 
-              <div className="glass rounded-2xl p-6">
-                <div className="text-[9px] font-black uppercase tracking-[0.4em] text-zinc-500 mb-3">
-                  Total de Casamentos
+              <div className="p-8 bg-white/[0.01]">
+                <div className="text-[9px] font-bold uppercase tracking-[0.4em] text-zinc-500 mb-4">
+                  Eventos Consolidados
                 </div>
-                <div className="text-3xl font-black italic text-white mb-1">
+                <div className="text-4xl font-serif italic text-white mb-2">
                   {stats?.eventos.length ?? 0}
                 </div>
-                <div className="text-[10px] text-zinc-600">no período selecionado</div>
+                <div className="text-[9px] text-zinc-700 uppercase tracking-widest font-bold">Arquivo no Período</div>
               </div>
 
-              <div className="glass rounded-2xl p-6">
-                <div className="text-[9px] font-black uppercase tracking-[0.4em] text-zinc-500 mb-3">
-                  Eventos Hoje
+              <div className="p-8 bg-white/[0.01]">
+                <div className="text-[9px] font-bold uppercase tracking-[0.4em] text-zinc-500 mb-4">
+                  Protocolos Hoje
                 </div>
-                <div className={`text-3xl font-black italic mb-1 ${(stats?.eventosHoje.length ?? 0) > 0 ? "text-yellow-400" : "text-zinc-700"}`}>
+                <div className={`text-4xl font-serif italic mb-2 ${(stats?.eventosHoje.length ?? 0) > 0 ? "text-brand-olive" : "text-zinc-800"}`}>
                   {stats?.eventosHoje.length ?? 0}
                 </div>
-                <div className="text-[10px] text-zinc-600">cerimônias programadas</div>
+                <div className="text-[9px] text-zinc-700 uppercase tracking-widest font-bold">Casamentos Programados</div>
               </div>
             </div>
 
-            {/* ── Agenda Table ── */}
-            <div id="cartorio-agenda" className="glass rounded-2xl overflow-hidden">
-              <div className="px-6 py-4 border-b border-white/5 flex items-center justify-between">
-                <h2 className="text-[9px] font-black uppercase tracking-[0.4em] text-zinc-400">
-                  Agenda de Casamentos
+            {/* ── Agenda Table Editorial ── */}
+            <div id="cartorio-agenda" className="border border-white/5 bg-black overflow-hidden mb-24">
+              <div className="px-10 py-8 border-b border-white/5 flex items-center justify-between bg-white/[0.01]">
+                <h2 className="text-[10px] font-bold uppercase tracking-[0.5em] text-zinc-400">
+                  Agenda de Ativos
                 </h2>
                 {(stats?.eventosHoje.length ?? 0) > 0 && (
-                  <span className="flex items-center gap-1.5 px-3 py-1 bg-yellow-400/10 border border-yellow-400/20 rounded-full text-yellow-400 text-[9px] font-black uppercase tracking-widest">
-                    <span className="w-1.5 h-1.5 bg-yellow-400 rounded-full animate-pulse" />
-                    {stats!.eventosHoje.length} hoje
+                  <span className="flex items-center gap-3 px-4 py-2 border border-brand-olive/20 text-brand-olive text-[8px] font-bold uppercase tracking-widest">
+                    <span className="w-1.5 h-1.5 bg-brand-olive rounded-full animate-pulse" />
+                    {stats!.eventosHoje.length} PROTOCOLO(S) HOJE
                   </span>
                 )}
               </div>
@@ -252,44 +242,34 @@ export const CartorioDashboard: React.FC = () => {
                   return (
                     <div
                       key={ev.id}
-                      className={`px-6 py-4 flex items-center gap-4 transition-colors ${
-                        isToday ? "bg-yellow-400/[0.04]" : "hover:bg-white/[0.02]"
+                      className={`px-10 py-6 flex items-center gap-8 transition-all group ${
+                        isToday ? "bg-brand-olive/[0.03]" : "hover:bg-white/[0.01]"
                       }`}
                     >
-                      {/* Status dot */}
-                      <div
-                        className={`w-2 h-2 rounded-full flex-shrink-0 mt-0.5 ${
-                          isToday ? "bg-yellow-400 animate-pulse" : "bg-zinc-700"
-                        }`}
-                      />
-
-                      {/* Info */}
+                      {/* Identification */}
                       <div className="flex-1 min-w-0">
-                        <div className="font-black italic text-white truncate">{ev.nomeNoivos}</div>
-                        <div className="text-xs text-zinc-500 mt-0.5 flex items-center gap-2 flex-wrap">
+                        <div className="text-[13px] font-serif italic text-white group-hover:text-brand-olive transition-all underline underline-offset-4 decoration-white/5">
+                          {ev.nomeNoivos}
+                        </div>
+                        <div className="text-[9px] text-zinc-600 mt-2 uppercase tracking-widest flex items-center gap-4 flex-wrap font-bold">
                           <span>
                             {new Date(ev.dataEvento).toLocaleDateString("pt-BR", {
                               weekday: "long", day: "numeric", month: "long", year: "numeric",
                             })}
                           </span>
-                          {ev.cartorio && (
-                            <span className="text-zinc-700">· {ev.cartorio}</span>
-                          )}
                           {isToday && (
-                            <span className="text-yellow-400 font-bold text-[10px] uppercase tracking-widest">
-                              Hoje
-                            </span>
+                            <span className="text-brand-olive">· HOJE</span>
                           )}
                         </div>
                       </div>
 
-                      {/* Financial summary */}
+                      {/* Repasse Amount */}
                       <div className="text-right flex-shrink-0">
-                        <div className="text-xs font-bold text-brand-emerald">
+                        <div className="text-sm font-serif italic text-white mb-1">
                           R$ {(receita * 0.1).toFixed(2)}
                         </div>
-                        <div className="text-[10px] text-zinc-600 mt-0.5">
-                          {approved} venda{approved !== 1 ? "s" : ""}
+                        <div className="text-[8px] font-bold text-zinc-700 uppercase tracking-widest group-hover:text-zinc-500 transition-colors">
+                          {approved} Transação(ões)
                         </div>
                       </div>
                     </div>
@@ -297,8 +277,8 @@ export const CartorioDashboard: React.FC = () => {
                 })}
 
                 {!stats?.eventos.length && (
-                  <div className="text-center py-16 text-zinc-700 text-sm">
-                    Nenhum evento encontrado para este período
+                  <div className="text-center py-24 text-[10px] font-bold uppercase tracking-[0.5em] text-zinc-800">
+                    Arquivo de eventos vazio
                   </div>
                 )}
               </div>

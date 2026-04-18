@@ -1,13 +1,14 @@
 import { BrowserRouter as Router, Routes, Route, Navigate } from "react-router-dom";
-import { AuthProvider } from "./contexts/AuthContext";
+import { AuthProvider, useAuth } from "./contexts/AuthContext";
 import { ProtectedRoute } from "./components/ProtectedRoute";
 import { EventPage } from "./pages/EventPage";
 import { LoginPage } from "./pages/LoginPage";
 import { HomePage } from "./pages/HomePage";
-import { ProfessionalDashboard } from "./pages/ProfessionalDashboard";
-import { AdminDashboard } from "./pages/AdminDashboard";
+import ProfissionalDashboard from "./pages/ProfissionalDashboard";
+import { AdminDashboard } from "./pages/admin/AdminDashboard";
 import { CartorioDashboard } from "./pages/CartorioDashboard";
-import { useAuth } from "./contexts/AuthContext";
+import { AuthSelectionPage } from "./pages/AuthSelectionPage";
+import { RegisterPage } from "./pages/RegisterPage";
 
 /** Redireciona /dashboard para o painel correto baseado no role */
 const DashboardRedirect = () => {
@@ -29,8 +30,11 @@ function App() {
         <Routes>
           {/* Público */}
           <Route path="/" element={<HomePage />} />
-          <Route path="/eventos/:id" element={<EventPage />} />
+          <Route path="/auth" element={<AuthSelectionPage />} />
           <Route path="/login" element={<LoginPage />} />
+          <Route path="/register" element={<RegisterPage />} />
+          <Route path="/eventos/:id" element={<EventPage />} />
+          <Route path="/e/:id" element={<EventPage />} />
 
           {/* Redireciona para o painel correto */}
           <Route path="/dashboard" element={
@@ -40,18 +44,19 @@ function App() {
           {/* Painel do Profissional */}
           <Route path="/profissional" element={
             <ProtectedRoute roles={["PROFISSIONAL", "ADMIN"]}>
-              <ProfessionalDashboard />
+              <ProfissionalDashboard />
             </ProtectedRoute>
           } />
 
-          {/* Painel Admin */}
+          {/* Painel Admin Modular v6.0 */}
           <Route path="/admin" element={
             <ProtectedRoute roles={["ADMIN"]}>
               <AdminDashboard />
             </ProtectedRoute>
           } />
+          <Route path="/admin/*" element={<Navigate to="/admin" replace />} />
 
-          {/* Painel Cartório */}
+          {/* Painel Unidades */}
           <Route path="/cartorio" element={
             <ProtectedRoute roles={["CARTORIO", "ADMIN"]}>
               <CartorioDashboard />

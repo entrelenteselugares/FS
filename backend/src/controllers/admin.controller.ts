@@ -1,209 +1,437 @@
 import { Request, Response } from "express";
-
 import prisma from "../lib/prisma";
-// @ts-ignore
-import { Order as PrismaOrder, Event as PrismaEvent } from "@prisma/client";
+import { slugify } from "../lib/utils";
+import bcrypt from "bcryptjs";
+import { createClient } from "@supabase/supabase-js";
 
-// Local types to satisfy lint when using mock prisma results
-type Order = PrismaOrder & { event?: Event };
-type Event = PrismaEvent & { pedidos?: Order[] };
+// Inicializa o cliente Supabase para Storage (Stateless)
+const supabase = createClient(
+  process.env.SUPABASE_URL!,
+  process.env.SUPABASE_SERVICE_ROLE_KEY!
+);
 
+// ── DASHBOARD ─────────────────────────────────────────
 
-export class AdminEventController {
-  /** POST /api/admin/events — Cria novo evento com foto de capa */
-  static async create(req: Request, res: Response) {
-    const { 
-      nomeNoivos, 
-      dataEvento, 
-      cartorio, 
-      lightroomUrl, 
-      driveUrl,
-      fotografoId,
-      editorId,
-      cartorioUserId
-    } = req.body;
+export async function adminUploadCover(req: Request, res: Response): Promise<void> {
+  const { id } = req.params;
+  const { imageBase64, mimeType } = req.body;
 
+  if (!imageBase64 || !mimeType) {
+    res.status(400).json({ error: "Imagem e MimeType são obrigatórios." });
+    return;
+  }
 
-    try {
-      // Se um arquivo foi enviado, constrói a URL local para servir
-      let coverPhotoUrl: string | undefined;
-      if (req.file) {
-        // Serve o arquivo via rota estática /uploads/
-        coverPhotoUrl = `${process.env.BACKEND_URL || "http://localhost:3001"}/uploads/covers/${req.file.filename}`;
-      }
+  try {
+    const exists = await prisma.event.findUnique({ where: { id: String(id) } });
+    if (!exists) { res.status(404).json({ error: "Evento não encontrado." }); return; }
 
-      if (!nomeNoivos || !dataEvento) {
-        return res.status(400).json({ error: "Nome dos noivos e data são obrigatórios" });
-      }
+    const base64Data = String(imageBase64).replace(/^data:image\/\w+;base64,/, "");
+    const buffer = Buffer.from(base64Data, "base64");
+    const ext = String(mimeType).split("/")[1] || "jpg";
+    const fileName = `covers/admin-${id}-${Date.now()}.${ext}`;
 
-      const event = await prisma.event.create({
+    const { error: uploadError } = await supabase.storage
+      .from("eventos")
+      .upload(fileName, buffer, { contentType: String(mimeType), upsert: true });
+
+    if (uploadError) throw uploadError;
+
+    const { data: { publicUrl } } = supabase.storage.from("eventos").getPublicUrl(fileName);
+
+    const updated = await prisma.event.update({
+      where: { id: String(id) },
+      data: { coverPhotoUrl: publicUrl },
+      select: { id: true, coverPhotoUrl: true },
+    });
+
+    res.json(updated);
+  } catch (err) {
+    console.error("adminUploadCover:", err);
+    res.status(500).json({ error: "Erro ao salvar capa via Admin." });
+  }
+}
+
+export async function getDashboardStats(req: Request, res: Response): Promise<void> {
+  try {
+    const [
+      totalEvents,
+      totalOrders,
+      totalRevenue,
+      recentOrders,
+      pendingEvents,
+    ] = await Promise.all([
+      prisma.event.count({ where: { active: true } }),
+      prisma.order.count({ where: { status: "APROVADO" } }),
+      prisma.order.aggregate({
+        where: { status: "APROVADO" },
+        _sum: { valor: true },
+      }),
+      prisma.order.findMany({
+        where: { status: "APROVADO" },
+        include: {
+          event: { select: { nomeNoivos: true, slug: true } },
+        },
+        orderBy: { createdAt: "desc" },
+        take: 8,
+      }),
+      // Eventos sem capa ou links (usando os campos v4.0)
+      prisma.event.findMany({
+        where: {
+          active: true,
+          OR: [
+            { coverPhotoUrl: null },
+            { lightroomUrl: null },
+          ],
+        },
+        select: { id: true, nomeNoivos: true, dataEvento: true, coverPhotoUrl: true, lightroomUrl: true },
+        orderBy: { dataEvento: "asc" },
+        take: 5,
+      }),
+    ]);
+
+    res.json({
+      stats: {
+        totalEvents,
+        totalOrders,
+        totalRevenue: Number(totalRevenue._sum.valor ?? 0),
+      },
+      recentOrders,
+      pendingEvents,
+    });
+  } catch (err) {
+    console.error("getDashboardStats:", err);
+    res.status(500).json({ error: "Erro ao carregar dashboard." });
+  }
+}
+
+// ── EVENTOS ───────────────────────────────────────────
+
+export async function adminListEvents(req: Request, res: Response): Promise<void> {
+  const { q, page = "1", status } = req.query;
+  const take = 15;
+  const skip = (Number(page) - 1) * take;
+
+  try {
+    const where: any = {};
+    if (status === "active") where.active = true;
+    if (status === "inactive") where.active = false;
+    
+    const searchString = q ? String(q) : undefined;
+    if (searchString) {
+      where.OR = [
+        { nomeNoivos: { contains: searchString, mode: "insensitive" } },
+        { location: { contains: searchString, mode: "insensitive" } },
+      ];
+    }
+
+    const [events, total] = await Promise.all([
+      prisma.event.findMany({
+        where,
+        include: {
+          cartorioUser: { select: { nome: true, cartorio: { select: { razaoSocial: true } } } },
+          captacao: { select: { nome: true } },
+          edicao:   { select: { nome: true } },
+          _count:   { select: { pedidos: true } },
+        },
+        orderBy: { dataEvento: "desc" },
+        take,
+        skip,
+      }),
+      prisma.event.count({ where }),
+    ]);
+
+    res.json({ 
+      events: events.map(e => ({ 
+        ...e, 
+        title: e.nomeNoivos, 
+        date: e.dataEvento, 
+        _count: { orders: e._count?.pedidos || 0 } 
+      })), 
+      total, 
+      page: Number(page), 
+      pages: Math.ceil(total / take) 
+    });
+  } catch (err) {
+    console.error("adminListEvents:", err);
+    res.status(500).json({ error: "Erro ao listar eventos." });
+  }
+}
+
+export async function adminCreateEvent(req: Request, res: Response): Promise<void> {
+  const {
+    title, date, location, city, description,
+    lightroomUrl, driveUrl, priceBase, priceEarly,
+    cartorioId, captacaoId, edicaoId,
+    temFoto, temVideo, temReels, temFotoImpressa,
+  } = req.body;
+
+  if (!title || !date || !location) {
+    res.status(400).json({ error: "Título (Noivos), data e local são obrigatórios." });
+    return;
+  }
+
+  try {
+    // Gera slug único
+    let slug = slugify(`${title}-${new Date(date).getFullYear()}`);
+    const exists = await prisma.event.findUnique({ where: { slug } });
+    if (exists) slug = `${slug}-${Date.now().toString(36)}`;
+
+    const event = await prisma.event.create({
+      data: {
+        nomeNoivos: title,
+        slug,
+        dataEvento: new Date(date),
+        location, city,
+        description,
+        lightroomUrl: lightroomUrl || null,
+        driveUrl: driveUrl || null,
+        priceBase: priceBase ?? 200,
+        priceEarly: priceEarly ?? 190,
+        cartorioUserId: cartorioId || null,
+        captacaoId: captacaoId || null,
+        edicaoId: edicaoId || null,
+        temFoto: temFoto ?? true,
+        temVideo: temVideo ?? false,
+        temReels: temReels ?? false,
+        temFotoImpressa: temFotoImpressa ?? false,
+      },
+      include: {
+        captacao: { select: { nome: true } },
+        edicao:   { select: { nome: true } },
+      },
+    });
+
+    res.status(201).json(event);
+  } catch (err: any) {
+    if (err.code === "P2002") {
+      res.status(409).json({ error: "Slug duplicado. Tente um título diferente." });
+      return;
+    }
+    console.error("adminCreateEvent:", err);
+    res.status(500).json({ error: "Erro ao criar evento." });
+  }
+}
+
+export async function adminUpdateEvent(req: Request, res: Response): Promise<void> {
+  const { id } = req.params;
+  const data: any = {};
+  
+  // Mapeamento de campos do body para o schema v4.0
+  if (req.body.title) data.nomeNoivos = req.body.title;
+  if (req.body.date) data.dataEvento = new Date(req.body.date);
+  if (req.body.location) data.location = req.body.location;
+  if (req.body.city) data.city = req.body.city;
+  if (req.body.description) data.description = req.body.description;
+  if (req.body.lightroomUrl !== undefined) data.lightroomUrl = req.body.lightroomUrl || null;
+  if (req.body.driveUrl !== undefined) data.driveUrl = req.body.driveUrl || null;
+  if (req.body.priceBase !== undefined) data.priceBase = Number(req.body.priceBase);
+  if (req.body.priceEarly !== undefined) data.priceEarly = Number(req.body.priceEarly);
+  if (req.body.cartorioId !== undefined) data.cartorioUserId = req.body.cartorioId || null;
+  if (req.body.captacaoId !== undefined) data.captacaoId = req.body.captacaoId || null;
+  if (req.body.edicaoId !== undefined) data.edicaoId = req.body.edicaoId || null;
+  if (req.body.active !== undefined) data.active = req.body.active;
+  if (req.body.temFoto !== undefined) data.temFoto = req.body.temFoto;
+  if (req.body.temVideo !== undefined) data.temVideo = req.body.temVideo;
+  if (req.body.temReels !== undefined) data.temReels = req.body.temReels;
+  if (req.body.temFotoImpressa !== undefined) data.temFotoImpressa = req.body.temFotoImpressa;
+  if (req.body.coverPhotoUrl !== undefined) data.coverPhotoUrl = req.body.coverPhotoUrl || null;
+
+  try {
+    const event = await prisma.event.update({
+      where: { id: String(id) },
+      data,
+      include: {
+        cartorioUser: { select: { cartorio: { select: { razaoSocial: true } } } },
+        captacao: { select: { nome: true } },
+        edicao:   { select: { nome: true } },
+        _count:   { select: { pedidos: true } },
+      },
+    });
+    res.json({ 
+      ...event, 
+      title: event.nomeNoivos, 
+      date: event.dataEvento, 
+      _count: { orders: event._count?.pedidos || 0 } 
+    });
+  } catch (err: any) {
+    if (err.code === "P2025") {
+      res.status(404).json({ error: "Evento não encontrado." });
+      return;
+    }
+    console.error("adminUpdateEvent:", err);
+    res.status(500).json({ error: "Erro ao atualizar evento." });
+  }
+}
+
+export async function adminDeleteEvent(req: Request, res: Response): Promise<void> {
+  try {
+    await prisma.event.update({
+      where: { id: String(req.params.id) },
+      data: { active: false },
+    });
+    res.json({ ok: true });
+  } catch {
+    res.status(500).json({ error: "Erro ao desativar evento." });
+  }
+}
+
+// ── USUÁRIOS / PROFISSIONAIS ──────────────────────────
+
+export async function adminListUsers(req: Request, res: Response): Promise<void> {
+  const { role, q } = req.query;
+  try {
+    const where: any = {};
+    if (role) where.role = String(role);
+    if (q) {
+      const searchString = String(q);
+      where.OR = [
+        { nome: { contains: searchString, mode: "insensitive" } },
+        { email: { contains: searchString, mode: "insensitive" } },
+      ];
+    }
+
+    const users = await prisma.user.findMany({
+      where,
+      select: {
+        id: true, nome: true, email: true, role: true, active: true, createdAt: true,
+        profissional: {
+          select: { id: true, services: true, cameras: true, captPct: true, editPct: true },
+        },
+        cartorio: { select: { id: true, razaoSocial: true } },
+      },
+      orderBy: { createdAt: "desc" },
+    });
+
+    res.json(users.map(u => ({ 
+      ...u, 
+      name: u.nome,
+      _count: { events: 0 } 
+    })));
+  } catch (err) {
+    console.error("adminListUsers:", err);
+    res.status(500).json({ error: "Erro ao listar usuários." });
+  }
+}
+
+export async function adminCreateUser(req: Request, res: Response): Promise<void> {
+  const { name, email, password, role } = req.body;
+  if (!name || !email || !password || !role) {
+    res.status(400).json({ error: "Todos os campos são obrigatórios." });
+    return;
+  }
+
+  try {
+    const exists = await prisma.user.findUnique({ where: { email } });
+    if (exists) { res.status(409).json({ error: "E-mail já cadastrado." }); return; }
+
+    const hash = await bcrypt.hash(password, 12);
+    const user = await prisma.user.create({
+      data: { nome: name, email, senha: hash, role },
+    });
+
+    // Cria perfil de profissional automaticamente
+    if (role === "PROFISSIONAL") {
+      await prisma.profissional.create({
+        data: { userId: user.id, services: [], cameras: [], lenses: [], lighting: [] },
+      });
+    }
+
+    res.status(201).json({
+      id: user.id, name: user.nome, email: user.email, role: user.role,
+    });
+  } catch (err) {
+    console.error("adminCreateUser:", err);
+    res.status(500).json({ error: "Erro ao criar usuário." });
+  }
+}
+
+export async function adminUpdateUser(req: Request, res: Response): Promise<void> {
+  const { id } = req.params;
+  const { name, role, active, captPct, editPct } = req.body;
+
+  try {
+    await prisma.user.update({
+      where: { id: String(id) },
+      data: {
+        ...(name && { nome: name }),
+        ...(role && { role }),
+        ...(active !== undefined && { active }),
+      },
+    });
+
+    // Atualiza percentuais do profissional se enviados
+    if ((captPct !== undefined || editPct !== undefined)) {
+      await prisma.profissional.update({
+        where: { userId: String(id) },
         data: {
-          nomeNoivos,
-          dataEvento: new Date(dataEvento),
-          cartorio,
-          lightroomUrl: lightroomUrl || null,
-          driveUrl: driveUrl || null,
-          coverPhotoUrl: coverPhotoUrl || null,
-          fotografoId: fotografoId || null,
-          editorId: editorId || null,
-          cartorioUserId: cartorioUserId || null,
+          ...(captPct !== undefined && { captPct }),
+          ...(editPct !== undefined && { editPct }),
         },
       });
-
-      return res.status(201).json(event);
-    } catch (error) {
-      console.error("Erro ao criar evento:", error);
-      return res.status(500).json({ error: "Erro ao criar evento" });
     }
-  }
 
-  /** GET /api/admin/users — Lista usuários por role para o formulário de evento */
-  static async listUsers(req: Request, res: Response) {
-    try {
-      const { role } = req.query;
-      const roleStr = role as string;
-      const users = await prisma.user.findMany({
-        where: roleStr ? { role: roleStr as any } : {},
-        select: {
-          id: true,
-          nome: true,
-          email: true,
-          role: true,
-          mpUserId: true, // Útil para saber quem já conectou o Mercado Pago
+    res.json({ ok: true });
+  } catch {
+    res.status(500).json({ error: "Erro ao atualizar usuário." });
+  }
+}
+
+// ── PEDIDOS ───────────────────────────────────────────
+
+export async function adminListOrders(req: Request, res: Response): Promise<void> {
+  const { status, page = "1", q } = req.query;
+  const take = 20;
+  const skip = (Number(page) - 1) * take;
+
+  try {
+    const where: any = {};
+    if (status) where.status = String(status);
+    if (q) {
+      const searchString = String(q);
+      where.OR = [
+        { buyerEmail: { contains: searchString, mode: "insensitive" } },
+        { event: { nomeNoivos: { contains: searchString, mode: "insensitive" } } },
+      ];
+    }
+
+    const [orders, total] = await Promise.all([
+      prisma.order.findMany({
+        where,
+        include: {
+          event: { select: { nomeNoivos: true, slug: true } },
+          cliente:  { select: { nome: true, email: true } },
         },
-        orderBy: { nome: "asc" },
-      });
-      return res.json(users);
-    } catch (error) {
-      console.error("Erro ao listar usuários:", error);
-      return res.status(500).json({ error: "Erro ao listar usuários" });
-    }
-  }
+        orderBy: { createdAt: "desc" },
+        take,
+        skip,
+      }),
+      prisma.order.count({ where }),
+    ]);
 
-  /** GET /api/admin/events — Lista todos os eventos */
-  static async list(req: Request, res: Response) {
+    res.json({ 
+      orders: orders.map(o => ({ ...o, amount: o.valor, user: o.cliente, event: { title: o.event.nomeNoivos, slug: o.event.slug } })), 
+      total, page: Number(page), pages: Math.ceil(total / take) 
+    });
+  } catch (err) {
+    console.error("adminListOrders:", err);
+    res.status(500).json({ error: "Erro ao listar pedidos." });
+  }
+}
+
+// ── LEGACY COMPATIBILITY ──────────────────────────────
+export class AdminEventController {
+  static cartorioStats = async (req: Request, res: Response) => {
     try {
+      const { cartorioName } = req.query;
+      const cName = cartorioName ? String(cartorioName) : undefined;
       const events = await prisma.event.findMany({
-        include: { pedidos: true, fotografo: true, editor: true, cartorioUser: true },
+        where: cName ? { cartorio: cName } : {},
+        include: { pedidos: { where: { status: "APROVADO" } } },
         orderBy: { dataEvento: "desc" },
       });
-      return res.json(events);
-    } catch (error) {
-      console.error("Erro ao listar eventos:", error);
-      return res.status(500).json({ error: "Erro ao listar eventos" });
-    }
-  }
-
-  /** GET /api/admin/stats — Estatísticas financeiras para o Admin */
-  static async stats(req: Request, res: Response) {
-    try {
-      const { startDate, endDate, cartorio, status } = req.query;
-
-      const where: Record<string, unknown> = {};
-      if (status) where.status = status;
-      if (cartorio) where.event = { cartorio };
-      if (startDate || endDate) {
-        const dateFilter: any = {};
-        if (startDate) dateFilter.gte = new Date(startDate as string);
-        if (endDate) dateFilter.lte = new Date(endDate as string);
-        where.createdAt = dateFilter;
-      }
-
-      const orders = await prisma.order.findMany({
-        where,
-        include: { event: true },
-        orderBy: { createdAt: "desc" },
-      });
-
-      const totalReceita = orders
-        .filter((o: Order) => o.status === "APROVADO")
-        .reduce((sum: number, o: Order) => sum + Number(o.valor), 0);
-
-      const taxaMatriz = Number(process.env.TAXA_MATRIZ || 0.4);
-      const taxaCartorio = Number(process.env.TAXA_CARTORIO || 0.1);
-      const taxaFotografo = Number(process.env.TAXA_FOTOGRAFO || 0.3);
-      const taxaEditor = Number(process.env.TAXA_EDITOR || 0.2);
-
-      return res.json({
-        totalReceita,
-        split: {
-          matriz: totalReceita * taxaMatriz,
-          cartorio: totalReceita * taxaCartorio,
-          fotografo: totalReceita * taxaFotografo,
-          editor: totalReceita * taxaEditor,
-        },
-        totalPedidos: orders.length,
-        aprovados: orders.filter((o: Order) => o.status === "APROVADO").length,
-        pendentes: orders.filter((o: Order) => o.status === "PENDENTE").length,
-        orders: orders.slice(0, 50),
-      });
-    } catch (error) {
-      console.error("Erro ao calcular estatísticas:", error);
-      return res.status(500).json({ error: "Erro ao calcular estatísticas" });
-    }
-  }
-
-  /** GET /api/cartorio/stats — Agenda e comissões para o Cartório */
-  static async cartorioStats(req: Request, res: Response) {
-    try {
-      const { cartorioName, startDate, endDate } = req.query;
-      const where: Record<string, unknown> = {};
-      if (cartorioName) where.cartorio = cartorioName;
-      if (startDate || endDate) {
-        const dateFilter: any = {};
-        if (startDate) dateFilter.gte = new Date(startDate as string);
-        if (endDate) dateFilter.lte = new Date(endDate as string);
-        where.dataEvento = dateFilter;
-      }
-
-      const events = await prisma.event.findMany({
-        where,
-        include: { pedidos: true },
-        orderBy: { dataEvento: "asc" },
-      });
-
-      const taxaCartorio = Number(process.env.TAXA_CARTORIO || 0.1);
-      const receitaTotal = (events as Event[])
-        .flatMap((e: Event) => e.pedidos || [])
-        .filter((o: Order) => o.status === "APROVADO")
-        .reduce((sum: number, o: Order) => sum + Number(o.valor), 0);
-
-      return res.json({
-        eventos: events,
-        estimativaRepasse: receitaTotal * taxaCartorio,
-        eventosHoje: (events as Event[]).filter(
-          (e: Event) => new Date(e.dataEvento).toDateString() === new Date().toDateString()
-        ),
-      });
-    } catch (error) {
-      console.error("Erro ao calcular dados do cartório:", error);
-      return res.status(500).json({ error: "Erro ao calcular dados do cartório" });
-    }
-  }
-
-  /** PATCH /api/admin/events/:id — Atualiza links e foto de capa de um evento */
-  static async update(req: Request, res: Response) {
-    const { id } = req.params;
-    const { lightroomUrl, driveUrl } = req.body;
-    try {
-      let coverPhotoUrl: string | undefined;
-      if (req.file) {
-        coverPhotoUrl = `${process.env.BACKEND_URL || "http://localhost:3001"}/uploads/covers/${req.file.filename}`;
-      }
-
-      const event = await prisma.event.update({
-        where: { id },
-        data: {
-          ...(lightroomUrl !== undefined && { lightroomUrl: lightroomUrl || null }),
-          ...(driveUrl !== undefined && { driveUrl: driveUrl || null }),
-          ...(coverPhotoUrl && { coverPhotoUrl }),
-        },
-      });
-
-      return res.json(event);
-    } catch (error) {
-      console.error("Erro ao atualizar evento:", error);
-      return res.status(500).json({ error: "Erro ao atualizar evento" });
+      res.json({ eventos: events });
+    } catch {
+      res.status(500).json({ error: "Erro ao carregar dados do cartório." });
     }
   }
 }

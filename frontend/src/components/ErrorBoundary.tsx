@@ -36,7 +36,9 @@ export class ErrorBoundary extends Component<Props, State> {
               Nossa equipe técnica foi notificada.
             </p>
             <div className="text-[10px] text-zinc-600 font-mono bg-black/50 p-4 rounded mb-6 overflow-auto max-h-32">
-              {this.state.error?.message}
+              {typeof this.state.error?.message === 'string' 
+                ? this.state.error.message 
+                : (this.state.error as any)?.error || JSON.stringify(this.state.error) || "Erro desconhecido"}
             </div>
             <button
               onClick={() => window.location.reload()}

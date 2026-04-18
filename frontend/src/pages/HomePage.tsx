@@ -1,231 +1,334 @@
-import React, { useState, useEffect } from "react";
-import { useNavigate, Link } from "react-router-dom";
-import { Search, MapPin, Calendar, Camera, Building2, ArrowRight } from "lucide-react";
-import { motion, AnimatePresence } from "framer-motion";
-import { API } from "../contexts/AuthContext";
+import { useState, useEffect, useRef } from "react";
+import { useNavigate } from "react-router-dom";
+import { API } from "../lib/api";
 
-interface EventCard {
+interface Event {
   id: string;
   nomeNoivos: string;
   dataEvento: string;
-  cartorio: string;
+  cartorio: string | null;
   coverPhotoUrl: string | null;
+  priceBase?: number;
+  temFoto: boolean;
+  temVideo: boolean;
+  temReels: boolean;
 }
 
-const CATEGORIES = ["Todos", "Casamento Civil", "Pré-Wedding", "Aniversários", "Bodas"];
+const CATEGORIAS = ["Todos", "Casamento Civil", "Pré-Wedding", "Eventos Sociais", "Corporativo"];
 
-export const HomePage: React.FC = () => {
+function formatDate(dateStr: string) {
+  try {
+    return new Intl.DateTimeFormat("pt-BR", {
+      day: "2-digit", month: "short", year: "numeric",
+    }).format(new Date(dateStr));
+  } catch (e) {
+    return "Data indisponível";
+  }
+}
+
+function isRecent(dateStr: string) {
+  try {
+    const diff = Date.now() - new Date(dateStr).getTime();
+    return diff < 3 * 24 * 60 * 60 * 1000; // 3 dias
+  } catch (e) {
+    return false;
+  }
+}
+
+export const HomePage = () => {
   const navigate = useNavigate();
-  const [search, setSearch] = useState("");
-  const [events, setEvents] = useState<EventCard[]>([]);
+  const [query, setQuery] = useState("");
+  const [categoria, setCategoria] = useState("Todos");
+  const [events, setEvents] = useState<Event[]>([]);
   const [loading, setLoading] = useState(true);
-  const [selectedCategory, setSelectedCategory] = useState("Todos");
+  const [page, setPage] = useState(1);
+  const [totalPages, setTotalPages] = useState(1);
+  const debounceRef = useRef<ReturnType<typeof setTimeout> | undefined>(undefined);
 
-  useEffect(() => {
-    console.log("[DEBUG] HomePage Mounted");
-    fetchEvents();
-    return () => console.log("[DEBUG] HomePage Unmounted");
-  }, [search]);
-
-  const fetchEvents = async () => {
-    if (loading && events.length > 0) return; // Evita chamadas duplas se já estiver carregando
+  const fetchEvents = async (q: string, pg: number) => {
+    setLoading(true);
     try {
-      setLoading(true);
-      const { data } = await API.get(`/public/events?q=${search}`);
-      setEvents(data);
-    } catch (error) {
-      console.error("Erro ao carregar eventos:", error);
+      const { data } = await API.get(`/public/events`, {
+        params: { q: q.trim() || undefined, page: pg }
+      });
+      setEvents(data.events ?? []);
+      setTotalPages(data.pages ?? 1);
+    } catch (err) {
+      console.error("Erro ao carregar eventos:", err);
     } finally {
-      setLoading(false);
+      // Pequeno delay para suavidade da animação do skeleton
+      setTimeout(() => setLoading(false), 300);
     }
   };
 
+  // Debounce na busca
+  useEffect(() => {
+    clearTimeout(debounceRef.current);
+    debounceRef.current = setTimeout(() => {
+      setPage(1);
+      fetchEvents(query, 1);
+    }, 400);
+    return () => clearTimeout(debounceRef.current);
+  }, [query]);
+
+  useEffect(() => {
+    fetchEvents(query, page);
+  }, [page]);
+
   return (
-    <div className="min-h-screen bg-[#050505] text-white">
-      {/* Navbar Luxuosa */}
-      <nav className="fixed top-0 w-full z-50 glass px-6 py-4 flex items-center justify-between border-b border-white/5">
-        <div className="text-xl font-black italic tracking-tighter uppercase">
-          Foto Segundo <span className="text-brand-indigo">.</span>
+    <div style={{ fontFamily: "'Outfit', 'Inter', sans-serif", background: "#050505", color: "#e8e4dc", minHeight: "100vh" }}>
+
+      {/* Google Fonts */}
+      <link rel="preconnect" href="https://fonts.googleapis.com" />
+      <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,700;0,900;1,700&family=Outfit:wght@300;400;500;700&display=swap" rel="stylesheet" />
+
+      {/* NAV */}
+      <nav 
+        id="main-nav"
+        style={{ 
+          display: "flex", alignItems: "center", justifyContent: "space-between", 
+          padding: "1rem 1rem", borderBottom: "1px solid rgba(255,255,255,0.05)", 
+          background: "rgba(5,5,5,0.8)", backdropFilter: "blur(10px)", 
+          position: "sticky", top: 0, zIndex: 100 
+        }}
+      >
+        <div style={{ fontFamily: "'Playfair Display', serif", fontSize: "min(20px, 5vw)", fontWeight: 700, color: "#fff", display: "flex", alignItems: "center", gap: 8 }}>
+          <span style={{ width: 6, height: 6, background: "#c9a96e", borderRadius: "50%", display: "inline-block" }} />
+          Foto Segundo
         </div>
-        <Link 
-          to="/login"
-          className="text-xs font-bold uppercase tracking-widest hover:text-brand-indigo transition-colors"
+        <button
+          onClick={() => navigate("/login")}
+          style={{ fontSize: 9, background: "transparent", color: "#fff", border: "1px solid rgba(255,255,255,0.1)", padding: "6px 12px", borderRadius: 4, cursor: "pointer", fontWeight: 500, letterSpacing: "1px", textTransform: "uppercase" }}
         >
-          Acesso Administrativo
-        </Link>
+          Acesso
+        </button>
       </nav>
 
-      {/* Hero Section */}
-      <section className="relative h-[85vh] flex items-center justify-center overflow-hidden pt-20">
-        <div 
-          className="absolute inset-0 bg-cover bg-center scale-105"
-          style={{ backgroundImage: 'url("/assets/hero-bg.png")' }}
-        >
-          <div className="absolute inset-0 bg-gradient-to-b from-[#050505]/40 via-[#050505]/80 to-[#050505]" />
-        </div>
+      {/* HERO */}
+      <section style={{ padding: "6rem 1rem 4rem", textAlign: "center", position: "relative", background: "radial-gradient(circle at 50% 0%, rgba(201, 169, 110, 0.08) 0%, transparent 70%)" }}>
+        <p style={{ fontSize: 9, letterSpacing: 3, textTransform: "uppercase", color: "#c9a96e", marginBottom: "1rem", fontWeight: 700, opacity: 0.8 }}>
+          Photography & Cinema Collective
+        </p>
+        <h1 style={{ fontFamily: "'Playfair Display', serif", fontSize: "clamp(32px, 10vw, 84px)", fontWeight: 900, color: "#fff", lineHeight: 1.1, letterSpacing: "-0.02em", marginBottom: "1.5rem" }}>
+          Suas memórias,<br />
+          <em style={{ fontStyle: "italic", color: "#c9a96e", fontWeight: 400 }}>sincronizadas com a vida.</em>
+        </h1>
+        <p style={{ fontSize: 14, color: "#888", marginBottom: "2.5rem", fontWeight: 300, maxWidth: "500px", margin: "0 auto 3rem", lineHeight: 1.5 }}>
+          Acesse a galeria exclusiva do seu casamento e reviva cada detalhe com qualidade premium em segundos.
+        </p>
 
-        <div className="relative z-10 w-full max-w-4xl px-4 text-center">
-          <motion.div
-            initial={{ opacity: 0, y: 30 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.8 }}
+        {/* Barra de busca Responsiva */}
+        <div className="search-container" style={{ maxWidth: 640, margin: "0 auto", position: "relative" }}>
+          <input
+            value={query}
+            onChange={(e) => setQuery(e.target.value)}
+            placeholder="Noivos, data ou cartório..."
+            className="search-input"
+            style={{
+              width: "100%", background: "rgba(255,255,255,0.02)", border: "1px solid rgba(255,255,255,0.05)",
+              borderRadius: 50, padding: "18px 30px", fontSize: 14,
+              color: "#fff", outline: "none", transition: "all 0.4s",
+              boxShadow: "0 10px 30px rgba(0,0,0,0.5)"
+            }}
+          />
+          <button
+            onClick={() => fetchEvents(query, 1)}
+            className="search-button"
+            style={{
+              position: "absolute", right: 6, top: "50%", transform: "translateY(-50%)",
+              background: "#c9a96e", color: "#050505", border: "none", padding: "10px 25px",
+              borderRadius: 40, fontSize: 10, fontWeight: 700, cursor: "pointer",
+              textTransform: "uppercase", letterSpacing: "1px"
+            }}
           >
-            <h1 className="text-5xl md:text-7xl font-black italic tracking-tighter uppercase mb-6 leading-none">
-              Encontre o seu <br />
-              <span className="text-brand-indigo">Grande Momento</span>
-            </h1>
-            <p className="text-zinc-400 text-lg md:text-xl mb-12 max-w-2xl mx-auto">
-              A elegância eterna do seu casamento civil, capturada com exclusividade e pronta para download.
-            </p>
-
-            {/* BARRA DE BUSCA PREMIUM */}
-            <div className="relative max-w-2xl mx-auto group">
-              <div className="absolute -inset-1 bg-gradient-to-r from-brand-indigo to-violet-600 rounded-full blur opacity-25 group-focus-within:opacity-50 transition duration-1000"></div>
-              <div className="relative glass rounded-full p-2 flex items-center">
-                <Search className="ml-4 text-zinc-500" size={20} />
-                <input 
-                  type="text"
-                  value={search}
-                  onChange={(e) => setSearch(e.target.value)}
-                  placeholder="Nome dos noivos, data ou cartório..."
-                  className="bg-transparent border-none focus:ring-0 w-full px-4 py-3 text-white placeholder-zinc-500 text-sm"
-                />
-                <button 
-                  onClick={fetchEvents}
-                  className="bg-brand-indigo text-white px-8 py-3 rounded-full text-xs font-black uppercase tracking-widest hover:scale-105 active:scale-95 transition-all"
-                >
-                  Buscar
-                </button>
-              </div>
-            </div>
-
-            {/* CHIPS DE CATEGORIA */}
-            <div className="flex flex-wrap justify-center gap-2 mt-8">
-              {CATEGORIES.map((cat) => (
-                <button
-                  key={cat}
-                  onClick={() => setSelectedCategory(cat)}
-                  className={`px-6 py-2 rounded-full text-[10px] font-black uppercase tracking-widest transition-all ${
-                    selectedCategory === cat 
-                      ? "bg-white text-black" 
-                      : "bg-white/5 border border-white/10 text-zinc-400 hover:bg-white/10"
-                  }`}
-                >
-                  {cat}
-                </button>
-              ))}
-            </div>
-          </motion.div>
+            Buscar
+          </button>
         </div>
-      </section>
 
-      {/* Galeria de Eventos */}
-      <section className="px-6 py-20 bg-[#050505]">
-        <div className="max-w-7xl mx-auto">
-          <div className="flex items-center justify-between mb-12">
-            <div>
-              <h2 className="text-3xl font-black italic uppercase tracking-tighter">Eventos Recentes</h2>
-              <p className="text-zinc-500 text-sm uppercase tracking-widest mt-2">{events.length} resultados encontrados</p>
-            </div>
-          </div>
-
-          <AnimatePresence mode="popLayout">
-            <motion.div 
-              layout
-              className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6"
+        {/* Chips de categoria */}
+        <div style={{ display: "flex", gap: 8, justifyContent: "center", marginTop: "2.5rem", flexWrap: "wrap" }}>
+          {CATEGORIAS.map((cat) => (
+            <span
+              key={cat}
+              onClick={() => setCategoria(cat)}
+              style={{
+                fontSize: 9, padding: "5px 14px",
+                border: "1px solid",
+                borderColor: categoria === cat ? "#c9a96e" : "rgba(255,255,255,0.05)",
+                borderRadius: 20, color: categoria === cat ? "#c9a96e" : "#555",
+                background: categoria === cat ? "rgba(201, 169, 110, 0.1)" : "transparent",
+                cursor: "pointer", letterSpacing: "1px", textTransform: "uppercase", fontWeight: 600, transition: "all .3s",
+              }}
             >
-              {Array.isArray(events) && events.map((event) => (
-                <motion.div
-                  key={event.id}
-                  layout
-                  initial={{ opacity: 0, scale: 0.9 }}
-                  animate={{ opacity: 1, scale: 1 }}
-                  exit={{ opacity: 0, scale: 0.9 }}
-                  whileHover={{ y: -10 }}
-                  className="group cursor-pointer"
-                  onClick={() => navigate(`/eventos/${event.id}`)}
-                >
-                  <div className="relative aspect-[4/5] overflow-hidden rounded-3xl border border-white/10">
-                    <img 
-                      src={event.coverPhotoUrl || "https://images.unsplash.com/photo-1511795409834-ef04bbd61622?w=800"}
-                      alt={event.nomeNoivos}
-                      className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110"
-                    />
-                    <div className="absolute inset-0 bg-gradient-to-t from-black via-transparent to-transparent opacity-80" />
-                    
-                    <div className="absolute bottom-0 left-0 right-0 p-6">
-                      <div className="flex items-center gap-2 text-[10px] font-black text-brand-indigo uppercase tracking-widest mb-2">
-                        <MapPin size={10} />
-                        {event.cartorio}
-                      </div>
-                      <h3 className="text-lg font-black italic uppercase leading-tight mb-1">
-                        {event.nomeNoivos}
-                      </h3>
-                      <div className="flex items-center gap-2 text-zinc-400 text-[10px] uppercase font-bold">
-                        <Calendar size={10} />
-                        {new Date(event.dataEvento).toLocaleDateString()}
-                      </div>
-                    </div>
-                  </div>
-                </motion.div>
-              ))}
-            </motion.div>
-          </AnimatePresence>
-
-          {events.length === 0 && !loading && (
-            <div className="text-center py-20 border border-white/5 rounded-3xl bg-white/5">
-              <Camera className="mx-auto text-zinc-700 mb-4" size={48} />
-              <p className="text-zinc-500 font-bold uppercase tracking-widest text-sm">Nenhum evento encontrado para sua busca.</p>
-            </div>
-          )}
+              {cat}
+            </span>
+          ))}
         </div>
       </section>
 
-      {/* Como Funciona & Call to Action */}
-      <section className="px-6 py-20 bg-brand-indigo/5 border-y border-white/5">
-        <div className="max-w-7xl mx-auto grid grid-cols-1 md:grid-cols-3 gap-12">
-          <div className="text-center md:text-left">
-            <div className="w-12 h-12 bg-white/5 rounded-2xl flex items-center justify-center mb-6 mx-auto md:mx-0">
-              <Search className="text-brand-indigo" />
-            </div>
-            <h4 className="text-xl font-black uppercase mb-4">Ache seu Evento</h4>
-            <p className="text-zinc-400 text-sm leading-relaxed">Localize seu casamento civil pelo nome dos noivos ou pela data da celebração em nosso sistema exclusivo.</p>
-          </div>
-          <div className="text-center md:text-left">
-            <div className="w-12 h-12 bg-white/5 rounded-2xl flex items-center justify-center mb-6 mx-auto md:mx-0">
-              <ArrowRight className="text-brand-indigo" />
-            </div>
-            <h4 className="text-xl font-black uppercase mb-4">Acesse a Galeria</h4>
-            <p className="text-zinc-400 text-sm leading-relaxed">Visualize os momentos capturados e selecione as fotos que deseja eternizar para sua família.</p>
-          </div>
-          <div className="text-center md:text-left">
-            <div className="w-12 h-12 bg-white/5 rounded-2xl flex items-center justify-center mb-6 mx-auto md:mx-0">
-              <Camera className="text-brand-indigo" />
-            </div>
-            <h4 className="text-xl font-black uppercase mb-4">Baixe na Hora</h4>
-            <p className="text-zinc-400 text-sm leading-relaxed">Após a confirmação, o acesso é liberado instantaneamente via Lightroom e Google Drive.</p>
-          </div>
-        </div>
-      </section>
+      <style>{`
+        @media (max-width: 480px) {
+          .search-input { padding: 16px 20px !important; border-radius: 12px !important; }
+          .search-button { 
+            position: static !important; transform: none !important; 
+            width: 100% !important; margin-top: 10px !important; 
+            border-radius: 8px !important; padding: 14px !important;
+          }
+          .search-container { display: flex; flex-direction: column; }
+        }
+        .search-input:focus { border-color: #c9a96e !important; background: rgba(255,255,255,0.04) !important; }
+      `}</style>
 
-      {/* Rodapé Luxuoso */}
-      <footer className="px-6 py-12 border-t border-white/5">
-        <div className="max-w-7xl mx-auto flex flex-col md:flex-row items-center justify-between gap-8 text-center md:text-left">
+      {/* GRID DE EVENTOS */}
+      <section style={{ padding: "4rem 2rem", maxWidth: 1400, margin: "0 auto" }}>
+        <div style={{ display: "flex", alignItems: "flex-end", justifyContent: "space-between", marginBottom: "3rem" }}>
           <div>
-            <div className="text-xl font-black italic uppercase tracking-tighter mb-2">Foto Segundo</div>
-            <p className="text-zinc-500 text-[10px] uppercase font-black tracking-widest tracking-[0.4em]">Midnight Luxury Edition</p>
+            <p style={{ fontSize: 10, color: "#c9a96e", letterSpacing: 3, textTransform: "uppercase", marginBottom: 10, fontWeight: 700 }}>Showcase</p>
+            <h2 style={{ fontFamily: "'Playfair Display', serif", fontSize: 32, fontWeight: 700, color: "#fff" }}>
+              Eventos <span style={{ fontStyle: "italic", color: "#555" }}>Recentes</span>
+            </h2>
           </div>
-
-          <div className="flex flex-wrap justify-center gap-8">
-            <Link to="#" className="text-[10px] font-black uppercase tracking-widest hover:text-brand-indigo flex items-center gap-2">
-              <Camera size={14} /> Seja um Fotógrafo
-            </Link>
-            <Link to="#" className="text-[10px] font-black uppercase tracking-widest hover:text-brand-indigo flex items-center gap-2">
-              <Building2 size={14} /> Para Cartórios
-            </Link>
-          </div>
+          <span style={{ fontSize: 11, color: "#888", letterSpacing: "1px", textTransform: "uppercase", cursor: "pointer", borderBottom: "1px solid #333", paddingBottom: 4 }}>
+            Ver agenda completa
+          </span>
         </div>
+
+        {loading ? (
+          <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fill, minmax(300px, 1fr))", gap: "2rem" }}>
+            {[...Array(4)].map((_, i) => (
+              <div key={i} style={{ background: "rgba(255,255,255,0.01)", borderRadius: 0, overflow: "hidden" }}>
+                <div style={{ width: "100%", aspectRatio: "16/10", background: "#111", animation: "pulse 2s infinite" }} />
+                <div style={{ padding: "24px 0" }}>
+                  <div style={{ height: 18, background: "#111", borderRadius: 2, marginBottom: 12, width: "70%" }} />
+                  <div style={{ height: 12, background: "#111", borderRadius: 2, width: "40%" }} />
+                </div>
+              </div>
+            ))}
+          </div>
+        ) : events.length === 0 ? (
+          <div style={{ textAlign: "center", padding: "6rem 0", background: "rgba(255,255,255,0.01)", border: "1px dashed rgba(255,255,255,0.05)" }}>
+            <p style={{ fontFamily: "'Playfair Display', serif", fontSize: 24, color: "#555", marginBottom: 12 }}>Nenhum registro encontrado</p>
+            <p style={{ fontSize: 14, color: "#333" }}>Tente buscar por termos diferentes ou verifique a categoria.</p>
+          </div>
+        ) : (
+          <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fill, minmax(300px, 1fr))", gap: "3rem" }}>
+            {events.map((event) => (
+              <EventCard key={event.id} event={event} onClick={() => navigate(`/e/${event.id}`)} />
+            ))}
+          </div>
+        )}
+
+        {/* Paginação Premium */}
+        {totalPages > 1 && (
+          <div style={{ display: "flex", justifyContent: "center", alignItems: "center", gap: 30, marginTop: "5rem" }}>
+            <button
+              onClick={() => { setPage((p) => Math.max(1, p - 1)); window.scrollTo({ top: 400, behavior: 'smooth' }); }}
+              disabled={page === 1}
+              style={{ padding: "0 0 5px 0", background: "transparent", border: "none", borderBottom: "1px solid", borderColor: page === 1 ? "transparent" : "#333", color: page === 1 ? "transparent" : "#888", cursor: page === 1 ? "not-allowed" : "pointer", fontSize: 10, textTransform: "uppercase", letterSpacing: 2 }}
+            >
+              Back
+            </button>
+            <span style={{ fontSize: 12, color: "#fff", fontFamily: "'Playfair Display', serif", fontStyle: "italic" }}>
+              {page} <span style={{ color: "#333", margin: "0 10px" }}>/</span> {totalPages}
+            </span>
+            <button
+              onClick={() => { setPage((p) => Math.min(totalPages, p + 1)); window.scrollTo({ top: 400, behavior: 'smooth' }); }}
+              disabled={page === totalPages}
+              style={{ padding: "0 0 5px 0", background: "transparent", border: "none", borderBottom: "1px solid", borderColor: page === totalPages ? "transparent" : "#c9a96e", color: page === totalPages ? "transparent" : "#c9a96e", cursor: page === totalPages ? "not-allowed" : "pointer", fontSize: 10, textTransform: "uppercase", letterSpacing: 2 }}
+            >
+              Next
+            </button>
+          </div>
+        )}
+      </section>
+
+      {/* FOOTER */}
+      <footer style={{ padding: "4rem 2rem", borderTop: "1px solid rgba(255,255,255,0.03)", display: "flex", justifyContent: "space-between", alignItems: "center", flexWrap: "wrap", gap: "2rem", maxWidth: 1400, margin: "6rem auto 0" }}>
+        <div style={{ fontFamily: "'Playfair Display', serif", fontSize: 16, color: "#c9a96e" }}>FOTO SEGUNDO.</div>
+        <div style={{ display: "flex", gap: "3rem" }}>
+          {["Parcerias", "Cartórios", "Contato"].map((l) => (
+            <span key={l} style={{ fontSize: 10, color: "#555", cursor: "pointer", textTransform: "uppercase", letterSpacing: 2 }}>{l}</span>
+          ))}
+        </div>
+        <span style={{ fontSize: 10, color: "#222", textTransform: "uppercase", letterSpacing: 2 }}>© 2026 Archive.</span>
       </footer>
+
+      <style>{`
+        @keyframes pulse { 0%,100%{opacity:1} 50%{opacity:0.4} }
+        * { box-sizing: border-box; }
+        body { margin: 0; padding: 0; overflow-x: hidden; }
+      `}</style>
     </div>
   );
-};
+}
+
+// ── Componente do Card Editorial ──────────────────────────
+
+function EventCard({ event, onClick }: { event: Event; onClick: () => void }) {
+  const isNew = isRecent(event.dataEvento);
+
+  return (
+    <div
+      onClick={onClick}
+      style={{ cursor: "pointer", overflow: "hidden", transition: "all 0.4s" }}
+      className="group"
+    >
+      {/* Imagem Editorial */}
+      <div style={{ width: "100%", aspectRatio: "16/11", background: "#0d0d0d", position: "relative", overflow: "hidden" }}>
+        {event.coverPhotoUrl ? (
+          <img 
+            src={event.coverPhotoUrl} 
+            alt={event.nomeNoivos} 
+            style={{ width: "100%", height: "100%", objectFit: "cover", opacity: 0.8, transition: "transform 0.8s cubic-bezier(0.16, 1, 0.3, 1)" }} 
+            onMouseOver={(e) => (e.currentTarget.style.transform = "scale(1.05)")}
+            onMouseOut={(e) => (e.currentTarget.style.transform = "scale(1)")}
+          />
+        ) : (
+          <div style={{ width: "100%", height: "100%", display: "flex", alignItems: "center", justifyContent: "center" }}>
+            <span style={{ fontSize: 10, color: "#222", letterSpacing: 2, textTransform: "uppercase" }}>Private Archive</span>
+          </div>
+        )}
+        
+        {isNew && (
+          <span style={{
+            position: "absolute", top: 15, left: 15,
+            fontSize: 9, letterSpacing: 2, textTransform: "uppercase",
+            background: "#c9a96e", color: "#050505",
+            padding: "4px 10px", fontWeight: 700,
+          }}>
+            Recently Added
+          </span>
+        )}
+
+        <div style={{ position: "absolute", bottom: 15, right: 15, display: "flex", gap: 6 }}>
+          {event.temFoto && <ServiceBadge label="Digital" />}
+          {event.temVideo && <ServiceBadge label="Cinema" />}
+        </div>
+      </div>
+
+      {/* Meta Info */}
+      <div style={{ padding: "20px 0" }}>
+        <h3 style={{ fontFamily: "'Playfair Display', serif", fontSize: 20, fontWeight: 700, color: "#fff", marginBottom: 6, letterSpacing: "-0.01em" }}>
+          {event.nomeNoivos}
+        </h3>
+        <div style={{ fontSize: 11, color: "#444", display: "flex", gap: 12, alignItems: "center", textTransform: "uppercase", letterSpacing: 1.5 }}>
+          <span>{formatDate(event.dataEvento)}</span>
+          <span style={{ width: 4, height: 1, background: "#333" }} />
+          <span>{event.cartorio || "Public Event"}</span>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+function ServiceBadge({ label }: { label: string }) {
+  return (
+    <span style={{
+      fontSize: 8, padding: "3px 8px", background: "rgba(5,5,5,0.7)",
+      border: "1px solid rgba(255,255,255,0.05)", borderRadius: 0, color: "#aaa",
+      letterSpacing: "1px", textTransform: "uppercase", backdropFilter: "blur(5px)"
+    }}>
+      {label}
+    </span>
+  );
+}

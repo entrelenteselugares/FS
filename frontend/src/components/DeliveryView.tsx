@@ -1,88 +1,93 @@
 import React from "react";
+import { motion } from "framer-motion";
 
 interface DeliveryViewProps {
-  event: any;
+  event: {
+    nomeNoivos: string;
+    lightroomUrl?: string | null;
+    driveUrl?: string | null;
+  };
 }
 
-const ExternalLinkIcon = () => (
-   <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg>
-);
-
 const PhotoIcon = () => (
-    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><rect width="18" height="18" x="3" y="3" rx="2" ry="2"/><circle cx="9" cy="9" r="2"/><path d="m21 15-3.086-3.086a2 2 0 0 0-2.828 0L6 21"/></svg>
+    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"><rect width="18" height="18" x="3" y="3" rx="0" ry="0"/><circle cx="9" cy="9" r="2"/><path d="m21 15-3.086-3.086a2 2 0 0 0-2.828 0L6 21"/></svg>
 );
 
 const VideoIcon = () => (
-    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="m22 8-6 4 6 4V8Z"/><rect width="14" height="12" x="2" y="6" rx="2" ry="2"/></svg>
+    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"><path d="m22 8-6 4 6 4V8Z"/><rect width="14" height="12" x="2" y="6" rx="0" ry="0"/></svg>
 );
 
 export const DeliveryView: React.FC<DeliveryViewProps> = ({ event }) => {
   return (
-    <div className="min-h-screen bg-[#050505] flex flex-col items-center justify-center px-6 py-12 animate-fade-in relative overflow-hidden">
-      {/* Background Glow */}
-      <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[500px] h-[500px] bg-brand-indigo/10 rounded-full blur-[120px] pointer-events-none" />
+    <div className="min-h-screen bg-[#050505] flex flex-col items-center justify-center px-6 py-20 relative overflow-hidden">
+      {/* Editorial Watermark */}
+      <img src="/assets/logo.png" alt="" className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 h-[60vh] opacity-[0.02] pointer-events-none invert brightness-0" />
+      
+      <div className="absolute top-0 w-full p-10 flex justify-center">
+         <img src="/assets/logo.png" alt="Foto Segundo" className="h-6 w-auto invert brightness-0 opacity-40" />
+      </div>
 
-      <div className="max-w-xl w-full text-center relative z-10">
-        <div className="inline-flex items-center gap-2 px-4 py-2 mb-8 border rounded-full bg-brand-emerald/10 border-brand-emerald/20 animate-slide-up">
-          <div className="w-2 h-2 rounded-full bg-brand-emerald animate-pulse" />
-          <span className="text-[10px] font-black uppercase tracking-[0.3em] text-brand-emerald">Pagamento Aprovado</span>
+      <motion.div 
+        initial={{ opacity: 0 }}
+        animate={{ opacity: 1 }}
+        className="max-w-4xl w-full text-center relative z-10"
+      >
+        <div className="flex flex-col items-center gap-6 mb-16">
+          <div className="w-[1px] h-10 bg-brand-olive" />
+          <span className="text-[10px] font-bold uppercase tracking-[0.6em] text-brand-olive">Digital Archive Unlocked</span>
         </div>
 
-        <h1 className="text-4xl md:text-6xl font-black italic tracking-tighter uppercase mb-4 animate-slide-up">
-          Suas Memórias Estão Prontas
+        <h1 className="text-5xl md:text-8xl font-serif tracking-tight mb-8">
+          Arquivos <br /><span className="italic text-zinc-600">Disponíveis.</span>
         </h1>
         
-        <p className="text-zinc-400 text-sm leading-relaxed mb-12 animate-slide-up max-w-sm mx-auto">
-          Obrigado por confiar no Foto Segundo. Acesse agora seus arquivos em alta resolução através dos nossos parceiros de entrega.
+        <p className="text-zinc-600 text-sm md:text-base leading-relaxed mb-24 max-w-lg mx-auto uppercase tracking-[0.2em] font-light">
+          A curadoria foi finalizada com sucesso. <br />
+          Explore cada fragmento histórico desta celebração.
         </p>
 
-        <div className="grid gap-4 animate-slide-up">
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-px bg-white/5 border border-white/5">
           {/* Botão Lightroom */}
-          <a 
-            href={event.lightroomUrl} 
+          <motion.a 
+            href={event.lightroomUrl || "#"} 
             target="_blank" 
             rel="noopener noreferrer"
-            className="group flex items-center justify-between p-6 bg-brand-indigo/10 hover:bg-brand-indigo/20 border border-brand-indigo/20 hover:border-brand-indigo/40 rounded-3xl transition-all duration-300"
+            className="group bg-black p-16 flex flex-col items-center text-center hover:bg-white/[0.02] transition-all duration-700"
           >
-            <div className="flex items-center gap-4 text-left">
-              <div className="w-12 h-12 rounded-2xl bg-brand-indigo flex items-center justify-center text-white shadow-xl glow-indigo">
-                <PhotoIcon />
-              </div>
-              <div>
-                <div className="text-white font-black uppercase tracking-widest text-xs">Álbum de Fotos</div>
-                <div className="text-zinc-500 text-[10px]">Adobe Lightroom Gallery</div>
-              </div>
+            <div className="mb-10 text-zinc-700 group-hover:text-white transition-all">
+              <PhotoIcon />
             </div>
-            <ExternalLinkIcon />
-          </a>
+            <h3 className="text-xl font-serif text-white mb-4 tracking-tight">Professional Gallery</h3>
+            <p className="text-zinc-600 text-[9px] font-bold uppercase tracking-[0.3em] mb-10">Adobe Cloud Experience</p>
+            <div className="w-6 h-[1px] bg-zinc-800 group-hover:bg-brand-olive group-hover:w-16 transition-all" />
+          </motion.a>
 
           {/* Botão Google Drive */}
-          <a 
-            href={event.driveUrl} 
+          <motion.a 
+            href={event.driveUrl || "#"} 
             target="_blank" 
             rel="noopener noreferrer"
-            className="group flex items-center justify-between p-6 bg-zinc-900/50 hover:bg-zinc-900 border border-white/5 hover:border-white/10 rounded-3xl transition-all duration-300"
+            className="group bg-black p-16 flex flex-col items-center text-center hover:bg-white/[0.02] transition-all duration-700"
           >
-            <div className="flex items-center gap-4 text-left">
-              <div className="w-12 h-12 rounded-2xl bg-brand-emerald flex items-center justify-center text-white shadow-xl">
-                <VideoIcon />
-              </div>
-              <div>
-                <div className="text-white font-black uppercase tracking-widest text-xs">Vídeos & Matérias</div>
-                <div className="text-zinc-500 text-[10px]">Google Drive Folder</div>
-              </div>
+            <div className="mb-10 text-zinc-700 group-hover:text-white transition-all">
+              <VideoIcon />
             </div>
-            <ExternalLinkIcon />
-          </a>
+            <h3 className="text-xl font-serif text-white mb-4 tracking-tight">Master Repository</h3>
+            <p className="text-zinc-600 text-[9px] font-bold uppercase tracking-[0.3em] mb-10">Google Cloud Master Assets</p>
+            <div className="w-6 h-[1px] bg-zinc-800 group-hover:bg-brand-olive group-hover:w-16 transition-all" />
+          </motion.a>
         </div>
 
-        <button 
-          onClick={() => window.print()}
-          className="mt-12 text-[10px] font-black uppercase tracking-widest text-zinc-600 hover:text-white transition-colors"
-        >
-          Baixar Comprovante de Liberação
-        </button>
-      </div>
+        <div className="mt-24 flex flex-col items-center gap-6">
+           <p className="text-[9px] font-bold uppercase tracking-[0.5em] text-zinc-800 italic">Obrigado pela preferência</p>
+           <button 
+             onClick={() => window.print()}
+             className="text-[10px] font-bold uppercase tracking-[0.4em] text-zinc-600 hover:text-white border-b border-zinc-900 pb-1 transition-all"
+           >
+             Gerar Certificado Digital
+           </button>
+        </div>
+      </motion.div>
     </div>
   );
 };

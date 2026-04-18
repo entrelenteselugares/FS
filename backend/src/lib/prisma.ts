@@ -1,22 +1,42 @@
 import { PrismaClient } from "@prisma/client";
-import { PrismaPg } from "@prisma/adapter-pg";
-import { Pool } from "pg";
 
-// Singleton do Prisma para evitar conexões excessivas
-const prismaClientSingleton = () => {
-  const pool = new Pool({ connectionString: process.env.DATABASE_URL });
-  const adapter = new PrismaPg(pool);
-  return new PrismaClient({ adapter });
-};
+const globalForPrisma = global as unknown as { prisma: PrismaClient };
 
-type PrismaClientSingleton = ReturnType<typeof prismaClientSingleton>;
+/**
+ * Cria uma instância padrão do Prisma Client.
+ * O Prisma 6+ já lida muito bem com serverless se a URL estiver correta.
+ */
+function createPrismaClient() {
+  const connectionString = process.env.DATABASE_URL;
 
-const globalForPrisma = globalThis as unknown as {
-  prisma: PrismaClientSingleton | undefined;
-};
+  if (!connectionString) {
+    console.error("[CRITICAL] DATABASE_URL não encontrada!");
+    return null as any; 
+  }
 
-export const prisma = globalForPrisma.prisma ?? prismaClientSingleton();
+  try {
+    console.log("[DB] Inicializando Prisma Client Nativo...");
+    return new PrismaClient({
+      log: process.env.NODE_ENV === "development" ? ["query", "error", "warn"] : ["error"],
+    });
+  } catch (err) {
+    console.error("[DB BOOTSTRAP ERROR]:", err);
+    return null as any;
+  }
+}
 
-if (process.env.NODE_ENV !== "production") globalForPrisma.prisma = prisma;
+export const prisma = new Proxy({} as PrismaClient, {
+  get: (target, prop) => {
+    if (!globalForPrisma.prisma) {
+      globalForPrisma.prisma = createPrismaClient();
+    }
+    
+    if (!globalForPrisma.prisma) {
+      throw new Error("DATABASE_URL_NOT_CONFIGURED: Verifique as variáveis no Vercel.");
+    }
+    
+    return (globalForPrisma.prisma as any)[prop];
+  }
+});
 
 export default prisma;

@@ -1,121 +1,449 @@
-import React, { useEffect, useState, useCallback } from "react";
-import { useParams } from "react-router-dom";
-import { getEvent, createCheckout } from "../api";
-import type { EventData } from "../api";
-import { PaywallView } from "../components/PaywallView";
-import { DeliveryView } from "../components/DeliveryView";
-import { useAuth } from "../contexts/AuthContext";
+import { useState, useEffect } from "react";
+import { useParams, useNavigate, useSearchParams } from "react-router-dom";
+import { API } from "../lib/api";
 
-const Spinner = () => (
-  <svg className="animate-spin h-10 w-10 text-brand-indigo" viewBox="0 0 24 24">
-    <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" fill="none"></circle>
-    <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
-  </svg>
-);
+interface EventData {
+  id: string;
+  nomeNoivos: string;
+  dataEvento: string;
+  cartorio: string | null;
+  description?: string | null;
+  coverPhotoUrl: string | null;
+  priceBase: number;
+  priceEarly: number;
+  temFoto: boolean;
+  temVideo: boolean;
+  temReels: boolean;
+  temFotoImpressa: boolean;
+}
 
-const getSafeUUID = () => {
-    try {
-        return crypto.randomUUID();
-    } catch {
-        return Math.random().toString(36).substring(2) + Date.now().toString(36);
-    }
+interface AccessData {
+  lightroomUrl: string | null;
+  driveUrl: string | null;
+  eventTitle: string;
+}
+
+function formatDate(d: string) {
+  try {
+    return new Intl.DateTimeFormat("pt-BR", {
+      weekday: "long", day: "2-digit", month: "long", year: "numeric",
+    }).format(new Date(d));
+  } catch (e) {
+    return "Data indisponível";
+  }
+}
+
+function formatCurrency(v: number) {
+  return new Intl.NumberFormat("pt-BR", { style: "currency", currency: "BRL" }).format(v);
+}
+
+const S = {
+  page: { fontFamily: "'Outfit', 'Inter', sans-serif", background: "#050505", color: "#e8e4dc", minHeight: "100vh" } as React.CSSProperties,
+  input: {
+    width: "100%", background: "rgba(255,255,255,0.02)", border: "1px solid rgba(255,255,255,0.05)",
+    borderRadius: 6, padding: "12px 14px", fontSize: 13,
+    color: "#fff", outline: "none", transition: "all 0.3s"
+  } as React.CSSProperties,
+  label: { fontSize: 9, color: "#666", display: "block", marginBottom: 5, letterSpacing: "1px", textTransform: "uppercase", fontWeight: 700 } as React.CSSProperties,
+  btnGold: {
+    width: "100%", background: "#c9a96e", color: "#050505",
+    border: "none", borderRadius: 4, padding: "15px", fontSize: 11,
+    fontWeight: 700, cursor: "pointer", textTransform: "uppercase", letterSpacing: "1px",
+    transition: "all 0.3s",
+  } as React.CSSProperties,
+  btnOutline: {
+    width: "100%", background: "transparent", color: "#888",
+    border: "1px solid rgba(255,255,255,0.1)", borderRadius: 4, padding: "12px",
+    fontSize: 10, cursor: "pointer", textTransform: "uppercase", letterSpacing: "1px",
+    transition: "all 0.3s",
+  } as React.CSSProperties,
+  card: {
+    background: "rgba(255,255,255,0.02)", border: "1px solid rgba(255,255,255,0.05)",
+    borderRadius: 8, padding: "1.5rem",
+  } as React.CSSProperties,
 };
 
-export const EventPage: React.FC = () => {
+export const EventPage = () => {
   const { id } = useParams<{ id: string }>();
+  const navigate = useNavigate();
+
   const [event, setEvent] = useState<EventData | null>(null);
   const [loading, setLoading] = useState(true);
-  const [isProcessing, setIsProcessing] = useState(false);
-  const [userId] = useState(() => localStorage.getItem("tempUserId") || getSafeUUID());
+  const [notFound, setNotFound] = useState(false);
 
-  // Salvar ID temporário para persistência do polling no checkout
+  // Paywall
+  const [searchParams] = useSearchParams();
+  const [hasPaid, setHasPaid] = useState(false);
+  const [access, setAccess] = useState<AccessData | null>(null);
+  const [orderId, setOrderId] = useState<string | null>(null);
+
+  const [step, setStep] = useState<"paywall" | "checkout" | "processing" | "success">("paywall");
+  const [checkoutError, setCheckoutError] = useState("");
+
+  const [cardData, setCardData] = useState({
+    number: "", name: "", month: "", year: "", cvv: "",
+    email: "", cpf: "",
+  });
+  const [mpLoaded, setMpLoaded] = useState(false);
+  const [cardToken, setCardToken] = useState("");
+  const [tokenizing, setTokenizing] = useState(false);
+
   useEffect(() => {
-    localStorage.setItem("tempUserId", userId);
-  }, [userId]);
-
-  const fetchData = useCallback(async () => {
     if (!id) return;
-    try {
-      const data = await getEvent(id, userId);
-      setEvent(data);
-    } catch (error) {
-      console.error("Erro ao carregar evento:", error);
-    } finally {
-      setLoading(false);
-    }
-  }, [id, userId]);
+    API.get(`/public/events/${id}`)
+      .then((r) => setEvent(r.data))
+      .catch((e) => {
+        if (e.response?.status === 404) setNotFound(true);
+      })
+      .finally(() => setLoading(false));
+  }, [id]);
 
-  // Initial Fetch
   useEffect(() => {
-    fetchData();
-  }, [fetchData]);
-
-  // SHORT POLLING: Se o checkout estiver ativo e o paywall existir, checa a cada 3s
-  useEffect(() => {
-    let interval: number | undefined;
-    
-    if (event?.paywall?.active) {
-      interval = window.setInterval(async () => {
-        try {
-          const data = await getEvent(id!, userId);
-          if (!data?.paywall?.active) {
-            setEvent(data);
-            window.clearInterval(interval);
-          }
-        } catch (e) {
-          console.error("Erro no polling de pagamento.");
-        }
-      }, 3000);
-    }
-
-    return () => window.clearInterval(interval);
-  }, [event?.paywall?.active, id, userId]);
-
-  const { user } = useAuth();
-
-  const handleCheckout = async () => {
     if (!id) return;
-    setIsProcessing(true);
+
+    // Prioridade 1: orderId na URL (?orderId=xxx)
+    const urlOrderId = searchParams.get("orderId");
     
-    // Prioriza o email do usuário logado, senão usa um placeholder/prompt para sandbox
-    const checkoutEmail = user?.email || "cliente-sandbox@teste.com";
+    // Prioridade 2: orderId no localStorage
+    const savedOrderId = localStorage.getItem(`fs_order_${id}`);
+    
+    const oid = urlOrderId ?? savedOrderId;
+    
+    if (oid) {
+      setOrderId(oid);
+      // Salva no localStorage caso tenha vindo pela URL
+      localStorage.setItem(`fs_order_${id}`, oid);
+      checkAccess(oid);
+    }
+  }, [id, searchParams]);
 
+  useEffect(() => {
+    if ((window as any).MercadoPago) { setMpLoaded(true); return; }
+    const s = document.createElement("script");
+    s.src = "https://sdk.mercadopago.com/js/v2";
+    s.onload = () => setMpLoaded(true);
+    document.head.appendChild(s);
+  }, []);
+
+  const checkAccess = async (oid: string) => {
     try {
-      const response = await createCheckout({
-        eventId: id,
-        userId,
-        email: checkoutEmail,
-        method: "pix",
-      });
-      
-      console.log("Checkout gerado para:", checkoutEmail, response);
-      alert(`Checkout Gerado para ${checkoutEmail}. O sistema agora está monitorando o pagamento em tempo real...`);
-
-    } catch (error) {
-       alert("Erro ao processar pagamento.");
-    } finally {
-      setIsProcessing(false);
+      const { data } = await API.get(`/public/events/${id}/access?orderId=${oid}`);
+      setAccess(data);
+      setHasPaid(true);
+      setStep("success");
+    } catch (err: any) { 
+      if (err.response?.status === 403 || err.response?.status === 401) {
+        console.warn("[Access] Token/Pedido inválido ou expirado. Limpando...");
+        localStorage.removeItem(`fs_order_${id}`);
+        setOrderId(null);
+      }
     }
   };
 
-  if (loading) {
-    return (
-      <div className="flex flex-col items-center justify-center min-h-screen bg-[#050505]">
-        <Spinner />
-        <p className="text-[10px] font-black uppercase tracking-[0.4em] text-zinc-700 animate-pulse mt-6">Sincronizando Memórias...</p>
-      </div>
-    );
-  }
+  const handleTokenize = async () => {
+    if (!(window as any).MercadoPago || !mpLoaded) return;
+    setTokenizing(true);
+    setCheckoutError("");
+    try {
+      const mp = new (window as any).MercadoPago(import.meta.env.VITE_MP_PUBLIC_KEY);
+      const result = await mp.createCardToken({
+        cardNumber: cardData.number.replace(/\s/g, ""),
+        cardholderName: cardData.name,
+        cardExpirationMonth: cardData.month,
+        cardExpirationYear: cardData.year.length === 2 ? `20${cardData.year}` : cardData.year,
+        securityCode: cardData.cvv,
+      });
+      console.log("[MercadoPago] Tokenization result:", result);
+      if (result.id) {
+        setCardToken(result.id);
+      } else {
+        const errorMsg = result.cause?.[0]?.description || "Dados do cartão incorretos.";
+        throw new Error(errorMsg);
+      }
+    } catch (err: any) {
+      console.error("[MercadoPago Error]:", err);
+      
+      // Bypass para Localhost (SSL Restriction) ou modo desenvolvimento
+      if (window.location.hostname === "localhost" || window.location.hostname === "127.0.0.1") {
+        console.warn("[MercadoPago] Ambiente local detectado. Usando mock-token para teste de fluxo.");
+        setCardToken("mock-token-" + Date.now());
+        return;
+      }
 
-  if (!event) return <div className="p-20 text-center text-zinc-500">Evento não encontrado.</div>;
+      setCheckoutError(err.message || "Dados do cartão inválidos. Verifique e tente novamente.");
+    } finally {
+      setTokenizing(false);
+    }
+  };
+
+  const handlePay = async () => {
+    if (!event || !cardToken) return;
+    setStep("processing");
+    setCheckoutError("");
+    try {
+      const { data } = await API.post("/checkout/payment", {
+        eventId: event.id,
+        cardToken,
+        email: cardData.email,
+        cpf: cardData.cpf,
+        installments: 1,
+        paymentMethodId: "visa"
+      });
+
+      localStorage.setItem(`fs_order_${id}`, data.orderId);
+      setOrderId(data.orderId);
+
+      // Atualiza URL com orderId para persistir em refresh
+      navigate(`/e/${id}?orderId=${data.orderId}`, { replace: true });
+
+      if (data.status === "APROVADO" || data.hasPaid) {
+        await checkAccess(data.orderId);
+      } else {
+        pollPaymentStatus(data.orderId);
+      }
+    } catch (err: any) {
+      setCheckoutError(err.response?.data?.error ?? "Erro ao processar pagamento.");
+      setStep("checkout");
+    }
+  };
+
+  const pollPaymentStatus = (oid: string) => {
+    let attempts = 0;
+    const interval = setInterval(async () => {
+      attempts++;
+      try {
+        await checkAccess(oid);
+        clearInterval(interval);
+      } catch {
+        if (attempts >= 15) {
+          clearInterval(interval);
+          setCheckoutError("Pagamento em análise. Você receberá o acesso assim que aprovado.");
+          setStep("checkout");
+        }
+      }
+    }, 3000);
+  };
+
+  if (loading) return <LoadingScreen />;
+  if (notFound || !event) return <NotFoundScreen onBack={() => navigate("/")} />;
 
   return (
-    <>
-      {event?.paywall?.active ? (
-        <PaywallView event={event} onCheckout={handleCheckout} isProcessing={isProcessing} />
-      ) : (
-        <DeliveryView event={event} />
-      )}
-    </>
+    <div style={S.page}>
+      <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,700;0,900;1,700&family=Outfit:wght@300;400;500;700&display=swap" rel="stylesheet" />
+      
+      <nav style={{ display: "flex", alignItems: "center", justifyContent: "space-between", padding: "1.25rem 2rem", borderBottom: "1px solid rgba(255,255,255,0.05)" }}>
+        <button onClick={() => navigate("/")} style={{ background: "none", border: "none", color: "#555", fontSize: 11, cursor: "pointer", textTransform: "uppercase", letterSpacing: 2 }}>
+          ← Vitrine
+        </button>
+        <div style={{ fontFamily: "'Playfair Display', serif", fontSize: 18, fontWeight: 700, color: "#fff" }}>FOTO SEGUNDO.</div>
+        <div style={{ width: 60 }} />
+      </nav>
+
+      <div className="event-grid" style={{ maxWidth: 1100, margin: "0 auto", padding: "3rem 1rem", display: "grid", gridTemplateColumns: "1fr 400px", gap: "3rem", alignItems: "start" }}>
+        
+        {/* Coluna Evento */}
+        <div>
+          <div style={{ width: "100%", aspectRatio: "16/9", background: "#0d0d0d", borderRadius: 0, overflow: "hidden", marginBottom: "2.5rem", position: "relative", border: "1px solid rgba(255,255,255,0.03)" }}>
+            {event.coverPhotoUrl ? (
+              <img src={event.coverPhotoUrl} alt={event.nomeNoivos} style={{ width: "100%", height: "100%", objectFit: "cover", filter: hasPaid ? "none" : "blur(8px) brightness(0.7)" }} />
+            ) : (
+              <div style={{ width: "100%", height: "100%", display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center", background: "linear-gradient(135deg, #050505 0%, #0d0d0d 100%)" }}>
+                <div style={{ width: 40, height: 40, border: "0.5px solid #222", transform: "rotate(45deg)", display: "flex", alignItems: "center", justifyContent: "center", marginBottom: 15 }}>
+                  <div style={{ width: 4, height: 4, background: "#c9a96e" }} />
+                </div>
+                <span style={{ fontSize: 9, color: "#333", textTransform: "uppercase", letterSpacing: 4, fontWeight: 700 }}>Exclusive Collective</span>
+              </div>
+            )}
+            {!hasPaid && (
+              <div style={{ position: "absolute", inset: 0, display: "flex", alignItems: "center", justifyContent: "center", background: "rgba(0,0,0,0.5)", backdropFilter: "blur(2px)" }}>
+                <div style={{ textAlign: "center" }}>
+                  <div style={{ fontSize: 24, marginBottom: 12, opacity: 0.8 }}>✧</div>
+                  <p style={{ fontSize: 9, color: "#c9a96e", letterSpacing: 3, textTransform: "uppercase", fontWeight: 700 }}>Acesso Reservado</p>
+                </div>
+              </div>
+            )}
+          </div>
+
+          <p style={{ fontSize: 10, letterSpacing: 3, textTransform: "uppercase", color: "#666", marginBottom: 10, fontWeight: 700 }}>
+            <span style={{ color: "#c9a96e" }}>✧</span> {event.cartorio || "Digital Archive"}
+          </p>
+          <h1 style={{ fontFamily: "'Playfair Display', serif", fontSize: 42, fontWeight: 900, color: "#fff", marginBottom: "1rem", lineHeight: 1.1 }}>{event.nomeNoivos}</h1>
+          <p style={{ fontSize: 12, color: "#666", marginBottom: "3rem", textTransform: "uppercase", letterSpacing: 2 }}>
+            {formatDate(event.dataEvento)}
+          </p>
+
+          <div style={S.card}>
+            <p style={{ fontSize: 10, letterSpacing: 2, textTransform: "uppercase", color: "#c9a96e", marginBottom: "2rem", fontWeight: 700 }}>Serviços Inclusos</p>
+            <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "2rem" }}>
+              {[
+                { active: event.temFoto, icon: "✦", label: "Galeria de Fotos", desc: "Alta resolução p/ impressão" },
+                { active: event.temVideo, icon: "✦", label: "Filme & Vídeo", desc: "Download em 4K disponível" },
+                { active: event.temReels, icon: "✦", label: "Social Media", desc: "Formato Reels e Stories" },
+                { active: event.temFotoImpressa, icon: "✦", label: "Foto Física", desc: "Retirada em loja/evento" },
+              ].map((item) => item.active && (
+                <div key={item.label} style={{ display: "flex", gap: 15 }}>
+                  <span style={{ fontSize: 12, color: "#c9a96e", paddingTop: 2 }}>{item.icon}</span>
+                  <div>
+                    <div style={{ fontSize: 13, fontWeight: 600, color: "#fff", marginBottom: 4 }}>{item.label}</div>
+                    <div style={{ fontSize: 11, color: "#555", lineHeight: 1.4 }}>{item.desc}</div>
+                  </div>
+                </div>
+              ))}
+            </div>
+          </div>
+
+          {hasPaid && access && (
+            <div id="access-area" style={{ marginTop: "3rem", background: "rgba(201, 169, 110, 0.03)", border: "1px solid rgba(201, 169, 110, 0.1)", borderRadius: 12, padding: "2.5rem" }}>
+              <div style={{ textAlign: "center", marginBottom: "2.5rem" }}>
+                <span style={{ fontSize: 9, letterSpacing: 4, textTransform: "uppercase", color: "#c9a96e", fontWeight: 700 }}>Download Center</span>
+                <h3 style={{ fontFamily: "'Playfair Display', serif", fontSize: 24, color: "#fff", marginTop: 8 }}>Seus arquivos estão prontos</h3>
+              </div>
+              
+              <div style={{ display: "grid", gap: "1.25rem" }}>
+                {access.lightroomUrl && (
+                  <a href={access.lightroomUrl} target="_blank" rel="noopener" style={{ 
+                    display: "flex", alignItems: "center", justifyContent: "space-between", 
+                    background: "#000", border: "1px solid rgba(255,255,255,0.05)", 
+                    padding: "20px 25px", textDecoration: "none", borderRadius: 8,
+                    transition: "all 0.3s"
+                  }} className="access-btn">
+                    <div>
+                      <div style={{ fontSize: 10, color: "#c9a96e", fontWeight: 700, textTransform: "uppercase", letterSpacing: 1, marginBottom: 4 }}>Galeria Exclusiva</div>
+                      <div style={{ fontSize: 14, color: "#fff", fontWeight: 500 }}>Adobe Portfolio Archive</div>
+                    </div>
+                    <span style={{ fontSize: 12, color: "#c9a96e" }}>Acessar Galeria →</span>
+                  </a>
+                )}
+                {access.driveUrl && (
+                  <a href={access.driveUrl} target="_blank" rel="noopener" style={{ 
+                    display: "flex", alignItems: "center", justifyContent: "space-between", 
+                    background: "#000", border: "1px solid rgba(255,255,255,0.05)", 
+                    padding: "20px 25px", textDecoration: "none", borderRadius: 8,
+                    transition: "all 0.3s"
+                  }} className="access-btn">
+                    <div>
+                      <div style={{ fontSize: 10, color: "#c9a96e", fontWeight: 700, textTransform: "uppercase", letterSpacing: 1, marginBottom: 4 }}>Arquivos Brutos</div>
+                      <div style={{ fontSize: 14, color: "#fff", fontWeight: 500 }}>Google Drive Storage</div>
+                    </div>
+                    <span style={{ fontSize: 12, color: "#c9a96e" }}>Baixar Arquivos →</span>
+                  </a>
+                )}
+              </div>
+            </div>
+          )}
+        </div>
+
+        {/* Coluna Paywall */}
+        <div style={{ position: "sticky", top: "6.5rem" }}>
+          {step === "paywall" && <PaywallCard event={event} onCheckout={() => setStep("checkout")} />}
+          {step === "checkout" && (
+            <CheckoutCard
+              event={event} cardData={cardData} setCardData={setCardData}
+              cardToken={cardToken} tokenizing={tokenizing} mpLoaded={mpLoaded} error={checkoutError}
+              onTokenize={handleTokenize} onPay={handlePay} onBack={() => setStep("paywall")}
+            />
+          )}
+          {step === "success" && (
+            <SuccessCard 
+              event={event} 
+              orderId={orderId} 
+              onViewFiles={() => {
+                document.getElementById("access-area")?.scrollIntoView({ behavior: "smooth", block: "center" });
+              }}
+            />
+          )}
+        </div>
+      </div>
+      <style>{`
+        @keyframes spin { to { transform: rotate(360deg); } }
+        .access-btn:hover {
+          background: rgba(201, 169, 110, 0.05) !important;
+          border-color: rgba(201, 169, 110, 0.3) !important;
+          transform: translateY(-2px);
+        }
+        @media (max-width: 1024px) {
+          .event-grid { grid-template-columns: 1fr !important; gap: 2rem !important; }
+          .event-grid > div { position: static !important; }
+        }
+      `}</style>
+    </div>
   );
-};
+}
+
+function PaywallCard({ event, onCheckout }: any) {
+  return (
+    <div style={{ ...S.card, border: "1px solid rgba(201, 169, 110, 0.15)", background: "rgba(201, 169, 110, 0.02)" }}>
+      <p style={{ fontSize: 10, letterSpacing: 3, textTransform: "uppercase", color: "#666", marginBottom: "1rem", fontWeight: 700 }}>Exclusive Collection</p>
+      <div style={{ fontFamily: "'Playfair Display', serif", fontSize: 48, fontWeight: 900, color: "#fff", marginBottom: 5 }}>
+        {formatCurrency(event.priceBase)}
+      </div>
+      <p style={{ fontSize: 12, color: "#555", marginBottom: "2.5rem", lineHeight: 1.5 }}>Acesso vitalício à galeria completa de fotos e vídeos em alta resolução.</p>
+      <button style={S.btnGold} onClick={onCheckout}>Desbloquear Arquivos</button>
+      <div style={{ display: "flex", alignItems: "center", justifyContent: "center", gap: 8, marginTop: "1.5rem", opacity: 0.3 }}>
+        <span style={{ fontSize: 9, color: "#fff", letterSpacing: 1, textTransform: "uppercase" }}>Secure Payment</span>
+        <div style={{ width: 1, height: 8, background: "#fff" }} />
+        <span style={{ fontSize: 9, color: "#fff", letterSpacing: 1, textTransform: "uppercase" }}>Instant Access</span>
+      </div>
+    </div>
+  );
+}
+
+function CheckoutCard({ event, cardData, setCardData, cardToken, tokenizing, mpLoaded, error, onTokenize, onPay, onBack }: any) {
+  const set = (k: string) => (e: any) => setCardData((p: any) => ({ ...p, [k]: e.target.value }));
+  return (
+    <div style={S.card}>
+      <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "2rem" }}>
+        <p style={{ fontSize: 10, fontWeight: 700, color: "#c9a96e", textTransform: "uppercase", letterSpacing: 2 }}>Secure Checkout</p>
+        <button onClick={onBack} style={{ background: "none", border: "none", color: "#444", fontSize: 10, cursor: "pointer", textTransform: "uppercase", letterSpacing: 1 }}>Voltar</button>
+      </div>
+      {error && <div style={{ background: "rgba(248, 113, 113, 0.05)", border: "1px solid rgba(248, 113, 113, 0.2)", padding: 15, color: "#f87171", fontSize: 11, marginBottom: 20, borderRadius: 4 }}>{error}</div>}
+      <div style={{ display: "flex", flexDirection: "column", gap: 15 }}>
+        <div><label style={S.label}>Número do Cartão</label><input style={S.input} value={cardData.number} placeholder="0000 0000 0000 0000" onChange={(e) => {
+          const v = e.target.value.replace(/\D/g, "").replace(/(.{4})/g, "$1 ").trim();
+          setCardData((p: any) => ({ ...p, number: v }));
+        }} /></div>
+        <div><label style={S.label}>Nome (como no cartão)</label><input style={S.input} value={cardData.name} placeholder="NOME IMPRESSO" onChange={set("name")} /></div>
+        <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr 1fr", gap: 12 }}>
+          <div><label style={S.label}>Mês</label><input style={S.input} maxLength={2} placeholder="MM" value={cardData.month} onChange={set("month")} /></div>
+          <div><label style={S.label}>Ano</label><input style={S.input} maxLength={2} placeholder="AA" value={cardData.year} onChange={set("year")} /></div>
+          <div><label style={S.label}>CVV</label><input style={S.input} maxLength={4} placeholder="000" value={cardData.cvv} onChange={set("cvv")} /></div>
+        </div>
+        <div style={{ display: "grid", gridTemplateColumns: "1.2fr 1fr", gap: 12 }}>
+          <div><label style={S.label}>E-mail p/ recibo</label><input style={S.input} type="email" value={cardData.email} onChange={set("email")} /></div>
+          <div><label style={S.label}>CPF do titular</label><input style={S.input} value={cardData.cpf} onChange={set("cpf")} /></div>
+        </div>
+      </div>
+      <div style={{ marginTop: "2rem", display: "flex", flexDirection: "column", gap: 12 }}>
+        {!cardToken ? (
+          <button style={S.btnOutline} onClick={onTokenize} disabled={tokenizing || !mpLoaded}>{tokenizing ? "Criptografando..." : "Validar Cartão"}</button>
+        ) : (
+          <div style={{ padding: "12px", background: "rgba(74, 222, 128, 0.05)", border: "1px solid rgba(74, 222, 128, 0.1)", color: "#4ade80", fontSize: 10, textAlign: "center", textTransform: "uppercase", letterSpacing: 2, fontWeight: 700 }}>✓ Cartão Validado</div>
+        )}
+        <button style={{ ...S.btnGold, opacity: cardToken ? 1 : 0.3 }} onClick={onPay} disabled={!cardToken}>Finalizar de R$ {event.priceBase}</button>
+      </div>
+    </div>
+  );
+}
+
+// function ProcessingCard() {
+//   return <div style={{ ...S.card, textAlign: "center", padding: "5rem 2rem" }}><div style={{ width: 32, height: 32, border: "1px solid #c9a96e", borderTopColor: "transparent", borderRadius: "50%", margin: "0 auto 24px", animation: "spin 0.8s linear infinite" }} /><p style={{ fontSize: 10, color: "#fff", textTransform: "uppercase", letterSpacing: 3, fontWeight: 700 }}>Processando Pagamento</p><p style={{ fontSize: 11, color: "#444", marginTop: 8 }}>Não feche esta janela.</p></div>;
+// }
+
+function SuccessCard({ onViewFiles }: any) {
+  return (
+    <div style={{ ...S.card, textAlign: "center", padding: "4rem 2rem", background: "rgba(74, 222, 128, 0.02)", border: "1px solid rgba(74, 222, 128, 0.1)" }}>
+      <div style={{ width: 56, height: 56, border: "1px solid #4ade80", borderRadius: "50%", margin: "0 auto 20px", display: "flex", alignItems: "center", justifyContent: "center", color: "#4ade80", fontSize: 24 }}>✓</div>
+      <p style={{ fontFamily: "'Playfair Display', serif", fontSize: 28, color: "#fff", marginBottom: 8 }}>Pagamento Aprovado</p>
+      <p style={{ fontSize: 13, color: "#666", marginBottom: "2.5rem", lineHeight: 1.5 }}>Sua galeria exclusiva já está disponível para acesso e download.</p>
+      <button style={S.btnGold} onClick={onViewFiles}>Ver Meus Arquivos</button>
+    </div>
+  );
+}
+
+function LoadingScreen() {
+  return <div style={{ background: "#050505", minHeight: "100vh", display: "flex", alignItems: "center", justifyContent: "center" }}><div style={{ width: 32, height: 32, border: "1px solid #c9a96e", borderTopColor: "transparent", borderRadius: "50%", animation: "spin 0.8s linear infinite" }} /></div>;
+}
+
+function NotFoundScreen({ onBack }: any) {
+  return <div style={{ background: "#050505", minHeight: "100vh", display: "flex", alignItems: "center", justifyContent: "center", flexDirection: "column", gap: "1rem" }}><p style={{ fontFamily: "'Playfair Display', serif", fontSize: 24, color: "#fff" }}>Link Expirado ou Inválido</p><button onClick={onBack} style={{ background: "none", border: "none", color: "#c9a96e", cursor: "pointer", textTransform: "uppercase", fontSize: 10, letterSpacing: 2 }}>Voltar à Vitrine</button></div>;
+}

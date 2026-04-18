@@ -19,32 +19,6 @@ async function main() {
   });
 
   console.log(`✅ Evento criado: ${event.id}`);
-
-  // 2. Criar Mídias (1 Capa + 3 protegidas)
-  await prisma.mediaFile.createMany({
-    data: [
-      {
-        url: "https://images.unsplash.com/photo-1511795409834-ef04bbd61622?auto=format&fit=crop&q=80&w=1200",
-        tipo: "FOTO",
-        isCoverPhoto: true,
-        eventId: event.id,
-      },
-      {
-        url: "https://images.unsplash.com/photo-1519741497674-611481863552?auto=format&fit=crop&q=80&w=800",
-        tipo: "FOTO",
-        isCoverPhoto: false,
-        eventId: event.id,
-      },
-      {
-        url: "https://images.unsplash.com/photo-1583939003579-730e3918a45a?auto=format&fit=crop&q=80&w=800",
-        tipo: "FOTO",
-        isCoverPhoto: false,
-        eventId: event.id,
-      },
-    ],
-  });
-
-  console.log("💎 Mídias de teste inseridas.");
   console.log(`\n🚀 URL para teste: http://localhost:5173/eventos/${event.id}`);
 }
 

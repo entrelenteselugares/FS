@@ -2,10 +2,22 @@ import { Router } from "express";
 import { EventController } from "../controllers/event.controller";
 import { PaymentController } from "../controllers/payment.controller";
 import { AuthController } from "../controllers/auth.controller";
-import { AdminEventController } from "../controllers/admin.controller";
+import { 
+  getDashboardStats, 
+  adminListEvents, 
+  adminCreateEvent, 
+  adminUpdateEvent, 
+  adminDeleteEvent, 
+  adminListUsers, 
+  adminCreateUser, 
+  adminUpdateUser, 
+  adminListOrders,
+  AdminEventController,
+  adminUploadCover
+} from "../controllers/admin.controller";
 import { MercadoPagoController } from "../controllers/mercadopago.controller";
+import { getMeusEventos, updateEventLinks, uploadEventCover } from "../controllers/profissional.controller";
 import { requireAuth, requireRole } from "../lib/auth";
-import { uploadCover } from "../lib/multer.config";
 
 const router = Router();
 
@@ -20,54 +32,39 @@ router.get("/mercadopago/callback", MercadoPagoController.callback);
 
 // ── Eventos públicos (Paywall & Vitrine) ─────────────────────────
 router.get("/public/events", EventController.listPublic);
+router.get("/public/events/:id", EventController.getById);
+router.get("/public/events/:id/access", EventController.getAccess);
 router.get("/events/:id", EventController.getById);
 
 // ── Pagamento ────────────────────────────────────────────────────
 router.post("/checkout", PaymentController.checkout);
+router.post("/checkout/payment", PaymentController.processPayment);
 router.post("/webhooks/mercadopago", PaymentController.webhook);
 
+// ── Admin: Dashboard & Stats ─────────────────────────────────────
+router.get("/admin/stats", requireAuth, requireRole("ADMIN"), getDashboardStats);
+
 // ── Admin: Gestão de Eventos ─────────────────────────────────────
-router.get(
-  "/admin/users",
-  requireAuth,
-  requireRole("ADMIN"),
-  AdminEventController.listUsers
-);
-router.post(
-  "/admin/events",
-  requireAuth,
-  requireRole("ADMIN", "PROFISSIONAL"),
-  uploadCover,
-  AdminEventController.create
-);
-router.get(
-  "/admin/events",
-  requireAuth,
-  requireRole("ADMIN", "PROFISSIONAL"),
-  AdminEventController.list
-);
-router.patch(
-  "/admin/events/:id",
-  requireAuth,
-  requireRole("ADMIN", "PROFISSIONAL"),
-  uploadCover,
-  AdminEventController.update
-);
+router.get("/admin/events", requireAuth, requireRole("ADMIN", "PROFISSIONAL"), adminListEvents);
+router.post("/admin/events", requireAuth, requireRole("ADMIN", "PROFISSIONAL"), adminCreateEvent);
+router.patch("/admin/events/:id", requireAuth, requireRole("ADMIN", "PROFISSIONAL"), adminUpdateEvent);
+router.patch("/admin/events/:id/cover", requireAuth, requireRole("ADMIN"), adminUploadCover);
+router.delete("/admin/events/:id", requireAuth, requireRole("ADMIN"), adminDeleteEvent);
 
-// ── Admin: Financeiro ─────────────────────────────────────────────
-router.get(
-  "/admin/stats",
-  requireAuth,
-  requireRole("ADMIN"),
-  AdminEventController.stats
-);
+// ── Admin: Gestão de Usuários ────────────────────────────────────
+router.get("/admin/users", requireAuth, requireRole("ADMIN"), adminListUsers);
+router.post("/admin/users", requireAuth, requireRole("ADMIN"), adminCreateUser);
+router.patch("/admin/users/:id", requireAuth, requireRole("ADMIN"), adminUpdateUser);
 
-// ── Cartório: Agenda e Comissões ──────────────────────────────────
-router.get(
-  "/cartorio/stats",
-  requireAuth,
-  requireRole("ADMIN", "CARTORIO"),
-  AdminEventController.cartorioStats
-);
+// ── Admin: Gestão de Pedidos ─────────────────────────────────────
+router.get("/admin/orders", requireAuth, requireRole("ADMIN"), adminListOrders);
+
+// ── Profissional: Gestão de Entregas ─────────────────────────────
+router.get("/profissional/events", requireAuth, requireRole("ADMIN", "PROFISSIONAL"), getMeusEventos);
+router.patch("/profissional/events/:id/links", requireAuth, requireRole("ADMIN", "PROFISSIONAL"), updateEventLinks);
+router.patch("/profissional/events/:id/cover", requireAuth, requireRole("ADMIN", "PROFISSIONAL"), uploadEventCover);
+
+// ── Legado / Compatibilidade ─────────────────────────────────────
+router.get("/cartorio/stats", requireAuth, requireRole("ADMIN", "CARTORIO"), AdminEventController.cartorioStats);
 
 export default router;

@@ -1,51 +1,49 @@
 import dotenv from "dotenv";
 dotenv.config();
 
-import express from "express";
+import express, { Request, Response, NextFunction } from "express";
 import cors from "cors";
 import path from "path";
-
 import apiRoutes from "./routes/index";
 
 const app = express();
 const PORT = process.env.PORT || 3001;
 
-if (!process.env.BACKEND_URL) {
-  process.env.BACKEND_URL = `http://localhost:${PORT}`;
-}
+// 1. Blindagem contra falhas não capturadas
+process.on("unhandledRejection", (reason) => console.error("Unhandled Rejection:", reason));
+process.on("uncaughtException", (error) => console.error("Uncaught Exception:", error));
 
 app.use(cors());
 app.use(express.json());
 
-// Serve arquivos de uploads como estáticos
-app.use("/uploads", express.static(path.join(process.cwd(), "uploads")));
+// 2. Health Check (Independente do Banco)
+app.get("/health", (_req, res) => res.json({ status: "alive" }));
 
-// Registro das Rotas - Flexível para evitar erros de prefixo na Vercel
+// 3. Serve arquivos de uploads (Melhorado)
+const uploadsPath = path.join(process.cwd(), "uploads");
+app.use("/uploads", express.static(uploadsPath));
+
+// 4. Roteamento Unificado (Resolve conflitos de prefixo da Vercel)
 app.use("/api", apiRoutes);
-app.use("/", apiRoutes); // Fallback para quando a Vercel já removeu o prefixo /api
+app.use("/", apiRoutes); 
 
-// ── Dev Helpers ───────────────────────────────────────────────────
-app.locals.MOCK_PAID = false;
-
-app.get("/api/dev/pay", (req, res) => {
-  req.app.locals.MOCK_PAID = true;
-  res.json({ success: true, message: "Pagamento Simulado com Sucesso!" });
+// Handler de Erros Global (Senior Diagnostic)
+app.use((err: any, _req: express.Request, res: express.Response, _next: express.NextFunction) => {
+  console.error("❌ ERRO GLOBAL CAPTURADO:", err);
+  res.status(500).json({ 
+    error: "Erro Interno do Servidor", 
+    message: err.message || "Falha desconhecida",
+    code: err.code || "INTERNAL_ERROR",
+    stack: process.env.NODE_ENV === "development" ? err.stack : undefined,
+    db_connected: !!process.env.DATABASE_URL
+  });
 });
 
-app.get("/api/dev/status", (req, res) => {
-  res.json({ paid: req.app.locals.MOCK_PAID });
-});
-
-app.get("/health", (_req, res) => {
-  res.json({ status: "ok", message: "Foto Segundo Backend v2.0 — Auth + RBAC + Split" });
-});
-
-// Exportar para Vercel
 export default app;
 
-// Só rodar o listen se não estivermos no ambiente Serverless da Vercel
 if (process.env.NODE_ENV !== "production") {
-  app.listen(PORT, () => {
-    console.log(`🚀 Senior Backend running on http://localhost:${PORT}`);
-  });
+  app.listen(PORT, () => console.log(`🚀 Senior Backend running on http://localhost:${PORT}`));
 }
+ 
+ 
+ 

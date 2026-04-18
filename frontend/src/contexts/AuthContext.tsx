@@ -1,7 +1,5 @@
-import React, { createContext, useContext, useState, useEffect } from "react";
-import axios from "axios";
-
-const API = axios.create({ baseURL: import.meta.env.VITE_API_URL || "/api" });
+import React, { createContext, useState, useEffect } from "react";
+import { API } from "../lib/api";
 
 interface AuthUser {
   id: string;
@@ -15,12 +13,12 @@ interface AuthUser {
 interface AuthContextType {
   user: AuthUser | null;
   token: string | null;
-  login: (email: string, senha: string) => Promise<void>;
+  login: (email: string, senha: string) => Promise<AuthUser>;
   logout: () => void;
   loading: boolean;
 }
 
-const AuthContext = createContext<AuthContextType | null>(null);
+export const AuthContext = createContext<AuthContextType | null>(null);
 
 export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
   const [user, setUser] = useState<AuthUser | null>(null);
@@ -28,16 +26,23 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    const stored = localStorage.getItem("fs_token");
-    if (stored) {
-      API.defaults.headers.common["Authorization"] = `Bearer ${stored}`;
-      API.get("/auth/me")
-        .then((r) => { setUser(r.data); setToken(stored); })
-        .catch(() => localStorage.removeItem("fs_token"))
-        .finally(() => setLoading(false));
-    } else {
+    const initAuth = async () => {
+      const stored = localStorage.getItem("fs_token");
+      if (stored) {
+        API.defaults.headers.common["Authorization"] = `Bearer ${stored}`;
+        try {
+          const r = await API.get("/auth/me");
+          setUser(r.data);
+          setToken(stored);
+        } catch (_err) {
+          localStorage.removeItem("fs_token");
+          delete API.defaults.headers.common["Authorization"];
+        }
+      }
       setLoading(false);
-    }
+    };
+    
+    initAuth();
   }, []);
 
   const login = async (email: string, senha: string) => {
@@ -46,6 +51,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     API.defaults.headers.common["Authorization"] = `Bearer ${data.token}`;
     setToken(data.token);
     setUser(data.user);
+    return data.user as AuthUser;
   };
 
   const logout = () => {
@@ -62,10 +68,5 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
   );
 };
 
-export const useAuth = () => {
-  const ctx = useContext(AuthContext);
-  if (!ctx) throw new Error("useAuth deve ser usado dentro de AuthProvider");
-  return ctx;
-};
-
-export { API };
+// Re-export useAuth hook for backward compatibility
+export { useAuth } from "../hooks/useAuth";

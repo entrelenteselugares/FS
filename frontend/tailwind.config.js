@@ -7,18 +7,22 @@ export default {
   theme: {
     extend: {
       colors: {
-        midnight: {
-          DEFAULT: '#050505',
-          lighter: '#121212',
-          card: 'rgba(24, 24, 24, 0.4)'
+        photography: {
+          charcoal: '#121212',
+          slate: '#2a2a2a',
+          olive: '#4b5320',
+          offwhite: '#fafafa'
         },
         brand: {
-          indigo: '#6366f1',
+          charcoal: '#121212',
+          olive: '#556b2f',
           emerald: '#10b981'
         }
       },
       fontFamily: {
-        sans: ['Outfit', 'sans-serif'],
+        sans: ['Inter', 'sans-serif'],
+        serif: ['"Playfair Display"', 'serif'],
+        heading: ['"Playfair Display"', 'serif'],
       },
       animation: {
         'fade-in': 'fadeIn 0.5s ease-out',

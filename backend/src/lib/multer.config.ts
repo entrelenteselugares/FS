@@ -2,18 +2,23 @@ import multer from "multer";
 import path from "path";
 import fs from "fs";
 
-// Garante que a pasta de uploads existe
-const uploadDir = path.join(process.cwd(), "uploads", "covers");
-if (!fs.existsSync(uploadDir)) fs.mkdirSync(uploadDir, { recursive: true });
+const isProduction = process.env.NODE_ENV === "production";
 
-const storage = multer.diskStorage({
-  destination: (_req, _file, cb) => cb(null, uploadDir),
-  filename: (_req, file, cb) => {
-    const ext = path.extname(file.originalname).toLowerCase();
-    const name = `cover_${Date.now()}${ext}`;
-    cb(null, name);
-  },
-});
+// Na Vercel (Production), usamos Memory Storage para evitar erros de disco Read-Only
+// Em ambiente local, mantemos o disco para compatibilidade
+const storage = isProduction 
+  ? multer.memoryStorage() 
+  : multer.diskStorage({
+      destination: (_req, _file, cb) => {
+        const uploadDir = path.join(process.cwd(), "uploads", "covers");
+        if (!fs.existsSync(uploadDir)) fs.mkdirSync(uploadDir, { recursive: true });
+        cb(null, uploadDir);
+      },
+      filename: (_req, file, cb) => {
+        const ext = path.extname(file.originalname).toLowerCase();
+        cb(null, `cover_${Date.now()}${ext}`);
+      },
+    });
 
 const fileFilter = (_req: any, file: Express.Multer.File, cb: multer.FileFilterCallback) => {
   const allowed = [".jpg", ".jpeg", ".png", ".webp"];

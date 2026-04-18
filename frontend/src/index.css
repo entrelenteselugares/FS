@@ -1,42 +1,83 @@
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Playfair+Display:ital,wght@0,400;0,700;0,900;1,400&display=swap');
+
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
 
 @layer base {
   body {
-    @apply bg-[#050505] text-white font-sans antialiased m-0 p-0;
+    @apply bg-[#050505] text-white;
+    font-family: 'Inter', sans-serif;
+    -webkit-font-smoothing: antialiased;
+  }
+
+  ::selection {
+    @apply bg-brand-olive/30;
+  }
+
+  h1, h2, h3, h4, .font-heading {
+    font-family: 'Playfair Display', serif;
   }
 }
 
-.luxury-gradient {
-  background: linear-gradient(to bottom, rgba(5,5,5,0) 0%, rgba(5,5,5,0.8) 50%, rgba(5,5,5,1) 100%);
+@layer components {
+  .glass {
+    @apply backdrop-blur-xl bg-white/[0.01] border border-white/[0.05];
+  }
+
+  .glass-card {
+    @apply glass rounded-sm transition-all duration-500 hover:border-white/[0.1] hover:bg-white/[0.02];
+  }
+
+  .lux-gradient-text {
+    @apply text-white; /* Removed gradients for a more solid, serious feel */
+  }
+
+  .lux-button {
+    @apply relative overflow-hidden px-8 py-3.5 rounded-none font-bold uppercase tracking-[0.2em] text-[10px] transition-all active:scale-95;
+  }
+
+  .lux-button-primary {
+    @apply lux-button bg-white text-black hover:bg-zinc-200 shadow-none border border-transparent;
+  }
+
+  .lux-button-olive {
+    @apply lux-button bg-brand-olive text-white hover:bg-brand-olive/80;
+  }
+
+  .lux-button-ghost {
+    @apply lux-button bg-white/5 border border-white/10 text-white hover:bg-white/10;
+  }
+
+  .lux-input {
+    @apply w-full bg-white/[0.02] border border-white/5 rounded-none px-5 py-4 text-sm text-white focus:outline-none focus:border-white/20 focus:bg-white/[0.04] transition-all placeholder:text-zinc-700;
+  }
 }
 
-.glass {
-  background: rgba(24, 24, 24, 0.4);
-  backdrop-filter: blur(20px);
-  -webkit-backdrop-filter: blur(20px);
-  border: 1px solid rgba(255, 255, 255, 0.05);
+/* Animações Editoriais */
+@keyframes reveal {
+  from { opacity: 0; transform: translateY(10px); }
+  to { opacity: 1; transform: translateY(0); }
 }
 
-.glow-indigo {
-  box-shadow: 0 0 30px rgba(99, 102, 241, 0.3);
+.animate-reveal {
+  animation: reveal 1s cubic-bezier(0.16, 1, 0.3, 1) forwards;
 }
 
-@keyframes fadeIn {
-  from { opacity: 0; }
-  to { opacity: 1; }
-}
+.delay-100 { animation-delay: 0.1s; }
+.delay-200 { animation-delay: 0.2s; }
+.delay-300 { animation-delay: 0.3s; }
 
-@keyframes slideUp {
-  from { transform: translateY(20px); opacity: 0; }
-  to { transform: translateY(0); opacity: 1; }
+/* Scrollbar Fine Art */
+::-webkit-scrollbar {
+  width: 4px;
 }
-
-.animate-fade-in {
-  animation: fadeIn 0.5s ease-out;
+::-webkit-scrollbar-track {
+  background: #050505;
 }
-
-.animate-slide-up {
-  animation: slideUp 0.6s ease-out;
+::-webkit-scrollbar-thumb {
+  background: #1a1a1a;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: #333;
 }
