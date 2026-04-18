@@ -4,7 +4,7 @@ import { API } from "../lib/api";
 
 declare global {
   interface Window {
-    MercadoPago: new (key: string) => any;
+    MercadoPago: new (key: string) => unknown;
   }
 }
 
@@ -363,8 +363,6 @@ export const EventPage = () => {
           )}
           {step === "success" && (
             <SuccessCard 
-              event={event} 
-              orderId={orderId} 
               onViewFiles={() => {
                 document.getElementById("access-area")?.scrollIntoView({ behavior: "smooth", block: "center" });
               }}
@@ -459,7 +457,7 @@ function CheckoutCard({ event, cardData, setCardData, cardToken, tokenizing, mpL
 //   return <div style={{ ...S.card, textAlign: "center", padding: "5rem 2rem" }}><div style={{ width: 32, height: 32, border: "1px solid #c9a96e", borderTopColor: "transparent", borderRadius: "50%", margin: "0 auto 24px", animation: "spin 0.8s linear infinite" }} /><p style={{ fontSize: 10, color: "#fff", textTransform: "uppercase", letterSpacing: 3, fontWeight: 700 }}>Processando Pagamento</p><p style={{ fontSize: 11, color: "#444", marginTop: 8 }}>Não feche esta janela.</p></div>;
 // }
 
-function SuccessCard({ event, orderId, onViewFiles }: { event: EventData; orderId: string | null; onViewFiles: () => void }) {
+function SuccessCard({ onViewFiles }: { onViewFiles: () => void }) {
   return (
     <div style={{ ...S.card, textAlign: "center", padding: "4rem 2rem", background: "rgba(74, 222, 128, 0.02)", border: "1px solid rgba(74, 222, 128, 0.1)" }}>
       <div style={{ width: 56, height: 56, border: "1px solid #4ade80", borderRadius: "50%", margin: "0 auto 20px", display: "flex", alignItems: "center", justifyContent: "center", color: "#4ade80", fontSize: 24 }}>✓</div>
