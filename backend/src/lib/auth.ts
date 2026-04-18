@@ -20,11 +20,20 @@ export const verifyToken = (token: string): AuthPayload => {
 /** Middleware: requer JWT válido */
 export const requireAuth = (req: Request, res: Response, next: NextFunction) => {
   const authHeader = req.headers.authorization;
-  if (!authHeader?.startsWith("Bearer ")) {
+  const queryToken = req.query.token as string;
+  let token: string | undefined;
+
+  if (authHeader?.startsWith("Bearer ")) {
+    token = authHeader.slice(7);
+  } else if (queryToken) {
+    token = queryToken;
+  }
+
+  if (!token) {
     return res.status(401).json({ error: "Token não fornecido" });
   }
+
   try {
-    const token = authHeader.slice(7);
     (req as any).user = verifyToken(token);
     return next();
   } catch {

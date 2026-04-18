@@ -112,7 +112,8 @@ export const CartorioDashboard: React.FC = () => {
               id="btn-cartorio-mp-connect"
               onClick={() => {
                 const base = import.meta.env.VITE_API_URL || "";
-                window.location.href = `${base}/api/mercadopago/connect`;
+                const token = localStorage.getItem("token");
+                window.location.href = `${base}/api/mercadopago/connect?token=${token}`;
               }}
               className="bg-white text-black hover:bg-zinc-200 font-bold text-[10px] uppercase tracking-[0.3em] px-8 py-4 transition-all"
             >
