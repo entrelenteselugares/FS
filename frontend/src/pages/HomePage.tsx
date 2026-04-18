@@ -1,6 +1,7 @@
 import { useState, useEffect, useRef } from "react";
 import { useNavigate } from "react-router-dom";
 import { API } from "../lib/api";
+import { useAuth } from "../contexts/AuthContext";
 
 interface Event {
   id: string;
@@ -37,13 +38,20 @@ function isRecent(dateStr: string) {
 
 export const HomePage = () => {
   const navigate = useNavigate();
+  const { user, logout } = useAuth();
   const [query, setQuery] = useState("");
   const [categoria, setCategoria] = useState("Todos");
   const [events, setEvents] = useState<Event[]>([]);
   const [loading, setLoading] = useState(true);
   const [page, setPage] = useState(1);
   const [totalPages, setTotalPages] = useState(1);
+  const [userMenuOpen, setUserMenuOpen] = useState(false);
   const debounceRef = useRef<ReturnType<typeof setTimeout> | undefined>(undefined);
+
+  const dashboardPath = user?.role === "ADMIN" ? "/admin"
+    : user?.role === "PROFISSIONAL" ? "/profissional"
+    : user?.role === "CARTORIO" ? "/cartorio"
+    : null;
 
   const fetchEvents = async (q: string, pg: number) => {
     setLoading(true);
@@ -96,12 +104,36 @@ export const HomePage = () => {
           <span style={{ width: 6, height: 6, background: "#c9a96e", borderRadius: "50%", display: "inline-block" }} />
           Foto Segundo
         </div>
-        <button
-          onClick={() => navigate("/login")}
-          style={{ fontSize: 9, background: "transparent", color: "#fff", border: "1px solid rgba(255,255,255,0.1)", padding: "6px 12px", borderRadius: 4, cursor: "pointer", fontWeight: 500, letterSpacing: "1px", textTransform: "uppercase" }}
-        >
-          Acesso
-        </button>
+        {user ? (
+          <div style={{ position: "relative" }}>
+            <button
+              onClick={() => setUserMenuOpen((v) => !v)}
+              style={{ fontSize: 9, background: "rgba(201,169,110,0.1)", color: "#c9a96e", border: "1px solid rgba(201,169,110,0.3)", padding: "6px 14px", borderRadius: 4, cursor: "pointer", fontWeight: 700, letterSpacing: "1px", textTransform: "uppercase", display: "flex", alignItems: "center", gap: 6 }}
+            >
+              {user.nome.split(" ")[0]}
+              <span style={{ fontSize: 8 }}>▾</span>
+            </button>
+            {userMenuOpen && (
+              <div style={{ position: "absolute", right: 0, top: "calc(100% + 8px)", background: "#0d0d0d", border: "1px solid rgba(255,255,255,0.07)", borderRadius: 4, minWidth: 160, zIndex: 200, overflow: "hidden" }}>
+                {dashboardPath && (
+                  <button onClick={() => { setUserMenuOpen(false); navigate(dashboardPath); }} style={{ width: "100%", textAlign: "left", padding: "12px 16px", background: "transparent", border: "none", color: "#e8e4dc", fontSize: 10, letterSpacing: "1px", textTransform: "uppercase", cursor: "pointer", borderBottom: "1px solid rgba(255,255,255,0.04)" }}>
+                    Meu Painel
+                  </button>
+                )}
+                <button onClick={() => { logout(); setUserMenuOpen(false); navigate("/"); }} style={{ width: "100%", textAlign: "left", padding: "12px 16px", background: "transparent", border: "none", color: "#666", fontSize: 10, letterSpacing: "1px", textTransform: "uppercase", cursor: "pointer" }}>
+                  Sair
+                </button>
+              </div>
+            )}
+          </div>
+        ) : (
+          <button
+            onClick={() => navigate("/login")}
+            style={{ fontSize: 9, background: "transparent", color: "#fff", border: "1px solid rgba(255,255,255,0.1)", padding: "6px 12px", borderRadius: 4, cursor: "pointer", fontWeight: 500, letterSpacing: "1px", textTransform: "uppercase" }}
+          >
+            Acesso
+          </button>
+        )}
       </nav>
 
       {/* HERO */}
