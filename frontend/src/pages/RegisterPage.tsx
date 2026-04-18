@@ -28,16 +28,22 @@ export const RegisterPage: React.FC = () => {
       console.log(`[REGISTERING] User Role: ${role}`);
       const response = await API.post("/auth/register", { ...formData, role });
       
-      console.log("[REGISTER SUCCESS]", response.data);
+      // Logar automaticamente salvando o token e dados do usuário
+      const { token, user } = response.data;
+      localStorage.setItem("token", token);
+      localStorage.setItem("user", JSON.stringify(user));
 
-      const hasPending = !!localStorage.getItem("pending_purchase_event_id");
+      console.log("[REGISTER & LOGIN SUCCESS]", user.nome);
+
+      const hasPending = localStorage.getItem("pending_purchase_event_id");
       if (hasPending) {
-        alert("Registro concluído com sucesso. Agora faça login para finalizar sua compra.");
+        // Se estava tentando comprar, volta para o evento
+        navigate(`/public/events/${hasPending}`);
       } else {
-        alert("Inscrição submetida. Por favor, autentique sua conta para continuar.");
+        // Senão, vai para o dashboard correto
+        const target = user.role === "ADMIN" ? "/admin" : user.role === "CARTORIO" ? "/cartorio" : user.role === "PROFISSIONAL" ? "/profissional" : "/#eventos";
+        navigate(target);
       }
-      
-      navigate("/login");
     } catch (err: any) {
       console.error("[REGISTER CRITICAL FAILURE]:", err.response?.data || err.message);
       
