@@ -103,6 +103,7 @@ export const LoginPage: React.FC = () => {
                   type="password"
                   value={senha}
                   onChange={(e) => setSenha(e.target.value)}
+                  autoComplete="current-password"
                   className="w-full bg-transparent border-b border-zinc-900 py-3 pl-8 text-xs text-white placeholder-zinc-800 focus:outline-none focus:border-brand-olive transition-all"
                   placeholder="••••••••"
                   required

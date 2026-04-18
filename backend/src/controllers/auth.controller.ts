@@ -6,6 +6,15 @@ import { generateToken } from "../lib/auth";
 export class AuthController {
   /** POST /api/auth/login */
   static async login(req: Request, res: Response) {
+    // ✅ Guard: variáveis críticas verificadas ANTES de qualquer lógica
+    if (!process.env.SUPABASE_URL || !process.env.SUPABASE_SERVICE_ROLE_KEY) {
+      console.error("[AUTH CONFIG ERROR] SUPABASE_URL ou SERVICE_ROLE_KEY ausentes no ambiente.");
+      return res.status(503).json({ 
+        error: "Configuração incompleta no servidor. Contate o administrador.",
+        code: "SUPABASE_NOT_CONFIGURED"
+      });
+    }
+
     const { email, senha } = req.body;
     console.log(`[AUTH] Tentativa de login via Supabase: ${email}`);
     
@@ -69,17 +78,8 @@ export class AuthController {
       return res.json({ token, user: { id: user.id, nome: user.nome, email: user.email, role: user.role } });
 
     } catch (error: any) {
-      console.error("Erro no login Supabase:", error);
+      console.error("[AUTH LOGIN ERROR]:", error?.message || error);
       return res.status(500).json({ error: "Erro interno no servidor de autenticação" });
-    }
-
-    if (!process.env.SUPABASE_URL || !process.env.SUPABASE_SERVICE_ROLE_KEY) {
-      console.error("[AUTH CONFIG ERROR]: Supabase keys missing.");
-      return res.status(500).json({ 
-        error: "Server Configuration Error", 
-        details: "SUPABASE_URL or SUPABASE_SERVICE_ROLE_KEY is undefined in process.env",
-        env_keys: Object.keys(process.env).filter(k => k.includes("SUPABASE"))
-      });
     }
   }
 

@@ -14,10 +14,17 @@ const allowedOrigins = [
 
 app.use(cors({
   origin: (origin, callback) => {
-    // Permite requisições sem origin (como apps mobile ou curl) ou de origins autorizados
-    if (!origin || allowedOrigins.includes(origin)) {
+    // Permite requisições sem origin (curl, Postman, server-to-server)
+    if (!origin) return callback(null, true);
+
+    const isAllowed = allowedOrigins.filter(Boolean).includes(origin);
+    // Permite qualquer URL de preview dinâmica do projeto na Vercel
+    const isVercelPreview = /^https:\/\/foto-segundo-[a-z0-9]+-.*\.vercel\.app$/.test(origin);
+
+    if (isAllowed || isVercelPreview) {
       callback(null, true);
     } else {
+      console.warn(`[CORS] Bloqueado para origin: ${origin}`);
       callback(new Error("CORS bloqueado por política de segurança"));
     }
   },
