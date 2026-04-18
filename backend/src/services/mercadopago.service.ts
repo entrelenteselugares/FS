@@ -4,9 +4,22 @@ import dotenv from "dotenv";
 
 dotenv.config();
 
-// Configuração do Cliente para Pagamentos (usando Access Token principal)
+// Limpeza rigorosa do Access Token para evitar caracteres invisíveis no Header Authorization
+const rawToken = process.env.MP_ACCESS_TOKEN || "";
+const accessToken = rawToken
+  .trim()
+  .replace(/[\r\n\t]/g, "")
+  .replace(/[^\x20-\x7E]/g, "");
+
+if (accessToken) {
+  console.log(`[MP] Token Sanitized. Length: ${accessToken.length} | Prefix: ${accessToken.slice(0, 10)}...`);
+} else {
+  console.error("[MP] CRITICAL: MP_ACCESS_TOKEN is missing or empty after sanitization!");
+}
+
+// Configuração do Cliente para Pagamentos
 const client = new MercadoPagoConfig({
-  accessToken: process.env.MP_ACCESS_TOKEN || "",
+  accessToken: accessToken,
   options: { timeout: 5000 }
 });
 
@@ -122,7 +135,7 @@ export class MercadoPagoService {
   static async getPaymentStatus(paymentId: string) {
     try {
       const response = await axios.get(`https://api.mercadopago.com/v1/payments/${paymentId}`, {
-        headers: { Authorization: `Bearer ${process.env.MP_ACCESS_TOKEN}` }
+        headers: { Authorization: `Bearer ${accessToken}` }
       });
       return response.data;
     } catch (error: any) {
@@ -162,7 +175,7 @@ export class MercadoPagoService {
         },
         {
           headers: {
-            Authorization: `Bearer ${process.env.MP_ACCESS_TOKEN}`,
+            Authorization: `Bearer ${accessToken}`,
             "X-Idempotency-Key": `pay-${Date.now()}`
           }
         }
