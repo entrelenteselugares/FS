@@ -2,9 +2,17 @@ import { useState, useEffect, useCallback } from "react";
 import { useParams, useNavigate, useSearchParams } from "react-router-dom";
 import { API } from "../lib/api";
 
+interface MercadoPagoInstance {
+  createCardToken: (data: any) => Promise<{ id: string; cause?: Array<{ description: string }> }>;
+}
+
+interface MercadoPagoConstructor {
+  new (publicKey: string): MercadoPagoInstance;
+}
+
 declare global {
   interface Window {
-    MercadoPago: new (key: string) => unknown;
+    MercadoPago: MercadoPagoConstructor;
   }
 }
 
@@ -81,7 +89,7 @@ export const EventPage = () => {
   const [searchParams] = useSearchParams();
   const [hasPaid, setHasPaid] = useState(false);
   const [access, setAccess] = useState<AccessData | null>(null);
-  const [orderId, setOrderId] = useState<string | null>(null);
+  const [_orderId, setOrderId] = useState<string | null>(null);
 
   const [step, setStep] = useState<"paywall" | "checkout" | "processing" | "success">("paywall");
   const [checkoutError, setCheckoutError] = useState("");
@@ -124,12 +132,12 @@ export const EventPage = () => {
     if (!id) return;
 
     // Prioridade 1: orderId na URL (?orderId=xxx)
-    const urlOrderId = searchParams.get("orderId");
+    const _urlOrderId = searchParams.get("orderId");
     
     // Prioridade 2: orderId no localStorage
     const savedOrderId = localStorage.getItem(`fs_order_${id}`);
     
-    const oid = urlOrderId ?? savedOrderId;
+    const oid = _urlOrderId ?? savedOrderId;
     
     if (oid) {
       setOrderId(oid);
