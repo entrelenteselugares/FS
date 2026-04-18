@@ -1,6 +1,7 @@
 import { useState, useEffect, useCallback } from "react";
 import { useParams, useNavigate, useSearchParams } from "react-router-dom";
 import { API } from "../lib/api";
+import { useAuth } from "../contexts/AuthContext";
 
 interface MercadoPagoInstance {
   createCardToken: (data: Record<string, string>) => Promise<{ id: string; cause?: Array<{ description: string }> }>;
@@ -36,6 +37,8 @@ interface AccessData {
   driveUrl: string | null;
   eventTitle: string;
 }
+
+
 
 function formatDate(d: string) {
   try {
@@ -220,7 +223,7 @@ export const EventPage = () => {
     try {
       const { data } = await API.post("/checkout/payment", {
         eventId: event.id,
-        userId: user?.userId,
+        userId: user?.id,
         cardToken,
         email: cardData.email,
         cpf: cardData.cpf,

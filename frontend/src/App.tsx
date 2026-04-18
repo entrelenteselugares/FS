@@ -6,7 +6,7 @@ import { LoginPage } from "./pages/LoginPage";
 import { HomePage } from "./pages/HomePage";
 import ProfissionalDashboard from "./pages/ProfissionalDashboard";
 import { AdminDashboard } from "./pages/admin/AdminDashboard";
-import { CartorioDashboard } from "./pages/CartorioDashboard";
+import CartorioDashboard from "./pages/CartorioDashboard";
 import { AuthSelectionPage } from "./pages/AuthSelectionPage";
 import { RegisterPage } from "./pages/RegisterPage";
 import ClienteArea from "./pages/ClienteArea";
