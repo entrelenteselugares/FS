@@ -2,6 +2,7 @@ import { useState, useEffect, useCallback } from "react";
 import { useParams, useNavigate, useSearchParams } from "react-router-dom";
 import { API } from "../lib/api";
 import { useAuth } from "../contexts/AuthContext";
+import { Helmet } from "react-helmet-async";
 
 interface MercadoPagoInstance {
   createCardToken: (data: Record<string, string>) => Promise<{ id: string; cause?: Array<{ description: string }> }>;
@@ -288,6 +289,10 @@ export const EventPage = () => {
 
   return (
     <div style={S.page}>
+      <Helmet>
+        <title>{event.nomeNoivos ? `${event.nomeNoivos} | Foto Segundo` : "Foto Segundo"}</title>
+        <meta name="description" content={`Veja as fotos e vídeos exclusivos do evento ${event.nomeNoivos}.`} />
+      </Helmet>
       <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,700;0,900;1,700&family=Outfit:wght@300;400;500;700&display=swap" rel="stylesheet" />
       
       <nav style={{ display: "flex", alignItems: "center", justifyContent: "space-between", padding: "1.25rem 2rem", borderBottom: "1px solid rgba(255,255,255,0.05)" }}>

@@ -36,6 +36,7 @@ router.get("/mercadopago/callback", MercadoPagoController.callback);
 router.get("/public/events", EventController.listPublic);
 router.get("/public/events/:id", EventController.getById);
 router.get("/public/events/:id/access", EventController.getAccess);
+router.get("/share/e/:id", SEOController.getEventPreview);
 
 // ── Pagamento ────────────────────────────────────────────────────
 router.post("/checkout", PaymentController.checkout);

@@ -2,6 +2,7 @@ import { useState, useEffect, useRef } from "react";
 import { useNavigate } from "react-router-dom";
 import { API } from "../lib/api";
 import { useAuth } from "../contexts/AuthContext";
+import { Helmet } from "react-helmet-async";
 
 interface Event {
   id: string;
@@ -85,7 +86,11 @@ export const HomePage = () => {
 
   return (
     <div style={{ fontFamily: "'Outfit', 'Inter', sans-serif", background: "#050505", color: "#e8e4dc", minHeight: "100vh" }}>
-
+      <Helmet>
+        <title>Foto Segundo | Suas memórias, sincronizadas com a vida.</title>
+        <meta name="description" content="Acesse a galeria exclusiva do seu casamento e reviva cada detalhe com qualidade premium em segundos." />
+      </Helmet>
+      
       {/* Google Fonts */}
       <link rel="preconnect" href="https://fonts.googleapis.com" />
       <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,700;0,900;1,700&family=Outfit:wght@300;400;500;700&display=swap" rel="stylesheet" />

@@ -1,5 +1,6 @@
 import { BrowserRouter as Router, Routes, Route, Navigate } from "react-router-dom";
 import { AuthProvider, useAuth } from "./contexts/AuthContext";
+import { HelmetProvider } from "react-helmet-async";
 import { ProtectedRoute } from "./components/ProtectedRoute";
 import { EventPage } from "./pages/EventPage";
 import { LoginPage } from "./pages/LoginPage";
@@ -27,7 +28,8 @@ const DashboardRedirect = () => {
 function App() {
   return (
     <AuthProvider>
-      <Router>
+      <HelmetProvider>
+        <Router>
         <Routes>
           {/* Público */}
           <Route path="/" element={<HomePage />} />
@@ -75,6 +77,7 @@ function App() {
           <Route path="*" element={<Navigate to="/" replace />} />
         </Routes>
       </Router>
+      </HelmetProvider>
     </AuthProvider>
   );
 }
