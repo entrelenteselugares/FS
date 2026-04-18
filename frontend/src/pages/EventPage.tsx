@@ -51,6 +51,16 @@ function formatCurrency(v: number) {
   return new Intl.NumberFormat("pt-BR", { style: "currency", currency: "BRL" }).format(v);
 }
 
+function detectCardBrand(number: string): string {
+  const n = number.replace(/\s/g, "");
+  if (/^4/.test(n)) return "visa";
+  if (/^5[1-5]/.test(n) || /^2[2-7]/.test(n)) return "master";
+  if (/^3[47]/.test(n)) return "amex";
+  if (/^6(?:011|5)/.test(n)) return "elo";
+  if (/^(?:606282|3841)/.test(n)) return "hipercard";
+  return "visa"; // fallback
+}
+
 const S = {
   page: { fontFamily: "'Outfit', 'Inter', sans-serif", background: "#050505", color: "#e8e4dc", minHeight: "100vh" } as React.CSSProperties,
   input: {
@@ -212,7 +222,7 @@ export const EventPage = () => {
         email: cardData.email,
         cpf: cardData.cpf,
         installments: 1,
-        paymentMethodId: "visa"
+        paymentMethodId: detectCardBrand(cardData.number)
       });
 
       localStorage.setItem(`fs_order_${id}`, data.orderId);
