@@ -200,7 +200,7 @@ export const CartorioDashboard: React.FC = () => {
                   Eventos Consolidados
                 </div>
                 <div className="text-4xl font-serif italic text-white mb-2">
-                  {stats?.eventos.length ?? 0}
+                  {stats?.eventos?.length ?? 0}
                 </div>
                 <div className="text-[9px] text-zinc-700 uppercase tracking-widest font-bold">Arquivo no Período</div>
               </div>
@@ -209,8 +209,8 @@ export const CartorioDashboard: React.FC = () => {
                 <div className="text-[9px] font-bold uppercase tracking-[0.4em] text-zinc-500 mb-4">
                   Protocolos Hoje
                 </div>
-                <div className={`text-4xl font-serif italic mb-2 ${(stats?.eventosHoje.length ?? 0) > 0 ? "text-brand-olive" : "text-zinc-800"}`}>
-                  {stats?.eventosHoje.length ?? 0}
+                <div className={`text-4xl font-serif italic mb-2 ${(stats?.eventosHoje?.length ?? 0) > 0 ? "text-brand-olive" : "text-zinc-800"}`}>
+                  {stats?.eventosHoje?.length ?? 0}
                 </div>
                 <div className="text-[9px] text-zinc-700 uppercase tracking-widest font-bold">Casamentos Programados</div>
               </div>
@@ -222,16 +222,16 @@ export const CartorioDashboard: React.FC = () => {
                 <h2 className="text-[10px] font-bold uppercase tracking-[0.5em] text-zinc-400">
                   Agenda de Ativos
                 </h2>
-                {(stats?.eventosHoje.length ?? 0) > 0 && (
+                {(stats?.eventosHoje?.length ?? 0) > 0 && (
                   <span className="flex items-center gap-3 px-4 py-2 border border-brand-olive/20 text-brand-olive text-[8px] font-bold uppercase tracking-widest">
                     <span className="w-1.5 h-1.5 bg-brand-olive rounded-full animate-pulse" />
-                    {stats!.eventosHoje.length} PROTOCOLO(S) HOJE
+                    {stats?.eventosHoje?.length} PROTOCOLO(S) HOJE
                   </span>
                 )}
               </div>
 
               <div className="divide-y divide-white/5">
-                {stats?.eventos.map((ev) => {
+                {stats?.eventos?.map((ev) => {
                   const isToday = new Date(ev.dataEvento).toDateString() === new Date().toDateString();
                   const pedidos = ev.pedidos ?? [];
                   const approved = pedidos.filter((o) => o.status === "APROVADO").length;
@@ -276,7 +276,7 @@ export const CartorioDashboard: React.FC = () => {
                   );
                 })}
 
-                {!stats?.eventos.length && (
+                {(!stats?.eventos || stats.eventos.length === 0) && (
                   <div className="text-center py-24 text-[10px] font-bold uppercase tracking-[0.5em] text-zinc-800">
                     Arquivo de eventos vazio
                   </div>
