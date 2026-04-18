@@ -38,10 +38,7 @@ export const CartorioDashboard: React.FC = () => {
   const [searchParams] = useSearchParams();
   const { user } = useAuth();
   const [stats, setStats] = useState<CartorioStats | null>(null);
-  const [loading, setLoading] = useState(true);
-  const [startDate, setStartDate] = useState("");
-  const [endDate, setEndDate] = useState("");
-  const [cartorioName, setCartorioName] = useState("");
+  const [error, setError] = useState("");
   const [success, setSuccess] = useState(() => {
     const mpConnected = searchParams.get("mp_connected");
     return mpConnected ? "Mercado Pago conectado com sucesso! ✅" : "";
@@ -49,16 +46,24 @@ export const CartorioDashboard: React.FC = () => {
 
   const fetchStats = useCallback(() => {
     setLoading(true);
+    setError("");
     const params: Record<string, string> = {};
     if (startDate) params.startDate = startDate;
     if (endDate) params.endDate = endDate;
     if (cartorioName) params.cartorioName = cartorioName;
     API.get("/cartorio/stats", { params })
       .then((r) => setStats(r.data))
-      .catch(console.error)
+      .catch((err) => {
+        console.error(err);
+        if (err.response?.status === 404) {
+          setError("Seu perfil de cartório ainda não foi configurado. Entre em contato com o administrador.");
+        } else {
+          setError("Erro ao carregar dados. Tente novamente mais tarde.");
+        }
+      })
       .finally(() => setLoading(false));
   // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
+  }, [startDate, endDate, cartorioName]);
 
   useEffect(() => {
     fetchStats();
@@ -112,7 +117,11 @@ export const CartorioDashboard: React.FC = () => {
               id="btn-cartorio-mp-connect"
               onClick={() => {
                 const base = import.meta.env.VITE_API_URL || "";
-                const token = localStorage.getItem("token");
+                const token = localStorage.getItem("fs_token");
+                if (!token) {
+                  alert("Você precisa estar logado para vincular sua conta.");
+                  return;
+                }
                 window.location.href = `${base}/api/mercadopago/connect?token=${token}`;
               }}
               className="bg-white text-black hover:bg-zinc-200 font-bold text-[10px] uppercase tracking-[0.3em] px-8 py-4 transition-all"
@@ -121,6 +130,14 @@ export const CartorioDashboard: React.FC = () => {
             </button>
           )}
         </div>
+
+        {/* ── Error banner ── */}
+        {error && (
+          <div className="mb-12 p-6 border border-red-900/20 bg-red-900/5 text-red-700 text-[10px] font-bold uppercase tracking-[0.3em] flex items-center gap-4">
+            <div className="w-2 h-2 rounded-full bg-red-700" />
+            {error}
+          </div>
+        )}
 
         {/* ── Success banner ── */}
         {success && (

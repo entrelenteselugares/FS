@@ -12,7 +12,18 @@ export class CartorioController {
     const { startDate, endDate, cartorioName } = req.query;
 
     try {
-      // 1. Definir o filtro de unidade
+      // 1. Validar existência do perfil se não for Admin
+      if (!isAdmin) {
+        const cartorio = await prisma.cartorio.findUnique({ where: { userId: user.userId } });
+        if (!cartorio) {
+          return res.status(404).json({ 
+            error: "Perfil de cartório não encontrado. Entre em contato com a administração.",
+            code: "CARTORIO_NOT_FOUND" 
+          });
+        }
+      }
+
+      // 2. Definir o filtro de unidade
       // Se for ADMIN, pode filtrar por nome. Se for CARTORIO, filtra por ele mesmo.
       const where: any = { active: true };
       
