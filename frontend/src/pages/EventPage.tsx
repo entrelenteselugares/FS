@@ -352,24 +352,39 @@ export const EventPage = () => {
             {formatDate(event.dataEvento)}
           </p>
 
-          <div style={S.card}>
-            <p style={{ fontSize: 10, letterSpacing: 2, textTransform: "uppercase", color: "#c9a96e", marginBottom: "2rem", fontWeight: 700 }}>Serviços Inclusos</p>
-            <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "2rem" }}>
+          <div style={{ ...S.card, padding: "2rem" }}>
+            <div style={{ display: "flex", alignItems: "center", gap: 10, marginBottom: "2.5rem" }}>
+              <div style={{ width: 15, height: 1, background: "#c9a96e" }} />
+              <p style={{ fontSize: 10, letterSpacing: 3, textTransform: "uppercase", color: "#c9a96e", margin: 0, fontWeight: 700 }}>Serviços Inclusos</p>
+            </div>
+            
+            <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(200px, 1fr))", gap: "2.5rem" }}>
               {[
-                { active: event.temFoto, icon: "✦", label: "Galeria de Fotos", desc: "Alta resolução p/ impressão" },
-                { active: event.temVideo, icon: "✦", label: "Filme & Vídeo", desc: "Download em 4K disponível" },
-                { active: event.temReels, icon: "✦", label: "Social Media", desc: "Formato Reels e Stories" },
-                { active: event.temFotoImpressa, icon: "✦", label: "Foto Física", desc: "Retirada em loja/evento" },
+                { active: event.temFoto, icon: "📸", label: "Galeria Digital", desc: "Fotos em alta resolução com tratamento editorial." },
+                { active: event.temVideo, icon: "🎬", label: "Cinema & Filme", desc: "Registro cinematográfico dos momentos principais." },
+                { active: event.temReels, icon: "📱", label: "Social Media", desc: "Vídeos otimizados para Reels, Stories e TikTok." },
+                { active: event.temFotoImpressa, icon: "💎", label: "Foto Física", desc: "Impressão premium em papel fine art no local." },
               ].map((item) => item.active && (
-                <div key={item.label} style={{ display: "flex", gap: 15 }}>
-                  <span style={{ fontSize: 12, color: "#c9a96e", paddingTop: 2 }}>{item.icon}</span>
+                <div key={item.label} style={{ display: "flex", gap: 18, alignItems: "flex-start" }}>
+                  <div style={{ 
+                    minWidth: 42, height: 42, borderRadius: "50%", 
+                    background: "rgba(201,169,110,0.05)", border: "1px solid rgba(201,169,110,0.1)",
+                    display: "flex", alignItems: "center", justifyContent: "center", fontSize: 18
+                  }}>
+                    {item.icon}
+                  </div>
                   <div>
-                    <div style={{ fontSize: 13, fontWeight: 600, color: "#fff", marginBottom: 4 }}>{item.label}</div>
-                    <div style={{ fontSize: 11, color: "#555", lineHeight: 1.4 }}>{item.desc}</div>
+                    <div style={{ fontSize: 13, fontWeight: 700, color: "#fff", marginBottom: 5, letterSpacing: "0.5px" }}>{item.label}</div>
+                    <div style={{ fontSize: 11, color: "#666", lineHeight: 1.5, fontWeight: 300 }}>{item.desc}</div>
                   </div>
                 </div>
               ))}
             </div>
+            
+            {/* Caso nenhum serviço esteja ativo (fallback visual) */}
+            {!event.temFoto && !event.temVideo && !event.temReels && !event.temFotoImpressa && (
+              <p style={{ fontSize: 12, color: "#333", fontStyle: "italic" }}>Consulte os serviços disponíveis para este evento com o cartório oficial.</p>
+            )}
           </div>
 
           {hasPaid && access && (

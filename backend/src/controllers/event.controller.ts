@@ -75,7 +75,7 @@ export class EventController {
 
       const hasAccess = isPaid || !!order;
 
-      // No Pivot, não retornamos mídias individuais, mas sim os links de entrega
+      // Links sensíveis só aparecem se aprovado
       return res.json({
         id: targetEvent.id,
         nomeNoivos: targetEvent.nomeNoivos,
@@ -84,6 +84,10 @@ export class EventController {
         coverPhotoUrl: targetEvent.coverPhotoUrl,
         priceBase: targetEvent.priceBase,
         priceEarly: targetEvent.priceEarly,
+        temFoto: targetEvent.temFoto,
+        temVideo: targetEvent.temVideo,
+        temReels: targetEvent.temReels,
+        temFotoImpressa: targetEvent.temFotoImpressa,
         // Links sensíveis só aparecem se aprovado
         lightroomUrl: hasAccess ? targetEvent.lightroomUrl : null,
         driveUrl: hasAccess ? targetEvent.driveUrl : null,
