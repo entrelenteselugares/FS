@@ -18,6 +18,7 @@ import {
 import { MercadoPagoController } from "../controllers/mercadopago.controller";
 import { getMeusEventos, updateEventLinks, uploadEventCover } from "../controllers/profissional.controller";
 import { getMeusPedidos, getMeuPedidoDetalhe } from "../controllers/cliente.controller";
+import { CartorioController } from "../controllers/cartorio.controller";
 import { requireAuth, requireRole } from "../lib/auth";
 
 const router = Router();
@@ -69,6 +70,8 @@ router.patch("/profissional/events/:id/links", requireAuth, requireRole("ADMIN",
 router.patch("/profissional/events/:id/cover", requireAuth, requireRole("ADMIN", "PROFISSIONAL"), uploadEventCover);
 
 // ── Legado / Compatibilidade ─────────────────────────────────────
-router.get("/cartorio/stats", requireAuth, requireRole("ADMIN", "CARTORIO"), AdminEventController.cartorioStats);
+// ── Cartório / Unidades: Gestão de Ativos ────────────────────────
+router.get("/cartorio/stats", requireAuth, requireRole("ADMIN", "CARTORIO"), CartorioController.getStats);
+router.get("/cartorio/events", requireAuth, requireRole("ADMIN", "CARTORIO"), CartorioController.getEvents);
 
 export default router;
