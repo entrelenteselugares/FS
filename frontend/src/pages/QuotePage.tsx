@@ -83,7 +83,7 @@ export const QuotePage = () => {
       } else {
         setStep(3); 
       }
-    } catch (err) {
+    } catch {
       alert("Erro ao processar orçamento. Tente novamente.");
     }
   };
