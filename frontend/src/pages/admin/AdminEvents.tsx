@@ -156,15 +156,15 @@ export const AdminEvents: React.FC = () => {
       </div>
 
       {isModalOpen && (
-        <div className="fixed inset-0 bg-black/95 backdrop-blur-xl z-50 flex items-center justify-center p-6 overflow-y-auto">
-          <div className="w-full max-w-4xl bg-[#080808] border border-white/5 p-12 relative animate-in zoom-in-95 duration-300">
-             <button onClick={() => setIsModalOpen(false)} className="absolute top-8 right-8 text-zinc-500 hover:text-white">
-               <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M18 6L6 18M6 6l13 13"/></svg>
+        <div className="fixed inset-0 bg-black/95 backdrop-blur-xl z-50 flex items-start justify-center p-4 overflow-y-auto pt-10">
+          <div className="w-full max-w-4xl bg-[#080808] border border-white/5 p-8 relative animate-in zoom-in-95 duration-300 mb-10">
+             <button onClick={() => setIsModalOpen(false)} className="absolute top-6 right-6 text-zinc-500 hover:text-white transition-colors">
+               <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5"><path d="M18 6L6 18M6 6l12 12"/></svg>
              </button>
 
-             <div className="mb-12">
-               <h2 className="text-4xl font-heading text-white tracking-tighter uppercase mb-2">Novo Arquivo</h2>
-               <div className="w-16 h-1.5 bg-brand-tactical" />
+             <div className="mb-8">
+               <h2 className="text-3xl font-heading text-white tracking-tighter uppercase mb-2">Novo Arquivo</h2>
+               <div className="w-12 h-1 bg-brand-tactical" />
              </div>
 
              <form onSubmit={handleCreate} className="grid grid-cols-1 md:grid-cols-2 gap-x-12 gap-y-10">
