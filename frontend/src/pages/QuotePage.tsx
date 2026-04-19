@@ -131,9 +131,9 @@ export const QuotePage = () => {
               <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 20 }}>
                 <div>
                   <label style={{ fontSize: 10, fontWeight: 800, textTransform: "uppercase", marginBottom: 15, display: "block", color: THEME.text2 }}>2. Número de Convidados</label>
-                  <div style={{ position: "relative" }}>
-                    <Users size={16} style={{ position: "absolute", left: 15, top: 15, color: THEME.accent }} />
-                    <input type="number" value={attendees} onChange={e => setAttendees(Number(e.target.value))} style={{ width: "100%", paddingLeft: 45 }} />
+                  <div style={{ position: "relative", display: "flex", alignItems: "center" }}>
+                    <Users size={18} style={{ position: "absolute", left: 15, color: THEME.accent, pointerEvents: "none" }} />
+                    <input type="number" value={attendees} onChange={e => setAttendees(Number(e.target.value))} style={{ width: "100%", paddingLeft: "48px !important" }} />
                   </div>
                   <div style={{ fontSize: 9, marginTop: 10, color: THEME.accent, fontWeight: 700, textTransform: "uppercase" }}>
                     Equipe Suggest: {team.senior} Sênior {team.aux > 0 && `+ ${team.aux} Auxiliar`}
@@ -141,9 +141,9 @@ export const QuotePage = () => {
                 </div>
                 <div>
                   <label style={{ fontSize: 10, fontWeight: 800, textTransform: "uppercase", marginBottom: 15, display: "block", color: THEME.text2 }}>3. Data do Evento</label>
-                  <div style={{ position: "relative" }}>
-                    <Calendar size={16} style={{ position: "absolute", left: 15, top: 15, color: THEME.accent }} />
-                    <input type="date" value={eventDate} onChange={e => setEventDate(e.target.value)} style={{ width: "100%", paddingLeft: 45 }} />
+                  <div style={{ position: "relative", display: "flex", alignItems: "center" }}>
+                    <Calendar size={18} style={{ position: "absolute", left: 15, color: THEME.accent, pointerEvents: "none" }} />
+                    <input type="date" value={eventDate} onChange={e => setEventDate(e.target.value)} style={{ width: "100%", paddingLeft: "48px !important" }} />
                   </div>
                 </div>
               </div>
