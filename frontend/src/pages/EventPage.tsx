@@ -4,9 +4,13 @@ import { useAuth } from "../hooks/useAuth";
 import { API as api } from "../lib/api";
 import axios from "axios";
 
+interface MercadoPagoInstance {
+  createCardToken: (data: Record<string, string>) => Promise<{ id: string }>;
+}
+
 declare global {
   interface Window {
-    MercadoPago: new (publicKey: string) => Record<string, unknown>;
+    MercadoPago: new (publicKey: string) => MercadoPagoInstance;
   }
 }
 
