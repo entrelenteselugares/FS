@@ -11,7 +11,7 @@ export const SEOController = {
 
     try {
       const event = await prisma.event.findUnique({
-        where: { id },
+        where: { id: id as string },
         select: { 
           nomeNoivos: true, 
           coverPhotoUrl: true, 

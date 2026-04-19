@@ -56,7 +56,7 @@ export async function getMeuPedidoDetalhe(req: Request, res: Response): Promise<
 
   try {
     const pedido = await prisma.order.findFirst({
-      where: { id, clienteId: user.userId },
+      where: { id: id as string, clienteId: user.userId },
       include: {
         event: {
           select: {
@@ -84,17 +84,19 @@ export async function getMeuPedidoDetalhe(req: Request, res: Response): Promise<
 
     const aprovado = pedido.status === "APROVADO";
 
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    const p = pedido as any;
     res.json({
-      id: pedido.id,
-      status: pedido.status,
-      amount: Number(pedido.valor),
-      createdAt: pedido.createdAt,
+      id: p.id,
+      status: p.status,
+      amount: Number(p.valor),
+      createdAt: p.createdAt,
       hasPaid: aprovado,
       event: {
-        ...pedido.event,
+        ...p.event,
         // Só expõe os links se o status for APROVADO no banco
-        lightroomUrl: aprovado ? pedido.event.lightroomUrl : null,
-        driveUrl: aprovado ? pedido.event.driveUrl : null,
+        lightroomUrl: aprovado ? p.event?.lightroomUrl ?? null : null,
+        driveUrl: aprovado ? p.event?.driveUrl ?? null : null,
       },
     });
   } catch (err) {
