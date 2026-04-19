@@ -1,42 +1,34 @@
+import { Pool } from "pg";
+import { PrismaPg } from "@prisma/adapter-pg";
 import { PrismaClient } from "@prisma/client";
 
+/**
+ * Padrão Singleton com Driver Adapter (Prisma 6)
+ * Elimina a dependência de motores Rust (binários) em produção.
+ */
 const globalForPrisma = global as unknown as { prisma: PrismaClient };
 
-/**
- * Cria uma instância padrão do Prisma Client.
- * O Prisma 6+ já lida muito bem com serverless se a URL estiver correta.
- */
+const connectionString = process.env.DATABASE_URL;
+
 function createPrismaClient() {
-  const connectionString = process.env.DATABASE_URL;
-
   if (!connectionString) {
-    console.error("[CRITICAL] DATABASE_URL não encontrada!");
-    return null as any; 
+    throw new Error("DATABASE_URL não configurada no ambiente.");
   }
 
-  try {
-    console.log("[DB] Inicializando Prisma Client Nativo...");
-    return new PrismaClient({
-      log: process.env.NODE_ENV === "development" ? ["query", "error", "warn"] : ["error"],
-    });
-  } catch (err) {
-    console.error("[DB BOOTSTRAP ERROR]:", err);
-    return null as any;
-  }
+  // Cria a pool de conexões nativa do Postgres (node-postgres)
+  const pool = new Pool({ connectionString });
+  
+  // Envolve a pool com o adaptador do Prisma
+  const adapter = new PrismaPg(pool);
+
+  return new PrismaClient({
+    adapter,
+    log: process.env.NODE_ENV === "development" ? ["query", "error", "warn"] : ["error"],
+  });
 }
 
-export const prisma = new Proxy({} as PrismaClient, {
-  get: (target, prop) => {
-    if (!globalForPrisma.prisma) {
-      globalForPrisma.prisma = createPrismaClient();
-    }
-    
-    if (!globalForPrisma.prisma) {
-      throw new Error("DATABASE_URL_NOT_CONFIGURED: Verifique as variáveis no Vercel.");
-    }
-    
-    return (globalForPrisma.prisma as any)[prop];
-  }
-});
+export const prisma = globalForPrisma.prisma || createPrismaClient();
+
+if (process.env.NODE_ENV !== "production") globalForPrisma.prisma = prisma;
 
 export default prisma;

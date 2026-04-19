@@ -19,6 +19,7 @@ import { MercadoPagoController } from "../controllers/mercadopago.controller";
 import { getMeusEventos, updateEventLinks, uploadEventCover } from "../controllers/profissional.controller";
 import { getMeusPedidos, getMeuPedidoDetalhe } from "../controllers/cliente.controller";
 import { CartorioController } from "../controllers/cartorio.controller";
+import { SEOController } from "../controllers/seo.controller";
 import { requireAuth, requireRole } from "../lib/auth";
 
 const router = Router();

@@ -2,7 +2,7 @@
   "version": 2,
   "functions": {
     "api/index.js": {
-      "includeFiles": "api/server.js"
+      "includeFiles": "{api/server.js,node_modules/.prisma/client/**/*}"
     }
   },
   "rewrites": [

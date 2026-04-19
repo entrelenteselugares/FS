@@ -1,27 +1,35 @@
 "use strict";
 
 /**
- * Vercel Serverless Function — Foto Segundo
+ * Vercel Serverless Function — Foto Segundo (Rescue Edition)
  * 
- * Usa o bundle auto-suficiente gerado pelo esbuild (api/server.js).
- * Todas as dependências (Express, cors, jwt, etc.) estão embutidas no bundle.
- * Apenas @prisma/client e multer são carregados de node_modules.
+ * Agora com carregamento lazy para capturar erros de boot no runtime.
  */
-const app = require("./server").default;
 
 module.exports = (req, res) => {
   try {
+    // Carrega o servidor apenas quando a função é invocada
+    // Isso permite capturar erros de require() ausentes
+    const app = require("./server").default;
+    
+    if (!app) {
+      throw new Error("Instância do servidor (Express) não encontrada no bundle.");
+    }
+
     return app(req, res);
   } catch (err) {
-    console.error("[BOOT ERROR]:", err.message);
+    console.error("[CRITICAL BOOT ERROR]:", err.message);
     return res.status(500).json({
-      error: "Falha na inicialização do servidor.",
+      error: "Falha catastrófica no boot do servidor.",
       message: err.message,
       diagnostic: {
         node: process.version,
-        has_db_url: !!process.env.DATABASE_URL,
-        has_supabase_url: !!process.env.SUPABASE_URL,
-        has_supabase_key: !!process.env.SUPABASE_SERVICE_ROLE_KEY,
+        has_server_bundle: true,
+        stack: err.stack,
+        env: {
+          has_db_url: !!process.env.DATABASE_URL,
+          has_direct_url: !!process.env.DIRECT_URL
+        }
       }
     });
   }
