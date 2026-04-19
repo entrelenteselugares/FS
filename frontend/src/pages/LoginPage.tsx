@@ -4,6 +4,21 @@ import { useAuth } from "../hooks/useAuth";
 import { motion } from "framer-motion";
 import { ArrowRight, Lock, Mail } from "lucide-react";
 
+// ── Design System "Tactical Professional" 🛡️🎨 ──────────────────
+const T = {
+  bg:       "#0c0c0c",
+  bgCard:   "#111",
+  bgField:  "#0c0c0c",
+  border:   "#1c1c1c",
+  border2:  "#2a2a2a",
+  text:     "#f0ede8",
+  text2:    "#888",
+  text3:    "#555",
+  accent:   "#8a9a5b",
+  fontDisplay: "'Barlow Condensed', sans-serif",
+  fontBody:    "'Inter', sans-serif",
+} as const;
+
 export const LoginPage: React.FC = () => {
   const [email, setEmail] = useState("");
   const [senha, setSenha] = useState("");
@@ -25,7 +40,6 @@ export const LoginPage: React.FC = () => {
     try {
       const authUser = await login(email, senha);
       
-      // Verificação de Intenção de Compra Pendente
       const pendingEventId = localStorage.getItem("pending_purchase_event_id");
       if (pendingEventId) {
         localStorage.removeItem("pending_purchase_event_id");
@@ -33,7 +47,6 @@ export const LoginPage: React.FC = () => {
         return;
       }
 
-      // Redirecionamento por Role
       const destinos: Record<string, string> = {
         ADMIN: "/admin",
         PROFISSIONAL: "/profissional",
@@ -42,75 +55,79 @@ export const LoginPage: React.FC = () => {
       };
 
       navigate(destinos[authUser.role] || "/");
-
     } catch (err: any) {
       const errorMsg = err.response?.data?.error;
-      setError(typeof errorMsg === 'string' ? errorMsg : "Acesso negado. Credenciais expiradas ou incorretas.");
+      setError(typeof errorMsg === 'string' ? errorMsg : "Acesso negado. Verifique suas credenciais.");
     } finally {
       setLoading(false);
     }
   };
 
   return (
-    <div className="min-h-screen bg-[#050505] flex items-center justify-center px-6 relative overflow-hidden">
-      {/* Editorial Decorative Elements */}
-      <div className="absolute top-0 left-0 w-full h-[1px] bg-gradient-to-r from-transparent via-white/5 to-transparent" />
-      <div className="absolute bottom-1/4 left-1/4 w-[1px] h-32 bg-brand-tactical/20" />
+    <div style={{ fontFamily: T.fontBody, background: T.bg, color: T.text, minHeight: "100vh", display: "flex", alignItems: "center", justifyContent: "center", padding: "0 24px", position: "relative", overflow: "hidden" }}>
+      <style>{`
+        @import url('https://fonts.googleapis.com/css2?family=Barlow+Condensed:ital,wght@0,700;0,800;0,900;1,700;1,900&family=Inter:wght@300;400;500&display=swap');
+        * { box-sizing: border-box; }
+        input:focus { border-color: ${T.accent} !important; outline: none; }
+        input::placeholder { color: #333; }
+      `}</style>
+
+      {/* Decorative */}
+      <div style={{ position: "absolute", top: 0, left: 0, width: "100%", height: "1px", background: "linear-gradient(90deg, transparent, rgba(255,255,255,0.05), transparent)" }} />
+      <div style={{ position: "absolute", bottom: "20%", left: "10%", width: "1px", height: 120, background: `${T.accent}20` }} />
 
       <motion.div 
-        initial={{ opacity: 0, scale: 0.98 }}
-        animate={{ opacity: 1, scale: 1 }}
+        initial={{ opacity: 0, y: 10 }}
+        animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.8 }}
-        className="w-full max-w-lg relative z-10"
+        style={{ width: "100%", maxWidth: 500, position: "relative", zIndex: 10 }}
       >
-        <div className="text-center mb-16">
-          <div className="text-sm font-bold uppercase tracking-[0.5em] text-zinc-700 mb-8 flex items-center justify-center gap-4">
-            <span className="w-8 h-[1px] bg-zinc-900" />
-            Secure Authentication
-            <span className="w-8 h-[1px] bg-zinc-900" />
+        <div style={{ textAlign: "center", marginBottom: 60 }}>
+          <div style={{ fontSize: 10, fontWeight: 800, textTransform: "uppercase", letterSpacing: 6, color: T.text3, marginBottom: 30, display: "flex", alignItems: "center", justifyContent: "center", gap: 16 }}>
+            <span style={{ width: 30, height: 1, background: "#1a1a1a" }} />
+            Secure Access
+            <span style={{ width: 30, height: 1, background: "#1a1a1a" }} />
           </div>
-          <h1 className="text-5xl md:text-7xl font-heading text-white tracking-tighter mb-4">
-            ACESSO <span className="text-zinc-700">PRIVADO</span>
+          <h1 style={{ fontFamily: T.fontDisplay, fontSize: "clamp(50px, 8vw, 80px)", fontWeight: 900, lineHeight: 0.9, textTransform: "uppercase", letterSpacing: "-0.5px", color: "#fff", marginBottom: 12 }}>
+            ACESSO <span style={{ color: T.text3 }}>PRIVADO</span>
           </h1>
-          <p className="text-[10px] font-bold uppercase tracking-[0.5em] text-brand-tactical">
+          <p style={{ fontSize: 10, letterSpacing: 4, textTransform: "uppercase", color: T.accent, fontWeight: 800 }}>
             {preferredRole === "CARTORIO" || preferredRole === "UNIDADE" ? "PORTAL DA UNIDADE" : preferredRole ? `IDENTIDADE: ${preferredRole}` : "COLETIVO FOTO SEGUNDO"}
           </p>
         </div>
 
-        <div className="border border-white/5 bg-white/[0.01] p-10 md:p-16">
+        <div style={{ background: T.bgCard, border: `1px solid ${T.border}`, padding: "60px 50px" }}>
           {error && (
-            <div className="border border-red-900/10 bg-red-900/5 text-red-600 text-[10px] font-bold uppercase tracking-[0.2em] p-6 mb-10 text-center">
-              {typeof error === 'string' ? error : (error as any).error || JSON.stringify(error)}
+            <div style={{ border: `1px solid rgba(248,113,113,0.1)`, background: "rgba(248,113,113,0.05)", padding: 20, marginBottom: 40, textAlign: "center" }}>
+              <p style={{ color: "#f87171", fontSize: 10, fontWeight: 700, textTransform: "uppercase", letterSpacing: 2, margin: 0 }}>{error}</p>
             </div>
           )}
 
-          <form onSubmit={handleSubmit} className="space-y-10">
-            <div className="space-y-4">
-              <label className="text-[10px] font-bold uppercase tracking-[0.4em] text-zinc-600 ml-1">E-mail de Registro</label>
-              <div className="relative group">
-                <Mail className="absolute left-0 top-1/2 -translate-y-1/2 text-zinc-800 group-focus-within:text-brand-tactical transition-colors" size={14} strokeWidth={1.5} />
+          <form onSubmit={handleSubmit} style={{ display: "flex", flexDirection: "column", gap: 40 }}>
+            <div style={{ display: "flex", flexDirection: "column", gap: 12 }}>
+              <label style={{ fontSize: 10, fontWeight: 800, textTransform: "uppercase", letterSpacing: 3, color: T.text3, marginLeft: 2 }}>E-mail de Registro</label>
+              <div style={{ position: "relative", display: "flex", alignItems: "center" }}>
+                <Mail style={{ position: "absolute", left: 0, color: "#222" }} size={14} strokeWidth={1.5} />
                 <input
                   type="email"
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
-                  autoComplete="email"
-                  className="w-full bg-transparent border-b border-zinc-900 py-3 pl-8 text-xs text-white placeholder-zinc-800 focus:outline-none focus:border-brand-tactical transition-all"
+                  style={{ width: "100%", background: "transparent", border: "none", borderBottom: `1px solid ${T.border2}`, padding: "12px 0 12px 28px", fontSize: 13, color: "#fff", fontFamily: T.fontBody }}
                   placeholder="IDENTIFIER@DOMAIN.COM"
                   required
                 />
               </div>
             </div>
 
-            <div className="space-y-4">
-              <label className="text-[10px] font-bold uppercase tracking-[0.4em] text-zinc-600 ml-1">Código de Segurança</label>
-              <div className="relative group">
-                <Lock className="absolute left-0 top-1/2 -translate-y-1/2 text-zinc-800 group-focus-within:text-brand-tactical transition-colors" size={14} strokeWidth={1.5} />
+            <div style={{ display: "flex", flexDirection: "column", gap: 12 }}>
+              <label style={{ fontSize: 10, fontWeight: 800, textTransform: "uppercase", letterSpacing: 3, color: T.text3, marginLeft: 2 }}>Código de Segurança</label>
+              <div style={{ position: "relative", display: "flex", alignItems: "center" }}>
+                <Lock style={{ position: "absolute", left: 0, color: "#222" }} size={14} strokeWidth={1.5} />
                 <input
                   type="password"
                   value={senha}
                   onChange={(e) => setSenha(e.target.value)}
-                  autoComplete="current-password"
-                  className="w-full bg-transparent border-b border-zinc-900 py-3 pl-8 text-xs text-white placeholder-zinc-800 focus:outline-none focus:border-brand-tactical transition-all"
+                  style={{ width: "100%", background: "transparent", border: "none", borderBottom: `1px solid ${T.border2}`, padding: "12px 0 12px 28px", fontSize: 13, color: "#fff", fontFamily: T.fontBody }}
                   placeholder="••••••••"
                   required
                 />
@@ -120,29 +137,35 @@ export const LoginPage: React.FC = () => {
             <button
               type="submit"
               disabled={loading}
-              className="w-full bg-brand-tactical text-white hover:brightness-110 font-bold uppercase tracking-[0.5em] text-[11px] py-6 transition-all flex items-center justify-center gap-4 group rounded-none"
+              style={{
+                width: "100%", background: T.accent, color: "#0c0c0c", border: "none",
+                padding: "20px", fontWeight: 900, fontSize: 14, textTransform: "uppercase",
+                letterSpacing: 4, cursor: loading ? "not-allowed" : "pointer",
+                display: "flex", alignItems: "center", justifyContent: "center", gap: 12,
+                transition: "all 0.3s", opacity: loading ? 0.7 : 1
+              }}
             >
               {loading ? "AUTHENTICATING..." : (
                 <>
-                  Entrar no Sistema <ArrowRight size={12} className="group-hover:translate-x-2 transition-transform" />
+                  Entrar no Sistema <ArrowRight size={14} />
                 </>
               )}
             </button>
           </form>
 
-          <div className="mt-16 pt-10 border-t border-white/5 text-center">
-            <p className="text-zinc-700 text-[9px] font-bold uppercase tracking-[0.3em] mb-6 font-light">Novo no Coletivo?</p>
+          <div style={{ marginTop: 60, paddingTop: 40, borderTop: `1px solid ${T.border}`, textAlign: "center" }}>
+            <p style={{ color: T.text3, fontSize: 9, fontWeight: 800, textTransform: "uppercase", letterSpacing: 2, marginBottom: 20 }}>Novo no Coletivo?</p>
             <Link 
               to="/register?role=CLIENTE"
-              className="text-white hover:text-brand-tactical text-[11px] font-heading font-bold uppercase tracking-[0.4em] transition-all flex items-center justify-center gap-4 group italic"
+              style={{ color: "#fff", fontSize: 12, fontWeight: 700, textTransform: "uppercase", letterSpacing: 3, textDecoration: "none", display: "flex", alignItems: "center", justifyContent: "center", gap: 12, fontStyle: "italic" }}
             >
-              Solicitar Registro <span className="w-8 h-[1px] bg-zinc-900 group-hover:w-12 group-hover:bg-brand-tactical transition-all" />
+              Solicitar Registro <span style={{ width: 30, height: 1, background: "#1a1a1a" }} />
             </Link>
           </div>
         </div>
 
-        <div className="mt-12 text-center">
-          <Link to="/" className="text-zinc-800 hover:text-white text-[9px] font-bold uppercase tracking-[0.5em] transition-all">
+        <div style={{ marginTop: 40, textAlign: "center" }}>
+          <Link to="/" style={{ color: T.text3, fontSize: 9, fontWeight: 800, textTransform: "uppercase", letterSpacing: 4, textDecoration: "none" }}>
             Return to Public Showcase
           </Link>
         </div>
