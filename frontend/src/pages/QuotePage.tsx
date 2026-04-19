@@ -267,9 +267,9 @@ export const QuotePage = () => {
 
       <div style={{ maxWidth: 800, margin: "0 auto" }}>
         <header style={{ textAlign: "center", marginBottom: 60 }}>
-          <div style={{ fontSize: 10, fontWeight: 800, textTransform: "uppercase", letterSpacing: 6, color: THEME.accent, marginBottom: 20 }}>Operations & Intelligence</div>
+          <div style={{ fontSize: 10, fontWeight: 800, textTransform: "uppercase", letterSpacing: 6, color: THEME.accent, marginBottom: 20 }}>Solicitação de Orçamento</div>
           <h1 style={{ fontFamily: THEME.fontD, fontSize: "clamp(40px, 8vw, 64px)", fontWeight: 900, textTransform: "uppercase", lineHeight: 0.9 }}>
-            Máquina de <span style={{ color: THEME.text2 }}>Vendas</span>
+            Reserve seu <span style={{ color: THEME.text2 }}>Grande Dia</span>
           </h1>
         </header>
 
@@ -311,7 +311,7 @@ export const QuotePage = () => {
                     />
                   </div>
                   <div style={{ fontSize: 9, marginTop: 10, color: THEME.accent, fontWeight: 700, textTransform: "uppercase" }}>
-                    Equipe Suggest: {team.senior} Sênior {team.aux > 0 && `+ ${team.aux} Auxiliar`}
+                    Equipe Recomendada: {team.senior} Sênior {team.aux > 0 && `+ ${team.aux} Auxiliar`}
                   </div>
                 </div>
                 <div>
@@ -397,7 +397,7 @@ export const QuotePage = () => {
                   type="submit"
                   style={{ background: THEME.accent, color: "black", padding: "20px", fontWeight: 900, fontSize: 14, textTransform: "uppercase", letterSpacing: 4, marginTop: 20 }}
                 >
-                  {locationType === "PARTNER" ? "CONCLUIR RESERVA IMEDIATA" : "SOLICITAR APROVAÇÃO TÉCNICA"}
+                  {locationType === "PARTNER" ? "CONCLUIR RESERVA IMEDIATA" : "ENVIAR PARA ANÁLISE"}
                 </button>
              </form>
           </motion.div>
@@ -408,7 +408,7 @@ export const QuotePage = () => {
             <div style={{ width: 80, height: 80, borderRadius: "50%", background: `${THEME.accent}20`, display: "flex", alignItems: "center", justifyContent: "center", margin: "0 auto 30px" }}>
               <ShieldCheck size={40} color={THEME.accent} />
             </div>
-            <h2 style={{ fontFamily: THEME.fontD, fontSize: 42, fontWeight: 900, textTransform: "uppercase", marginBottom: 20 }}>Enviado para Aprovação</h2>
+            <h2 style={{ fontFamily: THEME.fontD, fontSize: 42, fontWeight: 900, textTransform: "uppercase", marginBottom: 20 }}>Recebemos sua Solicitação</h2>
             <p style={{ color: THEME.text2, fontSize: 14, maxWidth: 400, margin: "0 auto 40px", lineHeight: 1.6 }}>
               O orçamento estimado foi salvo. Como trata-se de um local novo, nossa equipe técnica validará o CEP e a descrição em até 30 minutos para liberar o seu link de reserva.
             </p>
