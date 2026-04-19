@@ -1,10 +1,8 @@
 import axios from "axios";
 
-// Em produção usa a URL do backend na Vercel
-// Em desenvolvimento usa o proxy do Vite (/api -> localhost:3001)
-const baseURL = import.meta.env.PROD
-  ? `${import.meta.env.VITE_API_URL}/api`
-  : "/api";
+// Sempre usa caminhos relativos — o vercel.json roteia /api/* para o backend.
+// Isso elimina erros de CORS pois frontend e backend compartilham o mesmo domínio.
+const baseURL = "/api";
 
 export const API = axios.create({ 
   baseURL 
