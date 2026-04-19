@@ -1,6 +1,6 @@
-import { useState, useEffect } from "react";
-import { motion } from "framer-motion";
-import { Users, Calendar, ArrowRight, ShieldCheck } from "lucide-react";
+import { useState, useEffect, useRef } from "react";
+import { motion, AnimatePresence } from "framer-motion";
+import { Users, Calendar, ArrowRight, ShieldCheck, ChevronLeft, ChevronRight, Clock } from "lucide-react";
 import { API } from "../lib/api";
 import { useNavigate } from "react-router-dom";
 
@@ -29,6 +29,174 @@ const THEME = {
   fontD: "'Barlow Condensed', sans-serif",
   fontB: "'Inter', sans-serif",
 };
+
+// ── DateTimePicker Customizado (Tactical Theme) 📅🛡️ ─────────────────
+const MONTHS_PT = ["Janeiro","Fevereiro","Março","Abril","Maio","Junho",
+  "Julho","Agosto","Setembro","Outubro","Novembro","Dezembro"];
+const DAYS_PT = ["Dom","Seg","Ter","Qua","Qui","Sex","Sáb"];
+
+function DateTimePicker({ value, onChange }: { value: string; onChange: (v: string) => void }) {
+  const [open, setOpen] = useState(false);
+  const [viewDate, setViewDate] = useState(() => value ? new Date(value) : new Date());
+  const [hour, setHour] = useState(() => value?.split("T")[1]?.substring(0,2) || "09");
+  const [minute, setMinute] = useState(() => value?.split("T")[1]?.substring(3,5) || "00");
+  const ref = useRef<HTMLDivElement>(null);
+  const selectedDate = value ? value.split("T")[0] : "";
+  const today = new Date().toISOString().split("T")[0];
+
+  useEffect(() => {
+    const handler = (e: MouseEvent) => {
+      if (ref.current && !ref.current.contains(e.target as Node)) setOpen(false);
+    };
+    document.addEventListener("mousedown", handler);
+    return () => document.removeEventListener("mousedown", handler);
+  }, []);
+
+  const buildCalendar = () => {
+    const y = viewDate.getFullYear(), m = viewDate.getMonth();
+    const firstDay = new Date(y, m, 1).getDay();
+    const daysInMonth = new Date(y, m + 1, 0).getDate();
+    const cells: (number | null)[] = Array(firstDay).fill(null);
+    for (let d = 1; d <= daysInMonth; d++) cells.push(d);
+    while (cells.length % 7 !== 0) cells.push(null);
+    return cells;
+  };
+
+  const selectDay = (day: number) => {
+    const y = viewDate.getFullYear();
+    const m = String(viewDate.getMonth() + 1).padStart(2, "0");
+    const d = String(day).padStart(2, "0");
+    onChange(`${y}-${m}-${d}T${hour}:${minute}`);
+  };
+
+  const updateTime = (h: string, min: string) => {
+    setHour(h); setMinute(min);
+    if (selectedDate) onChange(`${selectedDate}T${h}:${min}`);
+  };
+
+  const displayValue = value
+    ? new Intl.DateTimeFormat("pt-BR", { day:"2-digit", month:"long", year:"numeric" })
+        .format(new Date(value.split("T")[0] + "T12:00")) + " às " + hour + ":" + minute + "h"
+    : "";
+
+  return (
+    <div ref={ref} style={{ position: "relative" }}>
+      {/* Trigger */}
+      <div onClick={() => setOpen(o => !o)} style={{ position: "relative", display: "flex", alignItems: "center", cursor: "pointer" }}>
+        <Calendar size={18} style={{ position: "absolute", left: 15, color: THEME.accent, pointerEvents: "none", zIndex: 1 }} />
+        <div
+          className="fs-input"
+          style={{
+            width: "100%", padding: "15px 15px 15px 48px", fontSize: 13,
+            userSelect: "none", minHeight: 52, display: "flex", alignItems: "center",
+            color: displayValue ? THEME.text : "#555",
+          }}
+        >
+          {displayValue || "SELECIONE A DATA E HORÁRIO"}
+        </div>
+      </div>
+
+      {/* Popover */}
+      <AnimatePresence>
+        {open && (
+          <motion.div
+            key="picker"
+            initial={{ opacity: 0, y: -8 }}
+            animate={{ opacity: 1, y: 0 }}
+            exit={{ opacity: 0, y: -8 }}
+            transition={{ duration: 0.18 }}
+            style={{
+              position: "absolute", top: "calc(100% + 8px)", left: 0, zIndex: 999,
+              background: "#0d0d0d", border: `1px solid ${THEME.accent}40`,
+              width: 320, padding: 20, boxShadow: "0 24px 60px rgba(0,0,0,0.9)"
+            }}
+          >
+            {/* Month Navigation */}
+            <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: 16 }}>
+              <button
+                onClick={() => setViewDate(new Date(viewDate.getFullYear(), viewDate.getMonth() - 1))}
+                style={{ background: "none", border: "none", color: THEME.text2, cursor: "pointer", padding: 6, display: "flex" }}
+              ><ChevronLeft size={16} /></button>
+              <span style={{ fontSize: 11, fontWeight: 800, color: THEME.text, textTransform: "uppercase", letterSpacing: 3 }}>
+                {MONTHS_PT[viewDate.getMonth()]} {viewDate.getFullYear()}
+              </span>
+              <button
+                onClick={() => setViewDate(new Date(viewDate.getFullYear(), viewDate.getMonth() + 1))}
+                style={{ background: "none", border: "none", color: THEME.text2, cursor: "pointer", padding: 6, display: "flex" }}
+              ><ChevronRight size={16} /></button>
+            </div>
+
+            {/* Day Labels */}
+            <div style={{ display: "grid", gridTemplateColumns: "repeat(7, 1fr)", gap: 2, marginBottom: 6 }}>
+              {DAYS_PT.map(d => (
+                <div key={d} style={{ textAlign: "center", fontSize: 9, fontWeight: 800, color: THEME.text2, textTransform: "uppercase", letterSpacing: 1, padding: "4px 0" }}>
+                  {d}
+                </div>
+              ))}
+            </div>
+
+            {/* Calendar Grid */}
+            <div style={{ display: "grid", gridTemplateColumns: "repeat(7, 1fr)", gap: 2 }}>
+              {buildCalendar().map((day, i) => {
+                const y = viewDate.getFullYear();
+                const m = String(viewDate.getMonth() + 1).padStart(2, "0");
+                const dayStr = day ? `${y}-${m}-${String(day).padStart(2,"0")}` : "";
+                const isPast = dayStr && dayStr < today;
+                const isSelected = dayStr === selectedDate;
+                const isToday = dayStr === today;
+                return (
+                  <button key={i} disabled={!day || !!isPast}
+                    onClick={() => day && !isPast && selectDay(day)}
+                    style={{
+                      height: 34, width: "100%", border: "none", borderRadius: 0,
+                      fontSize: 12, fontWeight: isSelected ? 800 : 400,
+                      cursor: day && !isPast ? "pointer" : "default",
+                      background: isSelected ? THEME.accent : isToday ? `${THEME.accent}20` : "transparent",
+                      color: isSelected ? "#000" : isPast ? "#2a2a2a" : !day ? "transparent" : THEME.text,
+                      outline: isToday && !isSelected ? `1px solid ${THEME.accent}50` : "none",
+                      transition: "background 0.15s",
+                    }}
+                  >{day || ""}</button>
+                );
+              })}
+            </div>
+
+            {/* Time Selector */}
+            <div style={{ marginTop: 16, paddingTop: 16, borderTop: `1px solid ${THEME.border}` }}>
+              <div style={{ display: "flex", alignItems: "center", gap: 8, marginBottom: 10 }}>
+                <Clock size={13} color={THEME.accent} />
+                <span style={{ fontSize: 10, fontWeight: 800, color: THEME.text2, textTransform: "uppercase", letterSpacing: 2 }}>Horário do Evento</span>
+              </div>
+              <div style={{ display: "flex", alignItems: "center", gap: 10 }}>
+                <select value={hour} onChange={e => updateTime(e.target.value, minute)}
+                  style={{ flex: 1, background: "#111", border: `1px solid ${THEME.border}`, color: THEME.text, padding: "10px 8px", fontSize: 18, fontWeight: 700, textAlign: "center", borderRadius: 0, cursor: "pointer" }}>
+                  {Array.from({length: 24}, (_, i) => String(i).padStart(2,"0")).map(h => (
+                    <option key={h} value={h}>{h}h</option>
+                  ))}
+                </select>
+                <span style={{ color: THEME.accent, fontSize: 22, fontWeight: 900 }}>:</span>
+                <select value={minute} onChange={e => updateTime(hour, e.target.value)}
+                  style={{ flex: 1, background: "#111", border: `1px solid ${THEME.border}`, color: THEME.text, padding: "10px 8px", fontSize: 18, fontWeight: 700, textAlign: "center", borderRadius: 0, cursor: "pointer" }}>
+                  {["00","15","30","45"].map(m => (
+                    <option key={m} value={m}>{m}min</option>
+                  ))}
+                </select>
+              </div>
+            </div>
+
+            {/* Confirm Button */}
+            {selectedDate && (
+              <button onClick={() => setOpen(false)}
+                style={{ width: "100%", marginTop: 16, background: THEME.accent, color: "#000", border: "none", padding: "12px", fontSize: 10, fontWeight: 900, textTransform: "uppercase", letterSpacing: 3, cursor: "pointer" }}>
+                CONFIRMAR DATA E HORÁRIO
+              </button>
+            )}
+          </motion.div>
+        )}
+      </AnimatePresence>
+    </div>
+  );
+}
 
 export const QuotePage = () => {
   const navigate = useNavigate();
@@ -147,17 +315,8 @@ export const QuotePage = () => {
                   </div>
                 </div>
                 <div>
-                  <label style={{ fontSize: 10, fontWeight: 800, textTransform: "uppercase", marginBottom: 15, display: "block", color: THEME.text2 }}>3. Data do Evento</label>
-                  <div style={{ position: "relative", display: "flex", alignItems: "center" }}>
-                    <Calendar size={18} style={{ position: "absolute", left: 15, color: THEME.accent, pointerEvents: "none", zIndex: 1 }} />
-                    <input
-                      type="date"
-                      value={eventDate}
-                      onChange={e => setEventDate(e.target.value)}
-                      className="fs-input"
-                      style={{ width: "100%", padding: "15px 15px 15px 48px" }}
-                    />
-                  </div>
+                  <label style={{ fontSize: 10, fontWeight: 800, textTransform: "uppercase", marginBottom: 15, display: "block", color: THEME.text2 }}>3. Data e Horário do Evento</label>
+                  <DateTimePicker value={eventDate} onChange={setEventDate} />
                 </div>
               </div>
 
