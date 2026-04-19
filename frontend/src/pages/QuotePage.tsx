@@ -133,7 +133,7 @@ export const QuotePage = () => {
                   <label style={{ fontSize: 10, fontWeight: 800, textTransform: "uppercase", marginBottom: 15, display: "block", color: THEME.text2 }}>2. Número de Convidados</label>
                   <div style={{ position: "relative", display: "flex", alignItems: "center" }}>
                     <Users size={18} style={{ position: "absolute", left: 15, color: THEME.accent, pointerEvents: "none" }} />
-                    <input type="number" value={attendees} onChange={e => setAttendees(Number(e.target.value))} style={{ width: "100%", paddingLeft: "48px !important" }} />
+                    <input type="number" value={attendees} onChange={e => setAttendees(Number(e.target.value))} style={{ width: "100%", padding: "15px 15px 15px 48px" }} />
                   </div>
                   <div style={{ fontSize: 9, marginTop: 10, color: THEME.accent, fontWeight: 700, textTransform: "uppercase" }}>
                     Equipe Suggest: {team.senior} Sênior {team.aux > 0 && `+ ${team.aux} Auxiliar`}
@@ -143,7 +143,7 @@ export const QuotePage = () => {
                   <label style={{ fontSize: 10, fontWeight: 800, textTransform: "uppercase", marginBottom: 15, display: "block", color: THEME.text2 }}>3. Data do Evento</label>
                   <div style={{ position: "relative", display: "flex", alignItems: "center" }}>
                     <Calendar size={18} style={{ position: "absolute", left: 15, color: THEME.accent, pointerEvents: "none" }} />
-                    <input type="date" value={eventDate} onChange={e => setEventDate(e.target.value)} style={{ width: "100%", paddingLeft: "48px !important" }} />
+                    <input type="date" value={eventDate} onChange={e => setEventDate(e.target.value)} style={{ width: "100%", padding: "15px 15px 15px 48px" }} />
                   </div>
                 </div>
               </div>
