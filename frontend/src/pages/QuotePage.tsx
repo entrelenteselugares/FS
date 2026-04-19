@@ -221,10 +221,22 @@ export const QuotePage = () => {
 
   // Lógica de Equipe 🛡️👥
   const calculateTeam = () => {
-    if (attendees <= 50) return { senior: 1, aux: 0, cost: P.COST_SENIOR };
-    if (attendees <= 65) return { senior: 1, aux: 1, cost: P.COST_SENIOR + P.COST_AUX };
-    const seniorsNeeded = Math.ceil(attendees / 50);
-    return { senior: seniorsNeeded, aux: 0, cost: seniorsNeeded * P.COST_SENIOR };
+    let senior = 1;
+    let aux = 0;
+
+    // Escalonamento por convidados (Foco em Fotografia)
+    if (attendees > 50 && attendees <= 65) {
+      aux = 1;
+    } else if (attendees > 65) {
+      senior = Math.ceil(attendees / 50);
+    }
+
+    // Adicional por serviços de captação extra
+    if (selectedServices.includes("video")) senior += 1;
+    if (selectedServices.includes("reels")) senior += 1;
+
+    const cost = (senior * P.COST_SENIOR) + (aux * P.COST_AUX);
+    return { senior, aux, cost };
   };
 
   // Cálculo de Preço Final 💰
