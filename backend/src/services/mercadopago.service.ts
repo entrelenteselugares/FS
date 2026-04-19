@@ -184,7 +184,17 @@ export class MercadoPagoService {
       );
       return response.data;
     } catch (error: any) {
-      console.error("[MP API ERROR - Payment]:", JSON.stringify(error.response?.data || error.message, null, 2));
+      const errorData = error.response?.data;
+      const errorMsg = errorData?.message || error.message;
+
+      // Log detalhado para o Diagnóstico do Desenvolvedor
+      console.error("[MP API ERROR - Payment]:", JSON.stringify(errorData || errorMsg, null, 2));
+
+      // 🔍 Lógica de Auto-Correção Tática:
+      // Se o erro for "You cannot use application_fee" (comum em contas não-Marketplace),
+      // podemos tentar novamente SEM a taxa se o contexto permitir (OPCIONAL/CONFIGURÁVEL).
+      // Para agora, vamos apenas garantir que o erro retornado seja rico em detalhes.
+      
       throw error;
     }
   }

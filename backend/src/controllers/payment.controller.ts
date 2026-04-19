@@ -247,10 +247,63 @@ export class PaymentController {
       });
 
     } catch (error: any) {
-      console.error("[Process Payment Error]:", error.response?.data || error);
+      const errorData = error.response?.data;
+      const isFeeError = errorData?.message?.includes("application_fee") || 
+                         JSON.stringify(errorData)?.includes("application_fee");
+
+      // 🆘 RESGATE AUTOMÁTICO: Se o erro for a taxa de comissão, tenta novamente sem ela
+      if (isFeeError) {
+        console.warn(`[Payment Rescue] Retrying WITHOUT application_fee for Event ${eventId}.`);
+        try {
+          const mpResponseFallback = await MercadoPagoService.processPayment({
+            transaction_amount: preco,
+            token: cardToken,
+            description: `Fotos Evento: ${event.nomeNoivos}`,
+            installments: Number(installments) || 1,
+            payment_method_id: paymentMethodId || "visa",
+            payer: {
+              email: email,
+              identification: cpf ? { type: "CPF", number: cpf } : undefined
+            },
+            external_reference: order.id
+            // application_fee OMITIDA no fallback
+          });
+
+          const isApproved = mpResponseFallback.status === "approved";
+          await prisma.order.update({
+            where: { id: order.id },
+            data: { 
+              status: isApproved ? "APROVADO" : "PENDENTE",
+              paymentId: String(mpResponseFallback.id)
+            }
+          });
+
+          if (isApproved) {
+            NotificationService.sendAccessEmail({
+              to: email,
+              buyerName: event.nomeNoivos,
+              eventTitle: event.nomeNoivos,
+              orderId: order.id,
+              accessLink: `${process.env.FRONTEND_URL || "http://localhost:5173"}/e/${event.id}`
+            }).catch(e => console.error("Erro no e-mail de resgate:", e));
+          }
+
+          return res.json({
+            orderId: order.id,
+            status: mpResponseFallback.status,
+            hasPaid: isApproved,
+            details: mpResponseFallback.status_detail,
+            warn: "Pagamento processado sem split automático. Verifique a configuração da conta MP."
+          });
+        } catch (fallbackError: any) {
+          console.error("[Process Payment Fallback Error]:", fallbackError.response?.data || fallbackError.message);
+        }
+      }
+
+      console.error("[Process Payment Error]:", errorData || error.message);
       return res.status(500).json({ 
         error: "Erro ao processar pagamento v2",
-        details: error.response?.data || error.message
+        details: errorData || error.message
       });
     }
   }

@@ -40,10 +40,10 @@ export const AdminOverview: React.FC<OverviewProps> = ({ stats, recentOrders, pe
 
       <div className="grid lg:grid-cols-2 gap-12">
         {/* Charts */}
-        <div className="border border-white/5 p-10 bg-white/[0.01]">
+        <div className="border border-white/5 p-10 bg-white/[0.01] min-h-[450px]">
           <h3 className="text-[10px] font-bold uppercase tracking-[0.5em] text-zinc-500 mb-12 border-b border-white/5 pb-6">Timeline de Conversão</h3>
-          <div className="h-[300px]">
-             <ResponsiveContainer width="100%" height="100%">
+          <div className="h-[300px] w-full" style={{ minWidth: 0, minHeight: 300 }}>
+             <ResponsiveContainer width="99%" height="100%">
                 <AreaChart data={chartData}>
                   <defs>
                     <linearGradient id="gradValor" x1="0" y1="0" x2="0" y2="1">
