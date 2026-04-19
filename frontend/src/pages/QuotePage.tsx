@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
-import { motion, AnimatePresence } from "framer-motion";
-import { Calculator, MapPin, Users, Calendar, ArrowRight, ShieldCheck, Truck, MessageSquare } from "lucide-react";
+import { motion } from "framer-motion";
+import { Users, Calendar, ArrowRight, ShieldCheck } from "lucide-react";
 import { API } from "../lib/api";
 import { useNavigate } from "react-router-dom";
 
