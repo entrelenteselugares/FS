@@ -2,6 +2,13 @@ import { useState, useEffect } from "react";
 import { useParams, useNavigate, useSearchParams } from "react-router-dom";
 import { useAuth } from "../hooks/useAuth";
 import { API as api } from "../lib/api";
+import axios from "axios";
+
+declare global {
+  interface Window {
+    MercadoPago: any;
+  }
+}
 
 interface EventData {
   id: string;
@@ -111,7 +118,7 @@ export default function EventPage() {
   }, [id, searchParams]);
 
   useEffect(() => {
-    if ((window as any).MercadoPago) { setMpLoaded(true); return; }
+    if (window.MercadoPago) { setMpLoaded(true); return; }
     const s = document.createElement("script");
     s.src = "https://sdk.mercadopago.com/js/v2";
     s.onload = () => setMpLoaded(true);
@@ -127,7 +134,7 @@ export default function EventPage() {
   };
 
   const handleTokenize = async () => {
-    const mpLib = (window as any).MercadoPago;
+    const mpLib = window.MercadoPago;
     if (!mpLib || !mpLoaded) return;
     setTokenizing(true); setError("");
     try {
@@ -167,7 +174,10 @@ export default function EventPage() {
       if (data.hasPaid) await checkAccess(oid);
       else pollStatus(oid);
     } catch (err: unknown) {
-      const msg = (err as any).response?.data?.error ?? "Erro ao processar pagamento.";
+      let msg = "Erro ao processar pagamento.";
+      if (axios.isAxiosError(err)) {
+        msg = err.response?.data?.error ?? msg;
+      }
       setError(msg);
       setStep("checkout");
     }
