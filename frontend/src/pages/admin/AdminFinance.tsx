@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useCallback } from "react";
 import { API } from "../../lib/api";
 
 const fmtDate = (iso: string) =>
@@ -28,11 +28,11 @@ export const AdminFinance: React.FC = () => {
   const [loading, setLoading] = useState(true);
   const [view, setView] = useState<"pending" | "history">("pending");
 
-  const fetchPayouts = async () => {
+  const fetchPayouts = useCallback(async () => {
     setLoading(true);
     try {
-      const url = view === "pending" 
-        ? "/admin/orders?readyForPayout=true" 
+      const url = view === "pending"
+        ? "/admin/orders?readyForPayout=true"
         : "/admin/orders?payoutDone=true&status=APROVADO";
       const { data } = await API.get(url);
       setOrders(data.orders || []);
@@ -41,18 +41,18 @@ export const AdminFinance: React.FC = () => {
     } finally {
       setLoading(false);
     }
-  };
+  }, [view]);
 
   useEffect(() => {
     fetchPayouts();
-  }, [view]);
+  }, [fetchPayouts]);
 
   const handleMarkAsPaid = async (orderId: string) => {
     if (!window.confirm("Confirmar que você já realizou os repasses via PIX para este pedido?")) return;
     try {
       await API.patch(`/admin/orders/${orderId}/payout`);
       setOrders(orders.filter(o => o.id !== orderId));
-    } catch (err) {
+    } catch {
       alert("Erro ao marcar como pago");
     }
   };

@@ -6,7 +6,7 @@ import axios from "axios";
 
 declare global {
   interface Window {
-    MercadoPago: new (publicKey: string) => any;
+    MercadoPago: new (publicKey: string) => Record<string, unknown>;
   }
 }
 
