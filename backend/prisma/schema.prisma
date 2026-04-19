@@ -71,17 +71,28 @@ model Event {
   coverPhotoUrl   String?
   lightroomUrl    String?
   driveUrl        String?
-  priceBase       Decimal   @default(200) @db.Decimal(10, 2)
+  priceBase       Decimal   @default(190) @db.Decimal(10, 2)
   priceEarly      Decimal   @default(190) @db.Decimal(10, 2)
   active          Boolean   @default(true)
   createdAt       DateTime  @default(now())
   updatedAt       DateTime  @updatedAt
 
-  // Metadados de serviço
-  temFoto         Boolean   @default(true)
-  temVideo        Boolean   @default(false)
-  temReels        Boolean   @default(false)
-  temFotoImpressa Boolean   @default(false)
+  // ── Serviços oferecidos (presença) ─────────────────────────────
+  temFoto           Boolean  @default(true)   // Foto (bruta ou editada)
+  temFotoEditada    Boolean  @default(false)  // Foto com edição + 1 impressa inclusa
+  temVideo          Boolean  @default(false)  // Vídeo bruto
+  temVideoEditado   Boolean  @default(false)  // Vídeo editado full (~10min)
+  temReels          Boolean  @default(false)  // Reels/vídeo mobile
+  temFotoImpressa   Boolean  @default(false)  // Álbum impresso avulso
+  temAlbumImpresso  Boolean  @default(false)  // Álbum impresso completo (R$420)
+
+  // ── Preços por serviço (sobrescrevem o padrão se preenchidos) ──
+  priceFoto          Decimal? @db.Decimal(10, 2) // padrão: 190
+  priceFotoEditada   Decimal? @db.Decimal(10, 2) // padrão: 250 (inclui 1 impressa)
+  priceVideo         Decimal? @db.Decimal(10, 2) // padrão: 190
+  priceVideoEditado  Decimal? @db.Decimal(10, 2) // padrão: 650
+  priceReels         Decimal? @db.Decimal(10, 2) // padrão: 120
+  priceAlbum         Decimal? @db.Decimal(10, 2) // padrão: 420
 
   // Profissionais atribuídos
   captacaoId     String?

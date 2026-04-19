@@ -1,7 +1,7 @@
 import { useState, useEffect, useCallback } from "react";
 import { useParams, useNavigate, useSearchParams } from "react-router-dom";
 import { API } from "../lib/api";
-import { useAuth } from "../contexts/AuthContext";
+import { useAuth } from "../hooks/useAuth";
 import { Helmet } from "react-helmet-async";
 
 interface MercadoPagoInstance {
@@ -66,28 +66,28 @@ function detectCardBrand(number: string): string {
 }
 
 const S = {
-  page: { fontFamily: "'Outfit', 'Inter', sans-serif", background: "#050505", color: "#e8e4dc", minHeight: "100vh" } as React.CSSProperties,
+  page: { fontFamily: "'Inter', sans-serif", background: "#050505", color: "#ffffff", minHeight: "100vh" } as React.CSSProperties,
   input: {
     width: "100%", background: "rgba(255,255,255,0.02)", border: "1px solid rgba(255,255,255,0.05)",
-    borderRadius: 6, padding: "12px 14px", fontSize: 13,
+    borderRadius: 0, padding: "12px 14px", fontSize: 13,
     color: "#fff", outline: "none", transition: "all 0.3s"
   } as React.CSSProperties,
-  label: { fontSize: 9, color: "#666", display: "block", marginBottom: 5, letterSpacing: "1px", textTransform: "uppercase", fontWeight: 700 } as React.CSSProperties,
+  label: { fontSize: 10, color: "#9ca3af", display: "block", marginBottom: 5, letterSpacing: "2px", textTransform: "uppercase", fontWeight: 700 } as React.CSSProperties,
   btnGold: {
-    width: "100%", background: "#c9a96e", color: "#050505",
-    border: "none", borderRadius: 4, padding: "15px", fontSize: 11,
-    fontWeight: 700, cursor: "pointer", textTransform: "uppercase", letterSpacing: "1px",
+    width: "100%", background: "#5D6532", color: "#ffffff",
+    border: "none", borderRadius: 0, padding: "18px", fontSize: 11,
+    fontWeight: 800, cursor: "pointer", textTransform: "uppercase", letterSpacing: "3px",
     transition: "all 0.3s",
   } as React.CSSProperties,
   btnOutline: {
-    width: "100%", background: "transparent", color: "#888",
-    border: "1px solid rgba(255,255,255,0.1)", borderRadius: 4, padding: "12px",
-    fontSize: 10, cursor: "pointer", textTransform: "uppercase", letterSpacing: "1px",
+    width: "100%", background: "transparent", color: "#9ca3af",
+    border: "1px solid rgba(255,255,255,0.1)", borderRadius: 0, padding: "12px",
+    fontSize: 10, cursor: "pointer", textTransform: "uppercase", letterSpacing: "2px",
     transition: "all 0.3s",
   } as React.CSSProperties,
   card: {
     background: "rgba(255,255,255,0.02)", border: "1px solid rgba(255,255,255,0.05)",
-    borderRadius: 8, padding: "1.5rem",
+    borderRadius: 0, padding: "1.5rem",
   } as React.CSSProperties,
 };
 
@@ -135,7 +135,7 @@ export const EventPage = () => {
       // Repassar erro para quem chamou tratar (ex: polling)
       throw err;
     }
-  }, [id, id]);
+  }, [id]);
 
   useEffect(() => {
     if (!id) return;
@@ -299,7 +299,7 @@ export const EventPage = () => {
         <button onClick={() => navigate("/")} style={{ background: "none", border: "none", color: "#555", fontSize: 11, cursor: "pointer", textTransform: "uppercase", letterSpacing: 2 }}>
           ← Vitrine
         </button>
-        <div style={{ fontFamily: "'Playfair Display', serif", fontSize: 18, fontWeight: 700, color: "#fff" }}>FOTO SEGUNDO.</div>
+        <div style={{ fontFamily: "'Barlow Condensed', sans-serif", fontSize: 24, fontWeight: 800, color: "#fff", textTransform: "uppercase", letterSpacing: "1px" }}>FOTO SEGUNDO.</div>
         <div style={{ display: "flex", alignItems: "center", gap: 15 }}>
           {user ? (
             <span style={{ fontSize: 9, color: "#444", textTransform: "uppercase", letterSpacing: 1 }}>{user.nome || user.email}</span>
@@ -334,33 +334,33 @@ export const EventPage = () => {
             }}>
                <div style={{ textAlign: "center" }}>
                   <div style={{ width: 40, height: 40, border: "0.5px solid #222", transform: "rotate(45deg)", display: "flex", alignItems: "center", justifyContent: "center", margin: "0 auto 16px" }}>
-                    <div style={{ width: 6, height: 6, background: "#c9a96e" }} />
+                    <div style={{ width: 6, height: 6, background: "#5D6532" }} />
                   </div>
-                  <span style={{ fontSize: 10, color: "#333", letterSpacing: 3, textTransform: "uppercase" }}>Archive</span>
+                  <span style={{ fontSize: 10, color: "#333", letterSpacing: 3, textTransform: "uppercase", fontWeight: 700 }}>Archive</span>
                </div>
             </div>
             {!hasPaid && (
               <div style={{ position: "absolute", inset: 0, display: "flex", alignItems: "center", justifyContent: "center", background: "rgba(0,0,0,0.5)", backdropFilter: "blur(2px)" }}>
                 <div style={{ textAlign: "center" }}>
                   <div style={{ fontSize: 24, marginBottom: 12, opacity: 0.8 }}>✧</div>
-                  <p style={{ fontSize: 9, color: "#c9a96e", letterSpacing: 3, textTransform: "uppercase", fontWeight: 700 }}>Acesso Reservado</p>
+                  <p style={{ fontSize: 10, color: "#5D6532", letterSpacing: 4, textTransform: "uppercase", fontWeight: 800 }}>Acesso Reservado</p>
                 </div>
               </div>
             )}
           </div>
 
-          <p style={{ fontSize: 10, letterSpacing: 3, textTransform: "uppercase", color: "#666", marginBottom: 10, fontWeight: 700 }}>
-            <span style={{ color: "#c9a96e" }}>✧</span> {event.cartorio || "Digital Archive"}
+          <p style={{ fontSize: 11, letterSpacing: 3, textTransform: "uppercase", color: "#5D6532", marginBottom: 10, fontWeight: 800 }}>
+            <span style={{ color: "#5D6532" }}>✧</span> {event.cartorio || "Digital Archive"}
           </p>
-          <h1 style={{ fontFamily: "'Playfair Display', serif", fontSize: 42, fontWeight: 900, color: "#fff", marginBottom: "1rem", lineHeight: 1.1 }}>{event.nomeNoivos}</h1>
-          <p style={{ fontSize: 12, color: "#666", marginBottom: "3rem", textTransform: "uppercase", letterSpacing: 2 }}>
+          <h1 style={{ fontFamily: "'Barlow Condensed', sans-serif", fontSize: 54, fontWeight: 800, color: "#fff", marginBottom: "0.5rem", lineHeight: 0.9, textTransform: "uppercase" }}>{event.nomeNoivos}</h1>
+          <p style={{ fontSize: 11, color: "#444", marginBottom: "3rem", textTransform: "uppercase", letterSpacing: 3, fontWeight: 700 }}>
             {formatDate(event.dataEvento)}
           </p>
 
           <div style={{ ...S.card, padding: "2rem" }}>
             <div style={{ display: "flex", alignItems: "center", gap: 10, marginBottom: "2.5rem" }}>
-              <div style={{ width: 15, height: 1, background: "#c9a96e" }} />
-              <p style={{ fontSize: 10, letterSpacing: 3, textTransform: "uppercase", color: "#c9a96e", margin: 0, fontWeight: 700 }}>Serviços Inclusos</p>
+              <div style={{ width: 15, height: 1, background: "#5D6532" }} />
+              <p style={{ fontSize: 11, letterSpacing: 4, textTransform: "uppercase", color: "#5D6532", margin: 0, fontWeight: 800 }}>Serviços Inclusos</p>
             </div>
             
             <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(200px, 1fr))", gap: "2.5rem" }}>
@@ -372,8 +372,8 @@ export const EventPage = () => {
               ].map((item) => item.active && (
                 <div key={item.label} style={{ display: "flex", gap: 18, alignItems: "flex-start" }}>
                   <div style={{ 
-                    minWidth: 42, height: 42, borderRadius: "50%", 
-                    background: "rgba(201,169,110,0.05)", border: "1px solid rgba(201,169,110,0.1)",
+                    minWidth: 42, height: 42, borderRadius: 0, 
+                    background: "rgba(93,101,50,0.05)", border: "1px solid rgba(93,101,50,0.1)",
                     display: "flex", alignItems: "center", justifyContent: "center", fontSize: 18
                   }}>
                     {item.icon}
@@ -388,15 +388,15 @@ export const EventPage = () => {
             
             {/* Caso nenhum serviço esteja ativo (fallback visual) */}
             {!event.temFoto && !event.temVideo && !event.temReels && !event.temFotoImpressa && (
-              <p style={{ fontSize: 12, color: "#333", fontStyle: "italic" }}>Consulte os serviços disponíveis para este evento com o cartório oficial.</p>
+              <p style={{ fontSize: 12, color: "#333", fontStyle: "italic" }}>Consulte os serviços disponíveis para este evento com a unidade responsável.</p>
             )}
           </div>
 
           {hasPaid && access && (
-            <div id="access-area" style={{ marginTop: "3rem", background: "rgba(201, 169, 110, 0.03)", border: "1px solid rgba(201, 169, 110, 0.1)", borderRadius: 12, padding: "2.5rem" }}>
+            <div id="access-area" style={{ marginTop: "3rem", background: "rgba(93, 101, 50, 0.03)", border: "1px solid rgba(93, 101, 50, 0.1)", borderRadius: 0, padding: "2.5rem" }}>
               <div style={{ textAlign: "center", marginBottom: "2.5rem" }}>
-                <span style={{ fontSize: 9, letterSpacing: 4, textTransform: "uppercase", color: "#c9a96e", fontWeight: 700 }}>Download Center</span>
-                <h3 style={{ fontFamily: "'Playfair Display', serif", fontSize: 24, color: "#fff", marginTop: 8 }}>Seus arquivos estão prontos</h3>
+                <span style={{ fontSize: 10, letterSpacing: 4, textTransform: "uppercase", color: "#5D6532", fontWeight: 800 }}>Download Center</span>
+                <h3 style={{ fontFamily: "'Barlow Condensed', sans-serif", fontSize: 32, color: "#fff", marginTop: 8, textTransform: "uppercase" }}>Seus arquivos estão prontos</h3>
               </div>
               
               <div style={{ display: "grid", gap: "1.25rem" }}>
@@ -408,24 +408,24 @@ export const EventPage = () => {
                     transition: "all 0.3s"
                   }} className="access-btn">
                     <div>
-                      <div style={{ fontSize: 10, color: "#c9a96e", fontWeight: 700, textTransform: "uppercase", letterSpacing: 1, marginBottom: 4 }}>Galeria Exclusiva</div>
-                      <div style={{ fontSize: 14, color: "#fff", fontWeight: 500 }}>Adobe Portfolio Archive</div>
+                      <div style={{ fontSize: 11, color: "#5D6532", fontWeight: 800, textTransform: "uppercase", letterSpacing: 2, marginBottom: 4 }}>Galeria Exclusiva</div>
+                      <div style={{ fontSize: 14, color: "#fff", fontWeight: 600 }}>Adobe Portfolio Archive</div>
                     </div>
-                    <span style={{ fontSize: 12, color: "#c9a96e" }}>Acessar Galeria →</span>
+                    <span style={{ fontSize: 13, color: "#5D6532", fontWeight: 700 }}>Acessar Galeria →</span>
                   </a>
                 )}
                 {access.driveUrl && (
                   <a href={access.driveUrl} target="_blank" rel="noopener" style={{ 
                     display: "flex", alignItems: "center", justifyContent: "space-between", 
                     background: "#000", border: "1px solid rgba(255,255,255,0.05)", 
-                    padding: "20px 25px", textDecoration: "none", borderRadius: 8,
+                    padding: "20px 25px", textDecoration: "none", borderRadius: 0,
                     transition: "all 0.3s"
                   }} className="access-btn">
                     <div>
-                      <div style={{ fontSize: 10, color: "#c9a96e", fontWeight: 700, textTransform: "uppercase", letterSpacing: 1, marginBottom: 4 }}>Arquivos Brutos</div>
-                      <div style={{ fontSize: 14, color: "#fff", fontWeight: 500 }}>Google Drive Storage</div>
+                      <div style={{ fontSize: 11, color: "#5D6532", fontWeight: 800, textTransform: "uppercase", letterSpacing: 2, marginBottom: 4 }}>Arquivos Brutos</div>
+                      <div style={{ fontSize: 14, color: "#fff", fontWeight: 600 }}>Google Drive Storage</div>
                     </div>
-                    <span style={{ fontSize: 12, color: "#c9a96e" }}>Baixar Arquivos →</span>
+                    <span style={{ fontSize: 13, color: "#5D6532", fontWeight: 700 }}>Baixar Arquivos →</span>
                   </a>
                 )}
               </div>
@@ -459,9 +459,21 @@ export const EventPage = () => {
       <style>{`
         @keyframes spin { to { transform: rotate(360deg); } }
         @keyframes pulse-slow { 0%, 100% { opacity: 0.3; } 50% { opacity: 0.6; } }
+        @keyframes pulse-tactical {
+          0% { box-shadow: 0 0 0 0 rgba(93, 101, 50, 0.4); }
+          70% { box-shadow: 0 0 0 20px rgba(93, 101, 50, 0); }
+          100% { box-shadow: 0 0 0 0 rgba(93, 101, 50, 0); }
+        }
+        .btn-success-glow {
+          animation: pulse-tactical 2s infinite;
+        }
+        .btn-success-glow:hover {
+          transform: scale(1.02);
+          filter: brightness(1.2);
+        }
         .access-btn:hover {
-          background: rgba(201, 169, 110, 0.05) !important;
-          border-color: rgba(201, 169, 110, 0.3) !important;
+          background: rgba(93, 101, 50, 0.05) !important;
+          border-color: rgba(93, 101, 50, 0.3) !important;
           transform: translateY(-2px);
         }
         @media (max-width: 1024px) {
@@ -475,9 +487,9 @@ export const EventPage = () => {
 
 function PaywallCard({ event, onCheckout }: { event: EventData; onCheckout: () => void }) {
   return (
-    <div style={{ ...S.card, border: "1px solid rgba(201, 169, 110, 0.15)", background: "rgba(201, 169, 110, 0.02)" }}>
-      <p style={{ fontSize: 10, letterSpacing: 3, textTransform: "uppercase", color: "#666", marginBottom: "1rem", fontWeight: 700 }}>Exclusive Collection</p>
-      <div style={{ fontFamily: "'Playfair Display', serif", fontSize: 48, fontWeight: 900, color: "#fff", marginBottom: 5 }}>
+    <div style={{ ...S.card, border: "1px solid rgba(93, 101, 50, 0.3)", background: "rgba(93, 101, 50, 0.05)" }}>
+      <p style={{ fontSize: 10, letterSpacing: 4, textTransform: "uppercase", color: "#9ca3af", marginBottom: "1rem", fontWeight: 800 }}>Exclusive Collection</p>
+      <div style={{ fontFamily: "'Barlow Condensed', sans-serif", fontSize: 54, fontWeight: 900, color: "#fff", marginBottom: 5 }}>
         {formatCurrency(event.priceBase)}
       </div>
       <p style={{ fontSize: 12, color: "#555", marginBottom: "2.5rem", lineHeight: 1.5 }}>Acesso vitalício à galeria completa de fotos e vídeos em alta resolução.</p>
@@ -526,14 +538,14 @@ function CheckoutCard({ event, cardData, setCardData, cardToken, tokenizing, mpL
   return (
     <div style={S.card}>
       <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "2rem" }}>
-        <p style={{ fontSize: 10, fontWeight: 700, color: "#c9a96e", textTransform: "uppercase", letterSpacing: 2 }}>Secure Checkout</p>
-        <button onClick={onBack} style={{ background: "none", border: "none", color: "#444", fontSize: 10, cursor: "pointer", textTransform: "uppercase", letterSpacing: 1 }}>Voltar</button>
+        <p style={{ fontSize: 11, fontWeight: 800, color: "#5D6532", textTransform: "uppercase", letterSpacing: 3 }}>Secure Checkout</p>
+        <button onClick={onBack} style={{ background: "none", border: "none", color: "#555", fontSize: 10, cursor: "pointer", textTransform: "uppercase", letterSpacing: 2 }}>Voltar</button>
       </div>
       {error && <div style={{ background: "rgba(248, 113, 113, 0.05)", border: "1px solid rgba(248, 113, 113, 0.2)", padding: 15, color: "#f87171", fontSize: 11, marginBottom: 20, borderRadius: 4 }}>{error}</div>}
       <div style={{ display: "flex", flexDirection: "column", gap: 15 }}>
         <div><label style={S.label}>Número do Cartão</label><input style={S.input} value={cardData.number} placeholder="0000 0000 0000 0000" onChange={(e) => {
           const v = e.target.value.replace(/\D/g, "").replace(/(.{4})/g, "$1 ").trim();
-          setCardData((p: any) => ({ ...p, number: v }));
+          setCardData((p: CardData) => ({ ...p, number: v }));
         }} /></div>
         <div><label style={S.label}>Nome (como no cartão)</label><input style={S.input} value={cardData.name} placeholder="NOME IMPRESSO" onChange={set("name")} /></div>
         <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr 1fr", gap: 12 }}>
@@ -550,9 +562,9 @@ function CheckoutCard({ event, cardData, setCardData, cardToken, tokenizing, mpL
         {!cardToken ? (
           <button style={S.btnOutline} onClick={onTokenize} disabled={tokenizing || !mpLoaded}>{tokenizing ? "Criptografando..." : "Validar Cartão"}</button>
         ) : (
-          <div style={{ padding: "12px", background: "rgba(74, 222, 128, 0.05)", border: "1px solid rgba(74, 222, 128, 0.1)", color: "#4ade80", fontSize: 10, textAlign: "center", textTransform: "uppercase", letterSpacing: 2, fontWeight: 700 }}>✓ Cartão Validado</div>
+          <div style={{ padding: "12px", background: "rgba(93, 101, 50, 0.1)", border: "1px solid #5D6532", color: "#fff", fontSize: 10, textAlign: "center", textTransform: "uppercase", letterSpacing: 3, fontWeight: 800 }}>✓ Cartão Validado</div>
         )}
-        <button style={{ ...S.btnGold, opacity: cardToken ? 1 : 0.3 }} onClick={onPay} disabled={!cardToken}>Finalizar de R$ {event.priceBase}</button>
+        <button style={{ ...S.btnGold, opacity: cardToken ? 1 : 0.4 }} onClick={onPay} disabled={!cardToken}>Finalizar de R$ {event.priceBase}</button>
       </div>
     </div>
   );
@@ -561,30 +573,41 @@ function CheckoutCard({ event, cardData, setCardData, cardToken, tokenizing, mpL
 function ProcessingCard() {
   return (
     <div style={{ ...S.card, textAlign: "center", padding: "5rem 2rem", position: "relative", overflow: "hidden" }}>
-      <div style={{ position: "absolute", inset: 0, background: "radial-gradient(circle at center, rgba(201, 169, 110, 0.05) 0%, transparent 70%)", animation: "pulse-slow 3s infinite" }} />
-      <div style={{ width: 40, height: 40, border: "1.5px solid #c9a96e", borderTopColor: "transparent", borderRadius: "50%", margin: "0 auto 30px", animation: "spin 1s linear infinite" }} />
-      <p style={{ fontFamily: "'Playfair Display', serif", fontSize: 20, color: "#fff", marginBottom: 8, letterSpacing: 1 }}>Revelando Memórias</p>
-      <p style={{ fontSize: 10, color: "#444", textTransform: "uppercase", letterSpacing: 3 }}>Processando seu acesso exclusivo...</p>
-      <p style={{ fontSize: 9, color: "#222", marginTop: 20, fontStyle: "italic" }}>Aguarde. A segurança do coletivo está validando sua transação.</p>
+      <div style={{ position: "absolute", inset: 0, background: "radial-gradient(circle at center, rgba(93, 101, 50, 0.1) 0%, transparent 70%)", animation: "pulse-slow 3s infinite" }} />
+      <div style={{ width: 40, height: 40, border: "2px solid #5D6532", borderTopColor: "transparent", borderRadius: "50%", margin: "0 auto 30px", animation: "spin 1s linear infinite" }} />
+      <p style={{ fontFamily: "'Barlow Condensed', sans-serif", fontSize: 28, fontWeight: 800, color: "#fff", marginBottom: 8, letterSpacing: 2, textTransform: "uppercase" }}>Revelando Memórias</p>
+      <p style={{ fontSize: 10, color: "#5D6532", textTransform: "uppercase", letterSpacing: 4, fontWeight: 700 }}>Processando acesso exclusivo...</p>
     </div>
   );
 }
 
 function SuccessCard({ onViewFiles }: { onViewFiles: () => void }) {
   return (
-    <div style={{ ...S.card, textAlign: "center", padding: "4rem 2rem", background: "rgba(74, 222, 128, 0.02)", border: "1px solid rgba(74, 222, 128, 0.1)" }}>
-      <div style={{ width: 56, height: 56, border: "1px solid #4ade80", borderRadius: "50%", margin: "0 auto 20px", display: "flex", alignItems: "center", justifyContent: "center", color: "#4ade80", fontSize: 24 }}>✓</div>
-      <p style={{ fontFamily: "'Playfair Display', serif", fontSize: 28, color: "#fff", marginBottom: 8 }}>Pagamento Aprovado</p>
-      <p style={{ fontSize: 13, color: "#666", marginBottom: "2.5rem", lineHeight: 1.5 }}>Sua galeria exclusiva já está disponível para acesso e download.</p>
-      <button style={S.btnGold} onClick={onViewFiles}>Ver Meus Arquivos</button>
+    <div style={{ ...S.card, textAlign: "center", padding: "4rem 2rem", background: "rgba(93, 101, 50, 0.1)", border: "1px solid rgba(93, 101, 50, 0.4)" }}>
+      <div style={{ 
+        width: 64, height: 64, background: "#5D6532", borderRadius: 0, 
+        margin: "0 auto 24px", display: "flex", alignItems: "center", justifyContent: "center", 
+        color: "#fff", fontSize: 24, boxShadow: "0 0 30px rgba(93, 101, 50, 0.5)" 
+      }}>
+        ✓
+      </div>
+      <p style={{ fontFamily: "'Barlow Condensed', sans-serif", fontSize: 36, color: "#fff", marginBottom: 8, fontWeight: 800, textTransform: "uppercase" }}>Acesso Liberado</p>
+      <p style={{ fontSize: 13, color: "#ffffff", marginBottom: "3rem", lineHeight: 1.6, opacity: 0.8, fontWeight: 500 }}>Sua galeria exclusiva já está disponível para download. <br/>As memórias foram sincronizadas com sua conta.</p>
+      <button 
+        className="btn-success-glow"
+        style={{ ...S.btnGold, padding: "20px 40px", boxShadow: "0 10px 40px rgba(93, 101, 50, 0.4)" }} 
+        onClick={onViewFiles}
+      >
+        Ver Meus Arquivos
+      </button>
     </div>
   );
 }
 
 function LoadingScreen() {
-  return <div style={{ background: "#050505", minHeight: "100vh", display: "flex", alignItems: "center", justifyContent: "center" }}><div style={{ width: 32, height: 32, border: "1px solid #c9a96e", borderTopColor: "transparent", borderRadius: "50%", animation: "spin 0.8s linear infinite" }} /></div>;
+  return <div style={{ background: "#050505", minHeight: "100vh", display: "flex", alignItems: "center", justifyContent: "center" }}><div style={{ width: 32, height: 32, border: "1px solid #5D6532", borderTopColor: "transparent", borderRadius: "50%", animation: "spin 0.8s linear infinite" }} /></div>;
 }
 
 function NotFoundScreen({ onBack }: { onBack: () => void }) {
-  return <div style={{ background: "#050505", minHeight: "100vh", display: "flex", alignItems: "center", justifyContent: "center", flexDirection: "column", gap: "1rem" }}><p style={{ fontFamily: "'Playfair Display', serif", fontSize: 24, color: "#fff" }}>Link Expirado ou Inválido</p><button onClick={onBack} style={{ background: "none", border: "none", color: "#c9a96e", cursor: "pointer", textTransform: "uppercase", fontSize: 10, letterSpacing: 2 }}>Voltar à Vitrine</button></div>;
+  return <div style={{ background: "#050505", minHeight: "100vh", display: "flex", alignItems: "center", justifyContent: "center", flexDirection: "column", gap: "1rem" }}><p style={{ fontFamily: "'Barlow Condensed', sans-serif", fontSize: 32, color: "#fff", textTransform: "uppercase" }}>Link Expirado ou Inválido</p><button onClick={onBack} style={{ background: "none", border: "none", color: "#5D6532", cursor: "pointer", textTransform: "uppercase", fontSize: 11, letterSpacing: 3, fontWeight: 800 }}>Voltar à Vitrine</button></div>;
 }

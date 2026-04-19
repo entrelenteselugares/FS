@@ -6,9 +6,9 @@ import { API } from "../lib/api";
 
 export const RegisterPage: React.FC = () => {
   const [searchParams] = useSearchParams();
-  const initialRole = (searchParams.get("role") || "CLIENTE") as "CLIENTE" | "PROFISSIONAL" | "CARTORIO";
+  const initialRole = (searchParams.get("role") || "CLIENTE") as "CLIENTE" | "PROFISSIONAL" | "UNIDADE";
   
-  const [role, setRole] = useState<"CLIENTE" | "PROFISSIONAL" | "CARTORIO">(initialRole);
+  const [role, setRole] = useState<"CLIENTE" | "PROFISSIONAL" | "UNIDADE">(initialRole);
   const [formData, setFormData] = useState({
     nome: "",
     email: "",
@@ -41,13 +41,14 @@ export const RegisterPage: React.FC = () => {
         navigate(`/public/events/${hasPending}`);
       } else {
         // Senão, vai para o dashboard correto
-        const target = user.role === "ADMIN" ? "/admin" : user.role === "CARTORIO" ? "/cartorio" : user.role === "PROFISSIONAL" ? "/profissional" : "/#eventos";
+        const target = user.role === "ADMIN" ? "/admin" : user.role === "UNIDADE" || user.role === "CARTORIO" ? "/cartorio" : user.role === "PROFISSIONAL" ? "/profissional" : "/#eventos";
         navigate(target);
       }
-    } catch (err: any) {
-      console.error("[REGISTER CRITICAL FAILURE]:", err.response?.data || err.message);
+    } catch (err: unknown) {
+      const error = err as { response?: { data?: { error?: string, details?: string } }, message?: string };
+      console.error("[REGISTER CRITICAL FAILURE]:", error.response?.data || error.message);
       
-      const apiError = err.response?.data;
+      const apiError = error.response?.data;
       const displayMsg = typeof apiError?.error === 'string' 
         ? `${apiError.error}${apiError.details ? ` (${apiError.details})` : ""}`
         : "Não foi possível processar o registro. Verifique sua conexão e tente novamente.";
@@ -61,7 +62,7 @@ export const RegisterPage: React.FC = () => {
   const roles = [
     { id: "CLIENTE", label: "Private Client", icon: <User size={14} /> },
     { id: "PROFISSIONAL", label: "Network Artist", icon: <Camera size={14} /> },
-    { id: "CARTORIO", label: "Estabelecimento", icon: <Building2 size={14} /> },
+    { id: "UNIDADE", label: "Unidade Local", icon: <Building2 size={14} /> },
   ];
 
   return (
@@ -77,17 +78,17 @@ export const RegisterPage: React.FC = () => {
         className="w-full max-w-2xl relative z-10"
       >
         <div className="text-center mb-16">
-          <div className="text-[10px] font-bold uppercase tracking-[0.5em] text-zinc-600 mb-8 font-light italic">Request Membership</div>
-          <h1 className="text-5xl md:text-7xl font-serif text-white tracking-tight mb-4">
-            Solicitar <span className="text-zinc-700 italic">Registro</span>
+          <div className="text-[10px] font-bold uppercase tracking-[0.6em] text-zinc-600 mb-8 font-light italic">Request Membership</div>
+          <h1 className="text-5xl md:text-7xl font-heading text-white tracking-tighter mb-4 uppercase">
+            SOLICITAR <span className="text-zinc-700 italic">REGISTRO</span>
           </h1>
-          <p className="text-[10px] font-bold uppercase tracking-[0.4em] text-brand-olive/80">The Collective Network Protocol</p>
+          <p className="text-[10px] font-bold uppercase tracking-[0.5em] text-brand-tactical">The Collective Network Protocol</p>
         </div>
 
         <div className="border border-white/5 bg-white/[0.01] p-8 md:p-16">
           {error && (
-            <div className="border border-red-900/20 bg-red-900/5 text-red-700 text-[9px] font-bold uppercase tracking-[0.3em] p-6 mb-12 text-center font-bold">
-              {typeof error === 'string' ? error : ((error as any).error || JSON.stringify(error))}
+            <div className="border border-red-900/10 bg-red-900/5 text-red-600 text-[10px] font-bold uppercase tracking-[0.2em] p-6 mb-12 text-center font-bold">
+              {error}
             </div>
           )}
 
@@ -98,74 +99,74 @@ export const RegisterPage: React.FC = () => {
                 key={r.id}
                 type="button"
                 onClick={() => setRole(r.id as any)}
-                className={`flex flex-col items-center justify-center py-8 px-4 transition-all duration-700 group ${
-                  role === r.id ? "bg-white text-black" : "text-zinc-500 hover:bg-white/[0.02] hover:text-white"
+                className={`flex flex-col items-center justify-center py-8 px-4 transition-all duration-700 group rounded-none ${
+                  role === r.id ? "bg-brand-tactical text-white" : "text-zinc-500 hover:bg-white/[0.02] hover:text-white"
                 }`}
               >
                 <div className={`mb-4 transition-transform group-hover:scale-110 ${role === r.id ? "opacity-100" : "opacity-30 group-hover:opacity-100"}`}>
                   {r.icon}
                 </div>
-                <span className="text-[9px] font-bold uppercase tracking-[0.3em]">{r.label}</span>
+                <span className="text-[9px] font-bold uppercase tracking-[0.3em] font-bold">{r.label}</span>
               </button>
             ))}
           </div>
 
           <form onSubmit={handleRegister} className="grid grid-cols-1 md:grid-cols-2 gap-10">
             <div className="space-y-4 md:col-span-2">
-              <label className="text-[9px] font-bold uppercase tracking-[0.4em] text-zinc-700 ml-1">Entidade / Nome Completo</label>
+              <label className="text-[10px] font-bold uppercase tracking-[0.4em] text-zinc-600 ml-1">Entidade / Nome Completo</label>
               <div className="relative group">
-                <UserCircle className="absolute left-0 top-1/2 -translate-y-1/2 text-zinc-800 group-focus-within:text-brand-olive transition-colors" size={14} strokeWidth={1.5} />
+                <UserCircle className="absolute left-0 top-1/2 -translate-y-1/2 text-zinc-800 group-focus-within:text-brand-tactical transition-colors" size={14} strokeWidth={1.5} />
                 <input
                   type="text"
                   required
                   value={formData.nome}
                   onChange={(e) => setFormData({ ...formData, nome: e.target.value })}
-                  className="w-full bg-transparent border-b border-zinc-900 py-3 pl-8 text-xs text-white placeholder-zinc-800 focus:outline-none focus:border-brand-olive transition-all"
+                  className="w-full bg-transparent border-b border-zinc-900 py-3 pl-8 text-xs text-white placeholder-zinc-800 focus:outline-none focus:border-brand-tactical transition-all"
                   placeholder="TITULAR DO REGISTRO"
                 />
               </div>
             </div>
 
             <div className="space-y-4">
-              <label className="text-[9px] font-bold uppercase tracking-[0.4em] text-zinc-700 ml-1">Comunicação (WhatsApp)</label>
+              <label className="text-[10px] font-bold uppercase tracking-[0.4em] text-zinc-600 ml-1">Comunicação (WhatsApp)</label>
               <div className="relative group">
-                <Phone className="absolute left-0 top-1/2 -translate-y-1/2 text-zinc-800 group-focus-within:text-brand-olive transition-colors" size={14} strokeWidth={1.5} />
+                <Phone className="absolute left-0 top-1/2 -translate-y-1/2 text-zinc-800 group-focus-within:text-brand-tactical transition-colors" size={14} strokeWidth={1.5} />
                 <input
                   type="text"
                   required
                   value={formData.whatsapp}
                   onChange={(e) => setFormData({ ...formData, whatsapp: e.target.value })}
-                  className="w-full bg-transparent border-b border-zinc-900 py-3 pl-8 text-xs text-white placeholder-zinc-800 focus:outline-none focus:border-brand-olive transition-all"
+                  className="w-full bg-transparent border-b border-zinc-900 py-3 pl-8 text-xs text-white placeholder-zinc-800 focus:outline-none focus:border-brand-tactical transition-all"
                   placeholder="(00) 00000-0000"
                 />
               </div>
             </div>
 
             <div className="space-y-4">
-              <label className="text-[9px] font-bold uppercase tracking-[0.4em] text-zinc-700 ml-1">E-mail Cadastral</label>
+              <label className="text-[10px] font-bold uppercase tracking-[0.4em] text-zinc-600 ml-1">E-mail Cadastral</label>
               <div className="relative group">
-                <Mail className="absolute left-0 top-1/2 -translate-y-1/2 text-zinc-800 group-focus-within:text-brand-olive transition-colors" size={14} strokeWidth={1.5} />
+                <Mail className="absolute left-0 top-1/2 -translate-y-1/2 text-zinc-800 group-focus-within:text-brand-tactical transition-colors" size={14} strokeWidth={1.5} />
                 <input
                   type="email"
                   required
                   value={formData.email}
                   onChange={(e) => setFormData({ ...formData, email: e.target.value })}
-                  className="w-full bg-transparent border-b border-zinc-900 py-3 pl-8 text-xs text-white placeholder-zinc-800 focus:outline-none focus:border-brand-olive transition-all"
+                  className="w-full bg-transparent border-b border-zinc-900 py-3 pl-8 text-xs text-white placeholder-zinc-800 focus:outline-none focus:border-brand-tactical transition-all"
                   placeholder="EMAIL@DOMAIN.COM"
                 />
               </div>
             </div>
 
             <div className="space-y-4 md:col-span-2">
-              <label className="text-[9px] font-bold uppercase tracking-[0.4em] text-zinc-700 ml-1">Senha de Acesso</label>
+              <label className="text-[10px] font-bold uppercase tracking-[0.4em] text-zinc-600 ml-1">Senha de Acesso</label>
               <div className="relative group">
-                <Lock className="absolute left-0 top-1/2 -translate-y-1/2 text-zinc-800 group-focus-within:text-brand-olive transition-colors" size={14} strokeWidth={1.5} />
+                <Lock className="absolute left-0 top-1/2 -translate-y-1/2 text-zinc-800 group-focus-within:text-brand-tactical transition-colors" size={14} strokeWidth={1.5} />
                 <input
                   type="password"
                   required
                   value={formData.senha}
                   onChange={(e) => setFormData({ ...formData, senha: e.target.value })}
-                  className="w-full bg-transparent border-b border-zinc-900 py-3 pl-8 text-xs text-white placeholder-zinc-800 focus:outline-none focus:border-brand-olive transition-all"
+                  className="w-full bg-transparent border-b border-zinc-900 py-3 pl-8 text-xs text-white placeholder-zinc-800 focus:outline-none focus:border-brand-tactical transition-all"
                   placeholder="••••••••"
                 />
               </div>
@@ -174,7 +175,7 @@ export const RegisterPage: React.FC = () => {
             <button
               type="submit"
               disabled={loading}
-              className="md:col-span-2 bg-white text-black hover:bg-zinc-200 font-bold uppercase tracking-[0.5em] text-[10px] py-6 transition-all mt-6 flex items-center justify-center gap-4 group"
+              className="md:col-span-2 bg-brand-tactical text-white hover:brightness-110 font-bold uppercase tracking-[0.5em] text-[11px] py-6 transition-all mt-6 flex items-center justify-center gap-4 group rounded-none"
             >
               {loading ? "PROCESSING REQUEST..." : (
                 <>
@@ -186,7 +187,7 @@ export const RegisterPage: React.FC = () => {
 
           <div className="mt-16 text-center border-t border-white/5 pt-10">
             <p className="text-zinc-700 text-[9px] font-bold uppercase tracking-[0.3em] mb-4">
-              Já possui credenciais? <Link to="/login" className="text-white hover:text-brand-olive ml-4 transition-all italic underline underline-offset-4 decoration-white/10">Fazer Login</Link>
+              Já possui credenciais? <Link to="/login" className="text-white hover:text-brand-tactical ml-4 transition-all italic underline underline-offset-4 decoration-white/10">Fazer Login</Link>
             </p>
           </div>
         </div>

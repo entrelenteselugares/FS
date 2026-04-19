@@ -14,15 +14,15 @@ export default {
           offwhite: '#fafafa'
         },
         brand: {
-          charcoal: '#121212',
-          olive: '#556b2f',
-          emerald: '#10b981'
+          dark: '#050505',
+          tactical: '#5D6532',
+          frost: '#ffffff',
+          emerald: '#064e3b',
         }
       },
       fontFamily: {
         sans: ['Inter', 'sans-serif'],
-        serif: ['"Playfair Display"', 'serif'],
-        heading: ['"Playfair Display"', 'serif'],
+        heading: ['"Barlow Condensed"', 'sans-serif'],
       },
       animation: {
         'fade-in': 'fadeIn 0.5s ease-out',

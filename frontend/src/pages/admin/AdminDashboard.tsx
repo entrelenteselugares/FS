@@ -15,7 +15,7 @@ const IconDashboard = () => (
 );
 
 const NAV_ITEMS: NavItem[] = [
-  { label: "Master Ledger", to: "/admin", exact: true, icon: <IconDashboard /> },
+  { label: "Operações Centrais", to: "/admin", exact: true, icon: <IconDashboard /> },
 ];
 
 const TABS = [
@@ -25,11 +25,34 @@ const TABS = [
   { id: "orders", label: "Pedidos", icon: "📑" },
 ];
 
+interface AdminStats {
+  totalRevenue: number;
+  totalOrders: number;
+  activeEvents: number;
+  totalUsers: number;
+}
+
+interface AdminOrder {
+  id: string;
+  customerName: string;
+  total: number;
+  status: string;
+  createdAt: string;
+}
+
+interface AdminEvent {
+  id: string;
+  title: string;
+  date: string;
+  location: string;
+  _count: { orders: number };
+}
+
 export const AdminDashboard: React.FC = () => {
   const [activeTab, setActiveTab] = useState("overview");
-  const [stats, setStats] = useState<any>(null);
-  const [recentOrders, setRecentOrders] = useState<any[]>([]);
-  const [pendingEvents, setPendingEvents] = useState<any[]>([]);
+  const [stats, setStats] = useState<AdminStats | null>(null);
+  const [recentOrders, setRecentOrders] = useState<AdminOrder[]>([]);
+  const [pendingEvents, setPendingEvents] = useState<AdminEvent[]>([]);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
@@ -50,18 +73,18 @@ export const AdminDashboard: React.FC = () => {
   }, []);
 
   return (
-    <DashboardLayout title="Master Ledger" variant="olive" navItems={NAV_ITEMS}>
+    <DashboardLayout title="Operações Centrais" variant="tactical" navItems={NAV_ITEMS}>
       <div className="p-10 max-w-7xl mx-auto min-h-screen">
         {/* Header Editorial */}
         <div className="mb-20 animate-in fade-in slide-in-from-left-4 duration-1000">
           <div className="flex items-center gap-4 mb-6">
-            <div className="w-[1px] h-6 bg-brand-olive" />
-            <div className="text-[10px] font-bold uppercase tracking-[0.5em] text-zinc-500">
-              Admin & Intelligence
+            <div className="w-1.5 h-8 bg-brand-tactical" />
+            <div className="text-[10px] font-bold uppercase tracking-[0.5em] text-zinc-600">
+              Operations & Intelligence
             </div>
           </div>
-          <h1 className="text-5xl md:text-7xl font-serif tracking-tight text-white mb-6 italic">
-            Central de Ativos
+          <h1 className="text-5xl md:text-8xl font-heading tracking-tighter text-white mb-6 uppercase font-black">
+            Central de <span className="text-brand-tactical">Ativos</span>
           </h1>
           <p className="text-zinc-600 text-sm font-light uppercase tracking-[0.2em] max-w-2xl leading-relaxed">
             Gestão estratégica de receita e rede de profissionais Foto Segundo.
@@ -74,13 +97,13 @@ export const AdminDashboard: React.FC = () => {
             <button
               key={tab.id}
               onClick={() => setActiveTab(tab.id)}
-              className={`pb-4 text-[10px] font-bold uppercase tracking-[0.3em] transition-all relative ${
+              className={`pb-4 text-[10px] font-bold uppercase tracking-[0.4em] transition-all relative ${
                 activeTab === tab.id ? "text-white" : "text-zinc-700 hover:text-zinc-500"
               }`}
             >
               {tab.label}
               {activeTab === tab.id && (
-                <div className="absolute bottom-[-1px] left-0 right-0 h-[1.5px] bg-brand-olive" />
+                <div className="absolute bottom-[-1px] left-0 right-0 h-1.5 bg-brand-tactical" />
               )}
             </button>
           ))}

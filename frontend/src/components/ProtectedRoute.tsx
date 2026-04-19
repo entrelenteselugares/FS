@@ -1,10 +1,10 @@
 import React from "react";
 import { Navigate } from "react-router-dom";
-import { useAuth } from "../contexts/AuthContext";
+import { useAuth } from "../hooks/useAuth";
 
 interface Props {
   children: React.ReactNode;
-  roles?: Array<"ADMIN" | "CARTORIO" | "PROFISSIONAL" | "CLIENTE">;
+  roles?: Array<"ADMIN" | "CARTORIO" | "UNIDADE" | "PROFISSIONAL" | "CLIENTE">;
 }
 
 export const ProtectedRoute: React.FC<Props> = ({ children, roles }) => {

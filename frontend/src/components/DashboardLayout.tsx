@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import { Link, useLocation, type Location } from "react-router-dom";
-import { useAuth } from "../contexts/AuthContext";
+import { useAuth } from "../hooks/useAuth";
 
 export interface NavItem {
   label: string;
@@ -12,7 +12,7 @@ export interface NavItem {
 interface DashboardLayoutProps {
   children: React.ReactNode;
   navItems: NavItem[];
-  variant?: "indigo" | "emerald" | "olive";
+  variant?: "indigo" | "emerald" | "olive" | "tactical";
   title: string;
 }
 
@@ -46,6 +46,16 @@ const VARIANTS = {
     avatarText: "text-brand-olive",
     spinnerBorder: "border-brand-olive",
     gradient: "from-brand-olive/5",
+  },
+  tactical: {
+    label: "text-brand-tactical",
+    activeBg: "bg-brand-tactical/5",
+    activeBorder: "border-brand-tactical/20",
+    activeText: "text-brand-tactical",
+    avatarBg: "bg-white/5",
+    avatarText: "text-brand-tactical",
+    spinnerBorder: "border-brand-tactical",
+    gradient: "from-brand-tactical/5",
   },
 };
 
@@ -183,7 +193,7 @@ export const DashboardLayout: React.FC<DashboardLayoutProps> = ({
   const { user, logout } = useAuth();
   const location = useLocation();
   const [drawerOpen, setDrawerOpen] = useState(false);
-  const v = (VARIANTS as any)[variant];
+  const v = VARIANTS[variant as keyof typeof VARIANTS];
 
   const sidebarProps = {
     variant: v,

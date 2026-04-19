@@ -49,8 +49,9 @@ const EVENTOS = [
     location: "Espaço Monumental",
     city: "São Paulo",
     cartorio: "1º Cartório de Registro Civil",
-    description: "Casamento clássico com recepção luxuosa. Fotos e vídeos editados com finalização artística.",
-    services: { fotoEditada: true, videoEditado: true, reels: true },
+    description: "ÁLBUM DE TESTE OFICIAL. Use para validar o fluxo de pagamento no Mercado Pago.",
+    services: { foto: true }, // Apenas foto bruta para custar 1 real
+    priceOverride: 1.00,
     coverPhotoUrl: COVERS[9],
   },
   {
@@ -150,7 +151,8 @@ async function main() {
 
   for (const ev of EVENTOS) {
     const slug = slugify(ev.nomeNoivos);
-    const total = calcTotal(ev.services);
+    // @ts-ignore
+    const total = ev.priceOverride ?? calcTotal(ev.services);
 
     // Tentar encontrar por slug limpo ou pelo padrão "Exemplo: Julia & Ricardo"
     const existing = await prisma.event.findFirst({

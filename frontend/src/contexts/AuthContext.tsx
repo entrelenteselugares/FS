@@ -1,24 +1,6 @@
-import React, { createContext, useState, useEffect } from "react";
+import React, { useState, useEffect } from "react";
 import { API } from "../lib/api";
-
-interface AuthUser {
-  id: string;
-  nome: string;
-  email: string;
-  role: "ADMIN" | "CARTORIO" | "PROFISSIONAL" | "CLIENTE";
-  mpUserId?: string | null;
-  mpPublicKey?: string | null;
-}
-
-interface AuthContextType {
-  user: AuthUser | null;
-  token: string | null;
-  login: (email: string, senha: string) => Promise<AuthUser>;
-  logout: () => void;
-  loading: boolean;
-}
-
-export const AuthContext = createContext<AuthContextType | null>(null);
+import { AuthContext, type AuthUser } from "./AuthContextBase";
 
 export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
   const [user, setUser] = useState<AuthUser | null>(null);
@@ -34,7 +16,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
           const r = await API.get("/auth/me");
           setUser(r.data);
           setToken(stored);
-        } catch (_err) {
+        } catch {
           localStorage.removeItem("fs_token");
           delete API.defaults.headers.common["Authorization"];
         }
@@ -67,6 +49,3 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     </AuthContext.Provider>
   );
 };
-
-// Re-export useAuth hook for backward compatibility
-export { useAuth } from "../hooks/useAuth";

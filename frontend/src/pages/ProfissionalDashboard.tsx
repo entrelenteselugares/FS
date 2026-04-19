@@ -1,6 +1,6 @@
 import { useState, useEffect, useRef, useCallback } from "react";
 import { useNavigate } from "react-router-dom";
-import { useAuth } from "../contexts/AuthContext";
+import { useAuth } from "../hooks/useAuth";
 import { API } from "../lib/api";
 
 interface EventItem {
@@ -75,10 +75,10 @@ function DeadlineTimer({ event, type }: { event: EventItem; type: "FOTO" | "VIDE
 }
 
 const S = {
-  page: { fontFamily: "'Outfit', sans-serif", background: "#050505", color: "#e8e4dc", minHeight: "100vh" } as React.CSSProperties,
-  input: { width: "100%", background: "#0d0d0d", border: "0.5px solid #2a2a2a", borderRadius: 6, padding: "12px 14px", fontSize: 13, color: "#e8e4dc", outline: "none", transition: "border-color .2s" } as React.CSSProperties,
-  label: { fontSize: 11, color: "#888", display: "block", marginBottom: 6, letterSpacing: "1px", textTransform: "uppercase" as const } as React.CSSProperties,
-  card: { background: "#0a0a0a", border: "0.5px solid #1a1a1a", borderRadius: 12, overflow: "hidden" as const, transition: "transform 0.2s" } as React.CSSProperties,
+  page: { fontFamily: "'Inter', sans-serif", background: "#050505", color: "#ffffff", minHeight: "100vh" } as React.CSSProperties,
+  input: { width: "100%", background: "rgba(255,255,255,0.01)", border: "1px solid rgba(255,255,255,0.05)", borderRadius: 0, padding: "12px 14px", fontSize: 13, color: "#ffffff", outline: "none", transition: "all 0.2s" } as React.CSSProperties,
+  label: { fontSize: 11, color: "#9ca3af", display: "block", marginBottom: 6, letterSpacing: "1px", textTransform: "uppercase" as const, fontWeight: 700 } as React.CSSProperties,
+  card: { background: "rgba(255,255,255,0.02)", border: "1px solid rgba(255,255,255,0.05)", borderRadius: 0, overflow: "hidden" as const, transition: "transform 0.2s" } as React.CSSProperties,
 };
 
 export default function ProfissionalDashboard() {
@@ -105,31 +105,31 @@ export default function ProfissionalDashboard() {
   return (
     <div style={S.page}>
       <style>{`
-        @import url('https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700;900&family=Outfit:wght@300;400;500;700&display=swap');
+        @import url('https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@600;700;800&display=swap');
         * { box-sizing: border-box; }
-        input:focus { border-color: #c9a96e !important; }
+        input:focus { border-color: #5D6532 !important; }
         .hover-row:hover { background: #0f100a !important; transform: translateY(-2px); }
         .spin { animation: spin 0.8s linear infinite; }
         @keyframes spin { to { transform: rotate(360deg); } }
       `}</style>
 
       {/* NAV */}
-      <nav style={{ display: "flex", alignItems: "center", justifyContent: "space-between", padding: "1.25rem 2.5rem", borderBottom: "1px solid #141414", background: "rgba(5,5,5,0.9)", backdropFilter: "blur(10px)", position: "sticky", top: 0, zIndex: 100 }}>
+      <nav style={{ display: "flex", alignItems: "center", justifyContent: "space-between", padding: "1.25rem 2.5rem", borderBottom: "1px solid #141414", background: "rgba(5,5,5,0.95)", backdropFilter: "blur(10px)", position: "sticky", top: 0, zIndex: 100 }}>
         <div style={{ display: "flex", alignItems: "center", gap: 24 }}>
-          <button onClick={() => navigate("/")} style={{ background: "none", border: "none", color: "#666", fontSize: 13, cursor: "pointer" }}>
-            ← Vitrine
+          <button onClick={() => navigate("/")} style={{ background: "none", border: "none", color: "#5D6532", fontSize: 11, fontWeight: 800, textTransform: "uppercase", letterSpacing: 2, cursor: "pointer" }}>
+            ← Showcase
           </button>
-          <div style={{ fontFamily: "'Playfair Display', serif", fontSize: 18, fontWeight: 700, color: "#fff", display: "flex", alignItems: "center", gap: 10 }}>
-            <span style={{ width: 8, height: 8, background: "#c9a96e", borderRadius: "2px", transform: "rotate(45deg)" }} />
+          <div style={{ fontFamily: "'Barlow Condensed', sans-serif", fontSize: 20, fontWeight: 800, color: "#fff", display: "flex", alignItems: "center", gap: 10, textTransform: "uppercase", letterSpacing: 1 }}>
+            <span style={{ width: 8, height: 8, background: "#5D6532" }} />
             Foto Segundo
           </div>
         </div>
         <div style={{ display: "flex", alignItems: "center", gap: 20 }}>
           <div style={{ textAlign: "right" }}>
-            <div style={{ fontSize: 13, color: "#fff", fontWeight: 500 }}>{user?.nome}</div>
-            <div style={{ fontSize: 10, color: "#c9a96e", letterSpacing: 1, textTransform: "uppercase" }}>{user?.role}</div>
+            <div style={{ fontSize: 12, color: "#fff", fontWeight: 700, textTransform: "uppercase" }}>{user?.nome}</div>
+            <div style={{ fontSize: 9, color: "#5D6532", letterSpacing: 2, textTransform: "uppercase", fontWeight: 800 }}>{user?.role}</div>
           </div>
-          <button onClick={logout} style={{ background: "none", border: "1px solid #222", borderRadius: 6, padding: "8px 16px", color: "#888", fontSize: 12, cursor: "pointer" }}>
+          <button onClick={logout} style={{ background: "none", border: "1.5px solid #222", borderRadius: 0, padding: "8px 16px", color: "#666", fontSize: 10, fontWeight: 700, textTransform: "uppercase", cursor: "pointer" }}>
             Sair
           </button>
         </div>
@@ -147,10 +147,10 @@ export default function ProfissionalDashboard() {
         <div>
           <header style={{ marginBottom: "2rem", display: "flex", justifyContent: "space-between", alignItems: "flex-end" }}>
             <div>
-              <h1 style={{ fontFamily: "'Playfair Display', serif", fontSize: 32, fontWeight: 700, color: "#fff", marginBottom: 8 }}>
+              <h1 style={{ fontFamily: "'Barlow Condensed', sans-serif", fontSize: 48, fontWeight: 800, color: "#fff", marginBottom: 4, textTransform: "uppercase", letterSpacing: 1 }}>
                 Meus eventos
               </h1>
-              <p style={{ fontSize: 14, color: "#666" }}>
+              <p style={{ fontSize: 12, color: "#555", textTransform: "uppercase", letterSpacing: 2 }}>
                 {events.length} evento{events.length !== 1 ? "s" : ""} gerenciado{events.length !== 1 ? "s" : ""} por você
               </p>
             </div>
@@ -163,9 +163,9 @@ export default function ProfissionalDashboard() {
               ))}
             </div>
           ) : events.length === 0 ? (
-            <div style={{ textAlign: "center", padding: "6rem 0", background: "#0a0a0a", borderRadius: 16, border: "1px dashed #222" }}>
-              <p style={{ fontFamily: "'Playfair Display', serif", fontSize: 20, color: "#c9a96e", marginBottom: 12 }}>Nenhum evento no seu radar</p>
-              <p style={{ fontSize: 14, color: "#666", maxWidth: 300, margin: "0 auto" }}>Assim que você for alocado em um novo evento, ele aparecerá aqui automaticamente.</p>
+            <div style={{ textAlign: "center", padding: "6rem 0", background: "#0a0a0a", borderRadius: 0, border: "1px dashed #222" }}>
+              <p style={{ fontFamily: "'Barlow Condensed', sans-serif", fontSize: 24, color: "#5D6532", marginBottom: 12, fontWeight: 800, textTransform: "uppercase" }}>Nenhum evento no seu radar</p>
+              <p style={{ fontSize: 12, color: "#555", maxWidth: 350, margin: "0 auto", textTransform: "uppercase", letterSpacing: 1 }}>Assim que você for alocado em um novo evento, ele aparecerá aqui automaticamente.</p>
             </div>
           ) : (
             <div style={{ display: "flex", flexDirection: "column", gap: 12 }}>
@@ -179,8 +179,8 @@ export default function ProfissionalDashboard() {
                     onClick={() => setSelected(selected?.id === event.id ? null : event)}
                     style={{
                       ...S.card,
-                      background: selected?.id === event.id ? "#0f100a" : "#0a0a0a",
-                      borderColor: selected?.id === event.id ? "#c9a96e44" : "#1a1a1a",
+                      background: selected?.id === event.id ? "rgba(93, 101, 50, 0.1)" : "#0a0a0a",
+                      borderColor: selected?.id === event.id ? "#5D6532" : "#1a1a1a",
                       padding: "1.25rem",
                       cursor: "pointer",
                       display: "flex",
@@ -191,13 +191,13 @@ export default function ProfissionalDashboard() {
                     }}
                   >
                     {isNew && (
-                      <div style={{ position: "absolute", top: 0, left: 0, background: "#c9a96e", color: "#000", fontSize: 8, fontWeight: 900, padding: "3px 8px", borderRadius: "0 0 6px 0", textTransform: "uppercase", letterSpacing: 0.5 }}>
+                      <div style={{ position: "absolute", top: 0, left: 0, background: "#5D6532", color: "#fff", fontSize: 8, fontWeight: 900, padding: "4px 10px", borderRadius: 0, textTransform: "uppercase", letterSpacing: 1 }}>
                         Novo
                       </div>
                     )}
 
                     {/* Thumbnail */}
-                    <div style={{ width: 80, height: 80, background: "#050505", borderRadius: 8, flexShrink: 0, overflow: "hidden", border: "1px solid #222" }}>
+                    <div style={{ width: 80, height: 80, background: "#050505", borderRadius: 0, flexShrink: 0, overflow: "hidden", border: "1px solid #1a1a1a" }}>
                       {event.coverPhotoUrl ? (
                         <img src={event.coverPhotoUrl} alt="" style={{ width: "100%", height: "100%", objectFit: "cover" }} />
                       ) : (
@@ -213,9 +213,9 @@ export default function ProfissionalDashboard() {
 
                     {/* Info */}
                     <div style={{ flex: 1, minWidth: 0 }}>
-                      <div style={{ fontSize: 16, fontWeight: 600, color: "#fff", marginBottom: 4, overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>{event.nomeNoivos}</div>
-                      <div style={{ fontSize: 12, color: "#555", marginBottom: 8 }}>
-                        {formatDate(event.dataEvento)} · {event.cartorio || "Sem cartório"}
+                      <div style={{ fontSize: 16, fontWeight: 700, color: "#fff", marginBottom: 4, overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap", textTransform: "uppercase" }}>{event.nomeNoivos}</div>
+                      <div style={{ fontSize: 11, color: "#555", marginBottom: 8, fontWeight: 600, textTransform: "uppercase", letterSpacing: 1 }}>
+                        {formatDate(event.dataEvento)} · {event.cartorio || "UNIDADE NÃO DEFINIDA"}
                       </div>
                       
                       <div style={{ display: "flex", gap: "1.5rem", alignItems: "center" }}>
@@ -228,11 +228,11 @@ export default function ProfissionalDashboard() {
                     <div style={{ textAlign: "right", paddingLeft: 20, borderLeft: "1px solid #1a1a1a", flexShrink: 0 }}>
                       <div style={{ display: "flex", alignItems: "center", gap: 4, justifyContent: "flex-end" }}>
                         {event._count.pedidos > 5 && <span style={{ fontSize: 12 }}>🔥</span>}
-                        <div style={{ fontSize: 24, fontWeight: 700, color: event._count.pedidos > 0 ? "#c9a96e" : "#333", fontFamily: "'Playfair Display', serif" }}>
+                        <div style={{ fontSize: 24, fontWeight: 800, color: event._count.pedidos > 0 ? "#5D6532" : "#222", fontFamily: "'Barlow Condensed', sans-serif" }}>
                           {event._count.pedidos}
                         </div>
                       </div>
-                      <div style={{ fontSize: 9, color: "#444", textTransform: "uppercase", letterSpacing: 1.5, fontWeight: 700 }}>Vendas</div>
+                      <div style={{ fontSize: 9, color: "#444", textTransform: "uppercase", letterSpacing: 2, fontWeight: 800 }}>Vendas</div>
                     </div>
                   </div>
                 );
@@ -244,6 +244,7 @@ export default function ProfissionalDashboard() {
         {/* PAINEL DE EDIÇÃO */}
         {selected && (
           <EventEditPanel
+            key={selected.id}
             event={selected}
             onUpdated={handleUpdated}
             onClose={() => setSelected(null)}
@@ -251,21 +252,6 @@ export default function ProfissionalDashboard() {
         )}
       </div>
     </div>
-  );
-}
-
-function StatusPill({ ok, label }: { ok: boolean; label: string }) {
-  return (
-    <span style={{
-      fontSize: 9, padding: "3px 10px", borderRadius: 4, letterSpacing: "1px",
-      textTransform: "uppercase" as const,
-      background: ok ? "#102010" : "#111",
-      border: `1px solid ${ok ? "#1b3a1b" : "#222"}`,
-      color: ok ? "#4ade80" : "#444",
-      fontWeight: 500
-    }}>
-      {ok ? "✓" : "·"} {label}
-    </span>
   );
 }
 
@@ -282,17 +268,7 @@ function EventEditPanel({ event, onUpdated, onClose }: {
   const [coverStatus, setCoverStatus] = useState<SaveStatus>("idle");
   const [coverPreview, setCoverPreview] = useState<string | null>(event.coverPhotoUrl);
   const fileRef = useRef<HTMLInputElement>(null);
-  const prevEventId = useRef(event.id);
 
-  // Resetar estado SOMENTE quando o evento muda (evita cascata de setState)
-  if (prevEventId.current !== event.id) {
-    prevEventId.current = event.id;
-    setLrUrl(event.lightroomUrl ?? "");
-    setDrUrl(event.driveUrl ?? "");
-    setCoverPreview(event.coverPhotoUrl);
-    setLinkStatus("idle");
-    setCoverStatus("idle");
-  }
 
   const saveLinks = async () => {
     setLinkStatus("saving");
@@ -343,9 +319,9 @@ function EventEditPanel({ event, onUpdated, onClose }: {
       {/* Header */}
       <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start", marginBottom: "2rem" }}>
         <div>
-          <p style={{ fontSize: 10, letterSpacing: "2px", textTransform: "uppercase", color: "#c9a96e", marginBottom: 4 }}>Editando</p>
-          <h2 style={{ fontFamily: "'Playfair Display', serif", fontSize: 20, color: "#fff", margin: 0 }}>{event.nomeNoivos}</h2>
-          <p style={{ fontSize: 12, color: "#666", marginTop: 4 }}>{formatDate(event.dataEvento)}</p>
+          <p style={{ fontSize: 10, letterSpacing: "3px", textTransform: "uppercase", color: "#5D6532", marginBottom: 6, fontWeight: 800 }}>Gestão de Evento</p>
+          <h2 style={{ fontFamily: "'Barlow Condensed', sans-serif", fontSize: 28, color: "#fff", margin: 0, fontWeight: 800, textTransform: "uppercase" }}>{event.nomeNoivos}</h2>
+          <p style={{ fontSize: 11, color: "#555", marginTop: 4, fontWeight: 700, textTransform: "uppercase", letterSpacing: 1 }}>{formatDate(event.dataEvento)}</p>
         </div>
         <button onClick={onClose} style={{ background: "none", border: "none", color: "#444", fontSize: 28, cursor: "pointer", lineHeight: 1 }}>×</button>
       </div>
@@ -355,7 +331,7 @@ function EventEditPanel({ event, onUpdated, onClose }: {
         <label style={S.label}>Foto de Capa</label>
         <div
           onClick={() => fileRef.current?.click()}
-          style={{ width: "100%", aspectRatio: "16/9", background: "#050505", borderRadius: 8, border: "1px dashed #2a2a2a", cursor: "pointer", overflow: "hidden", position: "relative" }}
+          style={{ width: "100%", aspectRatio: "16/9", background: "#050505", borderRadius: 0, border: "1px dashed #333", cursor: "pointer", overflow: "hidden", position: "relative" }}
         >
           {coverPreview ? (
             <img src={coverPreview} alt="" style={{ width: "100%", height: "100%", objectFit: "cover" }} />
@@ -369,8 +345,8 @@ function EventEditPanel({ event, onUpdated, onClose }: {
             </div>
           )}
           {coverStatus === "saving" && (
-            <div style={{ position: "absolute", inset: 0, background: "rgba(0,0,0,0.7)", display: "flex", alignItems: "center", justifyContent: "center" }}>
-              <div className="spin" style={{ width: 24, height: 24, border: "2px solid #c9a96e", borderTopColor: "transparent", borderRadius: "50%" }} />
+            <div style={{ position: "absolute", inset: 0, background: "rgba(0,0,0,0.8)", display: "flex", alignItems: "center", justifyContent: "center" }}>
+              <div className="spin" style={{ width: 24, height: 24, border: "2px solid #5D6532", borderTopColor: "transparent", borderRadius: "50%" }} />
             </div>
           )}
           {coverStatus === "saved" && (
@@ -411,14 +387,15 @@ function EventEditPanel({ event, onUpdated, onClose }: {
           onClick={saveLinks}
           disabled={linkStatus === "saving"}
           style={{
-            width: "100%", padding: "14px", borderRadius: 8, border: "none", fontSize: 14, fontWeight: 600,
+            width: "100%", padding: "18px", borderRadius: 0, border: "none", fontSize: 12, fontWeight: 800,
             cursor: linkStatus === "saving" ? "not-allowed" : "pointer", transition: "all .3s",
-            background: linkStatus === "saved" ? "#4ade80" : linkStatus === "error" ? "#7f1d1d" : "#c9a96e",
-            color: linkStatus === "error" ? "#fca5a5" : "#000",
+            background: linkStatus === "saved" ? "#5D6532" : linkStatus === "error" ? "#7f1d1d" : "#5D6532",
+            color: "#fff",
             opacity: linkStatus === "saving" ? 0.7 : 1,
+            textTransform: "uppercase", letterSpacing: 2
           }}
         >
-          {linkStatus === "saving" ? "Salvando..." : linkStatus === "saved" ? "✓ Salvo com sucesso" : linkStatus === "error" ? "Erro — tentar novamente" : "Salvar Alterações"}
+          {linkStatus === "saving" ? "SINCRONIZANDO..." : linkStatus === "saved" ? "✓ SINCRONIZADO" : linkStatus === "error" ? "ERRO — REPETIR" : "SALVAR ALTERAÇÕES"}
         </button>
       </section>
 
@@ -428,10 +405,10 @@ function EventEditPanel({ event, onUpdated, onClose }: {
           href={`/eventos/${event.id}`}
           target="_blank"
           rel="noopener noreferrer"
-          style={{ display: "flex", alignItems: "center", justifyContent: "space-between", fontSize: 12, color: "#555", textDecoration: "none" }}
+          style={{ display: "flex", alignItems: "center", justifyContent: "space-between", fontSize: 10, color: "#666", textDecoration: "none", fontWeight: 800, textTransform: "uppercase", letterSpacing: 1 }}
         >
-          <span>Ver página pública do evento</span>
-          <span style={{ color: "#c9a96e" }}>↗</span>
+          <span>Ver página pública</span>
+          <span style={{ color: "#5D6532" }}>↗</span>
         </a>
       </div>
     </div>

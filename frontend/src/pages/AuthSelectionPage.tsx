@@ -9,26 +9,26 @@ export const AuthSelectionPage: React.FC = () => {
   const options = [
     {
       id: "cliente",
-      title: "Private Client",
-      description: "Acesso reservado a portadores de convite e clientes VIP.",
-      icon: <User className="text-zinc-500" size={20} strokeWidth={1.5} />,
-      label: "Entrar na Galeria",
+      title: "OPERADOR CLIENTE",
+      description: "Acesso reservado a portadores de convite e portfólios autorizados.",
+      icon: <User className="text-zinc-600" size={24} strokeWidth={1.5} />,
+      label: "ENTRAR NA GALERIA",
       role: "CLIENTE"
     },
     {
       id: "profissional",
-      title: "Network Artist",
-      description: "Infraestrutura analítica para fotógrafos e curadores do coletivo.",
-      icon: <Camera className="text-zinc-500" size={20} strokeWidth={1.5} />,
-      label: "Painel de Criação",
+      title: "REDE TÉCNICA",
+      description: "Infraestrutura analítica para fotógrafos e inteligência de campo.",
+      icon: <Camera className="text-zinc-600" size={24} strokeWidth={1.5} />,
+      label: "PAINEL OPERACIONAL",
       role: "PROFISSIONAL"
     },
     {
       id: "cartorio",
-      title: "Estabelecimentos", // Termo neutro como solicitado
-      description: "Gestão institucional, regramento de ativos e fluxos de repasse.",
-      icon: <Building2 className="text-zinc-500" size={20} strokeWidth={1.5} />,
-      label: "Área de Unidade",
+      title: "CENTRAL UNIDADE",
+      description: "Gestão institucional, regramento de ativos e fluxos de logística.",
+      icon: <Building2 className="text-zinc-600" size={24} strokeWidth={1.5} />,
+      label: "PORTAL DA UNIDADE",
       role: "CARTORIO"
     }
   ];
@@ -48,13 +48,13 @@ export const AuthSelectionPage: React.FC = () => {
         className="text-center mb-32 relative z-10"
       >
         <img src="/assets/logo.png" alt="Foto Segundo" className="h-8 w-auto invert brightness-0 mb-16 mx-auto opacity-80" />
-        <h1 className="text-6xl md:text-8xl font-serif tracking-tight text-white mb-8">
-          Portal de <span className="italic text-zinc-700">Acesso</span>
+        <h1 className="text-6xl md:text-9xl font-heading tracking-tighter text-white mb-8 uppercase font-black">
+          GATE<span className="text-brand-tactical">KEEPER</span>
         </h1>
         <div className="flex items-center justify-center gap-6">
-           <div className="w-12 h-[1px] bg-brand-olive/40" />
-           <p className="text-zinc-600 uppercase tracking-[0.6em] text-[10px] font-bold">The Photography Collective</p>
-           <div className="w-12 h-[1px] bg-brand-olive/40" />
+           <div className="w-16 h-1.5 bg-brand-tactical" />
+           <p className="text-zinc-600 uppercase tracking-[0.8em] text-[10px] font-bold">Protocolo de Identidade</p>
+           <div className="w-16 h-1.5 bg-brand-tactical" />
         </div>
       </motion.div>
 
@@ -68,18 +68,18 @@ export const AuthSelectionPage: React.FC = () => {
             onClick={() => navigate(`/login?role=${opt.role}`)}
             className="group p-20 flex flex-col items-start border-r border-white/5 last:border-r-0 hover:bg-white/[0.02] cursor-pointer transition-all duration-1000"
           >
-            <div className="mb-12 opacity-30 group-hover:opacity-100 group-hover:text-brand-olive transition-all transform group-hover:scale-110 duration-700">
+            <div className="mb-12 opacity-40 group-hover:opacity-100 group-hover:text-brand-tactical transition-all transform group-hover:scale-110 duration-500">
               {opt.icon}
             </div>
-            <h3 className="text-3xl font-serif text-white mb-6 tracking-tight group-hover:italic transition-all duration-700 font-light">
+            <h3 className="text-4xl font-heading text-white mb-6 tracking-tighter transition-all duration-500 font-bold uppercase">
               {opt.title}
             </h3>
-            <p className="text-zinc-600 text-xs leading-[1.8] mb-16 font-light lg:pr-10 uppercase tracking-widest font-bold">
+            <p className="text-zinc-700 text-[11px] leading-[1.8] mb-16 font-bold lg:pr-10 uppercase tracking-widest">
               {opt.description}
             </p>
             
-            <div className="mt-auto flex items-center gap-6 text-[9px] font-bold uppercase tracking-[0.5em] text-zinc-600 group-hover:text-white transition-all duration-700">
-              <span className="w-6 h-[1px] bg-zinc-900 group-hover:bg-brand-olive transition-all" />
+            <div className="mt-auto flex items-center gap-6 text-[10px] font-black uppercase tracking-[0.5em] text-zinc-700 group-hover:text-brand-tactical transition-all duration-500">
+              <span className="w-8 h-1 bg-zinc-900 group-hover:bg-brand-tactical transition-all" />
               {opt.label}
             </div>
           </motion.div>
@@ -91,10 +91,10 @@ export const AuthSelectionPage: React.FC = () => {
         animate={{ opacity: 1 }}
         transition={{ delay: 1, duration: 1 }}
         onClick={() => navigate("/")}
-        className="mt-32 text-zinc-800 hover:text-brand-olive text-[11px] font-bold uppercase tracking-[0.6em] transition-all duration-500 flex items-center gap-4 group"
+        className="mt-32 text-zinc-800 hover:text-brand-tactical text-[11px] font-bold uppercase tracking-[0.8em] transition-all duration-500 flex items-center gap-6 group"
       >
-        <span className="w-8 h-[1px] bg-zinc-900 group-hover:w-12 group-hover:bg-brand-olive transition-all" />
-        Return to Home
+        <span className="w-12 h-1.5 bg-zinc-900 group-hover:w-16 group-hover:bg-brand-tactical transition-all" />
+        VOLTAR À VITRINE
       </motion.button>
     </div>
   );

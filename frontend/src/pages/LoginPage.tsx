@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import { useNavigate, useLocation, Link } from "react-router-dom";
-import { useAuth } from "../contexts/AuthContext";
+import { useAuth } from "../hooks/useAuth";
 import { motion } from "framer-motion";
 import { ArrowRight, Lock, Mail } from "lucide-react";
 
@@ -37,7 +37,7 @@ export const LoginPage: React.FC = () => {
       const destinos: Record<string, string> = {
         ADMIN: "/admin",
         PROFISSIONAL: "/profissional",
-        CARTORIO: "/cartorio",
+        UNIDADE: "/cartorio",
         CLIENTE: "/minha-conta",
       };
 
@@ -55,7 +55,7 @@ export const LoginPage: React.FC = () => {
     <div className="min-h-screen bg-[#050505] flex items-center justify-center px-6 relative overflow-hidden">
       {/* Editorial Decorative Elements */}
       <div className="absolute top-0 left-0 w-full h-[1px] bg-gradient-to-r from-transparent via-white/5 to-transparent" />
-      <div className="absolute bottom-1/4 left-1/4 w-[1px] h-32 bg-brand-olive/20" />
+      <div className="absolute bottom-1/4 left-1/4 w-[1px] h-32 bg-brand-tactical/20" />
 
       <motion.div 
         initial={{ opacity: 0, scale: 0.98 }}
@@ -64,37 +64,37 @@ export const LoginPage: React.FC = () => {
         className="w-full max-w-lg relative z-10"
       >
         <div className="text-center mb-16">
-          <div className="text-sm font-bold uppercase tracking-[0.5em] text-zinc-600 mb-8 flex items-center justify-center gap-4">
+          <div className="text-sm font-bold uppercase tracking-[0.5em] text-zinc-700 mb-8 flex items-center justify-center gap-4">
             <span className="w-8 h-[1px] bg-zinc-900" />
             Secure Authentication
             <span className="w-8 h-[1px] bg-zinc-900" />
           </div>
-          <h1 className="text-5xl md:text-6xl font-serif text-white tracking-tight italic mb-4">
-            Acesso <span className="text-zinc-700">Privado</span>
+          <h1 className="text-5xl md:text-7xl font-heading text-white tracking-tighter mb-4">
+            ACESSO <span className="text-zinc-700">PRIVADO</span>
           </h1>
-          <p className="text-[10px] font-bold uppercase tracking-[0.3em] text-brand-olive/80">
-            {preferredRole === "CARTORIO" ? "PORTAL DE ESTABELECIMENTO" : preferredRole ? `IDENTIDADE: ${preferredRole}` : "COLETIVO FOTO SEGUNDO"}
+          <p className="text-[10px] font-bold uppercase tracking-[0.5em] text-brand-tactical">
+            {preferredRole === "CARTORIO" || preferredRole === "UNIDADE" ? "PORTAL DA UNIDADE" : preferredRole ? `IDENTIDADE: ${preferredRole}` : "COLETIVO FOTO SEGUNDO"}
           </p>
         </div>
 
         <div className="border border-white/5 bg-white/[0.01] p-10 md:p-16">
           {error && (
-            <div className="border border-red-900/20 bg-red-900/5 text-red-700 text-[9px] font-bold uppercase tracking-[0.3em] p-5 mb-10 text-center">
+            <div className="border border-red-900/10 bg-red-900/5 text-red-600 text-[10px] font-bold uppercase tracking-[0.2em] p-6 mb-10 text-center">
               {typeof error === 'string' ? error : (error as any).error || JSON.stringify(error)}
             </div>
           )}
 
           <form onSubmit={handleSubmit} className="space-y-10">
             <div className="space-y-4">
-              <label className="text-[9px] font-bold uppercase tracking-[0.4em] text-zinc-700 ml-1">E-mail de Registro</label>
+              <label className="text-[10px] font-bold uppercase tracking-[0.4em] text-zinc-600 ml-1">E-mail de Registro</label>
               <div className="relative group">
-                <Mail className="absolute left-0 top-1/2 -translate-y-1/2 text-zinc-800 group-focus-within:text-brand-olive transition-colors" size={14} strokeWidth={1.5} />
+                <Mail className="absolute left-0 top-1/2 -translate-y-1/2 text-zinc-800 group-focus-within:text-brand-tactical transition-colors" size={14} strokeWidth={1.5} />
                 <input
                   type="email"
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
                   autoComplete="email"
-                  className="w-full bg-transparent border-b border-zinc-900 py-3 pl-8 text-xs text-white placeholder-zinc-800 focus:outline-none focus:border-brand-olive transition-all"
+                  className="w-full bg-transparent border-b border-zinc-900 py-3 pl-8 text-xs text-white placeholder-zinc-800 focus:outline-none focus:border-brand-tactical transition-all"
                   placeholder="IDENTIFIER@DOMAIN.COM"
                   required
                 />
@@ -102,15 +102,15 @@ export const LoginPage: React.FC = () => {
             </div>
 
             <div className="space-y-4">
-              <label className="text-[9px] font-bold uppercase tracking-[0.4em] text-zinc-700 ml-1">Código de Segurança</label>
+              <label className="text-[10px] font-bold uppercase tracking-[0.4em] text-zinc-600 ml-1">Código de Segurança</label>
               <div className="relative group">
-                <Lock className="absolute left-0 top-1/2 -translate-y-1/2 text-zinc-800 group-focus-within:text-brand-olive transition-colors" size={14} strokeWidth={1.5} />
+                <Lock className="absolute left-0 top-1/2 -translate-y-1/2 text-zinc-800 group-focus-within:text-brand-tactical transition-colors" size={14} strokeWidth={1.5} />
                 <input
                   type="password"
                   value={senha}
                   onChange={(e) => setSenha(e.target.value)}
                   autoComplete="current-password"
-                  className="w-full bg-transparent border-b border-zinc-900 py-3 pl-8 text-xs text-white placeholder-zinc-800 focus:outline-none focus:border-brand-olive transition-all"
+                  className="w-full bg-transparent border-b border-zinc-900 py-3 pl-8 text-xs text-white placeholder-zinc-800 focus:outline-none focus:border-brand-tactical transition-all"
                   placeholder="••••••••"
                   required
                 />
@@ -120,7 +120,7 @@ export const LoginPage: React.FC = () => {
             <button
               type="submit"
               disabled={loading}
-              className="w-full bg-white text-black hover:bg-zinc-200 font-bold uppercase tracking-[0.5em] text-[10px] py-5 transition-all flex items-center justify-center gap-4 group"
+              className="w-full bg-brand-tactical text-white hover:brightness-110 font-bold uppercase tracking-[0.5em] text-[11px] py-6 transition-all flex items-center justify-center gap-4 group rounded-none"
             >
               {loading ? "AUTHENTICATING..." : (
                 <>
@@ -134,9 +134,9 @@ export const LoginPage: React.FC = () => {
             <p className="text-zinc-700 text-[9px] font-bold uppercase tracking-[0.3em] mb-6 font-light">Novo no Coletivo?</p>
             <Link 
               to="/register?role=CLIENTE"
-              className="text-white hover:text-brand-olive text-[10px] font-bold uppercase tracking-[0.4em] transition-all flex items-center justify-center gap-4 group italic"
+              className="text-white hover:text-brand-tactical text-[11px] font-heading font-bold uppercase tracking-[0.4em] transition-all flex items-center justify-center gap-4 group italic"
             >
-              Solicitar Registro <span className="w-8 h-[1px] bg-zinc-900 group-hover:w-12 group-hover:bg-brand-olive transition-all" />
+              Solicitar Registro <span className="w-8 h-[1px] bg-zinc-900 group-hover:w-12 group-hover:bg-brand-tactical transition-all" />
             </Link>
           </div>
         </div>

@@ -1,6 +1,6 @@
-import { useState, useEffect, useRef } from "react";
+import { useState, useEffect, useRef, useCallback } from "react";
 import { useNavigate, useSearchParams } from "react-router-dom";
-import { useAuth } from "../contexts/AuthContext";
+import { useAuth } from "../hooks/useAuth";
 import { API } from "../lib/api";
 
 interface CartorioStats {
@@ -47,9 +47,9 @@ function formatDateTime(d: string) {
 }
 
 const S = {
-  page: { fontFamily: "'DM Sans', sans-serif", background: "#0a0a0a", color: "#e8e4dc", minHeight: "100vh" } as React.CSSProperties,
-  card: { background: "#111", border: "0.5px solid #1e1e1e", borderRadius: 10 } as React.CSSProperties,
-  input: { background: "#0d0d0d", border: "0.5px solid #2a2a2a", borderRadius: 6, padding: "8px 12px", fontSize: 12, color: "#e8e4dc", fontFamily: "'DM Sans', sans-serif", outline: "none" } as React.CSSProperties,
+  page: { fontFamily: "'Inter', sans-serif", background: "#050505", color: "#ffffff", minHeight: "100vh" } as React.CSSProperties,
+  card: { background: "rgba(255,255,255,0.02)", border: "1px solid rgba(255,255,255,0.05)", borderRadius: 0 } as React.CSSProperties,
+  input: { background: "rgba(255,255,255,0.01)", border: "0.5px solid rgba(255,255,255,0.1)", borderRadius: 0, padding: "8px 12px", fontSize: 13, color: "#ffffff", outline: "none" } as React.CSSProperties,
 };
 
 type Tab = "agenda" | "pedidos" | "configuracoes";
@@ -98,9 +98,10 @@ export default function CartorioDashboard() {
       setStats(statsRes.data);
       setEventos(eventosRes.data.events ?? eventosRes.data);
       setCartorioName(statsRes.data.razaoSocial ?? "");
-    } catch (err: any) {
-      if (err.response?.status === 404) {
-        setError("Perfil de cartório não configurado. Entre em contato com o administrador.");
+    } catch (err: unknown) {
+      const error = err as { response?: { status: number } };
+      if (error.response?.status === 404) {
+        setError("Perfil de unidade não configurado. Entre em contato com o administrador.");
       } else {
         setError("Erro ao carregar dados.");
       }
@@ -109,7 +110,7 @@ export default function CartorioDashboard() {
     }
   };
 
-  const loadPedidos = async () => {
+  const loadPedidos = useCallback(async () => {
     try {
       const params = new URLSearchParams();
       if (startDate) params.set("startDate", startDate);
@@ -119,11 +120,13 @@ export default function CartorioDashboard() {
     } catch {
       setError("Erro ao carregar pedidos.");
     }
-  };
+  }, [startDate, endDate]);
 
   useEffect(() => {
-    if (tab === "pedidos") loadPedidos();
-  }, [tab]);
+    if (tab === "pedidos") {
+      loadPedidos();
+    }
+  }, [tab, loadPedidos]);
 
   const handleVincularMP = () => {
     const token = localStorage.getItem("fs_token");
@@ -140,26 +143,26 @@ export default function CartorioDashboard() {
   return (
     <div style={S.page}>
       <style>{`
-        @import url('https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700;900&family=DM+Sans:wght@300;400;500&display=swap');
+        @import url('https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@600;700;800&display=swap');
         * { box-sizing: border-box; }
-        input:focus { border-color: #c9a96e !important; outline: none; }
+        input:focus { border-color: #5D6532 !important; outline: none; }
       `}</style>
 
       {/* NAV */}
       <nav style={{ display: "flex", alignItems: "center", justifyContent: "space-between", padding: "1rem 2rem", borderBottom: "0.5px solid #1e1e1e" }}>
         <div style={{ display: "flex", alignItems: "center", gap: 20 }}>
-          <div style={{ fontFamily: "'Playfair Display', serif", fontSize: 16, fontWeight: 700, color: "#fff", display: "flex", alignItems: "center", gap: 7 }}>
-            <span style={{ width: 6, height: 6, background: "#c9a96e", borderRadius: "50%", display: "inline-block" }} />
+          <div style={{ fontFamily: "'Barlow Condensed', sans-serif", fontSize: 20, fontWeight: 800, color: "#fff", display: "flex", alignItems: "center", gap: 8, textTransform: "uppercase", letterSpacing: "1px" }}>
+            <span style={{ width: 8, height: 8, background: "#5D6532", display: "inline-block" }} />
             Foto Segundo
           </div>
-          <div style={{ display: "flex", gap: 2 }}>
+          <div style={{ display: "flex", gap: 10 }}>
             {TABS.map((t) => (
               <button key={t.key} onClick={() => setTab(t.key)} style={{
-                background: tab === t.key ? "#1a1a1a" : "none",
-                border: "none", padding: "6px 14px", fontSize: 13,
-                cursor: "pointer", borderRadius: 6,
-                color: tab === t.key ? "#fff" : "#555",
-                fontFamily: "'DM Sans', sans-serif",
+                background: tab === t.key ? "#5D6532" : "rgba(255,255,255,0.02)",
+                border: "none", padding: "8px 20px", fontSize: 11,
+                cursor: "pointer", borderRadius: 0,
+                color: tab === t.key ? "#fff" : "#888",
+                textTransform: "uppercase", fontWeight: 700, letterSpacing: "1px",
               }}>
                 {t.label}
               </button>
@@ -167,9 +170,9 @@ export default function CartorioDashboard() {
           </div>
         </div>
         <div style={{ display: "flex", alignItems: "center", gap: 12 }}>
-          <span style={{ fontSize: 12, color: "#555" }}>{cartorioName || user?.nome}</span>
-          <span style={{ fontSize: 9, padding: "3px 8px", background: "#0a1a2a", border: "0.5px solid #1a3a5a", borderRadius: 20, color: "#60a5fa", letterSpacing: 1, textTransform: "uppercase" as const }}>Cartório</span>
-          <button onClick={() => { logout(); navigate("/"); }} style={{ background: "none", border: "0.5px solid #2a2a2a", borderRadius: 4, padding: "5px 12px", color: "#666", fontSize: 12, cursor: "pointer" }}>
+          <span style={{ fontSize: 11, color: "#555", fontWeight: 700, textTransform: "uppercase", letterSpacing: 1 }}>{cartorioName || user?.nome}</span>
+          <span style={{ fontSize: 9, padding: "4px 10px", background: "#5D6532", color: "#fff", letterSpacing: 2, textTransform: "uppercase" as const, fontWeight: 800 }}>Unidade</span>
+          <button onClick={() => { logout(); navigate("/"); }} style={{ background: "none", border: "1.5px solid #2a2a2a", borderRadius: 0, padding: "6px 14px", color: "#888", fontSize: 10, fontWeight: 700, textTransform: "uppercase", letterSpacing: 1, cursor: "pointer" }}>
             Sair
           </button>
         </div>
@@ -190,12 +193,12 @@ export default function CartorioDashboard() {
         )}
 
         {/* Header */}
-        <div style={{ marginBottom: "2rem" }}>
-          <h1 style={{ fontFamily: "'Playfair Display', serif", fontSize: 24, fontWeight: 900, color: "#fff", marginBottom: 4 }}>
+        <div style={{ marginBottom: "3rem" }}>
+          <h1 style={{ fontFamily: "'Barlow Condensed', sans-serif", fontSize: 42, fontWeight: 800, color: "#fff", marginBottom: 4, textTransform: "uppercase", letterSpacing: "1px" }}>
             {tab === "agenda" ? "Agenda & Eventos" : tab === "pedidos" ? "Repasses" : "Configurações"}
           </h1>
-          <p style={{ fontSize: 13, color: "#555" }}>
-            {cartorioName && `${cartorioName} · `}Painel de gestão
+          <p style={{ fontSize: 12, color: "#555", textTransform: "uppercase", letterSpacing: 2, fontWeight: 600 }}>
+            {cartorioName && `${cartorioName} · `}PAINEL DE GESTÃO TÁTICA
           </p>
         </div>
 
@@ -208,9 +211,9 @@ export default function CartorioDashboard() {
               { label: "Vendas confirmadas", value: String(stats.totalVendas ?? 0) },
               { label: "Repasse estimado", value: formatCurrency(stats.repasseEstimado ?? 0) },
             ].map((m) => (
-              <div key={m.label} style={{ ...S.card, padding: "1.25rem" }}>
-                <p style={{ fontSize: 10, color: "#555", letterSpacing: 1, textTransform: "uppercase", marginBottom: 8 }}>{m.label}</p>
-                <p style={{ fontFamily: "'Playfair Display', serif", fontSize: 22, fontWeight: 700, color: "#fff" }}>{m.value}</p>
+              <div key={m.label} style={{ ...S.card, padding: "1.5rem" }}>
+                <p style={{ fontSize: 10, color: "#9ca3af", letterSpacing: 2, textTransform: "uppercase", marginBottom: 12, fontWeight: 700 }}>{m.label}</p>
+                <p style={{ fontFamily: "'Barlow Condensed', sans-serif", fontSize: 32, fontWeight: 800, color: "#fff" }}>{m.value}</p>
               </div>
             ))}
           </div>
@@ -230,8 +233,8 @@ export default function CartorioDashboard() {
         {/* ── AGENDA ── */}
         {tab === "agenda" && (
           <div style={S.card}>
-            <div style={{ padding: "1rem 1.25rem", borderBottom: "0.5px solid #1e1e1e" }}>
-              <p style={{ fontSize: 13, fontWeight: 500, color: "#e8e4dc" }}>Próximos eventos</p>
+            <div style={{ padding: "1.25rem 1.5rem", borderBottom: "0.5px solid #1e1e1e" }}>
+              <p style={{ fontSize: 11, fontWeight: 800, color: "#fff", textTransform: "uppercase", letterSpacing: 2 }}>Próximos eventos</p>
             </div>
             {loading ? (
               <p style={{ padding: "2rem", textAlign: "center", color: "#444", fontSize: 13 }}>Carregando...</p>
@@ -251,11 +254,11 @@ export default function CartorioDashboard() {
                 </div>
                 <div style={{ textAlign: "right", flexShrink: 0 }}>
                   {ev.captacao ? (
-                    <p style={{ fontSize: 12, color: "#4ade80" }}>✓ {ev.captacao.user.name}</p>
+                    <p style={{ fontSize: 12, color: "#5D6532", fontWeight: 700 }}>✓ {ev.captacao.user.name}</p>
                   ) : (
-                    <p style={{ fontSize: 12, color: "#f59e0b" }}>Sem fotógrafo</p>
+                    <p style={{ fontSize: 12, color: "#f59e0b", fontWeight: 700 }}>SEM FOTÓGRAFO</p>
                   )}
-                  <p style={{ fontSize: 10, color: "#444", marginTop: 2 }}>{ev._count.orders} venda(s)</p>
+                  <p style={{ fontSize: 10, color: "#444", marginTop: 2, fontWeight: 600 }}>{ev._count.orders} venda(s)</p>
                 </div>
               </div>
             ))}
@@ -277,7 +280,7 @@ export default function CartorioDashboard() {
               </div>
               <button
                 onClick={loadPedidos}
-                style={{ marginTop: 20, background: "#c9a96e", color: "#0a0a0a", border: "none", borderRadius: 6, padding: "8px 16px", fontSize: 12, fontWeight: 600, cursor: "pointer" }}
+                style={{ marginTop: 20, background: "#5D6532", color: "#fff", border: "none", borderRadius: 0, padding: "12px 24px", fontSize: 11, fontWeight: 800, cursor: "pointer", textTransform: "uppercase", letterSpacing: 2 }}
               >
                 Filtrar
               </button>
@@ -298,10 +301,10 @@ export default function CartorioDashboard() {
                     <p style={{ fontSize: 11, color: "#555" }}>{p.buyerEmail ?? "—"} · {formatDate(p.createdAt)}</p>
                   </div>
                   <div style={{ textAlign: "right", flexShrink: 0 }}>
-                    <p style={{ fontSize: 11, color: "#555", marginBottom: 2 }}>
+                    <p style={{ fontSize: 11, color: "#555", marginBottom: 2, fontWeight: 600 }}>
                       Venda: {formatCurrency(Number(p.amount))}
                     </p>
-                    <p style={{ fontFamily: "'Playfair Display', serif", fontSize: 15, color: "#c9a96e", fontWeight: 700 }}>
+                    <p style={{ fontFamily: "'Barlow Condensed', sans-serif", fontSize: 20, color: "#5D6532", fontWeight: 800 }}>
                       Repasse: {p.splitCartorio ? formatCurrency(Number(p.splitCartorio)) : "—"}
                     </p>
                   </div>
@@ -332,9 +335,9 @@ export default function CartorioDashboard() {
                     Vincule sua conta para receber repasses automáticos (10% por venda)
                   </p>
                 </div>
-                <button
+                 <button
                   onClick={handleVincularMP}
-                  style={{ background: "#c9a96e", color: "#0a0a0a", border: "none", borderRadius: 6, padding: "10px 20px", fontSize: 13, fontWeight: 600, cursor: "pointer", flexShrink: 0 }}
+                  style={{ background: "#5D6532", color: "#fff", border: "none", borderRadius: 0, padding: "12px 24px", fontSize: 11, fontWeight: 800, cursor: "pointer", flexShrink: 0, textTransform: "uppercase", letterSpacing: 2 }}
                 >
                   Vincular conta
                 </button>
@@ -342,7 +345,7 @@ export default function CartorioDashboard() {
             </div>
 
             <div style={{ ...S.card, padding: "1.25rem" }}>
-              <p style={{ fontSize: 13, fontWeight: 500, color: "#e8e4dc", marginBottom: 4 }}>Nome do cartório</p>
+              <p style={{ fontSize: 11, fontWeight: 800, color: "#fff", marginBottom: 4, textTransform: "uppercase", letterSpacing: 1 }}>Nome da unidade</p>
               <p style={{ fontSize: 12, color: "#555", marginBottom: "0.875rem" }}>
                 Nome exibido na vitrine pública dos eventos
               </p>
@@ -350,7 +353,7 @@ export default function CartorioDashboard() {
                 value={cartorioName}
                 onChange={(e) => setCartorioName(e.target.value)}
                 style={{ ...S.input, width: "100%" }}
-                placeholder="1º Cartório de Registro Civil"
+                placeholder="Unidade Local de Registro"
               />
             </div>
           </div>

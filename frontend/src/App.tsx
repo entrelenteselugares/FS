@@ -1,5 +1,6 @@
 import { BrowserRouter as Router, Routes, Route, Navigate } from "react-router-dom";
-import { AuthProvider, useAuth } from "./contexts/AuthContext";
+import { AuthProvider } from "./contexts/AuthContext";
+import { useAuth } from "./hooks/useAuth";
 import { HelmetProvider } from "react-helmet-async";
 import { ProtectedRoute } from "./components/ProtectedRoute";
 import { EventPage } from "./pages/EventPage";
@@ -19,6 +20,7 @@ const DashboardRedirect = () => {
   const map: Record<string, string> = {
     ADMIN: "/admin",
     CARTORIO: "/cartorio",
+    UNIDADE: "/cartorio",
     PROFISSIONAL: "/profissional",
     CLIENTE: "/minha-conta",
   };
@@ -61,14 +63,14 @@ function App() {
 
           {/* Painel Unidades */}
           <Route path="/cartorio" element={
-            <ProtectedRoute roles={["CARTORIO", "ADMIN"]}>
+            <ProtectedRoute roles={["UNIDADE", "CARTORIO", "ADMIN"]}>
               <CartorioDashboard />
             </ProtectedRoute>
           } />
 
           {/* Área do Cliente */}
           <Route path="/minha-conta" element={
-            <ProtectedRoute roles={["CLIENTE", "ADMIN", "PROFISSIONAL", "CARTORIO"]}>
+            <ProtectedRoute roles={["CLIENTE", "ADMIN", "PROFISSIONAL", "UNIDADE", "CARTORIO"]}>
               <ClienteArea />
             </ProtectedRoute>
           } />

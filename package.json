@@ -10,7 +10,7 @@
     "dev:frontend": "npm run dev --prefix frontend",
     "dev": "npx concurrently \"npm run dev:backend\" \"npm run dev:frontend\"",
     "build": "npx prisma generate --schema=backend/prisma/schema.prisma && npm run build --prefix frontend",
-    "vercel-build": "npm install --prefix frontend && npx esbuild backend/src/index.ts --bundle --platform=node --target=node20 --outfile=api/server.js --external:@prisma/client --external:prisma --external:multer && npx prisma generate --schema=backend/prisma/schema.prisma && npm run build --prefix frontend && rm -rf public && mv frontend/dist public",
+    "vercel-build": "npm install --prefix frontend && npx esbuild backend/src/index.ts --bundle --platform=node --target=node20 --outfile=api/server.js --external:@prisma/client --external:prisma --external:multer --external:nodemailer && npx prisma generate --schema=backend/prisma/schema.prisma && npm run build --prefix frontend && rm -rf public && mv frontend/dist public",
     "start": "node api/server.js",
     "postinstall": "npx prisma generate --schema=backend/prisma/schema.prisma"
   },
@@ -27,6 +27,7 @@
     "jsonwebtoken": "^9.0.3",
     "mercadopago": "^2.12.0",
     "multer": "^2.1.1",
+    "nodemailer": "^8.0.5",
     "pg": "^8.13.1",
     "prisma": "6.19.3",
     "react": "19.2.4",
