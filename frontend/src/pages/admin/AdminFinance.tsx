@@ -1,7 +1,11 @@
 import React, { useState, useEffect } from "react";
 import { API } from "../../lib/api";
-import { format } from "date-fns";
-import { ptBR } from "date-fns/locale";
+
+const fmtDate = (iso: string) =>
+  new Intl.DateTimeFormat("pt-BR", { day: "2-digit", month: "short", year: "numeric" }).format(new Date(iso)).toUpperCase();
+
+const fmtDateTime = (iso: string) =>
+  new Intl.DateTimeFormat("pt-BR", { day: "2-digit", month: "2-digit", year: "numeric", hour: "2-digit", minute: "2-digit" }).format(new Date(iso));
 
 interface PayoutOrder {
   id: string;
@@ -91,7 +95,7 @@ export const AdminFinance: React.FC = () => {
               <div className="flex items-center gap-3 mb-4">
                 <span className="text-[8px] font-bold uppercase tracking-widest px-2 py-1 border border-brand-tactical text-brand-tactical">PEDIDO APROVADO</span>
                 <span className="text-[10px] text-zinc-600 font-bold uppercase tracking-widest">
-                  {format(new Date(order.updatedAt), "dd 'DE' MMM", { locale: ptBR })}
+                  {fmtDate(order.updatedAt)}
                 </span>
               </div>
               <h3 className="text-2xl font-heading text-white uppercase tracking-tighter mb-2">{order.event.title}</h3>
@@ -137,7 +141,7 @@ export const AdminFinance: React.FC = () => {
                 <div className="text-right">
                   <div className="text-[9px] font-bold text-zinc-600 uppercase tracking-widest mb-1">Repasse realizado em</div>
                   <div className="text-[11px] text-brand-tactical font-bold uppercase tracking-widest">
-                    {order.payoutDate && format(new Date(order.payoutDate), "dd/MM/yyyy HH:mm")}
+                    {order.payoutDate && fmtDateTime(order.payoutDate)}
                   </div>
                 </div>
               )}
