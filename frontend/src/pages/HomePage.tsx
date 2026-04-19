@@ -104,7 +104,7 @@ export const HomePage = () => {
     <div style={{ fontFamily: THEME.fontBody, background: THEME.bg, color: THEME.text, minHeight: "100vh" }}>
       <Helmet>
         <title>Foto Segundo | Suas memórias, sincronizadas com a vida.</title>
-        <meta name="description" content="Acesse a galeria exclusiva do seu casamento e reviva cada detalhe com qualidade premium em segundos." />
+        <meta name="description" content="Acesse a galeria exclusiva do seu grande dia e reviva cada detalhe com qualidade premium em segundos." />
       </Helmet>
       
       {/* Google Fonts (Fallback) */}
@@ -188,7 +188,7 @@ export const HomePage = () => {
           <em style={{ fontStyle: "italic", color: THEME.accent, fontWeight: 400 }}>entregues agora.</em>
         </h1>
         <p style={{ fontSize: 14, color: "#888", marginBottom: "2.5rem", fontWeight: 300, maxWidth: "500px", margin: "0 auto 3rem", lineHeight: 1.5 }}>
-          Acesse a galeria exclusiva do seu casamento e reviva cada detalhe com qualidade premium em segundos.
+          Acesse a galeria exclusiva do seu grande dia e reviva cada detalhe com qualidade premium em segundos.
         </p>
 
         {/* Barra de busca Responsiva */}
