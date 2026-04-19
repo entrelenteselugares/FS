@@ -62,7 +62,7 @@ const T = {
 type Step = "paywall" | "checkout" | "processing" | "success";
 
 export default function EventPage() {
-  const { slug } = useParams<{ slug: string }>();
+  const { id } = useParams<{ id: string }>();
   const navigate = useNavigate();
   const [searchParams] = useSearchParams();
   const { user } = useAuth();
@@ -82,19 +82,19 @@ export default function EventPage() {
   });
 
   useEffect(() => {
-    if (!slug) return;
-    api.get(`/public/events/${slug}`)
+    if (!id) return;
+    api.get(`/public/events/${id}`)
       .then((r) => setEvent(r.data))
       .catch((e) => { if (e.response?.status === 404) setNotFound(true); })
       .finally(() => setLoading(false));
-  }, [slug]);
+  }, [id]);
 
   useEffect(() => {
     const urlOrderId = searchParams.get("orderId");
-    const savedOrderId = localStorage.getItem(`fs_order_${slug}`);
+    const savedOrderId = localStorage.getItem(`fs_order_${id}`);
     const oid = urlOrderId ?? savedOrderId;
     if (oid) { setOrderId(oid); checkAccess(oid); }
-  }, [slug, searchParams]);
+  }, [id, searchParams]);
 
   useEffect(() => {
     if ((window as any).MercadoPago) { setMpLoaded(true); return; }
@@ -106,7 +106,7 @@ export default function EventPage() {
 
   const checkAccess = async (oid: string) => {
     try {
-      const { data } = await api.get(`/public/events/${slug}/access?orderId=${oid}`);
+      const { data } = await api.get(`/public/events/${id}/access?orderId=${oid}`);
       setAccess(data);
       setStep("success");
     } catch { /* ainda não pago */ }
@@ -146,9 +146,9 @@ export default function EventPage() {
         cpf: cardData.cpf,
       });
       const oid = data.orderId;
-      localStorage.setItem(`fs_order_${slug}`, oid);
+      localStorage.setItem(`fs_order_${id}`, oid);
       setOrderId(oid);
-      navigate(`/e/${slug}?orderId=${oid}`, { replace: true });
+      navigate(`/e/${id}?orderId=${oid}`, { replace: true });
       if (data.hasPaid) await checkAccess(oid);
       else pollStatus(oid);
     } catch (err: any) {
