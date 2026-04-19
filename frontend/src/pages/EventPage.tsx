@@ -96,10 +96,18 @@ export default function EventPage() {
   }, [id]);
 
   useEffect(() => {
+    const checkAccessLocal = async (oid: string) => {
+      try {
+        const { data } = await api.get(`/public/events/${id}/access?orderId=${oid}`);
+        setAccess(data);
+        setStep("success");
+      } catch { /* ainda não pago */ }
+    };
+
     const urlOrderId = searchParams.get("orderId");
     const savedOrderId = localStorage.getItem(`fs_order_${id}`);
     const oid = urlOrderId ?? savedOrderId;
-    if (oid) { setOrderId(oid); checkAccess(oid); }
+    if (oid) { setOrderId(oid); checkAccessLocal(oid); }
   }, [id, searchParams]);
 
   useEffect(() => {
@@ -119,11 +127,12 @@ export default function EventPage() {
   };
 
   const handleTokenize = async () => {
-    if (!(window as any).MercadoPago || !mpLoaded) return;
+    const mpLib = (window as any).MercadoPago;
+    if (!mpLib || !mpLoaded) return;
     setTokenizing(true); setError("");
     try {
       const publicKey = (import.meta.env.VITE_MP_PUBLIC_KEY ?? "").trim();
-      const mp = new (window as any).MercadoPago(publicKey);
+      const mp = new mpLib(publicKey);
       const result = await mp.createCardToken({
         cardNumber: cardData.number.replace(/\s/g, ""),
         cardholderName: cardData.name,
@@ -157,8 +166,9 @@ export default function EventPage() {
       navigate(`/e/${id}?orderId=${oid}`, { replace: true });
       if (data.hasPaid) await checkAccess(oid);
       else pollStatus(oid);
-    } catch (err: any) {
-      setError(err.response?.data?.error ?? "Erro ao processar pagamento.");
+    } catch (err: unknown) {
+      const msg = (err as any).response?.data?.error ?? "Erro ao processar pagamento.";
+      setError(msg);
       setStep("checkout");
     }
   };
@@ -383,7 +393,7 @@ export default function EventPage() {
                   <div key={k} style={{ marginBottom: 14 }}>
                     <label style={{ fontSize: 10, letterSpacing: 1.5, textTransform: "uppercase", color: T.text3, display: "block", marginBottom: 6 }}>{label}</label>
                     <input
-                      value={(cardData as any)[k]}
+                      value={cardData[k as keyof typeof cardData]}
                       onChange={set(k)}
                       placeholder={placeholder}
                       maxLength={maxLength}
@@ -400,7 +410,7 @@ export default function EventPage() {
                   ].map(({ k, label, placeholder, max }) => (
                     <div key={k}>
                       <label style={{ fontSize: 10, letterSpacing: 1.5, textTransform: "uppercase", color: T.text3, display: "block", marginBottom: 6 }}>{label}</label>
-                      <input value={(cardData as any)[k]} onChange={set(k)} placeholder={placeholder} maxLength={max}
+                      <input value={cardData[k as keyof typeof cardData]} onChange={set(k)} placeholder={placeholder} maxLength={max}
                         style={{ width: "100%", background: T.bg, border: `1px solid ${T.border2}`, padding: "10px 12px", fontSize: 13, color: T.text, fontFamily: T.fontB }} />
                     </div>
                   ))}
@@ -412,7 +422,7 @@ export default function EventPage() {
                 ].map(({ k, label, placeholder }) => (
                   <div key={k} style={{ marginBottom: 14 }}>
                     <label style={{ fontSize: 10, letterSpacing: 1.5, textTransform: "uppercase", color: T.text3, display: "block", marginBottom: 6 }}>{label}</label>
-                    <input value={(cardData as any)[k]} onChange={set(k)} placeholder={placeholder}
+                    <input value={cardData[k as keyof typeof cardData]} onChange={set(k)} placeholder={placeholder}
                       style={{ width: "100%", background: T.bg, border: `1px solid ${T.border2}`, padding: "10px 12px", fontSize: 13, color: T.text, fontFamily: T.fontB }} />
                   </div>
                 ))}
