@@ -3,7 +3,7 @@ import { AuthProvider } from "./contexts/AuthContext";
 import { useAuth } from "./hooks/useAuth";
 import { HelmetProvider } from "react-helmet-async";
 import { ProtectedRoute } from "./components/ProtectedRoute";
-import { EventPage } from "./pages/EventPage";
+import EventPage from "./pages/EventPage";
 import { LoginPage } from "./pages/LoginPage";
 import { HomePage } from "./pages/HomePage";
 import ProfissionalDashboard from "./pages/ProfissionalDashboard";
