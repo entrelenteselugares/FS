@@ -163,6 +163,7 @@ export async function adminCreateEvent(req: Request, res: Response): Promise<voi
     lightroomUrl, driveUrl, priceBase, priceEarly,
     cartorioId, captacaoId, edicaoId,
     temFoto, temVideo, temReels, temFotoImpressa,
+    eventHours,
   } = req.body;
 
   if (!title || !date || !location) {
@@ -194,6 +195,7 @@ export async function adminCreateEvent(req: Request, res: Response): Promise<voi
         temVideo: temVideo ?? false,
         temReels: temReels ?? false,
         temFotoImpressa: temFotoImpressa ?? false,
+        eventHours: eventHours ? Number(eventHours) : 2,
       },
       include: {
         captacao: { select: { nome: true } },
@@ -235,6 +237,7 @@ export async function adminUpdateEvent(req: Request, res: Response): Promise<voi
   if (req.body.temReels !== undefined) data.temReels = req.body.temReels;
   if (req.body.temFotoImpressa !== undefined) data.temFotoImpressa = req.body.temFotoImpressa;
   if (req.body.coverPhotoUrl !== undefined) data.coverPhotoUrl = req.body.coverPhotoUrl || null;
+  if (req.body.eventHours !== undefined) data.eventHours = Number(req.body.eventHours);
 
   try {
     const event = await prisma.event.update({

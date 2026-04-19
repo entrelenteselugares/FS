@@ -120,18 +120,41 @@ export class AuthController {
       const validRoles = ["ADMIN", "CARTORIO", "PROFISSIONAL", "CLIENTE"];
       const finalRole = validRoles.includes(role?.toUpperCase()) ? role.toUpperCase() : "CLIENTE";
       
-      const user = await prisma.user.create({
-        data: { 
-          id: supabaseUser.id, // O ID agora é o UID do Supabase!
-          email: cleanEmail, 
-          senha: "AUTH_EXTERNAL_SUPABASE", // Senha não é mais salva localmente
-          nome, 
-          role: finalRole as any, 
-          whatsapp: cleanWhatsapp 
+      const user = await prisma.$transaction(async (tx) => {
+        const newUser = await tx.user.create({
+          data: { 
+            id: supabaseUser.id,
+            email: cleanEmail, 
+            senha: "AUTH_EXTERNAL_SUPABASE",
+            nome, 
+            role: finalRole as any, 
+            whatsapp: cleanWhatsapp 
+          }
+        });
+
+        // 3. Criar perfis específicos
+        if (finalRole === "PROFISSIONAL") {
+          await tx.profissional.create({
+            data: {
+              userId: newUser.id,
+              services: req.body.habilidades || [],
+              otherHabilities: req.body.outrasHabilidades || null,
+            }
+          });
+        } else if (finalRole === "UNIDADE" || finalRole === "CARTORIO") {
+          await tx.cartorio.create({
+            data: {
+              userId: newUser.id,
+              razaoSocial: req.body.razaoSocial || nome,
+              address: req.body.endereco || null,
+            }
+          });
         }
+
+        return newUser;
       });
 
-      console.log(`[AUTH] Registro sincronizado com sucesso: ${user.id}`);
+      console.log(`[AUTH] Registro e perfil sincronizados: ${user.id}`);
 
       // 3. Gerar token compatível (ou poderíamos retornar o do Supabase)
       const token = generateToken({ userId: user.id, role: user.role, nome: user.nome });

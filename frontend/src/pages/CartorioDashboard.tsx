@@ -67,6 +67,14 @@ export default function CartorioDashboard() {
   const [error, setError] = useState("");
   const [success, setSuccess] = useState("");
 
+  // Landing Page State
+  const [lpSlug, setLpSlug] = useState("");
+  const [lpAddress, setLpAddress] = useState("");
+  const [lpPhone, setLpPhone] = useState("");
+  const [lpDescription, setLpDescription] = useState("");
+  const [lpCoverUrl, setLpCoverUrl] = useState("");
+  const [savingLp, setSavingLp] = useState(false);
+
   // Filtros
   const [startDate, setStartDate] = useState("");
   const [endDate, setEndDate] = useState("");
@@ -107,6 +115,43 @@ export default function CartorioDashboard() {
       }
     } finally {
       setLoading(false);
+    }
+  };
+
+  const loadLpData = async () => {
+    try {
+      const { data } = await API.get("/cartorio/stats"); 
+      // Re-aproveitando statsRes.data que já incluía cartório
+      if (data.cartorio) {
+        setLpSlug(data.cartorio.slug ?? "");
+        setLpAddress(data.cartorio.address ?? "");
+        setLpPhone(data.cartorio.phone ?? "");
+        setLpDescription(data.cartorio.description ?? "");
+        setLpCoverUrl(data.cartorio.coverUrl ?? "");
+      }
+    } catch {}
+  };
+
+  useEffect(() => {
+    if (tab === "configuracoes") loadLpData();
+  }, [tab]);
+
+  const saveLpProfile = async () => {
+    setSavingLp(true);
+    try {
+      await API.patch("/partner/profile", {
+        slug: lpSlug,
+        address: lpAddress,
+        phone: lpPhone,
+        description: lpDescription,
+        coverUrl: lpCoverUrl,
+      });
+      setSuccess("Página pública atualizada com sucesso! ✨");
+      setTimeout(() => setSuccess(""), 3000);
+    } catch {
+      setError("Erro ao salvar dados da página.");
+    } finally {
+      setSavingLp(false);
     }
   };
 
@@ -344,17 +389,52 @@ export default function CartorioDashboard() {
               </div>
             </div>
 
-            <div style={{ ...S.card, padding: "1.25rem" }}>
-              <p style={{ fontSize: 11, fontWeight: 800, color: "#fff", marginBottom: 4, textTransform: "uppercase", letterSpacing: 1 }}>Nome da unidade</p>
-              <p style={{ fontSize: 12, color: "#555", marginBottom: "0.875rem" }}>
-                Nome exibido na vitrine pública dos eventos
-              </p>
-              <input
-                value={cartorioName}
-                onChange={(e) => setCartorioName(e.target.value)}
-                style={{ ...S.input, width: "100%" }}
-                placeholder="Unidade Local de Registro"
-              />
+            <div style={{ ...S.card, padding: "2rem", display: "flex", flexDirection: "column", gap: "2rem" }}>
+              <div style={{ borderBottom: "1px solid #1a1a1a", paddingBottom: 20 }}>
+                <h3 style={{ fontFamily: "'Barlow Condensed', sans-serif", fontSize: 24, fontWeight: 800, color: "#fff", marginBottom: 10 }}>PÁGINA PÚBLICA (SEO)</h3>
+                <p style={{ fontSize: 12, color: "#555" }}>Configure como sua unidade aparece nos motores de busca e para clientes que chegam via link direto.</p>
+              </div>
+
+              <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "2rem" }}>
+                <div>
+                  <label style={{ fontSize: 10, fontWeight: 800, color: "#fff", marginBottom: 8, display: "block", textTransform: "uppercase", letterSpacing: 1 }}>Slug URL (/p/xxxx)</label>
+                  <input value={lpSlug} onChange={e => setLpSlug(e.target.value)} style={{ ...S.input, width: "100%" }} placeholder="ex: cartorio-central-campinas" />
+                </div>
+                <div>
+                  <label style={{ fontSize: 10, fontWeight: 800, color: "#fff", marginBottom: 8, display: "block", textTransform: "uppercase", letterSpacing: 1 }}>Telefone de Contato</label>
+                  <input value={lpPhone} onChange={e => setLpPhone(e.target.value)} style={{ ...S.input, width: "100%" }} placeholder="(19) 9..." />
+                </div>
+              </div>
+
+              <div>
+                <label style={{ fontSize: 10, fontWeight: 800, color: "#fff", marginBottom: 8, display: "block", textTransform: "uppercase", letterSpacing: 1 }}>Endereço Completo</label>
+                <input value={lpAddress} onChange={e => setLpAddress(e.target.value)} style={{ ...S.input, width: "100%" }} placeholder="Rua, Número, Bairro, Cidade - UF" />
+              </div>
+
+              <div>
+                 <label style={{ fontSize: 10, fontWeight: 800, color: "#fff", marginBottom: 8, display: "block", textTransform: "uppercase", letterSpacing: 1 }}>Breve Descrição (Até 300 caracteres)</label>
+                 <textarea value={lpDescription} onChange={e => setLpDescription(e.target.value)} rows={4} style={{ ...S.input, width: "100%", resize: "none" }} placeholder="Conte sobre a infraestrutura e horários da unidade..." />
+              </div>
+
+              <div>
+                 <label style={{ fontSize: 10, fontWeight: 800, color: "#fff", marginBottom: 8, display: "block", textTransform: "uppercase", letterSpacing: 1 }}>URL da Foto de Capa</label>
+                 <input value={lpCoverUrl} onChange={e => setLpCoverUrl(e.target.value)} style={{ ...S.input, width: "100%" }} placeholder="https://..." />
+              </div>
+
+              <div style={{ display: "flex", gap: "1rem", alignItems: "center", paddingTop: 20 }}>
+                <button
+                    disabled={savingLp}
+                    onClick={saveLpProfile}
+                    style={{ background: "#5D6532", color: "#fff", border: "none", borderRadius: 0, padding: "14px 28px", fontSize: 11, fontWeight: 800, cursor: "pointer", textTransform: "uppercase", letterSpacing: 2, opacity: savingLp ? 0.6 : 1 }}
+                >
+                    {savingLp ? "SALVANDO..." : "ATUALIZAR PÁGINA PÚBLICA"}
+                </button>
+                {lpSlug && (
+                  <a href={`/p/${lpSlug}`} target="_blank" rel="noreferrer" style={{ fontSize: 10, color: "#5D6532", textDecoration: "none", fontWeight: 800, textTransform: "uppercase", letterSpacing: 1 }}>
+                    Visualizar Página ↗
+                  </a>
+                )}
+              </div>
             </div>
           </div>
         )}

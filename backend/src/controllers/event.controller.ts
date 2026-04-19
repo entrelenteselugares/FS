@@ -182,13 +182,14 @@ export class EventController {
     try {
       const { 
         name, email, attendees, locationType, selectedPartnerId, 
-        customCep, eventDate, description, selectedServices, totalPrice 
+        customCep, eventDate, eventHours, description, selectedServices, totalPrice 
       } = req.body;
 
       const event = await prisma.event.create({
         data: {
           nomeNoivos: name,
           dataEvento: new Date(eventDate),
+          eventHours: eventHours ? Number(eventHours) : 2,
           location: locationType === "PARTNER" ? "Ponto Parceiro" : `CEP: ${customCep}`,
           description: `ORÇAMENTO AUTOMÁTICO\nConvidados: ${attendees}\nServiços: ${selectedServices.join(", ")}\n\nDescrição do Cliente: ${description}`,
           priceBase: totalPrice,

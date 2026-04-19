@@ -2,6 +2,7 @@ import { useState, useEffect } from "react";
 import { useNavigate, useSearchParams } from "react-router-dom";
 import { useAuth } from "../hooks/useAuth";
 import { API } from "../lib/api";
+import PointBalance from "../components/PointBalance";
 
 interface Pedido {
   id: string;
@@ -9,6 +10,8 @@ interface Pedido {
   amount: number;
   createdAt: string;
   hasPaid: boolean;
+  accessType?: string | null;
+  accessExpiresAt?: string | null;
   event: {
     id: string;
     nomeNoivos: string;
@@ -114,6 +117,10 @@ export default function ClienteArea() {
             <p style={{ fontSize: 14, color: "#888" }}>
               Acesso vitalício às memórias que você adquiriu.
             </p>
+          </div>
+
+          <div style={{ marginBottom: "2.5rem" }}>
+            <PointBalance />
           </div>
 
           {loading ? (
@@ -254,6 +261,32 @@ function PedidoRow({ pedido, isSelected, onClick }: {
           {pedido.event.temVideo && <Tag label="Vídeo" />}
           {pedido.event.temReels && <Tag label="Reels" color="#c9a96e" />}
         </div>
+        
+        {pedido.accessExpiresAt && pedido.hasPaid && (
+          <div style={{ marginTop: 8 }}>
+            {(() => {
+              const expires = new Date(pedido.accessExpiresAt);
+              const now = new Date();
+              const dias = Math.ceil((expires.getTime() - now.getTime()) / 86400000);
+              const urgente = dias <= 5;
+              const expirado = dias <= 0;
+              return (
+                <span style={{
+                  fontSize: 9, padding: "3px 8px", letterSpacing: 0.5,
+                  textTransform: "uppercase", fontWeight: 700,
+                  background: expirado ? "#1a0a0a" : urgente ? "#1a0d00" : "#0f130a",
+                  border: `1px solid ${expirado ? "#3a1a1a" : urgente ? "#3a2000" : "#8a9a5b"}`,
+                  color: expirado ? "#f87171" : urgente ? "#f59e0b" : "#8a9a5b",
+                  borderRadius: 4
+                }}>
+                  {expirado
+                    ? "Expirado"
+                    : `${dias}d restantes — ${pedido.accessType === "PUBLIC" ? "Público" : "Privado"}`}
+                </span>
+              );
+            })()}
+          </div>
+        )}
       </div>
 
       {/* Valor */}
@@ -300,6 +333,24 @@ function PedidoDetalhe({ pedido, loading, onClose, onGoToEvent }: {
           ×
         </button>
       </div>
+
+      {pedido.accessExpiresAt && pedido.hasPaid && (
+        <div style={{ 
+          margin: "0 1.5rem", 
+          marginTop: "1.5rem", 
+          padding: "10px 14px", 
+          background: pedido.accessType === "PRIVATE" ? "#1a0a0a" : "#0f130a", 
+          border: `1px solid ${pedido.accessType === "PRIVATE" ? "#3a1a1a" : "#8a9a5b"}`,
+          borderRadius: 4
+        }}>
+          <p style={{ fontSize: 11, color: pedido.accessType === "PRIVATE" ? "#f87171" : "#8a9a5b", margin: 0, fontWeight: 600 }}>
+            {pedido.accessType === "PRIVATE" ? "⚠️ ACESSO PRIVADO" : "📅 ÁLBUM PÚBLICO"}
+          </p>
+          <p style={{ fontSize: 10, color: "#666", margin: 0, marginTop: 4 }}>
+            Expira em: {new Date(pedido.accessExpiresAt).toLocaleDateString("pt-BR")}
+          </p>
+        </div>
+      )}
 
       <div style={{ padding: "1.5rem", display: "flex", flexDirection: "column", gap: "1.5rem" }}>
 

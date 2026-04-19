@@ -42,6 +42,7 @@ export const AdminEvents: React.FC = () => {
     temReels: boolean;
     temFotoImpressa: boolean;
     coverPhotoUrl: string;
+    eventHours: number;
   }
 
   // Form State
@@ -50,7 +51,8 @@ export const AdminEvents: React.FC = () => {
     priceBase: 200, priceEarly: 190,
     cartorioId: "", captacaoId: "", edicaoId: "",
     temFoto: true, temVideo: false, temReels: false, temFotoImpressa: false,
-    coverPhotoUrl: ""
+    coverPhotoUrl: "",
+    eventHours: 2
   });
 
   const handleFileChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -216,6 +218,17 @@ export const AdminEvents: React.FC = () => {
                         className="w-full bg-transparent border-b border-zinc-900 py-3 text-sm text-white focus:outline-none focus:border-brand-tactical transition-all rounded-none" 
                       />
                     </div>
+                  </div>
+
+                  <div className="space-y-2">
+                    <label className="text-[9px] font-bold text-zinc-600 uppercase tracking-[0.4em]">Horas de Trabalho</label>
+                    <input 
+                      type="number"
+                      required
+                      value={formData.eventHours}
+                      onChange={e => setFormData({...formData, eventHours: Number(e.target.value)})}
+                      className="w-full bg-transparent border-b border-zinc-900 py-3 text-sm text-white focus:outline-none focus:border-brand-tactical transition-all rounded-none" 
+                    />
                   </div>
                   
                   <div className="space-y-4">

@@ -13,6 +13,8 @@ import { AuthSelectionPage } from "./pages/AuthSelectionPage";
 import { RegisterPage } from "./pages/RegisterPage";
 import ClienteArea from "./pages/ClienteArea";
 import { QuotePage } from "./pages/QuotePage";
+import { HallOfFame } from "./pages/HallOfFame";
+import { PartnerLP } from "./pages/PartnerLP";
 
 /** Redireciona /dashboard para o painel correto baseado no role */
 const DashboardRedirect = () => {
@@ -42,6 +44,9 @@ function App() {
           <Route path="/eventos/:id" element={<EventPage />} />
           <Route path="/e/:id" element={<EventPage />} />
           <Route path="/cotacao" element={<QuotePage />} />
+          <Route path="/hall-da-fama" element={<HallOfFame />} />
+          <Route path="/concursos" element={<HallOfFame />} />
+          <Route path="/p/:slug" element={<PartnerLP />} />
 
           {/* Redireciona para o painel correto */}
           <Route path="/dashboard" element={

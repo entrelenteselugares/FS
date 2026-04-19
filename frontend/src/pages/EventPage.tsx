@@ -2,6 +2,7 @@ import { useState, useEffect } from "react";
 import { useParams, useNavigate, useSearchParams } from "react-router-dom";
 import { useAuth } from "../hooks/useAuth";
 import { API as api } from "../lib/api";
+import AccessTypeModal from "../components/AccessTypeModal";
 import axios from "axios";
 
 interface MercadoPagoInstance {
@@ -98,6 +99,11 @@ export default function EventPage() {
     number: "", name: "", month: "", year: "", cvv: "", email: "", cpf: "",
   });
 
+  // LGPD State
+  const [needsAccessChoice, setNeedsAccessChoice] = useState(false);
+  const [accessType, setAccessType] = useState<string | null>(null);
+  const [accessExpiresAt, setAccessExpiresAt] = useState<string | null>(null);
+
   useEffect(() => {
     if (!id) return;
     api.get(`/public/events/${id}`)
@@ -109,9 +115,27 @@ export default function EventPage() {
   useEffect(() => {
     const checkAccessLocal = async (oid: string) => {
       try {
-        const { data } = await api.get(`/public/events/${id}/access?orderId=${oid}`);
-        setAccess(data);
-        setStep("success");
+        const { data } = await api.get(`/orders/${oid}/access-status`);
+        
+        if (data.status === "PENDING_CHOICE") {
+            setStep("success");
+            setNeedsAccessChoice(true);
+            return;
+        }
+
+        if (data.status === "EXPIRED") {
+            setStep("success");
+            setAccess({ lightroomUrl: null, driveUrl: null });
+            return;
+        }
+
+        if (data.status === "ACTIVE") {
+            setAccess({ lightroomUrl: data.lightroomUrl, driveUrl: data.driveUrl });
+            setAccessType(data.accessType);
+            setAccessExpiresAt(data.accessExpiresAt);
+            setStep("success");
+            setNeedsAccessChoice(false);
+        }
       } catch { /* ainda não pago */ }
     };
 
@@ -131,9 +155,27 @@ export default function EventPage() {
 
   const checkAccess = async (oid: string) => {
     try {
-      const { data } = await api.get(`/public/events/${id}/access?orderId=${oid}`);
-      setAccess(data);
-      setStep("success");
+      const { data } = await api.get(`/orders/${oid}/access-status`);
+      
+      if (data.status === "PENDING_CHOICE") {
+          setStep("success");
+          setNeedsAccessChoice(true);
+          return;
+      }
+
+      if (data.status === "EXPIRED") {
+          setStep("success");
+          setAccess({ lightroomUrl: null, driveUrl: null });
+          return;
+      }
+
+      if (data.status === "ACTIVE") {
+          setAccess({ lightroomUrl: data.lightroomUrl, driveUrl: data.driveUrl });
+          setAccessType(data.accessType);
+          setAccessExpiresAt(data.accessExpiresAt);
+          setStep("success");
+          setNeedsAccessChoice(false);
+      }
     } catch { /* ainda não pago */ }
   };
 
@@ -306,6 +348,23 @@ export default function EventPage() {
               <p style={{ fontSize: 10, letterSpacing: 2, textTransform: "uppercase", color: "#4ade80", marginBottom: 16 }}>
                 ✓ Acesso Liberado
               </p>
+              
+              {accessExpiresAt && (
+                <div style={{ 
+                  marginBottom: 16, 
+                  padding: "10px 14px", 
+                  background: accessType === "PRIVATE" ? "#1a0a0a" : "#0f130a", 
+                  border: `1px solid ${accessType === "PRIVATE" ? "#3a1a1a" : T.border}`,
+                  borderRadius: 2
+                }}>
+                  <p style={{ fontSize: 11, color: accessType === "PRIVATE" ? "#f87171" : T.accent, margin: 0 }}>
+                    {accessType === "PRIVATE" ? "⚠️ ACESSO PRIVADO" : "📅 ÁLBUM PÚBLICO"} — Expira em{" "}
+                    <strong>{new Date(accessExpiresAt).toLocaleDateString("pt-BR")}</strong>
+                    {" "}({Math.ceil((new Date(accessExpiresAt).getTime() - Date.now()) / 86400000)} dias restantes)
+                  </p>
+                </div>
+              )}
+
               <div style={{ display: "flex", flexDirection: "column", gap: 10 }}>
                 {access.lightroomUrl && (
                   <a href={access.lightroomUrl} target="_blank" rel="noopener noreferrer"
@@ -495,6 +554,19 @@ export default function EventPage() {
           )}
         </div>
       </div>
+
+      {needsAccessChoice && orderId && event && (
+        <AccessTypeModal
+          orderId={orderId}
+          eventTitle={event.title}
+          onConfirmed={(type, expiresAt) => {
+            setAccessType(type);
+            setAccessExpiresAt(expiresAt);
+            setNeedsAccessChoice(false);
+            checkAccess(orderId);
+          }}
+        />
+      )}
     </div>
   );
 }

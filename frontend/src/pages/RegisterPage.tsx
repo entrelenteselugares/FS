@@ -13,7 +13,13 @@ export const RegisterPage: React.FC = () => {
     nome: "",
     email: "",
     senha: "",
-    whatsapp: ""
+    whatsapp: "",
+    // Campos Profissional
+    habilidades: [] as string[],
+    outrasHabilidades: "",
+    // Campos Unidade
+    razaoSocial: "",
+    endereco: "",
   });
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
@@ -156,6 +162,70 @@ export const RegisterPage: React.FC = () => {
                 />
               </div>
             </div>
+
+            {/* Campos Dinâmicos baseado no Role */}
+            {role === "PROFISSIONAL" && (
+              <div className="md:col-span-2 space-y-8 mt-4 border-l-2 border-brand-tactical/20 pl-8 py-4">
+                <div className="space-y-4">
+                  <label className="text-[10px] font-bold uppercase tracking-[0.4em] text-zinc-600">Minhas Especialidades</label>
+                  <div className="flex flex-wrap gap-4">
+                    {["CAPTAÇÃO", "EDIÇÃO"].map(skill => (
+                      <button
+                        key={skill}
+                        type="button"
+                        onClick={() => {
+                          const current = formData.habilidades;
+                          const next = current.includes(skill) ? current.filter(s => s !== skill) : [...current, skill];
+                          setFormData({ ...formData, habilidades: next });
+                        }}
+                        className={`px-6 py-3 text-[9px] font-black uppercase tracking-widest border transition-all ${
+                          formData.habilidades.includes(skill) ? "bg-brand-tactical text-white border-brand-tactical" : "border-white/5 text-zinc-600 hover:border-white/10"
+                        }`}
+                      >
+                        {skill}
+                      </button>
+                    ))}
+                  </div>
+                </div>
+                <div className="space-y-4">
+                  <label className="text-[10px] font-bold uppercase tracking-[0.4em] text-zinc-600">Outras Habilidades & Equipamentos</label>
+                  <textarea
+                    value={formData.outrasHabilidades}
+                    onChange={(e) => setFormData({ ...formData, outrasHabilidades: e.target.value })}
+                    className="w-full bg-transparent border-b border-zinc-900 py-3 text-xs text-white placeholder-zinc-800 focus:outline-none focus:border-brand-tactical transition-all resize-none"
+                    placeholder="EX: DRONE, ILUMINAÇÃO, TRATAMENTO DE COR..."
+                    rows={2}
+                  />
+                </div>
+              </div>
+            )}
+
+            {role === "UNIDADE" && (
+              <div className="md:col-span-2 space-y-8 mt-4 border-l-2 border-brand-tactical/20 pl-8 py-4">
+                <div className="space-y-4">
+                  <label className="text-[10px] font-bold uppercase tracking-[0.4em] text-zinc-600">Razão Social / Identificação</label>
+                  <input
+                    type="text"
+                    required
+                    value={formData.razaoSocial}
+                    onChange={(e) => setFormData({ ...formData, razaoSocial: e.target.value })}
+                    className="w-full bg-transparent border-b border-zinc-900 py-3 text-xs text-white placeholder-zinc-800 focus:outline-none focus:border-brand-tactical transition-all"
+                    placeholder="NOME OFICIAL DA UNIDADE"
+                  />
+                </div>
+                <div className="space-y-4">
+                  <label className="text-[10px] font-bold uppercase tracking-[0.4em] text-zinc-600">Localização Estratégica (Endereço)</label>
+                  <input
+                    type="text"
+                    required
+                    value={formData.endereco}
+                    onChange={(e) => setFormData({ ...formData, endereco: e.target.value })}
+                    className="w-full bg-transparent border-b border-zinc-900 py-3 text-xs text-white placeholder-zinc-800 focus:outline-none focus:border-brand-tactical transition-all"
+                    placeholder="CIDADE, ESTADO, ENDEREÇO..."
+                  />
+                </div>
+              </div>
+            )}
 
             <div className="space-y-4 md:col-span-2">
               <label className="text-[10px] font-bold uppercase tracking-[0.4em] text-zinc-600 ml-1">Senha de Acesso</label>

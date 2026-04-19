@@ -216,14 +216,7 @@ export const HomePage = () => {
               Buscar
             </button>
         </div>
-        <div style={{ marginTop: "1.5rem" }}>
-          <button 
-            onClick={() => navigate("/cotacao")}
-            style={{ fontSize: 10, color: THEME.text2, background: "transparent", border: "none", borderBottom: `1px solid ${THEME.border2}`, paddingBottom: 4, cursor: "pointer", textTransform: "uppercase", letterSpacing: 3, fontWeight: 700 }}
-          >
-            Não encontrou seu evento? <span style={{ color: THEME.accent }}>Solicite um orçamento agora &rarr;</span>
-          </button>
-        </div>
+
 
         {/* Chips de categoria */}
         <div style={{ display: "flex", gap: 10, justifyContent: "center", marginTop: "2.5rem", flexWrap: "wrap" }}>
@@ -312,6 +305,27 @@ export const HomePage = () => {
             </button>
           </div>
         )}
+      </section>
+
+      {/* CTA BANNER */}
+      <section
+        onClick={() => navigate("/cotacao")}
+        style={{
+          cursor: "pointer",
+          borderTop: `1px solid ${THEME.border}`,
+          borderBottom: `1px solid ${THEME.border}`,
+          padding: "2rem",
+          textAlign: "center",
+          background: THEME.accentBg,
+          transition: "background 0.3s",
+        }}
+        onMouseOver={(e) => (e.currentTarget.style.background = "#141a08")}
+        onMouseOut={(e) => (e.currentTarget.style.background = THEME.accentBg)}
+      >
+        <span style={{ fontSize: 10, color: THEME.text2, textTransform: "uppercase", letterSpacing: 3, fontWeight: 700 }}>
+          Não encontrou seu evento?{" "}
+          <span style={{ color: THEME.accent }}>Solicite um orçamento agora &rarr;</span>
+        </span>
       </section>
 
       {/* FOOTER */}

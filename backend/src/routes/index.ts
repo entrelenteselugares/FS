@@ -21,7 +21,36 @@ import { getMeusEventos, updateEventLinks, uploadEventCover } from "../controlle
 import { getMeusPedidos, getMeuPedidoDetalhe } from "../controllers/cliente.controller";
 import { CartorioController } from "../controllers/cartorio.controller";
 import { SEOController } from "../controllers/seo.controller";
+import {
+  chooseAccessType,
+  getAccessStatus,
+  deleteMediaAdmin,
+} from "../controllers/access.controller";
 import { requireAuth, requireRole } from "../lib/auth";
+import {
+  likePhoto,
+  getEventLikes,
+  getMyPoints,
+  redeemPrint,
+} from "../controllers/gamification.controller";
+import {
+  listSuppliers,
+  createSupplier,
+  getBreakeven,
+  updateRedemptionStatus,
+  listRedemptions,
+} from "../controllers/supplier.controller";
+import {
+  adminCreateContest,
+  adminListContests,
+  adminUpdateContest,
+  getActiveContest,
+  getHallOfFame,
+} from "../controllers/contest.controller";
+import {
+  getPartnerLandingData,
+  updatePartnerProfile,
+} from "../controllers/partner.controller";
 
 const router = Router();
 
@@ -40,6 +69,9 @@ router.get("/public/events/:id", EventController.getById);
 router.get("/public/events/:id/access", EventController.getAccess);
 router.get("/public/partners", EventController.listPartners);
 router.post("/public/quotes", EventController.createQuote);
+router.get("/public/contests/active", getActiveContest);
+router.get("/public/contests/hall-of-fame", getHallOfFame);
+router.get("/public/partners/:slug", getPartnerLandingData);
 router.get("/share/e/:id", SEOController.getEventPreview);
 
 // ── Pagamento ────────────────────────────────────────────────────
@@ -70,10 +102,36 @@ router.patch("/admin/orders/:id/payout", requireAuth, requireRole("ADMIN"), admi
 router.get("/cliente/pedidos", requireAuth, getMeusPedidos);
 router.get("/cliente/pedidos/:id", requireAuth, getMeuPedidoDetalhe);
 
+// ── Cliente: LGPD Acesso & Privacidade ───────────────────────────
+router.post("/orders/:id/access-type", requireAuth, chooseAccessType);
+router.get("/orders/:id/access-status", requireAuth, getAccessStatus);
+router.post("/admin/orders/:id/delete-media", requireAuth, requireRole("ADMIN"), deleteMediaAdmin);
+
 // ── Profissional: Gestão de Entregas ─────────────────────────────
 router.get("/profissional/events", requireAuth, requireRole("ADMIN", "PROFISSIONAL"), getMeusEventos);
 router.patch("/profissional/events/:id/links", requireAuth, requireRole("ADMIN", "PROFISSIONAL"), updateEventLinks);
 router.patch("/profissional/events/:id/cover", requireAuth, requireRole("ADMIN", "PROFISSIONAL"), uploadEventCover);
+
+// ── Gamificação: Curtidas & Pontos ──────────────────────────────
+router.post("/events/:slug/photos/like", requireAuth, likePhoto);
+router.get("/events/:slug/likes", getEventLikes); // pública
+
+// ── Gamificação: Resgates & Perfil ──────────────────────────────
+router.get("/me/points", requireAuth, getMyPoints);
+router.post("/me/redeem-print", requireAuth, redeemPrint);
+
+// ── Admin: Operação de Impressão ────────────────────────────────
+router.get("/admin/suppliers", requireAuth, requireRole("ADMIN"), listSuppliers);
+router.post("/admin/suppliers", requireAuth, requireRole("ADMIN"), createSupplier);
+router.get("/admin/suppliers/:id/breakeven", requireAuth, requireRole("ADMIN"), getBreakeven);
+router.get("/admin/redemptions", requireAuth, requireRole("ADMIN"), listRedemptions);
+router.patch("/admin/redemptions/:id/status", requireAuth, requireRole("ADMIN"), updateRedemptionStatus);
+router.get("/admin/contests", requireAuth, requireRole("ADMIN"), adminListContests);
+router.post("/admin/contests", requireAuth, requireRole("ADMIN"), adminCreateContest);
+router.patch("/admin/contests/:id", requireAuth, requireRole("ADMIN"), adminUpdateContest);
+
+// ── Perfil do Parceiro (Self-care) ──────────────────────────────
+router.patch("/partner/profile", requireAuth, requireRole("CARTORIO"), updatePartnerProfile);
 
 // ── Legado / Compatibilidade ─────────────────────────────────────
 // ── Cartório / Unidades: Gestão de Ativos ────────────────────────

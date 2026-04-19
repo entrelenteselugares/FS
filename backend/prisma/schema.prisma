@@ -56,6 +56,11 @@ model User {
   profissional   Profissional?
   cartorio       Cartorio?
 
+  // Gamificação
+  likes          PhotoLike[]
+  points         UserPoints?
+  redemptions    PrintRedemption[]
+
   @@map("users")
 }
 
@@ -103,9 +108,13 @@ model Event {
   edicao         User?     @relation("EdicaoEvents", fields: [edicaoId], references: [id])
   cartorioUserId  String?
   cartorioUser    User?     @relation("CartorioUserEvents", fields: [cartorioUserId], references: [id])
+  eventHours      Int?      @default(2)
 
   // Pedidos vinculados
   pedidos         Order[]
+  
+  // Gamificação
+  likes           PhotoLike[]
 
   @@map("events")
 }
@@ -120,8 +129,9 @@ model Profissional {
   cameras   String[]
   lenses    String[]
   lighting  String[]
-  captPct   Float    @default(30)
-  editPct   Float    @default(20)
+  captPct          Float    @default(30)
+  editPct          Float    @default(20)
+  otherHabilities  String?
 
   @@map("profissionais")
 }
@@ -133,8 +143,15 @@ model Cartorio {
   userId      String   @unique
   user        User     @relation(fields: [userId], references: [id])
   razaoSocial String
+  slug        String?  @unique
   cnpj        String?
   splitPct    Float    @default(10)
+
+  // Landing Page Fields
+  address     String?
+  phone       String?
+  description String?
+  coverUrl    String?
 
   @@map("cartorios")
 }
@@ -168,5 +185,126 @@ model Order {
   eventId       String
   event         Event    @relation(fields: [eventId], references: [id])
 
+  // LGPD
+  accessType        String?   // "PUBLIC" | "PRIVATE" | null (não escolhido ainda)
+  accessChosenAt    DateTime?
+  accessExpiresAt   DateTime?
+  deletedAt         DateTime? // quando foi excluído permanentemente
+  warningsSent      Int       @default(0) // quantos avisos de expiração foram enviados
+
   @@map("orders")
 }
+
+// ─────────────────────────────────────────
+// GAMIFICAÇÃO
+// ─────────────────────────────────────────
+
+model PhotoLike {
+  id        String   @id @default(cuid())
+  userId    String
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  eventId   String
+  event     Event    @relation(fields: [eventId], references: [id], onDelete: Cascade)
+  photoUrl  String   // URL da foto específica curtida
+  createdAt DateTime @default(now())
+  expiresAt DateTime // +365 dias
+
+  @@unique([userId, eventId, photoUrl])
+  @@map("photo_likes")
+}
+
+model UserPoints {
+  id        String   @id @default(cuid())
+  userId    String   @unique
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  total     Int      @default(0)
+  redeemed  Int      @default(0) // já resgatados
+  updatedAt DateTime @updatedAt
+
+  @@map("user_points")
+}
+
+model PrintRedemption {
+  id            String            @id @default(cuid())
+  userId        String
+  user          User              @relation(fields: [userId], references: [id])
+  pointsUsed    Int
+  quantity      Int               // qtd de fotos
+  packageType   String            // "12" | "24" | "36"
+  status        RedemptionStatus  @default(PENDING)
+  // Fotos escolhidas (URLs)
+  selectedPhotos String[]
+  // Entrega
+  deliveryType  String            // "PICKUP" | "MAIL" | "SEDEX"
+  addressJson   String?           // JSON com endereço
+  trackingCode  String?
+  // Fornecedor
+  supplierId    String?
+  supplier      PrintSupplier?    @relation(fields: [supplierId], references: [id])
+  // Financeiro
+  unitCost      Decimal?          @db.Decimal(10, 2)
+  shippingCost  Decimal?          @db.Decimal(10, 2)
+  totalCost     Decimal?          @db.Decimal(10, 2)
+  // Timestamps
+  createdAt     DateTime          @default(now())
+  updatedAt     DateTime          @updatedAt
+
+  @@map("print_redemptions")
+}
+
+enum RedemptionStatus {
+  PENDING
+  APPROVED
+  PRINTING
+  SHIPPED
+  DELIVERED
+  CANCELLED
+}
+
+model PrintSupplier {
+  id            String   @id @default(cuid())
+  name          String
+  type          String   // "OWN_PRINTER" | "EXTERNAL"
+  printerModel  String?
+  printerCost   Decimal? @db.Decimal(10, 2)
+  costPer10x15  Decimal  @db.Decimal(10, 4) // custo por foto 10x15
+  costPer4x6    Decimal? @db.Decimal(10, 4)
+  // Embalagem e envio
+  boxCost       Decimal? @db.Decimal(10, 4)
+  labelCost     Decimal? @db.Decimal(10, 4)
+  uberCost      Decimal? @db.Decimal(10, 2) // custo do Uber até os Correios
+  baseCep       String?  // CEP de origem (13050-251)
+  active        Boolean  @default(true)
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+
+  redemptions   PrintRedemption[]
+
+  @@map("print_suppliers")
+}
+
+model Contest {
+  id          String        @id @default(cuid())
+  title       String
+  description String?
+  startDate   DateTime
+  endDate     DateTime
+  status      ContestStatus @default(DRAFT)
+  // Premiação
+  prize1st    String        // "3 fotos impressas"
+  prize2nd    String?
+  prize3rd    String?
+  prize1stPts Int           // pontos extras para 1º lugar
+  prize2ndPts Int?
+  prize3rdPts Int?
+  createdAt   DateTime      @default(now())
+
+  @@map("contests")
+}
+
+enum ContestStatus {
+  DRAFT
+  ACTIVE
+  FINISHED
+}
+

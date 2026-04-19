@@ -7,6 +7,8 @@ import { AdminEvents } from "./AdminEvents";
 import { AdminUsers } from "./AdminUsers";
 import { AdminOrders } from "./AdminOrders";
 import { AdminFinance } from "./AdminFinance";
+import AdminSuppliers from "./AdminSuppliers";
+import { AdminContests } from "./AdminContests";
 
 const IconDashboard = () => (
   <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5">
@@ -25,6 +27,8 @@ const TABS = [
   { id: "users", label: "Membros", icon: "🫂" },
   { id: "orders", label: "Pedidos", icon: "📑" },
   { id: "finance", label: "Financeiro", icon: "💰" },
+  { id: "printers", label: "Impressão", icon: "🖨️" },
+  { id: "contests", label: "Concursos", icon: "🏆" },
 ];
 
 interface AdminStats {
@@ -124,6 +128,8 @@ export const AdminDashboard: React.FC = () => {
             {activeTab === "users"    && <AdminUsers />}
             {activeTab === "orders"   && <AdminOrders />}
             {activeTab === "finance"  && <AdminFinance />}
+            {activeTab === "printers" && <AdminSuppliers />}
+            {activeTab === "contests" && <AdminContests />}
           </div>
         )}
       </div>

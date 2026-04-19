@@ -16,6 +16,7 @@ interface EventItem {
   temVideo: boolean;
   temReels: boolean;
   temFotoImpressa: boolean;
+  eventHours: number | null;
   _count: { pedidos: number };
 }
 
@@ -215,7 +216,7 @@ export default function ProfissionalDashboard() {
                     <div style={{ flex: 1, minWidth: 0 }}>
                       <div style={{ fontSize: 16, fontWeight: 700, color: "#fff", marginBottom: 4, overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap", textTransform: "uppercase" }}>{event.nomeNoivos}</div>
                       <div style={{ fontSize: 11, color: "#555", marginBottom: 8, fontWeight: 600, textTransform: "uppercase", letterSpacing: 1 }}>
-                        {formatDate(event.dataEvento)} · {event.cartorio || "UNIDADE NÃO DEFINIDA"}
+                        {formatDate(event.dataEvento)} · {event.cartorio || "UNIDADE NÃO DEFINIDA"} · {event.eventHours ?? 2}H
                       </div>
                       
                       <div style={{ display: "flex", gap: "1.5rem", alignItems: "center" }}>

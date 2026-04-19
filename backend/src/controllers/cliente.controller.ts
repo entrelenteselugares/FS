@@ -36,7 +36,9 @@ export async function getMeusPedidos(req: Request, res: Response): Promise<void>
       amount: Number(p.valor),
       createdAt: p.createdAt,
       event: p.event,
-      hasPaid: p.status === "APROVADO",
+      hasPaid: p.status === "APROVADO" || p.status === "APPROVED",
+      accessType: p.accessType,
+      accessExpiresAt: p.accessExpiresAt,
     }));
 
     res.json(resultado);
@@ -92,11 +94,15 @@ export async function getMeuPedidoDetalhe(req: Request, res: Response): Promise<
       amount: Number(p.valor),
       createdAt: p.createdAt,
       hasPaid: aprovado,
+      accessType: p.accessType,
+      accessExpiresAt: p.accessExpiresAt,
       event: {
         ...p.event,
-        // Só expõe os links se o status for APROVADO no banco
-        lightroomUrl: aprovado ? p.event?.lightroomUrl ?? null : null,
-        driveUrl: aprovado ? p.event?.driveUrl ?? null : null,
+        // Só expõe os links se aprovado INTEGRALMENTE e NÃO expirado/excluído
+        lightroomUrl: (aprovado && !p.deletedAt && (!p.accessExpiresAt || new Date(p.accessExpiresAt) > new Date())) 
+          ? p.event?.lightroomUrl ?? null : null,
+        driveUrl: (aprovado && !p.deletedAt && (!p.accessExpiresAt || new Date(p.accessExpiresAt) > new Date())) 
+          ? p.event?.driveUrl ?? null : null,
       },
     });
   } catch (err) {
