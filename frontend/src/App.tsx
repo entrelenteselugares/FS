@@ -12,6 +12,7 @@ import CartorioDashboard from "./pages/CartorioDashboard";
 import { AuthSelectionPage } from "./pages/AuthSelectionPage";
 import { RegisterPage } from "./pages/RegisterPage";
 import ClienteArea from "./pages/ClienteArea";
+import { QuotePage } from "./pages/QuotePage";
 
 /** Redireciona /dashboard para o painel correto baseado no role */
 const DashboardRedirect = () => {
@@ -40,6 +41,7 @@ function App() {
           <Route path="/register" element={<RegisterPage />} />
           <Route path="/eventos/:id" element={<EventPage />} />
           <Route path="/e/:id" element={<EventPage />} />
+          <Route path="/cotacao" element={<QuotePage />} />
 
           {/* Redireciona para o painel correto */}
           <Route path="/dashboard" element={

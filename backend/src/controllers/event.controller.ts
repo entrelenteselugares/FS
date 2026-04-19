@@ -151,4 +151,78 @@ export class EventController {
       return res.status(500).json({ error: "Erro ao carregar vitrine", details: (error as any).message });
     }
   }
+
+  /**
+   * GET /api/public/partners
+   * Lista todos os cartórios cadastrados como pontos parceiros.
+   */
+  static async listPartners(_req: Request, res: Response) {
+    try {
+      const partners = await prisma.user.findMany({
+        where: { role: "CARTORIO" },
+        include: { cartorio: true },
+        orderBy: { nome: "asc" }
+      });
+      return res.json(partners.map(p => ({
+        id: p.id,
+        name: p.cartorio?.razaoSocial || p.nome,
+        city: "Campinas" 
+      })));
+    } catch (error) {
+      console.error("Erro ao listar parceiros:", error);
+      return res.status(500).json({ error: "Erro interno ao listar parceiros." });
+    }
+  }
+
+  /**
+   * POST /api/public/quotes
+   * Processa a solicitação de orçamento e gera o fluxo de reserva.
+   */
+  static async createQuote(req: Request, res: Response) {
+    try {
+      const { 
+        name, email, attendees, locationType, selectedPartnerId, 
+        customCep, eventDate, description, selectedServices, totalPrice 
+      } = req.body;
+
+      const event = await prisma.event.create({
+        data: {
+          nomeNoivos: name,
+          dataEvento: new Date(eventDate),
+          location: locationType === "PARTNER" ? "Ponto Parceiro" : `CEP: ${customCep}`,
+          description: `ORÇAMENTO AUTOMÁTICO\nConvidados: ${attendees}\nServiços: ${selectedServices.join(", ")}\n\nDescrição do Cliente: ${description}`,
+          priceBase: totalPrice,
+          priceEarly: totalPrice,
+          active: locationType === "PARTNER", 
+          cartorioUserId: locationType === "PARTNER" ? selectedPartnerId : null,
+          temFoto: selectedServices.includes("foto"),
+          temVideo: selectedServices.includes("video"),
+          temReels: selectedServices.includes("reels"),
+          temFotoImpressa: selectedServices.includes("impresso"),
+        }
+      });
+
+      if (locationType === "PARTNER") {
+        const order = await prisma.order.create({
+          data: {
+            eventId: event.id,
+            valor: totalPrice,
+            buyerEmail: email,
+            status: "PENDENTE"
+          }
+        });
+
+        // Simulação de Checkout Link
+        const checkoutUrl = `${process.env.VITE_APP_URL || 'https://foto-segundo.vercel.app'}/eventos/${event.id}?orderId=${order.id}&autoPay=true`;
+        
+        return res.json({ success: true, eventId: event.id, checkoutUrl });
+      }
+
+      return res.json({ success: true, message: "Lead registrado para aprovação técnica." });
+
+    } catch (error) {
+      console.error("Erro ao processar orçamento:", error);
+      return res.status(500).json({ error: "Falha na Máquina de Vendas. Tente novamente." });
+    }
+  }
 }

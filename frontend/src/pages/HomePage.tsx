@@ -152,12 +152,20 @@ export const HomePage = () => {
             )}
           </div>
         ) : (
-          <button
-            onClick={() => navigate("/login")}
-            style={{ fontSize: 9, background: "transparent", color: "#fff", border: "1px solid rgba(255,255,255,0.1)", padding: "10px 18px", borderRadius: 0, cursor: "pointer", fontWeight: 700, letterSpacing: "2px", textTransform: "uppercase" }}
-          >
-            Acesso
-          </button>
+          <div style={{ display: "flex", gap: 12 }}>
+            <button
+              onClick={() => navigate("/cotacao")}
+              style={{ fontSize: 9, background: THEME.accent, color: "black", border: "none", padding: "10px 18px", borderRadius: 0, cursor: "pointer", fontWeight: 800, letterSpacing: "2px", textTransform: "uppercase" }}
+            >
+              Orçamento
+            </button>
+            <button
+              onClick={() => navigate("/login")}
+              style={{ fontSize: 9, background: "transparent", color: "#fff", border: "1px solid rgba(255,255,255,0.1)", padding: "10px 18px", borderRadius: 0, cursor: "pointer", fontWeight: 700, letterSpacing: "2px", textTransform: "uppercase" }}
+            >
+              Acesso
+            </button>
+          </div>
         )}
       </nav>
 
@@ -207,6 +215,14 @@ export const HomePage = () => {
             >
               Buscar
             </button>
+        </div>
+        <div style={{ marginTop: "1.5rem" }}>
+          <button 
+            onClick={() => navigate("/cotacao")}
+            style={{ fontSize: 10, color: THEME.text2, background: "transparent", border: "none", borderBottom: `1px solid ${THEME.border2}`, paddingBottom: 4, cursor: "pointer", textTransform: "uppercase", letterSpacing: 3, fontWeight: 700 }}
+          >
+            Não encontrou seu evento? <span style={{ color: THEME.accent }}>Solicite um orçamento agora &rarr;</span>
+          </button>
         </div>
 
         {/* Chips de categoria */}
