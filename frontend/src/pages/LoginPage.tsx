@@ -80,15 +80,15 @@ export const LoginPage: React.FC = () => {
         initial={{ opacity: 0, y: 10 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.8 }}
-        style={{ width: "100%", maxWidth: 500, position: "relative", zIndex: 10 }}
+        style={{ width: "100%", maxWidth: 480, position: "relative", zIndex: 10 }}
       >
-        <div style={{ textAlign: "center", marginBottom: 60 }}>
-          <div style={{ fontSize: 10, fontWeight: 800, textTransform: "uppercase", letterSpacing: 6, color: T.text3, marginBottom: 30, display: "flex", alignItems: "center", justifyContent: "center", gap: 16 }}>
+        <div style={{ textAlign: "center", marginBottom: 40 }}>
+          <div style={{ fontSize: 10, fontWeight: 800, textTransform: "uppercase", letterSpacing: 6, color: T.text3, marginBottom: 20, display: "flex", alignItems: "center", justifyContent: "center", gap: 16 }}>
             <span style={{ width: 30, height: 1, background: "#1a1a1a" }} />
             Secure Access
             <span style={{ width: 30, height: 1, background: "#1a1a1a" }} />
           </div>
-          <h1 style={{ fontFamily: T.fontDisplay, fontSize: "clamp(50px, 8vw, 80px)", fontWeight: 900, lineHeight: 0.9, textTransform: "uppercase", letterSpacing: "-0.5px", color: "#fff", marginBottom: 12 }}>
+          <h1 style={{ fontFamily: T.fontDisplay, fontSize: "clamp(50px, 8vw, 80px)", fontWeight: 900, lineHeight: 0.9, textTransform: "uppercase", letterSpacing: "-0.5px", color: "#fff", marginBottom: 8 }}>
             ACESSO <span style={{ color: T.text3 }}>PRIVADO</span>
           </h1>
           <p style={{ fontSize: 10, letterSpacing: 4, textTransform: "uppercase", color: T.accent, fontWeight: 800 }}>
@@ -96,15 +96,15 @@ export const LoginPage: React.FC = () => {
           </p>
         </div>
 
-        <div style={{ background: T.bgCard, border: `1px solid ${T.border}`, padding: "60px 50px" }}>
+        <div style={{ background: T.bgCard, border: `1px solid ${T.border}`, padding: "40px 40px" }}>
           {error && (
             <div style={{ border: `1px solid rgba(248,113,113,0.1)`, background: "rgba(248,113,113,0.05)", padding: 20, marginBottom: 40, textAlign: "center" }}>
               <p style={{ color: "#f87171", fontSize: 10, fontWeight: 700, textTransform: "uppercase", letterSpacing: 2, margin: 0 }}>{error}</p>
             </div>
           )}
 
-          <form onSubmit={handleSubmit} style={{ display: "flex", flexDirection: "column", gap: 40 }}>
-            <div style={{ display: "flex", flexDirection: "column", gap: 12 }}>
+          <form onSubmit={handleSubmit} style={{ display: "flex", flexDirection: "column", gap: 30 }}>
+            <div style={{ display: "flex", flexDirection: "column", gap: 8 }}>
               <label style={{ fontSize: 10, fontWeight: 800, textTransform: "uppercase", letterSpacing: 3, color: T.text3, marginLeft: 2 }}>E-mail de Registro</label>
               <div style={{ position: "relative", display: "flex", alignItems: "center" }}>
                 <Mail style={{ position: "absolute", left: 0, color: "#222" }} size={14} strokeWidth={1.5} />
@@ -119,7 +119,7 @@ export const LoginPage: React.FC = () => {
               </div>
             </div>
 
-            <div style={{ display: "flex", flexDirection: "column", gap: 12 }}>
+            <div style={{ display: "flex", flexDirection: "column", gap: 8 }}>
               <label style={{ fontSize: 10, fontWeight: 800, textTransform: "uppercase", letterSpacing: 3, color: T.text3, marginLeft: 2 }}>Código de Segurança</label>
               <div style={{ position: "relative", display: "flex", alignItems: "center" }}>
                 <Lock style={{ position: "absolute", left: 0, color: "#222" }} size={14} strokeWidth={1.5} />
@@ -153,8 +153,8 @@ export const LoginPage: React.FC = () => {
             </button>
           </form>
 
-          <div style={{ marginTop: 60, paddingTop: 40, borderTop: `1px solid ${T.border}`, textAlign: "center" }}>
-            <p style={{ color: T.text3, fontSize: 9, fontWeight: 800, textTransform: "uppercase", letterSpacing: 2, marginBottom: 20 }}>Novo no Coletivo?</p>
+          <div style={{ marginTop: 40, paddingTop: 30, borderTop: `1px solid ${T.border}`, textAlign: "center" }}>
+            <p style={{ color: T.text3, fontSize: 9, fontWeight: 800, textTransform: "uppercase", letterSpacing: 2, marginBottom: 15 }}>Novo no Coletivo?</p>
             <Link 
               to="/register?role=CLIENTE"
               style={{ color: "#fff", fontSize: 12, fontWeight: 700, textTransform: "uppercase", letterSpacing: 3, textDecoration: "none", display: "flex", alignItems: "center", justifyContent: "center", gap: 12, fontStyle: "italic" }}
@@ -164,7 +164,7 @@ export const LoginPage: React.FC = () => {
           </div>
         </div>
 
-        <div style={{ marginTop: 40, textAlign: "center" }}>
+        <div style={{ marginTop: 30, textAlign: "center" }}>
           <Link to="/" style={{ color: T.text3, fontSize: 9, fontWeight: 800, textTransform: "uppercase", letterSpacing: 4, textDecoration: "none" }}>
             Return to Public Showcase
           </Link>
