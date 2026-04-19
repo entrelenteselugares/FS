@@ -27,9 +27,15 @@ interface AccessData {
 }
 
 function formatDate(d: string) {
-  return new Intl.DateTimeFormat("pt-BR", {
-    weekday: "long", day: "2-digit", month: "long", year: "numeric",
-  }).format(new Date(d));
+  try {
+    const dateObj = new Date(d);
+    if (isNaN(dateObj.getTime())) return "Data a definir";
+    return new Intl.DateTimeFormat("pt-BR", {
+      weekday: "long", day: "2-digit", month: "long", year: "numeric",
+    }).format(dateObj);
+  } catch {
+    return "Data a definir";
+  }
 }
 
 function formatCurrency(v: number) {
