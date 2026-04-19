@@ -92,8 +92,9 @@ export const QuotePage = () => {
     <div style={{ background: THEME.bg, color: THEME.text, minHeight: "100vh", fontFamily: THEME.fontB, padding: "40px 20px" }}>
       <style>{`
         @import url('https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@700;900&family=Inter:wght@400;700&display=swap');
-        input, select, textarea { background: #000 !important; border: 1px solid #1c1c1c !important; color: white !important; border-radius: 0 !important; padding: 15px !important; }
-        input:focus { border-color: ${THEME.accent} !important; outline: none; }
+        .fs-input { background: #000 !important; border: 1px solid #1c1c1c !important; color: white !important; border-radius: 0 !important; box-sizing: border-box; }
+        .fs-input:focus { border-color: ${THEME.accent} !important; outline: none !important; }
+        select.fs-input, textarea.fs-input { padding: 15px !important; }
       `}</style>
 
       <div style={{ maxWidth: 800, margin: "0 auto" }}>
@@ -132,8 +133,14 @@ export const QuotePage = () => {
                 <div>
                   <label style={{ fontSize: 10, fontWeight: 800, textTransform: "uppercase", marginBottom: 15, display: "block", color: THEME.text2 }}>2. Número de Convidados</label>
                   <div style={{ position: "relative", display: "flex", alignItems: "center" }}>
-                    <Users size={18} style={{ position: "absolute", left: 15, color: THEME.accent, pointerEvents: "none" }} />
-                    <input type="number" value={attendees} onChange={e => setAttendees(Number(e.target.value))} style={{ width: "100%", padding: "15px 15px 15px 48px" }} />
+                    <Users size={18} style={{ position: "absolute", left: 15, color: THEME.accent, pointerEvents: "none", zIndex: 1 }} />
+                    <input
+                      type="number"
+                      value={attendees}
+                      onChange={e => setAttendees(Number(e.target.value))}
+                      className="fs-input"
+                      style={{ width: "100%", padding: "15px 15px 15px 48px" }}
+                    />
                   </div>
                   <div style={{ fontSize: 9, marginTop: 10, color: THEME.accent, fontWeight: 700, textTransform: "uppercase" }}>
                     Equipe Suggest: {team.senior} Sênior {team.aux > 0 && `+ ${team.aux} Auxiliar`}
@@ -142,8 +149,14 @@ export const QuotePage = () => {
                 <div>
                   <label style={{ fontSize: 10, fontWeight: 800, textTransform: "uppercase", marginBottom: 15, display: "block", color: THEME.text2 }}>3. Data do Evento</label>
                   <div style={{ position: "relative", display: "flex", alignItems: "center" }}>
-                    <Calendar size={18} style={{ position: "absolute", left: 15, color: THEME.accent, pointerEvents: "none" }} />
-                    <input type="date" value={eventDate} onChange={e => setEventDate(e.target.value)} style={{ width: "100%", padding: "15px 15px 15px 48px" }} />
+                    <Calendar size={18} style={{ position: "absolute", left: 15, color: THEME.accent, pointerEvents: "none", zIndex: 1 }} />
+                    <input
+                      type="date"
+                      value={eventDate}
+                      onChange={e => setEventDate(e.target.value)}
+                      className="fs-input"
+                      style={{ width: "100%", padding: "15px 15px 15px 48px" }}
+                    />
                   </div>
                 </div>
               </div>
@@ -175,11 +188,11 @@ export const QuotePage = () => {
                 <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 20 }}>
                   <div style={{ display: "flex", flexDirection: "column", gap: 10 }}>
                     <label style={{ fontSize: 10, fontWeight: 800, textTransform: "uppercase", color: THEME.text2 }}>Seu Nome</label>
-                    <input required value={name} onChange={e => setName(e.target.value)} placeholder="NOME DO CONTRATANTE" />
+                    <input required value={name} onChange={e => setName(e.target.value)} placeholder="NOME DO CONTRATANTE" className="fs-input" style={{ width: "100%", padding: "15px" }} />
                   </div>
                   <div style={{ display: "flex", flexDirection: "column", gap: 10 }}>
                     <label style={{ fontSize: 10, fontWeight: 800, textTransform: "uppercase", color: THEME.text2 }}>E-mail para Contato</label>
-                    <input required type="email" value={email} onChange={e => setEmail(e.target.value)} placeholder="EX: CONTATO@DOMINIO.COM" />
+                    <input required type="email" value={email} onChange={e => setEmail(e.target.value)} placeholder="EX: CONTATO@DOMINIO.COM" className="fs-input" style={{ width: "100%", padding: "15px" }} />
                   </div>
                 </div>
 
@@ -199,24 +212,25 @@ export const QuotePage = () => {
                   </div>
 
                   {locationType === "PARTNER" ? (
-                    <select required value={selectedPartnerId} onChange={e => setSelectedPartnerId(e.target.value)} style={{ width: "100%" }}>
+                    <select required value={selectedPartnerId} onChange={e => setSelectedPartnerId(e.target.value)} className="fs-input" style={{ width: "100%" }}>
                       <option value="">SELECIONE O PONTO PARCEIRO...</option>
                       {partners.map(p => <option key={p.id} value={p.id}>{p.name.toUpperCase()} - {p.city || 'CAMPINAS'}</option>)}
                     </select>
                   ) : (
                     <div style={{ display: "flex", flexDirection: "column", gap: 10 }}>
-                      <input required value={customCep} onChange={e => setCustomCep(e.target.value)} placeholder="DIGITE O CEP DO LOCAL" />
+                      <input required value={customCep} onChange={e => setCustomCep(e.target.value)} placeholder="DIGITE O CEP DO LOCAL" className="fs-input" style={{ width: "100%", padding: "15px" }} />
                     </div>
                   )}
                 </div>
 
                 <div style={{ display: "flex", flexDirection: "column", gap: 10 }}>
                   <label style={{ fontSize: 10, fontWeight: 800, textTransform: "uppercase", color: THEME.text2 }}>Descreva seu evento com suas palavras</label>
-                  <textarea 
-                    value={description} 
-                    onChange={e => setDescription(e.target.value)} 
-                    rows={4} 
+                  <textarea
+                    value={description}
+                    onChange={e => setDescription(e.target.value)}
+                    rows={4}
                     placeholder="CONTE-NOS MAIS DETALHES, OBJETIVOS E EXPECTATIVAS..."
+                    className="fs-input"
                   />
                 </div>
 

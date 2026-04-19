@@ -34,6 +34,7 @@ model User {
   active         Boolean  @default(true)
   createdAt      DateTime @default(now())
   updatedAt      DateTime @updatedAt
+  pixKey         String?
 
   // Mercado Pago OAuth (armazenado diretamente no user)
   mpUserId       String?
@@ -147,6 +148,8 @@ model Order {
   paymentId     String?  @unique              // ID do pagamento no Mercado Pago
   createdAt     DateTime @default(now())
   updatedAt     DateTime @updatedAt
+  payoutDone    Boolean  @default(false)
+  payoutDate    DateTime?
 
   // Buyer Info (Redundância para facilitar relatórios)
   buyerEmail    String?

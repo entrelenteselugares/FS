@@ -298,6 +298,7 @@ export async function adminListUsers(req: Request, res: Response): Promise<void>
           select: { id: true, services: true, cameras: true, captPct: true, editPct: true },
         },
         cartorio: { select: { id: true, razaoSocial: true } },
+        pixKey: true,
       },
       orderBy: { createdAt: "desc" },
     });
@@ -314,7 +315,7 @@ export async function adminListUsers(req: Request, res: Response): Promise<void>
 }
 
 export async function adminCreateUser(req: Request, res: Response): Promise<void> {
-  const { name, email, password, role } = req.body;
+  const { name, email, password, role, pixKey } = req.body;
   if (!name || !email || !password || !role) {
     res.status(400).json({ error: "Todos os campos são obrigatórios." });
     return;
@@ -326,7 +327,7 @@ export async function adminCreateUser(req: Request, res: Response): Promise<void
 
     const hash = await bcrypt.hash(password, 12);
     const user = await prisma.user.create({
-      data: { nome: name, email, senha: hash, role },
+      data: { nome: name, email, senha: hash, role, pixKey },
     });
 
     // Cria perfil de profissional automaticamente
@@ -347,7 +348,7 @@ export async function adminCreateUser(req: Request, res: Response): Promise<void
 
 export async function adminUpdateUser(req: Request, res: Response): Promise<void> {
   const { id } = req.params;
-  const { name, role, active, captPct, editPct } = req.body;
+  const { name, role, active, captPct, editPct, pixKey } = req.body;
 
   try {
     await prisma.user.update({
@@ -356,6 +357,7 @@ export async function adminUpdateUser(req: Request, res: Response): Promise<void
         ...(name && { nome: name }),
         ...(role && { role }),
         ...(active !== undefined && { active }),
+        ...(pixKey !== undefined && { pixKey }),
       },
     });
 
@@ -379,13 +381,25 @@ export async function adminUpdateUser(req: Request, res: Response): Promise<void
 // ── PEDIDOS ───────────────────────────────────────────
 
 export async function adminListOrders(req: Request, res: Response): Promise<void> {
-  const { status, page = "1", q } = req.query;
+  const { status, page = "1", q, readyForPayout } = req.query;
   const take = 20;
   const skip = (Number(page) - 1) * take;
 
   try {
     const where: any = {};
     if (status) where.status = String(status);
+    if (req.query.payoutDone !== undefined) where.payoutDone = req.query.payoutDone === "true";
+    
+    // Filtro Uber Style: Pronto para Repasse (Status APROVADO, > 7 dias, payoutDone=false)
+    if (readyForPayout === "true") {
+      const sevenDaysAgo = new Date();
+      sevenDaysAgo.setDate(sevenDaysAgo.getDate() - 7);
+      
+      where.status = "APROVADO";
+      where.payoutDone = false;
+      where.updatedAt = { lte: sevenDaysAgo };
+    }
+
     if (q) {
       const searchString = String(q);
       where.OR = [
@@ -398,10 +412,17 @@ export async function adminListOrders(req: Request, res: Response): Promise<void
       prisma.order.findMany({
         where,
         include: {
-          event: { select: { nomeNoivos: true, slug: true } },
+          event: { 
+            select: { 
+              nomeNoivos: true, slug: true,
+              captacao: { select: { id: true, nome: true, pixKey: true, profissional: { select: { captPct: true } } } },
+              edicao:   { select: { id: true, nome: true, pixKey: true, profissional: { select: { editPct: true } } } },
+              cartorioUser: { select: { id: true, nome: true, pixKey: true, cartorio: { select: { splitPct: true } } } }
+            } 
+          },
           cliente:  { select: { nome: true, email: true } },
         },
-        orderBy: { createdAt: "desc" },
+        orderBy: { updatedAt: "desc" },
         take,
         skip,
       }),
@@ -409,12 +430,41 @@ export async function adminListOrders(req: Request, res: Response): Promise<void
     ]);
 
     res.json({ 
-      orders: orders.map(o => ({ ...o, amount: o.valor, user: o.cliente, event: { title: o.event.nomeNoivos, slug: o.event.slug } })), 
+      orders: orders.map(o => ({ 
+        ...o, 
+        amount: o.valor, 
+        user: o.cliente, 
+        event: { 
+          title: o.event.nomeNoivos, 
+          slug: o.event.slug,
+          partners: {
+            captacao: o.event.captacao,
+            edicao: o.event.edicao,
+            cartorio: o.event.cartorioUser
+          }
+        } 
+      })), 
       total, page: Number(page), pages: Math.ceil(total / take) 
     });
   } catch (err) {
     console.error("adminListOrders:", err);
     res.status(500).json({ error: "Erro ao listar pedidos." });
+  }
+}
+
+export async function adminMarkOrderPaid(req: Request, res: Response): Promise<void> {
+  const { id } = req.params;
+  try {
+    await prisma.order.update({
+      where: { id: String(id) },
+      data: { 
+        payoutDone: true,
+        payoutDate: new Date()
+      }
+    });
+    res.json({ ok: true });
+  } catch (err) {
+    res.status(500).json({ error: "Erro ao marcar como pago." });
   }
 }
 

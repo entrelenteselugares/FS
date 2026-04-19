@@ -14,6 +14,7 @@ interface User {
   unidade?: {
     razaoSocial: string;
   };
+  pixKey?: string;
 }
 
 export const AdminUsers: React.FC = () => {
@@ -21,7 +22,7 @@ export const AdminUsers: React.FC = () => {
   const [loading, setLoading] = useState(true);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [formData, setFormData] = useState({
-    name: "", email: "", password: "", role: "PROFISSIONAL"
+    name: "", email: "", password: "", role: "PROFISSIONAL", pixKey: ""
   });
 
   const fetchUsers = async () => {
@@ -111,6 +112,13 @@ export const AdminUsers: React.FC = () => {
                </div>
             )}
 
+            <div className="mt-6 pt-6 border-t border-white/5">
+              <label className="text-[10px] font-bold text-zinc-700 uppercase tracking-[0.4em] mb-2 block">Chave PIX para Repasse</label>
+              <div className="text-sm text-brand-tactical font-bold tracking-widest break-all">
+                {user.pixKey || "NÃO CADASTRADA"}
+              </div>
+            </div>
+
             <div className="flex justify-end gap-6 mt-4">
               <button className="text-[10px] font-bold text-zinc-600 uppercase tracking-[0.5em] hover:text-brand-tactical transition-all underline underline-offset-8 decoration-zinc-900">Ajustar Perfil</button>
             </div>
@@ -142,6 +150,15 @@ export const AdminUsers: React.FC = () => {
                     type="email" required
                     value={formData.email}
                     onChange={e => setFormData({...formData, email: e.target.value})}
+                    className="w-full bg-transparent border-b border-zinc-900 py-3 text-sm text-white focus:outline-none focus:border-brand-tactical transition-all rounded-none" 
+                  />
+                </div>
+                <div className="space-y-2">
+                  <label className="text-[10px] font-bold text-zinc-600 uppercase tracking-[0.4em]">Chave PIX (CPF, E-mail, Celular ou Aleatória)</label>
+                  <input 
+                    value={formData.pixKey}
+                    onChange={e => setFormData({...formData, pixKey: e.target.value})}
+                    placeholder="DADOS PARA REPASSE"
                     className="w-full bg-transparent border-b border-zinc-900 py-3 text-sm text-white focus:outline-none focus:border-brand-tactical transition-all rounded-none" 
                   />
                 </div>

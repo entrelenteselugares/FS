@@ -59,8 +59,8 @@ export class PaymentController {
         payer_email: email,
         notification_url: `${process.env.BACKEND_URL || "http://localhost:3001"}/api/webhooks/mercadopago`,
         orderId: order.id,
-        partners: partnersList,
-        matrizRate: taxaMatriz,
+        partners: [],
+        matrizRate: 1.0,
       });
 
       // 6. Vincular ID da Preferência ao Pedido (opcional, mas bom para tracking)
@@ -160,15 +160,14 @@ export class PaymentController {
         ? Number(event.priceEarly ?? 190) 
         : Number(event.priceBase ?? 200);
 
-      // 3. Cálculo de Split (Matriz Fee)
-      // Buscamos as porcentagens dos parceiros para definir quanto sobra para a Matriz
+      // 3. Cálculo de Split — Referência para Repasse Manual (Modelo Uber)
+      // 100% do valor vai para a conta master. Os splits são salvos apenas para
+      // mostrar quanto transferir via PIX para cada parceiro após os 7 dias.
       const pctCapt = event.captacao?.profissional?.captPct ?? 30;
       const pctEdit = event.edicao?.profissional?.editPct ?? 20;
       const pctCart = event.cartorioUser?.cartorio?.splitPct ?? 10;
-      
-      const totalPartnersPct = (pctCapt + pctEdit + pctCart) / 100;
-      const matrizPct = 1 - totalPartnersPct; // O que sobra é a comissão da plataforma
-      const applicationFee = preco * matrizPct;
+      const matrizPct = 1 - (pctCapt + pctEdit + pctCart) / 100;
+      const applicationFeeCalculated = preco * matrizPct;
 
       // 4. Criar Pedido (Identidade Obrigatória)
       if (!userId) {
@@ -181,8 +180,8 @@ export class PaymentController {
           clienteId: userId,
           valor: preco,
           status: "PENDENTE",
-          // Salva snapshot dos splits para auditoria interna
-          splitMatriz: applicationFee,
+          // Salva snapshot dos calculos para referencia no repasse manual
+          splitMatriz: applicationFeeCalculated,
           splitCaptacao: preco * (pctCapt / 100),
           splitEdicao: preco * (pctEdit / 100),
           splitCartorio: preco * (pctCart / 100)
@@ -210,8 +209,8 @@ export class PaymentController {
           email: email,
           identification: cpf ? { type: "CPF", number: cpf } : undefined
         },
-        external_reference: order.id,
-        application_fee: applicationFee // Aqui acontece o Split
+        external_reference: order.id
+        // application_fee REMOVIDA: 100% para master
       });
 
       // 6. Atualizar Pedido com Status Real
@@ -248,58 +247,6 @@ export class PaymentController {
 
     } catch (error: any) {
       const errorData = error.response?.data;
-      const isFeeError = errorData?.message?.includes("application_fee") || 
-                         JSON.stringify(errorData)?.includes("application_fee");
-
-      // 🆘 RESGATE AUTOMÁTICO: Se o erro for a taxa de comissão, tenta novamente sem ela
-      if (isFeeError) {
-        console.warn(`[Payment Rescue] Retrying WITHOUT application_fee for Event ${eventId}.`);
-        try {
-          const mpResponseFallback = await MercadoPagoService.processPayment({
-            transaction_amount: preco,
-            token: cardToken,
-            description: `Fotos Evento: ${event.nomeNoivos}`,
-            installments: Number(installments) || 1,
-            payment_method_id: paymentMethodId || "visa",
-            payer: {
-              email: email,
-              identification: cpf ? { type: "CPF", number: cpf } : undefined
-            },
-            external_reference: order.id
-            // application_fee OMITIDA no fallback
-          });
-
-          const isApproved = mpResponseFallback.status === "approved";
-          await prisma.order.update({
-            where: { id: order.id },
-            data: { 
-              status: isApproved ? "APROVADO" : "PENDENTE",
-              paymentId: String(mpResponseFallback.id)
-            }
-          });
-
-          if (isApproved) {
-            NotificationService.sendAccessEmail({
-              to: email,
-              buyerName: event.nomeNoivos,
-              eventTitle: event.nomeNoivos,
-              orderId: order.id,
-              accessLink: `${process.env.FRONTEND_URL || "http://localhost:5173"}/e/${event.id}`
-            }).catch(e => console.error("Erro no e-mail de resgate:", e));
-          }
-
-          return res.json({
-            orderId: order.id,
-            status: mpResponseFallback.status,
-            hasPaid: isApproved,
-            details: mpResponseFallback.status_detail,
-            warn: "Pagamento processado sem split automático. Verifique a configuração da conta MP."
-          });
-        } catch (fallbackError: any) {
-          console.error("[Process Payment Fallback Error]:", fallbackError.response?.data || fallbackError.message);
-        }
-      }
-
       console.error("[Process Payment Error]:", errorData || error.message);
       return res.status(500).json({ 
         error: "Erro ao processar pagamento v2",

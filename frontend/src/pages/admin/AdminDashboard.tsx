@@ -6,6 +6,7 @@ import { AdminOverview } from "./AdminOverview";
 import { AdminEvents } from "./AdminEvents";
 import { AdminUsers } from "./AdminUsers";
 import { AdminOrders } from "./AdminOrders";
+import { AdminFinance } from "./AdminFinance";
 
 const IconDashboard = () => (
   <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5">
@@ -23,6 +24,7 @@ const TABS = [
   { id: "events", label: "Eventos", icon: "📸" },
   { id: "users", label: "Membros", icon: "🫂" },
   { id: "orders", label: "Pedidos", icon: "📑" },
+  { id: "finance", label: "Financeiro", icon: "💰" },
 ];
 
 interface AdminStats {
@@ -121,6 +123,7 @@ export const AdminDashboard: React.FC = () => {
             {activeTab === "events"   && <AdminEvents />}
             {activeTab === "users"    && <AdminUsers />}
             {activeTab === "orders"   && <AdminOrders />}
+            {activeTab === "finance"  && <AdminFinance />}
           </div>
         )}
       </div>
