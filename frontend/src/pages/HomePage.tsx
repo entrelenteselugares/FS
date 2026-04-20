@@ -112,20 +112,24 @@ export const HomePage = () => {
         
         @media (max-width: 768px) {
           .mobile-stack { flex-direction: column !important; align-items: center !important; text-align: center !important; gap: 20px !important; }
-          .mobile-hero-padding { padding: 4rem 1rem 3rem !important; }
-          .mobile-grid-header { flex-direction: column !important; align-items: center !important; text-align: center !important; gap: 1.5rem !important; margin-bottom: 2rem !important; }
+          .mobile-hero-padding { padding: 3rem 0 2rem !important; }
+          .mobile-grid-header { flex-direction: column !important; align-items: flex-start !important; text-align: left !important; gap: 0.75rem !important; margin-bottom: 2rem !important; }
           .mobile-hide { display: none !important; }
-          .mobile-nav { padding: 0.8rem 1rem !important; }
+          .mobile-nav { padding: 0.75rem 1.25rem !important; }
           .mobile-footer { flex-direction: column !important; text-align: center !important; gap: 2rem !important; }
-          .mobile-search { flex-direction: column !important; background: transparent !important; border: none !important; padding: 0 !important; gap: 10px !important; }
-          .mobile-search-input { border: 1px solid ${THEME.border2} !important; background: ${THEME.bgCard} !important; }
-          .mobile-search-button { width: 100% !important; padding: 15px !important; }
-          
-          /* New Padding Corections */
-          .responsive-padding { padding-left: 20px !important; padding-right: 20px !important; }
-          .hero-mobile-margin { margin: 10px 10px !important; }
-          section { padding: 4rem 20px !important; }
-          .hero-title-mobile { font-size: 32px !important; }
+
+          /* Search bar: keep horizontal, pill-style, compact */
+          .mobile-search { flex-direction: row !important; background: rgba(255,255,255,0.08) !important; border: 1px solid rgba(255,255,255,0.12) !important; padding: 4px !important; gap: 0 !important; border-radius: 6px !important; }
+          .mobile-search-input { background: transparent !important; border: none !important; font-size: 15px !important; padding: 12px 16px !important; }
+          .mobile-search-button { width: auto !important; padding: 10px 16px !important; border-radius: 4px !important; flex-shrink: 0 !important; }
+
+          /* Section spacing */
+          section { padding: 2.5rem 20px !important; }
+          .hero-title-mobile { font-size: 30px !important; line-height: 1.1 !important; }
+          .hero-mobile-margin { margin: 12px 12px 0 !important; }
+
+          /* Event grid on mobile: single column */
+          .events-grid { grid-template-columns: 1fr !important; gap: 2rem !important; }
 
           .desktop-hide { display: none !important; }
         }
@@ -408,12 +412,15 @@ export const HomePage = () => {
                 onClick={() => fetchEvents(query, 1)}
                 className="mobile-search-button"
                 style={{
-                  background: "#FFFFFF", color: "#000000", border: "none", padding: "0 25px",
+                  background: "#FFFFFF", color: "#000000", border: "none", padding: "0 20px",
                   borderRadius: "2px", fontSize: 10, fontWeight: 800, cursor: "pointer",
-                  textTransform: "uppercase", letterSpacing: "0.1em"
+                  textTransform: "uppercase", letterSpacing: "0.1em", display: "flex",
+                  alignItems: "center", justifyContent: "center"
                 }}
               >
-                Buscar
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+                  <circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/>
+                </svg>
               </button>
           </motion.div>
         </div>
@@ -428,13 +435,13 @@ export const HomePage = () => {
               Últimos Registros
             </h2>
           </div>
-          <span style={{ fontSize: 11, color: THEME.text2, letterSpacing: "0.15em", textTransform: "uppercase", cursor: "pointer", borderBottom: `1px solid ${THEME.border}`, paddingBottom: 6, fontWeight: 700 }}>
+          <span style={{ fontSize: 11, color: THEME.text2, letterSpacing: "0.15em", textTransform: "uppercase", cursor: "pointer", borderBottom: `1px solid ${THEME.border}`, paddingBottom: 6, fontWeight: 700, whiteSpace: "nowrap" }}>
             Ver agenda completa
           </span>
         </div>
 
         {loading ? (
-          <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fill, minmax(350px, 1fr))", gap: "3rem" }}>
+          <div className="events-grid" style={{ display: "grid", gridTemplateColumns: "repeat(auto-fill, minmax(350px, 1fr))", gap: "3rem" }}>
             {[...Array(6)].map((_, i) => (
               <div key={i} style={{ background: "rgba(127,127,127,0.05)", aspectRatio: "4/3", animation: "pulse 2s infinite" }} />
             ))}
@@ -444,7 +451,7 @@ export const HomePage = () => {
             <p style={{ fontFamily: THEME.fontBase, fontSize: 32, color: THEME.text2, fontWeight: 300 }}>Nada encontrado para sua busca.</p>
           </div>
         ) : (
-          <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fill, minmax(350px, 1fr))", gap: "4rem 3rem" }}>
+          <div className="events-grid" style={{ display: "grid", gridTemplateColumns: "repeat(auto-fill, minmax(350px, 1fr))", gap: "4rem 3rem" }}>
             {events.map((event) => (
               <EventCard key={event.id} event={event} onClick={() => navigate(`/e/${event.id}`)} />
             ))}
