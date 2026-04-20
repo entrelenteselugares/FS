@@ -398,52 +398,52 @@ export default function EventPage() {
                   <p style={{ fontSize: 10, color: T.text3 }}>{Math.round((Number(event.collectedAmount) / Number(event.targetAmount || 1)) * 100)}% concluído</p>
                 </div>
               ) : (
-                <p style={{ fontSize: 10, letterSpacing: 2, textTransform: "uppercase", color: "#4ade80", marginBottom: 16 }}>
-                  ✓ Acesso Liberado
-                </p>
-              )}
-              
-              {accessExpiresAt && (
-                <div style={{ 
-                  marginBottom: 16, 
-                  padding: "10px 14px", 
-                  background: accessType === "PRIVATE" ? "#1a0a0a" : "#0f130a", 
-                  border: `1px solid ${accessType === "PRIVATE" ? "#3a1a1a" : T.border}`,
-                  borderRadius: 2
-                }}>
-                  <p style={{ fontSize: 11, color: accessType === "PRIVATE" ? "#f87171" : T.accent, margin: 0 }}>
-                    {accessType === "PRIVATE" ? "⚠️ ACESSO PRIVADO" : "📅 ÁLBUM PÚBLICO"} — Expira em{" "}
-                    <strong>{new Date(accessExpiresAt).toLocaleDateString("pt-BR")}</strong>
-                    {access && (
-                <div style={{ display: "flex", flexDirection: "column", gap: 10 }}>
-                  {access.lightroomUrl && (
-                    <a href={access.lightroomUrl} target="_blank" rel="noopener noreferrer"
-                      style={{ display: "flex", justifyContent: "space-between", alignItems: "center", padding: "14px 16px", background: T.bg, border: `1px solid #1e3a1e`, textDecoration: "none" }}>
-                      <div>
-                        <p style={{ fontSize: 13, fontWeight: 500, color: T.text, marginBottom: 2 }}>Álbum de Fotos</p>
-                        <p style={{ fontSize: 11, color: T.text3 }}>Adobe Portfolio · Alta resolução</p>
-                      </div>
-                      <span style={{ fontSize: 12, color: T.accent }}>Abrir ↗</span>
-                    </a>
+                <>
+                  <p style={{ fontSize: 10, letterSpacing: 2, textTransform: "uppercase", color: "#4ade80", marginBottom: 16 }}>
+                    ✓ Acesso Liberado
+                  </p>
+
+                  {accessExpiresAt && (
+                    <div style={{ 
+                      marginBottom: 16, 
+                      padding: "10px 14px", 
+                      background: accessType === "PRIVATE" ? "#1a0a0a" : "#0f130a", 
+                      border: `1px solid ${accessType === "PRIVATE" ? "#3a1a1a" : T.border}`,
+                      borderRadius: 2
+                    }}>
+                      <p style={{ fontSize: 11, color: accessType === "PRIVATE" ? "#f87171" : T.accent, margin: 0 }}>
+                        {accessType === "PRIVATE" ? "⚠️ ACESSO PRIVADO" : "📅 ÁLBUM PÚBLICO"} — Expira em{" "}
+                        <strong>{new Date(accessExpiresAt).toLocaleDateString("pt-BR")}</strong>
+                        {" "}({Math.ceil((new Date(accessExpiresAt).getTime() - Date.now()) / 86400000)} dias restantes)
+                      </p>
+                    </div>
                   )}
-                  {access.driveUrl && (
-                    <a href={access.driveUrl} target="_blank" rel="noopener noreferrer"
-                      style={{ display: "flex", justifyContent: "space-between", alignItems: "center", padding: "14px 16px", background: T.bg, border: `1px solid #1e3a1e`, textDecoration: "none" }}>
-                      <div>
-                        <p style={{ fontSize: 13, fontWeight: 500, color: T.text, marginBottom: 2 }}>Vídeo & Reels</p>
-                        <p style={{ fontSize: 11, color: T.text3 }}>Google Drive · Download disponível</p>
-                      </div>
-                      <span style={{ fontSize: 12, color: T.accent }}>Abrir ↗</span>
-                    </a>
+
+                  {access && (
+                    <div style={{ display: "flex", flexDirection: "column", gap: 10 }}>
+                      {access.lightroomUrl && (
+                        <a href={access.lightroomUrl} target="_blank" rel="noopener noreferrer"
+                          style={{ display: "flex", justifyContent: "space-between", alignItems: "center", padding: "14px 16px", background: T.bg, border: `1px solid #1e3a1e`, textDecoration: "none" }}>
+                          <div>
+                            <p style={{ fontSize: 13, fontWeight: 500, color: T.text, marginBottom: 2 }}>Álbum de Fotos</p>
+                            <p style={{ fontSize: 11, color: T.text3 }}>Adobe Portfolio · Alta resolução</p>
+                          </div>
+                          <span style={{ fontSize: 12, color: T.accent }}>Abrir ↗</span>
+                        </a>
+                      )}
+                      {access.driveUrl && (
+                        <a href={access.driveUrl} target="_blank" rel="noopener noreferrer"
+                          style={{ display: "flex", justifyContent: "space-between", alignItems: "center", padding: "14px 16px", background: T.bg, border: `1px solid #1e3a1e`, textDecoration: "none" }}>
+                          <div>
+                            <p style={{ fontSize: 13, fontWeight: 500, color: T.text, marginBottom: 2 }}>Vídeo & Reels</p>
+                            <p style={{ fontSize: 11, color: T.text3 }}>Google Drive · Download disponível</p>
+                          </div>
+                          <span style={{ fontSize: 12, color: T.accent }}>Abrir ↗</span>
+                        </a>
+                      )}
+                    </div>
                   )}
-                </div>
-              )}
-            </div>
-          )}
- · Download disponível</p>
-                  </a>
-                )}
-                </div>
+                </>
               )}
             </div>
           )}
@@ -582,7 +582,7 @@ export default function EventPage() {
                 <div style={{ background: T.bg, border: `1px solid ${T.border}`, padding: "12px 14px", marginBottom: 20, display: "flex", justifyContent: "space-between", alignItems: "center" }}>
                   <span style={{ fontSize: 12, color: T.text3 }}>{event.title}</span>
                   <span style={{ fontFamily: T.fontD, fontSize: 18, fontWeight: 700, color: T.accent }}>
-                    {formatCurrency(Number(event.priceBase))}
+                    {formatCurrency(event.isCrowdfund ? contributionAmount : Number(event.priceBase))}
                   </span>
                 </div>
 
@@ -647,7 +647,7 @@ export default function EventPage() {
 
                 <button onClick={handlePay} disabled={!cardToken}
                   style={{ width: "100%", background: cardToken ? T.accent : "#1a1a1a", color: cardToken ? "#0c0c0c" : T.text3, border: "none", padding: 13, fontFamily: T.fontD, fontWeight: 900, fontSize: 14, letterSpacing: 2, textTransform: "uppercase", cursor: cardToken ? "pointer" : "not-allowed" }}>
-                  Finalizar · {formatCurrency(Number(event.priceBase))}
+                  Finalizar · {formatCurrency(event.isCrowdfund ? contributionAmount : Number(event.priceBase))}
                 </button>
               </div>
             </div>
