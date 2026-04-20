@@ -66,13 +66,13 @@ export const RegisterPage: React.FC = () => {
   };
 
   const roles = [
-    { id: "CLIENTE", label: "Private Client", icon: <User size={14} /> },
-    { id: "PROFISSIONAL", label: "Network Artist", icon: <Camera size={14} /> },
+    { id: "CLIENTE", label: "Cliente Privado", icon: <User size={14} /> },
+    { id: "PROFISSIONAL", label: "Artista da Rede", icon: <Camera size={14} /> },
     { id: "UNIDADE", label: "Unidade Local", icon: <Building2 size={14} /> },
   ];
 
   return (
-    <div className="min-h-screen bg-[#050505] flex items-center justify-center px-6 py-20 relative overflow-hidden">
+    <div className="min-h-screen bg-theme-bg text-theme-text flex items-center justify-center px-6 py-20 relative overflow-hidden transition-colors duration-300">
       {/* Back Button */}
       <nav className="absolute top-0 left-0 w-full z-50 p-6 pointer-events-none">
         <button 
@@ -94,14 +94,14 @@ export const RegisterPage: React.FC = () => {
         className="w-full max-w-2xl relative z-10"
       >
         <div className="text-center mb-16">
-          <div className="text-[10px] font-bold uppercase tracking-[0.6em] text-zinc-600 mb-8 font-light italic">Request Membership</div>
-          <h1 className="text-5xl md:text-7xl font-heading text-white tracking-tighter mb-4 uppercase">
-            SOLICITAR <span className="text-zinc-700 italic">REGISTRO</span>
+          <div className="text-[10px] font-bold uppercase tracking-[0.6em] text-theme-muted mb-8 font-light">Solicitar Adesão</div>
+          <h1 className="text-5xl md:text-7xl font-sans font-black text-theme-text tracking-tighter mb-4 uppercase">
+            SOLICITAR <span className="text-theme-muted opacity-50">REGISTRO</span>
           </h1>
-          <p className="text-[10px] font-bold uppercase tracking-[0.5em] text-brand-tactical">The Collective Network Protocol</p>
+          <p className="text-[10px] font-bold uppercase tracking-[0.5em] text-brand-tactical">Protocolo Coletivo de Rede</p>
         </div>
 
-        <div className="border border-white/5 bg-white/[0.01] p-8 md:p-16">
+        <div className="border border-theme-border bg-theme-bg-muted/30 p-8 md:p-16">
           {error && (
             <div className="border border-red-900/10 bg-red-900/5 text-red-600 text-[10px] font-bold uppercase tracking-[0.2em] p-6 mb-12 text-center font-bold">
               {error}
@@ -129,46 +129,46 @@ export const RegisterPage: React.FC = () => {
 
           <form onSubmit={handleRegister} className="grid grid-cols-1 md:grid-cols-2 gap-10">
             <div className="space-y-4 md:col-span-2">
-              <label className="text-[10px] font-bold uppercase tracking-[0.4em] text-zinc-600 ml-1">Entidade / Nome Completo</label>
+              <label className="text-[10px] font-bold uppercase tracking-[0.4em] text-theme-muted ml-1">Entidade / Nome Completo</label>
               <div className="relative group">
-                <UserCircle className="absolute left-0 top-1/2 -translate-y-1/2 text-zinc-800 group-focus-within:text-brand-tactical transition-colors" size={14} strokeWidth={1.5} />
+                <UserCircle className="absolute left-0 top-1/2 -translate-y-1/2 text-theme-muted group-focus-within:text-brand-tactical transition-colors" size={14} strokeWidth={1.5} />
                 <input
                   type="text"
                   required
                   value={formData.nome}
                   onChange={(e) => setFormData({ ...formData, nome: e.target.value })}
-                  className="w-full bg-transparent border-b border-zinc-900 py-3 pl-8 text-xs text-white placeholder-zinc-800 focus:outline-none focus:border-brand-tactical transition-all"
-                  placeholder="TITULAR DO REGISTRO"
+                  className="w-full bg-transparent border-b border-theme-border py-3 pl-8 text-xs text-theme-text placeholder:text-theme-muted/40 focus:outline-none focus:border-brand-tactical transition-all"
+                  placeholder="USUARIO@DOMINIO.COM"
                 />
               </div>
             </div>
 
             <div className="space-y-4">
-              <label className="text-[10px] font-bold uppercase tracking-[0.4em] text-zinc-600 ml-1">Comunicação (WhatsApp)</label>
+              <label className="text-[10px] font-bold uppercase tracking-[0.4em] text-theme-muted ml-1">Comunicação (WhatsApp)</label>
               <div className="relative group">
-                <Phone className="absolute left-0 top-1/2 -translate-y-1/2 text-zinc-800 group-focus-within:text-brand-tactical transition-colors" size={14} strokeWidth={1.5} />
+                <Phone className="absolute left-0 top-1/2 -translate-y-1/2 text-theme-muted group-focus-within:text-brand-tactical transition-colors" size={14} strokeWidth={1.5} />
                 <input
                   type="text"
                   required
                   value={formData.whatsapp}
                   onChange={(e) => setFormData({ ...formData, whatsapp: e.target.value })}
-                  className="w-full bg-transparent border-b border-zinc-900 py-3 pl-8 text-xs text-white placeholder-zinc-800 focus:outline-none focus:border-brand-tactical transition-all"
+                  className="w-full bg-transparent border-b border-theme-border py-3 pl-8 text-xs text-theme-text placeholder:text-theme-muted/40 focus:outline-none focus:border-brand-tactical transition-all"
                   placeholder="(00) 00000-0000"
                 />
               </div>
             </div>
 
             <div className="space-y-4">
-              <label className="text-[10px] font-bold uppercase tracking-[0.4em] text-zinc-600 ml-1">E-mail Cadastral</label>
+              <label className="text-[10px] font-bold uppercase tracking-[0.4em] text-theme-muted ml-1">E-mail Cadastral</label>
               <div className="relative group">
-                <Mail className="absolute left-0 top-1/2 -translate-y-1/2 text-zinc-800 group-focus-within:text-brand-tactical transition-colors" size={14} strokeWidth={1.5} />
+                <Mail className="absolute left-0 top-1/2 -translate-y-1/2 text-theme-muted group-focus-within:text-brand-tactical transition-colors" size={14} strokeWidth={1.5} />
                 <input
                   type="email"
                   required
                   value={formData.email}
                   onChange={(e) => setFormData({ ...formData, email: e.target.value })}
-                  className="w-full bg-transparent border-b border-zinc-900 py-3 pl-8 text-xs text-white placeholder-zinc-800 focus:outline-none focus:border-brand-tactical transition-all"
-                  placeholder="EMAIL@DOMAIN.COM"
+                  className="w-full bg-transparent border-b border-theme-border py-3 pl-8 text-xs text-theme-text placeholder:text-theme-muted/40 focus:outline-none focus:border-brand-tactical transition-all"
+                  placeholder="EMAIL@DOMINIO.COM"
                 />
               </div>
             </div>
@@ -177,7 +177,7 @@ export const RegisterPage: React.FC = () => {
             {role === "PROFISSIONAL" && (
               <div className="md:col-span-2 space-y-8 mt-4 border-l-2 border-brand-tactical/20 pl-8 py-4">
                 <div className="space-y-4">
-                  <label className="text-[10px] font-bold uppercase tracking-[0.4em] text-zinc-600">Minhas Especialidades</label>
+                  <label className="text-[10px] font-bold uppercase tracking-[0.4em] text-theme-muted">Minhas Especialidades</label>
                   <div className="flex flex-wrap gap-4">
                     {["CAPTAÇÃO", "EDIÇÃO"].map(skill => (
                       <button
@@ -198,11 +198,11 @@ export const RegisterPage: React.FC = () => {
                   </div>
                 </div>
                 <div className="space-y-4">
-                  <label className="text-[10px] font-bold uppercase tracking-[0.4em] text-zinc-600">Outras Habilidades & Equipamentos</label>
+                  <label className="text-[10px] font-bold uppercase tracking-[0.4em] text-theme-muted">Outras Habilidades & Equipamentos</label>
                   <textarea
                     value={formData.outrasHabilidades}
                     onChange={(e) => setFormData({ ...formData, outrasHabilidades: e.target.value })}
-                    className="w-full bg-transparent border-b border-zinc-900 py-3 text-xs text-white placeholder-zinc-800 focus:outline-none focus:border-brand-tactical transition-all resize-none"
+                    className="w-full bg-transparent border-b border-theme-border py-3 text-xs text-theme-text placeholder:text-theme-muted/40 focus:outline-none focus:border-brand-tactical transition-all resize-none"
                     placeholder="EX: DRONE, ILUMINAÇÃO, TRATAMENTO DE COR..."
                     rows={2}
                   />
@@ -238,15 +238,15 @@ export const RegisterPage: React.FC = () => {
             )}
 
             <div className="space-y-4 md:col-span-2">
-              <label className="text-[10px] font-bold uppercase tracking-[0.4em] text-zinc-600 ml-1">Senha de Acesso</label>
+              <label className="text-[10px] font-bold uppercase tracking-[0.4em] text-theme-muted ml-1">Senha de Acesso</label>
               <div className="relative group">
-                <Lock className="absolute left-0 top-1/2 -translate-y-1/2 text-zinc-800 group-focus-within:text-brand-tactical transition-colors" size={14} strokeWidth={1.5} />
+                <Lock className="absolute left-0 top-1/2 -translate-y-1/2 text-theme-muted group-focus-within:text-brand-tactical transition-colors" size={14} strokeWidth={1.5} />
                 <input
                   type="password"
                   required
                   value={formData.senha}
                   onChange={(e) => setFormData({ ...formData, senha: e.target.value })}
-                  className="w-full bg-transparent border-b border-zinc-900 py-3 pl-8 text-xs text-white placeholder-zinc-800 focus:outline-none focus:border-brand-tactical transition-all"
+                  className="w-full bg-transparent border-b border-theme-border py-3 pl-8 text-xs text-theme-text placeholder:text-theme-muted/40 focus:outline-none focus:border-brand-tactical transition-all"
                   placeholder="••••••••"
                 />
               </div>
@@ -257,7 +257,7 @@ export const RegisterPage: React.FC = () => {
               disabled={loading}
               className="md:col-span-2 bg-brand-tactical text-white hover:brightness-110 font-bold uppercase tracking-[0.5em] text-[11px] py-6 transition-all mt-6 flex items-center justify-center gap-4 group rounded-none"
             >
-              {loading ? "PROCESSING REQUEST..." : (
+              {loading ? "PROCESSANDO SOLICITAÇÃO..." : (
                 <>
                   Confirmar Inscrição <ArrowRight size={12} className="group-hover:translate-x-2 transition-transform" />
                 </>
@@ -267,14 +267,14 @@ export const RegisterPage: React.FC = () => {
 
           <div className="mt-16 text-center border-t border-white/5 pt-10">
             <p className="text-zinc-700 text-[9px] font-bold uppercase tracking-[0.3em] mb-4">
-              Já possui credenciais? <Link to="/login" className="text-white hover:text-brand-tactical ml-4 transition-all italic underline underline-offset-4 decoration-white/10">Fazer Login</Link>
+              Já possui credenciais? <Link to="/login" className="text-white hover:text-brand-tactical ml-4 transition-all font-bold underline underline-offset-4 decoration-white/10">Fazer Login</Link>
             </p>
           </div>
         </div>
 
         <div className="mt-12 text-center">
-          <Link to="/" className="text-zinc-800 hover:text-white text-[9px] font-bold uppercase tracking-[0.5em] transition-all">
-            Return to Showcase
+          <Link to="/" className="text-theme-muted hover:text-theme-text text-[9px] font-bold uppercase tracking-[0.5em] transition-all">
+            Voltar para a Vitrine
           </Link>
         </div>
       </motion.div>

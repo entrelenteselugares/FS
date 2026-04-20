@@ -39,8 +39,8 @@ function formatDate(d: string) {
 }
 
 const S = {
-  page: { fontFamily: "'Outfit', sans-serif", background: "#050505", color: "#e8e4dc", minHeight: "100vh" } as React.CSSProperties,
-  card: { background: "#0a0a0a", border: "0.5px solid #1a1a1a", borderRadius: 12 } as React.CSSProperties,
+  page: { fontFamily: "'Outfit', sans-serif", background: "var(--theme-bg)", color: "var(--theme-text)", minHeight: "100vh" } as React.CSSProperties,
+  card: { background: "var(--theme-bg-muted)", border: "1px solid var(--theme-border)", borderRadius: 0 } as React.CSSProperties,
 };
 
 export default function ClienteArea() {
@@ -103,8 +103,8 @@ export default function ClienteArea() {
         <button onClick={() => navigate("/")} style={{ background: "none", border: "none", color: "#888", fontSize: 13, cursor: "pointer", transition: "color .2s" }} onMouseEnter={(e) => (e.currentTarget.style.color = "#fff")} onMouseLeave={(e) => (e.currentTarget.style.color = "#888")}>
           ← <span className="mobile-hide">Voltar para Galeria</span><span className="md:hidden">Voltar</span>
         </button>
-        <div style={{ fontSize: "min(18px, 5vw)", fontWeight: 700, color: "#fff", letterSpacing: 1, display: "flex", alignItems: "center", gap: 8 }}>
-          <span className="mobile-hide" style={{ width: 8, height: 8, background: "#c9a96e", borderRadius: "50%" }} />
+        <div style={{ fontSize: "min(18px, 5vw)", fontWeight: 900, color: "var(--theme-text)", letterSpacing: 1, display: "flex", alignItems: "center", gap: 8, textTransform: "uppercase" }}>
+          <span className="mobile-hide" style={{ width: 8, height: 8, background: "var(--brand-primary)" }} />
           FOTO SEGUNDO
         </div>
         <div style={{ display: "flex", alignItems: "center", gap: 12 }}>
@@ -157,11 +157,11 @@ export default function ClienteArea() {
               </p>
               <button
                 onClick={() => navigate("/")}
-                style={{ background: "#c9a96e", color: "#000", border: "none", borderRadius: 8, padding: "12px 28px", fontSize: 14, fontWeight: 700, cursor: "pointer", transition: "transform .2s" }}
+                style={{ background: "var(--brand-primary)", color: "var(--theme-text-on-brand)", border: "none", borderRadius: 0, padding: "12px 28px", fontSize: 13, fontWeight: 900, cursor: "pointer", transition: "transform .2s", textTransform: "uppercase", letterSpacing: 2 }}
                 onMouseEnter={(e) => (e.currentTarget.style.transform = "scale(1.05)")}
                 onMouseLeave={(e) => (e.currentTarget.style.transform = "scale(1)")}
               >
-                Explorar Eventos
+                Explorar Vitrine
               </button>
             </div>
           ) : (
@@ -169,8 +169,8 @@ export default function ClienteArea() {
               {/* Liberados */}
               {aprovados.length > 0 && (
                 <div style={{ marginBottom: "3.5rem" }}>
-                  <p style={{ fontSize: 11, fontWeight: 700, letterSpacing: 1.5, textTransform: "uppercase", color: "#4ade80", marginBottom: "1rem", display: "flex", alignItems: "center", gap: 8 }}>
-                    <span style={{ width: 6, height: 6, background: "#4ade80", borderRadius: "50%" }} />
+                  <p style={{ fontSize: 11, fontWeight: 700, letterSpacing: 1.5, textTransform: "uppercase", color: "#85B9AC", marginBottom: "1rem", display: "flex", alignItems: "center", gap: 8 }}>
+                    <span style={{ width: 6, height: 6, background: "#85B9AC", borderRadius: "50%" }} />
                     Acesso Liberado
                   </p>
                   <div style={{ display: "flex", flexDirection: "column", gap: 12 }}>
@@ -243,13 +243,13 @@ function PedidoRow({ pedido, isSelected, onClick }: {
         display: "flex",
         gap: "1.5rem",
         alignItems: "center",
-        borderColor: isSelected ? "#c9a96e" : "#1a1a1a",
-        background: isSelected ? "rgba(201,169,110,0.03)" : "#0a0a0a",
+        borderColor: isSelected ? "var(--brand-primary)" : "var(--theme-border)",
+        background: isSelected ? "var(--theme-highlight)" : "var(--theme-bg-muted)",
         transition: "all .2s ease-out",
-        transform: isSelected ? "translateX(10px)" : "none",
+        transform: isSelected ? "translateY(-4px)" : "none",
       }}
-      onMouseEnter={(e) => !isSelected && ((e.currentTarget as HTMLDivElement).style.borderColor = "#333")}
-      onMouseLeave={(e) => !isSelected && ((e.currentTarget as HTMLDivElement).style.borderColor = "#1a1a1a")}
+      onMouseEnter={(e) => !isSelected && ((e.currentTarget as HTMLDivElement).style.borderColor = "var(--brand-primary)")}
+      onMouseLeave={(e) => !isSelected && ((e.currentTarget as HTMLDivElement).style.borderColor = "var(--theme-border)")}
     >
       {/* Thumbnail */}
       <div style={{ width: 84, height: 84, background: "#111", borderRadius: 10, flexShrink: 0, overflow: "hidden", position: "relative" }}>
@@ -271,7 +271,7 @@ function PedidoRow({ pedido, isSelected, onClick }: {
         <div style={{ display: "flex", gap: 8, flexWrap: "wrap" }}>
           {pedido.event.temFoto && <Tag label="Foto" />}
           {pedido.event.temVideo && <Tag label="Vídeo" />}
-          {pedido.event.temReels && <Tag label="Reels" color="#c9a96e" />}
+          {pedido.event.temReels && <Tag label="Reels" color="var(--brand-primary)" />}
         </div>
         
         {pedido.accessExpiresAt && pedido.hasPaid && (
@@ -287,8 +287,8 @@ function PedidoRow({ pedido, isSelected, onClick }: {
                   fontSize: 9, padding: "3px 8px", letterSpacing: 0.5,
                   textTransform: "uppercase", fontWeight: 700,
                   background: expirado ? "#1a0a0a" : urgente ? "#1a0d00" : "#0f130a",
-                  border: `1px solid ${expirado ? "#3a1a1a" : urgente ? "#3a2000" : "#8a9a5b"}`,
-                  color: expirado ? "#f87171" : urgente ? "#f59e0b" : "#8a9a5b",
+                  border: `1px solid ${expirado ? "#3a1a1a" : urgente ? "#3a2000" : "#85B9AC"}`,
+                  color: expirado ? "#f87171" : urgente ? "#f59e0b" : "#85B9AC",
                   borderRadius: 4
                 }}>
                   {expirado
@@ -334,7 +334,7 @@ function PedidoDetalhe({ pedido, loading, onClose, onGoToEvent }: {
       {/* Header */}
       <div style={{ padding: "1.5rem", borderBottom: "0.5px solid #1a1a1a", display: "flex", justifyContent: "space-between", alignItems: "flex-start" }}>
         <div>
-          <p style={{ fontSize: 10, fontWeight: 800, letterSpacing: 1, textTransform: "uppercase", color: pedido.hasPaid ? "#4ade80" : "#f59e0b", marginBottom: 6 }}>
+          <p style={{ fontSize: 10, fontWeight: 800, letterSpacing: 1, textTransform: "uppercase", color: pedido.hasPaid ? "#85B9AC" : "#f59e0b", marginBottom: 6 }}>
             {pedido.hasPaid ? "Entrega Liberada" : "Pedido em Processamento"}
           </p>
           <h2 style={{ fontSize: 20, fontWeight: 800, color: "#fff", margin: 0 }}>
@@ -352,10 +352,10 @@ function PedidoDetalhe({ pedido, loading, onClose, onGoToEvent }: {
           marginTop: "1.5rem", 
           padding: "10px 14px", 
           background: pedido.accessType === "PRIVATE" ? "#1a0a0a" : "#0f130a", 
-          border: `1px solid ${pedido.accessType === "PRIVATE" ? "#3a1a1a" : "#8a9a5b"}`,
+          border: `1px solid ${pedido.accessType === "PRIVATE" ? "#3a1a1a" : "#85B9AC"}`,
           borderRadius: 4
         }}>
-          <p style={{ fontSize: 11, color: pedido.accessType === "PRIVATE" ? "#f87171" : "#8a9a5b", margin: 0, fontWeight: 600 }}>
+          <p style={{ fontSize: 11, color: pedido.accessType === "PRIVATE" ? "#f87171" : "#85B9AC", margin: 0, fontWeight: 600 }}>
             {pedido.accessType === "PRIVATE" ? "⚠️ ACESSO PRIVADO" : "📅 ÁLBUM PÚBLICO"}
           </p>
           <p style={{ fontSize: 10, color: "#666", margin: 0, marginTop: 4 }}>
@@ -369,7 +369,7 @@ function PedidoDetalhe({ pedido, loading, onClose, onGoToEvent }: {
         {/* Links */}
         {loading ? (
           <div style={{ textAlign: "center", padding: "2rem 0" }}>
-            <div style={{ width: 30, height: 30, border: "2px solid #c9a96e", borderTopColor: "transparent", borderRadius: "50%", margin: "0 auto", animation: "spin 1s linear infinite" }} />
+            <div style={{ width: 30, height: 30, border: "2px solid var(--brand-primary)", borderTopColor: "transparent", borderRadius: "50%", margin: "0 auto", animation: "spin 1s linear infinite" }} />
           </div>
         ) : pedido.hasPaid ? (
           <div style={{ display: "flex", flexDirection: "column", gap: 12 }}>
@@ -438,15 +438,15 @@ function PedidoDetalhe({ pedido, loading, onClose, onGoToEvent }: {
             </div>
             <div style={{ display: "flex", justifyContent: "space-between", fontSize: 12 }}>
                 <span style={{ color: "#555" }}>Status MP</span>
-                <span style={{ color: pedido.hasPaid ? "#4ade80" : "#f59e0b" }}>{pedido.status}</span>
+                <span style={{ color: pedido.hasPaid ? "#85B9AC" : "#f59e0b" }}>{pedido.status}</span>
             </div>
         </div>
 
         <button
           onClick={onGoToEvent}
-          style={{ background: "transparent", border: "1px solid #222", borderRadius: 8, padding: "12px", color: "#888", fontSize: 13, fontWeight: 600, cursor: "pointer", transition: "all .2s" }}
-          onMouseEnter={(e) => { e.currentTarget.style.borderColor = "#c9a96e"; e.currentTarget.style.color = "#fff"; }}
-          onMouseLeave={(e) => { e.currentTarget.style.borderColor = "#222"; e.currentTarget.style.color = "#888"; }}
+          style={{ background: "transparent", border: "1px solid var(--theme-border)", borderRadius: 0, padding: "14px", color: "var(--theme-text-muted)", fontSize: 11, fontWeight: 800, cursor: "pointer", transition: "all .2s", textTransform: "uppercase", letterSpacing: 2 }}
+          onMouseEnter={(e) => { e.currentTarget.style.borderColor = "var(--brand-primary)"; e.currentTarget.style.color = "var(--theme-text)"; }}
+          onMouseLeave={(e) => { e.currentTarget.style.borderColor = "var(--theme-border)"; e.currentTarget.style.color = "var(--theme-text-muted)"; }}
         >
           Página do Evento
         </button>

@@ -44,6 +44,7 @@ export async function adminUploadCover(req: Request, res: Response): Promise<voi
       select: { id: true, coverPhotoUrl: true },
     });
 
+    console.log(`[STORAGE] Cover uploaded for event ${id}: ${publicUrl}`);
     res.json(updated);
   } catch (err) {
     console.error("adminUploadCover:", err);

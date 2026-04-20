@@ -100,13 +100,13 @@ export const AdminConfigs: React.FC = () => {
     <div className="space-y-12 animate-in fade-in slide-in-from-bottom-4 duration-700">
       <div className="flex flex-col md:flex-row md:items-center justify-between border-b border-white/5 pb-8 gap-6">
         <div>
-          <h2 className="text-4xl font-heading text-white tracking-tighter uppercase">Inteligência Financeira</h2>
-          <p className="text-[10px] text-zinc-600 uppercase tracking-[0.5em] mt-2 font-bold italic">Modelo de Repasse Pix Manual (Plataforma Master)</p>
+          <h2 className="text-4xl font-heading text-theme-text tracking-tighter uppercase">Inteligência Financeira</h2>
+          <p className="text-[10px] text-theme-muted uppercase tracking-[0.5em] mt-2 font-bold italic">Modelo de Repasse Pix Manual (Plataforma Master)</p>
         </div>
         <button
           onClick={handleGeneratePayout}
           disabled={generating}
-          className="bg-brand-tactical text-white text-[10px] font-bold uppercase tracking-[0.4em] px-10 py-5 hover:brightness-110 transition-all rounded-none flex items-center gap-2 disabled:opacity-50 shadow-xl shadow-brand-tactical/10"
+          className="bg-brand-tactical text-black text-[10px] font-bold uppercase tracking-[0.4em] px-10 py-5 hover:brightness-110 transition-all rounded-none flex items-center gap-2 disabled:opacity-50 shadow-xl shadow-brand-tactical/10"
         >
           {generating ? <RefreshCw className="animate-spin" size={14} /> : <Calculator size={14} />}
           {generating ? "GERANDO..." : "FECHAMENTO SEMANAL"}
@@ -137,8 +137,8 @@ export const AdminConfigs: React.FC = () => {
               <Settings size={20} />
             </div>
             <div>
-              <h4 className="text-[11px] font-bold text-white uppercase tracking-widest mb-2">Protocolo de Split Manual</h4>
-              <p className="text-zinc-500 text-[10px] uppercase tracking-widest leading-relaxed">
+              <h4 className="text-[11px] font-bold text-theme-text uppercase tracking-widest mb-2">Protocolo de Split Manual</h4>
+              <p className="text-theme-muted text-[10px] uppercase tracking-widest leading-relaxed">
                 A plataforma recebe 100% dos pagamentos. Os percentuais abaixo definem o valor provisionado para cada parceiro no relatório semanal.
               </p>
             </div>
@@ -148,7 +148,7 @@ export const AdminConfigs: React.FC = () => {
             {/* Split Distribution */}
             <div className="bg-white/[0.01] border border-white/5 p-10 space-y-10">
               <div className="flex items-center justify-between mb-2">
-                <h3 className="text-[11px] font-bold text-zinc-500 uppercase tracking-[0.4em] flex items-center gap-2">
+                <h3 className="text-[11px] font-bold text-theme-muted uppercase tracking-[0.4em] flex items-center gap-2">
                   <Percent size={14} /> Distribuição por Venda
                 </h3>
                 <div className={`px-4 py-1 text-[10px] font-bold border ${splitsValid ? "border-brand-tactical text-brand-tactical" : "border-red-900 text-red-500"}`}>
@@ -160,15 +160,15 @@ export const AdminConfigs: React.FC = () => {
                 {splitConfigs.map((config) => (
                   <div key={config.key} className="space-y-4">
                     <div className="flex justify-between items-end">
-                      <label className="text-[9px] font-bold text-zinc-600 uppercase tracking-[0.4em]">{config.label}</label>
+                      <label className="text-[9px] font-bold text-theme-muted uppercase tracking-[0.4em]">{config.label}</label>
                       <div className="flex items-center gap-2">
                          <input 
                            type="number"
                            value={config.value}
                            onChange={(e) => handleChange(config.key, e.target.value)}
-                           className="w-20 bg-black border-zinc-900 border text-white text-right py-2 px-3 text-lg font-heading tracking-tighter focus:outline-none focus:border-brand-tactical transition-all"
+                           className="w-20 bg-theme-bg-muted border-theme-border border text-theme-text text-right py-2 px-3 text-lg font-heading tracking-tighter focus:outline-none focus:border-brand-tactical transition-all"
                          />
-                         <span className="text-zinc-800 font-bold uppercase text-[10px]">%</span>
+                         <span className="text-theme-muted font-bold uppercase text-[10px]">%</span>
                       </div>
                     </div>
                     <div className="w-full h-1 bg-zinc-900 overflow-hidden">
@@ -183,7 +183,7 @@ export const AdminConfigs: React.FC = () => {
                   onClick={handleSave}
                   disabled={saving || !splitsValid}
                   className={`w-full py-5 text-[10px] font-bold uppercase tracking-[0.4em] transition-all flex items-center justify-center gap-2 ${
-                    saved ? "bg-green-600 text-white" : splitsValid ? "bg-white text-black hover:bg-white/90" : "bg-zinc-900 text-zinc-700 cursor-not-allowed"
+                    saved ? "bg-green-600 text-white" : splitsValid ? "bg-theme-text text-theme-bg hover:opacity-90" : "bg-theme-bg-muted text-theme-muted cursor-not-allowed"
                   }`}
                 >
                   {saved ? <CheckCircle size={14} /> : <Save size={14} />}
@@ -205,7 +205,7 @@ export const AdminConfigs: React.FC = () => {
                     <input 
                       value={config.value}
                       onChange={(e) => handleChange(config.key, e.target.value)}
-                      className="w-full bg-transparent border-b border-zinc-900 py-3 text-sm text-white focus:outline-none focus:border-brand-tactical transition-all font-mono"
+                      className="w-full bg-transparent border-b border-zinc-900 py-3 text-sm text-white focus:outline-none focus:border-brand-tactical transition-all font-sans"
                     />
                   </div>
                 ))}
@@ -239,11 +239,11 @@ export const AdminConfigs: React.FC = () => {
                            </span>
                         </div>
                         <div className="mt-2 flex gap-8">
-                           <span className="text-[10px] text-zinc-500 uppercase tracking-widest">Receita: <span className="text-white font-mono">{formatCurrency(payout.totalRevenue)}</span></span>
-                           <span className="text-[10px] text-zinc-500 uppercase tracking-widest">Repasse: <span className="text-brand-tactical font-mono">{formatCurrency(payout.totalPayout)}</span></span>
+                           <span className="text-[10px] text-zinc-500 uppercase tracking-widest">Receita: <span className="text-white font-sans">{formatCurrency(payout.totalRevenue)}</span></span>
+                           <span className="text-[10px] text-zinc-500 uppercase tracking-widest">Repasse: <span className="text-brand-tactical font-sans">{formatCurrency(payout.totalPayout)}</span></span>
                         </div>
                       </div>
-                      <div className="p-4 bg-zinc-900/50 border border-zinc-800 text-zinc-500 text-[9px] font-mono group-hover:text-white transition-all uppercase tracking-widest">
+                      <div className="p-4 bg-zinc-900/50 border border-zinc-800 text-zinc-500 text-[9px] font-sans group-hover:text-white transition-all uppercase tracking-widest">
                         ID: {payout.id.slice(-8).toUpperCase()}
                       </div>
                    </div>
@@ -260,7 +260,7 @@ export const AdminConfigs: React.FC = () => {
                            </div>
                            <div className="col-span-3 text-center border-l border-white/5">
                               <div className="text-[9px] text-zinc-700 uppercase tracking-widest font-bold">Base de Cálculo</div>
-                              <div className="text-[10px] text-zinc-400 font-mono mt-1">{item.orderCount} PEDIDOS · {item.splitPct}% DE {formatCurrency(item.grossRevenue)}</div>
+                              <div className="text-[10px] text-zinc-400 font-sans mt-1">{item.orderCount} PEDIDOS · {item.splitPct}% DE {formatCurrency(item.grossRevenue)}</div>
                            </div>
                            <div className="col-span-2 text-right">
                               <div className="text-[9px] text-zinc-700 uppercase tracking-widest font-bold">Valor Líquido</div>
@@ -272,12 +272,12 @@ export const AdminConfigs: React.FC = () => {
                                    <div className="text-[9px] text-green-500 font-bold uppercase tracking-widest flex items-center gap-2">
                                       <CheckCircle size={10} /> REPASSE CONCLUÍDO
                                    </div>
-                                   {item.pixTxId && <div className="text-[8px] text-zinc-700 font-mono mt-1">REF: {item.pixTxId.slice(0, 16)}...</div>}
+                                   {item.pixTxId && <div className="text-[8px] text-zinc-700 font-sans mt-1">REF: {item.pixTxId.slice(0, 16)}...</div>}
                                 </div>
                               ) : (
                                 <button 
                                   onClick={() => handleMarkPaid(payout.id, item.id)}
-                                  className="text-[9px] font-bold text-brand-tactical uppercase tracking-widest border border-brand-tactical/30 px-6 py-3 hover:bg-brand-tactical hover:text-white transition-all rounded-none flex items-center gap-2"
+                                  className="text-[9px] font-bold text-black uppercase tracking-widest bg-brand-tactical border border-brand-tactical px-6 py-3 hover:brightness-110 transition-all rounded-none flex items-center gap-2"
                                 >
                                   <DollarSign size={10} /> REPASSAR VIA PIX
                                 </button>

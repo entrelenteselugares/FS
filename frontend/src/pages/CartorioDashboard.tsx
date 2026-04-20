@@ -47,9 +47,9 @@ function formatDateTime(d: string) {
 }
 
 const S = {
-  page: { fontFamily: "'Inter', sans-serif", background: "#050505", color: "#ffffff", minHeight: "100vh" } as React.CSSProperties,
-  card: { background: "rgba(255,255,255,0.02)", border: "1px solid rgba(255,255,255,0.05)", borderRadius: 0 } as React.CSSProperties,
-  input: { background: "rgba(255,255,255,0.01)", border: "0.5px solid rgba(255,255,255,0.1)", borderRadius: 0, padding: "8px 12px", fontSize: 13, color: "#ffffff", outline: "none" } as React.CSSProperties,
+  page: { fontFamily: "'Outfit', sans-serif", background: "var(--theme-bg)", color: "var(--theme-text)", minHeight: "100vh" } as React.CSSProperties,
+  card: { background: "var(--theme-bg-muted)", border: "1px solid var(--theme-border)", borderRadius: 0 } as React.CSSProperties,
+  input: { background: "transparent", border: "1px solid var(--theme-border)", borderRadius: 0, padding: "12px 16px", fontSize: 13, color: "var(--theme-text)", outline: "none" } as React.CSSProperties,
 };
 
 type Tab = "agenda" | "pedidos" | "configuracoes";
@@ -199,9 +199,8 @@ export default function CartorioDashboard() {
   return (
     <div style={S.page}>
       <style>{`
-        @import url('https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@600;700;800&display=swap');
         * { box-sizing: border-box; }
-        input:focus { border-color: #5D6532 !important; outline: none; }
+        input:focus { border-color: var(--brand-primary) !important; outline: none; }
         @media (max-width: 768px) {
           .mobile-grid-1 { grid-template-columns: 1fr !important; gap: 1rem !important; }
           .mobile-grid-2 { grid-template-columns: repeat(2, 1fr) !important; gap: 1rem !important; }
@@ -209,25 +208,31 @@ export default function CartorioDashboard() {
           .mobile-nav { padding: 0.8rem 1rem !important; flex-direction: column !important; gap: 1rem !important; align-items: center !important; text-align: center !important; }
           .mobile-hide { display: none !important; }
           .mobile-padding { padding: 1.5rem !important; }
-          .mobile-title { font-size: 28px !important; }
           .mobile-scroll-x { overflow-x: auto !important; padding-bottom: 5px !important; width: 100% !important; justify-content: flex-start !important; }
         }
       `}</style>
 
       {/* NAV */}
-      <nav className="mobile-nav" style={{ display: "flex", alignItems: "center", justifyContent: "space-between", padding: "1rem 2rem", borderBottom: "0.5px solid #1e1e1e" }}>
+      <nav className="mobile-nav" style={{ display: "flex", alignItems: "center", justifyContent: "space-between", padding: "1rem 2rem", borderBottom: "1px solid var(--theme-border)" }}>
         <div style={{ display: "flex", alignItems: "center", gap: 20 }}>
-          <div className="mobile-hide" style={{ fontFamily: "'Barlow Condensed', sans-serif", fontSize: 20, fontWeight: 800, color: "#fff", display: "flex", alignItems: "center", gap: 8, textTransform: "uppercase", letterSpacing: "1px" }}>
-            <span style={{ width: 8, height: 8, background: "#5D6532", display: "inline-block" }} />
-            FS. Unit
+          <div onClick={() => navigate("/")} style={{ cursor: "pointer", display: "flex", alignItems: "center" }}>
+            <img 
+              src="/logo-premium.png" 
+              alt="Logo" 
+              style={{ 
+                height: 40, 
+                objectFit: "contain",
+                filter: "brightness(0) invert(1)"
+              }} 
+            />
           </div>
           <div className="mobile-scroll-x" style={{ display: "flex", gap: 8 }}>
             {TABS.map((t) => (
               <button key={t.key} onClick={() => setTab(t.key)} style={{
-                background: tab === t.key ? "#5D6532" : "rgba(255,255,255,0.02)",
+                background: tab === t.key ? "var(--brand-primary)" : "var(--theme-bg-muted)",
                 border: "none", padding: "8px 14px", fontSize: 10,
                 cursor: "pointer", borderRadius: 0,
-                color: tab === t.key ? "#fff" : "#888",
+                color: tab === t.key ? "var(--theme-text-on-brand)" : "var(--theme-text-muted)",
                 textTransform: "uppercase", fontWeight: 700, letterSpacing: "1px",
                 whiteSpace: "nowrap"
               }}>
@@ -237,8 +242,8 @@ export default function CartorioDashboard() {
           </div>
         </div>
         <div style={{ display: "flex", alignItems: "center", gap: 12 }}>
-          <span className="mobile-hide" style={{ fontSize: 10, color: "#555", fontWeight: 700, textTransform: "uppercase", letterSpacing: 1 }}>{cartorioName || user?.nome}</span>
-          <button onClick={() => { logout(); navigate("/"); }} style={{ background: "none", border: "1.5px solid #2a2a2a", borderRadius: 0, padding: "6px 12px", color: "#666", fontSize: 9, fontWeight: 700, textTransform: "uppercase", letterSpacing: 1, cursor: "pointer" }}>
+          <span className="mobile-hide" style={{ fontSize: 10, color: "var(--theme-text-muted)", fontWeight: 700, textTransform: "uppercase", letterSpacing: 1 }}>{cartorioName || user?.nome}</span>
+          <button onClick={() => { logout(); navigate("/"); }} style={{ background: "none", border: "1px solid var(--theme-border)", borderRadius: 0, padding: "6px 12px", color: "var(--theme-text-muted)", fontSize: 9, fontWeight: 700, textTransform: "uppercase", letterSpacing: 1, cursor: "pointer" }}>
             Sair
           </button>
         </div>
@@ -248,22 +253,22 @@ export default function CartorioDashboard() {
 
         {/* Alertas */}
         {error && (
-          <div style={{ background: "#1a0a0a", border: "0.5px solid #3a1a1a", borderRadius: 8, padding: "12px 16px", marginBottom: "1.5rem" }}>
-            <p style={{ fontSize: 13, color: "#f87171", margin: 0 }}>{error}</p>
+          <div style={{ background: "rgba(239, 68, 68, 0.1)", border: "1px solid rgba(239, 68, 68, 0.2)", borderRadius: 0, padding: "12px 16px", marginBottom: "1.5rem" }}>
+            <p style={{ fontSize: 13, color: "#ef4444", margin: 0, fontWeight: 600, textTransform: "uppercase", letterSpacing: 0.5 }}>{error}</p>
           </div>
         )}
         {success && (
-          <div style={{ background: "#0d1a0d", border: "0.5px solid #1e3a1e", borderRadius: 8, padding: "12px 16px", marginBottom: "1.5rem" }}>
-            <p style={{ fontSize: 13, color: "#4ade80", margin: 0 }}>{success}</p>
+          <div style={{ background: "rgba(133, 185, 172, 0.1)", border: "1px solid rgba(133, 185, 172, 0.2)", borderRadius: 0, padding: "12px 16px", marginBottom: "1.5rem" }}>
+            <p style={{ fontSize: 13, color: "#85B9AC", margin: 0, fontWeight: 600, textTransform: "uppercase", letterSpacing: 0.5 }}>{success}</p>
           </div>
         )}
 
         {/* Header */}
         <div style={{ marginBottom: "2.5rem" }}>
-          <h1 className="mobile-title" style={{ fontFamily: "'Barlow Condensed', sans-serif", fontSize: 42, fontWeight: 800, color: "#fff", marginBottom: 4, textTransform: "uppercase", letterSpacing: "1px" }}>
+          <h1 className="mobile-title" style={{ fontSize: 42, fontWeight: 800, color: "var(--theme-text)", marginBottom: 4, textTransform: "uppercase", letterSpacing: "-1px" }}>
             {tab === "agenda" ? "Agenda & Eventos" : tab === "pedidos" ? "Repasses" : "Configurações"}
           </h1>
-          <p style={{ fontSize: 11, color: "#555", textTransform: "uppercase", letterSpacing: 2, fontWeight: 600 }}>
+          <p style={{ fontSize: 11, color: "var(--theme-text-muted)", textTransform: "uppercase", letterSpacing: 2, fontWeight: 600 }}>
             {cartorioName && `${cartorioName} · `}PAINEL DE GESTÃO TÁTICA
           </p>
         </div>
@@ -278,8 +283,8 @@ export default function CartorioDashboard() {
               { label: "Repasse estimado", value: formatCurrency(stats.repasseEstimado ?? 0) },
             ].map((m) => (
               <div key={m.label} style={{ ...S.card, padding: "1.5rem" }}>
-                <p style={{ fontSize: 10, color: "#9ca3af", letterSpacing: 2, textTransform: "uppercase", marginBottom: 12, fontWeight: 700 }}>{m.label}</p>
-                <p style={{ fontFamily: "'Barlow Condensed', sans-serif", fontSize: 32, fontWeight: 800, color: "#fff" }}>{m.value}</p>
+                <p style={{ fontSize: 10, color: "var(--theme-text-muted)", letterSpacing: 2, textTransform: "uppercase", marginBottom: 12, fontWeight: 700 }}>{m.label}</p>
+                <p style={{ fontSize: 32, fontWeight: 800, color: "var(--theme-text)" }}>{m.value}</p>
               </div>
             ))}
           </div>
@@ -311,20 +316,20 @@ export default function CartorioDashboard() {
             ) : eventos.map((ev, i) => (
               <div key={ev.id} style={{ padding: "0.875rem 1.25rem", borderBottom: i < eventos.length - 1 ? "0.5px solid #161616" : "none", display: "flex", alignItems: "center", gap: "1rem" }}>
                 <div style={{ flex: 1, minWidth: 0 }}>
-                  <p style={{ fontSize: 14, fontWeight: 500, color: "#e8e4dc", marginBottom: 2, whiteSpace: "nowrap", overflow: "hidden", textOverflow: "ellipsis" }}>
+                  <p style={{ fontSize: 14, fontWeight: 500, color: "var(--theme-text)", marginBottom: 2, whiteSpace: "nowrap", overflow: "hidden", textOverflow: "ellipsis" }}>
                     {ev.title}
                   </p>
-                  <p style={{ fontSize: 11, color: "#555" }}>
+                  <p style={{ fontSize: 11, color: "var(--theme-text-muted)" }}>
                     {formatDateTime(ev.date)} · {ev.location}
                   </p>
                 </div>
                 <div style={{ textAlign: "right", flexShrink: 0 }}>
                   {ev.captacao ? (
-                    <p style={{ fontSize: 12, color: "#5D6532", fontWeight: 700 }}>✓ {ev.captacao.user.name}</p>
+                    <p style={{ fontSize: 12, color: "var(--brand-primary)", fontWeight: 700 }}>✓ {ev.captacao.user.name}</p>
                   ) : (
                     <p style={{ fontSize: 12, color: "#f59e0b", fontWeight: 700 }}>SEM FOTÓGRAFO</p>
                   )}
-                  <p style={{ fontSize: 10, color: "#444", marginTop: 2, fontWeight: 600 }}>{ev._count.orders} venda(s)</p>
+                  <p style={{ fontSize: 10, color: "var(--theme-text-muted)", marginTop: 2, fontWeight: 600 }}>{ev._count.orders} venda(s)</p>
                 </div>
               </div>
             ))}
@@ -346,7 +351,7 @@ export default function CartorioDashboard() {
               </div>
               <button
                 onClick={loadPedidos}
-                style={{ marginTop: 20, background: "#5D6532", color: "#fff", border: "none", borderRadius: 0, padding: "12px 24px", fontSize: 11, fontWeight: 800, cursor: "pointer", textTransform: "uppercase", letterSpacing: 2 }}
+                style={{ marginTop: 20, background: "var(--brand-primary)", color: "var(--theme-text-on-brand)", border: "none", borderRadius: 0, padding: "12px 24px", fontSize: 11, fontWeight: 800, cursor: "pointer", textTransform: "uppercase", letterSpacing: 2 }}
               >
                 Filtrar
               </button>
@@ -363,23 +368,23 @@ export default function CartorioDashboard() {
               ) : pedidos.map((p, i) => (
                 <div key={p.id} style={{ padding: "0.875rem 1.25rem", borderBottom: i < pedidos.length - 1 ? "0.5px solid #161616" : "none", display: "flex", alignItems: "center", gap: "1rem" }}>
                   <div style={{ flex: 1, minWidth: 0 }}>
-                    <p style={{ fontSize: 13, color: "#e8e4dc", marginBottom: 2 }}>{p.event.title}</p>
-                    <p style={{ fontSize: 11, color: "#555" }}>{p.buyerEmail ?? "—"} · {formatDate(p.createdAt)}</p>
+                    <p style={{ fontSize: 13, color: "var(--theme-text)", marginBottom: 2 }}>{p.event.title}</p>
+                    <p style={{ fontSize: 11, color: "var(--theme-text-muted)" }}>{p.buyerEmail ?? "—"} · {formatDate(p.createdAt)}</p>
                   </div>
                   <div style={{ textAlign: "right", flexShrink: 0 }}>
-                    <p style={{ fontSize: 11, color: "#555", marginBottom: 2, fontWeight: 600 }}>
+                    <p style={{ fontSize: 11, color: "var(--theme-text-muted)", marginBottom: 2, fontWeight: 600 }}>
                       Venda: {formatCurrency(Number(p.amount))}
                     </p>
-                    <p style={{ fontFamily: "'Barlow Condensed', sans-serif", fontSize: 20, color: "#5D6532", fontWeight: 800 }}>
+                    <p style={{ fontSize: 20, color: "var(--brand-primary)", fontWeight: 800 }}>
                       Repasse: {p.splitCartorio ? formatCurrency(Number(p.splitCartorio)) : "—"}
                     </p>
                   </div>
                   <span style={{
                     fontSize: 9, padding: "3px 8px", borderRadius: 20, letterSpacing: 1,
                     textTransform: "uppercase" as const,
-                    background: p.status === "APPROVED" || p.status === "APROVADO" ? "#0d1a0d" : "#1a0d00",
-                    border: `0.5px solid ${p.status === "APPROVED" || p.status === "APROVADO" ? "#1e3a1e" : "#3a2000"}`,
-                    color: p.status === "APPROVED" || p.status === "APROVADO" ? "#4ade80" : "#f59e0b",
+                    background: p.status === "APPROVED" || p.status === "APROVADO" ? "rgba(133, 185, 172, 0.1)" : "#1a0d00",
+                    border: `0.5px solid ${p.status === "APPROVED" || p.status === "APROVADO" ? "rgba(133, 185, 172, 0.3)" : "#3a2000"}`,
+                    color: p.status === "APPROVED" || p.status === "APROVADO" ? "#85B9AC" : "#f59e0b",
                     flexShrink: 0,
                   }}>
                     {p.status === "APPROVED" || p.status === "APROVADO" ? "pago" : "pendente"}
@@ -407,10 +412,10 @@ export default function CartorioDashboard() {
                     placeholder="E-mail, CPF, CNPJ ou Chave Aleatória"
                   />
                 </div>
-                 <button
+                  <button
                   disabled={savingPix}
                   onClick={savePixKey}
-                  style={{ background: "#5D6532", color: "#fff", border: "none", borderRadius: 0, padding: "12px 24px", fontSize: 11, fontWeight: 800, cursor: "pointer", flexShrink: 0, textTransform: "uppercase", letterSpacing: 2, opacity: savingPix ? 0.6 : 1 }}
+                  style={{ background: "var(--brand-primary)", color: "var(--theme-text-on-brand)", border: "none", borderRadius: 0, padding: "12px 24px", fontSize: 11, fontWeight: 800, cursor: "pointer", flexShrink: 0, textTransform: "uppercase", letterSpacing: 2, opacity: savingPix ? 0.6 : 1 }}
                 >
                   {savingPix ? "SALVANDO..." : "SALVAR CHAVE PIX"}
                 </button>
@@ -419,7 +424,7 @@ export default function CartorioDashboard() {
 
             <div style={{ ...S.card, padding: "2rem", display: "flex", flexDirection: "column", gap: "2rem" }}>
               <div style={{ borderBottom: "1px solid #1a1a1a", paddingBottom: 20 }}>
-                <h3 style={{ fontFamily: "'Barlow Condensed', sans-serif", fontSize: 24, fontWeight: 800, color: "#fff", marginBottom: 10 }}>PÁGINA PÚBLICA (SEO)</h3>
+                <h3 style={{ fontFamily: "'Outfit', sans-serif", fontSize: 24, fontWeight: 800, color: "#fff", marginBottom: 10 }}>PÁGINA PÚBLICA (SEO)</h3>
                 <p style={{ fontSize: 12, color: "#555" }}>Configure como sua unidade aparece nos motores de busca e para clientes que chegam via link direto.</p>
               </div>
 
@@ -450,15 +455,15 @@ export default function CartorioDashboard() {
               </div>
 
               <div style={{ display: "flex", gap: "1rem", alignItems: "center", paddingTop: 20 }}>
-                <button
+                 <button
                     disabled={savingLp}
                     onClick={saveLpProfile}
-                    style={{ background: "#5D6532", color: "#fff", border: "none", borderRadius: 0, padding: "14px 28px", fontSize: 11, fontWeight: 800, cursor: "pointer", textTransform: "uppercase", letterSpacing: 2, opacity: savingLp ? 0.6 : 1 }}
+                    style={{ background: "var(--brand-primary)", color: "var(--theme-text-on-brand)", border: "none", borderRadius: 0, padding: "14px 28px", fontSize: 11, fontWeight: 800, cursor: "pointer", textTransform: "uppercase", letterSpacing: 2, opacity: savingLp ? 0.6 : 1 }}
                 >
                     {savingLp ? "SALVANDO..." : "ATUALIZAR PÁGINA PÚBLICA"}
                 </button>
                 {lpSlug && (
-                  <a href={`/p/${lpSlug}`} target="_blank" rel="noreferrer" style={{ fontSize: 10, color: "#5D6532", textDecoration: "none", fontWeight: 800, textTransform: "uppercase", letterSpacing: 1 }}>
+                  <a href={`/p/${lpSlug}`} target="_blank" rel="noreferrer" style={{ fontSize: 10, color: "var(--brand-primary)", textDecoration: "none", fontWeight: 800, textTransform: "uppercase", letterSpacing: 1 }}>
                     Visualizar Página ↗
                   </a>
                 )}

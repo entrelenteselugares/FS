@@ -21,7 +21,7 @@ import { getMeusEventos, updateEventLinks, uploadEventCover } from "../controlle
 import { getMeusPedidos, getMeuPedidoDetalhe } from "../controllers/cliente.controller";
 import { CartorioController } from "../controllers/cartorio.controller";
 import { SEOController } from "../controllers/seo.controller";
-import { getConfigs, updateConfigs } from "../controllers/config.controller";
+import { getConfigs, updateConfigs, getPublicThemeConfigs } from "../controllers/config.controller";
 import { generateWeeklyPayout, listPayouts, markItemPaid } from "../controllers/payout.controller";
 import {
   chooseAccessType,
@@ -75,6 +75,7 @@ router.get("/public/contests/active", getActiveContest);
 router.get("/public/contests/hall-of-fame", getHallOfFame);
 router.get("/public/partners/:slug", getPartnerLandingData);
 router.get("/share/e/:id", SEOController.getEventPreview);
+router.get("/public/configs/theme", getPublicThemeConfigs);
 
 // ── Pagamento ────────────────────────────────────────────────────
 router.post("/checkout", PaymentController.checkout);

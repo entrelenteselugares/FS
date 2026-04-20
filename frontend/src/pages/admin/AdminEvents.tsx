@@ -82,7 +82,7 @@ export const AdminEvents: React.FC = () => {
         event = data;
       }
       
-      if (coverPreview) {
+      if (coverPreview && coverPreview.startsWith("data:image")) {
         await API.patch(`/admin/events/${event.id}/cover`, {
           imageBase64: coverPreview,
           mimeType: "image/jpeg" 
@@ -165,12 +165,13 @@ export const AdminEvents: React.FC = () => {
     <div className="space-y-12 animate-in fade-in slide-in-from-bottom-4 duration-700">
       <div className="flex items-center justify-between border-b border-white/5 pb-8">
         <div>
-          <h2 className="text-4xl font-heading text-white tracking-tighter uppercase">Logística de Eventos</h2>
-          <p className="text-[10px] text-zinc-600 uppercase tracking-[0.5em] mt-2 font-bold italic">Curadoria e Gestão de Operações</p>
+          <h2 className="text-4xl font-heading text-theme-text tracking-tighter uppercase">Logística de Eventos</h2>
+          <p className="text-[10px] text-theme-muted uppercase tracking-[0.5em] mt-2 font-bold italic">Curadoria e Gestão de Operações</p>
         </div>
         <button 
           onClick={() => setIsModalOpen(true)}
-          className="bg-brand-tactical text-[10px] font-bold uppercase tracking-[0.4em] px-10 py-5 text-white hover:brightness-110 transition-all shadow-xl shadow-brand-tactical/10 rounded-none"
+          className="font-black uppercase tracking-[0.4em] px-10 py-5 hover:brightness-110 transition-all shadow-xl shadow-brand-tactical/10 rounded-none text-[10px]"
+          style={{ backgroundColor: 'var(--brand-tactical)', color: 'var(--theme-text-on-brand)' }}
         >
           NOVO REGISTRO
         </button>
@@ -178,43 +179,60 @@ export const AdminEvents: React.FC = () => {
 
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-10">
         {loading ? (
-          <div className="col-span-full py-20 text-center text-[10px] text-zinc-700 uppercase tracking-widest animate-pulse bg-black">Indexando Eventos...</div>
+          <div className="col-span-full py-20 text-center text-[10px] text-theme-muted uppercase tracking-widest animate-pulse bg-theme-bg-muted">Indexando Eventos...</div>
         ) : events.map(event => (
-          <div key={event.id} className="group border border-white/5 p-8 bg-white/[0.01] hover:bg-white/[0.02] transition-all relative overflow-hidden">
-            <div className="absolute top-0 right-0 p-4 opacity-0 group-hover:opacity-100 transition-opacity">
-              <span className="text-[9px] text-zinc-700 font-mono">#{event.id.slice(-6).toUpperCase()}</span>
-            </div>
-            
-            <div className="text-[9px] text-zinc-500 uppercase tracking-[0.4em] font-bold mb-4 italic opacity-60">
-              {new Date(event.date).toLocaleDateString("pt-BR", { month: "long", year: "numeric" })}
-            </div>
-            
-            <h3 className="text-2xl font-heading text-white group-hover:text-brand-tactical transition-colors mb-2 uppercase tracking-tighter font-bold">
-              {event.title}
-            </h3>
-            
-            <div className="text-[10px] text-zinc-600 uppercase tracking-[0.2em] mb-8 border-b border-white/5 pb-4 font-bold">
-              {event.location}
+          <div key={event.id} className="group border border-theme-border bg-theme-bg-muted hover:bg-theme-bg transition-all relative overflow-hidden flex flex-col">
+            {/* Visual Preview */}
+            <div className="aspect-video w-full overflow-hidden bg-theme-bg border-b border-theme-border">
+              {event.coverPhotoUrl ? (
+                <img 
+                  src={event.coverPhotoUrl} 
+                  alt={event.title} 
+                  className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-1000"
+                />
+              ) : (
+                <div className="w-full h-full flex items-center justify-center opacity-20">
+                  <span className="text-[8px] tracking-[0.4em] uppercase text-theme-text">Sem Capa</span>
+                </div>
+              )}
             </div>
 
-            <div className="flex items-center justify-between">
-              <div className="text-[10px] text-zinc-500 font-bold uppercase tracking-[0.3em] italic">
-                {event._count.orders} ADQUIRIDOS
+            <div className="p-8">
+              <div className="absolute top-0 right-0 p-4 opacity-0 group-hover:opacity-100 transition-opacity">
+                <span className="text-[9px] text-theme-muted font-sans font-black">#{event.id.slice(-6).toUpperCase()}</span>
               </div>
-              <button 
-                onClick={() => handleEditOpen(event)}
-                className="text-[10px] font-bold text-white uppercase tracking-[0.2em] border-b border-brand-tactical pb-1 hover:border-white transition-all"
-              >
-                CONFIGURAR
-              </button>
+              
+              <div className="text-[9px] text-theme-muted uppercase tracking-[0.4em] font-black mb-3 italic opacity-60">
+                {new Date(event.date).toLocaleDateString("pt-BR", { month: "long", year: "numeric" })}
+              </div>
+              
+              <h3 className="text-xl font-heading text-theme-text group-hover:text-brand-primary transition-colors mb-2 uppercase tracking-tighter font-black line-clamp-1">
+                {event.title}
+              </h3>
+              
+              <div className="text-[9px] text-theme-muted uppercase tracking-[0.2em] mb-6 border-b border-theme-border pb-4 font-black">
+                {event.location}
+              </div>
+  
+              <div className="flex items-center justify-between">
+                <div className="text-[9px] text-theme-muted font-black uppercase tracking-[0.3em] italic">
+                  {event._count.orders} ADQUIRIDOS
+                </div>
+                <button 
+                  onClick={() => handleEditOpen(event)}
+                  className="text-[9px] font-black text-theme-text uppercase tracking-[0.2em] border-b border-brand-primary pb-1 hover:border-brand-tactical transition-all"
+                >
+                  CONFIGURAR
+                </button>
+              </div>
             </div>
           </div>
         ))}
       </div>
 
       {isModalOpen && (
-        <div className="fixed inset-0 bg-black/95 backdrop-blur-xl z-50 flex items-start justify-center p-4 overflow-y-auto pt-10">
-          <div className="w-full max-w-4xl bg-[#080808] border border-white/5 p-8 relative animate-in zoom-in-95 duration-300 mb-10">
+        <div className="fixed inset-0 bg-theme-bg/95 backdrop-blur-xl z-50 flex items-start justify-center p-4 overflow-y-auto pt-10">
+          <div className="w-full max-w-4xl bg-theme-bg border border-theme-border p-8 relative animate-in zoom-in-95 duration-300 mb-10">
              <button onClick={() => setIsModalOpen(false)} className="absolute top-6 right-6 text-zinc-500 hover:text-white transition-colors">
                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5"><path d="M18 6L6 18M6 6l12 12"/></svg>
              </button>
@@ -232,14 +250,14 @@ export const AdminEvents: React.FC = () => {
                     <label className="text-[9px] font-bold text-zinc-600 uppercase tracking-[0.4em]">Capa da Vitrine</label>
                     <div 
                       onClick={() => fileInputRef.current?.click()}
-                      className="w-full aspect-video bg-black border border-zinc-900 flex flex-col items-center justify-center cursor-pointer overflow-hidden group relative rounded-none"
+                      className="w-full aspect-video bg-theme-bg-muted border border-theme-border flex flex-col items-center justify-center cursor-pointer overflow-hidden group relative rounded-none"
                     >
                       {coverPreview ? (
                         <img src={coverPreview} alt="Preview" className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700" />
                       ) : (
                         <div className="text-center group-hover:text-brand-tactical transition-colors">
                           <div className="text-2xl mb-2">📸</div>
-                          <div className="text-[9px] uppercase tracking-[0.3em] text-zinc-700 font-bold">Upload Capa</div>
+                          <div className="text-[9px] uppercase tracking-[0.3em] text-zinc-700 font-bold">Enviar Capa</div>
                         </div>
                       )}
                       {isUploading && <div className="absolute inset-0 bg-black/80 flex items-center justify-center text-[9px] text-white uppercase tracking-widest animate-pulse">Processando...</div>}
@@ -253,7 +271,7 @@ export const AdminEvents: React.FC = () => {
                       required
                       value={formData.title} 
                       onChange={e => setFormData({...formData, title: e.target.value})}
-                      className="w-full bg-transparent border-b border-zinc-900 py-3 text-sm text-white focus:outline-none focus:border-brand-tactical transition-all rounded-none" 
+                      className="w-full bg-transparent border-b border-theme-border py-3 text-sm text-theme-text focus:outline-none focus:border-brand-tactical transition-all rounded-none" 
                     />
                   </div>
                   <div className="grid grid-cols-2 gap-8">
@@ -263,7 +281,7 @@ export const AdminEvents: React.FC = () => {
                         type="date" required
                         value={formData.date}
                         onChange={e => setFormData({...formData, date: e.target.value})}
-                        className="w-full bg-transparent border-b border-zinc-900 py-3 text-sm text-white focus:outline-none focus:border-brand-tactical transition-all invert brightness-150 rounded-none" 
+                        className="w-full bg-transparent border-b border-theme-border py-3 text-sm text-theme-text focus:outline-none focus:border-brand-tactical transition-all rounded-none" 
                       />
                     </div>
                     <div className="space-y-2">
@@ -272,7 +290,7 @@ export const AdminEvents: React.FC = () => {
                         required
                         value={formData.location}
                         onChange={e => setFormData({...formData, location: e.target.value})}
-                        className="w-full bg-transparent border-b border-zinc-900 py-3 text-sm text-white focus:outline-none focus:border-brand-tactical transition-all rounded-none" 
+                        className="w-full bg-transparent border-b border-theme-border py-3 text-sm text-theme-text focus:outline-none focus:border-brand-tactical transition-all rounded-none" 
                       />
                     </div>
                   </div>
@@ -284,7 +302,7 @@ export const AdminEvents: React.FC = () => {
                       required
                       value={formData.eventHours}
                       onChange={e => setFormData({...formData, eventHours: Number(e.target.value)})}
-                      className="w-full bg-transparent border-b border-zinc-900 py-3 text-sm text-white focus:outline-none focus:border-brand-tactical transition-all rounded-none" 
+                      className="w-full bg-transparent border-b border-theme-border py-3 text-sm text-theme-text focus:outline-none focus:border-brand-tactical transition-all rounded-none" 
                     />
                   </div>
                   
@@ -314,7 +332,7 @@ export const AdminEvents: React.FC = () => {
                     <select 
                       value={formData.captacaoId}
                       onChange={e => setFormData({...formData, captacaoId: e.target.value})}
-                      className="w-full bg-black border-b border-zinc-900 py-3 text-sm text-white focus:outline-none focus:border-brand-tactical appearance-none rounded-none"
+                      className="w-full bg-theme-bg-muted border-b border-theme-border py-3 text-sm text-theme-text focus:outline-none focus:border-brand-tactical appearance-none rounded-none"
                     >
                       <option value="">NÃO ATRIBUÍDO</option>
                       {users.filter(u => u.role === "PROFISSIONAL").map(u => (
@@ -330,7 +348,7 @@ export const AdminEvents: React.FC = () => {
                         type="number"
                         value={formData.priceBase}
                         onChange={e => setFormData({...formData, priceBase: Number(e.target.value)})}
-                        className="w-full bg-transparent border-b border-zinc-900 py-3 text-sm text-white focus:outline-none focus:border-brand-tactical transition-all rounded-none" 
+                        className="w-full bg-transparent border-b border-theme-border py-3 text-sm text-theme-text focus:outline-none focus:border-brand-tactical transition-all rounded-none" 
                       />
                     </div>
                     <div className="space-y-2">
@@ -339,7 +357,7 @@ export const AdminEvents: React.FC = () => {
                         type="number"
                         value={formData.priceEarly}
                         onChange={e => setFormData({...formData, priceEarly: Number(e.target.value)})}
-                        className="w-full bg-transparent border-b border-zinc-900 py-3 text-sm text-white focus:outline-none focus:border-brand-tactical transition-all rounded-none" 
+                        className="w-full bg-transparent border-b border-theme-border py-3 text-sm text-theme-text focus:outline-none focus:border-brand-tactical transition-all rounded-none" 
                       />
                     </div>
                   </div>
@@ -365,15 +383,20 @@ export const AdminEvents: React.FC = () => {
                           type="number"
                           value={formData.targetAmount}
                           onChange={e => setFormData({...formData, targetAmount: Number(e.target.value)})}
-                          className="w-full bg-black border-b border-zinc-800 py-2 text-sm text-white focus:outline-none focus:border-brand-tactical transition-all"
+                          className="w-full bg-theme-bg-muted border-b border-theme-border py-2 text-sm text-theme-text focus:outline-none focus:border-brand-tactical transition-all"
                         />
                       </div>
                     )}
                   </div>
 
                   <div className="pt-10">
-                    <button type="submit" className="w-full bg-brand-tactical text-white font-bold uppercase tracking-[0.4em] py-6 text-[11px] hover:brightness-110 transition-all rounded-none shadow-[0_10px_30px_rgba(93,101,50,0.2)]">
-                      {editingEvent ? "SALVAR ALTERAÇÕES" : "SINCRONIZAR ARQUIVO"}
+                    <button
+                      type="submit"
+                      disabled={isUploading}
+                      className="w-full font-black uppercase tracking-[0.3em] py-4 text-[10px] hover:brightness-110 active:scale-[0.98] transition-all rounded-none"
+                      style={{ backgroundColor: 'var(--brand-primary)', color: 'var(--theme-text-on-brand)' }}
+                    >
+                      {isUploading ? "PROCESSANDO..." : (editingEvent ? "SALVAR ALTERAÇÕES" : "SINCRONIZAR ARQUIVO")}
                     </button>
                   </div>
                 </div>

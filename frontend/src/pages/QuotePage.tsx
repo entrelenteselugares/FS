@@ -20,14 +20,14 @@ const P = {
 };
 
 const THEME = {
-  bg: "#0c0c0c",
-  bgCard: "#111",
-  border: "#1c1c1c",
-  accent: "#8a9a5b",
-  text: "#f0ede8",
-  text2: "#888",
-  fontD: "'Barlow Condensed', sans-serif",
-  fontB: "'Inter', sans-serif",
+  bg: "var(--theme-bg)",
+  bgCard: "var(--theme-bg-muted)",
+  border: "var(--theme-border)",
+  accent: "var(--brand-primary)",
+  text: "var(--theme-text)",
+  text2: "var(--theme-text-muted)",
+  fontD: "'Outfit', sans-serif",
+  fontB: "'Outfit', sans-serif",
 };
 
 // ── DateTimePicker Customizado (Tactical Theme) 📅🛡️ ─────────────────
@@ -117,7 +117,7 @@ function DateTimePicker({ value, onChange }: { value: string; onChange: (v: stri
                 onClick={() => setViewDate(new Date(viewDate.getFullYear(), viewDate.getMonth() - 1))}
                 style={{ background: "none", border: "none", color: THEME.text2, cursor: "pointer", padding: 6, display: "flex" }}
               ><ChevronLeft size={16} /></button>
-              <span style={{ fontSize: 11, fontWeight: 800, color: THEME.text, textTransform: "uppercase", letterSpacing: 3 }}>
+              <span style={{ fontSize: 11, fontWeight: 900, color: THEME.text, textTransform: "uppercase", letterSpacing: 3 }}>
                 {MONTHS_PT[viewDate.getMonth()]} {viewDate.getFullYear()}
               </span>
               <button
@@ -149,7 +149,7 @@ function DateTimePicker({ value, onChange }: { value: string; onChange: (v: stri
                     onClick={() => day && !isPast && selectDay(day)}
                     style={{
                       height: 34, width: "100%", border: "none", borderRadius: 0,
-                      fontSize: 12, fontWeight: isSelected ? 800 : 400,
+                      fontSize: 12, fontWeight: isSelected ? 900 : 500,
                       cursor: day && !isPast ? "pointer" : "default",
                       background: isSelected ? THEME.accent : isToday ? `${THEME.accent}20` : "transparent",
                       color: isSelected ? "#000" : isPast ? "#2a2a2a" : !day ? "transparent" : THEME.text,
@@ -169,14 +169,14 @@ function DateTimePicker({ value, onChange }: { value: string; onChange: (v: stri
               </div>
               <div style={{ display: "flex", alignItems: "center", gap: 10 }}>
                 <select value={hour} onChange={e => updateTime(e.target.value, minute)}
-                  style={{ flex: 1, background: "#111", border: `1px solid ${THEME.border}`, color: THEME.text, padding: "10px 8px", fontSize: 18, fontWeight: 700, textAlign: "center", borderRadius: 0, cursor: "pointer" }}>
+                  style={{ flex: 1, background: "#111", border: `1px solid ${THEME.border}`, color: THEME.text, padding: "10px 8px", fontSize: 18, fontWeight: 900, textAlign: "center", borderRadius: 0, cursor: "pointer" }}>
                   {Array.from({length: 24}, (_, i) => String(i).padStart(2,"0")).map(h => (
                     <option key={h} value={h}>{h}h</option>
                   ))}
                 </select>
                 <span style={{ color: THEME.accent, fontSize: 22, fontWeight: 900 }}>:</span>
                 <select value={minute} onChange={e => updateTime(hour, e.target.value)}
-                  style={{ flex: 1, background: "#111", border: `1px solid ${THEME.border}`, color: THEME.text, padding: "10px 8px", fontSize: 18, fontWeight: 700, textAlign: "center", borderRadius: 0, cursor: "pointer" }}>
+                  style={{ flex: 1, background: "#111", border: `1px solid ${THEME.border}`, color: THEME.text, padding: "10px 8px", fontSize: 18, fontWeight: 900, textAlign: "center", borderRadius: 0, cursor: "pointer" }}>
                   {["00","15","30","45"].map(m => (
                     <option key={m} value={m}>{m}min</option>
                   ))}
@@ -275,9 +275,8 @@ export const QuotePage = () => {
   return (
     <div style={{ background: THEME.bg, color: THEME.text, minHeight: "100vh", fontFamily: THEME.fontB, padding: "40px 20px" }}>
       <style>{`
-        @import url('https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@700;900&family=Inter:wght@400;700&display=swap');
-        .fs-input { background: #000 !important; border: 1px solid #1c1c1c !important; color: white !important; border-radius: 0 !important; box-sizing: border-box; }
-        .fs-input:focus { border-color: ${THEME.accent} !important; outline: none !important; }
+        .fs-input { background: var(--theme-bg-muted) !important; border: 1px solid var(--theme-border) !important; color: var(--theme-text) !important; border-radius: 0 !important; box-sizing: border-box; font-family: 'Outfit', sans-serif !important; }
+        .fs-input:focus { border-color: var(--brand-primary) !important; outline: none !important; }
         select.fs-input, textarea.fs-input { padding: 15px !important; }
         
         @media (max-width: 768px) {
@@ -294,7 +293,7 @@ export const QuotePage = () => {
       <div style={{ maxWidth: 800, margin: "0 auto" }}>
         <header style={{ textAlign: "center", marginBottom: 60 }}>
           <div style={{ fontSize: 10, fontWeight: 800, textTransform: "uppercase", letterSpacing: 6, color: THEME.accent, marginBottom: 20 }}>Solicitação de Orçamento</div>
-          <h1 style={{ fontFamily: THEME.fontD, fontSize: "clamp(40px, 8vw, 64px)", fontWeight: 900, textTransform: "uppercase", lineHeight: 0.9 }}>
+          <h1 style={{ fontFamily: THEME.fontD, fontSize: "clamp(40px, 8vw, 64px)", fontWeight: 900, textTransform: "uppercase", lineHeight: 0.9, letterSpacing: '-0.04em' }}>
             Reserve seu <span style={{ color: THEME.text2 }}>Grande Dia</span>
           </h1>
         </header>
@@ -335,7 +334,7 @@ export const QuotePage = () => {
                   </div>
                 )}
                 {locationType === "OTHER" && (
-                  <p style={{ fontSize: 9, color: "#f59e0b", margin: 0, fontWeight: 700, textTransform: "uppercase", letterSpacing: 1 }}>
+                  <p style={{ fontSize: 9, color: "#f59e0b", margin: 0, fontWeight: 900, textTransform: "uppercase", letterSpacing: 1 }}>
                     ⚠️ Importante: Para locais não cadastrados, o orçamento é uma estimativa e poderá sofrer variações após análise técnica.
                   </p>
                 )}
@@ -455,7 +454,7 @@ export const QuotePage = () => {
               <ShieldCheck size={40} color={THEME.accent} />
             </div>
             <h2 style={{ fontFamily: THEME.fontD, fontSize: 42, fontWeight: 900, textTransform: "uppercase", marginBottom: 20 }}>Recebemos sua Solicitação</h2>
-            <p style={{ color: THEME.text2, fontSize: 14, maxWidth: 400, margin: "0 auto 40px", lineHeight: 1.6 }}>
+            <p style={{ color: THEME.text2, fontSize: 13, maxWidth: 400, margin: "0 auto 40px", lineHeight: 1.6, fontWeight: 600, textTransform: 'uppercase' }}>
               O orçamento estimado foi salvo. Como trata-se de um local novo, nossa equipe técnica validará o CEP e a descrição em até 30 minutos para liberar o seu link de reserva.
             </p>
             <button 

@@ -1,8 +1,9 @@
 import React, { useEffect, useState } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import { API } from "../lib/api";
+import { useTheme } from "../contexts/ThemeContext";
 import { motion } from "framer-motion";
-import { MapPin, Phone, MessageSquare, Calendar, Star } from "lucide-react";
+import { MapPin, Phone, MessageSquare, Calendar, Star, ArrowLeft } from "lucide-react";
 
 interface PartnerData {
   razaoSocial: string;
@@ -24,6 +25,7 @@ interface RecentEvent {
 
 export const PartnerLP: React.FC = () => {
   const { slug } = useParams<{ slug: string }>();
+  useTheme(); // ensures CSS variables re-evaluate on theme toggle
   const navigate = useNavigate();
   const [data, setData] = useState<{ partner: PartnerData; recentEvents: RecentEvent[] } | null>(null);
   const [loading, setLoading] = useState(true);
@@ -35,14 +37,17 @@ export const PartnerLP: React.FC = () => {
       .finally(() => setLoading(false));
   }, [slug, navigate]);
 
-  if (loading || !data) return <div className="min-h-screen bg-[#050505] flex items-center justify-center text-[10px] text-zinc-800 uppercase tracking-widest font-black">Sincronizando Localização...</div>;
+  if (loading || !data) return (
+    <div className="min-h-screen bg-theme-bg flex items-center justify-center text-[10px] text-theme-muted uppercase tracking-[0.5em] font-black animate-pulse">
+      Sincronizando Localização...
+    </div>
+  );
 
   const { partner, recentEvents } = data;
 
   return (
-    <div className="min-h-screen bg-[#050505] text-white">
+    <div className="min-h-screen bg-theme-bg text-theme-text transition-colors duration-500 overflow-x-hidden">
       <style>{`
-        @import url('https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@600;700;800;900&display=swap');
         @media (max-width: 768px) {
           .mobile-hero-title { font-size: clamp(32px, 12vw, 48px) !important; line-height: 1 !important; }
           .mobile-py { padding-top: 4rem !important; padding-bottom: 4rem !important; }
@@ -53,71 +58,85 @@ export const PartnerLP: React.FC = () => {
         }
       `}</style>
 
-      {/* Back Button */}
-      <nav className="absolute top-0 left-0 w-full z-50 p-6 pointer-events-none">
+      {/* Navigation */}
+      <nav className="fixed top-0 left-0 w-full z-50 p-6 flex justify-between items-center pointer-events-none">
         <button 
           onClick={() => navigate("/")} 
-          className="pointer-events-auto flex items-center gap-3 text-[10px] font-black uppercase tracking-[0.4em] text-white/40 hover:text-white transition-all bg-black/20 backdrop-blur-md px-6 py-3 border border-white/5"
+          className="pointer-events-auto flex items-center gap-3 text-[10px] font-bold uppercase tracking-[0.3em] text-theme-muted hover:text-theme-text transition-all bg-theme-bg-muted/80 backdrop-blur-xl px-6 py-3 border border-theme-border"
         >
-          <span className="text-lg">←</span> Vitrine
+          <ArrowLeft size={14} /> Vitrine
         </button>
+
+        <div className="pointer-events-auto">
+          <img 
+            src="/logo-premium.png" 
+            alt="Logo" 
+            style={{ 
+              height: 32, 
+              objectFit: "contain",
+              filter: useTheme().theme === 'dark' ? 'brightness(0) invert(1)' : 'none'
+            }} 
+          />
+        </div>
       </nav>
 
       {/* Hero / Cover */}
-      <section className="relative h-[80vh] overflow-hidden">
+      <section className="relative h-[85vh] overflow-hidden flex items-center justify-center">
         <div className="absolute inset-0">
           <img 
             src={partner.coverUrl || "https://images.unsplash.com/photo-1511795409834-ef04bbd61622?w=1600"} 
-            className="w-full h-full object-cover opacity-40 grayscale"
+            className="w-full h-full object-cover opacity-60 grayscale scale-110"
             alt="" 
           />
-          <div className="absolute inset-0 bg-gradient-to-t from-[#050505] via-transparent to-transparent" />
+          <div className="absolute inset-0 bg-gradient-to-t from-theme-bg via-theme-bg/20 to-transparent" />
         </div>
 
-        <div className="absolute inset-0 flex flex-col items-center justify-center text-center px-6">
-           <motion.div initial={{ opacity: 0, y: 30 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.8 }}>
-             <div className="text-[10px] font-black uppercase tracking-[0.6em] text-brand-tactical mb-6">Ponto Parceiro Autorizado</div>
-             <h1 className="text-6xl md:text-9xl font-black uppercase tracking-tighter leading-[0.85] mb-8 mobile-hero-title" style={{ fontFamily: "'Barlow Condensed', sans-serif" }}>
+        <div className="relative z-10 text-center px-6 max-w-5xl">
+            <motion.div initial={{ opacity: 0, y: 40 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 1, ease: [0.16, 1, 0.3, 1] }}>
+             <div className="text-[11px] font-extrabold uppercase tracking-[0.5em] text-brand-primary mb-6">Ponto Parceiro Autorizado</div>
+             <h1 className="text-6xl md:text-9xl font-black leading-[0.9] mb-10 mobile-hero-title tracking-tighter uppercase" style={{ fontFamily: "'Outfit', sans-serif" }}>
                {partner.razaoSocial}
              </h1>
-             <div className="flex flex-wrap justify-center gap-4 text-[10px] md:text-[11px] font-bold uppercase tracking-widest text-zinc-400 italic">
-               <div className="flex items-center gap-2"><MapPin size={12} className="md:w-3.5 md:h-3.5" /> {partner.address || "Campinas, SP"}</div>
-               <div className="flex items-center gap-2"><Phone size={12} className="md:w-3.5 md:h-3.5" /> {partner.phone || "(19) 98765-4321"}</div>
+             <div className="flex flex-wrap justify-center gap-8 text-[11px] font-bold uppercase tracking-[0.2em] text-theme-muted">
+               <div className="flex items-center gap-3"><MapPin size={14} className="text-brand-primary" /> {partner.address || "Campinas, SP"}</div>
+               <div className="flex items-center gap-3"><Phone size={14} className="text-brand-primary" /> {partner.phone || "(19) 98765-4321"}</div>
              </div>
            </motion.div>
         </div>
       </section>
 
       {/* Info Sections */}
-      <section className="max-w-7xl mx-auto px-6 grid grid-cols-1 lg:grid-cols-2 gap-20 py-20 md:py-32 border-b border-white/5 mobile-py">
+      <section className="max-w-7xl mx-auto px-6 grid grid-cols-1 lg:grid-cols-2 gap-20 py-24 md:py-40 border-b border-theme-border mobile-py">
         <div>
-          <h2 className="text-3xl font-black uppercase tracking-tighter mb-8 italic" style={{ fontFamily: "'Barlow Condensed', sans-serif" }}>Sobre este Local</h2>
-          <p className="text-zinc-500 leading-relaxed uppercase tracking-widest text-[11px] font-bold mb-12">
-            {partner.description || "Este cartório é um parceiro estratégico da plataforma Foto Segundo, oferecendo infraestrutura otimizada para registros de registros civis de alto padrão. Localizado em área nobre, com iluminação preparada para fotografia profissional."}
+          <h2 className="text-4xl font-extrabold tracking-tighter mb-10 uppercase" style={{ fontFamily: "'Outfit', sans-serif" }}>Sobre a Unidade</h2>
+          <p className="text-theme-muted leading-relaxed tracking-widest text-[12px] font-bold mb-12 uppercase">
+            {partner.description || "Este cartório é um parceiro estratégico da plataforma Foto Segundo, oferecendo infraestrutura otimizada para registros civis de alto padrão. Localizado em área nobre, com iluminação preparada para fotografia profissional e cinema."}
           </p>
           
-          <div className="space-y-6">
+          <div className="space-y-8">
              {[
-               "Acesso prioritário para profissionais Foto Segundo",
+               "Acesso prioritário para profissionais credenciados",
                "Iluminação natural otimizada para retratos",
-               "Área privativa para fotos de família",
-               "Sincronização imediata de álbuns"
+               "Área privativa para fotos e cinema familiar",
+               "Sincronização imediata de álbuns digitais"
              ].map(feat => (
-               <div key={feat} className="flex items-center gap-4 text-[10px] font-black uppercase tracking-widest text-zinc-400 group">
-                 <div className="w-1.5 h-1.5 bg-brand-tactical group-hover:scale-150 transition-transform" />
+               <div key={feat} className="flex items-center gap-5 text-[10px] font-bold uppercase tracking-[0.25em] text-theme-muted group">
+                 <div className="w-2 h-[1px] bg-brand-primary transition-all group-hover:w-8" />
                  {feat}
                </div>
              ))}
           </div>
         </div>
 
-        <div className="bg-[#0a0a0a] border border-white/5 p-8 md:p-12 flex flex-col justify-center items-center text-center">
-            <Calendar className="text-brand-tactical mb-8" size={48} />
-            <h3 className="text-3xl md:text-4xl font-black uppercase tracking-tighter mb-4" style={{ fontFamily: "'Barlow Condensed', sans-serif" }}>Solicite seu Registro</h3>
-            <p className="text-zinc-600 text-[10px] font-bold uppercase tracking-widest leading-relaxed mb-10">Agende sua cobertura fotográfica ou cinematográfica diretamente para este local com preços exclusivos de ponto parceiro.</p>
+        <div className="bg-theme-bg-muted border border-theme-border p-10 md:p-20 flex flex-col justify-center items-center text-center backdrop-blur-sm">
+            <Calendar className="text-brand-primary mb-10" size={56} strokeWidth={1} />
+            <h3 className="text-4xl font-extrabold tracking-tighter mb-6 uppercase" style={{ fontFamily: "'Outfit', sans-serif" }}>Agende seu Protocolo</h3>
+            <p className="text-theme-muted text-[11px] font-bold uppercase tracking-[0.2em] leading-relaxed mb-12">
+              Solicite cobertura fotográfica ou cinematográfica exclusiva para este local com condições especiais de ponto parceiro.
+            </p>
             <button 
                 onClick={() => navigate(`/cotacao?partner=${partner.slug}`)}
-                className="w-full py-6 bg-brand-tactical text-white text-[11px] font-black uppercase tracking-[0.4em] hover:brightness-110 transition-all shadow-2xl shadow-brand-tactical/20"
+                className="w-full py-6 bg-theme-text text-theme-bg text-[11px] font-bold uppercase tracking-[0.4em] hover:opacity-90 transition-all"
             >
                 INICIAR ORÇAMENTO EXPRESS
             </button>
@@ -125,39 +144,41 @@ export const PartnerLP: React.FC = () => {
       </section>
 
       {/* Recents Gallery */}
-      <section className="py-20 md:py-32 px-6 max-w-7xl mx-auto mobile-py">
-        <div className="flex flex-col md:flex-row items-center justify-between mb-12 md:mb-20 mobile-center">
+      <section className="py-24 md:py-40 px-6 max-w-7xl mx-auto mobile-py">
+        <div className="flex flex-col md:flex-row items-center justify-between mb-16 md:mb-24 mobile-center">
             <div>
-                <h2 className="text-4xl font-black uppercase tracking-tighter italic" style={{ fontFamily: "'Barlow Condensed', sans-serif" }}>Registrados Recentemente</h2>
-                <p className="text-[10px] text-zinc-600 font-bold uppercase tracking-[0.3em] mt-2">Neste Local de Atendimento</p>
+                <h2 className="text-5xl font-black tracking-tighter uppercase" style={{ fontFamily: "'Outfit', sans-serif" }}>Registros Recentes</h2>
+                <p className="text-[11px] text-theme-muted font-extrabold uppercase tracking-[0.35em] mt-3">Curadoria Editorial neste Local</p>
             </div>
-            <div className="hidden md:flex items-center gap-2 text-zinc-800">
-                <Star size={16} fill="currentColor" />
-                <Star size={16} fill="currentColor" />
-                <Star size={16} fill="currentColor" />
+            <div className="hidden md:flex items-center gap-3 text-theme-muted opacity-30">
+                <Star size={18} fill="currentColor" />
+                <Star size={18} fill="currentColor" />
+                <Star size={18} fill="currentColor" />
             </div>
         </div>
 
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 md:gap-12">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-12 md:gap-16">
             {recentEvents.length === 0 ? (
-                <div className="col-span-full py-20 text-center text-zinc-800 uppercase tracking-widest text-[9px] border border-dashed border-zinc-900 italic">Os registros deste local serão indexados em breve.</div>
+                <div className="col-span-full py-32 text-center text-theme-muted uppercase tracking-[0.4em] text-[10px] border border-dashed border-theme-border">
+                  Os registros deste local estão sendo processados e indexados.
+                </div>
             ) : recentEvents.map(event => (
                 <motion.div 
                     key={event.id}
-                    onClick={() => navigate(`/eventos/${event.slug || event.id}`)}
-                    whileHover={{ y: -5 }}
-                    className="group"
+                    onClick={() => navigate(`/e/${event.slug || event.id}`)}
+                    whileHover={{ y: -10 }}
+                    className="group cursor-pointer"
                 >
-                    <div className="aspect-[4/5] overflow-hidden border border-white/5 mb-6 bg-zinc-950 relative">
+                    <div className="aspect-[4/5] overflow-hidden bg-theme-bg-muted relative">
                         <img 
                             src={event.coverPhotoUrl} 
-                            className="w-full h-full object-cover grayscale opacity-60 group-hover:grayscale-0 group-hover:opacity-100 transition-all duration-700 hover:scale-110" 
+                            className="w-full h-full object-cover grayscale group-hover:grayscale-0 transition-all duration-1000 ease-out group-hover:scale-105" 
                             alt="" 
                         />
-                        <div className="absolute inset-0 bg-gradient-to-t from-black via-transparent opacity-80" />
+                        <div className="absolute inset-0 bg-gradient-to-t from-theme-bg/80 via-transparent opacity-60" />
                         <div className="absolute bottom-0 left-0 p-8">
-                             <h4 className="text-xl font-black uppercase tracking-tighter mb-1" style={{ fontFamily: "'Barlow Condensed', sans-serif" }}>{event.nomeNoivos}</h4>
-                             <div className="text-[9px] text-brand-tactical font-black uppercase tracking-widest">{new Date(event.dataEvento).toLocaleDateString('pt-BR', { month: 'long', year: 'numeric' })}</div>
+                             <h4 className="text-3xl font-extrabold tracking-tighter text-white mb-2 uppercase" style={{ fontFamily: "'Outfit', sans-serif" }}>{event.nomeNoivos}</h4>
+                             <div className="text-[9px] text-brand-primary font-black uppercase tracking-[0.2em]">{new Date(event.dataEvento).toLocaleDateString('pt-BR', { month: 'long', year: 'numeric' })}</div>
                         </div>
                     </div>
                 </motion.div>
@@ -166,24 +187,24 @@ export const PartnerLP: React.FC = () => {
       </section>
 
       {/* Footer / Location */}
-      <footer className="py-16 md:py-40 border-t border-white/5 bg-zinc-900/10 mobile-py">
+      <footer className="py-24 md:py-48 border-t border-theme-border bg-theme-bg-muted/30 mobile-py">
         <div className="max-w-xl mx-auto text-center px-6">
-            <h3 className="text-2xl font-black uppercase tracking-tighter mb-8" style={{ fontFamily: "'Barlow Condensed', sans-serif" }}>Visite-nos</h3>
-            <p className="text-zinc-600 text-[10px] font-bold uppercase tracking-widest leading-relaxed mb-12">
-                {partner.address || "Endereço em processamento..."}
+            <h3 className="text-3xl font-extrabold tracking-tighter mb-10 uppercase" style={{ fontFamily: "'Outfit', sans-serif" }}>Localização do Protocolo</h3>
+            <p className="text-theme-muted text-[11px] font-bold uppercase tracking-[0.2em] leading-relaxed mb-16">
+                {partner.address || "Endereço em processamento em nossa rede..."}
             </p>
-            <div className="flex justify-center gap-10">
-                <a href={`tel:${partner.phone}`} className="flex flex-col items-center gap-4 group">
-                    <div className="w-12 h-12 flex items-center justify-center border border-zinc-800 rounded-none group-hover:border-brand-tactical transition-colors">
-                        <Phone size={18} className="text-zinc-600 group-hover:text-brand-tactical" />
+            <div className="flex justify-center gap-16">
+                <a href={`tel:${partner.phone}`} className="flex flex-col items-center gap-5 group">
+                    <div className="w-16 h-16 flex items-center justify-center border border-theme-border group-hover:border-theme-text transition-all duration-300">
+                        <Phone size={22} strokeWidth={1} className="text-theme-muted group-hover:text-theme-text" />
                     </div>
-                    <span className="text-[8px] font-black uppercase tracking-widest text-zinc-700">Ligar</span>
+                    <span className="text-[8px] font-bold uppercase tracking-[0.4em] text-theme-muted group-hover:text-theme-text">Ligar</span>
                 </a>
-                <a href="#" className="flex flex-col items-center gap-4 group">
-                    <div className="w-12 h-12 flex items-center justify-center border border-zinc-800 rounded-none group-hover:border-brand-tactical transition-colors">
-                        <MessageSquare size={18} className="text-zinc-600 group-hover:text-brand-tactical" />
+                <a href="#" className="flex flex-col items-center gap-5 group">
+                    <div className="w-16 h-16 flex items-center justify-center border border-theme-border group-hover:border-theme-text transition-all duration-300">
+                        <MessageSquare size={22} strokeWidth={1} className="text-theme-muted group-hover:text-theme-text" />
                     </div>
-                    <span className="text-[8px] font-black uppercase tracking-widest text-zinc-700">WhatsApp</span>
+                    <span className="text-[8px] font-bold uppercase tracking-[0.4em] text-theme-muted group-hover:text-theme-text">Mensagem</span>
                 </a>
             </div>
         </div>
@@ -191,3 +212,4 @@ export const PartnerLP: React.FC = () => {
     </div>
   );
 };
+

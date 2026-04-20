@@ -1,9 +1,25 @@
 import { useState, useEffect } from "react";
 import { useParams, useNavigate, useSearchParams } from "react-router-dom";
 import { useAuth } from "../hooks/useAuth";
+import { useTheme } from "../contexts/ThemeContext";
 import { API as api } from "../lib/api";
 import AccessTypeModal from "../components/AccessTypeModal";
 import axios from "axios";
+import { motion, AnimatePresence } from "framer-motion";
+import { 
+  ShieldCheck, 
+  Lock, 
+  Unlock, 
+  Calendar, 
+  MapPin, 
+  ArrowLeft, 
+  CreditCard, 
+  Gift, 
+  CheckCircle2,
+  ExternalLink,
+  ChevronRight,
+  Info
+} from "lucide-react";
 
 interface MercadoPagoInstance {
   createCardToken: (data: Record<string, string>) => Promise<{ id: string }>;
@@ -17,13 +33,13 @@ declare global {
 
 interface EventData {
   id: string;
-  title: string;
+  nomeNoivos: string;
   slug: string;
   date: string;
   location: string;
   city: string | null;
   description: string | null;
-  coverUrl: string | null;
+  coverPhotoUrl: string | null;
   priceBase: number;
   priceEarly: number;
   temFoto: boolean;
@@ -65,21 +81,6 @@ function detectBrand(number: string): string {
   return "visa";
 }
 
-// ── Tema ─────────────────────────────────────────────
-const T = {
-  bg:      "#0c0c0c",
-  bgCard:  "#111",
-  bgField: "#0c0c0c",
-  border:  "#1c1c1c",
-  border2: "#2a2a2a",
-  text:    "#f0ede8",
-  text2:   "#999",
-  text3:   "#555",
-  accent:  "#8a9a5b",
-  fontD:   "'Barlow Condensed', sans-serif",
-  fontB:   "'Inter', sans-serif",
-};
-
 type Step = "paywall" | "checkout" | "processing" | "success";
 
 export default function EventPage() {
@@ -87,6 +88,7 @@ export default function EventPage() {
   const navigate = useNavigate();
   const [searchParams] = useSearchParams();
   const { user } = useAuth();
+  useTheme(); // ensures ThemeProvider is available — renders correctly in both modes
 
   const [event, setEvent]       = useState<EventData | null>(null);
   const [loading, setLoading]   = useState(true);
@@ -104,7 +106,7 @@ export default function EventPage() {
 
   // LGPD State
   const [needsAccessChoice, setNeedsAccessChoice] = useState(false);
-  const [accessType, setAccessType] = useState<string | null>(null);
+  const [_accessType, setAccessType] = useState<string | null>(null);
   const [accessExpiresAt, setAccessExpiresAt] = useState<string | null>(null);
   const [contributionAmount, setContributionAmount] = useState<number>(50); // Valor padrão
   const [contributorName, setContributorName] = useState<string>("");
@@ -258,436 +260,542 @@ export default function EventPage() {
     }, 3000);
   };
 
-  const set = (k: string) => (e: React.ChangeEvent<HTMLInputElement>) =>
+  const handleChange = (k: string) => (e: React.ChangeEvent<HTMLInputElement>) =>
     setCardData((p) => ({ ...p, [k]: e.target.value }));
 
   if (loading) return (
-    <div style={{ background: T.bg, minHeight: "100vh", display: "flex", alignItems: "center", justifyContent: "center" }}>
-      <div style={{ width: 28, height: 28, border: `2px solid ${T.accent}`, borderTopColor: "transparent", borderRadius: "50%", animation: "spin .8s linear infinite" }} />
-      <style>{`@keyframes spin{to{transform:rotate(360deg)}}`}</style>
+    <div className="min-h-screen bg-theme-bg flex items-center justify-center">
+      <div className="w-8 h-8 border-2 border-brand-primary border-t-transparent rounded-full animate-spin" />
     </div>
   );
 
   if (notFound || !event) return (
-    <div style={{ background: T.bg, minHeight: "100vh", display: "flex", alignItems: "center", justifyContent: "center", flexDirection: "column", gap: 16 }}>
-      <p style={{ fontFamily: T.fontD, fontSize: 32, fontWeight: 900, color: "#fff", textTransform: "uppercase" }}>Evento não encontrado</p>
-      <button onClick={() => navigate("/")} style={{ fontSize: 11, color: T.accent, background: "none", border: "none", cursor: "pointer", letterSpacing: 1.5, textTransform: "uppercase" }}>
-        ← Voltar à vitrine
+    <div className="min-h-screen bg-theme-bg flex flex-col items-center justify-center gap-6 px-6 text-center">
+      <h1 className="text-4xl md:text-5xl font-extrabold tracking-tight text-theme-text uppercase">
+        Protocolo não localizado
+      </h1>
+      <p className="text-theme-muted text-[11px] font-bold uppercase tracking-[0.3em]">O registro solicitado não existe em nossa rede</p>
+      <button 
+        onClick={() => navigate("/")} 
+        className="mt-8 text-[10px] font-bold uppercase tracking-[0.4em] text-brand-primary border-b border-brand-primary/30 pb-1 hover:border-brand-primary transition-all"
+      >
+        ← Retornar à Vitrine
       </button>
     </div>
   );
 
   return (
-    <div style={{ fontFamily: T.fontB, background: T.bg, color: T.text, minHeight: "100vh" }}>
+    <div className="min-h-screen bg-theme-bg text-theme-text font-sans transition-colors duration-500 overflow-x-hidden">
       <style>{`
-        @import url('https://fonts.googleapis.com/css2?family=Barlow+Condensed:ital,wght@0,700;0,800;0,900;1,700;1,900&family=Inter:wght@300;400;500&display=swap');
-        * { box-sizing: border-box; }
-        input { transition: border-color .15s; }
-        input:focus { border-color: ${T.accent} !important; outline: none; }
-        
-        @media (max-width: 768px) {
-          .mobile-grid-1 { grid-template-columns: 1fr !important; }
-          .mobile-stack { flex-direction: column !important; }
-          .mobile-padding { padding: 20px !important; }
-          .mobile-center { text-align: center !important; justify-content: center !important; }
-          .mobile-hide { display: none !important; }
-          .mobile-nav { padding: 12px 16px !important; }
-          .mobile-sidebar { position: relative !important; top: 0 !important; width: 100% !important; margin-top: 40px !important; }
-        }
+        .editorial-shadow { box-shadow: 0 40px 100px -20px rgba(0,0,0,0.15); }
+        .dark .editorial-shadow { box-shadow: 0 40px 100px -20px rgba(0,0,0,0.6); }
       `}</style>
 
-      {/* NAV */}
-      <nav className="mobile-nav" style={{ display: "flex", alignItems: "center", justifyContent: "space-between", padding: "16px 28px", borderBottom: `1px solid ${T.border}` }}>
-        <button onClick={() => navigate("/")} style={{ background: "none", border: "none", color: "#666", fontSize: 10, cursor: "pointer", letterSpacing: 1, textTransform: "uppercase", display: "flex", alignItems: "center", gap: 6 }}>
-          ← <span className="mobile-hide">Vitrine</span>
+      {/* Navigation */}
+      <nav className="sticky top-0 z-50 bg-theme-bg/80 backdrop-blur-xl border-b border-theme-border px-6 py-4 flex justify-between items-center transition-colors">
+        <button 
+          onClick={() => navigate("/")} 
+          className="flex items-center gap-3 text-[10px] font-bold uppercase tracking-[0.3em] text-theme-muted hover:text-theme-text transition-all"
+        >
+          <ArrowLeft size={14} /> <span className="hidden md:inline">Protocolos</span>
         </button>
-        <div style={{ fontFamily: T.fontD, fontWeight: 900, fontSize: 18, color: "#fff", letterSpacing: 1 }}>
-          FOTO SEGUNDO.
+        <div className="text-center">
+          <span className="text-[14px] font-bold uppercase tracking-[0.5em] text-theme-text block md:inline md:mr-1">FOTO</span>
+          <span className="text-[14px] font-light uppercase tracking-[0.5em] text-theme-text">SEGUNDO</span>
         </div>
-        <span style={{ fontSize: 12, color: T.text3 }}>{user?.nome ?? "Login"}</span>
+        <div className="flex items-center gap-4">
+          <span className="text-[9px] font-bold uppercase tracking-[0.2em] text-theme-muted hidden sm:block">
+            {user?.role === 'ADMIN' ? 'Painel de Controle' : 'Acesso Editorial'}
+          </span>
+          <div className="w-1.5 h-1.5 rounded-full bg-brand-primary animate-pulse" />
+        </div>
       </nav>
 
-      {/* LAYOUT */}
-      <div className="mobile-grid-1 mobile-padding" style={{ maxWidth: 1040, margin: "0 auto", padding: "40px 28px", display: "grid", gridTemplateColumns: "1fr 360px", gap: "48px", alignItems: "start" }}>
-
-        {/* ESQUERDA */}
-        <div>
-          {/* Capa */}
-          <div style={{ width: "100%", aspectRatio: "16/9", background: "#161616", border: `1px solid ${T.border}`, position: "relative", overflow: "hidden", marginBottom: 28 }}>
-            {event.coverUrl ? (
-              <img src={event.coverUrl} alt={event.title} style={{ width: "100%", height: "100%", objectFit: "cover", filter: step === "success" ? "none" : "blur(3px) brightness(0.5)" }} />
-            ) : (
-              <div style={{ width: "100%", height: "100%", display: "flex", alignItems: "center", justifyContent: "center" }}>
-                <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke={T.accent} strokeWidth="0.8" opacity={0.3}>
-                  <rect x="3" y="3" width="18" height="18" rx="1"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21,15 16,10 5,21"/>
-                </svg>
+      {/* Main Content Layout */}
+      <main className="max-w-7xl mx-auto px-6 py-12 md:py-24 grid grid-cols-1 lg:grid-cols-12 gap-12 lg:gap-20 items-start">
+        
+        {/* Left Column: Visual & Header */}
+        <div className="lg:col-span-7 space-y-12">
+          
+          {/* Immersive Cover */}
+          <div className="relative group overflow-hidden bg-theme-bg-muted aspect-[4/3] md:aspect-[16/9] editorial-shadow">
+            <AnimatePresence mode="wait">
+              <motion.img 
+                key={event.coverPhotoUrl}
+                initial={{ opacity: 0, scale: 1.1 }}
+                animate={{ opacity: step === "success" ? 1 : 0.6, scale: 1 }}
+                exit={{ opacity: 0 }}
+                transition={{ duration: 1.5, ease: [0.16, 1, 0.3, 1] }}
+                src={event.coverPhotoUrl || "https://images.unsplash.com/photo-1511795409834-ef04bbd61622?w=1600"} 
+                className={`w-full h-full object-cover transition-all duration-1000 ${step !== "success" ? "grayscale blur-[2px]" : "grayscale-0 blur-0"}`}
+                alt={event.nomeNoivos} 
+              />
+            </AnimatePresence>
+            
+            {step !== "success" && (
+              <div className="absolute inset-0 flex flex-col items-center justify-center text-center p-8 bg-black/40 backdrop-blur-[1px]">
+                <div className="w-16 h-16 rounded-full border border-white/20 flex items-center justify-center mb-6">
+                  <Lock size={20} className="text-white/60" strokeWidth={1} />
+                </div>
+                <div className="text-[10px] font-bold uppercase tracking-[0.6em] text-white/40 mb-2">Acesso Restrito</div>
+                <div className="text-[12px] font-medium tracking-[0.2em] text-white/60 uppercase">Protocolo Protegido por Paywall</div>
               </div>
             )}
-            {step !== "success" && (
-              <div style={{ position: "absolute", inset: 0, display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center", gap: 10, background: "rgba(0,0,0,0.5)" }}>
-                <div style={{ width: 36, height: 36, border: "1.5px solid rgba(255,255,255,0.25)", borderRadius: "50%", display: "flex", alignItems: "center", justifyContent: "center" }}>
-                  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="rgba(255,255,255,0.4)" strokeWidth="2">
-                    <rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0110 0v4"/>
-                  </svg>
-                </div>
-                <span style={{ fontSize: 10, letterSpacing: 2, textTransform: "uppercase", color: "rgba(255,255,255,0.35)" }}>Acesso Reservado</span>
-              </div>
+            
+            {step === "success" && (
+              <motion.div 
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                className="absolute bottom-6 left-6 flex items-center gap-3 bg-white/10 backdrop-blur-md px-4 py-2 border border-white/20 rounded-full"
+              >
+                <div className="w-2 h-2 rounded-full bg-brand-primary" />
+                <span className="text-[9px] font-bold uppercase tracking-[0.2em] text-white">Visualização Liberada</span>
+              </motion.div>
             )}
           </div>
 
-          {/* Info */}
-          <p style={{ fontSize: 10, letterSpacing: 2, textTransform: "uppercase", color: T.accent, marginBottom: 10, display: "flex", alignItems: "center", gap: 8 }}>
-            <span style={{ width: 16, height: 1, background: T.accent, display: "inline-block" }} />
-            {event.cartorio?.razaoSocial ?? event.location}
-          </p>
-          <h1 style={{ fontFamily: T.fontD, fontWeight: 900, fontSize: "clamp(40px, 5vw, 56px)", color: "#fff", textTransform: "uppercase", lineHeight: 0.95, letterSpacing: "0.5px", marginBottom: 10 }}>
-            {event.title}
-          </h1>
-          <p style={{ fontSize: 13, color: T.text2, marginBottom: 28, letterSpacing: "0.3px" }}>
-            {formatDate(event.date)} · {event.city ?? event.location}
-          </p>
+          {/* Header Info */}
+          <div className="space-y-6">
+            <motion.div 
+               initial={{ opacity: 0, y: 20 }}
+               animate={{ opacity: 1, y: 0 }}
+               transition={{ delay: 0.2 }}
+               className="flex items-center gap-4 text-[10px] font-bold uppercase tracking-[0.5em] text-brand-primary"
+            >
+              <div className="w-8 h-[1px] bg-brand-primary/40" />
+              {event.cartorio?.razaoSocial ?? event.location}
+            </motion.div>
+            
+            <motion.h1 
+               initial={{ opacity: 0, y: 20 }}
+               animate={{ opacity: 1, y: 0 }}
+               transition={{ delay: 0.3 }}
+               className="text-5xl md:text-7xl font-extrabold tracking-tighter leading-[1] text-theme-text uppercase"
+            >
+              {event.nomeNoivos}
+            </motion.h1>
+            
+            <motion.div 
+               initial={{ opacity: 0, y: 20 }}
+               animate={{ opacity: 1, y: 0 }}
+               transition={{ delay: 0.4 }}
+               className="flex flex-wrap items-center gap-x-10 gap-y-4 text-[11px] font-bold uppercase tracking-[0.2em] text-theme-muted border-y border-theme-border py-6"
+            >
+              <div className="flex items-center gap-3"><Calendar size={14} className="text-brand-primary" /> {formatDate(event.date)}</div>
+              <div className="flex items-center gap-3"><MapPin size={14} className="text-brand-primary" /> {event.city ?? event.location}</div>
+            </motion.div>
+          </div>
 
-          {/* Serviços */}
-          {(event.temFoto || event.temVideo || event.temReels || event.temFotoImpressa) && (
-            <div>
-              <p style={{ fontSize: 10, letterSpacing: 2, textTransform: "uppercase", color: T.text3, marginBottom: 14 }}>
-                Serviços inclusos
-              </p>
-              <div className="mobile-grid-1" style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 10 }}>
-                {[
-                  { active: event.temFoto, name: "Galeria Digital", desc: "Fotos editadas no Adobe Portfolio" },
-                  { active: event.temVideo, name: "Cinema & Filme", desc: "Vídeo cinematográfico completo" },
-                  { active: event.temReels, name: "Social Media", desc: "Reels e Stories para redes sociais" },
-                  { active: event.temFotoImpressa, name: "Foto Impressa", desc: "Impressão no local do evento" },
-                ].filter((s) => s.active).map((s) => (
-                  <div key={s.name} style={{ padding: 12, border: `1px solid ${T.border}`, display: "flex", alignItems: "flex-start", gap: 10 }}>
-                    <span style={{ width: 5, height: 5, background: T.accent, borderRadius: "50%", flexShrink: 0, marginTop: 5 }} />
-                    <div>
-                      <p style={{ fontSize: 12, fontWeight: 500, color: "#ddd", marginBottom: 2 }}>{s.name}</p>
-                      <p style={{ fontSize: 11, color: T.text3, lineHeight: 1.4 }}>{s.desc}</p>
-                    </div>
+          {/* Features / Services */}
+          <section className="grid grid-cols-1 sm:grid-cols-2 gap-6">
+            {[
+              { active: event.temFoto, name: "Galeria Editorial", desc: "Curadoria completa em alta resolução" },
+              { active: event.temVideo, name: "Cinema & Filme", desc: "Produção cinematográfica em 4K" },
+              { active: event.temReels, name: "Conteúdo para Redes", desc: "Reels e Stories prontos para compartilhar" },
+              { active: event.temFotoImpressa, name: "Papel Algodão", desc: "Impressão fine-art no local do evento" },
+            ].filter((s) => s.active).map((s, idx) => (
+              <motion.div 
+                key={s.name}
+                initial={{ opacity: 0, scale: 0.95 }}
+                animate={{ opacity: 1, scale: 1 }}
+                transition={{ delay: 0.5 + (idx * 0.1) }}
+                className="group p-6 border border-theme-border bg-theme-bg-muted/30 hover:border-brand-primary transition-all duration-500"
+              >
+                <div className="flex items-start gap-5">
+                  <div className="w-1.5 h-1.5 rounded-none bg-brand-primary mt-1.5 group-hover:scale-x-4 transition-transform origin-left" />
+                  <div>
+                    <h4 className="text-[12px] font-bold uppercase tracking-[0.2em] mb-2">{s.name}</h4>
+                    <p className="text-[11px] text-theme-muted font-bold uppercase tracking-wider">{s.desc}</p>
                   </div>
-                ))}
-              </div>
-            </div>
-          )}
-
-          {/* Links desbloqueados OU Aguardando Meta */}
-          {step === "success" && (
-            <div style={{ marginTop: 28, border: `1px solid #1e3a1e`, padding: 20 }}>
-              {!access?.lightroomUrl && event?.isCrowdfund ? (
-                <div className="animate-in fade-in duration-500">
-                  <p style={{ fontSize: 10, letterSpacing: 2, textTransform: "uppercase", color: T.accent, marginBottom: 12, fontWeight: "bold" }}>
-                    ⭐ Contribuição Confirmada
-                  </p>
-                  <p style={{ fontSize: 13, color: T.text, marginBottom: 16, lineHeight: 1.5 }}>
-                    Obrigado por presentear! Os arquivos serão liberados para todos assim que a meta de <strong>{formatCurrency(Number(event.targetAmount || 0))}</strong> for atingida.
-                  </p>
-                  
-                  {/* Progress bar inside success view */}
-                  <div style={{ marginBottom: 10 }}>
-                    <div style={{ width: "100%", height: 4, background: "#1a2114" }}>
-                      <div style={{ 
-                        width: `${Math.min(100, (Number(event.collectedAmount) / Number(event.targetAmount || 1)) * 100)}%`, 
-                        height: "100%", 
-                        background: T.accent, 
-                        transition: "width 1s ease-out" 
-                      }} />
-                    </div>
-                  </div>
-                  <p style={{ fontSize: 10, color: T.text3 }}>{Math.round((Number(event.collectedAmount) / Number(event.targetAmount || 1)) * 100)}% concluído</p>
                 </div>
-              ) : (
+              </motion.div>
+            ))}
+          </section>
+
+          {/* Delivery Links (Success) */}
+          {step === "success" && (
+            <motion.div 
+              initial={{ opacity: 0, y: 30 }}
+              animate={{ opacity: 1, y: 0 }}
+              className="p-10 border border-brand-primary bg-brand-primary/5 space-y-8"
+            >
+              {access?.lightroomUrl || access?.driveUrl ? (
                 <>
-                  <p style={{ fontSize: 10, letterSpacing: 2, textTransform: "uppercase", color: "#4ade80", marginBottom: 16 }}>
-                    ✓ Acesso Liberado
-                  </p>
+                  <div className="flex items-center justify-between">
+                    <div>
+                      <h3 className="text-3xl font-extrabold tracking-tight uppercase">Seus Registros Estão Prontos</h3>
+                      <p className="text-[10px] font-bold uppercase tracking-[0.3em] text-brand-primary mt-2">Download em Alta Definição</p>
+                    </div>
+                    <Unlock size={24} className="text-brand-primary" strokeWidth={1} />
+                  </div>
+
+                  <div className="grid grid-cols-1 gap-4">
+                    {access.lightroomUrl && (
+                      <a href={access.lightroomUrl} target="_blank" rel="noopener noreferrer"
+                        className="flex items-center justify-between p-6 bg-theme-bg border border-theme-border hover:border-theme-text transition-all group">
+                        <div className="flex items-center gap-5">
+                          <div className="w-10 h-10 flex items-center justify-center border border-theme-border text-theme-muted group-hover:text-theme-text transition-all font-sans font-bold">Lr</div>
+                          <div>
+                            <p className="text-[13px] font-bold uppercase tracking-widest text-theme-text">Álbum de Fotos</p>
+                            <p className="text-[10px] text-theme-muted uppercase tracking-widest mt-1">Adobe Creative Cloud</p>
+                          </div>
+                        </div>
+                        <ExternalLink size={16} className="text-theme-muted group-hover:text-theme-text transition-all" />
+                      </a>
+                    )}
+                    {access.driveUrl && (
+                      <a href={access.driveUrl} target="_blank" rel="noopener noreferrer"
+                        className="flex items-center justify-between p-6 bg-theme-bg border border-theme-border hover:border-theme-text transition-all group">
+                        <div className="flex items-center gap-5">
+                          <div className="w-10 h-10 flex items-center justify-center border border-theme-border text-theme-muted group-hover:text-theme-text transition-all">
+                            <motion.div animate={{ rotate: 360 }} transition={{ duration: 10, repeat: Infinity, ease: "linear" }}>🎥</motion.div>
+                          </div>
+                          <div>
+                            <p className="text-[13px] font-bold uppercase tracking-widest text-theme-text">Vídeos & Reels</p>
+                            <p className="text-[10px] text-theme-muted uppercase tracking-widest mt-1">Google Drive Storage</p>
+                          </div>
+                        </div>
+                        <ExternalLink size={16} className="text-theme-muted group-hover:text-theme-text transition-all" />
+                      </a>
+                    )}
+                  </div>
 
                   {accessExpiresAt && (
-                    <div style={{ 
-                      marginBottom: 16, 
-                      padding: "10px 14px", 
-                      background: accessType === "PRIVATE" ? "#1a0a0a" : "#0f130a", 
-                      border: `1px solid ${accessType === "PRIVATE" ? "#3a1a1a" : T.border}`,
-                      borderRadius: 2
-                    }}>
-                      <p style={{ fontSize: 11, color: accessType === "PRIVATE" ? "#f87171" : T.accent, margin: 0 }}>
-                        {accessType === "PRIVATE" ? "⚠️ ACESSO PRIVADO" : "📅 ÁLBUM PÚBLICO"} — Expira em{" "}
-                        <strong>{new Date(accessExpiresAt).toLocaleDateString("pt-BR")}</strong>
-                        {" "}({Math.ceil((new Date(accessExpiresAt).getTime() - Date.now()) / 86400000)} dias restantes)
-                      </p>
-                    </div>
-                  )}
-
-                  {access && (
-                    <div style={{ display: "flex", flexDirection: "column", gap: 10 }}>
-                      {access.lightroomUrl && (
-                        <a href={access.lightroomUrl} target="_blank" rel="noopener noreferrer"
-                          style={{ display: "flex", justifyContent: "space-between", alignItems: "center", padding: "14px 16px", background: T.bg, border: `1px solid #1e3a1e`, textDecoration: "none" }}>
-                          <div>
-                            <p style={{ fontSize: 13, fontWeight: 500, color: T.text, marginBottom: 2 }}>Álbum de Fotos</p>
-                            <p style={{ fontSize: 11, color: T.text3 }}>Adobe Portfolio · Alta resolução</p>
-                          </div>
-                          <span style={{ fontSize: 12, color: T.accent }}>Abrir ↗</span>
-                        </a>
-                      )}
-                      {access.driveUrl && (
-                        <a href={access.driveUrl} target="_blank" rel="noopener noreferrer"
-                          style={{ display: "flex", justifyContent: "space-between", alignItems: "center", padding: "14px 16px", background: T.bg, border: `1px solid #1e3a1e`, textDecoration: "none" }}>
-                          <div>
-                            <p style={{ fontSize: 13, fontWeight: 500, color: T.text, marginBottom: 2 }}>Vídeo & Reels</p>
-                            <p style={{ fontSize: 11, color: T.text3 }}>Google Drive · Download disponível</p>
-                          </div>
-                          <span style={{ fontSize: 12, color: T.accent }}>Abrir ↗</span>
-                        </a>
-                      )}
+                    <div className="flex items-center gap-3 p-4 bg-theme-bg-muted/50 border border-theme-border text-[9px] font-medium uppercase tracking-[0.2em] text-theme-muted">
+                      <Info size={14} className="text-brand-primary" />
+                      O acesso expira em {new Date(accessExpiresAt).toLocaleDateString("pt-BR")} · 
+                      Restam {Math.ceil((new Date(accessExpiresAt).getTime() - Date.now()) / 86400000)} dias
                     </div>
                   )}
                 </>
+              ) : (
+                <div className="text-center py-6">
+                   <Gift className="mx-auto mb-6 text-brand-primary/40" size={48} strokeWidth={1} />
+                   <h3 className="text-2xl font-extrabold tracking-tight uppercase text-theme-text">Contribuição Registrada</h3>
+                   <p className="text-theme-muted text-[11px] font-bold uppercase tracking-[0.2em] mt-4 leading-relaxed max-w-sm mx-auto">
+                     A meta de {formatCurrency(event.targetAmount || 0)} ainda não foi atingida. 
+                     Os registros serão desbloqueados para todos assim que o objetivo coletivo for concluído.
+                   </p>
+                   {/* Progress Visual in success state */}
+                   <div className="mt-8 max-w-xs mx-auto">
+                      <div className="w-full h-[2px] bg-theme-border relative">
+                        <motion.div 
+                          initial={{ width: 0 }}
+                          animate={{ width: `${Math.min(100, (Number(event.collectedAmount) / Number(event.targetAmount || 1)) * 100)}%` }}
+                          className="absolute inset-0 bg-brand-primary"
+                        />
+                      </div>
+                      <div className="flex justify-between mt-3 text-[9px] font-bold uppercase tracking-widest text-brand-primary">
+                        <span>{Math.round((Number(event.collectedAmount) / Number(event.targetAmount || 1)) * 100)}%</span>
+                        <span>{formatCurrency(Number(event.collectedAmount))}</span>
+                      </div>
+                   </div>
+                </div>
               )}
-            </div>
+            </motion.div>
           )}
         </div>
 
-        {/* DIREITA */}
-        <div className="mobile-sidebar" style={{ position: "sticky", top: "2rem" }}>
-
-          {/* PAYWALL */}
+        {/* Right Column: Checkout Flow */}
+        <aside className="lg:col-span-5 space-y-8 lg:sticky lg:top-32">
+          
+          {/* STEP: PAYWALL */}
           {step === "paywall" && (
-            <div style={{ background: T.bgCard, border: `1px solid ${T.border}`, padding: 24 }}>
-              <p style={{ fontSize: 10, letterSpacing: 2, textTransform: "uppercase", color: T.accent, marginBottom: 16 }}>Exclusive Collection</p>
-              <p style={{ fontFamily: T.fontD, fontWeight: 900, fontSize: 44, color: "#fff", marginBottom: 4 }}>
-                {formatCurrency(Number(event.priceBase))}
-              </p>
-              <p style={{ fontSize: 12, color: T.text3, marginBottom: 20 }}>Acesso vitalício · Download imediato</p>
+            <motion.div 
+              initial={{ opacity: 0, x: 20 }}
+              animate={{ opacity: 1, x: 0 }}
+              className="bg-theme-bg-muted border border-theme-border p-8 md:p-12 editorial-shadow transition-colors"
+            >
+              <div className="text-[10px] font-bold uppercase tracking-[0.5em] text-brand-primary mb-6">Arquivo Editorial</div>
+              <div className="space-y-1 mb-10">
+                <div className="text-5xl font-black tracking-tight text-theme-text uppercase">
+                  {formatCurrency(Number(event.priceBase))}
+                </div>
+                <div className="text-[11px] font-medium uppercase tracking-[0.2em] text-theme-muted">Acesso Vitalício Individual</div>
+              </div>
+
               {Number(event.priceEarly) < Number(event.priceBase) && (
-                <div style={{ background: "#0f130a", border: `1px solid ${T.border}`, padding: "10px 12px", marginBottom: 20 }}>
-                  <p style={{ fontSize: 11, color: T.accent }}>
-                    Antecipado: {formatCurrency(Number(event.priceEarly))}
+                <div className="p-4 bg-brand-primary/10 border border-brand-primary/20 mb-8">
+                  <p className="text-[10px] font-bold uppercase tracking-[0.2em] text-brand-primary">
+                    Desconto Antecipado: {formatCurrency(Number(event.priceEarly))}
                   </p>
                 </div>
               )}
-              <div style={{ borderTop: `1px solid ${T.border}`, borderBottom: `1px solid ${T.border}`, padding: "16px 0", marginBottom: 20 }}>
+
+              <ul className="space-y-4 mb-12 border-t border-theme-border pt-8">
                 {[
-                  event.temFoto && "Álbum completo em alta resolução",
-                  event.temVideo && "Vídeo cinematográfico completo",
-                  event.temReels && "Reels editados para redes sociais",
-                  event.temFotoImpressa && "Foto impressa no local",
-                ].filter(Boolean).map((item) => (
-                  <div key={item as string} style={{ display: "flex", alignItems: "center", gap: 8, marginBottom: 10, fontSize: 13, color: T.text2 }}>
-                    <span style={{ width: 5, height: 5, background: T.accent, borderRadius: "50%", flexShrink: 0 }} />
-                    {item}
-                  </div>
+                  "Arquivos originais em alta resolução",
+                  "Sem marcas d'água de proteção",
+                  "Licença para uso em redes sociais",
+                  "Backup garantido por 12 meses"
+                ].map(item => (
+                  <li key={item} className="flex items-center gap-4 text-[11px] font-medium uppercase tracking-wider text-theme-muted">
+                    <CheckCircle2 size={14} className="text-brand-primary" /> {item}
+                  </li>
                 ))}
-              </div>
+              </ul>
+
               <button
                 onClick={() => setStep("checkout")}
-                style={{ width: "100%", background: T.accent, color: "#0c0c0c", border: "none", padding: 14, fontFamily: T.fontD, fontWeight: 900, fontSize: 15, letterSpacing: 2, textTransform: "uppercase", cursor: "pointer" }}
+                className="w-full py-6 bg-theme-text text-theme-bg text-[11px] font-bold uppercase tracking-[0.4em] hover:opacity-90 transition-all flex items-center justify-center gap-3"
               >
-                Desbloquear Arquivos
+                DESBLOQUEAR PROTOCOLO <ChevronRight size={14} />
               </button>
-              <p style={{ fontSize: 10, color: T.text3, textAlign: "center", marginTop: 10, letterSpacing: "0.5px" }}>
-                Secure Payment · Instant Access · SSL
-              </p>
-            </div>
+
+              <div className="mt-8 flex items-center justify-center gap-6 opacity-30">
+                <ShieldCheck size={20} strokeWidth={1} />
+                <CreditCard size={20} strokeWidth={1} />
+              </div>
+            </motion.div>
           )}
 
-          {/* GIFT QUOTA / CROWDFUNDING UI */}
+          {/* STEP: CROWDFUND / GIFT */}
           {step === "paywall" && event.isCrowdfund && (
-            <div style={{ background: "#0f130a", border: `1px solid ${T.border}`, padding: 24, marginTop: 24 }}>
-              <p style={{ fontSize: 10, letterSpacing: 2, textTransform: "uppercase", color: "#4ade80", marginBottom: 12, fontWeight: "bold" }}>
-                🎁 Presente Coletivo (Cota)
-              </p>
-              
-              {/* Progress Bar */}
-              <div style={{ marginBottom: 20 }}>
-                <div style={{ display: "flex", justifyContent: "space-between", marginBottom: 8 }}>
-                  <span style={{ fontSize: 11, color: T.text }}>{formatCurrency(Number(event.collectedAmount))}</span>
-                  <span style={{ fontSize: 11, color: T.text3 }}>Meta: {formatCurrency(Number(event.targetAmount || 0))}</span>
+            <motion.div 
+               initial={{ opacity: 0, y: 20 }}
+               animate={{ opacity: 1, y: 0 }}
+               className="bg-brand-primary/5 border border-brand-primary/20 p-8 md:p-12 editorial-shadow"
+            >
+              <div className="flex items-center gap-3 mb-8">
+                <Gift size={20} className="text-brand-primary" strokeWidth={1.5} />
+                <h3 className="text-[14px] font-bold uppercase tracking-[0.3em] text-theme-text">Cota de Presente</h3>
+              </div>
+
+              {/* Progress Visual */}
+              <div className="mb-10 space-y-4">
+                <div className="flex items-end justify-between font-bold text-2xl uppercase">
+                  <span className="text-theme-text font-black">{formatCurrency(Number(event.collectedAmount))}</span>
+                  <span className="text-[11px] font-bold uppercase tracking-widest text-theme-muted">Meta: {formatCurrency(Number(event.targetAmount || 0))}</span>
                 </div>
-                <div style={{ width: "100%", height: 6, background: "#1a2114", perspective: 1000 }}>
-                  <div style={{ 
-                    width: `${Math.min(100, (Number(event.collectedAmount) / Number(event.targetAmount || 1)) * 100)}%`, 
-                    height: "100%", 
-                    background: "#5D6532", 
-                    boxShadow: "0 0 10px rgba(93,101,50,0.5)",
-                    transition: "width 1.5s cubic-bezier(0.4, 0, 0.2, 1)" 
-                  }} />
+                <div className="w-full h-[3px] bg-theme-border overflow-hidden">
+                  <motion.div 
+                    initial={{ width: 0 }}
+                    animate={{ width: `${Math.min(100, (Number(event.collectedAmount) / Number(event.targetAmount || 1)) * 100)}%` }}
+                    className="h-full bg-brand-primary shadow-[0_0_15px_rgba(133,185,172,0.5)]"
+                    transition={{ duration: 2, ease: "circOut" }}
+                  />
                 </div>
-                <p style={{ fontSize: 10, color: T.text3, marginTop: 10, textAlign: "center", fontStyle: "italic" }}>
-                  {Math.round((Number(event.collectedAmount) / Number(event.targetAmount || 1)) * 100)}% arrecadado para liberar o álbum
+                <p className="text-[10px] font-bold uppercase tracking-[0.3em] text-theme-muted text-center">
+                  {Math.round((Number(event.collectedAmount) / Number(event.targetAmount || 1)) * 100)}% Arrecadado
                 </p>
               </div>
 
-              <div className="space-y-4">
-                <p style={{ fontSize: 11, color: T.text, marginBottom: 12 }}>Quanto deseja presentear?</p>
-                <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 10, marginBottom: 16 }}>
+              <div className="space-y-6">
+                <div className="grid grid-cols-2 gap-3">
                   {[30, 50, 100, 200].map(val => (
                     <button 
                       key={val} 
                       onClick={() => { setContributionAmount(val); setStep("checkout"); }}
-                      style={{ 
-                        padding: "10px 0", 
-                        background: "transparent", 
-                        border: `1px solid #1e3a1e`, 
-                        color: "#fff", 
-                        fontSize: 12, 
-                        fontWeight: "bold",
-                        cursor: "pointer"
-                      }}
+                      className="py-4 border border-theme-border text-theme-text font-bold text-[12px] tracking-widest hover:border-brand-primary hover:text-brand-primary transition-all"
                     >
                       {formatCurrency(val)}
                     </button>
                   ))}
                 </div>
-                <div style={{ position: "relative", marginBottom: 10 }}>
-                   <input 
-                      type="text" 
-                      placeholder="Seu Nome (Aparece no Relatório)"
-                      value={contributorName}
-                      onChange={(e) => setContributorName(e.target.value)}
-                      style={{ width: "100%", background: "black", border: "1px solid #1e3a1e", padding: 12, color: "#fff", fontSize: 12, outline: "none" }}
-                   />
-                </div>
-                <div style={{ position: "relative" }}>
-                   <input 
+                
+                <div className="space-y-3">
+                  <input 
+                    type="text" 
+                    placeholder="Nome p/ o Relatório"
+                    value={contributorName}
+                    onChange={(e) => setContributorName(e.target.value)}
+                    className="w-full bg-theme-bg border border-theme-border px-5 py-4 text-[12px] font-medium placeholder:text-theme-muted/50 focus:border-brand-primary outline-none transition-colors"
+                  />
+                  <div className="relative">
+                    <input 
                       type="number" 
-                      placeholder="Outro valor..."
+                      placeholder="Outro Valor..."
                       value={contributionAmount}
                       onChange={(e) => setContributionAmount(Number(e.target.value))}
-                      style={{ width: "100%", background: "black", border: "1px solid #1e3a1e", padding: 12, color: "#fff", fontSize: 12, outline: "none" }}
-                   />
-                   <button 
-                     onClick={() => setStep("checkout")}
-                     style={{ position: "absolute", right: 10, top: 10, background: "none", border: "none", color: "#5D6532", fontSize: 11, fontWeight: "bold", cursor: "pointer" }}
-                   >
-                     CONTRIBUIR
-                   </button>
+                      className="w-full bg-theme-bg border border-theme-border px-5 py-4 text-[12px] font-medium placeholder:text-theme-muted/50 focus:border-brand-primary outline-none transition-colors"
+                    />
+                    <button 
+                      onClick={() => setStep("checkout")}
+                      className="absolute right-4 top-1/2 -translate-y-1/2 text-[10px] font-bold uppercase tracking-[0.2em] text-brand-primary hover:text-theme-text"
+                    >
+                      Presentear
+                    </button>
+                  </div>
                 </div>
               </div>
-            </div>
+            </motion.div>
           )}
 
-          {/* CHECKOUT */}
+          {/* STEP: CHECKOUT FORM */}
           {step === "checkout" && (
-            <div style={{ background: T.bgCard, border: `1px solid ${T.border}` }}>
-              <div style={{ padding: "16px 20px", borderBottom: `1px solid ${T.border}`, display: "flex", justifyContent: "space-between", alignItems: "center" }}>
-                <span style={{ fontSize: 11, letterSpacing: 2, textTransform: "uppercase", color: T.text2 }}>Secure Checkout</span>
-                <button onClick={() => setStep("paywall")} style={{ background: "none", border: "none", color: T.text3, fontSize: 11, cursor: "pointer", letterSpacing: 1, textTransform: "uppercase" }}>
-                  Voltar
+            <motion.div 
+               initial={{ opacity: 0, x: 20 }}
+               animate={{ opacity: 1, x: 0 }}
+               className="bg-theme-bg-muted border border-theme-border editorial-shadow overflow-hidden"
+            >
+              <div className="px-8 py-6 border-b border-theme-border flex justify-between items-center bg-theme-bg/30">
+                <span className="text-[10px] font-bold uppercase tracking-[0.3em] text-theme-muted">Finalização Segura</span>
+                <button 
+                  onClick={() => setStep("paywall")} 
+                  className="text-[9px] font-bold uppercase tracking-[0.2em] text-theme-muted hover:text-brand-primary transition-colors"
+                >
+                  Cancelar
                 </button>
               </div>
-              <div style={{ padding: 20 }}>
-                {/* Resumo */}
-                <div style={{ background: T.bg, border: `1px solid ${T.border}`, padding: "12px 14px", marginBottom: 20, display: "flex", justifyContent: "space-between", alignItems: "center" }}>
-                  <span style={{ fontSize: 12, color: T.text3 }}>{event.title}</span>
-                  <span style={{ fontFamily: T.fontD, fontSize: 18, fontWeight: 700, color: T.accent }}>
+
+              <div className="p-8 space-y-8">
+                {/* Order Summary */}
+                <div className="flex justify-between items-end border-b border-theme-border pb-8">
+                  <div className="text-3xl font-black tracking-tight uppercase">
                     {formatCurrency(event.isCrowdfund ? contributionAmount : Number(event.priceBase))}
-                  </span>
+                  </div>
                 </div>
 
                 {error && (
-                  <div style={{ background: "#1a0a0a", border: "1px solid #3a1a1a", padding: "10px 12px", marginBottom: 16 }}>
-                    <p style={{ fontSize: 12, color: "#f87171", margin: 0 }}>{error}</p>
-                  </div>
+                  <motion.div 
+                    initial={{ height: 0, opacity: 0 }}
+                    animate={{ height: "auto", opacity: 1 }}
+                    className="p-4 bg-red-400/5 border border-red-400/20 text-red-500 text-[11px] font-medium uppercase tracking-wider"
+                  >
+                    {error}
+                  </motion.div>
                 )}
 
-                {/* Campos */}
-                {[
-                  { k: "number", label: "Número do cartão", placeholder: "0000 0000 0000 0000", maxLength: 19 },
-                  { k: "name", label: "Nome no cartão", placeholder: "Nome impresso" },
-                ].map(({ k, label, placeholder, maxLength }) => (
-                  <div key={k} style={{ marginBottom: 14 }}>
-                    <label style={{ fontSize: 10, letterSpacing: 1.5, textTransform: "uppercase", color: T.text3, display: "block", marginBottom: 6 }}>{label}</label>
+                {/* Card Inputs */}
+                <div className="space-y-6">
+                  <div className="space-y-2">
+                    <label className="text-[9px] font-black uppercase tracking-[0.3em] text-theme-muted">Número do Cartão</label>
+                    <div className="relative">
+                      <input
+                        value={cardData.number}
+                        onChange={handleChange("number")}
+                        placeholder="0000 0000 0000 0000"
+                        maxLength={19}
+                        className="w-full bg-theme-bg border border-theme-border px-5 py-4 text-[13px] font-medium placeholder:text-theme-muted/30 focus:border-theme-text outline-none transition-all"
+                      />
+                      <div className="absolute right-4 top-1/2 -translate-y-1/2 opacity-20">
+                        <CreditCard size={18} strokeWidth={1} />
+                      </div>
+                    </div>
+                  </div>
+
+                  <div className="space-y-2">
+                    <label className="text-[9px] font-black uppercase tracking-[0.3em] text-theme-muted">Titular (Impressão)</label>
                     <input
-                      value={cardData[k as keyof typeof cardData]}
-                      onChange={set(k)}
-                      placeholder={placeholder}
-                      maxLength={maxLength}
-                      style={{ width: "100%", background: T.bg, border: `1px solid ${T.border2}`, padding: "10px 12px", fontSize: 13, color: T.text, fontFamily: T.fontB }}
+                      value={cardData.name}
+                      onChange={handleChange("name")}
+                      placeholder="Identico ao Cartão"
+                      className="w-full bg-theme-bg border border-theme-border px-5 py-4 text-[13px] font-medium placeholder:text-theme-muted/30 focus:border-theme-text outline-none transition-all uppercase"
                     />
                   </div>
-                ))}
 
-                <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr 1fr", gap: 8, marginBottom: 14 }}>
-                  {[
-                    { k: "month", label: "Mês", placeholder: "MM", max: 2 },
-                    { k: "year", label: "Ano", placeholder: "AA", max: 2 },
-                    { k: "cvv", label: "CVV", placeholder: "000", max: 4 },
-                  ].map(({ k, label, placeholder, max }) => (
-                    <div key={k}>
-                      <label style={{ fontSize: 10, letterSpacing: 1.5, textTransform: "uppercase", color: T.text3, display: "block", marginBottom: 6 }}>{label}</label>
-                      <input value={cardData[k as keyof typeof cardData]} onChange={set(k)} placeholder={placeholder} maxLength={max}
-                        style={{ width: "100%", background: T.bg, border: `1px solid ${T.border2}`, padding: "10px 12px", fontSize: 13, color: T.text, fontFamily: T.fontB }} />
+                  <div className="grid grid-cols-3 gap-4">
+                    <div className="space-y-2">
+                      <label className="text-[9px] font-black uppercase tracking-[0.3em] text-theme-muted">Mês</label>
+                      <input value={cardData.month} onChange={handleChange("month")} placeholder="MM" maxLength={2} className="w-full bg-theme-bg border border-theme-border px-4 py-4 text-[13px] text-center font-medium focus:border-theme-text outline-none" />
                     </div>
-                  ))}
+                    <div className="space-y-2">
+                      <label className="text-[9px] font-black uppercase tracking-[0.3em] text-theme-muted">Ano</label>
+                      <input value={cardData.year} onChange={handleChange("year")} placeholder="AA" maxLength={2} className="w-full bg-theme-bg border border-theme-border px-4 py-4 text-[13px] text-center font-medium focus:border-theme-text outline-none" />
+                    </div>
+                    <div className="space-y-2">
+                      <label className="text-[9px] font-black uppercase tracking-[0.3em] text-theme-muted">CVV</label>
+                      <input value={cardData.cvv} onChange={handleChange("cvv")} placeholder="000" maxLength={4} className="w-full bg-theme-bg border border-theme-border px-4 py-4 text-[13px] text-center font-medium focus:border-theme-text outline-none" />
+                    </div>
+                  </div>
+
+                  <div className="space-y-2">
+                    <label className="text-[9px] font-black uppercase tracking-[0.3em] text-theme-muted">Documento (CPF)</label>
+                    <input value={cardData.cpf} onChange={handleChange("cpf")} placeholder="000.000.000-00" className="w-full bg-theme-bg border border-theme-border px-5 py-4 text-[13px] font-medium focus:border-theme-text outline-none" />
+                  </div>
+
+                  <div className="space-y-2">
+                    <label className="text-[9px] font-black uppercase tracking-[0.3em] text-theme-muted">E-mail para Recebimento</label>
+                    <input value={cardData.email} onChange={handleChange("email")} placeholder="seu@email.com" className="w-full bg-theme-bg border border-theme-border px-5 py-4 text-[13px] font-medium focus:border-theme-text outline-none" />
+                  </div>
                 </div>
 
-                {[
-                  { k: "email", label: "E-mail p/ recibo", placeholder: "seu@email.com" },
-                  { k: "cpf", label: "CPF do titular", placeholder: "000.000.000-00" },
-                ].map(({ k, label, placeholder }) => (
-                  <div key={k} style={{ marginBottom: 14 }}>
-                    <label style={{ fontSize: 10, letterSpacing: 1.5, textTransform: "uppercase", color: T.text3, display: "block", marginBottom: 6 }}>{label}</label>
-                    <input value={cardData[k as keyof typeof cardData]} onChange={set(k)} placeholder={placeholder}
-                      style={{ width: "100%", background: T.bg, border: `1px solid ${T.border2}`, padding: "10px 12px", fontSize: 13, color: T.text, fontFamily: T.fontB }} />
-                  </div>
-                ))}
+                <div className="space-y-4 pt-4">
+                  {!cardToken ? (
+                    <button 
+                      onClick={handleTokenize} 
+                      disabled={tokenizing || !mpLoaded}
+                      className="w-full py-4 border border-theme-text/20 text-[10px] font-bold uppercase tracking-[0.3em] hover:bg-theme-text hover:text-theme-bg transition-all disabled:opacity-30"
+                    >
+                      {tokenizing ? "Sincronizando..." : "Validar Cartão"}
+                    </button>
+                  ) : (
+                    <div className="py-4 bg-brand-primary/10 border border-brand-primary/30 text-[10px] font-bold uppercase tracking-[0.3em] text-brand-primary text-center">
+                      ✓ Sincronização Autêntica
+                    </div>
+                  )}
 
-                {!cardToken ? (
-                  <button onClick={handleTokenize} disabled={tokenizing || !mpLoaded}
-                    style={{ width: "100%", background: "transparent", border: `1px solid ${T.border2}`, padding: 11, fontSize: 11, letterSpacing: 1.5, textTransform: "uppercase", color: tokenizing ? T.text3 : T.text2, cursor: "pointer", fontFamily: T.fontB, marginBottom: 8 }}>
-                    {tokenizing ? "Verificando..." : "Validar Cartão"}
+                  <button 
+                    onClick={handlePay} 
+                    disabled={!cardToken}
+                    className="w-full py-6 bg-theme-text text-theme-bg text-[12px] font-bold uppercase tracking-[0.4em] hover:opacity-90 transition-all disabled:opacity-20"
+                  >
+                    Confirmar Transação
                   </button>
-                ) : (
-                  <div style={{ padding: "10px 14px", background: "#0d1a0d", border: "1px solid #1e3a1e", marginBottom: 8, fontSize: 12, color: "#4ade80", letterSpacing: "0.5px" }}>
-                    ✓ Cartão verificado
+                </div>
+              </div>
+            </motion.div>
+          )}
+
+          {/* STEP: PROCESSING */}
+          {step === "processing" && (
+            <motion.div 
+               initial={{ opacity: 0, scale: 0.95 }}
+               animate={{ opacity: 1, scale: 1 }}
+               className="bg-theme-bg-muted border border-theme-border p-16 editorial-shadow text-center"
+            >
+              <div className="w-12 h-12 border-2 border-brand-primary border-t-transparent rounded-full animate-spin mx-auto mb-10" />
+              <h3 className="text-3xl font-extrabold tracking-tight uppercase mb-4">Registrando Acesso</h3>
+              <p className="text-[10px] font-bold uppercase tracking-[0.3em] text-theme-muted">Sincronizando com a Rede Foto Segundo...</p>
+            </motion.div>
+          )}
+
+          {/* STEP: SUCCESS SIDEBAR */}
+          {step === "success" && (
+            <motion.div 
+               initial={{ opacity: 0, scale: 0.95 }}
+               animate={{ opacity: 1, scale: 1 }}
+               className="bg-brand-primary/10 border border-brand-primary p-12 editorial-shadow text-center relative overflow-hidden"
+            >
+              <motion.div 
+                initial={{ rotate: -15, x: 20, y: -20, opacity: 0.2 }}
+                className="absolute top-0 right-0 text-brand-primary"
+              >
+                <CheckCircle2 size={120} strokeWidth={0.5} />
+              </motion.div>
+              
+              <div className="relative z-10">
+                <div className="w-16 h-16 bg-brand-primary/20 rounded-full flex items-center justify-center mx-auto mb-8 border border-brand-primary/40">
+                  <CheckCircle2 size={32} className="text-brand-primary" strokeWidth={1} />
+                </div>
+                <h3 className="text-3xl font-extrabold tracking-tight uppercase mb-3">Sucesso Editorial</h3>
+                <p className="text-[10px] font-bold uppercase tracking-[0.3em] text-theme-muted mb-10">Protocolo Desbloqueado com Sucesso</p>
+                
+                {orderId && (
+                  <div className="pt-8 border-t border-brand-primary/20 flex flex-col items-center gap-2">
+                    <span className="text-[9px] font-bold uppercase tracking-[0.1em] text-theme-muted">Autenticação do Pedido</span>
+                    <span className="text-[12px] font-sans font-bold text-brand-primary uppercase tracking-widest">{orderId.slice(-12)}</span>
                   </div>
                 )}
-
-                <button onClick={handlePay} disabled={!cardToken}
-                  style={{ width: "100%", background: cardToken ? T.accent : "#1a1a1a", color: cardToken ? "#0c0c0c" : T.text3, border: "none", padding: 13, fontFamily: T.fontD, fontWeight: 900, fontSize: 14, letterSpacing: 2, textTransform: "uppercase", cursor: cardToken ? "pointer" : "not-allowed" }}>
-                  Finalizar · {formatCurrency(event.isCrowdfund ? contributionAmount : Number(event.priceBase))}
-                </button>
               </div>
-            </div>
+            </motion.div>
           )}
+        </aside>
+      </main>
 
-          {/* PROCESSING */}
-          {step === "processing" && (
-            <div style={{ background: T.bgCard, border: `1px solid ${T.border}`, padding: "48px 24px", textAlign: "center" }}>
-              <div style={{ width: 36, height: 36, border: `2px solid ${T.accent}`, borderTopColor: "transparent", borderRadius: "50%", margin: "0 auto 20px", animation: "spin .8s linear infinite" }} />
-              <p style={{ fontFamily: T.fontD, fontWeight: 900, fontSize: 22, color: "#fff", textTransform: "uppercase", marginBottom: 8 }}>
-                Processando
-              </p>
-              <p style={{ fontSize: 12, color: T.text3 }}>Confirmando seu pagamento...</p>
-              <style>{`@keyframes spin{to{transform:rotate(360deg)}}`}</style>
-            </div>
-          )}
-
-          {/* SUCCESS */}
-          {step === "success" && (
-            <div style={{ background: "#0d1a0d", border: "1px solid #1e3a1e", padding: 24, textAlign: "center" }}>
-              <div style={{ width: 44, height: 44, border: "2px solid #4ade80", borderRadius: "50%", margin: "0 auto 16px", display: "flex", alignItems: "center", justifyContent: "center" }}>
-                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#4ade80" strokeWidth="2.5">
-                  <polyline points="20,6 9,17 4,12"/>
-                </svg>
-              </div>
-              <p style={{ fontFamily: T.fontD, fontWeight: 900, fontSize: 22, color: "#fff", textTransform: "uppercase", marginBottom: 6 }}>
-                Pagamento Confirmado
-              </p>
-              <p style={{ fontSize: 12, color: T.text3, marginBottom: 20 }}>
-                Seus arquivos estão disponíveis ao lado.
-              </p>
-              {orderId && (
-                <p style={{ fontSize: 10, color: T.text3, letterSpacing: "0.5px" }}>
-                  Pedido: <span style={{ fontFamily: "monospace", color: "#555" }}>{orderId.slice(-8).toUpperCase()}</span>
-                </p>
-              )}
-            </div>
-          )}
+      {/* Footer / Legal */}
+      <footer className="mt-24 py-24 border-t border-theme-border bg-theme-bg-muted/30">
+        <div className="max-w-xl mx-auto text-center px-6 opacity-40 hover:opacity-100 transition-opacity duration-700">
+           <h4 className="text-[14px] font-bold uppercase tracking-[0.5em] mb-8">FOTO SEGUNDO EDITORIAL</h4>
+           <p className="text-[9px] font-bold uppercase tracking-[0.2em] leading-relaxed mb-6">
+             Plataforma de curadoria fotográfica e cinematográfica. 
+             Todos os registros são protegidos por direitos autorais e sincronizados em tempo real.
+           </p>
+           <div className="text-[8px] font-medium tracking-[0.1em] text-theme-muted uppercase">
+             © {new Date().getFullYear()} REDE FS · TODOS OS DIREITOS RESERVADOS
+           </div>
         </div>
-      </div>
+      </footer>
 
       {needsAccessChoice && orderId && event && (
         <AccessTypeModal
@@ -704,3 +812,4 @@ export default function EventPage() {
     </div>
   );
 }
+

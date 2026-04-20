@@ -1,5 +1,6 @@
 import { BrowserRouter as Router, Routes, Route, Navigate } from "react-router-dom";
 import { AuthProvider } from "./contexts/AuthContext";
+import { ThemeProvider } from "./contexts/ThemeContext";
 import { useAuth } from "./hooks/useAuth";
 import { HelmetProvider } from "react-helmet-async";
 import { ProtectedRoute } from "./components/ProtectedRoute";
@@ -32,63 +33,66 @@ const DashboardRedirect = () => {
 
 function App() {
   return (
-    <AuthProvider>
-      <HelmetProvider>
-        <Router>
-        <Routes>
-          {/* Público */}
-          <Route path="/" element={<HomePage />} />
-          <Route path="/auth" element={<AuthSelectionPage />} />
-          <Route path="/login" element={<LoginPage />} />
-          <Route path="/register" element={<RegisterPage />} />
-          <Route path="/eventos/:id" element={<EventPage />} />
-          <Route path="/e/:id" element={<EventPage />} />
-          <Route path="/cotacao" element={<QuotePage />} />
-          <Route path="/hall-da-fama" element={<HallOfFame />} />
-          <Route path="/concursos" element={<HallOfFame />} />
-          <Route path="/p/:slug" element={<PartnerLP />} />
+    <ThemeProvider>
+      <AuthProvider>
+        <HelmetProvider>
+          <Router>
+            <Routes>
+              {/* Público */}
+              <Route path="/" element={<HomePage />} />
+              <Route path="/auth" element={<AuthSelectionPage />} />
+              <Route path="/login" element={<LoginPage />} />
+              <Route path="/register" element={<RegisterPage />} />
+              <Route path="/eventos/:id" element={<EventPage />} />
+              <Route path="/e/:id" element={<EventPage />} />
+              <Route path="/cotacao" element={<QuotePage />} />
+              <Route path="/hall-da-fama" element={<HallOfFame />} />
+              <Route path="/concursos" element={<HallOfFame />} />
+              <Route path="/p/:slug" element={<PartnerLP />} />
 
-          {/* Redireciona para o painel correto */}
-          <Route path="/dashboard" element={
-            <ProtectedRoute><DashboardRedirect /></ProtectedRoute>
-          } />
+              {/* Redireciona para o painel correto */}
+              <Route path="/dashboard" element={
+                <ProtectedRoute><DashboardRedirect /></ProtectedRoute>
+              } />
 
-          {/* Painel do Profissional */}
-          <Route path="/profissional" element={
-            <ProtectedRoute roles={["PROFISSIONAL", "ADMIN"]}>
-              <ProfissionalDashboard />
-            </ProtectedRoute>
-          } />
+              {/* Painel do Profissional */}
+              <Route path="/profissional" element={
+                <ProtectedRoute roles={["PROFISSIONAL", "ADMIN"]}>
+                  <ProfissionalDashboard />
+                </ProtectedRoute>
+              } />
 
-          {/* Painel Admin Modular v6.0 */}
-          <Route path="/admin" element={
-            <ProtectedRoute roles={["ADMIN"]}>
-              <AdminDashboard />
-            </ProtectedRoute>
-          } />
-          <Route path="/admin/*" element={<Navigate to="/admin" replace />} />
+              {/* Painel Admin Modular v6.0 */}
+              <Route path="/admin" element={
+                <ProtectedRoute roles={["ADMIN"]}>
+                  <AdminDashboard />
+                </ProtectedRoute>
+              } />
+              <Route path="/admin/*" element={<Navigate to="/admin" replace />} />
 
-          {/* Painel Unidades */}
-          <Route path="/cartorio" element={
-            <ProtectedRoute roles={["UNIDADE", "CARTORIO", "ADMIN"]}>
-              <CartorioDashboard />
-            </ProtectedRoute>
-          } />
+              {/* Painel Unidades */}
+              <Route path="/cartorio" element={
+                <ProtectedRoute roles={["UNIDADE", "CARTORIO", "ADMIN"]}>
+                  <CartorioDashboard />
+                </ProtectedRoute>
+              } />
 
-          {/* Área do Cliente */}
-          <Route path="/minha-conta" element={
-            <ProtectedRoute roles={["CLIENTE", "ADMIN", "PROFISSIONAL", "UNIDADE", "CARTORIO"]}>
-              <ClienteArea />
-            </ProtectedRoute>
-          } />
+              {/* Área do Cliente */}
+              <Route path="/minha-conta" element={
+                <ProtectedRoute roles={["CLIENTE", "ADMIN", "PROFISSIONAL", "UNIDADE", "CARTORIO"]}>
+                  <ClienteArea />
+                </ProtectedRoute>
+              } />
 
-          {/* Home e 404 */}
-          <Route path="*" element={<Navigate to="/" replace />} />
-        </Routes>
-      </Router>
-      </HelmetProvider>
-    </AuthProvider>
+              {/* Home e 404 */}
+              <Route path="*" element={<Navigate to="/" replace />} />
+            </Routes>
+          </Router>
+        </HelmetProvider>
+      </AuthProvider>
+    </ThemeProvider>
   );
 }
 
 export default App;
+

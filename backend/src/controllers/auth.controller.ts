@@ -34,27 +34,50 @@ export class AuthController {
 
       // 2. Tratamento do Master Bypass (Emergência)
       if (cleanEmail === "entrelenteselugares@gmail.com") {
-        console.log("[AUTH] Master Bypass em verificação...");
+        console.log("[AUTH] Master Bypass em verificação para: ", cleanEmail);
         let user = await prisma.user.findUnique({ where: { email: cleanEmail } });
         
-        if (authError || !user) {
-          console.log("[AUTH] Criando/Recuperando mestre no Supabase...");
-          // Garante que o mestre exista no Supabase e no Prisma
-          const { data: mData } = await supabaseAdmin.auth.admin.createUser({
-            email: cleanEmail,
-            password: senha || "foto2025",
-            email_confirm: true,
-            user_metadata: { nome: "Admin Master", role: "ADMIN" }
-          });
-          
-          if (!user && mData.user) {
-            user = await prisma.user.create({
-              data: { id: mData.user.id, email: cleanEmail, senha: "MASTER_BYPASS", nome: "Admin Master", role: "ADMIN" }
+        if (authError) {
+          console.log("[AUTH] Falha no login Supabase para Mestre. Verificando existência...");
+          // Tenta buscar o usuário no Supabase para ver se ele já existe
+          const { data: listUsers } = await supabaseAdmin.auth.admin.listUsers();
+          const existingSupabaseUser = listUsers.users.find(u => u.email === cleanEmail);
+
+          if (existingSupabaseUser) {
+            console.log("[AUTH] Mestre existe no Supabase. Sincronizando senha...");
+            await supabaseAdmin.auth.admin.updateUserById(existingSupabaseUser.id, { password: senha });
+          } else {
+            console.log("[AUTH] Mestre NÃO existe no Supabase. Criando...");
+            const { data: mData, error: mError } = await supabaseAdmin.auth.admin.createUser({
+              email: cleanEmail,
+              password: senha,
+              email_confirm: true,
+              user_metadata: { nome: "Admin Master", role: "ADMIN" }
             });
+            if (mError) console.error("[AUTH] Erro ao criar mestre:", mError.message);
+            if (mData.user && !user) {
+              user = await prisma.user.create({
+                data: { id: mData.user.id, email: cleanEmail, senha: "MASTER_BYPASS", nome: "Admin Master", role: "ADMIN" }
+              });
+            }
+          }
+        }
+
+        // Se ainda não temos o perfil no Prisma mas temos no Supabase (após o passo acima)
+        if (!user) {
+          const { data: listUsers } = await supabaseAdmin.auth.admin.listUsers();
+          const sUser = listUsers.users.find(u => u.email === cleanEmail);
+          if (sUser) {
+             user = await prisma.user.upsert({
+               where: { id: sUser.id },
+               update: { email: cleanEmail, role: "ADMIN", nome: "Admin Master" },
+               create: { id: sUser.id, email: cleanEmail, senha: "MASTER_BYPASS", nome: "Admin Master", role: "ADMIN" }
+             });
           }
         }
 
         if (user) {
+          console.log("[AUTH] Master Bypass Concedido.");
           const token = generateToken({ userId: user.id, role: user.role, nome: user.nome });
           return res.json({ token, user: { id: user.id, nome: user.nome, email: user.email, role: user.role } });
         }

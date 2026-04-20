@@ -40,7 +40,7 @@ export const GalleryView: React.FC<GalleryViewProps> = ({ event }) => {
     <div className="min-h-screen pt-24 pb-40 bg-midnight animate-fade-in">
       <header className="px-6 mb-16 text-center max-w-7xl mx-auto">
         <h2 className="mb-2 text-[10px] font-black uppercase tracking-[0.6em] text-brand-indigo">Galeria Desbloqueada</h2>
-        <h1 className="text-4xl font-black italic tracking-tighter uppercase md:text-6xl text-white">
+        <h1 className="text-4xl font-black tracking-tighter uppercase md:text-6xl text-white">
           {event.nomeNoivos}
         </h1>
         <div className="flex items-center justify-center gap-4 mt-6">

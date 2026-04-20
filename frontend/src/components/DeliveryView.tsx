@@ -37,8 +37,8 @@ export const DeliveryView: React.FC<DeliveryViewProps> = ({ event }) => {
           <span className="text-[10px] font-bold uppercase tracking-[0.6em] text-brand-olive">Digital Archive Unlocked</span>
         </div>
 
-        <h1 className="text-5xl md:text-8xl font-serif tracking-tight mb-8">
-          Arquivos <br /><span className="italic text-zinc-600">Disponíveis.</span>
+        <h1 className="text-5xl md:text-8xl tracking-tight mb-8">
+          Arquivos <br /><span className="text-zinc-600">Disponíveis.</span>
         </h1>
         
         <p className="text-zinc-600 text-sm md:text-base leading-relaxed mb-24 max-w-lg mx-auto uppercase tracking-[0.2em] font-light">
@@ -57,7 +57,7 @@ export const DeliveryView: React.FC<DeliveryViewProps> = ({ event }) => {
             <div className="mb-10 text-zinc-700 group-hover:text-white transition-all">
               <PhotoIcon />
             </div>
-            <h3 className="text-xl font-serif text-white mb-4 tracking-tight">Professional Gallery</h3>
+            <h3 className="text-xl text-white mb-4 tracking-tight">Professional Gallery</h3>
             <p className="text-zinc-600 text-[9px] font-bold uppercase tracking-[0.3em] mb-10">Adobe Cloud Experience</p>
             <div className="w-6 h-[1px] bg-zinc-800 group-hover:bg-brand-olive group-hover:w-16 transition-all" />
           </motion.a>
@@ -72,14 +72,14 @@ export const DeliveryView: React.FC<DeliveryViewProps> = ({ event }) => {
             <div className="mb-10 text-zinc-700 group-hover:text-white transition-all">
               <VideoIcon />
             </div>
-            <h3 className="text-xl font-serif text-white mb-4 tracking-tight">Master Repository</h3>
+            <h3 className="text-xl text-white mb-4 tracking-tight">Master Repository</h3>
             <p className="text-zinc-600 text-[9px] font-bold uppercase tracking-[0.3em] mb-10">Google Cloud Master Assets</p>
             <div className="w-6 h-[1px] bg-zinc-800 group-hover:bg-brand-olive group-hover:w-16 transition-all" />
           </motion.a>
         </div>
 
         <div className="mt-24 flex flex-col items-center gap-6">
-           <p className="text-[9px] font-bold uppercase tracking-[0.5em] text-zinc-800 italic">Obrigado pela preferência</p>
+           <p className="text-[9px] font-bold uppercase tracking-[0.5em] text-zinc-800">Obrigado pela preferência</p>
            <button 
              onClick={() => window.print()}
              className="text-[10px] font-bold uppercase tracking-[0.4em] text-zinc-600 hover:text-white border-b border-zinc-900 pb-1 transition-all"

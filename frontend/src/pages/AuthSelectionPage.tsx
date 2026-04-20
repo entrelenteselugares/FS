@@ -34,7 +34,7 @@ export const AuthSelectionPage: React.FC = () => {
   ];
 
   return (
-    <div className="min-h-screen bg-[#050505] flex flex-col items-center justify-center px-6 py-20 overflow-hidden relative">
+    <div className="min-h-screen bg-theme-bg text-theme-text flex flex-col items-center justify-center px-6 py-20 overflow-hidden relative transition-colors duration-300">
       {/* Back Button */}
       <nav className="absolute top-0 left-0 w-full z-50 p-6 pointer-events-none">
         <button 
@@ -58,12 +58,12 @@ export const AuthSelectionPage: React.FC = () => {
         className="text-center mb-32 relative z-10"
       >
         <img src="/assets/logo.png" alt="Foto Segundo" className="h-8 w-auto invert brightness-0 mb-16 mx-auto opacity-80" />
-        <h1 className="text-6xl md:text-9xl font-heading tracking-tighter text-white mb-8 uppercase font-black">
+        <h1 className="text-6xl md:text-9xl font-sans tracking-tighter text-white mb-8 uppercase font-black">
           GATE<span className="text-brand-tactical">KEEPER</span>
         </h1>
         <div className="flex items-center justify-center gap-6">
            <div className="w-16 h-1.5 bg-brand-tactical" />
-           <p className="text-zinc-600 uppercase tracking-[0.8em] text-[10px] font-bold">Protocolo de Identidade</p>
+           <p className="text-theme-muted uppercase tracking-[0.8em] text-[10px] font-bold">Protocolo de Identidade</p>
            <div className="w-16 h-1.5 bg-brand-tactical" />
         </div>
       </motion.div>
@@ -81,15 +81,15 @@ export const AuthSelectionPage: React.FC = () => {
             <div className="mb-12 opacity-40 group-hover:opacity-100 group-hover:text-brand-tactical transition-all transform group-hover:scale-110 duration-500">
               {opt.icon}
             </div>
-            <h3 className="text-4xl font-heading text-white mb-6 tracking-tighter transition-all duration-500 font-bold uppercase">
+            <h3 className="text-4xl font-sans text-white mb-6 tracking-tighter transition-all duration-500 font-extrabold uppercase">
               {opt.title}
             </h3>
-            <p className="text-zinc-700 text-[11px] leading-[1.8] mb-16 font-bold lg:pr-10 uppercase tracking-widest">
+            <p className="text-theme-muted text-[11px] leading-[1.8] mb-16 font-bold lg:pr-10 uppercase tracking-widest">
               {opt.description}
             </p>
             
-            <div className="mt-auto flex items-center gap-6 text-[10px] font-black uppercase tracking-[0.5em] text-zinc-700 group-hover:text-brand-tactical transition-all duration-500">
-              <span className="w-8 h-1 bg-zinc-900 group-hover:bg-brand-tactical transition-all" />
+            <div className="mt-auto flex items-center gap-6 text-[10px] font-black uppercase tracking-[0.5em] text-theme-muted group-hover:text-brand-tactical transition-all duration-500">
+              <span className="w-8 h-1 bg-theme-border group-hover:bg-brand-tactical transition-all" />
               {opt.label}
             </div>
           </motion.div>
@@ -101,9 +101,9 @@ export const AuthSelectionPage: React.FC = () => {
         animate={{ opacity: 1 }}
         transition={{ delay: 1, duration: 1 }}
         onClick={() => navigate("/")}
-        className="mt-32 text-zinc-800 hover:text-brand-tactical text-[11px] font-bold uppercase tracking-[0.8em] transition-all duration-500 flex items-center gap-6 group"
+        className="mt-32 text-theme-muted hover:text-brand-tactical text-[11px] font-bold uppercase tracking-[0.8em] transition-all duration-500 flex items-center gap-6 group"
       >
-        <span className="w-12 h-1.5 bg-zinc-900 group-hover:w-16 group-hover:bg-brand-tactical transition-all" />
+        <span className="w-12 h-1.5 bg-theme-border group-hover:w-16 group-hover:bg-brand-tactical transition-all" />
         VOLTAR À VITRINE
       </motion.button>
     </div>

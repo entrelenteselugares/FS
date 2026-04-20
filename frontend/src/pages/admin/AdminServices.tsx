@@ -52,14 +52,14 @@ export const AdminServices: React.FC = () => {
 
   return (
     <div className="space-y-12 animate-in fade-in slide-in-from-bottom-4 duration-700">
-      <div className="flex items-center justify-between border-b border-white/5 pb-8">
+      <div className="flex items-center justify-between border-b border-theme-border pb-8">
         <div>
-          <h2 className="text-4xl font-heading text-white tracking-tighter uppercase">Catálogo de Serviços</h2>
-          <p className="text-[10px] text-zinc-600 uppercase tracking-[0.5em] mt-2 font-bold italic">Configuração de Produtos e Tabelas de Preço</p>
+          <h2 className="text-4xl font-heading text-theme-text tracking-tighter uppercase font-black">Catálogo de Serviços</h2>
+          <p className="text-[10px] text-theme-muted uppercase tracking-[0.5em] mt-2 font-black italic">Configuração de Produtos e Tabelas de Preço</p>
         </div>
         <button 
           onClick={() => setIsAdding(true)}
-          className="bg-brand-tactical text-white text-[10px] font-bold uppercase tracking-[0.4em] px-10 py-5 hover:brightness-110 transition-all rounded-none flex items-center gap-2"
+          className="bg-brand-tactical text-black text-[10px] font-black uppercase tracking-[0.4em] px-10 py-5 hover:brightness-110 transition-all rounded-none flex items-center gap-2 shadow-xl shadow-brand-tactical/10"
         >
           <Plus size={14} /> ADICIONAR SERVIÇO
         </button>
@@ -97,7 +97,7 @@ export const AdminServices: React.FC = () => {
             </div>
           </div>
           <div className="mt-10 flex gap-4">
-            <button onClick={handleAdd} className="bg-brand-tactical text-white text-[10px] font-bold uppercase tracking-widest px-8 py-3 rounded-none flex items-center gap-2">
+            <button onClick={handleAdd} className="bg-brand-tactical text-black text-[10px] font-bold uppercase tracking-widest px-8 py-3 rounded-none flex items-center gap-2">
               <Save size={14} /> {editingService ? "SALVAR ALTERAÇÕES" : "SALVAR NOVO SERVIÇO"}
             </button>
             <button onClick={() => { setIsAdding(false); setEditingService(null); setNewService({ name: "", description: "", basePrice: 0, category: "FOTOGRAFIA" }); }} className="text-[10px] text-zinc-600 uppercase tracking-widest hover:text-white transition-all">CANCELAR</button>
@@ -106,7 +106,7 @@ export const AdminServices: React.FC = () => {
       )}
 
       <div className="space-y-2">
-        <div className="grid grid-cols-12 gap-4 px-10 py-4 text-[9px] font-bold text-zinc-700 uppercase tracking-[0.4em] border-b border-white/5 bg-white/[0.02]">
+        <div className="grid grid-cols-12 gap-4 px-10 py-4 text-[9px] font-black text-theme-muted uppercase tracking-[0.4em] border-b border-theme-border bg-theme-bg-muted/50">
           <div className="col-span-1">Categoria</div>
           <div className="col-span-4">Serviço / Descrição</div>
           <div className="col-span-3 text-right">Preço Sugerido</div>
@@ -114,26 +114,26 @@ export const AdminServices: React.FC = () => {
         </div>
 
         {services.map(s => (
-          <div key={s.id} className="bg-black hover:bg-white/[0.02] border border-white/5 transition-all group">
+          <div key={s.id} className="bg-theme-bg-muted hover:bg-theme-bg transition-all border border-theme-border group">
             <div className="grid grid-cols-1 md:grid-cols-12 gap-4 items-center px-10 py-6">
               <div className="col-span-1">
-                <span className="text-[8px] font-bold text-zinc-600 border border-zinc-800 px-2 py-0.5 rounded-none">{s.category}</span>
+                <span className="text-[8px] font-black text-theme-muted border border-theme-border px-2 py-0.5 rounded-none">{s.category}</span>
               </div>
               <div className="col-span-4">
-                <div className="text-sm font-bold text-white uppercase tracking-tighter">{s.name}</div>
-                <div className="text-[10px] text-zinc-700 font-bold uppercase tracking-wider truncate mt-0.5 opacity-60 leading-relaxed">{s.description}</div>
+                <div className="text-sm font-black text-theme-text uppercase tracking-tighter">{s.name}</div>
+                <div className="text-[10px] text-theme-muted font-bold uppercase tracking-wider truncate mt-0.5 opacity-60 leading-relaxed">{s.description}</div>
               </div>
               <div className="col-span-3 text-right">
-                <div className="text-sm font-mono font-bold text-brand-tactical tracking-widest">R$ {s.basePrice},00</div>
+                <div className="text-sm font-sans font-black text-brand-tactical tracking-widest">R$ {s.basePrice},00</div>
               </div>
               <div className="col-span-4 flex justify-end gap-6 opacity-30 group-hover:opacity-100 transition-all">
                 <button 
                   onClick={() => handleEditOpen(s)}
-                  className="text-[9px] font-bold text-zinc-600 uppercase tracking-[0.3em] hover:text-white flex items-center gap-2"
+                  className="text-[9px] font-black text-theme-muted uppercase tracking-[0.3em] hover:text-theme-text flex items-center gap-2"
                 >
                   <Edit3 size={11} /> Ajustar
                 </button>
-                <button onClick={() => removeService(s.id)} className="text-[9px] font-bold text-red-900/50 uppercase tracking-[0.3em] hover:text-red-500 flex items-center gap-2">
+                <button onClick={() => removeService(s.id)} className="text-[9px] font-black text-red-500 uppercase tracking-[0.3em] hover:text-red-400 flex items-center gap-2">
                   <Trash2 size={11} /> Remover
                 </button>
               </div>

@@ -10,6 +10,8 @@ async function main() {
     { key: "payout_day",      value: "1",  label: "Dia do repasse (1=Segunda, 5=Sexta)" },
     { key: "payout_cutoff",   value: "0",  label: "Dias de corte antes do repasse" },
     { key: "pix_matriz",      value: "",   label: "Chave Pix da plataforma" },
+    { key: "brand_primary",   value: "#85B9AC", label: "Cor Primária (Logo)" },
+    { key: "brand_tactical",  value: "#85B9AC", label: "Cor Secundária (Tática)" },
   ];
 
   for (const config of configs) {

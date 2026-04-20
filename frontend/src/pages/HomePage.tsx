@@ -2,6 +2,7 @@ import { useState, useEffect, useRef } from "react";
 import { useNavigate } from "react-router-dom";
 import { API } from "../lib/api";
 import { useAuth } from "../hooks/useAuth";
+import { useTheme } from "../contexts/ThemeContext";
 import { Helmet } from "react-helmet-async";
 
 interface Event {
@@ -18,20 +19,19 @@ interface Event {
 
 const CATEGORIAS = ["Todos", "Casamento Civil", "Pré-Wedding", "Eventos Sociais", "Corporativo"];
 
-// Paleta unificada — Design System "Tactical Professional" 🛡️🎨
+// Paleta unificada — Design System "Editorial Portfólio" 📸✨
 const THEME = {
-  bg:       "#0c0c0c",
-  bgCard:   "#111",
-  bgHover:  "#161616",
-  border:   "#1c1c1c",
-  border2:  "#2a2a2a",
-  text:     "#f0ede8",   // texto principal — muito mais legível que #e8e4dc
-  text2:    "#888",      // texto secundário
-  text3:    "#555",      // texto terciário
-  accent:   "#8a9a5b",   // verde oliva
-  accentBg: "#0f130a",   // fundo do accent
-  fontDisplay: "'Barlow Condensed', sans-serif",
-  fontBody:    "'Inter', sans-serif",
+  bg:       "var(--theme-bg)",
+  bgCard:   "var(--theme-bg-muted)",
+  bgHover:  "var(--theme-bg-muted)",
+  border:   "var(--theme-border)",
+  border2:  "var(--theme-border)",
+  text:     "var(--theme-text)",
+  text2:    "var(--theme-muted)",
+  text3:    "var(--theme-muted)",
+  accent:   "var(--brand-primary)",   // verde da logo dinâmico
+  accentBg: "var(--theme-bg-muted)",
+  fontBase: "'Outfit', sans-serif",
 } as const;
 
 function formatDate(dateStr: string) {
@@ -56,6 +56,7 @@ function isRecent(dateStr: string) {
 export const HomePage = () => {
   const navigate = useNavigate();
   const { user, logout } = useAuth();
+  const { theme, toggleTheme } = useTheme();
   const [query, setQuery] = useState("");
   const [categoria, setCategoria] = useState("Todos");
   const [events, setEvents] = useState<Event[]>([]);
@@ -81,12 +82,10 @@ export const HomePage = () => {
     } catch (err) {
       console.error("Erro ao carregar eventos:", err);
     } finally {
-      // Pequeno delay para suavidade da animação do skeleton
       setTimeout(() => setLoading(false), 300);
     }
   };
 
-  // Debounce na busca
   useEffect(() => {
     clearTimeout(debounceRef.current);
     debounceRef.current = setTimeout(() => {
@@ -101,18 +100,16 @@ export const HomePage = () => {
   }, [page, query]);
 
   return (
-    <div style={{ fontFamily: THEME.fontBody, background: THEME.bg, color: THEME.text, minHeight: "100vh" }}>
+    <div style={{ fontFamily: THEME.fontBase, background: THEME.bg, color: THEME.text, minHeight: "100vh", transition: "all 0.3s ease" }}>
       <Helmet>
         <title>Foto Segundo | Suas memórias, sincronizadas com a vida.</title>
         <meta name="description" content="Acesse a galeria exclusiva do seu grande dia e reviva cada detalhe com qualidade premium em segundos." />
       </Helmet>
       
-      {/* Google Fonts (Fallback) */}
       <style>{`
-        @import url('https://fonts.googleapis.com/css2?family=Barlow+Condensed:ital,wght@0,700;0,800;0,900;1,700;1,900&family=Inter:wght@300;400;500&display=swap');
         * { box-sizing: border-box; }
-        body { margin: 0; padding: 0; overflow-x: hidden; background: ${THEME.bg}; }
-        .search-input:focus { border-color: ${THEME.accent} !important; background: rgba(255,255,255,0.04) !important; }
+        body { margin: 0; padding: 0; overflow-x: hidden; background: ${THEME.bg}; color: ${THEME.text}; font-family: 'Outfit', sans-serif; }
+        .search-input:focus { border-color: ${THEME.accent} !important; background: rgba(var(--accent-rgb), 0.05) !important; }
         
         @media (max-width: 768px) {
           .mobile-stack { flex-direction: column !important; align-items: center !important; text-align: center !important; gap: 20px !important; }
@@ -132,20 +129,63 @@ export const HomePage = () => {
         id="main-nav"
         style={{ 
           display: "flex", alignItems: "center", justifyContent: "space-between", 
-          padding: "1rem 1rem", borderBottom: "1px solid rgba(255,255,255,0.05)", 
-          background: "rgba(5,5,5,0.8)", backdropFilter: "blur(10px)", 
+          padding: "1rem 2rem", borderBottom: `1px solid ${THEME.border}`, 
+          background: "var(--theme-bg-nav)", backdropFilter: "blur(20px)", 
           position: "sticky", top: 0, zIndex: 100 
         }}
       >
-        <div style={{ fontFamily: "'Barlow Condensed', sans-serif", fontSize: "min(24px, 6vw)", fontWeight: 800, color: "#fff", display: "flex", alignItems: "center", gap: 10, textTransform: "uppercase", letterSpacing: "1px" }}>
-          <img src="/logo-circular.png" alt="" style={{ width: "min(32px, 8vw)", height: "min(32px, 8vw)", objectFit: "contain" }} onError={(e) => (e.currentTarget.style.display = "none")} />
-          <span className="mobile-hide">Foto Segundo</span>
-          <span className="mobile-hide" style={{ fontSize: 10, color: THEME.text3, fontWeight: 400 }}>™</span>
+        <div 
+          onClick={() => navigate("/")}
+          style={{ 
+            cursor: "pointer",
+            display: "flex", 
+            alignItems: "center", 
+            gap: 12 
+          }}
+        >
+          <img 
+            src="/logo-premium.png" 
+            alt="Foto Segundo" 
+            style={{ 
+              height: "clamp(30px, 8vw, 48px)", 
+              width: "auto", 
+              objectFit: "contain",
+              filter: theme === 'dark' ? 'brightness(0) invert(1)' : 'none'
+            }} 
+          />
         </div>
-        <div style={{ display: "flex", alignItems: "center", gap: 12 }}>
+        <div style={{ display: "flex", alignItems: "center", gap: 16 }}>
+          <button 
+            onClick={toggleTheme}
+            style={{ 
+              background: "none", border: "none", color: THEME.text2, cursor: "pointer", 
+              padding: "8px", display: "flex", alignItems: "center", transition: "color 0.3s" 
+            }}
+            onMouseOver={(e) => (e.currentTarget.style.color = THEME.text)}
+            onMouseOut={(e) => (e.currentTarget.style.color = THEME.text2)}
+          >
+            {theme === "light" ? (
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg>
+            ) : (
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><circle cx="12" cy="12" r="5"/><line x1="12" y1="1" x2="12" y2="3"/><line x1="12" y1="21" x2="12" y2="23"/><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/><line x1="1" y1="12" x2="3" y2="12"/><line x1="21" y1="12" x2="23" y2="12"/><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"/><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"/></svg>
+            )}
+          </button>
+
           <button
             onClick={() => navigate("/cotacao")}
-            style={{ fontSize: 9, background: THEME.accent, color: "black", border: "none", padding: "10px 18px", borderRadius: 0, cursor: "pointer", fontWeight: 800, letterSpacing: "2px", textTransform: "uppercase" }}
+            style={{ 
+              fontSize: 10, 
+              background: "var(--brand-primary)", 
+              color: "#fff", 
+              border: "none", 
+              padding: "12px 24px", 
+              borderRadius: 0, 
+              cursor: "pointer", 
+              fontWeight: 800, 
+              letterSpacing: "0.15em", 
+              textTransform: "uppercase",
+              boxShadow: "0 4px 15px rgba(133, 185, 172, 0.2)"
+            }}
           >
             Orçamento
           </button>
@@ -154,19 +194,19 @@ export const HomePage = () => {
             <div style={{ position: "relative" }}>
               <button
                 onClick={() => setUserMenuOpen((v) => !v)}
-                style={{ fontSize: 9, background: "rgba(255,255,255,0.03)", color: "#fff", border: "1px solid rgba(255,255,255,0.1)", padding: "10px 18px", borderRadius: 0, cursor: "pointer", fontWeight: 700, letterSpacing: "2px", textTransform: "uppercase", display: "flex", alignItems: "center", gap: 6 }}
+                style={{ fontSize: 10, background: "transparent", color: THEME.text, border: `1px solid ${THEME.border}`, padding: "10px 20px", borderRadius: 0, cursor: "pointer", fontWeight: 600, letterSpacing: "0.05em", textTransform: "uppercase", display: "flex", alignItems: "center", gap: 8 }}
               >
                 {user.nome.split(" ")[0]}
                 <span style={{ fontSize: 8 }}>▾</span>
               </button>
               {userMenuOpen && (
-                <div style={{ position: "absolute", right: 0, top: "calc(100% + 8px)", background: "#0d0d0d", border: "1px solid rgba(255,255,255,0.07)", borderRadius: 4, minWidth: 160, zIndex: 200, overflow: "hidden" }}>
+                <div style={{ position: "absolute", right: 0, top: "calc(100% + 12px)", background: THEME.bg, border: `1px solid ${THEME.border}`, borderRadius: 2, minWidth: 180, zIndex: 200, overflow: "hidden", boxShadow: "0 10px 30px rgba(0,0,0,0.15)" }}>
                   {dashboardPath && (
-                    <button onClick={() => { setUserMenuOpen(false); navigate(dashboardPath); }} style={{ width: "100%", textAlign: "left", padding: "12px 16px", background: "transparent", border: "none", color: "#e8e4dc", fontSize: 10, letterSpacing: "1px", textTransform: "uppercase", cursor: "pointer", borderBottom: "1px solid rgba(255,255,255,0.04)" }}>
+                    <button onClick={() => { setUserMenuOpen(false); navigate(dashboardPath); }} style={{ width: "100%", textAlign: "left", padding: "14px 20px", background: "transparent", border: "none", color: THEME.text, fontSize: 11, fontWeight: 500, letterSpacing: "0.05em", textTransform: "uppercase", cursor: "pointer", borderBottom: `1px solid ${THEME.border}` }}>
                       Meu Painel
                     </button>
                   )}
-                  <button onClick={() => { logout(); setUserMenuOpen(false); navigate("/"); }} style={{ width: "100%", textAlign: "left", padding: "12px 16px", background: "transparent", border: "none", color: "#666", fontSize: 10, letterSpacing: "1px", textTransform: "uppercase", cursor: "pointer" }}>
+                  <button onClick={() => { logout(); setUserMenuOpen(false); navigate("/"); }} style={{ width: "100%", textAlign: "left", padding: "14px 20px", background: "transparent", border: "none", color: THEME.text2, fontSize: 11, fontWeight: 500, letterSpacing: "0.05em", textTransform: "uppercase", cursor: "pointer" }}>
                     Sair
                   </button>
                 </div>
@@ -175,7 +215,7 @@ export const HomePage = () => {
           ) : (
             <button
               onClick={() => navigate("/login")}
-              style={{ fontSize: 9, background: "transparent", color: "#fff", border: "1px solid rgba(255,255,255,0.1)", padding: "10px 18px", borderRadius: 0, cursor: "pointer", fontWeight: 700, letterSpacing: "2px", textTransform: "uppercase" }}
+              style={{ fontSize: 10, background: "transparent", color: THEME.text, border: `1px solid ${THEME.border}`, padding: "10px 20px", borderRadius: 0, cursor: "pointer", fontWeight: 600, letterSpacing: "0.05em", textTransform: "uppercase" }}
             >
               Acesso
             </button>
@@ -183,68 +223,67 @@ export const HomePage = () => {
         </div>
       </nav>
 
-      {/* HERO */}
-      <section className="mobile-hero-padding" style={{ padding: "8rem 1rem 6rem", textAlign: "center", position: "relative", background: `radial-gradient(circle at 50% 0%, ${THEME.accent}15 0%, transparent 70%)` }}>
-        <p style={{ fontSize: 10, letterSpacing: 4, textTransform: "uppercase", color: THEME.accent, marginBottom: "1.5rem", fontWeight: 800 }}>
-          Photography & Cinema Collective
+      <section className="mobile-hero-padding" style={{ padding: "10rem 1rem 8rem", textAlign: "center", position: "relative" }}>
+        <p style={{ fontSize: 11, letterSpacing: "0.4em", textTransform: "uppercase", color: "var(--brand-primary)", marginBottom: "2rem", fontWeight: 700 }}>
+          Coletivo Editorial de Imagem & Cinema
         </p>
         <h1 style={{
-          fontFamily: THEME.fontDisplay,
-          fontWeight: 900,
-          fontSize: "clamp(48px, 9vw, 100px)",
-          lineHeight: 0.95,
-          color: "#fff",
+          fontFamily: THEME.fontBase,
+          fontWeight: 800,
+          fontSize: "clamp(54px, 10vw, 120px)",
+          lineHeight: 1.1,
+          color: THEME.text,
+          marginBottom: "2.5rem",
           textTransform: "uppercase",
-          letterSpacing: "0.5px",
-          marginBottom: "2rem"
+          letterSpacing: "-0.03em"
         }}>
-          Suas memórias,<br />
-          <em style={{ fontStyle: "italic", color: THEME.accent, fontWeight: 400 }}>entregues agora.</em>
+          Eternizando Cada<br />
+          Segundo.
         </h1>
-        <p style={{ fontSize: 14, color: "#888", marginBottom: "2.5rem", fontWeight: 300, maxWidth: "500px", margin: "0 auto 3rem", lineHeight: 1.5 }}>
-          Acesse a galeria exclusiva do seu grande dia e reviva cada detalhe com qualidade premium em segundos.
+        <p style={{ fontSize: 16, color: THEME.text2, marginBottom: "3.5rem", fontWeight: 300, maxWidth: "600px", margin: "0 auto 4rem", lineHeight: 1.6 }}>
+          Uma curadoria refinada de experiências visuais. Acesse sua galeria exclusiva com a sofisticação que seu momento merece.
         </p>
 
-        {/* Barra de busca Responsiva */}
-        <div className="mobile-search" style={{ maxWidth: 640, margin: "0 auto", position: "relative", display: "flex", background: THEME.bgCard, border: `1px solid ${THEME.border2}`, padding: "4px" }}>
+        {/* Barra de busca Editorial */}
+        <div className="mobile-search" style={{ maxWidth: 700, margin: "0 auto", position: "relative", display: "flex", background: THEME.bg, border: `1px solid ${THEME.border}`, padding: "4px" }}>
             <input
               value={query}
               onChange={(e) => setQuery(e.target.value)}
-              placeholder="Pesquisar registro..."
+              placeholder="Buscar por nome ou data..."
               className="search-input mobile-search-input"
               style={{
                 width: "100%", background: "transparent", border: "none",
-                padding: "16px 20px", fontSize: 13,
-                color: "#fff", outline: "none", transition: "all 0.4s",
+                padding: "20px 25px", fontSize: 15,
+                color: THEME.text, outline: "none", transition: "all 0.4s",
+                fontFamily: THEME.fontBase
               }}
             />
             <button
               onClick={() => fetchEvents(query, 1)}
               className="search-button mobile-search-button"
               style={{
-                background: THEME.accent, color: "#fff", border: "none", padding: "0 25px",
-                borderRadius: 0, fontSize: 10, fontWeight: 800, cursor: "pointer",
-                textTransform: "uppercase", letterSpacing: "2px"
+                background: THEME.text, color: THEME.bg, border: "none", padding: "0 35px",
+                borderRadius: 0, fontSize: 11, fontWeight: 700, cursor: "pointer",
+                textTransform: "uppercase", letterSpacing: "0.2em"
               }}
             >
-              Buscar
+              Explorar
             </button>
         </div>
 
-
-        {/* Chips de categoria */}
-        <div style={{ display: "flex", gap: 10, justifyContent: "center", marginTop: "2.5rem", flexWrap: "wrap" }}>
+        {/* Categorias */}
+        <div style={{ display: "flex", gap: 12, justifyContent: "center", marginTop: "3.5rem", flexWrap: "wrap" }}>
           {CATEGORIAS.map((cat) => (
             <span
               key={cat}
               onClick={() => setCategoria(cat)}
               style={{
-                fontSize: 9, padding: "6px 16px",
+                fontSize: 10, padding: "8px 20px",
                 border: "1px solid",
-                borderColor: categoria === cat ? THEME.accent : THEME.border2,
-                borderRadius: 0, color: categoria === cat ? "#fff" : THEME.text3,
-                background: categoria === cat ? THEME.accent : "transparent",
-                cursor: "pointer", letterSpacing: "1.5px", textTransform: "uppercase", fontWeight: 700, transition: "all .3s",
+                borderColor: categoria === cat ? THEME.text : THEME.border,
+                borderRadius: 0, color: categoria === cat ? THEME.bg : THEME.text2,
+                background: categoria === cat ? THEME.text : "transparent",
+                cursor: "pointer", letterSpacing: "0.1em", textTransform: "uppercase", fontWeight: 600, transition: "all .3s ease",
               }}
             >
               {cat}
@@ -253,69 +292,57 @@ export const HomePage = () => {
         </div>
       </section>
 
-      <style>{`
-        }
-        .search-input:focus { border-color: #5D6532 !important; background: rgba(255,255,255,0.04) !important; }
-      `}</style>
-
       {/* GRID DE EVENTOS */}
-      <section style={{ padding: "4rem 1rem", maxWidth: 1400, margin: "0 auto" }}>
-        <div className="mobile-grid-header" style={{ display: "flex", alignItems: "flex-end", justifyContent: "space-between", marginBottom: "3rem" }}>
-          <div>
-            <p style={{ fontSize: 11, color: THEME.accent, letterSpacing: 4, textTransform: "uppercase", marginBottom: 10, fontWeight: 800 }}>Showcase</p>
-            <h2 style={{ fontFamily: THEME.fontDisplay, fontSize: 48, fontWeight: 900, color: "#fff", textTransform: "uppercase", letterSpacing: "1px", lineHeight: 1 }}>
-              Eventos <span style={{ fontStyle: "italic", color: THEME.text3 }}>Recentes</span>
+      <section style={{ padding: "6rem 2rem", maxWidth: 1400, margin: "0 auto" }}>
+        <div className="mobile-grid-header" style={{ display: "flex", alignItems: "flex-end", justifyContent: "space-between", marginBottom: "4rem" }}>
+          <div style={{ borderLeft: `2px solid ${THEME.accent}`, paddingLeft: "1.5rem" }}>
+            <p style={{ fontSize: 12, color: THEME.text2, letterSpacing: "0.2em", textTransform: "uppercase", marginBottom: 8, fontWeight: 600 }}>Arquivo Recente</p>
+            <h2 style={{ fontFamily: THEME.fontBase, fontSize: "clamp(36px, 5vw, 56px)", fontWeight: 800, color: THEME.text, lineHeight: 1, textTransform: "uppercase" }}>
+              Últimos Registros
             </h2>
           </div>
-          <span style={{ fontSize: 11, color: "#888", letterSpacing: "1px", textTransform: "uppercase", cursor: "pointer", borderBottom: "1px solid #333", paddingBottom: 4 }}>
+          <span style={{ fontSize: 11, color: THEME.text2, letterSpacing: "0.15em", textTransform: "uppercase", cursor: "pointer", borderBottom: `1px solid ${THEME.border}`, paddingBottom: 6, fontWeight: 700 }}>
             Ver agenda completa
           </span>
         </div>
 
         {loading ? (
-          <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fill, minmax(300px, 1fr))", gap: "2rem" }}>
-            {[...Array(4)].map((_, i) => (
-              <div key={i} style={{ background: "rgba(255,255,255,0.01)", borderRadius: 0, overflow: "hidden" }}>
-                <div style={{ width: "100%", aspectRatio: "16/10", background: "#111", animation: "pulse 2s infinite" }} />
-                <div style={{ padding: "24px 0" }}>
-                  <div style={{ height: 18, background: "#111", borderRadius: 2, marginBottom: 12, width: "70%" }} />
-                  <div style={{ height: 12, background: "#111", borderRadius: 2, width: "40%" }} />
-                </div>
-              </div>
+          <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fill, minmax(350px, 1fr))", gap: "3rem" }}>
+            {[...Array(6)].map((_, i) => (
+              <div key={i} style={{ background: "rgba(127,127,127,0.05)", aspectRatio: "4/3", animation: "pulse 2s infinite" }} />
             ))}
           </div>
         ) : events.length === 0 ? (
-          <div style={{ textAlign: "center", padding: "6rem 0", background: "rgba(255,255,255,0.01)", border: "1px dashed rgba(255,255,255,0.05)" }}>
-            <p style={{ fontFamily: "'Barlow Condensed', sans-serif", fontSize: 24, color: "#555", marginBottom: 12, textTransform: "uppercase", fontWeight: 800 }}>Nenhum registro encontrado</p>
-            <p style={{ fontSize: 14, color: "#333" }}>Tente buscar por termos diferentes ou verifique a categoria.</p>
+          <div style={{ textAlign: "center", padding: "8rem 0", border: `1px dashed ${THEME.border}` }}>
+            <p style={{ fontFamily: THEME.fontBase, fontSize: 32, color: THEME.text2, fontWeight: 300 }}>Nada encontrado para sua busca.</p>
           </div>
         ) : (
-          <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fill, minmax(300px, 1fr))", gap: "3rem" }}>
+          <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fill, minmax(350px, 1fr))", gap: "4rem 3rem" }}>
             {events.map((event) => (
               <EventCard key={event.id} event={event} onClick={() => navigate(`/e/${event.id}`)} />
             ))}
           </div>
         )}
 
-        {/* Paginação Premium */}
+        {/* Paginação */}
         {totalPages > 1 && (
-          <div style={{ display: "flex", justifyContent: "center", alignItems: "center", gap: 30, marginTop: "5rem" }}>
+          <div style={{ display: "flex", justifyContent: "center", alignItems: "center", gap: 40, marginTop: "6rem" }}>
             <button
               onClick={() => { setPage((p) => Math.max(1, p - 1)); window.scrollTo({ top: 400, behavior: 'smooth' }); }}
               disabled={page === 1}
-              style={{ padding: "0 0 5px 0", background: "transparent", border: "none", borderBottom: "1px solid", borderColor: page === 1 ? "transparent" : "#333", color: page === 1 ? "transparent" : "#888", cursor: page === 1 ? "not-allowed" : "pointer", fontSize: 10, textTransform: "uppercase", letterSpacing: 2, fontWeight: 800 }}
+              style={{ background: "none", border: "none", color: page === 1 ? "transparent" : THEME.text2, cursor: "pointer", fontSize: 11, textTransform: "uppercase", letterSpacing: "0.2em", fontWeight: 700, borderBottom: `1px solid ${THEME.border}` }}
             >
-              Back
+              Anterior
             </button>
-            <span style={{ fontSize: 13, color: "#fff", fontFamily: "'Barlow Condensed', sans-serif", fontWeight: 800, textTransform: "uppercase", letterSpacing: 2 }}>
-              {page} <span style={{ color: "#333", margin: "0 10px" }}>/</span> {totalPages}
+            <span style={{ fontSize: 14, color: THEME.text, fontFamily: THEME.fontBase, letterSpacing: "0.2em", fontWeight: 600 }}>
+              {page} <span style={{ opacity: 0.2, margin: "0 10px" }}>—</span> {totalPages}
             </span>
             <button
               onClick={() => { setPage((p) => Math.min(totalPages, p + 1)); window.scrollTo({ top: 400, behavior: 'smooth' }); }}
               disabled={page === totalPages}
-              style={{ padding: "0 0 5px 0", background: "transparent", border: "none", borderBottom: "1px solid", borderColor: page === totalPages ? "transparent" : THEME.accent, color: page === totalPages ? "transparent" : THEME.accent, cursor: page === totalPages ? "not-allowed" : "pointer", fontSize: 10, textTransform: "uppercase", letterSpacing: 2 }}
+              style={{ background: "none", border: "none", color: page === totalPages ? "transparent" : THEME.text, cursor: "pointer", fontSize: 11, textTransform: "uppercase", letterSpacing: "0.2em", fontWeight: 700, borderBottom: `1px solid ${THEME.text}` }}
             >
-              Next
+              Próximo
             </button>
           </div>
         )}
@@ -326,40 +353,50 @@ export const HomePage = () => {
         onClick={() => navigate("/cotacao")}
         style={{
           cursor: "pointer",
+          padding: "5rem 2rem",
+          textAlign: "center",
+          background: THEME.bgCard,
           borderTop: `1px solid ${THEME.border}`,
           borderBottom: `1px solid ${THEME.border}`,
-          padding: "2rem",
-          textAlign: "center",
-          background: THEME.accentBg,
-          transition: "background 0.3s",
+          transition: "all 0.4s",
         }}
-        onMouseOver={(e) => (e.currentTarget.style.background = "#141a08")}
-        onMouseOut={(e) => (e.currentTarget.style.background = THEME.accentBg)}
+        className="cta-section"
       >
-        <span style={{ fontSize: 10, color: THEME.text2, textTransform: "uppercase", letterSpacing: 3, fontWeight: 700 }}>
-          Não encontrou seu evento?{" "}
-          <span style={{ color: THEME.accent }}>Solicite um orçamento agora &rarr;</span>
+        <span style={{ fontSize: 12, color: THEME.text2, textTransform: "uppercase", letterSpacing: "0.3em", fontWeight: 600 }}>
+          Deseja uma cobertura exclusiva?{" "}
+          <span style={{ color: THEME.text, borderBottom: "1px solid" }}>Solicite orçamento &rarr;</span>
         </span>
       </section>
 
       {/* FOOTER */}
-      <footer className="mobile-footer" style={{ padding: "6rem 2rem", borderTop: `1px solid ${THEME.border}`, display: "flex", justifyContent: "space-between", alignItems: "center", flexWrap: "wrap", gap: "2rem", maxWidth: 1400, margin: "4rem auto 0" }}>
-        <div style={{ display: "flex", flexDirection: "column", gap: 10, alignItems: "center" }}>
-          <img src="/logo-horizontal.png" alt="Foto Segundo" style={{ height: 20, objectFit: "contain" }} onError={(e) => (e.currentTarget.style.display = "none")} />
-          <span style={{ fontSize: 9, color: THEME.border2, textTransform: "uppercase", letterSpacing: 2 }}>Protocolo Archive © 2026.</span>
+      <footer className="mobile-footer" style={{ padding: "8rem 2rem 4rem", borderTop: `1px solid ${THEME.border}`, display: "flex", justifyContent: "space-between", alignItems: "flex-start", flexWrap: "wrap", gap: "4rem", maxWidth: 1400, margin: "0 auto" }}>
+        <div style={{ display: "flex", flexDirection: "column", gap: 20 }}>
+          <img src="/logo.png" alt="Foto Segundo" style={{ height: 32, objectFit: "contain", filter: theme === 'dark' ? 'brightness(0) invert(1)' : 'none' }} />
+          <p style={{ fontSize: 11, color: THEME.text3, textTransform: "uppercase", letterSpacing: "0.15em", maxWidth: 280, lineHeight: 1.8 }}>
+            Protocolo Editorial de Imagem e Cinema.<br />© 2026 Todos os Direitos Reservados.
+          </p>
         </div>
-        <div style={{ display: "flex", gap: "2rem", flexWrap: "wrap", justifyContent: "center" }}>
-          {["Parcerias", "Unidades Locais", "Segurança"].map((l) => (
-            <span key={l} style={{ fontSize: 10, color: THEME.text3, cursor: "pointer", textTransform: "uppercase", letterSpacing: 2, fontWeight: 700 }}>{l}</span>
-          ))}
+        <div style={{ display: "flex", gap: "4rem", flexWrap: "wrap" }}>
+          <FooterNav title="Plataforma" links={["Sobre", "Parcerias", "Segurança"]} />
+          <FooterNav title="Jurídico" links={["Termos", "Privacidade", "Cookies"]} />
         </div>
       </footer>
 
       <style>{`
         @keyframes pulse { 0%,100%{opacity:1} 50%{opacity:0.4} }
-        * { box-sizing: border-box; }
-        body { margin: 0; padding: 0; overflow-x: hidden; }
+        .cta-section:hover { background: var(--theme-bg-muted); opacity: 0.8; }
       `}</style>
+    </div>
+  );
+}
+
+function FooterNav({ title, links }: { title: string, links: string[] }) {
+  return (
+    <div style={{ display: "flex", flexDirection: "column", gap: 20 }}>
+      <span style={{ fontSize: 11, color: THEME.text, textTransform: "uppercase", letterSpacing: "0.2em", fontWeight: 800 }}>{title}</span>
+      {links.map((l) => (
+        <span key={l} style={{ fontSize: 11, color: THEME.text3, cursor: "pointer", textTransform: "uppercase", letterSpacing: "0.1em", transition: "color 0.3s" }} onMouseOver={(e) => (e.currentTarget.style.color = THEME.text)} onMouseOut={(e) => (e.currentTarget.style.color = THEME.text3)}>{l}</span>
+      ))}
     </div>
   );
 }
@@ -368,81 +405,65 @@ export const HomePage = () => {
 
 function EventCard({ event, onClick }: { event: Event; onClick: () => void }) {
   const isNew = isRecent(event.dataEvento);
+  useTheme(); // re-renders on theme change — colors handled by CSS variables
 
   return (
     <div
       onClick={onClick}
-      style={{ cursor: "pointer", overflow: "hidden", transition: "all 0.4s" }}
+      style={{ cursor: "pointer", transition: "all 0.4s ease" }}
       className="group"
     >
       {/* Imagem Editorial */}
-      <div style={{ width: "100%", aspectRatio: "16/11", background: "#0d0d0d", position: "relative", overflow: "hidden" }}>
+      <div style={{ width: "100%", aspectRatio: "4/5", background: "var(--theme-bg-muted)", position: "relative", overflow: "hidden" }}>
         {event.coverPhotoUrl ? (
           <img 
             src={event.coverPhotoUrl} 
             alt={event.nomeNoivos} 
-            onError={(e) => {
-              (e.currentTarget as HTMLImageElement).style.display = "none";
-              const parent = (e.currentTarget as HTMLImageElement).parentElement;
-              if (parent) {
-                const placeholder = parent.querySelector(".image-placeholder");
-                if (placeholder) (placeholder as HTMLElement).style.display = "flex";
-              }
-            }}
-            style={{ width: "100%", height: "100%", objectFit: "cover", opacity: 0.8, transition: "transform 0.8s cubic-bezier(0.16, 1, 0.3, 1)" }} 
-            onMouseOver={(e) => (e.currentTarget.style.transform = "scale(1.05)")}
-            onMouseOut={(e) => (e.currentTarget.style.transform = "scale(1)")}
+            style={{ width: "100%", height: "100%", objectFit: "cover", transition: "transform 1.2s cubic-bezier(0.16, 1, 0.3, 1)" }} 
+            className="group-hover:scale-105"
           />
-        ) : null}
-
-        <div className="image-placeholder" style={{ 
-          width: "100%", height: "100%", 
-          display: event.coverPhotoUrl ? "none" : "flex", 
-          alignItems: "center", justifyContent: "center",
-          background: "linear-gradient(135deg, #050505 0%, #0d0d0d 100%)"
-        }}>
-          <div style={{ textAlign: "center" }}>
-             <div style={{ width: 30, height: 30, border: `0.5px solid ${THEME.border2}`, borderLeftColor: THEME.accent, borderTopColor: THEME.accent, transform: "rotate(45deg)", display: "flex", alignItems: "center", justifyContent: "center", margin: "0 auto 12px" }}>
-                <div style={{ width: 4, height: 4, background: THEME.accent }} />
-             </div>
-             <span style={{ fontSize: 8, color: "#222", letterSpacing: 2, textTransform: "uppercase", fontWeight: 700 }}>Private Archive</span>
+        ) : (
+          <div style={{ width: "100%", height: "100%", display: "flex", alignItems: "center", justifyContent: "center", opacity: 0.2 }}>
+            <span style={{ fontSize: 12, letterSpacing: 4, textTransform: "uppercase" }}>Visual Indisponível</span>
           </div>
-        </div>
+        )}
         
         {isNew && (
           <span style={{
-            position: "absolute", top: 15, left: 15,
+            position: "absolute", top: 20, left: 20,
             fontSize: 9, letterSpacing: 2, textTransform: "uppercase",
-            background: THEME.accent, color: "#fff",
-            padding: "8px 16px", fontWeight: 800,
+            background: THEME.text, color: THEME.bg,
+            padding: "8px 16px", fontWeight: 700,
           }}>
-            RECENTEMENTE ADICIONADO
+            Novo
           </span>
         )}
 
-        <div style={{ position: "absolute", bottom: 15, right: 15, display: "flex", gap: 6 }}>
-          {event.temFoto && <ServiceBadge label="Digital" />}
-          {event.temVideo && <ServiceBadge label="Cinema" />}
+        <div style={{ position: "absolute", bottom: 20, right: 20, display: "flex", gap: 8 }}>
+          {event.temFoto && <ServiceBadge label="Imagens" />}
+          {event.temVideo && <ServiceBadge label="Filme" />}
         </div>
+
+        {/* Overlay Hover */}
+        <div style={{ position: "absolute", inset: 0, background: "rgba(0,0,0,0.1)", opacity: 0, transition: "opacity 0.4s" }} className="group-hover:opacity-100" />
       </div>
 
-      {/* Meta Info */}
-      <div style={{ padding: "16px 0" }}>
+      <div style={{ padding: "24px 0" }}>
         <h3 style={{
-          fontFamily: THEME.fontDisplay,
-          fontWeight: 800,
-          fontSize: 22,
-          color: "#fff",
-          textTransform: "uppercase",
-          letterSpacing: "0.5px",
-          marginBottom: 6,
+          fontFamily: THEME.fontBase,
+          fontWeight: 700,
+          fontSize: 24,
+          color: THEME.text,
+          marginBottom: 10,
+          letterSpacing: "-0.01em",
+          textTransform: "uppercase"
         }}>
           {event.nomeNoivos}
         </h3>
-        <div style={{ fontSize: 11, color: THEME.text2, display: "flex", gap: 12, alignItems: "center", textTransform: "uppercase", letterSpacing: "0.5px" }}>
+        <div style={{ fontSize: 12, color: THEME.text2, display: "flex", gap: 16, alignItems: "center", textTransform: "uppercase", letterSpacing: "0.1em" }}>
           <span>{formatDate(event.dataEvento)}</span>
-          <span style={{ width: 4, height: 1, background: THEME.border2 }} />
-          <span>{event.cartorio || "Unidade Local"}</span>
+          <span style={{ width: 6, height: 1, background: THEME.border }} />
+          <span>{event.cartorio || "Exclusivo"}</span>
         </div>
       </div>
     </div>
@@ -452,11 +473,12 @@ function EventCard({ event, onClick }: { event: Event; onClick: () => void }) {
 function ServiceBadge({ label }: { label: string }) {
   return (
     <span style={{
-      fontSize: 8, padding: "3px 8px", background: "rgba(5,5,5,0.7)",
-      border: "1px solid rgba(255,255,255,0.05)", borderRadius: 0, color: "#aaa",
-      letterSpacing: "1px", textTransform: "uppercase", backdropFilter: "blur(5px)"
+      fontSize: 9, padding: "5px 12px", background: "rgba(var(--bg-rgb), 0.7)",
+      border: "1px solid rgba(var(--text-rgb), 0.1)", color: "white",
+      letterSpacing: "0.1em", textTransform: "uppercase", backdropFilter: "blur(10px)"
     }}>
       {label}
     </span>
   );
 }
+

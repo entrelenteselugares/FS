@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import { Link, useLocation, type Location } from "react-router-dom";
 import { useAuth } from "../hooks/useAuth";
+import { useTheme } from "../contexts/ThemeContext";
 
 export interface NavItem {
   label: string;
@@ -44,7 +45,7 @@ const VARIANTS = {
     activeBg: "bg-brand-olive/5",
     activeBorder: "border-brand-olive/20",
     activeText: "text-brand-olive",
-    avatarBg: "bg-white/5",
+    avatarBg: "bg-black/5 dark:bg-white/5",
     avatarText: "text-brand-olive",
     spinnerBorder: "border-brand-olive",
     gradient: "from-brand-olive/5",
@@ -54,7 +55,7 @@ const VARIANTS = {
     activeBg: "bg-brand-tactical/5",
     activeBorder: "border-brand-tactical/20",
     activeText: "text-brand-tactical",
-    avatarBg: "bg-white/5",
+    avatarBg: "bg-black/5 dark:bg-white/5",
     avatarText: "text-brand-tactical",
     spinnerBorder: "border-brand-tactical",
     gradient: "from-brand-tactical/5",
@@ -73,6 +74,18 @@ const CloseIcon = () => (
   <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5">
     <line x1="18" y1="6" x2="6" y2="18" />
     <line x1="6" y1="6" x2="18" y2="18" />
+  </svg>
+);
+
+const SunIcon = () => (
+  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+    <circle cx="12" cy="12" r="5"/><line x1="12" y1="1" x2="12" y2="3"/><line x1="12" y1="21" x2="12" y2="23"/><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/><line x1="1" y1="12" x2="3" y2="12"/><line x1="21" y1="12" x2="23" y2="12"/><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"/><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"/>
+  </svg>
+);
+
+const MoonIcon = () => (
+  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+    <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/>
   </svg>
 );
 
@@ -100,6 +113,8 @@ interface SidebarContentProps {
   logout: () => void;
   location: Location;
   onNavigate: () => void;
+  theme: "light" | "dark";
+  toggleTheme: () => void;
 }
 
 const SidebarContent: React.FC<SidebarContentProps> = ({
@@ -110,6 +125,8 @@ const SidebarContent: React.FC<SidebarContentProps> = ({
   logout,
   location,
   onNavigate,
+  theme,
+  toggleTheme,
 }) => {
   const isActive = (item: NavItem) => {
     if (!item.to) return false;
@@ -119,13 +136,22 @@ const SidebarContent: React.FC<SidebarContentProps> = ({
   };
 
   return (
-    <div className="flex flex-col h-full">
+    <div className="flex flex-col h-full bg-theme-bg text-theme-text transition-colors duration-300">
       {/* Brand Header */}
-      <div className={`px-5 pt-8 pb-5 border-b border-white/5 bg-gradient-to-b ${v.gradient} to-transparent`}>
-        <div className={`text-[9px] font-bold uppercase tracking-[0.5em] ${v.label} mb-2.5`}>
-          Protocolo
+      <div className={`px-5 pt-10 pb-8 border-b border-theme-border bg-gradient-to-b ${v.gradient} to-transparent flex flex-col items-center text-center`}>
+        <div className="mb-4">
+          <img 
+            src="/logo-premium.png" 
+            alt="Logo" 
+            style={{ 
+              height: 48, 
+              width: "auto",
+              objectFit: "contain",
+              filter: theme === 'dark' ? 'brightness(0) invert(1)' : 'none'
+            }} 
+          />
         </div>
-        <div className="text-lg font-serif tracking-tight text-white leading-tight">
+        <div className="text-[7.5px] font-black tracking-[0.4em] text-theme-muted leading-tight uppercase opacity-80">
           {title}
         </div>
       </div>
@@ -148,12 +174,12 @@ const SidebarContent: React.FC<SidebarContentProps> = ({
                 text-[10px] font-bold uppercase tracking-widest
                 transition-all duration-300 group text-left
                 ${active
-                  ? `${v.activeBg} ${v.activeText} border-l-2 border-brand-olive ml-[-12px] pl-[22px]`
-                  : "text-zinc-600 hover:text-white hover:bg-white/[0.02] border-l-2 border-transparent"
+                  ? `${v.activeBg} ${v.activeText} border-l-2 border-brand-tactical ml-[-12px] pl-[22px]`
+                  : "text-theme-muted hover:text-theme-text hover:bg-theme-bg-muted border-l-2 border-transparent"
                 }
               `}
             >
-              <span className={`w-3.5 h-3.5 flex-shrink-0 transition-colors ${active ? v.activeText : "text-zinc-700 group-hover:text-zinc-400"}`}>
+              <span className={`w-3.5 h-3.5 flex-shrink-0 transition-colors ${active ? v.activeText : "text-theme-muted group-hover:text-theme-text"}`}>
                 {item.icon}
               </span>
               {item.label}
@@ -163,30 +189,41 @@ const SidebarContent: React.FC<SidebarContentProps> = ({
       </nav>
 
       {/* User footer */}
-      <div className="px-4 pb-6 pt-4 border-t border-white/5 bg-white/[0.01]">
+      <div className="px-4 pb-6 pt-4 border-t border-theme-border bg-theme-bg-muted">
         <div className="flex items-center gap-3 px-1 mb-4">
           <div className={`
             w-10 h-10 rounded-none flex-shrink-0
             flex items-center justify-center
-            text-xs font-bold border border-white/10
+            text-xs font-bold border border-theme-border
             ${v.avatarBg} ${v.avatarText}
           `}>
             {user?.nome?.charAt(0).toUpperCase() ?? "?"}
           </div>
           <div className="min-w-0">
-            <div className="text-[10px] font-bold text-white truncate uppercase tracking-wider">{user?.nome}</div>
-            <div className="text-[8px] text-zinc-600 uppercase tracking-widest mt-1">
+            <div className="text-[10px] font-bold text-theme-text truncate uppercase tracking-wider">{user?.nome}</div>
+            <div className="text-[8px] text-theme-muted uppercase tracking-widest mt-1">
               {user?.role} Profile
             </div>
           </div>
         </div>
-        <button
-          id="btn-logout"
-          onClick={logout}
-          className="w-full text-[9px] font-bold uppercase tracking-[0.3em] text-zinc-600 hover:text-white transition-colors py-3 text-center border border-white/5 hover:border-white/10"
-        >
-          Encerrar
-        </button>
+        <div className="flex gap-2">
+          <button 
+            onClick={toggleTheme}
+            className="flex-1 p-3 text-theme-muted hover:text-theme-text transition-colors bg-theme-bg border border-theme-border flex items-center justify-center"
+            title={theme === "light" ? "Modo Escuro" : "Modo Claro"}
+          >
+            {theme === "light" ? <MoonIcon /> : <span className="flex items-center gap-2"><SunIcon /> <span className="text-[9px] uppercase font-bold tracking-widest">Modo Claro</span></span>}
+            {theme === "light" && <span className="text-[9px] uppercase font-bold tracking-widest ml-2">Modo Escuro</span>}
+          </button>
+          
+          <button
+            id="btn-logout"
+            onClick={logout}
+            className="flex-1 text-[9px] font-bold uppercase tracking-[0.3em] text-theme-muted hover:text-theme-text transition-colors py-3 text-center border border-theme-border hover:border-theme-muted"
+          >
+            Encerrar
+          </button>
+        </div>
       </div>
     </div>
   );
@@ -195,10 +232,11 @@ const SidebarContent: React.FC<SidebarContentProps> = ({
 export const DashboardLayout: React.FC<DashboardLayoutProps> = ({
   children,
   navItems,
-  variant = "olive",
+  variant = "tactical",
   title,
 }) => {
   const { user, logout } = useAuth();
+  const { theme, toggleTheme } = useTheme();
   const location = useLocation();
   const [drawerOpen, setDrawerOpen] = useState(false);
   const v = VARIANTS[variant as keyof typeof VARIANTS];
@@ -211,19 +249,21 @@ export const DashboardLayout: React.FC<DashboardLayoutProps> = ({
     logout,
     location,
     onNavigate: () => setDrawerOpen(false),
+    theme,
+    toggleTheme,
   };
 
   return (
-    <div className="flex h-screen bg-[#050505] overflow-hidden">
+    <div className="flex h-screen bg-theme-bg text-theme-text overflow-hidden transition-colors duration-300">
       {/* Desktop Sidebar */}
-      <aside className="hidden lg:flex flex-shrink-0 w-64 border-r border-white/5 bg-[#0a0a0a]">
+      <aside className="hidden lg:flex flex-shrink-0 w-64 border-r border-theme-border bg-theme-bg transition-colors duration-300">
         <SidebarContent {...sidebarProps} />
       </aside>
 
       {/* Mobile Drawer Backdrop */}
       {drawerOpen && (
         <div
-          className="fixed inset-0 bg-black/90 backdrop-blur-md z-40 lg:hidden"
+          className="fixed inset-0 bg-black/60 backdrop-blur-sm z-40 lg:hidden"
           onClick={() => setDrawerOpen(false)}
         />
       )}
@@ -231,7 +271,7 @@ export const DashboardLayout: React.FC<DashboardLayoutProps> = ({
       {/* Mobile Drawer */}
       <aside
         className={`
-          fixed inset-y-0 left-0 z-50 w-72 bg-[#0a0a0a] border-r border-white/5
+          fixed inset-y-0 left-0 z-50 w-72 bg-theme-bg border-r border-theme-border
           transform transition-transform duration-500 cubic-bezier(0.4, 0, 0.2, 1) lg:hidden
           ${drawerOpen ? "translate-x-0" : "-translate-x-full"}
         `}
@@ -239,7 +279,7 @@ export const DashboardLayout: React.FC<DashboardLayoutProps> = ({
         <div className="absolute top-6 right-6">
           <button
             onClick={() => setDrawerOpen(false)}
-            className="text-zinc-600 hover:text-white transition-colors p-2"
+            className="text-theme-muted hover:text-theme-text transition-colors p-2"
           >
             <CloseIcon />
           </button>
@@ -250,30 +290,37 @@ export const DashboardLayout: React.FC<DashboardLayoutProps> = ({
       {/* Main content area */}
       <div className="flex-1 flex flex-col min-w-0 overflow-hidden">
         {/* Mobile top bar */}
-        <header className="lg:hidden flex items-center gap-4 px-6 py-4 bg-[#0a0a0a] border-b border-white/5 flex-shrink-0">
+        <header className="lg:hidden flex items-center gap-4 px-6 py-4 bg-theme-bg border-b border-theme-border flex-shrink-0">
           <button
             id="btn-mobile-menu"
             onClick={() => setDrawerOpen(true)}
-            className="text-zinc-500 hover:text-white transition-colors"
+            className="text-theme-muted hover:text-theme-text transition-colors"
             aria-label="Abrir menu"
           >
             <MenuIcon />
           </button>
-          <div className="flex flex-col">
+          <div className="flex flex-col flex-1">
              <span className={`text-[8px] font-bold uppercase tracking-[0.4em] ${v.label} leading-none mb-1`}>
                F. Segundo
              </span>
-             <span className="text-[10px] font-serif tracking-tight text-white leading-none">
+             <span className="text-[10px] tracking-tight text-theme-text leading-none uppercase">
                {title}
              </span>
           </div>
+          <button 
+            onClick={toggleTheme}
+            className="p-2 text-theme-muted hover:text-theme-text transition-colors"
+          >
+            {theme === "light" ? <MoonIcon /> : <SunIcon />}
+          </button>
         </header>
 
         {/* Scrollable content */}
-        <main className="flex-1 overflow-y-auto bg-[#050505]">
+        <main className="flex-1 overflow-y-auto bg-theme-bg">
           {children}
         </main>
       </div>
     </div>
   );
 };
+

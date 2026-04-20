@@ -40,8 +40,8 @@ export const AdminOrders: React.FC = () => {
     <div className="space-y-8 animate-in fade-in slide-in-from-bottom-4 duration-700">
       <div className="flex flex-col md:flex-row md:items-center justify-between gap-6 border-b border-white/5 pb-8">
         <div>
-          <h2 className="text-3xl font-serif text-white italic">Auditoria de Pedidos</h2>
-          <p className="text-[10px] text-zinc-600 uppercase tracking-[0.3em] mt-2 font-bold">
+          <h2 className="text-3xl font-heading text-theme-text italic">Auditoria de Pedidos</h2>
+          <p className="text-[10px] text-theme-muted uppercase tracking-[0.3em] mt-2 font-bold">
             Trilha de transições e liquidez do ledger
           </p>
         </div>
@@ -52,16 +52,16 @@ export const AdminOrders: React.FC = () => {
             placeholder="PROCURAR POR E-MAIL OU EVENTO..."
             value={search}
             onChange={(e) => { setSearch(e.target.value); setPage(1); }}
-            className="w-full bg-transparent border-b border-white/10 py-3 text-[10px] text-white placeholder-zinc-800 focus:outline-none focus:border-brand-olive transition-all uppercase tracking-widest"
+            className="w-full bg-transparent border-b border-theme-border py-3 text-[10px] text-theme-text placeholder-theme-muted/50 focus:outline-none focus:border-brand-primary transition-all uppercase tracking-widest"
           />
         </div>
       </div>
 
-      <div className="border border-white/5 bg-black/40 backdrop-blur-sm overflow-hidden">
+      <div className="border border-theme-border bg-theme-bg-muted backdrop-blur-sm overflow-hidden">
         <div className="overflow-x-auto">
           <table className="w-full">
             <thead>
-              <tr className="border-b border-white/5 text-[9px] font-bold uppercase tracking-[0.4em] text-zinc-500 bg-white/[0.02]">
+              <tr className="border-b border-theme-border text-[9px] font-bold uppercase tracking-[0.4em] text-theme-muted bg-theme-bg/10">
                 <th className="text-left px-8 py-6">ID / Data</th>
                 <th className="text-left px-8 py-6">Comprador</th>
                 <th className="text-left px-8 py-6">Evento</th>
@@ -73,31 +73,31 @@ export const AdminOrders: React.FC = () => {
               {loading ? (
                 <tr>
                   <td colSpan={5} className="py-20 text-center">
-                    <div className="text-[10px] text-zinc-700 animate-pulse tracking-[0.5em] uppercase">Sincronizando Ledger...</div>
+                    <div className="text-[10px] text-theme-muted animate-pulse tracking-[0.5em] uppercase">Sincronizando Ledger...</div>
                   </td>
                 </tr>
               ) : orders.length > 0 ? (
                 orders.map((order) => (
-                  <tr key={order.id} className="border-b border-white/5 hover:bg-white/[0.01] transition-all group">
+                  <tr key={order.id} className="border-b border-theme-border hover:bg-theme-bg/5 transition-all group">
                     <td className="px-8 py-6">
-                      <div className="text-[10px] text-zinc-400 font-mono mb-1">#{order.id.slice(-8).toUpperCase()}</div>
-                      <div className="text-[9px] text-zinc-700 uppercase font-bold">{new Date(order.createdAt).toLocaleDateString("pt-BR")}</div>
+                      <div className="text-[10px] text-theme-muted font-sans mb-1">#{order.id.slice(-8).toUpperCase()}</div>
+                      <div className="text-[9px] text-theme-muted uppercase font-bold">{new Date(order.createdAt).toLocaleDateString("pt-BR")}</div>
                     </td>
                     <td className="px-8 py-6">
-                      <div className="text-[11px] text-white font-serif italic">{order.user?.nome || "Convidado"}</div>
-                      <div className="text-[9px] text-zinc-600 font-mono">{order.buyerEmail || order.user?.email || "—"}</div>
+                      <div className="text-[11px] text-theme-text font-medium italic">{order.user?.nome || "Convidado"}</div>
+                      <div className="text-[9px] text-theme-muted font-sans">{order.buyerEmail || order.user?.email || "—"}</div>
                     </td>
                     <td className="px-8 py-6">
-                      <div className="text-[10px] text-brand-olive uppercase tracking-wider font-bold group-hover:underline underline-offset-4 decoration-white/10">
+                      <div className="text-[10px] text-brand-primary uppercase tracking-wider font-bold group-hover:underline underline-offset-4 decoration-theme-border">
                         {order.event.title}
                       </div>
                     </td>
                     <td className="px-8 py-6 text-right">
-                      <div className="text-[13px] text-white font-serif italic">R$ {Number(order.amount).toFixed(2)}</div>
+                      <div className="text-[13px] text-theme-text font-medium italic">R$ {Number(order.amount).toFixed(2)}</div>
                     </td>
                     <td className="px-8 py-6 text-center">
                       <span className={`inline-block px-4 py-1.5 border text-[8px] font-bold uppercase tracking-[0.2em] rounded-sm ${
-                        order.status === "APROVADO" ? "border-brand-olive/30 text-brand-olive bg-brand-olive/5" :
+                        order.status === "APROVADO" ? "border-brand-primary/30 text-brand-primary bg-brand-primary/5" :
                         order.status === "PENDENTE" ? "border-zinc-800 text-zinc-700" :
                         "border-red-900/30 text-red-700"
                       }`}>

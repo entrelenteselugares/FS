@@ -68,3 +68,22 @@ export async function updateConfigs(req: Request, res: Response): Promise<void> 
     res.status(500).json({ error: "Erro ao salvar configurações." });
   }
 }
+
+// GET /api/public/configs/theme (Tema e Identidade)
+export async function getPublicThemeConfigs(req: Request, res: Response): Promise<void> {
+  try {
+    const keys = ["brand_primary", "brand_tactical"];
+    const configs = await prisma.platformConfig.findMany({
+      where: { key: { in: keys } },
+    });
+    
+    const theme: Record<string, string> = {};
+    configs.forEach(c => {
+      theme[c.key] = c.value;
+    });
+
+    res.json(theme);
+  } catch (err) {
+    res.status(500).json({ error: "Erro ao buscar tema." });
+  }
+}

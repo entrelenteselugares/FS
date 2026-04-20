@@ -61,7 +61,7 @@ export const PaywallView: React.FC<PaywallViewProps> = ({ event, onCheckout, isP
           initial={{ opacity: 0, y: 10 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.2 }}
-          className="mb-8 text-6xl md:text-9xl font-serif tracking-tight text-white leading-tight"
+          className="mb-8 text-6xl md:text-9xl tracking-tight text-white leading-tight"
         >
           {event?.nomeNoivos || "Evento Premium"}
         </motion.h1>
@@ -94,7 +94,7 @@ export const PaywallView: React.FC<PaywallViewProps> = ({ event, onCheckout, isP
               )}
             </div>
             <div className="flex items-baseline gap-4">
-               <span className="text-4xl font-serif text-white italic">R$ {preco.toFixed(2)}</span>
+               <span className="text-4xl text-white">R$ {preco.toFixed(2)}</span>
                {!isAdvancePurchase && <span className="text-xs text-zinc-700 line-through tracking-wider font-light">R$ 250.00</span>}
             </div>
           </div>

@@ -1,7 +1,18 @@
 import { useState, useEffect } from "react";
 import { API as api } from "../../lib/api";
-
-
+import { useTheme } from "../../contexts/ThemeContext";
+import { motion, AnimatePresence } from "framer-motion";
+import { 
+  Calculator, 
+  Printer, 
+  Truck, 
+  Receipt, 
+  BarChart3, 
+  Settings,
+  Package,
+  Target,
+  Clock
+} from "lucide-react";
 
 interface Supplier {
   id: string;
@@ -31,20 +42,12 @@ interface Breakeven {
   }>;
 }
 
-const T = {
-  bg: "#050505",
-  card: "#0a0a0a",
-  border: "#1a1a1a",
-  accent: "#8a9a5b",
-  text: "#eee",
-  text2: "#888",
-  fontD: "'Barlow Condensed', sans-serif",
-};
-
 export default function AdminSuppliers() {
+  useTheme();
   const [suppliers, setSuppliers] = useState<Supplier[]>([]);
   const [selectedId, setSelectedId] = useState<string | null>(null);
   const [breakeven, setBreakeven] = useState<Breakeven | null>(null);
+  const [, setLoading] = useState(true);
 
   useEffect(() => {
     fetchSuppliers();
@@ -57,6 +60,8 @@ export default function AdminSuppliers() {
       if (data.length > 0) handleSelect(data[0].id);
     } catch (err) {
       console.error(err);
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -72,136 +77,239 @@ export default function AdminSuppliers() {
   };
 
   return (
-    <div style={{ display: "grid", gridTemplateColumns: "300px 1fr", gap: 32, padding: "0 32px 32px 32px" }}>
+    <div className="grid grid-cols-[320px_1fr] gap-10 p-8 pt-0 min-h-[calc(100vh-200px)]">
       
-      {/* Lista */}
-      <div>
-        <h3 style={{ fontFamily: T.fontD, fontSize: 18, color: "#fff", textTransform: "uppercase", marginBottom: 16 }}>
-          Fornecedores / Ativos
-        </h3>
-        <div style={{ display: "flex", flexDirection: "column", gap: 8 }}>
-          {suppliers.map(s => (
-            <button
-              key={s.id}
-              onClick={() => handleSelect(s.id)}
-              style={{
-                background: selectedId === s.id ? "#111" : "transparent",
-                border: `1px solid ${selectedId === s.id ? T.accent : T.border}`,
-                padding: 16, textAlign: "left", cursor: "pointer", transition: "all .2s",
-              }}
-            >
-              <p style={{ fontSize: 13, fontWeight: 700, color: "#fff", margin: 0 }}>{s.name}</p>
-              <p style={{ fontSize: 11, color: T.text2, margin: "4px 0 0" }}>
-                {s.type === "OWN_PRINTER" ? "Impressora Própria" : "Custo Externo"}
-              </p>
-              <div style={{ display: "flex", justifyContent: "space-between", marginTop: 12 }}>
-                <span style={{ fontSize: 10, color: T.accent }}>R$ {Number(s.costPer10x15).toFixed(2)} / foto</span>
-                <span style={{ fontSize: 10, color: "#444" }}>{s._count.redemptions} resgates</span>
-              </div>
+      {/* Sidebar List */}
+      <div className="space-y-6 border-r border-theme-border pr-10">
+        <div className="flex items-center justify-between mb-8">
+            <h3 className="text-[11px] font-black uppercase tracking-[0.5em] text-theme-muted flex items-center gap-3">
+                <Printer size={14} className="text-brand-primary" />
+                Hardware & Ativos
+            </h3>
+            <button className="p-2 ghost border border-theme-border/50 text-theme-muted hover:text-theme-text transition-colors">
+                <Settings size={14} />
             </button>
+        </div>
+
+        <div className="flex flex-col gap-3">
+          {suppliers.map(s => (
+            <motion.button
+              key={s.id}
+              whileHover={{ x: 4 }}
+              onClick={() => handleSelect(s.id)}
+              className={`w-full p-6 text-left border transition-all duration-300 relative group
+                ${selectedId === s.id 
+                  ? "bg-theme-bg-muted border-brand-primary shadow-lg" 
+                  : "bg-transparent border-theme-border hover:border-theme-text/20"}`}
+            >
+              <div className="flex flex-col">
+                <span className={`text-[13px] font-bold tracking-tight mb-1 transition-colors ${selectedId === s.id ? "text-theme-text" : "text-theme-text/70"}`}>
+                    {s.name}
+                </span>
+                <span className="text-[9px] font-black uppercase tracking-[0.25em] text-theme-muted">
+                    {s.type === "OWN_PRINTER" ? "Ativo Local" : "Fulfillment Externo"}
+                </span>
+              </div>
+              
+              <div className="mt-6 flex items-center justify-between">
+                <div className="flex items-center gap-2">
+                    <span className="text-[10px] font-bold text-brand-primary uppercase tracking-widest">
+                        R$ {Number(s.costPer10x15).toFixed(2)}
+                    </span>
+                    <span className="text-[8px] text-theme-muted uppercase tracking-tighter">/ unid</span>
+                </div>
+                <div className="flex items-center gap-1.5 text-[10px] text-theme-muted">
+                    <Receipt size={10} />
+                    <span>{s._count.redemptions} resg.</span>
+                </div>
+              </div>
+
+              {selectedId === s.id && (
+                  <motion.div 
+                    layoutId="active-indicator"
+                    className="absolute -right-[41px] top-1/2 -translate-y-1/2 w-[2px] h-12 bg-brand-primary shadow-[0_0_12px_rgba(133,185,172,0.8)]"
+                  />
+              )}
+            </motion.button>
           ))}
         </div>
       </div>
 
-      {/* Detalhes & Simulador */}
-      <div>
-        {!selectedId ? (
-          <div style={{ padding: 64, textAlign: "center", border: `1px dashed ${T.border}`, borderRadius: 8 }}>
-            <p style={{ color: T.text2 }}>Selecione um fornecedor para ver a análise financeira.</p>
-          </div>
-        ) : !breakeven ? (
-          <p style={{ color: T.text2 }}>Carregando dados financeiros...</p>
-        ) : (
-          <div style={{ display: "flex", flexDirection: "column", gap: 32 }}>
-            
-            {/* Header Analysis */}
-            <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr 1fr", gap: 20 }}>
-              <StatsCard label="Custo Unitário (Full)" value={`R$ ${breakeven.costPerPhoto}`} sub="Papel + Tinta + Embalagem + Frete" />
-              <StatsCard label="Custo Impressora" value={`R$ ${breakeven.printerCost.toFixed(2)}`} sub="Investimento inicial do ativo" />
-              <StatsCard label="Break-even" value={`${breakeven.photosToBreakeven} fotos`} sub={`Equivale a aprox. ${breakeven.estimatedConcursos} concursos`} accent />
-            </div>
-
-            {/* Pacotes de Gamificação */}
-            <div style={{ background: T.card, border: `1px solid ${T.border}`, padding: 24 }}>
-              <h4 style={{ fontFamily: T.fontD, fontSize: 16, color: "#fff", textTransform: "uppercase", marginBottom: 20, letterSpacing: 1 }}>
-                Custos por Pacote de Gamificação
-              </h4>
-              <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr 1fr", gap: 16 }}>
-                {breakeven.packages.map(p => (
-                  <div key={p.curtidas} style={{ padding: 16, border: `1px solid ${T.border}`, background: "#080808" }}>
-                    <p style={{ fontSize: 10, color: T.accent, textTransform: "uppercase", letterSpacing: 1, marginBottom: 4 }}>
-                      {p.curtidas} Curtidas
-                    </p>
-                    <p style={{ fontSize: 18, fontWeight: 800, color: "#fff", marginBottom: 12 }}>
-                      {p.photos} Foto{p.photos > 1 ? "s" : ""}
-                    </p>
-                    <div style={{ display: "flex", flexDirection: "column", gap: 4, marginBottom: 16 }}>
-                      <Line label="Impressão" value={`R$ ${p.costBreakdown.impressao}`} />
-                      <Line label="Embalagem" value={`R$ ${p.costBreakdown.embalagem}`} />
-                      <Line label="Etiqueta" value={`R$ ${p.costBreakdown.etiqueta}`} />
-                      <Line label="Frete (Rateado)" value={`R$ ${p.costBreakdown.frete}`} />
-                    </div>
-                    <div style={{ borderTop: `1px solid ${T.border}`, paddingTop: 12 }}>
-                      <Line label="CUSTO TOTAL" value={`R$ ${p.totalCost}`} bold />
-                    </div>
-                  </div>
-                ))}
-              </div>
-            </div>
-
-            {/* Simulador de Cenários */}
-            <div style={{ background: T.card, border: `1px solid ${T.border}`, padding: 24 }}>
-              <h4 style={{ fontFamily: T.fontD, fontSize: 16, color: "#fff", textTransform: "uppercase", marginBottom: 8, letterSpacing: 1 }}>
-                Simulador de ROI de Hardware
-              </h4>
-              <p style={{ fontSize: 12, color: T.text2, marginBottom: 20 }}>
-                Quantas fotos precisam ser "pagas" via gamificação para amortizar diferentes modelos de impressora.
+      {/* Analysis Workspace */}
+      <AnimatePresence mode="wait">
+        <motion.div 
+           key={selectedId || 'none'}
+           initial={{ opacity: 0, x: 20 }}
+           animate={{ opacity: 1, x: 0 }}
+           exit={{ opacity: 0, x: -20 }}
+           transition={{ duration: 0.5, ease: [0.16, 1, 0.3, 1] }}
+           className="space-y-10"
+        >
+          {!selectedId ? (
+            <div className="h-full flex flex-col items-center justify-center border-2 border-dashed border-theme-border p-20 text-center space-y-4">
+              <Calculator size={48} className="text-theme-border" strokeWidth={1} />
+              <p className="text-[11px] font-black uppercase tracking-[0.4em] text-theme-muted">
+                Selecione um ativo para análise de ROI
               </p>
-              <div style={{ overflow: "hidden", borderRadius: 4 }}>
-                 <table style={{ width: "100%", borderCollapse: "collapse", fontSize: 13 }}>
-                    <thead>
-                      <tr style={{ background: "#111", textAlign: "left" }}>
-                        <th style={{ padding: 12, border: `1px solid ${T.border}` }}>Preço Impressora</th>
-                        <th style={{ padding: 12, border: `1px solid ${T.border}` }}>Fotos p/ Pagar</th>
-                        <th style={{ padding: 12, border: `1px solid ${T.border}` }}>Tempo Est. (10/mês)</th>
-                      </tr>
-                    </thead>
-                    <tbody>
-                      {breakeven.scenarios.map(s => (
-                        <tr key={s.printerPrice}>
-                          <td style={{ padding: 12, border: `1px solid ${T.border}`, color: "#fff" }}>R$ {s.printerPrice.toFixed(2)}</td>
-                          <td style={{ padding: 12, border: `1px solid ${T.border}`, color: T.accent, fontWeight: 700 }}>{s.photosNeeded} fotos</td>
-                          <td style={{ padding: 12, border: `1px solid ${T.border}`, color: T.text2 }}>{s.monthsAt10PerMonth} meses</td>
-                        </tr>
-                      ))}
-                    </tbody>
-                 </table>
-              </div>
             </div>
+          ) : !breakeven ? (
+            <div className="p-20 text-center animate-pulse">
+                <div className="h-4 w-48 bg-theme-border/50 mx-auto rounded mb-4" />
+                <div className="h-4 w-32 bg-theme-border/30 mx-auto rounded" />
+            </div>
+          ) : (
+            <>
+              {/* Financial Stats */}
+              <div className="grid grid-cols-3 gap-6">
+                <StatsCard 
+                    icon={<Calculator size={18} />} 
+                    label="Operacional Unitário" 
+                    value={`R$ ${breakeven.costPerPhoto}`} 
+                    sub="Papel + Tinta + Embalagem + Frete" 
+                />
+                <StatsCard 
+                    icon={<Printer size={18} />} 
+                    label="Equipamento" 
+                    value={`R$ ${breakeven.printerCost.toFixed(2)}`} 
+                    sub="CAPEX — Investimento Inicial" 
+                />
+                <StatsCard 
+                    icon={<Target size={18} />} 
+                    label="Análise de Amortização" 
+                    value={`${breakeven.photosToBreakeven}`} 
+                    suffix="fotos"
+                    sub={`Aprox. ${breakeven.estimatedConcursos} concursos`} 
+                    variant="accent"
+                />
+              </div>
 
-          </div>
-        )}
+              {/* Gamification Costs */}
+              <div className="glass-card p-10 relative overflow-hidden">
+                <div className="absolute top-0 right-0 p-8 text-white/[0.02] pointer-events-none transform rotate-12 translate-x-1/4 -translate-y-1/4">
+                    <BarChart3 size={240} />
+                </div>
+                
+                <h4 className="text-[11px] font-black uppercase tracking-[0.6em] text-theme-muted mb-10 flex items-center gap-4">
+                  <span className="w-8 h-px bg-brand-primary/40" />
+                  Custos por Patamar de Gamificação
+                </h4>
+                
+                <div className="grid grid-cols-3 gap-8 relative z-10">
+                  {breakeven.packages.map(p => (
+                    <div key={p.curtidas} className="p-8 border border-theme-border bg-theme-bg h-full flex flex-col justify-between hover:border-brand-primary/50 transition-colors cursor-default">
+                      <div>
+                        <div className="flex items-center gap-2 text-[10px] font-bold uppercase tracking-[0.3em] text-brand-primary mb-4">
+                            <span className="w-4 h-px bg-brand-primary" />
+                            {p.curtidas} Curtidas
+                        </div>
+                        <div className="flex items-baseline gap-2 mb-8">
+                            <span className="text-4xl font-black font-sans text-theme-text leading-none">{p.photos}</span>
+                            <span className="text-[10px] font-bold uppercase tracking-widest text-theme-muted">Arquivos</span>
+                        </div>
+                        
+                        <div className="space-y-3.5 mb-10">
+                          <DataLine icon={<Printer size={12} />} label="Impressão" value={`R$ ${p.costBreakdown.impressao}`} />
+                          <DataLine icon={<Package size={12} />} label="Embalagem" value={`R$ ${p.costBreakdown.embalagem}`} />
+                          <DataLine icon={<Truck size={12} />} label="Logística" value={`R$ ${p.costBreakdown.frete}`} />
+                        </div>
+                      </div>
+                      
+                      <div className="pt-6 border-t border-theme-border flex justify-between items-center">
+                        <span className="text-[9px] font-black uppercase tracking-[0.2em] text-theme-muted">Custo Total</span>
+                        <span className="text-lg font-black text-theme-text">R$ {p.totalCost}</span>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              </div>
+
+              {/* ROI Simulator */}
+              <div className="glass-card p-10">
+                <div className="flex items-center justify-between mb-8">
+                    <div className="space-y-1">
+                        <h4 className="text-[11px] font-black uppercase tracking-[0.6em] text-theme-muted flex items-center gap-4">
+                          <span className="w-8 h-px bg-theme-border" />
+                          Simulador Prospectivo de ROI
+                        </h4>
+                        <p className="text-[10px] text-theme-muted uppercase tracking-[0.2em] font-medium ml-12">Projeção baseada em taxa de conversão orgânica</p>
+                    </div>
+                    <BarChart3 className="text-theme-muted opacity-30" size={24} />
+                </div>
+                
+                <div className="overflow-hidden border border-theme-border">
+                   <table className="w-full text-left border-collapse">
+                      <thead>
+                        <tr className="bg-theme-bg-muted/50 text-[10px] font-black uppercase tracking-[0.3em] text-theme-muted">
+                          <th className="p-6 border-r border-theme-border">Investimento Ativo</th>
+                          <th className="p-6 border-r border-theme-border text-center">Volume Amortização</th>
+                          <th className="p-6">Projeção Temporal (10/mês)</th>
+                        </tr>
+                      </thead>
+                      <tbody className="text-[12px] font-bold tracking-tight">
+                        {breakeven.scenarios.map(s => (
+                          <tr key={s.printerPrice} className="border-t border-theme-border hover:bg-theme-bg-muted/20 transition-colors">
+                            <td className="p-6 border-r border-theme-border text-theme-text">
+                                <span className="text-[10px] text-theme-muted font-medium uppercase tracking-widest mr-3">CAPEX:</span>
+                                R$ {s.printerPrice.toFixed(2)}
+                            </td>
+                            <td className="p-6 border-r border-theme-border text-center">
+                                <span className="bg-brand-primary/10 text-brand-primary border border-brand-primary/20 px-4 py-1 flex items-center gap-2 justify-center w-fit mx-auto">
+                                    <Target size={12} />
+                                    {s.photosNeeded} FOTOS
+                                </span>
+                            </td>
+                            <td className="p-6 text-theme-muted flex items-center gap-3">
+                                <Clock size={16} strokeWidth={1.5} className="text-brand-primary" />
+                                <span>{s.monthsAt10PerMonth} Meses Estimados</span>
+                            </td>
+                          </tr>
+                        ))}
+                      </tbody>
+                   </table>
+                </div>
+              </div>
+            </>
+          )}
+        </motion.div>
+      </AnimatePresence>
+    </div>
+  );
+}
+
+function StatsCard({ icon, label, value, sub, suffix, variant = "default" }: { icon: React.ReactNode, label: string; value: string; sub: string; suffix?: string; variant?: "default" | "accent" }) {
+  return (
+    <div className={`p-8 border relative overflow-hidden transition-all duration-700
+        ${variant === "accent" 
+            ? "bg-brand-primary/5 border-brand-primary shadow-2xl" 
+            : "bg-theme-bg-muted border-theme-border hover:border-theme-text/20"}`}>
+      <div className={`absolute top-0 right-0 p-4 transition-transform duration-700 group-hover:scale-125
+        ${variant === "accent" ? "text-brand-primary/20" : "text-theme-muted/10"}`}>
+          {icon}
       </div>
-
+      <p className="text-[9px] font-black uppercase tracking-[0.45em] text-theme-muted mb-4 flex items-center gap-2">
+        {label}
+      </p>
+      <div className="flex items-baseline gap-3 mb-2">
+          <p className={`text-4xl font-black font-sans tracking-tight leading-none
+            ${variant === "accent" ? "text-brand-primary" : "text-theme-text"}`}>
+            {value}
+          </p>
+          {suffix && <span className={`text-[10px] font-black uppercase tracking-[0.2em] font-sans ${variant === "accent" ? "text-brand-primary" : "text-theme-muted"}`}>{suffix}</span>}
+      </div>
+      <p className="text-[9px] font-bold uppercase tracking-widest text-theme-muted/60">{sub}</p>
     </div>
   );
 }
 
-function StatsCard({ label, value, sub, accent = false }: { label: string; value: string; sub: string; accent?: boolean }) {
+function DataLine({ icon, label, value }: { icon: React.ReactNode, label: string; value: string }) {
   return (
-    <div style={{ background: T.card, border: `1px solid ${accent ? T.accent : T.border}`, padding: 24 }}>
-      <p style={{ fontSize: 10, color: T.text2, textTransform: "uppercase", letterSpacing: 1.5, marginBottom: 8 }}>{label}</p>
-      <p style={{ fontFamily: T.fontD, fontSize: 32, fontWeight: 900, color: accent ? T.accent : "#fff", margin: 0 }}>{value}</p>
-      <p style={{ fontSize: 11, color: "#555", marginTop: 4 }}>{sub}</p>
+    <div className="flex justify-between items-center group/line">
+      <div className="flex items-center gap-3">
+          <span className="text-theme-muted transition-colors group-hover/line:text-brand-primary">{icon}</span>
+          <span className="text-[10px] font-extrabold uppercase tracking-[0.15em] text-theme-muted/50">{label}</span>
+      </div>
+      <span className="text-[11px] font-bold text-theme-text whitespace-nowrap">{value}</span>
     </div>
   );
 }
 
-function Line({ label, value, bold = false }: { label: string; value: string; bold?: boolean }) {
-  return (
-    <div style={{ display: "flex", justifyContent: "space-between", fontSize: 11 }}>
-      <span style={{ color: "#444" }}>{label}</span>
-      <span style={{ color: bold ? "#fff" : T.text2, fontWeight: bold ? 700 : 400 }}>{value}</span>
-    </div>
-  );
-}

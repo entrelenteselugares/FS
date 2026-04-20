@@ -1,84 +1,174 @@
-@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Barlow+Condensed:wght@400;600;700;800&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Outfit:wght@100;200;300;400;500;600;700;800;900&display=swap');
 
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
 
+/* ══════════════════════════════════════════════════════════
+   GLOBAL TYPOGRAPHY SYSTEM — OUTFIT SANS
+   ── Dark Mode (default: Midnight Luxury) ─────────────────
+   ══════════════════════════════════════════════════════════ */
+
+/* ── Light Mode (default) ─────────────────────────────── */
+:root {
+  --theme-bg:          #FFFFFF;
+  --theme-bg-muted:    #F8F9FA;
+  --theme-text:        #000000;
+  --theme-text-muted:  #666666;
+  --theme-border:      #E5E5E5;
+  
+  /* Brand Identity */
+  --brand-primary:     #85B9AC;
+  --brand-tactical:    #85B9AC;
+  
+  /* UX Consistency */
+  --theme-bg-nav:      rgba(255, 255, 255, 0.8);
+  --theme-text-on-brand: #000000;
+
+  color-scheme: light;
+}
+
+/* ── Dark Mode — Applied when html.dark class is present ── */
+html.dark {
+  --theme-bg:          #000000;
+  --theme-bg-muted:    #0A0A0A;
+  --theme-text:        #FFFFFF;
+  --theme-text-muted:  #999999;
+  --theme-border:      #1A1A1A;
+
+  /* Brand Identity */
+  --brand-primary:     #85B9AC;
+  --brand-tactical:    #85B9AC;
+
+  /* UX Consistency */
+  --theme-bg-nav:      rgba(0, 0, 0, 0.8);
+  --theme-text-on-brand: #000000;
+
+  color-scheme: dark;
+}
+
+/* ══════════════════════════════════════════════════════════
+   BASE LAYER
+   ══════════════════════════════════════════════════════════ */
 @layer base {
+  html {
+    /* Smooth transitions when toggling theme */
+    transition: background-color 0.4s ease, color 0.4s ease;
+  }
+
   body {
-    @apply bg-[#050505] text-white;
-    font-family: 'Inter', sans-serif;
+    background-color: var(--theme-bg);
+    color: var(--theme-text);
+    font-family: 'Outfit', sans-serif;
     -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
   }
 
   ::selection {
-    @apply bg-brand-tactical/30;
+    background: var(--brand-primary);
+    color: white;
   }
 
-  h1, h2, h3, h4, .font-heading {
-    font-family: 'Barlow Condensed', sans-serif;
-    @apply uppercase tracking-wider;
+  /* Universal typography - all headings and elements use Outfit */
+  h1, h2, h3, h4, h5, h6 {
+    @apply font-sans;
+    font-family: 'Outfit', sans-serif;
   }
 }
 
+/* ══════════════════════════════════════════════════════════
+   COMPONENT LAYER
+   ══════════════════════════════════════════════════════════ */
 @layer components {
+  /* Glass morphism — adapts to theme */
   .glass {
-    @apply backdrop-blur-xl bg-white/[0.01] border border-white/[0.05];
+    backdrop-filter: blur(20px);
+    -webkit-backdrop-filter: blur(20px);
+    background-color: rgba(255, 255, 255, 0.03);
+    border: 1px solid var(--theme-border);
+  }
+
+  html.dark .glass {
+    background-color: rgba(0, 0, 0, 0.03);
   }
 
   .glass-card {
-    @apply glass rounded-none transition-all duration-500 hover:border-white/[0.1] hover:bg-white/[0.02];
+    @apply glass transition-all duration-500;
   }
 
-  .lux-gradient-text {
-    @apply text-white; /* Removed gradients for a more solid, serious feel */
-  }
-
+  /* Legacy button system */
   .lux-button {
-    @apply relative overflow-hidden px-10 py-4 rounded-none font-bold uppercase tracking-[0.3em] text-[10px] transition-all active:scale-95;
+    @apply relative overflow-hidden px-10 py-4 font-bold uppercase tracking-[0.3em] text-[10px] transition-all active:scale-95;
   }
 
   .lux-button-primary {
-    @apply lux-button bg-white text-black hover:bg-zinc-200 shadow-none border border-transparent;
+    @apply lux-button;
+    background-color: var(--theme-text);
+    color: var(--theme-bg);
   }
 
   .lux-button-tactical {
-    @apply lux-button bg-brand-tactical text-white hover:brightness-110;
+    @apply lux-button bg-brand-tactical hover:brightness-110;
+    color: var(--theme-text-on-brand);
   }
 
   .lux-button-ghost {
-    @apply lux-button bg-white/5 border border-white/10 text-white hover:bg-white/10;
+    @apply lux-button border border-theme-border;
+    color: var(--theme-text);
   }
 
   .lux-input {
-    @apply w-full bg-white/[0.02] border border-white/5 rounded-none px-5 py-4 text-sm text-white focus:outline-none focus:border-white/20 focus:bg-white/[0.04] transition-all placeholder:text-zinc-700;
+    width: 100%;
+    background-color: var(--theme-bg-muted);
+    border: 1px solid var(--theme-border);
+    padding: 1rem 1.25rem;
+    font-size: 0.875rem;
+    color: var(--theme-text);
+    outline: none;
+    transition: border-color 0.2s;
+  }
+  .lux-input::placeholder {
+    color: var(--theme-muted);
+    opacity: 0.5;
+  }
+  .lux-input:focus {
+    border-color: var(--brand-primary);
+  }
+
+  /* Theme-aware scrollbar */
+  ::-webkit-scrollbar {
+    width: 4px;
+  }
+  ::-webkit-scrollbar-track {
+    background: var(--theme-bg);
+  }
+  ::-webkit-scrollbar-thumb {
+    background: var(--theme-border);
+  }
+  ::-webkit-scrollbar-thumb:hover {
+    background: var(--theme-muted);
   }
 }
 
-/* Animações Editoriais */
+/* ══════════════════════════════════════════════════════════
+   ANIMATIONS
+   ══════════════════════════════════════════════════════════ */
 @keyframes reveal {
-  from { opacity: 0; transform: translateY(10px); }
-  to { opacity: 1; transform: translateY(0); }
+  from { opacity: 0; transform: translateY(12px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes spin {
+  to { transform: rotate(360deg); }
 }
 
 .animate-reveal {
-  animation: reveal 1s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+  animation: reveal 0.9s cubic-bezier(0.16, 1, 0.3, 1) forwards;
 }
 
 .delay-100 { animation-delay: 0.1s; }
 .delay-200 { animation-delay: 0.2s; }
 .delay-300 { animation-delay: 0.3s; }
+.delay-400 { animation-delay: 0.4s; }
+.delay-500 { animation-delay: 0.5s; }
 
-/* Scrollbar Fine Art */
-::-webkit-scrollbar {
-  width: 4px;
-}
-::-webkit-scrollbar-track {
-  background: #050505;
-}
-::-webkit-scrollbar-thumb {
-  background: #1a1a1a;
-}
-::-webkit-scrollbar-thumb:hover {
-  background: #333;
-}

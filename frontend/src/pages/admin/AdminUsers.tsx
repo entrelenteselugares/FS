@@ -90,12 +90,12 @@ export const AdminUsers: React.FC = () => {
     <div className="space-y-12 animate-in fade-in slide-in-from-bottom-4 duration-700">
       <div className="flex items-center justify-between border-b border-white/5 pb-8">
         <div>
-          <h2 className="text-4xl font-heading text-white tracking-tighter uppercase">Rede de Membros</h2>
-          <p className="text-[10px] text-zinc-600 uppercase tracking-[0.5em] mt-2 font-bold italic">Diretório de Profissionais e Unidades</p>
+          <h2 className="text-4xl font-heading text-theme-text tracking-tighter uppercase">Rede de Membros</h2>
+          <p className="text-[10px] text-theme-muted uppercase tracking-[0.5em] mt-2 font-bold italic">Diretório de Profissionais e Unidades</p>
         </div>
         <button 
           onClick={() => setIsModalOpen(true)}
-          className="bg-brand-tactical text-white text-[10px] font-bold uppercase tracking-[0.4em] px-10 py-5 hover:brightness-110 transition-all rounded-none"
+          className="bg-brand-tactical text-black text-[10px] font-bold uppercase tracking-[0.4em] px-10 py-5 hover:brightness-110 transition-all rounded-none"
         >
           CONVOCAR MEMBRO
         </button>
@@ -103,7 +103,7 @@ export const AdminUsers: React.FC = () => {
 
       <div className="space-y-2">
         {/* List Header */}
-        <div className="hidden md:grid grid-cols-12 gap-4 px-10 py-4 text-[9px] font-bold text-zinc-700 uppercase tracking-[0.4em] border-b border-white/5 bg-white/[0.02]">
+        <div className="hidden md:grid grid-cols-12 gap-4 px-10 py-4 text-[9px] font-bold text-theme-muted uppercase tracking-[0.4em] border-b border-theme-border bg-theme-bg/10">
           <div className="col-span-2">Perfil</div>
           <div className="col-span-4">Identificação / E-mail</div>
           <div className="col-span-3">Chave PIX</div>
@@ -112,14 +112,14 @@ export const AdminUsers: React.FC = () => {
         </div>
 
         {loading ? (
-          <div className="py-20 text-center text-[10px] text-zinc-700 uppercase tracking-widest animate-pulse border border-white/5 bg-black">Sincronizando Rede...</div>
+          <div className="py-20 text-center text-[10px] text-theme-muted uppercase tracking-widest animate-pulse border border-theme-border bg-theme-bg-muted">Sincronizando Rede...</div>
         ) : users.map(user => (
-          <div key={user.id} className="bg-black hover:bg-white/[0.02] border border-white/5 transition-all group">
+          <div key={user.id} className="bg-theme-bg-muted hover:bg-theme-bg/5 border border-theme-border transition-all group">
             <div className="grid grid-cols-1 md:grid-cols-12 gap-4 items-center px-6 md:px-10 py-6">
               {/* Perfil */}
               <div className="col-span-2 flex items-center gap-4">
                 <span className={`text-[8px] font-bold uppercase tracking-[0.3em] px-2 py-0.5 border ${
-                  user.role === "ADMIN" ? "border-brand-tactical text-brand-tactical" : "border-zinc-800 text-zinc-600"
+                  user.role === "ADMIN" ? "border-brand-tactical text-brand-tactical" : "border-theme-border text-theme-muted"
                 }`}>
                   {user.role}
                 </span>
@@ -127,8 +127,8 @@ export const AdminUsers: React.FC = () => {
 
               {/* Identificação */}
               <div className="col-span-4">
-                <div className="text-sm font-bold text-white uppercase tracking-tighter truncate">{user.nome}</div>
-                <div className="text-[10px] text-zinc-700 font-bold uppercase tracking-wider truncate mt-0.5 opacity-60">{user.email}</div>
+                <div className="text-sm font-bold text-theme-text uppercase tracking-tighter truncate">{user.nome}</div>
+                <div className="text-[10px] text-theme-muted font-bold uppercase tracking-wider truncate mt-0.5 opacity-60">{user.email}</div>
               </div>
 
               {/* Financeiro / PIX */}
@@ -150,7 +150,7 @@ export const AdminUsers: React.FC = () => {
                   onClick={() => toggleActive(user)}
                   className={`transition-all hover:scale-110 ${user.active ? "text-brand-tactical" : "text-zinc-800"}`}
                 >
-                  <div className={`w-8 h-1 ${user.active ? "bg-brand-tactical shadow-[0_0_10px_rgba(93,101,50,0.4)]" : "bg-zinc-900"}`} />
+                  <div className={`w-8 h-1 ${user.active ? "bg-brand-tactical shadow-[0_0_10px_rgba(133,185,172,0.4)]" : "bg-zinc-900"}`} />
                 </button>
               </div>
 
@@ -169,10 +169,10 @@ export const AdminUsers: React.FC = () => {
       </div>
 
       {isModalOpen && (
-        <div className="fixed inset-0 bg-black/95 backdrop-blur-xl z-50 flex items-center justify-center p-6">
-          <div className="w-full max-w-xl bg-[#080808] border border-white/5 p-12 animate-in zoom-in-95 duration-300">
+        <div className="fixed inset-0 bg-theme-bg/95 backdrop-blur-xl z-50 flex items-center justify-center p-6">
+          <div className="w-full max-w-xl bg-theme-bg border border-theme-border p-12 animate-in zoom-in-95 duration-300">
               <div className="mb-12 text-center md:text-left">
-                <h2 className="text-4xl font-heading text-white uppercase tracking-tighter mb-2">
+                <h2 className="text-4xl font-heading text-theme-text uppercase tracking-tighter mb-2">
                   {editingUser ? "Ajustar Membro" : "Novo Membro"}
                 </h2>
                 <div className="w-16 h-1.5 bg-brand-tactical mx-auto md:mx-0" />
@@ -180,50 +180,50 @@ export const AdminUsers: React.FC = () => {
 
              <form onSubmit={handleCreate} className="space-y-8">
                 <div className="space-y-2">
-                  <label className="text-[10px] font-bold text-zinc-600 uppercase tracking-[0.4em]">Nome Completo</label>
+                  <label className="text-[10px] font-black text-theme-muted uppercase tracking-[0.4em]">Nome Completo</label>
                   <input 
                     required
                     value={formData.name}
                     onChange={e => setFormData({...formData, name: e.target.value})}
-                    className="w-full bg-transparent border-b border-zinc-900 py-3 text-sm text-white focus:outline-none focus:border-brand-tactical transition-all rounded-none" 
+                    className="w-full bg-transparent border-b border-theme-border py-3 text-sm text-theme-text focus:outline-none focus:border-brand-tactical transition-all rounded-none" 
                   />
                 </div>
                 <div className="space-y-2">
-                  <label className="text-[10px] font-bold text-zinc-600 uppercase tracking-[0.4em]">E-mail Corporativo</label>
+                  <label className="text-[10px] font-black text-theme-muted uppercase tracking-[0.4em]">E-mail Corporativo</label>
                   <input 
                     type="email" required
                     value={formData.email}
                     onChange={e => setFormData({...formData, email: e.target.value})}
-                    className="w-full bg-transparent border-b border-zinc-900 py-3 text-sm text-white focus:outline-none focus:border-brand-tactical transition-all rounded-none" 
+                    className="w-full bg-transparent border-b border-theme-border py-3 text-sm text-theme-text focus:outline-none focus:border-brand-tactical transition-all rounded-none" 
                   />
                 </div>
                 <div className="space-y-2">
-                  <label className="text-[10px] font-bold text-zinc-600 uppercase tracking-[0.4em]">Chave PIX (CPF, E-mail, Celular ou Aleatória)</label>
+                  <label className="text-[10px] font-black text-theme-muted uppercase tracking-[0.4em]">Chave PIX (CPF, E-mail, Celular ou Aleatória)</label>
                   <input 
                     value={formData.pixKey}
                     onChange={e => setFormData({...formData, pixKey: e.target.value})}
                     placeholder="DADOS PARA REPASSE"
-                    className="w-full bg-transparent border-b border-zinc-900 py-3 text-sm text-white focus:outline-none focus:border-brand-tactical transition-all rounded-none" 
+                    className="w-full bg-transparent border-b border-theme-border py-3 text-sm text-theme-text focus:outline-none focus:border-brand-tactical transition-all rounded-none placeholder:opacity-20" 
                   />
                 </div>
                 <div className="grid grid-cols-2 gap-8">
                   <div className="space-y-2">
-                    <label className="text-[10px] font-bold text-zinc-600 uppercase tracking-[0.4em]">
+                    <label className="text-[10px] font-black text-theme-muted uppercase tracking-[0.4em]">
                       {editingUser ? "Nova Senha (opcional)" : "Senha Inicial"}
                     </label>
                     <input 
                       type="password" required={!editingUser}
                       value={formData.password}
                       onChange={e => setFormData({...formData, password: e.target.value})}
-                      className="w-full bg-transparent border-b border-zinc-900 py-3 text-sm text-white focus:outline-none focus:border-brand-tactical transition-all rounded-none" 
+                      className="w-full bg-transparent border-b border-theme-border py-3 text-sm text-theme-text focus:outline-none focus:border-brand-tactical transition-all rounded-none" 
                     />
                   </div>
                   <div className="space-y-2">
-                    <label className="text-[10px] font-bold text-zinc-600 uppercase tracking-[0.4em]">Nível de Acesso</label>
+                    <label className="text-[10px] font-black text-theme-muted uppercase tracking-[0.4em]">Nível de Acesso</label>
                     <select 
                       value={formData.role}
                       onChange={e => setFormData({...formData, role: e.target.value})}
-                      className="w-full bg-black border-b border-white/10 py-3 text-sm text-white focus:outline-none focus:border-brand-tactical appearance-none"
+                      className="w-full bg-theme-bg-muted border-b border-theme-border py-3 text-sm text-theme-text focus:outline-none focus:border-brand-tactical appearance-none"
                     >
                       <option value="PROFISSIONAL">PROFISSIONAL</option>
                       <option value="CARTORIO">UNIDADE LOCAL</option>
@@ -233,10 +233,14 @@ export const AdminUsers: React.FC = () => {
                 </div>
 
                 <div className="pt-10 flex gap-4">
-                  <button type="submit" className="flex-1 bg-brand-tactical text-white font-bold uppercase tracking-[0.4em] py-6 text-[11px] hover:brightness-110 transition-all rounded-none">
+                  <button 
+                    type="submit" 
+                    className="flex-1 font-black uppercase tracking-[0.4em] py-6 text-[11px] hover:brightness-110 transition-all rounded-none"
+                    style={{ backgroundColor: 'var(--brand-tactical)', color: 'var(--theme-text-on-brand)' }}
+                  >
                     {editingUser ? "SALVAR ALTERAÇÕES" : "REGISTRAR"}
                   </button>
-                  <button type="button" onClick={() => { setIsModalOpen(false); setEditingUser(null); setFormData({ name: "", email: "", password: "", role: "PROFISSIONAL", pixKey: "" }); }} className="px-8 border border-zinc-900 text-zinc-600 hover:text-white transition-all rounded-none uppercase text-[10px] font-bold tracking-widest">
+                  <button type="button" onClick={() => { setIsModalOpen(false); setEditingUser(null); setFormData({ name: "", email: "", password: "", role: "PROFISSIONAL", pixKey: "" }); }} className="px-8 border border-theme-border text-theme-muted hover:text-theme-text transition-all rounded-none uppercase text-[10px] font-black tracking-widest">
                     CANCELAR
                   </button>
                 </div>

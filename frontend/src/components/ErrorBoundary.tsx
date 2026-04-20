@@ -27,7 +27,7 @@ export class ErrorBoundary extends Component<Props, State> {
     if (this.state.hasError) {
       return (
         <div className="min-h-screen bg-[#050505] flex items-center justify-center p-6 text-center">
-          <div className="max-w-md w-full glass p-8 rounded-2xl border border-red-500/20 glow-indigo">
+          <div className="max-w-md w-full bg-black/40 backdrop-blur-xl p-10 border border-white/5 shadow-2xl">
             <h1 className="text-2xl font-black uppercase tracking-widest text-red-500 mb-4">
               Erro de Sincronização
             </h1>
@@ -35,16 +35,16 @@ export class ErrorBoundary extends Component<Props, State> {
               Ocorreu uma falha inesperada ao carregar a interface premium.
               Nossa equipe técnica foi notificada.
             </p>
-            <div className="text-[10px] text-zinc-600 font-mono bg-black/50 p-4 rounded mb-6 overflow-auto max-h-32">
+            <div className="text-[10px] text-zinc-600 font-sans bg-black/50 p-4 rounded-none mb-6 overflow-auto max-h-32 border border-white/5">
               {typeof this.state.error?.message === 'string' 
                 ? this.state.error.message 
                 : (this.state.error as any)?.error || JSON.stringify(this.state.error) || "Erro desconhecido"}
             </div>
             <button
               onClick={() => window.location.reload()}
-              className="w-full py-4 bg-brand-indigo hover:bg-brand-indigo/90 text-white font-black uppercase tracking-widest transition-all rounded-lg text-xs"
+              className="w-full py-4 bg-brand-primary hover:brightness-110 text-black font-black uppercase tracking-[0.4em] transition-all rounded-none text-[10px]"
             >
-              Reiniciar Sistema
+              RESTAURAR CONEXÃO
             </button>
           </div>
         </div>

@@ -63,19 +63,19 @@ export const AdminFinance: React.FC = () => {
     <div className="space-y-12 animate-in fade-in slide-in-from-bottom-4 duration-700">
       <div className="flex items-center justify-between border-b border-white/5 pb-8">
         <div>
-          <h2 className="text-4xl font-heading text-white tracking-tighter uppercase">Central de Repasses</h2>
-          <p className="text-[10px] text-zinc-600 uppercase tracking-[0.5em] mt-2 font-bold italic">Modelo Uber — Pagamentos após 7 dias</p>
+          <h2 className="text-4xl font-heading text-theme-text tracking-tighter uppercase">Central de Repasses</h2>
+          <p className="text-[10px] text-theme-muted uppercase tracking-[0.5em] mt-2 font-bold italic">Modelo Uber — Pagamentos após 7 dias</p>
         </div>
         <div className="flex bg-white/5 p-1 rounded-none border border-white/5">
           <button 
             onClick={() => setView("pending")}
-            className={`px-6 py-3 text-[9px] font-bold uppercase tracking-widest transition-all ${view === "pending" ? "bg-brand-tactical text-white" : "text-zinc-600 hover:text-white"}`}
+            className={`px-6 py-3 text-[9px] font-bold uppercase tracking-widest transition-all ${view === "pending" ? "bg-brand-tactical text-black" : "text-theme-muted hover:text-theme-text"}`}
           >
             Pendentes
           </button>
           <button 
             onClick={() => setView("history")}
-            className={`px-6 py-3 text-[9px] font-bold uppercase tracking-widest transition-all ${view === "history" ? "bg-white/10 text-white" : "text-zinc-600 hover:text-white"}`}
+            className={`px-6 py-3 text-[9px] font-bold uppercase tracking-widest transition-all ${view === "history" ? "bg-theme-bg/10 text-theme-text" : "text-theme-muted hover:text-theme-text"}`}
           >
             Histórico
           </button>
@@ -84,46 +84,46 @@ export const AdminFinance: React.FC = () => {
 
       <div className="grid grid-cols-1 gap-6">
         {loading ? (
-          <div className="py-20 text-center text-[10px] text-zinc-700 uppercase tracking-widest animate-pulse bg-black border border-white/5">Sincronizando Fluxo Financeiro...</div>
+          <div className="py-20 text-center text-[10px] text-theme-muted uppercase tracking-widest animate-pulse bg-theme-bg-muted border border-theme-border">Sincronizando Fluxo Financeiro...</div>
         ) : orders.length === 0 ? (
           <div className="py-20 text-center text-[10px] text-zinc-800 uppercase tracking-widest border border-dashed border-white/5">
             {view === "pending" ? "Nenhum repasse pronto para liberação." : "Nenhum histórico de repasse encontrado."}
           </div>
         ) : orders.map(order => (
-          <div key={order.id} className="bg-[#080808] border border-white/5 p-8 flex flex-col md:flex-row justify-between gap-10">
+          <div key={order.id} className="bg-theme-bg-muted border border-theme-border p-8 flex flex-col md:flex-row justify-between gap-10">
             <div className="flex-1">
               <div className="flex items-center gap-3 mb-4">
-                <span className="text-[8px] font-bold uppercase tracking-widest px-2 py-1 border border-brand-tactical text-brand-tactical">PEDIDO APROVADO</span>
-                <span className="text-[10px] text-zinc-600 font-bold uppercase tracking-widest">
+                <span className="text-[8px] font-black uppercase tracking-widest px-2 py-1 border border-brand-tactical text-brand-tactical">PEDIDO APROVADO</span>
+                <span className="text-[10px] text-theme-muted font-bold uppercase tracking-widest leading-none">
                   {fmtDate(order.updatedAt)}
                 </span>
               </div>
-              <h3 className="text-2xl font-heading text-white uppercase tracking-tighter mb-2">{order.event.title}</h3>
-              <p className="text-[10px] text-zinc-700 font-bold uppercase tracking-widest">Venda Total: {Number(order.amount).toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' })}</p>
+              <h3 className="text-2xl font-heading text-theme-text uppercase tracking-tighter mb-2 font-black">{order.event.title}</h3>
+              <p className="text-[10px] text-theme-muted font-black uppercase tracking-widest leading-none">Venda Total: {Number(order.amount).toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' })}</p>
               
               <div className="mt-8 grid grid-cols-1 md:grid-cols-3 gap-8">
                 {/* Captação */}
                 {order.event.partners.captacao && (
                   <div className="space-y-2">
-                    <label className="text-[9px] font-bold text-zinc-600 uppercase tracking-widest block">Captação: {order.event.partners.captacao.nome}</label>
-                    <div className="text-lg text-white font-bold">{calculateAmount(order.amount, order.event.partners.captacao.profissional.captPct)}</div>
-                    <div className="text-[9px] text-brand-tactical font-bold bg-brand-tactical/5 p-2 border border-brand-tactical/10">PIX: {order.event.partners.captacao.pixKey || "PENDENTE"}</div>
+                    <label className="text-[9px] font-black text-theme-muted uppercase tracking-widest block">Captação: {order.event.partners.captacao.nome}</label>
+                    <div className="text-lg text-theme-text font-black">{calculateAmount(order.amount, order.event.partners.captacao.profissional.captPct)}</div>
+                    <div className="text-[9px] text-brand-tactical font-black bg-brand-tactical/5 p-2 border border-brand-tactical/10">PIX: {order.event.partners.captacao.pixKey || "PENDENTE"}</div>
                   </div>
                 )}
                 {/* Edição */}
                 {order.event.partners.edicao && (
                   <div className="space-y-2">
-                    <label className="text-[9px] font-bold text-zinc-600 uppercase tracking-widest block">Edição: {order.event.partners.edicao.nome}</label>
-                    <div className="text-lg text-white font-bold">{calculateAmount(order.amount, order.event.partners.edicao.profissional.editPct)}</div>
-                    <div className="text-[9px] text-brand-tactical font-bold bg-brand-tactical/5 p-2 border border-brand-tactical/10">PIX: {order.event.partners.edicao.pixKey || "PENDENTE"}</div>
+                    <label className="text-[9px] font-black text-theme-muted uppercase tracking-widest block">Edição: {order.event.partners.edicao.nome}</label>
+                    <div className="text-lg text-theme-text font-black">{calculateAmount(order.amount, order.event.partners.edicao.profissional.editPct)}</div>
+                    <div className="text-[9px] text-brand-tactical font-black bg-brand-tactical/5 p-2 border border-brand-tactical/10">PIX: {order.event.partners.edicao.pixKey || "PENDENTE"}</div>
                   </div>
                 )}
                 {/* Unidade Local */}
                 {order.event.partners.cartorio && (
                   <div className="space-y-2">
-                    <label className="text-[9px] font-bold text-zinc-600 uppercase tracking-widest block">Unidade: {order.event.partners.cartorio.nome}</label>
-                    <div className="text-lg text-white font-bold">{calculateAmount(order.amount, order.event.partners.cartorio.cartorio.splitPct)}</div>
-                    <div className="text-[9px] text-brand-tactical font-bold bg-brand-tactical/5 p-2 border border-brand-tactical/10">PIX: {order.event.partners.cartorio.pixKey || "PENDENTE"}</div>
+                    <label className="text-[9px] font-black text-theme-muted uppercase tracking-widest block">Unidade: {order.event.partners.cartorio.nome}</label>
+                    <div className="text-lg text-theme-text font-black">{calculateAmount(order.amount, order.event.partners.cartorio.cartorio.splitPct)}</div>
+                    <div className="text-[9px] text-brand-tactical font-black bg-brand-tactical/5 p-2 border border-brand-tactical/10">PIX: {order.event.partners.cartorio.pixKey || "PENDENTE"}</div>
                   </div>
                 )}
               </div>
@@ -133,14 +133,14 @@ export const AdminFinance: React.FC = () => {
               {view === "pending" ? (
                 <button 
                   onClick={() => handleMarkAsPaid(order.id)}
-                  className="bg-brand-tactical text-white text-[10px] font-bold uppercase tracking-[0.3em] px-8 py-5 hover:brightness-110 transition-all"
+                  className="bg-brand-tactical text-black text-[10px] font-black uppercase tracking-[0.3em] px-8 py-5 hover:brightness-110 transition-all rounded-none"
                 >
                   Confirmar Repasse PIX
                 </button>
               ) : (
                 <div className="text-right">
-                  <div className="text-[9px] font-bold text-zinc-600 uppercase tracking-widest mb-1">Repasse realizado em</div>
-                  <div className="text-[11px] text-brand-tactical font-bold uppercase tracking-widest">
+                  <div className="text-[9px] font-black text-theme-muted uppercase tracking-widest mb-1">Repasse realizado em</div>
+                  <div className="text-[11px] text-brand-tactical font-black uppercase tracking-widest">
                     {order.payoutDate && fmtDateTime(order.payoutDate)}
                   </div>
                 </div>

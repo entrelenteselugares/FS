@@ -75,7 +75,7 @@ export const AdminContests: React.FC = () => {
         </div>
         <button 
           onClick={() => setShowModal(true)}
-          className="bg-brand-tactical text-[10px] font-bold uppercase tracking-[0.4em] px-10 py-5 text-white hover:brightness-110 transition-all rounded-none"
+          className="bg-brand-tactical text-[10px] font-bold uppercase tracking-[0.4em] px-10 py-5 text-black hover:brightness-110 transition-all rounded-none"
         >
           NOVO CONCURSO
         </button>
@@ -95,11 +95,11 @@ export const AdminContests: React.FC = () => {
                     c.status === 'ACTIVE' ? 'bg-green-500/20 text-green-400' : 
                     c.status === 'FINISHED' ? 'bg-zinc-800 text-zinc-500' : 'bg-brand-tactical/20 text-brand-tactical'
                   }`}>
-                    {c.status}
+                    {c.status === 'ACTIVE' ? 'ATIVO' : c.status === 'FINISHED' ? 'FINALIZADO' : 'RASCUNHO'}
                   </span>
                   <h3 className="text-xl font-heading text-white uppercase tracking-tighter font-bold">{c.title}</h3>
                 </div>
-                <div className="text-[10px] text-zinc-500 uppercase tracking-widest font-bold flex gap-4 italic font-mono">
+                <div className="text-[10px] text-zinc-500 uppercase tracking-widest font-bold flex gap-4 italic font-sans">
                   <span>DE: {new Date(c.startDate).toLocaleDateString()}</span>
                   <span>ATÉ: {new Date(c.endDate).toLocaleDateString()}</span>
                 </div>
@@ -110,7 +110,7 @@ export const AdminContests: React.FC = () => {
 
               <div className="flex gap-4 opacity-0 group-hover:opacity-100 transition-opacity">
                 {c.status === "DRAFT" && (
-                  <button onClick={() => updateStatus(c.id, "ACTIVE")} className="px-6 py-3 bg-brand-tactical/10 text-brand-tactical text-[9px] font-black uppercase tracking-widest hover:bg-brand-tactical hover:text-white transition-all">ATIVAR</button>
+                  <button onClick={() => updateStatus(c.id, "ACTIVE")} className="px-6 py-3 bg-brand-tactical/10 text-brand-tactical text-[9px] font-black uppercase tracking-widest hover:bg-brand-tactical hover:text-black transition-all">ATIVAR</button>
                 )}
                 {c.status === "ACTIVE" && (
                   <button onClick={() => updateStatus(c.id, "FINISHED")} className="px-6 py-3 bg-zinc-800 text-zinc-400 text-[9px] font-black uppercase tracking-widest hover:bg-white hover:text-black transition-all">ENCERRAR</button>
@@ -156,7 +156,7 @@ export const AdminContests: React.FC = () => {
                 </div>
               </div>
 
-              <button className="w-full bg-brand-tactical text-white font-bold uppercase tracking-[0.4em] py-6 text-[11px] hover:brightness-110 transition-all rounded-none shadow-xl shadow-brand-tactical/10">
+              <button className="w-full bg-brand-tactical text-black font-bold uppercase tracking-[0.4em] py-6 text-[11px] hover:brightness-110 transition-all rounded-none shadow-xl shadow-brand-tactical/10">
                 LANÇAR CONCURSO
               </button>
             </form>
