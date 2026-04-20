@@ -1,16 +1,6 @@
-import { Request, Response } from "express";
+import { Response } from "express";
+import { AuthRequest } from "../lib/auth";
 import { prisma } from "../lib/prisma";
-
-/**
- * CUSTOM TYPES FOR REQUEST
- */
-interface AuthRequest extends Request {
-  user?: {
-    userId: string;
-    role: string;
-    email: string;
-  };
-}
 
 // POST /api/orders/:id/access-type
 // Comprador escolhe PUBLIC ou PRIVATE após pagamento
@@ -32,7 +22,7 @@ export async function chooseAccessType(req: AuthRequest, res: Response): Promise
   try {
     // Busca o pedido
     const order = await prisma.order.findFirst({
-      where: { id },
+      where: { id: String(id) },
       include: { event: true },
     });
 
@@ -74,7 +64,7 @@ export async function chooseAccessType(req: AuthRequest, res: Response): Promise
 
     // Atualiza o pedido
     const updated = await prisma.order.update({
-      where: { id },
+      where: { id: String(id) },
       data: {
         accessType,
         accessChosenAt: now,
@@ -118,7 +108,7 @@ export async function getAccessStatus(req: AuthRequest, res: Response): Promise<
 
   try {
     const order = await prisma.order.findFirst({
-      where: { id, clienteId: user.userId },
+      where: { id: String(id), clienteId: user.userId },
       include: {
         event: {
           select: {
@@ -132,7 +122,7 @@ export async function getAccessStatus(req: AuthRequest, res: Response): Promise<
           },
         },
       },
-    });
+    }) as any; // Cast as any because Prisma's deep inclusion types sometimes conflict with simplified Controller return types
 
     if (!order) {
       res.status(404).json({ error: "Pedido não encontrado." });
@@ -185,12 +175,12 @@ export async function getAccessStatus(req: AuthRequest, res: Response): Promise<
 }
 
 // POST /api/admin/orders/:id/delete-media — exclusão manual pelo admin
-export async function deleteMediaAdmin(req: Request, res: Response): Promise<void> {
+export async function deleteMediaAdmin(req: AuthRequest, res: Response): Promise<void> {
   const { id } = req.params;
 
   try {
     await prisma.order.update({
-      where: { id },
+      where: { id: String(id) },
       data: { deletedAt: new Date() },
     });
     res.json({ ok: true, mensagem: "Mídia marcada como excluída." });

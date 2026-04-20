@@ -1,4 +1,5 @@
 import { Request, Response } from "express";
+import { AuthRequest } from "../lib/auth";
 import prisma from "../lib/prisma";
 
 export class CartorioController {
@@ -6,8 +7,9 @@ export class CartorioController {
    * GET /api/cartorio/stats
    * Consolida métricas financeiras e agenda para o Cartório.
    */
-  static async getStats(req: Request, res: Response) {
-    const user = (req as any).user;
+  static async getStats(req: AuthRequest, res: Response) {
+    const user = req.user;
+    if (!user) return res.status(401).json({ error: "Não autorizado" });
     const isAdmin = user.role === "ADMIN";
     const { startDate, endDate, cartorioName } = req.query;
 
@@ -116,8 +118,9 @@ export class CartorioController {
    * GET /api/cartorio/events
    * Listagem simples da agenda.
    */
-  static async getEvents(req: Request, res: Response) {
-      const user = (req as any).user;
+  static async getEvents(req: AuthRequest, res: Response) {
+      const user = req.user;
+      if (!user) return res.status(401).json({ error: "Não autorizado" });
       try {
           const events = await prisma.event.findMany({
               where: { cartorioUserId: user.userId, active: true },

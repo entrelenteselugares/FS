@@ -1,13 +1,7 @@
 import { Request, Response } from "express";
 import { prisma } from "../lib/prisma";
+import { AuthRequest } from "../lib/auth";
 
-interface AuthRequest extends Request {
-  user?: {
-    userId: string;
-    role: string;
-    email: string;
-  };
-}
 
 // ── CURTIDAS ──────────────────────────────────────────
 
@@ -29,7 +23,7 @@ export async function likePhoto(req: AuthRequest, res: Response): Promise<void> 
   }
 
   try {
-    const event = await prisma.event.findUnique({ where: { slug } });
+    const event = await prisma.event.findUnique({ where: { slug: String(slug) } });
     if (!event) { res.status(404).json({ error: "Evento não encontrado." }); return; }
 
     // Titular não pode curtir o próprio álbum
@@ -128,7 +122,7 @@ export async function getEventLikes(req: AuthRequest, res: Response): Promise<vo
   const userId = user?.userId;
 
   try {
-    const event = await prisma.event.findUnique({ where: { slug } });
+    const event = await prisma.event.findUnique({ where: { slug: String(slug) } });
     if (!event) { res.status(404).json({ error: "Evento não encontrado." }); return; }
 
     // Curtidas agrupadas por foto

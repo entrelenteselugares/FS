@@ -1,6 +1,6 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useCallback } from "react";
 import { API as api } from "../../lib/api";
-import { useTheme } from "../../contexts/ThemeContext";
+import { useTheme } from "../../hooks/useTheme";
 import { motion, AnimatePresence } from "framer-motion";
 import { 
   Calculator, 
@@ -49,11 +49,18 @@ export default function AdminSuppliers() {
   const [breakeven, setBreakeven] = useState<Breakeven | null>(null);
   const [, setLoading] = useState(true);
 
-  useEffect(() => {
-    fetchSuppliers();
+  const handleSelect = useCallback(async (id: string) => {
+    setSelectedId(id);
+    setBreakeven(null);
+    try {
+      const { data } = await api.get(`/admin/suppliers/${id}/breakeven`);
+      setBreakeven(data);
+    } catch (err) {
+      console.error(err);
+    }
   }, []);
 
-  const fetchSuppliers = async () => {
+  const fetchSuppliers = useCallback(async () => {
     try {
       const { data } = await api.get("/admin/suppliers");
       setSuppliers(data);
@@ -63,18 +70,12 @@ export default function AdminSuppliers() {
     } finally {
       setLoading(false);
     }
-  };
+  }, [handleSelect]);
 
-  const handleSelect = async (id: string) => {
-    setSelectedId(id);
-    setBreakeven(null);
-    try {
-      const { data } = await api.get(`/admin/suppliers/${id}/breakeven`);
-      setBreakeven(data);
-    } catch (err) {
-      console.error(err);
-    }
-  };
+  useEffect(() => {
+    fetchSuppliers();
+  }, [fetchSuppliers]);
+
 
   return (
     <div className="grid grid-cols-[320px_1fr] gap-10 p-8 pt-0 min-h-[calc(100vh-200px)]">

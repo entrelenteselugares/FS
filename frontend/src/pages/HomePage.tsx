@@ -2,7 +2,7 @@ import { useState, useEffect, useRef } from "react";
 import { useNavigate } from "react-router-dom";
 import { API } from "../lib/api";
 import { useAuth } from "../hooks/useAuth";
-import { useTheme } from "../contexts/ThemeContext";
+import { useTheme } from "../hooks/useTheme";
 import { Helmet } from "react-helmet-async";
 
 interface Event {

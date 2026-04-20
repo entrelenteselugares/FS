@@ -60,7 +60,7 @@ export const AdminUsers: React.FC = () => {
       setEditingUser(null);
       setFormData({ name: "", email: "", password: "", role: "PROFISSIONAL", pixKey: "" });
       fetchUsers();
-    } catch (err) {
+    } catch {
       alert("Erro ao processar usuário");
     }
   };

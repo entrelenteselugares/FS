@@ -35,7 +35,7 @@ const THEME = {
 
 export const HallOfFame: React.FC = () => {
   const navigate = useNavigate();
-  const [activeContest, setActiveContest] = useState<any>(null);
+  const [activeContest, setActiveContest] = useState<{ contest: { title: string }; ranking: RankingItem[] } | null>(null);
   const [history, setHistory] = useState<ContestResult[]>([]);
   const [loading, setLoading] = useState(true);
 

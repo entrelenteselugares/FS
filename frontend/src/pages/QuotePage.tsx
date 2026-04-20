@@ -6,16 +6,16 @@ import { useNavigate } from "react-router-dom";
 
 // ── Configurações de Precificação (Tactical Engine) 🛡️⚙️ ───────────
 const P = {
-  COST_SENIOR: 160,
-  COST_AUX: 58.62,
+  COST_SENIOR: 160, // Custo interno de referência
+  COST_AUX: 60,
   FEE_TOLL: 25,
   BASE_FREIGHT: 15,
   KM_RATE: 2.50,
   SERVICES: [
-    { id: "foto", label: "FOTOGRAFIA", price: 0, required: true },
-    { id: "video", label: "VÍDEO", price: 150 },
-    { id: "reels", label: "REELS / MOBILE", price: 80 },
-    { id: "impresso", label: "FOTO IMPRESSA", price: 120 },
+    { id: "foto", label: "FOTOGRAFIA DIGITAL", price: 190, required: true },
+    { id: "video", label: "VÍDEO BRUTO", price: 190 },
+    { id: "reels", label: "REELS / MOBILE", price: 120 },
+    { id: "impresso", label: "ÁLBUM / IMPRESSA", price: 120 },
   ]
 };
 
@@ -224,23 +224,26 @@ export const QuotePage = () => {
   const calculateTeam = () => {
     let senior = 1;
     let aux = 0;
+    let extraGuestsCost = 0;
 
-    // Escalonamento por convidados (Foco em Fotografia)
-    if (attendees > 50 && attendees <= 65) {
+    // Escalonamento por convidados (Capacidade de Operação)
+    // 0-60: 1 Senior (Base)
+    // 61-95: 1 Senior + 1 Auxiliar
+    // > 95: 2 Seniors ou mais
+    if (attendees > 60 && attendees <= 95) {
       aux = 1;
-    } else if (attendees > 65) {
-      senior = Math.ceil(attendees / 50);
+      extraGuestsCost += 80;
+    } else if (attendees > 95) {
+      senior = Math.ceil(attendees / 60);
+      extraGuestsCost += (senior - 1) * 150;
     }
 
-    // Adicional por serviços de captação extra
-    if (selectedServices.includes("video")) senior += 1;
-    if (selectedServices.includes("reels")) senior += 1;
+    // Contagem de equipe total (Apenas Informativo no UI)
+    let teamCount = senior + aux;
+    if (selectedServices.includes("video")) teamCount += 1;
+    if (selectedServices.includes("reels")) teamCount += 1;
 
-    // Fator multiplicador por horas (Para locais não cadastrados)
-    const hoursFactor = locationType === "OTHER" ? eventHours : 1;
-
-    const cost = ((senior * P.COST_SENIOR) + (aux * P.COST_AUX)) * hoursFactor;
-    return { senior, aux, cost };
+    return { senior, aux, teamCount, extraGuestsCost };
   };
 
   // Cálculo de Preço Final 💰
@@ -249,7 +252,7 @@ export const QuotePage = () => {
   const isOutsideCampinas = locationType === "OTHER" && customCep !== ""; 
   const freight = isOutsideCampinas ? P.BASE_FREIGHT + (20 * P.KM_RATE) + P.FEE_TOLL : 0; 
   
-  const totalPrice = team.cost + servicesPrice + freight;
+  const totalPrice = servicesPrice + team.extraGuestsCost + freight;
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -292,9 +295,27 @@ export const QuotePage = () => {
 
       <div style={{ maxWidth: 800, margin: "0 auto" }}>
         <header style={{ textAlign: "center", marginBottom: 60 }}>
+          <div style={{ display: "flex", justifyContent: "center", marginBottom: 30 }}>
+            <img 
+              src="/logo-premium.png" 
+              alt="Logo" 
+              style={{ 
+                height: 50, 
+                objectFit: "contain"
+              }} 
+            />
+          </div>
           <div style={{ fontSize: 10, fontWeight: 800, textTransform: "uppercase", letterSpacing: 6, color: THEME.accent, marginBottom: 20 }}>Solicitação de Orçamento</div>
-          <h1 style={{ fontFamily: THEME.fontD, fontSize: "clamp(40px, 8vw, 64px)", fontWeight: 900, textTransform: "uppercase", lineHeight: 0.9, letterSpacing: '-0.04em' }}>
-            Reserve seu <span style={{ color: THEME.text2 }}>Grande Dia</span>
+          <h1 style={{ 
+            fontFamily: THEME.fontD, 
+            fontSize: "clamp(24px, 5.5vw, 42px)", 
+            fontWeight: 900, 
+            textTransform: "uppercase", 
+            lineHeight: 1.1, 
+            letterSpacing: '-0.02em',
+            whiteSpace: "nowrap"
+          }}>
+            ETERNIZE SEU <span style={{ color: THEME.text2 }}>GRANDE DIA</span>
           </h1>
         </header>
 
@@ -304,17 +325,17 @@ export const QuotePage = () => {
 
               {/* 1. Onde será o registro? */}
               <div style={{ display: "flex", flexDirection: "column", gap: 15 }}>
-                <label style={{ fontSize: 10, fontWeight: 800, textTransform: "uppercase", color: THEME.text2 }}>1. Onde será o registro?</label>
+                <label style={{ fontSize: 10, fontWeight: 800, textTransform: "uppercase", color: THEME.text }}>1. Onde será o registro?</label>
                 <div className="mobile-stack" style={{ display: "flex", gap: 10 }}>
                   <button 
                     type="button"
                     onClick={() => setLocationType("PARTNER")}
-                    style={{ flex: 1, padding: 15, border: `1px solid ${locationType === "PARTNER" ? THEME.accent : THEME.border}`, background: locationType === "PARTNER" ? `${THEME.accent}10` : "transparent", fontSize: 10, fontWeight: 900, color: "white", cursor: "pointer" }}
+                    style={{ flex: 1, padding: 15, border: `1px solid ${locationType === "PARTNER" ? THEME.accent : THEME.border}`, background: locationType === "PARTNER" ? `${THEME.accent}10` : "transparent", fontSize: 10, fontWeight: 900, color: locationType === "PARTNER" ? THEME.accent : THEME.text2, cursor: "pointer" }}
                   >PONTO PARCEIRO</button>
                   <button 
                     type="button"
                     onClick={() => setLocationType("OTHER")}
-                    style={{ flex: 1, padding: 15, border: `1px solid ${locationType === "OTHER" ? THEME.accent : THEME.border}`, background: locationType === "OTHER" ? `${THEME.accent}10` : "transparent", fontSize: 10, fontWeight: 900, color: "white", cursor: "pointer" }}
+                    style={{ flex: 1, padding: 15, border: `1px solid ${locationType === "OTHER" ? THEME.accent : THEME.border}`, background: locationType === "OTHER" ? `${THEME.accent}10` : "transparent", fontSize: 10, fontWeight: 900, color: locationType === "OTHER" ? THEME.accent : THEME.text2, cursor: "pointer" }}
                   >OUTRO LOCAL</button>
                 </div>
 
@@ -341,7 +362,7 @@ export const QuotePage = () => {
               </div>
 
               <div>
-                <label style={{ fontSize: 10, fontWeight: 800, textTransform: "uppercase", marginBottom: 15, display: "block", color: THEME.text2 }}>2. Selecione os Serviços</label>
+                <label style={{ fontSize: 10, fontWeight: 800, textTransform: "uppercase", marginBottom: 15, display: "block", color: THEME.text }}>2. Selecione os Serviços</label>
                 <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(160px, 1fr))", gap: 15 }}>
                   {P.SERVICES.map(s => (
                     <div 
@@ -362,7 +383,7 @@ export const QuotePage = () => {
 
               <div className="mobile-grid-1" style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 20 }}>
                 <div>
-                  <label style={{ fontSize: 10, fontWeight: 800, textTransform: "uppercase", marginBottom: 15, display: "block", color: THEME.text2 }}>3. Número de Convidados</label>
+                  <label style={{ fontSize: 10, fontWeight: 800, textTransform: "uppercase", marginBottom: 15, display: "block", color: THEME.text }}>3. Número de Convidados</label>
                   <div style={{ position: "relative", display: "flex", alignItems: "center" }}>
                     <Users size={18} style={{ position: "absolute", left: 15, color: THEME.accent, pointerEvents: "none", zIndex: 1 }} />
                     <input
@@ -374,11 +395,11 @@ export const QuotePage = () => {
                     />
                   </div>
                   <div style={{ fontSize: 9, marginTop: 10, color: THEME.accent, fontWeight: 700, textTransform: "uppercase" }}>
-                    Equipe Recomendada: {team.senior} Sênior {team.aux > 0 && `+ ${team.aux} Auxiliar`}
+                    Equipe em Campo: {team.teamCount} {team.teamCount === 1 ? "Profissional" : "Profissionais"}
                   </div>
                 </div>
                 <div>
-                  <label style={{ fontSize: 10, fontWeight: 800, textTransform: "uppercase", marginBottom: 15, display: "block", color: THEME.text2 }}>4. Data e Horário do Evento</label>
+                  <label style={{ fontSize: 10, fontWeight: 800, textTransform: "uppercase", marginBottom: 15, display: "block", color: THEME.text }}>4. Data e Horário do Evento</label>
                   <DateTimePicker value={eventDate} onChange={setEventDate} />
                 </div>
               </div>
@@ -393,7 +414,7 @@ export const QuotePage = () => {
                       <button 
                         type="button"
                         onClick={() => navigate(-1)}
-                        style={{ border: `1px solid ${THEME.border}`, color: "white", padding: "15px 30px", fontWeight: 800, fontSize: 11, textTransform: "uppercase", letterSpacing: 2, background: "none", cursor: "pointer" }}
+                        style={{ border: `1px solid ${THEME.border}`, color: THEME.text, padding: "15px 30px", fontWeight: 800, fontSize: 11, textTransform: "uppercase", letterSpacing: 2, background: "none", cursor: "pointer" }}
                       >
                         VOLTAR
                       </button>
@@ -459,7 +480,7 @@ export const QuotePage = () => {
             </p>
             <button 
               onClick={() => navigate("/")}
-              style={{ border: `1px solid ${THEME.border}`, padding: "15px 40px", fontSize: 12, fontWeight: 800, textTransform: "uppercase", letterSpacing: 2, background: "none", color: "white", cursor: "pointer" }}
+              style={{ border: `1px solid ${THEME.border}`, padding: "15px 40px", fontSize: 12, fontWeight: 800, textTransform: "uppercase", letterSpacing: 2, background: "none", color: THEME.text, cursor: "pointer" }}
             >
               VOLTAR PARA A VITRINE
             </button>

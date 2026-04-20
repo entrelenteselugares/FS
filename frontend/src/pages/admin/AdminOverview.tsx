@@ -4,18 +4,39 @@ import {
   ResponsiveContainer,
 } from "recharts";
 
+interface OverviewStats {
+  totalRevenue: number;
+  activeEvents: number;
+  totalOrders: number;
+  totalUsers: number;
+}
+
+interface RecentOrder {
+  id: string;
+  createdAt: string;
+  total: number | string;
+}
+
+interface PendingEvent {
+  id: string;
+  title: string;
+  coverPhotoUrl?: string;
+  lightroomUrl?: string;
+}
+
 interface OverviewProps {
-  stats: any;
-  recentOrders: any[];
-  pendingEvents: any[];
+  stats: OverviewStats | null;
+  recentOrders: RecentOrder[];
+  pendingEvents: PendingEvent[];
 }
 
 export const AdminOverview: React.FC<OverviewProps> = ({ stats, recentOrders, pendingEvents }) => {
   // Prepara dados para os gráficos
   const chartData = recentOrders.map(o => ({
     name: new Date(o.createdAt).toLocaleDateString("pt-BR", { day: "2-digit", month: "2-digit" }),
-    valor: Number(o.valor)
+    valor: Number(o.total)
   })).reverse();
+
 
   return (
     <div className="space-y-16 animate-in fade-in slide-in-from-bottom-4 duration-700">
@@ -28,7 +49,7 @@ export const AdminOverview: React.FC<OverviewProps> = ({ stats, recentOrders, pe
         </div>
         <div className="bg-theme-bg p-10 border-l border-theme-border/10">
           <div className="text-[10px] font-bold uppercase tracking-[0.4em] text-theme-muted mb-6">Ativos Reais</div>
-          <div className="text-4xl font-sans text-theme-text font-black mb-2 tracking-tighter">{stats?.totalEvents}</div>
+          <div className="text-4xl font-sans text-theme-text font-black mb-2 tracking-tighter">{stats?.activeEvents}</div>
           <p className="text-[9px] text-theme-muted uppercase tracking-widest font-black">Eventos em Prateleira</p>
         </div>
         <div className="bg-theme-bg p-10 border-l border-theme-border/10">
@@ -67,7 +88,8 @@ export const AdminOverview: React.FC<OverviewProps> = ({ stats, recentOrders, pe
             {pendingEvents.length > 0 ? pendingEvents.map(event => (
               <div key={event.id} className="flex items-center justify-between p-4 border border-theme-border bg-theme-bg-muted group hover:border-brand-primary/30 transition-all font-sans">
                 <div>
-                  <div className="text-[14px] text-theme-text font-black mb-1 uppercase tracking-tighter">{event.nomeNoivos}</div>
+                  <div className="text-[14px] text-theme-text font-black mb-1 uppercase tracking-tighter">{event.title}</div>
+
                   <div className="flex gap-4">
                      {!event.coverPhotoUrl && <span className="text-[8px] text-red-500 uppercase font-black tracking-widest">Sem Capa</span>}
                      {!event.lightroomUrl && <span className="text-[8px] text-brand-primary uppercase font-black tracking-widest">Sem Fotos</span>}

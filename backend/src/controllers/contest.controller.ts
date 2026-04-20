@@ -51,7 +51,7 @@ export async function adminUpdateContest(req: Request, res: Response): Promise<v
 
   try {
     const updated = await prisma.contest.update({
-      where: { id },
+      where: { id: String(id) },
       data: {
         ...(status && { status }),
         ...(title && { title }),

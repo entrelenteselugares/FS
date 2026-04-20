@@ -1,4 +1,5 @@
 import { Request, Response } from "express";
+import { AuthRequest } from "../lib/auth";
 import bcrypt from "bcryptjs";
 import prisma from "../lib/prisma";
 import { generateToken } from "../lib/auth";
@@ -202,9 +203,10 @@ export class AuthController {
   }
 
   /** GET /api/auth/me */
-  static async me(req: Request, res: Response) {
+  static async me(req: AuthRequest, res: Response) {
     try {
-      const payload = (req as any).user;
+      const payload = req.user;
+      if (!payload) return res.status(401).json({ error: "Não autorizado" });
       const user = await prisma.user.findUnique({
         where: { id: payload.userId },
         select: {

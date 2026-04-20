@@ -1,8 +1,9 @@
-import { Request, Response } from "express";
+import { Response } from "express";
+import { AuthRequest } from "../lib/auth";
 import { prisma } from "../lib/prisma";
 
 // GET /api/admin/suppliers
-export async function listSuppliers(req: Request, res: Response): Promise<void> {
+export async function listSuppliers(req: AuthRequest, res: Response): Promise<void> {
   try {
     const suppliers = await prisma.printSupplier.findMany({
       orderBy: { createdAt: "desc" },
@@ -15,7 +16,7 @@ export async function listSuppliers(req: Request, res: Response): Promise<void> 
 }
 
 // GET /api/admin/redemptions
-export async function listRedemptions(req: Request, res: Response): Promise<void> {
+export async function listRedemptions(req: AuthRequest, res: Response): Promise<void> {
   try {
     const redemptions = await prisma.printRedemption.findMany({
       orderBy: { createdAt: "desc" },
@@ -32,7 +33,7 @@ export async function listRedemptions(req: Request, res: Response): Promise<void
 }
 
 // POST /api/admin/suppliers
-export async function createSupplier(req: Request, res: Response): Promise<void> {
+export async function createSupplier(req: AuthRequest, res: Response): Promise<void> {
   const {
     name, type, printerModel, printerCost,
     costPer10x15, costPer4x6,
@@ -66,11 +67,11 @@ export async function createSupplier(req: Request, res: Response): Promise<void>
 
 // GET /api/admin/suppliers/:id/breakeven
 // Calcula quantas fotos precisam ser impressas para pagar a impressora
-export async function getBreakeven(req: Request, res: Response): Promise<void> {
+export async function getBreakeven(req: AuthRequest, res: Response): Promise<void> {
   const { id } = req.params;
 
   try {
-    const supplier = await prisma.printSupplier.findUnique({ where: { id } });
+    const supplier = await prisma.printSupplier.findUnique({ where: { id: String(id) } });
     if (!supplier || !supplier.printerCost) {
       res.status(400).json({ error: "Fornecedor não encontrado ou sem custo de impressora." });
       return;
@@ -126,13 +127,13 @@ export async function getBreakeven(req: Request, res: Response): Promise<void> {
 }
 
 // PATCH /api/admin/redemptions/:id/status
-export async function updateRedemptionStatus(req: Request, res: Response): Promise<void> {
+export async function updateRedemptionStatus(req: AuthRequest, res: Response): Promise<void> {
   const { id } = req.params;
   const { status, trackingCode } = req.body;
 
   try {
     const updated = await prisma.printRedemption.update({
-      where: { id },
+      where: { id: String(id) },
       data: {
         status,
         ...(trackingCode && { trackingCode }),

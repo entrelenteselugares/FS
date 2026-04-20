@@ -1,4 +1,5 @@
 import { Request, Response } from "express";
+import { AuthRequest } from "../lib/auth";
 import { prisma } from "../lib/prisma";
 
 /**
@@ -10,7 +11,7 @@ export async function getPartnerLandingData(req: Request, res: Response): Promis
 
   try {
     const partner = await prisma.cartorio.findUnique({
-      where: { slug },
+      where: { slug: String(slug) },
       include: {
         user: {
           select: {
@@ -67,7 +68,7 @@ export async function getPartnerLandingData(req: Request, res: Response): Promis
  * PATCH /api/partner/profile 
  * Permite que o próprio cartório atualize seus dados de Landing Page
  */
-export async function updatePartnerProfile(req: Request, res: Response): Promise<void> {
+export async function updatePartnerProfile(req: AuthRequest, res: Response): Promise<void> {
   const userId = (req as any).user.id;
   const { address, phone, description, coverUrl, slug, pixKey } = req.body;
 

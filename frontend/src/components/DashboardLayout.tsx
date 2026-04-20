@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import { Link, useLocation, type Location } from "react-router-dom";
 import { useAuth } from "../hooks/useAuth";
-import { useTheme } from "../contexts/ThemeContext";
+import { useTheme } from "../hooks/useTheme";
 
 export interface NavItem {
   label: string;
@@ -160,30 +160,38 @@ const SidebarContent: React.FC<SidebarContentProps> = ({
       <nav className="flex-1 px-3 py-6 space-y-1 overflow-y-auto font-sans">
         {navItems.map((item) => {
           const active = item.isActive ?? isActive(item);
-          const Component = item.to ? Link : "button";
-          const props: any = item.to 
-            ? { to: item.to, onClick: () => { onNavigate(); item.onClick?.(); } }
-            : { onClick: () => { onNavigate(); item.onClick?.(); }, type: "button" };
+          const commonProps = {
+            key: item.label,
+            onClick: () => { onNavigate(); item.onClick?.(); },
+            className: `
+              w-full flex items-center gap-3 px-4 py-3 rounded-none
+              text-[10px] font-bold uppercase tracking-widest
+              transition-all duration-300 group text-left
+              ${active
+                ? `${v.activeBg} ${v.activeText} border-l-2 border-brand-tactical ml-[-12px] pl-[22px]`
+                : "text-theme-muted hover:text-theme-text hover:bg-theme-bg-muted border-l-2 border-transparent"
+              }
+            `
+          };
+
+          if (item.to) {
+            return (
+              <Link to={item.to} {...commonProps}>
+                <div className={`${active ? v.activeText : "text-theme-muted group-hover:text-brand-tactical transition-colors"}`}>
+                  {item.icon}
+                </div>
+                <span>{item.label}</span>
+              </Link>
+            );
+          }
 
           return (
-            <Component
-              key={item.label}
-              {...props}
-              className={`
-                w-full flex items-center gap-3 px-4 py-3 rounded-none
-                text-[10px] font-bold uppercase tracking-widest
-                transition-all duration-300 group text-left
-                ${active
-                  ? `${v.activeBg} ${v.activeText} border-l-2 border-brand-tactical ml-[-12px] pl-[22px]`
-                  : "text-theme-muted hover:text-theme-text hover:bg-theme-bg-muted border-l-2 border-transparent"
-                }
-              `}
-            >
-              <span className={`w-3.5 h-3.5 flex-shrink-0 transition-colors ${active ? v.activeText : "text-theme-muted group-hover:text-theme-text"}`}>
+            <button type="button" {...commonProps}>
+              <div className={`${active ? v.activeText : "text-theme-muted group-hover:text-brand-tactical transition-colors"}`}>
                 {item.icon}
-              </span>
-              {item.label}
-            </Component>
+              </div>
+              <span>{item.label}</span>
+            </button>
           );
         })}
       </nav>

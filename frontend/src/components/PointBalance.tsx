@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
 import { API as api } from "../lib/api";
-import { useTheme } from "../contexts/ThemeContext";
+import { useTheme } from "../hooks/useTheme";
 import { motion } from "framer-motion";
 import { Award, Star, TrendingUp, Info } from "lucide-react";
 

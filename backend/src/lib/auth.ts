@@ -1,4 +1,4 @@
-import { Request, Response, NextFunction } from "express";
+import { Request as ExpressRequest, Response, NextFunction } from "express";
 import jwt from "jsonwebtoken";
 
 const JWT_SECRET = process.env.JWT_SECRET || "fotosegundo-dev-secret-2026";
@@ -7,6 +7,10 @@ export interface AuthPayload {
   userId: string;
   role: string;
   nome: string;
+}
+
+export interface AuthRequest extends ExpressRequest {
+  user?: AuthPayload;
 }
 
 export const generateToken = (payload: AuthPayload): string => {
@@ -18,7 +22,7 @@ export const verifyToken = (token: string): AuthPayload => {
 };
 
 /** Middleware: requer JWT válido */
-export const requireAuth = (req: Request, res: Response, next: NextFunction) => {
+export const requireAuth = (req: ExpressRequest, res: Response, next: NextFunction) => {
   const authHeader = req.headers.authorization;
   const queryToken = req.query.token as string;
   let token: string | undefined;
@@ -43,7 +47,7 @@ export const requireAuth = (req: Request, res: Response, next: NextFunction) => 
 
 /** Middleware: restringe acesso por role */
 export const requireRole = (...roles: string[]) => {
-  return (req: Request, res: Response, next: NextFunction) => {
+  return (req: ExpressRequest, res: Response, next: NextFunction) => {
     const user = (req as any).user as AuthPayload;
     if (!roles.includes(user?.role)) {
       return res.status(403).json({ error: "Acesso negado" });

@@ -8,6 +8,29 @@ interface Config {
   label: string;
 }
 
+interface PayoutItem {
+  id: string;
+  recipientType: string;
+  recipientName: string;
+  pixKey: string;
+  splitPct: number;
+  grossRevenue: number;
+  amount: number;
+  status: "PENDING" | "PAID";
+  pixTxId?: string;
+  orderCount: number;
+}
+
+interface Payout {
+  id: string;
+  weekStart: string;
+  weekEnd: string;
+  status: "PENDING" | "PAID";
+  totalRevenue: number;
+  totalPayout: number;
+  items?: PayoutItem[];
+}
+
 function formatCurrency(v: number) {
   return new Intl.NumberFormat("pt-BR", { style: "currency", currency: "BRL" }).format(v);
 }
@@ -18,7 +41,7 @@ export const AdminConfigs: React.FC = () => {
   const [splitsValid, setSplitsValid] = useState(true);
   const [saving, setSaving] = useState(false);
   const [saved, setSaved] = useState(false);
-  const [payouts, setPayouts] = useState<any[]>([]);
+  const [payouts, setPayouts] = useState<Payout[]>([]);
   const [generating, setGenerating] = useState(false);
   const [tab, setTab] = useState<"splits" | "payouts">("splits");
 
@@ -62,8 +85,9 @@ export const AdminConfigs: React.FC = () => {
       await API.patch("/admin/configs", { configs });
       setSaved(true);
       setTimeout(() => setSaved(false), 2500);
-    } catch (err: any) {
-      alert(err.response?.data?.error ?? "Erro ao salvar.");
+    } catch (err) {
+      const axiosError = err as import("axios").AxiosError<{ error: string }>;
+      alert(axiosError.response?.data?.error ?? "Erro ao salvar.");
     } finally {
       setSaving(false);
     }
@@ -76,8 +100,9 @@ export const AdminConfigs: React.FC = () => {
       const { data } = await API.post("/admin/payouts/generate");
       setPayouts((p) => [data, ...p]);
       setTab("payouts");
-    } catch (err: any) {
-      alert(err.response?.data?.error ?? "Erro ao gerar relatório.");
+    } catch (err) {
+      const axiosError = err as import("axios").AxiosError<{ error: string }>;
+      alert(axiosError.response?.data?.error ?? "Erro ao gerar relatório.");
     } finally {
       setGenerating(false);
     }
@@ -249,7 +274,7 @@ export const AdminConfigs: React.FC = () => {
                    </div>
 
                    <div className="divide-y divide-white/5">
-                      {payout.items?.map((item: any) => (
+                      {payout.items?.map((item) => (
                         <div key={item.id} className="px-10 py-6 grid grid-cols-12 items-center gap-8 hover:bg-white/[0.01] transition-all">
                            <div className="col-span-1">
                               <span className="text-[8px] font-bold text-zinc-600 border border-zinc-800 px-2 py-0.5 rounded-none">{item.recipientType}</span>

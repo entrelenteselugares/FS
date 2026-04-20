@@ -1,4 +1,5 @@
-import { Request, Response } from "express";
+import { Response } from "express";
+import { AuthRequest } from "../lib/auth";
 import prisma from "../lib/prisma";
 
 export class EventController {
@@ -6,7 +7,7 @@ export class EventController {
    * GET /api/public/events/:id/access
    * Libera links sensíveis se o pagamento estiver aprovado.
    */
-  static async getAccess(req: Request, res: Response) {
+  static async getAccess(req: AuthRequest, res: Response) {
     try {
       const { id } = req.params;
       const { orderId } = req.query;
@@ -39,7 +40,7 @@ export class EventController {
    * GET /api/events/:id
    * Lógica de Pivot: Retorna URLs de entrega baseando-se no acesso.
    */
-  static async getById(req: Request, res: Response) {
+  static async getById(req: AuthRequest, res: Response) {
     const { id } = req.params;
     const { userId } = req.query;
 
@@ -106,7 +107,7 @@ export class EventController {
    * GET /api/public/events
    * Lista eventos para a vitrine pública com suporte a busca robusta e paginação real.
    */
-  static async listPublic(req: Request, res: Response) {
+  static async listPublic(req: AuthRequest, res: Response) {
     try {
       const { q, page = "1" } = req.query;
       const query = q as string;
@@ -156,7 +157,7 @@ export class EventController {
    * GET /api/public/partners
    * Lista todos os cartórios cadastrados como pontos parceiros.
    */
-  static async listPartners(_req: Request, res: Response) {
+  static async listPartners(req: AuthRequest, res: Response) {
     try {
       const partners = await prisma.user.findMany({
         where: { role: "CARTORIO" },
@@ -178,7 +179,7 @@ export class EventController {
    * POST /api/public/quotes
    * Processa a solicitação de orçamento e gera o fluxo de reserva.
    */
-  static async createQuote(req: Request, res: Response) {
+  static async createQuote(req: AuthRequest, res: Response) {
     try {
       const { 
         name, email, attendees, locationType, selectedPartnerId, 

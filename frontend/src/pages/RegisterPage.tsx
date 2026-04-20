@@ -114,7 +114,7 @@ export const RegisterPage: React.FC = () => {
               <button
                 key={r.id}
                 type="button"
-                onClick={() => setRole(r.id as any)}
+                onClick={() => setRole(r.id as "CLIENTE" | "PROFISSIONAL" | "UNIDADE")}
                 className={`flex flex-col items-center justify-center py-8 px-4 transition-all duration-700 group rounded-none ${
                   role === r.id ? "bg-brand-tactical text-white" : "text-zinc-500 hover:bg-white/[0.02] hover:text-white"
                 }`}

@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { API as api } from "../lib/api";
-import { useTheme } from "../contexts/ThemeContext";
+import { useTheme } from "../hooks/useTheme";
+import { AxiosError } from "axios";
 import { motion } from "framer-motion";
 import { Shield, Lock, Globe, AlertTriangle, CheckCircle2 } from "lucide-react";
 
@@ -25,8 +26,9 @@ export default function AccessTypeModal({ orderId, eventTitle, onConfirmed }: Ac
         accessType: selected,
       });
       onConfirmed(data.accessType, data.accessExpiresAt);
-    } catch (err: any) {
-      setError(err.response?.data?.error ?? "Erro ao salvar escolha.");
+    } catch (err) {
+      const axiosError = err as AxiosError<{ error: string }>;
+      setError(axiosError.response?.data?.error ?? "Erro ao salvar escolha.");
     } finally {
       setSaving(false);
     }

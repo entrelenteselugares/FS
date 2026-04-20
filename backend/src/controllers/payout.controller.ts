@@ -1,8 +1,9 @@
-import { Request, Response } from "express";
+import { Response } from "express";
+import { AuthRequest } from "../lib/auth";
 import prisma from "../lib/prisma";
 
 // Gera o relatório semanal de repasse
-export async function generateWeeklyPayout(req: Request, res: Response): Promise<void> {
+export async function generateWeeklyPayout(req: AuthRequest, res: Response): Promise<void> {
   try {
     // Semana anterior: segunda a domingo (pois geramos na segunda o repasse da semana que passou)
     // Para simplificar, vamos pegar os últimos 7 dias ou a semana atual se o usuário preferir.
@@ -97,9 +98,9 @@ export async function generateWeeklyPayout(req: Request, res: Response): Promise
       const b = beneficiarios[key];
       const user = await prisma.user.findUnique({
         where: { id: b.recipientId },
-        select: { pixKey: true, phone: true },
+        select: { pixKey: true, whatsapp: true },
       });
-      beneficiarios[key].pixKey = user?.pixKey ?? user?.phone ?? null;
+      beneficiarios[key].pixKey = user?.pixKey ?? user?.whatsapp ?? null;
     }
 
     // Calcula valores
@@ -141,7 +142,7 @@ export async function generateWeeklyPayout(req: Request, res: Response): Promise
 }
 
 // GET /api/admin/payouts
-export async function listPayouts(req: Request, res: Response): Promise<void> {
+export async function listPayouts(req: AuthRequest, res: Response): Promise<void> {
   try {
     const payouts = await prisma.weeklyPayout.findMany({
       orderBy: { weekStart: "desc" },
@@ -157,13 +158,13 @@ export async function listPayouts(req: Request, res: Response): Promise<void> {
 }
 
 // PATCH /api/admin/payouts/:id/items/:itemId/paid — marcar item como pago
-export async function markItemPaid(req: Request, res: Response): Promise<void> {
+export async function markItemPaid(req: AuthRequest, res: Response): Promise<void> {
   const { itemId } = req.params;
   const { pixTxId } = req.body;
 
   try {
     const item = await prisma.payoutItem.update({
-      where: { id: itemId },
+      where: { id: String(itemId) },
       data: {
         status: "PAID",
         paidAt: new Date(),

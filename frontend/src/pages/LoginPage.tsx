@@ -1,7 +1,8 @@
 import React, { useState } from "react";
-import { useNavigate, useLocation, Link } from "react-router-dom";
+import { isAxiosError } from "axios";
+import { useNavigate, Link } from "react-router-dom";
 import { useAuth } from "../hooks/useAuth";
-import { useTheme } from "../contexts/ThemeContext";
+import { useTheme } from "../hooks/useTheme";
 import { motion } from "framer-motion";
 import { ArrowRight, Lock, Mail, ArrowLeft, Sun, Moon } from "lucide-react";
 
@@ -14,10 +15,6 @@ export const LoginPage: React.FC = () => {
   const { login } = useAuth();
   const { theme, toggleTheme } = useTheme();
   const navigate = useNavigate();
-  const location = useLocation();
-
-  const params = new URLSearchParams(location.search);
-  const preferredRole = params.get("role");
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -42,9 +39,12 @@ export const LoginPage: React.FC = () => {
       };
 
       navigate(destinos[authUser.role] || "/");
-    } catch (err: any) {
-      const errorMsg = err.response?.data?.error;
-      setError(typeof errorMsg === 'string' ? errorMsg : "Acesso negado. Verifique suas credenciais.");
+    } catch (err: unknown) {
+      let errorMsg = "Acesso negado. Verifique suas credenciais.";
+      if (isAxiosError(err)) {
+        errorMsg = err.response?.data?.error || errorMsg;
+      }
+      setError(typeof errorMsg === "string" ? errorMsg : "Acesso negado.");
     } finally {
       setLoading(false);
     }
@@ -109,26 +109,14 @@ export const LoginPage: React.FC = () => {
             }} 
           />
         </div>
-        <div className="text-center mb-12">
+        <div className="text-center mb-10">
           <div className="flex items-center justify-center gap-6 text-[9px] font-bold uppercase tracking-[0.6em] text-theme-muted mb-6">
             <span className="w-8 h-px bg-theme-border block" />
             Acesso Seguro
             <span className="w-8 h-px bg-theme-border block" />
           </div>
-          <h1 
-            style={{ fontFamily: "'Outfit', sans-serif" }} 
-            className="text-6xl font-black uppercase leading-none tracking-tighter text-theme-text mb-3"
-          >
-            ACESSO <span className="text-theme-muted">PRIVADO</span>
-          </h1>
-          <p className="text-[10px] font-bold uppercase tracking-[0.5em] text-brand-primary">
-            {preferredRole === "CARTORIO" || preferredRole === "UNIDADE" 
-              ? "PORTAL DA UNIDADE" 
-              : preferredRole 
-              ? `IDENTIDADE: ${preferredRole}` 
-              : "COLETIVO FOTO SEGUNDO"}
-          </p>
         </div>
+
 
         {/* Card */}
         <div className="bg-theme-bg-muted border border-theme-border p-10 editorial-shadow">

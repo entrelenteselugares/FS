@@ -1,4 +1,5 @@
-import { Request, Response } from "express";
+import { Response } from "express";
+import { AuthRequest } from "../lib/auth";
 import prisma from "../lib/prisma";
 import { slugify } from "../lib/utils";
 import bcrypt from "bcryptjs";
@@ -12,7 +13,7 @@ const supabase = createClient(
 
 // ── DASHBOARD ─────────────────────────────────────────
 
-export async function adminUploadCover(req: Request, res: Response): Promise<void> {
+export async function adminUploadCover(req: AuthRequest, res: Response): Promise<void> {
   const { id } = req.params;
   const { imageBase64, mimeType } = req.body;
 
@@ -52,7 +53,7 @@ export async function adminUploadCover(req: Request, res: Response): Promise<voi
   }
 }
 
-export async function getDashboardStats(req: Request, res: Response): Promise<void> {
+export async function getDashboardStats(req: AuthRequest, res: Response): Promise<void> {
   try {
     const [
       totalEvents,
@@ -107,7 +108,7 @@ export async function getDashboardStats(req: Request, res: Response): Promise<vo
 
 // ── EVENTOS ───────────────────────────────────────────
 
-export async function adminListEvents(req: Request, res: Response): Promise<void> {
+export async function adminListEvents(req: AuthRequest, res: Response): Promise<void> {
   const { q, page = "1", status } = req.query;
   const take = 15;
   const skip = (Number(page) - 1) * take;
@@ -161,7 +162,7 @@ export async function adminListEvents(req: Request, res: Response): Promise<void
   }
 }
 
-export async function adminCreateEvent(req: Request, res: Response): Promise<void> {
+export async function adminCreateEvent(req: AuthRequest, res: Response): Promise<void> {
   const {
     title, date, location, city, description,
     lightroomUrl, driveUrl, priceBase, priceEarly,
@@ -221,7 +222,7 @@ export async function adminCreateEvent(req: Request, res: Response): Promise<voi
   }
 }
 
-export async function adminUpdateEvent(req: Request, res: Response): Promise<void> {
+export async function adminUpdateEvent(req: AuthRequest, res: Response): Promise<void> {
   const { id } = req.params;
   const data: any = {};
   
@@ -275,7 +276,7 @@ export async function adminUpdateEvent(req: Request, res: Response): Promise<voi
   }
 }
 
-export async function adminDeleteEvent(req: Request, res: Response): Promise<void> {
+export async function adminDeleteEvent(req: AuthRequest, res: Response): Promise<void> {
   try {
     await prisma.event.update({
       where: { id: String(req.params.id) },
@@ -289,7 +290,7 @@ export async function adminDeleteEvent(req: Request, res: Response): Promise<voi
 
 // ── USUÁRIOS / PROFISSIONAIS ──────────────────────────
 
-export async function adminListUsers(req: Request, res: Response): Promise<void> {
+export async function adminListUsers(req: AuthRequest, res: Response): Promise<void> {
   const { role, q } = req.query;
   try {
     const where: any = {};
@@ -326,7 +327,7 @@ export async function adminListUsers(req: Request, res: Response): Promise<void>
   }
 }
 
-export async function adminCreateUser(req: Request, res: Response): Promise<void> {
+export async function adminCreateUser(req: AuthRequest, res: Response): Promise<void> {
   const { name, email, password, role, pixKey } = req.body;
   if (!name || !email || !password || !role) {
     res.status(400).json({ error: "Todos os campos são obrigatórios." });
@@ -358,7 +359,7 @@ export async function adminCreateUser(req: Request, res: Response): Promise<void
   }
 }
 
-export async function adminUpdateUser(req: Request, res: Response): Promise<void> {
+export async function adminUpdateUser(req: AuthRequest, res: Response): Promise<void> {
   const { id } = req.params;
   const { name, role, active, captPct, editPct, pixKey } = req.body;
 
@@ -392,7 +393,7 @@ export async function adminUpdateUser(req: Request, res: Response): Promise<void
 
 // ── PEDIDOS ───────────────────────────────────────────
 
-export async function adminListOrders(req: Request, res: Response): Promise<void> {
+export async function adminListOrders(req: AuthRequest, res: Response): Promise<void> {
   const { status, page = "1", q, readyForPayout } = req.query;
   const take = 20;
   const skip = (Number(page) - 1) * take;
@@ -400,7 +401,6 @@ export async function adminListOrders(req: Request, res: Response): Promise<void
   try {
     const where: any = {};
     if (status) where.status = String(status);
-    if (req.query.payoutDone !== undefined) where.payoutDone = req.query.payoutDone === "true";
     
     // Filtro Uber Style: Pronto para Repasse (Status APROVADO, > 7 dias, payoutDone=false)
     if (readyForPayout === "true") {
@@ -408,7 +408,6 @@ export async function adminListOrders(req: Request, res: Response): Promise<void
       sevenDaysAgo.setDate(sevenDaysAgo.getDate() - 7);
       
       where.status = "APROVADO";
-      where.payoutDone = false;
       where.updatedAt = { lte: sevenDaysAgo };
     }
 
@@ -464,25 +463,13 @@ export async function adminListOrders(req: Request, res: Response): Promise<void
   }
 }
 
-export async function adminMarkOrderPaid(req: Request, res: Response): Promise<void> {
-  const { id } = req.params;
-  try {
-    await prisma.order.update({
-      where: { id: String(id) },
-      data: { 
-        payoutDone: true,
-        payoutDate: new Date()
-      }
-    });
-    res.json({ ok: true });
-  } catch (err) {
-    res.status(500).json({ error: "Erro ao marcar como pago." });
-  }
+export async function adminMarkOrderPaid(req: AuthRequest, res: Response): Promise<void> {
+  res.status(400).json({ error: "Funcionalidade migrada para Repasses Semanais." });
 }
 
 // ── LEGACY COMPATIBILITY ──────────────────────────────
 export class AdminEventController {
-  static cartorioStats = async (req: Request, res: Response) => {
+  static cartorioStats = async (req: AuthRequest, res: Response) => {
     try {
       const { cartorioName } = req.query;
       const cName = cartorioName ? String(cartorioName) : undefined;

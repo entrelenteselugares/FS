@@ -2,8 +2,14 @@ import React, { useState, useEffect } from "react";
 import { Shield, Database, Save, RotateCcw, Palette } from "lucide-react";
 import { API } from "../../lib/api";
 
+interface Config {
+  key: string;
+  value: string;
+  label: string;
+}
+
 export const AdminSettings: React.FC = () => {
-  const [settings, setSettings] = useState<any[]>([]);
+  const [settings, setSettings] = useState<Config[]>([]);
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
 
@@ -36,8 +42,9 @@ export const AdminSettings: React.FC = () => {
       // Trigger a global theme update by reloading if necessary, 
       // or just trust the next visit. Here we reload for immediate feedback.
       window.location.reload();
-    } catch (err: any) {
-      alert(err.response?.data?.error || "Erro ao salvar.");
+    } catch (err) {
+      const axiosError = err as import("axios").AxiosError<{ error: string }>;
+      alert(axiosError.response?.data?.error || "Erro ao salvar.");
     } finally {
       setSaving(false);
     }

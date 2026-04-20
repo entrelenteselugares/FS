@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import { API } from "../lib/api";
-import { useTheme } from "../contexts/ThemeContext";
+import { useTheme } from "../hooks/useTheme";
 import { motion } from "framer-motion";
 import { MapPin, Phone, MessageSquare, Calendar, Star, ArrowLeft } from "lucide-react";
 
@@ -25,7 +25,7 @@ interface RecentEvent {
 
 export const PartnerLP: React.FC = () => {
   const { slug } = useParams<{ slug: string }>();
-  useTheme(); // ensures CSS variables re-evaluate on theme toggle
+  const { theme } = useTheme(); // ensures CSS variables re-evaluate on theme toggle
   const navigate = useNavigate();
   const [data, setData] = useState<{ partner: PartnerData; recentEvents: RecentEvent[] } | null>(null);
   const [loading, setLoading] = useState(true);
@@ -74,7 +74,7 @@ export const PartnerLP: React.FC = () => {
             style={{ 
               height: 32, 
               objectFit: "contain",
-              filter: useTheme().theme === 'dark' ? 'brightness(0) invert(1)' : 'none'
+              filter: theme === 'dark' ? 'brightness(0) invert(1)' : 'none'
             }} 
           />
         </div>

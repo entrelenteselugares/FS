@@ -1,4 +1,5 @@
-import { Request, Response } from "express";
+import { Response } from "express";
+import { AuthRequest } from "../lib/auth";
 import prisma from "../lib/prisma";
 import { createClient } from "@supabase/supabase-js";
 
@@ -9,7 +10,7 @@ const supabase = createClient(
 );
 
 // GET /api/profissional/events — eventos atribuídos ao profissional logado
-export async function getMeusEventos(req: Request, res: Response): Promise<void> {
+export async function getMeusEventos(req: AuthRequest, res: Response): Promise<void> {
   const userId = req.user?.userId;
   if (!userId) { res.status(401).json({ error: "Não autenticado." }); return; }
 
@@ -47,7 +48,7 @@ export async function getMeusEventos(req: Request, res: Response): Promise<void>
 }
 
 // PATCH /api/profissional/events/:id/links — atualiza lightroomUrl e driveUrl
-export async function updateEventLinks(req: Request, res: Response): Promise<void> {
+export async function updateEventLinks(req: AuthRequest, res: Response): Promise<void> {
   const { id } = req.params;
   const { lightroomUrl, driveUrl } = req.body;
   const userId = req.user?.userId;
@@ -88,7 +89,7 @@ export async function updateEventLinks(req: Request, res: Response): Promise<voi
 }
 
 // PATCH /api/profissional/events/:id/cover — upload da foto de capa (BASE64)
-export async function uploadEventCover(req: Request, res: Response): Promise<void> {
+export async function uploadEventCover(req: AuthRequest, res: Response): Promise<void> {
   const { id } = req.params;
   const userId = req.user?.userId;
   if (!userId) { res.status(401).json({ error: "Não autenticado." }); return; }

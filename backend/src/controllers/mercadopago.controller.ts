@@ -1,22 +1,15 @@
-import { Request, Response } from "express";
+import { Response } from "express";
 import { MercadoPagoService } from "../services/mercadopago.service";
 import prisma from "../lib/prisma";
-
-interface RequestWithUser extends Request {
-  user?: {
-    userId: string;
-    role: string;
-    nome: string;
-  };
-}
+import { AuthRequest } from "../lib/auth";
 
 export const MercadoPagoController = {
   /**
    * Gera a URL para o usuário conectar sua conta Mercado Pago
    */
-  async connect(req: Request, res: Response) {
+  async connect(req: AuthRequest, res: Response) {
     try {
-      const user = (req as RequestWithUser).user;
+      const user = req.user;
       const userId = user?.userId;
       if (!userId) {
         return res.status(401).json({ error: "Não autorizado" });
@@ -35,7 +28,7 @@ export const MercadoPagoController = {
   /**
    * Endpoint de callback (Redirect URI) do Mercado Pago OAuth
    */
-  async callback(req: Request, res: Response) {
+  async callback(req: AuthRequest, res: Response) {
     const { code, state: userId } = req.query;
 
     if (!code || !userId) {

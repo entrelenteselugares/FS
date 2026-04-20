@@ -1,12 +1,14 @@
-import { Request, Response } from "express";
+import { Response } from "express";
+import { AuthRequest } from "../lib/auth";
 import prisma from "../lib/prisma";
 
 /**
  * GET /api/cliente/pedidos
  * Retorna todos os pedidos do usuário logado (clienteId).
  */
-export async function getMeusPedidos(req: Request, res: Response): Promise<void> {
-  const user = (req as any).user;
+export async function getMeusPedidos(req: AuthRequest, res: Response): Promise<void> {
+  const user = req.user;
+  if (!user) { res.status(401).json({ error: "Não autenticado." }); return; }
   
   try {
     const pedidos = await prisma.order.findMany({
@@ -52,8 +54,9 @@ export async function getMeusPedidos(req: Request, res: Response): Promise<void>
  * GET /api/cliente/pedidos/:id
  * Retorna o detalhe de um pedido específico com links de acesso se pago.
  */
-export async function getMeuPedidoDetalhe(req: Request, res: Response): Promise<void> {
-  const user = (req as any).user;
+export async function getMeuPedidoDetalhe(req: AuthRequest, res: Response): Promise<void> {
+  const user = req.user;
+  if (!user) { res.status(401).json({ error: "Não autenticado." }); return; }
   const { id } = req.params;
 
   try {

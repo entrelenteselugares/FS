@@ -1,8 +1,9 @@
-import { Request, Response } from "express";
+import { Response } from "express";
+import { AuthRequest } from "../lib/auth";
 import prisma from "../lib/prisma";
 
 // GET /api/admin/configs
-export async function getConfigs(req: Request, res: Response): Promise<void> {
+export async function getConfigs(req: AuthRequest, res: Response): Promise<void> {
   try {
     const configs = await prisma.platformConfig.findMany({
       orderBy: { key: "asc" },
@@ -22,9 +23,10 @@ export async function getConfigs(req: Request, res: Response): Promise<void> {
 }
 
 // PATCH /api/admin/configs
-export async function updateConfigs(req: Request, res: Response): Promise<void> {
+export async function updateConfigs(req: AuthRequest, res: Response): Promise<void> {
   const { configs } = req.body as { configs: Array<{ key: string; value: string }> };
-  const userId = (req as any).user!.userId;
+  const userId = req.user?.userId;
+  if (!userId) { res.status(401).json({ error: "Não autenticado." }); return; }
 
   if (!Array.isArray(configs)) {
     res.status(400).json({ error: "configs deve ser um array." });
@@ -70,7 +72,7 @@ export async function updateConfigs(req: Request, res: Response): Promise<void> 
 }
 
 // GET /api/public/configs/theme (Tema e Identidade)
-export async function getPublicThemeConfigs(req: Request, res: Response): Promise<void> {
+export async function getPublicThemeConfigs(req: AuthRequest, res: Response): Promise<void> {
   try {
     const keys = ["brand_primary", "brand_tactical"];
     const configs = await prisma.platformConfig.findMany({
