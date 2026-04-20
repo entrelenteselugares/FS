@@ -131,4 +131,54 @@ export class CartorioController {
           res.status(500).json({ error: "Erro ao buscar agenda." });
       }
   }
+  /**
+   * GET /api/cartorio/orders
+   * Lista os pedidos (repasses) dos eventos desta unidade.
+   */
+  static async getOrders(req: AuthRequest, res: Response) {
+    const user = req.user;
+    if (!user) return res.status(401).json({ error: "Não autorizado" });
+
+    const { startDate, endDate } = req.query;
+
+    try {
+      const isAdmin = user.role === "ADMIN";
+
+      // Buscar os pedidos dos eventos desta unidade
+      const pedidos = await prisma.pedido.findMany({
+        where: {
+          status: "APROVADO",
+          event: isAdmin ? undefined : { cartorioUserId: user.userId },
+          ...(startDate || endDate
+            ? {
+                createdAt: {
+                  ...(startDate ? { gte: new Date(String(startDate)) } : {}),
+                  ...(endDate ? { lte: new Date(String(endDate)) } : {}),
+                },
+              }
+            : {}),
+        },
+        include: {
+          event: { select: { nomeNoivos: true } },
+        },
+        orderBy: { createdAt: "desc" },
+        take: 100,
+      });
+
+      const result = pedidos.map((p) => ({
+        id: p.id,
+        status: p.status,
+        amount: Number(p.valor),
+        splitCartorio: null, // Futuro: calcular split
+        createdAt: p.createdAt,
+        buyerEmail: null,
+        event: { title: p.event?.nomeNoivos ?? "—" },
+      }));
+
+      res.json({ orders: result });
+    } catch (error) {
+      console.error("[CartorioOrders Error]:", error);
+      res.status(500).json({ error: "Erro ao buscar pedidos." });
+    }
+  }
 }

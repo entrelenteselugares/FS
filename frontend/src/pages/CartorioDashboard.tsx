@@ -71,6 +71,7 @@ export default function CartorioDashboard() {
   const [pedidos, setPedidos] = useState<PedidoCartorio[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
+  const [pedidosError, setPedidosError] = useState("");
   const [success, setSuccess] = useState("");
 
   // Landing Page State
@@ -178,6 +179,7 @@ export default function CartorioDashboard() {
   };
 
   const loadPedidos = useCallback(async () => {
+    setPedidosError("");
     try {
       const params = new URLSearchParams();
       if (startDate) params.set("startDate", startDate);
@@ -185,7 +187,7 @@ export default function CartorioDashboard() {
       const { data } = await API.get(`/cartorio/orders?${params}`);
       setPedidos(data.orders ?? data);
     } catch {
-      setError("Erro ao carregar pedidos.");
+      setPedidosError("Erro ao carregar pedidos. Tente novamente.");
     }
   }, [startDate, endDate]);
 
@@ -345,6 +347,11 @@ export default function CartorioDashboard() {
         {/* ── REPASSES ── */}
         {tab === "pedidos" && (
           <div>
+            {pedidosError && (
+              <div style={{ background: "rgba(239, 68, 68, 0.1)", border: "1px solid rgba(239, 68, 68, 0.2)", borderRadius: 0, padding: "12px 16px", marginBottom: "1.25rem" }}>
+                <p style={{ fontSize: 13, color: "#ef4444", margin: 0, fontWeight: 600, textTransform: "uppercase", letterSpacing: 0.5 }}>{pedidosError}</p>
+              </div>
+            )}
             {/* Filtros de data */}
             <div style={{ display: "flex", gap: "0.75rem", marginBottom: "1.25rem", alignItems: "center" }}>
               <div>

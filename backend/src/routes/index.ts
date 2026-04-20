@@ -146,6 +146,7 @@ router.patch("/partner/profile", requireAuth, requireRole("CARTORIO"), updatePar
 // ── Cartório / Unidades: Gestão de Ativos ────────────────────────
 router.get("/cartorio/stats", requireAuth, requireRole("ADMIN", "CARTORIO"), CartorioController.getStats);
 router.get("/cartorio/events", requireAuth, requireRole("ADMIN", "CARTORIO"), CartorioController.getEvents);
+router.get("/cartorio/orders", requireAuth, requireRole("ADMIN", "CARTORIO", "UNIDADE"), CartorioController.getOrders);
 
 // --- Configurações & Repasses ---
 router.get("/admin/configs", requireAuth, requireRole("ADMIN"), getConfigs);
