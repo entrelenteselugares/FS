@@ -800,7 +800,7 @@ export default function EventPage() {
       {needsAccessChoice && orderId && event && (
         <AccessTypeModal
           orderId={orderId}
-          eventTitle={event.title}
+          eventTitle={event.nomeNoivos}
           onConfirmed={(type, expiresAt) => {
             setAccessType(type);
             setAccessExpiresAt(expiresAt);
