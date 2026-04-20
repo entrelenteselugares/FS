@@ -113,22 +113,29 @@ export const HomePage = () => {
         @media (max-width: 768px) {
           .mobile-stack { flex-direction: column !important; align-items: center !important; text-align: center !important; gap: 20px !important; }
           .mobile-hero-padding { padding: 4rem 1rem 3rem !important; }
-          .mobile-grid-header { flex-direction: column !important; align-items: center !important; text-align: center !important; gap: 1rem !important; }
+          .mobile-grid-header { flex-direction: column !important; align-items: center !important; text-align: center !important; gap: 1.5rem !important; margin-bottom: 2rem !important; }
           .mobile-hide { display: none !important; }
           .mobile-nav { padding: 0.8rem 1rem !important; }
           .mobile-footer { flex-direction: column !important; text-align: center !important; gap: 2rem !important; }
           .mobile-search { flex-direction: column !important; background: transparent !important; border: none !important; padding: 0 !important; gap: 10px !important; }
           .mobile-search-input { border: 1px solid ${THEME.border2} !important; background: ${THEME.bgCard} !important; }
           .mobile-search-button { width: 100% !important; padding: 15px !important; }
+          
+          /* New Padding Corections */
+          .responsive-padding { padding-left: 20px !important; padding-right: 20px !important; }
+          .hero-mobile-margin { margin: 10px 10px !important; }
+          section { padding: 4rem 20px !important; }
+          .hero-title-mobile { font-size: 32px !important; }
         }
       `}</style>
 
       {/* NAV */}
       <nav 
         id="main-nav"
+        className="mobile-nav"
         style={{ 
           display: "flex", alignItems: "center", justifyContent: "space-between", 
-          padding: "1rem 2rem", borderBottom: `1px solid ${THEME.border}`, 
+          padding: "1.2rem 2.5rem", borderBottom: `1px solid ${THEME.border}`, 
           background: "var(--theme-bg-nav)", backdropFilter: "blur(20px)", 
           position: "sticky", top: 0, zIndex: 100 
         }}
@@ -154,11 +161,30 @@ export const HomePage = () => {
           />
         </div>
         <div style={{ display: "flex", alignItems: "center", gap: 16 }}>
+          <button
+            onClick={() => navigate("/cotacao")}
+            style={{ 
+              fontSize: 9, 
+              background: "var(--brand-primary)", 
+              color: "#fff", 
+              border: "none", 
+              padding: "10px 18px", 
+              borderRadius: 0, 
+              cursor: "pointer", 
+              fontWeight: 900, 
+              letterSpacing: "0.2em", 
+              textTransform: "uppercase",
+              boxShadow: "0 4px 15px rgba(133, 185, 172, 0.2)"
+            }}
+          >
+            Agendar
+          </button>
+
           <button 
             onClick={toggleTheme}
             style={{ 
               background: "none", border: "none", color: THEME.text2, cursor: "pointer", 
-              padding: "8px", display: "flex", alignItems: "center", transition: "color 0.3s" 
+              padding: "4px", display: "flex", alignItems: "center", transition: "color 0.3s" 
             }}
             onMouseOver={(e) => (e.currentTarget.style.color = THEME.text)}
             onMouseOut={(e) => (e.currentTarget.style.color = THEME.text2)}
@@ -168,25 +194,6 @@ export const HomePage = () => {
             ) : (
               <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><circle cx="12" cy="12" r="5"/><line x1="12" y1="1" x2="12" y2="3"/><line x1="12" y1="21" x2="12" y2="23"/><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/><line x1="1" y1="12" x2="3" y2="12"/><line x1="21" y1="12" x2="23" y2="12"/><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"/><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"/></svg>
             )}
-          </button>
-
-          <button
-            onClick={() => navigate("/cotacao")}
-            style={{ 
-              fontSize: 10, 
-              background: "var(--brand-primary)", 
-              color: "#fff", 
-              border: "none", 
-              padding: "12px 24px", 
-              borderRadius: 0, 
-              cursor: "pointer", 
-              fontWeight: 800, 
-              letterSpacing: "0.15em", 
-              textTransform: "uppercase",
-              boxShadow: "0 4px 15px rgba(133, 185, 172, 0.2)"
-            }}
-          >
-            Orçamento
           </button>
 
           {user ? (
@@ -223,18 +230,21 @@ export const HomePage = () => {
       </nav>
 
       {/* HERO SECTION ESTILO YOUTUBE (SLIM & SLEEK) 📸✨ */}
-      <section style={{ 
-        height: "clamp(300px, 40vh, 400px)", 
-        position: "relative", 
-        overflow: "hidden", 
-        display: "flex", 
-        alignItems: "center", 
-        justifyContent: "center", 
-        background: "#000",
-        margin: "0 20px",
-        marginTop: "20px",
-        borderRadius: "16px"
-      }}>
+      <section 
+        className="hero-mobile-margin"
+        style={{ 
+          height: "clamp(300px, 40vh, 400px)", 
+          position: "relative", 
+          overflow: "hidden", 
+          display: "flex", 
+          alignItems: "center", 
+          justifyContent: "center", 
+          background: "#000",
+          margin: "0 20px",
+          marginTop: "20px",
+          borderRadius: "16px"
+        }}
+      >
         
         {/* Imagem de Fundo Panorâmica */}
         <div style={{ 
@@ -297,6 +307,7 @@ export const HomePage = () => {
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.8, delay: 0.2 }}
+            className="hero-title-mobile"
             style={{
               fontFamily: THEME.fontBase,
               fontWeight: 800,
@@ -333,6 +344,7 @@ export const HomePage = () => {
             initial={{ opacity: 0, scale: 0.98 }}
             animate={{ opacity: 1, scale: 1 }}
             transition={{ duration: 0.6, delay: 0.6 }}
+            className="mobile-search"
             style={{ 
               maxWidth: 600, 
               margin: "0 auto", 
@@ -349,6 +361,7 @@ export const HomePage = () => {
                 value={query}
                 onChange={(e) => setQuery(e.target.value)}
                 placeholder="Buscar álbum (ex: Noivos)..."
+                className="mobile-search-input"
                 style={{
                   width: "100%", background: "transparent", border: "none",
                   padding: "12px 20px", fontSize: 14,
@@ -358,6 +371,7 @@ export const HomePage = () => {
               />
               <button
                 onClick={() => fetchEvents(query, 1)}
+                className="mobile-search-button"
                 style={{
                   background: "#FFFFFF", color: "#000000", border: "none", padding: "0 25px",
                   borderRadius: "2px", fontSize: 10, fontWeight: 800, cursor: "pointer",

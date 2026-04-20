@@ -10,6 +10,10 @@ interface Contest {
   status: "DRAFT" | "ACTIVE" | "FINISHED";
   prize1st: string;
   prize1stPts: number;
+  prize2nd?: string;
+  prize2ndPts?: number;
+  prize3rd?: string;
+  prize3rdPts?: number;
 }
 
 export const AdminContests: React.FC = () => {

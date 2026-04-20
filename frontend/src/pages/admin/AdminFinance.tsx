@@ -57,7 +57,10 @@ export const AdminFinance: React.FC = () => {
     }
   };
 
-  const calculateAmount = (total: number, pct: number) => (total * (pct / 100)).toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' });
+  const calculateAmount = (total: number, pct: number = 0) => {
+    const amount = total * ((pct || 0) / 100);
+    return amount.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' });
+  };
 
   return (
     <div className="space-y-12 animate-in fade-in slide-in-from-bottom-4 duration-700">
