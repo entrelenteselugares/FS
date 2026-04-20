@@ -264,12 +264,22 @@ export default function EventPage() {
         * { box-sizing: border-box; }
         input { transition: border-color .15s; }
         input:focus { border-color: ${T.accent} !important; outline: none; }
+        
+        @media (max-width: 768px) {
+          .mobile-grid-1 { grid-template-columns: 1fr !important; }
+          .mobile-stack { flex-direction: column !important; }
+          .mobile-padding { padding: 20px !important; }
+          .mobile-center { text-align: center !important; justify-content: center !important; }
+          .mobile-hide { display: none !important; }
+          .mobile-nav { padding: 12px 16px !important; }
+          .mobile-sidebar { position: relative !important; top: 0 !important; width: 100% !important; margin-top: 40px !important; }
+        }
       `}</style>
 
       {/* NAV */}
-      <nav style={{ display: "flex", alignItems: "center", justifyContent: "space-between", padding: "16px 28px", borderBottom: `1px solid ${T.border}` }}>
-        <button onClick={() => navigate("/")} style={{ background: "none", border: "none", color: T.text3, fontSize: 11, cursor: "pointer", letterSpacing: 1, textTransform: "uppercase", display: "flex", alignItems: "center", gap: 6 }}>
-          ← Vitrine
+      <nav className="mobile-nav" style={{ display: "flex", alignItems: "center", justifyContent: "space-between", padding: "16px 28px", borderBottom: `1px solid ${T.border}` }}>
+        <button onClick={() => navigate("/")} style={{ background: "none", border: "none", color: "#666", fontSize: 10, cursor: "pointer", letterSpacing: 1, textTransform: "uppercase", display: "flex", alignItems: "center", gap: 6 }}>
+          ← <span className="mobile-hide">Vitrine</span>
         </button>
         <div style={{ fontFamily: T.fontD, fontWeight: 900, fontSize: 18, color: "#fff", letterSpacing: 1 }}>
           FOTO SEGUNDO.
@@ -278,7 +288,7 @@ export default function EventPage() {
       </nav>
 
       {/* LAYOUT */}
-      <div style={{ maxWidth: 1040, margin: "0 auto", padding: "40px 28px", display: "grid", gridTemplateColumns: "1fr 360px", gap: "48px", alignItems: "start" }}>
+      <div className="mobile-grid-1 mobile-padding" style={{ maxWidth: 1040, margin: "0 auto", padding: "40px 28px", display: "grid", gridTemplateColumns: "1fr 360px", gap: "48px", alignItems: "start" }}>
 
         {/* ESQUERDA */}
         <div>
@@ -323,7 +333,7 @@ export default function EventPage() {
               <p style={{ fontSize: 10, letterSpacing: 2, textTransform: "uppercase", color: T.text3, marginBottom: 14 }}>
                 Serviços inclusos
               </p>
-              <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 10 }}>
+              <div className="mobile-grid-1" style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 10 }}>
                 {[
                   { active: event.temFoto, name: "Galeria Digital", desc: "Fotos editadas no Adobe Portfolio" },
                   { active: event.temVideo, name: "Cinema & Filme", desc: "Vídeo cinematográfico completo" },
@@ -392,7 +402,7 @@ export default function EventPage() {
         </div>
 
         {/* DIREITA */}
-        <div style={{ position: "sticky", top: "2rem" }}>
+        <div className="mobile-sidebar" style={{ position: "sticky", top: "2rem" }}>
 
           {/* PAYWALL */}
           {step === "paywall" && (

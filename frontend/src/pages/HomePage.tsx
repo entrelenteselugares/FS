@@ -111,8 +111,20 @@ export const HomePage = () => {
       <style>{`
         @import url('https://fonts.googleapis.com/css2?family=Barlow+Condensed:ital,wght@0,700;0,800;0,900;1,700;1,900&family=Inter:wght@300;400;500&display=swap');
         * { box-sizing: border-box; }
-        body { margin: 0; padding: 0; overflow-x: hidden; }
+        body { margin: 0; padding: 0; overflow-x: hidden; background: ${THEME.bg}; }
         .search-input:focus { border-color: ${THEME.accent} !important; background: rgba(255,255,255,0.04) !important; }
+        
+        @media (max-width: 768px) {
+          .mobile-stack { flex-direction: column !important; align-items: center !important; text-align: center !important; gap: 20px !important; }
+          .mobile-hero-padding { padding: 4rem 1rem 3rem !important; }
+          .mobile-grid-header { flex-direction: column !important; align-items: center !important; text-align: center !important; gap: 1rem !important; }
+          .mobile-hide { display: none !important; }
+          .mobile-nav { padding: 0.8rem 1rem !important; }
+          .mobile-footer { flex-direction: column !important; text-align: center !important; gap: 2rem !important; }
+          .mobile-search { flex-direction: column !important; background: transparent !important; border: none !important; padding: 0 !important; gap: 10px !important; }
+          .mobile-search-input { border: 1px solid ${THEME.border2} !important; background: ${THEME.bgCard} !important; }
+          .mobile-search-button { width: 100% !important; padding: 15px !important; }
+        }
       `}</style>
 
       {/* NAV */}
@@ -125,9 +137,10 @@ export const HomePage = () => {
           position: "sticky", top: 0, zIndex: 100 
         }}
       >
-        <div style={{ fontFamily: "'Barlow Condensed', sans-serif", fontSize: "min(24px, 6vw)", fontWeight: 800, color: "#fff", display: "flex", alignItems: "center", gap: 12, textTransform: "uppercase", letterSpacing: "1px" }}>
-          <img src="/logo-circular.png" alt="" style={{ width: 32, height: 32, objectFit: "contain" }} onError={(e) => (e.currentTarget.style.display = "none")} />
-          Foto Segundo
+        <div style={{ fontFamily: "'Barlow Condensed', sans-serif", fontSize: "min(24px, 6vw)", fontWeight: 800, color: "#fff", display: "flex", alignItems: "center", gap: 10, textTransform: "uppercase", letterSpacing: "1px" }}>
+          <img src="/logo-circular.png" alt="" style={{ width: "min(32px, 8vw)", height: "min(32px, 8vw)", objectFit: "contain" }} onError={(e) => (e.currentTarget.style.display = "none")} />
+          <span className="mobile-hide">Foto Segundo</span>
+          <span className="mobile-hide" style={{ fontSize: 10, color: THEME.text3, fontWeight: 400 }}>™</span>
         </div>
         <div style={{ display: "flex", alignItems: "center", gap: 12 }}>
           <button
@@ -171,7 +184,7 @@ export const HomePage = () => {
       </nav>
 
       {/* HERO */}
-      <section style={{ padding: "8rem 1rem 6rem", textAlign: "center", position: "relative", background: `radial-gradient(circle at 50% 0%, ${THEME.accent}15 0%, transparent 70%)` }}>
+      <section className="mobile-hero-padding" style={{ padding: "8rem 1rem 6rem", textAlign: "center", position: "relative", background: `radial-gradient(circle at 50% 0%, ${THEME.accent}15 0%, transparent 70%)` }}>
         <p style={{ fontSize: 10, letterSpacing: 4, textTransform: "uppercase", color: THEME.accent, marginBottom: "1.5rem", fontWeight: 800 }}>
           Photography & Cinema Collective
         </p>
@@ -193,12 +206,12 @@ export const HomePage = () => {
         </p>
 
         {/* Barra de busca Responsiva */}
-        <div className="search-container" style={{ maxWidth: 640, margin: "0 auto", position: "relative", display: "flex", background: THEME.bgCard, border: `1px solid ${THEME.border2}`, padding: "4px" }}>
+        <div className="mobile-search" style={{ maxWidth: 640, margin: "0 auto", position: "relative", display: "flex", background: THEME.bgCard, border: `1px solid ${THEME.border2}`, padding: "4px" }}>
             <input
               value={query}
               onChange={(e) => setQuery(e.target.value)}
-              placeholder="Pesquisar por noivos, data ou unidade..."
-              className="search-input"
+              placeholder="Pesquisar registro..."
+              className="search-input mobile-search-input"
               style={{
                 width: "100%", background: "transparent", border: "none",
                 padding: "16px 20px", fontSize: 13,
@@ -207,7 +220,7 @@ export const HomePage = () => {
             />
             <button
               onClick={() => fetchEvents(query, 1)}
-              className="search-button"
+              className="search-button mobile-search-button"
               style={{
                 background: THEME.accent, color: "#fff", border: "none", padding: "0 25px",
                 borderRadius: 0, fontSize: 10, fontWeight: 800, cursor: "pointer",
@@ -246,8 +259,8 @@ export const HomePage = () => {
       `}</style>
 
       {/* GRID DE EVENTOS */}
-      <section style={{ padding: "4rem 2rem", maxWidth: 1400, margin: "0 auto" }}>
-        <div style={{ display: "flex", alignItems: "flex-end", justifyContent: "space-between", marginBottom: "3rem" }}>
+      <section style={{ padding: "4rem 1rem", maxWidth: 1400, margin: "0 auto" }}>
+        <div className="mobile-grid-header" style={{ display: "flex", alignItems: "flex-end", justifyContent: "space-between", marginBottom: "3rem" }}>
           <div>
             <p style={{ fontSize: 11, color: THEME.accent, letterSpacing: 4, textTransform: "uppercase", marginBottom: 10, fontWeight: 800 }}>Showcase</p>
             <h2 style={{ fontFamily: THEME.fontDisplay, fontSize: 48, fontWeight: 900, color: "#fff", textTransform: "uppercase", letterSpacing: "1px", lineHeight: 1 }}>
@@ -330,14 +343,16 @@ export const HomePage = () => {
       </section>
 
       {/* FOOTER */}
-      <footer style={{ padding: "6rem 2rem", borderTop: `1px solid ${THEME.border}`, display: "flex", justifyContent: "space-between", alignItems: "center", flexWrap: "wrap", gap: "2rem", maxWidth: 1400, margin: "6rem auto 0" }}>
-        <img src="/logo-horizontal.png" alt="Foto Segundo" style={{ height: 24, objectFit: "contain" }} onError={(e) => (e.currentTarget.style.display = "none")} />
-        <div style={{ display: "flex", gap: "3rem" }}>
-          {["Parcerias", "Unidades Locais", "Contato"].map((l) => (
+      <footer className="mobile-footer" style={{ padding: "6rem 2rem", borderTop: `1px solid ${THEME.border}`, display: "flex", justifyContent: "space-between", alignItems: "center", flexWrap: "wrap", gap: "2rem", maxWidth: 1400, margin: "4rem auto 0" }}>
+        <div style={{ display: "flex", flexDirection: "column", gap: 10, alignItems: "center" }}>
+          <img src="/logo-horizontal.png" alt="Foto Segundo" style={{ height: 20, objectFit: "contain" }} onError={(e) => (e.currentTarget.style.display = "none")} />
+          <span style={{ fontSize: 9, color: THEME.border2, textTransform: "uppercase", letterSpacing: 2 }}>Protocolo Archive © 2026.</span>
+        </div>
+        <div style={{ display: "flex", gap: "2rem", flexWrap: "wrap", justifyContent: "center" }}>
+          {["Parcerias", "Unidades Locais", "Segurança"].map((l) => (
             <span key={l} style={{ fontSize: 10, color: THEME.text3, cursor: "pointer", textTransform: "uppercase", letterSpacing: 2, fontWeight: 700 }}>{l}</span>
           ))}
         </div>
-        <span style={{ fontSize: 10, color: THEME.border2, textTransform: "uppercase", letterSpacing: 2 }}>© 2026 Archive.</span>
       </footer>
 
       <style>{`

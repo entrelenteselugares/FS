@@ -43,6 +43,14 @@ export const PartnerLP: React.FC = () => {
     <div className="min-h-screen bg-[#050505] text-white">
       <style>{`
         @import url('https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@600;700;800;900&display=swap');
+        @media (max-width: 768px) {
+          .mobile-hero-title { font-size: clamp(32px, 12vw, 48px) !important; line-height: 1 !important; }
+          .mobile-py { padding-top: 4rem !important; padding-bottom: 4rem !important; }
+          .mobile-px { padding-left: 1.5rem !important; padding-right: 1.5rem !important; }
+          .mobile-gap { gap: 40px !important; }
+          .mobile-full-width { width: 100% !important; }
+          .mobile-center { text-align: center !important; flex-direction: column !important; }
+        }
       `}</style>
 
       {/* Back Button */}
@@ -69,19 +77,19 @@ export const PartnerLP: React.FC = () => {
         <div className="absolute inset-0 flex flex-col items-center justify-center text-center px-6">
            <motion.div initial={{ opacity: 0, y: 30 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.8 }}>
              <div className="text-[10px] font-black uppercase tracking-[0.6em] text-brand-tactical mb-6">Ponto Parceiro Autorizado</div>
-             <h1 className="text-6xl md:text-9xl font-black uppercase tracking-tighter leading-[0.85] mb-8" style={{ fontFamily: "'Barlow Condensed', sans-serif" }}>
+             <h1 className="text-6xl md:text-9xl font-black uppercase tracking-tighter leading-[0.85] mb-8 mobile-hero-title" style={{ fontFamily: "'Barlow Condensed', sans-serif" }}>
                {partner.razaoSocial}
              </h1>
-             <div className="flex flex-wrap justify-center gap-6 text-[11px] font-bold uppercase tracking-widest text-zinc-400 italic">
-               <div className="flex items-center gap-2"><MapPin size={14} /> {partner.address || "Campinas, SP"}</div>
-               <div className="flex items-center gap-2"><Phone size={14} /> {partner.phone || "(19) 98765-4321"}</div>
+             <div className="flex flex-wrap justify-center gap-4 text-[10px] md:text-[11px] font-bold uppercase tracking-widest text-zinc-400 italic">
+               <div className="flex items-center gap-2"><MapPin size={12} className="md:w-3.5 md:h-3.5" /> {partner.address || "Campinas, SP"}</div>
+               <div className="flex items-center gap-2"><Phone size={12} className="md:w-3.5 md:h-3.5" /> {partner.phone || "(19) 98765-4321"}</div>
              </div>
            </motion.div>
         </div>
       </section>
 
       {/* Info Sections */}
-      <section className="max-w-7xl mx-auto px-6 grid grid-cols-1 lg:grid-cols-2 gap-20 py-32 border-b border-white/5">
+      <section className="max-w-7xl mx-auto px-6 grid grid-cols-1 lg:grid-cols-2 gap-20 py-20 md:py-32 border-b border-white/5 mobile-py">
         <div>
           <h2 className="text-3xl font-black uppercase tracking-tighter mb-8 italic" style={{ fontFamily: "'Barlow Condensed', sans-serif" }}>Sobre este Local</h2>
           <p className="text-zinc-500 leading-relaxed uppercase tracking-widest text-[11px] font-bold mb-12">
@@ -103,9 +111,9 @@ export const PartnerLP: React.FC = () => {
           </div>
         </div>
 
-        <div className="bg-[#0a0a0a] border border-white/5 p-12 flex flex-col justify-center items-center text-center">
+        <div className="bg-[#0a0a0a] border border-white/5 p-8 md:p-12 flex flex-col justify-center items-center text-center">
             <Calendar className="text-brand-tactical mb-8" size={48} />
-            <h3 className="text-4xl font-black uppercase tracking-tighter mb-4" style={{ fontFamily: "'Barlow Condensed', sans-serif" }}>Solicite seu Registro</h3>
+            <h3 className="text-3xl md:text-4xl font-black uppercase tracking-tighter mb-4" style={{ fontFamily: "'Barlow Condensed', sans-serif" }}>Solicite seu Registro</h3>
             <p className="text-zinc-600 text-[10px] font-bold uppercase tracking-widest leading-relaxed mb-10">Agende sua cobertura fotográfica ou cinematográfica diretamente para este local com preços exclusivos de ponto parceiro.</p>
             <button 
                 onClick={() => navigate(`/cotacao?partner=${partner.slug}`)}
@@ -117,8 +125,8 @@ export const PartnerLP: React.FC = () => {
       </section>
 
       {/* Recents Gallery */}
-      <section className="py-32 px-6 max-w-7xl mx-auto">
-        <div className="flex items-center justify-between mb-20">
+      <section className="py-20 md:py-32 px-6 max-w-7xl mx-auto mobile-py">
+        <div className="flex flex-col md:flex-row items-center justify-between mb-12 md:mb-20 mobile-center">
             <div>
                 <h2 className="text-4xl font-black uppercase tracking-tighter italic" style={{ fontFamily: "'Barlow Condensed', sans-serif" }}>Registrados Recentemente</h2>
                 <p className="text-[10px] text-zinc-600 font-bold uppercase tracking-[0.3em] mt-2">Neste Local de Atendimento</p>
@@ -130,7 +138,7 @@ export const PartnerLP: React.FC = () => {
             </div>
         </div>
 
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-12">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 md:gap-12">
             {recentEvents.length === 0 ? (
                 <div className="col-span-full py-20 text-center text-zinc-800 uppercase tracking-widest text-[9px] border border-dashed border-zinc-900 italic">Os registros deste local serão indexados em breve.</div>
             ) : recentEvents.map(event => (
@@ -158,7 +166,7 @@ export const PartnerLP: React.FC = () => {
       </section>
 
       {/* Footer / Location */}
-      <footer className="py-40 border-t border-white/5 bg-zinc-900/10">
+      <footer className="py-16 md:py-40 border-t border-white/5 bg-zinc-900/10 mobile-py">
         <div className="max-w-xl mx-auto text-center px-6">
             <h3 className="text-2xl font-black uppercase tracking-tighter mb-8" style={{ fontFamily: "'Barlow Condensed', sans-serif" }}>Visite-nos</h3>
             <p className="text-zinc-600 text-[10px] font-bold uppercase tracking-widest leading-relaxed mb-12">
