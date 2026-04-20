@@ -414,12 +414,7 @@ export default function EventPage() {
                   <p style={{ fontSize: 11, color: accessType === "PRIVATE" ? "#f87171" : T.accent, margin: 0 }}>
                     {accessType === "PRIVATE" ? "⚠️ ACESSO PRIVADO" : "📅 ÁLBUM PÚBLICO"} — Expira em{" "}
                     <strong>{new Date(accessExpiresAt).toLocaleDateString("pt-BR")}</strong>
-                    {" "}({Math.ceil((new Date(accessExpiresAt).getTime() - Date.now()) / 86400000)} dias restantes)
-                  </p>
-                </div>
-              )}
-
-              {access && (
+                    {access && (
                 <div style={{ display: "flex", flexDirection: "column", gap: 10 }}>
                   {access.lightroomUrl && (
                     <a href={access.lightroomUrl} target="_blank" rel="noopener noreferrer"
@@ -431,15 +426,23 @@ export default function EventPage() {
                       <span style={{ fontSize: 12, color: T.accent }}>Abrir ↗</span>
                     </a>
                   )}
-                {access.driveUrl && (
-                  <a href={access.driveUrl} target="_blank" rel="noopener noreferrer"
-                    style={{ display: "flex", justifyContent: "space-between", alignItems: "center", padding: "14px 16px", background: T.bg, border: `1px solid #1e3a1e`, textDecoration: "none" }}>
-                    <div>
-                      <p style={{ fontSize: 13, fontWeight: 500, color: T.text, marginBottom: 2 }}>Vídeo & Reels</p>
-                      <p style={{ fontSize: 11, color: T.text3 }}>Google Drive · Download disponível</p>
-                    </div>
-                    <span style={{ fontSize: 12, color: T.accent }}>Abrir ↗</span>
+                  {access.driveUrl && (
+                    <a href={access.driveUrl} target="_blank" rel="noopener noreferrer"
+                      style={{ display: "flex", justifyContent: "space-between", alignItems: "center", padding: "14px 16px", background: T.bg, border: `1px solid #1e3a1e`, textDecoration: "none" }}>
+                      <div>
+                        <p style={{ fontSize: 13, fontWeight: 500, color: T.text, marginBottom: 2 }}>Vídeo & Reels</p>
+                        <p style={{ fontSize: 11, color: T.text3 }}>Google Drive · Download disponível</p>
+                      </div>
+                      <span style={{ fontSize: 12, color: T.accent }}>Abrir ↗</span>
+                    </a>
+                  )}
+                </div>
+              )}
+            </div>
+          )}
+ · Download disponível</p>
                   </a>
+                )}
                 </div>
               )}
             </div>
