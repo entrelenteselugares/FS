@@ -118,18 +118,44 @@ export const HomePage = () => {
           .mobile-nav { padding: 0.75rem 1.25rem !important; }
           .mobile-footer { flex-direction: column !important; text-align: center !important; gap: 2rem !important; }
 
-          /* Search bar: keep horizontal, pill-style, compact */
-          .mobile-search { flex-direction: row !important; background: rgba(255,255,255,0.08) !important; border: 1px solid rgba(255,255,255,0.12) !important; padding: 4px !important; gap: 0 !important; border-radius: 6px !important; }
-          .mobile-search-input { background: transparent !important; border: none !important; font-size: 15px !important; padding: 12px 16px !important; }
-          .mobile-search-button { width: auto !important; padding: 10px 16px !important; border-radius: 4px !important; flex-shrink: 0 !important; }
+          /* Search bar: Premium pill-style with high blur */
+          .mobile-search { 
+            flex-direction: row !important; 
+            background: rgba(255,255,255,0.06) !important; 
+            backdrop-filter: blur(30px) !important;
+            border: 1px solid rgba(255,255,255,0.08) !important; 
+            padding: 4px !important; 
+            gap: 0 !important; 
+            border-radius: 100px !important; 
+          }
+          .mobile-search-input { 
+            background: transparent !important; 
+            border: none !important; 
+            font-size: 16px !important; /* Prevents iOS auto-zoom */
+            padding: 12px 20px !important; 
+            letter-spacing: -0.01em !important;
+          }
+          .mobile-search-button { 
+            width: 48px !important;
+            height: 48px !important;
+            padding: 0 !important; 
+            border-radius: 100px !important; 
+            flex-shrink: 0 !important; 
+            box-shadow: 0 4px 15px rgba(0,0,0,0.2) !important;
+          }
 
           /* Section spacing */
           section { padding: 2.5rem 20px !important; }
-          .hero-title-mobile { font-size: 30px !important; line-height: 1.1 !important; }
+          .hero-title-mobile { 
+            font-size: 32px !important; 
+            line-height: 1.05 !important; 
+            letter-spacing: -0.03em !important;
+            font-weight: 900 !important;
+          }
           .hero-mobile-margin { margin: 12px 12px 0 !important; }
 
           /* Event grid on mobile: single column */
-          .events-grid { grid-template-columns: 1fr !important; gap: 2rem !important; }
+          .events-grid { grid-template-columns: 1fr !important; gap: 2.5rem !important; }
 
           .desktop-hide { display: none !important; }
         }

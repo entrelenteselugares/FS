@@ -34,16 +34,22 @@ function formatCurrency(v: number) {
   return new Intl.NumberFormat("pt-BR", { style: "currency", currency: "BRL" }).format(Number(v));
 }
 
-function formatDate(d: string) {
+function formatDate(d: string | null | undefined) {
+  if (!d) return "—";
+  const date = new Date(d);
+  if (isNaN(date.getTime())) return "—";
   return new Intl.DateTimeFormat("pt-BR", {
     day: "2-digit", month: "short", year: "numeric",
-  }).format(new Date(d));
+  }).format(date);
 }
 
-function formatDateTime(d: string) {
+function formatDateTime(d: string | null | undefined) {
+  if (!d) return "—";
+  const date = new Date(d);
+  if (isNaN(date.getTime())) return "—";
   return new Intl.DateTimeFormat("pt-BR", {
     day: "2-digit", month: "short", hour: "2-digit", minute: "2-digit",
-  }).format(new Date(d));
+  }).format(date);
 }
 
 const S = {
