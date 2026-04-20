@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useCallback } from "react";
 import { API } from "../../lib/api";
 import { 
   Briefcase, 
@@ -36,7 +36,7 @@ export const AdminQuotes: React.FC = () => {
   const [price, setPrice] = useState("");
   const [approving, setApproving] = useState(false);
 
-  const fetchQuotes = async () => {
+  const fetchQuotes = useCallback(async () => {
     setLoading(true);
     try {
       const { data } = await API.get("/admin/quotes", { params: { q: search } });
@@ -46,11 +46,11 @@ export const AdminQuotes: React.FC = () => {
     } finally {
       setLoading(false);
     }
-  };
+  }, [search]);
 
   useEffect(() => {
     fetchQuotes();
-  }, [search]);
+  }, [fetchQuotes]);
 
   const handleApprove = async () => {
     if (!selectedQuote || !price) return;
