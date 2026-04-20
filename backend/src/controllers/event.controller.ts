@@ -113,7 +113,8 @@ export class EventController {
       const query = q as string;
       const take = 20;
       const skip = (Number(page) - 1) * take;
-      const term = query ? `%${query.toLowerCase()}%` : "%";
+      // Normalização robusta: transforma "&" em "e" para busca flexível
+      const term = query ? `%${query.toLowerCase().replace(/&/g, "e")}%` : "%";
 
       // 1. Busca os eventos com SQL Nativo para máxima estabilidade (contornando Case-Sensitivity)
       const events: any[] = await prisma.$queryRaw`
@@ -127,7 +128,10 @@ export class EventController {
           "priceEarly",
           true as "temFoto" -- Ativando badges por padrão para estética
         FROM events
-        WHERE (LOWER("nomeNoivos") LIKE ${term} OR LOWER(cartorio) LIKE ${term})
+        WHERE active = true AND (
+          REPLACE(LOWER("nomeNoivos"), '&', 'e') LIKE ${term} 
+          OR REPLACE(LOWER(cartorio), '&', 'e') LIKE ${term}
+        )
         ORDER BY "dataEvento" DESC
         LIMIT ${take} OFFSET ${skip}
       `;
@@ -135,7 +139,10 @@ export class EventController {
       // 2. Busca o total para cálculo de páginas
       const countResult: any[] = await prisma.$queryRaw`
         SELECT COUNT(*)::int as count FROM events
-        WHERE (LOWER("nomeNoivos") LIKE ${term} OR LOWER(cartorio) LIKE ${term})
+        WHERE active = true AND (
+          REPLACE(LOWER("nomeNoivos"), '&', 'e') LIKE ${term} 
+          OR REPLACE(LOWER(cartorio), '&', 'e') LIKE ${term}
+        )
       `;
       
       const total = countResult[0].count;
@@ -167,7 +174,13 @@ export class EventController {
       return res.json(partners.map(p => ({
         id: p.id,
         name: p.cartorio?.razaoSocial || p.nome,
-        city: "Campinas" 
+        city: p.cartorio?.cidade || "Campinas",
+        prices: {
+          foto: p.cartorio?.priceFoto,
+          video: p.cartorio?.priceVideo,
+          reels: p.cartorio?.priceReels,
+          impresso: p.cartorio?.priceImpresso
+        }
       })));
     } catch (error) {
       console.error("Erro ao listar parceiros:", error);
@@ -182,25 +195,33 @@ export class EventController {
   static async createQuote(req: AuthRequest, res: Response) {
     try {
       const { 
-        name, email, attendees, locationType, selectedPartnerId, 
+        name, email, attendees, locationType, usageType, selectedPartnerId, 
         customCep, eventDate, eventHours, description, selectedServices, totalPrice 
       } = req.body;
+
+      // Todos os novos eventos começam como inativos até o pagamento/aprovação
+      const isQuote = locationType === "OTHER";
 
       const event = await prisma.event.create({
         data: {
           nomeNoivos: name,
           dataEvento: new Date(eventDate),
           eventHours: eventHours ? Number(eventHours) : 2,
-          location: locationType === "PARTNER" ? "Ponto Parceiro" : `CEP: ${customCep}`,
-          description: `ORÇAMENTO AUTOMÁTICO\nConvidados: ${attendees}\nServiços: ${selectedServices.join(", ")}\n\nDescrição do Cliente: ${description}`,
+          location: locationType === "PARTNER" ? "Ponto Fixo" : `CEP: ${customCep}`,
+          description: `ORÇAMENTO AUTOMÁTICO\nConvidados: ${attendees}\nUso: ${usageType}\nServiços: ${selectedServices.join(", ")}\n\nDescrição do Cliente: ${description}`,
+          usageType: usageType || "PESSOAL",
+          isQuote: isQuote,
+          quoteStatus: isQuote ? "PENDING" : "APPROVED", // Pontos fixos já nascem aprovados, apenas aguardando pagamento
           priceBase: totalPrice,
           priceEarly: totalPrice,
-          active: locationType === "PARTNER", 
+          active: false, // MANDATÓRIO: Inativo até confirmação de pagamento
           cartorioUserId: locationType === "PARTNER" ? selectedPartnerId : null,
           temFoto: selectedServices.includes("foto"),
           temVideo: selectedServices.includes("video"),
           temReels: selectedServices.includes("reels"),
           temFotoImpressa: selectedServices.includes("impresso"),
+          clientEmail: email,
+          clientName: name
         }
       });
 
@@ -214,13 +235,14 @@ export class EventController {
           }
         });
 
-        // Simulação de Checkout Link
-        const checkoutUrl = `${process.env.VITE_APP_URL || 'https://foto-segundo.vercel.app'}/eventos/${event.id}?orderId=${order.id}&autoPay=true`;
+        // Link de Checkout para Ponto Fixo (Pagamento imediato)
+        const checkoutUrl = `${process.env.VITE_APP_URL || 'http://localhost:5173'}/checkout?orderId=${order.id}`;
         
         return res.json({ success: true, eventId: event.id, checkoutUrl });
       }
 
-      return res.json({ success: true, message: "Lead registrado para aprovação técnica." });
+      // Se for Orçamento (OTHER), apenas retorna sucesso. O Admin irá precificar depois.
+      return res.json({ success: true, message: "Sua solicitação foi enviada! Em breve entraremos em contato com o orçamento detalhado." });
 
     } catch (error) {
       console.error("Erro ao processar orçamento:", error);

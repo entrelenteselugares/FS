@@ -13,6 +13,8 @@ import {
   adminUpdateUser, 
   adminListOrders,
   adminMarkOrderPaid,
+  adminListQuotes,
+  adminApproveQuote,
   AdminEventController,
   adminUploadCover
 } from "../controllers/admin.controller";
@@ -100,6 +102,10 @@ router.patch("/admin/users/:id", requireAuth, requireRole("ADMIN"), adminUpdateU
 // ── Admin: Gestão de Pedidos ─────────────────────────────────────
 router.get("/admin/orders", requireAuth, requireRole("ADMIN"), adminListOrders);
 router.patch("/admin/orders/:id/payout", requireAuth, requireRole("ADMIN"), adminMarkOrderPaid);
+
+// ── Admin: Gestão de Orçamentos (Leads) ──────────────────────────
+router.get("/admin/quotes", requireAuth, requireRole("ADMIN"), adminListQuotes);
+router.post("/admin/quotes/:id/approve", requireAuth, requireRole("ADMIN"), adminApproveQuote);
 
 // ── Cliente: Meus Pedidos & Arquivos ─────────────────────────────
 router.get("/cliente/pedidos", requireAuth, getMeusPedidos);

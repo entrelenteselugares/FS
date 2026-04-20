@@ -89,6 +89,7 @@ export async function getDashboardStats(req: AuthRequest, res: Response): Promis
         orderBy: { dataEvento: "asc" },
         take: 5,
       }),
+      prisma.event.count({ where: { isQuote: true, quoteStatus: "PENDING" } }),
     ]);
 
     res.json({
@@ -96,6 +97,7 @@ export async function getDashboardStats(req: AuthRequest, res: Response): Promis
         totalEvents,
         totalOrders,
         totalRevenue: Number(totalRevenue._sum.valor ?? 0),
+        pendingQuotesCount,
       },
       recentOrders,
       pendingEvents,
@@ -114,7 +116,7 @@ export async function adminListEvents(req: AuthRequest, res: Response): Promise<
   const skip = (Number(page) - 1) * take;
 
   try {
-    const where: any = {};
+    const where: any = { isQuote: false }; // Segregação: Não lista orçamentos na aba de eventos
     if (status === "active") where.active = true;
     if (status === "inactive") where.active = false;
     
@@ -194,6 +196,7 @@ export async function adminCreateEvent(req: AuthRequest, res: Response): Promise
         driveUrl: driveUrl || null,
         priceBase: priceBase ?? 200,
         priceEarly: priceEarly ?? 190,
+        active: true, // Eventos criados pelo Admin já nascem ativos
         cartorioUserId: cartorioId || null,
         captacaoId: captacaoId || null,
         edicaoId: edicaoId || null,
@@ -361,7 +364,10 @@ export async function adminCreateUser(req: AuthRequest, res: Response): Promise<
 
 export async function adminUpdateUser(req: AuthRequest, res: Response): Promise<void> {
   const { id } = req.params;
-  const { name, role, active, captPct, editPct, pixKey } = req.body;
+  const { 
+    name, role, active, captPct, editPct, pixKey, 
+    priceFoto, priceVideo, priceReels, priceImpresso, splitPct, cidade 
+  } = req.body;
 
   try {
     await prisma.user.update({
@@ -375,7 +381,7 @@ export async function adminUpdateUser(req: AuthRequest, res: Response): Promise<
     });
 
     // Atualiza percentuais do profissional se enviados
-    if ((captPct !== undefined || editPct !== undefined)) {
+    if (role === "PROFISSIONAL" && (captPct !== undefined || editPct !== undefined)) {
       await prisma.profissional.update({
         where: { userId: String(id) },
         data: {
@@ -385,8 +391,24 @@ export async function adminUpdateUser(req: AuthRequest, res: Response): Promise<
       });
     }
 
+    // Atualiza campos do cartório se enviados
+    if (role === "CARTORIO") {
+      await prisma.cartorio.update({
+        where: { userId: String(id) },
+        data: {
+          ...(splitPct !== undefined && { splitPct }),
+          ...(cidade !== undefined && { cidade }),
+          ...(priceFoto !== undefined && { priceFoto }),
+          ...(priceVideo !== undefined && { priceVideo }),
+          ...(priceReels !== undefined && { priceReels }),
+          ...(priceImpresso !== undefined && { priceImpresso }),
+        }
+      });
+    }
+
     res.json({ ok: true });
-  } catch {
+  } catch (err) {
+    console.error("adminUpdateUser:", err);
     res.status(500).json({ error: "Erro ao atualizar usuário." });
   }
 }
@@ -465,6 +487,98 @@ export async function adminListOrders(req: AuthRequest, res: Response): Promise<
 
 export async function adminMarkOrderPaid(req: AuthRequest, res: Response): Promise<void> {
   res.status(400).json({ error: "Funcionalidade migrada para Repasses Semanais." });
+}
+
+// ── ORÇAMENTOS (LEADS) ─────────────────────────────
+
+export async function adminListQuotes(req: AuthRequest, res: Response): Promise<void> {
+  const { page = "1", q } = req.query;
+  const take = 20;
+  const skip = (Number(page) - 1) * take;
+
+  try {
+    const where: any = { isQuote: true };
+    if (q) {
+      where.OR = [
+        { clientEmail: { contains: String(q), mode: "insensitive" } },
+        { clientName: { contains: String(q), mode: "insensitive" } },
+        { nomeNoivos: { contains: String(q), mode: "insensitive" } },
+      ];
+    }
+
+    const [quotes, total] = await Promise.all([
+      prisma.event.findMany({
+        where,
+        orderBy: { createdAt: "desc" },
+        take,
+        skip,
+      }),
+      prisma.event.count({ where }),
+    ]);
+
+    res.json({ quotes, total, page: Number(page), pages: Math.ceil(total / take) });
+  } catch (err) {
+    console.error("adminListQuotes:", err);
+    res.status(500).json({ error: "Erro ao listar orçamentos." });
+  }
+}
+
+export async function adminApproveQuote(req: AuthRequest, res: Response): Promise<void> {
+  const { id } = req.params;
+  const { finalPrice } = req.body;
+
+  if (!finalPrice || Number(finalPrice) <= 0) {
+    res.status(400).json({ error: "O preço final deve ser maior que zero." });
+    return;
+  }
+
+  try {
+    const quote = await prisma.event.findUnique({
+      where: { id: String(id) }
+    });
+
+    if (!quote || !quote.isQuote) {
+      res.status(404).json({ error: "Orçamento não encontrado." });
+      return;
+    }
+
+    // 1. Atualizar o evento com o preço e status
+    const updatedQuote = await prisma.event.update({
+      where: { id: String(id) },
+      data: {
+        priceBase: Number(finalPrice),
+        priceEarly: Number(finalPrice),
+        quoteStatus: "PRICED"
+      }
+    });
+
+    // 2. Criar o pedido (Order) pendente para gerar o checkout
+    const order = await prisma.order.create({
+      data: {
+        eventId: updatedQuote.id,
+        valor: Number(finalPrice),
+        buyerEmail: quote.clientEmail,
+        status: "PENDENTE"
+      }
+    });
+
+    // 3. Gerar link de checkout
+    const checkoutUrl = `${process.env.VITE_APP_URL || 'http://localhost:5173'}/checkout?orderId=${order.id}`;
+
+    // 4. Enviar E-mail Automático (Importação Dinâmica para evitar circular dependency se houver)
+    const { NotificationService } = await import("../services/notification.service");
+    await NotificationService.sendQuotationPricedEmail({
+      to: quote.clientEmail!,
+      clientName: quote.clientName || "Cliente",
+      eventTitle: quote.nomeNoivos,
+      checkoutUrl
+    });
+
+    res.json({ success: true, updatedQuote, checkoutUrl });
+  } catch (err) {
+    console.error("adminApproveQuote:", err);
+    res.status(500).json({ error: "Erro ao aprovar orçamento." });
+  }
 }
 
 // ── LEGACY COMPATIBILITY ──────────────────────────────

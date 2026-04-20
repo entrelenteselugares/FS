@@ -107,8 +107,8 @@ function DateTimePicker({ value, onChange }: { value: string; onChange: (v: stri
             transition={{ duration: 0.18 }}
             style={{
               position: "absolute", top: "calc(100% + 8px)", left: 0, zIndex: 999,
-              background: "#0d0d0d", border: `1px solid ${THEME.accent}40`,
-              width: "min(320px, 90vw)", padding: 20, boxShadow: "0 24px 60px rgba(0,0,0,0.9)"
+              background: "var(--theme-bg)", border: `1px solid var(--theme-border)`,
+              width: "min(320px, 90vw)", padding: 20, boxShadow: "0 24px 60px rgba(0,0,0,0.4)"
             }}
           >
             {/* Month Navigation */}
@@ -169,14 +169,14 @@ function DateTimePicker({ value, onChange }: { value: string; onChange: (v: stri
               </div>
               <div style={{ display: "flex", alignItems: "center", gap: 10 }}>
                 <select value={hour} onChange={e => updateTime(e.target.value, minute)}
-                  style={{ flex: 1, background: "#111", border: `1px solid ${THEME.border}`, color: THEME.text, padding: "10px 8px", fontSize: 18, fontWeight: 900, textAlign: "center", borderRadius: 0, cursor: "pointer" }}>
+                  style={{ flex: 1, background: "var(--theme-bg-muted)", border: `1px solid ${THEME.border}`, color: THEME.text, padding: "10px 8px", fontSize: 18, fontWeight: 900, textAlign: "center", borderRadius: 0, cursor: "pointer" }}>
                   {Array.from({length: 24}, (_, i) => String(i).padStart(2,"0")).map(h => (
                     <option key={h} value={h}>{h}h</option>
                   ))}
                 </select>
                 <span style={{ color: THEME.accent, fontSize: 22, fontWeight: 900 }}>:</span>
                 <select value={minute} onChange={e => updateTime(hour, e.target.value)}
-                  style={{ flex: 1, background: "#111", border: `1px solid ${THEME.border}`, color: THEME.text, padding: "10px 8px", fontSize: 18, fontWeight: 900, textAlign: "center", borderRadius: 0, cursor: "pointer" }}>
+                  style={{ flex: 1, background: "var(--theme-bg-muted)", border: `1px solid ${THEME.border}`, color: THEME.text, padding: "10px 8px", fontSize: 18, fontWeight: 900, textAlign: "center", borderRadius: 0, cursor: "pointer" }}>
                   {["00","15","30","45"].map(m => (
                     <option key={m} value={m}>{m}min</option>
                   ))}
@@ -201,12 +201,13 @@ function DateTimePicker({ value, onChange }: { value: string; onChange: (v: stri
 export const QuotePage = () => {
   const navigate = useNavigate();
   const [step, setStep] = useState(1);
-  const [partners, setPartners] = useState<{id: string, name: string, city: string}[]>([]);
+  const [partners, setPartners] = useState<{id: string, name: string, city: string, prices?: any}[]>([]);
   
   // Form State
   const [selectedServices, setSelectedServices] = useState<string[]>(["foto"]);
-  const [attendees, setAttendees] = useState(50);
+  const [attendees, setAttendees] = useState<string>("0");
   const [locationType, setLocationType] = useState<"PARTNER" | "OTHER">("PARTNER");
+  const [usageType, setUsageType] = useState<"PESSOAL" | "EMPRESARIAL">("PESSOAL");
   const [selectedPartnerId, setSelectedPartnerId] = useState("");
   const [customCep, setCustomCep] = useState("");
   const [eventDate, setEventDate] = useState("");
@@ -230,11 +231,12 @@ export const QuotePage = () => {
     // 0-60: 1 Senior (Base)
     // 61-95: 1 Senior + 1 Auxiliar
     // > 95: 2 Seniors ou mais
-    if (attendees > 60 && attendees <= 95) {
+    const guestCount = Number(attendees) || 0;
+    if (guestCount > 60 && guestCount <= 95) {
       aux = 1;
       extraGuestsCost += 80;
-    } else if (attendees > 95) {
-      senior = Math.ceil(attendees / 60);
+    } else if (guestCount > 95) {
+      senior = Math.ceil(guestCount / 60);
       extraGuestsCost += (senior - 1) * 150;
     }
 
@@ -246,9 +248,22 @@ export const QuotePage = () => {
     return { senior, aux, teamCount, extraGuestsCost };
   };
 
-  // Cálculo de Preço Final 💰
+  // Cálculo de Preço Final 💰 (Preços Customizados por Ponto Fixo) 🛡️⚡
   const team = calculateTeam();
-  const servicesPrice = P.SERVICES.filter(s => selectedServices.includes(s.id)).reduce((acc, s) => acc + s.price, 0);
+  
+  const currentPartner = partners.find(p => p.id === selectedPartnerId);
+  const showPrices = locationType === "PARTNER" ? !!selectedPartnerId : false;
+
+  const getServicePrice = (id: string, defaultPrice: number) => {
+    if (!showPrices) return defaultPrice;
+    const custom = currentPartner?.prices?.[id];
+    return custom !== undefined && custom !== null ? Number(custom) : defaultPrice;
+  };
+
+  const servicesPrice = P.SERVICES.filter(s => selectedServices.includes(s.id)).reduce((acc, s) => {
+    return acc + getServicePrice(s.id, s.price);
+  }, 0);
+
   const isOutsideCampinas = locationType === "OTHER" && customCep !== ""; 
   const freight = isOutsideCampinas ? P.BASE_FREIGHT + (20 * P.KM_RATE) + P.FEE_TOLL : 0; 
   
@@ -257,7 +272,7 @@ export const QuotePage = () => {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     const payload = {
-      name, email, attendees, locationType, selectedPartnerId, customCep, 
+      name, email, attendees: Number(attendees), locationType, usageType, selectedPartnerId, customCep, 
       eventDate, eventHours, description, selectedServices, totalPrice, 
       status: locationType === "PARTNER" ? "APROVADO" : "PENDENTE"
     };
@@ -331,7 +346,7 @@ export const QuotePage = () => {
                     type="button"
                     onClick={() => setLocationType("PARTNER")}
                     style={{ flex: 1, padding: 15, border: `1px solid ${locationType === "PARTNER" ? THEME.accent : THEME.border}`, background: locationType === "PARTNER" ? `${THEME.accent}10` : "transparent", fontSize: 10, fontWeight: 900, color: locationType === "PARTNER" ? THEME.accent : THEME.text2, cursor: "pointer" }}
-                  >PONTO PARCEIRO</button>
+                  >PONTO FIXO</button>
                   <button 
                     type="button"
                     onClick={() => setLocationType("OTHER")}
@@ -341,23 +356,25 @@ export const QuotePage = () => {
 
                 {locationType === "PARTNER" ? (
                   <select required value={selectedPartnerId} onChange={e => setSelectedPartnerId(e.target.value)} className="fs-input" style={{ width: "100%" }}>
-                    <option value="">SELECIONE O PONTO PARCEIRO...</option>
+                    <option value="">SELECIONE O PONTO FIXO...</option>
                     {partners.map(p => <option key={p.id} value={p.id}>{p.name.toUpperCase()} - {p.city || 'CAMPINAS'}</option>)}
                   </select>
                 ) : (
-                  <div className="mobile-grid-1" style={{ display: "grid", gridTemplateColumns: "1fr 120px", gap: 10 }}>
-                    <input required value={customCep} onChange={e => setCustomCep(e.target.value)} placeholder="CEP DO LOCAL" className="fs-input" style={{ width: "100%", padding: "15px" }} />
-                    <div style={{ position: "relative", display: "flex", alignItems: "center" }}>
-                      <Clock size={16} style={{ position: "absolute", left: 12, color: THEME.accent, pointerEvents: "none" }} />
-                      <input type="number" value={eventHours} onChange={e => setEventHours(Number(e.target.value))} className="fs-input" style={{ width: "100%", padding: "15px 10px 15px 35px" }} />
-                      <span style={{ position: "absolute", right: 10, fontSize: 9, color: THEME.text2, pointerEvents: "none" }}>H</span>
+                  <div style={{ display: "flex", flexDirection: "column", gap: 15 }}>
+                    <div className="mobile-grid-1" style={{ display: "grid", gridTemplateColumns: "1fr 120px", gap: 10 }}>
+                      <input required value={customCep} onChange={e => setCustomCep(e.target.value)} placeholder="CEP DO LOCAL" className="fs-input" style={{ width: "100%", padding: "15px" }} />
+                      <div style={{ position: "relative", display: "flex", alignItems: "center" }}>
+                        <Clock size={16} style={{ position: "absolute", left: 12, color: THEME.accent, pointerEvents: "none" }} />
+                        <input type="number" value={eventHours} onChange={e => setEventHours(Number(e.target.value))} className="fs-input" style={{ width: "100%", padding: "15px 10px 15px 35px" }} />
+                        <span style={{ position: "absolute", right: 10, fontSize: 9, color: THEME.text2, pointerEvents: "none" }}>H</span>
+                      </div>
+                    </div>
+                    
+                    <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 10 }}>
+                       <button type="button" onClick={() => setUsageType("PESSOAL")} style={{ padding: 12, fontSize: 9, fontWeight: 800, border: `1px solid ${usageType === "PESSOAL" ? THEME.accent : THEME.border}`, background: usageType === "PESSOAL" ? `${THEME.accent}10` : "transparent", color: usageType === "PESSOAL" ? THEME.accent : THEME.text2, cursor: "pointer" }}>USO PESSOAL</button>
+                       <button type="button" onClick={() => setUsageType("EMPRESARIAL")} style={{ padding: 12, fontSize: 9, fontWeight: 800, border: `1px solid ${usageType === "EMPRESARIAL" ? THEME.accent : THEME.border}`, background: usageType === "EMPRESARIAL" ? `${THEME.accent}10` : "transparent", color: usageType === "EMPRESARIAL" ? THEME.accent : THEME.text2, cursor: "pointer" }}>USO EMPRESARIAL</button>
                     </div>
                   </div>
-                )}
-                {locationType === "OTHER" && (
-                  <p style={{ fontSize: 9, color: "#f59e0b", margin: 0, fontWeight: 900, textTransform: "uppercase", letterSpacing: 1 }}>
-                    ⚠️ Importante: Para locais não cadastrados, o orçamento é uma estimativa e poderá sofrer variações após análise técnica.
-                  </p>
                 )}
               </div>
 
@@ -375,7 +392,11 @@ export const QuotePage = () => {
                       }}
                     >
                       <div style={{ fontSize: 11, fontWeight: 900, marginBottom: 5 }}>{s.label}</div>
-                      <div style={{ fontSize: 10, color: THEME.text2 }}>{s.price === 0 ? "INCLUSO" : `+ R$ ${s.price}`}</div>
+                      {showPrices && (
+                        <div style={{ fontSize: 10, color: THEME.text2 }}>
+                          {getServicePrice(s.id, s.price) === 0 ? "INCLUSO" : `+ R$ ${getServicePrice(s.id, s.price)}`}
+                        </div>
+                      )}
                     </div>
                   ))}
                 </div>
@@ -387,15 +408,16 @@ export const QuotePage = () => {
                   <div style={{ position: "relative", display: "flex", alignItems: "center" }}>
                     <Users size={18} style={{ position: "absolute", left: 15, color: THEME.accent, pointerEvents: "none", zIndex: 1 }} />
                     <input
-                      type="number"
+                      type="text"
+                      inputMode="numeric"
                       value={attendees}
-                      onChange={e => setAttendees(Number(e.target.value))}
+                      onChange={e => {
+                         const val = e.target.value.replace(/\D/g, "");
+                         setAttendees(val);
+                      }}
                       className="fs-input"
                       style={{ width: "100%", padding: "15px 15px 15px 48px" }}
                     />
-                  </div>
-                  <div style={{ fontSize: 9, marginTop: 10, color: THEME.accent, fontWeight: 700, textTransform: "uppercase" }}>
-                    Equipe em Campo: {team.teamCount} {team.teamCount === 1 ? "Profissional" : "Profissionais"}
                   </div>
                 </div>
                 <div>
@@ -406,10 +428,17 @@ export const QuotePage = () => {
 
               <div style={{ borderTop: `1px solid ${THEME.border}`, paddingTop: 30, marginTop: 20 }}>
                  <div className="mobile-stack" style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-end" }}>
-                    <div className="mobile-text-center">
-                      <div style={{ fontSize: 10, fontWeight: 800, color: THEME.text2, textTransform: "uppercase", marginBottom: 5 }}>Investimento Estimado</div>
-                      <div className="mobile-price" style={{ fontFamily: THEME.fontD, fontSize: 44, fontWeight: 900, color: THEME.accent }}>R$ {totalPrice.toFixed(2)}</div>
-                    </div>
+                    {showPrices ? (
+                       <div className="mobile-text-center">
+                         <div style={{ fontSize: 10, fontWeight: 800, color: THEME.text2, textTransform: "uppercase", marginBottom: 5 }}>Investimento Estimado</div>
+                         <div className="mobile-price" style={{ fontFamily: THEME.fontD, fontSize: 44, fontWeight: 900, color: THEME.accent }}>R$ {totalPrice.toFixed(2)}</div>
+                       </div>
+                     ) : (
+                       <div className="mobile-text-center" style={{ maxWidth: 300 }}>
+                         <div style={{ fontSize: 10, fontWeight: 900, color: THEME.accent, textTransform: "uppercase", marginBottom: 5 }}>Análise Sob Demanda</div>
+                         <div style={{ fontSize: 12, color: THEME.text2, lineHeight: 1.4 }}>Selecione o local e serviços para validarmos os detalhes técnicos.</div>
+                       </div>
+                     )}
                     <div className="mobile-stack" style={{ display: "flex", gap: 15 }}>
                       <button 
                         type="button"
@@ -419,8 +448,21 @@ export const QuotePage = () => {
                         VOLTAR
                       </button>
                       <button 
-                        onClick={() => setStep(2)}
-                        style={{ background: THEME.accent, color: "black", padding: "15px 30px", fontWeight: 900, fontSize: 12, textTransform: "uppercase", letterSpacing: 2, display: "flex", alignItems: "center", gap: 10, justifyContent: "center" }}
+                        type="button"
+                        onClick={() => {
+                          const isLocalOk = locationType === "PARTNER" ? !!selectedPartnerId : !!customCep;
+                          const isServiceOk = selectedServices.length > 0;
+                          const isDateOk = !!eventDate;
+                          const isGuestsOk = Number(attendees) > 0;
+
+                          if (isLocalOk && isServiceOk && isDateOk && isGuestsOk) {
+                            setStep(2);
+                            window.scrollTo(0,0);
+                          } else {
+                            alert("Por favor, preencha todos os campos do Passo 1 antes de continuar.");
+                          }
+                        }}
+                        style={{ background: THEME.accent, color: "black", padding: "15px 30px", fontWeight: 900, fontSize: 12, textTransform: "uppercase", letterSpacing: 2, display: "flex", alignItems: "center", gap: 10, justifyContent: "center", border: "none", cursor: "pointer" }}
                       >
                         PRÓXIMO PASSO <ArrowRight size={16} />
                       </button>

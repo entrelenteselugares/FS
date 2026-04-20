@@ -9,6 +9,7 @@ import { AdminOrders } from "./AdminOrders";
 import { AdminFinance } from "./AdminFinance";
 import AdminSuppliers from "./AdminSuppliers";
 import { AdminContests } from "./AdminContests";
+import { AdminQuotes } from "./AdminQuotes";
 import { 
   LayoutDashboard, 
   Camera, 
@@ -27,6 +28,7 @@ const NAV_ITEMS = (activeTab: string, setActiveTab: (t: string) => void): NavIte
   { label: "Visão Geral", to: "/admin", exact: true, icon: <LayoutDashboard size={16} />, isActive: activeTab === "overview", onClick: () => setActiveTab("overview") },
   { label: "Eventos", onClick: () => setActiveTab("events"), isActive: activeTab === "events", icon: <Camera size={16} /> },
   { label: "Membros", onClick: () => setActiveTab("users"), isActive: activeTab === "users", icon: <Users size={16} /> },
+  { label: "Orçamentos", onClick: () => setActiveTab("quotes"), isActive: activeTab === "quotes", icon: <Briefcase size={16} /> },
   { label: "Pedidos", onClick: () => setActiveTab("orders"), isActive: activeTab === "orders", icon: <FileText size={16} /> },
   { label: "Financeiro", onClick: () => setActiveTab("finance"), isActive: activeTab === "finance", icon: <DollarSign size={16} /> },
   { label: "Impressão", onClick: () => setActiveTab("printers"), isActive: activeTab === "printers", icon: <Printer size={16} /> },
@@ -39,6 +41,7 @@ interface AdminStats {
   totalOrders: number;
   activeEvents: number;
   totalUsers: number;
+  pendingQuotesCount: number;
 }
 
 interface AdminOrder {
@@ -114,6 +117,7 @@ export const AdminDashboard: React.FC = () => {
             {activeTab === "overview" && <AdminOverview stats={stats} recentOrders={recentOrders} pendingEvents={pendingEvents} />}
             {activeTab === "events"   && <AdminEvents />}
             {activeTab === "users"    && <AdminUsers />}
+            {activeTab === "quotes"   && <AdminQuotes />}
             {activeTab === "orders"   && <AdminOrders />}
             {activeTab === "finance"  && <AdminFinance />}
             {activeTab === "printers" && <AdminSuppliers />}

@@ -1,5 +1,6 @@
 import { useState, useEffect, useRef } from "react";
 import { useNavigate } from "react-router-dom";
+import { motion } from "framer-motion";
 import { API } from "../lib/api";
 import { useAuth } from "../hooks/useAuth";
 import { useTheme } from "../hooks/useTheme";
@@ -17,22 +18,6 @@ interface Event {
   temReels: boolean;
 }
 
-const CATEGORIAS = ["Todos", "Casamento Civil", "Pré-Wedding", "Eventos Sociais", "Corporativo"];
-
-// Paleta unificada — Design System "Editorial Portfólio" 📸✨
-const THEME = {
-  bg:       "var(--theme-bg)",
-  bgCard:   "var(--theme-bg-muted)",
-  bgHover:  "var(--theme-bg-muted)",
-  border:   "var(--theme-border)",
-  border2:  "var(--theme-border)",
-  text:     "var(--theme-text)",
-  text2:    "var(--theme-muted)",
-  text3:    "var(--theme-muted)",
-  accent:   "var(--brand-primary)",   // verde da logo dinâmico
-  accentBg: "var(--theme-bg-muted)",
-  fontBase: "'Outfit', sans-serif",
-} as const;
 
 function formatDate(dateStr: string) {
   try {
@@ -53,12 +38,26 @@ function isRecent(dateStr: string) {
   }
 }
 
+// Paleta unificada — Design System "Editorial Portfólio" 📸✨
+const THEME = {
+  bg:       "var(--theme-bg)",
+  bgCard:   "var(--theme-bg-muted)",
+  bgHover:  "var(--theme-bg-muted)",
+  border:   "var(--theme-border)",
+  border2:  "var(--theme-border)",
+  text:     "var(--theme-text)",
+  text2:    "var(--theme-muted)",
+  text3:    "var(--theme-muted)",
+  accent:   "var(--brand-primary)",   // verde da logo dinâmico
+  accentBg: "var(--theme-bg-muted)",
+  fontBase: "'Outfit', sans-serif",
+} as const;
+
 export const HomePage = () => {
   const navigate = useNavigate();
   const { user, logout } = useAuth();
   const { theme, toggleTheme } = useTheme();
   const [query, setQuery] = useState("");
-  const [categoria, setCategoria] = useState("Todos");
   const [events, setEvents] = useState<Event[]>([]);
   const [loading, setLoading] = useState(true);
   const [page, setPage] = useState(1);
@@ -223,72 +222,151 @@ export const HomePage = () => {
         </div>
       </nav>
 
-      <section className="mobile-hero-padding" style={{ padding: "10rem 1rem 8rem", textAlign: "center", position: "relative" }}>
-        <p style={{ fontSize: 11, letterSpacing: "0.4em", textTransform: "uppercase", color: "var(--brand-primary)", marginBottom: "2rem", fontWeight: 700 }}>
-          Coletivo Editorial de Imagem & Cinema
-        </p>
-        <h1 style={{
-          fontFamily: THEME.fontBase,
-          fontWeight: 800,
-          fontSize: "clamp(54px, 10vw, 120px)",
-          lineHeight: 1.1,
-          color: THEME.text,
-          marginBottom: "2.5rem",
-          textTransform: "uppercase",
-          letterSpacing: "-0.03em"
+      {/* HERO SECTION ESTILO YOUTUBE (SLIM & SLEEK) 📸✨ */}
+      <section style={{ 
+        height: "clamp(300px, 40vh, 400px)", 
+        position: "relative", 
+        overflow: "hidden", 
+        display: "flex", 
+        alignItems: "center", 
+        justifyContent: "center", 
+        background: "#000",
+        margin: "0 20px",
+        marginTop: "20px",
+        borderRadius: "16px"
+      }}>
+        
+        {/* Imagem de Fundo Panorâmica */}
+        <div style={{ 
+          position: "absolute", inset: 0, 
+          display: "grid", 
+          gridTemplateColumns: "repeat(12, 1fr)", 
+          gridTemplateRows: "repeat(6, 1fr)", 
+          gap: 0, zIndex: 0,
+          opacity: 0.6
         }}>
-          Eternizando Cada<br />
-          Segundo.
-        </h1>
-        <p style={{ fontSize: 16, color: THEME.text2, marginBottom: "3.5rem", fontWeight: 300, maxWidth: "600px", margin: "0 auto 4rem", lineHeight: 1.6 }}>
-          Uma curadoria refinada de experiências visuais. Acesse sua galeria exclusiva com a sofisticação que seu momento merece.
-        </p>
-
-        {/* Barra de busca Editorial */}
-        <div className="mobile-search" style={{ maxWidth: 700, margin: "0 auto", position: "relative", display: "flex", background: THEME.bg, border: `1px solid ${THEME.border}`, padding: "4px" }}>
-            <input
-              value={query}
-              onChange={(e) => setQuery(e.target.value)}
-              placeholder="Buscar por nome ou data..."
-              className="search-input mobile-search-input"
-              style={{
-                width: "100%", background: "transparent", border: "none",
-                padding: "20px 25px", fontSize: 15,
-                color: THEME.text, outline: "none", transition: "all 0.4s",
-                fontFamily: THEME.fontBase
-              }}
-            />
-            <button
-              onClick={() => fetchEvents(query, 1)}
-              className="search-button mobile-search-button"
-              style={{
-                background: THEME.text, color: THEME.bg, border: "none", padding: "0 35px",
-                borderRadius: 0, fontSize: 11, fontWeight: 700, cursor: "pointer",
-                textTransform: "uppercase", letterSpacing: "0.2em"
-              }}
-            >
-              Explorar
-            </button>
+          {Array.from({ length: 72 }).map((_, i) => {
+            const photoIds = [
+              '1507003211169-0a1dd7228f2d', '1522202176988-66273c2fd55f', '1519389950473-47ba0277781c',
+              '1556761175-b413da4baf72', '1497366216548-37526070297c', '1542744173-8e7e53415bb0',
+              '1522071823991-b5ae71c4708e', '1517248135467-4c7edcad34c4', '1531482615713-2afd69097998',
+              '1551836022-d5d88e9218df', '1516321497487-e288fb19713f', '1491975458591-174922118d59',
+              '1521737604893-d14cc237f11d', '1531297484001-80022131f5a1', '1495360010541-f48722b34f7d',
+              '1542744094-110bb0764132', '1522071901873-41981fb0300c', '1470225620780-dba8ba36b745',
+              '1511671782779-c97d3d27a1d4', '1454165205744-3b78555e5572', '1513151233558-d860c5398176',
+              '1504384308090-c594cf107983', '1504384764586-bb4cdc17457b', '1521737706096-3ad5a0542387'
+            ];
+            const pId = photoIds[i % photoIds.length];
+            return (
+              <div key={i} style={{ width: "100%", height: "100%", overflow: "hidden", border: "1px solid rgba(255,255,255,0.02)" }}>
+                <img
+                  src={`https://images.unsplash.com/photo-${pId}?auto=format&fit=crop&q=10&w=200`}
+                  onError={(e) => {
+                    const target = e.target as HTMLImageElement;
+                    target.src = `https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?auto=format&fit=crop&q=10&w=200`;
+                  }}
+                  style={{ width: "100%", height: "100%", objectFit: "cover", filter: "grayscale(100%) brightness(0.6)" }}
+                />
+              </div>
+            );
+          })}
         </div>
 
-        {/* Categorias */}
-        <div style={{ display: "flex", gap: 12, justifyContent: "center", marginTop: "3.5rem", flexWrap: "wrap" }}>
-          {CATEGORIAS.map((cat) => (
-            <span
-              key={cat}
-              onClick={() => setCategoria(cat)}
-              style={{
-                fontSize: 10, padding: "8px 20px",
-                border: "1px solid",
-                borderColor: categoria === cat ? THEME.text : THEME.border,
-                borderRadius: 0, color: categoria === cat ? THEME.bg : THEME.text2,
-                background: categoria === cat ? THEME.text : "transparent",
-                cursor: "pointer", letterSpacing: "0.1em", textTransform: "uppercase", fontWeight: 600, transition: "all .3s ease",
-              }}
-            >
-              {cat}
-            </span>
-          ))}
+        {/* Overlay Suave */}
+        <div style={{ position: "absolute", inset: 0, background: "linear-gradient(to top, rgba(0,0,0,0.8), rgba(0,0,0,0.2))", zIndex: 1 }} />
+
+        {/* Conteúdo Centralizado e Equilibrado */}
+        <div style={{ position: "relative", zIndex: 10, textAlign: "center", padding: "0 24px", maxWidth: 800 }}>
+          <motion.p 
+            initial={{ opacity: 0, y: 10 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.8 }}
+            style={{ 
+              fontSize: "clamp(9px, 1.2vw, 10px)", 
+              letterSpacing: "0.4em", 
+              textTransform: "uppercase", 
+              color: "rgba(255,255,255,0.6)", 
+              marginBottom: "1rem", 
+              fontWeight: 700 
+            }}
+          >
+            Coletivo Editorial de Imagem e Cinema
+          </motion.p>
+          
+          <motion.h1 
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.8, delay: 0.2 }}
+            style={{
+              fontFamily: THEME.fontBase,
+              fontWeight: 800,
+              fontSize: "clamp(32px, 6vw, 48px)",
+              lineHeight: 1.1,
+              color: "#FFFFFF",
+              marginBottom: "1.5rem",
+              textTransform: "uppercase",
+              letterSpacing: "-0.02em"
+            }}
+          >
+            Eternizando Cada Segundo.
+          </motion.h1>
+
+          <motion.p 
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            transition={{ duration: 1, delay: 0.4 }}
+            style={{ 
+              fontSize: "clamp(12px, 1.8vw, 14px)", 
+              color: "rgba(255,255,255,0.7)", 
+              marginBottom: "2.5rem", 
+              fontWeight: 300, 
+              maxWidth: "500px", 
+              margin: "0 auto 2.5rem", 
+              lineHeight: 1.6 
+            }}
+          >
+            Uma curadoria refinada de experiências visuais. Acesse sua galeria exclusiva com a sofisticação que seu momento merece.
+          </motion.p>
+
+          {/* Barra de busca Compacta */}
+          <motion.div 
+            initial={{ opacity: 0, scale: 0.98 }}
+            animate={{ opacity: 1, scale: 1 }}
+            transition={{ duration: 0.6, delay: 0.6 }}
+            style={{ 
+              maxWidth: 600, 
+              margin: "0 auto", 
+              position: "relative", 
+              display: "flex", 
+              background: "rgba(255,255,255,0.08)", 
+              backdropFilter: "blur(20px)",
+              border: "1px solid rgba(255,255,255,0.1)", 
+              borderRadius: "4px",
+              padding: "4px" 
+            }}
+          >
+              <input
+                value={query}
+                onChange={(e) => setQuery(e.target.value)}
+                placeholder="Buscar álbum (ex: Noivos)..."
+                style={{
+                  width: "100%", background: "transparent", border: "none",
+                  padding: "12px 20px", fontSize: 14,
+                  color: "#FFFFFF", outline: "none",
+                  fontFamily: THEME.fontBase
+                }}
+              />
+              <button
+                onClick={() => fetchEvents(query, 1)}
+                style={{
+                  background: "#FFFFFF", color: "#000000", border: "none", padding: "0 25px",
+                  borderRadius: "2px", fontSize: 10, fontWeight: 800, cursor: "pointer",
+                  textTransform: "uppercase", letterSpacing: "0.1em"
+                }}
+              >
+                Buscar
+              </button>
+          </motion.div>
         </div>
       </section>
 

@@ -226,11 +226,11 @@ export const AdminConfigs: React.FC = () => {
               <div className="space-y-8">
                 {otherConfigs.map((config) => (
                   <div key={config.key} className="space-y-2">
-                    <label className="text-[9px] font-bold text-zinc-600 uppercase tracking-[0.4em]">{config.label}</label>
+                    <label className="text-[9px] font-bold text-theme-muted uppercase tracking-[0.4em]">{config.label}</label>
                     <input 
                       value={config.value}
                       onChange={(e) => handleChange(config.key, e.target.value)}
-                      className="w-full bg-transparent border-b border-zinc-900 py-3 text-sm text-white focus:outline-none focus:border-brand-tactical transition-all font-sans"
+                      className="w-full bg-transparent border-b border-theme-border py-3 text-sm text-theme-text focus:outline-none focus:border-brand-tactical transition-all font-sans"
                     />
                   </div>
                 ))}

@@ -125,7 +125,13 @@ export class PaymentController {
                });
             }
 
-            // 2. Dispara e-mail automático
+            // 2. Ativa o evento automaticamente (Sincronização Lead -> Sale)
+            await prisma.event.update({
+              where: { id: order.eventId },
+              data: { active: true, isQuote: false }
+            });
+
+            // 3. Dispara e-mail automático
             const recipientEmail = order.buyerEmail || order.cliente?.email || paymentData.payer?.email;
             if (recipientEmail) {
               NotificationService.sendAccessEmail({
@@ -257,8 +263,13 @@ export class PaymentController {
         });
       }
 
-      // 7. Notificar Cliente IMEDIATAMENTE se aprovado (Checkout Transparente)
+      // 7. Ativa o evento IMEDIATAMENTE (Checkout Transparente)
       if (isApproved) {
+        await prisma.event.update({
+          where: { id: eventId },
+          data: { active: true, isQuote: false }
+        });
+
         NotificationService.sendAccessEmail({
           to: email,
           buyerName: event.nomeNoivos, // Ou buscar nome real do user se houver

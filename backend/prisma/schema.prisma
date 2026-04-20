@@ -64,6 +64,13 @@ model User {
   @@map("users")
 }
 
+enum QuoteStatus {
+  PENDING
+  PRICED
+  APPROVED
+  REJECTED
+}
+
 // ─── Model: Event ────────────────────────────────────────────────────────────
 
 model Event {
@@ -80,7 +87,12 @@ model Event {
   driveUrl        String?
   priceBase       Decimal   @default(190) @db.Decimal(10, 2)
   priceEarly      Decimal   @default(190) @db.Decimal(10, 2)
-  active          Boolean   @default(true)
+  active          Boolean   @default(false) // Todos começam como inativos até o pagamento
+  isQuote         Boolean   @default(false)
+  quoteStatus     QuoteStatus?
+  usageType       String?   // PESSOAL | EMPRESARIAL
+  clientEmail     String?
+  clientName      String?
   createdAt       DateTime  @default(now())
   updatedAt       DateTime  @updatedAt
 
@@ -151,6 +163,13 @@ model Cartorio {
   slug        String?  @unique
   cnpj        String?
   splitPct    Float    @default(10)
+  cidade      String?  // Para exibir na vitrine dos pontos fixos
+
+  // Preços dos serviços por ponto fixo
+  priceFoto     Decimal? @db.Decimal(10, 2)  // padrão: 190
+  priceVideo    Decimal? @db.Decimal(10, 2)  // padrão: 190
+  priceReels    Decimal? @db.Decimal(10, 2)  // padrão: 120
+  priceImpresso Decimal? @db.Decimal(10, 2) // padrão: 120
 
   // Landing Page Fields
   address     String?
