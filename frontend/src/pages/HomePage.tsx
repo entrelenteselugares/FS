@@ -129,44 +129,45 @@ export const HomePage = () => {
           <img src="/logo-circular.png" alt="" style={{ width: 32, height: 32, objectFit: "contain" }} onError={(e) => (e.currentTarget.style.display = "none")} />
           Foto Segundo
         </div>
-        {user ? (
-          <div style={{ position: "relative" }}>
-            <button
-              onClick={() => setUserMenuOpen((v) => !v)}
-              style={{ fontSize: 9, background: `${THEME.accent}15`, color: THEME.accent, border: `1px solid ${THEME.accent}30`, padding: "10px 18px", borderRadius: 0, cursor: "pointer", fontWeight: 700, letterSpacing: "2px", textTransform: "uppercase", display: "flex", alignItems: "center", gap: 6 }}
-            >
-              {user.nome.split(" ")[0]}
-              <span style={{ fontSize: 8 }}>▾</span>
-            </button>
-            {userMenuOpen && (
-              <div style={{ position: "absolute", right: 0, top: "calc(100% + 8px)", background: "#0d0d0d", border: "1px solid rgba(255,255,255,0.07)", borderRadius: 4, minWidth: 160, zIndex: 200, overflow: "hidden" }}>
-                {dashboardPath && (
-                  <button onClick={() => { setUserMenuOpen(false); navigate(dashboardPath); }} style={{ width: "100%", textAlign: "left", padding: "12px 16px", background: "transparent", border: "none", color: "#e8e4dc", fontSize: 10, letterSpacing: "1px", textTransform: "uppercase", cursor: "pointer", borderBottom: "1px solid rgba(255,255,255,0.04)" }}>
-                    Meu Painel
+        <div style={{ display: "flex", alignItems: "center", gap: 12 }}>
+          <button
+            onClick={() => navigate("/cotacao")}
+            style={{ fontSize: 9, background: THEME.accent, color: "black", border: "none", padding: "10px 18px", borderRadius: 0, cursor: "pointer", fontWeight: 800, letterSpacing: "2px", textTransform: "uppercase" }}
+          >
+            Orçamento
+          </button>
+
+          {user ? (
+            <div style={{ position: "relative" }}>
+              <button
+                onClick={() => setUserMenuOpen((v) => !v)}
+                style={{ fontSize: 9, background: "rgba(255,255,255,0.03)", color: "#fff", border: "1px solid rgba(255,255,255,0.1)", padding: "10px 18px", borderRadius: 0, cursor: "pointer", fontWeight: 700, letterSpacing: "2px", textTransform: "uppercase", display: "flex", alignItems: "center", gap: 6 }}
+              >
+                {user.nome.split(" ")[0]}
+                <span style={{ fontSize: 8 }}>▾</span>
+              </button>
+              {userMenuOpen && (
+                <div style={{ position: "absolute", right: 0, top: "calc(100% + 8px)", background: "#0d0d0d", border: "1px solid rgba(255,255,255,0.07)", borderRadius: 4, minWidth: 160, zIndex: 200, overflow: "hidden" }}>
+                  {dashboardPath && (
+                    <button onClick={() => { setUserMenuOpen(false); navigate(dashboardPath); }} style={{ width: "100%", textAlign: "left", padding: "12px 16px", background: "transparent", border: "none", color: "#e8e4dc", fontSize: 10, letterSpacing: "1px", textTransform: "uppercase", cursor: "pointer", borderBottom: "1px solid rgba(255,255,255,0.04)" }}>
+                      Meu Painel
+                    </button>
+                  )}
+                  <button onClick={() => { logout(); setUserMenuOpen(false); navigate("/"); }} style={{ width: "100%", textAlign: "left", padding: "12px 16px", background: "transparent", border: "none", color: "#666", fontSize: 10, letterSpacing: "1px", textTransform: "uppercase", cursor: "pointer" }}>
+                    Sair
                   </button>
-                )}
-                <button onClick={() => { logout(); setUserMenuOpen(false); navigate("/"); }} style={{ width: "100%", textAlign: "left", padding: "12px 16px", background: "transparent", border: "none", color: "#666", fontSize: 10, letterSpacing: "1px", textTransform: "uppercase", cursor: "pointer" }}>
-                  Sair
-                </button>
-              </div>
-            )}
-          </div>
-        ) : (
-          <div style={{ display: "flex", gap: 12 }}>
-            <button
-              onClick={() => navigate("/cotacao")}
-              style={{ fontSize: 9, background: THEME.accent, color: "black", border: "none", padding: "10px 18px", borderRadius: 0, cursor: "pointer", fontWeight: 800, letterSpacing: "2px", textTransform: "uppercase" }}
-            >
-              Orçamento
-            </button>
+                </div>
+              )}
+            </div>
+          ) : (
             <button
               onClick={() => navigate("/login")}
               style={{ fontSize: 9, background: "transparent", color: "#fff", border: "1px solid rgba(255,255,255,0.1)", padding: "10px 18px", borderRadius: 0, cursor: "pointer", fontWeight: 700, letterSpacing: "2px", textTransform: "uppercase" }}
             >
               Acesso
             </button>
-          </div>
-        )}
+          )}
+        </div>
       </nav>
 
       {/* HERO */}
