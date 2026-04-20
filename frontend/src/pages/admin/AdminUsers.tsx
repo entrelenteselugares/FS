@@ -76,51 +76,65 @@ export const AdminUsers: React.FC = () => {
         </button>
       </div>
 
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-px bg-white/5 border border-white/5">
+      <div className="space-y-2">
+        {/* List Header */}
+        <div className="hidden md:grid grid-cols-12 gap-4 px-10 py-4 text-[9px] font-bold text-zinc-700 uppercase tracking-[0.4em] border-b border-white/5 bg-white/[0.02]">
+          <div className="col-span-2">Perfil</div>
+          <div className="col-span-4">Identificação / E-mail</div>
+          <div className="col-span-3">Chave PIX</div>
+          <div className="col-span-1 text-center">Status</div>
+          <div className="col-span-2 text-right">Ações</div>
+        </div>
+
         {loading ? (
-          <div className="col-span-full py-20 text-center text-[10px] text-zinc-700 uppercase tracking-widest animate-pulse bg-black">Sincronizando Rede...</div>
+          <div className="py-20 text-center text-[10px] text-zinc-700 uppercase tracking-widest animate-pulse border border-white/5 bg-black">Sincronizando Rede...</div>
         ) : users.map(user => (
-          <div key={user.id} className="bg-black p-10 flex flex-col gap-8">
-            <div className="flex justify-between items-start">
-              <div>
-                <span className={`text-[8px] font-bold uppercase tracking-[0.4em] px-3 py-1 border mb-4 inline-block ${
+          <div key={user.id} className="bg-black hover:bg-white/[0.02] border border-white/5 transition-all group">
+            <div className="grid grid-cols-1 md:grid-cols-12 gap-4 items-center px-6 md:px-10 py-6">
+              {/* Perfil */}
+              <div className="col-span-2 flex items-center gap-4">
+                <span className={`text-[8px] font-bold uppercase tracking-[0.3em] px-2 py-0.5 border ${
                   user.role === "ADMIN" ? "border-brand-tactical text-brand-tactical" : "border-zinc-800 text-zinc-600"
                 }`}>
                   {user.role}
                 </span>
-                <h3 className="text-3xl font-heading text-white uppercase tracking-tighter">{user.nome}</h3>
-                <p className="text-[11px] text-zinc-700 font-bold uppercase tracking-widest mt-1 opacity-80">{user.email}</p>
               </div>
-              <button 
-                onClick={() => toggleActive(user)}
-                className={`p-2 transition-all ${user.active ? "text-brand-tactical" : "text-zinc-800"}`}
-              >
-                <div className={`w-12 h-1.5 ${user.active ? "bg-brand-tactical shadow-[0_0_15px_rgba(93,101,50,0.5)]" : "bg-zinc-900"}`} />
-              </button>
-            </div>
 
-            {user.role === "PROFISSIONAL" && user.profissional && (
-               <div className="grid grid-cols-2 gap-8 pt-6 border-t border-white/5">
-                  <div>
-                    <label className="text-[10px] font-bold text-zinc-700 uppercase tracking-[0.4em] mb-2 block">Cota Captação</label>
-                    <div className="text-2xl text-white font-heading font-bold">{user.profissional.captPct}%</div>
-                  </div>
-                  <div>
-                    <label className="text-[10px] font-bold text-zinc-700 uppercase tracking-[0.4em] mb-2 block">Cota Edição</label>
-                    <div className="text-2xl text-white font-heading font-bold">{user.profissional.editPct}%</div>
-                  </div>
-               </div>
-            )}
-
-            <div className="mt-6 pt-6 border-t border-white/5">
-              <label className="text-[10px] font-bold text-zinc-700 uppercase tracking-[0.4em] mb-2 block">Chave PIX para Repasse</label>
-              <div className="text-sm text-brand-tactical font-bold tracking-widest break-all">
-                {user.pixKey || "NÃO CADASTRADA"}
+              {/* Identificação */}
+              <div className="col-span-4">
+                <div className="text-sm font-bold text-white uppercase tracking-tighter truncate">{user.nome}</div>
+                <div className="text-[10px] text-zinc-700 font-bold uppercase tracking-wider truncate mt-0.5 opacity-60">{user.email}</div>
               </div>
-            </div>
 
-            <div className="flex justify-end gap-6 mt-4">
-              <button className="text-[10px] font-bold text-zinc-600 uppercase tracking-[0.5em] hover:text-brand-tactical transition-all underline underline-offset-8 decoration-zinc-900">Ajustar Perfil</button>
+              {/* Financeiro / PIX */}
+              <div className="col-span-3">
+                <div className="text-[10px] text-zinc-600 font-bold uppercase tracking-widest truncate">
+                  {user.pixKey ? <span className="text-zinc-500 break-all">{user.pixKey}</span> : <span className="opacity-30 italic">Pendente</span>}
+                </div>
+                {user.role === "PROFISSIONAL" && user.profissional && (
+                  <div className="flex gap-4 mt-1 opacity-40">
+                    <span className="text-[8px] font-bold text-zinc-700 uppercase italic">CP: {user.profissional.captPct}%</span>
+                    <span className="text-[8px] font-bold text-zinc-700 uppercase italic">ED: {user.profissional.editPct}%</span>
+                  </div>
+                )}
+              </div>
+
+              {/* Status */}
+              <div className="col-span-1 flex justify-center">
+                <button 
+                  onClick={() => toggleActive(user)}
+                  className={`transition-all hover:scale-110 ${user.active ? "text-brand-tactical" : "text-zinc-800"}`}
+                >
+                  <div className={`w-8 h-1 ${user.active ? "bg-brand-tactical shadow-[0_0_10px_rgba(93,101,50,0.4)]" : "bg-zinc-900"}`} />
+                </button>
+              </div>
+
+              {/* Ações */}
+              <div className="col-span-2 flex justify-end">
+                <button className="text-[9px] font-bold text-zinc-700 uppercase tracking-[0.4em] hover:text-white transition-all border border-transparent hover:border-white/10 px-4 py-2">
+                   Editar
+                </button>
+              </div>
             </div>
           </div>
         ))}
