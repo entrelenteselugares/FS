@@ -98,7 +98,9 @@ export const AdminEvents: React.FC = () => {
         priceBase: 200, priceEarly: 190,
         cartorioId: "", captacaoId: "", edicaoId: "",
         temFoto: true, temVideo: false, temReels: false, temFotoImpressa: false,
-        coverPhotoUrl: "", eventHours: 2
+        coverPhotoUrl: "", eventHours: 2,
+        isCrowdfund: false,
+        targetAmount: 0
       });
       setCoverPreview(null);
     } catch {

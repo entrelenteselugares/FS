@@ -519,7 +519,7 @@ export default function EventPage() {
                 </p>
               </div>
 
-              <div style={{ spaceY: 16 }}>
+              <div className="space-y-4">
                 <p style={{ fontSize: 11, color: T.text, marginBottom: 12 }}>Quanto deseja presentear?</p>
                 <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 10, marginBottom: 16 }}>
                   {[30, 50, 100, 200].map(val => (
