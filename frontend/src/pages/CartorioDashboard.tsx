@@ -16,8 +16,8 @@ interface EventoAgenda {
   title: string;
   date: string;
   location: string;
-  captacao?: { user: { name: string } } | null;
-  _count: { orders: number };
+  captacao?: { nome?: string; user?: { name?: string; nome?: string } } | null;
+  _count?: { orders: number };
 }
 
 interface PedidoCartorio {
@@ -331,11 +331,11 @@ export default function CartorioDashboard() {
                 </div>
                 <div style={{ textAlign: "right", flexShrink: 0 }}>
                   {ev.captacao ? (
-                    <p style={{ fontSize: 12, color: "var(--brand-primary)", fontWeight: 700 }}>✓ {ev.captacao.user.name}</p>
+                    <p style={{ fontSize: 12, color: "var(--brand-primary)", fontWeight: 700 }}>✓ {ev.captacao?.user?.name ?? ev.captacao?.user?.nome ?? ev.captacao?.nome ?? "Fotógrafo"}</p>
                   ) : (
                     <p style={{ fontSize: 12, color: "#f59e0b", fontWeight: 700 }}>SEM FOTÓGRAFO</p>
                   )}
-                  <p style={{ fontSize: 10, color: "var(--theme-text-muted)", marginTop: 2, fontWeight: 600 }}>{ev._count.orders} venda(s)</p>
+                  <p style={{ fontSize: 10, color: "var(--theme-text-muted)", marginTop: 2, fontWeight: 600 }}>{ev._count?.orders ?? 0} venda(s)</p>
                 </div>
               </div>
             ))}
