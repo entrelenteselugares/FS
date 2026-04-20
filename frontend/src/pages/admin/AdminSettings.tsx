@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { Shield, Globe, Database, Save, RotateCcw, Palette } from "lucide-react";
+import { Shield, Database, Save, RotateCcw, Palette } from "lucide-react";
 import { API } from "../../lib/api";
 
 export const AdminSettings: React.FC = () => {
@@ -157,8 +157,11 @@ export const AdminSettings: React.FC = () => {
                   <div className="text-[10px] font-bold text-theme-text uppercase tracking-widest">Modo Manutenção</div>
                   <div className="text-[9px] text-zinc-700 uppercase mt-1">Bloqueia acesso público à plataforma</div>
                </div>
-               <button onClick={() => setSettings({...settings, maintenanceMode: !settings.maintenanceMode})} className={`w-12 h-6 transition-all rounded-none p-1 ${settings.maintenanceMode ? "bg-red-500" : "bg-zinc-800"}`}>
-                  <div className={`w-4 h-4 bg-white transition-all transform ${settings.maintenanceMode ? "translate-x-6" : "translate-x-0"}`} />
+               <button 
+                 onClick={() => updateKey("maintenance_mode", getConfig("maintenance_mode") === "true" ? "false" : "true")} 
+                 className={`w-12 h-6 transition-all rounded-none p-1 ${getConfig("maintenance_mode") === "true" ? "bg-red-500" : "bg-zinc-800"}`}
+               >
+                 <div className={`w-4 h-4 bg-white transition-all transform ${getConfig("maintenance_mode") === "true" ? "translate-x-6" : "translate-x-0"}`} />
                </button>
             </div>
             <div className="flex items-center justify-between p-6 border border-theme-border">
@@ -166,8 +169,11 @@ export const AdminSettings: React.FC = () => {
                   <div className="text-[10px] font-bold text-theme-text uppercase tracking-widest">Acesso Público à Vitrine</div>
                   <div className="text-[9px] text-zinc-700 uppercase mt-1">Permite visualização sem login</div>
                </div>
-               <button onClick={() => setSettings({...settings, publicAccess: !settings.publicAccess})} className={`w-12 h-6 transition-all rounded-none p-1 ${settings.publicAccess ? "bg-brand-tactical" : "bg-zinc-800"}`}>
-                  <div className={`w-4 h-4 bg-white transition-all transform ${settings.publicAccess ? "translate-x-6" : "translate-x-0"}`} />
+               <button 
+                 onClick={() => updateKey("public_access", getConfig("public_access") === "true" ? "false" : "true")} 
+                 className={`w-12 h-6 transition-all rounded-none p-1 ${getConfig("public_access") === "true" ? "bg-brand-tactical" : "bg-zinc-800"}`}
+               >
+                 <div className={`w-4 h-4 bg-white transition-all transform ${getConfig("public_access") === "true" ? "translate-x-6" : "translate-x-0"}`} />
                </button>
             </div>
           </div>

@@ -14,6 +14,7 @@ interface Event {
   date: string;
   location: string;
   active: boolean;
+  coverPhotoUrl?: string | null;
   _count: { orders: number };
 }
 
