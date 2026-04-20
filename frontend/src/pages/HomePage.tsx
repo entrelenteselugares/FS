@@ -548,10 +548,31 @@ function EventCard({ event, onClick }: { event: Event; onClick: () => void }) {
             alt={event.nomeNoivos} 
             style={{ width: "100%", height: "100%", objectFit: "cover", transition: "transform 1.2s cubic-bezier(0.16, 1, 0.3, 1)" }} 
             className="group-hover:scale-105"
+            onError={(e) => {
+              const fallbacks = [
+                "https://images.unsplash.com/photo-1511795409834-ef04bbd61622?auto=format&fit=crop&q=80&w=800",
+                "https://images.unsplash.com/photo-1519741497674-611481863552?auto=format&fit=crop&q=80&w=800",
+                "https://images.unsplash.com/photo-1522673607200-164883eecd0c?auto=format&fit=crop&q=80&w=800",
+                "https://images.unsplash.com/photo-1469334031218-e382a71b716b?auto=format&fit=crop&q=80&w=800",
+                "https://images.unsplash.com/photo-1517263904808-5dc91e3e7044?auto=format&fit=crop&q=80&w=800",
+                "https://images.unsplash.com/photo-1520854221256-17451cc331bf?auto=format&fit=crop&q=80&w=800",
+              ];
+              const img = e.currentTarget;
+              img.onerror = null; // prevent infinite loop
+              img.src = fallbacks[Math.floor(Math.random() * fallbacks.length)];
+            }}
           />
         ) : (
-          <div style={{ width: "100%", height: "100%", display: "flex", alignItems: "center", justifyContent: "center", opacity: 0.2 }}>
-            <span style={{ fontSize: 12, letterSpacing: 4, textTransform: "uppercase" }}>Visual Indisponível</span>
+          <div style={{ 
+            width: "100%", height: "100%", 
+            background: "linear-gradient(135deg, #0a0a0a 0%, #1a1a1a 50%, #0d0d0d 100%)",
+            display: "flex", alignItems: "center", justifyContent: "center", flexDirection: "column", gap: 12
+          }}>
+            <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="rgba(133,185,172,0.3)" strokeWidth="1" strokeLinecap="round" strokeLinejoin="round">
+              <path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"/>
+              <circle cx="12" cy="13" r="4"/>
+            </svg>
+            <span style={{ fontSize: 9, letterSpacing: 4, textTransform: "uppercase", color: "rgba(133,185,172,0.2)", fontWeight: 700 }}>Em breve</span>
           </div>
         )}
         
