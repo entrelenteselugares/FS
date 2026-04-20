@@ -308,3 +308,66 @@ enum ContestStatus {
   FINISHED
 }
 
+// ─── Model: PlatformConfig ──────────────────────────────────────────────────
+// Configurações globais da plataforma (chave-valor)
+model PlatformConfig {
+  key       String   @id
+  value     String
+  label     String   // descrição legível
+  updatedAt DateTime @updatedAt
+  updatedBy String?
+
+  @@map("platform_configs")
+}
+
+// ─── Model: WeeklyPayout ───────────────────────────────────────────────────
+// Relatório semanal de repasse
+model WeeklyPayout {
+  id            String        @id @default(cuid())
+  weekStart     DateTime      // segunda-feira
+  weekEnd       DateTime      // domingo
+  status        PayoutStatus  @default(PENDING)
+  generatedAt   DateTime      @default(now())
+  paidAt        DateTime?
+  totalRevenue  Decimal       @db.Decimal(10, 2) // total recebido no período
+  totalPayout   Decimal       @db.Decimal(10, 2) // total a repassar
+  notesAdmin    String?       // observações do admin
+
+  items         PayoutItem[]
+
+  @@map("weekly_payouts")
+}
+
+enum PayoutStatus {
+  PENDING
+  PROCESSING
+  PAID
+  CANCELLED
+}
+
+// ─── Model: PayoutItem ────────────────────────────────────────────────────
+// Item do relatório: um repasse para um beneficiário
+model PayoutItem {
+  id            String       @id @default(cuid())
+  payoutId      String
+  payout        WeeklyPayout @relation(fields: [payoutId], references: [id])
+
+  // Beneficiário
+  recipientType String       // "CARTORIO" | "CAPTACAO" | "EDICAO"
+  recipientId   String       // userId
+  recipientName String
+  pixKey        String?      // chave Pix cadastrada
+
+  // Financeiro
+  orderCount    Int          // qtd de pedidos no período
+  grossRevenue  Decimal      @db.Decimal(10, 2) // receita bruta dos pedidos
+  splitPct      Decimal      @db.Decimal(5, 2)  // % aplicado
+  amount        Decimal      @db.Decimal(10, 2) // valor a transferir
+
+  status        String       @default("PENDING") // PENDING | PAID
+  paidAt        DateTime?
+  pixTxId       String?      // ID da transação Pix (preenchido manualmente)
+
+  @@map("payout_items")
+}
+

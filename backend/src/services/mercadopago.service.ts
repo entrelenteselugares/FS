@@ -79,12 +79,7 @@ export class MercadoPagoService {
     matrizRate?: number;
   }) {
     try {
-      const taxaMatriz = data.matrizRate ?? Number(process.env.TAXA_MATRIZ || 0.40);
-      const marketplaceFee = Number((data.transaction_amount * taxaMatriz).toFixed(2));
-
-      // Importante: No Checkout Pro como Marketplace, a taxa da plataforma (nossa comissão)
-      // é enviada como marketplace_fee. Os parceiros conectados (disbursements)
-      // recebem o valor subtraído dessa taxa.
+      // Remoção do Marketplace Fee: O Foto Segundo agora recebe 100% via Repasse Manual.
       const body = {
         items: [
           {
@@ -99,7 +94,6 @@ export class MercadoPagoService {
           email: data.payer_email,
         },
         external_reference: data.orderId,
-        marketplace_fee: marketplaceFee,
         metadata: {
           order_id: data.orderId,
           partners: data.partners
@@ -118,7 +112,7 @@ export class MercadoPagoService {
         auto_return: "approved" as const,
       };
 
-      console.log(`[MP] Criando Preferência: R$ ${data.transaction_amount} | Fee Matriz: R$ ${marketplaceFee}`);
+      console.log(`[MP] Criando Preferência: R$ ${data.transaction_amount} (100% Matriz)`);
       
       const response = await preference.create({ body });
       return response;
@@ -159,7 +153,6 @@ export class MercadoPagoService {
     };
     notification_url?: string;
     external_reference?: string;
-    application_fee?: number;
   }) {
     try {
       const response = await axios.post(
@@ -173,7 +166,6 @@ export class MercadoPagoService {
           payer: data.payer,
           notification_url: data.notification_url,
           external_reference: data.external_reference,
-          application_fee: data.application_fee ? Number(data.application_fee.toFixed(2)) : undefined,
         },
         {
           headers: {

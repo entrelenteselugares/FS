@@ -21,6 +21,8 @@ import { getMeusEventos, updateEventLinks, uploadEventCover } from "../controlle
 import { getMeusPedidos, getMeuPedidoDetalhe } from "../controllers/cliente.controller";
 import { CartorioController } from "../controllers/cartorio.controller";
 import { SEOController } from "../controllers/seo.controller";
+import { getConfigs, updateConfigs } from "../controllers/config.controller";
+import { generateWeeklyPayout, listPayouts, markItemPaid } from "../controllers/payout.controller";
 import {
   chooseAccessType,
   getAccessStatus,
@@ -137,5 +139,13 @@ router.patch("/partner/profile", requireAuth, requireRole("CARTORIO"), updatePar
 // ── Cartório / Unidades: Gestão de Ativos ────────────────────────
 router.get("/cartorio/stats", requireAuth, requireRole("ADMIN", "CARTORIO"), CartorioController.getStats);
 router.get("/cartorio/events", requireAuth, requireRole("ADMIN", "CARTORIO"), CartorioController.getEvents);
+
+// --- Configurações & Repasses ---
+router.get("/admin/configs", requireAuth, requireRole("ADMIN"), getConfigs);
+router.patch("/admin/configs", requireAuth, requireRole("ADMIN"), updateConfigs);
+
+router.post("/admin/payouts/generate", requireAuth, requireRole("ADMIN"), generateWeeklyPayout);
+router.get("/admin/payouts", requireAuth, requireRole("ADMIN"), listPayouts);
+router.patch("/admin/payouts/:id/items/:itemId/paid", requireAuth, requireRole("ADMIN"), markItemPaid);
 
 export default router;
