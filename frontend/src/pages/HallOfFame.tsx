@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from "react";
+import { useNavigate } from "react-router-dom";
 import { API } from "../lib/api";
 import { motion } from "framer-motion";
 import { Award, Heart, Shield, Star } from "lucide-react";
@@ -33,6 +34,7 @@ const THEME = {
 };
 
 export const HallOfFame: React.FC = () => {
+  const navigate = useNavigate();
   const [activeContest, setActiveContest] = useState<any>(null);
   const [history, setHistory] = useState<ContestResult[]>([]);
   const [loading, setLoading] = useState(true);
@@ -62,6 +64,16 @@ export const HallOfFame: React.FC = () => {
       <style>{`
         @import url('https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@600;700;800;900&display=swap');
       `}</style>
+
+      {/* Back Button */}
+      <nav className="absolute top-0 left-0 w-full z-50 p-6 pointer-events-none">
+        <button 
+          onClick={() => navigate("/")} 
+          className="pointer-events-auto flex items-center gap-3 text-[10px] font-black uppercase tracking-[0.4em] text-white/40 hover:text-white transition-all bg-black/20 backdrop-blur-md px-6 py-3 border border-white/5"
+        >
+          <span className="text-lg">←</span> Vitrine
+        </button>
+      </nav>
       
       {/* Hero Section */}
       <section className="pt-20 pb-40 px-6 max-w-7xl mx-auto text-center">

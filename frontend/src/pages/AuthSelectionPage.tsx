@@ -35,6 +35,16 @@ export const AuthSelectionPage: React.FC = () => {
 
   return (
     <div className="min-h-screen bg-[#050505] flex flex-col items-center justify-center px-6 py-20 overflow-hidden relative">
+      {/* Back Button */}
+      <nav className="absolute top-0 left-0 w-full z-50 p-6 pointer-events-none">
+        <button 
+          onClick={() => navigate("/")} 
+          className="pointer-events-auto flex items-center gap-3 text-[10px] font-black uppercase tracking-[0.4em] text-white/40 hover:text-white transition-all bg-black/20 backdrop-blur-md px-6 py-3 border border-white/5"
+        >
+          <span className="text-lg">←</span> Vitrine
+        </button>
+      </nav>
+
       {/* Editorial Background Lines */}
       <div className="absolute inset-0 z-0 opacity-20 pointer-events-none">
         <div className="absolute top-0 left-1/4 w-[1px] h-full bg-white/5" />

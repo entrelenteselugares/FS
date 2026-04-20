@@ -72,6 +72,16 @@ export const LoginPage: React.FC = () => {
         input::placeholder { color: #333; }
       `}</style>
 
+      {/* Back Button */}
+      <nav style={{ position: "absolute", top: 0, left: 0, width: "100%", zIndex: 50, padding: 24, pointerEvents: "none" }}>
+        <button 
+          onClick={() => navigate("/")} 
+          style={{ pointerEvents: "auto", background: "rgba(0,0,0,0.2)", backdropFilter: "blur(10px)", border: `1px solid ${T.border}`, padding: "12px 24px", color: T.text3, fontSize: 10, fontWeight: 800, textTransform: "uppercase", letterSpacing: 4, cursor: "pointer", display: "flex", alignItems: "center", gap: 12 }}
+        >
+          <span style={{ fontSize: 16 }}>←</span> Vitrine
+        </button>
+      </nav>
+
       {/* Decorative */}
       <div style={{ position: "absolute", top: 0, left: 0, width: "100%", height: "1px", background: "linear-gradient(90deg, transparent, rgba(255,255,255,0.05), transparent)" }} />
       <div style={{ position: "absolute", bottom: "20%", left: "10%", width: "1px", height: 120, background: `${T.accent}20` }} />
