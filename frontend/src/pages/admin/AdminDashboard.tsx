@@ -9,6 +9,15 @@ import { AdminOrders } from "./AdminOrders";
 import { AdminFinance } from "./AdminFinance";
 import AdminSuppliers from "./AdminSuppliers";
 import { AdminContests } from "./AdminContests";
+import { 
+  LayoutDashboard, 
+  Camera, 
+  Users, 
+  FileText, 
+  DollarSign, 
+  Printer, 
+  Trophy 
+} from "lucide-react";
 
 const IconDashboard = () => (
   <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5">
@@ -17,18 +26,15 @@ const IconDashboard = () => (
   </svg>
 );
 
-const NAV_ITEMS: NavItem[] = [
-  { label: "Operações Centrais", to: "/admin", exact: true, icon: <IconDashboard /> },
-];
-
-const TABS = [
-  { id: "overview", label: "Visão Geral", icon: "📊" },
-  { id: "events", label: "Eventos", icon: "📸" },
-  { id: "users", label: "Membros", icon: "🫂" },
-  { id: "orders", label: "Pedidos", icon: "📑" },
-  { id: "finance", label: "Financeiro", icon: "💰" },
-  { id: "printers", label: "Impressão", icon: "🖨️" },
-  { id: "contests", label: "Concursos", icon: "🏆" },
+const NAV_ITEMS = (activeTab: string, setActiveTab: (t: string) => void): NavItem[] => [
+  { label: "Operações Centrais", to: "/admin", exact: true, icon: <IconDashboard />, isActive: activeTab === "overview", onClick: () => setActiveTab("overview") },
+  { label: "Visão Geral", onClick: () => setActiveTab("overview"), isActive: activeTab === "overview", icon: <LayoutDashboard size={14} /> },
+  { label: "Eventos", onClick: () => setActiveTab("events"), isActive: activeTab === "events", icon: <Camera size={14} /> },
+  { label: "Membros", onClick: () => setActiveTab("users"), isActive: activeTab === "users", icon: <Users size={14} /> },
+  { label: "Pedidos", onClick: () => setActiveTab("orders"), isActive: activeTab === "orders", icon: <FileText size={14} /> },
+  { label: "Financeiro", onClick: () => setActiveTab("finance"), isActive: activeTab === "finance", icon: <DollarSign size={14} /> },
+  { label: "Impressão", onClick: () => setActiveTab("printers"), isActive: activeTab === "printers", icon: <Printer size={14} /> },
+  { label: "Concursos", onClick: () => setActiveTab("contests"), isActive: activeTab === "contests", icon: <Trophy size={14} /> },
 ];
 
 interface AdminStats {
@@ -79,7 +85,7 @@ export const AdminDashboard: React.FC = () => {
   }, []);
 
   return (
-    <DashboardLayout title="Operações Centrais" variant="tactical" navItems={NAV_ITEMS}>
+    <DashboardLayout title="Operações Centrais" variant="tactical" navItems={NAV_ITEMS(activeTab, setActiveTab)}>
       <div className="p-10 max-w-7xl mx-auto min-h-screen">
         {/* Header Editorial */}
         <div className="mb-20 animate-in fade-in slide-in-from-left-4 duration-1000">
@@ -97,23 +103,6 @@ export const AdminDashboard: React.FC = () => {
           </p>
         </div>
 
-        {/* Tab Navigation */}
-        <div className="flex flex-wrap gap-8 mb-16 border-b border-white/5 pb-8">
-          {TABS.map((tab) => (
-            <button
-              key={tab.id}
-              onClick={() => setActiveTab(tab.id)}
-              className={`pb-4 text-[10px] font-bold uppercase tracking-[0.4em] transition-all relative ${
-                activeTab === tab.id ? "text-white" : "text-zinc-700 hover:text-zinc-500"
-              }`}
-            >
-              {tab.label}
-              {activeTab === tab.id && (
-                <div className="absolute bottom-[-1px] left-0 right-0 h-1.5 bg-brand-tactical" />
-              )}
-            </button>
-          ))}
-        </div>
 
         {/* Tab Content */}
         {loading && activeTab === "overview" ? (

@@ -4,9 +4,11 @@ import { useAuth } from "../hooks/useAuth";
 
 export interface NavItem {
   label: string;
-  to: string;
+  to?: string;
+  onClick?: () => void;
   exact?: boolean;
   icon: React.ReactNode;
+  isActive?: boolean;
 }
 
 interface DashboardLayoutProps {
@@ -109,10 +111,12 @@ const SidebarContent: React.FC<SidebarContentProps> = ({
   location,
   onNavigate,
 }) => {
-  const isActive = (item: NavItem) =>
-    item.exact
+  const isActive = (item: NavItem) => {
+    if (!item.to) return false;
+    return item.exact
       ? location.pathname === item.to
       : location.pathname.startsWith(item.to);
+  };
 
   return (
     <div className="flex flex-col h-full">
@@ -129,16 +133,20 @@ const SidebarContent: React.FC<SidebarContentProps> = ({
       {/* Navigation */}
       <nav className="flex-1 px-3 py-6 space-y-1 overflow-y-auto font-sans">
         {navItems.map((item) => {
-          const active = isActive(item);
+          const active = item.isActive ?? isActive(item);
+          const Component = item.to ? Link : "button";
+          const props: any = item.to 
+            ? { to: item.to, onClick: () => { onNavigate(); item.onClick?.(); } }
+            : { onClick: () => { onNavigate(); item.onClick?.(); }, type: "button" };
+
           return (
-            <Link
+            <Component
               key={item.label}
-              to={item.to}
-              onClick={onNavigate}
+              {...props}
               className={`
-                flex items-center gap-3 px-4 py-3 rounded-none
+                w-full flex items-center gap-3 px-4 py-3 rounded-none
                 text-[10px] font-bold uppercase tracking-widest
-                transition-all duration-300 group
+                transition-all duration-300 group text-left
                 ${active
                   ? `${v.activeBg} ${v.activeText} border-l-2 border-brand-olive ml-[-12px] pl-[22px]`
                   : "text-zinc-600 hover:text-white hover:bg-white/[0.02] border-l-2 border-transparent"
@@ -149,7 +157,7 @@ const SidebarContent: React.FC<SidebarContentProps> = ({
                 {item.icon}
               </span>
               {item.label}
-            </Link>
+            </Component>
           );
         })}
       </nav>
