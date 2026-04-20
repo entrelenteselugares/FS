@@ -380,12 +380,21 @@ export const QuotePage = () => {
                       <div style={{ fontSize: 10, fontWeight: 800, color: THEME.text2, textTransform: "uppercase", marginBottom: 5 }}>Investimento Estimado</div>
                       <div style={{ fontFamily: THEME.fontD, fontSize: 44, fontWeight: 900, color: THEME.accent }}>R$ {totalPrice.toFixed(2)}</div>
                     </div>
-                    <button 
-                      onClick={() => setStep(2)}
-                      style={{ background: THEME.accent, color: "black", padding: "15px 30px", fontWeight: 900, fontSize: 12, textTransform: "uppercase", letterSpacing: 2, display: "flex", alignItems: "center", gap: 10 }}
-                    >
-                      PRÓXIMO PASSO <ArrowRight size={16} />
-                    </button>
+                    <div style={{ display: "flex", gap: 15 }}>
+                      <button 
+                        type="button"
+                        onClick={() => navigate(-1)}
+                        style={{ border: `1px solid ${THEME.border}`, color: "white", padding: "15px 30px", fontWeight: 800, fontSize: 11, textTransform: "uppercase", letterSpacing: 2, background: "none", cursor: "pointer" }}
+                      >
+                        VOLTAR
+                      </button>
+                      <button 
+                        onClick={() => setStep(2)}
+                        style={{ background: THEME.accent, color: "black", padding: "15px 30px", fontWeight: 900, fontSize: 12, textTransform: "uppercase", letterSpacing: 2, display: "flex", alignItems: "center", gap: 10 }}
+                      >
+                        PRÓXIMO PASSO <ArrowRight size={16} />
+                      </button>
+                    </div>
                  </div>
               </div>
 

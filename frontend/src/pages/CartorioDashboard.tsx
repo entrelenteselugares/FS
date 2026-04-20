@@ -73,7 +73,9 @@ export default function CartorioDashboard() {
   const [lpPhone, setLpPhone] = useState("");
   const [lpDescription, setLpDescription] = useState("");
   const [lpCoverUrl, setLpCoverUrl] = useState("");
+  const [pixKey, setPixKey] = useState("");
   const [savingLp, setSavingLp] = useState(false);
+  const [savingPix, setSavingPix] = useState(false);
 
   // Filtros
   const [startDate, setStartDate] = useState("");
@@ -128,6 +130,7 @@ export default function CartorioDashboard() {
         setLpPhone(data.cartorio.phone ?? "");
         setLpDescription(data.cartorio.description ?? "");
         setLpCoverUrl(data.cartorio.coverUrl ?? "");
+        setPixKey(data.pixKey ?? "");
       }
     } catch {}
   };
@@ -155,6 +158,19 @@ export default function CartorioDashboard() {
     }
   };
 
+  const savePixKey = async () => {
+    setSavingPix(true);
+    try {
+      await API.patch("/partner/profile", { pixKey });
+      setSuccess("Chave PIX atualizada com sucesso! 💎");
+      setTimeout(() => setSuccess(""), 3000);
+    } catch {
+      setError("Erro ao salvar chave PIX.");
+    } finally {
+      setSavingPix(false);
+    }
+  };
+
   const loadPedidos = useCallback(async () => {
     try {
       const params = new URLSearchParams();
@@ -173,11 +189,6 @@ export default function CartorioDashboard() {
     }
   }, [tab, loadPedidos]);
 
-  const handleVincularMP = () => {
-    const token = localStorage.getItem("fs_token");
-    if (!token) { setError("Você precisa estar logado."); return; }
-    window.location.href = `${import.meta.env.VITE_API_URL}/api/mercadopago/connect?token=${token}`;
-  };
 
   const TABS: { key: Tab; label: string }[] = [
     { key: "agenda", label: "Agenda" },
@@ -374,17 +385,24 @@ export default function CartorioDashboard() {
           <div style={{ display: "flex", flexDirection: "column", gap: "1rem" }}>
             <div style={{ ...S.card, padding: "1.25rem" }}>
               <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
-                <div>
-                  <p style={{ fontSize: 13, fontWeight: 500, color: "#e8e4dc", marginBottom: 4 }}>Vínculo Mercado Pago</p>
-                  <p style={{ fontSize: 12, color: "#555" }}>
-                    Vincule sua conta para receber repasses automáticos (10% por venda)
+                <div style={{ flex: 1, marginRight: 20 }}>
+                  <p style={{ fontSize: 13, fontWeight: 500, color: "#e8e4dc", marginBottom: 4 }}>DADOS PARA REPASSE (PIX)</p>
+                  <p style={{ fontSize: 12, color: "#555", marginBottom: 12 }}>
+                    Insira sua chave PIX para receber os repasses manuais das vendas (10% de comissão).
                   </p>
+                  <input 
+                    value={pixKey} 
+                    onChange={e => setPixKey(e.target.value)} 
+                    style={{ ...S.input, width: "100%", maxWidth: 400 }} 
+                    placeholder="E-mail, CPF, CNPJ ou Chave Aleatória"
+                  />
                 </div>
                  <button
-                  onClick={handleVincularMP}
-                  style={{ background: "#5D6532", color: "#fff", border: "none", borderRadius: 0, padding: "12px 24px", fontSize: 11, fontWeight: 800, cursor: "pointer", flexShrink: 0, textTransform: "uppercase", letterSpacing: 2 }}
+                  disabled={savingPix}
+                  onClick={savePixKey}
+                  style={{ background: "#5D6532", color: "#fff", border: "none", borderRadius: 0, padding: "12px 24px", fontSize: 11, fontWeight: 800, cursor: "pointer", flexShrink: 0, textTransform: "uppercase", letterSpacing: 2, opacity: savingPix ? 0.6 : 1 }}
                 >
-                  Vincular conta
+                  {savingPix ? "SALVANDO..." : "SALVAR CHAVE PIX"}
                 </button>
               </div>
             </div>
