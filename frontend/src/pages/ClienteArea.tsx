@@ -32,10 +32,13 @@ function formatCurrency(v: number) {
   return new Intl.NumberFormat("pt-BR", { style: "currency", currency: "BRL" }).format(Number(v));
 }
 
-function formatDate(d: string) {
+function formatDate(d: string | null | undefined) {
+  if (!d) return "—";
+  const dt = new Date(d);
+  if (isNaN(dt.getTime())) return "—";
   return new Intl.DateTimeFormat("pt-BR", {
     day: "2-digit", month: "long", year: "numeric",
-  }).format(new Date(d));
+  }).format(dt);
 }
 
 const S = {
@@ -277,7 +280,8 @@ function PedidoRow({ pedido, isSelected, onClick }: {
         {pedido.accessExpiresAt && pedido.hasPaid && (
           <div style={{ marginTop: 8 }}>
             {(() => {
-              const expires = new Date(pedido.accessExpiresAt);
+              const expires = new Date(pedido.accessExpiresAt ?? "");
+              if (isNaN(expires.getTime())) return null;
               const now = new Date();
               const dias = Math.ceil((expires.getTime() - now.getTime()) / 86400000);
               const urgente = dias <= 5;

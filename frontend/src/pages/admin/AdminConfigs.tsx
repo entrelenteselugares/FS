@@ -35,6 +35,12 @@ function formatCurrency(v: number) {
   return new Intl.NumberFormat("pt-BR", { style: "currency", currency: "BRL" }).format(v);
 }
 
+const safeDate = (d: string | null | undefined) => {
+  if (!d) return "—";
+  const dt = new Date(d);
+  return isNaN(dt.getTime()) ? "—" : dt.toLocaleDateString("pt-BR");
+};
+
 export const AdminConfigs: React.FC = () => {
   const [configs, setConfigs] = useState<Config[]>([]);
   const [splitsTotal, setSplitsTotal] = useState(0);
@@ -255,7 +261,7 @@ export const AdminConfigs: React.FC = () => {
                       <div>
                         <div className="flex items-center gap-4">
                            <span className="text-xl font-heading text-white uppercase tracking-tighter">
-                             Período {new Date(payout.weekStart).toLocaleDateString("pt-BR")} — {new Date(payout.weekEnd).toLocaleDateString("pt-BR")}
+                             Período {safeDate(payout.weekStart)} — {safeDate(payout.weekEnd)}
                            </span>
                            <span className={`text-[8px] font-bold px-3 py-1 border uppercase tracking-widest ${
                              payout.status === "PAID" ? "border-brand-tactical text-brand-tactical" : "border-amber-900 text-amber-500"
