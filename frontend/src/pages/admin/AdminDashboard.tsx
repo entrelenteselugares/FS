@@ -19,22 +19,15 @@ import {
   Trophy 
 } from "lucide-react";
 
-const IconDashboard = () => (
-  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5">
-    <rect x="3" y="3" width="7" height="7" /><rect x="14" y="3" width="7" height="7" />
-    <rect x="14" y="14" width="7" height="7" /><rect x="3" y="14" width="7" height="7" />
-  </svg>
-);
 
 const NAV_ITEMS = (activeTab: string, setActiveTab: (t: string) => void): NavItem[] => [
-  { label: "Operações Centrais", to: "/admin", exact: true, icon: <IconDashboard />, isActive: activeTab === "overview", onClick: () => setActiveTab("overview") },
-  { label: "Visão Geral", onClick: () => setActiveTab("overview"), isActive: activeTab === "overview", icon: <LayoutDashboard size={14} /> },
-  { label: "Eventos", onClick: () => setActiveTab("events"), isActive: activeTab === "events", icon: <Camera size={14} /> },
-  { label: "Membros", onClick: () => setActiveTab("users"), isActive: activeTab === "users", icon: <Users size={14} /> },
-  { label: "Pedidos", onClick: () => setActiveTab("orders"), isActive: activeTab === "orders", icon: <FileText size={14} /> },
-  { label: "Financeiro", onClick: () => setActiveTab("finance"), isActive: activeTab === "finance", icon: <DollarSign size={14} /> },
-  { label: "Impressão", onClick: () => setActiveTab("printers"), isActive: activeTab === "printers", icon: <Printer size={14} /> },
-  { label: "Concursos", onClick: () => setActiveTab("contests"), isActive: activeTab === "contests", icon: <Trophy size={14} /> },
+  { label: "Visão Geral", to: "/admin", exact: true, icon: <LayoutDashboard size={16} />, isActive: activeTab === "overview", onClick: () => setActiveTab("overview") },
+  { label: "Eventos", onClick: () => setActiveTab("events"), isActive: activeTab === "events", icon: <Camera size={16} /> },
+  { label: "Membros", onClick: () => setActiveTab("users"), isActive: activeTab === "users", icon: <Users size={16} /> },
+  { label: "Pedidos", onClick: () => setActiveTab("orders"), isActive: activeTab === "orders", icon: <FileText size={16} /> },
+  { label: "Financeiro", onClick: () => setActiveTab("finance"), isActive: activeTab === "finance", icon: <DollarSign size={16} /> },
+  { label: "Impressão", onClick: () => setActiveTab("printers"), isActive: activeTab === "printers", icon: <Printer size={16} /> },
+  { label: "Concursos", onClick: () => setActiveTab("contests"), isActive: activeTab === "contests", icon: <Trophy size={16} /> },
 ];
 
 interface AdminStats {
