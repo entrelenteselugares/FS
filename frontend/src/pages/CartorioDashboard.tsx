@@ -202,23 +202,34 @@ export default function CartorioDashboard() {
         @import url('https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@600;700;800&display=swap');
         * { box-sizing: border-box; }
         input:focus { border-color: #5D6532 !important; outline: none; }
+        @media (max-width: 768px) {
+          .mobile-grid-1 { grid-template-columns: 1fr !important; gap: 1rem !important; }
+          .mobile-grid-2 { grid-template-columns: repeat(2, 1fr) !important; gap: 1rem !important; }
+          .mobile-stack { flex-direction: column !important; align-items: stretch !important; gap: 1.5rem !important; }
+          .mobile-nav { padding: 0.8rem 1rem !important; flex-direction: column !important; gap: 1rem !important; align-items: center !important; text-align: center !important; }
+          .mobile-hide { display: none !important; }
+          .mobile-padding { padding: 1.5rem !important; }
+          .mobile-title { font-size: 28px !important; }
+          .mobile-scroll-x { overflow-x: auto !important; padding-bottom: 5px !important; width: 100% !important; justify-content: flex-start !important; }
+        }
       `}</style>
 
       {/* NAV */}
-      <nav style={{ display: "flex", alignItems: "center", justifyContent: "space-between", padding: "1rem 2rem", borderBottom: "0.5px solid #1e1e1e" }}>
+      <nav className="mobile-nav" style={{ display: "flex", alignItems: "center", justifyContent: "space-between", padding: "1rem 2rem", borderBottom: "0.5px solid #1e1e1e" }}>
         <div style={{ display: "flex", alignItems: "center", gap: 20 }}>
-          <div style={{ fontFamily: "'Barlow Condensed', sans-serif", fontSize: 20, fontWeight: 800, color: "#fff", display: "flex", alignItems: "center", gap: 8, textTransform: "uppercase", letterSpacing: "1px" }}>
+          <div className="mobile-hide" style={{ fontFamily: "'Barlow Condensed', sans-serif", fontSize: 20, fontWeight: 800, color: "#fff", display: "flex", alignItems: "center", gap: 8, textTransform: "uppercase", letterSpacing: "1px" }}>
             <span style={{ width: 8, height: 8, background: "#5D6532", display: "inline-block" }} />
-            Foto Segundo
+            FS. Unit
           </div>
-          <div style={{ display: "flex", gap: 10 }}>
+          <div className="mobile-scroll-x" style={{ display: "flex", gap: 8 }}>
             {TABS.map((t) => (
               <button key={t.key} onClick={() => setTab(t.key)} style={{
                 background: tab === t.key ? "#5D6532" : "rgba(255,255,255,0.02)",
-                border: "none", padding: "8px 20px", fontSize: 11,
+                border: "none", padding: "8px 14px", fontSize: 10,
                 cursor: "pointer", borderRadius: 0,
                 color: tab === t.key ? "#fff" : "#888",
                 textTransform: "uppercase", fontWeight: 700, letterSpacing: "1px",
+                whiteSpace: "nowrap"
               }}>
                 {t.label}
               </button>
@@ -226,15 +237,14 @@ export default function CartorioDashboard() {
           </div>
         </div>
         <div style={{ display: "flex", alignItems: "center", gap: 12 }}>
-          <span style={{ fontSize: 11, color: "#555", fontWeight: 700, textTransform: "uppercase", letterSpacing: 1 }}>{cartorioName || user?.nome}</span>
-          <span style={{ fontSize: 9, padding: "4px 10px", background: "#5D6532", color: "#fff", letterSpacing: 2, textTransform: "uppercase" as const, fontWeight: 800 }}>Unidade</span>
-          <button onClick={() => { logout(); navigate("/"); }} style={{ background: "none", border: "1.5px solid #2a2a2a", borderRadius: 0, padding: "6px 14px", color: "#888", fontSize: 10, fontWeight: 700, textTransform: "uppercase", letterSpacing: 1, cursor: "pointer" }}>
+          <span className="mobile-hide" style={{ fontSize: 10, color: "#555", fontWeight: 700, textTransform: "uppercase", letterSpacing: 1 }}>{cartorioName || user?.nome}</span>
+          <button onClick={() => { logout(); navigate("/"); }} style={{ background: "none", border: "1.5px solid #2a2a2a", borderRadius: 0, padding: "6px 12px", color: "#666", fontSize: 9, fontWeight: 700, textTransform: "uppercase", letterSpacing: 1, cursor: "pointer" }}>
             Sair
           </button>
         </div>
       </nav>
 
-      <div style={{ maxWidth: 1100, margin: "0 auto", padding: "2rem" }}>
+      <div className="mobile-padding" style={{ maxWidth: 1100, margin: "0 auto", padding: "2rem" }}>
 
         {/* Alertas */}
         {error && (
@@ -249,18 +259,18 @@ export default function CartorioDashboard() {
         )}
 
         {/* Header */}
-        <div style={{ marginBottom: "3rem" }}>
-          <h1 style={{ fontFamily: "'Barlow Condensed', sans-serif", fontSize: 42, fontWeight: 800, color: "#fff", marginBottom: 4, textTransform: "uppercase", letterSpacing: "1px" }}>
+        <div style={{ marginBottom: "2.5rem" }}>
+          <h1 className="mobile-title" style={{ fontFamily: "'Barlow Condensed', sans-serif", fontSize: 42, fontWeight: 800, color: "#fff", marginBottom: 4, textTransform: "uppercase", letterSpacing: "1px" }}>
             {tab === "agenda" ? "Agenda & Eventos" : tab === "pedidos" ? "Repasses" : "Configurações"}
           </h1>
-          <p style={{ fontSize: 12, color: "#555", textTransform: "uppercase", letterSpacing: 2, fontWeight: 600 }}>
+          <p style={{ fontSize: 11, color: "#555", textTransform: "uppercase", letterSpacing: 2, fontWeight: 600 }}>
             {cartorioName && `${cartorioName} · `}PAINEL DE GESTÃO TÁTICA
           </p>
         </div>
 
         {/* KPIs */}
         {!loading && stats && (
-          <div style={{ display: "grid", gridTemplateColumns: "repeat(4, 1fr)", gap: "1rem", marginBottom: "2rem" }}>
+          <div className="mobile-grid-2" style={{ display: "grid", gridTemplateColumns: "repeat(4, 1fr)", gap: "1rem", marginBottom: "2rem" }}>
             {[
               { label: "Eventos este mês", value: String(stats.eventosMes ?? 0) },
               { label: "Total de eventos", value: String(stats.totalEventos ?? 0) },
@@ -276,7 +286,7 @@ export default function CartorioDashboard() {
         )}
 
         {loading && (
-          <div style={{ display: "grid", gridTemplateColumns: "repeat(4, 1fr)", gap: "1rem", marginBottom: "2rem" }}>
+          <div className="mobile-grid-2" style={{ display: "grid", gridTemplateColumns: "repeat(4, 1fr)", gap: "1rem", marginBottom: "2rem" }}>
             {[...Array(4)].map((_, i) => (
               <div key={i} style={{ ...S.card, padding: "1.25rem" }}>
                 <div style={{ height: 10, background: "#1a1a1a", borderRadius: 3, width: "60%", marginBottom: 12 }} />

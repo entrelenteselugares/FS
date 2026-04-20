@@ -86,32 +86,43 @@ export default function ClienteArea() {
 
   return (
     <div style={S.page}>
+      <style>{`
+        @keyframes pulse { 0% { opacity: 1; } 50% { opacity: 0.5; } 100% { opacity: 1; } }
+        @media (max-width: 768px) {
+          .mobile-grid-1 { grid-template-columns: 1fr !important; gap: 2rem !important; }
+          .mobile-hide { display: none !important; }
+          .mobile-nav { padding: 1rem !important; }
+          .mobile-detail-panel { width: 100% !important; border: none !important; margin-top: 2rem !important; position: relative !important; top: 0 !important; }
+          .mobile-stack { flex-direction: column !important; align-items: center !important; text-align: center !important; }
+          .mobile-title { font-size: 24px !important; }
+        }
+      `}</style>
+      
       {/* NAV */}
-      <nav style={{ display: "flex", alignItems: "center", justifyContent: "space-between", padding: "1.25rem 2rem", background: "rgba(10,10,10,0.8)", backdropFilter: "blur(10px)", borderBottom: "0.5px solid #1a1a1a", position: "sticky", top: 0, zIndex: 100 }}>
+      <nav className="mobile-nav" style={{ display: "flex", alignItems: "center", justifyContent: "space-between", padding: "1.25rem 2rem", background: "rgba(10,10,10,0.8)", backdropFilter: "blur(10px)", borderBottom: "0.5px solid #1a1a1a", position: "sticky", top: 0, zIndex: 100 }}>
         <button onClick={() => navigate("/")} style={{ background: "none", border: "none", color: "#888", fontSize: 13, cursor: "pointer", transition: "color .2s" }} onMouseEnter={(e) => (e.currentTarget.style.color = "#fff")} onMouseLeave={(e) => (e.currentTarget.style.color = "#888")}>
-          ← Voltar para Galeria
+          ← <span className="mobile-hide">Voltar para Galeria</span><span className="md:hidden">Voltar</span>
         </button>
-        <div style={{ fontSize: 18, fontWeight: 700, color: "#fff", letterSpacing: 1, display: "flex", alignItems: "center", gap: 8 }}>
-          <span style={{ width: 8, height: 8, background: "#c9a96e", borderRadius: "50%" }} />
+        <div style={{ fontSize: "min(18px, 5vw)", fontWeight: 700, color: "#fff", letterSpacing: 1, display: "flex", alignItems: "center", gap: 8 }}>
+          <span className="mobile-hide" style={{ width: 8, height: 8, background: "#c9a96e", borderRadius: "50%" }} />
           FOTO SEGUNDO
         </div>
-        <div style={{ display: "flex", alignItems: "center", gap: 15 }}>
-          <div style={{ textAlign: "right" }}>
-            <p style={{ fontSize: 12, fontWeight: 600, color: "#fff", margin: 0 }}>{user?.nome}</p>
-            <p style={{ fontSize: 10, color: "#555", margin: 0 }}>Área do Cliente</p>
+        <div style={{ display: "flex", alignItems: "center", gap: 12 }}>
+          <div className="mobile-hide" style={{ textAlign: "right" }}>
+            <p style={{ fontSize: 11, fontWeight: 600, color: "#fff", margin: 0 }}>{user?.nome}</p>
           </div>
-          <button onClick={logout} style={{ background: "rgba(255,255,255,0.05)", border: "0.5px solid #222", borderRadius: 6, padding: "6px 14px", color: "#fff", fontSize: 12, cursor: "pointer", transition: "all .2s" }} onMouseEnter={(e) => (e.currentTarget.style.borderColor = "#c9a96e")} onMouseLeave={(e) => (e.currentTarget.style.borderColor = "#222")}>
+          <button onClick={logout} style={{ background: "rgba(255,255,255,0.05)", border: "0.5px solid #222", borderRadius: 6, padding: "6px 14px", color: "#fff", fontSize: 11, cursor: "pointer", transition: "all .2s" }}>
             Sair
           </button>
         </div>
       </nav>
 
-      <div style={{ maxWidth: 1200, margin: "0 auto", padding: "3rem 2rem", display: "grid", gridTemplateColumns: selected ? "1fr 420px" : "1fr", gap: "3rem", transition: "all 0.3s ease" }}>
+      <div className="mobile-grid-1" style={{ maxWidth: 1200, margin: "0 auto", padding: "3rem 2rem", display: "grid", gridTemplateColumns: selected ? "1fr 420px" : "1fr", gap: "3rem", transition: "all 0.3s ease" }}>
 
         {/* LISTA */}
         <div>
           <div style={{ marginBottom: "2.5rem" }}>
-            <h1 style={{ fontSize: 32, fontWeight: 800, color: "#fff", marginBottom: 8, letterSpacing: -0.5 }}>
+            <h1 className="mobile-title" style={{ fontSize: 32, fontWeight: 800, color: "#fff", marginBottom: 8, letterSpacing: -0.5 }}>
               Meus Arquivos
             </h1>
             <p style={{ fontSize: 14, color: "#888" }}>
@@ -200,7 +211,7 @@ export default function ClienteArea() {
 
         {/* DETALHE (SIDEBAR) */}
         {selected && (
-          <div style={{ position: "relative" }}>
+          <div className="mobile-detail-panel" style={{ position: "relative" }}>
              <PedidoDetalhe
                 pedido={selected}
                 loading={loadingDetalhe}
@@ -224,6 +235,7 @@ function PedidoRow({ pedido, isSelected, onClick }: {
   return (
     <div
       onClick={onClick}
+      className="mobile-stack"
       style={{
         ...S.card,
         padding: "1.25rem 1.5rem",

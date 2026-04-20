@@ -112,31 +112,39 @@ export default function ProfissionalDashboard() {
         .hover-row:hover { background: #0f100a !important; transform: translateY(-2px); }
         .spin { animation: spin 0.8s linear infinite; }
         @keyframes spin { to { transform: rotate(360deg); } }
+        
+        @media (max-width: 768px) {
+          .mobile-grid-1 { grid-template-columns: 1fr !important; gap: 2rem !important; }
+          .mobile-stack { flex-direction: column !important; align-items: center !important; text-align: center !important; gap: 1rem !important; }
+          .mobile-hide { display: none !important; }
+          .mobile-nav { padding: 1rem !important; }
+          .mobile-padding { padding: 2rem 1.5rem !important; }
+          .mobile-detail-panel { width: 100% !important; margin-top: 2rem !important; position: relative !important; top: 0 !important; }
+        }
       `}</style>
 
       {/* NAV */}
-      <nav style={{ display: "flex", alignItems: "center", justifyContent: "space-between", padding: "1.25rem 2.5rem", borderBottom: "1px solid #141414", background: "rgba(5,5,5,0.95)", backdropFilter: "blur(10px)", position: "sticky", top: 0, zIndex: 100 }}>
-        <div style={{ display: "flex", alignItems: "center", gap: 24 }}>
-          <button onClick={() => navigate("/")} style={{ background: "none", border: "none", color: "#5D6532", fontSize: 11, fontWeight: 800, textTransform: "uppercase", letterSpacing: 2, cursor: "pointer" }}>
-            ← Showcase
+      <nav className="mobile-nav" style={{ display: "flex", alignItems: "center", justifyContent: "space-between", padding: "1.25rem 2.5rem", borderBottom: "1px solid #141414", background: "rgba(5,5,5,0.95)", backdropFilter: "blur(10px)", position: "sticky", top: 0, zIndex: 100 }}>
+        <div style={{ display: "flex", alignItems: "center", gap: 15 }}>
+          <button onClick={() => navigate("/")} style={{ background: "none", border: "none", color: "#5D6532", fontSize: 10, fontWeight: 800, textTransform: "uppercase", letterSpacing: 2, cursor: "pointer" }}>
+            ← <span className="mobile-hide">Showcase</span>
           </button>
-          <div style={{ fontFamily: "'Barlow Condensed', sans-serif", fontSize: 20, fontWeight: 800, color: "#fff", display: "flex", alignItems: "center", gap: 10, textTransform: "uppercase", letterSpacing: 1 }}>
-            <span style={{ width: 8, height: 8, background: "#5D6532" }} />
-            Foto Segundo
+          <div style={{ fontFamily: "'Barlow Condensed', sans-serif", fontSize: "min(20px, 5vw)", fontWeight: 800, color: "#fff", display: "flex", alignItems: "center", gap: 8, textTransform: "uppercase", letterSpacing: 1 }}>
+            <span className="mobile-hide" style={{ width: 8, height: 8, background: "#5D6532" }} />
+            FS. Dashboard
           </div>
         </div>
-        <div style={{ display: "flex", alignItems: "center", gap: 20 }}>
-          <div style={{ textAlign: "right" }}>
-            <div style={{ fontSize: 12, color: "#fff", fontWeight: 700, textTransform: "uppercase" }}>{user?.nome}</div>
-            <div style={{ fontSize: 9, color: "#5D6532", letterSpacing: 2, textTransform: "uppercase", fontWeight: 800 }}>{user?.role}</div>
+        <div style={{ display: "flex", alignItems: "center", gap: 15 }}>
+          <div className="mobile-hide" style={{ textAlign: "right" }}>
+            <div style={{ fontSize: 11, color: "#fff", fontWeight: 700, textTransform: "uppercase" }}>{user?.nome}</div>
           </div>
-          <button onClick={logout} style={{ background: "none", border: "1.5px solid #222", borderRadius: 0, padding: "8px 16px", color: "#666", fontSize: 10, fontWeight: 700, textTransform: "uppercase", cursor: "pointer" }}>
+          <button onClick={logout} style={{ background: "none", border: "1.5px solid #222", borderRadius: 0, padding: "8px 14px", color: "#666", fontSize: 10, fontWeight: 700, textTransform: "uppercase", cursor: "pointer" }}>
             Sair
           </button>
         </div>
       </nav>
 
-      <div style={{
+      <div className="mobile-grid-1 mobile-padding" style={{
         maxWidth: 1200,
         margin: "0 auto",
         padding: "3rem 2.5rem",
@@ -146,7 +154,7 @@ export default function ProfissionalDashboard() {
       }}>
         {/* LISTA DE EVENTOS */}
         <div>
-          <header style={{ marginBottom: "2rem", display: "flex", justifyContent: "space-between", alignItems: "flex-end" }}>
+          <header className="mobile-stack" style={{ marginBottom: "2rem", display: "flex", justifyContent: "space-between", alignItems: "flex-end" }}>
             <div>
               <h1 style={{ fontFamily: "'Barlow Condensed', sans-serif", fontSize: 48, fontWeight: 800, color: "#fff", marginBottom: 4, textTransform: "uppercase", letterSpacing: 1 }}>
                 Meus eventos
