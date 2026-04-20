@@ -108,7 +108,7 @@ function DateTimePicker({ value, onChange }: { value: string; onChange: (v: stri
             style={{
               position: "absolute", top: "calc(100% + 8px)", left: 0, zIndex: 999,
               background: "#0d0d0d", border: `1px solid ${THEME.accent}40`,
-              width: 320, padding: 20, boxShadow: "0 24px 60px rgba(0,0,0,0.9)"
+              width: "min(320px, 90vw)", padding: 20, boxShadow: "0 24px 60px rgba(0,0,0,0.9)"
             }}
           >
             {/* Month Navigation */}
@@ -279,6 +279,16 @@ export const QuotePage = () => {
         .fs-input { background: #000 !important; border: 1px solid #1c1c1c !important; color: white !important; border-radius: 0 !important; box-sizing: border-box; }
         .fs-input:focus { border-color: ${THEME.accent} !important; outline: none !important; }
         select.fs-input, textarea.fs-input { padding: 15px !important; }
+        
+        @media (max-width: 768px) {
+          .mobile-grid-1 { grid-template-columns: 1fr !important; }
+          .mobile-stack { flex-direction: column !important; align-items: stretch !important; gap: 20px !important; }
+          .mobile-padding { padding: 20px !important; }
+          .mobile-text-center { text-align: center !important; }
+          .mobile-full { width: 100% !important; }
+          .mobile-hide { display: none !important; }
+          .mobile-price { font-size: 32px !important; }
+        }
       `}</style>
 
       <div style={{ maxWidth: 800, margin: "0 auto" }}>
@@ -290,13 +300,13 @@ export const QuotePage = () => {
         </header>
 
         {step === 1 && (
-          <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} style={{ background: THEME.bgCard, border: `1px solid ${THEME.border}`, padding: 40 }}>
+          <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} className="mobile-padding" style={{ background: THEME.bgCard, border: `1px solid ${THEME.border}`, padding: 40 }}>
             <div style={{ display: "flex", flexDirection: "column", gap: 30 }}>
 
               {/* 1. Onde será o registro? */}
               <div style={{ display: "flex", flexDirection: "column", gap: 15 }}>
                 <label style={{ fontSize: 10, fontWeight: 800, textTransform: "uppercase", color: THEME.text2 }}>1. Onde será o registro?</label>
-                <div style={{ display: "flex", gap: 10 }}>
+                <div className="mobile-stack" style={{ display: "flex", gap: 10 }}>
                   <button 
                     type="button"
                     onClick={() => setLocationType("PARTNER")}
@@ -315,7 +325,7 @@ export const QuotePage = () => {
                     {partners.map(p => <option key={p.id} value={p.id}>{p.name.toUpperCase()} - {p.city || 'CAMPINAS'}</option>)}
                   </select>
                 ) : (
-                  <div style={{ display: "grid", gridTemplateColumns: "1fr 120px", gap: 10 }}>
+                  <div className="mobile-grid-1" style={{ display: "grid", gridTemplateColumns: "1fr 120px", gap: 10 }}>
                     <input required value={customCep} onChange={e => setCustomCep(e.target.value)} placeholder="CEP DO LOCAL" className="fs-input" style={{ width: "100%", padding: "15px" }} />
                     <div style={{ position: "relative", display: "flex", alignItems: "center" }}>
                       <Clock size={16} style={{ position: "absolute", left: 12, color: THEME.accent, pointerEvents: "none" }} />
@@ -351,7 +361,7 @@ export const QuotePage = () => {
                 </div>
               </div>
 
-              <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 20 }}>
+              <div className="mobile-grid-1" style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 20 }}>
                 <div>
                   <label style={{ fontSize: 10, fontWeight: 800, textTransform: "uppercase", marginBottom: 15, display: "block", color: THEME.text2 }}>3. Número de Convidados</label>
                   <div style={{ position: "relative", display: "flex", alignItems: "center" }}>
@@ -375,12 +385,12 @@ export const QuotePage = () => {
               </div>
 
               <div style={{ borderTop: `1px solid ${THEME.border}`, paddingTop: 30, marginTop: 20 }}>
-                 <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-end" }}>
-                    <div>
+                 <div className="mobile-stack" style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-end" }}>
+                    <div className="mobile-text-center">
                       <div style={{ fontSize: 10, fontWeight: 800, color: THEME.text2, textTransform: "uppercase", marginBottom: 5 }}>Investimento Estimado</div>
-                      <div style={{ fontFamily: THEME.fontD, fontSize: 44, fontWeight: 900, color: THEME.accent }}>R$ {totalPrice.toFixed(2)}</div>
+                      <div className="mobile-price" style={{ fontFamily: THEME.fontD, fontSize: 44, fontWeight: 900, color: THEME.accent }}>R$ {totalPrice.toFixed(2)}</div>
                     </div>
-                    <div style={{ display: "flex", gap: 15 }}>
+                    <div className="mobile-stack" style={{ display: "flex", gap: 15 }}>
                       <button 
                         type="button"
                         onClick={() => navigate(-1)}
@@ -390,7 +400,7 @@ export const QuotePage = () => {
                       </button>
                       <button 
                         onClick={() => setStep(2)}
-                        style={{ background: THEME.accent, color: "black", padding: "15px 30px", fontWeight: 900, fontSize: 12, textTransform: "uppercase", letterSpacing: 2, display: "flex", alignItems: "center", gap: 10 }}
+                        style={{ background: THEME.accent, color: "black", padding: "15px 30px", fontWeight: 900, fontSize: 12, textTransform: "uppercase", letterSpacing: 2, display: "flex", alignItems: "center", gap: 10, justifyContent: "center" }}
                       >
                         PRÓXIMO PASSO <ArrowRight size={16} />
                       </button>
@@ -403,11 +413,11 @@ export const QuotePage = () => {
         )}
 
         {step === 2 && (
-          <motion.div initial={{ opacity: 0, x: 20 }} animate={{ opacity: 1, x: 0 }} style={{ background: THEME.bgCard, border: `1px solid ${THEME.border}`, padding: 40 }}>
+          <motion.div initial={{ opacity: 0, x: 20 }} animate={{ opacity: 1, x: 0 }} className="mobile-padding" style={{ background: THEME.bgCard, border: `1px solid ${THEME.border}`, padding: 40 }}>
              <button onClick={() => setStep(1)} style={{ color: THEME.text2, fontSize: 10, fontWeight: 800, marginBottom: 30, background: "none", border: "none", cursor: "pointer" }}>&larr; VOLTAR</button>
              
              <form onSubmit={handleSubmit} style={{ display: "flex", flexDirection: "column", gap: 30 }}>
-                <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 20 }}>
+                <div className="mobile-grid-1" style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 20 }}>
                   <div style={{ display: "flex", flexDirection: "column", gap: 10 }}>
                     <label style={{ fontSize: 10, fontWeight: 800, textTransform: "uppercase", color: THEME.text2 }}>Seu Nome</label>
                     <input required value={name} onChange={e => setName(e.target.value)} placeholder="NOME DO CONTRATANTE" className="fs-input" style={{ width: "100%", padding: "15px" }} />
@@ -416,17 +426,6 @@ export const QuotePage = () => {
                     <label style={{ fontSize: 10, fontWeight: 800, textTransform: "uppercase", color: THEME.text2 }}>E-mail para Contato</label>
                     <input required type="email" value={email} onChange={e => setEmail(e.target.value)} placeholder="EX: CONTATO@DOMINIO.COM" className="fs-input" style={{ width: "100%", padding: "15px" }} />
                   </div>
-                </div>
-
-                <div style={{ display: "flex", flexDirection: "column", gap: 10 }}>
-                  <label style={{ fontSize: 10, fontWeight: 800, textTransform: "uppercase", color: THEME.text2 }}>Descreva seu evento com suas palavras</label>
-                  <textarea
-                    value={description}
-                    onChange={e => setDescription(e.target.value)}
-                    rows={4}
-                    placeholder="CONTE-NOS MAIS DETALHES, OBJETIVOS E EXPECTATIVAS..."
-                    className="fs-input"
-                  />
                 </div>
 
                 <div style={{ display: "flex", flexDirection: "column", gap: 10 }}>
