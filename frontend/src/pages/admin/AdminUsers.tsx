@@ -21,6 +21,7 @@ export const AdminUsers: React.FC = () => {
   const [users, setUsers] = useState<User[]>([]);
   const [loading, setLoading] = useState(true);
   const [isModalOpen, setIsModalOpen] = useState(false);
+  const [editingUser, setEditingUser] = useState<User | null>(null);
   const [formData, setFormData] = useState({
     name: "", email: "", password: "", role: "PROFISSIONAL", pixKey: ""
   });
@@ -44,12 +45,36 @@ export const AdminUsers: React.FC = () => {
   const handleCreate = async (e: React.FormEvent) => {
     e.preventDefault();
     try {
-      await API.post("/admin/users", formData);
+      if (editingUser) {
+        await API.patch(`/admin/users/${editingUser.id}`, {
+          nome: formData.name,
+          email: formData.email,
+          role: formData.role,
+          pixKey: formData.pixKey,
+          ...(formData.password ? { senha: formData.password } : {})
+        });
+      } else {
+        await API.post("/admin/users", formData);
+      }
       setIsModalOpen(false);
+      setEditingUser(null);
+      setFormData({ name: "", email: "", password: "", role: "PROFISSIONAL", pixKey: "" });
       fetchUsers();
     } catch (err) {
-      alert("Erro ao criar usuário");
+      alert("Erro ao processar usuário");
     }
+  };
+
+  const handleEditOpen = (user: User) => {
+    setEditingUser(user);
+    setFormData({
+      name: user.nome,
+      email: user.email,
+      password: "", // Não carregar senha
+      role: user.role,
+      pixKey: user.pixKey || ""
+    });
+    setIsModalOpen(true);
   };
 
   const toggleActive = async (user: User) => {
@@ -131,7 +156,10 @@ export const AdminUsers: React.FC = () => {
 
               {/* Ações */}
               <div className="col-span-2 flex justify-end">
-                <button className="text-[9px] font-bold text-zinc-700 uppercase tracking-[0.4em] hover:text-white transition-all border border-transparent hover:border-white/10 px-4 py-2">
+                <button 
+                  onClick={() => handleEditOpen(user)}
+                  className="text-[9px] font-bold text-zinc-700 uppercase tracking-[0.4em] hover:text-white transition-all border border-transparent hover:border-white/10 px-4 py-2"
+                >
                    Editar
                 </button>
               </div>
@@ -143,10 +171,12 @@ export const AdminUsers: React.FC = () => {
       {isModalOpen && (
         <div className="fixed inset-0 bg-black/95 backdrop-blur-xl z-50 flex items-center justify-center p-6">
           <div className="w-full max-w-xl bg-[#080808] border border-white/5 p-12 animate-in zoom-in-95 duration-300">
-             <div className="mb-12">
-               <h2 className="text-4xl font-heading text-white uppercase tracking-tighter mb-2">Novo Membro</h2>
-               <div className="w-16 h-1.5 bg-brand-tactical" />
-             </div>
+              <div className="mb-12 text-center md:text-left">
+                <h2 className="text-4xl font-heading text-white uppercase tracking-tighter mb-2">
+                  {editingUser ? "Ajustar Membro" : "Novo Membro"}
+                </h2>
+                <div className="w-16 h-1.5 bg-brand-tactical mx-auto md:mx-0" />
+              </div>
 
              <form onSubmit={handleCreate} className="space-y-8">
                 <div className="space-y-2">
@@ -178,9 +208,11 @@ export const AdminUsers: React.FC = () => {
                 </div>
                 <div className="grid grid-cols-2 gap-8">
                   <div className="space-y-2">
-                    <label className="text-[10px] font-bold text-zinc-600 uppercase tracking-[0.4em]">Senha Inicial</label>
+                    <label className="text-[10px] font-bold text-zinc-600 uppercase tracking-[0.4em]">
+                      {editingUser ? "Nova Senha (opcional)" : "Senha Inicial"}
+                    </label>
                     <input 
-                      type="password" required
+                      type="password" required={!editingUser}
                       value={formData.password}
                       onChange={e => setFormData({...formData, password: e.target.value})}
                       className="w-full bg-transparent border-b border-zinc-900 py-3 text-sm text-white focus:outline-none focus:border-brand-tactical transition-all rounded-none" 
@@ -202,9 +234,9 @@ export const AdminUsers: React.FC = () => {
 
                 <div className="pt-10 flex gap-4">
                   <button type="submit" className="flex-1 bg-brand-tactical text-white font-bold uppercase tracking-[0.4em] py-6 text-[11px] hover:brightness-110 transition-all rounded-none">
-                    REGISTRAR
+                    {editingUser ? "SALVAR ALTERAÇÕES" : "REGISTRAR"}
                   </button>
-                  <button type="button" onClick={() => setIsModalOpen(false)} className="px-8 border border-zinc-900 text-zinc-600 hover:text-white transition-all rounded-none uppercase text-[10px] font-bold tracking-widest">
+                  <button type="button" onClick={() => { setIsModalOpen(false); setEditingUser(null); setFormData({ name: "", email: "", password: "", role: "PROFISSIONAL", pixKey: "" }); }} className="px-8 border border-zinc-900 text-zinc-600 hover:text-white transition-all rounded-none uppercase text-[10px] font-bold tracking-widest">
                     CANCELAR
                   </button>
                 </div>

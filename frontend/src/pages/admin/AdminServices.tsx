@@ -20,13 +20,30 @@ export const AdminServices: React.FC = () => {
   ]);
 
   const [isAdding, setIsAdding] = useState(false);
+  const [editingService, setEditingService] = useState<Service | null>(null);
   const [newService, setNewService] = useState({ name: "", description: "", basePrice: 0, category: "FOTOGRAFIA" });
 
   const handleAdd = () => {
     if (!newService.name) return;
-    setServices([...services, { ...newService, id: Date.now().toString() }]);
+    if (editingService) {
+      setServices(services.map(s => s.id === editingService.id ? { ...newService, id: editingService.id } : s));
+    } else {
+      setServices([...services, { ...newService, id: Date.now().toString() }]);
+    }
     setIsAdding(false);
+    setEditingService(null);
     setNewService({ name: "", description: "", basePrice: 0, category: "FOTOGRAFIA" });
+  };
+
+  const handleEditOpen = (service: Service) => {
+    setEditingService(service);
+    setNewService({
+      name: service.name,
+      description: service.description,
+      basePrice: service.basePrice,
+      category: service.category
+    });
+    setIsAdding(true);
   };
 
   const removeService = (id: string) => {
@@ -81,9 +98,9 @@ export const AdminServices: React.FC = () => {
           </div>
           <div className="mt-10 flex gap-4">
             <button onClick={handleAdd} className="bg-brand-tactical text-white text-[10px] font-bold uppercase tracking-widest px-8 py-3 rounded-none flex items-center gap-2">
-              <Save size={14} /> SALVAR NOVO SERVIÇO
+              <Save size={14} /> {editingService ? "SALVAR ALTERAÇÕES" : "SALVAR NOVO SERVIÇO"}
             </button>
-            <button onClick={() => setIsAdding(false)} className="text-[10px] text-zinc-600 uppercase tracking-widest hover:text-white transition-all">CANCELAR</button>
+            <button onClick={() => { setIsAdding(false); setEditingService(null); setNewService({ name: "", description: "", basePrice: 0, category: "FOTOGRAFIA" }); }} className="text-[10px] text-zinc-600 uppercase tracking-widest hover:text-white transition-all">CANCELAR</button>
           </div>
         </div>
       )}
@@ -110,7 +127,10 @@ export const AdminServices: React.FC = () => {
                 <div className="text-sm font-mono font-bold text-brand-tactical tracking-widest">R$ {s.basePrice},00</div>
               </div>
               <div className="col-span-4 flex justify-end gap-6 opacity-30 group-hover:opacity-100 transition-all">
-                <button className="text-[9px] font-bold text-zinc-600 uppercase tracking-[0.3em] hover:text-white flex items-center gap-2">
+                <button 
+                  onClick={() => handleEditOpen(s)}
+                  className="text-[9px] font-bold text-zinc-600 uppercase tracking-[0.3em] hover:text-white flex items-center gap-2"
+                >
                   <Edit3 size={11} /> Ajustar
                 </button>
                 <button onClick={() => removeService(s.id)} className="text-[9px] font-bold text-red-900/50 uppercase tracking-[0.3em] hover:text-red-500 flex items-center gap-2">

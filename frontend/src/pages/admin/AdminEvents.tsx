@@ -22,6 +22,7 @@ export const AdminEvents: React.FC = () => {
   const [users, setUsers] = useState<User[]>([]);
   const [loading, setLoading] = useState(true);
   const [isModalOpen, setIsModalOpen] = useState(false);
+  const [editingEvent, setEditingEvent] = useState<Event | null>(null);
   const [isUploading, setIsUploading] = useState(false);
   const [coverPreview, setCoverPreview] = useState<string | null>(null);
   const fileInputRef = React.useRef<HTMLInputElement>(null);
@@ -68,10 +69,15 @@ export const AdminEvents: React.FC = () => {
     e.preventDefault();
     setIsUploading(true);
     try {
-      // 1. Cria o evento
-      const { data: event } = await API.post("/admin/events", formData);
+      let event;
+      if (editingEvent) {
+        const { data } = await API.patch(`/admin/events/${editingEvent.id}`, formData);
+        event = data;
+      } else {
+        const { data } = await API.post("/admin/events", formData);
+        event = data;
+      }
       
-      // 2. Se houver imagem no preview, faz o upload separado
       if (coverPreview) {
         await API.patch(`/admin/events/${event.id}/cover`, {
           imageBase64: coverPreview,
@@ -82,11 +88,49 @@ export const AdminEvents: React.FC = () => {
       const updatedEvents = await API.get("/admin/events");
       setEvents(updatedEvents.data.events || []);
       setIsModalOpen(false);
+      setEditingEvent(null);
+      setFormData({
+        title: "", date: "", location: "", city: "", description: "",
+        priceBase: 200, priceEarly: 190,
+        cartorioId: "", captacaoId: "", edicaoId: "",
+        temFoto: true, temVideo: false, temReels: false, temFotoImpressa: false,
+        coverPhotoUrl: "", eventHours: 2
+      });
       setCoverPreview(null);
     } catch {
-      alert("Erro ao criar evento ou processar capa.");
+      alert("Erro ao processar evento.");
     } finally {
       setIsUploading(false);
+    }
+  };
+
+  const handleEditOpen = async (event: Event) => {
+    try {
+      // Carregar evento completo (detalhes extras) para edição
+      const { data } = await API.get(`/public/events/${event.id}`);
+      setEditingEvent(data);
+      setFormData({
+        title: data.nomeNoivos,
+        date: data.dataEvento.split("T")[0],
+        location: data.location || "",
+        city: data.city || "",
+        description: data.description || "",
+        priceBase: Number(data.priceBase),
+        priceEarly: Number(data.priceEarly),
+        cartorioId: data.cartorioUserId || "",
+        captacaoId: data.captacaoId || "",
+        edicaoId: data.edicaoId || "",
+        temFoto: data.temFoto,
+        temVideo: data.temVideo,
+        temReels: data.temReels,
+        temFotoImpressa: data.temFotoImpressa,
+        coverPhotoUrl: data.coverPhotoUrl || "",
+        eventHours: data.eventHours || 2
+      });
+      setCoverPreview(data.coverPhotoUrl);
+      setIsModalOpen(true);
+    } catch {
+      alert("Erro ao carregar detalhes do evento.");
     }
   };
 
@@ -149,7 +193,10 @@ export const AdminEvents: React.FC = () => {
               <div className="text-[10px] text-zinc-500 font-bold uppercase tracking-[0.3em] italic">
                 {event._count.orders} ADQUIRIDOS
               </div>
-              <button className="text-[10px] font-bold text-white uppercase tracking-[0.2em] border-b border-brand-tactical pb-1 hover:border-white transition-all">
+              <button 
+                onClick={() => handleEditOpen(event)}
+                className="text-[10px] font-bold text-white uppercase tracking-[0.2em] border-b border-brand-tactical pb-1 hover:border-white transition-all"
+              >
                 CONFIGURAR
               </button>
             </div>
@@ -165,7 +212,9 @@ export const AdminEvents: React.FC = () => {
              </button>
 
              <div className="mb-8">
-               <h2 className="text-3xl font-heading text-white tracking-tighter uppercase mb-2">Novo Arquivo</h2>
+               <h2 className="text-3xl font-heading text-white tracking-tighter uppercase mb-2">
+                 {editingEvent ? "Ajustar Operação" : "Novo Registro"}
+               </h2>
                <div className="w-12 h-1 bg-brand-tactical" />
              </div>
 
@@ -289,7 +338,7 @@ export const AdminEvents: React.FC = () => {
 
                   <div className="pt-10">
                     <button type="submit" className="w-full bg-brand-tactical text-white font-bold uppercase tracking-[0.4em] py-6 text-[11px] hover:brightness-110 transition-all rounded-none shadow-[0_10px_30px_rgba(93,101,50,0.2)]">
-                      SINCRONIZAR ARQUIVO
+                      {editingEvent ? "SALVAR ALTERAÇÕES" : "SINCRONIZAR ARQUIVO"}
                     </button>
                   </div>
                 </div>
