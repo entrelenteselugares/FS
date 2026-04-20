@@ -139,7 +139,7 @@ export default function CartorioDashboard() {
         setLpCoverUrl(data.cartorio.coverUrl ?? "");
         setPixKey(data.pixKey ?? "");
       }
-    } catch {}
+    } catch { /* silently ignore - LP data is optional */ }
   };
 
   useEffect(() => {

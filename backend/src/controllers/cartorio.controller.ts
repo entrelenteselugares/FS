@@ -145,7 +145,7 @@ export class CartorioController {
       const isAdmin = user.role === "ADMIN";
 
       // Buscar os pedidos dos eventos desta unidade
-      const pedidos = await prisma.pedido.findMany({
+      const pedidos = await prisma.order.findMany({
         where: {
           status: "APROVADO",
           event: isAdmin ? undefined : { cartorioUserId: user.userId },
@@ -165,11 +165,11 @@ export class CartorioController {
         take: 100,
       });
 
-      const result = pedidos.map((p) => ({
+      const result = pedidos.map((p: any) => ({
         id: p.id,
         status: p.status,
         amount: Number(p.valor),
-        splitCartorio: null, // Futuro: calcular split
+        splitCartorio: null,
         createdAt: p.createdAt,
         buyerEmail: null,
         event: { title: p.event?.nomeNoivos ?? "—" },
