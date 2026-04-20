@@ -16,8 +16,13 @@ import {
   FileText, 
   DollarSign, 
   Printer, 
-  Trophy 
+  Trophy,
+  Settings,
+  Briefcase
 } from "lucide-react";
+
+import { AdminServices } from "./AdminServices";
+import { AdminSettings } from "./AdminSettings";
 
 
 const NAV_ITEMS = (activeTab: string, setActiveTab: (t: string) => void): NavItem[] => [
@@ -28,6 +33,8 @@ const NAV_ITEMS = (activeTab: string, setActiveTab: (t: string) => void): NavIte
   { label: "Financeiro", onClick: () => setActiveTab("finance"), isActive: activeTab === "finance", icon: <DollarSign size={16} /> },
   { label: "Impressão", onClick: () => setActiveTab("printers"), isActive: activeTab === "printers", icon: <Printer size={16} /> },
   { label: "Concursos", onClick: () => setActiveTab("contests"), isActive: activeTab === "contests", icon: <Trophy size={16} /> },
+  { label: "Serviços", onClick: () => setActiveTab("services"), isActive: activeTab === "services", icon: <Briefcase size={16} /> },
+  { label: "Configurações", onClick: () => setActiveTab("settings"), isActive: activeTab === "settings", icon: <Settings size={16} /> },
 ];
 
 interface AdminStats {
@@ -112,6 +119,8 @@ export const AdminDashboard: React.FC = () => {
             {activeTab === "finance"  && <AdminFinance />}
             {activeTab === "printers" && <AdminSuppliers />}
             {activeTab === "contests" && <AdminContests />}
+            {activeTab === "services" && <AdminServices />}
+            {activeTab === "settings" && <AdminSettings />}
           </div>
         )}
       </div>
