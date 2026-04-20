@@ -145,6 +145,9 @@ export async function adminListEvents(req: Request, res: Response): Promise<void
         ...e, 
         title: e.nomeNoivos, 
         date: e.dataEvento, 
+        isCrowdfund: e.isCrowdfund,
+        targetAmount: e.targetAmount,
+        collectedAmount: e.collectedAmount,
         _count: { orders: e._count?.pedidos || 0 } 
       })), 
       total, 
@@ -164,6 +167,7 @@ export async function adminCreateEvent(req: Request, res: Response): Promise<voi
     cartorioId, captacaoId, edicaoId,
     temFoto, temVideo, temReels, temFotoImpressa,
     eventHours,
+    isCrowdfund, targetAmount,
   } = req.body;
 
   if (!title || !date || !location) {
@@ -196,6 +200,8 @@ export async function adminCreateEvent(req: Request, res: Response): Promise<voi
         temReels: temReels ?? false,
         temFotoImpressa: temFotoImpressa ?? false,
         eventHours: eventHours ? Number(eventHours) : 2,
+        isCrowdfund: isCrowdfund ?? false,
+        targetAmount: targetAmount ? Number(targetAmount) : null,
       },
       include: {
         captacao: { select: { nome: true } },
@@ -238,6 +244,8 @@ export async function adminUpdateEvent(req: Request, res: Response): Promise<voi
   if (req.body.temFotoImpressa !== undefined) data.temFotoImpressa = req.body.temFotoImpressa;
   if (req.body.coverPhotoUrl !== undefined) data.coverPhotoUrl = req.body.coverPhotoUrl || null;
   if (req.body.eventHours !== undefined) data.eventHours = Number(req.body.eventHours);
+  if (req.body.isCrowdfund !== undefined) data.isCrowdfund = req.body.isCrowdfund;
+  if (req.body.targetAmount !== undefined) data.targetAmount = req.body.targetAmount ? Number(req.body.targetAmount) : null;
 
   try {
     const event = await prisma.event.update({

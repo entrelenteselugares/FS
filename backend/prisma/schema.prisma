@@ -113,6 +113,11 @@ model Event {
   // Pedidos vinculados
   pedidos         Order[]
   
+  // Collaborative Buying / Cota de Presente
+  isCrowdfund     Boolean   @default(false)
+  targetAmount    Decimal?  @db.Decimal(10, 2)
+  collectedAmount Decimal   @default(0) @db.Decimal(10, 2)
+  
   // Gamificação
   likes           PhotoLike[]
 
@@ -165,8 +170,9 @@ model Order {
   paymentId     String?  @unique              // ID do pagamento no Mercado Pago
   createdAt     DateTime @default(now())
   updatedAt     DateTime @updatedAt
-  payoutDone    Boolean  @default(false)
-  payoutDate    DateTime?
+  // Collaborative Buying
+  isContribution  Boolean  @default(false)
+  contributorName String?
 
   // Buyer Info (Redundância para facilitar relatórios)
   buyerEmail    String?

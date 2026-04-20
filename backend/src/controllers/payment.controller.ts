@@ -9,7 +9,7 @@ export class PaymentController {
    * Inicia o fluxo de pagamento com precificação dinâmica.
    */
   static async checkout(req: Request, res: Response) {
-    const { eventId, userId, email, method, token, installments, issuer_id } = req.body;
+    const { eventId, userId, email, method, token, installments, issuer_id, contributionAmount } = req.body;
 
     try {
       // 1. Buscar evento com os parceiros vinculados
@@ -30,9 +30,14 @@ export class PaymentController {
       eventDate.setHours(0, 0, 0, 0);
       
       // Se a data atual for anterior à data do evento, usa preço antecipado
-      const preco = now.getTime() < eventDate.getTime() 
+      let preco = now.getTime() < eventDate.getTime() 
         ? Number(event.priceEarly ?? 190) 
         : Number(event.priceBase ?? 200);
+
+      // Se for Compra Coletiva, o valor é o enviado pelo usuário (cota)
+      if (event.isCrowdfund && contributionAmount) {
+        preco = Number(contributionAmount);
+      }
 
       // 3. Preparar Split de Pagamentos (Regra: Repasse Manual)
       // Todo o valor vai para a Matriz para posterior repasse manual aos profissionais.
@@ -48,7 +53,9 @@ export class PaymentController {
           eventId,
           clienteId: userId,
           valor: preco,
-          status: "PENDENTE"
+          status: "PENDENTE",
+          isContribution: event.isCrowdfund,
+          contributorName: event.isCrowdfund ? (req.body.contributorName || null) : null
         }
       });
 
@@ -110,6 +117,14 @@ export class PaymentController {
               data: { status: "APROVADO" }
             });
 
+            // Se for cota de presente, atualiza o montante do evento
+            if (order.isContribution && order.eventId) {
+               await prisma.event.update({
+                 where: { id: order.eventId },
+                 data: { collectedAmount: { increment: order.valor } }
+               });
+            }
+
             // 2. Dispara e-mail automático
             const recipientEmail = order.buyerEmail || order.cliente?.email || paymentData.payer?.email;
             if (recipientEmail) {
@@ -139,7 +154,7 @@ export class PaymentController {
    * Processa o pagamento transparente vindo do frontend.
    */
   static async processPayment(req: Request, res: Response) {
-    const { eventId, userId, email, cpf, cardToken, installments, paymentMethodId } = req.body;
+    const { eventId, userId, email, cpf, cardToken, installments, paymentMethodId, contributionAmount } = req.body;
 
     try {
       // 1. Buscar evento com parceiros para cálculo de split
@@ -156,9 +171,14 @@ export class PaymentController {
       // 2. Lógica de Precificação
       const now = new Date();
       const eventDate = new Date(event.dataEvento);
-      const preco = now.getTime() < eventDate.getTime() 
+      let preco = now.getTime() < eventDate.getTime() 
         ? Number(event.priceEarly ?? 190) 
         : Number(event.priceBase ?? 200);
+
+      // Gift Quota logic
+      if (event.isCrowdfund && contributionAmount) {
+        preco = Number(contributionAmount);
+      }
 
       // 3. Cálculo de Split — Referência para Repasse Manual (Modelo Uber)
       // 100% do valor vai para a conta master. Os splits são salvos apenas para
@@ -180,6 +200,8 @@ export class PaymentController {
           clienteId: userId,
           valor: preco,
           status: "PENDENTE",
+          isContribution: event.isCrowdfund,
+          contributorName: event.isCrowdfund ? (req.body.contributorName || null) : null,
           // Salva snapshot dos calculos para referencia no repasse manual
           splitMatriz: applicationFeeCalculated,
           splitCaptacao: preco * (pctCapt / 100),
@@ -226,6 +248,14 @@ export class PaymentController {
           paymentId: String(mpResponse.id)
         }
       });
+
+      // Se aprovado e for cota, atualiza evento
+      if (isApproved && event.isCrowdfund) {
+        await prisma.event.update({
+          where: { id: event.id },
+          data: { collectedAmount: { increment: preco } }
+        });
+      }
 
       // 7. Notificar Cliente IMEDIATAMENTE se aprovado (Checkout Transparente)
       if (isApproved) {

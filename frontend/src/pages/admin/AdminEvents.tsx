@@ -44,6 +44,8 @@ export const AdminEvents: React.FC = () => {
     temFotoImpressa: boolean;
     coverPhotoUrl: string;
     eventHours: number;
+    isCrowdfund: boolean;
+    targetAmount: number;
   }
 
   // Form State
@@ -53,7 +55,9 @@ export const AdminEvents: React.FC = () => {
     cartorioId: "", captacaoId: "", edicaoId: "",
     temFoto: true, temVideo: false, temReels: false, temFotoImpressa: false,
     coverPhotoUrl: "",
-    eventHours: 2
+    eventHours: 2,
+    isCrowdfund: false,
+    targetAmount: 0
   });
 
   const handleFileChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -125,7 +129,9 @@ export const AdminEvents: React.FC = () => {
         temReels: data.temReels,
         temFotoImpressa: data.temFotoImpressa,
         coverPhotoUrl: data.coverPhotoUrl || "",
-        eventHours: data.eventHours || 2
+        eventHours: data.eventHours || 2,
+        isCrowdfund: data.isCrowdfund || false,
+        targetAmount: Number(data.targetAmount || 0)
       });
       setCoverPreview(data.coverPhotoUrl);
       setIsModalOpen(true);
@@ -334,6 +340,33 @@ export const AdminEvents: React.FC = () => {
                         className="w-full bg-transparent border-b border-zinc-900 py-3 text-sm text-white focus:outline-none focus:border-brand-tactical transition-all rounded-none" 
                       />
                     </div>
+                  </div>
+
+                  {/* Gift Quota / Compra Coletiva Section */}
+                  <div className="bg-brand-tactical/5 p-6 border border-brand-tactical/20 space-y-6">
+                    <label className="flex items-center gap-3 cursor-pointer group">
+                      <input 
+                        type="checkbox"
+                        checked={formData.isCrowdfund}
+                        onChange={e => setFormData({...formData, isCrowdfund: e.target.checked})}
+                        className="w-5 h-5 border-zinc-800 bg-transparent rounded-none checked:bg-brand-tactical focus:ring-0 appearance-none border transition-all"
+                      />
+                      <span className="text-[10px] text-brand-tactical uppercase tracking-[0.3em] font-bold">
+                        ATIVAR MODO COMPRA COLETIVA (VAQUINHA)
+                      </span>
+                    </label>
+
+                    {formData.isCrowdfund && (
+                      <div className="space-y-2 animate-in slide-in-from-top-1 duration-300">
+                        <label className="text-[9px] font-bold text-zinc-500 uppercase tracking-[0.4em]">VALOR TOTAL DA META (R$)</label>
+                        <input 
+                          type="number"
+                          value={formData.targetAmount}
+                          onChange={e => setFormData({...formData, targetAmount: Number(e.target.value)})}
+                          className="w-full bg-black border-b border-zinc-800 py-2 text-sm text-white focus:outline-none focus:border-brand-tactical transition-all"
+                        />
+                      </div>
+                    )}
                   </div>
 
                   <div className="pt-10">

@@ -31,6 +31,9 @@ interface EventData {
   temReels: boolean;
   temFotoImpressa: boolean;
   cartorio?: { razaoSocial: string; city: string | null } | null;
+  isCrowdfund: boolean;
+  targetAmount: number | null;
+  collectedAmount: number;
 }
 
 interface AccessData {
@@ -103,6 +106,8 @@ export default function EventPage() {
   const [needsAccessChoice, setNeedsAccessChoice] = useState(false);
   const [accessType, setAccessType] = useState<string | null>(null);
   const [accessExpiresAt, setAccessExpiresAt] = useState<string | null>(null);
+  const [contributionAmount, setContributionAmount] = useState<number>(50); // Valor padrão
+  const [contributorName, setContributorName] = useState<string>("");
 
   useEffect(() => {
     if (!id) return;
@@ -176,6 +181,19 @@ export default function EventPage() {
           setStep("success");
           setNeedsAccessChoice(false);
       }
+
+      if (data.status === "PENDING_GOAL") {
+          setStep("success");
+          setNeedsAccessChoice(false);
+          // Atualiza o evento localmente se necessário para mostrar o progresso real
+          if (event) {
+            setEvent({
+              ...event, 
+              collectedAmount: data.collectedAmount,
+              targetAmount: data.targetAmount 
+            });
+          }
+      }
     } catch { /* ainda não pago */ }
   };
 
@@ -212,6 +230,8 @@ export default function EventPage() {
         paymentMethodId: detectBrand(cardData.number),
         email: cardData.email,
         cpf: cardData.cpf,
+        contributionAmount: event.isCrowdfund ? contributionAmount : null,
+        contributorName: event.isCrowdfund ? contributorName : null,
       });
       const oid = data.orderId;
       localStorage.setItem(`fs_order_${id}`, oid);
@@ -352,12 +372,36 @@ export default function EventPage() {
             </div>
           )}
 
-          {/* Links desbloqueados */}
-          {step === "success" && access && (
+          {/* Links desbloqueados OU Aguardando Meta */}
+          {step === "success" && (
             <div style={{ marginTop: 28, border: `1px solid #1e3a1e`, padding: 20 }}>
-              <p style={{ fontSize: 10, letterSpacing: 2, textTransform: "uppercase", color: "#4ade80", marginBottom: 16 }}>
-                ✓ Acesso Liberado
-              </p>
+              {!access?.lightroomUrl && event?.isCrowdfund ? (
+                <div className="animate-in fade-in duration-500">
+                  <p style={{ fontSize: 10, letterSpacing: 2, textTransform: "uppercase", color: T.accent, marginBottom: 12, fontWeight: "bold" }}>
+                    ⭐ Contribuição Confirmada
+                  </p>
+                  <p style={{ fontSize: 13, color: T.text, marginBottom: 16, lineHeight: 1.5 }}>
+                    Obrigado por presentear! Os arquivos serão liberados para todos assim que a meta de <strong>{formatCurrency(Number(event.targetAmount || 0))}</strong> for atingida.
+                  </p>
+                  
+                  {/* Progress bar inside success view */}
+                  <div style={{ marginBottom: 10 }}>
+                    <div style={{ width: "100%", height: 4, background: "#1a2114" }}>
+                      <div style={{ 
+                        width: `${Math.min(100, (Number(event.collectedAmount) / Number(event.targetAmount || 1)) * 100)}%`, 
+                        height: "100%", 
+                        background: T.accent, 
+                        transition: "width 1s ease-out" 
+                      }} />
+                    </div>
+                  </div>
+                  <p style={{ fontSize: 10, color: T.text3 }}>{Math.round((Number(event.collectedAmount) / Number(event.targetAmount || 1)) * 100)}% concluído</p>
+                </div>
+              ) : (
+                <p style={{ fontSize: 10, letterSpacing: 2, textTransform: "uppercase", color: "#4ade80", marginBottom: 16 }}>
+                  ✓ Acesso Liberado
+                </p>
+              )}
               
               {accessExpiresAt && (
                 <div style={{ 
@@ -375,17 +419,18 @@ export default function EventPage() {
                 </div>
               )}
 
-              <div style={{ display: "flex", flexDirection: "column", gap: 10 }}>
-                {access.lightroomUrl && (
-                  <a href={access.lightroomUrl} target="_blank" rel="noopener noreferrer"
-                    style={{ display: "flex", justifyContent: "space-between", alignItems: "center", padding: "14px 16px", background: T.bg, border: `1px solid #1e3a1e`, textDecoration: "none" }}>
-                    <div>
-                      <p style={{ fontSize: 13, fontWeight: 500, color: T.text, marginBottom: 2 }}>Álbum de Fotos</p>
-                      <p style={{ fontSize: 11, color: T.text3 }}>Adobe Portfolio · Alta resolução</p>
-                    </div>
-                    <span style={{ fontSize: 12, color: T.accent }}>Abrir ↗</span>
-                  </a>
-                )}
+              {access && (
+                <div style={{ display: "flex", flexDirection: "column", gap: 10 }}>
+                  {access.lightroomUrl && (
+                    <a href={access.lightroomUrl} target="_blank" rel="noopener noreferrer"
+                      style={{ display: "flex", justifyContent: "space-between", alignItems: "center", padding: "14px 16px", background: T.bg, border: `1px solid #1e3a1e`, textDecoration: "none" }}>
+                      <div>
+                        <p style={{ fontSize: 13, fontWeight: 500, color: T.text, marginBottom: 2 }}>Álbum de Fotos</p>
+                        <p style={{ fontSize: 11, color: T.text3 }}>Adobe Portfolio · Alta resolução</p>
+                      </div>
+                      <span style={{ fontSize: 12, color: T.accent }}>Abrir ↗</span>
+                    </a>
+                  )}
                 {access.driveUrl && (
                   <a href={access.driveUrl} target="_blank" rel="noopener noreferrer"
                     style={{ display: "flex", justifyContent: "space-between", alignItems: "center", padding: "14px 16px", background: T.bg, border: `1px solid #1e3a1e`, textDecoration: "none" }}>
@@ -395,8 +440,8 @@ export default function EventPage() {
                     </div>
                     <span style={{ fontSize: 12, color: T.accent }}>Abrir ↗</span>
                   </a>
-                )}
-              </div>
+                </div>
+              )}
             </div>
           )}
         </div>
@@ -441,6 +486,82 @@ export default function EventPage() {
               <p style={{ fontSize: 10, color: T.text3, textAlign: "center", marginTop: 10, letterSpacing: "0.5px" }}>
                 Secure Payment · Instant Access · SSL
               </p>
+            </div>
+          )}
+
+          {/* GIFT QUOTA / CROWDFUNDING UI */}
+          {step === "paywall" && event.isCrowdfund && (
+            <div style={{ background: "#0f130a", border: `1px solid ${T.border}`, padding: 24, marginTop: 24 }}>
+              <p style={{ fontSize: 10, letterSpacing: 2, textTransform: "uppercase", color: "#4ade80", marginBottom: 12, fontWeight: "bold" }}>
+                🎁 Presente Coletivo (Cota)
+              </p>
+              
+              {/* Progress Bar */}
+              <div style={{ marginBottom: 20 }}>
+                <div style={{ display: "flex", justifyContent: "space-between", marginBottom: 8 }}>
+                  <span style={{ fontSize: 11, color: T.text }}>{formatCurrency(Number(event.collectedAmount))}</span>
+                  <span style={{ fontSize: 11, color: T.text3 }}>Meta: {formatCurrency(Number(event.targetAmount || 0))}</span>
+                </div>
+                <div style={{ width: "100%", height: 6, background: "#1a2114", perspective: 1000 }}>
+                  <div style={{ 
+                    width: `${Math.min(100, (Number(event.collectedAmount) / Number(event.targetAmount || 1)) * 100)}%`, 
+                    height: "100%", 
+                    background: "#5D6532", 
+                    boxShadow: "0 0 10px rgba(93,101,50,0.5)",
+                    transition: "width 1.5s cubic-bezier(0.4, 0, 0.2, 1)" 
+                  }} />
+                </div>
+                <p style={{ fontSize: 10, color: T.text3, marginTop: 10, textAlign: "center", fontStyle: "italic" }}>
+                  {Math.round((Number(event.collectedAmount) / Number(event.targetAmount || 1)) * 100)}% arrecadado para liberar o álbum
+                </p>
+              </div>
+
+              <div style={{ spaceY: 16 }}>
+                <p style={{ fontSize: 11, color: T.text, marginBottom: 12 }}>Quanto deseja presentear?</p>
+                <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 10, marginBottom: 16 }}>
+                  {[30, 50, 100, 200].map(val => (
+                    <button 
+                      key={val} 
+                      onClick={() => { setContributionAmount(val); setStep("checkout"); }}
+                      style={{ 
+                        padding: "10px 0", 
+                        background: "transparent", 
+                        border: `1px solid #1e3a1e`, 
+                        color: "#fff", 
+                        fontSize: 12, 
+                        fontWeight: "bold",
+                        cursor: "pointer"
+                      }}
+                    >
+                      {formatCurrency(val)}
+                    </button>
+                  ))}
+                </div>
+                <div style={{ position: "relative", marginBottom: 10 }}>
+                   <input 
+                      type="text" 
+                      placeholder="Seu Nome (Aparece no Relatório)"
+                      value={contributorName}
+                      onChange={(e) => setContributorName(e.target.value)}
+                      style={{ width: "100%", background: "black", border: "1px solid #1e3a1e", padding: 12, color: "#fff", fontSize: 12, outline: "none" }}
+                   />
+                </div>
+                <div style={{ position: "relative" }}>
+                   <input 
+                      type="number" 
+                      placeholder="Outro valor..."
+                      value={contributionAmount}
+                      onChange={(e) => setContributionAmount(Number(e.target.value))}
+                      style={{ width: "100%", background: "black", border: "1px solid #1e3a1e", padding: 12, color: "#fff", fontSize: 12, outline: "none" }}
+                   />
+                   <button 
+                     onClick={() => setStep("checkout")}
+                     style={{ position: "absolute", right: 10, top: 10, background: "none", border: "none", color: "#5D6532", fontSize: 11, fontWeight: "bold", cursor: "pointer" }}
+                   >
+                     CONTRIBUIR
+                   </button>
+                </div>
+              </div>
             </div>
           )}
 

@@ -126,6 +126,9 @@ export async function getAccessStatus(req: AuthRequest, res: Response): Promise<
             slug: true,
             lightroomUrl: true, 
             driveUrl: true,
+            isCrowdfund: true,
+            targetAmount: true,
+            collectedAmount: true,
           },
         },
       },
@@ -157,14 +160,20 @@ export async function getAccessStatus(req: AuthRequest, res: Response): Promise<
       ? Math.ceil((new Date(order.accessExpiresAt).getTime() - now.getTime()) / (1000 * 60 * 60 * 24))
       : null;
 
+    const isGoalMet = !order.event.isCrowdfund || (Number(order.event.collectedAmount) >= Number(order.event.targetAmount || 0));
+
     res.json({
-      status: order.accessType ? "ACTIVE" : aprovado ? "PENDING_CHOICE" : "PENDING_PAYMENT",
+      status: order.accessType ? (isGoalMet ? "ACTIVE" : "PENDING_GOAL") : aprovado ? "PENDING_CHOICE" : "PENDING_PAYMENT",
       accessType: order.accessType,
+      isCrowdfund: order.event.isCrowdfund,
+      isGoalMet,
+      collectedAmount: order.event.collectedAmount,
+      targetAmount: order.event.targetAmount,
       accessExpiresAt: order.accessExpiresAt,
       diasRestantes,
-      // Links apenas se ativo e não expirado
-      lightroomUrl: (order.accessType && !expirado) ? order.event.lightroomUrl : null,
-      driveUrl: (order.accessType && !expirado) ? order.event.driveUrl : null,
+      // Links apenas se ativo e não expirado E meta atingida
+      lightroomUrl: (order.accessType && !expirado && isGoalMet) ? order.event.lightroomUrl : null,
+      driveUrl: (order.accessType && !expirado && isGoalMet) ? order.event.driveUrl : null,
       eventTitle: order.event.nomeNoivos,
       eventSlug: order.event.slug,
     });
