@@ -71,6 +71,7 @@ export async function likePhoto(req: AuthRequest, res: Response): Promise<void> 
         await prisma.userPoints.upsert({
           where: { userId: haPublicOrder.clienteId },
           create: { userId: haPublicOrder.clienteId, total: 1 },
+          update: { total: { increment: 1 } },
         });
       }
 
