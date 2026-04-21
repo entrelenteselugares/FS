@@ -201,6 +201,8 @@ export class AuthController {
               userId: newUser.id,
               razaoSocial: req.body.razaoSocial || nome,
               address: req.body.endereco || null,
+              cidade: req.body.cidade || null,
+              cnpj: req.body.cnpj || null,
             }
           });
         }

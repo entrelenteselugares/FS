@@ -21,13 +21,55 @@ export const RegisterPage: React.FC = () => {
     // Campos Unidade
     razaoSocial: "",
     endereco: "",
+    cep: "",
+    logradouro: "",
+    numero: "",
+    bairro: "",
+    cidade: "",
+    uf: "",
+    referencia: "",
     acceptedTerms: false,
     acceptedPrivacy: false,
   });
   const [loading, setLoading] = useState(false);
+  const [isCepLoading, setIsCepLoading] = useState(false);
   const [showSenha, setShowSenha] = useState(false);
   const [error, setError] = useState("");
   const navigate = useNavigate();
+
+  const handleCepChange = async (cepValue: string) => {
+    const rawCep = cepValue.replace(/\D/g, "").slice(0, 8);
+    
+    // Masking 00000-000
+    let masked = rawCep;
+    if (rawCep.length > 5) {
+      masked = `${rawCep.slice(0, 5)}-${rawCep.slice(5)}`;
+    }
+    
+    setFormData(prev => ({ ...prev, cep: masked }));
+
+    if (rawCep.length === 8) {
+      setIsCepLoading(true);
+      try {
+        const response = await fetch(`https://viacep.com.br/ws/${rawCep}/json/`);
+        const data = await response.json();
+        
+        if (!data.erro) {
+          setFormData(prev => ({
+            ...prev,
+            logradouro: data.logradouro,
+            bairro: data.bairro,
+            cidade: data.localidade,
+            uf: data.uf
+          }));
+        }
+      } catch (err) {
+        console.error("Erro ao buscar CEP:", err);
+      } finally {
+        setIsCepLoading(false);
+      }
+    }
+  };
 
   const handleRegister = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -36,7 +78,20 @@ export const RegisterPage: React.FC = () => {
 
     try {
       console.log(`[REGISTERING] User Role: ${role}`);
-      const response = await API.post("/auth/register", { ...formData, role });
+      
+      let finalPayload = { ...formData, role };
+      
+      // Se for Unidade, consolidamos o endereço
+      if (role === "UNIDADE") {
+        const fullAddress = `${formData.logradouro}, ${formData.numero}${formData.referencia ? ` - ${formData.referencia}` : ""} | ${formData.bairro} | ${formData.cidade}-${formData.uf}`;
+        finalPayload = { 
+          ...finalPayload, 
+          endereco: fullAddress,
+          cidade: formData.cidade // Também envia cidade separada se o backend permitir
+        };
+      }
+
+      const response = await API.post("/auth/register", finalPayload);
       
       // Logar automaticamente salvando o token e dados do usuário
       const { token, user } = response.data;
@@ -230,9 +285,14 @@ export const RegisterPage: React.FC = () => {
             )}
 
             {role === "UNIDADE" && (
-              <div className="md:col-span-2 space-y-8 mt-4 border-l-2 border-brand-tactical/20 pl-8 py-4">
+              <div className="md:col-span-2 space-y-10 mt-8 border-l border-brand-tactical/20 pl-8 py-4 animate-in fade-in slide-in-from-left duration-700">
+                <div className="text-[10px] font-black uppercase tracking-[0.4em] text-brand-tactical mb-6 flex items-center gap-3">
+                  <div className="w-1.5 h-1.5 bg-brand-tactical rounded-full animate-pulse" />
+                  Dados de Identificação e LOGÍSTICA
+                </div>
+
                 <div className="space-y-4">
-                  <label className="text-[10px] font-bold uppercase tracking-[0.4em] text-zinc-600">Razão Social / Identificação</label>
+                  <label className="text-[10px] font-bold uppercase tracking-[0.4em] text-zinc-600">Razão Social / Nome Fantasia</label>
                   <input
                     type="text"
                     required
@@ -242,16 +302,81 @@ export const RegisterPage: React.FC = () => {
                     placeholder="NOME OFICIAL DA UNIDADE"
                   />
                 </div>
-                <div className="space-y-4">
-                  <label className="text-[10px] font-bold uppercase tracking-[0.4em] text-zinc-600">Localização Estratégica (Endereço)</label>
-                  <input
-                    type="text"
-                    required
-                    value={formData.endereco}
-                    onChange={(e) => setFormData({ ...formData, endereco: e.target.value })}
-                    className="w-full bg-transparent border-b border-zinc-900 py-3 text-xs text-white placeholder-zinc-800 focus:outline-none focus:border-brand-tactical transition-all"
-                    placeholder="CIDADE, ESTADO, ENDEREÇO..."
-                  />
+
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-10">
+                  <div className="space-y-4 relative">
+                    <label className="text-[10px] font-bold uppercase tracking-[0.4em] text-zinc-600">CEP</label>
+                    <input
+                      type="text"
+                      required
+                      value={formData.cep}
+                      onChange={(e) => handleCepChange(e.target.value)}
+                      className="w-full bg-transparent border-b border-zinc-900 py-3 text-xs text-white placeholder-zinc-800 focus:outline-none focus:border-brand-tactical transition-all font-mono tracking-widest"
+                      placeholder="00000-000"
+                    />
+                    {isCepLoading && (
+                      <div className="absolute right-0 bottom-3">
+                        <div className="w-3 h-3 border-t-2 border-brand-tactical rounded-full animate-spin" />
+                      </div>
+                    )}
+                  </div>
+
+                  <div className="space-y-4">
+                    <label className="text-[10px] font-bold uppercase tracking-[0.4em] text-zinc-600">Cidade / UF</label>
+                    <div className="w-full bg-transparent border-b border-zinc-900 py-3 text-xs text-white/50 flex justify-between">
+                      <span className="uppercase">{formData.cidade || "CIDADE"}</span>
+                      <span className="font-black text-brand-tactical">{formData.uf || "UF"}</span>
+                    </div>
+                  </div>
+                </div>
+
+                <div className="grid grid-cols-1 md:grid-cols-4 gap-10">
+                  <div className="md:col-span-3 space-y-4">
+                    <label className="text-[10px] font-bold uppercase tracking-[0.4em] text-zinc-600">Logradouro / Rua</label>
+                    <input
+                      type="text"
+                      required
+                      value={formData.logradouro}
+                      onChange={(e) => setFormData({ ...formData, logradouro: e.target.value })}
+                      className="w-full bg-transparent border-b border-zinc-900 py-3 text-xs text-white placeholder-zinc-800 focus:outline-none focus:border-brand-tactical transition-all"
+                      placeholder="NOME DA RUA OU AVENIDA"
+                    />
+                  </div>
+                  <div className="space-y-4">
+                    <label className="text-[10px] font-bold uppercase tracking-[0.4em] text-zinc-600">Número</label>
+                    <input
+                      type="text"
+                      required
+                      value={formData.numero}
+                      onChange={(e) => setFormData({ ...formData, numero: e.target.value })}
+                      className="w-full bg-transparent border-b border-zinc-900 py-3 text-xs text-white placeholder-zinc-800 focus:outline-none focus:border-brand-tactical transition-all"
+                      placeholder="123"
+                    />
+                  </div>
+                </div>
+
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-10">
+                  <div className="space-y-4">
+                    <label className="text-[10px] font-bold uppercase tracking-[0.4em] text-zinc-600">Bairro</label>
+                    <input
+                      type="text"
+                      required
+                      value={formData.bairro}
+                      onChange={(e) => setFormData({ ...formData, bairro: e.target.value })}
+                      className="w-full bg-transparent border-b border-zinc-900 py-3 text-xs text-white placeholder-zinc-800 focus:outline-none focus:border-brand-tactical transition-all"
+                      placeholder="BAIRRO"
+                    />
+                  </div>
+                  <div className="space-y-4">
+                    <label className="text-[10px] font-bold uppercase tracking-[0.4em] text-zinc-600">Ponto de Referência</label>
+                    <input
+                      type="text"
+                      value={formData.referencia}
+                      onChange={(e) => setFormData({ ...formData, referencia: e.target.value })}
+                      className="w-full bg-transparent border-b border-zinc-900 py-3 text-xs text-white placeholder-zinc-800 focus:outline-none focus:border-brand-tactical transition-all"
+                      placeholder="AO LADO DE... PRÓXIMO A..."
+                    />
+                  </div>
                 </div>
               </div>
             )}
