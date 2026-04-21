@@ -75,8 +75,6 @@ export class MercadoPagoService {
     payer_email: string;
     notification_url: string;
     orderId: string;
-    partners: SplitPartner[]; 
-    matrizRate?: number;
   }) {
     try {
       // Remoção do Marketplace Fee: O Foto Segundo agora recebe 100% via Repasse Manual.
@@ -95,8 +93,7 @@ export class MercadoPagoService {
         },
         external_reference: data.orderId,
         metadata: {
-          order_id: data.orderId,
-          partners: data.partners
+          order_id: data.orderId
         },
         // Em produção, se a URL for localhost, o MP pode rejeitar. 
         // Vamos omitir a notification_url apenas se detectarmos localhost em produção para testes rápidos.
@@ -112,7 +109,7 @@ export class MercadoPagoService {
         auto_return: "approved" as const,
       };
 
-      console.log(`[MP] Criando Preferência: R$ ${data.transaction_amount} (100% Matriz)`);
+      console.log(`[MP] Criando Preferência Integral: R$ ${data.transaction_amount} | Pedido: ${data.orderId}`);
       
       const response = await preference.create({ body });
       return response;

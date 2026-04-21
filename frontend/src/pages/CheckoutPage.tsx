@@ -50,8 +50,9 @@ export const CheckoutPage = () => {
       if (data.init_point) {
         window.location.href = data.init_point;
       }
-    } catch (err) {
-      alert("Erro ao processar pagamento. Tente novamente.");
+    } catch (err: any) {
+      const msg = err.response?.data?.details || "Erro ao processar pagamento. Tente novamente.";
+      alert(`Erro: ${msg}`);
     }
   };
 
@@ -89,37 +90,43 @@ export const CheckoutPage = () => {
         <div className="animate-reveal">
           <div className="mb-0">
              <div className="text-proportional text-brand-primary mb-4">Resumo da Aquisição</div>
-             <h1 className="heading-luxury mb-12 !text-3xl md:!text-5xl">
-               RESERVA <span className="opacity-30">CONFIRMADA</span>
+             <h1 className="heading-luxury mb-12 !text-3xl md:!text-5xl !tracking-tight flex gap-3 justify-center items-center">
+               <span className="text-theme-text opacity-100 font-black">RESERVA</span> 
+               <span 
+                 className="opacity-40" 
+                 style={{ 
+                   WebkitTextStroke: "1px var(--theme-text)", 
+                   color: "transparent",
+                   fontWeight: 900
+                 }}
+               >CONFIRMADA</span>
              </h1>
           </div>
 
-          <div className="lux-card editorial-shadow space-y-8">
-            <div className="flex gap-6 border-b border-theme-border pb-8">
-              <div className="w-24 h-24 bg-theme-bg-muted overflow-hidden">
-                <img 
-                  src={order.event?.coverPhotoUrl || "/logo-premium.png"} 
-                  alt={order.event?.nomeNoivos} 
-                  className="w-full h-full object-cover grayscale opacity-60"
-                />
-              </div>
-              <div className="flex-1">
-                <div className="text-xl font-black uppercase tracking-tighter mb-2">{order.event?.nomeNoivos}</div>
-                <div className="text-proportional">{new Date(order.event?.dataEvento).toLocaleDateString()}</div>
+          <div className="lux-card editorial-shadow space-y-8 !bg-white !text-[#0a0a0a] !border-none !rounded-sm">
+            <div className="flex flex-col items-center gap-6 border-b border-gray-100 pb-8">
+              <img 
+                src="/logo-minimalista.png" 
+                alt="Logo Minimalista" 
+                className="h-14 object-contain"
+              />
+              <div className="text-center">
+                <div className="text-xl font-black uppercase tracking-tighter mb-1">{order.event?.nomeNoivos}</div>
+                <div className="text-[10px] opacity-40 font-bold uppercase tracking-widest">{new Date(order.event?.dataEvento).toLocaleDateString("pt-BR")}</div>
               </div>
             </div>
 
-            <div className="space-y-4">
-              <div className="flex justify-between items-center text-proportional">
+            <div className="space-y-6">
+              <div className="flex justify-between items-center text-[10px] font-black uppercase tracking-widest opacity-40">
                 <span>Investimento Base</span>
                 <span>R$ {Number(order.amount).toFixed(2)}</span>
               </div>
-              <div className="flex justify-between items-center text-proportional">
+              <div className="flex justify-between items-center text-[10px] font-black uppercase tracking-widest opacity-40">
                 <span>Taxas & Encargos</span>
                 <span>Incluso</span>
               </div>
-              <div className="pt-4 border-t border-theme-border flex justify-between items-end">
-                <div className="text-proportional !opacity-100 uppercase font-black">Total a Liquidar</div>
+              <div className="pt-6 border-t border-gray-100 flex justify-between items-center">
+                <div className="text-[11px] !opacity-100 uppercase font-black tracking-widest">Total a Liquidar</div>
                 <div className="text-4xl font-black tracking-tighter text-brand-primary">R$ {Number(order.amount).toFixed(2)}</div>
               </div>
             </div>
@@ -136,12 +143,12 @@ export const CheckoutPage = () => {
           <div className="space-y-4">
             <button 
               onClick={handlePayment}
-              className="w-full lux-button-tactical py-6 !text-sm flex flex-col items-center gap-2 group"
+              className="w-full bg-brand-primary hover:brightness-110 text-[#0a0a0a] py-6 !text-sm flex flex-col items-center gap-1 transition-all"
             >
-              <div className="flex items-center gap-3">
+              <div className="flex items-center gap-3 font-black">
                 <CreditCard size={18} /> PAGAR COM CARTÃO / PIX
               </div>
-              <span className="text-[9px] opacity-60 tracking-[0.2em]">Liberação Imediata via Checkout Pro</span>
+              <span className="text-[9px] opacity-60 tracking-[0.2em] font-medium">Liberação Imediata via Checkout Pro</span>
             </button>
             
             <div className="flex items-center justify-center gap-4 py-4">

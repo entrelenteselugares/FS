@@ -73,14 +73,18 @@ export class PaymentController {
       });
 
       // 5. Criar Preferência no Mercado Pago (Checkout Pro)
+      // Ajuste de Notification URL: Mercadopago rejeita localhost em produção.
+      const backendUrl = process.env.BACKEND_URL || `${req.protocol}://${req.get('host')}`;
+      const isLocal = backendUrl.includes("localhost") || backendUrl.includes("127.0.0.1");
+
       const mpResponse = await MercadoPagoService.createPreference({
         transaction_amount: preco,
         description: `Fotos Evento: ${event.nomeNoivos}`,
         payer_email: email,
-        notification_url: `${process.env.BACKEND_URL || "http://localhost:3001"}/api/webhooks/mercadopago`,
-        orderId: order.id,
-        partners: [],
-        matrizRate: 1.0,
+        notification_url: isLocal 
+          ? "" // Omitir se for local para evitar erro de API do MP
+          : `${backendUrl}/api/webhooks/mercadopago`,
+        orderId: order.id
       });
 
       // 6. Vincular ID da Preferência ao Pedido (opcional, mas bom para tracking)
@@ -96,11 +100,14 @@ export class PaymentController {
       });
 
     } catch (error: any) {
-      console.error("[Checkout Error Full]:", error.response?.data || error);
-      // Retorna o objeto de erro real do Mercado Pago para debug visual no frontend
+      console.error("[Checkout Error Full]:", error.response?.data || error.message || error);
+      
+      const mpDetails = error.response?.data?.message || error.message || "Erro desconhecido no MP";
+
       return res.status(500).json({ 
         error: "Erro no processamento do Mercado Pago",
-        details: error.response?.data || error.message
+        details: mpDetails,
+        fullError: error.response?.data || null
       });
     }
   }

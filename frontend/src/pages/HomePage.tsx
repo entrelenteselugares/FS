@@ -156,9 +156,11 @@ export const HomePage = () => {
           }
 
           .hero-section-container {
-            margin: 0 !important;
-            border-radius: 0 !important;
-            height: 500px !important; /* Altura controlada conforme referência */
+            margin: 1.5rem 2.5rem !important; /* Margem para flutuar conforme SDF */
+            border-radius: 24px !important; /* Bordas arredondadas conforme SDF */
+            height: 380px !important; /* Proporção panorâmica YouTube */
+            overflow: hidden;
+            border: 1px solid rgba(255,255,255,0.05);
           }
 
           .desktop-hide { display: none !important; }
@@ -321,23 +323,21 @@ export const HomePage = () => {
           gridTemplateColumns: "repeat(12, 1fr)", 
           gridTemplateRows: "repeat(auto-fill, minmax(200px, 1fr))", 
           gap: 0, zIndex: 0,
-          opacity: 0.45,
-          filter: "saturate(0.4) contrast(1.1)",
-          transform: "scale(1.02)"
+          opacity: 0.35, /* Menor opacidade para ar editorial */
+          filter: "grayscale(100%)",
+          transform: "scale(1.01)"
         }}>
-          {Array.from({ length: 96 }).map((_, i) => {
+          {Array.from({ length: 48 }).map((_, i) => {
             const photoIds = [
               '1507003211169-0a1dd7228f2d', '1522202176988-66273c2fd55f', '1519389950473-47ba0277781c',
-              '1556761175-b413da4baf72', '1497366216548-37526070297c', '1542744173-8e7e53415bb0',
-              '1522071823991-b5ae71c4708e', '1517248135467-4c7edcad34c4', '1531482615713-2afd69097998',
-              '1551836022-d5d88e9218df', '1516321497487-e288fb19713f', '1491975458591-174922118d59'
+              '1556761175-b413da4baf72', '1497366216548-37526070297c', '1542744173-8e7e53415bb0'
             ];
             const pId = photoIds[i % photoIds.length];
             return (
-              <div key={i} style={{ width: "100%", height: "100%", overflow: "hidden", border: "1px solid rgba(255,255,255,0.03)" }}>
+              <div key={i} style={{ width: "100%", height: "100%", overflow: "hidden", border: "1px solid rgba(255,255,255,0.02)" }}>
                 <img
                   src={`https://images.unsplash.com/photo-${pId}?auto=format&fit=crop&q=40&w=400`}
-                  style={{ width: "100%", height: "100%", objectFit: "cover", filter: "grayscale(100%)", opacity: 0.8 }}
+                  style={{ width: "100%", height: "100%", objectFit: "cover", opacity: 0.8 }}
                 />
               </div>
             );
