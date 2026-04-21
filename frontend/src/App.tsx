@@ -27,8 +27,8 @@ const DashboardRedirect = () => {
   if (!user) return <Navigate to="/login" replace />;
   const map: Record<string, string> = {
     ADMIN: "/admin",
-    CARTORIO: "/cartorio",
-    UNIDADE: "/cartorio",
+    CARTORIO: "/unidade-fixa",
+    UNIDADE: "/unidade-fixa",
     PROFISSIONAL: "/profissional",
     CLIENTE: "/minha-conta",
   };
@@ -80,8 +80,8 @@ const AnimatedRoutes = () => {
           } />
           <Route path="/admin/*" element={<Navigate to="/admin" replace />} />
 
-          {/* Painel Unidades */}
-          <Route path="/cartorio" element={
+          {/* Painel Unidades Fixas */}
+          <Route path="/unidade-fixa" element={
             <ProtectedRoute roles={["UNIDADE", "CARTORIO", "ADMIN"]}>
               <CartorioDashboard />
             </ProtectedRoute>

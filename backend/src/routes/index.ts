@@ -96,11 +96,11 @@ router.get("/public/events", EventController.listPublic);
 router.get("/public/events/:id", EventController.getById);
 router.get("/public/events/id/:id", EventController.getById); // Alias para busca explícita por ID
 router.get("/public/events/:id/access", EventController.getAccess);
-router.get("/public/partners", EventController.listPartners);
+router.get("/public/unidades-fixas", EventController.listPartners);
 router.post("/public/quotes", EventController.createQuote);
 router.get("/public/contests/active", getActiveContest);
 router.get("/public/contests/hall-of-fame", getHallOfFame);
-router.get("/public/partners/:slug", getPartnerLandingData);
+router.get("/public/unidade-fixa/:slug", getPartnerLandingData);
 router.get("/share/e/:id", SEOController.getEventPreview);
 router.get("/public/configs/theme", getPublicThemeConfigs);
 
@@ -168,14 +168,14 @@ router.get("/admin/contests", requireAuth, requireRole("ADMIN"), adminListContes
 router.post("/admin/contests", requireAuth, requireRole("ADMIN"), adminCreateContest);
 router.patch("/admin/contests/:id", requireAuth, requireRole("ADMIN"), adminUpdateContest);
 
-// ── Perfil do Parceiro (Self-care) ──────────────────────────────
-router.patch("/partner/profile", requireAuth, requireRole("CARTORIO"), updatePartnerProfile);
+router.patch("/unidade-fixa/profile", requireAuth, requireRole("CARTORIO"), updatePartnerProfile);
+router.patch("/partner/profile", requireAuth, requireRole("CARTORIO"), updatePartnerProfile); // Alias para transição segura
 
 // ── Legado / Compatibilidade ─────────────────────────────────────
-// ── Cartório / Unidades: Gestão de Ativos ────────────────────────
-router.get("/cartorio/stats", requireAuth, requireRole("ADMIN", "CARTORIO"), CartorioController.getStats);
-router.get("/cartorio/events", requireAuth, requireRole("ADMIN", "CARTORIO"), CartorioController.getEvents);
-router.get("/cartorio/orders", requireAuth, requireRole("ADMIN", "CARTORIO", "UNIDADE"), CartorioController.getOrders);
+// ── Unidades Fixas: Gestão de Ativos ────────────────────────
+router.get("/unidade-fixa/stats", requireAuth, requireRole("ADMIN", "CARTORIO"), CartorioController.getStats);
+router.get("/unidade-fixa/events", requireAuth, requireRole("ADMIN", "CARTORIO"), CartorioController.getEvents);
+router.get("/unidade-fixa/orders", requireAuth, requireRole("ADMIN", "CARTORIO", "UNIDADE"), CartorioController.getOrders);
 
 // --- Configurações & Repasses ---
 router.get("/admin/configs", requireAuth, requireRole("ADMIN"), getConfigs);

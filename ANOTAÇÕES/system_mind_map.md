@@ -72,5 +72,3 @@ A interface de alta fidelidade "Midnight Luxury" com a qual os usuários interag
 
 ---
 
-> [!NOTE]
-> **Fluxo de Trabalho**: Sempre que houver uma mudança no Banco de Dados, o desenvolvedor deve primeiro atualizar o `schema.prisma` e depois rodar o build para que os tipos TypeScript sejam sincronizados em todo o projeto.

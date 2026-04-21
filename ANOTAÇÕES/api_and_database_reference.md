@@ -93,12 +93,12 @@ O sistema utiliza **JWT (JSON Web Tokens)** em conjunto com o **Supabase Auth**.
 | `GET` | `/api/me/points` | Saldo de pontos do cliente |
 | `POST` | `/api/me/redeem-print` | Resgata pontos por fotos impressas |
 
-### 🏪 Parceiros / Cartório
+### 🏪 Unidades Fixas
 
 | Método | Endpoint | Descrição |
 | :--- | :--- | :--- |
-| `GET` | `/api/parceiro/:slug` | Dados da landing page do parceiro |
-| `PATCH` | `/api/cartorio/profile` | Atualiza perfil da unidade |
+| `GET` | `/api/unidade-fixa/:slug` | Dados da landing page da unidade |
+| `PATCH` | `/api/unidade-fixa/profile` | Atualiza perfil da unidade |
 
 ---
 

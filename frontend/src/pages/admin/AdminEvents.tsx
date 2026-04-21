@@ -170,8 +170,6 @@ export const AdminEvents: React.FC = () => {
     <div className="space-y-12 animate-in fade-in slide-in-from-bottom-4 duration-700">
       <div className="flex items-center justify-between border-b border-white/5 pb-8">
         <div>
-          <h2 className="text-4xl font-heading text-theme-text tracking-tighter uppercase">Logística de Eventos</h2>
-          <p className="text-[10px] text-theme-muted uppercase tracking-[0.5em] mt-2 font-bold italic">Curadoria e Gestão de Operações</p>
         </div>
         <button 
           onClick={() => setIsModalOpen(true)}
@@ -341,19 +339,6 @@ export const AdminEvents: React.FC = () => {
                 </div>
 
                 <div className="space-y-8">
-                  <div className="space-y-2">
-                    <label className="text-[9px] font-bold text-zinc-600 uppercase tracking-[0.4em]">Profissional (Captação)</label>
-                    <select 
-                      value={formData.captacaoId}
-                      onChange={e => setFormData({...formData, captacaoId: e.target.value})}
-                      className="w-full bg-theme-bg-muted border-b border-theme-border py-3 text-sm text-theme-text focus:outline-none focus:border-brand-tactical appearance-none rounded-none"
-                    >
-                      <option value="">NÃO ATRIBUÍDO</option>
-                      {users.filter(u => u.role === "PROFISSIONAL").map(u => (
-                        <option key={u.id} value={u.id}>{u.nome.toUpperCase()}</option>
-                      ))}
-                    </select>
-                  </div>
 
                   <div className="grid grid-cols-2 gap-8">
                     <div className="space-y-2">

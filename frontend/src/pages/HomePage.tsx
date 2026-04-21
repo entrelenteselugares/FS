@@ -65,12 +65,7 @@ export const HomePage = () => {
   const [userMenuOpen, setUserMenuOpen] = useState(false);
   const debounceRef = useRef<ReturnType<typeof setTimeout> | undefined>(undefined);
 
-  const dashboardPath = user?.role === "ADMIN" ? "/admin"
-    : user?.role === "PROFISSIONAL" ? "/profissional"
-    : (user?.role === "CARTORIO" || user?.role === "UNIDADE") ? "/cartorio"
-    : null;
 
-  const fetchEvents = async (q: string, pg: number) => {
     setLoading(true);
     try {
       const { data } = await API.get(`/public/events`, {

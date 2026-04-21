@@ -35,7 +35,7 @@ O Supabase expõe **duas** URLs de conexão — ambas são necessárias no `.env
 | :--- | :--- | :--- |
 | `ADMIN` | `/admin` | Acesso total: eventos, usuários, finanças, configurações |
 | `PROFISSIONAL` | `/profissional` | Agenda, convites de serviço, perfil técnico, links de entrega |
-| `CARTORIO` | `/cartorio` | QR distribution, estatísticas da unidade, landing page |
+| `CARTORIO` | `/unidade-fixa` | QR distribution, estatísticas da unidade, landing page |
 | `CLIENTE` | `/minha-conta` | Visualizar álbuns comprados, gamificação, LGPD |
 
 ### 👤 Usuários de Produção (referência)
@@ -105,10 +105,10 @@ O campo `captacaoStatus` / `edicaoStatus` no modelo `Event` registra o estado: `
 - **Perfil Técnico**: Equipamentos, habilidades (FOTO/VÍDEO/EDIÇÃO), skills complementares.
 - **Falar com Matriz**: Link direto WhatsApp para suporte da Matriz.
 
-### 🟢 Painel do Cartório (`/cartorio`)
+### 🟢 Painel da Unidade Fixa (`/unidade-fixa`)
 
 - QR Code dinâmico para displays físicos.
-- Landing page própria da unidade (`/parceiro/:slug`).
+- Landing page própria da unidade (`/unidade-fixa/:slug`).
 - Estatísticas de leads originados na unidade.
 
 ### 🟣 Área do Cliente (`/minha-conta`)
@@ -231,4 +231,4 @@ cross-env DATABASE_URL="<DIRECT_URL>" npx prisma db push
 > **Nunca use `DATABASE_URL` apontando para o banco direto em código de produção.** O PgBouncer (Transaction Pooler) é obrigatório para o ambiente serverless da Vercel evitar esgotamento de conexões.
 
 > [!NOTE]
-> O sistema de **self-healing auth** no `AuthController.login` corrige UIDs silenciosamente mas **nunca altera a `role`** do usuário. Qualquer mudança de role deve ser feita via script administrativo ou pelo Admin Tower.
+> O sistema de **self-healing auth** no `AuthController.login` corrige UIDs silenciosamente mas **nunca altera a `role`** do usuário. Qualquer mudança de role deve ser feita via script administrativo ou pelo Admin Tower. As referências visuais a 'Cartório' agora são padronizadas como **'Unidade Fixa'**.

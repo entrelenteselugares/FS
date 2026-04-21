@@ -51,7 +51,6 @@ export const RegisterPage: React.FC = () => {
         navigate(`/public/events/${hasPending}`);
       } else {
         // Senão, vai para o dashboard correto
-        const target = user.role === "ADMIN" ? "/admin" : user.role === "UNIDADE" || user.role === "CARTORIO" ? "/cartorio" : user.role === "PROFISSIONAL" ? "/profissional" : "/#eventos";
         navigate(target);
       }
     } catch (err: unknown) {
@@ -72,7 +71,6 @@ export const RegisterPage: React.FC = () => {
   const roles = [
     { id: "CLIENTE", label: "Cliente Privado", icon: <User size={14} /> },
     { id: "PROFISSIONAL", label: "Artista da Rede", icon: <Camera size={14} /> },
-    { id: "UNIDADE", label: "Unidade Local", icon: <Building2 size={14} /> },
   ];
 
   return (

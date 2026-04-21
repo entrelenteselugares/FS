@@ -31,7 +31,7 @@ export const PartnerLP: React.FC = () => {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    API.get(`/public/partners/${slug}`)
+    API.get(`/public/unidade-fixa/${slug}`)
       .then(res => setData(res.data))
       .catch(() => navigate("/"))
       .finally(() => setLoading(false));
@@ -93,7 +93,7 @@ export const PartnerLP: React.FC = () => {
 
         <div className="relative z-10 text-center px-6 max-w-5xl">
             <motion.div initial={{ opacity: 0, y: 40 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 1, ease: [0.16, 1, 0.3, 1] }}>
-             <div className="text-[11px] font-extrabold uppercase tracking-[0.5em] text-brand-primary mb-6">Ponto Parceiro Autorizado</div>
+             <div className="text-[11px] font-extrabold uppercase tracking-[0.5em] text-brand-primary mb-6">Unidade Fixa Autorizada</div>
              <h1 className="text-6xl md:text-9xl font-black leading-[0.9] mb-10 mobile-hero-title tracking-tighter uppercase" style={{ fontFamily: "'Outfit', sans-serif" }}>
                {partner.razaoSocial}
              </h1>
@@ -110,7 +110,7 @@ export const PartnerLP: React.FC = () => {
         <div>
           <h2 className="text-4xl font-extrabold tracking-tighter mb-10 uppercase" style={{ fontFamily: "'Outfit', sans-serif" }}>Sobre a Unidade</h2>
           <p className="text-theme-muted leading-relaxed tracking-widest text-[12px] font-bold mb-12 uppercase">
-            {partner.description || "Este cartório é um parceiro estratégico da plataforma Foto Segundo, oferecendo infraestrutura otimizada para registros civis de alto padrão. Localizado em área nobre, com iluminação preparada para fotografia profissional e cinema."}
+            {partner.description || "Esta unidade é um parceiro estratégico da plataforma Foto Segundo, oferecendo infraestrutura otimizada para capturas profissionais de alto padrão. Localizada em área nobre, com iluminação preparada para fotografia e cinema."}
           </p>
           
           <div className="space-y-8">
@@ -132,7 +132,7 @@ export const PartnerLP: React.FC = () => {
             <Calendar className="text-brand-primary mb-10" size={56} strokeWidth={1} />
             <h3 className="text-4xl font-extrabold tracking-tighter mb-6 uppercase" style={{ fontFamily: "'Outfit', sans-serif" }}>Agende seu Protocolo</h3>
             <p className="text-theme-muted text-[11px] font-bold uppercase tracking-[0.2em] leading-relaxed mb-12">
-              Solicite cobertura fotográfica ou cinematográfica exclusiva para este local com condições especiais de ponto parceiro.
+              Solicite cobertura fotográfica ou cinematográfica exclusiva para este local com condições especiais de unidade fixa parceira.
             </p>
             <button 
                 onClick={() => navigate(`/cotacao?partner=${partner.slug}`)}
@@ -157,59 +157,47 @@ export const PartnerLP: React.FC = () => {
             </div>
         </div>
 
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-12 md:gap-16">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-12 mobile-gap">
             {recentEvents.length === 0 ? (
-                <div className="col-span-full py-32 text-center text-theme-muted uppercase tracking-[0.4em] text-[10px] border border-dashed border-theme-border">
-                  Os registros deste local estão sendo processados e indexados.
+                <div className="col-span-full py-20 text-center border border-dashed border-theme-border text-[10px] text-theme-muted uppercase tracking-widest">
+                    Aguardando primeiros registros oficiais.
                 </div>
-            ) : recentEvents.map(event => (
+            ) : recentEvents.map((evt) => (
                 <motion.div 
-                    key={event.id}
-                    onClick={() => navigate(`/e/${event.slug || event.id}`)}
-                    whileHover={{ y: -10 }}
+                    key={evt.id} 
+                    whileHover={{ scale: 0.98 }}
+                    onClick={() => navigate(`/eventos/${evt.slug || evt.id}`)}
                     className="group cursor-pointer"
                 >
-                    <div className="aspect-[4/5] overflow-hidden bg-theme-bg-muted relative">
+                    <div className="aspect-[4/5] overflow-hidden mb-8 bg-theme-bg-muted border border-theme-border relative">
                         <img 
-                            src={event.coverPhotoUrl} 
-                            className="w-full h-full object-cover grayscale group-hover:grayscale-0 transition-all duration-1000 ease-out group-hover:scale-105" 
-                            alt="" 
+                            src={evt.coverPhotoUrl || "https://images.unsplash.com/photo-1519741497674-611481863552?w=800"} 
+                            className="w-full h-full object-cover transition-all duration-1000 group-hover:scale-110 grayscale group-hover:grayscale-0"
+                            alt={evt.nomeNoivos} 
                         />
-                        <div className="absolute inset-0 bg-gradient-to-t from-theme-bg/80 via-transparent opacity-60" />
-                        <div className="absolute bottom-0 left-0 p-8">
-                             <h4 className="text-3xl font-extrabold tracking-tighter text-white mb-2 uppercase" style={{ fontFamily: "'Outfit', sans-serif" }}>{event.nomeNoivos}</h4>
-                             <div className="text-[9px] text-brand-primary font-black uppercase tracking-[0.2em]">{new Date(event.dataEvento).toLocaleDateString('pt-BR', { month: 'long', year: 'numeric' })}</div>
+                        <div className="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center">
+                            <span className="text-white text-[10px] font-black uppercase tracking-[0.5em] border border-white/20 px-6 py-3 backdrop-blur-md">Ver Galeria</span>
                         </div>
                     </div>
+                    <h4 className="text-2xl font-black uppercase tracking-tighter mb-1 leading-none">{evt.nomeNoivos}</h4>
+                    <div className="text-[10px] text-theme-muted font-bold uppercase tracking-[0.3em]">{new Date(evt.dataEvento).toLocaleDateString('pt-BR', { year: 'numeric', month: 'short', day: '2-digit' })}</div>
                 </motion.div>
             ))}
         </div>
       </section>
 
-      {/* Footer / Location */}
-      <footer className="py-24 md:py-48 border-t border-theme-border bg-theme-bg-muted/30 mobile-py">
-        <div className="max-w-xl mx-auto text-center px-6">
-            <h3 className="text-3xl font-extrabold tracking-tighter mb-10 uppercase" style={{ fontFamily: "'Outfit', sans-serif" }}>Localização do Protocolo</h3>
-            <p className="text-theme-muted text-[11px] font-bold uppercase tracking-[0.2em] leading-relaxed mb-16">
-                {partner.address || "Endereço em processamento em nossa rede..."}
-            </p>
-            <div className="flex justify-center gap-16">
-                <a href={`tel:${partner.phone}`} className="flex flex-col items-center gap-5 group">
-                    <div className="w-16 h-16 flex items-center justify-center border border-theme-border group-hover:border-theme-text transition-all duration-300">
-                        <Phone size={22} strokeWidth={1} className="text-theme-muted group-hover:text-theme-text" />
-                    </div>
-                    <span className="text-[8px] font-bold uppercase tracking-[0.4em] text-theme-muted group-hover:text-theme-text">Ligar</span>
-                </a>
-                <a href="#" className="flex flex-col items-center gap-5 group">
-                    <div className="w-16 h-16 flex items-center justify-center border border-theme-border group-hover:border-theme-text transition-all duration-300">
-                        <MessageSquare size={22} strokeWidth={1} className="text-theme-muted group-hover:text-theme-text" />
-                    </div>
-                    <span className="text-[8px] font-bold uppercase tracking-[0.4em] text-theme-muted group-hover:text-theme-text">Mensagem</span>
-                </a>
-            </div>
-        </div>
+      {/* Footer / Contact */}
+      <footer className="py-24 md:py-40 bg-zinc-950 text-white text-center mobile-py">
+           <div className="max-w-xl mx-auto px-6">
+                <MessageSquare className="mx-auto mb-10 text-brand-primary" size={40} />
+                <h2 className="text-4xl md:text-6xl font-black tracking-tighter mb-10 leading-none uppercase" style={{ fontFamily: "'Outfit', sans-serif" }}>Dúvidas sobre o Local?</h2>
+                <p className="text-zinc-500 text-[11px] font-bold uppercase tracking-[0.3em] leading-relaxed mb-12">Entre em contato direto com a administração da unidade para suporte logístico e agendamento de visitas técnicas.</p>
+                <div className="flex flex-col gap-4">
+                    <button className="px-12 py-6 bg-brand-primary text-black text-[11px] font-black uppercase tracking-[0.4em] hover:brightness-110 transition-all">WhatsApp Unidade</button>
+                    <button onClick={() => navigate("/")} className="text-[10px] font-bold uppercase tracking-[0.8em] text-zinc-600 hover:text-white transition-colors mt-8">Voltar para Vitrine Global</button>
+                </div>
+           </div>
       </footer>
     </div>
   );
 };
-

@@ -129,11 +129,6 @@ export const AdminUsers: React.FC = () => {
             <div className="grid grid-cols-1 md:grid-cols-12 gap-4 items-center px-6 md:px-10 py-6">
               {/* Perfil */}
               <div className="col-span-2 flex items-center gap-4">
-                <span className={`text-[8px] font-bold uppercase tracking-[0.3em] px-2 py-0.5 border ${
-                  user.role === "ADMIN" ? "border-brand-tactical text-brand-tactical" : "border-theme-border text-theme-muted"
-                }`}>
-                  {user.role}
-                </span>
               </div>
 
               {/* Identificação */}

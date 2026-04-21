@@ -315,7 +315,6 @@ export default function ProfissionalDashboard() {
                     <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start" }}>
                       <div>
                         <h3 style={{ fontSize: 18, fontWeight: 900, color: "#fff", marginBottom: 4, whiteSpace: "nowrap", overflow: "hidden", textOverflow: "ellipsis", textTransform: "uppercase", letterSpacing: -0.5 }}>{ev.nomeNoivos}</h3>
-                        <p style={{ fontSize: 10, color: "var(--theme-text-muted)", marginBottom: 8, fontWeight: 800, textTransform: "uppercase", letterSpacing: 1.5 }}>{formatDate(ev.dataEvento)} · {ev.cartorio || "Unidade Parceira"}</p>
                       </div>
                       
                       {activeTab === "convites" && (

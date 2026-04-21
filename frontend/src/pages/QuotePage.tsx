@@ -346,7 +346,7 @@ export const QuotePage = () => {
                     type="button"
                     onClick={() => setLocationType("PARTNER")}
                     style={{ flex: 1, padding: 15, border: `1px solid ${locationType === "PARTNER" ? THEME.accent : THEME.border}`, background: locationType === "PARTNER" ? `${THEME.accent}10` : "transparent", fontSize: 10, fontWeight: 900, color: locationType === "PARTNER" ? THEME.accent : THEME.text2, cursor: "pointer" }}
-                  >PONTO FIXO</button>
+                  >UNIDADE FIXA</button>
                   <button 
                     type="button"
                     onClick={() => setLocationType("OTHER")}
@@ -356,7 +356,7 @@ export const QuotePage = () => {
 
                 {locationType === "PARTNER" ? (
                   <select required value={selectedPartnerId} onChange={e => setSelectedPartnerId(e.target.value)} className="fs-input" style={{ width: "100%" }}>
-                    <option value="">SELECIONE O PONTO FIXO...</option>
+                    <option value="">SELECIONE A UNIDADE FIXA...</option>
                     {partners.map(p => <option key={p.id} value={p.id}>{p.name.toUpperCase()} - {p.city || 'CAMPINAS'}</option>)}
                   </select>
                 ) : (

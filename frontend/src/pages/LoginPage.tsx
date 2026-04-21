@@ -35,7 +35,7 @@ export const LoginPage: React.FC = () => {
       const destinos: Record<string, string> = {
         ADMIN: "/admin",
         PROFISSIONAL: "/profissional",
-        UNIDADE: "/cartorio",
+        UNIDADE: "/unidade-fixa",
         CLIENTE: "/minha-conta",
       };
 

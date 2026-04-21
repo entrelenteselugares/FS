@@ -22,7 +22,7 @@ interface EventoAgenda {
   _count?: { orders: number };
 }
 
-interface PedidoCartorio {
+interface PedidoUnidade {
   id: string;
   status: string;
   amount: number;
@@ -70,7 +70,6 @@ export default function CartorioDashboard() {
   const [tab, setTab] = useState<Tab>("agenda");
   const [stats, setStats] = useState<CartorioStats | null>(null);
   const [eventos, setEventos] = useState<EventoAgenda[]>([]);
-  const [pedidos, setPedidos] = useState<PedidoCartorio[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
   const [pedidosError, setPedidosError] = useState("");
@@ -113,8 +112,8 @@ export default function CartorioDashboard() {
     setLoading(true);
     try {
       const [statsRes, eventosRes] = await Promise.all([
-        API.get("/cartorio/stats"),
-        API.get("/cartorio/events"),
+        API.get("/unidade-fixa/stats"),
+        API.get("/unidade-fixa/events"),
       ]);
       setStats(statsRes.data);
       setEventos(eventosRes.data.events ?? eventosRes.data);
@@ -133,7 +132,7 @@ export default function CartorioDashboard() {
 
   const loadLpData = async () => {
     try {
-      const { data } = await API.get("/cartorio/stats"); 
+      const { data } = await API.get("/unidade-fixa/stats"); 
       // Re-aproveitando statsRes.data que já incluía cartório
       if (data.cartorio) {
         setLpSlug(data.cartorio.slug ?? "");
@@ -153,7 +152,7 @@ export default function CartorioDashboard() {
   const saveLpProfile = async () => {
     setSavingLp(true);
     try {
-      await API.patch("/partner/profile", {
+      await API.patch("/unidade-fixa/profile", {
         slug: lpSlug,
         address: lpAddress,
         phone: lpPhone,
@@ -172,7 +171,7 @@ export default function CartorioDashboard() {
   const savePixKey = async () => {
     setSavingPix(true);
     try {
-      await API.patch("/partner/profile", { pixKey });
+      await API.patch("/unidade-fixa/profile", { pixKey });
       setSuccess("Chave PIX atualizada com sucesso! 💎");
       setTimeout(() => setSuccess(""), 3000);
     } catch {
@@ -188,7 +187,7 @@ export default function CartorioDashboard() {
       const params = new URLSearchParams();
       if (startDate) params.set("startDate", startDate);
       if (endDate) params.set("endDate", endDate);
-      const { data } = await API.get(`/cartorio/orders?${params}`);
+      const { data } = await API.get(`/unidade-fixa/orders?${params}`);
       setPedidos(data.orders ?? data);
     } catch {
       setPedidosError("Erro ao carregar pedidos. Tente novamente.");
@@ -451,13 +450,13 @@ export default function CartorioDashboard() {
             <div style={{ ...S.card, padding: "2rem", display: "flex", flexDirection: "column", gap: "2rem" }}>
               <div style={{ borderBottom: "1px solid #1a1a1a", paddingBottom: 20 }}>
                 <h3 style={{ fontFamily: "'Outfit', sans-serif", fontSize: 24, fontWeight: 800, color: "#fff", marginBottom: 10 }}>PÁGINA PÚBLICA (SEO)</h3>
-                <p style={{ fontSize: 12, color: "#555" }}>Configure como sua unidade aparece nos motores de busca e para clientes que chegam via link direto.</p>
+                <p style={{ fontSize: 12, color: "#555" }}>Configure como sua unidade fixa aparece nos motores de busca e para clientes que chegam via link direto.</p>
               </div>
 
               <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "2rem" }}>
                 <div>
                   <label style={{ fontSize: 10, fontWeight: 800, color: "#fff", marginBottom: 8, display: "block", textTransform: "uppercase", letterSpacing: 1 }}>Slug URL (/p/xxxx)</label>
-                  <input value={lpSlug} onChange={e => setLpSlug(e.target.value)} style={{ ...S.input, width: "100%" }} placeholder="ex: cartorio-central-campinas" />
+                  <input value={lpSlug} onChange={e => setLpSlug(e.target.value)} style={{ ...S.input, width: "100%" }} placeholder="ex: unidade-centro-campinas" />
                 </div>
                 <div>
                   <label style={{ fontSize: 10, fontWeight: 800, color: "#fff", marginBottom: 8, display: "block", textTransform: "uppercase", letterSpacing: 1 }}>Telefone de Contato</label>
@@ -514,7 +513,7 @@ export default function CartorioDashboard() {
                 <QrCode size={24} />
               </div>
               <h3 style={{ fontSize: 20, fontWeight: 800, color: "#fff", marginBottom: 4 }}>QR Code do Evento</h3>
-              <p style={{ fontSize: 12, color: "#888" }}>Imprima ou compartilhe para que os noivos e convidados acessem o álbum direto do cartório.</p>
+              <p style={{ fontSize: 12, color: "#888" }}>Imprima ou compartilhe para que os noivos e convidados acessem o álbum direto da unidade fixa.</p>
             </div>
 
             <div style={{ background: "#fff", padding: "1.5rem", borderRadius: 12, display: "inline-block", marginBottom: "1.5rem", boxShadow: "0 10px 30px rgba(0,0,0,0.5)" }}>

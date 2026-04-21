@@ -143,10 +143,10 @@ export const AdminFinance: React.FC = () => {
                     <div className="text-[9px] text-brand-tactical font-black bg-brand-tactical/5 p-2 border border-brand-tactical/10">PIX: {order.event.partners.edicao.pixKey || "PENDENTE"}</div>
                   </div>
                 )}
-                {/* Unidade Local */}
+                {/* Unidade Fixa */}
                 {order.event.partners.cartorio && (
                   <div className="space-y-2">
-                    <label className="text-[9px] font-black text-theme-muted uppercase tracking-widest block">Unidade: {order.event.partners.cartorio.nome}</label>
+                    <label className="text-[9px] font-black text-theme-muted uppercase tracking-widest block">Unidade Fixa: {order.event.partners.cartorio.nome}</label>
                     <div className="text-lg text-theme-text font-black">
                       {order.splitCartorio !== undefined && order.splitCartorio !== null
                         ? order.splitCartorio.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' })

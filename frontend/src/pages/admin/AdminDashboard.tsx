@@ -34,7 +34,6 @@ const NAV_ITEMS = (activeTab: string, setActiveTab: (t: string) => void): NavIte
   { label: "Financeiro", onClick: () => setActiveTab("finance"), isActive: activeTab === "finance", icon: <DollarSign size={16} /> },
   { label: "Impressão", onClick: () => setActiveTab("printers"), isActive: activeTab === "printers", icon: <Printer size={16} /> },
   { label: "Serviços", onClick: () => setActiveTab("services"), isActive: activeTab === "services", icon: <Briefcase size={16} /> },
-  { label: "Repasses", onClick: () => setActiveTab("settings"), isActive: activeTab === "settings", icon: <DollarSign size={16} /> },
 ];
 
 interface AdminStats {
