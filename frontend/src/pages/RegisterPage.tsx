@@ -17,6 +17,7 @@ export const RegisterPage: React.FC = () => {
     // Campos Profissional
     habilidades: [] as string[],
     outrasHabilidades: "",
+    equipamento: "",
     // Campos Unidade
     razaoSocial: "",
     endereco: "",
@@ -202,12 +203,22 @@ export const RegisterPage: React.FC = () => {
                   </div>
                 </div>
                 <div className="space-y-4">
-                  <label className="text-[10px] font-bold uppercase tracking-[0.4em] text-theme-muted">Outras Habilidades & Equipamentos</label>
+                  <label className="text-[10px] font-bold uppercase tracking-[0.4em] text-theme-muted">Habilidades Extras</label>
                   <textarea
                     value={formData.outrasHabilidades}
                     onChange={(e) => setFormData({ ...formData, outrasHabilidades: e.target.value })}
                     className="w-full bg-transparent border-b border-theme-border py-3 text-xs text-theme-text placeholder:text-theme-muted/40 focus:outline-none focus:border-brand-tactical transition-all resize-none"
-                    placeholder="EX: DRONE, ILUMINAÇÃO, TRATAMENTO DE COR..."
+                    placeholder="EX: TRATAMENTO DE COR, EDIÇÃO ÁGIL..."
+                    rows={2}
+                  />
+                </div>
+                <div className="space-y-4">
+                  <label className="text-[10px] font-bold uppercase tracking-[0.4em] text-theme-muted">Meus Equipamentos</label>
+                  <textarea
+                    value={formData.equipamento}
+                    onChange={(e) => setFormData({ ...formData, equipamento: e.target.value })}
+                    className="w-full bg-transparent border-b border-theme-border py-3 text-xs text-theme-text placeholder:text-theme-muted/40 focus:outline-none focus:border-brand-tactical transition-all resize-none"
+                    placeholder="EX: DRONE, ILUMINAÇÃO, CÂMERA..."
                     rows={2}
                   />
                 </div>

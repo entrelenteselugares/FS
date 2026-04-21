@@ -153,6 +153,7 @@ model Profissional {
   captPct          Float    @default(30)
   editPct          Float    @default(20)
   otherHabilities  String?
+  equipment        String?
 
   @@map("profissionais")
 }

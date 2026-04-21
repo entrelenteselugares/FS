@@ -168,8 +168,9 @@ export class AuthController {
           await tx.profissional.create({
             data: {
               userId: newUser.id,
-              services: req.body.habilidades || [],
+              services: [], // Especialidades principais (CAPTAÇÃO, EDIÇÃO)
               otherHabilities: req.body.outrasHabilidades || null,
+              equipment: req.body.equipamento || null,
             }
           });
         } else if (finalRole === "UNIDADE" || finalRole === "CARTORIO") {

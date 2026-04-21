@@ -10,6 +10,8 @@ interface User {
   profissional?: {
     captPct: number;
     editPct: number;
+    otherHabilities?: string;
+    equipment?: string;
   };
   unidade?: {
     razaoSocial: string;
@@ -23,7 +25,8 @@ export const AdminUsers: React.FC = () => {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [editingUser, setEditingUser] = useState<User | null>(null);
   const [formData, setFormData] = useState({
-    name: "", email: "", password: "", role: "PROFISSIONAL", pixKey: ""
+    name: "", email: "", password: "", role: "PROFISSIONAL", pixKey: "",
+    otherHabilities: "", equipment: ""
   });
 
   const fetchUsers = async () => {
@@ -56,9 +59,15 @@ export const AdminUsers: React.FC = () => {
       } else {
         await API.post("/admin/users", formData);
       }
+      if (editingUser?.role === "PROFISSIONAL") {
+        await API.patch(`/admin/users/${editingUser.id}`, {
+          otherHabilities: formData.otherHabilities,
+          equipment: formData.equipment
+        });
+      }
       setIsModalOpen(false);
       setEditingUser(null);
-      setFormData({ name: "", email: "", password: "", role: "PROFISSIONAL", pixKey: "" });
+      setFormData({ name: "", email: "", password: "", role: "PROFISSIONAL", pixKey: "", otherHabilities: "", equipment: "" });
       fetchUsers();
     } catch {
       alert("Erro ao processar usuário");
@@ -72,7 +81,9 @@ export const AdminUsers: React.FC = () => {
       email: user.email,
       password: "", // Não carregar senha
       role: user.role,
-      pixKey: user.pixKey || ""
+      pixKey: user.pixKey || "",
+      otherHabilities: user.profissional?.otherHabilities || "",
+      equipment: user.profissional?.equipment || ""
     });
     setIsModalOpen(true);
   };
@@ -178,7 +189,7 @@ export const AdminUsers: React.FC = () => {
                 <div className="w-16 h-1.5 bg-brand-tactical mx-auto md:mx-0" />
               </div>
 
-             <form onSubmit={handleCreate} className="space-y-8">
+             <form onSubmit={handleCreate} className="space-y-6 max-h-[70vh] overflow-y-auto pr-4 custom-scrollbar">
                 <div className="space-y-2">
                   <label className="text-[10px] font-black text-theme-muted uppercase tracking-[0.4em]">Nome Completo</label>
                   <input 
@@ -218,19 +229,30 @@ export const AdminUsers: React.FC = () => {
                       className="w-full bg-transparent border-b border-theme-border py-3 text-sm text-theme-text focus:outline-none focus:border-brand-tactical transition-all rounded-none" 
                     />
                   </div>
-                  <div className="space-y-2">
-                    <label className="text-[10px] font-black text-theme-muted uppercase tracking-[0.4em]">Nível de Acesso</label>
-                    <select 
-                      value={formData.role}
-                      onChange={e => setFormData({...formData, role: e.target.value})}
-                      className="w-full bg-theme-bg-muted border-b border-theme-border py-3 text-sm text-theme-text focus:outline-none focus:border-brand-tactical appearance-none"
-                    >
-                      <option value="PROFISSIONAL">PROFISSIONAL</option>
-                      <option value="CARTORIO">UNIDADE LOCAL</option>
-                      <option value="ADMIN">ADMINISTRADOR</option>
-                    </select>
-                  </div>
                 </div>
+
+                {formData.role === "PROFISSIONAL" && (
+                  <div className="grid grid-cols-1 gap-6 pt-4 border-t border-white/5">
+                    <div className="space-y-2">
+                      <label className="text-[10px] font-black text-theme-muted uppercase tracking-[0.4em]">Habilidades Extras</label>
+                      <textarea 
+                        value={formData.otherHabilities}
+                        onChange={e => setFormData({...formData, otherHabilities: e.target.value})}
+                        className="w-full bg-transparent border-b border-theme-border py-2 text-sm text-theme-text focus:outline-none focus:border-brand-tactical transition-all rounded-none resize-none"
+                        rows={2}
+                      />
+                    </div>
+                    <div className="space-y-2">
+                      <label className="text-[10px] font-black text-theme-muted uppercase tracking-[0.4em]">Meus Equipamentos</label>
+                      <textarea 
+                        value={formData.equipment}
+                        onChange={e => setFormData({...formData, equipment: e.target.value})}
+                        className="w-full bg-transparent border-b border-theme-border py-2 text-sm text-theme-text focus:outline-none focus:border-brand-tactical transition-all rounded-none resize-none"
+                        rows={2}
+                      />
+                    </div>
+                  </div>
+                )}
 
                 <div className="pt-10 flex gap-4">
                   <button 
@@ -240,7 +262,7 @@ export const AdminUsers: React.FC = () => {
                   >
                     {editingUser ? "SALVAR ALTERAÇÕES" : "REGISTRAR"}
                   </button>
-                  <button type="button" onClick={() => { setIsModalOpen(false); setEditingUser(null); setFormData({ name: "", email: "", password: "", role: "PROFISSIONAL", pixKey: "" }); }} className="px-8 border border-theme-border text-theme-muted hover:text-theme-text transition-all rounded-none uppercase text-[10px] font-black tracking-widest">
+                  <button type="button" onClick={() => { setIsModalOpen(false); setEditingUser(null); setFormData({ name: "", email: "", password: "", role: "PROFISSIONAL", pixKey: "", otherHabilities: "", equipment: "" }); }} className="px-8 border border-theme-border text-theme-muted hover:text-theme-text transition-all rounded-none uppercase text-[10px] font-black tracking-widest">
                     CANCELAR
                   </button>
                 </div>

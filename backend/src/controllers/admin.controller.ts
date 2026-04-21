@@ -313,7 +313,7 @@ export async function adminListUsers(req: AuthRequest, res: Response): Promise<v
       select: {
         id: true, nome: true, email: true, role: true, active: true, createdAt: true,
         profissional: {
-          select: { id: true, services: true, cameras: true, captPct: true, editPct: true },
+          select: { id: true, services: true, cameras: true, captPct: true, editPct: true, otherHabilities: true, equipment: true },
         },
         cartorio: { select: { id: true, razaoSocial: true } },
         pixKey: true,
@@ -383,12 +383,14 @@ export async function adminUpdateUser(req: AuthRequest, res: Response): Promise<
     });
 
     // Atualiza percentuais do profissional se enviados
-    if (role === "PROFISSIONAL" && (captPct !== undefined || editPct !== undefined)) {
+    if (role === "PROFISSIONAL" && (captPct !== undefined || editPct !== undefined || req.body.otherHabilities !== undefined || req.body.equipment !== undefined)) {
       await prisma.profissional.update({
         where: { userId: String(id) },
         data: {
           ...(captPct !== undefined && { captPct }),
           ...(editPct !== undefined && { editPct }),
+          ...(req.body.otherHabilities !== undefined && { otherHabilities: req.body.otherHabilities || null }),
+          ...(req.body.equipment !== undefined && { equipment: req.body.equipment || null }),
         },
       });
     }
