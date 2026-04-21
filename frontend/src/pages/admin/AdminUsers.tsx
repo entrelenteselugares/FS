@@ -1,5 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { API } from "../../lib/api";
+import { motion } from "framer-motion";
+import { X } from "lucide-react";
 
 interface User {
   id: string;
@@ -175,18 +177,27 @@ export const AdminUsers: React.FC = () => {
       </div>
 
       {isModalOpen && (
-        <div className="fixed inset-0 bg-theme-bg/95 backdrop-blur-xl z-50 flex items-center justify-center p-6">
-          <div className="w-full max-w-xl bg-theme-bg border border-theme-border p-12 animate-in zoom-in-95 duration-300">
-              <div className="mb-12 text-center md:text-left">
-                <h2 className="text-4xl font-heading text-theme-text uppercase tracking-tighter mb-2">
-                  {editingUser ? "Ajustar Membro" : "Novo Membro"}
-                </h2>
-                <div className="w-16 h-1.5 bg-brand-tactical mx-auto md:mx-0" />
-              </div>
+        <div className="fixed inset-0 z-[100] bg-black/95 backdrop-blur-xl flex items-center justify-center p-4">
+          <motion.div 
+            initial={{ opacity: 0, scale: 0.95 }}
+            animate={{ opacity: 1, scale: 1 }}
+            className="w-full max-w-2xl bg-theme-bg border border-theme-border relative max-h-[90vh] overflow-y-auto lux-card p-6 md:p-12"
+          >
+            <button onClick={() => { setIsModalOpen(false); setEditingUser(null); }} className="absolute top-6 right-6 text-theme-muted hover:text-white transition-colors">
+              <X size={24} />
+            </button>
 
-             <form onSubmit={handleCreate} className="space-y-6 max-h-[70vh] overflow-y-auto pr-4 custom-scrollbar">
-                <div className="space-y-2">
-                  <label className="text-[10px] font-black text-theme-muted uppercase tracking-[0.4em]">Nome Completo</label>
+            <div className="mb-10">
+              <div className="text-proportional text-brand-primary mb-4">Ajuste de Perfil</div>
+              <h2 className="text-2xl md:text-4xl font-heading text-white uppercase tracking-tighter leading-none">
+                {editingUser ? "Ajustar Membro" : "Novo Membro"}
+              </h2>
+            </div>
+
+            <form onSubmit={handleCreate} className="space-y-8">
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+                <div className="space-y-3">
+                  <label className="text-proportional">Nome Completo</label>
                   <input 
                     required
                     value={formData.name}
@@ -225,9 +236,10 @@ export const AdminUsers: React.FC = () => {
                     />
                   </div>
                 </div>
+              </div>
 
-                {formData.role === "PROFISSIONAL" && (
-                  <div className="grid grid-cols-1 gap-6 pt-4 border-t border-white/5">
+              {formData.role === "PROFISSIONAL" && (
+                <div className="grid grid-cols-1 gap-6 pt-4 border-t border-white/5">
                     <div className="space-y-2">
                       <label className="text-[10px] font-black text-theme-muted uppercase tracking-[0.4em]">Habilidades Extras</label>
                       <textarea 
@@ -261,10 +273,10 @@ export const AdminUsers: React.FC = () => {
                     CANCELAR
                   </button>
                 </div>
-             </form>
+              </form>
+            </motion.div>
           </div>
-        </div>
-      )}
+        )}
     </div>
   );
 };

@@ -111,7 +111,7 @@ export const LoginPage: React.FC = () => {
           />
         </div>
         <div className="text-center mb-10">
-          <div className="flex items-center justify-center gap-6 text-[9px] font-bold uppercase tracking-[0.6em] text-theme-muted mb-6">
+          <div className="flex items-center justify-center gap-6 text-proportional mb-6">
             <span className="w-8 h-px bg-theme-border block" />
             Acesso Seguro
             <span className="w-8 h-px bg-theme-border block" />
@@ -120,7 +120,7 @@ export const LoginPage: React.FC = () => {
 
 
         {/* Card */}
-        <div className="bg-theme-bg-muted border border-theme-border p-10 editorial-shadow">
+        <div className="lux-card editorial-shadow">
           {error && (
             <div className="border border-red-400/10 bg-red-400/5 p-5 mb-10 text-center">
               <p className="text-red-400 text-[10px] font-bold uppercase tracking-[0.2em]">{error}</p>

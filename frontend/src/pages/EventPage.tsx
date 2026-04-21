@@ -331,13 +331,13 @@ export default function EventPage() {
       </nav>
 
       {/* Main Content Layout */}
-      <main className="max-w-7xl mx-auto px-6 py-12 md:py-24 grid grid-cols-1 lg:grid-cols-12 gap-12 lg:gap-20 items-start">
+      <main className="max-w-7xl mx-auto px-4 md:px-6 py-12 md:py-24 grid grid-cols-1 lg:grid-cols-12 gap-12 lg:gap-20 items-start">
         
         {/* Left Column: Visual & Header */}
-        <div className="lg:col-span-7 space-y-12">
+        <div className="lg:col-span-7 space-y-8 md:space-y-12">
           
           {/* Immersive Cover */}
-          <div className="relative group overflow-hidden bg-theme-bg-muted aspect-[4/3] md:aspect-[16/9] editorial-shadow">
+          <div className="relative group overflow-hidden bg-theme-bg-muted aspect-[4/3] md:aspect-[16/9] lux-card !p-0 editorial-shadow">
             <AnimatePresence mode="wait">
               <motion.img 
                 key={event.coverPhotoUrl}
@@ -374,12 +374,12 @@ export default function EventPage() {
           </div>
 
           {/* Header Info */}
-          <div className="space-y-6">
+          <div className="space-y-4 md:space-y-6">
             <motion.div 
                initial={{ opacity: 0, y: 20 }}
                animate={{ opacity: 1, y: 0 }}
                transition={{ delay: 0.2 }}
-               className="flex items-center gap-4 text-[10px] font-bold uppercase tracking-[0.5em] text-brand-primary"
+               className="flex items-center gap-4 text-proportional text-brand-primary"
             >
               <div className="w-8 h-[1px] bg-brand-primary/40" />
               {event.cartorio?.razaoSocial ?? event.location}
@@ -389,7 +389,7 @@ export default function EventPage() {
                initial={{ opacity: 0, y: 20 }}
                animate={{ opacity: 1, y: 0 }}
                transition={{ delay: 0.3 }}
-               className="text-5xl md:text-7xl font-extrabold tracking-tighter leading-[1] text-theme-text uppercase"
+               className="heading-luxury text-theme-text"
             >
               {event.nomeNoivos}
             </motion.h1>

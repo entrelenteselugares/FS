@@ -300,11 +300,10 @@ export const QuotePage = () => {
         @media (max-width: 768px) {
           .mobile-grid-1 { grid-template-columns: 1fr !important; }
           .mobile-stack { flex-direction: column !important; align-items: stretch !important; gap: 20px !important; }
-          .mobile-padding { padding: 20px !important; }
+          .mobile-padding { padding: 1.5rem !important; }
           .mobile-text-center { text-align: center !important; }
           .mobile-full { width: 100% !important; }
           .mobile-hide { display: none !important; }
-          .mobile-price { font-size: 32px !important; }
         }
       `}</style>
 
@@ -320,22 +319,14 @@ export const QuotePage = () => {
               }} 
             />
           </div>
-          <div style={{ fontSize: 10, fontWeight: 800, textTransform: "uppercase", letterSpacing: 6, color: THEME.accent, marginBottom: 20 }}>Solicitação de Orçamento</div>
-          <h1 style={{ 
-            fontFamily: THEME.fontD, 
-            fontSize: "clamp(24px, 5.5vw, 42px)", 
-            fontWeight: 900, 
-            textTransform: "uppercase", 
-            lineHeight: 1.1, 
-            letterSpacing: '-0.02em',
-            whiteSpace: "nowrap"
-          }}>
-            ETERNIZE SEU <span style={{ color: THEME.text2 }}>GRANDE DIA</span>
+          <div className="text-proportional text-brand-primary mb-6" style={{ letterSpacing: 6 }}>Solicitação de Orçamento</div>
+          <h1 className="heading-luxury">
+            ETERNIZE SEU <span className="text-theme-text-muted">GRANDE DIA</span>
           </h1>
         </header>
 
         {step === 1 && (
-          <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} className="mobile-padding" style={{ background: THEME.bgCard, border: `1px solid ${THEME.border}`, padding: 40 }}>
+          <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} className="lux-card mobile-padding">
             <div style={{ display: "flex", flexDirection: "column", gap: 30 }}>
 
               {/* 1. Onde será o registro? */}
@@ -428,11 +419,11 @@ export const QuotePage = () => {
 
               <div style={{ borderTop: `1px solid ${THEME.border}`, paddingTop: 30, marginTop: 20 }}>
                  <div className="mobile-stack" style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-end" }}>
-                    {showPrices ? (
-                       <div className="mobile-text-center">
-                         <div style={{ fontSize: 10, fontWeight: 800, color: THEME.text2, textTransform: "uppercase", marginBottom: 5 }}>Investimento Estimado</div>
-                         <div className="mobile-price" style={{ fontFamily: THEME.fontD, fontSize: 44, fontWeight: 900, color: THEME.accent }}>R$ {totalPrice.toFixed(2)}</div>
-                       </div>
+                     {showPrices ? (
+                        <div className="mobile-text-center">
+                          <div className="text-proportional mb-2">Investimento Estimado</div>
+                          <div className="heading-luxury !text-brand-primary">R$ {totalPrice.toFixed(2)}</div>
+                        </div>
                      ) : (
                        <div className="mobile-text-center" style={{ maxWidth: 300 }}>
                          <div style={{ fontSize: 10, fontWeight: 900, color: THEME.accent, textTransform: "uppercase", marginBottom: 5 }}>Análise Sob Demanda</div>

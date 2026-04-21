@@ -78,8 +78,8 @@ export const AdminFinance: React.FC = () => {
     <div className="space-y-12 animate-in fade-in slide-in-from-bottom-4 duration-700">
       <div className="flex items-center justify-between border-b border-white/5 pb-8">
         <div>
-          <h2 className="text-4xl font-heading text-theme-text tracking-tighter uppercase">Central de Repasses</h2>
-          <p className="text-[10px] text-theme-muted uppercase tracking-[0.5em] mt-2 font-bold italic">Modelo Uber — Pagamentos após 7 dias</p>
+          <h2 className="text-2xl md:text-4xl font-heading text-theme-text tracking-tighter uppercase leading-none mb-4">Central de Repasses</h2>
+          <p className="text-proportional italic">Modelo Uber — Pagamentos após 7 dias</p>
         </div>
         <div className="flex bg-white/5 p-1 rounded-none border border-white/5">
           <button 
@@ -105,7 +105,7 @@ export const AdminFinance: React.FC = () => {
             {view === "pending" ? "Nenhum repasse pronto para liberação." : "Nenhum histórico de repasse encontrado."}
           </div>
         ) : orders.map(order => (
-          <div key={order.id} className="bg-theme-bg-muted border border-theme-border p-8 flex flex-col md:flex-row justify-between gap-10">
+          <div key={order.id} className="lux-card flex flex-col md:flex-row justify-between gap-10">
             <div className="flex-1">
               <div className="flex items-center gap-3 mb-4">
                 <span className="text-[8px] font-black uppercase tracking-widest px-2 py-1 border border-brand-tactical text-brand-tactical">PEDIDO APROVADO</span>
@@ -113,8 +113,8 @@ export const AdminFinance: React.FC = () => {
                   {fmtDate(order.updatedAt)}
                 </span>
               </div>
-              <h3 className="text-2xl font-heading text-theme-text uppercase tracking-tighter mb-2 font-black">{order.event.title}</h3>
-              <p className="text-[10px] text-theme-muted font-black uppercase tracking-widest leading-none">Venda Total: {Number(order.amount).toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' })}</p>
+              <h3 className="text-xl md:text-2xl font-heading text-theme-text uppercase tracking-tighter mb-4 font-black">{order.event.title}</h3>
+              <p className="text-proportional !opacity-100 !text-theme-text">Venda Total: {Number(order.amount).toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' })}</p>
               
               <div className="mt-8 grid grid-cols-1 md:grid-cols-3 gap-8">
                 {/* Captação */}
@@ -153,7 +153,7 @@ export const AdminFinance: React.FC = () => {
                         : calculateAmount(order.amount, order.event.partners.cartorio.cartorio.splitPct)
                       }
                     </div>
-                    <div className="text-[9px] text-brand-tactical font-black bg-brand-tactical/5 p-2 border border-brand-tactical/10">PIX: {order.event.partners.cartorio.pixKey || "PENDENTE"}</div>
+                    <div className="text-proportional !opacity-100 !text-brand-primary bg-brand-primary/5 p-3 border border-brand-primary/10 break-all">PIX: {order.event.partners.cartorio.pixKey || "PENDENTE"}</div>
                   </div>
                 )}
               </div>

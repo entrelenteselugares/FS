@@ -275,27 +275,27 @@ export default function UnidadeFixaDashboard() {
         )}
 
         {/* Header */}
-        <div style={{ marginBottom: "2.5rem" }}>
-          <h1 className="mobile-title" style={{ fontSize: 42, fontWeight: 800, color: "var(--theme-text)", marginBottom: 4, textTransform: "uppercase", letterSpacing: "-1px" }}>
+        <div className="mb-12">
+          <h1 className="heading-luxury text-theme-text mb-4">
             {tab === "agenda" ? "Agenda & Eventos" : tab === "pedidos" ? "Repasses" : "Configurações"}
           </h1>
-          <p style={{ fontSize: 11, color: "var(--theme-text-muted)", textTransform: "uppercase", letterSpacing: 2, fontWeight: 600 }}>
-            {unidadeName && `${unidadeName} · `}PAINEL DE GESTÃO TÁTICA (UNIDADE FIXA)
+          <p className="text-proportional">
+            {unidadeName && `${unidadeName} · `}PAINEL DE GESTÃO TÁTICA
           </p>
         </div>
 
         {/* KPIs */}
         {!loading && stats && (
-          <div className="mobile-grid-2" style={{ display: "grid", gridTemplateColumns: "repeat(4, 1fr)", gap: "1rem", marginBottom: "2rem" }}>
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 mb-10">
             {[
               { label: "Eventos este mês", value: String(stats.eventosMes ?? 0) },
               { label: "Total de eventos", value: String(stats.totalEventos ?? 0) },
               { label: "Vendas confirmadas", value: String(stats.totalVendas ?? 0) },
               { label: "Repasse estimado", value: formatCurrency(stats.repasseEstimado ?? 0) },
             ].map((m) => (
-              <div key={m.label} style={{ ...S.card, padding: "1.5rem" }}>
-                <p style={{ fontSize: 10, color: "var(--theme-text-muted)", letterSpacing: 2, textTransform: "uppercase", marginBottom: 12, fontWeight: 700 }}>{m.label}</p>
-                <p style={{ fontSize: 32, fontWeight: 800, color: "var(--theme-text)" }}>{m.value}</p>
+              <div key={m.label} className="lux-card border-l-4 border-l-brand-primary">
+                <p className="text-proportional mb-4">{m.label}</p>
+                <p className="text-3xl font-black text-theme-text">{m.value}</p>
               </div>
             ))}
           </div>

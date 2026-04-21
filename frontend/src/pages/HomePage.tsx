@@ -145,13 +145,7 @@ export const HomePage = () => {
           }
 
           /* Section spacing */
-          section { padding: 2.5rem 20px !important; }
-          .hero-title-mobile { 
-            font-size: 32px !important; 
-            line-height: 1.05 !important; 
-            letter-spacing: -0.03em !important;
-            font-weight: 900 !important;
-          }
+          section { padding: 2.5rem 1rem !important; }
           .hero-mobile-margin { margin: 12px 12px 0 !important; }
 
           /* Event grid on mobile: single column */
@@ -356,14 +350,7 @@ export const HomePage = () => {
             initial={{ opacity: 0, y: 10 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.8 }}
-            style={{ 
-              fontSize: "clamp(9px, 1.2vw, 10px)", 
-              letterSpacing: "0.4em", 
-              textTransform: "uppercase", 
-              color: "rgba(255,255,255,0.6)", 
-              marginBottom: "1rem", 
-              fontWeight: 700 
-            }}
+            className="text-proportional mb-4"
           >
             Coletivo Editorial de Imagem e Cinema
           </motion.p>
@@ -372,17 +359,7 @@ export const HomePage = () => {
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.8, delay: 0.2 }}
-            className="hero-title-mobile"
-            style={{
-              fontFamily: THEME.fontBase,
-              fontWeight: 800,
-              fontSize: "clamp(32px, 6vw, 48px)",
-              lineHeight: 1.1,
-              color: "#FFFFFF",
-              marginBottom: "1.5rem",
-              textTransform: "uppercase",
-              letterSpacing: "-0.02em"
-            }}
+            className="heading-luxury mb-6 text-white"
           >
             Eternizando Cada Segundo.
           </motion.h1>

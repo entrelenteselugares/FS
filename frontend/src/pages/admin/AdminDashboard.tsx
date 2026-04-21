@@ -88,16 +88,13 @@ export const AdminDashboard: React.FC = () => {
     <DashboardLayout title="Operações Centrais" variant="tactical" navItems={NAV_ITEMS(activeTab, setActiveTab)}>
       <div className="p-10 max-w-7xl mx-auto min-h-screen">
         {/* Header Editorial */}
-        <div className="mb-20 animate-in fade-in slide-in-from-left-4 duration-1000">
-          <div className="flex items-center gap-4 mb-10">
-            <div className="w-1.5 h-10 bg-brand-tactical" />
-            <div className="text-[11px] font-black uppercase tracking-[0.6em] text-theme-muted">
-              Operações e Inteligência
-            </div>
+        <div className="mb-8 md:mb-16 animate-in fade-in slide-in-from-left-4 duration-1000">
+          <div className="flex items-center gap-4 text-proportional text-brand-primary mb-4">
+            <div className="w-12 h-[1px] bg-brand-primary/40" />
+            Comando Central
           </div>
-          
-          <h1 className="text-7xl md:text-[140px] font-heading tracking-[-0.05em] text-white mb-10 uppercase font-black leading-none flex flex-col">
-            <span style={{ color: 'var(--brand-tactical)' }}>Ativos</span>
+          <h1 className="heading-luxury text-theme-text">
+            ADMIN <span className="text-theme-text-muted">CONTROL</span>
           </h1>
           
           <p className="text-theme-muted text-[11px] font-bold uppercase tracking-[0.4em] max-w-2xl leading-relaxed opacity-60">

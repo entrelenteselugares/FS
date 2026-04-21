@@ -103,6 +103,7 @@ router.get("/public/contests/hall-of-fame", getHallOfFame);
 router.get("/public/unidade-fixa/:slug", getPartnerLandingData);
 router.get("/share/e/:id", SEOController.getEventPreview);
 router.get("/public/configs/theme", getPublicThemeConfigs);
+router.get("/public/orders/:id", PaymentController.getOrderPublic);
 
 // ── Pagamento ────────────────────────────────────────────────────
 router.post("/checkout", PaymentController.checkout);

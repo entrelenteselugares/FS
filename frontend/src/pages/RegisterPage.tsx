@@ -156,14 +156,14 @@ export const RegisterPage: React.FC = () => {
         className="w-full max-w-2xl relative z-10"
       >
         <div className="text-center mb-16">
-          <div className="text-[10px] font-bold uppercase tracking-[0.6em] text-theme-muted mb-8 font-light">Solicitar Adesão</div>
-          <h1 className="text-5xl md:text-7xl font-sans font-black text-theme-text tracking-tighter mb-4 uppercase">
-            SOLICITAR <span className="text-theme-muted opacity-50">REGISTRO</span>
+          <div className="text-proportional text-brand-primary mb-8">Solicitar Adesão</div>
+          <h1 className="heading-luxury">
+            SOLICITAR <span className="opacity-30">REGISTRO</span>
           </h1>
-          <p className="text-[10px] font-bold uppercase tracking-[0.5em] text-brand-tactical">Protocolo Coletivo de Rede</p>
+          <p className="text-proportional mt-6">Protocolo Coletivo de Rede</p>
         </div>
 
-        <div className="border border-theme-border bg-theme-bg-muted/30 p-8 md:p-16">
+        <div className="lux-card editorial-shadow">
           {error && (
             <div className="border border-red-900/10 bg-red-900/5 text-red-600 text-[10px] font-bold uppercase tracking-[0.2em] p-6 mb-12 text-center font-bold">
               {error}

@@ -42,25 +42,25 @@ export const AdminOverview: React.FC<OverviewProps> = ({ stats, recentOrders, pe
   return (
     <div className="space-y-16 animate-in fade-in slide-in-from-bottom-4 duration-700">
       {/* KPI Section */}
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-px bg-theme-border border border-theme-border shadow-2xl">
-        <div className="bg-theme-bg p-10 border-l-4 border-brand-primary">
-          <div className="text-[10px] font-bold uppercase tracking-[0.4em] text-theme-muted mb-6">Receita Bruta</div>
-          <div className="text-4xl font-sans text-theme-text font-black mb-2 tracking-tighter">R$ {stats?.totalRevenue.toFixed(2)}</div>
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 md:gap-px md:bg-theme-border md:border md:border-theme-border shadow-2xl">
+        <div className="lux-card border-l-4 border-l-brand-primary">
+          <div className="text-proportional mb-6">Receita Bruta</div>
+          <div className="text-3xl md:text-4xl font-sans text-theme-text font-black mb-2 tracking-tighter">R$ {stats?.totalRevenue.toFixed(2)}</div>
           <p className="text-[9px] text-theme-muted uppercase tracking-widest font-black">Protocolos Aprovados</p>
         </div>
-        <div className="bg-theme-bg p-10 border-l border-theme-border/10">
-          <div className="text-[10px] font-bold uppercase tracking-[0.4em] text-theme-muted mb-6">Ativos Reais</div>
-          <div className="text-4xl font-sans text-theme-text font-black mb-2 tracking-tighter">{stats?.activeEvents}</div>
+        <div className="lux-card border-l-4 md:border-l-0 md:border-l border-theme-border/10">
+          <div className="text-proportional mb-6">Ativos Reais</div>
+          <div className="text-3xl md:text-4xl font-sans text-theme-text font-black mb-2 tracking-tighter">{stats?.activeEvents}</div>
           <p className="text-[9px] text-theme-muted uppercase tracking-widest font-black">Eventos em Prateleira</p>
         </div>
-        <div className="bg-theme-bg p-10 border-l border-theme-border/10">
-          <div className="text-[10px] font-bold uppercase tracking-[0.4em] text-theme-muted mb-6">Conversão</div>
-          <div className="text-4xl font-sans text-theme-text font-black mb-2 tracking-tighter">{stats?.totalOrders}</div>
+        <div className="lux-card border-l-4 md:border-l-0 md:border-l border-theme-border/10">
+          <div className="text-proportional mb-6">Conversão</div>
+          <div className="text-3xl md:text-4xl font-sans text-theme-text font-black mb-2 tracking-tighter">{stats?.totalOrders}</div>
           <p className="text-[9px] text-theme-muted uppercase tracking-widest font-black">Vendas Liquidadas</p>
         </div>
-        <div className={`bg-theme-bg p-10 border-l-4 ${Number(stats?.pendingQuotesCount) > 0 ? "border-amber-500 animate-pulse" : "border-theme-border/10"}`}>
-          <div className="text-[10px] font-bold uppercase tracking-[0.4em] text-theme-muted mb-6">Leads Pendentes</div>
-          <div className={`text-4xl font-sans font-black mb-2 tracking-tighter ${(Number(stats?.pendingQuotesCount) > 0) ? "text-amber-500" : "text-theme-text"}`}>
+        <div className={`lux-card border-l-4 ${Number(stats?.pendingQuotesCount) > 0 ? "border-l-amber-500 animate-pulse" : "border-l-theme-border/10"}`}>
+          <div className="text-proportional mb-6">Leads Pendentes</div>
+          <div className={`text-3xl md:text-4xl font-sans font-black mb-2 tracking-tighter ${(Number(stats?.pendingQuotesCount) > 0) ? "text-amber-500" : "text-theme-text"}`}>
             {stats?.pendingQuotesCount || 0}
           </div>
           <p className="text-[9px] text-theme-muted uppercase tracking-widest font-black">Aguardando Precificação</p>

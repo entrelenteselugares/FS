@@ -4,171 +4,125 @@
 @tailwind components;
 @tailwind utilities;
 
-/* ══════════════════════════════════════════════════════════
-   GLOBAL TYPOGRAPHY SYSTEM — OUTFIT SANS
-   ── Dark Mode (default: Midnight Luxury) ─────────────────
-   ══════════════════════════════════════════════════════════ */
-
-/* ── Light Mode (default) ─────────────────────────────── */
 :root {
-  --theme-bg:          #FFFFFF;
-  --theme-bg-muted:    #F8F9FA;
-  --theme-text:        #000000;
-  --theme-text-muted:  #666666;
-  --theme-border:      #E5E5E5;
-  
-  /* Brand Identity */
-  --brand-primary:     #85B9AC;
-  --brand-tactical:    #85B9AC;
-  
-  /* UX Consistency */
-  --theme-bg-nav:      rgba(255, 255, 255, 0.8);
+  --theme-bg: #FFFFFF;
+  --theme-bg-muted: #F8F9FA;
+  --theme-text: #000000;
+  --theme-text-muted: #666666;
+  --theme-border: #E5E5E5;
+  --brand-primary: #85B9AC;
+  --brand-tactical: #85B9AC;
+  --theme-bg-nav: rgba(255, 255, 255, 0.8);
   --theme-text-on-brand: #000000;
-
   color-scheme: light;
 }
 
-/* ── Dark Mode — Applied when html.dark class is present ── */
 html.dark {
-  --theme-bg:          #000000;
-  --theme-bg-muted:    #0A0A0A;
-  --theme-text:        #FFFFFF;
-  --theme-text-muted:  #999999;
-  --theme-border:      #1A1A1A;
-
-  /* Brand Identity */
-  --brand-primary:     #85B9AC;
-  --brand-tactical:    #85B9AC;
-
-  /* UX Consistency */
-  --theme-bg-nav:      rgba(0, 0, 0, 0.8);
+  --theme-bg: #000000;
+  --theme-bg-muted: #0A0A0A;
+  --theme-text: #FFFFFF;
+  --theme-text-muted: #999999;
+  --theme-border: #1A1A1A;
+  --brand-primary: #85B9AC;
+  --brand-tactical: #85B9AC;
+  --theme-bg-nav: rgba(0, 0, 0, 0.8);
   --theme-text-on-brand: #000000;
-
   color-scheme: dark;
 }
 
-/* ══════════════════════════════════════════════════════════
-   BASE LAYER
-   ══════════════════════════════════════════════════════════ */
 @layer base {
-  html {
-    /* Smooth transitions when toggling theme */
-    transition: background-color 0.4s ease, color 0.4s ease;
-  }
-
   body {
     background-color: var(--theme-bg);
     color: var(--theme-text);
     font-family: 'Outfit', sans-serif;
     -webkit-font-smoothing: antialiased;
-    -moz-osx-font-smoothing: grayscale;
-  }
-
-  ::selection {
-    background: var(--brand-primary);
-    color: white;
-  }
-
-  /* Universal typography - all headings and elements use Outfit */
-  h1, h2, h3, h4, h5, h6 {
-    @apply font-sans;
-    font-family: 'Outfit', sans-serif;
   }
 }
 
-/* ══════════════════════════════════════════════════════════
-   COMPONENT LAYER
-   ══════════════════════════════════════════════════════════ */
-@layer components {
-  /* Glass morphism — adapts to theme */
-  .glass {
-    backdrop-filter: blur(20px);
-    -webkit-backdrop-filter: blur(20px);
-    background-color: rgba(255, 255, 255, 0.03);
-    border: 1px solid var(--theme-border);
-  }
+.heading-luxury {
+  font-family: 'Outfit', sans-serif;
+  font-weight: 900;
+  text-transform: uppercase;
+  letter-spacing: -0.05em;
+  line-height: 0.9;
+  font-size: clamp(2rem, 8vw, 8rem);
+}
 
-  html.dark .glass {
-    background-color: rgba(0, 0, 0, 0.03);
-  }
+.text-proportional {
+  font-size: clamp(0.7rem, 2vw, 0.9rem);
+  text-transform: uppercase;
+  letter-spacing: 0.2em;
+  font-weight: 700;
+  opacity: 0.6;
+}
 
-  .glass-card {
-    @apply glass transition-all duration-500;
-  }
+.lux-card {
+  border: 1px solid var(--theme-border);
+  background-color: var(--theme-bg-muted);
+  padding: 1.5rem;
+  transition: all 0.5s;
+}
 
-  /* Legacy button system */
-  .lux-button {
-    @apply relative overflow-hidden px-10 py-4 font-bold uppercase tracking-[0.3em] text-[10px] transition-all active:scale-95;
-  }
+@media (min-width: 768px) {
+  .lux-card { padding: 2.5rem; }
+}
 
-  .lux-button-primary {
-    @apply lux-button;
-    background-color: var(--theme-text);
-    color: var(--theme-bg);
-  }
+.lux-input {
+  width: 100%;
+  background-color: var(--theme-bg-muted);
+  border: 1px solid var(--theme-border);
+  padding: 0.875rem 1rem;
+  font-size: 16px;
+  color: var(--theme-text);
+  outline: none;
+  border-radius: 0;
+}
 
-  .lux-button-tactical {
-    @apply lux-button bg-brand-tactical hover:brightness-110;
-    color: var(--theme-text-on-brand);
-  }
+.lux-button-base {
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  text-transform: uppercase;
+  font-weight: 800;
+  letter-spacing: 0.2em;
+  font-size: 9px;
+  padding: 0.75rem 1.5rem;
+  transition: all 0.2s;
+  cursor: pointer;
+  border: none;
+}
 
-  .lux-button-ghost {
-    @apply lux-button border border-theme-border;
-    color: var(--theme-text);
-  }
-
-  .lux-input {
-    width: 100%;
-    background-color: var(--theme-bg-muted);
-    border: 1px solid var(--theme-border);
-    padding: 1rem 1.25rem;
-    font-size: 0.875rem;
-    color: var(--theme-text);
-    outline: none;
-    transition: border-color 0.2s;
-  }
-  .lux-input::placeholder {
-    color: var(--theme-muted);
-    opacity: 0.5;
-  }
-  .lux-input:focus {
-    border-color: var(--brand-primary);
-  }
-
-  /* Theme-aware scrollbar */
-  ::-webkit-scrollbar {
-    width: 4px;
-  }
-  ::-webkit-scrollbar-track {
-    background: var(--theme-bg);
-  }
-  ::-webkit-scrollbar-thumb {
-    background: var(--theme-border);
-  }
-  ::-webkit-scrollbar-thumb:hover {
-    background: var(--theme-muted);
+@media (min-width: 768px) {
+  .lux-button-base {
+    font-size: 10px;
+    letter-spacing: 0.4em;
+    padding: 1rem 2.5rem;
   }
 }
 
-/* ══════════════════════════════════════════════════════════
-   ANIMATIONS
-   ══════════════════════════════════════════════════════════ */
+.lux-button-primary {
+  background-color: var(--theme-text);
+  color: var(--theme-bg);
+}
+
+.lux-button-tactical {
+  background-color: var(--brand-tactical);
+  color: var(--theme-text-on-brand);
+}
+
+.lux-button-ghost {
+  background-color: transparent;
+  color: var(--theme-text);
+  border: 1px solid var(--theme-border);
+}
+
 @keyframes reveal {
   from { opacity: 0; transform: translateY(12px); }
   to   { opacity: 1; transform: translateY(0); }
 }
 
-@keyframes spin {
-  to { transform: rotate(360deg); }
-}
-
 .animate-reveal {
   animation: reveal 0.9s cubic-bezier(0.16, 1, 0.3, 1) forwards;
 }
-
-.delay-100 { animation-delay: 0.1s; }
-.delay-200 { animation-delay: 0.2s; }
-.delay-300 { animation-delay: 0.3s; }
-.delay-400 { animation-delay: 0.4s; }
-.delay-500 { animation-delay: 0.5s; }
-

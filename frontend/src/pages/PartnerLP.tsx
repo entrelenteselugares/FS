@@ -93,11 +93,11 @@ export const PartnerLP: React.FC = () => {
 
         <div className="relative z-10 text-center px-6 max-w-5xl">
             <motion.div initial={{ opacity: 0, y: 40 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 1, ease: [0.16, 1, 0.3, 1] }}>
-             <div className="text-[11px] font-extrabold uppercase tracking-[0.5em] text-brand-primary mb-6">Unidade Fixa Autorizada</div>
-             <h1 className="text-6xl md:text-9xl font-black leading-[0.9] mb-10 mobile-hero-title tracking-tighter uppercase" style={{ fontFamily: "'Outfit', sans-serif" }}>
+             <div className="text-proportional text-brand-primary mb-6">Unidade Fixa Autorizada</div>
+             <h1 className="heading-luxury mb-10 text-white">
                {partner.razaoSocial}
              </h1>
-             <div className="flex flex-wrap justify-center gap-8 text-[11px] font-bold uppercase tracking-[0.2em] text-theme-muted">
+             <div className="flex flex-wrap justify-center gap-8 text-proportional">
                <div className="flex items-center gap-3"><MapPin size={14} className="text-brand-primary" /> {partner.address || "Campinas, SP"}</div>
                <div className="flex items-center gap-3"><Phone size={14} className="text-brand-primary" /> {partner.phone || "(19) 98765-4321"}</div>
              </div>
@@ -106,9 +106,9 @@ export const PartnerLP: React.FC = () => {
       </section>
 
       {/* Info Sections */}
-      <section className="max-w-7xl mx-auto px-6 grid grid-cols-1 lg:grid-cols-2 gap-20 py-24 md:py-40 border-b border-theme-border mobile-py">
+      <section className="max-w-7xl mx-auto px-6 grid grid-cols-1 lg:grid-cols-2 gap-12 lg:gap-20 py-12 md:py-24 border-b border-theme-border">
         <div>
-          <h2 className="text-4xl font-extrabold tracking-tighter mb-10 uppercase" style={{ fontFamily: "'Outfit', sans-serif" }}>Sobre a Unidade</h2>
+          <h2 className="text-3xl md:text-5xl font-black tracking-tighter mb-10 uppercase leading-none">Sobre a Unidade</h2>
           <p className="text-theme-muted leading-relaxed tracking-widest text-[12px] font-bold mb-12 uppercase">
             {partner.description || "Esta unidade é um parceiro estratégico da plataforma Foto Segundo, oferecendo infraestrutura otimizada para capturas profissionais de alto padrão. Localizada em área nobre, com iluminação preparada para fotografia e cinema."}
           </p>
@@ -128,9 +128,9 @@ export const PartnerLP: React.FC = () => {
           </div>
         </div>
 
-        <div className="bg-theme-bg-muted border border-theme-border p-10 md:p-20 flex flex-col justify-center items-center text-center backdrop-blur-sm">
+        <div className="lux-card flex flex-col justify-center items-center text-center">
             <Calendar className="text-brand-primary mb-10" size={56} strokeWidth={1} />
-            <h3 className="text-4xl font-extrabold tracking-tighter mb-6 uppercase" style={{ fontFamily: "'Outfit', sans-serif" }}>Agende seu Protocolo</h3>
+            <h3 className="text-2xl md:text-4xl font-black tracking-tighter mb-6 uppercase leading-none">Agende seu Protocolo</h3>
             <p className="text-theme-muted text-[11px] font-bold uppercase tracking-[0.2em] leading-relaxed mb-12">
               Solicite cobertura fotográfica ou cinematográfica exclusiva para este local com condições especiais de unidade fixa parceira.
             </p>

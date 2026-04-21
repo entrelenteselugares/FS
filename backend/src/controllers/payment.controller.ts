@@ -351,4 +351,44 @@ export class PaymentController {
       });
     }
   }
+  /**
+   * GET /api/public/orders/:id
+   * Busca resumo do pedido para o checkout público.
+   */
+  static async getOrderPublic(req: Request, res: Response) {
+    const { id } = req.params;
+
+    try {
+      const order = await prisma.order.findUnique({
+        where: { id },
+        include: {
+          event: {
+            select: {
+              nomeNoivos: true,
+              dataEvento: true,
+              location: true,
+              coverPhotoUrl: true,
+              isCrowdfund: true
+            }
+          }
+        }
+      });
+
+      if (!order) return res.status(404).json({ error: "Pedido não localizado." });
+
+      return res.json({
+        id: order.id,
+        amount: order.valor,
+        status: order.status,
+        event: order.event,
+        isContribution: order.isContribution,
+        contributorName: order.contributorName
+      });
+
+    } catch (error) {
+      console.error("[GetOrderPublic Error]:", error);
+      return res.status(500).json({ error: "Erro ao recuperar dados do pedido." });
+    }
+  }
 }
+

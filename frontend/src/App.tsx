@@ -18,6 +18,7 @@ import { QuotePage } from "./pages/QuotePage";
 import { HallOfFame } from "./pages/HallOfFame";
 import { PartnerLP } from "./pages/PartnerLP";
 import { NotFoundPage } from "./pages/NotFoundPage";
+import { CheckoutPage } from "./pages/CheckoutPage";
 import { useState, useEffect } from "react";
 import { API as api } from "./lib/api";
 
@@ -59,6 +60,8 @@ const AnimatedRoutes = () => {
           <Route path="/hall-da-fama" element={<HallOfFame />} />
           <Route path="/concursos" element={<HallOfFame />} />
           <Route path="/p/:slug" element={<PartnerLP />} />
+          <Route path="/checkout" element={<CheckoutPage />} />
+          <Route path="/checkout/:orderId" element={<CheckoutPage />} />
 
           {/* Redireciona para o painel correto */}
           <Route path="/dashboard" element={
