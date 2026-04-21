@@ -79,5 +79,14 @@ export async function runExpirationJob(): Promise<void> {
     }
   }
 
-  console.log(`[EXPIRATION JOB] Concluído. ${proximosDeExpirar.length} avisos, ${expirados.length} exclusões.`);
+  // ── 3. Limpeza de Curtidas Expiradas (Gamificação) ──
+  const curtidasExpiradas = await prisma.photoLike.deleteMany({
+    where: { expiresAt: { lt: now } },
+  });
+
+  if (curtidasExpiradas.count > 0) {
+    console.log(`[EXPIRATION JOB] Limpeza: ${curtidasExpiradas.count} curtidas expiradas removidas.`);
+  }
+
+  console.log(`[EXPIRATION JOB] Concluído. ${proximosDeExpirar.length} avisos, ${expirados.length} exclusões, ${curtidasExpiradas.count} curtidas limpas.`);
 }

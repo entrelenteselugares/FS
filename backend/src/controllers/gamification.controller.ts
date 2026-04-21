@@ -1,6 +1,7 @@
 import { Request, Response } from "express";
-import { prisma } from "../lib/prisma";
+import prisma from "../lib/prisma";
 import { AuthRequest } from "../lib/auth";
+import { logger } from "../lib/logger";
 
 
 // ── CURTIDAS ──────────────────────────────────────────
@@ -57,7 +58,7 @@ export async function likePhoto(req: AuthRequest, res: Response): Promise<void> 
       return;
     }
 
-    const expiresAt = new Date(Date.now() + 365 * 24 * 60 * 60 * 1000);
+    const expiresAt = new Date(Date.now() + 90 * 24 * 60 * 60 * 1000); // Expiração em 90 dias
 
     // Cria a curtida (unique constraint evita duplicata)
     try {
@@ -70,9 +71,10 @@ export async function likePhoto(req: AuthRequest, res: Response): Promise<void> 
         await prisma.userPoints.upsert({
           where: { userId: haPublicOrder.clienteId },
           create: { userId: haPublicOrder.clienteId, total: 1 },
-          update: { total: { increment: 1 } },
         });
       }
+
+      await logger.info(userId, "PHOTO_LIKED", { eventId: event.id, photoUrl });
     } catch (err: any) {
       if (err.code === "P2002") {
         // Já curtiu — remove a curtida (toggle)
@@ -84,13 +86,14 @@ export async function likePhoto(req: AuthRequest, res: Response): Promise<void> 
           },
         });
 
-        // Remove ponto do titular
         if (haPublicOrder.clienteId) {
           await prisma.userPoints.update({
             where: { userId: haPublicOrder.clienteId },
             data: { total: { decrement: 1 } },
           });
         }
+
+        await logger.info(userId, "PHOTO_UNLIKED", { eventId: event.id, photoUrl });
 
         const totalLikes = await prisma.photoLike.count({
           where: { eventId: event.id, photoUrl },
@@ -248,6 +251,14 @@ export async function redeemPrint(req: AuthRequest, res: Response): Promise<void
 
     // Cria o resgate em transaction
     const redemption = await prisma.$transaction(async (tx) => {
+      // Re-validação atômica de saldo dentro da transação
+      const pointsTx = await tx.userPoints.findUnique({ where: { userId } });
+      const availableTx = (pointsTx?.total ?? 0) - (pointsTx?.redeemed ?? 0);
+
+      if (availableTx < pkg.points) {
+        throw new Error(`Saldo insuficiente verificado durante a transação (${availableTx} pts)`);
+      }
+
       const r = await tx.printRedemption.create({
         data: {
           userId,
@@ -267,6 +278,13 @@ export async function redeemPrint(req: AuthRequest, res: Response): Promise<void
       await tx.userPoints.update({
         where: { userId },
         data: { redeemed: { increment: pkg.points } },
+      });
+
+      // Log de Auditoria
+      await logger.info(userId, "GIFT_REDEEMED", { 
+        packageType, 
+        quantity: pkg.quantity, 
+        pointsUsed: pkg.points 
       });
 
       return r;
