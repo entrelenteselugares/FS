@@ -94,7 +94,26 @@ export class AuthController {
       if (!supabaseUser) throw new Error("Usuário não retornado pelo Supabase");
 
       // 3. Buscar perfil no Prisma usando o UID do Supabase
-      const user = await prisma.user.findUnique({ where: { id: supabaseUser.id } });
+      let user = await prisma.user.findUnique({ where: { id: supabaseUser.id } });
+      
+      if (!user) {
+        console.log(`[AUTH] UID mismatch detected for ${supabaseUser.email}. Attempting self-healing...`);
+        // Fallback: Buscar por e-mail e corrigir o ID caso coincida
+        const userByEmail = await prisma.user.findUnique({ where: { email: supabaseUser.email } });
+        
+        if (userByEmail) {
+          console.log(`[AUTH] Fixing UID for ${supabaseUser.email}: ${userByEmail.id} -> ${supabaseUser.id}`);
+          // Usamos raw query para trocar a PK (id) de forma segura
+          await prisma.$executeRawUnsafe(
+            `UPDATE users SET id = $1 WHERE email = $2`,
+            supabaseUser.id,
+            supabaseUser.email
+          );
+          // Recarrega o usuário com o novo ID
+          user = await prisma.user.findUnique({ where: { id: supabaseUser.id } });
+        }
+      }
+
       if (!user) {
         return res.status(404).json({ error: "Perfil não encontrado no banco de dados. Contate o suporte." });
       }
