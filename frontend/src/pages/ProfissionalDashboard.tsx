@@ -2,7 +2,7 @@ import { useState, useEffect, useRef, useCallback } from "react";
 import { useNavigate } from "react-router-dom";
 import { useAuth } from "../hooks/useAuth";
 import { API } from "../lib/api";
-import { List, Calendar as CalendarIcon, TrendingUp, DollarSign, Award, ChevronLeft, ChevronRight } from "lucide-react";
+import { List, Calendar as CalendarIcon, TrendingUp, DollarSign, Award, ChevronLeft, ChevronRight, Settings, MessageCircle, Check, X, ShieldCheck, HardDrive } from "lucide-react";
 
 interface EventItem {
   id: string;
@@ -18,7 +18,17 @@ interface EventItem {
   temReels: boolean;
   temFotoImpressa: boolean;
   eventHours: number | null;
+  captacaoId: string | null;
+  captacaoStatus: "PENDING" | "ACCEPTED" | "REJECTED";
+  edicaoId: string | null;
+  edicaoStatus: "PENDING" | "ACCEPTED" | "REJECTED";
   _count: { pedidos: number };
+}
+
+interface ProfileData {
+  services: string[];
+  equipment: string | null;
+  otherHabilities: string | null;
 }
 
 type SaveStatus = "idle" | "saving" | "saved" | "error";
@@ -89,8 +99,10 @@ export default function ProfissionalDashboard() {
   const [events, setEvents] = useState<EventItem[]>([]);
   const [loading, setLoading] = useState(true);
   const [selected, setSelected] = useState<EventItem | null>(null);
-  const [viewTab, setViewTab] = useState<"lista" | "calendario">("lista");
   const [currentMonth, setCurrentMonth] = useState(new Date());
+  const [profile, setProfile] = useState<ProfileData | null>(null);
+  const [isProfileOpen, setIsProfileOpen] = useState(false);
+  const [activeTab, setActiveTab] = useState<"agenda" | "convites">("agenda");
 
   // Cálculos financeiros (Estimatativa: R$ 40 por venda ou 20% do ticket médio)
   const ESTIMATED_PER_SALE = 40; 
@@ -107,11 +119,33 @@ export default function ProfissionalDashboard() {
   const revenueThisMonth = salesThisMonth * ESTIMATED_PER_SALE;
 
   useEffect(() => {
+    fetchEvents();
+    fetchProfile();
+  }, []);
+
+  const fetchEvents = () => {
+    setLoading(true);
     API.get("/profissional/events")
       .then((r) => setEvents(r.data))
       .catch((err) => console.error("Erro ao buscar eventos:", err))
       .finally(() => setLoading(false));
-  }, []);
+  };
+
+  const fetchProfile = () => {
+    API.get("/profissional/me")
+      .then((r) => setProfile(r.data))
+      .catch((err) => console.error("Erro ao buscar perfil:", err));
+  };
+
+  const handleRespond = async (eventId: string, status: "ACCEPTED" | "REJECTED") => {
+    try {
+      await API.patch(`/profissional/events/${eventId}/respond`, { status });
+      fetchEvents(); // Recarrega
+    } catch (err) {
+      console.error("Erro ao responder convite:", err);
+      alert("Erro ao processar resposta.");
+    }
+  };
 
   const handleUpdated = useCallback((updated: Partial<EventItem>) => {
     setSelected((prev) => prev ? { ...prev, ...updated } : prev);
@@ -119,6 +153,21 @@ export default function ProfissionalDashboard() {
       prev.map((e) => (selected && e.id === selected.id ? { ...e, ...updated } : e))
     );
   }, [selected]);
+
+  // Filtros de eventos
+  const pendingEvents = events.filter(ev => {
+    const isCaptacao = ev.captacaoId === user?.id && ev.captacaoStatus === "PENDING";
+    const isEdicao = ev.edicaoId === user?.id && ev.edicaoStatus === "PENDING";
+    return isCaptacao || isEdicao;
+  });
+
+  const acceptedEvents = events.filter(ev => {
+    const isCaptacao = ev.captacaoId === user?.id && ev.captacaoStatus === "ACCEPTED";
+    const isEdicao = ev.edicaoId === user?.id && ev.edicaoStatus === "ACCEPTED";
+    return isCaptacao || isEdicao;
+  });
+
+  const displayEvents = activeTab === "agenda" ? acceptedEvents : pendingEvents;
 
   return (
     <div style={S.page}>
@@ -149,6 +198,12 @@ export default function ProfissionalDashboard() {
             <div style={{ fontSize: 11, color: "var(--theme-text)", fontWeight: 700, textTransform: "uppercase" }}>{user?.nome}</div>
             <p style={{ fontSize: 9, color: "var(--brand-primary)", margin: 0, fontWeight: 900, textTransform: "uppercase", letterSpacing: 1 }}>PROFISSIONAL</p>
           </div>
+          <button 
+            onClick={() => setIsProfileOpen(true)}
+            style={{ background: "rgba(133,185,172,0.1)", border: "1px solid var(--brand-primary)", borderRadius: 0, padding: "8px 14px", color: "var(--brand-primary)", fontSize: 10, fontWeight: 700, textTransform: "uppercase", cursor: "pointer", display: "flex", alignItems: "center", gap: 6 }}
+          >
+            <Settings size={12} /> <span className="mobile-hide">Perfil</span>
+          </button>
           <button onClick={logout} style={{ background: "none", border: "1px solid var(--theme-border)", borderRadius: 0, padding: "8px 14px", color: "var(--theme-text-muted)", fontSize: 10, fontWeight: 700, textTransform: "uppercase", cursor: "pointer" }}>
             Sair
           </button>
@@ -178,10 +233,40 @@ export default function ProfissionalDashboard() {
           </div>
         </div>
 
+        {/* SUB HEADER SUPPORT */}
+        <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", background: "rgba(133,185,172,0.05)", border: "1px solid var(--brand-primary)", padding: "1.5rem 2rem", marginBottom: "3rem" }}>
+          <div>
+            <h4 style={{ fontSize: 13, fontWeight: 900, color: "var(--brand-primary)", margin: 0, textTransform: "uppercase" }}>Apoio à Rede Profissional</h4>
+            <p style={{ fontSize: 10, color: "var(--theme-text-muted)", margin: "4px 0 0 0" }}>Problemas técnicos ou dúvidas sobre pagamentos?</p>
+          </div>
+          <a 
+            href="https://wa.me/5519984470420" 
+            target="_blank" 
+            rel="noopener noreferrer"
+            style={{ textDecoration: "none", background: "var(--brand-primary)", color: "#000", padding: "12px 20px", fontSize: 10, fontWeight: 900, textTransform: "uppercase", display: "flex", alignItems: "center", gap: 8, transition: "all .3s" }}
+          >
+            <MessageCircle size={14} /> Falar com Matriz
+          </a>
+        </div>
+
         <div className="mobile-stack" style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: "2rem" }}>
-          <h2 style={{ fontSize: 24, fontWeight: 900, color: "#fff", textTransform: "uppercase", letterSpacing: -0.5 }}>Meus compromissos</h2>
+          <div style={{ display: "flex", gap: "2rem", borderBottom: "1px solid var(--theme-border)", width: "100%", maxWidth: 600 }}>
+             <button 
+              onClick={() => setActiveTab("agenda")}
+              style={{ padding: "0 0 16px 0", border: "none", background: "none", borderBottom: activeTab === "agenda" ? "2px solid var(--brand-primary)" : "2px solid transparent", color: activeTab === "agenda" ? "var(--theme-text)" : "var(--theme-text-muted)", fontSize: 13, fontWeight: 900, cursor: "pointer", transition: "all .2s" }}
+            >
+              MINHA AGENDA
+            </button>
+            <button 
+              onClick={() => setActiveTab("convites")}
+              style={{ padding: "0 0 16px 0", border: "none", background: "none", borderBottom: activeTab === "convites" ? "2px solid var(--brand-primary)" : "2px solid transparent", color: activeTab === "convites" ? "var(--theme-text)" : "var(--theme-text-muted)", fontSize: 13, fontWeight: 900, cursor: "pointer", transition: "all .2s", position: "relative" }}
+            >
+              CONVITES PENDENTES
+              {pendingEvents.length > 0 && <span style={{ position: "absolute", top: -8, right: -12, background: "#ef4444", color: "#fff", fontSize: 9, width: 16, height: 16, borderRadius: "50%", display: "flex", alignItems: "center", justifyContent: "center" }}>{pendingEvents.length}</span>}
+            </button>
+          </div>
           
-          <div style={{ display: "flex", background: "rgba(255,255,255,0.02)", padding: 4, borderRadius: 8, border: "0.5px solid #1a1a1a" }}>
+          <div className="mobile-hide" style={{ display: "flex", background: "rgba(255,255,255,0.02)", padding: 4, borderRadius: 8, border: "0.5px solid #1a1a1a" }}>
             <button 
               onClick={() => setViewTab("lista")}
               style={{ padding: "8px 16px", border: "none", background: viewTab === "lista" ? "rgba(133,185,172,0.1)" : "transparent", color: viewTab === "lista" ? "var(--brand-primary)" : "#555", fontSize: 10, fontWeight: 900, borderRadius: 6, cursor: "pointer", transition: "all .2s", display: "flex", alignItems: "center", gap: 6 }}
@@ -192,7 +277,7 @@ export default function ProfissionalDashboard() {
               onClick={() => setViewTab("calendario")}
               style={{ padding: "8px 16px", border: "none", background: viewTab === "calendario" ? "rgba(133,185,172,0.1)" : "transparent", color: viewTab === "calendario" ? "var(--brand-primary)" : "#555", fontSize: 10, fontWeight: 900, borderRadius: 6, cursor: "pointer", transition: "all .2s", display: "flex", alignItems: "center", gap: 6 }}
             >
-              <CalendarIcon size={14} /> CALENDÁRIO
+               <CalendarIcon size={14} /> CALENDÁRIO
             </button>
           </div>
         </div>
@@ -201,23 +286,23 @@ export default function ProfissionalDashboard() {
           <div className="mobile-grid-1" style={{ display: "grid", gridTemplateColumns: selected ? "1fr 440px" : "1fr", gap: "2.5rem", animation: "fadeIn 0.4s ease-out" }}>
             {/* LISTA */}
             <div style={{ display: "flex", flexDirection: "column", gap: 14 }}>
-              {loading ? (
+            {loading ? (
                 <div style={{ padding: "4rem", textAlign: "center", color: "#444", fontSize: 11, textTransform: "uppercase", letterSpacing: 2 }}>INDEXANDO...</div>
-              ) : events.length === 0 ? (
+              ) : displayEvents.length === 0 ? (
                 <div style={{ padding: "6rem 0", textAlign: "center", background: "rgba(255,255,255,0.01)", border: "1px dashed #222" }}>
-                  <p style={{ color: "#444", fontSize: 12, textTransform: "uppercase", letterSpacing: 1 }}>Você ainda não possui eventos vinculados.</p>
+                  <p style={{ color: "#444", fontSize: 12, textTransform: "uppercase", letterSpacing: 1 }}>{activeTab === "agenda" ? "Você ainda não possui eventos confirmados." : "Nenhum convite pendente momento."}</p>
                 </div>
-              ) : events.map((ev) => (
+              ) : displayEvents.map((ev) => (
                 <div 
                   key={ev.id} 
-                  onClick={() => setSelected(selected?.id === ev.id ? null : ev)}
+                  onClick={() => activeTab === "agenda" && setSelected(selected?.id === ev.id ? null : ev)}
                   className="lux-card"
                   style={{ 
                     ...S.card, 
                     padding: "1.25rem", 
                     display: "flex", 
                     gap: "1.5rem", 
-                    cursor: "pointer",
+                    cursor: activeTab === "agenda" ? "pointer" : "default",
                     borderColor: selected?.id === ev.id ? "var(--brand-primary)" : "var(--theme-border)",
                     background: selected?.id === ev.id ? "rgba(133,185,172,0.03)" : "var(--theme-bg-muted)"
                   }}
@@ -226,21 +311,49 @@ export default function ProfissionalDashboard() {
                     {ev.coverPhotoUrl ? <img src={ev.coverPhotoUrl} alt="" style={{ width: "100%", height: "100%", objectFit: "cover", opacity: 0.8 }} /> : <div style={{ width: "100%", height: "100%", display: "flex", alignItems: "center", justifyContent: "center", fontSize: 24 }}>📦</div>}
                   </div>
                   <div style={{ flex: 1, minWidth: 0, display: "flex", flexDirection: "column", justifyContent: "center" }}>
-                    <h3 style={{ fontSize: 18, fontWeight: 900, color: "#fff", marginBottom: 4, whiteSpace: "nowrap", overflow: "hidden", textOverflow: "ellipsis", textTransform: "uppercase", letterSpacing: -0.5 }}>{ev.nomeNoivos}</h3>
-                    <p style={{ fontSize: 10, color: "var(--theme-text-muted)", marginBottom: 8, fontWeight: 800, textTransform: "uppercase", letterSpacing: 1.5 }}>{formatDate(ev.dataEvento)} · {ev.cartorio || "Unidade Parceira"}</p>
+                    <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start" }}>
+                      <div>
+                        <h3 style={{ fontSize: 18, fontWeight: 900, color: "#fff", marginBottom: 4, whiteSpace: "nowrap", overflow: "hidden", textOverflow: "ellipsis", textTransform: "uppercase", letterSpacing: -0.5 }}>{ev.nomeNoivos}</h3>
+                        <p style={{ fontSize: 10, color: "var(--theme-text-muted)", marginBottom: 8, fontWeight: 800, textTransform: "uppercase", letterSpacing: 1.5 }}>{formatDate(ev.dataEvento)} · {ev.cartorio || "Unidade Parceira"}</p>
+                      </div>
+                      
+                      {activeTab === "convites" && (
+                        <div style={{ display: "flex", gap: 10 }}>
+                          <button 
+                            onClick={(e) => { e.stopPropagation(); handleRespond(ev.id, "REJECTED"); }}
+                            style={{ background: "rgba(239, 68, 68, 0.1)", color: "#ef4444", border: "1px solid #ef4444", padding: "8px 12px", fontSize: 9, fontWeight: 900, textTransform: "uppercase", cursor: "pointer", display: "flex", alignItems: "center", gap: 4 }}
+                          >
+                            <X size={12} /> Recusar
+                          </button>
+                          <button 
+                            onClick={(e) => { e.stopPropagation(); handleRespond(ev.id, "ACCEPTED"); }}
+                            style={{ background: "var(--brand-primary)", color: "#000", border: "none", padding: "8px 12px", fontSize: 9, fontWeight: 900, textTransform: "uppercase", cursor: "pointer", display: "flex", alignItems: "center", gap: 4 }}
+                          >
+                            <Check size={12} /> Aceitar
+                          </button>
+                        </div>
+                      )}
+                    </div>
                     
                     <div className="mobile-stack" style={{ display: "flex", gap: "1.5rem", alignItems: "center" }}>
-                      {ev.temFoto && <DeadlineTimer event={ev} type="FOTO" />}
-                      {ev.temVideo && <DeadlineTimer event={ev} type="VIDEO" />}
+                       {(ev.captacaoId === user?.id) && <div style={{ fontSize: 9, background: "rgba(133,185,172,0.1)", color: "var(--brand-primary)", padding: "4px 8px", fontWeight: 700, textTransform: "uppercase", border: "1px solid var(--brand-primary)" }}>Captador</div>}
+                       {(ev.edicaoId === user?.id) && <div style={{ fontSize: 9, background: "rgba(133,185,172,0.1)", color: "var(--brand-primary)", padding: "4px 8px", fontWeight: 700, textTransform: "uppercase", border: "1px solid var(--brand-primary)" }}>Editor</div>}
                       
                       <div className="mobile-hide" style={{ flex: 1 }} />
-                      <div style={{ textAlign: "right" }}>
-                         <div style={{ display: "flex", alignItems: "center", gap: 6, justifyContent: "flex-end" }}>
-                           {ev._count.pedidos > 5 && <span style={{ fontSize: 12 }}>🔥</span>}
-                           <p style={{ fontSize: 18, fontWeight: 900, color: ev._count.pedidos > 0 ? "var(--brand-primary)" : "var(--theme-text-muted)", letterSpacing: -1, margin: 0 }}>{ev._count?.pedidos}</p>
-                         </div>
-                         <p style={{ fontSize: 8, color: "var(--theme-text-muted)", fontWeight: 900, textTransform: "uppercase", letterSpacing: 1, margin: 0 }}>Vendas</p>
-                      </div>
+                      
+                      {activeTab === "agenda" && (
+                        <>
+                          {ev.temFoto && <DeadlineTimer event={ev} type="FOTO" />}
+                          {ev.temVideo && <DeadlineTimer event={ev} type="VIDEO" />}
+                          <div style={{ textAlign: "right" }}>
+                             <div style={{ display: "flex", alignItems: "center", gap: 6, justifyContent: "flex-end" }}>
+                               {ev._count.pedidos > 5 && <span style={{ fontSize: 12 }}>🔥</span>}
+                               <p style={{ fontSize: 18, fontWeight: 900, color: ev._count.pedidos > 0 ? "var(--brand-primary)" : "var(--theme-text-muted)", letterSpacing: -1, margin: 0 }}>{ev._count?.pedidos}</p>
+                             </div>
+                             <p style={{ fontSize: 8, color: "var(--theme-text-muted)", fontWeight: 900, textTransform: "uppercase", letterSpacing: 1, margin: 0 }}>Vendas</p>
+                          </div>
+                        </>
+                      )}
                     </div>
                   </div>
                 </div>
@@ -261,9 +374,119 @@ export default function ProfissionalDashboard() {
           </div>
         ) : (
           <div style={{ animation: "fadeIn 0.4s ease-out" }}>
-             <CalendarView events={events} currentMonth={currentMonth} setCurrentMonth={setCurrentMonth} onSelect={(ev) => { setSelected(ev); setViewTab("lista"); }} />
+             <CalendarView events={displayEvents} currentMonth={currentMonth} setCurrentMonth={setCurrentMonth} onSelect={(ev) => { if(activeTab === "agenda"){ setSelected(ev); setViewTab("lista"); } }} />
           </div>
         )}
+      </div>
+
+      {/* MODAL DE PERFIL */}
+      {isProfileOpen && profile && (
+        <ProfileModal 
+          profile={profile} 
+          onClose={() => setIsProfileOpen(false)} 
+          onUpdated={(p) => { setProfile(p); setIsProfileOpen(false); }}
+        />
+      )}
+    </div>
+  );
+}
+
+// ── Perfil do Profissional ───────────────────────────────────────────
+
+function ProfileModal({ profile, onClose, onUpdated }: { profile: ProfileData; onClose: () => void; onUpdated: (p: ProfileData) => void }) {
+  const [formData, setFormData] = useState<ProfileData>({ ...profile });
+  const [saving, setSaving] = useState(false);
+
+  const handleSave = async () => {
+    setSaving(true);
+    try {
+      const { data } = await API.patch("/profissional/me", formData);
+      onUpdated(data);
+    } catch (err) {
+      console.error("Erro ao salvar perfil:", err);
+      alert("Erro ao salvar perfil.");
+    } finally {
+      setSaving(false);
+    }
+  };
+
+  const toggleSkill = (skill: string) => {
+    const current = formData.services || [];
+    const next = current.includes(skill) ? current.filter(s => s !== skill) : [...current, skill];
+    setFormData({ ...formData, services: next });
+  };
+
+  return (
+    <div style={{ position: "fixed", inset: 0, background: "rgba(0,0,0,0.8)", backdropFilter: "blur(5px)", zIndex: 1000, display: "flex", justifyContent: "flex-end", animation: "fadeIn 0.2s ease-out" }}>
+      <div 
+        onClick={(e) => e.stopPropagation()}
+        style={{ width: "100%", maxWidth: 500, background: "var(--theme-bg)", height: "100%", borderLeft: "1px solid var(--theme-border)", padding: "4rem 3rem", overflowY: "auto", position: "relative" }}
+      >
+        <button onClick={onClose} style={{ position: "absolute", top: 30, right: 30, background: "none", border: "none", color: "var(--theme-text-muted)", fontSize: 24, cursor: "pointer" }}>×</button>
+        
+        <div style={{ marginBottom: "3rem" }}>
+          <ShieldCheck size={40} style={{ color: "var(--brand-primary)", marginBottom: 15 }} />
+          <h2 style={{ fontSize: 32, fontWeight: 900, color: "#fff", textTransform: "uppercase", letterSpacing: -1 }}>Meu Perfil Técnico</h2>
+          <p style={{ fontSize: 11, color: "var(--theme-text-muted)", fontWeight: 900, textTransform: "uppercase", letterSpacing: 1.5, marginTop: 4 }}>Foto Segundo · Rede Coletiva</p>
+        </div>
+
+        <div style={{ display: "flex", flexDirection: "column", gap: "2.5rem" }}>
+          <section>
+            <label style={S.label}>Habilidades Ativas</label>
+            <div style={{ display: "flex", flexWrap: "wrap", gap: 10, marginTop: 15 }}>
+              {["FOTO", "VÍDEO", "EDIÇÃO"].map(skill => (
+                <button
+                  key={skill}
+                  onClick={() => toggleSkill(skill)}
+                  style={{ 
+                    padding: "10px 20px", 
+                    fontSize: 10, 
+                    fontWeight: 900, 
+                    background: formData.services?.includes(skill) ? "var(--brand-primary)" : "rgba(255,255,255,0.02)",
+                    color: formData.services?.includes(skill) ? "#000" : "#555",
+                    border: "1px solid",
+                    borderColor: formData.services?.includes(skill) ? "var(--brand-primary)" : "#1a1a1a",
+                    cursor: "pointer",
+                    transition: "all .2s"
+                  }}
+                >
+                  {skill}
+                </button>
+              ))}
+            </div>
+          </section>
+
+          <section>
+            <label style={S.label}>Equipamento Principal</label>
+            <div style={{ position: "relative", marginTop: 10 }}>
+               <HardDrive size={14} style={{ position: "absolute", left: 14, top: 14, color: "var(--theme-text-muted)" }} />
+               <input 
+                style={{ ...S.input, paddingLeft: 40 }}
+                value={formData.equipment || ""}
+                onChange={(e) => setFormData({ ...formData, equipment: e.target.value })}
+                placeholder="EX: SONY A7RIII, DJI MINI 3 PRO..."
+              />
+            </div>
+          </section>
+
+          <section>
+            <label style={S.label}>Habilidades Complementares</label>
+            <textarea 
+              style={{ ...S.input, minHeight: 100, resize: "none", marginTop: 10 }}
+              value={formData.otherHabilities || ""}
+              onChange={(e) => setFormData({ ...formData, otherHabilities: e.target.value })}
+              placeholder="EX: COLOR GRADING, DRONE PILOT, AFTER EFFECTS..."
+            />
+          </section>
+
+          <button
+            onClick={handleSave}
+            disabled={saving}
+            style={{ width: "100%", padding: "20px", background: "var(--brand-primary)", color: "#000", border: "none", fontSize: 11, fontWeight: 900, textTransform: "uppercase", letterSpacing: 2, cursor: saving ? "not-allowed" : "pointer", marginTop: "1rem" }}
+          >
+            {saving ? "SALVANDO..." : "ATUALIZAR PERFIL"}
+          </button>
+        </div>
       </div>
     </div>
   );

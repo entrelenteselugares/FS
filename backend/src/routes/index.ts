@@ -19,7 +19,7 @@ import {
   adminUploadCover
 } from "../controllers/admin.controller";
 import { MercadoPagoController } from "../controllers/mercadopago.controller";
-import { getMeusEventos, updateEventLinks, uploadEventCover } from "../controllers/profissional.controller";
+import { getMeusEventos, updateEventLinks, uploadEventCover, getProfile, updateProfile, respondToEvent } from "../controllers/profissional.controller";
 import { getMeusPedidos, getMeuPedidoDetalhe } from "../controllers/cliente.controller";
 import { CartorioController } from "../controllers/cartorio.controller";
 import { SEOController } from "../controllers/seo.controller";
@@ -145,6 +145,10 @@ router.post("/admin/orders/:id/delete-media", requireAuth, requireRole("ADMIN"),
 router.get("/profissional/events", requireAuth, requireRole("ADMIN", "PROFISSIONAL"), getMeusEventos);
 router.patch("/profissional/events/:id/links", requireAuth, requireRole("ADMIN", "PROFISSIONAL"), updateEventLinks);
 router.patch("/profissional/events/:id/cover", requireAuth, requireRole("ADMIN", "PROFISSIONAL"), uploadEventCover);
+router.patch("/profissional/events/:id/respond", requireAuth, requireRole("ADMIN", "PROFISSIONAL"), respondToEvent);
+
+router.get("/profissional/me", requireAuth, requireRole("ADMIN", "PROFISSIONAL"), getProfile);
+router.patch("/profissional/me", requireAuth, requireRole("ADMIN", "PROFISSIONAL"), updateProfile);
 
 // ── Gamificação: Curtidas & Pontos ──────────────────────────────
 router.post("/events/:slug/photos/like", requireAuth, likePhoto);

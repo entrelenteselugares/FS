@@ -32,10 +32,11 @@ export async function getMeusEventos(req: AuthRequest, res: Response): Promise<v
         coverPhotoUrl: true,
         lightroomUrl: true,
         driveUrl: true,
-        temFoto: true,
-        temVideo: true,
-        temReels: true,
         temFotoImpressa: true,
+        captacaoId: true,
+        captacaoStatus: true,
+        edicaoId: true,
+        edicaoStatus: true,
         _count: { select: { pedidos: true } },
       },
       orderBy: { dataEvento: "desc" },
@@ -142,5 +143,86 @@ export async function uploadEventCover(req: AuthRequest, res: Response): Promise
   } catch (err) {
     console.error("uploadEventCover:", err);
     res.status(500).json({ error: "Erro ao sincronizar capa no Cloud Storage." });
+  }
+}
+
+// GET /api/profissional/me — retorna dados do perfil profissional
+export async function getProfile(req: AuthRequest, res: Response): Promise<void> {
+  const userId = req.user?.userId;
+  if (!userId) { res.status(401).json({ error: "Não autenticado." }); return; }
+
+  try {
+    const profile = await prisma.profissional.findUnique({
+      where: { userId },
+      include: { user: { select: { nome: true, email: true, whatsapp: true } } }
+    });
+    res.json(profile);
+  } catch (err) {
+    console.error("getProfile:", err);
+    res.status(500).json({ error: "Erro ao buscar perfil." });
+  }
+}
+
+// PATCH /api/profissional/me — atualiza dados do perfil profissional
+export async function updateProfile(req: AuthRequest, res: Response): Promise<void> {
+  const userId = req.user?.userId;
+  if (!userId) { res.status(401).json({ error: "Não autenticado." }); return; }
+
+  const { services, equipment, otherHabilities } = req.body;
+
+  try {
+    const updated = await prisma.profissional.update({
+      where: { userId },
+      data: {
+        ...(services !== undefined && { services }),
+        ...(equipment !== undefined && { equipment }),
+        ...(otherHabilities !== undefined && { otherHabilities }),
+      }
+    });
+    res.json(updated);
+  } catch (err) {
+    console.error("updateProfile:", err);
+    res.status(500).json({ error: "Erro ao atualizar perfil." });
+  }
+}
+
+// PATCH /api/profissional/events/:id/respond — aceita ou recusa um convite
+export async function respondToEvent(req: AuthRequest, res: Response): Promise<void> {
+  const { id } = req.params;
+  const { status } = req.body; // 'ACCEPTED' | 'REJECTED'
+  const userId = req.user?.userId;
+  if (!userId) { res.status(401).json({ error: "Não autenticado." }); return; }
+
+  if (!['ACCEPTED', 'REJECTED'].includes(status)) {
+    res.status(400).json({ error: "Status inválido." });
+    return;
+  }
+
+  try {
+    const event = await prisma.event.findFirst({
+      where: {
+        id: String(id),
+        OR: [{ captacaoId: userId }, { edicaoId: userId }]
+      }
+    });
+
+    if (!event) {
+      res.status(404).json({ error: "Evento não encontrado ou acesso negado." });
+      return;
+    }
+
+    const updateData: any = {};
+    if (event.captacaoId === userId) updateData.captacaoStatus = status;
+    if (event.edicaoId === userId) updateData.edicaoStatus = status;
+
+    const updated = await prisma.event.update({
+      where: { id: String(id) },
+      data: updateData
+    });
+
+    res.json(updated);
+  } catch (err) {
+    console.error("respondToEvent:", err);
+    res.status(500).json({ error: "Erro ao responder ao convite." });
   }
 }

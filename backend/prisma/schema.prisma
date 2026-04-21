@@ -22,6 +22,12 @@ enum Role {
   CLIENTE
 }
 
+enum AcceptanceStatus {
+  PENDING
+  ACCEPTED
+  REJECTED
+}
+
 // ─── Model: User ─────────────────────────────────────────────────────────────
 
 model User {
@@ -120,8 +126,10 @@ model Event {
   // Profissionais atribuídos
   captacaoId     String?
   captacao       User?     @relation("CaptacaoEvents", fields: [captacaoId], references: [id])
+  captacaoStatus AcceptanceStatus @default(PENDING)
   edicaoId       String?
   edicao         User?     @relation("EdicaoEvents", fields: [edicaoId], references: [id])
+  edicaoStatus   AcceptanceStatus @default(PENDING)
   cartorioUserId  String?
   cartorioUser    User?     @relation("CartorioUserEvents", fields: [cartorioUserId], references: [id])
   eventHours      Int?      @default(2)
