@@ -102,7 +102,37 @@ export default function ProfissionalDashboard() {
   const [currentMonth, setCurrentMonth] = useState(new Date());
   const [profile, setProfile] = useState<ProfileData | null>(null);
   const [isProfileOpen, setIsProfileOpen] = useState(false);
+  const [viewTab, setViewTab] = useState<"lista" | "calendario">("lista");
   const [activeTab, setActiveTab] = useState<"agenda" | "convites">("agenda");
+
+  const fetchEvents = useCallback(() => {
+    setLoading(true);
+    API.get("/profissional/events")
+      .then((r) => setEvents(r.data))
+      .catch((err) => console.error("Erro ao buscar eventos:", err))
+      .finally(() => setLoading(false));
+  }, []);
+
+  const fetchProfile = useCallback(() => {
+    API.get("/profissional/me")
+      .then((r) => setProfile(r.data))
+      .catch((err) => console.error("Erro ao buscar perfil:", err));
+  }, []);
+
+  const handleRespond = async (eventId: string, status: "ACCEPTED" | "REJECTED") => {
+    try {
+      await API.patch(`/profissional/events/${eventId}/respond`, { status });
+      fetchEvents(); // Recarrega
+    } catch (err) {
+      console.error("Erro ao responder convite:", err);
+      alert("Erro ao processar resposta.");
+    }
+  };
+
+  useEffect(() => {
+    fetchEvents();
+    fetchProfile();
+  }, [fetchEvents, fetchProfile]);
 
   // Cálculos financeiros (Estimatativa: R$ 40 por venda ou 20% do ticket médio)
   const ESTIMATED_PER_SALE = 40; 
@@ -117,35 +147,6 @@ export default function ProfissionalDashboard() {
     })
     .reduce((acc, ev) => acc + (ev._count?.pedidos ?? 0), 0);
   const revenueThisMonth = salesThisMonth * ESTIMATED_PER_SALE;
-
-  useEffect(() => {
-    fetchEvents();
-    fetchProfile();
-  }, []);
-
-  const fetchEvents = () => {
-    setLoading(true);
-    API.get("/profissional/events")
-      .then((r) => setEvents(r.data))
-      .catch((err) => console.error("Erro ao buscar eventos:", err))
-      .finally(() => setLoading(false));
-  };
-
-  const fetchProfile = () => {
-    API.get("/profissional/me")
-      .then((r) => setProfile(r.data))
-      .catch((err) => console.error("Erro ao buscar perfil:", err));
-  };
-
-  const handleRespond = async (eventId: string, status: "ACCEPTED" | "REJECTED") => {
-    try {
-      await API.patch(`/profissional/events/${eventId}/respond`, { status });
-      fetchEvents(); // Recarrega
-    } catch (err) {
-      console.error("Erro ao responder convite:", err);
-      alert("Erro ao processar resposta.");
-    }
-  };
 
   const handleUpdated = useCallback((updated: Partial<EventItem>) => {
     setSelected((prev) => prev ? { ...prev, ...updated } : prev);
