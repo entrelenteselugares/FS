@@ -105,9 +105,9 @@ export class MercadoPagoService {
             : { notification_url: data.notification_url }),
         
         back_urls: {
-          success: `${process.env.FRONTEND_URL || "http://localhost:5173"}/success`,
-          failure: `${process.env.FRONTEND_URL || "http://localhost:5173"}/failure`,
-          pending: `${process.env.FRONTEND_URL || "http://localhost:5173"}/pending`
+          success: `${process.env.VITE_APP_URL || process.env.APP_URL || "https://foto-segundo.vercel.app"}/success`,
+          failure: `${process.env.VITE_APP_URL || process.env.APP_URL || "https://foto-segundo.vercel.app"}/failure`,
+          pending: `${process.env.VITE_APP_URL || process.env.APP_URL || "https://foto-segundo.vercel.app"}/pending`
         },
         auto_return: "approved" as const,
       };

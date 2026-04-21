@@ -236,7 +236,9 @@ export class EventController {
         });
 
         // Link de Checkout para Ponto Fixo (Pagamento imediato)
-        const checkoutUrl = `${process.env.VITE_APP_URL || 'http://localhost:5173'}/checkout?orderId=${order.id}`;
+        // Prioriza URL de produção via variáveis de ambiente
+        const appUrl = process.env.VITE_APP_URL || process.env.APP_URL || 'https://foto-segundo.vercel.app';
+        const checkoutUrl = `${appUrl}/checkout?orderId=${order.id}`;
         
         return res.json({ success: true, eventId: event.id, checkoutUrl });
       }
