@@ -165,9 +165,11 @@ export class AuthController {
       if (!supabaseUser) throw new Error("Falha ao recuperar usuário criado no Supabase");
 
       // 2. Sincronizar com a nossa tabela User no Prisma
-      // "UNIDADE" é o label do frontend para pontos fixos — mapeamos para "CARTORIO" (enum do banco)
+      // "UNIDADE"/"PONTO FIXO" são parceiros locais — permanecem como CLIENTE (sem vínculo empregatício/legal)
+      // O perfil de Ponto Fixo é criado na tabela Cartorio como container de dados de parceiro.
       const roleUpper = role?.toUpperCase();
-      const finalRole = roleUpper === "UNIDADE" ? "CARTORIO"
+      const isPontoFixo = roleUpper === "UNIDADE" || roleUpper === "PONTO_FIXO";
+      const finalRole = isPontoFixo ? "CLIENTE"
         : ["ADMIN", "CARTORIO", "PROFISSIONAL", "CLIENTE"].includes(roleUpper) ? roleUpper
         : "CLIENTE";
       
@@ -195,7 +197,8 @@ export class AuthController {
               equipment: req.body.equipamento || null,
             }
           });
-        } else if (finalRole === "UNIDADE" || finalRole === "CARTORIO") {
+        } else if (isPontoFixo || finalRole === "CARTORIO") {
+          // Ponto Fixo: CLIENTE com perfil de parceiro (sem role especial)
           await tx.cartorio.create({
             data: {
               userId: newUser.id,

@@ -166,22 +166,25 @@ export class EventController {
    */
   static async listPartners(req: AuthRequest, res: Response) {
     try {
-      const partners = await prisma.user.findMany({
-        where: { role: "CARTORIO" },
-        include: { cartorio: true },
-        orderBy: { nome: "asc" }
+      // Filtra por quem tem perfil de Ponto Fixo (tabela Cartorio), independente da role.
+      // Pontos Fixos são legalmente CLIENTEs — não têm role especial.
+      const cartorios = await prisma.cartorio.findMany({
+        include: { user: { select: { nome: true, active: true } } },
+        orderBy: { razaoSocial: "asc" }
       });
-      return res.json(partners.map(p => ({
-        id: p.id,
-        name: p.cartorio?.razaoSocial || p.nome,
-        city: p.cartorio?.cidade || "Campinas",
-        prices: {
-          foto: p.cartorio?.priceFoto,
-          video: p.cartorio?.priceVideo,
-          reels: p.cartorio?.priceReels,
-          impresso: p.cartorio?.priceImpresso
-        }
-      })));
+      return res.json(cartorios
+        .filter(c => c.user?.active !== false) // Apenas unidades ativas
+        .map(c => ({
+          id: c.userId,
+          name: c.razaoSocial || c.user?.nome || "Ponto Fixo",
+          city: c.cidade || "Campinas",
+          prices: {
+            foto: c.priceFoto,
+            video: c.priceVideo,
+            reels: c.priceReels,
+            impresso: c.priceImpresso
+          }
+        })));
     } catch (error) {
       console.error("Erro ao listar parceiros:", error);
       return res.status(500).json({ error: "Erro interno ao listar parceiros." });
