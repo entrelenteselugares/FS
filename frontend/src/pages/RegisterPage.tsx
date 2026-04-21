@@ -20,6 +20,8 @@ export const RegisterPage: React.FC = () => {
     // Campos Unidade
     razaoSocial: "",
     endereco: "",
+    acceptedTerms: false,
+    acceptedPrivacy: false,
   });
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
@@ -138,7 +140,8 @@ export const RegisterPage: React.FC = () => {
                   value={formData.nome}
                   onChange={(e) => setFormData({ ...formData, nome: e.target.value })}
                   className="w-full bg-transparent border-b border-theme-border py-3 pl-8 text-xs text-theme-text placeholder:text-theme-muted/40 focus:outline-none focus:border-brand-tactical transition-all"
-                  placeholder="USUARIO@DOMINIO.COM"
+                  placeholder="EX: JOÃO DA SILVA"
+                  autoComplete="name"
                 />
               </div>
             </div>
@@ -169,6 +172,7 @@ export const RegisterPage: React.FC = () => {
                   onChange={(e) => setFormData({ ...formData, email: e.target.value })}
                   className="w-full bg-transparent border-b border-theme-border py-3 pl-8 text-xs text-theme-text placeholder:text-theme-muted/40 focus:outline-none focus:border-brand-tactical transition-all"
                   placeholder="EMAIL@DOMINIO.COM"
+                  autoComplete="email"
                 />
               </div>
             </div>
@@ -248,14 +252,36 @@ export const RegisterPage: React.FC = () => {
                   onChange={(e) => setFormData({ ...formData, senha: e.target.value })}
                   className="w-full bg-transparent border-b border-theme-border py-3 pl-8 text-xs text-theme-text placeholder:text-theme-muted/40 focus:outline-none focus:border-brand-tactical transition-all"
                   placeholder="••••••••"
+                  autoComplete="new-password"
                 />
+              </div>
+            </div>
+
+            {/* LGPD Compliance */}
+            <div className="md:col-span-2 space-y-4 mt-6">
+              <div className="flex items-start gap-4 cursor-pointer" onClick={() => setFormData({ ...formData, acceptedTerms: !formData.acceptedTerms })}>
+                <div className={`mt-1 w-4 h-4 border transition-all flex items-center justify-center ${formData.acceptedTerms ? "bg-brand-tactical border-brand-tactical" : "border-theme-border bg-theme-bg-muted"}`}>
+                  {formData.acceptedTerms && <div className="w-1.5 h-1.5 bg-white" />}
+                </div>
+                <p className="text-[10px] text-theme-muted font-bold uppercase tracking-widest leading-relaxed">
+                  Eu aceito os <a href="/termos" target="_blank" className="text-theme-text underline underline-offset-4 decoration-brand-tactical/30">Termos de Uso</a> do Coletivo Foto Segundo.
+                </p>
+              </div>
+
+              <div className="flex items-start gap-4 cursor-pointer" onClick={() => setFormData({ ...formData, acceptedPrivacy: !formData.acceptedPrivacy })}>
+                <div className={`mt-1 w-4 h-4 border transition-all flex items-center justify-center ${formData.acceptedPrivacy ? "bg-brand-tactical border-brand-tactical" : "border-theme-border bg-theme-bg-muted"}`}>
+                  {formData.acceptedPrivacy && <div className="w-1.5 h-1.5 bg-white" />}
+                </div>
+                <p className="text-[10px] text-theme-muted font-bold uppercase tracking-widest leading-relaxed">
+                  Eu concordo com a <a href="/privacidade" target="_blank" className="text-theme-text underline underline-offset-4 decoration-brand-tactical/30">Política de Privacidade</a> e o uso de meus dados.
+                </p>
               </div>
             </div>
 
             <button
               type="submit"
-              disabled={loading}
-              className="md:col-span-2 bg-brand-tactical text-white hover:brightness-110 font-bold uppercase tracking-[0.5em] text-[11px] py-6 transition-all mt-6 flex items-center justify-center gap-4 group rounded-none"
+              disabled={loading || !formData.acceptedTerms || !formData.acceptedPrivacy}
+              className="md:col-span-2 bg-brand-tactical text-white hover:brightness-110 font-bold uppercase tracking-[0.5em] text-[11px] py-6 transition-all mt-6 flex items-center justify-center gap-4 group rounded-none disabled:opacity-30 disabled:grayscale transition-all"
             >
               {loading ? "PROCESSANDO SOLICITAÇÃO..." : (
                 <>

@@ -2,6 +2,7 @@ import "dotenv/config";
 import express from "express";
 import cors from "cors";
 import path from "path";
+import rateLimit from "express-rate-limit";
 import apiRoutes from "./routes/index";
 
 const app = express();
@@ -39,11 +40,16 @@ app.use(express.json({ limit: "10mb" })); // Aumentado para suportar Base64 de i
 // Uploads estáticos (Apenas para legado local, em produção usamos Supabase)
 app.use("/uploads", express.static(path.join(process.cwd(), "uploads")));
 
-app.get("/health", (_req, res) =>
-  res.json({ status: "ok", ts: new Date().toISOString() })
-);
+// Rate Limiting — Proteção contra abuso
+const limiter = rateLimit({
+  windowMs: 1 * 60 * 1000, // 1 minuto
+  max: 60, // limite de 60 requisições por IP
+  message: { error: "Muitas requisições. Tente novamente em 1 minuto." },
+  standardHeaders: true,
+  legacyHeaders: false,
+});
 
-app.use("/api", apiRoutes);
+app.use("/api", limiter, apiRoutes);
 
 // Tratamento de erros global
 app.use((err: any, _req: express.Request, res: express.Response, _next: express.NextFunction) => {

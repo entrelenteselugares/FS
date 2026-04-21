@@ -3,6 +3,7 @@ import { useParams, useNavigate, useSearchParams } from "react-router-dom";
 import { useAuth } from "../hooks/useAuth";
 import { useTheme } from "../hooks/useTheme";
 import { API as api } from "../lib/api";
+import { Helmet } from "react-helmet-async";
 import AccessTypeModal from "../components/AccessTypeModal";
 import axios from "axios";
 import { motion, AnimatePresence } from "framer-motion";
@@ -111,37 +112,12 @@ export default function EventPage() {
   const [contributionAmount, setContributionAmount] = useState<number>(50); // Valor padrão
   const [contributorName, setContributorName] = useState<string>("");
 
-  useEffect(() => {
-    if (event) {
-      const title = `Foto Segundo | ${event.nomeNoivos}`;
-      const desc = `Acesse as fotos e vídeos do casamento de ${event.nomeNoivos} em ${event.location}. Disponível para download imediato.`;
-      const url = `${window.location.origin}/e/${event.id}`;
-      const image = event.coverPhotoUrl || `${window.location.origin}/og-default.png`;
-
-      // Update Title
-      document.title = title;
-
-      // Update Meta Tags (Dynamic Injection)
-      const updateMeta = (name: string, property: boolean, content: string) => {
-        const selector = property ? `meta[property="${name}"]` : `meta[name="${name}"]`;
-        let el = document.head.querySelector(selector);
-        if (!el) {
-          el = document.createElement("meta");
-          if (property) el.setAttribute("property", name);
-          else el.setAttribute("name", name);
-          document.head.appendChild(el);
-        }
-        el.setAttribute("content", content);
-      };
-
-      updateMeta("description", false, desc);
-      updateMeta("og:title", true, title);
-      updateMeta("og:description", true, desc);
-      updateMeta("og:url", true, url);
-      updateMeta("og:image", true, image);
-      updateMeta("twitter:card", false, "summary_large_image");
-    }
-  }, [event]);
+  const seoData = event ? {
+    title: `Foto Segundo | ${event.nomeNoivos}`,
+    desc: `Acesse as fotos e vídeos do casamento de ${event.nomeNoivos} em ${event.location}. Disponível para download imediato.`,
+    url: `${window.location.origin}/e/${event.id}`,
+    image: event.coverPhotoUrl || `${window.location.origin}/og-default.png`
+  } : null;
 
   useEffect(() => {
     if (!id) return;
@@ -318,6 +294,17 @@ export default function EventPage() {
 
   return (
     <div className="min-h-screen bg-theme-bg text-theme-text font-sans transition-colors duration-500 overflow-x-hidden">
+      {seoData && (
+        <Helmet>
+          <title>{seoData.title}</title>
+          <meta name="description" content={seoData.desc} />
+          <meta property="og:title" content={seoData.title} />
+          <meta property="og:description" content={seoData.desc} />
+          <meta property="og:url" content={seoData.url} />
+          <meta property="og:image" content={seoData.image} />
+          <meta name="twitter:card" content="summary_large_image" />
+        </Helmet>
+      )}
       <style>{`
         .editorial-shadow { box-shadow: 0 40px 100px -20px rgba(0,0,0,0.15); }
         .dark .editorial-shadow { box-shadow: 0 40px 100px -20px rgba(0,0,0,0.6); }

@@ -3,6 +3,7 @@ import { AuthRequest } from "../lib/auth";
 import bcrypt from "bcryptjs";
 import prisma from "../lib/prisma";
 import { generateToken } from "../lib/auth";
+import { logger } from "../lib/logger";
 
 export class AuthController {
   /** POST /api/auth/login */
@@ -99,6 +100,10 @@ export class AuthController {
       }
 
       const token = generateToken({ userId: user.id, role: user.role, nome: user.nome });
+      
+      // Log de Auditoria
+      await logger.info(user.id, "LOGIN", { email: user.email, role: user.role });
+
       return res.json({ token, user: { id: user.id, nome: user.nome, email: user.email, role: user.role } });
 
     } catch (error: any) {
@@ -109,7 +114,7 @@ export class AuthController {
 
   /** POST /api/auth/register */
   static async register(req: Request, res: Response) {
-    const { email, senha, nome, role, whatsapp } = req.body;
+    const { email, senha, nome, role, whatsapp, acceptedTerms, acceptedPrivacy } = req.body;
     
     console.log(`[AUTH] Iniciando registro via Supabase Auth: ${email} (Role: ${role})`);
 
@@ -152,7 +157,9 @@ export class AuthController {
             senha: "AUTH_EXTERNAL_SUPABASE",
             nome, 
             role: finalRole as any, 
-            whatsapp: cleanWhatsapp 
+            whatsapp: cleanWhatsapp,
+            acceptedTermsAt: acceptedTerms ? new Date() : null,
+            acceptedPrivacyAt: acceptedPrivacy ? new Date() : null
           }
         });
 
@@ -179,6 +186,9 @@ export class AuthController {
       });
 
       console.log(`[AUTH] Registro e perfil sincronizados: ${user.id}`);
+
+      // Log de Auditoria
+      await logger.info(user.id, "REGISTER", { email: user.email, role: user.role });
 
       // 3. Gerar token compatível (ou poderíamos retornar o do Supabase)
       const token = generateToken({ userId: user.id, role: user.role, nome: user.nome });

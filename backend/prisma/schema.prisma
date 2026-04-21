@@ -36,6 +36,10 @@ model User {
   updatedAt      DateTime @updatedAt
   pixKey         String?
 
+  // LGPD Compliance
+  acceptedTermsAt   DateTime?
+  acceptedPrivacyAt DateTime?
+
   // Mercado Pago OAuth (armazenado diretamente no user)
   mpUserId       String?
   mpAccessToken  String?
@@ -396,3 +400,12 @@ model PayoutItem {
   @@map("payout_items")
 }
 
+
+// ─── Model: AuditLog ────────────────────────────────────────────────────────
+model AuditLog {
+  id        String   @id @default(cuid())
+  userId    String?
+  action    String   // Ex: LOGIN, PAYMENT_APPROVED, USER_PROMOTED
+  details   String?  // JSON ou texto descritivo
+  createdAt DateTime @default(now())
+}

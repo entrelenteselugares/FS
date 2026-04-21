@@ -139,6 +139,7 @@ export const LoginPage: React.FC = () => {
                   onChange={(e) => setEmail(e.target.value)}
                   className="login-input"
                   placeholder="USUARIO@DOMINIO.COM"
+                  autoComplete="username"
                   required
                 />
               </div>
@@ -156,6 +157,7 @@ export const LoginPage: React.FC = () => {
                   onChange={(e) => setSenha(e.target.value)}
                   className="login-input"
                   placeholder="••••••••"
+                  autoComplete="current-password"
                   required
                 />
               </div>

@@ -55,8 +55,32 @@ import {
   getPartnerLandingData,
   updatePartnerProfile,
 } from "../controllers/partner.controller";
+import { runExpirationJob } from "../jobs/expiration.job";
 
 const router = Router();
+
+// ── Sistema & Infra ─────────────────────────────────────────────
+router.get("/health", (req, res) => res.json({ status: "ok", time: new Date().toISOString() }));
+
+// Cron — chamado pela Vercel diariamente às 06:00
+router.get("/cron/expiration", async (req, res) => {
+  const token = req.headers["authorization"];
+  if (
+    process.env.CRON_SECRET &&
+    token !== `Bearer ${process.env.CRON_SECRET}`
+  ) {
+    console.warn("[Cron] Tentativa de acesso não autorizada.");
+    return res.status(401).json({ error: "Não autorizado." });
+  }
+  try {
+    await runExpirationJob();
+    console.log("[Cron] Job de expiração executado com sucesso.");
+    res.json({ ok: true, ran: new Date().toISOString() });
+  } catch (err: any) {
+    console.error("[Cron] Erro:", err.message);
+    res.status(500).json({ error: err.message });
+  }
+});
 
 // ── Autenticação ────────────────────────────────────────────────
 router.post("/auth/login", AuthController.login);
@@ -70,6 +94,7 @@ router.get("/mercadopago/callback", MercadoPagoController.callback);
 // ── Eventos públicos (Paywall & Vitrine) ─────────────────────────
 router.get("/public/events", EventController.listPublic);
 router.get("/public/events/:id", EventController.getById);
+router.get("/public/events/id/:id", EventController.getById); // Alias para busca explícita por ID
 router.get("/public/events/:id/access", EventController.getAccess);
 router.get("/public/partners", EventController.listPartners);
 router.post("/public/quotes", EventController.createQuote);

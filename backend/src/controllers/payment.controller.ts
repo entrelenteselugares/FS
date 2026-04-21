@@ -2,6 +2,7 @@ import { Request, Response } from "express";
 import prisma from "../lib/prisma";
 import { MercadoPagoService } from "../services/mercadopago.service";
 import { NotificationService } from "../services/notification.service";
+import crypto from "crypto";
 
 export class PaymentController {
   /**
@@ -41,11 +42,18 @@ export class PaymentController {
 
       // 3. Preparar Split de Pagamentos (Regra: Repasse Manual)
       // Todo o valor vai para a Matriz para posterior repasse manual aos profissionais.
-      const taxaMatriz = 1.0; 
-      const partnersList: any[] = [];
+      // BUSCA CONFIGS NO MOMENTO DA COMPRA (SNAPSHOT)
+      const configs = await prisma.platformConfig.findMany({
+        where: { key: { in: ["split_matriz", "split_captacao", "split_edicao", "split_cartorio"] } },
+      });
+      const getPct = (key: string) => Number(configs.find((c) => c.key === key)?.value ?? 0) / 100;
 
-      console.log(`[Checkout] Repasse Manual: 100% para Matriz.`);
+      const splitMatriz   = preco * getPct("split_matriz");
+      const splitCaptacao = preco * getPct("split_captacao");
+      const splitEdicao   = preco * getPct("split_edicao");
+      const splitCartorio = preco * getPct("split_cartorio");
 
+      console.log(`[Checkout] Repasse Manual: 100% para Matriz. Snapshot salvo.`);
 
       // 4. Criar Pedido Pendente no Banco
       const order = await prisma.order.create({
@@ -55,7 +63,12 @@ export class PaymentController {
           valor: preco,
           status: "PENDENTE",
           isContribution: event.isCrowdfund,
-          contributorName: event.isCrowdfund ? (req.body.contributorName || null) : null
+          contributorName: event.isCrowdfund ? (req.body.contributorName || null) : null,
+          // Snapshot dos splits
+          splitMatriz,
+          splitCaptacao,
+          splitEdicao,
+          splitCartorio
         }
       });
 
@@ -99,10 +112,44 @@ export class PaymentController {
   static async webhook(req: Request, res: Response) {
     const { type, data } = req.body;
 
+    // ── VALIDAÇÃO DE ASSINATURA (Opcional se configurado) ──
+    if (process.env.MP_WEBHOOK_SECRET) {
+      const sig    = (req.headers["x-signature"] as string) ?? "";
+      const reqId  = (req.headers["x-request-id"] as string) ?? "";
+      const dataId = (req.query["data.id"] as string) ?? "";
+      const [tsPart, v1Part] = sig.split(",");
+      const ts = tsPart?.split("=")[1];
+      const v1 = v1Part?.split("=")[1];
+      const manifest = `id:${dataId};request-id:${reqId};ts:${ts};`;
+      const hmac = crypto
+        .createHmac("sha256", process.env.MP_WEBHOOK_SECRET)
+        .update(manifest)
+        .digest("hex");
+      if (hmac !== v1) {
+        console.error("[Webhook] Assinatura Inválida.");
+        return res.status(401).json({ error: "Assinatura inválida." });
+      }
+    }
+
     // O MP envia o ID da transação em data.id quando o type é 'payment'
     if (type === "payment" && data?.id) {
       try {
-        const paymentData = await MercadoPagoService.getPaymentStatus(data.id);
+        const mpPaymentId = String(data.id);
+
+        // ── IDEMPOTÊNCIA: Verifica se já foi processado APPROVED ──
+        const statusCheck = await prisma.order.findFirst({
+          where: { 
+            paymentId: mpPaymentId,
+            status: { in: ["APROVADO", "APPROVED"] as any }
+          }
+        });
+
+        if (statusCheck) {
+          console.log(`[Webhook] Pagamento ${mpPaymentId} já processado como APROVADO. Ignorando.`);
+          return res.status(200).json({ ok: true, skipped: true });
+        }
+
+        const paymentData = await MercadoPagoService.getPaymentStatus(mpPaymentId);
         
         if (paymentData.status === "approved") {
           // 1. Atualiza o pedido vinculado

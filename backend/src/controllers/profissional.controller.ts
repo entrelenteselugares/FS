@@ -17,6 +17,7 @@ export async function getMeusEventos(req: AuthRequest, res: Response): Promise<v
   try {
     const events = await prisma.event.findMany({
       where: {
+        active: true,
         OR: [
           { captacaoId: userId },
           { edicaoId: userId },

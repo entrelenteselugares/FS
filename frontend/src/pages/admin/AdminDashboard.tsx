@@ -2,14 +2,16 @@ import React, { useState, useEffect } from "react";
 import { DashboardLayout, type NavItem } from "../../components/DashboardLayout";
 import { API } from "../../lib/api";
 
-import { AdminOverview } from "./AdminOverview";
-import { AdminEvents } from "./AdminEvents";
-import { AdminUsers } from "./AdminUsers";
-import { AdminOrders } from "./AdminOrders";
-import { AdminFinance } from "./AdminFinance";
-import AdminSuppliers from "./AdminSuppliers";
-import { AdminContests } from "./AdminContests";
-import { AdminQuotes } from "./AdminQuotes";
+const AdminOverview = React.lazy(() => import("./AdminOverview").then(m => ({ default: m.AdminOverview })));
+const AdminEvents = React.lazy(() => import("./AdminEvents").then(m => ({ default: m.AdminEvents })));
+const AdminUsers = React.lazy(() => import("./AdminUsers").then(m => ({ default: m.AdminUsers })));
+const AdminOrders = React.lazy(() => import("./AdminOrders").then(m => ({ default: m.AdminOrders })));
+const AdminFinance = React.lazy(() => import("./AdminFinance").then(m => ({ default: m.AdminFinance })));
+const AdminSuppliers = React.lazy(() => import("./AdminSuppliers"));
+const AdminContests = React.lazy(() => import("./AdminContests").then(m => ({ default: m.AdminContests })));
+const AdminQuotes = React.lazy(() => import("./AdminQuotes").then(m => ({ default: m.AdminQuotes })));
+const AdminServices = React.lazy(() => import("./AdminServices").then(m => ({ default: m.AdminServices })));
+const AdminConfigs = React.lazy(() => import("./AdminConfigs").then(m => ({ default: m.AdminConfigs })));
 import { 
   LayoutDashboard, 
   Camera, 
@@ -20,8 +22,7 @@ import {
   Briefcase
 } from "lucide-react";
 
-import { AdminServices } from "./AdminServices";
-import { AdminConfigs } from "./AdminConfigs";
+
 
 
 const NAV_ITEMS = (activeTab: string, setActiveTab: (t: string) => void): NavItem[] => [
@@ -114,16 +115,23 @@ export const AdminDashboard: React.FC = () => {
            </div>
         ) : (
           <div className="pb-32">
-            {activeTab === "overview" && <AdminOverview stats={stats} recentOrders={recentOrders} pendingEvents={pendingEvents} />}
-            {activeTab === "events"   && <AdminEvents />}
-            {activeTab === "users"    && <AdminUsers />}
-            {activeTab === "quotes"   && <AdminQuotes />}
-            {activeTab === "orders"   && <AdminOrders />}
-            {activeTab === "finance"  && <AdminFinance />}
-            {activeTab === "printers" && <AdminSuppliers />}
-            {activeTab === "contests" && <AdminContests />}
-            {activeTab === "services" && <AdminServices />}
-            {activeTab === "settings" && <AdminConfigs />}
+            <React.Suspense fallback={
+              <div className="py-20 flex flex-col items-center gap-6">
+                <div className="w-1 h-1 rounded-full bg-brand-tactical animate-ping" />
+                <div className="text-[10px] font-bold uppercase tracking-[0.3em] text-white/20">Acessando Módulo...</div>
+              </div>
+            }>
+              {activeTab === "overview" && <AdminOverview stats={stats} recentOrders={recentOrders} pendingEvents={pendingEvents} />}
+              {activeTab === "events"   && <AdminEvents />}
+              {activeTab === "users"    && <AdminUsers />}
+              {activeTab === "quotes"   && <AdminQuotes />}
+              {activeTab === "orders"   && <AdminOrders />}
+              {activeTab === "finance"  && <AdminFinance />}
+              {activeTab === "printers" && <AdminSuppliers />}
+              {activeTab === "contests" && <AdminContests />}
+              {activeTab === "services" && <AdminServices />}
+              {activeTab === "settings" && <AdminConfigs />}
+            </React.Suspense>
           </div>
         )}
       </div>

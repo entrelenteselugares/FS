@@ -4,6 +4,7 @@ import prisma from "../lib/prisma";
 import { slugify } from "../lib/utils";
 import bcrypt from "bcryptjs";
 import { createClient } from "@supabase/supabase-js";
+import { NotificationService } from "../services/notification.service";
 
 // Inicializa o cliente Supabase para Storage (Stateless)
 const supabase = createClient(
@@ -61,6 +62,7 @@ export async function getDashboardStats(req: AuthRequest, res: Response): Promis
       totalRevenue,
       recentOrders,
       pendingEvents,
+      pendingQuotesCount,
     ] = await Promise.all([
       prisma.event.count({ where: { active: true } }),
       prisma.order.count({ where: { status: "APROVADO" } }),
@@ -565,8 +567,7 @@ export async function adminApproveQuote(req: AuthRequest, res: Response): Promis
     // 3. Gerar link de checkout
     const checkoutUrl = `${process.env.VITE_APP_URL || 'http://localhost:5173'}/checkout?orderId=${order.id}`;
 
-    // 4. Enviar E-mail Automático (Importação Dinâmica para evitar circular dependency se houver)
-    const { NotificationService } = await import("../services/notification.service");
+    // 4. Enviar E-mail Automático
     await NotificationService.sendQuotationPricedEmail({
       to: quote.clientEmail!,
       clientName: quote.clientName || "Cliente",

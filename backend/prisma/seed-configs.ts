@@ -1,28 +1,45 @@
 import "dotenv/config";
-import { prisma } from "../src/lib/prisma";
+import { Pool } from "pg";
+import { PrismaPg } from "@prisma/adapter-pg";
+import { PrismaClient } from "@prisma/client";
+
+const connectionString = process.env.DATABASE_URL;
+const pool = new Pool({ connectionString });
+const adapter = new PrismaPg(pool);
+const prisma = new PrismaClient({ adapter });
 
 async function main() {
+  console.log("🌱 Iniciando Seed de Configurações...");
+  
   const configs = [
-    { key: "split_matriz",    value: "40", label: "% Plataforma (Foto Segundo)" },
-    { key: "split_captacao",  value: "30", label: "% Fotógrafo/Captação" },
-    { key: "split_edicao",    value: "20", label: "% Editor" },
-    { key: "split_cartorio",  value: "10", label: "% Cartório parceiro" },
-    { key: "payout_day",      value: "1",  label: "Dia do repasse (1=Segunda, 5=Sexta)" },
-    { key: "payout_cutoff",   value: "0",  label: "Dias de corte antes do repasse" },
-    { key: "pix_matriz",      value: "",   label: "Chave Pix da plataforma" },
-    { key: "brand_primary",   value: "#85B9AC", label: "Cor Primária (Logo)" },
-    { key: "brand_tactical",  value: "#85B9AC", label: "Cor Secundária (Tática)" },
+    { key: "split_matriz",   value: "40", label: "% Plataforma (Foto Segundo)" },
+    { key: "split_captacao", value: "30", label: "% Fotógrafo/Captação" },
+    { key: "split_edicao",   value: "20", label: "% Editor" },
+    { key: "split_cartorio", value: "10", label: "% Cartório parceiro" },
+    { key: "payout_day",     value: "1",  label: "Dia do repasse (1=Segunda)" },
+    { key: "pix_matriz",     value: "financeiro@fotosegundo.com", label: "Chave Pix da plataforma" },
   ];
 
-  for (const config of configs) {
+  for (const c of configs) {
     await prisma.platformConfig.upsert({
-      where: { key: config.key },
-      create: config,
-      update: { value: config.value, label: config.label },
+      where: { key: c.key },
+      create: c,
+      update: { 
+        value: c.value, 
+        label: c.label 
+      },
     });
+    console.log(`✅ Configuração: ${c.key} = ${c.value}`);
   }
 
-  console.log("✅ Configurações criadas.");
+  console.log("✨ Seed concluído com sucesso!");
 }
 
-main().finally(() => prisma.$disconnect());
+main()
+  .catch((e) => {
+    console.error("❌ Erro no Seed:", e);
+    process.exit(1);
+  })
+  .finally(async () => {
+    await prisma.$disconnect();
+  });

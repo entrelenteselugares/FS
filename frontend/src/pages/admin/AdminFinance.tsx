@@ -29,6 +29,10 @@ interface PayoutOrder {
       cartorio?: { id: string; nome: string; pixKey: string; cartorio: { splitPct: number } };
     };
   };
+  splitMatriz?: number;
+  splitCaptacao?: number;
+  splitEdicao?: number;
+  splitCartorio?: number;
 }
 
 export const AdminFinance: React.FC = () => {
@@ -117,7 +121,12 @@ export const AdminFinance: React.FC = () => {
                 {order.event.partners.captacao && (
                   <div className="space-y-2">
                     <label className="text-[9px] font-black text-theme-muted uppercase tracking-widest block">Captação: {order.event.partners.captacao.nome}</label>
-                    <div className="text-lg text-theme-text font-black">{calculateAmount(order.amount, order.event.partners.captacao.profissional.captPct)}</div>
+                    <div className="text-lg text-theme-text font-black">
+                      {order.splitCaptacao !== undefined && order.splitCaptacao !== null
+                        ? order.splitCaptacao.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' })
+                        : calculateAmount(order.amount, order.event.partners.captacao.profissional.captPct)
+                      }
+                    </div>
                     <div className="text-[9px] text-brand-tactical font-black bg-brand-tactical/5 p-2 border border-brand-tactical/10">PIX: {order.event.partners.captacao.pixKey || "PENDENTE"}</div>
                   </div>
                 )}
@@ -125,7 +134,12 @@ export const AdminFinance: React.FC = () => {
                 {order.event.partners.edicao && (
                   <div className="space-y-2">
                     <label className="text-[9px] font-black text-theme-muted uppercase tracking-widest block">Edição: {order.event.partners.edicao.nome}</label>
-                    <div className="text-lg text-theme-text font-black">{calculateAmount(order.amount, order.event.partners.edicao.profissional.editPct)}</div>
+                    <div className="text-lg text-theme-text font-black">
+                      {order.splitEdicao !== undefined && order.splitEdicao !== null
+                        ? order.splitEdicao.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' })
+                        : calculateAmount(order.amount, order.event.partners.edicao.profissional.editPct)
+                      }
+                    </div>
                     <div className="text-[9px] text-brand-tactical font-black bg-brand-tactical/5 p-2 border border-brand-tactical/10">PIX: {order.event.partners.edicao.pixKey || "PENDENTE"}</div>
                   </div>
                 )}
@@ -133,7 +147,12 @@ export const AdminFinance: React.FC = () => {
                 {order.event.partners.cartorio && (
                   <div className="space-y-2">
                     <label className="text-[9px] font-black text-theme-muted uppercase tracking-widest block">Unidade: {order.event.partners.cartorio.nome}</label>
-                    <div className="text-lg text-theme-text font-black">{calculateAmount(order.amount, order.event.partners.cartorio.cartorio.splitPct)}</div>
+                    <div className="text-lg text-theme-text font-black">
+                      {order.splitCartorio !== undefined && order.splitCartorio !== null
+                        ? order.splitCartorio.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' })
+                        : calculateAmount(order.amount, order.event.partners.cartorio.cartorio.splitPct)
+                      }
+                    </div>
                     <div className="text-[9px] text-brand-tactical font-black bg-brand-tactical/5 p-2 border border-brand-tactical/10">PIX: {order.event.partners.cartorio.pixKey || "PENDENTE"}</div>
                   </div>
                 )}
