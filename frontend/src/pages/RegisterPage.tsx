@@ -184,7 +184,7 @@ export const RegisterPage: React.FC = () => {
                 <div className="space-y-4">
                   <label className="text-[10px] font-bold uppercase tracking-[0.4em] text-theme-muted">Minhas Especialidades</label>
                   <div className="flex flex-wrap gap-4">
-                    {["CAPTAÇÃO", "EDIÇÃO"].map(skill => (
+                    {["FOTO", "VÍDEO", "EDIÇÃO"].map(skill => (
                       <button
                         key={skill}
                         type="button"

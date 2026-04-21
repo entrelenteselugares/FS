@@ -168,7 +168,7 @@ export class AuthController {
           await tx.profissional.create({
             data: {
               userId: newUser.id,
-              services: [], // Especialidades principais (CAPTAÇÃO, EDIÇÃO)
+              services: req.body.habilidades || [], // Foto, Vídeo, Edição
               otherHabilities: req.body.outrasHabilidades || null,
               equipment: req.body.equipamento || null,
             }
