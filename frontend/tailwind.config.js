@@ -11,14 +11,13 @@ export default {
         photography: {
           charcoal: '#121212',
           slate: '#2a2a2a',
-          olive: '#85B9AC',
+          primary: '#85B9AC', // Renamed from olive
           offwhite: '#fafafa'
         },
         brand: {
           dark: '#050505',
-          primary: 'var(--brand-primary)',
-          tactical: 'var(--brand-tactical)',
-          olive: '#85B9AC', // Unified Brand Color
+          primary: '#85B9AC', // Unified Premium Teal
+          tactical: '#85B9AC', // Aliased for consistency
           frost: '#ffffff',
           emerald: '#064e3b',
         },

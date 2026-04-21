@@ -5,6 +5,7 @@ import { slugify } from "../lib/utils";
 import bcrypt from "bcryptjs";
 import { createClient } from "@supabase/supabase-js";
 import { NotificationService } from "../services/notification.service";
+import { audit } from "../lib/audit";
 
 // Inicializa o cliente Supabase para Storage (Stateless)
 const supabase = createClient(
@@ -45,6 +46,8 @@ export async function adminUploadCover(req: AuthRequest, res: Response): Promise
       data: { coverPhotoUrl: publicUrl },
       select: { id: true, coverPhotoUrl: true },
     });
+
+    await audit(req, "ADMIN_UPLOAD_COVER", "Event", String(id), null, { publicUrl });
 
     console.log(`[STORAGE] Cover uploaded for event ${id}: ${publicUrl}`);
     res.json(updated);
@@ -216,6 +219,8 @@ export async function adminCreateEvent(req: AuthRequest, res: Response): Promise
       },
     });
 
+    await audit(req, "EVENT_CREATED", "Event", event.id, null, event);
+
     res.status(201).json(event);
   } catch (err: any) {
     if (err.code === "P2002") {
@@ -265,6 +270,9 @@ export async function adminUpdateEvent(req: AuthRequest, res: Response): Promise
         _count:   { select: { pedidos: true } },
       },
     });
+
+    await audit(req, "EVENT_UPDATED", "Event", String(id), null, data);
+
     res.json({ 
       ...event, 
       title: event.nomeNoivos, 
@@ -287,6 +295,9 @@ export async function adminDeleteEvent(req: AuthRequest, res: Response): Promise
       where: { id: String(req.params.id) },
       data: { active: false },
     });
+
+    await audit(req, "EVENT_DELETED", "Event", String(req.params.id));
+
     res.json({ ok: true });
   } catch {
     res.status(500).json({ error: "Erro ao desativar evento." });
@@ -348,12 +359,21 @@ export async function adminCreateUser(req: AuthRequest, res: Response): Promise<
       data: { nome: name, email, senha: hash, role, pixKey },
     });
 
-    // Cria perfil de profissional automaticamente
+    // Cria perfil específico baseado no role
     if (role === "PROFISSIONAL") {
       await prisma.profissional.create({
         data: { userId: user.id, services: [], cameras: [], lenses: [], lighting: [] },
       });
+    } else if (role === "CARTORIO") {
+      await prisma.cartorio.create({
+        data: {
+          userId: user.id,
+          razaoSocial: name, // Usa o nome cadastrado como Razão Social inicial
+        },
+      });
     }
+
+    await audit(req, "USER_CREATED", "User", user.id, null, { email: user.email, role: user.role });
 
     res.status(201).json({
       id: user.id, name: user.nome, email: user.email, role: user.role,
@@ -409,6 +429,8 @@ export async function adminUpdateUser(req: AuthRequest, res: Response): Promise<
         }
       });
     }
+
+    await audit(req, "USER_UPDATED", "User", String(id), null, req.body);
 
     res.json({ ok: true });
   } catch (err) {
@@ -576,6 +598,8 @@ export async function adminApproveQuote(req: AuthRequest, res: Response): Promis
       eventTitle: quote.nomeNoivos,
       checkoutUrl
     });
+
+    await audit(req, "QUOTE_APPROVED", "Event", String(id), null, { finalPrice });
 
     res.json({ success: true, updatedQuote, checkoutUrl });
   } catch (err) {

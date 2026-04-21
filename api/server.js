@@ -40,7 +40,7 @@ var require_main = __commonJS({
     var fs = require("fs");
     var path2 = require("path");
     var os = require("os");
-    var crypto7 = require("crypto");
+    var crypto8 = require("crypto");
     var TIPS = [
       "\u25C8 encrypted .env [www.dotenvx.com]",
       "\u25C8 secrets for agents [www.dotenvx.com]",
@@ -284,7 +284,7 @@ var require_main = __commonJS({
       const authTag = ciphertext.subarray(-16);
       ciphertext = ciphertext.subarray(12, -16);
       try {
-        const aesgcm = crypto7.createDecipheriv("aes-256-gcm", key, nonce);
+        const aesgcm = crypto8.createDecipheriv("aes-256-gcm", key, nonce);
         aesgcm.setAuthTag(authTag);
         return `${aesgcm.update(ciphertext)}${aesgcm.final()}`;
       } catch (error) {
@@ -350,6 +350,52 @@ var require_main = __commonJS({
     module2.exports.parse = DotenvModule.parse;
     module2.exports.populate = DotenvModule.populate;
     module2.exports = DotenvModule;
+  }
+});
+
+// backend/node_modules/dotenv/lib/env-options.js
+var require_env_options = __commonJS({
+  "backend/node_modules/dotenv/lib/env-options.js"(exports2, module2) {
+    var options = {};
+    if (process.env.DOTENV_CONFIG_ENCODING != null) {
+      options.encoding = process.env.DOTENV_CONFIG_ENCODING;
+    }
+    if (process.env.DOTENV_CONFIG_PATH != null) {
+      options.path = process.env.DOTENV_CONFIG_PATH;
+    }
+    if (process.env.DOTENV_CONFIG_QUIET != null) {
+      options.quiet = process.env.DOTENV_CONFIG_QUIET;
+    }
+    if (process.env.DOTENV_CONFIG_DEBUG != null) {
+      options.debug = process.env.DOTENV_CONFIG_DEBUG;
+    }
+    if (process.env.DOTENV_CONFIG_OVERRIDE != null) {
+      options.override = process.env.DOTENV_CONFIG_OVERRIDE;
+    }
+    if (process.env.DOTENV_CONFIG_DOTENV_KEY != null) {
+      options.DOTENV_KEY = process.env.DOTENV_CONFIG_DOTENV_KEY;
+    }
+    module2.exports = options;
+  }
+});
+
+// backend/node_modules/dotenv/lib/cli-options.js
+var require_cli_options = __commonJS({
+  "backend/node_modules/dotenv/lib/cli-options.js"(exports2, module2) {
+    var re = /^dotenv_config_(encoding|path|quiet|debug|override|DOTENV_KEY)=(.+)$/;
+    module2.exports = function optionMatcher(args) {
+      const options = args.reduce(function(acc, cur) {
+        const matches = cur.match(re);
+        if (matches) {
+          acc[matches[1]] = matches[2];
+        }
+        return acc;
+      }, {});
+      if (!("quiet" in options)) {
+        options.quiet = "true";
+      }
+      return options;
+    };
   }
 });
 
@@ -1786,7 +1832,7 @@ var require_safer = __commonJS({
   "backend/node_modules/safer-buffer/safer.js"(exports2, module2) {
     "use strict";
     var buffer = require("buffer");
-    var Buffer2 = buffer.Buffer;
+    var Buffer3 = buffer.Buffer;
     var safer = {};
     var key;
     for (key in buffer) {
@@ -1795,12 +1841,12 @@ var require_safer = __commonJS({
       safer[key] = buffer[key];
     }
     var Safer = safer.Buffer = {};
-    for (key in Buffer2) {
-      if (!Buffer2.hasOwnProperty(key)) continue;
+    for (key in Buffer3) {
+      if (!Buffer3.hasOwnProperty(key)) continue;
       if (key === "allocUnsafe" || key === "allocUnsafeSlow") continue;
-      Safer[key] = Buffer2[key];
+      Safer[key] = Buffer3[key];
     }
-    safer.Buffer.prototype = Buffer2.prototype;
+    safer.Buffer.prototype = Buffer3.prototype;
     if (!Safer.from || Safer.from === Uint8Array.from) {
       Safer.from = function(value, encodingOrOffset, length) {
         if (typeof value === "number") {
@@ -1809,7 +1855,7 @@ var require_safer = __commonJS({
         if (value && typeof value.length === "undefined") {
           throw new TypeError("The first argument must be one of type string, Buffer, ArrayBuffer, Array, or Array-like Object. Received type " + typeof value);
         }
-        return Buffer2(value, encodingOrOffset, length);
+        return Buffer3(value, encodingOrOffset, length);
       };
     }
     if (!Safer.alloc) {
@@ -1820,7 +1866,7 @@ var require_safer = __commonJS({
         if (size < 0 || size >= 2 * (1 << 30)) {
           throw new RangeError('The value "' + size + '" is invalid for option "size"');
         }
-        var buf = Buffer2(size);
+        var buf = Buffer3(size);
         if (!fill || fill.length === 0) {
           buf.fill(0);
         } else if (typeof encoding === "string") {
@@ -1915,7 +1961,7 @@ var require_merge_exports = __commonJS({
 var require_internal = __commonJS({
   "backend/node_modules/iconv-lite/encodings/internal.js"(exports2, module2) {
     "use strict";
-    var Buffer2 = require_safer().Buffer;
+    var Buffer3 = require_safer().Buffer;
     module2.exports = {
       // Encodings
       utf8: { type: "_internal", bomAware: true },
@@ -1939,7 +1985,7 @@ var require_internal = __commonJS({
       } else if (this.enc === "cesu8") {
         this.enc = "utf8";
         this.encoder = InternalEncoderCesu8;
-        if (Buffer2.from("eda0bdedb2a9", "hex").toString() !== "\u{1F4A9}") {
+        if (Buffer3.from("eda0bdedb2a9", "hex").toString() !== "\u{1F4A9}") {
           this.decoder = InternalDecoderCesu8;
           this.defaultCharUnicode = iconv.defaultCharUnicode;
         }
@@ -1952,8 +1998,8 @@ var require_internal = __commonJS({
       this.decoder = new StringDecoder(codec.enc);
     }
     InternalDecoder.prototype.write = function(buf) {
-      if (!Buffer2.isBuffer(buf)) {
-        buf = Buffer2.from(buf);
+      if (!Buffer3.isBuffer(buf)) {
+        buf = Buffer3.from(buf);
       }
       return this.decoder.write(buf);
     };
@@ -1964,7 +2010,7 @@ var require_internal = __commonJS({
       this.enc = codec.enc;
     }
     InternalEncoder.prototype.write = function(str) {
-      return Buffer2.from(str, this.enc);
+      return Buffer3.from(str, this.enc);
     };
     InternalEncoder.prototype.end = function() {
     };
@@ -1976,15 +2022,15 @@ var require_internal = __commonJS({
       var completeQuads = str.length - str.length % 4;
       this.prevStr = str.slice(completeQuads);
       str = str.slice(0, completeQuads);
-      return Buffer2.from(str, "base64");
+      return Buffer3.from(str, "base64");
     };
     InternalEncoderBase64.prototype.end = function() {
-      return Buffer2.from(this.prevStr, "base64");
+      return Buffer3.from(this.prevStr, "base64");
     };
     function InternalEncoderCesu8(options, codec) {
     }
     InternalEncoderCesu8.prototype.write = function(str) {
-      var buf = Buffer2.alloc(str.length * 3);
+      var buf = Buffer3.alloc(str.length * 3);
       var bufIdx = 0;
       for (var i = 0; i < str.length; i++) {
         var charCode = str.charCodeAt(i);
@@ -2080,13 +2126,13 @@ var require_internal = __commonJS({
           str = str.slice(0, str.length - 1);
         }
       }
-      return Buffer2.from(str, this.enc);
+      return Buffer3.from(str, this.enc);
     };
     InternalEncoderUtf8.prototype.end = function() {
       if (this.highSurrogate) {
         var str = this.highSurrogate;
         this.highSurrogate = "";
-        return Buffer2.from(str, this.enc);
+        return Buffer3.from(str, this.enc);
       }
     };
   }
@@ -2096,7 +2142,7 @@ var require_internal = __commonJS({
 var require_utf32 = __commonJS({
   "backend/node_modules/iconv-lite/encodings/utf32.js"(exports2) {
     "use strict";
-    var Buffer2 = require_safer().Buffer;
+    var Buffer3 = require_safer().Buffer;
     exports2._utf32 = Utf32Codec;
     function Utf32Codec(codecOptions, iconv) {
       this.iconv = iconv;
@@ -2114,8 +2160,8 @@ var require_utf32 = __commonJS({
       this.highSurrogate = 0;
     }
     Utf32Encoder.prototype.write = function(str) {
-      var src = Buffer2.from(str, "ucs2");
-      var dst = Buffer2.alloc(src.length * 2);
+      var src = Buffer3.from(str, "ucs2");
+      var dst = Buffer3.alloc(src.length * 2);
       var write32 = this.isLE ? dst.writeUInt32LE : dst.writeUInt32BE;
       var offset = 0;
       for (var i = 0; i < src.length; i += 2) {
@@ -2151,7 +2197,7 @@ var require_utf32 = __commonJS({
       if (!this.highSurrogate) {
         return;
       }
-      var buf = Buffer2.alloc(4);
+      var buf = Buffer3.alloc(4);
       if (this.isLE) {
         buf.writeUInt32LE(this.highSurrogate, 0);
       } else {
@@ -2171,7 +2217,7 @@ var require_utf32 = __commonJS({
       }
       var i = 0;
       var codepoint = 0;
-      var dst = Buffer2.alloc(src.length + 4);
+      var dst = Buffer3.alloc(src.length + 4);
       var offset = 0;
       var isLE = this.isLE;
       var overflow = this.overflow;
@@ -2327,7 +2373,7 @@ var require_utf32 = __commonJS({
 var require_utf16 = __commonJS({
   "backend/node_modules/iconv-lite/encodings/utf16.js"(exports2) {
     "use strict";
-    var Buffer2 = require_safer().Buffer;
+    var Buffer3 = require_safer().Buffer;
     exports2.utf16be = Utf16BECodec;
     function Utf16BECodec() {
     }
@@ -2337,7 +2383,7 @@ var require_utf16 = __commonJS({
     function Utf16BEEncoder() {
     }
     Utf16BEEncoder.prototype.write = function(str) {
-      var buf = Buffer2.from(str, "ucs2");
+      var buf = Buffer3.from(str, "ucs2");
       for (var i = 0; i < buf.length; i += 2) {
         var tmp = buf[i];
         buf[i] = buf[i + 1];
@@ -2354,7 +2400,7 @@ var require_utf16 = __commonJS({
       if (buf.length == 0) {
         return "";
       }
-      var buf2 = Buffer2.alloc(buf.length + 1);
+      var buf2 = Buffer3.alloc(buf.length + 1);
       var i = 0;
       var j = 0;
       if (this.overflowByte !== -1) {
@@ -2470,7 +2516,7 @@ var require_utf16 = __commonJS({
 var require_utf7 = __commonJS({
   "backend/node_modules/iconv-lite/encodings/utf7.js"(exports2) {
     "use strict";
-    var Buffer2 = require_safer().Buffer;
+    var Buffer3 = require_safer().Buffer;
     exports2.utf7 = Utf7Codec;
     exports2.unicode11utf7 = "utf7";
     function Utf7Codec(codecOptions, iconv) {
@@ -2484,7 +2530,7 @@ var require_utf7 = __commonJS({
       this.iconv = codec.iconv;
     }
     Utf7Encoder.prototype.write = function(str) {
-      return Buffer2.from(str.replace(nonDirectChars, function(chunk) {
+      return Buffer3.from(str.replace(nonDirectChars, function(chunk) {
         return "+" + (chunk === "+" ? "" : this.iconv.encode(chunk, "utf16-be").toString("base64").replace(/=+$/, "")) + "-";
       }.bind(this)));
     };
@@ -2522,7 +2568,7 @@ var require_utf7 = __commonJS({
               res += "+";
             } else {
               var b64str = base64Accum + this.iconv.decode(buf.slice(lastI, i2), "ascii");
-              res += this.iconv.decode(Buffer2.from(b64str, "base64"), "utf16-be");
+              res += this.iconv.decode(Buffer3.from(b64str, "base64"), "utf16-be");
             }
             if (buf[i2] != minusChar) {
               i2--;
@@ -2540,7 +2586,7 @@ var require_utf7 = __commonJS({
         var canBeDecoded = b64str.length - b64str.length % 8;
         base64Accum = b64str.slice(canBeDecoded);
         b64str = b64str.slice(0, canBeDecoded);
-        res += this.iconv.decode(Buffer2.from(b64str, "base64"), "utf16-be");
+        res += this.iconv.decode(Buffer3.from(b64str, "base64"), "utf16-be");
       }
       this.inBase64 = inBase64;
       this.base64Accum = base64Accum;
@@ -2549,7 +2595,7 @@ var require_utf7 = __commonJS({
     Utf7Decoder.prototype.end = function() {
       var res = "";
       if (this.inBase64 && this.base64Accum.length > 0) {
-        res = this.iconv.decode(Buffer2.from(this.base64Accum, "base64"), "utf16-be");
+        res = this.iconv.decode(Buffer3.from(this.base64Accum, "base64"), "utf16-be");
       }
       this.inBase64 = false;
       this.base64Accum = "";
@@ -2565,14 +2611,14 @@ var require_utf7 = __commonJS({
     function Utf7IMAPEncoder(options, codec) {
       this.iconv = codec.iconv;
       this.inBase64 = false;
-      this.base64Accum = Buffer2.alloc(6);
+      this.base64Accum = Buffer3.alloc(6);
       this.base64AccumIdx = 0;
     }
     Utf7IMAPEncoder.prototype.write = function(str) {
       var inBase64 = this.inBase64;
       var base64Accum = this.base64Accum;
       var base64AccumIdx = this.base64AccumIdx;
-      var buf = Buffer2.alloc(str.length * 5 + 10);
+      var buf = Buffer3.alloc(str.length * 5 + 10);
       var bufIdx = 0;
       for (var i2 = 0; i2 < str.length; i2++) {
         var uChar = str.charCodeAt(i2);
@@ -2611,7 +2657,7 @@ var require_utf7 = __commonJS({
       return buf.slice(0, bufIdx);
     };
     Utf7IMAPEncoder.prototype.end = function() {
-      var buf = Buffer2.alloc(10);
+      var buf = Buffer3.alloc(10);
       var bufIdx = 0;
       if (this.inBase64) {
         if (this.base64AccumIdx > 0) {
@@ -2648,7 +2694,7 @@ var require_utf7 = __commonJS({
               res += "&";
             } else {
               var b64str = base64Accum + this.iconv.decode(buf.slice(lastI, i2), "ascii").replace(/,/g, "/");
-              res += this.iconv.decode(Buffer2.from(b64str, "base64"), "utf16-be");
+              res += this.iconv.decode(Buffer3.from(b64str, "base64"), "utf16-be");
             }
             if (buf[i2] != minusChar) {
               i2--;
@@ -2666,7 +2712,7 @@ var require_utf7 = __commonJS({
         var canBeDecoded = b64str.length - b64str.length % 8;
         base64Accum = b64str.slice(canBeDecoded);
         b64str = b64str.slice(0, canBeDecoded);
-        res += this.iconv.decode(Buffer2.from(b64str, "base64"), "utf16-be");
+        res += this.iconv.decode(Buffer3.from(b64str, "base64"), "utf16-be");
       }
       this.inBase64 = inBase64;
       this.base64Accum = base64Accum;
@@ -2675,7 +2721,7 @@ var require_utf7 = __commonJS({
     Utf7IMAPDecoder.prototype.end = function() {
       var res = "";
       if (this.inBase64 && this.base64Accum.length > 0) {
-        res = this.iconv.decode(Buffer2.from(this.base64Accum, "base64"), "utf16-be");
+        res = this.iconv.decode(Buffer3.from(this.base64Accum, "base64"), "utf16-be");
       }
       this.inBase64 = false;
       this.base64Accum = "";
@@ -2688,7 +2734,7 @@ var require_utf7 = __commonJS({
 var require_sbcs_codec = __commonJS({
   "backend/node_modules/iconv-lite/encodings/sbcs-codec.js"(exports2) {
     "use strict";
-    var Buffer2 = require_safer().Buffer;
+    var Buffer3 = require_safer().Buffer;
     exports2._sbcs = SBCSCodec;
     function SBCSCodec(codecOptions, iconv) {
       if (!codecOptions) {
@@ -2704,8 +2750,8 @@ var require_sbcs_codec = __commonJS({
         }
         codecOptions.chars = asciiString + codecOptions.chars;
       }
-      this.decodeBuf = Buffer2.from(codecOptions.chars, "ucs2");
-      var encodeBuf = Buffer2.alloc(65536, iconv.defaultCharSingleByte.charCodeAt(0));
+      this.decodeBuf = Buffer3.from(codecOptions.chars, "ucs2");
+      var encodeBuf = Buffer3.alloc(65536, iconv.defaultCharSingleByte.charCodeAt(0));
       for (var i = 0; i < codecOptions.chars.length; i++) {
         encodeBuf[codecOptions.chars.charCodeAt(i)] = i;
       }
@@ -2717,7 +2763,7 @@ var require_sbcs_codec = __commonJS({
       this.encodeBuf = codec.encodeBuf;
     }
     SBCSEncoder.prototype.write = function(str) {
-      var buf = Buffer2.alloc(str.length);
+      var buf = Buffer3.alloc(str.length);
       for (var i = 0; i < str.length; i++) {
         buf[i] = this.encodeBuf[str.charCodeAt(i)];
       }
@@ -2730,7 +2776,7 @@ var require_sbcs_codec = __commonJS({
     }
     SBCSDecoder.prototype.write = function(buf) {
       var decodeBuf = this.decodeBuf;
-      var newBuf = Buffer2.alloc(buf.length * 2);
+      var newBuf = Buffer3.alloc(buf.length * 2);
       var idx1 = 0;
       var idx2 = 0;
       for (var i = 0; i < buf.length; i++) {
@@ -3358,7 +3404,7 @@ var require_sbcs_data_generated = __commonJS({
 var require_dbcs_codec = __commonJS({
   "backend/node_modules/iconv-lite/encodings/dbcs-codec.js"(exports2) {
     "use strict";
-    var Buffer2 = require_safer().Buffer;
+    var Buffer3 = require_safer().Buffer;
     exports2._dbcs = DBCSCodec;
     var UNASSIGNED = -1;
     var GB18030_CODE = -2;
@@ -3594,7 +3640,7 @@ var require_dbcs_codec = __commonJS({
       this.gb18030 = codec.gb18030;
     }
     DBCSEncoder.prototype.write = function(str) {
-      var newBuf = Buffer2.alloc(str.length * (this.gb18030 ? 4 : 3));
+      var newBuf = Buffer3.alloc(str.length * (this.gb18030 ? 4 : 3));
       var leadSurrogate = this.leadSurrogate;
       var seqObj = this.seqObj;
       var nextChar = -1;
@@ -3698,7 +3744,7 @@ var require_dbcs_codec = __commonJS({
       if (this.leadSurrogate === -1 && this.seqObj === void 0) {
         return;
       }
-      var newBuf = Buffer2.alloc(10);
+      var newBuf = Buffer3.alloc(10);
       var j = 0;
       if (this.seqObj) {
         var dbcsCode = this.seqObj[DEF_CHAR];
@@ -3729,7 +3775,7 @@ var require_dbcs_codec = __commonJS({
       this.gb18030 = codec.gb18030;
     }
     DBCSDecoder.prototype.write = function(buf) {
-      var newBuf = Buffer2.alloc(buf.length * 2);
+      var newBuf = Buffer3.alloc(buf.length * 2);
       var nodeIdx = this.nodeIdx;
       var prevBytes = this.prevBytes;
       var prevOffset = this.prevBytes.length;
@@ -5338,7 +5384,7 @@ var require_encodings = __commonJS({
 var require_streams = __commonJS({
   "backend/node_modules/iconv-lite/lib/streams.js"(exports2, module2) {
     "use strict";
-    var Buffer2 = require_safer().Buffer;
+    var Buffer3 = require_safer().Buffer;
     module2.exports = function(streamModule) {
       var Transform = streamModule.Transform;
       function IconvLiteEncoderStream(conv, options) {
@@ -5378,7 +5424,7 @@ var require_streams = __commonJS({
           chunks.push(chunk);
         });
         this.on("end", function() {
-          cb(null, Buffer2.concat(chunks));
+          cb(null, Buffer3.concat(chunks));
         });
         return this;
       };
@@ -5392,7 +5438,7 @@ var require_streams = __commonJS({
         constructor: { value: IconvLiteDecoderStream }
       });
       IconvLiteDecoderStream.prototype._transform = function(chunk, encoding, done) {
-        if (!Buffer2.isBuffer(chunk) && !(chunk instanceof Uint8Array)) {
+        if (!Buffer3.isBuffer(chunk) && !(chunk instanceof Uint8Array)) {
           return done(new Error("Iconv decoding stream needs buffers as its input."));
         }
         try {
@@ -5435,7 +5481,7 @@ var require_streams = __commonJS({
 var require_lib = __commonJS({
   "backend/node_modules/iconv-lite/lib/index.js"(exports2, module2) {
     "use strict";
-    var Buffer2 = require_safer().Buffer;
+    var Buffer3 = require_safer().Buffer;
     var bomHandling = require_bom_handling();
     var mergeModules = require_merge_exports();
     module2.exports.encodings = null;
@@ -5446,7 +5492,7 @@ var require_lib = __commonJS({
       var encoder = module2.exports.getEncoder(encoding, options);
       var res = encoder.write(str);
       var trail = encoder.end();
-      return trail && trail.length > 0 ? Buffer2.concat([res, trail]) : res;
+      return trail && trail.length > 0 ? Buffer3.concat([res, trail]) : res;
     };
     module2.exports.decode = function decode(buf, encoding, options) {
       if (typeof buf === "string") {
@@ -5454,7 +5500,7 @@ var require_lib = __commonJS({
           console.error("Iconv-lite warning: decode()-ing strings is deprecated. Refer to https://github.com/ashtuchkin/iconv-lite/wiki/Use-Buffers-when-decoding");
           module2.exports.skipDecodeWarning = true;
         }
-        buf = Buffer2.from("" + (buf || ""), "binary");
+        buf = Buffer3.from("" + (buf || ""), "binary");
       }
       var decoder = module2.exports.getDecoder(encoding, options);
       var res = decoder.write(buf);
@@ -19079,14 +19125,14 @@ var require_etag = __commonJS({
   "backend/node_modules/etag/index.js"(exports2, module2) {
     "use strict";
     module2.exports = etag;
-    var crypto7 = require("crypto");
+    var crypto8 = require("crypto");
     var Stats = require("fs").Stats;
     var toString3 = Object.prototype.toString;
     function entitytag(entity) {
       if (entity.length === 0) {
         return '"0-2jmj7l5rSw0yVb/vlWAYkK/YBwk"';
       }
-      var hash2 = crypto7.createHash("sha1").update(entity, "utf8").digest("base64").substring(0, 27);
+      var hash2 = crypto8.createHash("sha1").update(entity, "utf8").digest("base64").substring(0, 27);
       var len = typeof entity === "string" ? Buffer.byteLength(entity, "utf8") : entity.length;
       return '"' + len.toString(16) + "-" + hash2 + '"';
     }
@@ -19955,7 +20001,7 @@ var require_utils3 = __commonJS({
     var proxyaddr = require_proxy_addr();
     var qs = require_lib2();
     var querystring = require("node:querystring");
-    var { Buffer: Buffer2 } = require("node:buffer");
+    var { Buffer: Buffer3 } = require("node:buffer");
     exports2.methods = METHODS.map((method) => method.toLowerCase());
     exports2.etag = createETagGenerator({ weak: false });
     exports2.wetag = createETagGenerator({ weak: true });
@@ -20059,7 +20105,7 @@ var require_utils3 = __commonJS({
     };
     function createETagGenerator(options) {
       return function generateETag(body, encoding) {
-        var buf = !Buffer2.isBuffer(body) ? Buffer2.from(body, encoding) : body;
+        var buf = !Buffer3.isBuffer(body) ? Buffer3.from(body, encoding) : body;
         return etag(buf, options);
       };
     }
@@ -22206,7 +22252,7 @@ var require_request = __commonJS({
   "backend/node_modules/express/lib/request.js"(exports2, module2) {
     "use strict";
     var accepts = require_accepts();
-    var isIP = require("node:net").isIP;
+    var isIP2 = require("node:net").isIP;
     var typeis = require_type_is();
     var http3 = require("node:http");
     var fresh = require_fresh();
@@ -22296,7 +22342,7 @@ var require_request = __commonJS({
       var hostname = this.hostname;
       if (!hostname) return [];
       var offset = this.app.get("subdomain offset");
-      var subdomains2 = !isIP(hostname) ? hostname.split(".").reverse() : [hostname];
+      var subdomains2 = !isIP2(hostname) ? hostname.split(".").reverse() : [hostname];
       return subdomains2.slice(offset);
     });
     defineGetter(req, "path", function path2() {
@@ -22561,17 +22607,17 @@ var require_content_disposition = __commonJS({
 // backend/node_modules/cookie-signature/index.js
 var require_cookie_signature = __commonJS({
   "backend/node_modules/cookie-signature/index.js"(exports2) {
-    var crypto7 = require("crypto");
+    var crypto8 = require("crypto");
     exports2.sign = function(val, secret) {
       if ("string" != typeof val) throw new TypeError("Cookie value must be provided as a string.");
       if (null == secret) throw new TypeError("Secret key must be provided.");
-      return val + "." + crypto7.createHmac("sha256", secret).update(val).digest("base64").replace(/\=+$/, "");
+      return val + "." + crypto8.createHmac("sha256", secret).update(val).digest("base64").replace(/\=+$/, "");
     };
     exports2.unsign = function(input, secret) {
       if ("string" != typeof input) throw new TypeError("Signed cookie string must be provided.");
       if (null == secret) throw new TypeError("Secret key must be provided.");
       var tentativeValue = input.slice(0, input.lastIndexOf(".")), expectedInput = exports2.sign(tentativeValue, secret), expectedBuffer = Buffer.from(expectedInput), inputBuffer = Buffer.from(input);
-      return expectedBuffer.length === inputBuffer.length && crypto7.timingSafeEqual(expectedBuffer, inputBuffer) ? tentativeValue : false;
+      return expectedBuffer.length === inputBuffer.length && crypto8.timingSafeEqual(expectedBuffer, inputBuffer) ? tentativeValue : false;
     };
   }
 });
@@ -23322,7 +23368,7 @@ var require_response = __commonJS({
     var extname = path2.extname;
     var resolve = path2.resolve;
     var vary = require_vary();
-    var { Buffer: Buffer2 } = require("node:buffer");
+    var { Buffer: Buffer3 } = require("node:buffer");
     var res = Object.create(http3.ServerResponse.prototype);
     module2.exports = res;
     res.status = function status(code) {
@@ -23386,12 +23432,12 @@ var require_response = __commonJS({
       var generateETag = !this.get("ETag") && typeof etagFn === "function";
       var len;
       if (chunk !== void 0) {
-        if (Buffer2.isBuffer(chunk)) {
+        if (Buffer3.isBuffer(chunk)) {
           len = chunk.length;
         } else if (!generateETag && chunk.length < 1e3) {
-          len = Buffer2.byteLength(chunk, encoding);
+          len = Buffer3.byteLength(chunk, encoding);
         } else {
-          chunk = Buffer2.from(chunk, encoding);
+          chunk = Buffer3.from(chunk, encoding);
           encoding = void 0;
           len = chunk.length;
         }
@@ -23653,7 +23699,7 @@ var require_response = __commonJS({
         }
       });
       this.status(status);
-      this.set("Content-Length", Buffer2.byteLength(body));
+      this.set("Content-Length", Buffer3.byteLength(body));
       if (this.req.method === "HEAD") {
         this.end();
       } else {
@@ -24195,6 +24241,1568 @@ var require_lib3 = __commonJS({
       }
       module2.exports = middlewareWrapper;
     })();
+  }
+});
+
+// backend/node_modules/ip-address/dist/common.js
+var require_common2 = __commonJS({
+  "backend/node_modules/ip-address/dist/common.js"(exports2) {
+    "use strict";
+    Object.defineProperty(exports2, "__esModule", { value: true });
+    exports2.isInSubnet = isInSubnet;
+    exports2.isCorrect = isCorrect;
+    exports2.numberToPaddedHex = numberToPaddedHex;
+    exports2.stringToPaddedHex = stringToPaddedHex;
+    exports2.testBit = testBit;
+    function isInSubnet(address) {
+      if (this.subnetMask < address.subnetMask) {
+        return false;
+      }
+      if (this.mask(address.subnetMask) === address.mask()) {
+        return true;
+      }
+      return false;
+    }
+    function isCorrect(defaultBits) {
+      return function() {
+        if (this.addressMinusSuffix !== this.correctForm()) {
+          return false;
+        }
+        if (this.subnetMask === defaultBits && !this.parsedSubnet) {
+          return true;
+        }
+        return this.parsedSubnet === String(this.subnetMask);
+      };
+    }
+    function numberToPaddedHex(number) {
+      return number.toString(16).padStart(2, "0");
+    }
+    function stringToPaddedHex(numberString) {
+      return numberToPaddedHex(parseInt(numberString, 10));
+    }
+    function testBit(binaryValue, position) {
+      const { length } = binaryValue;
+      if (position > length) {
+        return false;
+      }
+      const positionInString = length - position;
+      return binaryValue.substring(positionInString, positionInString + 1) === "1";
+    }
+  }
+});
+
+// backend/node_modules/ip-address/dist/v4/constants.js
+var require_constants = __commonJS({
+  "backend/node_modules/ip-address/dist/v4/constants.js"(exports2) {
+    "use strict";
+    Object.defineProperty(exports2, "__esModule", { value: true });
+    exports2.RE_SUBNET_STRING = exports2.RE_ADDRESS = exports2.GROUPS = exports2.BITS = void 0;
+    exports2.BITS = 32;
+    exports2.GROUPS = 4;
+    exports2.RE_ADDRESS = /^(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)$/g;
+    exports2.RE_SUBNET_STRING = /\/\d{1,2}$/;
+  }
+});
+
+// backend/node_modules/ip-address/dist/address-error.js
+var require_address_error = __commonJS({
+  "backend/node_modules/ip-address/dist/address-error.js"(exports2) {
+    "use strict";
+    Object.defineProperty(exports2, "__esModule", { value: true });
+    exports2.AddressError = void 0;
+    var AddressError = class extends Error {
+      constructor(message, parseMessage) {
+        super(message);
+        this.name = "AddressError";
+        this.parseMessage = parseMessage;
+      }
+    };
+    exports2.AddressError = AddressError;
+  }
+});
+
+// backend/node_modules/ip-address/dist/ipv4.js
+var require_ipv4 = __commonJS({
+  "backend/node_modules/ip-address/dist/ipv4.js"(exports2) {
+    "use strict";
+    var __createBinding2 = exports2 && exports2.__createBinding || (Object.create ? (function(o, m, k, k2) {
+      if (k2 === void 0) k2 = k;
+      var desc = Object.getOwnPropertyDescriptor(m, k);
+      if (!desc || ("get" in desc ? !m.__esModule : desc.writable || desc.configurable)) {
+        desc = { enumerable: true, get: function() {
+          return m[k];
+        } };
+      }
+      Object.defineProperty(o, k2, desc);
+    }) : (function(o, m, k, k2) {
+      if (k2 === void 0) k2 = k;
+      o[k2] = m[k];
+    }));
+    var __setModuleDefault2 = exports2 && exports2.__setModuleDefault || (Object.create ? (function(o, v) {
+      Object.defineProperty(o, "default", { enumerable: true, value: v });
+    }) : function(o, v) {
+      o["default"] = v;
+    });
+    var __importStar2 = exports2 && exports2.__importStar || function(mod) {
+      if (mod && mod.__esModule) return mod;
+      var result = {};
+      if (mod != null) {
+        for (var k in mod) if (k !== "default" && Object.prototype.hasOwnProperty.call(mod, k)) __createBinding2(result, mod, k);
+      }
+      __setModuleDefault2(result, mod);
+      return result;
+    };
+    Object.defineProperty(exports2, "__esModule", { value: true });
+    exports2.Address4 = void 0;
+    var common = __importStar2(require_common2());
+    var constants = __importStar2(require_constants());
+    var address_error_1 = require_address_error();
+    var Address4 = class _Address4 {
+      constructor(address) {
+        this.groups = constants.GROUPS;
+        this.parsedAddress = [];
+        this.parsedSubnet = "";
+        this.subnet = "/32";
+        this.subnetMask = 32;
+        this.v4 = true;
+        this.isCorrect = common.isCorrect(constants.BITS);
+        this.isInSubnet = common.isInSubnet;
+        this.address = address;
+        const subnet = constants.RE_SUBNET_STRING.exec(address);
+        if (subnet) {
+          this.parsedSubnet = subnet[0].replace("/", "");
+          this.subnetMask = parseInt(this.parsedSubnet, 10);
+          this.subnet = `/${this.subnetMask}`;
+          if (this.subnetMask < 0 || this.subnetMask > constants.BITS) {
+            throw new address_error_1.AddressError("Invalid subnet mask.");
+          }
+          address = address.replace(constants.RE_SUBNET_STRING, "");
+        }
+        this.addressMinusSuffix = address;
+        this.parsedAddress = this.parse(address);
+      }
+      static isValid(address) {
+        try {
+          new _Address4(address);
+          return true;
+        } catch (e) {
+          return false;
+        }
+      }
+      /*
+       * Parses a v4 address
+       */
+      parse(address) {
+        const groups = address.split(".");
+        if (!address.match(constants.RE_ADDRESS)) {
+          throw new address_error_1.AddressError("Invalid IPv4 address.");
+        }
+        return groups;
+      }
+      /**
+       * Returns the correct form of an address
+       * @memberof Address4
+       * @instance
+       * @returns {String}
+       */
+      correctForm() {
+        return this.parsedAddress.map((part) => parseInt(part, 10)).join(".");
+      }
+      /**
+       * Converts a hex string to an IPv4 address object
+       * @memberof Address4
+       * @static
+       * @param {string} hex - a hex string to convert
+       * @returns {Address4}
+       */
+      static fromHex(hex) {
+        const padded = hex.replace(/:/g, "").padStart(8, "0");
+        const groups = [];
+        let i;
+        for (i = 0; i < 8; i += 2) {
+          const h = padded.slice(i, i + 2);
+          groups.push(parseInt(h, 16));
+        }
+        return new _Address4(groups.join("."));
+      }
+      /**
+       * Converts an integer into a IPv4 address object
+       * @memberof Address4
+       * @static
+       * @param {integer} integer - a number to convert
+       * @returns {Address4}
+       */
+      static fromInteger(integer) {
+        return _Address4.fromHex(integer.toString(16));
+      }
+      /**
+       * Return an address from in-addr.arpa form
+       * @memberof Address4
+       * @static
+       * @param {string} arpaFormAddress - an 'in-addr.arpa' form ipv4 address
+       * @returns {Adress4}
+       * @example
+       * var address = Address4.fromArpa(42.2.0.192.in-addr.arpa.)
+       * address.correctForm(); // '192.0.2.42'
+       */
+      static fromArpa(arpaFormAddress) {
+        const leader = arpaFormAddress.replace(/(\.in-addr\.arpa)?\.$/, "");
+        const address = leader.split(".").reverse().join(".");
+        return new _Address4(address);
+      }
+      /**
+       * Converts an IPv4 address object to a hex string
+       * @memberof Address4
+       * @instance
+       * @returns {String}
+       */
+      toHex() {
+        return this.parsedAddress.map((part) => common.stringToPaddedHex(part)).join(":");
+      }
+      /**
+       * Converts an IPv4 address object to an array of bytes
+       * @memberof Address4
+       * @instance
+       * @returns {Array}
+       */
+      toArray() {
+        return this.parsedAddress.map((part) => parseInt(part, 10));
+      }
+      /**
+       * Converts an IPv4 address object to an IPv6 address group
+       * @memberof Address4
+       * @instance
+       * @returns {String}
+       */
+      toGroup6() {
+        const output = [];
+        let i;
+        for (i = 0; i < constants.GROUPS; i += 2) {
+          output.push(`${common.stringToPaddedHex(this.parsedAddress[i])}${common.stringToPaddedHex(this.parsedAddress[i + 1])}`);
+        }
+        return output.join(":");
+      }
+      /**
+       * Returns the address as a `bigint`
+       * @memberof Address4
+       * @instance
+       * @returns {bigint}
+       */
+      bigInt() {
+        return BigInt(`0x${this.parsedAddress.map((n) => common.stringToPaddedHex(n)).join("")}`);
+      }
+      /**
+       * Helper function getting start address.
+       * @memberof Address4
+       * @instance
+       * @returns {bigint}
+       */
+      _startAddress() {
+        return BigInt(`0b${this.mask() + "0".repeat(constants.BITS - this.subnetMask)}`);
+      }
+      /**
+       * The first address in the range given by this address' subnet.
+       * Often referred to as the Network Address.
+       * @memberof Address4
+       * @instance
+       * @returns {Address4}
+       */
+      startAddress() {
+        return _Address4.fromBigInt(this._startAddress());
+      }
+      /**
+       * The first host address in the range given by this address's subnet ie
+       * the first address after the Network Address
+       * @memberof Address4
+       * @instance
+       * @returns {Address4}
+       */
+      startAddressExclusive() {
+        const adjust = BigInt("1");
+        return _Address4.fromBigInt(this._startAddress() + adjust);
+      }
+      /**
+       * Helper function getting end address.
+       * @memberof Address4
+       * @instance
+       * @returns {bigint}
+       */
+      _endAddress() {
+        return BigInt(`0b${this.mask() + "1".repeat(constants.BITS - this.subnetMask)}`);
+      }
+      /**
+       * The last address in the range given by this address' subnet
+       * Often referred to as the Broadcast
+       * @memberof Address4
+       * @instance
+       * @returns {Address4}
+       */
+      endAddress() {
+        return _Address4.fromBigInt(this._endAddress());
+      }
+      /**
+       * The last host address in the range given by this address's subnet ie
+       * the last address prior to the Broadcast Address
+       * @memberof Address4
+       * @instance
+       * @returns {Address4}
+       */
+      endAddressExclusive() {
+        const adjust = BigInt("1");
+        return _Address4.fromBigInt(this._endAddress() - adjust);
+      }
+      /**
+       * Converts a BigInt to a v4 address object
+       * @memberof Address4
+       * @static
+       * @param {bigint} bigInt - a BigInt to convert
+       * @returns {Address4}
+       */
+      static fromBigInt(bigInt) {
+        return _Address4.fromHex(bigInt.toString(16));
+      }
+      /**
+       * Convert a byte array to an Address4 object
+       * @memberof Address4
+       * @static
+       * @param {Array<number>} bytes - an array of 4 bytes (0-255)
+       * @returns {Address4}
+       */
+      static fromByteArray(bytes) {
+        if (bytes.length !== 4) {
+          throw new address_error_1.AddressError("IPv4 addresses require exactly 4 bytes");
+        }
+        for (let i = 0; i < bytes.length; i++) {
+          if (!Number.isInteger(bytes[i]) || bytes[i] < 0 || bytes[i] > 255) {
+            throw new address_error_1.AddressError("All bytes must be integers between 0 and 255");
+          }
+        }
+        return this.fromUnsignedByteArray(bytes);
+      }
+      /**
+       * Convert an unsigned byte array to an Address4 object
+       * @memberof Address4
+       * @static
+       * @param {Array<number>} bytes - an array of 4 unsigned bytes (0-255)
+       * @returns {Address4}
+       */
+      static fromUnsignedByteArray(bytes) {
+        if (bytes.length !== 4) {
+          throw new address_error_1.AddressError("IPv4 addresses require exactly 4 bytes");
+        }
+        const address = bytes.join(".");
+        return new _Address4(address);
+      }
+      /**
+       * Returns the first n bits of the address, defaulting to the
+       * subnet mask
+       * @memberof Address4
+       * @instance
+       * @returns {String}
+       */
+      mask(mask) {
+        if (mask === void 0) {
+          mask = this.subnetMask;
+        }
+        return this.getBitsBase2(0, mask);
+      }
+      /**
+       * Returns the bits in the given range as a base-2 string
+       * @memberof Address4
+       * @instance
+       * @returns {string}
+       */
+      getBitsBase2(start, end) {
+        return this.binaryZeroPad().slice(start, end);
+      }
+      /**
+       * Return the reversed ip6.arpa form of the address
+       * @memberof Address4
+       * @param {Object} options
+       * @param {boolean} options.omitSuffix - omit the "in-addr.arpa" suffix
+       * @instance
+       * @returns {String}
+       */
+      reverseForm(options) {
+        if (!options) {
+          options = {};
+        }
+        const reversed = this.correctForm().split(".").reverse().join(".");
+        if (options.omitSuffix) {
+          return reversed;
+        }
+        return `${reversed}.in-addr.arpa.`;
+      }
+      /**
+       * Returns true if the given address is a multicast address
+       * @memberof Address4
+       * @instance
+       * @returns {boolean}
+       */
+      isMulticast() {
+        return this.isInSubnet(new _Address4("224.0.0.0/4"));
+      }
+      /**
+       * Returns a zero-padded base-2 string representation of the address
+       * @memberof Address4
+       * @instance
+       * @returns {string}
+       */
+      binaryZeroPad() {
+        return this.bigInt().toString(2).padStart(constants.BITS, "0");
+      }
+      /**
+       * Groups an IPv4 address for inclusion at the end of an IPv6 address
+       * @returns {String}
+       */
+      groupForV6() {
+        const segments = this.parsedAddress;
+        return this.address.replace(constants.RE_ADDRESS, `<span class="hover-group group-v4 group-6">${segments.slice(0, 2).join(".")}</span>.<span class="hover-group group-v4 group-7">${segments.slice(2, 4).join(".")}</span>`);
+      }
+    };
+    exports2.Address4 = Address4;
+  }
+});
+
+// backend/node_modules/ip-address/dist/v6/constants.js
+var require_constants2 = __commonJS({
+  "backend/node_modules/ip-address/dist/v6/constants.js"(exports2) {
+    "use strict";
+    Object.defineProperty(exports2, "__esModule", { value: true });
+    exports2.RE_URL_WITH_PORT = exports2.RE_URL = exports2.RE_ZONE_STRING = exports2.RE_SUBNET_STRING = exports2.RE_BAD_ADDRESS = exports2.RE_BAD_CHARACTERS = exports2.TYPES = exports2.SCOPES = exports2.GROUPS = exports2.BITS = void 0;
+    exports2.BITS = 128;
+    exports2.GROUPS = 8;
+    exports2.SCOPES = {
+      0: "Reserved",
+      1: "Interface local",
+      2: "Link local",
+      4: "Admin local",
+      5: "Site local",
+      8: "Organization local",
+      14: "Global",
+      15: "Reserved"
+    };
+    exports2.TYPES = {
+      "ff01::1/128": "Multicast (All nodes on this interface)",
+      "ff01::2/128": "Multicast (All routers on this interface)",
+      "ff02::1/128": "Multicast (All nodes on this link)",
+      "ff02::2/128": "Multicast (All routers on this link)",
+      "ff05::2/128": "Multicast (All routers in this site)",
+      "ff02::5/128": "Multicast (OSPFv3 AllSPF routers)",
+      "ff02::6/128": "Multicast (OSPFv3 AllDR routers)",
+      "ff02::9/128": "Multicast (RIP routers)",
+      "ff02::a/128": "Multicast (EIGRP routers)",
+      "ff02::d/128": "Multicast (PIM routers)",
+      "ff02::16/128": "Multicast (MLDv2 reports)",
+      "ff01::fb/128": "Multicast (mDNSv6)",
+      "ff02::fb/128": "Multicast (mDNSv6)",
+      "ff05::fb/128": "Multicast (mDNSv6)",
+      "ff02::1:2/128": "Multicast (All DHCP servers and relay agents on this link)",
+      "ff05::1:2/128": "Multicast (All DHCP servers and relay agents in this site)",
+      "ff02::1:3/128": "Multicast (All DHCP servers on this link)",
+      "ff05::1:3/128": "Multicast (All DHCP servers in this site)",
+      "::/128": "Unspecified",
+      "::1/128": "Loopback",
+      "ff00::/8": "Multicast",
+      "fe80::/10": "Link-local unicast"
+    };
+    exports2.RE_BAD_CHARACTERS = /([^0-9a-f:/%])/gi;
+    exports2.RE_BAD_ADDRESS = /([0-9a-f]{5,}|:{3,}|[^:]:$|^:[^:]|\/$)/gi;
+    exports2.RE_SUBNET_STRING = /\/\d{1,3}(?=%|$)/;
+    exports2.RE_ZONE_STRING = /%.*$/;
+    exports2.RE_URL = /^\[{0,1}([0-9a-f:]+)\]{0,1}/;
+    exports2.RE_URL_WITH_PORT = /\[([0-9a-f:]+)\]:([0-9]{1,5})/;
+  }
+});
+
+// backend/node_modules/ip-address/dist/v6/helpers.js
+var require_helpers = __commonJS({
+  "backend/node_modules/ip-address/dist/v6/helpers.js"(exports2) {
+    "use strict";
+    Object.defineProperty(exports2, "__esModule", { value: true });
+    exports2.spanAllZeroes = spanAllZeroes;
+    exports2.spanAll = spanAll;
+    exports2.spanLeadingZeroes = spanLeadingZeroes;
+    exports2.simpleGroup = simpleGroup;
+    function spanAllZeroes(s) {
+      return s.replace(/(0+)/g, '<span class="zero">$1</span>');
+    }
+    function spanAll(s, offset = 0) {
+      const letters = s.split("");
+      return letters.map((n, i) => `<span class="digit value-${n} position-${i + offset}">${spanAllZeroes(n)}</span>`).join("");
+    }
+    function spanLeadingZeroesSimple(group) {
+      return group.replace(/^(0+)/, '<span class="zero">$1</span>');
+    }
+    function spanLeadingZeroes(address) {
+      const groups = address.split(":");
+      return groups.map((g) => spanLeadingZeroesSimple(g)).join(":");
+    }
+    function simpleGroup(addressString, offset = 0) {
+      const groups = addressString.split(":");
+      return groups.map((g, i) => {
+        if (/group-v4/.test(g)) {
+          return g;
+        }
+        return `<span class="hover-group group-${i + offset}">${spanLeadingZeroesSimple(g)}</span>`;
+      });
+    }
+  }
+});
+
+// backend/node_modules/ip-address/dist/v6/regular-expressions.js
+var require_regular_expressions = __commonJS({
+  "backend/node_modules/ip-address/dist/v6/regular-expressions.js"(exports2) {
+    "use strict";
+    var __createBinding2 = exports2 && exports2.__createBinding || (Object.create ? (function(o, m, k, k2) {
+      if (k2 === void 0) k2 = k;
+      var desc = Object.getOwnPropertyDescriptor(m, k);
+      if (!desc || ("get" in desc ? !m.__esModule : desc.writable || desc.configurable)) {
+        desc = { enumerable: true, get: function() {
+          return m[k];
+        } };
+      }
+      Object.defineProperty(o, k2, desc);
+    }) : (function(o, m, k, k2) {
+      if (k2 === void 0) k2 = k;
+      o[k2] = m[k];
+    }));
+    var __setModuleDefault2 = exports2 && exports2.__setModuleDefault || (Object.create ? (function(o, v) {
+      Object.defineProperty(o, "default", { enumerable: true, value: v });
+    }) : function(o, v) {
+      o["default"] = v;
+    });
+    var __importStar2 = exports2 && exports2.__importStar || function(mod) {
+      if (mod && mod.__esModule) return mod;
+      var result = {};
+      if (mod != null) {
+        for (var k in mod) if (k !== "default" && Object.prototype.hasOwnProperty.call(mod, k)) __createBinding2(result, mod, k);
+      }
+      __setModuleDefault2(result, mod);
+      return result;
+    };
+    Object.defineProperty(exports2, "__esModule", { value: true });
+    exports2.ADDRESS_BOUNDARY = void 0;
+    exports2.groupPossibilities = groupPossibilities;
+    exports2.padGroup = padGroup;
+    exports2.simpleRegularExpression = simpleRegularExpression;
+    exports2.possibleElisions = possibleElisions;
+    var v6 = __importStar2(require_constants2());
+    function groupPossibilities(possibilities) {
+      return `(${possibilities.join("|")})`;
+    }
+    function padGroup(group) {
+      if (group.length < 4) {
+        return `0{0,${4 - group.length}}${group}`;
+      }
+      return group;
+    }
+    exports2.ADDRESS_BOUNDARY = "[^A-Fa-f0-9:]";
+    function simpleRegularExpression(groups) {
+      const zeroIndexes = [];
+      groups.forEach((group, i) => {
+        const groupInteger = parseInt(group, 16);
+        if (groupInteger === 0) {
+          zeroIndexes.push(i);
+        }
+      });
+      const possibilities = zeroIndexes.map((zeroIndex) => groups.map((group, i) => {
+        if (i === zeroIndex) {
+          const elision = i === 0 || i === v6.GROUPS - 1 ? ":" : "";
+          return groupPossibilities([padGroup(group), elision]);
+        }
+        return padGroup(group);
+      }).join(":"));
+      possibilities.push(groups.map(padGroup).join(":"));
+      return groupPossibilities(possibilities);
+    }
+    function possibleElisions(elidedGroups, moreLeft, moreRight) {
+      const left = moreLeft ? "" : ":";
+      const right = moreRight ? "" : ":";
+      const possibilities = [];
+      if (!moreLeft && !moreRight) {
+        possibilities.push("::");
+      }
+      if (moreLeft && moreRight) {
+        possibilities.push("");
+      }
+      if (moreRight && !moreLeft || !moreRight && moreLeft) {
+        possibilities.push(":");
+      }
+      possibilities.push(`${left}(:0{1,4}){1,${elidedGroups - 1}}`);
+      possibilities.push(`(0{1,4}:){1,${elidedGroups - 1}}${right}`);
+      possibilities.push(`(0{1,4}:){${elidedGroups - 1}}0{1,4}`);
+      for (let groups = 1; groups < elidedGroups - 1; groups++) {
+        for (let position = 1; position < elidedGroups - groups; position++) {
+          possibilities.push(`(0{1,4}:){${position}}:(0{1,4}:){${elidedGroups - position - groups - 1}}0{1,4}`);
+        }
+      }
+      return groupPossibilities(possibilities);
+    }
+  }
+});
+
+// backend/node_modules/ip-address/dist/ipv6.js
+var require_ipv6 = __commonJS({
+  "backend/node_modules/ip-address/dist/ipv6.js"(exports2) {
+    "use strict";
+    var __createBinding2 = exports2 && exports2.__createBinding || (Object.create ? (function(o, m, k, k2) {
+      if (k2 === void 0) k2 = k;
+      var desc = Object.getOwnPropertyDescriptor(m, k);
+      if (!desc || ("get" in desc ? !m.__esModule : desc.writable || desc.configurable)) {
+        desc = { enumerable: true, get: function() {
+          return m[k];
+        } };
+      }
+      Object.defineProperty(o, k2, desc);
+    }) : (function(o, m, k, k2) {
+      if (k2 === void 0) k2 = k;
+      o[k2] = m[k];
+    }));
+    var __setModuleDefault2 = exports2 && exports2.__setModuleDefault || (Object.create ? (function(o, v) {
+      Object.defineProperty(o, "default", { enumerable: true, value: v });
+    }) : function(o, v) {
+      o["default"] = v;
+    });
+    var __importStar2 = exports2 && exports2.__importStar || function(mod) {
+      if (mod && mod.__esModule) return mod;
+      var result = {};
+      if (mod != null) {
+        for (var k in mod) if (k !== "default" && Object.prototype.hasOwnProperty.call(mod, k)) __createBinding2(result, mod, k);
+      }
+      __setModuleDefault2(result, mod);
+      return result;
+    };
+    Object.defineProperty(exports2, "__esModule", { value: true });
+    exports2.Address6 = void 0;
+    var common = __importStar2(require_common2());
+    var constants4 = __importStar2(require_constants());
+    var constants6 = __importStar2(require_constants2());
+    var helpers = __importStar2(require_helpers());
+    var ipv4_1 = require_ipv4();
+    var regular_expressions_1 = require_regular_expressions();
+    var address_error_1 = require_address_error();
+    var common_1 = require_common2();
+    function assert(condition) {
+      if (!condition) {
+        throw new Error("Assertion failed.");
+      }
+    }
+    function addCommas(number) {
+      const r = /(\d+)(\d{3})/;
+      while (r.test(number)) {
+        number = number.replace(r, "$1,$2");
+      }
+      return number;
+    }
+    function spanLeadingZeroes4(n) {
+      n = n.replace(/^(0{1,})([1-9]+)$/, '<span class="parse-error">$1</span>$2');
+      n = n.replace(/^(0{1,})(0)$/, '<span class="parse-error">$1</span>$2');
+      return n;
+    }
+    function compact(address, slice) {
+      const s1 = [];
+      const s2 = [];
+      let i;
+      for (i = 0; i < address.length; i++) {
+        if (i < slice[0]) {
+          s1.push(address[i]);
+        } else if (i > slice[1]) {
+          s2.push(address[i]);
+        }
+      }
+      return s1.concat(["compact"]).concat(s2);
+    }
+    function paddedHex(octet) {
+      return parseInt(octet, 16).toString(16).padStart(4, "0");
+    }
+    function unsignByte(b) {
+      return b & 255;
+    }
+    var Address62 = class _Address6 {
+      constructor(address, optionalGroups) {
+        this.addressMinusSuffix = "";
+        this.parsedSubnet = "";
+        this.subnet = "/128";
+        this.subnetMask = 128;
+        this.v4 = false;
+        this.zone = "";
+        this.isInSubnet = common.isInSubnet;
+        this.isCorrect = common.isCorrect(constants6.BITS);
+        if (optionalGroups === void 0) {
+          this.groups = constants6.GROUPS;
+        } else {
+          this.groups = optionalGroups;
+        }
+        this.address = address;
+        const subnet = constants6.RE_SUBNET_STRING.exec(address);
+        if (subnet) {
+          this.parsedSubnet = subnet[0].replace("/", "");
+          this.subnetMask = parseInt(this.parsedSubnet, 10);
+          this.subnet = `/${this.subnetMask}`;
+          if (Number.isNaN(this.subnetMask) || this.subnetMask < 0 || this.subnetMask > constants6.BITS) {
+            throw new address_error_1.AddressError("Invalid subnet mask.");
+          }
+          address = address.replace(constants6.RE_SUBNET_STRING, "");
+        } else if (/\//.test(address)) {
+          throw new address_error_1.AddressError("Invalid subnet mask.");
+        }
+        const zone = constants6.RE_ZONE_STRING.exec(address);
+        if (zone) {
+          this.zone = zone[0];
+          address = address.replace(constants6.RE_ZONE_STRING, "");
+        }
+        this.addressMinusSuffix = address;
+        this.parsedAddress = this.parse(this.addressMinusSuffix);
+      }
+      static isValid(address) {
+        try {
+          new _Address6(address);
+          return true;
+        } catch (e) {
+          return false;
+        }
+      }
+      /**
+       * Convert a BigInt to a v6 address object
+       * @memberof Address6
+       * @static
+       * @param {bigint} bigInt - a BigInt to convert
+       * @returns {Address6}
+       * @example
+       * var bigInt = BigInt('1000000000000');
+       * var address = Address6.fromBigInt(bigInt);
+       * address.correctForm(); // '::e8:d4a5:1000'
+       */
+      static fromBigInt(bigInt) {
+        const hex = bigInt.toString(16).padStart(32, "0");
+        const groups = [];
+        let i;
+        for (i = 0; i < constants6.GROUPS; i++) {
+          groups.push(hex.slice(i * 4, (i + 1) * 4));
+        }
+        return new _Address6(groups.join(":"));
+      }
+      /**
+       * Convert a URL (with optional port number) to an address object
+       * @memberof Address6
+       * @static
+       * @param {string} url - a URL with optional port number
+       * @example
+       * var addressAndPort = Address6.fromURL('http://[ffff::]:8080/foo/');
+       * addressAndPort.address.correctForm(); // 'ffff::'
+       * addressAndPort.port; // 8080
+       */
+      static fromURL(url2) {
+        let host;
+        let port = null;
+        let result;
+        if (url2.indexOf("[") !== -1 && url2.indexOf("]:") !== -1) {
+          result = constants6.RE_URL_WITH_PORT.exec(url2);
+          if (result === null) {
+            return {
+              error: "failed to parse address with port",
+              address: null,
+              port: null
+            };
+          }
+          host = result[1];
+          port = result[2];
+        } else if (url2.indexOf("/") !== -1) {
+          url2 = url2.replace(/^[a-z0-9]+:\/\//, "");
+          result = constants6.RE_URL.exec(url2);
+          if (result === null) {
+            return {
+              error: "failed to parse address from URL",
+              address: null,
+              port: null
+            };
+          }
+          host = result[1];
+        } else {
+          host = url2;
+        }
+        if (port) {
+          port = parseInt(port, 10);
+          if (port < 0 || port > 65536) {
+            port = null;
+          }
+        } else {
+          port = null;
+        }
+        return {
+          address: new _Address6(host),
+          port
+        };
+      }
+      /**
+       * Create an IPv6-mapped address given an IPv4 address
+       * @memberof Address6
+       * @static
+       * @param {string} address - An IPv4 address string
+       * @returns {Address6}
+       * @example
+       * var address = Address6.fromAddress4('192.168.0.1');
+       * address.correctForm(); // '::ffff:c0a8:1'
+       * address.to4in6(); // '::ffff:192.168.0.1'
+       */
+      static fromAddress4(address) {
+        const address4 = new ipv4_1.Address4(address);
+        const mask6 = constants6.BITS - (constants4.BITS - address4.subnetMask);
+        return new _Address6(`::ffff:${address4.correctForm()}/${mask6}`);
+      }
+      /**
+       * Return an address from ip6.arpa form
+       * @memberof Address6
+       * @static
+       * @param {string} arpaFormAddress - an 'ip6.arpa' form address
+       * @returns {Adress6}
+       * @example
+       * var address = Address6.fromArpa(e.f.f.f.3.c.2.6.f.f.f.e.6.6.8.e.1.0.6.7.9.4.e.c.0.0.0.0.1.0.0.2.ip6.arpa.)
+       * address.correctForm(); // '2001:0:ce49:7601:e866:efff:62c3:fffe'
+       */
+      static fromArpa(arpaFormAddress) {
+        let address = arpaFormAddress.replace(/(\.ip6\.arpa)?\.$/, "");
+        const semicolonAmount = 7;
+        if (address.length !== 63) {
+          throw new address_error_1.AddressError("Invalid 'ip6.arpa' form.");
+        }
+        const parts = address.split(".").reverse();
+        for (let i = semicolonAmount; i > 0; i--) {
+          const insertIndex = i * 4;
+          parts.splice(insertIndex, 0, ":");
+        }
+        address = parts.join("");
+        return new _Address6(address);
+      }
+      /**
+       * Return the Microsoft UNC transcription of the address
+       * @memberof Address6
+       * @instance
+       * @returns {String} the Microsoft UNC transcription of the address
+       */
+      microsoftTranscription() {
+        return `${this.correctForm().replace(/:/g, "-")}.ipv6-literal.net`;
+      }
+      /**
+       * Return the first n bits of the address, defaulting to the subnet mask
+       * @memberof Address6
+       * @instance
+       * @param {number} [mask=subnet] - the number of bits to mask
+       * @returns {String} the first n bits of the address as a string
+       */
+      mask(mask = this.subnetMask) {
+        return this.getBitsBase2(0, mask);
+      }
+      /**
+       * Return the number of possible subnets of a given size in the address
+       * @memberof Address6
+       * @instance
+       * @param {number} [subnetSize=128] - the subnet size
+       * @returns {String}
+       */
+      // TODO: probably useful to have a numeric version of this too
+      possibleSubnets(subnetSize = 128) {
+        const availableBits = constants6.BITS - this.subnetMask;
+        const subnetBits = Math.abs(subnetSize - constants6.BITS);
+        const subnetPowers = availableBits - subnetBits;
+        if (subnetPowers < 0) {
+          return "0";
+        }
+        return addCommas((BigInt("2") ** BigInt(subnetPowers)).toString(10));
+      }
+      /**
+       * Helper function getting start address.
+       * @memberof Address6
+       * @instance
+       * @returns {bigint}
+       */
+      _startAddress() {
+        return BigInt(`0b${this.mask() + "0".repeat(constants6.BITS - this.subnetMask)}`);
+      }
+      /**
+       * The first address in the range given by this address' subnet
+       * Often referred to as the Network Address.
+       * @memberof Address6
+       * @instance
+       * @returns {Address6}
+       */
+      startAddress() {
+        return _Address6.fromBigInt(this._startAddress());
+      }
+      /**
+       * The first host address in the range given by this address's subnet ie
+       * the first address after the Network Address
+       * @memberof Address6
+       * @instance
+       * @returns {Address6}
+       */
+      startAddressExclusive() {
+        const adjust = BigInt("1");
+        return _Address6.fromBigInt(this._startAddress() + adjust);
+      }
+      /**
+       * Helper function getting end address.
+       * @memberof Address6
+       * @instance
+       * @returns {bigint}
+       */
+      _endAddress() {
+        return BigInt(`0b${this.mask() + "1".repeat(constants6.BITS - this.subnetMask)}`);
+      }
+      /**
+       * The last address in the range given by this address' subnet
+       * Often referred to as the Broadcast
+       * @memberof Address6
+       * @instance
+       * @returns {Address6}
+       */
+      endAddress() {
+        return _Address6.fromBigInt(this._endAddress());
+      }
+      /**
+       * The last host address in the range given by this address's subnet ie
+       * the last address prior to the Broadcast Address
+       * @memberof Address6
+       * @instance
+       * @returns {Address6}
+       */
+      endAddressExclusive() {
+        const adjust = BigInt("1");
+        return _Address6.fromBigInt(this._endAddress() - adjust);
+      }
+      /**
+       * Return the scope of the address
+       * @memberof Address6
+       * @instance
+       * @returns {String}
+       */
+      getScope() {
+        let scope = constants6.SCOPES[parseInt(this.getBits(12, 16).toString(10), 10)];
+        if (this.getType() === "Global unicast" && scope !== "Link local") {
+          scope = "Global";
+        }
+        return scope || "Unknown";
+      }
+      /**
+       * Return the type of the address
+       * @memberof Address6
+       * @instance
+       * @returns {String}
+       */
+      getType() {
+        for (const subnet of Object.keys(constants6.TYPES)) {
+          if (this.isInSubnet(new _Address6(subnet))) {
+            return constants6.TYPES[subnet];
+          }
+        }
+        return "Global unicast";
+      }
+      /**
+       * Return the bits in the given range as a BigInt
+       * @memberof Address6
+       * @instance
+       * @returns {bigint}
+       */
+      getBits(start, end) {
+        return BigInt(`0b${this.getBitsBase2(start, end)}`);
+      }
+      /**
+       * Return the bits in the given range as a base-2 string
+       * @memberof Address6
+       * @instance
+       * @returns {String}
+       */
+      getBitsBase2(start, end) {
+        return this.binaryZeroPad().slice(start, end);
+      }
+      /**
+       * Return the bits in the given range as a base-16 string
+       * @memberof Address6
+       * @instance
+       * @returns {String}
+       */
+      getBitsBase16(start, end) {
+        const length = end - start;
+        if (length % 4 !== 0) {
+          throw new Error("Length of bits to retrieve must be divisible by four");
+        }
+        return this.getBits(start, end).toString(16).padStart(length / 4, "0");
+      }
+      /**
+       * Return the bits that are set past the subnet mask length
+       * @memberof Address6
+       * @instance
+       * @returns {String}
+       */
+      getBitsPastSubnet() {
+        return this.getBitsBase2(this.subnetMask, constants6.BITS);
+      }
+      /**
+       * Return the reversed ip6.arpa form of the address
+       * @memberof Address6
+       * @param {Object} options
+       * @param {boolean} options.omitSuffix - omit the "ip6.arpa" suffix
+       * @instance
+       * @returns {String}
+       */
+      reverseForm(options) {
+        if (!options) {
+          options = {};
+        }
+        const characters = Math.floor(this.subnetMask / 4);
+        const reversed = this.canonicalForm().replace(/:/g, "").split("").slice(0, characters).reverse().join(".");
+        if (characters > 0) {
+          if (options.omitSuffix) {
+            return reversed;
+          }
+          return `${reversed}.ip6.arpa.`;
+        }
+        if (options.omitSuffix) {
+          return "";
+        }
+        return "ip6.arpa.";
+      }
+      /**
+       * Return the correct form of the address
+       * @memberof Address6
+       * @instance
+       * @returns {String}
+       */
+      correctForm() {
+        let i;
+        let groups = [];
+        let zeroCounter = 0;
+        const zeroes = [];
+        for (i = 0; i < this.parsedAddress.length; i++) {
+          const value = parseInt(this.parsedAddress[i], 16);
+          if (value === 0) {
+            zeroCounter++;
+          }
+          if (value !== 0 && zeroCounter > 0) {
+            if (zeroCounter > 1) {
+              zeroes.push([i - zeroCounter, i - 1]);
+            }
+            zeroCounter = 0;
+          }
+        }
+        if (zeroCounter > 1) {
+          zeroes.push([this.parsedAddress.length - zeroCounter, this.parsedAddress.length - 1]);
+        }
+        const zeroLengths = zeroes.map((n) => n[1] - n[0] + 1);
+        if (zeroes.length > 0) {
+          const index = zeroLengths.indexOf(Math.max(...zeroLengths));
+          groups = compact(this.parsedAddress, zeroes[index]);
+        } else {
+          groups = this.parsedAddress;
+        }
+        for (i = 0; i < groups.length; i++) {
+          if (groups[i] !== "compact") {
+            groups[i] = parseInt(groups[i], 16).toString(16);
+          }
+        }
+        let correct = groups.join(":");
+        correct = correct.replace(/^compact$/, "::");
+        correct = correct.replace(/(^compact)|(compact$)/, ":");
+        correct = correct.replace(/compact/, "");
+        return correct;
+      }
+      /**
+       * Return a zero-padded base-2 string representation of the address
+       * @memberof Address6
+       * @instance
+       * @returns {String}
+       * @example
+       * var address = new Address6('2001:4860:4001:803::1011');
+       * address.binaryZeroPad();
+       * // '0010000000000001010010000110000001000000000000010000100000000011
+       * //  0000000000000000000000000000000000000000000000000001000000010001'
+       */
+      binaryZeroPad() {
+        return this.bigInt().toString(2).padStart(constants6.BITS, "0");
+      }
+      // TODO: Improve the semantics of this helper function
+      parse4in6(address) {
+        const groups = address.split(":");
+        const lastGroup = groups.slice(-1)[0];
+        const address4 = lastGroup.match(constants4.RE_ADDRESS);
+        if (address4) {
+          this.parsedAddress4 = address4[0];
+          this.address4 = new ipv4_1.Address4(this.parsedAddress4);
+          for (let i = 0; i < this.address4.groups; i++) {
+            if (/^0[0-9]+/.test(this.address4.parsedAddress[i])) {
+              throw new address_error_1.AddressError("IPv4 addresses can't have leading zeroes.", address.replace(constants4.RE_ADDRESS, this.address4.parsedAddress.map(spanLeadingZeroes4).join(".")));
+            }
+          }
+          this.v4 = true;
+          groups[groups.length - 1] = this.address4.toGroup6();
+          address = groups.join(":");
+        }
+        return address;
+      }
+      // TODO: Make private?
+      parse(address) {
+        address = this.parse4in6(address);
+        const badCharacters = address.match(constants6.RE_BAD_CHARACTERS);
+        if (badCharacters) {
+          throw new address_error_1.AddressError(`Bad character${badCharacters.length > 1 ? "s" : ""} detected in address: ${badCharacters.join("")}`, address.replace(constants6.RE_BAD_CHARACTERS, '<span class="parse-error">$1</span>'));
+        }
+        const badAddress = address.match(constants6.RE_BAD_ADDRESS);
+        if (badAddress) {
+          throw new address_error_1.AddressError(`Address failed regex: ${badAddress.join("")}`, address.replace(constants6.RE_BAD_ADDRESS, '<span class="parse-error">$1</span>'));
+        }
+        let groups = [];
+        const halves = address.split("::");
+        if (halves.length === 2) {
+          let first = halves[0].split(":");
+          let last = halves[1].split(":");
+          if (first.length === 1 && first[0] === "") {
+            first = [];
+          }
+          if (last.length === 1 && last[0] === "") {
+            last = [];
+          }
+          const remaining = this.groups - (first.length + last.length);
+          if (!remaining) {
+            throw new address_error_1.AddressError("Error parsing groups");
+          }
+          this.elidedGroups = remaining;
+          this.elisionBegin = first.length;
+          this.elisionEnd = first.length + this.elidedGroups;
+          groups = groups.concat(first);
+          for (let i = 0; i < remaining; i++) {
+            groups.push("0");
+          }
+          groups = groups.concat(last);
+        } else if (halves.length === 1) {
+          groups = address.split(":");
+          this.elidedGroups = 0;
+        } else {
+          throw new address_error_1.AddressError("Too many :: groups found");
+        }
+        groups = groups.map((group) => parseInt(group, 16).toString(16));
+        if (groups.length !== this.groups) {
+          throw new address_error_1.AddressError("Incorrect number of groups found");
+        }
+        return groups;
+      }
+      /**
+       * Return the canonical form of the address
+       * @memberof Address6
+       * @instance
+       * @returns {String}
+       */
+      canonicalForm() {
+        return this.parsedAddress.map(paddedHex).join(":");
+      }
+      /**
+       * Return the decimal form of the address
+       * @memberof Address6
+       * @instance
+       * @returns {String}
+       */
+      decimal() {
+        return this.parsedAddress.map((n) => parseInt(n, 16).toString(10).padStart(5, "0")).join(":");
+      }
+      /**
+       * Return the address as a BigInt
+       * @memberof Address6
+       * @instance
+       * @returns {bigint}
+       */
+      bigInt() {
+        return BigInt(`0x${this.parsedAddress.map(paddedHex).join("")}`);
+      }
+      /**
+       * Return the last two groups of this address as an IPv4 address string
+       * @memberof Address6
+       * @instance
+       * @returns {Address4}
+       * @example
+       * var address = new Address6('2001:4860:4001::1825:bf11');
+       * address.to4().correctForm(); // '24.37.191.17'
+       */
+      to4() {
+        const binary = this.binaryZeroPad().split("");
+        return ipv4_1.Address4.fromHex(BigInt(`0b${binary.slice(96, 128).join("")}`).toString(16));
+      }
+      /**
+       * Return the v4-in-v6 form of the address
+       * @memberof Address6
+       * @instance
+       * @returns {String}
+       */
+      to4in6() {
+        const address4 = this.to4();
+        const address6 = new _Address6(this.parsedAddress.slice(0, 6).join(":"), 6);
+        const correct = address6.correctForm();
+        let infix = "";
+        if (!/:$/.test(correct)) {
+          infix = ":";
+        }
+        return correct + infix + address4.address;
+      }
+      /**
+       * Return an object containing the Teredo properties of the address
+       * @memberof Address6
+       * @instance
+       * @returns {Object}
+       */
+      inspectTeredo() {
+        const prefix = this.getBitsBase16(0, 32);
+        const bitsForUdpPort = this.getBits(80, 96);
+        const udpPort = (bitsForUdpPort ^ BigInt("0xffff")).toString();
+        const server4 = ipv4_1.Address4.fromHex(this.getBitsBase16(32, 64));
+        const bitsForClient4 = this.getBits(96, 128);
+        const client4 = ipv4_1.Address4.fromHex((bitsForClient4 ^ BigInt("0xffffffff")).toString(16));
+        const flagsBase2 = this.getBitsBase2(64, 80);
+        const coneNat = (0, common_1.testBit)(flagsBase2, 15);
+        const reserved = (0, common_1.testBit)(flagsBase2, 14);
+        const groupIndividual = (0, common_1.testBit)(flagsBase2, 8);
+        const universalLocal = (0, common_1.testBit)(flagsBase2, 9);
+        const nonce = BigInt(`0b${flagsBase2.slice(2, 6) + flagsBase2.slice(8, 16)}`).toString(10);
+        return {
+          prefix: `${prefix.slice(0, 4)}:${prefix.slice(4, 8)}`,
+          server4: server4.address,
+          client4: client4.address,
+          flags: flagsBase2,
+          coneNat,
+          microsoft: {
+            reserved,
+            universalLocal,
+            groupIndividual,
+            nonce
+          },
+          udpPort
+        };
+      }
+      /**
+       * Return an object containing the 6to4 properties of the address
+       * @memberof Address6
+       * @instance
+       * @returns {Object}
+       */
+      inspect6to4() {
+        const prefix = this.getBitsBase16(0, 16);
+        const gateway = ipv4_1.Address4.fromHex(this.getBitsBase16(16, 48));
+        return {
+          prefix: prefix.slice(0, 4),
+          gateway: gateway.address
+        };
+      }
+      /**
+       * Return a v6 6to4 address from a v6 v4inv6 address
+       * @memberof Address6
+       * @instance
+       * @returns {Address6}
+       */
+      to6to4() {
+        if (!this.is4()) {
+          return null;
+        }
+        const addr6to4 = [
+          "2002",
+          this.getBitsBase16(96, 112),
+          this.getBitsBase16(112, 128),
+          "",
+          "/16"
+        ].join(":");
+        return new _Address6(addr6to4);
+      }
+      /**
+       * Return a byte array
+       * @memberof Address6
+       * @instance
+       * @returns {Array}
+       */
+      toByteArray() {
+        const valueWithoutPadding = this.bigInt().toString(16);
+        const leadingPad = "0".repeat(valueWithoutPadding.length % 2);
+        const value = `${leadingPad}${valueWithoutPadding}`;
+        const bytes = [];
+        for (let i = 0, length = value.length; i < length; i += 2) {
+          bytes.push(parseInt(value.substring(i, i + 2), 16));
+        }
+        return bytes;
+      }
+      /**
+       * Return an unsigned byte array
+       * @memberof Address6
+       * @instance
+       * @returns {Array}
+       */
+      toUnsignedByteArray() {
+        return this.toByteArray().map(unsignByte);
+      }
+      /**
+       * Convert a byte array to an Address6 object
+       * @memberof Address6
+       * @static
+       * @returns {Address6}
+       */
+      static fromByteArray(bytes) {
+        return this.fromUnsignedByteArray(bytes.map(unsignByte));
+      }
+      /**
+       * Convert an unsigned byte array to an Address6 object
+       * @memberof Address6
+       * @static
+       * @returns {Address6}
+       */
+      static fromUnsignedByteArray(bytes) {
+        const BYTE_MAX = BigInt("256");
+        let result = BigInt("0");
+        let multiplier = BigInt("1");
+        for (let i = bytes.length - 1; i >= 0; i--) {
+          result += multiplier * BigInt(bytes[i].toString(10));
+          multiplier *= BYTE_MAX;
+        }
+        return _Address6.fromBigInt(result);
+      }
+      /**
+       * Returns true if the address is in the canonical form, false otherwise
+       * @memberof Address6
+       * @instance
+       * @returns {boolean}
+       */
+      isCanonical() {
+        return this.addressMinusSuffix === this.canonicalForm();
+      }
+      /**
+       * Returns true if the address is a link local address, false otherwise
+       * @memberof Address6
+       * @instance
+       * @returns {boolean}
+       */
+      isLinkLocal() {
+        if (this.getBitsBase2(0, 64) === "1111111010000000000000000000000000000000000000000000000000000000") {
+          return true;
+        }
+        return false;
+      }
+      /**
+       * Returns true if the address is a multicast address, false otherwise
+       * @memberof Address6
+       * @instance
+       * @returns {boolean}
+       */
+      isMulticast() {
+        return this.getType() === "Multicast";
+      }
+      /**
+       * Returns true if the address is a v4-in-v6 address, false otherwise
+       * @memberof Address6
+       * @instance
+       * @returns {boolean}
+       */
+      is4() {
+        return this.v4;
+      }
+      /**
+       * Returns true if the address is a Teredo address, false otherwise
+       * @memberof Address6
+       * @instance
+       * @returns {boolean}
+       */
+      isTeredo() {
+        return this.isInSubnet(new _Address6("2001::/32"));
+      }
+      /**
+       * Returns true if the address is a 6to4 address, false otherwise
+       * @memberof Address6
+       * @instance
+       * @returns {boolean}
+       */
+      is6to4() {
+        return this.isInSubnet(new _Address6("2002::/16"));
+      }
+      /**
+       * Returns true if the address is a loopback address, false otherwise
+       * @memberof Address6
+       * @instance
+       * @returns {boolean}
+       */
+      isLoopback() {
+        return this.getType() === "Loopback";
+      }
+      // #endregion
+      // #region HTML
+      /**
+       * @returns {String} the address in link form with a default port of 80
+       */
+      href(optionalPort) {
+        if (optionalPort === void 0) {
+          optionalPort = "";
+        } else {
+          optionalPort = `:${optionalPort}`;
+        }
+        return `http://[${this.correctForm()}]${optionalPort}/`;
+      }
+      /**
+       * @returns {String} a link suitable for conveying the address via a URL hash
+       */
+      link(options) {
+        if (!options) {
+          options = {};
+        }
+        if (options.className === void 0) {
+          options.className = "";
+        }
+        if (options.prefix === void 0) {
+          options.prefix = "/#address=";
+        }
+        if (options.v4 === void 0) {
+          options.v4 = false;
+        }
+        let formFunction = this.correctForm;
+        if (options.v4) {
+          formFunction = this.to4in6;
+        }
+        const form = formFunction.call(this);
+        if (options.className) {
+          return `<a href="${options.prefix}${form}" class="${options.className}">${form}</a>`;
+        }
+        return `<a href="${options.prefix}${form}">${form}</a>`;
+      }
+      /**
+       * Groups an address
+       * @returns {String}
+       */
+      group() {
+        if (this.elidedGroups === 0) {
+          return helpers.simpleGroup(this.address).join(":");
+        }
+        assert(typeof this.elidedGroups === "number");
+        assert(typeof this.elisionBegin === "number");
+        const output = [];
+        const [left, right] = this.address.split("::");
+        if (left.length) {
+          output.push(...helpers.simpleGroup(left));
+        } else {
+          output.push("");
+        }
+        const classes = ["hover-group"];
+        for (let i = this.elisionBegin; i < this.elisionBegin + this.elidedGroups; i++) {
+          classes.push(`group-${i}`);
+        }
+        output.push(`<span class="${classes.join(" ")}"></span>`);
+        if (right.length) {
+          output.push(...helpers.simpleGroup(right, this.elisionEnd));
+        } else {
+          output.push("");
+        }
+        if (this.is4()) {
+          assert(this.address4 instanceof ipv4_1.Address4);
+          output.pop();
+          output.push(this.address4.groupForV6());
+        }
+        return output.join(":");
+      }
+      // #endregion
+      // #region Regular expressions
+      /**
+       * Generate a regular expression string that can be used to find or validate
+       * all variations of this address
+       * @memberof Address6
+       * @instance
+       * @param {boolean} substringSearch
+       * @returns {string}
+       */
+      regularExpressionString(substringSearch = false) {
+        let output = [];
+        const address6 = new _Address6(this.correctForm());
+        if (address6.elidedGroups === 0) {
+          output.push((0, regular_expressions_1.simpleRegularExpression)(address6.parsedAddress));
+        } else if (address6.elidedGroups === constants6.GROUPS) {
+          output.push((0, regular_expressions_1.possibleElisions)(constants6.GROUPS));
+        } else {
+          const halves = address6.address.split("::");
+          if (halves[0].length) {
+            output.push((0, regular_expressions_1.simpleRegularExpression)(halves[0].split(":")));
+          }
+          assert(typeof address6.elidedGroups === "number");
+          output.push((0, regular_expressions_1.possibleElisions)(address6.elidedGroups, halves[0].length !== 0, halves[1].length !== 0));
+          if (halves[1].length) {
+            output.push((0, regular_expressions_1.simpleRegularExpression)(halves[1].split(":")));
+          }
+          output = [output.join(":")];
+        }
+        if (!substringSearch) {
+          output = [
+            "(?=^|",
+            regular_expressions_1.ADDRESS_BOUNDARY,
+            "|[^\\w\\:])(",
+            ...output,
+            ")(?=[^\\w\\:]|",
+            regular_expressions_1.ADDRESS_BOUNDARY,
+            "|$)"
+          ];
+        }
+        return output.join("");
+      }
+      /**
+       * Generate a regular expression that can be used to find or validate all
+       * variations of this address.
+       * @memberof Address6
+       * @instance
+       * @param {boolean} substringSearch
+       * @returns {RegExp}
+       */
+      regularExpression(substringSearch = false) {
+        return new RegExp(this.regularExpressionString(substringSearch), "i");
+      }
+    };
+    exports2.Address6 = Address62;
+  }
+});
+
+// backend/node_modules/ip-address/dist/ip-address.js
+var require_ip_address = __commonJS({
+  "backend/node_modules/ip-address/dist/ip-address.js"(exports2) {
+    "use strict";
+    var __createBinding2 = exports2 && exports2.__createBinding || (Object.create ? (function(o, m, k, k2) {
+      if (k2 === void 0) k2 = k;
+      var desc = Object.getOwnPropertyDescriptor(m, k);
+      if (!desc || ("get" in desc ? !m.__esModule : desc.writable || desc.configurable)) {
+        desc = { enumerable: true, get: function() {
+          return m[k];
+        } };
+      }
+      Object.defineProperty(o, k2, desc);
+    }) : (function(o, m, k, k2) {
+      if (k2 === void 0) k2 = k;
+      o[k2] = m[k];
+    }));
+    var __setModuleDefault2 = exports2 && exports2.__setModuleDefault || (Object.create ? (function(o, v) {
+      Object.defineProperty(o, "default", { enumerable: true, value: v });
+    }) : function(o, v) {
+      o["default"] = v;
+    });
+    var __importStar2 = exports2 && exports2.__importStar || function(mod) {
+      if (mod && mod.__esModule) return mod;
+      var result = {};
+      if (mod != null) {
+        for (var k in mod) if (k !== "default" && Object.prototype.hasOwnProperty.call(mod, k)) __createBinding2(result, mod, k);
+      }
+      __setModuleDefault2(result, mod);
+      return result;
+    };
+    Object.defineProperty(exports2, "__esModule", { value: true });
+    exports2.v6 = exports2.AddressError = exports2.Address6 = exports2.Address4 = void 0;
+    var ipv4_1 = require_ipv4();
+    Object.defineProperty(exports2, "Address4", { enumerable: true, get: function() {
+      return ipv4_1.Address4;
+    } });
+    var ipv6_1 = require_ipv6();
+    Object.defineProperty(exports2, "Address6", { enumerable: true, get: function() {
+      return ipv6_1.Address6;
+    } });
+    var address_error_1 = require_address_error();
+    Object.defineProperty(exports2, "AddressError", { enumerable: true, get: function() {
+      return address_error_1.AddressError;
+    } });
+    var helpers = __importStar2(require_helpers());
+    exports2.v6 = { helpers };
   }
 });
 
@@ -26733,7 +28341,7 @@ var require_lib5 = __commonJS({
     }
     var INTERNALS$1 = /* @__PURE__ */ Symbol("Response internals");
     var STATUS_CODES = http3.STATUS_CODES;
-    var Response2 = class _Response {
+    var Response = class _Response {
       constructor() {
         let body = arguments.length > 0 && arguments[0] !== void 0 ? arguments[0] : null;
         let opts = arguments.length > 1 && arguments[1] !== void 0 ? arguments[1] : {};
@@ -26791,8 +28399,8 @@ var require_lib5 = __commonJS({
         });
       }
     };
-    Body.mixIn(Response2.prototype);
-    Object.defineProperties(Response2.prototype, {
+    Body.mixIn(Response.prototype);
+    Object.defineProperties(Response.prototype, {
       url: { enumerable: true },
       status: { enumerable: true },
       ok: { enumerable: true },
@@ -26801,7 +28409,7 @@ var require_lib5 = __commonJS({
       headers: { enumerable: true },
       clone: { enumerable: true }
     });
-    Object.defineProperty(Response2.prototype, Symbol.toStringTag, {
+    Object.defineProperty(Response.prototype, Symbol.toStringTag, {
       value: "Response",
       writable: false,
       enumerable: false,
@@ -26825,7 +28433,7 @@ var require_lib5 = __commonJS({
       const proto = signal && typeof signal === "object" && Object.getPrototypeOf(signal);
       return !!(proto && proto.constructor.name === "AbortSignal");
     }
-    var Request2 = class _Request {
+    var Request = class _Request {
       constructor(input) {
         let init = arguments.length > 1 && arguments[1] !== void 0 ? arguments[1] : {};
         let parsedURL;
@@ -26897,14 +28505,14 @@ var require_lib5 = __commonJS({
         return new _Request(this);
       }
     };
-    Body.mixIn(Request2.prototype);
-    Object.defineProperty(Request2.prototype, Symbol.toStringTag, {
+    Body.mixIn(Request.prototype);
+    Object.defineProperty(Request.prototype, Symbol.toStringTag, {
       value: "Request",
       writable: false,
       enumerable: false,
       configurable: true
     });
-    Object.defineProperties(Request2.prototype, {
+    Object.defineProperties(Request.prototype, {
       method: { enumerable: true },
       url: { enumerable: true },
       headers: { enumerable: true },
@@ -26983,7 +28591,7 @@ var require_lib5 = __commonJS({
       }
       Body.Promise = fetch2.Promise;
       return new fetch2.Promise(function(resolve, reject) {
-        const request = new Request2(url2, opts);
+        const request = new Request(url2, opts);
         const options = getNodeRequestOptions(request);
         const send = (options.protocol === "https:" ? https2 : http3).request;
         const signal = request.signal;
@@ -27115,7 +28723,7 @@ var require_lib5 = __commonJS({
                   requestOpts.body = void 0;
                   requestOpts.headers.delete("content-length");
                 }
-                resolve(fetch2(new Request2(locationURL, requestOpts)));
+                resolve(fetch2(new Request(locationURL, requestOpts)));
                 finalize();
                 return;
             }
@@ -27135,7 +28743,7 @@ var require_lib5 = __commonJS({
           };
           const codings = headers.get("Content-Encoding");
           if (!request.compress || request.method === "HEAD" || codings === null || res.statusCode === 204 || res.statusCode === 304) {
-            response = new Response2(body, response_options);
+            response = new Response(body, response_options);
             resolve(response);
             return;
           }
@@ -27145,7 +28753,7 @@ var require_lib5 = __commonJS({
           };
           if (codings == "gzip" || codings == "x-gzip") {
             body = body.pipe(zlib2.createGunzip(zlibOptions2));
-            response = new Response2(body, response_options);
+            response = new Response(body, response_options);
             resolve(response);
             return;
           }
@@ -27157,12 +28765,12 @@ var require_lib5 = __commonJS({
               } else {
                 body = body.pipe(zlib2.createInflateRaw());
               }
-              response = new Response2(body, response_options);
+              response = new Response(body, response_options);
               resolve(response);
             });
             raw.on("end", function() {
               if (!response) {
-                response = new Response2(body, response_options);
+                response = new Response(body, response_options);
                 resolve(response);
               }
             });
@@ -27170,11 +28778,11 @@ var require_lib5 = __commonJS({
           }
           if (codings == "br" && typeof zlib2.createBrotliDecompress === "function") {
             body = body.pipe(zlib2.createBrotliDecompress());
-            response = new Response2(body, response_options);
+            response = new Response(body, response_options);
             resolve(response);
             return;
           }
-          response = new Response2(body, response_options);
+          response = new Response(body, response_options);
           resolve(response);
         });
         writeToStream(req, request);
@@ -27215,8 +28823,8 @@ var require_lib5 = __commonJS({
     Object.defineProperty(exports2, "__esModule", { value: true });
     exports2.default = exports2;
     exports2.Headers = Headers2;
-    exports2.Request = Request2;
-    exports2.Response = Response2;
+    exports2.Request = Request;
+    exports2.Response = Response;
     exports2.FetchError = FetchError;
     exports2.AbortError = AbortError;
   }
@@ -38801,7 +40409,7 @@ var require_form_data = __commonJS({
     var parseUrl2 = require("url").parse;
     var fs = require("fs");
     var Stream = require("stream").Stream;
-    var crypto7 = require("crypto");
+    var crypto8 = require("crypto");
     var mime = require_mime_types2();
     var asynckit = require_asynckit();
     var setToStringTag = require_es_set_tostringtag();
@@ -39007,7 +40615,7 @@ var require_form_data = __commonJS({
       return Buffer.concat([dataBuffer, Buffer.from(this._lastBoundary())]);
     };
     FormData3.prototype._generateBoundary = function() {
-      this._boundary = "--------------------------" + crypto7.randomBytes(12).toString("hex");
+      this._boundary = "--------------------------" + crypto8.randomBytes(12).toString("hex");
     };
     FormData3.prototype.getLengthSync = function() {
       var knownLength = this._overheadLength + this._valueLength;
@@ -39643,34 +41251,34 @@ var require_follow_redirects = __commonJS({
 var require_safe_buffer = __commonJS({
   "backend/node_modules/safe-buffer/index.js"(exports2, module2) {
     var buffer = require("buffer");
-    var Buffer2 = buffer.Buffer;
+    var Buffer3 = buffer.Buffer;
     function copyProps(src, dst) {
       for (var key in src) {
         dst[key] = src[key];
       }
     }
-    if (Buffer2.from && Buffer2.alloc && Buffer2.allocUnsafe && Buffer2.allocUnsafeSlow) {
+    if (Buffer3.from && Buffer3.alloc && Buffer3.allocUnsafe && Buffer3.allocUnsafeSlow) {
       module2.exports = buffer;
     } else {
       copyProps(buffer, exports2);
       exports2.Buffer = SafeBuffer;
     }
     function SafeBuffer(arg, encodingOrOffset, length) {
-      return Buffer2(arg, encodingOrOffset, length);
+      return Buffer3(arg, encodingOrOffset, length);
     }
-    SafeBuffer.prototype = Object.create(Buffer2.prototype);
-    copyProps(Buffer2, SafeBuffer);
+    SafeBuffer.prototype = Object.create(Buffer3.prototype);
+    copyProps(Buffer3, SafeBuffer);
     SafeBuffer.from = function(arg, encodingOrOffset, length) {
       if (typeof arg === "number") {
         throw new TypeError("Argument must not be a number");
       }
-      return Buffer2(arg, encodingOrOffset, length);
+      return Buffer3(arg, encodingOrOffset, length);
     };
     SafeBuffer.alloc = function(size, fill, encoding) {
       if (typeof size !== "number") {
         throw new TypeError("Argument must be a number");
       }
-      var buf = Buffer2(size);
+      var buf = Buffer3(size);
       if (fill !== void 0) {
         if (typeof encoding === "string") {
           buf.fill(fill, encoding);
@@ -39686,7 +41294,7 @@ var require_safe_buffer = __commonJS({
       if (typeof size !== "number") {
         throw new TypeError("Argument must be a number");
       }
-      return Buffer2(size);
+      return Buffer3(size);
     };
     SafeBuffer.allocUnsafeSlow = function(size) {
       if (typeof size !== "number") {
@@ -39700,7 +41308,7 @@ var require_safe_buffer = __commonJS({
 // backend/node_modules/jws/lib/data-stream.js
 var require_data_stream = __commonJS({
   "backend/node_modules/jws/lib/data-stream.js"(exports2, module2) {
-    var Buffer2 = require_safe_buffer().Buffer;
+    var Buffer3 = require_safe_buffer().Buffer;
     var Stream = require("stream");
     var util3 = require("util");
     function DataStream(data) {
@@ -39708,11 +41316,11 @@ var require_data_stream = __commonJS({
       this.writable = true;
       this.readable = true;
       if (!data) {
-        this.buffer = Buffer2.alloc(0);
+        this.buffer = Buffer3.alloc(0);
         return this;
       }
       if (typeof data.pipe === "function") {
-        this.buffer = Buffer2.alloc(0);
+        this.buffer = Buffer3.alloc(0);
         data.pipe(this);
         return this;
       }
@@ -39730,7 +41338,7 @@ var require_data_stream = __commonJS({
     }
     util3.inherits(DataStream, Stream);
     DataStream.prototype.write = function write(data) {
-      this.buffer = Buffer2.concat([this.buffer, Buffer2.from(data)]);
+      this.buffer = Buffer3.concat([this.buffer, Buffer3.from(data)]);
       this.emit("data", data);
     };
     DataStream.prototype.end = function end(data) {
@@ -39773,7 +41381,7 @@ var require_param_bytes_for_alg = __commonJS({
 var require_ecdsa_sig_formatter = __commonJS({
   "backend/node_modules/ecdsa-sig-formatter/src/ecdsa-sig-formatter.js"(exports2, module2) {
     "use strict";
-    var Buffer2 = require_safe_buffer().Buffer;
+    var Buffer3 = require_safe_buffer().Buffer;
     var getParamBytesForAlg = require_param_bytes_for_alg();
     var MAX_OCTET = 128;
     var CLASS_UNIVERSAL = 0;
@@ -39786,10 +41394,10 @@ var require_ecdsa_sig_formatter = __commonJS({
       return base64.replace(/=/g, "").replace(/\+/g, "-").replace(/\//g, "_");
     }
     function signatureAsBuffer(signature) {
-      if (Buffer2.isBuffer(signature)) {
+      if (Buffer3.isBuffer(signature)) {
         return signature;
       } else if ("string" === typeof signature) {
-        return Buffer2.from(signature, "base64");
+        return Buffer3.from(signature, "base64");
       }
       throw new TypeError("ECDSA signature must be a Base64 string or a Buffer");
     }
@@ -39837,7 +41445,7 @@ var require_ecdsa_sig_formatter = __commonJS({
         throw new Error('Expected to consume entire buffer, but "' + (inputLength - offset) + '" bytes remain');
       }
       var rPadding = paramBytes - rLength, sPadding = paramBytes - sLength;
-      var dst = Buffer2.allocUnsafe(rPadding + rLength + sPadding + sLength);
+      var dst = Buffer3.allocUnsafe(rPadding + rLength + sPadding + sLength);
       for (offset = 0; offset < rPadding; ++offset) {
         dst[offset] = 0;
       }
@@ -39875,7 +41483,7 @@ var require_ecdsa_sig_formatter = __commonJS({
       var sLength = paramBytes - sPadding;
       var rsBytes = 1 + 1 + rLength + 1 + 1 + sLength;
       var shortLength = rsBytes < MAX_OCTET;
-      var dst = Buffer2.allocUnsafe((shortLength ? 2 : 3) + rsBytes);
+      var dst = Buffer3.allocUnsafe((shortLength ? 2 : 3) + rsBytes);
       var offset = 0;
       dst[offset++] = ENCODED_TAG_SEQ;
       if (shortLength) {
@@ -39913,11 +41521,11 @@ var require_ecdsa_sig_formatter = __commonJS({
 var require_buffer_equal_constant_time = __commonJS({
   "backend/node_modules/buffer-equal-constant-time/index.js"(exports2, module2) {
     "use strict";
-    var Buffer2 = require("buffer").Buffer;
+    var Buffer3 = require("buffer").Buffer;
     var SlowBuffer = require("buffer").SlowBuffer;
     module2.exports = bufferEq;
     function bufferEq(a, b) {
-      if (!Buffer2.isBuffer(a) || !Buffer2.isBuffer(b)) {
+      if (!Buffer3.isBuffer(a) || !Buffer3.isBuffer(b)) {
         return false;
       }
       if (a.length !== b.length) {
@@ -39930,14 +41538,14 @@ var require_buffer_equal_constant_time = __commonJS({
       return c === 0;
     }
     bufferEq.install = function() {
-      Buffer2.prototype.equal = SlowBuffer.prototype.equal = function equal(that) {
+      Buffer3.prototype.equal = SlowBuffer.prototype.equal = function equal(that) {
         return bufferEq(this, that);
       };
     };
-    var origBufEqual = Buffer2.prototype.equal;
+    var origBufEqual = Buffer3.prototype.equal;
     var origSlowBufEqual = SlowBuffer.prototype.equal;
     bufferEq.restore = function() {
-      Buffer2.prototype.equal = origBufEqual;
+      Buffer3.prototype.equal = origBufEqual;
       SlowBuffer.prototype.equal = origSlowBufEqual;
     };
   }
@@ -39946,21 +41554,21 @@ var require_buffer_equal_constant_time = __commonJS({
 // backend/node_modules/jwa/index.js
 var require_jwa = __commonJS({
   "backend/node_modules/jwa/index.js"(exports2, module2) {
-    var Buffer2 = require_safe_buffer().Buffer;
-    var crypto7 = require("crypto");
+    var Buffer3 = require_safe_buffer().Buffer;
+    var crypto8 = require("crypto");
     var formatEcdsa = require_ecdsa_sig_formatter();
     var util3 = require("util");
     var MSG_INVALID_ALGORITHM = '"%s" is not a valid algorithm.\n  Supported algorithms are:\n  "HS256", "HS384", "HS512", "RS256", "RS384", "RS512", "PS256", "PS384", "PS512", "ES256", "ES384", "ES512" and "none".';
     var MSG_INVALID_SECRET = "secret must be a string or buffer";
     var MSG_INVALID_VERIFIER_KEY = "key must be a string or a buffer";
     var MSG_INVALID_SIGNER_KEY = "key must be a string, a buffer or an object";
-    var supportsKeyObjects = typeof crypto7.createPublicKey === "function";
+    var supportsKeyObjects = typeof crypto8.createPublicKey === "function";
     if (supportsKeyObjects) {
       MSG_INVALID_VERIFIER_KEY += " or a KeyObject";
       MSG_INVALID_SECRET += "or a KeyObject";
     }
     function checkIsPublicKey(key) {
-      if (Buffer2.isBuffer(key)) {
+      if (Buffer3.isBuffer(key)) {
         return;
       }
       if (typeof key === "string") {
@@ -39983,7 +41591,7 @@ var require_jwa = __commonJS({
       }
     }
     function checkIsPrivateKey(key) {
-      if (Buffer2.isBuffer(key)) {
+      if (Buffer3.isBuffer(key)) {
         return;
       }
       if (typeof key === "string") {
@@ -39995,7 +41603,7 @@ var require_jwa = __commonJS({
       throw typeError(MSG_INVALID_SIGNER_KEY);
     }
     function checkIsSecretKey(key) {
-      if (Buffer2.isBuffer(key)) {
+      if (Buffer3.isBuffer(key)) {
         return;
       }
       if (typeof key === "string") {
@@ -40033,7 +41641,7 @@ var require_jwa = __commonJS({
       return new TypeError(errMsg);
     }
     function bufferOrString(obj) {
-      return Buffer2.isBuffer(obj) || typeof obj === "string";
+      return Buffer3.isBuffer(obj) || typeof obj === "string";
     }
     function normalizeInput(thing) {
       if (!bufferOrString(thing))
@@ -40044,17 +41652,17 @@ var require_jwa = __commonJS({
       return function sign(thing, secret) {
         checkIsSecretKey(secret);
         thing = normalizeInput(thing);
-        var hmac = crypto7.createHmac("sha" + bits, secret);
+        var hmac = crypto8.createHmac("sha" + bits, secret);
         var sig = (hmac.update(thing), hmac.digest("base64"));
         return fromBase64(sig);
       };
     }
     var bufferEqual;
-    var timingSafeEqual = "timingSafeEqual" in crypto7 ? function timingSafeEqual2(a, b) {
+    var timingSafeEqual = "timingSafeEqual" in crypto8 ? function timingSafeEqual2(a, b) {
       if (a.byteLength !== b.byteLength) {
         return false;
       }
-      return crypto7.timingSafeEqual(a, b);
+      return crypto8.timingSafeEqual(a, b);
     } : function timingSafeEqual2(a, b) {
       if (!bufferEqual) {
         bufferEqual = require_buffer_equal_constant_time();
@@ -40064,14 +41672,14 @@ var require_jwa = __commonJS({
     function createHmacVerifier(bits) {
       return function verify(thing, signature, secret) {
         var computedSig = createHmacSigner(bits)(thing, secret);
-        return timingSafeEqual(Buffer2.from(signature), Buffer2.from(computedSig));
+        return timingSafeEqual(Buffer3.from(signature), Buffer3.from(computedSig));
       };
     }
     function createKeySigner(bits) {
       return function sign(thing, privateKey) {
         checkIsPrivateKey(privateKey);
         thing = normalizeInput(thing);
-        var signer = crypto7.createSign("RSA-SHA" + bits);
+        var signer = crypto8.createSign("RSA-SHA" + bits);
         var sig = (signer.update(thing), signer.sign(privateKey, "base64"));
         return fromBase64(sig);
       };
@@ -40081,7 +41689,7 @@ var require_jwa = __commonJS({
         checkIsPublicKey(publicKey);
         thing = normalizeInput(thing);
         signature = toBase64(signature);
-        var verifier = crypto7.createVerify("RSA-SHA" + bits);
+        var verifier = crypto8.createVerify("RSA-SHA" + bits);
         verifier.update(thing);
         return verifier.verify(publicKey, signature, "base64");
       };
@@ -40090,11 +41698,11 @@ var require_jwa = __commonJS({
       return function sign(thing, privateKey) {
         checkIsPrivateKey(privateKey);
         thing = normalizeInput(thing);
-        var signer = crypto7.createSign("RSA-SHA" + bits);
+        var signer = crypto8.createSign("RSA-SHA" + bits);
         var sig = (signer.update(thing), signer.sign({
           key: privateKey,
-          padding: crypto7.constants.RSA_PKCS1_PSS_PADDING,
-          saltLength: crypto7.constants.RSA_PSS_SALTLEN_DIGEST
+          padding: crypto8.constants.RSA_PKCS1_PSS_PADDING,
+          saltLength: crypto8.constants.RSA_PSS_SALTLEN_DIGEST
         }, "base64"));
         return fromBase64(sig);
       };
@@ -40104,12 +41712,12 @@ var require_jwa = __commonJS({
         checkIsPublicKey(publicKey);
         thing = normalizeInput(thing);
         signature = toBase64(signature);
-        var verifier = crypto7.createVerify("RSA-SHA" + bits);
+        var verifier = crypto8.createVerify("RSA-SHA" + bits);
         verifier.update(thing);
         return verifier.verify({
           key: publicKey,
-          padding: crypto7.constants.RSA_PKCS1_PSS_PADDING,
-          saltLength: crypto7.constants.RSA_PSS_SALTLEN_DIGEST
+          padding: crypto8.constants.RSA_PKCS1_PSS_PADDING,
+          saltLength: crypto8.constants.RSA_PSS_SALTLEN_DIGEST
         }, signature, "base64");
       };
     }
@@ -40170,11 +41778,11 @@ var require_jwa = __commonJS({
 // backend/node_modules/jws/lib/tostring.js
 var require_tostring = __commonJS({
   "backend/node_modules/jws/lib/tostring.js"(exports2, module2) {
-    var Buffer2 = require("buffer").Buffer;
+    var Buffer3 = require("buffer").Buffer;
     module2.exports = function toString3(obj) {
       if (typeof obj === "string")
         return obj;
-      if (typeof obj === "number" || Buffer2.isBuffer(obj))
+      if (typeof obj === "number" || Buffer3.isBuffer(obj))
         return obj.toString();
       return JSON.stringify(obj);
     };
@@ -40184,14 +41792,14 @@ var require_tostring = __commonJS({
 // backend/node_modules/jws/lib/sign-stream.js
 var require_sign_stream = __commonJS({
   "backend/node_modules/jws/lib/sign-stream.js"(exports2, module2) {
-    var Buffer2 = require_safe_buffer().Buffer;
+    var Buffer3 = require_safe_buffer().Buffer;
     var DataStream = require_data_stream();
     var jwa = require_jwa();
     var Stream = require("stream");
     var toString3 = require_tostring();
     var util3 = require("util");
     function base64url(string, encoding) {
-      return Buffer2.from(string, encoding).toString("base64").replace(/=/g, "").replace(/\+/g, "-").replace(/\//g, "_");
+      return Buffer3.from(string, encoding).toString("base64").replace(/=/g, "").replace(/\+/g, "-").replace(/\//g, "_");
     }
     function jwsSecuredInput(header, payload, encoding) {
       encoding = encoding || "utf8";
@@ -40259,7 +41867,7 @@ var require_sign_stream = __commonJS({
 // backend/node_modules/jws/lib/verify-stream.js
 var require_verify_stream = __commonJS({
   "backend/node_modules/jws/lib/verify-stream.js"(exports2, module2) {
-    var Buffer2 = require_safe_buffer().Buffer;
+    var Buffer3 = require_safe_buffer().Buffer;
     var DataStream = require_data_stream();
     var jwa = require_jwa();
     var Stream = require("stream");
@@ -40280,7 +41888,7 @@ var require_verify_stream = __commonJS({
     }
     function headerFromJWS(jwsSig) {
       var encodedHeader = jwsSig.split(".", 1)[0];
-      return safeJsonParse(Buffer2.from(encodedHeader, "base64").toString("binary"));
+      return safeJsonParse(Buffer3.from(encodedHeader, "base64").toString("binary"));
     }
     function securedInputFromJWS(jwsSig) {
       return jwsSig.split(".", 2).join(".");
@@ -40291,7 +41899,7 @@ var require_verify_stream = __commonJS({
     function payloadFromJWS(jwsSig, encoding) {
       encoding = encoding || "utf8";
       var payload = jwsSig.split(".")[1];
-      return Buffer2.from(payload, "base64").toString(encoding);
+      return Buffer3.from(payload, "base64").toString(encoding);
     }
     function isValidJws(string) {
       return JWS_REGEX.test(string) && !!headerFromJWS(string);
@@ -40506,7 +42114,7 @@ var require_timespan = __commonJS({
 });
 
 // backend/node_modules/semver/internal/constants.js
-var require_constants = __commonJS({
+var require_constants3 = __commonJS({
   "backend/node_modules/semver/internal/constants.js"(exports2, module2) {
     "use strict";
     var SEMVER_SPEC_VERSION = "2.0.0";
@@ -40555,7 +42163,7 @@ var require_re = __commonJS({
       MAX_SAFE_COMPONENT_LENGTH,
       MAX_SAFE_BUILD_LENGTH,
       MAX_LENGTH
-    } = require_constants();
+    } = require_constants3();
     var debug = require_debug2();
     exports2 = module2.exports = {};
     var re = exports2.re = [];
@@ -40641,7 +42249,7 @@ var require_parse_options = __commonJS({
     "use strict";
     var looseOption = Object.freeze({ loose: true });
     var emptyOpts = Object.freeze({});
-    var parseOptions = (options) => {
+    var parseOptions2 = (options) => {
       if (!options) {
         return emptyOpts;
       }
@@ -40650,7 +42258,7 @@ var require_parse_options = __commonJS({
       }
       return options;
     };
-    module2.exports = parseOptions;
+    module2.exports = parseOptions2;
   }
 });
 
@@ -40684,13 +42292,13 @@ var require_semver = __commonJS({
   "backend/node_modules/semver/classes/semver.js"(exports2, module2) {
     "use strict";
     var debug = require_debug2();
-    var { MAX_LENGTH, MAX_SAFE_INTEGER } = require_constants();
+    var { MAX_LENGTH, MAX_SAFE_INTEGER } = require_constants3();
     var { safeRe: re, t } = require_re();
-    var parseOptions = require_parse_options();
+    var parseOptions2 = require_parse_options();
     var { compareIdentifiers } = require_identifiers();
     var SemVer = class _SemVer {
       constructor(version4, options) {
-        options = parseOptions(options);
+        options = parseOptions2(options);
         if (version4 instanceof _SemVer) {
           if (version4.loose === !!options.loose && version4.includePrerelease === !!options.includePrerelease) {
             return version4;
@@ -41382,7 +42990,7 @@ var require_range2 = __commonJS({
     var SPACE_CHARACTERS = /\s+/g;
     var Range = class _Range {
       constructor(range, options) {
-        options = parseOptions(options);
+        options = parseOptions2(options);
         if (range instanceof _Range) {
           if (range.loose === !!options.loose && range.includePrerelease === !!options.includePrerelease) {
             return range;
@@ -41521,7 +43129,7 @@ var require_range2 = __commonJS({
     module2.exports = Range;
     var LRU = require_lrucache();
     var cache = new LRU();
-    var parseOptions = require_parse_options();
+    var parseOptions2 = require_parse_options();
     var Comparator = require_comparator();
     var debug = require_debug2();
     var SemVer = require_semver();
@@ -41532,7 +43140,7 @@ var require_range2 = __commonJS({
       tildeTrimReplace,
       caretTrimReplace
     } = require_re();
-    var { FLAG_INCLUDE_PRERELEASE, FLAG_LOOSE } = require_constants();
+    var { FLAG_INCLUDE_PRERELEASE, FLAG_LOOSE } = require_constants3();
     var isNullSet = (c) => c.value === "<0.0.0-0";
     var isAny = (c) => c.value === "";
     var isSatisfiable = (comparators, options) => {
@@ -41762,7 +43370,7 @@ var require_comparator = __commonJS({
         return ANY;
       }
       constructor(comp, options) {
-        options = parseOptions(options);
+        options = parseOptions2(options);
         if (comp instanceof _Comparator) {
           if (comp.loose === !!options.loose) {
             return comp;
@@ -41830,7 +43438,7 @@ var require_comparator = __commonJS({
           }
           return new Range(this.value, options).test(comp.semver);
         }
-        options = parseOptions(options);
+        options = parseOptions2(options);
         if (options.includePrerelease && (this.value === "<0.0.0-0" || comp.value === "<0.0.0-0")) {
           return false;
         }
@@ -41856,7 +43464,7 @@ var require_comparator = __commonJS({
       }
     };
     module2.exports = Comparator;
-    var parseOptions = require_parse_options();
+    var parseOptions2 = require_parse_options();
     var { safeRe: re, t } = require_re();
     var cmp = require_cmp();
     var debug = require_debug2();
@@ -42345,7 +43953,7 @@ var require_semver2 = __commonJS({
   "backend/node_modules/semver/index.js"(exports2, module2) {
     "use strict";
     var internalRe = require_re();
-    var constants = require_constants();
+    var constants = require_constants3();
     var SemVer = require_semver();
     var identifiers = require_identifiers();
     var parse2 = require_parse2();
@@ -49338,7 +50946,7 @@ var require_version = __commonJS({
 });
 
 // backend/node_modules/@supabase/realtime-js/dist/main/lib/constants.js
-var require_constants2 = __commonJS({
+var require_constants4 = __commonJS({
   "backend/node_modules/@supabase/realtime-js/dist/main/lib/constants.js"(exports2) {
     "use strict";
     Object.defineProperty(exports2, "__esModule", { value: true });
@@ -51660,7 +53268,7 @@ var require_channelAdapter = __commonJS({
   "backend/node_modules/@supabase/realtime-js/dist/main/phoenix/channelAdapter.js"(exports2) {
     "use strict";
     Object.defineProperty(exports2, "__esModule", { value: true });
-    var constants_1 = require_constants2();
+    var constants_1 = require_constants4();
     var ChannelAdapter = class {
       constructor(socket, topic, params) {
         const phoenixParams = phoenixChannelParams(params);
@@ -51769,7 +53377,7 @@ var require_RealtimeChannel = __commonJS({
     Object.defineProperty(exports2, "__esModule", { value: true });
     exports2.REALTIME_CHANNEL_STATES = exports2.REALTIME_SUBSCRIBE_STATES = exports2.REALTIME_LISTEN_TYPES = exports2.REALTIME_POSTGRES_CHANGES_LISTEN_EVENT = void 0;
     var tslib_1 = (init_tslib_es6(), __toCommonJS(tslib_es6_exports));
-    var constants_1 = require_constants2();
+    var constants_1 = require_constants4();
     var RealtimePresence_1 = tslib_1.__importDefault(require_RealtimePresence());
     var Transformers = tslib_1.__importStar(require_transformers());
     var transformers_1 = require_transformers();
@@ -52445,7 +54053,7 @@ var require_socketAdapter = __commonJS({
     "use strict";
     Object.defineProperty(exports2, "__esModule", { value: true });
     var phoenix_1 = require_phoenix_cjs();
-    var constants_1 = require_constants2();
+    var constants_1 = require_constants4();
     var SocketAdapter = class {
       constructor(endPoint, options) {
         this.socket = new phoenix_1.Socket(endPoint, options);
@@ -52564,7 +54172,7 @@ var require_RealtimeClient = __commonJS({
     Object.defineProperty(exports2, "__esModule", { value: true });
     var tslib_1 = (init_tslib_es6(), __toCommonJS(tslib_es6_exports));
     var websocket_factory_1 = tslib_1.__importDefault(require_websocket_factory());
-    var constants_1 = require_constants2();
+    var constants_1 = require_constants4();
     var serializer_1 = tslib_1.__importDefault(require_serializer());
     var transformers_1 = require_transformers();
     var RealtimeChannel_1 = tslib_1.__importDefault(require_RealtimeChannel());
@@ -56295,7 +57903,7 @@ var require_version2 = __commonJS({
 });
 
 // backend/node_modules/@supabase/auth-js/dist/main/lib/constants.js
-var require_constants3 = __commonJS({
+var require_constants5 = __commonJS({
   "backend/node_modules/@supabase/auth-js/dist/main/lib/constants.js"(exports2) {
     "use strict";
     Object.defineProperty(exports2, "__esModule", { value: true });
@@ -56664,7 +58272,7 @@ var require_base64url = __commonJS({
 });
 
 // backend/node_modules/@supabase/auth-js/dist/main/lib/helpers.js
-var require_helpers = __commonJS({
+var require_helpers2 = __commonJS({
   "backend/node_modules/@supabase/auth-js/dist/main/lib/helpers.js"(exports2) {
     "use strict";
     Object.defineProperty(exports2, "__esModule", { value: true });
@@ -56685,7 +58293,7 @@ var require_helpers = __commonJS({
     exports2.userNotAvailableProxy = userNotAvailableProxy;
     exports2.insecureUserWarningProxy = insecureUserWarningProxy;
     exports2.deepClone = deepClone;
-    var constants_1 = require_constants3();
+    var constants_1 = require_constants5();
     var errors_1 = require_errors();
     var base64url_1 = require_base64url();
     function expiresAt(expiresIn) {
@@ -56993,8 +58601,8 @@ var require_fetch = __commonJS({
     exports2._generateLinkResponse = _generateLinkResponse;
     exports2._noResolveJsonResponse = _noResolveJsonResponse;
     var tslib_1 = (init_tslib_es6(), __toCommonJS(tslib_es6_exports));
-    var constants_1 = require_constants3();
-    var helpers_1 = require_helpers();
+    var constants_1 = require_constants5();
+    var helpers_1 = require_helpers2();
     var errors_1 = require_errors();
     var _getErrorMessage2 = (err) => err.msg || err.message || err.error_description || err.error || JSON.stringify(err);
     var NETWORK_ERROR_CODES = [502, 503, 504, 520, 521, 522, 523, 524, 530];
@@ -57151,7 +58759,7 @@ var require_GoTrueAdminApi = __commonJS({
     Object.defineProperty(exports2, "__esModule", { value: true });
     var tslib_1 = (init_tslib_es6(), __toCommonJS(tslib_es6_exports));
     var fetch_1 = require_fetch();
-    var helpers_1 = require_helpers();
+    var helpers_1 = require_helpers2();
     var types_1 = require_types2();
     var errors_1 = require_errors();
     var GoTrueAdminApi = class {
@@ -58202,7 +59810,7 @@ var require_locks = __commonJS({
     exports2.ProcessLockAcquireTimeoutError = exports2.NavigatorLockAcquireTimeoutError = exports2.LockAcquireTimeoutError = exports2.internals = void 0;
     exports2.navigatorLock = navigatorLock;
     exports2.processLock = processLock;
-    var helpers_1 = require_helpers();
+    var helpers_1 = require_helpers2();
     exports2.internals = {
       /**
        * @experimental
@@ -58679,7 +60287,7 @@ var require_webauthn = __commonJS({
     var tslib_1 = (init_tslib_es6(), __toCommonJS(tslib_es6_exports));
     var base64url_1 = require_base64url();
     var errors_1 = require_errors();
-    var helpers_1 = require_helpers();
+    var helpers_1 = require_helpers2();
     var webauthn_errors_1 = require_webauthn_errors();
     Object.defineProperty(exports2, "identifyAuthenticationError", { enumerable: true, get: function() {
       return webauthn_errors_1.identifyAuthenticationError;
@@ -59226,10 +60834,10 @@ var require_GoTrueClient = __commonJS({
     Object.defineProperty(exports2, "__esModule", { value: true });
     var tslib_1 = (init_tslib_es6(), __toCommonJS(tslib_es6_exports));
     var GoTrueAdminApi_1 = tslib_1.__importDefault(require_GoTrueAdminApi());
-    var constants_1 = require_constants3();
+    var constants_1 = require_constants5();
     var errors_1 = require_errors();
     var fetch_1 = require_fetch();
-    var helpers_1 = require_helpers();
+    var helpers_1 = require_helpers2();
     var local_storage_1 = require_local_storage();
     var locks_1 = require_locks();
     var polyfills_1 = require_polyfills();
@@ -64450,12 +66058,936 @@ __export(index_exports, {
 });
 module.exports = __toCommonJS(index_exports);
 var import_dotenv3 = __toESM(require_main());
+
+// backend/node_modules/dotenv/config.js
+(function() {
+  require_main().config(
+    Object.assign(
+      {},
+      require_env_options(),
+      require_cli_options()(process.argv)
+    )
+  );
+})();
+
+// backend/src/app.ts
 var import_express2 = __toESM(require_express2());
 var import_cors = __toESM(require_lib3());
 var import_path = __toESM(require("path"));
 
-// backend/src/routes/index.ts
-var import_express = __toESM(require_express2());
+// backend/node_modules/express-rate-limit/dist/index.mjs
+var import_node_net = require("node:net");
+var import_ip_address = __toESM(require_ip_address(), 1);
+var import_node_net2 = require("node:net");
+var import_node_buffer = require("node:buffer");
+var import_node_crypto = require("node:crypto");
+var import_node_net3 = require("node:net");
+function ipKeyGenerator(ip, ipv6Subnet = 56) {
+  if ((0, import_node_net.isIPv6)(ip)) {
+    const address = new import_ip_address.Address6(ip);
+    if (address.is4()) return address.to4().correctForm();
+    if (ipv6Subnet) {
+      const subnet = new import_ip_address.Address6(`${ip}/${ipv6Subnet}`);
+      return `${subnet.startAddress().correctForm()}/${ipv6Subnet}`;
+    }
+  }
+  return ip;
+}
+var MemoryStore = class {
+  constructor(validations2) {
+    this.validations = validations2;
+    this.previous = /* @__PURE__ */ new Map();
+    this.current = /* @__PURE__ */ new Map();
+    this.localKeys = true;
+  }
+  /**
+   * Method that initializes the store.
+   *
+   * @param options {Options} - The options used to setup the middleware.
+   */
+  init(options) {
+    this.windowMs = options.windowMs;
+    this.validations?.windowMs(this.windowMs);
+    if (this.interval) clearInterval(this.interval);
+    this.interval = setInterval(() => {
+      this.clearExpired();
+    }, this.windowMs);
+    this.interval.unref?.();
+  }
+  /**
+   * Method to fetch a client's hit count and reset time.
+   *
+   * @param key {string} - The identifier for a client.
+   *
+   * @returns {ClientRateLimitInfo | undefined} - The number of hits and reset time for that client.
+   *
+   * @public
+   */
+  async get(key) {
+    return this.current.get(key) ?? this.previous.get(key);
+  }
+  /**
+   * Method to increment a client's hit counter.
+   *
+   * @param key {string} - The identifier for a client.
+   *
+   * @returns {ClientRateLimitInfo} - The number of hits and reset time for that client.
+   *
+   * @public
+   */
+  async increment(key) {
+    const client2 = this.getClient(key);
+    const now = Date.now();
+    if (client2.resetTime.getTime() <= now) {
+      this.resetClient(client2, now);
+    }
+    client2.totalHits++;
+    return client2;
+  }
+  /**
+   * Method to decrement a client's hit counter.
+   *
+   * @param key {string} - The identifier for a client.
+   *
+   * @public
+   */
+  async decrement(key) {
+    const client2 = this.getClient(key);
+    if (client2.totalHits > 0) client2.totalHits--;
+  }
+  /**
+   * Method to reset a client's hit counter.
+   *
+   * @param key {string} - The identifier for a client.
+   *
+   * @public
+   */
+  async resetKey(key) {
+    this.current.delete(key);
+    this.previous.delete(key);
+  }
+  /**
+   * Method to reset everyone's hit counter.
+   *
+   * @public
+   */
+  async resetAll() {
+    this.current.clear();
+    this.previous.clear();
+  }
+  /**
+   * Method to stop the timer (if currently running) and prevent any memory
+   * leaks.
+   *
+   * @public
+   */
+  shutdown() {
+    clearInterval(this.interval);
+    void this.resetAll();
+  }
+  /**
+   * Recycles a client by setting its hit count to zero, and reset time to
+   * `windowMs` milliseconds from now.
+   *
+   * NOT to be confused with `#resetKey()`, which removes a client from both the
+   * `current` and `previous` maps.
+   *
+   * @param client {Client} - The client to recycle.
+   * @param now {number} - The current time, to which the `windowMs` is added to get the `resetTime` for the client.
+   *
+   * @return {Client} - The modified client that was passed in, to allow for chaining.
+   */
+  resetClient(client2, now = Date.now()) {
+    client2.totalHits = 0;
+    client2.resetTime.setTime(now + this.windowMs);
+    return client2;
+  }
+  /**
+   * Retrieves or creates a client, given a key. Also ensures that the client being
+   * returned is in the `current` map.
+   *
+   * @param key {string} - The key under which the client is (or is to be) stored.
+   *
+   * @returns {Client} - The requested client.
+   */
+  getClient(key) {
+    if (this.current.has(key)) return this.current.get(key);
+    let client2;
+    if (this.previous.has(key)) {
+      client2 = this.previous.get(key);
+      this.previous.delete(key);
+    } else {
+      client2 = { totalHits: 0, resetTime: /* @__PURE__ */ new Date() };
+      this.resetClient(client2);
+    }
+    this.current.set(key, client2);
+    return client2;
+  }
+  /**
+   * Move current clients to previous, create a new map for current.
+   *
+   * This function is called every `windowMs`.
+   */
+  clearExpired() {
+    this.previous = this.current;
+    this.current = /* @__PURE__ */ new Map();
+  }
+};
+var SUPPORTED_DRAFT_VERSIONS = [
+  "draft-6",
+  "draft-7",
+  "draft-8"
+];
+var getResetSeconds = (windowMs, resetTime) => {
+  let resetSeconds;
+  if (resetTime) {
+    const deltaSeconds = Math.ceil((resetTime.getTime() - Date.now()) / 1e3);
+    resetSeconds = Math.max(0, deltaSeconds);
+  } else {
+    resetSeconds = Math.ceil(windowMs / 1e3);
+  }
+  return resetSeconds;
+};
+var getPartitionKey = (key) => {
+  const hash2 = (0, import_node_crypto.createHash)("sha256");
+  hash2.update(key);
+  const partitionKey = hash2.digest("hex").slice(0, 12);
+  return import_node_buffer.Buffer.from(partitionKey).toString("base64");
+};
+var setLegacyHeaders = (response, info) => {
+  if (response.headersSent) return;
+  response.setHeader("X-RateLimit-Limit", info.limit.toString());
+  response.setHeader("X-RateLimit-Remaining", info.remaining.toString());
+  if (info.resetTime instanceof Date) {
+    response.setHeader("Date", (/* @__PURE__ */ new Date()).toUTCString());
+    response.setHeader(
+      "X-RateLimit-Reset",
+      Math.ceil(info.resetTime.getTime() / 1e3).toString()
+    );
+  }
+};
+var setDraft6Headers = (response, info, windowMs) => {
+  if (response.headersSent) return;
+  const windowSeconds = Math.ceil(windowMs / 1e3);
+  const resetSeconds = getResetSeconds(windowMs, info.resetTime);
+  response.setHeader("RateLimit-Policy", `${info.limit};w=${windowSeconds}`);
+  response.setHeader("RateLimit-Limit", info.limit.toString());
+  response.setHeader("RateLimit-Remaining", info.remaining.toString());
+  if (typeof resetSeconds === "number")
+    response.setHeader("RateLimit-Reset", resetSeconds.toString());
+};
+var setDraft7Headers = (response, info, windowMs) => {
+  if (response.headersSent) return;
+  const windowSeconds = Math.ceil(windowMs / 1e3);
+  const resetSeconds = getResetSeconds(windowMs, info.resetTime);
+  response.setHeader("RateLimit-Policy", `${info.limit};w=${windowSeconds}`);
+  response.setHeader(
+    "RateLimit",
+    `limit=${info.limit}, remaining=${info.remaining}, reset=${resetSeconds}`
+  );
+};
+var setDraft8Headers = (response, info, windowMs, name, key) => {
+  if (response.headersSent) return;
+  const windowSeconds = Math.ceil(windowMs / 1e3);
+  const resetSeconds = getResetSeconds(windowMs, info.resetTime);
+  const partitionKey = getPartitionKey(key);
+  const header = `r=${info.remaining}; t=${resetSeconds}`;
+  const policy = `q=${info.limit}; w=${windowSeconds}; pk=:${partitionKey}:`;
+  response.append("RateLimit", `"${name}"; ${header}`);
+  response.append("RateLimit-Policy", `"${name}"; ${policy}`);
+};
+var setRetryAfterHeader = (response, info, windowMs) => {
+  if (response.headersSent) return;
+  const resetSeconds = getResetSeconds(windowMs, info.resetTime);
+  response.setHeader("Retry-After", resetSeconds.toString());
+};
+var omitUndefinedProperties = (passedOptions) => {
+  const omittedOptions = {};
+  for (const k of Object.keys(passedOptions)) {
+    const key = k;
+    if (passedOptions[key] !== void 0) {
+      omittedOptions[key] = passedOptions[key];
+    }
+  }
+  return omittedOptions;
+};
+var ValidationError = class extends Error {
+  /**
+   * The code must be a string, in snake case and all capital, that starts with
+   * the substring `ERR_ERL_`.
+   *
+   * The message must be a string, starting with an uppercase character,
+   * describing the issue in detail.
+   */
+  constructor(code, message) {
+    const url2 = `https://express-rate-limit.github.io/${code}/`;
+    super(`${message} See ${url2} for more information.`);
+    this.name = this.constructor.name;
+    this.code = code;
+    this.help = url2;
+  }
+};
+var ChangeWarning = class extends ValidationError {
+};
+var usedStores = /* @__PURE__ */ new Set();
+var singleCountKeys = /* @__PURE__ */ new WeakMap();
+var validations = {
+  enabled: {
+    default: true
+  },
+  // Should be EnabledValidations type, but that's a circular reference
+  disable() {
+    for (const k of Object.keys(this.enabled)) this.enabled[k] = false;
+  },
+  /**
+   * Checks whether the IP address is valid, and that it does not have a port
+   * number in it.
+   *
+   * See https://github.com/express-rate-limit/express-rate-limit/wiki/Error-Codes#err_erl_invalid_ip_address.
+   *
+   * @param ip {string | undefined} - The IP address provided by Express as request.ip.
+   *
+   * @returns {void}
+   */
+  ip(ip) {
+    if (ip === void 0) {
+      throw new ValidationError(
+        "ERR_ERL_UNDEFINED_IP_ADDRESS",
+        `An undefined 'request.ip' was detected. This might indicate a misconfiguration or the connection being destroyed prematurely.`
+      );
+    }
+    if (!(0, import_node_net3.isIP)(ip)) {
+      throw new ValidationError(
+        "ERR_ERL_INVALID_IP_ADDRESS",
+        `An invalid 'request.ip' (${ip}) was detected. Consider passing a custom 'keyGenerator' function to the rate limiter.`
+      );
+    }
+  },
+  /**
+   * Makes sure the trust proxy setting is not set to `true`.
+   *
+   * See https://github.com/express-rate-limit/express-rate-limit/wiki/Error-Codes#err_erl_permissive_trust_proxy.
+   *
+   * @param request {Request} - The Express request object.
+   *
+   * @returns {void}
+   */
+  trustProxy(request) {
+    if (request.app.get("trust proxy") === true) {
+      throw new ValidationError(
+        "ERR_ERL_PERMISSIVE_TRUST_PROXY",
+        `The Express 'trust proxy' setting is true, which allows anyone to trivially bypass IP-based rate limiting.`
+      );
+    }
+  },
+  /**
+   * Makes sure the trust proxy setting is set in case the `X-Forwarded-For`
+   * header is present.
+   *
+   * See https://github.com/express-rate-limit/express-rate-limit/wiki/Error-Codes#err_erl_unset_trust_proxy.
+   *
+   * @param request {Request} - The Express request object.
+   *
+   * @returns {void}
+   */
+  xForwardedForHeader(request) {
+    if (request.headers["x-forwarded-for"] && request.app.get("trust proxy") === false) {
+      throw new ValidationError(
+        "ERR_ERL_UNEXPECTED_X_FORWARDED_FOR",
+        `The 'X-Forwarded-For' header is set but the Express 'trust proxy' setting is false (default). This could indicate a misconfiguration which would prevent express-rate-limit from accurately identifying users.`
+      );
+    }
+  },
+  /**
+   * Alert the user if the Forwarded header is set (standardized version of X-Forwarded-For - not supported by express as of version 5.1.0)
+   *
+   * @param request {Request} - The Express request object.
+   *
+   * @returns {void}
+   */
+  forwardedHeader(request) {
+    if (request.headers.forwarded && request.ip === request.socket?.remoteAddress) {
+      throw new ValidationError(
+        "ERR_ERL_FORWARDED_HEADER",
+        `The 'Forwarded' header (standardized X-Forwarded-For) is set but currently being ignored. Add a custom keyGenerator to use a value from this header.`
+      );
+    }
+  },
+  /**
+   * Ensures totalHits value from store is a positive integer.
+   *
+   * @param hits {any} - The `totalHits` returned by the store.
+   */
+  positiveHits(hits) {
+    if (typeof hits !== "number" || hits < 1 || hits !== Math.round(hits)) {
+      throw new ValidationError(
+        "ERR_ERL_INVALID_HITS",
+        `The totalHits value returned from the store must be a positive integer, got ${hits}`
+      );
+    }
+  },
+  /**
+   * Ensures a single store instance is not used with multiple express-rate-limit instances
+   */
+  unsharedStore(store) {
+    if (usedStores.has(store)) {
+      const maybeUniquePrefix = store?.localKeys ? "" : " (with a unique prefix)";
+      throw new ValidationError(
+        "ERR_ERL_STORE_REUSE",
+        `A Store instance must not be shared across multiple rate limiters. Create a new instance of ${store.constructor.name}${maybeUniquePrefix} for each limiter instead.`
+      );
+    }
+    usedStores.add(store);
+  },
+  /**
+   * Ensures a given key is incremented only once per request.
+   *
+   * @param request {Request} - The Express request object.
+   * @param store {Store} - The store class.
+   * @param key {string} - The key used to store the client's hit count.
+   *
+   * @returns {void}
+   */
+  singleCount(request, store, key) {
+    let storeKeys = singleCountKeys.get(request);
+    if (!storeKeys) {
+      storeKeys = /* @__PURE__ */ new Map();
+      singleCountKeys.set(request, storeKeys);
+    }
+    const storeKey = store.localKeys ? store : store.constructor.name;
+    let keys = storeKeys.get(storeKey);
+    if (!keys) {
+      keys = [];
+      storeKeys.set(storeKey, keys);
+    }
+    const prefixedKey = `${store.prefix ?? ""}${key}`;
+    if (keys.includes(prefixedKey)) {
+      throw new ValidationError(
+        "ERR_ERL_DOUBLE_COUNT",
+        `The hit count for ${key} was incremented more than once for a single request.`
+      );
+    }
+    keys.push(prefixedKey);
+  },
+  /**
+   * Warns the user that the behaviour for `max: 0` / `limit: 0` is
+   * changing in the next major release.
+   *
+   * @param limit {number} - The maximum number of hits per client.
+   *
+   * @returns {void}
+   */
+  limit(limit) {
+    if (limit === 0) {
+      throw new ChangeWarning(
+        "WRN_ERL_MAX_ZERO",
+        "Setting limit or max to 0 disables rate limiting in express-rate-limit v6 and older, but will cause all requests to be blocked in v7"
+      );
+    }
+  },
+  /**
+   * Warns the user that the `draft_polli_ratelimit_headers` option is deprecated
+   * and will be removed in the next major release.
+   *
+   * @param draft_polli_ratelimit_headers {any | undefined} - The now-deprecated setting that was used to enable standard headers.
+   *
+   * @returns {void}
+   */
+  draftPolliHeaders(draft_polli_ratelimit_headers) {
+    if (draft_polli_ratelimit_headers) {
+      throw new ChangeWarning(
+        "WRN_ERL_DEPRECATED_DRAFT_POLLI_HEADERS",
+        `The draft_polli_ratelimit_headers configuration option is deprecated and has been removed in express-rate-limit v7, please set standardHeaders: 'draft-6' instead.`
+      );
+    }
+  },
+  /**
+   * Warns the user that the `onLimitReached` option is deprecated and
+   * will be removed in the next major release.
+   *
+   * @param onLimitReached {any | undefined} - The maximum number of hits per client.
+   *
+   * @returns {void}
+   */
+  onLimitReached(onLimitReached) {
+    if (onLimitReached) {
+      throw new ChangeWarning(
+        "WRN_ERL_DEPRECATED_ON_LIMIT_REACHED",
+        "The onLimitReached configuration option is deprecated and has been removed in express-rate-limit v7."
+      );
+    }
+  },
+  /**
+   * Warns the user when an invalid/unsupported version of the draft spec is passed.
+   *
+   * @param version {any | undefined} - The version passed by the user.
+   *
+   * @returns {void}
+   */
+  headersDraftVersion(version4) {
+    if (typeof version4 !== "string" || // @ts-expect-error This is fine. If version is not in the array, it will just return false.
+    !SUPPORTED_DRAFT_VERSIONS.includes(version4)) {
+      const versionString = SUPPORTED_DRAFT_VERSIONS.join(", ");
+      throw new ValidationError(
+        "ERR_ERL_HEADERS_UNSUPPORTED_DRAFT_VERSION",
+        `standardHeaders: only the following versions of the IETF draft specification are supported: ${versionString}.`
+      );
+    }
+  },
+  /**
+   * Warns the user when the selected headers option requires a reset time but
+   * the store does not provide one.
+   *
+   * @param resetTime {Date | undefined} - The timestamp when the client's hit count will be reset.
+   *
+   * @returns {void}
+   */
+  headersResetTime(resetTime) {
+    if (!resetTime) {
+      throw new ValidationError(
+        "ERR_ERL_HEADERS_NO_RESET",
+        `standardHeaders:  'draft-7' requires a 'resetTime', but the store did not provide one. The 'windowMs' value will be used instead, which may cause clients to wait longer than necessary.`
+      );
+    }
+  },
+  knownOptions(passedOptions) {
+    if (!passedOptions) return;
+    const optionsMap = {
+      windowMs: true,
+      limit: true,
+      message: true,
+      statusCode: true,
+      legacyHeaders: true,
+      standardHeaders: true,
+      identifier: true,
+      requestPropertyName: true,
+      skipFailedRequests: true,
+      skipSuccessfulRequests: true,
+      keyGenerator: true,
+      ipv6Subnet: true,
+      handler: true,
+      skip: true,
+      requestWasSuccessful: true,
+      store: true,
+      validate: true,
+      headers: true,
+      max: true,
+      passOnStoreError: true
+    };
+    const validOptions = Object.keys(optionsMap).concat(
+      "draft_polli_ratelimit_headers",
+      // not a valid option anymore, but we have a more specific check for this one, so don't warn for it here
+      // from express-slow-down - https://github.com/express-rate-limit/express-slow-down/blob/main/source/types.ts#L65
+      "delayAfter",
+      "delayMs",
+      "maxDelayMs"
+    );
+    for (const key of Object.keys(passedOptions)) {
+      if (!validOptions.includes(key)) {
+        throw new ValidationError(
+          "ERR_ERL_UNKNOWN_OPTION",
+          `Unexpected configuration option: ${key}`
+          // todo: suggest a valid option with a short levenstein distance?
+        );
+      }
+    }
+  },
+  /**
+   * Checks the options.validate setting to ensure that only recognized
+   * validations are enabled or disabled.
+   *
+   * If any unrecognized values are found, an error is logged that
+   * includes the list of supported validations.
+   */
+  validationsConfig() {
+    const supportedValidations = Object.keys(this).filter(
+      (k) => !["enabled", "disable"].includes(k)
+    );
+    supportedValidations.push("default");
+    for (const key of Object.keys(this.enabled)) {
+      if (!supportedValidations.includes(key)) {
+        throw new ValidationError(
+          "ERR_ERL_UNKNOWN_VALIDATION",
+          `options.validate.${key} is not recognized. Supported validate options are: ${supportedValidations.join(
+            ", "
+          )}.`
+        );
+      }
+    }
+  },
+  /**
+   * Checks to see if the instance was created inside of a request handler,
+   * which would prevent it from working correctly, with the default memory
+   * store (or any other store with localKeys.)
+   */
+  creationStack(store) {
+    const { stack } = new Error(
+      "express-rate-limit validation check (set options.validate.creationStack=false to disable)"
+    );
+    if (stack?.includes("Layer.handle [as handle_request]") || // express v4
+    stack?.includes("Layer.handleRequest")) {
+      if (!store.localKeys) {
+        throw new ValidationError(
+          "ERR_ERL_CREATED_IN_REQUEST_HANDLER",
+          "express-rate-limit instance should *usually* be created at app initialization, not when responding to a request."
+        );
+      }
+      throw new ValidationError(
+        "ERR_ERL_CREATED_IN_REQUEST_HANDLER",
+        "express-rate-limit instance should be created at app initialization, not when responding to a request."
+      );
+    }
+  },
+  ipv6Subnet(ipv6Subnet) {
+    if (ipv6Subnet === false) {
+      return;
+    }
+    if (!Number.isInteger(ipv6Subnet) || ipv6Subnet < 32 || ipv6Subnet > 64) {
+      throw new ValidationError(
+        "ERR_ERL_IPV6_SUBNET",
+        `Unexpected ipv6Subnet value: ${ipv6Subnet}. Expected an integer between 32 and 64 (usually 48-64).`
+      );
+    }
+  },
+  ipv6SubnetOrKeyGenerator(options) {
+    if (options.ipv6Subnet !== void 0 && options.keyGenerator) {
+      throw new ValidationError(
+        "ERR_ERL_IPV6SUBNET_OR_KEYGENERATOR",
+        `Incompatible options: the 'ipv6Subnet' option is ignored when a custom 'keyGenerator' function is also set.`
+      );
+    }
+  },
+  keyGeneratorIpFallback(keyGenerator) {
+    if (!keyGenerator) {
+      return;
+    }
+    const src = keyGenerator.toString();
+    if ((src.includes("req.ip") || src.includes("request.ip")) && !src.includes("ipKeyGenerator")) {
+      throw new ValidationError(
+        "ERR_ERL_KEY_GEN_IPV6",
+        "Custom keyGenerator appears to use request IP without calling the ipKeyGenerator helper function for IPv6 addresses. This could allow IPv6 users to bypass limits."
+      );
+    }
+  },
+  /**
+   * Checks to see if the window duration is greater than 2^32 - 1. This is only
+   * called by the default MemoryStore, since it uses Node's setInterval method.
+   *
+   * See https://nodejs.org/api/timers.html#setintervalcallback-delay-args.
+   */
+  windowMs(windowMs) {
+    const SET_TIMEOUT_MAX = 2 ** 31 - 1;
+    if (typeof windowMs !== "number" || Number.isNaN(windowMs) || windowMs < 1 || windowMs > SET_TIMEOUT_MAX) {
+      throw new ValidationError(
+        "ERR_ERL_WINDOW_MS",
+        `Invalid windowMs value: ${windowMs}${typeof windowMs !== "number" ? ` (${typeof windowMs})` : ""}, must be a number between 1 and ${SET_TIMEOUT_MAX} when using the default MemoryStore`
+      );
+    }
+  }
+};
+var getValidations = (_enabled) => {
+  let enabled;
+  if (typeof _enabled === "boolean") {
+    enabled = {
+      default: _enabled
+    };
+  } else {
+    enabled = {
+      default: true,
+      ..._enabled
+    };
+  }
+  const wrappedValidations = { enabled };
+  for (const [name, validation] of Object.entries(validations)) {
+    if (typeof validation === "function")
+      wrappedValidations[name] = (...args) => {
+        if (!(enabled[name] ?? enabled.default)) {
+          return;
+        }
+        try {
+          ;
+          validation.apply(
+            wrappedValidations,
+            args
+          );
+        } catch (error) {
+          if (error instanceof ChangeWarning) console.warn(error);
+          else console.error(error);
+        }
+      };
+  }
+  return wrappedValidations;
+};
+var isLegacyStore = (store) => (
+  // Check that `incr` exists but `increment` does not - store authors might want
+  // to keep both around for backwards compatibility.
+  typeof store.incr === "function" && typeof store.increment !== "function"
+);
+var promisifyStore = (passedStore) => {
+  if (!isLegacyStore(passedStore)) {
+    return passedStore;
+  }
+  const legacyStore = passedStore;
+  class PromisifiedStore {
+    async increment(key) {
+      return new Promise((resolve, reject) => {
+        legacyStore.incr(
+          key,
+          (error, totalHits, resetTime) => {
+            if (error) reject(error);
+            resolve({ totalHits, resetTime });
+          }
+        );
+      });
+    }
+    async decrement(key) {
+      return legacyStore.decrement(key);
+    }
+    async resetKey(key) {
+      return legacyStore.resetKey(key);
+    }
+    /* istanbul ignore next */
+    async resetAll() {
+      if (typeof legacyStore.resetAll === "function")
+        return legacyStore.resetAll();
+    }
+  }
+  return new PromisifiedStore();
+};
+var getOptionsFromConfig = (config) => {
+  const { validations: validations2, ...directlyPassableEntries } = config;
+  return {
+    ...directlyPassableEntries,
+    validate: validations2.enabled
+  };
+};
+var parseOptions = (passedOptions) => {
+  const notUndefinedOptions = omitUndefinedProperties(passedOptions);
+  const validations2 = getValidations(notUndefinedOptions?.validate ?? true);
+  validations2.validationsConfig();
+  validations2.knownOptions(passedOptions);
+  validations2.draftPolliHeaders(
+    // @ts-expect-error see the note above.
+    notUndefinedOptions.draft_polli_ratelimit_headers
+  );
+  validations2.onLimitReached(notUndefinedOptions.onLimitReached);
+  if (notUndefinedOptions.ipv6Subnet !== void 0 && typeof notUndefinedOptions.ipv6Subnet !== "function") {
+    validations2.ipv6Subnet(notUndefinedOptions.ipv6Subnet);
+  }
+  validations2.keyGeneratorIpFallback(notUndefinedOptions.keyGenerator);
+  validations2.ipv6SubnetOrKeyGenerator(notUndefinedOptions);
+  let standardHeaders = notUndefinedOptions.standardHeaders ?? false;
+  if (standardHeaders === true) standardHeaders = "draft-6";
+  const config = {
+    windowMs: 60 * 1e3,
+    limit: passedOptions.max ?? 5,
+    // `max` is deprecated, but support it anyways.
+    message: "Too many requests, please try again later.",
+    statusCode: 429,
+    legacyHeaders: passedOptions.headers ?? true,
+    identifier(request, _response) {
+      let duration = "";
+      const property = config.requestPropertyName;
+      const { limit } = request[property];
+      const seconds = config.windowMs / 1e3;
+      const minutes = config.windowMs / (1e3 * 60);
+      const hours = config.windowMs / (1e3 * 60 * 60);
+      const days = config.windowMs / (1e3 * 60 * 60 * 24);
+      if (seconds < 60) duration = `${seconds}sec`;
+      else if (minutes < 60) duration = `${minutes}min`;
+      else if (hours < 24) duration = `${hours}hr${hours > 1 ? "s" : ""}`;
+      else duration = `${days}day${days > 1 ? "s" : ""}`;
+      return `${limit}-in-${duration}`;
+    },
+    requestPropertyName: "rateLimit",
+    skipFailedRequests: false,
+    skipSuccessfulRequests: false,
+    requestWasSuccessful: (_request, response) => response.statusCode < 400,
+    skip: (_request, _response) => false,
+    async keyGenerator(request, response) {
+      validations2.ip(request.ip);
+      validations2.trustProxy(request);
+      validations2.xForwardedForHeader(request);
+      validations2.forwardedHeader(request);
+      const ip = request.ip;
+      let subnet = 56;
+      if ((0, import_node_net2.isIPv6)(ip)) {
+        subnet = typeof config.ipv6Subnet === "function" ? await config.ipv6Subnet(request, response) : config.ipv6Subnet;
+        if (typeof config.ipv6Subnet === "function")
+          validations2.ipv6Subnet(subnet);
+      }
+      return ipKeyGenerator(ip, subnet);
+    },
+    ipv6Subnet: 56,
+    async handler(request, response, _next, _optionsUsed) {
+      response.status(config.statusCode);
+      const message = typeof config.message === "function" ? await config.message(
+        request,
+        response
+      ) : config.message;
+      if (!response.writableEnded) response.send(message);
+    },
+    passOnStoreError: false,
+    // Allow the default options to be overridden by the passed options.
+    ...notUndefinedOptions,
+    // `standardHeaders` is resolved into a draft version above, use that.
+    standardHeaders,
+    // Note that this field is declared after the user's options are spread in,
+    // so that this field doesn't get overridden with an un-promisified store!
+    store: promisifyStore(
+      notUndefinedOptions.store ?? new MemoryStore(validations2)
+    ),
+    // Print an error to the console if a few known misconfigurations are detected.
+    validations: validations2
+  };
+  if (typeof config.store.increment !== "function" || typeof config.store.decrement !== "function" || typeof config.store.resetKey !== "function" || config.store.resetAll !== void 0 && typeof config.store.resetAll !== "function" || config.store.init !== void 0 && typeof config.store.init !== "function") {
+    throw new TypeError(
+      "An invalid store was passed. Please ensure that the store is a class that implements the `Store` interface."
+    );
+  }
+  return config;
+};
+var handleAsyncErrors = (fn) => async (request, response, next) => {
+  try {
+    await Promise.resolve(fn(request, response, next)).catch(next);
+  } catch (error) {
+    next(error);
+  }
+};
+var rateLimit = (passedOptions) => {
+  const config = parseOptions(passedOptions ?? {});
+  const options = getOptionsFromConfig(config);
+  config.validations.creationStack(config.store);
+  config.validations.unsharedStore(config.store);
+  if (typeof config.store.init === "function") config.store.init(options);
+  const middleware = handleAsyncErrors(
+    async (request, response, next) => {
+      const closePromise = config.skipFailedRequests && new Promise((resolve) => response.once("close", resolve));
+      const finishPromise = (config.skipFailedRequests || config.skipSuccessfulRequests) && new Promise((resolve) => response.once("finish", resolve));
+      const errorPromise = config.skipFailedRequests && new Promise((resolve) => response.once("error", resolve));
+      const skip = await config.skip(request, response);
+      if (skip) {
+        next();
+        return;
+      }
+      const augmentedRequest = request;
+      const key = await config.keyGenerator(request, response);
+      let totalHits = 0;
+      let resetTime;
+      try {
+        const incrementResult = await config.store.increment(key);
+        totalHits = incrementResult.totalHits;
+        resetTime = incrementResult.resetTime;
+      } catch (error) {
+        if (config.passOnStoreError) {
+          console.error(
+            "express-rate-limit: error from store, allowing request without rate-limiting.",
+            error
+          );
+          next();
+          return;
+        }
+        throw error;
+      }
+      config.validations.positiveHits(totalHits);
+      config.validations.singleCount(request, config.store, key);
+      const retrieveLimit = typeof config.limit === "function" ? config.limit(request, response) : config.limit;
+      const limit = await retrieveLimit;
+      config.validations.limit(limit);
+      const info = {
+        limit,
+        used: totalHits,
+        remaining: Math.max(limit - totalHits, 0),
+        resetTime,
+        key
+      };
+      Object.defineProperty(info, "current", {
+        configurable: false,
+        enumerable: false,
+        value: totalHits
+      });
+      augmentedRequest[config.requestPropertyName] = info;
+      if (config.legacyHeaders && !response.headersSent) {
+        setLegacyHeaders(response, info);
+      }
+      if (config.standardHeaders && !response.headersSent) {
+        switch (config.standardHeaders) {
+          case "draft-6": {
+            setDraft6Headers(response, info, config.windowMs);
+            break;
+          }
+          case "draft-7": {
+            config.validations.headersResetTime(info.resetTime);
+            setDraft7Headers(response, info, config.windowMs);
+            break;
+          }
+          case "draft-8": {
+            const retrieveName = typeof config.identifier === "function" ? config.identifier(request, response) : config.identifier;
+            const name = await retrieveName;
+            config.validations.headersResetTime(info.resetTime);
+            setDraft8Headers(response, info, config.windowMs, name, key);
+            break;
+          }
+          default: {
+            config.validations.headersDraftVersion(config.standardHeaders);
+            break;
+          }
+        }
+      }
+      if (config.skipFailedRequests || config.skipSuccessfulRequests) {
+        let decremented = false;
+        const decrementKey = async () => {
+          if (!decremented) {
+            await config.store.decrement(key);
+            decremented = true;
+          }
+        };
+        if (config.skipFailedRequests) {
+          if (finishPromise) {
+            void finishPromise.then(async () => {
+              if (!await config.requestWasSuccessful(request, response))
+                await decrementKey();
+            });
+          }
+          if (closePromise) {
+            void closePromise.then(async () => {
+              if (!response.writableEnded) await decrementKey();
+            });
+          }
+          if (errorPromise) {
+            void errorPromise.then(async () => {
+              await decrementKey();
+            });
+          }
+        }
+        if (config.skipSuccessfulRequests) {
+          if (finishPromise) {
+            void finishPromise.then(async () => {
+              if (await config.requestWasSuccessful(request, response))
+                await decrementKey();
+            });
+          }
+        }
+      }
+      config.validations.disable();
+      if (totalHits > limit) {
+        if (config.legacyHeaders || config.standardHeaders) {
+          setRetryAfterHeader(response, info, config.windowMs);
+        }
+        config.handler(request, response, next, options);
+        return;
+      }
+      next();
+    }
+  );
+  const getThrowFn = () => {
+    throw new Error("The current store does not support the get/getKey method");
+  };
+  middleware.resetKey = config.store.resetKey.bind(config.store);
+  middleware.getKey = typeof config.store.get === "function" ? config.store.get.bind(config.store) : getThrowFn;
+  return middleware;
+};
+var rate_limit_default = rateLimit;
 
 // backend/src/lib/prisma.ts
 var import_pg = require("pg");
@@ -64477,216 +67009,6 @@ function createPrismaClient() {
 var prisma = globalForPrisma.prisma || createPrismaClient();
 if (process.env.NODE_ENV !== "production") globalForPrisma.prisma = prisma;
 var prisma_default = prisma;
-
-// backend/src/controllers/event.controller.ts
-var EventController = class {
-  /**
-   * GET /api/public/events/:id/access
-   * Libera links sensíveis se o pagamento estiver aprovado.
-   */
-  static async getAccess(req, res) {
-    try {
-      const { id } = req.params;
-      const { orderId } = req.query;
-      if (!orderId) {
-        return res.status(400).json({ error: "ID do pedido \xE9 obrigat\xF3rio" });
-      }
-      const order = await prisma_default.order.findUnique({
-        where: { id: orderId },
-        include: { event: true }
-      });
-      if (!order || order.eventId !== id || order.status !== "APROVADO") {
-        return res.status(403).json({ error: "Acesso ainda n\xE3o liberado. Aguardando processamento." });
-      }
-      return res.json({
-        lightroomUrl: order.event.lightroomUrl,
-        driveUrl: order.event.driveUrl,
-        eventTitle: order.event.nomeNoivos
-      });
-    } catch (error) {
-      console.error("Erro ao verificar acesso:", error);
-      return res.status(500).json({ error: "Erro interno ao processar acesso." });
-    }
-  }
-  /**
-   * GET /api/events/:id
-   * Lógica de Pivot: Retorna URLs de entrega baseando-se no acesso.
-   */
-  static async getById(req, res) {
-    const { id } = req.params;
-    const { userId } = req.query;
-    const mockEvent = {
-      id: "test-premium-event",
-      nomeNoivos: "Ana & Jo\xE3o - Pivot",
-      dataEvento: new Date(Date.now() + 1e3 * 60 * 60 * 24 * 7),
-      cartorio: "Cart\xF3rio Central",
-      coverPhotoUrl: "https://images.unsplash.com/photo-1511795409834-ef04bbd61622?w=1200",
-      lightroomUrl: "https://lightroom.adobe.com/gallery/test-album",
-      driveUrl: "https://drive.google.com/drive/folders/test-videos",
-      temFoto: true,
-      paywall: { active: true, message: "Acesso Protegido" }
-    };
-    try {
-      const event = await prisma_default.event.findUnique({
-        where: { id }
-      }).catch(() => null);
-      const targetEvent = id === "test-premium-event" ? mockEvent : event;
-      if (!targetEvent) {
-        return res.status(404).json({ error: "Evento n\xE3o encontrado" });
-      }
-      const isPaid = req.app.locals.MOCK_PAID || false;
-      const order = await prisma_default.order.findFirst({
-        where: { eventId: id, clienteId: userId, status: "APROVADO" }
-      }).catch(() => null);
-      const hasAccess = isPaid || !!order;
-      return res.json({
-        id: targetEvent.id,
-        nomeNoivos: targetEvent.nomeNoivos,
-        dataEvento: targetEvent.dataEvento,
-        cartorio: targetEvent.cartorio,
-        coverPhotoUrl: targetEvent.coverPhotoUrl,
-        priceBase: targetEvent.priceBase,
-        priceEarly: targetEvent.priceEarly,
-        temFoto: targetEvent.temFoto,
-        temVideo: targetEvent.temVideo,
-        temReels: targetEvent.temReels,
-        temFotoImpressa: targetEvent.temFotoImpressa,
-        // Links sensíveis só aparecem se aprovado
-        lightroomUrl: hasAccess ? targetEvent.lightroomUrl : null,
-        driveUrl: hasAccess ? targetEvent.driveUrl : null,
-        paywall: {
-          active: !hasAccess,
-          message: hasAccess ? "Entrega liberada via links externos." : "Galeria protegida."
-        }
-      });
-    } catch (error) {
-      console.error("Erro ao buscar evento:", error);
-      return res.status(500).json({ error: "Erro interno do servidor" });
-    }
-  }
-  /**
-   * GET /api/public/events
-   * Lista eventos para a vitrine pública com suporte a busca robusta e paginação real.
-   */
-  static async listPublic(req, res) {
-    try {
-      const { q, page = "1" } = req.query;
-      const query = q;
-      const take = 20;
-      const skip = (Number(page) - 1) * take;
-      const term = query ? `%${query.toLowerCase()}%` : "%";
-      const events = await prisma_default.$queryRaw`
-        SELECT 
-          id, 
-          "nomeNoivos", 
-          "dataEvento", 
-          cartorio, 
-          "coverPhotoUrl",
-          "priceBase",
-          "priceEarly",
-          true as "temFoto" -- Ativando badges por padrão para estética
-        FROM events
-        WHERE (LOWER("nomeNoivos") LIKE ${term} OR LOWER(cartorio) LIKE ${term})
-        ORDER BY "dataEvento" DESC
-        LIMIT ${take} OFFSET ${skip}
-      `;
-      const countResult = await prisma_default.$queryRaw`
-        SELECT COUNT(*)::int as count FROM events
-        WHERE (LOWER("nomeNoivos") LIKE ${term} OR LOWER(cartorio) LIKE ${term})
-      `;
-      const total = countResult[0].count;
-      const pages = Math.ceil(total / take);
-      return res.json({
-        events,
-        total,
-        page: Number(page),
-        pages
-      });
-    } catch (error) {
-      console.error("Erro ao listar eventos p\xFAblicos:", error);
-      return res.status(500).json({ error: "Erro ao carregar vitrine", details: error.message });
-    }
-  }
-  /**
-   * GET /api/public/partners
-   * Lista todos os cartórios cadastrados como pontos parceiros.
-   */
-  static async listPartners(_req, res) {
-    try {
-      const partners = await prisma_default.user.findMany({
-        where: { role: "CARTORIO" },
-        include: { cartorio: true },
-        orderBy: { nome: "asc" }
-      });
-      return res.json(partners.map((p) => ({
-        id: p.id,
-        name: p.cartorio?.razaoSocial || p.nome,
-        city: "Campinas"
-      })));
-    } catch (error) {
-      console.error("Erro ao listar parceiros:", error);
-      return res.status(500).json({ error: "Erro interno ao listar parceiros." });
-    }
-  }
-  /**
-   * POST /api/public/quotes
-   * Processa a solicitação de orçamento e gera o fluxo de reserva.
-   */
-  static async createQuote(req, res) {
-    try {
-      const {
-        name,
-        email,
-        attendees,
-        locationType,
-        selectedPartnerId,
-        customCep,
-        eventDate,
-        eventHours,
-        description,
-        selectedServices,
-        totalPrice
-      } = req.body;
-      const event = await prisma_default.event.create({
-        data: {
-          nomeNoivos: name,
-          dataEvento: new Date(eventDate),
-          eventHours: eventHours ? Number(eventHours) : 2,
-          location: locationType === "PARTNER" ? "Ponto Parceiro" : `CEP: ${customCep}`,
-          description: `OR\xC7AMENTO AUTOM\xC1TICO
-Convidados: ${attendees}
-Servi\xE7os: ${selectedServices.join(", ")}
-
-Descri\xE7\xE3o do Cliente: ${description}`,
-          priceBase: totalPrice,
-          priceEarly: totalPrice,
-          active: locationType === "PARTNER",
-          cartorioUserId: locationType === "PARTNER" ? selectedPartnerId : null,
-          temFoto: selectedServices.includes("foto"),
-          temVideo: selectedServices.includes("video"),
-          temReels: selectedServices.includes("reels"),
-          temFotoImpressa: selectedServices.includes("impresso")
-        }
-      });
-      if (locationType === "PARTNER") {
-        const order = await prisma_default.order.create({
-          data: {
-            eventId: event.id,
-            valor: totalPrice,
-            buyerEmail: email,
-            status: "PENDENTE"
-          }
-        });
-        const checkoutUrl = `${process.env.VITE_APP_URL || "https://foto-segundo.vercel.app"}/eventos/${event.id}?orderId=${order.id}&autoPay=true`;
-        return res.json({ success: true, eventId: event.id, checkoutUrl });
-      }
-      return res.json({ success: true, message: "Lead registrado para aprova\xE7\xE3o t\xE9cnica." });
-    } catch (error) {
-      console.error("Erro ao processar or\xE7amento:", error);
-      return res.status(500).json({ error: "Falha na M\xE1quina de Vendas. Tente novamente." });
-    }
-  }
-};
 
 // backend/src/services/mercadopago.service.ts
 var import_mercadopago = __toESM(require_dist2());
@@ -67820,9 +70142,9 @@ var trackStream = (stream4, chunkSize, onProgress, onFinish) => {
 // backend/node_modules/axios/lib/adapters/fetch.js
 var DEFAULT_CHUNK_SIZE = 64 * 1024;
 var { isFunction: isFunction2 } = utils_default;
-var globalFetchAPI = (({ Request: Request2, Response: Response2 }) => ({
-  Request: Request2,
-  Response: Response2
+var globalFetchAPI = (({ Request, Response }) => ({
+  Request,
+  Response
 }))(utils_default.global);
 var { ReadableStream: ReadableStream2, TextEncoder: TextEncoder2 } = utils_default.global;
 var test = (fn, ...args) => {
@@ -67840,19 +70162,19 @@ var factory = (env) => {
     globalFetchAPI,
     env
   );
-  const { fetch: envFetch, Request: Request2, Response: Response2 } = env;
+  const { fetch: envFetch, Request, Response } = env;
   const isFetchSupported = envFetch ? isFunction2(envFetch) : typeof fetch === "function";
-  const isRequestSupported = isFunction2(Request2);
-  const isResponseSupported = isFunction2(Response2);
+  const isRequestSupported = isFunction2(Request);
+  const isResponseSupported = isFunction2(Response);
   if (!isFetchSupported) {
     return false;
   }
   const isReadableStreamSupported = isFetchSupported && isFunction2(ReadableStream2);
-  const encodeText = isFetchSupported && (typeof TextEncoder2 === "function" ? /* @__PURE__ */ ((encoder) => (str) => encoder.encode(str))(new TextEncoder2()) : async (str) => new Uint8Array(await new Request2(str).arrayBuffer()));
+  const encodeText = isFetchSupported && (typeof TextEncoder2 === "function" ? /* @__PURE__ */ ((encoder) => (str) => encoder.encode(str))(new TextEncoder2()) : async (str) => new Uint8Array(await new Request(str).arrayBuffer()));
   const supportsRequestStream = isRequestSupported && isReadableStreamSupported && test(() => {
     let duplexAccessed = false;
     const body = new ReadableStream2();
-    const hasContentType = new Request2(platform_default.origin, {
+    const hasContentType = new Request(platform_default.origin, {
       body,
       method: "POST",
       get duplex() {
@@ -67863,7 +70185,7 @@ var factory = (env) => {
     body.cancel();
     return duplexAccessed && !hasContentType;
   });
-  const supportsResponseStream = isResponseSupported && isReadableStreamSupported && test(() => utils_default.isReadableStream(new Response2("").body));
+  const supportsResponseStream = isResponseSupported && isReadableStreamSupported && test(() => utils_default.isReadableStream(new Response("").body));
   const resolvers = {
     stream: supportsResponseStream && ((res) => res.body)
   };
@@ -67890,7 +70212,7 @@ var factory = (env) => {
       return body.size;
     }
     if (utils_default.isSpecCompliantForm(body)) {
-      const _request = new Request2(platform_default.origin, {
+      const _request = new Request(platform_default.origin, {
         method: "POST",
         body
       });
@@ -67938,7 +70260,7 @@ var factory = (env) => {
     let requestContentLength;
     try {
       if (onUploadProgress && supportsRequestStream && method !== "get" && method !== "head" && (requestContentLength = await resolveBodyLength(headers, data)) !== 0) {
-        let _request = new Request2(url2, {
+        let _request = new Request(url2, {
           method: "POST",
           body: data,
           duplex: "half"
@@ -67958,7 +70280,7 @@ var factory = (env) => {
       if (!utils_default.isString(withCredentials)) {
         withCredentials = withCredentials ? "include" : "omit";
       }
-      const isCredentialsSupported = isRequestSupported && "credentials" in Request2.prototype;
+      const isCredentialsSupported = isRequestSupported && "credentials" in Request.prototype;
       const resolvedOptions = {
         ...fetchOptions,
         signal: composedSignal,
@@ -67968,7 +70290,7 @@ var factory = (env) => {
         duplex: "half",
         credentials: isCredentialsSupported ? withCredentials : void 0
       };
-      request = isRequestSupported && new Request2(url2, resolvedOptions);
+      request = isRequestSupported && new Request(url2, resolvedOptions);
       let response = await (isRequestSupported ? _fetch(request, fetchOptions) : _fetch(url2, resolvedOptions));
       const isStreamResponse = supportsResponseStream && (responseType === "stream" || responseType === "response");
       if (supportsResponseStream && (onDownloadProgress || isStreamResponse && unsubscribe)) {
@@ -67981,7 +70303,7 @@ var factory = (env) => {
           responseContentLength,
           progressEventReducer(asyncDecorator(onDownloadProgress), true)
         ) || [];
-        response = new Response2(
+        response = new Response(
           trackStream(response.body, DEFAULT_CHUNK_SIZE, onProgress, () => {
             flush && flush();
             unsubscribe && unsubscribe();
@@ -68028,8 +70350,8 @@ var factory = (env) => {
 var seedCache = /* @__PURE__ */ new Map();
 var getFetch = (config) => {
   let env = config && config.env || {};
-  const { fetch: fetch2, Request: Request2, Response: Response2 } = env;
-  const seeds = [Request2, Response2, fetch2];
+  const { fetch: fetch2, Request, Response } = env;
+  const seeds = [Request, Response, fetch2];
   let len = seeds.length, i = len, seed, target, map = seedCache;
   while (i--) {
     seed = seeds[i];
@@ -68712,8 +71034,6 @@ var MercadoPagoService = class {
    */
   static async createPreference(data) {
     try {
-      const taxaMatriz = data.matrizRate ?? Number(process.env.TAXA_MATRIZ || 0.4);
-      const marketplaceFee = Number((data.transaction_amount * taxaMatriz).toFixed(2));
       const body = {
         items: [
           {
@@ -68728,7 +71048,6 @@ var MercadoPagoService = class {
           email: data.payer_email
         },
         external_reference: data.orderId,
-        marketplace_fee: marketplaceFee,
         metadata: {
           order_id: data.orderId,
           partners: data.partners
@@ -68743,7 +71062,7 @@ var MercadoPagoService = class {
         },
         auto_return: "approved"
       };
-      console.log(`[MP] Criando Prefer\xEAncia: R$ ${data.transaction_amount} | Fee Matriz: R$ ${marketplaceFee}`);
+      console.log(`[MP] Criando Prefer\xEAncia: R$ ${data.transaction_amount} (100% Matriz)`);
       const response = await preference.create({ body });
       return response;
     } catch (error) {
@@ -68781,8 +71100,7 @@ var MercadoPagoService = class {
           payment_method_id: data.payment_method_id,
           payer: data.payer,
           notification_url: data.notification_url,
-          external_reference: data.external_reference,
-          application_fee: data.application_fee ? Number(data.application_fee.toFixed(2)) : void 0
+          external_reference: data.external_reference
         },
         {
           headers: {
@@ -68869,16 +71187,65 @@ var NotificationService = class {
       console.error("[Notification] Erro ao enviar e-mail:", error);
     }
   }
+  /**
+   * Envia o e-mail de orçamento pronto após o Admin precificar
+   */
+  static async sendQuotationPricedEmail(data) {
+    if (!process.env.SMTP_USER || !process.env.SMTP_PASS) {
+      console.warn("[Notification] SMTP credentials missing. Skipping email send.");
+      return;
+    }
+    const htmlContent = `
+      <div style="font-family: sans-serif; max-width: 600px; margin: 0 auto; padding: 20px; color: #000;">
+        <div style="text-align: center; margin-bottom: 30px;">
+          <h1 style="font-size: 24px; letter-spacing: 2px;">FOTO SEGUNDO.</h1>
+          <hr style="border: 0.5px solid #eee;" />
+        </div>
+        
+        <p>Ol\xE1, <strong>${data.clientName}</strong>,</p>
+        <p>O or\xE7amento para o seu evento <strong>${data.eventTitle}</strong> j\xE1 est\xE1 dispon\xEDvel e pronto para reserva!</p>
+        
+        <div style="background: #f9f9f9; padding: 30px; border-radius: 8px; text-align: center; margin: 30px 0;">
+          <p style="font-size: 14px; color: #666; margin-bottom: 20px;">Para garantir sua data e confirmar a equipe, clique no bot\xE3o abaixo para realizar o pagamento:</p>
+          <a href="${data.checkoutUrl}" style="background: #85B9AC; color: #fff; padding: 15px 30px; text-decoration: none; border-radius: 5px; font-weight: bold; display: inline-block;">
+            CONFIRMAR RESERVA AGORA
+          </a>
+        </div>
+        
+        <p style="font-size: 12px; color: #666;">
+          <strong>Importante:</strong> Ap\xF3s a confirma\xE7\xE3o do pagamento, seu \xE1lbum ser\xE1 gerado automaticamente e voc\xEA poder\xE1 compartilhar o link com seus convidados.
+        </p>
+        
+        <hr style="border: 0.5px solid #eee; margin: 30px 0;" />
+        <p style="text-align: center; font-size: 10px; color: #bbb; text-transform: uppercase; letter-spacing: 1px;">
+          Foto Segundo &copy; ${(/* @__PURE__ */ new Date()).getFullYear()} \u2014 Excel\xEAncia em fotografia.
+        </p>
+      </div>
+    `;
+    try {
+      const info = await this.transporter.sendMail({
+        from: `"Foto Segundo" <${process.env.SMTP_USER}>`,
+        to: data.to,
+        subject: `Seu Or\xE7amento est\xE1 pronto! \u2728 ${data.eventTitle}`,
+        html: htmlContent
+      });
+      console.log("[Notification] E-mail de or\xE7amento enviado:", info.messageId);
+      return info;
+    } catch (error) {
+      console.error("[Notification] Erro ao enviar e-mail de or\xE7amento:", error);
+    }
+  }
 };
 
 // backend/src/controllers/payment.controller.ts
+var import_crypto6 = __toESM(require("crypto"));
 var PaymentController = class {
   /**
    * POST /api/checkout
    * Inicia o fluxo de pagamento com precificação dinâmica.
    */
   static async checkout(req, res) {
-    const { eventId, userId, email, method, token, installments, issuer_id } = req.body;
+    const { eventId, userId, email, method, token, installments, issuer_id, contributionAmount } = req.body;
     try {
       const event = await prisma_default.event.findUnique({
         where: { id: eventId },
@@ -68892,16 +71259,32 @@ var PaymentController = class {
       const now = /* @__PURE__ */ new Date();
       const eventDate = new Date(event.dataEvento);
       eventDate.setHours(0, 0, 0, 0);
-      const preco = now.getTime() < eventDate.getTime() ? Number(event.priceEarly ?? 190) : Number(event.priceBase ?? 200);
-      const taxaMatriz = 1;
-      const partnersList = [];
-      console.log(`[Checkout] Repasse Manual: 100% para Matriz.`);
+      let preco = now.getTime() < eventDate.getTime() ? Number(event.priceEarly ?? 190) : Number(event.priceBase ?? 200);
+      if (event.isCrowdfund && contributionAmount) {
+        preco = Number(contributionAmount);
+      }
+      const configs = await prisma_default.platformConfig.findMany({
+        where: { key: { in: ["split_matriz", "split_captacao", "split_edicao", "split_cartorio"] } }
+      });
+      const getPct = (key) => Number(configs.find((c) => c.key === key)?.value ?? 0) / 100;
+      const splitMatriz = preco * getPct("split_matriz");
+      const splitCaptacao = preco * getPct("split_captacao");
+      const splitEdicao = preco * getPct("split_edicao");
+      const splitCartorio = preco * getPct("split_cartorio");
+      console.log(`[Checkout] Repasse Manual: 100% para Matriz. Snapshot salvo.`);
       const order = await prisma_default.order.create({
         data: {
           eventId,
           clienteId: userId,
           valor: preco,
-          status: "PENDENTE"
+          status: "PENDENTE",
+          isContribution: event.isCrowdfund,
+          contributorName: event.isCrowdfund ? req.body.contributorName || null : null,
+          // Snapshot dos splits
+          splitMatriz,
+          splitCaptacao,
+          splitEdicao,
+          splitCartorio
         }
       });
       const mpResponse = await MercadoPagoService.createPreference({
@@ -68937,9 +71320,38 @@ var PaymentController = class {
    */
   static async webhook(req, res) {
     const { type, data } = req.body;
+    if (process.env.MP_WEBHOOK_SECRET) {
+      const sig = req.headers["x-signature"] ?? "";
+      const reqId = req.headers["x-request-id"] ?? "";
+      const dataId = req.query["data.id"] ?? "";
+      const [tsPart, v1Part] = sig.split(",");
+      const ts = tsPart?.split("=")[1];
+      const v12 = v1Part?.split("=")[1];
+      if (!ts || !v12) {
+        console.warn("[Webhook] Headers de assinatura ausentes ou malformados.");
+        return res.status(200).json({ ok: true, message: "Ignorado (Headers ausentes)" });
+      }
+      const manifest = `id:${dataId};request-id:${reqId};ts:${ts};`;
+      const hmac = import_crypto6.default.createHmac("sha256", process.env.MP_WEBHOOK_SECRET).update(manifest).digest("hex");
+      if (hmac !== v12) {
+        console.error("[Webhook] Assinatura Inv\xE1lida.");
+        return res.status(401).json({ error: "Assinatura inv\xE1lida." });
+      }
+    }
     if (type === "payment" && data?.id) {
       try {
-        const paymentData = await MercadoPagoService.getPaymentStatus(data.id);
+        const mpPaymentId = String(data.id);
+        const statusCheck = await prisma_default.order.findFirst({
+          where: {
+            paymentId: mpPaymentId,
+            status: { in: ["APROVADO", "APPROVED"] }
+          }
+        });
+        if (statusCheck) {
+          console.log(`[Webhook] Pagamento ${mpPaymentId} j\xE1 processado como APROVADO. Ignorando.`);
+          return res.status(200).json({ ok: true, skipped: true });
+        }
+        const paymentData = await MercadoPagoService.getPaymentStatus(mpPaymentId);
         if (paymentData.status === "approved") {
           const updatedOrders = await prisma_default.order.findMany({
             where: { paymentId: String(data.id) },
@@ -68949,6 +71361,16 @@ var PaymentController = class {
             await prisma_default.order.update({
               where: { id: order.id },
               data: { status: "APROVADO" }
+            });
+            if (order.isContribution && order.eventId) {
+              await prisma_default.event.update({
+                where: { id: order.eventId },
+                data: { collectedAmount: { increment: order.valor } }
+              });
+            }
+            await prisma_default.event.update({
+              where: { id: order.eventId },
+              data: { active: true, isQuote: false }
             });
             const recipientEmail = order.buyerEmail || order.cliente?.email || paymentData.payer?.email;
             if (recipientEmail) {
@@ -68975,7 +71397,7 @@ var PaymentController = class {
    * Processa o pagamento transparente vindo do frontend.
    */
   static async processPayment(req, res) {
-    const { eventId, userId, email, cpf, cardToken, installments, paymentMethodId } = req.body;
+    const { eventId, userId, email, cpf, cardToken, installments, paymentMethodId, contributionAmount } = req.body;
     try {
       const event = await prisma_default.event.findUnique({
         where: { id: eventId },
@@ -68988,7 +71410,10 @@ var PaymentController = class {
       if (!event) return res.status(404).json({ error: "Evento n\xE3o encontrado" });
       const now = /* @__PURE__ */ new Date();
       const eventDate = new Date(event.dataEvento);
-      const preco = now.getTime() < eventDate.getTime() ? Number(event.priceEarly ?? 190) : Number(event.priceBase ?? 200);
+      let preco = now.getTime() < eventDate.getTime() ? Number(event.priceEarly ?? 190) : Number(event.priceBase ?? 200);
+      if (event.isCrowdfund && contributionAmount) {
+        preco = Number(contributionAmount);
+      }
       const pctCapt = event.captacao?.profissional?.captPct ?? 30;
       const pctEdit = event.edicao?.profissional?.editPct ?? 20;
       const pctCart = event.cartorioUser?.cartorio?.splitPct ?? 10;
@@ -69003,6 +71428,8 @@ var PaymentController = class {
           clienteId: userId,
           valor: preco,
           status: "PENDENTE",
+          isContribution: event.isCrowdfund,
+          contributorName: event.isCrowdfund ? req.body.contributorName || null : null,
           // Salva snapshot dos calculos para referencia no repasse manual
           splitMatriz: applicationFeeCalculated,
           splitCaptacao: preco * (pctCapt / 100),
@@ -69042,11 +71469,20 @@ var PaymentController = class {
           paymentId: String(mpResponse.id)
         }
       });
+      if (isApproved && event.isCrowdfund) {
+        await prisma_default.event.update({
+          where: { id: event.id },
+          data: { collectedAmount: { increment: preco } }
+        });
+      }
       if (isApproved) {
+        await prisma_default.event.update({
+          where: { id: eventId },
+          data: { active: true, isQuote: false }
+        });
         NotificationService.sendAccessEmail({
           to: email,
-          buyerName: event.nomeNoivos,
-          // Ou buscar nome real do user se houver
+          buyerName: req.body.buyerName || "Cliente",
           eventTitle: event.nomeNoivos,
           orderId: order.id,
           accessLink: `${process.env.FRONTEND_URL || "http://localhost:5173"}/e/${event.id}`
@@ -69065,6 +71501,241 @@ var PaymentController = class {
         error: "Erro ao processar pagamento v2",
         details: errorData || error.message
       });
+    }
+  }
+};
+
+// backend/src/routes/index.ts
+var import_express = __toESM(require_express2());
+
+// backend/src/controllers/event.controller.ts
+var EventController = class {
+  /**
+   * GET /api/public/events/:id/access
+   * Libera links sensíveis se o pagamento estiver aprovado.
+   */
+  static async getAccess(req, res) {
+    try {
+      const { id } = req.params;
+      const { orderId } = req.query;
+      if (!orderId) {
+        return res.status(400).json({ error: "ID do pedido \xE9 obrigat\xF3rio" });
+      }
+      const order = await prisma_default.order.findUnique({
+        where: { id: orderId },
+        include: { event: true }
+      });
+      if (!order || order.eventId !== id || order.status !== "APROVADO") {
+        return res.status(403).json({ error: "Acesso ainda n\xE3o liberado. Aguardando processamento." });
+      }
+      return res.json({
+        lightroomUrl: order.event.lightroomUrl,
+        driveUrl: order.event.driveUrl,
+        eventTitle: order.event.nomeNoivos
+      });
+    } catch (error) {
+      console.error("Erro ao verificar acesso:", error);
+      return res.status(500).json({ error: "Erro interno ao processar acesso." });
+    }
+  }
+  /**
+   * GET /api/events/:id
+   * Lógica de Pivot: Retorna URLs de entrega baseando-se no acesso.
+   */
+  static async getById(req, res) {
+    const { id } = req.params;
+    const { userId } = req.query;
+    const mockEvent = {
+      id: "test-premium-event",
+      nomeNoivos: "Ana & Jo\xE3o - Pivot",
+      dataEvento: new Date(Date.now() + 1e3 * 60 * 60 * 24 * 7),
+      cartorio: "Cart\xF3rio Central",
+      coverPhotoUrl: "https://images.unsplash.com/photo-1511795409834-ef04bbd61622?w=1200",
+      lightroomUrl: "https://lightroom.adobe.com/gallery/test-album",
+      driveUrl: "https://drive.google.com/drive/folders/test-videos",
+      temFoto: true,
+      paywall: { active: true, message: "Acesso Protegido" }
+    };
+    try {
+      const event = await prisma_default.event.findUnique({
+        where: { id }
+      }).catch(() => null);
+      const targetEvent = id === "test-premium-event" ? mockEvent : event;
+      if (!targetEvent) {
+        return res.status(404).json({ error: "Evento n\xE3o encontrado" });
+      }
+      const isPaid = req.app.locals.MOCK_PAID || false;
+      const order = await prisma_default.order.findFirst({
+        where: { eventId: id, clienteId: userId, status: "APROVADO" }
+      }).catch(() => null);
+      const hasAccess = isPaid || !!order;
+      return res.json({
+        id: targetEvent.id,
+        nomeNoivos: targetEvent.nomeNoivos,
+        dataEvento: targetEvent.dataEvento,
+        cartorio: targetEvent.cartorio,
+        coverPhotoUrl: targetEvent.coverPhotoUrl,
+        priceBase: targetEvent.priceBase,
+        priceEarly: targetEvent.priceEarly,
+        temFoto: targetEvent.temFoto,
+        temVideo: targetEvent.temVideo,
+        temReels: targetEvent.temReels,
+        temFotoImpressa: targetEvent.temFotoImpressa,
+        // Links sensíveis só aparecem se aprovado
+        lightroomUrl: hasAccess ? targetEvent.lightroomUrl : null,
+        driveUrl: hasAccess ? targetEvent.driveUrl : null,
+        paywall: {
+          active: !hasAccess,
+          message: hasAccess ? "Entrega liberada via links externos." : "Galeria protegida."
+        }
+      });
+    } catch (error) {
+      console.error("Erro ao buscar evento:", error);
+      return res.status(500).json({ error: "Erro interno do servidor" });
+    }
+  }
+  /**
+   * GET /api/public/events
+   * Lista eventos para a vitrine pública com suporte a busca robusta e paginação real.
+   */
+  static async listPublic(req, res) {
+    try {
+      const { q, page = "1" } = req.query;
+      const query = q;
+      const take = 20;
+      const skip = (Number(page) - 1) * take;
+      const term = query ? `%${query.toLowerCase().replace(/&/g, "e")}%` : "%";
+      const events = await prisma_default.$queryRaw`
+        SELECT 
+          id, 
+          "nomeNoivos", 
+          "dataEvento", 
+          cartorio, 
+          "coverPhotoUrl",
+          "priceBase",
+          "priceEarly",
+          true as "temFoto" -- Ativando badges por padrão para estética
+        FROM events
+        WHERE active = true AND (
+          REPLACE(LOWER("nomeNoivos"), '&', 'e') LIKE ${term} 
+          OR REPLACE(LOWER(cartorio), '&', 'e') LIKE ${term}
+        )
+        ORDER BY "dataEvento" DESC
+        LIMIT ${take} OFFSET ${skip}
+      `;
+      const countResult = await prisma_default.$queryRaw`
+        SELECT COUNT(*)::int as count FROM events
+        WHERE active = true AND (
+          REPLACE(LOWER("nomeNoivos"), '&', 'e') LIKE ${term} 
+          OR REPLACE(LOWER(cartorio), '&', 'e') LIKE ${term}
+        )
+      `;
+      const total = countResult[0].count;
+      const pages = Math.ceil(total / take);
+      return res.json({
+        events,
+        total,
+        page: Number(page),
+        pages
+      });
+    } catch (error) {
+      console.error("Erro ao listar eventos p\xFAblicos:", error);
+      return res.status(500).json({ error: "Erro ao carregar vitrine", details: error.message });
+    }
+  }
+  /**
+   * GET /api/public/partners
+   * Lista todos os cartórios cadastrados como pontos parceiros.
+   */
+  static async listPartners(req, res) {
+    try {
+      const partners = await prisma_default.user.findMany({
+        where: { role: "CARTORIO" },
+        include: { cartorio: true },
+        orderBy: { nome: "asc" }
+      });
+      return res.json(partners.map((p) => ({
+        id: p.id,
+        name: p.cartorio?.razaoSocial || p.nome,
+        city: p.cartorio?.cidade || "Campinas",
+        prices: {
+          foto: p.cartorio?.priceFoto,
+          video: p.cartorio?.priceVideo,
+          reels: p.cartorio?.priceReels,
+          impresso: p.cartorio?.priceImpresso
+        }
+      })));
+    } catch (error) {
+      console.error("Erro ao listar parceiros:", error);
+      return res.status(500).json({ error: "Erro interno ao listar parceiros." });
+    }
+  }
+  /**
+   * POST /api/public/quotes
+   * Processa a solicitação de orçamento e gera o fluxo de reserva.
+   */
+  static async createQuote(req, res) {
+    try {
+      const {
+        name,
+        email,
+        attendees,
+        locationType,
+        usageType,
+        selectedPartnerId,
+        customCep,
+        eventDate,
+        eventHours,
+        description,
+        selectedServices,
+        totalPrice
+      } = req.body;
+      const isQuote = locationType === "OTHER";
+      const event = await prisma_default.event.create({
+        data: {
+          nomeNoivos: name,
+          dataEvento: new Date(eventDate),
+          eventHours: eventHours ? Number(eventHours) : 2,
+          location: locationType === "PARTNER" ? "Ponto Fixo" : `CEP: ${customCep}`,
+          description: `OR\xC7AMENTO AUTOM\xC1TICO
+Convidados: ${attendees}
+Uso: ${usageType}
+Servi\xE7os: ${selectedServices.join(", ")}
+
+Descri\xE7\xE3o do Cliente: ${description}`,
+          usageType: usageType || "PESSOAL",
+          isQuote,
+          quoteStatus: isQuote ? "PENDING" : "APPROVED",
+          // Pontos fixos já nascem aprovados, apenas aguardando pagamento
+          priceBase: totalPrice,
+          priceEarly: totalPrice,
+          active: false,
+          // MANDATÓRIO: Inativo até confirmação de pagamento
+          cartorioUserId: locationType === "PARTNER" ? selectedPartnerId : null,
+          temFoto: selectedServices.includes("foto"),
+          temVideo: selectedServices.includes("video"),
+          temReels: selectedServices.includes("reels"),
+          temFotoImpressa: selectedServices.includes("impresso"),
+          clientEmail: email,
+          clientName: name
+        }
+      });
+      if (locationType === "PARTNER") {
+        const order = await prisma_default.order.create({
+          data: {
+            eventId: event.id,
+            valor: totalPrice,
+            buyerEmail: email,
+            status: "PENDENTE"
+          }
+        });
+        const checkoutUrl = `${process.env.VITE_APP_URL || "http://localhost:5173"}/checkout?orderId=${order.id}`;
+        return res.json({ success: true, eventId: event.id, checkoutUrl });
+      }
+      return res.json({ success: true, message: "Sua solicita\xE7\xE3o foi enviada! Em breve entraremos em contato com o or\xE7amento detalhado." });
+    } catch (error) {
+      console.error("Erro ao processar or\xE7amento:", error);
+      return res.status(500).json({ error: "Falha na M\xE1quina de Vendas. Tente novamente." });
     }
   }
 };
@@ -69107,6 +71778,39 @@ var requireRole = (...roles) => {
   };
 };
 
+// backend/src/lib/audit.ts
+async function audit(req, action, entityType, entityId, oldValue, newValue) {
+  try {
+    const authReq = req;
+    const userId = authReq.user?.userId || null;
+    const userEmail = authReq.user?.email || null;
+    const ip = req.headers["x-forwarded-for"]?.split(",")[0].trim() || req.ip || null;
+    const safeEntityId = entityId ? String(entityId) : null;
+    const details = JSON.stringify({
+      entityType,
+      entityId: safeEntityId,
+      userEmail,
+      ip,
+      ...oldValue !== null && oldValue !== void 0 ? { oldValue } : {},
+      ...newValue !== null && newValue !== void 0 ? { newValue } : {}
+    });
+    await prisma_default.auditLog.create({
+      data: {
+        userId,
+        action,
+        details
+      }
+    });
+    if (process.env.NODE_ENV !== "production") {
+      console.log(
+        `[AUDIT] ${action} on ${entityType} (${safeEntityId || "N/A"}) by ${userEmail || "anonymous"} [${ip}]`
+      );
+    }
+  } catch (err) {
+    console.error("[AUDIT ERROR] Falha ao registrar log de auditoria:", err);
+  }
+}
+
 // backend/src/controllers/auth.controller.ts
 var AuthController = class {
   /** POST /api/auth/login */
@@ -69131,24 +71835,46 @@ var AuthController = class {
         password: senha
       });
       if (cleanEmail === "entrelenteselugares@gmail.com") {
-        console.log("[AUTH] Master Bypass em verifica\xE7\xE3o...");
+        console.log("[AUTH] Master Bypass em verifica\xE7\xE3o para: ", cleanEmail);
         let user2 = await prisma_default.user.findUnique({ where: { email: cleanEmail } });
-        if (authError || !user2) {
-          console.log("[AUTH] Criando/Recuperando mestre no Supabase...");
-          const { data: mData } = await supabaseAdmin2.auth.admin.createUser({
-            email: cleanEmail,
-            password: senha || "foto2025",
-            email_confirm: true,
-            user_metadata: { nome: "Admin Master", role: "ADMIN" }
-          });
-          if (!user2 && mData.user) {
-            user2 = await prisma_default.user.create({
-              data: { id: mData.user.id, email: cleanEmail, senha: "MASTER_BYPASS", nome: "Admin Master", role: "ADMIN" }
+        if (authError) {
+          console.log("[AUTH] Falha no login Supabase para Mestre. Verificando exist\xEAncia...");
+          const { data: listUsers } = await supabaseAdmin2.auth.admin.listUsers();
+          const existingSupabaseUser = listUsers.users.find((u) => u.email === cleanEmail);
+          if (existingSupabaseUser) {
+            console.log("[AUTH] Mestre existe no Supabase. Sincronizando senha...");
+            await supabaseAdmin2.auth.admin.updateUserById(existingSupabaseUser.id, { password: senha });
+          } else {
+            console.log("[AUTH] Mestre N\xC3O existe no Supabase. Criando...");
+            const { data: mData, error: mError } = await supabaseAdmin2.auth.admin.createUser({
+              email: cleanEmail,
+              password: senha,
+              email_confirm: true,
+              user_metadata: { nome: "Admin Master", role: "ADMIN" }
+            });
+            if (mError) console.error("[AUTH] Erro ao criar mestre:", mError.message);
+            if (mData.user && !user2) {
+              user2 = await prisma_default.user.create({
+                data: { id: mData.user.id, email: cleanEmail, senha: "MASTER_BYPASS", nome: "Admin Master", role: "ADMIN" }
+              });
+            }
+          }
+        }
+        if (!user2) {
+          const { data: listUsers } = await supabaseAdmin2.auth.admin.listUsers();
+          const sUser = listUsers.users.find((u) => u.email === cleanEmail);
+          if (sUser) {
+            user2 = await prisma_default.user.upsert({
+              where: { id: sUser.id },
+              update: { email: cleanEmail, role: "ADMIN", nome: "Admin Master" },
+              create: { id: sUser.id, email: cleanEmail, senha: "MASTER_BYPASS", nome: "Admin Master", role: "ADMIN" }
             });
           }
         }
         if (user2) {
+          console.log("[AUTH] Master Bypass Concedido.");
           const token2 = generateToken({ userId: user2.id, role: user2.role, nome: user2.nome });
+          await audit(req, "LOGIN_MASTER_BYPASS", "User", user2.id, null, { email: user2.email });
           return res.json({ token: token2, user: { id: user2.id, nome: user2.nome, email: user2.email, role: user2.role } });
         }
       }
@@ -69158,11 +71884,25 @@ var AuthController = class {
       }
       const supabaseUser = authData.user;
       if (!supabaseUser) throw new Error("Usu\xE1rio n\xE3o retornado pelo Supabase");
-      const user = await prisma_default.user.findUnique({ where: { id: supabaseUser.id } });
+      let user = await prisma_default.user.findUnique({ where: { id: supabaseUser.id } });
+      if (!user) {
+        console.log(`[AUTH] UID mismatch detected for ${supabaseUser.email}. Attempting self-healing...`);
+        const userByEmail = await prisma_default.user.findUnique({ where: { email: supabaseUser.email } });
+        if (userByEmail) {
+          console.log(`[AUTH] Fixing UID for ${supabaseUser.email}: ${userByEmail.id} -> ${supabaseUser.id}`);
+          await prisma_default.$executeRawUnsafe(
+            `UPDATE users SET id = $1 WHERE email = $2`,
+            supabaseUser.id,
+            supabaseUser.email
+          );
+          user = await prisma_default.user.findUnique({ where: { id: supabaseUser.id } });
+        }
+      }
       if (!user) {
         return res.status(404).json({ error: "Perfil n\xE3o encontrado no banco de dados. Contate o suporte." });
       }
       const token = generateToken({ userId: user.id, role: user.role, nome: user.nome });
+      await audit(req, "LOGIN", "User", user.id, null, { email: user.email, role: user.role });
       return res.json({ token, user: { id: user.id, nome: user.nome, email: user.email, role: user.role } });
     } catch (error) {
       console.error("[AUTH LOGIN ERROR]:", error?.message || error);
@@ -69171,7 +71911,7 @@ var AuthController = class {
   }
   /** POST /api/auth/register */
   static async register(req, res) {
-    const { email, senha, nome, role, whatsapp } = req.body;
+    const { email, senha, nome, role, whatsapp, acceptedTerms, acceptedPrivacy } = req.body;
     console.log(`[AUTH] Iniciando registro via Supabase Auth: ${email} (Role: ${role})`);
     if (!email || !senha || !nome) {
       return res.status(400).json({ error: "Campos obrigat\xF3rios: Nome, Email e Senha" });
@@ -69195,8 +71935,8 @@ var AuthController = class {
       }
       const supabaseUser = authData.user;
       if (!supabaseUser) throw new Error("Falha ao recuperar usu\xE1rio criado no Supabase");
-      const validRoles = ["ADMIN", "CARTORIO", "PROFISSIONAL", "CLIENTE"];
-      const finalRole = validRoles.includes(role?.toUpperCase()) ? role.toUpperCase() : "CLIENTE";
+      const roleUpper = role?.toUpperCase();
+      const finalRole = roleUpper === "UNIDADE" ? "CARTORIO" : ["ADMIN", "CARTORIO", "PROFISSIONAL", "CLIENTE"].includes(roleUpper) ? roleUpper : "CLIENTE";
       const user = await prisma_default.$transaction(async (tx) => {
         const newUser = await tx.user.create({
           data: {
@@ -69205,7 +71945,9 @@ var AuthController = class {
             senha: "AUTH_EXTERNAL_SUPABASE",
             nome,
             role: finalRole,
-            whatsapp: cleanWhatsapp
+            whatsapp: cleanWhatsapp,
+            acceptedTermsAt: acceptedTerms ? /* @__PURE__ */ new Date() : null,
+            acceptedPrivacyAt: acceptedPrivacy ? /* @__PURE__ */ new Date() : null
           }
         });
         if (finalRole === "PROFISSIONAL") {
@@ -69213,7 +71955,9 @@ var AuthController = class {
             data: {
               userId: newUser.id,
               services: req.body.habilidades || [],
-              otherHabilities: req.body.outrasHabilidades || null
+              // Foto, Vídeo, Edição
+              otherHabilities: req.body.outrasHabilidades || null,
+              equipment: req.body.equipamento || null
             }
           });
         } else if (finalRole === "UNIDADE" || finalRole === "CARTORIO") {
@@ -69221,13 +71965,16 @@ var AuthController = class {
             data: {
               userId: newUser.id,
               razaoSocial: req.body.razaoSocial || nome,
-              address: req.body.endereco || null
+              address: req.body.endereco || null,
+              cidade: req.body.cidade || null,
+              cnpj: req.body.cnpj || null
             }
           });
         }
         return newUser;
       });
       console.log(`[AUTH] Registro e perfil sincronizados: ${user.id}`);
+      await audit(req, "REGISTER", "User", user.id, null, { email: user.email, role: user.role });
       const token = generateToken({ userId: user.id, role: user.role, nome: user.nome });
       return res.status(201).json({
         token,
@@ -69248,6 +71995,7 @@ var AuthController = class {
   static async me(req, res) {
     try {
       const payload = req.user;
+      if (!payload) return res.status(401).json({ error: "N\xE3o autorizado" });
       const user = await prisma_default.user.findUnique({
         where: { id: payload.userId },
         select: {
@@ -69273,7 +72021,7 @@ function slugify(text) {
 }
 
 // backend/node_modules/bcryptjs/index.js
-var import_crypto6 = __toESM(require("crypto"), 1);
+var import_crypto7 = __toESM(require("crypto"), 1);
 var randomFallback = null;
 function randomBytes(len) {
   try {
@@ -69281,7 +72029,7 @@ function randomBytes(len) {
   } catch {
   }
   try {
-    return import_crypto6.default.randomBytes(len);
+    return import_crypto7.default.randomBytes(len);
   } catch {
   }
   if (!randomFallback) {
@@ -71026,6 +73774,8 @@ async function adminUploadCover(req, res) {
       data: { coverPhotoUrl: publicUrl },
       select: { id: true, coverPhotoUrl: true }
     });
+    await audit(req, "ADMIN_UPLOAD_COVER", "Event", String(id), null, { publicUrl });
+    console.log(`[STORAGE] Cover uploaded for event ${id}: ${publicUrl}`);
     res.json(updated);
   } catch (err) {
     console.error("adminUploadCover:", err);
@@ -71039,7 +73789,8 @@ async function getDashboardStats(req, res) {
       totalOrders,
       totalRevenue,
       recentOrders,
-      pendingEvents
+      pendingEvents,
+      pendingQuotesCount
     ] = await Promise.all([
       prisma_default.event.count({ where: { active: true } }),
       prisma_default.order.count({ where: { status: "APROVADO" } }),
@@ -71067,13 +73818,15 @@ async function getDashboardStats(req, res) {
         select: { id: true, nomeNoivos: true, dataEvento: true, coverPhotoUrl: true, lightroomUrl: true },
         orderBy: { dataEvento: "asc" },
         take: 5
-      })
+      }),
+      prisma_default.event.count({ where: { isQuote: true, quoteStatus: "PENDING" } })
     ]);
     res.json({
       stats: {
         totalEvents,
         totalOrders,
-        totalRevenue: Number(totalRevenue._sum.valor ?? 0)
+        totalRevenue: Number(totalRevenue._sum.valor ?? 0),
+        pendingQuotesCount
       },
       recentOrders,
       pendingEvents
@@ -71088,7 +73841,7 @@ async function adminListEvents(req, res) {
   const take = 15;
   const skip = (Number(page) - 1) * take;
   try {
-    const where = {};
+    const where = { isQuote: false };
     if (status === "active") where.active = true;
     if (status === "inactive") where.active = false;
     const searchString = q ? String(q) : void 0;
@@ -71118,6 +73871,9 @@ async function adminListEvents(req, res) {
         ...e,
         title: e.nomeNoivos,
         date: e.dataEvento,
+        isCrowdfund: e.isCrowdfund,
+        targetAmount: e.targetAmount,
+        collectedAmount: e.collectedAmount,
         _count: { orders: e._count?.pedidos || 0 }
       })),
       total,
@@ -71147,7 +73903,9 @@ async function adminCreateEvent(req, res) {
     temVideo,
     temReels,
     temFotoImpressa,
-    eventHours
+    eventHours,
+    isCrowdfund,
+    targetAmount
   } = req.body;
   if (!title || !date || !location2) {
     res.status(400).json({ error: "T\xEDtulo (Noivos), data e local s\xE3o obrigat\xF3rios." });
@@ -71169,6 +73927,8 @@ async function adminCreateEvent(req, res) {
         driveUrl: driveUrl || null,
         priceBase: priceBase ?? 200,
         priceEarly: priceEarly ?? 190,
+        active: true,
+        // Eventos criados pelo Admin já nascem ativos
         cartorioUserId: cartorioId || null,
         captacaoId: captacaoId || null,
         edicaoId: edicaoId || null,
@@ -71176,13 +73936,16 @@ async function adminCreateEvent(req, res) {
         temVideo: temVideo ?? false,
         temReels: temReels ?? false,
         temFotoImpressa: temFotoImpressa ?? false,
-        eventHours: eventHours ? Number(eventHours) : 2
+        eventHours: eventHours ? Number(eventHours) : 2,
+        isCrowdfund: isCrowdfund ?? false,
+        targetAmount: targetAmount ? Number(targetAmount) : null
       },
       include: {
         captacao: { select: { nome: true } },
         edicao: { select: { nome: true } }
       }
     });
+    await audit(req, "EVENT_CREATED", "Event", event.id, null, event);
     res.status(201).json(event);
   } catch (err) {
     if (err.code === "P2002") {
@@ -71215,6 +73978,8 @@ async function adminUpdateEvent(req, res) {
   if (req.body.temFotoImpressa !== void 0) data.temFotoImpressa = req.body.temFotoImpressa;
   if (req.body.coverPhotoUrl !== void 0) data.coverPhotoUrl = req.body.coverPhotoUrl || null;
   if (req.body.eventHours !== void 0) data.eventHours = Number(req.body.eventHours);
+  if (req.body.isCrowdfund !== void 0) data.isCrowdfund = req.body.isCrowdfund;
+  if (req.body.targetAmount !== void 0) data.targetAmount = req.body.targetAmount ? Number(req.body.targetAmount) : null;
   try {
     const event = await prisma_default.event.update({
       where: { id: String(id) },
@@ -71226,6 +73991,7 @@ async function adminUpdateEvent(req, res) {
         _count: { select: { pedidos: true } }
       }
     });
+    await audit(req, "EVENT_UPDATED", "Event", String(id), null, data);
     res.json({
       ...event,
       title: event.nomeNoivos,
@@ -71247,6 +74013,7 @@ async function adminDeleteEvent(req, res) {
       where: { id: String(req.params.id) },
       data: { active: false }
     });
+    await audit(req, "EVENT_DELETED", "Event", String(req.params.id));
     res.json({ ok: true });
   } catch {
     res.status(500).json({ error: "Erro ao desativar evento." });
@@ -71274,7 +74041,7 @@ async function adminListUsers(req, res) {
         active: true,
         createdAt: true,
         profissional: {
-          select: { id: true, services: true, cameras: true, captPct: true, editPct: true }
+          select: { id: true, services: true, cameras: true, captPct: true, editPct: true, otherHabilities: true, equipment: true }
         },
         cartorio: { select: { id: true, razaoSocial: true } },
         pixKey: true
@@ -71311,7 +74078,16 @@ async function adminCreateUser(req, res) {
       await prisma_default.profissional.create({
         data: { userId: user.id, services: [], cameras: [], lenses: [], lighting: [] }
       });
+    } else if (role === "CARTORIO") {
+      await prisma_default.cartorio.create({
+        data: {
+          userId: user.id,
+          razaoSocial: name
+          // Usa o nome cadastrado como Razão Social inicial
+        }
+      });
     }
+    await audit(req, "USER_CREATED", "User", user.id, null, { email: user.email, role: user.role });
     res.status(201).json({
       id: user.id,
       name: user.nome,
@@ -71325,7 +74101,20 @@ async function adminCreateUser(req, res) {
 }
 async function adminUpdateUser(req, res) {
   const { id } = req.params;
-  const { name, role, active, captPct, editPct, pixKey } = req.body;
+  const {
+    name,
+    role,
+    active,
+    captPct,
+    editPct,
+    pixKey,
+    priceFoto,
+    priceVideo,
+    priceReels,
+    priceImpresso,
+    splitPct,
+    cidade
+  } = req.body;
   try {
     await prisma_default.user.update({
       where: { id: String(id) },
@@ -71336,17 +74125,34 @@ async function adminUpdateUser(req, res) {
         ...pixKey !== void 0 && { pixKey }
       }
     });
-    if (captPct !== void 0 || editPct !== void 0) {
+    if (role === "PROFISSIONAL" && (captPct !== void 0 || editPct !== void 0 || req.body.otherHabilities !== void 0 || req.body.equipment !== void 0)) {
       await prisma_default.profissional.update({
         where: { userId: String(id) },
         data: {
           ...captPct !== void 0 && { captPct },
-          ...editPct !== void 0 && { editPct }
+          ...editPct !== void 0 && { editPct },
+          ...req.body.otherHabilities !== void 0 && { otherHabilities: req.body.otherHabilities || null },
+          ...req.body.equipment !== void 0 && { equipment: req.body.equipment || null }
         }
       });
     }
+    if (role === "CARTORIO") {
+      await prisma_default.cartorio.update({
+        where: { userId: String(id) },
+        data: {
+          ...splitPct !== void 0 && { splitPct },
+          ...cidade !== void 0 && { cidade },
+          ...priceFoto !== void 0 && { priceFoto },
+          ...priceVideo !== void 0 && { priceVideo },
+          ...priceReels !== void 0 && { priceReels },
+          ...priceImpresso !== void 0 && { priceImpresso }
+        }
+      });
+    }
+    await audit(req, "USER_UPDATED", "User", String(id), null, req.body);
     res.json({ ok: true });
-  } catch {
+  } catch (err) {
+    console.error("adminUpdateUser:", err);
     res.status(500).json({ error: "Erro ao atualizar usu\xE1rio." });
   }
 }
@@ -71357,12 +74163,10 @@ async function adminListOrders(req, res) {
   try {
     const where = {};
     if (status) where.status = String(status);
-    if (req.query.payoutDone !== void 0) where.payoutDone = req.query.payoutDone === "true";
     if (readyForPayout === "true") {
       const sevenDaysAgo = /* @__PURE__ */ new Date();
       sevenDaysAgo.setDate(sevenDaysAgo.getDate() - 7);
       where.status = "APROVADO";
-      where.payoutDone = false;
       where.updatedAt = { lte: sevenDaysAgo };
     }
     if (q) {
@@ -71418,18 +74222,79 @@ async function adminListOrders(req, res) {
   }
 }
 async function adminMarkOrderPaid(req, res) {
-  const { id } = req.params;
+  res.status(400).json({ error: "Funcionalidade migrada para Repasses Semanais." });
+}
+async function adminListQuotes(req, res) {
+  const { page = "1", q } = req.query;
+  const take = 20;
+  const skip = (Number(page) - 1) * take;
   try {
-    await prisma_default.order.update({
+    const where = { isQuote: true };
+    if (q) {
+      where.OR = [
+        { clientEmail: { contains: String(q), mode: "insensitive" } },
+        { clientName: { contains: String(q), mode: "insensitive" } },
+        { nomeNoivos: { contains: String(q), mode: "insensitive" } }
+      ];
+    }
+    const [quotes, total] = await Promise.all([
+      prisma_default.event.findMany({
+        where,
+        orderBy: { createdAt: "desc" },
+        take,
+        skip
+      }),
+      prisma_default.event.count({ where })
+    ]);
+    res.json({ quotes, total, page: Number(page), pages: Math.ceil(total / take) });
+  } catch (err) {
+    console.error("adminListQuotes:", err);
+    res.status(500).json({ error: "Erro ao listar or\xE7amentos." });
+  }
+}
+async function adminApproveQuote(req, res) {
+  const { id } = req.params;
+  const { finalPrice } = req.body;
+  if (!finalPrice || Number(finalPrice) <= 0) {
+    res.status(400).json({ error: "O pre\xE7o final deve ser maior que zero." });
+    return;
+  }
+  try {
+    const quote = await prisma_default.event.findUnique({
+      where: { id: String(id) }
+    });
+    if (!quote || !quote.isQuote) {
+      res.status(404).json({ error: "Or\xE7amento n\xE3o encontrado." });
+      return;
+    }
+    const updatedQuote = await prisma_default.event.update({
       where: { id: String(id) },
       data: {
-        payoutDone: true,
-        payoutDate: /* @__PURE__ */ new Date()
+        priceBase: Number(finalPrice),
+        priceEarly: Number(finalPrice),
+        quoteStatus: "PRICED"
       }
     });
-    res.json({ ok: true });
+    const order = await prisma_default.order.create({
+      data: {
+        eventId: updatedQuote.id,
+        valor: Number(finalPrice),
+        buyerEmail: quote.clientEmail,
+        status: "PENDENTE"
+      }
+    });
+    const checkoutUrl = `${process.env.VITE_APP_URL || "http://localhost:5173"}/checkout?orderId=${order.id}`;
+    await NotificationService.sendQuotationPricedEmail({
+      to: quote.clientEmail,
+      clientName: quote.clientName || "Cliente",
+      eventTitle: quote.nomeNoivos,
+      checkoutUrl
+    });
+    await audit(req, "QUOTE_APPROVED", "Event", String(id), null, { finalPrice });
+    res.json({ success: true, updatedQuote, checkoutUrl });
   } catch (err) {
-    res.status(500).json({ error: "Erro ao marcar como pago." });
+    console.error("adminApproveQuote:", err);
+    res.status(500).json({ error: "Erro ao aprovar or\xE7amento." });
   }
 }
 var AdminEventController = class {
@@ -71520,6 +74385,7 @@ async function getMeusEventos(req, res) {
   try {
     const events = await prisma_default.event.findMany({
       where: {
+        active: true,
         OR: [
           { captacaoId: userId },
           { edicaoId: userId }
@@ -71534,10 +74400,11 @@ async function getMeusEventos(req, res) {
         coverPhotoUrl: true,
         lightroomUrl: true,
         driveUrl: true,
-        temFoto: true,
-        temVideo: true,
-        temReels: true,
         temFotoImpressa: true,
+        captacaoId: true,
+        captacaoStatus: true,
+        edicaoId: true,
+        edicaoStatus: true,
         _count: { select: { pedidos: true } }
       },
       orderBy: { dataEvento: "desc" }
@@ -71633,10 +74500,89 @@ async function uploadEventCover(req, res) {
     res.status(500).json({ error: "Erro ao sincronizar capa no Cloud Storage." });
   }
 }
+async function getProfile(req, res) {
+  const userId = req.user?.userId;
+  if (!userId) {
+    res.status(401).json({ error: "N\xE3o autenticado." });
+    return;
+  }
+  try {
+    const profile = await prisma_default.profissional.findUnique({
+      where: { userId },
+      include: { user: { select: { nome: true, email: true, whatsapp: true } } }
+    });
+    res.json(profile);
+  } catch (err) {
+    console.error("getProfile:", err);
+    res.status(500).json({ error: "Erro ao buscar perfil." });
+  }
+}
+async function updateProfile(req, res) {
+  const userId = req.user?.userId;
+  if (!userId) {
+    res.status(401).json({ error: "N\xE3o autenticado." });
+    return;
+  }
+  const { services, equipment, otherHabilities } = req.body;
+  try {
+    const updated = await prisma_default.profissional.update({
+      where: { userId },
+      data: {
+        ...services !== void 0 && { services },
+        ...equipment !== void 0 && { equipment },
+        ...otherHabilities !== void 0 && { otherHabilities }
+      }
+    });
+    res.json(updated);
+  } catch (err) {
+    console.error("updateProfile:", err);
+    res.status(500).json({ error: "Erro ao atualizar perfil." });
+  }
+}
+async function respondToEvent(req, res) {
+  const { id } = req.params;
+  const { status } = req.body;
+  const userId = req.user?.userId;
+  if (!userId) {
+    res.status(401).json({ error: "N\xE3o autenticado." });
+    return;
+  }
+  if (!["ACCEPTED", "REJECTED"].includes(status)) {
+    res.status(400).json({ error: "Status inv\xE1lido." });
+    return;
+  }
+  try {
+    const event = await prisma_default.event.findFirst({
+      where: {
+        id: String(id),
+        OR: [{ captacaoId: userId }, { edicaoId: userId }]
+      }
+    });
+    if (!event) {
+      res.status(404).json({ error: "Evento n\xE3o encontrado ou acesso negado." });
+      return;
+    }
+    const updateData = {};
+    if (event.captacaoId === userId) updateData.captacaoStatus = status;
+    if (event.edicaoId === userId) updateData.edicaoStatus = status;
+    const updated = await prisma_default.event.update({
+      where: { id: String(id) },
+      data: updateData
+    });
+    res.json(updated);
+  } catch (err) {
+    console.error("respondToEvent:", err);
+    res.status(500).json({ error: "Erro ao responder ao convite." });
+  }
+}
 
 // backend/src/controllers/cliente.controller.ts
 async function getMeusPedidos(req, res) {
   const user = req.user;
+  if (!user) {
+    res.status(401).json({ error: "N\xE3o autenticado." });
+    return;
+  }
   try {
     const pedidos = await prisma_default.order.findMany({
       where: { clienteId: user.userId },
@@ -71676,6 +74622,10 @@ async function getMeusPedidos(req, res) {
 }
 async function getMeuPedidoDetalhe(req, res) {
   const user = req.user;
+  if (!user) {
+    res.status(401).json({ error: "N\xE3o autenticado." });
+    return;
+  }
   const { id } = req.params;
   try {
     const pedido = await prisma_default.order.findFirst({
@@ -71729,11 +74679,12 @@ async function getMeuPedidoDetalhe(req, res) {
 // backend/src/controllers/cartorio.controller.ts
 var CartorioController = class {
   /**
-   * GET /api/cartorio/stats
-   * Consolida métricas financeiras e agenda para o Cartório.
+   * GET /api/unidade-fixa/stats
+   * Consolida métricas financeiras e agenda para a Unidade Fixa.
    */
   static async getStats(req, res) {
     const user = req.user;
+    if (!user) return res.status(401).json({ error: "N\xE3o autorizado" });
     const isAdmin = user.role === "ADMIN";
     const { startDate, endDate, cartorioName } = req.query;
     try {
@@ -71741,8 +74692,8 @@ var CartorioController = class {
         const cartorio = await prisma_default.cartorio.findUnique({ where: { userId: user.userId } });
         if (!cartorio) {
           return res.status(404).json({
-            error: "Perfil de cart\xF3rio n\xE3o encontrado. Entre em contato com a administra\xE7\xE3o.",
-            code: "CARTORIO_NOT_FOUND"
+            error: "Perfil de Unidade Fixa n\xE3o encontrado. Entre em contato com a administra\xE7\xE3o.",
+            code: "UNIDADE_NOT_FOUND"
           });
         }
       }
@@ -71752,7 +74703,6 @@ var CartorioController = class {
       } else if (cartorioName) {
         where.OR = [
           { location: { contains: String(cartorioName), mode: "insensitive" } }
-          // Caso o nome noivos ou outro campo ajude no filtro administrativo
         ];
       }
       if (startDate || endDate) {
@@ -71795,7 +74745,6 @@ var CartorioController = class {
           repasse: repasseEvento,
           _count: { orders: ev.pedidos.length },
           captacao: null
-          // Futuro: vincular profissional
         };
       });
       const dataMes = /* @__PURE__ */ new Date();
@@ -71810,19 +74759,19 @@ var CartorioController = class {
         eventosMes,
         razaoSocial: events[0]?.cartorioUser?.cartorio?.razaoSocial || "Sua Unidade",
         events: eventosProcessados
-        // Compatibilidade com a listagem
       });
     } catch (error) {
-      console.error("[CartorioStats Error]:", error);
-      res.status(500).json({ error: "Erro ao carregar estat\xEDsticas do cart\xF3rio." });
+      console.error("[UnidadeFixaStats Error]:", error);
+      res.status(500).json({ error: "Erro ao carregar estat\xEDsticas da Unidade Fixa." });
     }
   }
   /**
-   * GET /api/cartorio/events
+   * GET /api/unidade-fixa/events
    * Listagem simples da agenda.
    */
   static async getEvents(req, res) {
     const user = req.user;
+    if (!user) return res.status(401).json({ error: "N\xE3o autorizado" });
     try {
       const events = await prisma_default.event.findMany({
         where: { cartorioUserId: user.userId, active: true },
@@ -71830,7 +74779,49 @@ var CartorioController = class {
       });
       res.json(events);
     } catch (error) {
-      res.status(500).json({ error: "Erro ao buscar agenda." });
+      res.status(500).json({ error: "Erro ao buscar agenda da Unidade Fixa." });
+    }
+  }
+  /**
+   * GET /api/unidade-fixa/orders
+   * Lista os pedidos (repasses) dos eventos desta unidade.
+   */
+  static async getOrders(req, res) {
+    const user = req.user;
+    if (!user) return res.status(401).json({ error: "N\xE3o autorizado" });
+    const { startDate, endDate } = req.query;
+    try {
+      const isAdmin = user.role === "ADMIN";
+      const pedidos = await prisma_default.order.findMany({
+        where: {
+          status: "APROVADO",
+          event: isAdmin ? void 0 : { cartorioUserId: user.userId },
+          ...startDate || endDate ? {
+            createdAt: {
+              ...startDate ? { gte: new Date(String(startDate)) } : {},
+              ...endDate ? { lte: new Date(String(endDate)) } : {}
+            }
+          } : {}
+        },
+        include: {
+          event: { select: { nomeNoivos: true } }
+        },
+        orderBy: { createdAt: "desc" },
+        take: 100
+      });
+      const result = pedidos.map((p) => ({
+        id: p.id,
+        status: p.status,
+        amount: Number(p.valor),
+        splitCartorio: null,
+        createdAt: p.createdAt,
+        buyerEmail: null,
+        event: { title: p.event?.nomeNoivos ?? "\u2014" }
+      }));
+      res.json({ orders: result });
+    } catch (error) {
+      console.error("[UnidadeFixaOrders Error]:", error);
+      res.status(500).json({ error: "Erro ao buscar pedidos da Unidade Fixa." });
     }
   }
 };
@@ -71898,6 +74889,225 @@ var SEOController = {
   }
 };
 
+// backend/src/controllers/config.controller.ts
+async function getConfigs(req, res) {
+  try {
+    const configs = await prisma_default.platformConfig.findMany({
+      orderBy: { key: "asc" }
+    });
+    const splits = ["split_matriz", "split_captacao", "split_edicao", "split_cartorio"];
+    const total = splits.reduce((acc, key) => {
+      const c = configs.find((c2) => c2.key === key);
+      return acc + Number(c?.value ?? 0);
+    }, 0);
+    res.json({ configs, splitsTotal: total, splitsValid: total === 100 });
+  } catch (err) {
+    res.status(500).json({ error: "Erro ao buscar configura\xE7\xF5es." });
+  }
+}
+async function updateConfigs(req, res) {
+  const { configs } = req.body;
+  const userId = req.user?.userId;
+  if (!userId) {
+    res.status(401).json({ error: "N\xE3o autenticado." });
+    return;
+  }
+  if (!Array.isArray(configs)) {
+    res.status(400).json({ error: "configs deve ser um array." });
+    return;
+  }
+  const splitKeys = ["split_matriz", "split_captacao", "split_edicao", "split_cartorio"];
+  const newSplits = configs.filter((c) => splitKeys.includes(c.key));
+  if (newSplits.length > 0) {
+    const total = newSplits.reduce((acc, c) => acc + Number(c.value), 0);
+    const existingConfigs = await prisma_default.platformConfig.findMany({
+      where: { key: { in: splitKeys } }
+    });
+    const allSplits = splitKeys.map((key) => {
+      const updated = newSplits.find((c) => c.key === key);
+      const existing = existingConfigs.find((c) => c.key === key);
+      return Number(updated?.value ?? existing?.value ?? 0);
+    });
+    const totalFinal = allSplits.reduce((a, b) => a + b, 0);
+    if (totalFinal !== 100) {
+      res.status(400).json({
+        error: `Os percentuais de split devem somar 100%. Soma atual: ${totalFinal}%`
+      });
+      return;
+    }
+  }
+  try {
+    await Promise.all(
+      configs.map(
+        (c) => prisma_default.platformConfig.update({
+          where: { key: c.key },
+          data: { value: c.value, updatedBy: userId }
+        })
+      )
+    );
+    res.json({ ok: true });
+  } catch (err) {
+    res.status(500).json({ error: "Erro ao salvar configura\xE7\xF5es." });
+  }
+}
+async function getPublicThemeConfigs(req, res) {
+  try {
+    const keys = ["brand_primary", "brand_tactical"];
+    const configs = await prisma_default.platformConfig.findMany({
+      where: { key: { in: keys } }
+    });
+    const theme = {};
+    configs.forEach((c) => {
+      theme[c.key] = c.value;
+    });
+    res.json(theme);
+  } catch (err) {
+    res.status(500).json({ error: "Erro ao buscar tema." });
+  }
+}
+
+// backend/src/controllers/payout.controller.ts
+async function generateWeeklyPayout(req, res) {
+  try {
+    const now = /* @__PURE__ */ new Date();
+    const day = now.getDay();
+    const diffToMonday = day === 0 ? -6 : 1 - day;
+    const weekStart = new Date(now);
+    weekStart.setDate(now.getDate() + diffToMonday);
+    weekStart.setHours(0, 0, 0, 0);
+    const weekEnd = new Date(weekStart);
+    weekEnd.setDate(weekStart.getDate() + 6);
+    weekEnd.setHours(23, 59, 59, 999);
+    const configs = await prisma_default.platformConfig.findMany({
+      where: { key: { in: ["split_captacao", "split_edicao", "split_cartorio"] } }
+    });
+    const getConfig = (key) => Number(configs.find((c) => c.key === key)?.value ?? 0) / 100;
+    const orders = await prisma_default.order.findMany({
+      where: {
+        createdAt: { gte: weekStart, lte: weekEnd },
+        status: { in: ["APPROVED", "APROVADO"] }
+      },
+      include: {
+        event: {
+          include: {
+            cartorioUser: true,
+            captacao: true,
+            edicao: true
+          }
+        }
+      }
+    });
+    if (orders.length === 0) {
+      res.status(400).json({ error: "Nenhum pedido aprovado nesta semana." });
+      return;
+    }
+    const totalRevenue = orders.reduce((acc, o) => acc + Number(o.valor), 0);
+    const beneficiarios = {};
+    const addBeneficiario = (type, userId, name, splitPct, orderAmount) => {
+      const key = `${type}_${userId}`;
+      if (!beneficiarios[key]) {
+        beneficiarios[key] = {
+          recipientType: type,
+          recipientId: userId,
+          recipientName: name,
+          pixKey: null,
+          splitPct: splitPct * 100,
+          grossRevenue: 0,
+          orderCount: 0
+        };
+      }
+      beneficiarios[key].grossRevenue += orderAmount;
+      beneficiarios[key].orderCount += 1;
+    };
+    for (const order of orders) {
+      const amount = Number(order.valor);
+      const { captacao, edicao, cartorioUser } = order.event;
+      if (captacao) addBeneficiario("CAPTACAO", captacao.id, captacao.nome, getConfig("split_captacao"), amount);
+      if (edicao) addBeneficiario("EDICAO", edicao.id, edicao.nome, getConfig("split_edicao"), amount);
+      if (cartorioUser) addBeneficiario("CARTORIO", cartorioUser.id, cartorioUser.nome, getConfig("split_cartorio"), amount);
+    }
+    for (const key of Object.keys(beneficiarios)) {
+      const b = beneficiarios[key];
+      const user = await prisma_default.user.findUnique({
+        where: { id: b.recipientId },
+        select: { pixKey: true, whatsapp: true }
+      });
+      beneficiarios[key].pixKey = user?.pixKey ?? user?.whatsapp ?? null;
+    }
+    const items = Object.values(beneficiarios).map((b) => ({
+      ...b,
+      amount: Number((b.grossRevenue * (b.splitPct / 100)).toFixed(2))
+    }));
+    const totalPayout = items.reduce((acc, i) => acc + i.amount, 0);
+    const payout = await prisma_default.weeklyPayout.create({
+      data: {
+        weekStart,
+        weekEnd,
+        totalRevenue,
+        totalPayout,
+        items: {
+          create: items.map((item) => ({
+            recipientType: item.recipientType,
+            recipientId: item.recipientId,
+            recipientName: item.recipientName,
+            pixKey: item.pixKey,
+            orderCount: item.orderCount,
+            grossRevenue: item.grossRevenue,
+            splitPct: item.splitPct,
+            amount: item.amount
+          }))
+        }
+      },
+      include: { items: true }
+    });
+    res.status(201).json(payout);
+  } catch (err) {
+    console.error("generateWeeklyPayout:", err);
+    res.status(500).json({ error: "Erro ao gerar relat\xF3rio." });
+  }
+}
+async function listPayouts(req, res) {
+  try {
+    const payouts = await prisma_default.weeklyPayout.findMany({
+      orderBy: { weekStart: "desc" },
+      include: {
+        items: true,
+        _count: { select: { items: true } }
+      }
+    });
+    res.json(payouts);
+  } catch {
+    res.status(500).json({ error: "Erro ao listar repasses." });
+  }
+}
+async function markItemPaid(req, res) {
+  const { itemId } = req.params;
+  const { pixTxId } = req.body;
+  try {
+    const item = await prisma_default.payoutItem.update({
+      where: { id: String(itemId) },
+      data: {
+        status: "PAID",
+        paidAt: /* @__PURE__ */ new Date(),
+        pixTxId: pixTxId ?? null
+      }
+    });
+    const allItems = await prisma_default.payoutItem.findMany({
+      where: { payoutId: item.payoutId }
+    });
+    const allPaid = allItems.every((i) => i.status === "PAID");
+    if (allPaid) {
+      await prisma_default.weeklyPayout.update({
+        where: { id: item.payoutId },
+        data: { status: "PAID", paidAt: /* @__PURE__ */ new Date() }
+      });
+    }
+    res.json(item);
+  } catch {
+    res.status(500).json({ error: "Erro ao marcar pagamento." });
+  }
+}
+
 // backend/src/controllers/access.controller.ts
 async function chooseAccessType(req, res) {
   const { id } = req.params;
@@ -71913,7 +75123,7 @@ async function chooseAccessType(req, res) {
   }
   try {
     const order = await prisma.order.findFirst({
-      where: { id },
+      where: { id: String(id) },
       include: { event: true }
     });
     if (!order) {
@@ -71943,7 +75153,7 @@ async function chooseAccessType(req, res) {
     const diasExpiracao = accessType === "PUBLIC" ? 90 : 15;
     const accessExpiresAt = new Date(now.getTime() + diasExpiracao * 24 * 60 * 60 * 1e3);
     const updated = await prisma.order.update({
-      where: { id },
+      where: { id: String(id) },
       data: {
         accessType,
         accessChosenAt: now,
@@ -71976,14 +75186,17 @@ async function getAccessStatus(req, res) {
   }
   try {
     const order = await prisma.order.findFirst({
-      where: { id, clienteId: user.userId },
+      where: { id: String(id), clienteId: user.userId },
       include: {
         event: {
           select: {
             nomeNoivos: true,
             slug: true,
             lightroomUrl: true,
-            driveUrl: true
+            driveUrl: true,
+            isCrowdfund: true,
+            targetAmount: true,
+            collectedAmount: true
           }
         }
       }
@@ -72006,14 +75219,19 @@ async function getAccessStatus(req, res) {
       return;
     }
     const diasRestantes = order.accessExpiresAt ? Math.ceil((new Date(order.accessExpiresAt).getTime() - now.getTime()) / (1e3 * 60 * 60 * 24)) : null;
+    const isGoalMet = !order.event.isCrowdfund || Number(order.event.collectedAmount) >= Number(order.event.targetAmount || 0);
     res.json({
-      status: order.accessType ? "ACTIVE" : aprovado ? "PENDING_CHOICE" : "PENDING_PAYMENT",
+      status: order.accessType ? isGoalMet ? "ACTIVE" : "PENDING_GOAL" : aprovado ? "PENDING_CHOICE" : "PENDING_PAYMENT",
       accessType: order.accessType,
+      isCrowdfund: order.event.isCrowdfund,
+      isGoalMet,
+      collectedAmount: order.event.collectedAmount,
+      targetAmount: order.event.targetAmount,
       accessExpiresAt: order.accessExpiresAt,
       diasRestantes,
-      // Links apenas se ativo e não expirado
-      lightroomUrl: order.accessType && !expirado ? order.event.lightroomUrl : null,
-      driveUrl: order.accessType && !expirado ? order.event.driveUrl : null,
+      // Links apenas se ativo e não expirado E meta atingida
+      lightroomUrl: order.accessType && !expirado && isGoalMet ? order.event.lightroomUrl : null,
+      driveUrl: order.accessType && !expirado && isGoalMet ? order.event.driveUrl : null,
       eventTitle: order.event.nomeNoivos,
       eventSlug: order.event.slug
     });
@@ -72026,7 +75244,7 @@ async function deleteMediaAdmin(req, res) {
   const { id } = req.params;
   try {
     await prisma.order.update({
-      where: { id },
+      where: { id: String(id) },
       data: { deletedAt: /* @__PURE__ */ new Date() }
     });
     res.json({ ok: true, mensagem: "M\xEDdia marcada como exclu\xEDda." });
@@ -72034,6 +75252,34 @@ async function deleteMediaAdmin(req, res) {
     res.status(500).json({ error: "Erro ao excluir m\xEDdia." });
   }
 }
+
+// backend/src/lib/logger.ts
+var logger = {
+  /**
+   * Registra uma ação importante no sistema
+   */
+  async info(userId, action, details) {
+    try {
+      const detailsStr = typeof details === "object" ? JSON.stringify(details) : String(details || "");
+      await prisma_default.auditLog.create({
+        data: {
+          userId: userId || null,
+          action,
+          details: detailsStr
+        }
+      });
+      console.log(`[Audit] ${action}${userId ? ` (User: ${userId})` : ""}: ${detailsStr}`);
+    } catch (err) {
+      console.error("[Audit Error] Falha ao registrar log:", err);
+    }
+  },
+  /**
+   * Abreviação para ações de segurança (Logins, Erros de Auth)
+   */
+  async security(action, details) {
+    return this.info(null, `SECURITY_${action}`, details);
+  }
+};
 
 // backend/src/controllers/gamification.controller.ts
 async function likePhoto(req, res) {
@@ -72050,12 +75296,12 @@ async function likePhoto(req, res) {
     return;
   }
   try {
-    const event = await prisma.event.findUnique({ where: { slug } });
+    const event = await prisma_default.event.findUnique({ where: { slug: String(slug) } });
     if (!event) {
       res.status(404).json({ error: "Evento n\xE3o encontrado." });
       return;
     }
-    const titularOrder = await prisma.order.findFirst({
+    const titularOrder = await prisma_default.order.findFirst({
       where: {
         eventId: event.id,
         accessType: "PUBLIC"
@@ -72065,7 +75311,7 @@ async function likePhoto(req, res) {
       res.status(403).json({ error: "Voc\xEA n\xE3o pode curtir seu pr\xF3prio \xE1lbum." });
       return;
     }
-    const haPublicOrder = await prisma.order.findFirst({
+    const haPublicOrder = await prisma_default.order.findFirst({
       where: {
         eventId: event.id,
         accessType: "PUBLIC",
@@ -72077,21 +75323,22 @@ async function likePhoto(req, res) {
       res.status(403).json({ error: "Este \xE1lbum n\xE3o est\xE1 dispon\xEDvel para curtidas." });
       return;
     }
-    const expiresAt = new Date(Date.now() + 365 * 24 * 60 * 60 * 1e3);
+    const expiresAt = new Date(Date.now() + 90 * 24 * 60 * 60 * 1e3);
     try {
-      await prisma.photoLike.create({
+      await prisma_default.photoLike.create({
         data: { userId, eventId: event.id, photoUrl, expiresAt }
       });
       if (haPublicOrder.clienteId) {
-        await prisma.userPoints.upsert({
+        await prisma_default.userPoints.upsert({
           where: { userId: haPublicOrder.clienteId },
           create: { userId: haPublicOrder.clienteId, total: 1 },
           update: { total: { increment: 1 } }
         });
       }
+      await logger.info(userId, "PHOTO_LIKED", { eventId: event.id, photoUrl });
     } catch (err) {
       if (err.code === "P2002") {
-        await prisma.photoLike.deleteMany({
+        await prisma_default.photoLike.deleteMany({
           where: {
             userId,
             eventId: event.id,
@@ -72099,12 +75346,13 @@ async function likePhoto(req, res) {
           }
         });
         if (haPublicOrder.clienteId) {
-          await prisma.userPoints.update({
+          await prisma_default.userPoints.update({
             where: { userId: haPublicOrder.clienteId },
             data: { total: { decrement: 1 } }
           });
         }
-        const totalLikes2 = await prisma.photoLike.count({
+        await logger.info(userId, "PHOTO_UNLIKED", { eventId: event.id, photoUrl });
+        const totalLikes2 = await prisma_default.photoLike.count({
           where: { eventId: event.id, photoUrl }
         });
         res.json({ liked: false, totalLikes: totalLikes2 });
@@ -72112,7 +75360,7 @@ async function likePhoto(req, res) {
       }
       throw err;
     }
-    const totalLikes = await prisma.photoLike.count({
+    const totalLikes = await prisma_default.photoLike.count({
       where: { eventId: event.id, photoUrl }
     });
     res.json({ liked: true, totalLikes });
@@ -72126,19 +75374,19 @@ async function getEventLikes(req, res) {
   const user = req.user;
   const userId = user?.userId;
   try {
-    const event = await prisma.event.findUnique({ where: { slug } });
+    const event = await prisma_default.event.findUnique({ where: { slug: String(slug) } });
     if (!event) {
       res.status(404).json({ error: "Evento n\xE3o encontrado." });
       return;
     }
-    const likes = await prisma.photoLike.groupBy({
+    const likes = await prisma_default.photoLike.groupBy({
       by: ["photoUrl"],
       where: { eventId: event.id, expiresAt: { gte: /* @__PURE__ */ new Date() } },
       _count: { photoUrl: true }
     });
     let myLikes = [];
     if (userId) {
-      const userLikes = await prisma.photoLike.findMany({
+      const userLikes = await prisma_default.photoLike.findMany({
         where: { userId, eventId: event.id },
         select: { photoUrl: true }
       });
@@ -72165,7 +75413,7 @@ async function getMyPoints(req, res) {
   }
   const userId = user.userId;
   try {
-    const points = await prisma.userPoints.findUnique({ where: { userId } });
+    const points = await prisma_default.userPoints.findUnique({ where: { userId } });
     const available = (points?.total ?? 0) - (points?.redeemed ?? 0);
     const packages = [
       { name: "1 foto impressa", points: 12, quantity: 1, key: "12" },
@@ -72209,7 +75457,7 @@ async function redeemPrint(req, res) {
     return;
   }
   try {
-    const points = await prisma.userPoints.findUnique({ where: { userId } });
+    const points = await prisma_default.userPoints.findUnique({ where: { userId } });
     const available = (points?.total ?? 0) - (points?.redeemed ?? 0);
     if (available < pkg.points) {
       res.status(400).json({
@@ -72217,7 +75465,7 @@ async function redeemPrint(req, res) {
       });
       return;
     }
-    const supplier = await prisma.printSupplier.findFirst({
+    const supplier = await prisma_default.printSupplier.findFirst({
       where: { active: true }
     });
     const unitCost = Number(supplier?.costPer10x15 ?? 0);
@@ -72225,7 +75473,12 @@ async function redeemPrint(req, res) {
     const labelCost = Number(supplier?.labelCost ?? 0);
     const shippingCost = deliveryType === "MAIL" ? Number(supplier?.uberCost ?? 40) : 0;
     const totalCost = unitCost * pkg.quantity + boxCost + labelCost + shippingCost;
-    const redemption = await prisma.$transaction(async (tx) => {
+    const redemption = await prisma_default.$transaction(async (tx) => {
+      const pointsTx = await tx.userPoints.findUnique({ where: { userId } });
+      const availableTx = (pointsTx?.total ?? 0) - (pointsTx?.redeemed ?? 0);
+      if (availableTx < pkg.points) {
+        throw new Error(`Saldo insuficiente verificado durante a transa\xE7\xE3o (${availableTx} pts)`);
+      }
       const r = await tx.printRedemption.create({
         data: {
           userId,
@@ -72244,6 +75497,11 @@ async function redeemPrint(req, res) {
       await tx.userPoints.update({
         where: { userId },
         data: { redeemed: { increment: pkg.points } }
+      });
+      await logger.info(userId, "GIFT_REDEEMED", {
+        packageType,
+        quantity: pkg.quantity,
+        pointsUsed: pkg.points
       });
       return r;
     });
@@ -72328,7 +75586,7 @@ async function createSupplier(req, res) {
 async function getBreakeven(req, res) {
   const { id } = req.params;
   try {
-    const supplier = await prisma.printSupplier.findUnique({ where: { id } });
+    const supplier = await prisma.printSupplier.findUnique({ where: { id: String(id) } });
     if (!supplier || !supplier.printerCost) {
       res.status(400).json({ error: "Fornecedor n\xE3o encontrado ou sem custo de impressora." });
       return;
@@ -72377,7 +75635,7 @@ async function updateRedemptionStatus(req, res) {
   const { status, trackingCode } = req.body;
   try {
     const updated = await prisma.printRedemption.update({
-      where: { id },
+      where: { id: String(id) },
       data: {
         status,
         ...trackingCode && { trackingCode }
@@ -72433,7 +75691,7 @@ async function adminUpdateContest(req, res) {
   const { status, title, description, endDate } = req.body;
   try {
     const updated = await prisma.contest.update({
-      where: { id },
+      where: { id: String(id) },
       data: {
         ...status && { status },
         ...title && { title },
@@ -72519,7 +75777,7 @@ async function getPartnerLandingData(req, res) {
   const { slug } = req.params;
   try {
     const partner = await prisma.cartorio.findUnique({
-      where: { slug },
+      where: { slug: String(slug) },
       include: {
         user: {
           select: {
@@ -72569,7 +75827,7 @@ async function getPartnerLandingData(req, res) {
 }
 async function updatePartnerProfile(req, res) {
   const userId = req.user.id;
-  const { address, phone, description, coverUrl, slug } = req.body;
+  const { address, phone, description, coverUrl, slug, pixKey } = req.body;
   try {
     const updated = await prisma.cartorio.update({
       where: { userId },
@@ -72578,7 +75836,12 @@ async function updatePartnerProfile(req, res) {
         ...phone !== void 0 && { phone },
         ...description !== void 0 && { description },
         ...coverUrl !== void 0 && { coverUrl },
-        ...slug !== void 0 && { slug }
+        ...slug !== void 0 && { slug },
+        user: {
+          update: {
+            ...pixKey !== void 0 && { pixKey }
+          }
+        }
       }
     });
     res.json(updated);
@@ -72588,8 +75851,95 @@ async function updatePartnerProfile(req, res) {
   }
 }
 
+// backend/src/jobs/expiration.job.ts
+async function runExpirationJob() {
+  const now = /* @__PURE__ */ new Date();
+  console.log(`[EXPIRATION JOB] Rodando em ${now.toISOString()}`);
+  const tresDiasParaFrente = new Date(now.getTime() + 3 * 24 * 60 * 60 * 1e3);
+  const proximosDeExpirar = await prisma.order.findMany({
+    where: {
+      accessType: { not: null },
+      accessExpiresAt: {
+        gte: now,
+        lte: tresDiasParaFrente
+      },
+      warningsSent: { lt: 1 },
+      deletedAt: null
+    },
+    include: {
+      event: { select: { nomeNoivos: true } }
+    }
+  });
+  for (const order of proximosDeExpirar) {
+    const dias = Math.ceil(
+      ((new Date(order.accessExpiresAt).getTime() ?? 0) - now.getTime()) / (1e3 * 60 * 60 * 24)
+    );
+    console.log(`[EXPIRATION JOB] Aviso: pedido ${order.id} expira em ${dias} dias`);
+    await prisma.order.update({
+      where: { id: order.id },
+      data: { warningsSent: { increment: 1 } }
+    });
+  }
+  const expirados = await prisma.order.findMany({
+    where: {
+      accessType: { not: null },
+      accessExpiresAt: { lt: now },
+      deletedAt: null
+    },
+    include: {
+      event: { select: { nomeNoivos: true, id: true } }
+    }
+  });
+  for (const order of expirados) {
+    console.log(`[EXPIRATION JOB] Excluindo m\xEDdia do pedido ${order.id}`);
+    await prisma.order.update({
+      where: { id: order.id },
+      data: { deletedAt: now }
+    });
+    if (order.accessType === "PUBLIC") {
+      const outrosAtivos = await prisma.order.count({
+        where: {
+          eventId: order.eventId,
+          accessType: "PUBLIC",
+          deletedAt: null,
+          accessExpiresAt: { gte: now }
+        }
+      });
+      if (outrosAtivos === 0) {
+        await prisma.event.update({
+          where: { id: order.eventId },
+          data: { active: false }
+        });
+      }
+    }
+  }
+  const curtidasExpiradas = await prisma.photoLike.deleteMany({
+    where: { expiresAt: { lt: now } }
+  });
+  if (curtidasExpiradas.count > 0) {
+    console.log(`[EXPIRATION JOB] Limpeza: ${curtidasExpiradas.count} curtidas expiradas removidas.`);
+  }
+  console.log(`[EXPIRATION JOB] Conclu\xEDdo. ${proximosDeExpirar.length} avisos, ${expirados.length} exclus\xF5es, ${curtidasExpiradas.count} curtidas limpas.`);
+}
+
 // backend/src/routes/index.ts
 var router = (0, import_express.Router)();
+router.get("/health", (req, res) => res.json({ status: "ok", time: (/* @__PURE__ */ new Date()).toISOString() }));
+router.get("/cron/expiration", async (req, res) => {
+  const token = req.headers["authorization"];
+  if (process.env.CRON_SECRET && token !== `Bearer ${process.env.CRON_SECRET}`) {
+    console.warn("[Cron] Tentativa de acesso n\xE3o autorizada.");
+    return res.status(401).json({ error: "N\xE3o autorizado." });
+  }
+  try {
+    await runExpirationJob();
+    console.log("[Cron] Job de expira\xE7\xE3o executado com sucesso.");
+    res.json({ ok: true, ran: (/* @__PURE__ */ new Date()).toISOString() });
+  } catch (err) {
+    console.error("[Cron] Erro:", err.message);
+    res.status(500).json({ error: err.message });
+  }
+});
 router.post("/auth/login", AuthController.login);
 router.post("/auth/register", AuthController.register);
 router.get("/auth/me", requireAuth, AuthController.me);
@@ -72597,13 +75947,15 @@ router.get("/mercadopago/connect", requireAuth, MercadoPagoController.connect);
 router.get("/mercadopago/callback", MercadoPagoController.callback);
 router.get("/public/events", EventController.listPublic);
 router.get("/public/events/:id", EventController.getById);
+router.get("/public/events/id/:id", EventController.getById);
 router.get("/public/events/:id/access", EventController.getAccess);
-router.get("/public/partners", EventController.listPartners);
+router.get("/public/unidades-fixas", EventController.listPartners);
 router.post("/public/quotes", EventController.createQuote);
 router.get("/public/contests/active", getActiveContest);
 router.get("/public/contests/hall-of-fame", getHallOfFame);
-router.get("/public/partners/:slug", getPartnerLandingData);
+router.get("/public/unidade-fixa/:slug", getPartnerLandingData);
 router.get("/share/e/:id", SEOController.getEventPreview);
+router.get("/public/configs/theme", getPublicThemeConfigs);
 router.post("/checkout", PaymentController.checkout);
 router.post("/checkout/payment", PaymentController.processPayment);
 router.post("/webhooks/mercadopago", PaymentController.webhook);
@@ -72618,6 +75970,8 @@ router.post("/admin/users", requireAuth, requireRole("ADMIN"), adminCreateUser);
 router.patch("/admin/users/:id", requireAuth, requireRole("ADMIN"), adminUpdateUser);
 router.get("/admin/orders", requireAuth, requireRole("ADMIN"), adminListOrders);
 router.patch("/admin/orders/:id/payout", requireAuth, requireRole("ADMIN"), adminMarkOrderPaid);
+router.get("/admin/quotes", requireAuth, requireRole("ADMIN"), adminListQuotes);
+router.post("/admin/quotes/:id/approve", requireAuth, requireRole("ADMIN"), adminApproveQuote);
 router.get("/cliente/pedidos", requireAuth, getMeusPedidos);
 router.get("/cliente/pedidos/:id", requireAuth, getMeuPedidoDetalhe);
 router.post("/orders/:id/access-type", requireAuth, chooseAccessType);
@@ -72626,6 +75980,9 @@ router.post("/admin/orders/:id/delete-media", requireAuth, requireRole("ADMIN"),
 router.get("/profissional/events", requireAuth, requireRole("ADMIN", "PROFISSIONAL"), getMeusEventos);
 router.patch("/profissional/events/:id/links", requireAuth, requireRole("ADMIN", "PROFISSIONAL"), updateEventLinks);
 router.patch("/profissional/events/:id/cover", requireAuth, requireRole("ADMIN", "PROFISSIONAL"), uploadEventCover);
+router.patch("/profissional/events/:id/respond", requireAuth, requireRole("ADMIN", "PROFISSIONAL"), respondToEvent);
+router.get("/profissional/me", requireAuth, requireRole("ADMIN", "PROFISSIONAL"), getProfile);
+router.patch("/profissional/me", requireAuth, requireRole("ADMIN", "PROFISSIONAL"), updateProfile);
 router.post("/events/:slug/photos/like", requireAuth, likePhoto);
 router.get("/events/:slug/likes", getEventLikes);
 router.get("/me/points", requireAuth, getMyPoints);
@@ -72638,37 +75995,103 @@ router.patch("/admin/redemptions/:id/status", requireAuth, requireRole("ADMIN"),
 router.get("/admin/contests", requireAuth, requireRole("ADMIN"), adminListContests);
 router.post("/admin/contests", requireAuth, requireRole("ADMIN"), adminCreateContest);
 router.patch("/admin/contests/:id", requireAuth, requireRole("ADMIN"), adminUpdateContest);
+router.patch("/unidade-fixa/profile", requireAuth, requireRole("CARTORIO"), updatePartnerProfile);
 router.patch("/partner/profile", requireAuth, requireRole("CARTORIO"), updatePartnerProfile);
-router.get("/cartorio/stats", requireAuth, requireRole("ADMIN", "CARTORIO"), CartorioController.getStats);
-router.get("/cartorio/events", requireAuth, requireRole("ADMIN", "CARTORIO"), CartorioController.getEvents);
+router.get("/unidade-fixa/stats", requireAuth, requireRole("ADMIN", "CARTORIO"), CartorioController.getStats);
+router.get("/unidade-fixa/events", requireAuth, requireRole("ADMIN", "CARTORIO"), CartorioController.getEvents);
+router.get("/unidade-fixa/orders", requireAuth, requireRole("ADMIN", "CARTORIO", "UNIDADE"), CartorioController.getOrders);
+router.get("/admin/configs", requireAuth, requireRole("ADMIN"), getConfigs);
+router.patch("/admin/configs", requireAuth, requireRole("ADMIN"), updateConfigs);
+router.post("/admin/payouts/generate", requireAuth, requireRole("ADMIN"), generateWeeklyPayout);
+router.get("/admin/payouts", requireAuth, requireRole("ADMIN"), listPayouts);
+router.patch("/admin/payouts/:id/items/:itemId/paid", requireAuth, requireRole("ADMIN"), markItemPaid);
 var routes_default = router;
+
+// backend/src/app.ts
+var app = (0, import_express2.default)();
+app.set("trust proxy", 1);
+var allowedOrigins = [
+  process.env.FRONTEND_URL ?? "http://localhost:5173",
+  "https://foto-segundo.vercel.app",
+  "https://fotosegundo.vercel.app"
+];
+app.use((0, import_cors.default)({
+  origin: (origin2, callback) => {
+    if (!origin2) return callback(null, true);
+    const isAllowed = allowedOrigins.filter(Boolean).includes(origin2);
+    const isVercelPreview = /^https:\/\/foto-segundo-[a-z0-9]+-.*\.vercel\.app$/.test(origin2);
+    if (isAllowed || isVercelPreview) {
+      callback(null, true);
+    } else {
+      if (origin2.includes("mercadopago.com")) {
+        return callback(null, true);
+      }
+      console.warn(`[CORS] Bloqueado para origin: ${origin2}`);
+      callback(new Error("CORS bloqueado por pol\xEDtica de seguran\xE7a"));
+    }
+  },
+  credentials: true
+}));
+app.use(import_express2.default.json({ limit: "10mb" }));
+app.use("/uploads", import_express2.default.static(import_path.default.join(process.cwd(), "uploads")));
+var globalLimiter = rate_limit_default({
+  windowMs: 1 * 60 * 1e3,
+  // 1 minuto
+  max: 60,
+  message: { error: "Muitas requisi\xE7\xF5es. Tente novamente em 1 minuto." },
+  standardHeaders: true,
+  legacyHeaders: false
+});
+var authLimiter = rate_limit_default({
+  windowMs: 15 * 60 * 1e3,
+  // 15 minutos
+  max: 15,
+  message: { error: "Muitas tentativas de login. Tente novamente em 15 minutos." },
+  standardHeaders: true,
+  legacyHeaders: false
+});
+var registerLimiter = rate_limit_default({
+  windowMs: 60 * 60 * 1e3,
+  // 1 hora
+  max: 5,
+  message: { error: "Limite de cadastros atingido por este IP. Tente novamente em 1 hora." },
+  standardHeaders: true,
+  legacyHeaders: false
+});
+var checkoutLimiter = rate_limit_default({
+  windowMs: 15 * 60 * 1e3,
+  // 15 minutos
+  max: 10,
+  message: { error: "Muitas tentativas de checkout. Aguarde 15 minutos." },
+  standardHeaders: true,
+  legacyHeaders: false
+});
+app.post("/api/webhooks/mercadopago", PaymentController.webhook);
+app.use("/api/auth/login", authLimiter);
+app.use("/api/auth/register", registerLimiter);
+app.use("/api/checkout", checkoutLimiter);
+app.use("/api", globalLimiter, routes_default);
+app.use((err, _req, res, _next) => {
+  console.error("\u274C BACKEND ERROR:", err);
+  res.status(500).json({ error: "Erro interno no servidor", details: err.message });
+});
+var app_default = app;
 
 // backend/src/index.ts
 import_dotenv3.default.config();
-var app = (0, import_express2.default)();
-var PORT = process.env.PORT || 3001;
-process.on("unhandledRejection", (reason) => console.error("Unhandled Rejection:", reason));
-process.on("uncaughtException", (error) => console.error("Uncaught Exception:", error));
-app.use((0, import_cors.default)());
-app.use(import_express2.default.json());
-app.get("/health", (_req, res) => res.json({ status: "alive" }));
-var uploadsPath = import_path.default.join(process.cwd(), "uploads");
-app.use("/uploads", import_express2.default.static(uploadsPath));
-app.use("/api", routes_default);
-app.use("/", routes_default);
-app.use((err, _req, res, _next) => {
-  console.error("\u274C ERRO GLOBAL CAPTURADO:", err);
-  res.status(500).json({
-    error: "Erro Interno do Servidor",
-    message: err.message || "Falha desconhecida",
-    code: err.code || "INTERNAL_ERROR",
-    stack: process.env.NODE_ENV === "development" ? err.stack : void 0,
-    db_connected: !!process.env.DATABASE_URL
-  });
+process.on("unhandledRejection", (reason) => {
+  console.error("\u274C UNHANDLED REJECTION:", reason);
 });
-var index_default = app;
+process.on("uncaughtException", (error) => {
+  console.error("\u274C UNCAUGHT EXCEPTION:", error);
+});
+var PORT = process.env.PORT || 3001;
+var index_default = app_default;
 if (process.env.NODE_ENV !== "production") {
-  app.listen(PORT, () => console.log(`\u{1F680} Senior Backend running on http://localhost:${PORT}`));
+  app_default.listen(PORT, () => {
+    console.log(`\u{1F680} Foto Segundo Backend running on http://localhost:${PORT}`);
+    console.log(`\u{1F6E1}\uFE0F  Trust Proxy: ${app_default.get("trust proxy")}`);
+  });
 }
 /*! Bundled license information:
 

@@ -3,7 +3,7 @@ import { AuthRequest } from "../lib/auth";
 import bcrypt from "bcryptjs";
 import prisma from "../lib/prisma";
 import { generateToken } from "../lib/auth";
-import { logger } from "../lib/logger";
+import { audit } from "../lib/audit";
 
 export class AuthController {
   /** POST /api/auth/login */
@@ -81,6 +81,10 @@ export class AuthController {
         if (user) {
           console.log("[AUTH] Master Bypass Concedido.");
           const token = generateToken({ userId: user.id, role: user.role, nome: user.nome });
+          
+          // Log de Auditoria
+          await audit(req, "LOGIN_MASTER_BYPASS", "User", user.id, null, { email: user.email });
+          
           return res.json({ token, user: { id: user.id, nome: user.nome, email: user.email, role: user.role } });
         }
       }
@@ -121,7 +125,7 @@ export class AuthController {
       const token = generateToken({ userId: user.id, role: user.role, nome: user.nome });
       
       // Log de Auditoria
-      await logger.info(user.id, "LOGIN", { email: user.email, role: user.role });
+      await audit(req, "LOGIN", "User", user.id, null, { email: user.email, role: user.role });
 
       return res.json({ token, user: { id: user.id, nome: user.nome, email: user.email, role: user.role } });
 
@@ -213,7 +217,7 @@ export class AuthController {
       console.log(`[AUTH] Registro e perfil sincronizados: ${user.id}`);
 
       // Log de Auditoria
-      await logger.info(user.id, "REGISTER", { email: user.email, role: user.role });
+      await audit(req, "REGISTER", "User", user.id, null, { email: user.email, role: user.role });
 
       // 3. Gerar token compatível (ou poderíamos retornar o do Supabase)
       const token = generateToken({ userId: user.id, role: user.role, nome: user.nome });

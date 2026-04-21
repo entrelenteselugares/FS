@@ -24,8 +24,8 @@ export const AuthSelectionPage: React.FC = () => {
       role: "PROFISSIONAL"
     },
     {
-      id: "cartorio",
-      title: "CENTRAL UNIDADE",
+      id: "unidade-fixa",
+      title: "UNIDADES FIXAS",
       description: "Gestão institucional, regramento de ativos e fluxos de logística.",
       icon: <Building2 className="text-zinc-600" size={24} strokeWidth={1.5} />,
       label: "PORTAL DA UNIDADE",

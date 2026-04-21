@@ -4,8 +4,8 @@ import prisma from "../lib/prisma";
 
 export class CartorioController {
   /**
-   * GET /api/cartorio/stats
-   * Consolida métricas financeiras e agenda para o Cartório.
+   * GET /api/unidade-fixa/stats
+   * Consolida métricas financeiras e agenda para a Unidade Fixa.
    */
   static async getStats(req: AuthRequest, res: Response) {
     const user = req.user;
@@ -19,14 +19,14 @@ export class CartorioController {
         const cartorio = await prisma.cartorio.findUnique({ where: { userId: user.userId } });
         if (!cartorio) {
           return res.status(404).json({ 
-            error: "Perfil de cartório não encontrado. Entre em contato com a administração.",
-            code: "CARTORIO_NOT_FOUND" 
+            error: "Perfil de Unidade Fixa não encontrado. Entre em contato com a administração.",
+            code: "UNIDADE_NOT_FOUND" 
           });
         }
       }
 
       // 2. Definir o filtro de unidade
-      // Se for ADMIN, pode filtrar por nome. Se for CARTORIO, filtra por ele mesmo.
+      // Se for ADMIN, pode filtrar por nome. Se for CARTORIO/UNIDADE, filtra por ele mesmo.
       const where: any = { active: true };
       
       if (!isAdmin) {
@@ -34,7 +34,6 @@ export class CartorioController {
       } else if (cartorioName) {
         where.OR = [
             { location: { contains: String(cartorioName), mode: "insensitive" } },
-            // Caso o nome noivos ou outro campo ajude no filtro administrativo
         ];
       }
 
@@ -88,7 +87,7 @@ export class CartorioController {
           receita: receitaEvento,
           repasse: repasseEvento,
           _count: { orders: ev.pedidos.length },
-          captacao: null // Futuro: vincular profissional
+          captacao: null 
         };
       });
 
@@ -105,17 +104,17 @@ export class CartorioController {
         repasseEstimado: estimativaRepasse,
         eventosMes,
         razaoSocial: events[0]?.cartorioUser?.cartorio?.razaoSocial || "Sua Unidade",
-        events: eventosProcessados // Compatibilidade com a listagem
+        events: eventosProcessados 
       });
 
     } catch (error) {
-      console.error("[CartorioStats Error]:", error);
-      res.status(500).json({ error: "Erro ao carregar estatísticas do cartório." });
+      console.error("[UnidadeFixaStats Error]:", error);
+      res.status(500).json({ error: "Erro ao carregar estatísticas da Unidade Fixa." });
     }
   }
 
   /**
-   * GET /api/cartorio/events
+   * GET /api/unidade-fixa/events
    * Listagem simples da agenda.
    */
   static async getEvents(req: AuthRequest, res: Response) {
@@ -128,11 +127,12 @@ export class CartorioController {
           });
           res.json(events);
       } catch (error) {
-          res.status(500).json({ error: "Erro ao buscar agenda." });
+          res.status(500).json({ error: "Erro ao buscar agenda da Unidade Fixa." });
       }
   }
+
   /**
-   * GET /api/cartorio/orders
+   * GET /api/unidade-fixa/orders
    * Lista os pedidos (repasses) dos eventos desta unidade.
    */
   static async getOrders(req: AuthRequest, res: Response) {
@@ -177,8 +177,8 @@ export class CartorioController {
 
       res.json({ orders: result });
     } catch (error) {
-      console.error("[CartorioOrders Error]:", error);
-      res.status(500).json({ error: "Erro ao buscar pedidos." });
+      console.error("[UnidadeFixaOrders Error]:", error);
+      res.status(500).json({ error: "Erro ao buscar pedidos da Unidade Fixa." });
     }
   }
 }

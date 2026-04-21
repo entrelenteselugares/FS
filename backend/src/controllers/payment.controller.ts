@@ -327,11 +327,12 @@ export class PaymentController {
 
         NotificationService.sendAccessEmail({
           to: email,
-          buyerName: event.nomeNoivos, // Ou buscar nome real do user se houver
+          buyerName: req.body.buyerName || "Cliente",
           eventTitle: event.nomeNoivos,
           orderId: order.id,
           accessLink: `${process.env.FRONTEND_URL || "http://localhost:5173"}/e/${event.id}`
         }).catch(e => console.error("Erro ao enviar e-mail no checkout:", e));
+
       }
 
       return res.json({

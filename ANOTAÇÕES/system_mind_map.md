@@ -1,4 +1,4 @@
-# Mind Map: Estrutura do Sistema Foto Segundo
+# Mind Map: Estrutura do Sistema Foto Segundo (V2.0)
 
 Este mapa descreve a organização física e lógica do projeto, servindo como uma "bússola" para navegar entre o frontend React e o backend Express.
 
@@ -11,64 +11,50 @@ mindmap
       package.json
       vercel.json
       tsconfig.json
-      env
-    Infra_Vercel [api/]
-      index.js
-      server.js
+    Infra_Servidor [app.ts]
+      Rate_Limiting
+      Trust_Proxy
+      CORS_Policy
     Backend_Express [backend/]
       Prisma_DB [prisma/]
         schema.prisma
       Src_Logic [src/]
-        Controllers
-        Routes
-        Lib_Utils [incl. logger.ts]
-        Services
-        Jobs [Expiration/Cleanup]
-    Infrastructure [Operations]
-      Audit_Trail [AuditLog Table]
-      Security [LGPD Flow]
-      Automations [Cron Jobs]
+        Controllers [Auth, Admin, Partner, Payment]
+        Routes [Core Index Routing]
+        Lib [audit.ts, prisma.ts, auth.ts]
+        Services [MercadoPago, Notifications]
+    Frontend_React [frontend/]
+      Public_Assets [Logos / Branding]
+      Administrative [Dashboard Tower]
+        Events_Management
+        Lead_Machine [Quotes]
+        Financial_Uber_Style [Payouts]
+      Public_Pages [Storefront]
+        Landing_Pages [Unidades Fixas]
+        Checkout_Flow
 ```
 
 ---
 
 ## 📂 Descrição Detalhada de Pastas e Arquivos
 
-### 1. Raiz do Projeto (Root)
+### 1. Motor de Execução (backend/)
 
-Arquivos de configuração global que ditam como o sistema é construído e implantado.
+Onde reside toda a inteligência e segurança.
 
-- **`package.json`**: Gerencia scripts de build (ex: `vercel-build`) e dependências do projeto.
-- **`vercel.json`**: Define as regras de roteamento da Vercel, separando chamadas de API (`/api/*`) do roteamento frontend.
-- **`tsconfig.json`**: Configurações do compilador TypeScript.
-- **`.env`**: (Oculto) Armazena chaves secretas como `DATABASE_URL` e `JWT_SECRET`.
+- **`src/app.ts`**: Coração do servidor. Configura segurança crítica (`trust proxy`), limites de requisição e orquestração de rotas.
+- **`src/lib/audit.ts`**: Motor de rastreabilidade. Registra toda ação relevante no banco de dados.
+- **`src/lib/auth.ts`**: Gestão de tokens JWT e RBAC (Role-Based Access Control).
 
-### 2. `api/` (O Portal de Produção)
+### 2. Interface do Usuário (frontend/)
 
-Esta pasta é usada pela Vercel para servir o backend como "Serverless Functions".
+A "Pele" do sistema em Midnight Luxury.
 
-- **`index.js`**: O ponto de entrada que a Vercel chama. Ele carrega o servidor Express de forma preguiçosa (lazy load).
-- **`server.js`**: O bundle compactado do backend gerado pelo `esbuild`.
+- **`src/pages/admin/`**: O centro de controle administrativo ("Operações Centrais"). Inclui gestão de Eventos, Orçamentos (Leads) e Repasses Financeiros.
+- **`src/pages/public/`**: Páginas de vitrine e landing pages customizadas para as **Unidades Fixas**.
+- **`src/components/DashboardLayout`**: Estrutura visual adaptativa usada em todos os painéis internos.
 
-### 3. `backend/` (O Motor do Sistema)
+### 3. Operações e Deploy
 
-Onde reside toda a inteligência, segurança e comunicação com o banco de dados.
-
-- **`prisma/`**: Contém o `schema.prisma`, que é a "única fonte da verdade" sobre o banco de dados.
-- **`src/controllers/`**: Funções que processam as requisições (ex: `login`, `processPayment`).
-- **`src/routes/`**: Define os endereços da API e quais permissões/autenticação são necessárias.
-- **`src/lib/`**: Ferramentas compartilhadas, como a instância do Prisma e helpers de criptografia.
-
-### 4. `frontend/` (A Pele do Sistema)
-
-A interface de alta fidelidade "Midnight Luxury" com a qual os usuários interagem.
-
-- **`public/`**: Logos, ícones e arquivos estáticos que não mudam.
-- **`src/pages/`**: Cada arquivo aqui representa uma "tela" completa (Dashboard, Login, Vitrine).
-- **`src/components/`**: Peças de interface reutilizáveis (Botões, Modais, GalleryView).
-- **`src/contexts/`**: Controla o estado global (ex: `AuthContext` sabe quem está logado; `ThemeContext` controla as cores).
-- **`src/hooks/`**: "Atalhos" de lógica (ex: `useAuth` para pegar dados do usuário logado).
-- **`src/lib/api.ts`**: Configuração central do Axios para conversar com o backend.
-
----
-
+- **`vercel.json`**: Ponte de comunicação entre o domínio e o código, garantindo que `/api/*` chegue ao backend corretamente.
+- **`package.json`**: Orquestra os builds de produção e dependências compartilhadas.

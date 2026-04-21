@@ -62,7 +62,7 @@ const S = {
 
 type Tab = "agenda" | "pedidos" | "configuracoes";
 
-export default function CartorioDashboard() {
+export default function UnidadeFixaDashboard() {
   const { user, logout } = useAuth();
   const navigate = useNavigate();
   const [searchParams] = useSearchParams();
@@ -91,7 +91,7 @@ export default function CartorioDashboard() {
   // Filtros
   const [startDate, setStartDate] = useState("");
   const [endDate, setEndDate] = useState("");
-  const [cartorioName, setCartorioName] = useState("");
+  const [unidadeName, setUnidadeName] = useState("");
 
   // Evitar setState loop no useEffect
   const handledRef = useRef(false);
@@ -118,7 +118,7 @@ export default function CartorioDashboard() {
       ]);
       setStats(statsRes.data);
       setEventos(eventosRes.data.events ?? eventosRes.data);
-      setCartorioName(statsRes.data.razaoSocial ?? "");
+      setUnidadeName(statsRes.data.razaoSocial ?? "");
     } catch (err: unknown) {
       const error = err as { response?: { status: number } };
       if (error.response?.status === 404) {
@@ -253,7 +253,7 @@ export default function CartorioDashboard() {
           </div>
         </div>
         <div style={{ display: "flex", alignItems: "center", gap: 12 }}>
-          <span className="mobile-hide" style={{ fontSize: 10, color: "var(--theme-text-muted)", fontWeight: 700, textTransform: "uppercase", letterSpacing: 1 }}>{cartorioName || user?.nome}</span>
+          <span className="mobile-hide" style={{ fontSize: 10, color: "var(--theme-text-muted)", fontWeight: 700, textTransform: "uppercase", letterSpacing: 1 }}>{unidadeName || user?.nome}</span>
           <button onClick={() => { logout(); navigate("/"); }} style={{ background: "none", border: "1px solid var(--theme-border)", borderRadius: 0, padding: "6px 12px", color: "var(--theme-text-muted)", fontSize: 9, fontWeight: 700, textTransform: "uppercase", letterSpacing: 1, cursor: "pointer" }}>
             Sair
           </button>
@@ -270,7 +270,7 @@ export default function CartorioDashboard() {
         )}
         {success && (
           <div style={{ background: "rgba(133, 185, 172, 0.1)", border: "1px solid rgba(133, 185, 172, 0.2)", borderRadius: 0, padding: "12px 16px", marginBottom: "1.5rem" }}>
-            <p style={{ fontSize: 13, color: "#85B9AC", margin: 0, fontWeight: 600, textTransform: "uppercase", letterSpacing: 0.5 }}>{success}</p>
+            <p style={{ fontSize: 13, color: "var(--brand-primary)", margin: 0, fontWeight: 600, textTransform: "uppercase", letterSpacing: 0.5 }}>{success}</p>
           </div>
         )}
 
@@ -280,7 +280,7 @@ export default function CartorioDashboard() {
             {tab === "agenda" ? "Agenda & Eventos" : tab === "pedidos" ? "Repasses" : "Configurações"}
           </h1>
           <p style={{ fontSize: 11, color: "var(--theme-text-muted)", textTransform: "uppercase", letterSpacing: 2, fontWeight: 600 }}>
-            {cartorioName && `${cartorioName} · `}PAINEL DE GESTÃO TÁTICA
+            {unidadeName && `${unidadeName} · `}PAINEL DE GESTÃO TÁTICA (UNIDADE FIXA)
           </p>
         </div>
 
@@ -305,8 +305,8 @@ export default function CartorioDashboard() {
           <div className="mobile-grid-2" style={{ display: "grid", gridTemplateColumns: "repeat(4, 1fr)", gap: "1rem", marginBottom: "2rem" }}>
             {[...Array(4)].map((_, i) => (
               <div key={i} style={{ ...S.card, padding: "1.25rem" }}>
-                <div style={{ height: 10, background: "#1a1a1a", borderRadius: 3, width: "60%", marginBottom: 12 }} />
-                <div style={{ height: 22, background: "#1a1a1a", borderRadius: 3, width: "40%" }} />
+                <div style={{ height: 10, background: "var(--theme-bg-muted)", borderRadius: 3, width: "60%", marginBottom: 12 }} />
+                <div style={{ height: 22, background: "var(--theme-bg-muted)", borderRadius: 3, width: "40%" }} />
               </div>
             ))}
           </div>
@@ -315,17 +315,17 @@ export default function CartorioDashboard() {
         {/* ── AGENDA ── */}
         {tab === "agenda" && (
           <div style={S.card}>
-            <div style={{ padding: "1.25rem 1.5rem", borderBottom: "0.5px solid #1e1e1e" }}>
-              <p style={{ fontSize: 11, fontWeight: 800, color: "#fff", textTransform: "uppercase", letterSpacing: 2 }}>Próximos eventos</p>
+            <div style={{ padding: "1.25rem 1.5rem", borderBottom: "0.5px solid var(--theme-border)" }}>
+              <p style={{ fontSize: 11, fontWeight: 800, color: "var(--theme-text)", textTransform: "uppercase", letterSpacing: 2 }}>Próximos eventos</p>
             </div>
             {loading ? (
-              <p style={{ padding: "2rem", textAlign: "center", color: "#444", fontSize: 13 }}>Carregando...</p>
+              <p style={{ padding: "2rem", textAlign: "center", color: "var(--theme-text-muted)", fontSize: 13 }}>Carregando...</p>
             ) : eventos.length === 0 ? (
-              <p style={{ padding: "2rem", textAlign: "center", color: "#444", fontSize: 13 }}>
+              <p style={{ padding: "2rem", textAlign: "center", color: "var(--theme-text-muted)", fontSize: 13 }}>
                 Nenhum evento agendado ainda.
               </p>
             ) : eventos.map((ev, i) => (
-              <div key={ev.id} style={{ padding: "0.875rem 1.25rem", borderBottom: i < eventos.length - 1 ? "0.5px solid #161616" : "none", display: "flex", alignItems: "center", gap: "1rem" }}>
+              <div key={ev.id} style={{ padding: "0.875rem 1.25rem", borderBottom: i < eventos.length - 1 ? "0.5px solid var(--theme-border)" : "none", display: "flex", alignItems: "center", gap: "1rem" }}>
                 <div style={{ flex: 1, minWidth: 0 }}>
                   <p style={{ fontSize: 14, fontWeight: 500, color: "var(--theme-text)", marginBottom: 2, whiteSpace: "nowrap", overflow: "hidden", textOverflow: "ellipsis" }}>
                     {ev.title}
@@ -342,7 +342,7 @@ export default function CartorioDashboard() {
                   )}
                   <p style={{ fontSize: 10, color: "var(--theme-text-muted)", marginTop: 2, fontWeight: 600 }}>{ev._count?.orders ?? 0} venda(s)</p>
                 </div>
-                <div style={{ paddingLeft: "1rem", borderLeft: "0.5px solid #161616" }}>
+                <div style={{ paddingLeft: "1rem", borderLeft: "0.5px solid var(--theme-border)" }}>
                   <button 
                     onClick={() => { setQrModalEvent(ev); setCopied(false); }}
                     style={{ background: "rgba(133,185,172,0.1)", border: "1px solid rgba(133,185,172,0.2)", borderRadius: 6, padding: "8px", color: "var(--brand-primary)", cursor: "pointer", display: "flex", alignItems: "center", justifyContent: "center" }}
@@ -366,11 +366,11 @@ export default function CartorioDashboard() {
             )}
             <div style={{ display: "flex", gap: "0.75rem", marginBottom: "1.25rem", alignItems: "center" }}>
               <div>
-                <label style={{ fontSize: 11, color: "#666", display: "block", marginBottom: 4 }}>De</label>
+                <label style={{ fontSize: 11, color: "var(--theme-text-muted)", display: "block", marginBottom: 4 }}>De</label>
                 <input type="date" value={startDate} onChange={(e) => setStartDate(e.target.value)} style={S.input} />
               </div>
               <div>
-                <label style={{ fontSize: 11, color: "#666", display: "block", marginBottom: 4 }}>Até</label>
+                <label style={{ fontSize: 11, color: "var(--theme-text-muted)", display: "block", marginBottom: 4 }}>Até</label>
                 <input type="date" value={endDate} onChange={(e) => setEndDate(e.target.value)} style={S.input} />
               </div>
               <button
@@ -382,15 +382,15 @@ export default function CartorioDashboard() {
             </div>
 
             <div style={S.card}>
-              <div style={{ padding: "1rem 1.25rem", borderBottom: "0.5px solid #1e1e1e" }}>
-                <p style={{ fontSize: 13, fontWeight: 500, color: "#e8e4dc" }}>Histórico de repasses</p>
+              <div style={{ padding: "1rem 1.25rem", borderBottom: "0.5px solid var(--theme-border)" }}>
+                <p style={{ fontSize: 13, fontWeight: 500, color: "var(--theme-text)" }}>Histórico de repasses</p>
               </div>
               {pedidos.length === 0 ? (
-                <p style={{ padding: "2rem", textAlign: "center", color: "#444", fontSize: 13 }}>
+                <p style={{ padding: "2rem", textAlign: "center", color: "var(--theme-text-muted)", fontSize: 13 }}>
                   Nenhum repasse encontrado.
                 </p>
               ) : pedidos.map((p, i) => (
-                <div key={p.id} style={{ padding: "0.875rem 1.25rem", borderBottom: i < pedidos.length - 1 ? "0.5px solid #161616" : "none", display: "flex", alignItems: "center", gap: "1rem" }}>
+                <div key={p.id} style={{ padding: "0.875rem 1.25rem", borderBottom: i < pedidos.length - 1 ? "0.5px solid var(--theme-border)" : "none", display: "flex", alignItems: "center", gap: "1rem" }}>
                   <div style={{ flex: 1, minWidth: 0 }}>
                     <p style={{ fontSize: 13, color: "var(--theme-text)", marginBottom: 2 }}>{p.event.title}</p>
                     <p style={{ fontSize: 11, color: "var(--theme-text-muted)" }}>{p.buyerEmail ?? "—"} · {formatDate(p.createdAt)}</p>
@@ -406,9 +406,9 @@ export default function CartorioDashboard() {
                   <span style={{
                     fontSize: 9, padding: "3px 8px", borderRadius: 20, letterSpacing: 1,
                     textTransform: "uppercase" as const,
-                    background: p.status === "APPROVED" || p.status === "APROVADO" ? "rgba(133, 185, 172, 0.1)" : "#1a0d00",
-                    border: `0.5px solid ${p.status === "APPROVED" || p.status === "APROVADO" ? "rgba(133, 185, 172, 0.3)" : "#3a2000"}`,
-                    color: p.status === "APPROVED" || p.status === "APROVADO" ? "#85B9AC" : "#f59e0b",
+                    background: p.status === "APPROVED" || p.status === "APROVADO" ? "rgba(133, 185, 172, 0.1)" : "rgba(245, 158, 11, 0.1)",
+                    border: `0.5px solid ${p.status === "APPROVED" || p.status === "APROVADO" ? "rgba(133, 185, 172, 0.3)" : "rgba(245, 158, 11, 0.3)"}`,
+                    color: p.status === "APPROVED" || p.status === "APROVADO" ? "var(--brand-primary)" : "#f59e0b",
                     flexShrink: 0,
                   }}>
                     {p.status === "APPROVED" || p.status === "APROVADO" ? "pago" : "pendente"}
@@ -425,8 +425,8 @@ export default function CartorioDashboard() {
             <div style={{ ...S.card, padding: "1.25rem" }}>
               <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
                 <div style={{ flex: 1, marginRight: 20 }}>
-                  <p style={{ fontSize: 13, fontWeight: 500, color: "#e8e4dc", marginBottom: 4 }}>DADOS PARA REPASSE (PIX)</p>
-                  <p style={{ fontSize: 12, color: "#555", marginBottom: 12 }}>
+                  <p style={{ fontSize: 13, fontWeight: 500, color: "var(--theme-text)", marginBottom: 4 }}>DADOS PARA REPASSE (PIX)</p>
+                  <p style={{ fontSize: 12, color: "var(--theme-text-muted)", marginBottom: 12 }}>
                     Insira sua chave PIX para receber os repasses manuais das vendas (10% de comissão).
                   </p>
                   <input 
@@ -447,34 +447,34 @@ export default function CartorioDashboard() {
             </div>
 
             <div style={{ ...S.card, padding: "2rem", display: "flex", flexDirection: "column", gap: "2rem" }}>
-              <div style={{ borderBottom: "1px solid #1a1a1a", paddingBottom: 20 }}>
-                <h3 style={{ fontFamily: "'Outfit', sans-serif", fontSize: 24, fontWeight: 800, color: "#fff", marginBottom: 10 }}>PÁGINA PÚBLICA (SEO)</h3>
-                <p style={{ fontSize: 12, color: "#555" }}>Configure como sua unidade fixa aparece nos motores de busca e para clientes que chegam via link direto.</p>
+              <div style={{ borderBottom: "1px solid var(--theme-border)", paddingBottom: 20 }}>
+                <h3 style={{ fontFamily: "'Outfit', sans-serif", fontSize: 24, fontWeight: 800, color: "var(--theme-text)", marginBottom: 10 }}>PÁGINA PÚBLICA (SEO)</h3>
+                <p style={{ fontSize: 12, color: "var(--theme-text-muted)" }}>Configure como sua unidade fixa aparece nos motores de busca e para clientes que chegam via link direto.</p>
               </div>
 
-              <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "2rem" }}>
+              <div className="mobile-grid-1" style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "2rem" }}>
                 <div>
-                  <label style={{ fontSize: 10, fontWeight: 800, color: "#fff", marginBottom: 8, display: "block", textTransform: "uppercase", letterSpacing: 1 }}>Slug URL (/p/xxxx)</label>
+                  <label style={{ fontSize: 10, fontWeight: 800, color: "var(--theme-text)", marginBottom: 8, display: "block", textTransform: "uppercase", letterSpacing: 1 }}>Slug URL (/p/xxxx)</label>
                   <input value={lpSlug} onChange={e => setLpSlug(e.target.value)} style={{ ...S.input, width: "100%" }} placeholder="ex: unidade-centro-campinas" />
                 </div>
                 <div>
-                  <label style={{ fontSize: 10, fontWeight: 800, color: "#fff", marginBottom: 8, display: "block", textTransform: "uppercase", letterSpacing: 1 }}>Telefone de Contato</label>
+                  <label style={{ fontSize: 10, fontWeight: 800, color: "var(--theme-text)", marginBottom: 8, display: "block", textTransform: "uppercase", letterSpacing: 1 }}>Telefone de Contato</label>
                   <input value={lpPhone} onChange={e => setLpPhone(e.target.value)} style={{ ...S.input, width: "100%" }} placeholder="(19) 9..." />
                 </div>
               </div>
 
               <div>
-                <label style={{ fontSize: 10, fontWeight: 800, color: "#fff", marginBottom: 8, display: "block", textTransform: "uppercase", letterSpacing: 1 }}>Endereço Completo</label>
+                <label style={{ fontSize: 10, fontWeight: 800, color: "var(--theme-text)", marginBottom: 8, display: "block", textTransform: "uppercase", letterSpacing: 1 }}>Endereço Completo</label>
                 <input value={lpAddress} onChange={e => setLpAddress(e.target.value)} style={{ ...S.input, width: "100%" }} placeholder="Rua, Número, Bairro, Cidade - UF" />
               </div>
 
               <div>
-                 <label style={{ fontSize: 10, fontWeight: 800, color: "#fff", marginBottom: 8, display: "block", textTransform: "uppercase", letterSpacing: 1 }}>Breve Descrição (Até 300 caracteres)</label>
+                 <label style={{ fontSize: 10, fontWeight: 800, color: "var(--theme-text)", marginBottom: 8, display: "block", textTransform: "uppercase", letterSpacing: 1 }}>Breve Descrição (Até 300 caracteres)</label>
                  <textarea value={lpDescription} onChange={e => setLpDescription(e.target.value)} rows={4} style={{ ...S.input, width: "100%", resize: "none" }} placeholder="Conte sobre a infraestrutura e horários da unidade..." />
               </div>
 
               <div>
-                 <label style={{ fontSize: 10, fontWeight: 800, color: "#fff", marginBottom: 8, display: "block", textTransform: "uppercase", letterSpacing: 1 }}>URL da Foto de Capa</label>
+                 <label style={{ fontSize: 10, fontWeight: 800, color: "var(--theme-text)", marginBottom: 8, display: "block", textTransform: "uppercase", letterSpacing: 1 }}>URL da Foto de Capa</label>
                  <input value={lpCoverUrl} onChange={e => setLpCoverUrl(e.target.value)} style={{ ...S.input, width: "100%" }} placeholder="https://..." />
               </div>
 
@@ -502,7 +502,7 @@ export default function CartorioDashboard() {
           <div style={{ ...S.card, width: "100%", maxWidth: 400, padding: "2rem", position: "relative", textAlign: "center", animation: "fadeIn 0.3s ease-out" }}>
             <button 
               onClick={() => setQrModalEvent(null)}
-              style={{ position: "absolute", top: 15, right: 15, background: "none", border: "none", color: "#444", cursor: "pointer" }}
+              style={{ position: "absolute", top: 15, right: 15, background: "none", border: "none", color: "var(--theme-text-muted)", cursor: "pointer" }}
             >
               <X size={24} />
             </button>
@@ -511,8 +511,8 @@ export default function CartorioDashboard() {
               <div style={{ width: 44, height: 44, borderRadius: "50%", background: "rgba(133,185,172,0.1)", color: "var(--brand-primary)", display: "flex", alignItems: "center", justifyContent: "center", margin: "0 auto 1rem" }}>
                 <QrCode size={24} />
               </div>
-              <h3 style={{ fontSize: 20, fontWeight: 800, color: "#fff", marginBottom: 4 }}>QR Code do Evento</h3>
-              <p style={{ fontSize: 12, color: "#888" }}>Imprima ou compartilhe para que os noivos e convidados acessem o álbum direto da unidade fixa.</p>
+              <h3 style={{ fontSize: 20, fontWeight: 800, color: "var(--theme-text)", marginBottom: 4 }}>QR Code do Evento</h3>
+              <p style={{ fontSize: 12, color: "var(--theme-text-muted)" }}>Imprima ou compartilhe para que os noivos e convidados acessem o álbum direto da unidade fixa.</p>
             </div>
 
             <div style={{ background: "#fff", padding: "1.5rem", borderRadius: 12, display: "inline-block", marginBottom: "1.5rem", boxShadow: "0 10px 30px rgba(0,0,0,0.5)" }}>
@@ -534,7 +534,7 @@ export default function CartorioDashboard() {
                     setCopied(true);
                     setTimeout(() => setCopied(false), 2000);
                   }}
-                  style={{ flex: 1, display: "flex", alignItems: "center", justifyContent: "center", gap: 8, padding: "12px", background: "rgba(255,255,255,0.05)", border: "1px solid #333", color: "#fff", fontSize: 12, fontWeight: 700, cursor: "pointer", transition: "all 0.2s" }}
+                  style={{ flex: 1, display: "flex", alignItems: "center", justifyContent: "center", gap: 8, padding: "12px", background: "var(--theme-bg-muted)", border: "1px solid var(--theme-border)", color: "var(--theme-text)", fontSize: 12, fontWeight: 700, cursor: "pointer", transition: "all 0.2s" }}
                 >
                   {copied ? <Check size={16} /> : <Copy size={16} />}
                   {copied ? "Link Copiado!" : "Copiar Link"}
@@ -566,7 +566,7 @@ export default function CartorioDashboard() {
                 </button>
               </div>
               
-              <p style={{ fontSize: 10, color: "#444", fontStyle: "italic" }}>Dica: Imprima este QR Code e anexe à pasta de documentos dos noivos.</p>
+              <p style={{ fontSize: 10, color: "var(--theme-text-muted)", fontStyle: "italic" }}>Dica: Imprima este QR Code e anexe à pasta de documentos dos noivos.</p>
             </div>
           </div>
           <style>{`

@@ -173,7 +173,20 @@ export const AdminEvents: React.FC = () => {
           <p className="text-[10px] text-theme-muted uppercase tracking-[0.5em] mt-2 font-bold italic">Logística de Captação e Unidades Fixas</p>
         </div>
         <button 
-          onClick={() => setIsModalOpen(true)}
+          onClick={() => {
+            setEditingEvent(null);
+            setFormData({
+              title: "", date: "", location: "", city: "", description: "",
+              priceBase: 200, priceEarly: 190,
+              cartorioId: "", captacaoId: "", edicaoId: "",
+              temFoto: true, temVideo: false, temReels: false, temFotoImpressa: false,
+              coverPhotoUrl: "", eventHours: 2,
+              isCrowdfund: false,
+              targetAmount: 0
+            });
+            setCoverPreview(null);
+            setIsModalOpen(true);
+          }}
           className="font-black uppercase tracking-[0.4em] px-10 py-5 hover:brightness-110 transition-all shadow-xl shadow-brand-tactical/10 rounded-none text-[10px]"
           style={{ backgroundColor: 'var(--brand-tactical)', color: 'var(--theme-text-on-brand)' }}
         >
@@ -350,7 +363,7 @@ export const AdminEvents: React.FC = () => {
                           onChange={e => setFormData({...formData, cartorioId: e.target.value})}
                           className="w-full bg-theme-bg-muted border-b border-theme-border py-4 px-4 text-xs text-theme-text focus:outline-none focus:border-brand-tactical appearance-none rounded-none cursor-pointer"
                         >
-                          <option value="">SELECIONE A UNIDADE</option>
+                          <option value="">SELECIONE A UNIDADE FIXA</option>
                           {users.filter(u => u.role === "UNIDADE" || u.role === "CARTORIO").map(u => (
                             <option key={u.id} value={u.id}>{u.nome.toUpperCase()}</option>
                           ))}
@@ -472,7 +485,7 @@ export const AdminEvents: React.FC = () => {
 
             <div className="bg-white p-6 rounded-none inline-block mb-10 shadow-2xl">
               <QRCodeSVG 
-                id="qr-code-svg-admin"
+                id="qr-code-svg-admin-rev"
                 value={`${window.location.origin}/e/${qrModalEvent.id}`}
                 size={220}
                 level="H"
@@ -497,7 +510,7 @@ export const AdminEvents: React.FC = () => {
                 
                 <button 
                   onClick={() => {
-                    const svg = document.getElementById("qr-code-svg-admin");
+                    const svg = document.getElementById("qr-code-svg-admin-rev");
                     if (!svg) return;
                     const svgData = new XMLSerializer().serializeToString(svg);
                     const canvas = document.createElement("canvas");

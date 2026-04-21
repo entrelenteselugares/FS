@@ -10,7 +10,7 @@ import { LoginPage } from "./pages/LoginPage";
 import { HomePage } from "./pages/HomePage";
 import ProfissionalDashboard from "./pages/ProfissionalDashboard";
 import { AdminDashboard } from "./pages/admin/AdminDashboard";
-import CartorioDashboard from "./pages/CartorioDashboard";
+import UnidadeFixaDashboard from "./pages/UnidadeFixaDashboard";
 import { AuthSelectionPage } from "./pages/AuthSelectionPage";
 import { RegisterPage } from "./pages/RegisterPage";
 import ClienteArea from "./pages/ClienteArea";
@@ -83,7 +83,7 @@ const AnimatedRoutes = () => {
           {/* Painel Unidades Fixas */}
           <Route path="/unidade-fixa" element={
             <ProtectedRoute roles={["UNIDADE", "CARTORIO", "ADMIN"]}>
-              <CartorioDashboard />
+              <UnidadeFixaDashboard />
             </ProtectedRoute>
           } />
 
@@ -143,4 +143,3 @@ function App() {
 }
 
 export default App;
-
