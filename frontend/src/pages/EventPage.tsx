@@ -112,6 +112,38 @@ export default function EventPage() {
   const [contributorName, setContributorName] = useState<string>("");
 
   useEffect(() => {
+    if (event) {
+      const title = `Foto Segundo | ${event.nomeNoivos}`;
+      const desc = `Acesse as fotos e vídeos do casamento de ${event.nomeNoivos} em ${event.location}. Disponível para download imediato.`;
+      const url = `${window.location.origin}/e/${event.id}`;
+      const image = event.coverPhotoUrl || `${window.location.origin}/og-default.png`;
+
+      // Update Title
+      document.title = title;
+
+      // Update Meta Tags (Dynamic Injection)
+      const updateMeta = (name: string, property: boolean, content: string) => {
+        const selector = property ? `meta[property="${name}"]` : `meta[name="${name}"]`;
+        let el = document.head.querySelector(selector);
+        if (!el) {
+          el = document.createElement("meta");
+          if (property) el.setAttribute("property", name);
+          else el.setAttribute("name", name);
+          document.head.appendChild(el);
+        }
+        el.setAttribute("content", content);
+      };
+
+      updateMeta("description", false, desc);
+      updateMeta("og:title", true, title);
+      updateMeta("og:description", true, desc);
+      updateMeta("og:url", true, url);
+      updateMeta("og:image", true, image);
+      updateMeta("twitter:card", false, "summary_large_image");
+    }
+  }, [event]);
+
+  useEffect(() => {
     if (!id) return;
     api.get(`/public/events/${id}`)
       .then((r) => setEvent(r.data))

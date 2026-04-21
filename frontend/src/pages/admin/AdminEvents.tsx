@@ -1,5 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { API } from "../../lib/api";
+import { QRCodeSVG } from "qrcode.react";
+import { QrCode, Copy, Check, Download, X } from "lucide-react";
 
 interface User {
   id: string;
@@ -26,6 +28,8 @@ export const AdminEvents: React.FC = () => {
   const [editingEvent, setEditingEvent] = useState<Event | null>(null);
   const [isUploading, setIsUploading] = useState(false);
   const [coverPreview, setCoverPreview] = useState<string | null>(null);
+  const [qrModalEvent, setQrModalEvent] = useState<Event | null>(null);
+  const [copied, setCopied] = useState(false);
   const fileInputRef = React.useRef<HTMLInputElement>(null);
   
   interface EventFormData {
@@ -181,7 +185,7 @@ export const AdminEvents: React.FC = () => {
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-10">
         {loading ? (
           <div className="col-span-full py-20 text-center text-[10px] text-theme-muted uppercase tracking-widest animate-pulse bg-theme-bg-muted">Indexando Eventos...</div>
-        ) : events.map(event => (
+        ) : events.map((event: Event) => (
           <div key={event.id} className="group border border-theme-border bg-theme-bg-muted hover:bg-theme-bg transition-all relative overflow-hidden flex flex-col">
             {/* Visual Preview */}
             <div className="aspect-video w-full overflow-hidden bg-theme-bg border-b border-theme-border">
@@ -219,12 +223,21 @@ export const AdminEvents: React.FC = () => {
                 <div className="text-[9px] text-theme-muted font-black uppercase tracking-[0.3em] italic">
                   {event._count.orders} ADQUIRIDOS
                 </div>
-                <button 
-                  onClick={() => handleEditOpen(event)}
-                  className="text-[9px] font-black text-theme-text uppercase tracking-[0.2em] border-b border-brand-primary pb-1 hover:border-brand-tactical transition-all"
-                >
-                  CONFIGURAR
-                </button>
+                 <div className="flex items-center gap-3">
+                  <button 
+                    onClick={() => { setQrModalEvent(event); setCopied(false); }}
+                    className="p-2 border border-theme-border text-theme-muted hover:text-brand-primary hover:border-brand-primary transition-all"
+                    title="QR Code"
+                  >
+                    <QrCode size={14} />
+                  </button>
+                  <button 
+                    onClick={() => handleEditOpen(event)}
+                    className="text-[9px] font-black text-theme-text uppercase tracking-[0.2em] border-b border-brand-primary pb-1 hover:border-brand-tactical transition-all"
+                  >
+                    CONFIGURAR
+                  </button>
+                </div>
               </div>
             </div>
           </div>
@@ -402,6 +415,79 @@ export const AdminEvents: React.FC = () => {
                   </div>
                 </div>
              </form>
+          </div>
+        </div>
+      )}
+      {/* QR CODE MODAL */}
+      {qrModalEvent && (
+        <div className="fixed inset-0 bg-theme-bg/95 backdrop-blur-xl z-[60] flex items-center justify-center p-4">
+          <div className="w-full max-w-sm bg-theme-bg border border-theme-border p-10 relative text-center animate-in zoom-in-95 duration-300">
+            <button 
+              onClick={() => setQrModalEvent(null)}
+              className="absolute top-6 right-6 text-zinc-500 hover:text-white"
+            >
+              <X size={20} />
+            </button>
+            
+            <div className="mb-8">
+               <div className="w-12 h-12 bg-brand-primary/10 text-brand-primary rounded-full flex items-center justify-center mx-auto mb-4 border border-brand-primary/20">
+                 <QrCode size={24} />
+               </div>
+               <h3 className="text-2xl font-heading text-white uppercase tracking-tighter">QR Code</h3>
+               <p className="text-[10px] text-theme-muted uppercase tracking-[0.2em] mt-1">Acesso direto ao protocolo</p>
+            </div>
+
+            <div className="bg-white p-6 rounded-none inline-block mb-10 shadow-2xl">
+              <QRCodeSVG 
+                id="qr-code-svg-admin"
+                value={`${window.location.origin}/e/${qrModalEvent.id}`}
+                size={220}
+                level="H"
+                includeMargin={true}
+              />
+            </div>
+
+            <div className="space-y-4">
+              <div className="grid grid-cols-2 gap-4">
+                <button 
+                  onClick={() => {
+                    const url = `${window.location.origin}/e/${qrModalEvent.id}`;
+                    navigator.clipboard.writeText(url);
+                    setCopied(true);
+                    setTimeout(() => setCopied(false), 2000);
+                  }}
+                  className="flex items-center justify-center gap-2 py-4 border border-theme-border text-[9px] font-black uppercase tracking-[0.2em] hover:bg-white/5"
+                >
+                  {copied ? <Check size={14} /> : <Copy size={14} />}
+                  {copied ? "Copiado" : "Link"}
+                </button>
+                
+                <button 
+                  onClick={() => {
+                    const svg = document.getElementById("qr-code-svg-admin");
+                    if (!svg) return;
+                    const svgData = new XMLSerializer().serializeToString(svg);
+                    const canvas = document.createElement("canvas");
+                    const ctx = canvas.getContext("2d");
+                    const img = new Image();
+                    img.onload = () => {
+                      canvas.width = img.width;
+                      canvas.height = img.height;
+                      ctx?.drawImage(img, 0, 0);
+                      const pngFile = canvas.toDataURL("image/png");
+                      const downloadLink = document.createElement("a");
+                      downloadLink.download = `QRCode-${qrModalEvent.title.replace(/\s+/g, '-').toLowerCase()}.png`;
+                      downloadLink.href = pngFile;
+                      downloadLink.click();
+                    };
+                    img.src = "data:image/svg+xml;base64," + btoa(svgData);
+                  }}
+                  className="flex items-center justify-center gap-2 py-4 bg-brand-primary text-black text-[9px] font-black uppercase tracking-[0.2em]"
+                >
+                  <Download size={14} /> PNG
+                </button>
+              </div>
+            </div>
           </div>
         </div>
       )}

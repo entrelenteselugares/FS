@@ -2,6 +2,7 @@ import { useState, useEffect, useRef, useCallback } from "react";
 import { useNavigate } from "react-router-dom";
 import { useAuth } from "../hooks/useAuth";
 import { API } from "../lib/api";
+import { List, Calendar as CalendarIcon, TrendingUp, DollarSign, Award, ChevronLeft, ChevronRight } from "lucide-react";
 
 interface EventItem {
   id: string;
@@ -88,6 +89,22 @@ export default function ProfissionalDashboard() {
   const [events, setEvents] = useState<EventItem[]>([]);
   const [loading, setLoading] = useState(true);
   const [selected, setSelected] = useState<EventItem | null>(null);
+  const [viewTab, setViewTab] = useState<"lista" | "calendario">("lista");
+  const [currentMonth, setCurrentMonth] = useState(new Date());
+
+  // Cálculos financeiros (Estimatativa: R$ 40 por venda ou 20% do ticket médio)
+  const ESTIMATED_PER_SALE = 40; 
+  const totalSales = events.reduce((acc, ev) => acc + (ev._count?.pedidos ?? 0), 0);
+  const totalRevenue = totalSales * ESTIMATED_PER_SALE;
+  
+  const now = new Date();
+  const salesThisMonth = events
+    .filter(ev => {
+      const d = new Date(ev.dataEvento);
+      return d.getMonth() === now.getMonth() && d.getFullYear() === now.getFullYear();
+    })
+    .reduce((acc, ev) => acc + (ev._count?.pedidos ?? 0), 0);
+  const revenueThisMonth = salesThisMonth * ESTIMATED_PER_SALE;
 
   useEffect(() => {
     API.get("/profissional/events")
@@ -106,22 +123,17 @@ export default function ProfissionalDashboard() {
   return (
     <div style={S.page}>
       <style>{`
-        * { box-sizing: border-box; }
-        input:focus { border-color: var(--brand-primary) !important; }
-        .hover-row:hover { background: var(--theme-bg-muted) !important; transform: translateY(-2px); }
-        .spin { animation: spin 0.8s linear infinite; }
-        @keyframes spin { to { transform: rotate(360deg); } }
-        
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+        .lux-card { transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1); }
+        .lux-card:hover { border-color: var(--brand-primary) !important; transform: translateY(-2px); }
         @media (max-width: 768px) {
-          .mobile-grid-1 { grid-template-columns: 1fr !important; gap: 2rem !important; }
-          .mobile-stack { flex-direction: column !important; align-items: center !important; text-align: center !important; gap: 1rem !important; }
           .mobile-hide { display: none !important; }
-          .mobile-nav { padding: 1rem !important; }
+          .mobile-stack { flex-direction: column !important; align-items: stretch !important; gap: 1rem !important; }
           .mobile-padding { padding: 2rem 1.5rem !important; }
-          .mobile-detail-panel { width: 100% !important; margin-top: 2rem !important; position: relative !important; top: 0 !important; }
+          .mobile-grid-1 { grid-template-columns: 1fr !important; }
         }
       `}</style>
-
+      
       {/* NAV */}
       <nav className="mobile-nav" style={{ display: "flex", alignItems: "center", justifyContent: "space-between", padding: "1.25rem 2.5rem", borderBottom: "1px solid var(--theme-border)", background: "var(--theme-bg)", backdropFilter: "blur(10px)", position: "sticky", top: 0, zIndex: 100 }}>
         <div style={{ display: "flex", alignItems: "center", gap: 15 }}>
@@ -129,20 +141,13 @@ export default function ProfissionalDashboard() {
             ← <span className="mobile-hide">Vitrine</span>
           </button>
           <div onClick={() => navigate("/")} style={{ cursor: "pointer", display: "flex", alignItems: "center" }}>
-            <img 
-              src="/logo-premium.png" 
-              alt="Logo" 
-              style={{ 
-                height: 40, 
-                objectFit: "contain",
-                filter: "brightness(0) invert(1)"
-              }} 
-            />
+             <span style={{ fontSize: 14, fontWeight: 900, color: "var(--theme-text)", letterSpacing: 1, textTransform: "uppercase" }}>FOTO SEGUNDO</span>
           </div>
         </div>
         <div style={{ display: "flex", alignItems: "center", gap: 15 }}>
           <div className="mobile-hide" style={{ textAlign: "right" }}>
             <div style={{ fontSize: 11, color: "var(--theme-text)", fontWeight: 700, textTransform: "uppercase" }}>{user?.nome}</div>
+            <p style={{ fontSize: 9, color: "var(--brand-primary)", margin: 0, fontWeight: 900, textTransform: "uppercase", letterSpacing: 1 }}>PROFISSIONAL</p>
           </div>
           <button onClick={logout} style={{ background: "none", border: "1px solid var(--theme-border)", borderRadius: 0, padding: "8px 14px", color: "var(--theme-text-muted)", fontSize: 10, fontWeight: 700, textTransform: "uppercase", cursor: "pointer" }}>
             Sair
@@ -150,120 +155,114 @@ export default function ProfissionalDashboard() {
         </div>
       </nav>
 
-      <div className="mobile-grid-1 mobile-padding" style={{
-        maxWidth: 1200,
-        margin: "0 auto",
-        padding: "3rem 2.5rem",
-        display: "grid",
-        gridTemplateColumns: selected ? "1fr 440px" : "1fr",
-        gap: "2.5rem",
-      }}>
-        {/* LISTA DE EVENTOS */}
-        <div>
-          <header className="mobile-stack" style={{ marginBottom: "2rem", display: "flex", justifyContent: "space-between", alignItems: "flex-end" }}>
-            <div>
-              <h1 style={{ fontFamily: "'Outfit', sans-serif", fontSize: 48, fontWeight: 900, color: "var(--theme-text)", marginBottom: 4, textTransform: "uppercase", letterSpacing: -1 }}>
-                Meus eventos
-              </h1>
-              <p style={{ fontSize: 12, color: "var(--theme-text-muted)", textTransform: "uppercase", letterSpacing: 2, fontWeight: 800 }}>
-                {events.length} evento{events.length !== 1 ? "s" : ""} gerenciado{events.length !== 1 ? "s" : ""} por você
-              </p>
-            </div>
-          </header>
+      <div className="mobile-padding" style={{ maxWidth: 1200, margin: "0 auto", padding: "3rem 2.5rem" }}>
+        
+        {/* STATS CARDS */}
+        <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(280px, 1fr))", gap: "1.5rem", marginBottom: "3rem" }}>
+          <div style={{ ...S.card, padding: "1.5rem", position: "relative" }}>
+            <TrendingUp size={20} style={{ position: "absolute", top: 20, right: 20, color: "var(--brand-primary)", opacity: 0.3 }} />
+            <p style={{ fontSize: 10, fontWeight: 900, color: "var(--theme-text-muted)", marginBottom: 12, textTransform: "uppercase", letterSpacing: 1.5 }}>Entregas Totais</p>
+            <h3 style={{ fontSize: 28, fontWeight: 900, color: "#fff" }}>{events.length} <span style={{ fontSize: 13, color: "var(--theme-text-muted)", fontWeight: 400 }}>Eventos</span></h3>
+          </div>
+          
+          <div style={{ ...S.card, padding: "1.5rem", position: "relative" }}>
+            <DollarSign size={20} style={{ position: "absolute", top: 20, right: 20, color: "var(--brand-primary)", opacity: 0.3 }} />
+            <p style={{ fontSize: 10, fontWeight: 900, color: "var(--theme-text-muted)", marginBottom: 12, textTransform: "uppercase", letterSpacing: 1.5 }}>Receita Estimada</p>
+            <h3 style={{ fontSize: 28, fontWeight: 900, color: "var(--brand-primary)" }}>R$ {totalRevenue.toLocaleString()}</h3>
+          </div>
 
-          {loading ? (
-            <div style={{ display: "flex", flexDirection: "column", gap: 12 }}>
-              {[...Array(3)].map((_, i) => (
-                <div key={i} style={{ background: "var(--theme-bg-muted)", height: 100, borderRadius: 0, opacity: 0.5 }} />
-              ))}
-            </div>
-          ) : events.length === 0 ? (
-            <div style={{ textAlign: "center", padding: "6rem 0", background: "var(--theme-bg-muted)", borderRadius: 0, border: "1px dashed var(--theme-border)" }}>
-              <p style={{ fontFamily: "'Outfit', sans-serif", fontSize: 24, color: "var(--brand-primary)", marginBottom: 12, fontWeight: 900, textTransform: "uppercase" }}>Nenhum evento no seu radar</p>
-              <p style={{ fontSize: 12, color: "var(--theme-text-muted)", maxWidth: 350, margin: "0 auto", textTransform: "uppercase", letterSpacing: 1 }}>Assim que você for alocado em um novo evento, ele aparecerá aqui automaticamente.</p>
-            </div>
-          ) : (
-            <div style={{ display: "flex", flexDirection: "column", gap: 12 }}>
-              {events.map((event) => {
-                const isNew = (new Date().getTime() - new Date(event.createdAt).getTime()) < 24 * 60 * 60 * 1000;
-                
-                return (
-                  <div
-                    key={event.id}
-                    className="hover-row"
-                    onClick={() => setSelected(selected?.id === event.id ? null : event)}
-                    style={{
-                      ...S.card,
-                      background: selected?.id === event.id ? "var(--theme-highlight)" : "var(--theme-bg-muted)",
-                      borderColor: selected?.id === event.id ? "var(--brand-primary)" : "var(--theme-border)",
-                      padding: "1.25rem",
-                      cursor: "pointer",
-                      display: "flex",
-                      alignItems: "center",
-                      gap: "1.5rem",
-                      transition: "all .2s",
-                      position: "relative"
-                    }}
-                  >
-                    {isNew && (
-                      <div style={{ position: "absolute", top: 0, left: 0, background: "var(--brand-primary)", color: "var(--theme-text-on-brand)", fontSize: 8, fontWeight: 900, padding: "4px 10px", borderRadius: 0, textTransform: "uppercase", letterSpacing: 1 }}>
-                        Novo
-                      </div>
-                    )}
-
-                    {/* Thumbnail */}
-                    <div style={{ width: 80, height: 80, background: "var(--theme-bg)", borderRadius: 0, flexShrink: 0, overflow: "hidden", border: "1px solid var(--theme-border)" }}>
-                      {event.coverPhotoUrl ? (
-                        <img src={event.coverPhotoUrl} alt="" style={{ width: "100%", height: "100%", objectFit: "cover" }} />
-                      ) : (
-                        <div style={{ width: "100%", height: "100%", display: "flex", alignItems: "center", justifyContent: "center", color: "var(--theme-text-muted)" }}>
-                          <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5">
-                            <rect x="3" y="3" width="18" height="18" rx="2" />
-                            <circle cx="8.5" cy="8.5" r="1.5" />
-                            <polyline points="21,15 16,10 5,21" />
-                          </svg>
-                        </div>
-                      )}
-                    </div>
-
-                    {/* Info */}
-                    <div style={{ flex: 1, minWidth: 0 }}>
-                      <div style={{ fontSize: 16, fontWeight: 700, color: "var(--theme-text)", marginBottom: 4, overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap", textTransform: "uppercase" }}>{event.nomeNoivos}</div>
-                      <div style={{ fontSize: 11, color: "var(--theme-text-muted)", marginBottom: 8, fontWeight: 600, textTransform: "uppercase", letterSpacing: 1 }}>
-                        {formatDate(event.dataEvento)} · {event.cartorio || "UNIDADE NÃO DEFINIDA"} · {event.eventHours ?? 2}H
-                      </div>
-                      
-                      <div style={{ display: "flex", gap: "1.5rem", alignItems: "center" }}>
-                        {event.temFoto && <DeadlineTimer event={event} type="FOTO" />}
-                        {event.temVideo && <DeadlineTimer event={event} type="VIDEO" />}
-                      </div>
-                    </div>
-
-                    {/* Vendas (Prominent) */}
-                    <div style={{ textAlign: "right", paddingLeft: 20, borderLeft: "1px solid var(--theme-border)", flexShrink: 0 }}>
-                      <div style={{ display: "flex", alignItems: "center", gap: 4, justifyContent: "flex-end" }}>
-                        {event._count.pedidos > 5 && <span style={{ fontSize: 12 }}>🔥</span>}
-                        <div style={{ fontSize: 24, fontWeight: 900, color: event._count.pedidos > 0 ? "var(--brand-primary)" : "var(--theme-text-muted)", fontFamily: "'Outfit', sans-serif" }}>
-                          {event._count.pedidos}
-                        </div>
-                      </div>
-                      <div style={{ fontSize: 9, color: "var(--theme-text-muted)", textTransform: "uppercase", letterSpacing: 2, fontWeight: 800 }}>Vendas</div>
-                    </div>
-                  </div>
-                );
-              })}
-            </div>
-          )}
+          <div style={{ ...S.card, padding: "1.5rem", position: "relative" }}>
+            <Award size={20} style={{ position: "absolute", top: 20, right: 20, color: "var(--brand-primary)", opacity: 0.3 }} />
+            <p style={{ fontSize: 10, fontWeight: 900, color: "var(--theme-text-muted)", marginBottom: 12, textTransform: "uppercase", letterSpacing: 1.5 }}>Ganhos do Mês</p>
+            <h3 style={{ fontSize: 28, fontWeight: 900, color: "#fff" }}>R$ {revenueThisMonth.toLocaleString()}</h3>
+          </div>
         </div>
 
-        {/* PAINEL DE EDIÇÃO */}
-        {selected && (
-          <EventEditPanel
-            key={selected.id}
-            event={selected}
-            onUpdated={handleUpdated}
-            onClose={() => setSelected(null)}
-          />
+        <div className="mobile-stack" style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: "2rem" }}>
+          <h2 style={{ fontSize: 24, fontWeight: 900, color: "#fff", textTransform: "uppercase", letterSpacing: -0.5 }}>Meus compromissos</h2>
+          
+          <div style={{ display: "flex", background: "rgba(255,255,255,0.02)", padding: 4, borderRadius: 8, border: "0.5px solid #1a1a1a" }}>
+            <button 
+              onClick={() => setViewTab("lista")}
+              style={{ padding: "8px 16px", border: "none", background: viewTab === "lista" ? "rgba(133,185,172,0.1)" : "transparent", color: viewTab === "lista" ? "var(--brand-primary)" : "#555", fontSize: 10, fontWeight: 900, borderRadius: 6, cursor: "pointer", transition: "all .2s", display: "flex", alignItems: "center", gap: 6 }}
+            >
+              <List size={14} /> LISTA
+            </button>
+            <button 
+              onClick={() => setViewTab("calendario")}
+              style={{ padding: "8px 16px", border: "none", background: viewTab === "calendario" ? "rgba(133,185,172,0.1)" : "transparent", color: viewTab === "calendario" ? "var(--brand-primary)" : "#555", fontSize: 10, fontWeight: 900, borderRadius: 6, cursor: "pointer", transition: "all .2s", display: "flex", alignItems: "center", gap: 6 }}
+            >
+              <CalendarIcon size={14} /> CALENDÁRIO
+            </button>
+          </div>
+        </div>
+
+        {viewTab === "lista" ? (
+          <div className="mobile-grid-1" style={{ display: "grid", gridTemplateColumns: selected ? "1fr 440px" : "1fr", gap: "2.5rem", animation: "fadeIn 0.4s ease-out" }}>
+            {/* LISTA */}
+            <div style={{ display: "flex", flexDirection: "column", gap: 14 }}>
+              {loading ? (
+                <div style={{ padding: "4rem", textAlign: "center", color: "#444", fontSize: 11, textTransform: "uppercase", letterSpacing: 2 }}>INDEXANDO...</div>
+              ) : events.length === 0 ? (
+                <div style={{ padding: "6rem 0", textAlign: "center", background: "rgba(255,255,255,0.01)", border: "1px dashed #222" }}>
+                  <p style={{ color: "#444", fontSize: 12, textTransform: "uppercase", letterSpacing: 1 }}>Você ainda não possui eventos vinculados.</p>
+                </div>
+              ) : events.map((ev) => (
+                <div 
+                  key={ev.id} 
+                  onClick={() => setSelected(selected?.id === ev.id ? null : ev)}
+                  className="lux-card"
+                  style={{ 
+                    ...S.card, 
+                    padding: "1.25rem", 
+                    display: "flex", 
+                    gap: "1.5rem", 
+                    cursor: "pointer",
+                    borderColor: selected?.id === ev.id ? "var(--brand-primary)" : "var(--theme-border)",
+                    background: selected?.id === ev.id ? "rgba(133,185,172,0.03)" : "var(--theme-bg-muted)"
+                  }}
+                >
+                  <div style={{ width: 84, height: 84, background: "#111", borderRadius: 0, flexShrink: 0, overflow: "hidden", border: "1px solid var(--theme-border)" }}>
+                    {ev.coverPhotoUrl ? <img src={ev.coverPhotoUrl} alt="" style={{ width: "100%", height: "100%", objectFit: "cover", opacity: 0.8 }} /> : <div style={{ width: "100%", height: "100%", display: "flex", alignItems: "center", justifyContent: "center", fontSize: 24 }}>📦</div>}
+                  </div>
+                  <div style={{ flex: 1, minWidth: 0, display: "flex", flexDirection: "column", justifyContent: "center" }}>
+                    <h3 style={{ fontSize: 18, fontWeight: 900, color: "#fff", marginBottom: 4, whiteSpace: "nowrap", overflow: "hidden", textOverflow: "ellipsis", textTransform: "uppercase", letterSpacing: -0.5 }}>{ev.nomeNoivos}</h3>
+                    <p style={{ fontSize: 10, color: "var(--theme-text-muted)", marginBottom: 8, fontWeight: 800, textTransform: "uppercase", letterSpacing: 1.5 }}>{formatDate(ev.dataEvento)} · {ev.cartorio || "Unidade Parceira"}</p>
+                    
+                    <div className="mobile-stack" style={{ display: "flex", gap: "1.5rem", alignItems: "center" }}>
+                      {ev.temFoto && <DeadlineTimer event={ev} type="FOTO" />}
+                      {ev.temVideo && <DeadlineTimer event={ev} type="VIDEO" />}
+                      
+                      <div className="mobile-hide" style={{ flex: 1 }} />
+                      <div style={{ textAlign: "right" }}>
+                         <div style={{ display: "flex", alignItems: "center", gap: 6, justifyContent: "flex-end" }}>
+                           {ev._count.pedidos > 5 && <span style={{ fontSize: 12 }}>🔥</span>}
+                           <p style={{ fontSize: 18, fontWeight: 900, color: ev._count.pedidos > 0 ? "var(--brand-primary)" : "var(--theme-text-muted)", letterSpacing: -1, margin: 0 }}>{ev._count?.pedidos}</p>
+                         </div>
+                         <p style={{ fontSize: 8, color: "var(--theme-text-muted)", fontWeight: 900, textTransform: "uppercase", letterSpacing: 1, margin: 0 }}>Vendas</p>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              ))}
+            </div>
+
+            {/* DETALHE */}
+            {selected && (
+              <div className="mobile-detail-panel" style={{ position: "sticky", top: 100, height: "fit-content", animation: "fadeIn 0.3s ease-out" }}>
+                <EventEditPanel 
+                  key={selected.id}
+                  event={selected} 
+                  onClose={() => setSelected(null)} 
+                  onUpdated={handleUpdated} 
+                />
+              </div>
+            )}
+          </div>
+        ) : (
+          <div style={{ animation: "fadeIn 0.4s ease-out" }}>
+             <CalendarView events={events} currentMonth={currentMonth} setCurrentMonth={setCurrentMonth} onSelect={(ev) => { setSelected(ev); setViewTab("lista"); }} />
+          </div>
         )}
       </div>
     </div>
@@ -425,6 +424,73 @@ function EventEditPanel({ event, onUpdated, onClose }: {
           <span>Ver página pública</span>
           <span style={{ color: "var(--brand-primary)" }}>↗</span>
         </a>
+      </div>
+    </div>
+  );
+}
+
+// ── Componentes Internos ─────────────────────────────────────────
+
+function CalendarView({ events, currentMonth, setCurrentMonth, onSelect }: { events: EventItem[], currentMonth: Date, setCurrentMonth: (d: Date) => void, onSelect: (ev: EventItem) => void }) {
+  const year = currentMonth.getFullYear();
+  const month = currentMonth.getMonth();
+  
+  const firstDay = new Date(year, month, 1).getDay();
+  const daysInMonth = new Date(year, month + 1, 0).getDate();
+  
+  const days = [];
+  for (let i = 0; i < firstDay; i++) days.push(null);
+  for (let i = 1; i <= daysInMonth; i++) days.push(i);
+
+  const prevMonth = () => setCurrentMonth(new Date(year, month - 1, 1));
+  const nextMonth = () => setCurrentMonth(new Date(year, month + 1, 1));
+
+  const getEventsOnDay = (d: number) => {
+    return events.filter(ev => {
+      const date = new Date(ev.dataEvento);
+      return date.getDate() === d && date.getMonth() === month && date.getFullYear() === year;
+    });
+  };
+
+  const monthNames = ["Janeiro", "Fevereiro", "Março", "Abril", "Maio", "Junho", "Julho", "Agosto", "Setembro", "Outubro", "Novembro", "Dezembro"];
+
+  return (
+    <div style={{ ...S.card, padding: "2rem" }}>
+      <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: "2rem" }}>
+        <h3 style={{ fontSize: 20, fontWeight: 900, color: "#fff", textTransform: "uppercase", letterSpacing: 2 }}>{monthNames[month]} <span style={{ fontWeight: 300, color: "#888" }}>{year}</span></h3>
+        <div style={{ display: "flex", gap: 10 }}>
+          <button onClick={prevMonth} style={{ padding: 8, background: "rgba(255,255,255,0.02)", border: "1px solid #222", color: "#fff", cursor: "pointer" }}><ChevronLeft size={16} /></button>
+          <button onClick={nextMonth} style={{ padding: 8, background: "rgba(255,255,255,0.02)", border: "1px solid #222", color: "#fff", cursor: "pointer" }}><ChevronRight size={16} /></button>
+        </div>
+      </div>
+
+      <div style={{ display: "grid", gridTemplateColumns: "repeat(7, 1fr)", gap: 1 }}>
+        {["Dom", "Seg", "Ter", "Qua", "Qui", "Sex", "Sab"].map(d => (
+          <div key={d} style={{ textAlign: "center", padding: "12px", borderBottom: "1px solid #1a1a1a", fontSize: 10, fontWeight: 900, color: "#444", textTransform: "uppercase" }}>{d}</div>
+        ))}
+        {days.map((d, i) => {
+          const dayEvents = d ? getEventsOnDay(d) : [];
+          return (
+            <div key={i} style={{ minHeight: 100, padding: 8, border: "0.5px solid #1a1a1a", position: "relative", background: (d === new Date().getDate() && month === new Date().getMonth() && year === new Date().getFullYear()) ? "rgba(133,185,172,0.05)" : "transparent" }}>
+              {d && (
+                <>
+                  <span style={{ fontSize: 11, fontWeight: 900, color: (d === new Date().getDate() && month === new Date().getMonth() && year === new Date().getFullYear()) ? "var(--brand-primary)" : "#333", position: "absolute", top: 8, left: 10 }}>{d}</span>
+                  <div style={{ marginTop: 24, display: "flex", flexDirection: "column", gap: 4 }}>
+                    {dayEvents.map(ev => (
+                      <div 
+                        key={ev.id} 
+                        onClick={() => onSelect(ev)}
+                        style={{ padding: "4px 8px", background: "var(--brand-primary)", color: "#000", fontSize: 9, fontWeight: 900, overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap", cursor: "pointer", textTransform: "uppercase", borderRadius: 2 }}
+                      >
+                        {ev.nomeNoivos}
+                      </div>
+                    ))}
+                  </div>
+                </>
+              )}
+            </div>
+          );
+        })}
       </div>
     </div>
   );

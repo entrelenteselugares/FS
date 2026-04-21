@@ -119,6 +119,24 @@ export default function ClienteArea() {
           </button>
         </div>
       </nav>
+      {/* EXPIRING ALERT BANNER */}
+      {(() => {
+        const expiringOrders = aprovados.filter(p => {
+          if (!p.accessExpiresAt) return false;
+          const diff = new Date(p.accessExpiresAt).getTime() - Date.now();
+          const days = Math.ceil(diff / (1000 * 60 * 60 * 24));
+          return days > 0 && days <= 7;
+        });
+
+        if (expiringOrders.length === 0) return null;
+
+        return (
+          <div style={{ background: "#f59e0b", color: "#000", padding: "12px 2rem", textAlign: "center", fontSize: 12, fontWeight: 900, textTransform: "uppercase", letterSpacing: 1.5, display: "flex", alignItems: "center", justifyContent: "center", gap: 12 }}>
+            <span style={{ fontSize: 18 }}>⚠️</span>
+            ATENÇÃO: Você tem {expiringOrders.length} álbum(ns) que expiram em breve. Faça o download dos seus arquivos hoje mesmo!
+          </div>
+        );
+      })()}
 
       <div className="mobile-grid-1" style={{ maxWidth: 1200, margin: "0 auto", padding: "3rem 2rem", display: "grid", gridTemplateColumns: selected ? "1fr 420px" : "1fr", gap: "3rem", transition: "all 0.3s ease" }}>
 
@@ -235,6 +253,10 @@ function PedidoRow({ pedido, isSelected, onClick }: {
   isSelected: boolean;
   onClick: () => void;
 }) {
+  const diff = pedido.accessExpiresAt ? new Date(pedido.accessExpiresAt).getTime() - Date.now() : null;
+  const daysLeft = diff ? Math.ceil(diff / (1000 * 60 * 60 * 24)) : null;
+  const isExpiringSoon = daysLeft !== null && daysLeft <= 7 && daysLeft > 0;
+
   return (
     <div
       onClick={onClick}
@@ -246,13 +268,14 @@ function PedidoRow({ pedido, isSelected, onClick }: {
         display: "flex",
         gap: "1.5rem",
         alignItems: "center",
-        borderColor: isSelected ? "var(--brand-primary)" : "var(--theme-border)",
+        borderColor: isExpiringSoon ? "#f59e0b" : (isSelected ? "var(--brand-primary)" : "var(--theme-border)"),
         background: isSelected ? "var(--theme-highlight)" : "var(--theme-bg-muted)",
+        boxShadow: isExpiringSoon ? "0 0 15px rgba(245, 158, 11, 0.1)" : "none",
         transition: "all .2s ease-out",
         transform: isSelected ? "translateY(-4px)" : "none",
       }}
       onMouseEnter={(e) => !isSelected && ((e.currentTarget as HTMLDivElement).style.borderColor = "var(--brand-primary)")}
-      onMouseLeave={(e) => !isSelected && ((e.currentTarget as HTMLDivElement).style.borderColor = "var(--theme-border)")}
+      onMouseLeave={(e) => !isSelected && ((e.currentTarget as HTMLDivElement).style.borderColor = isExpiringSoon ? "#f59e0b" : "var(--theme-border)")}
     >
       {/* Thumbnail */}
       <div style={{ width: 84, height: 84, background: "#111", borderRadius: 10, flexShrink: 0, overflow: "hidden", position: "relative" }}>
@@ -260,6 +283,11 @@ function PedidoRow({ pedido, isSelected, onClick }: {
           <img src={pedido.event.coverPhotoUrl} alt="" style={{ width: "100%", height: "100%", objectFit: "cover", filter: pedido.hasPaid ? "none" : "grayscale(80%) brightness(0.4)" }} />
         ) : (
           <div style={{ width: "100%", height: "100%", display: "flex", alignItems: "center", justifyContent: "center", fontSize: 28 }}>📦</div>
+        )}
+        {isExpiringSoon && (
+          <div style={{ position: "absolute", bottom: 0, left: 0, right: 0, background: "#f59e0b", color: "#000", fontSize: 8, fontWeight: 900, textAlign: "center", padding: "4px 0", textTransform: "uppercase", letterSpacing: 0.5 }}>
+            {daysLeft}d restantes
+          </div>
         )}
       </div>
 

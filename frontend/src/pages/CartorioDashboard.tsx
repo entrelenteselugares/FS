@@ -2,6 +2,8 @@ import { useState, useEffect, useRef, useCallback } from "react";
 import { useNavigate, useSearchParams } from "react-router-dom";
 import { useAuth } from "../hooks/useAuth";
 import { API } from "../lib/api";
+import { QRCodeSVG } from "qrcode.react";
+import { QrCode, Copy, Check, X, Download } from "lucide-react";
 
 interface CartorioStats {
   totalEventos: number;
@@ -83,6 +85,8 @@ export default function CartorioDashboard() {
   const [pixKey, setPixKey] = useState("");
   const [savingLp, setSavingLp] = useState(false);
   const [savingPix, setSavingPix] = useState(false);
+  const [qrModalEvent, setQrModalEvent] = useState<EventoAgenda | null>(null);
+  const [copied, setCopied] = useState(false);
 
   // Filtros
   const [startDate, setStartDate] = useState("");
@@ -339,6 +343,15 @@ export default function CartorioDashboard() {
                   )}
                   <p style={{ fontSize: 10, color: "var(--theme-text-muted)", marginTop: 2, fontWeight: 600 }}>{ev._count?.orders ?? 0} venda(s)</p>
                 </div>
+                <div style={{ paddingLeft: "1rem", borderLeft: "0.5px solid #161616" }}>
+                  <button 
+                    onClick={() => { setQrModalEvent(ev); setCopied(false); }}
+                    style={{ background: "rgba(133,185,172,0.1)", border: "1px solid rgba(133,185,172,0.2)", borderRadius: 6, padding: "8px", color: "var(--brand-primary)", cursor: "pointer", display: "flex", alignItems: "center", justifyContent: "center" }}
+                    title="QR Code do Evento"
+                  >
+                    <QrCode size={18} />
+                  </button>
+                </div>
               </div>
             ))}
           </div>
@@ -485,6 +498,84 @@ export default function CartorioDashboard() {
           </div>
         )}
       </div>
+      {/* QR CODE MODAL */}
+      {qrModalEvent && (
+        <div style={{ position: "fixed", inset: 0, background: "rgba(0,0,0,0.85)", backdropFilter: "blur(4px)", display: "flex", alignItems: "center", justifyContent: "center", zIndex: 1000, padding: "20px" }}>
+          <div style={{ ...S.card, width: "100%", maxWidth: 400, padding: "2rem", position: "relative", textAlign: "center", animation: "fadeIn 0.3s ease-out" }}>
+            <button 
+              onClick={() => setQrModalEvent(null)}
+              style={{ position: "absolute", top: 15, right: 15, background: "none", border: "none", color: "#444", cursor: "pointer" }}
+            >
+              <X size={24} />
+            </button>
+            
+            <div style={{ marginBottom: "1.5rem" }}>
+              <div style={{ width: 44, height: 44, borderRadius: "50%", background: "rgba(133,185,172,0.1)", color: "var(--brand-primary)", display: "flex", alignItems: "center", justifyContent: "center", margin: "0 auto 1rem" }}>
+                <QrCode size={24} />
+              </div>
+              <h3 style={{ fontSize: 20, fontWeight: 800, color: "#fff", marginBottom: 4 }}>QR Code do Evento</h3>
+              <p style={{ fontSize: 12, color: "#888" }}>Imprima ou compartilhe para que os noivos e convidados acessem o álbum direto do cartório.</p>
+            </div>
+
+            <div style={{ background: "#fff", padding: "1.5rem", borderRadius: 12, display: "inline-block", marginBottom: "1.5rem", boxShadow: "0 10px 30px rgba(0,0,0,0.5)" }}>
+              <QRCodeSVG 
+                id="qr-code-svg"
+                value={`${window.location.origin}/e/${qrModalEvent.id}`}
+                size={220}
+                level="H"
+                includeMargin={true}
+              />
+            </div>
+
+            <div style={{ display: "flex", flexDirection: "column", gap: "0.75rem" }}>
+              <div style={{ display: "flex", gap: "0.75rem" }}>
+                <button 
+                  onClick={() => {
+                    const url = `${window.location.origin}/e/${qrModalEvent.id}`;
+                    navigator.clipboard.writeText(url);
+                    setCopied(true);
+                    setTimeout(() => setCopied(false), 2000);
+                  }}
+                  style={{ flex: 1, display: "flex", alignItems: "center", justifyContent: "center", gap: 8, padding: "12px", background: "rgba(255,255,255,0.05)", border: "1px solid #333", color: "#fff", fontSize: 12, fontWeight: 700, cursor: "pointer", transition: "all 0.2s" }}
+                >
+                  {copied ? <Check size={16} /> : <Copy size={16} />}
+                  {copied ? "Link Copiado!" : "Copiar Link"}
+                </button>
+                
+                <button 
+                  onClick={() => {
+                    const svg = document.getElementById("qr-code-svg");
+                    if (!svg) return;
+                    const svgData = new XMLSerializer().serializeToString(svg);
+                    const canvas = document.createElement("canvas");
+                    const ctx = canvas.getContext("2d");
+                    const img = new Image();
+                    img.onload = () => {
+                      canvas.width = img.width;
+                      canvas.height = img.height;
+                      ctx?.drawImage(img, 0, 0);
+                      const pngFile = canvas.toDataURL("image/png");
+                      const downloadLink = document.createElement("a");
+                      downloadLink.download = `QRCode-${qrModalEvent.title.replace(/\s+/g, '-').toLowerCase()}.png`;
+                      downloadLink.href = pngFile;
+                      downloadLink.click();
+                    };
+                    img.src = "data:image/svg+xml;base64," + btoa(svgData);
+                  }}
+                  style={{ flex: 1, display: "flex", alignItems: "center", justifyContent: "center", gap: 8, padding: "12px", background: "var(--brand-primary)", border: "none", color: "var(--theme-text-on-brand)", fontSize: 12, fontWeight: 900, cursor: "pointer", transition: "all 0.2s", textTransform: "uppercase" }}
+                >
+                  <Download size={16} /> DOWNLOAD
+                </button>
+              </div>
+              
+              <p style={{ fontSize: 10, color: "#444", fontStyle: "italic" }}>Dica: Imprima este QR Code e anexe à pasta de documentos dos noivos.</p>
+            </div>
+          </div>
+          <style>{`
+            @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+          `}</style>
+        </div>
+      )}
     </div>
   );
 }
