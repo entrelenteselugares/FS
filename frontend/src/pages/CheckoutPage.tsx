@@ -4,6 +4,8 @@ import { ShieldCheck, ArrowLeft, CreditCard, Lock } from "lucide-react";
 import { API } from "../lib/api";
 
 export const CheckoutPage = () => {
+  const { orderId } = useParams();
+  const navigate = useNavigate();
   const [searchParams] = useSearchParams();
   const orderIdFromQuery = searchParams.get("orderId");
   const effectiveOrderId = orderId || orderIdFromQuery;
