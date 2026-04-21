@@ -70,6 +70,7 @@ export default function CartorioDashboard() {
   const [tab, setTab] = useState<Tab>("agenda");
   const [stats, setStats] = useState<CartorioStats | null>(null);
   const [eventos, setEventos] = useState<EventoAgenda[]>([]);
+  const [pedidos, setPedidos] = useState<PedidoUnidade[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
   const [pedidosError, setPedidosError] = useState("");
@@ -133,7 +134,6 @@ export default function CartorioDashboard() {
   const loadLpData = async () => {
     try {
       const { data } = await API.get("/unidade-fixa/stats"); 
-      // Re-aproveitando statsRes.data que já incluía cartório
       if (data.cartorio) {
         setLpSlug(data.cartorio.slug ?? "");
         setLpAddress(data.cartorio.address ?? "");
@@ -364,7 +364,6 @@ export default function CartorioDashboard() {
                 <p style={{ fontSize: 13, color: "#ef4444", margin: 0, fontWeight: 600, textTransform: "uppercase", letterSpacing: 0.5 }}>{pedidosError}</p>
               </div>
             )}
-            {/* Filtros de data */}
             <div style={{ display: "flex", gap: "0.75rem", marginBottom: "1.25rem", alignItems: "center" }}>
               <div>
                 <label style={{ fontSize: 11, color: "#666", display: "block", marginBottom: 4 }}>De</label>
@@ -497,7 +496,7 @@ export default function CartorioDashboard() {
           </div>
         )}
       </div>
-      {/* QR CODE MODAL */}
+
       {qrModalEvent && (
         <div style={{ position: "fixed", inset: 0, background: "rgba(0,0,0,0.85)", backdropFilter: "blur(4px)", display: "flex", alignItems: "center", justifyContent: "center", zIndex: 1000, padding: "20px" }}>
           <div style={{ ...S.card, width: "100%", maxWidth: 400, padding: "2rem", position: "relative", textAlign: "center", animation: "fadeIn 0.3s ease-out" }}>

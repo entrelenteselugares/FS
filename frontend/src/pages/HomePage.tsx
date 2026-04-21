@@ -65,7 +65,12 @@ export const HomePage = () => {
   const [userMenuOpen, setUserMenuOpen] = useState(false);
   const debounceRef = useRef<ReturnType<typeof setTimeout> | undefined>(undefined);
 
+  const dashboardPath = user?.role === "ADMIN" ? "/admin"
+    : user?.role === "PROFISSIONAL" ? "/profissional"
+    : (user?.role === "CARTORIO" || user?.role === "UNIDADE") ? "/unidade-fixa"
+    : null;
 
+  const fetchEvents = async (q: string, pg: number) => {
     setLoading(true);
     try {
       const { data } = await API.get(`/public/events`, {
@@ -289,7 +294,7 @@ export const HomePage = () => {
         )}
       </button>
 
-      {/* HERO SECTION ESTILO YOUTUBE (SLIM & SLEEK) 📸✨ */}
+      {/* HERO SECTION */}
       <section 
         className="hero-mobile-margin"
         style={{ 
@@ -345,7 +350,7 @@ export const HomePage = () => {
         {/* Overlay Suave */}
         <div style={{ position: "absolute", inset: 0, background: "linear-gradient(to top, rgba(0,0,0,0.8), rgba(0,0,0,0.2))", zIndex: 1 }} />
 
-        {/* Conteúdo Centralizado e Equilibrado */}
+        {/* Conteúdo Centralizado */}
         <div style={{ position: "relative", zIndex: 10, textAlign: "center", padding: "0 24px", maxWidth: 800 }}>
           <motion.p 
             initial={{ opacity: 0, y: 10 }}
@@ -399,7 +404,7 @@ export const HomePage = () => {
             Uma curadoria refinada de experiências visuais. Acesse sua galeria exclusiva com a sofisticação que seu momento merece.
           </motion.p>
 
-          {/* Barra de busca Compacta */}
+          {/* Barra de busca */}
           <motion.div 
             initial={{ opacity: 0, scale: 0.98 }}
             animate={{ opacity: 1, scale: 1 }}
@@ -657,4 +662,3 @@ function ServiceBadge({ label }: { label: string }) {
     </span>
   );
 }
-
