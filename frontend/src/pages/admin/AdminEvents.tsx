@@ -22,8 +22,6 @@ interface Event {
 
 export const AdminEvents: React.FC = () => {
   const [events, setEvents] = useState<Event[]>([]);
-  const [users, setUsers] = useState<User[]>([]);
-  const [loading, setLoading] = useState(true);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [editingEvent, setEditingEvent] = useState<Event | null>(null);
   const [isUploading, setIsUploading] = useState(false);

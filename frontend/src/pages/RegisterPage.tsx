@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import { useNavigate, Link, useSearchParams } from "react-router-dom";
 import { motion } from "framer-motion";
-import { ArrowRight, User, Camera, Building2, Mail, Lock, UserCircle, Phone, Eye, EyeOff } from "lucide-react";
+import { ArrowRight, User, Camera, Mail, Lock, UserCircle, Phone, Eye, EyeOff } from "lucide-react";
 import { API } from "../lib/api";
 
 export const RegisterPage: React.FC = () => {
@@ -44,6 +44,10 @@ export const RegisterPage: React.FC = () => {
       localStorage.setItem("user", JSON.stringify(user));
 
       console.log("[REGISTER & LOGIN SUCCESS]", user.nome);
+
+      const target = role === "PROFISSIONAL" ? "/profissional"
+        : (role === "UNIDADE") ? "/unidade-fixa"
+        : "/";
 
       const hasPending = localStorage.getItem("pending_purchase_event_id");
       if (hasPending) {
