@@ -217,8 +217,8 @@ export const QuotePage = () => {
   const [email, setEmail] = useState("");
 
   useEffect(() => {
-    // Busca parceiros cadastrados
-    API.get("/public/partners").then(res => setPartners(res.data)).catch(() => {});
+    // Busca parceiros cadastrados (Unidades Fixas)
+    API.get("/public/unidades-fixas").then(res => setPartners(res.data)).catch(() => {});
   }, []);
 
   // Lógica de Equipe 🛡️👥
