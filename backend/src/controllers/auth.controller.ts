@@ -165,8 +165,11 @@ export class AuthController {
       if (!supabaseUser) throw new Error("Falha ao recuperar usuário criado no Supabase");
 
       // 2. Sincronizar com a nossa tabela User no Prisma
-      const validRoles = ["ADMIN", "CARTORIO", "PROFISSIONAL", "CLIENTE"];
-      const finalRole = validRoles.includes(role?.toUpperCase()) ? role.toUpperCase() : "CLIENTE";
+      // "UNIDADE" é o label do frontend para pontos fixos — mapeamos para "CARTORIO" (enum do banco)
+      const roleUpper = role?.toUpperCase();
+      const finalRole = roleUpper === "UNIDADE" ? "CARTORIO"
+        : ["ADMIN", "CARTORIO", "PROFISSIONAL", "CLIENTE"].includes(roleUpper) ? roleUpper
+        : "CLIENTE";
       
       const user = await prisma.$transaction(async (tx) => {
         const newUser = await tx.user.create({
