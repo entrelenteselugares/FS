@@ -43,9 +43,9 @@ html.dark {
   font-family: 'Outfit', sans-serif;
   font-weight: 900;
   text-transform: uppercase;
-  letter-spacing: -0.05em;
-  line-height: 1.05; /* Senior Fix: Evita sobreposição em títulos longos */
-  font-size: clamp(2.5rem, 8vw, 8.5rem);
+  letter-spacing: -0.04em;
+  line-height: 1.1; /* Editorial spacing */
+  font-size: clamp(1.8rem, 5vw, 3.8rem); /* Significativamente menor conforme referência */
 }
 
 .text-proportional {

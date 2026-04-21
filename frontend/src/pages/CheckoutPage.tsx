@@ -84,12 +84,12 @@ export const CheckoutPage = () => {
         </div>
       </nav>
 
-      <div className="max-w-4xl mx-auto px-4 md:px-10 py-12 md:py-24 grid grid-cols-1 lg:grid-cols-2 gap-12 lg:gap-20">
+      <div className="max-w-2xl mx-auto px-4 md:px-10 py-12 md:py-24 space-y-20">
         {/* Resumo do Pedido */}
-        <div className="order-first lg:order-none">
+        <div className="animate-reveal">
           <div className="mb-0">
              <div className="text-proportional text-brand-primary mb-4">Resumo da Aquisição</div>
-             <h1 className="heading-luxury mb-12">
+             <h1 className="heading-luxury mb-12 !text-3xl md:!text-5xl">
                RESERVA <span className="opacity-30">CONFIRMADA</span>
              </h1>
           </div>
@@ -127,10 +127,10 @@ export const CheckoutPage = () => {
         </div>
 
         {/* Pagamento */}
-        <div className="space-y-12">
-          <div>
+        <div className="animate-reveal" style={{ animationDelay: "0.2s" }}>
+          <div className="text-center mb-10">
             <div className="text-proportional text-brand-primary mb-4">Forma de Pagamento</div>
-            <p className="text-proportional mb-8">Processamento via Mercado Pago com criptografia de 256 bits.</p>
+            <p className="text-proportional">Processamento via Mercado Pago com criptografia de 256 bits.</p>
           </div>
 
           <div className="space-y-4">
@@ -144,9 +144,9 @@ export const CheckoutPage = () => {
               <span className="text-[9px] opacity-60 tracking-[0.2em]">Liberação Imediata via Checkout Pro</span>
             </button>
             
-            <div className="flex items-center justify-center gap-4 py-8">
+            <div className="flex items-center justify-center gap-4 py-4">
                <div className="w-8 h-px bg-theme-border" />
-               <Lock size={12} className="text-theme-muted" />
+               <Lock size={12} className="text-theme-text opacity-30" />
                <div className="w-8 h-px bg-theme-border" />
             </div>
 

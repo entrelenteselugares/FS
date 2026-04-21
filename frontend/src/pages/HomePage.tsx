@@ -158,7 +158,7 @@ export const HomePage = () => {
           .hero-section-container {
             margin: 0 !important;
             border-radius: 0 !important;
-            height: 85vh !important;
+            height: 500px !important; /* Altura controlada conforme referência */
           }
 
           .desktop-hide { display: none !important; }
@@ -353,23 +353,35 @@ export const HomePage = () => {
         }} />
 
         {/* Conteúdo Centralizado */}
-        <div style={{ position: "relative", zIndex: 10, textAlign: "center", padding: "0 24px", maxWidth: 800 }}>
-          <motion.p 
+        <div style={{ position: "relative", zIndex: 10, textAlign: "center", padding: "0 24px", maxWidth: 1200 }}>
+          <motion.div
             initial={{ opacity: 0, y: 10 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.8 }}
             className="text-proportional mb-4"
+            style={{ 
+              letterSpacing: "0.5em", 
+              fontSize: "min(10px, 3vw)",
+              color: "rgba(255,255,255,0.7)",
+              fontWeight: 600,
+              textTransform: "uppercase"
+            }}
           >
-            Coletivo Editorial de Imagem e Cinema
-          </motion.p>
+            COLETIVO EDITORIAL DE IMAGEM E CINEMA
+          </motion.div>
           
           <motion.h1 
-            initial={{ opacity: 0, y: 20 }}
+            initial={{ opacity: 0, y: 15 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.8, delay: 0.2 }}
-            className="heading-luxury mb-6 text-white"
+            className="heading-luxury mb-8"
+            style={{ 
+              fontWeight: 900, 
+              color: "#fff",
+              textShadow: "0 2px 20px rgba(0,0,0,0.5)"
+            }}
           >
-            Eternizando Cada Segundo.
+            ETERNIZANDO CADA SEGUNDO.
           </motion.h1>
 
           <motion.p 
@@ -377,13 +389,13 @@ export const HomePage = () => {
             animate={{ opacity: 1 }}
             transition={{ duration: 1, delay: 0.4 }}
             style={{ 
-              fontSize: "clamp(12px, 1.8vw, 14px)", 
-              color: "rgba(255,255,255,0.7)", 
-              marginBottom: "2.5rem", 
-              fontWeight: 300, 
-              maxWidth: "500px", 
-              margin: "0 auto 2.5rem", 
-              lineHeight: 1.6 
+              fontSize: "clamp(11px, 1.5vw, 13px)", 
+              color: "rgba(255,255,255,0.6)", 
+              marginBottom: "3rem", 
+              fontWeight: 400, 
+              maxWidth: "600px", 
+              margin: "0 auto 3rem", 
+              lineHeight: 1.8 
             }}
           >
             Uma curadoria refinada de experiências visuais. Acesse sua galeria exclusiva com a sofisticação que seu momento merece.
@@ -401,8 +413,8 @@ export const HomePage = () => {
               position: "relative", 
               display: "flex", 
               borderRadius: "2px",
-              padding: "6px",
-              boxShadow: "0 24px 64px -12px rgba(0,0,0,0.4)"
+              padding: "4px", /* Mais compacto conforme referência */
+              boxShadow: "0 10px 40px rgba(0,0,0,0.4)"
             }}
           >
               <input
