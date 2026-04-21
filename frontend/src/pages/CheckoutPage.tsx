@@ -1,21 +1,27 @@
 import { useState, useEffect } from "react";
-import { useParams, useNavigate } from "react-router-dom";
+import { useParams, useNavigate, useSearchParams } from "react-router-dom";
 import { ShieldCheck, ArrowLeft, CreditCard, Lock } from "lucide-react";
 import { API } from "../lib/api";
 
 export const CheckoutPage = () => {
-  const { orderId } = useParams();
-  const navigate = useNavigate();
+  const [searchParams] = useSearchParams();
+  const orderIdFromQuery = searchParams.get("orderId");
+  const effectiveOrderId = orderId || orderIdFromQuery;
+  
   const [order, setOrder] = useState<any>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
 
   useEffect(() => {
-    if (!orderId) return;
+    if (!effectiveOrderId) {
+      setLoading(false);
+      setError("Protocolo de pagamento não identificado.");
+      return;
+    }
 
     const fetchOrder = async () => {
       try {
-        const { data } = await API.get(`/public/orders/${orderId}`);
+        const { data } = await API.get(`/public/orders/${effectiveOrderId}`);
         setOrder(data);
       } catch (err) {
         console.error("Erro ao carregar pedido:", err);
@@ -26,7 +32,7 @@ export const CheckoutPage = () => {
     };
 
     fetchOrder();
-  }, [orderId]);
+  }, [effectiveOrderId]);
 
   const handlePayment = async () => {
     if (!order) return;

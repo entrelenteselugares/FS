@@ -290,18 +290,17 @@ export const HomePage = () => {
 
       {/* HERO SECTION */}
       <section 
-        className="hero-mobile-margin"
+        className="hero-section-container"
         style={{ 
-          height: "clamp(300px, 40vh, 400px)", 
+          height: "clamp(350px, 75vh, 750px)", 
           position: "relative", 
           overflow: "hidden", 
           display: "flex", 
           alignItems: "center", 
           justifyContent: "center", 
           background: "#000",
-          margin: "0 20px",
-          marginTop: "20px",
-          borderRadius: "16px"
+          margin: "clamp(0px, 2vw, 24px)",
+          borderRadius: "clamp(0px, 1.5vw, 16px)"
         }}
       >
         
@@ -310,9 +309,10 @@ export const HomePage = () => {
           position: "absolute", inset: 0, 
           display: "grid", 
           gridTemplateColumns: "repeat(12, 1fr)", 
-          gridTemplateRows: "repeat(6, 1fr)", 
+          gridTemplateRows: "repeat(auto-fill, minmax(150px, 1fr))", 
           gap: 0, zIndex: 0,
-          opacity: 0.6
+          opacity: 0.5,
+          transform: "scale(1.05)" /* Pequeno zoom para evitar bordas brancas */
         }}>
           {Array.from({ length: 72 }).map((_, i) => {
             const photoIds = [
