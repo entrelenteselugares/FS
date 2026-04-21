@@ -16918,7 +16918,7 @@ var require_shams = __commonJS({
         return true;
       }
       var obj = {};
-      var sym = /* @__PURE__ */ Symbol("test");
+      var sym = Symbol("test");
       var symObj = Object(sym);
       if (typeof sym === "string") {
         return false;
@@ -16977,7 +16977,7 @@ var require_has_symbols = __commonJS({
       if (typeof origSymbol("foo") !== "symbol") {
         return false;
       }
-      if (typeof /* @__PURE__ */ Symbol("bar") !== "symbol") {
+      if (typeof Symbol("bar") !== "symbol") {
         return false;
       }
       return hasSymbolSham();
@@ -25985,8 +25985,8 @@ var require_utils4 = __commonJS({
         Object.defineProperty(target, keys[i], Object.getOwnPropertyDescriptor(source, keys[i]));
       }
     };
-    module2.exports.wrapperSymbol = /* @__PURE__ */ Symbol("wrapper");
-    module2.exports.implSymbol = /* @__PURE__ */ Symbol("impl");
+    module2.exports.wrapperSymbol = Symbol("wrapper");
+    module2.exports.implSymbol = Symbol("impl");
     module2.exports.wrapperForImpl = function(impl) {
       return impl[module2.exports.wrapperSymbol];
     };
@@ -26179,7 +26179,7 @@ var require_url_state_machine = __commonJS({
       ws: 80,
       wss: 443
     };
-    var failure = /* @__PURE__ */ Symbol("failure");
+    var failure = Symbol("failure");
     function countSymbols(str) {
       return punycode.ucs2.decode(str).length;
     }
@@ -27606,8 +27606,8 @@ var require_lib5 = __commonJS({
     var https2 = _interopDefault(require("https"));
     var zlib2 = _interopDefault(require("zlib"));
     var Readable2 = Stream.Readable;
-    var BUFFER = /* @__PURE__ */ Symbol("buffer");
-    var TYPE = /* @__PURE__ */ Symbol("type");
+    var BUFFER = Symbol("buffer");
+    var TYPE = Symbol("type");
     var Blob2 = class _Blob {
       constructor() {
         this[TYPE] = "";
@@ -27722,7 +27722,7 @@ var require_lib5 = __commonJS({
       convert = require("encoding").convert;
     } catch (e) {
     }
-    var INTERNALS = /* @__PURE__ */ Symbol("Body internals");
+    var INTERNALS = Symbol("Body internals");
     var PassThrough = Stream.PassThrough;
     function Body(body) {
       var _this = this;
@@ -28062,7 +28062,7 @@ var require_lib5 = __commonJS({
       }
       return void 0;
     }
-    var MAP = /* @__PURE__ */ Symbol("map");
+    var MAP = Symbol("map");
     var Headers2 = class _Headers {
       /**
        * Headers class
@@ -28270,7 +28270,7 @@ var require_lib5 = __commonJS({
         return [k.toLowerCase(), headers[MAP][k].join(", ")];
       });
     }
-    var INTERNAL = /* @__PURE__ */ Symbol("internal");
+    var INTERNAL = Symbol("internal");
     function createHeadersIterator(target, kind) {
       const iterator2 = Object.create(HeadersIteratorPrototype);
       iterator2[INTERNAL] = {
@@ -28339,7 +28339,7 @@ var require_lib5 = __commonJS({
       }
       return headers;
     }
-    var INTERNALS$1 = /* @__PURE__ */ Symbol("Response internals");
+    var INTERNALS$1 = Symbol("Response internals");
     var STATUS_CODES = http3.STATUS_CODES;
     var Response = class _Response {
       constructor() {
@@ -28415,7 +28415,7 @@ var require_lib5 = __commonJS({
       enumerable: false,
       configurable: true
     });
-    var INTERNALS$2 = /* @__PURE__ */ Symbol("Request internals");
+    var INTERNALS$2 = Symbol("Request internals");
     var URL3 = Url.URL || whatwgUrl.URL;
     var parse_url = Url.parse;
     var format_url = Url.format;
@@ -43364,7 +43364,7 @@ var require_range2 = __commonJS({
 var require_comparator = __commonJS({
   "backend/node_modules/semver/classes/comparator.js"(exports2, module2) {
     "use strict";
-    var ANY = /* @__PURE__ */ Symbol("SemVer ANY");
+    var ANY = Symbol("SemVer ANY");
     var Comparator = class _Comparator {
       static get ANY() {
         return ANY;
@@ -58301,7 +58301,7 @@ var require_helpers2 = __commonJS({
       return timeNow + expiresIn;
     }
     function generateCallbackId() {
-      return /* @__PURE__ */ Symbol("auth-callback");
+      return Symbol("auth-callback");
     }
     var isBrowser = () => typeof window !== "undefined" && typeof document !== "undefined";
     exports2.isBrowser = isBrowser;
@@ -68066,7 +68066,7 @@ var parseHeaders_default = (rawHeaders) => {
 };
 
 // backend/node_modules/axios/lib/core/AxiosHeaders.js
-var $internals = /* @__PURE__ */ Symbol("internals");
+var $internals = Symbol("internals");
 var isValidHeaderValue = (value) => !/[\r\n]/.test(value);
 function assertValidHeaderValue(value, header) {
   if (value === false || value == null) {
@@ -68521,7 +68521,7 @@ var import_stream4 = __toESM(require("stream"), 1);
 
 // backend/node_modules/axios/lib/helpers/AxiosTransformStream.js
 var import_stream = __toESM(require("stream"), 1);
-var kInternals = /* @__PURE__ */ Symbol("internals");
+var kInternals = Symbol("internals");
 var AxiosTransformStream = class extends import_stream.default.Transform {
   constructor(options) {
     options = utils_default.toFlatObject(
