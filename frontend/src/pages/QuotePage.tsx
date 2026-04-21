@@ -291,7 +291,13 @@ export const QuotePage = () => {
   };
 
   return (
-    <div style={{ background: THEME.bg, color: THEME.text, minHeight: "100vh", fontFamily: THEME.fontB, padding: "40px 20px" }}>
+    <div style={{ 
+      background: THEME.bg, 
+      color: THEME.text, 
+      minHeight: "100vh", 
+      fontFamily: THEME.fontB, 
+      padding: "80px 20px" /* Aumento no padding superior para ar editorial */
+    }}>
       <style>{`
         .fs-input { background: var(--theme-bg-muted) !important; border: 1px solid var(--theme-border) !important; color: var(--theme-text) !important; border-radius: 0 !important; box-sizing: border-box; font-family: 'Outfit', sans-serif !important; }
         .fs-input:focus { border-color: var(--brand-primary) !important; outline: none !important; }
@@ -319,14 +325,26 @@ export const QuotePage = () => {
               }} 
             />
           </div>
-          <div className="text-proportional text-brand-primary mb-6" style={{ letterSpacing: 6 }}>Solicitação de Orçamento</div>
+          <div 
+            className="text-proportional text-brand-primary mb-8" 
+            style={{ 
+              letterSpacing: 10, 
+              opacity: 0.8,
+              fontSize: 11
+            }}
+          >Solicitação de Orçamento</div>
           <h1 className="heading-luxury">
             ETERNIZE SEU <span className="text-theme-text-muted">GRANDE DIA</span>
           </h1>
         </header>
 
         {step === 1 && (
-          <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} className="lux-card mobile-padding">
+          <motion.div 
+            initial={{ opacity: 0, y: 30 }} 
+            animate={{ opacity: 1, y: 0 }} 
+            transition={{ duration: 0.8, ease: [0.16, 1, 0.3, 1] }}
+            className="lux-card mobile-padding editorial-shadow"
+          >
             <div style={{ display: "flex", flexDirection: "column", gap: 30 }}>
 
               {/* 1. Onde será o registro? */}

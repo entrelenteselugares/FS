@@ -148,8 +148,18 @@ export const HomePage = () => {
           section { padding: 2.5rem 1rem !important; }
           .hero-mobile-margin { margin: 12px 12px 0 !important; }
 
-          /* Event grid on mobile: single column */
-          .events-grid { grid-template-columns: 1fr !important; gap: 2.5rem !important; }
+          /* Grid improvements for Desktop */
+          .events-grid { 
+            grid-template-columns: repeat(2, 1fr) !important; 
+            gap: 4rem !important;
+            padding: 0 4rem !important;
+          }
+
+          .hero-section-container {
+            margin: 0 !important;
+            border-radius: 0 !important;
+            height: 85vh !important;
+          }
 
           .desktop-hide { display: none !important; }
         }
@@ -309,40 +319,38 @@ export const HomePage = () => {
           position: "absolute", inset: 0, 
           display: "grid", 
           gridTemplateColumns: "repeat(12, 1fr)", 
-          gridTemplateRows: "repeat(auto-fill, minmax(150px, 1fr))", 
+          gridTemplateRows: "repeat(auto-fill, minmax(200px, 1fr))", 
           gap: 0, zIndex: 0,
-          opacity: 0.5,
-          transform: "scale(1.05)" /* Pequeno zoom para evitar bordas brancas */
+          opacity: 0.45,
+          filter: "saturate(0.4) contrast(1.1)",
+          transform: "scale(1.02)"
         }}>
-          {Array.from({ length: 72 }).map((_, i) => {
+          {Array.from({ length: 96 }).map((_, i) => {
             const photoIds = [
               '1507003211169-0a1dd7228f2d', '1522202176988-66273c2fd55f', '1519389950473-47ba0277781c',
               '1556761175-b413da4baf72', '1497366216548-37526070297c', '1542744173-8e7e53415bb0',
               '1522071823991-b5ae71c4708e', '1517248135467-4c7edcad34c4', '1531482615713-2afd69097998',
-              '1551836022-d5d88e9218df', '1516321497487-e288fb19713f', '1491975458591-174922118d59',
-              '1521737604893-d14cc237f11d', '1531297484001-80022131f5a1', '1495360010541-f48722b34f7d',
-              '1542744094-110bb0764132', '1522071901873-41981fb0300c', '1470225620780-dba8ba36b745',
-              '1511671782779-c97d3d27a1d4', '1454165205744-3b78555e5572', '1513151233558-d860c5398176',
-              '1504384308090-c594cf107983', '1504384764586-bb4cdc17457b', '1521737706096-3ad5a0542387'
+              '1551836022-d5d88e9218df', '1516321497487-e288fb19713f', '1491975458591-174922118d59'
             ];
             const pId = photoIds[i % photoIds.length];
             return (
-              <div key={i} style={{ width: "100%", height: "100%", overflow: "hidden", border: "1px solid rgba(255,255,255,0.02)" }}>
+              <div key={i} style={{ width: "100%", height: "100%", overflow: "hidden", border: "1px solid rgba(255,255,255,0.03)" }}>
                 <img
-                  src={`https://images.unsplash.com/photo-${pId}?auto=format&fit=crop&q=10&w=200`}
-                  onError={(e) => {
-                    const target = e.target as HTMLImageElement;
-                    target.src = `https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?auto=format&fit=crop&q=10&w=200`;
-                  }}
-                  style={{ width: "100%", height: "100%", objectFit: "cover", filter: "grayscale(100%) brightness(0.6)" }}
+                  src={`https://images.unsplash.com/photo-${pId}?auto=format&fit=crop&q=40&w=400`}
+                  style={{ width: "100%", height: "100%", objectFit: "cover", filter: "grayscale(100%)", opacity: 0.8 }}
                 />
               </div>
             );
           })}
         </div>
 
-        {/* Overlay Suave */}
-        <div style={{ position: "absolute", inset: 0, background: "linear-gradient(to top, rgba(0,0,0,0.8), rgba(0,0,0,0.2))", zIndex: 1 }} />
+        {/* Overlay Editorial */}
+        <div style={{ 
+          position: "absolute", 
+          inset: 0, 
+          background: "linear-gradient(to top, var(--theme-bg), transparent, rgba(0,0,0,0.4))", 
+          zIndex: 1 
+        }} />
 
         {/* Conteúdo Centralizado */}
         <div style={{ position: "relative", zIndex: 10, textAlign: "center", padding: "0 24px", maxWidth: 800 }}>
@@ -386,17 +394,15 @@ export const HomePage = () => {
             initial={{ opacity: 0, scale: 0.98 }}
             animate={{ opacity: 1, scale: 1 }}
             transition={{ duration: 0.6, delay: 0.6 }}
-            className="mobile-search"
+            className="mobile-search lux-glass"
             style={{ 
-              maxWidth: 600, 
+              maxWidth: 720, 
               margin: "0 auto", 
               position: "relative", 
               display: "flex", 
-              background: "rgba(255,255,255,0.08)", 
-              backdropFilter: "blur(20px)",
-              border: "1px solid rgba(255,255,255,0.1)", 
-              borderRadius: "4px",
-              padding: "4px" 
+              borderRadius: "2px",
+              padding: "6px",
+              boxShadow: "0 24px 64px -12px rgba(0,0,0,0.4)"
             }}
           >
               <input

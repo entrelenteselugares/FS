@@ -43,9 +43,9 @@ html.dark {
   font-family: 'Outfit', sans-serif;
   font-weight: 900;
   text-transform: uppercase;
-  letter-spacing: -0.06em;
-  line-height: 0.85;
-  font-size: clamp(2.5rem, 9vw, 9rem);
+  letter-spacing: -0.05em;
+  line-height: 1.05; /* Senior Fix: Evita sobreposição em títulos longos */
+  font-size: clamp(2.5rem, 8vw, 8.5rem);
 }
 
 .text-proportional {
@@ -61,15 +61,26 @@ html.dark {
   background-color: var(--theme-bg-muted);
   padding: 1.5rem;
   transition: all 0.6s cubic-bezier(0.16, 1, 0.3, 1);
-  box-shadow: 0 4px 20px rgba(0,0,0,0.03);
+}
+
+.lux-glass {
+  background: var(--theme-bg-nav);
+  backdrop-filter: blur(24px);
+  -webkit-backdrop-filter: blur(24px);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+html.dark .lux-glass {
+  border: 1px solid rgba(255, 255, 255, 0.05);
+  background: rgba(0, 0, 0, 0.7);
 }
 
 .editorial-shadow {
-  box-shadow: 0 20px 60px -10px rgba(0,0,0,0.2), 0 10px 30px -10px rgba(0,0,0,0.1);
+  box-shadow: 0 40px 100px -20px rgba(0,0,0,0.3), 0 20px 40px -15px rgba(0,0,0,0.1);
 }
 
 @media (min-width: 768px) {
-  .lux-card { padding: 2.5rem; }
+  .lux-card { padding: 3rem; }
 }
 
 .lux-input {
