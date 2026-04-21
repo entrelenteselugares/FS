@@ -22,7 +22,7 @@ interface Event {
 
 export const AdminEvents: React.FC = () => {
   const [events, setEvents] = useState<Event[]>([]);
-  const [, setUsers] = useState<User[]>([]);
+  const [users, setUsers] = useState<User[]>([]);
   const [loading, setLoading] = useState(true);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [editingEvent, setEditingEvent] = useState<Event | null>(null);
@@ -117,7 +117,6 @@ export const AdminEvents: React.FC = () => {
 
   const handleEditOpen = async (event: Event) => {
     try {
-      // Carregar evento completo (detalhes extras) para edição
       const { data } = await API.get(`/public/events/${event.id}`);
       setEditingEvent(data);
       setFormData({
@@ -170,6 +169,8 @@ export const AdminEvents: React.FC = () => {
     <div className="space-y-12 animate-in fade-in slide-in-from-bottom-4 duration-700">
       <div className="flex items-center justify-between border-b border-white/5 pb-8">
         <div>
+          <h2 className="text-4xl font-heading text-theme-text tracking-tighter uppercase">Operação de Eventos</h2>
+          <p className="text-[10px] text-theme-muted uppercase tracking-[0.5em] mt-2 font-bold italic">Logística de Captação e Unidades Fixas</p>
         </div>
         <button 
           onClick={() => setIsModalOpen(true)}
@@ -339,6 +340,53 @@ export const AdminEvents: React.FC = () => {
                 </div>
 
                 <div className="space-y-8">
+                  <div className="space-y-6 pt-10 border-t border-white/5">
+                    <label className="text-[10px] font-bold text-brand-tactical uppercase tracking-[0.4em]">Equipe Operacional</label>
+                    <div className="space-y-6">
+                      <div className="space-y-2">
+                        <label className="text-[9px] font-bold text-zinc-600 uppercase tracking-[0.4em]">Unidade Fixa Responsável</label>
+                        <select 
+                          value={formData.cartorioId}
+                          onChange={e => setFormData({...formData, cartorioId: e.target.value})}
+                          className="w-full bg-theme-bg-muted border-b border-theme-border py-4 px-4 text-xs text-theme-text focus:outline-none focus:border-brand-tactical appearance-none rounded-none cursor-pointer"
+                        >
+                          <option value="">SELECIONE A UNIDADE</option>
+                          {users.filter(u => u.role === "UNIDADE" || u.role === "CARTORIO").map(u => (
+                            <option key={u.id} value={u.id}>{u.nome.toUpperCase()}</option>
+                          ))}
+                        </select>
+                      </div>
+
+                      <div className="grid grid-cols-2 gap-8">
+                        <div className="space-y-2">
+                          <label className="text-[9px] font-bold text-zinc-600 uppercase tracking-[0.4em]">Captação (Fotógrafo)</label>
+                          <select 
+                            value={formData.captacaoId}
+                            onChange={e => setFormData({...formData, captacaoId: e.target.value})}
+                            className="w-full bg-theme-bg-muted border-b border-theme-border py-4 px-4 text-xs text-theme-text focus:outline-none focus:border-brand-tactical appearance-none rounded-none cursor-pointer"
+                          >
+                            <option value="">FOTÓGRAFO</option>
+                            {users.filter(u => u.role === "PROFISSIONAL").map(u => (
+                              <option key={u.id} value={u.id}>{u.nome.toUpperCase()}</option>
+                            ))}
+                          </select>
+                        </div>
+                        <div className="space-y-2">
+                          <label className="text-[9px] font-bold text-zinc-600 uppercase tracking-[0.4em]">Edição (Design)</label>
+                          <select 
+                            value={formData.edicaoId}
+                            onChange={e => setFormData({...formData, edicaoId: e.target.value})}
+                            className="w-full bg-theme-bg-muted border-b border-theme-border py-4 px-4 text-xs text-theme-text focus:outline-none focus:border-brand-tactical appearance-none rounded-none cursor-pointer"
+                          >
+                            <option value="">EDITOR</option>
+                            {users.filter(u => u.role === "PROFISSIONAL").map(u => (
+                              <option key={u.id} value={u.id}>{u.nome.toUpperCase()}</option>
+                            ))}
+                          </select>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
 
                   <div className="grid grid-cols-2 gap-8">
                     <div className="space-y-2">
@@ -456,8 +504,8 @@ export const AdminEvents: React.FC = () => {
                     const ctx = canvas.getContext("2d");
                     const img = new Image();
                     img.onload = () => {
-                      canvas.width = img.width;
                       canvas.height = img.height;
+                      canvas.width = img.width;
                       ctx?.drawImage(img, 0, 0);
                       const pngFile = canvas.toDataURL("image/png");
                       const downloadLink = document.createElement("a");

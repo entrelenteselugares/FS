@@ -5,7 +5,7 @@ import { API } from "../lib/api";
 import { QRCodeSVG } from "qrcode.react";
 import { QrCode, Copy, Check, X, Download } from "lucide-react";
 
-interface CartorioStats {
+interface UnidadeStats {
   totalEventos: number;
   totalVendas: number;
   repasseEstimado: number;
@@ -68,7 +68,7 @@ export default function CartorioDashboard() {
   const [searchParams] = useSearchParams();
 
   const [tab, setTab] = useState<Tab>("agenda");
-  const [stats, setStats] = useState<CartorioStats | null>(null);
+  const [stats, setStats] = useState<UnidadeStats | null>(null);
   const [eventos, setEventos] = useState<EventoAgenda[]>([]);
   const [pedidos, setPedidos] = useState<PedidoUnidade[]>([]);
   const [loading, setLoading] = useState(true);

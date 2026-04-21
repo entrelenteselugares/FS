@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import { useNavigate, Link, useSearchParams } from "react-router-dom";
 import { motion } from "framer-motion";
-import { ArrowRight, User, Camera, Mail, Lock, UserCircle, Phone, Eye, EyeOff } from "lucide-react";
+import { ArrowRight, User, Camera, Building2, Mail, Lock, UserCircle, Phone, Eye, EyeOff } from "lucide-react";
 import { API } from "../lib/api";
 
 export const RegisterPage: React.FC = () => {
@@ -75,6 +75,7 @@ export const RegisterPage: React.FC = () => {
   const roles = [
     { id: "CLIENTE", label: "Cliente Privado", icon: <User size={14} /> },
     { id: "PROFISSIONAL", label: "Artista da Rede", icon: <Camera size={14} /> },
+    { id: "UNIDADE", label: "Unidade Fixa", icon: <Building2 size={14} /> },
   ];
 
   return (
