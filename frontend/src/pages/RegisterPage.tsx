@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import { useNavigate, Link, useSearchParams } from "react-router-dom";
 import { motion } from "framer-motion";
-import { ArrowRight, User, Camera, Building2, Mail, Lock, UserCircle, Phone } from "lucide-react";
+import { ArrowRight, User, Camera, Building2, Mail, Lock, UserCircle, Phone, Eye, EyeOff } from "lucide-react";
 import { API } from "../lib/api";
 
 export const RegisterPage: React.FC = () => {
@@ -25,6 +25,7 @@ export const RegisterPage: React.FC = () => {
     acceptedPrivacy: false,
   });
   const [loading, setLoading] = useState(false);
+  const [showSenha, setShowSenha] = useState(false);
   const [error, setError] = useState("");
   const navigate = useNavigate();
 
@@ -254,17 +255,25 @@ export const RegisterPage: React.FC = () => {
 
             <div className="space-y-4 md:col-span-2">
               <label className="text-[10px] font-bold uppercase tracking-[0.4em] text-theme-muted ml-1">Senha de Acesso</label>
-              <div className="relative group">
+              <div className="relative group flex items-center">
                 <Lock className="absolute left-0 top-1/2 -translate-y-1/2 text-theme-muted group-focus-within:text-brand-tactical transition-colors" size={14} strokeWidth={1.5} />
                 <input
-                  type="password"
+                  type={showSenha ? "text" : "password"}
                   required
                   value={formData.senha}
                   onChange={(e) => setFormData({ ...formData, senha: e.target.value })}
-                  className="w-full bg-transparent border-b border-theme-border py-3 pl-8 text-xs text-theme-text placeholder:text-theme-muted/40 focus:outline-none focus:border-brand-tactical transition-all"
+                  className="w-full bg-transparent border-b border-theme-border py-3 pl-8 pr-10 text-xs text-theme-text placeholder:text-theme-muted/40 focus:outline-none focus:border-brand-tactical transition-all"
                   placeholder="••••••••"
                   autoComplete="new-password"
                 />
+                <button
+                  type="button"
+                  onClick={() => setShowSenha(!showSenha)}
+                  className="absolute right-0 top-1/2 -translate-y-1/2 text-theme-muted hover:text-theme-text transition-colors p-2"
+                  title={showSenha ? "Ocultar senha" : "Ver senha"}
+                >
+                  {showSenha ? <EyeOff size={16} /> : <Eye size={16} />}
+                </button>
               </div>
             </div>
 

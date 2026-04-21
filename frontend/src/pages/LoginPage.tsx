@@ -4,13 +4,14 @@ import { useNavigate, Link } from "react-router-dom";
 import { useAuth } from "../hooks/useAuth";
 import { useTheme } from "../hooks/useTheme";
 import { motion } from "framer-motion";
-import { ArrowRight, Lock, Mail, ArrowLeft, Sun, Moon } from "lucide-react";
+import { ArrowRight, Lock, Mail, ArrowLeft, Sun, Moon, Eye, EyeOff } from "lucide-react";
 
 export const LoginPage: React.FC = () => {
   const [email, setEmail] = useState("");
   const [senha, setSenha] = useState("");
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
+  const [showSenha, setShowSenha] = useState(false);
   
   const { login } = useAuth();
   const { theme, toggleTheme } = useTheme();
@@ -152,14 +153,22 @@ export const LoginPage: React.FC = () => {
               <div className="relative flex items-center">
                 <Lock className="absolute left-0 text-theme-muted" size={14} strokeWidth={1.5} />
                 <input
-                  type="password"
+                  type={showSenha ? "text" : "password"}
                   value={senha}
                   onChange={(e) => setSenha(e.target.value)}
-                  className="login-input"
+                  className="login-input pr-10"
                   placeholder="••••••••"
                   autoComplete="current-password"
                   required
                 />
+                <button
+                  type="button"
+                  onClick={() => setShowSenha(!showSenha)}
+                  className="absolute right-0 text-theme-muted hover:text-theme-text transition-colors p-2"
+                  title={showSenha ? "Ocultar senha" : "Ver senha"}
+                >
+                  {showSenha ? <EyeOff size={16} /> : <Eye size={16} />}
+                </button>
               </div>
             </div>
 
