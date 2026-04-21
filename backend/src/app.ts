@@ -25,6 +25,10 @@ app.use(cors({
     if (isAllowed || isVercelPreview) {
       callback(null, true);
     } else {
+      // Especial: Permite que Webhooks do Mercado Pago passem pelo CORS se enviarem Origin
+      if (origin.includes("mercadopago.com")) {
+        return callback(null, true);
+      }
       console.warn(`[CORS] Bloqueado para origin: ${origin}`);
       callback(new Error("CORS bloqueado por política de segurança"));
     }
@@ -48,6 +52,9 @@ const limiter = rateLimit({
   standardHeaders: true,
   legacyHeaders: false,
 });
+
+// Webhooks do Mercado Pago (Bypass do Rate Limiter e Autenticação)
+app.post("/api/webhooks/mercadopago", apiRoutes); 
 
 app.use("/api", limiter, apiRoutes);
 

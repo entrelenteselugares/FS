@@ -120,6 +120,14 @@ export class PaymentController {
       const [tsPart, v1Part] = sig.split(",");
       const ts = tsPart?.split("=")[1];
       const v1 = v1Part?.split("=")[1];
+      
+      if (!ts || !v1) {
+        console.warn("[Webhook] Headers de assinatura ausentes ou malformados.");
+        // Se o secret está configurado mas a assinatura veio vazia (ex: simulador),
+        // respondemos 200 para não pendurar o sistema, mas não processamos.
+        return res.status(200).json({ ok: true, message: "Ignorado (Headers ausentes)" });
+      }
+
       const manifest = `id:${dataId};request-id:${reqId};ts:${ts};`;
       const hmac = crypto
         .createHmac("sha256", process.env.MP_WEBHOOK_SECRET)
