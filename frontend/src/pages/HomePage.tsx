@@ -86,10 +86,7 @@ function EventCard({ event, onClick }: { event: Event; onClick: () => void }) {
           <span>{formatDate(event.dataEvento)}</span>
           {event.cartorio && <><span>·</span><span>{event.cartorio}</span></>}
         </div>
-        <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between" }}>
-          <span style={{ fontFamily: T.fontD, fontWeight: 700, fontSize: 17, color: T.brand }}>
-            R$ {price.toFixed(0)}
-          </span>
+        <div style={{ display: "flex", alignItems: "center", justifyContent: "flex-end" }}>
           <div style={{ display: "flex", gap: 6 }}>
             {event.temFoto  && <span style={{ fontSize: 9, fontFamily: T.fontB, color: T.text3, letterSpacing: 1, textTransform: "uppercase", border: `1px solid ${T.border}`, padding: "2px 7px" }}>Foto</span>}
             {event.temVideo && <span style={{ fontSize: 9, fontFamily: T.fontB, color: T.text3, letterSpacing: 1, textTransform: "uppercase", border: `1px solid ${T.border}`, padding: "2px 7px" }}>Vídeo</span>}
