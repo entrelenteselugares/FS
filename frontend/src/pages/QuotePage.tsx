@@ -199,14 +199,27 @@ function DateTimePicker({ value, onChange }: { value: string; onChange: (v: stri
   );
 }
 
+interface Service {
+  id: string;
+  name: string;
+  basePrice: number;
+}
+
+interface Partner {
+  id: string;
+  name: string;
+  city: string;
+  prices?: Record<string, number>;
+}
+
 export const QuotePage = () => {
   const navigate = useNavigate();
   const [step, setStep] = useState(1);
-  const [partners, setPartners] = useState<{id: string, name: string, city: string, prices?: any}[]>([]);
+  const [partners, setPartners] = useState<Partner[]>([]);
   
   // Form State
   const [selectedServices, setSelectedServices] = useState<string[]>([]);
-  const [catalog, setCatalog] = useState<any[]>([]);
+  const [catalog, setCatalog] = useState<Service[]>([]);
 
   // Carregar catálogo global
   useEffect(() => {
@@ -235,11 +248,10 @@ export const QuotePage = () => {
   const { user } = useAuth();
 
   useEffect(() => {
-    if (user) {
-      if (!name) setName(user.nome);
-      if (!email) setEmail(user.email);
-    }
-  }, [user, name, email]);
+    if (user && !name) setName(user.nome);
+    if (user && !email) setEmail(user.email);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [user]);
 
   useEffect(() => {
     // Busca parceiros cadastrados (Unidades Fixas)
