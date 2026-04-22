@@ -454,7 +454,8 @@ export default function UnidadeFixaDashboard() {
               <div style={{ display: "flex", flexDirection: "column", gap: "1rem" }}>
                 {globalServices.length === 0 ? (
                   <div style={{ padding: "4rem 2rem", textAlign: "center", border: "1px dashed var(--theme-border)" }}>
-                    <p style={{ fontSize: 12, color: "var(--theme-text-muted)", textTransform: "uppercase", letterSpacing: 2 }}>Sincronizando catálogo global...</p>
+                    <p style={{ fontSize: 13, fontWeight: 800, color: "var(--theme-text)", textTransform: "uppercase", letterSpacing: 2, marginBottom: 8 }}>Catálogo não configurado</p>
+                    <p style={{ fontSize: 11, color: "var(--theme-text-muted)" }}>O administrador ainda não cadastrou os serviços da rede. Assim que o catálogo for publicado, os itens aparecerão aqui para customização.</p>
                   </div>
                 ) : globalServices.map(svc => (
                   <div key={svc.id} style={{ display: "flex", alignItems: "center", justifyContent: "space-between", padding: "1.5rem 2rem", background: "var(--theme-bg)", border: "1px solid var(--theme-border)", transition: "border-color 0.3s" }} className="mobile-stack group hover:border-brand-primary/30">
@@ -484,6 +485,7 @@ export default function UnidadeFixaDashboard() {
                 ))}
               </div>
 
+              {globalServices.length > 0 && (
               <div style={{ marginTop: "2.5rem", borderTop: "1px solid var(--theme-border)", paddingTop: "2.5rem" }}>
                 <button
                    disabled={savingPrices}
@@ -493,6 +495,7 @@ export default function UnidadeFixaDashboard() {
                    {savingPrices ? "SALVANDO..." : "ATUALIZAR TABELA DE PREÇOS"}
                 </button>
               </div>
+              )}
             </div>
 
             <div style={{ ...S.card, padding: "2rem", display: "flex", flexDirection: "column", gap: "2rem" }}>
