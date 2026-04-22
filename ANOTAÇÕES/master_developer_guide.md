@@ -27,11 +27,11 @@ Nenhuma ação administrativa ou de autenticação deve ocorrer sem rastro.
 > [!IMPORTANT]
 > **Helper `audit()`**: Localizado em `backend/src/lib/audit.ts`.
 > Uso obrigatório em:
+>
 > - Login / Registro
 > - Criação/Edição/Deleção de Eventos
 > - Aprovação de Orçamentos
 > - Alterações de Perfil
-
 
 **Formato de Dados**: Devido ao schema compacto, todos os metadados (entidade, valores antigos/novos, IP) devem ser serializados no campo `details` via helper `audit()`.
 

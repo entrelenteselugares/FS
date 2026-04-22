@@ -38,7 +38,7 @@ export function useViaCep() {
       }
 
       return data;
-    } catch (err) {
+    } catch {
       setError("Erro ao buscar CEP.");
       return null;
     } finally {
