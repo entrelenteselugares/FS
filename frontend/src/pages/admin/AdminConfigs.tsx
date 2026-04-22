@@ -193,8 +193,8 @@ export const AdminConfigs: React.FC = () => {
                     <div className="flex justify-between items-end">
                       <label className="text-[9px] font-bold text-theme-muted uppercase tracking-[0.4em]">
                         {config.key === "split_cartorio" ? "Unidade Fixa (Logística)" : 
-                         config.key === "split_captacao" ? "Captação (Artista da Rede)" :
-                         config.key === "split_edicao" ? "Edição (Artista da Rede)" :
+                         config.key === "split_captacao" ? "Captação (Profissional da Rede)" :
+                         config.key === "split_edicao" ? "Edição (Profissional da Rede)" :
                          config.label}
                       </label>
                       <div className="flex items-center gap-2">

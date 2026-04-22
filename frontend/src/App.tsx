@@ -129,7 +129,7 @@ function App() {
         <div className="min-h-screen bg-theme-bg flex flex-col items-center justify-center gap-6 transition-colors duration-500">
           <div className="w-1.5 h-1.5 rounded-full bg-brand-primary animate-ping mb-4" />
           <div className="text-[14px] font-bold uppercase tracking-[0.6em] text-theme-text">FOTO SEGUNDO</div>
-          <div className="text-[10px] font-bold uppercase tracking-[0.3em] text-theme-text-muted animate-pulse">Sincronizando Rede de Artistas...</div>
+          <div className="text-[10px] font-bold uppercase tracking-[0.3em] text-theme-text-muted animate-pulse">Sincronizando Rede de Profissionais...</div>
         </div>
       ) : (
         <AuthProvider>

@@ -437,26 +437,26 @@ export const AdminEvents: React.FC = () => {
 
                       <div className="grid grid-cols-2 gap-8">
                         <div className="space-y-2">
-                          <label className="text-[9px] font-bold text-theme-muted/60 uppercase tracking-[0.4em]">Captação (Artista da Rede)</label>
+                          <label className="text-[9px] font-bold text-theme-muted/60 uppercase tracking-[0.4em]">Captação (Profissional da Rede)</label>
                           <select 
                             value={formData.captacaoId}
                             onChange={e => setFormData({...formData, captacaoId: e.target.value})}
                             className="w-full bg-theme-bg-muted border-b border-theme-border py-4 px-4 text-xs text-theme-text focus:outline-none focus:border-brand-tactical appearance-none rounded-none cursor-pointer"
                           >
-                            <option value="">ARTISTA DA REDE</option>
+                            <option value="">PROFISSIONAL DA REDE</option>
                             {users.filter(u => u.role === "PROFISSIONAL").map(u => (
                               <option key={u.id} value={u.id}>{u.nome.toUpperCase()}</option>
                             ))}
                           </select>
                         </div>
                         <div className="space-y-2">
-                          <label className="text-[9px] font-bold text-theme-muted/60 uppercase tracking-[0.4em]">Edição (Artista da Rede)</label>
+                          <label className="text-[9px] font-bold text-theme-muted/60 uppercase tracking-[0.4em]">Edição (Profissional da Rede)</label>
                           <select 
                             value={formData.edicaoId}
                             onChange={e => setFormData({...formData, edicaoId: e.target.value})}
                             className="w-full bg-theme-bg-muted border-b border-theme-border py-4 px-4 text-xs text-theme-text focus:outline-none focus:border-brand-tactical appearance-none rounded-none cursor-pointer"
                           >
-                            <option value="">ARTISTA DA REDE</option>
+                            <option value="">PROFISSIONAL DA REDE</option>
                             {users.filter(u => u.role === "PROFISSIONAL").map(u => (
                               <option key={u.id} value={u.id}>{u.nome.toUpperCase()}</option>
                             ))}

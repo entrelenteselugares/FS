@@ -207,7 +207,7 @@ const SidebarContent: React.FC<SidebarContentProps> = ({ navItems, onNavigate })
           }}>
             {user?.role === "ADMIN" ? "Administrador" : 
              user?.role === "CARTORIO" || user?.role === "UNIDADE" ? "Unidade Fixa" :
-             user?.role === "PROFISSIONAL" ? "Artista da Rede" :
+             user?.role === "PROFISSIONAL" ? "Profissional da Rede" :
              "Cliente"}
           </div>
         </div>

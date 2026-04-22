@@ -114,7 +114,7 @@ export const AdminUsers: React.FC = () => {
       <div className="flex items-center justify-between border-b border-white/5 pb-8">
         <div>
           <h2 className="text-4xl font-heading text-theme-text tracking-tighter uppercase">Rede de Membros</h2>
-          <p className="text-[10px] text-theme-muted uppercase tracking-[0.5em] mt-2 font-bold italic">Diretório de Artistas e Unidades Fixas</p>
+          <p className="text-[10px] text-theme-muted uppercase tracking-[0.5em] mt-2 font-bold italic">Diretório de Profissionais e Unidades Fixas</p>
         </div>
         <button 
           onClick={() => setIsModalOpen(true)}

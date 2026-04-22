@@ -190,7 +190,7 @@ export default function ProfissionalDashboard() {
 
   return (
     <DashboardLayout 
-      title="Painel do Artista" 
+      title="Painel do Profissional" 
       navItems={NAV_ITEMS(activeTab, setActiveTab, pendingEvents.length)}
     >
       <style>{`
@@ -364,8 +364,8 @@ export default function ProfissionalDashboard() {
                     </div>
                     
                     <div className="mobile-stack" style={{ display: "flex", gap: "1.5rem", alignItems: "center" }}>
-                       {(ev.captacaoId === user?.id) && <div style={{ fontSize: 9, background: "rgba(133,185,172,0.1)", color: "var(--brand-primary)", padding: "4px 8px", fontWeight: 700, textTransform: "uppercase", border: "1px solid var(--brand-primary)" }}>Artista da Rede</div>}
-                       {(ev.edicaoId === user?.id) && <div style={{ fontSize: 9, background: "rgba(133,185,172,0.1)", color: "var(--brand-primary)", padding: "4px 8px", fontWeight: 700, textTransform: "uppercase", border: "1px solid var(--brand-primary)" }}>Artista da Rede</div>}
+                       {(ev.captacaoId === user?.id) && <div style={{ fontSize: 9, background: "rgba(133,185,172,0.1)", color: "var(--brand-primary)", padding: "4px 8px", fontWeight: 700, textTransform: "uppercase", border: "1px solid var(--brand-primary)" }}>Profissional da Rede</div>}
+                       {(ev.edicaoId === user?.id) && <div style={{ fontSize: 9, background: "rgba(133,185,172,0.1)", color: "var(--brand-primary)", padding: "4px 8px", fontWeight: 700, textTransform: "uppercase", border: "1px solid var(--brand-primary)" }}>Profissional da Rede</div>}
                       
                       <div className="mobile-hide" style={{ flex: 1 }} />
                       

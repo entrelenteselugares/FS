@@ -384,9 +384,9 @@ export default function UnidadeFixaDashboard() {
                 </div>
                 <div style={{ textAlign: "right", flexShrink: 0 }}>
                   {ev.captacao ? (
-                    <p style={{ fontSize: 12, color: "var(--brand-primary)", fontWeight: 700 }}>✓ {ev.captacao?.user?.name ?? ev.captacao?.user?.nome ?? ev.captacao?.nome ?? "Artista da Rede"}</p>
+                    <p style={{ fontSize: 12, color: "var(--brand-primary)", fontWeight: 700 }}>✓ {ev.captacao?.user?.name ?? ev.captacao?.user?.nome ?? ev.captacao?.nome ?? "Profissional da Rede"}</p>
                   ) : (
-                    <p style={{ fontSize: 12, color: "#f59e0b", fontWeight: 700 }}>SEM ARTISTA DESIGNADO</p>
+                    <p style={{ fontSize: 12, color: "#f59e0b", fontWeight: 700 }}>SEM PROFISSIONAL DESIGNADO</p>
                   )}
                   <p style={{ fontSize: 10, color: "var(--theme-text-muted)", marginTop: 2, fontWeight: 600 }}>{ev._count?.orders ?? 0} venda(s)</p>
                 </div>

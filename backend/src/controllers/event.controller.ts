@@ -64,7 +64,7 @@ export class EventController {
 
       const isPaid = (req.app as any).locals.MOCK_PAID || false;
       const order = await prisma.order.findFirst({
-        where: { eventId: id as string, clienteId: userId as string, status: "APROVADO" }
+        where: { eventId: event.id, clienteId: userId as string, status: "APROVADO" }
       }).catch(() => null);
 
       const hasAccess = isPaid || !!order;

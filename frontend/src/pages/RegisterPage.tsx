@@ -130,7 +130,7 @@ export const RegisterPage: React.FC = () => {
 
   const roles = [
     { id: "CLIENTE", label: "Cliente Privado", icon: <User size={14} /> },
-    { id: "PROFISSIONAL", label: "Artista da Rede", icon: <Camera size={14} /> },
+    { id: "PROFISSIONAL", label: "Profissional da Rede", icon: <Camera size={14} /> },
     { id: "UNIDADE", label: "Unidade Fixa", icon: <Building2 size={14} /> },
   ];
 
@@ -167,7 +167,7 @@ export const RegisterPage: React.FC = () => {
           <h1 className="heading-luxury">
             SOLICITAR <span className="opacity-30">REGISTRO</span>
           </h1>
-          <p className="text-proportional mt-6">Protocolo de Registro de Rede (Artistas & Unidades)</p>
+          <p className="text-proportional mt-6">Protocolo de Registro de Rede (Profissionais & Unidades)</p>
         </div>
 
         <div className="lux-card editorial-shadow">
