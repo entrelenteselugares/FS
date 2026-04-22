@@ -22,7 +22,7 @@ export const useTheme = () => {
 export function ThemeProvider({ children }: { children: ReactNode }) {
   const [theme, setTheme] = useState<Theme>(() => {
     const saved = localStorage.getItem("fs_theme") as Theme;
-    return saved ?? "dark";
+    return saved ?? "light";
   });
 
   // ── Sync Theme (Light/Dark) ──
