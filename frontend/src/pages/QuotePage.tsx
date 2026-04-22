@@ -277,9 +277,23 @@ export const QuotePage = () => {
   const team = calculateTeam();
   
   const currentPartner = partners.find(p => p.id === selectedPartnerId);
-  const showPrices = locationType === "PARTNER" ? !!selectedPartnerId : false;
+  // Lógica de exibição de preços
+  // - Unidade Fixa: mostra preço apenas se parceiro selecionado
+  // - Outro Local + Pessoal: mostra preço estimado (simulado por hora)
+  // - Outro Local + Empresarial: não mostra preços (negociação direta)
+  const showPrices = locationType === "PARTNER" 
+    ? !!selectedPartnerId 
+    : (locationType === "OTHER" && usageType === "PESSOAL");
+  
+  const showBusinessBanner = locationType === "OTHER" && usageType === "EMPRESARIAL";
 
+  // Preço por hora para uso pessoal em outro local
   const getServicePrice = (id: string, defaultPrice: number) => {
+    if (locationType === "OTHER" && usageType === "PESSOAL") {
+      // Cada hora adicional além da primeira agrega 40% do preço base
+      const hourMultiplier = 1 + ((eventHours - 1) * 0.4);
+      return Math.round(defaultPrice * hourMultiplier);
+    }
     if (!showPrices) return defaultPrice;
     const custom = currentPartner?.prices?.[id];
     return custom !== undefined && custom !== null ? Number(custom) : defaultPrice;
@@ -412,9 +426,33 @@ export const QuotePage = () => {
                 )}
               </div>
 
+              </div>
+
+              {/* Seção de Serviços */}
               <div>
                 <label style={{ fontSize: 10, fontWeight: 800, textTransform: "uppercase", marginBottom: 15, display: "block", color: THEME.text }}>2. Selecione os Serviços</label>
-                <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(200px, 1fr))", gap: 15 }}>
+                
+                {/* Banner Empresarial */}
+                {showBusinessBanner ? (
+                  <div style={{ 
+                    padding: "28px 24px", 
+                    border: `1px solid ${THEME.accent}44`,
+                    background: `${THEME.accent}08`,
+                    display: "flex",
+                    flexDirection: "column",
+                    gap: 12
+                  }}>
+                    <div style={{ fontSize: 11, fontWeight: 900, textTransform: "uppercase", letterSpacing: 2, color: THEME.accent }}>Negociação Personalizada</div>
+                    <p style={{ fontSize: 13, color: THEME.text2, lineHeight: 1.7, margin: 0 }}>
+                      Eventos empresariais envolvem <strong style={{ color: THEME.text }}>logística dedicada, profissionais sêniores certificados e nota fiscal</strong>. O valor é calculado individualmente após análise do briefing.
+                    </p>
+                    <p style={{ fontSize: 11, color: THEME.text2, margin: 0, opacity: 0.7 }}>
+                      Selecione os serviços desejados e nossa equipe preparará uma proposta comercial completa.
+                    </p>
+                  </div>
+                ) : null}
+
+                <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(200px, 1fr))", gap: 15, marginTop: showBusinessBanner ? 16 : 0 }}>
                 {availableServices.map(s => (
                   <div key={s.id} onClick={() => {
                     if (selectedServices.includes(s.id)) setSelectedServices(prev => prev.filter(x => x !== s.id));
@@ -425,9 +463,17 @@ export const QuotePage = () => {
                     position: "relative", overflow: "hidden"
                   }}>
                     <p style={{ fontSize: 11, fontWeight: 900, color: THEME.text, textTransform: "uppercase", letterSpacing: 1 }}>{s.name}</p>
-                    <p style={{ fontSize: 13, color: THEME.accent, fontWeight: 900, marginTop: 4 }}>
-                      + {new Intl.NumberFormat("pt-BR", { style: "currency", currency: "BRL" }).format(getServicePrice(s.id, s.basePrice))}
-                    </p>
+                    {!showBusinessBanner && (
+                      <p style={{ fontSize: 13, color: THEME.accent, fontWeight: 900, marginTop: 4 }}>
+                        + {new Intl.NumberFormat("pt-BR", { style: "currency", currency: "BRL" }).format(getServicePrice(s.id, s.basePrice))}
+                        {locationType === "OTHER" && usageType === "PESSOAL" && eventHours > 1 && (
+                          <span style={{ fontSize: 9, color: THEME.text2, fontWeight: 600, marginLeft: 6 }}>/{eventHours}h</span>
+                        )}
+                      </p>
+                    )}
+                    {showBusinessBanner && (
+                      <p style={{ fontSize: 10, color: THEME.text2, marginTop: 4, fontStyle: "italic" }}>sob consulta</p>
+                    )}
                     {selectedServices.includes(s.id) && (
                       <div style={{ position: "absolute", top: 0, right: 0, width: 24, height: 24, background: THEME.accent, color: "var(--theme-text-on-brand)", display: "flex", alignItems: "center", justifyContent: "center" }}>
                         <ShieldCheck size={12} />
@@ -436,6 +482,21 @@ export const QuotePage = () => {
                   </div>
                 ))}
               </div>
+
+              {/* Aviso de Simulação para Uso Pessoal em Outro Local */}
+              {locationType === "OTHER" && usageType === "PESSOAL" && (
+                <div style={{ 
+                  marginTop: 12, 
+                  padding: "10px 14px", 
+                  border: `1px solid ${THEME.accent}33`,
+                  background: `${THEME.accent}05`,
+                  fontSize: 10,
+                  color: THEME.text2,
+                  lineHeight: 1.6
+                }}>
+                  ⚠️ <strong style={{ color: THEME.accent }}>Simulação de valores iniciais.</strong> Os preços são estimativas baseadas em {eventHours}h de cobertura e podem variar conforme deslocamento, equipe e complexidade do evento. O valor final será confirmado por nossa equipe após análise do briefing.
+                </div>
+              )}
               </div>
 
               <div className="mobile-grid-1" style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 20 }}>
@@ -464,10 +525,18 @@ export const QuotePage = () => {
 
               <div style={{ borderTop: `1px solid ${THEME.border}`, paddingTop: 30, marginTop: 20 }}>
                  <div className="mobile-stack" style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-end" }}>
-                     {showPrices ? (
+                     {showBusinessBanner ? (
+                       <div className="mobile-text-center" style={{ maxWidth: 320 }}>
+                         <div style={{ fontSize: 10, fontWeight: 900, color: THEME.accent, textTransform: "uppercase", marginBottom: 5 }}>Proposta Comercial</div>
+                         <div style={{ fontSize: 12, color: THEME.text2, lineHeight: 1.4 }}>Nossa equipe analisará seu briefing e enviará uma proposta personalizada em até 24h.</div>
+                       </div>
+                     ) : showPrices ? (
                         <div className="mobile-text-center">
                           <div className="text-proportional mb-2">Investimento Estimado</div>
                           <div className="heading-luxury !text-brand-primary">R$ {Number(totalPrice).toFixed(2)}</div>
+                          {locationType === "OTHER" && usageType === "PESSOAL" && (
+                            <div style={{ fontSize: 9, color: THEME.text2, marginTop: 4 }}>* Simulação — sujeito a confirmação</div>
+                          )}
                         </div>
                      ) : (
                        <div className="mobile-text-center" style={{ maxWidth: 300 }}>
