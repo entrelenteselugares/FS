@@ -181,6 +181,8 @@ export const CheckoutPage = () => {
             initializationStarted.current = false; // Permite tentar novamente em caso de erro
           },
         },
+      };
+
       brickController.current = await bricksBuilder.create("payment", "paymentBrick_container", settings);
     };
 
