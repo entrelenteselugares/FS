@@ -40,7 +40,6 @@ function isRecent(d: string) {
 function EventCard({ event, onClick }: { event: Event; onClick: () => void }) {
   const today = isToday(event.dataEvento);
   const novo  = !today && isRecent(event.dataEvento);
-  const price = Number(event.priceBase ?? 190);
 
   return (
     <div
