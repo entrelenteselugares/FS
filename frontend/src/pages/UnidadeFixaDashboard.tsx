@@ -19,7 +19,7 @@ interface GlobalService {
   id: string;
   name: string;
   description: string;
-  priceBase: number;
+  basePrice: number;
 }
 
 interface ProfissionalTeam {
@@ -148,6 +148,7 @@ export default function UnidadeFixaDashboard() {
       setStats(statsRes.data);
       setEventos(eventosRes.data.events ?? eventosRes.data);
       setUnidadeName(statsRes.data.razaoSocial ?? "");
+      await loadLpData();
     } catch (err: unknown) {
       const error = err as { response?: { status: number } };
       if (error.response?.status === 404) {
@@ -642,7 +643,7 @@ export default function UnidadeFixaDashboard() {
                       <p style={{ fontSize: 11, color: "var(--theme-text-muted)", lineHeight: 1.5 }}>{svc.description}</p>
                       <div style={{ marginTop: 12, display: "inline-flex", alignItems: "center", gap: 6, background: "var(--theme-bg-muted)", padding: "4px 10px", border: "1px solid var(--theme-border)" }}>
                          <span style={{ fontSize: 8, fontWeight: 900, color: "var(--theme-text-muted)", textTransform: "uppercase", letterSpacing: 1 }}>Sugerido:</span>
-                         <span style={{ fontSize: 10, fontWeight: 800, color: "var(--theme-text)" }}>{formatCurrency(svc.priceBase)}</span>
+                         <span style={{ fontSize: 10, fontWeight: 800, color: "var(--theme-text)" }}>{formatCurrency(svc.basePrice)}</span>
                       </div>
                     </div>
                     <div style={{ width: 220 }} className="mobile-stack">
@@ -653,7 +654,7 @@ export default function UnidadeFixaDashboard() {
                             value={localPrices[svc.id] || ""} 
                             onChange={e => setLocalPrices({ ...localPrices, [svc.id]: Number(e.target.value) })}
                             style={{ ...S.input, width: "100%", paddingLeft: 45, fontWeight: 900, fontSize: 18, border: "1px solid var(--theme-border)" }} 
-                            placeholder={String(svc.priceBase)}
+                            placeholder={String(svc.basePrice)}
                           />
                        </div>
                     </div>

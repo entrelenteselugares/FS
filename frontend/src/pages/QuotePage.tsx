@@ -204,7 +204,23 @@ export const QuotePage = () => {
   const [partners, setPartners] = useState<{id: string, name: string, city: string, prices?: any}[]>([]);
   
   // Form State
-  const [selectedServices, setSelectedServices] = useState<string[]>(["foto"]);
+  const [selectedServices, setSelectedServices] = useState<string[]>([]);
+  const [catalog, setCatalog] = useState<any[]>([]);
+
+  // Carregar catálogo global
+  useEffect(() => {
+    API.get("/public/configs/services")
+      .then(res => {
+        if (res.data?.services?.length > 0) {
+          setCatalog(res.data.services);
+        }
+      })
+      .catch(err => console.error("Erro ao carregar serviços:", err));
+  }, []);
+
+  const availableServices = catalog.length > 0 
+    ? catalog 
+    : P.SERVICES.map(s => ({ id: s.id, name: s.label, basePrice: s.price }));
   const [attendees, setAttendees] = useState<string>("0");
   const [locationType, setLocationType] = useState<"PARTNER" | "OTHER">("PARTNER");
   const [usageType, setUsageType] = useState<"PESSOAL" | "EMPRESARIAL">("PESSOAL");
@@ -260,8 +276,8 @@ export const QuotePage = () => {
     return custom !== undefined && custom !== null ? Number(custom) : defaultPrice;
   };
 
-  const servicesPrice = P.SERVICES.filter(s => selectedServices.includes(s.id)).reduce((acc, s) => {
-    return acc + getServicePrice(s.id, s.price);
+  const servicesPrice = availableServices.filter(s => selectedServices.includes(s.id)).reduce((acc, s) => {
+    return acc + getServicePrice(s.id, s.basePrice);
   }, 0);
 
   const isOutsideCampinas = locationType === "OTHER" && customCep !== ""; 
@@ -389,26 +405,28 @@ export const QuotePage = () => {
 
               <div>
                 <label style={{ fontSize: 10, fontWeight: 800, textTransform: "uppercase", marginBottom: 15, display: "block", color: THEME.text }}>2. Selecione os Serviços</label>
-                <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(160px, 1fr))", gap: 15 }}>
-                  {P.SERVICES.map(s => (
-                    <div 
-                      key={s.id}
-                      onClick={() => !s.required && setSelectedServices(prev => prev.includes(s.id) ? prev.filter(x => x !== s.id) : [...prev, s.id])}
-                      style={{ 
-                        padding: 20, border: `1px solid ${selectedServices.includes(s.id) ? THEME.accent : THEME.border}`, 
-                        cursor: s.required ? "default" : "pointer", background: selectedServices.includes(s.id) ? `${THEME.accent}10` : "transparent",
-                        transition: "all 0.3s"
-                      }}
-                    >
-                      <div style={{ fontSize: 11, fontWeight: 900, marginBottom: 5 }}>{s.label}</div>
-                      {showPrices && (
-                        <div style={{ fontSize: 10, color: THEME.text2 }}>
-                          {getServicePrice(s.id, s.price) === 0 ? "INCLUSO" : `+ R$ ${getServicePrice(s.id, s.price)}`}
-                        </div>
-                      )}
-                    </div>
-                  ))}
-                </div>
+                <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(200px, 1fr))", gap: 15 }}>
+                {availableServices.map(s => (
+                  <div key={s.id} onClick={() => {
+                    if (selectedServices.includes(s.id)) setSelectedServices(prev => prev.filter(x => x !== s.id));
+                    else setSelectedServices(prev => [...prev, s.id]);
+                  }} style={{
+                    padding: 20, border: `1px solid ${selectedServices.includes(s.id) ? THEME.accent : THEME.border}`,
+                    cursor: "pointer", background: "var(--theme-bg-muted)", transition: "all 0.2s",
+                    position: "relative", overflow: "hidden"
+                  }}>
+                    <p style={{ fontSize: 11, fontWeight: 900, color: THEME.text, textTransform: "uppercase", letterSpacing: 1 }}>{s.name}</p>
+                    <p style={{ fontSize: 13, color: THEME.accent, fontWeight: 900, marginTop: 4 }}>
+                      + {new Intl.NumberFormat("pt-BR", { style: "currency", currency: "BRL" }).format(getServicePrice(s.id, s.basePrice))}
+                    </p>
+                    {selectedServices.includes(s.id) && (
+                      <div style={{ position: "absolute", top: 0, right: 0, width: 24, height: 24, background: THEME.accent, color: "#000", display: "flex", alignItems: "center", justifyContent: "center" }}>
+                        <ShieldCheck size={12} />
+                      </div>
+                    )}
+                  </div>
+                ))}
+              </div>
               </div>
 
               <div className="mobile-grid-1" style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 20 }}>
