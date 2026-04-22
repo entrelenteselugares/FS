@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { API } from "../../lib/api";
+import { T } from "../../lib/theme";
 import { QRCodeSVG } from "qrcode.react";
 import { QrCode, Copy, Check, Download, X } from "lucide-react";
 

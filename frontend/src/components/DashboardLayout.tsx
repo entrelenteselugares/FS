@@ -17,7 +17,7 @@ export interface NavItem {
 interface DashboardLayoutProps {
   children: React.ReactNode;
   navItems: NavItem[];
-  title: string;
+  title?: string;
   /** @deprecated variante única: sempre "tactical" (brand teal). Ignorado. */
   variant?: string;
 }
@@ -55,7 +55,7 @@ interface SidebarContentProps {
   onNavigate: () => void;
 }
 
-const SidebarContent: React.FC<SidebarContentProps> = ({ title, navItems, onNavigate }) => {
+const SidebarContent: React.FC<SidebarContentProps> = ({ navItems, onNavigate }) => {
   const { user, logout } = useAuth();
   const location = useLocation();
 
@@ -67,7 +67,7 @@ const SidebarContent: React.FC<SidebarContentProps> = ({ title, navItems, onNavi
       : location.pathname.startsWith(item.to);
   };
 
-  const initial = (user?.nome ?? "?").charAt(0).toUpperCase();
+  // initial removed as it was unused
 
   return (
     <div style={{

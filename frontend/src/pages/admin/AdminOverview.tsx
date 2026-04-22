@@ -3,6 +3,7 @@ import {
   AreaChart, Area, XAxis, CartesianGrid, Tooltip,
   ResponsiveContainer,
 } from "recharts";
+import { T } from "../../lib/theme";
 
 interface OverviewStats {
   totalRevenue: number;

@@ -117,8 +117,6 @@ export default function EventPage() {
   });
 
   const [needsAccessChoice, setNeedsAccessChoice] = useState(false);
-  const [accessExpiresAt, setAccessExpiresAt] = useState<string | null>(null);
-  const [pollingCount, setPollingCount] = useState(0);
 
 
   useEffect(() => {
@@ -139,20 +137,19 @@ export default function EventPage() {
           setNeedsAccessChoice(true);
         } else if (data.status === "ACTIVE") {
           setAccess({ lightroomUrl: data.lightroomUrl, driveUrl: data.driveUrl });
-          setAccessExpiresAt(data.accessExpiresAt);
           setStep("success");
         }
       } catch { /* not paid yet */ }
     };
 
     const urlOrderId = searchParams.get("orderId");
-    const savedOrderId = localStorage.getItem(`fs_order_${id}`);
+    const savedOrderId = localStorage.getItem(`fs_order_${slug}`);
     const oid = urlOrderId ?? savedOrderId;
     if (oid) {
       setOrderId(oid);
       checkAccessStatus(oid);
     }
-  }, [id, searchParams]);
+  }, [slug, searchParams]);
 
   const handleTokenize = async () => {
     if (!MP_PUBLIC_KEY) {

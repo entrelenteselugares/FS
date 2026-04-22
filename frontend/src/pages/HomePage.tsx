@@ -4,7 +4,7 @@ import { motion } from "framer-motion";
 import { API } from "../lib/api";
 import { useAuth } from "../hooks/useAuth";
 import { Helmet } from "react-helmet-async";
-import { T, BtnPrimary, BtnSecondary, getBadgeStyle } from "../lib/theme";
+import { T, BtnPrimary, BtnSecondary } from "../lib/theme";
 
 interface Event {
   id: string;
@@ -132,7 +132,7 @@ export const HomePage = () => {
   const [page, setPage]         = useState(1);
   const [totalPages, setTotal]  = useState(1);
   const [userMenu, setUserMenu] = useState(false);
-  const debounce = useRef<ReturnType<typeof setTimeout>>();
+  const debounce = useRef<any>();
 
   const dashPath = user?.role === "ADMIN" ? "/admin"
     : user?.role === "PROFISSIONAL" ? "/profissional"

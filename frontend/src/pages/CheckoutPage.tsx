@@ -1,6 +1,6 @@
 import { useState, useEffect, useRef } from "react";
 import { useParams, useNavigate, useSearchParams } from "react-router-dom";
-import { ShieldCheck, ArrowLeft, CreditCard, Lock, Copy, CheckCircle2 } from "lucide-react";
+import { ShieldCheck, ArrowLeft, Copy, CheckCircle2 } from "lucide-react";
 import { API } from "../lib/api";
 import { useTheme } from "../hooks/useTheme";
 
@@ -72,7 +72,7 @@ export const CheckoutPage = () => {
 
     const mpPublicKey = "APP_USR-18f8ccc4-8ed4-4f99-bb6d-e333d026e578";
     
-    if (!window.MercadoPago) {
+    if (!(window as any).MercadoPago) {
       console.warn("Mercado Pago SDK não detectado no window.");
       initializationStarted.current = false;
       return;
@@ -83,7 +83,7 @@ export const CheckoutPage = () => {
       const container = document.getElementById("paymentBrick_container");
       if (container) container.innerHTML = "";
 
-      const mp = new window.MercadoPago(mpPublicKey, { locale: "pt-BR" });
+      const mp = new (window as any).MercadoPago(mpPublicKey, { locale: "pt-BR" });
       const bricksBuilder = mp.bricks();
 
       const settings = {
