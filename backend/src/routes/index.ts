@@ -109,7 +109,7 @@ router.get("/public/unidade-fixa/:slug",   getPartnerLandingData);
 
 // ── Configurações Públicas ─────────────────────────────────────────────────────
 router.get("/public/configs/theme",        getPublicThemeConfigs);
-router.get("/public/configs/services",     requireAuth, requireRole("ADMIN", "CARTORIO", "UNIDADE"), getPublicServices);
+router.get("/public/configs/services",     getPublicServices);
 
 // ── Gamificação Pública ───────────────────────────────────────────────────────
 router.get("/public/contests/active",      getActiveContest);
