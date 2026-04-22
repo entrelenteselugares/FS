@@ -368,7 +368,7 @@ export default function EventPage() {
 
           {/* Meta */}
           <div style={{ fontSize: 13, color: T.text2, fontFamily: T.fontB, fontWeight: 400, marginTop: -12 }}>
-            {new Date(event.date).toLocaleDateString("pt-BR", { day: "numeric", month: "long", year: "numeric" })} · {event.city || event.location}
+          {new Date(event.date.includes('T') ? event.date : event.date + 'T00:00').toLocaleDateString("pt-BR", { day: "numeric", month: "long", year: "numeric" })} · {event.city || event.location}
           </div>
 
           {/* Services Grid 2x2 */}
@@ -377,7 +377,7 @@ export default function EventPage() {
               { label: "Fotos em Alta", active: event.temFoto },
               { label: "Vídeo Cinema", active: event.temVideo },
               { label: "Reels / Stories", active: event.temReels },
-              { label: "Backup 1 Ano", active: true },
+              { label: "Foto Impressa", active: event.temFotoImpressa },
             ].map(s => (
               <div key={s.label} style={{ padding: "16px", border: `1px solid ${T.border}`, background: T.bgCard, opacity: s.active ? 1 : 0.3 }}>
                 <div style={{ fontSize: 11, fontWeight: 600, textTransform: "uppercase", letterSpacing: 1, color: s.active ? T.text : T.text3 }}>{s.label}</div>
