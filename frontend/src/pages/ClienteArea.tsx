@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useCallback, useMemo } from "react";
 import { useNavigate, useSearchParams } from "react-router-dom";
 import { useAuth } from "../hooks/useAuth";
 import { API } from "../lib/api";
@@ -55,21 +55,7 @@ export default function ClienteArea() {
   const [loading, setLoading] = useState(true);
   const [loadingDetalhe, setLoadingDetalhe] = useState(false);
 
-  useEffect(() => {
-    API.get("/cliente/pedidos")
-      .then((r) => {
-        setPedidos(r.data);
-        const urlOrderId = searchParams.get("orderId");
-        if (urlOrderId) {
-          const found = r.data.find((p: Pedido) => p.id === urlOrderId);
-          if (found) handleSelect(found);
-        }
-      })
-      .catch(console.error)
-      .finally(() => setLoading(false));
-  }, []);
-
-  const handleSelect = async (pedido: Pedido) => {
+  const handleSelect = useCallback(async (pedido: Pedido) => {
     setSelected(pedido);
     if (pedido.hasPaid && !pedido.event.lightroomUrl) {
       setLoadingDetalhe(true);
@@ -82,7 +68,23 @@ export default function ClienteArea() {
         setLoadingDetalhe(false);
       }
     }
-  };
+  }, []);
+
+  useEffect(() => {
+    API.get("/cliente/pedidos")
+      .then((r) => {
+        setPedidos(r.data);
+        const urlOrderId = searchParams.get("orderId");
+        if (urlOrderId) {
+          const found = r.data.find((p: Pedido) => p.id === urlOrderId);
+          if (found) handleSelect(found);
+        }
+      })
+      .catch(console.error)
+      .finally(() => setLoading(false));
+  }, [searchParams, handleSelect]);
+
+  const now = useMemo(() => Date.now(), []);
 
   const aprovados = pedidos.filter((p) => p.hasPaid);
   const pendentes = pedidos.filter((p) => !p.hasPaid);
@@ -195,6 +197,7 @@ export default function ClienteArea() {
                       <PedidoRow
                         key={p.id}
                         pedido={p}
+                        now={now}
                         isSelected={selected?.id === p.id}
                         onClick={() => handleSelect(p)}
                       />
@@ -215,6 +218,7 @@ export default function ClienteArea() {
                       <PedidoRow
                         key={p.id}
                         pedido={p}
+                        now={now}
                         isSelected={selected?.id === p.id}
                         onClick={() => handleSelect(p)}
                       />
@@ -244,12 +248,13 @@ export default function ClienteArea() {
 
 // ── Componentes Internos ─────────────────────────────────────────
 
-function PedidoRow({ pedido, isSelected, onClick }: {
+function PedidoRow({ pedido, now, isSelected, onClick }: {
   pedido: Pedido;
+  now: number;
   isSelected: boolean;
   onClick: () => void;
 }) {
-  const diff = pedido.accessExpiresAt ? new Date(pedido.accessExpiresAt).getTime() - Date.now() : null;
+  const diff = pedido.accessExpiresAt ? new Date(pedido.accessExpiresAt).getTime() - now : null;
   const daysLeft = diff ? Math.ceil(diff / (1000 * 60 * 60 * 24)) : null;
   const isExpiringSoon = daysLeft !== null && daysLeft <= 7 && daysLeft > 0;
 

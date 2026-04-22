@@ -1,6 +1,5 @@
-import React, { useState, useEffect } from "react";
+import React from "react";
 import { Download, Share2, ImageIcon, PlayCircle } from "lucide-react";
-import { API as api } from "../lib/api";
 import type { EventData } from "../api";
 
 interface GalleryViewProps {

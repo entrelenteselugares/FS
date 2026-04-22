@@ -1,4 +1,4 @@
-import { useState, useEffect, useRef } from "react";
+import { useState, useEffect, useRef, useCallback } from "react";
 import { useNavigate } from "react-router-dom";
 import { motion } from "framer-motion";
 import { API } from "../lib/api";
@@ -133,7 +133,7 @@ export const HomePage = () => {
   const [page, setPage]         = useState(1);
   const [totalPages, setTotal]  = useState(1);
   const [userMenu, setUserMenu] = useState(false);
-  const debounce = useRef<any>(null);
+  const debounce = useRef<ReturnType<typeof setTimeout> | null>(null);
   const [isCtaHovered, setIsCtaHovered] = useState(false);
 
   const dashPath = user?.role === "ADMIN" ? "/admin"
@@ -141,7 +141,7 @@ export const HomePage = () => {
     : (user?.role === "CARTORIO" || user?.role === "UNIDADE") ? "/unidade-fixa"
     : "/minha-conta";
 
-  const fetch = async (q: string, pg: number) => {
+  const fetch = useCallback(async (q: string, pg: number) => {
     setLoading(true);
     try {
       const { data } = await API.get("/public/events", { params: { q: q.trim() || undefined, page: pg } });
@@ -149,15 +149,15 @@ export const HomePage = () => {
       setTotal(data.pages ?? 1);
     } catch { /* silencioso */ }
     finally { setLoading(false); }
-  };
+  }, []);
 
   useEffect(() => {
-    clearTimeout(debounce.current);
+    if (debounce.current) clearTimeout(debounce.current);
     debounce.current = setTimeout(() => { setPage(1); fetch(query, 1); }, 400);
-    return () => clearTimeout(debounce.current);
-  }, [query]);
+    return () => { if (debounce.current) clearTimeout(debounce.current); };
+  }, [query, fetch]);
 
-  useEffect(() => { fetch(query, page); }, [page]);
+  useEffect(() => { fetch(query, page); }, [page, query, fetch]);
 
   return (
     <div style={{ background: T.bg, color: T.text, minHeight: "100vh", fontFamily: T.fontB }}>
