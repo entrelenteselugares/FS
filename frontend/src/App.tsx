@@ -15,7 +15,6 @@ import { AuthSelectionPage } from "./pages/AuthSelectionPage";
 import { RegisterPage } from "./pages/RegisterPage";
 import ClienteArea from "./pages/ClienteArea";
 import { QuotePage } from "./pages/QuotePage";
-import { HallOfFame } from "./pages/HallOfFame";
 import { PartnerLP } from "./pages/PartnerLP";
 import { NotFoundPage } from "./pages/NotFoundPage";
 import { CheckoutPage } from "./pages/CheckoutPage";
@@ -56,8 +55,10 @@ const AnimatedRoutes = () => {
           <Route path="/e/:slug" element={<EventPage />} />
           <Route path="/auth" element={<AuthSelectionPage />} />
           <Route path="/cotacao" element={<QuotePage />} />
+{/* 
           <Route path="/hall-da-fama" element={<HallOfFame />} />
-          <Route path="/concursos" element={<HallOfFame />} />
+          <Route path="/concursos" element={<HallOfFame />} /> 
+          */}
           <Route path="/p/:slug" element={<PartnerLP />} />
           <Route path="/checkout" element={<CheckoutPage />} />
           <Route path="/checkout/:orderId" element={<CheckoutPage />} />

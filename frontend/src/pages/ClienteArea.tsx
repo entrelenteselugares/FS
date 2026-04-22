@@ -2,7 +2,6 @@ import { useState, useEffect } from "react";
 import { useNavigate, useSearchParams } from "react-router-dom";
 import { useAuth } from "../hooks/useAuth";
 import { API } from "../lib/api";
-import PointBalance from "../components/PointBalance";
 import { T } from "../lib/theme";
 
 interface Pedido {
@@ -151,9 +150,6 @@ export default function ClienteArea() {
             </p>
           </div>
 
-          <div style={{ marginBottom: "2.5rem" }}>
-            <PointBalance />
-          </div>
 
           {loading ? (
             <div style={{ display: "flex", flexDirection: "column", gap: 12 }}>

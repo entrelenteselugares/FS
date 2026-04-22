@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { Download, Share2, ImageIcon, PlayCircle, Heart } from "lucide-react";
+import { Download, Share2, ImageIcon, PlayCircle } from "lucide-react";
 import { API as api } from "../lib/api";
 import type { EventData } from "../api";
 
@@ -8,33 +8,6 @@ interface GalleryViewProps {
 }
 
 export const GalleryView: React.FC<GalleryViewProps> = ({ event }) => {
-  const [likesData, setLikesData] = useState<Record<string, { count: number; likedByMe: boolean }>>({});
-
-  useEffect(() => {
-    api.get(`/events/${event.id}/likes`)
-      .then(r => {
-        const map: any = {};
-        r.data.likes.forEach((l: any) => { map[l.photoUrl] = l; });
-        setLikesData(map);
-      })
-      .catch(console.error);
-  }, [event.id]);
-
-  const toggleLike = async (photoUrl: string) => {
-    try {
-      const { data } = await api.post(`/events/${event.id}/photos/like`, { photoUrl });
-      setLikesData(prev => ({
-        ...prev,
-        [photoUrl]: { count: data.totalLikes, likedByMe: data.liked }
-      }));
-    } catch (err: any) {
-      if (err.response?.status === 401) {
-        alert("Faça login para curtir e ajudar a bater a meta!");
-      } else {
-        alert(err.response?.data?.error ?? "Erro ao curtir.");
-      }
-    }
-  };
 
   return (
     <div className="min-h-screen pt-24 pb-40 bg-midnight animate-fade-in">
@@ -69,20 +42,6 @@ export const GalleryView: React.FC<GalleryViewProps> = ({ event }) => {
             <div className="absolute inset-0 transition-all duration-500 opacity-0 bg-black/40 group-hover:opacity-100 backdrop-blur-sm flex items-center justify-center gap-4">
               <button className="flex items-center justify-center w-12 h-12 transition-all bg-white rounded-2xl text-midnight hover:bg-brand-indigo hover:text-white active:scale-90">
                 <Download size={20} />
-              </button>
-              
-              <button 
-                onClick={() => toggleLike(midia.url)}
-                className={`flex flex-col items-center justify-center w-12 h-12 transition-all border rounded-2xl active:scale-90 ${
-                  likesData[midia.url]?.likedByMe 
-                    ? "bg-red-500 border-red-500 text-white" 
-                    : "border-white/20 bg-white/10 text-white hover:bg-red-500 hover:border-red-500"
-                }`}
-              >
-                <Heart size={20} fill={likesData[midia.url]?.likedByMe ? "currentColor" : "none"} />
-                {likesData[midia.url]?.count > 0 && (
-                  <span className="absolute -bottom-6 text-[10px] font-bold text-white/50">{likesData[midia.url]?.count}</span>
-                )}
               </button>
 
               <button className="flex items-center justify-center w-12 h-12 transition-all border rounded-2xl border-white/20 bg-white/10 text-white hover:bg-white hover:text-midnight active:scale-90">

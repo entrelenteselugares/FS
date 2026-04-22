@@ -405,7 +405,7 @@ export const HomePage = () => {
             </p>
           </div>
           <div className="hp-footer-cols" style={{ display: "flex", gap: "3.5rem", flexWrap: "wrap" }}>
-            <FooterCol title="Plataforma" links={["Sobre", "Parcerias", "Hall da Fama"]} />
+            <FooterCol title="Plataforma" links={["Sobre", "Parcerias"]} />
             <FooterCol title="Jurídico" links={["Termos de Uso", "Privacidade", "LGPD"]} />
             <FooterCol title="Suporte" links={["Central de Ajuda", "Contato", "Status"]} />
           </div>
