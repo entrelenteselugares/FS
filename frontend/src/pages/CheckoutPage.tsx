@@ -36,7 +36,7 @@ interface MPFormData {
   token?: string;
   installments?: number;
   payment_method_id?: string;
-  [key: string]: any;
+  [key: string]: unknown;
 }
 
 interface MPBrickSettings {
