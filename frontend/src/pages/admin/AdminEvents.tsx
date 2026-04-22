@@ -226,7 +226,7 @@ export const AdminEvents: React.FC = () => {
                   Nenhum registro encontrado.
                 </td>
               </tr>
-            ) : events.map((event: any, idx) => (
+            ) : events.map((event: Event, idx) => (
               <tr 
                 key={event.id} 
                 style={{ 

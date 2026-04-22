@@ -263,7 +263,7 @@ export default function ClienteArea() {
             setIsPrivacyModalOpen(false);
             const data = await fetchPedidos();
             // Atualiza o selecionado para refletir a mudança
-            const updated = data.find((p: any) => p.id === selected.id);
+            const updated = data.find((p: Pedido) => p.id === selected.id);
             if (updated) setSelected(updated);
             else setSelected(null);
           }}
