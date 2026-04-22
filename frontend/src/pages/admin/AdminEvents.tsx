@@ -16,10 +16,17 @@ interface Event {
   slug: string;
   date: string;
   location: string;
+  city?: string | null;
+  description?: string | null;
   active: boolean;
   coverPhotoUrl?: string | null;
   lightroomUrl?: string | null;
   driveUrl?: string | null;
+  priceBase?: number;
+  priceEarly?: number;
+  cartorioUser?: { nome: string; cartorio?: { razaoSocial: string } } | null;
+  captacao?: { nome: string } | null;
+  edicao?: { nome: string } | null;
   _count: { pedidos: number };
 }
 
