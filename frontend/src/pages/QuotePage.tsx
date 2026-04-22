@@ -424,9 +424,6 @@ export const QuotePage = () => {
                     </div>
                   </div>
                 )}
-              </div>
-
-              </div>
 
               {/* Seção de Serviços */}
               <div>
