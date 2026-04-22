@@ -133,6 +133,7 @@ export const AdminDashboard: React.FC = () => {
           </div>
         )}
       </div>
+    </div>
     </DashboardLayout>
   );
 };
