@@ -165,6 +165,8 @@ model Profissional {
   otherHabilities  String?
   equipment        String?
 
+  cartorios CartorioProfissional[]
+
   @@map("profissionais")
 }
 
@@ -194,7 +196,24 @@ model Cartorio {
   description String?
   coverUrl    String?
 
+  profissionais CartorioProfissional[]
+
   @@map("cartorios")
+}
+
+// ─── Model: CartorioProfissional ──────────────────────────────────────────────
+
+model CartorioProfissional {
+  id             String       @id @default(cuid())
+  cartorioId     String
+  cartorio       Cartorio     @relation(fields: [cartorioId], references: [id], onDelete: Cascade)
+  profissionalId String
+  profissional   Profissional @relation(fields: [profissionalId], references: [id], onDelete: Cascade)
+  tipo           String       @default("ROTATIVO") // "FIXO" | "ROTATIVO"
+  createdAt      DateTime     @default(now())
+
+  @@unique([cartorioId, profissionalId])
+  @@map("cartorio_profissionais")
 }
 
 // ─── Model: Order ────────────────────────────────────────────────────────────

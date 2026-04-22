@@ -3,7 +3,7 @@ import { useSearchParams } from "react-router-dom";
 
 import { API } from "../lib/api";
 import { QRCodeSVG } from "qrcode.react";
-import { QrCode, Copy, Check, X, Download, Calendar, DollarSign, Settings } from "lucide-react";
+import { QrCode, Copy, Check, X, Download, Calendar, DollarSign, Settings, Users2, Camera, Star } from "lucide-react";
 import { DashboardLayout, type NavItem } from "../components/DashboardLayout";
 import { T } from "../lib/theme";
 
@@ -20,6 +20,17 @@ interface GlobalService {
   name: string;
   description: string;
   priceBase: number;
+}
+
+interface ProfissionalTeam {
+  id: string;
+  userId: string;
+  nome: string;
+  email: string;
+  whatsapp: string | null;
+  services: string[];
+  cameras: string[];
+  vinculo: "FIXO" | "ROTATIVO" | null;
 }
 
 interface EventoAgenda {
@@ -70,7 +81,7 @@ const S = {
   input: { background: "transparent", border: "1px solid var(--theme-border)", borderRadius: 0, padding: "12px 16px", fontSize: 13, color: "var(--theme-text)", outline: "none" } as React.CSSProperties,
 };
 
-type Tab = "agenda" | "pedidos" | "configuracoes";
+type Tab = "agenda" | "pedidos" | "equipe" | "configuracoes";
 
 export default function UnidadeFixaDashboard() {
   const [searchParams] = useSearchParams();
@@ -99,6 +110,12 @@ export default function UnidadeFixaDashboard() {
   const [globalServices, setGlobalServices] = useState<GlobalService[]>([]);
   const [localPrices, setLocalPrices] = useState<Record<string, number>>({});
   const [savingPrices, setSavingPrices] = useState(false);
+
+  // Team State
+  const [teamData, setTeamData] = useState<ProfissionalTeam[]>([]);
+  const [teamChanges, setTeamChanges] = useState<Record<string, "FIXO" | "ROTATIVO" | null>>({});
+  const [savingTeam, setSavingTeam] = useState(false);
+  const [teamLoaded, setTeamLoaded] = useState(false);
 
   // Filtros
   const [startDate, setStartDate] = useState("");
@@ -212,6 +229,37 @@ export default function UnidadeFixaDashboard() {
     }
   };
 
+  const loadTeam = async () => {
+    try {
+      const { data } = await API.get("/unidade-fixa/team");
+      setTeamData(data.profissionais || []);
+      setTeamLoaded(true);
+    } catch {
+      setError("Erro ao carregar equipe.");
+    }
+  };
+
+  const saveTeam = async () => {
+    setSavingTeam(true);
+    try {
+      const assignments = Object.entries(teamChanges).map(([profissionalId, tipo]) => ({ profissionalId, tipo }));
+      await API.put("/unidade-fixa/team", { assignments });
+      setSuccess("Configuração de equipe salva com sucesso! 👥");
+      setTeamChanges({});
+      await loadTeam();
+      setTimeout(() => setSuccess(""), 3000);
+    } catch {
+      setError("Erro ao salvar configuração de equipe.");
+    } finally {
+      setSavingTeam(false);
+    }
+  };
+
+  const getVinculo = (p: ProfissionalTeam): "FIXO" | "ROTATIVO" | null => {
+    if (p.id in teamChanges) return teamChanges[p.id];
+    return p.vinculo;
+  };
+
   const loadPedidos = useCallback(async () => {
     try {
       const params = new URLSearchParams();
@@ -234,6 +282,7 @@ export default function UnidadeFixaDashboard() {
   const NAV_ITEMS = (tab: Tab, setTab: (t: Tab) => void): NavItem[] => [
     { label: "Agenda", onClick: () => setTab("agenda"), isActive: tab === "agenda", icon: <Calendar size={16} /> },
     { label: "Repasses", onClick: () => setTab("pedidos"), isActive: tab === "pedidos", icon: <DollarSign size={16} /> },
+    { label: "Equipe", onClick: () => { setTab("equipe"); if (!teamLoaded) loadTeam(); }, isActive: tab === "equipe", icon: <Users2 size={16} /> },
     { label: "Página Pública", onClick: () => setTab("configuracoes"), isActive: tab === "configuracoes", icon: <Settings size={16} /> },
   ];
 
@@ -274,7 +323,11 @@ export default function UnidadeFixaDashboard() {
             {tab === "agenda" ? "Agenda & Eventos" : tab === "pedidos" ? "Repasses" : "Configurações"}
           </h1>
           <p className="text-proportional">
-            {unidadeName && `${unidadeName} · `}PAINEL DE GESTÃO TÁTICA
+          {unidadeName && `${unidadeName} · `}
+          {tab === "agenda" && "PAINEL DE GESTÃO TÁTICA"}
+          {tab === "pedidos" && "HISTÓRICO DE REPASSES"}
+          {tab === "equipe" && "GESTÃO DE EQUIPE"}
+          {tab === "configuracoes" && "CONFIGURAÇÕES"}
           </p>
         </div>
 
@@ -405,6 +458,129 @@ export default function UnidadeFixaDashboard() {
                 </div>
               ))}
             </div>
+          </div>
+        )}
+
+        {/* ── EQUIPE ── */}
+        {tab === "equipe" && (
+          <div style={{ display: "flex", flexDirection: "column", gap: "1.5rem" }}>
+            {/* Header Card */}
+            <div style={{ ...S.card, padding: "2rem" }}>
+              <div style={{ display: "flex", alignItems: "center", gap: 12, marginBottom: 12 }}>
+                <div style={{ width: 36, height: 36, borderRadius: "50%", background: "var(--brand-primary)", color: "black", display: "flex", alignItems: "center", justifyContent: "center" }}>
+                  <Users2 size={18} />
+                </div>
+                <h3 style={{ fontFamily: "'Outfit', sans-serif", fontSize: 24, fontWeight: 900, color: "var(--theme-text)", textTransform: "uppercase" }}>
+                  Configuração de Equipe
+                </h3>
+              </div>
+              <p style={{ fontSize: 12, color: "var(--theme-text-muted)", maxWidth: 600, lineHeight: 1.6 }}>
+                Defina quais profissionais são <strong style={{ color: "var(--theme-text)" }}>fixos</strong> na sua unidade (sempre convocados) ou <strong style={{ color: "var(--theme-text)" }}>rotativos</strong> (entram no pool geral da rede). Profissionais sem vínculo não aparecem como preferência para os seus eventos.
+              </p>
+            </div>
+
+            {/* Legenda */}
+            <div style={{ display: "flex", gap: "1rem", flexWrap: "wrap" }}>
+              {[
+                { cor: "var(--theme-border)", label: "Sem vínculo — não entra no pool desta unidade" },
+                { cor: "#3b82f6", label: "Rotativo — pode ser convocado pela rede" },
+                { cor: "var(--brand-primary)", label: "Fixo — sempre convocado para seus eventos" },
+              ].map(l => (
+                <div key={l.label} style={{ display: "flex", alignItems: "center", gap: 8 }}>
+                  <div style={{ width: 10, height: 10, borderRadius: "50%", background: l.cor, flexShrink: 0 }} />
+                  <span style={{ fontSize: 10, color: "var(--theme-text-muted)", fontWeight: 600 }}>{l.label}</span>
+                </div>
+              ))}
+            </div>
+
+            {/* Lista de profissionais */}
+            {teamData.length === 0 ? (
+              <div style={{ ...S.card, padding: "4rem 2rem", textAlign: "center" }}>
+                <Camera size={32} style={{ color: "var(--theme-text-muted)", margin: "0 auto 1rem" }} />
+                <p style={{ fontSize: 13, color: "var(--theme-text-muted)", textTransform: "uppercase", letterSpacing: 2 }}>
+                  Nenhum profissional cadastrado na plataforma ainda.
+                </p>
+              </div>
+            ) : (
+              <div style={{ display: "flex", flexDirection: "column", gap: "0.75rem" }}>
+                {teamData.map(p => {
+                  const vinculo = getVinculo(p);
+                  return (
+                    <div key={p.id} style={{
+                      display: "flex", alignItems: "center", justifyContent: "space-between",
+                      padding: "1.25rem 1.75rem",
+                      background: "var(--theme-bg-muted)",
+                      border: `1px solid ${vinculo === "FIXO" ? "var(--brand-primary)" : vinculo === "ROTATIVO" ? "#3b82f620" : "var(--theme-border)"}`,
+                      transition: "border-color 0.3s"
+                    }} className="mobile-stack">
+                      {/* Info do profissional */}
+                      <div style={{ flex: 1, minWidth: 0, marginRight: "2rem" }}>
+                        <div style={{ display: "flex", alignItems: "center", gap: 10, marginBottom: 4 }}>
+                          {vinculo === "FIXO" && <Star size={13} style={{ color: "var(--brand-primary)", flexShrink: 0 }} />}
+                          <p style={{ fontSize: 14, fontWeight: 800, color: "var(--theme-text)", whiteSpace: "nowrap", overflow: "hidden", textOverflow: "ellipsis" }}>{p.nome}</p>
+                        </div>
+                        <p style={{ fontSize: 11, color: "var(--theme-text-muted)", marginBottom: 8 }}>{p.email}</p>
+                        <div style={{ display: "flex", gap: 6, flexWrap: "wrap" }}>
+                          {p.services.map(s => (
+                            <span key={s} style={{ fontSize: 9, fontWeight: 800, textTransform: "uppercase", letterSpacing: 1, padding: "3px 8px", background: "var(--theme-bg)", border: "1px solid var(--theme-border)", color: "var(--theme-text-muted)" }}>
+                              {s}
+                            </span>
+                          ))}
+                        </div>
+                      </div>
+
+                      {/* Seletor de vínculo */}
+                      <div style={{ display: "flex", gap: 6, flexShrink: 0 }}>
+                        {([null, "ROTATIVO", "FIXO"] as const).map(tipo => (
+                          <button
+                            key={String(tipo)}
+                            onClick={() => setTeamChanges(prev => ({ ...prev, [p.id]: tipo }))}
+                            style={{
+                              padding: "8px 14px",
+                              fontSize: 9,
+                              fontWeight: 900,
+                              textTransform: "uppercase",
+                              letterSpacing: 1.5,
+                              cursor: "pointer",
+                              border: "1px solid",
+                              borderRadius: 0,
+                              transition: "all 0.2s",
+                              borderColor: vinculo === tipo
+                                ? tipo === "FIXO" ? "var(--brand-primary)" : tipo === "ROTATIVO" ? "#3b82f6" : "var(--theme-border)"
+                                : "var(--theme-border)",
+                              background: vinculo === tipo
+                                ? tipo === "FIXO" ? "var(--brand-primary)" : tipo === "ROTATIVO" ? "#3b82f620" : "var(--theme-bg)"
+                                : "transparent",
+                              color: vinculo === tipo
+                                ? tipo === "FIXO" ? "black" : tipo === "ROTATIVO" ? "#3b82f6" : "var(--theme-text-muted)"
+                                : "var(--theme-text-muted)",
+                            }}
+                          >
+                            {tipo === null ? "Sem vínculo" : tipo === "ROTATIVO" ? "Rotativo" : "⭐ Fixo"}
+                          </button>
+                        ))}
+                      </div>
+                    </div>
+                  );
+                })}
+              </div>
+            )}
+
+            {/* Botão Salvar */}
+            {Object.keys(teamChanges).length > 0 && (
+              <div style={{ padding: "1.5rem", background: "var(--theme-bg-muted)", border: "1px solid var(--brand-primary)", display: "flex", alignItems: "center", justifyContent: "space-between", gap: "1rem" }}>
+                <p style={{ fontSize: 12, color: "var(--theme-text)", fontWeight: 700 }}>
+                  {Object.keys(teamChanges).length} alteração(ões) pendente(s)
+                </p>
+                <button
+                  disabled={savingTeam}
+                  onClick={saveTeam}
+                  style={{ background: "var(--brand-primary)", color: "black", border: "none", borderRadius: 0, padding: "12px 32px", fontSize: 11, fontWeight: 900, cursor: "pointer", textTransform: "uppercase", letterSpacing: 2, opacity: savingTeam ? 0.6 : 1 }}
+                >
+                  {savingTeam ? "SALVANDO..." : "SALVAR CONFIGURAÇÃO"}
+                </button>
+              </div>
+            )}
           </div>
         )}
 
