@@ -257,15 +257,12 @@ export class PaymentController {
       const splitEdicao   = +(preco * getPct("split_edicao")).toFixed(2);
       const splitCartorio = +(preco * getPct("split_cartorio")).toFixed(2);
 
-      // 4. Criar Pedido (Identidade Obrigatória)
-      if (!userId) {
-        return res.status(401).json({ error: "Identificação obrigatória para realizar o pagamento." });
-      }
-
+      // 4. Criar Pedido (Identidade Opcional para Guests)
       const order = await prisma.order.create({
         data: {
           eventId,
-          clienteId: userId,
+          clienteId: userId || null,
+          buyerEmail: email,
           valor: preco,
           status: "PENDENTE",
           isContribution: event.isCrowdfund,
