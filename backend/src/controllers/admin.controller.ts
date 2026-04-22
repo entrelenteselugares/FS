@@ -209,6 +209,21 @@ export async function adminCreateEvent(req: AuthRequest, res: Response): Promise
     const exists = await prisma.event.findUnique({ where: { slug } });
     if (exists) slug = `${slug}-${Date.now().toString(36)}`;
 
+    let finalCaptacaoId = captacaoId || null;
+
+    // ── LOGICA DE CONVOCAÇÃO TÁTICA ──
+    // Se selecionou um cartório e não selecionou profissional, busca o FIXO da unidade
+    if (!finalCaptacaoId && cartorioId) {
+      const cartorio = await prisma.cartorio.findUnique({
+        where: { userId: cartorioId },
+        include: { profissionais: { where: { tipo: "FIXO" }, take: 1, include: { profissional: true } } }
+      });
+      if (cartorio?.profissionais?.length) {
+        finalCaptacaoId = cartorio.profissionais[0].profissional.userId;
+        console.log(`[AdminCreate] Auto-atribuindo profissional FIXO titular: ${finalCaptacaoId}`);
+      }
+    }
+
     const event = await prisma.event.create({
       data: {
         nomeNoivos: title,
@@ -222,7 +237,7 @@ export async function adminCreateEvent(req: AuthRequest, res: Response): Promise
         priceEarly: priceEarly ?? 190,
         active: true, // Eventos criados pelo Admin já nascem ativos
         cartorioUserId: cartorioId || null,
-        captacaoId: captacaoId || null,
+        captacaoId: finalCaptacaoId,
         edicaoId: edicaoId || null,
         temFoto: temFoto ?? true,
         temVideo: temVideo ?? false,

@@ -51,6 +51,9 @@ export default function ClienteArea() {
   const { user, logout } = useAuth();
   const navigate = useNavigate();
   const [searchParams] = useSearchParams();
+  const [pedidos, setPedidos] = useState<Pedido[]>([]);
+  const [selected, setSelected] = useState<Pedido | null>(null);
+  const [loading, setLoading] = useState(true);
   const [loadingDetalhe, setLoadingDetalhe] = useState(false);
   const [isPrivacyModalOpen, setIsPrivacyModalOpen] = useState(false);
 
