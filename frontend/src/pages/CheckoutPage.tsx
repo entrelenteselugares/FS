@@ -25,6 +25,39 @@ interface OrderDetail {
   contributorName?: string;
 }
 
+interface MPBrickSettings {
+  initialization: {
+    amount: number;
+    payer: {
+      email: string;
+      entityType: string;
+    };
+  };
+  customization: {
+    paymentMethods: {
+      creditCard: "all";
+      bankTransfer: string[];
+      maxInstallments: number;
+    };
+    visual: {
+      style: {
+        theme: "default" | "dark";
+      };
+    };
+  };
+  callbacks: {
+    onReady: () => void;
+    onSubmit: (data: { selectedPaymentMethod: string; formData: any }) => Promise<void>;
+    onError: (error: unknown) => void;
+  };
+}
+
+interface MPMediator {
+  bricks: () => {
+    create: (type: string, containerId: string, settings: MPBrickSettings) => Promise<{ unmount: () => void }>;
+  };
+}
+
 export const CheckoutPage = () => {
   const { orderId } = useParams();
   const navigate = useNavigate();
@@ -73,7 +106,7 @@ export const CheckoutPage = () => {
 
     const mpPublicKey = "APP_USR-18f8ccc4-8ed4-4f99-bb6d-e333d026e578";
     
-    const win = window as Window & { MercadoPago?: any };
+    const win = window as Window & { MercadoPago?: new (key: string, options: { locale: string }) => MPMediator };
     if (!win.MercadoPago) {
       console.warn("Mercado Pago SDK não detectado no window.");
       initializationStarted.current = false;
@@ -85,10 +118,11 @@ export const CheckoutPage = () => {
       const container = document.getElementById("paymentBrick_container");
       if (container) container.innerHTML = "";
 
+      if (!win.MercadoPago) return;
       const mp = new win.MercadoPago(mpPublicKey, { locale: "pt-BR" });
       const bricksBuilder = mp.bricks();
 
-      const settings = {
+      const settings: MPBrickSettings = {
         initialization: {
           amount: Number(order.amount),
           payer: {
@@ -98,13 +132,13 @@ export const CheckoutPage = () => {
         },
         customization: {
           paymentMethods: {
-            creditCard: "all" as const,
-            bankTransfer: ["pix"] as any,
+            creditCard: "all",
+            bankTransfer: ["pix"],
             maxInstallments: 12,
           },
           visual: {
             style: {
-              theme: (theme === "dark" ? "dark" : "default") as any,
+              theme: (theme === "dark" ? "dark" : "default"),
             },
           },
         },
@@ -112,7 +146,7 @@ export const CheckoutPage = () => {
           onReady: () => {
             console.log("[Payment Brick] Ready");
           },
-          onSubmit: async ({ selectedPaymentMethod, formData }: { selectedPaymentMethod: string, formData: any }) => {
+          onSubmit: async ({ selectedPaymentMethod, formData }) => {
             try {
               const { data } = await API.post("/checkout/payment", {
                 eventId: order.event.id || order.eventId,
@@ -137,7 +171,7 @@ export const CheckoutPage = () => {
               } else {
                 alert(`Status do Pagamento: ${data.status}`);
               }
-            } catch (err: any) {
+            } catch (err: unknown) {
               console.error("Erro no processamento transparente:", err);
               alert("Erro ao processar pagamento. Verifique seus dados.");
             }
@@ -147,8 +181,6 @@ export const CheckoutPage = () => {
             initializationStarted.current = false; // Permite tentar novamente em caso de erro
           },
         },
-      };
-
       brickController.current = await bricksBuilder.create("payment", "paymentBrick_container", settings);
     };
 
