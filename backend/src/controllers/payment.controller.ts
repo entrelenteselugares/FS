@@ -371,13 +371,13 @@ export class PaymentController {
 
       return res.json({
         orderId: order.id,
-        status: mpResponse.status,
+        status: mpResponse?.status,
         hasPaid: isApproved,
-        details: mpResponse.status_detail,
+        details: mpResponse?.status_detail,
         // Dados de PIX para Checkout Transparente
-        qr_code: mpResponse.point_of_interaction?.transaction_data?.qr_code,
-        qr_code_base64: mpResponse.point_of_interaction?.transaction_data?.qr_code_base64,
-        ticket_url: mpResponse.point_of_interaction?.transaction_data?.ticket_url
+        qr_code: mpResponse?.point_of_interaction?.transaction_data?.qr_code,
+        qr_code_base64: mpResponse?.point_of_interaction?.transaction_data?.qr_code_base64,
+        ticket_url: mpResponse?.point_of_interaction?.transaction_data?.ticket_url
       });
 
     } catch (error: any) {
