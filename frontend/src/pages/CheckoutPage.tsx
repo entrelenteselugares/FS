@@ -25,6 +25,20 @@ interface OrderDetail {
   contributorName?: string;
 }
 
+interface MPFormData {
+  payer: {
+    email: string;
+    identification?: {
+      number: string;
+      type: string;
+    };
+  };
+  token?: string;
+  installments?: number;
+  payment_method_id?: string;
+  [key: string]: any;
+}
+
 interface MPBrickSettings {
   initialization: {
     amount: number;
@@ -47,7 +61,7 @@ interface MPBrickSettings {
   };
   callbacks: {
     onReady: () => void;
-    onSubmit: (data: { selectedPaymentMethod: string; formData: any }) => Promise<void>;
+    onSubmit: (data: { selectedPaymentMethod: string; formData: MPFormData }) => Promise<void>;
     onError: (error: unknown) => void;
   };
 }
