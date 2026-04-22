@@ -13,6 +13,12 @@ import { useAuth } from "../hooks/useAuth";
 interface EventData {
   id: string;
   nomeNoivos: string;
+  paywall: {
+    active: boolean;
+    message: string;
+  };
+  lightroomUrl?: string | null;
+  driveUrl?: string | null;
   slug: string;
   date: string;
   location: string;
@@ -123,11 +129,22 @@ export default function EventPage() {
 
   useEffect(() => {
     if (!slug) return;
-    api.get(`/public/events/${slug}`)
-      .then((r) => setEvent(r.data))
+    const params = user?.id ? { userId: user.id } : {};
+    api.get(`/public/events/${slug}`, { params })
+      .then((r) => {
+        setEvent(r.data);
+        if (r.data.paywall && !r.data.paywall.active) {
+          setStep("success");
+          setAccess({
+            lightroomUrl: r.data.lightroomUrl,
+            driveUrl: r.data.driveUrl,
+            expiresAt: "" // Vitalício se já pago
+          });
+        }
+      })
       .catch(() => navigate("/404"))
       .finally(() => setLoading(false));
-  }, [slug, navigate]);
+  }, [slug, navigate, user?.id]);
 
 
   useEffect(() => {
