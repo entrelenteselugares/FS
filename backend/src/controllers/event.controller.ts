@@ -202,6 +202,21 @@ export class EventController {
 
       // Todos os novos eventos começam como inativos até o pagamento/aprovação
       const isQuote = locationType === "OTHER";
+      
+      // ── LOGICA DE CONVOCAÇÃO TÁTICA (PROXIMIDADE) ──
+      // Se for ponto fixo, buscamos o profissional titular (FIXO)
+      let captacaoId: string | null = null;
+      if (locationType === "PARTNER" && selectedPartnerId) {
+        const cartorio = await prisma.cartorio.findUnique({
+          where: { userId: selectedPartnerId },
+          include: { profissionais: { where: { tipo: "FIXO" }, take: 1, include: { profissional: true } } }
+        });
+        
+        if (cartorio?.profissionais?.length) {
+          captacaoId = cartorio.profissionais[0].profissional.userId;
+          console.log(`[Quote] Convocando profissional FIXO titular: ${captacaoId}`);
+        }
+      }
 
       const event = await prisma.event.create({
         data: {
@@ -222,7 +237,9 @@ export class EventController {
           temReels: selectedServices.includes("reels"),
           temFotoImpressa: selectedServices.includes("impresso"),
           clientEmail: email,
-          clientName: name
+          clientName: name,
+          captacaoId: captacaoId,
+          captacaoStatus: "PENDING"
         }
       });
 
