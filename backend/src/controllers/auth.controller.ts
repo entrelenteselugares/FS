@@ -4,6 +4,7 @@ import bcrypt from "bcryptjs";
 import prisma from "../lib/prisma";
 import { generateToken } from "../lib/auth";
 import { audit } from "../lib/audit";
+import { supabaseAdmin } from "../lib/supabase";
 
 export class AuthController {
   /** POST /api/auth/login */
@@ -25,7 +26,6 @@ export class AuthController {
     }
 
     try {
-      const { supabaseAdmin } = await import("../lib/supabase.js");
       const cleanEmail = email.toLowerCase().trim();
 
       // 1. Autenticar com Supabase Auth
@@ -147,7 +147,6 @@ export class AuthController {
     }
 
     try {
-      const { supabaseAdmin } = await import("../lib/supabase.js");
       const cleanEmail = email.toLowerCase().trim();
       const cleanWhatsapp = whatsapp?.replace(/\D/g, "") || null;
 
