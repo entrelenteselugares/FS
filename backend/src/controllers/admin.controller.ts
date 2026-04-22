@@ -256,7 +256,7 @@ export async function adminCreateEvent(req: AuthRequest, res: Response): Promise
     await audit(req, "EVENT_CREATED", "Event", event.id, null, event);
 
     res.status(201).json(event);
-  } catch (err: any) {
+    } catch (err: any) {
     if (err.code === "P2002") {
       res.status(409).json({ error: "Slug duplicado. Tente um título diferente." });
       return;
