@@ -89,3 +89,19 @@ export async function getPublicThemeConfigs(req: AuthRequest, res: Response): Pr
     res.status(500).json({ error: "Erro ao buscar tema." });
   }
 }
+// GET /api/public/configs/services
+export async function getPublicServices(_req: any, res: Response): Promise<void> {
+  try {
+    const config = await prisma.platformConfig.findUnique({
+      where: { key: "services_catalog" }
+    });
+    if (!config) {
+      res.json({ services: [] });
+      return;
+    }
+    const services = JSON.parse(config.value);
+    res.json({ services });
+  } catch (err) {
+    res.status(500).json({ error: "Erro ao buscar serviços." });
+  }
+}

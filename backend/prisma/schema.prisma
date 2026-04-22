@@ -184,6 +184,8 @@ model Cartorio {
   priceVideo    Decimal? @db.Decimal(10, 2)  // padrão: 190
   priceReels    Decimal? @db.Decimal(10, 2)  // padrão: 120
   priceImpresso Decimal? @db.Decimal(10, 2) // padrão: 120
+  
+  servicePrices Json?     // Overrides: { "svc_id_1": 250, "svc_id_2": 180 }
 
   // Landing Page Fields
   address     String?

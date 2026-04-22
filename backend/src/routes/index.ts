@@ -31,7 +31,7 @@ import {
 import { getMeusPedidos, getMeuPedidoDetalhe } from "../controllers/cliente.controller";
 import { CartorioController } from "../controllers/cartorio.controller";
 import { SEOController } from "../controllers/seo.controller";
-import { getConfigs, updateConfigs, getPublicThemeConfigs } from "../controllers/config.controller";
+import { getConfigs, updateConfigs, getPublicThemeConfigs, getPublicServices } from "../controllers/config.controller";
 import { generateWeeklyPayout, listPayouts, markItemPaid, exportPayoutCSV } from "../controllers/payout.controller";
 import {
   chooseAccessType,
@@ -109,6 +109,7 @@ router.get("/public/unidade-fixa/:slug",   getPartnerLandingData);
 
 // ── Configurações Públicas ─────────────────────────────────────────────────────
 router.get("/public/configs/theme",        getPublicThemeConfigs);
+router.get("/public/configs/services",     requireAuth, requireRole("ADMIN", "CARTORIO", "UNIDADE"), getPublicServices);
 
 // ── Gamificação Pública ───────────────────────────────────────────────────────
 router.get("/public/contests/active",      getActiveContest);

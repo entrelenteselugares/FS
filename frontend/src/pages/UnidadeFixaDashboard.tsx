@@ -15,6 +15,13 @@ interface UnidadeStats {
   razaoSocial?: string;
 }
 
+interface GlobalService {
+  id: string;
+  name: string;
+  description: string;
+  priceBase: number;
+}
+
 interface EventoAgenda {
   id: string;
   slug: string;
@@ -88,6 +95,11 @@ export default function UnidadeFixaDashboard() {
   const [qrModalEvent, setQrModalEvent] = useState<EventoAgenda | null>(null);
   const [copied, setCopied] = useState(false);
 
+  // Custom Prices State
+  const [globalServices, setGlobalServices] = useState<GlobalService[]>([]);
+  const [localPrices, setLocalPrices] = useState<Record<string, number>>({});
+  const [savingPrices, setSavingPrices] = useState(false);
+
   // Filtros
   const [startDate, setStartDate] = useState("");
   const [endDate, setEndDate] = useState("");
@@ -133,15 +145,21 @@ export default function UnidadeFixaDashboard() {
 
   const loadLpData = async () => {
     try {
-      const { data } = await API.get("/unidade-fixa/stats"); 
-      if (data.cartorio) {
-        setLpSlug(data.cartorio.slug ?? "");
-        setLpAddress(data.cartorio.address ?? "");
-        setLpPhone(data.cartorio.phone ?? "");
-        setLpDescription(data.cartorio.description ?? "");
-        setLpCoverUrl(data.cartorio.coverUrl ?? "");
-        setPixKey(data.pixKey ?? "");
+      const [{ data: statsData }, { data: servicesData }] = await Promise.all([
+        API.get("/unidade-fixa/stats"),
+        API.get("/public/configs/services")
+      ]);
+
+      if (statsData.cartorio) {
+        setLpSlug(statsData.cartorio.slug ?? "");
+        setLpAddress(statsData.cartorio.address ?? "");
+        setLpPhone(statsData.cartorio.phone ?? "");
+        setLpDescription(statsData.cartorio.description ?? "");
+        setLpCoverUrl(statsData.cartorio.coverUrl ?? "");
+        setLocalPrices(statsData.cartorio.servicePrices || {});
+        setPixKey(statsData.pixKey ?? "");
       }
+      setGlobalServices(servicesData.services || []);
     } catch { /* silently ignore - LP data is optional */ }
   };
 
@@ -178,6 +196,19 @@ export default function UnidadeFixaDashboard() {
       setError("Erro ao salvar chave PIX.");
     } finally {
       setSavingPix(false);
+    }
+  };
+
+  const saveServicePrices = async () => {
+    setSavingPrices(true);
+    try {
+      await API.patch("/unidade-fixa/profile", { servicePrices: localPrices });
+      setSuccess("Tabela de preços atualizada com sucesso! 🏷️");
+      setTimeout(() => setSuccess(""), 3000);
+    } catch {
+      setError("Erro ao salvar tabela de preços.");
+    } finally {
+      setSavingPrices(false);
     }
   };
 
@@ -400,6 +431,66 @@ export default function UnidadeFixaDashboard() {
                   style={{ background: "var(--brand-primary)", color: "var(--theme-text-on-brand)", border: "none", borderRadius: 0, padding: "12px 24px", fontSize: 11, fontWeight: 800, cursor: "pointer", flexShrink: 0, textTransform: "uppercase", letterSpacing: 2, opacity: savingPix ? 0.6 : 1 }}
                 >
                   {savingPix ? "SALVANDO..." : "SALVAR CHAVE PIX"}
+                </button>
+              </div>
+            </div>
+
+            {/* ── GESTÃO DE PREÇOS ── */}
+            <div style={{ ...S.card, padding: "2rem" }}>
+              <div style={{ borderBottom: "1px solid var(--theme-border)", paddingBottom: 20, marginBottom: 40 }}>
+                <div style={{ display: "flex", alignItems: "center", gap: 12, marginBottom: 10 }}>
+                   <div style={{ width: 32, height: 32, borderRadius: "50%", background: "var(--brand-primary)", color: "black", display: "flex", alignItems: "center", justifyContent: "center" }}>
+                      <DollarSign size={16} />
+                   </div>
+                   <h3 style={{ fontFamily: "'Outfit', sans-serif", fontSize: 24, fontWeight: 900, color: "var(--theme-text)", textTransform: "uppercase", letterSpacing: -0.5 }}>Tabela de Preços Locais</h3>
+                </div>
+                <p style={{ fontSize: 12, color: "var(--theme-text-muted)", maxWidth: 600, lineHeight: 1.6 }}>
+                  Sua unidade tem autonomia para praticar preços diferenciados. 
+                  Abaixo, você pode configurar o valor final de venda para cada item do catálogo. 
+                  Deixe em branco para utilizar o valor base sugerido pela administração.
+                </p>
+              </div>
+
+              <div style={{ display: "flex", flexDirection: "column", gap: "1rem" }}>
+                {globalServices.length === 0 ? (
+                  <div style={{ padding: "4rem 2rem", textAlign: "center", border: "1px dashed var(--theme-border)" }}>
+                    <p style={{ fontSize: 12, color: "var(--theme-text-muted)", textTransform: "uppercase", letterSpacing: 2 }}>Sincronizando catálogo global...</p>
+                  </div>
+                ) : globalServices.map(svc => (
+                  <div key={svc.id} style={{ display: "flex", alignItems: "center", justifyContent: "space-between", padding: "1.5rem 2rem", background: "var(--theme-bg)", border: "1px solid var(--theme-border)", transition: "border-color 0.3s" }} className="mobile-stack group hover:border-brand-primary/30">
+                    <div style={{ flex: 1, marginRight: "2rem" }}>
+                      <div style={{ display: "flex", alignItems: "center", gap: 8, marginBottom: 4 }}>
+                        <p style={{ fontSize: 13, fontWeight: 900, color: "var(--theme-text)", textTransform: "uppercase", letterSpacing: 1 }}>{svc.name}</p>
+                      </div>
+                      <p style={{ fontSize: 11, color: "var(--theme-text-muted)", lineHeight: 1.5 }}>{svc.description}</p>
+                      <div style={{ marginTop: 12, display: "inline-flex", alignItems: "center", gap: 6, background: "var(--theme-bg-muted)", padding: "4px 10px", border: "1px solid var(--theme-border)" }}>
+                         <span style={{ fontSize: 8, fontWeight: 900, color: "var(--theme-text-muted)", textTransform: "uppercase", letterSpacing: 1 }}>Sugerido:</span>
+                         <span style={{ fontSize: 10, fontWeight: 800, color: "var(--theme-text)" }}>{formatCurrency(svc.priceBase)}</span>
+                      </div>
+                    </div>
+                    <div style={{ width: 220 }} className="mobile-stack">
+                       <div style={{ position: "relative" }}>
+                          <span style={{ position: "absolute", left: 15, top: "50%", transform: "translateY(-50%)", fontSize: 14, fontWeight: 900, color: "var(--brand-primary)" }}>R$</span>
+                          <input 
+                            type="number"
+                            value={localPrices[svc.id] || ""} 
+                            onChange={e => setLocalPrices({ ...localPrices, [svc.id]: Number(e.target.value) })}
+                            style={{ ...S.input, width: "100%", paddingLeft: 45, fontWeight: 900, fontSize: 18, border: "1px solid var(--theme-border)" }} 
+                            placeholder={String(svc.priceBase)}
+                          />
+                       </div>
+                    </div>
+                  </div>
+                ))}
+              </div>
+
+              <div style={{ marginTop: "2.5rem", borderTop: "1px solid var(--theme-border)", paddingTop: "2.5rem" }}>
+                <button
+                   disabled={savingPrices}
+                   onClick={saveServicePrices}
+                   style={{ background: "var(--brand-primary)", color: "var(--theme-text-on-brand)", border: "none", borderRadius: 0, padding: "14px 40px", fontSize: 11, fontWeight: 800, cursor: "pointer", textTransform: "uppercase", letterSpacing: 2, opacity: savingPrices ? 0.6 : 1 }}
+                >
+                   {savingPrices ? "SALVANDO..." : "ATUALIZAR TABELA DE PREÇOS"}
                 </button>
               </div>
             </div>

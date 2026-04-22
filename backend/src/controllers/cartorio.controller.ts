@@ -98,12 +98,21 @@ export class CartorioController {
           return d.getMonth() === dataMes.getMonth() && d.getFullYear() === dataMes.getFullYear();
       }).length;
 
+      // Buscar dados do cartório se não for Admin (para garantir que temos servicePrices mesmo sem eventos)
+      let cartorioData = null;
+      if (!isAdmin) {
+        cartorioData = await prisma.cartorio.findUnique({ where: { userId: user.userId } });
+      } else {
+        cartorioData = events[0]?.cartorioUser?.cartorio || null;
+      }
+
       res.json({
         totalEventos: events.length,
         totalVendas: events.reduce((acc, ev) => acc + ev.pedidos.length, 0),
         repasseEstimado: estimativaRepasse,
         eventosMes,
-        razaoSocial: events[0]?.cartorioUser?.cartorio?.razaoSocial || "Sua Unidade",
+        razaoSocial: cartorioData?.razaoSocial || "Sua Unidade",
+        cartorio: cartorioData,
         events: eventosProcessados 
       });
 

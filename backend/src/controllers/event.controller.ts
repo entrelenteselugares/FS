@@ -164,17 +164,25 @@ export class EventController {
         include: { cartorio: true },
         orderBy: { nome: "asc" }
       });
-      return res.json(partners.map(p => ({
-        id: p.id,
-        name: p.cartorio?.razaoSocial || p.nome,
-        city: p.cartorio?.cidade || "Campinas",
-        prices: {
+      return res.json(partners.map(p => {
+        const legacyPrices = {
           foto: p.cartorio?.priceFoto,
           video: p.cartorio?.priceVideo,
           reels: p.cartorio?.priceReels,
           impresso: p.cartorio?.priceImpresso
-        }
-      })));
+        };
+        const customPrices = (p.cartorio?.servicePrices as any) || {};
+        
+        // Merge legacy with custom (custom takes priority)
+        const mergedPrices = { ...legacyPrices, ...customPrices };
+
+        return {
+          id: p.id,
+          name: p.cartorio?.razaoSocial || p.nome,
+          city: p.cartorio?.cidade || "Campinas",
+          prices: mergedPrices
+        };
+      }));
     } catch (error) {
       console.error("Erro ao listar parceiros:", error);
       return res.status(500).json({ error: "Erro interno ao listar parceiros." });
