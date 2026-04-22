@@ -40,16 +40,6 @@ export async function chooseAccessType(req: AuthRequest, res: Response): Promise
       return;
     }
 
-    // Verifica se já foi escolhido (imutável após primeira escolha)
-    if (order.accessType) {
-      res.status(409).json({
-        error: `Tipo de acesso já definido como ${order.accessType}. Esta escolha não pode ser alterada.`,
-        accessType: order.accessType,
-        accessExpiresAt: order.accessExpiresAt,
-      });
-      return;
-    }
-
     // Verifica se o pagamento foi aprovado
     const aprovado = order.status === "APROVADO" || order.status === "APPROVED";
     if (!aprovado) {
@@ -73,12 +63,11 @@ export async function chooseAccessType(req: AuthRequest, res: Response): Promise
     });
 
     // Se PUBLIC, o evento fica visível no portfolio
-    if (accessType === "PUBLIC") {
-      await prisma.event.update({
-        where: { id: order.eventId },
-        data: { active: true },
-      });
-    }
+    // Se PRIVATE, desativamos (a menos que haja outro pedido público - simplificado)
+    await prisma.event.update({
+      where: { id: order.eventId },
+      data: { active: accessType === "PUBLIC" },
+    });
 
     res.json({
       accessType: updated.accessType,

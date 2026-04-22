@@ -3,6 +3,7 @@ import { useNavigate, useSearchParams } from "react-router-dom";
 import { useAuth } from "../hooks/useAuth";
 import { API } from "../lib/api";
 import { T } from "../lib/theme";
+import AccessTypeModal from "../components/AccessTypeModal";
 
 interface Pedido {
   id: string;
@@ -50,10 +51,21 @@ export default function ClienteArea() {
   const { user, logout } = useAuth();
   const navigate = useNavigate();
   const [searchParams] = useSearchParams();
-  const [pedidos, setPedidos] = useState<Pedido[]>([]);
-  const [selected, setSelected] = useState<Pedido | null>(null);
-  const [loading, setLoading] = useState(true);
   const [loadingDetalhe, setLoadingDetalhe] = useState(false);
+  const [isPrivacyModalOpen, setIsPrivacyModalOpen] = useState(false);
+
+  const fetchPedidos = useCallback(async () => {
+    try {
+      const { data } = await API.get("/cliente/pedidos");
+      setPedidos(data);
+      return data;
+    } catch (err) {
+      console.error("Erro ao carregar pedidos:", err);
+      return [];
+    } finally {
+      setLoading(false);
+    }
+  }, []);
 
   const handleSelect = useCallback(async (pedido: Pedido) => {
     setSelected(pedido);
@@ -71,18 +83,14 @@ export default function ClienteArea() {
   }, []);
 
   useEffect(() => {
-    API.get("/cliente/pedidos")
-      .then((r) => {
-        setPedidos(r.data);
-        const urlOrderId = searchParams.get("orderId");
-        if (urlOrderId) {
-          const found = r.data.find((p: Pedido) => p.id === urlOrderId);
-          if (found) handleSelect(found);
-        }
-      })
-      .catch(console.error)
-      .finally(() => setLoading(false));
-  }, [searchParams, handleSelect]);
+    fetchPedidos().then(data => {
+      const urlOrderId = searchParams.get("orderId");
+      if (urlOrderId) {
+        const found = data.find((p: Pedido) => p.id === urlOrderId);
+        if (found) handleSelect(found);
+      }
+    });
+  }, [searchParams, handleSelect, fetchPedidos]);
 
   const now = useMemo(() => Date.now(), []);
 
@@ -238,10 +246,26 @@ export default function ClienteArea() {
                 loading={loadingDetalhe}
                 onClose={() => setSelected(null)}
                 onGoToEvent={() => navigate(`/e/${selected.event.id}`)}
+                onChangePrivacy={() => setIsPrivacyModalOpen(true)}
             />
           </div>
         )}
       </div>
+
+      {isPrivacyModalOpen && selected && (
+        <AccessTypeModal
+          orderId={selected.id}
+          eventTitle={selected.event.nomeNoivos}
+          onConfirmed={async () => {
+            setIsPrivacyModalOpen(false);
+            const data = await fetchPedidos();
+            // Atualiza o selecionado para refletir a mudança
+            const updated = data.find((p: any) => p.id === selected.id);
+            if (updated) setSelected(updated);
+            else setSelected(null);
+          }}
+        />
+      )}
     </div>
   );
 }
@@ -360,6 +384,7 @@ function PedidoDetalhe({ pedido, loading, onClose, onGoToEvent }: {
   loading: boolean;
   onClose: () => void;
   onGoToEvent: () => void;
+  onChangePrivacy: () => void;
 }) {
   return (
     <div style={{ ...S.card, position: "sticky", top: "100px", overflow: "hidden" }}>
@@ -475,14 +500,24 @@ function PedidoDetalhe({ pedido, loading, onClose, onGoToEvent }: {
             </div>
         </div>
 
-        <button
-          onClick={onGoToEvent}
-          style={{ background: "transparent", border: "1px solid var(--theme-border)", borderRadius: 0, padding: "14px", color: "var(--theme-text-muted)", fontSize: 11, fontWeight: 800, cursor: "pointer", transition: "all .2s", textTransform: "uppercase", letterSpacing: 2 }}
-          onMouseEnter={(e) => { e.currentTarget.style.borderColor = "var(--brand-primary)"; e.currentTarget.style.color = "var(--theme-text)"; }}
-          onMouseLeave={(e) => { e.currentTarget.style.borderColor = "var(--theme-border)"; e.currentTarget.style.color = "var(--theme-text-muted)"; }}
-        >
-          Página do Evento
-        </button>
+        <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 12 }}>
+          <button
+            onClick={onGoToEvent}
+            style={{ background: "transparent", border: "1px solid var(--theme-border)", borderRadius: 0, padding: "14px", color: "var(--theme-text-muted)", fontSize: 10, fontWeight: 800, cursor: "pointer", transition: "all .2s", textTransform: "uppercase", letterSpacing: 1 }}
+            onMouseEnter={(e) => { e.currentTarget.style.borderColor = "var(--brand-primary)"; e.currentTarget.style.color = "var(--theme-text)"; }}
+            onMouseLeave={(e) => { e.currentTarget.style.borderColor = "var(--theme-border)"; e.currentTarget.style.color = "var(--theme-text-muted)"; }}
+          >
+            Página do Evento
+          </button>
+          <button
+            onClick={onChangePrivacy}
+            style={{ background: "transparent", border: "1px solid var(--theme-border)", borderRadius: 0, padding: "14px", color: "var(--theme-text-muted)", fontSize: 10, fontWeight: 800, cursor: "pointer", transition: "all .2s", textTransform: "uppercase", letterSpacing: 1 }}
+            onMouseEnter={(e) => { e.currentTarget.style.borderColor = "#f87171"; e.currentTarget.style.color = "var(--theme-text)"; }}
+            onMouseLeave={(e) => { e.currentTarget.style.borderColor = "var(--theme-border)"; e.currentTarget.style.color = "var(--theme-text-muted)"; }}
+          >
+            Mudar Privacidade
+          </button>
+        </div>
       </div>
     </div>
   );
