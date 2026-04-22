@@ -457,7 +457,7 @@ export const AdminEvents: React.FC = () => {
                           <select 
                             value={formData.captacaoId}
                             onChange={e => setFormData({...formData, captacaoId: e.target.value})}
-                            className="w-full bg-theme-bg-muted border-b border-theme-border py-4 px-4 text-xs text-theme-text focus:outline-none focus:border-brand-tactical appearance-none rounded-none cursor-pointer"
+                            className="w-full bg-theme-bg border border-theme-border p-4 text-[13px] text-theme-text focus:border-brand-tactical transition-colors outline-none font-bold appearance-none cursor-pointer"
                           >
                             <option value="">PROFISSIONAL DA REDE</option>
                             {users.filter(u => u.role === "PROFISSIONAL").map(u => (
@@ -470,8 +470,6 @@ export const AdminEvents: React.FC = () => {
                           <select 
                             value={formData.edicaoId}
                             onChange={e => setFormData({...formData, edicaoId: e.target.value})}
-                            className="w-full bg-theme-bg-muted border-b border-theme-border py-4 px-4 text-xs text-theme-text focus:outline-none focus:border-brand-tactical appearance-none rounded-none cursor-pointer"
-                          >
                             className="w-full bg-theme-bg border border-theme-border p-4 text-[13px] text-theme-text focus:border-brand-tactical transition-colors outline-none font-bold appearance-none cursor-pointer"
                           >
                             <option value="">PROFISSIONAL DA REDE</option>
