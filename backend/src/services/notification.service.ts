@@ -27,6 +27,7 @@ export class NotificationService {
     eventTitle: string;
     orderId: string;
     accessLink: string;
+    tempPassword?: string;
   }) {
     if (!process.env.SMTP_USER || !process.env.SMTP_PASS) {
       console.warn("[Notification] SMTP credentials missing. Skipping email send.");
@@ -49,6 +50,15 @@ export class NotificationService {
             ACESSAR MEUS ARQUIVOS
           </a>
         </div>
+
+        ${data.tempPassword ? `
+        <div style="border: 1px dashed #ccc; padding: 20px; margin: 20px 0; font-size: 13px;">
+          <p><strong>Aviso:</strong> Criamos uma conta automática para você gerenciar suas compras.</p>
+          <p>E-mail: ${data.to}</p>
+          <p>Senha Temporária: <strong>${data.tempPassword}</strong></p>
+          <p style="color: #666; font-size: 11px;">Recomendamos alterar sua senha no primeiro acesso ao painel do cliente.</p>
+        </div>
+        ` : ""}
         
         <p style="font-size: 12px; color: #999;">
           Número do Pedido: ${data.orderId}<br/>

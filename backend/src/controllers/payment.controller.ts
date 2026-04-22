@@ -257,11 +257,40 @@ export class PaymentController {
       const splitEdicao   = +(preco * getPct("split_edicao")).toFixed(2);
       const splitCartorio = +(preco * getPct("split_cartorio")).toFixed(2);
 
-      // 4. Criar Pedido (Identidade Opcional para Guests)
+      // 4. Identificação do Comprador (Lead -> Customer)
+      let finalUserId = userId;
+      let isNewUser = false;
+      let tempPassword = "";
+
+      if (!finalUserId && email) {
+        const cleanEmail = email.toLowerCase().trim();
+        const existing = await prisma.user.findUnique({ where: { email: cleanEmail } });
+        if (existing) {
+          finalUserId = existing.id;
+        } else {
+          // Auto-cadastro tático para convidados
+          tempPassword = "FS-" + Math.random().toString(36).slice(-8).toUpperCase();
+          const newUser = await prisma.user.create({
+             data: {
+               email: cleanEmail,
+               senha: tempPassword, // O cliente poderá trocar depois via "Esqueci Senha"
+               nome: req.body.buyerName || cleanEmail.split("@")[0],
+               role: "CLIENTE"
+             }
+          });
+          finalUserId = newUser.id;
+          isNewUser = true;
+        }
+      }
+
+      if (!finalUserId) {
+        return res.status(400).json({ error: "E-mail obrigatório para processar o pagamento." });
+      }
+
       const order = await prisma.order.create({
         data: {
           eventId,
-          clienteId: userId || null,
+          clienteId: finalUserId,
           buyerEmail: email,
           valor: preco,
           status: "PENDENTE",
@@ -334,7 +363,8 @@ export class PaymentController {
           buyerName: req.body.buyerName || "Cliente",
           eventTitle: event.nomeNoivos,
           orderId: order.id,
-          accessLink: `${process.env.FRONTEND_URL || "http://localhost:5173"}/e/${event.id}`
+          accessLink: `${process.env.FRONTEND_URL || "https://foto-segundo.vercel.app"}/e/${event.id}`,
+          tempPassword: isNewUser ? tempPassword : undefined
         }).catch(e => console.error("Erro ao enviar e-mail no checkout:", e));
 
       }
