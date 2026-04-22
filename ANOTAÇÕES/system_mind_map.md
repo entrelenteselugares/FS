@@ -26,12 +26,14 @@ mindmap
         schema.prisma
       Src_Logic [src/]
         Controllers [Auth, Admin, Partner, Payment]
+          - Auto_Allocation [Lógica de Profissional FIXO]
         Routes [Core Index Routing]
         Lib [audit.ts, prisma.ts, auth.ts, pricing.ts]
         Services [MercadoPago, Notifications]
     Frontend_React [frontend/]
       Public_Assets [logo-fs.png / Icons]
       Design_System [lib/theme.ts / index.css]
+        - Theme_Engine [Split Context para HMR/Fast Refresh]
       Administrative [Dashboard Tower]
         Events_Management
         Lead_Machine [Quotes]
@@ -41,7 +43,8 @@ mindmap
         Unidade_Fixa [Cartório]
       Public_Pages [Storefront]
         Landing_Pages [SEO / Unidades]
-        Checkout_Flow [Mercado Pago V2]
+        - Checkout_Flow [Mercado Pago V2 / Zero-Any TS Compliance]
+        - ClienteArea [Self-Service Privacy & Event Status]
 ```
 
 ---
