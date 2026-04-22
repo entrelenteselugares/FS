@@ -76,12 +76,12 @@ export const AdminFinance: React.FC = () => {
 
   return (
     <div className="space-y-12 animate-in fade-in slide-in-from-bottom-4 duration-700">
-      <div className="flex items-center justify-between border-b border-white/5 pb-8">
+      <div className="flex items-center justify-between border-b border-theme-border pb-8">
         <div>
           <h2 className="text-2xl md:text-4xl font-heading text-theme-text tracking-tighter uppercase leading-none mb-4">Central de Repasses</h2>
           <p className="text-proportional italic">Modelo Uber — Pagamentos após 7 dias</p>
         </div>
-        <div className="flex bg-white/5 p-1 rounded-none border border-white/5">
+        <div className="flex bg-theme-bg-muted/50 p-1 rounded-none border border-theme-border">
           <button 
             onClick={() => setView("pending")}
             className={`px-6 py-3 text-[9px] font-bold uppercase tracking-widest transition-all ${view === "pending" ? "bg-brand-tactical text-black" : "text-theme-muted hover:text-theme-text"}`}
@@ -109,7 +109,7 @@ export const AdminFinance: React.FC = () => {
               alert("Erro ao exportar CSV");
             }
           }}
-          className="px-6 py-3 bg-white/5 border border-white/10 text-[9px] font-bold uppercase tracking-widest hover:bg-white/10 transition-all text-theme-text flex items-center gap-2"
+          className="px-6 py-3 bg-theme-bg-muted border border-theme-border text-[9px] font-bold uppercase tracking-widest hover:brightness-110 transition-all text-theme-text flex items-center gap-2"
         >
           Exportar CSV
         </button>
@@ -119,7 +119,7 @@ export const AdminFinance: React.FC = () => {
         {loading ? (
           <div className="py-20 text-center text-[10px] text-theme-muted uppercase tracking-widest animate-pulse bg-theme-bg-muted border border-theme-border">Sincronizando Fluxo Financeiro...</div>
         ) : orders.length === 0 ? (
-          <div className="py-20 text-center text-[10px] text-zinc-800 uppercase tracking-widest border border-dashed border-white/5">
+          <div className="py-20 text-center text-[10px] text-theme-muted/30 uppercase tracking-widest border border-dashed border-theme-border">
             {view === "pending" ? "Nenhum repasse pronto para liberação." : "Nenhum histórico de repasse encontrado."}
           </div>
         ) : orders.map(order => (

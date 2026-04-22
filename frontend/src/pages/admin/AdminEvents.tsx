@@ -338,7 +338,7 @@ export const AdminEvents: React.FC = () => {
              <form onSubmit={handleCreate} className="grid grid-cols-1 md:grid-cols-2 gap-x-12 gap-y-10">
                 <div className="space-y-8">
                   <div className="space-y-2">
-                    <label className="text-[9px] font-bold text-zinc-600 uppercase tracking-[0.4em]">Capa da Vitrine</label>
+                    <label className="text-[9px] font-bold text-theme-muted/60 uppercase tracking-[0.4em]">Capa da Vitrine</label>
                     <div 
                       onClick={() => fileInputRef.current?.click()}
                       className="w-full aspect-video bg-theme-bg-muted border border-theme-border flex flex-col items-center justify-center cursor-pointer overflow-hidden group relative rounded-none"
@@ -357,7 +357,7 @@ export const AdminEvents: React.FC = () => {
                   </div>
 
                   <div className="space-y-2">
-                    <label className="text-[9px] font-bold text-zinc-600 uppercase tracking-[0.4em]">Nome do Evento (Noivos)</label>
+                    <label className="text-[9px] font-bold text-theme-muted/60 uppercase tracking-[0.4em]">Nome do Evento (Noivos)</label>
                     <input 
                       required
                       value={formData.title} 
@@ -367,7 +367,7 @@ export const AdminEvents: React.FC = () => {
                   </div>
                   <div className="grid grid-cols-2 gap-8">
                     <div className="space-y-2">
-                      <label className="text-[9px] font-bold text-zinc-600 uppercase tracking-[0.4em]">Data do Evento</label>
+                      <label className="text-[9px] font-bold text-theme-muted/60 uppercase tracking-[0.4em]">Data do Evento</label>
                       <input 
                         type="date" required
                         value={formData.date}
@@ -376,7 +376,7 @@ export const AdminEvents: React.FC = () => {
                       />
                     </div>
                     <div className="space-y-2">
-                      <label className="text-[9px] font-bold text-zinc-600 uppercase tracking-[0.4em]">Local do Registro</label>
+                      <label className="text-[9px] font-bold text-theme-muted/60 uppercase tracking-[0.4em]">Local do Registro</label>
                       <input 
                         required
                         value={formData.location}
@@ -387,7 +387,7 @@ export const AdminEvents: React.FC = () => {
                   </div>
 
                   <div className="space-y-2">
-                    <label className="text-[9px] font-bold text-zinc-600 uppercase tracking-[0.4em]">Horas de Trabalho</label>
+                    <label className="text-[9px] font-bold text-theme-muted/60 uppercase tracking-[0.4em]">Horas de Trabalho</label>
                     <input 
                       type="number"
                       required
@@ -398,7 +398,7 @@ export const AdminEvents: React.FC = () => {
                   </div>
                   
                   <div className="space-y-4">
-                    <label className="text-[9px] font-bold text-zinc-600 uppercase tracking-[0.4em]">Serviços Inclusos</label>
+                    <label className="text-[9px] font-bold text-theme-muted/60 uppercase tracking-[0.4em]">Serviços Inclusos</label>
                     <div className="grid grid-cols-2 gap-4">
                       {(["temFoto", "temVideo", "temReels", "temFotoImpressa"] as const).map(serv => (
                         <label key={serv} className="flex items-center gap-3 cursor-pointer group">
@@ -418,11 +418,11 @@ export const AdminEvents: React.FC = () => {
                 </div>
 
                 <div className="space-y-8">
-                  <div className="space-y-6 pt-10 border-t border-white/5">
+                  <div className="space-y-6 pt-10 border-t border-theme-border">
                     <label className="text-[10px] font-bold text-brand-tactical uppercase tracking-[0.4em]">Equipe Operacional</label>
                     <div className="space-y-6">
                       <div className="space-y-2">
-                        <label className="text-[9px] font-bold text-zinc-600 uppercase tracking-[0.4em]">Unidade Fixa Responsável</label>
+                        <label className="text-[9px] font-bold text-theme-muted/60 uppercase tracking-[0.4em]">Unidade Fixa Responsável</label>
                         <select 
                           value={formData.cartorioId}
                           onChange={e => setFormData({...formData, cartorioId: e.target.value})}
@@ -437,7 +437,7 @@ export const AdminEvents: React.FC = () => {
 
                       <div className="grid grid-cols-2 gap-8">
                         <div className="space-y-2">
-                          <label className="text-[9px] font-bold text-zinc-600 uppercase tracking-[0.4em]">Captação (Artista da Rede)</label>
+                          <label className="text-[9px] font-bold text-theme-muted/60 uppercase tracking-[0.4em]">Captação (Artista da Rede)</label>
                           <select 
                             value={formData.captacaoId}
                             onChange={e => setFormData({...formData, captacaoId: e.target.value})}
@@ -450,7 +450,7 @@ export const AdminEvents: React.FC = () => {
                           </select>
                         </div>
                         <div className="space-y-2">
-                          <label className="text-[9px] font-bold text-zinc-600 uppercase tracking-[0.4em]">Edição (Artista da Rede)</label>
+                          <label className="text-[9px] font-bold text-theme-muted/60 uppercase tracking-[0.4em]">Edição (Artista da Rede)</label>
                           <select 
                             value={formData.edicaoId}
                             onChange={e => setFormData({...formData, edicaoId: e.target.value})}
@@ -468,7 +468,7 @@ export const AdminEvents: React.FC = () => {
 
                   <div className="grid grid-cols-2 gap-8">
                     <div className="space-y-2">
-                      <label className="text-[9px] font-bold text-zinc-600 uppercase tracking-[0.4em]">Preço Regular (R$)</label>
+                      <label className="text-[9px] font-bold text-theme-muted/60 uppercase tracking-[0.4em]">Preço Regular (R$)</label>
                       <input 
                         type="number"
                         value={formData.priceBase}
@@ -477,7 +477,7 @@ export const AdminEvents: React.FC = () => {
                       />
                     </div>
                     <div className="space-y-2">
-                      <label className="text-[9px] font-bold text-zinc-600 uppercase tracking-[0.4em]">Preço Antecipado (R$)</label>
+                      <label className="text-[9px] font-bold text-theme-muted/60 uppercase tracking-[0.4em]">Preço Antecipado (R$)</label>
                       <input 
                         type="number"
                         value={formData.priceEarly}
@@ -503,7 +503,7 @@ export const AdminEvents: React.FC = () => {
 
                     {formData.isCrowdfund && (
                       <div className="space-y-2 animate-in slide-in-from-top-1 duration-300">
-                        <label className="text-[9px] font-bold text-zinc-500 uppercase tracking-[0.4em]">VALOR TOTAL DA META (R$)</label>
+                        <label className="text-[9px] font-bold text-theme-muted/60 uppercase tracking-[0.4em]">VALOR TOTAL DA META (R$)</label>
                         <input 
                           type="number"
                           value={formData.targetAmount}
@@ -535,7 +535,7 @@ export const AdminEvents: React.FC = () => {
           <div className="w-full max-w-sm bg-theme-bg border border-theme-border p-10 relative text-center animate-in zoom-in-95 duration-300">
             <button 
               onClick={() => setQrModalEvent(null)}
-              className="absolute top-6 right-6 text-zinc-500 hover:text-white"
+              className="absolute top-6 right-6 text-theme-muted/60 hover:text-white"
             >
               <X size={20} />
             </button>

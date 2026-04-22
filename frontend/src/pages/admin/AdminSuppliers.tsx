@@ -185,8 +185,8 @@ export default function AdminSuppliers() {
               </div>
 
               {/* Gamification Costs */}
-              <div className="glass-card p-10 relative overflow-hidden">
-                <div className="absolute top-0 right-0 p-8 text-white/[0.02] pointer-events-none transform rotate-12 translate-x-1/4 -translate-y-1/4">
+              <div className="glass-card p-10 relative overflow-hidden border border-theme-border bg-theme-bg-muted/30">
+                <div className="absolute top-0 right-0 p-8 text-theme-text/5 pointer-events-none transform rotate-12 translate-x-1/4 -translate-y-1/4">
                     <BarChart3 size={240} />
                 </div>
                 
