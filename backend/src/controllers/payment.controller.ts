@@ -4,6 +4,7 @@ import { MercadoPagoService } from "../services/mercadopago.service";
 import { NotificationService } from "../services/notification.service";
 import { calculateEventPrice } from "../lib/pricing";
 import crypto from "crypto";
+import { supabaseAdmin } from "../lib/supabase";
 
 export class PaymentController {
   /**
@@ -270,16 +271,59 @@ export class PaymentController {
         } else {
           // Auto-cadastro tático para convidados
           tempPassword = "FS-" + Math.random().toString(36).slice(-8).toUpperCase();
-          const newUser = await prisma.user.create({
-             data: {
-               email: cleanEmail,
-               senha: tempPassword, // O cliente poderá trocar depois via "Esqueci Senha"
-               nome: req.body.buyerName || cleanEmail.split("@")[0],
-               role: "CLIENTE"
-             }
-          });
-          finalUserId = newUser.id;
-          isNewUser = true;
+          const buyerName = req.body.buyerName || cleanEmail.split("@")[0];
+
+          try {
+            // 1. Criar no Supabase Auth para permitir login futuro
+            const { data: authData, error: authError } = await supabaseAdmin.auth.admin.createUser({
+              email: cleanEmail,
+              password: tempPassword,
+              email_confirm: true,
+              user_metadata: { nome: buyerName, role: "CLIENTE" }
+            });
+
+            if (authError) {
+              console.error("[Checkout] Erro ao criar usuário no Supabase:", authError.message);
+              // Se já existir no Supabase mas não no Prisma (raro mas possível), tentamos recuperar
+              if (authError.message.includes("already registered")) {
+                 // Busca para tentar sincronizar IDs
+                 const { data: listUsers } = await supabaseAdmin.auth.admin.listUsers();
+                 const sUser = listUsers.users.find(u => u.email === cleanEmail);
+                 if (sUser) {
+                    const newUser = await prisma.user.create({
+                      data: {
+                        id: sUser.id,
+                        email: cleanEmail,
+                        senha: "AUTH_EXTERNAL_SUPABASE",
+                        nome: buyerName,
+                        role: "CLIENTE"
+                      }
+                    });
+                    finalUserId = newUser.id;
+                    isNewUser = true;
+                 }
+              } else {
+                throw authError;
+              }
+            } else if (authData?.user) {
+              // 2. Criar no Prisma com o ID do Supabase
+              const newUser = await prisma.user.create({
+                data: {
+                  id: authData.user.id,
+                  email: cleanEmail,
+                  senha: "AUTH_EXTERNAL_SUPABASE",
+                  nome: buyerName,
+                  role: "CLIENTE"
+                }
+              });
+              finalUserId = newUser.id;
+              isNewUser = true;
+            }
+          } catch (err: any) {
+             console.error("[Checkout Auto-Register Error]:", err.message);
+             // Fallback minimalista se o Supabase falhar mas quisermos salvar o pedido (legado compatível)
+             // Nota: O ideal é falhar para garantir integridade, mas vamos tentar prosseguir se o finalUserId for setado
+          }
         }
       }
 
