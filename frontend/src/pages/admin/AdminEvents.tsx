@@ -37,6 +37,7 @@ export const AdminEvents: React.FC = () => {
   
   interface EventFormData {
     title: string;
+    slug: string;
     date: string;
     location: string;
     city: string;
@@ -58,7 +59,7 @@ export const AdminEvents: React.FC = () => {
 
   // Form State
   const [formData, setFormData] = useState<EventFormData>({
-    title: "", date: "", location: "", city: "", description: "",
+    title: "", slug: "", date: "", location: "", city: "", description: "",
     priceBase: 200, priceEarly: 190,
     cartorioId: "", captacaoId: "", edicaoId: "",
     temFoto: true, temVideo: false, temReels: false, temFotoImpressa: false,
@@ -102,7 +103,7 @@ export const AdminEvents: React.FC = () => {
       setIsModalOpen(false);
       setEditingEvent(null);
       setFormData({
-        title: "", date: "", location: "", city: "", description: "",
+        title: "", slug: "", date: "", location: "", city: "", description: "",
         priceBase: 200, priceEarly: 190,
         cartorioId: "", captacaoId: "", edicaoId: "",
         temFoto: true, temVideo: false, temReels: false, temFotoImpressa: false,
@@ -124,6 +125,7 @@ export const AdminEvents: React.FC = () => {
       setEditingEvent(data);
       setFormData({
         title: data.nomeNoivos,
+        slug: data.slug || "",
         date: data.dataEvento.split("T")[0],
         location: data.location || "",
         city: data.city || "",
@@ -357,31 +359,45 @@ export const AdminEvents: React.FC = () => {
                   </div>
 
                   <div className="space-y-2">
-                    <label className="text-[9px] font-bold text-theme-muted/60 uppercase tracking-[0.4em]">Nome do Evento (Noivos)</label>
+                    <label className="text-[9px] font-bold text-theme-muted/60 uppercase tracking-[0.4em]">Nome do Evento (Ex: Noivos)</label>
                     <input 
+                      type="text"
+                      className="w-full bg-theme-bg border border-theme-border p-4 text-[13px] text-theme-text focus:border-brand-tactical transition-colors outline-none font-bold"
+                      value={formData.title}
+                      onChange={(e) => setFormData({ ...formData, title: e.target.value })}
                       required
-                      value={formData.title} 
-                      onChange={e => setFormData({...formData, title: e.target.value})}
-                      className="w-full bg-transparent border-b border-theme-border py-3 text-sm text-theme-text focus:outline-none focus:border-brand-tactical transition-all rounded-none" 
                     />
                   </div>
+
+                  <div className="space-y-2">
+                    <label className="text-[9px] font-bold text-theme-muted/60 uppercase tracking-[0.4em]">Identificador URL (Slug)</label>
+                    <input 
+                      type="text"
+                      className="w-full bg-theme-bg border border-theme-border p-4 text-[13px] text-theme-text focus:border-brand-tactical transition-colors outline-none font-bold"
+                      value={formData.slug}
+                      onChange={(e) => setFormData({ ...formData, slug: e.target.value.toLowerCase().replace(/\s+/g, "-") })}
+                      placeholder="ex: taynan-e-felipe"
+                    />
+                  </div>
+
                   <div className="grid grid-cols-2 gap-8">
                     <div className="space-y-2">
                       <label className="text-[9px] font-bold text-theme-muted/60 uppercase tracking-[0.4em]">Data do Evento</label>
                       <input 
                         type="date" required
+                        className="w-full bg-theme-bg border border-theme-border p-4 text-[13px] text-theme-text focus:border-brand-tactical transition-colors outline-none font-bold"
                         value={formData.date}
                         onChange={e => setFormData({...formData, date: e.target.value})}
-                        className="w-full bg-transparent border-b border-theme-border py-3 text-sm text-theme-text focus:outline-none focus:border-brand-tactical transition-all rounded-none" 
                       />
                     </div>
                     <div className="space-y-2">
                       <label className="text-[9px] font-bold text-theme-muted/60 uppercase tracking-[0.4em]">Local do Registro</label>
                       <input 
-                        required
+                        type="text" required
+                        className="w-full bg-theme-bg border border-theme-border p-4 text-[13px] text-theme-text focus:border-brand-tactical transition-colors outline-none font-bold"
                         value={formData.location}
                         onChange={e => setFormData({...formData, location: e.target.value})}
-                        className="w-full bg-transparent border-b border-theme-border py-3 text-sm text-theme-text focus:outline-none focus:border-brand-tactical transition-all rounded-none" 
+                        placeholder="EX: CARTÓRIO X"
                       />
                     </div>
                   </div>
@@ -456,6 +472,8 @@ export const AdminEvents: React.FC = () => {
                             onChange={e => setFormData({...formData, edicaoId: e.target.value})}
                             className="w-full bg-theme-bg-muted border-b border-theme-border py-4 px-4 text-xs text-theme-text focus:outline-none focus:border-brand-tactical appearance-none rounded-none cursor-pointer"
                           >
+                            className="w-full bg-theme-bg border border-theme-border p-4 text-[13px] text-theme-text focus:border-brand-tactical transition-colors outline-none font-bold appearance-none cursor-pointer"
+                          >
                             <option value="">PROFISSIONAL DA REDE</option>
                             {users.filter(u => u.role === "PROFISSIONAL").map(u => (
                               <option key={u.id} value={u.id}>{u.nome.toUpperCase()}</option>
@@ -466,23 +484,34 @@ export const AdminEvents: React.FC = () => {
                     </div>
                   </div>
 
+                  <div className="space-y-2">
+                      <label className="text-[9px] font-bold text-theme-muted/60 uppercase tracking-[0.4em]">Cidade / UF</label>
+                      <input 
+                        type="text"
+                        className="w-full bg-theme-bg border border-theme-border p-4 text-[13px] text-theme-text focus:border-brand-tactical transition-colors outline-none font-bold"
+                        value={formData.city}
+                        onChange={(e) => setFormData({ ...formData, city: e.target.value })}
+                        placeholder="EX: SÃO PAULO - SP"
+                      />
+                    </div>
+
                   <div className="grid grid-cols-2 gap-8">
                     <div className="space-y-2">
-                      <label className="text-[9px] font-bold text-theme-muted/60 uppercase tracking-[0.4em]">Preço Regular (R$)</label>
+                      <label className="text-[9px] font-bold text-theme-muted/60 uppercase tracking-[0.4em]">Preço do Desbloqueio (R$)</label>
                       <input 
                         type="number"
+                        className="w-full bg-theme-bg border border-theme-border p-4 text-[13px] text-theme-text focus:border-brand-tactical transition-colors outline-none font-bold"
                         value={formData.priceBase}
-                        onChange={e => setFormData({...formData, priceBase: Number(e.target.value)})}
-                        className="w-full bg-transparent border-b border-theme-border py-3 text-sm text-theme-text focus:outline-none focus:border-brand-tactical transition-all rounded-none" 
+                        onChange={(e) => setFormData({ ...formData, priceBase: Number(e.target.value) })}
                       />
                     </div>
                     <div className="space-y-2">
                       <label className="text-[9px] font-bold text-theme-muted/60 uppercase tracking-[0.4em]">Preço Antecipado (R$)</label>
                       <input 
                         type="number"
+                        className="w-full bg-theme-bg border border-theme-border p-4 text-[13px] text-theme-text focus:border-brand-tactical transition-colors outline-none font-bold"
                         value={formData.priceEarly}
                         onChange={e => setFormData({...formData, priceEarly: Number(e.target.value)})}
-                        className="w-full bg-transparent border-b border-theme-border py-3 text-sm text-theme-text focus:outline-none focus:border-brand-tactical transition-all rounded-none" 
                       />
                     </div>
                   </div>
@@ -506,9 +535,9 @@ export const AdminEvents: React.FC = () => {
                         <label className="text-[9px] font-bold text-theme-muted/60 uppercase tracking-[0.4em]">VALOR TOTAL DA META (R$)</label>
                         <input 
                           type="number"
+                          className="w-full bg-theme-bg border border-theme-border p-4 text-[13px] text-theme-text focus:border-brand-tactical transition-colors outline-none font-bold"
                           value={formData.targetAmount}
                           onChange={e => setFormData({...formData, targetAmount: Number(e.target.value)})}
-                          className="w-full bg-theme-bg-muted border-b border-theme-border py-2 text-sm text-theme-text focus:outline-none focus:border-brand-tactical transition-all"
                         />
                       </div>
                     )}
@@ -551,7 +580,7 @@ export const AdminEvents: React.FC = () => {
             <div className="bg-white p-6 rounded-none inline-block mb-10 shadow-2xl">
               <QRCodeSVG 
                 id="qr-code-svg-admin-rev"
-                value={`${window.location.origin}/e/${qrModalEvent.id}`}
+                value={`${window.location.origin}/e/${qrModalEvent.slug || qrModalEvent.id}`}
                 size={220}
                 level="H"
                 includeMargin={true}
@@ -562,7 +591,7 @@ export const AdminEvents: React.FC = () => {
               <div className="grid grid-cols-2 gap-4">
                 <button 
                   onClick={() => {
-                    const url = `${window.location.origin}/e/${qrModalEvent.id}`;
+                    const url = `${window.location.origin}/e/${qrModalEvent.slug || qrModalEvent.id}`;
                     navigator.clipboard.writeText(url);
                     setCopied(true);
                     setTimeout(() => setCopied(false), 2000);
