@@ -156,7 +156,11 @@ export default function EventPage() {
           setStep("success");
           setNeedsAccessChoice(true);
         } else if (data.status === "ACTIVE") {
-          setAccess({ lightroomUrl: data.lightroomUrl, driveUrl: data.driveUrl });
+          setAccess({ 
+            lightroomUrl: data.lightroomUrl, 
+            driveUrl: data.driveUrl,
+            expiresAt: data.expiresAt || ""
+          });
           setStep("success");
         }
       } catch { /* not paid yet */ }
@@ -197,7 +201,7 @@ export default function EventPage() {
         return;
       }
       setCardToken(token);
-    } catch (err) {
+    } catch {
       setError("Erro ao validar cartão.");
     } finally {
       setTokenizing(false);
@@ -223,7 +227,11 @@ export default function EventPage() {
           if (data.status === "PENDING_CHOICE") {
             setNeedsAccessChoice(true);
           } else {
-            setAccess({ lightroomUrl: data.lightroomUrl, driveUrl: data.driveUrl });
+            setAccess({ 
+              lightroomUrl: data.lightroomUrl, 
+              driveUrl: data.driveUrl,
+              expiresAt: data.expiresAt || ""
+            });
           }
           setStep("success");
         }
@@ -253,8 +261,9 @@ export default function EventPage() {
       } else {
         pollPaymentStatus(data.orderId);
       }
-    } catch (err: any) {
-      const msg = err.response?.data?.code ? (mpErrors[err.response.data.code] || err.response.data.error) : "Erro no pagamento.";
+    } catch (err: unknown) {
+      const axiosErr = err as any;
+      const msg = axiosErr.response?.data?.code ? (mpErrors[axiosErr.response.data.code] || axiosErr.response.data.error) : "Erro no pagamento.";
       setError(msg);
       setStep("checkout");
       setCardToken(null);
@@ -538,7 +547,7 @@ export default function EventPage() {
           orderId="PRE-PAYMENT"
           eventTitle={event.nomeNoivos}
           onConfirmed={(type) => {
-            setAccessType(type as any);
+            setAccessType(type as "PUBLIC" | "PRIVATE");
             setStep("checkout");
           }}
         />
@@ -553,7 +562,11 @@ export default function EventPage() {
             // Atualiza status para liberar links
             try {
               const { data } = await api.get(`/orders/${orderId}/access-status`);
-              setAccess({ lightroomUrl: data.lightroomUrl, driveUrl: data.driveUrl });
+              setAccess({ 
+                lightroomUrl: data.lightroomUrl, 
+                driveUrl: data.driveUrl,
+                expiresAt: data.expiresAt || ""
+              });
             } catch (err) {
               console.error("Erro ao atualizar links após escolha:", err);
             }
