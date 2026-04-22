@@ -382,10 +382,16 @@ export class PaymentController {
 
     } catch (error: any) {
       const errorData = error.response?.data;
-      console.error("[Process Payment Error]:", errorData || error.message);
+      console.error("[Process Payment FATAL]:", {
+        message: error.message,
+        data: errorData,
+        stack: error.stack,
+        body: req.body
+      });
       return res.status(500).json({ 
         error: "Erro ao processar pagamento v2",
-        details: errorData || error.message
+        details: errorData || error.message,
+        code: error.code // Para erros do Prisma
       });
     }
   }
