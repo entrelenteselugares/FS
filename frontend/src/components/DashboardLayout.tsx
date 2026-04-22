@@ -284,6 +284,7 @@ export const DashboardLayout: React.FC<DashboardLayoutProps> = ({
       {drawerOpen && (
         <div
           onClick={() => setDrawerOpen(false)}
+          className="dashboard-drawer-backdrop"
           style={{
             position:   "fixed",
             inset:      0,
@@ -379,6 +380,10 @@ export const DashboardLayout: React.FC<DashboardLayoutProps> = ({
         @media (max-width: 1023px) {
           .dashboard-sidebar { display: none !important; }
           .dashboard-topbar  { border-bottom: 1px solid ${T.border}; }
+        }
+        /* Garantia de que o backdrop NUNCA apareça em desktop */
+        @media (min-width: 1024px) {
+          .dashboard-drawer-backdrop { display: none !important; }
         }
       `}</style>
     </div>

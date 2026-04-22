@@ -175,16 +175,29 @@ export class PaymentController {
         const paymentData = await MercadoPagoService.getPaymentStatus(mpPaymentId);
         
         if (paymentData.status === "approved") {
-          // 1. Atualiza o pedido vinculado
-          const updatedOrders = await prisma.order.findMany({ 
+          // 1. Busca os pedidos vinculados (Tentando por PaymentId ou ExternalReference)
+          let updatedOrders = await prisma.order.findMany({ 
             where: { paymentId: String(data.id) },
             include: { event: true, cliente: true }
           });
 
+          // Fallback tático: Caso o checkout Pro ainda não tenha salvo o PaymentID, usamos a Referência Externa
+          if (updatedOrders.length === 0 && paymentData.external_reference) {
+            console.log(`[Webhook] Pedido não achado por ID ${data.id}. Tentando por Ref: ${paymentData.external_reference}`);
+            const orderRef = await prisma.order.findUnique({
+              where: { id: paymentData.external_reference },
+              include: { event: true, cliente: true }
+            });
+            if (orderRef) updatedOrders = [orderRef];
+          }
+
           for (const order of updatedOrders) {
             await prisma.order.update({
               where: { id: order.id },
-              data: { status: "APROVADO" }
+              data: { 
+                status: "APROVADO",
+                paymentId: String(data.id) // Garante sincronização do ID real do MP
+              }
             });
 
             // Se for cota de presente, atualiza o montante do evento
