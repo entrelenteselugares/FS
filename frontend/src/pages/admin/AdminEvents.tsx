@@ -120,7 +120,7 @@ export const AdminEvents: React.FC = () => {
 
   const handleEditOpen = async (event: Event) => {
     try {
-      const { data } = await API.get(`/public/events/${event.id}`);
+      const { data } = await API.get(`/admin/events/${event.id}`);
       setEditingEvent(data);
       setFormData({
         title: data.nomeNoivos,

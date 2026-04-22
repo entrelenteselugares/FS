@@ -64,6 +64,7 @@ import {
   updatePartnerProfile,
 } from "../controllers/partner.controller";
 import { getTeam, saveTeam } from "../controllers/team.controller";
+import { adminGetEventById } from "../controllers/admin_event_detail.controller";
 import { runExpirationJob } from "../jobs/expiration.job";
 
 const router = Router();
@@ -162,6 +163,7 @@ router.get("/admin/logs",  requireAuth, requireRole("ADMIN"), adminGetLogs);
 
 // ── Admin: Gestão de Eventos ───────────────────────────────────────────────────
 router.get("/admin/events",             requireAuth, requireRole("ADMIN"), adminListEvents);
+router.get("/admin/events/:id",         requireAuth, requireRole("ADMIN"), adminGetEventById);
 router.post("/admin/events",            requireAuth, requireRole("ADMIN"), adminCreateEvent);
 router.patch("/admin/events/:id",       requireAuth, requireRole("ADMIN"), adminUpdateEvent);
 router.patch("/admin/events/:id/cover", requireAuth, requireRole("ADMIN"), adminUploadCover);
