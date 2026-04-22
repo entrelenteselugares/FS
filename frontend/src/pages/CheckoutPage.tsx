@@ -136,8 +136,9 @@ export const CheckoutPage = () => {
                 alert(`Status do Pagamento: ${data.status}`);
               }
             } catch (err: any) {
-              console.error("Erro no processamento transparente:", err);
-              alert("Erro ao processar pagamento. Verifique seus dados.");
+              console.error("Erro no processamento transparente:", err.response?.data || err);
+              const detail = err.response?.data?.details || err.response?.data?.error || "Verifique seus dados.";
+              alert(`Erro ao processar pagamento: ${detail}`);
             }
           },
           onError: (error: any) => {
