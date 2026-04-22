@@ -140,9 +140,9 @@ export class MercadoPagoService {
    */
   static async processPayment(data: {
     transaction_amount: number;
-    token: string;
+    token?: string;
     description: string;
-    installments: number;
+    installments?: number;
     payment_method_id: string;
     payer: {
       email: string;
@@ -152,18 +152,21 @@ export class MercadoPagoService {
     external_reference?: string;
   }) {
     try {
+      const body: any = {
+        transaction_amount: Number(data.transaction_amount.toFixed(2)),
+        description: data.description,
+        payment_method_id: data.payment_method_id,
+        payer: data.payer,
+        notification_url: data.notification_url,
+        external_reference: data.external_reference,
+      };
+
+      if (data.token) body.token = data.token;
+      if (data.installments) body.installments = data.installments;
+
       const response = await axios.post(
         "https://api.mercadopago.com/v1/payments",
-        {
-          transaction_amount: Number(data.transaction_amount.toFixed(2)),
-          token: data.token,
-          description: data.description,
-          installments: data.installments,
-          payment_method_id: data.payment_method_id,
-          payer: data.payer,
-          notification_url: data.notification_url,
-          external_reference: data.external_reference,
-        },
+        body,
         {
           headers: {
             Authorization: `Bearer ${accessToken}`,
