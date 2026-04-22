@@ -39,6 +39,7 @@ interface EventData {
 interface AccessData {
   lightroomUrl: string | null;
   driveUrl: string | null;
+  expiresAt: string;
 }
 
 type Step = "paywall" | "auth" | "choice" | "checkout" | "processing" | "success";
