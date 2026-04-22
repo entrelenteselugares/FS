@@ -1,23 +1,8 @@
-import { createContext, useContext, useEffect, useState, type ReactNode } from "react";
+import { useEffect, useState, type ReactNode } from "react";
 import { API } from "../lib/api";
+import { ThemeContext, type Theme } from "./ThemeContextCore";
 
-export type Theme = "dark" | "light";
-
-export interface ThemeCtx {
-  theme: Theme;
-  toggle: () => void;
-  isDark: boolean;
-}
-
-export const ThemeContext = createContext<ThemeCtx>(null!);
-
-export const useTheme = () => {
-  const context = useContext(ThemeContext);
-  if (!context) {
-    throw new Error("useTheme must be used within a ThemeProvider");
-  }
-  return context;
-};
+export { useTheme } from "./ThemeContextCore";
 
 export function ThemeProvider({ children }: { children: ReactNode }) {
   const [theme, setTheme] = useState<Theme>(() => {
