@@ -181,7 +181,7 @@ export const AdminEvents: React.FC = () => {
           onClick={() => {
             setEditingEvent(null);
             setFormData({
-              title: "", date: "", location: "", city: "", description: "",
+              title: "", slug: "", date: "", location: "", city: "", description: "",
               priceBase: 200, priceEarly: 190,
               cartorioId: "", captacaoId: "", edicaoId: "",
               temFoto: true, temVideo: false, temReels: false, temFotoImpressa: false,

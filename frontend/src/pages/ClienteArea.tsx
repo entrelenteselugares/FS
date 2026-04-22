@@ -382,7 +382,7 @@ function Tag({ label, color = "#444" }: { label: string; color?: string }) {
   );
 }
 
-function PedidoDetalhe({ pedido, loading, onClose, onGoToEvent }: {
+function PedidoDetalhe({ pedido, loading, onClose, onGoToEvent, onChangePrivacy }: {
   pedido: Pedido;
   loading: boolean;
   onClose: () => void;
