@@ -96,7 +96,7 @@ export const AdminDashboard: React.FC = () => {
         <div style={{ marginBottom: 40 }}>
           <h1 style={{ 
             fontFamily: T.fontD, fontWeight: 900, fontSize: 32, 
-            color: "#fff", textTransform: "uppercase", letterSpacing: 2 
+            color: T.text, textTransform: "uppercase", letterSpacing: 2 
           }}>
             {activeTab === "overview" ? "Visão Geral" : 
              activeTab === "events" ? "Operação de Eventos" : 

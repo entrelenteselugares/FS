@@ -341,7 +341,7 @@ export const DashboardLayout: React.FC<DashboardLayoutProps> = ({
               <MenuIcon />
             </button>
             <div style={{ display: "flex", alignItems: "center" }}>
-              <img src="/logo-fs.png" alt="Foto Segundo" style={{ height: 22, objectFit: "contain" }} />
+              {/* Logo removido daqui pois já existe no sidebar */}
             </div>
           </div>
 

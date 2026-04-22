@@ -32,6 +32,20 @@ interface ProfileData {
   services: string[];
   equipment: string | null;
   otherHabilities: string | null;
+  stats?: {
+    totalEarnings: number;
+    monthEarnings: number;
+    completedEvents: number;
+  };
+  payoutHistory?: Array<{
+    id: string;
+    amount: number;
+    status: string;
+    orderCount: number;
+    payout?: {
+      weekStart: string;
+    }
+  }>;
 }
 
 type SaveStatus = "idle" | "saving" | "saved" | "error";
@@ -133,16 +147,17 @@ export default function ProfissionalDashboard() {
   };
 
   useEffect(() => {
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-    fetchEvents();
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-    fetchProfile();
+    const timer = setTimeout(() => {
+      fetchEvents();
+      fetchProfile();
+    }, 0);
+    return () => clearTimeout(timer);
   }, [fetchEvents, fetchProfile]);
 
   // Ganhos reais do perfil
-  const totalRevenue = (profile as any)?.stats?.totalEarnings || 0;
-  const revenueThisMonth = (profile as any)?.stats?.monthEarnings || 0;
-  const completedEventsCount = (profile as any)?.stats?.completedEvents || 0;
+  const totalRevenue = profile?.stats?.totalEarnings || 0;
+  const revenueThisMonth = profile?.stats?.monthEarnings || 0;
+  const completedEventsCount = profile?.stats?.completedEvents || 0;
 
   const handleUpdated = useCallback((updated: Partial<EventItem>) => {
     setSelected((prev) => prev ? { ...prev, ...updated } : prev);
@@ -166,7 +181,7 @@ export default function ProfissionalDashboard() {
 
   const displayEvents = activeTab === "agenda" ? acceptedEvents : pendingEvents;
 
-  const NAV_ITEMS = (activeTab: string, setActiveTab: (t: any) => void, pendingCount: number): NavItem[] => [
+  const NAV_ITEMS = (activeTab: string, setActiveTab: (t: "agenda" | "convites" | "financeiro") => void, pendingCount: number): NavItem[] => [
     { label: "Visão Geral", onClick: () => setActiveTab("agenda"), isActive: activeTab === "agenda", icon: <LayoutDashboard size={16} /> },
     { label: "Convites Pendentes", onClick: () => setActiveTab("convites"), isActive: activeTab === "convites", icon: <MessageCircle size={16} />, badge: pendingCount },
     { label: "Financeiro", onClick: () => setActiveTab("financeiro"), isActive: activeTab === "financeiro", icon: <DollarSign size={16} /> },
@@ -194,7 +209,7 @@ export default function ProfissionalDashboard() {
         
         {/* Header contextual */}
         <div style={{ marginBottom: "3rem" }}>
-          <h1 style={{ fontFamily: T.fontD, fontWeight: 900, fontSize: 32, color: "#fff", textTransform: "uppercase", letterSpacing: 2, margin: 0 }}>
+          <h1 style={{ fontFamily: T.fontD, fontWeight: 900, fontSize: 32, color: T.text, textTransform: "uppercase", letterSpacing: 2, margin: 0 }}>
             {activeTab === "agenda" ? "Minha Agenda" : 
              activeTab === "convites" ? "Convites Pendentes" : 
              "Fluxo Financeiro"}
@@ -267,12 +282,12 @@ export default function ProfissionalDashboard() {
         {activeTab === "financeiro" ? (
           <div style={{ animation: "fadeIn 0.4s ease-out" }}>
             <div style={{ ...S.card, padding: "2rem" }}>
-              <h3 style={{ fontSize: 18, fontWeight: 900, color: "#fff", marginBottom: "1.5rem", textTransform: "uppercase", letterSpacing: 1 }}>Histórico de Vendas e Comissões</h3>
+              <h3 style={{ fontSize: 18, fontWeight: 900, color: T.text, marginBottom: "1.5rem", textTransform: "uppercase", letterSpacing: 1 }}>Histórico de Vendas e Comissões</h3>
               <div style={{ display: "flex", flexDirection: "column", gap: 1 }}>
-                {(profile as any)?.payoutHistory?.map((p: any) => (
+                {profile?.payoutHistory?.map((p) => (
                   <div key={p.id} style={{ display: "flex", justifyContent: "space-between", alignItems: "center", padding: "1.25rem", borderBottom: "1px solid var(--theme-border)", background: "rgba(255,255,255,0.01)" }}>
                     <div>
-                      <p style={{ fontSize: 14, fontWeight: 800, color: "#fff", margin: 0 }}>Repasse {p.payout?.weekStart ? formatDate(p.payout.weekStart) : 'Mensal'}</p>
+                      <p style={{ fontSize: 14, fontWeight: 800, color: T.text, margin: 0 }}>Repasse {p.payout?.weekStart ? formatDate(p.payout.weekStart) : 'Mensal'}</p>
                       <p style={{ fontSize: 11, color: "var(--theme-text-muted)", margin: "4px 0 0 0" }}>{p.status === 'PAID' ? 'PAGO' : 'PROCESSANDO'} · {p.orderCount} vendas</p>
                     </div>
                     <div style={{ textAlign: "right" }}>
@@ -281,7 +296,7 @@ export default function ProfissionalDashboard() {
                     </div>
                   </div>
                 ))}
-                {(!profile || !(profile as any).payoutHistory?.length) && (
+                {(!profile || !profile.payoutHistory?.length) && (
                   <div style={{ padding: "4rem", textAlign: "center", color: "var(--theme-text-muted)" }}>
                     Nenhum repasse liquidado encontrado. Continue produzindo!
                   </div>

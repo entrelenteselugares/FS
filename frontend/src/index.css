@@ -47,9 +47,9 @@
   --bg-field:     #f0ede8;
   --border:       #e0dbd4;
   --border-2:     #ccc8c0;
-  --text:         #1a1814;
-  --text-2:       #6b6560;
-  --text-3:       #a09890;
+  --text:         #000000;   /* Preto absoluto para legibilidade máxima */
+  --text-2:       #2a2723;   /* Cinza muito escuro */
+  --text-3:       #4d4842;   /* Cinza escuro para labels */
   --brand:        #2d8a7a;   /* teal mais escuro no claro para contraste */
   --brand-dark:   #e8f5f2;
   --brand-border: #b8ddd8;
