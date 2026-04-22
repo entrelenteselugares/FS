@@ -1,7 +1,29 @@
 import nodemailer from "nodemailer";
 import dotenv from "dotenv";
+import https from "https";
 
 dotenv.config();
+
+// ─── CallMeBot WhatsApp Helper ────────────────────────────────────────────────
+function sendWhatsApp(message: string): void {
+  const phone = process.env.CALLMEBOT_PHONE;
+  const apikey = process.env.CALLMEBOT_APIKEY;
+
+  if (!phone || !apikey) {
+    console.warn("[WhatsApp] CALLMEBOT_PHONE ou CALLMEBOT_APIKEY não configurados. Pulando.");
+    return;
+  }
+
+  const encodedMsg = encodeURIComponent(message);
+  const url = `https://api.callmebot.com/whatsapp.php?phone=${phone}&text=${encodedMsg}&apikey=${apikey}`;
+
+  https.get(url, (res) => {
+    console.log(`[WhatsApp] Notificação enviada. Status: ${res.statusCode}`);
+  }).on("error", (err) => {
+    console.error("[WhatsApp] Erro ao enviar notificação:", err.message);
+  });
+}
+
 
 /**
  * Serviço de Notificações Centralizado
@@ -140,5 +162,39 @@ export class NotificationService {
     } catch (error) {
       console.error("[Notification] Erro ao enviar e-mail de orçamento:", error);
     }
+  }
+
+  // ─── WhatsApp Alerts (CallMeBot) ───────────────────────────────────────────
+
+  /** Alerta para nova venda confirmada */
+  static notifyNewSale(data: { buyerEmail: string; eventTitle: string; orderId: string; amount: number }) {
+    sendWhatsApp(
+      `💰 *VENDA CONFIRMADA — Foto Segundo*\n\n` +
+      `📸 Evento: ${data.eventTitle}\n` +
+      `🆔 Pedido: ${data.orderId.slice(-8).toUpperCase()}\n` +
+      `💵 Valor: R$ ${Number(data.amount).toFixed(2)}\n` +
+      `📧 Comprador: ${data.buyerEmail}`
+    );
+  }
+
+  /** Alerta para novo lead/orçamento recebido */
+  static notifyNewLead(data: { name: string; email: string; eventDate?: string; usageType?: string; locationType?: string }) {
+    sendWhatsApp(
+      `📋 *NOVO LEAD — Foto Segundo*\n\n` +
+      `👤 Nome: ${data.name}\n` +
+      `📧 E-mail: ${data.email}\n` +
+      `📅 Data: ${data.eventDate || "Não informada"}\n` +
+      `📍 Tipo: ${data.locationType === "PARTNER" ? "Unidade Fixa" : "Outro Local"} · ${data.usageType || ""}`
+    );
+  }
+
+  /** Alerta para pagamento com status inesperado */
+  static notifyPaymentIssue(data: { orderId: string; status: string; eventTitle: string }) {
+    sendWhatsApp(
+      `⚠️ *ALERTA DE PAGAMENTO — Foto Segundo*\n\n` +
+      `📸 Evento: ${data.eventTitle}\n` +
+      `🆔 Pedido: ${data.orderId.slice(-8).toUpperCase()}\n` +
+      `❌ Status: ${data.status}`
+    );
   }
 }

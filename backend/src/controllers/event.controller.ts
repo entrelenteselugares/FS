@@ -1,6 +1,7 @@
 import { Response } from "express";
 import { AuthRequest } from "../lib/auth";
 import prisma from "../lib/prisma";
+import { NotificationService } from "../services/notification.service";
 
 export class EventController {
   /**
@@ -264,6 +265,8 @@ export class EventController {
       }
 
       // Se for Orçamento (OTHER), apenas retorna sucesso. O Admin irá precificar depois.
+      // Alerta de novo lead para o admin via WhatsApp
+      NotificationService.notifyNewLead({ name, email, eventDate, usageType, locationType });
       return res.json({ success: true, message: "Sua solicitação foi enviada! Em breve entraremos em contato com o orçamento detalhado." });
 
     } catch (error) {

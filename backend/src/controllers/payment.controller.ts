@@ -225,6 +225,14 @@ export class PaymentController {
                 accessLink: `${process.env.FRONTEND_URL || "http://localhost:5173"}/e/${order.eventId}`
               }).catch(e => console.error("Erro ao enviar e-mail via Webhook:", e));
             }
+
+            // 4. Alerta WhatsApp para o admin
+            NotificationService.notifyNewSale({
+              buyerEmail: order.buyerEmail || order.cliente?.email || "desconhecido",
+              eventTitle: order.event.nomeNoivos,
+              orderId: order.id,
+              amount: order.valor
+            });
           }
           console.log(`✅ Pagamento ${data.id} aprovado e notificação enviada.`);
         }
