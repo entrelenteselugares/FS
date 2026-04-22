@@ -9,14 +9,14 @@ interface GalleryViewProps {
 export const GalleryView: React.FC<GalleryViewProps> = ({ event }) => {
 
   return (
-    <div className="min-h-screen pt-24 pb-40 bg-midnight animate-fade-in">
+    <div className="min-h-screen pt-24 pb-40" style={{ background: "var(--theme-bg)" }}>
       <header className="px-6 mb-16 text-center max-w-7xl mx-auto">
         <h2 className="mb-2 text-[10px] font-black uppercase tracking-[0.6em] text-brand-indigo">Galeria Desbloqueada</h2>
-        <h1 className="text-4xl font-black tracking-tighter uppercase md:text-6xl text-white">
+        <h1 className="text-4xl font-black tracking-tighter uppercase md:text-6xl" style={{ color: "var(--theme-text)" }}>
           {event.nomeNoivos}
         </h1>
         <div className="flex items-center justify-center gap-4 mt-6">
-           <div className="flex items-center gap-2 px-4 py-2 text-[10px] font-black uppercase border rounded-xl border-white/5 bg-white/5">
+           <div className="flex items-center gap-2 px-4 py-2 text-[10px] font-black uppercase border rounded-xl" style={{ borderColor: "var(--theme-border)", background: "var(--theme-bg-muted)", color: "var(--theme-text)" }}>
               <ImageIcon size={14} className="text-zinc-500" />
               {event.midias.length} Mídias Registradas
            </div>
@@ -28,7 +28,8 @@ export const GalleryView: React.FC<GalleryViewProps> = ({ event }) => {
         {event.midias.map((midia, index) => (
           <div 
             key={midia.id} 
-            className="relative overflow-hidden group rounded-[2.5rem] bg-midnight-card border border-white/5 transition-all duration-700 hover:scale-[1.02] shadow-2xl break-inside-avoid"
+            className="relative overflow-hidden group rounded-[2.5rem] shadow-2xl break-inside-avoid"
+            style={{ background: "var(--theme-bg-muted)", border: "1px solid var(--theme-border)" }}
           >
             <img 
               src={midia.url} 
@@ -60,7 +61,7 @@ export const GalleryView: React.FC<GalleryViewProps> = ({ event }) => {
 
       {/* Floating Toolbar Minimalista */}
       <div className="fixed bottom-10 left-1/2 -translate-x-1/2 z-50">
-         <div className="flex items-center gap-2 p-2 bg-midnight-card border border-white/10 rounded-[2rem] shadow-2xl backdrop-blur-2xl">
+         <div className="flex items-center gap-2 p-2 rounded-[2rem] shadow-2xl backdrop-blur-2xl" style={{ background: "var(--theme-bg-muted)", border: "1px solid var(--theme-border)" }}>
             <button className="px-8 py-4 text-[10px] font-black uppercase tracking-widest bg-brand-indigo text-white rounded-full hover:bg-white hover:text-midnight transition-all">
                Baixar Tudo (.zip)
             </button>

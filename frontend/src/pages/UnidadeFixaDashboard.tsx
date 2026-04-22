@@ -468,7 +468,7 @@ export default function UnidadeFixaDashboard() {
             {/* Header Card */}
             <div style={{ ...S.card, padding: "2rem" }}>
               <div style={{ display: "flex", alignItems: "center", gap: 12, marginBottom: 12 }}>
-                <div style={{ width: 36, height: 36, borderRadius: "50%", background: "var(--brand-primary)", color: "black", display: "flex", alignItems: "center", justifyContent: "center" }}>
+                <div style={{ width: 36, height: 36, borderRadius: "50%", background: "var(--brand-primary)", color: "var(--theme-text-on-brand)", display: "flex", alignItems: "center", justifyContent: "center" }}>
                   <Users2 size={18} />
                 </div>
                 <h3 style={{ fontFamily: "'Outfit', sans-serif", fontSize: 24, fontWeight: 900, color: "var(--theme-text)", textTransform: "uppercase" }}>
@@ -553,7 +553,7 @@ export default function UnidadeFixaDashboard() {
                                 ? tipo === "FIXO" ? "var(--brand-primary)" : tipo === "ROTATIVO" ? "#3b82f620" : "var(--theme-bg)"
                                 : "transparent",
                               color: vinculo === tipo
-                                ? tipo === "FIXO" ? "black" : tipo === "ROTATIVO" ? "#3b82f6" : "var(--theme-text-muted)"
+                                ? tipo === "FIXO" ? "var(--theme-text-on-brand)" : tipo === "ROTATIVO" ? "#3b82f6" : "var(--theme-text-muted)"
                                 : "var(--theme-text-muted)",
                             }}
                           >
@@ -616,7 +616,7 @@ export default function UnidadeFixaDashboard() {
             <div style={{ ...S.card, padding: "2rem" }}>
               <div style={{ borderBottom: "1px solid var(--theme-border)", paddingBottom: 20, marginBottom: 40 }}>
                 <div style={{ display: "flex", alignItems: "center", gap: 12, marginBottom: 10 }}>
-                   <div style={{ width: 32, height: 32, borderRadius: "50%", background: "var(--brand-primary)", color: "black", display: "flex", alignItems: "center", justifyContent: "center" }}>
+                   <div style={{ width: 32, height: 32, borderRadius: "50%", background: "var(--brand-primary)", color: "var(--theme-text-on-brand)", display: "flex", alignItems: "center", justifyContent: "center" }}>
                       <DollarSign size={16} />
                    </div>
                    <h3 style={{ fontFamily: "'Outfit', sans-serif", fontSize: 24, fontWeight: 900, color: "var(--theme-text)", textTransform: "uppercase", letterSpacing: -0.5 }}>Tabela de Preços Locais</h3>

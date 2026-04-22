@@ -105,7 +105,7 @@ export default function ClienteArea() {
       
       {/* NAV */}
       <nav className="mobile-nav" style={{ display: "flex", alignItems: "center", justifyContent: "space-between", padding: "1.25rem 2rem", background: "rgba(10,10,10,0.8)", backdropFilter: "blur(10px)", borderBottom: "0.5px solid #1a1a1a", position: "sticky", top: 0, zIndex: 100 }}>
-        <button onClick={() => navigate("/")} style={{ background: "none", border: "none", color: "#888", fontSize: 13, cursor: "pointer", transition: "color .2s" }} onMouseEnter={(e) => (e.currentTarget.style.color = "#fff")} onMouseLeave={(e) => (e.currentTarget.style.color = "#888")}>
+        <button onClick={() => navigate("/")} style={{ background: "none", border: "none", color: "var(--theme-text-muted)", fontSize: 13, cursor: "pointer", transition: "color .2s" }} onMouseEnter={(e) => (e.currentTarget.style.color = "var(--theme-text)")} onMouseLeave={(e) => (e.currentTarget.style.color = "var(--theme-text-muted)")}>
           ← <span className="mobile-hide">Voltar para Galeria</span><span className="md:hidden">Voltar</span>
         </button>
         <div style={{ display: "flex", alignItems: "center" }}>
@@ -115,7 +115,7 @@ export default function ClienteArea() {
           <div className="mobile-hide" style={{ textAlign: "right" }}>
             <p style={{ fontSize: 11, fontWeight: 600, color: "#fff", margin: 0 }}>{user?.nome}</p>
           </div>
-          <button onClick={logout} style={{ background: "rgba(255,255,255,0.05)", border: "0.5px solid #222", borderRadius: 6, padding: "6px 14px", color: "#fff", fontSize: 11, cursor: "pointer", transition: "all .2s" }}>
+          <button onClick={logout} style={{ background: "rgba(255,255,255,0.05)", border: "0.5px solid rgba(255,255,255,0.2)", borderRadius: 6, padding: "6px 14px", color: "#fff", fontSize: 11, cursor: "pointer", transition: "all .2s" }}>
             Sair
           </button>
         </div>
@@ -144,10 +144,10 @@ export default function ClienteArea() {
         {/* LISTA */}
         <div>
           <div style={{ marginBottom: "2.5rem" }}>
-            <h1 className="mobile-title" style={{ fontSize: 32, fontWeight: 800, color: "#fff", marginBottom: 8, letterSpacing: -0.5 }}>
+            <h1 className="mobile-title" style={{ fontSize: 32, fontWeight: 800, color: "var(--theme-text)", marginBottom: 8, letterSpacing: -0.5 }}>
               Meus Arquivos
             </h1>
-            <p style={{ fontSize: 14, color: "#888" }}>
+            <p style={{ fontSize: 14, color: "var(--theme-text-muted)" }}>
               Acesso vitalício às memórias que você adquiriu.
             </p>
           </div>
@@ -167,11 +167,11 @@ export default function ClienteArea() {
               <style>{`@keyframes pulse { 0% { opacity: 1; } 50% { opacity: 0.5; } 100% { opacity: 1; } }`}</style>
             </div>
           ) : pedidos.length === 0 ? (
-            <div style={{ textAlign: "center", padding: "6rem 0", background: "rgba(255,255,255,0.02)", borderRadius: 20, border: "1px dashed #222" }}>
-              <p style={{ fontSize: 24, fontWeight: 700, color: "#333", marginBottom: 10 }}>
+            <div style={{ textAlign: "center", padding: "6rem 0", background: "var(--theme-bg-muted)", borderRadius: 20, border: "1px dashed var(--theme-border)" }}>
+              <p style={{ fontSize: 24, fontWeight: 700, color: "var(--theme-text)", marginBottom: 10 }}>
                 Sua galeria está vazia
               </p>
-              <p style={{ fontSize: 15, color: "#555", marginBottom: "2rem" }}>
+              <p style={{ fontSize: 15, color: "var(--theme-text-muted)", marginBottom: "2rem" }}>
                 Você ainda não adquiriu fotos de nenhum evento.
               </p>
               <button
@@ -294,10 +294,10 @@ function PedidoRow({ pedido, now, isSelected, onClick }: {
 
       {/* Info */}
       <div style={{ flex: 1, minWidth: 0 }}>
-        <p style={{ fontSize: 16, fontWeight: 700, color: "#fff", marginBottom: 4, whiteSpace: "nowrap", overflow: "hidden", textOverflow: "ellipsis" }}>
+        <p style={{ fontSize: 16, fontWeight: 700, color: "var(--theme-text)", marginBottom: 4, whiteSpace: "nowrap", overflow: "hidden", textOverflow: "ellipsis" }}>
           {pedido.event.nomeNoivos}
         </p>
-        <p style={{ fontSize: 12, color: "#666", marginBottom: 10 }}>
+        <p style={{ fontSize: 12, color: "var(--theme-text-muted)", marginBottom: 10 }}>
           {formatDate(pedido.event.dataEvento)} · {pedido.event.city || pedido.event.location}
         </p>
         <div style={{ display: "flex", gap: 8, flexWrap: "wrap" }}>
@@ -336,10 +336,10 @@ function PedidoRow({ pedido, now, isSelected, onClick }: {
 
       {/* Valor */}
       <div style={{ textAlign: "right", flexShrink: 0 }}>
-        <p style={{ fontSize: 18, color: "#fff", fontWeight: 800 }}>
+        <p style={{ fontSize: 18, color: "var(--theme-text)", fontWeight: 800 }}>
           {formatCurrency(pedido.amount)}
         </p>
-        <p style={{ fontSize: 10, color: "#444", textTransform: "uppercase", letterSpacing: 0.5 }}>
+        <p style={{ fontSize: 10, color: "var(--theme-text-muted)", textTransform: "uppercase", letterSpacing: 0.5 }}>
           ID: {pedido.id.slice(-6).toUpperCase()}
         </p>
       </div>
@@ -370,11 +370,11 @@ function PedidoDetalhe({ pedido, loading, onClose, onGoToEvent }: {
           <p style={{ fontSize: 10, fontWeight: 800, letterSpacing: 1, textTransform: "uppercase", color: pedido.hasPaid ? "#85B9AC" : "#f59e0b", marginBottom: 6 }}>
             {pedido.hasPaid ? "Entrega Liberada" : "Pedido em Processamento"}
           </p>
-          <h2 style={{ fontSize: 20, fontWeight: 800, color: "#fff", margin: 0 }}>
+          <h2 style={{ fontSize: 20, fontWeight: 800, color: "var(--theme-text)", margin: 0 }}>
             {pedido.event.nomeNoivos}
           </h2>
         </div>
-        <button onClick={onClose} style={{ background: "none", border: "none", color: "#444", fontSize: 24, cursor: "pointer", padding: 0, lineHeight: 1 }} onMouseEnter={(e) => (e.currentTarget.style.color = "#fff")} onMouseLeave={(e) => (e.currentTarget.style.color = "#444")}>
+        <button onClick={onClose} style={{ background: "none", border: "none", color: "var(--theme-text-muted)", fontSize: 24, cursor: "pointer", padding: 0, lineHeight: 1 }} onMouseEnter={(e) => (e.currentTarget.style.color = "var(--theme-text)")} onMouseLeave={(e) => (e.currentTarget.style.color = "var(--theme-text-muted)")}>
           ×
         </button>
       </div>
@@ -391,7 +391,7 @@ function PedidoDetalhe({ pedido, loading, onClose, onGoToEvent }: {
           <p style={{ fontSize: 11, color: pedido.accessType === "PRIVATE" ? "#f87171" : "#85B9AC", margin: 0, fontWeight: 600 }}>
             {pedido.accessType === "PRIVATE" ? "⚠️ ACESSO PRIVADO" : "📅 ÁLBUM PÚBLICO"}
           </p>
-          <p style={{ fontSize: 10, color: "#666", margin: 0, marginTop: 4 }}>
+          <p style={{ fontSize: 10, color: "var(--theme-text-muted)", margin: 0, marginTop: 4 }}>
             Expira em: {new Date(pedido.accessExpiresAt).toLocaleDateString("pt-BR")}
           </p>
         </div>
@@ -406,7 +406,7 @@ function PedidoDetalhe({ pedido, loading, onClose, onGoToEvent }: {
           </div>
         ) : pedido.hasPaid ? (
           <div style={{ display: "flex", flexDirection: "column", gap: 12 }}>
-            <p style={{ fontSize: 11, fontWeight: 600, color: "#555", textTransform: "uppercase", letterSpacing: 1 }}>Links de Acesso</p>
+            <p style={{ fontSize: 11, fontWeight: 600, color: "var(--theme-text-muted)", textTransform: "uppercase", letterSpacing: 1 }}>Links de Acesso</p>
             
             {pedido.event.lightroomUrl ? (
               <a
@@ -418,14 +418,14 @@ function PedidoDetalhe({ pedido, loading, onClose, onGoToEvent }: {
                 onMouseLeave={(e: React.MouseEvent<HTMLElement>) => { e.currentTarget.style.borderColor = T.border; e.currentTarget.style.background = T.bg; }}
               >
                 <div>
-                  <p style={{ fontSize: 14, fontWeight: 700, color: "#fff", marginBottom: 2 }}>📸 Álbum Digital</p>
-                  <p style={{ fontSize: 11, color: "#666" }}>Curadoria em Alta Resolução</p>
+                  <p style={{ fontSize: 14, fontWeight: 700, color: "var(--theme-text)", marginBottom: 2 }}>📸 Álbum Digital</p>
+                  <p style={{ fontSize: 11, color: "var(--theme-text-muted)" }}>Curadoria em Alta Resolução</p>
                 </div>
                 <span style={{ color: "#c9a96e" }}>↗</span>
               </a>
             ) : (
-                <div style={{ background: "#050505", border: "0.5px solid #1a1a1a", borderRadius: 10, padding: "14px 18px" }}>
-                   <p style={{ fontSize: 13, color: "#444", margin: 0 }}>📸 Fotos em edição — disponível em breve</p>
+                <div style={{ background: "var(--theme-bg-muted)", border: "0.5px solid var(--theme-border)", borderRadius: 10, padding: "14px 18px" }}>
+                   <p style={{ fontSize: 13, color: "var(--theme-text-muted)", margin: 0 }}>📸 Fotos em edição — disponível em breve</p>
                 </div>
             )}
 
@@ -439,8 +439,8 @@ function PedidoDetalhe({ pedido, loading, onClose, onGoToEvent }: {
                 onMouseLeave={(e: React.MouseEvent<HTMLElement>) => { e.currentTarget.style.borderColor = T.border; e.currentTarget.style.background = T.bg; }}
               >
                 <div>
-                  <p style={{ fontSize: 14, fontWeight: 700, color: "#fff", marginBottom: 2 }}>🎬 Vídeos & Reels</p>
-                  <p style={{ fontSize: 11, color: "#666" }}>Download via Google Drive</p>
+                  <p style={{ fontSize: 14, fontWeight: 700, color: "var(--theme-text)", marginBottom: 2 }}>🎬 Vídeos & Reels</p>
+                  <p style={{ fontSize: 11, color: "var(--theme-text-muted)" }}>Download via Google Drive</p>
                 </div>
                 <span style={{ color: "#c9a96e" }}>↗</span>
               </a>
@@ -453,24 +453,24 @@ function PedidoDetalhe({ pedido, loading, onClose, onGoToEvent }: {
         ) : (
           <div style={{ background: "rgba(245,158,11,0.05)", border: "0.5px solid rgba(245,158,11,0.2)", borderRadius: 10, padding: "1.25rem" }}>
             <p style={{ fontSize: 14, fontWeight: 700, color: "#f59e0b", marginBottom: 6 }}>Pagamento Pendente</p>
-            <p style={{ fontSize: 12, color: "#888", lineHeight: 1.6, margin: 0 }}>
+            <p style={{ fontSize: 12, color: "var(--theme-text-muted)", lineHeight: 1.6, margin: 0 }}>
               O Mercado Pago está confirmando sua transação. Nossos servidores liberarão o acesso automaticamente assim que aprovado.
             </p>
           </div>
         )}
 
         {/* Info */}
-        <div style={{ background: "#050505", borderRadius: 10, padding: "1rem", display: "flex", flexDirection: "column", gap: 10 }}>
+        <div style={{ background: "var(--theme-bg-muted)", borderRadius: 10, padding: "1rem", display: "flex", flexDirection: "column", gap: 10 }}>
             <div style={{ display: "flex", justifyContent: "space-between", fontSize: 12 }}>
-                <span style={{ color: "#555" }}>Data da Compra</span>
-                <span style={{ color: "#eee" }}>{formatDate(pedido.createdAt)}</span>
+                <span style={{ color: "var(--theme-text-muted)" }}>Data da Compra</span>
+                <span style={{ color: "var(--theme-text)" }}>{formatDate(pedido.createdAt)}</span>
             </div>
             <div style={{ display: "flex", justifyContent: "space-between", fontSize: 12 }}>
-                <span style={{ color: "#555" }}>Valor Total</span>
-                <span style={{ color: "#c9a96e", fontWeight: 700 }}>{formatCurrency(pedido.amount)}</span>
+                <span style={{ color: "var(--theme-text-muted)" }}>Valor Total</span>
+                <span style={{ color: "var(--brand-primary)", fontWeight: 700 }}>{formatCurrency(pedido.amount)}</span>
             </div>
             <div style={{ display: "flex", justifyContent: "space-between", fontSize: 12 }}>
-                <span style={{ color: "#555" }}>Status MP</span>
+                <span style={{ color: "var(--theme-text-muted)" }}>Status MP</span>
                 <span style={{ color: pedido.hasPaid ? "#85B9AC" : "#f59e0b" }}>{pedido.status}</span>
             </div>
         </div>

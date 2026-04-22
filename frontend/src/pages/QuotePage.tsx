@@ -153,7 +153,7 @@ function DateTimePicker({ value, onChange }: { value: string; onChange: (v: stri
                       fontSize: 12, fontWeight: isSelected ? 900 : 500,
                       cursor: day && !isPast ? "pointer" : "default",
                       background: isSelected ? THEME.accent : isToday ? `${THEME.accent}20` : "transparent",
-                      color: isSelected ? "#000" : isPast ? "#2a2a2a" : !day ? "transparent" : THEME.text,
+                      color: isSelected ? "var(--theme-text-on-brand)" : isPast ? "var(--theme-text-muted)" : !day ? "transparent" : THEME.text,
                       outline: isToday && !isSelected ? `1px solid ${THEME.accent}50` : "none",
                       transition: "background 0.15s",
                     }}
@@ -188,7 +188,7 @@ function DateTimePicker({ value, onChange }: { value: string; onChange: (v: stri
             {/* Confirm Button */}
             {selectedDate && (
               <button onClick={() => setOpen(false)}
-                style={{ width: "100%", marginTop: 16, background: THEME.accent, color: "#000", border: "none", padding: "12px", fontSize: 10, fontWeight: 900, textTransform: "uppercase", letterSpacing: 3, cursor: "pointer" }}>
+                style={{ width: "100%", marginTop: 16, background: THEME.accent, color: "var(--theme-text-on-brand)", border: "none", padding: "12px", fontSize: 10, fontWeight: 900, textTransform: "uppercase", letterSpacing: 3, cursor: "pointer" }}>
                 CONFIRMAR DATA E HORÁRIO
               </button>
             )}
@@ -429,7 +429,7 @@ export const QuotePage = () => {
                       + {new Intl.NumberFormat("pt-BR", { style: "currency", currency: "BRL" }).format(getServicePrice(s.id, s.basePrice))}
                     </p>
                     {selectedServices.includes(s.id) && (
-                      <div style={{ position: "absolute", top: 0, right: 0, width: 24, height: 24, background: THEME.accent, color: "#000", display: "flex", alignItems: "center", justifyContent: "center" }}>
+                      <div style={{ position: "absolute", top: 0, right: 0, width: 24, height: 24, background: THEME.accent, color: "var(--theme-text-on-brand)", display: "flex", alignItems: "center", justifyContent: "center" }}>
                         <ShieldCheck size={12} />
                       </div>
                     )}
@@ -498,7 +498,7 @@ export const QuotePage = () => {
                             alert("Por favor, preencha todos os campos do Passo 1 antes de continuar.");
                           }
                         }}
-                        style={{ background: THEME.accent, color: "black", padding: "15px 30px", fontWeight: 900, fontSize: 12, textTransform: "uppercase", letterSpacing: 2, display: "flex", alignItems: "center", gap: 10, justifyContent: "center", border: "none", cursor: "pointer" }}
+                        style={{ background: THEME.accent, color: "var(--theme-text-on-brand)", padding: "15px 30px", fontWeight: 900, fontSize: 12, textTransform: "uppercase", letterSpacing: 2, display: "flex", alignItems: "center", gap: 10, justifyContent: "center", border: "none", cursor: "pointer" }}
                       >
                         PRÓXIMO PASSO <ArrowRight size={16} />
                       </button>

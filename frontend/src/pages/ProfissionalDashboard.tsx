@@ -224,7 +224,7 @@ export default function ProfissionalDashboard() {
           <div style={{ ...S.card, padding: "1.5rem", position: "relative" }}>
             <TrendingUp size={20} style={{ position: "absolute", top: 20, right: 20, color: "var(--brand-primary)", opacity: 0.3 }} />
             <p style={{ fontSize: 10, fontWeight: 900, color: "var(--theme-text-muted)", marginBottom: 12, textTransform: "uppercase", letterSpacing: 1.5 }}>Entregas Concluídas</p>
-            <h3 style={{ fontSize: 28, fontWeight: 900, color: "#fff" }}>{completedEventsCount} <span style={{ fontSize: 13, color: "var(--theme-text-muted)", fontWeight: 400 }}>Eventos</span></h3>
+            <h3 style={{ fontSize: 28, fontWeight: 900, color: "var(--theme-text)" }}>{completedEventsCount} <span style={{ fontSize: 13, color: "var(--theme-text-muted)", fontWeight: 400 }}>Eventos</span></h3>
           </div>
           
           <div style={{ ...S.card, padding: "1.5rem", position: "relative" }}>
@@ -236,7 +236,7 @@ export default function ProfissionalDashboard() {
           <div style={{ ...S.card, padding: "1.5rem", position: "relative" }}>
             <Award size={20} style={{ position: "absolute", top: 20, right: 20, color: "var(--brand-primary)", opacity: 0.3 }} />
             <p style={{ fontSize: 10, fontWeight: 900, color: "var(--theme-text-muted)", marginBottom: 12, textTransform: "uppercase", letterSpacing: 1.5 }}>Ganhos do Mês</p>
-            <h3 style={{ fontSize: 28, fontWeight: 900, color: "#fff" }}>R$ {revenueThisMonth.toLocaleString()}</h3>
+            <h3 style={{ fontSize: 28, fontWeight: 900, color: "var(--theme-text)" }}>R$ {revenueThisMonth.toLocaleString()}</h3>
           </div>
         </div>
 
@@ -342,7 +342,7 @@ export default function ProfissionalDashboard() {
                   <div style={{ flex: 1, minWidth: 0, display: "flex", flexDirection: "column", justifyContent: "center" }}>
                     <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start" }}>
                       <div>
-                        <h3 style={{ fontSize: 18, fontWeight: 900, color: "#fff", marginBottom: 4, whiteSpace: "nowrap", overflow: "hidden", textOverflow: "ellipsis", textTransform: "uppercase", letterSpacing: -0.5 }}>{ev.nomeNoivos}</h3>
+                        <h3 style={{ fontSize: 18, fontWeight: 900, color: "var(--theme-text)", marginBottom: 4, whiteSpace: "nowrap", overflow: "hidden", textOverflow: "ellipsis", textTransform: "uppercase", letterSpacing: -0.5 }}>{ev.nomeNoivos}</h3>
                       </div>
                       
                       {activeTab === "convites" && (
@@ -454,7 +454,7 @@ function ProfileModal({ profile, onClose, onUpdated }: { profile: ProfileData; o
         
         <div style={{ marginBottom: "3rem" }}>
           <ShieldCheck size={40} style={{ color: "var(--brand-primary)", marginBottom: 15 }} />
-          <h2 style={{ fontSize: 32, fontWeight: 900, color: "#fff", textTransform: "uppercase", letterSpacing: -1 }}>Meu Perfil Técnico</h2>
+          <h2 style={{ fontSize: 32, fontWeight: 900, color: "var(--theme-text)", textTransform: "uppercase", letterSpacing: -1 }}>Meu Perfil Técnico</h2>
           <p style={{ fontSize: 11, color: "var(--theme-text-muted)", fontWeight: 900, textTransform: "uppercase", letterSpacing: 1.5, marginTop: 4 }}>Foto Segundo · Rede Coletiva</p>
         </div>
 
@@ -708,10 +708,10 @@ function CalendarView({ events, currentMonth, setCurrentMonth, onSelect }: { eve
   return (
     <div style={{ ...S.card, padding: "2rem" }}>
       <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: "2rem" }}>
-        <h3 style={{ fontSize: 20, fontWeight: 900, color: "#fff", textTransform: "uppercase", letterSpacing: 2 }}>{monthNames[month]} <span style={{ fontWeight: 300, color: "#888" }}>{year}</span></h3>
+        <h3 style={{ fontSize: 20, fontWeight: 900, color: "var(--theme-text)", textTransform: "uppercase", letterSpacing: 2 }}>{monthNames[month]} <span style={{ fontWeight: 300, color: "var(--theme-text-muted)" }}>{year}</span></h3>
         <div style={{ display: "flex", gap: 10 }}>
-          <button onClick={prevMonth} style={{ padding: 8, background: "rgba(255,255,255,0.02)", border: "1px solid #222", color: "#fff", cursor: "pointer" }}><ChevronLeft size={16} /></button>
-          <button onClick={nextMonth} style={{ padding: 8, background: "rgba(255,255,255,0.02)", border: "1px solid #222", color: "#fff", cursor: "pointer" }}><ChevronRight size={16} /></button>
+          <button onClick={prevMonth} style={{ padding: 8, background: "var(--theme-bg-muted)", border: "1px solid var(--theme-border)", color: "var(--theme-text)", cursor: "pointer" }}><ChevronLeft size={16} /></button>
+          <button onClick={nextMonth} style={{ padding: 8, background: "var(--theme-bg-muted)", border: "1px solid var(--theme-border)", color: "var(--theme-text)", cursor: "pointer" }}><ChevronRight size={16} /></button>
         </div>
       </div>
 
