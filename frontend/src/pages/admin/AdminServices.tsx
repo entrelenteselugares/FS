@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { Briefcase, Plus, Trash2, Edit3, Save } from "lucide-react";
 import { API } from "../../lib/api";
-import { T, BtnPrimary, BtnGhost } from "../../lib/theme";
+import { T, BtnPrimary } from "../../lib/theme";
 
 interface Service {
   id: string;
