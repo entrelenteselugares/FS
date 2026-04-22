@@ -95,6 +95,24 @@ export const AdminFinance: React.FC = () => {
             Histórico
           </button>
         </div>
+        <button 
+          onClick={async () => {
+            try {
+              const res = await API.get("/admin/payouts/export", { responseType: 'blob' });
+              const url = window.URL.createObjectURL(new Blob([res.data]));
+              const link = document.createElement('a');
+              link.href = url;
+              link.setAttribute('download', `repasses-${Date.now()}.csv`);
+              document.body.appendChild(link);
+              link.click();
+            } catch (err) {
+              alert("Erro ao exportar CSV");
+            }
+          }}
+          className="px-6 py-3 bg-white/5 border border-white/10 text-[9px] font-bold uppercase tracking-widest hover:bg-white/10 transition-all text-theme-text flex items-center gap-2"
+        >
+          Exportar CSV
+        </button>
       </div>
 
       <div className="grid grid-cols-1 gap-6">

@@ -189,3 +189,27 @@ export async function markItemPaid(req: AuthRequest, res: Response): Promise<voi
     res.status(500).json({ error: "Erro ao marcar pagamento." });
   }
 }
+
+// GET /api/admin/payouts/export — exporta todos os itens de repasse em CSV
+export async function exportPayoutCSV(req: AuthRequest, res: Response): Promise<void> {
+  try {
+    const items = await prisma.payoutItem.findMany({
+      include: { payout: true },
+      orderBy: { payout: { weekStart: "desc" } }
+    });
+
+    let csv = "ID_Repasse,Semana,Beneficiario,Tipo,Valor,Pix,Status,Data_Pagamento,ID_Transacao\n";
+    
+    for (const i of items) {
+      const week = `${i.payout.weekStart.toLocaleDateString()} - ${i.payout.weekEnd.toLocaleDateString()}`;
+      csv += `${i.id},${week},${i.recipientName},${i.recipientType},${i.amount},${i.pixKey || ""},${i.status},${i.paidAt ? i.paidAt.toLocaleDateString() : ""},${i.pixTxId || ""}\n`;
+    }
+
+    res.setHeader("Content-Type", "text/csv");
+    res.setHeader("Content-Disposition", `attachment; filename=repasses-foto-segundo-${Date.now()}.csv`);
+    res.status(200).send(csv);
+  } catch (err) {
+    console.error("exportPayoutCSV:", err);
+    res.status(500).json({ error: "Erro ao exportar CSV." });
+  }
+}

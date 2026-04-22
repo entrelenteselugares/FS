@@ -18,7 +18,9 @@ interface Event {
   location: string;
   active: boolean;
   coverPhotoUrl?: string | null;
-  _count: { orders: number };
+  lightroomUrl?: string | null;
+  driveUrl?: string | null;
+  _count: { pedidos: number };
 }
 
 export const AdminEvents: React.FC = () => {
@@ -199,7 +201,7 @@ export const AdminEvents: React.FC = () => {
         <table style={{ width: "100%", borderCollapse: "collapse", textAlign: "left" }}>
           <thead>
             <tr style={{ borderBottom: `1px solid ${T.border}` }}>
-              {["Evento", "Data", "Artista", "Pedidos", "Status", "Ações"].map((h) => (
+              {["Evento", "Data", "Produção", "Vendas", "Membros", "Ações"].map((h) => (
                 <th key={h} style={{ 
                   padding: "16px 20px", fontSize: 10, fontFamily: T.fontB, fontWeight: 700, 
                   textTransform: "uppercase", letterSpacing: 1.5, color: T.text3 
@@ -230,8 +232,8 @@ export const AdminEvents: React.FC = () => {
                   borderBottom: `1px solid ${T.border}44`,
                   transition: "background 0.2s"
                 }}
-                onMouseEnter={(e) => e.currentTarget.style.background = "#141410"}
-                onMouseLeave={(e) => e.currentTarget.style.background = idx % 2 === 0 ? "#0f0f0f" : "transparent"}
+                onMouseEnter={(e: React.MouseEvent<HTMLElement>) => { (e.currentTarget as HTMLElement).style.background = T.bgCard; }}
+                onMouseLeave={(e: React.MouseEvent<HTMLElement>) => { (e.currentTarget as HTMLElement).style.background = idx % 2 === 0 ? T.bgField : "transparent"; }}
               >
                 {/* Evento */}
                 <td style={{ padding: "20px" }}>
@@ -248,28 +250,44 @@ export const AdminEvents: React.FC = () => {
                   {new Date(event.date).toLocaleDateString("pt-BR")}
                 </td>
 
-                {/* Fotógrafo */}
-                <td style={{ padding: "20px", fontSize: 12, fontFamily: T.fontB, color: T.text2 }}>
-                  {event.captacao?.nome || "—"}
-                </td>
-
-                {/* Pedidos */}
-                <td style={{ padding: "20px", fontSize: 12, fontFamily: T.fontB, fontWeight: 700, color: T.brand }}>
-                  {event._count?.pedidos || 0}
-                </td>
-
-                {/* Status */}
+                {/* Produção */}
                 <td style={{ padding: "20px" }}>
-                  <span style={{ 
-                    fontSize: 9, fontFamily: T.fontB, fontWeight: 900, 
-                    textTransform: "uppercase", letterSpacing: 1,
-                    padding: "4px 8px", background: event.active ? "#102010" : "#201010",
-                    color: event.active ? "#40ff40" : "#ff4040",
-                    border: `1px solid ${event.active ? "#40ff4044" : "#ff404044"}`,
-                    borderRadius: 0
-                  }}>
-                    {event.active ? "Ativo" : "Pendente"}
-                  </span>
+                   <div style={{ display: "flex", gap: 12, alignItems: "center" }}>
+                      <div title="Capa" style={{ 
+                        width: 8, height: 8, borderRadius: "50%", 
+                        background: event.coverPhotoUrl ? T.brand : T.border,
+                        border: `1px solid ${event.coverPhotoUrl ? T.brand : T.text3}`
+                      }} />
+                      <div title="Links" style={{ 
+                        width: 8, height: 8, borderRadius: "50%", 
+                        background: (event.lightroomUrl || event.driveUrl) ? T.brand : T.border,
+                        border: `1px solid ${(event.lightroomUrl || event.driveUrl) ? T.brand : T.text3}`
+                      }} />
+                      <span style={{ fontSize: 9, color: T.text3, fontWeight: 700, textTransform: "uppercase", letterSpacing: 1 }}>
+                        {(event.lightroomUrl || event.driveUrl) ? "CONCLUÍDO" : "EM PRODUÇÃO"}
+                      </span>
+                   </div>
+                </td>
+
+                {/* Vendas */}
+                <td style={{ padding: "20px" }}>
+                  <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
+                    <div style={{ 
+                      fontSize: 12, fontFamily: T.fontB, fontWeight: 700, 
+                      color: event._count?.pedidos > 0 ? T.brand : T.text3 
+                    }}>
+                      {event._count?.pedidos || 0}
+                    </div>
+                    {event._count?.pedidos > 0 && (
+                      <span style={{ fontSize: 8, color: T.brand, border: `1px solid ${T.brand}44`, padding: "2px 4px", fontWeight: 900 }}>HOT</span>
+                    )}
+                  </div>
+                </td>
+
+                {/* Membros */}
+                <td style={{ padding: "20px" }}>
+                   <div style={{ fontSize: 10, color: T.text, fontWeight: 600 }}>{event.captacao?.nome || "—"}</div>
+                   <div style={{ fontSize: 9, color: T.text3 }}>{event.edicao?.nome || "—"}</div>
                 </td>
 
                 {/* Ações */}

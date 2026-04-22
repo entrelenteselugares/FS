@@ -5,32 +5,28 @@
 @tailwind components;
 @tailwind utilities;
 
-/* ─── Design System Tokens ────────────────────────────────────────────────── */
-:root {
-  /* Brand */
+/* ── TEMA ESCURO (padrão) ─────────────────────── */
+:root,
+[data-theme="dark"] {
+  --bg:           #0a0a0a;
+  --bg-card:      #111111;
+  --bg-field:     #0c0c0c;
+  --border:       #1c1c1c;
+  --border-2:     #2a2a2a;
+  --text:         #f0ede8;
+  --text-2:       #999999;
+  --text-3:       #555555;
   --brand:        #85B9AC;
   --brand-dark:   #0d1f1d;
   --brand-border: #1a3530;
-
-  /* Backgrounds */
-  --bg:       #0a0a0a;
-  --bg-card:  #111111;
-  --bg-field: #0c0c0c;
-
-  /* Borders */
-  --border:   #1c1c1c;
-  --border-2: #2a2a2a;
-
-  /* Typography */
-  --text:   #f0ede8;
-  --text-2: #999999;
-  --text-3: #555555;
+  --brand-text:   #0a0a0a;
+  --overlay:      rgba(0,0,0,0.85);
 
   /* Font Families */
-  --font-d: 'Barlow Condensed', sans-serif; /* Display / Headings */
-  --font-b: 'Inter', sans-serif;            /* Body / UI           */
+  --font-d: 'Barlow Condensed', sans-serif;
+  --font-b: 'Inter', sans-serif;
 
-  /* Legacy aliases — mantidos para compatibilidade com componentes existentes */
+  /* Legacy aliases */
   --theme-bg:           var(--bg);
   --theme-bg-muted:     var(--bg-card);
   --theme-text:         var(--text);
@@ -39,14 +35,49 @@
   --brand-primary:      var(--brand);
   --brand-tactical:     var(--brand);
   --theme-bg-nav:       rgba(10, 10, 10, 0.85);
-  --theme-text-on-brand:#000000;
+  --theme-text-on-brand: var(--brand-text);
 
   color-scheme: dark;
 }
 
+/* ── TEMA CLARO ──────────────────────────────── */
+[data-theme="light"] {
+  --bg:           #f5f3ef;
+  --bg-card:      #ffffff;
+  --bg-field:     #f0ede8;
+  --border:       #e0dbd4;
+  --border-2:     #ccc8c0;
+  --text:         #1a1814;
+  --text-2:       #6b6560;
+  --text-3:       #a09890;
+  --brand:        #2d8a7a;   /* teal mais escuro no claro para contraste */
+  --brand-dark:   #e8f5f2;
+  --brand-border: #b8ddd8;
+  --brand-text:   #ffffff;
+  --overlay:      rgba(0,0,0,0.5);
+
+  /* Font Families */
+  --font-d: 'Barlow Condensed', sans-serif;
+  --font-b: 'Inter', sans-serif;
+
+  /* Legacy aliases */
+  --theme-bg:           var(--bg);
+  --theme-bg-muted:     var(--bg-card);
+  --theme-text:         var(--text);
+  --theme-text-muted:   var(--text-2);
+  --theme-border:       var(--border);
+  --brand-primary:      var(--brand);
+  --brand-tactical:     var(--brand);
+  --theme-bg-nav:       rgba(245, 243, 239, 0.85);
+  --theme-text-on-brand: var(--brand-text);
+
+  color-scheme: light;
+}
+
 /* ─── Base Reset ──────────────────────────────────────────────────────────── */
-*, *::before, *::after {
+* {
   box-sizing: border-box;
+  transition: background-color 0.2s, color 0.2s, border-color 0.2s, box-shadow 0.2s;
 }
 
 body {
@@ -115,12 +146,23 @@ textarea:focus {
 /* ─── Shadow Utilities ────────────────────────────────────────────────────── */
 .editorial-shadow {
   box-shadow:
+    0 40px 100px -20px rgba(0, 0, 0, 0.2),
+    0 20px 40px -15px rgba(0, 0, 0, 0.1);
+}
+
+[data-theme="dark"] .editorial-shadow {
+  box-shadow:
     0 40px 100px -20px rgba(0, 0, 0, 0.6),
     0 20px 40px -15px rgba(0, 0, 0, 0.4);
 }
 
 @media (min-width: 768px) {
   .editorial-shadow {
+    box-shadow:
+      0 60px 120px -20px rgba(0, 0, 0, 0.25),
+      0 30px 60px -15px rgba(0, 0, 0, 0.15);
+  }
+  [data-theme="dark"] .editorial-shadow {
     box-shadow:
       0 60px 120px -20px rgba(0, 0, 0, 0.7),
       0 30px 60px -15px rgba(0, 0, 0, 0.5);
@@ -179,7 +221,7 @@ textarea:focus {
 
 .lux-button-tactical {
   background-color: var(--brand);
-  color: #000000;
+  color: var(--brand-text);
 }
 
 .lux-button-ghost {

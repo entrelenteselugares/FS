@@ -3,6 +3,7 @@ import { useNavigate, useSearchParams } from "react-router-dom";
 import { useAuth } from "../hooks/useAuth";
 import { API } from "../lib/api";
 import PointBalance from "../components/PointBalance";
+import { T } from "../lib/theme";
 
 interface Pedido {
   id: string;
@@ -106,9 +107,8 @@ export default function ClienteArea() {
         <button onClick={() => navigate("/")} style={{ background: "none", border: "none", color: "#888", fontSize: 13, cursor: "pointer", transition: "color .2s" }} onMouseEnter={(e) => (e.currentTarget.style.color = "#fff")} onMouseLeave={(e) => (e.currentTarget.style.color = "#888")}>
           ← <span className="mobile-hide">Voltar para Galeria</span><span className="md:hidden">Voltar</span>
         </button>
-        <div style={{ fontSize: "min(18px, 5vw)", fontWeight: 900, color: "var(--theme-text)", letterSpacing: 1, display: "flex", alignItems: "center", gap: 8, textTransform: "uppercase" }}>
-          <span className="mobile-hide" style={{ width: 8, height: 8, background: "var(--brand-primary)" }} />
-          FOTO SEGUNDO
+        <div style={{ display: "flex", alignItems: "center" }}>
+          <img src="/logo-fs.png" alt="Foto Segundo" style={{ height: 26, objectFit: "contain" }} />
         </div>
         <div style={{ display: "flex", alignItems: "center", gap: 12 }}>
           <div className="mobile-hide" style={{ textAlign: "right" }}>
@@ -413,8 +413,8 @@ function PedidoDetalhe({ pedido, loading, onClose, onGoToEvent }: {
                 target="_blank"
                 rel="noopener noreferrer"
                 style={{ display: "flex", alignItems: "center", justifyContent: "space-between", background: "#111", border: "0.5px solid #222", borderRadius: 10, padding: "14px 18px", textDecoration: "none", transition: "all .2s" }}
-                onMouseEnter={(e) => { e.currentTarget.style.borderColor = "#c9a96e"; e.currentTarget.style.background = "#161616"; }}
-                onMouseLeave={(e) => { e.currentTarget.style.borderColor = "#222"; e.currentTarget.style.background = "#111"; }}
+                onMouseEnter={(e: React.MouseEvent<HTMLElement>) => { e.currentTarget.style.borderColor = T.brand; e.currentTarget.style.background = T.bgCard; }}
+                onMouseLeave={(e: React.MouseEvent<HTMLElement>) => { e.currentTarget.style.borderColor = T.border; e.currentTarget.style.background = T.bg; }}
               >
                 <div>
                   <p style={{ fontSize: 14, fontWeight: 700, color: "#fff", marginBottom: 2 }}>📸 Álbum Digital</p>
@@ -434,8 +434,8 @@ function PedidoDetalhe({ pedido, loading, onClose, onGoToEvent }: {
                 target="_blank"
                 rel="noopener noreferrer"
                 style={{ display: "flex", alignItems: "center", justifyContent: "space-between", background: "#111", border: "0.5px solid #222", borderRadius: 10, padding: "14px 18px", textDecoration: "none", transition: "all .2s" }}
-                onMouseEnter={(e) => { e.currentTarget.style.borderColor = "#c9a96e"; e.currentTarget.style.background = "#161616"; }}
-                onMouseLeave={(e) => { e.currentTarget.style.borderColor = "#222"; e.currentTarget.style.background = "#111"; }}
+                onMouseEnter={(e: React.MouseEvent<HTMLElement>) => { e.currentTarget.style.borderColor = T.brand; e.currentTarget.style.background = T.bgCard; }}
+                onMouseLeave={(e: React.MouseEvent<HTMLElement>) => { e.currentTarget.style.borderColor = T.border; e.currentTarget.style.background = T.bg; }}
               >
                 <div>
                   <p style={{ fontSize: 14, fontWeight: 700, color: "#fff", marginBottom: 2 }}>🎬 Vídeos & Reels</p>

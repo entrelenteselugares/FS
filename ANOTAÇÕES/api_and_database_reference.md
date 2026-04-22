@@ -15,7 +15,8 @@ O sistema utiliza **JWT (JSON Web Tokens)** em conjunto com o **Supabase Auth**.
 - **RBAC**: `requireRole("ADMIN", "PROFISSIONAL", ...)` — garante nível de acesso correto.
 - **Trust Proxy**: Configurado em `app.ts` (`app.set("trust proxy", 1)`) para permitir detecção real de IP em ambientes Vercel.
 - **Rate Limiting**: Implementado em rotas críticas (`/api/auth/*`, `/api/checkout`) para prevenir ataques de força bruta.
-- **Self-Healing**: O `AuthController.login` detecta e corrige desalinhamentos de UID automaticamente.
+- **Estrutura de Código**: Organizada em `frontend/`, `backend/` e a ponte de deployment `api/` (Vercel Functions).
+- **Manutenção**: Documentos de infraestrutura e logs centralizados em `/infrastructure`.
 
 ---
 
@@ -44,6 +45,7 @@ O sistema utiliza **JWT (JSON Web Tokens)** em conjunto com o **Supabase Auth**.
 | `GET` | `/api/admin/stats` | KPIs e Visão Geral | ADMIN |
 | `GET` | `/api/admin/events` | Gestão de Eventos | ADMIN |
 | `PATCH` | `/api/admin/quotes/:id/approve` | Gerencia precificação e aprovação de Leads | ADMIN |
+| `GET` | `/api/admin/payouts` | Sistema de Repasses (Financeiro) | ADMIN |
 | `GET` | `/api/admin/logs` | Trilha de Auditoria (Audit Logs) | ADMIN |
 
 ---
@@ -93,5 +95,6 @@ model Cartorio {
 ## 🚀 Checklist de QA e Payout
 
 1. **Rastreabilidade**: Toda ação Admin deve gerar um `AuditLog` visível no banco.
-2. **Branding**: O termo "Cartório" é estritamente proibido na interface; use "Unidade Fixa".
+2. **Branding**: Termos "Cartório" e "Fotógrafo" são estritamente proibidos; use "Unidade Fixa" e "Artista da Rede".
 3. **Segurança**: Testar o Rate Limiting em `/api/checkout` para garantir proteção contra disparos em massa.
+4. **Deploy**: Verificar se a pasta `api/` na raiz está sincronizada com as mudanças do `backend/src`.

@@ -3,6 +3,7 @@ import { useNavigate, Link, useSearchParams } from "react-router-dom";
 import { motion } from "framer-motion";
 import { ArrowRight, User, Camera, Building2, Mail, Lock, UserCircle, Phone, Eye, EyeOff } from "lucide-react";
 import { API } from "../lib/api";
+import { ThemeToggle } from "../components/ThemeToggle";
 
 export const RegisterPage: React.FC = () => {
   const [searchParams] = useSearchParams();
@@ -136,18 +137,21 @@ export const RegisterPage: React.FC = () => {
   return (
     <div className="min-h-screen bg-theme-bg text-theme-text flex items-center justify-center px-6 py-20 relative overflow-hidden transition-colors duration-300">
       {/* Back Button */}
-      <nav className="absolute top-0 left-0 w-full z-50 p-6 pointer-events-none">
+      <nav className="absolute top-0 left-0 w-full z-50 p-6 pointer-events-none flex justify-between items-center">
         <button 
           onClick={() => navigate("/")} 
-          className="pointer-events-auto flex items-center gap-3 text-[10px] font-black uppercase tracking-[0.4em] text-white/40 hover:text-white transition-all bg-black/20 backdrop-blur-md px-6 py-3 border border-white/5"
+          className="pointer-events-auto flex items-center gap-3 text-[10px] font-black uppercase tracking-[0.4em] text-theme-muted hover:text-theme-text transition-all bg-theme-bg-muted backdrop-blur-md px-6 py-3 border border-theme-border"
         >
           <span className="text-lg">←</span> Vitrine
         </button>
+        <div className="pointer-events-auto">
+          <ThemeToggle />
+        </div>
       </nav>
 
       {/* Decorative Editorial Lines */}
-      <div className="absolute top-0 left-1/3 w-[1px] h-full bg-white/[0.02]" />
-      <div className="absolute top-0 right-1/3 w-[1px] h-full bg-white/[0.02]" />
+      <div className="absolute top-0 left-1/3 w-[1px] h-full bg-theme-border opacity-20" />
+      <div className="absolute top-0 right-1/3 w-[1px] h-full bg-theme-border opacity-20" />
       
       <motion.div 
         initial={{ opacity: 0, y: 20 }}
@@ -156,11 +160,14 @@ export const RegisterPage: React.FC = () => {
         className="w-full max-w-2xl relative z-10"
       >
         <div className="text-center mb-16">
+          <div className="flex justify-center mb-12">
+            <img src="/logo-fs.png" alt="Foto Segundo" style={{ height: 40, objectFit: "contain" }} />
+          </div>
           <div className="text-proportional text-brand-primary mb-8">Solicitar Adesão</div>
           <h1 className="heading-luxury">
             SOLICITAR <span className="opacity-30">REGISTRO</span>
           </h1>
-          <p className="text-proportional mt-6">Protocolo Coletivo de Rede</p>
+          <p className="text-proportional mt-6">Protocolo de Registro de Rede (Artistas & Unidades)</p>
         </div>
 
         <div className="lux-card editorial-shadow">
@@ -178,7 +185,7 @@ export const RegisterPage: React.FC = () => {
                 type="button"
                 onClick={() => setRole(r.id as "CLIENTE" | "PROFISSIONAL" | "UNIDADE")}
                 className={`flex flex-col items-center justify-center py-8 px-4 transition-all duration-700 group rounded-none ${
-                  role === r.id ? "bg-brand-tactical text-white" : "text-zinc-500 hover:bg-white/[0.02] hover:text-white"
+                  role === r.id ? "bg-brand-tactical text-theme-bg" : "text-zinc-500 hover:bg-theme-bg-muted hover:text-theme-text"
                 }`}
               >
                 <div className={`mb-4 transition-transform group-hover:scale-110 ${role === r.id ? "opacity-100" : "opacity-30 group-hover:opacity-100"}`}>

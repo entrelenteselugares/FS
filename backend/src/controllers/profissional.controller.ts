@@ -150,7 +150,37 @@ export async function getProfile(req: AuthRequest, res: Response): Promise<void>
       where: { userId },
       include: { user: { select: { nome: true, email: true, whatsapp: true } } }
     });
-    res.json(profile);
+
+    // Calcula ganhos totais (baseado em PayoutItems pagos)
+    const totalEarnings = await prisma.payoutItem.aggregate({
+      where: { recipientId: userId, status: "PAID" },
+      _sum: { amount: true }
+    });
+
+    // Ganhos do mês atual
+    const now = new Date();
+    const firstDayOfMonth = new Date(now.getFullYear(), now.getMonth(), 1);
+    const monthEarnings = await prisma.payoutItem.aggregate({
+      where: { recipientId: userId, status: "PAID", paidAt: { gte: firstDayOfMonth } },
+      _sum: { amount: true }
+    });
+
+    // Contagem de eventos concluídos (links preenchidos)
+    const completedEvents = await prisma.event.count({
+      where: {
+        OR: [{ captacaoId: userId }, { edicaoId: userId }],
+        lightroomUrl: { not: null }
+      }
+    });
+
+    res.json({
+      ...profile,
+      stats: {
+        totalEarnings: Number(totalEarnings._sum.amount ?? 0),
+        monthEarnings: Number(monthEarnings._sum.amount ?? 0),
+        completedEvents
+      }
+    });
   } catch (err) {
     console.error("getProfile:", err);
     res.status(500).json({ error: "Erro ao buscar perfil." });

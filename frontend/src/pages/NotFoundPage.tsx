@@ -47,7 +47,7 @@ export function NotFoundPage() {
       </motion.div>
 
       <div className="fixed bottom-12 left-0 right-0 flex justify-center opacity-10">
-        <div className="text-[14px] font-bold uppercase tracking-[0.6em]">FOTO SEGUNDO</div>
+        <img src="/logo-fs.png" alt="Foto Segundo" style={{ height: 20, objectFit: "contain", filter: "grayscale(1) brightness(2)" }} />
       </div>
     </div>
   );

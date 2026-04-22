@@ -317,10 +317,10 @@ export const QuotePage = () => {
         <header style={{ textAlign: "center", marginBottom: 60 }}>
           <div style={{ display: "flex", justifyContent: "center", marginBottom: 30 }}>
             <img 
-              src="/logo-premium.png" 
+              src="/logo-fs.png" 
               alt="Logo" 
               style={{ 
-                height: 50, 
+                height: 40, 
                 objectFit: "contain"
               }} 
             />

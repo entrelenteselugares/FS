@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { API as api } from "../lib/api";
-import { useTheme } from "../hooks/useTheme";
+import { useTheme } from "../contexts/ThemeContext";
 import { AxiosError } from "axios";
 import { motion } from "framer-motion";
 import { Shield, Lock, Globe, AlertTriangle, CheckCircle2 } from "lucide-react";
@@ -19,6 +19,13 @@ export default function AccessTypeModal({ orderId, eventTitle, onConfirmed }: Ac
 
   const handleConfirm = async () => {
     if (!selected) return;
+    
+    // Se for pré-pagamento, apenas notifica o pai sem chamar API
+    if (orderId === "PRE-PAYMENT") {
+      onConfirmed(selected, new Date().toISOString());
+      return;
+    }
+
     setSaving(true);
     setError("");
     try {

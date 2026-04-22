@@ -31,7 +31,7 @@ import { getMeusPedidos, getMeuPedidoDetalhe } from "../controllers/cliente.cont
 import { CartorioController } from "../controllers/cartorio.controller";
 import { SEOController } from "../controllers/seo.controller";
 import { getConfigs, updateConfigs, getPublicThemeConfigs } from "../controllers/config.controller";
-import { generateWeeklyPayout, listPayouts, markItemPaid } from "../controllers/payout.controller";
+import { generateWeeklyPayout, listPayouts, markItemPaid, exportPayoutCSV } from "../controllers/payout.controller";
 import {
   chooseAccessType,
   getAccessStatus,
@@ -178,6 +178,7 @@ router.patch("/admin/quotes/:id/approve", requireAuth, requireRole("ADMIN"), adm
 // ── Admin: Repasses ────────────────────────────────────────────────────────────
 router.post("/admin/payouts/generate",                requireAuth, requireRole("ADMIN"), generateWeeklyPayout);
 router.get("/admin/payouts",                          requireAuth, requireRole("ADMIN"), listPayouts);
+router.get("/admin/payouts/export",                requireAuth, requireRole("ADMIN"), exportPayoutCSV);
 router.patch("/admin/payouts/:id/items/:itemId/paid", requireAuth, requireRole("ADMIN"), markItemPaid);
 
 // ── Admin: Configurações ───────────────────────────────────────────────────────

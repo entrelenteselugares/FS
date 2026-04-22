@@ -60,8 +60,10 @@ export async function getDashboardStats(req: AuthRequest, res: Response): Promis
       recentOrders,
       pendingEvents,
       pendingQuotesCount,
+      pendingInvitesCount,
+      missingLinksCount,
     ] = await Promise.all([
-      prisma.event.count({ where: { active: true } }),
+      prisma.event.count({ where: { active: true, isQuote: false } }),
       prisma.order.count({ where: { status: "APROVADO" } }),
       prisma.order.aggregate({
         where: { status: "APROVADO" },
@@ -79,6 +81,7 @@ export async function getDashboardStats(req: AuthRequest, res: Response): Promis
       prisma.event.findMany({
         where: {
           active: true,
+          isQuote: false,
           OR: [
             { coverPhotoUrl: null },
             { lightroomUrl: null },
@@ -88,7 +91,27 @@ export async function getDashboardStats(req: AuthRequest, res: Response): Promis
         orderBy: { dataEvento: "asc" },
         take: 5,
       }),
-      prisma.event.count({ where: { isQuote: true, quoteStatus: "PENDING" } }),
+      prisma.event.count({ where: { isQuote: true, quoteStatus: { in: ["PENDING", "PRICED"] } } }),
+      // Convites pendentes (captacao ou edicao em PENDING)
+      prisma.event.count({
+        where: {
+          active: true,
+          isQuote: false,
+          OR: [
+            { captacaoStatus: "PENDING", captacaoId: { not: null } },
+            { edicaoStatus: "PENDING", edicaoId: { not: null } },
+          ]
+        }
+      }),
+      // Eventos com vendas (pedidos aprovados) mas sem links
+      prisma.event.count({
+        where: {
+          active: true,
+          isQuote: false,
+          lightroomUrl: null,
+          pedidos: { some: { status: "APROVADO" } }
+        }
+      })
     ]);
 
     res.json({
@@ -97,6 +120,8 @@ export async function getDashboardStats(req: AuthRequest, res: Response): Promis
         totalOrders,
         totalRevenue: Number(totalRevenue._sum.valor ?? 0),
         pendingQuotesCount,
+        pendingInvitesCount,
+        missingLinksCount,
       },
       recentOrders,
       pendingEvents,

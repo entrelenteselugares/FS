@@ -20,21 +20,22 @@ import {
   FileText, 
   DollarSign, 
   Printer, 
-  Briefcase
+  Briefcase,
+  Settings
 } from "lucide-react";
 
 
 
-
-const NAV_ITEMS = (activeTab: string, setActiveTab: (t: string) => void): NavItem[] => [
+const NAV_ITEMS = (activeTab: string, setActiveTab: (t: string) => void, stats: AdminStats | null): NavItem[] => [
   { label: "Visão Geral", to: "/admin", exact: true, icon: <LayoutDashboard size={16} />, isActive: activeTab === "overview", onClick: () => setActiveTab("overview") },
-  { label: "Eventos", onClick: () => setActiveTab("events"), isActive: activeTab === "events", icon: <Camera size={16} /> },
-  { label: "Membros", onClick: () => setActiveTab("users"), isActive: activeTab === "users", icon: <Users size={16} /> },
-  { label: "Orçamentos", onClick: () => setActiveTab("quotes"), isActive: activeTab === "quotes", icon: <Briefcase size={16} /> },
+  { label: "Eventos", onClick: () => setActiveTab("events"), isActive: activeTab === "events", icon: <Camera size={16} />, badge: stats?.missingLinksCount },
+  { label: "Membros", onClick: () => setActiveTab("users"), isActive: activeTab === "users", icon: <Users size={16} />, badge: stats?.pendingInvitesCount },
+  { label: "Orçamentos", onClick: () => setActiveTab("quotes"), isActive: activeTab === "quotes", icon: <Briefcase size={16} />, badge: stats?.pendingQuotesCount },
   { label: "Pedidos", onClick: () => setActiveTab("orders"), isActive: activeTab === "orders", icon: <FileText size={16} /> },
   { label: "Financeiro", onClick: () => setActiveTab("finance"), isActive: activeTab === "finance", icon: <DollarSign size={16} /> },
   { label: "Impressão", onClick: () => setActiveTab("printers"), isActive: activeTab === "printers", icon: <Printer size={16} /> },
   { label: "Serviços", onClick: () => setActiveTab("services"), isActive: activeTab === "services", icon: <Briefcase size={16} /> },
+  { label: "Configurações", onClick: () => setActiveTab("settings"), isActive: activeTab === "settings", icon: <Settings size={16} /> },
 ];
 
 interface AdminStats {
@@ -43,6 +44,8 @@ interface AdminStats {
   activeEvents: number;
   totalUsers: number;
   pendingQuotesCount: number;
+  pendingInvitesCount: number;
+  missingLinksCount: number;
 }
 
 interface AdminOrder {
@@ -86,7 +89,7 @@ export const AdminDashboard: React.FC = () => {
   }, []);
 
   return (
-    <DashboardLayout title="Operações Centrais" variant="tactical" navItems={NAV_ITEMS(activeTab, setActiveTab)}>
+    <DashboardLayout title="Operações Centrais" variant="tactical" navItems={NAV_ITEMS(activeTab, setActiveTab, stats)}>
       <div className="p-10 max-w-7xl mx-auto min-h-screen">
       <div style={{ padding: "40px 0" }}>
         {/* Minimal Header */}
@@ -99,7 +102,10 @@ export const AdminDashboard: React.FC = () => {
              activeTab === "events" ? "Operação de Eventos" : 
              activeTab === "users" ? "Gestão de Membros" : 
              activeTab === "orders" ? "Pedidos e Vendas" : 
-             "Configurações"}
+             activeTab === "finance" ? "Fluxo Financeiro" :
+             activeTab === "printers" ? "Hardware e Impressão" :
+             activeTab === "services" ? "Portfólio de Serviços" :
+             "Configurações da Plataforma"}
           </h1>
           <div style={{ width: 40, height: 2, background: T.brand, marginTop: 12 }} />
         </div>

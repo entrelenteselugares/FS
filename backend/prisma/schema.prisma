@@ -76,6 +76,7 @@ model User {
 
 enum QuoteStatus {
   PENDING
+  PRICED
   APPROVED
   REJECTED
   CONVERTED

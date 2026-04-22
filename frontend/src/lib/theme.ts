@@ -28,6 +28,10 @@ export const T = {
   brand:       "var(--brand)",        // #85B9AC
   brandDark:   "var(--brand-dark)",   // #0d1f1d
   brandBorder: "var(--brand-border)", // #1a3530
+  brandText:   "var(--brand-text)",   // #0a0a0a (dark) | #ffffff (light)
+
+  // ── Overlay ───────────────────────────────────────
+  overlay:     "var(--overlay)",
 
   // ── Font Families ─────────────────────────────────
   fontD: "var(--font-d)", // Barlow Condensed — Display (900, uppercase)
@@ -43,7 +47,7 @@ export type ThemeKey = keyof typeof T;
 /** Botão primário accent (brand teal, fundo escuro) */
 export const BtnPrimary: React.CSSProperties = {
   background:    T.brand,
-  color:         "#0a0a0a",
+  color:         T.brandText,
   border:        "none",
   padding:       "13px 24px",
   fontFamily:    T.fontD,
@@ -55,13 +59,13 @@ export const BtnPrimary: React.CSSProperties = {
   display:       "inline-flex",
   alignItems:    "center",
   gap:           8,
-  transition:    "opacity 0.2s",
+  transition:    "opacity 0.2s, background-color 0.2s, color 0.2s",
 };
 
 /** Botão secundário outline */
 export const BtnSecondary: React.CSSProperties = {
   background:    "transparent",
-  color:         T.text2,
+  color:         T.text,
   border:        `1px solid ${T.border2}`,
   padding:       "11px 20px",
   fontFamily:    T.fontB,
@@ -73,7 +77,7 @@ export const BtnSecondary: React.CSSProperties = {
   display:       "inline-flex",
   alignItems:    "center",
   gap:           8,
-  transition:    "border-color 0.2s, color 0.2s",
+  transition:    "border-color 0.2s, color 0.2s, background-color 0.2s",
 };
 
 /** Botão ghost compacto (usado na nav e tabelas) */

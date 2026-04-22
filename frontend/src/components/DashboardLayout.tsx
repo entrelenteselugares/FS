@@ -2,6 +2,7 @@ import React, { useState } from "react";
 import { Link, useLocation } from "react-router-dom";
 import { useAuth } from "../hooks/useAuth";
 import { T, BtnGhost } from "../lib/theme";
+import { ThemeToggle } from "./ThemeToggle";
 
 // ─── Types ────────────────────────────────────────────────────────────────────
 
@@ -12,6 +13,7 @@ export interface NavItem {
   exact?: boolean;
   icon: React.ReactNode;
   isActive?: boolean;
+  badge?: string | number;
 }
 
 interface DashboardLayoutProps {
@@ -83,15 +85,10 @@ const SidebarContent: React.FC<SidebarContentProps> = ({ navItems, onNavigate })
         borderBottom: `1px solid ${T.border}`,
       }}>
         <div style={{
-          fontFamily:    T.fontD,
-          fontWeight:    900,
-          fontSize:      18,
-          color:         "#fff",
-          letterSpacing: 1.5,
-          lineHeight:    1,
-          textTransform: "uppercase",
+          display: "flex",
+          alignItems: "center"
         }}>
-          Foto Segundo
+          <img src="/logo-fs.png" alt="Foto Segundo" style={{ height: 28, objectFit: "contain" }} />
         </div>
       </div>
 
@@ -111,8 +108,8 @@ const SidebarContent: React.FC<SidebarContentProps> = ({ navItems, onNavigate })
             letterSpacing: "0.05em",
             cursor:        "pointer",
             border:        "none",
-            background:    active ? "rgba(255,255,255,0.03)" : "transparent",
-            color:         active ? "#fff" : T.text3,
+            background:    active ? "var(--bg-field)" : "transparent",
+            color:         active ? T.text : T.text3,
             textDecoration:"none",
             width:         "100%",
             textAlign:     "left",
@@ -131,7 +128,22 @@ const SidebarContent: React.FC<SidebarContentProps> = ({ navItems, onNavigate })
                 <span style={{ color: active ? T.brand : T.text3, flexShrink: 0 }}>
                   {item.icon}
                 </span>
-                {item.label}
+                <span style={{ flex: 1 }}>{item.label}</span>
+                {item.badge !== undefined && item.badge !== 0 && (
+                  <span style={{
+                    background: T.brand,
+                    color: "#0a0a0a",
+                    fontSize: 9,
+                    fontWeight: 900,
+                    padding: "2px 6px",
+                    borderRadius: 2,
+                    minWidth: 16,
+                    textAlign: "center",
+                    letterSpacing: 0
+                  }}>
+                    {item.badge}
+                  </span>
+                )}
               </Link>
             );
           }
@@ -141,7 +153,22 @@ const SidebarContent: React.FC<SidebarContentProps> = ({ navItems, onNavigate })
               <span style={{ color: active ? T.brand : T.text3, flexShrink: 0 }}>
                 {item.icon}
               </span>
-              {item.label}
+              <span style={{ flex: 1 }}>{item.label}</span>
+              {item.badge !== undefined && item.badge !== 0 && (
+                <span style={{
+                  background: T.brand,
+                  color: "#0a0a0a",
+                  fontSize: 9,
+                  fontWeight: 900,
+                  padding: "2px 6px",
+                  borderRadius: 2,
+                  minWidth: 16,
+                  textAlign: "center",
+                  letterSpacing: 0
+                }}>
+                  {item.badge}
+                </span>
+              )}
             </button>
           );
         })}
@@ -159,7 +186,7 @@ const SidebarContent: React.FC<SidebarContentProps> = ({ navItems, onNavigate })
             fontSize:      12,
             fontFamily:    T.fontB,
             fontWeight:    600,
-            color:         "#fff",
+            color:         T.text,
             overflow:      "hidden",
             textOverflow:  "ellipsis",
             whiteSpace:    "nowrap",
@@ -209,7 +236,7 @@ const SidebarContent: React.FC<SidebarContentProps> = ({ navItems, onNavigate })
             transition: "all 0.2s",
             borderRadius: 0,
           }}
-          onMouseEnter={(e) => { e.currentTarget.style.color = "#fff"; e.currentTarget.style.borderColor = T.text3; }}
+          onMouseEnter={(e) => { e.currentTarget.style.color = T.text; e.currentTarget.style.borderColor = T.text2; }}
           onMouseLeave={(e) => { e.currentTarget.style.color = T.text3; e.currentTarget.style.borderColor = T.border; }}
         >
           <LogoutIcon />
@@ -313,22 +340,17 @@ export const DashboardLayout: React.FC<DashboardLayoutProps> = ({
             >
               <MenuIcon />
             </button>
-            <div style={{
-              fontFamily:    T.fontD,
-              fontWeight:    900,
-              fontSize:      18,
-              color:         "#fff",
-              letterSpacing: 1,
-            }}>
-              FOTO SEGUNDO.
+            <div style={{ display: "flex", alignItems: "center" }}>
+              <img src="/logo-fs.png" alt="Foto Segundo" style={{ height: 22, objectFit: "contain" }} />
             </div>
           </div>
 
-          {/* Right: user info + logout */}
+          {/* Right: user info + toggle + logout */}
           <div style={{ display: "flex", alignItems: "center", gap: 12 }}>
-            <span style={{ fontSize: 12, color: T.text3, fontFamily: T.fontB }}>
+            <span style={{ fontSize: 12, color: T.text3, fontFamily: T.fontB, marginRight: 8 }} className="mobile-hide">
               {user?.nome}
             </span>
+            <ThemeToggle />
             <button
               onClick={logout}
               style={{ ...BtnGhost, display: "flex", alignItems: "center", gap: 6 }}

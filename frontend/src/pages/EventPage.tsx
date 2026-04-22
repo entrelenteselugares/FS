@@ -4,6 +4,9 @@ import { API as api } from "../lib/api";
 import { Helmet } from "react-helmet-async";
 import AccessTypeModal from "../components/AccessTypeModal";
 import { T, BtnPrimary, BtnSecondary, Card, FieldLabel, FieldInput } from "../lib/theme";
+import { ThemeToggle } from "../components/ThemeToggle";
+import { AuthModal } from "../components/AuthModal";
+import { useAuth } from "../hooks/useAuth";
 
 // ─── Types ────────────────────────────────────────────────────────────────────
 
@@ -32,7 +35,7 @@ interface AccessData {
   driveUrl: string | null;
 }
 
-type Step = "paywall" | "checkout" | "processing" | "success";
+type Step = "paywall" | "auth" | "choice" | "checkout" | "processing" | "success";
 
 // ─── Icons ────────────────────────────────────────────────────────────────────
 
@@ -114,6 +117,8 @@ export default function EventPage() {
   });
 
   const [needsAccessChoice, setNeedsAccessChoice] = useState(false);
+  const [accessType, setAccessType] = useState<"PUBLIC" | "PRIVATE" | null>(null);
+  const { user } = useAuth();
 
 
   useEffect(() => {
@@ -215,16 +220,17 @@ export default function EventPage() {
     try {
       const { data } = await api.post("/checkout/payment", {
         eventId: event.id,
+        userId: user?.id,
         email: cardData.email,
         cpf: cardData.cpf,
         cardToken: cardToken,
         installments: 1,
-        paymentMethodId: detectBrand(cardData.number)
+        paymentMethodId: detectBrand(cardData.number),
+        accessType: accessType
       });
 
       if (data.hasPaid) {
         setOrderId(data.orderId);
-        setNeedsAccessChoice(true);
         setStep("success");
       } else {
         pollPaymentStatus(data.orderId);
@@ -234,6 +240,14 @@ export default function EventPage() {
       setError(msg);
       setStep("checkout");
       setCardToken(null);
+    }
+  };
+
+  const handleUnlockClick = () => {
+    if (!user) {
+      setStep("auth");
+    } else {
+      setStep("choice");
     }
   };
 
@@ -272,8 +286,12 @@ export default function EventPage() {
         <button onClick={() => navigate("/")} style={{ background: "none", border: "none", color: T.text3, cursor: "pointer", fontSize: 11, textTransform: "uppercase", letterSpacing: 2, display: "flex", alignItems: "center", gap: 8 }}>
           ← Voltar
         </button>
-        <div style={{ fontFamily: T.fontD, fontWeight: 900, fontSize: 18, color: "#fff" }}>FOTO SEGUNDO.</div>
-        <div style={{ width: 60 }} />
+        <div style={{ cursor: "pointer", display: "flex", alignItems: "center" }} onClick={() => navigate("/")}>
+          <img src="/logo-fs.png" alt="Foto Segundo" style={{ height: 24, objectFit: "contain" }} />
+        </div>
+        <div style={{ display: "flex", alignItems: "center", gap: 12 }}>
+          <ThemeToggle />
+        </div>
       </nav>
 
       <main style={{ maxWidth: 1200, margin: "0 auto", padding: "40px 24px" }} className="event-grid">
@@ -303,6 +321,7 @@ export default function EventPage() {
           </div>
 
           {/* Registry Tag */}
+
           <div style={{ display: "flex", alignItems: "center", gap: 12 }}>
             <div style={{ width: 30, height: 2, background: T.brand }} />
             <span style={{ fontSize: 10, letterSpacing: 2, textTransform: "uppercase", color: T.brand, fontWeight: 700 }}>
@@ -314,14 +333,14 @@ export default function EventPage() {
           <h1 style={{ 
             fontFamily: T.fontD, fontWeight: 900, 
             fontSize: "clamp(40px, 5vw, 56px)", 
-            lineHeight: 1, color: "#fff", 
+            lineHeight: 1, color: T.text, 
             textTransform: "uppercase", margin: 0 
           }}>
             {event.nomeNoivos}
           </h1>
 
           {/* Meta */}
-          <div style={{ fontSize: 13, color: "#777", fontFamily: T.fontB, fontWeight: 400, marginTop: -12 }}>
+          <div style={{ fontSize: 13, color: T.text2, fontFamily: T.fontB, fontWeight: 400, marginTop: -12 }}>
             {new Date(event.date).toLocaleDateString("pt-BR", { day: "numeric", month: "long", year: "numeric" })} · {event.city || event.location}
           </div>
 
@@ -363,7 +382,7 @@ export default function EventPage() {
             {step === "paywall" && (
               <div style={{ ...Card, padding: 24 }}>
                 <p style={{ fontSize: 10, letterSpacing: 2, color: T.brand, textTransform: "uppercase", margin: "0 0 12px" }}>Exclusive Collection</p>
-                <p style={{ fontFamily: T.fontD, fontWeight: 900, fontSize: 44, color: "#fff", margin: "0 0 4px" }}>
+                <p style={{ fontFamily: T.fontD, fontWeight: 900, fontSize: 44, color: T.text, margin: "0 0 4px" }}>
                   R$ {Number(event.priceBase).toFixed(2).replace(".", ",")}
                 </p>
                 <p style={{ fontSize: 12, color: T.text3, margin: "0 0 24px" }}>Acesso vitalício · Download imediato</p>
@@ -376,7 +395,7 @@ export default function EventPage() {
                   ))}
                 </div>
 
-                <button onClick={() => setStep("checkout")} style={{ ...BtnPrimary, width: "100%", justifyContent: "center" }}>
+                <button onClick={handleUnlockClick} style={{ ...BtnPrimary, width: "100%", justifyContent: "center" }}>
                   Desbloquear Arquivos
                 </button>
                 
@@ -396,7 +415,7 @@ export default function EventPage() {
 
                   <div style={{ background: T.bgField, border: `1px solid ${T.border}`, padding: 16, marginBottom: 24 }}>
                   <div style={{ fontSize: 11, color: T.text2 }}>{event.nomeNoivos}</div>
-                  <div style={{ fontSize: 16, fontWeight: 700, color: "#fff" }}>R$ {Number(event.priceBase).toFixed(2)}</div>
+                  <div style={{ fontSize: 16, fontWeight: 700, color: T.text }}>R$ {Number(event.priceBase).toFixed(2)}</div>
                 </div>
 
                 <div style={{ display: "flex", flexDirection: "column", gap: 16 }}>
@@ -463,7 +482,7 @@ export default function EventPage() {
             {step === "processing" && (
               <div style={{ ...Card, padding: "48px 24px", textAlign: "center" }}>
                 <div style={{ display: "flex", justifyContent: "center", marginBottom: 24 }}><Spinner /></div>
-                <h3 style={{ fontFamily: T.fontD, fontWeight: 900, fontSize: 22, color: "#fff", textTransform: "uppercase", margin: "0 0 8px" }}>PROCESSANDO</h3>
+                <h3 style={{ fontFamily: T.fontD, fontWeight: 900, fontSize: 22, color: T.text, textTransform: "uppercase", margin: "0 0 8px" }}>PROCESSANDO</h3>
                 <p style={{ fontSize: 12, color: T.text3, margin: 0 }}>Validando transação com a rede bancária...</p>
               </div>
             )}
@@ -477,7 +496,7 @@ export default function EventPage() {
                 }}>
                   <CheckIcon />
                 </div>
-                <h3 style={{ fontFamily: T.fontD, fontWeight: 900, fontSize: 22, color: "#fff", textTransform: "uppercase", margin: "0 0 8px" }}>PAGAMENTO CONFIRMADO</h3>
+                <h3 style={{ fontFamily: T.fontD, fontWeight: 900, fontSize: 22, color: T.text, textTransform: "uppercase", margin: "0 0 8px" }}>PAGAMENTO CONFIRMADO</h3>
                 <p style={{ fontSize: 13, color: T.text2, margin: "0 0 24px" }}>Seus arquivos estão disponíveis ao lado.</p>
                 <div style={{ fontSize: 11, fontFamily: "monospace", color: T.text3, background: T.bgField, padding: "8px", border: `1px solid ${T.border}` }}>
                   ID: {orderId ? orderId.slice(-12).toUpperCase() : "FS-CONFIRMED"}
@@ -488,6 +507,24 @@ export default function EventPage() {
           </div>
         </aside>
       </main>
+
+      {step === "auth" && (
+        <AuthModal 
+          onSuccess={() => setStep("choice")} 
+          onClose={() => setStep("paywall")} 
+        />
+      )}
+
+      {step === "choice" && (
+        <AccessTypeModal
+          orderId="PRE-PAYMENT"
+          eventTitle={event.nomeNoivos}
+          onConfirmed={(type) => {
+            setAccessType(type as any);
+            setStep("checkout");
+          }}
+        />
+      )}
 
       {needsAccessChoice && orderId && event && (
         <AccessTypeModal

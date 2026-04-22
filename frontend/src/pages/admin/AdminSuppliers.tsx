@@ -1,6 +1,6 @@
 import { useState, useEffect, useCallback } from "react";
 import { API as api } from "../../lib/api";
-import { useTheme } from "../../hooks/useTheme";
+import { useTheme } from "../../contexts/ThemeContext";
 import { motion, AnimatePresence } from "framer-motion";
 import { 
   Calculator, 

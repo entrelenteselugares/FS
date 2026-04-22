@@ -1,8 +1,10 @@
 import { useState, useEffect, useRef, useCallback } from "react";
-import { useNavigate } from "react-router-dom";
+
 import { useAuth } from "../hooks/useAuth";
 import { API } from "../lib/api";
-import { List, Calendar as CalendarIcon, TrendingUp, DollarSign, Award, ChevronLeft, ChevronRight, Settings, MessageCircle, Check, X, ShieldCheck, HardDrive } from "lucide-react";
+import { List, Calendar as CalendarIcon, TrendingUp, DollarSign, Award, ChevronLeft, ChevronRight, Settings, MessageCircle, Check, X, ShieldCheck, HardDrive, LayoutDashboard } from "lucide-react";
+import { DashboardLayout, type NavItem } from "../components/DashboardLayout";
+import { T } from "../lib/theme";
 
 interface EventItem {
   id: string;
@@ -95,8 +97,8 @@ const S = {
 };
 
 export default function ProfissionalDashboard() {
-  const { user, logout } = useAuth();
-  const navigate = useNavigate();
+  const { user } = useAuth();
+
   const [events, setEvents] = useState<EventItem[]>([]);
   const [loading, setLoading] = useState(true);
   const [selected, setSelected] = useState<EventItem | null>(null);
@@ -104,7 +106,7 @@ export default function ProfissionalDashboard() {
   const [profile, setProfile] = useState<ProfileData | null>(null);
   const [isProfileOpen, setIsProfileOpen] = useState(false);
   const [viewTab, setViewTab] = useState<"lista" | "calendario">("lista");
-  const [activeTab, setActiveTab] = useState<"agenda" | "convites">("agenda");
+  const [activeTab, setActiveTab] = useState<"agenda" | "convites" | "financeiro">("agenda");
 
   const fetchEvents = useCallback(() => {
     setLoading(true);
@@ -131,23 +133,16 @@ export default function ProfissionalDashboard() {
   };
 
   useEffect(() => {
+    // eslint-disable-next-line react-hooks/exhaustive-deps
     fetchEvents();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
     fetchProfile();
   }, [fetchEvents, fetchProfile]);
 
-  // Cálculos financeiros (Estimatativa: R$ 40 por venda ou 20% do ticket médio)
-  const ESTIMATED_PER_SALE = 40; 
-  const totalSales = events.reduce((acc, ev) => acc + (ev._count?.pedidos ?? 0), 0);
-  const totalRevenue = totalSales * ESTIMATED_PER_SALE;
-  
-  const now = new Date();
-  const salesThisMonth = events
-    .filter(ev => {
-      const d = new Date(ev.dataEvento);
-      return d.getMonth() === now.getMonth() && d.getFullYear() === now.getFullYear();
-    })
-    .reduce((acc, ev) => acc + (ev._count?.pedidos ?? 0), 0);
-  const revenueThisMonth = salesThisMonth * ESTIMATED_PER_SALE;
+  // Ganhos reais do perfil
+  const totalRevenue = (profile as any)?.stats?.totalEarnings || 0;
+  const revenueThisMonth = (profile as any)?.stats?.monthEarnings || 0;
+  const completedEventsCount = (profile as any)?.stats?.completedEvents || 0;
 
   const handleUpdated = useCallback((updated: Partial<EventItem>) => {
     setSelected((prev) => prev ? { ...prev, ...updated } : prev);
@@ -171,12 +166,22 @@ export default function ProfissionalDashboard() {
 
   const displayEvents = activeTab === "agenda" ? acceptedEvents : pendingEvents;
 
+  const NAV_ITEMS = (activeTab: string, setActiveTab: (t: any) => void, pendingCount: number): NavItem[] => [
+    { label: "Visão Geral", onClick: () => setActiveTab("agenda"), isActive: activeTab === "agenda", icon: <LayoutDashboard size={16} /> },
+    { label: "Convites Pendentes", onClick: () => setActiveTab("convites"), isActive: activeTab === "convites", icon: <MessageCircle size={16} />, badge: pendingCount },
+    { label: "Financeiro", onClick: () => setActiveTab("financeiro"), isActive: activeTab === "financeiro", icon: <DollarSign size={16} /> },
+    { label: "Meu Perfil", onClick: () => setIsProfileOpen(true), isActive: false, icon: <Settings size={16} /> },
+  ];
+
   return (
-    <div style={S.page}>
+    <DashboardLayout 
+      title="Painel do Artista" 
+      navItems={NAV_ITEMS(activeTab, setActiveTab, pendingEvents.length)}
+    >
       <style>{`
         @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
         .lux-card { transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1); }
-        .lux-card:hover { border-color: var(--brand-primary) !important; transform: translateY(-2px); }
+        .lux-card:hover { border-color: ${T.brand} !important; transform: translateY(-2px); }
         @media (max-width: 768px) {
           .mobile-hide { display: none !important; }
           .mobile-stack { flex-direction: column !important; align-items: stretch !important; gap: 1rem !important; }
@@ -184,42 +189,27 @@ export default function ProfissionalDashboard() {
           .mobile-grid-1 { grid-template-columns: 1fr !important; }
         }
       `}</style>
-      
-      {/* NAV */}
-      <nav className="mobile-nav" style={{ display: "flex", alignItems: "center", justifyContent: "space-between", padding: "1.25rem 2.5rem", borderBottom: "1px solid var(--theme-border)", background: "var(--theme-bg)", backdropFilter: "blur(10px)", position: "sticky", top: 0, zIndex: 100 }}>
-        <div style={{ display: "flex", alignItems: "center", gap: 15 }}>
-          <button onClick={() => navigate("/")} style={{ background: "none", border: "none", color: "var(--brand-primary)", fontSize: 10, fontWeight: 800, textTransform: "uppercase", letterSpacing: 2, cursor: "pointer" }}>
-            ← <span className="mobile-hide">Vitrine</span>
-          </button>
-          <div onClick={() => navigate("/")} style={{ cursor: "pointer", display: "flex", alignItems: "center" }}>
-             <span style={{ fontSize: 14, fontWeight: 900, color: "var(--theme-text)", letterSpacing: 1, textTransform: "uppercase" }}>FOTO SEGUNDO</span>
-          </div>
-        </div>
-        <div style={{ display: "flex", alignItems: "center", gap: 15 }}>
-          <div className="mobile-hide" style={{ textAlign: "right" }}>
-            <div style={{ fontSize: 11, color: "var(--theme-text)", fontWeight: 700, textTransform: "uppercase" }}>{user?.nome}</div>
-            <p style={{ fontSize: 9, color: "var(--brand-primary)", margin: 0, fontWeight: 900, textTransform: "uppercase", letterSpacing: 1 }}>Artista da Rede</p>
-          </div>
-          <button 
-            onClick={() => setIsProfileOpen(true)}
-            style={{ background: "rgba(133,185,172,0.1)", border: "1px solid var(--brand-primary)", borderRadius: 0, padding: "8px 14px", color: "var(--brand-primary)", fontSize: 10, fontWeight: 700, textTransform: "uppercase", cursor: "pointer", display: "flex", alignItems: "center", gap: 6 }}
-          >
-            <Settings size={12} /> <span className="mobile-hide">Perfil</span>
-          </button>
-          <button onClick={logout} style={{ background: "none", border: "1px solid var(--theme-border)", borderRadius: 0, padding: "8px 14px", color: "var(--theme-text-muted)", fontSize: 10, fontWeight: 700, textTransform: "uppercase", cursor: "pointer" }}>
-            Sair
-          </button>
-        </div>
-      </nav>
 
       <div className="mobile-padding" style={{ maxWidth: 1200, margin: "0 auto", padding: "3rem 2.5rem" }}>
+        
+        {/* Header contextual */}
+        <div style={{ marginBottom: "3rem" }}>
+          <h1 style={{ fontFamily: T.fontD, fontWeight: 900, fontSize: 32, color: "#fff", textTransform: "uppercase", letterSpacing: 2, margin: 0 }}>
+            {activeTab === "agenda" ? "Minha Agenda" : 
+             activeTab === "convites" ? "Convites Pendentes" : 
+             "Fluxo Financeiro"}
+          </h1>
+          <div style={{ width: 40, height: 2, background: T.brand, marginTop: 12 }} />
+        </div>
+
+
         
         {/* STATS CARDS */}
         <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(280px, 1fr))", gap: "1.5rem", marginBottom: "3rem" }}>
           <div style={{ ...S.card, padding: "1.5rem", position: "relative" }}>
             <TrendingUp size={20} style={{ position: "absolute", top: 20, right: 20, color: "var(--brand-primary)", opacity: 0.3 }} />
-            <p style={{ fontSize: 10, fontWeight: 900, color: "var(--theme-text-muted)", marginBottom: 12, textTransform: "uppercase", letterSpacing: 1.5 }}>Entregas Totais</p>
-            <h3 style={{ fontSize: 28, fontWeight: 900, color: "#fff" }}>{events.length} <span style={{ fontSize: 13, color: "var(--theme-text-muted)", fontWeight: 400 }}>Eventos</span></h3>
+            <p style={{ fontSize: 10, fontWeight: 900, color: "var(--theme-text-muted)", marginBottom: 12, textTransform: "uppercase", letterSpacing: 1.5 }}>Entregas Concluídas</p>
+            <h3 style={{ fontSize: 28, fontWeight: 900, color: "#fff" }}>{completedEventsCount} <span style={{ fontSize: 13, color: "var(--theme-text-muted)", fontWeight: 400 }}>Eventos</span></h3>
           </div>
           
           <div style={{ ...S.card, padding: "1.5rem", position: "relative" }}>
@@ -252,39 +242,57 @@ export default function ProfissionalDashboard() {
         </div>
 
         <div className="mobile-stack" style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: "2rem" }}>
-          <div style={{ display: "flex", gap: "2rem", borderBottom: "1px solid var(--theme-border)", width: "100%", maxWidth: 600 }}>
-             <button 
-              onClick={() => setActiveTab("agenda")}
-              style={{ padding: "0 0 16px 0", border: "none", background: "none", borderBottom: activeTab === "agenda" ? "2px solid var(--brand-primary)" : "2px solid transparent", color: activeTab === "agenda" ? "var(--theme-text)" : "var(--theme-text-muted)", fontSize: 13, fontWeight: 900, cursor: "pointer", transition: "all .2s" }}
-            >
-              MINHA AGENDA
-            </button>
-            <button 
-              onClick={() => setActiveTab("convites")}
-              style={{ padding: "0 0 16px 0", border: "none", background: "none", borderBottom: activeTab === "convites" ? "2px solid var(--brand-primary)" : "2px solid transparent", color: activeTab === "convites" ? "var(--theme-text)" : "var(--theme-text-muted)", fontSize: 13, fontWeight: 900, cursor: "pointer", transition: "all .2s", position: "relative" }}
-            >
-              CONVITES PENDENTES
-              {pendingEvents.length > 0 && <span style={{ position: "absolute", top: -8, right: -12, background: "#ef4444", color: "#fff", fontSize: 9, width: 16, height: 16, borderRadius: "50%", display: "flex", alignItems: "center", justifyContent: "center" }}>{pendingEvents.length}</span>}
-            </button>
+          <div style={{ display: "flex", gap: "2rem" }}>
+            <p style={{ fontSize: 11, color: T.text3, margin: 0, textTransform: "uppercase", letterSpacing: 1 }}>
+              Visualização:
+            </p>
           </div>
           
-          <div className="mobile-hide" style={{ display: "flex", background: "rgba(255,255,255,0.02)", padding: 4, borderRadius: 8, border: "0.5px solid #1a1a1a" }}>
+          <div style={{ display: "flex", background: "rgba(255,255,255,0.02)", padding: 4, borderRadius: 8, border: `0.5px solid ${T.border}` }}>
             <button 
               onClick={() => setViewTab("lista")}
-              style={{ padding: "8px 16px", border: "none", background: viewTab === "lista" ? "rgba(133,185,172,0.1)" : "transparent", color: viewTab === "lista" ? "var(--brand-primary)" : "#555", fontSize: 10, fontWeight: 900, borderRadius: 6, cursor: "pointer", transition: "all .2s", display: "flex", alignItems: "center", gap: 6 }}
+              style={{ padding: "8px 16px", border: "none", background: viewTab === "lista" ? "rgba(133,185,172,0.1)" : "transparent", color: viewTab === "lista" ? T.brand : "#555", fontSize: 10, fontWeight: 900, borderRadius: 6, cursor: "pointer", transition: "all .2s", display: "flex", alignItems: "center", gap: 6 }}
             >
               <List size={14} /> LISTA
             </button>
             <button 
               onClick={() => setViewTab("calendario")}
-              style={{ padding: "8px 16px", border: "none", background: viewTab === "calendario" ? "rgba(133,185,172,0.1)" : "transparent", color: viewTab === "calendario" ? "var(--brand-primary)" : "#555", fontSize: 10, fontWeight: 900, borderRadius: 6, cursor: "pointer", transition: "all .2s", display: "flex", alignItems: "center", gap: 6 }}
+              style={{ padding: "8px 16px", border: "none", background: viewTab === "calendario" ? "rgba(133,185,172,0.1)" : "transparent", color: viewTab === "calendario" ? T.brand : "#555", fontSize: 10, fontWeight: 900, borderRadius: 6, cursor: "pointer", transition: "all .2s", display: "flex", alignItems: "center", gap: 6 }}
             >
                <CalendarIcon size={14} /> CALENDÁRIO
             </button>
           </div>
         </div>
 
-        {viewTab === "lista" ? (
+        {activeTab === "financeiro" ? (
+          <div style={{ animation: "fadeIn 0.4s ease-out" }}>
+            <div style={{ ...S.card, padding: "2rem" }}>
+              <h3 style={{ fontSize: 18, fontWeight: 900, color: "#fff", marginBottom: "1.5rem", textTransform: "uppercase", letterSpacing: 1 }}>Histórico de Vendas e Comissões</h3>
+              <div style={{ display: "flex", flexDirection: "column", gap: 1 }}>
+                {(profile as any)?.payoutHistory?.map((p: any) => (
+                  <div key={p.id} style={{ display: "flex", justifyContent: "space-between", alignItems: "center", padding: "1.25rem", borderBottom: "1px solid var(--theme-border)", background: "rgba(255,255,255,0.01)" }}>
+                    <div>
+                      <p style={{ fontSize: 14, fontWeight: 800, color: "#fff", margin: 0 }}>Repasse {p.payout?.weekStart ? formatDate(p.payout.weekStart) : 'Mensal'}</p>
+                      <p style={{ fontSize: 11, color: "var(--theme-text-muted)", margin: "4px 0 0 0" }}>{p.status === 'PAID' ? 'PAGO' : 'PROCESSANDO'} · {p.orderCount} vendas</p>
+                    </div>
+                    <div style={{ textAlign: "right" }}>
+                      <p style={{ fontSize: 10, color: "var(--theme-text-muted)", marginBottom: 4, textTransform: "uppercase", fontWeight: 700 }}>Valor Recebido</p>
+                      <p style={{ fontSize: 18, fontWeight: 900, color: "var(--brand-primary)", margin: 0 }}>R$ {Number(p.amount).toLocaleString()}</p>
+                    </div>
+                  </div>
+                ))}
+                {(!profile || !(profile as any).payoutHistory?.length) && (
+                  <div style={{ padding: "4rem", textAlign: "center", color: "var(--theme-text-muted)" }}>
+                    Nenhum repasse liquidado encontrado. Continue produzindo!
+                  </div>
+                )}
+              </div>
+              <p style={{ fontSize: 10, color: "var(--theme-text-muted)", marginTop: "2rem", fontStyle: "italic" }}>
+                * Os valores acima referem-se a repasses liquidados via PIX. Ganhos de eventos em andamento aparecerão após a conciliação semanal.
+              </p>
+            </div>
+          </div>
+        ) : viewTab === "lista" ? (
           <div className="mobile-grid-1" style={{ display: "grid", gridTemplateColumns: selected ? "1fr 440px" : "1fr", gap: "2.5rem", animation: "fadeIn 0.4s ease-out" }}>
             {/* LISTA */}
             <div style={{ display: "flex", flexDirection: "column", gap: 14 }}>
@@ -292,7 +300,11 @@ export default function ProfissionalDashboard() {
                 <div style={{ padding: "4rem", textAlign: "center", color: "#444", fontSize: 11, textTransform: "uppercase", letterSpacing: 2 }}>INDEXANDO...</div>
               ) : displayEvents.length === 0 ? (
                 <div style={{ padding: "6rem 0", textAlign: "center", background: "rgba(255,255,255,0.01)", border: "1px dashed #222" }}>
-                  <p style={{ color: "#444", fontSize: 12, textTransform: "uppercase", letterSpacing: 1 }}>{activeTab === "agenda" ? "Você ainda não possui eventos confirmados." : "Nenhum convite pendente momento."}</p>
+                  <p style={{ color: "#444", fontSize: 12, textTransform: "uppercase", letterSpacing: 1, maxWidth: 300, margin: "0 auto", lineHeight: 1.6 }}>
+                    {activeTab === "agenda" 
+                      ? "Você ainda não possui eventos confirmados. Aguarde ser atribuído a um evento pelo administrador." 
+                      : "Você não possui novos convites de trabalho pendentes no momento."}
+                  </p>
                 </div>
               ) : displayEvents.map((ev) => (
                 <div 
@@ -388,7 +400,7 @@ export default function ProfissionalDashboard() {
           onUpdated={(p) => { setProfile(p); setIsProfileOpen(false); }}
         />
       )}
-    </div>
+    </DashboardLayout>
   );
 }
 

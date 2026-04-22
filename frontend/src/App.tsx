@@ -1,6 +1,6 @@
 import { BrowserRouter as Router, Routes, Route, Navigate, useLocation } from "react-router-dom";
 import { AuthProvider } from "./contexts/AuthContext";
-import { ThemeProvider } from "./contexts/ThemeProvider";
+import { ThemeProvider } from "./contexts/ThemeContext";
 import { useAuth } from "./hooks/useAuth";
 import { HelmetProvider } from "react-helmet-async";
 import { ProtectedRoute } from "./components/ProtectedRoute";
@@ -122,25 +122,23 @@ function App() {
     wakeUp();
   }, []);
 
-  if (isWakingUp) {
-    return (
-      <div className="min-h-screen bg-[#0A0A0A] flex flex-col items-center justify-center gap-6">
-        <div className="w-1.5 h-1.5 rounded-full bg-brand-primary animate-ping mb-4" />
-        <div className="text-[14px] font-bold uppercase tracking-[0.6em] text-white">FOTO SEGUNDO</div>
-        <div className="text-[10px] font-bold uppercase tracking-[0.3em] text-white/30 animate-pulse">Sincronizando Rede de Artistas...</div>
-      </div>
-    );
-  }
-
   return (
     <ThemeProvider>
-      <AuthProvider>
-        <HelmetProvider>
-          <Router>
-            <AnimatedRoutes />
-          </Router>
-        </HelmetProvider>
-      </AuthProvider>
+      {isWakingUp ? (
+        <div className="min-h-screen bg-theme-bg flex flex-col items-center justify-center gap-6 transition-colors duration-500">
+          <div className="w-1.5 h-1.5 rounded-full bg-brand-primary animate-ping mb-4" />
+          <div className="text-[14px] font-bold uppercase tracking-[0.6em] text-theme-text">FOTO SEGUNDO</div>
+          <div className="text-[10px] font-bold uppercase tracking-[0.3em] text-theme-text-muted animate-pulse">Sincronizando Rede de Artistas...</div>
+        </div>
+      ) : (
+        <AuthProvider>
+          <HelmetProvider>
+            <Router>
+              <AnimatedRoutes />
+            </Router>
+          </HelmetProvider>
+        </AuthProvider>
+      )}
     </ThemeProvider>
   );
 }

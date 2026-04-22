@@ -4,6 +4,7 @@ import { useNavigate, Link } from "react-router-dom";
 import { useAuth } from "../hooks/useAuth";
 import { Helmet } from "react-helmet-async";
 import { T, BtnPrimary, FieldLabel, FieldInput } from "../lib/theme";
+import { ThemeToggle } from "../components/ThemeToggle";
 
 const EyeIcon = ({ open }: { open: boolean }) => open ? (
   <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5">
@@ -78,13 +79,15 @@ export const LoginPage: React.FC = () => {
         .lp-reg:hover { opacity: 0.75; }
       `}</style>
 
+      <div style={{ position: "fixed", top: 20, right: 20 }}>
+        <ThemeToggle />
+      </div>
+
       <div style={{ width: "100%", maxWidth: 400 }}>
 
         {/* ── Brand ── */}
-        <div style={{ textAlign: "center", marginBottom: 36 }}>
-          <div style={{ fontFamily: T.fontD, fontWeight: 900, fontSize: 26, color: "#fff", letterSpacing: 1, marginBottom: 8 }}>
-            FOTO SEGUNDO.
-          </div>
+        <div style={{ textAlign: "center", marginBottom: 36, display: "flex", flexDirection: "column", alignItems: "center" }}>
+          <img src="/logo-fs.png" alt="Foto Segundo" style={{ height: 40, objectFit: "contain", marginBottom: 12 }} />
           <p style={{ fontSize: 13, color: T.text2, fontWeight: 300, margin: 0, lineHeight: 1.5 }}>
             Acesse sua conta para visualizar seu álbum.
           </p>
@@ -92,7 +95,7 @@ export const LoginPage: React.FC = () => {
 
         {/* ── Card ── */}
         <div style={{
-          background:   "#111111",
+          background:   "var(--bg-card)",
           border:       `1px solid ${T.border}`,
           borderRadius: 0,
           padding:      32,

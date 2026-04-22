@@ -229,7 +229,7 @@ export class PaymentController {
    * Processa o pagamento transparente vindo do frontend.
    */
   static async processPayment(req: Request, res: Response) {
-    const { eventId, userId, email, cpf, cardToken, installments, paymentMethodId, contributionAmount } = req.body;
+    const { eventId, userId, email, cpf, cardToken, installments, paymentMethodId, contributionAmount, accessType } = req.body;
 
     try {
       // 1. Buscar evento com parceiros para cálculo de split
@@ -287,6 +287,10 @@ export class PaymentController {
         return res.status(400).json({ error: "E-mail obrigatório para processar o pagamento." });
       }
 
+      const expiresAt = new Date();
+      if (accessType === "PRIVATE") expiresAt.setDate(expiresAt.getDate() + 15);
+      else expiresAt.setDate(expiresAt.getDate() + 90);
+
       const order = await prisma.order.create({
         data: {
           eventId,
@@ -296,6 +300,9 @@ export class PaymentController {
           status: "PENDENTE",
           isContribution: event.isCrowdfund,
           contributorName: event.isCrowdfund ? (req.body.contributorName || null) : null,
+          accessType: accessType || "PUBLIC",
+          accessChosenAt: new Date(),
+          accessExpiresAt: expiresAt,
           // Salva snapshot dos calculos para referencia no repasse manual
           splitMatriz,
           splitCaptacao,
@@ -303,16 +310,6 @@ export class PaymentController {
           splitCartorio
         }
       });
-
-      // 4. MOCK BYPASS para Testes Locais
-      if (cardToken?.startsWith("mock-token-")) {
-        console.log(`[Payment] Bypass MOCK detectado para Pedido ${order.id}.`);
-        await prisma.order.update({
-          where: { id: order.id },
-          data: { status: "APROVADO", paymentId: "mock-pay-" + Date.now() }
-        });
-        return res.json({ orderId: order.id, status: "approved", hasPaid: true });
-      }
 
       // 5. Chamada Real ao Mercado Pago
       const mpResponse = await MercadoPagoService.processPayment({
@@ -382,16 +379,10 @@ export class PaymentController {
 
     } catch (error: any) {
       const errorData = error.response?.data;
-      console.error("[Process Payment FATAL]:", {
-        message: error.message,
-        data: errorData,
-        stack: error.stack,
-        body: req.body
-      });
+      console.error("[Process Payment Error]:", errorData || error.message);
       return res.status(500).json({ 
         error: "Erro ao processar pagamento v2",
-        details: errorData || error.message,
-        code: error.code // Para erros do Prisma
+        details: errorData || error.message
       });
     }
   }
@@ -406,6 +397,7 @@ export class PaymentController {
       const order = await prisma.order.findUnique({
         where: { id: String(id) },
         include: {
+          cliente: { select: { email: true, nome: true } },
           event: {
             select: {
               id: true,
@@ -427,6 +419,7 @@ export class PaymentController {
         status: order.status,
         eventId: order.eventId,
         clienteId: order.clienteId,
+        buyerEmail: order.buyerEmail || (order as any).cliente?.email,
         event: (order as any).event,
         isContribution: order.isContribution,
         contributorName: order.contributorName

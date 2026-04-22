@@ -11,6 +11,8 @@ interface OverviewStats {
   totalOrders: number;
   totalUsers: number;
   pendingQuotesCount: number;
+  pendingInvitesCount: number;
+  missingLinksCount: number;
 }
 
 interface RecentOrder {
@@ -56,7 +58,7 @@ export const AdminOverview: React.FC<OverviewProps> = ({ stats, recentOrders, pe
             Receita Bruta
           </label>
           <div style={{ 
-            fontSize: 28, fontFamily: T.fontD, fontWeight: 900, color: "#fff", textTransform: "uppercase" 
+            fontSize: 28, fontFamily: T.fontD, fontWeight: 900, color: T.text, textTransform: "uppercase" 
           }}>
             R$ {Number(stats?.totalRevenue).toFixed(2)}
           </div>
@@ -73,7 +75,7 @@ export const AdminOverview: React.FC<OverviewProps> = ({ stats, recentOrders, pe
             Pedidos Liquidados
           </label>
           <div style={{ 
-            fontSize: 28, fontFamily: T.fontD, fontWeight: 900, color: "#fff", textTransform: "uppercase" 
+            fontSize: 28, fontFamily: T.fontD, fontWeight: 900, color: T.text, textTransform: "uppercase" 
           }}>
             {stats?.totalOrders}
           </div>
@@ -90,9 +92,60 @@ export const AdminOverview: React.FC<OverviewProps> = ({ stats, recentOrders, pe
             Eventos Ativos
           </label>
           <div style={{ 
-            fontSize: 28, fontFamily: T.fontD, fontWeight: 900, color: "#fff", textTransform: "uppercase" 
+            fontSize: 28, fontFamily: T.fontD, fontWeight: 900, color: T.text, textTransform: "uppercase" 
           }}>
             {stats?.activeEvents}
+          </div>
+        </div>
+
+        {/* Card 4: Convites Pendentes */}
+        <div style={{ 
+          background: T.bgField, border: `1px solid ${T.border}`, padding: "24px 32px", borderRadius: 0 
+        }}>
+          <label style={{ 
+            fontSize: 10, fontFamily: T.fontB, fontWeight: 700, 
+            textTransform: "uppercase", letterSpacing: 1, color: T.text3, display: "block", marginBottom: 8 
+          }}>
+            Convites Pendentes
+          </label>
+          <div style={{ 
+            fontSize: 28, fontFamily: T.fontD, fontWeight: 900, color: (stats?.pendingInvitesCount || 0) > 0 ? "#f87171" : T.text, textTransform: "uppercase" 
+          }}>
+            {stats?.pendingInvitesCount}
+          </div>
+        </div>
+
+        {/* Card 5: Sem Links (Pedidos Ativos) */}
+        <div style={{ 
+          background: T.bgField, border: `1px solid ${T.border}`, padding: "24px 32px", borderRadius: 0 
+        }}>
+          <label style={{ 
+            fontSize: 10, fontFamily: T.fontB, fontWeight: 700, 
+            textTransform: "uppercase", letterSpacing: 1, color: T.text3, display: "block", marginBottom: 8 
+          }}>
+            Vendas sem Entrega
+          </label>
+          <div style={{ 
+            fontSize: 28, fontFamily: T.fontD, fontWeight: 900, color: (stats?.missingLinksCount || 0) > 0 ? T.brand : T.text, textTransform: "uppercase" 
+          }}>
+            {stats?.missingLinksCount}
+          </div>
+        </div>
+
+        {/* Card 6: Novos Leads (Quotes) */}
+        <div style={{ 
+          background: T.bgField, border: `1px solid ${T.border}`, padding: "24px 32px", borderRadius: 0 
+        }}>
+          <label style={{ 
+            fontSize: 10, fontFamily: T.fontB, fontWeight: 700, 
+            textTransform: "uppercase", letterSpacing: 1, color: T.text3, display: "block", marginBottom: 8 
+          }}>
+            Novos Leads (Orçamentos)
+          </label>
+          <div style={{ 
+            fontSize: 28, fontFamily: T.fontD, fontWeight: 900, color: (stats?.pendingQuotesCount || 0) > 0 ? T.brand : T.text, textTransform: "uppercase" 
+          }}>
+            {stats?.pendingQuotesCount}
           </div>
         </div>
 

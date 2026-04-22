@@ -22,7 +22,7 @@ interface Quote {
   description: string;
   clientEmail: string;
   clientName: string;
-  quoteStatus: "PENDING" | "PRICED" | "APPROVED" | "REJECTED";
+  quoteStatus: "PENDING" | "PRICED" | "APPROVED" | "REJECTED" | "CONVERTED";
   priceBase: number;
   usageType: string;
   createdAt: string;
@@ -113,7 +113,10 @@ export const AdminQuotes: React.FC = () => {
                   <div className="space-y-3">
                     <div className="flex items-center gap-3">
                       <span className={`text-[8px] font-bold px-2 py-0.5 uppercase tracking-widest border ${
-                        quote.quoteStatus === "PENDING" ? "border-brand-tactical text-brand-tactical" : "border-zinc-800 text-zinc-500"
+                        quote.quoteStatus === "PENDING" ? "border-brand-tactical text-brand-tactical" : 
+                        quote.quoteStatus === "PRICED" ? "border-yellow-500 text-yellow-500" :
+                        quote.quoteStatus === "CONVERTED" ? "border-green-500 text-green-500" :
+                        "border-zinc-800 text-zinc-500"
                       }`}>
                         {quote.quoteStatus}
                       </span>
@@ -136,7 +139,9 @@ export const AdminQuotes: React.FC = () => {
                     <div className="text-right">
                       <div className="text-[9px] text-theme-muted uppercase tracking-widest mb-1">Status</div>
                       <div className="text-[11px] text-white font-bold uppercase tracking-widest">
-                        {quote.quoteStatus === "PENDING" ? "Aguardando Preço" : "Enviado"}
+                        {quote.quoteStatus === "PENDING" ? "Novo Lead" : 
+                         quote.quoteStatus === "PRICED" ? "Aguardando Pagamento" :
+                         quote.quoteStatus === "CONVERTED" ? "Convertido" : "Processado"}
                       </div>
                     </div>
                     <ChevronRight size={20} className={`text-zinc-800 group-hover:text-brand-tactical transition-all ${selectedQuote?.id === quote.id ? "rotate-90 text-brand-tactical" : ""}`} />

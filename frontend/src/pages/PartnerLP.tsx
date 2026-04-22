@@ -1,9 +1,10 @@
 import React, { useEffect, useState } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import { API } from "../lib/api";
-import { useTheme } from "../hooks/useTheme";
+import { useTheme } from "../contexts/ThemeContext";
 import { motion } from "framer-motion";
 import { MapPin, Phone, MessageSquare, Calendar, Star, ArrowLeft } from "lucide-react";
+import { ThemeToggle } from "../components/ThemeToggle";
 
 interface PartnerData {
   razaoSocial: string;
@@ -67,14 +68,15 @@ export const PartnerLP: React.FC = () => {
           <ArrowLeft size={14} /> Vitrine
         </button>
 
-        <div className="pointer-events-auto">
+        <div className="pointer-events-auto flex items-center gap-6">
+          <ThemeToggle />
           <img 
-            src="/logo-premium.png" 
+            src="/logo-fs.png" 
             alt="Logo" 
             style={{ 
-              height: 32, 
+              height: 28, 
               objectFit: "contain",
-              filter: theme === 'dark' ? 'brightness(0) invert(1)' : 'none'
+              filter: theme === 'light' ? 'invert(1)' : 'none'
             }} 
           />
         </div>
@@ -94,7 +96,7 @@ export const PartnerLP: React.FC = () => {
         <div className="relative z-10 text-center px-6 max-w-5xl">
             <motion.div initial={{ opacity: 0, y: 40 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 1, ease: [0.16, 1, 0.3, 1] }}>
              <div className="text-proportional text-brand-primary mb-6">Unidade Fixa Autorizada</div>
-             <h1 className="heading-luxury mb-10 text-white">
+             <h1 className="heading-luxury mb-10 text-theme-text">
                {partner.razaoSocial}
              </h1>
              <div className="flex flex-wrap justify-center gap-8 text-proportional">
@@ -187,7 +189,7 @@ export const PartnerLP: React.FC = () => {
       </section>
 
       {/* Footer / Contact */}
-      <footer className="py-24 md:py-40 bg-zinc-950 text-white text-center mobile-py">
+      <footer className="py-24 md:py-40 bg-theme-bg-muted text-theme-text text-center border-t border-theme-border mobile-py">
            <div className="max-w-xl mx-auto px-6">
                 <MessageSquare className="mx-auto mb-10 text-brand-primary" size={40} />
                 <h2 className="text-4xl md:text-6xl font-black tracking-tighter mb-10 leading-none uppercase" style={{ fontFamily: "'Outfit', sans-serif" }}>Dúvidas sobre o Local?</h2>

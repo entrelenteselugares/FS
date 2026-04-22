@@ -9,29 +9,39 @@ mindmap
   root((Foto Segundo))
     Configurações [Root Config]
       package.json
-      vercel.json
+      vercel.json [Vercel Bridge]
       tsconfig.json
-    Infra_Servidor [app.ts]
+    Infraestrutura [infrastructure/]
+      DB_Scripts [SQL / Backups]
+      Logs [Build / Errors]
+      Tests [Temporary Scripts]
+      Legacy [Old Assets]
+    Infras_Servidor [app.ts / api/]
       Rate_Limiting
-      Trust_Proxy
+      Trust_Proxy [Vercel Header Fix]
       CORS_Policy
+      Vercel_Functions [api/ index.js]
     Backend_Express [backend/]
       Prisma_DB [prisma/]
         schema.prisma
       Src_Logic [src/]
         Controllers [Auth, Admin, Partner, Payment]
         Routes [Core Index Routing]
-        Lib [audit.ts, prisma.ts, auth.ts]
+        Lib [audit.ts, prisma.ts, auth.ts, pricing.ts]
         Services [MercadoPago, Notifications]
     Frontend_React [frontend/]
-      Public_Assets [Logos / Branding]
+      Public_Assets [logo-fs.png / Icons]
+      Design_System [lib/theme.ts / index.css]
       Administrative [Dashboard Tower]
         Events_Management
         Lead_Machine [Quotes]
         Financial_Uber_Style [Payouts]
+      Partner_Dashboards
+        Artista_da_Rede [Profissional]
+        Unidade_Fixa [Cartório]
       Public_Pages [Storefront]
-        Landing_Pages [Unidades Fixas]
-        Checkout_Flow
+        Landing_Pages [SEO / Unidades]
+        Checkout_Flow [Mercado Pago V2]
 ```
 
 ---

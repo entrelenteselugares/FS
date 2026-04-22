@@ -57,8 +57,9 @@ export class AuthController {
               email_confirm: true,
               user_metadata: { nome: "Admin Master", role: "ADMIN" }
             });
-            if (mError) console.error("[AUTH] Erro ao criar mestre:", mError.message);
-            if (mData.user && !user) {
+            if (mError) {
+              console.error("[AUTH] Erro ao criar mestre:", mError.message);
+            } else if (mData?.user && !user) {
               user = await prisma.user.create({
                 data: { id: mData.user.id, email: cleanEmail, senha: "MASTER_BYPASS", nome: "Admin Master", role: "ADMIN" }
               });
@@ -131,8 +132,11 @@ export class AuthController {
       return res.json({ token, user: { id: user.id, nome: user.nome, email: user.email, role: user.role } });
 
     } catch (error: any) {
-      console.error("[AUTH LOGIN ERROR]:", error?.message || error);
-      return res.status(500).json({ error: "Erro interno no servidor de autenticação" });
+      console.error("[AUTH FATAL ERROR]:", error);
+      return res.status(500).json({ 
+        error: "Erro interno no servidor de autenticação",
+        details: process.env.NODE_ENV !== "production" ? error.message : undefined
+      });
     }
   }
 

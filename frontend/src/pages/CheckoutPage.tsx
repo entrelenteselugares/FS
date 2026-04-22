@@ -2,7 +2,7 @@ import { useState, useEffect, useRef } from "react";
 import { useParams, useNavigate, useSearchParams } from "react-router-dom";
 import { ShieldCheck, ArrowLeft, Copy, CheckCircle2 } from "lucide-react";
 import { API } from "../lib/api";
-import { useTheme } from "../hooks/useTheme";
+import { useTheme } from "../contexts/ThemeContext";
 
 interface OrderEvent {
   id: string;
@@ -19,6 +19,7 @@ interface OrderDetail {
   status: string;
   eventId: string;
   clienteId?: string;
+  buyerEmail?: string;
   event: OrderEvent;
   isContribution: boolean;
   contributorName?: string;
@@ -37,7 +38,7 @@ export const CheckoutPage = () => {
   const [pixData, setPixData] = useState<{ qrCode: string; qrCodeBase64: string; ticketUrl: string } | null>(null);
   const [paymentSuccess, setPaymentSuccess] = useState(false);
   const [copied, setCopied] = useState(false);
-  const brickController = useRef<any>(null);
+  const brickController = useRef<{ unmount: () => void } | null>(null);
   const initializationStarted = useRef(false);
   const { theme } = useTheme();
 
@@ -72,7 +73,8 @@ export const CheckoutPage = () => {
 
     const mpPublicKey = "APP_USR-18f8ccc4-8ed4-4f99-bb6d-e333d026e578";
     
-    if (!(window as any).MercadoPago) {
+    const win = window as Window & { MercadoPago?: any };
+    if (!win.MercadoPago) {
       console.warn("Mercado Pago SDK não detectado no window.");
       initializationStarted.current = false;
       return;
@@ -83,26 +85,26 @@ export const CheckoutPage = () => {
       const container = document.getElementById("paymentBrick_container");
       if (container) container.innerHTML = "";
 
-      const mp = new (window as any).MercadoPago(mpPublicKey, { locale: "pt-BR" });
+      const mp = new win.MercadoPago(mpPublicKey, { locale: "pt-BR" });
       const bricksBuilder = mp.bricks();
 
       const settings = {
         initialization: {
           amount: Number(order.amount),
           payer: {
-            email: "cliente@teste.com",
+            email: order.buyerEmail || "cliente@fotosegundo.com.br",
             entityType: "individual",
           },
         },
         customization: {
           paymentMethods: {
-            creditCard: "all",
-            bankTransfer: ["pix"],
+            creditCard: "all" as const,
+            bankTransfer: ["pix"] as any,
             maxInstallments: 12,
           },
           visual: {
             style: {
-              theme: theme === "dark" ? "dark" : "default",
+              theme: (theme === "dark" ? "dark" : "default") as any,
             },
           },
         },
@@ -110,7 +112,7 @@ export const CheckoutPage = () => {
           onReady: () => {
             console.log("[Payment Brick] Ready");
           },
-          onSubmit: async ({ selectedPaymentMethod, formData }: any) => {
+          onSubmit: async ({ selectedPaymentMethod, formData }: { selectedPaymentMethod: string, formData: any }) => {
             try {
               const { data } = await API.post("/checkout/payment", {
                 eventId: order.event.id || order.eventId,
@@ -136,12 +138,11 @@ export const CheckoutPage = () => {
                 alert(`Status do Pagamento: ${data.status}`);
               }
             } catch (err: any) {
-              console.error("Erro no processamento transparente:", err.response?.data || err);
-              const detail = err.response?.data?.details || err.response?.data?.error || "Verifique seus dados.";
-              alert(`Erro ao processar pagamento: ${detail}`);
+              console.error("Erro no processamento transparente:", err);
+              alert("Erro ao processar pagamento. Verifique seus dados.");
             }
           },
-          onError: (error: any) => {
+          onError: (error: unknown) => {
             console.error("[Payment Brick] Error:", error);
             initializationStarted.current = false; // Permite tentar novamente em caso de erro
           },
@@ -186,8 +187,11 @@ export const CheckoutPage = () => {
         <button onClick={() => navigate(-1)} className="text-proportional opacity-40 hover:opacity-100 transition-all flex items-center gap-2">
           <ArrowLeft size={16} /> Voltar
         </button>
+        <div className="absolute left-1/2 -translate-x-1/2 flex items-center">
+          <img src="/logo-fs.png" alt="Foto Segundo" style={{ height: 22, objectFit: "contain" }} />
+        </div>
         <div className="text-proportional opacity-100 flex items-center gap-2">
-          <ShieldCheck size={14} className="text-brand-primary" /> Checkout Seguro
+          <ShieldCheck size={14} className="text-brand-primary" /> <span className="mobile-hide">Checkout Seguro</span>
         </div>
       </nav>
 

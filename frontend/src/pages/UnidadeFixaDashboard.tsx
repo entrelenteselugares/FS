@@ -1,9 +1,11 @@
 import { useState, useEffect, useRef, useCallback } from "react";
-import { useNavigate, useSearchParams } from "react-router-dom";
-import { useAuth } from "../hooks/useAuth";
+import { useSearchParams } from "react-router-dom";
+
 import { API } from "../lib/api";
 import { QRCodeSVG } from "qrcode.react";
-import { QrCode, Copy, Check, X, Download } from "lucide-react";
+import { QrCode, Copy, Check, X, Download, Calendar, DollarSign, Settings } from "lucide-react";
+import { DashboardLayout, type NavItem } from "../components/DashboardLayout";
+import { T } from "../lib/theme";
 
 interface UnidadeStats {
   totalEventos: number;
@@ -64,8 +66,6 @@ const S = {
 type Tab = "agenda" | "pedidos" | "configuracoes";
 
 export default function UnidadeFixaDashboard() {
-  const { user, logout } = useAuth();
-  const navigate = useNavigate();
   const [searchParams] = useSearchParams();
 
   const [tab, setTab] = useState<Tab>("agenda");
@@ -74,7 +74,6 @@ export default function UnidadeFixaDashboard() {
   const [pedidos, setPedidos] = useState<PedidoUnidade[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
-  const [pedidosError, setPedidosError] = useState("");
   const [success, setSuccess] = useState("");
 
   // Landing Page State
@@ -183,7 +182,6 @@ export default function UnidadeFixaDashboard() {
   };
 
   const loadPedidos = useCallback(async () => {
-    setPedidosError("");
     try {
       const params = new URLSearchParams();
       if (startDate) params.set("startDate", startDate);
@@ -191,7 +189,7 @@ export default function UnidadeFixaDashboard() {
       const { data } = await API.get(`/unidade-fixa/orders?${params}`);
       setPedidos(data.orders ?? data);
     } catch {
-      setPedidosError("Erro ao carregar pedidos. Tente novamente.");
+      setError("Erro ao carregar pedidos. Tente novamente.");
     }
   }, [startDate, endDate]);
 
@@ -202,64 +200,28 @@ export default function UnidadeFixaDashboard() {
   }, [tab, loadPedidos]);
 
 
-  const TABS: { key: Tab; label: string }[] = [
-    { key: "agenda", label: "Agenda" },
-    { key: "pedidos", label: "Repasses" },
-    { key: "configuracoes", label: "Configurações" },
+  const NAV_ITEMS = (tab: Tab, setTab: (t: Tab) => void): NavItem[] => [
+    { label: "Agenda", onClick: () => setTab("agenda"), isActive: tab === "agenda", icon: <Calendar size={16} /> },
+    { label: "Repasses", onClick: () => setTab("pedidos"), isActive: tab === "pedidos", icon: <DollarSign size={16} /> },
+    { label: "Página Pública", onClick: () => setTab("configuracoes"), isActive: tab === "configuracoes", icon: <Settings size={16} /> },
   ];
 
   return (
-    <div style={S.page}>
+    <DashboardLayout 
+      title="Painel de Unidade" 
+      navItems={NAV_ITEMS(tab, setTab)}
+    >
       <style>{`
         * { box-sizing: border-box; }
-        input:focus { border-color: var(--brand-primary) !important; outline: none; }
+        input:focus { border-color: ${T.brand} !important; outline: none; }
         @media (max-width: 768px) {
           .mobile-grid-1 { grid-template-columns: 1fr !important; gap: 1rem !important; }
           .mobile-grid-2 { grid-template-columns: repeat(2, 1fr) !important; gap: 1rem !important; }
           .mobile-stack { flex-direction: column !important; align-items: stretch !important; gap: 1.5rem !important; }
-          .mobile-nav { padding: 0.8rem 1rem !important; flex-direction: column !important; gap: 1rem !important; align-items: center !important; text-align: center !important; }
           .mobile-hide { display: none !important; }
           .mobile-padding { padding: 1.5rem !important; }
-          .mobile-scroll-x { overflow-x: auto !important; padding-bottom: 5px !important; width: 100% !important; justify-content: flex-start !important; }
         }
       `}</style>
-
-      {/* NAV */}
-      <nav className="mobile-nav" style={{ display: "flex", alignItems: "center", justifyContent: "space-between", padding: "1rem 2rem", borderBottom: "1px solid var(--theme-border)" }}>
-        <div style={{ display: "flex", alignItems: "center", gap: 20 }}>
-          <div onClick={() => navigate("/")} style={{ cursor: "pointer", display: "flex", alignItems: "center" }}>
-            <img 
-              src="/logo-premium.png" 
-              alt="Logo" 
-              style={{ 
-                height: 40, 
-                objectFit: "contain",
-                filter: "brightness(0) invert(1)"
-              }} 
-            />
-          </div>
-          <div className="mobile-scroll-x" style={{ display: "flex", gap: 8 }}>
-            {TABS.map((t) => (
-              <button key={t.key} onClick={() => setTab(t.key)} style={{
-                background: tab === t.key ? "var(--brand-primary)" : "var(--theme-bg-muted)",
-                border: "none", padding: "8px 14px", fontSize: 10,
-                cursor: "pointer", borderRadius: 0,
-                color: tab === t.key ? "var(--theme-text-on-brand)" : "var(--theme-text-muted)",
-                textTransform: "uppercase", fontWeight: 700, letterSpacing: "1px",
-                whiteSpace: "nowrap"
-              }}>
-                {t.label}
-              </button>
-            ))}
-          </div>
-        </div>
-        <div style={{ display: "flex", alignItems: "center", gap: 12 }}>
-          <span className="mobile-hide" style={{ fontSize: 10, color: "var(--theme-text-muted)", fontWeight: 700, textTransform: "uppercase", letterSpacing: 1 }}>{unidadeName || user?.nome}</span>
-          <button onClick={() => { logout(); navigate("/"); }} style={{ background: "none", border: "1px solid var(--theme-border)", borderRadius: 0, padding: "6px 12px", color: "var(--theme-text-muted)", fontSize: 9, fontWeight: 700, textTransform: "uppercase", letterSpacing: 1, cursor: "pointer" }}>
-            Sair
-          </button>
-        </div>
-      </nav>
 
       <div className="mobile-padding" style={{ maxWidth: 1100, margin: "0 auto", padding: "2rem" }}>
 
@@ -360,11 +322,6 @@ export default function UnidadeFixaDashboard() {
         {/* ── REPASSES ── */}
         {tab === "pedidos" && (
           <div>
-            {pedidosError && (
-              <div style={{ background: "rgba(239, 68, 68, 0.1)", border: "1px solid rgba(239, 68, 68, 0.2)", borderRadius: 0, padding: "12px 16px", marginBottom: "1.25rem" }}>
-                <p style={{ fontSize: 13, color: "#ef4444", margin: 0, fontWeight: 600, textTransform: "uppercase", letterSpacing: 0.5 }}>{pedidosError}</p>
-              </div>
-            )}
             <div style={{ display: "flex", gap: "0.75rem", marginBottom: "1.25rem", alignItems: "center" }}>
               <div>
                 <label style={{ fontSize: 11, color: "var(--theme-text-muted)", display: "block", marginBottom: 4 }}>De</label>
@@ -575,6 +532,6 @@ export default function UnidadeFixaDashboard() {
           `}</style>
         </div>
       )}
-    </div>
+    </DashboardLayout>
   );
 }

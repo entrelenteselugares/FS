@@ -5,17 +5,18 @@
 O Foto Segundo é uma plataforma de fornecimento de ativos visuais de luxo, operando sob uma arquitetura de microsserviços simulada (Back-end Express + Front-end React na Vercel).
 
 - **Backend**: Node.js/Express, Prisma ORM, PostgreSQL (Supabase).
-- **Frontend**: React, TailwindCSS, Framer Motion.
-- **Identidade**: "Midnight Luxury" (Dark Mode severo, Teal accents).
+- **Identidade**: "Midnight Luxury" (Dark Mode severo, Teal accents, Zero Border Radius).
+- **Tipografia**: Barlow Condensed (Display) + Inter (UI/Body).
+- **Assets**: Logotipo oficial `/logo-fs.png` (Minimalista).
 
 ---
 
 ## 2. Padrões de Nomenclatura e Branding (CRÍTICO)
 
-A plataforma passou por um rebranding total. O termo **"Cartório"** (legado) deve ser substituído por **"Unidade Fixa"** em todos os contextos de interface com o usuário.
-
-- **Frontend**: Nunca exiba a palavra "Cartório". Use "Unidade Fixa" ou "Parceiro Oficial".
-- **Backend**: Por razões de integridade de banco de dados, o `role` permanece `CARTORIO`, mas as rotas de API e mensagens de erro devem usar `unidade-fixa`.
+A plataforma passou por um rebranding total.
+- **Unidade Fixa**: Substitui "Cartório" em todos os contextos de interface com o usuário.
+- **Artista da Rede**: Substitui "Fotógrafo" e "Editor" para unificar os parceiros de produção.
+- **Backend**: Por razões de integridade de banco de dados, o `role` permanece `CARTORIO` e `PROFISSIONAL`, mas as rotas de API e mensagens de erro devem usar `unidade-fixa` e `artista-da-rede`.
 - **Exceção**: O campo `cartorio` no modelo `Event` é mantido para compatibilidade com dados legados, mas novos registros devem priorizar `cartorioUserId`.
 
 ---
@@ -53,7 +54,7 @@ A aplicação DEVE ter `app.set("trust proxy", 1)` no `app.ts`. Sem isso, o `exp
 ## 5. Regras Inegociáveis
 
 > [!IMPORTANT]
-> **Identidade Visual**: A estética **Midnight Luxury** é o pilar da Foto Segundo. Background `#0a0a0a`, tipografia **Outfit**, e a cor de marca `#85B9AC`.
+> **Identidade Visual**: A estética **Midnight Luxury** é o pilar da Foto Segundo. Background `#0a0a0a`, tipografia **Barlow Condensed** (Títulos) e **Inter** (UI), e a cor de marca `#85B9AC`. Bordas sempre quadradas (`borderRadius: 0`).
 >
 > [!NOTE]
 > **Unidade Fixa**: O mapeamento `CARTORIO` -> `Unidade Fixa` na visualização é mandatório.

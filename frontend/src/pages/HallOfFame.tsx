@@ -3,6 +3,7 @@ import { useNavigate } from "react-router-dom";
 import { API } from "../lib/api";
 import { motion } from "framer-motion";
 import { Award, Heart, Shield, Star } from "lucide-react";
+import { ThemeToggle } from "../components/ThemeToggle";
 
 interface RankingItem {
   event: {
@@ -66,20 +67,23 @@ export const HallOfFame: React.FC = () => {
       `}</style>
 
       {/* Back Button */}
-      <nav className="absolute top-0 left-0 w-full z-50 p-6 pointer-events-none">
+      <nav className="absolute top-0 left-0 w-full z-50 p-6 pointer-events-none flex justify-between items-center">
         <button 
           onClick={() => navigate("/")} 
-          className="pointer-events-auto flex items-center gap-3 text-[10px] font-black uppercase tracking-[0.4em] text-white/40 hover:text-white transition-all bg-black/20 backdrop-blur-md px-6 py-3 border border-white/5"
+          className="pointer-events-auto flex items-center gap-3 text-[10px] font-black uppercase tracking-[0.4em] text-theme-muted hover:text-theme-text transition-all bg-theme-bg-muted backdrop-blur-md px-6 py-3 border border-theme-border"
         >
           <span className="text-lg">←</span> Vitrine
         </button>
+        <div className="pointer-events-auto">
+          <ThemeToggle />
+        </div>
       </nav>
       
       {/* Hero Section */}
       <section className="pt-20 pb-40 px-6 max-w-7xl mx-auto text-center">
         <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }}>
           <div className="flex justify-center mb-6">
-            <Award size={48} className="text-zinc-800" />
+            <Award size={48} className="text-theme-border" />
           </div>
           <h1 className="text-6xl md:text-8xl font-black uppercase tracking-tighter leading-none mb-6" style={{ fontFamily: "'Barlow Condensed', sans-serif" }}>
             Hall da <span style={{ color: THEME.accent }}>Fama</span>
@@ -119,13 +123,11 @@ export const HallOfFame: React.FC = () => {
                 <h3 className="text-2xl font-black uppercase tracking-tighter mb-1" style={{ fontFamily: "'Barlow Condensed', sans-serif" }}>{item.event.nomeNoivos}</h3>
                 <p className="text-[10px] text-theme-muted uppercase tracking-widest font-bold mb-6">{item.event.cartorio}</p>
 
-                <div className="flex items-center justify-between">
                   <div className="flex items-center gap-2">
                     <Heart size={14} className="text-brand-tactical fill-brand-tactical" />
                     <span className="text-lg font-black">{item.likes}</span>
                   </div>
-                  <a href={`/eventos/${item.event.slug || item.event.id}`} className="text-[9px] font-black uppercase tracking-widest text-zinc-400 hover:text-white border-b border-white/5 hover:border-white transition-all pb-1">APOIAR CASAL</a>
-                </div>
+                  <a href={`/eventos/${item.event.slug || item.event.id}`} className="text-[9px] font-black uppercase tracking-widest text-theme-muted hover:text-theme-text border-b border-theme-border hover:border-theme-text transition-all pb-1">APOIAR CASAL</a>
               </motion.div>
             ))}
           </div>
@@ -155,7 +157,7 @@ export const HallOfFame: React.FC = () => {
                         <div className="relative w-40 h-40 mx-auto mb-8">
                             <div className="absolute inset-0 border-2 border-zinc-800 -rotate-6 transition-transform hover:rotate-0" />
                             <img src={winner.event.coverPhotoUrl} className="w-full h-full object-cover grayscale hover:grayscale-0 transition-all duration-500" alt="" />
-                            <div className="absolute -top-4 -right-4 bg-zinc-900 border border-white/10 w-10 h-10 flex items-center justify-center">
+                            <div className="absolute -top-4 -right-4 bg-theme-bg-muted border border-theme-border w-10 h-10 flex items-center justify-center">
                                 <Star size={16} fill={widx === 0 ? THEME.gold : widx === 1 ? THEME.silver : THEME.bronze} className="stroke-none" />
                             </div>
                         </div>
@@ -177,7 +179,7 @@ export const HallOfFame: React.FC = () => {
         <div className="max-w-xl mx-auto px-6">
             <h2 className="text-4xl font-black uppercase tracking-tighter mb-8" style={{ fontFamily: "'Barlow Condensed', sans-serif" }}>Quer ver seu álbum aqui?</h2>
             <p className="text-theme-muted text-[11px] uppercase tracking-widest font-bold leading-relaxed mb-12">Compartilhe sua galeria e peça curtidas aos seus convidados. Os álbuns mais engajados recebem premiações exclusivas em todos os concursos.</p>
-            <button onClick={() => window.location.href='/cotacao'} className="px-12 py-5 bg-brand-tactical text-white text-[10px] font-black uppercase tracking-[0.4em] hover:brightness-110 transition-all shadow-2xl shadow-brand-tactical/20">RESERVAR MEU GRANDE DIA</button>
+            <button onClick={() => window.location.href='/cotacao'} className="px-12 py-5 bg-brand-tactical text-theme-bg text-[10px] font-black uppercase tracking-[0.4em] hover:brightness-110 transition-all shadow-2xl shadow-brand-tactical/20">RESERVAR MEU GRANDE DIA</button>
         </div>
       </footer>
     </div>

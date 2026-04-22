@@ -5,6 +5,7 @@ import { API } from "../lib/api";
 import { useAuth } from "../hooks/useAuth";
 import { Helmet } from "react-helmet-async";
 import { T, BtnPrimary, BtnSecondary } from "../lib/theme";
+import { ThemeToggle } from "../components/ThemeToggle";
 
 interface Event {
   id: string;
@@ -133,6 +134,7 @@ export const HomePage = () => {
   const [totalPages, setTotal]  = useState(1);
   const [userMenu, setUserMenu] = useState(false);
   const debounce = useRef<any>(null);
+  const [isCtaHovered, setIsCtaHovered] = useState(false);
 
   const dashPath = user?.role === "ADMIN" ? "/admin"
     : user?.role === "PROFISSIONAL" ? "/profissional"
@@ -185,14 +187,15 @@ export const HomePage = () => {
       <nav id="main-nav" style={{
         display: "flex", alignItems: "center", justifyContent: "space-between",
         padding: "16px 28px", borderBottom: `1px solid ${T.border}`,
-        background: "rgba(10,10,10,0.92)", backdropFilter: "blur(20px)",
+        background: "var(--theme-bg-nav)", backdropFilter: "blur(20px)",
         position: "sticky", top: 0, zIndex: 100,
       }}>
-        <div onClick={() => navigate("/")} style={{ cursor: "pointer", fontFamily: T.fontD, fontWeight: 900, fontSize: 20, color: "#fff", letterSpacing: 1 }}>
-          FOTO SEGUNDO.
+        <div onClick={() => navigate("/")} style={{ cursor: "pointer", display: "flex", alignItems: "center" }}>
+          <img src="/logo-fs.png" alt="Foto Segundo" style={{ height: 26, objectFit: "contain" }} />
         </div>
 
         <div style={{ display: "flex", alignItems: "center", gap: 12 }}>
+          <ThemeToggle />
           {user ? (
             <div style={{ position: "relative" }}>
               <button onClick={() => setUserMenu(v => !v)} style={{ ...BtnSecondary, fontSize: 11, padding: "9px 16px" }}>
@@ -226,7 +229,7 @@ export const HomePage = () => {
           <h1 className="hp-hero-title" style={{
             fontFamily: T.fontD, fontWeight: 900,
             fontSize: "clamp(48px, 7vw, 80px)",
-            lineHeight: 0.95, color: "#fff",
+            lineHeight: 0.95, color: T.text,
             textTransform: "uppercase", letterSpacing: "0.5px",
             margin: "0 0 24px",
           }}>
@@ -247,8 +250,8 @@ export const HomePage = () => {
               onKeyDown={e => e.key === "Enter" && fetch(query, 1)}
               placeholder="Buscar pelo nome dos noivos..."
               style={{
-                flex: 1, background: "#161616",
-                border: `1px solid #2a2a2a`, borderRight: "none",
+                flex: 1, background: "var(--bg-field)",
+                border: `1px solid var(--border-2)`, borderRight: "none",
                 padding: "13px 16px", fontSize: 13,
                 color: T.text, fontFamily: T.fontB, fontWeight: 300,
                 borderRadius: 0, outline: "none",
@@ -257,7 +260,7 @@ export const HomePage = () => {
             <button
               onClick={() => fetch(query, 1)}
               style={{
-                background: T.brand, color: "#0a0a0a", border: "none",
+                background: T.brand, color: T.brandText, border: "none",
                 padding: "13px 22px", fontFamily: T.fontD, fontWeight: 900,
                 fontSize: 13, letterSpacing: 1.5, textTransform: "uppercase",
                 cursor: "pointer", borderRadius: 0, flexShrink: 0,
@@ -373,9 +376,17 @@ export const HomePage = () => {
         </div>
       </section>
 
-      {/* ── CTA ───────────────────────────────────────────────────────────── */}
-      <section onClick={() => navigate("/cotacao")} style={{ padding: "48px 28px", textAlign: "center", cursor: "pointer", borderBottom: `1px solid ${T.border}` }}
-        onMouseOver={e => (e.currentTarget.style.background = T.bgCard)} onMouseOut={e => (e.currentTarget.style.background = "transparent")}>
+      <section 
+        onClick={() => navigate("/cotacao")} 
+        style={{ 
+          padding: "48px 28px", textAlign: "center", cursor: "pointer", 
+          borderBottom: `1px solid ${T.border}`,
+          background: isCtaHovered ? T.bgCard : "transparent",
+          transition: "background 0.3s ease"
+        }}
+        onMouseEnter={() => setIsCtaHovered(true)} 
+        onMouseLeave={() => setIsCtaHovered(false)}
+      >
         <span style={{ fontSize: 13, fontFamily: T.fontB, color: T.text2, fontWeight: 300 }}>
           Deseja uma cobertura exclusiva?{" "}
           <span style={{ color: T.brand, fontWeight: 500, borderBottom: `1px solid ${T.brand}` }}>Solicite um orçamento →</span>
@@ -386,7 +397,9 @@ export const HomePage = () => {
       <footer style={{ borderTop: `1px solid ${T.border}`, padding: "56px 28px 32px" }}>
         <div className="hp-footer-inner" style={{ maxWidth: 1100, margin: "0 auto", display: "flex", justifyContent: "space-between", alignItems: "flex-start", gap: "3rem" }}>
           <div>
-            <div style={{ fontFamily: T.fontD, fontWeight: 900, fontSize: 20, color: "#fff", letterSpacing: 1, marginBottom: 12 }}>FOTO SEGUNDO.</div>
+            <div style={{ display: "flex", alignItems: "center", marginBottom: 12 }}>
+              <img src="/logo-fs.png" alt="Foto Segundo" style={{ height: 20, objectFit: "contain" }} />
+            </div>
             <p style={{ fontSize: 11, fontFamily: T.fontB, color: T.text3, lineHeight: 1.8, maxWidth: 260, margin: 0 }}>
               Protocolo Editorial de Imagem e Cinema.<br />© 2026 Todos os Direitos Reservados.
             </p>

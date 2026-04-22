@@ -57,7 +57,7 @@ export const AuthSelectionPage: React.FC = () => {
         transition={{ duration: 1, ease: [0.19, 1, 0.22, 1] }}
         className="text-center mb-32 relative z-10"
       >
-        <img src="/assets/logo.png" alt="Foto Segundo" className="h-8 w-auto invert brightness-0 mb-16 mx-auto opacity-80" />
+        <img src="/logo-fs.png" alt="Foto Segundo" className="h-10 w-auto mb-16 mx-auto opacity-80" />
         <h1 className="text-6xl md:text-9xl font-sans tracking-tighter text-white mb-8 uppercase font-black">
           GATE<span className="text-brand-tactical">KEEPER</span>
         </h1>
