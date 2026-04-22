@@ -132,7 +132,7 @@ export const HomePage = () => {
   const [page, setPage]         = useState(1);
   const [totalPages, setTotal]  = useState(1);
   const [userMenu, setUserMenu] = useState(false);
-  const debounce = useRef<any>();
+  const debounce = useRef<any>(null);
 
   const dashPath = user?.role === "ADMIN" ? "/admin"
     : user?.role === "PROFISSIONAL" ? "/profissional"

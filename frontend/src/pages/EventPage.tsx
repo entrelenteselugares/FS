@@ -1,10 +1,8 @@
 import { useState, useEffect } from "react";
 import { useParams, useNavigate, useSearchParams } from "react-router-dom";
-import { useAuth } from "../hooks/useAuth";
 import { API as api } from "../lib/api";
 import { Helmet } from "react-helmet-async";
 import AccessTypeModal from "../components/AccessTypeModal";
-import axios from "axios";
 import { T, BtnPrimary, BtnSecondary, Card, FieldLabel, FieldInput } from "../lib/theme";
 
 // ─── Types ────────────────────────────────────────────────────────────────────
@@ -102,7 +100,6 @@ export default function EventPage() {
   const { slug } = useParams<{ slug: string }>();
   const navigate = useNavigate();
   const [searchParams] = useSearchParams();
-  const { user } = useAuth();
 
   const [event, setEvent] = useState<EventData | null>(null);
   const [loading, setLoading] = useState(true);
@@ -204,7 +201,6 @@ export default function EventPage() {
             setNeedsAccessChoice(true);
           } else {
             setAccess({ lightroomUrl: data.lightroomUrl, driveUrl: data.driveUrl });
-            setAccessExpiresAt(data.accessExpiresAt);
           }
           setStep("success");
         }
@@ -503,7 +499,6 @@ export default function EventPage() {
             try {
               const { data } = await api.get(`/orders/${orderId}/access-status`);
               setAccess({ lightroomUrl: data.lightroomUrl, driveUrl: data.driveUrl });
-              setAccessExpiresAt(data.accessExpiresAt);
             } catch (err) {
               console.error("Erro ao atualizar links após escolha:", err);
             }

@@ -50,7 +50,7 @@ const LogoutIcon = () => (
 // ─── Sidebar Content ──────────────────────────────────────────────────────────
 
 interface SidebarContentProps {
-  title: string;
+  title?: string;
   navItems: NavItem[];
   onNavigate: () => void;
 }
@@ -230,7 +230,7 @@ export const DashboardLayout: React.FC<DashboardLayoutProps> = ({
   const [drawerOpen, setDrawerOpen] = useState(false);
   const { user, logout } = useAuth();
 
-  const sidebarProps = {
+  const sidebarProps: SidebarContentProps = {
     title,
     navItems,
     onNavigate: () => setDrawerOpen(false),
