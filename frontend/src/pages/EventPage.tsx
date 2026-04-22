@@ -364,7 +364,7 @@ export default function EventPage() {
               <div style={{ ...Card, padding: 24 }}>
                 <p style={{ fontSize: 10, letterSpacing: 2, color: T.brand, textTransform: "uppercase", margin: "0 0 12px" }}>Exclusive Collection</p>
                 <p style={{ fontFamily: T.fontD, fontWeight: 900, fontSize: 44, color: "#fff", margin: "0 0 4px" }}>
-                  R$ {event.priceBase.toFixed(2).replace(".", ",")}
+                  R$ {Number(event.priceBase).toFixed(2).replace(".", ",")}
                 </p>
                 <p style={{ fontSize: 12, color: T.text3, margin: "0 0 24px" }}>Acesso vitalício · Download imediato</p>
                 
@@ -394,9 +394,9 @@ export default function EventPage() {
                   <button onClick={() => setStep("paywall")} style={{ background: "none", border: "none", color: T.brand, cursor: "pointer", fontSize: 10, textTransform: "uppercase" }}>Voltar</button>
                 </div>
 
-                <div style={{ background: T.bgField, border: `1px solid ${T.border}`, padding: 16, marginBottom: 24 }}>
+                  <div style={{ background: T.bgField, border: `1px solid ${T.border}`, padding: 16, marginBottom: 24 }}>
                   <div style={{ fontSize: 11, color: T.text2 }}>{event.nomeNoivos}</div>
-                  <div style={{ fontSize: 16, fontWeight: 700, color: "#fff" }}>R$ {event.priceBase.toFixed(2)}</div>
+                  <div style={{ fontSize: 16, fontWeight: 700, color: "#fff" }}>R$ {Number(event.priceBase).toFixed(2)}</div>
                 </div>
 
                 <div style={{ display: "flex", flexDirection: "column", gap: 16 }}>
@@ -447,7 +447,7 @@ export default function EventPage() {
                     </button>
                   ) : (
                     <button onClick={handlePay} style={{ ...BtnPrimary, width: "100%", justifyContent: "center", marginTop: 8, background: "#4ade80", color: "#0a0a0a" }}>
-                      Pagar R$ {event.priceBase.toFixed(2).replace(".", ",")}
+                      Pagar R$ {Number(event.priceBase).toFixed(2).replace(".", ",")}
                     </button>
                   )}
                 </div>

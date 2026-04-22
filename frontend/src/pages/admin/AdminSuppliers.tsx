@@ -171,7 +171,7 @@ export default function AdminSuppliers() {
                 <StatsCard 
                     icon={<Printer size={18} />} 
                     label="Equipamento" 
-                    value={`R$ ${breakeven.printerCost.toFixed(2)}`} 
+                    value={`R$ ${Number(breakeven.printerCost).toFixed(2)}`} 
                     sub="CAPEX — Investimento Inicial" 
                 />
                 <StatsCard 
@@ -251,7 +251,7 @@ export default function AdminSuppliers() {
                           <tr key={s.printerPrice} className="border-t border-theme-border hover:bg-theme-bg-muted/20 transition-colors">
                             <td className="p-6 border-r border-theme-border text-theme-text">
                                 <span className="text-[10px] text-theme-muted font-medium uppercase tracking-widest mr-3">CAPEX:</span>
-                                R$ {s.printerPrice.toFixed(2)}
+                                R$ {Number(s.printerPrice).toFixed(2)}
                             </td>
                             <td className="p-6 border-r border-theme-border text-center">
                                 <span className="bg-brand-primary/10 text-brand-primary border border-brand-primary/20 px-4 py-1 flex items-center gap-2 justify-center w-fit mx-auto">

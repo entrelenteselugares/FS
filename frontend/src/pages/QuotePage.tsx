@@ -440,7 +440,7 @@ export const QuotePage = () => {
                      {showPrices ? (
                         <div className="mobile-text-center">
                           <div className="text-proportional mb-2">Investimento Estimado</div>
-                          <div className="heading-luxury !text-brand-primary">R$ {totalPrice.toFixed(2)}</div>
+                          <div className="heading-luxury !text-brand-primary">R$ {Number(totalPrice).toFixed(2)}</div>
                         </div>
                      ) : (
                        <div className="mobile-text-center" style={{ maxWidth: 300 }}>

@@ -94,7 +94,7 @@ export const PaywallView: React.FC<PaywallViewProps> = ({ event, onCheckout, isP
               )}
             </div>
             <div className="flex items-baseline gap-4">
-               <span className="text-4xl text-white">R$ {preco.toFixed(2)}</span>
+               <span className="text-4xl text-white">R$ {Number(preco).toFixed(2)}</span>
                {!isAdvancePurchase && <span className="text-xs text-zinc-700 line-through tracking-wider font-light">R$ 250.00</span>}
             </div>
           </div>
