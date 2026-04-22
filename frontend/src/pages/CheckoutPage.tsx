@@ -2,7 +2,7 @@ import { useState, useEffect, useRef } from "react";
 import { useParams, useNavigate, useSearchParams } from "react-router-dom";
 import { ShieldCheck, ArrowLeft, Copy, CheckCircle2 } from "lucide-react";
 import { API } from "../lib/api";
-import { useTheme } from "../contexts/ThemeContext";
+import { useTheme } from "../contexts/ThemeContextCore";
 
 interface OrderEvent {
   id: string;

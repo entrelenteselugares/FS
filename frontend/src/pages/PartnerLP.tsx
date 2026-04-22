@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import { API } from "../lib/api";
-import { useTheme } from "../contexts/ThemeContext";
+import { useTheme } from "../contexts/ThemeContextCore";
 import { motion } from "framer-motion";
 import { MapPin, Phone, MessageSquare, Calendar, Star, ArrowLeft } from "lucide-react";
 import { ThemeToggle } from "../components/ThemeToggle";

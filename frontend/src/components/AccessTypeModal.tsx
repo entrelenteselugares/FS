@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { API as api } from "../lib/api";
-import { useTheme } from "../contexts/ThemeContext";
+import { useTheme } from "../contexts/ThemeContextCore";
 import { AxiosError } from "axios";
 import { motion } from "framer-motion";
 import { Shield, Lock, Globe, AlertTriangle, CheckCircle2 } from "lucide-react";
