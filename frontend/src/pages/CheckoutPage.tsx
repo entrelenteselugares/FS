@@ -239,7 +239,7 @@ export const CheckoutPage = () => {
           <img src="/logo-fs.png" alt="Foto Segundo" style={{ height: 22, objectFit: "contain" }} />
         </div>
         <div className="text-proportional opacity-100 flex items-center gap-2">
-          <ShieldCheck size={14} className="text-brand-primary" /> <span className="mobile-hide">Checkout Seguro</span>
+          <ShieldCheck size={14} className="text-brand-primary" /> <span className="desktop-only">Checkout Seguro</span>
         </div>
       </nav>
 

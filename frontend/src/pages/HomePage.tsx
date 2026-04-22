@@ -191,27 +191,29 @@ export const HomePage = () => {
           <img src="/logo-fs.png" alt="Foto Segundo" style={{ height: 26, objectFit: "contain" }} />
         </div>
 
-        <div style={{ display: "flex", alignItems: "center", gap: 12 }}>
+        <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
           <ThemeToggle />
           {user ? (
             <div style={{ position: "relative" }}>
-              <button onClick={() => setUserMenu(v => !v)} style={{ ...BtnSecondary, fontSize: 11, padding: "9px 16px" }}>
-                {user.nome.split(" ")[0]} <span style={{ fontSize: 8, marginLeft: 4 }}>▾</span>
+              <button onClick={() => setUserMenu(v => !v)} style={{ ...BtnSecondary, fontSize: 11, padding: "9px 12px" }}>
+                {user.nome.split(" ")[0]} <span style={{ fontSize: 8, marginLeft: 2 }}>▾</span>
               </button>
               {userMenu && (
-                <div style={{ position: "absolute", right: 0, top: "calc(100% + 8px)", background: T.bgCard, border: `1px solid ${T.border}`, minWidth: 160, zIndex: 200 }}>
+                <div style={{ position: "absolute", right: 0, top: "calc(100% + 8px)", background: T.bgCard, border: `1px solid ${T.border}`, minWidth: 160, zIndex: 200, boxShadow: '0 10px 30px rgba(0,0,0,0.5)' }}>
                   <button onClick={() => { setUserMenu(false); navigate(dashPath); }} style={{ width: "100%", textAlign: "left", padding: "12px 16px", background: "transparent", border: "none", borderBottom: `1px solid ${T.border}`, color: T.text, fontSize: 11, fontFamily: T.fontB, letterSpacing: "0.08em", textTransform: "uppercase", cursor: "pointer" }}>Meu Painel</button>
                   <button onClick={() => { logout(); setUserMenu(false); }} style={{ width: "100%", textAlign: "left", padding: "12px 16px", background: "transparent", border: "none", color: T.text2, fontSize: 11, fontFamily: T.fontB, letterSpacing: "0.08em", textTransform: "uppercase", cursor: "pointer" }}>Sair</button>
                 </div>
               )}
             </div>
           ) : (
-            <button onClick={() => navigate("/login")} style={{ ...BtnSecondary, fontSize: 11, padding: "9px 18px" }}>
-              Acesso
+            <button onClick={() => navigate("/login")} style={{ ...BtnSecondary, fontSize: 11, padding: "9px 12px" }}>
+              <span className="desktop-only">Acesso</span>
+              <span className="mobile-only">Login</span>
             </button>
           )}
-          <button onClick={() => navigate("/cotacao")} style={{ ...BtnPrimary, fontSize: 12, padding: "11px 20px" }}>
-            Agendar
+          <button onClick={() => navigate("/cotacao")} style={{ ...BtnPrimary, fontSize: 11, padding: "10px 14px", whiteSpace: 'nowrap' }}>
+            <span className="desktop-only">Agendar</span>
+            <span className="mobile-only">Reservar</span>
           </button>
         </div>
       </nav>
@@ -287,7 +289,7 @@ export const HomePage = () => {
           </div>
 
           {/* Stats */}
-          <div style={{ display: "flex", gap: 40, marginTop: 40, paddingTop: 32, borderTop: `1px solid ${T.border}` }}>
+          <div style={{ display: "flex", gap: 32, flexWrap: "wrap", marginTop: 40, paddingTop: 32, borderTop: `1px solid ${T.border}` }}>
             {[["500+", DICT.STATS_EVENTS], ["24h", DICT.STATS_DELIVERY], ["4.9★", DICT.STATS_RATING]].map(([val, label]) => (
               <div key={label}>
                 <div style={{ fontFamily: T.fontD, fontWeight: 900, fontSize: 28, color: T.text, lineHeight: 1 }}>{val}</div>

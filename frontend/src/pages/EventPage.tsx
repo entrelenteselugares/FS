@@ -309,19 +309,19 @@ export default function EventPage() {
       `}</style>
 
       {/* Nav */}
-      <nav style={{ padding: "16px 24px", borderBottom: `1px solid ${T.border}`, display: "flex", alignItems: "center", justifyContent: "space-between" }}>
+      <nav style={{ padding: "12px 16px", borderBottom: `1px solid ${T.border}`, display: "flex", alignItems: "center", justifyContent: "space-between", background: 'var(--theme-bg-nav)', backdropFilter: 'blur(10px)', position: 'sticky', top: 0, zIndex: 100 }}>
         <button onClick={() => navigate("/")} style={{ background: "none", border: "none", color: T.text3, cursor: "pointer", fontSize: 11, textTransform: "uppercase", letterSpacing: 2, display: "flex", alignItems: "center", gap: 8 }}>
-          ← Voltar
+          ← <span className="desktop-only">Voltar</span>
         </button>
         <div style={{ cursor: "pointer", display: "flex", alignItems: "center" }} onClick={() => navigate("/")}>
-          <img src="/logo-fs.png" alt="Foto Segundo" style={{ height: 24, objectFit: "contain" }} />
+          <img src="/logo-fs.png" alt="Foto Segundo" style={{ height: 20, objectFit: "contain" }} />
         </div>
-        <div style={{ display: "flex", alignItems: "center", gap: 12 }}>
+        <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
           <ThemeToggle />
         </div>
       </nav>
 
-      <main style={{ maxWidth: 1200, margin: "0 auto", padding: "40px 24px" }} className="event-grid">
+      <main style={{ maxWidth: 1200, margin: "0 auto", padding: "24px 16px" }} className="event-grid container-padding">
         
         {/* Coluna Esquerda */}
         <div style={{ display: "flex", flexDirection: "column", gap: 32 }}>
