@@ -231,7 +231,7 @@ export class PaymentController {
               buyerEmail: order.buyerEmail || order.cliente?.email || "desconhecido",
               eventTitle: order.event.nomeNoivos,
               orderId: order.id,
-              amount: order.valor
+              amount: Number(order.valor)
             });
           }
           console.log(`✅ Pagamento ${data.id} aprovado e notificação enviada.`);
