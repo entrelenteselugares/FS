@@ -41,8 +41,10 @@ export class EventController {
    * Lógica de Pivot: Retorna URLs de entrega baseando-se no acesso.
    */
   static async getById(req: AuthRequest, res: Response) {
-    const { id } = req.params;
+    const { slug: id } = req.params; // O express mapeia :slug para req.params.slug
     const { userId } = req.query;
+
+    console.log(`[EventController.getById] Buscando evento por id/slug: ${id}`);
 
     try {
       // Busca no banco por ID ou Slug

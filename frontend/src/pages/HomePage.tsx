@@ -6,6 +6,7 @@ import { useAuth } from "../hooks/useAuth";
 import { Helmet } from "react-helmet-async";
 import { T, BtnPrimary, BtnSecondary } from "../lib/theme";
 import { ThemeToggle } from "../components/ThemeToggle";
+import { DICT } from "../lib/dictionary";
 
 interface Event {
   id: string;
@@ -102,9 +103,9 @@ function EventCard({ event, onClick }: { event: Event; onClick: () => void }) {
 
 // ── STEPS ─────────────────────────────────────────────────────────────────────
 const STEPS = [
-  { n: "01", title: "Encontre seu evento", desc: "Busque pelo nome dos noivos ou data. Sua galeria estará aguardando." },
-  { n: "02", title: "Realize o pagamento", desc: "Checkout seguro via Pix ou cartão. Aprovação imediata." },
-  { n: "03", title: "Acesse os arquivos", desc: "Links do Lightroom e Google Drive liberados na hora. Faça o download quando quiser." },
+  { n: "01", title: DICT.STEP_01_TITLE, desc: DICT.STEP_01_DESC },
+  { n: "02", title: DICT.STEP_02_TITLE, desc: DICT.STEP_02_DESC },
+  { n: "03", title: DICT.STEP_03_TITLE, desc: DICT.STEP_03_DESC },
 ];
 
 // ── FOOTER NAV ────────────────────────────────────────────────────────────────
@@ -162,8 +163,8 @@ export const HomePage = () => {
   return (
     <div style={{ background: T.bg, color: T.text, minHeight: "100vh", fontFamily: T.fontB }}>
       <Helmet>
-        <title>Foto Segundo | Suas memórias, entregues agora.</title>
-        <meta name="description" content="Acesse a galeria exclusiva do seu grande dia. Fotos e vídeos em segundos." />
+        <title>Foto Segundo | {DICT.HERO_TITLE_PART1}{DICT.HERO_TITLE_PART2_ITALIC}</title>
+        <meta name="description" content={DICT.HERO_DESCRIPTION} />
       </Helmet>
 
       <style>{`
@@ -223,7 +224,7 @@ export const HomePage = () => {
       <section style={{ padding: "80px 28px 64px", maxWidth: 1100, margin: "0 auto" }}>
         <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ duration: 0.5 }}>
           <p style={{ fontSize: 10, fontFamily: T.fontB, fontWeight: 400, letterSpacing: "0.35em", textTransform: "uppercase", color: T.brand, marginBottom: 20 }}>
-            Coletivo Editorial de Imagem e Cinema
+            {DICT.HERO_TAGLINE}
           </p>
 
           <h1 className="hp-hero-title" style={{
@@ -233,12 +234,12 @@ export const HomePage = () => {
             textTransform: "uppercase", letterSpacing: "0.5px",
             margin: "0 0 24px",
           }}>
-            Suas memórias,{" "}
-            <em style={{ fontStyle: "italic", color: T.brand }}>entregues agora.</em>
+            {DICT.HERO_TITLE_PART1}
+            <em style={{ fontStyle: "italic", color: T.brand }}>{DICT.HERO_TITLE_PART2_ITALIC}</em>
           </h1>
 
           <p style={{ fontSize: 14, color: T.text2, fontWeight: 300, maxWidth: 440, lineHeight: 1.6, margin: "0 0 36px", fontFamily: T.fontB }}>
-            Acesse a galeria exclusiva do seu grande dia. Fotos e vídeos com qualidade premium, disponíveis em segundos após o evento.
+            {DICT.HERO_DESCRIPTION}
           </p>
 
           {/* Search bar — input + botão UNIDOS, sem gap, sem border-radius */}
@@ -248,7 +249,7 @@ export const HomePage = () => {
               value={query}
               onChange={e => setQuery(e.target.value)}
               onKeyDown={e => e.key === "Enter" && fetch(query, 1)}
-              placeholder="Buscar pelo nome dos noivos..."
+              placeholder={DICT.SEARCH_PLACEHOLDER}
               style={{
                 flex: 1, background: "var(--bg-field)",
                 border: `1px solid var(--border-2)`, borderRight: "none",
@@ -266,7 +267,7 @@ export const HomePage = () => {
                 cursor: "pointer", borderRadius: 0, flexShrink: 0,
               }}
             >
-              Buscar
+              {DICT.SEARCH_BUTTON}
             </button>
           </div>
 
@@ -291,7 +292,7 @@ export const HomePage = () => {
 
           {/* Stats */}
           <div style={{ display: "flex", gap: 40, marginTop: 40, paddingTop: 32, borderTop: `1px solid ${T.border}` }}>
-            {[["500+", "Eventos Registrados"], ["24h", "Entrega Garantida"], ["4.9★", "Avaliação Média"]].map(([val, label]) => (
+            {[["500+", DICT.STATS_EVENTS], ["24h", DICT.STATS_DELIVERY], ["4.9★", DICT.STATS_RATING]].map(([val, label]) => (
               <div key={label}>
                 <div style={{ fontFamily: T.fontD, fontWeight: 900, fontSize: 28, color: T.text, lineHeight: 1 }}>{val}</div>
                 <div style={{ fontSize: 10, fontFamily: T.fontB, color: T.text3, letterSpacing: "0.1em", textTransform: "uppercase", marginTop: 4 }}>{label}</div>
@@ -306,8 +307,8 @@ export const HomePage = () => {
         <div style={{ maxWidth: 1400, margin: "0 auto", padding: "0 28px" }}>
           <div style={{ display: "flex", alignItems: "flex-end", justifyContent: "space-between", marginBottom: 24 }}>
             <div style={{ borderLeft: `2px solid ${T.brand}`, paddingLeft: 16 }}>
-              <p style={{ fontSize: 10, fontFamily: T.fontB, color: T.text3, letterSpacing: "0.2em", textTransform: "uppercase", margin: "0 0 4px" }}>Arquivo Recente</p>
-              <h2 style={{ fontFamily: T.fontD, fontWeight: 900, fontSize: "clamp(28px,4vw,42px)", color: T.text, textTransform: "uppercase", margin: 0, lineHeight: 1 }}>Últimos Registros</h2>
+              <p style={{ fontSize: 10, fontFamily: T.fontB, color: T.text3, letterSpacing: "0.2em", textTransform: "uppercase", margin: "0 0 4px" }}>{DICT.LATEST_REGISTERS_TAG}</p>
+              <h2 style={{ fontFamily: T.fontD, fontWeight: 900, fontSize: "clamp(28px,4vw,42px)", color: T.text, textTransform: "uppercase", margin: 0, lineHeight: 1 }}>{DICT.LATEST_REGISTERS_TITLE}</h2>
             </div>
             {totalPages > 1 && (
               <span style={{ fontSize: 11, fontFamily: T.fontB, color: T.text3, letterSpacing: "0.1em", textTransform: "uppercase" }}>
@@ -362,7 +363,7 @@ export const HomePage = () => {
         <div style={{ maxWidth: 1100, margin: "0 auto" }}>
           <p style={{ fontSize: 10, fontFamily: T.fontB, color: T.brand, letterSpacing: "0.35em", textTransform: "uppercase", marginBottom: 12 }}>Processo</p>
           <h2 style={{ fontFamily: T.fontD, fontWeight: 900, fontSize: "clamp(32px,5vw,52px)", color: T.text, textTransform: "uppercase", margin: "0 0 48px", lineHeight: 1 }}>
-            Como Funciona
+            {DICT.HOW_IT_WORKS_TITLE}
           </h2>
           <div className="hp-steps" style={{ display: "flex", gap: 0 }}>
             {STEPS.map((step, i) => (
@@ -388,8 +389,8 @@ export const HomePage = () => {
         onMouseLeave={() => setIsCtaHovered(false)}
       >
         <span style={{ fontSize: 13, fontFamily: T.fontB, color: T.text2, fontWeight: 300 }}>
-          Deseja uma cobertura exclusiva?{" "}
-          <span style={{ color: T.brand, fontWeight: 500, borderBottom: `1px solid ${T.brand}` }}>Solicite um orçamento →</span>
+          {DICT.CTA_EXCLUSIVE}{" "}
+          <span style={{ color: T.brand, fontWeight: 500, borderBottom: `1px solid ${T.brand}` }}>{DICT.CTA_REQUEST_QUOTE}</span>
         </span>
       </section>
 
@@ -400,8 +401,8 @@ export const HomePage = () => {
             <div style={{ display: "flex", alignItems: "center", marginBottom: 12 }}>
               <img src="/logo-fs.png" alt="Foto Segundo" style={{ height: 20, objectFit: "contain" }} />
             </div>
-            <p style={{ fontSize: 11, fontFamily: T.fontB, color: T.text3, lineHeight: 1.8, maxWidth: 260, margin: 0 }}>
-              Protocolo Editorial de Imagem e Cinema.<br />© 2026 Todos os Direitos Reservados.
+            <p style={{ fontSize: 11, fontFamily: T.fontB, color: T.text3, lineHeight: 1.8, maxWidth: 260, margin: 0, whiteSpace: "pre-line" }}>
+              {DICT.FOOTER_COPYRIGHT}
             </p>
           </div>
           <div className="hp-footer-cols" style={{ display: "flex", gap: "3.5rem", flexWrap: "wrap" }}>
