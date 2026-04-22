@@ -3,6 +3,7 @@ import { motion, AnimatePresence } from "framer-motion";
 import { Users, Calendar, ArrowRight, ShieldCheck, ChevronLeft, ChevronRight, Clock } from "lucide-react";
 import { API } from "../lib/api";
 import { useNavigate } from "react-router-dom";
+import { useAuth } from "../hooks/useAuth";
 
 // ── Configurações de Precificação (Tactical Engine) 🛡️⚙️ ───────────
 const P = {
@@ -231,6 +232,14 @@ export const QuotePage = () => {
   const [description, setDescription] = useState("");
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
+  const { user } = useAuth();
+
+  useEffect(() => {
+    if (user) {
+      if (!name) setName(user.nome);
+      if (!email) setEmail(user.email);
+    }
+  }, [user, name, email]);
 
   useEffect(() => {
     // Busca parceiros cadastrados (Unidades Fixas)
