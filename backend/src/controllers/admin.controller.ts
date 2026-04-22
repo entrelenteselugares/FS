@@ -484,6 +484,56 @@ export async function adminUpdateUser(req: AuthRequest, res: Response): Promise<
   }
 }
 
+export async function adminDeleteUser(req: AuthRequest, res: Response): Promise<void> {
+  const { id } = req.params;
+
+  try {
+    const user = await prisma.user.findUnique({
+      where: { id: String(id) },
+      include: {
+        profissional: true,
+        cartorio: true
+      }
+    });
+
+    if (!user) {
+      res.status(404).json({ error: "Usuário não encontrado." });
+      return;
+    }
+
+    // 1. Remover do Supabase Auth
+    try {
+      const { error: sbError } = await supabase.auth.admin.deleteUser(user.id);
+      if (sbError) {
+        console.warn(`[Supabase] Erro ao remover usuário auth: ${sbError.message}`);
+        // Prosseguimos mesmo com erro no Supabase (ex: usuário já removido lá)
+      }
+    } catch (err) {
+      console.warn(`[Supabase] Exceção ao remover usuário auth`, err);
+    }
+
+    // 2. Remover perfis associados (Opcional se houver cascade, mas vamos garantir)
+    if (user.profissional) {
+      await prisma.profissional.delete({ where: { id: user.profissional.id } });
+    }
+    if (user.cartorio) {
+      await prisma.cartorio.delete({ where: { id: user.cartorio.id } });
+    }
+
+    // 3. Remover do Prisma
+    await prisma.user.delete({
+      where: { id: user.id }
+    });
+
+    await audit(req, "USER_DELETED", "User", String(id), null, { email: user.email });
+
+    res.json({ ok: true });
+  } catch (err) {
+    console.error("adminDeleteUser:", err);
+    res.status(500).json({ error: "Erro ao excluir usuário. Verifique se existem dependências (eventos/pedidos)." });
+  }
+}
+
 // ── PEDIDOS ───────────────────────────────────────────
 
 export async function adminListOrders(req: AuthRequest, res: Response): Promise<void> {

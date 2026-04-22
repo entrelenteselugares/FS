@@ -39,7 +39,7 @@ export const AuthSelectionPage: React.FC = () => {
       <nav className="absolute top-0 left-0 w-full z-50 p-6 pointer-events-none">
         <button 
           onClick={() => navigate("/")} 
-          className="pointer-events-auto flex items-center gap-3 text-[10px] font-black uppercase tracking-[0.4em] text-white/40 hover:text-white transition-all bg-black/20 backdrop-blur-md px-6 py-3 border border-white/5"
+          className="pointer-events-auto flex items-center gap-3 text-[10px] font-black uppercase tracking-[0.4em] text-theme-text/40 hover:text-theme-text transition-all bg-theme-bg-muted/20 backdrop-blur-md px-6 py-3 border border-theme-border/5"
         >
           <span className="text-lg">←</span> Vitrine
         </button>
@@ -47,8 +47,8 @@ export const AuthSelectionPage: React.FC = () => {
 
       {/* Editorial Background Lines */}
       <div className="absolute inset-0 z-0 opacity-20 pointer-events-none">
-        <div className="absolute top-0 left-1/4 w-[1px] h-full bg-white/5" />
-        <div className="absolute top-0 right-1/4 w-[1px] h-full bg-white/5" />
+        <div className="absolute top-0 left-1/4 w-[1px] h-full bg-theme-border/5" />
+        <div className="absolute top-0 right-1/4 w-[1px] h-full bg-theme-border/5" />
       </div>
       
       <motion.div 
@@ -58,7 +58,7 @@ export const AuthSelectionPage: React.FC = () => {
         className="text-center mb-32 relative z-10"
       >
         <img src="/logo-fs.png" alt="Foto Segundo" className="h-10 w-auto mb-16 mx-auto opacity-80" />
-        <h1 className="text-6xl md:text-9xl font-sans tracking-tighter text-white mb-8 uppercase font-black">
+        <h1 className="text-6xl md:text-9xl font-sans tracking-tighter text-theme-text mb-8 uppercase font-black">
           GATE<span className="text-brand-tactical">KEEPER</span>
         </h1>
         <div className="flex items-center justify-center gap-6">
@@ -68,7 +68,7 @@ export const AuthSelectionPage: React.FC = () => {
         </div>
       </motion.div>
 
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-0 max-w-7xl w-full relative z-10 border border-white/5 bg-white/[0.01]">
+      <div className="grid grid-cols-1 md:grid-cols-3 gap-0 max-w-7xl w-full relative z-10 border border-theme-border/5 bg-theme-bg-muted/10">
         {options.map((opt, idx) => (
           <motion.div
             key={opt.id}
@@ -76,12 +76,12 @@ export const AuthSelectionPage: React.FC = () => {
             animate={{ opacity: 1 }}
             transition={{ delay: 0.2 + idx * 0.1, duration: 1 }}
             onClick={() => navigate(`/login?role=${opt.role}`)}
-            className="group p-20 flex flex-col items-start border-r border-white/5 last:border-r-0 hover:bg-white/[0.02] cursor-pointer transition-all duration-1000"
+            className="group p-20 flex flex-col items-start border-r border-theme-border/5 last:border-r-0 hover:bg-theme-bg-muted/20 cursor-pointer transition-all duration-1000"
           >
             <div className="mb-12 opacity-40 group-hover:opacity-100 group-hover:text-brand-tactical transition-all transform group-hover:scale-110 duration-500">
               {opt.icon}
             </div>
-            <h3 className="text-4xl font-sans text-white mb-6 tracking-tighter transition-all duration-500 font-extrabold uppercase">
+            <h3 className="text-4xl font-sans text-theme-text mb-6 tracking-tighter transition-all duration-500 font-extrabold uppercase">
               {opt.title}
             </h3>
             <p className="text-theme-muted text-[11px] leading-[1.8] mb-16 font-bold lg:pr-10 uppercase tracking-widest">

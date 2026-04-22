@@ -228,7 +228,7 @@ export const AdminEvents: React.FC = () => {
               <tr 
                 key={event.id} 
                 style={{ 
-                  background: idx % 2 === 0 ? "#0f0f0f" : "transparent",
+                  background: idx % 2 === 0 ? T.bgField : "transparent",
                   borderBottom: `1px solid ${T.border}44`,
                   transition: "background 0.2s"
                 }}
@@ -237,7 +237,7 @@ export const AdminEvents: React.FC = () => {
               >
                 {/* Evento */}
                 <td style={{ padding: "20px" }}>
-                  <div style={{ fontSize: 13, fontFamily: T.fontB, fontWeight: 500, color: "#fff" }}>
+                  <div style={{ fontSize: 13, fontFamily: T.fontB, fontWeight: 500, color: T.text }}>
                     {event.title}
                   </div>
                   <div style={{ fontSize: 11, fontFamily: T.fontB, color: T.text3, marginTop: 4 }}>
@@ -329,7 +329,7 @@ export const AdminEvents: React.FC = () => {
              </button>
 
              <div className="mb-8">
-               <h2 className="text-3xl font-heading text-white tracking-tighter uppercase mb-2">
+               <h2 className="text-3xl font-heading text-theme-text tracking-tighter uppercase mb-2">
                  {editingEvent ? "Ajustar Operação" : "Novo Registro"}
                </h2>
                <div className="w-12 h-1 bg-brand-tactical" />
@@ -544,7 +544,7 @@ export const AdminEvents: React.FC = () => {
                <div className="w-12 h-12 bg-brand-primary/10 text-brand-primary rounded-full flex items-center justify-center mx-auto mb-4 border border-brand-primary/20">
                  <QrCode size={24} />
                </div>
-               <h3 className="text-2xl font-heading text-white uppercase tracking-tighter">QR Code</h3>
+               <h3 className="text-2xl font-heading text-theme-text uppercase tracking-tighter">QR Code</h3>
                <p className="text-[10px] text-theme-muted uppercase tracking-[0.2em] mt-1">Acesso direto ao protocolo</p>
             </div>
 

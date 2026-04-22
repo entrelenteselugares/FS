@@ -84,7 +84,7 @@ export const AdminQuotes: React.FC = () => {
             placeholder="PROCURAR POR NOME OU E-MAIL..."
             value={search}
             onChange={(e) => setSearch(e.target.value)}
-            className="w-full bg-transparent border-b border-white/5 py-4 pl-8 text-[11px] text-white placeholder-theme-muted/30 focus:outline-none focus:border-brand-tactical transition-all uppercase tracking-widest"
+            className="w-full bg-transparent border-b border-theme-border py-4 pl-8 text-[11px] text-theme-text placeholder-theme-muted/30 focus:outline-none focus:border-brand-tactical transition-all uppercase tracking-widest"
           />
         </div>
       </div>
@@ -122,7 +122,7 @@ export const AdminQuotes: React.FC = () => {
                       </span>
                       <span className="text-[9px] text-theme-muted font-sans">{new Date(quote.createdAt).toLocaleString("pt-BR")}</span>
                     </div>
-                    <h3 className="text-xl font-heading text-white uppercase tracking-tight italic group-hover:text-brand-tactical transition-colors">
+                    <h3 className="text-xl font-heading text-theme-text uppercase tracking-tight italic group-hover:text-brand-tactical transition-colors">
                       {quote.nomeNoivos}
                     </h3>
                     <div className="flex flex-wrap gap-6 items-center">
@@ -138,7 +138,7 @@ export const AdminQuotes: React.FC = () => {
                   <div className="flex items-center gap-6">
                     <div className="text-right">
                       <div className="text-[9px] text-theme-muted uppercase tracking-widest mb-1">Status</div>
-                      <div className="text-[11px] text-white font-bold uppercase tracking-widest">
+                      <div className="text-[11px] text-theme-text font-bold uppercase tracking-widest">
                         {quote.quoteStatus === "PENDING" ? "Novo Lead" : 
                          quote.quoteStatus === "PRICED" ? "Aguardando Pagamento" :
                          quote.quoteStatus === "CONVERTED" ? "Convertido" : "Processado"}
@@ -167,14 +167,14 @@ export const AdminQuotes: React.FC = () => {
                         <Calendar size={14} className="text-zinc-700 mt-1" />
                         <div>
                           <div className="text-[9px] text-theme-muted uppercase font-bold tracking-widest mb-1">Data Solicitada</div>
-                          <div className="text-[11px] text-white uppercase font-bold">{new Date(selectedQuote.dataEvento).toLocaleDateString("pt-BR")}</div>
+                          <div className="text-[11px] text-theme-text uppercase font-bold">{new Date(selectedQuote.dataEvento).toLocaleDateString("pt-BR")}</div>
                         </div>
                      </div>
                      <div className="flex gap-4 items-start">
                         <MapPin size={14} className="text-zinc-700 mt-1" />
                         <div>
                           <div className="text-[9px] text-theme-muted uppercase font-bold tracking-widest mb-1">Localização</div>
-                          <div className="text-[11px] text-white uppercase font-bold">{selectedQuote.location}</div>
+                          <div className="text-[11px] text-theme-text uppercase font-bold">{selectedQuote.location}</div>
                         </div>
                      </div>
                      <div className="flex gap-4 items-start">
@@ -197,7 +197,7 @@ export const AdminQuotes: React.FC = () => {
                {selectedQuote.quoteStatus === "PENDING" ? (
                  <div className="pt-6 space-y-6">
                     <div className="space-y-4">
-                      <label className="text-[10px] font-bold text-white uppercase tracking-[0.4em] flex items-center gap-2">
+                      <label className="text-[10px] font-bold text-theme-text uppercase tracking-[0.4em] flex items-center gap-2">
                         <DollarSign size={12} className="text-brand-tactical" /> Definir Preço Final (R$)
                       </label>
                       <input 
@@ -205,7 +205,7 @@ export const AdminQuotes: React.FC = () => {
                         value={price}
                         onChange={(e) => setPrice(e.target.value)}
                         placeholder="0.00"
-                        className="w-full bg-theme-bg-muted border border-white/10 py-5 px-6 text-2xl font-heading text-white focus:outline-none focus:border-brand-tactical"
+                        className="w-full bg-theme-bg-muted border border-theme-border py-5 px-6 text-2xl font-heading text-theme-text focus:outline-none focus:border-brand-tactical"
                       />
                     </div>
 
@@ -222,13 +222,13 @@ export const AdminQuotes: React.FC = () => {
                     <div className="bg-brand-tactical/5 border border-brand-tactical/20 p-6 text-center">
                        <CheckCircle size={24} className="text-brand-tactical mx-auto mb-4" />
                        <div className="text-[10px] text-brand-tactical font-bold uppercase tracking-widest">Orçamento Já Enviado</div>
-                       <div className="text-[11px] text-white font-bold mt-2 font-sans">VALOR: R$ {Number(selectedQuote.priceBase).toFixed(2)}</div>
+                       <div className="text-[11px] text-theme-text font-bold mt-2 font-sans">VALOR: R$ {Number(selectedQuote.priceBase).toFixed(2)}</div>
                     </div>
                  </div>
                )}
             </div>
           ) : (
-            <div className="h-full border border-dashed border-white/10 flex flex-col items-center justify-center p-20 text-center opacity-40">
+            <div className="h-full border border-dashed border-theme-border flex flex-col items-center justify-center p-20 text-center opacity-40">
                <Briefcase size={40} className="text-zinc-800 mb-6" />
                <p className="text-[9px] text-theme-muted uppercase tracking-[0.5em] font-bold italic">Selecione um orçamento para visualizar os detalhes e precificar.</p>
             </div>

@@ -123,7 +123,7 @@ export const AdminDashboard: React.FC = () => {
             <React.Suspense fallback={
               <div className="py-20 flex flex-col items-center gap-6">
                 <div className="w-1 h-1 rounded-full bg-brand-tactical animate-ping" />
-                <div className="text-[10px] font-bold uppercase tracking-[0.3em] text-white/20">Acessando Módulo...</div>
+                <div className="text-[10px] font-bold uppercase tracking-[0.3em] text-theme-text/20">Acessando Módulo...</div>
               </div>
             }>
               {activeTab === "overview" && <AdminOverview stats={stats} recentOrders={recentOrders} pendingEvents={pendingEvents} />}

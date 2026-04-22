@@ -132,7 +132,7 @@ const SidebarContent: React.FC<SidebarContentProps> = ({ navItems, onNavigate })
                 {item.badge !== undefined && item.badge !== 0 && (
                   <span style={{
                     background: T.brand,
-                    color: "#0a0a0a",
+                    color: T.brandText,
                     fontSize: 9,
                     fontWeight: 900,
                     padding: "2px 6px",
@@ -157,7 +157,7 @@ const SidebarContent: React.FC<SidebarContentProps> = ({ navItems, onNavigate })
               {item.badge !== undefined && item.badge !== 0 && (
                 <span style={{
                   background: T.brand,
-                  color: "#0a0a0a",
+                  color: T.brandText,
                   fontSize: 9,
                   fontWeight: 900,
                   padding: "2px 6px",
@@ -287,7 +287,7 @@ export const DashboardLayout: React.FC<DashboardLayoutProps> = ({
           style={{
             position:   "fixed",
             inset:      0,
-            background: "rgba(0,0,0,0.7)",
+            background: "var(--overlay)",
             backdropFilter: "blur(4px)",
             zIndex:     40,
           }}

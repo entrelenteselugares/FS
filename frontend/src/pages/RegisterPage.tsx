@@ -178,7 +178,7 @@ export const RegisterPage: React.FC = () => {
           )}
 
           {/* Role Selector Editorial */}
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-px bg-white/5 border border-white/5 mb-16">
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-px bg-theme-border/5 border border-theme-border/5 mb-16">
             {roles.map((r) => (
               <button
                 key={r.id}
@@ -260,7 +260,7 @@ export const RegisterPage: React.FC = () => {
                           setFormData({ ...formData, habilidades: next });
                         }}
                         className={`px-6 py-3 text-[9px] font-black uppercase tracking-widest border transition-all ${
-                          formData.habilidades.includes(skill) ? "bg-brand-tactical text-white border-brand-tactical" : "border-white/5 text-zinc-600 hover:border-white/10"
+                          formData.habilidades.includes(skill) ? "bg-brand-tactical text-theme-bg border-brand-tactical" : "border-theme-border/5 text-zinc-600 hover:border-theme-border/10"
                         }`}
                       >
                         {skill}
@@ -300,14 +300,14 @@ export const RegisterPage: React.FC = () => {
 
                 <div className="space-y-4">
                   <label className="text-[10px] font-bold uppercase tracking-[0.4em] text-zinc-600">Razão Social / Nome Fantasia</label>
-                  <input
-                    type="text"
-                    required
-                    value={formData.razaoSocial}
-                    onChange={(e) => setFormData({ ...formData, razaoSocial: e.target.value })}
-                    className="w-full bg-transparent border-b border-zinc-900 py-3 text-xs text-white placeholder-zinc-800 focus:outline-none focus:border-brand-tactical transition-all"
-                    placeholder="NOME OFICIAL DA UNIDADE"
-                  />
+                    <input
+                      type="text"
+                      required
+                      value={formData.razaoSocial}
+                      onChange={(e) => setFormData({ ...formData, razaoSocial: e.target.value })}
+                      className="w-full bg-transparent border-b border-theme-border py-3 text-xs text-theme-text placeholder:text-theme-muted/40 focus:outline-none focus:border-brand-tactical transition-all"
+                      placeholder="NOME OFICIAL DA UNIDADE"
+                    />
                 </div>
 
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-10">
@@ -318,7 +318,7 @@ export const RegisterPage: React.FC = () => {
                       required
                       value={formData.cep}
                       onChange={(e) => handleCepChange(e.target.value)}
-                      className="w-full bg-transparent border-b border-zinc-900 py-3 text-xs text-white placeholder-zinc-800 focus:outline-none focus:border-brand-tactical transition-all font-mono tracking-widest"
+                      className="w-full bg-transparent border-b border-theme-border py-3 text-xs text-theme-text placeholder:text-theme-muted/40 focus:outline-none focus:border-brand-tactical transition-all font-mono tracking-widest"
                       placeholder="00000-000"
                     />
                     {isCepLoading && (
@@ -330,7 +330,7 @@ export const RegisterPage: React.FC = () => {
 
                   <div className="space-y-4">
                     <label className="text-[10px] font-bold uppercase tracking-[0.4em] text-zinc-600">Cidade / UF</label>
-                    <div className="w-full bg-transparent border-b border-zinc-900 py-3 text-xs text-white/50 flex justify-between">
+                    <div className="w-full bg-transparent border-b border-theme-border py-3 text-xs text-theme-text/50 flex justify-between">
                       <span className="uppercase">{formData.cidade || "CIDADE"}</span>
                       <span className="font-black text-brand-tactical">{formData.uf || "UF"}</span>
                     </div>
@@ -345,7 +345,7 @@ export const RegisterPage: React.FC = () => {
                       required
                       value={formData.logradouro}
                       onChange={(e) => setFormData({ ...formData, logradouro: e.target.value })}
-                      className="w-full bg-transparent border-b border-zinc-900 py-3 text-xs text-white placeholder-zinc-800 focus:outline-none focus:border-brand-tactical transition-all"
+                      className="w-full bg-transparent border-b border-theme-border py-3 text-xs text-theme-text placeholder:text-theme-muted/40 focus:outline-none focus:border-brand-tactical transition-all"
                       placeholder="NOME DA RUA OU AVENIDA"
                     />
                   </div>
@@ -356,7 +356,7 @@ export const RegisterPage: React.FC = () => {
                       required
                       value={formData.numero}
                       onChange={(e) => setFormData({ ...formData, numero: e.target.value })}
-                      className="w-full bg-transparent border-b border-zinc-900 py-3 text-xs text-white placeholder-zinc-800 focus:outline-none focus:border-brand-tactical transition-all"
+                      className="w-full bg-transparent border-b border-theme-border py-3 text-xs text-theme-text placeholder:text-theme-muted/40 focus:outline-none focus:border-brand-tactical transition-all"
                       placeholder="123"
                     />
                   </div>
@@ -370,7 +370,7 @@ export const RegisterPage: React.FC = () => {
                       required
                       value={formData.bairro}
                       onChange={(e) => setFormData({ ...formData, bairro: e.target.value })}
-                      className="w-full bg-transparent border-b border-zinc-900 py-3 text-xs text-white placeholder-zinc-800 focus:outline-none focus:border-brand-tactical transition-all"
+                      className="w-full bg-transparent border-b border-theme-border py-3 text-xs text-theme-text placeholder:text-theme-muted/40 focus:outline-none focus:border-brand-tactical transition-all"
                       placeholder="BAIRRO"
                     />
                   </div>
@@ -380,7 +380,7 @@ export const RegisterPage: React.FC = () => {
                       type="text"
                       value={formData.referencia}
                       onChange={(e) => setFormData({ ...formData, referencia: e.target.value })}
-                      className="w-full bg-transparent border-b border-zinc-900 py-3 text-xs text-white placeholder-zinc-800 focus:outline-none focus:border-brand-tactical transition-all"
+                      className="w-full bg-transparent border-b border-theme-border py-3 text-xs text-theme-text placeholder:text-theme-muted/40 focus:outline-none focus:border-brand-tactical transition-all"
                       placeholder="AO LADO DE... PRÓXIMO A..."
                     />
                   </div>
@@ -436,7 +436,7 @@ export const RegisterPage: React.FC = () => {
             <button
               type="submit"
               disabled={loading || !formData.acceptedTerms || !formData.acceptedPrivacy}
-              className="md:col-span-2 bg-brand-tactical text-white hover:brightness-110 font-bold uppercase tracking-[0.5em] text-[11px] py-6 transition-all mt-6 flex items-center justify-center gap-4 group rounded-none disabled:opacity-30 disabled:grayscale transition-all"
+              className="md:col-span-2 bg-brand-tactical text-theme-text-on-brand hover:brightness-110 font-bold uppercase tracking-[0.5em] text-[11px] py-6 transition-all mt-6 flex items-center justify-center gap-4 group rounded-none disabled:opacity-30 disabled:grayscale transition-all"
             >
               {loading ? "PROCESSANDO SOLICITAÇÃO..." : (
                 <>

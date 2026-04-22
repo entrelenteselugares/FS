@@ -78,10 +78,10 @@ function EventCard({ event, onClick }: { event: Event; onClick: () => void }) {
 
       {/* Info */}
       <div style={{ padding: "14px 16px 18px" }}>
-        <h3 style={{ fontFamily: T.fontD, fontWeight: 800, fontSize: 19, textTransform: "uppercase", color: "#fff", margin: "0 0 6px", lineHeight: 1.1 }}>
+        <h3 style={{ fontFamily: T.fontD, fontWeight: 800, fontSize: 19, textTransform: "uppercase", color: T.text, margin: "0 0 6px", lineHeight: 1.1 }}>
           {event.nomeNoivos}
         </h3>
-        <div style={{ fontSize: 11, color: "#555", fontFamily: T.fontB, fontWeight: 400, display: "flex", gap: 10, marginBottom: 10 }}>
+        <div style={{ fontSize: 11, color: T.text3, fontFamily: T.fontB, fontWeight: 400, display: "flex", gap: 10, marginBottom: 10 }}>
           <span>{formatDate(event.dataEvento)}</span>
           {event.cartorio && <><span>·</span><span>{event.cartorio}</span></>}
         </div>
@@ -293,7 +293,7 @@ export const HomePage = () => {
           <div style={{ display: "flex", gap: 40, marginTop: 40, paddingTop: 32, borderTop: `1px solid ${T.border}` }}>
             {[["500+", "Eventos Registrados"], ["24h", "Entrega Garantida"], ["4.9★", "Avaliação Média"]].map(([val, label]) => (
               <div key={label}>
-                <div style={{ fontFamily: T.fontD, fontWeight: 900, fontSize: 28, color: "#fff", lineHeight: 1 }}>{val}</div>
+                <div style={{ fontFamily: T.fontD, fontWeight: 900, fontSize: 28, color: T.text, lineHeight: 1 }}>{val}</div>
                 <div style={{ fontSize: 10, fontFamily: T.fontB, color: T.text3, letterSpacing: "0.1em", textTransform: "uppercase", marginTop: 4 }}>{label}</div>
               </div>
             ))}
@@ -318,7 +318,7 @@ export const HomePage = () => {
 
           {loading ? (
             // Skeleton grid — gap 1px, background #1c1c1c cria o "divisor"
-            <div className="hp-grid" style={{ display: "grid", gridTemplateColumns: "repeat(auto-fill, minmax(300px, 1fr))", gap: 1, background: "#1c1c1c" }}>
+            <div className="hp-grid" style={{ display: "grid", gridTemplateColumns: "repeat(auto-fill, minmax(300px, 1fr))", gap: 1, background: T.border }}>
               {[...Array(6)].map((_, i) => (
                 <div key={i} style={{ background: T.bgCard, aspectRatio: "4/3", animation: "pulse 1.8s infinite" }} />
               ))}
@@ -329,7 +329,7 @@ export const HomePage = () => {
               <p style={{ fontSize: 12, color: T.text3, fontFamily: T.fontB, marginTop: 8 }}>Tente buscar pelo nome completo dos noivos.</p>
             </div>
           ) : (
-            <div className="hp-grid" style={{ display: "grid", gridTemplateColumns: "repeat(auto-fill, minmax(300px, 1fr))", gap: 1, background: "#1c1c1c" }}>
+            <div className="hp-grid" style={{ display: "grid", gridTemplateColumns: "repeat(auto-fill, minmax(300px, 1fr))", gap: 1, background: T.border }}>
               {events.map(ev => (
                 <div key={ev.id} className="card-hover">
                   <EventCard event={ev} onClick={() => navigate(`/e/${ev.id}`)} />
@@ -361,14 +361,14 @@ export const HomePage = () => {
       <section style={{ padding: "80px 28px", borderTop: `1px solid ${T.border}`, borderBottom: `1px solid ${T.border}`, background: T.bgCard }}>
         <div style={{ maxWidth: 1100, margin: "0 auto" }}>
           <p style={{ fontSize: 10, fontFamily: T.fontB, color: T.brand, letterSpacing: "0.35em", textTransform: "uppercase", marginBottom: 12 }}>Processo</p>
-          <h2 style={{ fontFamily: T.fontD, fontWeight: 900, fontSize: "clamp(32px,5vw,52px)", color: "#fff", textTransform: "uppercase", margin: "0 0 48px", lineHeight: 1 }}>
+          <h2 style={{ fontFamily: T.fontD, fontWeight: 900, fontSize: "clamp(32px,5vw,52px)", color: T.text, textTransform: "uppercase", margin: "0 0 48px", lineHeight: 1 }}>
             Como Funciona
           </h2>
           <div className="hp-steps" style={{ display: "flex", gap: 0 }}>
             {STEPS.map((step, i) => (
               <div key={step.n} style={{ flex: 1, padding: "32px 32px 32px 0", borderRight: i < STEPS.length - 1 ? `1px solid ${T.border}` : "none", paddingRight: i < STEPS.length - 1 ? 40 : 0, paddingLeft: i > 0 ? 40 : 0 }}>
                 <div style={{ fontFamily: T.fontD, fontWeight: 900, fontSize: 48, color: T.brand, lineHeight: 1, marginBottom: 16, opacity: 0.6 }}>{step.n}</div>
-                <h3 style={{ fontFamily: T.fontD, fontWeight: 900, fontSize: 22, color: "#fff", textTransform: "uppercase", margin: "0 0 10px", letterSpacing: "0.5px" }}>{step.title}</h3>
+                <h3 style={{ fontFamily: T.fontD, fontWeight: 900, fontSize: 22, color: T.text, textTransform: "uppercase", margin: "0 0 10px", letterSpacing: "0.5px" }}>{step.title}</h3>
                 <p style={{ fontSize: 13, color: T.text2, fontFamily: T.fontB, fontWeight: 300, lineHeight: 1.6, margin: 0 }}>{step.desc}</p>
               </div>
             ))}

@@ -11,6 +11,7 @@ import {
   adminListUsers,
   adminCreateUser,
   adminUpdateUser,
+  adminDeleteUser,
   adminListOrders,
   adminListQuotes,
   adminApproveQuote,
@@ -166,6 +167,7 @@ router.delete("/admin/events/:id",      requireAuth, requireRole("ADMIN"), admin
 router.get("/admin/users",       requireAuth, requireRole("ADMIN"), adminListUsers);
 router.post("/admin/users",      requireAuth, requireRole("ADMIN"), adminCreateUser);
 router.patch("/admin/users/:id", requireAuth, requireRole("ADMIN"), adminUpdateUser);
+router.delete("/admin/users/:id", requireAuth, requireRole("ADMIN"), adminDeleteUser);
 
 // ── Admin: Gestão de Pedidos ───────────────────────────────────────────────────
 router.get("/admin/orders",                   requireAuth, requireRole("ADMIN"), adminListOrders);

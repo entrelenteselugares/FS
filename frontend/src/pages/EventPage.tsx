@@ -313,7 +313,7 @@ export default function EventPage() {
             />
             {!paid && (
               <div style={{ position: "absolute", inset: 0, display: "flex", alignItems: "center", justifyContent: "center", background: "rgba(0,0,0,0.4)" }}>
-                <div style={{ padding: 20, background: "rgba(0,0,0,0.6)", borderRadius: "50%", color: "#fff" }}>
+                <div style={{ padding: 20, background: "rgba(0,0,0,0.6)", borderRadius: "50%", color: T.text }}>
                   <LockIcon />
                 </div>
               </div>
@@ -451,7 +451,7 @@ export default function EventPage() {
                   </div>
 
                   {error && (
-                    <div style={{ fontSize: 10, color: "#ff4040", background: "#ff404011", padding: 8, border: "1px solid #ff404033" }}>
+                    <div style={{ fontSize: 10, color: "#ef4444", background: "#ef444411", padding: 8, border: "1px solid #ef444433" }}>
                       {error}
                     </div>
                   )}
@@ -465,7 +465,7 @@ export default function EventPage() {
                       {tokenizing ? "Validando..." : "Validar Cartão"}
                     </button>
                   ) : (
-                    <button onClick={handlePay} style={{ ...BtnPrimary, width: "100%", justifyContent: "center", marginTop: 8, background: "#4ade80", color: "#0a0a0a" }}>
+                    <button onClick={handlePay} style={{ ...BtnPrimary, width: "100%", justifyContent: "center", marginTop: 8, background: T.brand, color: T.brandText }}>
                       Pagar R$ {Number(event.priceBase).toFixed(2).replace(".", ",")}
                     </button>
                   )}

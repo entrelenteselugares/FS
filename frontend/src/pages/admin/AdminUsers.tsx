@@ -99,6 +99,16 @@ export const AdminUsers: React.FC = () => {
     }
   };
 
+  const handleDelete = async (user: User) => {
+    if (!window.confirm(`Deseja realmente remover ${user.nome}? Esta ação removerá o acesso e o perfil do sistema.`)) return;
+    try {
+      await API.delete(`/admin/users/${user.id}`);
+      setUsers(users.filter(u => u.id !== user.id));
+    } catch {
+      alert("Erro ao excluir usuário. Certifique-se de que ele não possui eventos vinculados.");
+    }
+  };
+
   return (
     <div className="space-y-12 animate-in fade-in slide-in-from-bottom-4 duration-700">
       <div className="flex items-center justify-between border-b border-white/5 pb-8">
@@ -163,12 +173,18 @@ export const AdminUsers: React.FC = () => {
               </div>
 
               {/* Ações */}
-              <div className="col-span-2 flex justify-end">
+              <div className="col-span-2 flex justify-end gap-2">
                 <button 
                   onClick={() => handleEditOpen(user)}
                   className="text-[9px] font-bold text-zinc-700 uppercase tracking-[0.4em] hover:text-white transition-all border border-transparent hover:border-white/10 px-4 py-2"
                 >
                    Editar
+                </button>
+                <button 
+                  onClick={() => handleDelete(user)}
+                  className="text-[9px] font-bold text-red-900/40 hover:text-red-500 uppercase tracking-[0.4em] transition-all px-4 py-2"
+                >
+                   Remover
                 </button>
               </div>
             </div>
