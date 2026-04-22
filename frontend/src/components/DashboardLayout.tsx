@@ -1,7 +1,9 @@
 import React, { useState } from "react";
-import { Link, useLocation, type Location } from "react-router-dom";
+import { Link, useLocation } from "react-router-dom";
 import { useAuth } from "../hooks/useAuth";
-import { useTheme } from "../hooks/useTheme";
+import { T, BtnGhost } from "../lib/theme";
+
+// ─── Types ────────────────────────────────────────────────────────────────────
 
 export interface NavItem {
   label: string;
@@ -15,52 +17,12 @@ export interface NavItem {
 interface DashboardLayoutProps {
   children: React.ReactNode;
   navItems: NavItem[];
-  variant?: "indigo" | "emerald" | "olive" | "tactical";
   title: string;
+  /** @deprecated variante única: sempre "tactical" (brand teal). Ignorado. */
+  variant?: string;
 }
 
-const VARIANTS = {
-  indigo: {
-    label: "text-brand-indigo",
-    activeBg: "bg-brand-indigo/10",
-    activeBorder: "border-brand-indigo/20",
-    activeText: "text-brand-indigo",
-    avatarBg: "bg-brand-indigo/20",
-    avatarText: "text-brand-indigo",
-    spinnerBorder: "border-brand-indigo",
-    gradient: "from-brand-indigo/5",
-  },
-  emerald: {
-    label: "text-brand-emerald",
-    activeBg: "bg-brand-emerald/10",
-    activeBorder: "border-brand-emerald/20",
-    activeText: "text-brand-emerald",
-    avatarBg: "bg-brand-emerald/20",
-    avatarText: "text-brand-emerald",
-    spinnerBorder: "border-brand-emerald",
-    gradient: "from-brand-emerald/5",
-  },
-  olive: {
-    label: "text-brand-olive",
-    activeBg: "bg-brand-olive/5",
-    activeBorder: "border-brand-olive/20",
-    activeText: "text-brand-olive",
-    avatarBg: "bg-black/5 dark:bg-white/5",
-    avatarText: "text-brand-olive",
-    spinnerBorder: "border-brand-olive",
-    gradient: "from-brand-olive/5",
-  },
-  tactical: {
-    label: "text-brand-tactical",
-    activeBg: "bg-brand-tactical/5",
-    activeBorder: "border-brand-tactical/20",
-    activeText: "text-brand-tactical",
-    avatarBg: "bg-black/5 dark:bg-white/5",
-    avatarText: "text-brand-tactical",
-    spinnerBorder: "border-brand-tactical",
-    gradient: "from-brand-tactical/5",
-  },
-};
+// ─── Icons ────────────────────────────────────────────────────────────────────
 
 const MenuIcon = () => (
   <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5">
@@ -77,217 +39,249 @@ const CloseIcon = () => (
   </svg>
 );
 
-const SunIcon = () => (
-  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-    <circle cx="12" cy="12" r="5"/><line x1="12" y1="1" x2="12" y2="3"/><line x1="12" y1="21" x2="12" y2="23"/><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/><line x1="1" y1="12" x2="3" y2="12"/><line x1="21" y1="12" x2="23" y2="12"/><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"/><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"/>
+const LogoutIcon = () => (
+  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5">
+    <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4" />
+    <polyline points="16 17 21 12 16 7" />
+    <line x1="21" y1="12" x2="9" y2="12" />
   </svg>
 );
 
-const MoonIcon = () => (
-  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-    <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/>
-  </svg>
-);
-
-interface VariantStyle {
-  label: string;
-  activeBg: string;
-  activeBorder: string;
-  activeText: string;
-  avatarBg: string;
-  avatarText: string;
-  spinnerBorder: string;
-  gradient: string;
-}
-
-interface SidebarUser {
-  nome?: string;
-  role?: string;
-}
+// ─── Sidebar Content ──────────────────────────────────────────────────────────
 
 interface SidebarContentProps {
-  variant: VariantStyle;
   title: string;
   navItems: NavItem[];
-  user: SidebarUser | null;
-  logout: () => void;
-  location: Location;
   onNavigate: () => void;
-  theme: "light" | "dark";
-  toggleTheme: () => void;
 }
 
-const SidebarContent: React.FC<SidebarContentProps> = ({
-  variant: v,
-  title,
-  navItems,
-  user,
-  logout,
-  location,
-  onNavigate,
-  theme,
-  toggleTheme,
-}) => {
+const SidebarContent: React.FC<SidebarContentProps> = ({ title, navItems, onNavigate }) => {
+  const { user, logout } = useAuth();
+  const location = useLocation();
+
   const isActive = (item: NavItem) => {
+    if (item.isActive !== undefined) return item.isActive;
     if (!item.to) return false;
     return item.exact
       ? location.pathname === item.to
       : location.pathname.startsWith(item.to);
   };
 
+  const initial = (user?.nome ?? "?").charAt(0).toUpperCase();
+
   return (
-    <div className="flex flex-col h-full bg-theme-bg text-theme-text transition-colors duration-300">
-      {/* Brand Header */}
-      <div className={`px-5 pt-10 pb-8 border-b border-theme-border bg-gradient-to-b ${v.gradient} to-transparent flex flex-col items-center text-center`}>
-        <div className="mb-4">
-          <img 
-            src="/logo-premium.png" 
-            alt="Logo" 
-            style={{ 
-              height: 48, 
-              width: "auto",
-              objectFit: "contain",
-              filter: theme === 'dark' ? 'brightness(0) invert(1)' : 'none'
-            }} 
-          />
-        </div>
-        <div className="text-[7.5px] font-black tracking-[0.4em] text-theme-muted leading-tight uppercase opacity-80">
-          {title}
+    <div style={{
+      display:        "flex",
+      flexDirection:  "column",
+      height:         "100%",
+      background:     T.bg,
+      borderRight:    `1px solid ${T.border}`,
+    }}>
+      {/* ── Brand Header ── */}
+      <div style={{
+        padding:      "32px 24px 24px",
+        borderBottom: `1px solid ${T.border}`,
+      }}>
+        <div style={{
+          fontFamily:    T.fontD,
+          fontWeight:    900,
+          fontSize:      18,
+          color:         "#fff",
+          letterSpacing: 1.5,
+          lineHeight:    1,
+          textTransform: "uppercase",
+        }}>
+          Foto Segundo
         </div>
       </div>
 
-      {/* Navigation */}
-      <nav className="flex-1 px-3 py-6 space-y-1 overflow-y-auto font-sans">
+
+      {/* ── Navigation ── */}
+      <nav style={{ flex: 1, padding: "12px 0", overflowY: "auto" }}>
         {navItems.map((item) => {
-          const active = item.isActive ?? isActive(item);
-          const commonProps = {
-            key: item.label,
-            onClick: () => { onNavigate(); item.onClick?.(); },
-            className: `
-              w-full flex items-center gap-3 px-4 py-3 rounded-none
-              text-[10px] font-bold uppercase tracking-widest
-              transition-all duration-300 group text-left
-              ${active
-                ? `${v.activeBg} ${v.activeText} border-l-2 border-brand-tactical ml-[-12px] pl-[22px]`
-                : "text-theme-muted hover:text-theme-text hover:bg-theme-bg-muted border-l-2 border-transparent"
-              }
-            `
+          const active = isActive(item);
+          const itemStyle: React.CSSProperties = {
+            display:       "flex",
+            alignItems:    "center",
+            gap:           12,
+            padding:       "12px 24px",
+            fontSize:      11,
+            fontFamily:    T.fontB,
+            fontWeight:    active ? 600 : 400,
+            letterSpacing: "0.05em",
+            cursor:        "pointer",
+            border:        "none",
+            background:    active ? "rgba(255,255,255,0.03)" : "transparent",
+            color:         active ? "#fff" : T.text3,
+            textDecoration:"none",
+            width:         "100%",
+            textAlign:     "left",
+            transition:    "all 0.2s ease",
+            borderRadius:  0,
+          };
+
+          const handleClick = () => {
+            onNavigate();
+            item.onClick?.();
           };
 
           if (item.to) {
             return (
-              <Link to={item.to} {...commonProps}>
-                <div className={`${active ? v.activeText : "text-theme-muted group-hover:text-brand-tactical transition-colors"}`}>
+              <Link key={item.label} to={item.to} style={itemStyle} onClick={handleClick}>
+                <span style={{ color: active ? T.brand : T.text3, flexShrink: 0 }}>
                   {item.icon}
-                </div>
-                <span>{item.label}</span>
+                </span>
+                {item.label}
               </Link>
             );
           }
 
           return (
-            <button type="button" {...commonProps}>
-              <div className={`${active ? v.activeText : "text-theme-muted group-hover:text-brand-tactical transition-colors"}`}>
+            <button key={item.label} style={itemStyle} onClick={handleClick}>
+              <span style={{ color: active ? T.brand : T.text3, flexShrink: 0 }}>
                 {item.icon}
-              </div>
-              <span>{item.label}</span>
+              </span>
+              {item.label}
             </button>
           );
         })}
       </nav>
 
-      {/* User footer */}
-      <div className="px-4 pb-6 pt-4 border-t border-theme-border bg-theme-bg-muted">
-        <div className="flex items-center gap-3 px-1 mb-4">
-          <div className={`
-            w-10 h-10 rounded-none flex-shrink-0
-            flex items-center justify-center
-            text-xs font-bold border border-theme-border
-            ${v.avatarBg} ${v.avatarText}
-          `}>
-            {user?.nome?.charAt(0).toUpperCase() ?? "?"}
+      {/* ── User Footer ── */}
+      <div style={{
+        padding:      "16px 20px",
+        borderTop:    `1px solid ${T.border}`,
+        background:   T.bgCard,
+      }}>
+        {/* Info row */}
+        <div style={{ marginBottom: 16 }}>
+          <div style={{
+            fontSize:      12,
+            fontFamily:    T.fontB,
+            fontWeight:    600,
+            color:         "#fff",
+            overflow:      "hidden",
+            textOverflow:  "ellipsis",
+            whiteSpace:    "nowrap",
+          }}>
+            {user?.nome}
           </div>
-          <div className="min-w-0">
-            <div className="text-[10px] font-bold text-theme-text truncate uppercase tracking-wider">{user?.nome}</div>
-            <div className="text-[8px] text-theme-muted uppercase tracking-widest mt-1">
-              {user?.role} Profile
-            </div>
+          <div style={{
+            display:       "inline-block",
+            fontSize:      8,
+            fontFamily:    T.fontB,
+            fontWeight:    900,
+            color:         T.brand,
+            border:        `1px solid ${T.brand}44`,
+            padding:       "2px 6px",
+            textTransform: "uppercase",
+            letterSpacing: 1.5,
+            marginTop:     6,
+          }}>
+            {user?.role === "ADMIN" ? "Administrador" : 
+             user?.role === "CARTORIO" || user?.role === "UNIDADE" ? "Unidade Fixa" :
+             user?.role === "PROFISSIONAL" ? "Artista da Rede" :
+             "Cliente"}
           </div>
         </div>
-        <div className="flex gap-2">
-          <button 
-            onClick={toggleTheme}
-            className="flex-1 p-3 text-theme-muted hover:text-theme-text transition-colors bg-theme-bg border border-theme-border flex items-center justify-center"
-            title={theme === "light" ? "Modo Escuro" : "Modo Claro"}
-          >
-            {theme === "light" ? <MoonIcon /> : <span className="flex items-center gap-2"><SunIcon /> <span className="text-[9px] uppercase font-bold tracking-widest">Modo Claro</span></span>}
-            {theme === "light" && <span className="text-[9px] uppercase font-bold tracking-widest ml-2">Modo Escuro</span>}
-          </button>
-          
-          <button
-            id="btn-logout"
-            onClick={logout}
-            className="flex-1 text-[9px] font-bold uppercase tracking-[0.3em] text-theme-muted hover:text-theme-text transition-colors py-3 text-center border border-theme-border hover:border-theme-muted"
-          >
-            Encerrar
-          </button>
-        </div>
+
+
+        {/* Logout button */}
+        <button
+          id="btn-logout"
+          onClick={logout}
+          style={{
+            background: "transparent",
+            color:      T.text3,
+            border:     `1px solid ${T.border}`,
+            padding:    "10px",
+            fontSize:   10,
+            fontFamily: T.fontB,
+            fontWeight: 700,
+            textTransform: "uppercase",
+            letterSpacing: 1.5,
+            width:      "100%",
+            cursor:     "pointer",
+            display:    "flex",
+            alignItems: "center",
+            justifyContent: "center",
+            gap:        8,
+            transition: "all 0.2s",
+            borderRadius: 0,
+          }}
+          onMouseEnter={(e) => { e.currentTarget.style.color = "#fff"; e.currentTarget.style.borderColor = T.text3; }}
+          onMouseLeave={(e) => { e.currentTarget.style.color = T.text3; e.currentTarget.style.borderColor = T.border; }}
+        >
+          <LogoutIcon />
+          Encerrar
+        </button>
       </div>
     </div>
   );
 };
 
+// ─── DashboardLayout ──────────────────────────────────────────────────────────
+
 export const DashboardLayout: React.FC<DashboardLayoutProps> = ({
   children,
   navItems,
-  variant = "tactical",
   title,
 }) => {
-  const { user, logout } = useAuth();
-  const { theme, toggleTheme } = useTheme();
-  const location = useLocation();
   const [drawerOpen, setDrawerOpen] = useState(false);
-  const v = VARIANTS[variant as keyof typeof VARIANTS];
+  const { user, logout } = useAuth();
 
   const sidebarProps = {
-    variant: v,
     title,
     navItems,
-    user,
-    logout,
-    location,
     onNavigate: () => setDrawerOpen(false),
-    theme,
-    toggleTheme,
   };
 
   return (
-    <div className="flex h-screen bg-theme-bg text-theme-text overflow-hidden transition-colors duration-300">
-      {/* Desktop Sidebar */}
-      <aside className="hidden lg:flex flex-shrink-0 w-64 border-r border-theme-border bg-theme-bg transition-colors duration-300">
+    <div style={{
+      display:   "flex",
+      height:    "100vh",
+      background: T.bg,
+      color:      T.text,
+      overflow:   "hidden",
+    }}>
+      {/* ── Desktop Sidebar ── */}
+      <aside style={{
+        width:     220,
+        flexShrink: 0,
+        display:   "none",  // overridden by media via className below
+      }} className="dashboard-sidebar">
         <SidebarContent {...sidebarProps} />
       </aside>
 
-      {/* Mobile Drawer Backdrop */}
+      {/* ── Mobile Drawer Backdrop ── */}
       {drawerOpen && (
         <div
-          className="fixed inset-0 bg-black/60 backdrop-blur-sm z-40 lg:hidden"
           onClick={() => setDrawerOpen(false)}
+          style={{
+            position:   "fixed",
+            inset:      0,
+            background: "rgba(0,0,0,0.7)",
+            backdropFilter: "blur(4px)",
+            zIndex:     40,
+          }}
         />
       )}
 
-      {/* Mobile Drawer */}
-      <aside
-        className={`
-          fixed inset-y-0 left-0 z-50 w-72 bg-theme-bg border-r border-theme-border
-          transform transition-transform duration-500 cubic-bezier(0.4, 0, 0.2, 1) lg:hidden
-          ${drawerOpen ? "translate-x-0" : "-translate-x-full"}
-        `}
-      >
-        <div className="absolute top-6 right-6">
+      {/* ── Mobile Drawer ── */}
+      <aside style={{
+        position:   "fixed",
+        insetBlock:  0,
+        left:        0,
+        zIndex:      50,
+        width:       288,
+        transform:   drawerOpen ? "translateX(0)" : "translateX(-100%)",
+        transition:  "transform 0.35s cubic-bezier(0.16,1,0.3,1)",
+      }} className="dashboard-drawer">
+        <div style={{ position: "absolute", top: 16, right: 16, zIndex: 1 }}>
           <button
             onClick={() => setDrawerOpen(false)}
-            className="text-theme-muted hover:text-theme-text transition-colors p-2"
+            style={{ ...BtnGhost, padding: "6px 8px" }}
+            aria-label="Fechar menu"
           >
             <CloseIcon />
           </button>
@@ -295,40 +289,76 @@ export const DashboardLayout: React.FC<DashboardLayoutProps> = ({
         <SidebarContent {...sidebarProps} />
       </aside>
 
-      {/* Main content area */}
-      <div className="flex-1 flex flex-col min-w-0 overflow-hidden">
-        {/* Mobile top bar */}
-        <header className="lg:hidden flex items-center gap-4 px-6 py-4 bg-theme-bg border-b border-theme-border flex-shrink-0">
-          <button
-            id="btn-mobile-menu"
-            onClick={() => setDrawerOpen(true)}
-            className="text-theme-muted hover:text-theme-text transition-colors"
-            aria-label="Abrir menu"
-          >
-            <MenuIcon />
-          </button>
-          <div className="flex flex-col flex-1">
-             <span className={`text-[8px] font-bold uppercase tracking-[0.4em] ${v.label} leading-none mb-1`}>
-               F. Segundo
-             </span>
-             <span className="text-[10px] tracking-tight text-theme-text leading-none uppercase">
-               {title}
-             </span>
-          </div>
-          <button 
-            onClick={toggleTheme}
-            className="p-2 text-theme-muted hover:text-theme-text transition-colors"
-          >
-            {theme === "light" ? <MoonIcon /> : <SunIcon />}
-          </button>
-        </header>
+      {/* ── Main Content ── */}
+      <div style={{ flex: 1, display: "flex", flexDirection: "column", minWidth: 0, overflow: "hidden" }}>
 
-        {/* Scrollable content */}
-        <main className="flex-1 overflow-y-auto bg-theme-bg">
+        {/* Mobile Top Bar (NAV padrão — Parte 2) */}
+        <nav style={{
+          display:        "flex",
+          alignItems:     "center",
+          justifyContent: "space-between",
+          padding:        "16px 28px",
+          borderBottom:   `1px solid ${T.border}`,
+          background:     T.bg,
+          flexShrink:     0,
+        }} className="dashboard-topbar">
+          {/* Left: hamburguer + brand */}
+          <div style={{ display: "flex", alignItems: "center", gap: 14 }}>
+            <button
+              id="btn-mobile-menu"
+              onClick={() => setDrawerOpen(true)}
+              style={{ ...BtnGhost, padding: "8px" }}
+              aria-label="Abrir menu"
+              className="dashboard-menu-btn"
+            >
+              <MenuIcon />
+            </button>
+            <div style={{
+              fontFamily:    T.fontD,
+              fontWeight:    900,
+              fontSize:      18,
+              color:         "#fff",
+              letterSpacing: 1,
+            }}>
+              FOTO SEGUNDO.
+            </div>
+          </div>
+
+          {/* Right: user info + logout */}
+          <div style={{ display: "flex", alignItems: "center", gap: 12 }}>
+            <span style={{ fontSize: 12, color: T.text3, fontFamily: T.fontB }}>
+              {user?.nome}
+            </span>
+            <button
+              onClick={logout}
+              style={{ ...BtnGhost, display: "flex", alignItems: "center", gap: 6 }}
+            >
+              <LogoutIcon />
+              Sair
+            </button>
+          </div>
+        </nav>
+
+        {/* Scrollable page content */}
+        <main style={{ flex: 1, overflowY: "auto", background: T.bg }}>
           {children}
         </main>
       </div>
+
+      {/* ── Responsive CSS via <style> ── */}
+      <style>{`
+        /* Desktop: mostra sidebar, oculta topbar hamburguer */
+        @media (min-width: 1024px) {
+          .dashboard-sidebar { display: block !important; }
+          .dashboard-drawer  { display: none !important; }
+          .dashboard-menu-btn { display: none !important; }
+        }
+        /* Mobile: oculta sidebar, mostra topbar */
+        @media (max-width: 1023px) {
+          .dashboard-sidebar { display: none !important; }
+          .dashboard-topbar  { border-bottom: 1px solid ${T.border}; }
+        }
+      `}</style>
     </div>
   );
 };
-

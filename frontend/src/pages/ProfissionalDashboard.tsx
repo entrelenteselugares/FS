@@ -6,6 +6,7 @@ import { List, Calendar as CalendarIcon, TrendingUp, DollarSign, Award, ChevronL
 
 interface EventItem {
   id: string;
+  slug: string;
   nomeNoivos: string;
   dataEvento: string;
   createdAt: string;
@@ -197,7 +198,7 @@ export default function ProfissionalDashboard() {
         <div style={{ display: "flex", alignItems: "center", gap: 15 }}>
           <div className="mobile-hide" style={{ textAlign: "right" }}>
             <div style={{ fontSize: 11, color: "var(--theme-text)", fontWeight: 700, textTransform: "uppercase" }}>{user?.nome}</div>
-            <p style={{ fontSize: 9, color: "var(--brand-primary)", margin: 0, fontWeight: 900, textTransform: "uppercase", letterSpacing: 1 }}>PROFISSIONAL</p>
+            <p style={{ fontSize: 9, color: "var(--brand-primary)", margin: 0, fontWeight: 900, textTransform: "uppercase", letterSpacing: 1 }}>Artista da Rede</p>
           </div>
           <button 
             onClick={() => setIsProfileOpen(true)}
@@ -336,8 +337,8 @@ export default function ProfissionalDashboard() {
                     </div>
                     
                     <div className="mobile-stack" style={{ display: "flex", gap: "1.5rem", alignItems: "center" }}>
-                       {(ev.captacaoId === user?.id) && <div style={{ fontSize: 9, background: "rgba(133,185,172,0.1)", color: "var(--brand-primary)", padding: "4px 8px", fontWeight: 700, textTransform: "uppercase", border: "1px solid var(--brand-primary)" }}>Captador</div>}
-                       {(ev.edicaoId === user?.id) && <div style={{ fontSize: 9, background: "rgba(133,185,172,0.1)", color: "var(--brand-primary)", padding: "4px 8px", fontWeight: 700, textTransform: "uppercase", border: "1px solid var(--brand-primary)" }}>Editor</div>}
+                       {(ev.captacaoId === user?.id) && <div style={{ fontSize: 9, background: "rgba(133,185,172,0.1)", color: "var(--brand-primary)", padding: "4px 8px", fontWeight: 700, textTransform: "uppercase", border: "1px solid var(--brand-primary)" }}>Artista da Rede</div>}
+                       {(ev.edicaoId === user?.id) && <div style={{ fontSize: 9, background: "rgba(133,185,172,0.1)", color: "var(--brand-primary)", padding: "4px 8px", fontWeight: 700, textTransform: "uppercase", border: "1px solid var(--brand-primary)" }}>Artista da Rede</div>}
                       
                       <div className="mobile-hide" style={{ flex: 1 }} />
                       
@@ -639,7 +640,7 @@ function EventEditPanel({ event, onUpdated, onClose }: {
       {/* Link público */}
       <div style={{ borderTop: "1px solid var(--theme-border)", marginTop: "1.5rem", paddingTop: "1rem" }}>
         <a
-          href={`/e/${event.id}`}
+          href={`/e/${event.slug}`}
           target="_blank"
           rel="noopener noreferrer"
           style={{ display: "flex", alignItems: "center", justifyContent: "space-between", fontSize: 10, color: "var(--theme-text-muted)", textDecoration: "none", fontWeight: 800, textTransform: "uppercase", letterSpacing: 1 }}

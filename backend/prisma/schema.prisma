@@ -5,7 +5,7 @@
 generator client {
   provider      = "prisma-client-js"
   binaryTargets = ["native", "rhel-openssl-3.0.x"]
-  engineType    = "client"
+  engineType    = "library"
 }
 
 datasource db {
@@ -76,9 +76,9 @@ model User {
 
 enum QuoteStatus {
   PENDING
-  PRICED
   APPROVED
   REJECTED
+  CONVERTED
 }
 
 // ─── Model: Event ────────────────────────────────────────────────────────────
@@ -174,7 +174,7 @@ model Cartorio {
   user        User     @relation(fields: [userId], references: [id])
   razaoSocial String
   slug        String?  @unique
-  cnpj        String?
+  cnpj        String?  @unique
   splitPct    Float    @default(10)
   cidade      String?  // Para exibir na vitrine dos pontos fixos
 
@@ -205,6 +205,7 @@ model Order {
   // Collaborative Buying
   isContribution  Boolean  @default(false)
   contributorName String?
+  hasPaid         Boolean  @default(false)
 
   // Buyer Info (Redundância para facilitar relatórios)
   buyerEmail    String?
@@ -417,4 +418,21 @@ model AuditLog {
   action    String   // Ex: LOGIN, PAYMENT_APPROVED, USER_PROMOTED
   details   String?  // JSON ou texto descritivo
   createdAt DateTime @default(now())
+
+  @@map("audit_logs")
+}
+
+model Quote {
+  id               String      @id @default(cuid())
+  clientName       String
+  clientEmail      String
+  clientPhone      String?
+  eventDate        DateTime?
+  location         String?
+  services         String[]
+  notes            String?
+  status           QuoteStatus @default(PENDING)
+  convertedEventId String?
+  createdAt        DateTime    @default(now())
+  updatedAt        DateTime    @updatedAt
 }

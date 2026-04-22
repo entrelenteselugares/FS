@@ -18,7 +18,7 @@ export const AuthSelectionPage: React.FC = () => {
     {
       id: "profissional",
       title: "REDE TÉCNICA",
-      description: "Infraestrutura analítica para fotógrafos e inteligência de campo.",
+      description: "Infraestrutura analítica para artistas e inteligência de campo.",
       icon: <Camera className="text-zinc-600" size={24} strokeWidth={1.5} />,
       label: "PAINEL OPERACIONAL",
       role: "PROFISSIONAL"

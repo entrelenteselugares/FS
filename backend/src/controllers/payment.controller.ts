@@ -2,6 +2,7 @@ import { Request, Response } from "express";
 import prisma from "../lib/prisma";
 import { MercadoPagoService } from "../services/mercadopago.service";
 import { NotificationService } from "../services/notification.service";
+import { calculateEventPrice } from "../lib/pricing";
 import crypto from "crypto";
 
 export class PaymentController {
@@ -25,24 +26,10 @@ export class PaymentController {
 
       if (!event) return res.status(404).json({ error: "Evento não encontrado" });
 
-      // 2. Lógica de Precificação Dinâmica (Baseada no Evento)
-      const now = new Date();
-      const eventDate = new Date(event.dataEvento);
-      eventDate.setHours(0, 0, 0, 0);
-      
-      // Se a data atual for anterior à data do evento, usa preço antecipado
-      let preco = now.getTime() < eventDate.getTime() 
-        ? Number(event.priceEarly ?? 190) 
-        : Number(event.priceBase ?? 200);
+      // 2. Lógica de Precificação Dinâmica
+      const preco = calculateEventPrice(event as any, contributionAmount);
 
-      // Se for Compra Coletiva, o valor é o enviado pelo usuário (cota)
-      if (event.isCrowdfund && contributionAmount) {
-        preco = Number(contributionAmount);
-      }
-
-      // 3. Preparar Split de Pagamentos (Regra: Repasse Manual)
-      // Todo o valor vai para a Matriz para posterior repasse manual aos profissionais.
-      // BUSCA CONFIGS NO MOMENTO DA COMPRA (SNAPSHOT)
+      // 3. Preparar Split de Pagamentos (Regra: Repasse Manual via Snapshot)
       const configs = await prisma.platformConfig.findMany({
         where: { key: { in: ["split_matriz", "split_captacao", "split_edicao", "split_cartorio"] } },
       });
@@ -55,25 +42,43 @@ export class PaymentController {
 
       console.log(`[Checkout] Repasse Manual: 100% para Matriz. Snapshot salvo.`);
 
-      // 4. Criar Pedido Pendente no Banco
-      const order = await prisma.order.create({
-        data: {
-          eventId,
-          clienteId: userId,
-          valor: preco,
-          status: "PENDENTE",
-          isContribution: event.isCrowdfund,
-          contributorName: event.isCrowdfund ? (req.body.contributorName || null) : null,
-          // Snapshot dos splits
-          splitMatriz,
-          splitCaptacao,
-          splitEdicao,
-          splitCartorio
-        }
-      });
+      // 4. Criar ou Reutilizar Pedido no Banco
+      let order;
+      const existingOrderId = req.body.orderId;
+
+      if (existingOrderId) {
+        order = await prisma.order.findUnique({ where: { id: existingOrderId } });
+        if (!order) return res.status(404).json({ error: "Pedido original não encontrado." });
+        
+        // Atualiza o valor caso tenha mudado (ex: cotação atualizada)
+        order = await prisma.order.update({
+          where: { id: order.id },
+          data: {
+            valor: preco,
+            splitMatriz,
+            splitCaptacao,
+            splitEdicao,
+            splitCartorio
+          }
+        });
+      } else {
+        order = await prisma.order.create({
+          data: {
+            eventId,
+            clienteId: userId || null,
+            valor: preco,
+            status: "PENDENTE",
+            isContribution: event.isCrowdfund,
+            contributorName: event.isCrowdfund ? (req.body.contributorName || null) : null,
+            splitMatriz,
+            splitCaptacao,
+            splitEdicao,
+            splitCartorio
+          }
+        });
+      }
 
       // 5. Criar Preferência no Mercado Pago (Checkout Pro)
-      // Ajuste de Notification URL: Mercadopago rejeita localhost em produção.
       const backendUrl = process.env.BACKEND_URL || `${req.protocol}://${req.get('host')}`;
       const isLocal = backendUrl.includes("localhost") || backendUrl.includes("127.0.0.1");
 
@@ -82,7 +87,7 @@ export class PaymentController {
         description: `Fotos Evento: ${event.nomeNoivos}`,
         payer_email: email,
         notification_url: isLocal 
-          ? "" // Omitir se for local para evitar erro de API do MP
+          ? "" 
           : `${backendUrl}/api/webhooks/mercadopago`,
         orderId: order.id
       });
@@ -119,31 +124,33 @@ export class PaymentController {
   static async webhook(req: Request, res: Response) {
     const { type, data } = req.body;
 
-    // ── VALIDAÇÃO DE ASSINATURA (Opcional se configurado) ──
-    if (process.env.MP_WEBHOOK_SECRET) {
-      const sig    = (req.headers["x-signature"] as string) ?? "";
-      const reqId  = (req.headers["x-request-id"] as string) ?? "";
-      const dataId = (req.query["data.id"] as string) ?? "";
-      const [tsPart, v1Part] = sig.split(",");
-      const ts = tsPart?.split("=")[1];
-      const v1 = v1Part?.split("=")[1];
-      
-      if (!ts || !v1) {
-        console.warn("[Webhook] Headers de assinatura ausentes ou malformados.");
-        // Se o secret está configurado mas a assinatura veio vazia (ex: simulador),
-        // respondemos 200 para não pendurar o sistema, mas não processamos.
-        return res.status(200).json({ ok: true, message: "Ignorado (Headers ausentes)" });
-      }
+    // ── VALIDAÇÃO DE ASSINATURA OBRIGATÓRIA ──
+    if (!process.env.MP_WEBHOOK_SECRET) {
+      console.error("[CRITICAL] MP_WEBHOOK_SECRET não configurada! Webhook rejeitado por segurança.");
+      return res.status(500).json({ error: "Segurança do webhook não configurada." });
+    }
 
-      const manifest = `id:${dataId};request-id:${reqId};ts:${ts};`;
-      const hmac = crypto
-        .createHmac("sha256", process.env.MP_WEBHOOK_SECRET)
-        .update(manifest)
-        .digest("hex");
-      if (hmac !== v1) {
-        console.error("[Webhook] Assinatura Inválida.");
-        return res.status(401).json({ error: "Assinatura inválida." });
-      }
+    const sig    = (req.headers["x-signature"] as string) ?? "";
+    const reqId  = (req.headers["x-request-id"] as string) ?? "";
+    const dataId = (req.query["data.id"] as string) ?? "";
+    const [tsPart, v1Part] = sig.split(",");
+    const ts = tsPart?.split("=")[1];
+    const v1 = v1Part?.split("=")[1];
+    
+    if (!ts || !v1) {
+      console.warn("[Webhook] Headers de assinatura ausentes.");
+      return res.status(401).json({ error: "Assinatura ausente." });
+    }
+
+    const manifest = `id:${dataId};request-id:${reqId};ts:${ts};`;
+    const hmac = crypto
+      .createHmac("sha256", process.env.MP_WEBHOOK_SECRET)
+      .update(manifest)
+      .digest("hex");
+
+    if (hmac !== v1) {
+      console.error("[Webhook] Assinatura Inválida.");
+      return res.status(401).json({ error: "Assinatura inválida." });
     }
 
     // O MP envia o ID da transação em data.id quando o type é 'payment'
@@ -151,17 +158,17 @@ export class PaymentController {
       try {
         const mpPaymentId = String(data.id);
 
-        // ── IDEMPOTÊNCIA: Verifica se já foi processado APPROVED ──
-        const statusCheck = await prisma.order.findFirst({
+        // ── IDEMPOTÊNCIA: Verifica se já foi processado (Regra Absoluta 7.3) ──
+        const jaProcessado = await prisma.order.findFirst({
           where: { 
             paymentId: mpPaymentId,
             status: { in: ["APROVADO", "APPROVED"] as any }
           }
         });
 
-        if (statusCheck) {
-          console.log(`[Webhook] Pagamento ${mpPaymentId} já processado como APROVADO. Ignorando.`);
-          return res.status(200).json({ ok: true, skipped: true });
+        if (jaProcessado) {
+          console.log(`[Webhook] Pagamento ${mpPaymentId} já processado. Ignorando.`);
+          return res.json({ ok: true, skipped: true });
         }
 
         const paymentData = await MercadoPagoService.getPaymentStatus(mpPaymentId);
@@ -237,25 +244,18 @@ export class PaymentController {
       if (!event) return res.status(404).json({ error: "Evento não encontrado" });
 
       // 2. Lógica de Precificação
-      const now = new Date();
-      const eventDate = new Date(event.dataEvento);
-      let preco = now.getTime() < eventDate.getTime() 
-        ? Number(event.priceEarly ?? 190) 
-        : Number(event.priceBase ?? 200);
+      const preco = calculateEventPrice(event as any, contributionAmount);
 
-      // Gift Quota logic
-      if (event.isCrowdfund && contributionAmount) {
-        preco = Number(contributionAmount);
-      }
+      // 3. Cálculo de Split — Snapshot obrigatório via PlatformConfig
+      const configs = await prisma.platformConfig.findMany({
+        where: { key: { in: ["split_matriz", "split_captacao", "split_edicao", "split_cartorio"] } },
+      });
+      const getPct = (key: string) => Number(configs.find((c) => c.key === key)?.value ?? 0) / 100;
 
-      // 3. Cálculo de Split — Referência para Repasse Manual (Modelo Uber)
-      // 100% do valor vai para a conta master. Os splits são salvos apenas para
-      // mostrar quanto transferir via PIX para cada parceiro após os 7 dias.
-      const pctCapt = event.captacao?.profissional?.captPct ?? 30;
-      const pctEdit = event.edicao?.profissional?.editPct ?? 20;
-      const pctCart = event.cartorioUser?.cartorio?.splitPct ?? 10;
-      const matrizPct = 1 - (pctCapt + pctEdit + pctCart) / 100;
-      const applicationFeeCalculated = preco * matrizPct;
+      const splitMatriz   = +(preco * getPct("split_matriz")).toFixed(2);
+      const splitCaptacao = +(preco * getPct("split_captacao")).toFixed(2);
+      const splitEdicao   = +(preco * getPct("split_edicao")).toFixed(2);
+      const splitCartorio = +(preco * getPct("split_cartorio")).toFixed(2);
 
       // 4. Criar Pedido (Identidade Obrigatória)
       if (!userId) {
@@ -271,10 +271,10 @@ export class PaymentController {
           isContribution: event.isCrowdfund,
           contributorName: event.isCrowdfund ? (req.body.contributorName || null) : null,
           // Salva snapshot dos calculos para referencia no repasse manual
-          splitMatriz: applicationFeeCalculated,
-          splitCaptacao: preco * (pctCapt / 100),
-          splitEdicao: preco * (pctEdit / 100),
-          splitCartorio: preco * (pctCart / 100)
+          splitMatriz,
+          splitCaptacao,
+          splitEdicao,
+          splitCartorio
         }
       });
 
@@ -346,7 +346,11 @@ export class PaymentController {
         orderId: order.id,
         status: mpResponse.status,
         hasPaid: isApproved,
-        details: mpResponse.status_detail
+        details: mpResponse.status_detail,
+        // Dados de PIX para Checkout Transparente
+        qr_code: mpResponse.point_of_interaction?.transaction_data?.qr_code,
+        qr_code_base64: mpResponse.point_of_interaction?.transaction_data?.qr_code_base64,
+        ticket_url: mpResponse.point_of_interaction?.transaction_data?.ticket_url
       });
 
     } catch (error: any) {
@@ -367,10 +371,11 @@ export class PaymentController {
 
     try {
       const order = await prisma.order.findUnique({
-        where: { id },
+        where: { id: String(id) },
         include: {
           event: {
             select: {
+              id: true,
               nomeNoivos: true,
               dataEvento: true,
               location: true,
@@ -387,7 +392,9 @@ export class PaymentController {
         id: order.id,
         amount: order.valor,
         status: order.status,
-        event: order.event,
+        eventId: order.eventId,
+        clienteId: order.clienteId,
+        event: (order as any).event,
         isContribution: order.isContribution,
         contributorName: order.contributorName
       });

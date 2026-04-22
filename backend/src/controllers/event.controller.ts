@@ -44,28 +44,21 @@ export class EventController {
     const { id } = req.params;
     const { userId } = req.query;
 
-    // EVENTO MOCK PARA TESTES DO PIVOT (Independente do Prisma)
-    const mockEvent: any = {
-        id: "test-premium-event",
-        nomeNoivos: "Ana & João - Pivot",
-        dataEvento: new Date(Date.now() + 1000 * 60 * 60 * 24 * 7),
-        cartorio: "Cartório Central",
-        coverPhotoUrl: "https://images.unsplash.com/photo-1511795409834-ef04bbd61622?w=1200",
-        lightroomUrl: "https://lightroom.adobe.com/gallery/test-album",
-        driveUrl: "https://drive.google.com/drive/folders/test-videos",
-        temFoto: true,
-        paywall: { active: true, message: "Acesso Protegido" }
-    };
-
     try {
-      // Tentar buscar no banco
-      const event = await prisma.event.findUnique({
-        where: { id: id as string }
-      }).catch(() => null);
+      // Busca no banco por ID ou Slug
+      const event = await prisma.event.findFirst({
+        where: { 
+          OR: [
+            { id: String(id) },
+            { slug: String(id) }
+          ]
+        },
+        include: {
+          cartorioUser: { select: { cartorio: { select: { razaoSocial: true } } } }
+        }
+      });
 
-      const targetEvent = id === "test-premium-event" ? mockEvent : event;
-
-      if (!targetEvent) {
+      if (!event) {
         return res.status(404).json({ error: "Evento não encontrado" });
       }
 
@@ -78,20 +71,20 @@ export class EventController {
 
       // Links sensíveis só aparecem se aprovado
       return res.json({
-        id: targetEvent.id,
-        nomeNoivos: targetEvent.nomeNoivos,
-        dataEvento: targetEvent.dataEvento,
-        cartorio: targetEvent.cartorio,
-        coverPhotoUrl: targetEvent.coverPhotoUrl,
-        priceBase: targetEvent.priceBase,
-        priceEarly: targetEvent.priceEarly,
-        temFoto: targetEvent.temFoto,
-        temVideo: targetEvent.temVideo,
-        temReels: targetEvent.temReels,
-        temFotoImpressa: targetEvent.temFotoImpressa,
+        id: event.id,
+        nomeNoivos: event.nomeNoivos,
+        dataEvento: event.dataEvento,
+        cartorio: (event as any).cartorioUser?.cartorio?.razaoSocial || event.location,
+        coverPhotoUrl: event.coverPhotoUrl,
+        priceBase: event.priceBase,
+        priceEarly: event.priceEarly,
+        temFoto: event.temFoto,
+        temVideo: event.temVideo,
+        temReels: event.temReels,
+        temFotoImpressa: event.temFotoImpressa,
         // Links sensíveis só aparecem se aprovado
-        lightroomUrl: hasAccess ? targetEvent.lightroomUrl : null,
-        driveUrl: hasAccess ? targetEvent.driveUrl : null,
+        lightroomUrl: hasAccess ? event.lightroomUrl : null,
+        driveUrl: hasAccess ? event.driveUrl : null,
         paywall: {
           active: !hasAccess,
           message: hasAccess ? "Entrega liberada via links externos." : "Galeria protegida."

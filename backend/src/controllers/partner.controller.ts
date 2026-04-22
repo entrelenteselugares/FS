@@ -69,7 +69,7 @@ export async function getPartnerLandingData(req: Request, res: Response): Promis
  * Permite que o próprio cartório atualize seus dados de Landing Page
  */
 export async function updatePartnerProfile(req: AuthRequest, res: Response): Promise<void> {
-  const userId = (req as any).user.id;
+  const userId = req.user?.userId;
   const { address, phone, description, coverUrl, slug, pixKey } = req.body;
 
   try {

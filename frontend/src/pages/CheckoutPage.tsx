@@ -1,7 +1,28 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import { useParams, useNavigate, useSearchParams } from "react-router-dom";
-import { ShieldCheck, ArrowLeft, CreditCard, Lock } from "lucide-react";
+import { ShieldCheck, ArrowLeft, CreditCard, Lock, Copy, CheckCircle2 } from "lucide-react";
 import { API } from "../lib/api";
+import { useTheme } from "../hooks/useTheme";
+
+interface OrderEvent {
+  id: string;
+  nomeNoivos: string;
+  dataEvento: string;
+  location?: string;
+  coverPhotoUrl?: string;
+  isCrowdfund: boolean;
+}
+
+interface OrderDetail {
+  id: string;
+  amount: number;
+  status: string;
+  eventId: string;
+  clienteId?: string;
+  event: OrderEvent;
+  isContribution: boolean;
+  contributorName?: string;
+}
 
 export const CheckoutPage = () => {
   const { orderId } = useParams();
@@ -10,9 +31,15 @@ export const CheckoutPage = () => {
   const orderIdFromQuery = searchParams.get("orderId");
   const effectiveOrderId = orderId || orderIdFromQuery;
   
-  const [order, setOrder] = useState<any>(null);
+  const [order, setOrder] = useState<OrderDetail | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
+  const [pixData, setPixData] = useState<{ qrCode: string; qrCodeBase64: string; ticketUrl: string } | null>(null);
+  const [paymentSuccess, setPaymentSuccess] = useState(false);
+  const [copied, setCopied] = useState(false);
+  const brickController = useRef<any>(null);
+  const initializationStarted = useRef(false);
+  const { theme } = useTheme();
 
   useEffect(() => {
     if (!effectiveOrderId) {
@@ -36,25 +63,103 @@ export const CheckoutPage = () => {
     fetchOrder();
   }, [effectiveOrderId]);
 
-  const handlePayment = async () => {
-    if (!order) return;
+  // Inicialização do Mercado Pago Brick para Checkout Transparente
+  useEffect(() => {
+    // Se já houver um processo de inicialização ou se os dados não estiverem prontos, aborta.
+    if (!order || pixData || paymentSuccess || loading || initializationStarted.current) return;
     
-    try {
-      // Inicia o checkout pro do Mercado Pago
-      const { data } = await API.post("/checkout", {
-        eventId: order.event?.id || order.eventId, // Precisamos garantir que o order tenha o eventId
-        email: "checkout@cliente.com", // Placeholder - em prod pegaria do input ou auth
-        orderId: order.id
-      });
+    initializationStarted.current = true;
 
-      if (data.init_point) {
-        window.location.href = data.init_point;
-      }
-    } catch (err: any) {
-      const msg = err.response?.data?.details || "Erro ao processar pagamento. Tente novamente.";
-      alert(`Erro: ${msg}`);
+    const mpPublicKey = "APP_USR-18f8ccc4-8ed4-4f99-bb6d-e333d026e578";
+    
+    if (!window.MercadoPago) {
+      console.warn("Mercado Pago SDK não detectado no window.");
+      initializationStarted.current = false;
+      return;
     }
-  };
+
+    const renderPaymentBrick = async () => {
+      // Limpa o container antes de qualquer ação para garantir unicidade no DOM
+      const container = document.getElementById("paymentBrick_container");
+      if (container) container.innerHTML = "";
+
+      const mp = new window.MercadoPago(mpPublicKey, { locale: "pt-BR" });
+      const bricksBuilder = mp.bricks();
+
+      const settings = {
+        initialization: {
+          amount: Number(order.amount),
+          payer: {
+            email: "cliente@teste.com",
+            entityType: "individual",
+          },
+        },
+        customization: {
+          paymentMethods: {
+            creditCard: "all",
+            bankTransfer: ["pix"],
+            maxInstallments: 12,
+          },
+          visual: {
+            style: {
+              theme: theme === "dark" ? "dark" : "default",
+            },
+          },
+        },
+        callbacks: {
+          onReady: () => {
+            console.log("[Payment Brick] Ready");
+          },
+          onSubmit: async ({ selectedPaymentMethod, formData }: any) => {
+            try {
+              const { data } = await API.post("/checkout/payment", {
+                eventId: order.event.id || order.eventId,
+                userId: order.clienteId || null,
+                orderId: order.id,
+                email: formData.payer.email,
+                cpf: formData.payer.identification?.number,
+                cardToken: formData.token,
+                installments: formData.installments,
+                paymentMethodId: formData.payment_method_id,
+                method: selectedPaymentMethod
+              });
+
+              if (data.hasPaid) {
+                setPaymentSuccess(true);
+              } else if (data.qr_code) {
+                setPixData({
+                  qrCode: data.qr_code,
+                  qrCodeBase64: data.qr_code_base64,
+                  ticketUrl: data.ticket_url
+                });
+              } else {
+                alert(`Status do Pagamento: ${data.status}`);
+              }
+            } catch (err: any) {
+              console.error("Erro no processamento transparente:", err);
+              alert("Erro ao processar pagamento. Verifique seus dados.");
+            }
+          },
+          onError: (error: any) => {
+            console.error("[Payment Brick] Error:", error);
+            initializationStarted.current = false; // Permite tentar novamente em caso de erro
+          },
+        },
+      };
+
+      brickController.current = await bricksBuilder.create("payment", "paymentBrick_container", settings);
+    };
+
+    renderPaymentBrick();
+
+    return () => {
+      if (brickController.current) {
+        brickController.current.unmount();
+        brickController.current = null;
+      }
+      initializationStarted.current = false;
+    };
+  }, [order, pixData, paymentSuccess, loading, theme]); // Adicionado theme como dependência para atualizar o brick se o tema mudar
 
   if (loading) {
     return (
@@ -75,9 +180,9 @@ export const CheckoutPage = () => {
   }
 
   return (
-    <div className="min-h-screen bg-theme-bg text-theme-text font-sans">
-      <nav className="p-6 md:p-10 border-b border-theme-border flex items-center justify-between">
-        <button onClick={() => navigate(-1)} className="flex items-center gap-3 text-proportional hover:text-brand-primary transition-all">
+    <div className="min-h-screen bg-theme-bg text-theme-text font-['Inter']">
+      <nav className="h-16 flex items-center justify-between px-6 border-b border-theme-border sticky top-0 z-50 bg-theme-bg/80 backdrop-blur-md">
+        <button onClick={() => navigate(-1)} className="text-proportional opacity-40 hover:opacity-100 transition-all flex items-center gap-2">
           <ArrowLeft size={16} /> Voltar
         </button>
         <div className="text-proportional opacity-100 flex items-center gap-2">
@@ -85,83 +190,99 @@ export const CheckoutPage = () => {
         </div>
       </nav>
 
-      <div className="max-w-2xl mx-auto px-4 md:px-10 py-12 md:py-24 space-y-20">
-        {/* Resumo do Pedido */}
-        <div className="animate-reveal">
-          <div className="mb-0">
-             <div className="text-proportional text-brand-primary mb-4">Resumo da Aquisição</div>
-             <h1 className="heading-luxury mb-12 !text-3xl md:!text-5xl !tracking-tight flex gap-3 justify-center items-center">
-               <span className="text-theme-text opacity-100 font-black">RESERVA</span> 
-               <span 
-                 className="opacity-40" 
-                 style={{ 
-                   WebkitTextStroke: "1px var(--theme-text)", 
-                   color: "transparent",
-                   fontWeight: 900
-                 }}
-               >CONFIRMADA</span>
-             </h1>
+      <div className="max-w-3xl mx-auto px-4 py-12 space-y-16">
+        {paymentSuccess ? (
+          <div className="lux-card editorial-shadow text-center py-20 animate-reveal rounded-none border-zinc-200 dark:border-zinc-800">
+            <div className="w-24 h-24 bg-brand-primary/10 rounded-full flex items-center justify-center mx-auto mb-10">
+              <ShieldCheck size={48} className="text-brand-primary" />
+            </div>
+            <h1 className="heading-luxury mb-6 tracking-tighter">COMPRA APROVADA</h1>
+            <p className="text-proportional opacity-60 mb-10 max-w-sm mx-auto font-medium">
+              Sua galeria já está liberada! Enviamos as instruções de acesso para o seu e-mail.
+            </p>
+            <button 
+              onClick={() => navigate(`/e/${order.event.id || order.eventId}`)} 
+              className="lux-button-base lux-button-tactical w-full py-6 !text-lg shadow-2xl"
+            >
+              ACESSAR MINHAS FOTOS
+            </button>
           </div>
-
-          <div className="lux-card editorial-shadow space-y-8 !bg-white !text-[#0a0a0a] !border-none !rounded-sm">
-            <div className="flex flex-col items-center gap-6 border-b border-gray-100 pb-8">
-              <img 
-                src="/logo-minimalista.png" 
-                alt="Logo Minimalista" 
-                className="h-14 object-contain"
-              />
-              <div className="text-center">
-                <div className="text-xl font-black uppercase tracking-tighter mb-1">{order.event?.nomeNoivos}</div>
-                <div className="text-[10px] opacity-40 font-bold uppercase tracking-widest">{new Date(order.event?.dataEvento).toLocaleDateString("pt-BR")}</div>
-              </div>
+        ) : pixData ? (
+          <div className="lux-card editorial-shadow animate-reveal rounded-none border-zinc-200 dark:border-zinc-800">
+            <div className="mb-10 text-left border-b border-theme-border pb-6">
+              <h2 className="heading-luxury !text-2xl mb-2 italic">QUASE LÁ!</h2>
+              <p className="text-proportional opacity-60 text-[10px]">Escaneie o código PIX para liberação imediata.</p>
+            </div>
+            
+            <div className="bg-white p-6 rounded-none w-fit mx-auto mb-10 shadow-2xl border border-zinc-100">
+              <img src={`data:image/png;base64,${pixData.qrCodeBase64}`} alt="QR Code PIX" className="w-64 h-64" />
             </div>
 
             <div className="space-y-6">
-              <div className="flex justify-between items-center text-[10px] font-black uppercase tracking-widest opacity-40">
-                <span>Investimento Base</span>
-                <span>R$ {Number(order.amount).toFixed(2)}</span>
+              <div className="p-6 bg-theme-bg-muted border border-theme-border rounded-none text-left relative">
+                <p className="text-[10px] font-black uppercase tracking-widest opacity-40 mb-4 font-['Outfit']">Pix Copia e Cola</p>
+                <div className="flex items-center gap-6">
+                  <input readOnly value={pixData.qrCode} className="bg-transparent text-sm w-full outline-none truncate font-mono text-theme-text" />
+                  <button 
+                    onClick={() => { 
+                      navigator.clipboard.writeText(pixData.qrCode); 
+                      setCopied(true);
+                      setTimeout(() => setCopied(false), 2000);
+                    }} 
+                    className="flex items-center gap-2 text-brand-primary text-[10px] font-black uppercase whitespace-nowrap tracking-widest"
+                  >
+                    {copied ? <CheckCircle2 size={14} /> : <Copy size={14} />}
+                    {copied ? "Copiado" : "Copiar Código"}
+                  </button>
+                </div>
               </div>
-              <div className="flex justify-between items-center text-[10px] font-black uppercase tracking-widest opacity-40">
-                <span>Taxas & Encargos</span>
-                <span>Incluso</span>
-              </div>
-              <div className="pt-6 border-t border-gray-100 flex justify-between items-center">
-                <div className="text-[11px] !opacity-100 uppercase font-black tracking-widest">Total a Liquidar</div>
-                <div className="text-4xl font-black tracking-tighter text-brand-primary">R$ {Number(order.amount).toFixed(2)}</div>
-              </div>
+              <p className="text-[10px] text-center uppercase tracking-[0.3em] opacity-30 italic font-bold">Válido por 30 minutos</p>
             </div>
           </div>
-        </div>
+        ) : (
+          <>
+            {/* Resumo do Pedido Estilo Editorial */}
+            <div className="lux-aura">
+              <div className="lux-card editorial-shadow !bg-theme-bg-muted !border-theme-border rounded-none animate-reveal">
+                <div className="flex flex-col items-center gap-8 border-b border-theme-border pb-10 mb-10 text-center">
+                  <h1 className="heading-luxury !text-3xl md:!text-5xl italic tracking-tighter">
+                    {order.event?.nomeNoivos}
+                  </h1>
+                  <div className="text-proportional !opacity-100 tracking-[0.4em] font-black">Resumo da Aquisição</div>
+                </div>
 
-        {/* Pagamento */}
-        <div className="animate-reveal" style={{ animationDelay: "0.2s" }}>
-          <div className="text-center mb-10">
-            <div className="text-proportional text-brand-primary mb-4">Forma de Pagamento</div>
-            <p className="text-proportional">Processamento via Mercado Pago com criptografia de 256 bits.</p>
-          </div>
-
-          <div className="space-y-4">
-            <button 
-              onClick={handlePayment}
-              className="w-full bg-brand-primary hover:brightness-110 text-[#0a0a0a] py-6 !text-sm flex flex-col items-center gap-1 transition-all"
-            >
-              <div className="flex items-center gap-3 font-black">
-                <CreditCard size={18} /> PAGAR COM CARTÃO / PIX
+                <div className="space-y-8">
+                  <div className="flex justify-between items-center text-proportional font-black">
+                    <span>Investimento Base</span>
+                    <span className="opacity-100 text-theme-text">R$ {Number(order.amount).toFixed(2)}</span>
+                  </div>
+                  <div className="pt-8 border-t border-theme-border flex justify-between items-center">
+                    <div className="text-proportional !opacity-100 font-black tracking-[0.4em]">Total a Liquidar</div>
+                    <div className="text-4xl md:text-5xl font-black tracking-tighter text-brand-primary italic">R$ {Number(order.amount).toFixed(2)}</div>
+                  </div>
+                </div>
               </div>
-              <span className="text-[9px] opacity-60 tracking-[0.2em] font-medium">Liberação Imediata via Checkout Pro</span>
-            </button>
-            
-            <div className="flex items-center justify-center gap-4 py-4">
-               <div className="w-8 h-px bg-theme-border" />
-               <Lock size={12} className="text-theme-text opacity-30" />
-               <div className="w-8 h-px bg-theme-border" />
             </div>
 
-            <p className="text-[10px] text-center text-theme-muted uppercase tracking-widest leading-relaxed px-6">
-              Ao clicar em pagar, você será redirecionado para o ambiente seguro da matiz para concluir sua transação.
-            </p>
-          </div>
-        </div>
+            {/* Container do Pagamento Bricks */}
+            <div className="lux-card editorial-shadow !p-4 md:!p-10 min-h-[400px] rounded-none border-theme-border animate-reveal" style={{ animationDelay: "0.2s" }}>
+              <div className="mb-10 text-center">
+                <div className="text-proportional mb-4 tracking-[0.3em] font-black">Forma de Pagamento</div>
+                <p className="text-[10px] uppercase tracking-widest opacity-40">Processamento via Mercado Pago com criptografia 256 bits</p>
+              </div>
+              <div id="paymentBrick_container"></div>
+            </div>
+
+            <div className="text-center space-y-6 opacity-30 animate-reveal" style={{ animationDelay: "0.4s" }}>
+              <div className="flex items-center justify-center gap-8">
+                <img src="https://static.mlstatic.com/org-img/vendors/br/logo-mercado-pago.png" alt="MP" className="h-4 grayscale brightness-0 dark:brightness-200" />
+                <div className="w-px h-4 bg-theme-border" />
+                <ShieldCheck size={16} />
+                <span className="text-[10px] font-black tracking-[0.3em] uppercase italic">PAGAMENTO BLINDADO</span>
+              </div>
+            </div>
+          </>
+        )}
       </div>
     </div>
   );

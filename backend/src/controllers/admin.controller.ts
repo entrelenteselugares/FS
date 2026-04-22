@@ -3,15 +3,9 @@ import { AuthRequest } from "../lib/auth";
 import prisma from "../lib/prisma";
 import { slugify } from "../lib/utils";
 import bcrypt from "bcryptjs";
-import { createClient } from "@supabase/supabase-js";
+import { supabaseAdmin as supabase } from "../lib/supabase";
 import { NotificationService } from "../services/notification.service";
 import { audit } from "../lib/audit";
-
-// Inicializa o cliente Supabase para Storage (Stateless)
-const supabase = createClient(
-  process.env.SUPABASE_URL!,
-  process.env.SUPABASE_SERVICE_ROLE_KEY!
-);
 
 // ── DASHBOARD ─────────────────────────────────────────
 
@@ -355,8 +349,34 @@ export async function adminCreateUser(req: AuthRequest, res: Response): Promise<
     if (exists) { res.status(409).json({ error: "E-mail já cadastrado." }); return; }
 
     const hash = await bcrypt.hash(password, 12);
+
+    // 1. Criar no Supabase Auth (Fonte da Verdade)
+    const { data: sbData, error: sbError } = await supabase.auth.admin.createUser({
+      email,
+      password,
+      email_confirm: true,
+      user_metadata: { nome: name, role }
+    });
+
+    if (sbError) {
+      console.error("Erro Supabase Auth:", sbError);
+      res.status(500).json({ error: `Erro na autenticação externa: ${sbError.message}` });
+      return;
+    }
+
+    const sbUser = sbData.user;
+    if (!sbUser) throw new Error("Supabase não retornou usuário.");
+
+    // 2. Criar no Prisma com o mesmo ID
     const user = await prisma.user.create({
-      data: { nome: name, email, senha: hash, role, pixKey },
+      data: { 
+        id: sbUser.id,
+        nome: name, 
+        email, 
+        senha: hash, 
+        role, 
+        pixKey 
+      },
     });
 
     // Cria perfil específico baseado no role
@@ -625,3 +645,31 @@ export class AdminEventController {
     }
   }
 }
+
+// ── AUDIT LOGS ────────────────────────────────────────
+
+export async function adminGetLogs(req: AuthRequest, res: Response): Promise<void> {
+  try {
+    const page   = Math.max(1, parseInt(String(req.query.page  ?? "1")));
+    const limit  = Math.min(100, parseInt(String(req.query.limit ?? "50")));
+    const action = req.query.action ? String(req.query.action) : undefined;
+
+    const where = action ? { action: { contains: action } } : {};
+
+    const [logs, total] = await Promise.all([
+      prisma.auditLog.findMany({
+        where,
+        orderBy: { createdAt: "desc" },
+        skip: (page - 1) * limit,
+        take: limit,
+      }),
+      prisma.auditLog.count({ where }),
+    ]);
+
+    res.json({ logs, total, page, limit });
+  } catch (err) {
+    console.error("adminGetLogs:", err);
+    res.status(500).json({ error: "Erro ao carregar logs de auditoria." });
+  }
+}
+

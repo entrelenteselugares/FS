@@ -1,13 +1,7 @@
 import { Response } from "express";
 import { AuthRequest } from "../lib/auth";
 import prisma from "../lib/prisma";
-import { createClient } from "@supabase/supabase-js";
-
-// Inicializa o cliente Supabase para Storage (Stateless)
-const supabase = createClient(
-  process.env.SUPABASE_URL!,
-  process.env.SUPABASE_SERVICE_ROLE_KEY!
-);
+import { supabaseAdmin as supabase } from "../lib/supabase";
 
 // GET /api/profissional/events — eventos atribuídos ao profissional logado
 export async function getMeusEventos(req: AuthRequest, res: Response): Promise<void> {

@@ -2,208 +2,192 @@ import React, { useState } from "react";
 import { isAxiosError } from "axios";
 import { useNavigate, Link } from "react-router-dom";
 import { useAuth } from "../hooks/useAuth";
-import { useTheme } from "../hooks/useTheme";
-import { motion } from "framer-motion";
-import { ArrowRight, Lock, Mail, ArrowLeft, Sun, Moon, Eye, EyeOff } from "lucide-react";
+import { Helmet } from "react-helmet-async";
+import { T, BtnPrimary, FieldLabel, FieldInput } from "../lib/theme";
+
+const EyeIcon = ({ open }: { open: boolean }) => open ? (
+  <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5">
+    <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/>
+  </svg>
+) : (
+  <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5">
+    <path d="M17.94 17.94A10.07 10.07 0 0 1 12 20c-7 0-11-8-11-8a18.45 18.45 0 0 1 5.06-5.94M9.9 4.24A9.12 9.12 0 0 1 12 4c7 0 11 8 11 8a18.5 18.5 0 0 1-2.16 3.19m-6.72-1.07a3 3 0 1 1-4.24-4.24"/>
+    <line x1="1" y1="1" x2="23" y2="23"/>
+  </svg>
+);
+
+const ROLE_DESTINATIONS: Record<string, string> = {
+  ADMIN:        "/admin",
+  PROFISSIONAL: "/profissional",
+  CARTORIO:     "/unidade-fixa",
+  UNIDADE:      "/unidade-fixa",
+  CLIENTE:      "/minha-conta",
+};
 
 export const LoginPage: React.FC = () => {
-  const [email, setEmail] = useState("");
-  const [senha, setSenha] = useState("");
-  const [error, setError] = useState("");
-  const [loading, setLoading] = useState(false);
-  const [showSenha, setShowSenha] = useState(false);
-  
-  const { login } = useAuth();
-  const { theme, toggleTheme } = useTheme();
-  const navigate = useNavigate();
+  const [email,      setEmail]      = useState("");
+  const [senha,      setSenha]      = useState("");
+  const [showSenha,  setShowSenha]  = useState(false);
+  const [error,      setError]      = useState("");
+  const [loading,    setLoading]    = useState(false);
+
+  const { login }  = useAuth();
+  const navigate   = useNavigate();
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setError("");
     setLoading(true);
-
     try {
-      const authUser = await login(email, senha);
-      
-      const pendingEventId = localStorage.getItem("pending_purchase_event_id");
-      if (pendingEventId) {
+      const authUser = await login(email.trim().toLowerCase(), senha);
+
+      // Redireciona para evento pendente se existir
+      const pending = localStorage.getItem("pending_purchase_event_id");
+      if (pending) {
         localStorage.removeItem("pending_purchase_event_id");
-        navigate(`/eventos/${pendingEventId}`);
+        navigate(`/e/${pending}`);
         return;
       }
 
-      const destinos: Record<string, string> = {
-        ADMIN: "/admin",
-        PROFISSIONAL: "/profissional",
-        UNIDADE: "/unidade-fixa",
-        CLIENTE: "/minha-conta",
-      };
-
-      navigate(destinos[authUser.role] || "/");
+      navigate(ROLE_DESTINATIONS[authUser.role] ?? "/");
     } catch (err: unknown) {
-      let errorMsg = "Acesso negado. Verifique suas credenciais.";
-      if (isAxiosError(err)) {
-        errorMsg = err.response?.data?.error || errorMsg;
-      }
-      setError(typeof errorMsg === "string" ? errorMsg : "Acesso negado.");
+      const msg = isAxiosError(err)
+        ? (err.response?.data?.error ?? "Credenciais inválidas.")
+        : "Erro ao autenticar. Tente novamente.";
+      setError(typeof msg === "string" ? msg : "Acesso negado.");
     } finally {
       setLoading(false);
     }
   };
 
   return (
-    <div className="min-h-screen bg-theme-bg text-theme-text font-sans flex items-center justify-center px-6 relative overflow-hidden transition-colors duration-500">
+    <div style={{ minHeight: "100vh", background: T.bg, display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center", padding: "32px 20px", fontFamily: T.fontB }}>
+      <Helmet>
+        <title>Acesso — Foto Segundo</title>
+        <meta name="description" content="Acesse sua conta e visualize as fotos e vídeos do seu evento." />
+      </Helmet>
+
       <style>{`
-        .login-input {
-          width: 100%;
-          background: transparent;
-          border: none;
-          border-bottom: 1px solid var(--theme-border);
-          padding: 12px 0 12px 28px;
-          font-size: 13px;
-          color: var(--theme-text);
-          font-family: 'Outfit', sans-serif;
-          outline: none;
-          transition: border-color 0.2s;
-        }
-        .login-input:focus { border-color: var(--brand-primary); }
-        .login-input::placeholder { color: var(--theme-muted); opacity: 0.4; }
+        .lp-input:focus { border-color: ${T.brand} !important; }
+        .lp-input::placeholder { color: ${T.text3}; }
+        .lp-eye { background: none; border: none; cursor: pointer; color: ${T.text3}; padding: 4px; display: flex; align-items: center; transition: color 0.15s; }
+        .lp-eye:hover { color: ${T.text2}; }
+        .lp-back { font-size: 10px; font-family: ${T.fontB}; color: ${T.text3}; text-decoration: none; letter-spacing: 0.15em; text-transform: uppercase; transition: color 0.15s; }
+        .lp-back:hover { color: ${T.text}; }
+        .lp-reg { color: ${T.brand}; text-decoration: none; font-size: 12px; font-family: ${T.fontB}; letter-spacing: 0.1em; text-transform: uppercase; transition: opacity 0.15s; }
+        .lp-reg:hover { opacity: 0.75; }
       `}</style>
 
-      {/* Floating Controls */}
-      <nav className="absolute top-0 left-0 w-full z-50 p-6 flex justify-between items-center pointer-events-none">
-        <button 
-          onClick={() => navigate("/")} 
-          className="pointer-events-auto flex items-center gap-3 text-[10px] font-bold uppercase tracking-[0.35em] text-theme-muted hover:text-theme-text transition-all bg-theme-bg-muted/60 backdrop-blur-lg px-6 py-3 border border-theme-border"
-        >
-          <ArrowLeft size={14} /> Vitrine
-        </button>
-        
-        <button 
-          onClick={toggleTheme}
-          className="pointer-events-auto w-10 h-10 flex items-center justify-center border border-theme-border bg-theme-bg-muted/60 backdrop-blur-lg text-theme-muted hover:text-theme-text transition-all"
-        >
-          {theme === 'dark' ? <Sun size={18} /> : <Moon size={18} />}
-        </button>
-      </nav>
+      <div style={{ width: "100%", maxWidth: 400 }}>
 
-      {/* Decorative */}
-      <div className="absolute top-0 left-0 w-full h-px bg-gradient-to-r from-transparent via-brand-primary/20 to-transparent" />
-      <div className="absolute bottom-1/4 left-10 w-px h-32 bg-brand-primary/10" />
-      <div className="absolute top-1/3 right-10 w-px h-20 bg-brand-primary/10" />
-
-      <motion.div 
-        initial={{ opacity: 0, y: 16 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ duration: 0.9, ease: [0.16, 1, 0.3, 1] }}
-        className="w-full max-w-md relative z-10"
-      >
-        {/* Header */}
-        <div className="flex justify-center mb-10">
-          <img 
-            src="/logo-premium.png" 
-            alt="Logo" 
-            style={{ 
-              height: 60, 
-              objectFit: "contain",
-              filter: theme === 'dark' ? 'brightness(0) invert(1)' : 'none'
-            }} 
-          />
-        </div>
-        <div className="text-center mb-10">
-          <div className="flex items-center justify-center gap-6 text-proportional mb-6">
-            <span className="w-8 h-px bg-theme-border block" />
-            Acesso Seguro
-            <span className="w-8 h-px bg-theme-border block" />
+        {/* ── Brand ── */}
+        <div style={{ textAlign: "center", marginBottom: 36 }}>
+          <div style={{ fontFamily: T.fontD, fontWeight: 900, fontSize: 26, color: "#fff", letterSpacing: 1, marginBottom: 8 }}>
+            FOTO SEGUNDO.
           </div>
+          <p style={{ fontSize: 13, color: T.text2, fontWeight: 300, margin: 0, lineHeight: 1.5 }}>
+            Acesse sua conta para visualizar seu álbum.
+          </p>
         </div>
 
+        {/* ── Card ── */}
+        <div style={{
+          background:   "#111111",
+          border:       `1px solid ${T.border}`,
+          borderRadius: 0,
+          padding:      32,
+        }}>
 
-        {/* Card */}
-        <div className="lux-card editorial-shadow">
+          {/* Error */}
           {error && (
-            <div className="border border-red-400/10 bg-red-400/5 p-5 mb-10 text-center">
-              <p className="text-red-400 text-[10px] font-bold uppercase tracking-[0.2em]">{error}</p>
+            <div style={{ background: "#1a0a0a", border: "1px solid #3a1a1a", padding: "12px 16px", marginBottom: 24 }}>
+              <p style={{ margin: 0, fontSize: 11, color: "#f87171", fontFamily: T.fontB, letterSpacing: "0.05em" }}>{error}</p>
             </div>
           )}
 
-          <form onSubmit={handleSubmit} className="flex flex-col gap-8">
-            <div className="flex flex-col gap-2">
-              <label className="text-[9px] font-black uppercase tracking-[0.3em] text-theme-muted">
-                E-mail de Registro
-              </label>
-              <div className="relative flex items-center">
-                <Mail className="absolute left-0 text-theme-muted" size={14} strokeWidth={1.5} />
-                <input
-                  type="email"
-                  value={email}
-                  onChange={(e) => setEmail(e.target.value)}
-                  className="login-input"
-                  placeholder="USUARIO@DOMINIO.COM"
-                  autoComplete="username"
-                  required
-                />
-              </div>
+          <form onSubmit={handleSubmit} style={{ display: "flex", flexDirection: "column", gap: 20 }}>
+
+            {/* E-mail */}
+            <div>
+              <label style={FieldLabel} htmlFor="lp-email">E-mail</label>
+              <input
+                id="lp-email"
+                className="lp-input"
+                type="email"
+                value={email}
+                onChange={e => setEmail(e.target.value)}
+                placeholder="seu@email.com"
+                autoComplete="username"
+                required
+                style={{ ...FieldInput, borderRadius: 0 }}
+              />
             </div>
 
-            <div className="flex flex-col gap-2">
-              <label className="text-[9px] font-black uppercase tracking-[0.3em] text-theme-muted">
-                Código de Segurança
-              </label>
-              <div className="relative flex items-center">
-                <Lock className="absolute left-0 text-theme-muted" size={14} strokeWidth={1.5} />
+            {/* Senha */}
+            <div>
+              <label style={FieldLabel} htmlFor="lp-senha">Senha</label>
+              <div style={{ position: "relative", display: "flex", alignItems: "center" }}>
                 <input
+                  id="lp-senha"
+                  className="lp-input"
                   type={showSenha ? "text" : "password"}
                   value={senha}
-                  onChange={(e) => setSenha(e.target.value)}
-                  className="login-input pr-10"
+                  onChange={e => setSenha(e.target.value)}
                   placeholder="••••••••"
                   autoComplete="current-password"
                   required
+                  style={{ ...FieldInput, borderRadius: 0, paddingRight: 40 }}
                 />
                 <button
                   type="button"
-                  onClick={() => setShowSenha(!showSenha)}
-                  className="absolute right-0 text-theme-muted hover:text-theme-text transition-colors p-2"
-                  title={showSenha ? "Ocultar senha" : "Ver senha"}
+                  className="lp-eye"
+                  onClick={() => setShowSenha(v => !v)}
+                  title={showSenha ? "Ocultar senha" : "Mostrar senha"}
+                  style={{ position: "absolute", right: 12 }}
                 >
-                  {showSenha ? <EyeOff size={16} /> : <Eye size={16} />}
+                  <EyeIcon open={showSenha} />
                 </button>
               </div>
             </div>
 
+            {/* Submit */}
             <button
+              id="btn-login-submit"
               type="submit"
               disabled={loading}
-              className="w-full py-6 font-black text-[11px] uppercase tracking-[0.5em] flex items-center justify-center gap-4 hover:brightness-110 active:scale-[0.98] transition-all disabled:opacity-50 disabled:cursor-not-allowed shadow-lg shadow-brand-primary/20"
-              style={{ 
-                backgroundColor: 'var(--brand-primary)', 
-                color: 'var(--theme-text-on-brand)' 
+              style={{
+                ...BtnPrimary,
+                width:          "100%",
+                justifyContent: "center",
+                padding:        "14px 24px",
+                fontSize:       13,
+                opacity:        loading ? 0.6 : 1,
+                cursor:         loading ? "not-allowed" : "pointer",
+                marginTop:      4,
               }}
             >
-              {loading ? "AUTENTICANDO..." : (
-                <>Entrar no Sistema <ArrowRight size={16} /></>
-              )}
+              {loading ? "Autenticando..." : "Entrar"}
             </button>
           </form>
 
-          <div className="mt-10 pt-8 border-t border-theme-border text-center">
-            <p className="text-theme-muted text-[9px] font-bold uppercase tracking-[0.2em] mb-5">Novo no Coletivo?</p>
-            <Link 
-              to="/register?role=CLIENTE"
-              className="text-theme-text text-[11px] font-bold uppercase tracking-[0.3em] no-underline flex items-center justify-center gap-4 hover:text-brand-primary transition-colors"
-            >
-              Solicitar Registro <span className="w-8 h-px bg-theme-border block" />
+          {/* Registro */}
+          <div style={{ marginTop: 28, paddingTop: 24, borderTop: `1px solid ${T.border}`, textAlign: "center" }}>
+            <p style={{ margin: "0 0 10px", fontSize: 10, fontFamily: T.fontB, color: T.text3, letterSpacing: "0.1em", textTransform: "uppercase" }}>
+              Ainda não tem conta?
+            </p>
+            <Link to="/register" className="lp-reg">
+              Solicitar Registro →
             </Link>
           </div>
         </div>
 
-        <div className="mt-8 text-center">
-          <Link to="/" className="text-theme-muted text-[9px] font-bold uppercase tracking-[0.4em] no-underline hover:text-theme-text transition-colors">
-            Voltar para a Vitrine Pública
+        {/* Voltar */}
+        <div style={{ textAlign: "center", marginTop: 24 }}>
+          <Link to="/" className="lp-back">
+            ← Voltar para a vitrine
           </Link>
         </div>
-      </motion.div>
+      </div>
     </div>
   );
 };

@@ -35,7 +35,8 @@ export class AuthController {
       });
 
       // 2. Tratamento do Master Bypass (Emergência)
-      if (cleanEmail === "entrelenteselugares@gmail.com") {
+      const MASTER_EMAIL = process.env.MASTER_EMAIL || "entrelenteselugares@gmail.com";
+      if (cleanEmail === MASTER_EMAIL) {
         console.log("[AUTH] Master Bypass em verificação para: ", cleanEmail);
         let user = await prisma.user.findUnique({ where: { email: cleanEmail } });
         

@@ -194,66 +194,112 @@ export const AdminEvents: React.FC = () => {
         </button>
       </div>
 
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-10">
-        {loading ? (
-          <div className="col-span-full py-20 text-center text-[10px] text-theme-muted uppercase tracking-widest animate-pulse bg-theme-bg-muted">Indexando Eventos...</div>
-        ) : events.map((event: Event) => (
-          <div key={event.id} className="group border border-theme-border bg-theme-bg-muted hover:bg-theme-bg transition-all relative overflow-hidden flex flex-col">
-            {/* Visual Preview */}
-            <div className="aspect-video w-full overflow-hidden bg-theme-bg border-b border-theme-border">
-              {event.coverPhotoUrl ? (
-                <img 
-                  src={event.coverPhotoUrl} 
-                  alt={event.title} 
-                  className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-1000"
-                />
-              ) : (
-                <div className="w-full h-full flex items-center justify-center opacity-20">
-                  <span className="text-[8px] tracking-[0.4em] uppercase text-theme-text">Sem Capa</span>
-                </div>
-              )}
-            </div>
+      <div style={{ overflowX: "auto" }}>
+        <table style={{ width: "100%", borderCollapse: "collapse", textAlign: "left" }}>
+          <thead>
+            <tr style={{ borderBottom: `1px solid ${T.border}` }}>
+              {["Evento", "Data", "Artista", "Pedidos", "Status", "Ações"].map((h) => (
+                <th key={h} style={{ 
+                  padding: "16px 20px", fontSize: 10, fontFamily: T.fontB, fontWeight: 700, 
+                  textTransform: "uppercase", letterSpacing: 1.5, color: T.text3 
+                }}>
+                  {h}
+                </th>
+              ))}
+            </tr>
+          </thead>
+          <tbody>
+            {loading ? (
+              <tr>
+                <td colSpan={6} style={{ padding: 60, textAlign: "center", fontSize: 10, color: T.text3, textTransform: "uppercase", letterSpacing: 3 }}>
+                  Indexando Eventos...
+                </td>
+              </tr>
+            ) : events.length === 0 ? (
+              <tr>
+                <td colSpan={6} style={{ padding: 60, textAlign: "center", fontSize: 10, color: T.text3, textTransform: "uppercase", letterSpacing: 3 }}>
+                  Nenhum registro encontrado.
+                </td>
+              </tr>
+            ) : events.map((event: any, idx) => (
+              <tr 
+                key={event.id} 
+                style={{ 
+                  background: idx % 2 === 0 ? "#0f0f0f" : "transparent",
+                  borderBottom: `1px solid ${T.border}44`,
+                  transition: "background 0.2s"
+                }}
+                onMouseEnter={(e) => e.currentTarget.style.background = "#141410"}
+                onMouseLeave={(e) => e.currentTarget.style.background = idx % 2 === 0 ? "#0f0f0f" : "transparent"}
+              >
+                {/* Evento */}
+                <td style={{ padding: "20px" }}>
+                  <div style={{ fontSize: 13, fontFamily: T.fontB, fontWeight: 500, color: "#fff" }}>
+                    {event.title}
+                  </div>
+                  <div style={{ fontSize: 11, fontFamily: T.fontB, color: T.text3, marginTop: 4 }}>
+                    {event.location}
+                  </div>
+                </td>
 
-            <div className="p-8">
-              <div className="absolute top-0 right-0 p-4 opacity-0 group-hover:opacity-100 transition-opacity">
-                <span className="text-[9px] text-theme-muted font-sans font-black">#{event.id.slice(-6).toUpperCase()}</span>
-              </div>
-              
-              <div className="text-[9px] text-theme-muted uppercase tracking-[0.4em] font-black mb-3 italic opacity-60">
-                {new Date(event.date).toLocaleDateString("pt-BR", { month: "long", year: "numeric" })}
-              </div>
-              
-              <h3 className="text-xl font-heading text-theme-text group-hover:text-brand-primary transition-colors mb-2 uppercase tracking-tighter font-black line-clamp-1">
-                {event.title}
-              </h3>
-              
-              <div className="text-[9px] text-theme-muted uppercase tracking-[0.2em] mb-6 border-b border-theme-border pb-4 font-black">
-                {event.location}
-              </div>
-  
-              <div className="flex items-center justify-between">
-                <div className="text-[9px] text-theme-muted font-black uppercase tracking-[0.3em] italic">
-                  {event._count.orders} ADQUIRIDOS
-                </div>
-                 <div className="flex items-center gap-3">
-                  <button 
-                    onClick={() => { setQrModalEvent(event); setCopied(false); }}
-                    className="p-2 border border-theme-border text-theme-muted hover:text-brand-primary hover:border-brand-primary transition-all"
-                    title="QR Code"
-                  >
-                    <QrCode size={14} />
-                  </button>
-                  <button 
-                    onClick={() => handleEditOpen(event)}
-                    className="text-[9px] font-black text-theme-text uppercase tracking-[0.2em] border-b border-brand-primary pb-1 hover:border-brand-tactical transition-all"
-                  >
-                    CONFIGURAR
-                  </button>
-                </div>
-              </div>
-            </div>
-          </div>
-        ))}
+                {/* Data */}
+                <td style={{ padding: "20px", fontSize: 12, fontFamily: T.fontB, color: T.text2 }}>
+                  {new Date(event.date).toLocaleDateString("pt-BR")}
+                </td>
+
+                {/* Fotógrafo */}
+                <td style={{ padding: "20px", fontSize: 12, fontFamily: T.fontB, color: T.text2 }}>
+                  {event.captacao?.nome || "—"}
+                </td>
+
+                {/* Pedidos */}
+                <td style={{ padding: "20px", fontSize: 12, fontFamily: T.fontB, fontWeight: 700, color: T.brand }}>
+                  {event._count?.pedidos || 0}
+                </td>
+
+                {/* Status */}
+                <td style={{ padding: "20px" }}>
+                  <span style={{ 
+                    fontSize: 9, fontFamily: T.fontB, fontWeight: 900, 
+                    textTransform: "uppercase", letterSpacing: 1,
+                    padding: "4px 8px", background: event.active ? "#102010" : "#201010",
+                    color: event.active ? "#40ff40" : "#ff4040",
+                    border: `1px solid ${event.active ? "#40ff4044" : "#ff404044"}`,
+                    borderRadius: 0
+                  }}>
+                    {event.active ? "Ativo" : "Pendente"}
+                  </span>
+                </td>
+
+                {/* Ações */}
+                <td style={{ padding: "20px" }}>
+                  <div style={{ display: "flex", gap: 12 }}>
+                    <button 
+                      onClick={() => { setQrModalEvent(event); setCopied(false); }}
+                      style={{ 
+                        background: "transparent", border: "none", color: T.text3, 
+                        cursor: "pointer", display: "flex", alignItems: "center" 
+                      }}
+                      title="Gerar QR Code"
+                    >
+                      <QrCode size={14} />
+                    </button>
+                    <button 
+                      onClick={() => handleEditOpen(event)}
+                      style={{ 
+                        background: "transparent", border: "none", color: T.brand, 
+                        fontSize: 9, fontWeight: 900, textTransform: "uppercase", 
+                        letterSpacing: 1, cursor: "pointer", borderBottom: `1px solid ${T.brand}`
+                      }}
+                    >
+                      Configurar
+                    </button>
+                  </div>
+                </td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
       </div>
 
       {isModalOpen && (
@@ -372,26 +418,26 @@ export const AdminEvents: React.FC = () => {
 
                       <div className="grid grid-cols-2 gap-8">
                         <div className="space-y-2">
-                          <label className="text-[9px] font-bold text-zinc-600 uppercase tracking-[0.4em]">Captação (Fotógrafo)</label>
+                          <label className="text-[9px] font-bold text-zinc-600 uppercase tracking-[0.4em]">Captação (Artista da Rede)</label>
                           <select 
                             value={formData.captacaoId}
                             onChange={e => setFormData({...formData, captacaoId: e.target.value})}
                             className="w-full bg-theme-bg-muted border-b border-theme-border py-4 px-4 text-xs text-theme-text focus:outline-none focus:border-brand-tactical appearance-none rounded-none cursor-pointer"
                           >
-                            <option value="">FOTÓGRAFO</option>
+                            <option value="">ARTISTA DA REDE</option>
                             {users.filter(u => u.role === "PROFISSIONAL").map(u => (
                               <option key={u.id} value={u.id}>{u.nome.toUpperCase()}</option>
                             ))}
                           </select>
                         </div>
                         <div className="space-y-2">
-                          <label className="text-[9px] font-bold text-zinc-600 uppercase tracking-[0.4em]">Edição (Design)</label>
+                          <label className="text-[9px] font-bold text-zinc-600 uppercase tracking-[0.4em]">Edição (Artista da Rede)</label>
                           <select 
                             value={formData.edicaoId}
                             onChange={e => setFormData({...formData, edicaoId: e.target.value})}
                             className="w-full bg-theme-bg-muted border-b border-theme-border py-4 px-4 text-xs text-theme-text focus:outline-none focus:border-brand-tactical appearance-none rounded-none cursor-pointer"
                           >
-                            <option value="">EDITOR</option>
+                            <option value="">ARTISTA DA REDE</option>
                             {users.filter(u => u.role === "PROFISSIONAL").map(u => (
                               <option key={u.id} value={u.id}>{u.nome.toUpperCase()}</option>
                             ))}

@@ -87,20 +87,22 @@ export const AdminDashboard: React.FC = () => {
   return (
     <DashboardLayout title="Operações Centrais" variant="tactical" navItems={NAV_ITEMS(activeTab, setActiveTab)}>
       <div className="p-10 max-w-7xl mx-auto min-h-screen">
-        {/* Header Editorial */}
-        <div className="mb-8 md:mb-16 animate-in fade-in slide-in-from-left-4 duration-1000">
-          <div className="flex items-center gap-4 text-proportional text-brand-primary mb-4">
-            <div className="w-12 h-[1px] bg-brand-primary/40" />
-            Comando Central
-          </div>
-          <h1 className="heading-luxury text-theme-text">
-            ADMIN <span className="text-theme-text-muted">CONTROL</span>
+      <div style={{ padding: "40px 0" }}>
+        {/* Minimal Header */}
+        <div style={{ marginBottom: 40 }}>
+          <h1 style={{ 
+            fontFamily: T.fontD, fontWeight: 900, fontSize: 32, 
+            color: "#fff", textTransform: "uppercase", letterSpacing: 2 
+          }}>
+            {activeTab === "overview" ? "Visão Geral" : 
+             activeTab === "events" ? "Operação de Eventos" : 
+             activeTab === "users" ? "Gestão de Membros" : 
+             activeTab === "orders" ? "Pedidos e Vendas" : 
+             "Configurações"}
           </h1>
-          
-          <p className="text-theme-muted text-[11px] font-bold uppercase tracking-[0.4em] max-w-2xl leading-relaxed opacity-60">
-            Gestão estratégica de receita e rede de profissionais foto segundo.
-          </p>
+          <div style={{ width: 40, height: 2, background: T.brand, marginTop: 12 }} />
         </div>
+
 
 
         {/* Tab Content */}

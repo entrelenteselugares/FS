@@ -41,30 +41,60 @@ export const AdminOverview: React.FC<OverviewProps> = ({ stats, recentOrders, pe
 
   return (
     <div className="space-y-16 animate-in fade-in slide-in-from-bottom-4 duration-700">
-      {/* KPI Section */}
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 md:gap-px md:bg-theme-border md:border md:border-theme-border shadow-2xl">
-        <div className="lux-card border-l-4 border-l-brand-primary">
-          <div className="text-proportional mb-6">Receita Bruta</div>
-          <div className="text-3xl md:text-4xl font-sans text-theme-text font-black mb-2 tracking-tighter">R$ {stats?.totalRevenue.toFixed(2)}</div>
-          <p className="text-[9px] text-theme-muted uppercase tracking-widest font-black">Protocolos Aprovados</p>
-        </div>
-        <div className="lux-card border-l-4 md:border-l-0 md:border-l border-theme-border/10">
-          <div className="text-proportional mb-6">Ativos Reais</div>
-          <div className="text-3xl md:text-4xl font-sans text-theme-text font-black mb-2 tracking-tighter">{stats?.activeEvents}</div>
-          <p className="text-[9px] text-theme-muted uppercase tracking-widest font-black">Eventos em Prateleira</p>
-        </div>
-        <div className="lux-card border-l-4 md:border-l-0 md:border-l border-theme-border/10">
-          <div className="text-proportional mb-6">Conversão</div>
-          <div className="text-3xl md:text-4xl font-sans text-theme-text font-black mb-2 tracking-tighter">{stats?.totalOrders}</div>
-          <p className="text-[9px] text-theme-muted uppercase tracking-widest font-black">Vendas Liquidadas</p>
-        </div>
-        <div className={`lux-card border-l-4 ${Number(stats?.pendingQuotesCount) > 0 ? "border-l-amber-500 animate-pulse" : "border-l-theme-border/10"}`}>
-          <div className="text-proportional mb-6">Leads Pendentes</div>
-          <div className={`text-3xl md:text-4xl font-sans font-black mb-2 tracking-tighter ${(Number(stats?.pendingQuotesCount) > 0) ? "text-amber-500" : "text-theme-text"}`}>
-            {stats?.pendingQuotesCount || 0}
+      {/* KPI Section — 3 Cards side-by-side */}
+      <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(280px, 1fr))", gap: 1 }}>
+        
+        {/* Card 1: Receita */}
+        <div style={{ 
+          background: T.bgField, border: `1px solid ${T.border}`, padding: "24px 32px", borderRadius: 0 
+        }}>
+          <label style={{ 
+            fontSize: 10, fontFamily: T.fontB, fontWeight: 700, 
+            textTransform: "uppercase", letterSpacing: 1, color: T.text3, display: "block", marginBottom: 8 
+          }}>
+            Receita Bruta
+          </label>
+          <div style={{ 
+            fontSize: 28, fontFamily: T.fontD, fontWeight: 900, color: "#fff", textTransform: "uppercase" 
+          }}>
+            R$ {stats?.totalRevenue.toFixed(2)}
           </div>
-          <p className="text-[9px] text-theme-muted uppercase tracking-widest font-black">Aguardando Precificação</p>
         </div>
+
+        {/* Card 2: Pedidos */}
+        <div style={{ 
+          background: T.bgField, border: `1px solid ${T.border}`, padding: "24px 32px", borderRadius: 0 
+        }}>
+          <label style={{ 
+            fontSize: 10, fontFamily: T.fontB, fontWeight: 700, 
+            textTransform: "uppercase", letterSpacing: 1, color: T.text3, display: "block", marginBottom: 8 
+          }}>
+            Pedidos Liquidados
+          </label>
+          <div style={{ 
+            fontSize: 28, fontFamily: T.fontD, fontWeight: 900, color: "#fff", textTransform: "uppercase" 
+          }}>
+            {stats?.totalOrders}
+          </div>
+        </div>
+
+        {/* Card 3: Eventos */}
+        <div style={{ 
+          background: T.bgField, border: `1px solid ${T.border}`, padding: "24px 32px", borderRadius: 0 
+        }}>
+          <label style={{ 
+            fontSize: 10, fontFamily: T.fontB, fontWeight: 700, 
+            textTransform: "uppercase", letterSpacing: 1, color: T.text3, display: "block", marginBottom: 8 
+          }}>
+            Eventos Ativos
+          </label>
+          <div style={{ 
+            fontSize: 28, fontFamily: T.fontD, fontWeight: 900, color: "#fff", textTransform: "uppercase" 
+          }}>
+            {stats?.activeEvents}
+          </div>
+        </div>
+
       </div>
 
       <div className="grid lg:grid-cols-2 gap-12">

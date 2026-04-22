@@ -2,24 +2,31 @@ import { Router } from "express";
 import { EventController } from "../controllers/event.controller";
 import { PaymentController } from "../controllers/payment.controller";
 import { AuthController } from "../controllers/auth.controller";
-import { 
-  getDashboardStats, 
-  adminListEvents, 
-  adminCreateEvent, 
-  adminUpdateEvent, 
-  adminDeleteEvent, 
-  adminListUsers, 
-  adminCreateUser, 
-  adminUpdateUser, 
+import {
+  getDashboardStats,
+  adminListEvents,
+  adminCreateEvent,
+  adminUpdateEvent,
+  adminDeleteEvent,
+  adminListUsers,
+  adminCreateUser,
+  adminUpdateUser,
   adminListOrders,
-  adminMarkOrderPaid,
   adminListQuotes,
   adminApproveQuote,
   AdminEventController,
-  adminUploadCover
+  adminUploadCover,
+  adminGetLogs,
 } from "../controllers/admin.controller";
 import { MercadoPagoController } from "../controllers/mercadopago.controller";
-import { getMeusEventos, updateEventLinks, uploadEventCover, getProfile, updateProfile, respondToEvent } from "../controllers/profissional.controller";
+import {
+  getMeusEventos,
+  updateEventLinks,
+  uploadEventCover,
+  getProfile,
+  updateProfile,
+  respondToEvent,
+} from "../controllers/profissional.controller";
 import { getMeusPedidos, getMeuPedidoDetalhe } from "../controllers/cliente.controller";
 import { CartorioController } from "../controllers/cartorio.controller";
 import { SEOController } from "../controllers/seo.controller";
@@ -59,16 +66,13 @@ import { runExpirationJob } from "../jobs/expiration.job";
 
 const router = Router();
 
-// ── Sistema & Infra ─────────────────────────────────────────────
-router.get("/health", (req, res) => res.json({ status: "ok", time: new Date().toISOString() }));
+// ── Sistema & Infra ──────────────────────────────────────────────────────────
+router.get("/health", (_req, res) => res.json({ status: "ok", time: new Date().toISOString() }));
 
-// Cron — chamado pela Vercel diariamente às 06:00
+// Cron — protegido por CRON_SECRET (chamado pela Vercel diariamente às 06:00)
 router.get("/cron/expiration", async (req, res) => {
   const token = req.headers["authorization"];
-  if (
-    process.env.CRON_SECRET &&
-    token !== `Bearer ${process.env.CRON_SECRET}`
-  ) {
+  if (process.env.CRON_SECRET && token !== `Bearer ${process.env.CRON_SECRET}`) {
     console.warn("[Cron] Tentativa de acesso não autorizada.");
     return res.status(401).json({ error: "Não autorizado." });
   }
@@ -82,108 +86,114 @@ router.get("/cron/expiration", async (req, res) => {
   }
 });
 
-// ── Autenticação ────────────────────────────────────────────────
-router.post("/auth/login", AuthController.login);
+// ── Autenticação ─────────────────────────────────────────────────────────────
+router.post("/auth/login",    AuthController.login);
 router.post("/auth/register", AuthController.register);
-router.get("/auth/me", requireAuth, AuthController.me);
+router.get("/auth/me",        requireAuth, AuthController.me);
 
-// ── Mercado Pago OAuth ───────────────────────────────────────────
-router.get("/mercadopago/connect", requireAuth, MercadoPagoController.connect);
+// ── Mercado Pago OAuth ────────────────────────────────────────────────────────
+router.get("/mercadopago/connect",  requireAuth, MercadoPagoController.connect);
 router.get("/mercadopago/callback", MercadoPagoController.callback);
 
-// ── Eventos públicos (Paywall & Vitrine) ─────────────────────────
-router.get("/public/events", EventController.listPublic);
-router.get("/public/events/:id", EventController.getById);
-router.get("/public/events/id/:id", EventController.getById); // Alias para busca explícita por ID
-router.get("/public/events/:id/access", EventController.getAccess);
-router.get("/public/unidades-fixas", EventController.listPartners);
-router.post("/public/quotes", EventController.createQuote);
-router.get("/public/contests/active", getActiveContest);
-router.get("/public/contests/hall-of-fame", getHallOfFame);
-router.get("/public/unidade-fixa/:slug", getPartnerLandingData);
+// ── Eventos Públicos (Vitrine & Paywall) ──────────────────────────────────────
+router.get("/public/events",               EventController.listPublic);
+router.get("/public/events/:slug",         EventController.getById);       // busca por slug ou id
+router.get("/public/events/:slug/access",  EventController.getAccess);     // ?orderId=xxx
+router.get("/public/partners",             EventController.listPartners);   // alias legado
+router.get("/public/unidades-fixas",       EventController.listPartners);   // alias compatível
+router.post("/public/quotes",              EventController.createQuote);
+
+// ── Landings de Unidade Fixa (pública) ───────────────────────────────────────
+router.get("/public/unidade-fixa/:slug",   getPartnerLandingData);
+
+// ── Configurações Públicas ─────────────────────────────────────────────────────
+router.get("/public/configs/theme",        getPublicThemeConfigs);
+
+// ── Gamificação Pública ───────────────────────────────────────────────────────
+router.get("/public/contests/active",      getActiveContest);
+router.get("/public/contests/hall-of-fame",getHallOfFame);
+router.get("/events/:slug/likes",          getEventLikes);
+
+// ── SEO / Share ────────────────────────────────────────────────────────────────
 router.get("/share/e/:id", SEOController.getEventPreview);
-router.get("/public/configs/theme", getPublicThemeConfigs);
+
+// ── Checkout & Webhook ─────────────────────────────────────────────────────────
+router.post("/checkout/payment",      PaymentController.processPayment);
+router.post("/webhooks/mercadopago",  PaymentController.webhook);
+
+// ── Pedido Público ─────────────────────────────────────────────────────────────
 router.get("/public/orders/:id", PaymentController.getOrderPublic);
 
-// ── Pagamento ────────────────────────────────────────────────────
-router.post("/checkout", PaymentController.checkout);
-router.post("/checkout/payment", PaymentController.processPayment);
-router.post("/webhooks/mercadopago", PaymentController.webhook);
+// ── LGPD / Acesso (pós-pagamento) ─────────────────────────────────────────────
+router.post("/orders/:id/access-type",  requireAuth, chooseAccessType);
+router.get("/orders/:id/access-status", requireAuth, getAccessStatus);
 
-// ── Admin: Dashboard & Stats ─────────────────────────────────────
-router.get("/admin/stats", requireAuth, requireRole("ADMIN"), getDashboardStats);
-
-// ── Admin: Gestão de Eventos ─────────────────────────────────────
-router.get("/admin/events", requireAuth, requireRole("ADMIN", "PROFISSIONAL"), adminListEvents);
-router.post("/admin/events", requireAuth, requireRole("ADMIN", "PROFISSIONAL"), adminCreateEvent);
-router.patch("/admin/events/:id", requireAuth, requireRole("ADMIN", "PROFISSIONAL"), adminUpdateEvent);
-router.patch("/admin/events/:id/cover", requireAuth, requireRole("ADMIN"), adminUploadCover);
-router.delete("/admin/events/:id", requireAuth, requireRole("ADMIN"), adminDeleteEvent);
-
-// ── Admin: Gestão de Usuários ────────────────────────────────────
-router.get("/admin/users", requireAuth, requireRole("ADMIN"), adminListUsers);
-router.post("/admin/users", requireAuth, requireRole("ADMIN"), adminCreateUser);
-router.patch("/admin/users/:id", requireAuth, requireRole("ADMIN"), adminUpdateUser);
-
-// ── Admin: Gestão de Pedidos ─────────────────────────────────────
-router.get("/admin/orders", requireAuth, requireRole("ADMIN"), adminListOrders);
-router.patch("/admin/orders/:id/payout", requireAuth, requireRole("ADMIN"), adminMarkOrderPaid);
-
-// ── Admin: Gestão de Orçamentos (Leads) ──────────────────────────
-router.get("/admin/quotes", requireAuth, requireRole("ADMIN"), adminListQuotes);
-router.post("/admin/quotes/:id/approve", requireAuth, requireRole("ADMIN"), adminApproveQuote);
-
-// ── Cliente: Meus Pedidos & Arquivos ─────────────────────────────
-router.get("/cliente/pedidos", requireAuth, getMeusPedidos);
+// ── Cliente: Meus Pedidos ──────────────────────────────────────────────────────
+router.get("/cliente/pedidos",     requireAuth, getMeusPedidos);
 router.get("/cliente/pedidos/:id", requireAuth, getMeuPedidoDetalhe);
 
-// ── Cliente: LGPD Acesso & Privacidade ───────────────────────────
-router.post("/orders/:id/access-type", requireAuth, chooseAccessType);
-router.get("/orders/:id/access-status", requireAuth, getAccessStatus);
+// ── Profissional (Artista da Rede) ────────────────────────────────────────────
+router.get("/profissional/events",               requireAuth, requireRole("ADMIN", "PROFISSIONAL"), getMeusEventos);
+router.patch("/profissional/events/:id/links",   requireAuth, requireRole("ADMIN", "PROFISSIONAL"), updateEventLinks);
+router.patch("/profissional/events/:id/cover",   requireAuth, requireRole("ADMIN", "PROFISSIONAL"), uploadEventCover);
+router.patch("/profissional/events/:id/respond", requireAuth, requireRole("ADMIN", "PROFISSIONAL"), respondToEvent);
+router.get("/profissional/me",                   requireAuth, requireRole("ADMIN", "PROFISSIONAL"), getProfile);
+router.patch("/profissional/me",                 requireAuth, requireRole("ADMIN", "PROFISSIONAL"), updateProfile);
+
+// ── Gamificação: Curtidas & Resgates ──────────────────────────────────────────
+router.post("/events/:slug/photos/like", requireAuth, likePhoto);
+router.get("/me/points",                 requireAuth, getMyPoints);
+router.post("/me/redeem-print",          requireAuth, redeemPrint);
+
+// ── Unidade Fixa ──────────────────────────────────────────────────────────────
+router.get("/unidade-fixa/stats",    requireAuth, requireRole("ADMIN", "CARTORIO", "UNIDADE"), CartorioController.getStats);
+router.get("/unidade-fixa/events",   requireAuth, requireRole("ADMIN", "CARTORIO", "UNIDADE"), CartorioController.getEvents);
+router.get("/unidade-fixa/orders",   requireAuth, requireRole("ADMIN", "CARTORIO", "UNIDADE"), CartorioController.getOrders);
+router.patch("/unidade-fixa/profile",requireAuth, requireRole("ADMIN", "CARTORIO", "UNIDADE"), updatePartnerProfile);
+
+// ── Admin: Stats & Logs ────────────────────────────────────────────────────────
+router.get("/admin/stats", requireAuth, requireRole("ADMIN"), getDashboardStats);
+router.get("/admin/logs",  requireAuth, requireRole("ADMIN"), adminGetLogs);
+
+// ── Admin: Gestão de Eventos ───────────────────────────────────────────────────
+router.get("/admin/events",             requireAuth, requireRole("ADMIN"), adminListEvents);
+router.post("/admin/events",            requireAuth, requireRole("ADMIN"), adminCreateEvent);
+router.patch("/admin/events/:id",       requireAuth, requireRole("ADMIN"), adminUpdateEvent);
+router.patch("/admin/events/:id/cover", requireAuth, requireRole("ADMIN"), adminUploadCover);
+router.delete("/admin/events/:id",      requireAuth, requireRole("ADMIN"), adminDeleteEvent);
+
+// ── Admin: Gestão de Usuários ──────────────────────────────────────────────────
+router.get("/admin/users",       requireAuth, requireRole("ADMIN"), adminListUsers);
+router.post("/admin/users",      requireAuth, requireRole("ADMIN"), adminCreateUser);
+router.patch("/admin/users/:id", requireAuth, requireRole("ADMIN"), adminUpdateUser);
+
+// ── Admin: Gestão de Pedidos ───────────────────────────────────────────────────
+router.get("/admin/orders",                   requireAuth, requireRole("ADMIN"), adminListOrders);
 router.post("/admin/orders/:id/delete-media", requireAuth, requireRole("ADMIN"), deleteMediaAdmin);
 
-// ── Profissional: Gestão de Entregas ─────────────────────────────
-router.get("/profissional/events", requireAuth, requireRole("ADMIN", "PROFISSIONAL"), getMeusEventos);
-router.patch("/profissional/events/:id/links", requireAuth, requireRole("ADMIN", "PROFISSIONAL"), updateEventLinks);
-router.patch("/profissional/events/:id/cover", requireAuth, requireRole("ADMIN", "PROFISSIONAL"), uploadEventCover);
-router.patch("/profissional/events/:id/respond", requireAuth, requireRole("ADMIN", "PROFISSIONAL"), respondToEvent);
+// ── Admin: Orçamentos (Leads) ──────────────────────────────────────────────────
+router.get("/admin/quotes",               requireAuth, requireRole("ADMIN"), adminListQuotes);
+router.patch("/admin/quotes/:id/approve", requireAuth, requireRole("ADMIN"), adminApproveQuote);
 
-router.get("/profissional/me", requireAuth, requireRole("ADMIN", "PROFISSIONAL"), getProfile);
-router.patch("/profissional/me", requireAuth, requireRole("ADMIN", "PROFISSIONAL"), updateProfile);
+// ── Admin: Repasses ────────────────────────────────────────────────────────────
+router.post("/admin/payouts/generate",                requireAuth, requireRole("ADMIN"), generateWeeklyPayout);
+router.get("/admin/payouts",                          requireAuth, requireRole("ADMIN"), listPayouts);
+router.patch("/admin/payouts/:id/items/:itemId/paid", requireAuth, requireRole("ADMIN"), markItemPaid);
 
-// ── Gamificação: Curtidas & Pontos ──────────────────────────────
-router.post("/events/:slug/photos/like", requireAuth, likePhoto);
-router.get("/events/:slug/likes", getEventLikes); // pública
-
-// ── Gamificação: Resgates & Perfil ──────────────────────────────
-router.get("/me/points", requireAuth, getMyPoints);
-router.post("/me/redeem-print", requireAuth, redeemPrint);
-
-// ── Admin: Operação de Impressão ────────────────────────────────
-router.get("/admin/suppliers", requireAuth, requireRole("ADMIN"), listSuppliers);
-router.post("/admin/suppliers", requireAuth, requireRole("ADMIN"), createSupplier);
-router.get("/admin/suppliers/:id/breakeven", requireAuth, requireRole("ADMIN"), getBreakeven);
-router.get("/admin/redemptions", requireAuth, requireRole("ADMIN"), listRedemptions);
-router.patch("/admin/redemptions/:id/status", requireAuth, requireRole("ADMIN"), updateRedemptionStatus);
-router.get("/admin/contests", requireAuth, requireRole("ADMIN"), adminListContests);
-router.post("/admin/contests", requireAuth, requireRole("ADMIN"), adminCreateContest);
-router.patch("/admin/contests/:id", requireAuth, requireRole("ADMIN"), adminUpdateContest);
-
-router.patch("/unidade-fixa/profile", requireAuth, requireRole("CARTORIO"), updatePartnerProfile);
-router.patch("/partner/profile", requireAuth, requireRole("CARTORIO"), updatePartnerProfile); // Alias para transição segura
-
-// ── Legado / Compatibilidade ─────────────────────────────────────
-// ── Unidades Fixas: Gestão de Ativos ────────────────────────
-router.get("/unidade-fixa/stats", requireAuth, requireRole("ADMIN", "CARTORIO"), CartorioController.getStats);
-router.get("/unidade-fixa/events", requireAuth, requireRole("ADMIN", "CARTORIO"), CartorioController.getEvents);
-router.get("/unidade-fixa/orders", requireAuth, requireRole("ADMIN", "CARTORIO", "UNIDADE"), CartorioController.getOrders);
-
-// --- Configurações & Repasses ---
-router.get("/admin/configs", requireAuth, requireRole("ADMIN"), getConfigs);
+// ── Admin: Configurações ───────────────────────────────────────────────────────
+router.get("/admin/configs",   requireAuth, requireRole("ADMIN"), getConfigs);
 router.patch("/admin/configs", requireAuth, requireRole("ADMIN"), updateConfigs);
 
-router.post("/admin/payouts/generate", requireAuth, requireRole("ADMIN"), generateWeeklyPayout);
-router.get("/admin/payouts", requireAuth, requireRole("ADMIN"), listPayouts);
-router.patch("/admin/payouts/:id/items/:itemId/paid", requireAuth, requireRole("ADMIN"), markItemPaid);
+// ── Admin: Fornecedores & Breakeven ────────────────────────────────────────────
+router.get("/admin/suppliers",               requireAuth, requireRole("ADMIN"), listSuppliers);
+router.post("/admin/suppliers",              requireAuth, requireRole("ADMIN"), createSupplier);
+router.get("/admin/suppliers/:id/breakeven", requireAuth, requireRole("ADMIN"), getBreakeven);
+router.get("/admin/redemptions",             requireAuth, requireRole("ADMIN"), listRedemptions);
+router.patch("/admin/redemptions/:id/status",requireAuth, requireRole("ADMIN"), updateRedemptionStatus);
+
+// ── Admin: Concursos ───────────────────────────────────────────────────────────
+router.get("/admin/contests",       requireAuth, requireRole("ADMIN"), adminListContests);
+router.post("/admin/contests",      requireAuth, requireRole("ADMIN"), adminCreateContest);
+router.patch("/admin/contests/:id", requireAuth, requireRole("ADMIN"), adminUpdateContest);
 
 export default router;

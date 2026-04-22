@@ -1,36 +1,13 @@
 import { useState, useEffect } from "react";
 import { useParams, useNavigate, useSearchParams } from "react-router-dom";
 import { useAuth } from "../hooks/useAuth";
-import { useTheme } from "../hooks/useTheme";
 import { API as api } from "../lib/api";
 import { Helmet } from "react-helmet-async";
 import AccessTypeModal from "../components/AccessTypeModal";
 import axios from "axios";
-import { motion, AnimatePresence } from "framer-motion";
-import { 
-  ShieldCheck, 
-  Lock, 
-  Unlock, 
-  Calendar, 
-  MapPin, 
-  ArrowLeft, 
-  CreditCard, 
-  Gift, 
-  CheckCircle2,
-  ExternalLink,
-  ChevronRight,
-  Info
-} from "lucide-react";
+import { T, BtnPrimary, BtnSecondary, Card, FieldLabel, FieldInput } from "../lib/theme";
 
-interface MercadoPagoInstance {
-  createCardToken: (data: Record<string, string>) => Promise<{ id: string }>;
-}
-
-declare global {
-  interface Window {
-    MercadoPago: new (publicKey: string) => MercadoPagoInstance;
-  }
-}
+// ─── Types ────────────────────────────────────────────────────────────────────
 
 interface EventData {
   id: string;
@@ -42,7 +19,6 @@ interface EventData {
   description: string | null;
   coverPhotoUrl: string | null;
   priceBase: number;
-  priceEarly: number;
   temFoto: boolean;
   temVideo: boolean;
   temReels: boolean;
@@ -58,777 +34,485 @@ interface AccessData {
   driveUrl: string | null;
 }
 
-function formatDate(d: string) {
-  try {
-    const dateObj = new Date(d);
-    if (isNaN(dateObj.getTime())) return "Data a definir";
-    return new Intl.DateTimeFormat("pt-BR", {
-      weekday: "long", day: "2-digit", month: "long", year: "numeric",
-    }).format(dateObj);
-  } catch {
-    return "Data a definir";
-  }
-}
+type Step = "paywall" | "checkout" | "processing" | "success";
 
-function formatCurrency(v: number) {
-  return new Intl.NumberFormat("pt-BR", { style: "currency", currency: "BRL" }).format(v);
-}
+// ─── Icons ────────────────────────────────────────────────────────────────────
+
+const LockIcon = () => (
+  <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5">
+    <rect x="3" y="11" width="18" height="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/>
+  </svg>
+);
+
+const CheckIcon = () => (
+  <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#4ade80" strokeWidth="3">
+    <polyline points="20 6 9 17 4 12"/>
+  </svg>
+);
+
+const Spinner = () => (
+  <div style={{
+    width: 36, height: 36,
+    border: `2px solid ${T.brand}`,
+    borderTopColor: "transparent",
+    borderRadius: "50%",
+    animation: "spin 0.8s linear infinite"
+  }} />
+);
+
+// ─── Mercado Pago Helpers ───────────────────────────────────────────────────
 
 function detectBrand(number: string): string {
   const n = number.replace(/\s/g, "");
-  if (/^4/.test(n)) return "visa";
-  if (/^5[1-5]/.test(n) || /^2[2-7]/.test(n)) return "master";
-  if (/^3[47]/.test(n)) return "amex";
+  if (/^4/.test(n))               return "visa";
+  if (/^5[1-5]|^2[2-7]/.test(n)) return "master";
+  if (/^3[47]/.test(n))           return "amex";
+  if (/^6(?:011|5)/.test(n))      return "elo";
   return "visa";
 }
 
-type Step = "paywall" | "checkout" | "processing" | "success";
+const mpErrors: Record<string, string> = {
+  cc_rejected_insufficient_amount:     "Cartão sem limite suficiente.",
+  cc_rejected_bad_filled_security_code:"CVV inválido.",
+  cc_rejected_bad_filled_date:         "Data de validade incorreta.",
+  cc_rejected_call_for_authorize:      "Pagamento não autorizado. Contate seu banco.",
+  cc_rejected_card_disabled:           "Cartão desabilitado. Contate seu banco.",
+  cc_rejected_duplicated_payment:      "Pagamento duplicado detectado.",
+};
+
+const MP_PUBLIC_KEY = (import.meta.env.VITE_MP_PUBLIC_KEY ?? "")
+  .trim()
+  .replace(/[\r\n\t]/g, "");
+
+// Carrega o script do MP apenas quando necessário
+const loadMP = () => {
+  return new Promise((resolve) => {
+    if ((window as any).MercadoPago) return resolve((window as any).MercadoPago);
+    const script = document.createElement("script");
+    script.src = "https://sdk.mercadopago.com/js/v2";
+    script.onload = () => resolve((window as any).MercadoPago);
+    document.body.appendChild(script);
+  });
+};
+
+
+// ─── EventPage Component ──────────────────────────────────────────────────────
 
 export default function EventPage() {
-  const { id } = useParams<{ id: string }>();
+  const { slug } = useParams<{ slug: string }>();
   const navigate = useNavigate();
   const [searchParams] = useSearchParams();
   const { user } = useAuth();
-  useTheme(); // ensures ThemeProvider is available — renders correctly in both modes
 
-  const [event, setEvent]       = useState<EventData | null>(null);
-  const [loading, setLoading]   = useState(true);
-  const [notFound, setNotFound] = useState(false);
-  const [step, setStep]         = useState<Step>("paywall");
-  const [access, setAccess]     = useState<AccessData | null>(null);
-  const [orderId, setOrderId]   = useState<string | null>(null);
-  const [error, setError]       = useState("");
-  const [mpLoaded, setMpLoaded] = useState(false);
-  const [cardToken, setCardToken] = useState("");
+  const [event, setEvent] = useState<EventData | null>(null);
+  const [loading, setLoading] = useState(true);
+  const [step, setStep] = useState<Step>("paywall");
+  const [access, setAccess] = useState<AccessData | null>(null);
+  const [orderId, setOrderId] = useState<string | null>(null);
+  const [error, setError] = useState("");
   const [tokenizing, setTokenizing] = useState(false);
+  const [cardToken, setCardToken] = useState<string | null>(null);
   const [cardData, setCardData] = useState({
     number: "", name: "", month: "", year: "", cvv: "", email: "", cpf: "",
   });
 
-  // LGPD State
   const [needsAccessChoice, setNeedsAccessChoice] = useState(false);
-  const [_accessType, setAccessType] = useState<string | null>(null);
   const [accessExpiresAt, setAccessExpiresAt] = useState<string | null>(null);
-  const [contributionAmount, setContributionAmount] = useState<number>(50); // Valor padrão
-  const [contributorName, setContributorName] = useState<string>("");
+  const [pollingCount, setPollingCount] = useState(0);
 
-  const seoData = event ? {
-    title: `Foto Segundo | ${event.nomeNoivos}`,
-    desc: `Acesse as fotos e vídeos do casamento de ${event.nomeNoivos} em ${event.location}. Disponível para download imediato.`,
-    url: `${window.location.origin}/e/${event.id}`,
-    image: event.coverPhotoUrl || `${window.location.origin}/og-default.png`
-  } : null;
 
   useEffect(() => {
-    if (!id) return;
-    api.get(`/public/events/${id}`)
+    if (!slug) return;
+    api.get(`/public/events/${slug}`)
       .then((r) => setEvent(r.data))
-      .catch((e) => { if (e.response?.status === 404) setNotFound(true); })
+      .catch(() => navigate("/404"))
       .finally(() => setLoading(false));
-  }, [id]);
+  }, [slug, navigate]);
+
 
   useEffect(() => {
-    const checkAccessLocal = async (oid: string) => {
+    const checkAccessStatus = async (oid: string) => {
       try {
         const { data } = await api.get(`/orders/${oid}/access-status`);
-        
         if (data.status === "PENDING_CHOICE") {
-            setStep("success");
-            setNeedsAccessChoice(true);
-            return;
+          setStep("success");
+          setNeedsAccessChoice(true);
+        } else if (data.status === "ACTIVE") {
+          setAccess({ lightroomUrl: data.lightroomUrl, driveUrl: data.driveUrl });
+          setAccessExpiresAt(data.accessExpiresAt);
+          setStep("success");
         }
-
-        if (data.status === "EXPIRED") {
-            setStep("success");
-            setAccess({ lightroomUrl: null, driveUrl: null });
-            return;
-        }
-
-        if (data.status === "ACTIVE") {
-            setAccess({ lightroomUrl: data.lightroomUrl, driveUrl: data.driveUrl });
-            setAccessType(data.accessType);
-            setAccessExpiresAt(data.accessExpiresAt);
-            setStep("success");
-            setNeedsAccessChoice(false);
-        }
-      } catch { /* ainda não pago */ }
+      } catch { /* not paid yet */ }
     };
 
     const urlOrderId = searchParams.get("orderId");
     const savedOrderId = localStorage.getItem(`fs_order_${id}`);
     const oid = urlOrderId ?? savedOrderId;
-    if (oid) { setOrderId(oid); checkAccessLocal(oid); }
+    if (oid) {
+      setOrderId(oid);
+      checkAccessStatus(oid);
+    }
   }, [id, searchParams]);
 
-  useEffect(() => {
-    if (window.MercadoPago) { setMpLoaded(true); return; }
-    const s = document.createElement("script");
-    s.src = "https://sdk.mercadopago.com/js/v2";
-    s.onload = () => setMpLoaded(true);
-    document.head.appendChild(s);
-  }, []);
-
-  const checkAccess = async (oid: string) => {
-    try {
-      const { data } = await api.get(`/orders/${oid}/access-status`);
-      
-      if (data.status === "PENDING_CHOICE") {
-          setStep("success");
-          setNeedsAccessChoice(true);
-          return;
-      }
-
-      if (data.status === "EXPIRED") {
-          setStep("success");
-          setAccess({ lightroomUrl: null, driveUrl: null });
-          return;
-      }
-
-      if (data.status === "ACTIVE") {
-          setAccess({ lightroomUrl: data.lightroomUrl, driveUrl: data.driveUrl });
-          setAccessType(data.accessType);
-          setAccessExpiresAt(data.accessExpiresAt);
-          setStep("success");
-          setNeedsAccessChoice(false);
-      }
-
-      if (data.status === "PENDING_GOAL") {
-          setStep("success");
-          setNeedsAccessChoice(false);
-          // Atualiza o evento localmente se necessário para mostrar o progresso real
-          if (event) {
-            setEvent({
-              ...event, 
-              collectedAmount: data.collectedAmount,
-              targetAmount: data.targetAmount 
-            });
-          }
-      }
-    } catch { /* ainda não pago */ }
-  };
-
   const handleTokenize = async () => {
-    const mpLib = window.MercadoPago;
-    if (!mpLib || !mpLoaded) return;
-    setTokenizing(true); setError("");
+    if (!MP_PUBLIC_KEY) {
+      setError("Erro de configuração: Chave MP ausente.");
+      return;
+    }
+    setTokenizing(true);
+    setError("");
     try {
-      const publicKey = (import.meta.env.VITE_MP_PUBLIC_KEY ?? "").trim();
-      const mp = new mpLib(publicKey);
-      const result = await mp.createCardToken({
+      const MP = (await loadMP()) as any;
+      const mp = new MP(MP_PUBLIC_KEY);
+      
+      const { token, error: mpErr } = await mp.createCardToken({
         cardNumber: cardData.number.replace(/\s/g, ""),
         cardholderName: cardData.name,
         cardExpirationMonth: cardData.month,
         cardExpirationYear: cardData.year,
         securityCode: cardData.cvv,
+        identificationType: "CPF",
+        identificationNumber: cardData.cpf.replace(/\D/g, ""),
       });
-      setCardToken(result.id);
-    } catch {
-      setError("Dados do cartão inválidos. Verifique e tente novamente.");
+
+      if (mpErr) {
+        setError("Dados do cartão inválidos. Verifique os campos.");
+        return;
+      }
+      setCardToken(token);
+    } catch (err) {
+      setError("Erro ao validar cartão.");
     } finally {
       setTokenizing(false);
     }
   };
 
+  const pollPaymentStatus = async (oid: string) => {
+    let count = 0;
+    const interval = setInterval(async () => {
+      count++;
+      if (count > 10) { // 30s total (3s * 10)
+        clearInterval(interval);
+        setError("O pagamento está demorando mais que o esperado. Verifique seu e-mail.");
+        setStep("checkout");
+        return;
+      }
+
+      try {
+        const { data } = await api.get(`/orders/${oid}/access-status`);
+        if (data.status === "PENDING_CHOICE" || data.status === "ACTIVE") {
+          clearInterval(interval);
+          setOrderId(oid);
+          if (data.status === "PENDING_CHOICE") {
+            setNeedsAccessChoice(true);
+          } else {
+            setAccess({ lightroomUrl: data.lightroomUrl, driveUrl: data.driveUrl });
+            setAccessExpiresAt(data.accessExpiresAt);
+          }
+          setStep("success");
+        }
+      } catch { /* keep polling */ }
+    }, 3000);
+  };
+
   const handlePay = async () => {
     if (!event || !cardToken) return;
-    setStep("processing"); setError("");
+    setStep("processing");
+    setError("");
     try {
       const { data } = await api.post("/checkout/payment", {
         eventId: event.id,
-        cardToken,
-        installments: 1,
-        paymentMethodId: detectBrand(cardData.number),
         email: cardData.email,
         cpf: cardData.cpf,
-        contributionAmount: event.isCrowdfund ? contributionAmount : null,
-        contributorName: event.isCrowdfund ? contributorName : null,
+        cardToken: cardToken,
+        installments: 1,
+        paymentMethodId: detectBrand(cardData.number)
       });
-      const oid = data.orderId;
-      localStorage.setItem(`fs_order_${id}`, oid);
-      setOrderId(oid);
-      navigate(`/e/${id}?orderId=${oid}`, { replace: true });
-      if (data.hasPaid) await checkAccess(oid);
-      else pollStatus(oid);
-    } catch (err: unknown) {
-      let msg = "Erro ao processar pagamento.";
-      if (axios.isAxiosError(err)) {
-        msg = err.response?.data?.error ?? msg;
+
+      if (data.hasPaid) {
+        setOrderId(data.orderId);
+        setNeedsAccessChoice(true);
+        setStep("success");
+      } else {
+        pollPaymentStatus(data.orderId);
       }
+    } catch (err: any) {
+      const msg = err.response?.data?.code ? (mpErrors[err.response.data.code] || err.response.data.error) : "Erro no pagamento.";
       setError(msg);
       setStep("checkout");
+      setCardToken(null);
     }
   };
 
-  const pollStatus = (oid: string) => {
-    let n = 0;
-    const t = setInterval(async () => {
-      n++;
-      try { await checkAccess(oid); clearInterval(t); }
-      catch { if (n >= 10) { clearInterval(t); setStep("checkout"); setError("Pagamento em análise. Você receberá acesso por e-mail."); } }
-    }, 3000);
-  };
 
   const handleChange = (k: string) => (e: React.ChangeEvent<HTMLInputElement>) =>
     setCardData((p) => ({ ...p, [k]: e.target.value }));
 
   if (loading) return (
-    <div className="min-h-screen bg-theme-bg flex items-center justify-center">
-      <div className="w-8 h-8 border-2 border-brand-primary border-t-transparent rounded-full animate-spin" />
+    <div style={{ minHeight: "100vh", background: T.bg, display: "flex", alignItems: "center", justifyContent: "center" }}>
+      <Spinner />
     </div>
   );
 
-  if (notFound || !event) return (
-    <div className="min-h-screen bg-theme-bg flex flex-col items-center justify-center gap-6 px-6 text-center">
-      <h1 className="text-4xl md:text-5xl font-extrabold tracking-tight text-theme-text uppercase">
-        Protocolo não localizado
-      </h1>
-      <p className="text-theme-muted text-[11px] font-bold uppercase tracking-[0.3em]">O registro solicitado não existe em nossa rede</p>
-      <button 
-        onClick={() => navigate("/")} 
-        className="mt-8 text-[10px] font-bold uppercase tracking-[0.4em] text-brand-primary border-b border-brand-primary/30 pb-1 hover:border-brand-primary transition-all"
-      >
-        ← Retornar à Vitrine
-      </button>
-    </div>
-  );
+  if (!event) return null;
+
+  const paid = step === "success";
 
   return (
-    <div className="min-h-screen bg-theme-bg text-theme-text font-sans transition-colors duration-500 overflow-x-hidden">
-      {seoData && (
-        <Helmet>
-          <title>{seoData.title}</title>
-          <meta name="description" content={seoData.desc} />
-          <meta property="og:title" content={seoData.title} />
-          <meta property="og:description" content={seoData.desc} />
-          <meta property="og:url" content={seoData.url} />
-          <meta property="og:image" content={seoData.image} />
-          <meta name="twitter:card" content="summary_large_image" />
-        </Helmet>
-      )}
+    <div style={{ minHeight: "100vh", background: T.bg, color: T.text, fontFamily: T.fontB }}>
+      <Helmet>
+        <title>{event.nomeNoivos} — Foto Segundo</title>
+      </Helmet>
+
       <style>{`
-        .editorial-shadow { box-shadow: 0 40px 100px -20px rgba(0,0,0,0.15); }
-        .dark .editorial-shadow { box-shadow: 0 40px 100px -20px rgba(0,0,0,0.6); }
+        @keyframes spin { from { transform: rotate(0deg); } to { transform: rotate(360deg); } }
+        @media (min-width: 1024px) {
+          .event-grid { display: grid; grid-template-columns: 1fr 360px; gap: 48px; }
+        }
+        @media (max-width: 1023px) {
+          .event-grid { display: flex; flex-direction: column; gap: 32px; }
+        }
       `}</style>
 
-      {/* Navigation */}
-      <nav className="sticky top-0 z-50 bg-theme-bg/80 backdrop-blur-xl border-b border-theme-border px-6 py-4 flex justify-between items-center transition-colors">
-        <button 
-          onClick={() => navigate("/")} 
-          className="flex items-center gap-3 text-[10px] font-bold uppercase tracking-[0.3em] text-theme-muted hover:text-theme-text transition-all"
-        >
-          <ArrowLeft size={14} /> <span className="hidden md:inline">Protocolos</span>
+      {/* Nav */}
+      <nav style={{ padding: "16px 24px", borderBottom: `1px solid ${T.border}`, display: "flex", alignItems: "center", justifyContent: "space-between" }}>
+        <button onClick={() => navigate("/")} style={{ background: "none", border: "none", color: T.text3, cursor: "pointer", fontSize: 11, textTransform: "uppercase", letterSpacing: 2, display: "flex", alignItems: "center", gap: 8 }}>
+          ← Voltar
         </button>
-        <div className="text-center">
-          <span className="text-[14px] font-bold uppercase tracking-[0.5em] text-theme-text block md:inline md:mr-1">FOTO</span>
-          <span className="text-[14px] font-light uppercase tracking-[0.5em] text-theme-text">SEGUNDO</span>
-        </div>
-        <div className="flex items-center gap-4">
-          <span className="text-[9px] font-bold uppercase tracking-[0.2em] text-theme-muted hidden sm:block">
-            {user?.role === 'ADMIN' ? 'Painel de Controle' : 'Acesso Editorial'}
-          </span>
-          <div className="w-1.5 h-1.5 rounded-full bg-brand-primary animate-pulse" />
-        </div>
+        <div style={{ fontFamily: T.fontD, fontWeight: 900, fontSize: 18, color: "#fff" }}>FOTO SEGUNDO.</div>
+        <div style={{ width: 60 }} />
       </nav>
 
-      {/* Main Content Layout */}
-      <main className="max-w-7xl mx-auto px-4 md:px-6 py-12 md:py-24 grid grid-cols-1 lg:grid-cols-12 gap-12 lg:gap-20 items-start">
+      <main style={{ maxWidth: 1200, margin: "0 auto", padding: "40px 24px" }} className="event-grid">
         
-        {/* Left Column: Visual & Header */}
-        <div className="lg:col-span-7 space-y-8 md:space-y-12">
+        {/* Coluna Esquerda */}
+        <div style={{ display: "flex", flexDirection: "column", gap: 32 }}>
           
-          {/* Immersive Cover */}
-          <div className="relative group overflow-hidden bg-theme-bg-muted aspect-[4/3] md:aspect-[16/9] lux-card !p-0 editorial-shadow">
-            <AnimatePresence mode="wait">
-              <motion.img 
-                key={event.coverPhotoUrl}
-                initial={{ opacity: 0, scale: 1.1 }}
-                animate={{ opacity: step === "success" ? 1 : 0.6, scale: 1 }}
-                exit={{ opacity: 0 }}
-                transition={{ duration: 1.5, ease: [0.16, 1, 0.3, 1] }}
-                src={event.coverPhotoUrl || "https://images.unsplash.com/photo-1511795409834-ef04bbd61622?w=1600"} 
-                className={`w-full h-full object-cover transition-all duration-1000 ${step !== "success" ? "grayscale blur-[2px]" : "grayscale-0 blur-0"}`}
-                alt={event.nomeNoivos} 
-              />
-            </AnimatePresence>
-            
-            {step !== "success" && (
-              <div className="absolute inset-0 flex flex-col items-center justify-center text-center p-8 bg-black/40 backdrop-blur-[1px]">
-                <div className="w-16 h-16 rounded-full border border-white/20 flex items-center justify-center mb-6">
-                  <Lock size={20} className="text-white/60" strokeWidth={1} />
+          {/* Thumbnail 16:9 */}
+          <div style={{ position: "relative", width: "100%", aspectRatio: "16/9", background: T.bgCard, overflow: "hidden" }}>
+            <img 
+              src={event.coverPhotoUrl || ""} 
+              style={{ 
+                width: "100%", height: "100%", objectFit: "cover", 
+                opacity: paid ? 1 : 0.6,
+                filter: paid ? "none" : "blur(12px)",
+                transition: "all 1s ease"
+              }} 
+              alt={event.nomeNoivos}
+            />
+            {!paid && (
+              <div style={{ position: "absolute", inset: 0, display: "flex", alignItems: "center", justifyContent: "center", background: "rgba(0,0,0,0.4)" }}>
+                <div style={{ padding: 20, background: "rgba(0,0,0,0.6)", borderRadius: "50%", color: "#fff" }}>
+                  <LockIcon />
                 </div>
-                <div className="text-[10px] font-bold uppercase tracking-[0.6em] text-white/40 mb-2">Acesso Restrito</div>
-                <div className="text-[12px] font-medium tracking-[0.2em] text-white/60 uppercase">Protocolo Protegido por Paywall</div>
               </div>
             )}
-            
-            {step === "success" && (
-              <motion.div 
-                initial={{ opacity: 0, y: 20 }}
-                animate={{ opacity: 1, y: 0 }}
-                className="absolute bottom-6 left-6 flex items-center gap-3 bg-white/10 backdrop-blur-md px-4 py-2 border border-white/20 rounded-full"
-              >
-                <div className="w-2 h-2 rounded-full bg-brand-primary" />
-                <span className="text-[9px] font-bold uppercase tracking-[0.2em] text-white">Visualização Liberada</span>
-              </motion.div>
-            )}
           </div>
 
-          {/* Header Info */}
-          <div className="space-y-4 md:space-y-6">
-            <motion.div 
-               initial={{ opacity: 0, y: 20 }}
-               animate={{ opacity: 1, y: 0 }}
-               transition={{ delay: 0.2 }}
-               className="flex items-center gap-4 text-proportional text-brand-primary"
-            >
-              <div className="w-8 h-[1px] bg-brand-primary/40" />
-              {event.cartorio?.razaoSocial ?? event.location}
-            </motion.div>
-            
-            <motion.h1 
-               initial={{ opacity: 0, y: 20 }}
-               animate={{ opacity: 1, y: 0 }}
-               transition={{ delay: 0.3 }}
-               className="heading-luxury text-theme-text"
-            >
-              {event.nomeNoivos}
-            </motion.h1>
-            
-            <motion.div 
-               initial={{ opacity: 0, y: 20 }}
-               animate={{ opacity: 1, y: 0 }}
-               transition={{ delay: 0.4 }}
-               className="flex flex-wrap items-center gap-x-10 gap-y-4 text-[11px] font-bold uppercase tracking-[0.2em] text-theme-muted border-y border-theme-border py-6"
-            >
-              <div className="flex items-center gap-3"><Calendar size={14} className="text-brand-primary" /> {formatDate(event.date)}</div>
-              <div className="flex items-center gap-3"><MapPin size={14} className="text-brand-primary" /> {event.city ?? event.location}</div>
-            </motion.div>
+          {/* Registry Tag */}
+          <div style={{ display: "flex", alignItems: "center", gap: 12 }}>
+            <div style={{ width: 30, height: 2, background: T.brand }} />
+            <span style={{ fontSize: 10, letterSpacing: 2, textTransform: "uppercase", color: T.brand, fontWeight: 700 }}>
+              {event.cartorio?.razaoSocial || "Registro Editorial"}
+            </span>
           </div>
 
-          {/* Features / Services */}
-          <section className="grid grid-cols-1 sm:grid-cols-2 gap-6">
+          {/* Title */}
+          <h1 style={{ 
+            fontFamily: T.fontD, fontWeight: 900, 
+            fontSize: "clamp(40px, 5vw, 56px)", 
+            lineHeight: 1, color: "#fff", 
+            textTransform: "uppercase", margin: 0 
+          }}>
+            {event.nomeNoivos}
+          </h1>
+
+          {/* Meta */}
+          <div style={{ fontSize: 13, color: "#777", fontFamily: T.fontB, fontWeight: 400, marginTop: -12 }}>
+            {new Date(event.date).toLocaleDateString("pt-BR", { day: "numeric", month: "long", year: "numeric" })} · {event.city || event.location}
+          </div>
+
+          {/* Services Grid 2x2 */}
+          <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 16, marginTop: 16 }}>
             {[
-              { active: event.temFoto, name: "Galeria Editorial", desc: "Curadoria completa em alta resolução" },
-              { active: event.temVideo, name: "Cinema & Filme", desc: "Produção cinematográfica em 4K" },
-              { active: event.temReels, name: "Conteúdo para Redes", desc: "Reels e Stories prontos para compartilhar" },
-              { active: event.temFotoImpressa, name: "Papel Algodão", desc: "Impressão fine-art no local do evento" },
-            ].filter((s) => s.active).map((s, idx) => (
-              <motion.div 
-                key={s.name}
-                initial={{ opacity: 0, scale: 0.95 }}
-                animate={{ opacity: 1, scale: 1 }}
-                transition={{ delay: 0.5 + (idx * 0.1) }}
-                className="group p-6 border border-theme-border bg-theme-bg-muted/30 hover:border-brand-primary transition-all duration-500"
-              >
-                <div className="flex items-start gap-5">
-                  <div className="w-1.5 h-1.5 rounded-none bg-brand-primary mt-1.5 group-hover:scale-x-4 transition-transform origin-left" />
-                  <div>
-                    <h4 className="text-[12px] font-bold uppercase tracking-[0.2em] mb-2">{s.name}</h4>
-                    <p className="text-[11px] text-theme-muted font-bold uppercase tracking-wider">{s.desc}</p>
-                  </div>
-                </div>
-              </motion.div>
+              { label: "Fotos em Alta", active: event.temFoto },
+              { label: "Vídeo Cinema", active: event.temVideo },
+              { label: "Reels / Stories", active: event.temReels },
+              { label: "Backup 1 Ano", active: true },
+            ].map(s => (
+              <div key={s.label} style={{ padding: "16px", border: `1px solid ${T.border}`, background: T.bgCard, opacity: s.active ? 1 : 0.3 }}>
+                <div style={{ fontSize: 11, fontWeight: 600, textTransform: "uppercase", letterSpacing: 1, color: s.active ? T.text : T.text3 }}>{s.label}</div>
+              </div>
             ))}
-          </section>
+          </div>
 
-          {/* Delivery Links (Success) */}
-          {step === "success" && (
-            <motion.div 
-              initial={{ opacity: 0, y: 30 }}
-              animate={{ opacity: 1, y: 0 }}
-              className="p-10 border border-brand-primary bg-brand-primary/5 space-y-8"
-            >
-              {access?.lightroomUrl || access?.driveUrl ? (
-                <>
-                  <div className="flex items-center justify-between">
-                    <div>
-                      <h3 className="text-3xl font-extrabold tracking-tight uppercase">Seus Registros Estão Prontos</h3>
-                      <p className="text-[10px] font-bold uppercase tracking-[0.3em] text-brand-primary mt-2">Download em Alta Definição</p>
-                    </div>
-                    <Unlock size={24} className="text-brand-primary" strokeWidth={1} />
-                  </div>
-
-                  <div className="grid grid-cols-1 gap-4">
-                    {access.lightroomUrl && (
-                      <a href={access.lightroomUrl} target="_blank" rel="noopener noreferrer"
-                        className="flex items-center justify-between p-6 bg-theme-bg border border-theme-border hover:border-theme-text transition-all group">
-                        <div className="flex items-center gap-5">
-                          <div className="w-10 h-10 flex items-center justify-center border border-theme-border text-theme-muted group-hover:text-theme-text transition-all font-sans font-bold">Lr</div>
-                          <div>
-                            <p className="text-[13px] font-bold uppercase tracking-widest text-theme-text">Álbum de Fotos</p>
-                            <p className="text-[10px] text-theme-muted uppercase tracking-widest mt-1">Adobe Creative Cloud</p>
-                          </div>
-                        </div>
-                        <ExternalLink size={16} className="text-theme-muted group-hover:text-theme-text transition-all" />
-                      </a>
-                    )}
-                    {access.driveUrl && (
-                      <a href={access.driveUrl} target="_blank" rel="noopener noreferrer"
-                        className="flex items-center justify-between p-6 bg-theme-bg border border-theme-border hover:border-theme-text transition-all group">
-                        <div className="flex items-center gap-5">
-                          <div className="w-10 h-10 flex items-center justify-center border border-theme-border text-theme-muted group-hover:text-theme-text transition-all">
-                            <motion.div animate={{ rotate: 360 }} transition={{ duration: 10, repeat: Infinity, ease: "linear" }}>🎥</motion.div>
-                          </div>
-                          <div>
-                            <p className="text-[13px] font-bold uppercase tracking-widest text-theme-text">Vídeos & Reels</p>
-                            <p className="text-[10px] text-theme-muted uppercase tracking-widest mt-1">Google Drive Storage</p>
-                          </div>
-                        </div>
-                        <ExternalLink size={16} className="text-theme-muted group-hover:text-theme-text transition-all" />
-                      </a>
-                    )}
-                  </div>
-
-                  {accessExpiresAt && (
-                    <div className="flex items-center gap-3 p-4 bg-theme-bg-muted/50 border border-theme-border text-[9px] font-medium uppercase tracking-[0.2em] text-theme-muted">
-                      <Info size={14} className="text-brand-primary" />
-                      O acesso expira em {new Date(accessExpiresAt).toLocaleDateString("pt-BR")} · 
-                      Restam {Math.ceil((new Date(accessExpiresAt).getTime() - Date.now()) / 86400000)} dias
-                    </div>
-                  )}
-                </>
-              ) : (
-                <div className="text-center py-6">
-                   <Gift className="mx-auto mb-6 text-brand-primary/40" size={48} strokeWidth={1} />
-                   <h3 className="text-2xl font-extrabold tracking-tight uppercase text-theme-text">Contribuição Registrada</h3>
-                   <p className="text-theme-muted text-[11px] font-bold uppercase tracking-[0.2em] mt-4 leading-relaxed max-w-sm mx-auto">
-                     A meta de {formatCurrency(event.targetAmount || 0)} ainda não foi atingida. 
-                     Os registros serão desbloqueados para todos assim que o objetivo coletivo for concluído.
-                   </p>
-                   {/* Progress Visual in success state */}
-                   <div className="mt-8 max-w-xs mx-auto">
-                      <div className="w-full h-[2px] bg-theme-border relative">
-                        <motion.div 
-                          initial={{ width: 0 }}
-                          animate={{ width: `${Math.min(100, (Number(event.collectedAmount) / Number(event.targetAmount || 1)) * 100)}%` }}
-                          className="absolute inset-0 bg-brand-primary"
-                        />
-                      </div>
-                      <div className="flex justify-between mt-3 text-[9px] font-bold uppercase tracking-widest text-brand-primary">
-                        <span>{Math.round((Number(event.collectedAmount) / Number(event.targetAmount || 1)) * 100)}%</span>
-                        <span>{formatCurrency(Number(event.collectedAmount))}</span>
-                      </div>
-                   </div>
-                </div>
-              )}
-            </motion.div>
+          {/* Success Content (Links) */}
+          {paid && access && (
+            <div style={{ marginTop: 32, padding: 32, border: `1px solid ${T.brand}`, background: T.brandDark }}>
+              <h2 style={{ fontFamily: T.fontD, fontSize: 24, fontWeight: 900, color: T.brand, textTransform: "uppercase", marginBottom: 20 }}>Acesso Liberado</h2>
+              <div style={{ display: "flex", flexWrap: "wrap", gap: 12 }}>
+                {access.lightroomUrl && (
+                  <a href={access.lightroomUrl} target="_blank" rel="noreferrer" style={{ ...BtnPrimary, textDecoration: "none" }}>Abrir Lightroom</a>
+                )}
+                {access.driveUrl && (
+                  <a href={access.driveUrl} target="_blank" rel="noreferrer" style={{ ...BtnSecondary, color: T.text, borderColor: T.brand, textDecoration: "none" }}>Abrir Google Drive</a>
+                )}
+              </div>
+            </div>
           )}
         </div>
 
-        {/* Right Column: Checkout Flow */}
-        <aside className="lg:col-span-5 space-y-8 lg:sticky lg:top-32">
-          
-          {/* STEP: PAYWALL */}
-          {step === "paywall" && (
-            <motion.div 
-              initial={{ opacity: 0, x: 20 }}
-              animate={{ opacity: 1, x: 0 }}
-              className="bg-theme-bg-muted border border-theme-border p-8 md:p-12 editorial-shadow transition-colors"
-            >
-              <div className="text-[10px] font-bold uppercase tracking-[0.5em] text-brand-primary mb-6">Arquivo Editorial</div>
-              <div className="space-y-1 mb-10">
-                <div className="text-5xl font-black tracking-tight text-theme-text uppercase">
-                  {formatCurrency(Number(event.priceBase))}
-                </div>
-                <div className="text-[11px] font-medium uppercase tracking-[0.2em] text-theme-muted">Acesso Vitalício Individual</div>
-              </div>
-
-              {Number(event.priceEarly) < Number(event.priceBase) && (
-                <div className="p-4 bg-brand-primary/10 border border-brand-primary/20 mb-8">
-                  <p className="text-[10px] font-bold uppercase tracking-[0.2em] text-brand-primary">
-                    Desconto Antecipado: {formatCurrency(Number(event.priceEarly))}
-                  </p>
-                </div>
-              )}
-
-              <ul className="space-y-4 mb-12 border-t border-theme-border pt-8">
-                {[
-                  "Arquivos originais em alta resolução",
-                  "Sem marcas d'água de proteção",
-                  "Licença para uso em redes sociais",
-                  "Backup garantido por 12 meses"
-                ].map(item => (
-                  <li key={item} className="flex items-center gap-4 text-[11px] font-medium uppercase tracking-wider text-theme-muted">
-                    <CheckCircle2 size={14} className="text-brand-primary" /> {item}
-                  </li>
-                ))}
-              </ul>
-
-              <button
-                onClick={() => setStep("checkout")}
-                className="w-full py-6 bg-theme-text text-theme-bg text-[11px] font-bold uppercase tracking-[0.4em] hover:opacity-90 transition-all flex items-center justify-center gap-3"
-              >
-                DESBLOQUEAR PROTOCOLO <ChevronRight size={14} />
-              </button>
-
-              <div className="mt-8 flex items-center justify-center gap-6 opacity-30">
-                <ShieldCheck size={20} strokeWidth={1} />
-                <CreditCard size={20} strokeWidth={1} />
-              </div>
-            </motion.div>
-          )}
-
-          {/* STEP: CROWDFUND / GIFT */}
-          {step === "paywall" && event.isCrowdfund && (
-            <motion.div 
-               initial={{ opacity: 0, y: 20 }}
-               animate={{ opacity: 1, y: 0 }}
-               className="bg-brand-primary/5 border border-brand-primary/20 p-8 md:p-12 editorial-shadow"
-            >
-              <div className="flex items-center gap-3 mb-8">
-                <Gift size={20} className="text-brand-primary" strokeWidth={1.5} />
-                <h3 className="text-[14px] font-bold uppercase tracking-[0.3em] text-theme-text">Cota de Presente</h3>
-              </div>
-
-              {/* Progress Visual */}
-              <div className="mb-10 space-y-4">
-                <div className="flex items-end justify-between font-bold text-2xl uppercase">
-                  <span className="text-theme-text font-black">{formatCurrency(Number(event.collectedAmount))}</span>
-                  <span className="text-[11px] font-bold uppercase tracking-widest text-theme-muted">Meta: {formatCurrency(Number(event.targetAmount || 0))}</span>
-                </div>
-                <div className="w-full h-[3px] bg-theme-border overflow-hidden">
-                  <motion.div 
-                    initial={{ width: 0 }}
-                    animate={{ width: `${Math.min(100, (Number(event.collectedAmount) / Number(event.targetAmount || 1)) * 100)}%` }}
-                    className="h-full bg-brand-primary shadow-[0_0_15px_rgba(133,185,172,0.5)]"
-                    transition={{ duration: 2, ease: "circOut" }}
-                  />
-                </div>
-                <p className="text-[10px] font-bold uppercase tracking-[0.3em] text-theme-muted text-center">
-                  {Math.round((Number(event.collectedAmount) / Number(event.targetAmount || 1)) * 100)}% Arrecadado
+        {/* Coluna Direita (Sidebar) */}
+        <aside>
+          <div style={{ position: "sticky", top: 100 }}>
+            
+            {/* STEP: PAYWALL */}
+            {step === "paywall" && (
+              <div style={{ ...Card, padding: 24 }}>
+                <p style={{ fontSize: 10, letterSpacing: 2, color: T.brand, textTransform: "uppercase", margin: "0 0 12px" }}>Exclusive Collection</p>
+                <p style={{ fontFamily: T.fontD, fontWeight: 900, fontSize: 44, color: "#fff", margin: "0 0 4px" }}>
+                  R$ {event.priceBase.toFixed(2).replace(".", ",")}
                 </p>
-              </div>
-
-              <div className="space-y-6">
-                <div className="grid grid-cols-2 gap-3">
-                  {[30, 50, 100, 200].map(val => (
-                    <button 
-                      key={val} 
-                      onClick={() => { setContributionAmount(val); setStep("checkout"); }}
-                      className="py-4 border border-theme-border text-theme-text font-bold text-[12px] tracking-widest hover:border-brand-primary hover:text-brand-primary transition-all"
-                    >
-                      {formatCurrency(val)}
-                    </button>
+                <p style={{ fontSize: 12, color: T.text3, margin: "0 0 24px" }}>Acesso vitalício · Download imediato</p>
+                
+                <div style={{ display: "flex", flexDirection: "column", gap: 12, marginBottom: 32, borderTop: `1px solid ${T.border}`, paddingTop: 20 }}>
+                  {["Arquivos originais em 4K", "Sem marcas d'água", "Direito de uso comercial"].map(item => (
+                    <div key={item} style={{ display: "flex", alignItems: "center", gap: 8, fontSize: 11, color: T.text2 }}>
+                      <div style={{ width: 4, height: 4, borderRadius: "50%", background: T.brand }} /> {item}
+                    </div>
                   ))}
                 </div>
-                
-                <div className="space-y-3">
-                  <input 
-                    type="text" 
-                    placeholder="Nome p/ o Relatório"
-                    value={contributorName}
-                    onChange={(e) => setContributorName(e.target.value)}
-                    className="w-full bg-theme-bg border border-theme-border px-5 py-4 text-[12px] font-medium placeholder:text-theme-muted/50 focus:border-brand-primary outline-none transition-colors"
-                  />
-                  <div className="relative">
-                    <input 
-                      type="number" 
-                      placeholder="Outro Valor..."
-                      value={contributionAmount}
-                      onChange={(e) => setContributionAmount(Number(e.target.value))}
-                      className="w-full bg-theme-bg border border-theme-border px-5 py-4 text-[12px] font-medium placeholder:text-theme-muted/50 focus:border-brand-primary outline-none transition-colors"
-                    />
-                    <button 
-                      onClick={() => setStep("checkout")}
-                      className="absolute right-4 top-1/2 -translate-y-1/2 text-[10px] font-bold uppercase tracking-[0.2em] text-brand-primary hover:text-theme-text"
-                    >
-                      Presentear
-                    </button>
-                  </div>
-                </div>
-              </div>
-            </motion.div>
-          )}
 
-          {/* STEP: CHECKOUT FORM */}
-          {step === "checkout" && (
-            <motion.div 
-               initial={{ opacity: 0, x: 20 }}
-               animate={{ opacity: 1, x: 0 }}
-               className="bg-theme-bg-muted border border-theme-border editorial-shadow overflow-hidden"
-            >
-              <div className="px-8 py-6 border-b border-theme-border flex justify-between items-center bg-theme-bg/30">
-                <span className="text-[10px] font-bold uppercase tracking-[0.3em] text-theme-muted">Finalização Segura</span>
-                <button 
-                  onClick={() => setStep("paywall")} 
-                  className="text-[9px] font-bold uppercase tracking-[0.2em] text-theme-muted hover:text-brand-primary transition-colors"
-                >
-                  Cancelar
+                <button onClick={() => setStep("checkout")} style={{ ...BtnPrimary, width: "100%", justifyContent: "center" }}>
+                  Desbloquear Arquivos
                 </button>
+                
+                <p style={{ fontSize: 10, color: T.text3, textAlign: "center", marginTop: 16 }}>
+                  Secure Payment · Instant Access · SSL
+                </p>
               </div>
+            )}
 
-              <div className="p-8 space-y-8">
-                {/* Order Summary */}
-                <div className="flex justify-between items-end border-b border-theme-border pb-8">
-                  <div className="text-3xl font-black tracking-tight uppercase">
-                    {formatCurrency(event.isCrowdfund ? contributionAmount : Number(event.priceBase))}
-                  </div>
+            {/* STEP: CHECKOUT */}
+            {step === "checkout" && (
+              <div style={{ ...Card, padding: 24 }}>
+                <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 24 }}>
+                  <span style={{ fontSize: 10, fontWeight: 700, textTransform: "uppercase", letterSpacing: 1 }}>Secure Checkout</span>
+                  <button onClick={() => setStep("paywall")} style={{ background: "none", border: "none", color: T.brand, cursor: "pointer", fontSize: 10, textTransform: "uppercase" }}>Voltar</button>
                 </div>
 
-                {error && (
-                  <motion.div 
-                    initial={{ height: 0, opacity: 0 }}
-                    animate={{ height: "auto", opacity: 1 }}
-                    className="p-4 bg-red-400/5 border border-red-400/20 text-red-500 text-[11px] font-medium uppercase tracking-wider"
-                  >
-                    {error}
-                  </motion.div>
-                )}
-
-                {/* Card Inputs */}
-                <div className="space-y-6">
-                  <div className="space-y-2">
-                    <label className="text-[9px] font-black uppercase tracking-[0.3em] text-theme-muted">Número do Cartão</label>
-                    <div className="relative">
-                      <input
-                        value={cardData.number}
-                        onChange={handleChange("number")}
-                        placeholder="0000 0000 0000 0000"
-                        maxLength={19}
-                        className="w-full bg-theme-bg border border-theme-border px-5 py-4 text-[13px] font-medium placeholder:text-theme-muted/30 focus:border-theme-text outline-none transition-all"
-                      />
-                      <div className="absolute right-4 top-1/2 -translate-y-1/2 opacity-20">
-                        <CreditCard size={18} strokeWidth={1} />
-                      </div>
-                    </div>
-                  </div>
-
-                  <div className="space-y-2">
-                    <label className="text-[9px] font-black uppercase tracking-[0.3em] text-theme-muted">Titular (Impressão)</label>
-                    <input
-                      value={cardData.name}
-                      onChange={handleChange("name")}
-                      placeholder="Identico ao Cartão"
-                      className="w-full bg-theme-bg border border-theme-border px-5 py-4 text-[13px] font-medium placeholder:text-theme-muted/30 focus:border-theme-text outline-none transition-all uppercase"
-                    />
-                  </div>
-
-                  <div className="grid grid-cols-3 gap-4">
-                    <div className="space-y-2">
-                      <label className="text-[9px] font-black uppercase tracking-[0.3em] text-theme-muted">Mês</label>
-                      <input value={cardData.month} onChange={handleChange("month")} placeholder="MM" maxLength={2} className="w-full bg-theme-bg border border-theme-border px-4 py-4 text-[13px] text-center font-medium focus:border-theme-text outline-none" />
-                    </div>
-                    <div className="space-y-2">
-                      <label className="text-[9px] font-black uppercase tracking-[0.3em] text-theme-muted">Ano</label>
-                      <input value={cardData.year} onChange={handleChange("year")} placeholder="AA" maxLength={2} className="w-full bg-theme-bg border border-theme-border px-4 py-4 text-[13px] text-center font-medium focus:border-theme-text outline-none" />
-                    </div>
-                    <div className="space-y-2">
-                      <label className="text-[9px] font-black uppercase tracking-[0.3em] text-theme-muted">CVV</label>
-                      <input value={cardData.cvv} onChange={handleChange("cvv")} placeholder="000" maxLength={4} className="w-full bg-theme-bg border border-theme-border px-4 py-4 text-[13px] text-center font-medium focus:border-theme-text outline-none" />
-                    </div>
-                  </div>
-
-                  <div className="space-y-2">
-                    <label className="text-[9px] font-black uppercase tracking-[0.3em] text-theme-muted">Documento (CPF)</label>
-                    <input value={cardData.cpf} onChange={handleChange("cpf")} placeholder="000.000.000-00" className="w-full bg-theme-bg border border-theme-border px-5 py-4 text-[13px] font-medium focus:border-theme-text outline-none" />
-                  </div>
-
-                  <div className="space-y-2">
-                    <label className="text-[9px] font-black uppercase tracking-[0.3em] text-theme-muted">E-mail para Recebimento</label>
-                    <input value={cardData.email} onChange={handleChange("email")} placeholder="seu@email.com" className="w-full bg-theme-bg border border-theme-border px-5 py-4 text-[13px] font-medium focus:border-theme-text outline-none" />
-                  </div>
+                <div style={{ background: T.bgField, border: `1px solid ${T.border}`, padding: 16, marginBottom: 24 }}>
+                  <div style={{ fontSize: 11, color: T.text2 }}>{event.nomeNoivos}</div>
+                  <div style={{ fontSize: 16, fontWeight: 700, color: "#fff" }}>R$ {event.priceBase.toFixed(2)}</div>
                 </div>
 
-                <div className="space-y-4 pt-4">
+                <div style={{ display: "flex", flexDirection: "column", gap: 16 }}>
+                  <div>
+                    <label style={FieldLabel}>Número do Cartão</label>
+                    <input style={FieldInput} value={cardData.number} onChange={handleChange("number")} placeholder="0000 0000 0000 0000" />
+                  </div>
+                  <div>
+                    <label style={FieldLabel}>Nome no Cartão</label>
+                    <input style={FieldInput} value={cardData.name} onChange={handleChange("name")} placeholder="JOÃO SILVA" />
+                  </div>
+                  <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr 1fr", gap: 8 }}>
+                    <div>
+                      <label style={FieldLabel}>Mês</label>
+                      <input style={FieldInput} value={cardData.month} onChange={handleChange("month")} placeholder="MM" />
+                    </div>
+                    <div>
+                      <label style={FieldLabel}>Ano</label>
+                      <input style={FieldInput} value={cardData.year} onChange={handleChange("year")} placeholder="AA" />
+                    </div>
+                    <div>
+                      <label style={FieldLabel}>CVV</label>
+                      <input style={FieldInput} value={cardData.cvv} onChange={handleChange("cvv")} placeholder="000" />
+                    </div>
+                  </div>
+                  <div>
+                    <label style={FieldLabel}>CPF</label>
+                    <input style={FieldInput} value={cardData.cpf} onChange={handleChange("cpf")} placeholder="000.000.000-00" />
+                  </div>
+                  <div>
+                    <label style={FieldLabel}>E-mail p/ Recebimento</label>
+                    <input style={FieldInput} value={cardData.email} onChange={handleChange("email")} placeholder="seu@email.com" />
+                  </div>
+
+                  {error && (
+                    <div style={{ fontSize: 10, color: "#ff4040", background: "#ff404011", padding: 8, border: "1px solid #ff404033" }}>
+                      {error}
+                    </div>
+                  )}
+
                   {!cardToken ? (
                     <button 
                       onClick={handleTokenize} 
-                      disabled={tokenizing || !mpLoaded}
-                      className="w-full py-4 border border-theme-text/20 text-[10px] font-bold uppercase tracking-[0.3em] hover:bg-theme-text hover:text-theme-bg transition-all disabled:opacity-30"
+                      disabled={tokenizing || !cardData.number || !cardData.cvv}
+                      style={{ ...BtnPrimary, width: "100%", justifyContent: "center", marginTop: 8, opacity: (tokenizing || !cardData.number) ? 0.5 : 1 }}
                     >
-                      {tokenizing ? "Sincronizando..." : "Validar Cartão"}
+                      {tokenizing ? "Validando..." : "Validar Cartão"}
                     </button>
                   ) : (
-                    <div className="py-4 bg-brand-primary/10 border border-brand-primary/30 text-[10px] font-bold uppercase tracking-[0.3em] text-brand-primary text-center">
-                      ✓ Sincronização Autêntica
-                    </div>
+                    <button onClick={handlePay} style={{ ...BtnPrimary, width: "100%", justifyContent: "center", marginTop: 8, background: "#4ade80", color: "#0a0a0a" }}>
+                      Pagar R$ {event.priceBase.toFixed(2).replace(".", ",")}
+                    </button>
                   )}
-
-                  <button 
-                    onClick={handlePay} 
-                    disabled={!cardToken}
-                    className="w-full py-6 bg-theme-text text-theme-bg text-[12px] font-bold uppercase tracking-[0.4em] hover:opacity-90 transition-all disabled:opacity-20"
-                  >
-                    Confirmar Transação
-                  </button>
                 </div>
-              </div>
-            </motion.div>
-          )}
 
-          {/* STEP: PROCESSING */}
-          {step === "processing" && (
-            <motion.div 
-               initial={{ opacity: 0, scale: 0.95 }}
-               animate={{ opacity: 1, scale: 1 }}
-               className="bg-theme-bg-muted border border-theme-border p-16 editorial-shadow text-center"
-            >
-              <div className="w-12 h-12 border-2 border-brand-primary border-t-transparent rounded-full animate-spin mx-auto mb-10" />
-              <h3 className="text-3xl font-extrabold tracking-tight uppercase mb-4">Registrando Acesso</h3>
-              <p className="text-[10px] font-bold uppercase tracking-[0.3em] text-theme-muted">Sincronizando com a Rede Foto Segundo...</p>
-            </motion.div>
-          )}
-
-          {/* STEP: SUCCESS SIDEBAR */}
-          {step === "success" && (
-            <motion.div 
-               initial={{ opacity: 0, scale: 0.95 }}
-               animate={{ opacity: 1, scale: 1 }}
-               className="bg-brand-primary/10 border border-brand-primary p-12 editorial-shadow text-center relative overflow-hidden"
-            >
-              <motion.div 
-                initial={{ rotate: -15, x: 20, y: -20, opacity: 0.2 }}
-                className="absolute top-0 right-0 text-brand-primary"
-              >
-                <CheckCircle2 size={120} strokeWidth={0.5} />
-              </motion.div>
-              
-              <div className="relative z-10">
-                <div className="w-16 h-16 bg-brand-primary/20 rounded-full flex items-center justify-center mx-auto mb-8 border border-brand-primary/40">
-                  <CheckCircle2 size={32} className="text-brand-primary" strokeWidth={1} />
-                </div>
-                <h3 className="text-3xl font-extrabold tracking-tight uppercase mb-3">Sucesso Editorial</h3>
-                <p className="text-[10px] font-bold uppercase tracking-[0.3em] text-theme-muted mb-10">Protocolo Desbloqueado com Sucesso</p>
                 
-                {orderId && (
-                  <div className="pt-8 border-t border-brand-primary/20 flex flex-col items-center gap-2">
-                    <span className="text-[9px] font-bold uppercase tracking-[0.1em] text-theme-muted">Autenticação do Pedido</span>
-                    <span className="text-[12px] font-sans font-bold text-brand-primary uppercase tracking-widest">{orderId.slice(-12)}</span>
-                  </div>
-                )}
+                <p style={{ fontSize: 9, color: T.text3, textAlign: "center", marginTop: 16, lineHeight: 1.4 }}>
+                  Secure Payment · SSL · Dados não armazenados
+                </p>
               </div>
-            </motion.div>
-          )}
+            )}
+
+            {/* STEP: PROCESSING */}
+            {step === "processing" && (
+              <div style={{ ...Card, padding: "48px 24px", textAlign: "center" }}>
+                <div style={{ display: "flex", justifyContent: "center", marginBottom: 24 }}><Spinner /></div>
+                <h3 style={{ fontFamily: T.fontD, fontWeight: 900, fontSize: 22, color: "#fff", textTransform: "uppercase", margin: "0 0 8px" }}>PROCESSANDO</h3>
+                <p style={{ fontSize: 12, color: T.text3, margin: 0 }}>Validando transação com a rede bancária...</p>
+              </div>
+            )}
+
+            {/* STEP: SUCCESS */}
+            {step === "success" && (
+              <div style={{ ...Card, padding: 32, textAlign: "center" }}>
+                <div style={{ 
+                  width: 44, height: 44, borderRadius: "50%", border: "2px solid #4ade80", 
+                  display: "flex", alignItems: "center", justifyContent: "center", margin: "0 auto 20px" 
+                }}>
+                  <CheckIcon />
+                </div>
+                <h3 style={{ fontFamily: T.fontD, fontWeight: 900, fontSize: 22, color: "#fff", textTransform: "uppercase", margin: "0 0 8px" }}>PAGAMENTO CONFIRMADO</h3>
+                <p style={{ fontSize: 13, color: T.text2, margin: "0 0 24px" }}>Seus arquivos estão disponíveis ao lado.</p>
+                <div style={{ fontSize: 11, fontFamily: "monospace", color: T.text3, background: T.bgField, padding: "8px", border: `1px solid ${T.border}` }}>
+                  ID: {orderId ? orderId.slice(-12).toUpperCase() : "FS-CONFIRMED"}
+                </div>
+              </div>
+            )}
+
+          </div>
         </aside>
       </main>
-
-      {/* Footer / Legal */}
-      <footer className="mt-24 py-24 border-t border-theme-border bg-theme-bg-muted/30">
-        <div className="max-w-xl mx-auto text-center px-6 opacity-40 hover:opacity-100 transition-opacity duration-700">
-           <h4 className="text-[14px] font-bold uppercase tracking-[0.5em] mb-8">FOTO SEGUNDO EDITORIAL</h4>
-           <p className="text-[9px] font-bold uppercase tracking-[0.2em] leading-relaxed mb-6">
-             Plataforma de curadoria fotográfica e cinematográfica. 
-             Todos os registros são protegidos por direitos autorais e sincronizados em tempo real.
-           </p>
-           <div className="text-[8px] font-medium tracking-[0.1em] text-theme-muted uppercase">
-             © {new Date().getFullYear()} REDE FS · TODOS OS DIREITOS RESERVADOS
-           </div>
-        </div>
-      </footer>
 
       {needsAccessChoice && orderId && event && (
         <AccessTypeModal
           orderId={orderId}
           eventTitle={event.nomeNoivos}
-          onConfirmed={(type, expiresAt) => {
-            setAccessType(type);
-            setAccessExpiresAt(expiresAt);
+          onConfirmed={async () => {
             setNeedsAccessChoice(false);
-            checkAccess(orderId);
+            // Atualiza status para liberar links
+            try {
+              const { data } = await api.get(`/orders/${orderId}/access-status`);
+              setAccess({ lightroomUrl: data.lightroomUrl, driveUrl: data.driveUrl });
+              setAccessExpiresAt(data.accessExpiresAt);
+            } catch (err) {
+              console.error("Erro ao atualizar links após escolha:", err);
+            }
           }}
         />
       )}
     </div>
   );
 }
-

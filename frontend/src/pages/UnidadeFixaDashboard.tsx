@@ -15,6 +15,7 @@ interface UnidadeStats {
 
 interface EventoAgenda {
   id: string;
+  slug: string;
   title: string;
   date: string;
   location: string;
@@ -336,9 +337,9 @@ export default function UnidadeFixaDashboard() {
                 </div>
                 <div style={{ textAlign: "right", flexShrink: 0 }}>
                   {ev.captacao ? (
-                    <p style={{ fontSize: 12, color: "var(--brand-primary)", fontWeight: 700 }}>✓ {ev.captacao?.user?.name ?? ev.captacao?.user?.nome ?? ev.captacao?.nome ?? "Fotógrafo"}</p>
+                    <p style={{ fontSize: 12, color: "var(--brand-primary)", fontWeight: 700 }}>✓ {ev.captacao?.user?.name ?? ev.captacao?.user?.nome ?? ev.captacao?.nome ?? "Artista da Rede"}</p>
                   ) : (
-                    <p style={{ fontSize: 12, color: "#f59e0b", fontWeight: 700 }}>SEM FOTÓGRAFO</p>
+                    <p style={{ fontSize: 12, color: "#f59e0b", fontWeight: 700 }}>SEM ARTISTA DESIGNADO</p>
                   )}
                   <p style={{ fontSize: 10, color: "var(--theme-text-muted)", marginTop: 2, fontWeight: 600 }}>{ev._count?.orders ?? 0} venda(s)</p>
                 </div>
@@ -518,7 +519,7 @@ export default function UnidadeFixaDashboard() {
             <div style={{ background: "#fff", padding: "1.5rem", borderRadius: 12, display: "inline-block", marginBottom: "1.5rem", boxShadow: "0 10px 30px rgba(0,0,0,0.5)" }}>
               <QRCodeSVG 
                 id="qr-code-svg"
-                value={`${window.location.origin}/e/${qrModalEvent.id}`}
+                value={`${window.location.origin}/e/${qrModalEvent.slug}`}
                 size={220}
                 level="H"
                 includeMargin={true}
@@ -529,7 +530,7 @@ export default function UnidadeFixaDashboard() {
               <div style={{ display: "flex", gap: "0.75rem" }}>
                 <button 
                   onClick={() => {
-                    const url = `${window.location.origin}/e/${qrModalEvent.id}`;
+                    const url = `${window.location.origin}/e/${qrModalEvent.slug}`;
                     navigator.clipboard.writeText(url);
                     setCopied(true);
                     setTimeout(() => setCopied(false), 2000);

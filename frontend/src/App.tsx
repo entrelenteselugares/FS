@@ -27,11 +27,11 @@ const DashboardRedirect = () => {
   const { user } = useAuth();
   if (!user) return <Navigate to="/login" replace />;
   const map: Record<string, string> = {
-    ADMIN: "/admin",
-    CARTORIO: "/unidade-fixa",
-    UNIDADE: "/unidade-fixa",
+    ADMIN:        "/admin",
     PROFISSIONAL: "/profissional",
-    CLIENTE: "/minha-conta",
+    CARTORIO:     "/unidade-fixa",
+    UNIDADE:      "/unidade-fixa",
+    CLIENTE:      "/minha-conta",
   };
   return <Navigate to={map[user.role] || "/"} replace />;
 };
@@ -51,11 +51,10 @@ const AnimatedRoutes = () => {
         <Routes location={location}>
           {/* Público */}
           <Route path="/" element={<HomePage />} />
-          <Route path="/auth" element={<AuthSelectionPage />} />
           <Route path="/login" element={<LoginPage />} />
           <Route path="/register" element={<RegisterPage />} />
-          <Route path="/eventos/:id" element={<EventPage />} />
-          <Route path="/e/:id" element={<EventPage />} />
+          <Route path="/e/:slug" element={<EventPage />} />
+          <Route path="/auth" element={<AuthSelectionPage />} />
           <Route path="/cotacao" element={<QuotePage />} />
           <Route path="/hall-da-fama" element={<HallOfFame />} />
           <Route path="/concursos" element={<HallOfFame />} />
@@ -68,14 +67,7 @@ const AnimatedRoutes = () => {
             <ProtectedRoute><DashboardRedirect /></ProtectedRoute>
           } />
 
-          {/* Painel do Profissional */}
-          <Route path="/profissional" element={
-            <ProtectedRoute roles={["PROFISSIONAL", "ADMIN"]}>
-              <ProfissionalDashboard />
-            </ProtectedRoute>
-          } />
-
-          {/* Painel Admin Modular v6.0 */}
+          {/* Painel do Admin */}
           <Route path="/admin" element={
             <ProtectedRoute roles={["ADMIN"]}>
               <AdminDashboard />
@@ -83,16 +75,23 @@ const AnimatedRoutes = () => {
           } />
           <Route path="/admin/*" element={<Navigate to="/admin" replace />} />
 
+          {/* Painel do Artista (Profissional) */}
+          <Route path="/profissional" element={
+            <ProtectedRoute roles={["ADMIN", "PROFISSIONAL"]}>
+              <ProfissionalDashboard />
+            </ProtectedRoute>
+          } />
+
           {/* Painel Unidades Fixas */}
           <Route path="/unidade-fixa" element={
-            <ProtectedRoute roles={["UNIDADE", "CARTORIO", "ADMIN"]}>
+            <ProtectedRoute roles={["ADMIN", "CARTORIO", "UNIDADE"]}>
               <UnidadeFixaDashboard />
             </ProtectedRoute>
           } />
 
-          {/* Área do Cliente */}
+          {/* Área do Cliente / Minha Conta */}
           <Route path="/minha-conta" element={
-            <ProtectedRoute roles={["CLIENTE", "ADMIN", "PROFISSIONAL", "UNIDADE", "CARTORIO"]}>
+            <ProtectedRoute roles={["ADMIN", "CLIENTE", "PROFISSIONAL", "CARTORIO", "UNIDADE"]}>
               <ClienteArea />
             </ProtectedRoute>
           } />
@@ -100,6 +99,7 @@ const AnimatedRoutes = () => {
           {/* Home e 404 */}
           <Route path="/404" element={<NotFoundPage />} />
           <Route path="*" element={<Navigate to="/404" replace />} />
+
         </Routes>
       </motion.div>
     </AnimatePresence>
@@ -127,7 +127,7 @@ function App() {
       <div className="min-h-screen bg-[#0A0A0A] flex flex-col items-center justify-center gap-6">
         <div className="w-1.5 h-1.5 rounded-full bg-brand-primary animate-ping mb-4" />
         <div className="text-[14px] font-bold uppercase tracking-[0.6em] text-white">FOTO SEGUNDO</div>
-        <div className="text-[10px] font-bold uppercase tracking-[0.3em] text-white/30 animate-pulse">Sincronizando Rede...</div>
+        <div className="text-[10px] font-bold uppercase tracking-[0.3em] text-white/30 animate-pulse">Sincronizando Rede de Artistas...</div>
       </div>
     );
   }

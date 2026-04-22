@@ -3,8 +3,8 @@ import { useNavigate } from "react-router-dom";
 import { motion } from "framer-motion";
 import { API } from "../lib/api";
 import { useAuth } from "../hooks/useAuth";
-import { useTheme } from "../hooks/useTheme";
 import { Helmet } from "react-helmet-async";
+import { T, BtnPrimary, BtnSecondary, getBadgeStyle } from "../lib/theme";
 
 interface Event {
   id: string;
@@ -18,642 +18,386 @@ interface Event {
   temReels: boolean;
 }
 
+const CATEGORIES = ["Todos", "Foto", "Vídeo", "Reels", "Álbum"];
 
-function formatDate(dateStr: string) {
-  try {
-    return new Intl.DateTimeFormat("pt-BR", {
-      day: "2-digit", month: "short", year: "numeric",
-    }).format(new Date(dateStr));
-  } catch {
-    return "Data indisponível";
-  }
+function formatDate(d: string) {
+  try { return new Intl.DateTimeFormat("pt-BR", { day: "2-digit", month: "short", year: "numeric" }).format(new Date(d)); }
+  catch { return "—"; }
 }
 
-function isRecent(dateStr: string) {
-  try {
-    const diff = Date.now() - new Date(dateStr).getTime();
-    return diff < 3 * 24 * 60 * 60 * 1000; // 3 dias
-  } catch {
-    return false;
-  }
+function isToday(d: string) {
+  const ev = new Date(d); const now = new Date();
+  return ev.getDate() === now.getDate() && ev.getMonth() === now.getMonth() && ev.getFullYear() === now.getFullYear();
 }
 
-// Paleta unificada — Design System "Editorial Portfólio" 📸✨
-const THEME = {
-  bg:       "var(--theme-bg)",
-  bgCard:   "var(--theme-bg-muted)",
-  bgHover:  "var(--theme-bg-muted)",
-  border:   "var(--theme-border)",
-  border2:  "var(--theme-border)",
-  text:     "var(--theme-text)",
-  text2:    "var(--theme-muted)",
-  text3:    "var(--theme-muted)",
-  accent:   "var(--brand-primary)",   // verde da logo dinâmico
-  accentBg: "var(--theme-bg-muted)",
-  fontBase: "'Outfit', sans-serif",
-} as const;
+function isRecent(d: string) {
+  return Date.now() - new Date(d).getTime() < 7 * 24 * 60 * 60 * 1000;
+}
 
-export const HomePage = () => {
-  const navigate = useNavigate();
-  const { user, logout } = useAuth();
-  const { theme, toggleTheme } = useTheme();
-  const [query, setQuery] = useState("");
-  const [events, setEvents] = useState<Event[]>([]);
-  const [loading, setLoading] = useState(true);
-  const [page, setPage] = useState(1);
-  const [totalPages, setTotalPages] = useState(1);
-  const [userMenuOpen, setUserMenuOpen] = useState(false);
-  const debounceRef = useRef<ReturnType<typeof setTimeout> | undefined>(undefined);
-
-  const dashboardPath = user?.role === "ADMIN" ? "/admin"
-    : user?.role === "PROFISSIONAL" ? "/profissional"
-    : (user?.role === "CARTORIO" || user?.role === "UNIDADE") ? "/unidade-fixa"
-    : null;
-
-  const fetchEvents = async (q: string, pg: number) => {
-    setLoading(true);
-    try {
-      const { data } = await API.get(`/public/events`, {
-        params: { q: q.trim() || undefined, page: pg }
-      });
-      setEvents(data.events ?? []);
-      setTotalPages(data.pages ?? 1);
-    } catch (err) {
-      console.error("Erro ao carregar eventos:", err);
-    } finally {
-      setTimeout(() => setLoading(false), 300);
-    }
-  };
-
-  useEffect(() => {
-    clearTimeout(debounceRef.current);
-    debounceRef.current = setTimeout(() => {
-      setPage(1);
-      fetchEvents(query, 1);
-    }, 400);
-    return () => clearTimeout(debounceRef.current);
-  }, [query]);
-
-  useEffect(() => {
-    fetchEvents(query, page);
-  }, [page, query]);
+// ── EventCard ─────────────────────────────────────────────────────────────────
+function EventCard({ event, onClick }: { event: Event; onClick: () => void }) {
+  const today = isToday(event.dataEvento);
+  const novo  = !today && isRecent(event.dataEvento);
+  const price = event.priceBase ?? 190;
 
   return (
-    <div style={{ fontFamily: THEME.fontBase, background: THEME.bg, color: THEME.text, minHeight: "100vh", transition: "all 0.3s ease" }}>
-      <Helmet>
-        <title>Foto Segundo | Suas memórias, sincronizadas com a vida.</title>
-        <meta name="description" content="Acesse a galeria exclusiva do seu grande dia e reviva cada detalhe com qualidade premium em segundos." />
-      </Helmet>
-      
-      <style>{`
-        * { box-sizing: border-box; }
-        body { margin: 0; padding: 0; overflow-x: hidden; background: ${THEME.bg}; color: ${THEME.text}; font-family: 'Outfit', sans-serif; }
-        .search-input:focus { border-color: ${THEME.accent} !important; background: rgba(var(--accent-rgb), 0.05) !important; }
-        
-        @media (max-width: 768px) {
-          .mobile-stack { flex-direction: column !important; align-items: center !important; text-align: center !important; gap: 20px !important; }
-          .mobile-hero-padding { padding: 3rem 0 2rem !important; }
-          .mobile-grid-header { flex-direction: column !important; align-items: flex-start !important; text-align: left !important; gap: 0.75rem !important; margin-bottom: 2rem !important; }
-          .mobile-hide { display: none !important; }
-          .mobile-nav { padding: 0.75rem 1.25rem !important; }
-          .mobile-footer { flex-direction: column !important; text-align: center !important; gap: 2rem !important; }
-
-          /* Search bar: Premium pill-style with high blur */
-          .mobile-search { 
-            flex-direction: row !important; 
-            background: rgba(255,255,255,0.06) !important; 
-            backdrop-filter: blur(30px) !important;
-            border: 1px solid rgba(255,255,255,0.08) !important; 
-            padding: 4px !important; 
-            gap: 0 !important; 
-            border-radius: 100px !important; 
-          }
-          .mobile-search-input { 
-            background: transparent !important; 
-            border: none !important; 
-            font-size: 16px !important; /* Prevents iOS auto-zoom */
-            padding: 12px 20px !important; 
-            letter-spacing: -0.01em !important;
-          }
-          .mobile-search-button { 
-            width: 48px !important;
-            height: 48px !important;
-            padding: 0 !important; 
-            border-radius: 100px !important; 
-            flex-shrink: 0 !important; 
-            box-shadow: 0 4px 15px rgba(0,0,0,0.2) !important;
-          }
-
-          /* Section spacing */
-          section { padding: 2.5rem 1rem !important; }
-          .hero-mobile-margin { margin: 12px 12px 0 !important; }
-
-          /* Grid improvements for Desktop */
-          .events-grid { 
-            grid-template-columns: repeat(2, 1fr) !important; 
-            gap: 4rem !important;
-            padding: 0 4rem !important;
-          }
-
-          .hero-section-container {
-            margin: 1.5rem 2.5rem !important; /* Margem para flutuar conforme SDF */
-            border-radius: 24px !important; /* Bordas arredondadas conforme SDF */
-            height: 380px !important; /* Proporção panorâmica YouTube */
-            overflow: hidden;
-            border: 1px solid rgba(255,255,255,0.05);
-          }
-
-          .desktop-hide { display: none !important; }
-        }
-
-        .mobile-toggle {
-          display: none;
-          position: fixed;
-          bottom: 30px;
-          right: 30px;
-          z-index: 1000;
-          background: var(--theme-bg-muted);
-          border: 1px solid var(--theme-border);
-          padding: 15px;
-          border-radius: 100px;
-          box-shadow: 0 10px 30px rgba(0,0,0,0.3);
-          color: var(--theme-text);
-          backdrop-filter: blur(10px);
-        }
-
-        @media (max-width: 768px) {
-          .mobile-toggle { display: flex; }
-          .desktop-only { display: none !important; }
-        }
-      `}</style>
-
-      {/* NAV */}
-      <nav 
-        id="main-nav"
-        className="mobile-nav"
-        style={{ 
-          display: "flex", alignItems: "center", justifyContent: "space-between", 
-          padding: "1.2rem 2.5rem", borderBottom: `1px solid ${THEME.border}`, 
-          background: "var(--theme-bg-nav)", backdropFilter: "blur(20px)", 
-          position: "sticky", top: 0, zIndex: 100 
-        }}
-      >
-        <div 
-          onClick={() => navigate("/")}
-          style={{ 
-            cursor: "pointer",
-            display: "flex", 
-            alignItems: "center", 
-            gap: 12 
-          }}
-        >
-          <img 
-            src="/logo-premium.png" 
-            alt="Foto Segundo" 
-            style={{ 
-              height: "clamp(30px, 8vw, 48px)", 
-              width: "auto", 
-              objectFit: "contain",
-              filter: theme === 'dark' ? 'brightness(0) invert(1)' : 'none'
-            }} 
+    <div
+      onClick={onClick}
+      style={{ cursor: "pointer", background: T.bgCard, display: "flex", flexDirection: "column" }}
+    >
+      {/* Thumbnail */}
+      <div style={{ position: "relative", aspectRatio: "4/3", background: "#161616", overflow: "hidden" }}>
+        {event.coverPhotoUrl ? (
+          <img
+            src={event.coverPhotoUrl}
+            alt={event.nomeNoivos}
+            style={{ width: "100%", height: "100%", objectFit: "cover", transition: "transform 0.6s ease" }}
+            onMouseOver={e => (e.currentTarget.style.transform = "scale(1.04)")}
+            onMouseOut={e  => (e.currentTarget.style.transform = "scale(1)")}
+            onError={e => { e.currentTarget.src = "https://images.unsplash.com/photo-1511795409834-ef04bbd61622?w=600&q=60"; }}
           />
-        </div>
-        <div style={{ display: "flex", alignItems: "center", gap: 16 }}>
-          <button 
-            className="desktop-only"
-            onClick={toggleTheme}
-            style={{ 
-              background: "none", border: "none", color: THEME.text2, cursor: "pointer", 
-              padding: "4px", display: "flex", alignItems: "center", transition: "color 0.3s" 
-            }}
-            onMouseOver={(e) => (e.currentTarget.style.color = THEME.text)}
-            onMouseOut={(e) => (e.currentTarget.style.color = THEME.text2)}
-          >
-            {theme === "light" ? (
-              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg>
-            ) : (
-              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><circle cx="12" cy="12" r="5"/><line x1="12" y1="1" x2="12" y2="3"/><line x1="12" y1="21" x2="12" y2="23"/><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/><line x1="1" y1="12" x2="3" y2="12"/><line x1="21" y1="12" x2="23" y2="12"/><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"/><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"/></svg>
-            )}
-          </button>
-
-          <button
-            onClick={() => navigate("/cotacao")}
-            style={{ 
-              fontSize: 9, 
-              background: "var(--brand-primary)", 
-              color: "#fff", 
-              border: "none", 
-              padding: "10px 18px", 
-              borderRadius: 0, 
-              cursor: "pointer", 
-              fontWeight: 900, 
-              letterSpacing: "0.2em", 
-              textTransform: "uppercase",
-              boxShadow: "0 4px 15px rgba(133, 185, 172, 0.2)"
-            }}
-          >
-            Agendar
-          </button>
-
-          {user ? (
-            <div style={{ position: "relative" }}>
-              <button
-                onClick={() => setUserMenuOpen((v) => !v)}
-                style={{ fontSize: 10, background: "transparent", color: THEME.text, border: `1px solid ${THEME.border}`, padding: "10px 20px", borderRadius: 0, cursor: "pointer", fontWeight: 600, letterSpacing: "0.05em", textTransform: "uppercase", display: "flex", alignItems: "center", gap: 8 }}
-              >
-                {user.nome.split(" ")[0]}
-                <span style={{ fontSize: 8 }}>▾</span>
-              </button>
-              {userMenuOpen && (
-                <div style={{ position: "absolute", right: 0, top: "calc(100% + 12px)", background: THEME.bg, border: `1px solid ${THEME.border}`, borderRadius: 2, minWidth: 180, zIndex: 200, overflow: "hidden", boxShadow: "0 10px 30px rgba(0,0,0,0.15)" }}>
-                  {dashboardPath && (
-                    <button onClick={() => { setUserMenuOpen(false); navigate(dashboardPath); }} style={{ width: "100%", textAlign: "left", padding: "14px 20px", background: "transparent", border: "none", color: THEME.text, fontSize: 11, fontWeight: 500, letterSpacing: "0.05em", textTransform: "uppercase", cursor: "pointer", borderBottom: `1px solid ${THEME.border}` }}>
-                      Meu Painel
-                    </button>
-                  )}
-                  <button onClick={() => { logout(); setUserMenuOpen(false); navigate("/"); }} style={{ width: "100%", textAlign: "left", padding: "14px 20px", background: "transparent", border: "none", color: THEME.text2, fontSize: 11, fontWeight: 500, letterSpacing: "0.05em", textTransform: "uppercase", cursor: "pointer" }}>
-                    Sair
-                  </button>
-                </div>
-              )}
-            </div>
-          ) : (
-            <button
-              onClick={() => navigate("/login")}
-              style={{ fontSize: 10, background: "transparent", color: THEME.text, border: `1px solid ${THEME.border}`, padding: "10px 20px", borderRadius: 0, cursor: "pointer", fontWeight: 600, letterSpacing: "0.05em", textTransform: "uppercase" }}
-            >
-              Acesso
-            </button>
-          )}
-        </div>
-      </nav>
-
-      {/* Mobile Theme Toggle Floating Button */}
-      <button 
-        className="mobile-toggle"
-        onClick={toggleTheme}
-      >
-        {theme === "light" ? (
-          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg>
         ) : (
-          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><circle cx="12" cy="12" r="5"/><line x1="12" y1="1" x2="12" y2="3"/><line x1="12" y1="21" x2="12" y2="23"/><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/><line x1="1" y1="12" x2="3" y2="12"/><line x1="21" y1="12" x2="23" y2="12"/><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"/><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"/></svg>
-        )}
-      </button>
-
-      {/* HERO SECTION */}
-      <section 
-        className="hero-section-container"
-        style={{ 
-          height: "clamp(350px, 75vh, 750px)", 
-          position: "relative", 
-          overflow: "hidden", 
-          display: "flex", 
-          alignItems: "center", 
-          justifyContent: "center", 
-          background: "#000",
-          margin: "clamp(0px, 2vw, 24px)",
-          borderRadius: "clamp(0px, 1.5vw, 16px)"
-        }}
-      >
-        
-        {/* Imagem de Fundo Panorâmica */}
-        <div style={{ 
-          position: "absolute", inset: 0, 
-          display: "grid", 
-          gridTemplateColumns: "repeat(12, 1fr)", 
-          gridTemplateRows: "repeat(auto-fill, minmax(200px, 1fr))", 
-          gap: 0, zIndex: 0,
-          opacity: 0.35, /* Menor opacidade para ar editorial */
-          filter: "grayscale(100%)",
-          transform: "scale(1.01)"
-        }}>
-          {Array.from({ length: 48 }).map((_, i) => {
-            const photoIds = [
-              '1507003211169-0a1dd7228f2d', '1522202176988-66273c2fd55f', '1519389950473-47ba0277781c',
-              '1556761175-b413da4baf72', '1497366216548-37526070297c', '1542744173-8e7e53415bb0'
-            ];
-            const pId = photoIds[i % photoIds.length];
-            return (
-              <div key={i} style={{ width: "100%", height: "100%", overflow: "hidden", border: "1px solid rgba(255,255,255,0.02)" }}>
-                <img
-                  src={`https://images.unsplash.com/photo-${pId}?auto=format&fit=crop&q=40&w=400`}
-                  style={{ width: "100%", height: "100%", objectFit: "cover", opacity: 0.8 }}
-                />
-              </div>
-            );
-          })}
-        </div>
-
-        {/* Overlay Editorial */}
-        <div style={{ 
-          position: "absolute", 
-          inset: 0, 
-          background: "linear-gradient(to top, var(--theme-bg), transparent, rgba(0,0,0,0.4))", 
-          zIndex: 1 
-        }} />
-
-        {/* Conteúdo Centralizado */}
-        <div style={{ position: "relative", zIndex: 10, textAlign: "center", padding: "0 24px", maxWidth: 1200 }}>
-          <motion.div
-            initial={{ opacity: 0, y: 10 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.8 }}
-            className="text-proportional mb-4"
-            style={{ 
-              letterSpacing: "0.5em", 
-              fontSize: "min(10px, 3vw)",
-              color: "rgba(255,255,255,0.7)",
-              fontWeight: 600,
-              textTransform: "uppercase"
-            }}
-          >
-            COLETIVO EDITORIAL DE IMAGEM E CINEMA
-          </motion.div>
-          
-          <motion.h1 
-            initial={{ opacity: 0, y: 15 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.8, delay: 0.2 }}
-            className="heading-luxury mb-8"
-            style={{ 
-              fontWeight: 900, 
-              color: "#fff",
-              textShadow: "0 2px 20px rgba(0,0,0,0.5)"
-            }}
-          >
-            ETERNIZANDO CADA SEGUNDO.
-          </motion.h1>
-
-          <motion.p 
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            transition={{ duration: 1, delay: 0.4 }}
-            style={{ 
-              fontSize: "clamp(11px, 1.5vw, 13px)", 
-              color: "rgba(255,255,255,0.6)", 
-              marginBottom: "3rem", 
-              fontWeight: 400, 
-              maxWidth: "600px", 
-              margin: "0 auto 3rem", 
-              lineHeight: 1.8 
-            }}
-          >
-            Uma curadoria refinada de experiências visuais. Acesse sua galeria exclusiva com a sofisticação que seu momento merece.
-          </motion.p>
-
-          {/* Barra de busca */}
-          <motion.div 
-            initial={{ opacity: 0, scale: 0.98 }}
-            animate={{ opacity: 1, scale: 1 }}
-            transition={{ duration: 0.6, delay: 0.6 }}
-            className="mobile-search lux-glass"
-            style={{ 
-              maxWidth: 720, 
-              margin: "0 auto", 
-              position: "relative", 
-              display: "flex", 
-              borderRadius: "2px",
-              padding: "4px", /* Mais compacto conforme referência */
-              boxShadow: "0 10px 40px rgba(0,0,0,0.4)"
-            }}
-          >
-              <input
-                value={query}
-                onChange={(e) => setQuery(e.target.value)}
-                placeholder="Buscar álbum (ex: Noivos)..."
-                className="mobile-search-input"
-                style={{
-                  width: "100%", background: "transparent", border: "none",
-                  padding: "12px 20px", fontSize: 14,
-                  color: "#FFFFFF", outline: "none",
-                  fontFamily: THEME.fontBase
-                }}
-              />
-              <button
-                onClick={() => fetchEvents(query, 1)}
-                className="mobile-search-button"
-                style={{
-                  background: "#FFFFFF", color: "#000000", border: "none", padding: "0 20px",
-                  borderRadius: "2px", fontSize: 10, fontWeight: 800, cursor: "pointer",
-                  textTransform: "uppercase", letterSpacing: "0.1em", display: "flex",
-                  alignItems: "center", justifyContent: "center"
-                }}
-              >
-                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
-                  <circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/>
-                </svg>
-              </button>
-          </motion.div>
-        </div>
-      </section>
-
-      {/* GRID DE EVENTOS */}
-      <section style={{ padding: "6rem 2rem", maxWidth: 1400, margin: "0 auto" }}>
-        <div className="mobile-grid-header" style={{ display: "flex", alignItems: "flex-end", justifyContent: "space-between", marginBottom: "4rem" }}>
-          <div style={{ borderLeft: `2px solid ${THEME.accent}`, paddingLeft: "1.5rem" }}>
-            <p style={{ fontSize: 12, color: THEME.text2, letterSpacing: "0.2em", textTransform: "uppercase", marginBottom: 8, fontWeight: 600 }}>Arquivo Recente</p>
-            <h2 style={{ fontFamily: THEME.fontBase, fontSize: "clamp(36px, 5vw, 56px)", fontWeight: 800, color: THEME.text, lineHeight: 1, textTransform: "uppercase" }}>
-              Últimos Registros
-            </h2>
+          <div style={{ width: "100%", height: "100%", display: "flex", alignItems: "center", justifyContent: "center" }}>
+            <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke={T.text3} strokeWidth="1"><path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"/><circle cx="12" cy="13" r="4"/></svg>
           </div>
-          <span style={{ fontSize: 11, color: THEME.text2, letterSpacing: "0.15em", textTransform: "uppercase", cursor: "pointer", borderBottom: `1px solid ${THEME.border}`, paddingBottom: 6, fontWeight: 700, whiteSpace: "nowrap" }}>
-            Ver agenda completa
+        )}
+
+        {/* Badge Hoje / Novo */}
+        {today && (
+          <span style={{ position: "absolute", top: 12, left: 12, fontSize: 9, fontFamily: T.fontB, fontWeight: 500, letterSpacing: 1.5, textTransform: "uppercase", background: T.brand, color: "#0a0a0a", padding: "4px 10px", borderRadius: 0 }}>
+            Hoje
           </span>
-        </div>
-
-        {loading ? (
-          <div className="events-grid" style={{ display: "grid", gridTemplateColumns: "repeat(auto-fill, minmax(350px, 1fr))", gap: "3rem" }}>
-            {[...Array(6)].map((_, i) => (
-              <div key={i} style={{ background: "rgba(127,127,127,0.05)", aspectRatio: "4/3", animation: "pulse 2s infinite" }} />
-            ))}
-          </div>
-        ) : events.length === 0 ? (
-          <div style={{ textAlign: "center", padding: "8rem 0", border: `1px dashed ${THEME.border}` }}>
-            <p style={{ fontFamily: THEME.fontBase, fontSize: 32, color: THEME.text2, fontWeight: 300 }}>Nada encontrado para sua busca.</p>
-          </div>
-        ) : (
-          <div className="events-grid" style={{ display: "grid", gridTemplateColumns: "repeat(auto-fill, minmax(350px, 1fr))", gap: "4rem 3rem" }}>
-            {events.map((event) => (
-              <EventCard key={event.id} event={event} onClick={() => navigate(`/e/${event.id}`)} />
-            ))}
-          </div>
         )}
-
-        {/* Paginação */}
-        {totalPages > 1 && (
-          <div style={{ display: "flex", justifyContent: "center", alignItems: "center", gap: 40, marginTop: "6rem" }}>
-            <button
-              onClick={() => { setPage((p) => Math.max(1, p - 1)); window.scrollTo({ top: 400, behavior: 'smooth' }); }}
-              disabled={page === 1}
-              style={{ background: "none", border: "none", color: page === 1 ? "transparent" : THEME.text2, cursor: "pointer", fontSize: 11, textTransform: "uppercase", letterSpacing: "0.2em", fontWeight: 700, borderBottom: `1px solid ${THEME.border}` }}
-            >
-              Anterior
-            </button>
-            <span style={{ fontSize: 14, color: THEME.text, fontFamily: THEME.fontBase, letterSpacing: "0.2em", fontWeight: 600 }}>
-              {page} <span style={{ opacity: 0.2, margin: "0 10px" }}>—</span> {totalPages}
-            </span>
-            <button
-              onClick={() => { setPage((p) => Math.min(totalPages, p + 1)); window.scrollTo({ top: 400, behavior: 'smooth' }); }}
-              disabled={page === totalPages}
-              style={{ background: "none", border: "none", color: page === totalPages ? "transparent" : THEME.text, cursor: "pointer", fontSize: 11, textTransform: "uppercase", letterSpacing: "0.2em", fontWeight: 700, borderBottom: `1px solid ${THEME.text}` }}
-            >
-              Próximo
-            </button>
-          </div>
+        {novo && (
+          <span style={{ position: "absolute", top: 12, left: 12, fontSize: 9, fontFamily: T.fontB, fontWeight: 500, letterSpacing: 1.5, textTransform: "uppercase", background: T.brand, color: "#0a0a0a", padding: "4px 10px", borderRadius: 0 }}>
+            Novo
+          </span>
         )}
-      </section>
+      </div>
 
-      {/* CTA BANNER */}
-      <section
-        onClick={() => navigate("/cotacao")}
-        style={{
-          cursor: "pointer",
-          padding: "5rem 2rem",
-          textAlign: "center",
-          background: THEME.bgCard,
-          borderTop: `1px solid ${THEME.border}`,
-          borderBottom: `1px solid ${THEME.border}`,
-          transition: "all 0.4s",
-        }}
-        className="cta-section"
-      >
-        <span style={{ fontSize: 12, color: THEME.text2, textTransform: "uppercase", letterSpacing: "0.3em", fontWeight: 600 }}>
-          Deseja uma cobertura exclusiva?{" "}
-          <span style={{ color: THEME.text, borderBottom: "1px solid" }}>Solicite orçamento &rarr;</span>
-        </span>
-      </section>
-
-      {/* FOOTER */}
-      <footer className="mobile-footer" style={{ padding: "8rem 2rem 4rem", borderTop: `1px solid ${THEME.border}`, display: "flex", justifyContent: "space-between", alignItems: "flex-start", flexWrap: "wrap", gap: "4rem", maxWidth: 1400, margin: "0 auto" }}>
-        <div style={{ display: "flex", flexDirection: "column", gap: 20 }}>
-          <img src="/logo.png" alt="Foto Segundo" style={{ height: 32, objectFit: "contain", filter: theme === 'dark' ? 'brightness(0) invert(1)' : 'none' }} />
-          <p style={{ fontSize: 11, color: THEME.text3, textTransform: "uppercase", letterSpacing: "0.15em", maxWidth: 280, lineHeight: 1.8 }}>
-            Protocolo Editorial de Imagem e Cinema.<br />© 2026 Todos os Direitos Reservados.
-          </p>
+      {/* Info */}
+      <div style={{ padding: "14px 16px 18px" }}>
+        <h3 style={{ fontFamily: T.fontD, fontWeight: 800, fontSize: 19, textTransform: "uppercase", color: "#fff", margin: "0 0 6px", lineHeight: 1.1 }}>
+          {event.nomeNoivos}
+        </h3>
+        <div style={{ fontSize: 11, color: "#555", fontFamily: T.fontB, fontWeight: 400, display: "flex", gap: 10, marginBottom: 10 }}>
+          <span>{formatDate(event.dataEvento)}</span>
+          {event.cartorio && <><span>·</span><span>{event.cartorio}</span></>}
         </div>
-        <div style={{ display: "flex", gap: "4rem", flexWrap: "wrap" }}>
-          <FooterNav title="Plataforma" links={["Sobre", "Parcerias", "Segurança"]} />
-          <FooterNav title="Jurídico" links={["Termos", "Privacidade", "Cookies"]} />
+        <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between" }}>
+          <span style={{ fontFamily: T.fontD, fontWeight: 700, fontSize: 17, color: T.brand }}>
+            R$ {price.toFixed(0)}
+          </span>
+          <div style={{ display: "flex", gap: 6 }}>
+            {event.temFoto  && <span style={{ fontSize: 9, fontFamily: T.fontB, color: T.text3, letterSpacing: 1, textTransform: "uppercase", border: `1px solid ${T.border}`, padding: "2px 7px" }}>Foto</span>}
+            {event.temVideo && <span style={{ fontSize: 9, fontFamily: T.fontB, color: T.text3, letterSpacing: 1, textTransform: "uppercase", border: `1px solid ${T.border}`, padding: "2px 7px" }}>Vídeo</span>}
+            {event.temReels && <span style={{ fontSize: 9, fontFamily: T.fontB, color: T.text3, letterSpacing: 1, textTransform: "uppercase", border: `1px solid ${T.border}`, padding: "2px 7px" }}>Reels</span>}
+          </div>
         </div>
-      </footer>
-
-      <style>{`
-        @keyframes pulse { 0%,100%{opacity:1} 50%{opacity:0.4} }
-        .cta-section:hover { background: var(--theme-bg-muted); opacity: 0.8; }
-      `}</style>
+      </div>
     </div>
   );
 }
 
-function FooterNav({ title, links }: { title: string, links: string[] }) {
+// ── STEPS ─────────────────────────────────────────────────────────────────────
+const STEPS = [
+  { n: "01", title: "Encontre seu evento", desc: "Busque pelo nome dos noivos ou data. Sua galeria estará aguardando." },
+  { n: "02", title: "Realize o pagamento", desc: "Checkout seguro via Pix ou cartão. Aprovação imediata." },
+  { n: "03", title: "Acesse os arquivos", desc: "Links do Lightroom e Google Drive liberados na hora. Faça o download quando quiser." },
+];
+
+// ── FOOTER NAV ────────────────────────────────────────────────────────────────
+function FooterCol({ title, links }: { title: string; links: string[] }) {
   return (
-    <div style={{ display: "flex", flexDirection: "column", gap: 20 }}>
-      <span style={{ fontSize: 11, color: THEME.text, textTransform: "uppercase", letterSpacing: "0.2em", fontWeight: 800 }}>{title}</span>
-      {links.map((l) => (
-        <span key={l} style={{ fontSize: 11, color: THEME.text3, cursor: "pointer", textTransform: "uppercase", letterSpacing: "0.1em", transition: "color 0.3s" }} onMouseOver={(e) => (e.currentTarget.style.color = THEME.text)} onMouseOut={(e) => (e.currentTarget.style.color = THEME.text3)}>{l}</span>
+    <div style={{ display: "flex", flexDirection: "column", gap: 14 }}>
+      <span style={{ fontSize: 10, fontFamily: T.fontB, fontWeight: 500, letterSpacing: "0.2em", textTransform: "uppercase", color: T.text }}>{title}</span>
+      {links.map(l => (
+        <span key={l} style={{ fontSize: 11, fontFamily: T.fontB, color: T.text3, cursor: "pointer", textTransform: "uppercase", letterSpacing: "0.1em" }}
+          onMouseOver={e => (e.currentTarget.style.color = T.text)} onMouseOut={e => (e.currentTarget.style.color = T.text3)}>
+          {l}
+        </span>
       ))}
     </div>
   );
 }
 
-// ── Componente do Card Editorial ──────────────────────────
+// ── HomePage ──────────────────────────────────────────────────────────────────
+export const HomePage = () => {
+  const navigate = useNavigate();
+  const { user, logout } = useAuth();
+  const [query, setQuery]       = useState("");
+  const [cat, setCat]           = useState("Todos");
+  const [events, setEvents]     = useState<Event[]>([]);
+  const [loading, setLoading]   = useState(true);
+  const [page, setPage]         = useState(1);
+  const [totalPages, setTotal]  = useState(1);
+  const [userMenu, setUserMenu] = useState(false);
+  const debounce = useRef<ReturnType<typeof setTimeout>>();
 
-function EventCard({ event, onClick }: { event: Event; onClick: () => void }) {
-  const isNew = isRecent(event.dataEvento);
-  useTheme(); // re-renders on theme change — colors handled by CSS variables
+  const dashPath = user?.role === "ADMIN" ? "/admin"
+    : user?.role === "PROFISSIONAL" ? "/profissional"
+    : (user?.role === "CARTORIO" || user?.role === "UNIDADE") ? "/unidade-fixa"
+    : "/minha-conta";
+
+  const fetch = async (q: string, pg: number) => {
+    setLoading(true);
+    try {
+      const { data } = await API.get("/public/events", { params: { q: q.trim() || undefined, page: pg } });
+      setEvents(data.events ?? []);
+      setTotal(data.pages ?? 1);
+    } catch { /* silencioso */ }
+    finally { setLoading(false); }
+  };
+
+  useEffect(() => {
+    clearTimeout(debounce.current);
+    debounce.current = setTimeout(() => { setPage(1); fetch(query, 1); }, 400);
+    return () => clearTimeout(debounce.current);
+  }, [query]);
+
+  useEffect(() => { fetch(query, page); }, [page]);
 
   return (
-    <div
-      onClick={onClick}
-      style={{ cursor: "pointer", transition: "all 0.4s ease" }}
-      className="group"
-    >
-      {/* Imagem Editorial */}
-      <div style={{ width: "100%", aspectRatio: "4/5", background: "var(--theme-bg-muted)", position: "relative", overflow: "hidden" }}>
-        {event.coverPhotoUrl ? (
-          <img 
-            src={event.coverPhotoUrl} 
-            alt={event.nomeNoivos} 
-            style={{ width: "100%", height: "100%", objectFit: "cover", transition: "transform 1.2s cubic-bezier(0.16, 1, 0.3, 1)" }} 
-            className="group-hover:scale-105"
-            onError={(e) => {
-              const fallbacks = [
-                "https://images.unsplash.com/photo-1511795409834-ef04bbd61622?auto=format&fit=crop&q=80&w=800",
-                "https://images.unsplash.com/photo-1519741497674-611481863552?auto=format&fit=crop&q=80&w=800",
-                "https://images.unsplash.com/photo-1522673607200-164883eecd0c?auto=format&fit=crop&q=80&w=800",
-                "https://images.unsplash.com/photo-1469334031218-e382a71b716b?auto=format&fit=crop&q=80&w=800",
-                "https://images.unsplash.com/photo-1517263904808-5dc91e3e7044?auto=format&fit=crop&q=80&w=800",
-                "https://images.unsplash.com/photo-1520854221256-17451cc331bf?auto=format&fit=crop&q=80&w=800",
-              ];
-              const img = e.currentTarget;
-              img.onerror = null; // prevent infinite loop
-              img.src = fallbacks[Math.floor(Math.random() * fallbacks.length)];
-            }}
-          />
-        ) : (
-          <div style={{ 
-            width: "100%", height: "100%", 
-            background: "linear-gradient(135deg, #0a0a0a 0%, #1a1a1a 50%, #0d0d0d 100%)",
-            display: "flex", alignItems: "center", justifyContent: "center", flexDirection: "column", gap: 12
+    <div style={{ background: T.bg, color: T.text, minHeight: "100vh", fontFamily: T.fontB }}>
+      <Helmet>
+        <title>Foto Segundo | Suas memórias, entregues agora.</title>
+        <meta name="description" content="Acesse a galeria exclusiva do seu grande dia. Fotos e vídeos em segundos." />
+      </Helmet>
+
+      <style>{`
+        @keyframes pulse { 0%,100%{opacity:1} 50%{opacity:0.4} }
+        @keyframes fadeUp { from{opacity:0;transform:translateY(16px)} to{opacity:1;transform:translateY(0)} }
+        .hp-search-input:focus { outline: none; }
+        .hp-search-input::placeholder { color: ${T.text3}; }
+        .chip { transition: all 0.15s; cursor: pointer; }
+        .card-hover { transition: opacity 0.2s; }
+        .card-hover:hover { opacity: 0.88; }
+        @media(max-width:768px){
+          .hp-hero-title { font-size: clamp(38px,10vw,60px) !important; }
+          .hp-grid { grid-template-columns: repeat(auto-fill, minmax(260px,1fr)) !important; }
+          .hp-steps { flex-direction: column !important; }
+          .hp-footer-inner { flex-direction: column !important; gap: 2.5rem !important; }
+          .hp-footer-cols { gap: 2rem !important; }
+        }
+      `}</style>
+
+      {/* ── NAV ─────────────────────────────────────────────────────────── */}
+      <nav id="main-nav" style={{
+        display: "flex", alignItems: "center", justifyContent: "space-between",
+        padding: "16px 28px", borderBottom: `1px solid ${T.border}`,
+        background: "rgba(10,10,10,0.92)", backdropFilter: "blur(20px)",
+        position: "sticky", top: 0, zIndex: 100,
+      }}>
+        <div onClick={() => navigate("/")} style={{ cursor: "pointer", fontFamily: T.fontD, fontWeight: 900, fontSize: 20, color: "#fff", letterSpacing: 1 }}>
+          FOTO SEGUNDO.
+        </div>
+
+        <div style={{ display: "flex", alignItems: "center", gap: 12 }}>
+          {user ? (
+            <div style={{ position: "relative" }}>
+              <button onClick={() => setUserMenu(v => !v)} style={{ ...BtnSecondary, fontSize: 11, padding: "9px 16px" }}>
+                {user.nome.split(" ")[0]} <span style={{ fontSize: 8, marginLeft: 4 }}>▾</span>
+              </button>
+              {userMenu && (
+                <div style={{ position: "absolute", right: 0, top: "calc(100% + 8px)", background: T.bgCard, border: `1px solid ${T.border}`, minWidth: 160, zIndex: 200 }}>
+                  <button onClick={() => { setUserMenu(false); navigate(dashPath); }} style={{ width: "100%", textAlign: "left", padding: "12px 16px", background: "transparent", border: "none", borderBottom: `1px solid ${T.border}`, color: T.text, fontSize: 11, fontFamily: T.fontB, letterSpacing: "0.08em", textTransform: "uppercase", cursor: "pointer" }}>Meu Painel</button>
+                  <button onClick={() => { logout(); setUserMenu(false); }} style={{ width: "100%", textAlign: "left", padding: "12px 16px", background: "transparent", border: "none", color: T.text2, fontSize: 11, fontFamily: T.fontB, letterSpacing: "0.08em", textTransform: "uppercase", cursor: "pointer" }}>Sair</button>
+                </div>
+              )}
+            </div>
+          ) : (
+            <button onClick={() => navigate("/login")} style={{ ...BtnSecondary, fontSize: 11, padding: "9px 18px" }}>
+              Acesso
+            </button>
+          )}
+          <button onClick={() => navigate("/cotacao")} style={{ ...BtnPrimary, fontSize: 12, padding: "11px 20px" }}>
+            Agendar
+          </button>
+        </div>
+      </nav>
+
+      {/* ── HERO ─────────────────────────────────────────────────────────── */}
+      <section style={{ padding: "80px 28px 64px", maxWidth: 1100, margin: "0 auto" }}>
+        <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ duration: 0.5 }}>
+          <p style={{ fontSize: 10, fontFamily: T.fontB, fontWeight: 400, letterSpacing: "0.35em", textTransform: "uppercase", color: T.brand, marginBottom: 20 }}>
+            Coletivo Editorial de Imagem e Cinema
+          </p>
+
+          <h1 className="hp-hero-title" style={{
+            fontFamily: T.fontD, fontWeight: 900,
+            fontSize: "clamp(48px, 7vw, 80px)",
+            lineHeight: 0.95, color: "#fff",
+            textTransform: "uppercase", letterSpacing: "0.5px",
+            margin: "0 0 24px",
           }}>
-            <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="rgba(133,185,172,0.3)" strokeWidth="1" strokeLinecap="round" strokeLinejoin="round">
-              <path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"/>
-              <circle cx="12" cy="13" r="4"/>
-            </svg>
-            <span style={{ fontSize: 9, letterSpacing: 4, textTransform: "uppercase", color: "rgba(133,185,172,0.2)", fontWeight: 700 }}>Em breve</span>
+            Suas memórias,{" "}
+            <em style={{ fontStyle: "italic", color: T.brand }}>entregues agora.</em>
+          </h1>
+
+          <p style={{ fontSize: 14, color: T.text2, fontWeight: 300, maxWidth: 440, lineHeight: 1.6, margin: "0 0 36px", fontFamily: T.fontB }}>
+            Acesse a galeria exclusiva do seu grande dia. Fotos e vídeos com qualidade premium, disponíveis em segundos após o evento.
+          </p>
+
+          {/* Search bar — input + botão UNIDOS, sem gap, sem border-radius */}
+          <div style={{ display: "flex", maxWidth: 560, marginBottom: 20 }}>
+            <input
+              className="hp-search-input"
+              value={query}
+              onChange={e => setQuery(e.target.value)}
+              onKeyDown={e => e.key === "Enter" && fetch(query, 1)}
+              placeholder="Buscar pelo nome dos noivos..."
+              style={{
+                flex: 1, background: "#161616",
+                border: `1px solid #2a2a2a`, borderRight: "none",
+                padding: "13px 16px", fontSize: 13,
+                color: T.text, fontFamily: T.fontB, fontWeight: 300,
+                borderRadius: 0, outline: "none",
+              }}
+            />
+            <button
+              onClick={() => fetch(query, 1)}
+              style={{
+                background: T.brand, color: "#0a0a0a", border: "none",
+                padding: "13px 22px", fontFamily: T.fontD, fontWeight: 900,
+                fontSize: 13, letterSpacing: 1.5, textTransform: "uppercase",
+                cursor: "pointer", borderRadius: 0, flexShrink: 0,
+              }}
+            >
+              Buscar
+            </button>
           </div>
-        )}
-        
-        {isNew && (
-          <span style={{
-            position: "absolute", top: 20, left: 20,
-            fontSize: 9, letterSpacing: 2, textTransform: "uppercase",
-            background: THEME.text, color: THEME.bg,
-            padding: "8px 16px", fontWeight: 700,
-          }}>
-            Novo
-          </span>
-        )}
 
-        <div style={{ position: "absolute", bottom: 20, right: 20, display: "flex", gap: 8 }}>
-          {event.temFoto && <ServiceBadge label="Imagens" />}
-          {event.temVideo && <ServiceBadge label="Filme" />}
+          {/* Category Chips */}
+          <div style={{ display: "flex", gap: 8, flexWrap: "wrap" }}>
+            {CATEGORIES.map(c => {
+              const active = cat === c;
+              return (
+                <button key={c} className="chip" onClick={() => setCat(c)} style={{
+                  fontSize: 10, fontFamily: T.fontB, fontWeight: 400,
+                  letterSpacing: "1.5px", textTransform: "uppercase",
+                  padding: "6px 14px", borderRadius: 0, cursor: "pointer",
+                  border: `1px solid ${active ? T.brand : T.border}`,
+                  color: active ? T.brand : T.text3,
+                  background: active ? T.brandDark : "transparent",
+                }}>
+                  {c}
+                </button>
+              );
+            })}
+          </div>
+
+          {/* Stats */}
+          <div style={{ display: "flex", gap: 40, marginTop: 40, paddingTop: 32, borderTop: `1px solid ${T.border}` }}>
+            {[["500+", "Eventos Registrados"], ["24h", "Entrega Garantida"], ["4.9★", "Avaliação Média"]].map(([val, label]) => (
+              <div key={label}>
+                <div style={{ fontFamily: T.fontD, fontWeight: 900, fontSize: 28, color: "#fff", lineHeight: 1 }}>{val}</div>
+                <div style={{ fontSize: 10, fontFamily: T.fontB, color: T.text3, letterSpacing: "0.1em", textTransform: "uppercase", marginTop: 4 }}>{label}</div>
+              </div>
+            ))}
+          </div>
+        </motion.div>
+      </section>
+
+      {/* ── EVENT GRID ───────────────────────────────────────────────────── */}
+      <section style={{ padding: "0 0 80px" }}>
+        <div style={{ maxWidth: 1400, margin: "0 auto", padding: "0 28px" }}>
+          <div style={{ display: "flex", alignItems: "flex-end", justifyContent: "space-between", marginBottom: 24 }}>
+            <div style={{ borderLeft: `2px solid ${T.brand}`, paddingLeft: 16 }}>
+              <p style={{ fontSize: 10, fontFamily: T.fontB, color: T.text3, letterSpacing: "0.2em", textTransform: "uppercase", margin: "0 0 4px" }}>Arquivo Recente</p>
+              <h2 style={{ fontFamily: T.fontD, fontWeight: 900, fontSize: "clamp(28px,4vw,42px)", color: T.text, textTransform: "uppercase", margin: 0, lineHeight: 1 }}>Últimos Registros</h2>
+            </div>
+            {totalPages > 1 && (
+              <span style={{ fontSize: 11, fontFamily: T.fontB, color: T.text3, letterSpacing: "0.1em", textTransform: "uppercase" }}>
+                Pág. {page} / {totalPages}
+              </span>
+            )}
+          </div>
+
+          {loading ? (
+            // Skeleton grid — gap 1px, background #1c1c1c cria o "divisor"
+            <div className="hp-grid" style={{ display: "grid", gridTemplateColumns: "repeat(auto-fill, minmax(300px, 1fr))", gap: 1, background: "#1c1c1c" }}>
+              {[...Array(6)].map((_, i) => (
+                <div key={i} style={{ background: T.bgCard, aspectRatio: "4/3", animation: "pulse 1.8s infinite" }} />
+              ))}
+            </div>
+          ) : events.length === 0 ? (
+            <div style={{ textAlign: "center", padding: "6rem 0", border: `1px dashed ${T.border}` }}>
+              <p style={{ fontFamily: T.fontD, fontWeight: 900, fontSize: 32, color: T.text2, textTransform: "uppercase" }}>Nenhum resultado encontrado.</p>
+              <p style={{ fontSize: 12, color: T.text3, fontFamily: T.fontB, marginTop: 8 }}>Tente buscar pelo nome completo dos noivos.</p>
+            </div>
+          ) : (
+            <div className="hp-grid" style={{ display: "grid", gridTemplateColumns: "repeat(auto-fill, minmax(300px, 1fr))", gap: 1, background: "#1c1c1c" }}>
+              {events.map(ev => (
+                <div key={ev.id} className="card-hover">
+                  <EventCard event={ev} onClick={() => navigate(`/e/${ev.id}`)} />
+                </div>
+              ))}
+            </div>
+          )}
+
+          {/* Pagination */}
+          {totalPages > 1 && (
+            <div style={{ display: "flex", justifyContent: "center", alignItems: "center", gap: 32, marginTop: 48 }}>
+              <button onClick={() => setPage(p => Math.max(1, p - 1))} disabled={page === 1}
+                style={{ background: "none", border: "none", color: page === 1 ? T.border : T.text2, cursor: page === 1 ? "default" : "pointer", fontSize: 11, fontFamily: T.fontB, letterSpacing: "0.2em", textTransform: "uppercase" }}>
+                ← Anterior
+              </button>
+              <span style={{ fontFamily: T.fontD, fontWeight: 900, fontSize: 20, color: T.text }}>
+                {page} <span style={{ color: T.border, margin: "0 8px" }}>—</span> {totalPages}
+              </span>
+              <button onClick={() => setPage(p => Math.min(totalPages, p + 1))} disabled={page === totalPages}
+                style={{ background: "none", border: "none", color: page === totalPages ? T.border : T.text, cursor: page === totalPages ? "default" : "pointer", fontSize: 11, fontFamily: T.fontB, letterSpacing: "0.2em", textTransform: "uppercase" }}>
+                Próximo →
+              </button>
+            </div>
+          )}
         </div>
+      </section>
 
-        {/* Overlay Hover */}
-        <div style={{ position: "absolute", inset: 0, background: "rgba(0,0,0,0.1)", opacity: 0, transition: "opacity 0.4s" }} className="group-hover:opacity-100" />
-      </div>
-
-      <div style={{ padding: "24px 0" }}>
-        <h3 style={{
-          fontFamily: THEME.fontBase,
-          fontWeight: 700,
-          fontSize: 24,
-          color: THEME.text,
-          marginBottom: 10,
-          letterSpacing: "-0.01em",
-          textTransform: "uppercase"
-        }}>
-          {event.nomeNoivos}
-        </h3>
-        <div style={{ fontSize: 12, color: THEME.text2, display: "flex", gap: 16, alignItems: "center", textTransform: "uppercase", letterSpacing: "0.1em" }}>
-          <span>{formatDate(event.dataEvento)}</span>
-          <span style={{ width: 6, height: 1, background: THEME.border }} />
-          <span>{event.cartorio || "Exclusivo"}</span>
+      {/* ── COMO FUNCIONA ─────────────────────────────────────────────────── */}
+      <section style={{ padding: "80px 28px", borderTop: `1px solid ${T.border}`, borderBottom: `1px solid ${T.border}`, background: T.bgCard }}>
+        <div style={{ maxWidth: 1100, margin: "0 auto" }}>
+          <p style={{ fontSize: 10, fontFamily: T.fontB, color: T.brand, letterSpacing: "0.35em", textTransform: "uppercase", marginBottom: 12 }}>Processo</p>
+          <h2 style={{ fontFamily: T.fontD, fontWeight: 900, fontSize: "clamp(32px,5vw,52px)", color: "#fff", textTransform: "uppercase", margin: "0 0 48px", lineHeight: 1 }}>
+            Como Funciona
+          </h2>
+          <div className="hp-steps" style={{ display: "flex", gap: 0 }}>
+            {STEPS.map((step, i) => (
+              <div key={step.n} style={{ flex: 1, padding: "32px 32px 32px 0", borderRight: i < STEPS.length - 1 ? `1px solid ${T.border}` : "none", paddingRight: i < STEPS.length - 1 ? 40 : 0, paddingLeft: i > 0 ? 40 : 0 }}>
+                <div style={{ fontFamily: T.fontD, fontWeight: 900, fontSize: 48, color: T.brand, lineHeight: 1, marginBottom: 16, opacity: 0.6 }}>{step.n}</div>
+                <h3 style={{ fontFamily: T.fontD, fontWeight: 900, fontSize: 22, color: "#fff", textTransform: "uppercase", margin: "0 0 10px", letterSpacing: "0.5px" }}>{step.title}</h3>
+                <p style={{ fontSize: 13, color: T.text2, fontFamily: T.fontB, fontWeight: 300, lineHeight: 1.6, margin: 0 }}>{step.desc}</p>
+              </div>
+            ))}
+          </div>
         </div>
-      </div>
+      </section>
+
+      {/* ── CTA ───────────────────────────────────────────────────────────── */}
+      <section onClick={() => navigate("/cotacao")} style={{ padding: "48px 28px", textAlign: "center", cursor: "pointer", borderBottom: `1px solid ${T.border}` }}
+        onMouseOver={e => (e.currentTarget.style.background = T.bgCard)} onMouseOut={e => (e.currentTarget.style.background = "transparent")}>
+        <span style={{ fontSize: 13, fontFamily: T.fontB, color: T.text2, fontWeight: 300 }}>
+          Deseja uma cobertura exclusiva?{" "}
+          <span style={{ color: T.brand, fontWeight: 500, borderBottom: `1px solid ${T.brand}` }}>Solicite um orçamento →</span>
+        </span>
+      </section>
+
+      {/* ── FOOTER ────────────────────────────────────────────────────────── */}
+      <footer style={{ borderTop: `1px solid ${T.border}`, padding: "56px 28px 32px" }}>
+        <div className="hp-footer-inner" style={{ maxWidth: 1100, margin: "0 auto", display: "flex", justifyContent: "space-between", alignItems: "flex-start", gap: "3rem" }}>
+          <div>
+            <div style={{ fontFamily: T.fontD, fontWeight: 900, fontSize: 20, color: "#fff", letterSpacing: 1, marginBottom: 12 }}>FOTO SEGUNDO.</div>
+            <p style={{ fontSize: 11, fontFamily: T.fontB, color: T.text3, lineHeight: 1.8, maxWidth: 260, margin: 0 }}>
+              Protocolo Editorial de Imagem e Cinema.<br />© 2026 Todos os Direitos Reservados.
+            </p>
+          </div>
+          <div className="hp-footer-cols" style={{ display: "flex", gap: "3.5rem", flexWrap: "wrap" }}>
+            <FooterCol title="Plataforma" links={["Sobre", "Parcerias", "Hall da Fama"]} />
+            <FooterCol title="Jurídico" links={["Termos de Uso", "Privacidade", "LGPD"]} />
+            <FooterCol title="Suporte" links={["Central de Ajuda", "Contato", "Status"]} />
+          </div>
+        </div>
+      </footer>
     </div>
   );
-}
-
-function ServiceBadge({ label }: { label: string }) {
-  return (
-    <span style={{
-      fontSize: 9, padding: "5px 12px", background: "rgba(var(--bg-rgb), 0.7)",
-      border: "1px solid rgba(var(--text-rgb), 0.1)", color: "white",
-      letterSpacing: "0.1em", textTransform: "uppercase", backdropFilter: "blur(10px)"
-    }}>
-      {label}
-    </span>
-  );
-}
+};

@@ -1,6 +1,6 @@
 import { Response } from "express";
 import { AuthRequest } from "../lib/auth";
-import { prisma } from "../lib/prisma";
+import prisma from "../lib/prisma";
 
 // POST /api/orders/:id/access-type
 // Comprador escolhe PUBLIC ou PRIVATE após pagamento
