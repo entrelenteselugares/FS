@@ -52,7 +52,23 @@ export class CartorioController {
             where: { status: "APROVADO" },
           },
           cartorioUser: {
-            include: { cartorio: true }
+            include: { 
+              cartorio: {
+                include: {
+                  profissionais: {
+                    where: { tipo: "FIXO" },
+                    include: {
+                      profissional: {
+                        include: { user: { select: { nome: true } } }
+                      }
+                    }
+                  }
+                }
+              } 
+            }
+          },
+          captacao: {
+            select: { nome: true }
           }
         },
         orderBy: { dataEvento: "desc" }
@@ -87,7 +103,9 @@ export class CartorioController {
           receita: receitaEvento,
           repasse: repasseEvento,
           _count: { orders: ev.pedidos.length },
-          captacao: null 
+          captacao: ev.captacao || (ev.cartorioUser?.cartorio?.profissionais?.length 
+            ? { nome: ev.cartorioUser.cartorio.profissionais.map(p => p.profissional.user.nome).join(", ") }
+            : null)
         };
       });
 
@@ -136,9 +154,40 @@ export class CartorioController {
       try {
           const events = await prisma.event.findMany({
               where: { cartorioUserId: user.userId, active: true },
+              include: {
+                captacao: {
+                  select: { nome: true, email: true }
+                },
+                cartorioUser: {
+                  include: {
+                    cartorio: {
+                      include: {
+                        profissionais: {
+                          where: { tipo: "FIXO" },
+                          include: {
+                            profissional: {
+                              include: { user: { select: { nome: true } } }
+                            }
+                          }
+                        }
+                      }
+                    }
+                  }
+                }
+              },
               orderBy: { dataEvento: "asc" }
           });
-          res.json(events);
+
+          const result = events.map(ev => ({
+            ...ev,
+            title: ev.nomeNoivos,
+            date: ev.dataEvento,
+            captacao: ev.captacao || (ev.cartorioUser?.cartorio?.profissionais?.length
+              ? { nome: ev.cartorioUser.cartorio.profissionais.map(p => p.profissional.user.nome).join(", ") }
+              : null)
+          }));
+
+          res.json(result);
       } catch (error) {
           res.status(500).json({ error: "Erro ao buscar agenda da Unidade Fixa." });
       }
