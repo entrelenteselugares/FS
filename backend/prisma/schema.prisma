@@ -196,6 +196,8 @@ model Cartorio {
   description String?
   coverUrl    String?
 
+  fixedDuration Int?      @default(2) // Duração padrão do evento nesta unidade (ex: 2h)
+  
   profissionais CartorioProfissional[]
 
   @@map("cartorios")

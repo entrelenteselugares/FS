@@ -1,6 +1,6 @@
 import React from "react";
 import type { EventData } from "../api";
-import { motion } from "framer-motion";
+
 
 interface PaywallViewProps {
   event: EventData;
@@ -27,12 +27,9 @@ export const PaywallView: React.FC<PaywallViewProps> = ({ event, onCheckout, isP
       {/* Editorial Background */}
       <div className="absolute inset-0 z-0">
         {coverPhotoUrl && (
-          <motion.div 
-            initial={{ scale: 1.05, opacity: 0 }}
-            animate={{ scale: 1, opacity: 0.4 }}
-            transition={{ duration: 1.5 }}
+          <div 
             className="absolute inset-0 bg-cover bg-center grayscale" 
-            style={{ backgroundImage: `url(${coverPhotoUrl})` }}
+            style={{ backgroundImage: `url(${coverPhotoUrl})`, opacity: 0.4 }}
           />
         )}
         <div className="absolute inset-0 bg-gradient-to-b from-transparent via-[#050505]/60 to-[#050505]" />
@@ -45,9 +42,7 @@ export const PaywallView: React.FC<PaywallViewProps> = ({ event, onCheckout, isP
 
       {/* Conteúdo Central Editorial */}
       <div className="relative z-10 flex flex-col items-center justify-center min-h-screen px-6 text-center pt-20 pb-40">
-        <motion.div 
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
+        <div 
           className="flex flex-col items-center gap-6 mb-16"
         >
           <div className="w-[1px] h-12 bg-white/20" />
@@ -55,34 +50,25 @@ export const PaywallView: React.FC<PaywallViewProps> = ({ event, onCheckout, isP
             <LockIcon />
             <span className="text-[10px] font-bold uppercase tracking-[0.5em]">Private Gallery Protocol</span>
           </div>
-        </motion.div>
+        </div>
 
-        <motion.h1 
-          initial={{ opacity: 0, y: 10 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ delay: 0.2 }}
+        <h1 
           className="mb-8 text-6xl md:text-9xl tracking-tight text-white leading-tight"
         >
           {event?.nomeNoivos || "Evento Premium"}
-        </motion.h1>
+        </h1>
         
-        <motion.p 
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
-          transition={{ delay: 0.4 }}
+        <p 
           className="max-w-xl mb-20 text-zinc-500 text-sm md:text-base font-light uppercase tracking-[0.3em] leading-relaxed"
         >
           Acesso exclusivo às memórias digitais <br />
           Processadas e curadas pela equipe Foto Segundo.
-        </motion.p>
+        </p>
       </div>
 
       {/* Floating Checkout Architecture */}
       <div className="fixed bottom-0 left-0 right-0 z-50 p-6 md:p-12">
-        <motion.div 
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ delay: 0.6 }}
+        <div 
           className="max-w-4xl mx-auto bg-[#0a0a0a] border border-white/10 p-1 flex flex-wrap md:flex-nowrap items-stretch"
         >
           {/* Price Section */}
@@ -90,7 +76,7 @@ export const PaywallView: React.FC<PaywallViewProps> = ({ event, onCheckout, isP
             <div className="flex items-center gap-4 mb-4">
               <span className="text-[10px] font-bold uppercase tracking-[0.4em] text-zinc-600">Full Access License</span>
               {isAdvancePurchase && (
-                <span className="text-[8px] font-bold uppercase tracking-widest text-brand-olive">Early Access Discount</span>
+                <span className="text-[8px] font-black uppercase tracking-widest text-brand-olive">Early Access Discount</span>
               )}
             </div>
             <div className="flex items-baseline gap-4">
@@ -110,7 +96,7 @@ export const PaywallView: React.FC<PaywallViewProps> = ({ event, onCheckout, isP
             </span>
             <div className="w-8 h-[1px] bg-black/20 group-hover:w-12 transition-all" />
           </button>
-        </motion.div>
+        </div>
       </div>
     </div>
   );

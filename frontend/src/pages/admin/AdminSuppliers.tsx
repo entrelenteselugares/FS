@@ -1,7 +1,7 @@
 import { useState, useEffect, useCallback } from "react";
 import { API as api } from "../../lib/api";
 import { useTheme } from "../../contexts/ThemeContextCore";
-import { motion, AnimatePresence } from "framer-motion";
+
 import { 
   Calculator, 
   Printer, 
@@ -94,9 +94,9 @@ export default function AdminSuppliers() {
 
         <div className="flex flex-col gap-3">
           {suppliers.map(s => (
-            <motion.button
+            <button
               key={s.id}
-              whileHover={{ x: 4 }}
+
               onClick={() => handleSelect(s.id)}
               className={`w-full p-6 text-left border transition-all duration-300 relative group
                 ${selectedId === s.id 
@@ -126,24 +126,17 @@ export default function AdminSuppliers() {
               </div>
 
               {selectedId === s.id && (
-                  <motion.div 
-                    layoutId="active-indicator"
+                  <div 
                     className="absolute -right-[41px] top-1/2 -translate-y-1/2 w-[2px] h-12 bg-brand-primary shadow-[0_0_12px_rgba(133,185,172,0.8)]"
                   />
               )}
-            </motion.button>
+            </button>
           ))}
         </div>
       </div>
 
       {/* Analysis Workspace */}
-      <AnimatePresence mode="wait">
-        <motion.div 
-           key={selectedId || 'none'}
-           initial={{ opacity: 0, x: 20 }}
-           animate={{ opacity: 1, x: 0 }}
-           exit={{ opacity: 0, x: -20 }}
-           transition={{ duration: 0.5, ease: [0.16, 1, 0.3, 1] }}
+        <div 
            className="space-y-10"
         >
           {!selectedId ? (
@@ -271,8 +264,7 @@ export default function AdminSuppliers() {
               </div>
             </>
           )}
-        </motion.div>
-      </AnimatePresence>
+        </div>
     </div>
   );
 }

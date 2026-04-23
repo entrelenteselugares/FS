@@ -183,7 +183,8 @@ export class EventController {
           id: p.id,
           name: p.cartorio?.razaoSocial || p.nome,
           city: p.cartorio?.cidade || "Campinas",
-          prices: mergedPrices
+          prices: mergedPrices,
+          fixedDuration: p.cartorio?.fixedDuration ?? 2
         };
       }));
     } catch (error) {

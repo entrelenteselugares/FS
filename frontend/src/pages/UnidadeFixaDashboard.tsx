@@ -101,6 +101,7 @@ export default function UnidadeFixaDashboard() {
   const [lpDescription, setLpDescription] = useState("");
   const [lpCoverUrl, setLpCoverUrl] = useState("");
   const [pixKey, setPixKey] = useState("");
+  const [lpFixedDuration, setLpFixedDuration] = useState(2);
   const [savingLp, setSavingLp] = useState(false);
   const [savingPix, setSavingPix] = useState(false);
   const [qrModalEvent, setQrModalEvent] = useState<EventoAgenda | null>(null);
@@ -174,6 +175,7 @@ export default function UnidadeFixaDashboard() {
         setLpPhone(statsData.cartorio.phone ?? "");
         setLpDescription(statsData.cartorio.description ?? "");
         setLpCoverUrl(statsData.cartorio.coverUrl ?? "");
+        setLpFixedDuration(statsData.cartorio.fixedDuration ?? 2);
         setLocalPrices(statsData.cartorio.servicePrices || {});
         setPixKey(statsData.pixKey ?? "");
       }
@@ -194,6 +196,7 @@ export default function UnidadeFixaDashboard() {
         phone: lpPhone,
         description: lpDescription,
         coverUrl: lpCoverUrl,
+        fixedDuration: lpFixedDuration,
       });
       setSuccess("Página pública atualizada com sucesso! ✨");
       setTimeout(() => setSuccess(""), 3000);
@@ -705,6 +708,20 @@ export default function UnidadeFixaDashboard() {
               <div>
                  <label style={{ fontSize: 10, fontWeight: 800, color: "var(--theme-text)", marginBottom: 8, display: "block", textTransform: "uppercase", letterSpacing: 1 }}>URL da Foto de Capa</label>
                  <input value={lpCoverUrl} onChange={e => setLpCoverUrl(e.target.value)} style={{ ...S.input, width: "100%" }} placeholder="https://..." />
+              </div>
+
+              <div>
+                 <label style={{ fontSize: 10, fontWeight: 800, color: "var(--theme-text)", marginBottom: 8, display: "block", textTransform: "uppercase", letterSpacing: 1 }}>Pontualidade de Horário (Duração Padrão)</label>
+                 <p style={{ fontSize: 11, color: "var(--theme-text-muted)", marginBottom: 12 }}>Defina quantas horas de cobertura são padrão para eventos nesta unidade fixa.</p>
+                 <div style={{ display: "flex", alignItems: "center", gap: "1rem" }}>
+                   <input 
+                     type="number"
+                     value={lpFixedDuration} 
+                     onChange={e => setLpFixedDuration(Number(e.target.value))} 
+                     style={{ ...S.input, width: 80, textAlign: "center", fontWeight: 900, fontSize: 18 }} 
+                   />
+                   <span style={{ fontSize: 11, fontWeight: 800, color: "var(--theme-text-muted)", textTransform: "uppercase", letterSpacing: 1 }}>HORAS DE COBERTURA</span>
+                 </div>
               </div>
 
               <div style={{ display: "flex", gap: "1rem", alignItems: "center", paddingTop: 20 }}>

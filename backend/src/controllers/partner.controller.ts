@@ -82,6 +82,7 @@ export async function updatePartnerProfile(req: AuthRequest, res: Response): Pro
         ...(coverUrl !== undefined && { coverUrl }),
         ...(slug !== undefined && { slug }),
         ...(servicePrices !== undefined && { servicePrices }),
+        ...(req.body.fixedDuration !== undefined && { fixedDuration: Number(req.body.fixedDuration) }),
         user: {
           update: {
             ...(pixKey !== undefined && { pixKey })

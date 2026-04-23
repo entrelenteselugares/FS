@@ -1,5 +1,4 @@
 import { useState, useEffect, useRef } from "react";
-import { motion, AnimatePresence } from "framer-motion";
 import { Users, Calendar, ArrowRight, ShieldCheck, ChevronLeft, ChevronRight, Clock } from "lucide-react";
 import { API } from "../lib/api";
 import { useNavigate } from "react-router-dom";
@@ -98,18 +97,14 @@ function DateTimePicker({ value, onChange }: { value: string; onChange: (v: stri
       </div>
 
       {/* Popover */}
-      <AnimatePresence>
         {open && (
-          <motion.div
+          <div
             key="picker"
-            initial={{ opacity: 0, y: -8 }}
-            animate={{ opacity: 1, y: 0 }}
-            exit={{ opacity: 0, y: -8 }}
-            transition={{ duration: 0.18 }}
             style={{
               position: "absolute", top: "calc(100% + 8px)", left: 0, zIndex: 999,
               background: "var(--theme-bg)", border: `1px solid var(--theme-border)`,
-              width: "min(320px, 90vw)", padding: 20, boxShadow: "0 24px 60px rgba(0,0,0,0.4)"
+              width: "min(320px, 90vw)", padding: 20, boxShadow: "0 24px 60px rgba(0,0,0,0.4)",
+              transition: "all 0.18s"
             }}
           >
             {/* Month Navigation */}
@@ -192,9 +187,8 @@ function DateTimePicker({ value, onChange }: { value: string; onChange: (v: stri
                 CONFIRMAR DATA E HORÁRIO
               </button>
             )}
-          </motion.div>
+          </div>
         )}
-      </AnimatePresence>
     </div>
   );
 }
@@ -210,6 +204,7 @@ interface Partner {
   name: string;
   city: string;
   prices?: Record<string, number>;
+  fixedDuration?: number;
 }
 
 export const QuotePage = () => {
@@ -258,6 +253,14 @@ export const QuotePage = () => {
     API.get("/public/unidades-fixas").then(res => setPartners(res.data)).catch(() => {});
   }, []);
 
+  // Sincronizar horas fixas se parceiro selecionado
+  useEffect(() => {
+    const p = partners.find(p => p.id === selectedPartnerId);
+    if (locationType === "PARTNER" && p?.fixedDuration) {
+      setEventHours(p.fixedDuration);
+    }
+  }, [selectedPartnerId, locationType, partners]);
+
   // Lógica de Equipe 🛡️👥
   const calculateTeam = () => {
     let senior = 1;
@@ -293,22 +296,19 @@ export const QuotePage = () => {
   // - Unidade Fixa: mostra preço apenas se parceiro selecionado
   // - Outro Local + Pessoal: mostra preço estimado (simulado por hora)
   // - Outro Local + Empresarial: não mostra preços (negociação direta)
-  const showPrices = locationType === "PARTNER" 
-    ? !!selectedPartnerId 
-    : (locationType === "OTHER" && usageType === "PESSOAL");
+  const showPrices = false;
   
   const showBusinessBanner = locationType === "OTHER" && usageType === "EMPRESARIAL";
 
-  // Preço por hora para uso pessoal em outro local
   const getServicePrice = (id: string, defaultPrice: number) => {
+    const hourMultiplier = 1 + ((eventHours - 1) * 0.4);
     if (locationType === "OTHER" && usageType === "PESSOAL") {
-      // Cada hora adicional além da primeira agrega 40% do preço base
-      const hourMultiplier = 1 + ((eventHours - 1) * 0.4);
       return Math.round(defaultPrice * hourMultiplier);
     }
     if (!showPrices) return defaultPrice;
     const custom = currentPartner?.prices?.[id];
-    return custom !== undefined && custom !== null ? Number(custom) : defaultPrice;
+    const base = custom !== undefined && custom !== null ? Number(custom) : defaultPrice;
+    return Math.round(base * hourMultiplier);
   };
 
   const servicesPrice = availableServices.filter(s => selectedServices.includes(s.id)).reduce((acc, s) => {
@@ -325,17 +325,12 @@ export const QuotePage = () => {
     const payload = {
       name, email, attendees: Number(attendees), locationType, usageType, selectedPartnerId, customCep, 
       eventDate, eventHours, description, selectedServices, totalPrice, 
-      status: locationType === "PARTNER" ? "APROVADO" : "PENDENTE"
+      status: "PENDING"
     };
 
     try {
-      const { data } = await API.post("/public/quotes", payload);
-      if (locationType === "PARTNER") {
-        alert("Orçamento Aprovado! Redirecionando para reserva...");
-        window.location.href = data.checkoutUrl;
-      } else {
-        setStep(3); 
-      }
+      await API.post("/public/quotes", payload);
+      setStep(3); 
     } catch {
       alert("Erro ao processar orçamento. Tente novamente.");
     }
@@ -390,10 +385,8 @@ export const QuotePage = () => {
         </header>
 
         {step === 1 && (
-          <motion.div 
-            initial={{ opacity: 0, y: 30 }} 
-            animate={{ opacity: 1, y: 0 }} 
-            transition={{ duration: 0.8, ease: [0.16, 1, 0.3, 1] }}
+          <div 
+            style={{ opacity: 1, transform: "none" }}
             className="lux-card mobile-padding editorial-shadow"
           >
             <div style={{ display: "flex", flexDirection: "column", gap: 30 }}>
@@ -411,29 +404,38 @@ export const QuotePage = () => {
                     type="button"
                     onClick={() => setLocationType("OTHER")}
                     style={{ flex: 1, padding: 15, border: `1px solid ${locationType === "OTHER" ? THEME.accent : THEME.border}`, background: locationType === "OTHER" ? `${THEME.accent}10` : "transparent", fontSize: 10, fontWeight: 900, color: locationType === "OTHER" ? THEME.accent : THEME.text2, cursor: "pointer" }}
-                  >OUTRO LOCAL</button>
+                  >ORÇAMENTO</button>
                 </div>
 
-                {locationType === "PARTNER" ? (
-                  <select required value={selectedPartnerId} onChange={e => setSelectedPartnerId(e.target.value)} className="fs-input" style={{ width: "100%" }}>
-                    <option value="">SELECIONE A UNIDADE FIXA...</option>
-                    {partners.map(p => <option key={p.id} value={p.id}>{p.name.toUpperCase()} - {p.city || 'CAMPINAS'}</option>)}
-                  </select>
-                ) : (
-                  <div style={{ display: "flex", flexDirection: "column", gap: 15 }}>
-                    <div className="mobile-grid-1" style={{ display: "grid", gridTemplateColumns: "1fr 120px", gap: 10 }}>
-                      <input required value={customCep} onChange={e => setCustomCep(e.target.value)} placeholder="CEP DO LOCAL" className="fs-input" style={{ width: "100%", padding: "15px" }} />
-                      <div style={{ position: "relative", display: "flex", alignItems: "center" }}>
-                        <Clock size={16} style={{ position: "absolute", left: 12, color: THEME.accent, pointerEvents: "none" }} />
-                        <input type="number" value={eventHours} onChange={e => setEventHours(Number(e.target.value))} className="fs-input" style={{ width: "100%", padding: "15px 10px 15px 35px" }} />
-                        <span style={{ position: "absolute", right: 10, fontSize: 9, color: THEME.text2, pointerEvents: "none" }}>H</span>
-                      </div>
-                    </div>
-                    
-                    <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 10 }}>
-                       <button type="button" onClick={() => setUsageType("PESSOAL")} style={{ padding: 12, fontSize: 9, fontWeight: 800, border: `1px solid ${usageType === "PESSOAL" ? THEME.accent : THEME.border}`, background: usageType === "PESSOAL" ? `${THEME.accent}10` : "transparent", color: usageType === "PESSOAL" ? THEME.accent : THEME.text2, cursor: "pointer" }}>USO PESSOAL</button>
-                       <button type="button" onClick={() => setUsageType("EMPRESARIAL")} style={{ padding: 12, fontSize: 9, fontWeight: 800, border: `1px solid ${usageType === "EMPRESARIAL" ? THEME.accent : THEME.border}`, background: usageType === "EMPRESARIAL" ? `${THEME.accent}10` : "transparent", color: usageType === "EMPRESARIAL" ? THEME.accent : THEME.text2, cursor: "pointer" }}>USO EMPRESARIAL</button>
-                    </div>
+                <div className="mobile-grid-1" style={{ display: "grid", gridTemplateColumns: "1fr 120px", gap: 10 }}>
+                  {locationType === "PARTNER" ? (
+                    <select required value={selectedPartnerId} onChange={e => setSelectedPartnerId(e.target.value)} className="fs-input" style={{ width: "100%" }}>
+                      <option value="">SELECIONE A UNIDADE FIXA...</option>
+                      {partners.map(p => <option key={p.id} value={p.id}>{p.name.toUpperCase()} - {p.city || 'CAMPINAS'}</option>)}
+                    </select>
+                  ) : (
+                    <input required value={customCep} onChange={e => setCustomCep(e.target.value)} placeholder="CEP DO LOCAL" className="fs-input" style={{ width: "100%", padding: "15px" }} />
+                  )}
+                  
+                  <div style={{ position: "relative", display: "flex", alignItems: "center", opacity: (locationType === "PARTNER" && !!selectedPartnerId) ? 0.6 : 1 }}>
+                    <Clock size={16} style={{ position: "absolute", left: 12, color: THEME.accent, pointerEvents: "none" }} />
+                    <input 
+                      type="number" 
+                      min={1} max={24} 
+                      value={eventHours} 
+                      readOnly={locationType === "PARTNER" && !!selectedPartnerId}
+                      onChange={e => setEventHours(Number(e.target.value))} 
+                      className="fs-input" 
+                      style={{ width: "100%", padding: "15px 10px 15px 35px", cursor: (locationType === "PARTNER" && !!selectedPartnerId) ? "not-allowed" : "text" }} 
+                    />
+                    <span style={{ position: "absolute", right: 10, fontSize: 9, color: THEME.text2, pointerEvents: "none" }}>H</span>
+                  </div>
+                </div>
+
+                {locationType === "OTHER" && (
+                  <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 10 }}>
+                     <button type="button" onClick={() => setUsageType("PESSOAL")} style={{ padding: 12, fontSize: 9, fontWeight: 800, border: `1px solid ${usageType === "PESSOAL" ? THEME.accent : THEME.border}`, background: usageType === "PESSOAL" ? `${THEME.accent}10` : "transparent", color: usageType === "PESSOAL" ? THEME.accent : THEME.text2, cursor: "pointer" }}>USO PESSOAL</button>
+                     <button type="button" onClick={() => setUsageType("EMPRESARIAL")} style={{ padding: 12, fontSize: 9, fontWeight: 800, border: `1px solid ${usageType === "EMPRESARIAL" ? THEME.accent : THEME.border}`, background: usageType === "EMPRESARIAL" ? `${THEME.accent}10` : "transparent", color: usageType === "EMPRESARIAL" ? THEME.accent : THEME.text2, cursor: "pointer" }}>USO EMPRESARIAL</button>
                   </div>
                 )}
               </div>
@@ -463,50 +465,30 @@ export const QuotePage = () => {
                 ) : null}
 
                 <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(200px, 1fr))", gap: 15, marginTop: showBusinessBanner ? 16 : 0 }}>
-                {availableServices.map(s => (
-                  <div key={s.id} onClick={() => {
-                    if (selectedServices.includes(s.id)) setSelectedServices(prev => prev.filter(x => x !== s.id));
-                    else setSelectedServices(prev => [...prev, s.id]);
-                  }} style={{
-                    padding: 20, border: `1px solid ${selectedServices.includes(s.id) ? THEME.accent : THEME.border}`,
-                    cursor: "pointer", background: "var(--theme-bg-muted)", transition: "all 0.2s",
-                    position: "relative", overflow: "hidden"
-                  }}>
-                    <p style={{ fontSize: 11, fontWeight: 900, color: THEME.text, textTransform: "uppercase", letterSpacing: 1 }}>{s.name}</p>
-                    {!showBusinessBanner && (
-                      <p style={{ fontSize: 13, color: THEME.accent, fontWeight: 900, marginTop: 4 }}>
-                        + {new Intl.NumberFormat("pt-BR", { style: "currency", currency: "BRL" }).format(getServicePrice(s.id, s.basePrice))}
-                        {locationType === "OTHER" && usageType === "PESSOAL" && eventHours > 1 && (
-                          <span style={{ fontSize: 9, color: THEME.text2, fontWeight: 600, marginLeft: 6 }}>/{eventHours}h</span>
-                        )}
-                      </p>
-                    )}
-                    {showBusinessBanner && (
-                      <p style={{ fontSize: 10, color: THEME.text2, marginTop: 4, fontStyle: "italic" }}>sob consulta</p>
-                    )}
-                    {selectedServices.includes(s.id) && (
-                      <div style={{ position: "absolute", top: 0, right: 0, width: 24, height: 24, background: THEME.accent, color: "var(--theme-text-on-brand)", display: "flex", alignItems: "center", justifyContent: "center" }}>
-                        <ShieldCheck size={12} />
+                  {availableServices.map(s => (
+                    <div key={s.id} onClick={() => {
+                      if (selectedServices.includes(s.id)) setSelectedServices(prev => prev.filter(x => x !== s.id));
+                      else setSelectedServices(prev => [...prev, s.id]);
+                    }} style={{
+                      padding: 20, border: `1px solid ${selectedServices.includes(s.id) ? THEME.accent : THEME.border}`,
+                      cursor: "pointer", background: "var(--theme-bg-muted)", transition: "all 0.2s",
+                      position: "relative", overflow: "hidden"
+                    }}>
+                      <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start", marginBottom: 10 }}>
+                        <div style={{ fontSize: 11, fontWeight: 900, textTransform: "uppercase", letterSpacing: 1 }}>{s.name}</div>
+                        {selectedServices.includes(s.id) && <div style={{ width: 8, height: 8, background: THEME.accent }} />}
                       </div>
-                    )}
-                  </div>
-                ))}
-              </div>
-
-              {/* Aviso de Simulação para Uso Pessoal em Outro Local */}
-              {locationType === "OTHER" && usageType === "PESSOAL" && (
-                <div style={{ 
-                  marginTop: 12, 
-                  padding: "10px 14px", 
-                  border: `1px solid ${THEME.accent}33`,
-                  background: `${THEME.accent}05`,
-                  fontSize: 10,
-                  color: THEME.text2,
-                  lineHeight: 1.6
-                }}>
-                  ⚠️ <strong style={{ color: THEME.accent }}>Simulação de valores iniciais.</strong> Os preços são estimativas baseadas em {eventHours}h de cobertura e podem variar conforme deslocamento, equipe e complexidade do evento. O valor final será confirmado por nossa equipe após análise do briefing.
+                      {showPrices ? (
+                        <div style={{ fontSize: 14, fontWeight: 900, color: THEME.accent }}>
+                          {new Intl.NumberFormat("pt-BR", { style: "currency", currency: "BRL" }).format(getServicePrice(s.id, s.basePrice))}
+                          <span style={{ fontSize: 9, marginLeft: 5, opacity: 0.6 }}>({eventHours}H)</span>
+                        </div>
+                      ) : (
+                        <div style={{ fontSize: 10, color: THEME.text2, fontStyle: "italic" }}>sob consulta</div>
+                      )}
+                    </div>
+                  ))}
                 </div>
-              )}
               </div>
 
               <div className="mobile-grid-1" style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 20 }}>
@@ -535,25 +517,24 @@ export const QuotePage = () => {
 
               <div style={{ borderTop: `1px solid ${THEME.border}`, paddingTop: 30, marginTop: 20 }}>
                  <div className="mobile-stack" style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-end" }}>
-                     {showBusinessBanner ? (
-                       <div className="mobile-text-center" style={{ maxWidth: 320 }}>
-                         <div style={{ fontSize: 10, fontWeight: 900, color: THEME.accent, textTransform: "uppercase", marginBottom: 5 }}>Proposta Comercial</div>
-                         <div style={{ fontSize: 12, color: THEME.text2, lineHeight: 1.4 }}>Nossa equipe analisará seu briefing e enviará uma proposta personalizada em até 24h.</div>
-                       </div>
-                     ) : showPrices ? (
-                        <div className="mobile-text-center">
-                          <div className="text-proportional mb-2">Investimento Estimado</div>
-                          <div className="heading-luxury !text-brand-primary">R$ {Number(totalPrice).toFixed(2)}</div>
-                          {locationType === "OTHER" && usageType === "PESSOAL" && (
-                            <div style={{ fontSize: 9, color: THEME.text2, marginTop: 4 }}>* Simulação — sujeito a confirmação</div>
-                          )}
+                    <div className="mobile-text-center">
+                      <div style={{ fontSize: 10, fontWeight: 800, textTransform: "uppercase", color: THEME.text2, marginBottom: 5 }}>Investimento Estimado</div>
+                      {showPrices ? (
+                        <div style={{ display: "flex", flexDirection: "column", gap: 4 }}>
+                          <div className="heading-luxury !text-brand-primary" style={{ fontSize: 32 }}>
+                            {new Intl.NumberFormat("pt-BR", { style: "currency", currency: "BRL" }).format(totalPrice)}
+                          </div>
+                          <div style={{ display: "flex", gap: 10, fontSize: 9, fontWeight: 700, color: THEME.text2, textTransform: "uppercase", opacity: 0.8 }}>
+                            <span>Serviços: {new Intl.NumberFormat("pt-BR", { style: "currency", currency: "BRL" }).format(servicesPrice)}</span>
+                            {freight > 0 && <span>· Deslocamento: {new Intl.NumberFormat("pt-BR", { style: "currency", currency: "BRL" }).format(freight)}</span>}
+                            {team.extraGuestsCost > 0 && <span>· Equipe Extra: {new Intl.NumberFormat("pt-BR", { style: "currency", currency: "BRL" }).format(team.extraGuestsCost)}</span>}
+                          </div>
                         </div>
-                     ) : (
-                       <div className="mobile-text-center" style={{ maxWidth: 300 }}>
-                         <div style={{ fontSize: 10, fontWeight: 900, color: THEME.accent, textTransform: "uppercase", marginBottom: 5 }}>Análise Sob Demanda</div>
-                         <div style={{ fontSize: 12, color: THEME.text2, lineHeight: 1.4 }}>Selecione o local e serviços para validarmos os detalhes técnicos.</div>
-                       </div>
-                     )}
+                      ) : (
+                        <div className="heading-luxury !text-brand-primary" style={{ fontSize: 24 }}>SOB CONSULTA</div>
+                      )}
+                    </div>
+
                     <div className="mobile-stack" style={{ display: "flex", gap: 15 }}>
                       <button 
                         type="button"
@@ -568,7 +549,7 @@ export const QuotePage = () => {
                           const isLocalOk = locationType === "PARTNER" ? !!selectedPartnerId : !!customCep;
                           const isServiceOk = selectedServices.length > 0;
                           const isDateOk = !!eventDate;
-                          const isGuestsOk = Number(attendees) > 0;
+                          const isGuestsOk = Number(attendees) >= 0;
 
                           if (isLocalOk && isServiceOk && isDateOk && isGuestsOk) {
                             setStep(2);
@@ -577,7 +558,7 @@ export const QuotePage = () => {
                             alert("Por favor, preencha todos os campos do Passo 1 antes de continuar.");
                           }
                         }}
-                        style={{ background: THEME.accent, color: "var(--theme-text-on-brand)", padding: "15px 30px", fontWeight: 900, fontSize: 12, textTransform: "uppercase", letterSpacing: 2, display: "flex", alignItems: "center", gap: 10, justifyContent: "center", border: "none", cursor: "pointer" }}
+                        style={{ background: THEME.accent, color: "black", padding: "15px 30px", fontWeight: 900, fontSize: 12, textTransform: "uppercase", letterSpacing: 2, display: "flex", alignItems: "center", gap: 10, justifyContent: "center", border: "none", cursor: "pointer" }}
                       >
                         PRÓXIMO PASSO <ArrowRight size={16} />
                       </button>
@@ -586,11 +567,12 @@ export const QuotePage = () => {
               </div>
 
             </div>
-          </motion.div>
+          </div>
+
         )}
 
         {step === 2 && (
-          <motion.div initial={{ opacity: 0, x: 20 }} animate={{ opacity: 1, x: 0 }} className="mobile-padding" style={{ background: THEME.bgCard, border: `1px solid ${THEME.border}`, padding: 40 }}>
+          <div className="mobile-padding" style={{ background: THEME.bgCard, border: `1px solid ${THEME.border}`, padding: 40 }}>
              <button onClick={() => setStep(1)} style={{ color: THEME.text2, fontSize: 10, fontWeight: 800, marginBottom: 30, background: "none", border: "none", cursor: "pointer" }}>&larr; VOLTAR</button>
              
              <form onSubmit={handleSubmit} style={{ display: "flex", flexDirection: "column", gap: 30 }}>
@@ -620,20 +602,20 @@ export const QuotePage = () => {
                   type="submit"
                   style={{ background: THEME.accent, color: "black", padding: "20px", fontWeight: 900, fontSize: 14, textTransform: "uppercase", letterSpacing: 4, marginTop: 20 }}
                 >
-                  {locationType === "PARTNER" ? "CONCLUIR RESERVA IMEDIATA" : "ENVIAR PARA ANÁLISE"}
+                  SOLICITAR ANÁLISE DE RESERVA
                 </button>
              </form>
-          </motion.div>
+          </div>
         )}
 
         {step === 3 && (
-          <motion.div initial={{ opacity: 0, scale: 0.95 }} animate={{ opacity: 1, scale: 1 }} style={{ textAlign: "center", padding: 60, background: THEME.bgCard, border: `1px solid ${THEME.border}` }}>
+          <div style={{ textAlign: "center", padding: 60, background: THEME.bgCard, border: `1px solid ${THEME.border}` }}>
             <div style={{ width: 80, height: 80, borderRadius: "50%", background: `${THEME.accent}20`, display: "flex", alignItems: "center", justifyContent: "center", margin: "0 auto 30px" }}>
               <ShieldCheck size={40} color={THEME.accent} />
             </div>
             <h2 style={{ fontFamily: THEME.fontD, fontSize: 42, fontWeight: 900, textTransform: "uppercase", marginBottom: 20 }}>Recebemos sua Solicitação</h2>
-            <p style={{ color: THEME.text2, fontSize: 13, maxWidth: 400, margin: "0 auto 40px", lineHeight: 1.6, fontWeight: 600, textTransform: 'uppercase' }}>
-              O orçamento estimado foi salvo. Como trata-se de um local novo, nossa equipe técnica validará o CEP e a descrição em até 30 minutos para liberar o seu link de reserva.
+            <p style={{ color: THEME.text2, fontSize: 13, maxWidth: 400, margin: "0 auto 40px", lineHeight: 1.7, fontWeight: 600, textTransform: 'uppercase', letterSpacing: 1 }}>
+              Sua solicitação foi enviada com sucesso. Nossa equipe técnica analisará o briefing e os detalhes do local para liberar o seu link de reserva e orçamento final em até 30 minutos.
             </p>
             <button 
               onClick={() => navigate("/")}
@@ -641,7 +623,7 @@ export const QuotePage = () => {
             >
               VOLTAR PARA A VITRINE
             </button>
-          </motion.div>
+          </div>
         )}
 
       </div>

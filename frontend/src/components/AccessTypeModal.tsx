@@ -2,7 +2,7 @@ import { useState } from "react";
 import { API as api } from "../lib/api";
 import { useTheme } from "../contexts/ThemeContextCore";
 import { AxiosError } from "axios";
-import { motion } from "framer-motion";
+
 import { Shield, Lock, Globe, AlertTriangle, CheckCircle2 } from "lucide-react";
 
 interface AccessTypeModalProps {
@@ -42,10 +42,7 @@ export default function AccessTypeModal({ orderId, eventTitle, onConfirmed }: Ac
   };
 
   return (
-    <div className="fixed inset-0 z-[100] flex items-center justify-center p-6 bg-black/80 backdrop-blur-md">
-      <motion.div 
-        initial={{ opacity: 0, scale: 0.95, y: 10 }}
-        animate={{ opacity: 1, scale: 1, y: 0 }}
+    <div className="fixed inset-0 z-[100] flex items-center justify-center p-6 bg-black/80 backdrop-blur-md">      <div 
         className="bg-theme-bg border border-theme-border max-w-md w-full overflow-y-auto max-h-[95vh] shadow-2xl custom-scrollbar"
       >
         {/* Header */}
@@ -92,13 +89,11 @@ export default function AccessTypeModal({ orderId, eventTitle, onConfirmed }: Ac
               Álbum listado na vitrine. Download ilimitado por 3 meses.
             </p>
             {selected === "PUBLIC" && (
-                <motion.div 
-                    initial={{ opacity: 0, height: 0 }}
-                    animate={{ opacity: 1, height: 'auto' }}
+                <div 
                     className="ml-7 mt-3 p-2 bg-brand-tactical/10 border-l-2 border-brand-tactical text-[10px] text-brand-tactical uppercase font-bold tracking-widest leading-relaxed"
                 >
                     Ideal para compartilhar com familiares e convidados.
-                </motion.div>
+                </div>
             )}
           </button>
 
@@ -130,14 +125,12 @@ export default function AccessTypeModal({ orderId, eventTitle, onConfirmed }: Ac
                Restrito ao seu login. Arquivos excluídos após 15 dias.
             </p>
             {selected === "PRIVATE" && (
-                <motion.div 
-                    initial={{ opacity: 0, height: 0 }}
-                    animate={{ opacity: 1, height: 'auto' }}
+                <div 
                     className="ml-7 mt-3 p-2 bg-red-500/10 border-l-2 border-red-500 text-[10px] text-red-500 uppercase font-bold tracking-widest leading-relaxed"
                 >
                     <AlertTriangle size={12} className="inline mr-2" />
                     Após o prazo, os registros serão deletados.
-                </motion.div>
+                </div>
             )}
           </button>
         </div>
@@ -180,7 +173,8 @@ export default function AccessTypeModal({ orderId, eventTitle, onConfirmed }: Ac
             </p>
           </div>
         </div>
-      </motion.div>
+      </div>
+
     </div>
   );
 }

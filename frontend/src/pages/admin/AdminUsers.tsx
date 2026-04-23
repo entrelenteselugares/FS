@@ -1,6 +1,5 @@
 import React, { useState, useEffect } from "react";
 import { API } from "../../lib/api";
-import { motion } from "framer-motion";
 import { X } from "lucide-react";
 
 interface User {
@@ -194,9 +193,7 @@ export const AdminUsers: React.FC = () => {
 
       {isModalOpen && (
         <div className="fixed inset-0 z-[100] bg-black/95 backdrop-blur-xl flex items-center justify-center p-4">
-          <motion.div 
-            initial={{ opacity: 0, scale: 0.95 }}
-            animate={{ opacity: 1, scale: 1 }}
+          <div 
             className="w-full max-w-2xl bg-theme-bg border border-theme-border relative max-h-[90vh] overflow-y-auto lux-card p-6 md:p-12"
           >
             <button onClick={() => { setIsModalOpen(false); setEditingUser(null); }} className="absolute top-6 right-6 text-theme-muted hover:text-white transition-colors">
@@ -290,7 +287,7 @@ export const AdminUsers: React.FC = () => {
                   </button>
                 </div>
               </form>
-            </motion.div>
+            </div>
           </div>
         )}
     </div>

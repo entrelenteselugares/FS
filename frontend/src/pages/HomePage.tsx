@@ -1,6 +1,6 @@
 import { useState, useEffect, useRef, useCallback } from "react";
 import { useNavigate } from "react-router-dom";
-import { motion } from "framer-motion";
+
 import { API } from "../lib/api";
 import { useAuth } from "../hooks/useAuth";
 import { Helmet } from "react-helmet-async";
@@ -220,7 +220,7 @@ export const HomePage = () => {
 
       {/* ── HERO ─────────────────────────────────────────────────────────── */}
       <section style={{ padding: "clamp(40px, 8vw, 80px) clamp(12px, 4vw, 28px) 64px", maxWidth: 1100, margin: "0 auto" }}>
-        <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ duration: 0.5 }}>
+        <div style={{ opacity: 1 }}>
           <p style={{ fontSize: 10, fontFamily: T.fontB, fontWeight: 400, letterSpacing: "0.35em", textTransform: "uppercase", color: T.brand, marginBottom: 20 }}>
             {DICT.HERO_TAGLINE}
           </p>
@@ -297,7 +297,7 @@ export const HomePage = () => {
               </div>
             ))}
           </div>
-        </motion.div>
+        </div>
       </section>
 
       {/* ── EVENT GRID ───────────────────────────────────────────────────── */}
