@@ -1,6 +1,7 @@
 import { useState, useEffect, useRef, useCallback } from "react";
 import { useParams, useNavigate, useSearchParams } from "react-router-dom";
 import { ShieldCheck, ArrowLeft, Copy, CheckCircle2, Clock, RefreshCw } from "lucide-react";
+import { QRCodeSVG } from "qrcode.react";
 import { API } from "../lib/api";
 import { useTheme } from "../contexts/ThemeContextCore";
 
@@ -346,22 +347,15 @@ export const CheckoutPage = () => {
             </p>
           </div>
 
-          {/* QR Code — base64 do MP ou fallback via qrserver.com */}
+          {/* QR Code — Gerado localmente para garantir visibilidade instantânea */}
           <div className="flex justify-center mb-6">
             <div className="bg-white p-4 border border-zinc-100 shadow-2xl">
-              {pixData.qrCodeBase64 ? (
-                <img
-                  src={`data:image/png;base64,${pixData.qrCodeBase64}`}
-                  alt="QR Code PIX"
-                  style={{ width: 220, height: 220, display: "block" }}
-                />
-              ) : (
-                <img
-                  src={`https://api.qrserver.com/v1/create-qr-code/?size=220x220&data=${encodeURIComponent(pixData.qrCode)}`}
-                  alt="QR Code PIX"
-                  style={{ width: 220, height: 220, display: "block" }}
-                />
-              )}
+              <QRCodeSVG 
+                value={pixData.qrCode}
+                size={220}
+                level="H"
+                includeMargin={true}
+              />
             </div>
           </div>
 
