@@ -111,7 +111,8 @@ export const CheckoutPage = () => {
 
     pollingRef.current = setInterval(async () => {
       try {
-        const { data } = await API.get(`/public/orders/${pOrderId}`);
+        // Usa o endpoint que consulta o MP diretamente — não depende de webhook
+        const { data } = await API.get(`/public/orders/${pOrderId}/check-payment`);
         if (data.status === "APROVADO" || data.status === "APPROVED") {
           stopPolling();
           setPollingStatus("found");
@@ -120,7 +121,7 @@ export const CheckoutPage = () => {
       } catch {
         // Ignora erros de rede e continua tentando
       }
-    }, 3000);
+    }, 4000);
   }, [stopPolling]);
 
   // Quando pixData chega, inicia polling e timer de expiração
@@ -345,14 +346,22 @@ export const CheckoutPage = () => {
             </p>
           </div>
 
-          {/* QR Code */}
+          {/* QR Code — base64 do MP ou fallback via qrserver.com */}
           <div className="flex justify-center mb-6">
             <div className="bg-white p-4 border border-zinc-100 shadow-2xl">
-              <img
-                src={`data:image/png;base64,${pixData.qrCodeBase64}`}
-                alt="QR Code PIX"
-                style={{ width: 220, height: 220, display: "block" }}
-              />
+              {pixData.qrCodeBase64 ? (
+                <img
+                  src={`data:image/png;base64,${pixData.qrCodeBase64}`}
+                  alt="QR Code PIX"
+                  style={{ width: 220, height: 220, display: "block" }}
+                />
+              ) : (
+                <img
+                  src={`https://api.qrserver.com/v1/create-qr-code/?size=220x220&data=${encodeURIComponent(pixData.qrCode)}`}
+                  alt="QR Code PIX"
+                  style={{ width: 220, height: 220, display: "block" }}
+                />
+              )}
             </div>
           </div>
 

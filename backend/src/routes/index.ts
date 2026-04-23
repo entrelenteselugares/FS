@@ -126,7 +126,8 @@ router.post("/checkout/payment",      PaymentController.processPayment);
 router.post("/webhooks/mercadopago",  PaymentController.webhook);
 
 // ── Pedido Público ─────────────────────────────────────────────────────────────
-router.get("/public/orders/:id", PaymentController.getOrderPublic);
+router.get("/public/orders/:id",               PaymentController.getOrderPublic);
+router.get("/public/orders/:id/check-payment", PaymentController.checkPaymentStatus);
 
 // ── LGPD / Acesso (pós-pagamento) ─────────────────────────────────────────────
 router.post("/orders/:id/access-type",  requireAuth, chooseAccessType);

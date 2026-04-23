@@ -331,7 +331,6 @@ export class PaymentController {
           const buyerName = req.body.buyerName || cleanEmail.split("@")[0];
 
           try {
-            // 1. Criar no Supabase Auth para permitir login futuro
             const { data: authData, error: authError } = await supabaseAdmin.auth.admin.createUser({
               email: cleanEmail,
               password: tempPassword,
@@ -340,46 +339,34 @@ export class PaymentController {
             });
 
             if (authError) {
-              console.error("[Checkout] Erro ao criar usuário no Supabase:", authError.message);
-              // Se já existir no Supabase mas não no Prisma (raro mas possível), tentamos recuperar
               if (authError.message.includes("already registered")) {
-                 // Busca para tentar sincronizar IDs
-                 const { data: listUsers } = await supabaseAdmin.auth.admin.listUsers();
-                 const sUser = listUsers.users.find(u => u.email === cleanEmail);
-                 if (sUser) {
-                    const newUser = await prisma.user.create({
-                      data: {
-                        id: sUser.id,
-                        email: cleanEmail,
-                        senha: "AUTH_EXTERNAL_SUPABASE",
-                        nome: buyerName,
-                        role: "CLIENTE"
-                      }
-                    });
-                    finalUserId = newUser.id;
-                    isNewUser = true;
-                 }
+                // Supabase já tem o usuário — sincroniza com Prisma via upsert
+                const { data: listUsers } = await supabaseAdmin.auth.admin.listUsers();
+                const sUser = listUsers.users.find(u => u.email === cleanEmail);
+                if (sUser) {
+                  const syncedUser = await prisma.user.upsert({
+                    where: { email: cleanEmail },
+                    create: { id: sUser.id, email: cleanEmail, senha: "AUTH_EXTERNAL_SUPABASE", nome: buyerName, role: "CLIENTE" },
+                    update: { id: sUser.id }
+                  });
+                  finalUserId = syncedUser.id;
+                  isNewUser = true;
+                }
               } else {
                 throw authError;
               }
             } else if (authData?.user) {
-              // 2. Criar no Prisma com o ID do Supabase
-              const newUser = await prisma.user.create({
-                data: {
-                  id: authData.user.id,
-                  email: cleanEmail,
-                  senha: "AUTH_EXTERNAL_SUPABASE",
-                  nome: buyerName,
-                  role: "CLIENTE"
-                }
+              // Upsert no Prisma para evitar duplicata por race condition
+              const newUser = await prisma.user.upsert({
+                where: { email: cleanEmail },
+                create: { id: authData.user.id, email: cleanEmail, senha: "AUTH_EXTERNAL_SUPABASE", nome: buyerName, role: "CLIENTE" },
+                update: {}
               });
               finalUserId = newUser.id;
               isNewUser = true;
             }
           } catch (err: any) {
-             console.error("[Checkout Auto-Register Error]:", err.message);
-             // Fallback minimalista se o Supabase falhar mas quisermos salvar o pedido (legado compatível)
-             // Nota: O ideal é falhar para garantir integridade, mas vamos tentar prosseguir se o finalUserId for setado
+            console.error("[Checkout Auto-Register Error]:", err.message);
           }
         }
       }
@@ -392,19 +379,22 @@ export class PaymentController {
       if (accessType === "PRIVATE") expiresAt.setDate(expiresAt.getDate() + 15);
       else expiresAt.setDate(expiresAt.getDate() + 90);
 
-      // Anti-duplicação: verifica se já existe pedido PENDENTE para esse evento+email
-      // Isso resolve o bug do convidado que compra e gera dois pedidos
-      const existingPendingOrder = await prisma.order.findFirst({
-        where: {
-          eventId,
-          status: "PENDENTE",
-          OR: [
-            { buyerEmail: email ? email.toLowerCase().trim() : undefined },
-            { clienteId: finalUserId ?? undefined }
-          ].filter(c => Object.values(c).some(v => v !== undefined))
-        },
-        orderBy: { createdAt: "desc" }
-      });
+      // Anti-duplicação: query Prisma sem .filter() que quebrava silenciosamente
+      const cleanEmailForQuery = email ? email.toLowerCase().trim() : null;
+      let existingPendingOrder = null;
+
+      if (cleanEmailForQuery) {
+        existingPendingOrder = await prisma.order.findFirst({
+          where: { eventId, status: "PENDENTE", buyerEmail: cleanEmailForQuery },
+          orderBy: { createdAt: "desc" }
+        });
+      }
+      if (!existingPendingOrder && finalUserId) {
+        existingPendingOrder = await prisma.order.findFirst({
+          where: { eventId, status: "PENDENTE", clienteId: finalUserId },
+          orderBy: { createdAt: "desc" }
+        });
+      }
 
       let order;
       if (existingPendingOrder) {
@@ -580,5 +570,55 @@ export class PaymentController {
       return res.status(500).json({ error: "Erro ao recuperar dados do pedido." });
     }
   }
-}
 
+  /**
+   * GET /api/public/orders/:id/check-payment
+   * Polling direto no MP — detecta aprovação de Pix sem depender de webhook.
+   */
+  static async checkPaymentStatus(req: Request, res: Response) {
+    const { id } = req.params;
+    try {
+      const order = await prisma.order.findUnique({
+        where: { id: String(id) },
+        include: {
+          event: { select: { id: true, nomeNoivos: true } },
+          cliente: { select: { email: true } }
+        }
+      });
+      if (!order) return res.status(404).json({ error: "Pedido não encontrado." });
+
+      if (order.status === "APROVADO" || order.status === "APPROVED") {
+        return res.json({ status: "APROVADO", eventId: order.eventId });
+      }
+
+      if (!order.paymentId) {
+        return res.json({ status: order.status });
+      }
+
+      const mpData = await MercadoPagoService.getPaymentStatus(order.paymentId);
+
+      if (mpData.status === "approved") {
+        await prisma.order.update({
+          where: { id: order.id },
+          data: { status: "APROVADO" }
+        });
+        await prisma.event.update({
+          where: { id: order.eventId },
+          data: { active: true, isQuote: false }
+        });
+        NotificationService.notifyNewSale({
+          buyerEmail: order.buyerEmail || order.cliente?.email || "desconhecido",
+          eventTitle: (order.event as any)?.nomeNoivos || order.eventId,
+          orderId: order.id,
+          amount: Number(order.valor)
+        });
+        return res.json({ status: "APROVADO", eventId: order.eventId });
+      }
+
+      return res.json({ status: order.status });
+    } catch (error) {
+      console.error("[CheckPaymentStatus Error]:", error);
+      return res.status(500).json({ error: "Erro ao verificar pagamento." });
+    }
+  }
+}
