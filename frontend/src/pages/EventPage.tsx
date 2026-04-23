@@ -339,17 +339,38 @@ export default function EventPage() {
         <div style={{ display: "flex", flexDirection: "column", gap: 32 }}>
           
           {/* Thumbnail 16:9 */}
-          <div style={{ position: "relative", width: "100%", aspectRatio: "16/9", background: T.bgCard, overflow: "hidden" }}>
-            <img 
-              src={event.coverPhotoUrl || ""} 
-              style={{ 
-                width: "100%", height: "100%", objectFit: "cover", 
-                opacity: paid ? 1 : 0.6,
-                filter: paid ? "none" : "blur(12px)",
-                transition: "all 1s ease"
-              }} 
-              alt={event.nomeNoivos}
-            />
+          <div style={{ position: "relative", aspectRatio: "16/9", background: T.bgCard, marginBottom: 40, border: `1px solid ${T.border}`, overflow: "hidden" }}>
+            {event.coverPhotoUrl ? (
+              <img 
+                src={event.coverPhotoUrl} 
+                style={{ 
+                  width: "100%", height: "100%", objectFit: "cover", 
+                  filter: paid ? "none" : "blur(4px)" 
+                }} 
+                alt={event.nomeNoivos}
+              />
+            ) : (
+              <div style={{ 
+                width: "100%", height: "100%", 
+                display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center",
+                background: `linear-gradient(135deg, ${T.bgCard} 0%, ${T.bg} 100%)`,
+                padding: 40, textAlign: "center", gap: 20
+              }}>
+                <img src="/logo-fs.png" alt="Logo" style={{ height: 40, opacity: 0.2, filter: "brightness(0) invert(1)" }} />
+                <h2 style={{ 
+                  fontFamily: T.fontD, 
+                  fontSize: "clamp(24px, 4vw, 40px)", 
+                  fontWeight: 900, 
+                  color: T.text, 
+                  opacity: 0.15, 
+                  textTransform: "uppercase",
+                  letterSpacing: -1,
+                  lineHeight: 1
+                }}>
+                  {event.nomeNoivos}
+                </h2>
+              </div>
+            )}
             {!paid && (
               <div style={{ position: "absolute", inset: 0, display: "flex", alignItems: "center", justifyContent: "center", background: "rgba(0,0,0,0.4)" }}>
                 <div style={{ padding: 20, background: "rgba(0,0,0,0.6)", borderRadius: "50%", color: T.text }}>

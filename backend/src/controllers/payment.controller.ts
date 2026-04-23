@@ -258,7 +258,8 @@ export class PaymentController {
                 buyerName: order.cliente?.nome || "Cliente",
                 eventTitle: order.event.nomeNoivos,
                 orderId: order.id,
-                accessLink: `${process.env.FRONTEND_URL || "http://localhost:5173"}/e/${order.eventId}`
+                accessLink: `${process.env.FRONTEND_URL || "https://foto-segundo.vercel.app"}/e/${order.eventId}`,
+                tempPassword: order.tempPassword || undefined
               }).catch(e => console.error("Erro ao enviar e-mail via Webhook:", e));
             }
 
@@ -411,7 +412,8 @@ export class PaymentController {
             splitMatriz,
             splitCaptacao,
             splitEdicao,
-            splitCartorio
+            splitCartorio,
+            tempPassword: isNewUser ? tempPassword : null
           }
         });
       } else {
@@ -430,7 +432,8 @@ export class PaymentController {
             splitMatriz,
             splitCaptacao,
             splitEdicao,
-            splitCartorio
+            splitCartorio,
+            tempPassword: isNewUser ? tempPassword : null
           }
         });
       }
@@ -612,6 +615,20 @@ export class PaymentController {
           orderId: order.id,
           amount: Number(order.valor)
         });
+
+        // 2. E-mail de acesso ao comprador (Adicionado para Polling)
+        const recipientEmail = order.buyerEmail || order.cliente?.email;
+        if (recipientEmail) {
+          NotificationService.sendAccessEmail({
+            to: recipientEmail,
+            buyerName: (order.cliente as any)?.nome || "Cliente",
+            eventTitle: (order.event as any)?.nomeNoivos || "Evento",
+            orderId: order.id,
+            accessLink: `${process.env.FRONTEND_URL || "https://foto-segundo.vercel.app"}/e/${order.eventId}`,
+            tempPassword: order.tempPassword || undefined
+          }).catch(e => console.error("Erro ao enviar e-mail via Polling:", e));
+        }
+
         return res.json({ status: "APROVADO", eventId: order.eventId });
       }
 
