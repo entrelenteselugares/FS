@@ -410,7 +410,11 @@ export const QuotePage = () => {
                   {locationType === "PARTNER" ? (
                     <select required value={selectedPartnerId} onChange={e => setSelectedPartnerId(e.target.value)} className="fs-input" style={{ width: "100%" }}>
                       <option value="">SELECIONE A UNIDADE FIXA...</option>
-                      {partners.map(p => <option key={p.id} value={p.id}>{p.name.toUpperCase()} - {p.city || 'CAMPINAS'}</option>)}
+                      {partners && partners.length > 0 && partners.map(p => (
+                        <option key={p.id} value={p.id}>
+                          {((p.name || 'Unidade').toUpperCase())} - {((p.city || 'Campinas').toUpperCase())}
+                        </option>
+                      ))}
                     </select>
                   ) : (
                     <input required value={customCep} onChange={e => setCustomCep(e.target.value)} placeholder="CEP DO LOCAL" className="fs-input" style={{ width: "100%", padding: "15px" }} />
