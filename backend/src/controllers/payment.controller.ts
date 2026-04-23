@@ -47,15 +47,22 @@ export class PaymentController {
       let order;
       const existingOrderId = req.body.orderId;
 
+      // Resolve email → userId para evitar pedido como "Convidado" quando usuário já existe
+      let resolvedClienteId = userId || null;
+      if (!resolvedClienteId && email) {
+        const existingUser = await prisma.user.findUnique({ where: { email: email.toLowerCase().trim() } });
+        if (existingUser) resolvedClienteId = existingUser.id;
+      }
+
       if (existingOrderId) {
         order = await prisma.order.findUnique({ where: { id: existingOrderId } });
         if (!order) return res.status(404).json({ error: "Pedido original não encontrado." });
         
-        // Atualiza o valor caso tenha mudado (ex: cotação atualizada)
         order = await prisma.order.update({
           where: { id: order.id },
           data: {
             valor: preco,
+            clienteId: resolvedClienteId ?? order.clienteId,
             splitMatriz,
             splitCaptacao,
             splitEdicao,
@@ -63,20 +70,49 @@ export class PaymentController {
           }
         });
       } else {
-        order = await prisma.order.create({
-          data: {
+        // Anti-duplicação: verifica pedido PENDENTE já existente para esse evento+email
+        const existingPending = email ? await prisma.order.findFirst({
+          where: {
             eventId,
-            clienteId: userId || null,
-            valor: preco,
             status: "PENDENTE",
-            isContribution: event.isCrowdfund,
-            contributorName: event.isCrowdfund ? (req.body.contributorName || null) : null,
-            splitMatriz,
-            splitCaptacao,
-            splitEdicao,
-            splitCartorio
-          }
-        });
+            OR: [
+              { buyerEmail: email.toLowerCase().trim() },
+              { clienteId: resolvedClienteId ?? undefined }
+            ]
+          },
+          orderBy: { createdAt: "desc" }
+        }) : null;
+
+        if (existingPending) {
+          console.log(`[Checkout] Reutilizando pedido existente ${existingPending.id} para evitar duplicata.`);
+          order = await prisma.order.update({
+            where: { id: existingPending.id },
+            data: {
+              valor: preco,
+              clienteId: resolvedClienteId ?? existingPending.clienteId,
+              splitMatriz,
+              splitCaptacao,
+              splitEdicao,
+              splitCartorio
+            }
+          });
+        } else {
+          order = await prisma.order.create({
+            data: {
+              eventId,
+              clienteId: resolvedClienteId,
+              buyerEmail: email || null,
+              valor: preco,
+              status: "PENDENTE",
+              isContribution: event.isCrowdfund,
+              contributorName: event.isCrowdfund ? (req.body.contributorName || null) : null,
+              splitMatriz,
+              splitCaptacao,
+              splitEdicao,
+              splitCartorio
+            }
+          });
+        }
       }
 
       // 5. Criar Preferência no Mercado Pago (Checkout Pro)
@@ -356,25 +392,58 @@ export class PaymentController {
       if (accessType === "PRIVATE") expiresAt.setDate(expiresAt.getDate() + 15);
       else expiresAt.setDate(expiresAt.getDate() + 90);
 
-      const order = await prisma.order.create({
-        data: {
+      // Anti-duplicação: verifica se já existe pedido PENDENTE para esse evento+email
+      // Isso resolve o bug do convidado que compra e gera dois pedidos
+      const existingPendingOrder = await prisma.order.findFirst({
+        where: {
           eventId,
-          clienteId: finalUserId,
-          buyerEmail: email,
-          valor: preco,
           status: "PENDENTE",
-          isContribution: event.isCrowdfund,
-          contributorName: event.isCrowdfund ? (req.body.contributorName || null) : null,
-          accessType: accessType || "PUBLIC",
-          accessChosenAt: new Date(),
-          accessExpiresAt: expiresAt,
-          // Salva snapshot dos calculos para referencia no repasse manual
-          splitMatriz,
-          splitCaptacao,
-          splitEdicao,
-          splitCartorio
-        }
+          OR: [
+            { buyerEmail: email ? email.toLowerCase().trim() : undefined },
+            { clienteId: finalUserId ?? undefined }
+          ].filter(c => Object.values(c).some(v => v !== undefined))
+        },
+        orderBy: { createdAt: "desc" }
       });
+
+      let order;
+      if (existingPendingOrder) {
+        console.log(`[processPayment] Reutilizando pedido ${existingPendingOrder.id} (anti-duplicata).`);
+        order = await prisma.order.update({
+          where: { id: existingPendingOrder.id },
+          data: {
+            clienteId: finalUserId,
+            buyerEmail: email,
+            valor: preco,
+            accessType: accessType || existingPendingOrder.accessType || "PUBLIC",
+            accessChosenAt: existingPendingOrder.accessChosenAt ?? new Date(),
+            accessExpiresAt: existingPendingOrder.accessExpiresAt ?? expiresAt,
+            splitMatriz,
+            splitCaptacao,
+            splitEdicao,
+            splitCartorio
+          }
+        });
+      } else {
+        order = await prisma.order.create({
+          data: {
+            eventId,
+            clienteId: finalUserId,
+            buyerEmail: email,
+            valor: preco,
+            status: "PENDENTE",
+            isContribution: event.isCrowdfund,
+            contributorName: event.isCrowdfund ? (req.body.contributorName || null) : null,
+            accessType: accessType || "PUBLIC",
+            accessChosenAt: new Date(),
+            accessExpiresAt: expiresAt,
+            splitMatriz,
+            splitCaptacao,
+            splitEdicao,
+            splitCartorio
+          }
+        });
+      }
 
       // 5. Chamada Real ao Mercado Pago
       const mpResponse = await MercadoPagoService.processPayment({
