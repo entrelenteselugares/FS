@@ -86,7 +86,7 @@ export const AuthSelectionPage: React.FC = () => {
               <span className="w-8 h-1 bg-theme-border group-hover:bg-brand-tactical transition-all" />
               {opt.label}
             </div>
-          </motion.div>
+          </div>
         ))}
       </div>
 

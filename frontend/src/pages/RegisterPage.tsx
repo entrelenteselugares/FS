@@ -459,7 +459,7 @@ export const RegisterPage: React.FC = () => {
             Voltar para a Vitrine
           </Link>
         </div>
-      </motion.div>
+      </div>
     </div>
   );
 };
