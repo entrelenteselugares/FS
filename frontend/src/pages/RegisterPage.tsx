@@ -96,23 +96,26 @@ export const RegisterPage: React.FC = () => {
       
       // Logar automaticamente salvando o token e dados do usuário
       const { token, user } = response.data;
-      localStorage.setItem("token", token);
-      localStorage.setItem("user", JSON.stringify(user));
+      localStorage.setItem("fs_token", token);
+      
+      // Notificamos o sistema que estamos logados antes de navegar
+      API.defaults.headers.common["Authorization"] = `Bearer ${token}`;
 
       console.log("[REGISTER & LOGIN SUCCESS]", user.nome);
 
       const target = role === "PROFISSIONAL" ? "/profissional"
         : (role === "UNIDADE") ? "/unidade-fixa"
-        : "/";
+        : "/minha-conta";
 
       const hasPending = localStorage.getItem("pending_purchase_event_id");
+      
+      // Navegação imediata sem resetar loading local para evitar crash de remoção de nó no mobile
       if (hasPending) {
-        // Se estava tentando comprar, volta para o evento
-        navigate(`/public/events/${hasPending}`);
+        window.location.href = `/public/events/${hasPending}`;
       } else {
-        // Senão, vai para o dashboard correto
-        navigate(target);
+        window.location.href = target;
       }
+      return; // Interrompe o fluxo para evitar setLoading(false)
     } catch (err: unknown) {
       const error = err as { response?: { data?: { error?: string, details?: string } }, message?: string };
       console.error("[REGISTER CRITICAL FAILURE]:", error.response?.data || error.message);
@@ -154,6 +157,7 @@ export const RegisterPage: React.FC = () => {
       <div className="absolute top-0 right-1/3 w-[1px] h-full bg-theme-border opacity-20" />
       
       <motion.div 
+        key="register-container"
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.8 }}
