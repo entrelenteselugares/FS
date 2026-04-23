@@ -95,11 +95,14 @@ export async function getDashboardStats(req: AuthRequest, res: Response): Promis
 
     const totalRevenue = totalRevenueResult._sum.valor ? Number(totalRevenueResult._sum.valor) : 0;
 
+    const totalUsers = await prisma.user.count();
+
     res.json({
       stats: {
         activeEvents: totalEvents || 0,
         totalOrders: totalOrders || 0,
         totalRevenue,
+        totalUsers: totalUsers || 0,
         pendingQuotesCount: pendingQuotesCount || 0,
         pendingInvitesCount: pendingInvitesCount || 0,
         missingLinksCount: 0,
