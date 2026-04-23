@@ -325,12 +325,34 @@ export const QuotePage = () => {
     (locationType === "PARTNER" && !!selectedPartnerId) ||
     (locationType === "OTHER" && usageType === "PESSOAL");
 
+  // Mapeamento de IDs do catálogo para chaves de preço dos parceiros
+  const PARTNER_PRICE_KEYS: Record<string, string[]> = {
+    foto:      ["foto", "foto-bruta", "fotografia", "foto-digital", "foto_bruta", "fotografia-digital"],
+    video:     ["video", "video-bruto", "video-cinema", "video_bruto", "video-editado", "video_editado"],
+    reels:     ["reels", "reels-stories", "social-media", "reels_stories", "reels-social-media"],
+    impresso:  ["impresso", "foto-impressa", "album", "album-impresso", "foto_impressa", "album_impresso"],
+  };
+
+  const resolvePartnerPrice = (serviceId: string, prices: Record<string, number | null | undefined>): number | undefined => {
+    // 1. Tentativa direta
+    if (prices[serviceId] !== undefined && prices[serviceId] !== null) return Number(prices[serviceId]);
+    // 2. Busca por mapeamento reverso
+    for (const [canonicalKey, aliases] of Object.entries(PARTNER_PRICE_KEYS)) {
+      if (aliases.includes(serviceId.toLowerCase())) {
+        if (prices[canonicalKey] !== undefined && prices[canonicalKey] !== null) {
+          return Number(prices[canonicalKey]);
+        }
+      }
+    }
+    return undefined;
+  };
+
   const getServicePrice = (id: string, defaultPrice: number) => {
     const hourMultiplier = 1 + ((eventHours - 1) * 0.4);
     if (locationType === "PARTNER" && selectedPartnerId) {
       // Preço fixo do parceiro — sem multiplicador de horas (valor tabelado)
-      const custom = currentPartner?.prices?.[id];
-      return custom !== undefined && custom !== null ? Number(custom) : defaultPrice;
+      const partnerPrice = resolvePartnerPrice(id, currentPartner?.prices || {});
+      return partnerPrice !== undefined ? partnerPrice : defaultPrice;
     }
     if (locationType === "OTHER" && usageType === "PESSOAL") {
       return Math.round(defaultPrice * hourMultiplier);
