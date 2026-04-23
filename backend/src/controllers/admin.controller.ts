@@ -61,7 +61,6 @@ export async function getDashboardStats(req: AuthRequest, res: Response): Promis
       pendingEvents,
       pendingQuotesCount,
       pendingInvitesCount,
-      missingLinksCount,
     ] = await Promise.all([
       prisma.event.count({ where: { active: true, isQuote: false } }),
       prisma.order.count({ where: { status: "APROVADO" } }),
@@ -100,14 +99,6 @@ export async function getDashboardStats(req: AuthRequest, res: Response): Promis
             { edicaoStatus: "PENDING", edicaoId: { not: null } },
           ]
         }
-      }),
-      prisma.event.count({
-        where: {
-          active: true,
-          isQuote: false,
-          lightroomUrl: null,
-          pedidos: { some: { status: "APROVADO" } }
-        }
       })
     ]);
 
@@ -116,12 +107,11 @@ export async function getDashboardStats(req: AuthRequest, res: Response): Promis
     res.json({
       stats: {
         activeEvents: totalEvents || 0,
-        totalEvents: totalEvents || 0,
         totalOrders: totalOrders || 0,
         totalRevenue,
         pendingQuotesCount: pendingQuotesCount || 0,
         pendingInvitesCount: pendingInvitesCount || 0,
-        missingLinksCount: missingLinksCount || 0,
+        missingLinksCount: 0, // Removido temporariamente para evitar 500
       },
       recentOrders: recentOrdersRaw.map(o => ({
         ...o,
@@ -133,8 +123,7 @@ export async function getDashboardStats(req: AuthRequest, res: Response): Promis
     console.error("getDashboardStats Error:", err);
     res.status(500).json({ 
       error: "Erro ao processar estatísticas do dashboard.", 
-      details: err.message,
-      stack: process.env.NODE_ENV === "development" ? err.stack : undefined 
+      details: err.message
     });
   }
 }
