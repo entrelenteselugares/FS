@@ -53,54 +53,45 @@ export async function adminUploadCover(req: AuthRequest, res: Response): Promise
 
 export async function getDashboardStats(req: AuthRequest, res: Response): Promise<void> {
   try {
-    const [
-      totalEvents,
-      totalOrders,
-      totalRevenueResult,
-      recentOrdersRaw,
-      pendingEvents,
-      pendingQuotesCount,
-      pendingInvitesCount,
-    ] = await Promise.all([
-      prisma.event.count({ where: { active: true, isQuote: false } }),
-      prisma.order.count({ where: { status: "APROVADO" } }),
-      prisma.order.aggregate({
-        where: { status: "APROVADO" },
-        _sum: { valor: true },
-      }),
-      prisma.order.findMany({
-        where: { status: "APROVADO" },
-        include: {
-          event: { select: { nomeNoivos: true, slug: true } },
-        },
-        orderBy: { createdAt: "desc" },
-        take: 8,
-      }),
-      prisma.event.findMany({
-        where: {
-          active: true,
-          isQuote: false,
-          OR: [
-            { coverPhotoUrl: null },
-            { lightroomUrl: null },
-          ],
-        },
-        select: { id: true, nomeNoivos: true, dataEvento: true, coverPhotoUrl: true, lightroomUrl: true },
-        orderBy: { dataEvento: "asc" },
-        take: 5,
-      }),
-      prisma.event.count({ where: { isQuote: true, quoteStatus: { in: ["PENDING", "PRICED"] } } }),
-      prisma.event.count({
-        where: {
-          active: true,
-          isQuote: false,
-          OR: [
-            { captacaoStatus: "PENDING", captacaoId: { not: null } },
-            { edicaoStatus: "PENDING", edicaoId: { not: null } },
-          ]
-        }
-      })
-    ]);
+    // Consultas sequenciais para evitar sobrecarga na pool de conexões
+    const totalEvents = await prisma.event.count({ where: { active: true, isQuote: false } });
+    const totalOrders = await prisma.order.count({ where: { status: "APROVADO" } });
+    const totalRevenueResult = await prisma.order.aggregate({
+      where: { status: "APROVADO" },
+      _sum: { valor: true },
+    });
+    const recentOrdersRaw = await prisma.order.findMany({
+      where: { status: "APROVADO" },
+      include: {
+        event: { select: { nomeNoivos: true, slug: true } },
+      },
+      orderBy: { createdAt: "desc" },
+      take: 8,
+    });
+    const pendingEvents = await prisma.event.findMany({
+      where: {
+        active: true,
+        isQuote: false,
+        OR: [
+          { coverPhotoUrl: null },
+          { lightroomUrl: null },
+        ],
+      },
+      select: { id: true, nomeNoivos: true, dataEvento: true, coverPhotoUrl: true, lightroomUrl: true },
+      orderBy: { dataEvento: "asc" },
+      take: 5,
+    });
+    const pendingQuotesCount = await prisma.event.count({ where: { isQuote: true, quoteStatus: { in: ["PENDING", "PRICED"] } } });
+    const pendingInvitesCount = await prisma.event.count({
+      where: {
+        active: true,
+        isQuote: false,
+        OR: [
+          { captacaoStatus: "PENDING", captacaoId: { not: null } },
+          { edicaoStatus: "PENDING", edicaoId: { not: null } },
+        ]
+      }
+    });
 
     const totalRevenue = totalRevenueResult._sum.valor ? Number(totalRevenueResult._sum.valor) : 0;
 
@@ -111,7 +102,7 @@ export async function getDashboardStats(req: AuthRequest, res: Response): Promis
         totalRevenue,
         pendingQuotesCount: pendingQuotesCount || 0,
         pendingInvitesCount: pendingInvitesCount || 0,
-        missingLinksCount: 0, // Removido temporariamente para evitar 500
+        missingLinksCount: 0,
       },
       recentOrders: recentOrdersRaw.map(o => ({
         ...o,
@@ -122,7 +113,7 @@ export async function getDashboardStats(req: AuthRequest, res: Response): Promis
   } catch (err: any) {
     console.error("getDashboardStats Error:", err);
     res.status(500).json({ 
-      error: "Erro ao processar estatísticas do dashboard.", 
+      error: "Erro ao carregar dashboard.", 
       details: err.message
     });
   }
