@@ -206,6 +206,8 @@ interface Partner {
   city: string;
   prices?: Record<string, number>;
   fixedDuration?: number;
+  fixedTime?: boolean;
+  hideDuration?: boolean;
 }
 
 export const QuotePage = () => {
@@ -317,6 +319,7 @@ export const QuotePage = () => {
   // - Unidade Fixa: mostra preço apenas se parceiro selecionado
   // - Outro Local + Pessoal: mostra preço estimado (simulado por hora)
   // - Outro Local + Empresarial: não mostra preços (negociação direta)
+  const selectedPartner = partners.find(p => p.id === selectedPartnerId);
   const showPrices = false;
   
 
@@ -501,19 +504,21 @@ export const QuotePage = () => {
                     </div>
                   )}
                   
-                  <div style={{ position: "relative", display: "flex", alignItems: "center", opacity: (locationType === "PARTNER" && !!selectedPartnerId) ? 0.6 : 1 }}>
-                    <Clock size={16} style={{ position: "absolute", left: 12, color: THEME.accent, pointerEvents: "none" }} />
-                    <input 
-                      type="number" 
-                      min={1} max={24} 
-                      value={eventHours} 
-                      readOnly={locationType === "PARTNER" && !!selectedPartnerId}
-                      onChange={e => setEventHours(Number(e.target.value))} 
-                      className="fs-input" 
-                      style={{ width: "100%", padding: "15px 10px 15px 35px", cursor: (locationType === "PARTNER" && !!selectedPartnerId) ? "not-allowed" : "text" }} 
-                    />
-                    <span style={{ position: "absolute", right: 10, fontSize: 9, color: THEME.text2, pointerEvents: "none" }}>H</span>
-                  </div>
+                  {!selectedPartner?.hideDuration && (
+                    <div style={{ position: "relative", display: "flex", alignItems: "center", opacity: (locationType === "PARTNER" && selectedPartner?.fixedTime) ? 0.6 : 1 }}>
+                      <Clock size={16} style={{ position: "absolute", left: 12, color: THEME.accent, pointerEvents: "none" }} />
+                      <input 
+                        type="number" 
+                        min={1} max={24} 
+                        value={eventHours} 
+                        readOnly={locationType === "PARTNER" && selectedPartner?.fixedTime}
+                        onChange={e => setEventHours(Number(e.target.value))} 
+                        className="fs-input" 
+                        style={{ width: "100%", padding: "15px 10px 15px 35px", cursor: (locationType === "PARTNER" && selectedPartner?.fixedTime) ? "not-allowed" : "text" }} 
+                      />
+                      <span style={{ position: "absolute", right: 10, fontSize: 9, color: THEME.text2, pointerEvents: "none" }}>H</span>
+                    </div>
+                  )}
                 </div>
 
                 {locationType === "OTHER" && (

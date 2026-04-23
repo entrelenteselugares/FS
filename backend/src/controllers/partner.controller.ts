@@ -70,7 +70,7 @@ export async function getPartnerLandingData(req: Request, res: Response): Promis
  */
 export async function updatePartnerProfile(req: AuthRequest, res: Response): Promise<void> {
   const userId = req.user?.userId;
-  const { address, phone, description, coverUrl, slug, pixKey, servicePrices } = req.body;
+  const { address, phone, description, coverUrl, slug, pixKey, servicePrices, fixedDuration, fixedTime, hideDuration } = req.body;
 
   try {
     const updated = await prisma.cartorio.update({
@@ -82,7 +82,9 @@ export async function updatePartnerProfile(req: AuthRequest, res: Response): Pro
         ...(coverUrl !== undefined && { coverUrl }),
         ...(slug !== undefined && { slug }),
         ...(servicePrices !== undefined && { servicePrices }),
-        ...(req.body.fixedDuration !== undefined && { fixedDuration: Number(req.body.fixedDuration) }),
+        ...(fixedDuration !== undefined && { fixedDuration: Number(fixedDuration) }),
+        ...(fixedTime !== undefined && { fixedTime: Boolean(fixedTime) }),
+        ...(hideDuration !== undefined && { hideDuration: Boolean(hideDuration) }),
         user: {
           update: {
             ...(pixKey !== undefined && { pixKey })

@@ -102,6 +102,8 @@ export default function UnidadeFixaDashboard() {
   const [lpCoverUrl, setLpCoverUrl] = useState("");
   const [pixKey, setPixKey] = useState("");
   const [lpFixedDuration, setLpFixedDuration] = useState(2);
+  const [lpFixedTime, setLpFixedTime] = useState(false);
+  const [lpHideDuration, setLpHideDuration] = useState(false);
   const [savingLp, setSavingLp] = useState(false);
   const [savingPix, setSavingPix] = useState(false);
   const [qrModalEvent, setQrModalEvent] = useState<EventoAgenda | null>(null);
@@ -175,7 +177,9 @@ export default function UnidadeFixaDashboard() {
         setLpPhone(statsData.cartorio.phone ?? "");
         setLpDescription(statsData.cartorio.description ?? "");
         setLpCoverUrl(statsData.cartorio.coverUrl ?? "");
-        setLpFixedDuration(statsData.cartorio.fixedDuration ?? 2);
+        setLpFixedDuration(statsData.cartorio.fixedDuration || 2);
+        setLpFixedTime(statsData.cartorio.fixedTime || false);
+        setLpHideDuration(statsData.cartorio.hideDuration || false);
         setLocalPrices(statsData.cartorio.servicePrices || {});
         setPixKey(statsData.pixKey ?? "");
       }
@@ -197,6 +201,8 @@ export default function UnidadeFixaDashboard() {
         description: lpDescription,
         coverUrl: lpCoverUrl,
         fixedDuration: lpFixedDuration,
+        fixedTime: lpFixedTime,
+        hideDuration: lpHideDuration
       });
       setSuccess("Página pública atualizada com sucesso! ✨");
       setTimeout(() => setSuccess(""), 3000);
@@ -711,18 +717,41 @@ export default function UnidadeFixaDashboard() {
               </div>
 
               <div>
-                 <label style={{ fontSize: 10, fontWeight: 800, color: "var(--theme-text)", marginBottom: 8, display: "block", textTransform: "uppercase", letterSpacing: 1 }}>Pontualidade de Horário (Duração Padrão)</label>
-                 <p style={{ fontSize: 11, color: "var(--theme-text-muted)", marginBottom: 12 }}>Defina quantas horas de cobertura são padrão para eventos nesta unidade fixa.</p>
-                 <div style={{ display: "flex", alignItems: "center", gap: "1rem" }}>
-                   <input 
-                     type="number"
-                     value={lpFixedDuration} 
-                     onChange={e => setLpFixedDuration(Number(e.target.value))} 
-                     style={{ ...S.input, width: 80, textAlign: "center", fontWeight: 900, fontSize: 18 }} 
-                   />
-                   <span style={{ fontSize: 11, fontWeight: 800, color: "var(--theme-text-muted)", textTransform: "uppercase", letterSpacing: 1 }}>HORAS DE COBERTURA</span>
-                 </div>
-              </div>
+                  <label style={{ fontSize: 10, fontWeight: 800, color: "var(--theme-text)", marginBottom: 8, display: "block", textTransform: "uppercase", letterSpacing: 1 }}>Pontualidade de Horário (Duração Padrão)</label>
+                  <p style={{ fontSize: 11, color: "var(--theme-text-muted)", marginBottom: 12 }}>Defina quantas horas de cobertura são padrão para eventos nesta unidade fixa.</p>
+                  
+                  <div style={{ display: "flex", alignItems: "center", gap: "1rem", marginBottom: 20 }}>
+                    <input 
+                      type="number"
+                      value={lpFixedDuration} 
+                      onChange={e => setLpFixedDuration(Number(e.target.value))} 
+                      style={{ ...S.input, width: 80, textAlign: "center", fontWeight: 900, fontSize: 18 }} 
+                    />
+                    <span style={{ fontSize: 11, fontWeight: 800, color: "var(--theme-text-muted)", textTransform: "uppercase", letterSpacing: 1 }}>HORAS DE COBERTURA</span>
+                  </div>
+
+                  <div style={{ display: "flex", flexDirection: "column", gap: 15 }}>
+                    <div style={{ display: "flex", alignItems: "center", gap: 12, cursor: "pointer" }} onClick={() => setLpFixedTime(!lpFixedTime)}>
+                      <div style={{ width: 22, height: 22, border: `2px solid ${lpFixedTime ? "var(--brand-primary)" : "var(--theme-border)"}`, display: "flex", alignItems: "center", justifyContent: "center", background: lpFixedTime ? "var(--brand-primary)" : "transparent", transition: "all 0.2s" }}>
+                        {lpFixedTime && <div style={{ width: 10, height: 10, background: "var(--theme-bg)" }} />}
+                      </div>
+                      <div>
+                        <div style={{ fontSize: 11, fontWeight: 800, textTransform: "uppercase", letterSpacing: 1 }}>Tempo Fixo (Travar Horário)</div>
+                        <div style={{ fontSize: 9, color: "var(--theme-text-muted)", marginTop: 2 }}>O cliente verá a duração, mas não poderá alterá-la.</div>
+                      </div>
+                    </div>
+
+                    <div style={{ display: "flex", alignItems: "center", gap: 12, cursor: "pointer" }} onClick={() => setLpHideDuration(!lpHideDuration)}>
+                      <div style={{ width: 22, height: 22, border: `2px solid ${lpHideDuration ? "var(--brand-primary)" : "var(--theme-border)"}`, display: "flex", alignItems: "center", justifyContent: "center", background: lpHideDuration ? "var(--brand-primary)" : "transparent", transition: "all 0.2s" }}>
+                        {lpHideDuration && <div style={{ width: 10, height: 10, background: "var(--theme-bg)" }} />}
+                      </div>
+                      <div>
+                        <div style={{ fontSize: 11, fontWeight: 800, textTransform: "uppercase", letterSpacing: 1 }}>Ocultar Seletor de Duração</div>
+                        <div style={{ fontSize: 9, color: "var(--theme-text-muted)", marginTop: 2 }}>Recomendado para Cartórios. Remove a opção de escolha de tempo.</div>
+                      </div>
+                    </div>
+                  </div>
+               </div>
 
               <div style={{ display: "flex", gap: "1rem", alignItems: "center", paddingTop: 20 }}>
                  <button

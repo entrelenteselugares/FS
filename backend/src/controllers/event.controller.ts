@@ -184,7 +184,9 @@ export class EventController {
           name: p.cartorio?.razaoSocial || p.nome,
           city: p.cartorio?.cidade || "Campinas",
           prices: mergedPrices,
-          fixedDuration: p.cartorio?.fixedDuration ?? 2
+          fixedDuration: p.cartorio?.fixedDuration ?? 2,
+          fixedTime: p.cartorio?.fixedTime ?? false,
+          hideDuration: p.cartorio?.hideDuration ?? false
         };
       }));
     } catch (error) {

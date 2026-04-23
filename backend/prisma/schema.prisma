@@ -197,6 +197,8 @@ model Cartorio {
   coverUrl    String?
 
   fixedDuration Int?      @default(2) // Duração padrão do evento nesta unidade (ex: 2h)
+  fixedTime     Boolean   @default(false) // Se true, o tempo é travado (não editável)
+  hideDuration  Boolean   @default(false) // Se true, o seletor de duração é ocultado
   
   profissionais CartorioProfissional[]
 
