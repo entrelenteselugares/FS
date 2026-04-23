@@ -129,9 +129,13 @@ export async function getDashboardStats(req: AuthRequest, res: Response): Promis
       })),
       pendingEvents,
     });
-  } catch (err) {
+  } catch (err: any) {
     console.error("getDashboardStats Error:", err);
-    res.status(500).json({ error: "Erro ao processar estatísticas do dashboard." });
+    res.status(500).json({ 
+      error: "Erro ao processar estatísticas do dashboard.", 
+      details: err.message,
+      stack: process.env.NODE_ENV === "development" ? err.stack : undefined 
+    });
   }
 }
 
