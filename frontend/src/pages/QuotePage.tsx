@@ -1,5 +1,5 @@
 import { useState, useEffect, useRef } from "react";
-import { Users, Calendar, ArrowRight, ShieldCheck, ChevronLeft, ChevronRight, Clock, MapPin, Home } from "lucide-react";
+import { Users, Calendar, ArrowRight, ShieldCheck, ChevronLeft, ChevronRight, Clock, Home } from "lucide-react";
 import { API } from "../lib/api";
 import { useNavigate } from "react-router-dom";
 import { useAuth } from "../hooks/useAuth";
