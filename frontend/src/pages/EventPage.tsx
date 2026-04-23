@@ -300,11 +300,24 @@ export default function EventPage() {
 
       <style>{`
         @keyframes spin { from { transform: rotate(0deg); } to { transform: rotate(360deg); } }
+
+        /* Desktop: grid 2 colunas */
         @media (min-width: 1024px) {
           .event-grid { display: grid; grid-template-columns: 1fr 360px; gap: 48px; }
+          .event-aside { order: 0; }
         }
+
+        /* Mobile: coluna única, aside vai para CIMA do conteúdo */
         @media (max-width: 1023px) {
-          .event-grid { display: flex; flex-direction: column; gap: 32px; }
+          .event-grid { display: flex; flex-direction: column; gap: 24px; padding: 16px !important; }
+          .event-aside { order: -1; } /* mostra o botão de compra primeiro */
+          .event-aside > div { position: static !important; } /* remove sticky no mobile */
+        }
+
+        /* Checkout card grid: 3 colunas -> 1 linha com 3 col em telas grandes, compacto em pequenas */
+        @media (max-width: 480px) {
+          .card-expiry-grid { grid-template-columns: 1fr 1fr !important; }
+          .card-cvv-col { grid-column: 1 / -1; }
         }
       `}</style>
 
@@ -321,7 +334,7 @@ export default function EventPage() {
         </div>
       </nav>
 
-      <main style={{ maxWidth: 1200, margin: "0 auto", padding: "24px 16px" }} className="event-grid container-padding">
+      <main style={{ maxWidth: 1200, margin: "0 auto", padding: "24px 16px" }} className="event-grid">
         
         {/* Coluna Esquerda */}
         <div style={{ display: "flex", flexDirection: "column", gap: 32 }}>
@@ -402,7 +415,7 @@ export default function EventPage() {
         </div>
 
         {/* Coluna Direita (Sidebar) */}
-        <aside>
+        <aside className="event-aside">
           <div style={{ position: "sticky", top: 100 }}>
             
             {/* STEP: PAYWALL */}
@@ -454,7 +467,7 @@ export default function EventPage() {
                     <label style={FieldLabel}>Nome no Cartão</label>
                     <input style={FieldInput} value={cardData.name} onChange={handleChange("name")} placeholder="JOÃO SILVA" />
                   </div>
-                  <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr 1fr", gap: 8 }}>
+                  <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr 1fr", gap: 8 }} className="card-expiry-grid">
                     <div>
                       <label style={FieldLabel}>Mês</label>
                       <input style={FieldInput} value={cardData.month} onChange={handleChange("month")} placeholder="MM" />
@@ -463,7 +476,7 @@ export default function EventPage() {
                       <label style={FieldLabel}>Ano</label>
                       <input style={FieldInput} value={cardData.year} onChange={handleChange("year")} placeholder="AA" />
                     </div>
-                    <div>
+                    <div className="card-cvv-col">
                       <label style={FieldLabel}>CVV</label>
                       <input style={FieldInput} value={cardData.cvv} onChange={handleChange("cvv")} placeholder="000" />
                     </div>

@@ -55,10 +55,10 @@ export const AuthSelectionPage: React.FC = () => {
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 1, ease: [0.19, 1, 0.22, 1] }}
-        className="text-center mb-32 relative z-10"
+        className="text-center mb-16 md:mb-32 relative z-10"
       >
         <img src="/logo-fs.png" alt="Foto Segundo" className="h-10 w-auto mb-16 mx-auto opacity-80" />
-        <h1 className="text-6xl md:text-9xl font-sans tracking-tighter text-theme-text mb-8 uppercase font-black">
+        <h1 className="font-sans tracking-tighter text-theme-text mb-8 uppercase font-black" style={{ fontSize: 'clamp(40px, 12vw, 96px)' }}>
           GATE<span className="text-brand-tactical">KEEPER</span>
         </h1>
         <div className="flex items-center justify-center gap-6">
@@ -76,15 +76,15 @@ export const AuthSelectionPage: React.FC = () => {
             animate={{ opacity: 1 }}
             transition={{ delay: 0.2 + idx * 0.1, duration: 1 }}
             onClick={() => navigate(`/login?role=${opt.role}`)}
-            className="group p-20 flex flex-col items-start border-r border-theme-border/5 last:border-r-0 hover:bg-theme-bg-muted/20 cursor-pointer transition-all duration-1000"
+            className="group p-8 md:p-16 flex flex-col items-start border-r border-theme-border/5 last:border-r-0 md:last:border-b-0 last:border-b-0 hover:bg-theme-bg-muted/20 cursor-pointer transition-all duration-1000"
           >
             <div className="mb-12 opacity-40 group-hover:opacity-100 group-hover:text-brand-tactical transition-all transform group-hover:scale-110 duration-500">
               {opt.icon}
             </div>
-            <h3 className="text-4xl font-sans text-theme-text mb-6 tracking-tighter transition-all duration-500 font-extrabold uppercase">
+            <h3 className="text-2xl md:text-4xl font-sans text-theme-text mb-4 md:mb-6 tracking-tighter transition-all duration-500 font-extrabold uppercase">
               {opt.title}
             </h3>
-            <p className="text-theme-muted text-[11px] leading-[1.8] mb-16 font-bold lg:pr-10 uppercase tracking-widest">
+            <p className="text-theme-muted text-[11px] leading-[1.8] mb-8 md:mb-16 font-bold lg:pr-10 uppercase tracking-widest">
               {opt.description}
             </p>
             

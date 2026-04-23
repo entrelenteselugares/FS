@@ -78,6 +78,7 @@
 * {
   box-sizing: border-box;
   transition: background-color 0.2s, color 0.2s, border-color 0.2s, box-shadow 0.2s;
+  -webkit-tap-highlight-color: transparent; /* Remove highlight azul iOS ao tocar */
 }
 
 body {
@@ -88,6 +89,12 @@ body {
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
   margin: 0;
+  overscroll-behavior-y: none; /* Evita bounce iOS que causa scroll indesejado */
+}
+
+/* Elimina delay de 300ms em toque para botões e links no iOS/Android */
+button, a, [role="button"], input, select, textarea {
+  touch-action: manipulation;
 }
 
 /* ─── Focus States ────────────────────────────────────────────────────────── */
@@ -263,10 +270,13 @@ textarea:focus {
 @media (max-width: 768px) {
   .mobile-only { display: block; }
   .desktop-only { display: none; }
-  
-  /* Ajuste de escala para mobile extremo (320px) */
-  html { font-size: 14px; }
   .container-padding { padding-left: 16px !important; padding-right: 16px !important; }
+}
+/* Garante que inputs em iOS não aplicam zoom automático ao focar (requer font-size >= 16px) */
+@media (max-width: 768px) {
+  input, select, textarea {
+    font-size: 16px !important;
+  }
 }
 
 .flex-center { display: flex; align-items: center; justify-content: center; }

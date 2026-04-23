@@ -183,7 +183,7 @@ export const HomePage = () => {
       {/* ── NAV ─────────────────────────────────────────────────────────── */}
       <nav id="main-nav" style={{
         display: "flex", alignItems: "center", justifyContent: "space-between",
-        padding: "16px 28px", borderBottom: `1px solid ${T.border}`,
+        padding: "16px clamp(12px, 4vw, 28px)", borderBottom: `1px solid ${T.border}`,
         background: "var(--theme-bg-nav)", backdropFilter: "blur(20px)",
         position: "sticky", top: 0, zIndex: 100,
       }}>
@@ -219,7 +219,7 @@ export const HomePage = () => {
       </nav>
 
       {/* ── HERO ─────────────────────────────────────────────────────────── */}
-      <section style={{ padding: "80px 28px 64px", maxWidth: 1100, margin: "0 auto" }}>
+      <section style={{ padding: "clamp(40px, 8vw, 80px) clamp(12px, 4vw, 28px) 64px", maxWidth: 1100, margin: "0 auto" }}>
         <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ duration: 0.5 }}>
           <p style={{ fontSize: 10, fontFamily: T.fontB, fontWeight: 400, letterSpacing: "0.35em", textTransform: "uppercase", color: T.brand, marginBottom: 20 }}>
             {DICT.HERO_TAGLINE}
