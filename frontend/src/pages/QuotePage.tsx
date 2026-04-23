@@ -1,8 +1,9 @@
 import { useState, useEffect, useRef } from "react";
-import { Users, Calendar, ArrowRight, ShieldCheck, ChevronLeft, ChevronRight, Clock } from "lucide-react";
+import { Users, Calendar, ArrowRight, ShieldCheck, ChevronLeft, ChevronRight, Clock, MapPin, Home } from "lucide-react";
 import { API } from "../lib/api";
 import { useNavigate } from "react-router-dom";
 import { useAuth } from "../hooks/useAuth";
+import { useViaCep } from "../hooks/useViaCep";
 
 // ── Configurações de Precificação (Tactical Engine) 🛡️⚙️ ───────────
 const P = {
@@ -235,6 +236,9 @@ export const QuotePage = () => {
   const [usageType, setUsageType] = useState<"PESSOAL" | "EMPRESARIAL">("PESSOAL");
   const [selectedPartnerId, setSelectedPartnerId] = useState("");
   const [customCep, setCustomCep] = useState("");
+  const [addressData, setAddressData] = useState({ logradouro: "", bairro: "", cidade: "", uf: "" });
+  const [addressNumber, setAddressNumber] = useState("");
+  const { fetchAddress, loading: isCepLoading } = useViaCep();
   const [eventDate, setEventDate] = useState("");
   const [eventHours, setEventHours] = useState(2);
   const [description, setDescription] = useState("");
@@ -260,6 +264,23 @@ export const QuotePage = () => {
       setEventHours(p.fixedDuration);
     }
   }, [selectedPartnerId, locationType, partners]);
+
+  const handleCepChange = async (val: string) => {
+    const clean = val.replace(/\D/g, "").slice(0, 8);
+    setCustomCep(clean);
+    
+    if (clean.length === 8) {
+      const data = await fetchAddress(clean);
+      if (data) {
+        setAddressData({
+          logradouro: data.logradouro,
+          bairro: data.bairro,
+          cidade: data.localidade,
+          uf: data.uf
+        });
+      }
+    }
+  };
 
   // Lógica de Equipe 🛡️👥
   const calculateTeam = () => {
@@ -321,8 +342,14 @@ export const QuotePage = () => {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    const fullAddress = locationType === "PARTNER" 
+      ? "Ponto Fixo" 
+      : `${addressData.logradouro}, ${addressNumber} - ${addressData.bairro}, ${addressData.cidade}/${addressData.uf} (CEP: ${customCep})`;
+
     const payload = {
-      name, email, attendees: Number(attendees), locationType, usageType, selectedPartnerId, customCep, 
+      name, email, attendees: Number(attendees), locationType, usageType, selectedPartnerId, 
+      customCep, 
+      location: fullAddress,
       eventDate, eventHours, description, selectedServices, totalPrice, 
       status: "PENDING"
     };
@@ -407,7 +434,7 @@ export const QuotePage = () => {
                 </div>
 
                 <div className="mobile-grid-1" style={{ display: "grid", gridTemplateColumns: "1fr 120px", gap: 10 }}>
-                  {locationType === "PARTNER" ? (
+                   {locationType === "PARTNER" ? (
                     <select required value={selectedPartnerId} onChange={e => setSelectedPartnerId(e.target.value)} className="fs-input" style={{ width: "100%" }}>
                       <option value="">SELECIONE A UNIDADE FIXA...</option>
                       {partners && partners.length > 0 && partners.map(p => (
@@ -417,7 +444,61 @@ export const QuotePage = () => {
                       ))}
                     </select>
                   ) : (
-                    <input required value={customCep} onChange={e => setCustomCep(e.target.value)} placeholder="CEP DO LOCAL" className="fs-input" style={{ width: "100%", padding: "15px" }} />
+                    <div style={{ display: "flex", flexDirection: "column", gap: 10 }}>
+                      <div style={{ position: "relative" }}>
+                        <input 
+                          required 
+                          value={customCep} 
+                          onChange={e => handleCepChange(e.target.value)} 
+                          placeholder="CEP DO LOCAL" 
+                          className="fs-input font-mono" 
+                          style={{ width: "100%", padding: "15px" }} 
+                        />
+                        {isCepLoading && (
+                          <div style={{ position: "absolute", right: 15, top: "50%", transform: "translateY(-50%)" }}>
+                             <div className="w-4 h-4 border-t-2 border-brand-primary rounded-full animate-spin" />
+                          </div>
+                        )}
+                      </div>
+                      
+                      {addressData.logradouro && (
+                        <div style={{ display: "flex", flexDirection: "column", gap: 10 }}>
+                          <div style={{ display: "flex", gap: 10 }}>
+                             <div style={{ flex: 3, position: "relative" }}>
+                               <Home size={14} style={{ position: "absolute", left: 12, top: "50%", transform: "translateY(-50%)", opacity: 0.5 }} />
+                               <input 
+                                 readOnly 
+                                 value={addressData.logradouro} 
+                                 className="fs-input" 
+                                 style={{ width: "100%", padding: "12px 12px 12px 35px", background: "rgba(255,255,255,0.03)", fontSize: 11 }} 
+                               />
+                             </div>
+                             <input 
+                               required 
+                               placeholder="Nº" 
+                               value={addressNumber} 
+                               onChange={e => setAddressNumber(e.target.value)} 
+                               className="fs-input" 
+                               style={{ flex: 1, padding: "12px", textAlign: "center", fontSize: 11 }} 
+                             />
+                          </div>
+                          <div style={{ display: "flex", gap: 10 }}>
+                             <input 
+                               readOnly 
+                               value={addressData.bairro} 
+                               className="fs-input" 
+                               style={{ flex: 2, padding: "12px", background: "rgba(255,255,255,0.03)", fontSize: 11 }} 
+                             />
+                             <input 
+                               readOnly 
+                               value={`${addressData.cidade}/${addressData.uf}`} 
+                               className="fs-input" 
+                               style={{ flex: 2, padding: "12px", background: "rgba(255,255,255,0.03)", fontSize: 11 }} 
+                             />
+                          </div>
+                        </div>
+                      )}
+                    </div>
                   )}
                   
                   <div style={{ position: "relative", display: "flex", alignItems: "center", opacity: (locationType === "PARTNER" && !!selectedPartnerId) ? 0.6 : 1 }}>
