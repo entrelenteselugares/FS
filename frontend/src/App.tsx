@@ -39,71 +39,66 @@ const AnimatedRoutes = () => {
   const location = useLocation();
   
   return (
-    <AnimatePresence mode="wait">
-      <motion.div
-        key={location.pathname}
-        initial={{ opacity: 0, scale: 0.995 }}
-        animate={{ opacity: 1, scale: 1 }}
-        exit={{ opacity: 0, scale: 1.002 }}
-        transition={{ duration: 0.35, ease: [0.16, 1, 0.3, 1] }}
-      >
-        <Routes location={location}>
-          {/* Público */}
-          <Route path="/" element={<HomePage />} />
-          <Route path="/login" element={<LoginPage />} />
-          <Route path="/register" element={<RegisterPage />} />
-          <Route path="/e/:slug" element={<EventPage />} />
-          <Route path="/auth" element={<AuthSelectionPage />} />
-          <Route path="/cotacao" element={<QuotePage />} />
-{/* 
-          <Route path="/hall-da-fama" element={<HallOfFame />} />
-          <Route path="/concursos" element={<HallOfFame />} /> 
-          */}
-          <Route path="/p/:slug" element={<PartnerLP />} />
-          <Route path="/checkout" element={<CheckoutPage />} />
-          <Route path="/checkout/:orderId" element={<CheckoutPage />} />
+    <div
+      key={location.pathname}
+      className="w-full h-full"
+    >
+      <Routes location={location}>
+        {/* Público */}
+        <Route path="/" element={<HomePage />} />
+        <Route path="/login" element={<LoginPage />} />
+        <Route path="/register" element={<RegisterPage />} />
+        <Route path="/e/:slug" element={<EventPage />} />
+        <Route path="/auth" element={<AuthSelectionPage />} />
+        <Route path="/cotacao" element={<QuotePage />} />
+        {/* 
+        <Route path="/hall-da-fama" element={<HallOfFame />} />
+        <Route path="/concursos" element={<HallOfFame />} /> 
+        */}
+        <Route path="/p/:slug" element={<PartnerLP />} />
+        <Route path="/checkout" element={<CheckoutPage />} />
+        <Route path="/checkout/:orderId" element={<CheckoutPage />} />
 
-          {/* Redireciona para o painel correto */}
-          <Route path="/dashboard" element={
-            <ProtectedRoute><DashboardRedirect /></ProtectedRoute>
-          } />
+        {/* Redireciona para o painel correto */}
+        <Route path="/dashboard" element={
+          <ProtectedRoute><DashboardRedirect /></ProtectedRoute>
+        } />
 
-          {/* Painel do Admin */}
-          <Route path="/admin" element={
-            <ProtectedRoute roles={["ADMIN"]}>
-              <AdminDashboard />
-            </ProtectedRoute>
-          } />
-          <Route path="/admin/*" element={<Navigate to="/admin" replace />} />
+        {/* Painel do Admin */}
+        <Route path="/admin" element={
+          <ProtectedRoute roles={["ADMIN"]}>
+            <AdminDashboard />
+          </ProtectedRoute>
+        } />
+        <Route path="/admin/*" element={<Navigate to="/admin" replace />} />
 
-          {/* Painel do Artista (Profissional) */}
-          <Route path="/profissional" element={
-            <ProtectedRoute roles={["ADMIN", "PROFISSIONAL"]}>
-              <ProfissionalDashboard />
-            </ProtectedRoute>
-          } />
+        {/* Painel do Artista (Profissional) */}
+        <Route path="/profissional" element={
+          <ProtectedRoute roles={["ADMIN", "PROFISSIONAL"]}>
+            <ProfissionalDashboard />
+          </ProtectedRoute>
+        } />
 
-          {/* Painel Unidades Fixas */}
-          <Route path="/unidade-fixa" element={
-            <ProtectedRoute roles={["ADMIN", "CARTORIO", "UNIDADE"]}>
-              <UnidadeFixaDashboard />
-            </ProtectedRoute>
-          } />
+        {/* Painel Unidades Fixas */}
+        <Route path="/unidade-fixa" element={
+          <ProtectedRoute roles={["ADMIN", "CARTORIO", "UNIDADE"]}>
+            <UnidadeFixaDashboard />
+          </ProtectedRoute>
+        } />
 
-          {/* Área do Cliente / Minha Conta */}
-          <Route path="/minha-conta" element={
-            <ProtectedRoute roles={["ADMIN", "CLIENTE", "PROFISSIONAL", "CARTORIO", "UNIDADE"]}>
-              <ClienteArea />
-            </ProtectedRoute>
-          } />
+        {/* Área do Cliente / Minha Conta */}
+        <Route path="/minha-conta" element={
+          <ProtectedRoute roles={["ADMIN", "CLIENTE", "PROFISSIONAL", "CARTORIO", "UNIDADE"]}>
+            <ClienteArea />
+          </ProtectedRoute>
+        } />
 
-          {/* Home e 404 */}
-          <Route path="/404" element={<NotFoundPage />} />
-          <Route path="*" element={<Navigate to="/404" replace />} />
+        {/* Home e 404 */}
+        <Route path="/404" element={<NotFoundPage />} />
+        <Route path="*" element={<Navigate to="/404" replace />} />
 
-        </Routes>
-      </motion.div>
-    </AnimatePresence>
+      </Routes>
+    </div>
   );
 };
 

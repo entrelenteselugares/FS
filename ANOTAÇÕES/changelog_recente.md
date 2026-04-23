@@ -26,5 +26,7 @@
 - **Dynamic Editorial Covers**: Implementado fallback dinâmico para capas de eventos. Eventos sem foto agora exibem automaticamente uma capa editorial elegante com logo e nome do evento em degradê.
 
 ### 🛠️ Correções Técnicas
+- **Mobile Registration Stability**: Resolvido o erro fatal `removeChild` que ocorria no Android/iOS após o registro. Implementado redirecionamento robusto via hardware e sincronizadas as chaves de `localStorage` (`fs_token`) para garantir login imediato sem crash de DOM.
+- **Database Schema Sync**: Realizado `prisma db push` para sincronizar o campo `tempPassword` no ambiente de produção, eliminando erros 500 no carregamento das estatísticas de vendas.
 - **TS Build Fixes**: Resolvido erro de tipagem no `EventPage.tsx` que impedia o build na Vercel devido a tratamento incompleto de mensagens de erro de pagamento.
 - **Local QR Generator**: Removida dependência de API externa para QR Code Pix, implementando geração nativa via `qrcode.react` para carregamento instantâneo no Checkout.

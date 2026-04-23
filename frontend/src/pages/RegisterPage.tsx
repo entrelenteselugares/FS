@@ -156,11 +156,8 @@ export const RegisterPage: React.FC = () => {
       <div className="absolute top-0 left-1/3 w-[1px] h-full bg-theme-border opacity-20" />
       <div className="absolute top-0 right-1/3 w-[1px] h-full bg-theme-border opacity-20" />
       
-      <motion.div 
+      <div 
         key="register-container"
-        initial={{ opacity: 0, y: 20 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ duration: 0.8 }}
         className="w-full max-w-2xl relative z-10"
       >
         <div className="text-center mb-16">

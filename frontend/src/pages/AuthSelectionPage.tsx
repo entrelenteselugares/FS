@@ -51,10 +51,7 @@ export const AuthSelectionPage: React.FC = () => {
         <div className="absolute top-0 right-1/4 w-[1px] h-full bg-theme-border/5" />
       </div>
       
-      <motion.div 
-        initial={{ opacity: 0, y: 20 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ duration: 1, ease: [0.19, 1, 0.22, 1] }}
+      <div 
         className="text-center mb-16 md:mb-32 relative z-10"
       >
         <img src="/logo-fs.png" alt="Foto Segundo" className="h-10 w-auto mb-16 mx-auto opacity-80" />
@@ -66,15 +63,12 @@ export const AuthSelectionPage: React.FC = () => {
            <p className="text-theme-muted uppercase tracking-[0.8em] text-[10px] font-bold">Protocolo de Identidade</p>
            <div className="w-16 h-1.5 bg-brand-tactical" />
         </div>
-      </motion.div>
+      </div>
 
       <div className="grid grid-cols-1 md:grid-cols-3 gap-0 max-w-7xl w-full relative z-10 border border-theme-border/5 bg-theme-bg-muted/10">
         {options.map((opt, idx) => (
-          <motion.div
+          <div
             key={opt.id}
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            transition={{ delay: 0.2 + idx * 0.1, duration: 1 }}
             onClick={() => navigate(`/login?role=${opt.role}`)}
             className="group p-8 md:p-16 flex flex-col items-start border-r border-theme-border/5 last:border-r-0 md:last:border-b-0 last:border-b-0 hover:bg-theme-bg-muted/20 cursor-pointer transition-all duration-1000"
           >
@@ -96,16 +90,13 @@ export const AuthSelectionPage: React.FC = () => {
         ))}
       </div>
 
-      <motion.button
-        initial={{ opacity: 0 }}
-        animate={{ opacity: 1 }}
-        transition={{ delay: 1, duration: 1 }}
+      <button
         onClick={() => navigate("/")}
         className="mt-32 text-theme-muted hover:text-brand-tactical text-[11px] font-bold uppercase tracking-[0.8em] transition-all duration-500 flex items-center gap-6 group"
       >
         <span className="w-12 h-1.5 bg-theme-border group-hover:w-16 group-hover:bg-brand-tactical transition-all" />
         VOLTAR À VITRINE
-      </motion.button>
+      </button>
     </div>
   );
 };
