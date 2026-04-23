@@ -82,6 +82,19 @@ model Cartorio {
 }
 ```
 
+### Modelo `Order` (Transacional)
+
+```prisma
+model Order {
+  id           String   @id @default(cuid())
+  externalId   String   @unique // Mercado Pago Payment ID
+  status       String   // PENDENTE | APROVADO | REJEITADO
+  valor        Decimal  @db.Decimal(10, 2)
+  tempPassword String?  // Senha provisória gerada no checkout (para acesso imediato)
+  clientEmail  String   // Sincronizado para notificações transacionais
+}
+```
+
 ---
 
 ## 🛠️ Regras de Endereço Automático (ViaCEP)

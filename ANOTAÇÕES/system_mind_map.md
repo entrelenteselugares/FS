@@ -27,11 +27,12 @@ mindmap
       Src_Logic [src/]
         Controllers [Auth, Admin, Partner, Payment]
           - Auto_Allocation [Lógica de Profissional FIXO]
+          - Sequential_Stats [Otimização para Vercel 500]
         Routes [Core Index Routing]
         Lib [audit.ts, prisma.ts, auth.ts, pricing.ts]
         Services [MercadoPago, Notifications]
     Frontend_React [frontend/]
-      Public_Assets [logo-fs.png / Icons]
+      Public_Assets [favicon.png / logo-fs.png]
       Design_System [lib/theme.ts / index.css]
         - Theme_Engine [Split Context para HMR/Fast Refresh]
       Administrative [Dashboard Tower]
@@ -43,7 +44,7 @@ mindmap
         Unidade_Fixa [Cartório]
       Public_Pages [Storefront]
         Landing_Pages [SEO / Unidades]
-        - Checkout_Flow [Mercado Pago V2 / Zero-Any TS Compliance]
+        - Checkout_Flow [Password Persistence / Zero-Any TS Compliance]
         - ClienteArea [Self-Service Privacy & Event Status]
 ```
 

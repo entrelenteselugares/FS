@@ -51,7 +51,17 @@ A aplicação DEVE ter `app.set("trust proxy", 1)` no `app.ts`. Sem isso, o `exp
 
 ---
 
-## 5. Regras Inegociáveis
+## 6. Diretrizes de Performance e Deploy (Vercel)
+
+### Sequential Query Pattern (Dashboard)
+Para evitar o erro 500 causado por concorrência de recursos ou estouro da pool de conexões (PGBouncer) no ambiente serverless, operações de dashboard (múltiplas contagens e agregações) DEVEM ser executadas de forma **sequencial** (`await` individual) em vez de paralelas (`Promise.all`).
+
+### Favicon & Branding Persistence
+O favicon oficial está localizado em `frontend/public/favicon.png`. Em caso de atualização da identidade visual, este arquivo deve ser substituído mantendo o nome exato para garantir que as referências no `index.html` e nos componentes de cabeçalho permaneçam válidas sem necessidade de refatoração de código.
+
+---
+
+## 7. Regras Inegociáveis
 
 > [!IMPORTANT]
 > **Identidade Visual**: A estética **Midnight Luxury** é o pilar da Foto Segundo. Background `#0a0a0a`, tipografia **Barlow Condensed** (Títulos) e **Inter** (UI), e a cor de marca `#85B9AC`. Bordas sempre quadradas (`borderRadius: 0`).
