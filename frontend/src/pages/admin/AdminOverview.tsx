@@ -60,7 +60,7 @@ export const AdminOverview: React.FC<OverviewProps> = ({ stats, recentOrders, pe
           <div style={{ 
             fontSize: 28, fontFamily: T.fontD, fontWeight: 900, color: T.text, textTransform: "uppercase" 
           }}>
-            R$ {Number(stats?.totalRevenue).toFixed(2)}
+            R$ {Number(stats?.totalRevenue || 0).toFixed(2)}
           </div>
         </div>
 

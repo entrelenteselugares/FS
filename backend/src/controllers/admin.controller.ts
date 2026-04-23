@@ -116,14 +116,17 @@ export async function getDashboardStats(req: AuthRequest, res: Response): Promis
 
     res.json({
       stats: {
-        totalEvents,
+        activeEvents: totalEvents,
         totalOrders,
         totalRevenue: Number(totalRevenue._sum.valor ?? 0),
         pendingQuotesCount,
         pendingInvitesCount,
         missingLinksCount,
       },
-      recentOrders,
+      recentOrders: recentOrders.map(o => ({
+        ...o,
+        total: Number(o.valor)
+      })),
       pendingEvents,
     });
   } catch (err) {
