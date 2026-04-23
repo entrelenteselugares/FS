@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import { useNavigate, Link, useSearchParams } from "react-router-dom";
-import { motion } from "framer-motion";
+
 import { ArrowRight, User, Camera, Building2, Mail, Lock, UserCircle, Phone, Eye, EyeOff } from "lucide-react";
 import { API } from "../lib/api";
 import { ThemeToggle } from "../components/ThemeToggle";

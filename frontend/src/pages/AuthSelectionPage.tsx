@@ -1,7 +1,7 @@
 import React from "react";
 import { useNavigate } from "react-router-dom";
 import { Camera, Building2, User } from "lucide-react";
-import { motion } from "framer-motion";
+
 
 export const AuthSelectionPage: React.FC = () => {
   const navigate = useNavigate();
@@ -66,7 +66,7 @@ export const AuthSelectionPage: React.FC = () => {
       </div>
 
       <div className="grid grid-cols-1 md:grid-cols-3 gap-0 max-w-7xl w-full relative z-10 border border-theme-border/5 bg-theme-bg-muted/10">
-        {options.map((opt, idx) => (
+        {options.map((opt) => (
           <div
             key={opt.id}
             onClick={() => navigate(`/login?role=${opt.role}`)}
