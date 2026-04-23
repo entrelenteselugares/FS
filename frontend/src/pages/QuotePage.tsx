@@ -298,7 +298,6 @@ export const QuotePage = () => {
   // - Outro Local + Empresarial: não mostra preços (negociação direta)
   const showPrices = false;
   
-  const showBusinessBanner = locationType === "OTHER" && usageType === "EMPRESARIAL";
 
   const getServicePrice = (id: string, defaultPrice: number) => {
     const hourMultiplier = 1 + ((eventHours - 1) * 0.4);
@@ -444,27 +443,8 @@ export const QuotePage = () => {
               <div>
                 <label style={{ fontSize: 10, fontWeight: 800, textTransform: "uppercase", marginBottom: 15, display: "block", color: THEME.text }}>2. Selecione os Serviços</label>
                 
-                {/* Banner Empresarial */}
-                {showBusinessBanner ? (
-                  <div style={{ 
-                    padding: "28px 24px", 
-                    border: `1px solid ${THEME.accent}44`,
-                    background: `${THEME.accent}08`,
-                    display: "flex",
-                    flexDirection: "column",
-                    gap: 12
-                  }}>
-                    <div style={{ fontSize: 11, fontWeight: 900, textTransform: "uppercase", letterSpacing: 2, color: THEME.accent }}>Negociação Personalizada</div>
-                    <p style={{ fontSize: 13, color: THEME.text2, lineHeight: 1.7, margin: 0 }}>
-                      Eventos empresariais envolvem <strong style={{ color: THEME.text }}>logística dedicada, profissionais sêniores certificados e nota fiscal</strong>. O valor é calculado individualmente após análise do briefing.
-                    </p>
-                    <p style={{ fontSize: 11, color: THEME.text2, margin: 0, opacity: 0.7 }}>
-                      Selecione os serviços desejados e nossa equipe preparará uma proposta comercial completa.
-                    </p>
-                  </div>
-                ) : null}
 
-                <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(200px, 1fr))", gap: 15, marginTop: showBusinessBanner ? 16 : 0 }}>
+                <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(200px, 1fr))", gap: 15, marginTop: 0 }}>
                   {availableServices.map(s => (
                     <div key={s.id} onClick={() => {
                       if (selectedServices.includes(s.id)) setSelectedServices(prev => prev.filter(x => x !== s.id));
