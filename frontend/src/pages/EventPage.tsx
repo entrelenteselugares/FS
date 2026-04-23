@@ -263,7 +263,9 @@ export default function EventPage() {
       }
     } catch (err: unknown) {
       const axiosErr = err as { response?: { data?: { code?: string; error?: string } } };
-      const msg = axiosErr.response?.data?.code ? (mpErrors[axiosErr.response.data.code] || axiosErr.response.data.error) : "Erro no pagamento.";
+      const msg = axiosErr.response?.data?.code 
+        ? (mpErrors[axiosErr.response.data.code] || axiosErr.response.data.error || "Erro no processamento.") 
+        : "Erro no pagamento.";
       setError(msg);
       setStep("checkout");
       setCardToken(null);
