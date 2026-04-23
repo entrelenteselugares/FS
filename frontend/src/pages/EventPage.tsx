@@ -94,10 +94,11 @@ const MP_PUBLIC_KEY = (import.meta.env.VITE_MP_PUBLIC_KEY ?? "")
 // Carrega o script do MP apenas quando necessário
 const loadMP = () => {
   return new Promise((resolve) => {
-    if ((window as any).MercadoPago) return resolve((window as any).MercadoPago);
+    const win = window as Window & { MercadoPago?: any };
+    if (win.MercadoPago) return resolve(win.MercadoPago);
     const script = document.createElement("script");
     script.src = "https://sdk.mercadopago.com/js/v2";
-    script.onload = () => resolve((window as any).MercadoPago);
+    script.onload = () => resolve(win.MercadoPago);
     document.body.appendChild(script);
   });
 };
@@ -182,7 +183,7 @@ export default function EventPage() {
     setTokenizing(true);
     setError("");
     try {
-      const MP = (await loadMP()) as any;
+      const MP: any = await loadMP();
       const mp = new MP(MP_PUBLIC_KEY);
       
       const { token, error: mpErr } = await mp.createCardToken({
@@ -261,7 +262,7 @@ export default function EventPage() {
         pollPaymentStatus(data.orderId);
       }
     } catch (err: unknown) {
-      const axiosErr = err as any;
+      const axiosErr = err as { response?: { data?: { code?: string; error?: string } } };
       const msg = axiosErr.response?.data?.code ? (mpErrors[axiosErr.response.data.code] || axiosErr.response.data.error) : "Erro no pagamento.";
       setError(msg);
       setStep("checkout");
@@ -385,7 +386,7 @@ export default function EventPage() {
           <div style={{ display: "flex", alignItems: "center", gap: 12 }}>
             <div style={{ width: 30, height: 2, background: T.brand }} />
             <span style={{ fontSize: 10, letterSpacing: 2, textTransform: "uppercase", color: T.brand, fontWeight: 700 }}>
-              {typeof event.cartorio === "string" ? event.cartorio : (event.cartorio as any)?.razaoSocial || "Registro Editorial"}
+              {typeof event.cartorio === "string" ? event.cartorio : "Registro Editorial"}
             </span>
           </div>
 
