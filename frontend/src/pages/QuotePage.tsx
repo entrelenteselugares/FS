@@ -315,23 +315,27 @@ export const QuotePage = () => {
   const team = calculateTeam();
   
   const currentPartner = partners.find(p => p.id === selectedPartnerId);
-  // Lógica de exibição de preços
-  // - Unidade Fixa: mostra preço apenas se parceiro selecionado
+  const selectedPartner = partners.find(p => p.id === selectedPartnerId);
+
+  // Lógica de exibição de preços:
+  // - Unidade Fixa com parceiro selecionado: mostra preço fixo do parceiro
   // - Outro Local + Pessoal: mostra preço estimado (simulado por hora)
   // - Outro Local + Empresarial: não mostra preços (negociação direta)
-  const selectedPartner = partners.find(p => p.id === selectedPartnerId);
-  const showPrices = false;
-  
+  const showPrices =
+    (locationType === "PARTNER" && !!selectedPartnerId) ||
+    (locationType === "OTHER" && usageType === "PESSOAL");
 
   const getServicePrice = (id: string, defaultPrice: number) => {
     const hourMultiplier = 1 + ((eventHours - 1) * 0.4);
+    if (locationType === "PARTNER" && selectedPartnerId) {
+      // Preço fixo do parceiro — sem multiplicador de horas (valor tabelado)
+      const custom = currentPartner?.prices?.[id];
+      return custom !== undefined && custom !== null ? Number(custom) : defaultPrice;
+    }
     if (locationType === "OTHER" && usageType === "PESSOAL") {
       return Math.round(defaultPrice * hourMultiplier);
     }
-    if (!showPrices) return defaultPrice;
-    const custom = currentPartner?.prices?.[id];
-    const base = custom !== undefined && custom !== null ? Number(custom) : defaultPrice;
-    return Math.round(base * hourMultiplier);
+    return defaultPrice;
   };
 
   const servicesPrice = availableServices.filter(s => selectedServices.includes(s.id)).reduce((acc, s) => {

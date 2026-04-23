@@ -3,20 +3,16 @@ import { useParams, useNavigate, useSearchParams } from "react-router-dom";
 import { API as api } from "../lib/api";
 import { Helmet } from "react-helmet-async";
 import AccessTypeModal from "../components/AccessTypeModal";
-import { T, BtnPrimary, BtnSecondary, Card, FieldLabel, FieldInput } from "../lib/theme";
+import { T, BtnPrimary, BtnSecondary, FieldLabel, FieldInput } from "../lib/theme";
 import { ThemeToggle } from "../components/ThemeToggle";
 import { AuthModal } from "../components/AuthModal";
 import { useAuth } from "../hooks/useAuth";
 
-// Campos retornados pelo EventController.getById
 interface EventData {
   id: string;
   nomeNoivos: string;
-  dataEvento?: string | null;   // backend envia "dataEvento", não "date"
-  paywall: {
-    active: boolean;
-    message: string;
-  };
+  dataEvento?: string | null;
+  paywall: { active: boolean; message: string };
   lightroomUrl?: string | null;
   driveUrl?: string | null;
   slug?: string | null;
@@ -29,7 +25,7 @@ interface EventData {
   temVideo?: boolean;
   temReels?: boolean;
   temFotoImpressa?: boolean;
-  cartorio?: string | null;     // backend envia string (razaoSocial), não objeto
+  cartorio?: string | null;
   isCrowdfund?: boolean;
   targetAmount?: number | null;
   collectedAmount?: number;
@@ -43,68 +39,43 @@ interface AccessData {
 
 type Step = "paywall" | "auth" | "choice" | "checkout" | "processing" | "success";
 
-// ─── Icons ────────────────────────────────────────────────────────────────────
-
-const LockIcon = () => (
-  <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5">
-    <rect x="3" y="11" width="18" height="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/>
-  </svg>
-);
-
-const CheckIcon = () => (
-  <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#4ade80" strokeWidth="3">
-    <polyline points="20 6 9 17 4 12"/>
-  </svg>
-);
-
 const Spinner = () => (
-  <div style={{
-    width: 36, height: 36,
-    border: `2px solid ${T.brand}`,
-    borderTopColor: "transparent",
-    borderRadius: "50%",
-    animation: "spin 0.8s linear infinite"
-  }} />
+  <div style={{ width: 28, height: 28, border: `2px solid ${T.brand}`, borderTopColor: "transparent", borderRadius: "50%", animation: "spin 0.8s linear infinite" }} />
 );
-
-// ─── Mercado Pago Helpers ───────────────────────────────────────────────────
 
 function detectBrand(number: string): string {
   const n = number.replace(/\s/g, "");
-  if (/^4/.test(n))               return "visa";
+  if (/^4/.test(n)) return "visa";
   if (/^5[1-5]|^2[2-7]/.test(n)) return "master";
-  if (/^3[47]/.test(n))           return "amex";
-  if (/^6(?:011|5)/.test(n))      return "elo";
+  if (/^3[47]/.test(n)) return "amex";
   return "visa";
 }
 
 const mpErrors: Record<string, string> = {
-  cc_rejected_insufficient_amount:     "Cartão sem limite suficiente.",
-  cc_rejected_bad_filled_security_code:"CVV inválido.",
-  cc_rejected_bad_filled_date:         "Data de validade incorreta.",
-  cc_rejected_call_for_authorize:      "Pagamento não autorizado. Contate seu banco.",
-  cc_rejected_card_disabled:           "Cartão desabilitado. Contate seu banco.",
-  cc_rejected_duplicated_payment:      "Pagamento duplicado detectado.",
+  cc_rejected_insufficient_amount: "Cartão sem limite suficiente.",
+  cc_rejected_bad_filled_security_code: "CVV inválido.",
+  cc_rejected_bad_filled_date: "Data de validade incorreta.",
+  cc_rejected_call_for_authorize: "Pagamento não autorizado. Contate seu banco.",
+  cc_rejected_card_disabled: "Cartão desabilitado. Contate seu banco.",
 };
 
-const MP_PUBLIC_KEY = (import.meta.env.VITE_MP_PUBLIC_KEY ?? "")
-  .trim()
-  .replace(/[\r\n\t]/g, "");
+const MP_PUBLIC_KEY = (import.meta.env.VITE_MP_PUBLIC_KEY ?? "").trim().replace(/[\r\n\t]/g, "");
 
-// Carrega o script do MP apenas quando necessário
-const loadMP = () => {
-  return new Promise((resolve) => {
-    const win = window as Window & { MercadoPago?: any };
-    if (win.MercadoPago) return resolve(win.MercadoPago);
-    const script = document.createElement("script");
-    script.src = "https://sdk.mercadopago.com/js/v2";
-    script.onload = () => resolve(win.MercadoPago);
-    document.body.appendChild(script);
-  });
-};
+const loadMP = () => new Promise((resolve) => {
+  const win = window as Window & { MercadoPago?: unknown };
+  if (win.MercadoPago) return resolve(win.MercadoPago);
+  const script = document.createElement("script");
+  script.src = "https://sdk.mercadopago.com/js/v2";
+  script.onload = () => resolve(win.MercadoPago);
+  document.body.appendChild(script);
+});
 
-
-// ─── EventPage Component ──────────────────────────────────────────────────────
+const SERVICES = [
+  { key: "temFoto", label: "Fotos em Alta" },
+  { key: "temVideo", label: "Vídeo Cinema" },
+  { key: "temReels", label: "Reels / Stories" },
+  { key: "temFotoImpressa", label: "Foto Impressa" },
+];
 
 export default function EventPage() {
   const { slug } = useParams<{ slug: string }>();
@@ -116,17 +87,14 @@ export default function EventPage() {
   const [step, setStep] = useState<Step>("paywall");
   const [access, setAccess] = useState<AccessData | null>(null);
   const [orderId, setOrderId] = useState<string | null>(null);
+  const [justPaid, setJustPaid] = useState(false); // só verdadeiro quando o USER acabou de pagar
   const [error, setError] = useState("");
   const [tokenizing, setTokenizing] = useState(false);
   const [cardToken, setCardToken] = useState<string | null>(null);
-  const [cardData, setCardData] = useState({
-    number: "", name: "", month: "", year: "", cvv: "", email: "", cpf: "",
-  });
-
+  const [cardData, setCardData] = useState({ number: "", name: "", month: "", year: "", cvv: "", email: "", cpf: "" });
   const [needsAccessChoice, setNeedsAccessChoice] = useState(false);
   const [accessType, setAccessType] = useState<"PUBLIC" | "PRIVATE" | null>(null);
   const { user } = useAuth();
-
 
   useEffect(() => {
     if (!slug) return;
@@ -136,17 +104,13 @@ export default function EventPage() {
         setEvent(r.data);
         if (r.data.paywall && !r.data.paywall.active) {
           setStep("success");
-          setAccess({
-            lightroomUrl: r.data.lightroomUrl,
-            driveUrl: r.data.driveUrl,
-            expiresAt: "" // Vitalício se já pago
-          });
+          setAccess({ lightroomUrl: r.data.lightroomUrl, driveUrl: r.data.driveUrl, expiresAt: "" });
+          // NÃO define justPaid — chegou com acesso já existente
         }
       })
       .catch(() => navigate("/404"))
       .finally(() => setLoading(false));
   }, [slug, navigate, user?.id]);
-
 
   useEffect(() => {
     const checkAccessStatus = async (oid: string) => {
@@ -156,36 +120,23 @@ export default function EventPage() {
           setStep("success");
           setNeedsAccessChoice(true);
         } else if (data.status === "ACTIVE") {
-          setAccess({ 
-            lightroomUrl: data.lightroomUrl, 
-            driveUrl: data.driveUrl,
-            expiresAt: data.expiresAt || ""
-          });
+          setAccess({ lightroomUrl: data.lightroomUrl, driveUrl: data.driveUrl, expiresAt: data.expiresAt || "" });
           setStep("success");
         }
-      } catch { /* not paid yet */ }
+      } catch { /* not paid */ }
     };
-
     const urlOrderId = searchParams.get("orderId");
     const savedOrderId = localStorage.getItem(`fs_order_${slug}`);
     const oid = urlOrderId ?? savedOrderId;
-    if (oid) {
-      setOrderId(oid);
-      checkAccessStatus(oid);
-    }
+    if (oid) { setOrderId(oid); checkAccessStatus(oid); }
   }, [slug, searchParams]);
 
   const handleTokenize = async () => {
-    if (!MP_PUBLIC_KEY) {
-      setError("Erro de configuração: Chave MP ausente.");
-      return;
-    }
-    setTokenizing(true);
-    setError("");
+    if (!MP_PUBLIC_KEY) { setError("Erro de configuração: Chave MP ausente."); return; }
+    setTokenizing(true); setError("");
     try {
-      const MP: any = await loadMP();
-      const mp = new MP(MP_PUBLIC_KEY);
-      
+      const MP: unknown = await loadMP();
+      const mp = new (MP as { new(key: string): { createCardToken: (d: unknown) => Promise<{ token: string; error?: unknown }> } })(MP_PUBLIC_KEY);
       const { token, error: mpErr } = await mp.createCardToken({
         cardNumber: cardData.number.replace(/\s/g, ""),
         cardholderName: cardData.name,
@@ -195,44 +146,25 @@ export default function EventPage() {
         identificationType: "CPF",
         identificationNumber: cardData.cpf.replace(/\D/g, ""),
       });
-
-      if (mpErr) {
-        setError("Dados do cartão inválidos. Verifique os campos.");
-        return;
-      }
+      if (mpErr) { setError("Dados do cartão inválidos. Verifique os campos."); return; }
       setCardToken(token);
-    } catch {
-      setError("Erro ao validar cartão.");
-    } finally {
-      setTokenizing(false);
-    }
+    } catch { setError("Erro ao validar cartão."); }
+    finally { setTokenizing(false); }
   };
 
   const pollPaymentStatus = async (oid: string) => {
     let count = 0;
     const interval = setInterval(async () => {
       count++;
-      if (count > 10) { // 30s total (3s * 10)
-        clearInterval(interval);
-        setError("O pagamento está demorando mais que o esperado. Verifique seu e-mail.");
-        setStep("checkout");
-        return;
-      }
-
+      if (count > 10) { clearInterval(interval); setError("O pagamento está demorando. Verifique seu e-mail."); setStep("checkout"); return; }
       try {
         const { data } = await api.get(`/orders/${oid}/access-status`);
         if (data.status === "PENDING_CHOICE" || data.status === "ACTIVE") {
           clearInterval(interval);
           setOrderId(oid);
-          if (data.status === "PENDING_CHOICE") {
-            setNeedsAccessChoice(true);
-          } else {
-            setAccess({ 
-              lightroomUrl: data.lightroomUrl, 
-              driveUrl: data.driveUrl,
-              expiresAt: data.expiresAt || ""
-            });
-          }
+          setJustPaid(true);
+          if (data.status === "PENDING_CHOICE") setNeedsAccessChoice(true);
+          else setAccess({ lightroomUrl: data.lightroomUrl, driveUrl: data.driveUrl, expiresAt: data.expiresAt || "" });
           setStep("success");
         }
       } catch { /* keep polling */ }
@@ -241,51 +173,28 @@ export default function EventPage() {
 
   const handlePay = async () => {
     if (!event || !cardToken) return;
-    setStep("processing");
-    setError("");
+    setStep("processing"); setError("");
     try {
       const { data } = await api.post("/checkout/payment", {
-        eventId: event.id,
-        userId: user?.id,
-        email: cardData.email,
-        cpf: cardData.cpf,
-        cardToken: cardToken,
-        installments: 1,
-        paymentMethodId: detectBrand(cardData.number),
-        accessType: accessType
+        eventId: event.id, userId: user?.id, email: cardData.email, cpf: cardData.cpf,
+        cardToken, installments: 1, paymentMethodId: detectBrand(cardData.number), accessType,
       });
-
-      if (data.hasPaid) {
-        setOrderId(data.orderId);
-        setStep("success");
-      } else {
-        pollPaymentStatus(data.orderId);
-      }
+      if (data.hasPaid) { setOrderId(data.orderId); setJustPaid(true); setStep("success"); }
+      else pollPaymentStatus(data.orderId);
     } catch (err: unknown) {
       const axiosErr = err as { response?: { data?: { code?: string; error?: string } } };
-      const msg = axiosErr.response?.data?.code 
-        ? (mpErrors[axiosErr.response.data.code] || axiosErr.response.data.error || "Erro no processamento.") 
+      const msg = axiosErr.response?.data?.code
+        ? (mpErrors[axiosErr.response.data.code] || axiosErr.response.data.error || "Erro no processamento.")
         : "Erro no pagamento.";
-      setError(msg);
-      setStep("checkout");
-      setCardToken(null);
+      setError(msg); setStep("checkout"); setCardToken(null);
     }
   };
 
-  const handleUnlockClick = () => {
-    if (!user) {
-      setStep("auth");
-    } else {
-      setStep("choice");
-    }
-  };
-
-
-  const handleChange = (k: string) => (e: React.ChangeEvent<HTMLInputElement>) =>
-    setCardData((p) => ({ ...p, [k]: e.target.value }));
+  const handleUnlockClick = () => { if (!user) setStep("auth"); else setStep("choice"); };
+  const handleChange = (k: string) => (e: React.ChangeEvent<HTMLInputElement>) => setCardData(p => ({ ...p, [k]: e.target.value }));
 
   if (loading) return (
-    <div style={{ minHeight: "100vh", background: T.bg, display: "flex", alignItems: "center", justifyContent: "center" }}>
+    <div style={{ height: "100vh", background: T.bg, display: "flex", alignItems: "center", justifyContent: "center" }}>
       <Spinner />
     </div>
   );
@@ -293,169 +202,135 @@ export default function EventPage() {
   if (!event) return null;
 
   const paid = step === "success";
+  const activeServices = SERVICES.filter(s => event[s.key as keyof EventData]);
+  const dateStr = event.dataEvento
+    ? new Date(event.dataEvento).toLocaleDateString("pt-BR", { day: "numeric", month: "long", year: "numeric" })
+    : "";
 
   return (
-    <div style={{ minHeight: "100vh", background: T.bg, color: T.text, fontFamily: T.fontB }}>
-      <Helmet>
-        <title>{event.nomeNoivos} — Foto Segundo</title>
-      </Helmet>
+    <div style={{ height: "100vh", overflow: "hidden", background: T.bg, color: T.text, fontFamily: T.fontB, display: "flex", flexDirection: "column" }}>
+      <Helmet><title>{event.nomeNoivos} — Foto Segundo</title></Helmet>
 
       <style>{`
         @keyframes spin { from { transform: rotate(0deg); } to { transform: rotate(360deg); } }
-
-        /* Desktop: grid 2 colunas */
-        @media (min-width: 1024px) {
-          .event-grid { display: grid; grid-template-columns: 1fr 360px; gap: 48px; }
-          .event-aside { order: 0; }
-        }
-
-        /* Mobile: coluna única, aside vai para CIMA do conteúdo */
-        @media (max-width: 1023px) {
-          .event-grid { display: flex; flex-direction: column; gap: 24px; padding: 16px !important; }
-          .event-aside { order: -1; } /* mostra o botão de compra primeiro */
-          .event-aside > div { position: static !important; } /* remove sticky no mobile */
-        }
-
-        /* Checkout card grid: 3 colunas -> 1 linha com 3 col em telas grandes, compacto em pequenas */
-        @media (max-width: 480px) {
-          .card-expiry-grid { grid-template-columns: 1fr 1fr !important; }
-          .card-cvv-col { grid-column: 1 / -1; }
+        @keyframes fadeUp { from { opacity:0; transform: translateY(12px); } to { opacity:1; transform: translateY(0); } }
+        .ep-grid { display: grid; grid-template-columns: 1fr 340px; height: calc(100vh - 52px); overflow: hidden; }
+        .ep-sidebar { overflow-y: auto; }
+        @media (max-width: 900px) {
+          .ep-grid { grid-template-columns: 1fr; grid-template-rows: auto 1fr; height: auto; overflow: auto; }
+          .ep-cover { max-height: 45vw; min-height: 200px; }
         }
       `}</style>
 
-      {/* Nav */}
-      <nav style={{ padding: "12px 16px", borderBottom: `1px solid ${T.border}`, display: "flex", alignItems: "center", justifyContent: "space-between", background: 'var(--theme-bg-nav)', backdropFilter: 'blur(10px)', position: 'sticky', top: 0, zIndex: 100 }}>
-        <button onClick={() => navigate("/")} style={{ background: "none", border: "none", color: T.text3, cursor: "pointer", fontSize: 11, textTransform: "uppercase", letterSpacing: 2, display: "flex", alignItems: "center", gap: 8 }}>
-          ← <span className="desktop-only">Voltar</span>
+      {/* ── Nav ── */}
+      <nav style={{ height: 52, padding: "0 20px", borderBottom: `1px solid ${T.border}`, display: "flex", alignItems: "center", justifyContent: "space-between", background: T.bg, flexShrink: 0, zIndex: 10 }}>
+        <button onClick={() => navigate("/")} style={{ background: "none", border: "none", color: T.text3, cursor: "pointer", fontSize: 10, textTransform: "uppercase", letterSpacing: 2, display: "flex", alignItems: "center", gap: 6 }}>
+          ← Voltar
         </button>
-        <div style={{ cursor: "pointer", display: "flex", alignItems: "center" }} onClick={() => navigate("/")}>
-          <img src="/logo-fs.png" alt="Foto Segundo" style={{ height: 20, objectFit: "contain" }} />
-        </div>
-        <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
-          <ThemeToggle />
-        </div>
+        <img src="/logo-fs.png" alt="Foto Segundo" style={{ height: 18, objectFit: "contain", cursor: "pointer" }} onClick={() => navigate("/")} />
+        <ThemeToggle />
       </nav>
 
-      <main style={{ maxWidth: 1200, margin: "0 auto", padding: "24px 16px" }} className="event-grid">
-        
-        {/* Coluna Esquerda */}
-        <div style={{ display: "flex", flexDirection: "column", gap: 32 }}>
-          
-          {/* Thumbnail 16:9 */}
-          <div style={{ position: "relative", aspectRatio: "16/9", background: T.bgCard, marginBottom: 40, border: `1px solid ${T.border}`, overflow: "hidden" }}>
-            {event.coverPhotoUrl ? (
-              <img 
-                src={event.coverPhotoUrl} 
-                style={{ 
-                  width: "100%", height: "100%", objectFit: "cover", 
-                  filter: paid ? "none" : "blur(4px)" 
-                }} 
-                alt={event.nomeNoivos}
-              />
-            ) : (
-              <div style={{ 
-                width: "100%", height: "100%", 
-                display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center",
-                background: `linear-gradient(135deg, ${T.bgCard} 0%, ${T.bg} 100%)`,
-                padding: 40, textAlign: "center", gap: 20
-              }}>
-                <img src="/logo-fs.png" alt="Logo" style={{ height: 40, opacity: 0.2, filter: "brightness(0) invert(1)" }} />
-                <h2 style={{ 
-                  fontFamily: T.fontD, 
-                  fontSize: "clamp(24px, 4vw, 40px)", 
-                  fontWeight: 900, 
-                  color: T.text, 
-                  opacity: 0.15, 
-                  textTransform: "uppercase",
-                  letterSpacing: -1,
-                  lineHeight: 1
-                }}>
-                  {event.nomeNoivos}
-                </h2>
-              </div>
-            )}
+      {/* ── Main Grid ── */}
+      <div className="ep-grid">
+
+        {/* ── Cover / Left ── */}
+        <div className="ep-cover" style={{ position: "relative", overflow: "hidden", background: T.bgCard }}>
+          {event.coverPhotoUrl ? (
+            <img src={event.coverPhotoUrl} alt={event.nomeNoivos}
+              style={{ width: "100%", height: "100%", objectFit: "cover", filter: paid ? "none" : "blur(6px) brightness(0.7)", transition: "filter 0.8s ease" }}
+            />
+          ) : (
+            <div style={{ width: "100%", height: "100%", display: "flex", alignItems: "center", justifyContent: "center", background: `linear-gradient(135deg, ${T.bgCard}, ${T.bg})` }}>
+              <span style={{ fontFamily: T.fontD, fontSize: "clamp(28px,5vw,56px)", fontWeight: 900, color: T.text, opacity: 0.08, textTransform: "uppercase", textAlign: "center", padding: 40 }}>{event.nomeNoivos}</span>
+            </div>
+          )}
+
+          {/* Overlay info */}
+          <div style={{ position: "absolute", inset: 0, background: "linear-gradient(to top, rgba(0,0,0,0.85) 0%, rgba(0,0,0,0.2) 50%, transparent 100%)", display: "flex", flexDirection: "column", justifyContent: "flex-end", padding: "32px 36px" }}>
+            {/* Lock overlay */}
             {!paid && (
-              <div style={{ position: "absolute", inset: 0, display: "flex", alignItems: "center", justifyContent: "center", background: "rgba(0,0,0,0.4)" }}>
-                <div style={{ padding: 20, background: "rgba(0,0,0,0.6)", borderRadius: "50%", color: T.text }}>
-                  <LockIcon />
+              <div style={{ position: "absolute", inset: 0, display: "flex", alignItems: "center", justifyContent: "center" }}>
+                <div style={{ padding: 18, background: "rgba(0,0,0,0.55)", backdropFilter: "blur(4px)", borderRadius: "50%", color: "rgba(255,255,255,0.7)" }}>
+                  <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
                 </div>
               </div>
             )}
-          </div>
 
-          {/* Registry Tag */}
+            {/* Cartório tag */}
+            <div style={{ display: "flex", alignItems: "center", gap: 10, marginBottom: 10 }}>
+              <div style={{ width: 24, height: 2, background: T.brand }} />
+              <span style={{ fontSize: 9, letterSpacing: 3, textTransform: "uppercase", color: T.brand, fontWeight: 700 }}>
+                {typeof event.cartorio === "string" ? event.cartorio : "Registro Editorial"}
+              </span>
+            </div>
 
-          <div style={{ display: "flex", alignItems: "center", gap: 12 }}>
-            <div style={{ width: 30, height: 2, background: T.brand }} />
-            <span style={{ fontSize: 10, letterSpacing: 2, textTransform: "uppercase", color: T.brand, fontWeight: 700 }}>
-              {typeof event.cartorio === "string" ? event.cartorio : "Registro Editorial"}
-            </span>
-          </div>
+            <h1 style={{ fontFamily: T.fontD, fontWeight: 900, fontSize: "clamp(28px, 4vw, 48px)", lineHeight: 1, color: "#fff", textTransform: "uppercase", margin: "0 0 8px" }}>
+              {event.nomeNoivos}
+            </h1>
 
-          {/* Title */}
-          <h1 style={{ 
-            fontFamily: T.fontD, fontWeight: 900, 
-            fontSize: "clamp(40px, 5vw, 56px)", 
-            lineHeight: 1, color: T.text, 
-            textTransform: "uppercase", margin: 0 
-          }}>
-            {event.nomeNoivos}
-          </h1>
+            <div style={{ fontSize: 12, color: "rgba(255,255,255,0.55)", marginBottom: 20 }}>
+              {dateStr}{event.city ? ` · ${event.city}` : ""}
+            </div>
 
-          {/* Meta */}
-          <div style={{ fontSize: 13, color: T.text2, fontFamily: T.fontB, fontWeight: 400, marginTop: -12 }}>
-          {event.dataEvento
-            ? new Date(event.dataEvento).toLocaleDateString("pt-BR", { day: "numeric", month: "long", year: "numeric" })
-            : ""} {event.city || event.location ? `· ${event.city || event.location}` : ""}
-          </div>
-
-          {/* Services Grid 2x2 */}
-          <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 16, marginTop: 16 }}>
-            {[
-              { label: "Fotos em Alta", active: event.temFoto },
-              { label: "Vídeo Cinema", active: event.temVideo },
-              { label: "Reels / Stories", active: event.temReels },
-              { label: "Foto Impressa", active: event.temFotoImpressa },
-            ].map(s => (
-              <div key={s.label} style={{ padding: "16px", border: `1px solid ${T.border}`, background: T.bgCard, opacity: s.active ? 1 : 0.3 }}>
-                <div style={{ fontSize: 11, fontWeight: 600, textTransform: "uppercase", letterSpacing: 1, color: s.active ? T.text : T.text3 }}>{s.label}</div>
+            {/* Services tags */}
+            {activeServices.length > 0 && (
+              <div style={{ display: "flex", flexWrap: "wrap", gap: 8 }}>
+                {activeServices.map(s => (
+                  <span key={s.key} style={{ fontSize: 9, fontWeight: 700, textTransform: "uppercase", letterSpacing: 2, padding: "5px 10px", border: "1px solid rgba(255,255,255,0.2)", color: "rgba(255,255,255,0.65)", backdropFilter: "blur(4px)" }}>
+                    {s.label}
+                  </span>
+                ))}
               </div>
-            ))}
-          </div>
+            )}
 
-          {/* Success Content (Links) */}
-          {paid && access && (
-            <div style={{ marginTop: 32, padding: 32, border: `1px solid ${T.brand}`, background: T.brandDark }}>
-              <h2 style={{ fontFamily: T.fontD, fontSize: 24, fontWeight: 900, color: T.brand, textTransform: "uppercase", marginBottom: 20 }}>Acesso Liberado</h2>
-              <div style={{ display: "flex", flexWrap: "wrap", gap: 12 }}>
+            {/* Access links — inline na foto após liberar */}
+            {paid && access && (access.lightroomUrl || access.driveUrl) && (
+              <div style={{ display: "flex", gap: 10, marginTop: 20, animation: "fadeUp 0.5s ease" }}>
                 {access.lightroomUrl && (
-                  <a href={access.lightroomUrl} target="_blank" rel="noreferrer" style={{ ...BtnPrimary, textDecoration: "none" }}>Abrir Lightroom</a>
+                  <a href={access.lightroomUrl} target="_blank" rel="noreferrer" style={{ ...BtnPrimary, textDecoration: "none", fontSize: 11 }}>
+                    Abrir Lightroom
+                  </a>
                 )}
                 {access.driveUrl && (
-                  <a href={access.driveUrl} target="_blank" rel="noreferrer" style={{ ...BtnSecondary, color: T.text, borderColor: T.brand, textDecoration: "none" }}>Abrir Google Drive</a>
+                  <a href={access.driveUrl} target="_blank" rel="noreferrer" style={{ ...BtnSecondary, color: "#fff", borderColor: "rgba(255,255,255,0.3)", textDecoration: "none", fontSize: 11 }}>
+                    Google Drive
+                  </a>
                 )}
               </div>
-            </div>
-          )}
+            )}
+          </div>
         </div>
 
-        {/* Coluna Direita (Sidebar) */}
-        <aside className="event-aside">
-          <div style={{ position: "sticky", top: 100 }}>
-            
-            {/* STEP: PAYWALL */}
+        {/* ── Sidebar ── */}
+        <aside className="ep-sidebar" style={{ borderLeft: `1px solid ${T.border}`, display: "flex", flexDirection: "column" }}>
+
+          {/* Confirmation badge — discreto, só para quem acabou de comprar */}
+          {justPaid && (
+            <div style={{ padding: "10px 20px", background: "#4ade8012", borderBottom: `1px solid #4ade8030`, display: "flex", alignItems: "center", gap: 10, animation: "fadeUp 0.4s ease" }}>
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#4ade80" strokeWidth="3"><polyline points="20 6 9 17 4 12"/></svg>
+              <span style={{ fontSize: 10, fontWeight: 700, color: "#4ade80", textTransform: "uppercase", letterSpacing: 2 }}>Pagamento confirmado</span>
+              {orderId && <span style={{ fontSize: 9, fontFamily: "monospace", color: T.text3, marginLeft: "auto" }}>#{orderId.slice(-8).toUpperCase()}</span>}
+            </div>
+          )}
+
+          <div style={{ padding: 28, flex: 1 }}>
+
+            {/* PAYWALL */}
             {step === "paywall" && (
-              <div style={{ ...Card, padding: 24 }}>
-                <p style={{ fontSize: 10, letterSpacing: 2, color: T.brand, textTransform: "uppercase", margin: "0 0 12px" }}>Exclusive Collection</p>
-                <p style={{ fontFamily: T.fontD, fontWeight: 900, fontSize: 44, color: T.text, margin: "0 0 4px" }}>
-                  R$ {Number(event.priceBase).toFixed(2).replace(".", ",")}
-                </p>
-                <p style={{ fontSize: 12, color: T.text3, margin: "0 0 24px" }}>Acesso vitalício · Download imediato</p>
-                
-                <div style={{ display: "flex", flexDirection: "column", gap: 12, marginBottom: 32, borderTop: `1px solid ${T.border}`, paddingTop: 20 }}>
+              <div style={{ display: "flex", flexDirection: "column", gap: 24, animation: "fadeUp 0.3s ease" }}>
+                <div>
+                  <p style={{ fontSize: 9, letterSpacing: 3, color: T.brand, textTransform: "uppercase", margin: "0 0 8px", fontWeight: 700 }}>Exclusive Collection</p>
+                  <p style={{ fontFamily: T.fontD, fontWeight: 900, fontSize: 40, color: T.text, margin: "0 0 2px", lineHeight: 1 }}>
+                    R$ {Number(event.priceBase).toFixed(2).replace(".", ",")}
+                  </p>
+                  <p style={{ fontSize: 11, color: T.text3, margin: 0 }}>Acesso vitalício · Download imediato</p>
+                </div>
+
+                <div style={{ display: "flex", flexDirection: "column", gap: 10, paddingTop: 16, borderTop: `1px solid ${T.border}` }}>
                   {["Arquivos originais em 4K", "Sem marcas d'água", "Direito de uso comercial"].map(item => (
                     <div key={item} style={{ display: "flex", alignItems: "center", gap: 8, fontSize: 11, color: T.text2 }}>
-                      <div style={{ width: 4, height: 4, borderRadius: "50%", background: T.brand }} /> {item}
+                      <div style={{ width: 3, height: 3, borderRadius: "50%", background: T.brand, flexShrink: 0 }} /> {item}
                     </div>
                   ))}
                 </div>
@@ -463,151 +338,123 @@ export default function EventPage() {
                 <button onClick={handleUnlockClick} style={{ ...BtnPrimary, width: "100%", justifyContent: "center" }}>
                   Desbloquear Arquivos
                 </button>
-                
-                <p style={{ fontSize: 10, color: T.text3, textAlign: "center", marginTop: 16 }}>
-                  Secure Payment · Instant Access · SSL
-                </p>
+                <p style={{ fontSize: 9, color: T.text3, textAlign: "center", margin: 0 }}>Secure Payment · SSL · Instant Access</p>
               </div>
             )}
 
-            {/* STEP: CHECKOUT */}
+            {/* CHECKOUT */}
             {step === "checkout" && (
-              <div style={{ ...Card, padding: 24 }}>
-                <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 24 }}>
+              <div style={{ display: "flex", flexDirection: "column", gap: 14, animation: "fadeUp 0.3s ease" }}>
+                <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
                   <span style={{ fontSize: 10, fontWeight: 700, textTransform: "uppercase", letterSpacing: 1 }}>Secure Checkout</span>
                   <button onClick={() => setStep("paywall")} style={{ background: "none", border: "none", color: T.brand, cursor: "pointer", fontSize: 10, textTransform: "uppercase" }}>Voltar</button>
                 </div>
 
-                  <div style={{ background: T.bgField, border: `1px solid ${T.border}`, padding: 16, marginBottom: 24 }}>
-                  <div style={{ fontSize: 11, color: T.text2 }}>{event.nomeNoivos}</div>
-                  <div style={{ fontSize: 16, fontWeight: 700, color: T.text }}>R$ {Number(event.priceBase).toFixed(2)}</div>
+                <div style={{ background: T.bgCard, border: `1px solid ${T.border}`, padding: 14, marginBottom: 4 }}>
+                  <div style={{ fontSize: 10, color: T.text2 }}>{event.nomeNoivos}</div>
+                  <div style={{ fontSize: 18, fontWeight: 700, color: T.text }}>R$ {Number(event.priceBase).toFixed(2)}</div>
                 </div>
 
-                <div style={{ display: "flex", flexDirection: "column", gap: 16 }}>
-                  <div>
-                    <label style={FieldLabel}>Número do Cartão</label>
-                    <input style={FieldInput} value={cardData.number} onChange={handleChange("number")} placeholder="0000 0000 0000 0000" />
+                {(["number", "name"] as const).map(k => (
+                  <div key={k}>
+                    <label style={FieldLabel}>{k === "number" ? "Número do Cartão" : "Nome no Cartão"}</label>
+                    <input style={FieldInput} value={cardData[k]} onChange={handleChange(k)} placeholder={k === "number" ? "0000 0000 0000 0000" : "JOÃO SILVA"} />
                   </div>
-                  <div>
-                    <label style={FieldLabel}>Nome no Cartão</label>
-                    <input style={FieldInput} value={cardData.name} onChange={handleChange("name")} placeholder="JOÃO SILVA" />
-                  </div>
-                  <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr 1fr", gap: 8 }} className="card-expiry-grid">
-                    <div>
-                      <label style={FieldLabel}>Mês</label>
-                      <input style={FieldInput} value={cardData.month} onChange={handleChange("month")} placeholder="MM" />
+                ))}
+                <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr 1fr", gap: 8 }}>
+                  {(["month", "year", "cvv"] as const).map(k => (
+                    <div key={k}>
+                      <label style={FieldLabel}>{k === "month" ? "Mês" : k === "year" ? "Ano" : "CVV"}</label>
+                      <input style={FieldInput} value={cardData[k]} onChange={handleChange(k)} placeholder={k === "month" ? "MM" : k === "year" ? "AA" : "000"} />
                     </div>
-                    <div>
-                      <label style={FieldLabel}>Ano</label>
-                      <input style={FieldInput} value={cardData.year} onChange={handleChange("year")} placeholder="AA" />
-                    </div>
-                    <div className="card-cvv-col">
-                      <label style={FieldLabel}>CVV</label>
-                      <input style={FieldInput} value={cardData.cvv} onChange={handleChange("cvv")} placeholder="000" />
-                    </div>
-                  </div>
-                  <div>
-                    <label style={FieldLabel}>CPF</label>
-                    <input style={FieldInput} value={cardData.cpf} onChange={handleChange("cpf")} placeholder="000.000.000-00" />
-                  </div>
-                  <div>
-                    <label style={FieldLabel}>E-mail p/ Recebimento</label>
-                    <input style={FieldInput} value={cardData.email} onChange={handleChange("email")} placeholder="seu@email.com" />
-                  </div>
-
-                  {error && (
-                    <div style={{ fontSize: 10, color: "#ef4444", background: "#ef444411", padding: 8, border: "1px solid #ef444433" }}>
-                      {error}
-                    </div>
-                  )}
-
-                  {!cardToken ? (
-                    <button 
-                      onClick={handleTokenize} 
-                      disabled={tokenizing || !cardData.number || !cardData.cvv}
-                      style={{ ...BtnPrimary, width: "100%", justifyContent: "center", marginTop: 8, opacity: (tokenizing || !cardData.number) ? 0.5 : 1 }}
-                    >
-                      {tokenizing ? "Validando..." : "Validar Cartão"}
-                    </button>
-                  ) : (
-                    <button onClick={handlePay} style={{ ...BtnPrimary, width: "100%", justifyContent: "center", marginTop: 8, background: T.brand, color: T.brandText }}>
-                      Pagar R$ {Number(event.priceBase).toFixed(2).replace(".", ",")}
-                    </button>
-                  )}
+                  ))}
                 </div>
+                {(["cpf", "email"] as const).map(k => (
+                  <div key={k}>
+                    <label style={FieldLabel}>{k === "cpf" ? "CPF" : "E-mail"}</label>
+                    <input style={FieldInput} value={cardData[k]} onChange={handleChange(k)} placeholder={k === "cpf" ? "000.000.000-00" : "seu@email.com"} />
+                  </div>
+                ))}
 
-                
-                <p style={{ fontSize: 9, color: T.text3, textAlign: "center", marginTop: 16, lineHeight: 1.4 }}>
-                  Secure Payment · SSL · Dados não armazenados
-                </p>
+                {error && <div style={{ fontSize: 10, color: "#ef4444", background: "#ef444411", padding: 8, border: "1px solid #ef444433" }}>{error}</div>}
+
+                {!cardToken ? (
+                  <button onClick={handleTokenize} disabled={tokenizing || !cardData.number || !cardData.cvv}
+                    style={{ ...BtnPrimary, width: "100%", justifyContent: "center", opacity: (tokenizing || !cardData.number) ? 0.5 : 1 }}>
+                    {tokenizing ? "Validando..." : "Validar Cartão"}
+                  </button>
+                ) : (
+                  <button onClick={handlePay} style={{ ...BtnPrimary, width: "100%", justifyContent: "center" }}>
+                    Pagar R$ {Number(event.priceBase).toFixed(2).replace(".", ",")}
+                  </button>
+                )}
+                <p style={{ fontSize: 9, color: T.text3, textAlign: "center", margin: 0 }}>SSL · Dados não armazenados</p>
               </div>
             )}
 
-            {/* STEP: PROCESSING */}
+            {/* PROCESSING */}
             {step === "processing" && (
-              <div style={{ ...Card, padding: "48px 24px", textAlign: "center" }}>
-                <div style={{ display: "flex", justifyContent: "center", marginBottom: 24 }}><Spinner /></div>
-                <h3 style={{ fontFamily: T.fontD, fontWeight: 900, fontSize: 22, color: T.text, textTransform: "uppercase", margin: "0 0 8px" }}>PROCESSANDO</h3>
-                <p style={{ fontSize: 12, color: T.text3, margin: 0 }}>Validando transação com a rede bancária...</p>
+              <div style={{ display: "flex", flexDirection: "column", alignItems: "center", gap: 20, padding: "40px 0", animation: "fadeUp 0.3s ease" }}>
+                <Spinner />
+                <div style={{ textAlign: "center" }}>
+                  <h3 style={{ fontFamily: T.fontD, fontWeight: 900, fontSize: 18, textTransform: "uppercase", margin: "0 0 6px" }}>Processando</h3>
+                  <p style={{ fontSize: 12, color: T.text3, margin: 0 }}>Validando transação bancária...</p>
+                </div>
               </div>
             )}
 
-            {/* STEP: SUCCESS */}
-            {step === "success" && (
-              <div style={{ ...Card, padding: 32, textAlign: "center" }}>
-                <div style={{ 
-                  width: 44, height: 44, borderRadius: "50%", border: "2px solid #4ade80", 
-                  display: "flex", alignItems: "center", justifyContent: "center", margin: "0 auto 20px" 
-                }}>
-                  <CheckIcon />
-                </div>
-                <h3 style={{ fontFamily: T.fontD, fontWeight: 900, fontSize: 22, color: T.text, textTransform: "uppercase", margin: "0 0 8px" }}>PAGAMENTO CONFIRMADO</h3>
-                <p style={{ fontSize: 13, color: T.text2, margin: "0 0 24px" }}>Seus arquivos estão disponíveis ao lado.</p>
-                <div style={{ fontSize: 11, fontFamily: "monospace", color: T.text3, background: T.bgField, padding: "8px", border: `1px solid ${T.border}` }}>
-                  ID: {orderId ? orderId.slice(-12).toUpperCase() : "FS-CONFIRMED"}
-                </div>
+            {/* SUCCESS — sem card prominente, apenas info de acesso */}
+            {step === "success" && !justPaid && (
+              <div style={{ display: "flex", flexDirection: "column", gap: 16, animation: "fadeUp 0.3s ease" }}>
+                <p style={{ fontSize: 10, fontWeight: 700, textTransform: "uppercase", letterSpacing: 2, color: T.brand, margin: 0 }}>Acesso Liberado</p>
+                <p style={{ fontSize: 12, color: T.text2, margin: 0 }}>Seus arquivos estão disponíveis na imagem ao lado.</p>
+                {access && (access.lightroomUrl || access.driveUrl) && (
+                  <div style={{ display: "flex", flexDirection: "column", gap: 10 }}>
+                    {access.lightroomUrl && <a href={access.lightroomUrl} target="_blank" rel="noreferrer" style={{ ...BtnPrimary, textDecoration: "none", justifyContent: "center" }}>Abrir Lightroom</a>}
+                    {access.driveUrl && <a href={access.driveUrl} target="_blank" rel="noreferrer" style={{ ...BtnSecondary, color: T.text, borderColor: T.brand, textDecoration: "none", justifyContent: "center" }}>Google Drive</a>}
+                  </div>
+                )}
+              </div>
+            )}
+
+            {step === "success" && justPaid && (
+              <div style={{ display: "flex", flexDirection: "column", gap: 16, animation: "fadeUp 0.3s ease" }}>
+                <p style={{ fontSize: 10, fontWeight: 700, textTransform: "uppercase", letterSpacing: 2, color: T.brand, margin: 0 }}>Tudo pronto!</p>
+                <p style={{ fontSize: 12, color: T.text2, margin: 0 }}>Seus links estão disponíveis. Acesse também pela foto.</p>
+                {access && (access.lightroomUrl || access.driveUrl) && (
+                  <div style={{ display: "flex", flexDirection: "column", gap: 10 }}>
+                    {access.lightroomUrl && <a href={access.lightroomUrl} target="_blank" rel="noreferrer" style={{ ...BtnPrimary, textDecoration: "none", justifyContent: "center" }}>Abrir Lightroom</a>}
+                    {access.driveUrl && <a href={access.driveUrl} target="_blank" rel="noreferrer" style={{ ...BtnSecondary, color: T.text, borderColor: T.brand, textDecoration: "none", justifyContent: "center" }}>Google Drive</a>}
+                  </div>
+                )}
               </div>
             )}
 
           </div>
-        </aside>
-      </main>
 
-      {step === "auth" && (
-        <AuthModal 
-          onSuccess={() => setStep("choice")} 
-          onClose={() => setStep("paywall")} 
-        />
-      )}
+          {/* Footer info */}
+          <div style={{ padding: "16px 28px", borderTop: `1px solid ${T.border}`, fontSize: 9, color: T.text3, letterSpacing: 1 }}>
+            FOTO SEGUNDO · {event.slug?.toUpperCase()}
+          </div>
+        </aside>
+      </div>
+
+      {step === "auth" && <AuthModal onSuccess={() => setStep("choice")} onClose={() => setStep("paywall")} />}
 
       {step === "choice" && (
-        <AccessTypeModal
-          orderId="PRE-PAYMENT"
-          eventTitle={event.nomeNoivos}
-          onConfirmed={(type) => {
-            setAccessType(type as "PUBLIC" | "PRIVATE");
-            setStep("checkout");
-          }}
+        <AccessTypeModal orderId="PRE-PAYMENT" eventTitle={event.nomeNoivos}
+          onConfirmed={(type) => { setAccessType(type as "PUBLIC" | "PRIVATE"); setStep("checkout"); }}
         />
       )}
 
       {needsAccessChoice && orderId && event && (
-        <AccessTypeModal
-          orderId={orderId}
-          eventTitle={event.nomeNoivos}
+        <AccessTypeModal orderId={orderId} eventTitle={event.nomeNoivos}
           onConfirmed={async () => {
             setNeedsAccessChoice(false);
-            // Atualiza status para liberar links
             try {
               const { data } = await api.get(`/orders/${orderId}/access-status`);
-              setAccess({ 
-                lightroomUrl: data.lightroomUrl, 
-                driveUrl: data.driveUrl,
-                expiresAt: data.expiresAt || ""
-              });
-            } catch (err) {
-              console.error("Erro ao atualizar links após escolha:", err);
-            }
+              setAccess({ lightroomUrl: data.lightroomUrl, driveUrl: data.driveUrl, expiresAt: data.expiresAt || "" });
+            } catch (err) { console.error("Erro ao atualizar links:", err); }
           }}
         />
       )}
