@@ -8,32 +8,31 @@ import { ThemeToggle } from "../components/ThemeToggle";
 import { AuthModal } from "../components/AuthModal";
 import { useAuth } from "../hooks/useAuth";
 
-// ─── Types ────────────────────────────────────────────────────────────────────
-
+// Campos retornados pelo EventController.getById
 interface EventData {
   id: string;
   nomeNoivos: string;
+  dataEvento?: string | null;   // backend envia "dataEvento", não "date"
   paywall: {
     active: boolean;
     message: string;
   };
   lightroomUrl?: string | null;
   driveUrl?: string | null;
-  slug: string;
-  date: string;
-  location: string;
-  city: string | null;
-  description: string | null;
+  slug?: string | null;
+  location?: string | null;
+  city?: string | null;
+  description?: string | null;
   coverPhotoUrl: string | null;
   priceBase: number;
-  temFoto: boolean;
-  temVideo: boolean;
-  temReels: boolean;
-  temFotoImpressa: boolean;
-  cartorio?: { razaoSocial: string; city: string | null } | null;
-  isCrowdfund: boolean;
-  targetAmount: number | null;
-  collectedAmount: number;
+  temFoto?: boolean;
+  temVideo?: boolean;
+  temReels?: boolean;
+  temFotoImpressa?: boolean;
+  cartorio?: string | null;     // backend envia string (razaoSocial), não objeto
+  isCrowdfund?: boolean;
+  targetAmount?: number | null;
+  collectedAmount?: number;
 }
 
 interface AccessData {
@@ -365,7 +364,7 @@ export default function EventPage() {
           <div style={{ display: "flex", alignItems: "center", gap: 12 }}>
             <div style={{ width: 30, height: 2, background: T.brand }} />
             <span style={{ fontSize: 10, letterSpacing: 2, textTransform: "uppercase", color: T.brand, fontWeight: 700 }}>
-              {event.cartorio?.razaoSocial || "Registro Editorial"}
+              {typeof event.cartorio === "string" ? event.cartorio : (event.cartorio as any)?.razaoSocial || "Registro Editorial"}
             </span>
           </div>
 
@@ -381,7 +380,9 @@ export default function EventPage() {
 
           {/* Meta */}
           <div style={{ fontSize: 13, color: T.text2, fontFamily: T.fontB, fontWeight: 400, marginTop: -12 }}>
-          {new Date(event.date.includes('T') ? event.date : event.date + 'T00:00').toLocaleDateString("pt-BR", { day: "numeric", month: "long", year: "numeric" })} · {event.city || event.location}
+          {event.dataEvento
+            ? new Date(event.dataEvento).toLocaleDateString("pt-BR", { day: "numeric", month: "long", year: "numeric" })
+            : ""} {event.city || event.location ? `· ${event.city || event.location}` : ""}
           </div>
 
           {/* Services Grid 2x2 */}
