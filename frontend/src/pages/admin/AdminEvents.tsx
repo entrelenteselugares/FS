@@ -62,6 +62,8 @@ export const AdminEvents: React.FC = () => {
     eventHours: number;
     isCrowdfund: boolean;
     targetAmount: number;
+    lightroomUrl: string;
+    driveUrl: string;
   }
 
   // Form State
@@ -73,7 +75,9 @@ export const AdminEvents: React.FC = () => {
     coverPhotoUrl: "",
     eventHours: 2,
     isCrowdfund: false,
-    targetAmount: 0
+    targetAmount: 0,
+    lightroomUrl: "",
+    driveUrl: ""
   });
 
   const handleFileChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -116,7 +120,9 @@ export const AdminEvents: React.FC = () => {
         temFoto: true, temVideo: false, temReels: false, temFotoImpressa: false,
         coverPhotoUrl: "", eventHours: 2,
         isCrowdfund: false,
-        targetAmount: 0
+        targetAmount: 0,
+        lightroomUrl: "",
+        driveUrl: ""
       });
       setCoverPreview(null);
     } catch {
@@ -149,7 +155,9 @@ export const AdminEvents: React.FC = () => {
         coverPhotoUrl: data.coverPhotoUrl || "",
         eventHours: data.eventHours || 2,
         isCrowdfund: data.isCrowdfund || false,
-        targetAmount: Number(data.targetAmount || 0)
+        targetAmount: Number(data.targetAmount || 0),
+        lightroomUrl: data.lightroomUrl || "",
+        driveUrl: data.driveUrl || ""
       });
       setCoverPreview(data.coverPhotoUrl);
       setIsModalOpen(true);
@@ -194,7 +202,9 @@ export const AdminEvents: React.FC = () => {
               temFoto: true, temVideo: false, temReels: false, temFotoImpressa: false,
               coverPhotoUrl: "", eventHours: 2,
               isCrowdfund: false,
-              targetAmount: 0
+              targetAmount: 0,
+              lightroomUrl: "",
+              driveUrl: ""
             });
             setCoverPreview(null);
             setIsModalOpen(true);
@@ -436,6 +446,32 @@ export const AdminEvents: React.FC = () => {
                           </span>
                         </label>
                       ))}
+                    </div>
+                  </div>
+
+                  <div className="space-y-4 pt-6 border-t border-theme-border/50">
+                    <label className="text-[10px] font-bold text-brand-tactical uppercase tracking-[0.4em]">Links de Entrega (Protocolo)</label>
+                    <div className="space-y-4">
+                       <div className="space-y-2">
+                         <label className="text-[9px] font-bold text-theme-muted/60 uppercase tracking-[0.4em]">Link Google Drive / Pasta de Entrega</label>
+                         <input 
+                           type="text"
+                           className="w-full bg-theme-bg border border-theme-border p-4 text-[13px] text-theme-text focus:border-brand-tactical transition-colors outline-none font-bold"
+                           value={formData.driveUrl}
+                           onChange={(e) => setFormData({ ...formData, driveUrl: e.target.value })}
+                           placeholder="https://drive.google.com/..."
+                         />
+                       </div>
+                       <div className="space-y-2">
+                         <label className="text-[9px] font-bold text-theme-muted/60 uppercase tracking-[0.4em]">Link Lightroom / Galeria Online</label>
+                         <input 
+                           type="text"
+                           className="w-full bg-theme-bg border border-theme-border p-4 text-[13px] text-theme-text focus:border-brand-tactical transition-colors outline-none font-bold"
+                           value={formData.lightroomUrl}
+                           onChange={(e) => setFormData({ ...formData, lightroomUrl: e.target.value })}
+                           placeholder="https://lightroom.adobe.com/..."
+                         />
+                       </div>
                     </div>
                   </div>
                 </div>

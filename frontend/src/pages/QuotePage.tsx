@@ -466,7 +466,7 @@ export const QuotePage = () => {
                       
                       {addressData.logradouro && (
                         <div style={{ display: "flex", flexDirection: "column", gap: 10 }}>
-                          <div style={{ display: "flex", gap: 10 }}>
+                          <div className="mobile-stack" style={{ display: "flex", gap: 10 }}>
                              <div style={{ flex: 3, position: "relative" }}>
                                <Home size={14} style={{ position: "absolute", left: 12, top: "50%", transform: "translateY(-50%)", opacity: 0.5 }} />
                                <input 
@@ -485,7 +485,7 @@ export const QuotePage = () => {
                                style={{ flex: 1, padding: "12px", textAlign: "center", fontSize: 11 }} 
                              />
                           </div>
-                          <div style={{ display: "flex", gap: 10 }}>
+                          <div className="mobile-stack" style={{ display: "flex", gap: 10 }}>
                              <input 
                                readOnly 
                                value={addressData.bairro} 
