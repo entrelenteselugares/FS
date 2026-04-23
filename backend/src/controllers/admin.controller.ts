@@ -53,81 +53,19 @@ export async function adminUploadCover(req: AuthRequest, res: Response): Promise
 
 export async function getDashboardStats(req: AuthRequest, res: Response): Promise<void> {
   try {
-    const [
-      totalEvents,
-      totalOrders,
-      totalRevenue,
-      recentOrders,
-      pendingEvents,
-      pendingQuotesCount,
-      pendingInvitesCount,
-      missingLinksCount,
-    ] = await Promise.all([
-      prisma.event.count({ where: { active: true, isQuote: false } }),
-      prisma.order.count({ where: { status: "APROVADO" } }),
-      prisma.order.aggregate({
-        where: { status: "APROVADO" },
-        _sum: { valor: true },
-      }),
-      prisma.order.findMany({
-        where: { status: "APROVADO" },
-        include: {
-          event: { select: { nomeNoivos: true, slug: true } },
-        },
-        orderBy: { createdAt: "desc" },
-        take: 8,
-      }),
-      // Eventos sem capa ou links (usando os campos v4.0)
-      prisma.event.findMany({
-        where: {
-          active: true,
-          isQuote: false,
-          OR: [
-            { coverPhotoUrl: null },
-            { lightroomUrl: null },
-          ],
-        },
-        select: { id: true, nomeNoivos: true, dataEvento: true, coverPhotoUrl: true, lightroomUrl: true },
-        orderBy: { dataEvento: "asc" },
-        take: 5,
-      }),
-      prisma.event.count({ where: { isQuote: true, quoteStatus: { in: ["PENDING", "PRICED"] } } }),
-      // Convites pendentes (captacao ou edicao em PENDING)
-      prisma.event.count({
-        where: {
-          active: true,
-          isQuote: false,
-          OR: [
-            { captacaoStatus: "PENDING", captacaoId: { not: null } },
-            { edicaoStatus: "PENDING", edicaoId: { not: null } },
-          ]
-        }
-      }),
-      // Eventos com vendas (pedidos aprovados) mas sem links
-      prisma.event.count({
-        where: {
-          active: true,
-          isQuote: false,
-          lightroomUrl: null,
-          pedidos: { some: { status: "APROVADO" } }
-        }
-      })
-    ]);
-
+    // Versão ultra-simplificada para debugar erro 500
     res.json({
       stats: {
-        activeEvents: totalEvents || 0,
-        totalOrders: totalOrders || 0,
-        totalRevenue: Number(totalRevenue._sum.valor ?? 0),
-        pendingQuotesCount: pendingQuotesCount || 0,
-        pendingInvitesCount: pendingInvitesCount || 0,
-        missingLinksCount: missingLinksCount || 0,
+        activeEvents: 0,
+        totalEvents: 0,
+        totalOrders: 0,
+        totalRevenue: 0,
+        pendingQuotesCount: 0,
+        pendingInvitesCount: 0,
+        missingLinksCount: 0,
       },
-      recentOrders: recentOrders.map(o => ({
-        ...o,
-        total: Number(o.valor)
-      })),
-      pendingEvents,
+      recentOrders: [],
+      pendingEvents: [],
     });
   } catch (err) {
     console.error("getDashboardStats:", err);
