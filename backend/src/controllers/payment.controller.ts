@@ -420,6 +420,7 @@ export class PaymentController {
           data: { active: true, isQuote: false }
         });
 
+        // 7a. E-mail de acesso ao comprador
         NotificationService.sendAccessEmail({
           to: email,
           buyerName: req.body.buyerName || "Cliente",
@@ -429,6 +430,21 @@ export class PaymentController {
           tempPassword: isNewUser ? tempPassword : undefined
         }).catch(e => console.error("Erro ao enviar e-mail no checkout:", e));
 
+        // 7b. Alerta WhatsApp para o admin (era disparado APENAS no webhook — bug corrigido)
+        NotificationService.notifyNewSale({
+          buyerEmail: email,
+          eventTitle: event.nomeNoivos,
+          orderId: order.id,
+          amount: Number(preco)
+        });
+
+      } else if (mpResponse.status === "rejected") {
+        // 7c. Alerta de pagamento rejeitado
+        NotificationService.notifyPaymentIssue({
+          orderId: order.id,
+          status: mpResponse.status_detail || "rejected",
+          eventTitle: event.nomeNoivos
+        });
       }
 
       return res.json({

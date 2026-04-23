@@ -6,19 +6,27 @@ dotenv.config();
 
 // ─── CallMeBot WhatsApp Helper ────────────────────────────────────────────────
 function sendWhatsApp(message: string): void {
-  const phone = process.env.CALLMEBOT_PHONE;
-  const apikey = process.env.CALLMEBOT_APIKEY;
+  // Remove aspas extras que surgem de env vars mal formatadas na Vercel
+  const phone  = (process.env.CALLMEBOT_PHONE  || "").replace(/"/g, "").trim();
+  const apikey = (process.env.CALLMEBOT_APIKEY || "").replace(/"/g, "").trim();
 
   if (!phone || !apikey) {
-    console.warn("[WhatsApp] CALLMEBOT_PHONE ou CALLMEBOT_APIKEY não configurados. Pulando.");
+    console.warn("[WhatsApp] CALLMEBOT_PHONE ou CALLMEBOT_APIKEY não configurados.",
+      { phoneSet: !!phone, apikeySet: !!apikey });
     return;
   }
 
   const encodedMsg = encodeURIComponent(message);
   const url = `https://api.callmebot.com/whatsapp.php?phone=${phone}&text=${encodedMsg}&apikey=${apikey}`;
 
+  console.log(`[WhatsApp] Disparando notificação para ${phone}...`);
+
   https.get(url, (res) => {
-    console.log(`[WhatsApp] Notificação enviada. Status: ${res.statusCode}`);
+    let body = "";
+    res.on("data", (chunk) => { body += chunk; });
+    res.on("end", () => {
+      console.log(`[WhatsApp] CallMeBot | HTTP ${res.statusCode} | ${body.slice(0, 150)}`);
+    });
   }).on("error", (err) => {
     console.error("[WhatsApp] Erro ao enviar notificação:", err.message);
   });
