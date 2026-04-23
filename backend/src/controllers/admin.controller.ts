@@ -114,14 +114,20 @@ export async function getDashboardStats(req: AuthRequest, res: Response): Promis
       })
     ]);
 
+    console.log("[DashboardStats] Calculated:", { 
+      totalEvents, totalOrders, totalRevenue: totalRevenue._sum.valor, 
+      pendingQuotesCount, pendingInvitesCount, missingLinksCount 
+    });
+
     res.json({
       stats: {
-        activeEvents: totalEvents,
-        totalOrders,
+        activeEvents: Number(totalEvents || 0),
+        totalEvents: Number(totalEvents || 0),
+        totalOrders: Number(totalOrders || 0),
         totalRevenue: Number(totalRevenue._sum.valor ?? 0),
-        pendingQuotesCount,
-        pendingInvitesCount,
-        missingLinksCount,
+        pendingQuotesCount: Number(pendingQuotesCount || 0),
+        pendingInvitesCount: Number(pendingInvitesCount || 0),
+        missingLinksCount: Number(missingLinksCount || 0),
       },
       recentOrders: recentOrders.map(o => ({
         ...o,

@@ -76,6 +76,7 @@ export const AdminDashboard: React.FC = () => {
       setLoading(true);
       try {
         const { data } = await API.get("/admin/stats");
+        console.log("[AdminDashboard] Stats Data Received:", data);
         setStats(data.stats);
         setRecentOrders(data.recentOrders);
         setPendingEvents(data.pendingEvents);

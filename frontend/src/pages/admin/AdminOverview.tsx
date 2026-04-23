@@ -77,7 +77,7 @@ export const AdminOverview: React.FC<OverviewProps> = ({ stats, recentOrders, pe
           <div style={{ 
             fontSize: 28, fontFamily: T.fontD, fontWeight: 900, color: T.text, textTransform: "uppercase" 
           }}>
-            {stats?.totalOrders}
+            {stats?.totalOrders || 0}
           </div>
         </div>
 
@@ -94,7 +94,7 @@ export const AdminOverview: React.FC<OverviewProps> = ({ stats, recentOrders, pe
           <div style={{ 
             fontSize: 28, fontFamily: T.fontD, fontWeight: 900, color: T.text, textTransform: "uppercase" 
           }}>
-            {stats?.activeEvents}
+            {stats?.activeEvents || 0}
           </div>
         </div>
 
@@ -111,7 +111,7 @@ export const AdminOverview: React.FC<OverviewProps> = ({ stats, recentOrders, pe
           <div style={{ 
             fontSize: 28, fontFamily: T.fontD, fontWeight: 900, color: (stats?.pendingInvitesCount || 0) > 0 ? "#f87171" : T.text, textTransform: "uppercase" 
           }}>
-            {stats?.pendingInvitesCount}
+            {stats?.pendingInvitesCount || 0}
           </div>
         </div>
 
@@ -128,7 +128,7 @@ export const AdminOverview: React.FC<OverviewProps> = ({ stats, recentOrders, pe
           <div style={{ 
             fontSize: 28, fontFamily: T.fontD, fontWeight: 900, color: (stats?.missingLinksCount || 0) > 0 ? T.brand : T.text, textTransform: "uppercase" 
           }}>
-            {stats?.missingLinksCount}
+            {stats?.missingLinksCount || 0}
           </div>
         </div>
 
@@ -145,7 +145,7 @@ export const AdminOverview: React.FC<OverviewProps> = ({ stats, recentOrders, pe
           <div style={{ 
             fontSize: 28, fontFamily: T.fontD, fontWeight: 900, color: (stats?.pendingQuotesCount || 0) > 0 ? T.brand : T.text, textTransform: "uppercase" 
           }}>
-            {stats?.pendingQuotesCount}
+            {stats?.pendingQuotesCount || 0}
           </div>
         </div>
 
