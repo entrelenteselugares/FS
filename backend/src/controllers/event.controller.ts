@@ -207,17 +207,26 @@ export class EventController {
       const isQuote = locationType === "OTHER";
       
       // ── LOGICA DE CONVOCAÇÃO TÁTICA (PROXIMIDADE) ──
-      // Se for ponto fixo, buscamos o profissional titular (FIXO)
+      // Se for ponto fixo, buscamos os profissionais titulares (FIXO)
       let captacaoId: string | null = null;
+      let fixoProfessionals: any[] = [];
+
       if (locationType === "PARTNER" && selectedPartnerId) {
         const cartorio = await prisma.cartorio.findUnique({
           where: { userId: selectedPartnerId },
-          include: { profissionais: { where: { tipo: "FIXO" }, take: 1, include: { profissional: true } } }
+          include: { 
+            profissionais: { 
+              where: { tipo: "FIXO" }, 
+              include: { profissional: { include: { user: true } } } 
+            } 
+          }
         });
         
         if (cartorio?.profissionais?.length) {
-          captacaoId = cartorio.profissionais[0].profissional.userId;
-          console.log(`[Quote] Convocando profissional FIXO titular: ${captacaoId}`);
+          fixoProfessionals = cartorio.profissionais;
+          // Atribui o primeiro como titular da captação
+          captacaoId = fixoProfessionals[0].profissional.user.id;
+          console.log(`[Quote] Convocando profissionais FIXOS: ${fixoProfessionals.length} encontrados. Titular: ${captacaoId}`);
         }
       }
 
@@ -244,6 +253,17 @@ export class EventController {
           captacaoId: captacaoId,
           captacaoStatus: "PENDING"
         }
+      });
+
+      // Notifica todos os profissionais FIXOS da unidade sobre o novo evento
+      fixoProfessionals.forEach(fp => {
+        NotificationService.notifyProfessionalNewAssignment({
+          to: fp.profissional.user.email,
+          profissionalName: fp.profissional.user.nome,
+          eventTitle: name,
+          eventDate: eventDate,
+          location: locationType === "PARTNER" ? "Ponto Fixo" : `CEP: ${customCep}`
+        }).catch(e => console.error("Erro ao notificar profissional fixo:", e));
       });
 
       if (locationType === "PARTNER") {

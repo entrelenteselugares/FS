@@ -101,7 +101,10 @@ export class CartorioController {
       // Buscar dados do cartório se não for Admin (para garantir que temos servicePrices mesmo sem eventos)
       let cartorioData = null;
       if (!isAdmin) {
-        cartorioData = await prisma.cartorio.findUnique({ where: { userId: user.userId } });
+        cartorioData = await prisma.cartorio.findUnique({ 
+          where: { userId: user.userId },
+          include: { user: { select: { pixKey: true } } }
+        });
       } else {
         cartorioData = events[0]?.cartorioUser?.cartorio || null;
       }
@@ -112,6 +115,7 @@ export class CartorioController {
         repasseEstimado: estimativaRepasse,
         eventosMes,
         razaoSocial: cartorioData?.razaoSocial || "Sua Unidade",
+        pixKey: (cartorioData as any)?.user?.pixKey || "",
         cartorio: cartorioData,
         events: eventosProcessados 
       });

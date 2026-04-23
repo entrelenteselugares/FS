@@ -205,4 +205,42 @@ export class NotificationService {
       `❌ Status: ${data.status}`
     );
   }
+
+  /** Alerta por E-mail para o Profissional quando um novo evento é atribuído a ele */
+  static async notifyProfessionalNewAssignment(data: { 
+    to: string; 
+    profissionalName: string; 
+    eventTitle: string; 
+    eventDate: string;
+    location: string;
+  }) {
+    if (!process.env.SMTP_USER || !process.env.SMTP_PASS) return;
+
+    const htmlContent = `
+      <div style="font-family: sans-serif; max-width: 600px; margin: 0 auto; padding: 20px; color: #000;">
+        <h1 style="font-size: 20px; color: #85B9AC;">Novo Evento Atribuído! 📸</h1>
+        <p>Olá, <strong>${data.profissionalName}</strong>,</p>
+        <p>Um novo evento foi agendado em uma de suas unidades fixas e você foi designado para a captação.</p>
+        <div style="background: #f9f9f9; padding: 20px; border-radius: 8px; margin: 20px 0;">
+          <p><strong>Evento:</strong> ${data.eventTitle}</p>
+          <p><strong>Data:</strong> ${new Date(data.eventDate).toLocaleDateString("pt-BR")}</p>
+          <p><strong>Local:</strong> ${data.location}</p>
+        </div>
+        <p>Acesse seu painel profissional para ver mais detalhes e confirmar a agenda.</p>
+        <hr style="border: 0.5px solid #eee;" />
+        <p style="font-size: 10px; color: #999; text-align: center;">Foto Segundo — Sistema de Gestão Tática</p>
+      </div>
+    `;
+
+    try {
+      await this.transporter.sendMail({
+        from: `"Foto Segundo" <${process.env.SMTP_USER}>`,
+        to: data.to,
+        subject: `Novo Evento: ${data.eventTitle} 📅`,
+        html: htmlContent,
+      });
+    } catch (error) {
+      console.error("[Notification] Erro ao notificar profissional:", error);
+    }
+  }
 }
