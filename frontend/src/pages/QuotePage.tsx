@@ -384,8 +384,15 @@ export const QuotePage = () => {
     };
 
     try {
-      await API.post("/public/quotes", payload);
-      setStep(3); 
+      const { data } = await API.post("/public/quotes", payload);
+      
+      if (data.checkoutUrl) {
+        // Se houver link de checkout (Unidade Fixa), redireciona direto
+        window.location.href = data.checkoutUrl;
+      } else {
+        // Se for orçamento sob consulta, mostra sucesso
+        setStep(3); 
+      }
     } catch {
       alert("Erro ao processar orçamento. Tente novamente.");
     }

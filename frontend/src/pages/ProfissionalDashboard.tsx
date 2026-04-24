@@ -81,7 +81,7 @@ function DeadlineTimer({ event, type }: { event: EventItem; type: "FOTO" | "VIDE
 
   if (isDelivered) {
     return (
-      <div style={{ display: "flex", alignItems: "center", gap: 5, color: "#85B9AC", fontSize: 10, fontWeight: 700, textTransform: "uppercase" }}>
+      <div style={{ display: "flex", alignItems: "center", gap: 5, color: "var(--brand-primary)", fontSize: 10, fontWeight: 700, textTransform: "uppercase" }}>
         <span style={{ fontSize: 14 }}>✓</span> {type === "FOTO" ? "Fotos OK" : "Vídeo OK"}
       </div>
     );
@@ -616,7 +616,7 @@ function EventEditPanel({ event, onUpdated, onClose }: {
           )}
           {coverStatus === "saved" && (
             <div style={{ position: "absolute", inset: 0, background: "rgba(0,0,0,0.5)", display: "flex", alignItems: "center", justifyContent: "center" }}>
-              <span style={{ color: "#85B9AC", fontSize: 13 }}>✓ Capa atualizada</span>
+              <span style={{ color: "var(--brand-primary)", fontSize: 13 }}>✓ Capa atualizada</span>
             </div>
           )}
         </div>

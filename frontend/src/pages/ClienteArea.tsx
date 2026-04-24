@@ -4,6 +4,7 @@ import { useAuth } from "../hooks/useAuth";
 import { API } from "../lib/api";
 import { T } from "../lib/theme";
 import AccessTypeModal from "../components/AccessTypeModal";
+import { ThemeToggle } from "../components/ThemeToggle";
 
 interface Pedido {
   id: string;
@@ -43,8 +44,18 @@ function formatDate(d: string | null | undefined) {
 }
 
 const S = {
-  page: { fontFamily: "'Outfit', sans-serif", background: "var(--theme-bg)", color: "var(--theme-text)", minHeight: "100vh" } as React.CSSProperties,
-  card: { background: "var(--theme-bg-muted)", border: "1px solid var(--theme-border)", borderRadius: 0 } as React.CSSProperties,
+  page: { 
+    fontFamily: T.fontB, 
+    background: T.bg, 
+    color: T.text, 
+    minHeight: "100vh" 
+  } as React.CSSProperties,
+  card: { 
+    ...T.Card, // fallback to T.bgCard if T.Card doesn't exist? Wait, I saw Card in theme.ts.
+    background: T.bgCard, 
+    border: `1px solid ${T.border}`, 
+    borderRadius: 0 
+  } as React.CSSProperties,
 };
 
 export default function ClienteArea() {
@@ -123,6 +134,7 @@ export default function ClienteArea() {
           <img src="/logo-fs.png" alt="Foto Segundo" style={{ height: 26, objectFit: "contain" }} />
         </div>
         <div style={{ display: "flex", alignItems: "center", gap: 12 }}>
+          <ThemeToggle />
           <div className="mobile-hide" style={{ textAlign: "right" }}>
             <p style={{ fontSize: 11, fontWeight: 600, color: "#fff", margin: 0 }}>{user?.nome}</p>
           </div>
@@ -199,8 +211,8 @@ export default function ClienteArea() {
               {/* Liberados */}
               {aprovados.length > 0 && (
                 <div style={{ marginBottom: "3.5rem" }}>
-                  <p style={{ fontSize: 11, fontWeight: 700, letterSpacing: 1.5, textTransform: "uppercase", color: "#85B9AC", marginBottom: "1rem", display: "flex", alignItems: "center", gap: 8 }}>
-                    <span style={{ width: 6, height: 6, background: "#85B9AC", borderRadius: "50%" }} />
+                  <p style={{ fontSize: 11, fontWeight: 700, letterSpacing: 1.5, textTransform: "uppercase", color: T.brand, marginBottom: "1rem", display: "flex", alignItems: "center", gap: 8 }}>
+                    <span style={{ width: 6, height: 6, background: T.brand, borderRadius: "50%" }} />
                     Acesso Liberado
                   </p>
                   <div style={{ display: "flex", flexDirection: "column", gap: 12 }}>
@@ -296,17 +308,17 @@ function PedidoRow({ pedido, now, isSelected, onClick }: {
         display: "flex",
         gap: "1.5rem",
         alignItems: "center",
-        borderColor: isExpiringSoon ? "#f59e0b" : (isSelected ? "var(--brand-primary)" : "var(--theme-border)"),
-        background: isSelected ? "var(--theme-highlight)" : "var(--theme-bg-muted)",
+        borderColor: isExpiringSoon ? "#f59e0b" : (isSelected ? T.brand : T.border),
+        background: isSelected ? "rgba(133, 185, 172, 0.05)" : T.bgCard,
         boxShadow: isExpiringSoon ? "0 0 15px rgba(245, 158, 11, 0.1)" : "none",
         transition: "all .2s ease-out",
-        transform: isSelected ? "translateY(-4px)" : "none",
+        transform: isSelected ? "translateY(-2px)" : "none",
       }}
       onMouseEnter={(e) => !isSelected && ((e.currentTarget as HTMLDivElement).style.borderColor = "var(--brand-primary)")}
       onMouseLeave={(e) => !isSelected && ((e.currentTarget as HTMLDivElement).style.borderColor = isExpiringSoon ? "#f59e0b" : "var(--theme-border)")}
     >
       {/* Thumbnail */}
-      <div style={{ width: 84, height: 84, background: "#111", borderRadius: 10, flexShrink: 0, overflow: "hidden", position: "relative" }}>
+      <div style={{ width: 84, height: 84, background: T.bgField, border: `1px solid ${T.border}`, borderRadius: 0, flexShrink: 0, overflow: "hidden", position: "relative" }}>
         {pedido.event.coverPhotoUrl ? (
           <img src={pedido.event.coverPhotoUrl} alt="" style={{ width: "100%", height: "100%", objectFit: "cover", filter: pedido.hasPaid ? "none" : "grayscale(80%) brightness(0.4)" }} />
         ) : (
@@ -346,9 +358,9 @@ function PedidoRow({ pedido, now, isSelected, onClick }: {
                 <span style={{
                   fontSize: 9, padding: "3px 8px", letterSpacing: 0.5,
                   textTransform: "uppercase", fontWeight: 700,
-                  background: expirado ? "#1a0a0a" : urgente ? "#1a0d00" : "#0f130a",
-                  border: `1px solid ${expirado ? "#3a1a1a" : urgente ? "#3a2000" : "#85B9AC"}`,
-                  color: expirado ? "#f87171" : urgente ? "#f59e0b" : "#85B9AC",
+                  background: expirado ? "var(--theme-bg-muted)" : urgente ? "rgba(245, 158, 11, 0.1)" : "var(--brand-dark)",
+                  border: `1px solid ${expirado ? "rgba(248, 113, 113, 0.3)" : urgente ? "rgba(245, 158, 11, 0.3)" : "var(--brand-border)"}`,
+                  color: expirado ? "#f87171" : urgente ? "#f59e0b" : "var(--brand-primary)",
                   borderRadius: 4
                 }}>
                   {expirado
@@ -395,10 +407,10 @@ function PedidoDetalhe({ pedido, loading, onClose, onGoToEvent, onChangePrivacy 
       {/* Header */}
       <div style={{ padding: "1.5rem", borderBottom: "0.5px solid #1a1a1a", display: "flex", justifyContent: "space-between", alignItems: "flex-start" }}>
         <div>
-          <p style={{ fontSize: 10, fontWeight: 800, letterSpacing: 1, textTransform: "uppercase", color: pedido.hasPaid ? "#85B9AC" : "#f59e0b", marginBottom: 6 }}>
+          <p style={{ fontSize: 10, fontWeight: 800, letterSpacing: 1, textTransform: "uppercase", color: pedido.hasPaid ? T.brand : "#f59e0b", marginBottom: 6 }}>
             {pedido.hasPaid ? "Entrega Liberada" : "Pedido em Processamento"}
           </p>
-          <h2 style={{ fontSize: 20, fontWeight: 800, color: "var(--theme-text)", margin: 0 }}>
+          <h2 style={{ fontSize: 22, fontWeight: 900, fontFamily: T.fontD, textTransform: "uppercase", color: T.text, margin: 0, letterSpacing: "-0.5px" }}>
             {pedido.event.nomeNoivos}
           </h2>
         </div>
@@ -412,11 +424,11 @@ function PedidoDetalhe({ pedido, loading, onClose, onGoToEvent, onChangePrivacy 
           margin: "0 1.5rem", 
           marginTop: "1.5rem", 
           padding: "10px 14px", 
-          background: pedido.accessType === "PRIVATE" ? "#1a0a0a" : "#0f130a", 
-          border: `1px solid ${pedido.accessType === "PRIVATE" ? "#3a1a1a" : "#85B9AC"}`,
+          background: "var(--brand-dark)", 
+          border: `1px solid var(--brand-border)`,
           borderRadius: 4
         }}>
-          <p style={{ fontSize: 11, color: pedido.accessType === "PRIVATE" ? "#f87171" : "#85B9AC", margin: 0, fontWeight: 600 }}>
+          <p style={{ fontSize: 11, color: "var(--brand-primary)", margin: 0, fontWeight: 600 }}>
             {pedido.accessType === "PRIVATE" ? "⚠️ ACESSO PRIVADO" : "📅 ÁLBUM PÚBLICO"}
           </p>
           <p style={{ fontSize: 10, color: "var(--theme-text-muted)", margin: 0, marginTop: 4 }}>
@@ -441,19 +453,19 @@ function PedidoDetalhe({ pedido, loading, onClose, onGoToEvent, onChangePrivacy 
                 href={pedido.event.lightroomUrl}
                 target="_blank"
                 rel="noopener noreferrer"
-                style={{ display: "flex", alignItems: "center", justifyContent: "space-between", background: "#111", border: "0.5px solid #222", borderRadius: 10, padding: "14px 18px", textDecoration: "none", transition: "all .2s" }}
+                style={{ display: "flex", alignItems: "center", justifyContent: "space-between", background: T.bgField, border: `1px solid ${T.border}`, borderRadius: 0, padding: "14px 18px", textDecoration: "none", transition: "all .2s" }}
                 onMouseEnter={(e: React.MouseEvent<HTMLElement>) => { e.currentTarget.style.borderColor = T.brand; e.currentTarget.style.background = T.bgCard; }}
-                onMouseLeave={(e: React.MouseEvent<HTMLElement>) => { e.currentTarget.style.borderColor = T.border; e.currentTarget.style.background = T.bg; }}
+                onMouseLeave={(e: React.MouseEvent<HTMLElement>) => { e.currentTarget.style.borderColor = T.border; e.currentTarget.style.background = T.bgField; }}
               >
                 <div>
-                  <p style={{ fontSize: 14, fontWeight: 700, color: "var(--theme-text)", marginBottom: 2 }}>📸 Álbum Digital</p>
-                  <p style={{ fontSize: 11, color: "var(--theme-text-muted)" }}>Curadoria em Alta Resolução</p>
+                  <p style={{ fontSize: 13, fontWeight: 700, color: T.text, marginBottom: 2 }}>📸 Álbum Digital</p>
+                  <p style={{ fontSize: 10, color: T.text2, textTransform: "uppercase", letterSpacing: 0.5 }}>Curadoria em Alta Resolução</p>
                 </div>
-                <span style={{ color: "#c9a96e" }}>↗</span>
+                <span style={{ color: T.brand }}>↗</span>
               </a>
             ) : (
-                <div style={{ background: "var(--theme-bg-muted)", border: "0.5px solid var(--theme-border)", borderRadius: 10, padding: "14px 18px" }}>
-                   <p style={{ fontSize: 13, color: "var(--theme-text-muted)", margin: 0 }}>📸 Fotos em edição — disponível em breve</p>
+                <div style={{ background: T.bgCard, border: `1px solid ${T.border}`, borderRadius: 0, padding: "14px 18px" }}>
+                   <p style={{ fontSize: 13, color: T.text3, margin: 0 }}>📸 Fotos em edição — disponível em breve</p>
                 </div>
             )}
 
@@ -462,19 +474,19 @@ function PedidoDetalhe({ pedido, loading, onClose, onGoToEvent, onChangePrivacy 
                 href={pedido.event.driveUrl}
                 target="_blank"
                 rel="noopener noreferrer"
-                style={{ display: "flex", alignItems: "center", justifyContent: "space-between", background: "#111", border: "0.5px solid #222", borderRadius: 10, padding: "14px 18px", textDecoration: "none", transition: "all .2s" }}
+                style={{ display: "flex", alignItems: "center", justifyContent: "space-between", background: T.bgField, border: `1px solid ${T.border}`, borderRadius: 0, padding: "14px 18px", textDecoration: "none", transition: "all .2s" }}
                 onMouseEnter={(e: React.MouseEvent<HTMLElement>) => { e.currentTarget.style.borderColor = T.brand; e.currentTarget.style.background = T.bgCard; }}
-                onMouseLeave={(e: React.MouseEvent<HTMLElement>) => { e.currentTarget.style.borderColor = T.border; e.currentTarget.style.background = T.bg; }}
+                onMouseLeave={(e: React.MouseEvent<HTMLElement>) => { e.currentTarget.style.borderColor = T.border; e.currentTarget.style.background = T.bgField; }}
               >
                 <div>
-                  <p style={{ fontSize: 14, fontWeight: 700, color: "var(--theme-text)", marginBottom: 2 }}>🎬 Vídeos & Reels</p>
-                  <p style={{ fontSize: 11, color: "var(--theme-text-muted)" }}>Download via Google Drive</p>
+                  <p style={{ fontSize: 13, fontWeight: 700, color: T.text, marginBottom: 2 }}>🎬 Vídeos & Reels</p>
+                  <p style={{ fontSize: 10, color: T.text2, textTransform: "uppercase", letterSpacing: 0.5 }}>Download via Google Drive</p>
                 </div>
-                <span style={{ color: "#c9a96e" }}>↗</span>
+                <span style={{ color: T.brand }}>↗</span>
               </a>
             ) : (pedido.event.temVideo || pedido.event.temReels) && (
-                 <div style={{ background: "#050505", border: "0.5px solid #1a1a1a", borderRadius: 10, padding: "14px 18px" }}>
-                    <p style={{ fontSize: 13, color: "#444", margin: 0 }}>🎬 Vídeos em edição — disponível em breve</p>
+                 <div style={{ background: T.bgCard, border: `1px solid ${T.border}`, borderRadius: 0, padding: "14px 18px" }}>
+                    <p style={{ fontSize: 13, color: T.text3, margin: 0 }}>🎬 Vídeos em edição — disponível em breve</p>
                  </div>
             )}
           </div>
@@ -488,18 +500,18 @@ function PedidoDetalhe({ pedido, loading, onClose, onGoToEvent, onChangePrivacy 
         )}
 
         {/* Info */}
-        <div style={{ background: "var(--theme-bg-muted)", borderRadius: 10, padding: "1rem", display: "flex", flexDirection: "column", gap: 10 }}>
+        <div style={{ background: T.bgField, border: `1px solid ${T.border}`, borderRadius: 0, padding: "1rem", display: "flex", flexDirection: "column", gap: 10 }}>
             <div style={{ display: "flex", justifyContent: "space-between", fontSize: 12 }}>
-                <span style={{ color: "var(--theme-text-muted)" }}>Data da Compra</span>
-                <span style={{ color: "var(--theme-text)" }}>{formatDate(pedido.createdAt)}</span>
+                <span style={{ color: T.text3 }}>Data da Compra</span>
+                <span style={{ color: T.text }}>{formatDate(pedido.createdAt)}</span>
             </div>
             <div style={{ display: "flex", justifyContent: "space-between", fontSize: 12 }}>
-                <span style={{ color: "var(--theme-text-muted)" }}>Valor Total</span>
-                <span style={{ color: "var(--brand-primary)", fontWeight: 700 }}>{formatCurrency(pedido.amount)}</span>
+                <span style={{ color: T.text3 }}>Valor Total</span>
+                <span style={{ color: T.brand, fontWeight: 900 }}>{formatCurrency(pedido.amount)}</span>
             </div>
             <div style={{ display: "flex", justifyContent: "space-between", fontSize: 12 }}>
-                <span style={{ color: "var(--theme-text-muted)" }}>Status MP</span>
-                <span style={{ color: pedido.hasPaid ? "#85B9AC" : "#f59e0b" }}>{pedido.status}</span>
+                <span style={{ color: T.text3 }}>Status MP</span>
+                <span style={{ color: pedido.hasPaid ? T.brand : "#f59e0b", fontWeight: 700, textTransform: "uppercase", fontSize: 10 }}>{pedido.status}</span>
             </div>
         </div>
 
