@@ -97,6 +97,7 @@ model Event {
   coverPhotoUrl   String?
   lightroomUrl    String?
   driveUrl        String?
+  previewPhotos   String?   // JSON array com até 3 URLs de fotos de prévia
   priceBase       Decimal   @default(190) @db.Decimal(10, 2)
   priceEarly      Decimal   @default(190) @db.Decimal(10, 2)
   active          Boolean   @default(false) // Todos começam como inativos até o pagamento

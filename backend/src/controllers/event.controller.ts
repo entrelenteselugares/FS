@@ -73,6 +73,9 @@ export class EventController {
       const hasAccess = isPaid || !!order;
 
       // Links sensíveis só aparecem se aprovado
+      const rawPreviews = (event as any).previewPhotos;
+      const previewPhotos: string[] = rawPreviews ? JSON.parse(rawPreviews) : [];
+
       return res.json({
         id: event.id,
         nomeNoivos: event.nomeNoivos,
@@ -85,6 +88,7 @@ export class EventController {
         temVideo: event.temVideo,
         temReels: event.temReels,
         temFotoImpressa: event.temFotoImpressa,
+        previewPhotos,
         // Links sensíveis só aparecem se aprovado
         lightroomUrl: hasAccess ? event.lightroomUrl : null,
         driveUrl: hasAccess ? event.driveUrl : null,

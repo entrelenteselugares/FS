@@ -29,6 +29,7 @@ interface EventData {
   isCrowdfund?: boolean;
   targetAmount?: number | null;
   collectedAmount?: number;
+  previewPhotos?: string[];
 }
 
 interface AccessData {
@@ -427,6 +428,41 @@ export default function EventPage() {
                     {access.driveUrl && <a href={access.driveUrl} target="_blank" rel="noreferrer" style={{ ...BtnSecondary, color: T.text, borderColor: T.brand, textDecoration: "none", justifyContent: "center" }}>Google Drive</a>}
                   </div>
                 )}
+              </div>
+            )}
+
+            {/* PREVIEW PHOTOS GALLERY */}
+            {event.previewPhotos && event.previewPhotos.filter(p => !!p).length > 0 && (
+              <div style={{ marginTop: 32, paddingTop: 24, borderTop: `1px solid ${T.border}`, animation: "fadeUp 0.6s ease" }}>
+                <p style={{ fontSize: 9, letterSpacing: 2, color: T.text3, textTransform: "uppercase", margin: "0 0 16px", fontWeight: 700 }}>Destaques da Galeria</p>
+                <div style={{ display: "flex", flexDirection: "column", gap: 12 }}>
+                  {event.previewPhotos.filter(p => !!p).map((url, idx) => (
+                    <div key={idx} style={{ 
+                      aspectRatio: "16/9", 
+                      background: T.bgCard, 
+                      overflow: "hidden", 
+                      border: `1px solid ${T.border}`,
+                      position: "relative"
+                    }}>
+                      <img 
+                        src={url} 
+                        alt={`Preview ${idx + 1}`} 
+                        style={{ 
+                          width: "100%", 
+                          height: "100%", 
+                          objectFit: "cover",
+                          filter: paid ? "none" : "blur(4px) grayscale(1) opacity(0.6)",
+                          transition: "filter 0.5s ease"
+                        }} 
+                      />
+                      {!paid && (
+                        <div style={{ position: "absolute", inset: 0, display: "flex", alignItems: "center", justifyContent: "center" }}>
+                           <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="rgba(255,255,255,0.4)" strokeWidth="2"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
+                        </div>
+                      )}
+                    </div>
+                  ))}
+                </div>
               </div>
             )}
 

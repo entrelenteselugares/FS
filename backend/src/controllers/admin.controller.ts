@@ -181,7 +181,7 @@ export async function adminListEvents(req: AuthRequest, res: Response): Promise<
 export async function adminCreateEvent(req: AuthRequest, res: Response): Promise<void> {
   const {
     title, date, location, city, description,
-    lightroomUrl, driveUrl, priceBase, priceEarly,
+    lightroomUrl, driveUrl, previewPhotos, priceBase, priceEarly,
     cartorioId, captacaoId, edicaoId,
     temFoto, temVideo, temReels, temFotoImpressa,
     eventHours,
@@ -223,6 +223,7 @@ export async function adminCreateEvent(req: AuthRequest, res: Response): Promise
         description,
         lightroomUrl: lightroomUrl || null,
         driveUrl: driveUrl || null,
+        previewPhotos: previewPhotos ? JSON.stringify(previewPhotos) : null,
         priceBase: priceBase ?? 200,
         priceEarly: priceEarly ?? 190,
         active: true, // Eventos criados pelo Admin já nascem ativos
@@ -268,6 +269,7 @@ export async function adminUpdateEvent(req: AuthRequest, res: Response): Promise
   if (req.body.description) data.description = req.body.description;
   if (req.body.lightroomUrl !== undefined) data.lightroomUrl = req.body.lightroomUrl || null;
   if (req.body.driveUrl !== undefined) data.driveUrl = req.body.driveUrl || null;
+  if (req.body.previewPhotos !== undefined) data.previewPhotos = req.body.previewPhotos ? JSON.stringify(req.body.previewPhotos) : null;
   if (req.body.priceBase !== undefined) data.priceBase = Number(req.body.priceBase);
   if (req.body.priceEarly !== undefined) data.priceEarly = Number(req.body.priceEarly);
   if (req.body.cartorioId !== undefined) data.cartorioUserId = req.body.cartorioId || null;

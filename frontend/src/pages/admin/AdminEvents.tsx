@@ -64,6 +64,7 @@ export const AdminEvents: React.FC = () => {
     targetAmount: number;
     lightroomUrl: string;
     driveUrl: string;
+    previewPhotos: [string, string, string];
   }
 
   // Form State
@@ -77,7 +78,8 @@ export const AdminEvents: React.FC = () => {
     isCrowdfund: false,
     targetAmount: 0,
     lightroomUrl: "",
-    driveUrl: ""
+    driveUrl: "",
+    previewPhotos: ["", "", ""]
   });
 
   const handleFileChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -122,7 +124,8 @@ export const AdminEvents: React.FC = () => {
         isCrowdfund: false,
         targetAmount: 0,
         lightroomUrl: "",
-        driveUrl: ""
+        driveUrl: "",
+        previewPhotos: ["", "", ""]
       });
       setCoverPreview(null);
     } catch {
@@ -157,7 +160,10 @@ export const AdminEvents: React.FC = () => {
         isCrowdfund: data.isCrowdfund || false,
         targetAmount: Number(data.targetAmount || 0),
         lightroomUrl: data.lightroomUrl || "",
-        driveUrl: data.driveUrl || ""
+        driveUrl: data.driveUrl || "",
+        previewPhotos: (() => {
+          try { const p = data.previewPhotos ? JSON.parse(data.previewPhotos) : []; return [p[0]||"", p[1]||"", p[2]||""] as [string,string,string]; } catch { return ["","",""] as [string,string,string]; }
+        })()
       });
       setCoverPreview(data.coverPhotoUrl);
       setIsModalOpen(true);
@@ -204,7 +210,8 @@ export const AdminEvents: React.FC = () => {
               isCrowdfund: false,
               targetAmount: 0,
               lightroomUrl: "",
-              driveUrl: ""
+              driveUrl: "",
+              previewPhotos: ["", "", ""]
             });
             setCoverPreview(null);
             setIsModalOpen(true);
@@ -471,6 +478,25 @@ export const AdminEvents: React.FC = () => {
                            onChange={(e) => setFormData({ ...formData, lightroomUrl: e.target.value })}
                            placeholder="https://lightroom.adobe.com/..."
                          />
+                       </div>
+
+                       <div className="space-y-4 pt-4">
+                         <label className="text-[9px] font-bold text-brand-tactical uppercase tracking-[0.4em]">Fotos de Prévia (Até 3 - Opcional)</label>
+                         {[0, 1, 2].map(idx => (
+                           <div key={idx} className="space-y-2">
+                             <input 
+                               type="text"
+                               className="w-full bg-theme-bg border border-theme-border p-3 text-[11px] text-theme-text focus:border-brand-tactical transition-colors outline-none"
+                               value={formData.previewPhotos[idx]}
+                               onChange={(e) => {
+                                 const newPreviews = [...formData.previewPhotos] as [string, string, string];
+                                 newPreviews[idx] = e.target.value;
+                                 setFormData({ ...formData, previewPhotos: newPreviews });
+                               }}
+                               placeholder={`URL da Foto ${idx + 1}`}
+                             />
+                           </div>
+                         ))}
                        </div>
                     </div>
                   </div>
