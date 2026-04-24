@@ -7,6 +7,46 @@ import { T, BtnPrimary, BtnSecondary, FieldLabel, FieldInput } from "../lib/them
 import { ThemeToggle } from "../components/ThemeToggle";
 import { AuthModal } from "../components/AuthModal";
 import { useAuth } from "../hooks/useAuth";
+import { API } from "../lib/api";
+
+const Countdown: React.FC<{ targetDate: string }> = ({ targetDate }) => {
+  const [timeLeft, setTimeLeft] = useState({ d: 0, h: 0, m: 0, s: 0 });
+
+  useEffect(() => {
+    const timer = setInterval(() => {
+      const diff = new Date(targetDate).getTime() - Date.now();
+      if (diff <= 0) {
+        clearInterval(timer);
+        return;
+      }
+      setTimeLeft({
+        d: Math.floor(diff / (1000 * 60 * 60 * 24)),
+        h: Math.floor((diff / (1000 * 60 * 60)) % 24),
+        m: Math.floor((diff / 1000 / 60) % 60),
+        s: Math.floor((diff / 1000) % 60),
+      });
+    }, 1000);
+    return () => clearInterval(timer);
+  }, [targetDate]);
+
+  const Item = ({ val, label }: { val: number, label: string }) => (
+    <div style={{ textAlign: "center" }}>
+      <div style={{ fontFamily: T.fontD, fontSize: 24, fontWeight: 900, color: T.text, lineHeight: 1 }}>{String(val).padStart(2, "0")}</div>
+      <div style={{ fontSize: 8, letterSpacing: 1, textTransform: "uppercase", color: T.text3, marginTop: 4 }}>{label}</div>
+    </div>
+  );
+
+  return (
+    <div style={{ display: "flex", gap: 20, padding: "20px 0", borderTop: `1px solid ${T.border}`, borderBottom: `1px solid ${T.border}`, margin: "10px 0" }}>
+      <Item val={timeLeft.d} label="Dias" />
+      <Item val={timeLeft.h} label="Horas" />
+      <Item val={timeLeft.m} label="Min" />
+      <Item val={timeLeft.s} label="Seg" />
+    </div>
+  );
+};
+
+};
 
 interface EventData {
   id: string;
@@ -30,12 +70,15 @@ interface EventData {
   targetAmount?: number | null;
   collectedAmount?: number;
   previewPhotos?: string[];
+  isComingSoon?: boolean;
 }
 
 interface AccessData {
   lightroomUrl: string | null;
   driveUrl: string | null;
   expiresAt: string;
+  eventTitle: string;
+  accessType?: "PUBLIC" | "PRIVATE";
 }
 
 type Step = "paywall" | "auth" | "choice" | "checkout" | "processing" | "success";
@@ -85,10 +128,11 @@ export default function EventPage() {
 
   const [event, setEvent] = useState<EventData | null>(null);
   const [loading, setLoading] = useState(true);
+  const [sharing, setSharing] = useState(false);
   const [step, setStep] = useState<Step>("paywall");
   const [access, setAccess] = useState<AccessData | null>(null);
   const [orderId, setOrderId] = useState<string | null>(null);
-  const [justPaid, setJustPaid] = useState(false); // só verdadeiro quando o USER acabou de pagar
+  const [justPaid, setJustPaid] = useState(false);
   const [error, setError] = useState("");
   const [tokenizing, setTokenizing] = useState(false);
   const [cardToken, setCardToken] = useState<string | null>(null);
@@ -96,6 +140,32 @@ export default function EventPage() {
   const [needsAccessChoice, setNeedsAccessChoice] = useState(false);
   const [accessType, setAccessType] = useState<"PUBLIC" | "PRIVATE" | null>(null);
   const { user } = useAuth();
+
+  const handleShare = async () => {
+    if (access?.accessType === "PRIVATE") {
+      alert("Este álbum está em modo PRIVADO. Para compartilhar com seus convidados, você precisa torná-lo PÚBLICO na sua área do cliente (Minha Conta).");
+      navigate("/minha-conta");
+      return;
+    }
+
+    const shareData = {
+      title: `Álbum: ${event?.nomeNoivos}`,
+      text: `Confira as fotos do evento ${event?.nomeNoivos} no Foto Segundo!`,
+      url: window.location.href,
+    };
+
+    try {
+      if (navigator.share) {
+        await navigator.share(shareData);
+      } else {
+        await navigator.clipboard.writeText(window.location.href);
+        setSharing(true);
+        setTimeout(() => setSharing(false), 2000);
+      }
+    } catch (err) {
+      console.error("Erro ao compartilhar:", err);
+    }
+  };
 
   useEffect(() => {
     if (!slug) return;
@@ -105,8 +175,7 @@ export default function EventPage() {
         setEvent(r.data);
         if (r.data.paywall && !r.data.paywall.active) {
           setStep("success");
-          setAccess({ lightroomUrl: r.data.lightroomUrl, driveUrl: r.data.driveUrl, expiresAt: "" });
-          // NÃO define justPaid — chegou com acesso já existente
+          setAccess({ lightroomUrl: r.data.lightroomUrl, driveUrl: r.data.driveUrl, expiresAt: "", eventTitle: r.data.nomeNoivos });
         }
       })
       .catch(() => navigate("/404"))
@@ -121,7 +190,7 @@ export default function EventPage() {
           setStep("success");
           setNeedsAccessChoice(true);
         } else if (data.status === "ACTIVE") {
-          setAccess({ lightroomUrl: data.lightroomUrl, driveUrl: data.driveUrl, expiresAt: data.expiresAt || "" });
+          setAccess({ lightroomUrl: data.lightroomUrl, driveUrl: data.driveUrl, expiresAt: data.expiresAt || "", eventTitle: event?.nomeNoivos || "" });
           setStep("success");
         }
       } catch { /* not paid */ }
@@ -130,7 +199,7 @@ export default function EventPage() {
     const savedOrderId = localStorage.getItem(`fs_order_${slug}`);
     const oid = urlOrderId ?? savedOrderId;
     if (oid) { setOrderId(oid); checkAccessStatus(oid); }
-  }, [slug, searchParams]);
+  }, [slug, searchParams, event?.nomeNoivos]);
 
   const handleTokenize = async () => {
     if (!MP_PUBLIC_KEY) { setError("Erro de configuração: Chave MP ausente."); return; }
@@ -165,7 +234,7 @@ export default function EventPage() {
           setOrderId(oid);
           setJustPaid(true);
           if (data.status === "PENDING_CHOICE") setNeedsAccessChoice(true);
-          else setAccess({ lightroomUrl: data.lightroomUrl, driveUrl: data.driveUrl, expiresAt: data.expiresAt || "" });
+          else setAccess({ lightroomUrl: data.lightroomUrl, driveUrl: data.driveUrl, expiresAt: data.expiresAt || "", eventTitle: event?.nomeNoivos || "" });
           setStep("success");
         }
       } catch { /* keep polling */ }
@@ -227,7 +296,6 @@ export default function EventPage() {
         }
       `}</style>
 
-      {/* ── Nav ── */}
       <nav style={{ height: 52, padding: "0 20px", borderBottom: `1px solid ${T.border}`, display: "flex", alignItems: "center", justifyContent: "space-between", background: T.bg, flexShrink: 0, zIndex: 10 }}>
         <button onClick={() => navigate("/")} style={{ background: "none", border: "none", color: T.text3, cursor: "pointer", fontSize: 10, textTransform: "uppercase", letterSpacing: 2, display: "flex", alignItems: "center", gap: 6 }}>
           ← Voltar
@@ -236,10 +304,7 @@ export default function EventPage() {
         <ThemeToggle />
       </nav>
 
-      {/* ── Main Grid ── */}
       <div className="ep-grid">
-
-        {/* ── Cover / Left ── */}
         <div className="ep-cover" style={{ position: "relative", overflow: "hidden", background: T.bgCard }}>
           {event.coverPhotoUrl ? (
             <img src={event.coverPhotoUrl} alt={event.nomeNoivos}
@@ -251,9 +316,7 @@ export default function EventPage() {
             </div>
           )}
 
-          {/* Overlay info */}
           <div style={{ position: "absolute", inset: 0, background: "linear-gradient(to top, rgba(0,0,0,0.85) 0%, rgba(0,0,0,0.2) 50%, transparent 100%)", display: "flex", flexDirection: "column", justifyContent: "flex-end", padding: "32px 36px" }}>
-            {/* Lock overlay */}
             {!paid && (
               <div style={{ position: "absolute", inset: 0, display: "flex", alignItems: "center", justifyContent: "center" }}>
                 <div style={{ padding: 18, background: "rgba(0,0,0,0.55)", backdropFilter: "blur(4px)", borderRadius: "50%", color: "rgba(255,255,255,0.7)" }}>
@@ -262,7 +325,6 @@ export default function EventPage() {
               </div>
             )}
 
-            {/* Cartório tag */}
             <div style={{ display: "flex", alignItems: "center", gap: 10, marginBottom: 10 }}>
               <div style={{ width: 24, height: 2, background: T.brand }} />
               <span style={{ fontSize: 9, letterSpacing: 3, textTransform: "uppercase", color: T.brand, fontWeight: 700 }}>
@@ -278,7 +340,6 @@ export default function EventPage() {
               {dateStr}{event.city ? ` · ${event.city}` : ""}
             </div>
 
-            {/* Services tags */}
             {activeServices.length > 0 && (
               <div style={{ display: "flex", flexWrap: "wrap", gap: 8 }}>
                 {activeServices.map(s => (
@@ -289,7 +350,6 @@ export default function EventPage() {
               </div>
             )}
 
-            {/* Mobile-only access buttons */}
             {paid && access && (access.lightroomUrl || access.driveUrl) && (
               <div className="desktop-hide" style={{ display: "flex", gap: 10, marginTop: 24, animation: "fadeUp 0.5s ease" }}>
                 {access.lightroomUrl && (
@@ -308,10 +368,8 @@ export default function EventPage() {
           </div>
         </div>
 
-        {/* ── Sidebar ── */}
         <aside className="ep-sidebar" style={{ borderLeft: `1px solid ${T.border}`, display: "flex", flexDirection: "column" }}>
 
-          {/* Confirmation badge — discreto, só para quem acabou de comprar */}
           {justPaid && (
             <div style={{ padding: "10px 20px", background: "#4ade8012", borderBottom: `1px solid #4ade8030`, display: "flex", alignItems: "center", gap: 10, animation: "fadeUp 0.4s ease" }}>
               <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#4ade80" strokeWidth="3"><polyline points="20 6 9 17 4 12"/></svg>
@@ -322,7 +380,6 @@ export default function EventPage() {
 
           <div style={{ padding: 28, flex: 1 }}>
 
-            {/* PAYWALL */}
             {step === "paywall" && (
               <div style={{ display: "flex", flexDirection: "column", gap: 24, animation: "fadeUp 0.3s ease" }}>
                 <div>
@@ -348,7 +405,6 @@ export default function EventPage() {
               </div>
             )}
 
-            {/* CHECKOUT */}
             {step === "checkout" && (
               <div style={{ display: "flex", flexDirection: "column", gap: 14, animation: "fadeUp 0.3s ease" }}>
                 <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
@@ -398,7 +454,6 @@ export default function EventPage() {
               </div>
             )}
 
-            {/* PROCESSING */}
             {step === "processing" && (
               <div style={{ display: "flex", flexDirection: "column", alignItems: "center", gap: 20, padding: "40px 0", animation: "fadeUp 0.3s ease" }}>
                 <Spinner />
@@ -411,20 +466,34 @@ export default function EventPage() {
 
             {step === "success" && (
               <div className="mobile-hide" style={{ display: "flex", flexDirection: "column", gap: 16, animation: "fadeUp 0.3s ease" }}>
-                <p style={{ fontSize: 10, fontWeight: 700, textTransform: "uppercase", letterSpacing: 2, color: T.brand, margin: 0 }}>
-                  {justPaid ? "Tudo pronto!" : "Acesso Liberado"}
-                </p>
-                <p style={{ fontSize: 12, color: T.text2, margin: 0 }}>Seus arquivos estão disponíveis na imagem ao lado.</p>
-                {access && (access.lightroomUrl || access.driveUrl) && (
-                  <div style={{ display: "flex", flexDirection: "column", gap: 10 }}>
-                    {access.lightroomUrl && <a href={access.lightroomUrl} target="_blank" rel="noreferrer" style={{ ...BtnPrimary, textDecoration: "none", justifyContent: "center" }}>Abrir Lightroom</a>}
-                    {access.driveUrl && <a href={access.driveUrl} target="_blank" rel="noreferrer" style={{ ...BtnSecondary, color: T.text, borderColor: T.brand, textDecoration: "none", justifyContent: "center" }}>Google Drive</a>}
-                  </div>
+                {!access?.lightroomUrl && !access?.driveUrl ? (
+                  <>
+                    <p style={{ fontSize: 10, fontWeight: 700, textTransform: "uppercase", letterSpacing: 2, color: T.brand, margin: 0 }}>
+                      Evento em breve
+                    </p>
+                    <p style={{ fontSize: 12, color: T.text2, margin: 0 }}>
+                      Sua compra foi confirmada! O contador abaixo mostra o tempo restante para o grande dia.
+                    </p>
+                    {event.dataEvento && <Countdown targetDate={event.dataEvento} />}
+                    <button onClick={handleShare} style={{ ...BtnSecondary, width: "100%", justifyContent: "center", color: T.text }}>
+                      {sharing ? "LINK COPIADO!" : "COMPARTILHAR LINK"}
+                    </button>
+                  </>
+                ) : (
+                  <>
+                    <p style={{ fontSize: 10, fontWeight: 700, textTransform: "uppercase", letterSpacing: 2, color: T.brand, margin: 0 }}>
+                      {justPaid ? "Tudo pronto!" : "Acesso Liberado"}
+                    </p>
+                    <p style={{ fontSize: 12, color: T.text2, margin: 0 }}>Seus arquivos estão disponíveis na imagem ao lado.</p>
+                    <div style={{ display: "flex", flexDirection: "column", gap: 10 }}>
+                      {access.lightroomUrl && <a href={access.lightroomUrl} target="_blank" rel="noreferrer" style={{ ...BtnPrimary, textDecoration: "none", justifyContent: "center" }}>Abrir Lightroom</a>}
+                      {access.driveUrl && <a href={access.driveUrl} target="_blank" rel="noreferrer" style={{ ...BtnSecondary, color: T.text, borderColor: T.brand, textDecoration: "none", justifyContent: "center" }}>Google Drive</a>}
+                    </div>
+                  </>
                 )}
               </div>
             )}
 
-            {/* PREVIEW PHOTOS GALLERY */}
             {event.previewPhotos && event.previewPhotos.filter(p => !!p).length > 0 && (
               <div style={{ marginTop: 32, paddingTop: 24, borderTop: `1px solid ${T.border}`, animation: "fadeUp 0.6s ease" }}>
                 <p style={{ fontSize: 9, letterSpacing: 2, color: T.text3, textTransform: "uppercase", margin: "0 0 16px", fontWeight: 700 }}>Destaques da Galeria</p>

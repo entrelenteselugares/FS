@@ -29,7 +29,8 @@ export class EventController {
       return res.json({
         lightroomUrl: order.event.lightroomUrl,
         driveUrl: order.event.driveUrl,
-        eventTitle: order.event.nomeNoivos
+        eventTitle: order.event.nomeNoivos,
+        accessType: order.accessType || "PRIVATE"
       });
     } catch (error) {
       console.error("Erro ao verificar acesso:", error);

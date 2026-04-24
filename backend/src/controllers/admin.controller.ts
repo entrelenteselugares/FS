@@ -286,6 +286,17 @@ export async function adminUpdateEvent(req: AuthRequest, res: Response): Promise
   if (req.body.targetAmount !== undefined) data.targetAmount = req.body.targetAmount ? Number(req.body.targetAmount) : null;
 
   try {
+    // 1. Busca estado atual para saber se os links estão sendo adicionados agora
+    const currentEvent = await prisma.event.findUnique({ where: { id: String(id) } });
+    if (!currentEvent) {
+      res.status(404).json({ error: "Evento não encontrado." });
+      return;
+    }
+
+    const wasEmpty = !currentEvent.lightroomUrl && !currentEvent.driveUrl;
+    const isAddingLinks = (data.lightroomUrl || data.driveUrl) && wasEmpty;
+
+    // 2. Executa a atualização do evento
     const event = await prisma.event.update({
       where: { id: String(id) },
       data,
@@ -296,6 +307,30 @@ export async function adminUpdateEvent(req: AuthRequest, res: Response): Promise
         _count:   { select: { pedidos: true } },
       },
     });
+
+    // 3. Se os links foram liberados agora, dispara os prazos de expiração dos pedidos
+    if (isAddingLinks) {
+      console.log(`[FAIR EXPIRE] Links adicionados ao evento ${id}. Disparando prazos...`);
+      
+      const orders = await prisma.order.findMany({
+        where: { eventId: event.id, status: "APROVADO" }
+      });
+
+      for (const order of orders) {
+        const type = order.accessType || "PRIVATE"; // Default fallback
+        const days = type === "PUBLIC" ? 90 : 15;
+        const expiresAt = new Date();
+        expiresAt.setDate(expiresAt.getDate() + days);
+
+        await prisma.order.update({
+          where: { id: order.id },
+          data: { 
+            accessExpiresAt: expiresAt,
+            accessChosenAt: order.accessChosenAt || new Date() // Garante que tenha uma data de escolha
+          }
+        });
+      }
+    }
 
     await audit(req, "EVENT_UPDATED", "Event", String(id), null, data);
 
