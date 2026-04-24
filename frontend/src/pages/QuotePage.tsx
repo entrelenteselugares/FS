@@ -469,7 +469,7 @@ export const QuotePage = () => {
                   >ORÇAMENTO</button>
                 </div>
 
-                <div className="mobile-grid-1" style={{ display: "grid", gridTemplateColumns: "1fr 120px", gap: 10 }}>
+                <div className="mobile-grid-1" style={{ display: "grid", gridTemplateColumns: "1fr", gap: 10 }}>
                    {locationType === "PARTNER" ? (
                     <select required value={selectedPartnerId} onChange={e => setSelectedPartnerId(e.target.value)} className="fs-input" style={{ width: "100%" }}>
                       <option value="">SELECIONE A UNIDADE FIXA...</option>
@@ -536,23 +536,40 @@ export const QuotePage = () => {
                       )}
                     </div>
                   )}
-                  
-                  {!selectedPartner?.hideDuration && (
-                    <div style={{ position: "relative", display: "flex", alignItems: "center", opacity: (locationType === "PARTNER" && selectedPartner?.fixedTime) ? 0.6 : 1 }}>
-                      <Clock size={16} style={{ position: "absolute", left: 12, color: THEME.accent, pointerEvents: "none" }} />
-                      <input 
-                        type="number" 
-                        min={1} max={24} 
-                        value={eventHours} 
-                        readOnly={locationType === "PARTNER" && selectedPartner?.fixedTime}
-                        onChange={e => setEventHours(Number(e.target.value))} 
-                        className="fs-input" 
-                        style={{ width: "100%", padding: "15px 10px 15px 35px", cursor: (locationType === "PARTNER" && selectedPartner?.fixedTime) ? "not-allowed" : "text" }} 
-                      />
-                      <span style={{ position: "absolute", right: 10, fontSize: 9, color: THEME.text2, pointerEvents: "none" }}>H</span>
-                    </div>
-                  )}
                 </div>
+
+                {/* Duração do Evento */}
+                {!selectedPartner?.hideDuration && (
+                  <div style={{ display: "flex", flexDirection: "column", gap: 10 }}>
+                    <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
+                      <label style={{ fontSize: 9, fontWeight: 800, textTransform: "uppercase", color: THEME.text2, letterSpacing: 1 }}>Duração do Registro</label>
+                      <span style={{ fontSize: 11, fontWeight: 900, color: THEME.accent }}>{eventHours} HORAS</span>
+                    </div>
+                    <div style={{ position: "relative", display: "flex", alignItems: "center", opacity: (locationType === "PARTNER" && selectedPartner?.fixedTime) ? 0.6 : 1 }}>
+                      <input 
+                        type="range"
+                        min={1} max={12} step={1}
+                        value={eventHours}
+                        disabled={locationType === "PARTNER" && selectedPartner?.fixedTime}
+                        onChange={e => setEventHours(Number(e.target.value))}
+                        style={{ 
+                          width: "100%", 
+                          accentColor: THEME.accent, 
+                          height: 6, 
+                          background: THEME.border,
+                          cursor: (locationType === "PARTNER" && selectedPartner?.fixedTime) ? "not-allowed" : "pointer" 
+                        }}
+                      />
+                    </div>
+                    <div style={{ display: "flex", justifyContent: "space-between", fontSize: 8, color: THEME.text2, fontWeight: 600 }}>
+                      <span>1H</span>
+                      <span>3H</span>
+                      <span>6H</span>
+                      <span>9H</span>
+                      <span>12H</span>
+                    </div>
+                  </div>
+                )}
 
                 {locationType === "OTHER" && (
                   <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 10 }}>
