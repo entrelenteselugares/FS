@@ -27,8 +27,8 @@ export class EventController {
       }
 
       return res.json({
-        lightroomUrl: order.event.lightroomUrl,
-        driveUrl: order.event.driveUrl,
+        lightroomUrl: order.showAlbum ? order.event.lightroomUrl : null,
+        driveUrl: order.showVideo ? order.event.driveUrl : null,
         eventTitle: order.event.nomeNoivos,
         accessType: order.accessType || "PRIVATE"
       });
@@ -90,9 +90,9 @@ export class EventController {
         temReels: event.temReels,
         temFotoImpressa: event.temFotoImpressa,
         previewPhotos,
-        // Links sensíveis só aparecem se aprovado
-        lightroomUrl: hasAccess ? event.lightroomUrl : null,
-        driveUrl: hasAccess ? event.driveUrl : null,
+        // Links sensíveis só aparecem se aprovado e visível
+        lightroomUrl: (hasAccess && (!order || order.showAlbum)) ? event.lightroomUrl : null,
+        driveUrl: (hasAccess && (!order || order.showVideo)) ? event.driveUrl : null,
         paywall: {
           active: !hasAccess,
           message: hasAccess ? "Entrega liberada via links externos." : "Galeria protegida."

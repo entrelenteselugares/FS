@@ -351,12 +351,12 @@ export default function EventPage() {
               <div className="desktop-hide" style={{ display: "flex", gap: 10, marginTop: 24, animation: "fadeUp 0.5s ease" }}>
                 {access.lightroomUrl && (
                   <a href={access.lightroomUrl} target="_blank" rel="noreferrer" style={{ ...BtnPrimary, flex: 1, justifyContent: "center", textDecoration: "none", fontSize: 11 }}>
-                    Abrir Lightroom
+                    Álbum de Fotos
                   </a>
                 )}
                 {access.driveUrl && (
                   <a href={access.driveUrl} target="_blank" rel="noreferrer" style={{ ...BtnSecondary, flex: 1, justifyContent: "center", color: "#fff", borderColor: "rgba(255,255,255,0.4)", textDecoration: "none", fontSize: 11 }}>
-                    Drive
+                    Vídeos
                   </a>
                 )}
               </div>
@@ -489,8 +489,14 @@ export default function EventPage() {
                         : "Confira as memórias desse dia incrível nos links abaixo."}
                     </p>
                     <div style={{ display: "flex", flexDirection: "column", gap: 10 }}>
-                      {access.lightroomUrl && <a href={access.lightroomUrl} target="_blank" rel="noreferrer" style={{ ...BtnPrimary, textDecoration: "none", justifyContent: "center" }}>Abrir Lightroom</a>}
-                      {access.driveUrl && <a href={access.driveUrl} target="_blank" rel="noreferrer" style={{ ...BtnSecondary, color: T.text, borderColor: T.brand, textDecoration: "none", justifyContent: "center" }}>Google Drive</a>}
+                      {access.lightroomUrl && <a href={access.lightroomUrl} target="_blank" rel="noreferrer" style={{ ...BtnPrimary, textDecoration: "none", justifyContent: "center" }}>Álbum de Fotos</a>}
+                      {access.driveUrl && <a href={access.driveUrl} target="_blank" rel="noreferrer" style={{ ...BtnSecondary, color: T.text, borderColor: T.brand, textDecoration: "none", justifyContent: "center" }}>Vídeos</a>}
+                      
+                      <div style={{ marginTop: 8, paddingTop: 16, borderTop: `1px solid ${T.border}` }}>
+                        <button onClick={handleShare} style={{ ...BtnSecondary, width: "100%", justifyContent: "center", border: "none", color: T.text3, fontSize: 11, letterSpacing: 1 }}>
+                          {sharing ? "LINK COPIADO!" : "COMPARTILHAR ÁLBUM"}
+                        </button>
+                      </div>
                     </div>
                   </>
                 )}

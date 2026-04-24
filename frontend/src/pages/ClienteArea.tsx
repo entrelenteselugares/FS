@@ -28,6 +28,8 @@ interface Pedido {
     temReels: boolean;
     temFotoImpressa: boolean;
   };
+  showAlbum: boolean;
+  showVideo: boolean;
 }
 
 function formatCurrency(v: number) {
@@ -95,6 +97,18 @@ export default function ClienteArea() {
       }
     }
   }, []);
+
+  const handleToggleVisibility = async (orderId: string, showAlbum?: boolean, showVideo?: boolean) => {
+    try {
+      await API.post(`/orders/${orderId}/visibility`, { showAlbum, showVideo });
+      const { data } = await API.get("/cliente/pedidos"); // Atualiza a lista completa
+      setPedidos(data);
+      const updated = data.find((p: Pedido) => p.id === orderId);
+      if (updated) setSelected(updated);
+    } catch (err: any) {
+      alert(err.response?.data?.error || "Erro ao atualizar visibilidade.");
+    }
+  };
 
   useEffect(() => {
     fetchPedidos().then(data => {
@@ -262,6 +276,7 @@ export default function ClienteArea() {
                 onClose={() => setSelected(null)}
                 onGoToEvent={() => navigate(`/e/${selected.event.id}`)}
                 onChangePrivacy={() => setIsPrivacyModalOpen(true)}
+                onToggleVisibility={handleToggleVisibility}
             />
           </div>
         )}
@@ -400,6 +415,7 @@ function PedidoDetalhe({ pedido, loading, onClose, onGoToEvent, onChangePrivacy 
   onClose: () => void;
   onGoToEvent: () => void;
   onChangePrivacy: () => void;
+  onToggleVisibility: (id: string, showAlbum?: boolean, showVideo?: boolean) => void;
 }) {
   return (
     <div style={{ ...S.card, position: "sticky", top: "100px", overflow: "hidden" }}>
@@ -438,6 +454,36 @@ function PedidoDetalhe({ pedido, loading, onClose, onGoToEvent, onChangePrivacy 
       )}
 
       <div style={{ padding: "1.5rem", display: "flex", flexDirection: "column", gap: "1.5rem" }}>
+        
+        {/* Visibilidade */}
+        {pedido.hasPaid && (
+          <div style={{ display: "flex", flexDirection: "column", gap: 12 }}>
+            <p style={{ fontSize: 11, fontWeight: 600, color: "var(--theme-text-muted)", textTransform: "uppercase", letterSpacing: 1 }}>Visibilidade do Conteúdo</p>
+            <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 8 }}>
+              <button 
+                onClick={() => onToggleVisibility(pedido.id, !pedido.showAlbum)}
+                style={{ 
+                  padding: "10px", background: pedido.showAlbum ? "var(--brand-dark)" : T.bgField, 
+                  border: `1px solid ${pedido.showAlbum ? T.brand : T.border}`, 
+                  color: pedido.showAlbum ? T.brand : T.text3, borderRadius: 4, cursor: "pointer", fontSize: 10, fontWeight: 700 
+                }}
+              >
+                {pedido.showAlbum ? "📸 ÁLBUM ATIVO" : "📸 ÁLBUM OCULTO"}
+              </button>
+              <button 
+                onClick={() => onToggleVisibility(pedido.id, undefined, !pedido.showVideo)}
+                style={{ 
+                  padding: "10px", background: pedido.showVideo ? "var(--brand-dark)" : T.bgField, 
+                  border: `1px solid ${pedido.showVideo ? T.brand : T.border}`, 
+                  color: pedido.showVideo ? T.brand : T.text3, borderRadius: 4, cursor: "pointer", fontSize: 10, fontWeight: 700 
+                }}
+              >
+                {pedido.showVideo ? "🎬 VÍDEO ATIVO" : "🎬 VÍDEO OCULTO"}
+              </button>
+            </div>
+            <p style={{ fontSize: 9, color: T.text3, margin: 0 }}>* Em álbuns públicos, ao menos um item deve estar visível.</p>
+          </div>
+        )}
 
         {/* Links */}
         {loading ? (

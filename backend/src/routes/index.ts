@@ -37,6 +37,7 @@ import {
   chooseAccessType,
   getAccessStatus,
   deleteMediaAdmin,
+  toggleVisibility,
 } from "../controllers/access.controller";
 import { requireAuth, requireRole } from "../lib/auth";
 import {
@@ -134,6 +135,7 @@ router.get("/public/orders/:id/check-payment", PaymentController.checkPaymentSta
 // ── LGPD / Acesso (pós-pagamento) ─────────────────────────────────────────────
 router.post("/orders/:id/access-type",  requireAuth, chooseAccessType);
 router.get("/orders/:id/access-status", requireAuth, getAccessStatus);
+router.post("/orders/:id/visibility",    requireAuth, toggleVisibility);
 
 // ── Cliente: Meus Pedidos ──────────────────────────────────────────────────────
 router.get("/cliente/pedidos",     requireAuth, getMeusPedidos);

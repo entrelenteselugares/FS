@@ -150,9 +150,11 @@ export async function getAccessStatus(req: AuthRequest, res: Response): Promise<
       targetAmount: order.event.targetAmount,
       accessExpiresAt: order.accessExpiresAt,
       diasRestantes,
-      // Links apenas se ativo e não expirado E meta atingida
-      lightroomUrl: (order.accessType && !expirado && isGoalMet) ? order.event.lightroomUrl : null,
-      driveUrl: (order.accessType && !expirado && isGoalMet) ? order.event.driveUrl : null,
+      showAlbum: order.showAlbum,
+      showVideo: order.showVideo,
+      // Links apenas se ativo e não expirado E meta atingida E visível
+      lightroomUrl: (order.accessType && !expirado && isGoalMet && order.showAlbum) ? order.event.lightroomUrl : null,
+      driveUrl: (order.accessType && !expirado && isGoalMet && order.showVideo) ? order.event.driveUrl : null,
       eventTitle: order.event.nomeNoivos,
       eventSlug: order.event.slug,
     });
@@ -175,5 +177,50 @@ export async function deleteMediaAdmin(req: AuthRequest, res: Response): Promise
     res.json({ ok: true, mensagem: "Mídia marcada como excluída." });
   } catch {
     res.status(500).json({ error: "Erro ao excluir mídia." });
+  }
+}
+
+// POST /api/orders/:id/visibility
+export async function toggleVisibility(req: AuthRequest, res: Response): Promise<void> {
+  const { id } = req.params;
+  const { showAlbum, showVideo } = req.body;
+  const user = req.user;
+
+  if (!user) {
+    res.status(401).json({ error: "Não autenticado." });
+    return;
+  }
+
+  try {
+    const order = await prisma.order.findUnique({
+      where: { id: String(id) },
+    });
+
+    if (!order || order.clienteId !== user.userId) {
+      res.status(404).json({ error: "Pedido não encontrado ou acesso negado." });
+      return;
+    }
+
+    const nextShowAlbum = showAlbum !== undefined ? !!showAlbum : order.showAlbum;
+    const nextShowVideo = showVideo !== undefined ? !!showVideo : order.showVideo;
+
+    // Regra: Se público, ao menos um deve ser verdadeiro
+    if (order.accessType === "PUBLIC" && !nextShowAlbum && !nextShowVideo) {
+      res.status(400).json({ error: "Em álbuns públicos, ao menos um item (Álbum ou Vídeo) deve estar visível." });
+      return;
+    }
+
+    const updated = await prisma.order.update({
+      where: { id: String(id) },
+      data: {
+        showAlbum: nextShowAlbum,
+        showVideo: nextShowVideo,
+      },
+    });
+
+    res.json({ ok: true, showAlbum: updated.showAlbum, showVideo: updated.showVideo });
+  } catch (err) {
+    console.error("toggleVisibility:", err);
+    res.status(500).json({ error: "Erro ao atualizar visibilidade." });
   }
 }

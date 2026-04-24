@@ -260,6 +260,10 @@ model Order {
   warningsSent      Int       @default(0) // quantos avisos de expiração foram enviados
   tempPassword      String?   // Armazena senha temporária para novos usuários
 
+  // Visibilidade Granular (LGPD)
+  showAlbum         Boolean   @default(true)
+  showVideo         Boolean   @default(true)
+
   @@map("orders")
 }
 
