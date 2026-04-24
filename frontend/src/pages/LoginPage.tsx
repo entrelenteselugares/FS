@@ -5,6 +5,7 @@ import { useAuth } from "../hooks/useAuth";
 import { Helmet } from "react-helmet-async";
 import { T, BtnPrimary, FieldLabel, FieldInput } from "../lib/theme";
 import { ThemeToggle } from "../components/ThemeToggle";
+import { API } from "../lib/api";
 
 const EyeIcon = ({ open }: { open: boolean }) => open ? (
   <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5">
@@ -70,7 +71,7 @@ export const LoginPage: React.FC = () => {
     setError("");
     setLoading(true);
     try {
-      await api.post("/auth/forgot-password", { email: email.trim().toLowerCase() });
+      await API.post("/auth/forgot-password", { email: email.trim().toLowerCase() });
       setResetSent(true);
       setError("");
     } catch (err: any) {
