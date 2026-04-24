@@ -218,8 +218,8 @@ export default function EventPage() {
         .ep-grid { display: grid; grid-template-columns: 1fr 340px; height: calc(100vh - 52px); overflow: hidden; }
         .ep-sidebar { overflow-y: auto; }
         @media (max-width: 900px) {
-          .ep-grid { grid-template-columns: 1fr; grid-template-rows: auto 1fr; height: auto; overflow: auto; }
-          .ep-cover { max-height: 45vw; min-height: 200px; }
+          .ep-grid { grid-template-columns: 1fr; grid-template-rows: auto auto; height: auto; overflow: auto; }
+          .ep-cover { height: 80vh; min-height: 500px; }
         }
       `}</style>
 
@@ -285,21 +285,6 @@ export default function EventPage() {
               </div>
             )}
 
-            {/* Access links — inline na foto após liberar */}
-            {paid && access && (access.lightroomUrl || access.driveUrl) && (
-              <div style={{ display: "flex", gap: 10, marginTop: 20, animation: "fadeUp 0.5s ease" }}>
-                {access.lightroomUrl && (
-                  <a href={access.lightroomUrl} target="_blank" rel="noreferrer" style={{ ...BtnPrimary, textDecoration: "none", fontSize: 11 }}>
-                    Abrir Lightroom
-                  </a>
-                )}
-                {access.driveUrl && (
-                  <a href={access.driveUrl} target="_blank" rel="noreferrer" style={{ ...BtnSecondary, color: "#fff", borderColor: "rgba(255,255,255,0.3)", textDecoration: "none", fontSize: 11 }}>
-                    Google Drive
-                  </a>
-                )}
-              </div>
-            )}
           </div>
         </div>
 

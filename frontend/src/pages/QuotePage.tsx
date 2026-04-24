@@ -539,7 +539,7 @@ export const QuotePage = () => {
                 </div>
 
                 {/* Duração do Evento */}
-                {!selectedPartner?.hideDuration && (
+                {(locationType === "OTHER" || (locationType === "PARTNER" && !!selectedPartnerId && !selectedPartner?.hideDuration)) && (
                   <div style={{ display: "flex", flexDirection: "column", gap: 10 }}>
                     <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
                       <label style={{ fontSize: 9, fontWeight: 800, textTransform: "uppercase", color: THEME.text2, letterSpacing: 1 }}>Duração do Registro</label>
@@ -638,7 +638,9 @@ export const QuotePage = () => {
               <div style={{ borderTop: `1px solid ${THEME.border}`, paddingTop: 30, marginTop: 20 }}>
                  <div className="mobile-stack" style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-end" }}>
                     <div className="mobile-text-center">
-                      <div style={{ fontSize: 10, fontWeight: 800, textTransform: "uppercase", color: THEME.text2, marginBottom: 5 }}>Investimento Estimado</div>
+                      <div style={{ fontSize: 10, fontWeight: 800, textTransform: "uppercase", color: THEME.text2, marginBottom: 5 }}>
+                        {locationType === "PARTNER" ? "Investimento Total" : "Investimento Estimado"}
+                      </div>
                       {showPrices ? (
                         <div style={{ display: "flex", flexDirection: "column", gap: 4 }}>
                           <div className="heading-luxury !text-brand-primary" style={{ fontSize: 32 }}>
