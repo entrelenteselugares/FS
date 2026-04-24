@@ -161,23 +161,23 @@ export const AdminOverview: React.FC<OverviewProps> = ({ stats, recentOrders, pe
           }}>
             Timeline de Conversão
           </h3>
-          <div className="h-[200px] w-full" style={{ minWidth: 0, minHeight: 200 }}>
-             <ResponsiveContainer width="99%" height="100%">
-                <AreaChart data={chartData}>
-                  <defs>
-                    <linearGradient id="gradValor" x1="0" y1="0" x2="0" y2="1">
-                      <stop offset="5%" stopColor={T.brand} stopOpacity={0.2}/>
-                      <stop offset="95%" stopColor={T.brand} stopOpacity={0}/>
-                    </linearGradient>
-                  </defs>
-                  <CartesianGrid strokeDasharray="3 3" vertical={false} stroke={T.border} opacity={0.1} />
-                  <XAxis dataKey="name" axisLine={false} tickLine={false} tick={{fontSize: 9, fill: T.text3}} dy={10} />
-                  <Tooltip contentStyle={{background: T.bg, border: `1px solid ${T.border}`, fontSize: 10, borderRadius: 0, color: T.text}} />
-                  <Area type="monotone" dataKey="valor" stroke={T.brand} fillOpacity={1} fill="url(#gradValor)" />
+          <div className="h-[200px] w-full" style={{ minWidth: "0", minHeight: "200px" }}>
+             <ResponsiveContainer width="100%" height="100%">
+                <AreaChart data={chartData} margin={{ top: 10, right: 10, left: -20, bottom: 0 }}>
+                   <defs>
+                      <linearGradient id="gradValor" x1="0" y1="0" x2="0" y2="1">
+                         <stop offset="5%" stopColor={T.brand} stopOpacity={0.2}/>
+                         <stop offset="95%" stopColor={T.brand} stopOpacity={0}/>
+                      </linearGradient>
+                   </defs>
+                   <CartesianGrid strokeDasharray="3 3" vertical={false} stroke={T.border} opacity={0.1} />
+                   <XAxis dataKey="name" axisLine={false} tickLine={false} tick={{fontSize: 9, fill: T.text3}} dy={10} />
+                   <Tooltip contentStyle={{background: T.bg, border: `1px solid ${T.border}`, fontSize: 10, borderRadius: 0, color: T.text}} />
+                   <Area type="monotone" dataKey="valor" stroke={T.brand} fillOpacity={1} fill="url(#gradValor)" strokeWidth={2} />
                 </AreaChart>
              </ResponsiveContainer>
           </div>
-        </div>
+       </div>
 
         {/* Alertas */}
         <div style={{ 

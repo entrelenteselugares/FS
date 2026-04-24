@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { API } from "../../lib/api";
-import { X } from "lucide-react";
-import { T } from "../../lib/theme";
+import { X, Plus, UserPlus, Shield, User, Trash2, Edit3 } from "lucide-react";
+import { T, BtnPrimary } from "../../lib/theme";
 
 interface User {
   id: string;
@@ -68,17 +68,23 @@ export const AdminUsers: React.FC = () => {
       } else {
         await API.post("/admin/users", formData);
       }
-      if (editingUser?.role === "PROFISSIONAL") {
-        await API.patch(`/admin/users/${editingUser.id}`, {
-          otherHabilities: formData.otherHabilities,
-          equipment: formData.equipment
-        });
+      
+      // Update professional details if applicable
+      if (formData.role === "PROFISSIONAL") {
+          const userId = editingUser ? editingUser.id : (await API.get("/admin/users")).data.find((u:any) => u.email === formData.email)?.id;
+          if (userId) {
+              await API.patch(`/admin/users/${userId}`, {
+                otherHabilities: formData.otherHabilities,
+                equipment: formData.equipment
+              });
+          }
       }
+
       setIsModalOpen(false);
       setEditingUser(null);
       setFormData({ name: "", email: "", password: "", role: "PROFISSIONAL", pixKey: "", otherHabilities: "", equipment: "" });
       fetchUsers();
-      showNotification(editingUser ? "Usuário atualizado com sucesso!" : "Membro convocado com sucesso!");
+      showNotification(editingUser ? "Membro atualizado com sucesso!" : "Membro convocado com sucesso!");
     } catch {
       showNotification("Erro ao processar usuário", 'error');
     }
@@ -89,7 +95,7 @@ export const AdminUsers: React.FC = () => {
     setFormData({
       name: user.nome,
       email: user.email,
-      password: "", // Não carregar senha
+      password: "", 
       role: user.role,
       pixKey: user.pixKey || "",
       otherHabilities: user.profissional?.otherHabilities || "",
@@ -98,244 +104,203 @@ export const AdminUsers: React.FC = () => {
     setIsModalOpen(true);
   };
 
-  const toggleActive = async (user: User) => {
+  const handleDelete = async (userId: string) => {
     try {
-      await API.patch(`/admin/users/${user.id}`, { active: !user.active });
-      setUsers(users.map(u => u.id === user.id ? { ...u, active: !u.active } : u));
-      showNotification(`Acesso de ${user.nome} ${!user.active ? 'ativado' : 'desativado'}`);
-    } catch {
-      showNotification("Erro ao alterar status", 'error');
-    }
-  };
-
-  const executeDelete = async () => {
-    if (!confirmDelete) return;
-    try {
-      await API.delete(`/admin/users/${confirmDelete.id}`);
-      setUsers(users.filter(u => u.id !== confirmDelete.id));
+      await API.delete(`/admin/users/${userId}`);
+      setUsers(users.filter(u => u.id !== userId));
       setConfirmDelete(null);
-      showNotification("Membro removido da rede.");
+      showNotification("Membro removido da base de dados.");
     } catch {
-      showNotification("Erro ao excluir usuário. Certifique-se de que ele não possui eventos vinculados.", 'error');
-      setConfirmDelete(null);
+      showNotification("Erro ao remover membro", 'error');
     }
   };
 
   return (
     <>
       <div className="space-y-12 animate-in fade-in slide-in-from-bottom-4 duration-700">
-      <div className="flex items-center justify-between border-b border-white/5 pb-8">
-        <div>
-          <h2 className="text-4xl font-heading text-theme-text tracking-tighter uppercase">Rede de Membros</h2>
-          <p className="text-[10px] text-theme-muted uppercase tracking-[0.5em] mt-2 font-bold italic">Diretório de Profissionais e Unidades Fixas</p>
-        </div>
-        <button 
-          onClick={() => setIsModalOpen(true)}
-          style={{ 
-            background: T.brand, color: T.brandText, padding: "12px 24px", 
-            border: "none", fontSize: 10, fontWeight: 900, 
-            textTransform: "uppercase", letterSpacing: 3, cursor: "pointer" 
-          }}
-        >
-          CONVOCAR MEMBRO
-        </button>
-      </div>
-
-      <div className="space-y-2">
-        {/* List Header */}
-        <div className="hidden md:grid grid-cols-12 gap-4 px-10 py-4 text-[9px] font-bold text-theme-muted uppercase tracking-[0.4em] border-b border-theme-border bg-theme-bg/10">
-          <div className="col-span-2">Perfil</div>
-          <div className="col-span-4">Identificação / E-mail</div>
-          <div className="col-span-3">Chave PIX</div>
-          <div className="col-span-1 text-center">Status</div>
-          <div className="col-span-2 text-right">Ações</div>
-        </div>
-
-        {loading ? (
-          <div className="py-20 text-center text-[10px] text-theme-muted uppercase tracking-widest animate-pulse border border-theme-border bg-theme-bg-muted">Sincronizando Rede...</div>
-        ) : users.map(user => (
-          <div key={user.id} className="bg-theme-bg-muted hover:bg-theme-bg/5 border border-theme-border transition-all group">
-            <div className="grid grid-cols-1 md:grid-cols-12 gap-4 items-center px-6 md:px-10 py-6">
-              {/* Perfil */}
-              <div className="col-span-2 flex items-center gap-4">
-              </div>
-
-              {/* Identificação */}
-              <div className="col-span-4">
-                <div className="text-sm font-bold text-theme-text uppercase tracking-tighter truncate">{user.nome}</div>
-                <div className="text-[10px] text-theme-muted font-bold uppercase tracking-wider truncate mt-0.5 opacity-60">{user.email}</div>
-              </div>
-
-              {/* Financeiro / PIX */}
-              <div className="col-span-3">
-                <div className="text-[10px] text-zinc-600 font-bold uppercase tracking-widest truncate">
-                  {user.pixKey ? <span className="text-zinc-500 break-all">{user.pixKey}</span> : <span className="opacity-30 italic">Pendente</span>}
-                </div>
-                {user.role === "PROFISSIONAL" && user.profissional && (
-                  <div className="flex gap-4 mt-1 opacity-40">
-                    <span className="text-[8px] font-bold text-zinc-700 uppercase italic">CP: {user.profissional.captPct}%</span>
-                    <span className="text-[8px] font-bold text-zinc-700 uppercase italic">ED: {user.profissional.editPct}%</span>
-                  </div>
-                )}
-              </div>
-
-              {/* Status */}
-              <div className="col-span-1 flex justify-center">
-                <button 
-                  onClick={() => toggleActive(user)}
-                  className={`transition-all hover:scale-110 ${user.active ? "text-brand-tactical" : "text-zinc-800"}`}
-                >
-                  <div className={`w-8 h-1 ${user.active ? "bg-brand-tactical shadow-[0_0_10px_rgba(133,185,172,0.4)]" : "bg-zinc-900"}`} />
-                </button>
-              </div>
-
-              {/* Ações */}
-              <div className="col-span-2 flex justify-end gap-2">
-                <button 
-                  onClick={() => handleEditOpen(user)}
-                  style={{ 
-                    background: "transparent", border: `1px solid ${T.border}`, 
-                    padding: "6px 12px", color: T.text2, fontSize: 8, 
-                    fontWeight: 900, textTransform: "uppercase", letterSpacing: 1,
-                    cursor: "pointer", transition: "all 0.2s"
-                  }}
-                  onMouseEnter={e => { e.currentTarget.style.borderColor = T.brand; e.currentTarget.style.color = T.text; }}
-                  onMouseLeave={e => { e.currentTarget.style.borderColor = T.border; e.currentTarget.style.color = T.text2; }}
-                >
-                   Editar
-                </button>
-                <button 
-                  onClick={() => setConfirmDelete(user)}
-                  style={{ 
-                    background: "transparent", border: `1px solid #451a1a`, 
-                    padding: "6px 12px", color: "#f87171", fontSize: 8, 
-                    fontWeight: 900, textTransform: "uppercase", letterSpacing: 1,
-                    cursor: "pointer", transition: "all 0.2s"
-                  }}
-                  onMouseEnter={e => { e.currentTarget.style.background = "#451a1a"; }}
-                  onMouseLeave={e => { e.currentTarget.style.background = "transparent"; }}
-                >
-                   Remover
-                </button>
-              </div>
-            </div>
+        <div className="flex flex-col md:flex-row md:items-center justify-between gap-6 border-b border-theme-border pb-8">
+          <div>
+            <h2 className="text-4xl font-heading text-theme-text tracking-tighter uppercase font-black">Gestão de Membros</h2>
+            <p className="text-[10px] text-theme-muted uppercase tracking-[0.5em] mt-2 font-black italic">Operação de Times, Unidades e Parceiros</p>
           </div>
-        ))}
-      </div>
-
-      {isModalOpen && (
-        <div className="fixed inset-0 z-[100] bg-black/95 backdrop-blur-xl flex items-center justify-center p-4">
-          <div 
-            className="w-full max-w-2xl bg-theme-bg border border-theme-border relative max-h-[90vh] overflow-y-auto lux-card p-6 md:p-12"
+          <button 
+            onClick={() => { setIsModalOpen(true); setEditingUser(null); setFormData({ name: "", email: "", password: "", role: "PROFISSIONAL", pixKey: "", otherHabilities: "", equipment: "" }); }}
+            style={{ 
+              background: T.brand, color: T.brandText, padding: "14px 28px", 
+              fontSize: 10, fontWeight: 900, textTransform: "uppercase", 
+              letterSpacing: "0.2em", cursor: "pointer", border: "none",
+              boxShadow: `0 0 20px ${T.brand}22`,
+              display: "flex", alignItems: "center", gap: 10
+            }}
           >
-            <button onClick={() => { setIsModalOpen(false); setEditingUser(null); }} className="absolute top-6 right-6 text-theme-muted hover:text-white transition-colors">
-              <X size={24} />
-            </button>
+            <UserPlus size={14} /> CONVOCAR MEMBRO
+          </button>
+        </div>
 
-            <div className="mb-10">
-              <div className="text-proportional text-brand-primary mb-4">Ajuste de Perfil</div>
-              <h2 className="text-2xl md:text-4xl font-heading text-white uppercase tracking-tighter leading-none">
-                {editingUser ? "Ajustar Membro" : "Novo Membro"}
-              </h2>
-            </div>
+        <div className="space-y-2">
+          <div style={{ background: T.bgField, borderBottom: `1px solid ${T.border}` }} className="grid grid-cols-12 gap-4 px-10 py-4 text-[9px] font-black text-theme-muted uppercase tracking-[0.4em]">
+            <div className="col-span-1">Status</div>
+            <div className="col-span-4">Membro / Identidade</div>
+            <div className="col-span-2">Nível de Acesso</div>
+            <div className="col-span-2 text-right">Vinculação</div>
+            <div className="col-span-3 text-right">Ações de Comando</div>
+          </div>
 
-            <form onSubmit={handleCreate} className="space-y-8">
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
-                <div className="space-y-3">
-                  <label className="text-proportional">Nome Completo</label>
-                  <input 
-                    required
-                    value={formData.name}
-                    onChange={e => setFormData({...formData, name: e.target.value})}
-                    className="w-full bg-transparent border-b border-theme-border py-3 text-sm text-theme-text focus:outline-none focus:border-brand-tactical transition-all rounded-none" 
-                  />
-                </div>
-                <div className="space-y-2">
-                  <label className="text-[10px] font-black text-theme-muted uppercase tracking-[0.4em]">E-mail Corporativo</label>
-                  <input 
-                    type="email" required
-                    value={formData.email}
-                    onChange={e => setFormData({...formData, email: e.target.value})}
-                    className="w-full bg-transparent border-b border-theme-border py-3 text-sm text-theme-text focus:outline-none focus:border-brand-tactical transition-all rounded-none" 
-                  />
-                </div>
-                <div className="space-y-2">
-                  <label className="text-[10px] font-black text-theme-muted uppercase tracking-[0.4em]">Chave PIX (CPF, E-mail, Celular ou Aleatória)</label>
-                  <input 
-                    value={formData.pixKey}
-                    onChange={e => setFormData({...formData, pixKey: e.target.value})}
-                    placeholder="DADOS PARA REPASSE"
-                    className="w-full bg-transparent border-b border-theme-border py-3 text-sm text-theme-text focus:outline-none focus:border-brand-tactical transition-all rounded-none placeholder:opacity-20" 
-                  />
-                </div>
-                <div className="grid grid-cols-2 gap-8">
-                  <div className="space-y-2">
-                    <label className="text-[10px] font-black text-theme-muted uppercase tracking-[0.4em]">
-                      {editingUser ? "Nova Senha (opcional)" : "Senha Inicial"}
-                    </label>
-                    <input 
-                      type="password" required={!editingUser}
-                      value={formData.password}
-                      onChange={e => setFormData({...formData, password: e.target.value})}
-                      className="w-full bg-transparent border-b border-theme-border py-3 text-sm text-theme-text focus:outline-none focus:border-brand-tactical transition-all rounded-none" 
-                    />
+          {loading ? (
+            <div className="py-20 text-center text-[10px] text-theme-muted uppercase tracking-widest animate-pulse font-black">Sincronizando Base de Dados...</div>
+          ) : users.length === 0 ? (
+            <div className="py-20 text-center text-[10px] text-theme-muted uppercase tracking-widest font-black">Nenhum membro registrado.</div>
+          ) : (
+            users.map(u => (
+              <div key={u.id} style={{ background: T.bgCard, border: `1px solid ${T.border}` }} className="hover:border-brand-tactical/30 transition-all group">
+                <div className="grid grid-cols-1 md:grid-cols-12 gap-4 items-center px-10 py-6">
+                  <div className="col-span-1">
+                    <div style={{ 
+                      width: 8, height: 8, borderRadius: "50%", 
+                      background: u.active ? T.brand : "#f87171",
+                      boxShadow: `0 0 10px ${u.active ? T.brand : "#f87171"}44` 
+                    }} />
+                  </div>
+                  <div className="col-span-4">
+                    <div style={{ fontSize: 14, fontWeight: 900, color: T.text, textTransform: "uppercase", letterSpacing: -0.5 }}>{u.nome}</div>
+                    <div style={{ fontSize: 10, color: T.text3, fontWeight: 500, textTransform: "uppercase", letterSpacing: 0.5 }} className="mt-1 opacity-80">{u.email}</div>
+                  </div>
+                  <div className="col-span-2">
+                    <span style={{ 
+                      fontSize: 8, fontWeight: 900, color: u.role === 'ADMIN' ? T.brand : T.text2, 
+                      border: `1px solid ${u.role === 'ADMIN' ? T.brand : T.border}`, 
+                      padding: "2px 6px", textTransform: "uppercase", display: "inline-flex", alignItems: "center", gap: 4
+                    }}>
+                      {u.role === 'ADMIN' && <Shield size={8} />} {u.role}
+                    </span>
+                  </div>
+                  <div className="col-span-2 text-right">
+                    <div style={{ fontSize: 10, color: T.text3, fontWeight: 700, textTransform: "uppercase" }}>
+                      {u.unidade?.razaoSocial || "DIRETO MATRIZ"}
+                    </div>
+                  </div>
+                  <div className="col-span-3 flex justify-end gap-6 opacity-30 group-hover:opacity-100 transition-all">
+                    <button 
+                      onClick={() => handleEditOpen(u)}
+                      style={{ background: "transparent", border: "none", color: T.text3, fontSize: 9, fontWeight: 900, textTransform: "uppercase", letterSpacing: 1, cursor: "pointer", display: "flex", alignItems: "center", gap: 6 }}
+                    >
+                      <Edit3 size={11} /> Ajustar
+                    </button>
+                    <button 
+                      onClick={() => setConfirmDelete(u)} 
+                      style={{ background: "transparent", border: "none", color: "#f87171", fontSize: 9, fontWeight: 900, textTransform: "uppercase", letterSpacing: 1, cursor: "pointer", display: "flex", alignItems: "center", gap: 6 }}
+                    >
+                      <Trash2 size={11} /> Banir
+                    </button>
                   </div>
                 </div>
               </div>
+            ))
+          )}
+        </div>
+      </div>
 
-              {formData.role === "PROFISSIONAL" && (
-                <div className="grid grid-cols-1 gap-6 pt-4 border-t border-white/5">
-                    <div className="space-y-2">
-                      <label className="text-[10px] font-black text-theme-muted uppercase tracking-[0.4em]">Habilidades Extras</label>
-                      <textarea 
-                        value={formData.otherHabilities}
-                        onChange={e => setFormData({...formData, otherHabilities: e.target.value})}
-                        className="w-full bg-transparent border-b border-theme-border py-2 text-sm text-theme-text focus:outline-none focus:border-brand-tactical transition-all rounded-none resize-none"
-                        rows={2}
-                      />
-                    </div>
-                    <div className="space-y-2">
-                      <label className="text-[10px] font-black text-theme-muted uppercase tracking-[0.4em]">Meus Equipamentos</label>
-                      <textarea 
-                        value={formData.equipment}
-                        onChange={e => setFormData({...formData, equipment: e.target.value})}
-                        className="w-full bg-transparent border-b border-theme-border py-2 text-sm text-theme-text focus:outline-none focus:border-brand-tactical transition-all rounded-none resize-none"
-                        rows={2}
-                      />
-                    </div>
-                  </div>
-                )}
-
-                <div className="pt-10 flex gap-4">
-                  <button 
-                    type="submit" 
-                    className="flex-1 font-black uppercase tracking-[0.4em] py-6 text-[11px] hover:brightness-110 transition-all rounded-none"
-                    style={{ backgroundColor: 'var(--brand-tactical)', color: 'var(--theme-text-on-brand)' }}
-                  >
-                    {editingUser ? "SALVAR ALTERAÇÕES" : "REGISTRAR"}
-                  </button>
-                  <button type="button" onClick={() => { setIsModalOpen(false); setEditingUser(null); setFormData({ name: "", email: "", password: "", role: "PROFISSIONAL", pixKey: "", otherHabilities: "", equipment: "" }); }} className="px-8 border border-theme-border text-theme-muted hover:text-theme-text transition-all rounded-none uppercase text-[10px] font-black tracking-widest">
-                    CANCELAR
-                  </button>
-                </div>
-              </form>
-            </div>
-          </div>
-        )}
-    </div>
-
-      {/* CONFIRMATION MODAL (MIDNIGHT LUXURY) */}
-      {confirmDelete && (
+      {/* MEMBER MODAL */}
+      {isModalOpen && (
         <div className="fixed inset-0 z-[110] flex items-center justify-center p-6 animate-in fade-in duration-300">
+           <div className="absolute inset-0 bg-black/95 backdrop-blur-sm" onClick={() => setIsModalOpen(false)} />
+           <div className="relative bg-zinc-950 border border-brand-tactical/30 w-full max-w-xl p-10 space-y-10 overflow-y-auto max-h-[90vh]">
+              <div className="flex justify-between items-start">
+                 <div className="space-y-2">
+                    <span className="text-[10px] font-black text-brand-tactical uppercase tracking-[0.4em]">Cadastro Operacional</span>
+                    <h3 className="text-2xl font-heading text-white uppercase tracking-tighter">{editingUser ? 'Ajustar Membro' : 'Novo Membro'}</h3>
+                 </div>
+                 <button onClick={() => setIsModalOpen(false)} className="text-zinc-600 hover:text-white transition-colors"><X size={20} /></button>
+              </div>
+
+              <form onSubmit={handleCreate} className="space-y-8">
+                 <div className="grid grid-cols-2 gap-8">
+                    <div className="space-y-2">
+                       <label style={{ fontSize: 9, fontWeight: 900, color: T.text3, textTransform: "uppercase", letterSpacing: 1 }}>Nome de Guerra</label>
+                       <input 
+                         required value={formData.name} onChange={e => setFormData({...formData, name: e.target.value})}
+                         style={{ background: "transparent", borderBottom: `1px solid ${T.border}`, padding: "12px 0", fontSize: 14, color: T.text, width: "100%", outline: "none" }}
+                       />
+                    </div>
+                    <div className="space-y-2">
+                       <label style={{ fontSize: 9, fontWeight: 900, color: T.text3, textTransform: "uppercase", letterSpacing: 1 }}>E-mail de Acesso</label>
+                       <input 
+                         required type="email" value={formData.email} onChange={e => setFormData({...formData, email: e.target.value})}
+                         style={{ background: "transparent", borderBottom: `1px solid ${T.border}`, padding: "12px 0", fontSize: 14, color: T.text, width: "100%", outline: "none" }}
+                       />
+                    </div>
+                    <div className="space-y-2">
+                       <label style={{ fontSize: 9, fontWeight: 900, color: T.text3, textTransform: "uppercase", letterSpacing: 1 }}>Nova Senha {editingUser && '(Opcional)'}</label>
+                       <input 
+                         type="password" value={formData.password} onChange={e => setFormData({...formData, password: e.target.value})}
+                         style={{ background: "transparent", borderBottom: `1px solid ${T.border}`, padding: "12px 0", fontSize: 14, color: T.text, width: "100%", outline: "none" }}
+                         required={!editingUser}
+                       />
+                    </div>
+                    <div className="space-y-2">
+                       <label style={{ fontSize: 9, fontWeight: 900, color: T.text3, textTransform: "uppercase", letterSpacing: 1 }}>Função Tática</label>
+                       <select 
+                         value={formData.role} onChange={e => setFormData({...formData, role: e.target.value})}
+                         style={{ background: T.bgField, border: `1px solid ${T.border}`, padding: "12px", fontSize: 11, color: T.text, width: "100%", outline: "none", textTransform: "uppercase", fontWeight: 700 }}
+                       >
+                          <option value="ADMIN">ADMINISTRADOR</option>
+                          <option value="PROFISSIONAL">PROFISSIONAL / PARCEIRO</option>
+                          <option value="UNIDADE_FIXA">UNIDADE FIXA / CARTÓRIO</option>
+                       </select>
+                    </div>
+                 </div>
+
+                 <div className="space-y-2">
+                    <label style={{ fontSize: 9, fontWeight: 900, color: T.text3, textTransform: "uppercase", letterSpacing: 1 }}>Chave PIX (Para Repasses)</label>
+                    <input 
+                      value={formData.pixKey} onChange={e => setFormData({...formData, pixKey: e.target.value})}
+                      style={{ background: "transparent", borderBottom: `1px solid ${T.border}`, padding: "12px 0", fontSize: 14, color: T.text, width: "100%", outline: "none" }}
+                      placeholder="CPF, E-mail ou Aleatória"
+                    />
+                 </div>
+
+                 {formData.role === "PROFISSIONAL" && (
+                   <div className="space-y-6 pt-6 border-t border-white/5">
+                      <div className="space-y-2">
+                         <label style={{ fontSize: 9, fontWeight: 900, color: T.text3, textTransform: "uppercase", letterSpacing: 1 }}>Equipamento Operacional</label>
+                         <textarea 
+                           value={formData.equipment} onChange={e => setFormData({...formData, equipment: e.target.value})}
+                           style={{ background: T.bgField, border: `1px solid ${T.border}`, padding: "12px", fontSize: 12, color: T.text, width: "100%", outline: "none", height: 80 }}
+                           placeholder="Câmeras, Lentes, Drones..."
+                         />
+                      </div>
+                      <div className="space-y-2">
+                         <label style={{ fontSize: 9, fontWeight: 900, color: T.text3, textTransform: "uppercase", letterSpacing: 1 }}>Outras Habilidades</label>
+                         <input 
+                           value={formData.otherHabilities} onChange={e => setFormData({...formData, otherHabilities: e.target.value})}
+                           style={{ background: "transparent", borderBottom: `1px solid ${T.border}`, padding: "12px 0", fontSize: 14, color: T.text, width: "100%", outline: "none" }}
+                         />
+                      </div>
+                   </div>
+                 )}
+
+                 <div className="pt-6">
+                    <button type="submit" style={{ ...BtnPrimary, width: "100%", justifyContent: "center", padding: 20 }}>
+                       {editingUser ? 'SALVAR ALTERAÇÕES' : 'CONFIRMAR CONVOCAÇÃO'}
+                    </button>
+                 </div>
+              </form>
+           </div>
+        </div>
+      )}
+
+      {/* CONFIRM DELETE MODAL */}
+      {confirmDelete && (
+        <div className="fixed inset-0 z-[120] flex items-center justify-center p-6 animate-in fade-in duration-300">
            <div className="absolute inset-0 bg-black/95 backdrop-blur-sm" onClick={() => setConfirmDelete(null)} />
-           <div className="relative bg-zinc-950 border border-brand-tactical/30 w-full max-w-sm p-8 space-y-8">
+           <div className="relative bg-zinc-950 border border-red-900/30 w-full max-w-sm p-8 space-y-8">
               <div className="space-y-2">
-                 <span className="text-[10px] font-black text-brand-tactical uppercase tracking-[0.4em]">Protocolo de Exclusão</span>
-                 <h3 className="text-xl font-heading text-white uppercase tracking-tighter">Remover Membro?</h3>
+                 <span className="text-[10px] font-black text-red-500 uppercase tracking-[0.4em]">Protocolo de Exclusão</span>
+                 <h3 className="text-xl font-heading text-white uppercase tracking-tighter">Banir Membro?</h3>
               </div>
               
               <p className="text-[11px] text-zinc-500 uppercase tracking-widest leading-relaxed">
-                DESEJA REALMENTE REMOVER {confirmDelete.nome.toUpperCase()}? ESTA AÇÃO REMOVERÁ O ACESSO E O PERFIL DO SISTEMA.
+                ESTA AÇÃO IRÁ REVOGAR O ACESSO DE <span className="text-white font-bold">{confirmDelete.nome}</span> IMEDIATAMENTE.
               </p>
 
               <div className="grid grid-cols-2 gap-4">
@@ -346,23 +311,23 @@ export const AdminUsers: React.FC = () => {
                    CANCELAR
                  </button>
                  <button 
-                   onClick={executeDelete}
+                   onClick={() => handleDelete(confirmDelete.id)}
                    className="p-4 bg-red-900 text-white text-[9px] font-black uppercase tracking-widest hover:brightness-110 transition-all"
                  >
-                   REMOVER AGORA
+                   CONFIRMAR BANIMENTO
                  </button>
               </div>
            </div>
         </div>
       )}
 
-      {/* NOTIFICATION (MIDNIGHT LUXURY) */}
+      {/* NOTIFICATION */}
       {notification && (
-        <div className="fixed bottom-10 right-10 z-[120] animate-in slide-in-from-right-10 duration-500">
-           <div className={`p-6 border ${notification.type === 'success' ? 'border-brand-tactical bg-zinc-950' : 'border-red-900 bg-zinc-950'} min-w-[300px] relative overflow-hidden shadow-2xl`}>
+        <div className="fixed bottom-10 right-10 z-[130] animate-in slide-in-from-right-10 duration-500">
+           <div className={`p-6 border ${notification.type === 'success' ? 'border-brand-tactical bg-zinc-950 shadow-[0_0_30px_rgba(133,185,172,0.1)]' : 'border-red-900 bg-zinc-950'} min-w-[300px] relative overflow-hidden shadow-2xl`}>
               <div className="flex flex-col gap-1">
                  <span className={`text-[8px] font-black uppercase tracking-[0.4em] ${notification.type === 'success' ? 'text-brand-tactical' : 'text-red-500'}`}>
-                    {notification.type === 'success' ? 'Sincronização OK' : 'Falha na Rede'}
+                    {notification.type === 'success' ? 'Comando Executado' : 'Falha na Operação'}
                  </span>
                  <p className="text-[11px] font-bold text-white uppercase tracking-widest">{notification.message}</p>
               </div>
