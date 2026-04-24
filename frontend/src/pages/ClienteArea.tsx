@@ -2,7 +2,7 @@ import { useState, useEffect, useCallback, useMemo } from "react";
 import { useNavigate, useSearchParams } from "react-router-dom";
 import { useAuth } from "../hooks/useAuth";
 import { API } from "../lib/api";
-import { T } from "../lib/theme";
+import { T, Card, S as GlobalS } from "../lib/theme";
 import AccessTypeModal from "../components/AccessTypeModal";
 import { ThemeToggle } from "../components/ThemeToggle";
 
@@ -51,7 +51,7 @@ const S = {
     minHeight: "100vh" 
   } as React.CSSProperties,
   card: { 
-    ...T.Card, // fallback to T.bgCard if T.Card doesn't exist? Wait, I saw Card in theme.ts.
+    ...Card, 
     background: T.bgCard, 
     border: `1px solid ${T.border}`, 
     borderRadius: 0 
