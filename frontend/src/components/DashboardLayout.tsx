@@ -84,12 +84,14 @@ const SidebarContent: React.FC<SidebarContentProps> = ({ navItems, onNavigate })
         padding:      "32px 24px 24px",
         borderBottom: `1px solid ${T.border}`,
       }}>
-        <div style={{
-          display: "flex",
-          alignItems: "center"
-        }}>
-          <img src="/logo-fs.png" alt="Foto Segundo" style={{ height: 28, objectFit: "contain" }} />
-        </div>
+        <Link to="/" style={{ textDecoration: "none", display: "inline-block" }}>
+          <div style={{
+            display: "flex",
+            alignItems: "center"
+          }}>
+            <img src="/logo-fs.png" alt="Foto Segundo" style={{ height: 28, objectFit: "contain" }} />
+          </div>
+        </Link>
       </div>
 
 
@@ -210,6 +212,17 @@ const SidebarContent: React.FC<SidebarContentProps> = ({ navItems, onNavigate })
              user?.role === "PROFISSIONAL" ? "Profissional da Rede" :
              "Cliente"}
           </div>
+
+          <Link to="/" style={{ 
+            display: "flex", alignItems: "center", gap: 6,
+            fontSize: 9, fontFamily: T.fontB, fontWeight: 800, 
+            color: T.text3, textDecoration: "none", textTransform: "uppercase",
+            letterSpacing: 1.5, marginTop: 12, opacity: 0.8,
+            transition: "opacity 0.2s"
+          }} onMouseEnter={(e) => (e.currentTarget.style.opacity = "1")} onMouseLeave={(e) => (e.currentTarget.style.opacity = "0.8")}>
+            Visitar Site
+            <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg>
+          </Link>
         </div>
 
 
