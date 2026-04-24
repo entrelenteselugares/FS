@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { API } from "../../lib/api";
-import { X, Plus, UserPlus, Shield, User, Trash2, Edit3 } from "lucide-react";
+import { X, UserPlus, Shield, Trash2, Edit3 } from "lucide-react";
 import { T, BtnPrimary } from "../../lib/theme";
 
 interface User {
@@ -71,7 +71,7 @@ export const AdminUsers: React.FC = () => {
       
       // Update professional details if applicable
       if (formData.role === "PROFISSIONAL") {
-          const userId = editingUser ? editingUser.id : (await API.get("/admin/users")).data.find((u:any) => u.email === formData.email)?.id;
+          const userId = editingUser ? editingUser.id : (await API.get("/admin/users")).data.find((u: User) => u.email === formData.email)?.id;
           if (userId) {
               await API.patch(`/admin/users/${userId}`, {
                 otherHabilities: formData.otherHabilities,
