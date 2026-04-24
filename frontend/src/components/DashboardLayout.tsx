@@ -175,6 +175,20 @@ const SidebarContent: React.FC<SidebarContentProps> = ({ navItems, onNavigate })
           );
         })}
 
+        {/* ── Visitar Site (bottom of nav) ── */}
+        <Link to="/" style={{ 
+          display: "flex", alignItems: "center", gap: 10,
+          padding: "8px 16px", fontSize: 9, fontFamily: T.fontB, fontWeight: 700,
+          color: T.brand, textDecoration: "none", textTransform: "uppercase",
+          letterSpacing: 1, marginTop: 8, borderTop: `1px solid ${T.border}`,
+          paddingTop: 12, transition: "all 0.2s"
+        }}
+          onMouseEnter={(e) => (e.currentTarget.style.opacity = "0.7")}
+          onMouseLeave={(e) => (e.currentTarget.style.opacity = "1")}
+        >
+          <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg>
+          <span>Visitar Site</span>
+        </Link>
       </nav>
 
       {/* ── User Footer ── */}
@@ -214,18 +228,6 @@ const SidebarContent: React.FC<SidebarContentProps> = ({ navItems, onNavigate })
              "Cliente"}
           </div>
         </div>
-        {/* Visit Site Button */}
-        <Link to="/" style={{ 
-          display: "flex", alignItems: "center", gap: 8,
-          padding: "10px", fontSize: 9, fontFamily: T.fontB, fontWeight: 900, 
-          color: T.brand, textDecoration: "none", textTransform: "uppercase",
-          letterSpacing: 2, border: `1px solid ${T.brand}44`,
-          marginBottom: 12, justifyContent: "center", transition: "all 0.2s"
-        }} onMouseEnter={(e) => (e.currentTarget.style.background = `${T.brand}11`)} onMouseLeave={(e) => (e.currentTarget.style.background = "transparent")}>
-          <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg>
-          <span>Visitar Site</span>
-        </Link>
-
         {/* Logout button */}
         <button
           id="btn-logout"
