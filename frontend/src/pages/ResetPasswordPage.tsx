@@ -1,5 +1,6 @@
 import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
+import { isAxiosError } from "axios";
 import { API } from "../lib/api";
 import { T, BtnPrimary, FieldLabel, FieldInput } from "../lib/theme";
 
@@ -43,11 +44,11 @@ export default function ResetPasswordPage() {
       await API.post("/auth/update-password", { password, token });
       setMessage({ type: "success", text: "Senha alterada com sucesso! Redirecionando..." });
       setTimeout(() => navigate("/login"), 3000);
-    } catch (err: any) {
-      setMessage({ 
-        type: "error", 
-        text: err.response?.data?.error || "Erro ao atualizar senha. O link pode ter expirado." 
-      });
+    } catch (err: unknown) {
+      const msg = isAxiosError(err)
+        ? (err.response?.data?.error ?? "Erro ao atualizar senha. O link pode ter expirado.")
+        : "Erro ao atualizar senha.";
+      setMessage({ type: "error", text: msg });
     } finally {
       setLoading(false);
     }

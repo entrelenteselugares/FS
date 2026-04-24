@@ -74,8 +74,11 @@ export const LoginPage: React.FC = () => {
       await API.post("/auth/forgot-password", { email: email.trim().toLowerCase() });
       setResetSent(true);
       setError("");
-    } catch (err: any) {
-      setError(err.response?.data?.error || "Erro ao solicitar recuperação.");
+    } catch (err: unknown) {
+      const msg = isAxiosError(err)
+        ? (err.response?.data?.error ?? "Erro ao solicitar recuperação.")
+        : "Erro ao solicitar recuperação.";
+      setError(msg);
     } finally {
       setLoading(false);
     }
