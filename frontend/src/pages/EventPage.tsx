@@ -469,7 +469,9 @@ export default function EventPage() {
                       Evento em breve
                     </p>
                     <p style={{ fontSize: 12, color: T.text2, margin: 0 }}>
-                      Sua compra foi confirmada! O contador abaixo mostra o tempo restante para o grande dia.
+                      {(orderId || justPaid) 
+                        ? "Sua compra foi confirmada! O contador abaixo mostra o tempo restante para o grande dia."
+                        : "O grande dia está chegando! Fique atento, as fotos serão liberadas aqui após o evento."}
                     </p>
                     {event.dataEvento && <Countdown targetDate={event.dataEvento} />}
                     <button onClick={handleShare} style={{ ...BtnSecondary, width: "100%", justifyContent: "center", color: T.text }}>
@@ -479,9 +481,13 @@ export default function EventPage() {
                 ) : (
                   <>
                     <p style={{ fontSize: 10, fontWeight: 700, textTransform: "uppercase", letterSpacing: 2, color: T.brand, margin: 0 }}>
-                      {justPaid ? "Tudo pronto!" : "Acesso Liberado"}
+                      {(orderId || justPaid) ? (justPaid ? "Tudo pronto!" : "Acesso Liberado") : "Fotos Disponíveis!"}
                     </p>
-                    <p style={{ fontSize: 12, color: T.text2, margin: 0 }}>Seus arquivos estão disponíveis na imagem ao lado.</p>
+                    <p style={{ fontSize: 12, color: T.text2, margin: 0 }}>
+                      {(orderId || justPaid) 
+                        ? "Seus arquivos estão disponíveis nos botões abaixo."
+                        : "Confira as memórias desse dia incrível nos links abaixo."}
+                    </p>
                     <div style={{ display: "flex", flexDirection: "column", gap: 10 }}>
                       {access.lightroomUrl && <a href={access.lightroomUrl} target="_blank" rel="noreferrer" style={{ ...BtnPrimary, textDecoration: "none", justifyContent: "center" }}>Abrir Lightroom</a>}
                       {access.driveUrl && <a href={access.driveUrl} target="_blank" rel="noreferrer" style={{ ...BtnSecondary, color: T.text, borderColor: T.brand, textDecoration: "none", justifyContent: "center" }}>Google Drive</a>}
