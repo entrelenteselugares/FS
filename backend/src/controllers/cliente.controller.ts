@@ -1,6 +1,7 @@
 import { Response } from "express";
 import { AuthRequest } from "../lib/auth";
 import prisma from "../lib/prisma";
+import { audit } from "../lib/audit";
 
 /**
  * GET /api/cliente/pedidos
@@ -32,7 +33,7 @@ export async function getMeusPedidos(req: AuthRequest, res: Response): Promise<v
       orderBy: { createdAt: "desc" },
     });
 
-    const resultado = pedidos.map((p: any) => ({
+    const resultado = pedidos.map(p => ({
       id: p.id,
       status: p.status,
       amount: Number(p.valor),
@@ -88,24 +89,33 @@ export async function getMeuPedidoDetalhe(req: AuthRequest, res: Response): Prom
     }
 
     const aprovado = pedido.status === "APROVADO";
+    const isNotExpired = !pedido.accessExpiresAt || new Date(pedido.accessExpiresAt) > new Date();
+    const canAccess = aprovado && !pedido.deletedAt && isNotExpired;
 
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    const p = pedido as any;
+    // LGPD: Loga o acesso aos links se estiverem disponíveis
+    if (canAccess && (pedido.event?.lightroomUrl || pedido.event?.driveUrl)) {
+      await audit(req, "VIEW_EVENT_LINKS", "Order", pedido.id, null, {
+        eventId: pedido.eventId,
+        links: {
+          lightroom: !!pedido.event?.lightroomUrl,
+          drive: !!pedido.event?.driveUrl
+        }
+      });
+    }
+
     res.json({
-      id: p.id,
-      status: p.status,
-      amount: Number(p.valor),
-      createdAt: p.createdAt,
+      id: pedido.id,
+      status: pedido.status,
+      amount: Number(pedido.valor),
+      createdAt: pedido.createdAt,
       hasPaid: aprovado,
-      accessType: p.accessType,
-      accessExpiresAt: p.accessExpiresAt,
+      accessType: pedido.accessType,
+      accessExpiresAt: pedido.accessExpiresAt,
       event: {
-        ...p.event,
+        ...pedido.event,
         // Só expõe os links se aprovado INTEGRALMENTE e NÃO expirado/excluído
-        lightroomUrl: (aprovado && !p.deletedAt && (!p.accessExpiresAt || new Date(p.accessExpiresAt) > new Date())) 
-          ? p.event?.lightroomUrl ?? null : null,
-        driveUrl: (aprovado && !p.deletedAt && (!p.accessExpiresAt || new Date(p.accessExpiresAt) > new Date())) 
-          ? p.event?.driveUrl ?? null : null,
+        lightroomUrl: canAccess ? pedido.event?.lightroomUrl ?? null : null,
+        driveUrl: canAccess ? pedido.event?.driveUrl ?? null : null,
       },
     });
   } catch (err) {

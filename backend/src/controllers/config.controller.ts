@@ -1,4 +1,4 @@
-import { Response } from "express";
+import { Request, Response } from "express";
 import { AuthRequest } from "../lib/auth";
 import prisma from "../lib/prisma";
 
@@ -90,7 +90,7 @@ export async function getPublicThemeConfigs(req: AuthRequest, res: Response): Pr
   }
 }
 // GET /api/public/configs/services
-export async function getPublicServices(_req: any, res: Response): Promise<void> {
+export async function getPublicServices(_req: Request, res: Response): Promise<void> {
   try {
     const config = await prisma.platformConfig.findUnique({
       where: { key: "services_catalog" }

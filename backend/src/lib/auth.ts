@@ -38,7 +38,7 @@ export const requireAuth = (req: ExpressRequest, res: Response, next: NextFuncti
   }
 
   try {
-    (req as any).user = verifyToken(token);
+    (req as AuthRequest).user = verifyToken(token);
     return next();
   } catch {
     return res.status(401).json({ error: "Token inválido ou expirado" });
@@ -48,8 +48,8 @@ export const requireAuth = (req: ExpressRequest, res: Response, next: NextFuncti
 /** Middleware: restringe acesso por role */
 export const requireRole = (...roles: string[]) => {
   return (req: ExpressRequest, res: Response, next: NextFunction) => {
-    const user = (req as any).user as AuthPayload;
-    if (!roles.includes(user?.role)) {
+    const user = (req as AuthRequest).user;
+    if (!roles.includes(user?.role || "")) {
       return res.status(403).json({ error: "Acesso negado" });
     }
     return next();

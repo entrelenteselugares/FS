@@ -2,7 +2,7 @@ import { Request, Response } from "express";
 import prisma from "../lib/prisma";
 import { MercadoPagoService } from "../services/mercadopago.service";
 import { NotificationService } from "../services/notification.service";
-import { calculateEventPrice } from "../lib/pricing";
+import { PricingService } from "../services/pricing.service";
 import crypto from "crypto";
 import { supabaseAdmin } from "../lib/supabase";
 
@@ -26,22 +26,14 @@ export class PaymentController {
       });
 
       if (!event) return res.status(404).json({ error: "Evento não encontrado" });
+      const eventBase = event as any; // Temporary cast until Prisma types are updated
 
-      // 2. Lógica de Precificação Dinâmica
-      const preco = calculateEventPrice(event as any, contributionAmount);
+      // 2. Lógica de Precificação Dinâmica & Splits (Centralizada)
+      const preco = PricingService.calculateEventPrice(eventBase, contributionAmount);
+      const { matriz: splitMatriz, captacao: splitCaptacao, edicao: splitEdicao, cartorio: splitCartorio } = 
+        await PricingService.calculateSplits(preco);
 
-      // 3. Preparar Split de Pagamentos (Regra: Repasse Manual via Snapshot)
-      const configs = await prisma.platformConfig.findMany({
-        where: { key: { in: ["split_matriz", "split_captacao", "split_edicao", "split_cartorio"] } },
-      });
-      const getPct = (key: string) => Number(configs.find((c) => c.key === key)?.value ?? 0) / 100;
-
-      const splitMatriz   = preco * getPct("split_matriz");
-      const splitCaptacao = preco * getPct("split_captacao");
-      const splitEdicao   = preco * getPct("split_edicao");
-      const splitCartorio = preco * getPct("split_cartorio");
-
-      console.log(`[Checkout] Repasse Manual: 100% para Matriz. Snapshot salvo.`);
+      console.log(`[Checkout] Repasse Manual Calculado: Snapshot salvo.`);
 
       // 4. Criar ou Reutilizar Pedido no Banco
       let order;
@@ -301,20 +293,12 @@ export class PaymentController {
         }
       });
       if (!event) return res.status(404).json({ error: "Evento não encontrado" });
+      const eventBase = event as any;
 
-      // 2. Lógica de Precificação
-      const preco = calculateEventPrice(event as any, contributionAmount);
-
-      // 3. Cálculo de Split — Snapshot obrigatório via PlatformConfig
-      const configs = await prisma.platformConfig.findMany({
-        where: { key: { in: ["split_matriz", "split_captacao", "split_edicao", "split_cartorio"] } },
-      });
-      const getPct = (key: string) => Number(configs.find((c) => c.key === key)?.value ?? 0) / 100;
-
-      const splitMatriz   = +(preco * getPct("split_matriz")).toFixed(2);
-      const splitCaptacao = +(preco * getPct("split_captacao")).toFixed(2);
-      const splitEdicao   = +(preco * getPct("split_edicao")).toFixed(2);
-      const splitCartorio = +(preco * getPct("split_cartorio")).toFixed(2);
+      // 2. Lógica de Precificação & Splits (Centralizada)
+      const preco = PricingService.calculateEventPrice(eventBase, contributionAmount);
+      const { matriz: splitMatriz, captacao: splitCaptacao, edicao: splitEdicao, cartorio: splitCartorio } = 
+        await PricingService.calculateSplits(preco);
 
       // 4. Identificação do Comprador (Lead -> Customer)
       let finalUserId = userId;

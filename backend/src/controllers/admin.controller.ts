@@ -1,6 +1,7 @@
 import { Response } from "express";
 import { AuthRequest } from "../lib/auth";
 import prisma from "../lib/prisma";
+import { Prisma } from "@prisma/client";
 import { slugify } from "../lib/utils";
 import bcrypt from "bcryptjs";
 import { supabaseAdmin as supabase } from "../lib/supabase";
@@ -147,7 +148,7 @@ export async function adminListEvents(req: AuthRequest, res: Response): Promise<
   const skip = (Number(page) - 1) * take;
 
   try {
-    const where: any = { isQuote: false }; // Segregação: Não lista orçamentos na aba de eventos
+    const where: Prisma.EventWhereInput = { isQuote: false }; // Segregação: Não lista orçamentos na aba de eventos
     if (status === "active") where.active = true;
     if (status === "inactive") where.active = false;
     
@@ -387,8 +388,8 @@ export async function adminDeleteEvent(req: AuthRequest, res: Response): Promise
 export async function adminListUsers(req: AuthRequest, res: Response): Promise<void> {
   const { role, q } = req.query;
   try {
-    const where: any = {};
-    if (role) where.role = String(role);
+    const where: Prisma.UserWhereInput = {};
+    if (role) where.role = String(role) as any;
     if (q) {
       const searchString = String(q);
       where.OR = [
@@ -601,7 +602,7 @@ export async function adminListOrders(req: AuthRequest, res: Response): Promise<
   const skip = (Number(page) - 1) * take;
 
   try {
-    const where: any = {};
+    const where: Prisma.OrderWhereInput = {};
     if (status) where.status = String(status);
     
     // Filtro Uber Style: Pronto para Repasse (Status APROVADO, > 7 dias, payoutDone=false)
@@ -677,12 +678,13 @@ export async function adminListQuotes(req: AuthRequest, res: Response): Promise<
   const skip = (Number(page) - 1) * take;
 
   try {
-    const where: any = { isQuote: true };
+    const where: Prisma.EventWhereInput = { isQuote: true };
     if (q) {
+      const searchString = String(q);
       where.OR = [
-        { clientEmail: { contains: String(q), mode: "insensitive" } },
-        { clientName: { contains: String(q), mode: "insensitive" } },
-        { nomeNoivos: { contains: String(q), mode: "insensitive" } },
+        { clientEmail: { contains: searchString, mode: "insensitive" } },
+        { clientName: { contains: searchString, mode: "insensitive" } },
+        { nomeNoivos: { contains: searchString, mode: "insensitive" } },
       ];
     }
 

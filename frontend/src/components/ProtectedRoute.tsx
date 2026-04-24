@@ -1,6 +1,7 @@
 import React from "react";
 import { Navigate } from "react-router-dom";
 import { useAuth } from "../hooks/useAuth";
+import { T } from "../lib/theme";
 
 interface Props {
   children: React.ReactNode;
@@ -12,8 +13,8 @@ export const ProtectedRoute: React.FC<Props> = ({ children, roles }) => {
 
   if (loading) {
     return (
-      <div className="min-h-screen bg-[#050505] flex items-center justify-center">
-        <div className="w-8 h-8 border-2 border-brand-indigo border-t-transparent rounded-full animate-spin" />
+      <div style={{ background: T.bg, minHeight: "100vh", display: "flex", alignItems: "center", justifyContent: "center" }}>
+        <div style={{ width: 32, height: 32, border: `2px solid ${T.brand}`, borderTopColor: "transparent", borderRadius: "50%" }} className="animate-spin" />
       </div>
     );
   }
