@@ -244,10 +244,10 @@ export class PaymentController {
                });
             }
 
-            // 2. Ativa o evento automaticamente (Sincronização Lead -> Sale)
+            // 2. O evento permanece inativo (PRIVATE por padrão)
             await prisma.event.update({
               where: { id: order.eventId },
-              data: { active: true, isQuote: false }
+              data: { active: false, isQuote: false }
             });
 
             // 3. Dispara e-mail automático
@@ -376,8 +376,9 @@ export class PaymentController {
         return res.status(400).json({ error: "E-mail obrigatório para processar o pagamento." });
       }
 
+      const finalAccessType = accessType || "PRIVATE";
       const expiresAt = new Date();
-      if (accessType === "PRIVATE") expiresAt.setDate(expiresAt.getDate() + 15);
+      if (finalAccessType === "PRIVATE") expiresAt.setDate(expiresAt.getDate() + 15);
       else expiresAt.setDate(expiresAt.getDate() + 90);
 
       // Anti-duplicação: query Prisma sem .filter() que quebrava silenciosamente
@@ -406,7 +407,7 @@ export class PaymentController {
             clienteId: finalUserId,
             buyerEmail: email,
             valor: preco,
-            accessType: accessType || existingPendingOrder.accessType || "PUBLIC",
+            accessType: accessType || existingPendingOrder.accessType || "PRIVATE",
             accessChosenAt: existingPendingOrder.accessChosenAt ?? new Date(),
             accessExpiresAt: existingPendingOrder.accessExpiresAt ?? expiresAt,
             splitMatriz,
@@ -426,7 +427,7 @@ export class PaymentController {
             status: "PENDENTE",
             isContribution: event.isCrowdfund,
             contributorName: event.isCrowdfund ? (req.body.contributorName || null) : null,
-            accessType: accessType || "PUBLIC",
+            accessType: accessType || "PRIVATE",
             accessChosenAt: new Date(),
             accessExpiresAt: expiresAt,
             splitMatriz,
@@ -479,7 +480,7 @@ export class PaymentController {
       if (isApproved) {
         await prisma.event.update({
           where: { id: eventId },
-          data: { active: true, isQuote: false }
+          data: { active: false, isQuote: false }
         });
 
         // 7a. E-mail de acesso ao comprador

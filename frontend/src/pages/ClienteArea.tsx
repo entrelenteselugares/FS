@@ -126,8 +126,8 @@ export default function ClienteArea() {
       `}</style>
       
       {/* NAV */}
-      <nav className="mobile-nav" style={{ display: "flex", alignItems: "center", justifyContent: "space-between", padding: "1.25rem 2rem", background: "rgba(10,10,10,0.8)", backdropFilter: "blur(10px)", borderBottom: "0.5px solid #1a1a1a", position: "sticky", top: 0, zIndex: 100 }}>
-        <button onClick={() => navigate("/")} style={{ background: "none", border: "none", color: "var(--theme-text-muted)", fontSize: 13, cursor: "pointer", transition: "color .2s" }} onMouseEnter={(e) => (e.currentTarget.style.color = "var(--theme-text)")} onMouseLeave={(e) => (e.currentTarget.style.color = "var(--theme-text-muted)")}>
+      <nav className="mobile-nav" style={{ display: "flex", alignItems: "center", justifyContent: "space-between", padding: "1.25rem 2rem", background: T.bg, borderBottom: `1px solid ${T.border}`, position: "sticky", top: 0, zIndex: 100 }}>
+        <button onClick={() => navigate("/")} style={{ background: "none", border: "none", color: T.text2, fontSize: 13, cursor: "pointer", transition: "color .2s" }} onMouseEnter={(e) => (e.currentTarget.style.color = T.text)} onMouseLeave={(e) => (e.currentTarget.style.color = T.text2)}>
           ← <span className="mobile-hide">Voltar para Galeria</span><span className="md:hidden">Voltar</span>
         </button>
         <div style={{ display: "flex", alignItems: "center" }}>
@@ -136,9 +136,9 @@ export default function ClienteArea() {
         <div style={{ display: "flex", alignItems: "center", gap: 12 }}>
           <ThemeToggle />
           <div className="mobile-hide" style={{ textAlign: "right" }}>
-            <p style={{ fontSize: 11, fontWeight: 600, color: "#fff", margin: 0 }}>{user?.nome}</p>
+            <p style={{ fontSize: 11, fontWeight: 600, color: T.text, margin: 0 }}>{user?.nome}</p>
           </div>
-          <button onClick={logout} style={{ background: "rgba(255,255,255,0.05)", border: "0.5px solid rgba(255,255,255,0.2)", borderRadius: 6, padding: "6px 14px", color: "#fff", fontSize: 11, cursor: "pointer", transition: "all .2s" }}>
+          <button onClick={logout} style={{ background: "transparent", border: `1px solid ${T.border2}`, borderRadius: 6, padding: "6px 14px", color: T.text, fontSize: 11, cursor: "pointer", transition: "all .2s" }}>
             Sair
           </button>
         </div>
