@@ -1,6 +1,7 @@
 import { useState, useEffect } from "react";
 import { API } from "../../lib/api";
-import { Settings, Percent, DollarSign, Calculator, Save, CheckCircle, AlertTriangle, RefreshCw } from "lucide-react";
+import { Settings, Percent, DollarSign, Calculator, Save, CheckCircle, AlertTriangle, RefreshCw, Palette, Shield } from "lucide-react";
+import { T } from "../../lib/theme";
 
 interface Config {
   key: string;
@@ -49,7 +50,7 @@ export const AdminConfigs: React.FC = () => {
   const [saved, setSaved] = useState(false);
   const [payouts, setPayouts] = useState<Payout[]>([]);
   const [generating, setGenerating] = useState(false);
-  const [tab, setTab] = useState<"splits" | "payouts">("splits");
+  const [tab, setTab] = useState<"splits" | "payouts" | "infra">("splits");
 
   const fetchData = async () => {
     try {
@@ -137,26 +138,55 @@ export const AdminConfigs: React.FC = () => {
         <button
           onClick={handleGeneratePayout}
           disabled={generating}
-          className="bg-brand-tactical text-black text-[10px] font-bold uppercase tracking-[0.4em] px-10 py-5 hover:brightness-110 transition-all rounded-none flex items-center gap-2 disabled:opacity-50 shadow-xl shadow-brand-tactical/10"
+          style={{ 
+            background: T.brand, color: T.brandText, padding: "10px 20px", 
+            border: "none", fontSize: 9, fontWeight: 900, 
+            textTransform: "uppercase", letterSpacing: "0.3em", cursor: "pointer",
+            display: "flex", alignItems: "center", gap: 8, opacity: generating ? 0.5 : 1
+          }}
         >
-          {generating ? <RefreshCw className="animate-spin" size={14} /> : <Calculator size={14} />}
+          {generating ? <RefreshCw className="animate-spin" size={12} /> : <Calculator size={12} />}
           {generating ? "GERANDO..." : "FECHAMENTO SEMANAL"}
         </button>
       </div>
 
       {/* Navigation Tabs */}
-      <div className="flex gap-1 border-b border-white/5">
+      <div style={{ display: "flex", gap: 4, borderBottom: `1px solid ${T.border}` }}>
         <button 
           onClick={() => setTab("splits")}
-          className={`px-8 py-4 text-[10px] font-bold uppercase tracking-[0.4em] transition-all border-b-2 ${tab === "splits" ? "border-brand-tactical text-white" : "border-transparent text-zinc-700 hover:text-zinc-400"}`}
+          style={{ 
+            padding: "10px 20px", fontSize: 9, fontWeight: 900, textTransform: "uppercase", 
+            letterSpacing: "0.2em", cursor: "pointer", background: "transparent",
+            color: tab === "splits" ? T.text : T.text3,
+            border: "none", borderBottom: `2px solid ${tab === "splits" ? T.brand : "transparent"}`,
+            transition: "all 0.2s"
+          }}
         >
           DIVISÃO DE SPLIT
         </button>
         <button 
           onClick={() => setTab("payouts")}
-          className={`px-8 py-4 text-[10px] font-bold uppercase tracking-[0.4em] transition-all border-b-2 ${tab === "payouts" ? "border-brand-tactical text-white" : "border-transparent text-zinc-700 hover:text-zinc-400"}`}
+          style={{ 
+            padding: "10px 20px", fontSize: 9, fontWeight: 900, textTransform: "uppercase", 
+            letterSpacing: "0.2em", cursor: "pointer", background: "transparent",
+            color: tab === "payouts" ? T.text : T.text3,
+            border: "none", borderBottom: `2px solid ${tab === "payouts" ? T.brand : "transparent"}`,
+            transition: "all 0.2s"
+          }}
         >
-          HISTÓRICO DE REPASSES ({payouts.length})
+          REPASSES ({payouts.length})
+        </button>
+        <button 
+          onClick={() => setTab("infra")}
+          style={{ 
+            padding: "10px 20px", fontSize: 9, fontWeight: 900, textTransform: "uppercase", 
+            letterSpacing: "0.2em", cursor: "pointer", background: "transparent",
+            color: tab === "infra" ? T.text : T.text3,
+            border: "none", borderBottom: `2px solid ${tab === "infra" ? T.brand : "transparent"}`,
+            transition: "all 0.2s"
+          }}
+        >
+          INFRAESTRUTURA
         </button>
       </div>
 
@@ -214,15 +244,21 @@ export const AdminConfigs: React.FC = () => {
                 ))}
               </div>
 
-              <div className="pt-6">
+              <div style={{ paddingTop: 16 }}>
                 <button
                   onClick={handleSave}
                   disabled={saving || !splitsValid}
-                  className={`w-full py-5 text-[10px] font-bold uppercase tracking-[0.4em] transition-all flex items-center justify-center gap-2 ${
-                    saved ? "bg-green-600 text-white" : splitsValid ? "bg-theme-text text-theme-bg hover:opacity-90" : "bg-theme-bg-muted text-theme-muted cursor-not-allowed"
-                  }`}
+                  style={{ 
+                    width: "100%", padding: "12px", border: "none",
+                    background: saved ? "#16a34a" : splitsValid ? T.text : T.bgField,
+                    color: saved ? "#fff" : splitsValid ? T.bg : T.text3,
+                    fontSize: 9, fontWeight: 900, textTransform: "uppercase",
+                    letterSpacing: "0.2em", cursor: splitsValid ? "pointer" : "not-allowed",
+                    display: "flex", alignItems: "center", justifyContent: "center", gap: 8,
+                    transition: "all 0.2s"
+                  }}
                 >
-                  {saved ? <CheckCircle size={14} /> : <Save size={14} />}
+                  {saved ? <CheckCircle size={12} /> : <Save size={12} />}
                   {saved ? "CONFIGURAÇÕES SINCRONIZADAS" : saving ? "SALVANDO..." : "SALVAR ALTERAÇÕES"}
                 </button>
               </div>
@@ -326,6 +362,92 @@ export const AdminConfigs: React.FC = () => {
               ))}
             </div>
           )}
+        </div>
+      )}
+
+      {tab === "infra" && (
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-8 animate-in fade-in duration-500">
+           {/* Branding */}
+           <div style={{ background: T.bgCard, border: `1px solid ${T.border}`, padding: "24px" }}>
+              <div className="flex items-center gap-3 mb-8">
+                <Palette size={16} style={{ color: T.brand }} />
+                <h3 style={{ fontSize: 10, fontWeight: 900, color: T.text, textTransform: "uppercase", letterSpacing: 2 }}>Identidade Visual</h3>
+              </div>
+              
+              <div className="space-y-8">
+                {["brand_primary", "brand_tactical"].map(key => {
+                   const config = configs.find(c => c.key === key);
+                   if (!config) return null;
+                   return (
+                     <div key={key} className="space-y-3">
+                        <label style={{ fontSize: 8, fontWeight: 900, color: T.text3, textTransform: "uppercase", letterSpacing: 1 }}>{config.label}</label>
+                        <div className="flex items-center gap-4">
+                           <div style={{ width: 40, height: 40, background: config.value, border: `1px solid ${T.border}` }} />
+                           <input 
+                             type="color" 
+                             value={config.value} 
+                             onChange={e => handleChange(key, e.target.value)}
+                             style={{ flex: 1, background: T.bgField, border: "none", height: 40, padding: "0 8px", cursor: "pointer" }}
+                           />
+                        </div>
+                     </div>
+                   );
+                })}
+              </div>
+           </div>
+
+           {/* Maintenance & Access */}
+           <div style={{ background: T.bgCard, border: `1px solid ${T.border}`, padding: "24px" }}>
+              <div className="flex items-center gap-3 mb-8">
+                <Shield size={16} style={{ color: T.brand }} />
+                <h3 style={{ fontSize: 10, fontWeight: 900, color: T.text, textTransform: "uppercase", letterSpacing: 2 }}>Protocolos de Acesso</h3>
+              </div>
+              
+              <div className="space-y-6">
+                {[
+                  { key: "maintenance_mode", label: "Modo Manutenção", desc: "Bloqueia acesso público à plataforma" },
+                  { key: "public_access", label: "Acesso à Vitrine", desc: "Permite visualização sem login" }
+                ].map(item => {
+                   const config = configs.find(c => c.key === item.key);
+                   if (!config) return null;
+                   const isOn = config.value === "true";
+                   return (
+                     <div key={item.key} style={{ display: "flex", justifyContent: "space-between", alignItems: "center", padding: "16px", border: `1px solid ${T.border}`, background: `${T.bgField}55` }}>
+                        <div>
+                          <div style={{ fontSize: 9, fontWeight: 900, color: T.text, textTransform: "uppercase", letterSpacing: 1 }}>{item.label}</div>
+                          <div style={{ fontSize: 8, color: T.text3, textTransform: "uppercase", marginTop: 2 }}>{item.desc}</div>
+                        </div>
+                        <button 
+                          onClick={() => handleChange(item.key, isOn ? "false" : "true")}
+                          style={{ 
+                            width: 32, height: 16, background: isOn ? T.brand : T.border, 
+                            border: "none", position: "relative", cursor: "pointer", transition: "all 0.3s"
+                          }}
+                        >
+                          <div style={{ 
+                            width: 12, height: 12, background: isOn ? T.brandText : T.text3, 
+                            position: "absolute", top: 2, left: isOn ? 18 : 2, transition: "all 0.3s" 
+                          }} />
+                        </button>
+                     </div>
+                   );
+                })}
+              </div>
+           </div>
+
+           <div className="md:col-span-2 pt-8 flex justify-center">
+              <button
+                onClick={handleSave}
+                disabled={saving}
+                style={{ 
+                  padding: "16px 40px", background: T.brand, color: T.brandText,
+                  fontSize: 9, fontWeight: 900, textTransform: "uppercase",
+                  letterSpacing: 4, border: "none", cursor: "pointer"
+                }}
+              >
+                {saving ? "SINCRONIZANDO..." : "SALVAR TODAS AS CONFIGURAÇÕES"}
+              </button>
+           </div>
         </div>
       )}
     </div>

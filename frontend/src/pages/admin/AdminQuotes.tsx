@@ -1,5 +1,6 @@
 import React, { useState, useEffect, useCallback } from "react";
 import { API } from "../../lib/api";
+import { T } from "../../lib/theme";
 import { 
   Briefcase, 
   Mail, 
@@ -7,11 +8,9 @@ import {
   Calendar, 
   ChevronRight, 
   CheckCircle, 
-  Send,
   Search,
   DollarSign,
   User,
-  Info
 } from "lucide-react";
 
 interface Quote {
@@ -70,21 +69,24 @@ export const AdminQuotes: React.FC = () => {
   };
 
   return (
-    <div className="space-y-12 animate-in fade-in slide-in-from-bottom-4 duration-700">
-      <div className="flex flex-col md:flex-row md:items-center justify-between gap-6 border-b border-white/5 pb-10">
+    <div className="space-y-8 animate-in fade-in slide-in-from-bottom-4 duration-700">
+      <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", borderBottom: `1px solid ${T.border}`, paddingBottom: 24 }}>
         <div>
-          <h2 className="text-4xl font-heading text-theme-text italic uppercase tracking-tighter">Máquina de Vendas</h2>
-          <p className="text-[10px] text-theme-muted uppercase tracking-[0.4em] mt-2 font-bold italic">Gestão de Leads e Orçamentos Customizados</p>
+          <h2 style={{ fontSize: 32, fontFamily: T.fontD, fontWeight: 900, color: T.text, textTransform: "uppercase", letterSpacing: -1, lineHeight: 1 }}>Máquina de Vendas</h2>
+          <p style={{ fontSize: 9, fontWeight: 900, color: T.text3, textTransform: "uppercase", letterSpacing: 2, marginTop: 8, fontStyle: "italic" }}>Gestão de Leads e Orçamentos Customizados</p>
         </div>
         
-        <div className="relative w-full md:w-96">
-          <Search className="absolute left-0 top-1/2 -translate-y-1/2 text-theme-muted" size={14} />
+        <div style={{ position: "relative", width: 320 }}>
+          <Search style={{ position: "absolute", left: 0, top: "50%", transform: "translateY(-50%)", color: T.text3 }} size={14} />
           <input
             type="text"
             placeholder="PROCURAR POR NOME OU E-MAIL..."
             value={search}
             onChange={(e) => setSearch(e.target.value)}
-            className="w-full bg-transparent border-b border-theme-border py-4 pl-8 text-[11px] text-theme-text placeholder-theme-muted/30 focus:outline-none focus:border-brand-tactical transition-all uppercase tracking-widest"
+            style={{ 
+              width: "100%", background: "transparent", border: "none", borderBottom: `1px solid ${T.border}`,
+              padding: "12px 0 12px 24px", fontSize: 9, color: T.text, textTransform: "uppercase", letterSpacing: 2, outline: "none"
+            }}
           />
         </div>
       </div>
@@ -101,50 +103,50 @@ export const AdminQuotes: React.FC = () => {
               <div 
                 key={quote.id}
                 onClick={() => setSelectedQuote(quote)}
-                className={`group p-8 border hover:bg-white/[0.03] transition-all cursor-pointer relative overflow-hidden ${
-                  selectedQuote?.id === quote.id ? "bg-white/[0.05] border-brand-tactical" : "bg-white/[0.01] border-white/5"
-                }`}
+                style={{ 
+                  padding: "16px 24px", border: `1px solid ${selectedQuote?.id === quote.id ? T.brand : T.border}`,
+                  background: selectedQuote?.id === quote.id ? `${T.brand}08` : T.bgCard,
+                  cursor: "pointer", position: "relative", transition: "all 0.2s"
+                }}
               >
                 {quote.quoteStatus === "PENDING" && (
-                  <div className="absolute top-0 right-0 w-2 h-full bg-brand-tactical/30" />
+                  <div style={{ position: "absolute", top: 0, left: 0, width: 2, height: "100%", background: T.brand }} />
                 )}
                 
                 <div className="flex flex-col md:flex-row md:items-center justify-between gap-6">
-                  <div className="space-y-3">
+                  <div className="space-y-2">
                     <div className="flex items-center gap-3">
-                      <span className={`text-[8px] font-bold px-2 py-0.5 uppercase tracking-widest border ${
-                        quote.quoteStatus === "PENDING" ? "border-brand-tactical text-brand-tactical" : 
-                        quote.quoteStatus === "PRICED" ? "border-yellow-500 text-yellow-500" :
-                        quote.quoteStatus === "CONVERTED" ? "border-green-500 text-green-500" :
-                        "border-zinc-800 text-zinc-500"
-                      }`}>
+                      <span style={{ 
+                        fontSize: 8, fontWeight: 900, textTransform: "uppercase", letterSpacing: 1, 
+                        border: `1px solid ${quote.quoteStatus === "PENDING" ? T.brand : T.border}`,
+                        color: quote.quoteStatus === "PENDING" ? T.brand : T.text3,
+                        padding: "2px 6px"
+                      }}>
                         {quote.quoteStatus}
                       </span>
-                      <span className="text-[9px] text-theme-muted font-sans">{new Date(quote.createdAt).toLocaleString("pt-BR")}</span>
+                      <span style={{ fontSize: 9, color: T.text3 }}>{new Date(quote.createdAt).toLocaleString("pt-BR")}</span>
                     </div>
-                    <h3 className="text-xl font-heading text-theme-text uppercase tracking-tight italic group-hover:text-brand-tactical transition-colors">
+                    <h3 style={{ fontSize: 16, fontWeight: 900, color: T.text, textTransform: "uppercase", letterSpacing: -0.5 }}>
                       {quote.nomeNoivos}
                     </h3>
-                    <div className="flex flex-wrap gap-6 items-center">
-                       <div className="flex items-center gap-2 text-[10px] text-theme-muted uppercase tracking-widest font-bold">
-                         <User size={12} className="text-brand-tactical" /> {quote.clientName || "Convidado"}
+                    <div className="flex flex-wrap gap-4 items-center">
+                       <div style={{ display: "flex", alignItems: "center", gap: 6, fontSize: 9, color: T.text3, fontWeight: 900, textTransform: "uppercase" }}>
+                         <User size={10} style={{ color: T.brand }} /> {quote.clientName || "Convidado"}
                        </div>
-                       <div className="flex items-center gap-2 text-[10px] text-theme-muted uppercase tracking-widest">
-                         <Mail size={12} className="text-zinc-700" /> {quote.clientEmail}
+                       <div style={{ display: "flex", alignItems: "center", gap: 6, fontSize: 9, color: T.text3, textTransform: "uppercase" }}>
+                         <Mail size={10} /> {quote.clientEmail}
                        </div>
                     </div>
                   </div>
 
                   <div className="flex items-center gap-6">
-                    <div className="text-right">
-                      <div className="text-[9px] text-theme-muted uppercase tracking-widest mb-1">Status</div>
-                      <div className="text-[11px] text-theme-text font-bold uppercase tracking-widest">
-                        {quote.quoteStatus === "PENDING" ? "Novo Lead" : 
-                         quote.quoteStatus === "PRICED" ? "Aguardando Pagamento" :
-                         quote.quoteStatus === "CONVERTED" ? "Convertido" : "Processado"}
+                    <div style={{ textAlign: "right" }}>
+                      <div style={{ fontSize: 8, color: T.text3, textTransform: "uppercase", letterSpacing: 1, marginBottom: 2 }}>Lead</div>
+                      <div style={{ fontSize: 10, color: T.text, fontWeight: 900, textTransform: "uppercase", letterSpacing: 1 }}>
+                        {quote.quoteStatus === "PENDING" ? "Pendente" : "Processado"}
                       </div>
                     </div>
-                    <ChevronRight size={20} className={`text-zinc-800 group-hover:text-brand-tactical transition-all ${selectedQuote?.id === quote.id ? "rotate-90 text-brand-tactical" : ""}`} />
+                    <ChevronRight size={16} style={{ color: selectedQuote?.id === quote.id ? T.brand : T.text3, transition: "all 0.2s", transform: selectedQuote?.id === quote.id ? "rotate(90deg)" : "none" }} />
                   </div>
                 </div>
               </div>
@@ -159,70 +161,69 @@ export const AdminQuotes: React.FC = () => {
         {/* Selected Details & Pricing */}
         <div className="lg:col-span-4 lg:sticky lg:top-10 h-fit">
           {selectedQuote ? (
-            <div className="bg-white/[0.02] border border-white/5 p-10 space-y-10 animate-in fade-in slide-in-from-right-4 duration-500">
+            <div style={{ background: T.bgCard, border: `1px solid ${T.border}`, padding: "24px" }} className="space-y-8 animate-in fade-in slide-in-from-right-4 duration-500">
                <div>
-                  <h4 className="text-[11px] font-bold text-brand-tactical uppercase tracking-[0.5em] mb-6">Detalhamento do Evento</h4>
-                  <div className="space-y-6">
-                     <div className="flex gap-4 items-start">
-                        <Calendar size={14} className="text-zinc-700 mt-1" />
+                  <h4 style={{ fontSize: 9, fontWeight: 900, color: T.brand, textTransform: "uppercase", letterSpacing: 4, marginBottom: 16 }}>Detalhamento</h4>
+                  <div className="space-y-4">
+                     <div className="flex gap-3 items-start">
+                        <Calendar size={12} style={{ color: T.text3, marginTop: 2 }} />
                         <div>
-                          <div className="text-[9px] text-theme-muted uppercase font-bold tracking-widest mb-1">Data Solicitada</div>
-                          <div className="text-[11px] text-theme-text uppercase font-bold">{new Date(selectedQuote.dataEvento).toLocaleDateString("pt-BR")}</div>
+                          <div style={{ fontSize: 8, color: T.text3, textTransform: "uppercase", fontWeight: 900, marginBottom: 2 }}>Data Solicitada</div>
+                          <div style={{ fontSize: 11, color: T.text, fontWeight: 900 }}>{new Date(selectedQuote.dataEvento).toLocaleDateString("pt-BR")}</div>
                         </div>
                      </div>
-                     <div className="flex gap-4 items-start">
-                        <MapPin size={14} className="text-zinc-700 mt-1" />
+                     <div className="flex gap-3 items-start">
+                        <MapPin size={12} style={{ color: T.text3, marginTop: 2 }} />
                         <div>
-                          <div className="text-[9px] text-theme-muted uppercase font-bold tracking-widest mb-1">Localização</div>
-                          <div className="text-[11px] text-theme-text uppercase font-bold">{selectedQuote.location}</div>
-                        </div>
-                     </div>
-                     <div className="flex gap-4 items-start">
-                        <Info size={14} className="text-zinc-700 mt-1" />
-                        <div>
-                          <div className="text-[9px] text-theme-muted uppercase font-bold tracking-widest mb-1">Tipo de Uso</div>
-                          <div className="text-[11px] text-brand-tactical uppercase font-bold tracking-widest">{selectedQuote.usageType || "PESSOAL"}</div>
+                          <div style={{ fontSize: 8, color: T.text3, textTransform: "uppercase", fontWeight: 900, marginBottom: 2 }}>Localização</div>
+                          <div style={{ fontSize: 11, color: T.text, fontWeight: 900 }}>{selectedQuote.location}</div>
                         </div>
                      </div>
                   </div>
                </div>
 
-               <div className="pt-6 border-t border-white/5">
-                  <h4 className="text-[11px] font-bold text-theme-muted uppercase tracking-[0.5em] mb-4">Briefing do Cliente</h4>
-                  <div className="bg-black/40 p-6 border border-white/5 text-[10px] text-zinc-500 leading-relaxed uppercase tracking-widest whitespace-pre-line">
+               <div style={{ paddingTop: 16, borderTop: `1px solid ${T.border}` }}>
+                  <h4 style={{ fontSize: 9, fontWeight: 900, color: T.text3, textTransform: "uppercase", letterSpacing: 2, marginBottom: 8 }}>Briefing</h4>
+                  <div style={{ background: `${T.bgField}88`, padding: "12px", border: `1px solid ${T.border}`, fontSize: 9, color: T.text2, lineHeight: 1.6, textTransform: "uppercase", letterSpacing: 0.5 }}>
                     {selectedQuote.description}
                   </div>
                </div>
 
                {selectedQuote.quoteStatus === "PENDING" ? (
-                 <div className="pt-6 space-y-6">
-                    <div className="space-y-4">
-                      <label className="text-[10px] font-bold text-theme-text uppercase tracking-[0.4em] flex items-center gap-2">
-                        <DollarSign size={12} className="text-brand-tactical" /> Definir Preço Final (R$)
+                 <div className="pt-4 space-y-4">
+                    <div className="space-y-2">
+                      <label style={{ fontSize: 9, fontWeight: 900, color: T.text, textTransform: "uppercase", letterSpacing: 2, display: "flex", alignItems: "center", gap: 6 }}>
+                        <DollarSign size={10} style={{ color: T.brand }} /> Definir Preço (R$)
                       </label>
                       <input 
                         type="number"
                         value={price}
                         onChange={(e) => setPrice(e.target.value)}
                         placeholder="0.00"
-                        className="w-full bg-theme-bg-muted border border-theme-border py-5 px-6 text-2xl font-heading text-theme-text focus:outline-none focus:border-brand-tactical"
+                        style={{ width: "100%", background: T.bgField, border: `1px solid ${T.border}`, padding: "12px", fontSize: 20, fontFamily: T.fontD, fontWeight: 900, color: T.text, outline: "none" }}
                       />
                     </div>
 
                     <button 
                       onClick={handleApprove}
                       disabled={!price || approving}
-                      className="w-full bg-brand-tactical text-black text-[10px] font-black uppercase tracking-[0.4em] py-6 hover:brightness-110 transition-all flex items-center justify-center gap-2 disabled:opacity-50"
+                      style={{ 
+                        width: "100%", background: T.brand, color: T.brandText, padding: "16px", 
+                        fontSize: 9, fontWeight: 900, textTransform: "uppercase", 
+                        letterSpacing: 2, cursor: "pointer", border: "none", transition: "all 0.2s"
+                      }}
+                      onMouseEnter={e => e.currentTarget.style.opacity = "0.8"}
+                      onMouseLeave={e => e.currentTarget.style.opacity = "1"}
                     >
-                      {approving ? "ENVIANDO..." : <><Send size={14} /> APROVAR E ENVIAR E-MAIL</>}
+                      {approving ? "ENVIANDO..." : "APROVAR E ENVIAR E-MAIL"}
                     </button>
                  </div>
                ) : (
-                 <div className="pt-6">
-                    <div className="bg-brand-tactical/5 border border-brand-tactical/20 p-6 text-center">
-                       <CheckCircle size={24} className="text-brand-tactical mx-auto mb-4" />
-                       <div className="text-[10px] text-brand-tactical font-bold uppercase tracking-widest">Orçamento Já Enviado</div>
-                       <div className="text-[11px] text-theme-text font-bold mt-2 font-sans">VALOR: R$ {Number(selectedQuote.priceBase).toFixed(2)}</div>
+                 <div className="pt-4">
+                    <div style={{ background: `${T.brand}08`, border: `1px solid ${T.brand}22`, padding: "16px", textAlign: "center" }}>
+                       <CheckCircle size={20} style={{ color: T.brand, margin: "0 auto 8px" }} />
+                       <div style={{ fontSize: 9, color: T.brand, fontWeight: 900, textTransform: "uppercase", letterSpacing: 1 }}>Orçamento Enviado</div>
+                       <div style={{ fontSize: 12, color: T.text, fontWeight: 900, marginTop: 4 }}>R$ {Number(selectedQuote.priceBase).toFixed(2)}</div>
                     </div>
                  </div>
                )}

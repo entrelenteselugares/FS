@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { API } from "../../lib/api";
 import { X } from "lucide-react";
+import { T } from "../../lib/theme";
 
 interface User {
   id: string;
@@ -117,7 +118,11 @@ export const AdminUsers: React.FC = () => {
         </div>
         <button 
           onClick={() => setIsModalOpen(true)}
-          className="bg-brand-tactical text-black text-[10px] font-bold uppercase tracking-[0.4em] px-10 py-5 hover:brightness-110 transition-all rounded-none"
+          style={{ 
+            background: T.brand, color: T.brandText, padding: "12px 24px", 
+            border: "none", fontSize: 10, fontWeight: 900, 
+            textTransform: "uppercase", letterSpacing: 3, cursor: "pointer" 
+          }}
         >
           CONVOCAR MEMBRO
         </button>
@@ -175,13 +180,27 @@ export const AdminUsers: React.FC = () => {
               <div className="col-span-2 flex justify-end gap-2">
                 <button 
                   onClick={() => handleEditOpen(user)}
-                  className="text-[9px] font-bold text-zinc-700 uppercase tracking-[0.4em] hover:text-white transition-all border border-transparent hover:border-white/10 px-4 py-2"
+                  style={{ 
+                    background: "transparent", border: `1px solid ${T.border}`, 
+                    padding: "6px 12px", color: T.text2, fontSize: 8, 
+                    fontWeight: 900, textTransform: "uppercase", letterSpacing: 1,
+                    cursor: "pointer", transition: "all 0.2s"
+                  }}
+                  onMouseEnter={e => { e.currentTarget.style.borderColor = T.brand; e.currentTarget.style.color = T.text; }}
+                  onMouseLeave={e => { e.currentTarget.style.borderColor = T.border; e.currentTarget.style.color = T.text2; }}
                 >
                    Editar
                 </button>
                 <button 
                   onClick={() => handleDelete(user)}
-                  className="text-[9px] font-bold text-red-900/40 hover:text-red-500 uppercase tracking-[0.4em] transition-all px-4 py-2"
+                  style={{ 
+                    background: "transparent", border: `1px solid #451a1a`, 
+                    padding: "6px 12px", color: "#f87171", fontSize: 8, 
+                    fontWeight: 900, textTransform: "uppercase", letterSpacing: 1,
+                    cursor: "pointer", transition: "all 0.2s"
+                  }}
+                  onMouseEnter={e => { e.currentTarget.style.background = "#451a1a"; }}
+                  onMouseLeave={e => { e.currentTarget.style.background = "transparent"; }}
                 >
                    Remover
                 </button>

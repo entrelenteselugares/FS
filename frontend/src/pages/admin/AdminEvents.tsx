@@ -229,8 +229,8 @@ export const AdminEvents: React.FC = () => {
             <tr style={{ borderBottom: `1px solid ${T.border}` }}>
               {["Evento", "Data", "Produção", "Vendas", "Membros", "Ações"].map((h) => (
                 <th key={h} style={{ 
-                  padding: "16px 20px", fontSize: 10, fontFamily: T.fontB, fontWeight: 700, 
-                  textTransform: "uppercase", letterSpacing: 1.5, color: T.text3 
+                  padding: "10px 16px", fontSize: 9, fontFamily: T.fontB, fontWeight: 900, 
+                  textTransform: "uppercase", letterSpacing: 2, color: T.text3 
                 }}>
                   {h}
                 </th>
@@ -262,22 +262,22 @@ export const AdminEvents: React.FC = () => {
                 onMouseLeave={(e: React.MouseEvent<HTMLElement>) => { (e.currentTarget as HTMLElement).style.background = idx % 2 === 0 ? T.bgField : "transparent"; }}
               >
                 {/* Evento */}
-                <td style={{ padding: "20px" }}>
-                  <div style={{ fontSize: 13, fontFamily: T.fontB, fontWeight: 500, color: T.text }}>
+                <td style={{ padding: "12px 16px" }}>
+                  <div style={{ fontSize: 12, fontWeight: 900, color: T.text, textTransform: "uppercase", letterSpacing: -0.3 }}>
                     {event.title}
                   </div>
-                  <div style={{ fontSize: 11, fontFamily: T.fontB, color: T.text3, marginTop: 4 }}>
+                  <div style={{ fontSize: 10, color: T.text3, marginTop: 2, textTransform: "uppercase", fontWeight: 700 }}>
                     {event.location}
                   </div>
                 </td>
 
                 {/* Data */}
-                <td style={{ padding: "20px", fontSize: 12, fontFamily: T.fontB, color: T.text2 }}>
+                <td style={{ padding: "12px 16px", fontSize: 11, fontWeight: 700, color: T.text2 }}>
                   {new Date(event.date).toLocaleDateString("pt-BR")}
                 </td>
 
                 {/* Produção */}
-                <td style={{ padding: "20px" }}>
+                <td style={{ padding: "12px 16px" }}>
                    <div style={{ display: "flex", gap: 12, alignItems: "center" }}>
                       <div title="Capa" style={{ 
                         width: 8, height: 8, borderRadius: "50%", 
@@ -296,46 +296,49 @@ export const AdminEvents: React.FC = () => {
                 </td>
 
                 {/* Vendas */}
-                <td style={{ padding: "20px" }}>
-                  <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
+                <td style={{ padding: "12px 16px" }}>
+                  <div style={{ display: "flex", alignItems: "center", gap: 6 }}>
                     <div style={{ 
-                      fontSize: 12, fontFamily: T.fontB, fontWeight: 700, 
+                      fontSize: 12, fontWeight: 900, 
                       color: event._count?.pedidos > 0 ? T.brand : T.text3 
                     }}>
                       {event._count?.pedidos || 0}
                     </div>
-                    {event._count?.pedidos > 0 && (
-                      <span style={{ fontSize: 8, color: T.brand, border: `1px solid ${T.brand}44`, padding: "2px 4px", fontWeight: 900 }}>HOT</span>
-                    )}
                   </div>
                 </td>
 
                 {/* Membros */}
-                <td style={{ padding: "20px" }}>
-                   <div style={{ fontSize: 10, color: T.text, fontWeight: 600 }}>{event.captacao?.nome || "—"}</div>
-                   <div style={{ fontSize: 9, color: T.text3 }}>{event.edicao?.nome || "—"}</div>
+                <td style={{ padding: "12px 16px" }}>
+                   <div style={{ fontSize: 9, color: T.text, fontWeight: 900, textTransform: "uppercase" }}>{event.captacao?.nome || "—"}</div>
+                   <div style={{ fontSize: 8, color: T.text3, textTransform: "uppercase" }}>{event.edicao?.nome || "—"}</div>
                 </td>
 
                 {/* Ações */}
-                <td style={{ padding: "20px" }}>
-                  <div style={{ display: "flex", gap: 12 }}>
+                <td style={{ padding: "12px 16px" }}>
+                  <div style={{ display: "flex", gap: 8, alignItems: "center" }}>
                     <button 
                       onClick={() => { setQrModalEvent(event); setCopied(false); }}
                       style={{ 
-                        background: "transparent", border: "none", color: T.text3, 
-                        cursor: "pointer", display: "flex", alignItems: "center" 
+                        background: "transparent", border: `1px solid ${T.border}`, color: T.text3, 
+                        cursor: "pointer", display: "flex", alignItems: "center", padding: 6,
+                        transition: "all 0.2s"
                       }}
+                      onMouseEnter={e => e.currentTarget.style.color = T.brand}
+                      onMouseLeave={e => e.currentTarget.style.color = T.text3}
                       title="Gerar QR Code"
                     >
-                      <QrCode size={14} />
+                      <QrCode size={12} />
                     </button>
                     <button 
                       onClick={() => handleEditOpen(event)}
                       style={{ 
-                        background: "transparent", border: "none", color: T.brand, 
-                        fontSize: 9, fontWeight: 900, textTransform: "uppercase", 
-                        letterSpacing: 1, cursor: "pointer", borderBottom: `1px solid ${T.brand}`
+                        background: "transparent", border: `1px solid ${T.border}`, color: T.text2, 
+                        fontSize: 8, fontWeight: 900, textTransform: "uppercase", 
+                        letterSpacing: 1, cursor: "pointer", padding: "6px 10px",
+                        transition: "all 0.2s"
                       }}
+                      onMouseEnter={e => { e.currentTarget.style.borderColor = T.brand; e.currentTarget.style.color = T.text; }}
+                      onMouseLeave={e => { e.currentTarget.style.borderColor = T.border; e.currentTarget.style.color = T.text2; }}
                     >
                       Configurar
                     </button>
@@ -383,7 +386,7 @@ export const AdminEvents: React.FC = () => {
                   </div>
 
                   <div className="space-y-2">
-                    <label className="text-[9px] font-bold text-theme-muted/60 uppercase tracking-[0.4em]">Nome do Evento (Ex: Noivos)</label>
+                    <label className="text-[9px] font-bold text-theme-muted/60 uppercase tracking-[0.4em]">Título do Evento (Ex: Nome do Evento)</label>
                     <input 
                       type="text"
                       className="w-full bg-theme-bg border border-theme-border p-4 text-[13px] text-theme-text focus:border-brand-tactical transition-colors outline-none font-bold"

@@ -33,11 +33,11 @@ app.use(cors({
   credentials: true,
 }));
 
-// Rate limiting
+// Rate limiting (Relaxado para desenvolvimento/produção MVP)
 app.use("/api/auth", rateLimit({ 
-  windowMs: 15 * 60 * 1000, 
-  max: 10,
-  message: { error: "Muitas tentativas. Tente em 15 minutos." } 
+  windowMs: 5 * 60 * 1000, // 5 minutos
+  max: 100, // Aumentado de 10 para 100
+  message: { error: "Muitas tentativas. Tente novamente em breve." } 
 }));
 
 app.use("/api/checkout", rateLimit({ 

@@ -787,7 +787,7 @@ export default function UnidadeFixaDashboard() {
                 <QrCode size={24} />
               </div>
               <h3 style={{ fontSize: 20, fontWeight: 800, color: "var(--theme-text)", marginBottom: 4 }}>QR Code do Evento</h3>
-              <p style={{ fontSize: 12, color: "var(--theme-text-muted)" }}>Imprima ou compartilhe para que os noivos e convidados acessem o álbum direto da unidade fixa.</p>
+              <p style={{ fontSize: 12, color: "var(--theme-text-muted)" }}>Imprima ou compartilhe para que os titulares e convidados acessem o álbum direto da unidade fixa.</p>
             </div>
 
             <div style={{ background: "#fff", padding: "1.5rem", borderRadius: 12, display: "inline-block", marginBottom: "1.5rem", boxShadow: "0 10px 30px rgba(0,0,0,0.5)" }}>
@@ -841,7 +841,7 @@ export default function UnidadeFixaDashboard() {
                 </button>
               </div>
               
-              <p style={{ fontSize: 10, color: "var(--theme-text-muted)", fontStyle: "italic" }}>Dica: Imprima este QR Code e anexe à pasta de documentos dos noivos.</p>
+              <p style={{ fontSize: 10, color: "var(--theme-text-muted)", fontStyle: "italic" }}>Dica: Imprima este QR Code e anexe à pasta de documentos do cliente.</p>
             </div>
           </div>
           <style>{`

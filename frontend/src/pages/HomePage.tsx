@@ -325,7 +325,7 @@ export const HomePage = () => {
           ) : events.length === 0 ? (
             <div style={{ textAlign: "center", padding: "6rem 0", border: `1px dashed ${T.border}` }}>
               <p style={{ fontFamily: T.fontD, fontWeight: 900, fontSize: 32, color: T.text2, textTransform: "uppercase" }}>Nenhum resultado encontrado.</p>
-              <p style={{ fontSize: 12, color: T.text3, fontFamily: T.fontB, marginTop: 8 }}>Tente buscar pelo nome completo dos noivos.</p>
+              <p style={{ fontSize: 12, color: T.text3, fontFamily: T.fontB, marginTop: 8 }}>Tente buscar pelo nome completo do evento ou titular.</p>
             </div>
           ) : (
             <div className="hp-grid" style={{ display: "grid", gridTemplateColumns: "repeat(auto-fill, minmax(300px, 1fr))", gap: 1, background: T.border }}>

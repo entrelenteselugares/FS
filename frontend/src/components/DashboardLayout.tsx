@@ -81,7 +81,7 @@ const SidebarContent: React.FC<SidebarContentProps> = ({ navItems, onNavigate })
     }}>
       {/* ── Brand Header ── */}
       <div style={{
-        padding:      "32px 24px 24px",
+        padding:      "16px 16px 12px",
         borderBottom: `1px solid ${T.border}`,
       }}>
         <Link to="/" style={{ textDecoration: "none", display: "inline-block" }}>
@@ -103,11 +103,11 @@ const SidebarContent: React.FC<SidebarContentProps> = ({ navItems, onNavigate })
             display:       "flex",
             alignItems:    "center",
             gap:           12,
-            padding:       "12px 24px",
-            fontSize:      11,
+            padding:       "8px 16px",
+            fontSize:      9,
             fontFamily:    T.fontB,
             fontWeight:    active ? 600 : 400,
-            letterSpacing: "0.05em",
+            letterSpacing: "0.01em",
             cursor:        "pointer",
             border:        "none",
             background:    active ? "var(--bg-field)" : "transparent",
@@ -174,11 +174,12 @@ const SidebarContent: React.FC<SidebarContentProps> = ({ navItems, onNavigate })
             </button>
           );
         })}
+
       </nav>
 
       {/* ── User Footer ── */}
       <div style={{
-        padding:      "16px 20px",
+        padding:      "12px 16px",
         borderTop:    `1px solid ${T.border}`,
         background:   T.bgCard,
       }}>
@@ -212,19 +213,18 @@ const SidebarContent: React.FC<SidebarContentProps> = ({ navItems, onNavigate })
              user?.role === "PROFISSIONAL" ? "Profissional da Rede" :
              "Cliente"}
           </div>
-
-          <Link to="/" style={{ 
-            display: "flex", alignItems: "center", gap: 6,
-            fontSize: 9, fontFamily: T.fontB, fontWeight: 800, 
-            color: T.text3, textDecoration: "none", textTransform: "uppercase",
-            letterSpacing: 1.5, marginTop: 12, opacity: 0.8,
-            transition: "opacity 0.2s"
-          }} onMouseEnter={(e) => (e.currentTarget.style.opacity = "1")} onMouseLeave={(e) => (e.currentTarget.style.opacity = "0.8")}>
-            Visitar Site
-            <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg>
-          </Link>
         </div>
-
+        {/* Visit Site Button */}
+        <Link to="/" style={{ 
+          display: "flex", alignItems: "center", gap: 8,
+          padding: "10px", fontSize: 9, fontFamily: T.fontB, fontWeight: 900, 
+          color: T.brand, textDecoration: "none", textTransform: "uppercase",
+          letterSpacing: 2, border: `1px solid ${T.brand}44`,
+          marginBottom: 12, justifyContent: "center", transition: "all 0.2s"
+        }} onMouseEnter={(e) => (e.currentTarget.style.background = `${T.brand}11`)} onMouseLeave={(e) => (e.currentTarget.style.background = "transparent")}>
+          <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg>
+          <span>Visitar Site</span>
+        </Link>
 
         {/* Logout button */}
         <button
@@ -286,7 +286,7 @@ export const DashboardLayout: React.FC<DashboardLayoutProps> = ({
     }}>
       {/* ── Desktop Sidebar ── */}
       <aside style={{
-        width:     220,
+        width:     180,
         flexShrink: 0,
         display:   "none",  // overridden by media via className below
       }} className="dashboard-sidebar">
@@ -338,7 +338,7 @@ export const DashboardLayout: React.FC<DashboardLayoutProps> = ({
           display:        "flex",
           alignItems:     "center",
           justifyContent: "space-between",
-          padding:        "16px 28px",
+          padding:        "12px 24px",
           borderBottom:   `1px solid ${T.border}`,
           background:     T.bg,
           flexShrink:     0,

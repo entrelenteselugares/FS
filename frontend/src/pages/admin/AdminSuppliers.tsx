@@ -1,18 +1,14 @@
 import { useState, useEffect, useCallback } from "react";
 import { API as api } from "../../lib/api";
-import { useTheme } from "../../contexts/ThemeContextCore";
-
 import { 
   Calculator, 
   Printer, 
-  Truck, 
-  Receipt, 
   BarChart3, 
   Settings,
-  Package,
   Target,
   Clock
 } from "lucide-react";
+import { T } from "../../lib/theme";
 
 interface Supplier {
   id: string;
@@ -43,7 +39,6 @@ interface Breakeven {
 }
 
 export default function AdminSuppliers() {
-  useTheme();
   const [suppliers, setSuppliers] = useState<Supplier[]>([]);
   const [selectedId, setSelectedId] = useState<string | null>(null);
   const [breakeven, setBreakeven] = useState<Breakeven | null>(null);
@@ -78,17 +73,17 @@ export default function AdminSuppliers() {
 
 
   return (
-    <div className="grid grid-cols-[320px_1fr] gap-10 p-8 pt-0 min-h-[calc(100vh-200px)]">
+    <div className="grid grid-cols-[240px_1fr] gap-4 p-4 pt-0 min-h-[calc(100vh-100px)]">
       
       {/* Sidebar List */}
-      <div className="space-y-6 border-r border-theme-border pr-10">
-        <div className="flex items-center justify-between mb-8">
-            <h3 className="text-[11px] font-black uppercase tracking-[0.5em] text-theme-muted flex items-center gap-3">
-                <Printer size={14} className="text-brand-primary" />
+      <div className="space-y-4 border-r border-theme-border pr-4">
+        <div className="flex items-center justify-between mb-4">
+            <h3 style={{ fontSize: 9, fontWeight: 900, textTransform: "uppercase", letterSpacing: "0.3em", color: T.text3, display: "flex", alignItems: "center", gap: 8 }}>
+                <Printer size={12} style={{ color: T.brand }} />
                 Hardware & Ativos
             </h3>
-            <button className="p-2 ghost border border-theme-border/50 text-theme-muted hover:text-theme-text transition-colors">
-                <Settings size={14} />
+            <button style={{ background: "transparent", border: `1px solid ${T.border}`, color: T.text3, padding: 4, cursor: "pointer" }}>
+                <Settings size={12} />
             </button>
         </div>
 
@@ -96,38 +91,36 @@ export default function AdminSuppliers() {
           {suppliers.map(s => (
             <button
               key={s.id}
-
               onClick={() => handleSelect(s.id)}
-              className={`w-full p-6 text-left border transition-all duration-300 relative group
-                ${selectedId === s.id 
-                  ? "bg-theme-bg-muted border-brand-primary shadow-lg" 
-                  : "bg-transparent border-theme-border hover:border-theme-text/20"}`}
+              style={{ 
+                width: "100%", padding: "12px", border: `1px solid ${selectedId === s.id ? T.brand : T.border}`,
+                background: selectedId === s.id ? `${T.brand}10` : "transparent",
+                textAlign: "left", cursor: "pointer", position: "relative", transition: "all 0.2s"
+              }}
             >
               <div className="flex flex-col">
-                <span className={`text-[13px] font-bold tracking-tight mb-1 transition-colors ${selectedId === s.id ? "text-theme-text" : "text-theme-text/70"}`}>
+                <span style={{ fontSize: 11, fontWeight: 900, color: selectedId === s.id ? T.text : T.text2, textTransform: "uppercase", letterSpacing: -0.2 }}>
                     {s.name}
                 </span>
-                <span className="text-[9px] font-black uppercase tracking-[0.25em] text-theme-muted">
-                    {s.type === "OWN_PRINTER" ? "Ativo Local" : "Fulfillment Externo"}
+                <span style={{ fontSize: 8, fontWeight: 900, textTransform: "uppercase", letterSpacing: 1, color: T.text3, marginTop: 2 }}>
+                    {s.type === "OWN_PRINTER" ? "Ativo Local" : "Fulfillment"}
                 </span>
               </div>
               
-              <div className="mt-6 flex items-center justify-between">
+              <div className="mt-4 flex items-center justify-between">
                 <div className="flex items-center gap-2">
-                    <span className="text-[10px] font-bold text-brand-primary uppercase tracking-widest">
+                    <span style={{ fontSize: 9, fontWeight: 900, color: T.brand, textTransform: "uppercase" }}>
                         R$ {Number(s.costPer10x15).toFixed(2)}
                     </span>
-                    <span className="text-[8px] text-theme-muted uppercase tracking-tighter">/ unid</span>
                 </div>
-                <div className="flex items-center gap-1.5 text-[10px] text-theme-muted">
-                    <Receipt size={10} />
-                    <span>{s._count.redemptions} resg.</span>
+                <div style={{ fontSize: 8, color: T.text3, fontWeight: 700, textTransform: "uppercase" }}>
+                    {s._count.redemptions} RESG.
                 </div>
               </div>
 
               {selectedId === s.id && (
                   <div 
-                    className="absolute -right-[41px] top-1/2 -translate-y-1/2 w-[2px] h-12 bg-brand-primary shadow-[0_0_12px_rgba(133,185,172,0.8)]"
+                    style={{ position: "absolute", right: -4, top: "20%", height: "60%", width: 2, background: T.brand, boxShadow: `0 0 10px ${T.brand}` }}
                   />
               )}
             </button>
@@ -136,9 +129,7 @@ export default function AdminSuppliers() {
       </div>
 
       {/* Analysis Workspace */}
-        <div 
-           className="space-y-10"
-        >
+        <div style={{ display: "flex", flexDirection: "column", gap: 16 }}>
           {!selectedId ? (
             <div className="h-full flex flex-col items-center justify-center border-2 border-dashed border-theme-border p-20 text-center space-y-4">
               <Calculator size={48} className="text-theme-border" strokeWidth={1} />
@@ -178,39 +169,24 @@ export default function AdminSuppliers() {
               </div>
 
               {/* Gamification Costs */}
-              <div className="glass-card p-10 relative overflow-hidden border border-theme-border bg-theme-bg-muted/30">
-                <div className="absolute top-0 right-0 p-8 text-theme-text/5 pointer-events-none transform rotate-12 translate-x-1/4 -translate-y-1/4">
-                    <BarChart3 size={240} />
-                </div>
-                
-                <h4 className="text-[11px] font-black uppercase tracking-[0.6em] text-theme-muted mb-10 flex items-center gap-4">
-                  <span className="w-8 h-px bg-brand-primary/40" />
+              <div style={{ border: `1px solid ${T.border}`, padding: "20px", background: `${T.bgCard}44` }}>
+                <h4 style={{ fontSize: 9, fontWeight: 900, textTransform: "uppercase", letterSpacing: "0.4em", color: T.text3, marginBottom: 16 }}>
                   Custos por Patamar de Gamificação
                 </h4>
                 
-                <div className="grid grid-cols-3 gap-8 relative z-10">
+                <div className="grid grid-cols-3 gap-4">
                   {breakeven.packages.map(p => (
-                    <div key={p.curtidas} className="p-8 border border-theme-border bg-theme-bg h-full flex flex-col justify-between hover:border-brand-primary/50 transition-colors cursor-default">
-                      <div>
-                        <div className="flex items-center gap-2 text-[10px] font-bold uppercase tracking-[0.3em] text-brand-primary mb-4">
-                            <span className="w-4 h-px bg-brand-primary" />
-                            {p.curtidas} Curtidas
-                        </div>
-                        <div className="flex items-baseline gap-2 mb-8">
-                            <span className="text-4xl font-black font-sans text-theme-text leading-none">{p.photos}</span>
-                            <span className="text-[10px] font-bold uppercase tracking-widest text-theme-muted">Arquivos</span>
-                        </div>
-                        
-                        <div className="space-y-3.5 mb-10">
-                          <DataLine icon={<Printer size={12} />} label="Impressão" value={`R$ ${p.costBreakdown.impressao}`} />
-                          <DataLine icon={<Package size={12} />} label="Embalagem" value={`R$ ${p.costBreakdown.embalagem}`} />
-                          <DataLine icon={<Truck size={12} />} label="Logística" value={`R$ ${p.costBreakdown.frete}`} />
-                        </div>
+                    <div key={p.curtidas} style={{ padding: "16px", border: `1px solid ${T.border}`, background: T.bgCard }}>
+                      <div className="flex items-center gap-2 text-[9px] font-black uppercase tracking-widest text-brand-primary mb-4">
+                          {p.curtidas} Curtidas
                       </div>
-                      
-                      <div className="pt-6 border-t border-theme-border flex justify-between items-center">
-                        <span className="text-[9px] font-black uppercase tracking-[0.2em] text-theme-muted">Custo Total</span>
-                        <span className="text-lg font-black text-theme-text">R$ {p.totalCost}</span>
+                      <div className="flex items-baseline gap-2 mb-4">
+                          <span style={{ fontSize: 24, fontWeight: 900, color: T.text }}>{p.photos}</span>
+                          <span style={{ fontSize: 8, fontWeight: 900, textTransform: "uppercase", color: T.text3 }}>Fotos</span>
+                      </div>
+                      <div className="pt-4 border-t border-theme-border flex justify-between items-center">
+                        <span style={{ fontSize: 8, fontWeight: 900, textTransform: "uppercase", color: T.text3 }}>Total</span>
+                        <span style={{ fontSize: 14, fontWeight: 900, color: T.text }}>R$ {p.totalCost}</span>
                       </div>
                     </div>
                   ))}
@@ -293,16 +269,3 @@ function StatsCard({ icon, label, value, sub, suffix, variant = "default" }: { i
     </div>
   );
 }
-
-function DataLine({ icon, label, value }: { icon: React.ReactNode, label: string; value: string }) {
-  return (
-    <div className="flex justify-between items-center group/line">
-      <div className="flex items-center gap-3">
-          <span className="text-theme-muted transition-colors group-hover/line:text-brand-primary">{icon}</span>
-          <span className="text-[10px] font-extrabold uppercase tracking-[0.15em] text-theme-muted/50">{label}</span>
-      </div>
-      <span className="text-[11px] font-bold text-theme-text whitespace-nowrap">{value}</span>
-    </div>
-  );
-}
-

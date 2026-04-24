@@ -102,7 +102,7 @@ function DateTimePicker({ value, onChange }: { value: string; onChange: (v: stri
           <div
             key="picker"
             style={{
-              position: "absolute", top: "calc(100% + 8px)", left: 0, zIndex: 999,
+              position: "absolute", bottom: "calc(100% + 8px)", left: 0, zIndex: 999,
               background: "var(--theme-bg)", border: `1px solid var(--theme-border)`,
               width: "min(320px, 90vw)", padding: 20, boxShadow: "0 24px 60px rgba(0,0,0,0.4)",
               transition: "all 0.18s"
@@ -404,45 +404,40 @@ export const QuotePage = () => {
       color: THEME.text, 
       minHeight: "100vh", 
       fontFamily: THEME.fontB, 
-      padding: "80px 20px" /* Aumento no padding superior para ar editorial */
+      padding: "40px 20px" 
     }}>
       <style>{`
-        .fs-input { background: var(--theme-bg-muted) !important; border: 1px solid var(--theme-border) !important; color: var(--theme-text) !important; border-radius: 0 !important; box-sizing: border-box; font-family: 'Outfit', sans-serif !important; }
+        .fs-input { background: var(--theme-bg-muted) !important; border: 1px solid var(--theme-border) !important; color: var(--theme-text) !important; border-radius: 0 !important; box-sizing: border-box; font-family: 'Outfit', sans-serif !important; padding: 12px 15px !important; }
         .fs-input:focus { border-color: var(--brand-primary) !important; outline: none !important; }
-        select.fs-input, textarea.fs-input { padding: 15px !important; }
         
         @media (max-width: 768px) {
           .mobile-grid-1 { grid-template-columns: 1fr !important; }
-          .mobile-stack { flex-direction: column !important; align-items: stretch !important; gap: 20px !important; }
-          .mobile-padding { padding: 1.5rem !important; }
-          .mobile-text-center { text-align: center !important; }
-          .mobile-full { width: 100% !important; }
-          .mobile-hide { display: none !important; }
+          .mobile-stack { flex-direction: column !important; align-items: stretch !important; gap: 15px !important; }
         }
       `}</style>
 
-      <div style={{ maxWidth: 800, margin: "0 auto" }}>
-        <header style={{ textAlign: "center", marginBottom: 60 }}>
-          <div style={{ display: "flex", justifyContent: "center", marginBottom: 30 }}>
+      <div style={{ maxWidth: 1100, margin: "0 auto" }}>
+        <header style={{ textAlign: "center", marginBottom: 20 }}>
+          <div style={{ display: "flex", justifyContent: "center", marginBottom: 15 }}>
             <img 
               src="/logo-fs.png" 
               alt="Logo" 
               style={{ 
-                height: 40, 
+                height: 32, 
                 objectFit: "contain"
               }} 
             />
           </div>
           <div 
-            className="text-proportional text-brand-primary mb-8" 
+            className="text-proportional text-brand-primary mb-4" 
             style={{ 
-              letterSpacing: 10, 
+              letterSpacing: 8, 
               opacity: 0.8,
-              fontSize: 11
+              fontSize: 10
             }}
           >Solicitação de Orçamento</div>
-          <h1 className="heading-luxury">
-            ETERNIZE SEU <span className="text-theme-text-muted">GRANDE DIA</span>
+          <h1 className="heading-luxury" style={{ fontSize: "clamp(24px, 4vw, 42px)" }}>
+            ETERNIZE SEU <span className="text-theme-text-muted">EVENTO</span>
           </h1>
         </header>
 
@@ -451,25 +446,25 @@ export const QuotePage = () => {
             style={{ opacity: 1, transform: "none" }}
             className="lux-card mobile-padding editorial-shadow"
           >
-            <div style={{ display: "flex", flexDirection: "column", gap: 30 }}>
+            <div style={{ display: "flex", flexDirection: "column", gap: 20 }}>
 
               {/* 1. Onde será o registro? */}
-              <div style={{ display: "flex", flexDirection: "column", gap: 15 }}>
-                <label style={{ fontSize: 10, fontWeight: 800, textTransform: "uppercase", color: THEME.text }}>01. Onde será o registro?</label>
-                <div className="mobile-stack" style={{ display: "flex", gap: 10 }}>
+              <div style={{ display: "flex", flexDirection: "column", gap: 12 }}>
+                <label style={{ fontSize: 9, fontWeight: 800, textTransform: "uppercase", color: THEME.text }}>01. Local do Registro</label>
+                <div className="mobile-stack" style={{ display: "flex", gap: 8 }}>
                   <button 
                     type="button"
                     onClick={() => setLocationType("PARTNER")}
-                    style={{ flex: 1, padding: 15, border: `1px solid ${locationType === "PARTNER" ? THEME.accent : THEME.border}`, background: locationType === "PARTNER" ? `${THEME.accent}10` : "transparent", fontSize: 10, fontWeight: 900, color: locationType === "PARTNER" ? THEME.accent : THEME.text2, cursor: "pointer" }}
+                    style={{ flex: 1, padding: 12, border: `1px solid ${locationType === "PARTNER" ? THEME.accent : THEME.border}`, background: locationType === "PARTNER" ? `${THEME.accent}10` : "transparent", fontSize: 9, fontWeight: 900, color: locationType === "PARTNER" ? THEME.accent : THEME.text2, cursor: "pointer" }}
                   >UNIDADE FIXA</button>
                   <button 
                     type="button"
                     onClick={() => setLocationType("OTHER")}
-                    style={{ flex: 1, padding: 15, border: `1px solid ${locationType === "OTHER" ? THEME.accent : THEME.border}`, background: locationType === "OTHER" ? `${THEME.accent}10` : "transparent", fontSize: 10, fontWeight: 900, color: locationType === "OTHER" ? THEME.accent : THEME.text2, cursor: "pointer" }}
+                    style={{ flex: 1, padding: 12, border: `1px solid ${locationType === "OTHER" ? THEME.accent : THEME.border}`, background: locationType === "OTHER" ? `${THEME.accent}10` : "transparent", fontSize: 9, fontWeight: 900, color: locationType === "OTHER" ? THEME.accent : THEME.text2, cursor: "pointer" }}
                   >ORÇAMENTO</button>
                 </div>
 
-                <div className="mobile-grid-1" style={{ display: "grid", gridTemplateColumns: "1fr", gap: 10 }}>
+                <div className="mobile-grid-1" style={{ display: "grid", gridTemplateColumns: "1fr", gap: 8 }}>
                    {locationType === "PARTNER" ? (
                     <select required value={selectedPartnerId} onChange={e => setSelectedPartnerId(e.target.value)} className="fs-input" style={{ width: "100%" }}>
                       <option value="">SELECIONE A UNIDADE FIXA...</option>
@@ -579,43 +574,44 @@ export const QuotePage = () => {
                 )}
               </div>
 
-              {/* Seção de Serviços */}
-              <div>
-                <label style={{ fontSize: 10, fontWeight: 800, textTransform: "uppercase", marginBottom: 15, display: "block", color: THEME.text }}>02. Selecione os Serviços Disponíveis</label>
-                
-
-                <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(200px, 1fr))", gap: 15, marginTop: 0 }}>
+              {/* 02. Serviços ── Grid Otimizado (Dinamismo Fullscreen) */}
+              <div style={{ marginTop: 0 }}>
+                <label style={{ fontSize: 10, fontWeight: 800, textTransform: "uppercase", marginBottom: 12, display: "block", color: THEME.text }}>02. Selecione os Serviços Disponíveis</label>
+                <div style={{ 
+                  display: "grid", 
+                  gridTemplateColumns: "repeat(auto-fit, minmax(170px, 1fr))", 
+                  gap: 10 
+                }}>
                   {availableServices.map(s => (
                     <div key={s.id} onClick={() => {
                       if (selectedServices.includes(s.id)) setSelectedServices(prev => prev.filter(x => x !== s.id));
                       else setSelectedServices(prev => [...prev, s.id]);
                     }} style={{
-                      padding: 20, border: `1px solid ${selectedServices.includes(s.id) ? THEME.accent : THEME.border}`,
+                      padding: "12px 15px", border: `1px solid ${selectedServices.includes(s.id) ? THEME.accent : THEME.border}`,
                       cursor: "pointer", background: "var(--theme-bg-muted)", transition: "all 0.2s",
-                      position: "relative", overflow: "hidden"
+                      position: "relative"
                     }}>
-                      <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start", marginBottom: 10 }}>
-                        <div style={{ fontSize: 11, fontWeight: 900, textTransform: "uppercase", letterSpacing: 1 }}>{s.name}</div>
-                        {selectedServices.includes(s.id) && <div style={{ width: 8, height: 8, background: THEME.accent }} />}
+                      <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 4 }}>
+                        <div style={{ fontSize: 9, fontWeight: 900, textTransform: "uppercase", letterSpacing: 0.5 }}>{s.name}</div>
+                        {selectedServices.includes(s.id) && <div style={{ width: 6, height: 6, background: THEME.accent }} />}
                       </div>
                       {showPrices ? (
-                        <div style={{ fontSize: 14, fontWeight: 900, color: THEME.accent }}>
+                        <div style={{ fontSize: 12, fontWeight: 900, color: THEME.accent }}>
                           {new Intl.NumberFormat("pt-BR", { style: "currency", currency: "BRL" }).format(getServicePrice(s.id, s.basePrice))}
-                          <span style={{ fontSize: 9, marginLeft: 5, opacity: 0.6 }}>({eventHours}H)</span>
                         </div>
                       ) : (
-                        <div style={{ fontSize: 10, color: THEME.text2, fontStyle: "italic" }}>sob consulta</div>
+                        <div style={{ fontSize: 8, color: THEME.text2, fontStyle: "italic" }}>sob consulta</div>
                       )}
                     </div>
                   ))}
                 </div>
               </div>
 
-              <div className="mobile-grid-1" style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 20 }}>
+              <div className="mobile-grid-1" style={{ display: "grid", gridTemplateColumns: "1fr 1fr 1fr", gap: 20 }}>
                 <div>
-                  <label style={{ fontSize: 10, fontWeight: 800, textTransform: "uppercase", marginBottom: 15, display: "block", color: THEME.text }}>03. Número de Convidados</label>
+                  <label style={{ fontSize: 10, fontWeight: 800, textTransform: "uppercase", marginBottom: 12, display: "block", color: THEME.text }}>03. Número de Convidados</label>
                   <div style={{ position: "relative", display: "flex", alignItems: "center" }}>
-                    <Users size={18} style={{ position: "absolute", left: 15, color: THEME.accent, pointerEvents: "none", zIndex: 1 }} />
+                    <Users size={16} style={{ position: "absolute", left: 15, color: THEME.accent, pointerEvents: "none", zIndex: 1 }} />
                     <input
                       type="text"
                       inputMode="numeric"
@@ -625,12 +621,12 @@ export const QuotePage = () => {
                          setAttendees(val);
                       }}
                       className="fs-input"
-                      style={{ width: "100%", padding: "15px 15px 15px 48px" }}
+                      style={{ width: "100%", padding: "12px 12px 12px 42px" }}
                     />
                   </div>
                 </div>
-                <div>
-                  <label style={{ fontSize: 10, fontWeight: 800, textTransform: "uppercase", marginBottom: 15, display: "block", color: THEME.text }}>04. Data e Horário do Evento</label>
+                <div style={{ gridColumn: "span 2" }}>
+                  <label style={{ fontSize: 10, fontWeight: 800, textTransform: "uppercase", marginBottom: 12, display: "block", color: THEME.text }}>04. Data e Horário do Evento</label>
                   <DateTimePicker value={eventDate} onChange={setEventDate} />
                 </div>
               </div>

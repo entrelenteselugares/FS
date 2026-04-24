@@ -91,8 +91,8 @@ export const AdminDashboard: React.FC = () => {
 
   return (
     <DashboardLayout title="Operações Centrais" variant="tactical" navItems={NAV_ITEMS(activeTab, setActiveTab, stats)}>
-      <div className="p-10 max-w-7xl mx-auto min-h-screen">
-      <div style={{ padding: "40px 0" }}>
+      <div style={{ padding: "16px 24px", maxWidth: "1600px", margin: "0 auto", minHeight: "100vh" }}>
+      <div style={{ padding: "0" }}>
         {/* Minimal Header */}
         <div style={{ marginBottom: 40 }}>
           <h1 style={{ 
@@ -108,7 +108,7 @@ export const AdminDashboard: React.FC = () => {
              activeTab === "services" ? "Portfólio de Serviços" :
              "Configurações da Plataforma"}
           </h1>
-          <div style={{ width: 40, height: 2, background: T.brand, marginTop: 12 }} />
+          <div style={{ width: 30, height: 2, background: T.brand, marginTop: 8 }} />
         </div>
 
 
