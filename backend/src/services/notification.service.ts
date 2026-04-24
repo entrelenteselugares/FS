@@ -117,6 +117,61 @@ export class NotificationService {
   }
 
   /**
+   * Envia boas-vindas e senha provisória para novo usuário
+   */
+  static async sendWelcomeEmail(data: {
+    to: string;
+    name: string;
+    tempPassword?: string;
+  }) {
+    if (!process.env.SMTP_USER || !process.env.SMTP_PASS) return;
+
+    const htmlContent = `
+      <div style="font-family: sans-serif; max-width: 600px; margin: 0 auto; padding: 20px; color: #000;">
+        <div style="text-align: center; margin-bottom: 30px;">
+          <h1 style="font-size: 24px; letter-spacing: 2px;">FOTO SEGUNDO.</h1>
+          <hr style="border: 0.5px solid #eee;" />
+        </div>
+        
+        <p>Olá, <strong>${data.name}</strong>,</p>
+        <p>Seja bem-vindo(a) à Foto Segundo! Recebemos sua solicitação de reserva.</p>
+        
+        ${data.tempPassword ? `
+        <div style="background: #f9f9f9; padding: 30px; border-radius: 8px; margin: 30px 0;">
+          <p style="font-size: 14px; font-weight: bold; margin-bottom: 15px;">Seus dados de acesso:</p>
+          <p style="font-size: 13px; margin: 5px 0;">E-mail: <strong>${data.to}</strong></p>
+          <p style="font-size: 13px; margin: 5px 0;">Senha Temporária: <strong>${data.tempPassword}</strong></p>
+          <p style="font-size: 11px; color: #666; margin-top: 15px;">Você poderá acompanhar seus pedidos e acessar seus álbuns em nosso painel do cliente.</p>
+        </div>
+        ` : `
+        <p>Você já possui cadastro conosco. Utilize seu e-mail e senha habituais para acessar o painel e acompanhar seu pedido.</p>
+        `}
+        
+        <div style="text-align: center; margin: 30px 0;">
+          <a href="${process.env.APP_URL}/login" style="background: #000; color: #fff; padding: 12px 25px; text-decoration: none; border-radius: 4px; font-size: 12px; font-weight: bold; text-transform: uppercase;">Acessar Meu Painel</a>
+        </div>
+
+        <hr style="border: 0.5px solid #eee; margin: 30px 0;" />
+        <p style="text-align: center; font-size: 10px; color: #bbb; text-transform: uppercase; letter-spacing: 1px;">
+          Foto Segundo &copy; ${new Date().getFullYear()} — Memórias que duram.
+        </p>
+      </div>
+    `;
+
+    try {
+      await this.transporter.sendMail({
+        from: `"Foto Segundo" <${process.env.SMTP_USER}>`,
+        to: data.to,
+        subject: `Bem-vindo(a) à Foto Segundo! ✨`,
+        html: htmlContent,
+      });
+      console.log(`[Notification] E-mail de boas-vindas enviado para ${data.to}`);
+    } catch (error) {
+      console.error("[Notification] Erro ao enviar e-mail de boas-vindas:", error);
+    }
+  }
+
+  /**
    * Envia o e-mail de orçamento pronto após o Admin precificar
    */
   static async sendQuotationPricedEmail(data: {

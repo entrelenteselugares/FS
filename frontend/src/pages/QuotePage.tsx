@@ -455,7 +455,7 @@ export const QuotePage = () => {
 
               {/* 1. Onde será o registro? */}
               <div style={{ display: "flex", flexDirection: "column", gap: 15 }}>
-                <label style={{ fontSize: 10, fontWeight: 800, textTransform: "uppercase", color: THEME.text }}>1. Onde será o registro?</label>
+                <label style={{ fontSize: 10, fontWeight: 800, textTransform: "uppercase", color: THEME.text }}>01. Onde será o registro?</label>
                 <div className="mobile-stack" style={{ display: "flex", gap: 10 }}>
                   <button 
                     type="button"
@@ -581,7 +581,7 @@ export const QuotePage = () => {
 
               {/* Seção de Serviços */}
               <div>
-                <label style={{ fontSize: 10, fontWeight: 800, textTransform: "uppercase", marginBottom: 15, display: "block", color: THEME.text }}>2. Selecione os Serviços</label>
+                <label style={{ fontSize: 10, fontWeight: 800, textTransform: "uppercase", marginBottom: 15, display: "block", color: THEME.text }}>02. Selecione os Serviços Disponíveis</label>
                 
 
                 <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(200px, 1fr))", gap: 15, marginTop: 0 }}>
@@ -613,7 +613,7 @@ export const QuotePage = () => {
 
               <div className="mobile-grid-1" style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 20 }}>
                 <div>
-                  <label style={{ fontSize: 10, fontWeight: 800, textTransform: "uppercase", marginBottom: 15, display: "block", color: THEME.text }}>3. Número de Convidados</label>
+                  <label style={{ fontSize: 10, fontWeight: 800, textTransform: "uppercase", marginBottom: 15, display: "block", color: THEME.text }}>03. Número de Convidados</label>
                   <div style={{ position: "relative", display: "flex", alignItems: "center" }}>
                     <Users size={18} style={{ position: "absolute", left: 15, color: THEME.accent, pointerEvents: "none", zIndex: 1 }} />
                     <input
@@ -630,7 +630,7 @@ export const QuotePage = () => {
                   </div>
                 </div>
                 <div>
-                  <label style={{ fontSize: 10, fontWeight: 800, textTransform: "uppercase", marginBottom: 15, display: "block", color: THEME.text }}>4. Data e Horário do Evento</label>
+                  <label style={{ fontSize: 10, fontWeight: 800, textTransform: "uppercase", marginBottom: 15, display: "block", color: THEME.text }}>04. Data e Horário do Evento</label>
                   <DateTimePicker value={eventDate} onChange={setEventDate} />
                 </div>
               </div>
@@ -698,6 +698,7 @@ export const QuotePage = () => {
              <button onClick={() => setStep(1)} style={{ color: THEME.text2, fontSize: 10, fontWeight: 800, marginBottom: 30, background: "none", border: "none", cursor: "pointer" }}>&larr; VOLTAR</button>
              
              <form onSubmit={handleSubmit} style={{ display: "flex", flexDirection: "column", gap: 30 }}>
+                <label style={{ fontSize: 11, fontWeight: 900, textTransform: "uppercase", letterSpacing: 2, color: THEME.accent, marginBottom: 10 }}>05. Preencha seus Dados</label>
                 <div className="mobile-grid-1" style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 20 }}>
                   <div style={{ display: "flex", flexDirection: "column", gap: 10 }}>
                     <label style={{ fontSize: 10, fontWeight: 800, textTransform: "uppercase", color: THEME.text2 }}>Seu Nome</label>
@@ -706,11 +707,16 @@ export const QuotePage = () => {
                   <div style={{ display: "flex", flexDirection: "column", gap: 10 }}>
                     <label style={{ fontSize: 10, fontWeight: 800, textTransform: "uppercase", color: THEME.text2 }}>E-mail para Contato</label>
                     <input required type="email" value={email} onChange={e => setEmail(e.target.value)} placeholder="EX: CONTATO@DOMINIO.COM" className="fs-input" style={{ width: "100%", padding: "15px" }} />
+                    {!user && (
+                      <p style={{ fontSize: 9, color: THEME.accent, marginTop: 4, fontWeight: 700, textTransform: "uppercase", letterSpacing: 0.5 }}>
+                        * CASO NÃO TENHA CADASTRO, ENVIAREMOS UMA SENHA PROVISÓRIA PARA ESTE E-MAIL.
+                      </p>
+                    )}
                   </div>
                 </div>
 
                 <div style={{ display: "flex", flexDirection: "column", gap: 10 }}>
-                  <label style={{ fontSize: 10, fontWeight: 800, textTransform: "uppercase", color: THEME.text2 }}>Descreva seu evento com suas palavras</label>
+                  <label style={{ fontSize: 10, fontWeight: 800, textTransform: "uppercase", color: THEME.text2 }}>06. Descreva seu evento com suas palavras</label>
                   <textarea
                     value={description}
                     onChange={e => setDescription(e.target.value)}
@@ -722,9 +728,9 @@ export const QuotePage = () => {
 
                 <button 
                   type="submit"
-                  style={{ background: THEME.accent, color: "black", padding: "20px", fontWeight: 900, fontSize: 14, textTransform: "uppercase", letterSpacing: 4, marginTop: 20 }}
+                  style={{ background: THEME.accent, color: "black", padding: "20px", fontWeight: 900, fontSize: 14, textTransform: "uppercase", letterSpacing: 4, marginTop: 20, cursor: "pointer", border: "none" }}
                 >
-                  SOLICITAR ANÁLISE DE RESERVA
+                  RESERVAR E PAGAR
                 </button>
              </form>
           </div>

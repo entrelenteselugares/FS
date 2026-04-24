@@ -2,6 +2,7 @@ import { Response } from "express";
 import { AuthRequest } from "../lib/auth";
 import prisma from "../lib/prisma";
 import { NotificationService } from "../services/notification.service";
+import bcrypt from "bcryptjs";
 
 export class EventController {
   /**
@@ -238,6 +239,26 @@ export class EventController {
         }
       }
 
+      // ── LOGICA DE USUÁRIO / CADASTRO AUTOMÁTICO ──
+      // Verifica se o usuário já existe ou cria um novo (Senha Provisória)
+      let targetUser = await prisma.user.findUnique({ where: { email } });
+      let tempPassForEmail: string | undefined = undefined;
+
+      if (!targetUser) {
+        tempPassForEmail = `FS-${Math.floor(1000 + Math.random() * 9000)}`;
+        const hashedPass = await bcrypt.hash(tempPassForEmail, 10);
+        
+        targetUser = await prisma.user.create({
+          data: {
+            email,
+            nome: name,
+            senha: hashedPass,
+            role: "CLIENTE",
+          }
+        });
+        console.log(`[Quote] Novo usuário criado para ${email}. Senha: ${tempPassForEmail}`);
+      }
+
       const event = await prisma.event.create({
         data: {
           nomeNoivos: name,
@@ -280,12 +301,19 @@ export class EventController {
             eventId: event.id,
             valor: totalPrice,
             buyerEmail: email,
+            clienteId: targetUser.id,
+            tempPassword: tempPassForEmail,
             status: "PENDENTE"
           }
         });
 
-        // Link de Checkout para Ponto Fixo (Pagamento imediato)
-        // Prioriza URL de produção via variáveis de ambiente
+        // Dispara e-mail de Boas-Vindas / Confirmação
+        NotificationService.sendWelcomeEmail({
+          to: email,
+          name: name,
+          tempPassword: tempPassForEmail
+        }).catch(e => console.error("Erro ao enviar boas-vindas:", e));
+
         const appUrl = process.env.VITE_APP_URL || process.env.APP_URL || 'https://foto-segundo.vercel.app';
         const checkoutUrl = `${appUrl}/checkout/${order.id}`;
         
@@ -293,8 +321,14 @@ export class EventController {
       }
 
       // Se for Orçamento (OTHER), apenas retorna sucesso. O Admin irá precificar depois.
-      // Alerta de novo lead para o admin via WhatsApp
       NotificationService.notifyNewLead({ name, email, eventDate, usageType, locationType });
+      
+      NotificationService.sendWelcomeEmail({
+        to: email,
+        name: name,
+        tempPassword: tempPassForEmail
+      }).catch(e => console.error("Erro ao enviar boas-vindas (lead):", e));
+
       return res.json({ success: true, message: "Sua solicitação foi enviada! Em breve entraremos em contato com o orçamento detalhado." });
 
     } catch (error) {
