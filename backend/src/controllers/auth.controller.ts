@@ -267,4 +267,39 @@ export class AuthController {
       return res.status(500).json({ error: "Erro ao buscar dados do usuário" });
     }
   }
+
+  /** POST /api/auth/update-password */
+  static async updatePassword(req: Request, res: Response) {
+    const { password, token } = req.body; // token opcional, vindo do hash do supabase
+
+    if (!password || password.length < 6) {
+      return res.status(400).json({ error: "A senha deve ter pelo menos 6 caracteres." });
+    }
+
+    try {
+      // 1. Verificar se o usuário está autenticado pelo Supabase via token de recuperação
+      // O Supabase coloca o token no hash, o frontend envia aqui
+      const { data: { user }, error: authError } = await supabaseAdmin.auth.getUser(token);
+
+      if (authError || !user) {
+        console.error("[AUTH] Erro ao recuperar usuário pelo token:", authError?.message);
+        return res.status(401).json({ error: "Link de redefinição inválido ou expirado." });
+      }
+
+      // 2. Atualizar a senha no Supabase
+      const { error: updateError } = await supabaseAdmin.auth.admin.updateUserById(user.id, {
+        password: password
+      });
+
+      if (updateError) throw updateError;
+
+      // 3. Log de Auditoria
+      await audit(req, "PASSWORD_RESET", "User", user.id, null, { email: user.email });
+
+      return res.json({ ok: true, message: "Senha atualizada com sucesso." });
+    } catch (error: any) {
+      console.error("[AUTH UPDATE PWD ERROR]:", error);
+      return res.status(500).json({ error: "Falha ao atualizar senha." });
+    }
+  }
 }

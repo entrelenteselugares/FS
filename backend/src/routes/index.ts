@@ -90,9 +90,10 @@ router.get("/cron/expiration", async (req, res) => {
 });
 
 // ── Autenticação ─────────────────────────────────────────────────────────────
-router.post("/auth/login",    AuthController.login);
-router.post("/auth/register", AuthController.register);
-router.get("/auth/me",        requireAuth, AuthController.me);
+router.post("/auth/login",           AuthController.login);
+router.post("/auth/register",        AuthController.register);
+router.post("/auth/update-password", AuthController.updatePassword);
+router.get("/auth/me",               requireAuth, AuthController.me);
 
 // ── Mercado Pago OAuth ────────────────────────────────────────────────────────
 router.get("/mercadopago/connect",  requireAuth, MercadoPagoController.connect);

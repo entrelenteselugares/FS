@@ -18,6 +18,7 @@ import { QuotePage } from "./pages/QuotePage";
 import { PartnerLP } from "./pages/PartnerLP";
 import { NotFoundPage } from "./pages/NotFoundPage";
 import { CheckoutPage } from "./pages/CheckoutPage";
+import ResetPasswordPage from "./pages/ResetPasswordPage";
 import { useState, useEffect } from "react";
 import { API as api } from "./lib/api";
 
@@ -50,6 +51,7 @@ const AnimatedRoutes = () => {
         <Route path="/register" element={<RegisterPage />} />
         <Route path="/e/:slug" element={<EventPage />} />
         <Route path="/auth" element={<AuthSelectionPage />} />
+        <Route path="/reset-password" element={<ResetPasswordPage />} />
         <Route path="/cotacao" element={<QuotePage />} />
         {/* 
         <Route path="/hall-da-fama" element={<HallOfFame />} />

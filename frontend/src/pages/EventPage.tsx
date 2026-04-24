@@ -217,9 +217,13 @@ export default function EventPage() {
         @keyframes fadeUp { from { opacity:0; transform: translateY(12px); } to { opacity:1; transform: translateY(0); } }
         .ep-grid { display: grid; grid-template-columns: 1fr 340px; height: calc(100vh - 52px); overflow: hidden; }
         .ep-sidebar { overflow-y: auto; }
+        @media (min-width: 901px) {
+          .desktop-hide { display: none !important; }
+        }
         @media (max-width: 900px) {
-          .ep-grid { grid-template-columns: 1fr; grid-template-rows: auto auto; height: auto; overflow: auto; }
-          .ep-cover { height: 80vh; min-height: 500px; }
+          .ep-grid { grid-template-columns: 1fr; grid-template-rows: auto; height: auto; overflow: auto; }
+          .ep-cover { height: 75vh; min-height: 480px; }
+          .mobile-hide { display: none !important; }
         }
       `}</style>
 
@@ -282,6 +286,22 @@ export default function EventPage() {
                     {s.label}
                   </span>
                 ))}
+              </div>
+            )}
+
+            {/* Mobile-only access buttons */}
+            {paid && access && (access.lightroomUrl || access.driveUrl) && (
+              <div className="desktop-hide" style={{ display: "flex", gap: 10, marginTop: 24, animation: "fadeUp 0.5s ease" }}>
+                {access.lightroomUrl && (
+                  <a href={access.lightroomUrl} target="_blank" rel="noreferrer" style={{ ...BtnPrimary, flex: 1, justifyContent: "center", textDecoration: "none", fontSize: 11 }}>
+                    Abrir Lightroom
+                  </a>
+                )}
+                {access.driveUrl && (
+                  <a href={access.driveUrl} target="_blank" rel="noreferrer" style={{ ...BtnSecondary, flex: 1, justifyContent: "center", color: "#fff", borderColor: "rgba(255,255,255,0.4)", textDecoration: "none", fontSize: 11 }}>
+                    Drive
+                  </a>
+                )}
               </div>
             )}
 
@@ -389,24 +409,12 @@ export default function EventPage() {
               </div>
             )}
 
-            {/* SUCCESS — sem card prominente, apenas info de acesso */}
-            {step === "success" && !justPaid && (
-              <div style={{ display: "flex", flexDirection: "column", gap: 16, animation: "fadeUp 0.3s ease" }}>
-                <p style={{ fontSize: 10, fontWeight: 700, textTransform: "uppercase", letterSpacing: 2, color: T.brand, margin: 0 }}>Acesso Liberado</p>
+            {step === "success" && (
+              <div className="mobile-hide" style={{ display: "flex", flexDirection: "column", gap: 16, animation: "fadeUp 0.3s ease" }}>
+                <p style={{ fontSize: 10, fontWeight: 700, textTransform: "uppercase", letterSpacing: 2, color: T.brand, margin: 0 }}>
+                  {justPaid ? "Tudo pronto!" : "Acesso Liberado"}
+                </p>
                 <p style={{ fontSize: 12, color: T.text2, margin: 0 }}>Seus arquivos estão disponíveis na imagem ao lado.</p>
-                {access && (access.lightroomUrl || access.driveUrl) && (
-                  <div style={{ display: "flex", flexDirection: "column", gap: 10 }}>
-                    {access.lightroomUrl && <a href={access.lightroomUrl} target="_blank" rel="noreferrer" style={{ ...BtnPrimary, textDecoration: "none", justifyContent: "center" }}>Abrir Lightroom</a>}
-                    {access.driveUrl && <a href={access.driveUrl} target="_blank" rel="noreferrer" style={{ ...BtnSecondary, color: T.text, borderColor: T.brand, textDecoration: "none", justifyContent: "center" }}>Google Drive</a>}
-                  </div>
-                )}
-              </div>
-            )}
-
-            {step === "success" && justPaid && (
-              <div style={{ display: "flex", flexDirection: "column", gap: 16, animation: "fadeUp 0.3s ease" }}>
-                <p style={{ fontSize: 10, fontWeight: 700, textTransform: "uppercase", letterSpacing: 2, color: T.brand, margin: 0 }}>Tudo pronto!</p>
-                <p style={{ fontSize: 12, color: T.text2, margin: 0 }}>Seus links estão disponíveis. Acesse também pela foto.</p>
                 {access && (access.lightroomUrl || access.driveUrl) && (
                   <div style={{ display: "flex", flexDirection: "column", gap: 10 }}>
                     {access.lightroomUrl && <a href={access.lightroomUrl} target="_blank" rel="noreferrer" style={{ ...BtnPrimary, textDecoration: "none", justifyContent: "center" }}>Abrir Lightroom</a>}
