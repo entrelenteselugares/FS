@@ -138,29 +138,6 @@ export default function UnidadeFixaDashboard() {
   }, [searchParams]);
 
 
-  const loadData = useCallback(async () => {
-    setLoading(true);
-    try {
-      const [statsRes, eventosRes] = await Promise.all([
-        API.get("/unidade-fixa/stats"),
-        API.get("/unidade-fixa/events"),
-      ]);
-      setStats(statsRes.data);
-      setEventos(eventosRes.data.events ?? eventosRes.data);
-      setUnidadeName(statsRes.data.razaoSocial ?? "");
-      await loadLpData();
-    } catch (err: unknown) {
-      const error = err as { response?: { status: number } };
-      if (error.response?.status === 404) {
-        setError("Perfil de unidade não configurado. Entre em contato com o administrador.");
-      } else {
-        setError("Erro ao carregar dados.");
-      }
-    } finally {
-      setLoading(false);
-    }
-  }, [loadLpData]);
-
   const loadLpData = useCallback(async () => {
     try {
       const [{ data: statsData }, { data: servicesData }] = await Promise.all([
@@ -183,6 +160,29 @@ export default function UnidadeFixaDashboard() {
       setGlobalServices(servicesData.services || []);
     } catch { /* silently ignore - LP data is optional */ }
   }, []);
+
+  const loadData = useCallback(async () => {
+    setLoading(true);
+    try {
+      const [statsRes, eventosRes] = await Promise.all([
+        API.get("/unidade-fixa/stats"),
+        API.get("/unidade-fixa/events"),
+      ]);
+      setStats(statsRes.data);
+      setEventos(eventosRes.data.events ?? eventosRes.data);
+      setUnidadeName(statsRes.data.razaoSocial ?? "");
+      await loadLpData();
+    } catch (err: unknown) {
+      const error = err as { response?: { status: number } };
+      if (error.response?.status === 404) {
+        setError("Perfil de unidade não configurado. Entre em contato com o administrador.");
+      } else {
+        setError("Erro ao carregar dados.");
+      }
+    } finally {
+      setLoading(false);
+    }
+  }, [loadLpData]);
 
   useEffect(() => {
     loadData();

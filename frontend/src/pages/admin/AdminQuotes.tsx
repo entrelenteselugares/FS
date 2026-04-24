@@ -201,7 +201,7 @@ export const AdminQuotes: React.FC = () => {
                   setMargin(30);
 
                   // Restore from breakdown if exists
-                  const breakdownMatch = (quote.description || "").match(/\[BUDGET_BREAKDOWN\]\s*({.*?})/);
+                  const breakdownMatch = (quote.description || "").match(/\[BUDGET_BREAKDOWN\]\s*({.*})/s);
                   if (breakdownMatch) {
                     try {
                       const data = JSON.parse(breakdownMatch[1]);
