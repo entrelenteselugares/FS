@@ -8,6 +8,13 @@ import { ThemeToggle } from "../components/ThemeToggle";
 import { AuthModal } from "../components/AuthModal";
 import { useAuth } from "../hooks/useAuth";
 
+const Item = ({ val, label }: { val: number, label: string }) => (
+  <div style={{ textAlign: "center" }}>
+    <div style={{ fontFamily: T.fontD, fontSize: 24, fontWeight: 900, color: T.text, lineHeight: 1 }}>{String(val).padStart(2, "0")}</div>
+    <div style={{ fontSize: 8, letterSpacing: 1, textTransform: "uppercase", color: T.text3, marginTop: 4 }}>{label}</div>
+  </div>
+);
+
 const Countdown: React.FC<{ targetDate: string }> = ({ targetDate }) => {
   const [timeLeft, setTimeLeft] = useState({ d: 0, h: 0, m: 0, s: 0 });
 
@@ -27,13 +34,6 @@ const Countdown: React.FC<{ targetDate: string }> = ({ targetDate }) => {
     }, 1000);
     return () => clearInterval(timer);
   }, [targetDate]);
-
-  const Item = ({ val, label }: { val: number, label: string }) => (
-    <div style={{ textAlign: "center" }}>
-      <div style={{ fontFamily: T.fontD, fontSize: 24, fontWeight: 900, color: T.text, lineHeight: 1 }}>{String(val).padStart(2, "0")}</div>
-      <div style={{ fontSize: 8, letterSpacing: 1, textTransform: "uppercase", color: T.text3, marginTop: 4 }}>{label}</div>
-    </div>
-  );
 
   return (
     <div style={{ display: "flex", gap: 20, padding: "20px 0", borderTop: `1px solid ${T.border}`, borderBottom: `1px solid ${T.border}`, margin: "10px 0" }}>
