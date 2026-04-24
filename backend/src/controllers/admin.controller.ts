@@ -82,6 +82,7 @@ export async function getDashboardStats(req: AuthRequest, res: Response): Promis
       take: 5,
     });
     const pendingQuotesCount = await prisma.event.count({ where: { isQuote: true, quoteStatus: { in: ["PENDING", "PRICED"] } } });
+    
     const pendingInvitesCount = await prisma.event.count({
       where: {
         active: true,
@@ -93,8 +94,19 @@ export async function getDashboardStats(req: AuthRequest, res: Response): Promis
       }
     });
 
-    const totalRevenue = totalRevenueResult._sum.valor ? Number(totalRevenueResult._sum.valor) : 0;
+    const missingLinksCount = await prisma.order.count({
+      where: {
+        status: "APROVADO",
+        event: {
+          OR: [
+            { lightroomUrl: null },
+            { driveUrl: null },
+          ]
+        }
+      }
+    });
 
+    const totalRevenue = totalRevenueResult._sum.valor ? Number(totalRevenueResult._sum.valor) : 0;
     const totalUsers = await prisma.user.count();
 
     res.json({
@@ -105,13 +117,18 @@ export async function getDashboardStats(req: AuthRequest, res: Response): Promis
         totalUsers: totalUsers || 0,
         pendingQuotesCount: pendingQuotesCount || 0,
         pendingInvitesCount: pendingInvitesCount || 0,
-        missingLinksCount: 0,
+        missingLinksCount: missingLinksCount || 0,
       },
       recentOrders: recentOrdersRaw.map(o => ({
         ...o,
         total: Number(o.valor || 0)
       })),
-      pendingEvents,
+      pendingEvents: pendingEvents.map(e => ({
+        id: e.id,
+        title: e.nomeNoivos,
+        coverPhotoUrl: e.coverPhotoUrl,
+        lightroomUrl: e.lightroomUrl
+      })),
     });
   } catch (err: any) {
     console.error("getDashboardStats Error:", err);
