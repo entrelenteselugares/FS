@@ -172,11 +172,13 @@ export const HomePage = () => {
         .card-hover { transition: opacity 0.2s; }
         .card-hover:hover { opacity: 0.88; }
         @media(max-width:768px){
-          .hp-hero-title { font-size: clamp(38px,10vw,60px) !important; }
+          .hp-hero-title { font-size: clamp(38px,10vw,60px) !important; line-height: 1 !important; }
           .hp-grid { grid-template-columns: repeat(auto-fill, minmax(260px,1fr)) !important; }
           .hp-steps { flex-direction: column !important; }
           .hp-footer-inner { flex-direction: column !important; gap: 2.5rem !important; }
           .hp-footer-cols { gap: 2rem !important; }
+          .hp-search-container { flex-direction: column !important; }
+          .hp-search-input { border-right: 1px solid var(--border-2) !important; border-bottom: none !important; }
         }
       `}</style>
 
@@ -241,7 +243,7 @@ export const HomePage = () => {
           </p>
 
           {/* Search bar — input + botão UNIDOS, sem gap, sem border-radius */}
-          <div style={{ display: "flex", maxWidth: 560, marginBottom: 20 }}>
+          <div className="hp-search-container" style={{ display: "flex", maxWidth: 560, marginBottom: 20 }}>
             <input
               className="hp-search-input"
               value={query}

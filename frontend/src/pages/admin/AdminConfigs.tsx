@@ -52,6 +52,9 @@ export const AdminConfigs: React.FC = () => {
   const [generating, setGenerating] = useState(false);
   const [tab, setTab] = useState<"splits" | "payouts" | "infra">("splits");
 
+  const [payoutModal, setPayoutModal] = useState<{payoutId: string, itemId: string, name: string, amount: number} | null>(null);
+  const [pixTxId, setPixTxId] = useState("");
+
   const fetchData = async () => {
     try {
       const [configRes, payoutRes] = await Promise.all([
@@ -100,30 +103,43 @@ export const AdminConfigs: React.FC = () => {
     }
   };
 
+  const [notification, setNotification] = useState<{message: string, type: 'success' | 'error'} | null>(null);
+  const [showGenerateConfirm, setShowGenerateConfirm] = useState(false);
+
+  const showNotification = (message: string, type: 'success' | 'error' = 'success') => {
+    setNotification({ message, type });
+    setTimeout(() => setNotification(null), 5000);
+  };
+
   const handleGeneratePayout = async () => {
-    if (!confirm("Gerar relatório de repasse da semana atual?")) return;
+    setShowGenerateConfirm(false);
     setGenerating(true);
     try {
       const { data } = await API.post("/admin/payouts/generate");
       setPayouts((p) => [data, ...p]);
       setTab("payouts");
+      showNotification("Relatório gerado com sucesso!");
     } catch (err) {
       const axiosError = err as import("axios").AxiosError<{ error: string }>;
-      alert(axiosError.response?.data?.error ?? "Erro ao gerar relatório.");
+      showNotification(axiosError.response?.data?.error ?? "Erro ao gerar relatório.", 'error');
     } finally {
       setGenerating(false);
     }
   };
 
-  const handleMarkPaid = async (payoutId: string, itemId: string) => {
-    const pixTxId = prompt("ID da transação Pix (opcional):");
+  const confirmPayout = async () => {
+    if (!payoutModal) return;
     try {
-      await API.patch(`/admin/payouts/${payoutId}/items/${itemId}/paid`, { pixTxId });
+      await API.patch(`/admin/payouts/${payoutModal.payoutId}/items/${payoutModal.itemId}/paid`, { pixTxId });
+      setPayoutModal(null);
+      setPixTxId("");
       fetchData();
+      showNotification("Comprovante registrado!");
     } catch {
-      alert("Erro ao marcar pagamento.");
+      showNotification("Erro ao registrar pagamento.", 'error');
     }
   };
+
 
   const splitConfigs = configs.filter((c) => c.key.startsWith("split_"));
   const otherConfigs = configs.filter((c) => !c.key.startsWith("split_"));
@@ -136,7 +152,7 @@ export const AdminConfigs: React.FC = () => {
           <p className="text-[10px] text-theme-muted uppercase tracking-[0.5em] mt-2 font-bold italic">Modelo de Repasse Pix Manual (Plataforma Master)</p>
         </div>
         <button
-          onClick={handleGeneratePayout}
+          onClick={() => setShowGenerateConfirm(true)}
           disabled={generating}
           style={{ 
             background: T.brand, color: T.brandText, padding: "10px 20px", 
@@ -348,7 +364,7 @@ export const AdminConfigs: React.FC = () => {
                                 </div>
                               ) : (
                                 <button 
-                                  onClick={() => handleMarkPaid(payout.id, item.id)}
+                                  onClick={() => setPayoutModal({ payoutId: payout.id, itemId: item.id, name: item.recipientName, amount: item.amount })}
                                   className="text-[9px] font-bold text-black uppercase tracking-widest bg-brand-tactical border border-brand-tactical px-6 py-3 hover:brightness-110 transition-all rounded-none flex items-center gap-2"
                                 >
                                   <DollarSign size={10} /> REPASSAR VIA PIX
@@ -447,6 +463,106 @@ export const AdminConfigs: React.FC = () => {
               >
                 {saving ? "SINCRONIZANDO..." : "SALVAR TODAS AS CONFIGURAÇÕES"}
               </button>
+           </div>
+        </div>
+      )}
+      {/* GENERATE PAYOUT CONFIRMATION MODAL */}
+      {showGenerateConfirm && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-6 animate-in fade-in duration-300">
+           <div className="absolute inset-0 bg-black/95 backdrop-blur-sm" onClick={() => setShowGenerateConfirm(false)} />
+           <div className="relative bg-zinc-950 border border-brand-tactical/30 w-full max-w-sm p-8 space-y-8">
+              <div className="space-y-2">
+                 <span className="text-[10px] font-black text-brand-tactical uppercase tracking-[0.4em]">Protocolo Financeiro</span>
+                 <h3 className="text-xl font-heading text-white uppercase tracking-tighter">Gerar Fechamento?</h3>
+              </div>
+              
+              <p className="text-[11px] text-zinc-500 uppercase tracking-widest leading-relaxed">
+                ESTA AÇÃO IRÁ CONSOLIDAR TODAS AS VENDAS DA SEMANA ATUAL E GERAR AS ORDENS DE REPASSE PARA OS PARCEIROS.
+              </p>
+
+              <div className="grid grid-cols-2 gap-4">
+                 <button 
+                   onClick={() => setShowGenerateConfirm(false)}
+                   className="p-4 border border-zinc-800 text-zinc-500 text-[9px] font-black uppercase tracking-widest hover:bg-white/5 transition-all"
+                 >
+                   CANCELAR
+                 </button>
+                 <button 
+                   onClick={handleGeneratePayout}
+                   className="p-4 bg-brand-tactical text-black text-[9px] font-black uppercase tracking-widest hover:brightness-110 transition-all"
+                 >
+                   GERAR AGORA
+                 </button>
+              </div>
+           </div>
+        </div>
+      )}
+
+      {/* PAYOUT MODAL (MIDNIGHT LUXURY) */}
+      {payoutModal && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-6 animate-in fade-in duration-300">
+           <div className="absolute inset-0 bg-black/90 backdrop-blur-md" onClick={() => setPayoutModal(null)} />
+           <div className="relative bg-zinc-950 border border-brand-tactical/30 w-full max-w-md shadow-[0_0_50px_rgba(133,185,172,0.1)] p-8 space-y-8 overflow-hidden">
+              <div className="absolute top-0 right-0 w-32 h-32 bg-brand-tactical/5 -rotate-45 translate-x-16 -translate-y-16" />
+              
+              <div className="space-y-2">
+                 <span className="text-[10px] font-black text-brand-tactical uppercase tracking-[0.4em]">Protocolo de Repasse</span>
+                 <h3 className="text-2xl font-heading text-white uppercase tracking-tighter">Confirmar Transferência</h3>
+              </div>
+
+              <div className="bg-white/[0.02] border border-white/5 p-6 space-y-4">
+                 <div className="flex justify-between items-center">
+                    <span className="text-[9px] text-zinc-500 uppercase tracking-widest">Favorecido</span>
+                    <span className="text-[11px] text-white font-bold uppercase">{payoutModal.name}</span>
+                 </div>
+                 <div className="flex justify-between items-center">
+                    <span className="text-[9px] text-zinc-500 uppercase tracking-widest">Valor do Pix</span>
+                    <span className="text-xl font-heading text-brand-tactical tracking-widest">{formatCurrency(payoutModal.amount)}</span>
+                 </div>
+              </div>
+
+              <div className="space-y-3">
+                 <label className="text-[9px] font-black text-zinc-500 uppercase tracking-widest">ID da Transação Pix (Opcional)</label>
+                 <input 
+                   autoFocus
+                   value={pixTxId}
+                   onChange={e => setPixTxId(e.target.value)}
+                   placeholder="COLE O CÓDIGO OU NÚMERO DO PROTOCOLO..."
+                   className="w-full bg-zinc-900 border border-zinc-800 p-4 text-[10px] font-sans text-white placeholder:text-zinc-700 focus:border-brand-tactical focus:outline-none transition-all uppercase"
+                 />
+                 <p className="text-[8px] text-zinc-600 uppercase tracking-widest leading-relaxed">
+                   ESTE REGISTRO SERVIRÁ COMO COMPROVANTE DE AUDITORIA INTERNA NA PLATAFORMA MASTER.
+                 </p>
+              </div>
+
+              <div className="grid grid-cols-2 gap-4 pt-4">
+                 <button 
+                   onClick={() => setPayoutModal(null)}
+                   className="p-4 border border-zinc-800 text-zinc-500 text-[9px] font-black uppercase tracking-widest hover:bg-white/5 transition-all"
+                 >
+                   CANCELAR
+                 </button>
+                 <button 
+                   onClick={confirmPayout}
+                   className="p-4 bg-brand-tactical text-black text-[9px] font-black uppercase tracking-widest hover:brightness-110 transition-all shadow-[0_0_20px_rgba(133,185,172,0.2)]"
+                 >
+                   CONFIRMAR PAGAMENTO
+                 </button>
+              </div>
+           </div>
+        </div>
+      )}
+      {/* NOTIFICATION (MIDNIGHT LUXURY) */}
+      {notification && (
+        <div className="fixed bottom-10 right-10 z-[120] animate-in slide-in-from-right-10 duration-500">
+           <div className={`p-6 border ${notification.type === 'success' ? 'border-brand-tactical bg-zinc-950 shadow-[0_0_30px_rgba(133,185,172,0.1)]' : 'border-red-900 bg-zinc-950'} min-w-[300px] relative overflow-hidden shadow-2xl`}>
+              <div className="flex flex-col gap-1">
+                 <span className={`text-[8px] font-black uppercase tracking-[0.4em] ${notification.type === 'success' ? 'text-brand-tactical' : 'text-red-500'}`}>
+                    {notification.type === 'success' ? 'Protocolo Sincronizado' : 'Falha na Operação'}
+                 </span>
+                 <p className="text-[11px] font-bold text-white uppercase tracking-widest">{notification.message}</p>
+              </div>
+              <div className={`absolute bottom-0 left-0 h-1 ${notification.type === 'success' ? 'bg-brand-tactical' : 'bg-red-900'} animate-out fade-out duration-[5000ms] w-full`} />
            </div>
         </div>
       )}

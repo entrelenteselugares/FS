@@ -34,17 +34,19 @@ export const AdminSettings: React.FC = () => {
 
   const getConfig = (key: string) => settings.find(c => c.key === key)?.value || "";
 
+  const [notification, setNotification] = useState<{message: string, type: 'success' | 'error'} | null>(null);
+
   const handleSave = async () => {
     setSaving(true);
     try {
       await API.patch("/admin/configs", { configs: settings });
-      alert("Configurações do sistema sincronizadas com sucesso! ✅");
-      // Trigger a global theme update by reloading if necessary, 
-      // or just trust the next visit. Here we reload for immediate feedback.
-      window.location.reload();
+      setNotification({ message: "Configurações do sistema sincronizadas com sucesso! ✅", type: 'success' });
+      // Delay reload to let user see success notification
+      setTimeout(() => window.location.reload(), 2000);
     } catch (err) {
       const axiosError = err as import("axios").AxiosError<{ error: string }>;
-      alert(axiosError.response?.data?.error || "Erro ao salvar.");
+      setNotification({ message: axiosError.response?.data?.error || "Erro ao salvar.", type: 'error' });
+      setTimeout(() => setNotification(null), 5000);
     } finally {
       setSaving(false);
     }
@@ -191,6 +193,20 @@ export const AdminSettings: React.FC = () => {
          <RotateCcw className="text-zinc-900 mb-4" size={24} />
          <p className="text-zinc-600 text-[9px] uppercase tracking-widest font-bold">Protocolo V4.0.2 - Todos os direitos reservados</p>
       </div>
+      {/* NOTIFICATION (MIDNIGHT LUXURY) */}
+      {notification && (
+        <div className="fixed bottom-10 right-10 z-[100] animate-in slide-in-from-right-10 duration-500">
+           <div className={`p-6 border ${notification.type === 'success' ? 'border-brand-tactical bg-zinc-950 shadow-[0_0_30px_rgba(133,185,172,0.1)]' : 'border-red-900 bg-zinc-950'} min-w-[300px] relative overflow-hidden shadow-2xl`}>
+              <div className="flex flex-col gap-1">
+                 <span className={`text-[8px] font-black uppercase tracking-[0.4em] ${notification.type === 'success' ? 'text-brand-tactical' : 'text-red-500'}`}>
+                    {notification.type === 'success' ? 'Protocolo Sincronizado' : 'Erro de Infraestrutura'}
+                 </span>
+                 <p className="text-[11px] font-bold text-white uppercase tracking-widest">{notification.message}</p>
+              </div>
+              <div className={`absolute bottom-0 left-0 h-1 ${notification.type === 'success' ? 'bg-brand-tactical' : 'bg-red-900'} animate-out fade-out duration-[5000ms] w-full`} />
+           </div>
+        </div>
+      )}
     </div>
   );
 };

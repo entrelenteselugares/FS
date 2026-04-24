@@ -30,6 +30,8 @@ export const AdminUsers: React.FC = () => {
     name: "", email: "", password: "", role: "PROFISSIONAL", pixKey: "",
     otherHabilities: "", equipment: ""
   });
+  const [confirmDelete, setConfirmDelete] = useState<User | null>(null);
+  const [notification, setNotification] = useState<{message: string, type: 'success' | 'error'} | null>(null);
 
   const fetchUsers = async () => {
     setLoading(true);
@@ -46,6 +48,11 @@ export const AdminUsers: React.FC = () => {
   useEffect(() => {
     fetchUsers();
   }, []);
+
+  const showNotification = (message: string, type: 'success' | 'error' = 'success') => {
+    setNotification({ message, type });
+    setTimeout(() => setNotification(null), 5000);
+  };
 
   const handleCreate = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -71,8 +78,9 @@ export const AdminUsers: React.FC = () => {
       setEditingUser(null);
       setFormData({ name: "", email: "", password: "", role: "PROFISSIONAL", pixKey: "", otherHabilities: "", equipment: "" });
       fetchUsers();
+      showNotification(editingUser ? "Usuário atualizado com sucesso!" : "Membro convocado com sucesso!");
     } catch {
-      alert("Erro ao processar usuário");
+      showNotification("Erro ao processar usuário", 'error');
     }
   };
 
@@ -94,23 +102,28 @@ export const AdminUsers: React.FC = () => {
     try {
       await API.patch(`/admin/users/${user.id}`, { active: !user.active });
       setUsers(users.map(u => u.id === user.id ? { ...u, active: !u.active } : u));
+      showNotification(`Acesso de ${user.nome} ${!user.active ? 'ativado' : 'desativado'}`);
     } catch {
-      alert("Erro ao alterar status");
+      showNotification("Erro ao alterar status", 'error');
     }
   };
 
-  const handleDelete = async (user: User) => {
-    if (!window.confirm(`Deseja realmente remover ${user.nome}? Esta ação removerá o acesso e o perfil do sistema.`)) return;
+  const executeDelete = async () => {
+    if (!confirmDelete) return;
     try {
-      await API.delete(`/admin/users/${user.id}`);
-      setUsers(users.filter(u => u.id !== user.id));
+      await API.delete(`/admin/users/${confirmDelete.id}`);
+      setUsers(users.filter(u => u.id !== confirmDelete.id));
+      setConfirmDelete(null);
+      showNotification("Membro removido da rede.");
     } catch {
-      alert("Erro ao excluir usuário. Certifique-se de que ele não possui eventos vinculados.");
+      showNotification("Erro ao excluir usuário. Certifique-se de que ele não possui eventos vinculados.", 'error');
+      setConfirmDelete(null);
     }
   };
 
   return (
-    <div className="space-y-12 animate-in fade-in slide-in-from-bottom-4 duration-700">
+    <>
+      <div className="space-y-12 animate-in fade-in slide-in-from-bottom-4 duration-700">
       <div className="flex items-center justify-between border-b border-white/5 pb-8">
         <div>
           <h2 className="text-4xl font-heading text-theme-text tracking-tighter uppercase">Rede de Membros</h2>
@@ -192,7 +205,7 @@ export const AdminUsers: React.FC = () => {
                    Editar
                 </button>
                 <button 
-                  onClick={() => handleDelete(user)}
+                  onClick={() => setConfirmDelete(user)}
                   style={{ 
                     background: "transparent", border: `1px solid #451a1a`, 
                     padding: "6px 12px", color: "#f87171", fontSize: 8, 
@@ -310,5 +323,53 @@ export const AdminUsers: React.FC = () => {
           </div>
         )}
     </div>
+
+      {/* CONFIRMATION MODAL (MIDNIGHT LUXURY) */}
+      {confirmDelete && (
+        <div className="fixed inset-0 z-[110] flex items-center justify-center p-6 animate-in fade-in duration-300">
+           <div className="absolute inset-0 bg-black/95 backdrop-blur-sm" onClick={() => setConfirmDelete(null)} />
+           <div className="relative bg-zinc-950 border border-brand-tactical/30 w-full max-w-sm p-8 space-y-8">
+              <div className="space-y-2">
+                 <span className="text-[10px] font-black text-brand-tactical uppercase tracking-[0.4em]">Protocolo de Exclusão</span>
+                 <h3 className="text-xl font-heading text-white uppercase tracking-tighter">Remover Membro?</h3>
+              </div>
+              
+              <p className="text-[11px] text-zinc-500 uppercase tracking-widest leading-relaxed">
+                DESEJA REALMENTE REMOVER {confirmDelete.nome.toUpperCase()}? ESTA AÇÃO REMOVERÁ O ACESSO E O PERFIL DO SISTEMA.
+              </p>
+
+              <div className="grid grid-cols-2 gap-4">
+                 <button 
+                   onClick={() => setConfirmDelete(null)}
+                   className="p-4 border border-zinc-800 text-zinc-500 text-[9px] font-black uppercase tracking-widest hover:bg-white/5 transition-all"
+                 >
+                   CANCELAR
+                 </button>
+                 <button 
+                   onClick={executeDelete}
+                   className="p-4 bg-red-900 text-white text-[9px] font-black uppercase tracking-widest hover:brightness-110 transition-all"
+                 >
+                   REMOVER AGORA
+                 </button>
+              </div>
+           </div>
+        </div>
+      )}
+
+      {/* NOTIFICATION (MIDNIGHT LUXURY) */}
+      {notification && (
+        <div className="fixed bottom-10 right-10 z-[120] animate-in slide-in-from-right-10 duration-500">
+           <div className={`p-6 border ${notification.type === 'success' ? 'border-brand-tactical bg-zinc-950' : 'border-red-900 bg-zinc-950'} min-w-[300px] relative overflow-hidden shadow-2xl`}>
+              <div className="flex flex-col gap-1">
+                 <span className={`text-[8px] font-black uppercase tracking-[0.4em] ${notification.type === 'success' ? 'text-brand-tactical' : 'text-red-500'}`}>
+                    {notification.type === 'success' ? 'Sincronização OK' : 'Falha na Rede'}
+                 </span>
+                 <p className="text-[11px] font-bold text-white uppercase tracking-widest">{notification.message}</p>
+              </div>
+              <div className={`absolute bottom-0 left-0 h-1 ${notification.type === 'success' ? 'bg-brand-tactical' : 'bg-red-900'} animate-out fade-out duration-[5000ms] w-full`} />
+           </div>
+        </div>
+      )}
+    </>
   );
 };

@@ -1,6 +1,7 @@
 import React, { useState, useEffect, useCallback } from "react";
 import { API } from "../../lib/api";
 import { T } from "../../lib/theme";
+import { DollarSign } from "lucide-react";
 
 const fmtDate = (iso: string | null | undefined) => {
   if (!iso) return "—";
@@ -40,6 +41,13 @@ export const AdminFinance: React.FC = () => {
   const [orders, setOrders] = useState<PayoutOrder[]>([]);
   const [loading, setLoading] = useState(true);
   const [view, setView] = useState<"pending" | "history">("pending");
+  const [confirmModal, setConfirmModal] = useState<string | null>(null);
+  const [notification, setNotification] = useState<{message: string, type: 'success' | 'error'} | null>(null);
+
+  const showNotification = (message: string, type: 'success' | 'error' = 'success') => {
+    setNotification({ message, type });
+    setTimeout(() => setNotification(null), 5000);
+  };
 
   const fetchPayouts = useCallback(async () => {
     setLoading(true);
@@ -61,12 +69,13 @@ export const AdminFinance: React.FC = () => {
   }, [fetchPayouts]);
 
   const handleMarkAsPaid = async (orderId: string) => {
-    if (!window.confirm("Confirmar que você já realizou os repasses via PIX para este pedido?")) return;
     try {
       await API.patch(`/admin/orders/${orderId}/payout`);
-      setOrders(orders.filter(o => o.id !== orderId));
+      setOrders(prev => prev.filter(o => o.id !== orderId));
+      setConfirmModal(null);
+      showNotification("Repasse liquidado com sucesso!");
     } catch {
-      alert("Erro ao marcar como pago");
+      showNotification("Erro ao marcar como pago", 'error');
     }
   };
 
@@ -108,51 +117,36 @@ export const AdminFinance: React.FC = () => {
             Histórico
           </button>
         </div>
-        <button 
-          onClick={async () => {
-            try {
-              const res = await API.get("/admin/payouts/export", { responseType: 'blob' });
-              const url = window.URL.createObjectURL(new Blob([res.data]));
-              const link = document.createElement('a');
-              link.href = url;
-              link.setAttribute('download', `repasses-${Date.now()}.csv`);
-              document.body.appendChild(link);
-              link.click();
-            } catch {
-              alert("Erro ao exportar CSV");
-            }
-          }}
-          style={{ 
-            padding: "10px 20px", background: T.bgField, border: `1px solid ${T.border}`, 
-            color: T.text2, fontSize: 8, fontWeight: 900, textTransform: "uppercase", 
-            letterSpacing: 2, cursor: "pointer", transition: "all 0.2s"
-          }}
-          onMouseEnter={e => e.currentTarget.style.color = T.text}
-          onMouseLeave={e => e.currentTarget.style.color = T.text2}
-        >
-          Exportar CSV
-        </button>
       </div>
 
-      <div className="grid grid-cols-1 gap-6">
+      <div className="space-y-4">
         {loading ? (
-          <div className="py-20 text-center text-[10px] text-theme-muted uppercase tracking-widest animate-pulse bg-theme-bg-muted border border-theme-border">Sincronizando Fluxo Financeiro...</div>
+          <div className="py-20 text-center text-[10px] text-theme-muted uppercase tracking-[0.5em] animate-pulse">Auditando Transações...</div>
         ) : orders.length === 0 ? (
-          <div className="py-20 text-center text-[10px] text-theme-muted/30 uppercase tracking-widest border border-dashed border-theme-border">
-            {view === "pending" ? "Nenhum repasse pronto para liberação." : "Nenhum histórico de repasse encontrado."}
+          <div className="py-20 text-center text-[10px] text-theme-muted uppercase tracking-[0.5em] border border-dashed border-theme-border">
+            {view === "pending" ? "Nenhum repasse pendente no momento." : "Nenhum histórico de repasse encontrado."}
           </div>
         ) : orders.map(order => (
-          <div key={order.id} style={{ border: `1px solid ${T.border}`, padding: "20px", background: T.bgCard }} className="hover:border-brand-tactical/20 transition-all group">
-            <div className="flex flex-col md:flex-row justify-between gap-8">
-              <div className="flex-1">
-                <div className="flex items-center gap-4 mb-4">
-                  <span style={{ fontSize: 8, fontWeight: 900, textTransform: "uppercase", letterSpacing: 1.5, color: T.brand, border: `1px solid ${T.brand}44`, padding: "2px 6px" }}>PEDIDO APROVADO</span>
-                  <span style={{ fontSize: 9, fontWeight: 900, textTransform: "uppercase", letterSpacing: 1, color: T.text3 }}>{fmtDate(order.updatedAt)}</span>
+          <div key={order.id} style={{ background: T.bgCard, border: `1px solid ${T.border}`, padding: 32 }} className="group hover:border-brand-tactical transition-all">
+            <div className="grid grid-cols-1 md:grid-cols-4 gap-12">
+              <div className="md:col-span-3">
+                <div className="flex items-center gap-4 mb-6">
+                  <div style={{ background: T.brand, color: T.brandText, fontSize: 8, fontWeight: 900, padding: "4px 10px", textTransform: "uppercase", letterSpacing: 1 }}>{view === "pending" ? "Aguardando PIX" : "Liquidado"}</div>
+                  <div style={{ fontSize: 10, fontWeight: 900, color: T.text, textTransform: "uppercase", letterSpacing: 1 }}>{order.event.title}</div>
+                  <div style={{ fontSize: 9, color: T.text3, textTransform: "uppercase" }}>• Atualizado em {fmtDate(order.updatedAt)}</div>
                 </div>
-                <h3 style={{ fontSize: 18, fontWeight: 900, color: T.text, textTransform: "uppercase", letterSpacing: -0.5, marginBottom: 4 }}>{order.event.title}</h3>
-                <p style={{ fontSize: 12, fontWeight: 700, color: T.text2 }}>Venda Total: <span style={{ color: T.text }}>{Number(order.amount).toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' })}</span></p>
-                
-                <div className="mt-6 grid grid-cols-1 md:grid-cols-3 gap-6">
+
+                <div className="grid grid-cols-1 md:grid-cols-4 gap-8 border-t border-white/5 pt-8">
+                  {/* Matriz */}
+                  <div className="space-y-2">
+                    <label style={{ fontSize: 8, fontWeight: 900, color: T.text3, textTransform: "uppercase", letterSpacing: 1, display: "block" }}>Matriz Foto Segundo</label>
+                    <div style={{ fontSize: 16, fontWeight: 900, color: T.text, letterSpacing: 0.5 }}>
+                      {order.splitMatriz !== undefined && order.splitMatriz !== null 
+                        ? order.splitMatriz.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' })
+                        : calculateAmount(order.amount, 50) // Fallback 50%
+                      }
+                    </div>
+                  </div>
                   {/* Captação */}
                   {order.event.partners.captacao && (
                     <div className="space-y-2">
@@ -195,34 +189,81 @@ export const AdminFinance: React.FC = () => {
                 </div>
               </div>
 
-            <div className="flex flex-col justify-end">
-              {view === "pending" ? (
-                <button 
-                  onClick={() => handleMarkAsPaid(order.id)}
-                  style={{ 
-                    background: T.brand, color: T.brandText, padding: "12px 24px", 
-                    fontSize: 9, fontWeight: 900, textTransform: "uppercase", 
-                    letterSpacing: "0.2em", cursor: "pointer", border: "none",
-                    transition: "all 0.2s"
-                  }}
-                  onMouseEnter={e => e.currentTarget.style.opacity = "0.8"}
-                  onMouseLeave={e => e.currentTarget.style.opacity = "1"}
-                >
-                  Confirmar Repasse PIX
-                </button>
-              ) : (
-                <div style={{ textAlign: "right" }}>
-                  <div style={{ fontSize: 8, fontWeight: 900, color: T.text3, textTransform: "uppercase", letterSpacing: 1, marginBottom: 4 }}>Repasse realizado em</div>
-                  <div style={{ fontSize: 10, fontWeight: 900, color: T.brand, textTransform: "uppercase", letterSpacing: 1 }}>
-                    {order.payoutDate && fmtDateTime(order.payoutDate)}
+              <div className="flex flex-col justify-end">
+                {view === "pending" ? (
+                  <button 
+                    onClick={() => setConfirmModal(order.id)}
+                    style={{ 
+                      background: T.brand, color: T.brandText, padding: "12px 24px", 
+                      fontSize: 9, fontWeight: 900, textTransform: "uppercase", 
+                      letterSpacing: "0.2em", cursor: "pointer", border: "none",
+                      transition: "all 0.2s",
+                      display: "flex", alignItems: "center", gap: 8
+                    }}
+                    onMouseEnter={e => e.currentTarget.style.opacity = "0.8"}
+                    onMouseLeave={e => e.currentTarget.style.opacity = "1"}
+                  >
+                    <DollarSign size={10} /> Confirmar Repasse PIX
+                  </button>
+                ) : (
+                  <div style={{ textAlign: "right" }}>
+                    <div style={{ fontSize: 8, fontWeight: 900, color: T.text3, textTransform: "uppercase", letterSpacing: 1, marginBottom: 4 }}>Repasse realizado em</div>
+                    <div style={{ fontSize: 10, fontWeight: 900, color: T.brand, textTransform: "uppercase", letterSpacing: 1 }}>
+                      {order.payoutDate && fmtDateTime(order.payoutDate)}
+                    </div>
                   </div>
-                </div>
-              )}
+                )}
+              </div>
+            </div>
           </div>
+        ))}
+      </div>
+
+      {/* CONFIRMATION MODAL (MIDNIGHT LUXURY) */}
+      {confirmModal && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-6 animate-in fade-in duration-300">
+           <div className="absolute inset-0 bg-black/95 backdrop-blur-sm" onClick={() => setConfirmModal(null)} />
+           <div className="relative bg-zinc-950 border border-brand-tactical/30 w-full max-w-sm p-8 space-y-8">
+              <div className="space-y-2">
+                 <span className="text-[10px] font-black text-brand-tactical uppercase tracking-[0.4em]">Validação de Saída</span>
+                 <h3 className="text-xl font-heading text-white uppercase tracking-tighter">Protocolo de Repasse</h3>
+              </div>
+              
+              <p className="text-[11px] text-zinc-500 uppercase tracking-widest leading-relaxed">
+                VOCÊ CONFIRMA QUE JÁ REALIZOU OS REPASSES VIA PIX PARA TODOS OS PARCEIROS DESTE PEDIDO?
+              </p>
+
+              <div className="grid grid-cols-2 gap-4">
+                 <button 
+                   onClick={() => setConfirmModal(null)}
+                   className="p-4 border border-zinc-800 text-zinc-500 text-[9px] font-black uppercase tracking-widest hover:bg-white/5 transition-all"
+                 >
+                   CANCELAR
+                 </button>
+                 <button 
+                   onClick={() => handleMarkAsPaid(confirmModal)}
+                   className="p-4 bg-brand-tactical text-black text-[9px] font-black uppercase tracking-widest hover:brightness-110 transition-all"
+                 >
+                   CONFIRMAR
+                 </button>
+              </div>
+           </div>
         </div>
-      </div>
-    ))}
-      </div>
+      )}
+      {/* NOTIFICATION (MIDNIGHT LUXURY) */}
+      {notification && (
+        <div className="fixed bottom-10 right-10 z-[100] animate-in slide-in-from-right-10 duration-500">
+           <div className={`p-6 border ${notification.type === 'success' ? 'border-brand-tactical bg-zinc-950 shadow-[0_0_30px_rgba(133,185,172,0.1)]' : 'border-red-900 bg-zinc-950'} min-w-[300px] relative overflow-hidden shadow-2xl`}>
+              <div className="flex flex-col gap-1">
+                 <span className={`text-[8px] font-black uppercase tracking-[0.4em] ${notification.type === 'success' ? 'text-brand-tactical' : 'text-red-500'}`}>
+                    {notification.type === 'success' ? 'Liquidação OK' : 'Falha no Repasse'}
+                 </span>
+                 <p className="text-[11px] font-bold text-white uppercase tracking-widest">{notification.message}</p>
+              </div>
+              <div className={`absolute bottom-0 left-0 h-1 ${notification.type === 'success' ? 'bg-brand-tactical' : 'bg-red-900'} animate-out fade-out duration-[5000ms] w-full`} />
+           </div>
+        </div>
+      )}
     </div>
   );
 };

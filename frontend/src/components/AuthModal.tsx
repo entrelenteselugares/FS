@@ -28,8 +28,9 @@ export const AuthModal: React.FC<AuthModalProps> = ({ onSuccess, onClose }) => {
         await register(email, password, nome);
       }
       onSuccess();
-    } catch (err: any) {
-      setError(err.response?.data?.error || "Erro na autenticação.");
+    } catch (err: unknown) {
+      const error = err as { response?: { data?: { error?: string } } };
+      setError(error.response?.data?.error || "Erro na autenticação.");
     } finally {
       setLoading(false);
     }

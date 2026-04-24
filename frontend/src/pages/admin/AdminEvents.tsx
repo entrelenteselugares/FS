@@ -40,6 +40,22 @@ export const AdminEvents: React.FC = () => {
   const [coverPreview, setCoverPreview] = useState<string | null>(null);
   const [qrModalEvent, setQrModalEvent] = useState<Event | null>(null);
   const [copied, setCopied] = useState(false);
+  const [notification, setNotification] = useState<{message: string, type: 'success' | 'error'} | null>(null);
+
+  const showNotification = (message: string, type: 'success' | 'error' = 'success') => {
+    setNotification({ message, type });
+    setTimeout(() => setNotification(null), 5000);
+  };
+  
+  // Venda Direta State
+  const [isSaleModalOpen, setIsSaleModalOpen] = useState(false);
+  const [saleEvent, setSaleEvent] = useState<Event | null>(null);
+  const [saleFormData, setSaleFormData] = useState({
+    customerName: "",
+    customerEmail: "",
+    amount: 0
+  });
+
   const fileInputRef = React.useRef<HTMLInputElement>(null);
   
   interface EventFormData {
@@ -81,6 +97,8 @@ export const AdminEvents: React.FC = () => {
     driveUrl: "",
     previewPhotos: ["", "", ""]
   });
+
+  const [activeTab, setActiveTab] = useState<'info' | 'equipe' | 'comercial' | 'entrega'>('info');
 
   const handleFileChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
@@ -129,7 +147,7 @@ export const AdminEvents: React.FC = () => {
       });
       setCoverPreview(null);
     } catch {
-      alert("Erro ao processar evento.");
+      showNotification("Erro ao processar evento.", 'error');
     } finally {
       setIsUploading(false);
     }
@@ -166,9 +184,32 @@ export const AdminEvents: React.FC = () => {
         })()
       });
       setCoverPreview(data.coverPhotoUrl);
+      setActiveTab('info');
       setIsModalOpen(true);
     } catch {
-      alert("Erro ao carregar detalhes do evento.");
+      showNotification("Erro ao carregar detalhes do evento.", 'error');
+    }
+  };
+
+  const handleSaleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!saleEvent) return;
+    setIsUploading(true);
+    try {
+      await API.post("/admin/orders/manual", {
+        eventId: saleEvent.id,
+        ...saleFormData
+      });
+      showNotification("Venda registrada com sucesso!");
+      setIsSaleModalOpen(false);
+      // Refresh events to show updated sales count
+      const updatedEvents = await API.get("/admin/events");
+      setEvents(updatedEvents.data.events || []);
+    } catch (err: unknown) {
+      const error = err as { response?: { data?: { error?: string } } };
+      showNotification(error.response?.data?.error || "Erro ao registrar venda.", 'error');
+    } finally {
+      setIsUploading(false);
     }
   };
 
@@ -219,7 +260,7 @@ export const AdminEvents: React.FC = () => {
           className="font-black uppercase tracking-[0.4em] px-10 py-5 hover:brightness-110 transition-all shadow-xl shadow-brand-tactical/10 rounded-none text-[10px]"
           style={{ backgroundColor: 'var(--brand-tactical)', color: 'var(--theme-text-on-brand)' }}
         >
-          NOVO REGISTRO
+          NOVO EVENTO
         </button>
       </div>
 
@@ -330,6 +371,25 @@ export const AdminEvents: React.FC = () => {
                       <QrCode size={12} />
                     </button>
                     <button 
+                      onClick={() => {
+                        setSaleEvent(event);
+                        setSaleFormData({
+                          customerName: "",
+                          customerEmail: "",
+                          amount: Number(event.priceBase || 0)
+                        });
+                        setIsSaleModalOpen(true);
+                      }}
+                      style={{ 
+                        background: T.brand, border: "none", color: "black", 
+                        fontSize: 8, fontWeight: 900, textTransform: "uppercase", 
+                        letterSpacing: 1, cursor: "pointer", padding: "6px 12px",
+                        transition: "all 0.2s"
+                      }}
+                    >
+                      VENDA
+                    </button>
+                    <button 
                       onClick={() => handleEditOpen(event)}
                       style={{ 
                         background: "transparent", border: `1px solid ${T.border}`, color: T.text2, 
@@ -340,7 +400,7 @@ export const AdminEvents: React.FC = () => {
                       onMouseEnter={e => { e.currentTarget.style.borderColor = T.brand; e.currentTarget.style.color = T.text; }}
                       onMouseLeave={e => { e.currentTarget.style.borderColor = T.border; e.currentTarget.style.color = T.text2; }}
                     >
-                      Configurar
+                      Editar
                     </button>
                   </div>
                 </td>
@@ -364,265 +424,372 @@ export const AdminEvents: React.FC = () => {
                <div className="w-12 h-1 bg-brand-tactical" />
              </div>
 
-             <form onSubmit={handleCreate} className="grid grid-cols-1 md:grid-cols-2 gap-x-12 gap-y-10">
-                <div className="space-y-8">
-                  <div className="space-y-2">
-                    <label className="text-[9px] font-bold text-theme-muted/60 uppercase tracking-[0.4em]">Capa da Vitrine</label>
-                    <div 
-                      onClick={() => fileInputRef.current?.click()}
-                      className="w-full aspect-video bg-theme-bg-muted border border-theme-border flex flex-col items-center justify-center cursor-pointer overflow-hidden group relative rounded-none"
-                    >
-                      {coverPreview ? (
-                        <img src={coverPreview} alt="Preview" className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700" />
-                      ) : (
-                        <div className="text-center group-hover:text-brand-tactical transition-colors">
-                          <div className="text-2xl mb-2">📸</div>
-                          <div className="text-[9px] uppercase tracking-[0.3em] text-zinc-700 font-bold">Enviar Capa</div>
+              <div className="flex border-b border-theme-border mb-10 gap-8">
+                {(['info', 'equipe', 'comercial', 'entrega'] as const).map(t => (
+                  <button
+                    key={t}
+                    type="button"
+                    onClick={() => setActiveTab(t)}
+                    className={`pb-4 text-[10px] font-black uppercase tracking-[0.3em] transition-all relative ${activeTab === t ? 'text-brand-tactical' : 'text-theme-muted hover:text-white'}`}
+                  >
+                    {t === 'info' ? 'Essencial' : t === 'equipe' ? 'Operação' : t === 'comercial' ? 'Comercial' : 'Entrega'}
+                    {activeTab === t && <div className="absolute bottom-0 left-0 right-0 h-0.5 bg-brand-tactical" />}
+                  </button>
+                ))}
+              </div>
+
+              <form onSubmit={handleCreate}>
+                 <div className="grid grid-cols-1 md:grid-cols-2 gap-x-12">
+                    {activeTab === 'info' && (
+                      <>
+                        <div className="space-y-8">
+                          <div className="space-y-2">
+                            <label className="text-[9px] font-bold text-theme-muted/60 uppercase tracking-[0.4em]">Capa da Vitrine</label>
+                            <div 
+                              onClick={() => fileInputRef.current?.click()}
+                              className="w-full aspect-video bg-theme-bg-muted border border-theme-border flex flex-col items-center justify-center cursor-pointer overflow-hidden group relative rounded-none"
+                            >
+                              {coverPreview ? (
+                                <img src={coverPreview} alt="Preview" className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700" />
+                              ) : (
+                                <div className="text-center group-hover:text-brand-tactical transition-colors">
+                                  <div className="text-2xl mb-2">📸</div>
+                                  <div className="text-[9px] uppercase tracking-[0.3em] text-zinc-700 font-bold">Enviar Capa</div>
+                                </div>
+                              )}
+                              {isUploading && <div className="absolute inset-0 bg-black/80 flex items-center justify-center text-[9px] text-white uppercase tracking-widest animate-pulse">Processando...</div>}
+                            </div>
+                            <input type="file" ref={fileInputRef} hidden accept="image/*" onChange={handleFileChange} />
+                          </div>
                         </div>
-                      )}
-                      {isUploading && <div className="absolute inset-0 bg-black/80 flex items-center justify-center text-[9px] text-white uppercase tracking-widest animate-pulse">Processando...</div>}
-                    </div>
-                    <input type="file" ref={fileInputRef} hidden accept="image/*" onChange={handleFileChange} />
-                  </div>
 
-                  <div className="space-y-2">
-                    <label className="text-[9px] font-bold text-theme-muted/60 uppercase tracking-[0.4em]">Título do Evento (Ex: Nome do Evento)</label>
-                    <input 
-                      type="text"
-                      className="w-full bg-theme-bg border border-theme-border p-4 text-[13px] text-theme-text focus:border-brand-tactical transition-colors outline-none font-bold"
-                      value={formData.title}
-                      onChange={(e) => setFormData({ ...formData, title: e.target.value })}
-                      required
-                    />
-                  </div>
+                        <div className="space-y-8">
+                          <div className="space-y-2">
+                            <label className="text-[9px] font-bold text-theme-muted/60 uppercase tracking-[0.4em]">Título do Evento</label>
+                            <input 
+                              type="text"
+                              className="w-full bg-theme-bg border border-theme-border p-4 text-[13px] text-zinc-300 focus:border-brand-tactical transition-colors outline-none font-bold"
+                              value={formData.title}
+                              onChange={(e) => setFormData({ ...formData, title: e.target.value })}
+                              required
+                            />
+                          </div>
 
-                  <div className="space-y-2">
-                    <label className="text-[9px] font-bold text-theme-muted/60 uppercase tracking-[0.4em]">Identificador URL (Slug)</label>
-                    <input 
-                      type="text"
-                      className="w-full bg-theme-bg border border-theme-border p-4 text-[13px] text-theme-text focus:border-brand-tactical transition-colors outline-none font-bold"
-                      value={formData.slug}
-                      onChange={(e) => setFormData({ ...formData, slug: e.target.value.toLowerCase().replace(/\s+/g, "-") })}
-                      placeholder="ex: taynan-e-felipe"
-                    />
-                  </div>
+                          <div className="space-y-2">
+                            <label className="text-[9px] font-bold text-theme-muted/60 uppercase tracking-[0.4em]">Identificador URL (Slug)</label>
+                            <input 
+                              type="text"
+                              className="w-full bg-theme-bg border border-theme-border p-4 text-[13px] text-zinc-400 focus:border-brand-tactical transition-colors outline-none font-bold"
+                              value={formData.slug}
+                              onChange={(e) => setFormData({ ...formData, slug: e.target.value.toLowerCase().replace(/\s+/g, "-") })}
+                              placeholder="ex: taynan-e-felipe"
+                            />
+                          </div>
 
-                  <div className="grid grid-cols-2 gap-8">
-                    <div className="space-y-2">
-                      <label className="text-[9px] font-bold text-theme-muted/60 uppercase tracking-[0.4em]">Data do Evento</label>
-                      <input 
-                        type="date" required
-                        className="w-full bg-theme-bg border border-theme-border p-4 text-[13px] text-theme-text focus:border-brand-tactical transition-colors outline-none font-bold"
-                        value={formData.date}
-                        onChange={e => setFormData({...formData, date: e.target.value})}
-                      />
-                    </div>
-                    <div className="space-y-2">
-                      <label className="text-[9px] font-bold text-theme-muted/60 uppercase tracking-[0.4em]">Local do Registro</label>
-                      <input 
-                        type="text" required
-                        className="w-full bg-theme-bg border border-theme-border p-4 text-[13px] text-theme-text focus:border-brand-tactical transition-colors outline-none font-bold"
-                        value={formData.location}
-                        onChange={e => setFormData({...formData, location: e.target.value})}
-                        placeholder="EX: CARTÓRIO X"
-                      />
-                    </div>
-                  </div>
+                          <div className="grid grid-cols-2 gap-8">
+                            <div className="space-y-2">
+                              <label className="text-[9px] font-bold text-theme-muted/60 uppercase tracking-[0.4em]">Data do Evento</label>
+                              <input 
+                                type="date" required
+                                className="w-full bg-theme-bg border border-theme-border p-4 text-[13px] text-theme-text focus:border-brand-tactical transition-colors outline-none font-bold"
+                                value={formData.date}
+                                onChange={e => setFormData({...formData, date: e.target.value})}
+                              />
+                            </div>
+                            <div className="space-y-2">
+                              <label className="text-[9px] font-bold text-theme-muted/60 uppercase tracking-[0.4em]">Local</label>
+                              <input 
+                                type="text" required
+                                className="w-full bg-theme-bg border border-theme-border p-4 text-[13px] text-theme-text focus:border-brand-tactical transition-colors outline-none font-bold"
+                                value={formData.location}
+                                onChange={e => setFormData({...formData, location: e.target.value})}
+                                placeholder="EX: CARTÓRIO X"
+                              />
+                            </div>
+                          </div>
+                        </div>
+                      </>
+                    )}
 
-                  <div className="space-y-2">
-                    <label className="text-[9px] font-bold text-theme-muted/60 uppercase tracking-[0.4em]">Horas de Trabalho</label>
-                    <input 
-                      type="number"
-                      required
-                      value={formData.eventHours}
-                      onChange={e => setFormData({...formData, eventHours: Number(e.target.value)})}
-                      className="w-full bg-transparent border-b border-theme-border py-3 text-sm text-theme-text focus:outline-none focus:border-brand-tactical transition-all rounded-none" 
-                    />
-                  </div>
-                  
-                  <div className="space-y-4">
-                    <label className="text-[9px] font-bold text-theme-muted/60 uppercase tracking-[0.4em]">Serviços Inclusos</label>
-                    <div className="grid grid-cols-2 gap-4">
-                      {(["temFoto", "temVideo", "temReels", "temFotoImpressa"] as const).map(serv => (
-                        <label key={serv} className="flex items-center gap-3 cursor-pointer group">
-                          <input 
-                            type="checkbox"
-                            checked={formData[serv]}
-                            onChange={e => setFormData({...formData, [serv]: e.target.checked})}
-                            className="w-5 h-5 border-zinc-800 bg-transparent rounded-none checked:bg-brand-tactical focus:ring-0 appearance-none border transition-all"
-                          />
-                          <span className="text-[10px] text-zinc-500 uppercase tracking-[0.3em] font-bold group-hover:text-white transition-all">
-                            {serv.replace("tem", "").replace(/([A-Z])/g, ' $1').trim()}
-                          </span>
-                        </label>
-                      ))}
-                    </div>
-                  </div>
+                    {activeTab === 'equipe' && (
+                      <>
+                        <div className="space-y-8">
+                          <div className="space-y-2">
+                            <label className="text-[9px] font-bold text-theme-muted/60 uppercase tracking-[0.4em]">Unidade Fixa Responsável</label>
+                            <select 
+                              value={formData.cartorioId}
+                              onChange={e => setFormData({...formData, cartorioId: e.target.value})}
+                              className="w-full bg-theme-bg border border-theme-border p-4 text-[13px] text-theme-text focus:border-brand-tactical transition-colors outline-none font-bold appearance-none cursor-pointer"
+                            >
+                              <option value="">SELECIONE A UNIDADE FIXA</option>
+                              {users.filter(u => u.role === "UNIDADE" || u.role === "CARTORIO").map(u => (
+                                <option key={u.id} value={u.id}>{u.nome.toUpperCase()}</option>
+                              ))}
+                            </select>
+                          </div>
 
-                  <div className="space-y-4 pt-6 border-t border-theme-border/50">
-                    <label className="text-[10px] font-bold text-brand-tactical uppercase tracking-[0.4em]">Links de Entrega (Protocolo)</label>
-                    <div className="space-y-4">
-                       <div className="space-y-2">
-                         <label className="text-[9px] font-bold text-theme-muted/60 uppercase tracking-[0.4em]">Link Google Drive / Pasta de Entrega</label>
-                         <input 
-                           type="text"
-                           className="w-full bg-theme-bg border border-theme-border p-4 text-[13px] text-theme-text focus:border-brand-tactical transition-colors outline-none font-bold"
-                           value={formData.driveUrl}
-                           onChange={(e) => setFormData({ ...formData, driveUrl: e.target.value })}
-                           placeholder="https://drive.google.com/..."
-                         />
-                       </div>
-                       <div className="space-y-2">
-                         <label className="text-[9px] font-bold text-theme-muted/60 uppercase tracking-[0.4em]">Link Lightroom / Galeria Online</label>
-                         <input 
-                           type="text"
-                           className="w-full bg-theme-bg border border-theme-border p-4 text-[13px] text-theme-text focus:border-brand-tactical transition-colors outline-none font-bold"
-                           value={formData.lightroomUrl}
-                           onChange={(e) => setFormData({ ...formData, lightroomUrl: e.target.value })}
-                           placeholder="https://lightroom.adobe.com/..."
-                         />
-                       </div>
+                          <div className="space-y-2">
+                            <label className="text-[9px] font-bold text-theme-muted/60 uppercase tracking-[0.4em]">Cidade / UF</label>
+                            <input 
+                              type="text"
+                              className="w-full bg-theme-bg border border-theme-border p-4 text-[13px] text-theme-text focus:border-brand-tactical transition-colors outline-none font-bold"
+                              value={formData.city}
+                              onChange={(e) => setFormData({ ...formData, city: e.target.value })}
+                              placeholder="EX: SÃO PAULO - SP"
+                            />
+                          </div>
+                        </div>
 
-                       <div className="space-y-4 pt-4">
-                         <label className="text-[9px] font-bold text-brand-tactical uppercase tracking-[0.4em]">Fotos de Prévia (Até 3 - Opcional)</label>
-                         {[0, 1, 2].map(idx => (
-                           <div key={idx} className="space-y-2">
-                             <input 
-                               type="text"
-                               className="w-full bg-theme-bg border border-theme-border p-3 text-[11px] text-theme-text focus:border-brand-tactical transition-colors outline-none"
-                               value={formData.previewPhotos[idx]}
-                               onChange={(e) => {
-                                 const newPreviews = [...formData.previewPhotos] as [string, string, string];
-                                 newPreviews[idx] = e.target.value;
-                                 setFormData({ ...formData, previewPhotos: newPreviews });
-                               }}
-                               placeholder={`URL da Foto ${idx + 1}`}
-                             />
-                           </div>
-                         ))}
-                       </div>
-                    </div>
-                  </div>
+                        <div className="space-y-8">
+                          <div className="grid grid-cols-2 gap-8">
+                            <div className="space-y-2">
+                              <label className="text-[9px] font-bold text-theme-muted/60 uppercase tracking-[0.4em]">Captação</label>
+                              <select 
+                                value={formData.captacaoId}
+                                onChange={e => setFormData({...formData, captacaoId: e.target.value})}
+                                className="w-full bg-theme-bg border border-theme-border p-4 text-[13px] text-theme-text focus:border-brand-tactical transition-colors outline-none font-bold appearance-none cursor-pointer"
+                              >
+                                <option value="">PROFISSIONAL DA REDE</option>
+                                {users.filter(u => u.role === "PROFISSIONAL").map(u => (
+                                  <option key={u.id} value={u.id}>{u.nome.toUpperCase()}</option>
+                                ))}
+                              </select>
+                            </div>
+                            <div className="space-y-2">
+                              <label className="text-[9px] font-bold text-theme-muted/60 uppercase tracking-[0.4em]">Edição</label>
+                              <select 
+                                value={formData.edicaoId}
+                                onChange={e => setFormData({...formData, edicaoId: e.target.value})}
+                                className="w-full bg-theme-bg border border-theme-border p-4 text-[13px] text-theme-text focus:border-brand-tactical transition-colors outline-none font-bold appearance-none cursor-pointer"
+                              >
+                                <option value="">PROFISSIONAL DA REDE</option>
+                                {users.filter(u => u.role === "PROFISSIONAL").map(u => (
+                                  <option key={u.id} value={u.id}>{u.nome.toUpperCase()}</option>
+                                ))}
+                              </select>
+                            </div>
+                          </div>
+
+                          <div className="space-y-2">
+                            <label className="text-[9px] font-bold text-theme-muted/60 uppercase tracking-[0.4em]">Horas de Trabalho</label>
+                            <input 
+                              type="number"
+                              required
+                              value={formData.eventHours}
+                              onChange={e => setFormData({...formData, eventHours: Number(e.target.value)})}
+                              className="w-full bg-theme-bg border border-theme-border p-4 text-[13px] text-theme-text focus:border-brand-tactical transition-colors outline-none font-bold" 
+                            />
+                          </div>
+                        </div>
+                      </>
+                    )}
+
+                    {activeTab === 'comercial' && (
+                      <>
+                        <div className="space-y-8">
+                          <div className="grid grid-cols-2 gap-8">
+                            <div className="space-y-2">
+                              <label className="text-[9px] font-bold text-theme-muted/60 uppercase tracking-[0.4em]">Preço Desbloqueio (R$)</label>
+                              <input 
+                                type="number"
+                                className="w-full bg-theme-bg border border-theme-border p-4 text-[13px] text-theme-text focus:border-brand-tactical transition-colors outline-none font-bold"
+                                value={formData.priceBase}
+                                onChange={(e) => setFormData({ ...formData, priceBase: Number(e.target.value) })}
+                              />
+                            </div>
+                            <div className="space-y-2">
+                              <label className="text-[9px] font-bold text-theme-muted/60 uppercase tracking-[0.4em]">Preço Antecipado (R$)</label>
+                              <input 
+                                type="number"
+                                className="w-full bg-theme-bg border border-theme-border p-4 text-[13px] text-theme-text focus:border-brand-tactical transition-colors outline-none font-bold"
+                                value={formData.priceEarly}
+                                onChange={e => setFormData({...formData, priceEarly: Number(e.target.value)})}
+                              />
+                            </div>
+                          </div>
+
+                          <div className="space-y-4 pt-4">
+                            <label className="text-[9px] font-bold text-theme-muted/60 uppercase tracking-[0.4em]">Serviços Inclusos</label>
+                            <div className="grid grid-cols-2 gap-4">
+                              {(["temFoto", "temVideo", "temReels", "temFotoImpressa"] as const).map(serv => (
+                                <label key={serv} className="flex items-center gap-3 cursor-pointer group">
+                                  <input 
+                                    type="checkbox"
+                                    checked={formData[serv]}
+                                    onChange={e => setFormData({...formData, [serv]: e.target.checked})}
+                                    className="w-5 h-5 border-zinc-800 bg-transparent rounded-none checked:bg-brand-tactical focus:ring-0 appearance-none border transition-all"
+                                  />
+                                  <span className="text-[10px] text-zinc-500 uppercase tracking-[0.3em] font-bold group-hover:text-white transition-all">
+                                    {serv.replace("tem", "").replace(/([A-Z])/g, ' $1').trim()}
+                                  </span>
+                                </label>
+                              ))}
+                            </div>
+                          </div>
+                        </div>
+
+                        <div className="space-y-8">
+                          <div className="bg-brand-tactical/5 p-6 border border-brand-tactical/20 space-y-6">
+                            <label className="flex items-center gap-3 cursor-pointer group">
+                              <input 
+                                type="checkbox"
+                                checked={formData.isCrowdfund}
+                                onChange={e => setFormData({...formData, isCrowdfund: e.target.checked})}
+                                className="w-5 h-5 border-zinc-800 bg-transparent rounded-none checked:bg-brand-tactical focus:ring-0 appearance-none border transition-all"
+                              />
+                              <span className="text-[10px] text-brand-tactical uppercase tracking-[0.3em] font-bold">
+                                MODO COMPRA COLETIVA (VAQUINHA)
+                              </span>
+                            </label>
+
+                            {formData.isCrowdfund && (
+                              <div className="space-y-2 animate-in slide-in-from-top-1 duration-300">
+                                <label className="text-[9px] font-bold text-theme-muted/60 uppercase tracking-[0.4em]">VALOR TOTAL DA META (R$)</label>
+                                <input 
+                                  type="number"
+                                  className="w-full bg-theme-bg border border-theme-border p-4 text-[13px] text-theme-text focus:border-brand-tactical transition-colors outline-none font-bold"
+                                  value={formData.targetAmount}
+                                  onChange={e => setFormData({...formData, targetAmount: Number(e.target.value)})}
+                                />
+                              </div>
+                            )}
+                          </div>
+                        </div>
+                      </>
+                    )}
+
+                    {activeTab === 'entrega' && (
+                      <>
+                        <div className="space-y-8">
+                          <div className="space-y-2">
+                            <label className="text-[9px] font-bold text-theme-muted/60 uppercase tracking-[0.4em]">Link Google Drive</label>
+                            <input 
+                              type="text"
+                              className="w-full bg-theme-bg border border-theme-border p-4 text-[13px] text-theme-text focus:border-brand-tactical transition-colors outline-none font-bold"
+                              value={formData.driveUrl}
+                              onChange={(e) => setFormData({ ...formData, driveUrl: e.target.value })}
+                              placeholder="https://drive.google.com/..."
+                            />
+                          </div>
+                          <div className="space-y-2">
+                            <label className="text-[9px] font-bold text-theme-muted/60 uppercase tracking-[0.4em]">Link Lightroom / Galeria</label>
+                            <input 
+                              type="text"
+                              className="w-full bg-theme-bg border border-theme-border p-4 text-[13px] text-theme-text focus:border-brand-tactical transition-colors outline-none font-bold"
+                              value={formData.lightroomUrl}
+                              onChange={(e) => setFormData({ ...formData, lightroomUrl: e.target.value })}
+                              placeholder="https://lightroom.adobe.com/..."
+                            />
+                          </div>
+                        </div>
+
+                        <div className="space-y-4">
+                          <label className="text-[9px] font-bold text-brand-tactical uppercase tracking-[0.4em]">Fotos de Prévia (Até 3)</label>
+                          {[0, 1, 2].map(idx => (
+                            <input 
+                              key={idx}
+                              type="text"
+                              className="w-full bg-theme-bg border border-theme-border p-3 text-[11px] text-theme-text focus:border-brand-tactical transition-colors outline-none"
+                              value={formData.previewPhotos[idx]}
+                              onChange={(e) => {
+                                const newPreviews = [...formData.previewPhotos] as [string, string, string];
+                                newPreviews[idx] = e.target.value;
+                                setFormData({ ...formData, previewPhotos: newPreviews });
+                              }}
+                              placeholder={`URL da Foto ${idx + 1}`}
+                            />
+                          ))}
+                        </div>
+                      </>
+                    )}
+                 </div>
+
+                 <div className="mt-12 pt-8 border-t border-theme-border flex justify-end gap-6">
+                    {activeTab !== 'entrega' ? (
+                      <button
+                        type="button"
+                        onClick={() => {
+                          const tabs: Array<'info' | 'equipe' | 'comercial' | 'entrega'> = ['info', 'equipe', 'comercial', 'entrega'];
+                          const nextIdx = tabs.indexOf(activeTab) + 1;
+                          setActiveTab(tabs[nextIdx]);
+                        }}
+                        className="px-10 py-4 bg-zinc-800 text-white text-[10px] font-black uppercase tracking-[0.3em] hover:bg-zinc-700 transition-all"
+                      >
+                        PRÓXIMO PASSO
+                      </button>
+                    ) : (
+                      <button
+                        type="submit"
+                        disabled={isUploading}
+                        className="px-12 py-4 bg-brand-tactical text-white text-[10px] font-black uppercase tracking-[0.3em] hover:brightness-110 transition-all"
+                      >
+                        {isUploading ? "PROCESSANDO..." : (editingEvent ? "SALVAR ALTERAÇÕES" : "CADASTRAR EVENTO")}
+                      </button>
+                    )}
+                 </div>
+              </form>
+          </div>
+        </div>
+      )}
+
+      {/* MODAL VENDA DIRETA */}
+      {isSaleModalOpen && saleEvent && (
+        <div className="fixed inset-0 bg-theme-bg/95 backdrop-blur-xl z-50 flex items-center justify-center p-4">
+          <div className="w-full max-w-xl bg-theme-bg border border-theme-border p-10 relative animate-in zoom-in-95 duration-300">
+             <button onClick={() => setIsSaleModalOpen(false)} className="absolute top-6 right-6 text-zinc-500 hover:text-white transition-colors">
+               <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5"><path d="M18 6L6 18M6 6l12 12"/></svg>
+             </button>
+
+             <div className="mb-10">
+               <h2 className="text-3xl font-heading text-theme-text tracking-tighter uppercase mb-2">Registrar Venda Direta</h2>
+               <p className="text-[10px] text-brand-tactical uppercase tracking-[0.4em] font-bold">Evento: {saleEvent.title}</p>
+               <div className="w-12 h-1 bg-brand-tactical mt-4" />
+             </div>
+
+             <form onSubmit={handleSaleSubmit} className="space-y-8">
+                <div className="space-y-2">
+                  <label className="text-[9px] font-bold text-theme-muted/60 uppercase tracking-[0.4em]">Nome Completo do Cliente</label>
+                  <input 
+                    type="text" required
+                    className="w-full bg-theme-bg border border-theme-border p-4 text-[13px] text-theme-text focus:border-brand-tactical transition-colors outline-none font-bold"
+                    value={saleFormData.customerName}
+                    onChange={e => setSaleFormData({...saleFormData, customerName: e.target.value})}
+                    placeholder="EX: JOÃO DA SILVA"
+                  />
                 </div>
 
-                <div className="space-y-8">
-                  <div className="space-y-6 pt-10 border-t border-theme-border">
-                    <label className="text-[10px] font-bold text-brand-tactical uppercase tracking-[0.4em]">Equipe Operacional</label>
-                    <div className="space-y-6">
-                      <div className="space-y-2">
-                        <label className="text-[9px] font-bold text-theme-muted/60 uppercase tracking-[0.4em]">Unidade Fixa Responsável</label>
-                        <select 
-                          value={formData.cartorioId}
-                          onChange={e => setFormData({...formData, cartorioId: e.target.value})}
-                          className="w-full bg-theme-bg-muted border-b border-theme-border py-4 px-4 text-xs text-theme-text focus:outline-none focus:border-brand-tactical appearance-none rounded-none cursor-pointer"
-                        >
-                          <option value="">SELECIONE A UNIDADE FIXA</option>
-                          {users.filter(u => u.role === "UNIDADE" || u.role === "CARTORIO").map(u => (
-                            <option key={u.id} value={u.id}>{u.nome.toUpperCase()}</option>
-                          ))}
-                        </select>
-                      </div>
+                <div className="space-y-2">
+                  <label className="text-[9px] font-bold text-theme-muted/60 uppercase tracking-[0.4em]">E-mail para Acesso (Álbum)</label>
+                  <input 
+                    type="email" required
+                    className="w-full bg-theme-bg border border-theme-border p-4 text-[13px] text-theme-text focus:border-brand-tactical transition-colors outline-none font-bold"
+                    value={saleFormData.customerEmail}
+                    onChange={e => setSaleFormData({...saleFormData, customerEmail: e.target.value})}
+                    placeholder="joao@email.com"
+                  />
+                </div>
 
-                      <div className="grid grid-cols-2 gap-8">
-                        <div className="space-y-2">
-                          <label className="text-[9px] font-bold text-theme-muted/60 uppercase tracking-[0.4em]">Captação (Profissional da Rede)</label>
-                          <select 
-                            value={formData.captacaoId}
-                            onChange={e => setFormData({...formData, captacaoId: e.target.value})}
-                            className="w-full bg-theme-bg border border-theme-border p-4 text-[13px] text-theme-text focus:border-brand-tactical transition-colors outline-none font-bold appearance-none cursor-pointer"
-                          >
-                            <option value="">PROFISSIONAL DA REDE</option>
-                            {users.filter(u => u.role === "PROFISSIONAL").map(u => (
-                              <option key={u.id} value={u.id}>{u.nome.toUpperCase()}</option>
-                            ))}
-                          </select>
-                        </div>
-                        <div className="space-y-2">
-                          <label className="text-[9px] font-bold text-theme-muted/60 uppercase tracking-[0.4em]">Edição (Profissional da Rede)</label>
-                          <select 
-                            value={formData.edicaoId}
-                            onChange={e => setFormData({...formData, edicaoId: e.target.value})}
-                            className="w-full bg-theme-bg border border-theme-border p-4 text-[13px] text-theme-text focus:border-brand-tactical transition-colors outline-none font-bold appearance-none cursor-pointer"
-                          >
-                            <option value="">PROFISSIONAL DA REDE</option>
-                            {users.filter(u => u.role === "PROFISSIONAL").map(u => (
-                              <option key={u.id} value={u.id}>{u.nome.toUpperCase()}</option>
-                            ))}
-                          </select>
-                        </div>
-                      </div>
-                    </div>
-                  </div>
+                <div className="space-y-2">
+                  <label className="text-[9px] font-bold text-theme-muted/60 uppercase tracking-[0.4em]">Valor da Venda (R$)</label>
+                  <input 
+                    type="number" required
+                    className="w-full bg-theme-bg border border-theme-border p-4 text-[13px] text-theme-text focus:border-brand-tactical transition-colors outline-none font-bold"
+                    value={saleFormData.amount}
+                    onChange={e => setSaleFormData({...saleFormData, amount: Number(e.target.value)})}
+                  />
+                </div>
 
-                  <div className="space-y-2">
-                      <label className="text-[9px] font-bold text-theme-muted/60 uppercase tracking-[0.4em]">Cidade / UF</label>
-                      <input 
-                        type="text"
-                        className="w-full bg-theme-bg border border-theme-border p-4 text-[13px] text-theme-text focus:border-brand-tactical transition-colors outline-none font-bold"
-                        value={formData.city}
-                        onChange={(e) => setFormData({ ...formData, city: e.target.value })}
-                        placeholder="EX: SÃO PAULO - SP"
-                      />
-                    </div>
-
-                  <div className="grid grid-cols-2 gap-8">
-                    <div className="space-y-2">
-                      <label className="text-[9px] font-bold text-theme-muted/60 uppercase tracking-[0.4em]">Preço do Desbloqueio (R$)</label>
-                      <input 
-                        type="number"
-                        className="w-full bg-theme-bg border border-theme-border p-4 text-[13px] text-theme-text focus:border-brand-tactical transition-colors outline-none font-bold"
-                        value={formData.priceBase}
-                        onChange={(e) => setFormData({ ...formData, priceBase: Number(e.target.value) })}
-                      />
-                    </div>
-                    <div className="space-y-2">
-                      <label className="text-[9px] font-bold text-theme-muted/60 uppercase tracking-[0.4em]">Preço Antecipado (R$)</label>
-                      <input 
-                        type="number"
-                        className="w-full bg-theme-bg border border-theme-border p-4 text-[13px] text-theme-text focus:border-brand-tactical transition-colors outline-none font-bold"
-                        value={formData.priceEarly}
-                        onChange={e => setFormData({...formData, priceEarly: Number(e.target.value)})}
-                      />
-                    </div>
-                  </div>
-
-                  {/* Gift Quota / Compra Coletiva Section */}
-                  <div className="bg-brand-tactical/5 p-6 border border-brand-tactical/20 space-y-6">
-                    <label className="flex items-center gap-3 cursor-pointer group">
-                      <input 
-                        type="checkbox"
-                        checked={formData.isCrowdfund}
-                        onChange={e => setFormData({...formData, isCrowdfund: e.target.checked})}
-                        className="w-5 h-5 border-zinc-800 bg-transparent rounded-none checked:bg-brand-tactical focus:ring-0 appearance-none border transition-all"
-                      />
-                      <span className="text-[10px] text-brand-tactical uppercase tracking-[0.3em] font-bold">
-                        ATIVAR MODO COMPRA COLETIVA (VAQUINHA)
-                      </span>
-                    </label>
-
-                    {formData.isCrowdfund && (
-                      <div className="space-y-2 animate-in slide-in-from-top-1 duration-300">
-                        <label className="text-[9px] font-bold text-theme-muted/60 uppercase tracking-[0.4em]">VALOR TOTAL DA META (R$)</label>
-                        <input 
-                          type="number"
-                          className="w-full bg-theme-bg border border-theme-border p-4 text-[13px] text-theme-text focus:border-brand-tactical transition-colors outline-none font-bold"
-                          value={formData.targetAmount}
-                          onChange={e => setFormData({...formData, targetAmount: Number(e.target.value)})}
-                        />
-                      </div>
-                    )}
-                  </div>
-
-                  <div className="pt-10">
-                    <button
-                      type="submit"
-                      disabled={isUploading}
-                      className="w-full font-black uppercase tracking-[0.3em] py-4 text-[10px] hover:brightness-110 active:scale-[0.98] transition-all rounded-none"
-                      style={{ backgroundColor: 'var(--brand-primary)', color: 'var(--theme-text-on-brand)' }}
-                    >
-                      {isUploading ? "PROCESSANDO..." : (editingEvent ? "SALVAR ALTERAÇÕES" : "SINCRONIZAR ARQUIVO")}
-                    </button>
-                  </div>
+                <div className="pt-6">
+                  <button
+                    type="submit"
+                    disabled={isUploading}
+                    className="w-full font-black uppercase tracking-[0.3em] py-5 text-[10px] bg-brand-primary text-black hover:brightness-110 active:scale-[0.98] transition-all rounded-none"
+                  >
+                    {isUploading ? "PROCESSANDO..." : "CONFIRMAR E GERAR ACESSO"}
+                  </button>
+                  <p className="text-[8px] text-theme-muted text-center mt-4 uppercase tracking-widest leading-relaxed">
+                    Ao confirmar, o sistema criará o usuário e o pedido marcado como pago,<br/>enviando as credenciais de acesso para o e-mail informado.
+                  </p>
                 </div>
              </form>
           </div>
@@ -699,6 +866,20 @@ export const AdminEvents: React.FC = () => {
               </div>
             </div>
           </div>
+        </div>
+      )}
+      {/* NOTIFICATION (MIDNIGHT LUXURY) */}
+      {notification && (
+        <div className="fixed bottom-10 right-10 z-[100] animate-in slide-in-from-right-10 duration-500">
+           <div className={`p-6 border ${notification.type === 'success' ? 'border-brand-tactical bg-zinc-950 shadow-[0_0_30px_rgba(133,185,172,0.1)]' : 'border-red-900 bg-zinc-950'} min-w-[300px] relative overflow-hidden shadow-2xl`}>
+              <div className="flex flex-col gap-1">
+                 <span className={`text-[8px] font-black uppercase tracking-[0.4em] ${notification.type === 'success' ? 'text-brand-tactical' : 'text-red-500'}`}>
+                    {notification.type === 'success' ? 'Operação Concluída' : 'Falha Crítica'}
+                 </span>
+                 <p className="text-[11px] font-bold text-white uppercase tracking-widest">{notification.message}</p>
+              </div>
+              <div className={`absolute bottom-0 left-0 h-1 ${notification.type === 'success' ? 'bg-brand-tactical' : 'bg-red-900'} animate-out fade-out duration-[5000ms] w-full`} />
+           </div>
         </div>
       )}
     </div>

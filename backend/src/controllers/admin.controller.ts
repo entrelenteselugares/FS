@@ -722,25 +722,58 @@ export async function adminApproveQuote(req: AuthRequest, res: Response): Promis
       return;
     }
 
-    // 1. Atualizar o evento com o preço e status
+    // 1. Atualizar o evento com o preço, status e breakdown no description (JSON)
     const updatedQuote = await prisma.event.update({
       where: { id: String(id) },
       data: {
         priceBase: Number(finalPrice),
         priceEarly: Number(finalPrice),
-        quoteStatus: "PRICED"
+        quoteStatus: "PRICED",
+        description: req.body.breakdown ? 
+          `[BUDGET_BREAKDOWN] ${JSON.stringify(req.body.breakdown)}\n\nOriginal: ${quote.description}` : 
+          quote.description
       }
     });
 
-    // 2. Criar o pedido (Order) pendente para gerar o checkout
-    const order = await prisma.order.create({
-      data: {
-        eventId: updatedQuote.id,
-        valor: Number(finalPrice),
-        buyerEmail: quote.clientEmail,
-        status: "PENDENTE"
-      }
-    });
+    const isSplit = req.body.isSplit === true;
+    let order;
+
+    if (isSplit) {
+      // Cria dois pedidos de 50%
+      const halfPrice = Number(finalPrice) / 2;
+      
+      // Pedido 1: Reserva (50%)
+      order = await prisma.order.create({
+        data: {
+          eventId: updatedQuote.id,
+          valor: halfPrice,
+          buyerEmail: quote.clientEmail,
+          status: "PENDENTE",
+          paymentId: `QUOTE-RESERVA-${Date.now()}`
+        }
+      });
+
+      // Pedido 2: Quitação (50%) - Sem paymentId imediato, ou gerado depois
+      await prisma.order.create({
+        data: {
+          eventId: updatedQuote.id,
+          valor: halfPrice,
+          buyerEmail: quote.clientEmail,
+          status: "PENDENTE",
+          paymentId: `QUOTE-FINAL-${Date.now()}`
+        }
+      });
+    } else {
+      // Pedido único
+      order = await prisma.order.create({
+        data: {
+          eventId: updatedQuote.id,
+          valor: Number(finalPrice),
+          buyerEmail: quote.clientEmail,
+          status: "PENDENTE"
+        }
+      });
+    }
 
     // 3. Gerar link de checkout
     const checkoutUrl = `${process.env.VITE_APP_URL || 'http://localhost:5173'}/checkout?orderId=${order.id}`;
@@ -804,6 +837,62 @@ export async function adminGetLogs(req: AuthRequest, res: Response): Promise<voi
   } catch (err) {
     console.error("adminGetLogs:", err);
     res.status(500).json({ error: "Erro ao carregar logs de auditoria." });
+  }
+}
+
+export async function adminCreateManualSale(req: AuthRequest, res: Response): Promise<void> {
+  const { eventId, customerName, customerEmail, amount } = req.body;
+
+  if (!eventId || !customerName || !customerEmail || !amount) {
+    res.status(400).json({ error: "Todos os campos são obrigatórios." });
+    return;
+  }
+
+  try {
+    const event = await prisma.event.findUnique({ where: { id: eventId } });
+    if (!event) {
+      res.status(404).json({ error: "Evento não encontrado." });
+      return;
+    }
+
+    // 1. Encontrar ou criar usuário
+    let user = await prisma.user.findUnique({ where: { email: customerEmail } });
+    
+    if (!user) {
+      const tempPassword = Math.random().toString(36).slice(-8);
+      const hashedPassword = await bcrypt.hash(tempPassword, 10);
+      
+      user = await prisma.user.create({
+        data: {
+          nome: customerName,
+          email: customerEmail,
+          senha: hashedPassword,
+          role: "CLIENTE",
+          active: true,
+        }
+      });
+      console.log(`[ADMIN] Novo usuário criado para venda manual: ${customerEmail} (Pass: ${tempPassword})`);
+      // TODO: Enviar e-mail/WhatsApp com as credenciais
+    }
+
+    // 2. Criar pedido aprovado
+    const order = await prisma.order.create({
+      data: {
+        clienteId: user.id,
+        eventId: event.id,
+        valor: amount,
+        status: "APROVADO",
+        paymentId: `MANUAL-${Date.now()}`,
+        accessType: "TOTAL",
+      }
+    });
+
+    await audit(req, "ADMIN_MANUAL_SALE", "Order", order.id, null, { eventId, customerEmail, amount });
+
+    res.json({ message: "Venda registrada com sucesso!", orderId: order.id, userEmail: user.email });
+  } catch (err: any) {
+    console.error("adminCreateManualSale Error:", err);
+    res.status(500).json({ error: "Erro ao registrar venda manual.", details: err.message });
   }
 }
 

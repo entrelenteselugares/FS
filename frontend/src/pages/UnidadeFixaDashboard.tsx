@@ -137,11 +137,8 @@ export default function UnidadeFixaDashboard() {
     }
   }, [searchParams]);
 
-  useEffect(() => {
-    loadData();
-  }, []);
 
-  const loadData = async () => {
+  const loadData = useCallback(async () => {
     setLoading(true);
     try {
       const [statsRes, eventosRes] = await Promise.all([
@@ -162,9 +159,9 @@ export default function UnidadeFixaDashboard() {
     } finally {
       setLoading(false);
     }
-  };
+  }, [loadLpData]);
 
-  const loadLpData = async () => {
+  const loadLpData = useCallback(async () => {
     try {
       const [{ data: statsData }, { data: servicesData }] = await Promise.all([
         API.get("/unidade-fixa/stats"),
@@ -185,11 +182,15 @@ export default function UnidadeFixaDashboard() {
       }
       setGlobalServices(servicesData.services || []);
     } catch { /* silently ignore - LP data is optional */ }
-  };
+  }, []);
+
+  useEffect(() => {
+    loadData();
+  }, [loadData]);
 
   useEffect(() => {
     if (tab === "configuracoes") loadLpData();
-  }, [tab]);
+  }, [tab, loadLpData]);
 
   const saveLpProfile = async () => {
     setSavingLp(true);

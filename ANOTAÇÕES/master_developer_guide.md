@@ -14,6 +14,7 @@ O Foto Segundo é uma plataforma de fornecimento de ativos visuais de luxo, oper
 ## 2. Padrões de Nomenclatura e Branding (CRÍTICO)
 
 A plataforma passou por um rebranding total.
+
 - **Unidade Fixa**: Substitui "Cartório" em todos os contextos de interface com o usuário.
 - **Artista da Rede**: Substitui "Fotógrafo" e "Editor" para unificar os parceiros de produção.
 - **Backend**: Por razões de integridade de banco de dados, o `role` permanece `CARTORIO` e `PROFISSIONAL`, mas as rotas de API e mensagens de erro devem usar `unidade-fixa` e `artista-da-rede`.
@@ -54,9 +55,11 @@ A aplicação DEVE ter `app.set("trust proxy", 1)` no `app.ts`. Sem isso, o `exp
 ## 6. Diretrizes de Performance e Deploy (Vercel)
 
 ### Sequential Query Pattern (Dashboard)
+
 Para evitar o erro 500 causado por concorrência de recursos ou estouro da pool de conexões (PGBouncer) no ambiente serverless, operações de dashboard (múltiplas contagens e agregações) DEVEM ser executadas de forma **sequencial** (`await` individual) em vez de paralelas (`Promise.all`).
 
 ### Favicon & Branding Persistence
+
 O favicon oficial está localizado em `frontend/public/favicon.png`. Em caso de atualização da identidade visual, este arquivo deve ser substituído mantendo o nome exato para garantir que as referências no `index.html` e nos componentes de cabeçalho permaneçam válidas sem necessidade de refatoração de código.
 
 ---

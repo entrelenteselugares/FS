@@ -88,8 +88,10 @@ export const CheckoutPage = () => {
   // ── Carrega o pedido ─────────────────────────────────────────────────────────
   useEffect(() => {
     if (!effectiveOrderId) {
-      setLoading(false);
-      setError("Protocolo de pagamento não identificado.");
+      Promise.resolve().then(() => {
+        setLoading(false);
+        setError("Protocolo de pagamento não identificado.");
+      });
       return;
     }
     API.get(`/public/orders/${effectiveOrderId}`)
@@ -128,7 +130,9 @@ export const CheckoutPage = () => {
   // Quando pixData chega, inicia polling e timer de expiração
   useEffect(() => {
     if (!pixData) return;
-    startPolling(pixData.orderId);
+    Promise.resolve().then(() => {
+      startPolling(pixData.orderId);
+    });
 
     // Timer regressivo do QR (30 min)
     const timer = setInterval(() => {

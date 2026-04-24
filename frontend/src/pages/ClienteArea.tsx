@@ -105,8 +105,9 @@ export default function ClienteArea() {
       setPedidos(data);
       const updated = data.find((p: Pedido) => p.id === orderId);
       if (updated) setSelected(updated);
-    } catch (err: any) {
-      alert(err.response?.data?.error || "Erro ao atualizar visibilidade.");
+    } catch (err: unknown) {
+      const error = err as { response?: { data?: { error?: string } } };
+      alert(error.response?.data?.error || "Erro ao atualizar visibilidade.");
     }
   };
 

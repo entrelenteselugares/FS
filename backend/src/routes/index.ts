@@ -18,6 +18,7 @@ import {
   AdminEventController,
   adminUploadCover,
   adminGetLogs,
+  adminCreateManualSale,
 } from "../controllers/admin.controller";
 import { MercadoPagoController } from "../controllers/mercadopago.controller";
 import {
@@ -164,7 +165,8 @@ router.put("/unidade-fixa/team",     requireAuth, requireRole("ADMIN", "CARTORIO
 
 // ── Admin: Stats & Logs ────────────────────────────────────────────────────────
 router.get("/admin/stats", requireAuth, requireRole("ADMIN"), getDashboardStats);
-router.get("/admin/logs",  requireAuth, requireRole("ADMIN"), adminGetLogs);
+router.get("/admin/logs", requireAuth, requireRole("ADMIN"), adminGetLogs);
+router.post("/admin/orders/manual", requireAuth, requireRole("ADMIN"), adminCreateManualSale);
 
 // ── Admin: Gestão de Eventos ───────────────────────────────────────────────────
 router.get("/admin/events",             requireAuth, requireRole("ADMIN"), adminListEvents);

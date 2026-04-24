@@ -421,13 +421,29 @@ export default function ProfissionalDashboard() {
 
 // ── Perfil do Profissional ───────────────────────────────────────────
 
+const EQUIPMENT_CATEGORIES = {
+  "Câmeras": ["Sony A7III/A7IV", "Sony A7R Series", "Canon R5/R6", "Nikon Z6/Z7", "Lumix GH5/GH6", "DJI Mavic/Mini"],
+  "Lentes": ["24-70mm f/2.8", "70-200mm f/2.8", "35mm Prime", "50mm Prime", "85mm Prime", "16-35mm Wide"],
+  "Acessórios": ["Flash Externo", "Gimbal (Ronin/Zhiyun)", "Tripé/Monopé", "Iluminação LED", "Drone"]
+};
+
 function ProfileModal({ profile, onClose, onUpdated }: { profile: ProfileData; onClose: () => void; onUpdated: (p: ProfileData) => void }) {
   const [formData, setFormData] = useState<ProfileData>({ ...profile });
   const [saving, setSaving] = useState(false);
+  const [otherEquip, setOtherEquip] = useState(() => {
+    if (profile.equipment) {
+      const allStandard = Object.values(EQUIPMENT_CATEGORIES).flat();
+      const items = profile.equipment.split(", ").filter(i => i.trim());
+      const others = items.filter(i => !allStandard.includes(i));
+      return others.join(", ");
+    }
+    return "";
+  });
 
   const handleSave = async () => {
     setSaving(true);
     try {
+      // Merge standard equipment + others
       const { data } = await API.patch("/profissional/me", formData);
       onUpdated(data);
     } catch (err) {
@@ -436,6 +452,12 @@ function ProfileModal({ profile, onClose, onUpdated }: { profile: ProfileData; o
     } finally {
       setSaving(false);
     }
+  };
+
+  const toggleEquipment = (item: string) => {
+    const current = formData.equipment ? formData.equipment.split(", ").filter(i => i.trim()) : [];
+    const next = current.includes(item) ? current.filter(i => i !== item) : [...current, item];
+    setFormData({ ...formData, equipment: next.join(", ") });
   };
 
   const toggleSkill = (skill: string) => {
@@ -485,15 +507,62 @@ function ProfileModal({ profile, onClose, onUpdated }: { profile: ProfileData; o
           </section>
 
           <section>
-            <label style={S.label}>Equipamento Principal</label>
-            <div style={{ position: "relative", marginTop: 10 }}>
-               <HardDrive size={14} style={{ position: "absolute", left: 14, top: 14, color: "var(--theme-text-muted)" }} />
-               <input 
-                style={{ ...S.input, paddingLeft: 40 }}
-                value={formData.equipment || ""}
-                onChange={(e) => setFormData({ ...formData, equipment: e.target.value })}
-                placeholder="EX: SONY A7RIII, DJI MINI 3 PRO..."
-              />
+            <label style={S.label}>Meu Equipamento</label>
+            <div style={{ marginTop: 15, display: "flex", flexDirection: "column", gap: "1.5rem" }}>
+              {Object.entries(EQUIPMENT_CATEGORIES).map(([cat, items]) => (
+                <div key={cat}>
+                  <p style={{ fontSize: 9, fontWeight: 900, color: "var(--brand-primary)", textTransform: "uppercase", letterSpacing: 1, marginBottom: 10 }}>{cat}</p>
+                  <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 8 }}>
+                    {items.map(item => {
+                      const isSelected = formData.equipment?.includes(item);
+                      return (
+                        <button
+                          key={item}
+                          onClick={() => toggleEquipment(item)}
+                          style={{
+                            display: "flex",
+                            alignItems: "center",
+                            gap: 8,
+                            padding: "8px 12px",
+                            fontSize: 10,
+                            background: isSelected ? "rgba(133,185,172,0.1)" : "transparent",
+                            border: `1px solid ${isSelected ? "var(--brand-primary)" : "#1a1a1a"}`,
+                            color: isSelected ? "var(--brand-primary)" : "var(--theme-text-muted)",
+                            textAlign: "left",
+                            cursor: "pointer",
+                            transition: "all .2s"
+                          }}
+                        >
+                          <div style={{ width: 12, height: 12, border: "1px solid", borderColor: isSelected ? "var(--brand-primary)" : "#444", display: "flex", alignItems: "center", justifyContent: "center" }}>
+                            {isSelected && <Check size={8} />}
+                          </div>
+                          {item}
+                        </button>
+                      );
+                    })}
+                  </div>
+                </div>
+              ))}
+
+              <div>
+                <p style={{ fontSize: 9, fontWeight: 900, color: "var(--theme-text-muted)", textTransform: "uppercase", letterSpacing: 1, marginBottom: 10 }}>Outros Equipamentos</p>
+                <div style={{ position: "relative" }}>
+                  <HardDrive size={14} style={{ position: "absolute", left: 14, top: 14, color: "var(--theme-text-muted)" }} />
+                  <input 
+                    style={{ ...S.input, paddingLeft: 40 }}
+                    value={otherEquip}
+                    onChange={(e) => {
+                      const val = e.target.value;
+                      setOtherEquip(val);
+                      // Update main equipment string by merging standard ones and this new 'others'
+                      const allStandard = Object.values(EQUIPMENT_CATEGORIES).flat();
+                      const currentSelected = formData.equipment ? formData.equipment.split(", ").filter(i => allStandard.includes(i)) : [];
+                      setFormData({ ...formData, equipment: [...currentSelected, val].filter(i => i.trim()).join(", ") });
+                    }}
+                    placeholder="DIGITE OUTROS ITENS SEPARADOS POR VÍRGULA..."
+                  />
+                </div>
+              </div>
             </div>
           </section>
 

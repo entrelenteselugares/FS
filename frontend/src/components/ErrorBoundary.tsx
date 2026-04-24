@@ -38,7 +38,7 @@ export class ErrorBoundary extends Component<Props, State> {
             <div className="text-[10px] text-zinc-600 font-sans bg-black/50 p-4 rounded-none mb-6 overflow-auto max-h-32 border border-white/5">
               {typeof this.state.error?.message === 'string' 
                 ? this.state.error.message 
-                : (this.state.error as any)?.error || JSON.stringify(this.state.error) || "Erro desconhecido"}
+                : (this.state.error as unknown as { error?: string })?.error || JSON.stringify(this.state.error) || "Erro desconhecido"}
             </div>
             <button
               onClick={() => window.location.reload()}

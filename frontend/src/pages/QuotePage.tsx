@@ -404,7 +404,7 @@ export const QuotePage = () => {
       color: THEME.text, 
       minHeight: "100vh", 
       fontFamily: THEME.fontB, 
-      padding: "40px 20px" 
+      padding: "20px clamp(10px, 4vw, 20px)" 
     }}>
       <style>{`
         .fs-input { background: var(--theme-bg-muted) !important; border: 1px solid var(--theme-border) !important; color: var(--theme-text) !important; border-radius: 0 !important; box-sizing: border-box; font-family: 'Outfit', sans-serif !important; padding: 12px 15px !important; }
@@ -413,6 +413,8 @@ export const QuotePage = () => {
         @media (max-width: 768px) {
           .mobile-grid-1 { grid-template-columns: 1fr !important; }
           .mobile-stack { flex-direction: column !important; align-items: stretch !important; gap: 15px !important; }
+          .mobile-padding { padding: 20px !important; }
+          .mobile-text-center { text-align: center !important; }
         }
       `}</style>
 
@@ -639,7 +641,7 @@ export const QuotePage = () => {
                       </div>
                       {showPrices ? (
                         <div style={{ display: "flex", flexDirection: "column", gap: 4 }}>
-                          <div className="heading-luxury !text-brand-primary" style={{ fontSize: 32 }}>
+                          <div className="heading-luxury !text-brand-primary" style={{ fontSize: "clamp(24px, 6vw, 32px)", wordBreak: "break-all" }}>
                             {new Intl.NumberFormat("pt-BR", { style: "currency", currency: "BRL" }).format(totalPrice)}
                           </div>
                           <div style={{ display: "flex", gap: 10, fontSize: 9, fontWeight: 700, color: THEME.text2, textTransform: "uppercase", opacity: 0.8 }}>
