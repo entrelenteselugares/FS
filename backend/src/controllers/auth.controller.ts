@@ -268,6 +268,34 @@ export class AuthController {
     }
   }
 
+  /** POST /api/auth/forgot-password */
+  static async forgotPassword(req: Request, res: Response) {
+    const { email } = req.body;
+    if (!email) return res.status(400).json({ error: "E-mail é obrigatório." });
+
+    try {
+      const cleanEmail = email.toLowerCase().trim();
+      
+      // Enviamos o e-mail de recuperação via Supabase
+      // O redirectUrl deve ser o link para a nossa página de reset
+      const redirectUrl = `${process.env.FRONTEND_URL || "https://foto-segundo.vercel.app"}/reset-password`;
+      
+      const { error } = await supabaseAdmin.auth.resetPasswordForEmail(cleanEmail, {
+        redirectTo: redirectUrl,
+      });
+
+      if (error) throw error;
+
+      // Log de Auditoria
+      await audit(req, "PASSWORD_FORGOT_REQUEST", "User", null, null, { email: cleanEmail });
+
+      return res.json({ ok: true, message: "E-mail de recuperação enviado." });
+    } catch (error: any) {
+      console.error("[AUTH FORGOT ERROR]:", error);
+      return res.status(500).json({ error: "Erro ao solicitar recuperação de senha." });
+    }
+  }
+
   /** POST /api/auth/update-password */
   static async updatePassword(req: Request, res: Response) {
     const { password, token } = req.body; // token opcional, vindo do hash do supabase

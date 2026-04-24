@@ -34,6 +34,7 @@ export const LoginPage: React.FC = () => {
 
   const { login }  = useAuth();
   const navigate   = useNavigate();
+  const [resetSent, setResetSent] = useState(false);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -61,6 +62,24 @@ export const LoginPage: React.FC = () => {
     }
   };
 
+  const handleForgotPassword = async () => {
+    if (!email) {
+      setError("Por favor, digite seu e-mail primeiro para solicitar a recuperação.");
+      return;
+    }
+    setError("");
+    setLoading(true);
+    try {
+      await api.post("/auth/forgot-password", { email: email.trim().toLowerCase() });
+      setResetSent(true);
+      setError("");
+    } catch (err: any) {
+      setError(err.response?.data?.error || "Erro ao solicitar recuperação.");
+    } finally {
+      setLoading(false);
+    }
+  };
+
   return (
     <div style={{ minHeight: "100vh", background: T.bg, display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center", padding: "32px 20px", fontFamily: T.fontB }}>
       <Helmet>
@@ -77,6 +96,8 @@ export const LoginPage: React.FC = () => {
         .lp-back:hover { color: ${T.text}; }
         .lp-reg { color: ${T.brand}; text-decoration: none; font-size: 12px; font-family: ${T.fontB}; letter-spacing: 0.1em; text-transform: uppercase; transition: opacity 0.15s; }
         .lp-reg:hover { opacity: 0.75; }
+        .lp-forgot { background: none; border: none; color: ${T.text3}; font-size: 9px; font-weight: 700; text-transform: uppercase; letter-spacing: 1px; cursor: pointer; padding: 0; margin-top: 8px; transition: color 0.15s; align-self: flex-end; }
+        .lp-forgot:hover { color: ${T.text}; }
       `}</style>
 
       <div style={{ position: "fixed", top: 20, right: 20 }}>
@@ -100,6 +121,15 @@ export const LoginPage: React.FC = () => {
           borderRadius: 0,
           padding:      32,
         }}>
+
+          {/* Success Reset */}
+          {resetSent && (
+            <div style={{ background: "rgba(133, 185, 172, 0.1)", border: `1px solid ${T.brand}33`, padding: "12px 16px", marginBottom: 24 }}>
+              <p style={{ margin: 0, fontSize: 11, color: T.brand, fontWeight: 700, fontFamily: T.fontB, letterSpacing: "0.05em" }}>
+                E-mail de recuperação enviado! Verifique sua caixa de entrada (e spam).
+              </p>
+            </div>
+          )}
 
           {/* Error */}
           {error && (
@@ -151,6 +181,9 @@ export const LoginPage: React.FC = () => {
                   <EyeIcon open={showSenha} />
                 </button>
               </div>
+              <button type="button" onClick={handleForgotPassword} className="lp-forgot">
+                Esqueci minha senha
+              </button>
             </div>
 
             {/* Submit */}

@@ -92,6 +92,7 @@ router.get("/cron/expiration", async (req, res) => {
 // ── Autenticação ─────────────────────────────────────────────────────────────
 router.post("/auth/login",           AuthController.login);
 router.post("/auth/register",        AuthController.register);
+router.post("/auth/forgot-password", AuthController.forgotPassword);
 router.post("/auth/update-password", AuthController.updatePassword);
 router.get("/auth/me",               requireAuth, AuthController.me);
 
