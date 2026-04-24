@@ -7,7 +7,6 @@ import { T, BtnPrimary, BtnSecondary, FieldLabel, FieldInput } from "../lib/them
 import { ThemeToggle } from "../components/ThemeToggle";
 import { AuthModal } from "../components/AuthModal";
 import { useAuth } from "../hooks/useAuth";
-import { API } from "../lib/api";
 
 const Countdown: React.FC<{ targetDate: string }> = ({ targetDate }) => {
   const [timeLeft, setTimeLeft] = useState({ d: 0, h: 0, m: 0, s: 0 });
@@ -44,8 +43,6 @@ const Countdown: React.FC<{ targetDate: string }> = ({ targetDate }) => {
       <Item val={timeLeft.s} label="Seg" />
     </div>
   );
-};
-
 };
 
 interface EventData {
@@ -551,7 +548,7 @@ export default function EventPage() {
             setNeedsAccessChoice(false);
             try {
               const { data } = await api.get(`/orders/${orderId}/access-status`);
-              setAccess({ lightroomUrl: data.lightroomUrl, driveUrl: data.driveUrl, expiresAt: data.expiresAt || "" });
+              setAccess({ lightroomUrl: data.lightroomUrl, driveUrl: data.driveUrl, expiresAt: data.expiresAt || "", eventTitle: event.nomeNoivos });
             } catch (err) { console.error("Erro ao atualizar links:", err); }
           }}
         />
