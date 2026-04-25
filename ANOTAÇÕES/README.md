@@ -25,6 +25,7 @@ Este diretório contém as anotações, guias técnicos e referências de fornec
 
 ### 📜 Histórico e Auditoria
 
+- [Relatório de Lançamento V1.0.0](file:///c:/foto-segundo/ANOTAÇÕES/release_report_v1.0.0.md): Estado oficial da versão de lançamento.
 - [Changelog Recente](file:///c:/foto-segundo/ANOTAÇÕES/changelog_recente.md): Últimas alterações implementadas.
 - [Relatório de Auditoria Técnica](file:///c:/foto-segundo/ANOTAÇÕES/relatorio_auditoria_tecnica.md): Auditoria de UI/UX e performance.
 - [Plano de Auditoria](file:///c:/foto-segundo/ANOTAÇÕES/plano_auditoria_tecnica.md): Roteiro de testes.
