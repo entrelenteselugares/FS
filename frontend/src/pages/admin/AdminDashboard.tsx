@@ -1,7 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { DashboardLayout, type NavItem } from "../../components/DashboardLayout";
 import { API } from "../../lib/api";
-import { T } from "../../lib/theme";
 
 const AdminOverview = React.lazy(() => import("./AdminOverview").then(m => ({ default: m.AdminOverview })));
 const AdminEvents = React.lazy(() => import("./AdminEvents").then(m => ({ default: m.AdminEvents })));
@@ -94,29 +93,7 @@ export const AdminDashboard: React.FC = () => {
 
   return (
     <DashboardLayout title="Operações Centrais" variant="tactical" navItems={NAV_ITEMS(activeTab, setActiveTab, stats)}>
-      <div style={{ padding: "16px 24px", maxWidth: "1600px", margin: "0 auto", minHeight: "100vh" }}>
-      <div style={{ padding: "0" }}>
-        {/* Minimal Header */}
-        <div style={{ marginBottom: 40 }}>
-          <h1 style={{ 
-            fontFamily: T.fontD, fontWeight: 900, fontSize: 32, 
-            color: T.text, textTransform: "uppercase", letterSpacing: 2 
-          }}>
-            {activeTab === "overview" ? "Visão Geral" : 
-             activeTab === "events" ? "Operação de Eventos" : 
-             activeTab === "users" ? "Gestão de Membros" : 
-             activeTab === "orders" ? "Pedidos e Vendas" : 
-             activeTab === "finance" ? "Fluxo Financeiro" :
-             activeTab === "printers" ? "Hardware e Impressão" :
-             activeTab === "print-catalog" ? "Catálogo de Impressão" :
-             activeTab === "services" ? "Portfólio de Serviços" :
-             "Configurações da Plataforma"}
-          </h1>
-          <div style={{ width: 30, height: 2, background: T.brand, marginTop: 8 }} />
-        </div>
-
-
-
+      <div style={{ padding: "clamp(16px, 4vw, 40px)", maxWidth: "1600px", margin: "0 auto", minHeight: "100vh" }}>
         {/* Tab Content */}
         {loading && activeTab === "overview" ? (
            <div className="py-40 flex flex-col items-center gap-8">
@@ -146,7 +123,6 @@ export const AdminDashboard: React.FC = () => {
           </div>
         )}
       </div>
-    </div>
     </DashboardLayout>
   );
 };
