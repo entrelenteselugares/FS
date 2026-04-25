@@ -21,15 +21,16 @@ Este documento registra as atualizações críticas realizadas para estabilizaç
 - **Automação de Regras de Unidade**: A `QuotePage` agora respeita dinamicamente as flags `fixedTime` e `hideDuration` configuradas no Admin.
 - **UX Adaptativo**: Ocultação automática de seletores de tempo e duração para unidades que operam com modelos de preço fixo.
 
-### 🧹 Estabilização Técnica
+### 🎨 Rede de Profissionais & UX
+- **Sistema de Convites de Parceria**: Implementação do fluxo de "Aceite de Unidade Fixa". O profissional agora recebe convites e deve aceitar formalmente para ser exibido como residente de uma unidade.
+- **Selo de Artista Residente**: Visualização dinâmica no dashboard do profissional, destacando parcerias ativas com unidades fixas.
+- **Painel Técnico Premium**: Refatoração do modal de perfil para permitir a gestão detalhada de habilidades e equipamentos, seguindo o padrão Midnight Luxury.
 
-- **Type Safety Audit**: Correção de erros críticos de tipagem no `EventPage` e `QuotePage` que causavam falhas de build na Vercel.
-- **Limpeza de Imports**: Remoção de bibliotecas e ícones não utilizados para otimização de performance.
+### 🧹 Estabilização Técnica & Build
+- **JSX Structural Fix**: Resolução de erros críticos de fechamento de tags no `ProfissionalDashboard.tsx` que impediam o build de produção.
+- **Prisma Schema V2**: Evolução da tabela `CartorioProfissional` para suportar estados de convite (`PENDING`, `ACCEPTED`, `REJECTED`).
+- **Type Safety Audit**: Eliminação de erros de tipagem no `profissional.controller.ts` e garantia de compilação limpa em todo o backend.
 
 ---
-> [!NOTE]
-> Próximo foco: Monitoramento de Webhooks do Mercado Pago para automação total de liberações.
-
----
-> [!NOTE]
-> Próximo foco: Integração de notificações WhatsApp via CallMeBot para novos orçamentos.
+> [!IMPORTANT]
+> A plataforma agora garante que nenhum profissional seja vinculado a uma unidade sem seu consentimento explícito.

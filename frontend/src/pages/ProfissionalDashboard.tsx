@@ -1,4 +1,4 @@
-import { useState, useEffect, useRef, useCallback } from "react";
+import React, { useState, useEffect, useRef, useCallback } from "react";
 
 import { useAuth } from "../hooks/useAuth";
 import { API } from "../lib/api";
@@ -480,7 +480,9 @@ export default function ProfissionalDashboard() {
                     </div>
                   </div>
                 </div>
-              ))}
+                ))}
+                </>
+              )}
             </div>
 
             {/* DETALHE */}

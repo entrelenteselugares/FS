@@ -153,7 +153,7 @@ export async function getProfile(req: AuthRequest, res: Response): Promise<void>
       where: { userId },
       include: { 
         user: { select: { nome: true, email: true, whatsapp: true } },
-        cartorioProfissional: {
+        cartorios: {
           where: { status: "ACCEPTED" },
           include: { cartorio: { select: { razaoSocial: true } } }
         }
@@ -368,14 +368,14 @@ export async function respondConviteUnidade(req: AuthRequest, res: Response) {
     if (!profissional) { res.status(404).json({ error: "Profissional não encontrado." }); return; }
 
     const invite = await prisma.cartorioProfissional.findFirst({
-      where: { id, profissionalId: profissional.id }
+      where: { id: String(id), profissionalId: profissional.id }
     });
 
     if (!invite) { res.status(404).json({ error: "Convite não encontrado." }); return; }
 
     const updated = await prisma.cartorioProfissional.update({
-      where: { id },
-      data: { status }
+      where: { id: String(id) },
+      data: { status: String(status) }
     });
 
     res.json(updated);
