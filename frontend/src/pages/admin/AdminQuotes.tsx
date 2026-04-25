@@ -158,13 +158,13 @@ export const AdminQuotes: React.FC = () => {
 
   return (
     <div className="space-y-8 animate-in fade-in slide-in-from-bottom-4 duration-700">
-      <div className="flex flex-col md:flex-row md:items-center justify-between gap-6 border-b border-theme-border pb-8">
+      <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-6 border-b border-theme-border pb-8">
         <div>
-          <h2 className="text-3xl md:text-4xl font-heading text-theme-text tracking-tighter uppercase font-black leading-none pt-2">Máquina de Vendas</h2>
-          <p className="text-[10px] text-theme-muted uppercase tracking-[0.5em] mt-2 font-black italic">Gestão de Leads e Orçamentos Customizados</p>
+          <h2 className="text-2xl md:text-4xl font-heading text-theme-text tracking-tighter uppercase font-black leading-none pt-2">Máquina de Vendas</h2>
+          <p className="text-[9px] text-theme-muted uppercase tracking-[0.4em] mt-2 font-black italic">Gestão de Leads e Orçamentos Customizados</p>
         </div>
         
-        <div className="relative w-full md:w-80">
+        <div className="relative w-full lg:w-80">
           <Search className="absolute left-0 top-1/2 -translate-y-1/2 text-theme-muted" size={14} />
           <input
             type="text"
@@ -271,13 +271,13 @@ export const AdminQuotes: React.FC = () => {
         {/* Selected Details & Budgeting Studio */}
         <div className="lg:col-span-6 lg:sticky lg:top-10 h-fit">
           {selectedQuote ? (
-            <div className="bg-theme-bg-muted border border-theme-border p-6 md:p-8 space-y-10 animate-in fade-in slide-in-from-right-4 duration-500 shadow-2xl">
-               <div className="flex gap-4 border-b border-theme-border pb-6 overflow-x-auto no-scrollbar scroll-smooth">
+            <div className="bg-theme-bg-muted border border-theme-border p-4 md:p-8 space-y-8 animate-in fade-in slide-in-from-right-4 duration-500 shadow-2xl">
+               <div className="flex gap-3 border-b border-theme-border pb-4 overflow-x-auto no-scrollbar scroll-smooth">
                  {(['briefing', 'equipe', 'locacao', 'logistica', 'hospedagem', 'fechamento'] as const).map(t => (
                    <button
                     key={t}
                     onClick={() => setActiveTab(t)}
-                    className={`pb-4 text-[9px] font-black uppercase tracking-[0.2em] transition-all relative whitespace-nowrap ${activeTab === t ? 'text-brand-tactical' : 'text-theme-muted hover:text-white'}`}
+                    className={`pb-2 text-[8px] font-black uppercase tracking-[0.15em] transition-all relative whitespace-nowrap ${activeTab === t ? 'text-brand-tactical' : 'text-theme-muted hover:text-white'}`}
                    >
                      {t}
                      {activeTab === t && <div className="absolute bottom-0 left-0 right-0 h-0.5 bg-brand-tactical" />}

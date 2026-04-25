@@ -220,6 +220,22 @@ export class EventController {
         name, email, attendees, locationType, usageType, selectedPartnerId, 
         customCep, eventDate, eventHours, description, selectedServices, totalPrice 
       } = req.body;
+      
+      // ── ANTI-FLOOD / DUPLICATE CHECK ──
+      const recentEvent = await prisma.event.findFirst({
+        where: {
+          clientEmail: email,
+          dataEvento: new Date(eventDate),
+          createdAt: {
+            gt: new Date(Date.now() - 2 * 60 * 1000) // últimos 2 minutos
+          }
+        }
+      });
+
+      if (recentEvent) {
+        console.log(`[Quote] Bloqueando duplicata para ${email}`);
+        return res.json({ success: true, message: "Sua solicitação já foi recebida e está em processamento." });
+      }
 
       // Todos os novos eventos começam como inativos até o pagamento/aprovação
       const isQuote = locationType === "OTHER";

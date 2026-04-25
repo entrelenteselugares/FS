@@ -50,7 +50,7 @@ export const AdminOverview: React.FC<OverviewProps> = ({ stats, recentOrders, pe
       </div>
 
       {/* KPI Section — 3 Cards side-by-side */}
-      <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(280px, 1fr))", gap: 1 }}>
+      <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(200px, 1fr))", gap: 1, border: `1px solid ${T.border}` }}>
         
         {/* Card 1: Receita */}
         <div style={{ 

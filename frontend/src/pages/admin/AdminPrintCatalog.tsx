@@ -455,46 +455,48 @@ export const AdminPrintCatalog: React.FC = () => {
           .desktop-only { display: none !important; }
           .mobile-hide { display: none !important; }
           .product-header { display: none !important; }
-          .product-row { grid-template-columns: 1fr; padding: 16px; gap: 16px; position: relative; }
-          .product-metrics { display: grid; grid-template-columns: repeat(2, 1fr); gap: 12px; border-top: 1px solid ${T.border}30; paddingTop: 12px; }
+          .product-row { grid-template-columns: 1fr; padding: 16px; gap: 16px; position: relative; border-bottom: 2px solid ${T.border}; }
+          .product-metrics { display: grid; grid-template-columns: repeat(2, 1fr); gap: 16px; border-top: 1px solid ${T.border}30; padding-top: 16px; }
           .metric-item { text-align: left; align-items: flex-start; }
-          .mobile-only { display: block !important; font-size: 8px; color: ${T.text3}; text-transform: uppercase; margin-bottom: 2px; }
-          .final-price-col { grid-column: span 2; text-align: right; align-items: flex-end; }
+          .mobile-only { display: block !important; font-size: 8px; color: ${T.text3}; text-transform: uppercase; margin-bottom: 4px; font-weight: 900; letter-spacing: 1px; }
+          .final-price-col { grid-column: span 2; text-align: right; align-items: flex-end; background: ${T.brand}08; padding: 8px; margin-top: 4px; }
           .metric-save-indicator { position: absolute; top: 12px; right: 12px; }
         }
         
-        .admin-header-bar { display: flex; align-items: center; gap: 12px; margin-bottom: 24px; padding: 14px 16px; background: ${T.bgCard}; border: 1px solid ${T.border}; }
-        @media (max-width: 768px) {
-          .admin-header-bar { flex-direction: column; align-items: stretch; gap: 16px; }
-          .header-stats { justify-content: space-around; }
+        .admin-header-bar { display: grid; grid-template-columns: auto 1fr auto; align-items: center; gap: 20px; margin-bottom: 32px; padding: 20px; background: ${T.bgCard}; border: 1px solid ${T.border}; }
+        @media (max-width: 900px) {
+          .admin-header-bar { grid-template-columns: 1fr; gap: 20px; }
+          .header-stats { justify-content: space-between; border-bottom: 1px solid ${T.border}50; padding-bottom: 15px; }
+          .header-actions-group { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+          .header-actions-group > * { width: 100%; }
         }
       `}</style>
       
       {isModalOpen && <NewProductModal onClose={() => setIsModalOpen(false)} onSave={handleCreate} />}
 
       <div className="admin-header-bar">
-        <div className="header-stats" style={{ flex: 1, display: "flex", gap: 24 }}>
-          <div><div style={{ fontSize: 22, fontFamily: T.fontD, fontWeight: 900, color: T.brand }}>{products.filter(p=>p.active).length}</div><div style={{ fontSize: 9, color: T.text3, textTransform: "uppercase" }}>Ativos</div></div>
-          <div><div style={{ fontSize: 22, fontFamily: T.fontD, fontWeight: 900, color: T.text }}>{products.length}</div><div style={{ fontSize: 9, color: T.text3, textTransform: "uppercase" }}>Total</div></div>
+        <div className="header-stats" style={{ display: "flex", gap: 32 }}>
+          <div><div style={{ fontSize: 24, fontFamily: T.fontD, fontWeight: 900, color: T.brand }}>{products.filter(p=>p.active).length}</div><div style={{ fontSize: 9, color: T.text3, textTransform: "uppercase", fontWeight: 800 }}>Ativos</div></div>
+          <div><div style={{ fontSize: 24, fontFamily: T.fontD, fontWeight: 900, color: T.text }}>{products.length}</div><div style={{ fontSize: 9, color: T.text3, textTransform: "uppercase", fontWeight: 800 }}>Total</div></div>
         </div>
 
-        <div style={{ display: "flex", flexWrap: "wrap", gap: 10 }}>
-          <button onClick={() => setIsModalOpen(true)} style={{ ...BtnGhost, color: T.brand, border: `1px solid ${T.brand}`, flex: 1 }}>
-            <Plus size={14} /> Novo Item
+        <div className="header-actions-group">
+          <button onClick={() => setIsModalOpen(true)} style={{ ...BtnPrimary, padding: "12px 16px", fontSize: 11 }}>
+            <Plus size={14} /> NOVO ITEM
           </button>
 
-          <select value={filterCategory} onChange={e => setFilterCategory(e.target.value)} style={{ ...FieldInput, flex: 2, minWidth: 150 }}>
+          <select value={filterCategory} onChange={e => setFilterCategory(e.target.value)} style={{ ...FieldInput, padding: "11px 16px", fontSize: 12 }}>
             <option value="">Todas as categorias</option>
             {categories.map(c => <option key={c} value={c}>{CATEGORY_LABELS[c].label}</option>)}
           </select>
-        </div>
 
-        <div style={{ display: "flex", gap: 10 }}>
-          <button onClick={() => setShowInactive(!showInactive)} style={{ ...BtnSecondary, fontSize: 11, flex: 1 }}>
+          <button onClick={() => setShowInactive(!showInactive)} style={{ ...BtnSecondary, fontSize: 11 }}>
             {showInactive ? <Eye size={13} /> : <EyeOff size={13} />} {showInactive ? "Inativos" : "Exibir"}
           </button>
+        </div>
 
-          <div style={{ position: "relative", flex: 1 }}>
+        <div className="header-actions-group">
+          <div style={{ position: "relative" }}>
             <input 
               type="file" 
               id="import-file" 
@@ -504,7 +506,7 @@ export const AdminPrintCatalog: React.FC = () => {
             />
             <button 
               onClick={() => document.getElementById("import-file")?.click()} 
-              style={{ ...BtnPrimary, fontSize: 11, width: "100%" }} 
+              style={{ ...BtnGhost, fontSize: 11, width: "100%", border: `1px solid ${T.brand}`, color: T.brand }} 
               disabled={seeding}
             >
               <Upload size={13} /> {seeding ? "..." : "Importar"}
@@ -513,9 +515,8 @@ export const AdminPrintCatalog: React.FC = () => {
 
           <button 
             onClick={handleSeedCK}
-            style={{ ...BtnGhost, fontSize: 10, padding: "8px 12px", border: `1px solid ${T.border}` }}
+            style={{ ...BtnGhost, fontSize: 10, border: `1px solid ${T.border}`, background: "rgba(0,0,0,0.05)" }}
             disabled={seeding}
-            title="Restaurar Tabela Padrão (CK)"
           >
             Reset CK
           </button>

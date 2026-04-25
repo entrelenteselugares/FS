@@ -234,10 +234,10 @@ export const AdminEvents: React.FC = () => {
 
   return (
     <div className="space-y-12 animate-in fade-in slide-in-from-bottom-4 duration-700">
-      <div className="flex items-center justify-between border-b border-white/5 pb-8">
+      <div className="flex flex-col md:flex-row md:items-center justify-between border-b border-white/5 pb-8 gap-6">
         <div>
-          <h2 className="text-3xl md:text-4xl font-heading text-theme-text tracking-tighter uppercase leading-none pt-2">Operação de Eventos</h2>
-          <p className="text-[10px] text-theme-muted uppercase tracking-[0.5em] mt-2 font-bold italic">Logística de Captação e Unidades Fixas</p>
+          <h2 className="text-2xl md:text-4xl font-heading text-theme-text tracking-tighter uppercase leading-none pt-2">Operação de Eventos</h2>
+          <p className="text-[9px] text-theme-muted uppercase tracking-[0.4em] mt-2 font-bold italic">Logística de Captação e Unidades Fixas</p>
         </div>
         <button 
           onClick={() => {
@@ -257,7 +257,7 @@ export const AdminEvents: React.FC = () => {
             setCoverPreview(null);
             setIsModalOpen(true);
           }}
-          className="font-black uppercase tracking-[0.4em] px-10 py-5 hover:brightness-110 transition-all shadow-xl shadow-brand-tactical/10 rounded-none text-[10px]"
+          className="font-black uppercase tracking-[0.4em] px-8 py-4 hover:brightness-110 transition-all shadow-xl shadow-brand-tactical/10 rounded-none text-[9px] w-full md:w-auto"
           style={{ backgroundColor: 'var(--brand-tactical)', color: 'var(--theme-text-on-brand)' }}
         >
           NOVO EVENTO

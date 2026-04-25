@@ -93,7 +93,7 @@ export const AdminDashboard: React.FC = () => {
 
   return (
     <DashboardLayout title="Operações Centrais" variant="tactical" navItems={NAV_ITEMS(activeTab, setActiveTab, stats)}>
-      <div style={{ padding: "clamp(24px, 6vw, 64px)", maxWidth: "1600px", margin: "0 auto", minHeight: "100vh" }}>
+      <div style={{ padding: "clamp(12px, 4vw, 64px)", maxWidth: "1600px", margin: "0 auto", minHeight: "100vh" }}>
         {/* Tab Content */}
         {loading && activeTab === "overview" ? (
            <div className="py-40 flex flex-col items-center gap-8">
