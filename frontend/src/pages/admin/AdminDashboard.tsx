@@ -29,7 +29,7 @@ import {
 
 
 const NAV_ITEMS = (activeTab: string, setActiveTab: (t: string) => void, stats: AdminStats | null): NavItem[] => [
-  { label: "Visão Geral", to: "/admin", exact: true, icon: <LayoutDashboard size={16} />, isActive: activeTab === "overview", onClick: () => setActiveTab("overview") },
+  { label: "Visão Geral", onClick: () => setActiveTab("overview"), isActive: activeTab === "overview", icon: <LayoutDashboard size={16} /> },
   { label: "Eventos", onClick: () => setActiveTab("events"), isActive: activeTab === "events", icon: <Camera size={16} />, badge: stats?.missingLinksCount },
   { label: "Membros", onClick: () => setActiveTab("users"), isActive: activeTab === "users", icon: <Users size={16} />, badge: stats?.pendingInvitesCount },
   { label: "Orçamentos", onClick: () => setActiveTab("quotes"), isActive: activeTab === "quotes", icon: <Briefcase size={16} />, badge: stats?.pendingQuotesCount },

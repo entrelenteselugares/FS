@@ -86,12 +86,12 @@ export const AdminFinance: React.FC = () => {
 
   return (
     <div className="space-y-12 animate-in fade-in slide-in-from-bottom-4 duration-700">
-      <div className="flex items-center justify-between border-b border-theme-border pb-8">
+      <div className="flex flex-col md:flex-row md:items-center justify-between gap-6 border-b border-theme-border pb-8">
         <div>
-          <h2 style={{ fontSize: 32, fontFamily: T.fontD, fontWeight: 900, color: T.text, textTransform: "uppercase", letterSpacing: -1, lineHeight: 1 }}>Central de Repasses</h2>
+          <h2 style={{ fontSize: "clamp(24px, 5vw, 32px)", fontFamily: T.fontD, fontWeight: 900, color: T.text, textTransform: "uppercase", letterSpacing: -1, lineHeight: 1 }}>Central de Repasses</h2>
           <p style={{ fontSize: 9, fontWeight: 900, color: T.text3, textTransform: "uppercase", letterSpacing: 2, marginTop: 8, fontStyle: "italic" }}>Modelo Uber — Pagamentos após 7 dias</p>
         </div>
-        <div style={{ display: "flex", background: `${T.bgField}88`, padding: 4, border: `1px solid ${T.border}` }}>
+        <div style={{ display: "flex", background: `${T.bgField}88`, padding: 4, border: `1px solid ${T.border}`, alignSelf: "flex-start" }}>
           <button 
             onClick={() => setView("pending")}
             style={{ 
@@ -99,7 +99,8 @@ export const AdminFinance: React.FC = () => {
               letterSpacing: "0.1em", cursor: "pointer", border: "none",
               background: view === "pending" ? T.brand : "transparent",
               color: view === "pending" ? T.brandText : T.text3,
-              transition: "all 0.2s"
+              transition: "all 0.2s",
+              flex: 1
             }}
           >
             Pendentes
@@ -111,7 +112,8 @@ export const AdminFinance: React.FC = () => {
               letterSpacing: "0.1em", cursor: "pointer", border: "none",
               background: view === "history" ? T.brand : "transparent",
               color: view === "history" ? T.brandText : T.text3,
-              transition: "all 0.2s"
+              transition: "all 0.2s",
+              flex: 1
             }}
           >
             Histórico
@@ -127,16 +129,16 @@ export const AdminFinance: React.FC = () => {
             {view === "pending" ? "Nenhum repasse pendente no momento." : "Nenhum histórico de repasse encontrado."}
           </div>
         ) : orders.map(order => (
-          <div key={order.id} style={{ background: T.bgCard, border: `1px solid ${T.border}`, padding: 32 }} className="group hover:border-brand-tactical transition-all">
-            <div className="grid grid-cols-1 md:grid-cols-4 gap-12">
-              <div className="md:col-span-3">
-                <div className="flex items-center gap-4 mb-6">
+          <div key={order.id} style={{ background: T.bgCard, border: `1px solid ${T.border}`, padding: "clamp(20px, 4vw, 32px)" }} className="group hover:border-brand-tactical transition-all">
+            <div className="flex flex-col gap-8">
+              <div className="w-full">
+                <div className="flex flex-wrap items-center gap-4 mb-6">
                   <div style={{ background: T.brand, color: T.brandText, fontSize: 8, fontWeight: 900, padding: "4px 10px", textTransform: "uppercase", letterSpacing: 1 }}>{view === "pending" ? "Aguardando PIX" : "Liquidado"}</div>
                   <div style={{ fontSize: 10, fontWeight: 900, color: T.text, textTransform: "uppercase", letterSpacing: 1 }}>{order.event.title}</div>
-                  <div style={{ fontSize: 9, color: T.text3, textTransform: "uppercase" }}>• Atualizado em {fmtDate(order.updatedAt)}</div>
+                  <div style={{ fontSize: 9, color: T.text3, textTransform: "uppercase" }}>• {fmtDate(order.updatedAt)}</div>
                 </div>
 
-                <div className="grid grid-cols-1 md:grid-cols-4 gap-8 border-t border-white/5 pt-8">
+                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8 border-t border-white/5 pt-8">
                   {/* Matriz */}
                   <div className="space-y-2">
                     <label style={{ fontSize: 8, fontWeight: 900, color: T.text3, textTransform: "uppercase", letterSpacing: 1, display: "block" }}>Matriz Foto Segundo</label>
@@ -157,7 +159,7 @@ export const AdminFinance: React.FC = () => {
                           : calculateAmount(order.amount, order.event.partners.captacao.profissional.captPct)
                         }
                       </div>
-                      <div style={{ fontSize: 8, fontWeight: 900, color: T.brand, background: `${T.brand}08`, padding: "4px 8px", border: `1px solid ${T.brand}22`, textTransform: "uppercase" }}>PIX: {order.event.partners.captacao.pixKey || "PENDENTE"}</div>
+                      <div style={{ fontSize: 8, fontWeight: 900, color: T.brand, background: `${T.brand}08`, padding: "4px 8px", border: `1px solid ${T.brand}22`, textTransform: "uppercase", overflow: "hidden", textOverflow: "ellipsis" }}>PIX: {order.event.partners.captacao.pixKey || "PENDENTE"}</div>
                     </div>
                   )}
                   {/* Edição */}
@@ -170,7 +172,7 @@ export const AdminFinance: React.FC = () => {
                           : calculateAmount(order.amount, order.event.partners.edicao.profissional.editPct)
                         }
                       </div>
-                      <div style={{ fontSize: 8, fontWeight: 900, color: T.brand, background: `${T.brand}08`, padding: "4px 8px", border: `1px solid ${T.brand}22`, textTransform: "uppercase" }}>PIX: {order.event.partners.edicao.pixKey || "PENDENTE"}</div>
+                      <div style={{ fontSize: 8, fontWeight: 900, color: T.brand, background: `${T.brand}08`, padding: "4px 8px", border: `1px solid ${T.brand}22`, textTransform: "uppercase", overflow: "hidden", textOverflow: "ellipsis" }}>PIX: {order.event.partners.edicao.pixKey || "PENDENTE"}</div>
                     </div>
                   )}
                   {/* Unidade Fixa */}
@@ -183,13 +185,13 @@ export const AdminFinance: React.FC = () => {
                           : calculateAmount(order.amount, order.event.partners.cartorio.cartorio.splitPct)
                         }
                       </div>
-                      <div style={{ fontSize: 8, fontWeight: 900, color: T.brand, background: `${T.brand}08`, padding: "4px 8px", border: `1px solid ${T.brand}22`, textTransform: "uppercase" }}>PIX: {order.event.partners.cartorio.pixKey || "PENDENTE"}</div>
+                      <div style={{ fontSize: 8, fontWeight: 900, color: T.brand, background: `${T.brand}08`, padding: "4px 8px", border: `1px solid ${T.brand}22`, textTransform: "uppercase", overflow: "hidden", textOverflow: "ellipsis" }}>PIX: {order.event.partners.cartorio.pixKey || "PENDENTE"}</div>
                     </div>
                   )}
                 </div>
               </div>
 
-              <div className="flex flex-col justify-end">
+              <div className="flex flex-col justify-end border-t border-white/5 pt-6 lg:border-none lg:pt-0">
                 {view === "pending" ? (
                   <button 
                     onClick={() => setConfirmModal(order.id)}

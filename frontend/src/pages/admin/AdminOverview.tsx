@@ -146,7 +146,7 @@ export const AdminOverview: React.FC<OverviewProps> = ({ stats, recentOrders, pe
 
       </div>
 
-      <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 16 }}>
+      <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(min(100%, 500px), 1fr))", gap: 16 }}>
         {/* Charts */}
         <div style={{ 
           border: `1px solid ${T.border}`, 

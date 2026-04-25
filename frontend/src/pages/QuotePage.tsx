@@ -84,13 +84,14 @@ function DateTimePicker({ value, onChange }: { value: string; onChange: (v: stri
     <div ref={ref} style={{ position: "relative" }}>
       {/* Trigger */}
       <div onClick={() => setOpen(o => !o)} style={{ position: "relative", display: "flex", alignItems: "center", cursor: "pointer" }}>
-        <Calendar size={18} style={{ position: "absolute", left: 15, color: THEME.accent, pointerEvents: "none", zIndex: 1 }} />
+        <Calendar size={18} style={{ position: "absolute", left: 18, color: THEME.accent, pointerEvents: "none", zIndex: 1 }} />
         <div
           className="fs-input"
           style={{
-            width: "100%", paddingLeft: 48, fontSize: 13,
+            width: "100%", paddingLeft: 52, fontSize: "clamp(11px, 3vw, 13px)",
             userSelect: "none", minHeight: 52, display: "flex", alignItems: "center",
             color: displayValue ? THEME.text : "#555",
+            textTransform: "uppercase", letterSpacing: 1
           }}
         >
           {displayValue || "SELECIONE A DATA E HORÁRIO"}
@@ -102,9 +103,9 @@ function DateTimePicker({ value, onChange }: { value: string; onChange: (v: stri
           <div
             key="picker"
             style={{
-              position: "absolute", bottom: "calc(100% + 8px)", left: 0, zIndex: 999,
+              position: "absolute", bottom: "calc(100% + 12px)", left: "50%", transform: "translateX(-50%)", zIndex: 999,
               background: "var(--theme-bg)", border: `1px solid var(--theme-border)`,
-              width: "min(320px, 90vw)", padding: 20, boxShadow: "0 24px 60px rgba(0,0,0,0.4)",
+              width: "min(320px, 95vw)", padding: "clamp(12px, 3vw, 20px)", boxShadow: "0 24px 60px rgba(0,0,0,0.5)",
               transition: "all 0.18s"
             }}
           >
@@ -603,18 +604,18 @@ export const QuotePage = () => {
               )}
 
               {/* Convidados e Tipo de Uso */}
-              <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 20 }}>
+              <div className="mobile-grid-1" style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 20 }}>
                 <div>
                   <label style={{ fontSize: 10, fontWeight: 800, textTransform: "uppercase", marginBottom: 10, display: "block", color: THEME.text }}>Número de Convidados</label>
                   <div style={{ position: "relative", display: "flex", alignItems: "center" }}>
-                    <Users size={16} style={{ position: "absolute", left: 15, color: THEME.accent, pointerEvents: "none", zIndex: 1 }} />
+                    <Users size={16} style={{ position: "absolute", left: 18, color: THEME.accent, pointerEvents: "none", zIndex: 1 }} />
                     <input
                       type="text"
                       inputMode="numeric"
                       value={attendees}
                       onChange={e => setAttendees(e.target.value.replace(/\D/g, ""))}
                       className="fs-input"
-                      style={{ width: "100%", paddingLeft: 48 }}
+                      style={{ width: "100%", paddingLeft: 52, minHeight: 52 }}
                     />
                   </div>
                 </div>

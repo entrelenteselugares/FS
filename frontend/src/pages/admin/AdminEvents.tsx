@@ -264,34 +264,40 @@ export const AdminEvents: React.FC = () => {
         </button>
       </div>
 
-      <div style={{ overflowX: "auto" }}>
-        <table style={{ width: "100%", borderCollapse: "collapse", textAlign: "left" }}>
+      <style>{`
+        .events-table { width: 100%; border-collapse: collapse; text-align: left; }
+        .events-table thead { border-bottom: 1px solid ${T.border}; }
+        .events-table th { padding: 10px 16px; fontSize: 9px; fontFamily: ${T.fontB}; fontWeight: 900; textTransform: uppercase; letterSpacing: 2px; color: ${T.text3}; }
+        
+        .event-card-mobile { display: none; }
+        
+        @media (max-width: 1024px) {
+          .events-table { display: none; }
+          .event-card-mobile { 
+            display: flex; flex-direction: column; gap: 16px; padding: 20px; 
+            background: ${T.bgCard}; border: 1px solid ${T.border}; margin-bottom: 12px;
+          }
+          .event-card-header { display: flex; justify-content: space-between; align-items: flex-start; }
+          .event-card-stats { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; border-top: 1px solid ${T.border}44; padding-top: 12px; }
+          .event-card-actions { display: flex; gap: 8px; margin-top: 4px; }
+        }
+      `}</style>
+
+      <div className="events-container">
+        <table className="events-table">
           <thead>
-            <tr style={{ borderBottom: `1px solid ${T.border}` }}>
+            <tr>
               {["Evento", "Data", "Produção", "Vendas", "Membros", "Ações"].map((h) => (
-                <th key={h} style={{ 
-                  padding: "10px 16px", fontSize: 9, fontFamily: T.fontB, fontWeight: 900, 
-                  textTransform: "uppercase", letterSpacing: 2, color: T.text3 
-                }}>
-                  {h}
-                </th>
+                <th key={h}>{h}</th>
               ))}
             </tr>
           </thead>
           <tbody>
             {loading ? (
-              <tr>
-                <td colSpan={6} style={{ padding: 60, textAlign: "center", fontSize: 10, color: T.text3, textTransform: "uppercase", letterSpacing: 3 }}>
-                  Indexando Eventos...
-                </td>
-              </tr>
+              <tr><td colSpan={6} style={{ padding: 60, textAlign: "center", fontSize: 10, color: T.text3, textTransform: "uppercase", letterSpacing: 3 }}>Indexando Eventos...</td></tr>
             ) : events.length === 0 ? (
-              <tr>
-                <td colSpan={6} style={{ padding: 60, textAlign: "center", fontSize: 10, color: T.text3, textTransform: "uppercase", letterSpacing: 3 }}>
-                  Nenhum registro encontrado.
-                </td>
-              </tr>
-            ) : events.map((event: Event, idx) => (
+              <tr><td colSpan={6} style={{ padding: 60, textAlign: "center", fontSize: 10, color: T.text3, textTransform: "uppercase", letterSpacing: 3 }}>Nenhum registro encontrado.</td></tr>
+            ) : events.map((event, idx) => (
               <tr 
                 key={event.id} 
                 style={{ 
@@ -299,115 +305,69 @@ export const AdminEvents: React.FC = () => {
                   borderBottom: `1px solid ${T.border}44`,
                   transition: "background 0.2s"
                 }}
-                onMouseEnter={(e: React.MouseEvent<HTMLElement>) => { (e.currentTarget as HTMLElement).style.background = T.bgCard; }}
-                onMouseLeave={(e: React.MouseEvent<HTMLElement>) => { (e.currentTarget as HTMLElement).style.background = idx % 2 === 0 ? T.bgField : "transparent"; }}
               >
-                {/* Evento */}
                 <td style={{ padding: "12px 16px" }}>
-                  <div style={{ fontSize: 12, fontWeight: 900, color: T.text, textTransform: "uppercase", letterSpacing: -0.3 }}>
-                    {event.title}
-                  </div>
-                  <div style={{ fontSize: 10, color: T.text3, marginTop: 2, textTransform: "uppercase", fontWeight: 700 }}>
-                    {event.location}
-                  </div>
+                  <div style={{ fontSize: 12, fontWeight: 900, color: T.text, textTransform: "uppercase", letterSpacing: -0.3 }}>{event.title}</div>
+                  <div style={{ fontSize: 10, color: T.text3, marginTop: 2, textTransform: "uppercase", fontWeight: 700 }}>{event.location}</div>
                 </td>
-
-                {/* Data */}
-                <td style={{ padding: "12px 16px", fontSize: 11, fontWeight: 700, color: T.text2 }}>
-                  {new Date(event.date).toLocaleDateString("pt-BR")}
-                </td>
-
-                {/* Produção */}
+                <td style={{ padding: "12px 16px", fontSize: 11, fontWeight: 700, color: T.text2 }}>{new Date(event.date).toLocaleDateString("pt-BR")}</td>
                 <td style={{ padding: "12px 16px" }}>
                    <div style={{ display: "flex", gap: 12, alignItems: "center" }}>
-                      <div title="Capa" style={{ 
-                        width: 8, height: 8, borderRadius: "50%", 
-                        background: event.coverPhotoUrl ? T.brand : T.border,
-                        border: `1px solid ${event.coverPhotoUrl ? T.brand : T.text3}`
-                      }} />
-                      <div title="Links" style={{ 
-                        width: 8, height: 8, borderRadius: "50%", 
-                        background: (event.lightroomUrl || event.driveUrl) ? T.brand : T.border,
-                        border: `1px solid ${(event.lightroomUrl || event.driveUrl) ? T.brand : T.text3}`
-                      }} />
-                      <span style={{ fontSize: 9, color: T.text3, fontWeight: 700, textTransform: "uppercase", letterSpacing: 1 }}>
-                        {(event.lightroomUrl || event.driveUrl) ? "CONCLUÍDO" : "EM PRODUÇÃO"}
-                      </span>
+                      <div title="Capa" style={{ width: 8, height: 8, borderRadius: "50%", background: event.coverPhotoUrl ? T.brand : T.border, border: `1px solid ${event.coverPhotoUrl ? T.brand : T.text3}` }} />
+                      <div title="Links" style={{ width: 8, height: 8, borderRadius: "50%", background: (event.lightroomUrl || event.driveUrl) ? T.brand : T.border, border: `1px solid ${(event.lightroomUrl || event.driveUrl) ? T.brand : T.text3}` }} />
                    </div>
                 </td>
-
-                {/* Vendas */}
-                <td style={{ padding: "12px 16px" }}>
-                  <div style={{ display: "flex", alignItems: "center", gap: 6 }}>
-                    <div style={{ 
-                      fontSize: 12, fontWeight: 900, 
-                      color: event._count?.pedidos > 0 ? T.brand : T.text3 
-                    }}>
-                      {event._count?.pedidos || 0}
-                    </div>
-                  </div>
-                </td>
-
-                {/* Membros */}
+                <td style={{ padding: "12px 16px" }}><div style={{ fontSize: 12, fontWeight: 900, color: event._count?.pedidos > 0 ? T.brand : T.text3 }}>{event._count?.pedidos || 0}</div></td>
                 <td style={{ padding: "12px 16px" }}>
                    <div style={{ fontSize: 9, color: T.text, fontWeight: 900, textTransform: "uppercase" }}>{event.captacao?.nome || "—"}</div>
                    <div style={{ fontSize: 8, color: T.text3, textTransform: "uppercase" }}>{event.edicao?.nome || "—"}</div>
                 </td>
-
-                {/* Ações */}
                 <td style={{ padding: "12px 16px" }}>
                   <div style={{ display: "flex", gap: 8, alignItems: "center" }}>
-                    <button 
-                      onClick={() => { setQrModalEvent(event); setCopied(false); }}
-                      style={{ 
-                        background: "transparent", border: `1px solid ${T.border}`, color: T.text3, 
-                        cursor: "pointer", display: "flex", alignItems: "center", padding: 6,
-                        transition: "all 0.2s"
-                      }}
-                      onMouseEnter={e => e.currentTarget.style.color = T.brand}
-                      onMouseLeave={e => e.currentTarget.style.color = T.text3}
-                      title="Gerar QR Code"
-                    >
-                      <QrCode size={12} />
-                    </button>
-                    <button 
-                      onClick={() => {
-                        setSaleEvent(event);
-                        setSaleFormData({
-                          customerName: "",
-                          customerEmail: "",
-                          amount: Number(event.priceBase || 0)
-                        });
-                        setIsSaleModalOpen(true);
-                      }}
-                      style={{ 
-                        background: T.brand, border: "none", color: "black", 
-                        fontSize: 8, fontWeight: 900, textTransform: "uppercase", 
-                        letterSpacing: 1, cursor: "pointer", padding: "6px 12px",
-                        transition: "all 0.2s"
-                      }}
-                    >
-                      VENDA
-                    </button>
-                    <button 
-                      onClick={() => handleEditOpen(event)}
-                      style={{ 
-                        background: "transparent", border: `1px solid ${T.border}`, color: T.text2, 
-                        fontSize: 8, fontWeight: 900, textTransform: "uppercase", 
-                        letterSpacing: 1, cursor: "pointer", padding: "6px 10px",
-                        transition: "all 0.2s"
-                      }}
-                      onMouseEnter={e => { e.currentTarget.style.borderColor = T.brand; e.currentTarget.style.color = T.text; }}
-                      onMouseLeave={e => { e.currentTarget.style.borderColor = T.border; e.currentTarget.style.color = T.text2; }}
-                    >
-                      Editar
-                    </button>
+                    <button onClick={() => { setQrModalEvent(event); setCopied(false); }} style={{ background: "transparent", border: `1px solid ${T.border}`, color: T.text3, cursor: "pointer", padding: 6 }}><QrCode size={12} /></button>
+                    <button onClick={() => { setSaleEvent(event); setSaleFormData({ customerName: "", customerEmail: "", amount: Number(event.priceBase || 0) }); setIsSaleModalOpen(true); }} style={{ background: T.brand, border: "none", color: "black", fontSize: 8, fontWeight: 900, textTransform: "uppercase", padding: "6px 12px" }}>VENDA</button>
+                    <button onClick={() => handleEditOpen(event)} style={{ background: "transparent", border: `1px solid ${T.border}`, color: T.text2, fontSize: 8, fontWeight: 900, textTransform: "uppercase", padding: "6px 10px" }}>Editar</button>
                   </div>
                 </td>
               </tr>
             ))}
           </tbody>
         </table>
+
+        {/* Mobile View */}
+        <div className="mobile-only">
+          {events.map(event => (
+            <div key={event.id} className="event-card-mobile">
+              <div className="event-card-header">
+                <div>
+                  <div style={{ fontSize: 14, fontWeight: 900, color: T.text, textTransform: "uppercase", letterSpacing: -0.5 }}>{event.title}</div>
+                  <div style={{ fontSize: 10, color: T.text3, marginTop: 4, textTransform: "uppercase" }}>{event.location} · {new Date(event.date).toLocaleDateString("pt-BR")}</div>
+                </div>
+                <div style={{ display: "flex", gap: 8 }}>
+                  <div style={{ width: 8, height: 8, borderRadius: "50%", background: event.coverPhotoUrl ? T.brand : T.border }} />
+                  <div style={{ width: 8, height: 8, borderRadius: "50%", background: (event.lightroomUrl || event.driveUrl) ? T.brand : T.border }} />
+                </div>
+              </div>
+              
+              <div className="event-card-stats">
+                <div>
+                  <div style={{ fontSize: 8, color: T.text3, textTransform: "uppercase", fontWeight: 900, marginBottom: 2 }}>Membros</div>
+                  <div style={{ fontSize: 10, color: T.text, fontWeight: 700 }}>{event.captacao?.nome || "REDE"} / {event.edicao?.nome || "REDE"}</div>
+                </div>
+                <div style={{ textAlign: "right" }}>
+                  <div style={{ fontSize: 8, color: T.text3, textTransform: "uppercase", fontWeight: 900, marginBottom: 2 }}>Vendas</div>
+                  <div style={{ fontSize: 14, color: T.brand, fontWeight: 900 }}>{event._count?.pedidos || 0}</div>
+                </div>
+              </div>
+
+              <div className="event-card-actions">
+                <button onClick={() => { setSaleEvent(event); setIsSaleModalOpen(true); }} style={{ flex: 2, background: T.brand, border: "none", color: "black", fontSize: 10, fontWeight: 900, textTransform: "uppercase", padding: "12px" }}>REGISTRAR VENDA</button>
+                <button onClick={() => handleEditOpen(event)} style={{ flex: 1, background: "transparent", border: `1px solid ${T.border}`, color: T.text, fontSize: 10, fontWeight: 900, textTransform: "uppercase", padding: "12px" }}>EDITAR</button>
+                <button onClick={() => { setQrModalEvent(event); setCopied(false); }} style={{ background: "transparent", border: `1px solid ${T.border}`, color: T.text3, padding: "12px" }}><QrCode size={16} /></button>
+              </div>
+            </div>
+          ))}
+        </div>
       </div>
 
       {isModalOpen && (

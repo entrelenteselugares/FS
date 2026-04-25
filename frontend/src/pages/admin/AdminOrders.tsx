@@ -39,13 +39,32 @@ export const AdminOrders: React.FC = () => {
 
   return (
     <div className="space-y-8 animate-in fade-in slide-in-from-bottom-4 duration-700">
-      <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", borderBottom: `1px solid ${T.border}`, paddingBottom: 24 }}>
+      <style>{`
+        .orders-header { display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid ${T.border}; padding-bottom: 24px; }
+        .orders-table-wrapper { border: 1px solid ${T.border}; background: ${T.bgField}; overflow: hidden; }
+        .orders-table { width: 100%; border-collapse: collapse; }
+        .order-card-mobile { display: none; }
+
+        @media (max-width: 768px) {
+          .orders-header { flex-direction: column; align-items: stretch; gap: 20px; }
+          .search-container { width: 100% !important; }
+          .orders-table-wrapper { display: none; }
+          .order-card-mobile { 
+            display: flex; flex-direction: column; gap: 12px; padding: 16px; 
+            background: ${T.bgField}; border: 1px solid ${T.border}; margin-bottom: 12px;
+          }
+          .order-card-top { display: flex; justify-content: space-between; align-items: flex-start; }
+          .order-card-footer { display: flex; justify-content: space-between; align-items: center; border-top: 1px solid ${T.border}44; padding-top: 12px; margin-top: 4px; }
+        }
+      `}</style>
+
+      <div className="orders-header">
         <div>
           <h2 style={{ fontSize: 24, fontFamily: T.fontD, fontWeight: 900, color: T.text, textTransform: "uppercase", letterSpacing: -1 }}>Auditoria de Pedidos</h2>
           <p style={{ fontSize: 9, fontWeight: 900, color: T.text3, textTransform: "uppercase", letterSpacing: 2, marginTop: 4 }}>Trilha de transições e liquidez do ledger</p>
         </div>
         
-        <div style={{ position: "relative", width: 320 }}>
+        <div className="search-container" style={{ position: "relative", width: 320 }}>
           <input
             type="text"
             placeholder="PROCURAR POR E-MAIL OU EVENTO..."
@@ -59,9 +78,9 @@ export const AdminOrders: React.FC = () => {
         </div>
       </div>
 
-      <div style={{ border: `1px solid ${T.border}`, background: T.bgField, overflow: "hidden" }}>
+      <div className="orders-table-wrapper">
         <div style={{ overflowX: "auto" }}>
-          <table style={{ width: "100%", borderCollapse: "collapse" }}>
+          <table className="orders-table">
             <thead>
               <tr style={{ borderBottom: `1px solid ${T.border}`, background: `${T.bg}55` }}>
                 <th style={{ textAlign: "left", padding: "12px 20px", fontSize: 9, fontWeight: 900, textTransform: "uppercase", letterSpacing: 2, color: T.text3 }}>ID / Data</th>
@@ -118,6 +137,37 @@ export const AdminOrders: React.FC = () => {
             </tbody>
           </table>
         </div>
+      </div>
+
+      {/* Mobile Cards */}
+      <div className="mobile-only">
+        {loading ? (
+          <div className="py-20 text-center text-[10px] text-theme-muted uppercase tracking-widest animate-pulse">Sincronizando...</div>
+        ) : orders.map(order => (
+          <div key={order.id} className="order-card-mobile">
+            <div className="order-card-top">
+              <div>
+                <div style={{ fontSize: 10, color: T.text3, fontWeight: 900, textTransform: "uppercase", letterSpacing: 1 }}>#{order.id.slice(-8).toUpperCase()}</div>
+                <div style={{ fontSize: 13, color: T.text, fontWeight: 700, marginTop: 4 }}>{order.user?.nome || "Convidado"}</div>
+                <div style={{ fontSize: 10, color: T.text3 }}>{order.buyerEmail || order.user?.email}</div>
+              </div>
+              <div style={{ textAlign: "right" }}>
+                <div style={{ fontSize: 14, color: T.text, fontWeight: 900 }}>R$ {Number(order.amount).toFixed(2)}</div>
+                <div style={{ 
+                  display: "inline-block", padding: "2px 6px", border: `1px solid ${order.status === "APROVADO" ? T.brand : T.border}`,
+                  fontSize: 7, fontWeight: 900, textTransform: "uppercase", color: order.status === "APROVADO" ? T.brand : T.text3,
+                  marginTop: 6
+                }}>
+                  {order.status}
+                </div>
+              </div>
+            </div>
+            <div className="order-card-footer">
+              <div style={{ fontSize: 9, color: T.brand, fontWeight: 900, textTransform: "uppercase" }}>{order.event.title}</div>
+              <div style={{ fontSize: 9, color: T.text3, fontWeight: 700 }}>{new Date(order.createdAt).toLocaleDateString("pt-BR")}</div>
+            </div>
+          </div>
+        ))}
       </div>
 
       {totalPages > 1 && (

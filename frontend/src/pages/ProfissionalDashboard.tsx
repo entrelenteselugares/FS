@@ -202,6 +202,15 @@ export default function ProfissionalDashboard() {
           .mobile-stack { flex-direction: column !important; align-items: stretch !important; gap: 1rem !important; }
           .mobile-padding { padding: 2rem 1.5rem !important; }
           .mobile-grid-1 { grid-template-columns: 1fr !important; }
+          .mobile-detail-overlay {
+            position: fixed !important;
+            inset: 0 !important;
+            z-index: 2000 !important;
+            background: var(--theme-bg) !important;
+            padding: 2rem !important;
+            overflow-y: auto !important;
+            top: 0 !important;
+          }
         }
       `}</style>
 
@@ -241,7 +250,7 @@ export default function ProfissionalDashboard() {
         </div>
 
         {/* SUB HEADER SUPPORT */}
-        <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", background: "rgba(133,185,172,0.05)", border: "1px solid var(--brand-primary)", padding: "1.5rem 2rem", marginBottom: "3rem" }}>
+        <div className="mobile-stack" style={{ display: "flex", alignItems: "center", justifyContent: "space-between", background: "rgba(133,185,172,0.05)", border: "1px solid var(--brand-primary)", padding: "1.5rem 2rem", marginBottom: "3rem" }}>
           <div>
             <h4 style={{ fontSize: 13, fontWeight: 900, color: "var(--brand-primary)", margin: 0, textTransform: "uppercase" }}>Apoio à Rede Profissional</h4>
             <p style={{ fontSize: 10, color: "var(--theme-text-muted)", margin: "4px 0 0 0" }}>Problemas técnicos ou dúvidas sobre pagamentos?</p>
@@ -250,7 +259,7 @@ export default function ProfissionalDashboard() {
             href="https://wa.me/5519984470420" 
             target="_blank" 
             rel="noopener noreferrer"
-            style={{ textDecoration: "none", background: "var(--brand-primary)", color: "#000", padding: "12px 20px", fontSize: 10, fontWeight: 900, textTransform: "uppercase", display: "flex", alignItems: "center", gap: 8, transition: "all .3s" }}
+            style={{ textDecoration: "none", background: "var(--brand-primary)", color: "#000", padding: "12px 24px", fontSize: 10, fontWeight: 900, textTransform: "uppercase", display: "flex", alignItems: "center", gap: 8, transition: "all .3s" }}
           >
             <MessageCircle size={14} /> Falar com Matriz
           </a>
@@ -390,7 +399,7 @@ export default function ProfissionalDashboard() {
 
             {/* DETALHE */}
             {selected && (
-              <div className="mobile-detail-panel" style={{ position: "sticky", top: 100, height: "fit-content", animation: "fadeIn 0.3s ease-out" }}>
+              <div className="mobile-detail-overlay" style={{ position: "sticky", top: 100, height: "fit-content", animation: "fadeIn 0.3s ease-out" }}>
                 <EventEditPanel 
                   key={selected.id}
                   event={selected} 

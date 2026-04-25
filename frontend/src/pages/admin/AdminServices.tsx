@@ -107,8 +107,8 @@ export const AdminServices: React.FC = () => {
       <div className="space-y-12 animate-in fade-in slide-in-from-bottom-4 duration-700">
         <div className="flex flex-col md:flex-row md:items-center justify-between gap-6 border-b border-theme-border pb-8">
           <div>
-            <h2 className="text-4xl font-heading text-theme-text tracking-tighter uppercase font-black">Catálogo de Serviços</h2>
-            <p className="text-[10px] text-theme-muted uppercase tracking-[0.5em] mt-2 font-black italic">Configuração de Produtos e Tabelas de Preço</p>
+            <h2 style={{ fontSize: "clamp(24px, 6vw, 36px)" }} className="font-heading text-theme-text tracking-tighter uppercase font-black">Catálogo de Serviços</h2>
+            <p className="text-[9px] text-theme-muted uppercase tracking-[0.3em] mt-2 font-black italic">Configuração de Produtos e Tabelas de Preço</p>
           </div>
           <button 
             onClick={() => {
@@ -172,8 +172,8 @@ export const AdminServices: React.FC = () => {
           </div>
         )}
 
-        <div className="space-y-2">
-          <div style={{ background: T.bgField, borderBottom: `1px solid ${T.border}` }} className="grid grid-cols-12 gap-4 px-10 py-4 text-[9px] font-black text-theme-muted uppercase tracking-[0.4em]">
+        <div className="space-y-4">
+          <div style={{ background: T.bgField, borderBottom: `1px solid ${T.border}` }} className="hidden md:grid grid-cols-12 gap-4 px-10 py-4 text-[9px] font-black text-theme-muted uppercase tracking-[0.4em]">
             <div className="col-span-1">Categoria</div>
             <div className="col-span-4">Serviço / Descrição</div>
             <div className="col-span-3 text-right">Preço Sugerido</div>
@@ -187,18 +187,23 @@ export const AdminServices: React.FC = () => {
           ) : (
             services.map(s => (
               <div key={s.id} style={{ background: T.bgCard, border: `1px solid ${T.border}` }} className="hover:border-brand-tactical/30 transition-all group">
-                <div className="grid grid-cols-1 md:grid-cols-12 gap-4 items-center px-10 py-6">
-                  <div className="col-span-1">
+                <div className="grid grid-cols-1 md:grid-cols-12 gap-4 items-center p-6 md:px-10">
+                  <div className="md:col-span-1 flex md:block items-center justify-between">
                     <span style={{ fontSize: 8, fontWeight: 900, color: T.text3, border: `1px solid ${T.border}`, padding: "2px 6px", textTransform: "uppercase" }}>{s.category}</span>
+                    <div className="md:hidden flex gap-4">
+                      <button onClick={() => handleEditOpen(s)} style={{ background: "none", border: "none", color: T.text3 }}><Edit3 size={14} /></button>
+                      <button onClick={() => setConfirmDelete(s.id)} style={{ background: "none", border: "none", color: "#ef4444" }}><Trash2 size={14} /></button>
+                    </div>
                   </div>
-                  <div className="col-span-4">
+                  <div className="md:col-span-4">
                     <div style={{ fontSize: 14, fontWeight: 900, color: T.text, textTransform: "uppercase", letterSpacing: -0.5 }}>{s.name}</div>
                     <div style={{ fontSize: 10, color: T.text3, fontWeight: 500, textTransform: "uppercase", letterSpacing: 0.5 }} className="mt-1 opacity-80">{s.description}</div>
                   </div>
-                  <div className="col-span-3 text-right">
+                  <div className="md:col-span-3 md:text-right border-t border-theme-border/20 pt-4 md:border-none md:pt-0">
+                    <div className="md:hidden text-[8px] font-black text-theme-muted uppercase tracking-widest mb-1">Preço Sugerido</div>
                     <div style={{ fontSize: 15, fontFamily: T.fontD, fontWeight: 900, color: T.brand, letterSpacing: 1 }}>R$ {Number(s.basePrice).toFixed(2).replace(".", ",")}</div>
                   </div>
-                  <div className="col-span-4 flex justify-end gap-6 opacity-30 group-hover:opacity-100 transition-all">
+                  <div className="hidden md:flex md:col-span-4 justify-end gap-6 opacity-30 group-hover:opacity-100 transition-all">
                     <button 
                       onClick={() => handleEditOpen(s)}
                       style={{ background: "transparent", border: "none", color: T.text3, fontSize: 9, fontWeight: 900, textTransform: "uppercase", letterSpacing: 1, cursor: "pointer", display: "flex", alignItems: "center", gap: 6 }}

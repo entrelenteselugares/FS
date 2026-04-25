@@ -417,22 +417,22 @@ export default function UnidadeFixaDashboard() {
         {/* ── REPASSES ── */}
         {tab === "pedidos" && (
           <div>
-            <div style={{ display: "flex", gap: "0.75rem", marginBottom: "1.25rem", alignItems: "center" }}>
-              <div>
-                <label style={{ fontSize: 11, color: "var(--theme-text-muted)", display: "block", marginBottom: 4 }}>De</label>
-                <input type="date" value={startDate} onChange={(e) => setStartDate(e.target.value)} style={S.input} />
-              </div>
-              <div>
-                <label style={{ fontSize: 11, color: "var(--theme-text-muted)", display: "block", marginBottom: 4 }}>Até</label>
-                <input type="date" value={endDate} onChange={(e) => setEndDate(e.target.value)} style={S.input} />
-              </div>
-              <button
-                onClick={loadPedidos}
-                style={{ marginTop: 20, background: "var(--brand-primary)", color: "var(--theme-text-on-brand)", border: "none", borderRadius: 0, padding: "12px 24px", fontSize: 11, fontWeight: 800, cursor: "pointer", textTransform: "uppercase", letterSpacing: 2 }}
-              >
-                Filtrar
-              </button>
+          <div className="mobile-stack" style={{ display: "flex", gap: "1rem", marginBottom: "1.25rem", alignItems: "flex-end" }}>
+            <div style={{ flex: 1 }}>
+              <label style={{ fontSize: 11, color: "var(--theme-text-muted)", display: "block", marginBottom: 4 }}>Início</label>
+              <input type="date" value={startDate} onChange={(e) => setStartDate(e.target.value)} style={{ ...S.input, width: "100%" }} />
             </div>
+            <div style={{ flex: 1 }}>
+              <label style={{ fontSize: 11, color: "var(--theme-text-muted)", display: "block", marginBottom: 4 }}>Fim</label>
+              <input type="date" value={endDate} onChange={(e) => setEndDate(e.target.value)} style={{ ...S.input, width: "100%" }} />
+            </div>
+            <button
+              onClick={loadPedidos}
+              style={{ background: "var(--brand-primary)", color: "var(--theme-text-on-brand)", border: "none", borderRadius: 0, padding: "12px 24px", fontSize: 11, fontWeight: 800, cursor: "pointer", textTransform: "uppercase", letterSpacing: 2, height: 44 }}
+            >
+              Filtrar
+            </button>
+          </div>
 
             <div style={S.card}>
               <div style={{ padding: "1rem 1.25rem", borderBottom: "0.5px solid var(--theme-border)" }}>
@@ -598,9 +598,9 @@ export default function UnidadeFixaDashboard() {
         {/* ── CONFIGURAÇÕES ── */}
         {tab === "configuracoes" && (
           <div style={{ display: "flex", flexDirection: "column", gap: "1rem" }}>
-            <div style={{ ...S.card, padding: "1.25rem" }}>
-              <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
-                <div style={{ flex: 1, marginRight: 20 }}>
+            <div style={{ ...S.card, padding: "2rem" }}>
+              <div style={{ display: "flex", flexWrap: "wrap", justifyContent: "space-between", alignItems: "center", gap: 20 }}>
+                <div style={{ flex: 1, minWidth: "min(300px, 100%)" }}>
                   <p style={{ fontSize: 13, fontWeight: 500, color: "var(--theme-text)", marginBottom: 4 }}>DADOS PARA REPASSE (PIX)</p>
                   <p style={{ fontSize: 12, color: "var(--theme-text-muted)", marginBottom: 12 }}>
                     Insira sua chave PIX para receber os repasses manuais das vendas (10% de comissão).
@@ -612,10 +612,10 @@ export default function UnidadeFixaDashboard() {
                     placeholder="E-mail, CPF, CNPJ ou Chave Aleatória"
                   />
                 </div>
-                  <button
+                <button
                   disabled={savingPix}
                   onClick={savePixKey}
-                  style={{ background: "var(--brand-primary)", color: "var(--theme-text-on-brand)", border: "none", borderRadius: 0, padding: "12px 24px", fontSize: 11, fontWeight: 800, cursor: "pointer", flexShrink: 0, textTransform: "uppercase", letterSpacing: 2, opacity: savingPix ? 0.6 : 1 }}
+                  style={{ background: "var(--brand-primary)", color: "var(--theme-text-on-brand)", border: "none", borderRadius: 0, padding: "12px 24px", fontSize: 11, fontWeight: 800, cursor: "pointer", textTransform: "uppercase", letterSpacing: 2, opacity: savingPix ? 0.6 : 1, width: "auto" }}
                 >
                   {savingPix ? "SALVANDO..." : "SALVAR CHAVE PIX"}
                 </button>
