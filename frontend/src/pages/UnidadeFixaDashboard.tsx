@@ -314,7 +314,7 @@ export default function UnidadeFixaDashboard() {
         }
       `}</style>
 
-      <div className="mobile-padding" style={{ maxWidth: 1100, margin: "0 auto", padding: "2rem" }}>
+      <div className="mobile-padding" style={{ maxWidth: 1200, margin: "0 auto", padding: "clamp(24px, 6vw, 64px)" }}>
 
         {/* Alertas */}
         {error && (

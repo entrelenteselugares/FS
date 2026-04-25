@@ -160,7 +160,7 @@ export const AdminQuotes: React.FC = () => {
     <div className="space-y-8 animate-in fade-in slide-in-from-bottom-4 duration-700">
       <div className="flex flex-col md:flex-row md:items-center justify-between gap-6 border-b border-theme-border pb-8">
         <div>
-          <h2 className="text-4xl font-heading text-theme-text tracking-tighter uppercase font-black">Máquina de Vendas</h2>
+          <h2 className="text-3xl md:text-4xl font-heading text-theme-text tracking-tighter uppercase font-black leading-none pt-2">Máquina de Vendas</h2>
           <p className="text-[10px] text-theme-muted uppercase tracking-[0.5em] mt-2 font-black italic">Gestão de Leads e Orçamentos Customizados</p>
         </div>
         

@@ -110,7 +110,7 @@ textarea:focus {
   font-family: var(--font-d);
   font-weight: 900;
   font-size: clamp(24px, 5vw, 48px);
-  line-height: 0.95;
+  line-height: 1.1;
   text-transform: uppercase;
   letter-spacing: -0.01em;
   margin-bottom: 0.75rem;

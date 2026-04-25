@@ -45,7 +45,7 @@ export const AdminOverview: React.FC<OverviewProps> = ({ stats, recentOrders, pe
   return (
     <div className="space-y-12 animate-in fade-in slide-in-from-bottom-4 duration-700">
       <div className="border-b border-theme-border pb-8">
-        <h2 className="text-4xl font-heading text-theme-text tracking-tighter uppercase font-black">Visão Geral</h2>
+        <h2 className="text-3xl md:text-4xl font-heading text-theme-text tracking-tighter uppercase font-black leading-none pt-2">Visão Geral</h2>
         <p className="text-[10px] text-theme-muted uppercase tracking-[0.5em] mt-2 font-black italic">Consolidado da Operação Nacional</p>
       </div>
 

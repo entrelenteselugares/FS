@@ -214,11 +214,11 @@ export default function ProfissionalDashboard() {
         }
       `}</style>
 
-      <div className="mobile-padding" style={{ maxWidth: 1200, margin: "0 auto", padding: "3rem 2.5rem" }}>
+      <div className="mobile-padding" style={{ maxWidth: 1200, margin: "0 auto", padding: "clamp(24px, 6vw, 64px)" }}>
         
         {/* Header contextual */}
         <div style={{ marginBottom: "3rem" }}>
-          <h1 style={{ fontFamily: T.fontD, fontWeight: 900, fontSize: 32, color: T.text, textTransform: "uppercase", letterSpacing: 2, margin: 0 }}>
+          <h1 style={{ fontFamily: T.fontD, fontWeight: 900, fontSize: "clamp(24px, 5vw, 36px)", color: T.text, textTransform: "uppercase", letterSpacing: 2, margin: 0, lineHeight: 1.1, paddingTop: 8 }}>
             {activeTab === "agenda" ? "Minha Agenda" : 
              activeTab === "convites" ? "Convites Pendentes" : 
              "Fluxo Financeiro"}

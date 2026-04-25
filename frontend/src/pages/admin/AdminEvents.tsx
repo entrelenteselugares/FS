@@ -236,7 +236,7 @@ export const AdminEvents: React.FC = () => {
     <div className="space-y-12 animate-in fade-in slide-in-from-bottom-4 duration-700">
       <div className="flex items-center justify-between border-b border-white/5 pb-8">
         <div>
-          <h2 className="text-4xl font-heading text-theme-text tracking-tighter uppercase">Operação de Eventos</h2>
+          <h2 className="text-3xl md:text-4xl font-heading text-theme-text tracking-tighter uppercase leading-none pt-2">Operação de Eventos</h2>
           <p className="text-[10px] text-theme-muted uppercase tracking-[0.5em] mt-2 font-bold italic">Logística de Captação e Unidades Fixas</p>
         </div>
         <button 
