@@ -262,6 +262,7 @@ export default function EventPage() {
   };
 
   const handleUnlockClick = () => { 
+    if (!event) return;
     if (!user) {
       setStep("auth"); 
       return;
