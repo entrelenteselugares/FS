@@ -370,8 +370,12 @@ export const QuotePage = () => {
   
   const totalPrice = servicesPrice + team.extraGuestsCost + freight;
 
+  const [submitting, setSubmitting] = useState(false);
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    if (submitting) return;
+    setSubmitting(true);
+
     const fullAddress = locationType === "PARTNER" 
       ? "Ponto Fixo" 
       : `${addressData.logradouro}, ${addressNumber} - ${addressData.bairro}, ${addressData.cidade}/${addressData.uf} (CEP: ${customCep})`;
@@ -392,10 +396,13 @@ export const QuotePage = () => {
         window.location.href = data.checkoutUrl;
       } else {
         // Se for orçamento sob consulta, mostra sucesso
-        setStep(3); 
+        setStep(4); 
+        window.scrollTo(0, 0);
       }
     } catch {
       alert("Erro ao processar orçamento. Tente novamente.");
+    } finally {
+      setSubmitting(false);
     }
   };
 
@@ -707,9 +714,22 @@ export const QuotePage = () => {
 
                 <button 
                   type="submit"
-                  style={{ background: THEME.accent, color: "black", padding: "20px", fontWeight: 900, fontSize: 14, textTransform: "uppercase", letterSpacing: 4, cursor: "pointer", border: "none" }}
+                  disabled={submitting}
+                  style={{ 
+                    background: submitting ? "#333" : THEME.accent, 
+                    color: submitting ? "#666" : "black", 
+                    padding: "20px", 
+                    fontWeight: 900, 
+                    fontSize: 14, 
+                    textTransform: "uppercase", 
+                    letterSpacing: 4, 
+                    cursor: submitting ? "not-allowed" : "pointer", 
+                    border: "none",
+                    width: "100%",
+                    opacity: submitting ? 0.7 : 1
+                  }}
                 >
-                  RESERVAR E FINALIZAR AGORA
+                  {submitting ? "PROCESSANDO..." : "RESERVAR E FINALIZAR AGORA"}
                 </button>
              </form>
           </div>
