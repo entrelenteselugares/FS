@@ -30,6 +30,7 @@ interface Pedido {
   };
   showAlbum: boolean;
   showVideo: boolean;
+  manualType?: string | null;
 }
 
 function formatCurrency(v: number) {
@@ -238,6 +239,7 @@ export default function ClienteArea() {
                         now={now}
                         isSelected={selected?.id === p.id}
                         onClick={() => handleSelect(p)}
+                        pedidos={pedidos}
                       />
                     ))}
                   </div>
@@ -259,6 +261,7 @@ export default function ClienteArea() {
                         now={now}
                         isSelected={selected?.id === p.id}
                         onClick={() => handleSelect(p)}
+                        pedidos={pedidos}
                       />
                     ))}
                   </div>
@@ -273,6 +276,7 @@ export default function ClienteArea() {
           <div className="mobile-detail-panel" style={{ position: "relative" }}>
              <PedidoDetalhe
                 pedido={selected}
+                now={now}
                 loading={loadingDetalhe}
                 onClose={() => setSelected(null)}
                 onGoToEvent={() => navigate(`/e/${selected.event.id}`)}
@@ -303,12 +307,14 @@ export default function ClienteArea() {
 
 // ── Componentes Internos ─────────────────────────────────────────
 
-function PedidoRow({ pedido, now, isSelected, onClick }: {
+function PedidoRow({ pedido, now, isSelected, onClick, pedidos }: {
   pedido: Pedido;
   now: number;
   isSelected: boolean;
   onClick: () => void;
+  pedidos: Pedido[];
 }) {
+  const navigate = useNavigate();
   const diff = pedido.accessExpiresAt ? new Date(pedido.accessExpiresAt).getTime() - now : null;
   const daysLeft = diff ? Math.ceil(diff / (1000 * 60 * 60 * 24)) : null;
   const isExpiringSoon = daysLeft !== null && daysLeft <= 7 && daysLeft > 0;
@@ -350,15 +356,16 @@ function PedidoRow({ pedido, now, isSelected, onClick }: {
       {/* Info */}
       <div style={{ flex: 1, minWidth: 0 }}>
         <p style={{ fontSize: 16, fontWeight: 700, color: "var(--theme-text)", marginBottom: 4, whiteSpace: "nowrap", overflow: "hidden", textOverflow: "ellipsis" }}>
-          {pedido.event.nomeNoivos}
+          {pedido.event.nomeNoivos} <span style={{ fontSize: 10, color: "var(--brand-primary)", fontWeight: 900, marginLeft: 8, background: "rgba(133,185,172,0.1)", padding: "2px 6px", borderRadius: 4 }}>REF #{pedido.event.id.slice(0, 6).toUpperCase()}</span>
         </p>
         <p style={{ fontSize: 12, color: "var(--theme-text-muted)", marginBottom: 10 }}>
-          {formatDate(pedido.event.dataEvento)} · {pedido.event.city || pedido.event.location}
+          {formatDate(pedido.event.dataEvento)} · {pedido.event.city || pedido.event.location} · {new Date(pedido.createdAt).toLocaleTimeString("pt-BR", { hour: "2-digit", minute: "2-digit" })}
         </p>
         <div style={{ display: "flex", gap: 8, flexWrap: "wrap" }}>
           {pedido.event.temFoto && <Tag label="Foto" />}
           {pedido.event.temVideo && <Tag label="Vídeo" />}
           {pedido.event.temReels && <Tag label="Reels" color="var(--brand-primary)" />}
+          {pedido.manualType && <Tag label={pedido.manualType} color="#f59e0b" />}
         </div>
         
         {pedido.accessExpiresAt && pedido.hasPaid && (
@@ -389,12 +396,64 @@ function PedidoRow({ pedido, now, isSelected, onClick }: {
         )}
       </div>
 
-      {/* Valor */}
-      <div style={{ textAlign: "right", flexShrink: 0 }}>
-        <p style={{ fontSize: 18, color: "var(--theme-text)", fontWeight: 800 }}>
+      <div style={{ textAlign: "right", flexShrink: 0, display: "flex", flexDirection: "column", gap: 8, alignItems: "flex-end" }}>
+        <p style={{ fontSize: 18, color: "var(--theme-text)", fontWeight: 800, margin: 0 }}>
           {formatCurrency(pedido.amount)}
         </p>
-        <p style={{ fontSize: 10, color: "var(--theme-text-muted)", textTransform: "uppercase", letterSpacing: 0.5 }}>
+        {/* Botão Pagar com Regra de Dependência (Reserva antes de Quitação) */}
+        {!pedido.hasPaid && (
+          <button
+            onClick={() => {
+              // Regra: Se for Quitação, verifica se a Reserva do mesmo evento está paga
+              const isQuitacao = pedido.manualType?.toLowerCase().includes("quitação");
+              if (isQuitacao) {
+                const reservaPendente = pedidos.find(p => 
+                  p.event.id === pedido.event.id && 
+                  p.manualType?.toLowerCase().includes("reserva") && 
+                  !p.hasPaid
+                );
+                if (reservaPendente) {
+                  alert("Você precisa pagar a Reserva antes de realizar a Quitação.");
+                  return;
+                }
+              }
+              navigate(`/checkout?orderId=${pedido.id}`);
+            }}
+            disabled={(() => {
+              const isQuitacao = pedido.manualType?.toLowerCase().includes("quitação");
+              if (!isQuitacao) return false;
+              return pedidos.some(p => 
+                p.event.id === pedido.event.id && 
+                p.manualType?.toLowerCase().includes("reserva") && 
+                !p.hasPaid
+              );
+            })()}
+            className="lux-button-base lux-button-tactical"
+            style={{ 
+              padding: "8px 24px", 
+              fontSize: 10, 
+              background: "#15803d",
+              opacity: (() => {
+                const isQuitacao = pedido.manualType?.toLowerCase().includes("quitação");
+                if (!isQuitacao) return 1;
+                const hasReservaPendente = pedidos.some(p => p.event.id === pedido.event.id && p.manualType?.toLowerCase().includes("reserva") && !p.hasPaid);
+                return hasReservaPendente ? 0.3 : 1;
+              })(),
+              cursor: (() => {
+                const isQuitacao = pedido.manualType?.toLowerCase().includes("quitação");
+                const hasReservaPendente = pedidos.some(p => p.event.id === pedido.event.id && p.manualType?.toLowerCase().includes("reserva") && !p.hasPaid);
+                return (isQuitacao && hasReservaPendente) ? "not-allowed" : "pointer";
+              })()
+            }}
+          >
+            {(() => {
+              const isQuitacao = pedido.manualType?.toLowerCase().includes("quitação");
+              const hasReservaPendente = pedidos.some(p => p.event.id === pedido.event.id && p.manualType?.toLowerCase().includes("reserva") && !p.hasPaid);
+              return (isQuitacao && hasReservaPendente) ? "AGUARD. RESERVA" : "PAGAR";
+            })()}
+          </button>
+        )}
+        <p style={{ fontSize: 10, color: "var(--theme-text-muted)", textTransform: "uppercase", letterSpacing: 0.5, margin: 0 }}>
           ID: {pedido.id.slice(-6).toUpperCase()}
         </p>
       </div>
@@ -404,20 +463,32 @@ function PedidoRow({ pedido, now, isSelected, onClick }: {
 
 function Tag({ label, color = "#444" }: { label: string; color?: string }) {
   return (
-    <span style={{ fontSize: 9, padding: "2px 8px", borderRadius: 4, border: `0.5px solid ${color}`, color: color, letterSpacing: 0.5, textTransform: "uppercase" }}>
+    <span style={{ 
+      fontSize: 9, 
+      padding: "3px 10px", 
+      borderRadius: 4, 
+      border: `1px solid ${color}`, 
+      background: `${color}15`, // Adiciona 15% de opacidade no fundo
+      color: color, 
+      letterSpacing: 0.5, 
+      textTransform: "uppercase",
+      fontWeight: 800
+    }}>
       {label}
     </span>
   );
 }
 
-function PedidoDetalhe({ pedido, loading, onClose, onGoToEvent, onChangePrivacy, onToggleVisibility }: {
+function PedidoDetalhe({ pedido, now, loading, onClose, onGoToEvent, onChangePrivacy, onToggleVisibility }: {
   pedido: Pedido;
+  now: number;
   loading: boolean;
   onClose: () => void;
   onGoToEvent: () => void;
   onChangePrivacy: () => void;
   onToggleVisibility: (id: string, showAlbum?: boolean, showVideo?: boolean) => void;
 }) {
+  const navigate = useNavigate();
   return (
     <div style={{ ...S.card, position: "sticky", top: "100px", overflow: "hidden" }}>
 
@@ -425,10 +496,10 @@ function PedidoDetalhe({ pedido, loading, onClose, onGoToEvent, onChangePrivacy,
       <div style={{ padding: "1.5rem", borderBottom: "0.5px solid #1a1a1a", display: "flex", justifyContent: "space-between", alignItems: "flex-start" }}>
         <div>
           <p style={{ fontSize: 10, fontWeight: 800, letterSpacing: 1, textTransform: "uppercase", color: pedido.hasPaid ? T.brand : "#f59e0b", marginBottom: 6 }}>
-            {pedido.hasPaid ? "Entrega Liberada" : "Pedido em Processamento"}
+            {pedido.hasPaid ? "Entrega Liberada" : `Processamento — #${pedido.id.slice(-6).toUpperCase()}`}
           </p>
           <h2 style={{ fontSize: 22, fontWeight: 900, fontFamily: T.fontD, textTransform: "uppercase", color: T.text, margin: 0, letterSpacing: "-0.5px" }}>
-            {pedido.event.nomeNoivos}
+            {pedido.event.nomeNoivos} <span style={{ fontSize: 10, color: T.brand, opacity: 0.6, marginLeft: 10 }}>REF #{pedido.event.id.slice(0, 6).toUpperCase()}</span>
           </h2>
         </div>
         <button onClick={onClose} style={{ background: "none", border: "none", color: "var(--theme-text-muted)", fontSize: 24, cursor: "pointer", padding: 0, lineHeight: 1 }} onMouseEnter={(e) => (e.currentTarget.style.color = "var(--theme-text)")} onMouseLeave={(e) => (e.currentTarget.style.color = "var(--theme-text-muted)")}>
@@ -449,7 +520,14 @@ function PedidoDetalhe({ pedido, loading, onClose, onGoToEvent, onChangePrivacy,
             {pedido.accessType === "PRIVATE" ? "⚠️ ACESSO PRIVADO" : "📅 ÁLBUM PÚBLICO"}
           </p>
           <p style={{ fontSize: 10, color: "var(--theme-text-muted)", margin: 0, marginTop: 4 }}>
-            Expira em: {new Date(pedido.accessExpiresAt).toLocaleDateString("pt-BR")}
+            Expira em: {new Date(pedido.accessExpiresAt).toLocaleDateString("pt-BR")} 
+            {(() => {
+              const diff = new Date(pedido.accessExpiresAt).getTime() - now;
+              const days = Math.ceil(diff / (1000 * 60 * 60 * 24));
+              if (days <= 0) return " (Expirado)";
+              if (days <= 7) return ` (${days}d restantes)`;
+              return "";
+            })()}
           </p>
         </div>
       )}
@@ -538,11 +616,31 @@ function PedidoDetalhe({ pedido, loading, onClose, onGoToEvent, onChangePrivacy,
             )}
           </div>
         ) : (
-          <div style={{ background: "rgba(245,158,11,0.05)", border: "0.5px solid rgba(245,158,11,0.2)", borderRadius: 10, padding: "1.25rem" }}>
-            <p style={{ fontSize: 14, fontWeight: 700, color: "#f59e0b", marginBottom: 6 }}>Pagamento Pendente</p>
-            <p style={{ fontSize: 12, color: "var(--theme-text-muted)", lineHeight: 1.6, margin: 0 }}>
-              O Mercado Pago está confirmando sua transação. Nossos servidores liberarão o acesso automaticamente assim que aprovado.
-            </p>
+          <div style={{ display: "flex", flexDirection: "column", gap: 15 }}>
+            <div style={{ background: "rgba(245,158,11,0.05)", border: "0.5px solid rgba(245,158,11,0.2)", borderRadius: 10, padding: "1.25rem" }}>
+              <p style={{ fontSize: 14, fontWeight: 700, color: "#f59e0b", marginBottom: 6 }}>Aguardando Pagamento</p>
+              <p style={{ fontSize: 12, color: "var(--theme-text-muted)", lineHeight: 1.6, margin: 0 }}>
+                Para confirmar sua reserva e liberar as opções do evento, realize o pagamento via Mercado Pago.
+              </p>
+            </div>
+            
+            <button
+              onClick={() => navigate(`/checkout?orderId=${pedido.id}`)}
+              style={{ 
+                background: "var(--brand-primary)", 
+                color: "#000", 
+                border: "none", 
+                padding: "16px", 
+                fontSize: 13, 
+                fontWeight: 900, 
+                cursor: "pointer", 
+                textTransform: "uppercase", 
+                letterSpacing: 2,
+                boxShadow: "0 4px 15px rgba(133, 185, 172, 0.3)"
+              }}
+            >
+              PAGAR AGORA
+            </button>
           </div>
         )}
 
@@ -572,10 +670,29 @@ function PedidoDetalhe({ pedido, loading, onClose, onGoToEvent, onChangePrivacy,
             Página do Evento
           </button>
           <button
-            onClick={onChangePrivacy}
-            style={{ background: "transparent", border: "1px solid var(--theme-border)", borderRadius: 0, padding: "14px", color: "var(--theme-text-muted)", fontSize: 10, fontWeight: 800, cursor: "pointer", transition: "all .2s", textTransform: "uppercase", letterSpacing: 1 }}
-            onMouseEnter={(e) => { e.currentTarget.style.borderColor = "#f87171"; e.currentTarget.style.color = "var(--theme-text)"; }}
-            onMouseLeave={(e) => { e.currentTarget.style.borderColor = "var(--theme-border)"; e.currentTarget.style.color = "var(--theme-text-muted)"; }}
+            onClick={pedido.hasPaid ? onChangePrivacy : undefined}
+            disabled={!pedido.hasPaid}
+            style={{ 
+              background: pedido.hasPaid ? "transparent" : "rgba(255,255,255,0.03)", 
+              border: `1px solid ${pedido.hasPaid ? "var(--theme-border)" : "rgba(255,255,255,0.05)"}`, 
+              borderRadius: 0, padding: "14px", 
+              color: pedido.hasPaid ? "var(--theme-text-muted)" : "rgba(255,255,255,0.1)", 
+              fontSize: 10, fontWeight: 800, 
+              cursor: pedido.hasPaid ? "pointer" : "not-allowed", 
+              transition: "all .2s", textTransform: "uppercase", letterSpacing: 1,
+            }}
+            onMouseEnter={(e) => { 
+              if (pedido.hasPaid) {
+                e.currentTarget.style.borderColor = "#f87171"; 
+                e.currentTarget.style.color = "var(--theme-text)"; 
+              }
+            }}
+            onMouseLeave={(e) => { 
+              if (pedido.hasPaid) {
+                e.currentTarget.style.borderColor = "var(--theme-border)"; 
+                e.currentTarget.style.color = "var(--theme-text-muted)"; 
+              }
+            }}
           >
             Mudar Privacidade
           </button>

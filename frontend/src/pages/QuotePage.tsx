@@ -211,6 +211,12 @@ interface Partner {
   hideDuration?: boolean;
 }
 
+interface UserProfile {
+  nome?: string;
+  email?: string;
+  whatsapp?: string;
+}
+
 export const QuotePage = () => {
   const navigate = useNavigate();
   const [step, setStep] = useState(1);
@@ -248,13 +254,17 @@ export const QuotePage = () => {
   const [description, setDescription] = useState("");
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
+  const [whatsapp, setWhatsapp] = useState("");
   const { user } = useAuth();
+  const authUser = user as UserProfile | null;
 
   useEffect(() => {
-    if (user && !name) setName(user.nome);
-    if (user && !email) setEmail(user.email);
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [user]);
+    if (authUser) {
+      if (!name) setName(authUser.nome || "");
+      if (!email) setEmail(authUser.email || "");
+      if (!whatsapp && authUser.whatsapp) setWhatsapp(authUser.whatsapp);
+    }
+  }, [authUser, name, email, whatsapp]);
 
   useEffect(() => {
     // Busca parceiros cadastrados (Unidades Fixas)
@@ -384,7 +394,7 @@ export const QuotePage = () => {
       : `${addressData.logradouro}, ${addressNumber} - ${addressData.bairro}, ${addressData.cidade}/${addressData.uf} (CEP: ${customCep})`;
 
     const payload = {
-      name, email, attendees: Number(attendees), locationType, usageType, selectedPartnerId, 
+      name, email, whatsapp, attendees: Number(attendees), locationType, usageType, selectedPartnerId, 
       customCep, 
       location: fullAddress,
       eventDate, eventHours, eventDays, description, selectedServices, totalPrice, 
@@ -744,6 +754,11 @@ export const QuotePage = () => {
                     <label style={{ fontSize: 10, fontWeight: 800, textTransform: "uppercase", color: THEME.text2 }}>E-mail para Contato</label>
                     <input required type="email" value={email} onChange={e => setEmail(e.target.value)} placeholder="EX: CONTATO@DOMINIO.COM" className="fs-input" style={{ width: "100%", padding: "15px" }} />
                   </div>
+                </div>
+
+                <div style={{ display: "flex", flexDirection: "column", gap: 10 }}>
+                  <label style={{ fontSize: 10, fontWeight: 800, textTransform: "uppercase", color: THEME.text2 }}>WhatsApp (com DDD)</label>
+                  <input required value={whatsapp} onChange={e => setWhatsapp(e.target.value.replace(/\D/g, ""))} placeholder="11999999999" className="fs-input" style={{ width: "100%", padding: "15px" }} />
                 </div>
 
                 <div style={{ display: "flex", flexDirection: "column", gap: 10 }}>

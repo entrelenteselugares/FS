@@ -24,6 +24,7 @@ interface OrderDetail {
   event: OrderEvent;
   isContribution: boolean;
   contributorName?: string;
+  manualType?: string | null;
 }
 
 interface MPFormData {
@@ -437,7 +438,7 @@ export const CheckoutPage = () => {
             </div>
             <div className="space-y-6">
               <div className="flex justify-between items-center text-proportional font-black">
-                <span>Investimento</span>
+                <span>{order.manualType || "Investimento"}</span>
                 <span className="opacity-100 text-theme-text">R$ {Number(order.amount).toFixed(2)}</span>
               </div>
               <div className="pt-6 border-t border-theme-border flex justify-between items-center">
@@ -445,6 +446,11 @@ export const CheckoutPage = () => {
                 <div className="text-3xl md:text-5xl font-black tracking-tighter text-brand-primary italic">
                   R$ {Number(order.amount).toFixed(2)}
                 </div>
+              </div>
+              <div className="flex justify-end">
+                <span className="bg-brand-primary/10 text-brand-primary text-[10px] font-black px-3 py-1 rounded-full uppercase tracking-widest animate-pulse">
+                  ✨ Parcelamento em até 3x sem juros
+                </span>
               </div>
             </div>
           </div>

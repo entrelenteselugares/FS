@@ -236,10 +236,10 @@ export class PaymentController {
                });
             }
 
-            // 2. O evento permanece inativo (PRIVATE por padrão)
+            // 2. O evento torna-se ativo e deixa de ser orçamento
             await prisma.event.update({
               where: { id: order.eventId },
-              data: { active: false, isQuote: false }
+              data: { active: true, isQuote: false }
             });
 
             // 3. Dispara e-mail automático
@@ -464,7 +464,7 @@ export class PaymentController {
       if (isApproved) {
         await prisma.event.update({
           where: { id: eventId },
-          data: { active: false, isQuote: false }
+          data: { active: true, isQuote: false }
         });
 
         // 7a. E-mail de acesso ao comprador
@@ -549,8 +549,8 @@ export class PaymentController {
         clienteId: order.clienteId,
         buyerEmail: order.buyerEmail || (order as any).cliente?.email,
         event: (order as any).event,
-        isContribution: order.isContribution,
-        contributorName: order.contributorName
+        contributorName: order.contributorName,
+        manualType: order.manualType
       });
 
     } catch (error) {

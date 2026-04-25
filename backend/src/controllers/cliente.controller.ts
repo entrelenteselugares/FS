@@ -42,6 +42,7 @@ export async function getMeusPedidos(req: AuthRequest, res: Response): Promise<v
       hasPaid: p.status === "APROVADO" || p.status === "APPROVED",
       accessType: p.accessType,
       accessExpiresAt: p.accessExpiresAt,
+      manualType: p.manualType,
     }));
 
     res.json(resultado);
@@ -111,6 +112,7 @@ export async function getMeuPedidoDetalhe(req: AuthRequest, res: Response): Prom
       hasPaid: aprovado,
       accessType: pedido.accessType,
       accessExpiresAt: pedido.accessExpiresAt,
+      manualType: pedido.manualType,
       event: {
         ...pedido.event,
         // Só expõe os links se aprovado INTEGRALMENTE e NÃO expirado/excluído

@@ -71,6 +71,7 @@ interface EventData {
   recentOrders?: { id: string; contributorName: string; valor: number; createdAt: string }[];
   isUnitSale?: boolean;
   priceUnit?: number;
+  pendingOrderId?: string | null;
 }
 
 interface AccessData {
@@ -260,7 +261,17 @@ export default function EventPage() {
     }
   };
 
-  const handleUnlockClick = () => { if (!user) setStep("auth"); else setStep("choice"); };
+  const handleUnlockClick = () => { 
+    if (!user) {
+      setStep("auth"); 
+      return;
+    }
+    if (event.pendingOrderId) {
+      navigate(`/checkout?orderId=${event.pendingOrderId}`);
+      return;
+    }
+    setStep("choice"); 
+  };
   const handleChange = (k: string) => (e: React.ChangeEvent<HTMLInputElement>) => setCardData(p => ({ ...p, [k]: e.target.value }));
 
   if (loading) return (
@@ -588,7 +599,27 @@ export default function EventPage() {
 
       {step === "choice" && (
         <AccessTypeModal orderId="PRE-PAYMENT" eventTitle={event.nomeNoivos}
-          onConfirmed={(type) => { setAccessType(type as "PUBLIC" | "PRIVATE"); setStep("checkout"); }}
+          onConfirmed={async (type) => { 
+            setAccessType(type as "PUBLIC" | "PRIVATE"); 
+            setStep("processing");
+            try {
+              // Cria o pedido no backend (como se fosse um pagamento mas sem token de cartão ainda)
+              const { data } = await api.post("/checkout/payment", {
+                eventId: event.id,
+                userId: user?.id,
+                email: user?.email || "",
+                accessType: type,
+                isDraft: true // Flag opcional para apenas criar o registro
+              });
+              
+              if (data.orderId) {
+                navigate(`/checkout?orderId=${data.orderId}`);
+              }
+            } catch (err) {
+              console.error("Erro ao iniciar checkout:", err);
+              setStep("paywall");
+            }
+          }}
         />
       )}
 

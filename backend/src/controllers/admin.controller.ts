@@ -746,8 +746,12 @@ export async function adminApproveQuote(req: AuthRequest, res: Response): Promis
       }
     });
 
+    // 2. Criar o(s) pedido(s)
     const isSplit = req.body.isSplit === true;
     let order;
+
+    // Busca o usuário pelo e-mail para vincular o pedido
+    const targetUser = await prisma.user.findUnique({ where: { email: quote.clientEmail! } });
 
     if (isSplit) {
       // Cria dois pedidos de 50%
@@ -759,7 +763,9 @@ export async function adminApproveQuote(req: AuthRequest, res: Response): Promis
           eventId: updatedQuote.id,
           valor: halfPrice,
           buyerEmail: quote.clientEmail,
+          clienteId: targetUser?.id, // Vincula ao usuário se existir
           status: "PENDENTE",
+          manualType: "Reserva (50%)",
           paymentId: `QUOTE-RESERVA-${Date.now()}`
         }
       });
@@ -770,7 +776,9 @@ export async function adminApproveQuote(req: AuthRequest, res: Response): Promis
           eventId: updatedQuote.id,
           valor: halfPrice,
           buyerEmail: quote.clientEmail,
+          clienteId: targetUser?.id, // Vincula ao usuário se existir
           status: "PENDENTE",
+          manualType: "Quitação (50%)",
           paymentId: `QUOTE-FINAL-${Date.now()}`
         }
       });
@@ -781,6 +789,7 @@ export async function adminApproveQuote(req: AuthRequest, res: Response): Promis
           eventId: updatedQuote.id,
           valor: Number(finalPrice),
           buyerEmail: quote.clientEmail,
+          clienteId: targetUser?.id, // Vincula ao usuário se existir
           status: "PENDENTE"
         }
       });
@@ -795,6 +804,13 @@ export async function adminApproveQuote(req: AuthRequest, res: Response): Promis
       clientName: quote.clientName || "Cliente",
       eventTitle: quote.nomeNoivos,
       checkoutUrl
+    });
+
+    // 5. Alerta WhatsApp (Admin)
+    NotificationService.notifyQuotationApproved({
+      clientName: quote.clientName || "Cliente",
+      eventTitle: quote.nomeNoivos,
+      finalPrice: Number(finalPrice)
     });
 
     await audit(req, "QUOTE_APPROVED", "Event", String(id), null, { finalPrice });

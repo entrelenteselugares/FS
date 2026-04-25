@@ -68,11 +68,17 @@ export class EventController {
       }
 
       const isPaid = (req.app as any).locals.MOCK_PAID || false;
+      // Busca qualquer pedido (Pendente ou Aprovado) para este usuário/evento
       const order = await prisma.order.findFirst({
-        where: { eventId: event.id, clienteId: userId as string, status: "APROVADO" }
+        where: { 
+          eventId: event.id, 
+          clienteId: userId as string,
+          status: { not: "CANCELADO" }
+        },
+        orderBy: { createdAt: "desc" }
       }).catch(() => null);
-
-      const hasAccess = isPaid || !!order;
+      
+      const hasAccess = isPaid || (order?.status === "APROVADO");
 
       // Links sensíveis só aparecem se aprovado
       const rawPreviews = (event as any).previewPhotos;
@@ -91,6 +97,7 @@ export class EventController {
         temReels: event.temReels,
         temFotoImpressa: event.temFotoImpressa,
         previewPhotos,
+        pendingOrderId: (order && order.status === "PENDENTE") ? order.id : null,
         // Links sensíveis só aparecem se aprovado e visível
         lightroomUrl: (hasAccess && (!order || order.showAlbum)) ? event.lightroomUrl : null,
         driveUrl: (hasAccess && (!order || order.showVideo)) ? event.driveUrl : null,
@@ -226,7 +233,7 @@ export class EventController {
   static async createQuote(req: AuthRequest, res: Response) {
     try {
       const { 
-        name, email, attendees, locationType, usageType, selectedPartnerId, 
+        name, email, whatsapp, attendees, locationType, usageType, selectedPartnerId, 
         customCep, eventDate, eventHours, eventDays, description, selectedServices, totalPrice 
       } = req.body;
       
@@ -292,6 +299,7 @@ export class EventController {
             nome: name,
             senha: hashedPass,
             role: "CLIENTE",
+            whatsapp: whatsapp ? String(whatsapp).replace(/\D/g, "") : null
           }
         });
         console.log(`[Quote] Novo usuário criado para ${email}. Senha: ${tempPassForEmail}`);
@@ -342,7 +350,8 @@ export class EventController {
             buyerEmail: email,
             clienteId: targetUser.id,
             tempPassword: tempPassForEmail,
-            status: "PENDENTE"
+            status: "PENDENTE",
+            manualType: "Pagamento Integral"
           }
         });
 
