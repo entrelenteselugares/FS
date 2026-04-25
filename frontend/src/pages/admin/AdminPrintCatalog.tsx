@@ -3,7 +3,7 @@ import { API } from "../../lib/api";
 import { T, BtnPrimary, BtnSecondary, BtnGhost, Card, FieldInput, FieldLabel } from "../../lib/theme";
 import {
   ChevronDown, ChevronRight, ToggleLeft, ToggleRight,
-  Percent, Eye, EyeOff, Plus, X, Tag, Upload, RefreshCw
+  Eye, EyeOff, Plus, X, Tag, Upload
 } from "lucide-react";
 
 // ─── Tipos ─────────────────────────────────────────────────────────────────────
@@ -24,6 +24,14 @@ interface PrintProduct {
   unit: string;
   minQty: number | null;
   maxQty: number | null;
+}
+
+interface ProductRowProps {
+  product: PrintProduct;
+  onToggle: (id: string, active: boolean) => void;
+  onMarginChange: (id: string, margin: number) => void;
+  onPriceOverride: (id: string, price: number | null) => void;
+  saving: string | null;
 }
 
 const CATEGORY_LABELS: Record<string, { label: string; color: string }> = {
@@ -502,6 +510,15 @@ export const AdminPrintCatalog: React.FC = () => {
               <Upload size={13} /> {seeding ? "..." : "Importar"}
             </button>
           </div>
+
+          <button 
+            onClick={handleSeedCK}
+            style={{ ...BtnGhost, fontSize: 10, padding: "8px 12px", border: `1px solid ${T.border}` }}
+            disabled={seeding}
+            title="Restaurar Tabela Padrão (CK)"
+          >
+            Reset CK
+          </button>
         </div>
       </div>
 
