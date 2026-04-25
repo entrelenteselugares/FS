@@ -446,7 +446,7 @@ export const AdminPrintCatalog: React.FC = () => {
         const { data } = await API.post("/admin/print-catalog/import", { products: productsToImport });
         alert(`Importação concluída!\nCriados: ${data.created}\nAtualizados: ${data.updated}\nErros: ${data.errors}`);
         load();
-      } catch (err) {
+      } catch {
         alert("Erro ao ler arquivo. Certifique-se de que é um JSON válido.");
       } finally {
         setSeeding(false);
