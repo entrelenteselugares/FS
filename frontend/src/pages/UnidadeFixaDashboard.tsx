@@ -331,7 +331,7 @@ export default function UnidadeFixaDashboard() {
           <p className="text-proportional">
           {unidadeName && `${unidadeName} · `}
           {tab === "agenda" && "PAINEL DE GESTÃO TÁTICA"}
-          {tab === "pedidos" && "HISTÓRICO DE REPASSES"}
+          {tab === "financas" && "HISTÓRICO DE REPASSES"}
           {tab === "equipe" && "GESTÃO DE EQUIPE"}
           {tab === "configuracoes" && "CONFIGURAÇÕES"}
           </p>
