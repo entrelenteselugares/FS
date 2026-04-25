@@ -1,7 +1,3 @@
-// ─────────────────────────────────────────────────────────────────────────────
-// Foto Segundo — Prisma Schema v4.0 (Aligned with Backend Code)
-// ─────────────────────────────────────────────────────────────────────────────
-
 generator client {
   provider      = "prisma-client-js"
   binaryTargets = ["native", "rhel-openssl-3.0.x"]
@@ -14,272 +10,191 @@ datasource db {
   directUrl = env("DIRECT_URL")
 }
 
-// ─── Enums ────────────────────────────────────────────────────────────────────
-
-enum Role {
-  ADMIN
-  CARTORIO
-  PROFISSIONAL
-  CLIENTE
-}
-
-enum AcceptanceStatus {
-  PENDING
-  ACCEPTED
-  REJECTED
-}
-
-// ─── Model: User ─────────────────────────────────────────────────────────────
-
 model User {
-  id             String   @id @default(cuid())
-  email          String   @unique
-  senha          String
-  nome           String
-  role           Role     @default(CLIENTE)
-  whatsapp       String?
-  active         Boolean  @default(true)
-  createdAt      DateTime @default(now())
-  updatedAt      DateTime @updatedAt
-  pixKey         String?
-
-  // LGPD Compliance
-  acceptedTermsAt   DateTime?
+  id                String            @id @default(cuid())
+  email             String            @unique
+  senha             String
+  nome              String
+  role              Role              @default(CLIENTE)
+  whatsapp          String?
+  active            Boolean           @default(true)
+  createdAt         DateTime          @default(now())
+  updatedAt         DateTime          @updatedAt
+  mpUserId          String?
+  mpAccessToken     String?
+  mpPublicKey       String?
+  mpRefreshToken    String?
+  pixKey            String?
   acceptedPrivacyAt DateTime?
-
-  // Mercado Pago OAuth (armazenado diretamente no user)
-  mpUserId       String?
-  mpAccessToken  String?
-  mpPublicKey    String?
-  mpRefreshToken String?
-
-  // Relações
-  pedidos        Order[]  @relation("ClienteOrders")
-
-  // Profissional atribuído como fotógrafo/captação em eventos
-  eventsCaptacao  Event[] @relation("CaptacaoEvents")
-  // Profissional atribuído como editor em eventos
-  eventsEdicao    Event[] @relation("EdicaoEvents")
-  // Cartório atribuído a eventos (via relação direta com o usuário de role CARTORIO)
-  eventsCartorio  Event[] @relation("CartorioUserEvents")
-
-  // Perfis estendidos (Opcionais based on Role)
-  profissional   Profissional?
-  cartorio       Cartorio?
-
-  // Gamificação
-  likes          PhotoLike[]
-  points         UserPoints?
-  redemptions    PrintRedemption[]
+  acceptedTermsAt   DateTime?
+  cartorio          Cartorio?
+  eventsCaptacao    Event[]           @relation("CaptacaoEvents")
+  eventsCartorio    Event[]           @relation("CartorioUserEvents")
+  eventsEdicao      Event[]           @relation("EdicaoEvents")
+  pedidos           Order[]           @relation("ClienteOrders")
+  likes             PhotoLike[]
+  redemptions       PrintRedemption[]
+  profissional      Profissional?
+  points            UserPoints?
 
   @@map("users")
 }
 
-enum QuoteStatus {
-  PENDING
-  PRICED
-  APPROVED
-  REJECTED
-  CONVERTED
-}
-
-// ─── Model: Event ────────────────────────────────────────────────────────────
-
 model Event {
-  id              String    @id @default(cuid())
-  nomeNoivos      String
-  slug            String?   @unique
-  dataEvento      DateTime
-  location        String?   // Nome do local/texto livre
-  city            String?
-  description     String?
-  cartorio        String?   // Nome do cartório legado (texto livre)
-  coverPhotoUrl   String?
-  lightroomUrl    String?
-  driveUrl        String?
-  previewPhotos   String?   // JSON array com até 3 URLs de fotos de prévia
-  priceBase       Decimal   @default(190) @db.Decimal(10, 2)
-  priceEarly      Decimal   @default(190) @db.Decimal(10, 2)
-  active          Boolean   @default(false) // Todos começam como inativos até o pagamento
-  isQuote         Boolean   @default(false)
-  quoteStatus     QuoteStatus?
-  usageType       String?   // PESSOAL | EMPRESARIAL
-  clientEmail     String?
-  clientName      String?
-  createdAt       DateTime  @default(now())
-  updatedAt       DateTime  @updatedAt
-
-  // ── Serviços oferecidos (presença) ─────────────────────────────
-  temFoto           Boolean  @default(true)   // Foto (bruta ou editada)
-  temFotoEditada    Boolean  @default(false)  // Foto com edição + 1 impressa inclusa
-  temVideo          Boolean  @default(false)  // Vídeo bruto
-  temVideoEditado   Boolean  @default(false)  // Vídeo editado full (~10min)
-  temReels          Boolean  @default(false)  // Reels/vídeo mobile
-  temFotoImpressa   Boolean  @default(false)  // Álbum impresso avulso
-  temAlbumImpresso  Boolean  @default(false)  // Álbum impresso completo (R$420)
-
-  // ── Preços por serviço (sobrescrevem o padrão se preenchidos) ──
-  priceFoto          Decimal? @db.Decimal(10, 2) // padrão: 190
-  priceFotoEditada   Decimal? @db.Decimal(10, 2) // padrão: 250 (inclui 1 impressa)
-  priceVideo         Decimal? @db.Decimal(10, 2) // padrão: 190
-  priceVideoEditado  Decimal? @db.Decimal(10, 2) // padrão: 650
-  priceReels         Decimal? @db.Decimal(10, 2) // padrão: 120
-  priceAlbum         Decimal? @db.Decimal(10, 2) // padrão: 420
-
-  // Profissionais atribuídos
-  captacaoId     String?
-  captacao       User?     @relation("CaptacaoEvents", fields: [captacaoId], references: [id])
-  captacaoStatus AcceptanceStatus @default(PENDING)
-  edicaoId       String?
-  edicao         User?     @relation("EdicaoEvents", fields: [edicaoId], references: [id])
-  edicaoStatus   AcceptanceStatus @default(PENDING)
-  cartorioUserId  String?
-  cartorioUser    User?     @relation("CartorioUserEvents", fields: [cartorioUserId], references: [id])
-  eventHours      Int?      @default(2)
-
-  // Pedidos vinculados
-  pedidos         Order[]
-  
-  // Collaborative Buying / Cota de Presente
-  isCrowdfund     Boolean   @default(false)
-  targetAmount    Decimal?  @db.Decimal(10, 2)
-  collectedAmount Decimal   @default(0) @db.Decimal(10, 2)
-  
-  // Gamificação
-  likes           PhotoLike[]
+  id                String           @id @default(cuid())
+  nomeNoivos        String
+  dataEvento        DateTime
+  cartorio          String?
+  coverPhotoUrl     String?
+  lightroomUrl      String?
+  driveUrl          String?
+  createdAt         DateTime         @default(now())
+  updatedAt         DateTime         @updatedAt
+  cartorioUserId    String?
+  priceBase         Decimal          @default(190) @db.Decimal(10, 2)
+  priceEarly        Decimal          @default(190) @db.Decimal(10, 2)
+  captacaoId        String?
+  edicaoId          String?
+  active            Boolean          @default(false)
+  city              String?
+  description       String?
+  location          String?
+  slug              String?          @unique
+  temFoto           Boolean          @default(true)
+  temFotoImpressa   Boolean          @default(false)
+  temReels          Boolean          @default(false)
+  temVideo          Boolean          @default(false)
+  priceAlbum        Decimal?         @db.Decimal(10, 2)
+  priceFoto         Decimal?         @db.Decimal(10, 2)
+  priceFotoEditada  Decimal?         @db.Decimal(10, 2)
+  priceReels        Decimal?         @db.Decimal(10, 2)
+  priceVideo        Decimal?         @db.Decimal(10, 2)
+  priceVideoEditado Decimal?         @db.Decimal(10, 2)
+  temAlbumImpresso  Boolean          @default(false)
+  temFotoEditada    Boolean          @default(false)
+  temVideoEditado   Boolean          @default(false)
+  eventHours        Int?             @default(2)
+  collectedAmount   Decimal          @default(0) @db.Decimal(10, 2)
+  isCrowdfund       Boolean          @default(false)
+  targetAmount      Decimal?         @db.Decimal(10, 2)
+  clientEmail       String?
+  clientName        String?
+  isQuote           Boolean          @default(false)
+  quoteStatus       QuoteStatus?
+  usageType         String?
+  captacaoStatus    AcceptanceStatus @default(PENDING)
+  edicaoStatus      AcceptanceStatus @default(PENDING)
+  previewPhotos     String?
+  isPrivate         Boolean          @default(false)
+  isUnitSale        Boolean          @default(false)
+  priceUnit         Decimal          @default(10) @db.Decimal(10, 2)
+  captacao          User?            @relation("CaptacaoEvents", fields: [captacaoId], references: [id])
+  cartorioUser      User?            @relation("CartorioUserEvents", fields: [cartorioUserId], references: [id])
+  edicao            User?            @relation("EdicaoEvents", fields: [edicaoId], references: [id])
+  pedidos           Order[]
+  likes             PhotoLike[]
 
   @@map("events")
 }
 
-// ─── Model: Profissional ─────────────────────────────────────────────────────
-
 model Profissional {
-  id        String   @id @default(cuid())
-  userId    String   @unique
-  user      User     @relation(fields: [userId], references: [id])
-  services  String[] // ["FOTO", "VIDEO", etc]
-  cameras   String[]
-  lenses    String[]
-  lighting  String[]
-  captPct          Float    @default(30)
-  editPct          Float    @default(20)
-  otherHabilities  String?
-  equipment        String?
-
-  cartorios CartorioProfissional[]
+  id              String                 @id @default(cuid())
+  userId          String                 @unique
+  services        String[]
+  cameras         String[]
+  lenses          String[]
+  lighting        String[]
+  captPct         Float                  @default(30)
+  editPct         Float                  @default(20)
+  otherHabilities String?
+  equipment       String?
+  cartorios       CartorioProfissional[]
+  user            User                   @relation(fields: [userId], references: [id])
 
   @@map("profissionais")
 }
 
-// ─── Model: Cartorio ─────────────────────────────────────────────────────────
-
 model Cartorio {
-  id          String   @id @default(cuid())
-  userId      String   @unique
-  user        User     @relation(fields: [userId], references: [id])
-  razaoSocial String
-  slug        String?  @unique
-  cnpj        String?  @unique
-  splitPct    Float    @default(10)
-  cidade      String?  // Para exibir na vitrine dos pontos fixos
-
-  // Preços dos serviços por ponto fixo
-  priceFoto     Decimal? @db.Decimal(10, 2)  // padrão: 190
-  priceVideo    Decimal? @db.Decimal(10, 2)  // padrão: 190
-  priceReels    Decimal? @db.Decimal(10, 2)  // padrão: 120
-  priceImpresso Decimal? @db.Decimal(10, 2) // padrão: 120
-  
-  servicePrices Json?     // Overrides: { "svc_id_1": 250, "svc_id_2": 180 }
-
-  // Landing Page Fields
-  address     String?
-  phone       String?
-  description String?
-  coverUrl    String?
-
-  fixedDuration Int?      @default(2) // Duração padrão do evento nesta unidade (ex: 2h)
-  fixedTime     Boolean   @default(false) // Se true, o tempo é travado (não editável)
-  hideDuration  Boolean   @default(false) // Se true, o seletor de duração é ocultado
-  
+  id            String                 @id @default(cuid())
+  userId        String                 @unique
+  razaoSocial   String
+  cnpj          String?                @unique
+  splitPct      Float                  @default(10)
+  address       String?
+  coverUrl      String?
+  description   String?
+  phone         String?
+  slug          String?                @unique
+  cidade        String?
+  priceFoto     Decimal?               @db.Decimal(10, 2)
+  priceImpresso Decimal?               @db.Decimal(10, 2)
+  priceReels    Decimal?               @db.Decimal(10, 2)
+  priceVideo    Decimal?               @db.Decimal(10, 2)
+  servicePrices Json?
+  fixedDuration Int?                   @default(2)
+  fixedTime     Boolean                @default(false)
+  hideDuration  Boolean                @default(false)
   profissionais CartorioProfissional[]
+  user          User                   @relation(fields: [userId], references: [id])
 
   @@map("cartorios")
 }
 
-// ─── Model: CartorioProfissional ──────────────────────────────────────────────
-
 model CartorioProfissional {
   id             String       @id @default(cuid())
   cartorioId     String
-  cartorio       Cartorio     @relation(fields: [cartorioId], references: [id], onDelete: Cascade)
   profissionalId String
-  profissional   Profissional @relation(fields: [profissionalId], references: [id], onDelete: Cascade)
-  tipo           String       @default("ROTATIVO") // "FIXO" | "ROTATIVO"
+  tipo           String       @default("ROTATIVO")
   createdAt      DateTime     @default(now())
+  cartorio       Cartorio     @relation(fields: [cartorioId], references: [id], onDelete: Cascade)
+  profissional   Profissional @relation(fields: [profissionalId], references: [id], onDelete: Cascade)
 
   @@unique([cartorioId, profissionalId])
   @@map("cartorio_profissionais")
 }
 
-// ─── Model: Order ────────────────────────────────────────────────────────────
-
 model Order {
-  id            String   @id @default(cuid())
-  valor         Decimal  @db.Decimal(10, 2)
-  status        String   @default("PENDENTE") // PENDENTE, APROVADO, CANCELADO
-  paymentId     String?  @unique              // ID do pagamento no Mercado Pago
-  createdAt     DateTime @default(now())
-  updatedAt     DateTime @updatedAt
-  // Collaborative Buying
-  isContribution  Boolean  @default(false)
+  id              String    @id @default(cuid())
+  valor           Decimal   @db.Decimal(10, 2)
+  status          String    @default("PENDENTE")
+  paymentId       String?   @unique
+  createdAt       DateTime  @default(now())
+  updatedAt       DateTime  @updatedAt
+  clienteId       String?
+  eventId         String
+  buyerEmail      String?
+  splitCaptacao   Decimal?  @db.Decimal(10, 2)
+  splitCartorio   Decimal?  @db.Decimal(10, 2)
+  splitEdicao     Decimal?  @db.Decimal(10, 2)
+  splitMatriz     Decimal?  @db.Decimal(10, 2)
+  accessChosenAt  DateTime?
+  accessExpiresAt DateTime?
+  accessType      String?
+  deletedAt       DateTime?
+  warningsSent    Int       @default(0)
   contributorName String?
-  hasPaid         Boolean  @default(false)
-
-  // Buyer Info (Redundância para facilitar relatórios)
-  buyerEmail    String?
-
-  // Split values (Snapshot do momento da compra)
-  splitMatriz   Decimal? @db.Decimal(10, 2)
-  splitCartorio Decimal? @db.Decimal(10, 2)
-  splitCaptacao Decimal? @db.Decimal(10, 2)
-  splitEdicao   Decimal? @db.Decimal(10, 2)
-
-  // Comprador (Opcional se for checkout de convidado)
-  clienteId     String?
-  cliente       User?    @relation("ClienteOrders", fields: [clienteId], references: [id])
-
-  // Evento
-  eventId       String
-  event         Event    @relation(fields: [eventId], references: [id])
-
-  // LGPD
-  accessType        String?   // "PUBLIC" | "PRIVATE" | null (não escolhido ainda)
-  accessChosenAt    DateTime?
-  accessExpiresAt   DateTime?
-  deletedAt         DateTime? // quando foi excluído permanentemente
-  warningsSent      Int       @default(0) // quantos avisos de expiração foram enviados
-  tempPassword      String?   // Armazena senha temporária para novos usuários
-
-  // Visibilidade Granular (LGPD)
-  showAlbum         Boolean   @default(true)
-  showVideo         Boolean   @default(true)
+  isContribution  Boolean   @default(false)
+  hasPaid         Boolean   @default(false)
+  tempPassword    String?
+  showAlbum       Boolean   @default(true)
+  showVideo       Boolean   @default(true)
+  isManual        Boolean   @default(false)
+  manualType      String?
+  cliente         User?     @relation("ClienteOrders", fields: [clienteId], references: [id])
+  event           Event     @relation(fields: [eventId], references: [id])
 
   @@map("orders")
 }
 
-// ─────────────────────────────────────────
-// GAMIFICAÇÃO
-// ─────────────────────────────────────────
-
 model PhotoLike {
   id        String   @id @default(cuid())
   userId    String
-  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
   eventId   String
-  event     Event    @relation(fields: [eventId], references: [id], onDelete: Cascade)
-  photoUrl  String   // URL da foto específica curtida
+  photoUrl  String
   createdAt DateTime @default(now())
-  expiresAt DateTime // +365 dias
+  expiresAt DateTime
+  event     Event    @relation(fields: [eventId], references: [id], onDelete: Cascade)
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
 
   @@unique([userId, eventId, photoUrl])
   @@map("photo_likes")
@@ -288,69 +203,53 @@ model PhotoLike {
 model UserPoints {
   id        String   @id @default(cuid())
   userId    String   @unique
-  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
   total     Int      @default(0)
-  redeemed  Int      @default(0) // já resgatados
+  redeemed  Int      @default(0)
   updatedAt DateTime @updatedAt
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
 
   @@map("user_points")
 }
 
 model PrintRedemption {
-  id            String            @id @default(cuid())
-  userId        String
-  user          User              @relation(fields: [userId], references: [id])
-  pointsUsed    Int
-  quantity      Int               // qtd de fotos
-  packageType   String            // "12" | "24" | "36"
-  status        RedemptionStatus  @default(PENDING)
-  // Fotos escolhidas (URLs)
+  id             String           @id @default(cuid())
+  userId         String
+  pointsUsed     Int
+  quantity       Int
+  packageType    String
+  status         RedemptionStatus @default(PENDING)
   selectedPhotos String[]
-  // Entrega
-  deliveryType  String            // "PICKUP" | "MAIL" | "SEDEX"
-  addressJson   String?           // JSON com endereço
-  trackingCode  String?
-  // Fornecedor
-  supplierId    String?
-  supplier      PrintSupplier?    @relation(fields: [supplierId], references: [id])
-  // Financeiro
-  unitCost      Decimal?          @db.Decimal(10, 2)
-  shippingCost  Decimal?          @db.Decimal(10, 2)
-  totalCost     Decimal?          @db.Decimal(10, 2)
-  // Timestamps
-  createdAt     DateTime          @default(now())
-  updatedAt     DateTime          @updatedAt
+  deliveryType   String
+  addressJson    String?
+  trackingCode   String?
+  supplierId     String?
+  unitCost       Decimal?         @db.Decimal(10, 2)
+  shippingCost   Decimal?         @db.Decimal(10, 2)
+  totalCost      Decimal?         @db.Decimal(10, 2)
+  createdAt      DateTime         @default(now())
+  updatedAt      DateTime         @updatedAt
+  supplier       PrintSupplier?   @relation(fields: [supplierId], references: [id])
+  user           User             @relation(fields: [userId], references: [id])
 
   @@map("print_redemptions")
 }
 
-enum RedemptionStatus {
-  PENDING
-  APPROVED
-  PRINTING
-  SHIPPED
-  DELIVERED
-  CANCELLED
-}
-
 model PrintSupplier {
-  id            String   @id @default(cuid())
-  name          String
-  type          String   // "OWN_PRINTER" | "EXTERNAL"
-  printerModel  String?
-  printerCost   Decimal? @db.Decimal(10, 2)
-  costPer10x15  Decimal  @db.Decimal(10, 4) // custo por foto 10x15
-  costPer4x6    Decimal? @db.Decimal(10, 4)
-  // Embalagem e envio
-  boxCost       Decimal? @db.Decimal(10, 4)
-  labelCost     Decimal? @db.Decimal(10, 4)
-  uberCost      Decimal? @db.Decimal(10, 2) // custo do Uber até os Correios
-  baseCep       String?  // CEP de origem (13050-251)
-  active        Boolean  @default(true)
-  createdAt     DateTime @default(now())
-  updatedAt     DateTime @updatedAt
-
-  redemptions   PrintRedemption[]
+  id           String            @id @default(cuid())
+  name         String
+  type         String
+  printerModel String?
+  printerCost  Decimal?          @db.Decimal(10, 2)
+  costPer10x15 Decimal           @db.Decimal(10, 4)
+  costPer4x6   Decimal?          @db.Decimal(10, 4)
+  boxCost      Decimal?          @db.Decimal(10, 4)
+  labelCost    Decimal?          @db.Decimal(10, 4)
+  uberCost     Decimal?          @db.Decimal(10, 2)
+  baseCep      String?
+  active       Boolean           @default(true)
+  createdAt    DateTime          @default(now())
+  updatedAt    DateTime          @updatedAt
+  redemptions  PrintRedemption[]
 
   @@map("print_suppliers")
 }
@@ -362,11 +261,10 @@ model Contest {
   startDate   DateTime
   endDate     DateTime
   status      ContestStatus @default(DRAFT)
-  // Premiação
-  prize1st    String        // "3 fotos impressas"
+  prize1st    String
   prize2nd    String?
   prize3rd    String?
-  prize1stPts Int           // pontos extras para 1º lugar
+  prize1stPts Int
   prize2ndPts Int?
   prize3rdPts Int?
   createdAt   DateTime      @default(now())
@@ -374,82 +272,55 @@ model Contest {
   @@map("contests")
 }
 
-enum ContestStatus {
-  DRAFT
-  ACTIVE
-  FINISHED
-}
-
-// ─── Model: PlatformConfig ──────────────────────────────────────────────────
-// Configurações globais da plataforma (chave-valor)
 model PlatformConfig {
   key       String   @id
   value     String
-  label     String   // descrição legível
+  label     String
   updatedAt DateTime @updatedAt
   updatedBy String?
 
   @@map("platform_configs")
 }
 
-// ─── Model: WeeklyPayout ───────────────────────────────────────────────────
-// Relatório semanal de repasse
 model WeeklyPayout {
-  id            String        @id @default(cuid())
-  weekStart     DateTime      // segunda-feira
-  weekEnd       DateTime      // domingo
-  status        PayoutStatus  @default(PENDING)
-  generatedAt   DateTime      @default(now())
-  paidAt        DateTime?
-  totalRevenue  Decimal       @db.Decimal(10, 2) // total recebido no período
-  totalPayout   Decimal       @db.Decimal(10, 2) // total a repassar
-  notesAdmin    String?       // observações do admin
-
-  items         PayoutItem[]
+  id           String       @id @default(cuid())
+  weekStart    DateTime
+  weekEnd      DateTime
+  status       PayoutStatus @default(PENDING)
+  generatedAt  DateTime     @default(now())
+  paidAt       DateTime?
+  totalRevenue Decimal      @db.Decimal(10, 2)
+  totalPayout  Decimal      @db.Decimal(10, 2)
+  notesAdmin   String?
+  items        PayoutItem[]
 
   @@map("weekly_payouts")
 }
 
-enum PayoutStatus {
-  PENDING
-  PROCESSING
-  PAID
-  CANCELLED
-}
-
-// ─── Model: PayoutItem ────────────────────────────────────────────────────
-// Item do relatório: um repasse para um beneficiário
 model PayoutItem {
   id            String       @id @default(cuid())
   payoutId      String
-  payout        WeeklyPayout @relation(fields: [payoutId], references: [id])
-
-  // Beneficiário
-  recipientType String       // "CARTORIO" | "CAPTACAO" | "EDICAO"
-  recipientId   String       // userId
+  recipientType String
+  recipientId   String
   recipientName String
-  pixKey        String?      // chave Pix cadastrada
-
-  // Financeiro
-  orderCount    Int          // qtd de pedidos no período
-  grossRevenue  Decimal      @db.Decimal(10, 2) // receita bruta dos pedidos
-  splitPct      Decimal      @db.Decimal(5, 2)  // % aplicado
-  amount        Decimal      @db.Decimal(10, 2) // valor a transferir
-
-  status        String       @default("PENDING") // PENDING | PAID
+  pixKey        String?
+  orderCount    Int
+  grossRevenue  Decimal      @db.Decimal(10, 2)
+  splitPct      Decimal      @db.Decimal(5, 2)
+  amount        Decimal      @db.Decimal(10, 2)
+  status        String       @default("PENDING")
   paidAt        DateTime?
-  pixTxId       String?      // ID da transação Pix (preenchido manualmente)
+  pixTxId       String?
+  payout        WeeklyPayout @relation(fields: [payoutId], references: [id])
 
   @@map("payout_items")
 }
 
-
-// ─── Model: AuditLog ────────────────────────────────────────────────────────
 model AuditLog {
   id        String   @id @default(cuid())
   userId    String?
-  action    String   // Ex: LOGIN, PAYMENT_APPROVED, USER_PROMOTED
-  details   String?  // JSON ou texto descritivo
+  action    String
+  details   String?
   createdAt DateTime @default(now())
 
   @@map("audit_logs")
@@ -470,33 +341,65 @@ model Quote {
   updatedAt        DateTime    @updatedAt
 }
 
-// ─── Model: PrintProduct ────────────────────────────────────────────────────
-// Catálogo de produtos de impressão (ex: Encadernadora CK).
-// O admin ativa/desativa cada item e define a margem de lucro.
 model PrintProduct {
   id           String   @id @default(cuid())
-  category     String   // "ALBUM" | "ALBUM_30X40" | "ACESSORIOS" | "QUADROS" | "REVELACAO"
-  name         String   // Nome descritivo do produto
-  sku          String   @unique // Código interno (ex: "ALBUM_15x21_20LAM_FOTOCAPA")
-  
-  // Custo do fornecedor (base CK)
+  category     String
+  name         String
+  sku          String   @unique
   supplierCost Decimal  @db.Decimal(10, 2)
-  supplier     String   @default("CK") // Nome do fornecedor
-  
-  // Configuração de venda
-  active       Boolean  @default(true)  // Admin ativa/desativa
-  marginPct    Float    @default(30)    // Margem de lucro em %
-  sellingPrice Decimal? @db.Decimal(10, 2) // Preço manual (null = calcula automaticamente)
-
-  // Metadados do produto
-  description  String?  // Especificações adicionais
-  unit         String   @default("un") // "un" | "lâmina" | "cópia"
-  minQty       Int?     // Quantidade mínima para esse preço
-  maxQty       Int?     // Quantidade máxima (para regras de volume)
-
+  supplier     String   @default("CK")
+  active       Boolean  @default(true)
+  marginPct    Float    @default(30)
+  sellingPrice Decimal? @db.Decimal(10, 2)
+  description  String?
+  unit         String   @default("un")
+  minQty       Int?
+  maxQty       Int?
   createdAt    DateTime @default(now())
   updatedAt    DateTime @updatedAt
 
   @@map("print_products")
 }
 
+enum Role {
+  ADMIN
+  CARTORIO
+  PROFISSIONAL
+  CLIENTE
+}
+
+enum AcceptanceStatus {
+  PENDING
+  ACCEPTED
+  REJECTED
+}
+
+enum QuoteStatus {
+  PENDING
+  APPROVED
+  REJECTED
+  CONVERTED
+  PRICED
+}
+
+enum RedemptionStatus {
+  PENDING
+  APPROVED
+  PRINTING
+  SHIPPED
+  DELIVERED
+  CANCELLED
+}
+
+enum ContestStatus {
+  DRAFT
+  ACTIVE
+  FINISHED
+}
+
+enum PayoutStatus {
+  PENDING
+  PROCESSING
+  PAID
+  CANCELLED
+}

@@ -28,12 +28,13 @@ import {
   getProfile,
   updateProfile,
   respondToEvent,
+  registerManualSale,
 } from "../controllers/profissional.controller";
 import { getMeusPedidos, getMeuPedidoDetalhe } from "../controllers/cliente.controller";
 import { CartorioController } from "../controllers/cartorio.controller";
 import { SEOController } from "../controllers/seo.controller";
 import { getConfigs, updateConfigs, getPublicThemeConfigs, getPublicServices } from "../controllers/config.controller";
-import { generateWeeklyPayout, listPayouts, markItemPaid, exportPayoutCSV } from "../controllers/payout.controller";
+import { generateWeeklyPayout, listPayouts, markItemPaid, exportPayoutCSV, getMeusRepasses } from "../controllers/payout.controller";
 import {
   chooseAccessType,
   getAccessStatus,
@@ -156,6 +157,7 @@ router.patch("/profissional/events/:id/cover",   requireAuth, requireRole("ADMIN
 router.patch("/profissional/events/:id/respond", requireAuth, requireRole("ADMIN", "PROFISSIONAL"), respondToEvent);
 router.get("/profissional/me",                   requireAuth, requireRole("ADMIN", "PROFISSIONAL"), getProfile);
 router.patch("/profissional/me",                 requireAuth, requireRole("ADMIN", "PROFISSIONAL"), updateProfile);
+router.post("/profissional/events/:id/manual-sale", requireAuth, requireRole("ADMIN", "PROFISSIONAL"), registerManualSale);
 
 // ── Gamificação: Curtidas & Resgates ──────────────────────────────────────────
 router.post("/events/:slug/photos/like", requireAuth, likePhoto);
@@ -202,6 +204,7 @@ router.post("/admin/payouts/generate",                requireAuth, requireRole("
 router.get("/admin/payouts",                          requireAuth, requireRole("ADMIN"), listPayouts);
 router.get("/admin/payouts/export",                requireAuth, requireRole("ADMIN"), exportPayoutCSV);
 router.patch("/admin/payouts/:id/items/:itemId/paid", requireAuth, requireRole("ADMIN"), markItemPaid);
+router.get("/payouts/me", requireAuth, getMeusRepasses);
 
 // ── Admin: Configurações ───────────────────────────────────────────────────────
 router.get("/admin/configs",   requireAuth, requireRole("ADMIN"), getConfigs);

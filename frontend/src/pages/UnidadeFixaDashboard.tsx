@@ -3,7 +3,7 @@ import { useSearchParams } from "react-router-dom";
 
 import { API } from "../lib/api";
 import { QRCodeSVG } from "qrcode.react";
-import { QrCode, Copy, Check, X, Download, Calendar, DollarSign, Settings, Users2, Camera, Star } from "lucide-react";
+import { QrCode, Copy, Check, X, Download, Calendar, DollarSign, Settings, Users2, Camera, Star, ShieldCheck } from "lucide-react";
 import { DashboardLayout, type NavItem } from "../components/DashboardLayout";
 import { T } from "../lib/theme";
 
@@ -43,14 +43,20 @@ interface EventoAgenda {
   _count?: { orders: number };
 }
 
-interface PedidoUnidade {
+interface PayoutItem {
   id: string;
-  status: string;
   amount: number;
-  splitCartorio: number | null;
-  createdAt: string;
-  buyerEmail: string | null;
-  event: { title: string };
+  status: string;
+  recipientName: string;
+  orderCount: number;
+  grossRevenue: number;
+  splitPct: number;
+  paidAt?: string | null;
+  pixTxId?: string | null;
+  payout: {
+    weekStart: string;
+    weekEnd: string;
+  };
 }
 
 function formatCurrency(v: number) {
@@ -81,18 +87,18 @@ const S = {
   input: { background: "transparent", border: "1px solid var(--theme-border)", borderRadius: 0, padding: "12px 16px", fontSize: 13, color: "var(--theme-text)", outline: "none" } as React.CSSProperties,
 };
 
-type Tab = "agenda" | "pedidos" | "equipe" | "configuracoes";
+type Tab = "agenda" | "financas" | "equipe" | "configuracoes";
 
 export default function UnidadeFixaDashboard() {
   const [searchParams] = useSearchParams();
 
-  const [tab, setTab] = useState<Tab>("agenda");
+  const [tab, setTab] = useState<Tab>((searchParams.get("tab") as Tab) || "agenda");
   const [stats, setStats] = useState<UnidadeStats | null>(null);
   const [eventos, setEventos] = useState<EventoAgenda[]>([]);
-  const [pedidos, setPedidos] = useState<PedidoUnidade[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
   const [success, setSuccess] = useState("");
+  const [repasses, setRepasses] = useState<PayoutItem[]>([]);
 
   // Landing Page State
   const [lpSlug, setLpSlug] = useState("");
@@ -120,9 +126,6 @@ export default function UnidadeFixaDashboard() {
   const [savingTeam, setSavingTeam] = useState(false);
   const [teamLoaded, setTeamLoaded] = useState(false);
 
-  // Filtros
-  const [startDate, setStartDate] = useState("");
-  const [endDate, setEndDate] = useState("");
   const [unidadeName, setUnidadeName] = useState("");
 
   // Evitar setState loop no useEffect
@@ -164,12 +167,14 @@ export default function UnidadeFixaDashboard() {
   const loadData = useCallback(async () => {
     setLoading(true);
     try {
-      const [statsRes, eventosRes] = await Promise.all([
+      const [statsRes, eventosRes, repassesRes] = await Promise.all([
         API.get("/unidade-fixa/stats"),
         API.get("/unidade-fixa/events"),
+        API.get("/payouts/me")
       ]);
       setStats(statsRes.data);
       setEventos(eventosRes.data.events ?? eventosRes.data);
+      setRepasses(repassesRes.data || []);
       setUnidadeName(statsRes.data.razaoSocial ?? "");
       await loadLpData();
     } catch (err: unknown) {
@@ -271,30 +276,20 @@ export default function UnidadeFixaDashboard() {
     return p.vinculo;
   };
 
-  const loadPedidos = useCallback(async () => {
-    try {
-      const params = new URLSearchParams();
-      if (startDate) params.set("startDate", startDate);
-      if (endDate) params.set("endDate", endDate);
-      const { data } = await API.get(`/unidade-fixa/orders?${params}`);
-      setPedidos(data.orders ?? data);
-    } catch {
-      setError("Erro ao carregar pedidos. Tente novamente.");
-    }
-  }, [startDate, endDate]);
+  useEffect(() => {
+    loadData();
+  }, [loadData]);
 
   useEffect(() => {
-    if (tab === "pedidos") {
-      loadPedidos();
-    }
-  }, [tab, loadPedidos]);
+    if (tab === "configuracoes") loadLpData();
+  }, [tab, loadLpData]);
 
 
   const NAV_ITEMS = (tab: Tab, setTab: (t: Tab) => void): NavItem[] => [
-    { label: "Agenda", onClick: () => setTab("agenda"), isActive: tab === "agenda", icon: <Calendar size={16} /> },
-    { label: "Repasses", onClick: () => setTab("pedidos"), isActive: tab === "pedidos", icon: <DollarSign size={16} /> },
-    { label: "Equipe", onClick: () => { setTab("equipe"); if (!teamLoaded) loadTeam(); }, isActive: tab === "equipe", icon: <Users2 size={16} /> },
-    { label: "Página Pública", onClick: () => setTab("configuracoes"), isActive: tab === "configuracoes", icon: <Settings size={16} /> },
+    { label: "Visão Geral", onClick: () => setTab("agenda"), isActive: tab === "agenda", icon: <Calendar size={18} /> },
+    { label: "Finanças", onClick: () => setTab("financas"), isActive: tab === "financas", icon: <ShieldCheck size={18} />, badge: repasses.filter(r => r.status !== "PAID").length || undefined },
+    { label: "Minha Equipe", onClick: () => { setTab("equipe"); if (!teamLoaded) loadTeam(); }, isActive: tab === "equipe", icon: <Users2 size={18} /> },
+    { label: "Unidade Fixa", onClick: () => setTab("configuracoes"), isActive: tab === "configuracoes", icon: <Settings size={18} /> },
   ];
 
   return (
@@ -331,7 +326,7 @@ export default function UnidadeFixaDashboard() {
         {/* Header */}
         <div className="mb-12">
           <h1 className="heading-luxury text-theme-text mb-4">
-            {tab === "agenda" ? "Agenda & Eventos" : tab === "pedidos" ? "Repasses" : "Configurações"}
+            {tab === "agenda" ? "Agenda & Eventos" : tab === "financas" ? "Finanças" : "Configurações"}
           </h1>
           <p className="text-proportional">
           {unidadeName && `${unidadeName} · `}
@@ -414,58 +409,49 @@ export default function UnidadeFixaDashboard() {
           </div>
         )}
 
-        {/* ── REPASSES ── */}
-        {tab === "pedidos" && (
-          <div>
-          <div className="mobile-stack" style={{ display: "flex", gap: "1rem", marginBottom: "1.25rem", alignItems: "flex-end" }}>
-            <div style={{ flex: 1 }}>
-              <label style={{ fontSize: 11, color: "var(--theme-text-muted)", display: "block", marginBottom: 4 }}>Início</label>
-              <input type="date" value={startDate} onChange={(e) => setStartDate(e.target.value)} style={{ ...S.input, width: "100%" }} />
+        {/* ── FINANÇAS (NOVO REPASSE) ── */}
+        {tab === "financas" && (
+          <div style={{ display: "flex", flexDirection: "column", gap: "1.5rem" }}>
+            <div style={{ ...S.card, padding: "2rem", borderLeft: `4px solid var(--brand-primary)` }}>
+              <h3 style={{ fontFamily: "'Outfit', sans-serif", fontSize: 18, fontWeight: 900, color: "var(--theme-text)", textTransform: "uppercase", marginBottom: 8 }}>Repasses Consolidados</h3>
+              <p style={{ fontSize: 11, color: "var(--theme-text-muted)", lineHeight: 1.6, maxWidth: 500 }}>
+                Aqui você acompanha o fechamento semanal da sua unidade. Os repasses são processados todas as sextas-feiras referentes à semana anterior.
+              </p>
             </div>
-            <div style={{ flex: 1 }}>
-              <label style={{ fontSize: 11, color: "var(--theme-text-muted)", display: "block", marginBottom: 4 }}>Fim</label>
-              <input type="date" value={endDate} onChange={(e) => setEndDate(e.target.value)} style={{ ...S.input, width: "100%" }} />
-            </div>
-            <button
-              onClick={loadPedidos}
-              style={{ background: "var(--brand-primary)", color: "var(--theme-text-on-brand)", border: "none", borderRadius: 0, padding: "12px 24px", fontSize: 11, fontWeight: 800, cursor: "pointer", textTransform: "uppercase", letterSpacing: 2, height: 44 }}
-            >
-              Filtrar
-            </button>
-          </div>
 
             <div style={S.card}>
-              <div style={{ padding: "1rem 1.25rem", borderBottom: "0.5px solid var(--theme-border)" }}>
-                <p style={{ fontSize: 13, fontWeight: 500, color: "var(--theme-text)" }}>Histórico de repasses</p>
+              <div style={{ padding: "1.25rem", borderBottom: "0.5px solid var(--theme-border)", display: "flex", justifyContent: "space-between", alignItems: "center" }}>
+                <p style={{ fontSize: 12, fontWeight: 800, textTransform: "uppercase", letterSpacing: 1 }}>Histórico de Fechamentos</p>
+                <div style={{ fontSize: 10, color: "var(--brand-primary)", fontWeight: 700 }}>Total a receber: {formatCurrency(repasses.filter(r => r.status !== "PAID").reduce((acc, r) => acc + r.amount, 0))}</div>
               </div>
-              {pedidos.length === 0 ? (
-                <p style={{ padding: "2rem", textAlign: "center", color: "var(--theme-text-muted)", fontSize: 13 }}>
-                  Nenhum repasse encontrado.
-                </p>
-              ) : pedidos.map((p, i) => (
-                <div key={p.id} style={{ padding: "0.875rem 1.25rem", borderBottom: i < pedidos.length - 1 ? "0.5px solid var(--theme-border)" : "none", display: "flex", alignItems: "center", gap: "1rem" }}>
-                  <div style={{ flex: 1, minWidth: 0 }}>
-                    <p style={{ fontSize: 13, color: "var(--theme-text)", marginBottom: 2 }}>{p.event.title}</p>
-                    <p style={{ fontSize: 11, color: "var(--theme-text-muted)" }}>{p.buyerEmail ?? "—"} · {formatDate(p.createdAt)}</p>
+
+              {repasses.length === 0 ? (
+                <div style={{ padding: "4rem 2rem", textAlign: "center" }}>
+                  <DollarSign size={32} style={{ color: "var(--theme-text-muted)", opacity: 0.2, margin: "0 auto 1rem" }} />
+                  <p style={{ fontSize: 11, color: "var(--theme-text-muted)", textTransform: "uppercase", letterSpacing: 1 }}>Nenhum fechamento semanal gerado ainda.</p>
+                </div>
+              ) : repasses.map((r, i) => (
+                <div key={r.id} style={{ padding: "1.5rem", borderBottom: i < repasses.length - 1 ? "0.5px solid var(--theme-border)" : "none", display: "flex", alignItems: "center", gap: "1.5rem" }}>
+                  <div style={{ flex: 1 }}>
+                    <p style={{ fontSize: 11, color: "var(--theme-text-muted)", textTransform: "uppercase", letterSpacing: 1, fontWeight: 800, marginBottom: 4 }}>Semana de {formatDate(r.payout.weekStart)}</p>
+                    <div style={{ display: "flex", gap: 12, alignItems: "center" }}>
+                      <span style={{ fontSize: 16, fontWeight: 900, color: "var(--theme-text)" }}>{formatCurrency(r.amount)}</span>
+                      <span style={{ fontSize: 10, color: "var(--theme-text-muted)" }}>{r.orderCount} vendas (Base: {formatCurrency(r.grossRevenue)})</span>
+                    </div>
                   </div>
-                  <div style={{ textAlign: "right", flexShrink: 0 }}>
-                    <p style={{ fontSize: 11, color: "var(--theme-text-muted)", marginBottom: 2, fontWeight: 600 }}>
-                      Venda: {formatCurrency(Number(p.amount))}
-                    </p>
-                    <p style={{ fontSize: 20, color: "var(--brand-primary)", fontWeight: 800 }}>
-                      Repasse: {p.splitCartorio ? formatCurrency(Number(p.splitCartorio)) : "—"}
-                    </p>
+
+                  <div style={{ textAlign: "right" }}>
+                    <span style={{
+                      fontSize: 9, padding: "4px 10px", borderRadius: 2, letterSpacing: 1,
+                      textTransform: "uppercase",
+                      background: r.status === "PAID" ? "rgba(133, 185, 172, 0.1)" : "rgba(245, 158, 11, 0.1)",
+                      border: `1px solid ${r.status === "PAID" ? "var(--brand-primary)" : "#f59e0b"}`,
+                      color: r.status === "PAID" ? "var(--brand-primary)" : "#f59e0b",
+                    }}>
+                      {r.status === "PAID" ? "LIQUIDADO" : "PENDENTE"}
+                    </span>
+                    {r.paidAt && <p style={{ fontSize: 8, color: "var(--theme-text-muted)", marginTop: 6, textTransform: "uppercase" }}>Pago em {formatDate(r.paidAt)}</p>}
                   </div>
-                  <span style={{
-                    fontSize: 9, padding: "3px 8px", borderRadius: 20, letterSpacing: 1,
-                    textTransform: "uppercase" as const,
-                    background: p.status === "APPROVED" || p.status === "APROVADO" ? "rgba(133, 185, 172, 0.1)" : "rgba(245, 158, 11, 0.1)",
-                    border: `0.5px solid ${p.status === "APPROVED" || p.status === "APROVADO" ? "rgba(133, 185, 172, 0.3)" : "rgba(245, 158, 11, 0.3)"}`,
-                    color: p.status === "APPROVED" || p.status === "APROVADO" ? "var(--brand-primary)" : "#f59e0b",
-                    flexShrink: 0,
-                  }}>
-                    {p.status === "APPROVED" || p.status === "APROVADO" ? "pago" : "pendente"}
-                  </span>
                 </div>
               ))}
             </div>

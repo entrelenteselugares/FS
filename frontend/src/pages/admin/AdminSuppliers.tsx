@@ -65,7 +65,7 @@ export default function AdminSuppliers() {
     } finally {
       setLoading(false);
     }
-  }, [handleSelect]);
+  }, [handleSelect, handleSelect]);
 
   useEffect(() => {
     fetchSuppliers();
@@ -73,10 +73,10 @@ export default function AdminSuppliers() {
 
 
   return (
-    <div className="grid grid-cols-[240px_1fr] gap-4 p-4 pt-0 min-h-[calc(100vh-100px)]">
+    <div className="grid grid-cols-1 md:grid-cols-[240px_1fr] gap-4 p-0 md:p-4 pt-0 min-h-[calc(100vh-100px)]">
       
       {/* Sidebar List */}
-      <div className="space-y-4 border-r border-theme-border pr-4">
+      <div className="space-y-4 border-r border-theme-border pr-0 md:pr-4">
         <div className="flex items-center justify-between mb-4">
             <h3 style={{ fontSize: 9, fontWeight: 900, textTransform: "uppercase", letterSpacing: "0.3em", color: T.text3, display: "flex", alignItems: "center", gap: 8 }}>
                 <Printer size={12} style={{ color: T.brand }} />
@@ -129,125 +129,124 @@ export default function AdminSuppliers() {
       </div>
 
       {/* Analysis Workspace */}
-        <div style={{ display: "flex", flexDirection: "column", gap: 16 }}>
-          {!selectedId ? (
-            <div className="h-full flex flex-col items-center justify-center border-2 border-dashed border-theme-border p-20 text-center space-y-4">
-              <Calculator size={48} className="text-theme-border" strokeWidth={1} />
-              <p className="text-[11px] font-black uppercase tracking-[0.4em] text-theme-muted">
-                Selecione um ativo para análise de ROI
-              </p>
+      <div style={{ display: "flex", flexDirection: "column", gap: 16 }}>
+        {!selectedId ? (
+          <div className="h-full flex flex-col items-center justify-center border-2 border-dashed border-theme-border p-20 text-center space-y-4">
+            <Calculator size={48} className="text-theme-border" strokeWidth={1} />
+            <p className="text-[11px] font-black uppercase tracking-[0.4em] text-theme-muted">
+              Selecione um ativo para análise de ROI
+            </p>
+          </div>
+        ) : !breakeven ? (
+          <div className="p-20 text-center animate-pulse">
+              <div className="h-4 w-48 bg-theme-border/50 mx-auto rounded mb-4" />
+              <div className="h-4 w-32 bg-theme-border/30 mx-auto rounded" />
+          </div>
+        ) : (
+          <>
+            {/* Financial Stats */}
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+              <StatsCard 
+                  icon={<Calculator size={18} />} 
+                  label="Operacional Unitário" 
+                  value={`R$ ${breakeven.costPerPhoto}`} 
+                  sub="Papel + Tinta + Embalagem + Frete" 
+              />
+              <StatsCard 
+                  icon={<Printer size={18} />} 
+                  label="Equipamento" 
+                  value={`R$ ${Number(breakeven.printerCost).toFixed(2)}`} 
+                  sub="CAPEX — Investimento Inicial" 
+              />
+              <StatsCard 
+                  icon={<Target size={18} />} 
+                  label="Análise de Amortização" 
+                  value={`${breakeven.photosToBreakeven}`} 
+                  suffix="fotos"
+                  sub={`Aprox. ${breakeven.estimatedConcursos} concursos`} 
+                  variant="accent"
+              />
             </div>
-          ) : !breakeven ? (
-            <div className="p-20 text-center animate-pulse">
-                <div className="h-4 w-48 bg-theme-border/50 mx-auto rounded mb-4" />
-                <div className="h-4 w-32 bg-theme-border/30 mx-auto rounded" />
+
+            {/* Gamification Costs */}
+            <div style={{ border: `1px solid ${T.border}`, padding: "16px", background: `${T.bgCard}44` }}>
+              <h4 style={{ fontSize: 9, fontWeight: 900, textTransform: "uppercase", letterSpacing: "0.4em", color: T.text3, marginBottom: 16 }}>
+                Custos por Patamar de Gamificação
+              </h4>
+              
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                {breakeven.packages.map(p => (
+                  <div key={p.curtidas} style={{ padding: "16px", border: `1px solid ${T.border}`, background: T.bgCard }}>
+                    <div className="flex items-center gap-2 text-[9px] font-black uppercase tracking-widest text-brand-primary mb-4">
+                        {p.curtidas} Curtidas
+                    </div>
+                    <div className="flex items-baseline gap-2 mb-4">
+                        <span style={{ fontSize: 24, fontWeight: 900, color: T.text }}>{p.photos}</span>
+                        <span style={{ fontSize: 8, fontWeight: 900, textTransform: "uppercase", color: T.text3 }}>Fotos</span>
+                    </div>
+                    <div className="pt-4 border-t border-theme-border flex justify-between items-center">
+                      <span style={{ fontSize: 8, fontWeight: 900, textTransform: "uppercase", color: T.text3 }}>Total</span>
+                      <span style={{ fontSize: 14, fontWeight: 900, color: T.text }}>R$ {p.totalCost}</span>
+                    </div>
+                  </div>
+                ))}
+              </div>
             </div>
-          ) : (
-            <>
-              {/* Financial Stats */}
-              <div className="grid grid-cols-3 gap-6">
-                <StatsCard 
-                    icon={<Calculator size={18} />} 
-                    label="Operacional Unitário" 
-                    value={`R$ ${breakeven.costPerPhoto}`} 
-                    sub="Papel + Tinta + Embalagem + Frete" 
-                />
-                <StatsCard 
-                    icon={<Printer size={18} />} 
-                    label="Equipamento" 
-                    value={`R$ ${Number(breakeven.printerCost).toFixed(2)}`} 
-                    sub="CAPEX — Investimento Inicial" 
-                />
-                <StatsCard 
-                    icon={<Target size={18} />} 
-                    label="Análise de Amortização" 
-                    value={`${breakeven.photosToBreakeven}`} 
-                    suffix="fotos"
-                    sub={`Aprox. ${breakeven.estimatedConcursos} concursos`} 
-                    variant="accent"
-                />
-              </div>
 
-              {/* Gamification Costs */}
-              <div style={{ border: `1px solid ${T.border}`, padding: "20px", background: `${T.bgCard}44` }}>
-                <h4 style={{ fontSize: 9, fontWeight: 900, textTransform: "uppercase", letterSpacing: "0.4em", color: T.text3, marginBottom: 16 }}>
-                  Custos por Patamar de Gamificação
-                </h4>
-                
-                <div className="grid grid-cols-3 gap-4">
-                  {breakeven.packages.map(p => (
-                    <div key={p.curtidas} style={{ padding: "16px", border: `1px solid ${T.border}`, background: T.bgCard }}>
-                      <div className="flex items-center gap-2 text-[9px] font-black uppercase tracking-widest text-brand-primary mb-4">
-                          {p.curtidas} Curtidas
-                      </div>
-                      <div className="flex items-baseline gap-2 mb-4">
-                          <span style={{ fontSize: 24, fontWeight: 900, color: T.text }}>{p.photos}</span>
-                          <span style={{ fontSize: 8, fontWeight: 900, textTransform: "uppercase", color: T.text3 }}>Fotos</span>
-                      </div>
-                      <div className="pt-4 border-t border-theme-border flex justify-between items-center">
-                        <span style={{ fontSize: 8, fontWeight: 900, textTransform: "uppercase", color: T.text3 }}>Total</span>
-                        <span style={{ fontSize: 14, fontWeight: 900, color: T.text }}>R$ {p.totalCost}</span>
-                      </div>
-                    </div>
-                  ))}
-                </div>
+            {/* ROI Simulator */}
+            <div className="glass-card p-4 md:p-10">
+              <div className="flex items-center justify-between mb-8">
+                  <div className="space-y-1">
+                      <h4 className="text-[11px] font-black uppercase tracking-[0.6em] text-theme-muted flex items-center gap-4">
+                        <span className="w-4 md:w-8 h-px bg-theme-border" />
+                        ROI Prospectivo
+                      </h4>
+                      <p className="text-[10px] text-theme-muted uppercase tracking-[0.2em] font-medium ml-4 md:ml-12">Projeção de conversão orgânica</p>
+                  </div>
+                  <BarChart3 className="text-theme-muted opacity-30" size={24} />
               </div>
-
-              {/* ROI Simulator */}
-              <div className="glass-card p-10">
-                <div className="flex items-center justify-between mb-8">
-                    <div className="space-y-1">
-                        <h4 className="text-[11px] font-black uppercase tracking-[0.6em] text-theme-muted flex items-center gap-4">
-                          <span className="w-8 h-px bg-theme-border" />
-                          Simulador Prospectivo de ROI
-                        </h4>
-                        <p className="text-[10px] text-theme-muted uppercase tracking-[0.2em] font-medium ml-12">Projeção baseada em taxa de conversão orgânica</p>
-                    </div>
-                    <BarChart3 className="text-theme-muted opacity-30" size={24} />
-                </div>
-                
-                <div className="overflow-hidden border border-theme-border">
-                   <table className="w-full text-left border-collapse">
-                      <thead>
-                        <tr className="bg-theme-bg-muted/50 text-[10px] font-black uppercase tracking-[0.3em] text-theme-muted">
-                          <th className="p-6 border-r border-theme-border">Investimento Ativo</th>
-                          <th className="p-6 border-r border-theme-border text-center">Volume Amortização</th>
-                          <th className="p-6">Projeção Temporal (10/mês)</th>
+              
+              <div className="overflow-x-auto border border-theme-border">
+                 <table className="w-full text-left border-collapse min-w-[600px]">
+                    <thead>
+                      <tr className="bg-theme-bg-muted/50 text-[10px] font-black uppercase tracking-[0.3em] text-theme-muted">
+                        <th className="p-4 border-r border-theme-border">Investimento</th>
+                        <th className="p-4 border-r border-theme-border text-center">Volume</th>
+                        <th className="p-4">Tempo (10/mês)</th>
+                      </tr>
+                    </thead>
+                    <tbody className="text-[12px] font-bold tracking-tight">
+                      {breakeven.scenarios.map(s => (
+                        <tr key={s.printerPrice} className="border-t border-theme-border hover:bg-theme-bg-muted/20 transition-colors">
+                          <td className="p-4 border-r border-theme-border text-theme-text">
+                              R$ {Number(s.printerPrice).toFixed(2)}
+                          </td>
+                          <td className="p-4 border-r border-theme-border text-center">
+                              <span className="bg-brand-primary/10 text-brand-primary border border-brand-primary/20 px-3 py-1 inline-flex items-center gap-2 justify-center">
+                                  <Target size={12} />
+                                  {s.photosNeeded}
+                              </span>
+                          </td>
+                          <td className="p-4 text-theme-muted flex items-center gap-3">
+                              <Clock size={16} strokeWidth={1.5} className="text-brand-primary" />
+                              <span>{s.monthsAt10PerMonth} Meses</span>
+                          </td>
                         </tr>
-                      </thead>
-                      <tbody className="text-[12px] font-bold tracking-tight">
-                        {breakeven.scenarios.map(s => (
-                          <tr key={s.printerPrice} className="border-t border-theme-border hover:bg-theme-bg-muted/20 transition-colors">
-                            <td className="p-6 border-r border-theme-border text-theme-text">
-                                <span className="text-[10px] text-theme-muted font-medium uppercase tracking-widest mr-3">CAPEX:</span>
-                                R$ {Number(s.printerPrice).toFixed(2)}
-                            </td>
-                            <td className="p-6 border-r border-theme-border text-center">
-                                <span className="bg-brand-primary/10 text-brand-primary border border-brand-primary/20 px-4 py-1 flex items-center gap-2 justify-center w-fit mx-auto">
-                                    <Target size={12} />
-                                    {s.photosNeeded} FOTOS
-                                </span>
-                            </td>
-                            <td className="p-6 text-theme-muted flex items-center gap-3">
-                                <Clock size={16} strokeWidth={1.5} className="text-brand-primary" />
-                                <span>{s.monthsAt10PerMonth} Meses Estimados</span>
-                            </td>
-                          </tr>
-                        ))}
-                      </tbody>
-                   </table>
-                </div>
+                      ))}
+                    </tbody>
+                 </table>
               </div>
-            </>
-          )}
-        </div>
+            </div>
+          </>
+        )}
+      </div>
     </div>
   );
 }
 
 function StatsCard({ icon, label, value, sub, suffix, variant = "default" }: { icon: React.ReactNode, label: string; value: string; sub: string; suffix?: string; variant?: "default" | "accent" }) {
   return (
-    <div className={`p-8 border relative overflow-hidden transition-all duration-700
+    <div className={`p-6 border relative overflow-hidden transition-all duration-700
         ${variant === "accent" 
             ? "bg-brand-primary/5 border-brand-primary shadow-2xl" 
             : "bg-theme-bg-muted border-theme-border hover:border-theme-text/20"}`}>
@@ -259,7 +258,7 @@ function StatsCard({ icon, label, value, sub, suffix, variant = "default" }: { i
         {label}
       </p>
       <div className="flex items-baseline gap-3 mb-2">
-          <p className={`text-4xl font-black font-sans tracking-tight leading-none
+          <p className={`text-2xl md:text-4xl font-black font-sans tracking-tight leading-none
             ${variant === "accent" ? "text-brand-primary" : "text-theme-text"}`}>
             {value}
           </p>

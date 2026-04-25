@@ -610,7 +610,29 @@ function EventEditPanel({ event, onUpdated, onClose }: {
   const [linkStatus, setLinkStatus] = useState<SaveStatus>("idle");
   const [coverStatus, setCoverStatus] = useState<SaveStatus>("idle");
   const [coverPreview, setCoverPreview] = useState<string | null>(event.coverPhotoUrl);
+  const [saleStatus, setSaleStatus] = useState<SaveStatus>("idle");
+  const [manualSale, setManualSale] = useState({ amount: "", email: "", type: "SD_CARD" });
   const fileRef = useRef<HTMLInputElement>(null);
+
+  const handleManualSale = async () => {
+    if (!manualSale.amount) return;
+    setSaleStatus("saving");
+    try {
+      await API.post(`/profissional/events/${event.id}/manual-sale`, {
+        amount: Number(manualSale.amount),
+        customerEmail: manualSale.email || null,
+        manualType: manualSale.type
+      });
+      setSaleStatus("saved");
+      setManualSale({ amount: "", email: "", type: "SD_CARD" });
+      setTimeout(() => setSaleStatus("idle"), 3000);
+      onUpdated({ _count: { pedidos: (event._count?.pedidos || 0) + 1 } });
+    } catch (err) {
+      console.error("handleManualSale:", err);
+      setSaleStatus("error");
+      setTimeout(() => setSaleStatus("idle"), 3000);
+    }
+  };
 
 
   const saveLinks = async () => {
@@ -742,18 +764,73 @@ function EventEditPanel({ event, onUpdated, onClose }: {
         </button>
       </section>
 
-      {/* Link público */}
-      <div style={{ borderTop: "1px solid var(--theme-border)", marginTop: "1.5rem", paddingTop: "1rem" }}>
-        <a
-          href={`/e/${event.slug}`}
-          target="_blank"
-          rel="noopener noreferrer"
-          style={{ display: "flex", alignItems: "center", justifyContent: "space-between", fontSize: 10, color: "var(--theme-text-muted)", textDecoration: "none", fontWeight: 800, textTransform: "uppercase", letterSpacing: 1 }}
-        >
-          <span>Ver página pública</span>
-          <span style={{ color: "var(--brand-primary)" }}>↗</span>
-        </a>
-      </div>
+      {/* Venda Manual (SD Card / Álbum) */}
+      <section style={{ marginTop: "2.5rem", paddingTop: "2rem", borderTop: "1px solid var(--theme-border)" }}>
+        <div style={{ display: "flex", alignItems: "center", gap: 10, marginBottom: "1.25rem" }}>
+          <div style={{ width: 24, height: 24, borderRadius: "50%", background: "rgba(133,185,172,0.1)", color: "var(--brand-primary)", display: "flex", alignItems: "center", justifyContent: "center" }}>
+            <DollarSign size={14} />
+          </div>
+          <label style={{ ...S.label, marginBottom: 0 }}>Registrar Venda Física (Cartão SD / Álbum)</label>
+        </div>
+        
+        <div style={{ display: "flex", flexDirection: "column", gap: "1rem", background: "rgba(133,185,172,0.03)", padding: "1.5rem", border: "1px solid rgba(133,185,172,0.1)" }}>
+          <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 10 }}>
+            <div>
+              <label style={{ ...S.label, fontSize: 8 }}>Valor Recebido (R$)</label>
+              <input 
+                style={S.input} 
+                type="number" 
+                placeholder="0,00"
+                value={manualSale.amount}
+                onChange={e => setManualSale({...manualSale, amount: e.target.value})}
+              />
+            </div>
+            <div>
+              <label style={{ ...S.label, fontSize: 8 }}>Tipo de Venda</label>
+              <select 
+                style={S.input}
+                value={manualSale.type}
+                onChange={e => setManualSale({...manualSale, type: e.target.value})}
+              >
+                <option value="SD_CARD">CARTÃO SD</option>
+                <option value="ALBUM">ÁLBUM IMPRESSO</option>
+                <option value="CLIQUE_AVULSO">FOTO AVULSA / CLIQUE</option>
+                <option value="OTHER">OUTROS</option>
+              </select>
+            </div>
+          </div>
+          
+          <div>
+            <label style={{ ...S.label, fontSize: 8 }}>E-mail do Cliente (Opcional)</label>
+            <input 
+              style={S.input} 
+              type="email" 
+              placeholder="cliente@email.com"
+              value={manualSale.email}
+              onChange={e => setManualSale({...manualSale, email: e.target.value})}
+            />
+          </div>
+
+          <button
+            onClick={handleManualSale}
+            disabled={!manualSale.amount || Number(manualSale.amount) <= 0 || saleStatus === "saving"}
+            style={{
+              width: "100%", padding: "14px", borderRadius: 0, border: "none", fontSize: 10, fontWeight: 900,
+              cursor: "pointer", transition: "all .3s",
+              background: saleStatus === "saved" ? "var(--brand-primary)" : "var(--brand-primary)",
+              color: "#000",
+              opacity: (saleStatus === "saving" || !manualSale.amount) ? 0.6 : 1,
+              textTransform: "uppercase", letterSpacing: 1.5
+            }}
+          >
+            {saleStatus === "saving" ? "REGISTRANDO..." : saleStatus === "saved" ? "✓ VENDA REGISTRADA" : "REGISTRAR VENDA MANUAL"}
+          </button>
+          
+          <p style={{ fontSize: 9, color: "var(--theme-text-muted)", textAlign: "center", lineHeight: 1.4 }}>
+            * Esta venda será contabilizada no repasse semanal. Certifique-se de que o valor foi recebido fisicamente.
+          </p>
+        </div>
+      </section>
     </div>
   );
 }

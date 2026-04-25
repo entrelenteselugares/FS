@@ -223,7 +223,7 @@ const CategoryGroup: React.FC<CategoryGroupProps> = ({
         <div style={{ fontSize: 10, color: T.text3 }}>{activeCount}/{products.length} <span className="mobile-hide">ativos</span></div>
 
         {!collapsed && (
-          <div style={{ display: "flex", alignItems: "center", gap: 6 }} onClick={e => e.stopPropagation()}>
+          <div className="category-header-actions" style={{ display: "flex", alignItems: "center", gap: 6 }} onClick={e => e.stopPropagation()}>
             <input
               placeholder="Margem %"
               value={bulkMargin}
@@ -301,24 +301,24 @@ const ProductRow: React.FC<ProductRowProps> = ({ product, onToggle, onMarginChan
       <div className="product-metrics">
         <div className="metric-item">
           <label className="mobile-only">Custo</label>
-          <div style={{ fontSize: 11, color: T.text2 }}>{fmt(product.supplierCost)}</div>
+          <div style={{ fontSize: 10, color: T.text2 }}>{fmt(product.supplierCost)}</div>
         </div>
 
         <div className="metric-item">
-          <label className="mobile-only">Margem %</label>
+          <label className="mobile-only">Margem</label>
           <div style={{ display: "flex", alignItems: "center", gap: 4, justifyContent: "flex-end" }}>
             <input
               value={localMargin}
               onChange={e => setLocalMargin(e.target.value)}
               onBlur={handleMarginBlur}
-              style={{ ...FieldInput, width: 50, padding: "4px", fontSize: 11, textAlign: "right" }}
+              style={{ ...FieldInput, width: 45, padding: "2px 4px", fontSize: 10, textAlign: "right" }}
             />
           </div>
         </div>
 
         <div className="metric-item desktop-only">
-          <div style={{ fontSize: 11, color: T.brand }}>{fmt(product.calculatedPrice)}</div>
-          <div style={{ fontSize: 8, color: T.text3 }}>auto</div>
+          <div style={{ fontSize: 10, color: T.brand }}>{fmt(product.calculatedPrice)}</div>
+          <div style={{ fontSize: 7, color: T.text3 }}>auto</div>
         </div>
 
         <div className="metric-item">
@@ -328,19 +328,19 @@ const ProductRow: React.FC<ProductRowProps> = ({ product, onToggle, onMarginChan
             value={localPrice}
             onChange={e => setLocalPrice(e.target.value)}
             onBlur={handlePriceBlur}
-            style={{ ...FieldInput, width: 65, padding: "4px", fontSize: 11, textAlign: "right", color: localPrice ? T.brand : T.text3 }}
+            style={{ ...FieldInput, width: 55, padding: "2px 4px", fontSize: 10, textAlign: "right", color: localPrice ? T.brand : T.text3 }}
           />
         </div>
 
         <div className="metric-item final-price-col">
           <label className="mobile-only">Final</label>
-          <div style={{ fontSize: 13, color: T.text, fontFamily: T.fontD, fontWeight: 900 }}>
+          <div style={{ fontSize: 12, color: T.text, fontFamily: T.fontD, fontWeight: 900 }}>
             {fmt(product.finalPrice)}
           </div>
         </div>
 
         <div className="metric-save-indicator">
-          {isSaving && <div style={{ width: 6, height: 6, borderRadius: "50%", background: T.brand }} className="animate-ping" />}
+          {isSaving && <div style={{ width: 4, height: 4, borderRadius: "50%", background: T.brand }} className="animate-ping" />}
         </div>
       </div>
     </div>
@@ -445,8 +445,8 @@ export const AdminPrintCatalog: React.FC = () => {
   return (
     <div style={{ fontFamily: T.fontB }}>
       <style>{`
-        .product-row { display: grid; grid-template-columns: 32px 1fr 90px 90px 90px 110px 110px 80px 42px; align-items: center; gap: 8; padding: 10px 16px; border-bottom: 1px solid ${T.border}; opacity: 1; transition: all 0.2s; background: transparent; }
-        .product-header { display: grid; grid-template-columns: 32px 1fr 90px 90px 90px 110px 110px 80px 42px; gap: 8; padding: 6px 16px; background: rgba(255,255,255,0.02); border-bottom: 1px solid ${T.border}; }
+        .product-row { display: grid; grid-template-columns: 32px 1fr 90px 90px 90px 110px 110px 80px 42px; align-items: center; gap: 8px; padding: 10px 16px; border-bottom: 1px solid ${T.border}; opacity: 1; transition: all 0.2s; background: transparent; }
+        .product-header { display: grid; grid-template-columns: 32px 1fr 90px 90px 90px 110px 110px 80px 42px; gap: 8px; padding: 6px 16px; background: rgba(255,255,255,0.02); border-bottom: 1px solid ${T.border}; }
         .product-metrics { display: contents; }
         .metric-item { display: flex; flex-direction: column; text-align: right; }
         .product-info-main { display: flex; align-items: center; gap: 12px; }
@@ -455,69 +455,87 @@ export const AdminPrintCatalog: React.FC = () => {
           .desktop-only { display: none !important; }
           .mobile-hide { display: none !important; }
           .product-header { display: none !important; }
-          .product-row { grid-template-columns: 1fr; padding: 16px; gap: 16px; position: relative; border-bottom: 2px solid ${T.border}; }
-          .product-metrics { display: grid; grid-template-columns: repeat(2, 1fr); gap: 16px; border-top: 1px solid ${T.border}30; padding-top: 16px; }
-          .metric-item { text-align: left; align-items: flex-start; }
-          .mobile-only { display: block !important; font-size: 8px; color: ${T.text3}; text-transform: uppercase; margin-bottom: 4px; font-weight: 900; letter-spacing: 1px; }
-          .final-price-col { grid-column: span 2; text-align: right; align-items: flex-end; background: ${T.brand}08; padding: 8px; margin-top: 4px; }
+          
+          .product-row { grid-template-columns: 40px 1fr auto; padding: 8px 12px; gap: 8px; position: relative; border-bottom: 1px solid ${T.border}; align-items: flex-start; }
+          .product-info-main { grid-column: 1 / 3; align-items: flex-start; gap: 8px; }
+          
+          .product-metrics { 
+            grid-column: 1 / 4; 
+            display: flex; 
+            flex-wrap: wrap; 
+            gap: 8px; 
+            padding: 8px 0; 
+            border-top: 1px solid ${T.border}20;
+            justify-content: space-between;
+            align-items: center;
+          }
+          
+          .metric-item { 
+            flex: 1;
+            min-width: 60px;
+            text-align: left; 
+            align-items: flex-start; 
+            gap: 2px;
+          }
+          
+          .mobile-only { display: block !important; font-size: 7px; color: ${T.text3}; text-transform: uppercase; font-weight: 900; letter-spacing: 0.5px; opacity: 0.6; }
+          
+          .final-price-col { 
+            flex: 0 0 auto;
+            text-align: right; 
+            align-items: flex-end; 
+            background: ${T.brand}12; 
+            padding: 4px 10px; 
+            border: 1px solid ${T.brand}30;
+          }
+          
           .metric-save-indicator { position: absolute; top: 12px; right: 12px; }
+          
+          .category-header-actions {
+            flex-direction: column !important;
+            align-items: flex-end !important;
+            gap: 4px !important;
+          }
         }
         
-        .admin-header-bar { display: grid; grid-template-columns: auto 1fr auto; align-items: center; gap: 20px; margin-bottom: 32px; padding: 20px; background: ${T.bgCard}; border: 1px solid ${T.border}; }
+        .admin-header-bar { display: flex; flex-direction: column; gap: 10px; margin-bottom: 20px; padding: 12px; background: ${T.bgCard}; border: 1px solid ${T.border}; }
+        
         @media (max-width: 900px) {
-          .admin-header-bar { grid-template-columns: 1fr; gap: 20px; }
-          .header-stats { justify-content: space-between; border-bottom: 1px solid ${T.border}50; padding-bottom: 15px; }
-          .header-actions-group { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
-          .header-actions-group > * { width: 100%; }
+          .admin-header-bar { gap: 8px; padding: 10px; margin-bottom: 16px; }
         }
       `}</style>
       
       {isModalOpen && <NewProductModal onClose={() => setIsModalOpen(false)} onSave={handleCreate} />}
 
       <div className="admin-header-bar">
-        <div className="header-stats" style={{ display: "flex", gap: 32 }}>
-          <div><div style={{ fontSize: 24, fontFamily: T.fontD, fontWeight: 900, color: T.brand }}>{products.filter(p=>p.active).length}</div><div style={{ fontSize: 9, color: T.text3, textTransform: "uppercase", fontWeight: 800 }}>Ativos</div></div>
-          <div><div style={{ fontSize: 24, fontFamily: T.fontD, fontWeight: 900, color: T.text }}>{products.length}</div><div style={{ fontSize: 9, color: T.text3, textTransform: "uppercase", fontWeight: 800 }}>Total</div></div>
+        <div className="header-stats" style={{ display: "flex", gap: 20, justifyContent: "space-between", width: "100%" }}>
+          <div><div style={{ fontSize: 16, fontFamily: T.fontD, fontWeight: 900, color: T.brand, lineHeight: 1 }}>{products.filter(p=>p.active).length}</div><div style={{ fontSize: 8, color: T.text3, textTransform: "uppercase", fontWeight: 800 }}>Ativos</div></div>
+          <div><div style={{ fontSize: 16, fontFamily: T.fontD, fontWeight: 900, color: T.text, lineHeight: 1 }}>{products.length}</div><div style={{ fontSize: 8, color: T.text3, textTransform: "uppercase", fontWeight: 800 }}>Total</div></div>
+          <div className="desktop-only" style={{ flex: 1 }} />
         </div>
 
-        <div className="header-actions-group">
-          <button onClick={() => setIsModalOpen(true)} style={{ ...BtnPrimary, padding: "12px 16px", fontSize: 11 }}>
-            <Plus size={14} /> NOVO ITEM
+        <div className="header-actions-grid" style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(110px, 1fr))", gap: 6, width: "100%" }}>
+          <button onClick={() => setIsModalOpen(true)} style={{ ...BtnPrimary, padding: "10px 12px", fontSize: 10, width: "100%" }}>
+            <Plus size={12} /> NOVO ITEM
           </button>
 
-          <select value={filterCategory} onChange={e => setFilterCategory(e.target.value)} style={{ ...FieldInput, padding: "11px 16px", fontSize: 12 }}>
+          <select value={filterCategory} onChange={e => setFilterCategory(e.target.value)} style={{ ...FieldInput, padding: "8px 12px", fontSize: 11, width: "100%", height: "100%" }}>
             <option value="">Todas as categorias</option>
             {categories.map(c => <option key={c} value={c}>{CATEGORY_LABELS[c].label}</option>)}
           </select>
 
-          <button onClick={() => setShowInactive(!showInactive)} style={{ ...BtnSecondary, fontSize: 11 }}>
-            {showInactive ? <Eye size={13} /> : <EyeOff size={13} />} {showInactive ? "Inativos" : "Exibir"}
+          <button onClick={() => setShowInactive(!showInactive)} style={{ ...BtnSecondary, fontSize: 10, width: "100%", padding: "10px 12px" }}>
+            {showInactive ? <Eye size={12} /> : <EyeOff size={12} />} {showInactive ? "Inativos" : "Exibir"}
           </button>
-        </div>
 
-        <div className="header-actions-group">
-          <div style={{ position: "relative" }}>
-            <input 
-              type="file" 
-              id="import-file" 
-              accept=".json" 
-              onChange={handleImportFile} 
-              style={{ display: "none" }} 
-            />
-            <button 
-              onClick={() => document.getElementById("import-file")?.click()} 
-              style={{ ...BtnGhost, fontSize: 11, width: "100%", border: `1px solid ${T.brand}`, color: T.brand }} 
-              disabled={seeding}
-            >
-              <Upload size={13} /> {seeding ? "..." : "Importar"}
+          <div style={{ position: "relative", width: "100%" }}>
+            <input type="file" id="import-file" accept=".json" onChange={handleImportFile} style={{ display: "none" }} />
+            <button onClick={() => document.getElementById("import-file")?.click()} style={{ ...BtnGhost, fontSize: 10, width: "100%", height: "100%", border: `1px solid ${T.brand}`, color: T.brand }} disabled={seeding}>
+              <Upload size={12} /> {seeding ? "..." : "Importar"}
             </button>
           </div>
 
-          <button 
-            onClick={handleSeedCK}
-            style={{ ...BtnGhost, fontSize: 10, border: `1px solid ${T.border}`, background: "rgba(0,0,0,0.05)" }}
-            disabled={seeding}
-          >
+          <button onClick={handleSeedCK} style={{ ...BtnGhost, fontSize: 10, width: "100%", border: `1px solid ${T.border}`, background: "rgba(0,0,0,0.05)" }} disabled={seeding}>
             Reset CK
           </button>
         </div>
@@ -525,11 +543,11 @@ export const AdminPrintCatalog: React.FC = () => {
 
       {loading ? <div style={{ textAlign: "center", padding: 40, color: T.text3 }}>Carregando catálogo...</div> : (
         <div style={{ maxWidth: "100vw", overflowX: "hidden" }}>
-          <h1 style={{ fontFamily: T.fontD, fontWeight: 900, fontSize: "clamp(20px, 5vw, 24px)", color: T.text, marginBottom: 12, textTransform: "uppercase", letterSpacing: 2 }}>
+          <h1 style={{ fontFamily: T.fontD, fontWeight: 900, fontSize: "clamp(18px, 4vw, 22px)", color: T.text, marginBottom: 4, textTransform: "uppercase", letterSpacing: 1.5 }}>
             CATÁLOGO DE IMPRESSÃO
           </h1>
-          <div style={{ fontSize: 10, color: T.text3, marginBottom: 20, fontStyle: "italic" }}>
-            Gerenciamento global de produtos de impressão. Fornecedor padrão: CK Encadernadora.
+          <div style={{ fontSize: 9, color: T.text3, marginBottom: 12, fontStyle: "italic", opacity: 0.8 }}>
+            Gerenciamento global de produtos. Fornecedor: CK Encadernadora.
           </div>
           {categories.filter(cat => grouped[cat]?.length > 0).map(cat => (
             <CategoryGroup key={cat} category={cat} products={grouped[cat]} onToggle={handleToggle} onMarginChange={handleMarginChange} onPriceOverride={handlePriceOverride} onBulkMargin={handleBulkMargin} saving={saving} showInactive={showInactive} />

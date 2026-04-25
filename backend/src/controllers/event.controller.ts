@@ -97,7 +97,13 @@ export class EventController {
         paywall: {
           active: !hasAccess,
           message: hasAccess ? "Entrega liberada via links externos." : "Galeria protegida."
-        }
+        },
+        recentOrders: await prisma.order.findMany({
+          where: { eventId: event.id, status: { in: ["APPROVED", "APROVADO"] as any }, contributorName: { not: null } },
+          orderBy: { createdAt: "desc" },
+          take: 5,
+          select: { id: true, contributorName: true, valor: true, createdAt: true }
+        })
       });
     } catch (error) {
       console.error("Erro ao buscar evento:", error);
@@ -139,7 +145,7 @@ export class EventController {
           "priceEarly",
           true as "temFoto" -- Ativando badges por padrão para estética
         FROM events
-        WHERE active = true AND (
+        WHERE active = true AND "isPrivate" = false AND (
           REPLACE(LOWER("nomeNoivos"), '&', 'e') LIKE ${term} 
           OR REPLACE(LOWER(cartorio), '&', 'e') LIKE ${term}
         )
@@ -150,7 +156,7 @@ export class EventController {
       // 2. Busca o total para cálculo de páginas
       const countResult: Array<{ count: number }> = await prisma.$queryRaw`
         SELECT COUNT(*)::int as count FROM events
-        WHERE active = true AND (
+        WHERE active = true AND "isPrivate" = false AND (
           REPLACE(LOWER("nomeNoivos"), '&', 'e') LIKE ${term} 
           OR REPLACE(LOWER(cartorio), '&', 'e') LIKE ${term}
         )

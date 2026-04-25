@@ -221,14 +221,14 @@ export const AdminQuotes: React.FC = () => {
                     }
                   }
                 }}
-                className={`p-6 border transition-all ${selectedQuote?.id === quote.id ? 'border-brand-tactical bg-brand-tactical/5' : 'border-theme-border bg-theme-bg-muted hover:border-zinc-700'}`}
+                className={`p-3 md:p-5 border transition-all ${selectedQuote?.id === quote.id ? 'border-brand-tactical bg-brand-tactical/5' : 'border-theme-border bg-theme-bg-muted hover:border-zinc-700'}`}
                 style={{ cursor: "pointer", position: "relative" }}
               >
                 {quote.quoteStatus === "PENDING" && (
                   <div className="absolute top-0 left-0 w-1 h-full bg-brand-tactical" />
                 )}
                 
-                <div className="flex flex-col md:flex-row md:items-center justify-between gap-6">
+                <div className="flex flex-col md:flex-row md:items-center justify-between gap-3 md:gap-6">
                   <div className="space-y-3">
                     <div className="flex items-center gap-3">
                       <span className={`text-[8px] font-black uppercase tracking-widest border px-2 py-0.5 ${quote.quoteStatus === 'PENDING' ? 'border-brand-tactical text-brand-tactical' : 'border-theme-border text-theme-muted'}`}>

@@ -3,6 +3,7 @@ import { AuthRequest } from "../lib/auth";
 import prisma from "../lib/prisma";
 import { Prisma } from "@prisma/client";
 import { supabaseAdmin as supabase } from "../lib/supabase";
+import { PricingService } from "../services/pricing.service";
 
 // GET /api/profissional/events — eventos atribuídos ao profissional logado
 export async function getMeusEventos(req: AuthRequest, res: Response): Promise<void> {
@@ -249,5 +250,51 @@ export async function respondToEvent(req: AuthRequest, res: Response): Promise<v
   } catch (err) {
     console.error("respondToEvent:", err);
     res.status(500).json({ error: "Erro ao responder ao convite." });
+  }
+}
+
+// POST /api/profissional/events/:id/manual-sale — registra uma venda física (Cartão SD, etc)
+export async function registerManualSale(req: AuthRequest, res: Response): Promise<void> {
+  const { id } = req.params;
+  const { customerName, customerEmail, amount, manualType } = req.body;
+  const userId = req.user?.userId;
+  if (!userId) { res.status(401).json({ error: "Não autenticado." }); return; }
+
+  try {
+    const event = await prisma.event.findFirst({
+      where: {
+        id: String(id),
+        OR: [{ captacaoId: userId }, { edicaoId: userId }],
+      },
+    });
+    if (!event) { res.status(403).json({ error: "Acesso negado." }); return; }
+
+    // Calcula splits usando a inteligência centralizada
+    const { matriz, captacao, edicao, cartorio } = await PricingService.calculateSplits(Number(amount));
+
+    // Cria o pedido aprovado com a tag de manual
+    const order = await prisma.order.create({
+      data: {
+        eventId: event.id,
+        valor: Number(amount),
+        status: "APROVADO",
+        // @ts-ignore - Prisma types not updated yet due to Windows file lock
+        isManual: true,
+        // @ts-ignore
+        manualType: manualType || "SD_CARD",
+        buyerEmail: customerEmail || null,
+        contributorName: customerName || null,
+        splitMatriz: matriz,
+        splitCaptacao: captacao,
+        splitEdicao: edicao,
+        splitCartorio: cartorio,
+        hasPaid: true
+      }
+    });
+
+    res.json(order);
+  } catch (err) {
+    console.error("registerManualSale:", err);
+    res.status(500).json({ error: "Erro ao registrar venda física." });
   }
 }

@@ -213,3 +213,20 @@ export async function exportPayoutCSV(req: AuthRequest, res: Response): Promise<
     res.status(500).json({ error: "Erro ao exportar CSV." });
   }
 }
+
+// GET /api/payouts/me — retorna repasses do usuário logado (Parceiro/Profissional)
+export async function getMeusRepasses(req: AuthRequest, res: Response): Promise<void> {
+  const userId = req.user?.userId;
+  if (!userId) { res.status(401).json({ error: "Não autenticado." }); return; }
+
+  try {
+    const items = await prisma.payoutItem.findMany({
+      where: { recipientId: userId },
+      include: { payout: true },
+      orderBy: { payout: { weekStart: "desc" } }
+    });
+    res.json(items);
+  } catch {
+    res.status(500).json({ error: "Erro ao listar meus repasses." });
+  }
+}

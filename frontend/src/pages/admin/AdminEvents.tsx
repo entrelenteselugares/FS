@@ -2,7 +2,7 @@ import React, { useState, useEffect } from "react";
 import { API } from "../../lib/api";
 import { T } from "../../lib/theme";
 import { QRCodeSVG } from "qrcode.react";
-import { QrCode, Copy, Check, Download, X } from "lucide-react";
+import { QrCode, X } from "lucide-react";
 
 interface User {
   id: string;
@@ -27,6 +27,7 @@ interface Event {
   cartorioUser?: { nome: string; cartorio?: { razaoSocial: string } } | null;
   captacao?: { nome: string } | null;
   edicao?: { nome: string } | null;
+  isPrivate: boolean;
   _count: { pedidos: number };
 }
 
@@ -81,6 +82,9 @@ export const AdminEvents: React.FC = () => {
     lightroomUrl: string;
     driveUrl: string;
     previewPhotos: [string, string, string];
+    isPrivate: boolean;
+    isUnitSale: boolean;
+    priceUnit: number;
   }
 
   // Form State
@@ -95,7 +99,10 @@ export const AdminEvents: React.FC = () => {
     targetAmount: 0,
     lightroomUrl: "",
     driveUrl: "",
-    previewPhotos: ["", "", ""]
+    previewPhotos: ["", "", ""],
+    isPrivate: false,
+    isUnitSale: false,
+    priceUnit: 10,
   });
 
   const [activeTab, setActiveTab] = useState<'info' | 'equipe' | 'comercial' | 'entrega'>('info');
@@ -143,7 +150,10 @@ export const AdminEvents: React.FC = () => {
         targetAmount: 0,
         lightroomUrl: "",
         driveUrl: "",
-        previewPhotos: ["", "", ""]
+        previewPhotos: ["", "", ""],
+        isPrivate: false,
+        isUnitSale: false,
+        priceUnit: 10,
       });
       setCoverPreview(null);
     } catch {
@@ -181,7 +191,10 @@ export const AdminEvents: React.FC = () => {
         driveUrl: data.driveUrl || "",
         previewPhotos: (() => {
           try { const p = data.previewPhotos ? JSON.parse(data.previewPhotos) : []; return [p[0]||"", p[1]||"", p[2]||""] as [string,string,string]; } catch { return ["","",""] as [string,string,string]; }
-        })()
+        })(),
+        isPrivate: data.isPrivate || false,
+        isUnitSale: data.isUnitSale || false,
+        priceUnit: Number(data.priceUnit || 10)
       });
       setCoverPreview(data.coverPhotoUrl);
       setActiveTab('info');
@@ -252,7 +265,10 @@ export const AdminEvents: React.FC = () => {
               targetAmount: 0,
               lightroomUrl: "",
               driveUrl: "",
-              previewPhotos: ["", "", ""]
+              previewPhotos: ["", "", ""],
+              isPrivate: false,
+              isUnitSale: false,
+              priceUnit: 10,
             });
             setCoverPreview(null);
             setIsModalOpen(true);
@@ -274,12 +290,12 @@ export const AdminEvents: React.FC = () => {
         @media (max-width: 1024px) {
           .events-table { display: none; }
           .event-card-mobile { 
-            display: flex; flex-direction: column; gap: 16px; padding: 20px; 
-            background: ${T.bgCard}; border: 1px solid ${T.border}; margin-bottom: 12px;
+            display: flex; flex-direction: column; gap: 10px; padding: 12px; 
+            background: ${T.bgCard}; border: 1px solid ${T.border}; margin-bottom: 8px;
           }
           .event-card-header { display: flex; justify-content: space-between; align-items: flex-start; }
-          .event-card-stats { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; border-top: 1px solid ${T.border}44; padding-top: 12px; }
-          .event-card-actions { display: flex; gap: 8px; margin-top: 4px; }
+          .event-card-stats { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; border-top: 1px solid ${T.border}30; padding-top: 8px; }
+          .event-card-actions { display: flex; gap: 6px; margin-top: 2px; }
         }
       `}</style>
 
@@ -586,6 +602,36 @@ export const AdminEvents: React.FC = () => {
                               ))}
                             </div>
                           </div>
+
+                          <div className="space-y-4 pt-6 border-t border-theme-border">
+                            <label className="text-[9px] font-bold text-theme-muted/60 uppercase tracking-[0.4em]">Modelo Comercial Especial</label>
+                            <div className="grid grid-cols-1 gap-6">
+                              <label className="flex items-center gap-3 cursor-pointer group">
+                                <input 
+                                  type="checkbox"
+                                  checked={formData.isUnitSale}
+                                  onChange={e => setFormData({...formData, isUnitSale: e.target.checked})}
+                                  className="w-5 h-5 border-zinc-800 bg-transparent rounded-none checked:bg-brand-tactical focus:ring-0 appearance-none border transition-all"
+                                />
+                                <div>
+                                  <span className="text-[10px] text-white uppercase tracking-[0.3em] font-bold block">Modo Venda por Unidade</span>
+                                  <span className="text-[9px] text-zinc-500 uppercase tracking-widest mt-1 block">Ideal para parques e eventos abertos</span>
+                                </div>
+                              </label>
+
+                              {formData.isUnitSale && (
+                                <div className="animate-in fade-in slide-in-from-top-2 duration-300">
+                                  <label className="text-[9px] font-bold text-theme-muted/60 uppercase tracking-[0.4em]">Preço por Foto (R$)</label>
+                                  <input 
+                                    type="number"
+                                    className="w-full bg-theme-bg border border-theme-border p-4 text-[13px] text-theme-text focus:border-brand-tactical transition-colors outline-none font-bold mt-2"
+                                    value={formData.priceUnit}
+                                    onChange={e => setFormData({...formData, priceUnit: Number(e.target.value)})}
+                                  />
+                                </div>
+                              )}
+                            </div>
+                          </div>
                         </div>
 
                         <div className="space-y-8">
@@ -613,6 +659,23 @@ export const AdminEvents: React.FC = () => {
                                 />
                               </div>
                             )}
+
+                            <label className="flex items-center gap-3 cursor-pointer group pt-4 border-t border-brand-tactical/10">
+                              <input 
+                                type="checkbox"
+                                checked={formData.isPrivate}
+                                onChange={e => setFormData({...formData, isPrivate: e.target.checked})}
+                                className="w-5 h-5 border-zinc-800 bg-transparent rounded-none checked:bg-brand-tactical focus:ring-0 appearance-none border transition-all"
+                              />
+                              <div className="flex flex-col">
+                                <span className="text-[10px] text-zinc-300 uppercase tracking-[0.3em] font-bold">
+                                  MODO OCULTO (PRIVACIDADE)
+                                </span>
+                                <span className="text-[8px] text-zinc-500 uppercase font-medium mt-1">
+                                  O evento não aparecerá na vitrine pública da Home.
+                                </span>
+                              </div>
+                            </label>
                           </div>
                         </div>
                       </>
@@ -776,54 +839,74 @@ export const AdminEvents: React.FC = () => {
 
             <div className="bg-white p-6 rounded-none inline-block mb-10 shadow-2xl">
               <QRCodeSVG 
-                id="qr-code-svg-admin-rev"
-                value={`${window.location.origin}/e/${qrModalEvent.slug || qrModalEvent.id}`}
-                size={220}
+                value={`${window.location.origin}/e/${qrModalEvent.slug}`}
+                size={240}
                 level="H"
-                includeMargin={true}
+                includeMargin={false}
               />
             </div>
 
-            <div className="space-y-4">
-              <div className="grid grid-cols-2 gap-4">
-                <button 
-                  onClick={() => {
-                    const url = `${window.location.origin}/e/${qrModalEvent.slug || qrModalEvent.id}`;
-                    navigator.clipboard.writeText(url);
-                    setCopied(true);
-                    setTimeout(() => setCopied(false), 2000);
-                  }}
-                  className="flex items-center justify-center gap-2 py-4 border border-theme-border text-[9px] font-black uppercase tracking-[0.2em] hover:bg-white/5"
-                >
-                  {copied ? <Check size={14} /> : <Copy size={14} />}
-                  {copied ? "Copiado" : "Link"}
-                </button>
-                
-                <button 
-                  onClick={() => {
-                    const svg = document.getElementById("qr-code-svg-admin-rev");
-                    if (!svg) return;
-                    const svgData = new XMLSerializer().serializeToString(svg);
-                    const canvas = document.createElement("canvas");
-                    const ctx = canvas.getContext("2d");
-                    const img = new Image();
-                    img.onload = () => {
-                      canvas.height = img.height;
-                      canvas.width = img.width;
-                      ctx?.drawImage(img, 0, 0);
-                      const pngFile = canvas.toDataURL("image/png");
-                      const downloadLink = document.createElement("a");
-                      downloadLink.download = `QRCode-${qrModalEvent.title.replace(/\s+/g, '-').toLowerCase()}.png`;
-                      downloadLink.href = pngFile;
-                      downloadLink.click();
-                    };
-                    img.src = "data:image/svg+xml;base64," + btoa(svgData);
-                  }}
-                  className="flex items-center justify-center gap-2 py-4 bg-brand-primary text-black text-[9px] font-black uppercase tracking-[0.2em]"
-                >
-                  <Download size={14} /> PNG
-                </button>
-              </div>
+            <div className="space-y-3">
+              <button 
+                onClick={() => {
+                  const url = `${window.location.origin}/e/${qrModalEvent.slug}`;
+                  const printWindow = window.open("", "_blank");
+                  if (printWindow) {
+                    printWindow.document.write(`
+                      <html>
+                        <head>
+                          <title>Kit de Marketing - ${qrModalEvent.title}</title>
+                          <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;900&display=swap" rel="stylesheet">
+                          <style>
+                            body { font-family: 'Outfit', sans-serif; background: white; color: black; display: flex; flex-direction: column; align-items: center; justify-content: center; height: 100vh; margin: 0; text-align: center; padding: 40px; }
+                            .card { border: 15px solid #85B9AC; padding: 60px; max-width: 600px; position: relative; }
+                            .logo { font-weight: 900; font-size: 24px; color: #85B9AC; margin-bottom: 60px; letter-spacing: -1px; }
+                            .label { font-size: 14px; text-transform: uppercase; letter-spacing: 5px; color: #888; margin-bottom: 20px; font-weight: 700; }
+                            h1 { font-size: 42px; font-weight: 900; text-transform: uppercase; margin: 0 0 40px 0; letter-spacing: -2px; line-height: 1; }
+                            .qr-placeholder { background: white; padding: 20px; border: 1px solid #eee; display: inline-block; margin-bottom: 40px; }
+                            .footer-text { font-size: 10px; text-transform: uppercase; letter-spacing: 3px; color: #bbb; font-weight: 700; }
+                            @media print { .no-print { display: none; } }
+                            button { margin-top: 40px; padding: 15px 40px; background: #000; color: #fff; border: none; font-weight: 900; cursor: pointer; text-transform: uppercase; letter-spacing: 2px; font-size: 12px; }
+                          </style>
+                        </head>
+                        <body>
+                          <div class="card">
+                            <div class="logo">FOTO / SEGUNDO</div>
+                            <div class="label">Nossas fotos estão aqui</div>
+                            <h1>${qrModalEvent.title}</h1>
+                            <div class="qr-placeholder" id="qrcode"></div>
+                            <div class="footer-text">Escaneie para acessar a galeria</div>
+                          </div>
+                          <button class="no-print" onclick="window.print()">Imprimir Kit</button>
+                          <script src="https://cdn.jsdelivr.net/npm/qrcodejs@1.0.0/qrcode.min.js"></script>
+                          <script>
+                            new QRCode(document.getElementById("qrcode"), {
+                              text: "${url}",
+                              width: 250,
+                              height: 250
+                            });
+                          </script>
+                        </body>
+                      </html>
+                    `);
+                    printWindow.document.close();
+                  }
+                }}
+                className="w-full bg-brand-primary text-black py-4 text-[10px] font-black uppercase tracking-[0.2em] hover:brightness-110 transition-all"
+              >
+                Gerar Kit de Marketing (PDF)
+              </button>
+              
+              <button 
+                onClick={() => {
+                  navigator.clipboard.writeText(`${window.location.origin}/e/${qrModalEvent.slug}`);
+                  setCopied(true);
+                  setTimeout(() => setCopied(false), 2000);
+                }}
+                className="w-full bg-theme-bg-muted border border-theme-border text-theme-text py-4 text-[10px] font-black uppercase tracking-[0.2em] hover:bg-theme-border transition-all"
+              >
+                {copied ? "COPIADO!" : "COPIAR LINK DIRETO"}
+              </button>
             </div>
           </div>
         </div>

@@ -68,6 +68,9 @@ interface EventData {
   collectedAmount?: number;
   previewPhotos?: string[];
   isComingSoon?: boolean;
+  recentOrders?: { id: string; contributorName: string; valor: number; createdAt: string }[];
+  isUnitSale?: boolean;
+  priceUnit?: number;
 }
 
 interface AccessData {
@@ -380,11 +383,15 @@ export default function EventPage() {
             {step === "paywall" && (
               <div style={{ display: "flex", flexDirection: "column", gap: 24, animation: "fadeUp 0.3s ease" }}>
                 <div>
-                  <p style={{ fontSize: 9, letterSpacing: 3, color: T.brand, textTransform: "uppercase", margin: "0 0 8px", fontWeight: 700 }}>Exclusive Collection</p>
-                  <p style={{ fontFamily: T.fontD, fontWeight: 900, fontSize: 40, color: T.text, margin: "0 0 2px", lineHeight: 1 }}>
-                    R$ {Number(event.priceBase).toFixed(2).replace(".", ",")}
+                  <p style={{ fontSize: 9, letterSpacing: 3, color: T.brand, textTransform: "uppercase", margin: "0 0 8px", fontWeight: 700 }}>
+                    {event.isUnitSale ? "Clique Único / Foto Avulsa" : "Exclusive Collection"}
                   </p>
-                  <p style={{ fontSize: 11, color: T.text3, margin: 0 }}>Acesso vitalício · Download imediato</p>
+                  <p style={{ fontFamily: T.fontD, fontWeight: 900, fontSize: 40, color: T.text, margin: "0 0 2px", lineHeight: 1 }}>
+                    R$ {Number(event.isUnitSale ? event.priceUnit : event.priceBase).toFixed(2).replace(".", ",")}
+                  </p>
+                  <p style={{ fontSize: 11, color: T.text3, margin: 0 }}>
+                    {event.isUnitSale ? "Download do arquivo original" : "Acesso vitalício · Download imediato"}
+                  </p>
                 </div>
 
                 <div style={{ display: "flex", flexDirection: "column", gap: 10, paddingTop: 16, borderTop: `1px solid ${T.border}` }}>
@@ -396,7 +403,7 @@ export default function EventPage() {
                 </div>
 
                 <button onClick={handleUnlockClick} style={{ ...BtnPrimary, width: "100%", justifyContent: "center" }}>
-                  Desbloquear Arquivos
+                  {event.isUnitSale ? "Adquirir este Clique" : "Desbloquear Arquivos"}
                 </button>
                 <p style={{ fontSize: 9, color: T.text3, textAlign: "center", margin: 0 }}>Secure Payment · SSL · Instant Access</p>
               </div>
@@ -410,8 +417,8 @@ export default function EventPage() {
                 </div>
 
                 <div style={{ background: T.bgCard, border: `1px solid ${T.border}`, padding: 14, marginBottom: 4 }}>
-                  <div style={{ fontSize: 10, color: T.text2 }}>{event.nomeNoivos}</div>
-                  <div style={{ fontSize: 18, fontWeight: 700, color: T.text }}>R$ {Number(event.priceBase).toFixed(2)}</div>
+                  <div style={{ fontSize: 10, color: T.text2 }}>{event.nomeNoivos} {event.isUnitSale ? "(Foto Avulsa)" : ""}</div>
+                  <div style={{ fontSize: 18, fontWeight: 700, color: T.text }}>R$ {Number(event.isUnitSale ? event.priceUnit : event.priceBase).toFixed(2)}</div>
                 </div>
 
                 {(["number", "name"] as const).map(k => (
@@ -444,7 +451,7 @@ export default function EventPage() {
                   </button>
                 ) : (
                   <button onClick={handlePay} style={{ ...BtnPrimary, width: "100%", justifyContent: "center" }}>
-                    Pagar R$ {Number(event.priceBase).toFixed(2).replace(".", ",")}
+                    Pagar R$ {Number(event.isUnitSale ? event.priceUnit : event.priceBase).toFixed(2).replace(".", ",")}
                   </button>
                 )}
                 <p style={{ fontSize: 9, color: T.text3, textAlign: "center", margin: 0 }}>SSL · Dados não armazenados</p>
@@ -492,6 +499,15 @@ export default function EventPage() {
                       {access.lightroomUrl && <a href={access.lightroomUrl} target="_blank" rel="noreferrer" style={{ ...BtnPrimary, textDecoration: "none", justifyContent: "center" }}>Álbum de Fotos</a>}
                       {access.driveUrl && <a href={access.driveUrl} target="_blank" rel="noreferrer" style={{ ...BtnSecondary, color: T.text, borderColor: T.brand, textDecoration: "none", justifyContent: "center" }}>Vídeos</a>}
                       
+                      <a 
+                        href={`https://wa.me/5519997843817?text=Gostaria%20de%20encomendar%20um%20%C3%A1lbum%20impresso%20do%20evento%3A%20${encodeURIComponent(event.nomeNoivos)}`} 
+                        target="_blank" 
+                        rel="noreferrer" 
+                        style={{ ...BtnSecondary, color: T.brand, borderColor: T.brand, textDecoration: "none", justifyContent: "center", marginTop: 8, fontWeight: 900, borderStyle: 'dashed' }}
+                      >
+                        ETERNIZE NO PAPEL: ÁLBUM IMPRESSO
+                      </a>
+
                       <div style={{ marginTop: 8, paddingTop: 16, borderTop: `1px solid ${T.border}` }}>
                         <button onClick={handleShare} style={{ ...BtnSecondary, width: "100%", justifyContent: "center", border: "none", color: T.text3, fontSize: 11, letterSpacing: 1 }}>
                           {sharing ? "LINK COPIADO!" : "COMPARTILHAR ÁLBUM"}
@@ -500,6 +516,28 @@ export default function EventPage() {
                     </div>
                   </>
                 )}
+              </div>
+            )}
+
+            {event.recentOrders && event.recentOrders.length > 0 && (
+              <div style={{ marginTop: 32, paddingTop: 24, borderTop: `1px solid ${T.border}`, animation: "fadeUp 0.4s ease" }}>
+                <p style={{ fontSize: 9, letterSpacing: 2, color: T.brand, textTransform: "uppercase", margin: "0 0 16px", fontWeight: 700 }}>Mural de Contribuições</p>
+                <div style={{ display: "flex", flexDirection: "column", gap: 8 }}>
+                  {event.recentOrders.map((ord: { id: string; contributorName: string; valor: number }) => (
+                    <div key={ord.id} style={{ display: "flex", alignItems: "center", gap: 10, background: `${T.brand}08`, padding: "10px 14px", border: `1px solid ${T.border}` }}>
+                      <div style={{ width: 6, height: 6, borderRadius: "50%", background: T.brand }}></div>
+                      <div style={{ flex: 1 }}>
+                        <p style={{ fontSize: 11, color: T.text, margin: 0, fontWeight: 700 }}>
+                          {ord.contributorName.split(' ')[0]} presenteou os noivos
+                        </p>
+                        <p style={{ fontSize: 9, color: T.text3, margin: 0, textTransform: 'uppercase' }}>há pouco tempo</p>
+                      </div>
+                      <div style={{ fontWeight: 900, color: T.brand, fontSize: 12 }}>
+                        R$ {Number(ord.valor).toFixed(0)}
+                      </div>
+                    </div>
+                  ))}
+                </div>
               </div>
             )}
 

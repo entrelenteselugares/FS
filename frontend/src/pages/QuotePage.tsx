@@ -691,7 +691,7 @@ export const QuotePage = () => {
         )}
 
         {step === 3 && (
-          <div className="mobile-padding" style={{ background: THEME.bgCard, border: `1px solid ${THEME.border}`, padding: 40 }}>
+          <div className="mobile-padding" style={{ background: THEME.bgCard, border: `1px solid ${THEME.border}`, padding: "clamp(20px, 5vw, 40px)" }}>
              <button onClick={() => setStep(2)} style={{ color: THEME.text2, fontSize: 10, fontWeight: 800, marginBottom: 30, background: "none", border: "none", cursor: "pointer" }}>&larr; VOLTAR PARA CONFIGURAÇÃO</button>
              
              <form onSubmit={handleSubmit} style={{ display: "flex", flexDirection: "column", gap: 30 }}>
@@ -744,12 +744,20 @@ export const QuotePage = () => {
             <p style={{ color: THEME.text2, fontSize: 13, maxWidth: 400, margin: "0 auto 40px", lineHeight: 1.7, fontWeight: 600, textTransform: 'uppercase', letterSpacing: 1 }}>
               Recebemos seu pedido. Nossa equipe técnica analisará o briefing e entrará em contato em breve.
             </p>
-            <button 
-              onClick={() => navigate("/")}
-              style={{ border: `1px solid ${THEME.border}`, padding: "15px 40px", fontSize: 12, fontWeight: 800, textTransform: "uppercase", background: "none", color: THEME.text, cursor: "pointer" }}
-            >
-              VOLTAR PARA O INÍCIO
-            </button>
+            <div style={{ display: "flex", flexDirection: "column", gap: 12, alignItems: "center" }}>
+              <button 
+                onClick={() => window.open('https://wa.me/5519997843817?text=Gostaria%20de%20saber%20mais%20sobre%20os%20albuns%20impressos%20Foto%20Segundo', '_blank')}
+                style={{ background: THEME.accent, color: "black", padding: "18px 50px", fontSize: 13, fontWeight: 900, textTransform: "uppercase", border: "none", cursor: "pointer", letterSpacing: 2, width: '100%' }}
+              >
+                ETERNIZE NO PAPEL: ENCOMENDE SEU ÁLBUM
+              </button>
+              <button 
+                onClick={() => navigate("/")}
+                style={{ border: `1px solid ${THEME.border}`, padding: "15px 40px", fontSize: 11, fontWeight: 800, textTransform: "uppercase", background: "none", color: THEME.text2, cursor: "pointer", width: '100%' }}
+              >
+                VOLTAR PARA O INÍCIO
+              </button>
+            </div>
           </div>
         )}
 

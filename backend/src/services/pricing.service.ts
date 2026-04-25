@@ -22,6 +22,11 @@ export class PricingService {
     const eventDate = new Date(event.dataEvento);
     eventDate.setHours(0, 0, 0, 0);
 
+    // Se for Venda por Unidade (Foto Avulsa / Clique)
+    if ((event as any).isUnitSale) {
+      return Number((event as any).priceUnit ?? 10);
+    }
+
     // Se for Compra Coletiva (Crowdfund), o valor é o enviado pelo usuário (cota)
     if (event.isCrowdfund && contributionAmount) {
       return Number(contributionAmount);

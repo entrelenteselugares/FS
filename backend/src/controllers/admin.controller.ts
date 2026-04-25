@@ -255,6 +255,12 @@ export async function adminCreateEvent(req: AuthRequest, res: Response): Promise
         eventHours: eventHours ? Number(eventHours) : 2,
         isCrowdfund: isCrowdfund ?? false,
         targetAmount: targetAmount ? Number(targetAmount) : null,
+        // @ts-ignore
+        isPrivate: req.body.isPrivate ?? false,
+        // @ts-ignore
+        isUnitSale: req.body.isUnitSale ?? false,
+        // @ts-ignore
+        priceUnit: req.body.priceUnit ? Number(req.body.priceUnit) : 10,
       },
       include: {
         captacao: { select: { nome: true } },
@@ -302,6 +308,9 @@ export async function adminUpdateEvent(req: AuthRequest, res: Response): Promise
   if (req.body.eventHours !== undefined) data.eventHours = Number(req.body.eventHours);
   if (req.body.isCrowdfund !== undefined) data.isCrowdfund = req.body.isCrowdfund;
   if (req.body.targetAmount !== undefined) data.targetAmount = req.body.targetAmount ? Number(req.body.targetAmount) : null;
+  if (req.body.isPrivate !== undefined) (data as any).isPrivate = req.body.isPrivate;
+  if (req.body.isUnitSale !== undefined) (data as any).isUnitSale = req.body.isUnitSale;
+  if (req.body.priceUnit !== undefined) (data as any).priceUnit = Number(req.body.priceUnit);
 
   try {
     // 1. Busca estado atual para saber se os links estão sendo adicionados agora
@@ -886,6 +895,10 @@ export async function adminCreateManualSale(req: AuthRequest, res: Response): Pr
         status: "APROVADO",
         paymentId: `MANUAL-${Date.now()}`,
         accessType: "TOTAL",
+        // @ts-ignore
+        isManual: true,
+        // @ts-ignore
+        manualType: "ADMIN_DIRECT",
       }
     });
 
