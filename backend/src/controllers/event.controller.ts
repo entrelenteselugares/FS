@@ -103,7 +103,10 @@ export class EventController {
           orderBy: { createdAt: "desc" },
           take: 5,
           select: { id: true, contributorName: true, valor: true, createdAt: true }
-        })
+        }),
+        // Configurações de Venda por Unidade
+        isUnitSale: (event as any).isUnitSale,
+        priceUnit: (event as any).priceUnit
       });
     } catch (error) {
       console.error("Erro ao buscar evento:", error);
