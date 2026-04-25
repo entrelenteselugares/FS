@@ -88,7 +88,7 @@ function DateTimePicker({ value, onChange }: { value: string; onChange: (v: stri
         <div
           className="fs-input"
           style={{
-            width: "100%", padding: "15px 15px 15px 48px", fontSize: 13,
+            width: "100%", paddingLeft: 48, fontSize: 13,
             userSelect: "none", minHeight: 52, display: "flex", alignItems: "center",
             color: displayValue ? THEME.text : "#555",
           }}
@@ -407,7 +407,7 @@ export const QuotePage = () => {
       padding: "20px clamp(10px, 4vw, 20px)" 
     }}>
       <style>{`
-        .fs-input { background: var(--theme-bg-muted) !important; border: 1px solid var(--theme-border) !important; color: var(--theme-text) !important; border-radius: 0 !important; box-sizing: border-box; font-family: 'Outfit', sans-serif !important; padding: 12px 15px !important; }
+        .fs-input { background: var(--theme-bg-muted) !important; border: 1px solid var(--theme-border) !important; color: var(--theme-text) !important; border-radius: 0 !important; box-sizing: border-box; font-family: 'Outfit', sans-serif !important; padding: 12px 15px; }
         .fs-input:focus { border-color: var(--brand-primary) !important; outline: none !important; }
         
         @media (max-width: 768px) {
@@ -623,7 +623,7 @@ export const QuotePage = () => {
                          setAttendees(val);
                       }}
                       className="fs-input"
-                      style={{ width: "100%", padding: "12px 12px 12px 42px" }}
+                      style={{ width: "100%", paddingLeft: 48 }}
                     />
                   </div>
                 </div>

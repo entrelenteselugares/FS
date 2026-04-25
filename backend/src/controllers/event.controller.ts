@@ -119,7 +119,16 @@ export class EventController {
       const term = query ? `%${query.toLowerCase().replace(/&/g, "e")}%` : "%";
 
       // 1. Busca os eventos com SQL Nativo para máxima estabilidade (contornando Case-Sensitivity)
-      const events: any[] = await prisma.$queryRaw`
+      const events: Array<{
+        id: string;
+        nomeNoivos: string;
+        dataEvento: Date;
+        cartorio: string | null;
+        coverPhotoUrl: string | null;
+        priceBase: number;
+        priceEarly: number;
+        temFoto: boolean;
+      }> = await prisma.$queryRaw`
         SELECT 
           id, 
           "nomeNoivos", 
@@ -139,7 +148,7 @@ export class EventController {
       `;
 
       // 2. Busca o total para cálculo de páginas
-      const countResult: any[] = await prisma.$queryRaw`
+      const countResult: Array<{ count: number }> = await prisma.$queryRaw`
         SELECT COUNT(*)::int as count FROM events
         WHERE active = true AND (
           REPLACE(LOWER("nomeNoivos"), '&', 'e') LIKE ${term} 
@@ -158,7 +167,7 @@ export class EventController {
       });
     } catch (error) {
       console.error("Erro ao listar eventos públicos:", error);
-      return res.status(500).json({ error: "Erro ao carregar vitrine", details: (error as any).message });
+      return res.status(500).json({ error: "Erro ao carregar vitrine", details: error instanceof Error ? error.message : String(error) });
     }
   }
 
@@ -218,7 +227,11 @@ export class EventController {
       // ── LOGICA DE CONVOCAÇÃO TÁTICA (PROXIMIDADE) ──
       // Se for ponto fixo, buscamos os profissionais titulares (FIXO)
       let captacaoId: string | null = null;
-      let fixoProfessionals: any[] = [];
+      let fixoProfessionals: Array<{
+        profissional: {
+          user: { id: string; email: string; nome: string; };
+        };
+      }> = [];
 
       if (locationType === "PARTNER" && selectedPartnerId) {
         const cartorio = await prisma.cartorio.findUnique({

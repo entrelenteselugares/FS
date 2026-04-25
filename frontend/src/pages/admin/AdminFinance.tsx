@@ -143,7 +143,7 @@ export const AdminFinance: React.FC = () => {
                     <div style={{ fontSize: 16, fontWeight: 900, color: T.text, letterSpacing: 0.5 }}>
                       {order.splitMatriz !== undefined && order.splitMatriz !== null 
                         ? order.splitMatriz.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' })
-                        : calculateAmount(order.amount, 50) // Fallback 50%
+                        : calculateAmount(order.amount, 40) // Fallback 40% (Matriz)
                       }
                     </div>
                   </div>

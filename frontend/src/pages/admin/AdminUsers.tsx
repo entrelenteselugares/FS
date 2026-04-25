@@ -203,12 +203,12 @@ export const AdminUsers: React.FC = () => {
       {/* MEMBER MODAL */}
       {isModalOpen && (
         <div className="fixed inset-0 z-[110] flex items-center justify-center p-6 animate-in fade-in duration-300">
-           <div className="absolute inset-0 bg-black/95 backdrop-blur-sm" onClick={() => setIsModalOpen(false)} />
-           <div className="relative bg-zinc-950 border border-brand-tactical/30 w-full max-w-xl p-10 space-y-10 overflow-y-auto max-h-[90vh]">
+           <div className="absolute inset-0" style={{ background: T.overlay, backdropFilter: "blur(4px)" }} onClick={() => setIsModalOpen(false)} />
+           <div className="relative border border-brand-tactical/30 w-full max-w-xl p-10 space-y-10 overflow-y-auto max-h-[90vh]" style={{ background: T.bgCard }}>
               <div className="flex justify-between items-start">
                  <div className="space-y-2">
                     <span className="text-[10px] font-black text-brand-tactical uppercase tracking-[0.4em]">Cadastro Operacional</span>
-                    <h3 className="text-2xl font-heading text-white uppercase tracking-tighter">{editingUser ? 'Ajustar Membro' : 'Novo Membro'}</h3>
+                    <h3 className="text-2xl font-heading uppercase tracking-tighter" style={{ color: T.text }}>{editingUser ? 'Ajustar Membro' : 'Novo Membro'}</h3>
                  </div>
                  <button onClick={() => setIsModalOpen(false)} className="text-zinc-600 hover:text-white transition-colors"><X size={20} /></button>
               </div>
@@ -292,15 +292,15 @@ export const AdminUsers: React.FC = () => {
       {/* CONFIRM DELETE MODAL */}
       {confirmDelete && (
         <div className="fixed inset-0 z-[120] flex items-center justify-center p-6 animate-in fade-in duration-300">
-           <div className="absolute inset-0 bg-black/95 backdrop-blur-sm" onClick={() => setConfirmDelete(null)} />
-           <div className="relative bg-zinc-950 border border-red-900/30 w-full max-w-sm p-8 space-y-8">
+           <div className="absolute inset-0" style={{ background: T.overlay, backdropFilter: "blur(4px)" }} onClick={() => setConfirmDelete(null)} />
+           <div className="relative border border-red-900/30 w-full max-w-sm p-8 space-y-8" style={{ background: T.bgCard }}>
               <div className="space-y-2">
                  <span className="text-[10px] font-black text-red-500 uppercase tracking-[0.4em]">Protocolo de Exclusão</span>
-                 <h3 className="text-xl font-heading text-white uppercase tracking-tighter">Banir Membro?</h3>
+                 <h3 className="text-xl font-heading uppercase tracking-tighter" style={{ color: T.text }}>Banir Membro?</h3>
               </div>
               
-              <p className="text-[11px] text-zinc-500 uppercase tracking-widest leading-relaxed">
-                ESTA AÇÃO IRÁ REVOGAR O ACESSO DE <span className="text-white font-bold">{confirmDelete.nome}</span> IMEDIATAMENTE.
+              <p className="text-[11px] uppercase tracking-widest leading-relaxed" style={{ color: T.text3 }}>
+                ESTA AÇÃO IRÁ REVOGAR O ACESSO DE <span style={{ color: T.text, fontWeight: "bold" }}>{confirmDelete.nome}</span> IMEDIATAMENTE.
               </p>
 
               <div className="grid grid-cols-2 gap-4">

@@ -54,7 +54,7 @@ Este relatório consolida a análise completa do sistema realizada em 23/04/2026
 ## 📋 Resumo de Ações Futuras (Backlog Técnico)
 
 1. **Normalização de Banco**: Rodar um script para converter todos os status `"APPROVED"` para `"APROVADO"`.
-2. **Hardening de Tipos**: Criar interfaces TypeScript para os objetos de resposta do Mercado Pago e substituir os `any`.
+2. ~~**Hardening de Tipos**~~: ✅ **CONCLUÍDO** — Backend 100% livre de `any`. Todos os controllers tipados com `Prisma.EventUncheckedUpdateInput`, `Role`, tipos inline para `$queryRaw` e `catch (err)` padrão `unknown`.
 3. **Prevenção de IDOR**: Adicionar verificação de `ownerId` nas rotas de atualização de links do profissional.
 
 ---

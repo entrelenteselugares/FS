@@ -207,7 +207,7 @@ export const RegisterPage: React.FC = () => {
                   required
                   value={formData.nome}
                   onChange={(e) => setFormData({ ...formData, nome: e.target.value })}
-                  className="w-full bg-transparent border-b border-theme-border py-3 pl-8 text-xs text-theme-text placeholder:text-theme-muted/40 focus:outline-none focus:border-brand-tactical transition-all"
+                  className="w-full bg-transparent border-b border-theme-border py-3 pl-10 text-xs text-theme-text placeholder:text-theme-muted/40 focus:outline-none focus:border-brand-tactical transition-all"
                   placeholder="EX: JOÃO DA SILVA"
                   autoComplete="name"
                 />
@@ -223,7 +223,7 @@ export const RegisterPage: React.FC = () => {
                   required
                   value={formData.whatsapp}
                   onChange={(e) => setFormData({ ...formData, whatsapp: e.target.value })}
-                  className="w-full bg-transparent border-b border-theme-border py-3 pl-8 text-xs text-theme-text placeholder:text-theme-muted/40 focus:outline-none focus:border-brand-tactical transition-all"
+                  className="w-full bg-transparent border-b border-theme-border py-3 pl-10 text-xs text-theme-text placeholder:text-theme-muted/40 focus:outline-none focus:border-brand-tactical transition-all"
                   placeholder="(00) 00000-0000"
                 />
               </div>
@@ -238,7 +238,7 @@ export const RegisterPage: React.FC = () => {
                   required
                   value={formData.email}
                   onChange={(e) => setFormData({ ...formData, email: e.target.value })}
-                  className="w-full bg-transparent border-b border-theme-border py-3 pl-8 text-xs text-theme-text placeholder:text-theme-muted/40 focus:outline-none focus:border-brand-tactical transition-all"
+                  className="w-full bg-transparent border-b border-theme-border py-3 pl-10 text-xs text-theme-text placeholder:text-theme-muted/40 focus:outline-none focus:border-brand-tactical transition-all"
                   placeholder="EMAIL@DOMINIO.COM"
                   autoComplete="email"
                 />
@@ -398,7 +398,7 @@ export const RegisterPage: React.FC = () => {
                   required
                   value={formData.senha}
                   onChange={(e) => setFormData({ ...formData, senha: e.target.value })}
-                  className="w-full bg-transparent border-b border-theme-border py-3 pl-8 pr-10 text-xs text-theme-text placeholder:text-theme-muted/40 focus:outline-none focus:border-brand-tactical transition-all"
+                  className="w-full bg-transparent border-b border-theme-border py-3 pl-10 pr-10 text-xs text-theme-text placeholder:text-theme-muted/40 focus:outline-none focus:border-brand-tactical transition-all"
                   placeholder="••••••••"
                   autoComplete="new-password"
                 />

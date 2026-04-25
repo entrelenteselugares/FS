@@ -1,7 +1,7 @@
 import { Response } from "express";
 import { AuthRequest } from "../lib/auth";
 import prisma from "../lib/prisma";
-import { Prisma } from "@prisma/client";
+import { Prisma, Role } from "@prisma/client";
 import { slugify } from "../lib/utils";
 import bcrypt from "bcryptjs";
 import { supabaseAdmin as supabase } from "../lib/supabase";
@@ -131,11 +131,11 @@ export async function getDashboardStats(req: AuthRequest, res: Response): Promis
         lightroomUrl: e.lightroomUrl
       })),
     });
-  } catch (err: any) {
+  } catch (err) {
     console.error("getDashboardStats Error:", err);
     res.status(500).json({ 
       error: "Erro ao carregar dashboard.", 
-      details: err.message
+      details: err instanceof Error ? err.message : String(err)
     });
   }
 }
@@ -265,8 +265,8 @@ export async function adminCreateEvent(req: AuthRequest, res: Response): Promise
     await audit(req, "EVENT_CREATED", "Event", event.id, null, event);
 
     res.status(201).json(event);
-    } catch (err: any) {
-    if (err.code === "P2002") {
+  } catch (err) {
+    if (err instanceof Error && (err as NodeJS.ErrnoException & { code?: string }).code === "P2002") {
       res.status(409).json({ error: "Slug duplicado. Tente um título diferente." });
       return;
     }
@@ -277,7 +277,7 @@ export async function adminCreateEvent(req: AuthRequest, res: Response): Promise
 
 export async function adminUpdateEvent(req: AuthRequest, res: Response): Promise<void> {
   const { id } = req.params;
-  const data: any = {};
+  const data: Prisma.EventUncheckedUpdateInput = {};
   
   // Mapeamento de campos do body para o schema v4.0
   if (req.body.title) data.nomeNoivos = req.body.title;
@@ -358,8 +358,8 @@ export async function adminUpdateEvent(req: AuthRequest, res: Response): Promise
       date: event.dataEvento, 
       _count: { orders: event._count?.pedidos || 0 } 
     });
-  } catch (err: any) {
-    if (err.code === "P2025") {
+  } catch (err) {
+    if (err instanceof Error && (err as NodeJS.ErrnoException & { code?: string }).code === "P2025") {
       res.status(404).json({ error: "Evento não encontrado." });
       return;
     }
@@ -389,7 +389,7 @@ export async function adminListUsers(req: AuthRequest, res: Response): Promise<v
   const { role, q } = req.query;
   try {
     const where: Prisma.UserWhereInput = {};
-    if (role) where.role = String(role) as any;
+    if (role) where.role = String(role) as Role;
     if (q) {
       const searchString = String(q);
       where.OR = [
@@ -892,9 +892,9 @@ export async function adminCreateManualSale(req: AuthRequest, res: Response): Pr
     await audit(req, "ADMIN_MANUAL_SALE", "Order", order.id, null, { eventId, customerEmail, amount });
 
     res.json({ message: "Venda registrada com sucesso!", orderId: order.id, userEmail: user.email });
-  } catch (err: any) {
+  } catch (err) {
     console.error("adminCreateManualSale Error:", err);
-    res.status(500).json({ error: "Erro ao registrar venda manual.", details: err.message });
+    res.status(500).json({ error: "Erro ao registrar venda manual.", details: err instanceof Error ? err.message : String(err) });
   }
 }
 

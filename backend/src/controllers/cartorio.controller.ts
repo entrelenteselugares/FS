@@ -1,6 +1,7 @@
 import { Request, Response } from "express";
 import { AuthRequest } from "../lib/auth";
 import prisma from "../lib/prisma";
+import { Prisma } from "@prisma/client";
 
 export class CartorioController {
   /**
@@ -27,7 +28,7 @@ export class CartorioController {
 
       // 2. Definir o filtro de unidade
       // Se for ADMIN, pode filtrar por nome. Se for CARTORIO/UNIDADE, filtra por ele mesmo.
-      const where: any = { active: true };
+      const where: Prisma.EventWhereInput = { active: true };
       
       if (!isAdmin) {
         where.cartorioUserId = user.userId;
@@ -133,7 +134,7 @@ export class CartorioController {
         repasseEstimado: estimativaRepasse,
         eventosMes,
         razaoSocial: cartorioData?.razaoSocial || "Sua Unidade",
-        pixKey: (cartorioData as any)?.user?.pixKey || "",
+        pixKey: (cartorioData as { user?: { pixKey?: string | null } } | null)?.user?.pixKey || "",
         cartorio: cartorioData,
         events: eventosProcessados 
       });
@@ -227,7 +228,7 @@ export class CartorioController {
         take: 100,
       });
 
-      const result = pedidos.map((p: any) => ({
+      const result = pedidos.map((p) => ({
         id: p.id,
         status: p.status,
         amount: Number(p.valor),

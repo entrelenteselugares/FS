@@ -47,6 +47,7 @@ import {
   getMyPoints,
   redeemPrint,
 } from "../controllers/gamification.controller";
+import * as AdminPrintCatalog from "../controllers/print_catalog.controller";
 import {
   listSuppliers,
   createSupplier,
@@ -68,6 +69,12 @@ import {
 import { getTeam, saveTeam } from "../controllers/team.controller";
 import { adminGetEventById } from "../controllers/admin_event_detail.controller";
 import { runExpirationJob } from "../jobs/expiration.job";
+import {
+  listPrintProducts,
+  updatePrintProduct,
+  bulkUpdateMargin,
+  seedCkCatalog,
+} from "../controllers/print_catalog.controller";
 
 const router = Router();
 
@@ -211,5 +218,13 @@ router.patch("/admin/redemptions/:id/status",requireAuth, requireRole("ADMIN"), 
 router.get("/admin/contests",       requireAuth, requireRole("ADMIN"), adminListContests);
 router.post("/admin/contests",      requireAuth, requireRole("ADMIN"), adminCreateContest);
 router.patch("/admin/contests/:id", requireAuth, requireRole("ADMIN"), adminUpdateContest);
+
+// ── Admin: Catálogo de Impressão (CK) ──────────────────────────────────────────
+router.get("/admin/print-catalog", requireAuth, requireRole("ADMIN"), AdminPrintCatalog.listPrintProducts);
+router.post("/admin/print-catalog", requireAuth, requireRole("ADMIN"), AdminPrintCatalog.createPrintProduct);
+router.post("/admin/print-catalog/import", requireAuth, requireRole("ADMIN"), AdminPrintCatalog.importPrintProducts);
+router.patch("/admin/print-catalog/bulk-margin", requireAuth, requireRole("ADMIN"), AdminPrintCatalog.bulkUpdateMargin);
+router.patch("/admin/print-catalog/:id", requireAuth, requireRole("ADMIN"), AdminPrintCatalog.updatePrintProduct);
+router.post("/admin/print-catalog/seed", requireAuth, requireRole("ADMIN"), AdminPrintCatalog.seedCkCatalog);
 
 export default router;

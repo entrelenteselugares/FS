@@ -287,7 +287,7 @@ export class AuthController {
       if (error) throw error;
 
       // Log de Auditoria
-      await audit(req, "PASSWORD_FORGOT_REQUEST", "User", null, null, { email: cleanEmail });
+      await audit(req, "PASSWORD_FORGOT_REQUEST", "User", undefined, undefined, { email: cleanEmail });
 
       return res.json({ ok: true, message: "E-mail de recuperação enviado." });
     } catch (error: any) {

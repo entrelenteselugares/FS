@@ -13,6 +13,7 @@ const AdminContests = React.lazy(() => import("./AdminContests").then(m => ({ de
 const AdminQuotes = React.lazy(() => import("./AdminQuotes").then(m => ({ default: m.AdminQuotes })));
 const AdminServices = React.lazy(() => import("./AdminServices").then(m => ({ default: m.AdminServices })));
 const AdminConfigs = React.lazy(() => import("./AdminConfigs").then(m => ({ default: m.AdminConfigs })));
+const AdminPrintCatalog = React.lazy(() => import("./AdminPrintCatalog").then(m => ({ default: m.AdminPrintCatalog })));
 import { 
   LayoutDashboard, 
   Camera, 
@@ -21,7 +22,8 @@ import {
   DollarSign, 
   Printer, 
   Briefcase,
-  Settings
+  Settings,
+  Layers
 } from "lucide-react";
 
 
@@ -34,6 +36,7 @@ const NAV_ITEMS = (activeTab: string, setActiveTab: (t: string) => void, stats: 
   { label: "Pedidos", onClick: () => setActiveTab("orders"), isActive: activeTab === "orders", icon: <FileText size={16} /> },
   { label: "Financeiro", onClick: () => setActiveTab("finance"), isActive: activeTab === "finance", icon: <DollarSign size={16} /> },
   { label: "Impressão", onClick: () => setActiveTab("printers"), isActive: activeTab === "printers", icon: <Printer size={16} /> },
+  { label: "Cat. Impressão", onClick: () => setActiveTab("print-catalog"), isActive: activeTab === "print-catalog", icon: <Layers size={16} /> },
   { label: "Serviços", onClick: () => setActiveTab("services"), isActive: activeTab === "services", icon: <Briefcase size={16} /> },
   { label: "Configurações", onClick: () => setActiveTab("settings"), isActive: activeTab === "settings", icon: <Settings size={16} /> },
 ];
@@ -105,6 +108,7 @@ export const AdminDashboard: React.FC = () => {
              activeTab === "orders" ? "Pedidos e Vendas" : 
              activeTab === "finance" ? "Fluxo Financeiro" :
              activeTab === "printers" ? "Hardware e Impressão" :
+             activeTab === "print-catalog" ? "Catálogo de Impressão" :
              activeTab === "services" ? "Portfólio de Serviços" :
              "Configurações da Plataforma"}
           </h1>
@@ -134,6 +138,7 @@ export const AdminDashboard: React.FC = () => {
               {activeTab === "orders"   && <AdminOrders />}
               {activeTab === "finance"  && <AdminFinance />}
               {activeTab === "printers" && <AdminSuppliers />}
+              {activeTab === "print-catalog" && <AdminPrintCatalog />}
               {activeTab === "contests" && <AdminContests />}
               {activeTab === "services" && <AdminServices />}
               {activeTab === "settings" && <AdminConfigs />}

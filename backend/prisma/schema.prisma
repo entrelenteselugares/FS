@@ -469,3 +469,34 @@ model Quote {
   createdAt        DateTime    @default(now())
   updatedAt        DateTime    @updatedAt
 }
+
+// ─── Model: PrintProduct ────────────────────────────────────────────────────
+// Catálogo de produtos de impressão (ex: Encadernadora CK).
+// O admin ativa/desativa cada item e define a margem de lucro.
+model PrintProduct {
+  id           String   @id @default(cuid())
+  category     String   // "ALBUM" | "ALBUM_30X40" | "ACESSORIOS" | "QUADROS" | "REVELACAO"
+  name         String   // Nome descritivo do produto
+  sku          String   @unique // Código interno (ex: "ALBUM_15x21_20LAM_FOTOCAPA")
+  
+  // Custo do fornecedor (base CK)
+  supplierCost Decimal  @db.Decimal(10, 2)
+  supplier     String   @default("CK") // Nome do fornecedor
+  
+  // Configuração de venda
+  active       Boolean  @default(true)  // Admin ativa/desativa
+  marginPct    Float    @default(30)    // Margem de lucro em %
+  sellingPrice Decimal? @db.Decimal(10, 2) // Preço manual (null = calcula automaticamente)
+
+  // Metadados do produto
+  description  String?  // Especificações adicionais
+  unit         String   @default("un") // "un" | "lâmina" | "cópia"
+  minQty       Int?     // Quantidade mínima para esse preço
+  maxQty       Int?     // Quantidade máxima (para regras de volume)
+
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+
+  @@map("print_products")
+}
+

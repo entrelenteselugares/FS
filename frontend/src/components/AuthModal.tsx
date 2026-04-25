@@ -55,7 +55,7 @@ export const AuthModal: React.FC<AuthModalProps> = ({ onSuccess, onClose }) => {
               <label style={FieldLabel}>Nome Completo</label>
               <div style={{ position: "relative" }}>
                 <User size={14} style={{ position: "absolute", left: 16, top: 18, color: T.text3 }} />
-                <input style={{ ...FieldInput, paddingLeft: 44 }} value={nome} onChange={e => setNome(e.target.value)} placeholder="Seu nome" required />
+                <input style={{ ...FieldInput, paddingLeft: 48 }} value={nome} onChange={e => setNome(e.target.value)} placeholder="Seu nome" required />
               </div>
             </div>
           )}
@@ -64,7 +64,7 @@ export const AuthModal: React.FC<AuthModalProps> = ({ onSuccess, onClose }) => {
             <label style={FieldLabel}>E-mail</label>
             <div style={{ position: "relative" }}>
               <Mail size={14} style={{ position: "absolute", left: 16, top: 18, color: T.text3 }} />
-              <input style={{ ...FieldInput, paddingLeft: 44 }} type="email" value={email} onChange={e => setEmail(e.target.value)} placeholder="seu@email.com" required />
+              <input style={{ ...FieldInput, paddingLeft: 48 }} type="email" value={email} onChange={e => setEmail(e.target.value)} placeholder="seu@email.com" required />
             </div>
           </div>
 
@@ -72,7 +72,7 @@ export const AuthModal: React.FC<AuthModalProps> = ({ onSuccess, onClose }) => {
             <label style={FieldLabel}>Senha</label>
             <div style={{ position: "relative" }}>
               <Lock size={14} style={{ position: "absolute", left: 16, top: 18, color: T.text3 }} />
-              <input style={{ ...FieldInput, paddingLeft: 44 }} type="password" value={password} onChange={e => setPassword(e.target.value)} placeholder="••••••••" required />
+              <input style={{ ...FieldInput, paddingLeft: 48 }} type="password" value={password} onChange={e => setPassword(e.target.value)} placeholder="••••••••" required />
             </div>
           </div>
 

@@ -1,6 +1,7 @@
 import { Response } from "express";
 import { AuthRequest } from "../lib/auth";
 import prisma from "../lib/prisma";
+import { Prisma } from "@prisma/client";
 import { supabaseAdmin as supabase } from "../lib/supabase";
 
 // GET /api/profissional/events — eventos atribuídos ao profissional logado
@@ -235,9 +236,9 @@ export async function respondToEvent(req: AuthRequest, res: Response): Promise<v
       return;
     }
 
-    const updateData: any = {};
-    if (event.captacaoId === userId) updateData.captacaoStatus = status;
-    if (event.edicaoId === userId) updateData.edicaoStatus = status;
+    const updateData: Prisma.EventUpdateInput = {};
+    if (event.captacaoId === userId) updateData.captacaoStatus = status as "ACCEPTED" | "REJECTED" | "PENDING";
+    if (event.edicaoId === userId) updateData.edicaoStatus = status as "ACCEPTED" | "REJECTED" | "PENDING";
 
     const updated = await prisma.event.update({
       where: { id: String(id) },

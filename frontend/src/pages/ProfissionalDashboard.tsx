@@ -549,7 +549,7 @@ function ProfileModal({ profile, onClose, onUpdated }: { profile: ProfileData; o
                 <div style={{ position: "relative" }}>
                   <HardDrive size={14} style={{ position: "absolute", left: 14, top: 14, color: "var(--theme-text-muted)" }} />
                   <input 
-                    style={{ ...S.input, paddingLeft: 40 }}
+                    style={{ ...S.input, paddingLeft: 48 }}
                     value={otherEquip}
                     onChange={(e) => {
                       const val = e.target.value;

@@ -663,7 +663,7 @@ export default function UnidadeFixaDashboard() {
                             type="number"
                             value={localPrices[svc.id] || ""} 
                             onChange={e => setLocalPrices({ ...localPrices, [svc.id]: Number(e.target.value) })}
-                            style={{ ...S.input, width: "100%", paddingLeft: 45, fontWeight: 900, fontSize: 18, border: "1px solid var(--theme-border)" }} 
+                            style={{ ...S.input, width: "100%", paddingLeft: 48, fontWeight: 900, fontSize: 18, border: "1px solid var(--theme-border)" }} 
                             placeholder={String(svc.basePrice)}
                           />
                        </div>
