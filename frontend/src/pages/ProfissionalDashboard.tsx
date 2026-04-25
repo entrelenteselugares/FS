@@ -28,6 +28,17 @@ interface EventItem {
   _count: { pedidos: number };
 }
 
+interface UnitInvite {
+  id: string;
+  cartorioId: string;
+  tipo: string;
+  status: string;
+  cartorio: {
+    razaoSocial: string;
+    cidade: string;
+  }
+}
+
 interface ProfileData {
   services: string[];
   equipment: string | null;
@@ -45,6 +56,10 @@ interface ProfileData {
     payout?: {
       weekStart: string;
     }
+  }>;
+  cartorioProfissional?: Array<{
+    tipo: string;
+    cartorio: { razaoSocial: string };
   }>;
 }
 
@@ -121,6 +136,7 @@ export default function ProfissionalDashboard() {
   const [isProfileOpen, setIsProfileOpen] = useState(false);
   const [viewTab, setViewTab] = useState<"lista" | "calendario">("lista");
   const [activeTab, setActiveTab] = useState<"agenda" | "convites" | "financeiro">("agenda");
+  const [unitInvites, setUnitInvites] = useState<UnitInvite[]>([]);
 
   const fetchEvents = useCallback(() => {
     setLoading(true);
@@ -136,6 +152,12 @@ export default function ProfissionalDashboard() {
       .catch((err) => console.error("Erro ao buscar perfil:", err));
   }, []);
 
+  const fetchUnitInvites = useCallback(() => {
+    API.get("/profissional/unidades/convites")
+      .then((r) => setUnitInvites(r.data))
+      .catch((err) => console.error("Erro ao buscar convites de unidades:", err));
+  }, []);
+
   const handleRespond = async (eventId: string, status: "ACCEPTED" | "REJECTED") => {
     try {
       await API.patch(`/profissional/events/${eventId}/respond`, { status });
@@ -146,13 +168,25 @@ export default function ProfissionalDashboard() {
     }
   };
 
+  const handleRespondUnit = async (inviteId: string, status: "ACCEPTED" | "REJECTED") => {
+    try {
+      await API.patch(`/profissional/unidades/convites/${inviteId}/respond`, { status });
+      fetchUnitInvites();
+      fetchProfile();
+    } catch (err) {
+      console.error("Erro ao responder convite de unidade:", err);
+      alert("Erro ao processar resposta da unidade.");
+    }
+  };
+
   useEffect(() => {
     const timer = setTimeout(() => {
       fetchEvents();
       fetchProfile();
+      fetchUnitInvites();
     }, 0);
     return () => clearTimeout(timer);
-  }, [fetchEvents, fetchProfile]);
+  }, [fetchEvents, fetchProfile, fetchUnitInvites]);
 
   // Ganhos reais do perfil
   const totalRevenue = profile?.stats?.totalEarnings || 0;
@@ -191,7 +225,7 @@ export default function ProfissionalDashboard() {
   return (
     <DashboardLayout 
       title="Painel do Profissional" 
-      navItems={NAV_ITEMS(activeTab, setActiveTab, pendingEvents.length)}
+      navItems={NAV_ITEMS(activeTab, setActiveTab, pendingEvents.length + unitInvites.length)}
     >
       <style>{`
         @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
@@ -223,6 +257,14 @@ export default function ProfissionalDashboard() {
              activeTab === "convites" ? "Convites Pendentes" : 
              "Fluxo Financeiro"}
           </h1>
+          {profile?.cartorioProfissional && profile.cartorioProfissional.length > 0 && (
+            <div style={{ display: "flex", alignItems: "center", gap: 8, marginTop: 12 }}>
+              <ShieldCheck size={14} color="var(--brand-primary)" />
+              <p style={{ fontSize: 10, fontWeight: 800, color: "var(--brand-primary)", margin: 0, textTransform: "uppercase", letterSpacing: 1 }}>
+                Artista Residente: {profile.cartorioProfissional.map(cp => cp.cartorio.razaoSocial).join(", ")}
+              </p>
+            </div>
+          )}
           <div style={{ width: 40, height: 2, background: T.brand, marginTop: 12 }} />
         </div>
 
@@ -322,29 +364,73 @@ export default function ProfissionalDashboard() {
             <div style={{ display: "flex", flexDirection: "column", gap: 14 }}>
             {loading ? (
                 <div style={{ padding: "4rem", textAlign: "center", color: "#444", fontSize: 11, textTransform: "uppercase", letterSpacing: 2 }}>INDEXANDO...</div>
-              ) : displayEvents.length === 0 ? (
+              ) : (displayEvents.length === 0 && unitInvites.length === 0) ? (
                 <div style={{ padding: "6rem 0", textAlign: "center", background: "rgba(255,255,255,0.01)", border: "1px dashed #222" }}>
                   <p style={{ color: "#444", fontSize: 12, textTransform: "uppercase", letterSpacing: 1, maxWidth: 300, margin: "0 auto", lineHeight: 1.6 }}>
                     {activeTab === "agenda" 
                       ? "Você ainda não possui eventos confirmados. Aguarde ser atribuído a um evento pelo administrador." 
-                      : "Você não possui novos convites de trabalho pendentes no momento."}
+                      : "Você não possui novos convites de trabalho ou parcerias pendentes no momento."}
                   </p>
                 </div>
-              ) : displayEvents.map((ev) => (
-                <div 
-                  key={ev.id} 
-                  onClick={() => activeTab === "agenda" && setSelected(selected?.id === ev.id ? null : ev)}
-                  className="lux-card"
-                  style={{ 
-                    ...S.card, 
-                    padding: "1.25rem", 
-                    display: "flex", 
-                    gap: "1.5rem", 
-                    cursor: activeTab === "agenda" ? "pointer" : "default",
-                    borderColor: selected?.id === ev.id ? "var(--brand-primary)" : "var(--theme-border)",
-                    background: selected?.id === ev.id ? "rgba(133,185,172,0.03)" : "var(--theme-bg-muted)"
-                  }}
-                >
+              ) : (
+                <>
+                  {/* Convites de Unidade Fixa */}
+                  {activeTab === "convites" && unitInvites.map(ui => (
+                    <div 
+                      key={ui.id} 
+                      className="lux-card"
+                      style={{ 
+                        ...S.card, 
+                        padding: "2rem", 
+                        background: "linear-gradient(135deg, rgba(133,185,172,0.05) 0%, rgba(133,185,172,0) 100%)",
+                        border: "1px solid var(--brand-primary)",
+                        marginBottom: 14,
+                        animation: "fadeIn 0.3s ease-out"
+                      }}
+                    >
+                      <div className="mobile-stack" style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
+                        <div>
+                          <div style={{ display: "flex", alignItems: "center", gap: 8, marginBottom: 8 }}>
+                            <ShieldCheck size={16} color="var(--brand-primary)" />
+                            <span style={{ fontSize: 9, fontWeight: 900, color: "var(--brand-primary)", textTransform: "uppercase", letterSpacing: 2 }}>Convite de Parceria Fixa</span>
+                          </div>
+                          <h3 style={{ fontSize: 20, fontWeight: 900, color: "var(--theme-text)", margin: 0, textTransform: "uppercase" }}>{ui.cartorio.razaoSocial}</h3>
+                          <p style={{ fontSize: 11, color: "var(--theme-text-muted)", marginTop: 4 }}>Unidade em {ui.cartorio.cidade} · Tipo: {ui.tipo}</p>
+                        </div>
+                        <div style={{ display: "flex", gap: 10 }}>
+                            <button 
+                              onClick={() => handleRespondUnit(ui.id, "REJECTED")}
+                              style={{ background: "rgba(239, 68, 68, 0.1)", color: "#ef4444", border: "1px solid #ef4444", padding: "12px 20px", fontSize: 9, fontWeight: 900, textTransform: "uppercase", cursor: "pointer", display: "flex", alignItems: "center", gap: 6 }}
+                            >
+                              <X size={14} /> Recusar
+                            </button>
+                            <button 
+                              onClick={() => handleRespondUnit(ui.id, "ACCEPTED")}
+                              style={{ background: "var(--brand-primary)", color: "#000", border: "none", padding: "12px 24px", fontSize: 10, fontWeight: 900, textTransform: "uppercase", cursor: "pointer", display: "flex", alignItems: "center", gap: 6 }}
+                            >
+                              <Check size={14} /> ACEITAR PARCERIA
+                            </button>
+                        </div>
+                      </div>
+                    </div>
+                  ))}
+
+                  {displayEvents.map((ev) => (
+                    <div 
+                      key={ev.id} 
+                      onClick={() => activeTab === "agenda" && setSelected(selected?.id === ev.id ? null : ev)}
+                      className="lux-card"
+                      style={{ 
+                        ...S.card, 
+                        padding: "1.25rem", 
+                        display: "flex", 
+                        gap: "1.5rem", 
+                        cursor: activeTab === "agenda" ? "pointer" : "default",
+                        borderColor: selected?.id === ev.id ? "var(--brand-primary)" : "var(--theme-border)",
+                        background: selected?.id === ev.id ? "rgba(133,185,172,0.03)" : "var(--theme-bg-muted)",
+                        marginBottom: 14
+                      }}
+                    >
                   <div style={{ width: 84, height: 84, background: "#111", borderRadius: 0, flexShrink: 0, overflow: "hidden", border: "1px solid var(--theme-border)" }}>
                     {ev.coverPhotoUrl ? <img src={ev.coverPhotoUrl} alt="" style={{ width: "100%", height: "100%", objectFit: "cover", opacity: 0.8 }} /> : <div style={{ width: "100%", height: "100%", display: "flex", alignItems: "center", justifyContent: "center", fontSize: 24 }}>📦</div>}
                   </div>

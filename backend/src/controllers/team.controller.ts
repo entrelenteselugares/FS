@@ -39,7 +39,7 @@ export async function getTeam(req: AuthRequest, res: Response): Promise<void> {
 
     // Montar mapa de vínculos existentes
     const vinculoMap = new Map(
-      cartorio.profissionais.map(v => [v.profissionalId, v.tipo])
+      cartorio.profissionais.map(v => [v.profissionalId, { tipo: v.tipo, status: v.status }])
     );
 
     const result = allProfissionais.map(p => ({
@@ -51,7 +51,8 @@ export async function getTeam(req: AuthRequest, res: Response): Promise<void> {
       services: p.services,
       cameras: p.cameras,
       // "FIXO" | "ROTATIVO" | null (sem vínculo = rotativo geral)
-      vinculo: vinculoMap.get(p.id) ?? null,
+      vinculo: vinculoMap.get(p.id)?.tipo ?? null,
+      status: vinculoMap.get(p.id)?.status ?? null,
     }));
 
     res.json({ cartorioId: cartorio.id, profissionais: result });
@@ -98,8 +99,19 @@ export async function saveTeam(req: AuthRequest, res: Response): Promise<void> {
         // Upsert vínculo
         await prisma.cartorioProfissional.upsert({
           where: { cartorioId_profissionalId: { cartorioId: cartorio.id, profissionalId } },
-          create: { cartorioId: cartorio.id, profissionalId, tipo },
-          update: { tipo }
+          create: { 
+            cartorioId: cartorio.id, 
+            profissionalId, 
+            tipo,
+            status: "PENDING" // Sempre começa como pendente
+          },
+          update: { 
+            tipo,
+            // Se estava rejeitado, volta para pendente ao ser reatribuído
+            status: {
+              set: "PENDING"
+            }
+          }
         });
       }
     }));

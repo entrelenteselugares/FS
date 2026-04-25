@@ -145,7 +145,8 @@ model CartorioProfissional {
   id             String       @id @default(cuid())
   cartorioId     String
   profissionalId String
-  tipo           String       @default("ROTATIVO")
+  tipo           String       @default("FIXO") // FIXO, EXTRA, etc.
+  status         String       @default("PENDING") // PENDING, ACCEPTED, REJECTED
   createdAt      DateTime     @default(now())
   cartorio       Cartorio     @relation(fields: [cartorioId], references: [id], onDelete: Cascade)
   profissional   Profissional @relation(fields: [profissionalId], references: [id], onDelete: Cascade)

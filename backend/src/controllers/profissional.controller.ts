@@ -151,7 +151,13 @@ export async function getProfile(req: AuthRequest, res: Response): Promise<void>
   try {
     const profile = await prisma.profissional.findUnique({
       where: { userId },
-      include: { user: { select: { nome: true, email: true, whatsapp: true } } }
+      include: { 
+        user: { select: { nome: true, email: true, whatsapp: true } },
+        cartorioProfissional: {
+          where: { status: "ACCEPTED" },
+          include: { cartorio: { select: { razaoSocial: true } } }
+        }
+      }
     });
 
     // Calcula ganhos totais (baseado em PayoutItems pagos)
@@ -315,5 +321,66 @@ export async function registerManualSale(req: AuthRequest, res: Response): Promi
   } catch (err) {
     console.error("registerManualSale:", err);
     res.status(500).json({ error: "Erro ao registrar venda física." });
+  }
+}
+
+/**
+ * GET /api/profissional/unidades/convites
+ * Lista convites pendentes de unidades fixas.
+ */
+export async function getConvitesUnidade(req: AuthRequest, res: Response) {
+  const userId = req.user?.userId;
+  if (!userId) { res.status(401).json({ error: "Não autenticado." }); return; }
+
+  try {
+    const profissional = await prisma.profissional.findUnique({ where: { userId } });
+    if (!profissional) { res.status(404).json({ error: "Profissional não encontrado." }); return; }
+
+    const invites = await prisma.cartorioProfissional.findMany({
+      where: { profissionalId: profissional.id, status: "PENDING" },
+      include: { cartorio: { select: { id: true, razaoSocial: true, cidade: true } } }
+    });
+
+    res.json(invites);
+  } catch (err) {
+    console.error("getConvitesUnidade:", err);
+    res.status(500).json({ error: "Erro ao buscar convites de unidades." });
+  }
+}
+
+/**
+ * PATCH /api/profissional/unidades/convites/:id/respond
+ * Aceita ou recusa convite de unidade.
+ */
+export async function respondConviteUnidade(req: AuthRequest, res: Response) {
+  const { id } = req.params;
+  const { status } = req.body; // "ACCEPTED" | "REJECTED"
+  const userId = req.user?.userId;
+  if (!userId) { res.status(401).json({ error: "Não autenticado." }); return; }
+
+  if (!["ACCEPTED", "REJECTED"].includes(status)) {
+    res.status(400).json({ error: "Status inválido." });
+    return;
+  }
+
+  try {
+    const profissional = await prisma.profissional.findUnique({ where: { userId } });
+    if (!profissional) { res.status(404).json({ error: "Profissional não encontrado." }); return; }
+
+    const invite = await prisma.cartorioProfissional.findFirst({
+      where: { id, profissionalId: profissional.id }
+    });
+
+    if (!invite) { res.status(404).json({ error: "Convite não encontrado." }); return; }
+
+    const updated = await prisma.cartorioProfissional.update({
+      where: { id },
+      data: { status }
+    });
+
+    res.json(updated);
+  } catch (err) {
+    console.error("respondConviteUnidade:", err);
+    res.status(500).json({ error: "Erro ao responder convite de unidade." });
   }
 }

@@ -29,6 +29,8 @@ import {
   updateProfile,
   respondToEvent,
   registerManualSale,
+  getConvitesUnidade,
+  respondConviteUnidade,
 } from "../controllers/profissional.controller";
 import { getMeusPedidos, getMeuPedidoDetalhe } from "../controllers/cliente.controller";
 import { CartorioController } from "../controllers/cartorio.controller";
@@ -158,6 +160,8 @@ router.patch("/profissional/events/:id/respond", requireAuth, requireRole("ADMIN
 router.get("/profissional/me",                   requireAuth, requireRole("ADMIN", "PROFISSIONAL"), getProfile);
 router.patch("/profissional/me",                 requireAuth, requireRole("ADMIN", "PROFISSIONAL"), updateProfile);
 router.post("/profissional/events/:id/manual-sale", requireAuth, requireRole("ADMIN", "PROFISSIONAL"), registerManualSale);
+router.get("/profissional/unidades/convites", requireAuth, requireRole("ADMIN", "PROFISSIONAL"), getConvitesUnidade);
+router.patch("/profissional/unidades/convites/:id/respond", requireAuth, requireRole("ADMIN", "PROFISSIONAL"), respondConviteUnidade);
 
 // ── Gamificação: Curtidas & Resgates ──────────────────────────────────────────
 router.post("/events/:slug/photos/like", requireAuth, likePhoto);
