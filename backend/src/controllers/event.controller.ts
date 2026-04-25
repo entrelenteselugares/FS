@@ -227,7 +227,7 @@ export class EventController {
     try {
       const { 
         name, email, attendees, locationType, usageType, selectedPartnerId, 
-        customCep, eventDate, eventHours, description, selectedServices, totalPrice 
+        customCep, eventDate, eventHours, eventDays, description, selectedServices, totalPrice 
       } = req.body;
       
       // ── ANTI-FLOOD / DUPLICATE CHECK ──
@@ -302,8 +302,9 @@ export class EventController {
           nomeNoivos: name,
           dataEvento: new Date(eventDate),
           eventHours: eventHours ? Number(eventHours) : 2,
+          eventDays: eventDays ? Number(eventDays) : 1,
           location: locationType === "PARTNER" ? "Ponto Fixo" : `CEP: ${customCep}`,
-          description: `ORÇAMENTO AUTOMÁTICO\nConvidados: ${attendees}\nUso: ${usageType}\nServiços: ${selectedServices.join(", ")}\n\nDescrição do Cliente: ${description}`,
+          description: `ORÇAMENTO AUTOMÁTICO\nConvidados: ${attendees}\nUso: ${usageType}\nServiços: ${selectedServices.join(", ")}\nDias: ${eventDays}\n\nDescrição do Cliente: ${description}`,
           usageType: usageType || "PESSOAL",
           isQuote: isQuote,
           quoteStatus: isQuote ? "PENDING" : "APPROVED", // Pontos fixos já nascem aprovados, apenas aguardando pagamento

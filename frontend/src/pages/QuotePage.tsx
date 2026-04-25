@@ -244,6 +244,7 @@ export const QuotePage = () => {
   const { fetchAddress, loading: isCepLoading } = useViaCep();
   const [eventDate, setEventDate] = useState("");
   const [eventHours, setEventHours] = useState(2);
+  const [eventDays, setEventDays] = useState(1);
   const [description, setDescription] = useState("");
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
@@ -260,11 +261,14 @@ export const QuotePage = () => {
     API.get("/public/unidades-fixas").then(res => setPartners(res.data)).catch(() => {});
   }, []);
 
-  // Sincronizar horas fixas se parceiro selecionado
+  // Sincronizar horas e dias se parceiro selecionado
   useEffect(() => {
-    const p = partners.find(p => p.id === selectedPartnerId);
-    if (locationType === "PARTNER" && p?.fixedDuration) {
-      setEventHours(p.fixedDuration);
+    if (locationType === "PARTNER") {
+      setEventDays(1);
+      const p = partners.find(p => p.id === selectedPartnerId);
+      if (p?.fixedDuration) {
+        setEventHours(p.fixedDuration);
+      }
     }
   }, [selectedPartnerId, locationType, partners]);
 
@@ -316,7 +320,6 @@ export const QuotePage = () => {
   const team = calculateTeam();
   
   const currentPartner = partners.find(p => p.id === selectedPartnerId);
-  const selectedPartner = partners.find(p => p.id === selectedPartnerId);
 
   // Lógica de exibição de preços:
   // - Unidade Fixa com parceiro selecionado: mostra preço fixo do parceiro
@@ -368,7 +371,7 @@ export const QuotePage = () => {
   const isOutsideCampinas = locationType === "OTHER" && customCep !== ""; 
   const freight = isOutsideCampinas ? P.BASE_FREIGHT + (20 * P.KM_RATE) + P.FEE_TOLL : 0; 
   
-  const totalPrice = servicesPrice + team.extraGuestsCost + freight;
+  const totalPrice = (servicesPrice + team.extraGuestsCost + freight) * eventDays;
 
   const [submitting, setSubmitting] = useState(false);
   const handleSubmit = async (e: React.FormEvent) => {
@@ -384,7 +387,7 @@ export const QuotePage = () => {
       name, email, attendees: Number(attendees), locationType, usageType, selectedPartnerId, 
       customCep, 
       location: fullAddress,
-      eventDate, eventHours, description, selectedServices, totalPrice, 
+      eventDate, eventHours, eventDays, description, selectedServices, totalPrice, 
       status: "PENDING"
     };
 
@@ -552,7 +555,14 @@ export const QuotePage = () => {
               </div>
 
               {/* Botões de Ação Passo 1 */}
-              <div style={{ borderTop: `1px solid ${THEME.border}`, paddingTop: 20, display: "flex", justifyContent: "flex-end" }}>
+              <div style={{ borderTop: `1px solid ${THEME.border}`, paddingTop: 20, display: "flex", justifyContent: "space-between", alignItems: "center" }}>
+                <button 
+                  type="button"
+                  onClick={() => navigate(-1)}
+                  style={{ border: `1px solid ${THEME.border}`, color: THEME.text, padding: "15px 30px", fontWeight: 800, fontSize: 11, textTransform: "uppercase", background: "none", cursor: "pointer" }}
+                >
+                  VOLTAR
+                </button>
                 <button 
                   type="button"
                   onClick={() => {
@@ -582,25 +592,24 @@ export const QuotePage = () => {
               <label style={{ fontSize: 10, fontWeight: 800, textTransform: "uppercase", color: THEME.accent, letterSpacing: 2 }}>Passo 2: Configuração e Serviços</label>
 
               {/* Duração do Evento */}
-              {(locationType === "OTHER" || (locationType === "PARTNER" && !!selectedPartnerId && !selectedPartner?.hideDuration)) && (
+              {locationType === "OTHER" && (
                 <div style={{ display: "flex", flexDirection: "column", gap: 10 }}>
                   <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
                     <label style={{ fontSize: 9, fontWeight: 800, textTransform: "uppercase", color: THEME.text2, letterSpacing: 1 }}>Duração do Registro</label>
                     <span style={{ fontSize: 11, fontWeight: 900, color: THEME.accent }}>{eventHours} HORAS</span>
                   </div>
-                  <div style={{ position: "relative", display: "flex", alignItems: "center", opacity: (locationType === "PARTNER" && selectedPartner?.fixedTime) ? 0.6 : 1 }}>
+                  <div style={{ position: "relative", display: "flex", alignItems: "center", opacity: 1 }}>
                     <input 
                       type="range"
                       min={1} max={12} step={1}
                       value={eventHours}
-                      disabled={locationType === "PARTNER" && selectedPartner?.fixedTime}
                       onChange={e => setEventHours(Number(e.target.value))}
                       style={{ 
                         width: "100%", 
                         accentColor: THEME.accent, 
                         height: 6, 
                         background: THEME.border,
-                        cursor: (locationType === "PARTNER" && selectedPartner?.fixedTime) ? "not-allowed" : "pointer" 
+                        cursor: "pointer" 
                       }}
                     />
                   </div>
@@ -610,8 +619,36 @@ export const QuotePage = () => {
                 </div>
               )}
 
+              {/* Quantidade de Dias */}
+              {locationType === "OTHER" && (
+                <div style={{ display: "flex", flexDirection: "column", gap: 10 }}>
+                  <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
+                    <label style={{ fontSize: 9, fontWeight: 800, textTransform: "uppercase", color: THEME.text2, letterSpacing: 1 }}>Quantidade de Dias</label>
+                    <span style={{ fontSize: 11, fontWeight: 900, color: THEME.accent }}>{eventDays} {eventDays === 1 ? 'DIA' : 'DIAS'}</span>
+                  </div>
+                  <div style={{ position: "relative", display: "flex", alignItems: "center" }}>
+                    <input 
+                      type="range"
+                      min={1} max={7} step={1}
+                      value={eventDays}
+                      onChange={e => setEventDays(Number(e.target.value))}
+                      style={{ 
+                        width: "100%", 
+                        accentColor: THEME.accent, 
+                        height: 6, 
+                        background: THEME.border,
+                        cursor: "pointer" 
+                      }}
+                    />
+                  </div>
+                  <div style={{ display: "flex", justifyContent: "space-between", fontSize: 8, color: THEME.text2, fontWeight: 600 }}>
+                    <span>1 DIA</span><span>3 DIAS</span><span>5 DIAS</span><span>7 DIAS</span>
+                  </div>
+                </div>
+              )}
+
               {/* Convidados e Tipo de Uso */}
-              <div className="mobile-grid-1" style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 20 }}>
+              <div className="mobile-grid-1" style={{ display: "grid", gridTemplateColumns: locationType === "OTHER" ? "1fr 1fr" : "1fr", gap: 20 }}>
                 <div>
                   <label style={{ fontSize: 10, fontWeight: 800, textTransform: "uppercase", marginBottom: 10, display: "block", color: THEME.text }}>Número de Convidados</label>
                   <div style={{ position: "relative", display: "flex", alignItems: "center" }}>
@@ -626,13 +663,15 @@ export const QuotePage = () => {
                     />
                   </div>
                 </div>
-                <div>
-                  <label style={{ fontSize: 10, fontWeight: 800, textTransform: "uppercase", marginBottom: 10, display: "block", color: THEME.text }}>Tipo de Finalidade</label>
-                  <div style={{ display: "flex", gap: 5 }}>
-                    <button type="button" onClick={() => setUsageType("PESSOAL")} style={{ flex: 1, padding: 12, fontSize: 8, fontWeight: 800, border: `1px solid ${usageType === "PESSOAL" ? THEME.accent : THEME.border}`, background: usageType === "PESSOAL" ? `${THEME.accent}10` : "transparent", color: usageType === "PESSOAL" ? THEME.accent : THEME.text2, cursor: "pointer" }}>PESSOAL</button>
-                    <button type="button" onClick={() => setUsageType("EMPRESARIAL")} style={{ flex: 1, padding: 12, fontSize: 8, fontWeight: 800, border: `1px solid ${usageType === "EMPRESARIAL" ? THEME.accent : THEME.border}`, background: usageType === "EMPRESARIAL" ? `${THEME.accent}10` : "transparent", color: usageType === "EMPRESARIAL" ? THEME.accent : THEME.text2, cursor: "pointer" }}>BUSINESS</button>
+                {locationType === "OTHER" && (
+                  <div>
+                    <label style={{ fontSize: 10, fontWeight: 800, textTransform: "uppercase", marginBottom: 10, display: "block", color: THEME.text }}>Tipo de Finalidade</label>
+                    <div style={{ display: "flex", gap: 5 }}>
+                      <button type="button" onClick={() => setUsageType("PESSOAL")} style={{ flex: 1, padding: 12, fontSize: 8, fontWeight: 800, border: `1px solid ${usageType === "PESSOAL" ? THEME.accent : THEME.border}`, background: usageType === "PESSOAL" ? `${THEME.accent}10` : "transparent", color: usageType === "PESSOAL" ? THEME.accent : THEME.text2, cursor: "pointer" }}>PESSOAL</button>
+                      <button type="button" onClick={() => setUsageType("EMPRESARIAL")} style={{ flex: 1, padding: 12, fontSize: 8, fontWeight: 800, border: `1px solid ${usageType === "EMPRESARIAL" ? THEME.accent : THEME.border}`, background: usageType === "EMPRESARIAL" ? `${THEME.accent}10` : "transparent", color: usageType === "EMPRESARIAL" ? THEME.accent : THEME.text2, cursor: "pointer" }}>BUSINESS</button>
+                    </div>
                   </div>
-                </div>
+                )}
               </div>
 
               {/* Serviços */}

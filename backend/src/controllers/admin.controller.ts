@@ -904,6 +904,22 @@ export async function adminCreateManualSale(req: AuthRequest, res: Response): Pr
 
     await audit(req, "ADMIN_MANUAL_SALE", "Order", order.id, null, { eventId, customerEmail, amount });
 
+    // 3. Notificações (Auditoria: Corrigindo lacuna de comunicação)
+    NotificationService.notifyNewSale({
+      buyerEmail: customerEmail,
+      eventTitle: event.nomeNoivos,
+      orderId: order.id,
+      amount: Number(amount)
+    });
+
+    NotificationService.sendAccessEmail({
+      to: customerEmail,
+      buyerName: customerName,
+      eventTitle: event.nomeNoivos,
+      orderId: order.id,
+      accessLink: `${process.env.FRONTEND_URL || "https://foto-segundo.vercel.app"}/e/${event.id}`
+    }).catch(e => console.error("Erro e-mail venda manual admin:", e));
+
     res.json({ message: "Venda registrada com sucesso!", orderId: order.id, userEmail: user.email });
   } catch (err) {
     console.error("adminCreateManualSale Error:", err);

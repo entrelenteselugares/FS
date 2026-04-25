@@ -74,6 +74,7 @@ model Event {
   temFotoEditada    Boolean          @default(false)
   temVideoEditado   Boolean          @default(false)
   eventHours        Int?             @default(2)
+  eventDays         Int?             @default(1)
   collectedAmount   Decimal          @default(0) @db.Decimal(10, 2)
   isCrowdfund       Boolean          @default(false)
   targetAmount      Decimal?         @db.Decimal(10, 2)

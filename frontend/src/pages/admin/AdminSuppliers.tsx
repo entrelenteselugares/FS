@@ -65,7 +65,7 @@ export default function AdminSuppliers() {
     } finally {
       setLoading(false);
     }
-  }, [handleSelect, handleSelect]);
+  }, [handleSelect]);
 
   useEffect(() => {
     fetchSuppliers();

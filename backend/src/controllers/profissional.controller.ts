@@ -4,6 +4,7 @@ import prisma from "../lib/prisma";
 import { Prisma } from "@prisma/client";
 import { supabaseAdmin as supabase } from "../lib/supabase";
 import { PricingService } from "../services/pricing.service";
+import { NotificationService } from "../services/notification.service";
 
 // GET /api/profissional/events — eventos atribuídos ao profissional logado
 export async function getMeusEventos(req: AuthRequest, res: Response): Promise<void> {
@@ -291,6 +292,24 @@ export async function registerManualSale(req: AuthRequest, res: Response): Promi
         hasPaid: true
       }
     });
+
+    // 3. Notificações (Auditoria: Adicionando fluxos de alerta)
+    NotificationService.notifyNewSale({
+      buyerEmail: customerEmail || "venda-manual@fotosegundo.com",
+      eventTitle: event.nomeNoivos,
+      orderId: order.id,
+      amount: Number(amount)
+    });
+
+    if (customerEmail) {
+      NotificationService.sendAccessEmail({
+        to: customerEmail,
+        buyerName: customerName || "Cliente",
+        eventTitle: event.nomeNoivos,
+        orderId: order.id,
+        accessLink: `${process.env.FRONTEND_URL || "https://foto-segundo.vercel.app"}/e/${event.id}`
+      }).catch((e: any) => console.error("Erro e-mail venda manual:", e));
+    }
 
     res.json(order);
   } catch (err) {
