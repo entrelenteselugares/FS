@@ -448,8 +448,9 @@ export const QuotePage = () => {
             style={{ opacity: 1, transform: "none" }}
             className="lux-card mobile-padding editorial-shadow"
           >
-            <div style={{ display: "flex", flexDirection: "column", gap: 20 }}>
-
+            <div style={{ display: "flex", flexDirection: "column", gap: 24 }}>
+              <label style={{ fontSize: 10, fontWeight: 800, textTransform: "uppercase", color: THEME.accent, letterSpacing: 2 }}>Passo 1: Onde e Quando</label>
+              
               {/* 1. Onde será o registro? */}
               <div style={{ display: "flex", flexDirection: "column", gap: 12 }}>
                 <label style={{ fontSize: 9, fontWeight: 800, textTransform: "uppercase", color: THEME.text }}>01. Local do Registro</label>
@@ -534,64 +535,100 @@ export const QuotePage = () => {
                     </div>
                   )}
                 </div>
-
-                {/* Duração do Evento */}
-                {(locationType === "OTHER" || (locationType === "PARTNER" && !!selectedPartnerId && !selectedPartner?.hideDuration)) && (
-                  <div style={{ display: "flex", flexDirection: "column", gap: 10 }}>
-                    <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
-                      <label style={{ fontSize: 9, fontWeight: 800, textTransform: "uppercase", color: THEME.text2, letterSpacing: 1 }}>Duração do Registro</label>
-                      <span style={{ fontSize: 11, fontWeight: 900, color: THEME.accent }}>{eventHours} HORAS</span>
-                    </div>
-                    <div style={{ position: "relative", display: "flex", alignItems: "center", opacity: (locationType === "PARTNER" && selectedPartner?.fixedTime) ? 0.6 : 1 }}>
-                      <input 
-                        type="range"
-                        min={1} max={12} step={1}
-                        value={eventHours}
-                        disabled={locationType === "PARTNER" && selectedPartner?.fixedTime}
-                        onChange={e => setEventHours(Number(e.target.value))}
-                        style={{ 
-                          width: "100%", 
-                          accentColor: THEME.accent, 
-                          height: 6, 
-                          background: THEME.border,
-                          cursor: (locationType === "PARTNER" && selectedPartner?.fixedTime) ? "not-allowed" : "pointer" 
-                        }}
-                      />
-                    </div>
-                    <div style={{ display: "flex", justifyContent: "space-between", fontSize: 8, color: THEME.text2, fontWeight: 600 }}>
-                      <span>1H</span>
-                      <span>3H</span>
-                      <span>6H</span>
-                      <span>9H</span>
-                      <span>12H</span>
-                    </div>
-                  </div>
-                )}
-
-                {locationType === "OTHER" && (
-                  <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 10 }}>
-                     <button type="button" onClick={() => setUsageType("PESSOAL")} style={{ padding: 12, fontSize: 9, fontWeight: 800, border: `1px solid ${usageType === "PESSOAL" ? THEME.accent : THEME.border}`, background: usageType === "PESSOAL" ? `${THEME.accent}10` : "transparent", color: usageType === "PESSOAL" ? THEME.accent : THEME.text2, cursor: "pointer" }}>USO PESSOAL</button>
-                     <button type="button" onClick={() => setUsageType("EMPRESARIAL")} style={{ padding: 12, fontSize: 9, fontWeight: 800, border: `1px solid ${usageType === "EMPRESARIAL" ? THEME.accent : THEME.border}`, background: usageType === "EMPRESARIAL" ? `${THEME.accent}10` : "transparent", color: usageType === "EMPRESARIAL" ? THEME.accent : THEME.text2, cursor: "pointer" }}>USO EMPRESARIAL</button>
-                  </div>
-                )}
               </div>
 
-              {/* 02. Serviços ── Grid Otimizado (Dinamismo Fullscreen) */}
-              <div style={{ marginTop: 0 }}>
-                <label style={{ fontSize: 10, fontWeight: 800, textTransform: "uppercase", marginBottom: 12, display: "block", color: THEME.text }}>02. Selecione os Serviços Disponíveis</label>
-                <div style={{ 
-                  display: "grid", 
-                  gridTemplateColumns: "repeat(auto-fit, minmax(170px, 1fr))", 
-                  gap: 10 
-                }}>
+              {/* Data e Horário */}
+              <div style={{ display: "flex", flexDirection: "column", gap: 12 }}>
+                <label style={{ fontSize: 9, fontWeight: 800, textTransform: "uppercase", color: THEME.text }}>02. Data e Horário do Evento</label>
+                <DateTimePicker value={eventDate} onChange={setEventDate} />
+              </div>
+
+              {/* Botões de Ação Passo 1 */}
+              <div style={{ borderTop: `1px solid ${THEME.border}`, paddingTop: 20, display: "flex", justifyContent: "flex-end" }}>
+                <button 
+                  type="button"
+                  onClick={() => {
+                    const isLocalOk = locationType === "PARTNER" ? !!selectedPartnerId : !!customCep;
+                    if (isLocalOk && eventDate) {
+                      setStep(2);
+                      window.scrollTo(0,0);
+                    } else {
+                      alert("Por favor, selecione o local e a data do evento.");
+                    }
+                  }}
+                  style={{ background: THEME.accent, color: "black", padding: "15px 30px", fontWeight: 900, fontSize: 12, textTransform: "uppercase", letterSpacing: 2, display: "flex", alignItems: "center", gap: 10, border: "none", cursor: "pointer" }}
+                >
+                  PRÓXIMO: CONFIGURAÇÃO <ArrowRight size={16} />
+                </button>
+              </div>
+            </div>
+          </div>
+        )}
+
+        {step === 2 && (
+          <div 
+            style={{ opacity: 1, transform: "none" }}
+            className="lux-card mobile-padding editorial-shadow"
+          >
+            <div style={{ display: "flex", flexDirection: "column", gap: 24 }}>
+              <label style={{ fontSize: 10, fontWeight: 800, textTransform: "uppercase", color: THEME.accent, letterSpacing: 2 }}>Passo 2: Configuração e Serviços</label>
+
+              {/* Duração do Evento */}
+              {(locationType === "OTHER" || (locationType === "PARTNER" && !!selectedPartnerId && !selectedPartner?.hideDuration)) && (
+                <div style={{ display: "flex", flexDirection: "column", gap: 10 }}>
+                  <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
+                    <label style={{ fontSize: 9, fontWeight: 800, textTransform: "uppercase", color: THEME.text2, letterSpacing: 1 }}>Duração do Registro</label>
+                    <span style={{ fontSize: 11, fontWeight: 900, color: THEME.accent }}>{eventHours} HORAS</span>
+                  </div>
+                  <div style={{ position: "relative", display: "flex", alignItems: "center", opacity: (locationType === "PARTNER" && selectedPartner?.fixedTime) ? 0.6 : 1 }}>
+                    <input 
+                      type="range"
+                      min={1} max={12} step={1}
+                      value={eventHours}
+                      disabled={locationType === "PARTNER" && selectedPartner?.fixedTime}
+                      onChange={e => setEventHours(Number(e.target.value))}
+                      style={{ 
+                        width: "100%", 
+                        accentColor: THEME.accent, 
+                        height: 6, 
+                        background: THEME.border,
+                        cursor: (locationType === "PARTNER" && selectedPartner?.fixedTime) ? "not-allowed" : "pointer" 
+                      }}
+                    />
+                  </div>
+                  <div style={{ display: "flex", justifyContent: "space-between", fontSize: 8, color: THEME.text2, fontWeight: 600 }}>
+                    <span>1H</span><span>3H</span><span>6H</span><span>9H</span><span>12H</span>
+                  </div>
+                </div>
+              )}
+
+              {/* Convidados */}
+              <div>
+                <label style={{ fontSize: 10, fontWeight: 800, textTransform: "uppercase", marginBottom: 10, display: "block", color: THEME.text }}>Número de Convidados</label>
+                <div style={{ position: "relative", display: "flex", alignItems: "center" }}>
+                  <Users size={16} style={{ position: "absolute", left: 15, color: THEME.accent, pointerEvents: "none", zIndex: 1 }} />
+                  <input
+                    type="text"
+                    inputMode="numeric"
+                    value={attendees}
+                    onChange={e => setAttendees(e.target.value.replace(/\D/g, ""))}
+                    className="fs-input"
+                    style={{ width: "100%", paddingLeft: 48 }}
+                  />
+                </div>
+              </div>
+
+              {/* Serviços */}
+              <div>
+                <label style={{ fontSize: 10, fontWeight: 800, textTransform: "uppercase", marginBottom: 12, display: "block", color: THEME.text }}>Selecione os Serviços</label>
+                <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(170px, 1fr))", gap: 10 }}>
                   {availableServices.map(s => (
                     <div key={s.id} onClick={() => {
                       if (selectedServices.includes(s.id)) setSelectedServices(prev => prev.filter(x => x !== s.id));
                       else setSelectedServices(prev => [...prev, s.id]);
                     }} style={{
                       padding: "12px 15px", border: `1px solid ${selectedServices.includes(s.id) ? THEME.accent : THEME.border}`,
-                      cursor: "pointer", background: "var(--theme-bg-muted)", transition: "all 0.2s",
-                      position: "relative"
+                      cursor: "pointer", background: "var(--theme-bg-muted)", transition: "all 0.2s"
                     }}>
                       <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 4 }}>
                         <div style={{ fontSize: 9, fontWeight: 900, textTransform: "uppercase", letterSpacing: 0.5 }}>{s.name}</div>
@@ -609,94 +646,39 @@ export const QuotePage = () => {
                 </div>
               </div>
 
-              <div className="mobile-grid-1" style={{ display: "grid", gridTemplateColumns: "1fr 1fr 1fr", gap: 20 }}>
+              {/* Rodapé Dinâmico de Preço */}
+              <div style={{ borderTop: `1px solid ${THEME.border}`, paddingTop: 20, display: "flex", justifyContent: "space-between", alignItems: "center" }}>
                 <div>
-                  <label style={{ fontSize: 10, fontWeight: 800, textTransform: "uppercase", marginBottom: 12, display: "block", color: THEME.text }}>03. Número de Convidados</label>
-                  <div style={{ position: "relative", display: "flex", alignItems: "center" }}>
-                    <Users size={16} style={{ position: "absolute", left: 15, color: THEME.accent, pointerEvents: "none", zIndex: 1 }} />
-                    <input
-                      type="text"
-                      inputMode="numeric"
-                      value={attendees}
-                      onChange={e => {
-                         const val = e.target.value.replace(/\D/g, "");
-                         setAttendees(val);
-                      }}
-                      className="fs-input"
-                      style={{ width: "100%", paddingLeft: 48 }}
-                    />
+                  <div style={{ fontSize: 10, fontWeight: 800, textTransform: "uppercase", color: THEME.text2 }}>Total Estimado</div>
+                  <div className="heading-luxury !text-brand-primary" style={{ fontSize: 24 }}>
+                    {showPrices ? new Intl.NumberFormat("pt-BR", { style: "currency", currency: "BRL" }).format(totalPrice) : "SOB CONSULTA"}
                   </div>
                 </div>
-                <div style={{ gridColumn: "span 2" }}>
-                  <label style={{ fontSize: 10, fontWeight: 800, textTransform: "uppercase", marginBottom: 12, display: "block", color: THEME.text }}>04. Data e Horário do Evento</label>
-                  <DateTimePicker value={eventDate} onChange={setEventDate} />
+                <div style={{ display: "flex", gap: 10 }}>
+                  <button onClick={() => setStep(1)} style={{ border: `1px solid ${THEME.border}`, color: THEME.text, padding: "15px 25px", fontWeight: 800, fontSize: 11, textTransform: "uppercase", background: "none", cursor: "pointer" }}>VOLTAR</button>
+                  <button 
+                    onClick={() => {
+                      if (selectedServices.length > 0) {
+                        setStep(3);
+                        window.scrollTo(0,0);
+                      } else {
+                        alert("Por favor, selecione pelo menos um serviço.");
+                      }
+                    }}
+                    style={{ background: THEME.accent, color: "black", padding: "15px 25px", fontWeight: 900, fontSize: 11, textTransform: "uppercase", border: "none", cursor: "pointer" }}
+                  >CONTINUAR &rarr;</button>
                 </div>
               </div>
-
-              <div style={{ borderTop: `1px solid ${THEME.border}`, paddingTop: 30, marginTop: 20 }}>
-                 <div className="mobile-stack" style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-end" }}>
-                    <div className="mobile-text-center">
-                      <div style={{ fontSize: 10, fontWeight: 800, textTransform: "uppercase", color: THEME.text2, marginBottom: 5 }}>
-                        {locationType === "PARTNER" ? "Investimento Total" : "Investimento Estimado"}
-                      </div>
-                      {showPrices ? (
-                        <div style={{ display: "flex", flexDirection: "column", gap: 4 }}>
-                          <div className="heading-luxury !text-brand-primary" style={{ fontSize: "clamp(24px, 6vw, 32px)", wordBreak: "break-all" }}>
-                            {new Intl.NumberFormat("pt-BR", { style: "currency", currency: "BRL" }).format(totalPrice)}
-                          </div>
-                          <div style={{ display: "flex", gap: 10, fontSize: 9, fontWeight: 700, color: THEME.text2, textTransform: "uppercase", opacity: 0.8 }}>
-                            <span>Serviços: {new Intl.NumberFormat("pt-BR", { style: "currency", currency: "BRL" }).format(servicesPrice)}</span>
-                            {freight > 0 && <span>· Deslocamento: {new Intl.NumberFormat("pt-BR", { style: "currency", currency: "BRL" }).format(freight)}</span>}
-                            {team.extraGuestsCost > 0 && <span>· Equipe Extra: {new Intl.NumberFormat("pt-BR", { style: "currency", currency: "BRL" }).format(team.extraGuestsCost)}</span>}
-                          </div>
-                        </div>
-                      ) : (
-                        <div className="heading-luxury !text-brand-primary" style={{ fontSize: 24 }}>SOB CONSULTA</div>
-                      )}
-                    </div>
-
-                    <div className="mobile-stack" style={{ display: "flex", gap: 15 }}>
-                      <button 
-                        type="button"
-                        onClick={() => navigate(-1)}
-                        style={{ border: `1px solid ${THEME.border}`, color: THEME.text, padding: "15px 30px", fontWeight: 800, fontSize: 11, textTransform: "uppercase", letterSpacing: 2, background: "none", cursor: "pointer" }}
-                      >
-                        VOLTAR
-                      </button>
-                      <button 
-                        type="button"
-                        onClick={() => {
-                          const isLocalOk = locationType === "PARTNER" ? !!selectedPartnerId : !!customCep;
-                          const isServiceOk = selectedServices.length > 0;
-                          const isDateOk = !!eventDate;
-                          const isGuestsOk = Number(attendees) >= 0;
-
-                          if (isLocalOk && isServiceOk && isDateOk && isGuestsOk) {
-                            setStep(2);
-                            window.scrollTo(0,0);
-                          } else {
-                            alert("Por favor, preencha todos os campos do Passo 1 antes de continuar.");
-                          }
-                        }}
-                        style={{ background: THEME.accent, color: "black", padding: "15px 30px", fontWeight: 900, fontSize: 12, textTransform: "uppercase", letterSpacing: 2, display: "flex", alignItems: "center", gap: 10, justifyContent: "center", border: "none", cursor: "pointer" }}
-                      >
-                        PRÓXIMO PASSO <ArrowRight size={16} />
-                      </button>
-                    </div>
-                 </div>
-              </div>
-
             </div>
           </div>
-
         )}
 
-        {step === 2 && (
+        {step === 3 && (
           <div className="mobile-padding" style={{ background: THEME.bgCard, border: `1px solid ${THEME.border}`, padding: 40 }}>
-             <button onClick={() => setStep(1)} style={{ color: THEME.text2, fontSize: 10, fontWeight: 800, marginBottom: 30, background: "none", border: "none", cursor: "pointer" }}>&larr; VOLTAR</button>
+             <button onClick={() => setStep(2)} style={{ color: THEME.text2, fontSize: 10, fontWeight: 800, marginBottom: 30, background: "none", border: "none", cursor: "pointer" }}>&larr; VOLTAR PARA CONFIGURAÇÃO</button>
              
              <form onSubmit={handleSubmit} style={{ display: "flex", flexDirection: "column", gap: 30 }}>
-                <label style={{ fontSize: 11, fontWeight: 900, textTransform: "uppercase", letterSpacing: 2, color: THEME.accent, marginBottom: 10 }}>05. Preencha seus Dados</label>
+                <label style={{ fontSize: 11, fontWeight: 900, textTransform: "uppercase", letterSpacing: 2, color: THEME.accent, marginBottom: 10 }}>Passo 3: Seus Dados</label>
                 <div className="mobile-grid-1" style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 20 }}>
                   <div style={{ display: "flex", flexDirection: "column", gap: 10 }}>
                     <label style={{ fontSize: 10, fontWeight: 800, textTransform: "uppercase", color: THEME.text2 }}>Seu Nome</label>
@@ -705,49 +687,38 @@ export const QuotePage = () => {
                   <div style={{ display: "flex", flexDirection: "column", gap: 10 }}>
                     <label style={{ fontSize: 10, fontWeight: 800, textTransform: "uppercase", color: THEME.text2 }}>E-mail para Contato</label>
                     <input required type="email" value={email} onChange={e => setEmail(e.target.value)} placeholder="EX: CONTATO@DOMINIO.COM" className="fs-input" style={{ width: "100%", padding: "15px" }} />
-                    {!user && (
-                      <p style={{ fontSize: 9, color: THEME.accent, marginTop: 4, fontWeight: 700, textTransform: "uppercase", letterSpacing: 0.5 }}>
-                        * CASO NÃO TENHA CADASTRO, ENVIAREMOS UMA SENHA PROVISÓRIA PARA ESTE E-MAIL.
-                      </p>
-                    )}
                   </div>
                 </div>
 
                 <div style={{ display: "flex", flexDirection: "column", gap: 10 }}>
-                  <label style={{ fontSize: 10, fontWeight: 800, textTransform: "uppercase", color: THEME.text2 }}>06. Descreva seu evento com suas palavras</label>
-                  <textarea
-                    value={description}
-                    onChange={e => setDescription(e.target.value)}
-                    rows={4}
-                    placeholder="CONTE-NOS MAIS DETALHES, OBJETIVOS E EXPECTATIVAS..."
-                    className="fs-input"
-                  />
+                  <label style={{ fontSize: 10, fontWeight: 800, textTransform: "uppercase", color: THEME.text2 }}>Observações do Evento</label>
+                  <textarea value={description} onChange={e => setDescription(e.target.value)} rows={4} placeholder="CONTE-NOS MAIS DETALHES..." className="fs-input" />
                 </div>
 
                 <button 
                   type="submit"
-                  style={{ background: THEME.accent, color: "black", padding: "20px", fontWeight: 900, fontSize: 14, textTransform: "uppercase", letterSpacing: 4, marginTop: 20, cursor: "pointer", border: "none" }}
+                  style={{ background: THEME.accent, color: "black", padding: "20px", fontWeight: 900, fontSize: 14, textTransform: "uppercase", letterSpacing: 4, cursor: "pointer", border: "none" }}
                 >
-                  RESERVAR E PAGAR
+                  RESERVAR E FINALIZAR AGORA
                 </button>
              </form>
           </div>
         )}
 
-        {step === 3 && (
+        {step === 4 && (
           <div style={{ textAlign: "center", padding: 60, background: THEME.bgCard, border: `1px solid ${THEME.border}` }}>
             <div style={{ width: 80, height: 80, borderRadius: "50%", background: `${THEME.accent}20`, display: "flex", alignItems: "center", justifyContent: "center", margin: "0 auto 30px" }}>
               <ShieldCheck size={40} color={THEME.accent} />
             </div>
-            <h2 style={{ fontFamily: THEME.fontD, fontSize: 42, fontWeight: 900, textTransform: "uppercase", marginBottom: 20 }}>Recebemos sua Solicitação</h2>
+            <h2 style={{ fontFamily: THEME.fontD, fontSize: 42, fontWeight: 900, textTransform: "uppercase", marginBottom: 20 }}>Solicitação Enviada</h2>
             <p style={{ color: THEME.text2, fontSize: 13, maxWidth: 400, margin: "0 auto 40px", lineHeight: 1.7, fontWeight: 600, textTransform: 'uppercase', letterSpacing: 1 }}>
-              Sua solicitação foi enviada com sucesso. Nossa equipe técnica analisará o briefing e os detalhes do local para liberar o seu link de reserva e orçamento final em até 30 minutos.
+              Recebemos seu pedido. Nossa equipe técnica analisará o briefing e entrará em contato em breve.
             </p>
             <button 
               onClick={() => navigate("/")}
-              style={{ border: `1px solid ${THEME.border}`, padding: "15px 40px", fontSize: 12, fontWeight: 800, textTransform: "uppercase", letterSpacing: 2, background: "none", color: THEME.text, cursor: "pointer" }}
+              style={{ border: `1px solid ${THEME.border}`, padding: "15px 40px", fontSize: 12, fontWeight: 800, textTransform: "uppercase", background: "none", color: THEME.text, cursor: "pointer" }}
             >
-              VOLTAR PARA A VITRINE
+              VOLTAR PARA O INÍCIO
             </button>
           </div>
         )}
