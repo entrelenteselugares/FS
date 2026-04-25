@@ -22,11 +22,13 @@ Este documento registra as atualizações críticas realizadas para estabilizaç
 - **UX Adaptativo**: Ocultação automática de seletores de tempo e duração para unidades que operam com modelos de preço fixo.
 
 ### 🎨 Rede de Profissionais & UX
+
 - **Sistema de Convites de Parceria**: Implementação do fluxo de "Aceite de Unidade Fixa". O profissional agora recebe convites e deve aceitar formalmente para ser exibido como residente de uma unidade.
 - **Selo de Artista Residente**: Visualização dinâmica no dashboard do profissional, destacando parcerias ativas com unidades fixas.
 - **Painel Técnico Premium**: Refatoração do modal de perfil para permitir a gestão detalhada de habilidades e equipamentos, seguindo o padrão Midnight Luxury.
 
 ### 🧹 Estabilização Técnica & Build
+
 - **JSX Structural Fix**: Resolução de erros críticos de fechamento de tags no `ProfissionalDashboard.tsx` que impediam o build de produção.
 - **Prisma Schema V2**: Evolução da tabela `CartorioProfissional` para suportar estados de convite (`PENDING`, `ACCEPTED`, `REJECTED`).
 - **Type Safety Audit**: Eliminação de erros de tipagem no `profissional.controller.ts` e garantia de compilação limpa em todo o backend.
