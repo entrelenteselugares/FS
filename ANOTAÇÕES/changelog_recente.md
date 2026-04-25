@@ -1,32 +1,28 @@
-# Changelog Recente: Foto Segundo
+# Changelog Recente - Foto Segundo
 
-## 2026-04-22 (Sessão Anterior)
+Este documento registra as atualizações críticas realizadas para estabilização da plataforma e lançamento da versão "Midnight Luxury".
 
-### 🚀 Novas Funcionalidades
-- **Self-Service Privacy (Área do Cliente)**: Clientes agora podem alternar a privacidade de seus eventos entre PÚBLICO e PRIVADO diretamente em seus painéis.
-- **Smart Professional Allocation**: Automatização da escala de profissionais vinculados a Unidades Fixas.
+## 🚀 Abril 2026 - Sprint de Estabilização e UX
 
-### 🛠️ Estabilidade e Infraestrutura
-- **Zero-Any TS Compliance**: Refatoração das páginas `AdminEvents` e `CheckoutPage`.
-- **HMR/Fast Refresh Optimization**: Refatoração do `ThemeContext`.
+### 🎨 Interface e Experiência (UX/UI)
 
-## 2026-04-23 (Sessão Atual)
+- **Wizard de Orçamento (QuotePage)**: Refatoração completa da calculadora para um sistema de 4 passos, reduzindo a carga cognitiva e aumentando a conversão.
+- **Midnight Luxury v2**: Padronização de todos os Dashboards (Admin, Profissional, Unidade Fixa) com tokens de design variáveis, eliminando hexadecimais hardcoded.
+- **Audit de Paddings**: Correção sistemática de 48px de recuo em campos de entrada com ícones para evitar sobreposições em telas mobile.
+- **Brutalismo Minimalista**: Reforço da regra de `borderRadius: 0` em todos os botões e cards para manter a identidade de marca.
 
-### 📊 Dashboard e BI (Admin Tower)
-- **Sequential Stats Sync**: Refatoração do carregamento do dashboard para processamento sequencial, eliminando erros 500 intermitentes causados por concorrência de pool no ambiente serverless (Vercel).
-- **KPI Reliability**: Corrigido o mismatch de nomes de campos (`activeEvents` vs `totalEvents`) e adicionados fallbacks de segurança para garantir que o dashboard nunca exiba cards vazios ou "NaN".
-- **Real-time Debug Mode**: Implementado log de depuração no console do Admin para auditoria instantânea dos dados recebidos da API.
+### ⚙️ Backend e Banco de Dados
 
-### 🔐 Segurança e Acesso
-- **Temporary Password Persistence**: Adicionado o campo `tempPassword` ao modelo `Order` no Prisma. Agora, a senha provisória gerada no checkout é persistida e incluída nos e-mails de boas-vindas enviados via Webhook/Polling.
-- **Pix Key Persistence (Unidade Fixa)**: Corrigida a persistência e exibição da chave PIX no painel do parceiro, garantindo que os dados bancários sejam carregados corretamente após o login.
+- **Módulo de Catálogo CK**: Implementação do modelo `PrintProduct` e controladores de administração para gestão de preços e margens de álbuns.
+- **Sincronização Supabase**: Execução de migrações via `db push` para habilitar novas funcionalidades de impressão sem downtime.
+- **Correção Financeira**: Ajuste do cálculo de repasse para a Matriz (fallback de 40%) alinhado ao modelo de negócio.
 
-### 🎨 Branding e UX
-- **Official Favicon Sync**: Substituído o ícone das guias pelo logotipo oficial minimalista "FS Luxury", reforçando a identidade visual da marca em todas as páginas.
-- **Dynamic Editorial Covers**: Implementado fallback dinâmico para capas de eventos. Eventos sem foto agora exibem automaticamente uma capa editorial elegante com logo e nome do evento em degradê.
+### 🧹 Debug e Manutenção
 
-### 🛠️ Correções Técnicas
-- **Mobile Registration Stability**: Resolvido o erro fatal `removeChild` que ocorria no Android/iOS após o registro. Implementado redirecionamento robusto via hardware e sincronizadas as chaves de `localStorage` (`fs_token`) para garantir login imediato sem crash de DOM.
-- **Database Schema Sync**: Realizado `prisma db push` para sincronizar o campo `tempPassword` no ambiente de produção, eliminando erros 500 no carregamento das estatísticas de vendas.
-- **TS Build Fixes**: Resolvido erro de tipagem no `EventPage.tsx` que impedia o build na Vercel devido a tratamento incompleto de mensagens de erro de pagamento.
-- **Local QR Generator**: Removida dependência de API externa para QR Code Pix, implementando geração nativa via `qrcode.react` para carregamento instantâneo no Checkout.
+- **Zero Build Errors**: Eliminação de variáveis não utilizadas e erros de tipo que impediam o deploy na Vercel.
+- **Organização de Documentação**: Limpeza de arquivos legados com nomes acentuados e criação de um índice mestre (`README.md`).
+- **Audit de SEO**: Adição de meta-tags dinâmicas e títulos descritivos via `react-helmet-async`.
+
+---
+> [!NOTE]
+> Próximo foco: Integração de notificações WhatsApp via CallMeBot para novos orçamentos.

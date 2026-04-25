@@ -58,6 +58,15 @@ A aplicação DEVE ter `app.set("trust proxy", 1)` no `app.ts`. Sem isso, o `exp
 
 Para evitar o erro 500 causado por concorrência de recursos ou estouro da pool de conexões (PGBouncer) no ambiente serverless, operações de dashboard (múltiplas contagens e agregações) DEVEM ser executadas de forma **sequencial** (`await` individual) em vez de paralelas (`Promise.all`).
 
+### Wizard Flow (QuotePage) Pattern
+
+Para formulários complexos (como o calculador de orçamentos), utilizamos o padrão de **Wizard Multi-etapas**.
+
+- **Estado**: Controlado via `step` local.
+- **Validação**: Cada etapa deve validar seus campos obrigatórios antes de permitir o avanço via `setStep`.
+- **UX**: Sempre utilizar `window.scrollTo(0,0)` ao trocar de etapa para garantir que o usuário veja o topo da nova seção.
+- **Pricing**: O motor de precificação (`totalPrice`) deve ser reativo, recalculando valores instantaneamente a cada mudança de estado.
+
 ### Favicon & Branding Persistence
 
 O favicon oficial está localizado em `frontend/public/favicon.png`. Em caso de atualização da identidade visual, este arquivo deve ser substituído mantendo o nome exato para garantir que as referências no `index.html` e nos componentes de cabeçalho permaneçam válidas sem necessidade de refatoração de código.
