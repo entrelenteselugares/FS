@@ -179,6 +179,8 @@ export const HomePage = () => {
           .hp-footer-cols { gap: 2rem !important; }
           .hp-search-container { flex-direction: column !important; }
           .hp-search-input { border-right: 1px solid var(--border-2) !important; border-bottom: none !important; }
+          .hp-step-item { border-right: none !important; padding-left: 0 !important; padding-right: 0 !important; border-bottom: 1px solid ${T.border} !important; }
+          .hp-step-item:last-child { border-bottom: none !important; }
         }
       `}</style>
 
@@ -367,7 +369,17 @@ export const HomePage = () => {
           </h2>
           <div className="hp-steps" style={{ display: "flex", gap: 0 }}>
             {STEPS.map((step, i) => (
-              <div key={step.n} style={{ flex: 1, padding: "32px 32px 32px 0", borderRight: i < STEPS.length - 1 ? `1px solid ${T.border}` : "none", paddingRight: i < STEPS.length - 1 ? 40 : 0, paddingLeft: i > 0 ? 40 : 0 }}>
+              <div 
+                key={step.n} 
+                className="hp-step-item"
+                style={{ 
+                  flex: 1, 
+                  padding: "32px 0", 
+                  borderRight: i < STEPS.length - 1 ? `1px solid ${T.border}` : "none", 
+                  paddingRight: i < STEPS.length - 1 ? 40 : 0, 
+                  paddingLeft: i > 0 ? 40 : 0 
+                }}
+              >
                 <div style={{ fontFamily: T.fontD, fontWeight: 900, fontSize: 48, color: T.brand, lineHeight: 1, marginBottom: 16, opacity: 0.6 }}>{step.n}</div>
                 <h3 style={{ fontFamily: T.fontD, fontWeight: 900, fontSize: 22, color: T.text, textTransform: "uppercase", margin: "0 0 10px", letterSpacing: "0.5px" }}>{step.title}</h3>
                 <p style={{ fontSize: 13, color: T.text2, fontFamily: T.fontB, fontWeight: 300, lineHeight: 1.6, margin: 0 }}>{step.desc}</p>
