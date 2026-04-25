@@ -1,4 +1,4 @@
-import { useState, useEffect, useRef } from "react";
+import { useState, useEffect, useRef, useMemo } from "react";
 import { Users, Calendar, ArrowRight, ShieldCheck, ChevronLeft, ChevronRight, Clock, Home } from "lucide-react";
 import { API } from "../lib/api";
 import { useNavigate } from "react-router-dom";
@@ -257,6 +257,7 @@ export const QuotePage = () => {
   const [whatsapp, setWhatsapp] = useState("");
   const { user } = useAuth();
   const authUser = user as UserProfile | null;
+  const currentPartner = useMemo(() => partners.find(p => p.id === selectedPartnerId), [partners, selectedPartnerId]);
 
   useEffect(() => {
     if (authUser) {
@@ -329,7 +330,6 @@ export const QuotePage = () => {
   // Cálculo de Preço Final 💰 (Preços Customizados por Ponto Fixo) 🛡️⚡
   const team = calculateTeam();
   
-  const currentPartner = partners.find(p => p.id === selectedPartnerId);
 
   // Lógica de exibição de preços:
   // - Unidade Fixa com parceiro selecionado: mostra preço fixo do parceiro
@@ -602,52 +602,57 @@ export const QuotePage = () => {
               <label style={{ fontSize: 10, fontWeight: 800, textTransform: "uppercase", color: THEME.accent, letterSpacing: 2 }}>Passo 2: Configuração e Serviços</label>
 
               {/* Duração do Evento */}
-              {locationType === "OTHER" && (
+              {(locationType === "OTHER" || (locationType === "PARTNER" && !currentPartner?.hideDuration)) && (
                 <div style={{ display: "flex", flexDirection: "column", gap: 10 }}>
                   <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
                     <label style={{ fontSize: 9, fontWeight: 800, textTransform: "uppercase", color: THEME.text2, letterSpacing: 1 }}>Duração do Registro</label>
                     <span style={{ fontSize: 11, fontWeight: 900, color: THEME.accent }}>{eventHours} HORAS</span>
                   </div>
-                  <div style={{ position: "relative", display: "flex", alignItems: "center", opacity: 1 }}>
+                  <div style={{ position: "relative", display: "flex", alignItems: "center", opacity: (locationType === "PARTNER" && currentPartner?.fixedTime) ? 0.6 : 1 }}>
                     <input 
                       type="range"
                       min={1} max={12} step={1}
                       value={eventHours}
+                      disabled={locationType === "PARTNER" && currentPartner?.fixedTime}
                       onChange={e => setEventHours(Number(e.target.value))}
                       style={{ 
                         width: "100%", 
                         accentColor: THEME.accent, 
                         height: 6, 
                         background: THEME.border,
-                        cursor: "pointer" 
+                        cursor: (locationType === "PARTNER" && currentPartner?.fixedTime) ? "not-allowed" : "pointer" 
                       }}
                     />
                   </div>
                   <div style={{ display: "flex", justifyContent: "space-between", fontSize: 8, color: THEME.text2, fontWeight: 600 }}>
                     <span>1H</span><span>3H</span><span>6H</span><span>9H</span><span>12H</span>
                   </div>
+                  {locationType === "PARTNER" && currentPartner?.fixedTime && (
+                    <span style={{ fontSize: 7, color: THEME.accent, fontWeight: 800, textTransform: "uppercase", marginTop: 4 }}>Duração Fixa da Unidade</span>
+                  )}
                 </div>
               )}
 
               {/* Quantidade de Dias */}
-              {locationType === "OTHER" && (
+              {(locationType === "OTHER" || (locationType === "PARTNER" && !currentPartner?.hideDuration)) && (
                 <div style={{ display: "flex", flexDirection: "column", gap: 10 }}>
                   <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
                     <label style={{ fontSize: 9, fontWeight: 800, textTransform: "uppercase", color: THEME.text2, letterSpacing: 1 }}>Quantidade de Dias</label>
                     <span style={{ fontSize: 11, fontWeight: 900, color: THEME.accent }}>{eventDays} {eventDays === 1 ? 'DIA' : 'DIAS'}</span>
                   </div>
-                  <div style={{ position: "relative", display: "flex", alignItems: "center" }}>
+                  <div style={{ position: "relative", display: "flex", alignItems: "center", opacity: (locationType === "PARTNER") ? 0.6 : 1 }}>
                     <input 
                       type="range"
                       min={1} max={7} step={1}
                       value={eventDays}
+                      disabled={locationType === "PARTNER"}
                       onChange={e => setEventDays(Number(e.target.value))}
                       style={{ 
                         width: "100%", 
                         accentColor: THEME.accent, 
                         height: 6, 
                         background: THEME.border,
-                        cursor: "pointer" 
+                        cursor: locationType === "PARTNER" ? "not-allowed" : "pointer" 
                       }}
                     />
                   </div>

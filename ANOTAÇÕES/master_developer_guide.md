@@ -73,7 +73,32 @@ O favicon oficial está localizado em `frontend/public/favicon.png`. Em caso de 
 
 ---
 
-## 7. Regras Inegociáveis
+## 8. Gestão de Pedidos e Fluxo Financeiro
+
+### Agrupamento por Evento (Audit Pattern)
+
+Para manter a clareza financeira, os pedidos individuais (`Order`) são visualizados de forma agrupada por `Event` na Auditoria Administrativa. 
+
+- **Lógica**: Agrupar por `eventId`, somar `amount` e consolidar o `status` (QUITADO, PARCIAL, PENDENTE).
+- **UI**: Utilizar o padrão de "Master-Detail" com expansão de linha para revelar as parcelas individuais.
+
+### Dependência Sequencial de Pagamentos
+
+Para orçamentos aprovados que geram parcelas (ex: Reserva + Quitação), o sistema impõe uma trava de segurança.
+
+- **Regra**: O botão de pagamento da parcela final ("Quitação") deve permanecer bloqueado até que a parcela inicial ("Reserva") do mesmo `eventId` esteja com status `APROVADO`.
+- **Objetivo**: Garantir a liquidez e o compromisso do cliente antes da mobilização da equipe para a entrega final.
+
+### Automação de Interface para Unidades Fixas
+
+O comportamento do `QuotePage` é dinâmico e controlado pelo banco de dados:
+
+- `hideDuration`: Se `true`, os seletores de horas e dias são removidos da UI.
+- `fixedTime`: Se `true`, o seletor de horas é exibido mas fica em estado `readonly/disabled`, utilizando o valor de `fixedDuration`.
+
+---
+
+## 9. Regras Inegociáveis
 
 > [!IMPORTANT]
 > **Identidade Visual**: A estética **Midnight Luxury** é o pilar da Foto Segundo. Background `#0a0a0a`, tipografia **Barlow Condensed** (Títulos) e **Inter** (UI), e a cor de marca `#85B9AC`. Bordas sempre quadradas (`borderRadius: 0`).

@@ -2,26 +2,33 @@
 
 Este documento registra as atualizações críticas realizadas para estabilização da plataforma e lançamento da versão "Midnight Luxury".
 
-## 🚀 Abril 2026 - Sprint de Estabilização e UX
+## 🚀 Abril 2026 - Sprint: Checkout Unificado & Integridade Financeira
 
-### 🎨 Interface e Experiência (UX/UI)
+### 💳 Pagamentos e Conversão
 
-- **Wizard de Orçamento (QuotePage)**: Refatoração completa da calculadora para um sistema de 4 passos, reduzindo a carga cognitiva e aumentando a conversão.
-- **Midnight Luxury v2**: Padronização de todos os Dashboards (Admin, Profissional, Unidade Fixa) com tokens de design variáveis, eliminando hexadecimais hardcoded.
-- **Audit de Paddings**: Correção sistemática de 48px de recuo em campos de entrada com ícones para evitar sobreposições em telas mobile.
-- **Brutalismo Minimalista**: Reforço da regra de `borderRadius: 0` em todos os botões e cards para manter a identidade de marca.
+- **Checkout Unificado**: Substituição completa do paywall legado pelo novo checkout premium, oferecendo suporte nativo a Pix e cartão com resumo detalhado.
+- **Selo 3x Sem Juros**: Implementação de sinalização visual estratégica no checkout para aumentar o ticket médio e conversão.
+- **Auto-preenchimento Inteligente**: Integração com o perfil do usuário para preencher Nome, E-mail e WhatsApp automaticamente no fluxo de orçamento.
 
-### ⚙️ Backend e Banco de Dados
+### 📊 Gestão Financeira e Auditoria
 
-- **Módulo de Catálogo CK**: Implementação do modelo `PrintProduct` e controladores de administração para gestão de preços e margens de álbuns.
-- **Sincronização Supabase**: Execução de migrações via `db push` para habilitar novas funcionalidades de impressão sem downtime.
-- **Correção Financeira**: Ajuste do cálculo de repasse para a Matriz (fallback de 40%) alinhado ao modelo de negócio.
+- **Auditoria por Projeto**: Refatoração da tela de pedidos para agrupar transações por Evento, eliminando a percepção de "duplicidade" em parcelas.
+- **Trava de Sequenciamento**: Regra de negócio que bloqueia o pagamento da "Quitação" até que a "Reserva" seja confirmada, garantindo liquidez imediata.
+- **Status Unificado**: Novo motor de status (QUITADO, PARCIAL, PENDENTE) para visão rápida da saúde financeira de cada projeto.
 
-### 🧹 Debug e Manutenção
+### 🏢 Unidades Fixas (Cartórios)
 
-- **Zero Build Errors**: Eliminação de variáveis não utilizadas e erros de tipo que impediam o deploy na Vercel.
-- **Organização de Documentação**: Limpeza de arquivos legados com nomes acentuados e criação de um índice mestre (`README.md`).
-- **Audit de SEO**: Adição de meta-tags dinâmicas e títulos descritivos via `react-helmet-async`.
+- **Automação de Regras de Unidade**: A `QuotePage` agora respeita dinamicamente as flags `fixedTime` e `hideDuration` configuradas no Admin.
+- **UX Adaptativo**: Ocultação automática de seletores de tempo e duração para unidades que operam com modelos de preço fixo.
+
+### 🧹 Estabilização Técnica
+
+- **Type Safety Audit**: Correção de erros críticos de tipagem no `EventPage` e `QuotePage` que causavam falhas de build na Vercel.
+- **Limpeza de Imports**: Remoção de bibliotecas e ícones não utilizados para otimização de performance.
+
+---
+> [!NOTE]
+> Próximo foco: Monitoramento de Webhooks do Mercado Pago para automação total de liberações.
 
 ---
 > [!NOTE]

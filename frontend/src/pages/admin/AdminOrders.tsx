@@ -1,6 +1,7 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useMemo } from "react";
 import { API } from "../../lib/api";
 import { T } from "../../lib/theme";
+import { ChevronDown, ChevronRight, PieChart, CheckCircle2, Clock } from "lucide-react";
 
 interface Order {
   id: string;
@@ -8,8 +9,22 @@ interface Order {
   status: string;
   createdAt: string;
   buyerEmail?: string;
+  eventId: string;
+  manualType?: string;
   event: { title: string; slug: string };
   user?: { nome: string; email: string };
+}
+
+interface OrderGroup {
+  eventId: string;
+  eventTitle: string;
+  eventSlug: string;
+  clientName: string;
+  clientEmail: string;
+  totalAmount: number;
+  orders: Order[];
+  status: "QUITADO" | "PARCIAL" | "PENDENTE";
+  latestDate: string;
 }
 
 export const AdminOrders: React.FC = () => {
@@ -18,13 +33,14 @@ export const AdminOrders: React.FC = () => {
   const [page, setPage] = useState(1);
   const [totalPages, setTotalPages] = useState(1);
   const [search, setSearch] = useState("");
+  const [expandedId, setExpandedId] = useState<string | null>(null);
 
   useEffect(() => {
     const fetchOrders = async () => {
       setLoading(true);
       try {
         const { data } = await API.get("/admin/orders", {
-          params: { page, q: search }
+          params: { page, q: search, limit: 100 } // Aumentamos o limite para garantir agrupamento coerente
         });
         setOrders(data.orders);
         setTotalPages(data.pages);
@@ -37,31 +53,73 @@ export const AdminOrders: React.FC = () => {
     fetchOrders();
   }, [page, search]);
 
+  // Agrupamento por Evento
+  const groupedOrders = useMemo(() => {
+    const groups: Record<string, OrderGroup> = {};
+
+    orders.forEach(o => {
+      const eid = o.eventId || o.event.slug;
+      if (!groups[eid]) {
+        groups[eid] = {
+          eventId: eid,
+          eventTitle: o.event.title,
+          eventSlug: o.event.slug,
+          clientName: o.user?.nome || "Convidado",
+          clientEmail: o.buyerEmail || o.user?.email || "—",
+          totalAmount: 0,
+          orders: [],
+          status: "PENDENTE",
+          latestDate: o.createdAt
+        };
+      }
+      groups[eid].totalAmount += Number(o.amount);
+      groups[eid].orders.push(o);
+      if (new Date(o.createdAt) > new Date(groups[eid].latestDate)) {
+        groups[eid].latestDate = o.createdAt;
+      }
+    });
+
+    // Definir Status Unificado
+    Object.values(groups).forEach(g => {
+      const allPaid = g.orders.every(o => o.status === "APROVADO" || o.status === "APPROVED");
+      const somePaid = g.orders.some(o => o.status === "APROVADO" || o.status === "APPROVED");
+      
+      if (allPaid) g.status = "QUITADO";
+      else if (somePaid) g.status = "PARCIAL";
+      else g.status = "PENDENTE";
+    });
+
+    return Object.values(groups).sort((a, b) => new Date(b.latestDate).getTime() - new Date(a.latestDate).getTime());
+  }, [orders]);
+
+  const formatCurrency = (val: number) => new Intl.NumberFormat("pt-BR", { style: "currency", currency: "BRL" }).format(val);
+
   return (
     <div className="space-y-8 animate-in fade-in slide-in-from-bottom-4 duration-700">
       <style>{`
         .orders-header { display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid ${T.border}; padding-bottom: 24px; }
         .orders-table-wrapper { border: 1px solid ${T.border}; background: ${T.bgField}; overflow: hidden; }
         .orders-table { width: 100%; border-collapse: collapse; }
-        .order-card-mobile { display: none; }
+        
+        .row-group { cursor: pointer; border-bottom: 1px solid ${T.border}44; transition: all 0.2s; }
+        .row-group:hover { background: ${T.brand}05; }
+        .row-expanded { background: ${T.bg}aa; }
+
+        .status-badge { 
+          display: inline-flex; align-items: center; gap: 6px; padding: 4px 10px; 
+          font-size: 8px; fontWeight: 900; text-transform: uppercase; letter-spacing: 1; border-radius: 2px;
+        }
 
         @media (max-width: 768px) {
           .orders-header { flex-direction: column; align-items: stretch; gap: 20px; }
           .search-container { width: 100% !important; }
-          .orders-table-wrapper { display: none; }
-          .order-card-mobile { 
-            display: flex; flex-direction: column; gap: 12px; padding: 16px; 
-            background: ${T.bgField}; border: 1px solid ${T.border}; margin-bottom: 12px;
-          }
-          .order-card-top { display: flex; justify-content: space-between; align-items: flex-start; }
-          .order-card-footer { display: flex; justify-content: space-between; align-items: center; border-top: 1px solid ${T.border}44; padding-top: 12px; margin-top: 4px; }
         }
       `}</style>
 
       <div className="orders-header">
         <div>
-          <h2 style={{ fontSize: 24, fontFamily: T.fontD, fontWeight: 900, color: T.text, textTransform: "uppercase", letterSpacing: -1 }}>Auditoria de Pedidos</h2>
-          <p style={{ fontSize: 9, fontWeight: 900, color: T.text3, textTransform: "uppercase", letterSpacing: 2, marginTop: 4 }}>Trilha de transições e liquidez do ledger</p>
+          <h2 style={{ fontSize: 24, fontFamily: T.fontD, fontWeight: 900, color: T.text, textTransform: "uppercase", letterSpacing: -1 }}>Auditoria de Projetos</h2>
+          <p style={{ fontSize: 9, fontWeight: 900, color: T.text3, textTransform: "uppercase", letterSpacing: 2, marginTop: 4 }}>Visão consolidada de transações por evento</p>
         </div>
         
         <div className="search-container" style={{ position: "relative", width: 320 }}>
@@ -83,10 +141,10 @@ export const AdminOrders: React.FC = () => {
           <table className="orders-table">
             <thead>
               <tr style={{ borderBottom: `1px solid ${T.border}`, background: `${T.bg}55` }}>
-                <th style={{ textAlign: "left", padding: "12px 20px", fontSize: 9, fontWeight: 900, textTransform: "uppercase", letterSpacing: 2, color: T.text3 }}>ID / Data</th>
-                <th style={{ textAlign: "left", padding: "12px 20px", fontSize: 9, fontWeight: 900, textTransform: "uppercase", letterSpacing: 2, color: T.text3 }}>Comprador</th>
-                <th style={{ textAlign: "left", padding: "12px 20px", fontSize: 9, fontWeight: 900, textTransform: "uppercase", letterSpacing: 2, color: T.text3 }}>Evento</th>
-                <th style={{ textAlign: "right", padding: "12px 20px", fontSize: 9, fontWeight: 900, textTransform: "uppercase", letterSpacing: 2, color: T.text3 }}>Valor</th>
+                <th style={{ width: 40 }}></th>
+                <th style={{ textAlign: "left", padding: "12px 20px", fontSize: 9, fontWeight: 900, textTransform: "uppercase", letterSpacing: 2, color: T.text3 }}>Projeto / Comprador</th>
+                <th style={{ textAlign: "center", padding: "12px 20px", fontSize: 9, fontWeight: 900, textTransform: "uppercase", letterSpacing: 2, color: T.text3 }}>Parcelas</th>
+                <th style={{ textAlign: "right", padding: "12px 20px", fontSize: 9, fontWeight: 900, textTransform: "uppercase", letterSpacing: 2, color: T.text3 }}>Total Bruto</th>
                 <th style={{ textAlign: "center", padding: "12px 20px", fontSize: 9, fontWeight: 900, textTransform: "uppercase", letterSpacing: 2, color: T.text3 }}>Status</th>
               </tr>
             </thead>
@@ -97,35 +155,87 @@ export const AdminOrders: React.FC = () => {
                     <div className="text-[10px] text-theme-muted animate-pulse tracking-[0.5em] uppercase">Sincronizando Ledger...</div>
                   </td>
                 </tr>
-              ) : orders.length > 0 ? (
-                orders.map((order) => (
-                  <tr key={order.id} style={{ borderBottom: `1px solid ${T.border}44`, transition: "all 0.2s" }} onMouseEnter={e => e.currentTarget.style.background = `${T.brand}05`} onMouseLeave={e => e.currentTarget.style.background = "transparent"}>
-                    <td style={{ padding: "10px 20px" }}>
-                      <div style={{ fontSize: 9, color: T.text3, marginBottom: 2 }}>#{order.id.slice(-8).toUpperCase()}</div>
-                      <div style={{ fontSize: 8, color: T.text3, fontWeight: 900, textTransform: "uppercase" }}>{new Date(order.createdAt).toLocaleDateString("pt-BR")}</div>
-                    </td>
-                    <td style={{ padding: "10px 20px" }}>
-                      <div style={{ fontSize: 11, color: T.text, fontWeight: 700, fontStyle: "italic" }}>{order.user?.nome || "Convidado"}</div>
-                      <div style={{ fontSize: 9, color: T.text3 }}>{order.buyerEmail || order.user?.email || "—"}</div>
-                    </td>
-                    <td style={{ padding: "10px 20px" }}>
-                      <div style={{ fontSize: 10, color: T.brand, fontWeight: 900, textTransform: "uppercase", letterSpacing: 1 }}>
-                        {order.event.title}
-                      </div>
-                    </td>
-                    <td style={{ padding: "10px 20px", textAlign: "right" }}>
-                      <div style={{ fontSize: 12, color: T.text, fontWeight: 900 }}>R$ {Number(order.amount).toFixed(2)}</div>
-                    </td>
-                    <td style={{ padding: "10px 20px", textAlign: "center" }}>
-                      <span style={{ 
-                        display: "inline-block", padding: "4px 8px", border: `1px solid ${order.status === "APROVADO" ? T.brand : T.border}`,
-                        fontSize: 8, fontWeight: 900, textTransform: "uppercase", letterSpacing: 1, color: order.status === "APROVADO" ? T.brand : T.text3,
-                        background: order.status === "APROVADO" ? `${T.brand}11` : "transparent"
-                      }}>
-                        {order.status}
-                      </span>
-                    </td>
-                  </tr>
+              ) : groupedOrders.length > 0 ? (
+                groupedOrders.map((group) => (
+                  <React.Fragment key={group.eventId}>
+                    <tr 
+                      className={`row-group ${expandedId === group.eventId ? "row-expanded" : ""}`}
+                      onClick={() => setExpandedId(expandedId === group.eventId ? null : group.eventId)}
+                    >
+                      <td style={{ padding: "15px 0 15px 20px" }}>
+                        {expandedId === group.eventId ? <ChevronDown size={14} className="text-brand-primary" /> : <ChevronRight size={14} className="opacity-20" />}
+                      </td>
+                      <td style={{ padding: "15px 20px" }}>
+                        <div style={{ fontSize: 11, color: T.text, fontWeight: 800, textTransform: "uppercase", letterSpacing: 0.5 }}>{group.eventTitle}</div>
+                        <div style={{ fontSize: 9, color: T.text3, marginTop: 2 }}>{group.clientName} · {group.clientEmail}</div>
+                      </td>
+                      <td style={{ padding: "15px 20px", textAlign: "center" }}>
+                        <div style={{ fontSize: 10, color: T.text, fontWeight: 900, opacity: 0.6 }}>
+                          {group.orders.length}
+                        </div>
+                      </td>
+                      <td style={{ padding: "15px 20px", textAlign: "right" }}>
+                        <div style={{ fontSize: 13, color: T.text, fontWeight: 900 }}>{formatCurrency(group.totalAmount)}</div>
+                      </td>
+                      <td style={{ padding: "15px 20px", textAlign: "center" }}>
+                        {group.status === "QUITADO" && (
+                          <span className="status-badge" style={{ border: `1px solid ${T.brand}`, color: T.brand, background: `${T.brand}11` }}>
+                            <CheckCircle2 size={10} /> {group.status}
+                          </span>
+                        )}
+                        {group.status === "PARCIAL" && (
+                          <span className="status-badge" style={{ border: "1px solid #f59e0b", color: "#f59e0b", background: "#f59e0b11" }}>
+                            <PieChart size={10} /> {group.status}
+                          </span>
+                        )}
+                        {group.status === "PENDENTE" && (
+                          <span className="status-badge" style={{ border: `1px solid ${T.text3}`, color: T.text3 }}>
+                            <Clock size={10} /> {group.status}
+                          </span>
+                        )}
+                      </td>
+                    </tr>
+
+                    {/* Detalhamento das Parcelas */}
+                    {expandedId === group.eventId && (
+                      <tr>
+                        <td colSpan={5} style={{ padding: "0 20px 20px 60px", background: `${T.bg}aa` }}>
+                          <div className="animate-in fade-in slide-in-from-top-2 duration-300">
+                            <table style={{ width: "100%", borderCollapse: "collapse", background: "rgba(0,0,0,0.2)", border: `1px solid ${T.border}22` }}>
+                              <thead>
+                                <tr style={{ borderBottom: `1px solid ${T.border}44` }}>
+                                  <th style={{ textAlign: "left", padding: "10px", fontSize: 8, color: T.text3, textTransform: "uppercase" }}>ID Pedido</th>
+                                  <th style={{ textAlign: "left", padding: "10px", fontSize: 8, color: T.text3, textTransform: "uppercase" }}>Tipo / Data</th>
+                                  <th style={{ textAlign: "right", padding: "10px", fontSize: 8, color: T.text3, textTransform: "uppercase" }}>Valor</th>
+                                  <th style={{ textAlign: "center", padding: "10px", fontSize: 8, color: T.text3, textTransform: "uppercase" }}>Status MP</th>
+                                </tr>
+                              </thead>
+                              <tbody>
+                                {group.orders.sort((a,b) => new Date(a.createdAt).getTime() - new Date(b.createdAt).getTime()).map(o => (
+                                  <tr key={o.id} style={{ borderBottom: `1px solid ${T.border}22` }}>
+                                    <td style={{ padding: "12px 10px", fontSize: 9, color: T.text3, fontFamily: "monospace" }}>#{o.id.toUpperCase()}</td>
+                                    <td style={{ padding: "12px 10px" }}>
+                                      <div style={{ fontSize: 9, color: T.text, fontWeight: 700 }}>{o.manualType || "Parcela"}</div>
+                                      <div style={{ fontSize: 8, color: T.text3 }}>{new Date(o.createdAt).toLocaleString("pt-BR")}</div>
+                                    </td>
+                                    <td style={{ padding: "12px 10px", textAlign: "right", fontSize: 10, fontWeight: 900 }}>{formatCurrency(o.amount)}</td>
+                                    <td style={{ padding: "12px 10px", textAlign: "center" }}>
+                                      <div style={{ 
+                                        fontSize: 7, fontWeight: 900, 
+                                        color: (o.status === "APROVADO" || o.status === "APPROVED") ? T.brand : "#f87171" 
+                                      }}>
+                                        {o.status}
+                                      </div>
+                                    </td>
+                                  </tr>
+                                ))}
+                              </tbody>
+                            </table>
+                          </div>
+                        </td>
+                      </tr>
+                    )}
+                  </React.Fragment>
                 ))
               ) : (
                 <tr>
@@ -137,37 +247,6 @@ export const AdminOrders: React.FC = () => {
             </tbody>
           </table>
         </div>
-      </div>
-
-      {/* Mobile Cards */}
-      <div className="mobile-only">
-        {loading ? (
-          <div className="py-20 text-center text-[10px] text-theme-muted uppercase tracking-widest animate-pulse">Sincronizando...</div>
-        ) : orders.map(order => (
-          <div key={order.id} className="order-card-mobile">
-            <div className="order-card-top">
-              <div>
-                <div style={{ fontSize: 10, color: T.text3, fontWeight: 900, textTransform: "uppercase", letterSpacing: 1 }}>#{order.id.slice(-8).toUpperCase()}</div>
-                <div style={{ fontSize: 13, color: T.text, fontWeight: 700, marginTop: 4 }}>{order.user?.nome || "Convidado"}</div>
-                <div style={{ fontSize: 10, color: T.text3 }}>{order.buyerEmail || order.user?.email}</div>
-              </div>
-              <div style={{ textAlign: "right" }}>
-                <div style={{ fontSize: 14, color: T.text, fontWeight: 900 }}>R$ {Number(order.amount).toFixed(2)}</div>
-                <div style={{ 
-                  display: "inline-block", padding: "2px 6px", border: `1px solid ${order.status === "APROVADO" ? T.brand : T.border}`,
-                  fontSize: 7, fontWeight: 900, textTransform: "uppercase", color: order.status === "APROVADO" ? T.brand : T.text3,
-                  marginTop: 6
-                }}>
-                  {order.status}
-                </div>
-              </div>
-            </div>
-            <div className="order-card-footer">
-              <div style={{ fontSize: 9, color: T.brand, fontWeight: 900, textTransform: "uppercase" }}>{order.event.title}</div>
-              <div style={{ fontSize: 9, color: T.text3, fontWeight: 700 }}>{new Date(order.createdAt).toLocaleDateString("pt-BR")}</div>
-            </div>
-          </div>
-        ))}
       </div>
 
       {totalPages > 1 && (
