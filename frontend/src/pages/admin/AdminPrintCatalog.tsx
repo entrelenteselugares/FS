@@ -3,7 +3,7 @@ import { API } from "../../lib/api";
 import { T, BtnPrimary, BtnSecondary, BtnGhost, Card, FieldInput, FieldLabel } from "../../lib/theme";
 import {
   ChevronDown, ChevronRight, ToggleLeft, ToggleRight,
-  Percent, Database, Eye, EyeOff, Plus, X, Tag, Upload, RefreshCw
+  Percent, Eye, EyeOff, Plus, X, Tag, Upload, RefreshCw
 } from "lucide-react";
 
 // ─── Tipos ─────────────────────────────────────────────────────────────────────
