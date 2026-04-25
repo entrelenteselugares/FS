@@ -602,19 +602,28 @@ export const QuotePage = () => {
                 </div>
               )}
 
-              {/* Convidados */}
-              <div>
-                <label style={{ fontSize: 10, fontWeight: 800, textTransform: "uppercase", marginBottom: 10, display: "block", color: THEME.text }}>Número de Convidados</label>
-                <div style={{ position: "relative", display: "flex", alignItems: "center" }}>
-                  <Users size={16} style={{ position: "absolute", left: 15, color: THEME.accent, pointerEvents: "none", zIndex: 1 }} />
-                  <input
-                    type="text"
-                    inputMode="numeric"
-                    value={attendees}
-                    onChange={e => setAttendees(e.target.value.replace(/\D/g, ""))}
-                    className="fs-input"
-                    style={{ width: "100%", paddingLeft: 48 }}
-                  />
+              {/* Convidados e Tipo de Uso */}
+              <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 20 }}>
+                <div>
+                  <label style={{ fontSize: 10, fontWeight: 800, textTransform: "uppercase", marginBottom: 10, display: "block", color: THEME.text }}>Número de Convidados</label>
+                  <div style={{ position: "relative", display: "flex", alignItems: "center" }}>
+                    <Users size={16} style={{ position: "absolute", left: 15, color: THEME.accent, pointerEvents: "none", zIndex: 1 }} />
+                    <input
+                      type="text"
+                      inputMode="numeric"
+                      value={attendees}
+                      onChange={e => setAttendees(e.target.value.replace(/\D/g, ""))}
+                      className="fs-input"
+                      style={{ width: "100%", paddingLeft: 48 }}
+                    />
+                  </div>
+                </div>
+                <div>
+                  <label style={{ fontSize: 10, fontWeight: 800, textTransform: "uppercase", marginBottom: 10, display: "block", color: THEME.text }}>Tipo de Finalidade</label>
+                  <div style={{ display: "flex", gap: 5 }}>
+                    <button type="button" onClick={() => setUsageType("PESSOAL")} style={{ flex: 1, padding: 12, fontSize: 8, fontWeight: 800, border: `1px solid ${usageType === "PESSOAL" ? THEME.accent : THEME.border}`, background: usageType === "PESSOAL" ? `${THEME.accent}10` : "transparent", color: usageType === "PESSOAL" ? THEME.accent : THEME.text2, cursor: "pointer" }}>PESSOAL</button>
+                    <button type="button" onClick={() => setUsageType("EMPRESARIAL")} style={{ flex: 1, padding: 12, fontSize: 8, fontWeight: 800, border: `1px solid ${usageType === "EMPRESARIAL" ? THEME.accent : THEME.border}`, background: usageType === "EMPRESARIAL" ? `${THEME.accent}10` : "transparent", color: usageType === "EMPRESARIAL" ? THEME.accent : THEME.text2, cursor: "pointer" }}>BUSINESS</button>
+                  </div>
                 </div>
               </div>
 
