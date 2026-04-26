@@ -43,7 +43,7 @@ import {
   deleteMediaAdmin,
   toggleVisibility,
 } from "../controllers/access.controller";
-import { requireAuth, requireRole } from "../lib/auth";
+import { requireAuth, requireRole, optionalAuth } from "../lib/auth";
 import {
   likePhoto,
   getEventLikes,
@@ -115,7 +115,7 @@ router.get("/mercadopago/callback", MercadoPagoController.callback);
 
 // ── Eventos Públicos (Vitrine & Paywall) ──────────────────────────────────────
 router.get("/public/events",               EventController.listPublic);
-router.get("/public/events/:slug",         EventController.getById);       // busca por slug ou id
+router.get("/public/events/:slug",         optionalAuth, EventController.getById);       // busca por slug ou id
 router.get("/public/events/:slug/access",  EventController.getAccess);     // ?orderId=xxx
 router.get("/public/partners",             EventController.listPartners);   // alias legado
 router.get("/public/unidades-fixas",       EventController.listPartners);   // alias compatível

@@ -255,7 +255,7 @@ export const AdminEvents: React.FC<AdminEventsProps> = ({ initialEditEventId }) 
       const found = events.find(e => e.id === initialEditEventId);
       if (found) handleEditOpen(found);
     }
-  }, [initialEditEventId, events]);
+  }, [initialEditEventId, events, handleEditOpen]);
 
   return (
     <div className="space-y-12 animate-in fade-in slide-in-from-bottom-4 duration-700">

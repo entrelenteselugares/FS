@@ -59,6 +59,28 @@ export const requireAuth = (req: ExpressRequest, res: Response, next: NextFuncti
   }
 };
 
+/** Middleware: tenta autenticar mas não bloqueia se falhar */
+export const optionalAuth = (req: ExpressRequest, res: Response, next: NextFunction) => {
+  const authHeader = req.headers.authorization;
+  const queryToken = req.query.token as string;
+  let token: string | undefined;
+
+  if (authHeader?.startsWith("Bearer ")) {
+    token = authHeader.slice(7);
+  } else if (queryToken) {
+    token = queryToken;
+  }
+
+  if (!token) return next();
+
+  try {
+    (req as AuthRequest).user = verifyToken(token);
+  } catch {
+    // Ignora erro de token em rotas opcionais
+  }
+  return next();
+};
+
 /** Middleware: restringe acesso por role */
 export const requireRole = (...roles: string[]) => {
   return (req: ExpressRequest, res: Response, next: NextFunction) => {

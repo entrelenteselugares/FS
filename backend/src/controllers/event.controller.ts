@@ -48,6 +48,9 @@ export class EventController {
     const { userId } = req.query;
 
     console.log(`[EventController.getById] Buscando evento por id/slug: ${id}`);
+    
+    // Usuário identificado pelo middleware optionalAuth
+    const authUser = (req as any).user;
 
     try {
       // Busca no banco por ID ou Slug
@@ -59,7 +62,9 @@ export class EventController {
           ]
         },
         include: {
-          cartorioUser: { select: { cartorio: { select: { razaoSocial: true } } } }
+          cartorioUser: { select: { cartorio: { select: { razaoSocial: true } } } },
+          captacao: { select: { id: true } },
+          edicao: { select: { id: true } }
         }
       });
 
@@ -78,7 +83,15 @@ export class EventController {
         orderBy: { createdAt: "desc" }
       }).catch(() => null);
       
-      const hasAccess = isPaid || (order?.status === "APROVADO");
+      // Lógica de Acesso (Pivot)
+      const isOwner = authUser && (
+        authUser.role === "ADMIN" || 
+        authUser.userId === event.captacaoId || 
+        authUser.userId === event.edicaoId || 
+        authUser.userId === event.cartorioUserId
+      );
+
+      const hasAccess = isPaid || isOwner || (order?.status === "APROVADO");
 
       // Links sensíveis só aparecem se aprovado
       const rawPreviews = (event as any).previewPhotos;

@@ -175,7 +175,11 @@ export default function EventPage() {
       .then((r) => {
         setEvent(r.data);
         if (r.data.paywall && !r.data.paywall.active) {
-          navigate("/minha-conta");
+          if (user?.role === "CLIENTE") {
+            navigate("/minha-conta");
+          } else {
+            setStep("success"); // Desbloqueia a visão para Admin/Pro
+          }
         }
       })
       .catch(() => navigate("/404"))
@@ -190,7 +194,11 @@ export default function EventPage() {
           setStep("success");
           setNeedsAccessChoice(true);
         } else if (data.status === "ACTIVE") {
-          navigate("/minha-conta");
+          if (user?.role === "CLIENTE") {
+            navigate("/minha-conta");
+          } else {
+            setStep("success");
+          }
         }
       } catch { /* not paid */ }
     };
