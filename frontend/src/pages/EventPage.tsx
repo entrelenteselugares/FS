@@ -184,7 +184,7 @@ export default function EventPage() {
       })
       .catch(() => navigate("/404"))
       .finally(() => setLoading(false));
-  }, [slug, navigate, user?.id]);
+  }, [slug, navigate, user?.id, user?.role]);
 
   useEffect(() => {
     const checkAccessStatus = async (oid: string) => {
@@ -206,7 +206,7 @@ export default function EventPage() {
     const savedOrderId = localStorage.getItem(`fs_order_${slug}`);
     const oid = urlOrderId ?? savedOrderId;
     if (oid) { setOrderId(oid); checkAccessStatus(oid); }
-  }, [slug, searchParams, event?.nomeNoivos]);
+  }, [slug, searchParams, event?.nomeNoivos, navigate, user?.role]);
 
   const handleTokenize = async () => {
     if (!MP_PUBLIC_KEY) { setError("Erro de configuração: Chave MP ausente."); return; }
