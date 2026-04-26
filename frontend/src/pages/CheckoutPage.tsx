@@ -156,7 +156,6 @@ export const CheckoutPage = () => {
       setRedirectCountdown(c => {
         if (c <= 1) {
           clearInterval(timer);
-          const eventTarget = order.event?.id || order.eventId;
           navigate(`/minha-conta?orderId=${order.id}`);
           return 0;
         }

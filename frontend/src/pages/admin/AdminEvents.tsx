@@ -246,13 +246,7 @@ export const AdminEvents: React.FC<AdminEventsProps> = ({ initialEditEventId }) 
         setLoading(false);
       }
     };
-    fetchData().then(() => {
-      if (initialEditEventId) {
-        // Encontra o evento e abre o modal
-        const eventToEdit = events.find(e => e.id === initialEditEventId);
-        // Nota: Como 'events' é atualizado via state, talvez precisemos de um efeito separado ou usar o resultado da API diretamente
-      }
-    });
+    fetchData();
   }, []);
 
   // Efeito separado para abrir o evento inicial quando os eventos carregarem
