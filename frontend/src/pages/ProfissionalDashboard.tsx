@@ -137,6 +137,8 @@ export default function ProfissionalDashboard() {
   const [viewTab, setViewTab] = useState<"lista" | "calendario">("lista");
   const [activeTab, setActiveTab] = useState<"agenda" | "convites" | "financeiro">("agenda");
   const [unitInvites, setUnitInvites] = useState<UnitInvite[]>([]);
+  const [showNewServicesModal, setShowNewServicesModal] = useState(false);
+  const [hasCheckedInvites, setHasCheckedInvites] = useState(false);
 
   const fetchEvents = useCallback(() => {
     setLoading(true);
@@ -215,6 +217,16 @@ export default function ProfissionalDashboard() {
 
   const displayEvents = activeTab === "agenda" ? acceptedEvents : pendingEvents;
 
+  // Auto-show modal if there are new things
+  useEffect(() => {
+    if (!loading && !hasCheckedInvites) {
+      if (pendingEvents.length > 0 || unitInvites.length > 0) {
+        setShowNewServicesModal(true);
+      }
+      setHasCheckedInvites(true);
+    }
+  }, [loading, pendingEvents.length, unitInvites.length, hasCheckedInvites]);
+
   const NAV_ITEMS = (activeTab: string, setActiveTab: (t: "agenda" | "convites" | "financeiro") => void, pendingCount: number): NavItem[] => [
     { label: "Visão Geral", onClick: () => setActiveTab("agenda"), isActive: activeTab === "agenda", icon: <LayoutDashboard size={16} /> },
     { label: "Convites Pendentes", onClick: () => setActiveTab("convites"), isActive: activeTab === "convites", icon: <MessageCircle size={16} />, badge: pendingCount },
@@ -247,6 +259,76 @@ export default function ProfissionalDashboard() {
           }
         }
       `}</style>
+
+      {/* POP-UP DE NOVOS SERVIÇOS (REQUISITO 3) */}
+      {showNewServicesModal && (
+        <div style={{
+          position: "fixed", inset: 0, zIndex: 5000, 
+          display: "flex", alignItems: "center", justifyContent: "center",
+          background: "rgba(0,0,0,0.85)", backdropFilter: "blur(8px)",
+          padding: "1.5rem"
+        }}>
+          <div style={{
+            ...S.card, width: "100%", maxWidth: 450, padding: "2.5rem",
+            textAlign: "center", border: `2px solid ${T.brand}`,
+            animation: "fadeIn 0.4s ease-out", position: "relative"
+          }}>
+            <div style={{ 
+              width: 60, height: 60, borderRadius: "50%", background: `${T.brand}20`,
+              display: "flex", alignItems: "center", justifyContent: "center",
+              margin: "0 auto 1.5rem", color: T.brand
+            }}>
+              <Award size={32} />
+            </div>
+
+            <h2 style={{ fontSize: 22, fontWeight: 900, marginBottom: "0.5rem", textTransform: "uppercase", letterSpacing: 1 }}>
+              Novas Oportunidades!
+            </h2>
+            <p style={{ fontSize: 13, color: "var(--theme-text-muted)", marginBottom: "2rem" }}>
+              Existem convites pendentes que aguardam sua resposta.
+            </p>
+
+            <div style={{ display: "flex", flexDirection: "column", gap: "0.75rem" }}>
+              {unitInvites.length > 0 && (
+                <div style={{ background: "rgba(133,185,172,0.1)", padding: "1rem", border: `1px solid ${T.brand}40` }}>
+                  <div style={{ fontSize: 10, fontWeight: 900, color: T.brand, textTransform: "uppercase", marginBottom: 4 }}>Parcerias de Unidade</div>
+                  <div style={{ fontSize: 14, fontWeight: 600 }}>{unitInvites.length} {unitInvites.length === 1 ? "novo convite" : "novos convites"}</div>
+                </div>
+              )}
+              {pendingEvents.length > 0 && (
+                <div style={{ background: "rgba(133,185,172,0.1)", padding: "1rem", border: `1px solid ${T.brand}40` }}>
+                  <div style={{ fontSize: 10, fontWeight: 900, color: T.brand, textTransform: "uppercase", marginBottom: 4 }}>Chamados de Trabalho</div>
+                  <div style={{ fontSize: 14, fontWeight: 600 }}>{pendingEvents.length} {pendingEvents.length === 1 ? "trabalho disponível" : "trabalhos disponíveis"}</div>
+                </div>
+              )}
+            </div>
+
+            <button 
+              onClick={() => {
+                setShowNewServicesModal(false);
+                setActiveTab(unitInvites.length > 0 ? "convites" : "agenda");
+              }}
+              style={{
+                marginTop: "2.5rem", width: "100%", background: T.brand, color: "#000",
+                border: "none", padding: "1rem", fontWeight: 900, fontSize: 12,
+                textTransform: "uppercase", letterSpacing: 2, cursor: "pointer"
+              }}
+            >
+              Ver Detalhes e Responder
+            </button>
+
+            <button 
+              onClick={() => setShowNewServicesModal(false)}
+              style={{ 
+                marginTop: "1rem", background: "none", border: "none", 
+                color: "var(--theme-text-muted)", fontSize: 11, cursor: "pointer"
+              }}
+            >
+              Ignorar por enquanto
+            </button>
+          </div>
+        </div>
+      )}
 
       <div className="mobile-padding" style={{ maxWidth: 1200, margin: "0 auto", padding: "clamp(24px, 6vw, 64px)" }}>
         

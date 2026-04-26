@@ -92,6 +92,7 @@ model Event {
   captacao          User?            @relation("CaptacaoEvents", fields: [captacaoId], references: [id])
   cartorioUser      User?            @relation("CartorioUserEvents", fields: [cartorioUserId], references: [id])
   edicao            User?            @relation("EdicaoEvents", fields: [edicaoId], references: [id])
+  rejectedBy        Json?            @default("[]")
   pedidos           Order[]
   likes             PhotoLike[]
 

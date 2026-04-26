@@ -244,9 +244,51 @@ export async function respondToEvent(req: AuthRequest, res: Response): Promise<v
       return;
     }
 
-    const updateData: Prisma.EventUpdateInput = {};
+    const updateData: any = {};
     if (event.captacaoId === userId) updateData.captacaoStatus = status as "ACCEPTED" | "REJECTED" | "PENDING";
     if (event.edicaoId === userId) updateData.edicaoStatus = status as "ACCEPTED" | "REJECTED" | "PENDING";
+
+    // ─── LOGICA DE REDIRECIONAMENTO AUTOMÁTICO ───
+    if (status === "REJECTED" && event.captacaoId === userId && event.cartorioUserId) {
+      // 1. Atualiza lista de rejeições
+      const rejectedArray = Array.isArray(event.rejectedBy) ? [...event.rejectedBy] : [];
+      if (!rejectedArray.includes(userId)) {
+        rejectedArray.push(userId);
+      }
+      updateData.rejectedBy = rejectedArray;
+
+      // 2. Busca próximo profissional disponível na unidade
+      const unit = await prisma.cartorio.findUnique({
+        where: { userId: event.cartorioUserId },
+        include: { 
+          profissionais: { 
+            where: { tipo: "FIXO", status: "ACCEPTED" }, 
+            include: { profissional: { include: { user: true } } } 
+          } 
+        }
+      });
+
+      const nextPro = unit?.profissionais.find(p => !rejectedArray.includes(p.profissional.user.id));
+
+      if (nextPro) {
+        console.log(`[Redirecionamento] Evento ${id} passado de ${userId} para ${nextPro.profissional.user.id}`);
+        updateData.captacaoId = nextPro.profissional.user.id;
+        updateData.captacaoStatus = "PENDING";
+
+        // Notifica o novo profissional
+        NotificationService.notifyProfessionalNewAssignment({
+          to: nextPro.profissional.user.email,
+          profissionalName: nextPro.profissional.user.nome,
+          eventTitle: event.nomeNoivos,
+          eventDate: event.dataEvento.toISOString(),
+          location: event.location || "Ponto Fixo"
+        }).catch(e => console.error("Erro ao notificar novo profissional redirecionado:", e));
+      } else {
+        console.log(`[Redirecionamento] Nenhum outro profissional disponível na unidade para o evento ${id}`);
+        // Se ninguém puder, o captacaoId permanece como o último que rejeitou, mas o status fica REJECTED. 
+        // O Admin verá isso no painel.
+      }
+    }
 
     const updated = await prisma.event.update({
       where: { id: String(id) },

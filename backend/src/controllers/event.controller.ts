@@ -270,7 +270,7 @@ export class EventController {
           where: { userId: selectedPartnerId },
           include: { 
             profissionais: { 
-              where: { tipo: "FIXO" }, 
+              where: { tipo: "FIXO", status: "ACCEPTED" }, 
               include: { profissional: { include: { user: true } } } 
             } 
           }
