@@ -10,6 +10,7 @@ import { DICT } from "../lib/dictionary";
 
 interface Event {
   id: string;
+  slug: string | null;
   nomeNoivos: string;
   dataEvento: string;
   cartorio: string | null;
@@ -48,20 +49,32 @@ function EventCard({ event, onClick }: { event: Event; onClick: () => void }) {
     >
       {/* Thumbnail */}
       <div style={{ position: "relative", aspectRatio: "4/3", background: "#161616", overflow: "hidden" }}>
-        {event.coverPhotoUrl ? (
-          <img
-            src={event.coverPhotoUrl}
-            alt={event.nomeNoivos}
-            style={{ width: "100%", height: "100%", objectFit: "cover", transition: "transform 0.6s ease" }}
-            onMouseOver={e => (e.currentTarget.style.transform = "scale(1.04)")}
-            onMouseOut={e  => (e.currentTarget.style.transform = "scale(1)")}
-            onError={e => { e.currentTarget.src = "https://images.unsplash.com/photo-1511795409834-ef04bbd61622?w=600&q=60"; }}
-          />
-        ) : (
-          <div style={{ width: "100%", height: "100%", display: "flex", alignItems: "center", justifyContent: "center" }}>
-            <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke={T.text3} strokeWidth="1"><path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"/><circle cx="12" cy="13" r="4"/></svg>
-          </div>
-        )}
+        {(() => {
+          const defaults = ["/defaults/cover1.png", "/defaults/cover2.png", "/defaults/cover3.png"];
+          // Determina uma capa fixa baseada no ID do evento para não mudar no reload
+          const index = event.id.split('').reduce((acc, char) => acc + char.charCodeAt(0), 0) % defaults.length;
+          const fallback = defaults[index];
+
+          if (event.coverPhotoUrl) {
+            return (
+              <img
+                src={event.coverPhotoUrl}
+                alt={event.nomeNoivos}
+                style={{ width: "100%", height: "100%", objectFit: "cover", transition: "transform 0.6s ease" }}
+                onMouseOver={e => (e.currentTarget.style.transform = "scale(1.04)")}
+                onMouseOut={e  => (e.currentTarget.style.transform = "scale(1)")}
+                onError={e => { e.currentTarget.src = fallback; }}
+              />
+            );
+          }
+          return (
+            <img
+              src={fallback}
+              alt="Capa Padrão"
+              style={{ width: "100%", height: "100%", objectFit: "cover", opacity: 0.6 }}
+            />
+          );
+        })()}
 
         {/* Badge Hoje / Novo */}
         {today && (
@@ -335,7 +348,7 @@ export const HomePage = () => {
             <div className="hp-grid" style={{ display: "grid", gridTemplateColumns: "repeat(auto-fill, minmax(300px, 1fr))", gap: 1, background: T.border }}>
               {events.map(ev => (
                 <div key={ev.id} className="card-hover">
-                  <EventCard event={ev} onClick={() => navigate(`/e/${ev.id}`)} />
+                  <EventCard event={ev} onClick={() => navigate(`/e/${ev.slug || ev.id}`)} />
                 </div>
               ))}
             </div>

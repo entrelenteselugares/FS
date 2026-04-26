@@ -30,6 +30,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
   const login = async (email: string, senha: string) => {
     const { data } = await API.post("/auth/login", { email, senha });
     localStorage.setItem("fs_token", data.token);
+    localStorage.setItem("fs_refresh_token", data.refreshToken);
     API.defaults.headers.common["Authorization"] = `Bearer ${data.token}`;
     setToken(data.token);
     setUser(data.user);
@@ -39,6 +40,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
   const register = async (email: string, senha: string, nome: string) => {
     const { data } = await API.post("/auth/register", { email, senha, nome });
     localStorage.setItem("fs_token", data.token);
+    localStorage.setItem("fs_refresh_token", data.refreshToken);
     API.defaults.headers.common["Authorization"] = `Bearer ${data.token}`;
     setToken(data.token);
     setUser(data.user);
@@ -47,6 +49,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
 
   const logout = () => {
     localStorage.removeItem("fs_token");
+    localStorage.removeItem("fs_refresh_token");
     delete API.defaults.headers.common["Authorization"];
     setToken(null);
     setUser(null);

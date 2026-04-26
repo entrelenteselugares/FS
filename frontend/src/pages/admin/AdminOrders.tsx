@@ -81,8 +81,8 @@ export const AdminOrders: React.FC = () => {
 
     // Definir Status Unificado
     Object.values(groups).forEach(g => {
-      const allPaid = g.orders.every(o => o.status === "APROVADO" || o.status === "APPROVED");
-      const somePaid = g.orders.some(o => o.status === "APROVADO" || o.status === "APPROVED");
+      const allPaid = g.orders.every(o => o.status === "APROVADO");
+      const somePaid = g.orders.some(o => o.status === "APROVADO");
       
       if (allPaid) g.status = "QUITADO";
       else if (somePaid) g.status = "PARCIAL";
@@ -222,7 +222,7 @@ export const AdminOrders: React.FC = () => {
                                     <td style={{ padding: "12px 10px", textAlign: "center" }}>
                                       <div style={{ 
                                         fontSize: 7, fontWeight: 900, 
-                                        color: (o.status === "APROVADO" || o.status === "APPROVED") ? T.brand : "#f87171" 
+                                        color: (o.status === "APROVADO") ? T.brand : "#f87171" 
                                       }}>
                                         {o.status}
                                       </div>

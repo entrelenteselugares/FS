@@ -15,7 +15,7 @@ interface Quote {
   description: string;
   clientEmail: string;
   clientName: string;
-  quoteStatus: "PENDING" | "PRICED" | "APPROVED" | "REJECTED" | "CONVERTED";
+  quoteStatus: "PENDING" | "PRICED" | "APROVADO" | "REJECTED" | "CONVERTED";
   priceBase: number;
   usageType: string;
   eventHours?: number;
@@ -405,7 +405,7 @@ export const AdminQuotes: React.FC = () => {
                           <div key={s.id} className="p-4 border border-theme-border bg-theme-bg flex items-center justify-between group hover:border-brand-tactical transition-all">
                              <div className="flex flex-col">
                                <span className="text-[11px] font-black uppercase tracking-widest text-brand-tactical">{s.label}</span>
-                               {s.userId && <span className="text-[8px] text-theme-muted uppercase font-black tracking-tighter opacity-70">Artista Cadastrado</span>}
+                               {s.userId && <span className="text-[8px] text-theme-muted uppercase font-black tracking-tighter opacity-70">PROFISSIONAL Cadastrado</span>}
                              </div>
                              <div className="flex items-center gap-4">
                                 <div className="flex items-center gap-2">

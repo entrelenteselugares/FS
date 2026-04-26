@@ -216,7 +216,7 @@ export const Badge = {
  */
 export function getBadgeStyle(status?: string | null): React.CSSProperties {
   const s = (status ?? "").toUpperCase();
-  if (s === "APROVADO" || s === "APPROVED" || s === "ACTIVE" || s === "PAID")
+  if (s === "APROVADO" || s === "ACTIVE" || s === "PAID")
     return Badge.approved;
   if (s === "PENDENTE" || s === "PENDING" || s === "PRICED")
     return Badge.pending;

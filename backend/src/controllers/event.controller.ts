@@ -106,7 +106,7 @@ export class EventController {
           message: hasAccess ? "Entrega liberada via links externos." : "Galeria protegida."
         },
         recentOrders: await prisma.order.findMany({
-          where: { eventId: event.id, status: { in: ["APPROVED", "APROVADO"] as any }, contributorName: { not: null } },
+          where: { eventId: event.id, status: "APROVADO", contributorName: { not: null } },
           orderBy: { createdAt: "desc" },
           take: 5,
           select: { id: true, contributorName: true, valor: true, createdAt: true }
@@ -155,7 +155,7 @@ export class EventController {
           "priceEarly",
           true as "temFoto" -- Ativando badges por padrão para estética
         FROM events
-        WHERE active = true AND "isPrivate" = false AND (
+        WHERE active = true AND "isPrivate" = false AND "isQuote" = false AND (
           REPLACE(LOWER("nomeNoivos"), '&', 'e') LIKE ${term} 
           OR REPLACE(LOWER(cartorio), '&', 'e') LIKE ${term}
         )
@@ -166,7 +166,7 @@ export class EventController {
       // 2. Busca o total para cálculo de páginas
       const countResult: Array<{ count: number }> = await prisma.$queryRaw`
         SELECT COUNT(*)::int as count FROM events
-        WHERE active = true AND "isPrivate" = false AND (
+        WHERE active = true AND "isPrivate" = false AND "isQuote" = false AND (
           REPLACE(LOWER("nomeNoivos"), '&', 'e') LIKE ${term} 
           OR REPLACE(LOWER(cartorio), '&', 'e') LIKE ${term}
         )
@@ -315,7 +315,7 @@ export class EventController {
           description: `ORÇAMENTO AUTOMÁTICO\nConvidados: ${attendees}\nUso: ${usageType}\nServiços: ${selectedServices.join(", ")}\nDias: ${eventDays}\n\nDescrição do Cliente: ${description}`,
           usageType: usageType || "PESSOAL",
           isQuote: isQuote,
-          quoteStatus: isQuote ? "PENDING" : "APPROVED", // Pontos fixos já nascem aprovados, apenas aguardando pagamento
+          quoteStatus: isQuote ? "PENDING" : "APROVADO", // Pontos fixos já nascem aprovados, apenas aguardando pagamento
           priceBase: totalPrice,
           priceEarly: totalPrice,
           active: false, // MANDATÓRIO: Inativo até confirmação de pagamento

@@ -41,7 +41,7 @@ export async function chooseAccessType(req: AuthRequest, res: Response): Promise
     }
 
     // Verifica se o pagamento foi aprovado
-    const aprovado = order.status === "APROVADO" || order.status === "APPROVED";
+    const aprovado = order.status === "APROVADO";
     if (!aprovado) {
       res.status(403).json({ error: "Pagamento ainda não confirmado." });
       return;
@@ -62,11 +62,11 @@ export async function chooseAccessType(req: AuthRequest, res: Response): Promise
       },
     });
 
-    // Se PUBLIC, o evento fica visível no portfolio
-    // Se PRIVATE, desativamos (a menos que haja outro pedido público - simplificado)
+    // Se PUBLIC, o evento fica visível na Home
+    // Se PRIVATE, ocultamos da vitrine
     await prisma.event.update({
       where: { id: order.eventId },
-      data: { active: accessType === "PUBLIC" },
+      data: { isPrivate: accessType === "PRIVATE" },
     });
 
     res.json({
@@ -118,7 +118,7 @@ export async function getAccessStatus(req: AuthRequest, res: Response): Promise<
       return;
     }
 
-    const aprovado = order.status === "APROVADO" || order.status === "APPROVED";
+    const aprovado = order.status === "APROVADO";
 
     // Verifica se expirou
     const now = new Date();

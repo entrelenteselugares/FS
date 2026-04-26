@@ -30,7 +30,7 @@ export async function generateWeeklyPayout(req: AuthRequest, res: Response): Pro
     const orders = await prisma.order.findMany({
       where: {
         createdAt: { gte: weekStart, lte: weekEnd },
-        status: { in: ["APPROVED", "APROVADO"] as any },
+        status: "APROVADO",
       },
       include: {
         event: {

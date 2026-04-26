@@ -32,9 +32,10 @@ interface OverviewProps {
   stats: OverviewStats | null;
   recentOrders: RecentOrder[];
   pendingEvents: PendingEvent[];
+  onEditEvent: (id: string) => void;
 }
 
-export const AdminOverview: React.FC<OverviewProps> = ({ stats, recentOrders, pendingEvents }) => {
+export const AdminOverview: React.FC<OverviewProps> = ({ stats, recentOrders, pendingEvents, onEditEvent }) => {
   // Prepara dados para os gráficos
   const chartData = recentOrders.map(o => ({
     name: new Date(o.createdAt).toLocaleDateString("pt-BR", { day: "2-digit", month: "2-digit" }),
@@ -215,11 +216,17 @@ export const AdminOverview: React.FC<OverviewProps> = ({ stats, recentOrders, pe
                      {!event.lightroomUrl && <span style={{ fontSize: 8, color: T.brand, textTransform: "uppercase", fontWeight: 900, letterSpacing: 1 }}>Sem Fotos</span>}
                   </div>
                 </div>
-                <button style={{ 
-                  background: "transparent", border: "none", color: T.text3, 
-                  fontSize: 8, fontWeight: 900, textTransform: "uppercase", 
-                  letterSpacing: 1.5, cursor: "pointer" 
-                }}>Ajustar</button>
+                <button 
+                  onClick={() => onEditEvent(event.id)}
+                  style={{ 
+                    background: "transparent", border: `1px solid ${T.border2}`, color: T.text2, 
+                    fontSize: 10, fontWeight: 900, textTransform: "uppercase", 
+                    letterSpacing: 1.5, cursor: "pointer", padding: "6px 12px",
+                    transition: "all 0.2s"
+                  }}
+                  onMouseEnter={(e) => { e.currentTarget.style.borderColor = T.brand; e.currentTarget.style.color = T.brand; }}
+                  onMouseLeave={(e) => { e.currentTarget.style.borderColor = T.border2; e.currentTarget.style.color = T.text2; }}
+                >Ajustar</button>
               </div>
             )) : (
               <div style={{ padding: "40px 0", textAlign: "center", fontSize: 9, color: T.text3, textTransform: "uppercase", fontWeight: 900, letterSpacing: 2 }}>Todos os ativos estão normalizados</div>

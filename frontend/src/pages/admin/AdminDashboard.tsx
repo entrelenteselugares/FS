@@ -72,6 +72,12 @@ export const AdminDashboard: React.FC = () => {
   const [recentOrders, setRecentOrders] = useState<AdminOrder[]>([]);
   const [pendingEvents, setPendingEvents] = useState<AdminEvent[]>([]);
   const [loading, setLoading] = useState(true);
+  const [editingEventId, setEditingEventId] = useState<string | null>(null);
+
+  const handleEditEvent = (id: string) => {
+    setEditingEventId(id);
+    setActiveTab("events");
+  };
 
   useEffect(() => {
     const fetchGlobalStats = async () => {
@@ -108,8 +114,8 @@ export const AdminDashboard: React.FC = () => {
                 <div className="text-[10px] font-bold uppercase tracking-[0.3em] text-theme-text/20">Acessando Módulo...</div>
               </div>
             }>
-              {activeTab === "overview" && <AdminOverview stats={stats} recentOrders={recentOrders} pendingEvents={pendingEvents} />}
-              {activeTab === "events"   && <AdminEvents />}
+              {activeTab === "overview" && <AdminOverview stats={stats} recentOrders={recentOrders} pendingEvents={pendingEvents} onEditEvent={handleEditEvent} />}
+              {activeTab === "events"   && <AdminEvents initialEditEventId={editingEventId} />}
               {activeTab === "users"    && <AdminUsers />}
               {activeTab === "quotes"   && <AdminQuotes />}
               {activeTab === "orders"   && <AdminOrders />}

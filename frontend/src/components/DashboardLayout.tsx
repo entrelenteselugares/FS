@@ -104,7 +104,7 @@ const SidebarContent: React.FC<SidebarContentProps> = ({ navItems, onNavigate })
             alignItems:    "center",
             gap:           12,
             padding:       "8px 16px",
-            fontSize:      9,
+            fontSize:      11,
             fontFamily:    T.fontB,
             fontWeight:    active ? 600 : 400,
             letterSpacing: "0.01em",
@@ -357,8 +357,10 @@ export const DashboardLayout: React.FC<DashboardLayoutProps> = ({
               <MenuIcon />
             </button>
             <div style={{ display: "flex", alignItems: "center" }}>
-              {/* Logo removido daqui pois já existe no sidebar */}
-            </div>
+            <Link to="/" style={{ textDecoration: "none", display: "inline-block" }}>
+              <img src="/logo-fs.png" alt="Foto Segundo" style={{ height: 24, objectFit: "contain" }} />
+            </Link>
+          </div>
           </div>
 
           {/* Right: user info + toggle + logout */}

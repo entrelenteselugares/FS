@@ -39,7 +39,7 @@ export async function getMeusPedidos(req: AuthRequest, res: Response): Promise<v
       amount: Number(p.valor),
       createdAt: p.createdAt,
       event: p.event,
-      hasPaid: p.status === "APROVADO" || p.status === "APPROVED",
+      hasPaid: p.status === "APROVADO",
       accessType: p.accessType,
       accessExpiresAt: p.accessExpiresAt,
       manualType: p.manualType,

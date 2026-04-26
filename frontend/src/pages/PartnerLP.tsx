@@ -168,7 +168,7 @@ export const PartnerLP: React.FC = () => {
                 <motion.div 
                     key={evt.id} 
                     whileHover={{ scale: 0.98 }}
-                    onClick={() => navigate(`/eventos/${evt.slug || evt.id}`)}
+                    onClick={() => navigate(`/e/${evt.slug || evt.id}`)}
                     className="group cursor-pointer"
                 >
                     <div className="aspect-[4/5] overflow-hidden mb-8 bg-theme-bg-muted border border-theme-border relative">

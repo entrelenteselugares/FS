@@ -320,3 +320,10 @@ textarea:focus {
 ::-webkit-scrollbar-track { background: var(--bg); }
 ::-webkit-scrollbar-thumb { background: var(--border-2); }
 ::-webkit-scrollbar-thumb:hover { background: var(--text-3); }
+
+/* ─── Admin Table Actions: sempre visível no mobile, hover no desktop ──────── */
+.admin-action-btns { opacity: 1; }
+@media (min-width: 1024px) {
+  .admin-action-btns { opacity: 0.25; }
+  .group:hover .admin-action-btns { opacity: 1; }
+}

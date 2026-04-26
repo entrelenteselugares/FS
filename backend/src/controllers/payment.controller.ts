@@ -191,7 +191,7 @@ export class PaymentController {
         const jaProcessado = await prisma.order.findFirst({
           where: { 
             paymentId: mpPaymentId,
-            status: { in: ["APROVADO", "APPROVED"] as any }
+            status: "APROVADO"
           }
         });
 
@@ -575,7 +575,7 @@ export class PaymentController {
       });
       if (!order) return res.status(404).json({ error: "Pedido não encontrado." });
 
-      if (order.status === "APROVADO" || order.status === "APPROVED") {
+      if (order.status === "APROVADO") {
         return res.json({ status: "APROVADO", eventId: order.eventId });
       }
 

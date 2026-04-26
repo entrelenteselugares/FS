@@ -107,6 +107,7 @@ router.post("/auth/register",        AuthController.register);
 router.post("/auth/forgot-password", AuthController.forgotPassword);
 router.post("/auth/update-password", AuthController.updatePassword);
 router.get("/auth/me",               requireAuth, AuthController.me);
+router.post("/auth/refresh",          AuthController.refresh);
 
 // ── Mercado Pago OAuth ────────────────────────────────────────────────────────
 router.get("/mercadopago/connect",  requireAuth, MercadoPagoController.connect);
@@ -152,7 +153,7 @@ router.post("/orders/:id/visibility",    requireAuth, toggleVisibility);
 router.get("/cliente/pedidos",     requireAuth, getMeusPedidos);
 router.get("/cliente/pedidos/:id", requireAuth, getMeuPedidoDetalhe);
 
-// ── Profissional (Artista da Rede) ────────────────────────────────────────────
+// ── PROFISSIONAIS (Rede Técnica) ────────────────────────────────────────────
 router.get("/profissional/events",               requireAuth, requireRole("ADMIN", "PROFISSIONAL"), getMeusEventos);
 router.patch("/profissional/events/:id/links",   requireAuth, requireRole("ADMIN", "PROFISSIONAL"), updateEventLinks);
 router.patch("/profissional/events/:id/cover",   requireAuth, requireRole("ADMIN", "PROFISSIONAL"), uploadEventCover);

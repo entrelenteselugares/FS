@@ -309,4 +309,56 @@ export class NotificationService {
       console.error("[Notification] Erro ao notificar profissional:", error);
     }
   }
+
+  /**
+   * Envia e-mail de recuperação de senha
+   */
+  static async sendPasswordRecoveryEmail(data: {
+    to: string;
+    name: string;
+    recoveryLink: string;
+  }) {
+    if (!process.env.SMTP_USER || !process.env.SMTP_PASS) return;
+
+    const htmlContent = `
+      <div style="font-family: sans-serif; max-width: 600px; margin: 0 auto; padding: 20px; color: #000;">
+        <div style="text-align: center; margin-bottom: 30px;">
+          <h1 style="font-size: 24px; letter-spacing: 2px;">FOTO SEGUNDO.</h1>
+          <hr style="border: 0.5px solid #eee;" />
+        </div>
+        
+        <p>Olá, <strong>${data.name}</strong>,</p>
+        <p>Recebemos uma solicitação para redefinir a sua senha. Caso não tenha sido você, ignore este e-mail.</p>
+        
+        <div style="background: #f9f9f9; padding: 30px; border-radius: 8px; text-align: center; margin: 30px 0;">
+          <p style="font-size: 14px; color: #666; margin-bottom: 20px;">Clique no botão abaixo para escolher uma nova senha:</p>
+          <a href="${data.recoveryLink}" style="background: #000; color: #fff; padding: 15px 30px; text-decoration: none; border-radius: 5px; font-weight: bold; display: inline-block;">
+            REDEFINIR MINHA SENHA
+          </a>
+        </div>
+        
+        <p style="font-size: 11px; color: #999;">
+          O link acima é válido por tempo limitado. Caso o botão não funcione, copie e cole o endereço abaixo no seu navegador:<br/>
+          ${data.recoveryLink}
+        </p>
+        
+        <hr style="border: 0.5px solid #eee; margin: 30px 0;" />
+        <p style="text-align: center; font-size: 10px; color: #bbb; text-transform: uppercase; letter-spacing: 1px;">
+          Foto Segundo &copy; ${new Date().getFullYear()} — Segurança e confiança.
+        </p>
+      </div>
+    `;
+
+    try {
+      await this.transporter.sendMail({
+        from: `"Foto Segundo" <${process.env.SMTP_USER}>`,
+        to: data.to,
+        subject: `Recuperação de Senha 🔒`,
+        html: htmlContent,
+      });
+      console.log(`[Notification] E-mail de recuperação enviado para ${data.to}`);
+    } catch (error) {
+      console.error("[Notification] Erro ao enviar e-mail de recuperação:", error);
+    }
+  }
 }

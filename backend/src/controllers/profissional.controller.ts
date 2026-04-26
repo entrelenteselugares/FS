@@ -16,8 +16,8 @@ export async function getMeusEventos(req: AuthRequest, res: Response): Promise<v
       where: {
         active: true,
         OR: [
-          { captacaoId: userId },
-          { edicaoId: userId },
+          { captacaoId: userId, captacaoStatus: { not: "REJECTED" } },
+          { edicaoId: userId, edicaoStatus: { not: "REJECTED" } },
         ],
       },
       select: {
@@ -237,7 +237,7 @@ export async function respondToEvent(req: AuthRequest, res: Response): Promise<v
         id: String(id),
         OR: [{ captacaoId: userId }, { edicaoId: userId }]
       }
-    });
+    }) as any;
 
     if (!event) {
       res.status(404).json({ error: "Evento não encontrado ou acesso negado." });
@@ -262,7 +262,7 @@ export async function respondToEvent(req: AuthRequest, res: Response): Promise<v
         where: { userId: event.cartorioUserId },
         include: { 
           profissionais: { 
-            where: { tipo: "FIXO", status: "ACCEPTED" }, 
+            where: { status: "ACCEPTED" }, 
             include: { profissional: { include: { user: true } } } 
           } 
         }
@@ -339,6 +339,12 @@ export async function registerManualSale(req: AuthRequest, res: Response): Promi
         splitCartorio: cartorio,
         hasPaid: true
       }
+    });
+
+    // Forçar o evento como privado ao registrar venda (Privacidade LGPD)
+    await prisma.event.update({
+      where: { id: event.id },
+      data: { isPrivate: true }
     });
 
     // 3. Notificações (Auditoria: Adicionando fluxos de alerta)

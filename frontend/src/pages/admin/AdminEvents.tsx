@@ -31,7 +31,11 @@ interface Event {
   _count: { pedidos: number };
 }
 
-export const AdminEvents: React.FC = () => {
+interface AdminEventsProps {
+  initialEditEventId?: string | null;
+}
+
+export const AdminEvents: React.FC<AdminEventsProps> = ({ initialEditEventId }) => {
   const [events, setEvents] = useState<Event[]>([]);
   const [users, setUsers] = useState<User[]>([]);
   const [loading, setLoading] = useState(true);
@@ -242,8 +246,22 @@ export const AdminEvents: React.FC = () => {
         setLoading(false);
       }
     };
-    fetchData();
+    fetchData().then(() => {
+      if (initialEditEventId) {
+        // Encontra o evento e abre o modal
+        const eventToEdit = events.find(e => e.id === initialEditEventId);
+        // Nota: Como 'events' é atualizado via state, talvez precisemos de um efeito separado ou usar o resultado da API diretamente
+      }
+    });
   }, []);
+
+  // Efeito separado para abrir o evento inicial quando os eventos carregarem
+  useEffect(() => {
+    if (initialEditEventId && events.length > 0) {
+      const found = events.find(e => e.id === initialEditEventId);
+      if (found) handleEditOpen(found);
+    }
+  }, [initialEditEventId, events]);
 
   return (
     <div className="space-y-12 animate-in fade-in slide-in-from-bottom-4 duration-700">

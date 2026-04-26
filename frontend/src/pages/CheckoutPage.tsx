@@ -117,7 +117,7 @@ export const CheckoutPage = () => {
       try {
         // Usa o endpoint que consulta o MP diretamente — não depende de webhook
         const { data } = await API.get(`/public/orders/${pOrderId}/check-payment`);
-        if (data.status === "APROVADO" || data.status === "APPROVED") {
+        if (data.status === "APROVADO") {
           stopPolling();
           setPollingStatus("found");
           setPaymentSuccess(true);
@@ -157,7 +157,7 @@ export const CheckoutPage = () => {
         if (c <= 1) {
           clearInterval(timer);
           const eventTarget = order.event?.id || order.eventId;
-          navigate(`/e/${eventTarget}`);
+          navigate(`/minha-conta?orderId=${order.id}`);
           return 0;
         }
         return c - 1;
@@ -288,7 +288,7 @@ export const CheckoutPage = () => {
           ACESSO LIBERADO
         </h1>
         <p className="text-proportional opacity-60 mb-3 max-w-sm mx-auto">
-          Suas memórias estão prontas! Um e-mail com as instruções de acesso foi enviado para você.
+          Suas memórias estão prontas! Você já pode visualizá-las diretamente no seu painel de controle.
         </p>
         <p className="text-proportional !text-brand-primary font-black mb-10">
           {order.event?.nomeNoivos}

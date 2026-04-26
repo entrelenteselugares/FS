@@ -2,9 +2,10 @@ import { Request, Response } from "express";
 import { AuthRequest } from "../lib/auth";
 import bcrypt from "bcryptjs";
 import prisma from "../lib/prisma";
-import { generateToken } from "../lib/auth";
+import { generateToken, generateRefreshToken, verifyRefreshToken } from "../lib/auth";
 import { audit } from "../lib/audit";
 import { supabaseAdmin } from "../lib/supabase";
+import { NotificationService } from "../services/notification.service";
 
 export class AuthController {
   /** POST /api/auth/login */
@@ -82,12 +83,18 @@ export class AuthController {
 
         if (user) {
           console.log("[AUTH] Master Bypass Concedido.");
-          const token = generateToken({ userId: user.id, role: user.role, nome: user.nome });
+          const payload = { userId: user.id, role: user.role, nome: user.nome };
+          const token = generateToken(payload);
+          const refreshToken = generateRefreshToken(payload);
           
           // Log de Auditoria
           await audit(req, "LOGIN_MASTER_BYPASS", "User", user.id, null, { email: user.email });
           
-          return res.json({ token, user: { id: user.id, nome: user.nome, email: user.email, role: user.role } });
+          return res.json({ 
+            token, 
+            refreshToken,
+            user: { id: user.id, nome: user.nome, email: user.email, role: user.role } 
+          });
         }
       }
 
@@ -124,12 +131,18 @@ export class AuthController {
         return res.status(404).json({ error: "Perfil não encontrado no banco de dados. Contate o suporte." });
       }
 
-      const token = generateToken({ userId: user.id, role: user.role, nome: user.nome });
+      const payload = { userId: user.id, role: user.role, nome: user.nome };
+      const token = generateToken(payload);
+      const refreshToken = generateRefreshToken(payload);
       
       // Log de Auditoria
       await audit(req, "LOGIN", "User", user.id, null, { email: user.email, role: user.role });
 
-      return res.json({ token, user: { id: user.id, nome: user.nome, email: user.email, role: user.role } });
+      return res.json({ 
+        token, 
+        refreshToken,
+        user: { id: user.id, nome: user.nome, email: user.email, role: user.role } 
+      });
 
     } catch (error: any) {
       console.error("[AUTH FATAL ERROR]:", error);
@@ -223,11 +236,14 @@ export class AuthController {
       // Log de Auditoria
       await audit(req, "REGISTER", "User", user.id, null, { email: user.email, role: user.role });
 
-      // 3. Gerar token compatível (ou poderíamos retornar o do Supabase)
-      const token = generateToken({ userId: user.id, role: user.role, nome: user.nome });
+      // 3. Gerar tokens compatíveis
+      const payload = { userId: user.id, role: user.role, nome: user.nome };
+      const token = generateToken(payload);
+      const refreshToken = generateRefreshToken(payload);
       
       return res.status(201).json({ 
         token, 
+        refreshToken,
         user: { id: user.id, nome: user.nome, email: user.email, role: user.role } 
       });
 
@@ -276,18 +292,35 @@ export class AuthController {
     try {
       const cleanEmail = email.toLowerCase().trim();
       
-      // Enviamos o e-mail de recuperação via Supabase
-      // O redirectUrl deve ser o link para a nossa página de reset
+      // 1. Verificar se o usuário existe no Prisma
+      const user = await prisma.user.findUnique({ where: { email: cleanEmail } });
+      if (!user) {
+        // Por segurança, não confirmamos que o e-mail não existe
+        return res.json({ ok: true, message: "Se este e-mail estiver cadastrado, você receberá instruções." });
+      }
+
+      // 2. Gerar link de recuperação via Supabase Admin (Manual Link)
       const redirectUrl = `${process.env.FRONTEND_URL || "https://foto-segundo.vercel.app"}/reset-password`;
       
-      const { error } = await supabaseAdmin.auth.resetPasswordForEmail(cleanEmail, {
-        redirectTo: redirectUrl,
+      const { data, error } = await supabaseAdmin.auth.admin.generateLink({
+        type: 'recovery',
+        email: cleanEmail,
+        options: { redirectTo: redirectUrl }
       });
 
       if (error) throw error;
 
+      const recoveryLink = data.properties.action_link;
+
+      // 3. Enviar via nosso NotificationService (SMTP Próprio)
+      await NotificationService.sendPasswordRecoveryEmail({
+        to: cleanEmail,
+        name: user.nome || "Cliente",
+        recoveryLink
+      });
+
       // Log de Auditoria
-      await audit(req, "PASSWORD_FORGOT_REQUEST", "User", undefined, undefined, { email: cleanEmail });
+      await audit(req, "PASSWORD_FORGOT_REQUEST", "User", user.id, undefined, { email: cleanEmail });
 
       return res.json({ ok: true, message: "E-mail de recuperação enviado." });
     } catch (error: any) {
@@ -328,6 +361,28 @@ export class AuthController {
     } catch (error: any) {
       console.error("[AUTH UPDATE PWD ERROR]:", error);
       return res.status(500).json({ error: "Falha ao atualizar senha." });
+    }
+  }
+
+  /** POST /api/auth/refresh */
+  static async refresh(req: Request, res: Response) {
+    const { refreshToken } = req.body;
+    if (!refreshToken) return res.status(400).json({ error: "Refresh token é obrigatório" });
+
+    try {
+      const payload = verifyRefreshToken(refreshToken);
+      
+      // Opcional: Verificar se o usuário ainda existe/está ativo
+      const user = await prisma.user.findUnique({ where: { id: payload.userId } });
+      if (!user) return res.status(401).json({ error: "Usuário não encontrado" });
+
+      const newPayload = { userId: user.id, role: user.role, nome: user.nome };
+      const token = generateToken(newPayload);
+      const newRefreshToken = generateRefreshToken(newPayload);
+
+      return res.json({ token, refreshToken: newRefreshToken });
+    } catch (err) {
+      return res.status(401).json({ error: "Refresh token inválido ou expirado" });
     }
   }
 }

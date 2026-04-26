@@ -2,37 +2,63 @@
 
 Este documento registra as atualizações críticas realizadas para estabilização da plataforma e lançamento da versão "Midnight Luxury".
 
-## 🚀 Abril 2026 - Sprint: Checkout Unificado & Integridade Financeira
+---
+
+## 🚀 26/04/2026 — Sprint: Segurança, SEO e Experiência do Comprador
+
+### 🔐 Segurança e Nomenclatura
+
+- **Prevenção de IDOR**: Auditoria e reforço de segurança em todas as rotas de **PROFISSIONAIS**. Agora o sistema valida rigorosamente se o profissional autenticado é o proprietário (captação ou edição) do evento que tenta acessar.
+- **Rebranding "PROFISSIONAIS"**: Substituição completa do termo "Artista" por **"PROFISSIONAIS"** em toda a interface e código-fonte, alinhando com a nova estratégia de posicionamento da marca.
+- **Normalização de Status**: Unificação de todos os status financeiros e de pedidos para o padrão em português. O status `"APPROVED"` foi 100% migrado para `"APROVADO"` no banco de dados e backend.
+
+### 🔍 SEO e Vitrine
+
+- **SEO Dinâmico**: Implementação de metatags dinâmicas (Título, Descrição, OpenGraph) na página do evento. previews automáticos com foto e nome do evento ao compartilhar em redes sociais.
+- **Slugs Amigáveis**: URLs de álbuns agora utilizam slugs semânticos (`/e/nome-do-evento-2026`) em vez de IDs numéricos, melhorando a indexação e a clareza.
+- **Capas de Álbum Padrão**: Criação de 3 artes luxuosas (Wedding, Minimalist, Event) usadas como fallback automático. Álbuns novos agora nascem com visual profissional mesmo antes do upload da capa definitiva.
+
+### 💳 Experiência de Fluxo (Post-Purchase)
+
+- **Redirecionamento Inteligente**: Após o pagamento, o cliente é enviado diretamente para `/minha-conta?orderId=...`, abrindo automaticamente os detalhes do evento adquirido.
+- **Proteção de Acesso**: Bloqueio automático da página pública de venda para usuários que já possuem acesso pago. Ao tentar acessar o link de compra, o sistema redireciona o cliente para seu painel de arquivos.
+
+### 🛡️ Infraestrutura e Sessão
+
+- **JWT Refresh Token**: Implementação de fluxo de renovação de sessão. O token de acesso agora expira em 1 hora, sendo renovado silenciosamente por um refresh token de 7 dias, garantindo segurança sem prejudicar a experiência do usuário.
+- **Interceptor de Resposta**: Motor Axios atualizado para tratar erros 401 e disparar renovações automáticas de token em segundo plano.
+
+### 🔒 Privacidade e Controle (Correções)
+
+- **Privacy-by-Default**: Toda venda (manual via Admin ou via Profissional) agora marca o evento como `isPrivate: true` automaticamente ao registrar o pagamento.
+- **Visibilidade de Rejeitados**: `getMeusEventos` corrigido para excluir definitivamente chamados rejeitados do painel do profissional.
+
+---
+
+## 🚀 Abril 2026 — Sprint: Checkout Unificado & Integridade Financeira
 
 ### 💳 Pagamentos e Conversão
 
-- **Checkout Unificado**: Substituição completa do paywall legado pelo novo checkout premium, oferecendo suporte nativo a Pix e cartão com resumo detalhado.
-- **Selo 3x Sem Juros**: Implementação de sinalização visual estratégica no checkout para aumentar o ticket médio e conversão.
-- **Auto-preenchimento Inteligente**: Integração com o perfil do usuário para preencher Nome, E-mail e WhatsApp automaticamente no fluxo de orçamento.
+- **Checkout Unificado**: Substituição completa do paywall legado pelo novo checkout premium, com suporte a Pix e cartão.
+- **Selo 3x Sem Juros**: Sinalização visual estratégica para aumento de ticket médio.
 
-### 📊 Gestão Financeira e Auditoria
+### 📊 Gestão Financeira
 
-- **Auditoria por Projeto**: Refatoração da tela de pedidos para agrupar transações por Evento, eliminando a percepção de "duplicidade" em parcelas.
-- **Trava de Sequenciamento**: Regra de negócio que bloqueia o pagamento da "Quitação" até que a "Reserva" seja confirmada, garantindo liquidez imediata.
-- **Status Unificado**: Novo motor de status (QUITADO, PARCIAL, PENDENTE) para visão rápida da saúde financeira de cada projeto.
+- **Auditoria por Projeto**: Agrupamento de transações por Evento, eliminando duplicidade visual.
+- **Trava de Sequenciamento**: Bloqueio de quitação antes da reserva ser confirmada.
+- **Status Unificado**: Novo motor (QUITADO, PARCIAL, PENDENTE).
 
 ### 🏢 Unidades Fixas (Cartórios)
 
-- **Automação de Regras de Unidade**: A `QuotePage` agora respeita dinamicamente as flags `fixedTime` e `hideDuration` configuradas no Admin.
-- **UX Adaptativo**: Ocultação automática de seletores de tempo e duração para unidades que operam com modelos de preço fixo.
+- **Automação de Regras**: `QuotePage` agora respeita flags `fixedTime` e `hideDuration`.
 
-### 🎨 Rede de Profissionais & UX
+### 🧹 Estabilização Técnica
 
-- **Sistema de Convites de Parceria**: Implementação do fluxo de "Aceite de Unidade Fixa". O profissional agora recebe convites e deve aceitar formalmente para ser exibido como residente de uma unidade.
-- **Selo de Artista Residente**: Visualização dinâmica no dashboard do profissional, destacando parcerias ativas com unidades fixas.
-- **Painel Técnico Premium**: Refatoração do modal de perfil para permitir a gestão detalhada de habilidades e equipamentos, seguindo o padrão Midnight Luxury.
-
-### 🧹 Estabilização Técnica & Build
-
-- **JSX Structural Fix**: Resolução de erros críticos de fechamento de tags no `ProfissionalDashboard.tsx` que impediam o build de produção.
-- **Prisma Schema V2**: Evolução da tabela `CartorioProfissional` para suportar estados de convite (`PENDING`, `ACCEPTED`, `REJECTED`).
-- **Type Safety Audit**: Eliminação de erros de tipagem no `profissional.controller.ts` e garantia de compilação limpa em todo o backend.
+- **JSX Structural Fix**: Resolução de erros no `ProfissionalDashboard.tsx`.
+- **Prisma Schema V2**: Tabela `CartorioProfissional` com estados `PENDING`, `ACCEPTED`, `REJECTED`.
+- **Type Safety Audit**: Backend 100% tipado.
 
 ---
+
 > [!IMPORTANT]
-> A plataforma agora garante que nenhum profissional seja vinculado a uma unidade sem seu consentimento explícito.
+> A plataforma agora garante que nenhum profissional seja vinculado a uma unidade sem seu consentimento explícito, e nenhum álbum apareça na vitrine pública sem autorização do comprador.

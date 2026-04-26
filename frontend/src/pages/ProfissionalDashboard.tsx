@@ -220,10 +220,13 @@ export default function ProfissionalDashboard() {
   // Auto-show modal if there are new things
   useEffect(() => {
     if (!loading && !hasCheckedInvites) {
-      if (pendingEvents.length > 0 || unitInvites.length > 0) {
-        setShowNewServicesModal(true);
-      }
-      setHasCheckedInvites(true);
+      const timer = setTimeout(() => {
+        if (pendingEvents.length > 0 || unitInvites.length > 0) {
+          setShowNewServicesModal(true);
+        }
+        setHasCheckedInvites(true);
+      }, 0);
+      return () => clearTimeout(timer);
     }
   }, [loading, pendingEvents.length, unitInvites.length, hasCheckedInvites]);
 
@@ -343,7 +346,7 @@ export default function ProfissionalDashboard() {
             <div style={{ display: "flex", alignItems: "center", gap: 8, marginTop: 12 }}>
               <ShieldCheck size={14} color="var(--brand-primary)" />
               <p style={{ fontSize: 10, fontWeight: 800, color: "var(--brand-primary)", margin: 0, textTransform: "uppercase", letterSpacing: 1 }}>
-                Artista Residente: {profile.cartorioProfissional.map(cp => cp.cartorio.razaoSocial).join(", ")}
+                Profissional Residente: {profile.cartorioProfissional.map(cp => cp.cartorio.razaoSocial).join(", ")}
               </p>
             </div>
           )}
@@ -399,13 +402,13 @@ export default function ProfissionalDashboard() {
           <div style={{ display: "flex", background: "rgba(255,255,255,0.02)", padding: 4, borderRadius: 8, border: `0.5px solid ${T.border}` }}>
             <button 
               onClick={() => setViewTab("lista")}
-              style={{ padding: "8px 16px", border: "none", background: viewTab === "lista" ? "rgba(133,185,172,0.1)" : "transparent", color: viewTab === "lista" ? T.brand : "#555", fontSize: 10, fontWeight: 900, borderRadius: 6, cursor: "pointer", transition: "all .2s", display: "flex", alignItems: "center", gap: 6 }}
+              style={{ padding: "8px 16px", border: "none", background: viewTab === "lista" ? "rgba(133,185,172,0.1)" : "transparent", color: viewTab === "lista" ? T.brand : T.text3, fontSize: 10, fontWeight: 900, borderRadius: 6, cursor: "pointer", transition: "all .2s", display: "flex", alignItems: "center", gap: 6 }}
             >
               <List size={14} /> LISTA
             </button>
             <button 
               onClick={() => setViewTab("calendario")}
-              style={{ padding: "8px 16px", border: "none", background: viewTab === "calendario" ? "rgba(133,185,172,0.1)" : "transparent", color: viewTab === "calendario" ? T.brand : "#555", fontSize: 10, fontWeight: 900, borderRadius: 6, cursor: "pointer", transition: "all .2s", display: "flex", alignItems: "center", gap: 6 }}
+              style={{ padding: "8px 16px", border: "none", background: viewTab === "calendario" ? "rgba(133,185,172,0.1)" : "transparent", color: viewTab === "calendario" ? T.brand : T.text3, fontSize: 10, fontWeight: 900, borderRadius: 6, cursor: "pointer", transition: "all .2s", display: "flex", alignItems: "center", gap: 6 }}
             >
                <CalendarIcon size={14} /> CALENDÁRIO
             </button>
@@ -445,10 +448,10 @@ export default function ProfissionalDashboard() {
             {/* LISTA */}
             <div style={{ display: "flex", flexDirection: "column", gap: 14 }}>
             {loading ? (
-                <div style={{ padding: "4rem", textAlign: "center", color: "#444", fontSize: 11, textTransform: "uppercase", letterSpacing: 2 }}>INDEXANDO...</div>
+                <div style={{ padding: "4rem", textAlign: "center", color: T.text3, fontSize: 11, textTransform: "uppercase", letterSpacing: 2 }}>INDEXANDO...</div>
               ) : (displayEvents.length === 0 && unitInvites.length === 0) ? (
-                <div style={{ padding: "6rem 0", textAlign: "center", background: "rgba(255,255,255,0.01)", border: "1px dashed #222" }}>
-                  <p style={{ color: "#444", fontSize: 12, textTransform: "uppercase", letterSpacing: 1, maxWidth: 300, margin: "0 auto", lineHeight: 1.6 }}>
+                <div style={{ padding: "6rem 0", textAlign: "center", background: "rgba(255,255,255,0.01)", border: `1px dashed ${T.border}` }}>
+                  <p style={{ color: T.text2, fontSize: 12, textTransform: "uppercase", letterSpacing: 1, maxWidth: 300, margin: "0 auto", lineHeight: 1.6 }}>
                     {activeTab === "agenda" 
                       ? "Você ainda não possui eventos confirmados. Aguarde ser atribuído a um evento pelo administrador." 
                       : "Você não possui novos convites de trabalho ou parcerias pendentes no momento."}

@@ -740,6 +740,7 @@ export async function adminApproveQuote(req: AuthRequest, res: Response): Promis
         priceBase: Number(finalPrice),
         priceEarly: Number(finalPrice),
         quoteStatus: "PRICED",
+        active: true, // Ativa para que o profissional veja o convite
         description: req.body.breakdown ? 
           `[BUDGET_BREAKDOWN] ${JSON.stringify(req.body.breakdown)}\n\nOriginal: ${quote.description}` : 
           quote.description
@@ -916,6 +917,12 @@ export async function adminCreateManualSale(req: AuthRequest, res: Response): Pr
         // @ts-ignore
         manualType: "ADMIN_DIRECT",
       }
+    });
+
+    // 3. Forçar o evento como privado ao registrar venda (Privacidade LGPD)
+    await prisma.event.update({
+      where: { id: event.id },
+      data: { isPrivate: true }
     });
 
     await audit(req, "ADMIN_MANUAL_SALE", "Order", order.id, null, { eventId, customerEmail, amount });

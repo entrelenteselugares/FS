@@ -2,6 +2,7 @@ import { Request as ExpressRequest, Response, NextFunction } from "express";
 import jwt from "jsonwebtoken";
 
 const JWT_SECRET = process.env.JWT_SECRET || "fotosegundo-dev-secret-2026";
+const REFRESH_SECRET = process.env.REFRESH_SECRET || "fotosegundo-refresh-secret-2026";
 
 export interface AuthPayload {
   userId: string;
@@ -13,12 +14,22 @@ export interface AuthRequest extends ExpressRequest {
   user?: AuthPayload;
 }
 
+/** Gera token de acesso (curta duração: 1 hora) */
 export const generateToken = (payload: AuthPayload): string => {
-  return jwt.sign(payload, JWT_SECRET, { expiresIn: "7d" });
+  return jwt.sign(payload, JWT_SECRET, { expiresIn: "1h" });
+};
+
+/** Gera token de renovação (longa duração: 7 dias) */
+export const generateRefreshToken = (payload: AuthPayload): string => {
+  return jwt.sign(payload, REFRESH_SECRET, { expiresIn: "7d" });
 };
 
 export const verifyToken = (token: string): AuthPayload => {
   return jwt.verify(token, JWT_SECRET) as AuthPayload;
+};
+
+export const verifyRefreshToken = (token: string): AuthPayload => {
+  return jwt.verify(token, REFRESH_SECRET) as AuthPayload;
 };
 
 /** Middleware: requer JWT válido */
@@ -40,8 +51,11 @@ export const requireAuth = (req: ExpressRequest, res: Response, next: NextFuncti
   try {
     (req as AuthRequest).user = verifyToken(token);
     return next();
-  } catch {
-    return res.status(401).json({ error: "Token inválido ou expirado" });
+  } catch (err: any) {
+    if (err.name === "TokenExpiredError") {
+      return res.status(401).json({ error: "Token expirado", code: "TOKEN_EXPIRED" });
+    }
+    return res.status(401).json({ error: "Token inválido" });
   }
 };
 

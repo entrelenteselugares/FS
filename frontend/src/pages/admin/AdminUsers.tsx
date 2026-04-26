@@ -137,8 +137,8 @@ export const AdminUsers: React.FC = () => {
           </button>
         </div>
 
-        <div className="space-y-2">
-          <div style={{ background: T.bgField, borderBottom: `1px solid ${T.border}` }} className="grid grid-cols-12 gap-4 px-10 py-4 text-[9px] font-black text-theme-muted uppercase tracking-[0.4em]">
+        <div className="space-y-4">
+          <div style={{ background: T.bgField, borderBottom: `1px solid ${T.border}` }} className="hidden md:grid grid-cols-12 gap-4 px-10 py-6 text-[9px] font-black text-theme-muted uppercase tracking-[0.4em]">
             <div className="col-span-1">Status</div>
             <div className="col-span-4">Membro / Identidade</div>
             <div className="col-span-2">Nível de Acesso</div>
@@ -179,7 +179,7 @@ export const AdminUsers: React.FC = () => {
                       {u.unidade?.razaoSocial || "DIRETO MATRIZ"}
                     </div>
                   </div>
-                  <div className="col-span-3 flex justify-end gap-6 opacity-30 group-hover:opacity-100 transition-all">
+                  <div className="col-span-3 flex justify-end gap-6 admin-action-btns transition-all">
                     <button 
                       onClick={() => handleEditOpen(u)}
                       style={{ background: "transparent", border: "none", color: T.text3, fontSize: 9, fontWeight: 900, textTransform: "uppercase", letterSpacing: 1, cursor: "pointer", display: "flex", alignItems: "center", gap: 6 }}

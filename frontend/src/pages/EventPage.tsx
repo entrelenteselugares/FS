@@ -175,8 +175,7 @@ export default function EventPage() {
       .then((r) => {
         setEvent(r.data);
         if (r.data.paywall && !r.data.paywall.active) {
-          setStep("success");
-          setAccess({ lightroomUrl: r.data.lightroomUrl, driveUrl: r.data.driveUrl, expiresAt: "", eventTitle: r.data.nomeNoivos });
+          navigate("/minha-conta");
         }
       })
       .catch(() => navigate("/404"))
@@ -191,8 +190,7 @@ export default function EventPage() {
           setStep("success");
           setNeedsAccessChoice(true);
         } else if (data.status === "ACTIVE") {
-          setAccess({ lightroomUrl: data.lightroomUrl, driveUrl: data.driveUrl, expiresAt: data.expiresAt || "", eventTitle: event?.nomeNoivos || "" });
-          setStep("success");
+          navigate("/minha-conta");
         }
       } catch { /* not paid */ }
     };
@@ -232,11 +230,7 @@ export default function EventPage() {
         const { data } = await api.get(`/orders/${oid}/access-status`);
         if (data.status === "PENDING_CHOICE" || data.status === "ACTIVE") {
           clearInterval(interval);
-          setOrderId(oid);
-          setJustPaid(true);
-          if (data.status === "PENDING_CHOICE") setNeedsAccessChoice(true);
-          else setAccess({ lightroomUrl: data.lightroomUrl, driveUrl: data.driveUrl, expiresAt: data.expiresAt || "", eventTitle: event?.nomeNoivos || "" });
-          setStep("success");
+          navigate("/minha-conta");
         }
       } catch { /* keep polling */ }
     }, 3000);
@@ -275,6 +269,26 @@ export default function EventPage() {
   };
   const handleChange = (k: string) => (e: React.ChangeEvent<HTMLInputElement>) => setCardData(p => ({ ...p, [k]: e.target.value }));
 
+  // ── SEO & Fallback Logic ───────────────────────────────────────────────────
+  const getSEOData = () => {
+    if (!event) return { title: "Foto Segundo", description: "Plataforma de Fotografia", image: "" };
+    const defaults = ["/defaults/cover1.png", "/defaults/cover2.png", "/defaults/cover3.png"];
+    const index = event.id.split('').reduce((acc, char) => acc + char.charCodeAt(0), 0) % defaults.length;
+    const fallback = window.location.origin + defaults[index];
+    const image = event.coverPhotoUrl || fallback;
+    const dateStr = event.dataEvento ? new Date(event.dataEvento).toLocaleDateString("pt-BR") : "";
+    const description = `Confira as fotos de ${event.nomeNoivos}${dateStr ? " em " + dateStr : ""}. Acesse suas memórias digitais e recorde os melhores momentos no Foto Segundo.`;
+
+    return {
+      title: `Álbum: ${event.nomeNoivos} | Foto Segundo`,
+      description,
+      image,
+      url: window.location.href
+    };
+  };
+
+  const seo = getSEOData();
+
   if (loading) return (
     <div style={{ height: "100vh", background: T.bg, display: "flex", alignItems: "center", justifyContent: "center" }}>
       <Spinner />
@@ -291,7 +305,24 @@ export default function EventPage() {
 
   return (
     <div style={{ height: "100vh", overflow: "hidden", background: T.bg, color: T.text, fontFamily: T.fontB, display: "flex", flexDirection: "column" }}>
-      <Helmet><title>{event.nomeNoivos} — Foto Segundo</title></Helmet>
+      <Helmet>
+        <title>{seo.title}</title>
+        <meta name="description" content={seo.description} />
+        
+        {/* OpenGraph / Facebook */}
+        <meta property="og:type" content="website" />
+        <meta property="og:url" content={seo.url} />
+        <meta property="og:title" content={seo.title} />
+        <meta property="og:description" content={seo.description} />
+        <meta property="og:image" content={seo.image} />
+
+        {/* Twitter */}
+        <meta property="twitter:card" content="summary_large_image" />
+        <meta property="twitter:url" content={seo.url} />
+        <meta property="twitter:title" content={seo.title} />
+        <meta property="twitter:description" content={seo.description} />
+        <meta property="twitter:image" content={seo.image} />
+      </Helmet>
 
       <style>{`
         @keyframes spin { from { transform: rotate(0deg); } to { transform: rotate(360deg); } }

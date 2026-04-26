@@ -136,7 +136,7 @@ export default function ClienteArea() {
           .mobile-hide { display: none !important; }
           .mobile-nav { padding: 1rem !important; }
           .mobile-detail-panel { width: 100% !important; border: none !important; margin-top: 2rem !important; position: relative !important; top: 0 !important; }
-          .mobile-stack { flex-direction: column !important; align-items: center !important; text-align: center !important; }
+          .mobile-stack { flex-direction: column !important; align-items: flex-start !important; text-align: left !important; }
           .mobile-title { font-size: 24px !important; }
         }
       `}</style>
@@ -178,7 +178,7 @@ export default function ClienteArea() {
         );
       })()}
 
-      <div className="mobile-grid-1" style={{ maxWidth: 1200, margin: "0 auto", padding: "3rem 2rem", display: "grid", gridTemplateColumns: selected ? "1fr 420px" : "1fr", gap: "3rem", transition: "all 0.3s ease" }}>
+      <div className="mobile-grid-1" style={{ maxWidth: 1200, margin: "0 auto", padding: "1.5rem 1.5rem", display: "grid", gridTemplateColumns: selected ? "1fr 420px" : "1fr", gap: "1.5rem", transition: "all 0.3s ease" }}>
 
         {/* LISTA */}
         <div>
@@ -329,7 +329,7 @@ function PedidoRow({ pedido, now, isSelected, onClick, pedidos }: {
         cursor: "pointer",
         display: "flex",
         gap: "1.5rem",
-        alignItems: "center",
+        alignItems: "flex-start",
         borderColor: isExpiringSoon ? "#f59e0b" : (isSelected ? T.brand : T.border),
         background: isSelected ? "rgba(133, 185, 172, 0.05)" : T.bgCard,
         boxShadow: isExpiringSoon ? "0 0 15px rgba(245, 158, 11, 0.1)" : "none",
@@ -359,7 +359,7 @@ function PedidoRow({ pedido, now, isSelected, onClick, pedidos }: {
           {pedido.event.nomeNoivos} <span style={{ fontSize: 10, color: "var(--brand-primary)", fontWeight: 900, marginLeft: 8, background: "rgba(133,185,172,0.1)", padding: "2px 6px", borderRadius: 4 }}>REF #{pedido.event.id.slice(0, 6).toUpperCase()}</span>
         </p>
         <p style={{ fontSize: 12, color: "var(--theme-text-muted)", marginBottom: 10 }}>
-          {formatDate(pedido.event.dataEvento)} · {pedido.event.city || pedido.event.location} · {new Date(pedido.createdAt).toLocaleTimeString("pt-BR", { hour: "2-digit", minute: "2-digit" })}
+          {formatDate(pedido.event.dataEvento)} · {pedido.event.city || pedido.event.location} · {new Date(pedido.event.dataEvento).toLocaleTimeString("pt-BR", { hour: "2-digit", minute: "2-digit" })}
         </p>
         <div style={{ display: "flex", gap: 8, flexWrap: "wrap" }}>
           {pedido.event.temFoto && <Tag label="Foto" />}
@@ -373,8 +373,14 @@ function PedidoRow({ pedido, now, isSelected, onClick, pedidos }: {
             {(() => {
               const expires = new Date(pedido.accessExpiresAt ?? "");
               if (isNaN(expires.getTime())) return null;
+              
+              // Cálculo de dias baseado no início do dia para evitar saltos por minutos
+              const expDate = new Date(expires);
+              expDate.setHours(23, 59, 59, 999);
               const now = new Date();
-              const dias = Math.ceil((expires.getTime() - now.getTime()) / 86400000);
+              const diffTime = expDate.getTime() - now.getTime();
+              const dias = Math.max(0, Math.ceil(diffTime / (1000 * 60 * 60 * 24)));
+              
               const urgente = dias <= 5;
               const expirado = dias <= 0;
               return (
@@ -432,7 +438,8 @@ function PedidoRow({ pedido, now, isSelected, onClick, pedidos }: {
             style={{ 
               padding: "8px 24px", 
               fontSize: 10, 
-              background: "#15803d",
+              background: "var(--brand-primary)",
+              color: "var(--theme-text-on-brand)",
               opacity: (() => {
                 const isQuitacao = pedido.manualType?.toLowerCase().includes("quitação");
                 if (!isQuitacao) return 1;
@@ -522,11 +529,12 @@ function PedidoDetalhe({ pedido, now, loading, onClose, onGoToEvent, onChangePri
           <p style={{ fontSize: 10, color: "var(--theme-text-muted)", margin: 0, marginTop: 4 }}>
             Expira em: {new Date(pedido.accessExpiresAt).toLocaleDateString("pt-BR")} 
             {(() => {
-              const diff = new Date(pedido.accessExpiresAt).getTime() - now;
-              const days = Math.ceil(diff / (1000 * 60 * 60 * 24));
+              const expDate = new Date(pedido.accessExpiresAt ?? "");
+              expDate.setHours(23, 59, 59, 999);
+              const diff = expDate.getTime() - now;
+              const days = Math.max(0, Math.ceil(diff / (1000 * 60 * 60 * 24)));
               if (days <= 0) return " (Expirado)";
-              if (days <= 7) return ` (${days}d restantes)`;
-              return "";
+              return ` (${days}d restantes)`;
             })()}
           </p>
         </div>

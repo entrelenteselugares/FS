@@ -379,7 +379,7 @@ enum AcceptanceStatus {
 
 enum QuoteStatus {
   PENDING
-  APPROVED
+  APROVADO
   REJECTED
   CONVERTED
   PRICED
@@ -387,7 +387,7 @@ enum QuoteStatus {
 
 enum RedemptionStatus {
   PENDING
-  APPROVED
+  APROVADO
   PRINTING
   SHIPPED
   DELIVERED
