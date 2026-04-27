@@ -341,7 +341,7 @@ export class AuthController {
       console.log(`[AUTH FORGOT] Solicitando reset de senha Supabase... (Redirect: ${redirectUrl})`);
       
       // NOTA: Usamos a API pública do cliente Supabase para que o e-mail seja disparado automaticamente pelo Supabase
-      const { error } = await supabase.auth.resetPasswordForEmail(cleanEmail, {
+      const { error } = await supabaseAdmin.auth.resetPasswordForEmail(cleanEmail, {
         redirectTo: redirectUrl
       });
 
@@ -367,7 +367,7 @@ export class AuthController {
             }
 
             console.log(`[AUTH FORGOT] Registro Auth criado. Solicitando reset novamente...`);
-            const retry = await supabase.auth.resetPasswordForEmail(cleanEmail, {
+            const retry = await supabaseAdmin.auth.resetPasswordForEmail(cleanEmail, {
               redirectTo: redirectUrl
             });
             
