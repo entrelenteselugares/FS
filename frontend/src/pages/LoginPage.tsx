@@ -100,7 +100,7 @@ export const LoginPage: React.FC = () => {
         .lp-back:hover { color: ${T.text}; }
         .lp-reg { color: ${T.brand}; text-decoration: none; font-size: 12px; font-family: ${T.fontB}; letter-spacing: 0.1em; text-transform: uppercase; transition: opacity 0.15s; }
         .lp-reg:hover { opacity: 0.75; }
-        .lp-forgot { background: none; border: none; color: ${T.text3}; font-size: 9px; font-weight: 700; text-transform: uppercase; letter-spacing: 1px; cursor: pointer; padding: 0; margin-top: 8px; transition: color 0.15s; align-self: flex-end; }
+        .lp-forgot { background: none; border: none; color: ${T.text3}; font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: 1px; cursor: pointer; padding: 10px 0; margin-top: 4px; transition: color 0.15s; align-self: flex-end; display: inline-block; }
         .lp-forgot:hover { color: ${T.text}; }
       `}</style>
 
@@ -161,7 +161,7 @@ export const LoginPage: React.FC = () => {
             </div>
 
             {/* Senha */}
-            <div>
+            <div style={{ display: "flex", flexDirection: "column" }}>
               <label style={FieldLabel} htmlFor="lp-senha">Senha</label>
               <div style={{ position: "relative", display: "flex", alignItems: "center" }}>
                 <input
