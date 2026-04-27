@@ -23,28 +23,38 @@ Este documento resume as correções críticas e melhorias de UX implementadas h
 
 ---
 
+### 4. Marketplace & CRM (Venda Rápida)
+
+- **Captura Enriquecida de Leads**: O formulário de "Venda Rápida" no dashboard do fotógrafo agora captura WhatsApp e Notas Internas (Ex: "Cliente quer ensaio pet em Maio").
+- **Privacidade Nativa**: Todas as vendas diretas agora nascem como PRIVADAS por padrão, garantindo a proteção da imagem do comprador.
+- **Autonomia do Cliente (Meus Dados)**: Nova aba no painel do cliente permitindo atualização imediata de Nome e WhatsApp.
+
+---
+
 ## 🧪 Roteiro de Testes (O Que Validar Agora)
 
-1. **Teste de Compra**:
+1. **Teste de Venda Rápida (CRM)**:
+   - No Dashboard do Profissional, clique em "Venda Rápida".
+   - Preencha Nome, E-mail, WhatsApp e uma nota interna.
+   - Verifique se o evento é criado e se as notas aparecem corretamente para o editor.
+
+2. **Teste de Perfil do Cliente**:
+   - Faça login como cliente.
+   - Vá em "Minha Conta" -> Aba "Meus Dados".
+   - Altere seu nome ou WhatsApp e salve.
+   - Verifique se a alteração persiste após recarregar.
+
+3. **Teste de Compra**:
    - Acesse um álbum público deslogado.
    - Clique em "Desbloquear".
    - Tente se cadastrar ou logar no checkout.
    - Valide se as opções de pagamento (Mercado Pago) aparecem após o login.
 
-2. **Teste de Calendário**:
+4. **Teste de Calendário**:
    - Vá em `/cotacao`.
    - Clique para selecionar data.
    - Tente mudar o mês usando as novas setinhas.
 
-3. **Teste de Mobile**:
-   - Abra um link de evento no celular.
-   - Tente rolar a página para baixo.
-   - Verifique se o contador (se o evento for futuro) ou os links (se já pago) aparecem abaixo da capa.
-
-4. **Teste de Recuperação de Senha**:
-   - Na tela de login, clique em "Esqueci minha senha".
-   - Insira seu e-mail e verifique se o alerta de "E-mail enviado" aparece sem dar erro 500.
-
 ---
 
-**Próxima Fase**: Após a sua validação desses pontos, iniciaremos a implementação do **Marketplace de Fotógrafos**.
+**Próxima Fase**: Após a sua validação desses pontos, iniciaremos a implementação do **Marketplace de Fotógrafos** com foco no rastreio em tempo real.

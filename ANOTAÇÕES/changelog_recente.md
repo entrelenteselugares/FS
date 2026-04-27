@@ -4,6 +4,24 @@ Este documento registra as atualizações críticas realizadas para estabilizaç
 
 ---
 
+## 🚀 27/04/2026 — Sprint: CRM de Campo e Autonomia do Cliente
+
+### 📊 Marketplace & CRM (Venda Rápida)
+- **Lead Enrichment**: Expansão do módulo de Venda Rápida para capturar WhatsApp e Notas Internas. Agora o fotógrafo pode registrar intenções de compra e observações do cliente no momento do clique.
+- **Armazenamento de Notas**: Implementada lógica de concatenação no campo `contributorName` do pedido para preservar notas de CRM sem alterar o schema legadamente.
+- **Privacidade Forçada**: Implementada regra de negócio onde toda venda direta (Venda Rápida) inicia como `isPrivate: true`, exigindo ação explícita do cliente para tornar pública.
+
+### 👤 Experiência do Cliente (Minha Conta)
+- **Perfil Editável**: Implementada a aba **"Meus Dados"** dentro da Área do Cliente. Clientes agora podem atualizar Nome e WhatsApp de forma autônoma.
+- **Refatoração de UI**: Otimização do painel de arquivos com novo tab switcher ("Meus Arquivos" vs "Meus Dados") e melhoria na estabilidade de renderização do JSX.
+- **Backend Auth**: Criado o endpoint `PATCH /api/auth/me` para atualização segura de dados cadastrais.
+
+### 🔧 Estabilização e Builds
+- **Fix Build Vercel**: Resolvidos erros de tipagem TS2345 no Dashboard do Profissional decorrentes da expansão dos formulários de venda.
+- **Otimização de Parsing**: Refatoração completa das lógicas de renderização condicional na Área do Cliente para evitar erros de paridade de parênteses.
+
+---
+
 ## 🚀 26/04/2026 — Sprint: Segurança, SEO e Experiência do Comprador
 
 ### 🔐 Segurança e Nomenclatura
