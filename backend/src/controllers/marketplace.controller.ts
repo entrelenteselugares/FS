@@ -32,7 +32,7 @@ export class MarketplaceController {
     const finalAmount = Number(amount || valorTotal);
     const finalMethod = (paymentMethod || method || "DINHEIRO").toUpperCase();
     const finalLocation = location || ponto || "Venda Direta";
-    const finalName = customerName || `VENDA: ${finalEmail.split('@')[0].toUpperCase()}`;
+    const finalName = customerName || finalEmail.split('@')[0].toUpperCase();
     const finalContributorName = internalNotes ? `${finalName} | OBS: ${internalNotes}` : finalName;
 
     if (!finalEmail || !finalAmount) {
