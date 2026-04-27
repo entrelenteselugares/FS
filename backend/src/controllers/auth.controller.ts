@@ -291,16 +291,19 @@ export class AuthController {
 
     try {
       const cleanEmail = email.toLowerCase().trim();
+      console.log(`[AUTH FORGOT] Solicitando recuperação para: ${cleanEmail}`);
       
       // 1. Verificar se o usuário existe no Prisma
       const user = await prisma.user.findUnique({ where: { email: cleanEmail } });
       if (!user) {
+        console.log(`[AUTH FORGOT] Usuário não encontrado no Prisma: ${cleanEmail}`);
         // Por segurança, não confirmamos que o e-mail não existe
         return res.json({ ok: true, message: "Se este e-mail estiver cadastrado, você receberá instruções." });
       }
 
       // 2. Gerar link de recuperação via Supabase Admin (Manual Link)
       const redirectUrl = `${process.env.FRONTEND_URL || "https://foto-segundo.vercel.app"}/reset-password`;
+      console.log(`[AUTH FORGOT] Gerando link Supabase para ${cleanEmail} com redirect: ${redirectUrl}`);
       
       const { data, error } = await supabaseAdmin.auth.admin.generateLink({
         type: 'recovery',
@@ -308,9 +311,13 @@ export class AuthController {
         options: { redirectTo: redirectUrl }
       });
 
-      if (error) throw error;
+      if (error) {
+        console.error(`[AUTH FORGOT] Erro Supabase generateLink: ${error.message}`, error);
+        throw error;
+      }
 
       const recoveryLink = data.properties.action_link;
+      console.log(`[AUTH FORGOT] Link gerado com sucesso. Disparando e-mail via NotificationService...`);
 
       // 3. Enviar via nosso NotificationService (SMTP Próprio)
       await NotificationService.sendPasswordRecoveryEmail({
@@ -324,8 +331,11 @@ export class AuthController {
 
       return res.json({ ok: true, message: "E-mail de recuperação enviado." });
     } catch (error: any) {
-      console.error("[AUTH FORGOT ERROR]:", error);
-      return res.status(500).json({ error: "Erro ao solicitar recuperação de senha." });
+      console.error("[AUTH FORGOT ERROR FATAL]:", error);
+      return res.status(500).json({ 
+        error: "Erro ao solicitar recuperação de senha.",
+        details: process.env.NODE_ENV !== "production" ? error.message : undefined
+      });
     }
   }
 
