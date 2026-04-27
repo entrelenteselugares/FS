@@ -33,9 +33,10 @@ interface Event {
 
 interface AdminEventsProps {
   initialEditEventId?: string | null;
+  onClose?: () => void;
 }
 
-export const AdminEvents: React.FC<AdminEventsProps> = ({ initialEditEventId }) => {
+export const AdminEvents: React.FC<AdminEventsProps> = ({ initialEditEventId, onClose }) => {
   const [events, setEvents] = useState<Event[]>([]);
   const [users, setUsers] = useState<User[]>([]);
   const [loading, setLoading] = useState(true);
@@ -401,8 +402,15 @@ export const AdminEvents: React.FC<AdminEventsProps> = ({ initialEditEventId }) 
       {isModalOpen && (
         <div className="fixed inset-0 bg-theme-bg/95 backdrop-blur-xl z-50 flex items-start justify-center p-4 overflow-y-auto pt-10">
           <div className="w-full max-w-4xl bg-theme-bg border border-theme-border p-8 relative animate-in zoom-in-95 duration-300 mb-10">
-             <button onClick={() => setIsModalOpen(false)} className="absolute top-6 right-6 text-zinc-500 hover:text-white transition-colors">
-               <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5"><path d="M18 6L6 18M6 6l12 12"/></svg>
+             <button 
+               onClick={() => {
+                 setIsModalOpen(false);
+                 if (onClose) onClose();
+               }} 
+               className="absolute top-6 right-6 text-zinc-500 hover:text-white transition-colors p-2"
+               aria-label="Fechar"
+             >
+               <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5"><path d="M18 6L6 18M6 6l12 12"/></svg>
              </button>
 
              <div className="mb-8">
@@ -739,7 +747,17 @@ export const AdminEvents: React.FC<AdminEventsProps> = ({ initialEditEventId }) 
                     )}
                  </div>
 
-                 <div className="mt-12 pt-8 border-t border-theme-border flex justify-end gap-6">
+                 <div className="mt-12 pt-8 border-t border-theme-border flex flex-col md:flex-row justify-end gap-4">
+                    <button
+                      type="button"
+                      onClick={() => {
+                        setIsModalOpen(false);
+                        if (onClose) onClose();
+                      }}
+                      className="px-10 py-4 bg-transparent border border-theme-border text-theme-muted text-[10px] font-black uppercase tracking-[0.3em] hover:text-white transition-all order-2 md:order-1"
+                    >
+                      Cancelar
+                    </button>
                     {activeTab !== 'entrega' ? (
                       <button
                         type="button"

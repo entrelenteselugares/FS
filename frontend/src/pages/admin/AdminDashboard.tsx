@@ -115,7 +115,7 @@ export const AdminDashboard: React.FC = () => {
               </div>
             }>
               {activeTab === "overview" && <AdminOverview stats={stats} recentOrders={recentOrders} pendingEvents={pendingEvents} onEditEvent={handleEditEvent} />}
-              {activeTab === "events"   && <AdminEvents initialEditEventId={editingEventId} />}
+              {activeTab === "events"   && <AdminEvents initialEditEventId={editingEventId} onClose={() => setEditingEventId(null)} />}
               {activeTab === "users"    && <AdminUsers />}
               {activeTab === "quotes"   && <AdminQuotes />}
               {activeTab === "orders"   && <AdminOrders />}
