@@ -77,6 +77,8 @@ import {
   seedCkCatalog,
 } from "../controllers/print_catalog.controller";
 import { MarketplaceController } from "../controllers/marketplace.controller";
+import { requireMercadoPagoSignature } from "../middleware/webhook-auth";
+import express from "express";
 
 const router = Router();
 
@@ -141,8 +143,20 @@ router.get("/events/:slug/likes",          getEventLikes);
 router.get("/share/e/:id", SEOController.getEventPreview);
 
 // ── Checkout & Webhook ─────────────────────────────────────────────────────────
-router.post("/checkout/payment",      PaymentController.processPayment);
-router.post("/webhooks/mercadopago",  PaymentController.webhook);
+router.post("/checkout/payment",     PaymentController.processPayment);
+router.post(
+  "/webhooks/mercadopago",
+  // Raw body antes do JSON parser — garante integridade do HMAC
+  express.raw({ type: "application/json" }),
+  (req: express.Request, _res: express.Response, next: express.NextFunction) => {
+    if (Buffer.isBuffer(req.body)) {
+      try { req.body = JSON.parse(req.body.toString("utf8")); } catch { req.body = {}; }
+    }
+    next();
+  },
+  requireMercadoPagoSignature,
+  PaymentController.webhook
+);
 
 // ── Pedido Público ─────────────────────────────────────────────────────────────
 router.get("/public/orders/:id",               PaymentController.getOrderPublic);

@@ -153,34 +153,8 @@ export class PaymentController {
   static async webhook(req: Request, res: Response) {
     const { type, data } = req.body;
 
-    // ── VALIDAÇÃO DE ASSINATURA ──
-    // Se o secret estiver configurado, valida HMAC. Caso contrário, processa com aviso.
-    if (!process.env.MP_WEBHOOK_SECRET) {
-      console.warn("[Webhook] MP_WEBHOOK_SECRET não configurada. Processando sem validação de assinatura (modo não-seguro).");
-    } else {
-      const sig    = (req.headers["x-signature"] as string) ?? "";
-      const reqId  = (req.headers["x-request-id"] as string) ?? "";
-      const dataId = (req.query["data.id"] as string) ?? "";
-      const [tsPart, v1Part] = sig.split(",");
-      const ts = tsPart?.split("=")[1];
-      const v1 = v1Part?.split("=")[1];
-
-      if (!ts || !v1) {
-        console.warn("[Webhook] Headers de assinatura ausentes.");
-        return res.status(401).json({ error: "Assinatura ausente." });
-      }
-
-      const manifest = `id:${dataId};request-id:${reqId};ts:${ts};`;
-      const hmac = crypto
-        .createHmac("sha256", process.env.MP_WEBHOOK_SECRET)
-        .update(manifest)
-        .digest("hex");
-
-      if (hmac !== v1) {
-        console.error("[Webhook] Assinatura Inválida.");
-        return res.status(401).json({ error: "Assinatura inválida." });
-      }
-    }
+    // Nota: Validação HMAC já foi feita pelo middleware requireMercadoPagoSignature.
+    // Este método só é chamado com assinatura válida (ou em modo dev sem secret).
 
     // O MP envia o ID da transação em data.id quando o type é 'payment'
     if (type === "payment" && data?.id) {
