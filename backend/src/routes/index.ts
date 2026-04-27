@@ -31,6 +31,9 @@ import {
   registerManualSale,
   getConvitesUnidade,
   respondConviteUnidade,
+  addProService,
+  updateProService,
+  deleteProService,
 } from "../controllers/profissional.controller";
 import { getMeusPedidos, getMeuPedidoDetalhe } from "../controllers/cliente.controller";
 import { CartorioController } from "../controllers/cartorio.controller";
@@ -51,6 +54,7 @@ import {
   redeemPrint,
 } from "../controllers/gamification.controller";
 import * as AdminPrintCatalog from "../controllers/print_catalog.controller";
+import * as ServiceCatalogController from "../controllers/service_catalog.controller";
 import {
   listSuppliers,
   createSupplier,
@@ -158,9 +162,11 @@ router.post(
   PaymentController.webhook
 );
 
-// ── Pedido Público ─────────────────────────────────────────────────────────────
+// ── Pedido e Catálogo Público ────────────────────────────────────────────────
 router.get("/public/orders/:id",               PaymentController.getOrderPublic);
 router.get("/public/orders/:id/check-payment", PaymentController.checkPaymentStatus);
+router.get("/public/print-catalog",            AdminPrintCatalog.getPublicPrintCatalog);
+router.get("/public/service-catalog",          ServiceCatalogController.listServiceCatalog);
 
 // ── LGPD / Acesso (pós-pagamento) ─────────────────────────────────────────────
 router.post("/orders/:id/access-type",  requireAuth, chooseAccessType);
@@ -181,6 +187,11 @@ router.patch("/profissional/me",                 requireAuth, requireRole("ADMIN
 router.post("/profissional/events/:id/manual-sale", requireAuth, requireRole("ADMIN", "PROFISSIONAL"), registerManualSale);
 router.get("/profissional/unidades/convites", requireAuth, requireRole("ADMIN", "PROFISSIONAL"), getConvitesUnidade);
 router.patch("/profissional/unidades/convites/:id/respond", requireAuth, requireRole("ADMIN", "PROFISSIONAL"), respondConviteUnidade);
+
+// ── Gestão de Serviços (Vitrine do Profissional) ──────────────────────────────
+router.post("/profissional/services", requireAuth, requireRole("ADMIN", "PROFISSIONAL"), addProService);
+router.patch("/profissional/services/:id", requireAuth, requireRole("ADMIN", "PROFISSIONAL"), updateProService);
+router.delete("/profissional/services/:id", requireAuth, requireRole("ADMIN", "PROFISSIONAL"), deleteProService);
 
 // ── Gamificação: Curtidas & Resgates ──────────────────────────────────────────
 router.post("/events/:slug/photos/like", requireAuth, likePhoto);
@@ -252,5 +263,10 @@ router.post("/admin/print-catalog/import", requireAuth, requireRole("ADMIN"), Ad
 router.patch("/admin/print-catalog/bulk-margin", requireAuth, requireRole("ADMIN"), AdminPrintCatalog.bulkUpdateMargin);
 router.patch("/admin/print-catalog/:id", requireAuth, requireRole("ADMIN"), AdminPrintCatalog.updatePrintProduct);
 router.post("/admin/print-catalog/seed", requireAuth, requireRole("ADMIN"), AdminPrintCatalog.seedCkCatalog);
+
+// ── Admin: Catálogo Global de Serviços ─────────────────────────────────────────
+router.get("/admin/service-catalog", requireAuth, requireRole("ADMIN"), ServiceCatalogController.adminListServiceCatalog);
+router.post("/admin/service-catalog", requireAuth, requireRole("ADMIN"), ServiceCatalogController.adminCreateService);
+router.patch("/admin/service-catalog/:id", requireAuth, requireRole("ADMIN"), ServiceCatalogController.adminUpdateService);
 
 export default router;

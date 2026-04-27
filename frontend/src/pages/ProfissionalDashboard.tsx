@@ -2,9 +2,9 @@ import React, { useState, useEffect, useRef, useCallback } from "react";
 
 import { useAuth } from "../hooks/useAuth";
 import { API } from "../lib/api";
-import { List, Calendar as CalendarIcon, TrendingUp, DollarSign, Award, ChevronLeft, ChevronRight, Settings, MessageCircle, Check, X, ShieldCheck, HardDrive, LayoutDashboard } from "lucide-react";
+import { List, Calendar as CalendarIcon, TrendingUp, DollarSign, Award, ChevronLeft, ChevronRight, Settings, MessageCircle, Check, X, ShieldCheck, HardDrive, LayoutDashboard, Briefcase } from "lucide-react";
 import { DashboardLayout, type NavItem } from "../components/DashboardLayout";
-import { T } from "../lib/theme";
+import { T, StickyBottomCTA, BtnPrimary } from "../lib/theme";
 
 interface EventItem {
   id: string;
@@ -45,9 +45,30 @@ interface EventMedia {
   shortId: string;
 }
 
+interface ServiceCatalog {
+  id: string;
+  name: string;
+  description: string | null;
+  basePrice: number;
+  estimatedMinutes: number;
+}
+
+interface ProfessionalService {
+  id: string;
+  name: string;
+  description: string | null;
+  price: number;
+  catalogId: string | null;
+  active: boolean;
+  catalog?: ServiceCatalog;
+}
+
 interface ProfileData {
   services: string[];
   equipment: string | null;
+  hourlyRate?: number;
+  equipmentMultiplier?: number;
+  proServices?: ProfessionalService[];
   otherHabilities: string | null;
   stats?: {
     totalEarnings: number;
@@ -141,7 +162,9 @@ export default function ProfissionalDashboard() {
   const [profile, setProfile] = useState<ProfileData | null>(null);
   const [isProfileOpen, setIsProfileOpen] = useState(false);
   const [viewTab, setViewTab] = useState<"lista" | "calendario">("lista");
-  const [activeTab, setActiveTab] = useState<"agenda" | "convites" | "financeiro">("agenda");
+  const [activeTab, setActiveTab] = useState<"agenda" | "convites" | "financeiro" | "servicos">("agenda");
+  const [catalogServices, setCatalogServices] = useState<ServiceCatalog[]>([]);
+  const [savingPrices, setSavingPrices] = useState(false);
   const [unitInvites, setUnitInvites] = useState<UnitInvite[]>([]);
   const [showNewServicesModal, setShowNewServicesModal] = useState(false);
   const [hasCheckedInvites, setHasCheckedInvites] = useState(false);
@@ -240,14 +263,24 @@ export default function ProfissionalDashboard() {
     }
   };
 
+  const fetchServiceCatalog = useCallback(async () => {
+    try {
+      const { data } = await API.get("/public/service-catalog");
+      setCatalogServices(data);
+    } catch (err) {
+      console.error("Erro ao buscar catálogo global:", err);
+    }
+  }, []);
+
   useEffect(() => {
     const timer = setTimeout(() => {
       fetchEvents();
       fetchProfile();
       fetchUnitInvites();
+      fetchServiceCatalog();
     }, 0);
     return () => clearTimeout(timer);
-  }, [fetchEvents, fetchProfile, fetchUnitInvites]);
+  }, [fetchEvents, fetchProfile, fetchUnitInvites, fetchServiceCatalog]);
 
   // Ganhos reais do perfil
   const totalRevenue = profile?.stats?.totalEarnings || 0;
@@ -289,12 +322,63 @@ export default function ProfissionalDashboard() {
     }
   }, [loading, pendingEvents.length, unitInvites.length, hasCheckedInvites]);
 
-  const NAV_ITEMS = (activeTab: string, setActiveTab: (t: "agenda" | "convites" | "financeiro") => void, pendingCount: number): NavItem[] => [
+  const NAV_ITEMS = (activeTab: string, setActiveTab: (t: "agenda" | "convites" | "financeiro" | "servicos") => void, pendingCount: number): NavItem[] => [
     { label: "Visão Geral", onClick: () => setActiveTab("agenda"), isActive: activeTab === "agenda", icon: <LayoutDashboard size={16} /> },
     { label: "Convites Pendentes", onClick: () => setActiveTab("convites"), isActive: activeTab === "convites", icon: <MessageCircle size={16} />, badge: pendingCount },
     { label: "Financeiro", onClick: () => setActiveTab("financeiro"), isActive: activeTab === "financeiro", icon: <DollarSign size={16} /> },
+    { label: "Serviços", onClick: () => setActiveTab("servicos"), isActive: activeTab === "servicos", icon: <Briefcase size={16} /> },
     { label: "Meu Perfil", onClick: () => setIsProfileOpen(true), isActive: false, icon: <Settings size={16} /> },
   ];
+
+  const handleSavePricing = async () => {
+    if (!profile) return;
+    setSavingPrices(true);
+    try {
+      const { data } = await API.patch("/profissional/me", {
+        hourlyRate: profile.hourlyRate,
+        equipmentMultiplier: profile.equipmentMultiplier
+      });
+      setProfile(data);
+      showNotification("Configurações de precificação atualizadas!", "success");
+    } catch (error) {
+      console.error(error);
+      showNotification("Erro ao atualizar precificação", "error");
+    } finally {
+      setSavingPrices(false);
+    }
+  };
+
+  const handleAddService = async (catalogService: ServiceCatalog) => {
+    const suggestedPrice = Math.max(
+      catalogService.basePrice,
+      ((profile?.hourlyRate || 150) * (catalogService.estimatedMinutes / 60)) * (profile?.equipmentMultiplier || 1.0)
+    );
+    try {
+      await API.post("/profissional/services", {
+        catalogId: catalogService.id,
+        name: catalogService.name,
+        description: catalogService.description,
+        price: suggestedPrice
+      });
+      fetchProfile();
+      showNotification("Serviço adicionado à sua vitrine!", "success");
+    } catch (error) {
+      console.error(error);
+      showNotification("Erro ao adicionar serviço", "error");
+    }
+  };
+
+  const handleRemoveService = async (serviceId: string) => {
+    if (!confirm("Remover este serviço da sua vitrine?")) return;
+    try {
+      await API.delete(`/profissional/services/${serviceId}`);
+      fetchProfile();
+      showNotification("Serviço removido.", "success");
+    } catch (error) {
+      console.error(error);
+      showNotification("Erro ao remover serviço", "error");
+    }
+  };
 
   return (
     <DashboardLayout 
@@ -539,6 +623,106 @@ export default function ProfissionalDashboard() {
               <p style={{ fontSize: 10, color: "var(--theme-text-muted)", marginTop: "2rem", fontStyle: "italic" }}>
                 * Os valores acima referem-se a repasses liquidados via PIX. Ganhos de eventos em andamento aparecerão após a conciliação semanal.
               </p>
+            </div>
+          </div>
+        ) : activeTab === "servicos" ? (
+          <div style={{ animation: "fadeIn 0.4s ease-out" }}>
+            <div style={{ ...S.card, padding: "2rem", marginBottom: "2rem" }}>
+              <h3 style={{ fontSize: 18, fontWeight: 900, color: T.text, marginBottom: "1.5rem", textTransform: "uppercase", letterSpacing: 1 }}>Precificação Base</h3>
+              <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(200px, 1fr))", gap: "1rem", marginBottom: "1.5rem" }}>
+                <div>
+                  <label style={S.label}>Valor da sua Hora (R$)</label>
+                  <input
+                    type="number"
+                    style={S.input}
+                    value={profile?.hourlyRate || ""}
+                    onChange={(e) => setProfile(p => p ? { ...p, hourlyRate: Number(e.target.value) } : null)}
+                    placeholder="Ex: 150"
+                  />
+                  <p style={{ fontSize: 10, color: T.text3, marginTop: 4 }}>O valor do seu trabalho por hora.</p>
+                </div>
+                <div>
+                  <label style={S.label}>Multiplicador de Equipamento</label>
+                  <input
+                    type="number"
+                    step="0.1"
+                    style={S.input}
+                    value={profile?.equipmentMultiplier || ""}
+                    onChange={(e) => setProfile(p => p ? { ...p, equipmentMultiplier: Number(e.target.value) } : null)}
+                    placeholder="Ex: 1.0"
+                  />
+                  <p style={{ fontSize: 10, color: T.text3, marginTop: 4 }}>1.0 = Padrão. 1.2 = Câmera de Cinema, etc.</p>
+                </div>
+              </div>
+              <button 
+                onClick={handleSavePricing}
+                disabled={savingPrices}
+                style={{ background: T.brand, color: "#000", border: "none", padding: "12px 24px", fontSize: 12, fontWeight: 900, textTransform: "uppercase", cursor: "pointer", display: "flex", alignItems: "center", gap: 8 }}
+              >
+                {savingPrices ? "SALVANDO..." : <><Check size={16} /> Salvar Configurações</>}
+              </button>
+            </div>
+
+            <div style={{ ...S.card, padding: "2rem", marginBottom: "2rem" }}>
+              <h3 style={{ fontSize: 18, fontWeight: 900, color: T.text, marginBottom: "1.5rem", textTransform: "uppercase", letterSpacing: 1 }}>Sua Vitrine de Serviços</h3>
+              {profile?.proServices && profile.proServices.length > 0 ? (
+                <div style={{ display: "flex", flexDirection: "column", gap: 10 }}>
+                  {profile.proServices.map(svc => (
+                    <div key={svc.id} style={{ display: "flex", justifyContent: "space-between", alignItems: "center", padding: "1rem", background: "rgba(255,255,255,0.02)", border: `1px solid ${T.border}` }}>
+                      <div>
+                        <div style={{ fontWeight: 900, color: T.brand, textTransform: "uppercase", fontSize: 13 }}>{svc.name}</div>
+                        {svc.description && <div style={{ fontSize: 11, color: T.text2, marginTop: 4 }}>{svc.description}</div>}
+                      </div>
+                      <div style={{ display: "flex", alignItems: "center", gap: 20 }}>
+                        <div style={{ fontSize: 16, fontWeight: 900, fontFamily: T.fontD }}>R$ {Number(svc.price).toFixed(2)}</div>
+                        <button onClick={() => handleRemoveService(svc.id)} style={{ background: "transparent", color: "#ef4444", border: "none", cursor: "pointer", display: "flex", alignItems: "center" }} title="Remover Serviço">
+                          <X size={16} />
+                        </button>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              ) : (
+                <p style={{ fontSize: 12, color: T.text3 }}>Você ainda não adicionou nenhum serviço na sua vitrine. Importe do catálogo abaixo.</p>
+              )}
+            </div>
+
+            <div style={{ ...S.card, padding: "2rem" }}>
+              <h3 style={{ fontSize: 18, fontWeight: 900, color: T.text, marginBottom: "1.5rem", textTransform: "uppercase", letterSpacing: 1 }}>Catálogo Global</h3>
+              <p style={{ fontSize: 11, color: T.text2, marginBottom: "1rem" }}>Importe os serviços padrão para sua vitrine. O valor sugerido é calculado com base no seu Valor/Hora.</p>
+              <div style={{ display: "grid", gridTemplateColumns: "1fr", gap: 10 }}>
+                {catalogServices.map(cat => {
+                  const alreadyAdded = profile?.proServices?.some(s => s.catalogId === cat.id);
+                  const suggested = Math.max(
+                    cat.basePrice,
+                    ((profile?.hourlyRate || 150) * (cat.estimatedMinutes / 60)) * (profile?.equipmentMultiplier || 1.0)
+                  );
+
+                  return (
+                    <div key={cat.id} style={{ display: "flex", justifyContent: "space-between", alignItems: "center", padding: "1rem", background: "rgba(133,185,172,0.05)", border: `1px solid ${T.brand}40` }}>
+                      <div>
+                        <div style={{ fontWeight: 900, color: T.text, textTransform: "uppercase", fontSize: 13 }}>{cat.name}</div>
+                        <div style={{ fontSize: 10, color: T.text3, marginTop: 4 }}>{cat.estimatedMinutes} min | Preço Mínimo: R$ {Number(cat.basePrice).toFixed(2)}</div>
+                      </div>
+                      <div style={{ display: "flex", alignItems: "center", gap: 16 }}>
+                        <div style={{ textAlign: "right" }}>
+                          <div style={{ fontSize: 10, color: T.text3, textTransform: "uppercase" }}>Sugerido</div>
+                          <div style={{ fontSize: 14, fontWeight: 900, color: T.brand }}>R$ {suggested.toFixed(2)}</div>
+                        </div>
+                        {alreadyAdded ? (
+                          <div style={{ display: "flex", alignItems: "center", gap: 4, color: T.brand, fontSize: 10, fontWeight: 900, textTransform: "uppercase" }}>
+                            <Check size={14} /> Na Vitrine
+                          </div>
+                        ) : (
+                          <button onClick={() => handleAddService(cat)} style={{ background: T.brand, color: "#000", border: "none", padding: "8px 16px", fontSize: 10, fontWeight: 900, cursor: "pointer", textTransform: "uppercase" }}>
+                            Importar
+                          </button>
+                        )}
+                      </div>
+                    </div>
+                  );
+                })}
+              </div>
             </div>
           </div>
         ) : viewTab === "lista" ? (
@@ -1058,9 +1242,20 @@ function ProfileModal({ profile, onClose, onUpdated }: { profile: ProfileData; o
             />
           </section>
 
+          <div className="desktop-hide" style={StickyBottomCTA}>
+            <button
+              onClick={handleSave}
+              disabled={saving}
+              style={{ ...BtnPrimary, width: "100%", padding: "16px", borderRadius: 0, border: "none", fontSize: 11, fontWeight: 900, textTransform: "uppercase", letterSpacing: 2, cursor: saving ? "not-allowed" : "pointer", background: "var(--brand-primary)", color: "#000" }}
+            >
+              {saving ? "SALVANDO..." : "ATUALIZAR PERFIL"}
+            </button>
+          </div>
+
           <button
             onClick={handleSave}
             disabled={saving}
+            className="mobile-hide"
             style={{ width: "100%", padding: "20px", background: "var(--brand-primary)", color: "#000", border: "none", fontSize: 11, fontWeight: 900, textTransform: "uppercase", letterSpacing: 2, cursor: saving ? "not-allowed" : "pointer", marginTop: "1rem" }}
           >
             {saving ? "SALVANDO..." : "ATUALIZAR PERFIL"}
@@ -1273,9 +1468,26 @@ function EventEditPanel({ event, onUpdated, onClose }: {
           <p style={{ fontSize: 10, color: "var(--theme-text-muted)", marginTop: 4 }}>Link da pasta compartilhada no Google Drive</p>
         </div>
 
+        <div className="desktop-hide" style={StickyBottomCTA}>
+          <button
+            onClick={saveLinks}
+            disabled={linkStatus === "saving"}
+            style={{
+              width: "100%", padding: "16px", borderRadius: 0, border: "none", fontSize: 11, fontWeight: 900,
+              cursor: linkStatus === "saving" ? "not-allowed" : "pointer",
+              background: linkStatus === "saved" ? "var(--brand-primary)" : "var(--brand-primary)",
+              color: "#000",
+              textTransform: "uppercase", letterSpacing: 2
+            }}
+          >
+            {linkStatus === "saving" ? "SINCRONIZANDO..." : "SALVAR ALTERAÇÕES"}
+          </button>
+        </div>
+
         <button
           onClick={saveLinks}
           disabled={linkStatus === "saving"}
+          className="mobile-hide"
           style={{
             width: "100%", padding: "18px", borderRadius: 0, border: "none", fontSize: 12, fontWeight: 800,
             cursor: linkStatus === "saving" ? "not-allowed" : "pointer", transition: "all .3s",

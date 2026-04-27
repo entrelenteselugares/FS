@@ -112,9 +112,11 @@ model Profissional {
   lighting        String[]
   captPct         Float                  @default(30)
   editPct         Float                  @default(20)
-  otherHabilities String?
-  equipment       String?
-  cartorios       CartorioProfissional[]
+  otherHabilities     String?
+  equipment           String?
+  hourlyRate          Decimal                @db.Decimal(10, 2) @default(150.00)
+  equipmentMultiplier Float                  @default(1.0)
+  cartorios           CartorioProfissional[]
   user            User                   @relation(fields: [userId], references: [id])
   proServices     ProfessionalService[]
 
@@ -211,14 +213,32 @@ model PhotoLike {
   @@map("photo_likes")
 }
 
+model ServiceCatalog {
+  id               String                @id @default(cuid())
+  name             String
+  description      String?
+  basePrice        Decimal               @db.Decimal(10, 2)
+  estimatedMinutes Int                   @default(60)
+  active           Boolean               @default(true)
+  createdAt        DateTime              @default(now())
+  updatedAt        DateTime              @updatedAt
+  proServices      ProfessionalService[]
+
+  @@map("service_catalog")
+}
+
 model ProfessionalService {
-  id             String       @id @default(cuid())
+  id             String          @id @default(cuid())
   profissionalId String
+  catalogId      String?
   name           String
   description    String?
-  price          Decimal      @db.Decimal(10, 2)
-  active         Boolean      @default(true)
-  profissional   Profissional @relation(fields: [profissionalId], references: [id], onDelete: Cascade)
+  price          Decimal         @db.Decimal(10, 2)
+  active         Boolean         @default(true)
+  createdAt      DateTime        @default(now())
+  updatedAt      DateTime        @updatedAt
+  profissional   Profissional    @relation(fields: [profissionalId], references: [id], onDelete: Cascade)
+  catalog        ServiceCatalog? @relation(fields: [catalogId], references: [id], onDelete: SetNull)
   orderItems     OrderItem[]
 
   @@map("professional_services")
@@ -249,6 +269,8 @@ model OrderItem {
   order     Order                @relation(fields: [orderId], references: [id], onDelete: Cascade)
   media     EventMedia?          @relation(fields: [mediaId], references: [id])
   service   ProfessionalService? @relation(fields: [serviceId], references: [id])
+  printProductId String?
+  printProduct PrintProduct? @relation(fields: [printProductId], references: [id])
 
   @@map("order_items")
 }
@@ -410,6 +432,7 @@ model PrintProduct {
   maxQty       Int?
   createdAt    DateTime @default(now())
   updatedAt    DateTime @updatedAt
+  orderItems   OrderItem[]
 
   @@map("print_products")
 }

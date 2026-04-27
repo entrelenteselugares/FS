@@ -1,4 +1,4 @@
-import { Response } from "express";
+import { Request, Response } from "express";
 import { AuthRequest } from "../lib/auth";
 import prisma from "../lib/prisma";
 import { Prisma } from "@prisma/client";
@@ -347,5 +347,33 @@ export async function seedCkCatalog(req: AuthRequest, res: Response): Promise<vo
   } catch (err) {
     console.error("seedCkCatalog:", err);
     res.status(500).json({ error: "Erro ao popular catálogo CK." });
+  }
+}
+
+// ── GET /public/print-catalog ──────────────────────────────────────────────
+export async function getPublicPrintCatalog(req: Request, res: Response): Promise<void> {
+  try {
+    const products = await prisma.printProduct.findMany({
+      where: { active: true },
+      orderBy: [{ category: "asc" }, { name: "asc" }]
+    });
+
+    const result = products.map((p: any) => ({
+      id: p.id,
+      category: p.category,
+      name: p.name,
+      description: p.description,
+      finalPrice: p.sellingPrice !== null
+        ? Number(p.sellingPrice)
+        : Number(p.supplierCost) * (1 + p.marginPct / 100),
+      unit: p.unit,
+      minQty: p.minQty,
+      maxQty: p.maxQty
+    }));
+
+    res.json(result);
+  } catch (err) {
+    console.error("getPublicPrintCatalog:", err);
+    res.status(500).json({ error: "Erro ao carregar catálogo." });
   }
 }

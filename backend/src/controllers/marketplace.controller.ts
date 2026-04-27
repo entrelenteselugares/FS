@@ -5,6 +5,7 @@ import { slugify } from "../lib/utils";
 import { supabaseAdmin } from "../lib/supabase";
 import { PricingService } from "../services/pricing.service";
 import { audit } from "../lib/audit";
+import { applyWatermark } from "../lib/image-processor";
 
 export class MarketplaceController {
   /**
@@ -72,8 +73,21 @@ export class MarketplaceController {
       });
 
       // 3. Vincular mídias se houver carrinho
+      let orderItems = [];
       if (Array.isArray(cart) && cart.length > 0) {
-        console.log(`[Marketplace] Vinculando ${cart.length} itens ao pedido.`);
+        // Busca as mídias reais para obter os IDs
+        const dbMedias = await prisma.eventMedia.findMany({
+          where: {
+            eventId: event.id,
+            shortId: { in: cart }
+          }
+        });
+
+        orderItems = dbMedias.map(m => ({
+          mediaId: m.id,
+          price: m.price || event.pricePerPhoto || 15,
+          quantity: 1
+        }));
       }
 
       // 4. Cria o Pedido
@@ -98,10 +112,7 @@ export class MarketplaceController {
           splitEdicao: edicao,
           splitCartorio: cartorio,
           items: {
-            create: Array.isArray(cart) ? cart.map((shortId: string) => ({
-              price: 15,
-              quantity: 1
-            })) : []
+            create: orderItems
           }
         }
       });

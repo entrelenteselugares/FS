@@ -260,7 +260,7 @@ export class PaymentController {
    * Processa o pagamento transparente vindo do frontend.
    */
   static async processPayment(req: Request, res: Response) {
-    const { eventId, userId, email, cpf, cardToken, installments, paymentMethodId, contributionAmount, accessType, cart } = req.body;
+    const { eventId, userId, email, cpf, cardToken, installments, paymentMethodId, contributionAmount, accessType, cart, printProductId } = req.body;
 
     try {
       // 1. Buscar evento com parceiros para cálculo de split
@@ -277,7 +277,20 @@ export class PaymentController {
 
       // 2. Lógica de Precificação & Splits (Centralizada)
       const cartItems = cart || [];
-      const preco = PricingService.calculateEventPrice(eventBase, contributionAmount, cartItems.length);
+      let basePrice = PricingService.calculateEventPrice(eventBase, contributionAmount, cartItems.length);
+      
+      // 2a. Produto Físico (Upsell Print Catalog)
+      let finalPrintProductId = null;
+      let finalPrintPrice = 0;
+      if (printProductId) {
+        const product = await prisma.printProduct.findUnique({ where: { id: printProductId } });
+        if (product && product.active) {
+          finalPrintProductId = product.id;
+          finalPrintPrice = product.sellingPrice !== null ? Number(product.sellingPrice) : Number(product.supplierCost) * (1 + product.marginPct / 100);
+        }
+      }
+
+      const preco = basePrice + finalPrintPrice;
       
       if (preco <= 0) {
         return res.status(400).json({ error: "O valor do pagamento deve ser superior a zero. Verifique os itens selecionados." });
@@ -368,6 +381,32 @@ export class PaymentController {
         });
       }
 
+      // 4a. Busca as mídias reais para obter os IDs (Marketplace)
+      let orderItemsData: any[] = [];
+      if (cartItems.length > 0) {
+        const dbMedias = await prisma.eventMedia.findMany({
+          where: {
+            eventId,
+            shortId: { in: cartItems }
+          }
+        });
+
+        orderItemsData = dbMedias.map(m => ({
+          mediaId: m.id,
+          price: m.price || event.pricePerPhoto || 15,
+          quantity: 1
+        }));
+      }
+
+      // Adiciona o produto impresso aos items se selecionado
+      if (finalPrintProductId) {
+        orderItemsData.push({
+          printProductId: finalPrintProductId,
+          price: finalPrintPrice,
+          quantity: 1
+        });
+      }
+
       let order;
       if (existingPendingOrder) {
         console.log(`[processPayment] Reutilizando pedido ${existingPendingOrder.id} (anti-duplicata).`);
@@ -386,12 +425,9 @@ export class PaymentController {
             splitCartorio,
             tempPassword: isNewUser ? tempPassword : null,
             // Limpa itens antigos e recria se necessário
-            items: cartItems.length > 0 ? {
+            items: orderItemsData.length > 0 ? {
               deleteMany: {},
-              create: cartItems.map((shortId: string) => ({
-                shortId,
-                amount: Number(event.pricePerPhoto || 15)
-              }))
+              create: orderItemsData
             } : undefined
           }
         });
@@ -413,11 +449,8 @@ export class PaymentController {
             splitEdicao,
             splitCartorio,
             tempPassword: isNewUser ? tempPassword : null,
-            items: cartItems.length > 0 ? {
-              create: cartItems.map((shortId: string) => ({
-                shortId,
-                amount: Number(event.pricePerPhoto || 15)
-              }))
+            items: orderItemsData.length > 0 ? {
+              create: orderItemsData
             } : undefined
           }
         });

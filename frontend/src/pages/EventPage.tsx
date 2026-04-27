@@ -7,6 +7,7 @@ import AccessTypeModal from "../components/AccessTypeModal";
 import { T, BtnPrimary, BtnSecondary, FieldLabel, FieldInput } from "../lib/theme";
 import { ThemeToggle } from "../components/ThemeToggle";
 import { AuthModal } from "../components/AuthModal";
+import { Modal } from "../components/UI/Modal";
 import { useAuth } from "../hooks/useAuth";
 
 const Item = ({ val, label }: { val: number, label: string }) => (
@@ -92,7 +93,15 @@ interface AccessData {
   accessType?: "PUBLIC" | "PRIVATE";
 }
 
-type Step = "paywall" | "auth" | "choice" | "checkout" | "processing" | "success";
+interface PrintProductData {
+  id: string;
+  category: string;
+  name: string;
+  description?: string;
+  finalPrice: number;
+}
+
+type Step = "paywall" | "auth" | "choice" | "upsell" | "checkout" | "processing" | "success";
 
 const Spinner = () => (
   <div style={{ width: 28, height: 28, border: `2px solid ${T.brand}`, borderTopColor: "transparent", borderRadius: "50%", animation: "spin 0.8s linear infinite" }} />
@@ -157,6 +166,10 @@ export default function EventPage() {
   const [cart, setCart] = useState<string[]>([]); // Array de shortIds selecionados
   const [cartTotal, setCartTotal] = useState(0);
 
+  // Print Catalog States
+  const [printProducts, setPrintProducts] = useState<PrintProductData[]>([]);
+  const [selectedPrintProductId, setSelectedPrintProductId] = useState<string | null>(null);
+
   const handleShare = async () => {
     if (access?.accessType === "PRIVATE") {
       alert("Este álbum está em modo PRIVADO. Para compartilhar com seus convidados, você precisa torná-lo PÚBLICO na sua área do cliente (Minha Conta).");
@@ -201,6 +214,11 @@ export default function EventPage() {
       })
       .catch(() => navigate("/404"))
       .finally(() => setLoading(false));
+
+    // Fetch Print Catalog
+    api.get('/public/print-catalog')
+      .then(res => setPrintProducts(res.data))
+      .catch(err => console.error("Erro ao carregar catálogo de impressão:", err));
   }, [slug, navigate, user?.id, user?.role]);
 
   useEffect(() => {
@@ -264,6 +282,8 @@ export default function EventPage() {
       const { data } = await api.post("/checkout/payment", {
         eventId: event.id, userId: user?.id, email: cardData.email, cpf: cardData.cpf,
         cardToken, installments: 1, paymentMethodId: detectBrand(cardData.number), accessType,
+        cart, // Envia os shortIds selecionados
+        printProductId: selectedPrintProductId, // Envia o produto impresso se houver
       });
       if (data.hasPaid) { setOrderId(data.orderId); setJustPaid(true); setStep("success"); }
       else pollPaymentStatus(data.orderId);
@@ -348,7 +368,8 @@ export default function EventPage() {
         fontFamily: T.fontB, 
         display: "flex", 
         flexDirection: "column",
-        userSelect: "none" // Impede seleção de texto e imagens
+        userSelect: "none",
+        overflow: "hidden"
       }}
     >
       <Helmet>
@@ -436,7 +457,8 @@ export default function EventPage() {
             </div>
           )}
 
-          <div style={{ position: "absolute", inset: 0, background: "linear-gradient(to top, rgba(0,0,0,0.85) 0%, rgba(0,0,0,0.2) 50%, transparent 100%)", display: "flex", flexDirection: "column", justifyContent: "flex-end", padding: "32px 36px" }}>
+          {/* Overlay gradiente unificado */}
+          <div style={{ position: "absolute", inset: 0, background: "linear-gradient(to top, rgba(0,0,0,0.9) 0%, rgba(0,0,0,0.2) 60%, transparent 100%)", display: "flex", flexDirection: "column", justifyContent: "flex-end", padding: "32px 36px" }}>
             {!paid && (
               <div style={{ position: "absolute", inset: 0, display: "flex", alignItems: "center", justifyContent: "center" }}>
                 <div style={{ padding: 18, background: "rgba(0,0,0,0.55)", backdropFilter: "blur(4px)", borderRadius: "50%", color: "rgba(255,255,255,0.7)" }}>
@@ -595,76 +617,28 @@ export default function EventPage() {
                     ))
                   }
                 </div>
-
+                
                 <button 
                   onClick={handleUnlockClick} 
                   disabled={isMarketplace && cart.length === 0}
+                  className="mobile-hide"
                   style={{ ...BtnPrimary, width: "100%", justifyContent: "center", opacity: (isMarketplace && cart.length === 0) ? 0.5 : 1 }}
                 >
-                  {event.pendingOrderId ? "Finalizar Pagamento" : (
-                    isMarketplace ? "Finalizar Seleção" : (event.isUnitSale ? "Adquirir este Clique" : "Desbloquear Arquivos")
-                  )}
+                  {event.pendingOrderId ? "FINALIZAR AGORA" : (isMarketplace ? "COMPRAR SELEÇÃO" : "DESBLOQUEAR ÁLBUM")}
                 </button>
+
+                {/* Mobile Sticky CTA */}
+                <div className="desktop-hide" style={{ position: "fixed", bottom: 0, left: 0, right: 0, padding: "16px 20px", background: "rgba(10,10,10,0.8)", backdropFilter: "blur(10px)", borderTop: `1px solid ${T.border}`, zIndex: 100, display: "flex", justifyContent: "center" }}>
+                   <button 
+                    onClick={handleUnlockClick} 
+                    disabled={isMarketplace && cart.length === 0}
+                    style={{ ...BtnPrimary, width: "100%", justifyContent: "center", opacity: (isMarketplace && cart.length === 0) ? 0.5 : 1 }}
+                  >
+                    {event.pendingOrderId ? "FINALIZAR AGORA" : (isMarketplace ? "COMPRAR SELEÇÃO" : "DESBLOQUEAR ÁLBUM")}
+                  </button>
+                </div>
+
                 <p style={{ fontSize: 9, color: T.text3, textAlign: "center", margin: 0 }}>Secure Payment · SSL · Instant Access</p>
-              </div>
-            )}
-
-            {step === "checkout" && (
-              <div style={{ display: "flex", flexDirection: "column", gap: 14, animation: "fadeUp 0.3s ease" }}>
-                <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
-                  <span style={{ fontSize: 10, fontWeight: 700, textTransform: "uppercase", letterSpacing: 1 }}>Secure Checkout</span>
-                  <button onClick={() => setStep("paywall")} style={{ background: "none", border: "none", color: T.brand, cursor: "pointer", fontSize: 10, textTransform: "uppercase" }}>Voltar</button>
-                </div>
-
-                <div style={{ background: T.bgCard, border: `1px solid ${T.border}`, padding: 14, marginBottom: 4 }}>
-                  <div style={{ fontSize: 10, color: T.text2 }}>{event.nomeNoivos} {event.isUnitSale ? "(Foto Avulsa)" : ""}</div>
-                  <div style={{ fontSize: 18, fontWeight: 700, color: T.text }}>R$ {Number(event.isUnitSale ? event.priceUnit : event.priceBase).toFixed(2)}</div>
-                </div>
-
-                {(["number", "name"] as const).map(k => (
-                  <div key={k}>
-                    <label style={FieldLabel}>{k === "number" ? "Número do Cartão" : "Nome no Cartão"}</label>
-                    <input style={FieldInput} value={cardData[k]} onChange={handleChange(k)} placeholder={k === "number" ? "0000 0000 0000 0000" : "JOÃO SILVA"} />
-                  </div>
-                ))}
-                <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr 1fr", gap: 8 }}>
-                  {(["month", "year", "cvv"] as const).map(k => (
-                    <div key={k}>
-                      <label style={FieldLabel}>{k === "month" ? "Mês" : k === "year" ? "Ano" : "CVV"}</label>
-                      <input style={FieldInput} value={cardData[k]} onChange={handleChange(k)} placeholder={k === "month" ? "MM" : k === "year" ? "AA" : "000"} />
-                    </div>
-                  ))}
-                </div>
-                {(["cpf", "email"] as const).map(k => (
-                  <div key={k}>
-                    <label style={FieldLabel}>{k === "cpf" ? "CPF" : "E-mail"}</label>
-                    <input style={FieldInput} value={cardData[k]} onChange={handleChange(k)} placeholder={k === "cpf" ? "000.000.000-00" : "seu@email.com"} />
-                  </div>
-                ))}
-
-                {error && <div style={{ fontSize: 10, color: "#ef4444", background: "#ef444411", padding: 8, border: "1px solid #ef444433" }}>{error}</div>}
-
-                {!cardToken ? (
-                  <button onClick={handleTokenize} disabled={tokenizing || !cardData.number || !cardData.cvv}
-                    style={{ ...BtnPrimary, width: "100%", justifyContent: "center", opacity: (tokenizing || !cardData.number) ? 0.5 : 1 }}>
-                    {tokenizing ? "Validando..." : "Validar Cartão"}
-                  </button>
-                ) : (
-                  <button onClick={handlePay} style={{ ...BtnPrimary, width: "100%", justifyContent: "center" }}>
-                    Pagar R$ {Number(event.isUnitSale ? event.priceUnit : event.priceBase).toFixed(2).replace(".", ",")}
-                  </button>
-                )}
-                <p style={{ fontSize: 9, color: T.text3, textAlign: "center", margin: 0 }}>SSL · Dados não armazenados</p>
-              </div>
-            )}
-
-            {step === "processing" && (
-              <div style={{ display: "flex", flexDirection: "column", alignItems: "center", gap: 20, padding: "40px 0", animation: "fadeUp 0.3s ease" }}>
-                <Spinner />
-                <div style={{ textAlign: "center" }}>
-                  <h3 style={{ fontFamily: T.fontD, fontWeight: 900, fontSize: 18, textTransform: "uppercase", margin: "0 0 6px" }}>Processando</h3>
-                  <p style={{ fontSize: 12, color: T.text3, margin: 0 }}>Validando transação bancária...</p>
-                </div>
               </div>
             )}
 
@@ -784,35 +758,152 @@ export default function EventPage() {
         </aside>
       </div>
 
-      {step === "auth" && <AuthModal onSuccess={() => setStep("choice")} onClose={() => setStep("paywall")} />}
+      {/* MODAL DE CHECKOUT UNIFICADO (v2.0) */}
+      <Modal 
+        isOpen={step === "choice" || step === "upsell" || step === "checkout" || step === "processing"} 
+        onClose={() => setStep("paywall")}
+        title={step === "choice" ? "Privacidade do Álbum" : step === "upsell" ? "Oferta Especial" : "Pagamento Seguro"}
+      >
+        {step === "choice" && (
+          <div style={{ display: "flex", flexDirection: "column", gap: 20 }}>
+            <p style={{ fontSize: 13, color: T.text2, lineHeight: 1.5 }}>
+              Como você deseja que seu acesso seja configurado?
+            </p>
+            <div style={{ display: "grid", gap: 12 }}>
+              <button 
+                onClick={() => { setAccessType("PUBLIC"); setStep(printProducts.length > 0 ? "upsell" : "checkout"); }}
+                style={{ ...BtnSecondary, justifyContent: "flex-start", padding: 20, textAlign: "left", flexDirection: "column", alignItems: "flex-start" }}
+              >
+                <div style={{ fontWeight: 900, color: T.brand, marginBottom: 4 }}>🔓 MODO PÚBLICO</div>
+                <div style={{ fontSize: 10, textTransform: "none", letterSpacing: 0 }}>Permite compartilhar o link com amigos e familiares.</div>
+              </button>
+              <button 
+                onClick={() => { setAccessType("PRIVATE"); setStep(printProducts.length > 0 ? "upsell" : "checkout"); }}
+                style={{ ...BtnSecondary, justifyContent: "flex-start", padding: 20, textAlign: "left", flexDirection: "column", alignItems: "flex-start" }}
+              >
+                <div style={{ fontWeight: 900, color: T.text, marginBottom: 4 }}>🔒 MODO PRIVADO</div>
+                <div style={{ fontSize: 10, textTransform: "none", letterSpacing: 0 }}>Apenas você (logado) poderá visualizar as fotos.</div>
+              </button>
+            </div>
+          </div>
+        )}
 
-      {step === "choice" && (
-        <AccessTypeModal orderId="PRE-PAYMENT" eventTitle={event.nomeNoivos}
-          onConfirmed={async (type) => { 
-            setAccessType(type as "PUBLIC" | "PRIVATE"); 
-            setStep("processing");
-            try {
-              // Cria o pedido no backend
-              const { data } = await api.post("/checkout/payment", {
-                eventId: event.id,
-                userId: user?.id,
-                email: user?.email || "",
-                accessType: type,
-                isDraft: true,
-                cart: isMarketplace ? cart : undefined,
-                amount: isMarketplace ? cartTotal : (event.isUnitSale ? event.priceUnit : event.priceBase)
-              });
-              
-              if (data.orderId) {
-                navigate(`/checkout?orderId=${data.orderId}`);
-              }
-            } catch (err) {
-              console.error("Erro ao iniciar checkout:", err);
-              setStep("paywall");
-            }
-          }}
-        />
-      )}
+        {step === "upsell" && printProducts.length > 0 && (
+          <div style={{ display: "flex", flexDirection: "column", gap: 16 }}>
+            <p style={{ fontSize: 12, color: T.text2, lineHeight: 1.4 }}>
+              Deseja eternizar esse momento em um lindo álbum impresso? Enviamos para todo o Brasil.
+            </p>
+            <div style={{ display: "grid", gap: 12, maxHeight: "50vh", overflowY: "auto", paddingRight: 4 }}>
+              {printProducts.map((p) => (
+                <div 
+                  key={p.id}
+                  onClick={() => setSelectedPrintProductId(selectedPrintProductId === p.id ? null : p.id)}
+                  style={{
+                    border: `1px solid ${selectedPrintProductId === p.id ? T.brand : T.border}`,
+                    background: selectedPrintProductId === p.id ? "rgba(133,185,172,0.05)" : T.bgField,
+                    padding: 16,
+                    cursor: "pointer",
+                    display: "flex",
+                    alignItems: "center",
+                    justifyContent: "space-between",
+                    gap: 12
+                  }}
+                >
+                  <div style={{ flex: 1 }}>
+                    <div style={{ fontSize: 10, color: T.brand, fontWeight: 900, textTransform: "uppercase" }}>{p.category}</div>
+                    <div style={{ fontSize: 13, color: T.text, fontWeight: 700, margin: "4px 0" }}>{p.name}</div>
+                    {p.description && <div style={{ fontSize: 10, color: T.text3 }}>{p.description}</div>}
+                  </div>
+                  <div style={{ textAlign: "right" }}>
+                    <div style={{ fontSize: 14, fontFamily: T.fontD, fontWeight: 900, color: T.text }}>
+                      +R$ {p.finalPrice.toFixed(2)}
+                    </div>
+                    <div style={{ width: 20, height: 20, borderRadius: "50%", border: `1px solid ${selectedPrintProductId === p.id ? T.brand : T.border}`, display: "flex", alignItems: "center", justifyContent: "center", margin: "8px 0 0 auto", background: selectedPrintProductId === p.id ? T.brand : "transparent" }}>
+                      {selectedPrintProductId === p.id && <Check size={12} color="black" />}
+                    </div>
+                  </div>
+                </div>
+              ))}
+            </div>
+            <div style={{ display: "flex", gap: 10, marginTop: 10 }}>
+              <button onClick={() => { setSelectedPrintProductId(null); setStep("checkout"); }} style={{ ...BtnSecondary, flex: 1, justifyContent: "center" }}>
+                PULAR
+              </button>
+              <button onClick={() => setStep("checkout")} style={{ ...BtnPrimary, flex: 1, justifyContent: "center" }}>
+                CONTINUAR
+              </button>
+            </div>
+          </div>
+        )}
+
+        {step === "checkout" && (
+          <div style={{ display: "flex", flexDirection: "column", gap: 14 }}>
+            <div style={{ background: T.bgField, border: `1px solid ${T.border}`, padding: 14, marginBottom: 10 }}>
+              <div style={{ fontSize: 10, color: T.text2, textTransform: "uppercase", letterSpacing: 1 }}>{event.nomeNoivos}</div>
+              <div style={{ fontSize: 24, fontWeight: 900, color: T.text, fontFamily: T.fontD }}>
+                R$ {
+                  (
+                    (isMarketplace ? cartTotal : Number(event.isUnitSale ? event.priceUnit : event.priceBase)) + 
+                    (selectedPrintProductId ? printProducts.find(p => p.id === selectedPrintProductId)?.finalPrice || 0 : 0)
+                  ).toFixed(2)
+                }
+              </div>
+              {selectedPrintProductId && (
+                <div style={{ fontSize: 10, color: T.brand, marginTop: 4, fontWeight: 700 }}>
+                  + INCLUI: {printProducts.find(p => p.id === selectedPrintProductId)?.name}
+                </div>
+              )}
+            </div>
+
+            {(["number", "name"] as const).map(k => (
+              <div key={k}>
+                <label style={FieldLabel}>{k === "number" ? "Número do Cartão" : "Nome no Cartão"}</label>
+                <input style={FieldInput} value={cardData[k]} onChange={handleChange(k)} placeholder={k === "number" ? "0000 0000 0000 0000" : "NOME IMPRESSO"} />
+              </div>
+            ))}
+            <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr 1fr", gap: 8 }}>
+              {(["month", "year", "cvv"] as const).map(k => (
+                <div key={k}>
+                  <label style={FieldLabel}>{k === "month" ? "Mês" : k === "year" ? "Ano" : "CVV"}</label>
+                  <input style={FieldInput} value={cardData[k]} onChange={handleChange(k)} placeholder={k === "month" ? "MM" : k === "year" ? "AA" : "000"} />
+                </div>
+              ))}
+            </div>
+            {(["cpf", "email"] as const).map(k => (
+              <div key={k}>
+                <label style={FieldLabel}>{k === "cpf" ? "CPF" : "E-mail"}</label>
+                <input style={FieldInput} value={cardData[k]} onChange={handleChange(k)} placeholder={k === "cpf" ? "000.000.000-00" : "seu@email.com"} />
+              </div>
+            ))}
+
+            {error && <div style={{ fontSize: 11, color: "#f87171", background: "#f8717111", padding: 12, border: "1px solid #f8717133" }}>{error}</div>}
+
+            {!cardToken ? (
+              <button onClick={handleTokenize} disabled={tokenizing || !cardData.number || !cardData.cvv}
+                style={{ ...BtnPrimary, width: "100%", justifyContent: "center", marginTop: 10 }}>
+                {tokenizing ? "VALIDANDO..." : "PRÓXIMO PASSO"}
+              </button>
+            ) : (
+              <button onClick={handlePay} style={{ ...BtnPrimary, width: "100%", justifyContent: "center", marginTop: 10 }}>
+                FINALIZAR PAGAMENTO
+              </button>
+            )}
+            <p style={{ fontSize: 9, color: T.text3, textAlign: "center", marginTop: 10 }}>AMBIENTE SEGURO · MERCADO PAGO · SSL</p>
+          </div>
+        )}
+
+        {step === "processing" && (
+          <div style={{ display: "flex", flexDirection: "column", alignItems: "center", gap: 20, padding: "40px 0" }}>
+            <Spinner />
+            <div style={{ textAlign: "center" }}>
+              <h3 style={{ fontFamily: T.fontD, fontWeight: 900, fontSize: 18, textTransform: "uppercase", margin: "0 0 6px" }}>Processando</h3>
+              <p style={{ fontSize: 12, color: T.text3, margin: 0 }}>Validando sua transação com o banco...</p>
+            </div>
+          </div>
+        )}
+      </Modal>
+
+      {step === "auth" && <AuthModal onSuccess={() => setStep("choice")} onClose={() => setStep("paywall")} />}
 
       {needsAccessChoice && orderId && event && (
         <AccessTypeModal orderId={orderId} eventTitle={event.nomeNoivos}

@@ -170,7 +170,8 @@ export async function getProfile(req: AuthRequest, res: Response): Promise<void>
         cartorios: {
           where: { status: "ACCEPTED" },
           include: { cartorio: { select: { razaoSocial: true } } }
-        }
+        },
+        proServices: { include: { catalog: true } }
       }
     });
 
@@ -254,7 +255,7 @@ export async function updateProfile(req: AuthRequest, res: Response): Promise<vo
   const userId = req.user?.userId;
   if (!userId) { res.status(401).json({ error: "Não autenticado." }); return; }
 
-  const { services, equipment, otherHabilities } = req.body;
+  const { services, equipment, otherHabilities, hourlyRate, equipmentMultiplier } = req.body;
 
   try {
     const updated = await prisma.profissional.update({
@@ -263,6 +264,8 @@ export async function updateProfile(req: AuthRequest, res: Response): Promise<vo
         ...(services !== undefined && { services }),
         ...(equipment !== undefined && { equipment }),
         ...(otherHabilities !== undefined && { otherHabilities }),
+        ...(hourlyRate !== undefined && { hourlyRate: Number(hourlyRate) }),
+        ...(equipmentMultiplier !== undefined && { equipmentMultiplier: Number(equipmentMultiplier) }),
       }
     });
     // P1 — Alteração de perfil profissional
@@ -508,6 +511,85 @@ export async function respondConviteUnidade(req: AuthRequest, res: Response) {
     res.json(updated);
   } catch (err) {
     console.error("respondConviteUnidade:", err);
-    res.status(500).json({ error: "Erro ao responder convite de unidade." });
+    res.status(500).json({ error: "Erro ao processar resposta do convite." });
+  }
+}
+
+// ── SERVIÇOS DO PROFISSIONAL ──────────────────────────────────────────────────
+export async function addProService(req: AuthRequest, res: Response): Promise<void> {
+  const userId = req.user?.userId;
+  if (!userId) { res.status(401).json({ error: "Não autenticado." }); return; }
+
+  try {
+    const prof = await prisma.profissional.findUnique({ where: { userId } });
+    if (!prof) { res.status(404).json({ error: "Profissional não encontrado." }); return; }
+
+    const { catalogId, name, description, price } = req.body;
+    if (!name || price === undefined) {
+      res.status(400).json({ error: "Nome e preço são obrigatórios." });
+      return;
+    }
+
+    const service = await prisma.professionalService.create({
+      data: {
+        profissionalId: prof.id,
+        catalogId: catalogId || null,
+        name,
+        description,
+        price: Number(price),
+      }
+    });
+    res.status(201).json(service);
+  } catch (err) {
+    console.error("addProService:", err);
+    res.status(500).json({ error: "Erro ao adicionar serviço." });
+  }
+}
+
+export async function updateProService(req: AuthRequest, res: Response): Promise<void> {
+  const userId = req.user?.userId;
+  if (!userId) { res.status(401).json({ error: "Não autenticado." }); return; }
+
+  try {
+    const id = req.params.id as string;
+    const { name, description, price, active } = req.body;
+
+    const existing = await prisma.professionalService.findUnique({ where: { id }, include: { profissional: true } });
+    if (!existing || existing.profissional.userId !== userId) {
+      res.status(404).json({ error: "Serviço não encontrado." }); return;
+    }
+
+    const updated = await prisma.professionalService.update({
+      where: { id },
+      data: {
+        ...(name && { name }),
+        ...(description !== undefined && { description }),
+        ...(price !== undefined && { price: Number(price) }),
+        ...(active !== undefined && { active }),
+      }
+    });
+    res.json(updated);
+  } catch (err) {
+    console.error("updateProService:", err);
+    res.status(500).json({ error: "Erro ao atualizar serviço." });
+  }
+}
+
+export async function deleteProService(req: AuthRequest, res: Response): Promise<void> {
+  const userId = req.user?.userId;
+  if (!userId) { res.status(401).json({ error: "Não autenticado." }); return; }
+
+  try {
+    const id = req.params.id as string;
+    const existing = await prisma.professionalService.findUnique({ where: { id }, include: { profissional: true } });
+    if (!existing || existing.profissional.userId !== userId) {
+      res.status(404).json({ error: "Serviço não encontrado." }); return;
+    }
+
+    await prisma.professionalService.delete({ where: { id } });
+    res.json({ success: true });
+  } catch (err) {
+    console.error("deleteProService:", err);
+    res.status(500).json({ error: "Erro ao deletar serviço." });
   }
 }
