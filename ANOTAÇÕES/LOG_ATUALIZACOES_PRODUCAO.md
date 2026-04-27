@@ -29,6 +29,13 @@ Este documento resume as correções críticas e melhorias de UX implementadas h
 - **Privacidade Nativa**: Todas as vendas diretas agora nascem como PRIVADAS por padrão, garantindo a proteção da imagem do comprador.
 - **Autonomia do Cliente (Meus Dados)**: Nova aba no painel do cliente permitindo atualização imediata de Nome e WhatsApp.
 
+### 5. Blindagem v2.0 (Marketplace Shield)
+
+- **Marca d'água Automática**: Integração com a biblioteca `sharp`. Todas as fotos do marketplace agora recebem marcas d'água durante o upload.
+- **Proteção Anti-Cópia**: Bloqueio de clique direito e arraste de imagens na galeria.
+- **Segurança HMAC**: Webhooks do Mercado Pago agora possuem validação criptográfica obrigatória, impedindo fraudes.
+- **Estabilidade Serverless**: Refatoração de dashboards para o padrão "Sequential Await", eliminando erros 500 de banco de dados na Vercel.
+
 ---
 
 ## 🧪 Roteiro de Testes (O Que Validar Agora)

@@ -1,8 +1,15 @@
 import { Request as ExpressRequest, Response, NextFunction } from "express";
 import jwt from "jsonwebtoken";
 
-const JWT_SECRET = process.env.JWT_SECRET || "fotosegundo-dev-secret-2026";
-const REFRESH_SECRET = process.env.REFRESH_SECRET || "fotosegundo-refresh-secret-2026";
+const JWT_SECRET = process.env.JWT_SECRET;
+const REFRESH_SECRET = process.env.REFRESH_SECRET;
+
+if (!JWT_SECRET || !REFRESH_SECRET) {
+  console.warn("⚠️ AVISO: JWT_SECRET ou REFRESH_SECRET não configurados. Autenticação irá falhar.");
+  if (process.env.NODE_ENV === "production") {
+    throw new Error("FATAL: Variáveis de ambiente JWT_SECRET e REFRESH_SECRET são obrigatórias em produção.");
+  }
+}
 
 export interface AuthPayload {
   userId: string;
@@ -16,20 +23,20 @@ export interface AuthRequest extends ExpressRequest {
 
 /** Gera token de acesso (curta duração: 1 hora) */
 export const generateToken = (payload: AuthPayload): string => {
-  return jwt.sign(payload, JWT_SECRET, { expiresIn: "1h" });
+  return jwt.sign(payload, JWT_SECRET as string, { expiresIn: "1h" });
 };
 
 /** Gera token de renovação (longa duração: 7 dias) */
 export const generateRefreshToken = (payload: AuthPayload): string => {
-  return jwt.sign(payload, REFRESH_SECRET, { expiresIn: "7d" });
+  return jwt.sign(payload, REFRESH_SECRET as string, { expiresIn: "7d" });
 };
 
 export const verifyToken = (token: string): AuthPayload => {
-  return jwt.verify(token, JWT_SECRET) as AuthPayload;
+  return jwt.verify(token, JWT_SECRET as string) as any;
 };
 
 export const verifyRefreshToken = (token: string): AuthPayload => {
-  return jwt.verify(token, REFRESH_SECRET) as AuthPayload;
+  return jwt.verify(token, REFRESH_SECRET as string) as any;
 };
 
 /** Middleware: requer JWT válido */

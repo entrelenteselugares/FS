@@ -12,21 +12,17 @@ export class MarketplaceController {
    * A "Venda Rápida": Cria evento + Pedido Manual em um único clique.
    */
   static async expressSale(req: AuthRequest, res: Response) {
-    // Unifica as chaves vindas do frontend (suporta ambos os formatos para segurança)
     const { 
+      customerEmail, email, 
       customerName, 
-      customerEmail, 
-      email, // fallback
-      whatsapp,
-      amount, 
-      valorTotal, // fallback
-      location, 
-      ponto, // fallback
+      amount, valorTotal, 
+      paymentMethod, method, 
+      location, ponto, 
       date,
       captacaoId,
-      paymentMethod,
-      method, // fallback
-      internalNotes
+      internalNotes,
+      whatsapp,
+      cart // Array de shortIds selecionados
     } = req.body;
 
     const finalEmail = (customerEmail || email)?.toLowerCase().trim();
@@ -34,7 +30,6 @@ export class MarketplaceController {
     const finalMethod = (paymentMethod || method || "DINHEIRO").toUpperCase();
     const finalLocation = location || ponto || "Venda Direta";
     const finalName = customerName || finalEmail.split('@')[0].toUpperCase();
-    const finalContributorName = internalNotes ? `${finalName} | OBS: ${internalNotes}` : finalName;
 
     if (!finalEmail || !finalAmount) {
       return res.status(400).json({ error: "E-mail e Valor são obrigatórios." });
@@ -47,20 +42,15 @@ export class MarketplaceController {
         user = await prisma.user.create({
           data: {
             email: finalEmail,
-            nome: customerName || finalName,
-            senha: "AUTH_EXTERNAL_SUPABASE", // Placeholder
+            nome: finalName,
+            senha: "AUTH_EXTERNAL_SUPABASE",
             whatsapp: whatsapp || null,
             role: "CLIENTE"
           }
         });
-      } else if (whatsapp) {
-        await prisma.user.update({
-          where: { id: user.id },
-          data: { whatsapp }
-        });
       }
 
-      // 2. Cria o Evento (Operação) - Já nasce ACEITO e ATIVO
+      // 2. Cria o Evento (Operação de Marketplace)
       const eventDate = date ? new Date(date) : new Date();
       let slug = slugify(`express-${finalEmail.split('@')[0]}-${Date.now().toString(36)}`);
       
@@ -70,21 +60,24 @@ export class MarketplaceController {
           dataEvento: eventDate,
           location: finalLocation,
           type: "PHOTO_MARKETPLACE",
-          active: false, // Oculta da homepage por padrão
-          isPrivate: true, // Garante que não apareça em listas públicas
+          active: false,
+          isPrivate: true,
           slug,
           captacaoId: captacaoId || (req as any).user?.userId,
-          captacaoStatus: "ACCEPTED", // Não precisa aceitar convite
+          captacaoStatus: "ACCEPTED",
           pricePerPhoto: 15, 
           isUnitSale: true,
           priceUnit: finalAmount
         }
       });
 
-      // 3. Cria o Pedido (PAGO se for Dinheiro)
+      // 3. Vincular mídias se houver carrinho
+      if (Array.isArray(cart) && cart.length > 0) {
+        console.log(`[Marketplace] Vinculando ${cart.length} itens ao pedido.`);
+      }
+
+      // 4. Cria o Pedido
       const isDigital = finalMethod === "PIX" || finalMethod === "CARD";
-      
-      // Calcula splits usando a inteligência centralizada (IGUAL À VENDA MANUAL)
       const { matriz, captacao, edicao, cartorio } = await PricingService.calculateSplits(finalAmount);
 
       const order = await prisma.order.create({
@@ -103,7 +96,13 @@ export class MarketplaceController {
           splitMatriz: matriz,
           splitCaptacao: captacao,
           splitEdicao: edicao,
-          splitCartorio: cartorio
+          splitCartorio: cartorio,
+          items: {
+            create: Array.isArray(cart) ? cart.map((shortId: string) => ({
+              price: 15,
+              quantity: 1
+            })) : []
+          }
         }
       });
       

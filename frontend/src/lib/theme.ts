@@ -33,12 +33,78 @@ export const T = {
   // ── Overlay ───────────────────────────────────────
   overlay:     "var(--overlay)",
 
+  // ── Glassmorphism ────────────────────────────────
+  glass:       "rgba(10, 10, 10, 0.6)",
+  glassBorder: "rgba(255, 255, 255, 0.1)",
+  blur:        "blur(20px) saturate(180%)",
+
   // ── Font Families ─────────────────────────────────
   fontD: "var(--font-d)", // Barlow Condensed — Display (900, uppercase)
   fontB: "var(--font-b)", // Inter            — Body (300-500)
 } as const;
 
 export type ThemeKey = keyof typeof T;
+
+// ─────────────────────────────────────────────────────────────────────────────
+// UI Components — Estilos Unificados
+// ─────────────────────────────────────────────────────────────────────────────
+
+/** Overlay de Modal com Glassmorphism Imersivo */
+export const ModalOverlay: React.CSSProperties = {
+  position:       "fixed",
+  top:            0,
+  left:           0,
+  right:          0,
+  bottom:         0,
+  background:     T.glass,
+  backdropFilter: T.blur,
+  zIndex:         1000,
+  display:        "flex",
+  alignItems:     "center",
+  justifyContent: "center",
+  padding:        "20px",
+};
+
+/** Conteúdo do Modal (Minimalista e Estrito) */
+export const ModalContent: React.CSSProperties = {
+  background:   T.bgCard,
+  border:       `1px solid ${T.border2}`,
+  borderRadius: 0,
+  width:        "100%",
+  maxWidth:     "500px",
+  padding:      "2rem",
+  boxShadow:    "0 25px 50px -12px rgba(0, 0, 0, 0.5)",
+  position:     "relative",
+  maxHeight:    "90vh",
+  overflowY:    "auto",
+};
+
+/** CTA Fixo no Rodapé (Sticky Mobile-First) */
+export const StickyBottomCTA: React.CSSProperties = {
+  position:      "fixed",
+  bottom:        0,
+  left:          0,
+  right:          0,
+  background:    T.bg,
+  borderTop:     `1px solid ${T.border}`,
+  padding:       "16px 20px",
+  zIndex:        900,
+  display:       "flex",
+  justifyContent: "center",
+  boxShadow:     "0 -10px 30px rgba(0,0,0,0.4)",
+};
+
+/** Wrapper Fullscreen para Eventos */
+export const FullscreenHero: React.CSSProperties = {
+  minHeight:      "100vh",
+  width:          "100%",
+  backgroundSize: "cover",
+  backgroundPosition: "center",
+  backgroundAttachment: "fixed",
+  position:       "relative",
+  display:        "flex",
+  flexDirection:  "column",
+};
 
 // ─────────────────────────────────────────────────────────────────────────────
 // Btn — Estilos de Botão (Parte 2)

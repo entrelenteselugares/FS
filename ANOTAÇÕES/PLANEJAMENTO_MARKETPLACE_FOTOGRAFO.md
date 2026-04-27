@@ -20,18 +20,17 @@ Este documento descreve a expansão da Foto Segundo para suportar eventos em loc
 
 ### 2.2 Processamento de Imagem
 
-- **Watermark (Marca d'água)**: Implementar uma função (usando biblioteca `sharp` ou similar) que aplica a logo da Foto Segundo automaticamente no "Preview" da foto durante o upload ou via Cloudinary Transformation.
-- **IDs Únicos**: Expor o `shortId` de cada mídia para que o cliente possa identificar e o fotógrafo possa localizar o original em alta.
+- **Watermark (Marca d'água) (CONCLUÍDO ✅)**: Implementada via biblioteca `sharp`. Aplica o logo oficial da Foto Segundo em todos os previews de mídias de marketplace automaticamente durante o upload.
+- **IDs Únicos (CONCLUÍDO ✅)**: Exposição do `shortId` de cada mídia para que o cliente possa identificar e o fotógrafo possa localizar o original em alta.
 
 ## 3. Requisitos de Interface (Front-end)
 
 ### 3.1 Proteção de Conteúdo
 
-- **Bloqueio de Clique Direito**: Impedir o "Salvar imagem como".
-- **Bloqueio de Print/Screenshot**:
-  - Usar CSS (`user-select: none`).
-  - Overlay transparente sobre a imagem para dificultar o arraste/cópia.
-  - *Disclaimer*: Bloqueio de print total é impossível no browser, mas podemos dificultar 99% com overlays e marca d'água agressiva.
+- **Bloqueio de Clique Direito (CONCLUÍDO ✅)**: Impedido o "Salvar imagem como" e menu de contexto em toda a galeria.
+- **Bloqueio de Print/Screenshot (CONCLUÍDO ✅)**:
+  - CSS `user-select: none` aplicado.
+  - Marca d'água centralizada e em opacidade defensiva via backend.
 
 ### 3.2 Novo Carrinho de Compras
 
@@ -70,8 +69,6 @@ Para eventos dinâmicos (ex: parques e corridas), o sistema operará como uma lo
 
 ---
 
-**Próximos Passos Sugeridos:**
-
-1. Validar se o modelo de "Preço Único por Foto" atende a maioria dos casos.
-2. Definir se os "Serviços/Packs" serão cadastrados globalmente pelo Admin ou se cada fotógrafo terá total liberdade.
-3. Iniciar o protótipo da "Dashboard de Rota" para o fotógrafo.
+1. Definir se os "Serviços/Packs" serão cadastrados globalmente pelo Admin ou se cada fotógrafo terá total liberdade.
+2. Iniciar o protótipo da "Dashboard de Rota" para o fotógrafo (Uberização).
+3. Implementar o sistema de **Gamificação (Badges e Conquistas)** para profissionais engajados.
