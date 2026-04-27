@@ -149,12 +149,14 @@ export default function ProfissionalDashboard() {
 
   // Venda Expressa State
   const [isExpressModalOpen, setIsExpressModalOpen] = useState(false);
+  const [expressStep, setExpressStep] = useState<1 | 2 | 3>(1);
   const [expressFormData, setExpressFormData] = useState({
     customerName: "",
     customerEmail: "",
     whatsapp: "",
-    amount: 15,
-    location: "Taquaral / Marketplace",
+    amount: 30,
+    location: "",
+    productType: "FOTOS" as "FOTOS" | "REELS" | "SD_CARD" | "ALBUM_IMPRESSO",
     paymentMethod: "MONEY" as "PIX" | "CARD" | "MONEY",
     internalNotes: ""
   });
@@ -209,7 +211,15 @@ export default function ProfissionalDashboard() {
     e.preventDefault();
     setLoading(true);
     try {
-      const { data } = await API.post("marketplace/express-sale", expressFormData);
+      const payload = {
+        ...expressFormData,
+        // SD_CARD e ALBUM_IMPRESSO são entrega física — usa método MONEY
+        method: (expressFormData.productType === 'SD_CARD' || expressFormData.productType === 'ALBUM_IMPRESSO')
+          ? 'MONEY'
+          : expressFormData.paymentMethod,
+        internalNotes: `[${expressFormData.productType}] ${expressFormData.internalNotes}`.trim()
+      };
+      const { data } = await API.post("marketplace/express-sale", payload);
       
       if (data.isDigital) {
         showNotification("Venda registrada! Redirecionando para pagamento...");
@@ -410,11 +420,13 @@ export default function ProfissionalDashboard() {
                 customerName: "", 
                 customerEmail: "", 
                 whatsapp: "",
-                amount: 15, 
-                location: "Taquaral / Marketplace",
+                amount: 30, 
+                location: "",
+                productType: "FOTOS",
                 paymentMethod: "MONEY",
                 internalNotes: ""
               });
+              setExpressStep(1);
               setIsExpressModalOpen(true);
             }}
             style={{ 
@@ -701,120 +713,173 @@ export default function ProfissionalDashboard() {
           onUpdated={(p) => { setProfile(p); setIsProfileOpen(false); }}
         />
       )}
-      {/* MODAL VENDA EXPRESSA (MARKETPLACE) */}
+      {/* MODAL VENDA EXPRESSA — WIZARD 3 ETAPAS */}
       {isExpressModalOpen && (
-        <div style={{ position: "fixed", inset: 0, zIndex: 6000, display: "flex", alignItems: "center", justifyContent: "center", background: "rgba(0,0,0,0.95)", backdropFilter: "blur(20px)", padding: "1.5rem" }}>
-          <div style={{ ...S.card, width: "100%", maxWidth: 500, padding: "2.5rem", position: "relative", background: "var(--theme-bg)" }}>
-             <button onClick={() => setIsExpressModalOpen(false)} style={{ position: "absolute", top: 20, right: 20, background: "none", border: "none", color: "var(--theme-text-muted)", cursor: "pointer" }}><X size={24} /></button>
+        <div style={{ position: "fixed", inset: 0, zIndex: 6000, display: "flex", alignItems: "center", justifyContent: "center", background: "rgba(0,0,0,0.95)", backdropFilter: "blur(20px)", padding: "1rem" }}>
+          <div style={{ width: "100%", maxWidth: 440, background: "var(--theme-bg)", border: "1px solid var(--theme-border)", position: "relative" }}>
 
-             <div style={{ marginBottom: "2rem" }}>
-               <h2 style={{ fontSize: 24, fontWeight: 900, color: "var(--theme-text)", textTransform: "uppercase", letterSpacing: 1, margin: 0 }}>Venda Rápida</h2>
-<p style={{ fontSize: 10, color: "var(--brand-primary)", fontWeight: 900, textTransform: "uppercase", letterSpacing: 2, marginTop: 4 }}>Venda Direta / Balcão</p>
-               <div style={{ width: 40, height: 2, background: "var(--brand-primary)", marginTop: 12 }} />
-             </div>
-
-             <form onSubmit={handleExpressSaleSubmit} style={{ display: "flex", flexDirection: "column", gap: "1.5rem" }}>
-                         <div>
-                <label className="text-[10px] font-black uppercase tracking-widest opacity-40 mb-2 block">E-mail do Cliente (Obrigatório)</label>
-                <input 
-                  type="email" 
-                  value={expressFormData.customerEmail}
-                  onChange={e => setExpressFormData(p => ({ ...p, customerEmail: e.target.value }))}
-                  className="w-full bg-theme-bg-muted border border-theme-border py-4 px-4 text-sm focus:border-brand-primary outline-none transition-all"
-                  placeholder="exemplo@email.com"
-                  required
-                />
+            {/* HEADER */}
+            <div style={{ padding: "1.5rem 1.5rem 1rem", borderBottom: "1px solid var(--theme-border)" }}>
+              <button onClick={() => { setIsExpressModalOpen(false); setExpressStep(1); }} style={{ position: "absolute", top: 16, right: 16, background: "none", border: "none", color: "var(--theme-text-muted)", cursor: "pointer" }}><X size={20} /></button>
+              <div style={{ fontSize: 9, fontWeight: 900, color: "var(--brand-primary)", textTransform: "uppercase", letterSpacing: 3, marginBottom: 4 }}>Venda Rápida · Etapa {expressStep} de 3</div>
+              <h2 style={{ fontSize: 20, fontWeight: 900, color: "var(--theme-text)", textTransform: "uppercase", letterSpacing: 1, margin: 0 }}>
+                {expressStep === 1 ? "Quem é o cliente?" : expressStep === 2 ? "O que foi vendido?" : "Como foi pago?"}
+              </h2>
+              {/* BARRA DE PROGRESSO */}
+              <div style={{ display: "flex", gap: 4, marginTop: 12 }}>
+                {[1,2,3].map(s => (
+                  <div key={s} style={{ flex: 1, height: 3, background: s <= expressStep ? "var(--brand-primary)" : "var(--theme-border)", transition: "background 0.3s" }} />
+                ))}
               </div>
+            </div>
 
-              <div className="grid grid-cols-2 gap-4">
-                <div>
-                  <label className="text-[10px] font-black uppercase tracking-widest opacity-40 mb-2 block">Nome (Opcional)</label>
-                  <input 
-                    type="text" 
-                    value={expressFormData.customerName}
-                    onChange={e => setExpressFormData(p => ({ ...p, customerName: e.target.value }))}
-                    className="w-full bg-theme-bg-muted border border-theme-border py-4 px-4 text-sm focus:border-brand-primary outline-none transition-all"
-                    placeholder="Nome Completo"
-                  />
-                </div>
-                <div>
-                  <label className="text-[10px] font-black uppercase tracking-widest opacity-40 mb-2 block">WhatsApp (Opcional)</label>
-                  <input 
-                    type="text" 
-                    value={expressFormData.whatsapp}
-                    onChange={e => setExpressFormData(p => ({ ...p, whatsapp: e.target.value }))}
-                    className="w-full bg-theme-bg-muted border border-theme-border py-4 px-4 text-sm focus:border-brand-primary outline-none transition-all"
-                    placeholder="(00) 00000-0000"
-                  />
-                </div>
-              </div>
+            {/* BODY */}
+            <div style={{ padding: "1.5rem" }}>
 
-              <div className="grid grid-cols-2 gap-4">
-                <div>
-                  <label className="text-[10px] font-black uppercase tracking-widest opacity-40 mb-2 block">Valor Pago (R$)</label>
-                  <input 
-                    type="number" 
-                    value={expressFormData.amount}
-                    onChange={e => setExpressFormData(p => ({ ...p, amount: Number(e.target.value) }))}
-                    className="w-full bg-theme-bg-muted border border-theme-border py-4 px-4 text-sm focus:border-brand-primary outline-none transition-all"
-                  />
+              {/* ETAPA 1: CLIENTE */}
+              {expressStep === 1 && (
+                <div style={{ display: "flex", flexDirection: "column", gap: "1rem" }}>
+                  <div>
+                    <label style={{ fontSize: 9, fontWeight: 900, color: "var(--theme-text-muted)", textTransform: "uppercase", letterSpacing: 2, display: "block", marginBottom: 6 }}>E-mail do Cliente *</label>
+                    <input
+                      type="email"
+                      autoFocus
+                      value={expressFormData.customerEmail}
+                      onChange={e => setExpressFormData(p => ({ ...p, customerEmail: e.target.value }))}
+                      style={{ width: "100%", background: "var(--theme-bg-muted)", border: "1px solid var(--theme-border)", padding: "14px", fontSize: 14, color: "var(--theme-text)", outline: "none", boxSizing: "border-box" }}
+                      placeholder="cliente@email.com"
+                    />
+                  </div>
+                  <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 12 }}>
+                    <div>
+                      <label style={{ fontSize: 9, fontWeight: 900, color: "var(--theme-text-muted)", textTransform: "uppercase", letterSpacing: 2, display: "block", marginBottom: 6 }}>Nome</label>
+                      <input
+                        type="text"
+                        value={expressFormData.customerName}
+                        onChange={e => setExpressFormData(p => ({ ...p, customerName: e.target.value }))}
+                        style={{ width: "100%", background: "var(--theme-bg-muted)", border: "1px solid var(--theme-border)", padding: "14px", fontSize: 14, color: "var(--theme-text)", outline: "none", boxSizing: "border-box" }}
+                        placeholder="Nome"
+                      />
+                    </div>
+                    <div>
+                      <label style={{ fontSize: 9, fontWeight: 900, color: "var(--theme-text-muted)", textTransform: "uppercase", letterSpacing: 2, display: "block", marginBottom: 6 }}>WhatsApp</label>
+                      <input
+                        type="tel"
+                        value={expressFormData.whatsapp}
+                        onChange={e => setExpressFormData(p => ({ ...p, whatsapp: e.target.value }))}
+                        style={{ width: "100%", background: "var(--theme-bg-muted)", border: "1px solid var(--theme-border)", padding: "14px", fontSize: 14, color: "var(--theme-text)", outline: "none", boxSizing: "border-box" }}
+                        placeholder="(00) 00000-0000"
+                      />
+                    </div>
+                  </div>
+                  <button
+                    onClick={() => { if (!expressFormData.customerEmail) { showNotification("E-mail do cliente é obrigatório.", "error"); return; } setExpressStep(2); }}
+                    style={{ width: "100%", background: "var(--brand-primary)", color: "#000", border: "none", padding: "16px", fontWeight: 900, fontSize: 11, textTransform: "uppercase", letterSpacing: 2, cursor: "pointer", marginTop: 4 }}
+                  >Próximo →</button>
                 </div>
-                <div>
-                  <label className="text-[10px] font-black uppercase tracking-widest opacity-40 mb-2 block">Local / Ponto</label>
-                  <input 
-                    type="text" 
-                    value={expressFormData.location}
-                    onChange={e => setExpressFormData(p => ({ ...p, location: e.target.value }))}
-                    className="w-full bg-theme-bg-muted border border-theme-border py-4 px-4 text-sm focus:border-brand-primary outline-none transition-all"
-                  />
-                </div>
-              </div>
+              )}
 
-              <div>
-                <label className="text-[10px] font-black uppercase tracking-widest opacity-40 mb-2 block">Anotações Internas (Oculto ao Cliente)</label>
-                <textarea 
-                  value={expressFormData.internalNotes}
-                  onChange={e => setExpressFormData(p => ({ ...p, internalNotes: e.target.value }))}
-                  className="w-full bg-theme-bg-muted border border-theme-border py-3 px-4 text-sm focus:border-brand-primary outline-none transition-all resize-none h-20"
-                  placeholder="Ex: Cliente VIP, Indicação do Cartório X..."
-                />
-              </div>
-
-                <div style={{ marginTop: "1rem" }}>
-                  <label style={S.label}>Método de Pagamento</label>
-                  <div style={{ display: "flex", gap: 10, marginTop: 8 }}>
-                    <button 
-                      type="button"
-                      onClick={() => setExpressFormData({...expressFormData, paymentMethod: "MONEY"})}
-                      style={{ flex: 1, padding: "12px", background: expressFormData.paymentMethod === "MONEY" ? T.brand : "rgba(255,255,255,0.05)", color: expressFormData.paymentMethod === "MONEY" ? "#000" : T.text3, border: `1px solid ${expressFormData.paymentMethod === "MONEY" ? T.brand : T.border}`, fontSize: 10, fontWeight: 900, textTransform: "uppercase", cursor: "pointer" }}
-                    >
-                      Dinheiro
-                    </button>
-                    <button 
-                      type="button"
-                      onClick={() => setExpressFormData({...expressFormData, paymentMethod: "PIX"})}
-                      style={{ flex: 1, padding: "12px", background: expressFormData.paymentMethod === "PIX" ? T.brand : "rgba(255,255,255,0.05)", color: expressFormData.paymentMethod === "PIX" ? "#000" : T.text3, border: `1px solid ${expressFormData.paymentMethod === "PIX" ? T.brand : T.border}`, fontSize: 10, fontWeight: 900, textTransform: "uppercase", cursor: "pointer" }}
-                    >
-                      PIX
-                    </button>
-                    <button 
-                      type="button"
-                      onClick={() => setExpressFormData({...expressFormData, paymentMethod: "CARD"})}
-                      style={{ flex: 1, padding: "12px", background: expressFormData.paymentMethod === "CARD" ? T.brand : "rgba(255,255,255,0.05)", color: expressFormData.paymentMethod === "CARD" ? "#000" : T.text3, border: `1px solid ${expressFormData.paymentMethod === "CARD" ? T.brand : T.border}`, fontSize: 10, fontWeight: 900, textTransform: "uppercase", cursor: "pointer" }}
-                    >
-                      Cartão
-                    </button>
+              {/* ETAPA 2: PRODUTO */}
+              {expressStep === 2 && (
+                <div style={{ display: "flex", flexDirection: "column", gap: "1rem" }}>
+                  <div>
+                    <label style={{ fontSize: 9, fontWeight: 900, color: "var(--theme-text-muted)", textTransform: "uppercase", letterSpacing: 2, display: "block", marginBottom: 8 }}>Tipo de Produto *</label>
+                    <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 8 }}>
+                      {([
+                        { key: "FOTOS", label: "📷 Fotos Digitais", desc: "Entrega via link" },
+                        { key: "REELS", label: "🎬 Reels / Vídeo", desc: "Entrega via link" },
+                        { key: "SD_CARD", label: "💾 Cartão SD", desc: "Entrega física única" },
+                        { key: "ALBUM_IMPRESSO", label: "📚 Álbum Impresso", desc: "Entrega física" },
+                      ] as { key: typeof expressFormData.productType; label: string; desc: string }[]).map(opt => (
+                        <button
+                          key={opt.key}
+                          type="button"
+                          onClick={() => setExpressFormData(p => ({ ...p, productType: opt.key }))}
+                          style={{ padding: "12px 8px", border: `2px solid ${expressFormData.productType === opt.key ? "var(--brand-primary)" : "var(--theme-border)"}`, background: expressFormData.productType === opt.key ? "rgba(133,185,172,0.1)" : "var(--theme-bg-muted)", color: "var(--theme-text)", cursor: "pointer", textAlign: "center" }}
+                        >
+                          <div style={{ fontSize: 13, fontWeight: 900 }}>{opt.label}</div>
+                          <div style={{ fontSize: 9, color: "var(--theme-text-muted)", marginTop: 2 }}>{opt.desc}</div>
+                        </button>
+                      ))}
+                    </div>
+                    {expressFormData.productType === "SD_CARD" && (
+                      <div style={{ marginTop: 8, padding: "10px 12px", background: "rgba(255,165,0,0.08)", border: "1px solid rgba(255,165,0,0.3)", fontSize: 10, color: "#f59e0b" }}>
+                        ⚠️ Entrega física — o cliente fica com todo o material. Nenhum link de acesso digital será gerado.
+                      </div>
+                    )}
+                  </div>
+                  <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 12 }}>
+                    <div>
+                      <label style={{ fontSize: 9, fontWeight: 900, color: "var(--theme-text-muted)", textTransform: "uppercase", letterSpacing: 2, display: "block", marginBottom: 6 }}>Valor (R$) *</label>
+                      <input
+                        type="number"
+                        min="1"
+                        value={expressFormData.amount}
+                        onChange={e => setExpressFormData(p => ({ ...p, amount: Number(e.target.value) }))}
+                        style={{ width: "100%", background: "var(--theme-bg-muted)", border: "1px solid var(--theme-border)", padding: "14px", fontSize: 18, fontWeight: 900, color: "var(--brand-primary)", outline: "none", boxSizing: "border-box" }}
+                      />
+                    </div>
+                    <div>
+                      <label style={{ fontSize: 9, fontWeight: 900, color: "var(--theme-text-muted)", textTransform: "uppercase", letterSpacing: 2, display: "block", marginBottom: 6 }}>Local</label>
+                      <input
+                        type="text"
+                        value={expressFormData.location}
+                        onChange={e => setExpressFormData(p => ({ ...p, location: e.target.value }))}
+                        style={{ width: "100%", background: "var(--theme-bg-muted)", border: "1px solid var(--theme-border)", padding: "14px", fontSize: 14, color: "var(--theme-text)", outline: "none", boxSizing: "border-box" }}
+                        placeholder="Taquaral / Evento"
+                      />
+                    </div>
+                  </div>
+                  <div style={{ display: "flex", gap: 8, marginTop: 4 }}>
+                    <button onClick={() => setExpressStep(1)} style={{ flex: 1, background: "var(--theme-bg-muted)", color: "var(--theme-text-muted)", border: "1px solid var(--theme-border)", padding: "14px", fontWeight: 900, fontSize: 11, textTransform: "uppercase", cursor: "pointer" }}>← Voltar</button>
+                    <button onClick={() => { if (!expressFormData.amount || expressFormData.amount <= 0) { showNotification("Informe um valor válido.", "error"); return; } setExpressStep(3); }} style={{ flex: 2, background: "var(--brand-primary)", color: "#000", border: "none", padding: "14px", fontWeight: 900, fontSize: 11, textTransform: "uppercase", cursor: "pointer" }}>Próximo →</button>
                   </div>
                 </div>
+              )}
 
-                <button 
-                  type="submit"
-                  disabled={loading}
-                  style={{ background: "var(--brand-primary)", color: "#000", border: "none", padding: "20px", fontWeight: 900, fontSize: 11, textTransform: "uppercase", letterSpacing: 2, cursor: loading ? "not-allowed" : "pointer", marginTop: "1rem" }}
-                >
-                  {loading ? "PROCESSANDO..." : "CONFIRMAR VENDA & CRIAR OPERAÇÃO"}
-                </button>
-             </form>
+              {/* ETAPA 3: PAGAMENTO */}
+              {expressStep === 3 && (
+                <div style={{ display: "flex", flexDirection: "column", gap: "1rem" }}>
+                  {/* RESUMO */}
+                  <div style={{ padding: "12px", background: "rgba(133,185,172,0.06)", border: "1px solid var(--brand-primary)30", fontSize: 12 }}>
+                    <div style={{ fontWeight: 900, color: "var(--theme-text)" }}>{expressFormData.customerEmail}</div>
+                    <div style={{ color: "var(--theme-text-muted)", fontSize: 10, marginTop: 2 }}>
+                      {expressFormData.productType === "FOTOS" ? "Fotos Digitais" : expressFormData.productType === "REELS" ? "Reels / Vídeo" : expressFormData.productType === "SD_CARD" ? "Cartão SD (Físico)" : "Álbum Impresso"}
+                      {" · "}
+                      <strong style={{ color: "var(--brand-primary)" }}>R$ {expressFormData.amount}</strong>
+                    </div>
+                  </div>
+                  <div>
+                    <label style={{ fontSize: 9, fontWeight: 900, color: "var(--theme-text-muted)", textTransform: "uppercase", letterSpacing: 2, display: "block", marginBottom: 8 }}>Método de Pagamento *</label>
+                    <div style={{ display: "flex", gap: 8 }}>
+                      {(["MONEY", "PIX", "CARD"] as const).map(m => (
+                        <button key={m} type="button" onClick={() => setExpressFormData(p => ({ ...p, paymentMethod: m }))}
+                          style={{ flex: 1, padding: "14px 8px", border: `2px solid ${expressFormData.paymentMethod === m ? "var(--brand-primary)" : "var(--theme-border)"}`, background: expressFormData.paymentMethod === m ? "var(--brand-primary)" : "var(--theme-bg-muted)", color: expressFormData.paymentMethod === m ? "#000" : "var(--theme-text-muted)", fontWeight: 900, fontSize: 10, textTransform: "uppercase", cursor: "pointer" }}
+                        >{m === "MONEY" ? "💵 Dinheiro" : m === "PIX" ? "⚡ PIX" : "💳 Cartão"}</button>
+                      ))}
+                    </div>
+                  </div>
+                  <div>
+                    <label style={{ fontSize: 9, fontWeight: 900, color: "var(--theme-text-muted)", textTransform: "uppercase", letterSpacing: 2, display: "block", marginBottom: 6 }}>Notas Internas (oculto ao cliente)</label>
+                    <input
+                      type="text"
+                      value={expressFormData.internalNotes}
+                      onChange={e => setExpressFormData(p => ({ ...p, internalNotes: e.target.value }))}
+                      style={{ width: "100%", background: "var(--theme-bg-muted)", border: "1px solid var(--theme-border)", padding: "12px", fontSize: 13, color: "var(--theme-text)", outline: "none", boxSizing: "border-box" }}
+                      placeholder="Ex: VIP, indicação do Cartório X..."
+                    />
+                  </div>
+                  <div style={{ display: "flex", gap: 8, marginTop: 4 }}>
+                    <button onClick={() => setExpressStep(2)} style={{ flex: 1, background: "var(--theme-bg-muted)", color: "var(--theme-text-muted)", border: "1px solid var(--theme-border)", padding: "14px", fontWeight: 900, fontSize: 11, textTransform: "uppercase", cursor: "pointer" }}>← Voltar</button>
+                    <button
+                      onClick={handleExpressSaleSubmit as unknown as React.MouseEventHandler}
+                      disabled={loading}
+                      style={{ flex: 2, background: "var(--brand-primary)", color: "#000", border: "none", padding: "14px", fontWeight: 900, fontSize: 11, textTransform: "uppercase", letterSpacing: 1, cursor: loading ? "not-allowed" : "pointer" }}
+                    >{loading ? "PROCESSANDO..." : "✓ CONFIRMAR VENDA"}</button>
+                  </div>
+                </div>
+              )}
+            </div>
           </div>
         </div>
       )}

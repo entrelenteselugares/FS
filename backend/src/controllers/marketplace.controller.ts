@@ -184,12 +184,57 @@ export class MarketplaceController {
 
   /**
    * GET /api/marketplace/events/:id/media
-   * Cliente visualiza fotos para compra
+   * Cliente visualiza fotos para compra.
+   * Trava de Privacidade: Se o evento for privado, exige vínculo com o usuário.
    */
   static async listMedia(req: AuthRequest, res: Response) {
     const { id: eventId } = req.params;
+    const authUser = (req as any).user;
 
     try {
+      // 1. Busca o evento para verificar privacidade
+      const event = await prisma.event.findUnique({
+        where: { id: String(eventId) },
+        select: { 
+          id: true, 
+          isPrivate: true, 
+          captacaoId: true, 
+          edicaoId: true, 
+          cartorioUserId: true 
+        }
+      });
+
+      if (!event) return res.status(404).json({ error: "Evento não encontrado." });
+
+      // 2. Se for privado, exige autorização
+      if (event.isPrivate) {
+        if (!authUser) {
+          return res.status(401).json({ error: "Este álbum é privado. Por favor, faça login para acessar." });
+        }
+
+        const isOwner = 
+          authUser.role === "ADMIN" || 
+          authUser.userId === event.captacaoId || 
+          authUser.userId === event.edicaoId || 
+          authUser.userId === event.cartorioUserId;
+
+        if (!isOwner) {
+          // Verifica se o usuário tem algum pedido para este evento
+          const order = await prisma.order.findFirst({
+            where: { 
+              eventId: event.id, 
+              clienteId: authUser.userId,
+              status: { not: "CANCELADO" }
+            }
+          });
+
+          if (!order) {
+            return res.status(403).json({ error: "Você não tem permissão para visualizar este álbum privado." });
+          }
+        }
+      }
+
+      // 3. Retorna as mídias
       const media = await prisma.eventMedia.findMany({
         where: { eventId: String(eventId) },
         orderBy: { shortId: "asc" }
@@ -197,6 +242,7 @@ export class MarketplaceController {
 
       return res.json(media);
     } catch (error) {
+      console.error("[Marketplace.listMedia] Erro:", error);
       return res.status(500).json({ error: "Erro ao listar mídias." });
     }
   }

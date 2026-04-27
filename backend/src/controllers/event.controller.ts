@@ -96,6 +96,15 @@ export class EventController {
       const isPaid = order && (order.status === "PAGO" || order.status === "APROVADO");
       const hasAccess = isPaid || isOwner;
 
+      // 3.1 Trava de Privacidade: Se o evento é privado, bloqueia acesso total para quem não tem relação
+      if (event.isPrivate && !hasAccess && !order) {
+        console.log(`[EventController.getById] Bloqueio de privacidade: Usuário ${currentUserId} tentou acessar evento privado ${event.id} sem pedido.`);
+        return res.status(403).json({ 
+          error: "Este álbum é privado e não está vinculado à sua conta.",
+          isPrivate: true 
+        });
+      }
+
       // 4. Links sensíveis e Previews
       const rawPreviews = (event as any).previewPhotos;
       const previewPhotos: string[] = rawPreviews ? (typeof rawPreviews === "string" ? JSON.parse(rawPreviews) : rawPreviews) : [];
