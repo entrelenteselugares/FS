@@ -305,8 +305,8 @@ export class NotificationService {
         subject: `Novo Evento: ${data.eventTitle} 📅`,
         html: htmlContent,
       });
-    } catch (error) {
-      console.error("[Notification] Erro ao notificar profissional:", error);
+    } catch (error: unknown) {
+      console.error("[Notification] Erro ao notificar profissional:", error instanceof Error ? error.message : error);
     }
   }
 
@@ -357,8 +357,10 @@ export class NotificationService {
         html: htmlContent,
       });
       console.log(`[Notification] E-mail de recuperação enviado para ${data.to}`);
+      return true;
     } catch (error) {
       console.error("[Notification] Erro ao enviar e-mail de recuperação:", error);
+      return false;
     }
   }
 }

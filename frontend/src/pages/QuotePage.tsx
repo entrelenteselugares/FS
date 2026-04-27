@@ -110,18 +110,49 @@ function DateTimePicker({ value, onChange }: { value: string; onChange: (v: stri
             }}
           >
             {/* Month Navigation */}
-            <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: 16 }}>
+            <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: 20, padding: "0 4px" }}>
               <button
-                onClick={() => setViewDate(new Date(viewDate.getFullYear(), viewDate.getMonth() - 1))}
-                style={{ background: "none", border: "none", color: THEME.text2, cursor: "pointer", padding: 6, display: "flex" }}
-              ><ChevronLeft size={16} /></button>
-              <span style={{ fontSize: 11, fontWeight: 900, color: THEME.text, textTransform: "uppercase", letterSpacing: 3 }}>
-                {MONTHS_PT[viewDate.getMonth()]} {viewDate.getFullYear()}
-              </span>
+                type="button"
+                onClick={(e) => {
+                  e.stopPropagation();
+                  setViewDate(new Date(viewDate.getFullYear(), viewDate.getMonth() - 1, 1));
+                }}
+                style={{ 
+                  background: `${THEME.accent}15`, border: `1px solid ${THEME.accent}30`, 
+                  color: THEME.accent, cursor: "pointer", padding: 8, borderRadius: 4,
+                  display: "flex", alignItems: "center", justifyContent: "center",
+                  transition: "all 0.2s"
+                }}
+                title="Mês Anterior"
+              >
+                <ChevronLeft size={18} />
+              </button>
+              
+              <div style={{ textAlign: "center" }}>
+                <div style={{ fontSize: 12, fontWeight: 900, color: THEME.text, textTransform: "uppercase", letterSpacing: 2 }}>
+                  {MONTHS_PT[viewDate.getMonth()] || "Mês"}
+                </div>
+                <div style={{ fontSize: 9, fontWeight: 700, color: THEME.accent, opacity: 0.8, letterSpacing: 1 }}>
+                  {viewDate.getFullYear()}
+                </div>
+              </div>
+
               <button
-                onClick={() => setViewDate(new Date(viewDate.getFullYear(), viewDate.getMonth() + 1))}
-                style={{ background: "none", border: "none", color: THEME.text2, cursor: "pointer", padding: 6, display: "flex" }}
-              ><ChevronRight size={16} /></button>
+                type="button"
+                onClick={(e) => {
+                  e.stopPropagation();
+                  setViewDate(new Date(viewDate.getFullYear(), viewDate.getMonth() + 1, 1));
+                }}
+                style={{ 
+                  background: `${THEME.accent}15`, border: `1px solid ${THEME.accent}30`, 
+                  color: THEME.accent, cursor: "pointer", padding: 8, borderRadius: 4,
+                  display: "flex", alignItems: "center", justifyContent: "center",
+                  transition: "all 0.2s"
+                }}
+                title="Próximo Mês"
+              >
+                <ChevronRight size={18} />
+              </button>
             </div>
 
             {/* Day Labels */}

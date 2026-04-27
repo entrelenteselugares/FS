@@ -444,7 +444,7 @@ export default function ProfissionalDashboard() {
             </div>
           </div>
         ) : viewTab === "lista" ? (
-          <div className="mobile-grid-1" style={{ display: "grid", gridTemplateColumns: selected ? "1fr 440px" : "1fr", gap: "2.5rem", animation: "fadeIn 0.4s ease-out" }}>
+          <div style={{ animation: "fadeIn 0.4s ease-out" }}>
             {/* LISTA */}
             <div style={{ display: "flex", flexDirection: "column", gap: 14 }}>
             {loading ? (
@@ -570,15 +570,33 @@ export default function ProfissionalDashboard() {
               )}
             </div>
 
-            {/* DETALHE */}
+            {/* MODAL DE DETALHES DO EVENTO */}
             {selected && (
-              <div className="mobile-detail-overlay" style={{ position: "sticky", top: 100, height: "fit-content", animation: "fadeIn 0.3s ease-out" }}>
-                <EventEditPanel 
-                  key={selected.id}
-                  event={selected} 
-                  onClose={() => setSelected(null)} 
-                  onUpdated={handleUpdated} 
-                />
+              <div 
+                onClick={() => setSelected(null)}
+                style={{ 
+                  position: "fixed", top: 0, left: 0, right: 0, bottom: 0, 
+                  background: "rgba(0,0,0,0.9)", backdropFilter: "blur(20px)", 
+                  zIndex: 1000, display: "flex", alignItems: "center", justifyContent: "center",
+                  padding: "20px"
+                }}
+              >
+                <div 
+                  onClick={e => e.stopPropagation()}
+                  style={{ 
+                    width: "100%", maxWidth: 600, maxHeight: "90vh", overflowY: "auto",
+                    background: "var(--theme-bg-muted)", border: "1px solid var(--theme-border)", borderRadius: 0,
+                    boxShadow: "0 25px 50px -12px rgba(0, 0, 0, 0.5)",
+                    animation: "zoomIn 0.3s ease-out"
+                  }}
+                >
+                  <EventEditPanel 
+                    key={selected.id}
+                    event={selected} 
+                    onClose={() => setSelected(null)} 
+                    onUpdated={handleUpdated} 
+                  />
+                </div>
               </div>
             )}
           </div>
@@ -649,7 +667,7 @@ function ProfileModal({ profile, onClose, onUpdated }: { profile: ProfileData; o
   };
 
   return (
-    <div style={{ position: "fixed", inset: 0, background: "rgba(0,0,0,0.8)", backdropFilter: "blur(5px)", zIndex: 1000, display: "flex", justifyContent: "flex-end", animation: "fadeIn 0.2s ease-out" }}>
+    <div style={{ position: "fixed", inset: 0, background: "rgba(0,0,0,0.9)", backdropFilter: "blur(20px)", zIndex: 1000, display: "flex", justifyContent: "flex-end", animation: "fadeIn 0.2s ease-out" }}>
       <div 
         onClick={(e) => e.stopPropagation()}
         style={{ width: "100%", maxWidth: 500, background: "var(--theme-bg)", height: "100%", borderLeft: "1px solid var(--theme-border)", padding: "4rem 3rem", overflowY: "auto", position: "relative" }}

@@ -42,7 +42,8 @@ export default function AccessTypeModal({ orderId, eventTitle, onConfirmed }: Ac
   };
 
   return (
-    <div className="fixed inset-0 z-[100] flex items-center justify-center p-6 bg-black/80 backdrop-blur-md">      <div 
+    <div className="fixed inset-0 z-[1100] flex items-center justify-center p-6 bg-black/80 backdrop-blur-md">
+      <div 
         className="bg-theme-bg border border-theme-border max-w-md w-full overflow-y-auto max-h-[95vh] shadow-2xl custom-scrollbar"
       >
         {/* Header */}

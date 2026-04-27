@@ -132,10 +132,8 @@ export default function ClienteArea() {
       <style>{`
         @keyframes pulse { 0% { opacity: 1; } 50% { opacity: 0.5; } 100% { opacity: 1; } }
         @media (max-width: 768px) {
-          .mobile-grid-1 { grid-template-columns: 1fr !important; gap: 2rem !important; }
           .mobile-hide { display: none !important; }
           .mobile-nav { padding: 1rem !important; }
-          .mobile-detail-panel { width: 100% !important; border: none !important; margin-top: 2rem !important; position: relative !important; top: 0 !important; }
           .mobile-stack { flex-direction: column !important; align-items: flex-start !important; text-align: left !important; }
           .mobile-title { font-size: 24px !important; }
         }
@@ -178,8 +176,7 @@ export default function ClienteArea() {
         );
       })()}
 
-      <div className="mobile-grid-1" style={{ maxWidth: 1200, margin: "0 auto", padding: "1.5rem 1.5rem", display: "grid", gridTemplateColumns: selected ? "1fr 420px" : "1fr", gap: "1.5rem", transition: "all 0.3s ease" }}>
-
+      <div style={{ maxWidth: 1200, margin: "0 auto", padding: "1.5rem 1.5rem" }}>
         {/* LISTA */}
         <div>
           <div style={{ marginBottom: "2.5rem" }}>
@@ -190,7 +187,6 @@ export default function ClienteArea() {
               Acesso vitalício às memórias que você adquiriu.
             </p>
           </div>
-
 
           {loading ? (
             <div style={{ display: "flex", flexDirection: "column", gap: 12 }}>
@@ -203,7 +199,6 @@ export default function ClienteArea() {
                     </div>
                 </div>
               ))}
-              <style>{`@keyframes pulse { 0% { opacity: 1; } 50% { opacity: 0.5; } 100% { opacity: 1; } }`}</style>
             </div>
           ) : pedidos.length === 0 ? (
             <div style={{ textAlign: "center", padding: "6rem 0", background: "var(--theme-bg-muted)", borderRadius: 20, border: "1px dashed var(--theme-border)" }}>
@@ -271,18 +266,35 @@ export default function ClienteArea() {
           )}
         </div>
 
-        {/* DETALHE (SIDEBAR) */}
+        {/* MODAL DE DETALHES */}
         {selected && (
-          <div className="mobile-detail-panel" style={{ position: "relative" }}>
-             <PedidoDetalhe
-                pedido={selected}
-                now={now}
-                loading={loadingDetalhe}
-                onClose={() => setSelected(null)}
-                onGoToEvent={() => navigate(`/e/${selected.event.id}`)}
-                onChangePrivacy={() => setIsPrivacyModalOpen(true)}
-                onToggleVisibility={handleToggleVisibility}
-            />
+          <div 
+            onClick={() => setSelected(null)}
+            style={{ 
+              position: "fixed", top: 0, left: 0, right: 0, bottom: 0, 
+              background: "rgba(0,0,0,0.9)", backdropFilter: "blur(20px)", 
+              zIndex: 1000, display: "flex", alignItems: "center", justifyContent: "center",
+              padding: "20px"
+            }}
+          >
+            <div 
+              onClick={e => e.stopPropagation()}
+              style={{ 
+                width: "100%", maxWidth: 500, maxHeight: "90vh", overflowY: "auto",
+                background: T.bgCard, border: `1px solid ${T.border}`, borderRadius: 0,
+                boxShadow: "0 25px 50px -12px rgba(0, 0, 0, 0.5)"
+              }}
+            >
+               <PedidoDetalhe
+                  pedido={selected}
+                  now={now}
+                  loading={loadingDetalhe}
+                  onClose={() => setSelected(null)}
+                  onGoToEvent={() => navigate(`/e/${selected.event.id}`)}
+                  onChangePrivacy={() => setIsPrivacyModalOpen(true)}
+                  onToggleVisibility={handleToggleVisibility}
+              />
+            </div>
           </div>
         )}
       </div>

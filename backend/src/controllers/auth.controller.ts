@@ -167,17 +167,20 @@ export class AuthController {
       const cleanEmail = email.toLowerCase().trim();
       const cleanWhatsapp = whatsapp?.replace(/\D/g, "") || null;
 
-      // 1. Criar usuário no Supabase Auth (Oficial)
+      // 1. Verificar se o usuário já existe no Prisma (pode ser um convidado)
+      const existingPrismaUser = await prisma.user.findUnique({ where: { email: cleanEmail } });
+
+      // 2. Criar usuário no Supabase Auth (Oficial)
       const { data: authData, error: authError } = await supabaseAdmin.auth.admin.createUser({
         email: cleanEmail,
         password: senha,
-        email_confirm: true, // Auto-confirma para facilitar o MVP
+        email_confirm: true,
         user_metadata: { nome, role }
       });
 
       if (authError) {
         if (authError.message.includes("already registered")) {
-          return res.status(409).json({ error: "Este endereço de e-mail já está em uso no Supabase." });
+          return res.status(409).json({ error: "Este endereço de e-mail já está em uso." });
         }
         throw authError;
       }
@@ -185,47 +188,74 @@ export class AuthController {
       const supabaseUser = authData.user;
       if (!supabaseUser) throw new Error("Falha ao recuperar usuário criado no Supabase");
 
-      // 2. Sincronizar com a nossa tabela User no Prisma
-      // "UNIDADE" é o label do frontend para pontos fixos — mapeamos para "CARTORIO" (enum do banco)
+      // 3. Sincronizar com a nossa tabela User no Prisma
       const roleUpper = role?.toUpperCase();
       const finalRole = roleUpper === "UNIDADE" ? "CARTORIO"
         : ["ADMIN", "CARTORIO", "PROFISSIONAL", "CLIENTE"].includes(roleUpper) ? roleUpper
         : "CLIENTE";
       
       const user = await prisma.$transaction(async (tx) => {
-        const newUser = await tx.user.create({
-          data: { 
-            id: supabaseUser.id,
-            email: cleanEmail, 
-            senha: "AUTH_EXTERNAL_SUPABASE",
-            nome, 
-            role: finalRole as any, 
-            whatsapp: cleanWhatsapp,
-            acceptedTermsAt: acceptedTerms ? new Date() : null,
-            acceptedPrivacyAt: acceptedPrivacy ? new Date() : null
+        let newUser;
+        
+        if (existingPrismaUser) {
+          console.log(`[AUTH] Convertendo convidado ${cleanEmail} para usuário real...`);
+          
+          // Se o ID for diferente, precisamos sincronizar (mesma lógica do self-healing no login)
+          if (existingPrismaUser.id !== supabaseUser.id) {
+            await tx.$executeRawUnsafe(
+              `UPDATE users SET id = $1, nome = $2, role = $3, whatsapp = $4 WHERE email = $5`,
+              supabaseUser.id, nome, finalRole, cleanWhatsapp, cleanEmail
+            );
+          } else {
+            await tx.user.update({
+              where: { email: cleanEmail },
+              data: { nome, role: finalRole as any, whatsapp: cleanWhatsapp }
+            });
           }
-        });
+          newUser = await tx.user.findUnique({ where: { id: supabaseUser.id } });
+        } else {
+          newUser = await tx.user.create({
+            data: { 
+              id: supabaseUser.id,
+              email: cleanEmail, 
+              senha: "AUTH_EXTERNAL_SUPABASE",
+              nome, 
+              role: finalRole as any, 
+              whatsapp: cleanWhatsapp,
+              acceptedTermsAt: acceptedTerms ? new Date() : null,
+              acceptedPrivacyAt: acceptedPrivacy ? new Date() : null
+            }
+          });
+        }
 
-        // 3. Criar perfis específicos
+        if (!newUser) throw new Error("Erro ao persistir/atualizar usuário no banco local.");
+
+        // 4. Criar perfis específicos (se ainda não existirem)
         if (finalRole === "PROFISSIONAL") {
-          await tx.profissional.create({
-            data: {
-              userId: newUser.id,
-              services: req.body.habilidades || [], // Foto, Vídeo, Edição
-              otherHabilities: req.body.outrasHabilidades || null,
-              equipment: req.body.equipamento || null,
-            }
-          });
+          const prof = await tx.profissional.findUnique({ where: { userId: newUser.id } });
+          if (!prof) {
+            await tx.profissional.create({
+              data: {
+                userId: newUser.id,
+                services: req.body.habilidades || [],
+                otherHabilities: req.body.outrasHabilidades || null,
+                equipment: req.body.equipamento || null,
+              }
+            });
+          }
         } else if (finalRole === "UNIDADE" || finalRole === "CARTORIO") {
-          await tx.cartorio.create({
-            data: {
-              userId: newUser.id,
-              razaoSocial: req.body.razaoSocial || nome,
-              address: req.body.endereco || null,
-              cidade: req.body.cidade || null,
-              cnpj: req.body.cnpj || null,
-            }
-          });
+          const cart = await tx.cartorio.findUnique({ where: { userId: newUser.id } });
+          if (!cart) {
+            await tx.cartorio.create({
+              data: {
+                userId: newUser.id,
+                razaoSocial: req.body.razaoSocial || nome,
+                address: req.body.endereco || null,
+                cidade: req.body.cidade || null,
+                cnpj: req.body.cnpj || null,
+              }
+            });
+          }
         }
 
         return newUser;
@@ -289,51 +319,103 @@ export class AuthController {
     const { email } = req.body;
     if (!email) return res.status(400).json({ error: "E-mail é obrigatório." });
 
+    // ✅ Guard: Verificar configuração básica
+    if (!process.env.SUPABASE_URL || !process.env.SUPABASE_SERVICE_ROLE_KEY) {
+      console.error("[AUTH FORGOT] Erro de configuração: SUPABASE_URL ou SERVICE_ROLE_KEY ausentes.");
+      return res.status(503).json({ error: "Serviço de autenticação temporariamente indisponível." });
+    }
+
     try {
       const cleanEmail = email.toLowerCase().trim();
-      console.log(`[AUTH FORGOT] Solicitando recuperação para: ${cleanEmail}`);
+      console.log(`[AUTH FORGOT] >>> Iniciando processo para: ${cleanEmail}`);
       
       // 1. Verificar se o usuário existe no Prisma
       const user = await prisma.user.findUnique({ where: { email: cleanEmail } });
       if (!user) {
-        console.log(`[AUTH FORGOT] Usuário não encontrado no Prisma: ${cleanEmail}`);
-        // Por segurança, não confirmamos que o e-mail não existe
+        console.log(`[AUTH FORGOT] Usuário não encontrado no banco local: ${cleanEmail}`);
         return res.json({ ok: true, message: "Se este e-mail estiver cadastrado, você receberá instruções." });
       }
 
-      // 2. Gerar link de recuperação via Supabase Admin (Manual Link)
+      // 2. Tentar gerar link de recuperação via Supabase Admin
       const redirectUrl = `${process.env.FRONTEND_URL || "https://foto-segundo.vercel.app"}/reset-password`;
-      console.log(`[AUTH FORGOT] Gerando link Supabase para ${cleanEmail} com redirect: ${redirectUrl}`);
+      console.log(`[AUTH FORGOT] Solicitando link Supabase... (Redirect: ${redirectUrl})`);
       
-      const { data, error } = await supabaseAdmin.auth.admin.generateLink({
+      let { data, error } = await supabaseAdmin.auth.admin.generateLink({
         type: 'recovery',
         email: cleanEmail,
         options: { redirectTo: redirectUrl }
       });
 
+      // ── CASO ESPECIAL: Usuário existe no Prisma mas não no Supabase Auth ──
       if (error) {
-        console.error(`[AUTH FORGOT] Erro Supabase generateLink: ${error.message}`, error);
-        throw error;
+        console.warn(`[AUTH FORGOT] Supabase reportou erro (${error.status}): ${error.message}`);
+        
+        if (error.message?.includes("User not found") || error.status === 422 || error.status === 404) {
+          console.log(`[AUTH FORGOT] Criando registro Auth retroativo para convidado...`);
+          
+          try {
+            const tempPassword = Math.random().toString(36).slice(-12) + "!";
+            const { data: newData, error: createError } = await supabaseAdmin.auth.admin.createUser({
+              email: cleanEmail,
+              password: tempPassword,
+              email_confirm: true,
+              user_metadata: { nome: user.nome, role: user.role }
+            });
+
+            if (createError) {
+              console.error(`[AUTH FORGOT] Erro ao criar usuário no Supabase:`, createError.message);
+              throw createError;
+            }
+
+            if (newData.user) {
+              console.log(`[AUTH FORGOT] Registro Auth criado. Gerando link de recuperação...`);
+              const retry = await supabaseAdmin.auth.admin.generateLink({
+                type: 'recovery',
+                email: cleanEmail,
+                options: { redirectTo: redirectUrl }
+              });
+              
+              if (retry.error) throw retry.error;
+              data = retry.data;
+            }
+          } catch (syncErr: any) {
+            console.error(`[AUTH FORGOT] Falha crítica no fluxo de criação/sync:`, syncErr.message);
+            throw syncErr;
+          }
+        } else {
+          throw error;
+        }
+      }
+
+      if (!data?.properties?.action_link) {
+        console.error("[AUTH FORGOT] Supabase não retornou action_link.", data);
+        throw new Error("Falha ao gerar link de ação.");
       }
 
       const recoveryLink = data.properties.action_link;
-      console.log(`[AUTH FORGOT] Link gerado com sucesso. Disparando e-mail via NotificationService...`);
+      console.log(`[AUTH FORGOT] Link gerado. Disparando NotificationService...`);
 
       // 3. Enviar via nosso NotificationService (SMTP Próprio)
-      await NotificationService.sendPasswordRecoveryEmail({
+      const emailResult = await NotificationService.sendPasswordRecoveryEmail({
         to: cleanEmail,
         name: user.nome || "Cliente",
         recoveryLink
       });
 
+      if (!emailResult) {
+        console.warn("[AUTH FORGOT] NotificationService não confirmou envio (verifique credenciais SMTP).");
+      }
+
       // Log de Auditoria
       await audit(req, "PASSWORD_FORGOT_REQUEST", "User", user.id, undefined, { email: cleanEmail });
 
+      console.log(`[AUTH FORGOT] <<< Processo concluído com sucesso para ${cleanEmail}`);
       return res.json({ ok: true, message: "E-mail de recuperação enviado." });
+
     } catch (error: any) {
-      console.error("[AUTH FORGOT ERROR FATAL]:", error);
+      console.error("[AUTH FORGOT FATAL ERROR]:", error);
       return res.status(500).json({ 
-        error: "Erro ao solicitar recuperação de senha.",
+        error: "Erro interno ao processar recuperação de senha.",
         details: process.env.NODE_ENV !== "production" ? error.message : undefined
       });
     }
@@ -393,6 +475,38 @@ export class AuthController {
       return res.json({ token, refreshToken: newRefreshToken });
     } catch (err) {
       return res.status(401).json({ error: "Refresh token inválido ou expirado" });
+    }
+  }
+
+  /** GET /api/public/auth/check?email=... */
+  static async checkEmail(req: Request, res: Response) {
+    const { email } = req.query;
+    if (!email) return res.status(400).json({ error: "E-mail é obrigatório" });
+
+    try {
+      const cleanEmail = String(email).toLowerCase().trim();
+      const user = await prisma.user.findUnique({
+        where: { email: cleanEmail },
+        select: { id: true, nome: true, role: true }
+      });
+
+      // Se o usuário existe no Prisma, verificamos se ele também está no Supabase Auth
+      let hasAuth = false;
+      if (user) {
+        const { data: listUsers } = await supabaseAdmin.auth.admin.listUsers();
+        const existingSupabaseUser = listUsers.users.find(u => u.email === cleanEmail);
+        hasAuth = !!existingSupabaseUser;
+      }
+
+      return res.json({
+        exists: !!user,
+        hasAuth,
+        name: user?.nome || null,
+        role: user?.role || null
+      });
+    } catch (error) {
+      console.error("[AUTH CHECK ERROR]:", error);
+      return res.status(500).json({ error: "Erro ao verificar e-mail" });
     }
   }
 }

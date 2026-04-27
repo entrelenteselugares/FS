@@ -223,9 +223,9 @@ export const AdminFinance: React.FC = () => {
 
       {/* CONFIRMATION MODAL (MIDNIGHT LUXURY) */}
       {confirmModal && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center p-6 animate-in fade-in duration-300">
-           <div className="absolute inset-0 bg-black/95 backdrop-blur-sm" onClick={() => setConfirmModal(null)} />
-           <div className="relative bg-zinc-950 border border-brand-tactical/30 w-full max-w-sm p-8 space-y-8">
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-6 bg-black/90 backdrop-blur-[20px] animate-in fade-in duration-300">
+           <div className="absolute inset-0" onClick={() => setConfirmModal(null)} />
+           <div className="relative bg-zinc-950 border border-brand-tactical/30 w-full max-w-sm p-8 space-y-8 shadow-2xl animate-in zoom-in-95 duration-500">
               <div className="space-y-2">
                  <span className="text-[10px] font-black text-brand-tactical uppercase tracking-[0.4em]">Validação de Saída</span>
                  <h3 className="text-xl font-heading text-white uppercase tracking-tighter">Protocolo de Repasse</h3>

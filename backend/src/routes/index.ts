@@ -108,6 +108,7 @@ router.post("/auth/forgot-password", AuthController.forgotPassword);
 router.post("/auth/update-password", AuthController.updatePassword);
 router.get("/auth/me",               requireAuth, AuthController.me);
 router.post("/auth/refresh",          AuthController.refresh);
+router.get("/public/auth/check",     AuthController.checkEmail);
 
 // ── Mercado Pago OAuth ────────────────────────────────────────────────────────
 router.get("/mercadopago/connect",  requireAuth, MercadoPagoController.connect);

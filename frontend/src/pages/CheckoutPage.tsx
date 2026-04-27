@@ -1,9 +1,11 @@
 import { useState, useEffect, useRef, useCallback } from "react";
 import { useParams, useNavigate, useSearchParams } from "react-router-dom";
-import { ShieldCheck, ArrowLeft, Copy, CheckCircle2, Clock, RefreshCw } from "lucide-react";
+import { ShieldCheck, ArrowLeft, Copy, CheckCircle2, Clock, RefreshCw, Lock, Mail, Key, User as UserIcon } from "lucide-react";
 import { QRCodeSVG } from "qrcode.react";
 import { API } from "../lib/api";
 import { useTheme } from "../contexts/ThemeContextCore";
+import { AuthContext } from "../contexts/AuthContextBase";
+import { useContext } from "react";
 
 interface OrderEvent {
   id: string;
@@ -85,6 +87,13 @@ export const CheckoutPage = () => {
   const initializationStarted = useRef(false);
   const pollingRef = useRef<ReturnType<typeof setInterval> | null>(null);
   const { theme } = useTheme();
+  const { user: authUser, login: authLogin, register: authRegister } = useContext(AuthContext)!;
+
+  // Estados de Autenticação Tática
+  const [authStep, setAuthStep] = useState<'loading' | 'required' | 'login' | 'register' | 'authorized'>('loading');
+  const [password, setPassword] = useState("");
+  const [localAuthError, setLocalAuthError] = useState("");
+  const [authLoading, setAuthLoading] = useState(false);
 
   // ── Carrega o pedido ─────────────────────────────────────────────────────────
   useEffect(() => {
@@ -96,10 +105,66 @@ export const CheckoutPage = () => {
       return;
     }
     API.get(`/public/orders/${effectiveOrderId}`)
-      .then(({ data }) => setOrder(data))
+      .then(({ data }) => {
+        setOrder(data);
+      })
       .catch(() => setError("Não foi possível carregar os detalhes do pedido."))
       .finally(() => setLoading(false));
   }, [effectiveOrderId]);
+
+  // ── Controle de Autenticação ────────────────────────────────────────────────
+  useEffect(() => {
+    if (loading || !order) return;
+
+    // Se já está logado, autoriza
+    if (authUser) {
+      setAuthStep('authorized');
+      return;
+    }
+
+    // Se não está logado, verifica se o e-mail do pedido tem conta
+    const verifyAuth = async () => {
+      try {
+        const { data } = await API.get(`/public/auth/check?email=${order.buyerEmail}`);
+        if (data.exists && data.hasAuth) {
+          setAuthStep('login');
+        } else {
+          setAuthStep('register');
+        }
+      } catch (err) {
+        console.error("Erro ao verificar auth:", err);
+        setAuthStep('register'); // Fallback para cadastro
+      }
+    };
+
+    verifyAuth();
+  }, [loading, order, authUser]);
+
+  const handleAuthSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!password || password.length < 6) {
+      setLocalAuthError("A senha deve ter pelo menos 6 caracteres.");
+      return;
+    }
+    setAuthLoading(true);
+    setLocalAuthError("");
+
+    try {
+      if (authStep === 'login') {
+        await authLogin(order!.buyerEmail!, password);
+      } else {
+        await authRegister(order!.buyerEmail!, password, order!.contributorName || order!.event.nomeNoivos || "Cliente");
+      }
+      setAuthStep('authorized');
+    } catch (err: unknown) {
+      const msg = err && typeof err === 'object' && 'response' in err 
+        ? (err.response as any)?.data?.error 
+        : "Falha na autenticação. Verifique sua senha.";
+      setLocalAuthError(msg);
+    } finally {
+      setAuthLoading(false);
+    }
+  };
 
   // ── Polling de status do Pix ─────────────────────────────────────────────────
   const stopPolling = useCallback(() => {
@@ -167,7 +232,7 @@ export const CheckoutPage = () => {
 
   // ── MP Bricks ────────────────────────────────────────────────────────────────
   useEffect(() => {
-    if (!order || pixData || paymentSuccess || loading || initializationStarted.current) return;
+    if (!order || pixData || paymentSuccess || loading || authStep !== 'authorized' || initializationStarted.current) return;
     initializationStarted.current = true;
 
     const mpPublicKey = "APP_USR-18f8ccc4-8ed4-4f99-bb6d-e333d026e578";
@@ -242,7 +307,7 @@ export const CheckoutPage = () => {
       if (brickController.current) { brickController.current.unmount(); brickController.current = null; }
       initializationStarted.current = false;
     };
-  }, [order, pixData, paymentSuccess, loading, theme]);
+  }, [order, pixData, paymentSuccess, loading, theme, authStep]);
 
   // ── Formatação do timer ───────────────────────────────────────────────────────
   const fmtTimer = (s: number) => {
@@ -409,6 +474,111 @@ export const CheckoutPage = () => {
     </div>
   );
 
+  // ── Renderização do Checkout Autenticado ─────────────────────────────────────
+  const renderCheckout = () => {
+    if (authStep === 'loading') {
+      return (
+        <div className="flex flex-col items-center justify-center py-12 gap-4">
+          <RefreshCw size={24} className="animate-spin text-brand-primary" />
+          <p className="text-[10px] font-black uppercase tracking-widest opacity-40">Verificando Credenciais...</p>
+        </div>
+      );
+    }
+
+    if (authStep === 'authorized') {
+      return (
+        <div className="animate-in fade-in duration-500">
+          <div className="flex items-center gap-4 p-4 bg-brand-primary/5 border border-brand-primary/20 mb-8">
+            <div className="w-10 h-10 rounded-full bg-brand-primary/10 flex items-center justify-center">
+              <UserIcon size={18} className="text-brand-primary" />
+            </div>
+            <div>
+              <p className="text-[9px] font-black uppercase tracking-widest opacity-40">Logado como</p>
+              <p className="text-xs font-bold">{authUser?.nome || authUser?.email}</p>
+            </div>
+            <div className="ml-auto">
+              <CheckCircle2 size={16} className="text-brand-primary" />
+            </div>
+          </div>
+          <div id="paymentBrick_container" />
+        </div>
+      );
+    }
+
+    // Fluxo de Autenticação Intermediário
+    return (
+      <div className="animate-in fade-in slide-in-from-bottom-4 duration-700">
+        <div className="flex flex-col items-center text-center mb-10">
+          <div className="w-16 h-16 rounded-full bg-brand-primary/10 flex items-center justify-center mb-6 border border-brand-primary/20">
+            <Lock size={28} className="text-brand-primary" />
+          </div>
+          <h2 className="heading-luxury !text-2xl md:!text-3xl italic mb-3">
+            {authStep === 'login' ? 'BEM-VINDO DE VOLTA' : 'QUASE LÁ!'}
+          </h2>
+          <p className="text-proportional opacity-60 text-xs max-w-xs">
+            {authStep === 'login' 
+              ? 'Identificamos que você já possui uma conta. Por favor, faça o login para prosseguir com o pagamento.'
+              : 'Para garantir o acesso às suas memórias após o pagamento, escolha uma senha para sua nova conta.'
+            }
+          </p>
+        </div>
+
+        <form onSubmit={handleAuthSubmit} className="space-y-6 max-w-sm mx-auto">
+          <div className="space-y-4">
+            <div className="relative group">
+              <Mail size={16} className="absolute left-4 top-1/2 -translate-y-1/2 text-theme-muted group-focus-within:text-brand-primary transition-colors" />
+              <input 
+                type="email" 
+                value={order.buyerEmail} 
+                disabled 
+                className="w-full bg-theme-bg-muted border border-theme-border py-4 pl-12 pr-4 text-sm opacity-50 cursor-not-allowed"
+              />
+            </div>
+            
+            <div className="relative group">
+              <Key size={16} className="absolute left-4 top-1/2 -translate-y-1/2 text-theme-muted group-focus-within:text-brand-primary transition-colors" />
+              <input 
+                type="password" 
+                placeholder={authStep === 'login' ? 'Sua senha' : 'Crie uma senha (mín. 6 dígitos)'}
+                value={password}
+                onChange={(e) => setPassword(e.target.value)}
+                className="w-full bg-theme-bg-muted border border-theme-border py-4 pl-12 pr-4 text-sm focus:border-brand-primary outline-none transition-all"
+                autoFocus
+              />
+            </div>
+          </div>
+
+          {localAuthError && (
+            <div className="p-3 bg-red-500/10 border border-red-500/20 text-red-500 text-[10px] font-black uppercase tracking-widest text-center animate-in fade-in zoom-in-95">
+              {localAuthError}
+            </div>
+          )}
+
+          <button 
+            type="submit" 
+            disabled={authLoading}
+            className="lux-button-base lux-button-tactical w-full py-4 text-xs font-black tracking-[0.3em] flex items-center justify-center gap-3"
+          >
+            {authLoading ? (
+              <>
+                <RefreshCw size={14} className="animate-spin" />
+                {authStep === 'login' ? 'AUTENTICANDO...' : 'CRIANDO CONTA...'}
+              </>
+            ) : (
+              <>
+                {authStep === 'login' ? 'ENTRAR E PAGAR' : 'CRIAR CONTA E CONTINUAR'}
+              </>
+            )}
+          </button>
+
+          <p className="text-center text-[10px] opacity-30 tracking-widest uppercase mt-6">
+            <ShieldCheck size={10} className="inline mr-1" /> Seus dados estão protegidos
+          </p>
+        </form>
+      </div>
+    );
+  };
+
   // ── Tela Principal: Resumo + MP Brick ────────────────────────────────────────
   return (
     <div className="min-h-screen bg-theme-bg text-theme-text">
@@ -459,11 +629,11 @@ export const CheckoutPage = () => {
         <div className="lux-card editorial-shadow !p-4 md:!p-10 min-h-[400px] rounded-none border-theme-border animate-reveal" style={{ animationDelay: "0.2s" }}>
           <div className="mb-8 text-center">
             <div className="text-proportional mb-3 tracking-[0.3em] font-black">Forma de Pagamento</div>
-            <p className="text-[10px] uppercase tracking-widest opacity-40">
+            <p className="text-[10px] uppercase tracking-widest opacity-40 mb-10">
               Processamento via Mercado Pago com criptografia 256 bits
             </p>
+            {renderCheckout()}
           </div>
-          <div id="paymentBrick_container" />
         </div>
 
         {/* Selos de segurança */}

@@ -202,9 +202,9 @@ export const AdminUsers: React.FC = () => {
 
       {/* MEMBER MODAL */}
       {isModalOpen && (
-        <div className="fixed inset-0 z-[110] flex items-center justify-center p-6 animate-in fade-in duration-300">
-           <div className="absolute inset-0" style={{ background: T.overlay, backdropFilter: "blur(4px)" }} onClick={() => setIsModalOpen(false)} />
-           <div className="relative border border-brand-tactical/30 w-full max-w-xl p-10 space-y-10 overflow-y-auto max-h-[90vh]" style={{ background: T.bgCard }}>
+        <div className="fixed inset-0 z-[110] flex items-center justify-center p-6 bg-black/80 backdrop-blur-[20px] animate-in fade-in duration-300">
+           <div className="absolute inset-0" onClick={() => setIsModalOpen(false)} />
+           <div className="relative border border-brand-tactical/30 w-full max-w-xl p-10 space-y-10 overflow-y-auto max-h-[90vh] shadow-2xl animate-in zoom-in-95 duration-500" style={{ background: T.bgCard }}>
               <div className="flex justify-between items-start">
                  <div className="space-y-2">
                     <span className="text-[10px] font-black text-brand-tactical uppercase tracking-[0.4em]">Cadastro Operacional</span>
@@ -292,9 +292,9 @@ export const AdminUsers: React.FC = () => {
 
       {/* CONFIRM DELETE MODAL */}
       {confirmDelete && (
-        <div className="fixed inset-0 z-[120] flex items-center justify-center p-6 animate-in fade-in duration-300">
-           <div className="absolute inset-0" style={{ background: T.overlay, backdropFilter: "blur(4px)" }} onClick={() => setConfirmDelete(null)} />
-           <div className="relative border border-red-900/30 w-full max-w-sm p-8 space-y-8" style={{ background: T.bgCard }}>
+        <div className="fixed inset-0 z-[120] flex items-center justify-center p-6 bg-black/90 backdrop-blur-[20px] animate-in fade-in duration-300">
+           <div className="absolute inset-0" onClick={() => setConfirmDelete(null)} />
+           <div className="relative border border-red-900/30 w-full max-w-sm p-8 space-y-8 shadow-2xl animate-in zoom-in-95 duration-500" style={{ background: T.bgCard }}>
               <div className="space-y-2">
                  <span className="text-[10px] font-black text-red-500 uppercase tracking-[0.4em]">Protocolo de Exclusão</span>
                  <h3 className="text-xl font-heading uppercase tracking-tighter" style={{ color: T.text }}>Banir Membro?</h3>

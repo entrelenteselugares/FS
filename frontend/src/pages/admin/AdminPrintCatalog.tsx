@@ -84,8 +84,8 @@ const NewProductModal: React.FC<NewProductModalProps> = ({ onClose, onSave }) =>
   return (
     <div style={{
       position: "fixed", top: 0, left: 0, right: 0, bottom: 0,
-      background: T.overlay, display: "flex", alignItems: "center", justifyContent: "center",
-      zIndex: 1000, backdropFilter: "blur(4px)"
+      background: "rgba(0,0,0,0.9)", display: "flex", alignItems: "center", justifyContent: "center",
+      zIndex: 1000, backdropFilter: "blur(20px)"
     }}>
       <div style={{ ...Card, width: "min(500px, 95vw)", padding: "clamp(16px, 4vw, 24px)", position: "relative", maxHeight: "90vh", overflowY: "auto" }}>
         <button onClick={onClose} style={{ position: "absolute", top: 16, right: 16, background: "none", border: "none", color: T.text3, cursor: "pointer" }}>

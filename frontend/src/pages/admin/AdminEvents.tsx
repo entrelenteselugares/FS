@@ -400,8 +400,8 @@ export const AdminEvents: React.FC<AdminEventsProps> = ({ initialEditEventId, on
       </div>
 
       {isModalOpen && (
-        <div className="fixed inset-0 bg-theme-bg/95 backdrop-blur-xl z-50 flex items-start justify-center p-4 overflow-y-auto pt-10">
-          <div className="w-full max-w-4xl bg-theme-bg border border-theme-border p-8 relative animate-in zoom-in-95 duration-300 mb-10">
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/90 backdrop-blur-[20px] animate-in fade-in duration-300 overflow-y-auto">
+          <div className="w-full max-w-4xl bg-theme-bg border border-theme-border p-8 relative shadow-2xl animate-in zoom-in-95 duration-500 my-10">
              <button 
                onClick={() => {
                  setIsModalOpen(false);
@@ -787,8 +787,8 @@ export const AdminEvents: React.FC<AdminEventsProps> = ({ initialEditEventId, on
 
       {/* MODAL VENDA DIRETA */}
       {isSaleModalOpen && saleEvent && (
-        <div className="fixed inset-0 bg-theme-bg/95 backdrop-blur-xl z-50 flex items-center justify-center p-4">
-          <div className="w-full max-w-xl bg-theme-bg border border-theme-border p-10 relative animate-in zoom-in-95 duration-300">
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/90 backdrop-blur-[20px] animate-in fade-in duration-300">
+          <div className="w-full max-w-xl bg-theme-bg border border-theme-border p-10 relative shadow-2xl animate-in zoom-in-95 duration-500">
              <button onClick={() => setIsSaleModalOpen(false)} className="absolute top-6 right-6 text-zinc-500 hover:text-white transition-colors">
                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5"><path d="M18 6L6 18M6 6l12 12"/></svg>
              </button>
@@ -850,8 +850,8 @@ export const AdminEvents: React.FC<AdminEventsProps> = ({ initialEditEventId, on
       )}
       {/* QR CODE MODAL */}
       {qrModalEvent && (
-        <div className="fixed inset-0 bg-theme-bg/95 backdrop-blur-xl z-[60] flex items-center justify-center p-4">
-          <div className="w-full max-w-sm bg-theme-bg border border-theme-border p-10 relative text-center animate-in zoom-in-95 duration-300">
+        <div className="fixed inset-0 z-[60] flex items-center justify-center p-4 bg-black/90 backdrop-blur-[20px] animate-in fade-in duration-300">
+          <div className="w-full max-w-sm bg-theme-bg border border-theme-border p-10 relative text-center shadow-2xl animate-in zoom-in-95 duration-500">
             <button 
               onClick={() => setQrModalEvent(null)}
               className="absolute top-6 right-6 text-theme-muted/60 hover:text-white"

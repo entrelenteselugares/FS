@@ -175,11 +175,7 @@ export default function EventPage() {
       .then((r) => {
         setEvent(r.data);
         if (r.data.paywall && !r.data.paywall.active) {
-          if (user?.role === "CLIENTE") {
-            navigate("/minha-conta");
-          } else {
-            setStep("success"); // Desbloqueia a visão para Admin/Pro
-          }
+          setStep("success"); // Desbloqueia a visão para todos que já possuem acesso
         }
       })
       .catch(() => navigate("/404"))
@@ -194,11 +190,7 @@ export default function EventPage() {
           setStep("success");
           setNeedsAccessChoice(true);
         } else if (data.status === "ACTIVE") {
-          if (user?.role === "CLIENTE") {
-            navigate("/minha-conta");
-          } else {
-            setStep("success");
-          }
+          setStep("success");
         }
       } catch { /* not paid */ }
     };
@@ -312,7 +304,7 @@ export default function EventPage() {
     : "";
 
   return (
-    <div style={{ height: "100vh", overflow: "hidden", background: T.bg, color: T.text, fontFamily: T.fontB, display: "flex", flexDirection: "column" }}>
+    <div className="ep-main-container" style={{ height: "100vh", background: T.bg, color: T.text, fontFamily: T.fontB, display: "flex", flexDirection: "column" }}>
       <Helmet>
         <title>{seo.title}</title>
         <meta name="description" content={seo.description} />
@@ -340,7 +332,9 @@ export default function EventPage() {
         @media (min-width: 901px) {
           .desktop-hide { display: none !important; }
         }
+        .ep-main-container { overflow: hidden; }
         @media (max-width: 900px) {
+          .ep-main-container { overflow: auto !important; height: auto !important; }
           .ep-grid { grid-template-columns: 1fr; grid-template-rows: auto; height: auto; overflow: auto; }
           .ep-cover { height: 75vh; min-height: 480px; }
           .mobile-hide { display: none !important; }
@@ -362,8 +356,37 @@ export default function EventPage() {
               style={{ width: "100%", height: "100%", objectFit: "cover", filter: paid ? "none" : "blur(6px) brightness(0.7)", transition: "filter 0.8s ease" }}
             />
           ) : (
-            <div style={{ width: "100%", height: "100%", display: "flex", alignItems: "center", justifyContent: "center", background: `linear-gradient(135deg, ${T.bgCard}, ${T.bg})` }}>
-              <span style={{ fontFamily: T.fontD, fontSize: "clamp(28px,5vw,56px)", fontWeight: 900, color: T.text, opacity: 0.08, textTransform: "uppercase", textAlign: "center", padding: 40 }}>{event.nomeNoivos}</span>
+            <div style={{ 
+              width: "100%", height: "100%", display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center", 
+              background: `radial-gradient(circle at center, #1a1a1a 0%, #0a0a0a 100%)`,
+              position: "relative", overflow: "hidden"
+            }}>
+              {/* Marca d'água do nome do evento */}
+              <div style={{ 
+                position: "absolute", fontFamily: T.fontD, fontSize: "15vw", fontWeight: 900, 
+                color: "#fff", opacity: 0.03, textTransform: "uppercase", whiteSpace: "nowrap",
+                pointerEvents: "none", userSelect: "none"
+              }}>
+                {event.nomeNoivos}
+              </div>
+              
+              {/* Logo Centralizada */}
+              <img 
+                src="/logo-fs.png" 
+                alt="Foto Segundo" 
+                style={{ 
+                  height: "clamp(30px, 5vw, 60px)", 
+                  opacity: 0.3, 
+                  filter: "brightness(0) invert(1)", // Torna a logo branca
+                  zIndex: 1 
+                }} 
+              />
+              <div style={{ 
+                marginTop: 20, fontSize: 10, letterSpacing: 5, color: "#fff", 
+                opacity: 0.2, textTransform: "uppercase", fontWeight: 300, zIndex: 1 
+              }}>
+                Álbum em Processamento
+              </div>
             </div>
           )}
 
@@ -520,7 +543,7 @@ export default function EventPage() {
             )}
 
             {step === "success" && (
-              <div className="mobile-hide" style={{ display: "flex", flexDirection: "column", gap: 16, animation: "fadeUp 0.3s ease" }}>
+              <div style={{ display: "flex", flexDirection: "column", gap: 16, animation: "fadeUp 0.3s ease" }}>
                 {!access?.lightroomUrl && !access?.driveUrl ? (
                   <>
                     <p style={{ fontSize: 10, fontWeight: 700, textTransform: "uppercase", letterSpacing: 2, color: T.brand, margin: 0 }}>
