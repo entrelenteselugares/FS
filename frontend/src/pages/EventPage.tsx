@@ -338,7 +338,19 @@ export default function EventPage() {
   };
 
   return (
-    <div className="ep-main-container" style={{ height: "100vh", background: T.bg, color: T.text, fontFamily: T.fontB, display: "flex", flexDirection: "column" }}>
+    <div 
+      className="ep-main-container" 
+      onContextMenu={(e) => e.preventDefault()}
+      style={{ 
+        height: "100vh", 
+        background: T.bg, 
+        color: T.text, 
+        fontFamily: T.fontB, 
+        display: "flex", 
+        flexDirection: "column",
+        userSelect: "none" // Impede seleção de texto e imagens
+      }}
+    >
       <Helmet>
         <title>{seo.title}</title>
         <meta name="description" content={seo.description} />

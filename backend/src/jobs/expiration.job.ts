@@ -1,8 +1,13 @@
 import { prisma } from "../lib/prisma";
+import { audit } from "../lib/audit";
 
-export async function runExpirationJob(): Promise<void> {
+export async function runExpirationJob(req?: any): Promise<void> {
   const now = new Date();
   console.log(`[EXPIRATION JOB] Rodando em ${now.toISOString()}`);
+  
+  if (req) {
+    await audit(req, "CRON_JOB_STARTED", "System", "CRON_EXPIRATION", null, { startTime: now });
+  }
 
   // ── 1. Envia aviso 3 dias antes da expiração ──────
   const tresDiasParaFrente = new Date(now.getTime() + 3 * 24 * 60 * 60 * 1000);
@@ -114,5 +119,12 @@ export async function runExpirationJob(): Promise<void> {
     console.error(`[PRIVACY AUDIT] ⚠️  ${expostos.length} eventos marketplace com privacidade incorreta corrigidos.`);
   } else {
     console.log(`[PRIVACY AUDIT] ✅ Nenhuma inconsistência de privacidade encontrada.`);
+  }
+
+  if (req) {
+    await audit(req, "CRON_JOB_FINISHED", "System", "CRON_EXPIRATION", null, { 
+      endTime: new Date(), 
+      correctedCount: expostos.length 
+    });
   }
 }

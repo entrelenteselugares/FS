@@ -96,8 +96,10 @@ export class MarketplaceController {
           hasPaid: !isDigital,
           isManual: !isDigital,
           manualType: finalMethod,
-          contributorName: finalContributorName,
+          contributorName: finalName,
           buyerEmail: finalEmail,
+          buyerWhatsapp: whatsapp || null,
+          internalNotes: internalNotes || null,
           splitMatriz: matriz,
           splitCaptacao: captacao,
           splitEdicao: edicao,
@@ -160,12 +162,16 @@ export class MarketplaceController {
       // 2. Upload para Supabase Storage
       const base64Data = String(imageBase64).replace(/^data:image\/\w+;base64,/, "");
       const buffer = Buffer.from(base64Data, "base64");
+      
+      // Aplicar Marca d'água (Blindagem de Conteúdo)
+      const watermarkedBuffer = await applyWatermark(buffer);
+      
       const ext = String(mimeType).split("/")[1] || "jpg";
       const fileName = `marketplace/${String(eventId)}/${Date.now()}-${Math.random().toString(36).slice(-4)}.${ext}`;
 
       const { error: uploadError } = await supabaseAdmin.storage
         .from("eventos")
-        .upload(fileName, buffer, {
+        .upload(fileName, watermarkedBuffer, {
           contentType: String(mimeType),
           upsert: true
         });

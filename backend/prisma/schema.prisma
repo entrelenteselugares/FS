@@ -188,6 +188,8 @@ model Order {
   showVideo       Boolean   @default(true)
   isManual        Boolean   @default(false)
   manualType      String?
+  internalNotes   String?
+  buyerWhatsapp   String?
   cliente         User?       @relation("ClienteOrders", fields: [clienteId], references: [id])
   event           Event       @relation(fields: [eventId], references: [id])
   items           OrderItem[]

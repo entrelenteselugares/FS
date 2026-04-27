@@ -96,7 +96,7 @@ router.get("/cron/expiration", async (req, res) => {
     return res.status(401).json({ error: "Não autorizado." });
   }
   try {
-    await runExpirationJob();
+    await runExpirationJob(req);
     console.log("[Cron] Job de expiração executado com sucesso.");
     res.json({ ok: true, ran: new Date().toISOString() });
   } catch (err: any) {

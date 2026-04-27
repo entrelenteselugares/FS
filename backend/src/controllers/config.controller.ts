@@ -1,6 +1,7 @@
 import { Request, Response } from "express";
 import { AuthRequest } from "../lib/auth";
 import prisma from "../lib/prisma";
+import { audit } from "../lib/audit";
 
 // GET /api/admin/configs
 export async function getConfigs(req: AuthRequest, res: Response): Promise<void> {
@@ -65,6 +66,13 @@ export async function updateConfigs(req: AuthRequest, res: Response): Promise<vo
         })
       )
     );
+
+    // Audit — Configurações da plataforma (P1)
+    await audit(req, "PLATFORM_CONFIG_UPDATED", "System", "CONFIGS", null, {
+      keysModified: configs.map(c => c.key),
+      updatedBy: userId
+    });
+
     res.json({ ok: true });
   } catch (err) {
     res.status(500).json({ error: "Erro ao salvar configurações." });

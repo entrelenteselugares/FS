@@ -160,21 +160,20 @@ export async function adminListEvents(req: AuthRequest, res: Response): Promise<
       ];
     }
 
-    const [events, total] = await Promise.all([
-      prisma.event.findMany({
-        where,
-        include: {
-          cartorioUser: { select: { nome: true, cartorio: { select: { razaoSocial: true } } } },
-          captacao: { select: { nome: true } },
-          edicao:   { select: { nome: true } },
-          _count:   { select: { pedidos: true } },
-        },
-        orderBy: { dataEvento: "desc" },
-        take,
-        skip,
-      }),
-      prisma.event.count({ where }),
-    ]);
+    const events = await prisma.event.findMany({
+      where,
+      include: {
+        cartorioUser: { select: { nome: true, cartorio: { select: { razaoSocial: true } } } },
+        captacao: { select: { nome: true } },
+        edicao:   { select: { nome: true } },
+        _count:   { select: { pedidos: true } },
+      },
+      orderBy: { dataEvento: "desc" },
+      take,
+      skip,
+    });
+
+    const total = await prisma.event.count({ where });
 
     res.json({ 
       events: events.map(e => ({ 
@@ -638,26 +637,25 @@ export async function adminListOrders(req: AuthRequest, res: Response): Promise<
       ];
     }
 
-    const [orders, total] = await Promise.all([
-      prisma.order.findMany({
-        where,
-        include: {
-          event: { 
-            select: { 
-              nomeNoivos: true, slug: true,
-              captacao: { select: { id: true, nome: true, pixKey: true, profissional: { select: { captPct: true } } } },
-              edicao:   { select: { id: true, nome: true, pixKey: true, profissional: { select: { editPct: true } } } },
-              cartorioUser: { select: { id: true, nome: true, pixKey: true, cartorio: { select: { splitPct: true } } } }
-            } 
-          },
-          cliente:  { select: { nome: true, email: true } },
+    const orders = await prisma.order.findMany({
+      where,
+      include: {
+        event: { 
+          select: { 
+            nomeNoivos: true, slug: true,
+            captacao: { select: { id: true, nome: true, pixKey: true, profissional: { select: { captPct: true } } } },
+            edicao:   { select: { id: true, nome: true, pixKey: true, profissional: { select: { editPct: true } } } },
+            cartorioUser: { select: { id: true, nome: true, pixKey: true, cartorio: { select: { splitPct: true } } } }
+          } 
         },
-        orderBy: { updatedAt: "desc" },
-        take,
-        skip,
-      }),
-      prisma.order.count({ where }),
-    ]);
+        cliente:  { select: { nome: true, email: true } },
+      },
+      orderBy: { updatedAt: "desc" },
+      take,
+      skip,
+    });
+
+    const total = await prisma.order.count({ where });
 
     res.json({ 
       orders: orders.map(o => ({ 
@@ -704,15 +702,14 @@ export async function adminListQuotes(req: AuthRequest, res: Response): Promise<
       ];
     }
 
-    const [quotes, total] = await Promise.all([
-      prisma.event.findMany({
-        where,
-        orderBy: { createdAt: "desc" },
-        take,
-        skip,
-      }),
-      prisma.event.count({ where }),
-    ]);
+    const quotes = await prisma.event.findMany({
+      where,
+      orderBy: { createdAt: "desc" },
+      take,
+      skip,
+    });
+
+    const total = await prisma.event.count({ where });
 
     res.json({ quotes, total, page: Number(page), pages: Math.ceil(total / take) });
   } catch (err) {
@@ -858,15 +855,14 @@ export async function adminGetLogs(req: AuthRequest, res: Response): Promise<voi
 
     const where = action ? { action: { contains: action } } : {};
 
-    const [logs, total] = await Promise.all([
-      prisma.auditLog.findMany({
-        where,
-        orderBy: { createdAt: "desc" },
-        skip: (page - 1) * limit,
-        take: limit,
-      }),
-      prisma.auditLog.count({ where }),
-    ]);
+    const logs = await prisma.auditLog.findMany({
+      where,
+      orderBy: { createdAt: "desc" },
+      skip: (page - 1) * limit,
+      take: limit,
+    });
+
+    const total = await prisma.auditLog.count({ where });
 
     res.json({ logs, total, page, limit });
   } catch (err) {
@@ -876,7 +872,7 @@ export async function adminGetLogs(req: AuthRequest, res: Response): Promise<voi
 }
 
 export async function adminCreateManualSale(req: AuthRequest, res: Response): Promise<void> {
-  const { eventId, customerName, customerEmail, amount } = req.body;
+  const { eventId, customerName, customerEmail, whatsapp, amount, manualType, internalNotes } = req.body;
 
   if (!eventId || !customerName || !customerEmail || !amount) {
     res.status(400).json({ error: "Todos os campos são obrigatórios." });
@@ -915,14 +911,19 @@ export async function adminCreateManualSale(req: AuthRequest, res: Response): Pr
       data: {
         clienteId: user.id,
         eventId: event.id,
-        valor: amount,
+        valor: Number(amount),
         status: "APROVADO",
         paymentId: `MANUAL-${Date.now()}`,
         accessType: "TOTAL",
         // @ts-ignore
         isManual: true,
         // @ts-ignore
-        manualType: "ADMIN_DIRECT",
+        manualType: manualType || "ADMIN_DIRECT",
+        contributorName: customerName,
+        buyerEmail: customerEmail,
+        buyerWhatsapp: whatsapp || null,
+        internalNotes: internalNotes || null,
+        hasPaid: true
       }
     });
 
@@ -932,7 +933,13 @@ export async function adminCreateManualSale(req: AuthRequest, res: Response): Pr
       data: { isPrivate: true }
     });
 
-    await audit(req, "ADMIN_MANUAL_SALE", "Order", order.id, null, { eventId, customerEmail, amount });
+    await audit(req, "ADMIN_MANUAL_SALE", "Order", order.id, null, { 
+      eventId, 
+      customerEmail, 
+      buyerWhatsapp: whatsapp || null,
+      internalNotes: internalNotes || null,
+      amount 
+    });
 
     // 3. Notificações (Auditoria: Corrigindo lacuna de comunicação)
     NotificationService.notifyNewSale({

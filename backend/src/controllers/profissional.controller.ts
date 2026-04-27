@@ -372,7 +372,7 @@ export async function respondToEvent(req: AuthRequest, res: Response): Promise<v
 // POST /api/profissional/events/:id/manual-sale — registra uma venda física (Cartão SD, etc)
 export async function registerManualSale(req: AuthRequest, res: Response): Promise<void> {
   const { id } = req.params;
-  const { customerName, customerEmail, amount, manualType } = req.body;
+  const { customerName, customerEmail, whatsapp, amount, manualType, internalNotes } = req.body;
   const userId = req.user?.userId;
   if (!userId) { res.status(401).json({ error: "Não autenticado." }); return; }
 
@@ -399,6 +399,8 @@ export async function registerManualSale(req: AuthRequest, res: Response): Promi
         // @ts-ignore
         manualType: manualType || "SD_CARD",
         buyerEmail: customerEmail || null,
+        buyerWhatsapp: whatsapp || null,
+        internalNotes: internalNotes || null,
         contributorName: customerName || null,
         splitMatriz: matriz,
         splitCaptacao: captacao,

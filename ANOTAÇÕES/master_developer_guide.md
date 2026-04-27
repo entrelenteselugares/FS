@@ -98,13 +98,38 @@ O comportamento do `QuotePage` é dinâmico e controlado pelo banco de dados:
 
 ---
 
-## 9. Regras Inegociáveis
+## 9. Marketplace e Privacidade (HARDENING)
+
+Para proteger a privacidade dos clientes e a integridade do conteúdo pago:
+
+- **isPrivate @default(true)**: Todo evento/álbum nasce privado por padrão. A ativação pública deve ser uma ação consciente.
+- **Filtro de Vitrine**: A rota pública (`listPublic`) deve SEMPRE filtrar por `type: 'ALBUM_FULL'`. Álbuns de Marketplace (`PHOTO_MARKETPLACE`) nunca devem aparecer na vitrine pública sem login/vínculo.
+- **Guard de Acesso**: O acesso a mídias de Marketplace exige validação de pagamento aprovado ou propriedade do evento (ADMIN/Artista). Retornar `404 Not Found` em vez de `403 Forbidden` para preservar a opacidade LGPD.
+
+---
+
+## 10. Webhooks e Finanças
+
+- **Validação HMAC**: Webhooks do Mercado Pago DEVEM ser validados via middleware `requireMercadoPagoSignature`.
+- **Timing Safe**: Comparações de assinatura devem usar `crypto.timingSafeEqual` para evitar ataques de tempo.
+- **Replay Protection**: Validar o timestamp da assinatura (máximo 5 minutos de atraso).
+
+---
+
+## 11. CRM e Integridade de Dados
+
+- **Campos Semânticos**: NUNCA concatenar notas internas ou contatos no campo `contributorName`.
+- **Uso Obrigatório**: Utilizar `internalNotes` para observações e `buyerWhatsapp` para contatos de venda expressa/manual no modelo `Order`.
+
+---
+
+## 12. Regras Inegociáveis
 
 > [!IMPORTANT]
-> **Identidade Visual**: A estética **Midnight Luxury** é o pilar da Foto Segundo. Background `#0a0a0a`, tipografia **Barlow Condensed** (Títulos) e **Inter** (UI), e a cor de marca `#85B9AC`. Bordas sempre quadradas (`borderRadius: 0`).
+> **Identidade Visual**: A estética **Midnight Luxury** é o pilar da Foto Segundo. Background `#0a0a0a`, tipografia **Barlow Condensed** (Títulos) and **Inter** (UI), e a cor de marca `#85B9AC`. Bordas sempre quadradas (`borderRadius: 0`).
+>
+> [!IMPORTANT]
+> **Privacidade por Padrão**: Marketplace é privado por design. Qualquer exposição pública não intencional é considerada um bug crítico de segurança.
 >
 > [!NOTE]
 > **Unidade Fixa**: O mapeamento `CARTORIO` -> `Unidade Fixa` na visualização é mandatório.
->
-> [!CAUTION]
-> **Automação ViaCEP**: O cadastro de Unidades Fixas depende do preenchimento automático via CEP para garantir a integridade dos endereços na vitrine pública.
