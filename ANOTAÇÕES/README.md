@@ -1,36 +1,44 @@
-# Central de Documentação - Foto Segundo
+# 📁 ANOTAÇÕES — Foto Segundo
 
-Este diretório contém as anotações, guias técnicos e referências de fornecedores da plataforma Foto Segundo.
-
-## 🗂️ Índice de Arquivos
-
-### 🚀 Guias de Desenvolvimento
-
-- [Guia Mestre do Desenvolvedor](file:///c:/foto-segundo/ANOTAÇÕES/master_developer_guide.md): Padrões de código, arquitetura e stack.
-- [Referência de API e Banco de Dados](file:///c:/foto-segundo/ANOTAÇÕES/api_and_database_reference.md): Estrutura Prisma e endpoints.
-- [Mind Map do Sistema](file:///c:/foto-segundo/ANOTAÇÕES/system_mind_map.md): Visão geral das integrações e fluxos.
-- [Mapa do Sistema](file:///c:/foto-segundo/ANOTAÇÕES/mapa_sistema.txt): Lista de páginas e rotas.
-
-### 💰 Catálogos e Fornecedores
-
-- [Catálogo CK Encadernadora](file:///c:/foto-segundo/ANOTAÇÕES/catalogo_ck.md): Produtos de impressão e margens.
-- [Catálogo Merlin Locações](file:///c:/foto-segundo/ANOTAÇÕES/catalogo_merlin.md): Equipamentos para locação.
-- [Tabela CK PDF](file:///c:/foto-segundo/ANOTAÇÕES/Lista%20de%20preços%20encadernadora%20CK%2001.02.2025.pdf)
-- [Tabela Merlin PDF](file:///c:/foto-segundo/ANOTAÇÕES/EQUIPAMENTOS%20LOCAÇAO%20MERLIN%20(2).pdf)
-
-### 🎮 Planejamento e Gamificação
-
-- [Guia de Gamificação](file:///c:/foto-segundo/ANOTAÇÕES/guia_gamificacao.md): Regras de pontos e resgates.
-- [Dicionário de Revisão](file:///c:/foto-segundo/ANOTAÇÕES/dicionario_revisao.md): Glossário do projeto.
-
-### 📜 Histórico e Auditoria
-
-- [Relatório de Lançamento V1.0.0](file:///c:/foto-segundo/ANOTAÇÕES/release_report_v1.0.0.md): Estado oficial da versão de lançamento.
-- [Changelog Recente](file:///c:/foto-segundo/ANOTAÇÕES/changelog_recente.md): Últimas alterações implementadas.
-- [Relatório de Auditoria Técnica](file:///c:/foto-segundo/ANOTAÇÕES/relatorio_auditoria_tecnica.md): Auditoria de UI/UX e performance.
-- [Plano de Auditoria](file:///c:/foto-segundo/ANOTAÇÕES/plano_auditoria_tecnica.md): Roteiro de testes.
-- [Histórico de Instruções](file:///c:/foto-segundo/ANOTAÇÕES/historico_instrucoes.txt): Logs de orientações passadas.
+Pasta de documentação técnica e planejamento do projeto.
 
 ---
-> [!TIP]
-> Utilize estes documentos como base para qualquer nova funcionalidade ou refatoração no sistema.
+
+## 📄 Documentos Técnicos (ler primeiro)
+
+| Arquivo | Descrição |
+|---|---|
+| `AUDITORIA_SISTEMA_2026-04-27.md` | ⭐ **Auditoria completa** — stack, rotas, banco, fluxos, bugs, ENV |
+| `master_developer_guide.md` | Guia de padrões de código, segurança e deploy |
+| `mapa_sistema.md` | Mapa de todas as páginas, controllers e regras de negócio |
+| `changelog_recente.md` | Histórico de mudanças recentes por sprint |
+| `api_and_database_reference.md` | Referência rápida de endpoints e modelos |
+
+## 📋 Planejamento e Produto
+
+| Arquivo | Descrição |
+|---|---|
+| `PLANEJAMENTO_MARKETPLACE_FOTOGRAFO.md` | Roadmap do módulo de Marketplace |
+| `plano_auditoria_tecnica.md` | Checklist de auditoria técnica |
+| `relatorio_auditoria_tecnica.md` | Relatório de auditoria anterior |
+| `release_report_v1.0.0.md` | Relatório do primeiro lançamento |
+| `system_mind_map.md` | Mapa mental da arquitetura do sistema |
+| `dicionario_revisao.md` | Dicionário de termos e revisões de nomenclatura |
+
+## 📦 Catálogos de Fornecedores
+
+| Arquivo | Descrição |
+|---|---|
+| `catalogo_ck.md` | Catálogo de impressão CK (produtos e preços) |
+| `catalogo_merlin.md` | Catálogo de locação Merlin |
+
+## 🗃️ Arquivos de Referência
+
+| Arquivo | Descrição |
+|---|---|
+| `LOG_ATUALIZACOES_PRODUCAO.md` | Log de atualizações em produção |
+| `Logotipo Minimalista Fotosegundo*.png` | Logos oficiais da marca |
+
+---
+
+> **Última atualização:** 27/04/2026 — Auditoria completa e hotfix de privacidade do Marketplace.
