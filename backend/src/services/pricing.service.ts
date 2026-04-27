@@ -17,14 +17,19 @@ export class PricingService {
    * Calcula o preço de um evento baseado na data atual e status de Crowdfund.
    * Lógica: Antecipado se hoje < data do evento, caso contrário preço base.
    */
-  static calculateEventPrice(event: Event, contributionAmount?: number): number {
+  static calculateEventPrice(event: Event, contributionAmount?: number, cartCount?: number): number {
     const now = new Date();
     const eventDate = new Date(event.dataEvento);
     eventDate.setHours(0, 0, 0, 0);
 
-    // Se for Venda por Unidade (Foto Avulsa / Clique)
+    // 1. Se for Venda por Unidade (Clique Único / Venda Rápida Fixa)
     if ((event as any).isUnitSale) {
-      return Number((event as any).priceUnit ?? 10);
+      return Number((event as any).priceUnit || (event as any).priceBase || 10);
+    }
+
+    // 2. Se for Marketplace (Venda por Foto Individual no Carrinho)
+    if ((event as any).type === "PHOTO_MARKETPLACE") {
+      return (cartCount ?? 0) * Number((event as any).pricePerPhoto ?? 15);
     }
 
     // Se for Compra Coletiva (Crowdfund), o valor é o enviado pelo usuário (cota)

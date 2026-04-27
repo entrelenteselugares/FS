@@ -280,7 +280,7 @@ export class PaymentController {
    * Processa o pagamento transparente vindo do frontend.
    */
   static async processPayment(req: Request, res: Response) {
-    const { eventId, userId, email, cpf, cardToken, installments, paymentMethodId, contributionAmount, accessType } = req.body;
+    const { eventId, userId, email, cpf, cardToken, installments, paymentMethodId, contributionAmount, accessType, cart } = req.body;
 
     try {
       // 1. Buscar evento com parceiros para cálculo de split
@@ -296,7 +296,13 @@ export class PaymentController {
       const eventBase = event as any;
 
       // 2. Lógica de Precificação & Splits (Centralizada)
-      const preco = PricingService.calculateEventPrice(eventBase, contributionAmount);
+      const cartItems = cart || [];
+      const preco = PricingService.calculateEventPrice(eventBase, contributionAmount, cartItems.length);
+      
+      if (preco <= 0) {
+        return res.status(400).json({ error: "O valor do pagamento deve ser superior a zero. Verifique os itens selecionados." });
+      }
+
       const { matriz: splitMatriz, captacao: splitCaptacao, edicao: splitEdicao, cartorio: splitCartorio } = 
         await PricingService.calculateSplits(preco);
 
@@ -398,7 +404,15 @@ export class PaymentController {
             splitCaptacao,
             splitEdicao,
             splitCartorio,
-            tempPassword: isNewUser ? tempPassword : null
+            tempPassword: isNewUser ? tempPassword : null,
+            // Limpa itens antigos e recria se necessário
+            items: cartItems.length > 0 ? {
+              deleteMany: {},
+              create: cartItems.map((shortId: string) => ({
+                shortId,
+                amount: Number(event.pricePerPhoto || 15)
+              }))
+            } : undefined
           }
         });
       } else {
@@ -418,7 +432,13 @@ export class PaymentController {
             splitCaptacao,
             splitEdicao,
             splitCartorio,
-            tempPassword: isNewUser ? tempPassword : null
+            tempPassword: isNewUser ? tempPassword : null,
+            items: cartItems.length > 0 ? {
+              create: cartItems.map((shortId: string) => ({
+                shortId,
+                amount: Number(event.pricePerPhoto || 15)
+              }))
+            } : undefined
           }
         });
       }
@@ -543,7 +563,7 @@ export class PaymentController {
 
       return res.json({
         id: order.id,
-        amount: order.valor,
+        amount: Number(order.valor),
         status: order.status,
         eventId: order.eventId,
         clienteId: order.clienteId,

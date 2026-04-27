@@ -1,4 +1,5 @@
 import { useState, useEffect } from "react";
+import { Check } from "lucide-react";
 import { useParams, useNavigate, useSearchParams } from "react-router-dom";
 import { API as api } from "../lib/api";
 import { Helmet } from "react-helmet-async";
@@ -68,10 +69,19 @@ interface EventData {
   collectedAmount?: number;
   previewPhotos?: string[];
   isComingSoon?: boolean;
-  recentOrders?: { id: string; contributorName: string; valor: number; createdAt: string }[];
-  isUnitSale?: boolean;
   priceUnit?: number;
   pendingOrderId?: string | null;
+  type?: 'ALBUM_FULL' | 'PHOTO_MARKETPLACE';
+  pricePerPhoto?: number;
+  isUnitSale?: boolean;
+  recentOrders?: { id: string; contributorName: string; valor: number; createdAt: string }[];
+}
+
+interface EventMedia {
+  id: string;
+  url: string;
+  shortId: string;
+  price?: number | null;
 }
 
 interface AccessData {
@@ -142,6 +152,11 @@ export default function EventPage() {
   const [accessType, setAccessType] = useState<"PUBLIC" | "PRIVATE" | null>(null);
   const { user } = useAuth();
 
+  // Marketplace States
+  const [medias, setMedias] = useState<EventMedia[]>([]);
+  const [cart, setCart] = useState<string[]>([]); // Array de shortIds selecionados
+  const [cartTotal, setCartTotal] = useState(0);
+
   const handleShare = async () => {
     if (access?.accessType === "PRIVATE") {
       alert("Este álbum está em modo PRIVADO. Para compartilhar com seus convidados, você precisa torná-lo PÚBLICO na sua área do cliente (Minha Conta).");
@@ -174,8 +189,14 @@ export default function EventPage() {
     api.get(`/public/events/${slug}`, { params })
       .then((r) => {
         setEvent(r.data);
-        if (r.data.paywall && !r.data.paywall.active) {
-          setStep("success"); // Desbloqueia a visão para todos que já possuem acesso
+        if ((r.data.paywall && !r.data.paywall.active) || r.data.isOwner) {
+          setStep("success"); 
+        }
+        // Se for marketplace, busca as mídias
+        if (r.data.type === 'PHOTO_MARKETPLACE') {
+          api.get(`/marketplace/events/${r.data.id}/media`)
+            .then(res => setMedias(res.data))
+            .catch(err => console.error("Erro ao carregar mídias:", err));
         }
       })
       .catch(() => navigate("/404"))
@@ -302,6 +323,19 @@ export default function EventPage() {
   const dateStr = event.dataEvento
     ? new Date(event.dataEvento).toLocaleDateString("pt-BR", { day: "numeric", month: "long", year: "numeric" })
     : "";
+
+  const isMarketplace = event.type === 'PHOTO_MARKETPLACE';
+
+  const toggleCart = (shortId: string) => {
+    setCart(prev => {
+      const exists = prev.includes(shortId);
+      const next = exists ? prev.filter(s => s !== shortId) : [...prev, shortId];
+      // Calcula total
+      const price = event.pricePerPhoto || 15;
+      setCartTotal(next.length * price);
+      return next;
+    });
+  };
 
   return (
     <div className="ep-main-container" style={{ height: "100vh", background: T.bg, color: T.text, fontFamily: T.fontB, display: "flex", flexDirection: "column" }}>
@@ -439,6 +473,55 @@ export default function EventPage() {
               </div>
             )}
 
+            {isMarketplace && !paid && medias.length > 0 && (
+              <div style={{ marginTop: 20, animation: "fadeUp 0.6s ease" }}>
+                <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fill, minmax(140px, 1fr))", gap: 10 }}>
+                  {medias.map(m => (
+                    <div 
+                      key={m.id} 
+                      onClick={() => toggleCart(m.shortId)}
+                      style={{ 
+                        aspectRatio: "1/1", 
+                        background: T.bgCard, 
+                        border: `1px solid ${cart.includes(m.shortId) ? T.brand : T.border}`,
+                        position: "relative",
+                        cursor: "pointer",
+                        overflow: "hidden"
+                      }}
+                    >
+                      <img src={m.url} alt={m.shortId} style={{ width: "100%", height: "100%", objectFit: "cover", filter: "blur(2px) grayscale(1) brightness(0.6)" }} />
+                      <div style={{ position: "absolute", top: 8, left: 8, background: cart.includes(m.shortId) ? T.brand : "rgba(0,0,0,0.5)", color: cart.includes(m.shortId) ? "black" : "white", padding: "2px 6px", fontSize: 9, fontWeight: 900 }}>
+                        #{m.shortId}
+                      </div>
+                      {cart.includes(m.shortId) && (
+                        <div style={{ position: "absolute", inset: 0, border: `3px solid ${T.brand}`, display: "flex", alignItems: "center", justifyContent: "center", background: "rgba(133,185,172,0.1)" }}>
+                          <Check size={32} color={T.brand} />
+                        </div>
+                      )}
+                      
+                      {paid && (
+                        <div style={{ position: "absolute", inset: 0, background: "rgba(0,0,0,0.4)", display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center", gap: 12 }}>
+                           <button 
+                            onClick={(e) => { e.stopPropagation(); window.open(m.url, '_blank'); }}
+                            style={{ background: T.brand, color: "black", border: "none", padding: "6px 12px", fontSize: 9, fontWeight: 900, cursor: "pointer", borderRadius: 2 }}
+                           >
+                            VER ORIGINAL
+                           </button>
+                           <a 
+                            href={m.url} 
+                            download={`foto-${m.shortId}.jpg`}
+                            onClick={e => e.stopPropagation()}
+                            style={{ background: "white", color: "black", padding: "6px 12px", fontSize: 9, fontWeight: 900, textDecoration: "none", borderRadius: 2 }}
+                           >
+                            DOWNLOAD
+                           </a>
+                        </div>
+                      )}
+                    </div>
+                  ))}
+                </div>
+              </div>
+            )}
           </div>
         </div>
 
@@ -458,26 +541,57 @@ export default function EventPage() {
               <div style={{ display: "flex", flexDirection: "column", gap: 24, animation: "fadeUp 0.3s ease" }}>
                 <div>
                   <p style={{ fontSize: 9, letterSpacing: 3, color: T.brand, textTransform: "uppercase", margin: "0 0 8px", fontWeight: 700 }}>
-                    {event.isUnitSale ? "Clique Único / Foto Avulsa" : "Exclusive Collection"}
+                    {isMarketplace ? "Sua Galeria Particular" : (event.isUnitSale ? "Clique Único / Foto Avulsa" : "Exclusive Collection")}
                   </p>
                   <p style={{ fontFamily: T.fontD, fontWeight: 900, fontSize: 40, color: T.text, margin: "0 0 2px", lineHeight: 1 }}>
-                    R$ {Number(event.isUnitSale ? event.priceUnit : event.priceBase).toFixed(2).replace(".", ",")}
+                    {isMarketplace 
+                      ? (cart.length > 0 ? `R$ ${cartTotal.toFixed(2).replace(".", ",")}` : "Selecione...")
+                      : `R$ ${Number(event.isUnitSale ? event.priceUnit : event.priceBase).toFixed(2).replace(".", ",")}`
+                    }
                   </p>
                   <p style={{ fontSize: 11, color: T.text3, margin: 0 }}>
-                    {event.isUnitSale ? "Download do arquivo original" : "Acesso vitalício · Download imediato"}
+                    {isMarketplace 
+                      ? `${cart.length} fotos selecionadas (R$ ${event.pricePerPhoto}/cada)`
+                      : (event.isUnitSale ? "Download do arquivo original" : "Acesso vitalício · Download imediato")
+                    }
                   </p>
                 </div>
 
+                {isMarketplace && (
+                  <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 8, maxHeight: 200, overflowY: "auto", padding: "10px", background: "rgba(255,255,255,0.02)", border: `1px solid ${T.border}` }}>
+                    {cart.map(id => (
+                      <div key={id} style={{ fontSize: 10, fontWeight: 900, color: T.brand, display: "flex", justifyContent: "space-between", alignItems: "center", padding: "6px 10px", background: "rgba(133,185,172,0.1)" }}>
+                        <span>#{id}</span>
+                        <button onClick={() => toggleCart(id)} style={{ background: "none", border: "none", color: "#ef4444", cursor: "pointer" }}>×</button>
+                      </div>
+                    ))}
+                    {cart.length === 0 && <div style={{ gridColumn: "span 2", textAlign: "center", fontSize: 9, color: T.text3, padding: 20 }}>Nenhuma foto selecionada</div>}
+                  </div>
+                )}
+
                 <div style={{ display: "flex", flexDirection: "column", gap: 10, paddingTop: 16, borderTop: `1px solid ${T.border}` }}>
-                  {["Arquivos originais em 4K", "Sem marcas d'água", "Direito de uso comercial"].map(item => (
-                    <div key={item} style={{ display: "flex", alignItems: "center", gap: 8, fontSize: 11, color: T.text2 }}>
-                      <div style={{ width: 3, height: 3, borderRadius: "50%", background: T.brand, flexShrink: 0 }} /> {item}
-                    </div>
-                  ))}
+                  {isMarketplace 
+                    ? ["Arquivos em alta resolução", "Liberação instantânea após PIX", "Seleção protegida"].map(item => (
+                      <div key={item} style={{ display: "flex", alignItems: "center", gap: 8, fontSize: 11, color: T.text2 }}>
+                        <div style={{ width: 3, height: 3, borderRadius: "50%", background: T.brand, flexShrink: 0 }} /> {item}
+                      </div>
+                    ))
+                    : ["Arquivos originais em 4K", "Sem marcas d'água", "Direito de uso comercial"].map(item => (
+                      <div key={item} style={{ display: "flex", alignItems: "center", gap: 8, fontSize: 11, color: T.text2 }}>
+                        <div style={{ width: 3, height: 3, borderRadius: "50%", background: T.brand, flexShrink: 0 }} /> {item}
+                      </div>
+                    ))
+                  }
                 </div>
 
-                <button onClick={handleUnlockClick} style={{ ...BtnPrimary, width: "100%", justifyContent: "center" }}>
-                  {event.isUnitSale ? "Adquirir este Clique" : "Desbloquear Arquivos"}
+                <button 
+                  onClick={handleUnlockClick} 
+                  disabled={isMarketplace && cart.length === 0}
+                  style={{ ...BtnPrimary, width: "100%", justifyContent: "center", opacity: (isMarketplace && cart.length === 0) ? 0.5 : 1 }}
+                >
+                  {event.pendingOrderId ? "Finalizar Pagamento" : (
+                    isMarketplace ? "Finalizar Seleção" : (event.isUnitSale ? "Adquirir este Clique" : "Desbloquear Arquivos")
+                  )}
                 </button>
                 <p style={{ fontSize: 9, color: T.text3, textAlign: "center", margin: 0 }}>Secure Payment · SSL · Instant Access</p>
               </div>
@@ -666,13 +780,15 @@ export default function EventPage() {
             setAccessType(type as "PUBLIC" | "PRIVATE"); 
             setStep("processing");
             try {
-              // Cria o pedido no backend (como se fosse um pagamento mas sem token de cartão ainda)
+              // Cria o pedido no backend
               const { data } = await api.post("/checkout/payment", {
                 eventId: event.id,
                 userId: user?.id,
                 email: user?.email || "",
                 accessType: type,
-                isDraft: true // Flag opcional para apenas criar o registro
+                isDraft: true,
+                cart: isMarketplace ? cart : undefined,
+                amount: isMarketplace ? cartTotal : (event.isUnitSale ? event.priceUnit : event.priceBase)
               });
               
               if (data.orderId) {

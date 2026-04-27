@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useCallback } from "react";
 import { API } from "../../lib/api";
 import { T } from "../../lib/theme";
 import { QRCodeSVG } from "qrcode.react";
@@ -28,6 +28,8 @@ interface Event {
   captacao?: { nome: string } | null;
   edicao?: { nome: string } | null;
   isPrivate: boolean;
+  type: 'ALBUM_FULL' | 'PHOTO_MARKETPLACE';
+  pricePerPhoto?: number;
   _count: { pedidos: number };
 }
 
@@ -62,6 +64,15 @@ export const AdminEvents: React.FC<AdminEventsProps> = ({ initialEditEventId, on
     amount: 0
   });
 
+  const [isExpressModalOpen, setIsExpressModalOpen] = useState(false);
+  const [expressFormData, setExpressFormData] = useState({
+    customerName: "",
+    customerEmail: "",
+    amount: 15,
+    location: "Taquaral / Marketplace",
+    paymentMethod: "MONEY" as "PIX" | "CARD" | "MONEY"
+  });
+
   const fileInputRef = React.useRef<HTMLInputElement>(null);
   
   interface EventFormData {
@@ -90,6 +101,8 @@ export const AdminEvents: React.FC<AdminEventsProps> = ({ initialEditEventId, on
     isPrivate: boolean;
     isUnitSale: boolean;
     priceUnit: number;
+    type: 'ALBUM_FULL' | 'PHOTO_MARKETPLACE';
+    pricePerPhoto: number;
   }
 
   // Form State
@@ -108,6 +121,8 @@ export const AdminEvents: React.FC<AdminEventsProps> = ({ initialEditEventId, on
     isPrivate: false,
     isUnitSale: false,
     priceUnit: 10,
+    type: 'ALBUM_FULL',
+    pricePerPhoto: 15,
   });
 
   const [activeTab, setActiveTab] = useState<'info' | 'equipe' | 'comercial' | 'entrega'>('info');
@@ -159,6 +174,8 @@ export const AdminEvents: React.FC<AdminEventsProps> = ({ initialEditEventId, on
         isPrivate: false,
         isUnitSale: false,
         priceUnit: 10,
+        type: 'ALBUM_FULL',
+        pricePerPhoto: 15,
       });
       setCoverPreview(null);
     } catch {
@@ -168,7 +185,7 @@ export const AdminEvents: React.FC<AdminEventsProps> = ({ initialEditEventId, on
     }
   };
 
-  const handleEditOpen = async (event: Event) => {
+  const handleEditOpen = useCallback(async (event: { id: string }) => {
     try {
       const { data } = await API.get(`/admin/events/${event.id}`);
       setEditingEvent(data);
@@ -199,7 +216,9 @@ export const AdminEvents: React.FC<AdminEventsProps> = ({ initialEditEventId, on
         })(),
         isPrivate: data.isPrivate || false,
         isUnitSale: data.isUnitSale || false,
-        priceUnit: Number(data.priceUnit || 10)
+        priceUnit: Number(data.priceUnit || 10),
+        type: data.type || 'ALBUM_FULL',
+        pricePerPhoto: Number(data.pricePerPhoto || 15)
       });
       setCoverPreview(data.coverPhotoUrl);
       setActiveTab('info');
@@ -207,7 +226,7 @@ export const AdminEvents: React.FC<AdminEventsProps> = ({ initialEditEventId, on
     } catch {
       showNotification("Erro ao carregar detalhes do evento.", 'error');
     }
-  };
+  }, []);
 
   const handleSaleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -220,12 +239,37 @@ export const AdminEvents: React.FC<AdminEventsProps> = ({ initialEditEventId, on
       });
       showNotification("Venda registrada com sucesso!");
       setIsSaleModalOpen(false);
-      // Refresh events to show updated sales count
       const updatedEvents = await API.get("/admin/events");
       setEvents(updatedEvents.data.events || []);
     } catch (err: unknown) {
       const error = err as { response?: { data?: { error?: string } } };
       showNotification(error.response?.data?.error || "Erro ao registrar venda.", 'error');
+    } finally {
+      setIsUploading(false);
+    }
+  };
+
+  const handleExpressSaleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setIsUploading(true);
+    try {
+      const { data } = await API.post("marketplace/express-sale", expressFormData);
+      
+      if (data.isDigital) {
+        showNotification("Venda registrada! Redirecionando para pagamento...");
+        setTimeout(() => {
+          window.location.href = `/checkout/payment?orderId=${data.orderId}`;
+        }, 1500);
+        return;
+      }
+
+      showNotification("Venda e Operação Marketplace registradas!");
+      setIsExpressModalOpen(false);
+      const updatedEvents = await API.get("/admin/events");
+      setEvents(updatedEvents.data.events || []);
+    } catch (err: unknown) {
+      const error = err as { response?: { data?: { error?: string } } };
+      showNotification(error.response?.data?.error || "Erro na venda expressa.", 'error');
     } finally {
       setIsUploading(false);
     }
@@ -262,35 +306,54 @@ export const AdminEvents: React.FC<AdminEventsProps> = ({ initialEditEventId, on
     <div className="space-y-12 animate-in fade-in slide-in-from-bottom-4 duration-700">
       <div className="flex flex-col md:flex-row md:items-center justify-between border-b border-white/5 pb-8 gap-6">
         <div>
-          <h2 className="text-2xl md:text-4xl font-heading text-theme-text tracking-tighter uppercase leading-none pt-2">Operação de Eventos</h2>
           <p className="text-[9px] text-theme-muted uppercase tracking-[0.4em] mt-2 font-bold italic">Logística de Captação e Unidades Fixas</p>
         </div>
-        <button 
-          onClick={() => {
-            setEditingEvent(null);
-            setFormData({
-              title: "", slug: "", date: "", location: "", city: "", description: "",
-              priceBase: 200, priceEarly: 190,
-              cartorioId: "", captacaoId: "", edicaoId: "",
-              temFoto: true, temVideo: false, temReels: false, temFotoImpressa: false,
-              coverPhotoUrl: "", eventHours: 2,
-              isCrowdfund: false,
-              targetAmount: 0,
-              lightroomUrl: "",
-              driveUrl: "",
-              previewPhotos: ["", "", ""],
-              isPrivate: false,
-              isUnitSale: false,
-              priceUnit: 10,
-            });
-            setCoverPreview(null);
-            setIsModalOpen(true);
-          }}
-          className="font-black uppercase tracking-[0.4em] px-8 py-4 hover:brightness-110 transition-all shadow-xl shadow-brand-tactical/10 rounded-none text-[9px] w-full md:w-auto"
-          style={{ backgroundColor: 'var(--brand-tactical)', color: 'var(--theme-text-on-brand)' }}
-        >
-          NOVO EVENTO
-        </button>
+        <div className="flex flex-col md:flex-row gap-4">
+          <button 
+            onClick={() => {
+              setExpressFormData({ 
+                customerName: "", 
+                customerEmail: "", 
+                amount: 15, 
+                location: "Taquaral / Marketplace",
+                paymentMethod: "MONEY"
+              });
+              setIsExpressModalOpen(true);
+            }}
+            className="font-black uppercase tracking-[0.4em] px-8 py-4 hover:brightness-110 transition-all shadow-xl shadow-brand-tactical/10 rounded-none text-[9px] w-full md:w-auto border border-brand-tactical"
+            style={{ backgroundColor: 'transparent', color: 'var(--brand-tactical)' }}
+          >
+            VENDA RÁPIDA (MARKETPLACE)
+          </button>
+          <button 
+            onClick={() => {
+              setEditingEvent(null);
+              setFormData({
+                title: "", slug: "", date: "", location: "", city: "", description: "",
+                priceBase: 200, priceEarly: 190,
+                cartorioId: "", captacaoId: "", edicaoId: "",
+                temFoto: true, temVideo: false, temReels: false, temFotoImpressa: false,
+                coverPhotoUrl: "", eventHours: 2,
+                isCrowdfund: false,
+                targetAmount: 0,
+                lightroomUrl: "",
+                driveUrl: "",
+                previewPhotos: ["", "", ""],
+                isPrivate: false,
+                isUnitSale: false,
+                priceUnit: 10,
+                type: 'ALBUM_FULL',
+                pricePerPhoto: 15,
+              });
+              setCoverPreview(null);
+              setIsModalOpen(true);
+            }}
+            className="font-black uppercase tracking-[0.4em] px-8 py-4 hover:brightness-110 transition-all shadow-xl shadow-brand-tactical/10 rounded-none text-[9px] w-full md:w-auto"
+            style={{ backgroundColor: 'var(--brand-tactical)', color: 'var(--theme-text-on-brand)' }}
+          >
+            NOVO EVENTO
+          </button>
+        </div>
       </div>
 
       <style>{`
@@ -603,6 +666,38 @@ export const AdminEvents: React.FC<AdminEventsProps> = ({ initialEditEventId, on
                               />
                             </div>
                           </div>
+
+                          <div className="space-y-4 pt-6 border-t border-theme-border">
+                            <label className="text-[9px] font-bold text-theme-muted/60 uppercase tracking-[0.4em]">Tipo de Entrega / Modelo</label>
+                            <div className="grid grid-cols-2 gap-4">
+                              <button
+                                type="button"
+                                onClick={() => setFormData({ ...formData, type: 'ALBUM_FULL' })}
+                                className={`p-4 border text-[10px] font-bold uppercase tracking-widest transition-all ${formData.type === 'ALBUM_FULL' ? 'bg-brand-tactical border-brand-tactical text-black' : 'border-zinc-800 text-zinc-500'}`}
+                              >
+                                Álbum Completo
+                              </button>
+                              <button
+                                type="button"
+                                onClick={() => setFormData({ ...formData, type: 'PHOTO_MARKETPLACE' })}
+                                className={`p-4 border text-[10px] font-bold uppercase tracking-widest transition-all ${formData.type === 'PHOTO_MARKETPLACE' ? 'bg-brand-tactical border-brand-tactical text-black' : 'border-zinc-800 text-zinc-500'}`}
+                              >
+                                Marketplace (Unidade)
+                              </button>
+                            </div>
+                          </div>
+
+                          {formData.type === 'PHOTO_MARKETPLACE' && (
+                            <div className="animate-in fade-in slide-in-from-top-2 duration-300">
+                              <label className="text-[9px] font-bold text-theme-muted/60 uppercase tracking-[0.4em]">Preço por Foto Individual (R$)</label>
+                              <input 
+                                type="number"
+                                className="w-full bg-theme-bg border border-theme-border p-4 text-[13px] text-theme-text focus:border-brand-tactical transition-colors outline-none font-bold mt-2"
+                                value={formData.pricePerPhoto}
+                                onChange={e => setFormData({...formData, pricePerPhoto: Number(e.target.value)})}
+                              />
+                            </div>
+                          )}
 
                           <div className="space-y-4 pt-4">
                             <label className="text-[9px] font-bold text-theme-muted/60 uppercase tracking-[0.4em]">Serviços Inclusos</label>
@@ -953,6 +1048,116 @@ export const AdminEvents: React.FC<AdminEventsProps> = ({ initialEditEventId, on
               </div>
               <div className={`absolute bottom-0 left-0 h-1 ${notification.type === 'success' ? 'bg-brand-tactical' : 'bg-red-900'} animate-out fade-out duration-[5000ms] w-full`} />
            </div>
+        </div>
+      )}
+      {/* MODAL VENDA EXPRESSA (MARKETPLACE) */}
+      {isExpressModalOpen && (
+        <div className="fixed inset-0 z-[60] flex items-center justify-center p-4 bg-black/95 backdrop-blur-xl animate-in fade-in duration-300">
+          <div className="w-full max-w-lg bg-theme-bg border border-brand-tactical/30 p-10 relative shadow-[0_0_50px_rgba(var(--brand-tactical-rgb),0.1)]">
+             <button onClick={() => setIsExpressModalOpen(false)} className="absolute top-6 right-6 text-zinc-500 hover:text-white transition-colors">
+               <X size={20} />
+             </button>
+
+             <div className="mb-10">
+               <h2 className="text-3xl font-heading text-theme-text tracking-tighter uppercase mb-2">Venda Rápida</h2>
+               <p className="text-[10px] text-brand-tactical uppercase tracking-[0.4em] font-bold">Venda Direta / Balcão</p>
+               <div className="w-12 h-1 bg-brand-tactical mt-4" />
+             </div>
+
+             <form onSubmit={handleExpressSaleSubmit} className="space-y-6">
+                <div className="space-y-2">
+                  <label className="text-[9px] font-bold text-theme-muted/60 uppercase tracking-[0.4em]">Nome do Cliente (Opcional)</label>
+                  <input 
+                    type="text"
+                    className="w-full bg-theme-bg border border-theme-border p-4 text-[13px] text-theme-text focus:border-brand-tactical outline-none"
+                    value={expressFormData.customerName}
+                    onChange={e => setExpressFormData({...expressFormData, customerName: e.target.value})}
+                    placeholder="EX: JOÃO SILVA"
+                  />
+                </div>
+
+                <div className="space-y-2">
+                  <label className="text-[9px] font-bold text-theme-muted/60 uppercase tracking-[0.4em]">E-mail do Cliente (Obrigatório)</label>
+                  <input 
+                    type="email" required
+                    className="w-full bg-theme-bg border border-theme-border p-4 text-[13px] text-theme-text focus:border-brand-tactical outline-none"
+                    value={expressFormData.customerEmail}
+                    onChange={e => setExpressFormData({...expressFormData, customerEmail: e.target.value})}
+                    placeholder="cliente@email.com"
+                  />
+                </div>
+
+                <div className="grid grid-cols-2 gap-6">
+                  <div className="space-y-2">
+                    <label className="text-[9px] font-bold text-theme-muted/60 uppercase tracking-[0.4em]">Valor Pago (R$)</label>
+                    <input 
+                      type="number" required
+                      className="w-full bg-theme-bg border border-theme-border p-4 text-[13px] text-brand-tactical focus:border-brand-tactical outline-none font-black"
+                      value={expressFormData.amount}
+                      onChange={e => setExpressFormData({...expressFormData, amount: Number(e.target.value)})}
+                    />
+                  </div>
+                  <div className="space-y-2">
+                    <label className="text-[9px] font-bold text-theme-muted/60 uppercase tracking-[0.4em]">Local / Ponto</label>
+                    <input 
+                      type="text" required
+                      className="w-full bg-theme-bg border border-theme-border p-4 text-[13px] text-theme-text focus:border-brand-tactical outline-none"
+                      value={expressFormData.location}
+                      onChange={e => setExpressFormData({...expressFormData, location: e.target.value})}
+                    />
+                  </div>
+                </div>
+
+                <div className="space-y-4">
+                  <label className="text-[9px] font-bold text-theme-muted/60 uppercase tracking-[0.4em]">Método de Pagamento</label>
+                  <div className="flex gap-4">
+                    <button 
+                      type="button"
+                      onClick={() => setExpressFormData({...expressFormData, paymentMethod: "MONEY"})}
+                      className={`flex-1 py-4 text-[10px] font-black uppercase tracking-widest border transition-all ${expressFormData.paymentMethod === 'MONEY' ? 'bg-brand-tactical text-black border-brand-tactical' : 'bg-theme-bg text-theme-muted border-theme-border'}`}
+                    >
+                      Dinheiro
+                    </button>
+                    <button 
+                      type="button"
+                      onClick={() => setExpressFormData({...expressFormData, paymentMethod: "PIX"})}
+                      className={`flex-1 py-4 text-[10px] font-black uppercase tracking-widest border transition-all ${expressFormData.paymentMethod === 'PIX' ? 'bg-brand-tactical text-black border-brand-tactical' : 'bg-theme-bg text-theme-muted border-theme-border'}`}
+                    >
+                      PIX
+                    </button>
+                    <button 
+                      type="button"
+                      onClick={() => setExpressFormData({...expressFormData, paymentMethod: "CARD"})}
+                      className={`flex-1 py-4 text-[10px] font-black uppercase tracking-widest border transition-all ${expressFormData.paymentMethod === 'CARD' ? 'bg-brand-tactical text-black border-brand-tactical' : 'bg-theme-bg text-theme-muted border-theme-border'}`}
+                    >
+                      Cartão
+                    </button>
+                  </div>
+                </div>
+
+                <button 
+                  type="submit"
+                  disabled={isUploading}
+                  className="w-full bg-brand-tactical text-black font-black uppercase tracking-[0.4em] py-5 text-[11px] hover:brightness-110 transition-all mt-4"
+                >
+                  {isUploading ? "PROCESSANDO..." : "CONFIRMAR VENDA & GERAR OP"}
+                </button>
+             </form>
+          </div>
+        </div>
+      )}
+
+      {/* NOTIFICAÇÃO FLOATING */}
+      {notification && (
+        <div 
+          className={`fixed bottom-8 right-8 z-[100] px-8 py-4 shadow-2xl border animate-in slide-in-from-right-10 duration-500 ${
+            notification.type === 'success' ? 'bg-zinc-900 border-brand-tactical text-brand-tactical' : 'bg-red-950 border-red-500 text-red-200'
+          }`}
+        >
+          <div className="flex items-center gap-4">
+            <div className={`w-2 h-2 rounded-full ${notification.type === 'success' ? 'bg-brand-tactical animate-pulse' : 'bg-red-500'}`} />
+            <span className="text-[10px] font-black uppercase tracking-[0.2em]">{notification.message}</span>
+          </div>
         </div>
       )}
     </div>

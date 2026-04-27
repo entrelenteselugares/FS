@@ -204,6 +204,7 @@ export async function adminCreateEvent(req: AuthRequest, res: Response): Promise
     temFoto, temVideo, temReels, temFotoImpressa,
     eventHours,
     isCrowdfund, targetAmount,
+    type, pricePerPhoto, marketplaceConfigs
   } = req.body;
 
   if (!title || !date || !location) {
@@ -261,6 +262,9 @@ export async function adminCreateEvent(req: AuthRequest, res: Response): Promise
         isUnitSale: req.body.isUnitSale ?? false,
         // @ts-ignore
         priceUnit: req.body.priceUnit ? Number(req.body.priceUnit) : 10,
+        type: type || "ALBUM_FULL",
+        pricePerPhoto: pricePerPhoto ? Number(pricePerPhoto) : null,
+        marketplaceConfigs: marketplaceConfigs || {},
       },
       include: {
         captacao: { select: { nome: true } },
@@ -311,6 +315,9 @@ export async function adminUpdateEvent(req: AuthRequest, res: Response): Promise
   if (req.body.isPrivate !== undefined) (data as any).isPrivate = req.body.isPrivate;
   if (req.body.isUnitSale !== undefined) (data as any).isUnitSale = req.body.isUnitSale;
   if (req.body.priceUnit !== undefined) (data as any).priceUnit = Number(req.body.priceUnit);
+  if (req.body.type !== undefined) (data as any).type = req.body.type;
+  if (req.body.pricePerPhoto !== undefined) (data as any).pricePerPhoto = Number(req.body.pricePerPhoto);
+  if (req.body.marketplaceConfigs !== undefined) (data as any).marketplaceConfigs = req.body.marketplaceConfigs;
 
   try {
     // 1. Busca estado atual para saber se os links estão sendo adicionados agora

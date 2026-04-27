@@ -70,6 +70,12 @@ export default function ClienteArea() {
   const [loading, setLoading] = useState(true);
   const [loadingDetalhe, setLoadingDetalhe] = useState(false);
   const [isPrivacyModalOpen, setIsPrivacyModalOpen] = useState(false);
+  const [activeTab, setActiveTab] = useState<"files" | "profile">("files");
+  
+  // Profile States
+  const [profileData, setProfileData] = useState({ nome: "", whatsapp: "" });
+  const [isSaving, setIsSaving] = useState(false);
+  const [saveSuccess, setSaveSuccess] = useState(false);
 
   const fetchPedidos = useCallback(async () => {
     try {
@@ -120,7 +126,29 @@ export default function ClienteArea() {
         if (found) handleSelect(found);
       }
     });
-  }, [searchParams, handleSelect, fetchPedidos]);
+
+    if (user) {
+      setProfileData({
+        nome: user.nome || "",
+        whatsapp: user.whatsapp || ""
+      });
+    }
+  }, [searchParams, handleSelect, fetchPedidos, user]);
+
+  const handleUpdateProfile = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setIsSaving(true);
+    setSaveSuccess(false);
+    try {
+      await API.patch("/auth/me", profileData);
+      setSaveSuccess(true);
+      setTimeout(() => setSaveSuccess(false), 3000);
+    } catch {
+      alert("Erro ao salvar perfil.");
+    } finally {
+      setIsSaving(false);
+    }
+  };
 
   const now = useMemo(() => Date.now(), []);
 
@@ -181,87 +209,170 @@ export default function ClienteArea() {
         <div>
           <div style={{ marginBottom: "2.5rem" }}>
             <h1 className="mobile-title" style={{ fontSize: 32, fontWeight: 800, color: "var(--theme-text)", marginBottom: 8, letterSpacing: -0.5 }}>
-              Meus Arquivos
+              Minha Conta
             </h1>
-            <p style={{ fontSize: 14, color: "var(--theme-text-muted)" }}>
-              Acesso vitalício às memórias que você adquiriu.
-            </p>
+            <div style={{ display: "flex", gap: 24, borderBottom: `1px solid ${T.border}`, marginTop: 24 }}>
+                <button 
+                  onClick={() => setActiveTab("files")}
+                  style={{ 
+                    padding: "12px 0", background: "none", border: "none", 
+                    color: activeTab === "files" ? T.brand : T.text3, 
+                    borderBottom: activeTab === "files" ? `2px solid ${T.brand}` : "none",
+                    fontSize: 12, fontWeight: 900, textTransform: "uppercase", letterSpacing: 2, cursor: "pointer"
+                  }}
+                >
+                  Meus Arquivos
+                </button>
+                <button 
+                  onClick={() => setActiveTab("profile")}
+                  style={{ 
+                    padding: "12px 0", background: "none", border: "none", 
+                    color: activeTab === "profile" ? T.brand : T.text3, 
+                    borderBottom: activeTab === "profile" ? `2px solid ${T.brand}` : "none",
+                    fontSize: 12, fontWeight: 900, textTransform: "uppercase", letterSpacing: 2, cursor: "pointer"
+                  }}
+                >
+                  Meus Dados
+                </button>
+          </div>
           </div>
 
-          {loading ? (
-            <div style={{ display: "flex", flexDirection: "column", gap: 12 }}>
-              {[...Array(3)].map((_, i) => (
-                <div key={i} style={{ ...S.card, padding: "1.5rem", display: "flex", gap: "1.5rem", animation: "pulse 2s infinite" }}>
-                    <div style={{ width: 100, height: 100, background: "#111", borderRadius: 8, flexShrink: 0 }} />
-                    <div style={{ flex: 1, paddingTop: 4 }}>
-                        <div style={{ height: 18, background: "#111", borderRadius: 4, width: "70%", marginBottom: 12 }} />
-                        <div style={{ height: 14, background: "#111", borderRadius: 4, width: "40%" }} />
-                    </div>
-                </div>
-              ))}
-            </div>
-          ) : pedidos.length === 0 ? (
-            <div style={{ textAlign: "center", padding: "6rem 0", background: "var(--theme-bg-muted)", borderRadius: 20, border: "1px dashed var(--theme-border)" }}>
-              <p style={{ fontSize: 24, fontWeight: 700, color: "var(--theme-text)", marginBottom: 10 }}>
-                Sua galeria está vazia
+          {activeTab === "files" ? (
+            <>
+              <p style={{ fontSize: 14, color: "var(--theme-text-muted)", marginBottom: 32 }}>
+                Acesso vitalício às memórias que você adquiriu.
               </p>
-              <p style={{ fontSize: 15, color: "var(--theme-text-muted)", marginBottom: "2rem" }}>
-                Você ainda não adquiriu fotos de nenhum evento.
-              </p>
-              <button
-                onClick={() => navigate("/")}
-                style={{ background: "var(--brand-primary)", color: "var(--theme-text-on-brand)", border: "none", borderRadius: 0, padding: "12px 28px", fontSize: 13, fontWeight: 900, cursor: "pointer", transition: "transform .2s", textTransform: "uppercase", letterSpacing: 2 }}
-                onMouseEnter={(e) => (e.currentTarget.style.transform = "scale(1.05)")}
-                onMouseLeave={(e) => (e.currentTarget.style.transform = "scale(1)")}
-              >
-                Explorar Vitrine
-              </button>
-            </div>
-          ) : (
-            <div>
-              {/* Liberados */}
-              {aprovados.length > 0 && (
-                <div style={{ marginBottom: "3.5rem" }}>
-                  <p style={{ fontSize: 11, fontWeight: 700, letterSpacing: 1.5, textTransform: "uppercase", color: T.brand, marginBottom: "1rem", display: "flex", alignItems: "center", gap: 8 }}>
-                    <span style={{ width: 6, height: 6, background: T.brand, borderRadius: "50%" }} />
-                    Acesso Liberado
-                  </p>
-                  <div style={{ display: "flex", flexDirection: "column", gap: 12 }}>
-                    {aprovados.map((p) => (
-                      <PedidoRow
-                        key={p.id}
-                        pedido={p}
-                        now={now}
-                        isSelected={selected?.id === p.id}
-                        onClick={() => handleSelect(p)}
-                        pedidos={pedidos}
-                      />
-                    ))}
-                  </div>
-                </div>
-              )}
 
-              {/* Pendentes */}
-              {pendentes.length > 0 && (
-                <div>
-                  <p style={{ fontSize: 11, fontWeight: 700, letterSpacing: 1.5, textTransform: "uppercase", color: "#f59e0b", marginBottom: "1rem", display: "flex", alignItems: "center", gap: 8 }}>
-                    <span style={{ width: 6, height: 6, background: "#f59e0b", borderRadius: "50%" }} />
-                    Aguardando Confirmação
+              {loading ? (
+                <div style={{ display: "flex", flexDirection: "column", gap: 12 }}>
+                  {[...Array(3)].map((_, i) => (
+                    <div key={i} style={{ ...S.card, padding: "1.5rem", display: "flex", gap: "1.5rem", animation: "pulse 2s infinite" }}>
+                        <div style={{ width: 100, height: 100, background: "#111", borderRadius: 8, flexShrink: 0 }} />
+                        <div style={{ flex: 1, paddingTop: 4 }}>
+                            <div style={{ height: 18, background: "#111", borderRadius: 4, width: "70%", marginBottom: 12 }} />
+                            <div style={{ height: 14, background: "#111", borderRadius: 4, width: "40%" }} />
+                        </div>
+                    </div>
+                  ))}
+                </div>
+              ) : pedidos.length === 0 ? (
+                <div style={{ textAlign: "center", padding: "6rem 0", background: "var(--theme-bg-muted)", borderRadius: 20, border: "1px dashed var(--theme-border)" }}>
+                  <p style={{ fontSize: 24, fontWeight: 700, color: "var(--theme-text)", marginBottom: 10 }}>
+                    Sua galeria está vazia
                   </p>
-                  <div style={{ display: "flex", flexDirection: "column", gap: 12 }}>
-                    {pendentes.map((p) => (
-                      <PedidoRow
-                        key={p.id}
-                        pedido={p}
-                        now={now}
-                        isSelected={selected?.id === p.id}
-                        onClick={() => handleSelect(p)}
-                        pedidos={pedidos}
-                      />
-                    ))}
-                  </div>
+                  <p style={{ fontSize: 15, color: "var(--theme-text-muted)", marginBottom: "2rem" }}>
+                    Você ainda não adquiriu fotos de nenhum evento.
+                  </p>
+                  <button
+                    onClick={() => navigate("/")}
+                    style={{ background: "var(--brand-primary)", color: "var(--theme-text-on-brand)", border: "none", borderRadius: 0, padding: "12px 28px", fontSize: 13, fontWeight: 900, cursor: "pointer", transition: "transform .2s", textTransform: "uppercase", letterSpacing: 2 }}
+                    onMouseEnter={(e) => (e.currentTarget.style.transform = "scale(1.05)")}
+                    onMouseLeave={(e) => (e.currentTarget.style.transform = "scale(1)")}
+                  >
+                    Explorar Vitrine
+                  </button>
+                </div>
+              ) : (
+                <div>
+                  {/* Liberados */}
+                  {aprovados.length > 0 && (
+                    <div style={{ marginBottom: "3.5rem" }}>
+                      <p style={{ fontSize: 11, fontWeight: 700, letterSpacing: 1.5, textTransform: "uppercase", color: T.brand, marginBottom: "1rem", display: "flex", alignItems: "center", gap: 8 }}>
+                        <span style={{ width: 6, height: 6, background: T.brand, borderRadius: "50%" }} />
+                        Acesso Liberado
+                      </p>
+                      <div style={{ display: "flex", flexDirection: "column", gap: 12 }}>
+                        {aprovados.map((p) => (
+                          <PedidoRow
+                            key={p.id}
+                            pedido={p}
+                            now={now}
+                            isSelected={selected?.id === p.id}
+                            onClick={() => handleSelect(p)}
+                            pedidos={pedidos}
+                          />
+                        ))}
+                      </div>
+                    </div>
+                  )}
+
+                  {/* Pendentes */}
+                  {pendentes.length > 0 && (
+                    <div>
+                      <p style={{ fontSize: 11, fontWeight: 700, letterSpacing: 1.5, textTransform: "uppercase", color: "#f59e0b", marginBottom: "1rem", display: "flex", alignItems: "center", gap: 8 }}>
+                        <span style={{ width: 6, height: 6, background: "#f59e0b", borderRadius: "50%" }} />
+                        Aguardando Confirmação
+                      </p>
+                      <div style={{ display: "flex", flexDirection: "column", gap: 12 }}>
+                        {pendentes.map((p) => (
+                          <PedidoRow
+                            key={p.id}
+                            pedido={p}
+                            now={now}
+                            isSelected={selected?.id === p.id}
+                            onClick={() => handleSelect(p)}
+                            pedidos={pedidos}
+                          />
+                        ))}
+                      </div>
+                    </div>
+                  )}
                 </div>
               )}
+            </>
+          ) : (
+            <div style={{ ...S.card, padding: "2.5rem", maxWidth: 600, animation: "fadeUp 0.4s ease" }}>
+                <h2 style={{ fontSize: 20, fontWeight: 900, textTransform: "uppercase", letterSpacing: 1, marginBottom: 24 }}>Informações Pessoais</h2>
+                
+                <form onSubmit={handleUpdateProfile} style={{ display: "flex", flexDirection: "column", gap: 20 }}>
+                    <div>
+                        <label style={{ fontSize: 10, fontWeight: 900, textTransform: "uppercase", letterSpacing: 2, color: T.text3, marginBottom: 8, display: "block" }}>E-mail (Não editável)</label>
+                        <input type="text" disabled value={user?.email || ""} style={{ width: "100%", background: "rgba(255,255,255,0.03)", border: `1px solid ${T.border}`, padding: "14px", color: T.text3, opacity: 0.6, fontSize: 13 }} />
+                    </div>
+
+                    <div>
+                        <label style={{ fontSize: 10, fontWeight: 900, textTransform: "uppercase", letterSpacing: 2, color: T.text3, marginBottom: 8, display: "block" }}>Nome Completo</label>
+                        <input 
+                          type="text" 
+                          value={profileData.nome}
+                          onChange={e => setProfileData(p => ({ ...p, nome: e.target.value }))}
+                          style={{ width: "100%", background: T.bgField, border: `1px solid ${T.border}`, padding: "14px", color: T.text, fontSize: 13 }} 
+                          placeholder="Como quer ser chamado"
+                        />
+                    </div>
+
+                    <div>
+                        <label style={{ fontSize: 10, fontWeight: 900, textTransform: "uppercase", letterSpacing: 2, color: T.text3, marginBottom: 8, display: "block" }}>WhatsApp</label>
+                        <input 
+                          type="text" 
+                          value={profileData.whatsapp}
+                          onChange={e => setProfileData(p => ({ ...p, whatsapp: e.target.value }))}
+                          style={{ width: "100%", background: T.bgField, border: `1px solid ${T.border}`, padding: "14px", color: T.text, fontSize: 13 }} 
+                          placeholder="(00) 00000-0000"
+                        />
+                    </div>
+
+                    <div style={{ marginTop: 12 }}>
+                        <button 
+                          type="submit" 
+                          disabled={isSaving}
+                          style={{ 
+                            background: T.brand, color: "black", border: "none", padding: "14px 28px", 
+                            fontSize: 12, fontWeight: 900, textTransform: "uppercase", letterSpacing: 2, 
+                            cursor: "pointer", transition: "all .2s" 
+                          }}
+                        >
+                          {isSaving ? "Salvando..." : "Salvar Alterações"}
+                        </button>
+                        {saveSuccess && <span style={{ marginLeft: 16, color: T.brand, fontSize: 11, fontWeight: 700 }}>✓ Dados atualizados com sucesso</span>}
+                    </div>
+                </form>
+
+                <div style={{ marginTop: 40, paddingTop: 32, borderTop: `1px solid ${T.border}` }}>
+                     <h3 style={{ fontSize: 10, fontWeight: 900, textTransform: "uppercase", letterSpacing: 2, color: "#f87171", marginBottom: 16 }}>Área de Segurança</h3>
+                     <p style={{ fontSize: 12, color: T.text3, marginBottom: 20 }}>Precisa mudar sua senha ou excluir seus dados? Entre em contato com nosso suporte especializado.</p>
+                     <a href="https://wa.me/5519997843817" target="_blank" rel="noreferrer" style={{ fontSize: 11, fontWeight: 800, color: T.text, textDecoration: "underline" }}>Falar com Suporte</a>
+                </div>
             </div>
           )}
         </div>

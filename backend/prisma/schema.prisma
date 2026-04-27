@@ -89,12 +89,16 @@ model Event {
   isPrivate         Boolean          @default(false)
   isUnitSale        Boolean          @default(false)
   priceUnit         Decimal          @default(10) @db.Decimal(10, 2)
+  type              EventType        @default(ALBUM_FULL)
+  pricePerPhoto     Decimal?         @db.Decimal(10, 2)
+  marketplaceConfigs Json?            @default("{}")
   captacao          User?            @relation("CaptacaoEvents", fields: [captacaoId], references: [id])
   cartorioUser      User?            @relation("CartorioUserEvents", fields: [cartorioUserId], references: [id])
   edicao            User?            @relation("EdicaoEvents", fields: [edicaoId], references: [id])
   rejectedBy        Json?            @default("[]")
   pedidos           Order[]
   likes             PhotoLike[]
+  media             EventMedia[]
 
   @@map("events")
 }
@@ -112,6 +116,7 @@ model Profissional {
   equipment       String?
   cartorios       CartorioProfissional[]
   user            User                   @relation(fields: [userId], references: [id])
+  proServices     ProfessionalService[]
 
   @@map("profissionais")
 }
@@ -183,8 +188,9 @@ model Order {
   showVideo       Boolean   @default(true)
   isManual        Boolean   @default(false)
   manualType      String?
-  cliente         User?     @relation("ClienteOrders", fields: [clienteId], references: [id])
-  event           Event     @relation(fields: [eventId], references: [id])
+  cliente         User?       @relation("ClienteOrders", fields: [clienteId], references: [id])
+  event           Event       @relation(fields: [eventId], references: [id])
+  items           OrderItem[]
 
   @@map("orders")
 }
@@ -201,6 +207,48 @@ model PhotoLike {
 
   @@unique([userId, eventId, photoUrl])
   @@map("photo_likes")
+}
+
+model ProfessionalService {
+  id             String       @id @default(cuid())
+  profissionalId String
+  name           String
+  description    String?
+  price          Decimal      @db.Decimal(10, 2)
+  active         Boolean      @default(true)
+  profissional   Profissional @relation(fields: [profissionalId], references: [id], onDelete: Cascade)
+  orderItems     OrderItem[]
+
+  @@map("professional_services")
+}
+
+model EventMedia {
+  id         String      @id @default(cuid())
+  eventId    String
+  url        String
+  shortId    String
+  price      Decimal?    @db.Decimal(10, 2)
+  type       String      @default("PHOTO") // PHOTO, VIDEO
+  createdAt  DateTime    @default(now())
+  event      Event       @relation(fields: [eventId], references: [id], onDelete: Cascade)
+  orderItems OrderItem[]
+
+  @@unique([eventId, shortId])
+  @@map("event_media")
+}
+
+model OrderItem {
+  id        String               @id @default(cuid())
+  orderId   String
+  mediaId   String?
+  serviceId String?
+  price     Decimal              @db.Decimal(10, 2)
+  quantity  Int                  @default(1)
+  order     Order                @relation(fields: [orderId], references: [id], onDelete: Cascade)
+  media     EventMedia?          @relation(fields: [mediaId], references: [id])
+  service   ProfessionalService? @relation(fields: [serviceId], references: [id])
+
+  @@map("order_items")
 }
 
 model UserPoints {
@@ -405,4 +453,9 @@ enum PayoutStatus {
   PROCESSING
   PAID
   CANCELLED
+}
+
+enum EventType {
+  ALBUM_FULL
+  PHOTO_MARKETPLACE
 }

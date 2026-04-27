@@ -5,6 +5,7 @@ export interface AuthUser {
   nome: string;
   email: string;
   role: "ADMIN" | "CARTORIO" | "UNIDADE" | "PROFISSIONAL" | "CLIENTE";
+  whatsapp?: string | null;
   mpUserId?: string | null;
   mpPublicKey?: string | null;
 }

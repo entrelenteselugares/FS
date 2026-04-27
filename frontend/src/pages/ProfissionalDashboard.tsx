@@ -39,6 +39,12 @@ interface UnitInvite {
   }
 }
 
+interface EventMedia {
+  id: string;
+  url: string;
+  shortId: string;
+}
+
 interface ProfileData {
   services: string[];
   equipment: string | null;
@@ -139,6 +145,24 @@ export default function ProfissionalDashboard() {
   const [unitInvites, setUnitInvites] = useState<UnitInvite[]>([]);
   const [showNewServicesModal, setShowNewServicesModal] = useState(false);
   const [hasCheckedInvites, setHasCheckedInvites] = useState(false);
+  const [notification, setNotification] = useState<{message: string, type: 'success' | 'error'} | null>(null);
+
+  // Venda Expressa State
+  const [isExpressModalOpen, setIsExpressModalOpen] = useState(false);
+  const [expressFormData, setExpressFormData] = useState({
+    customerName: "",
+    customerEmail: "",
+    whatsapp: "",
+    amount: 15,
+    location: "Taquaral / Marketplace",
+    paymentMethod: "MONEY" as "PIX" | "CARD" | "MONEY",
+    internalNotes: ""
+  });
+
+  const showNotification = (message: string, type: 'success' | 'error' = 'success') => {
+    setNotification({ message, type });
+    setTimeout(() => setNotification(null), 5000);
+  };
 
   const fetchEvents = useCallback(() => {
     setLoading(true);
@@ -178,6 +202,31 @@ export default function ProfissionalDashboard() {
     } catch (err) {
       console.error("Erro ao responder convite de unidade:", err);
       alert("Erro ao processar resposta da unidade.");
+    }
+  };
+
+  const handleExpressSaleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setLoading(true);
+    try {
+      const { data } = await API.post("marketplace/express-sale", expressFormData);
+      
+      if (data.isDigital) {
+        showNotification("Venda registrada! Redirecionando para pagamento...");
+        setTimeout(() => {
+          window.location.href = `/checkout/${data.orderId}`;
+        }, 1500);
+        return;
+      }
+
+      showNotification("Venda e Operação registradas com sucesso!");
+      setIsExpressModalOpen(false);
+      fetchEvents();
+    } catch (err: unknown) {
+      const error = err as { response?: { data?: { error?: string } } };
+      showNotification(error.response?.data?.error || "Erro na venda expressa.", 'error');
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -351,6 +400,41 @@ export default function ProfissionalDashboard() {
             </div>
           )}
           <div style={{ width: 40, height: 2, background: T.brand, marginTop: 12 }} />
+        </div>
+
+        {/* BOTÃO VENDA RÁPIDA DESTAQUE */}
+        <div style={{ marginBottom: "3rem" }}>
+          <button 
+            onClick={() => {
+              setExpressFormData({ 
+                customerName: "", 
+                customerEmail: "", 
+                amount: 15, 
+                location: "Taquaral / Marketplace",
+                paymentMethod: "MONEY"
+              });
+              setIsExpressModalOpen(true);
+            }}
+            style={{ 
+              width: "100%", 
+              background: "linear-gradient(90deg, var(--brand-primary) 0%, #a8d5cb 100%)", 
+              color: "#000", 
+              border: "none", 
+              padding: "24px", 
+              display: "flex", 
+              alignItems: "center", 
+              justifyContent: "center", 
+              gap: 16,
+              boxShadow: "0 10px 30px rgba(var(--brand-primary-rgb), 0.2)",
+              cursor: "pointer"
+            }}
+          >
+            <DollarSign size={24} />
+            <div style={{ textAlign: "left" }}>
+               <div style={{ fontSize: 14, fontWeight: 900, textTransform: "uppercase", letterSpacing: 2 }}>Venda Rápida</div>
+               <div style={{ fontSize: 10, fontWeight: 600, opacity: 0.8, textTransform: "uppercase" }}>Registre a venda e crie a operação na hora</div>
+            </div>
+          </button>
         </div>
 
 
@@ -615,6 +699,137 @@ export default function ProfissionalDashboard() {
           onUpdated={(p) => { setProfile(p); setIsProfileOpen(false); }}
         />
       )}
+      {/* MODAL VENDA EXPRESSA (MARKETPLACE) */}
+      {isExpressModalOpen && (
+        <div style={{ position: "fixed", inset: 0, zIndex: 6000, display: "flex", alignItems: "center", justifyContent: "center", background: "rgba(0,0,0,0.95)", backdropFilter: "blur(20px)", padding: "1.5rem" }}>
+          <div style={{ ...S.card, width: "100%", maxWidth: 500, padding: "2.5rem", position: "relative", background: "var(--theme-bg)" }}>
+             <button onClick={() => setIsExpressModalOpen(false)} style={{ position: "absolute", top: 20, right: 20, background: "none", border: "none", color: "var(--theme-text-muted)", cursor: "pointer" }}><X size={24} /></button>
+
+             <div style={{ marginBottom: "2rem" }}>
+               <h2 style={{ fontSize: 24, fontWeight: 900, color: "var(--theme-text)", textTransform: "uppercase", letterSpacing: 1, margin: 0 }}>Venda Rápida</h2>
+<p style={{ fontSize: 10, color: "var(--brand-primary)", fontWeight: 900, textTransform: "uppercase", letterSpacing: 2, marginTop: 4 }}>Venda Direta / Balcão</p>
+               <div style={{ width: 40, height: 2, background: "var(--brand-primary)", marginTop: 12 }} />
+             </div>
+
+             <form onSubmit={handleExpressSaleSubmit} style={{ display: "flex", flexDirection: "column", gap: "1.5rem" }}>
+                         <div>
+                <label className="text-[10px] font-black uppercase tracking-widest opacity-40 mb-2 block">E-mail do Cliente (Obrigatório)</label>
+                <input 
+                  type="email" 
+                  value={expressFormData.customerEmail}
+                  onChange={e => setExpressFormData(p => ({ ...p, customerEmail: e.target.value }))}
+                  className="w-full bg-theme-bg-muted border border-theme-border py-4 px-4 text-sm focus:border-brand-primary outline-none transition-all"
+                  placeholder="exemplo@email.com"
+                  required
+                />
+              </div>
+
+              <div className="grid grid-cols-2 gap-4">
+                <div>
+                  <label className="text-[10px] font-black uppercase tracking-widest opacity-40 mb-2 block">Nome (Opcional)</label>
+                  <input 
+                    type="text" 
+                    value={expressFormData.customerName}
+                    onChange={e => setExpressFormData(p => ({ ...p, customerName: e.target.value }))}
+                    className="w-full bg-theme-bg-muted border border-theme-border py-4 px-4 text-sm focus:border-brand-primary outline-none transition-all"
+                    placeholder="Nome Completo"
+                  />
+                </div>
+                <div>
+                  <label className="text-[10px] font-black uppercase tracking-widest opacity-40 mb-2 block">WhatsApp (Opcional)</label>
+                  <input 
+                    type="text" 
+                    value={expressFormData.whatsapp}
+                    onChange={e => setExpressFormData(p => ({ ...p, whatsapp: e.target.value }))}
+                    className="w-full bg-theme-bg-muted border border-theme-border py-4 px-4 text-sm focus:border-brand-primary outline-none transition-all"
+                    placeholder="(00) 00000-0000"
+                  />
+                </div>
+              </div>
+
+              <div className="grid grid-cols-2 gap-4">
+                <div>
+                  <label className="text-[10px] font-black uppercase tracking-widest opacity-40 mb-2 block">Valor Pago (R$)</label>
+                  <input 
+                    type="number" 
+                    value={expressFormData.amount}
+                    onChange={e => setExpressFormData(p => ({ ...p, amount: Number(e.target.value) }))}
+                    className="w-full bg-theme-bg-muted border border-theme-border py-4 px-4 text-sm focus:border-brand-primary outline-none transition-all"
+                  />
+                </div>
+                <div>
+                  <label className="text-[10px] font-black uppercase tracking-widest opacity-40 mb-2 block">Local / Ponto</label>
+                  <input 
+                    type="text" 
+                    value={expressFormData.location}
+                    onChange={e => setExpressFormData(p => ({ ...p, location: e.target.value }))}
+                    className="w-full bg-theme-bg-muted border border-theme-border py-4 px-4 text-sm focus:border-brand-primary outline-none transition-all"
+                  />
+                </div>
+              </div>
+
+              <div>
+                <label className="text-[10px] font-black uppercase tracking-widest opacity-40 mb-2 block">Anotações Internas (Oculto ao Cliente)</label>
+                <textarea 
+                  value={expressFormData.internalNotes}
+                  onChange={e => setExpressFormData(p => ({ ...p, internalNotes: e.target.value }))}
+                  className="w-full bg-theme-bg-muted border border-theme-border py-3 px-4 text-sm focus:border-brand-primary outline-none transition-all resize-none h-20"
+                  placeholder="Ex: Cliente VIP, Indicação do Cartório X..."
+                />
+              </div>
+
+                <div style={{ marginTop: "1rem" }}>
+                  <label style={S.label}>Método de Pagamento</label>
+                  <div style={{ display: "flex", gap: 10, marginTop: 8 }}>
+                    <button 
+                      type="button"
+                      onClick={() => setExpressFormData({...expressFormData, paymentMethod: "MONEY"})}
+                      style={{ flex: 1, padding: "12px", background: expressFormData.paymentMethod === "MONEY" ? T.brand : "rgba(255,255,255,0.05)", color: expressFormData.paymentMethod === "MONEY" ? "#000" : T.text3, border: `1px solid ${expressFormData.paymentMethod === "MONEY" ? T.brand : T.border}`, fontSize: 10, fontWeight: 900, textTransform: "uppercase", cursor: "pointer" }}
+                    >
+                      Dinheiro
+                    </button>
+                    <button 
+                      type="button"
+                      onClick={() => setExpressFormData({...expressFormData, paymentMethod: "PIX"})}
+                      style={{ flex: 1, padding: "12px", background: expressFormData.paymentMethod === "PIX" ? T.brand : "rgba(255,255,255,0.05)", color: expressFormData.paymentMethod === "PIX" ? "#000" : T.text3, border: `1px solid ${expressFormData.paymentMethod === "PIX" ? T.brand : T.border}`, fontSize: 10, fontWeight: 900, textTransform: "uppercase", cursor: "pointer" }}
+                    >
+                      PIX
+                    </button>
+                    <button 
+                      type="button"
+                      onClick={() => setExpressFormData({...expressFormData, paymentMethod: "CARD"})}
+                      style={{ flex: 1, padding: "12px", background: expressFormData.paymentMethod === "CARD" ? T.brand : "rgba(255,255,255,0.05)", color: expressFormData.paymentMethod === "CARD" ? "#000" : T.text3, border: `1px solid ${expressFormData.paymentMethod === "CARD" ? T.brand : T.border}`, fontSize: 10, fontWeight: 900, textTransform: "uppercase", cursor: "pointer" }}
+                    >
+                      Cartão
+                    </button>
+                  </div>
+                </div>
+
+                <button 
+                  type="submit"
+                  disabled={loading}
+                  style={{ background: "var(--brand-primary)", color: "#000", border: "none", padding: "20px", fontWeight: 900, fontSize: 11, textTransform: "uppercase", letterSpacing: 2, cursor: loading ? "not-allowed" : "pointer", marginTop: "1rem" }}
+                >
+                  {loading ? "PROCESSANDO..." : "CONFIRMAR VENDA & CRIAR OPERAÇÃO"}
+                </button>
+             </form>
+          </div>
+        </div>
+      )}
+
+      {/* NOTIFICAÇÃO FLOATING */}
+      {notification && (
+        <div style={{ 
+          position: "fixed", bottom: 32, right: 32, zIndex: 10000, 
+          background: "var(--theme-bg-muted)", border: `1px solid ${notification.type === 'success' ? T.brand : '#ef4444'}`,
+          padding: "16px 24px", animation: "fadeIn 0.5s ease-out"
+        }}>
+          <div style={{ display: "flex", alignItems: "center", gap: 12 }}>
+            <div style={{ width: 8, height: 8, borderRadius: "50%", background: notification.type === 'success' ? T.brand : '#ef4444' }} />
+            <span style={{ fontSize: 10, fontWeight: 900, color: "var(--theme-text)", textTransform: "uppercase", letterSpacing: 1 }}>{notification.message}</span>
+          </div>
+        </div>
+      )}
     </DashboardLayout>
   );
 }
@@ -798,6 +1013,58 @@ function EventEditPanel({ event, onUpdated, onClose }: {
 }) {
   const [lrUrl, setLrUrl] = useState(event.lightroomUrl ?? "");
   const [drUrl, setDrUrl] = useState(event.driveUrl ?? "");
+  const [uploadingMedia, setUploadingMedia] = useState(false);
+  const [marketplaceMedias, setMarketplaceMedias] = useState<EventMedia[]>([]);
+
+  const isMarketplace = (event as EventItem & { type?: string }).type === "PHOTO_MARKETPLACE";
+
+  useEffect(() => {
+    if (isMarketplace) {
+      API.get(`/marketplace/events/${event.id}/media`)
+        .then(res => setMarketplaceMedias(res.data))
+        .catch(err => console.error("Erro ao buscar mídias marketplace:", err));
+    }
+  }, [event.id, isMarketplace]);
+
+  const handleMediaUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const files = e.target.files;
+    if (!files || files.length === 0) return;
+
+    setUploadingMedia(true);
+    let successCount = 0;
+
+    const fileToBase64 = (file: File): Promise<string> => {
+      return new Promise((resolve, reject) => {
+        const reader = new FileReader();
+        reader.readAsDataURL(file);
+        reader.onload = () => resolve(reader.result as string);
+        reader.onerror = error => reject(error);
+      });
+    };
+
+    try {
+      for (let i = 0; i < files.length; i++) {
+        const file = files[i];
+        const base64 = await fileToBase64(file);
+        
+        await API.post(`/marketplace/events/${event.id}/media`, {
+          imageBase64: base64,
+          mimeType: file.type
+        });
+        successCount++;
+      }
+
+      // Recarrega lista
+      const res = await API.get(`/marketplace/events/${event.id}/media`);
+      setMarketplaceMedias(res.data);
+      alert(`${successCount} fotos enviadas com sucesso!`);
+    } catch (err) {
+      console.error("Erro no upload marketplace:", err);
+      alert("Erro ao enviar algumas fotos. Verifique sua conexão.");
+    } finally {
+      setUploadingMedia(false);
+    }
+  };
   const [linkStatus, setLinkStatus] = useState<SaveStatus>("idle");
   const [coverStatus, setCoverStatus] = useState<SaveStatus>("idle");
   const [coverPreview, setCoverPreview] = useState<string | null>(event.coverPhotoUrl);
@@ -1022,6 +1289,41 @@ function EventEditPanel({ event, onUpdated, onClose }: {
           </p>
         </div>
       </section>
+
+      {isMarketplace && (
+        <section style={{ marginTop: "2.5rem", borderTop: `1px solid ${T.border}`, paddingTop: "2.5rem" }}>
+          <div style={{ display: "flex", alignItems: "center", gap: 10, marginBottom: "1.25rem" }}>
+            <div style={{ width: 24, height: 24, borderRadius: "50%", background: "rgba(133,185,172,0.1)", color: "var(--brand-primary)", display: "flex", alignItems: "center", justifyContent: "center" }}>
+              <HardDrive size={14} />
+            </div>
+            <label style={{ ...S.label, marginBottom: 0 }}>Gerenciar Galeria Marketplace</label>
+          </div>
+          <p style={{ fontSize: 10, color: "var(--theme-text-muted)", marginBottom: 20 }}>Suba as fotos individuais para que o cliente possa selecioná-las e comprar pelo site.</p>
+          
+          <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fill, minmax(80px, 1fr))", gap: 10, marginBottom: 20 }}>
+            {marketplaceMedias.map(m => (
+              <div key={m.id} style={{ aspectRatio: "1/1", border: `1px solid ${T.border}`, position: "relative", background: "#000" }}>
+                 <img src={m.url} alt="" style={{ width: "100%", height: "100%", objectFit: "cover", opacity: 0.6 }} />
+                 <div style={{ position: "absolute", bottom: 0, left: 0, right: 0, background: "rgba(0,0,0,0.8)", color: "white", fontSize: 8, textAlign: "center", padding: "2px 0", fontWeight: 700 }}>#{m.shortId}</div>
+              </div>
+            ))}
+            
+            <label style={{ 
+              aspectRatio: "1/1", border: `1px dashed ${T.brand}`, 
+              display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center",
+              cursor: uploadingMedia ? "not-allowed" : "pointer", color: T.brand, fontSize: 10, fontWeight: 900,
+              background: "rgba(133,185,172,0.05)"
+            }}>
+              {uploadingMedia ? "..." : "+ FOTOS"}
+              <input type="file" multiple accept="image/*" hidden onChange={handleMediaUpload} disabled={uploadingMedia} />
+            </label>
+          </div>
+          
+          <div style={{ background: "rgba(133,185,172,0.05)", padding: "12px 16px", border: `1px solid ${T.brand}40`, fontSize: 10, color: T.brand, fontWeight: 700, textAlign: "center", letterSpacing: 1 }}>
+             LINK DO CLIENTE: {window.location.origin}/e/{event.slug}
+          </div>
+        </section>
+      )}
     </div>
   );
 }

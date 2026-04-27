@@ -73,16 +73,18 @@ import { getTeam, saveTeam } from "../controllers/team.controller";
 import { adminGetEventById } from "../controllers/admin_event_detail.controller";
 import { runExpirationJob } from "../jobs/expiration.job";
 import {
-  listPrintProducts,
-  updatePrintProduct,
   bulkUpdateMargin,
   seedCkCatalog,
 } from "../controllers/print_catalog.controller";
+import { MarketplaceController } from "../controllers/marketplace.controller";
 
 const router = Router();
 
-// ── Sistema & Infra ──────────────────────────────────────────────────────────
-router.get("/health", (_req, res) => res.json({ status: "ok", time: new Date().toISOString() }));
+// ── MARKETPLACE (Fotos Individuais & Venda Expressa) ──────────────────────────
+router.post("/marketplace/express-sale",      requireAuth, requireRole("ADMIN", "PROFISSIONAL"), MarketplaceController.expressSale);
+router.post("/marketplace/events/:id/media",  requireAuth, requireRole("ADMIN", "PROFISSIONAL"), MarketplaceController.addMedia);
+router.get("/marketplace/events/:id/media",   optionalAuth, MarketplaceController.listMedia);
+
 
 // Cron — protegido por CRON_SECRET (chamado pela Vercel diariamente às 06:00)
 router.get("/cron/expiration", async (req, res) => {
@@ -107,6 +109,7 @@ router.post("/auth/register",        AuthController.register);
 router.post("/auth/forgot-password", AuthController.forgotPassword);
 router.post("/auth/update-password", AuthController.updatePassword);
 router.get("/auth/me",               requireAuth, AuthController.me);
+router.patch("/auth/me",             requireAuth, AuthController.updateMe);
 router.post("/auth/refresh",          AuthController.refresh);
 router.get("/public/auth/check",     AuthController.checkEmail);
 

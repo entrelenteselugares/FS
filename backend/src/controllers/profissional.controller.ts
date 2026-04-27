@@ -160,19 +160,58 @@ export async function getProfile(req: AuthRequest, res: Response): Promise<void>
       }
     });
 
-    // Calcula ganhos totais (baseado em PayoutItems pagos)
-    const totalEarnings = await prisma.payoutItem.aggregate({
+    // Calcula ganhos totais (PayoutItems pagos + Pedidos liquidados ainda não processados)
+    const totalPaid = await prisma.payoutItem.aggregate({
       where: { recipientId: userId, status: "PAID" },
       _sum: { amount: true }
     });
 
-    // Ganhos do mês atual
+    const pendingOrders = await prisma.order.aggregate({
+      where: { 
+        status: { in: ["PAGO", "APROVADO"] },
+        OR: [
+          { event: { captacaoId: userId } },
+          { event: { edicaoId: userId } }
+        ]
+      },
+      _sum: { splitCaptacao: true, splitEdicao: true }
+    });
+
+    // Filtra o split correto baseado na função do profissional no evento (Captador ou Editor)
+    // Para simplificar e ser preciso, vamos buscar os pedidos onde ele é captador ou editor explicitamente
+    const ordersAsCaptador = await prisma.order.aggregate({
+      where: { status: { in: ["PAGO", "APROVADO"] }, event: { captacaoId: userId } },
+      _sum: { splitCaptacao: true }
+    });
+    const ordersAsEditor = await prisma.order.aggregate({
+      where: { status: { in: ["PAGO", "APROVADO"] }, event: { edicaoId: userId } },
+      _sum: { splitEdicao: true }
+    });
+
+    const totalEstimated = Number(ordersAsCaptador._sum.splitCaptacao ?? 0) + Number(ordersAsEditor._sum.splitEdicao ?? 0);
+
+    // Ganhos do mês atual (Liquidados no mês)
     const now = new Date();
     const firstDayOfMonth = new Date(now.getFullYear(), now.getMonth(), 1);
-    const monthEarnings = await prisma.payoutItem.aggregate({
-      where: { recipientId: userId, status: "PAID", paidAt: { gte: firstDayOfMonth } },
-      _sum: { amount: true }
+    
+    const monthOrdersAsCaptador = await prisma.order.aggregate({
+      where: { 
+        status: { in: ["PAGO", "APROVADO"] }, 
+        event: { captacaoId: userId },
+        createdAt: { gte: firstDayOfMonth }
+      },
+      _sum: { splitCaptacao: true }
     });
+    const monthOrdersAsEditor = await prisma.order.aggregate({
+      where: { 
+        status: { in: ["PAGO", "APROVADO"] }, 
+        event: { edicaoId: userId },
+        createdAt: { gte: firstDayOfMonth }
+      },
+      _sum: { splitEdicao: true }
+    });
+
+    const monthEstimated = Number(monthOrdersAsCaptador._sum.splitCaptacao ?? 0) + Number(monthOrdersAsEditor._sum.splitEdicao ?? 0);
 
     // Contagem de eventos concluídos (links preenchidos)
     const completedEvents = await prisma.event.count({
@@ -185,8 +224,8 @@ export async function getProfile(req: AuthRequest, res: Response): Promise<void>
     res.json({
       ...profile,
       stats: {
-        totalEarnings: Number(totalEarnings._sum.amount ?? 0),
-        monthEarnings: Number(monthEarnings._sum.amount ?? 0),
+        totalEarnings: totalEstimated, // Mostra o total real acumulado
+        monthEarnings: monthEstimated, // Mostra o acumulado do mês
         completedEvents
       }
     });

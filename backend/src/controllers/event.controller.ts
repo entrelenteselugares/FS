@@ -72,18 +72,20 @@ export class EventController {
         return res.status(404).json({ error: "Evento não encontrado" });
       }
 
-      const isPaid = (req.app as any).locals.MOCK_PAID || false;
-      // Busca qualquer pedido (Pendente ou Aprovado) para este usuário/evento
-      const order = await prisma.order.findFirst({
+      // 1. Identifica o usuário (Query ou JWT)
+      const currentUserId = (userId as string) || (authUser?.userId);
+
+      // 2. Busca qualquer pedido (Pendente ou Aprovado) para este usuário/evento
+      const order = currentUserId ? await prisma.order.findFirst({
         where: { 
           eventId: event.id, 
-          clienteId: userId as string,
+          clienteId: currentUserId,
           status: { not: "CANCELADO" }
         },
         orderBy: { createdAt: "desc" }
-      }).catch(() => null);
+      }) : null;
       
-      // Lógica de Acesso (Pivot)
+      // 3. Lógica de Acesso (Pivot)
       const isOwner = authUser && (
         authUser.role === "ADMIN" || 
         authUser.userId === event.captacaoId || 
@@ -91,11 +93,12 @@ export class EventController {
         authUser.userId === event.cartorioUserId
       );
 
-      const hasAccess = isPaid || isOwner || (order?.status === "APROVADO");
+      const isPaid = order && (order.status === "PAGO" || order.status === "APROVADO");
+      const hasAccess = isPaid || isOwner;
 
-      // Links sensíveis só aparecem se aprovado
+      // 4. Links sensíveis e Previews
       const rawPreviews = (event as any).previewPhotos;
-      const previewPhotos: string[] = rawPreviews ? JSON.parse(rawPreviews) : [];
+      const previewPhotos: string[] = rawPreviews ? (typeof rawPreviews === "string" ? JSON.parse(rawPreviews) : rawPreviews) : [];
 
       return res.json({
         id: event.id,
@@ -111,12 +114,13 @@ export class EventController {
         temFotoImpressa: event.temFotoImpressa,
         previewPhotos,
         pendingOrderId: (order && order.status === "PENDENTE") ? order.id : null,
+        isOwner: hasAccess,
         // Links sensíveis só aparecem se aprovado e visível
         lightroomUrl: (hasAccess && (!order || order.showAlbum)) ? event.lightroomUrl : null,
         driveUrl: (hasAccess && (!order || order.showVideo)) ? event.driveUrl : null,
         paywall: {
           active: !hasAccess,
-          message: hasAccess ? "Entrega liberada via links externos." : "Galeria protegida."
+          message: hasAccess ? "Entrega liberada." : "Galeria protegida."
         },
         recentOrders: await prisma.order.findMany({
           where: { eventId: event.id, status: "APROVADO", contributorName: { not: null } },
@@ -124,9 +128,9 @@ export class EventController {
           take: 5,
           select: { id: true, contributorName: true, valor: true, createdAt: true }
         }),
-        // Configurações de Venda por Unidade
         isUnitSale: (event as any).isUnitSale,
-        priceUnit: (event as any).priceUnit
+        priceUnit: (event as any).priceUnit,
+        type: (event as any).type
       });
     } catch (error) {
       console.error("Erro ao buscar evento:", error);

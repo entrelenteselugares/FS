@@ -244,8 +244,16 @@ export const CheckoutPage = () => {
     }
 
     const renderPaymentBrick = async () => {
+      // Pequeno delay para garantir que o React renderizou o container no DOM
+      await new Promise(resolve => setTimeout(resolve, 100));
+      
       const container = document.getElementById("paymentBrick_container");
-      if (container) container.innerHTML = "";
+      if (!container) {
+        console.warn("Aguardando container do Payment Brick...");
+        initializationStarted.current = false;
+        return;
+      }
+      container.innerHTML = "";
       if (!win.MercadoPago) return;
 
       const mp = new win.MercadoPago(mpPublicKey, { locale: "pt-BR" });
@@ -265,7 +273,7 @@ export const CheckoutPage = () => {
           onSubmit: async ({ formData }) => {
             try {
               const { data } = await API.post("/checkout/payment", {
-                eventId: order.event.id || order.eventId,
+                eventId: order.event?.id || order.eventId,
                 userId: order.clienteId || null,
                 orderId: order.id,
                 email: formData.payer.email,

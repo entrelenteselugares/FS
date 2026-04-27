@@ -16,7 +16,8 @@ export const SEOController = {
           nomeNoivos: true, 
           coverPhotoUrl: true, 
           dataEvento: true,
-          cartorio: true 
+          cartorio: true,
+          type: true
         }
       });
 
@@ -26,7 +27,11 @@ export const SEOController = {
 
       const title = `${event.nomeNoivos} | Foto Segundo`;
       const dateStr = new Intl.DateTimeFormat("pt-BR", { day: "2-digit", month: "long", year: "numeric" }).format(new Date(event.dataEvento));
-      const description = `Acesse as fotos e vídeos do evento: ${event.nomeNoivos} (${dateStr}). Registrado em ${event.cartorio || "Foto Segundo"}.`;
+      const isMarketplace = (event as any).type === "PHOTO_MARKETPLACE";
+      
+      const description = isMarketplace
+        ? `Escolha e compre suas fotos do evento: ${event.nomeNoivos} (${dateStr}). Seleção individual e download imediato.`
+        : `Acesse as fotos e vídeos do evento: ${event.nomeNoivos} (${dateStr}). Registrado em ${event.cartorio || "Foto Segundo"}.`;
       const image = event.coverPhotoUrl || "https://foto-segundo.vercel.app/og-default.png";
 
       // Se for bot, entrega o HTML com meta tags

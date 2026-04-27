@@ -18,17 +18,18 @@ REQUIRED_ENVS.forEach(env => {
 // CRÍTICO: necessário para rate-limit funcionar na Vercel
 app.set("trust proxy", 1);
 
-// CORS
+// ── MIDDLEWARES DE SEGURANÇA & PARSERS ───────────────────────────────────────
 app.use(cors({
   origin: (origin, cb) => {
-    const allowed = [
-      process.env.FRONTEND_URL,
-      "https://foto-segundo.vercel.app",
-      "http://localhost:5173",
-    ].filter(Boolean);
-    const isPreview = /^https:\/\/foto-segundo-[a-z0-9]+-.*\.vercel\.app$/.test(origin ?? "");
-    if (!origin || allowed.includes(origin) || isPreview) cb(null, true);
-    else cb(new Error("CORS bloqueado"));
+    if (!origin || 
+        origin.startsWith("http://localhost:") || 
+        origin.startsWith("http://127.0.0.1:") ||
+        origin === "https://foto-segundo.vercel.app" ||
+        /^https:\/\/foto-segundo-[a-z0-9]+-.*\.vercel\.app$/.test(origin)) {
+      cb(null, true);
+    } else {
+      cb(new Error(`CORS bloqueado - Origem: ${origin}`));
+    }
   },
   credentials: true,
 }));
@@ -54,12 +55,16 @@ app.use("/api/public", rateLimit({
 // Body parsers
 // Webhook precisa do raw body para algumas validações de assinatura (se necessário)
 app.use("/api/webhooks", express.raw({ type: "application/json" }));
-app.use(express.json({ limit: "10mb" })); // Suporte a Base64 de capas
+app.use(express.urlencoded({ extended: true, limit: "10mb" }));
+app.use(express.json({ limit: "10mb" }));
 
-app.get("/health", (_req, res) =>
+// ── ROTAS PRINCIPAIS ─────────────────────────────────────────────────────────
+app.use("/api", routes);
+
+app.get("/api/health", (_req, res) =>
   res.json({ status: "ok", ts: new Date().toISOString() }));
 
-app.use("/api", routes);
+
 
 // Tratamento de erros global
 app.use((err: any, _req: express.Request, res: express.Response, _next: express.NextFunction) => {

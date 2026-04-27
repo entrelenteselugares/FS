@@ -62,6 +62,18 @@ Para eventos dinâmicos (ex: parques e corridas), o sistema operará como uma lo
 - **API de Rotas**: Integração com Google Directions API para sugerir o caminho ponto-a-ponto para o fotógrafo.
 - **Geofencing**: Alertar o usuário quando o fotógrafo estiver a menos de 200 metros do seu ponto.
 
+## 7. Módulo de Venda Expressa (Conversão Imediata)
+
+Este módulo inverte a lógica atual (Evento -> Venda) para suportar o dinamismo do Marketplace (Venda -> Evento/Operação).
+
+- **Botão "Venda Rápida"**: Disponível no topo do dashboard do fotógrafo.
+- **Automação**: Ao registrar uma venda (E-mail + Pack de Fotos), o sistema:
+  1. Cria um registro de **Evento/Operação** (ex: "Ensaio Express - [Nome do Cliente]").
+  2. Gera o **Pedido (Order)** já pago.
+  3. Notifica o **Editor** vinculado para ficar em standby.
+  4. Abre a interface de upload imediato para o fotógrafo.
+- **Vantagem**: Reduz a burocracia de criação de eventos manuais em campo. O fotógrafo foca em vender e clicar.
+
 ---
 
 **Próximos Passos Sugeridos:**

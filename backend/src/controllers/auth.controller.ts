@@ -509,4 +509,33 @@ export class AuthController {
       return res.status(500).json({ error: "Erro ao verificar e-mail" });
     }
   }
+
+  /** PATCH /api/auth/me */
+  static async updateMe(req: AuthRequest, res: Response) {
+    const userId = req.user?.userId;
+    if (!userId) {
+      return res.status(401).json({ error: "Não autenticado." });
+    }
+
+    const { nome, whatsapp } = req.body;
+
+    try {
+      const updated = await prisma.user.update({
+        where: { id: userId },
+        data: {
+          ...(nome !== undefined && { nome }),
+          ...(whatsapp !== undefined && { whatsapp })
+        },
+        select: { id: true, nome: true, email: true, whatsapp: true, role: true }
+      });
+
+      // Log de Auditoria
+      await audit(req, "UPDATE_PROFILE", "User", userId, null, { nome, whatsapp });
+
+      res.json(updated);
+    } catch (err) {
+      console.error("[AUTH] Erro ao atualizar perfil:", err);
+      res.status(500).json({ error: "Erro interno ao atualizar perfil." });
+    }
+  }
 }
