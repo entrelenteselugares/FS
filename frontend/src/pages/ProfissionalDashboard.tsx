@@ -409,9 +409,11 @@ export default function ProfissionalDashboard() {
               setExpressFormData({ 
                 customerName: "", 
                 customerEmail: "", 
+                whatsapp: "",
                 amount: 15, 
                 location: "Taquaral / Marketplace",
-                paymentMethod: "MONEY"
+                paymentMethod: "MONEY",
+                internalNotes: ""
               });
               setIsExpressModalOpen(true);
             }}
