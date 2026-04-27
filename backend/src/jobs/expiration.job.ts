@@ -89,4 +89,30 @@ export async function runExpirationJob(): Promise<void> {
   }
 
   console.log(`[EXPIRATION JOB] Concluído. ${proximosDeExpirar.length} avisos, ${expirados.length} exclusões, ${curtidasExpiradas.count} curtidas limpas.`);
+
+  // ── 4. Auditoria de Privacidade de Marketplace (rede de segurança) ──
+  const expostos = await prisma.event.findMany({
+    where: {
+      type: "PHOTO_MARKETPLACE",
+      isPrivate: false,
+    },
+    include: {
+      pedidos: { where: { status: "APROVADO" }, take: 1 },
+    },
+  });
+
+  for (const event of expostos) {
+    const temPedidoPago = event.pedidos.length > 0;
+    await prisma.event.update({
+      where: { id: event.id },
+      data: { active: temPedidoPago, isPrivate: true },
+    });
+    console.warn(`[PRIVACY AUDIT] Evento marketplace ${event.id} corrigido. temPedidoPago=${temPedidoPago}`);
+  }
+
+  if (expostos.length > 0) {
+    console.error(`[PRIVACY AUDIT] ⚠️  ${expostos.length} eventos marketplace com privacidade incorreta corrigidos.`);
+  } else {
+    console.log(`[PRIVACY AUDIT] ✅ Nenhuma inconsistência de privacidade encontrada.`);
+  }
 }

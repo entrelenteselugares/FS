@@ -86,7 +86,7 @@ model Event {
   captacaoStatus    AcceptanceStatus @default(PENDING)
   edicaoStatus      AcceptanceStatus @default(PENDING)
   previewPhotos     String?
-  isPrivate         Boolean          @default(false)
+  isPrivate         Boolean          @default(true)
   isUnitSale        Boolean          @default(false)
   priceUnit         Decimal          @default(10) @db.Decimal(10, 2)
   type              EventType        @default(ALBUM_FULL)

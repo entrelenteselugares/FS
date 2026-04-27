@@ -236,10 +236,16 @@ export class PaymentController {
                });
             }
 
-            // 2. O evento torna-se ativo e deixa de ser orçamento
+            // 2. Ativação condicional por tipo de evento
+            const isMarketplace = order.event?.type === 'PHOTO_MARKETPLACE';
             await prisma.event.update({
               where: { id: order.eventId },
-              data: { active: true, isQuote: false }
+              data: { 
+                active: true, 
+                isQuote: false,
+                // PHOTO_MARKETPLACE nunca vira pública na vitrine
+                isPrivate: isMarketplace ? true : false
+              }
             });
 
             // 3. Dispara e-mail automático
@@ -482,9 +488,15 @@ export class PaymentController {
 
       // 7. Ativa o evento IMEDIATAMENTE (Checkout Transparente)
       if (isApproved) {
+        const isMarketplace = (event as any).type === 'PHOTO_MARKETPLACE';
         await prisma.event.update({
           where: { id: eventId },
-          data: { active: true, isQuote: false }
+          data: { 
+            active: true, 
+            isQuote: false,
+            // PHOTO_MARKETPLACE nunca vira pública na vitrine
+            isPrivate: isMarketplace ? true : false
+          }
         });
 
         // 7a. E-mail de acesso ao comprador
@@ -610,9 +622,16 @@ export class PaymentController {
           where: { id: order.id },
           data: { status: "APROVADO" }
         });
+        // Busca o evento para verificar o tipo antes de ativar
+        const evData = await prisma.event.findUnique({ where: { id: order.eventId }, select: { type: true } });
+        const isMarketplace = evData?.type === 'PHOTO_MARKETPLACE';
         await prisma.event.update({
           where: { id: order.eventId },
-          data: { active: true, isQuote: false }
+          data: { 
+            active: true, 
+            isQuote: false,
+            isPrivate: isMarketplace ? true : false
+          }
         });
         NotificationService.notifyNewSale({
           buyerEmail: order.buyerEmail || order.cliente?.email || "desconhecido",
