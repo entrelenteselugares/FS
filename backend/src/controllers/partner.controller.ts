@@ -1,6 +1,7 @@
 import { Request, Response } from "express";
 import { AuthRequest } from "../lib/auth";
 import { prisma } from "../lib/prisma";
+import { audit } from "../lib/audit";
 
 /**
  * GET /api/public/partners/:slug
@@ -73,6 +74,11 @@ export async function updatePartnerProfile(req: AuthRequest, res: Response): Pro
   const { address, phone, description, coverUrl, slug, pixKey, servicePrices, fixedDuration, fixedTime, hideDuration } = req.body;
 
   try {
+    const before = await prisma.cartorio.findUnique({
+      where: { userId },
+      include: { user: { select: { pixKey: true } } }
+    });
+
     const updated = await prisma.cartorio.update({
       where: { userId },
       data: {
@@ -92,6 +98,13 @@ export async function updatePartnerProfile(req: AuthRequest, res: Response): Pro
         }
       }
     });
+
+    // P1 — Perfil da unidade: audit obrigatório para mudanças em dados públicos e bancários
+    await audit(req, "CARTORIO_PROFILE_UPDATED", "Cartorio", userId, 
+      { address: before?.address, phone: before?.phone, pixKey: (before as any)?.user?.pixKey },
+      { address, phone, pixKey }
+    );
+
     res.json(updated);
   } catch (err) {
     console.error("updatePartnerProfile:", err);

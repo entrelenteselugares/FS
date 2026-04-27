@@ -4,6 +4,7 @@ import prisma from "../lib/prisma";
 import { slugify } from "../lib/utils";
 import { supabaseAdmin } from "../lib/supabase";
 import { PricingService } from "../services/pricing.service";
+import { audit } from "../lib/audit";
 
 export class MarketplaceController {
   /**
@@ -103,6 +104,19 @@ export class MarketplaceController {
           splitCartorio: cartorio
         }
       });
+      
+      // Audit — Registro de Venda Expressa (P0)
+      await audit(req, "EXPRESS_SALE_CREATED", "Event", event.id, null, {
+        type: event.type,
+        amount: finalAmount,
+        method: finalMethod,
+        location: finalLocation,
+        buyerEmail: finalEmail,
+        buyerWhatsapp: whatsapp || null,
+        internalNotes: internalNotes || null,
+        orderId: order.id,
+        isDigital
+      });
 
       return res.json({ 
         success: true, 
@@ -173,6 +187,14 @@ export class MarketplaceController {
           shortId,
           price: price ? Number(price) : null
         }
+      });
+
+      // Audit — Upload de Mídia (P2)
+      await audit(req, "MEDIA_UPLOADED", "EventMedia", media.id, null, {
+        eventId: String(eventId),
+        url: publicUrl,
+        shortId,
+        price: media.price
       });
 
       return res.json(media);

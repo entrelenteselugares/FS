@@ -495,6 +495,11 @@ export class AuthController {
     const { nome, whatsapp } = req.body;
 
     try {
+      const before = await prisma.user.findUnique({
+        where: { id: userId },
+        select: { nome: true, whatsapp: true }
+      });
+
       const updated = await prisma.user.update({
         where: { id: userId },
         data: {
@@ -504,8 +509,11 @@ export class AuthController {
         select: { id: true, nome: true, email: true, whatsapp: true, role: true }
       });
 
-      // Log de Auditoria
-      await audit(req, "UPDATE_PROFILE", "User", userId, null, { nome, whatsapp });
+      // Log de Auditoria — Captura antes e depois
+      await audit(req, "PROFILE_UPDATED", "User", userId, 
+        { nome: before?.nome, whatsapp: before?.whatsapp },
+        { nome: updated.nome, whatsapp: updated.whatsapp }
+      );
 
       res.json(updated);
     } catch (err) {

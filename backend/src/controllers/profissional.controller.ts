@@ -5,6 +5,7 @@ import { Prisma } from "@prisma/client";
 import { supabaseAdmin as supabase } from "../lib/supabase";
 import { PricingService } from "../services/pricing.service";
 import { NotificationService } from "../services/notification.service";
+import { audit } from "../lib/audit";
 
 // GET /api/profissional/events — eventos atribuídos ao profissional logado
 export async function getMeusEventos(req: AuthRequest, res: Response): Promise<void> {
@@ -80,6 +81,13 @@ export async function updateEventLinks(req: AuthRequest, res: Response): Promise
       },
     });
 
+    // P0 — Entrega do produto final: audit obrigatório para rastreabilidade em disputas
+    await audit(req, "DELIVERY_LINKS_SAVED", "Event", String(id), null, {
+      savedBy: userId,
+      before: { lightroomUrl: event.lightroomUrl ?? null, driveUrl: event.driveUrl ?? null },
+      after:  { lightroomUrl: lightroomUrl ?? null, driveUrl: driveUrl ?? null },
+    });
+
     res.json(updated);
   } catch (err) {
     console.error("updateEventLinks:", err);
@@ -134,6 +142,12 @@ export async function uploadEventCover(req: AuthRequest, res: Response): Promise
       where: { id: String(id) },
       data: { coverPhotoUrl: publicUrl },
       select: { id: true, coverPhotoUrl: true },
+    });
+
+    // P1 — Upload de capa: rastrear mudanças de identidade visual do evento
+    await audit(req, "EVENT_COVER_UPLOADED", "Event", String(id), null, {
+      uploadedBy: userId,
+      coverPhotoUrl: publicUrl,
     });
 
     res.json(updated);
@@ -251,6 +265,13 @@ export async function updateProfile(req: AuthRequest, res: Response): Promise<vo
         ...(otherHabilities !== undefined && { otherHabilities }),
       }
     });
+    // P1 — Alteração de perfil profissional
+    await audit(req, "PROFISSIONAL_PROFILE_UPDATED", "Profissional", userId, null, {
+      services: services ?? undefined,
+      equipment: equipment ?? undefined,
+      otherHabilities: otherHabilities ?? undefined,
+    });
+
     res.json(updated);
   } catch (err) {
     console.error("updateProfile:", err);
@@ -334,6 +355,13 @@ export async function respondToEvent(req: AuthRequest, res: Response): Promise<v
       data: updateData
     });
 
+    // P1 — Resposta a convite: rastrear aceitações e rejeições de trabalho
+    await audit(req, "EVENT_INVITE_RESPONDED", "Event", String(id), null, {
+      respondedBy: userId,
+      decision: status,
+      role: event.captacaoId === userId ? "CAPTACAO" : "EDICAO",
+    });
+
     res.json(updated);
   } catch (err) {
     console.error("respondToEvent:", err);
@@ -403,6 +431,16 @@ export async function registerManualSale(req: AuthRequest, res: Response): Promi
         accessLink: `${process.env.FRONTEND_URL || "https://foto-segundo.vercel.app"}/e/${event.id}`
       }).catch((e: any) => console.error("Erro e-mail venda manual:", e));
     }
+
+    // P0 — Venda física (Cartão SD / Álbum): rastrear transação sem checkout digital
+    await audit(req, "MANUAL_SALE_REGISTERED", "Order", order.id, null, {
+      registeredBy: userId,
+      eventId: event.id,
+      customerEmail: customerEmail ?? null,
+      amount: Number(amount),
+      manualType: manualType || "SD_CARD",
+      splits: { matriz, captacao, edicao, cartorio },
+    });
 
     res.json(order);
   } catch (err) {
