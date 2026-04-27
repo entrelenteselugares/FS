@@ -4,6 +4,20 @@ Este documento registra as atualizações críticas realizadas para estabilizaç
 
 ---
 
+## 🔴 27/04/2026 (tarde) — Hotfix: Privacidade do Marketplace e Auditoria Geral
+
+### 🛡️ Segurança e Privacidade (CRÍTICO)
+- **Fix Vitrine Pública**: Adicionado filtro `type = 'ALBUM_FULL'` na query `listPublic` do `EventController`. Eventos do tipo `PHOTO_MARKETPLACE` (Venda Rápida) estavam aparecendo indevidamente na homepage mesmo sem pagamento confirmado.
+- **Fix DB — 8 eventos corrigidos**: Script `fix_marketplace_privacy.ts` executado em produção. Todos os eventos `PHOTO_MARKETPLACE` sem pedido pago foram revertidos para `active: false, isPrivate: true`.
+- **Regra de Nomenclatura**: Prefixo `VENDA:` removido dos nomes de álbuns gerados automaticamente pela Venda Rápida. Script `fix_venda_names.ts` corrigiu 7 registros existentes.
+
+### 📋 Documentação e Auditoria
+- **Auditoria completa**: Criado `AUDITORIA_SISTEMA_2026-04-27.md` com mapeamento completo de stack, rotas, modelos, fluxos, bugs e variáveis de ambiente.
+- **Mapa do sistema atualizado**: `mapa_sistema.md` reescrito com tabelas de controllers, serviços e regras de negócio.
+- **Changelog atualizado**: Este arquivo.
+
+---
+
 ## 🚀 27/04/2026 — Sprint: CRM de Campo e Autonomia do Cliente
 
 ### 📊 Marketplace & CRM (Venda Rápida)

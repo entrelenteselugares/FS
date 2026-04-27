@@ -172,7 +172,9 @@ export class EventController {
           "priceEarly",
           true as "temFoto" -- Ativando badges por padrão para estética
         FROM events
-        WHERE active = true AND "isPrivate" = false AND "isQuote" = false AND (
+        WHERE active = true AND "isPrivate" = false AND "isQuote" = false
+          AND type = 'ALBUM_FULL'
+          AND (
           REPLACE(LOWER("nomeNoivos"), '&', 'e') LIKE ${term} 
           OR REPLACE(LOWER(cartorio), '&', 'e') LIKE ${term}
         )
@@ -183,7 +185,9 @@ export class EventController {
       // 2. Busca o total para cálculo de páginas
       const countResult: Array<{ count: number }> = await prisma.$queryRaw`
         SELECT COUNT(*)::int as count FROM events
-        WHERE active = true AND "isPrivate" = false AND "isQuote" = false AND (
+        WHERE active = true AND "isPrivate" = false AND "isQuote" = false
+          AND type = 'ALBUM_FULL'
+          AND (
           REPLACE(LOWER("nomeNoivos"), '&', 'e') LIKE ${term} 
           OR REPLACE(LOWER(cartorio), '&', 'e') LIKE ${term}
         )
