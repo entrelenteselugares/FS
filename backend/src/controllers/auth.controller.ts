@@ -336,14 +336,13 @@ export class AuthController {
         return res.json({ ok: true, message: "Se este e-mail estiver cadastrado, você receberá instruções." });
       }
 
-      // 2. Tentar gerar link de recuperação via Supabase Admin
+      // 2. Tentar disparar recuperação via Supabase
       const redirectUrl = `${process.env.FRONTEND_URL || "https://foto-segundo.vercel.app"}/reset-password`;
-      console.log(`[AUTH FORGOT] Solicitando link Supabase... (Redirect: ${redirectUrl})`);
+      console.log(`[AUTH FORGOT] Solicitando reset de senha Supabase... (Redirect: ${redirectUrl})`);
       
-      let { data, error } = await supabaseAdmin.auth.admin.generateLink({
-        type: 'recovery',
-        email: cleanEmail,
-        options: { redirectTo: redirectUrl }
+      // NOTA: Usamos a API pública do cliente Supabase para que o e-mail seja disparado automaticamente pelo Supabase
+      const { error } = await supabase.auth.resetPasswordForEmail(cleanEmail, {
+        redirectTo: redirectUrl
       });
 
       // ── CASO ESPECIAL: Usuário existe no Prisma mas não no Supabase Auth ──
@@ -355,7 +354,7 @@ export class AuthController {
           
           try {
             const tempPassword = Math.random().toString(36).slice(-12) + "!";
-            const { data: newData, error: createError } = await supabaseAdmin.auth.admin.createUser({
+            const { error: createError } = await supabaseAdmin.auth.admin.createUser({
               email: cleanEmail,
               password: tempPassword,
               email_confirm: true,
@@ -367,17 +366,12 @@ export class AuthController {
               throw createError;
             }
 
-            if (newData.user) {
-              console.log(`[AUTH FORGOT] Registro Auth criado. Gerando link de recuperação...`);
-              const retry = await supabaseAdmin.auth.admin.generateLink({
-                type: 'recovery',
-                email: cleanEmail,
-                options: { redirectTo: redirectUrl }
-              });
-              
-              if (retry.error) throw retry.error;
-              data = retry.data;
-            }
+            console.log(`[AUTH FORGOT] Registro Auth criado. Solicitando reset novamente...`);
+            const retry = await supabase.auth.resetPasswordForEmail(cleanEmail, {
+              redirectTo: redirectUrl
+            });
+            
+            if (retry.error) throw retry.error;
           } catch (syncErr: any) {
             console.error(`[AUTH FORGOT] Falha crítica no fluxo de criação/sync:`, syncErr.message);
             throw syncErr;
@@ -387,30 +381,11 @@ export class AuthController {
         }
       }
 
-      if (!data?.properties?.action_link) {
-        console.error("[AUTH FORGOT] Supabase não retornou action_link.", data);
-        throw new Error("Falha ao gerar link de ação.");
-      }
-
-      const recoveryLink = data.properties.action_link;
-      console.log(`[AUTH FORGOT] Link gerado. Disparando NotificationService...`);
-
-      // 3. Enviar via nosso NotificationService (SMTP Próprio)
-      const emailResult = await NotificationService.sendPasswordRecoveryEmail({
-        to: cleanEmail,
-        name: user.nome || "Cliente",
-        recoveryLink
-      });
-
-      if (!emailResult) {
-        console.warn("[AUTH FORGOT] NotificationService não confirmou envio (verifique credenciais SMTP).");
-      }
-
       // Log de Auditoria
       await audit(req, "PASSWORD_FORGOT_REQUEST", "User", user.id, undefined, { email: cleanEmail });
 
-      console.log(`[AUTH FORGOT] <<< Processo concluído com sucesso para ${cleanEmail}`);
-      return res.json({ ok: true, message: "E-mail de recuperação enviado." });
+      console.log(`[AUTH FORGOT] <<< Processo concluído com sucesso via Supabase Email para ${cleanEmail}`);
+      return res.json({ ok: true, message: "E-mail de recuperação enviado pelo sistema de autenticação." });
 
     } catch (error: any) {
       console.error("[AUTH FORGOT FATAL ERROR]:", error);
