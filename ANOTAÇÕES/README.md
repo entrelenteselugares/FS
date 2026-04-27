@@ -7,7 +7,7 @@ Pasta de documentação técnica e planejamento do projeto.
 ## 📄 Documentos Técnicos (ler primeiro)
 
 | Arquivo | Descrição |
-|---|---|
+| --- | --- |
 | `AUDITORIA_SISTEMA_2026-04-27.md` | ⭐ **Auditoria completa** — stack, rotas, banco, fluxos, bugs, ENV |
 | `master_developer_guide.md` | Guia de padrões de código, segurança e deploy |
 | `mapa_sistema.md` | Mapa de todas as páginas, controllers e regras de negócio |
@@ -17,7 +17,7 @@ Pasta de documentação técnica e planejamento do projeto.
 ## 📋 Planejamento e Produto
 
 | Arquivo | Descrição |
-|---|---|
+| --- | --- |
 | `PLANEJAMENTO_MARKETPLACE_FOTOGRAFO.md` | Roadmap do módulo de Marketplace |
 | `plano_auditoria_tecnica.md` | Checklist de auditoria técnica |
 | `relatorio_auditoria_tecnica.md` | Relatório de auditoria anterior |
@@ -28,14 +28,14 @@ Pasta de documentação técnica e planejamento do projeto.
 ## 📦 Catálogos de Fornecedores
 
 | Arquivo | Descrição |
-|---|---|
+| --- | --- |
 | `catalogo_ck.md` | Catálogo de impressão CK (produtos e preços) |
 | `catalogo_merlin.md` | Catálogo de locação Merlin |
 
 ## 🗃️ Arquivos de Referência
 
 | Arquivo | Descrição |
-|---|---|
+| --- | --- |
 | `LOG_ATUALIZACOES_PRODUCAO.md` | Log de atualizações em produção |
 | `Logotipo Minimalista Fotosegundo*.png` | Logos oficiais da marca |
 

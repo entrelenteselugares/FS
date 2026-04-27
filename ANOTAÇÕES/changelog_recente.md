@@ -7,11 +7,13 @@ Este documento registra as atualizações críticas realizadas para estabilizaç
 ## 🔴 27/04/2026 (tarde) — Hotfix: Privacidade do Marketplace e Auditoria Geral
 
 ### 🛡️ Segurança e Privacidade (CRÍTICO)
+
 - **Fix Vitrine Pública**: Adicionado filtro `type = 'ALBUM_FULL'` na query `listPublic` do `EventController`. Eventos do tipo `PHOTO_MARKETPLACE` (Venda Rápida) estavam aparecendo indevidamente na homepage mesmo sem pagamento confirmado.
 - **Fix DB — 8 eventos corrigidos**: Script `fix_marketplace_privacy.ts` executado em produção. Todos os eventos `PHOTO_MARKETPLACE` sem pedido pago foram revertidos para `active: false, isPrivate: true`.
 - **Regra de Nomenclatura**: Prefixo `VENDA:` removido dos nomes de álbuns gerados automaticamente pela Venda Rápida. Script `fix_venda_names.ts` corrigiu 7 registros existentes.
 
 ### 📋 Documentação e Auditoria
+
 - **Auditoria completa**: Criado `AUDITORIA_SISTEMA_2026-04-27.md` com mapeamento completo de stack, rotas, modelos, fluxos, bugs e variáveis de ambiente.
 - **Mapa do sistema atualizado**: `mapa_sistema.md` reescrito com tabelas de controllers, serviços e regras de negócio.
 - **Changelog atualizado**: Este arquivo.
@@ -21,16 +23,19 @@ Este documento registra as atualizações críticas realizadas para estabilizaç
 ## 🚀 27/04/2026 — Sprint: CRM de Campo e Autonomia do Cliente
 
 ### 📊 Marketplace & CRM (Venda Rápida)
+
 - **Lead Enrichment**: Expansão do módulo de Venda Rápida para capturar WhatsApp e Notas Internas. Agora o fotógrafo pode registrar intenções de compra e observações do cliente no momento do clique.
 - **Armazenamento de Notas**: Implementada lógica de concatenação no campo `contributorName` do pedido para preservar notas de CRM sem alterar o schema legadamente.
 - **Privacidade Forçada**: Implementada regra de negócio onde toda venda direta (Venda Rápida) inicia como `isPrivate: true`, exigindo ação explícita do cliente para tornar pública.
 
 ### 👤 Experiência do Cliente (Minha Conta)
+
 - **Perfil Editável**: Implementada a aba **"Meus Dados"** dentro da Área do Cliente. Clientes agora podem atualizar Nome e WhatsApp de forma autônoma.
 - **Refatoração de UI**: Otimização do painel de arquivos com novo tab switcher ("Meus Arquivos" vs "Meus Dados") e melhoria na estabilidade de renderização do JSX.
 - **Backend Auth**: Criado o endpoint `PATCH /api/auth/me` para atualização segura de dados cadastrais.
 
 ### 🔧 Estabilização e Builds
+
 - **Fix Build Vercel**: Resolvidos erros de tipagem TS2345 no Dashboard do Profissional decorrentes da expansão dos formulários de venda.
 - **Otimização de Parsing**: Refatoração completa das lógicas de renderização condicional na Área do Cliente para evitar erros de paridade de parênteses.
 
