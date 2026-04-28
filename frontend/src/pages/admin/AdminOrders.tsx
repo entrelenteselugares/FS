@@ -1,7 +1,11 @@
-import React, { useState, useEffect, useMemo } from "react";
+import React, { useState, useEffect, useMemo, useCallback } from "react";
 import { API } from "../../lib/api";
-import { T } from "../../lib/theme";
-import { ChevronDown, ChevronRight, PieChart, CheckCircle2, Clock } from "lucide-react";
+import { 
+  Search, ChevronDown, ChevronRight, 
+  CheckCircle2, Clock, PieChart, 
+  TrendingUp, CreditCard, DollarSign,
+  ArrowUpRight, Filter, Zap, X
+} from "lucide-react";
 
 interface Order {
   id: string;
@@ -30,30 +34,28 @@ interface OrderGroup {
 export const AdminOrders: React.FC = () => {
   const [orders, setOrders] = useState<Order[]>([]);
   const [loading, setLoading] = useState(true);
-  const [page, setPage] = useState(1);
-  const [totalPages, setTotalPages] = useState(1);
   const [search, setSearch] = useState("");
   const [expandedId, setExpandedId] = useState<string | null>(null);
+  const [statusFilter, setStatusFilter] = useState<string>("ALL");
+
+  const fetchOrders = useCallback(async () => {
+    setLoading(true);
+    try {
+      const { data } = await API.get("/admin/orders", {
+        params: { q: search, limit: 200 } 
+      });
+      setOrders(data.orders || []);
+    } catch (err) {
+      console.error("Erro ao carregar pedidos:", err);
+    } finally {
+      setLoading(false);
+    }
+  }, [search]);
 
   useEffect(() => {
-    const fetchOrders = async () => {
-      setLoading(true);
-      try {
-        const { data } = await API.get("/admin/orders", {
-          params: { page, q: search, limit: 100 } // Aumentamos o limite para garantir agrupamento coerente
-        });
-        setOrders(data.orders);
-        setTotalPages(data.pages);
-      } catch (err) {
-        console.error("Erro ao carregar pedidos:", err);
-      } finally {
-        setLoading(false);
-      }
-    };
     fetchOrders();
-  }, [page, search]);
+  }, [fetchOrders]);
 
-  // Agrupamento por Evento
   const groupedOrders = useMemo(() => {
     const groups: Record<string, OrderGroup> = {};
 
@@ -64,7 +66,7 @@ export const AdminOrders: React.FC = () => {
           eventId: eid,
           eventTitle: o.event.title,
           eventSlug: o.event.slug,
-          clientName: o.user?.nome || "Convidado",
+          clientName: o.user?.nome || "CONVIDADO",
           clientEmail: o.buyerEmail || o.user?.email || "—",
           totalAmount: 0,
           orders: [],
@@ -79,197 +81,196 @@ export const AdminOrders: React.FC = () => {
       }
     });
 
-    // Definir Status Unificado
     Object.values(groups).forEach(g => {
       const allPaid = g.orders.every(o => o.status === "APROVADO");
       const somePaid = g.orders.some(o => o.status === "APROVADO");
-      
       if (allPaid) g.status = "QUITADO";
       else if (somePaid) g.status = "PARCIAL";
       else g.status = "PENDENTE";
     });
 
-    return Object.values(groups).sort((a, b) => new Date(b.latestDate).getTime() - new Date(a.latestDate).getTime());
-  }, [orders]);
+    let result = Object.values(groups);
+    if (statusFilter !== "ALL") {
+      result = result.filter(g => g.status === statusFilter);
+    }
+
+    return result.sort((a, b) => new Date(b.latestDate).getTime() - new Date(a.latestDate).getTime());
+  }, [orders, statusFilter]);
+
+  const stats = useMemo(() => {
+    const totalVolume = orders.filter(o => o.status === "APROVADO").reduce((acc, o) => acc + Number(o.amount), 0);
+    const pendingCount = groupedOrders.filter(g => g.status === "PENDENTE").length;
+    const ticketMedio = groupedOrders.length > 0 ? totalVolume / groupedOrders.length : 0;
+    return { totalVolume, pendingCount, ticketMedio };
+  }, [orders, groupedOrders]);
 
   const formatCurrency = (val: number) => new Intl.NumberFormat("pt-BR", { style: "currency", currency: "BRL" }).format(val);
 
   return (
-    <div className="space-y-8 animate-in fade-in slide-in-from-bottom-4 duration-700">
-      <style>{`
-        .orders-header { display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid ${T.border}; padding-bottom: 24px; }
-        .orders-table-wrapper { border: 1px solid ${T.border}; background: ${T.bgField}; overflow: hidden; }
-        .orders-table { width: 100%; border-collapse: collapse; }
-        
-        .row-group { cursor: pointer; border-bottom: 1px solid ${T.border}44; transition: all 0.2s; }
-        .row-group:hover { background: ${T.brand}05; }
-        .row-expanded { background: ${T.bg}aa; }
-
-        .status-badge { 
-          display: inline-flex; align-items: center; gap: 6px; padding: 4px 10px; 
-          font-size: 8px; fontWeight: 900; text-transform: uppercase; letter-spacing: 1; border-radius: 2px;
-        }
-
-        @media (max-width: 768px) {
-          .orders-header { flex-direction: column; align-items: stretch; gap: 20px; }
-          .search-container { width: 100% !important; }
-        }
-      `}</style>
-
-      <div className="orders-header">
+    <div className="space-y-10 animate-in fade-in slide-in-from-bottom-4 duration-700">
+      {/* HEADER TÁTICO */}
+      <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-6 border-b border-theme-border pb-10">
         <div>
-          <h2 style={{ fontSize: 24, fontFamily: T.fontD, fontWeight: 900, color: T.text, textTransform: "uppercase", letterSpacing: -1 }}>Auditoria de Projetos</h2>
-          <p style={{ fontSize: 9, fontWeight: 900, color: T.text3, textTransform: "uppercase", letterSpacing: 2, marginTop: 4 }}>Visão consolidada de transações por evento</p>
+          <h2 className="text-3xl md:text-4xl font-heading text-theme-text tracking-tighter uppercase font-black leading-none pt-2">Auditoria de Projetos</h2>
+          <p className="text-[10px] text-theme-muted uppercase tracking-[0.5em] mt-3 font-black italic">Monitoramento de Fluxo e Transações</p>
         </div>
         
-        <div className="search-container" style={{ position: "relative", width: 320 }}>
-          <input
-            type="text"
-            placeholder="PROCURAR POR E-MAIL OU EVENTO..."
-            value={search}
-            onChange={(e) => { setSearch(e.target.value); setPage(1); }}
-            style={{ 
-              width: "100%", background: "transparent", border: "none", borderBottom: `1px solid ${T.border}`,
-              padding: "12px 0", fontSize: 9, color: T.text, textTransform: "uppercase", letterSpacing: 2, outline: "none"
-            }}
-          />
+        <div className="flex flex-col md:flex-row items-center gap-4 w-full lg:w-auto">
+          <div className="relative flex-1 lg:w-80 group">
+            <Search className="absolute left-4 top-1/2 -translate-y-1/2 text-theme-muted group-focus-within:text-brand-tactical transition-colors" size={14} />
+            <input
+              type="text"
+              placeholder="BUSCAR EVENTO OU E-MAIL..."
+              value={search}
+              onChange={(e) => setSearch(e.target.value)}
+              className="w-full bg-theme-bg-muted border border-theme-border p-3.5 pl-10 text-[10px] text-theme-text uppercase tracking-widest outline-none focus:border-brand-tactical transition-all font-black"
+            />
+          </div>
         </div>
       </div>
 
-      <div className="orders-table-wrapper">
-        <div style={{ overflowX: "auto" }}>
-          <table className="orders-table">
-            <thead>
-              <tr style={{ borderBottom: `1px solid ${T.border}`, background: `${T.bg}55` }}>
-                <th style={{ width: 40 }}></th>
-                <th style={{ textAlign: "left", padding: "12px 20px", fontSize: 9, fontWeight: 900, textTransform: "uppercase", letterSpacing: 2, color: T.text3 }}>Projeto / Comprador</th>
-                <th style={{ textAlign: "center", padding: "12px 20px", fontSize: 9, fontWeight: 900, textTransform: "uppercase", letterSpacing: 2, color: T.text3 }}>Parcelas</th>
-                <th style={{ textAlign: "right", padding: "12px 20px", fontSize: 9, fontWeight: 900, textTransform: "uppercase", letterSpacing: 2, color: T.text3 }}>Total Bruto</th>
-                <th style={{ textAlign: "center", padding: "12px 20px", fontSize: 9, fontWeight: 900, textTransform: "uppercase", letterSpacing: 2, color: T.text3 }}>Status</th>
-              </tr>
-            </thead>
-            <tbody>
-              {loading ? (
-                <tr>
-                  <td colSpan={5} className="py-20 text-center">
-                    <div className="text-[10px] text-theme-muted animate-pulse tracking-[0.5em] uppercase">Sincronizando Ledger...</div>
-                  </td>
-                </tr>
-              ) : groupedOrders.length > 0 ? (
-                groupedOrders.map((group) => (
-                  <React.Fragment key={group.eventId}>
-                    <tr 
-                      className={`row-group ${expandedId === group.eventId ? "row-expanded" : ""}`}
-                      onClick={() => setExpandedId(expandedId === group.eventId ? null : group.eventId)}
-                    >
-                      <td style={{ padding: "15px 0 15px 20px" }}>
-                        {expandedId === group.eventId ? <ChevronDown size={14} className="text-brand-primary" /> : <ChevronRight size={14} className="opacity-20" />}
-                      </td>
-                      <td style={{ padding: "15px 20px" }}>
-                        <div style={{ fontSize: 11, color: T.text, fontWeight: 800, textTransform: "uppercase", letterSpacing: 0.5 }}>{group.eventTitle}</div>
-                        <div style={{ fontSize: 9, color: T.text3, marginTop: 2 }}>{group.clientName} · {group.clientEmail}</div>
-                      </td>
-                      <td style={{ padding: "15px 20px", textAlign: "center" }}>
-                        <div style={{ fontSize: 10, color: T.text, fontWeight: 900, opacity: 0.6 }}>
-                          {group.orders.length}
-                        </div>
-                      </td>
-                      <td style={{ padding: "15px 20px", textAlign: "right" }}>
-                        <div style={{ fontSize: 13, color: T.text, fontWeight: 900 }}>{formatCurrency(group.totalAmount)}</div>
-                      </td>
-                      <td style={{ padding: "15px 20px", textAlign: "center" }}>
+      {/* DASHBOARD DE PERFORMANCE */}
+      <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+        <div className="bg-theme-bg-muted border border-theme-border p-6 space-y-4 relative overflow-hidden group hover:border-brand-tactical/50 transition-all">
+           <div className="flex justify-between items-start">
+              <span className="text-[9px] font-black text-theme-muted uppercase tracking-[0.3em]">Volume Bruto (Liquidado)</span>
+              <DollarSign className="text-brand-tactical opacity-30" size={16} />
+           </div>
+           <div className="text-3xl font-heading font-black text-theme-text tracking-tighter italic">{formatCurrency(stats.totalVolume)}</div>
+           <div className="absolute -bottom-2 -right-2 opacity-[0.03] group-hover:opacity-[0.05] transition-opacity">
+              <TrendingUp size={100} />
+           </div>
+        </div>
+        
+        <div className="bg-theme-bg-muted border border-theme-border p-6 space-y-4 relative overflow-hidden group hover:border-brand-tactical/50 transition-all">
+           <div className="flex justify-between items-start">
+              <span className="text-[9px] font-black text-theme-muted uppercase tracking-[0.3em]">Ticket Médio / Projeto</span>
+              <Zap className="text-amber-500 opacity-30" size={16} />
+           </div>
+           <div className="text-3xl font-heading font-black text-theme-text tracking-tighter italic">{formatCurrency(stats.ticketMedio)}</div>
+        </div>
+
+        <div className="bg-theme-bg-muted border border-theme-border p-6 space-y-4 relative overflow-hidden group hover:border-brand-tactical/50 transition-all">
+           <div className="flex justify-between items-start">
+              <span className="text-[9px] font-black text-theme-muted uppercase tracking-[0.3em]">Projetos Pendentes</span>
+              <Clock className="text-zinc-500 opacity-30" size={16} />
+           </div>
+           <div className="text-3xl font-heading font-black text-theme-text tracking-tighter italic">{stats.pendingCount}</div>
+        </div>
+      </div>
+
+      {/* FILTROS DE STATUS */}
+      <div className="flex items-center gap-3 border-b border-theme-border/30 pb-6 overflow-x-auto no-scrollbar">
+         <Filter size={14} className="text-theme-muted mr-2" />
+         {(['ALL', 'QUITADO', 'PARCIAL', 'PENDENTE'] as const).map(f => (
+           <button
+             key={f}
+             onClick={() => setStatusFilter(f)}
+             className={`px-6 py-2.5 text-[9px] font-black uppercase tracking-widest border transition-all ${statusFilter === f ? 'border-brand-tactical bg-brand-tactical text-zinc-950' : 'border-theme-border text-theme-muted hover:border-zinc-500'}`}
+           >
+             {f === 'ALL' ? 'TODOS' : f}
+           </button>
+         ))}
+      </div>
+
+      {/* LISTA DE PROJETOS AUDITADOS */}
+      <div className="space-y-4">
+        {loading ? (
+          <div className="py-24 text-center border border-theme-border bg-theme-bg-muted/10">
+            <div className="text-[10px] text-theme-muted animate-pulse uppercase tracking-[0.5em] font-black italic">Auditando Ledger Financeiro...</div>
+          </div>
+        ) : groupedOrders.length > 0 ? (
+          groupedOrders.map((group) => (
+            <div key={group.eventId} className="animate-in fade-in duration-500">
+               <div 
+                 onClick={() => setExpandedId(expandedId === group.eventId ? null : group.eventId)}
+                 className={`flex flex-col md:flex-row md:items-center justify-between gap-6 p-6 border transition-all cursor-pointer relative overflow-hidden ${expandedId === group.eventId ? 'border-brand-tactical bg-brand-tactical/5 shadow-inner' : 'border-theme-border bg-theme-bg-muted hover:border-zinc-500'}`}
+               >
+                  <div className="flex items-center gap-6">
+                     <div className={`p-3 border ${expandedId === group.eventId ? 'border-brand-tactical text-brand-tactical' : 'border-theme-border text-theme-muted'}`}>
+                        {expandedId === group.eventId ? <ChevronDown size={16} /> : <ChevronRight size={16} />}
+                     </div>
+                     <div className="space-y-1">
+                        <h4 className="text-lg font-heading font-black text-theme-text uppercase tracking-tighter leading-none">{group.eventTitle}</h4>
+                        <p className="text-[10px] text-theme-muted font-bold uppercase tracking-wider opacity-60 truncate max-w-[300px]">{group.clientName} · {group.clientEmail}</p>
+                     </div>
+                  </div>
+
+                  <div className="flex items-center gap-12 ml-auto md:ml-0">
+                     <div className="text-right hidden sm:block">
+                        <span className="text-[8px] font-black text-theme-muted uppercase tracking-widest block opacity-50 mb-1">Total Bruto</span>
+                        <div className="text-lg font-heading font-black text-theme-text italic">{formatCurrency(group.totalAmount)}</div>
+                     </div>
+                     
+                     <div className="text-center min-w-[120px]">
                         {group.status === "QUITADO" && (
-                          <span className="status-badge" style={{ border: `1px solid ${T.brand}`, color: T.brand, background: `${T.brand}11` }}>
-                            <CheckCircle2 size={10} /> {group.status}
-                          </span>
+                          <div className="flex items-center justify-center gap-2 px-4 py-2 border border-brand-tactical text-brand-tactical bg-brand-tactical/10 text-[9px] font-black uppercase tracking-widest">
+                             <CheckCircle2 size={12} /> {group.status}
+                          </div>
                         )}
                         {group.status === "PARCIAL" && (
-                          <span className="status-badge" style={{ border: "1px solid #f59e0b", color: "#f59e0b", background: "#f59e0b11" }}>
-                            <PieChart size={10} /> {group.status}
-                          </span>
+                          <div className="flex items-center justify-center gap-2 px-4 py-2 border border-amber-500 text-amber-500 bg-amber-500/10 text-[9px] font-black uppercase tracking-widest">
+                             <PieChart size={12} /> {group.status}
+                          </div>
                         )}
                         {group.status === "PENDENTE" && (
-                          <span className="status-badge" style={{ border: `1px solid ${T.text3}`, color: T.text3 }}>
-                            <Clock size={10} /> {group.status}
-                          </span>
-                        )}
-                      </td>
-                    </tr>
-
-                    {/* Detalhamento das Parcelas */}
-                    {expandedId === group.eventId && (
-                      <tr>
-                        <td colSpan={5} style={{ padding: "0 20px 20px 60px", background: `${T.bg}aa` }}>
-                          <div className="animate-in fade-in slide-in-from-top-2 duration-300">
-                            <table style={{ width: "100%", borderCollapse: "collapse", background: "rgba(0,0,0,0.2)", border: `1px solid ${T.border}22` }}>
-                              <thead>
-                                <tr style={{ borderBottom: `1px solid ${T.border}44` }}>
-                                  <th style={{ textAlign: "left", padding: "10px", fontSize: 8, color: T.text3, textTransform: "uppercase" }}>ID Pedido</th>
-                                  <th style={{ textAlign: "left", padding: "10px", fontSize: 8, color: T.text3, textTransform: "uppercase" }}>Tipo / Data</th>
-                                  <th style={{ textAlign: "right", padding: "10px", fontSize: 8, color: T.text3, textTransform: "uppercase" }}>Valor</th>
-                                  <th style={{ textAlign: "center", padding: "10px", fontSize: 8, color: T.text3, textTransform: "uppercase" }}>Status MP</th>
-                                </tr>
-                              </thead>
-                              <tbody>
-                                {group.orders.sort((a,b) => new Date(a.createdAt).getTime() - new Date(b.createdAt).getTime()).map(o => (
-                                  <tr key={o.id} style={{ borderBottom: `1px solid ${T.border}22` }}>
-                                    <td style={{ padding: "12px 10px", fontSize: 9, color: T.text3, fontFamily: "monospace" }}>#{o.id.toUpperCase()}</td>
-                                    <td style={{ padding: "12px 10px" }}>
-                                      <div style={{ fontSize: 9, color: T.text, fontWeight: 700 }}>{o.manualType || "Parcela"}</div>
-                                      <div style={{ fontSize: 8, color: T.text3 }}>{new Date(o.createdAt).toLocaleString("pt-BR")}</div>
-                                    </td>
-                                    <td style={{ padding: "12px 10px", textAlign: "right", fontSize: 10, fontWeight: 900 }}>{formatCurrency(o.amount)}</td>
-                                    <td style={{ padding: "12px 10px", textAlign: "center" }}>
-                                      <div style={{ 
-                                        fontSize: 7, fontWeight: 900, 
-                                        color: (o.status === "APROVADO") ? T.brand : "#f87171" 
-                                      }}>
-                                        {o.status}
-                                      </div>
-                                    </td>
-                                  </tr>
-                                ))}
-                              </tbody>
-                            </table>
+                          <div className="flex items-center justify-center gap-2 px-4 py-2 border border-theme-border text-theme-muted bg-theme-bg/30 text-[9px] font-black uppercase tracking-widest">
+                             <Clock size={12} /> {group.status}
                           </div>
-                        </td>
-                      </tr>
-                    )}
-                  </React.Fragment>
-                ))
-              ) : (
-                <tr>
-                  <td colSpan={5} className="py-32 text-center text-zinc-800 text-[10px] font-bold uppercase tracking-[0.5em] italic">
-                    Nenhum registro encontrado no arquivo
-                  </td>
-                </tr>
-              )}
-            </tbody>
-          </table>
-        </div>
-      </div>
+                        )}
+                     </div>
+                  </div>
+               </div>
 
-      {totalPages > 1 && (
-        <div className="flex justify-center gap-10 pt-10 border-t border-white/5">
-          <button
-            disabled={page === 1}
-            onClick={() => setPage(p => p - 1)}
-            className="text-[10px] font-bold uppercase tracking-[0.4em] text-zinc-600 hover:text-white disabled:opacity-20 transition-all italic underline underline-offset-8"
-          >
-            PÁGINA ANTERIOR
-          </button>
-          <span className="text-[10px] font-bold text-zinc-400 tracking-[0.5em] uppercase">
-            {page} / {totalPages}
-          </span>
-          <button
-            disabled={page === totalPages}
-            onClick={() => setPage(p => p + 1)}
-            className="text-[10px] font-bold uppercase tracking-[0.4em] text-zinc-600 hover:text-white disabled:opacity-20 transition-all italic underline underline-offset-8"
-          >
-            PRÓXIMA PÁGINA
-          </button>
-        </div>
-      )}
+               {/* LEDGER DE PARCELAS */}
+               {expandedId === group.eventId && (
+                 <div className="bg-theme-bg-muted/30 border-x border-b border-theme-border/40 p-6 md:p-10 animate-in slide-in-from-top-4 duration-500 overflow-x-auto no-scrollbar">
+                    <table className="w-full text-left border-collapse min-w-[600px]">
+                       <thead>
+                          <tr className="border-b border-theme-border/20">
+                             <th className="py-4 text-[9px] font-black text-theme-muted uppercase tracking-[0.3em] opacity-70">ID Ledger</th>
+                             <th className="py-4 text-[9px] font-black text-theme-muted uppercase tracking-[0.3em] opacity-70">Método / Data</th>
+                             <th className="py-4 text-right text-[9px] font-black text-theme-muted uppercase tracking-[0.3em] opacity-70">Montante</th>
+                             <th className="py-4 text-center text-[9px] font-black text-theme-muted uppercase tracking-[0.3em] opacity-70">Status MP</th>
+                          </tr>
+                       </thead>
+                       <tbody className="divide-y divide-theme-border/20">
+                          {group.orders.sort((a,b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime()).map(o => (
+                            <tr key={o.id} className="group hover:bg-white/5 transition-all">
+                               <td className="py-5 font-mono text-[10px] text-theme-muted group-hover:text-theme-text transition-colors">#{o.id.toUpperCase()}</td>
+                               <td className="py-5">
+                                  <div className="flex items-center gap-3">
+                                     <CreditCard size={14} className="text-brand-tactical opacity-50" />
+                                     <div>
+                                        <div className="text-[11px] font-black text-theme-text uppercase tracking-widest">{o.manualType || "PARCELA DIGITAL"}</div>
+                                        <div className="text-[9px] text-theme-muted font-bold opacity-60 uppercase">{new Date(o.createdAt).toLocaleString("pt-BR")}</div>
+                                     </div>
+                                  </div>
+                               </td>
+                               <td className="py-5 text-right font-heading font-black text-theme-text italic text-lg">{formatCurrency(o.amount)}</td>
+                               <td className="py-5 text-center">
+                                  <span className={`text-[8px] font-black uppercase tracking-[0.2em] px-3 py-1.5 border ${o.status === 'APROVADO' ? 'border-brand-tactical text-brand-tactical' : 'border-red-900 text-red-500'}`}>
+                                     {o.status}
+                                  </span>
+                               </td>
+                            </tr>
+                          ))}
+                       </tbody>
+                    </table>
+                 </div>
+               )}
+            </div>
+          ))
+        ) : (
+          <div className="py-32 text-center border border-dashed border-theme-border bg-theme-bg-muted/10 space-y-6">
+             <div className="relative inline-block">
+                <div className="absolute inset-0 bg-theme-border/20 rounded-full animate-ping" />
+                <ArrowUpRight size={48} className="text-theme-muted relative z-10" />
+             </div>
+             <p className="text-[12px] text-theme-muted uppercase tracking-[0.6em] font-black italic">Nenhum registro de auditoria encontrado.</p>
+          </div>
+        )}
+      </div>
     </div>
   );
 };

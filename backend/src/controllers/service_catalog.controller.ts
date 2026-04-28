@@ -54,7 +54,7 @@ export async function adminUpdateService(req: AuthRequest, res: Response): Promi
     const { id } = req.params;
     const { name, description, basePrice, estimatedMinutes, active } = req.body;
     const service = await prisma.serviceCatalog.update({
-      where: { id },
+      where: { id: String(id) },
       data: {
         ...(name && { name }),
         ...(description !== undefined && { description }),

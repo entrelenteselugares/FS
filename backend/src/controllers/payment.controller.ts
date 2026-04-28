@@ -533,6 +533,7 @@ export class PaymentController {
         where: { id: order.id },
         data: { 
           status: finalStatus,
+          hasPaid: isApproved,
           paymentId: String(mpResponse.id)
         }
       });

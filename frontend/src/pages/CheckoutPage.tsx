@@ -71,7 +71,7 @@ export const CheckoutPage = () => {
   const navigate = useNavigate();
   const [searchParams] = useSearchParams();
   const orderIdFromQuery = searchParams.get("orderId");
-  const effectiveOrderId = orderId || orderIdFromQuery;
+  const effectiveOrderId = (orderId === "payment" ? null : orderId) || orderIdFromQuery;
 
   const [order, setOrder] = useState<OrderDetail | null>(null);
   const [loading, setLoading] = useState(true);

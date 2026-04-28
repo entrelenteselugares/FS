@@ -1,20 +1,27 @@
-import React, { useState, useEffect, useCallback } from "react";
+import React, { useState, useEffect, useCallback, useMemo } from "react";
 import { API } from "../../lib/api";
-import { T } from "../../lib/theme";
-import { DollarSign } from "lucide-react";
+import { 
+  ShieldCheck, 
+  Zap, 
+  Trash2, 
+  ArrowDownCircle, ArrowUpCircle, BarChart3,
+  DollarSign
+} from "lucide-react";
+
+// Types for New Operational Management
+interface Expense {
+  id: string;
+  description: string;
+  amount: number;
+  category: "OPERACIONAL" | "MARKETING" | "LOGISTICA" | "INSUMO" | "FIXO";
+  date: string;
+}
 
 const fmtDate = (iso: string | null | undefined) => {
   if (!iso) return "—";
   const d = new Date(iso);
   if (isNaN(d.getTime())) return "—";
   return new Intl.DateTimeFormat("pt-BR", { day: "2-digit", month: "short", year: "numeric" }).format(d).toUpperCase();
-};
-
-const fmtDateTime = (iso: string | null | undefined) => {
-  if (!iso) return "—";
-  const d = new Date(iso);
-  if (isNaN(d.getTime())) return "—";
-  return new Intl.DateTimeFormat("pt-BR", { day: "2-digit", month: "2-digit", year: "numeric", hour: "2-digit", minute: "2-digit" }).format(d);
 };
 
 interface PayoutOrder {
@@ -39,20 +46,25 @@ interface PayoutOrder {
 
 export const AdminFinance: React.FC = () => {
   const [orders, setOrders] = useState<PayoutOrder[]>([]);
+  const [expenses, setExpenses] = useState<Expense[]>([]); 
   const [loading, setLoading] = useState(true);
-  const [view, setView] = useState<"pending" | "history">("pending");
+  const [view, setView] = useState<"payouts" | "expenses" | "dre">("payouts");
+  const [payoutTab, setPayoutTab] = useState<"pending" | "history">("pending");
   const [confirmModal, setConfirmModal] = useState<string | null>(null);
   const [notification, setNotification] = useState<{message: string, type: 'success' | 'error'} | null>(null);
 
-  const showNotification = (message: string, type: 'success' | 'error' = 'success') => {
-    setNotification({ message, type });
-    setTimeout(() => setNotification(null), 5000);
-  };
+  // New Expense Form State
+  const [newExpense, setNewExpense] = useState<Omit<Expense, 'id'>>({
+    description: "",
+    amount: 0,
+    category: "OPERACIONAL",
+    date: new Date().toISOString().split('T')[0]
+  });
 
   const fetchPayouts = useCallback(async () => {
     setLoading(true);
     try {
-      const url = view === "pending"
+      const url = payoutTab === "pending"
         ? "/admin/orders?readyForPayout=true"
         : "/admin/orders?payoutDone=true&status=APROVADO";
       const { data } = await API.get(url);
@@ -62,207 +74,296 @@ export const AdminFinance: React.FC = () => {
     } finally {
       setLoading(false);
     }
-  }, [view]);
+  }, [payoutTab]);
 
   useEffect(() => {
     fetchPayouts();
   }, [fetchPayouts]);
+
+  // Financial Stats Calculation
+  const financialData = useMemo(() => {
+    const grossRevenue = orders.filter(o => o.payoutDone || payoutTab === 'pending').reduce((acc, o) => acc + (o.splitMatriz || o.amount * 0.4), 0);
+    const totalExpenses = expenses.reduce((acc, e) => acc + e.amount, 0);
+    const netProfit = grossRevenue - totalExpenses;
+    const margin = grossRevenue > 0 ? (netProfit / grossRevenue) * 100 : 0;
+    
+    return { grossRevenue, totalExpenses, netProfit, margin };
+  }, [orders, expenses, payoutTab]);
 
   const handleMarkAsPaid = async (orderId: string) => {
     try {
       await API.patch(`/admin/orders/${orderId}/payout`);
       setOrders(prev => prev.filter(o => o.id !== orderId));
       setConfirmModal(null);
-      showNotification("Repasse liquidado com sucesso!");
+      setNotification({ message: "Repasse liquidado com sucesso! 💸", type: 'success' });
+      setTimeout(() => setNotification(null), 5000);
     } catch {
-      showNotification("Erro ao marcar como pago", 'error');
+      setNotification({ message: "Erro ao marcar como pago.", type: 'error' });
     }
   };
 
-  const calculateAmount = (total: number, pct: number = 0) => {
-    const amount = total * ((pct || 0) / 100);
-    return amount.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' });
+  const handleAddExpense = (e: React.FormEvent) => {
+    e.preventDefault();
+    const expense: Expense = { ...newExpense, id: Math.random().toString(36).substr(2, 9) };
+    setExpenses([expense, ...expenses]);
+    setNewExpense({ description: "", amount: 0, category: "OPERACIONAL", date: new Date().toISOString().split('T')[0] });
+    setNotification({ message: "Custo operacional lançado! 📊", type: 'success' });
+    setTimeout(() => setNotification(null), 5000);
   };
 
+  const deleteExpense = (id: string) => {
+    setExpenses(expenses.filter(e => e.id !== id));
+  };
+
+  const formatCurrency = (val: number = 0) => new Intl.NumberFormat("pt-BR", { style: "currency", currency: "BRL" }).format(val);
+
   return (
-    <div className="space-y-12 animate-in fade-in slide-in-from-bottom-4 duration-700">
-      <div className="flex flex-col md:flex-row md:items-center justify-between gap-6 border-b border-theme-border pb-8">
+    <div className="space-y-10 animate-in fade-in slide-in-from-bottom-4 duration-700">
+      {/* MASTER HEADER */}
+      <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-6 border-b border-theme-border pb-10">
         <div>
-          <h2 style={{ fontSize: "clamp(24px, 5vw, 32px)", fontFamily: T.fontD, fontWeight: 900, color: T.text, textTransform: "uppercase", letterSpacing: -1, lineHeight: 1 }}>Central de Repasses</h2>
-          <p style={{ fontSize: 9, fontWeight: 900, color: T.text3, textTransform: "uppercase", letterSpacing: 2, marginTop: 8, fontStyle: "italic" }}>Modelo Uber — Pagamentos após 7 dias</p>
+          <h2 className="text-3xl md:text-4xl font-heading text-theme-text tracking-tighter uppercase font-black leading-none pt-2">Gestão Financeira 360</h2>
+          <p className="text-[10px] text-theme-muted uppercase tracking-[0.5em] mt-3 font-black italic">Engenharia de Custos, Repasses e DRE Operacional</p>
         </div>
-        <div style={{ display: "flex", background: `${T.bgField}88`, padding: 4, border: `1px solid ${T.border}`, alignSelf: "flex-start" }}>
-          <button 
-            onClick={() => setView("pending")}
-            style={{ 
-              padding: "8px 16px", fontSize: 9, fontWeight: 900, textTransform: "uppercase", 
-              letterSpacing: "0.1em", cursor: "pointer", border: "none",
-              background: view === "pending" ? T.brand : "transparent",
-              color: view === "pending" ? T.brandText : T.text3,
-              transition: "all 0.2s",
-              flex: 1
-            }}
-          >
-            Pendentes
-          </button>
-          <button 
-            onClick={() => setView("history")}
-            style={{ 
-              padding: "8px 16px", fontSize: 9, fontWeight: 900, textTransform: "uppercase", 
-              letterSpacing: "0.1em", cursor: "pointer", border: "none",
-              background: view === "history" ? T.brand : "transparent",
-              color: view === "history" ? T.brandText : T.text3,
-              transition: "all 0.2s",
-              flex: 1
-            }}
-          >
-            Histórico
-          </button>
+        
+        <div className="flex bg-theme-bg-muted p-1 border border-theme-border overflow-x-auto no-scrollbar">
+          <button onClick={() => setView("payouts")} className={`px-6 py-3 text-[9px] font-black uppercase tracking-widest transition-all whitespace-nowrap ${view === "payouts" ? 'bg-brand-tactical text-zinc-950 shadow-lg' : 'text-theme-muted hover:text-white'}`}>Repasses</button>
+          <button onClick={() => setView("expenses")} className={`px-6 py-3 text-[9px] font-black uppercase tracking-widest transition-all whitespace-nowrap ${view === "expenses" ? 'bg-brand-tactical text-zinc-950 shadow-lg' : 'text-theme-muted hover:text-white'}`}>Lançamentos</button>
+          <button onClick={() => setView("dre")} className={`px-6 py-3 text-[9px] font-black uppercase tracking-widest transition-all whitespace-nowrap ${view === "dre" ? 'bg-brand-tactical text-zinc-950 shadow-lg' : 'text-theme-muted hover:text-white'}`}>DRE / Dashboard</button>
         </div>
       </div>
 
-      <div className="space-y-4">
-        {loading ? (
-          <div className="py-20 text-center text-[10px] text-theme-muted uppercase tracking-[0.5em] animate-pulse">Auditando Transações...</div>
-        ) : orders.length === 0 ? (
-          <div className="py-20 text-center text-[10px] text-theme-muted uppercase tracking-[0.5em] border border-dashed border-theme-border">
-            {view === "pending" ? "Nenhum repasse pendente no momento." : "Nenhum histórico de repasse encontrado."}
-          </div>
-        ) : orders.map(order => (
-          <div key={order.id} style={{ background: T.bgCard, border: `1px solid ${T.border}`, padding: "clamp(20px, 4vw, 32px)" }} className="group hover:border-brand-tactical transition-all">
-            <div className="flex flex-col gap-8">
-              <div className="w-full">
-                <div className="flex flex-wrap items-center gap-4 mb-6">
-                  <div style={{ background: T.brand, color: T.brandText, fontSize: 8, fontWeight: 900, padding: "4px 10px", textTransform: "uppercase", letterSpacing: 1 }}>{view === "pending" ? "Aguardando PIX" : "Liquidado"}</div>
-                  <div style={{ fontSize: 10, fontWeight: 900, color: T.text, textTransform: "uppercase", letterSpacing: 1 }}>{order.event.title}</div>
-                  <div style={{ fontSize: 9, color: T.text3, textTransform: "uppercase" }}>• {fmtDate(order.updatedAt)}</div>
-                </div>
-
-                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8 border-t border-white/5 pt-8">
-                  {/* Matriz */}
-                  <div className="space-y-2">
-                    <label style={{ fontSize: 8, fontWeight: 900, color: T.text3, textTransform: "uppercase", letterSpacing: 1, display: "block" }}>Matriz Foto Segundo</label>
-                    <div style={{ fontSize: 16, fontWeight: 900, color: T.text, letterSpacing: 0.5 }}>
-                      {order.splitMatriz !== undefined && order.splitMatriz !== null 
-                        ? order.splitMatriz.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' })
-                        : calculateAmount(order.amount, 40) // Fallback 40% (Matriz)
-                      }
-                    </div>
-                  </div>
-                  {/* Captação */}
-                  {order.event.partners.captacao && (
-                    <div className="space-y-2">
-                      <label style={{ fontSize: 8, fontWeight: 900, color: T.text3, textTransform: "uppercase", letterSpacing: 1, display: "block" }}>Captação: {order.event.partners.captacao.nome}</label>
-                      <div style={{ fontSize: 16, fontWeight: 900, color: T.text, letterSpacing: 0.5 }}>
-                        {order.splitCaptacao !== undefined && order.splitCaptacao !== null
-                          ? order.splitCaptacao.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' })
-                          : calculateAmount(order.amount, order.event.partners.captacao.profissional.captPct)
-                        }
-                      </div>
-                      <div style={{ fontSize: 8, fontWeight: 900, color: T.brand, background: `${T.brand}08`, padding: "4px 8px", border: `1px solid ${T.brand}22`, textTransform: "uppercase", overflow: "hidden", textOverflow: "ellipsis" }}>PIX: {order.event.partners.captacao.pixKey || "PENDENTE"}</div>
-                    </div>
-                  )}
-                  {/* Edição */}
-                  {order.event.partners.edicao && (
-                    <div className="space-y-2">
-                      <label style={{ fontSize: 8, fontWeight: 900, color: T.text3, textTransform: "uppercase", letterSpacing: 1, display: "block" }}>Edição: {order.event.partners.edicao.nome}</label>
-                      <div style={{ fontSize: 16, fontWeight: 900, color: T.text, letterSpacing: 0.5 }}>
-                        {order.splitEdicao !== undefined && order.splitEdicao !== null
-                          ? order.splitEdicao.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' })
-                          : calculateAmount(order.amount, order.event.partners.edicao.profissional.editPct)
-                        }
-                      </div>
-                      <div style={{ fontSize: 8, fontWeight: 900, color: T.brand, background: `${T.brand}08`, padding: "4px 8px", border: `1px solid ${T.brand}22`, textTransform: "uppercase", overflow: "hidden", textOverflow: "ellipsis" }}>PIX: {order.event.partners.edicao.pixKey || "PENDENTE"}</div>
-                    </div>
-                  )}
-                  {/* Unidade Fixa */}
-                  {order.event.partners.cartorio && (
-                    <div className="space-y-2">
-                      <label style={{ fontSize: 8, fontWeight: 900, color: T.text3, textTransform: "uppercase", letterSpacing: 1, display: "block" }}>Unidade Fixa: {order.event.partners.cartorio.nome}</label>
-                      <div style={{ fontSize: 16, fontWeight: 900, color: T.text, letterSpacing: 0.5 }}>
-                        {order.splitCartorio !== undefined && order.splitCartorio !== null
-                          ? order.splitCartorio.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' })
-                          : calculateAmount(order.amount, order.event.partners.cartorio.cartorio.splitPct)
-                        }
-                      </div>
-                      <div style={{ fontSize: 8, fontWeight: 900, color: T.brand, background: `${T.brand}08`, padding: "4px 8px", border: `1px solid ${T.brand}22`, textTransform: "uppercase", overflow: "hidden", textOverflow: "ellipsis" }}>PIX: {order.event.partners.cartorio.pixKey || "PENDENTE"}</div>
-                    </div>
-                  )}
-                </div>
-              </div>
-
-              <div className="flex flex-col justify-end border-t border-white/5 pt-6 lg:border-none lg:pt-0">
-                {view === "pending" ? (
-                  <button 
-                    onClick={() => setConfirmModal(order.id)}
-                    style={{ 
-                      background: T.brand, color: T.brandText, padding: "12px 24px", 
-                      fontSize: 9, fontWeight: 900, textTransform: "uppercase", 
-                      letterSpacing: "0.2em", cursor: "pointer", border: "none",
-                      transition: "all 0.2s",
-                      display: "flex", alignItems: "center", gap: 8
-                    }}
-                    onMouseEnter={e => e.currentTarget.style.opacity = "0.8"}
-                    onMouseLeave={e => e.currentTarget.style.opacity = "1"}
-                  >
-                    <DollarSign size={10} /> Confirmar Repasse PIX
-                  </button>
-                ) : (
-                  <div style={{ textAlign: "right" }}>
-                    <div style={{ fontSize: 8, fontWeight: 900, color: T.text3, textTransform: "uppercase", letterSpacing: 1, marginBottom: 4 }}>Repasse realizado em</div>
-                    <div style={{ fontSize: 10, fontWeight: 900, color: T.brand, textTransform: "uppercase", letterSpacing: 1 }}>
-                      {order.payoutDate && fmtDateTime(order.payoutDate)}
-                    </div>
-                  </div>
-                )}
-              </div>
-            </div>
-          </div>
-        ))}
+      {/* DASHBOARD DE LIQUIDEZ E MARGEM */}
+      <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
+        <div className="bg-theme-bg-muted border border-theme-border p-5 space-y-3 group hover:border-brand-tactical/50 transition-all">
+           <div className="flex justify-between items-start"><span className="text-[8px] font-black text-theme-muted uppercase tracking-widest">Receita Bruta (Matriz)</span><ArrowUpCircle className="text-brand-tactical" size={12} /></div>
+           <div className="text-2xl font-heading font-black text-theme-text italic">{formatCurrency(financialData.grossRevenue)}</div>
+        </div>
+        <div className="bg-theme-bg-muted border border-theme-border p-5 space-y-3 group hover:border-red-500/50 transition-all">
+           <div className="flex justify-between items-start"><span className="text-[8px] font-black text-theme-muted uppercase tracking-widest">Custo Operacional</span><ArrowDownCircle className="text-red-500" size={12} /></div>
+           <div className="text-2xl font-heading font-black text-theme-text italic">{formatCurrency(financialData.totalExpenses)}</div>
+        </div>
+        <div className="bg-theme-bg-muted border border-theme-border p-5 space-y-3 group hover:border-brand-tactical transition-all">
+           <div className="flex justify-between items-start"><span className="text-[8px] font-black text-brand-tactical uppercase tracking-widest">Lucro Líquido Real</span><DollarSign className="text-brand-tactical" size={12} /></div>
+           <div className="text-2xl font-heading font-black text-brand-tactical italic">{formatCurrency(financialData.netProfit)}</div>
+        </div>
+        <div className="bg-theme-bg-muted border border-theme-border p-5 space-y-3 group transition-all">
+           <div className="flex justify-between items-start"><span className="text-[8px] font-black text-theme-muted uppercase tracking-widest">Margem Operacional</span><BarChart3 className="text-amber-500" size={12} /></div>
+           <div className="text-2xl font-heading font-black text-theme-text italic">{financialData.margin.toFixed(1)}%</div>
+        </div>
       </div>
 
-      {/* CONFIRMATION MODAL (MIDNIGHT LUXURY) */}
-      {confirmModal && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center p-6 bg-black/90 backdrop-blur-[20px] animate-in fade-in duration-300">
-           <div className="absolute inset-0" onClick={() => setConfirmModal(null)} />
-           <div className="relative bg-zinc-950 border border-brand-tactical/30 w-full max-w-sm p-8 space-y-8 shadow-2xl animate-in zoom-in-95 duration-500">
-              <div className="space-y-2">
-                 <span className="text-[10px] font-black text-brand-tactical uppercase tracking-[0.4em]">Validação de Saída</span>
-                 <h3 className="text-xl font-heading text-white uppercase tracking-tighter">Protocolo de Repasse</h3>
+      {/* VIEW: REPASSES */}
+      {view === "payouts" && (
+        <div className="space-y-6 animate-in fade-in duration-500">
+          <div className="flex gap-2 border-b border-theme-border/30 pb-4">
+             <button onClick={() => setPayoutTab("pending")} className={`px-6 py-2 text-[8px] font-black uppercase tracking-widest border transition-all ${payoutTab === 'pending' ? 'border-brand-tactical text-brand-tactical bg-brand-tactical/5' : 'border-theme-border text-theme-muted'}`}>PENDENTES</button>
+             <button onClick={() => setPayoutTab("history")} className={`px-6 py-2 text-[8px] font-black uppercase tracking-widest border transition-all ${payoutTab === 'history' ? 'border-brand-tactical text-brand-tactical bg-brand-tactical/5' : 'border-theme-border text-theme-muted'}`}>HISTÓRICO</button>
+          </div>
+          
+          <div className="space-y-4">
+            {loading ? (
+              <div className="py-20 text-center border border-theme-border bg-theme-bg-muted/10 text-[10px] text-theme-muted animate-pulse uppercase tracking-widest font-black italic">Auditando Fluxo...</div>
+            ) : orders.length === 0 ? (
+              <div className="py-24 text-center border border-dashed border-theme-border bg-theme-bg-muted/5 space-y-4">
+                 <ShieldCheck size={32} className="mx-auto text-theme-muted opacity-30" />
+                 <p className="text-[10px] text-theme-muted uppercase tracking-[0.4em] font-black italic">Fluxo de repasses em conformidade.</p>
               </div>
-              
-              <p className="text-[11px] text-zinc-500 uppercase tracking-widest leading-relaxed">
-                VOCÊ CONFIRMA QUE JÁ REALIZOU OS REPASSES VIA PIX PARA TODOS OS PARCEIROS DESTE PEDIDO?
-              </p>
+            ) : orders.map(order => (
+              <div key={order.id} className="bg-theme-bg-muted border border-theme-border p-6 flex flex-col md:flex-row justify-between gap-6 hover:border-brand-tactical/30 transition-all">
+                 <div className="space-y-4 flex-1">
+                    <div className="flex items-center gap-3">
+                       <span className="text-[7px] font-black px-2 py-1 bg-brand-tactical text-zinc-950 uppercase tracking-widest">#{order.id.slice(-4).toUpperCase()}</span>
+                       <h4 className="text-md font-heading font-black text-theme-text uppercase tracking-tighter leading-none">{order.event.title}</h4>
+                    </div>
+                    <div className="grid grid-cols-2 md:grid-cols-4 gap-4 pt-4 border-t border-theme-border/10">
+                       <div className="space-y-1"><span className="text-[7px] font-black text-theme-muted uppercase tracking-widest opacity-60">Matriz</span><p className="text-sm font-black text-theme-text italic">{formatCurrency(order.splitMatriz || order.amount * 0.4)}</p></div>
+                       {order.event.partners.captacao && <div className="space-y-1"><span className="text-[7px] font-black text-brand-tactical uppercase tracking-widest opacity-60">Captação</span><p className="text-sm font-black text-theme-text italic">{formatCurrency(order.splitCaptacao || 0)}</p></div>}
+                       {order.event.partners.edicao && <div className="space-y-1"><span className="text-[7px] font-black text-brand-tactical uppercase tracking-widest opacity-60">Edição</span><p className="text-sm font-black text-theme-text italic">{formatCurrency(order.splitEdicao || 0)}</p></div>}
+                       {order.event.partners.cartorio && <div className="space-y-1"><span className="text-[7px] font-black text-theme-muted uppercase tracking-widest opacity-60">Unidade</span><p className="text-sm font-black text-theme-text italic">{formatCurrency(order.splitCartorio || 0)}</p></div>}
+                    </div>
+                 </div>
+                 <div className="flex items-center justify-center">
+                    {payoutTab === 'pending' ? (
+                      <button onClick={() => setConfirmModal(order.id)} className="bg-brand-tactical text-zinc-950 px-6 py-3 text-[8px] font-black uppercase tracking-widest shadow-xl hover:scale-[1.02] transition-all flex items-center gap-2"><Zap size={10} /> LIQUIDAR</button>
+                    ) : (
+                      <div className="text-right border-l border-theme-border pl-6"><span className="text-[7px] font-black text-theme-muted uppercase tracking-widest block mb-1">Pago em</span><span className="text-[10px] font-black text-brand-tactical uppercase">{fmtDate(order.payoutDate)}</span></div>
+                    )}
+                 </div>
+              </div>
+            ))}
+          </div>
+        </div>
+      )}
 
-              <div className="grid grid-cols-2 gap-4">
-                 <button 
-                   onClick={() => setConfirmModal(null)}
-                   className="p-4 border border-zinc-800 text-zinc-500 text-[9px] font-black uppercase tracking-widest hover:bg-white/5 transition-all"
-                 >
-                   CANCELAR
-                 </button>
-                 <button 
-                   onClick={() => handleMarkAsPaid(confirmModal)}
-                   className="p-4 bg-brand-tactical text-black text-[9px] font-black uppercase tracking-widest hover:brightness-110 transition-all"
-                 >
-                   CONFIRMAR
-                 </button>
+      {/* VIEW: LANÇAMENTOS (EXPENSES) */}
+      {view === "expenses" && (
+        <div className="grid grid-cols-1 lg:grid-cols-12 gap-10 animate-in fade-in duration-500">
+           {/* Form - Engenharia de Custos */}
+           <div className="lg:col-span-4 space-y-6">
+              <div className="bg-theme-bg-muted border border-theme-border p-6 space-y-6">
+                 <div className="space-y-1">
+                    <span className="text-[7px] font-black text-brand-tactical uppercase tracking-[0.5em]">Lançamento Tático</span>
+                    <h3 className="text-lg font-heading text-theme-text uppercase tracking-tighter">Registrar Custo</h3>
+                 </div>
+
+                 <form onSubmit={handleAddExpense} className="space-y-4">
+                    <div className="space-y-1.5">
+                       <label className="text-[7px] font-black text-theme-muted uppercase tracking-widest">Descrição</label>
+                       <input required value={newExpense.description} onChange={e => setNewExpense({...newExpense, description: e.target.value.toUpperCase()})} placeholder="EX: CARTÃO MICRO SD 32GB" className="w-full bg-theme-bg border border-theme-border p-2.5 text-[10px] text-theme-text font-black outline-none focus:border-brand-tactical uppercase" />
+                    </div>
+                    
+                    <div className="grid grid-cols-2 gap-3">
+                       <div className="space-y-1.5">
+                          <label className="text-[7px] font-black text-theme-muted uppercase tracking-widest">Valor (R$)</label>
+                          <input required type="number" step="0.01" value={newExpense.amount} onChange={e => setNewExpense({...newExpense, amount: Number(e.target.value)})} className="w-full bg-theme-bg border border-theme-border p-2.5 text-[10px] text-brand-tactical font-black outline-none focus:border-brand-tactical" />
+                       </div>
+                       <div className="space-y-1.5">
+                          <label className="text-[7px] font-black text-theme-muted uppercase tracking-widest">Data</label>
+                          <input required type="date" value={newExpense.date} onChange={e => setNewExpense({...newExpense, date: e.target.value})} className="w-full bg-theme-bg border border-theme-border p-2.5 text-[10px] text-theme-text font-black outline-none focus:border-brand-tactical" />
+                       </div>
+                    </div>
+
+                    <div className="space-y-1.5">
+                       <label className="text-[7px] font-black text-theme-muted uppercase tracking-widest">Categoria</label>
+                       <div className="grid grid-cols-2 gap-2">
+                          {(['OPERACIONAL', 'LOGISTICA', 'INSUMO', 'FIXO'] as const).map(c => (
+                            <button key={c} type="button" onClick={() => setNewExpense({...newExpense, category: c})} className={`py-2 text-[7px] font-black uppercase tracking-widest border transition-all ${newExpense.category === c ? 'border-brand-tactical bg-brand-tactical text-zinc-950 shadow-md' : 'border-theme-border text-theme-muted hover:border-zinc-500'}`}>{c}</button>
+                          ))}
+                       </div>
+                    </div>
+
+                    {/* Presets Rápidos */}
+                    <div className="pt-4 border-t border-theme-border/20 space-y-3">
+                       <span className="text-[7px] font-black text-theme-muted uppercase tracking-widest block opacity-50 italic">Presets de Engenharia</span>
+                       <div className="flex flex-wrap gap-2">
+                          <button type="button" onClick={() => setNewExpense({ description: "CARTÃO MICRO SD (Venda Bruta)", amount: 25, category: "INSUMO", date: new Date().toISOString().split('T')[0] })} className="px-3 py-1.5 bg-theme-bg border border-theme-border text-[7px] font-black text-theme-muted hover:border-brand-tactical hover:text-theme-text transition-all uppercase">+ CARTÃO SD (R$ 25)</button>
+                          <button type="button" onClick={() => setNewExpense({ description: "TRANSPORTE / UBER OPERAÇÃO", amount: 15, category: "LOGISTICA", date: new Date().toISOString().split('T')[0] })} className="px-3 py-1.5 bg-theme-bg border border-theme-border text-[7px] font-black text-theme-muted hover:border-brand-tactical hover:text-theme-text transition-all uppercase">+ UBER (R$ 15)</button>
+                          <button type="button" onClick={() => setNewExpense({ description: "CARTÕES DE VISITA (Lote)", amount: 120, category: "MARKETING", date: new Date().toISOString().split('T')[0] })} className="px-3 py-1.5 bg-theme-bg border border-theme-border text-[7px] font-black text-theme-muted hover:border-brand-tactical hover:text-theme-text transition-all uppercase">+ MARKETING</button>
+                       </div>
+                    </div>
+
+                    <button type="submit" className="w-full bg-brand-tactical text-zinc-950 py-3 text-[9px] font-black uppercase tracking-[0.4em] shadow-xl hover:brightness-110 active:scale-95 transition-all">LANÇAR DESPESA</button>
+                 </form>
+              </div>
+           </div>
+
+           {/* Ledger de Custos */}
+           <div className="lg:col-span-8 space-y-4">
+              <div className="bg-theme-bg-muted border border-theme-border overflow-hidden">
+                 <table className="w-full text-left border-collapse">
+                    <thead>
+                       <tr className="border-b border-theme-border/30 bg-black/5">
+                          <th className="p-4 text-[8px] font-black text-theme-muted uppercase tracking-widest">Data</th>
+                          <th className="p-4 text-[8px] font-black text-theme-muted uppercase tracking-widest">Descrição</th>
+                          <th className="p-4 text-[8px] font-black text-theme-muted uppercase tracking-widest text-center">Categoria</th>
+                          <th className="p-4 text-[8px] font-black text-theme-muted uppercase tracking-widest text-right">Valor</th>
+                          <th className="p-4 w-10"></th>
+                       </tr>
+                    </thead>
+                    <tbody className="divide-y divide-theme-border/10">
+                       {expenses.length === 0 ? (
+                         <tr>
+                           <td colSpan={5} className="py-20 text-center text-[10px] text-theme-muted uppercase tracking-[0.4em] italic font-black">Nenhuma despesa operacional lançada.</td>
+                         </tr>
+                       ) : expenses.map(exp => (
+                         <tr key={exp.id} className="group hover:bg-white/5 transition-all">
+                            <td className="p-4 text-[10px] text-theme-muted font-black">{new Date(exp.date).toLocaleDateString("pt-BR")}</td>
+                            <td className="p-4 text-[10px] text-theme-text font-black uppercase tracking-tight">{exp.description}</td>
+                            <td className="p-4 text-center">
+                               <span className="text-[7px] font-black px-2 py-1 border border-theme-border text-theme-muted uppercase group-hover:border-zinc-500">{exp.category}</span>
+                            </td>
+                            <td className="p-4 text-right text-[11px] font-black text-red-500 italic">{formatCurrency(exp.amount)}</td>
+                            <td className="p-4 text-right">
+                               <button onClick={() => deleteExpense(exp.id)} className="text-zinc-600 hover:text-red-500 p-1 transition-all"><Trash2 size={12} /></button>
+                            </td>
+                         </tr>
+                       ))}
+                    </tbody>
+                 </table>
               </div>
            </div>
         </div>
       )}
-      {/* NOTIFICATION (MIDNIGHT LUXURY) */}
-      {notification && (
-        <div className="fixed bottom-10 right-10 z-[100] animate-in slide-in-from-right-10 duration-500">
-           <div className={`p-6 border ${notification.type === 'success' ? 'border-brand-tactical bg-zinc-950 shadow-[0_0_30px_rgba(133,185,172,0.1)]' : 'border-red-900 bg-zinc-950'} min-w-[300px] relative overflow-hidden shadow-2xl`}>
-              <div className="flex flex-col gap-1">
-                 <span className={`text-[8px] font-black uppercase tracking-[0.4em] ${notification.type === 'success' ? 'text-brand-tactical' : 'text-red-500'}`}>
-                    {notification.type === 'success' ? 'Liquidação OK' : 'Falha no Repasse'}
-                 </span>
-                 <p className="text-[11px] font-bold text-white uppercase tracking-widest">{notification.message}</p>
+
+      {/* VIEW: DRE / DASHBOARD */}
+      {view === "dre" && (
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-10 animate-in fade-in duration-500">
+           <div className="bg-theme-bg-muted border border-theme-border p-10 space-y-10">
+              <div className="space-y-2">
+                 <span className="text-[9px] font-black text-brand-tactical uppercase tracking-[0.5em]">Análise de Performance</span>
+                 <h3 className="text-2xl font-heading text-theme-text uppercase tracking-tighter italic">DRE Simplificado</h3>
               </div>
-              <div className={`absolute bottom-0 left-0 h-1 ${notification.type === 'success' ? 'bg-brand-tactical' : 'bg-red-900'} animate-out fade-out duration-[5000ms] w-full`} />
+              
+              <div className="space-y-6">
+                 <div className="flex justify-between items-center border-b border-theme-border/20 pb-4">
+                    <span className="text-[10px] font-black text-theme-muted uppercase tracking-widest">Receita Bruta (Matriz)</span>
+                    <span className="text-lg font-heading font-black text-theme-text italic">{formatCurrency(financialData.grossRevenue)}</span>
+                 </div>
+                 <div className="flex justify-between items-center border-b border-theme-border/20 pb-4 text-red-500">
+                    <span className="text-[10px] font-black uppercase tracking-widest">(-) Despesas Totais</span>
+                    <span className="text-lg font-heading font-black italic">{formatCurrency(financialData.totalExpenses)}</span>
+                 </div>
+                 <div className="flex justify-between items-center pt-4">
+                    <span className="text-[11px] font-black text-brand-tactical uppercase tracking-[0.3em]">Lucro Líquido (EBITDA)</span>
+                    <span className="text-3xl font-heading font-black text-brand-tactical italic">{formatCurrency(financialData.netProfit)}</span>
+                 </div>
+              </div>
+
+              <div className="bg-zinc-950/20 p-6 border border-theme-border italic text-[11px] text-theme-muted leading-relaxed uppercase tracking-widest font-bold">
+                "O faturamento é vaidade, o lucro é sanidade, e o caixa é rei." — Foque em manter a margem acima de 30% para sustentar a escala da Foto Segundo.
+              </div>
+           </div>
+
+           <div className="bg-theme-bg-muted border border-theme-border p-10 flex flex-col items-center justify-center space-y-10">
+              <div className="relative w-48 h-48 flex items-center justify-center">
+                 <div className="absolute inset-0 border-[16px] border-theme-border rounded-full opacity-20" />
+                 <div className="absolute inset-0 border-[16px] border-brand-tactical rounded-full" style={{ clipPath: `polygon(50% 50%, -50% -50%, ${financialData.margin > 50 ? '150% -50%' : '50% -50%'}, 150% 150%, -50% 150%, -50% -50%)`, transform: `rotate(${(financialData.margin / 100) * 360}deg)` }} />
+                 <div className="flex flex-col items-center">
+                    <span className="text-[10px] font-black text-theme-muted uppercase tracking-widest">Margem Real</span>
+                    <span className="text-4xl font-heading font-black text-theme-text">{financialData.margin.toFixed(1)}%</span>
+                 </div>
+              </div>
+              <div className="grid grid-cols-2 gap-8 w-full border-t border-theme-border pt-10">
+                 <div className="text-center space-y-2">
+                    <span className="text-[9px] font-black text-theme-muted uppercase tracking-widest">Ponto de Equilíbrio</span>
+                    <p className="text-lg font-heading font-black text-theme-text italic">ALCANÇADO</p>
+                 </div>
+                 <div className="text-center space-y-2">
+                    <span className="text-[9px] font-black text-theme-muted uppercase tracking-widest">Saúde de Caixa</span>
+                    <p className="text-lg font-heading font-black text-brand-tactical italic">ESTÁVEL</p>
+                 </div>
+              </div>
+           </div>
+        </div>
+      )}
+
+      {/* MODALS & NOTIFICATIONS */}
+      {confirmModal && (
+        <div className="fixed inset-0 z-[200] flex items-center justify-center p-6 bg-zinc-950/60 backdrop-blur-md animate-in fade-in duration-300">
+           <div className="absolute inset-0" onClick={() => setConfirmModal(null)} />
+           <div className="relative bg-theme-bg border border-theme-border w-full max-w-sm p-8 space-y-8 shadow-2xl animate-in zoom-in-95 duration-500">
+              <div className="space-y-2">
+                 <span className="text-[10px] font-black text-brand-tactical uppercase tracking-[0.4em]">Protocolo Financeiro</span>
+                 <h3 className="text-xl font-heading text-theme-text uppercase tracking-tighter leading-none">Confirmar Repasse?</h3>
+              </div>
+              <p className="text-[10px] text-theme-muted font-bold uppercase tracking-wider leading-relaxed">VOCÊ CONFIRMA QUE JÁ EXECUTOU OS REPASSES PIX PARA TODOS OS PARCEIROS DESTE EVENTO?</p>
+              <div className="grid grid-cols-2 gap-4 pt-4">
+                 <button onClick={() => setConfirmModal(null)} className="p-4 border border-theme-border text-theme-muted text-[9px] font-black uppercase tracking-widest hover:bg-white/5 transition-all">CANCELAR</button>
+                 <button onClick={() => handleMarkAsPaid(confirmModal)} className="p-4 bg-brand-tactical text-zinc-950 text-[9px] font-black uppercase tracking-widest hover:brightness-110 transition-all shadow-lg">CONFIRMAR</button>
+              </div>
+           </div>
+        </div>
+      )}
+
+      {notification && (
+        <div className="fixed bottom-10 right-10 z-[300] animate-in slide-in-from-right-10 duration-500">
+           <div className={`p-8 border ${notification.type === 'success' ? 'border-brand-tactical bg-zinc-950 shadow-[0_0_40px_rgba(133,185,172,0.15)]' : 'border-red-900 bg-zinc-950'} min-w-[350px] relative overflow-hidden shadow-2xl`}>
+              <div className="flex flex-col gap-2">
+                 <span className={`text-[9px] font-black uppercase tracking-[0.5em] ${notification.type === 'success' ? 'text-brand-tactical' : 'text-red-500'}`}>Protocolo Financeiro</span>
+                 <p className="text-[13px] font-bold text-white uppercase tracking-widest mt-1 leading-tight">{notification.message}</p>
+              </div>
+              <div className={`absolute bottom-0 left-0 h-1.5 ${notification.type === 'success' ? 'bg-brand-tactical' : 'bg-red-900'} animate-out fade-out duration-[5000ms] w-full`} />
            </div>
         </div>
       )}

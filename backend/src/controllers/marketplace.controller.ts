@@ -73,7 +73,7 @@ export class MarketplaceController {
       });
 
       // 3. Vincular mídias se houver carrinho
-      let orderItems = [];
+      let orderItems: Array<{ mediaId: string; price: number; quantity: number }> = [];
       if (Array.isArray(cart) && cart.length > 0) {
         // Busca as mídias reais para obter os IDs
         const dbMedias = await prisma.eventMedia.findMany({
@@ -85,7 +85,7 @@ export class MarketplaceController {
 
         orderItems = dbMedias.map(m => ({
           mediaId: m.id,
-          price: m.price || event.pricePerPhoto || 15,
+          price: Number(m.price ?? event.pricePerPhoto ?? 15),
           quantity: 1
         }));
       }

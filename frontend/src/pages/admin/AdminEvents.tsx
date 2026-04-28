@@ -1,3 +1,4 @@
+// Optimized Admin Dashboard - Foto Segundo
 import React, { useState, useEffect, useCallback } from "react";
 import { API } from "../../lib/api";
 import { T } from "../../lib/theme";
@@ -31,6 +32,8 @@ interface Event {
   type: 'ALBUM_FULL' | 'PHOTO_MARKETPLACE';
   pricePerPhoto?: number;
   _count: { pedidos: number };
+  collectedAmount?: number;
+  targetAmount?: number;
 }
 
 interface AdminEventsProps {
@@ -38,7 +41,7 @@ interface AdminEventsProps {
   onClose?: () => void;
 }
 
-export const AdminEvents: React.FC<AdminEventsProps> = ({ initialEditEventId, onClose }) => {
+export const AdminEvents: React.FC<AdminEventsProps> = ({ initialEditEventId }) => {
   const [events, setEvents] = useState<Event[]>([]);
   const [users, setUsers] = useState<User[]>([]);
   const [loading, setLoading] = useState(true);
@@ -55,22 +58,14 @@ export const AdminEvents: React.FC<AdminEventsProps> = ({ initialEditEventId, on
     setTimeout(() => setNotification(null), 5000);
   };
   
-  // Venda Direta State
-  const [isSaleModalOpen, setIsSaleModalOpen] = useState(false);
-  const [saleEvent, setSaleEvent] = useState<Event | null>(null);
-  const [saleFormData, setSaleFormData] = useState({
-    customerName: "",
-    customerEmail: "",
-    amount: 0
-  });
-
   const [isExpressModalOpen, setIsExpressModalOpen] = useState(false);
   const [expressFormData, setExpressFormData] = useState({
     customerName: "",
     customerEmail: "",
     amount: 15,
     location: "Taquaral / Marketplace",
-    paymentMethod: "MONEY" as "PIX" | "CARD" | "MONEY"
+    paymentMethod: "MONEY" as "PIX" | "CARD" | "MONEY",
+    services: [] as string[]
   });
 
   const fileInputRef = React.useRef<HTMLInputElement>(null);
@@ -105,7 +100,6 @@ export const AdminEvents: React.FC<AdminEventsProps> = ({ initialEditEventId, on
     pricePerPhoto: number;
   }
 
-  // Form State
   const [formData, setFormData] = useState<EventFormData>({
     title: "", slug: "", date: "", location: "", city: "", description: "",
     priceBase: 200, priceEarly: 190,
@@ -125,7 +119,7 @@ export const AdminEvents: React.FC<AdminEventsProps> = ({ initialEditEventId, on
     pricePerPhoto: 15,
   });
 
-  const [activeTab, setActiveTab] = useState<'info' | 'equipe' | 'comercial' | 'entrega'>('info');
+  const [activeTab, setActiveTab] = useState<'info' | 'equipe' | 'comercial'>('info');
 
   const handleFileChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
@@ -228,32 +222,14 @@ export const AdminEvents: React.FC<AdminEventsProps> = ({ initialEditEventId, on
     }
   }, []);
 
-  const handleSaleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
-    if (!saleEvent) return;
-    setIsUploading(true);
-    try {
-      await API.post("/admin/orders/manual", {
-        eventId: saleEvent.id,
-        ...saleFormData
-      });
-      showNotification("Venda registrada com sucesso!");
-      setIsSaleModalOpen(false);
-      const updatedEvents = await API.get("/admin/events");
-      setEvents(updatedEvents.data.events || []);
-    } catch (err: unknown) {
-      const error = err as { response?: { data?: { error?: string } } };
-      showNotification(error.response?.data?.error || "Erro ao registrar venda.", 'error');
-    } finally {
-      setIsUploading(false);
-    }
-  };
-
   const handleExpressSaleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setIsUploading(true);
     try {
-      const { data } = await API.post("marketplace/express-sale", expressFormData);
+      const { data } = await API.post("marketplace/express-sale", {
+        ...expressFormData,
+        services: expressFormData.services.join(", ")
+      });
       
       if (data.isDigital) {
         showNotification("Venda registrada! Redirecionando para pagamento...");
@@ -294,7 +270,6 @@ export const AdminEvents: React.FC<AdminEventsProps> = ({ initialEditEventId, on
     fetchData();
   }, []);
 
-  // Efeito separado para abrir o evento inicial quando os eventos carregarem
   useEffect(() => {
     if (initialEditEventId && events.length > 0) {
       const found = events.find(e => e.id === initialEditEventId);
@@ -311,45 +286,21 @@ export const AdminEvents: React.FC<AdminEventsProps> = ({ initialEditEventId, on
         <div className="flex flex-col md:flex-row gap-4">
           <button 
             onClick={() => {
-              setExpressFormData({ 
-                customerName: "", 
-                customerEmail: "", 
-                amount: 15, 
-                location: "Taquaral / Marketplace",
-                paymentMethod: "MONEY"
-              });
+              setExpressFormData({ customerName: "", customerEmail: "", amount: 15, location: "Taquaral / Marketplace", paymentMethod: "MONEY", services: [] });
               setIsExpressModalOpen(true);
             }}
-            className="font-black uppercase tracking-[0.4em] px-8 py-4 hover:brightness-110 transition-all shadow-xl shadow-brand-tactical/10 rounded-none text-[9px] w-full md:w-auto border border-brand-tactical"
-            style={{ backgroundColor: 'transparent', color: 'var(--brand-tactical)' }}
+            className="font-black uppercase tracking-[0.4em] px-8 py-4 hover:brightness-110 transition-all shadow-xl shadow-brand-tactical/10 rounded-none text-[9px] w-full md:w-auto border border-brand-tactical text-brand-tactical bg-transparent"
           >
             VENDA RÁPIDA (MARKETPLACE)
           </button>
           <button 
             onClick={() => {
               setEditingEvent(null);
-              setFormData({
-                title: "", slug: "", date: "", location: "", city: "", description: "",
-                priceBase: 200, priceEarly: 190,
-                cartorioId: "", captacaoId: "", edicaoId: "",
-                temFoto: true, temVideo: false, temReels: false, temFotoImpressa: false,
-                coverPhotoUrl: "", eventHours: 2,
-                isCrowdfund: false,
-                targetAmount: 0,
-                lightroomUrl: "",
-                driveUrl: "",
-                previewPhotos: ["", "", ""],
-                isPrivate: false,
-                isUnitSale: false,
-                priceUnit: 10,
-                type: 'ALBUM_FULL',
-                pricePerPhoto: 15,
-              });
+              setFormData({ title: "", slug: "", date: "", location: "", city: "", description: "", priceBase: 200, priceEarly: 190, cartorioId: "", captacaoId: "", edicaoId: "", temFoto: true, temVideo: false, temReels: false, temFotoImpressa: false, coverPhotoUrl: "", eventHours: 2, isCrowdfund: false, targetAmount: 0, lightroomUrl: "", driveUrl: "", previewPhotos: ["", "", ""], isPrivate: false, isUnitSale: false, priceUnit: 10, type: 'ALBUM_FULL', pricePerPhoto: 15 });
               setCoverPreview(null);
               setIsModalOpen(true);
             }}
-            className="font-black uppercase tracking-[0.4em] px-8 py-4 hover:brightness-110 transition-all shadow-xl shadow-brand-tactical/10 rounded-none text-[9px] w-full md:w-auto"
-            style={{ backgroundColor: 'var(--brand-tactical)', color: 'var(--theme-text-on-brand)' }}
+            className="font-black uppercase tracking-[0.4em] px-8 py-4 hover:brightness-110 transition-all shadow-xl shadow-brand-tactical/10 rounded-none text-[9px] w-full md:w-auto bg-brand-tactical text-zinc-950"
           >
             NOVO EVENTO
           </button>
@@ -360,18 +311,10 @@ export const AdminEvents: React.FC<AdminEventsProps> = ({ initialEditEventId, on
         .events-table { width: 100%; border-collapse: collapse; text-align: left; }
         .events-table thead { border-bottom: 1px solid ${T.border}; }
         .events-table th { padding: 10px 16px; fontSize: 9px; fontFamily: ${T.fontB}; fontWeight: 900; textTransform: uppercase; letterSpacing: 2px; color: ${T.text3}; }
-        
         .event-card-mobile { display: none; }
-        
         @media (max-width: 1024px) {
           .events-table { display: none; }
-          .event-card-mobile { 
-            display: flex; flex-direction: column; gap: 10px; padding: 12px; 
-            background: ${T.bgCard}; border: 1px solid ${T.border}; margin-bottom: 8px;
-          }
-          .event-card-header { display: flex; justify-content: space-between; align-items: flex-start; }
-          .event-card-stats { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; border-top: 1px solid ${T.border}30; padding-top: 8px; }
-          .event-card-actions { display: flex; gap: 6px; margin-top: 2px; }
+          .event-card-mobile { display: flex; flex-direction: column; gap: 10px; padding: 12px; background: ${T.bgCard}; border: 1px solid ${T.border}; margin-bottom: 8px; }
         }
       `}</style>
 
@@ -386,777 +329,280 @@ export const AdminEvents: React.FC<AdminEventsProps> = ({ initialEditEventId, on
           </thead>
           <tbody>
             {loading ? (
-              <tr><td colSpan={6} style={{ padding: 60, textAlign: "center", fontSize: 10, color: T.text3, textTransform: "uppercase", letterSpacing: 3 }}>Indexando Eventos...</td></tr>
+              <tr><td colSpan={6} className="py-20 text-center text-[10px] text-theme-muted uppercase tracking-[0.3em]">Indexando Eventos...</td></tr>
             ) : events.length === 0 ? (
-              <tr><td colSpan={6} style={{ padding: 60, textAlign: "center", fontSize: 10, color: T.text3, textTransform: "uppercase", letterSpacing: 3 }}>Nenhum registro encontrado.</td></tr>
+              <tr><td colSpan={6} className="py-20 text-center text-[10px] text-theme-muted uppercase tracking-[0.3em]">Nenhum registro encontrado.</td></tr>
             ) : events.map((event, idx) => (
-              <tr 
-                key={event.id} 
-                style={{ 
-                  background: idx % 2 === 0 ? T.bgField : "transparent",
-                  borderBottom: `1px solid ${T.border}44`,
-                  transition: "background 0.2s"
-                }}
-              >
-                <td style={{ padding: "12px 16px" }}>
-                  <div style={{ fontSize: 12, fontWeight: 900, color: T.text, textTransform: "uppercase", letterSpacing: -0.3 }}>{event.title}</div>
-                  <div style={{ fontSize: 10, color: T.text3, marginTop: 2, textTransform: "uppercase", fontWeight: 700 }}>{event.location}</div>
+              <tr key={event.id} className={`${idx % 2 === 0 ? 'bg-theme-bg-muted/50' : 'bg-transparent'} border-b border-theme-border/30`}>
+                <td className="p-4">
+                  <div className="text-[12px] font-black text-theme-text uppercase tracking-tight">{event.title}</div>
+                  <div className="text-[10px] text-theme-muted font-bold uppercase">{event.location}</div>
                 </td>
-                <td style={{ padding: "12px 16px", fontSize: 11, fontWeight: 700, color: T.text2 }}>{new Date(event.date).toLocaleDateString("pt-BR")}</td>
-                <td style={{ padding: "12px 16px" }}>
-                   <div style={{ display: "flex", gap: 12, alignItems: "center" }}>
-                      <div title="Capa" style={{ width: 8, height: 8, borderRadius: "50%", background: event.coverPhotoUrl ? T.brand : T.border, border: `1px solid ${event.coverPhotoUrl ? T.brand : T.text3}` }} />
-                      <div title="Links" style={{ width: 8, height: 8, borderRadius: "50%", background: (event.lightroomUrl || event.driveUrl) ? T.brand : T.border, border: `1px solid ${(event.lightroomUrl || event.driveUrl) ? T.brand : T.text3}` }} />
+                <td className="p-4 text-[11px] font-bold text-theme-text/80">{new Date(event.date).toLocaleDateString("pt-BR")}</td>
+                <td className="p-4">
+                   <div className="flex gap-3">
+                      <div className={`w-2 h-2 rounded-full ${event.coverPhotoUrl ? 'bg-brand-tactical' : 'bg-zinc-800'}`} />
+                      <div className={`w-2 h-2 rounded-full ${(event.lightroomUrl || event.driveUrl) ? 'bg-brand-tactical' : 'bg-zinc-800'}`} />
                    </div>
                 </td>
-                <td style={{ padding: "12px 16px" }}><div style={{ fontSize: 12, fontWeight: 900, color: event._count?.pedidos > 0 ? T.brand : T.text3 }}>{event._count?.pedidos || 0}</div></td>
-                <td style={{ padding: "12px 16px" }}>
-                   <div style={{ fontSize: 9, color: T.text, fontWeight: 900, textTransform: "uppercase" }}>{event.captacao?.nome || "—"}</div>
-                   <div style={{ fontSize: 8, color: T.text3, textTransform: "uppercase" }}>{event.edicao?.nome || "—"}</div>
+                <td className="p-4 font-black text-brand-tactical">{event._count?.pedidos || 0}</td>
+                <td className="p-4">
+                   <div className="text-[9px] font-black uppercase text-theme-text">{event.captacao?.nome || "—"}</div>
+                   <div className="text-[8px] uppercase text-theme-muted">{event.edicao?.nome || "—"}</div>
                 </td>
-                <td style={{ padding: "12px 16px" }}>
-                  <div style={{ display: "flex", gap: 8, alignItems: "center" }}>
-                    <button onClick={() => { setQrModalEvent(event); setCopied(false); }} style={{ background: "transparent", border: `1px solid ${T.border}`, color: T.text3, cursor: "pointer", padding: 6 }}><QrCode size={12} /></button>
-                    <button onClick={() => { setSaleEvent(event); setSaleFormData({ customerName: "", customerEmail: "", amount: Number(event.priceBase || 0) }); setIsSaleModalOpen(true); }} style={{ background: T.brand, border: "none", color: "black", fontSize: 8, fontWeight: 900, textTransform: "uppercase", padding: "6px 12px" }}>VENDA</button>
-                    <button onClick={() => handleEditOpen(event)} style={{ background: "transparent", border: `1px solid ${T.border}`, color: T.text2, fontSize: 8, fontWeight: 900, textTransform: "uppercase", padding: "6px 10px" }}>Editar</button>
-                  </div>
+                <td className="p-4 flex gap-2">
+                  <button onClick={() => { setQrModalEvent(event); setCopied(false); }} className="p-2 border border-theme-border text-theme-muted hover:text-white"><QrCode size={12} /></button>
+                  <button onClick={() => handleEditOpen(event)} className="px-3 py-1.5 border border-theme-border text-[8px] font-black uppercase tracking-widest text-theme-text hover:bg-theme-border transition-all">Editar</button>
                 </td>
               </tr>
             ))}
           </tbody>
         </table>
-
-        {/* Mobile View */}
-        <div className="mobile-only">
-          {events.map(event => (
-            <div key={event.id} className="event-card-mobile">
-              <div className="event-card-header">
-                <div>
-                  <div style={{ fontSize: 14, fontWeight: 900, color: T.text, textTransform: "uppercase", letterSpacing: -0.5 }}>{event.title}</div>
-                  <div style={{ fontSize: 10, color: T.text3, marginTop: 4, textTransform: "uppercase" }}>{event.location} · {new Date(event.date).toLocaleDateString("pt-BR")}</div>
-                </div>
-                <div style={{ display: "flex", gap: 8 }}>
-                  <div style={{ width: 8, height: 8, borderRadius: "50%", background: event.coverPhotoUrl ? T.brand : T.border }} />
-                  <div style={{ width: 8, height: 8, borderRadius: "50%", background: (event.lightroomUrl || event.driveUrl) ? T.brand : T.border }} />
-                </div>
-              </div>
-              
-              <div className="event-card-stats">
-                <div>
-                  <div style={{ fontSize: 8, color: T.text3, textTransform: "uppercase", fontWeight: 900, marginBottom: 2 }}>Membros</div>
-                  <div style={{ fontSize: 10, color: T.text, fontWeight: 700 }}>{event.captacao?.nome || "REDE"} / {event.edicao?.nome || "REDE"}</div>
-                </div>
-                <div style={{ textAlign: "right" }}>
-                  <div style={{ fontSize: 8, color: T.text3, textTransform: "uppercase", fontWeight: 900, marginBottom: 2 }}>Vendas</div>
-                  <div style={{ fontSize: 14, color: T.brand, fontWeight: 900 }}>{event._count?.pedidos || 0}</div>
-                </div>
-              </div>
-
-              <div className="event-card-actions">
-                <button onClick={() => { setSaleEvent(event); setIsSaleModalOpen(true); }} style={{ flex: 2, background: T.brand, border: "none", color: "black", fontSize: 10, fontWeight: 900, textTransform: "uppercase", padding: "12px" }}>REGISTRAR VENDA</button>
-                <button onClick={() => handleEditOpen(event)} style={{ flex: 1, background: "transparent", border: `1px solid ${T.border}`, color: T.text, fontSize: 10, fontWeight: 900, textTransform: "uppercase", padding: "12px" }}>EDITAR</button>
-                <button onClick={() => { setQrModalEvent(event); setCopied(false); }} style={{ background: "transparent", border: `1px solid ${T.border}`, color: T.text3, padding: "12px" }}><QrCode size={16} /></button>
-              </div>
-            </div>
-          ))}
-        </div>
       </div>
 
       {isModalOpen && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/90 backdrop-blur-[20px] animate-in fade-in duration-300 overflow-y-auto">
-          <div className="w-full max-w-4xl bg-theme-bg border border-theme-border p-8 relative shadow-2xl animate-in zoom-in-95 duration-500 my-10">
-             <button 
-               onClick={() => {
-                 setIsModalOpen(false);
-                 if (onClose) onClose();
-               }} 
-               className="absolute top-6 right-6 text-zinc-500 hover:text-white transition-colors p-2"
-               aria-label="Fechar"
-             >
-               <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5"><path d="M18 6L6 18M6 6l12 12"/></svg>
-             </button>
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/95 backdrop-blur-xl overflow-y-auto">
+          <div className="w-full max-w-4xl bg-theme-bg border border-theme-border p-10 relative shadow-2xl my-10 flex flex-col min-h-[640px]">
+              <button onClick={() => setIsModalOpen(false)} className="absolute top-8 right-8 text-zinc-500 hover:text-white transition-colors">
+                <X size={24} />
+              </button>
 
-             <div className="mb-8">
-               <h2 className="text-3xl font-heading text-theme-text tracking-tighter uppercase mb-2">
-                 {editingEvent ? "Ajustar Operação" : "Novo Registro"}
-               </h2>
-               <div className="w-12 h-1 bg-brand-tactical" />
-             </div>
+              <div className="mb-8">
+                <h2 className="text-2xl font-black text-theme-text uppercase tracking-tighter">{editingEvent ? "Ajustar Operação" : "Novo Registro"}</h2>
+                <div className="w-12 h-1 bg-brand-tactical mt-1" />
+              </div>
 
-              <div className="flex border-b border-theme-border mb-10 gap-8">
-                {(['info', 'equipe', 'comercial', 'entrega'] as const).map(t => (
-                  <button
-                    key={t}
-                    type="button"
-                    onClick={() => setActiveTab(t)}
-                    className={`pb-4 text-[10px] font-black uppercase tracking-[0.3em] transition-all relative ${activeTab === t ? 'text-brand-tactical' : 'text-theme-muted hover:text-white'}`}
-                  >
-                    {t === 'info' ? 'Essencial' : t === 'equipe' ? 'Operação' : t === 'comercial' ? 'Comercial' : 'Entrega'}
-                    {activeTab === t && <div className="absolute bottom-0 left-0 right-0 h-0.5 bg-brand-tactical" />}
+              <div className="flex border-b border-theme-border mb-8 gap-8">
+                {(['info', 'equipe', 'comercial'] as const).map(t => (
+                  <button key={t} type="button" onClick={() => setActiveTab(t)} className={`pb-4 text-[10px] font-black uppercase tracking-[0.4em] relative ${activeTab === t ? 'text-brand-tactical' : 'text-theme-muted hover:text-white'}`}>
+                    {t === 'info' ? 'Essencial' : t === 'equipe' ? 'Operação' : 'Comercial & Entrega'}
+                    {activeTab === t && <div className="absolute bottom-0 left-0 right-0 h-1 bg-brand-tactical" />}
                   </button>
                 ))}
               </div>
 
-              <form onSubmit={handleCreate}>
-                 <div className="grid grid-cols-1 md:grid-cols-2 gap-x-12">
+              <form onSubmit={handleCreate} className="flex-1 flex flex-col">
+                  <div className="flex-1">
                     {activeTab === 'info' && (
-                      <>
-                        <div className="space-y-8">
-                          <div className="space-y-2">
-                            <label className="text-[9px] font-bold text-theme-muted/60 uppercase tracking-[0.4em]">Capa da Vitrine</label>
-                            <div 
-                              onClick={() => fileInputRef.current?.click()}
-                              className="w-full aspect-video bg-theme-bg-muted border border-theme-border flex flex-col items-center justify-center cursor-pointer overflow-hidden group relative rounded-none"
-                            >
-                              {coverPreview ? (
-                                <img src={coverPreview} alt="Preview" className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700" />
-                              ) : (
+                      <div className="grid grid-cols-2 gap-12 animate-in fade-in duration-500">
+                        <div className="space-y-12">
+                          <div className="space-y-4">
+                            <label className="text-[9px] font-black text-theme-muted uppercase tracking-[0.4em]">Capa da Vitrine</label>
+                            <div onClick={() => fileInputRef.current?.click()} className="w-full aspect-video bg-theme-bg-muted border border-theme-border flex flex-col items-center justify-center cursor-pointer overflow-hidden group relative shadow-inner">
+                              {coverPreview ? <img src={coverPreview} alt="Preview" className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700" /> : (
                                 <div className="text-center group-hover:text-brand-tactical transition-colors">
-                                  <div className="text-2xl mb-2">📸</div>
-                                  <div className="text-[9px] uppercase tracking-[0.3em] text-zinc-700 font-bold">Enviar Capa</div>
+                                  <div className="text-3xl mb-3">📸</div>
+                                  <div className="text-[9px] uppercase tracking-[0.4em] text-zinc-600 font-black">Enviar Capa</div>
                                 </div>
                               )}
-                              {isUploading && <div className="absolute inset-0 bg-black/80 flex items-center justify-center text-[9px] text-white uppercase tracking-widest animate-pulse">Processando...</div>}
+                              {isUploading && <div className="absolute inset-0 bg-black/80 flex items-center justify-center text-[9px] text-white uppercase tracking-widest animate-pulse font-black">Processando...</div>}
                             </div>
                             <input type="file" ref={fileInputRef} hidden accept="image/*" onChange={handleFileChange} />
                           </div>
                         </div>
-
-                        <div className="space-y-8">
-                          <div className="space-y-2">
-                            <label className="text-[9px] font-bold text-theme-muted/60 uppercase tracking-[0.4em]">Título do Evento</label>
-                            <input 
-                              type="text"
-                              className="w-full bg-theme-bg border border-theme-border p-4 text-[13px] text-zinc-300 focus:border-brand-tactical transition-colors outline-none font-bold"
-                              value={formData.title}
-                              onChange={(e) => setFormData({ ...formData, title: e.target.value })}
-                              required
-                            />
+                        <div className="space-y-12">
+                          <div className="space-y-3">
+                            <label className="text-[9px] font-black text-theme-muted uppercase tracking-[0.4em]">Título do Evento</label>
+                            <input type="text" required className="w-full bg-theme-bg border border-theme-border p-4 text-[12px] text-theme-text focus:border-brand-tactical outline-none font-black" value={formData.title} onChange={e => setFormData({ ...formData, title: e.target.value })} />
                           </div>
-
-                          <div className="space-y-2">
-                            <label className="text-[9px] font-bold text-theme-muted/60 uppercase tracking-[0.4em]">Identificador URL (Slug)</label>
-                            <input 
-                              type="text"
-                              className="w-full bg-theme-bg border border-theme-border p-4 text-[13px] text-zinc-400 focus:border-brand-tactical transition-colors outline-none font-bold"
-                              value={formData.slug}
-                              onChange={(e) => setFormData({ ...formData, slug: e.target.value.toLowerCase().replace(/\s+/g, "-") })}
-                              placeholder="ex: taynan-e-felipe"
-                            />
+                          <div className="space-y-3">
+                            <label className="text-[9px] font-black text-theme-muted uppercase tracking-[0.4em]">Identificador URL (Slug)</label>
+                            <input type="text" className="w-full bg-theme-bg border border-theme-border p-4 text-[12px] text-theme-muted focus:border-brand-tactical outline-none font-black" value={formData.slug} onChange={e => setFormData({ ...formData, slug: e.target.value.toLowerCase().replace(/\s+/g, "-") })} placeholder="ex: taynan-e-felipe" />
                           </div>
-
-                          <div className="grid grid-cols-2 gap-8">
-                            <div className="space-y-2">
-                              <label className="text-[9px] font-bold text-theme-muted/60 uppercase tracking-[0.4em]">Data do Evento</label>
-                              <input 
-                                type="date" required
-                                className="w-full bg-theme-bg border border-theme-border p-4 text-[13px] text-theme-text focus:border-brand-tactical transition-colors outline-none font-bold"
-                                value={formData.date}
-                                onChange={e => setFormData({...formData, date: e.target.value})}
-                              />
+                          <div className="grid grid-cols-2 gap-6">
+                            <div className="space-y-3">
+                              <label className="text-[9px] font-black text-theme-muted uppercase tracking-[0.4em]">Data</label>
+                              <input type="date" required className="w-full bg-theme-bg border border-theme-border p-4 text-[12px] text-theme-text focus:border-brand-tactical outline-none font-black" value={formData.date} onChange={e => setFormData({...formData, date: e.target.value})} />
                             </div>
-                            <div className="space-y-2">
-                              <label className="text-[9px] font-bold text-theme-muted/60 uppercase tracking-[0.4em]">Local</label>
-                              <input 
-                                type="text" required
-                                className="w-full bg-theme-bg border border-theme-border p-4 text-[13px] text-theme-text focus:border-brand-tactical transition-colors outline-none font-bold"
-                                value={formData.location}
-                                onChange={e => setFormData({...formData, location: e.target.value})}
-                                placeholder="EX: CARTÓRIO X"
-                              />
+                            <div className="space-y-3">
+                              <label className="text-[9px] font-black text-theme-muted uppercase tracking-[0.4em]">Local</label>
+                              <input type="text" required className="w-full bg-theme-bg border border-theme-border p-4 text-[12px] text-theme-text focus:border-brand-tactical outline-none font-black" value={formData.location} onChange={e => setFormData({...formData, location: e.target.value})} placeholder="EX: CARTÓRIO X" />
                             </div>
                           </div>
                         </div>
-                      </>
+                      </div>
                     )}
 
                     {activeTab === 'equipe' && (
-                      <>
-                        <div className="space-y-8">
-                          <div className="space-y-2">
-                            <label className="text-[9px] font-bold text-theme-muted/60 uppercase tracking-[0.4em]">Unidade Fixa Responsável</label>
-                            <select 
-                              value={formData.cartorioId}
-                              onChange={e => setFormData({...formData, cartorioId: e.target.value})}
-                              className="w-full bg-theme-bg border border-theme-border p-4 text-[13px] text-theme-text focus:border-brand-tactical transition-colors outline-none font-bold appearance-none cursor-pointer"
-                            >
-                              <option value="">SELECIONE A UNIDADE FIXA</option>
-                              {users.filter(u => u.role === "UNIDADE" || u.role === "CARTORIO").map(u => (
-                                <option key={u.id} value={u.id}>{u.nome.toUpperCase()}</option>
-                              ))}
+                      <div className="grid grid-cols-2 gap-12 animate-in fade-in duration-500">
+                        <div className="space-y-12">
+                          <div className="space-y-3">
+                            <label className="text-[9px] font-black text-theme-muted uppercase tracking-[0.4em]">Unidade Fixa</label>
+                            <select value={formData.cartorioId} onChange={e => setFormData({...formData, cartorioId: e.target.value})} className="w-full bg-theme-bg border border-theme-border p-4 text-[12px] text-theme-text focus:border-brand-tactical outline-none font-black cursor-pointer appearance-none">
+                              <option value="">SELECIONE A UNIDADE</option>
+                              {users.filter(u => u.role === "UNIDADE" || u.role === "CARTORIO").map(u => <option key={u.id} value={u.id}>{u.nome.toUpperCase()}</option>)}
                             </select>
                           </div>
-
-                          <div className="space-y-2">
-                            <label className="text-[9px] font-bold text-theme-muted/60 uppercase tracking-[0.4em]">Cidade / UF</label>
-                            <input 
-                              type="text"
-                              className="w-full bg-theme-bg border border-theme-border p-4 text-[13px] text-theme-text focus:border-brand-tactical transition-colors outline-none font-bold"
-                              value={formData.city}
-                              onChange={(e) => setFormData({ ...formData, city: e.target.value })}
-                              placeholder="EX: SÃO PAULO - SP"
-                            />
+                          <div className="space-y-3">
+                            <label className="text-[9px] font-black text-theme-muted uppercase tracking-[0.4em]">Cidade / UF</label>
+                            <input type="text" className="w-full bg-theme-bg border border-theme-border p-4 text-[12px] text-theme-text focus:border-brand-tactical outline-none font-black" value={formData.city} onChange={e => setFormData({ ...formData, city: e.target.value })} placeholder="EX: SÃO PAULO - SP" />
                           </div>
                         </div>
-
-                        <div className="space-y-8">
-                          <div className="grid grid-cols-2 gap-8">
-                            <div className="space-y-2">
-                              <label className="text-[9px] font-bold text-theme-muted/60 uppercase tracking-[0.4em]">Captação</label>
-                              <select 
-                                value={formData.captacaoId}
-                                onChange={e => setFormData({...formData, captacaoId: e.target.value})}
-                                className="w-full bg-theme-bg border border-theme-border p-4 text-[13px] text-theme-text focus:border-brand-tactical transition-colors outline-none font-bold appearance-none cursor-pointer"
-                              >
-                                <option value="">PROFISSIONAL DA REDE</option>
-                                {users.filter(u => u.role === "PROFISSIONAL").map(u => (
-                                  <option key={u.id} value={u.id}>{u.nome.toUpperCase()}</option>
-                                ))}
+                        <div className="space-y-12">
+                          <div className="grid grid-cols-2 gap-6">
+                            <div className="space-y-3">
+                              <label className="text-[9px] font-black text-theme-muted uppercase tracking-[0.4em]">Captação</label>
+                              <select value={formData.captacaoId} onChange={e => setFormData({...formData, captacaoId: e.target.value})} className="w-full bg-theme-bg border border-theme-border p-4 text-[12px] text-theme-text focus:border-brand-tactical outline-none font-black cursor-pointer appearance-none">
+                                <option value="">PROFISSIONAL</option>
+                                {users.filter(u => u.role === "PROFISSIONAL").map(u => <option key={u.id} value={u.id}>{u.nome.toUpperCase()}</option>)}
                               </select>
                             </div>
-                            <div className="space-y-2">
-                              <label className="text-[9px] font-bold text-theme-muted/60 uppercase tracking-[0.4em]">Edição</label>
-                              <select 
-                                value={formData.edicaoId}
-                                onChange={e => setFormData({...formData, edicaoId: e.target.value})}
-                                className="w-full bg-theme-bg border border-theme-border p-4 text-[13px] text-theme-text focus:border-brand-tactical transition-colors outline-none font-bold appearance-none cursor-pointer"
-                              >
-                                <option value="">PROFISSIONAL DA REDE</option>
-                                {users.filter(u => u.role === "PROFISSIONAL").map(u => (
-                                  <option key={u.id} value={u.id}>{u.nome.toUpperCase()}</option>
-                                ))}
+                            <div className="space-y-3">
+                              <label className="text-[9px] font-black text-theme-muted uppercase tracking-[0.4em]">Edição</label>
+                              <select value={formData.edicaoId} onChange={e => setFormData({...formData, edicaoId: e.target.value})} className="w-full bg-theme-bg border border-theme-border p-4 text-[12px] text-theme-text focus:border-brand-tactical outline-none font-black cursor-pointer appearance-none">
+                                <option value="">PROFISSIONAL</option>
+                                {users.filter(u => u.role === "PROFISSIONAL").map(u => <option key={u.id} value={u.id}>{u.nome.toUpperCase()}</option>)}
                               </select>
                             </div>
                           </div>
-
-                          <div className="space-y-2">
-                            <label className="text-[9px] font-bold text-theme-muted/60 uppercase tracking-[0.4em]">Horas de Trabalho</label>
-                            <input 
-                              type="number"
-                              required
-                              value={formData.eventHours}
-                              onChange={e => setFormData({...formData, eventHours: Number(e.target.value)})}
-                              className="w-full bg-theme-bg border border-theme-border p-4 text-[13px] text-theme-text focus:border-brand-tactical transition-colors outline-none font-bold" 
-                            />
+                          <div className="space-y-3">
+                            <label className="text-[9px] font-black text-theme-muted uppercase tracking-[0.4em]">Horas de Trabalho</label>
+                            <input type="number" required value={formData.eventHours} onChange={e => setFormData({...formData, eventHours: Number(e.target.value)})} className="w-full bg-theme-bg border border-theme-border p-4 text-[12px] text-theme-text focus:border-brand-tactical outline-none font-black" />
                           </div>
                         </div>
-                      </>
+                      </div>
                     )}
 
                     {activeTab === 'comercial' && (
-                      <>
-                        <div className="space-y-8">
-                          <div className="grid grid-cols-2 gap-8">
+                      <div className="animate-in fade-in duration-500 space-y-5">
+                        <div className="grid grid-cols-2 gap-12">
+                          <div className="space-y-4">
+                            <div className="grid grid-cols-2 gap-6">
+                              <div className="space-y-1.5">
+                                <label className="text-[9px] font-black text-zinc-800 uppercase tracking-[0.4em]">Preço Álbum (R$)</label>
+                                <input type="number" className="w-full bg-white border border-zinc-300 p-2.5 text-[13px] text-zinc-950 outline-none font-black" value={formData.priceBase} onChange={e => setFormData({ ...formData, priceBase: Number(e.target.value) })} />
+                              </div>
+                              <div className="space-y-1.5">
+                                <label className="text-[9px] font-black text-zinc-800 uppercase tracking-[0.4em]">Antecipado (R$)</label>
+                                <input type="number" className="w-full bg-white border border-zinc-300 p-2.5 text-[13px] text-zinc-950 outline-none font-black" value={formData.priceEarly} onChange={e => setFormData({...formData, priceEarly: Number(e.target.value)})} />
+                              </div>
+                            </div>
+                            <div className="space-y-1.5">
+                              <label className="text-[9px] font-black text-zinc-800 uppercase tracking-[0.4em]">Google Drive</label>
+                              <input type="text" className="w-full bg-white border border-zinc-300 p-2.5 text-[11px] text-zinc-950 outline-none font-bold italic" value={formData.driveUrl} onChange={e => setFormData({ ...formData, driveUrl: e.target.value })} placeholder="https://..." />
+                            </div>
+                            <div className="space-y-1.5">
+                              <label className="text-[9px] font-black text-zinc-800 uppercase tracking-[0.4em]">Lightroom / Galeria</label>
+                              <input type="text" className="w-full bg-white border border-zinc-300 p-2.5 text-[11px] text-zinc-950 outline-none font-bold italic" value={formData.lightroomUrl} onChange={e => setFormData({ ...formData, lightroomUrl: e.target.value })} placeholder="https://..." />
+                            </div>
+                          </div>
+                          <div className="space-y-4">
                             <div className="space-y-2">
-                              <label className="text-[9px] font-bold text-theme-muted/60 uppercase tracking-[0.4em]">Preço Desbloqueio (R$)</label>
-                              <input 
-                                type="number"
-                                className="w-full bg-theme-bg border border-theme-border p-4 text-[13px] text-theme-text focus:border-brand-tactical transition-colors outline-none font-bold"
-                                value={formData.priceBase}
-                                onChange={(e) => setFormData({ ...formData, priceBase: Number(e.target.value) })}
-                              />
+                              <label className="text-[9px] font-black text-zinc-800 uppercase tracking-[0.4em]">Modelo e Serviços</label>
+                              <div className="flex gap-4">
+                                <button type="button" onClick={() => setFormData({ ...formData, type: 'ALBUM_FULL' })} className={`flex-1 p-2.5 border text-[9px] font-black uppercase tracking-widest transition-all ${formData.type === 'ALBUM_FULL' ? 'bg-brand-tactical border-brand-tactical text-zinc-950 shadow-sm' : 'bg-zinc-50 border-zinc-300 text-zinc-500'}`}>Álbum Completo</button>
+                                <button type="button" onClick={() => setFormData({ ...formData, type: 'PHOTO_MARKETPLACE' })} className={`flex-1 p-2.5 border text-[9px] font-black uppercase tracking-widest transition-all ${formData.type === 'PHOTO_MARKETPLACE' ? 'bg-brand-tactical border-brand-tactical text-zinc-950 shadow-sm' : 'bg-zinc-50 border-zinc-300 text-zinc-500'}`}>Marketplace</button>
+                              </div>
+                              <div className="grid grid-cols-2 gap-x-6 gap-y-3 pt-3 border-t border-zinc-100">
+                                {["temFoto", "temVideo", "temReels", "temFotoImpressa", "isCrowdfund", "isPrivate"].map(f => (
+                                  <label key={f} className="flex items-center gap-3 cursor-pointer">
+                                    <input type="checkbox" checked={formData[f as keyof EventFormData] as boolean} onChange={e => setFormData({...formData, [f]: e.target.checked})} className="w-3.5 h-3.5 border-zinc-300 appearance-none checked:bg-brand-tactical border transition-all" />
+                                    <span className={`text-[9px] font-black uppercase tracking-widest ${formData[f as keyof EventFormData] ? 'text-brand-tactical' : 'text-zinc-400'}`}>{f.replace("tem", "").replace("is", "").replace(/([A-Z])/g, ' $1').trim()}</span>
+                                  </label>
+                                ))}
+                              </div>
                             </div>
-                            <div className="space-y-2">
-                              <label className="text-[9px] font-bold text-theme-muted/60 uppercase tracking-[0.4em]">Preço Antecipado (R$)</label>
-                              <input 
-                                type="number"
-                                className="w-full bg-theme-bg border border-theme-border p-4 text-[13px] text-theme-text focus:border-brand-tactical transition-colors outline-none font-bold"
-                                value={formData.priceEarly}
-                                onChange={e => setFormData({...formData, priceEarly: Number(e.target.value)})}
-                              />
-                            </div>
-                          </div>
-
-                          <div className="space-y-4 pt-6 border-t border-theme-border">
-                            <label className="text-[9px] font-bold text-theme-muted/60 uppercase tracking-[0.4em]">Tipo de Entrega / Modelo</label>
-                            <div className="grid grid-cols-2 gap-4">
-                              <button
-                                type="button"
-                                onClick={() => setFormData({ ...formData, type: 'ALBUM_FULL' })}
-                                className={`p-4 border text-[10px] font-bold uppercase tracking-widest transition-all ${formData.type === 'ALBUM_FULL' ? 'bg-brand-tactical border-brand-tactical text-black' : 'border-zinc-800 text-zinc-500'}`}
-                              >
-                                Álbum Completo
-                              </button>
-                              <button
-                                type="button"
-                                onClick={() => setFormData({ ...formData, type: 'PHOTO_MARKETPLACE' })}
-                                className={`p-4 border text-[10px] font-bold uppercase tracking-widest transition-all ${formData.type === 'PHOTO_MARKETPLACE' ? 'bg-brand-tactical border-brand-tactical text-black' : 'border-zinc-800 text-zinc-500'}`}
-                              >
-                                Marketplace (Unidade)
-                              </button>
-                            </div>
-                          </div>
-
-                          {formData.type === 'PHOTO_MARKETPLACE' && (
-                            <div className="animate-in fade-in slide-in-from-top-2 duration-300">
-                              <label className="text-[9px] font-bold text-theme-muted/60 uppercase tracking-[0.4em]">Preço por Foto Individual (R$)</label>
-                              <input 
-                                type="number"
-                                className="w-full bg-theme-bg border border-theme-border p-4 text-[13px] text-theme-text focus:border-brand-tactical transition-colors outline-none font-bold mt-2"
-                                value={formData.pricePerPhoto}
-                                onChange={e => setFormData({...formData, pricePerPhoto: Number(e.target.value)})}
-                              />
-                            </div>
-                          )}
-
-                          <div className="space-y-4 pt-4">
-                            <label className="text-[9px] font-bold text-theme-muted/60 uppercase tracking-[0.4em]">Serviços Inclusos</label>
-                            <div className="grid grid-cols-2 gap-4">
-                              {(["temFoto", "temVideo", "temReels", "temFotoImpressa"] as const).map(serv => (
-                                <label key={serv} className="flex items-center gap-3 cursor-pointer group">
-                                  <input 
-                                    type="checkbox"
-                                    checked={formData[serv]}
-                                    onChange={e => setFormData({...formData, [serv]: e.target.checked})}
-                                    className="w-5 h-5 border-zinc-800 bg-transparent rounded-none checked:bg-brand-tactical focus:ring-0 appearance-none border transition-all"
-                                  />
-                                  <span className="text-[10px] text-zinc-500 uppercase tracking-[0.3em] font-bold group-hover:text-white transition-all">
-                                    {serv.replace("tem", "").replace(/([A-Z])/g, ' $1').trim()}
-                                  </span>
-                                </label>
-                              ))}
-                            </div>
-                          </div>
-
-                          <div className="space-y-4 pt-6 border-t border-theme-border">
-                            <label className="text-[9px] font-bold text-theme-muted/60 uppercase tracking-[0.4em]">Modelo Comercial Especial</label>
-                            <div className="grid grid-cols-1 gap-6">
-                              <label className="flex items-center gap-3 cursor-pointer group">
-                                <input 
-                                  type="checkbox"
-                                  checked={formData.isUnitSale}
-                                  onChange={e => setFormData({...formData, isUnitSale: e.target.checked})}
-                                  className="w-5 h-5 border-zinc-800 bg-transparent rounded-none checked:bg-brand-tactical focus:ring-0 appearance-none border transition-all"
-                                />
-                                <div>
-                                  <span className="text-[10px] text-white uppercase tracking-[0.3em] font-bold block">Modo Venda por Unidade</span>
-                                  <span className="text-[9px] text-zinc-500 uppercase tracking-widest mt-1 block">Ideal para parques e eventos abertos</span>
-                                </div>
-                              </label>
-
-                              {formData.isUnitSale && (
-                                <div className="animate-in fade-in slide-in-from-top-2 duration-300">
-                                  <label className="text-[9px] font-bold text-theme-muted/60 uppercase tracking-[0.4em]">Preço por Foto (R$)</label>
-                                  <input 
-                                    type="number"
-                                    className="w-full bg-theme-bg border border-theme-border p-4 text-[13px] text-theme-text focus:border-brand-tactical transition-colors outline-none font-bold mt-2"
-                                    value={formData.priceUnit}
-                                    onChange={e => setFormData({...formData, priceUnit: Number(e.target.value)})}
-                                  />
-                                </div>
-                              )}
-                            </div>
-                          </div>
-                        </div>
-
-                        <div className="space-y-8">
-                          <div className="bg-brand-tactical/5 p-6 border border-brand-tactical/20 space-y-6">
-                            <label className="flex items-center gap-3 cursor-pointer group">
-                              <input 
-                                type="checkbox"
-                                checked={formData.isCrowdfund}
-                                onChange={e => setFormData({...formData, isCrowdfund: e.target.checked})}
-                                className="w-5 h-5 border-zinc-800 bg-transparent rounded-none checked:bg-brand-tactical focus:ring-0 appearance-none border transition-all"
-                              />
-                              <span className="text-[10px] text-brand-tactical uppercase tracking-[0.3em] font-bold">
-                                MODO COMPRA COLETIVA (VAQUINHA)
-                              </span>
-                            </label>
-
                             {formData.isCrowdfund && (
-                              <div className="space-y-2 animate-in slide-in-from-top-1 duration-300">
-                                <label className="text-[9px] font-bold text-theme-muted/60 uppercase tracking-[0.4em]">VALOR TOTAL DA META (R$)</label>
-                                <input 
-                                  type="number"
-                                  className="w-full bg-theme-bg border border-theme-border p-4 text-[13px] text-theme-text focus:border-brand-tactical transition-colors outline-none font-bold"
-                                  value={formData.targetAmount}
-                                  onChange={e => setFormData({...formData, targetAmount: Number(e.target.value)})}
-                                />
+                              <div className="p-3 bg-brand-tactical/5 border border-brand-tactical/20 flex justify-between items-center">
+                                <div><label className="text-[8px] font-black text-brand-tactical uppercase tracking-widest">Meta</label>
+                                <input type="number" className="bg-transparent text-lg font-black text-zinc-950 outline-none w-24" value={formData.targetAmount} onChange={e => setFormData({...formData, targetAmount: Number(e.target.value)})} /></div>
+                                <div className="text-right"><span className="text-[8px] font-black text-zinc-400 uppercase tracking-widest block">Coletado</span><span className="text-md font-black text-brand-tactical">{new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL' }).format(editingEvent?.collectedAmount || 0)}</span></div>
                               </div>
                             )}
-
-                            <label className="flex items-center gap-3 cursor-pointer group pt-4 border-t border-brand-tactical/10">
-                              <input 
-                                type="checkbox"
-                                checked={formData.isPrivate}
-                                onChange={e => setFormData({...formData, isPrivate: e.target.checked})}
-                                className="w-5 h-5 border-zinc-800 bg-transparent rounded-none checked:bg-brand-tactical focus:ring-0 appearance-none border transition-all"
-                              />
-                              <div className="flex flex-col">
-                                <span className="text-[10px] text-zinc-300 uppercase tracking-[0.3em] font-bold">
-                                  MODO OCULTO (PRIVACIDADE)
-                                </span>
-                                <span className="text-[8px] text-zinc-500 uppercase font-medium mt-1">
-                                  O evento não aparecerá na vitrine pública da Home.
-                                </span>
-                              </div>
-                            </label>
                           </div>
                         </div>
-                      </>
+                        <div className="pt-4 border-t border-zinc-100">
+                          <label className="text-[9px] font-black text-zinc-800 uppercase tracking-[0.4em] mb-3 block">Fotos de Prévia (Vitrine)</label>
+                          <div className="grid grid-cols-3 gap-6">
+                            {[0, 1, 2].map(i => <input key={i} type="text" className="w-full bg-white border border-zinc-300 p-2 text-[10px] text-zinc-900 outline-none font-bold italic" value={formData.previewPhotos[i]} onChange={e => { const p = [...formData.previewPhotos] as [string,string,string]; p[i] = e.target.value; setFormData({...formData, previewPhotos: p}); }} placeholder={`URL ${i+1}`} />)}
+                          </div>
+                        </div>
+                      </div>
                     )}
+                  </div>
 
-                    {activeTab === 'entrega' && (
-                      <>
-                        <div className="space-y-8">
-                          <div className="space-y-2">
-                            <label className="text-[9px] font-bold text-theme-muted/60 uppercase tracking-[0.4em]">Link Google Drive</label>
-                            <input 
-                              type="text"
-                              className="w-full bg-theme-bg border border-theme-border p-4 text-[13px] text-theme-text focus:border-brand-tactical transition-colors outline-none font-bold"
-                              value={formData.driveUrl}
-                              onChange={(e) => setFormData({ ...formData, driveUrl: e.target.value })}
-                              placeholder="https://drive.google.com/..."
-                            />
-                          </div>
-                          <div className="space-y-2">
-                            <label className="text-[9px] font-bold text-theme-muted/60 uppercase tracking-[0.4em]">Link Lightroom / Galeria</label>
-                            <input 
-                              type="text"
-                              className="w-full bg-theme-bg border border-theme-border p-4 text-[13px] text-theme-text focus:border-brand-tactical transition-colors outline-none font-bold"
-                              value={formData.lightroomUrl}
-                              onChange={(e) => setFormData({ ...formData, lightroomUrl: e.target.value })}
-                              placeholder="https://lightroom.adobe.com/..."
-                            />
-                          </div>
-                        </div>
-
-                        <div className="space-y-4">
-                          <label className="text-[9px] font-bold text-brand-tactical uppercase tracking-[0.4em]">Fotos de Prévia (Até 3)</label>
-                          {[0, 1, 2].map(idx => (
-                            <input 
-                              key={idx}
-                              type="text"
-                              className="w-full bg-theme-bg border border-theme-border p-3 text-[11px] text-theme-text focus:border-brand-tactical transition-colors outline-none"
-                              value={formData.previewPhotos[idx]}
-                              onChange={(e) => {
-                                const newPreviews = [...formData.previewPhotos] as [string, string, string];
-                                newPreviews[idx] = e.target.value;
-                                setFormData({ ...formData, previewPhotos: newPreviews });
-                              }}
-                              placeholder={`URL da Foto ${idx + 1}`}
-                            />
-                          ))}
-                        </div>
-                      </>
-                    )}
-                 </div>
-
-                 <div className="mt-12 pt-8 border-t border-theme-border flex flex-col md:flex-row justify-end gap-4">
-                    <button
-                      type="button"
-                      onClick={() => {
-                        setIsModalOpen(false);
-                        if (onClose) onClose();
-                      }}
-                      className="px-10 py-4 bg-transparent border border-theme-border text-theme-muted text-[10px] font-black uppercase tracking-[0.3em] hover:text-white transition-all order-2 md:order-1"
-                    >
-                      Cancelar
-                    </button>
-                    {activeTab !== 'entrega' ? (
-                      <button
-                        type="button"
-                        onClick={() => {
-                          const tabs: Array<'info' | 'equipe' | 'comercial' | 'entrega'> = ['info', 'equipe', 'comercial', 'entrega'];
-                          const nextIdx = tabs.indexOf(activeTab) + 1;
-                          setActiveTab(tabs[nextIdx]);
-                        }}
-                        className="px-10 py-4 bg-zinc-800 text-white text-[10px] font-black uppercase tracking-[0.3em] hover:bg-zinc-700 transition-all"
-                      >
-                        PRÓXIMO PASSO
-                      </button>
+                  <div className="mt-auto pt-10 border-t border-theme-border flex justify-end gap-6">
+                    <button type="button" onClick={() => setIsModalOpen(false)} className="px-10 py-4 text-[10px] font-black uppercase tracking-[0.4em] text-theme-muted hover:text-white transition-all">Cancelar</button>
+                    {activeTab !== 'comercial' ? (
+                      <button type="button" onClick={() => { const t: Array<'info' | 'equipe' | 'comercial'> = ['info','equipe','comercial']; setActiveTab(t[t.indexOf(activeTab)+1]); }} className="px-10 py-4 bg-zinc-800 text-white text-[10px] font-black uppercase tracking-[0.4em] hover:bg-zinc-700 transition-all">Próximo Passo</button>
                     ) : (
-                      <button
-                        type="submit"
-                        disabled={isUploading}
-                        className="px-12 py-4 bg-brand-tactical text-white text-[10px] font-black uppercase tracking-[0.3em] hover:brightness-110 transition-all"
-                      >
-                        {isUploading ? "PROCESSANDO..." : (editingEvent ? "SALVAR ALTERAÇÕES" : "CADASTRAR EVENTO")}
-                      </button>
+                      <button type="submit" disabled={isUploading} className="px-12 py-4 bg-brand-tactical text-zinc-950 text-[10px] font-black uppercase tracking-[0.4em] hover:brightness-110 shadow-lg">{isUploading ? "PROCESSANDO..." : (editingEvent ? "SALVAR ALTERAÇÕES" : "CADASTRAR EVENTO")}</button>
                     )}
-                 </div>
+                  </div>
               </form>
           </div>
         </div>
       )}
 
-      {/* MODAL VENDA DIRETA */}
-      {isSaleModalOpen && saleEvent && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/90 backdrop-blur-[20px] animate-in fade-in duration-300">
-          <div className="w-full max-w-xl bg-theme-bg border border-theme-border p-10 relative shadow-2xl animate-in zoom-in-95 duration-500">
-             <button onClick={() => setIsSaleModalOpen(false)} className="absolute top-6 right-6 text-zinc-500 hover:text-white transition-colors">
-               <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5"><path d="M18 6L6 18M6 6l12 12"/></svg>
-             </button>
-
-             <div className="mb-10">
-               <h2 className="text-3xl font-heading text-theme-text tracking-tighter uppercase mb-2">Registrar Venda Direta</h2>
-               <p className="text-[10px] text-brand-tactical uppercase tracking-[0.4em] font-bold">Evento: {saleEvent.title}</p>
-               <div className="w-12 h-1 bg-brand-tactical mt-4" />
-             </div>
-
-             <form onSubmit={handleSaleSubmit} className="space-y-8">
-                <div className="space-y-2">
-                  <label className="text-[9px] font-bold text-theme-muted/60 uppercase tracking-[0.4em]">Nome Completo do Cliente</label>
-                  <input 
-                    type="text" required
-                    className="w-full bg-theme-bg border border-theme-border p-4 text-[13px] text-theme-text focus:border-brand-tactical transition-colors outline-none font-bold"
-                    value={saleFormData.customerName}
-                    onChange={e => setSaleFormData({...saleFormData, customerName: e.target.value})}
-                    placeholder="EX: JOÃO DA SILVA"
-                  />
-                </div>
-
-                <div className="space-y-2">
-                  <label className="text-[9px] font-bold text-theme-muted/60 uppercase tracking-[0.4em]">E-mail para Acesso (Álbum)</label>
-                  <input 
-                    type="email" required
-                    className="w-full bg-theme-bg border border-theme-border p-4 text-[13px] text-theme-text focus:border-brand-tactical transition-colors outline-none font-bold"
-                    value={saleFormData.customerEmail}
-                    onChange={e => setSaleFormData({...saleFormData, customerEmail: e.target.value})}
-                    placeholder="joao@email.com"
-                  />
-                </div>
-
-                <div className="space-y-2">
-                  <label className="text-[9px] font-bold text-theme-muted/60 uppercase tracking-[0.4em]">Valor da Venda (R$)</label>
-                  <input 
-                    type="number" required
-                    className="w-full bg-theme-bg border border-theme-border p-4 text-[13px] text-theme-text focus:border-brand-tactical transition-colors outline-none font-bold"
-                    value={saleFormData.amount}
-                    onChange={e => setSaleFormData({...saleFormData, amount: Number(e.target.value)})}
-                  />
-                </div>
-
-                <div className="pt-6">
-                  <button
-                    type="submit"
-                    disabled={isUploading}
-                    className="w-full font-black uppercase tracking-[0.3em] py-5 text-[10px] bg-brand-primary text-black hover:brightness-110 active:scale-[0.98] transition-all rounded-none"
-                  >
-                    {isUploading ? "PROCESSANDO..." : "CONFIRMAR E GERAR ACESSO"}
-                  </button>
-                  <p className="text-[8px] text-theme-muted text-center mt-4 uppercase tracking-widest leading-relaxed">
-                    Ao confirmar, o sistema criará o usuário e o pedido marcado como pago,<br/>enviando as credenciais de acesso para o e-mail informado.
-                  </p>
-                </div>
-             </form>
-          </div>
-        </div>
-      )}
-      {/* QR CODE MODAL */}
       {qrModalEvent && (
-        <div className="fixed inset-0 z-[60] flex items-center justify-center p-4 bg-black/90 backdrop-blur-[20px] animate-in fade-in duration-300">
-          <div className="w-full max-w-sm bg-theme-bg border border-theme-border p-10 relative text-center shadow-2xl animate-in zoom-in-95 duration-500">
-            <button 
-              onClick={() => setQrModalEvent(null)}
-              className="absolute top-6 right-6 text-theme-muted/60 hover:text-white"
-            >
-              <X size={20} />
-            </button>
-            
+        <div className="fixed inset-0 z-[60] flex items-center justify-center p-4 bg-black/90 backdrop-blur-2xl">
+          <div className="w-full max-w-sm bg-theme-bg border border-theme-border p-10 relative text-center shadow-2xl">
+            <button onClick={() => setQrModalEvent(null)} className="absolute top-6 right-6 text-theme-muted hover:text-white"><X size={20} /></button>
             <div className="mb-8">
-               <div className="w-12 h-12 bg-brand-primary/10 text-brand-primary rounded-full flex items-center justify-center mx-auto mb-4 border border-brand-primary/20">
-                 <QrCode size={24} />
-               </div>
-               <h3 className="text-2xl font-heading text-theme-text uppercase tracking-tighter">QR Code</h3>
-               <p className="text-[10px] text-theme-muted uppercase tracking-[0.2em] mt-1">Acesso direto ao protocolo</p>
+               <h3 className="text-2xl font-black text-theme-text uppercase tracking-tighter">QR Code</h3>
+               <p className="text-[10px] text-theme-muted uppercase tracking-widest mt-1">Acesso Direto</p>
             </div>
-
-            <div className="bg-white p-6 rounded-none inline-block mb-10 shadow-2xl">
-              <QRCodeSVG 
-                value={`${window.location.origin}/e/${qrModalEvent.slug}`}
-                size={240}
-                level="H"
-                includeMargin={false}
-              />
-            </div>
-
+            <div className="bg-white p-6 inline-block mb-10"><QRCodeSVG value={`${window.location.origin}/e/${qrModalEvent.slug}`} size={240} level="H" /></div>
             <div className="space-y-3">
-              <button 
-                onClick={() => {
-                  const url = `${window.location.origin}/e/${qrModalEvent.slug}`;
-                  const printWindow = window.open("", "_blank");
-                  if (printWindow) {
-                    printWindow.document.write(`
-                      <html>
-                        <head>
-                          <title>Kit de Marketing - ${qrModalEvent.title}</title>
-                          <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;900&display=swap" rel="stylesheet">
-                          <style>
-                            body { font-family: 'Outfit', sans-serif; background: white; color: black; display: flex; flex-direction: column; align-items: center; justify-content: center; height: 100vh; margin: 0; text-align: center; padding: 40px; }
-                            .card { border: 15px solid #85B9AC; padding: 60px; max-width: 600px; position: relative; }
-                            .logo { font-weight: 900; font-size: 24px; color: #85B9AC; margin-bottom: 60px; letter-spacing: -1px; }
-                            .label { font-size: 14px; text-transform: uppercase; letter-spacing: 5px; color: #888; margin-bottom: 20px; font-weight: 700; }
-                            h1 { font-size: 42px; font-weight: 900; text-transform: uppercase; margin: 0 0 40px 0; letter-spacing: -2px; line-height: 1; }
-                            .qr-placeholder { background: white; padding: 20px; border: 1px solid #eee; display: inline-block; margin-bottom: 40px; }
-                            .footer-text { font-size: 10px; text-transform: uppercase; letter-spacing: 3px; color: #bbb; font-weight: 700; }
-                            @media print { .no-print { display: none; } }
-                            button { margin-top: 40px; padding: 15px 40px; background: #000; color: #fff; border: none; font-weight: 900; cursor: pointer; text-transform: uppercase; letter-spacing: 2px; font-size: 12px; }
-                          </style>
-                        </head>
-                        <body>
-                          <div class="card">
-                            <div class="logo">FOTO / SEGUNDO</div>
-                            <div class="label">Nossas fotos estão aqui</div>
-                            <h1>${qrModalEvent.title}</h1>
-                            <div class="qr-placeholder" id="qrcode"></div>
-                            <div class="footer-text">Escaneie para acessar a galeria</div>
-                          </div>
-                          <button class="no-print" onclick="window.print()">Imprimir Kit</button>
-                          <script src="https://cdn.jsdelivr.net/npm/qrcodejs@1.0.0/qrcode.min.js"></script>
-                          <script>
-                            new QRCode(document.getElementById("qrcode"), {
-                              text: "${url}",
-                              width: 250,
-                              height: 250
-                            });
-                          </script>
-                        </body>
-                      </html>
-                    `);
-                    printWindow.document.close();
-                  }
-                }}
-                className="w-full bg-brand-primary text-black py-4 text-[10px] font-black uppercase tracking-[0.2em] hover:brightness-110 transition-all"
-              >
-                Gerar Kit de Marketing (PDF)
-              </button>
-              
-              <button 
-                onClick={() => {
-                  navigator.clipboard.writeText(`${window.location.origin}/e/${qrModalEvent.slug}`);
-                  setCopied(true);
-                  setTimeout(() => setCopied(false), 2000);
-                }}
-                className="w-full bg-theme-bg-muted border border-theme-border text-theme-text py-4 text-[10px] font-black uppercase tracking-[0.2em] hover:bg-theme-border transition-all"
-              >
-                {copied ? "COPIADO!" : "COPIAR LINK DIRETO"}
-              </button>
+              <button onClick={() => { const url = `${window.location.origin}/e/${qrModalEvent.slug}`; const w = window.open("", "_blank"); if(w){ w.document.write(`<html><body style="display:flex;flex-direction:column;align-items:center;justify-content:center;height:100vh;font-family:sans-serif;"><h1>${qrModalEvent.title}</h1><div id="q"></div><button onclick="window.print()" style="margin-top:20px;padding:10px 20px;">Imprimir</button><script src="https://cdn.jsdelivr.net/npm/qrcodejs@1.0.0/qrcode.min.js"></script><script>new QRCode(document.getElementById("q"), {text:"${url}",width:250,height:250});</script></body></html>`); w.document.close(); } }} className="w-full bg-brand-tactical text-zinc-950 py-4 text-[10px] font-black uppercase tracking-widest">Imprimir Kit</button>
+              <button onClick={() => { navigator.clipboard.writeText(`${window.location.origin}/e/${qrModalEvent.slug}`); setCopied(true); setTimeout(()=>setCopied(false),2000); }} className="w-full bg-theme-bg-muted border border-theme-border text-theme-text py-4 text-[10px] font-black uppercase tracking-widest">{copied ? "COPIADO!" : "COPIAR LINK"}</button>
             </div>
           </div>
         </div>
       )}
-      {/* NOTIFICATION (MIDNIGHT LUXURY) */}
+
       {notification && (
-        <div className="fixed bottom-10 right-10 z-[100] animate-in slide-in-from-right-10 duration-500">
-           <div className={`p-6 border ${notification.type === 'success' ? 'border-brand-tactical bg-zinc-950 shadow-[0_0_30px_rgba(133,185,172,0.1)]' : 'border-red-900 bg-zinc-950'} min-w-[300px] relative overflow-hidden shadow-2xl`}>
-              <div className="flex flex-col gap-1">
-                 <span className={`text-[8px] font-black uppercase tracking-[0.4em] ${notification.type === 'success' ? 'text-brand-tactical' : 'text-red-500'}`}>
-                    {notification.type === 'success' ? 'Operação Concluída' : 'Falha Crítica'}
-                 </span>
-                 <p className="text-[11px] font-bold text-white uppercase tracking-widest">{notification.message}</p>
-              </div>
-              <div className={`absolute bottom-0 left-0 h-1 ${notification.type === 'success' ? 'bg-brand-tactical' : 'bg-red-900'} animate-out fade-out duration-[5000ms] w-full`} />
-           </div>
-        </div>
-      )}
-      {/* MODAL VENDA EXPRESSA (MARKETPLACE) */}
-      {isExpressModalOpen && (
-        <div className="fixed inset-0 z-[60] flex items-center justify-center p-4 bg-black/95 backdrop-blur-xl animate-in fade-in duration-300">
-          <div className="w-full max-w-lg bg-theme-bg border border-brand-tactical/30 p-10 relative shadow-[0_0_50px_rgba(var(--brand-tactical-rgb),0.1)]">
-             <button onClick={() => setIsExpressModalOpen(false)} className="absolute top-6 right-6 text-zinc-500 hover:text-white transition-colors">
-               <X size={20} />
-             </button>
-
-             <div className="mb-10">
-               <h2 className="text-3xl font-heading text-theme-text tracking-tighter uppercase mb-2">Venda Rápida</h2>
-               <p className="text-[10px] text-brand-tactical uppercase tracking-[0.4em] font-bold">Venda Direta / Balcão</p>
-               <div className="w-12 h-1 bg-brand-tactical mt-4" />
-             </div>
-
-             <form onSubmit={handleExpressSaleSubmit} className="space-y-6">
-                <div className="space-y-2">
-                  <label className="text-[9px] font-bold text-theme-muted/60 uppercase tracking-[0.4em]">Nome do Cliente (Opcional)</label>
-                  <input 
-                    type="text"
-                    className="w-full bg-theme-bg border border-theme-border p-4 text-[13px] text-theme-text focus:border-brand-tactical outline-none"
-                    value={expressFormData.customerName}
-                    onChange={e => setExpressFormData({...expressFormData, customerName: e.target.value})}
-                    placeholder="EX: JOÃO SILVA"
-                  />
-                </div>
-
-                <div className="space-y-2">
-                  <label className="text-[9px] font-bold text-theme-muted/60 uppercase tracking-[0.4em]">E-mail do Cliente (Obrigatório)</label>
-                  <input 
-                    type="email" required
-                    className="w-full bg-theme-bg border border-theme-border p-4 text-[13px] text-theme-text focus:border-brand-tactical outline-none"
-                    value={expressFormData.customerEmail}
-                    onChange={e => setExpressFormData({...expressFormData, customerEmail: e.target.value})}
-                    placeholder="cliente@email.com"
-                  />
-                </div>
-
-                <div className="grid grid-cols-2 gap-6">
-                  <div className="space-y-2">
-                    <label className="text-[9px] font-bold text-theme-muted/60 uppercase tracking-[0.4em]">Valor Pago (R$)</label>
-                    <input 
-                      type="number" required
-                      className="w-full bg-theme-bg border border-theme-border p-4 text-[13px] text-brand-tactical focus:border-brand-tactical outline-none font-black"
-                      value={expressFormData.amount}
-                      onChange={e => setExpressFormData({...expressFormData, amount: Number(e.target.value)})}
-                    />
-                  </div>
-                  <div className="space-y-2">
-                    <label className="text-[9px] font-bold text-theme-muted/60 uppercase tracking-[0.4em]">Local / Ponto</label>
-                    <input 
-                      type="text" required
-                      className="w-full bg-theme-bg border border-theme-border p-4 text-[13px] text-theme-text focus:border-brand-tactical outline-none"
-                      value={expressFormData.location}
-                      onChange={e => setExpressFormData({...expressFormData, location: e.target.value})}
-                    />
-                  </div>
-                </div>
-
-                <div className="space-y-4">
-                  <label className="text-[9px] font-bold text-theme-muted/60 uppercase tracking-[0.4em]">Método de Pagamento</label>
-                  <div className="flex gap-4">
-                    <button 
-                      type="button"
-                      onClick={() => setExpressFormData({...expressFormData, paymentMethod: "MONEY"})}
-                      className={`flex-1 py-4 text-[10px] font-black uppercase tracking-widest border transition-all ${expressFormData.paymentMethod === 'MONEY' ? 'bg-brand-tactical text-black border-brand-tactical' : 'bg-theme-bg text-theme-muted border-theme-border'}`}
-                    >
-                      Dinheiro
-                    </button>
-                    <button 
-                      type="button"
-                      onClick={() => setExpressFormData({...expressFormData, paymentMethod: "PIX"})}
-                      className={`flex-1 py-4 text-[10px] font-black uppercase tracking-widest border transition-all ${expressFormData.paymentMethod === 'PIX' ? 'bg-brand-tactical text-black border-brand-tactical' : 'bg-theme-bg text-theme-muted border-theme-border'}`}
-                    >
-                      PIX
-                    </button>
-                    <button 
-                      type="button"
-                      onClick={() => setExpressFormData({...expressFormData, paymentMethod: "CARD"})}
-                      className={`flex-1 py-4 text-[10px] font-black uppercase tracking-widest border transition-all ${expressFormData.paymentMethod === 'CARD' ? 'bg-brand-tactical text-black border-brand-tactical' : 'bg-theme-bg text-theme-muted border-theme-border'}`}
-                    >
-                      Cartão
-                    </button>
-                  </div>
-                </div>
-
-                <button 
-                  type="submit"
-                  disabled={isUploading}
-                  className="w-full bg-brand-tactical text-black font-black uppercase tracking-[0.4em] py-5 text-[11px] hover:brightness-110 transition-all mt-4"
-                >
-                  {isUploading ? "PROCESSANDO..." : "CONFIRMAR VENDA & GERAR OP"}
-                </button>
-             </form>
+        <div className="fixed bottom-10 right-10 z-[100] p-6 border border-brand-tactical bg-zinc-950 shadow-2xl min-w-[300px] animate-in slide-in-from-right-10 duration-500">
+          <div className="flex flex-col gap-1">
+             <span className="text-[8px] font-black uppercase tracking-[0.4em] text-brand-tactical">Notificação</span>
+             <p className="text-[11px] font-bold text-white uppercase tracking-widest">{notification.message}</p>
           </div>
         </div>
       )}
 
-      {/* NOTIFICAÇÃO FLOATING */}
-      {notification && (
-        <div 
-          className={`fixed bottom-8 right-8 z-[100] px-8 py-4 shadow-2xl border animate-in slide-in-from-right-10 duration-500 ${
-            notification.type === 'success' ? 'bg-zinc-900 border-brand-tactical text-brand-tactical' : 'bg-red-950 border-red-500 text-red-200'
-          }`}
-        >
-          <div className="flex items-center gap-4">
-            <div className={`w-2 h-2 rounded-full ${notification.type === 'success' ? 'bg-brand-tactical animate-pulse' : 'bg-red-500'}`} />
-            <span className="text-[10px] font-black uppercase tracking-[0.2em]">{notification.message}</span>
+      {isExpressModalOpen && (
+        <div className="fixed inset-0 z-[60] flex items-center justify-center p-6 bg-black/80 backdrop-blur-sm animate-in fade-in duration-300">
+          <div className="w-full max-w-5xl bg-theme-bg border border-theme-border p-10 relative shadow-2xl">
+             <button onClick={() => setIsExpressModalOpen(false)} className="absolute top-8 right-8 text-theme-muted hover:text-white"><X size={20} /></button>
+             <div className="mb-10"><h2 className="text-2xl font-black text-theme-text uppercase tracking-tighter">Venda Rápida</h2></div>
+             <form onSubmit={handleExpressSaleSubmit} className="grid grid-cols-2 gap-12">
+                <div className="space-y-6">
+                  <div className="space-y-2"><label className="text-[8px] font-black text-theme-muted uppercase tracking-[0.4em]">Cliente</label><input type="text" className="w-full bg-theme-bg border border-theme-border p-4 text-[12px] text-theme-text outline-none font-bold" value={expressFormData.customerName} onChange={e => setExpressFormData({...expressFormData, customerName: e.target.value})} placeholder="NOME" /></div>
+                  <div className="space-y-2"><label className="text-[8px] font-black text-theme-muted uppercase tracking-[0.4em]">E-mail</label><input type="email" required className="w-full bg-theme-bg border border-theme-border p-4 text-[12px] text-theme-text outline-none font-bold" value={expressFormData.customerEmail} onChange={e => setExpressFormData({...expressFormData, customerEmail: e.target.value})} placeholder="EMAIL" /></div>
+                  
+                  <div className="pt-4 border-t border-theme-border/30">
+                    <label className="text-[8px] font-black text-theme-muted uppercase tracking-[0.4em] mb-4 block">Serviços Selecionados</label>
+                    <div className="grid grid-cols-2 gap-4">
+                      {["FOTO DIGITAL", "FOTO IMPRESSA", "VIDEO", "REELS"].map(s => (
+                        <label key={s} className="flex items-center gap-3 cursor-pointer group">
+                          <input 
+                            type="checkbox" 
+                            checked={expressFormData.services.includes(s)}
+                            onChange={e => {
+                              const newServices = e.target.checked 
+                                ? [...expressFormData.services, s]
+                                : expressFormData.services.filter(x => x !== s);
+                              setExpressFormData({...expressFormData, services: newServices});
+                            }}
+                            className="w-4 h-4 border-theme-border appearance-none checked:bg-brand-tactical border transition-all"
+                          />
+                          <span className={`text-[9px] font-black uppercase tracking-widest ${expressFormData.services.includes(s) ? 'text-brand-tactical' : 'text-theme-muted'}`}>{s}</span>
+                        </label>
+                      ))}
+                    </div>
+                  </div>
+                </div>
+                <div className="space-y-6">
+                  <div className="grid grid-cols-2 gap-6">
+                    <div className="space-y-2"><label className="text-[8px] font-black text-theme-muted uppercase tracking-[0.4em]">Valor</label><input type="number" required className="w-full bg-theme-bg border border-theme-border p-4 text-[14px] text-brand-tactical outline-none font-black" value={expressFormData.amount} onChange={e => setExpressFormData({...expressFormData, amount: Number(e.target.value)})} /></div>
+                    <div className="space-y-2"><label className="text-[8px] font-black text-theme-muted uppercase tracking-[0.4em]">Local</label><input type="text" required className="w-full bg-theme-bg border border-theme-border p-4 text-[12px] text-theme-text outline-none font-bold" value={expressFormData.location} onChange={e => setExpressFormData({...expressFormData, location: e.target.value})} /></div>
+                  </div>
+                  <div className="flex gap-4">
+                    {(["MONEY", "PIX", "CARD"] as const).map(m => <button key={m} type="button" onClick={() => setExpressFormData({...expressFormData, paymentMethod: m})} className={`flex-1 py-4 text-[9px] font-black uppercase tracking-widest border transition-all ${expressFormData.paymentMethod === m ? 'bg-brand-tactical text-zinc-950 border-brand-tactical' : 'bg-theme-bg text-theme-muted border-theme-border'}`}>{m}</button>)}
+                  </div>
+                  <button type="submit" disabled={isUploading} className="w-full bg-brand-tactical text-zinc-950 font-black uppercase tracking-[0.5em] py-5 text-[11px] shadow-lg">{isUploading ? "PROCESSANDO..." : "FINALIZAR VENDA"}</button>
+                </div>
+             </form>
           </div>
         </div>
       )}

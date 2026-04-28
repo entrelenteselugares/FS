@@ -108,6 +108,29 @@ export async function getDashboardStats(req: AuthRequest, res: Response): Promis
       }
     });
 
+    // ── MÉTRICAS DE PERFORMANCE (30 DIAS) ──
+    const now = new Date();
+    const thirtyDaysAgo = new Date();
+    thirtyDaysAgo.setDate(now.getDate() - 30);
+    const sixtyDaysAgo = new Date();
+    sixtyDaysAgo.setDate(now.getDate() - 60);
+
+    const revenue30dResult = await prisma.order.aggregate({
+      where: { status: "APROVADO", updatedAt: { gte: thirtyDaysAgo } },
+      _sum: { valor: true },
+    });
+    const revenue30d = Number(revenue30dResult._sum.valor || 0);
+
+    const revenuePrev30dResult = await prisma.order.aggregate({
+      where: { status: "APROVADO", updatedAt: { gte: sixtyDaysAgo, lt: thirtyDaysAgo } },
+      _sum: { valor: true },
+    });
+    const revenuePrev30d = Number(revenuePrev30dResult._sum.valor || 0);
+
+    let growth = 0;
+    if (revenuePrev30d > 0) growth = ((revenue30d - revenuePrev30d) / revenuePrev30d) * 100;
+    else if (revenue30d > 0) growth = 100;
+
     const totalRevenue = totalRevenueResult._sum.valor ? Number(totalRevenueResult._sum.valor) : 0;
     const totalUsers = await prisma.user.count();
 
@@ -116,6 +139,8 @@ export async function getDashboardStats(req: AuthRequest, res: Response): Promis
         activeEvents: totalEvents || 0,
         totalOrders: totalOrders || 0,
         totalRevenue,
+        revenue30d,
+        growth: Number(growth.toFixed(1)),
         totalUsers: totalUsers || 0,
         pendingQuotesCount: pendingQuotesCount || 0,
         pendingInvitesCount: pendingInvitesCount || 0,
@@ -149,7 +174,13 @@ export async function adminListEvents(req: AuthRequest, res: Response): Promise<
   const skip = (Number(page) - 1) * take;
 
   try {
-    const where: Prisma.EventWhereInput = { isQuote: false }; // Segregação: Não lista orçamentos na aba de eventos
+    const where: Prisma.EventWhereInput = { 
+      isQuote: false,
+      OR: [
+        { type: { not: "PHOTO_MARKETPLACE" } }, 
+        { pedidos: { some: { hasPaid: true } } } 
+      ]
+    };
     if (status === "active") where.active = true;
     if (status === "inactive") where.active = false;
     
@@ -439,7 +470,10 @@ export async function adminListUsers(req: AuthRequest, res: Response): Promise<v
 }
 
 export async function adminCreateUser(req: AuthRequest, res: Response): Promise<void> {
-  const { name, email, password, role, pixKey } = req.body;
+  const { 
+    name, email, password, role, pixKey, 
+    captPct, editPct, equipment, otherHabilities 
+  } = req.body;
   if (!name || !email || !password || !role) {
     res.status(400).json({ error: "Todos os campos são obrigatórios." });
     return;
@@ -483,7 +517,17 @@ export async function adminCreateUser(req: AuthRequest, res: Response): Promise<
     // Cria perfil específico baseado no role
     if (role === "PROFISSIONAL") {
       await prisma.profissional.create({
-        data: { userId: user.id, services: [], cameras: [], lenses: [], lighting: [] },
+        data: { 
+          userId: user.id, 
+          services: [], 
+          cameras: [], 
+          lenses: [], 
+          lighting: [],
+          captPct: captPct ? Number(captPct) : 30,
+          editPct: editPct ? Number(editPct) : 10,
+          equipment: equipment || null,
+          otherHabilities: otherHabilities || null
+        },
       });
     } else if (role === "CARTORIO") {
       await prisma.cartorio.create({
@@ -802,7 +846,7 @@ export async function adminApproveQuote(req: AuthRequest, res: Response): Promis
     }
 
     // 3. Gerar link de checkout
-    const checkoutUrl = `${APP_URL}/checkout?orderId=${order.id}`;
+    const checkoutUrl = `${FRONTEND_URL}/checkout?orderId=${order.id}`;
 
     // 4. Enviar E-mail Automático
     await NotificationService.sendQuotationPricedEmail({

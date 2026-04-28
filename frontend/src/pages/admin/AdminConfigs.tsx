@@ -1,8 +1,23 @@
-import { useState, useEffect } from "react";
+import React, { useState, useEffect, useCallback, useMemo } from "react";
+import { 
+  Percent, 
+  DollarSign, 
+  Calculator, 
+  Save, 
+  CheckCircle, 
+  AlertTriangle, 
+  RefreshCw, 
+  Palette, 
+  Shield, 
+  ArrowRight,
+  Zap,
+  Globe,
+  Lock,
+  Smartphone
+} from "lucide-react";
 import { API } from "../../lib/api";
-import { Settings, Percent, DollarSign, Calculator, Save, CheckCircle, AlertTriangle, RefreshCw, Palette, Shield } from "lucide-react";
-import { T } from "../../lib/theme";
 
+// --- Types ---
 interface Config {
   key: string;
   value: string;
@@ -32,15 +47,20 @@ interface Payout {
   items?: PayoutItem[];
 }
 
-function formatCurrency(v: number) {
-  return new Intl.NumberFormat("pt-BR", { style: "currency", currency: "BRL" }).format(v);
-}
-
+const formatCurrency = (v: number) => new Intl.NumberFormat("pt-BR", { style: "currency", currency: "BRL" }).format(v);
 const safeDate = (d: string | null | undefined) => {
   if (!d) return "—";
   const dt = new Date(d);
   return isNaN(dt.getTime()) ? "—" : dt.toLocaleDateString("pt-BR");
 };
+
+// Constante fora do componente para evitar recriação a cada render
+const REQUIRED_SPLITS: Array<{key: string; label: string; value: string}> = [
+  { key: "split_matriz",    label: "Matriz (Plataforma)",       value: "0" },
+  { key: "split_captacao", label: "Captação (Fotógrafo)",      value: "0" },
+  { key: "split_edicao",   label: "Edição (Curadoria)",        value: "0" },
+  { key: "split_cartorio", label: "Unidade Fixa (Logística)",  value: "0" }
+];
 
 export const AdminConfigs: React.FC = () => {
   const [configs, setConfigs] = useState<Config[]>([]);
@@ -51,35 +71,42 @@ export const AdminConfigs: React.FC = () => {
   const [payouts, setPayouts] = useState<Payout[]>([]);
   const [generating, setGenerating] = useState(false);
   const [tab, setTab] = useState<"splits" | "payouts" | "infra">("splits");
-
   const [payoutModal, setPayoutModal] = useState<{payoutId: string, itemId: string, name: string, amount: number} | null>(null);
   const [pixTxId, setPixTxId] = useState("");
+  const [notification, setNotification] = useState<{message: string, type: 'success' | 'error'} | null>(null);
+  const [showGenerateConfirm, setShowGenerateConfirm] = useState(false);
 
-  const fetchData = async () => {
+  const fetchData = useCallback(async () => {
     try {
       const [configRes, payoutRes] = await Promise.all([
         API.get("/admin/configs"),
         API.get("/admin/payouts")
       ]);
-      setConfigs(configRes.data.configs);
-      setSplitsTotal(configRes.data.splitsTotal);
-      setSplitsValid(configRes.data.splitsValid);
-      setPayouts(payoutRes.data);
-    } catch (err) {
-      console.error(err);
-    }
-  };
+      
+      // Mescla configs do banco com as obrigatórias para garantir que apareçam
+      const dbConfigs = configRes.data.configs || [];
+      const mergedConfigs = [...dbConfigs];
+      
+      REQUIRED_SPLITS.forEach(req => {
+        if (!mergedConfigs.find(c => c.key === req.key)) {
+          mergedConfigs.push(req);
+        }
+      });
 
-  useEffect(() => {
-    fetchData();
+      setConfigs(mergedConfigs);
+      setSplitsTotal(configRes.data.splitsTotal || 0);
+      setSplitsValid(configRes.data.splitsValid ?? false);
+      setPayouts(payoutRes.data);
+    } catch (err) { console.error(err); }
   }, []);
+
+  useEffect(() => { fetchData(); }, [fetchData]);
 
   const handleChange = (key: string, value: string) => {
     const updatedConfigs = configs.map((c) => c.key === key ? { ...c, value } : c);
     setConfigs(updatedConfigs);
 
-    // Recalcula total dos splits em tempo real
-    const splitKeys = ["split_matriz", "split_captacao", "split_edicao", "split_cartorio"];
+    const splitKeys = REQUIRED_SPLITS.map(s => s.key);
     const total = splitKeys.reduce((acc, k) => {
       const c = updatedConfigs.find((c) => c.key === k);
       return acc + Number(c?.value ?? 0);
@@ -89,26 +116,19 @@ export const AdminConfigs: React.FC = () => {
   };
 
   const handleSave = async () => {
-    if (!splitsValid) return;
+    if (tab === 'splits' && !splitsValid) return;
     setSaving(true);
     try {
+      // Filtra apenas as que foram alteradas ou as obrigatórias para garantir criação no banco
       await API.patch("/admin/configs", { configs });
       setSaved(true);
-      setTimeout(() => setSaved(false), 2500);
-    } catch (err) {
-      const axiosError = err as import("axios").AxiosError<{ error: string }>;
-      alert(axiosError.response?.data?.error ?? "Erro ao salvar.");
+      setNotification({ message: "Configurações sincronizadas!", type: 'success' });
+      setTimeout(() => { setSaved(false); setNotification(null); }, 2500);
+    } catch {
+      setNotification({ message: "Erro ao salvar configurações.", type: 'error' });
     } finally {
       setSaving(false);
     }
-  };
-
-  const [notification, setNotification] = useState<{message: string, type: 'success' | 'error'} | null>(null);
-  const [showGenerateConfirm, setShowGenerateConfirm] = useState(false);
-
-  const showNotification = (message: string, type: 'success' | 'error' = 'success') => {
-    setNotification({ message, type });
-    setTimeout(() => setNotification(null), 5000);
   };
 
   const handleGeneratePayout = async () => {
@@ -118,12 +138,13 @@ export const AdminConfigs: React.FC = () => {
       const { data } = await API.post("/admin/payouts/generate");
       setPayouts((p) => [data, ...p]);
       setTab("payouts");
-      showNotification("Relatório gerado com sucesso!");
-    } catch (err) {
-      const axiosError = err as import("axios").AxiosError<{ error: string }>;
-      showNotification(axiosError.response?.data?.error ?? "Erro ao gerar relatório.", 'error');
+      setNotification({ message: "Relatório gerado com sucesso!", type: 'success' });
+    } catch (err: unknown) {
+      const msg = err instanceof Error ? err.message : "Erro ao gerar relatório.";
+      setNotification({ message: msg, type: 'error' });
     } finally {
       setGenerating(false);
+      setTimeout(() => setNotification(null), 5000);
     }
   };
 
@@ -134,240 +155,198 @@ export const AdminConfigs: React.FC = () => {
       setPayoutModal(null);
       setPixTxId("");
       fetchData();
-      showNotification("Comprovante registrado!");
+      setNotification({ message: "Comprovante registrado!", type: 'success' });
     } catch {
-      showNotification("Erro ao registrar pagamento.", 'error');
+      setNotification({ message: "Erro ao registrar pagamento.", type: 'error' });
+    } finally {
+      setTimeout(() => setNotification(null), 5000);
     }
   };
 
-
-  const splitConfigs = configs.filter((c) => c.key.startsWith("split_"));
-  const otherConfigs = configs.filter((c) => !c.key.startsWith("split_"));
+  const splitConfigs = useMemo(() => configs.filter((c) => c.key.startsWith("split_")), [configs]);
+  const infraConfigs = useMemo(() => configs.filter((c) => !c.key.startsWith("split_")), [configs]);
 
   return (
-    <div className="space-y-12 animate-in fade-in slide-in-from-bottom-4 duration-700">
-      <div className="flex flex-col md:flex-row md:items-center justify-between border-b border-white/5 pb-8 gap-6">
+    <div className="space-y-10 animate-in fade-in slide-in-from-bottom-4 duration-700 pb-20">
+      {/* HEADER MASTER */}
+      <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-6 border-b border-theme-border/60 pb-10">
         <div>
-          <h2 className="text-3xl md:text-4xl font-heading text-theme-text tracking-tighter uppercase leading-none pt-2">Inteligência Financeira</h2>
-          <p className="text-[10px] text-theme-muted uppercase tracking-[0.5em] mt-2 font-bold italic">Modelo de Repasse Pix Manual (Plataforma Master)</p>
+          <h2 className="text-3xl md:text-4xl font-heading text-theme-text tracking-tighter uppercase font-black leading-none pt-2">Inteligência Financeira</h2>
+          <p className="text-[10px] text-theme-muted uppercase tracking-[0.5em] mt-3 font-black italic">Gestão de Split e Governança de Infraestrutura</p>
         </div>
-        <button
+        
+        <button 
           onClick={() => setShowGenerateConfirm(true)}
           disabled={generating}
-          style={{ 
-            background: T.brand, color: T.brandText, padding: "10px 20px", 
-            border: "none", fontSize: 9, fontWeight: 900, 
-            textTransform: "uppercase", letterSpacing: "0.3em", cursor: "pointer",
-            display: "flex", alignItems: "center", gap: 8, opacity: generating ? 0.5 : 1
-          }}
+          className="px-8 py-4 bg-brand-tactical text-zinc-950 text-[9px] font-black uppercase tracking-[0.4em] shadow-xl hover:brightness-110 transition-all flex items-center gap-3"
         >
-          {generating ? <RefreshCw className="animate-spin" size={12} /> : <Calculator size={12} />}
-          {generating ? "GERANDO..." : "FECHAMENTO SEMANAL"}
+          {generating ? <RefreshCw className="animate-spin" size={14} /> : <Calculator size={14} />}
+          {generating ? "SINCRONIZANDO..." : "FECHAMENTO SEMANAL"}
         </button>
       </div>
 
-      {/* Navigation Tabs */}
-      <div style={{ display: "flex", gap: 4, borderBottom: `1px solid ${T.border}` }}>
-        <button 
-          onClick={() => setTab("splits")}
-          style={{ 
-            padding: "10px 20px", fontSize: 9, fontWeight: 900, textTransform: "uppercase", 
-            letterSpacing: "0.2em", cursor: "pointer", background: "transparent",
-            color: tab === "splits" ? T.text : T.text3,
-            border: "none", borderBottom: `2px solid ${tab === "splits" ? T.brand : "transparent"}`,
-            transition: "all 0.2s"
-          }}
-        >
-          DIVISÃO DE SPLIT
-        </button>
-        <button 
-          onClick={() => setTab("payouts")}
-          style={{ 
-            padding: "10px 20px", fontSize: 9, fontWeight: 900, textTransform: "uppercase", 
-            letterSpacing: "0.2em", cursor: "pointer", background: "transparent",
-            color: tab === "payouts" ? T.text : T.text3,
-            border: "none", borderBottom: `2px solid ${tab === "payouts" ? T.brand : "transparent"}`,
-            transition: "all 0.2s"
-          }}
-        >
-          REPASSES ({payouts.length})
-        </button>
-        <button 
-          onClick={() => setTab("infra")}
-          style={{ 
-            padding: "10px 20px", fontSize: 9, fontWeight: 900, textTransform: "uppercase", 
-            letterSpacing: "0.2em", cursor: "pointer", background: "transparent",
-            color: tab === "infra" ? T.text : T.text3,
-            border: "none", borderBottom: `2px solid ${tab === "infra" ? T.brand : "transparent"}`,
-            transition: "all 0.2s"
-          }}
-        >
-          INFRAESTRUTURA
-        </button>
+      {/* NAVIGATION TACTICAL */}
+      <div className="flex bg-theme-bg border border-theme-border/60 p-1.5 shadow-sm max-w-fit">
+        <button onClick={() => setTab("splits")} className={`px-8 py-3 text-[9px] font-black uppercase tracking-widest transition-all ${tab === "splits" ? 'bg-brand-tactical text-zinc-950 shadow-md' : 'text-theme-muted hover:text-theme-text'}`}>Divisão de Split</button>
+        <button onClick={() => setTab("payouts")} className={`px-8 py-3 text-[9px] font-black uppercase tracking-widest transition-all ${tab === "payouts" ? 'bg-brand-tactical text-zinc-950 shadow-md' : 'text-theme-muted hover:text-theme-text'}`}>Repasses ({payouts.length})</button>
+        <button onClick={() => setTab("infra")} className={`px-8 py-3 text-[9px] font-black uppercase tracking-widest transition-all ${tab === "infra" ? 'bg-brand-tactical text-zinc-950 shadow-md' : 'text-theme-muted hover:text-theme-text'}`}>Infraestrutura</button>
       </div>
 
+      {/* VIEW: SPLIT DISTRIBUTION */}
       {tab === "splits" && (
-        <div className="space-y-12">
-          {/* Info Banner */}
-          <div className="bg-brand-tactical/5 border border-brand-tactical/20 p-8 flex gap-6 items-start">
-            <div className="p-3 bg-brand-tactical/10 text-brand-tactical border border-brand-tactical/20">
-              <Settings size={20} />
-            </div>
-            <div>
-              <h4 className="text-[11px] font-bold text-theme-text uppercase tracking-widest mb-2">Protocolo de Split Manual</h4>
-              <p className="text-theme-muted text-[10px] uppercase tracking-widest leading-relaxed">
-                A plataforma recebe 100% dos pagamentos. Os percentuais abaixo definem o valor provisionado para cada parceiro no relatório semanal.
-              </p>
-            </div>
-          </div>
-
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-12">
-            {/* Split Distribution */}
-            <div className="bg-white/[0.01] border border-white/5 p-10 space-y-10">
-              <div className="flex items-center justify-between mb-2">
-                <h3 className="text-[11px] font-bold text-theme-muted uppercase tracking-[0.4em] flex items-center gap-2">
-                  <Percent size={14} /> Distribuição por Venda
-                </h3>
-                <div className={`px-4 py-1 text-[10px] font-bold border ${splitsValid ? "border-brand-tactical text-brand-tactical" : "border-red-900 text-red-500"}`}>
-                  TOTAL: {splitsTotal}% {splitsValid ? "✓" : "⚠️ DEVE SER 100%"}
-                </div>
+        <div className="space-y-10 animate-in fade-in duration-500">
+           <div className="bg-theme-bg border border-theme-border/60 p-10 flex flex-col md:flex-row items-center gap-10 shadow-sm relative overflow-hidden group">
+              <div className="p-6 bg-brand-tactical/5 border border-brand-tactical/20 text-brand-tactical rounded-none">
+                 <Shield size={32} />
               </div>
+              <div className="flex-1 space-y-2">
+                 <h4 className="text-[11px] font-black uppercase tracking-[0.5em] text-theme-text italic">Protocolo de Split Manual</h4>
+                 <p className="text-[9px] text-theme-muted uppercase tracking-widest font-medium leading-relaxed max-w-3xl">
+                    A plataforma centraliza 100% dos recebíveis. Os percentuais abaixo definem a provisão automática para cada parceiro no fechamento semanal, garantindo transparência e segurança operacional.
+                 </p>
+              </div>
+           </div>
 
-              <div className="space-y-8">
-                {splitConfigs.map((config) => (
-                  <div key={config.key} className="space-y-4">
-                    <div className="flex justify-between items-end">
-                      <label className="text-[9px] font-bold text-theme-muted uppercase tracking-[0.4em]">
-                        {config.key === "split_cartorio" ? "Unidade Fixa (Logística)" : 
-                         config.key === "split_captacao" ? "Captação (Profissional da Rede)" :
-                         config.key === "split_edicao" ? "Edição (Profissional da Rede)" :
-                         config.label}
-                      </label>
-                      <div className="flex items-center gap-2">
-                         <input 
-                           type="number"
-                           value={config.value}
-                           onChange={(e) => handleChange(config.key, e.target.value)}
-                           className="w-20 bg-theme-bg-muted border-theme-border border text-theme-text text-right py-2 px-3 text-lg font-heading tracking-tighter focus:outline-none focus:border-brand-tactical transition-all"
-                         />
-                         <span className="text-theme-muted font-bold uppercase text-[10px]">%</span>
+           <div className="grid grid-cols-1 lg:grid-cols-[1fr_400px] gap-10 items-start">
+              <div className="bg-theme-bg border border-theme-border/60 p-10 space-y-12 shadow-sm">
+                 <div className="flex items-center justify-between border-b border-theme-border/30 pb-6">
+                    <h3 className="text-[11px] font-black text-theme-text uppercase tracking-[0.4em] flex items-center gap-3">
+                       <Percent size={14} className="text-brand-tactical" /> Distribuição por Venda
+                    </h3>
+                    <div className={`px-6 py-2 text-[10px] font-black border tracking-widest italic ${splitsValid ? "border-brand-tactical/30 text-brand-tactical bg-brand-tactical/5" : "border-red-900/30 text-red-500 bg-red-900/5"}`}>
+                       TOTAL: {splitsTotal}% {splitsValid ? "✓ OPERACIONAL" : "⚠️ DEVE SER 100%"}
+                    </div>
+                 </div>
+
+                 <div className="space-y-10">
+                    {splitConfigs.map((config) => (
+                      <div key={config.key} className="space-y-4 group">
+                        <div className="flex justify-between items-end">
+                          <label className="text-[9px] font-black text-theme-muted uppercase tracking-[0.4em] group-hover:text-theme-text transition-colors">
+                            {config.key === "split_cartorio" ? "Unidade Fixa (Logística)" : 
+                             config.key === "split_captacao" ? "Captação (Fotógrafo)" :
+                             config.key === "split_edicao" ? "Edição (Curadoria)" :
+                             config.label}
+                          </label>
+                          <div className="flex items-center gap-3">
+                             <input 
+                               type="number"
+                               value={config.value}
+                               onChange={(e) => handleChange(config.key, e.target.value)}
+                               className="w-20 bg-theme-bg-muted border-theme-border/60 border text-theme-text text-right py-2 px-4 text-xl font-heading font-black italic tracking-tighter focus:outline-none focus:border-brand-tactical transition-all"
+                             />
+                             <span className="text-theme-muted font-black uppercase text-[10px] tracking-widest">%</span>
+                          </div>
+                        </div>
+                        <div className="w-full h-1 bg-theme-bg-muted border border-theme-border/10 overflow-hidden">
+                           <div className="h-full bg-brand-tactical transition-all duration-700 shadow-[0_0_10px_rgba(133,185,172,0.3)]" style={{ width: `${Math.min(100, Number(config.value))}%` }} />
+                        </div>
                       </div>
-                    </div>
-                    <div className="w-full h-1 bg-zinc-900 overflow-hidden">
-                       <div className="h-full bg-brand-tactical transition-all duration-700" style={{ width: `${Math.min(100, Number(config.value))}%` }} />
-                    </div>
-                  </div>
-                ))}
+                    ))}
+                 </div>
+
+                 <button
+                   onClick={handleSave}
+                   disabled={saving || !splitsValid}
+                   className={`w-full py-5 text-[9px] font-black uppercase tracking-[0.4em] flex items-center justify-center gap-3 shadow-xl transition-all ${
+                     saved ? "bg-green-600 text-white" : splitsValid ? "bg-theme-text text-theme-bg" : "bg-theme-bg-muted text-theme-muted cursor-not-allowed opacity-50"
+                   }`}
+                 >
+                   {saved ? <CheckCircle size={14} /> : <Save size={14} />}
+                   {saved ? "PROTOCOLO SINCRONIZADO" : saving ? "PROCESSANDO..." : "SALVAR CONFIGURAÇÕES FINANCEIRAS"}
+                 </button>
               </div>
 
-              <div style={{ paddingTop: 16 }}>
-                <button
-                  onClick={handleSave}
-                  disabled={saving || !splitsValid}
-                  style={{ 
-                    width: "100%", padding: "12px", border: "none",
-                    background: saved ? "#16a34a" : splitsValid ? T.text : T.bgField,
-                    color: saved ? "#fff" : splitsValid ? T.bg : T.text3,
-                    fontSize: 9, fontWeight: 900, textTransform: "uppercase",
-                    letterSpacing: "0.2em", cursor: splitsValid ? "pointer" : "not-allowed",
-                    display: "flex", alignItems: "center", justifyContent: "center", gap: 8,
-                    transition: "all 0.2s"
-                  }}
-                >
-                  {saved ? <CheckCircle size={12} /> : <Save size={12} />}
-                  {saved ? "CONFIGURAÇÕES SINCRONIZADAS" : saving ? "SALVANDO..." : "SALVAR ALTERAÇÕES"}
-                </button>
+              <div className="bg-theme-bg border border-theme-border/60 p-10 space-y-10 shadow-sm">
+                 <h3 className="text-[11px] font-black text-theme-muted uppercase tracking-[0.4em] flex items-center gap-3">
+                    <Zap size={14} className="text-brand-tactical" /> Gatilhos de Sistema
+                 </h3>
+                 <div className="space-y-8">
+                    {infraConfigs.filter(c => !c.key.includes("color") && !c.key.includes("access") && !c.key.includes("maintenance")).map((config) => (
+                      <div key={config.key} className="space-y-3">
+                        <label className="text-[9px] font-black text-theme-muted uppercase tracking-[0.4em] block">{config.label}</label>
+                        <input 
+                          value={config.value}
+                          onChange={(e) => handleChange(config.key, e.target.value)}
+                          className="w-full bg-transparent border-b border-theme-border/60 py-3 text-[11px] font-black text-theme-text focus:outline-none focus:border-brand-tactical transition-all uppercase tracking-widest placeholder:text-theme-muted/20"
+                        />
+                      </div>
+                    ))}
+                 </div>
               </div>
-            </div>
-
-            {/* Other Configs */}
-            <div className="bg-white/[0.01] border border-white/5 p-10 space-y-10">
-              <h3 className="text-[11px] font-bold text-zinc-500 uppercase tracking-[0.4em] flex items-center gap-2">
-                <Settings size={14} /> Parâmetros de Protocolo
-              </h3>
-              
-              <div className="space-y-8">
-                {otherConfigs.map((config) => (
-                  <div key={config.key} className="space-y-2">
-                    <label className="text-[9px] font-bold text-theme-muted uppercase tracking-[0.4em]">{config.label}</label>
-                    <input 
-                      value={config.value}
-                      onChange={(e) => handleChange(config.key, e.target.value)}
-                      className="w-full bg-transparent border-b border-theme-border py-3 text-sm text-theme-text focus:outline-none focus:border-brand-tactical transition-all font-sans"
-                    />
-                  </div>
-                ))}
-              </div>
-            </div>
-          </div>
+           </div>
         </div>
       )}
 
+      {/* VIEW: PAYOUTS / REPASSES */}
       {tab === "payouts" && (
-        <div className="space-y-8">
+        <div className="space-y-10 animate-in fade-in duration-500">
           {payouts.length === 0 ? (
-            <div className="py-40 text-center border border-white/5 bg-black/40">
-              <AlertTriangle className="mx-auto text-zinc-800 mb-4" size={48} />
-              <p className="text-[10px] text-zinc-600 uppercase tracking-[0.5em] font-bold italic">Nenhum relatório de repasse gerado no sistema.</p>
+            <div className="py-40 text-center border border-dashed border-theme-border bg-theme-bg-muted/5 space-y-6">
+              <AlertTriangle className="mx-auto text-theme-muted opacity-20" size={48} />
+              <div className="space-y-2">
+                <p className="text-[10px] text-theme-muted uppercase tracking-[0.5em] font-black italic">Nenhum relatório de repasse gerado no sistema.</p>
+                <p className="text-[8px] text-theme-muted/60 uppercase tracking-widest">Inicie um fechamento semanal para consolidar as provisões.</p>
+              </div>
             </div>
           ) : (
-            <div className="space-y-4">
+            <div className="space-y-8">
               {payouts.map((payout) => (
-                <div key={payout.id} className="bg-black border border-white/5 hover:border-white/10 transition-all group overflow-hidden">
-                   <div className="px-10 py-6 border-b border-white/5 flex justify-between items-center bg-white/[0.02]">
-                      <div>
-                        <div className="flex items-center gap-4">
-                           <span className="text-xl font-heading text-white uppercase tracking-tighter">
-                             Período {safeDate(payout.weekStart)} — {safeDate(payout.weekEnd)}
+                <div key={payout.id} className="bg-theme-bg border border-theme-border/60 shadow-sm group overflow-hidden">
+                   <div className="px-10 py-8 border-b border-theme-border/30 flex flex-col md:flex-row md:items-center justify-between gap-6 bg-theme-bg-muted/20">
+                      <div className="space-y-3">
+                        <div className="flex flex-wrap items-center gap-4">
+                           <span className="text-2xl font-heading font-black text-theme-text uppercase tracking-tighter italic leading-none">
+                             Ciclo {safeDate(payout.weekStart)} — {safeDate(payout.weekEnd)}
                            </span>
-                           <span className={`text-[8px] font-bold px-3 py-1 border uppercase tracking-widest ${
-                             payout.status === "PAID" ? "border-brand-tactical text-brand-tactical" : "border-amber-900 text-amber-500"
+                           <span className={`text-[8px] font-black px-3 py-1 border uppercase tracking-widest italic ${
+                             payout.status === "PAID" ? "border-brand-tactical text-brand-tactical bg-brand-tactical/5" : "border-amber-600 text-amber-600 bg-amber-600/5"
                            }`}>
-                             {payout.status === "PAID" ? "PAGO" : "PENDENTE"}
+                             {payout.status === "PAID" ? "LIQUIDADO" : "PENDENTE"}
                            </span>
                         </div>
-                        <div className="mt-2 flex gap-8">
-                           <span className="text-[10px] text-zinc-500 uppercase tracking-widest">Receita: <span className="text-white font-sans">{formatCurrency(payout.totalRevenue)}</span></span>
-                           <span className="text-[10px] text-zinc-500 uppercase tracking-widest">Repasse: <span className="text-brand-tactical font-sans">{formatCurrency(payout.totalPayout)}</span></span>
+                        <div className="flex flex-wrap gap-8">
+                           <div className="space-y-1"><span className="text-[7px] font-black text-theme-muted uppercase tracking-widest">Faturamento Bruto</span><p className="text-[12px] font-black text-theme-text font-mono italic">{formatCurrency(payout.totalRevenue)}</p></div>
+                           <div className="space-y-1"><span className="text-[7px] font-black text-theme-muted uppercase tracking-widest">Provisão de Repasse</span><p className="text-[12px] font-black text-brand-tactical font-mono italic">{formatCurrency(payout.totalPayout)}</p></div>
                         </div>
                       </div>
-                      <div className="p-4 bg-zinc-900/50 border border-zinc-800 text-zinc-500 text-[9px] font-sans group-hover:text-white transition-all uppercase tracking-widest">
+                      <div className="px-6 py-4 bg-theme-bg border border-theme-border/40 text-theme-muted text-[8px] font-black uppercase tracking-[0.3em] font-mono shadow-inner group-hover:text-theme-text transition-colors">
                         ID: {payout.id.slice(-8).toUpperCase()}
                       </div>
                    </div>
 
-                   <div className="divide-y divide-white/5">
+                   <div className="divide-y divide-theme-border/20">
                       {payout.items?.map((item) => (
-                        <div key={item.id} className="px-10 py-6 grid grid-cols-12 items-center gap-8 hover:bg-white/[0.01] transition-all">
-                           <div className="col-span-1">
-                              <span className="text-[8px] font-bold text-zinc-600 border border-zinc-800 px-2 py-0.5 rounded-none">{item.recipientType}</span>
+                        <div key={item.id} className="px-10 py-8 grid grid-cols-1 md:grid-cols-12 items-center gap-8 hover:bg-theme-bg-muted/30 transition-all">
+                           <div className="md:col-span-1">
+                              <span className="text-[7px] font-black text-theme-muted border border-theme-border/60 px-2 py-1 uppercase tracking-widest block text-center italic">{item.recipientType}</span>
                            </div>
-                           <div className="col-span-3">
-                              <div className="text-[11px] font-bold text-white uppercase tracking-widest">{item.recipientName}</div>
-                              <div className="text-[9px] text-zinc-600 font-bold uppercase tracking-widest mt-1">Pix: {item.pixKey || "NÃO CADASTRADO"}</div>
+                           <div className="md:col-span-3">
+                              <div className="text-[11px] font-black text-theme-text uppercase tracking-widest italic leading-none">{item.recipientName}</div>
+                              <div className="text-[9px] text-theme-muted font-black uppercase tracking-widest mt-2 flex items-center gap-2"><Smartphone size={10} /> Pix: {item.pixKey || "S/ CHAVE"}</div>
                            </div>
-                           <div className="col-span-3 text-center border-l border-white/5">
-                              <div className="text-[9px] text-zinc-700 uppercase tracking-widest font-bold">Base de Cálculo</div>
-                              <div className="text-[10px] text-zinc-400 font-sans mt-1">{item.orderCount} PEDIDOS · {item.splitPct}% DE {formatCurrency(item.grossRevenue)}</div>
+                           <div className="md:col-span-3 text-center border-l border-theme-border/10">
+                              <span className="text-[8px] text-theme-muted uppercase tracking-widest font-black block mb-1">Engenharia de Split</span>
+                              <div className="text-[10px] text-theme-text font-black uppercase italic tracking-tighter">{item.orderCount} PEDIDOS • {item.splitPct}% DE {formatCurrency(item.grossRevenue)}</div>
                            </div>
-                           <div className="col-span-2 text-right">
-                              <div className="text-[9px] text-zinc-700 uppercase tracking-widest font-bold">Valor Líquido</div>
-                              <div className="text-lg font-heading text-brand-tactical tracking-widest mt-0.5">{formatCurrency(item.amount)}</div>
+                           <div className="md:col-span-2 text-right">
+                              <span className="text-[8px] text-theme-muted uppercase tracking-widest font-black block mb-1">Vlr Líquido</span>
+                              <div className="text-xl font-heading font-black text-brand-tactical tracking-tighter italic leading-none">{formatCurrency(item.amount)}</div>
                            </div>
-                           <div className="col-span-3 flex justify-end">
+                           <div className="md:col-span-3 flex justify-end">
                               {item.status === "PAID" ? (
-                                <div className="flex flex-col items-end">
-                                   <div className="text-[9px] text-green-500 font-bold uppercase tracking-widest flex items-center gap-2">
-                                      <CheckCircle size={10} /> REPASSE CONCLUÍDO
+                                <div className="text-right space-y-1.5">
+                                   <div className="text-[9px] text-green-600 font-black uppercase tracking-widest flex items-center justify-end gap-2 italic">
+                                      <CheckCircle size={12} /> REPASSE EFETUADO
                                    </div>
-                                   {item.pixTxId && <div className="text-[8px] text-zinc-700 font-sans mt-1">REF: {item.pixTxId.slice(0, 16)}...</div>}
+                                   {item.pixTxId && <div className="text-[8px] text-theme-muted font-mono uppercase tracking-widest opacity-60">REF: {item.pixTxId.slice(0, 16)}...</div>}
                                 </div>
                               ) : (
                                 <button 
                                   onClick={() => setPayoutModal({ payoutId: payout.id, itemId: item.id, name: item.recipientName, amount: item.amount })}
-                                  className="text-[9px] font-bold text-black uppercase tracking-widest bg-brand-tactical border border-brand-tactical px-6 py-3 hover:brightness-110 transition-all rounded-none flex items-center gap-2"
+                                  className="text-[9px] font-black text-zinc-950 uppercase tracking-[0.4em] bg-brand-tactical px-8 py-4 hover:brightness-110 transition-all shadow-xl flex items-center gap-3"
                                 >
-                                  <DollarSign size={10} /> REPASSAR VIA PIX
+                                  <DollarSign size={14} /> LIQUIDAR
                                 </button>
                               )}
                            </div>
@@ -381,188 +360,175 @@ export const AdminConfigs: React.FC = () => {
         </div>
       )}
 
+      {/* VIEW: INFRASTRUCTURE & GOVERNANCE */}
       {tab === "infra" && (
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-8 animate-in fade-in duration-500">
-           {/* Branding */}
-           <div style={{ background: T.bgCard, border: `1px solid ${T.border}`, padding: "24px" }}>
-              <div className="flex items-center gap-3 mb-8">
-                <Palette size={16} style={{ color: T.brand }} />
-                <h3 style={{ fontSize: 10, fontWeight: 900, color: T.text, textTransform: "uppercase", letterSpacing: 2 }}>Identidade Visual</h3>
+        <div className="space-y-12 animate-in fade-in duration-500">
+           <div className="grid grid-cols-1 md:grid-cols-2 gap-10">
+              {/* Branding Section */}
+              <div className="bg-theme-bg border border-theme-border/60 p-10 space-y-10 shadow-sm">
+                 <div className="flex items-center gap-4 border-b border-theme-border/30 pb-6">
+                    <Palette size={16} className="text-brand-tactical" />
+                    <h3 className="text-[11px] font-black text-theme-text uppercase tracking-[0.4em]">Identidade Visual Tática</h3>
+                 </div>
+                 
+                 <div className="space-y-10">
+                    {["brand_primary", "brand_tactical"].map(key => {
+                       const config = configs.find(c => c.key === key);
+                       if (!config) return null;
+                       return (
+                         <div key={key} className="space-y-4">
+                            <label className="text-[9px] font-black text-theme-muted uppercase tracking-[0.4em]">{config.label}</label>
+                            <div className="flex items-center gap-6">
+                               <div className="w-14 h-14 border border-theme-border shadow-inner" style={{ background: config.value }} />
+                               <div className="flex-1 relative">
+                                  <input 
+                                    type="text" 
+                                    value={config.value} 
+                                    onChange={e => handleChange(key, e.target.value)}
+                                    className="w-full bg-theme-bg-muted border border-theme-border/60 p-4 text-[11px] font-black text-theme-text uppercase tracking-widest outline-none focus:border-brand-tactical transition-all"
+                                  />
+                                  <input 
+                                    type="color" 
+                                    value={config.value} 
+                                    onChange={e => handleChange(key, e.target.value)}
+                                    className="absolute right-4 top-1/2 -translate-y-1/2 w-8 h-8 bg-transparent border-none cursor-pointer"
+                                  />
+                               </div>
+                            </div>
+                         </div>
+                       );
+                    })}
+                 </div>
               </div>
-              
-              <div className="space-y-8">
-                {["brand_primary", "brand_tactical"].map(key => {
-                   const config = configs.find(c => c.key === key);
-                   if (!config) return null;
-                   return (
-                     <div key={key} className="space-y-3">
-                        <label style={{ fontSize: 8, fontWeight: 900, color: T.text3, textTransform: "uppercase", letterSpacing: 1 }}>{config.label}</label>
-                        <div className="flex items-center gap-4">
-                           <div style={{ width: 40, height: 40, background: config.value, border: `1px solid ${T.border}` }} />
-                           <input 
-                             type="color" 
-                             value={config.value} 
-                             onChange={e => handleChange(key, e.target.value)}
-                             style={{ flex: 1, background: T.bgField, border: "none", height: 40, padding: "0 8px", cursor: "pointer" }}
-                           />
-                        </div>
-                     </div>
-                   );
-                })}
+
+              {/* Security & Access Section */}
+              <div className="bg-theme-bg border border-theme-border/60 p-10 space-y-10 shadow-sm">
+                 <div className="flex items-center gap-4 border-b border-theme-border/30 pb-6">
+                    <Lock size={16} className="text-brand-tactical" />
+                    <h3 className="text-[11px] font-black text-theme-text uppercase tracking-[0.4em]">Protocolos de Governança</h3>
+                 </div>
+                 
+                 <div className="space-y-6">
+                    {[
+                      { key: "maintenance_mode", label: "Modo Manutenção", desc: "Bloqueia acesso público para auditoria técnica", icon: Shield },
+                      { key: "public_access", label: "Vitrine Global", desc: "Habilita visualização de álbuns sem credenciais", icon: Globe }
+                    ].map(item => {
+                       const config = configs.find(c => c.key === item.key);
+                       if (!config) return null;
+                       const isOn = config.value === "true";
+                       const Icon = item.icon;
+                       return (
+                         <div key={item.key} className="flex items-center justify-between p-6 bg-theme-bg-muted/30 border border-theme-border/40 group hover:border-brand-tactical transition-all">
+                            <div className="flex items-center gap-6">
+                               <div className={`p-4 border ${isOn ? 'border-brand-tactical text-brand-tactical bg-brand-tactical/5' : 'border-theme-border/60 text-theme-muted'}`}>
+                                  <Icon size={20} />
+                               </div>
+                               <div>
+                                 <div className="text-[10px] font-black text-theme-text uppercase tracking-widest italic">{item.label}</div>
+                                 <div className="text-[8px] text-theme-muted uppercase tracking-[0.2em] mt-1">{item.desc}</div>
+                               </div>
+                            </div>
+                            <button 
+                              onClick={() => handleChange(item.key, isOn ? "false" : "true")}
+                              className={`w-14 h-7 relative transition-all rounded-none ${isOn ? 'bg-brand-tactical' : 'bg-theme-border/60'}`}
+                            >
+                               <div className={`absolute top-1 w-5 h-5 bg-white shadow-sm transition-all ${isOn ? 'left-8' : 'left-1'}`} />
+                            </button>
+                         </div>
+                       );
+                    })}
+                 </div>
               </div>
            </div>
 
-           {/* Maintenance & Access */}
-           <div style={{ background: T.bgCard, border: `1px solid ${T.border}`, padding: "24px" }}>
-              <div className="flex items-center gap-3 mb-8">
-                <Shield size={16} style={{ color: T.brand }} />
-                <h3 style={{ fontSize: 10, fontWeight: 900, color: T.text, textTransform: "uppercase", letterSpacing: 2 }}>Protocolos de Acesso</h3>
-              </div>
-              
-              <div className="space-y-6">
-                {[
-                  { key: "maintenance_mode", label: "Modo Manutenção", desc: "Bloqueia acesso público à plataforma" },
-                  { key: "public_access", label: "Acesso à Vitrine", desc: "Permite visualização sem login" }
-                ].map(item => {
-                   const config = configs.find(c => c.key === item.key);
-                   if (!config) return null;
-                   const isOn = config.value === "true";
-                   return (
-                     <div key={item.key} style={{ display: "flex", justifyContent: "space-between", alignItems: "center", padding: "16px", border: `1px solid ${T.border}`, background: `${T.bgField}55` }}>
-                        <div>
-                          <div style={{ fontSize: 9, fontWeight: 900, color: T.text, textTransform: "uppercase", letterSpacing: 1 }}>{item.label}</div>
-                          <div style={{ fontSize: 8, color: T.text3, textTransform: "uppercase", marginTop: 2 }}>{item.desc}</div>
-                        </div>
-                        <button 
-                          onClick={() => handleChange(item.key, isOn ? "false" : "true")}
-                          style={{ 
-                            width: 32, height: 16, background: isOn ? T.brand : T.border, 
-                            border: "none", position: "relative", cursor: "pointer", transition: "all 0.3s"
-                          }}
-                        >
-                          <div style={{ 
-                            width: 12, height: 12, background: isOn ? T.brandText : T.text3, 
-                            position: "absolute", top: 2, left: isOn ? 18 : 2, transition: "all 0.3s" 
-                          }} />
-                        </button>
-                     </div>
-                   );
-                })}
-              </div>
-           </div>
-
-           <div className="md:col-span-2 pt-8 flex justify-center">
+           <div className="flex justify-center pt-10">
               <button
                 onClick={handleSave}
                 disabled={saving}
-                style={{ 
-                  padding: "16px 40px", background: T.brand, color: T.brandText,
-                  fontSize: 9, fontWeight: 900, textTransform: "uppercase",
-                  letterSpacing: 4, border: "none", cursor: "pointer"
-                }}
+                className="px-12 py-5 bg-theme-text text-theme-bg text-[10px] font-black uppercase tracking-[0.5em] shadow-2xl hover:brightness-110 transition-all flex items-center gap-4"
               >
-                {saving ? "SINCRONIZANDO..." : "SALVAR TODAS AS CONFIGURAÇÕES"}
+                {saving ? <RefreshCw className="animate-spin" size={16} /> : <CheckCircle size={16} />}
+                {saving ? "SINCRONIZANDO..." : "VALIDAR E SALVAR TODA INFRAESTRUTURA"}
               </button>
            </div>
         </div>
       )}
-      {/* GENERATE PAYOUT CONFIRMATION MODAL */}
+
+      {/* CONFIRMATION & NOTIFICATION MODALS */}
       {showGenerateConfirm && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center p-6 animate-in fade-in duration-300">
-           <div className="absolute inset-0 bg-black/95 backdrop-blur-sm" onClick={() => setShowGenerateConfirm(false)} />
-           <div className="relative bg-zinc-950 border border-brand-tactical/30 w-full max-w-sm p-8 space-y-8">
+        <div className="fixed inset-0 z-[600] flex items-center justify-center p-6 animate-in fade-in duration-300">
+           <div className="absolute inset-0 bg-black/95 backdrop-blur-md" onClick={() => setShowGenerateConfirm(false)} />
+           <div className="relative bg-theme-bg border border-brand-tactical/40 w-full max-w-sm p-10 space-y-8 shadow-2xl">
               <div className="space-y-2">
                  <span className="text-[10px] font-black text-brand-tactical uppercase tracking-[0.4em]">Protocolo Financeiro</span>
-                 <h3 className="text-xl font-heading text-white uppercase tracking-tighter">Gerar Fechamento?</h3>
+                 <h3 className="text-2xl font-heading text-theme-text uppercase tracking-tighter font-black">Gerar Fechamento?</h3>
               </div>
-              
-              <p className="text-[11px] text-zinc-500 uppercase tracking-widest leading-relaxed">
-                ESTA AÇÃO IRÁ CONSOLIDAR TODAS AS VENDAS DA SEMANA ATUAL E GERAR AS ORDENS DE REPASSE PARA OS PARCEIROS.
+              <p className="text-[11px] text-theme-muted uppercase tracking-widest leading-relaxed font-bold italic">
+                ESTA AÇÃO IRÁ CONSOLIDAR TODAS AS VENDAS DA SEMANA E GERAR AS ORDENS DE REPASSE PARA OS PARCEIROS.
               </p>
-
               <div className="grid grid-cols-2 gap-4">
-                 <button 
-                   onClick={() => setShowGenerateConfirm(false)}
-                   className="p-4 border border-zinc-800 text-zinc-500 text-[9px] font-black uppercase tracking-widest hover:bg-white/5 transition-all"
-                 >
-                   CANCELAR
-                 </button>
-                 <button 
-                   onClick={handleGeneratePayout}
-                   className="p-4 bg-brand-tactical text-black text-[9px] font-black uppercase tracking-widest hover:brightness-110 transition-all"
-                 >
-                   GERAR AGORA
-                 </button>
+                 <button onClick={() => setShowGenerateConfirm(false)} className="p-4 border border-theme-border text-theme-muted text-[9px] font-black uppercase tracking-widest hover:text-white transition-all">CANCELAR</button>
+                 <button onClick={handleGeneratePayout} className="p-4 bg-brand-tactical text-zinc-950 text-[9px] font-black uppercase tracking-widest hover:brightness-110 transition-all font-black">GERAR AGORA</button>
               </div>
            </div>
         </div>
       )}
 
-      {/* PAYOUT MODAL (MIDNIGHT LUXURY) */}
       {payoutModal && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center p-6 animate-in fade-in duration-300">
-           <div className="absolute inset-0 bg-black/90 backdrop-blur-md" onClick={() => setPayoutModal(null)} />
-           <div className="relative bg-zinc-950 border border-brand-tactical/30 w-full max-w-md shadow-[0_0_50px_rgba(133,185,172,0.1)] p-8 space-y-8 overflow-hidden">
+        <div className="fixed inset-0 z-[600] flex items-center justify-center p-6 animate-in fade-in duration-300">
+           <div className="absolute inset-0 bg-black/95 backdrop-blur-md" onClick={() => setPayoutModal(null)} />
+           <div className="relative bg-theme-bg border border-brand-tactical/30 w-full max-w-md shadow-2xl p-10 space-y-10 overflow-hidden">
               <div className="absolute top-0 right-0 w-32 h-32 bg-brand-tactical/5 -rotate-45 translate-x-16 -translate-y-16" />
               
               <div className="space-y-2">
                  <span className="text-[10px] font-black text-brand-tactical uppercase tracking-[0.4em]">Protocolo de Repasse</span>
-                 <h3 className="text-2xl font-heading text-white uppercase tracking-tighter">Confirmar Transferência</h3>
+                 <h3 className="text-3xl font-heading text-theme-text uppercase tracking-tighter font-black">Confirmar Pix</h3>
               </div>
 
-              <div className="bg-white/[0.02] border border-white/5 p-6 space-y-4">
-                 <div className="flex justify-between items-center">
-                    <span className="text-[9px] text-zinc-500 uppercase tracking-widest">Favorecido</span>
-                    <span className="text-[11px] text-white font-bold uppercase">{payoutModal.name}</span>
+              <div className="bg-theme-bg-muted/40 border border-theme-border/40 p-8 space-y-6">
+                 <div className="flex justify-between items-center border-b border-theme-border/20 pb-4">
+                    <span className="text-[9px] text-theme-muted uppercase tracking-widest font-black">Favorecido</span>
+                    <span className="text-[12px] text-theme-text font-black uppercase italic">{payoutModal.name}</span>
                  </div>
                  <div className="flex justify-between items-center">
-                    <span className="text-[9px] text-zinc-500 uppercase tracking-widest">Valor do Pix</span>
-                    <span className="text-xl font-heading text-brand-tactical tracking-widest">{formatCurrency(payoutModal.amount)}</span>
+                    <span className="text-[9px] text-theme-muted uppercase tracking-widest font-black">Valor do Pix</span>
+                    <span className="text-3xl font-heading text-brand-tactical tracking-tighter font-black italic">{formatCurrency(payoutModal.amount)}</span>
                  </div>
               </div>
 
-              <div className="space-y-3">
-                 <label className="text-[9px] font-black text-zinc-500 uppercase tracking-widest">ID da Transação Pix (Opcional)</label>
-                 <input 
-                   autoFocus
-                   value={pixTxId}
-                   onChange={e => setPixTxId(e.target.value)}
-                   placeholder="COLE O CÓDIGO OU NÚMERO DO PROTOCOLO..."
-                   className="w-full bg-zinc-900 border border-zinc-800 p-4 text-[10px] font-sans text-white placeholder:text-zinc-700 focus:border-brand-tactical focus:outline-none transition-all uppercase"
-                 />
-                 <p className="text-[8px] text-zinc-600 uppercase tracking-widest leading-relaxed">
-                   ESTE REGISTRO SERVIRÁ COMO COMPROVANTE DE AUDITORIA INTERNA NA PLATAFORMA MASTER.
+              <div className="space-y-4">
+                 <label className="text-[9px] font-black text-theme-muted uppercase tracking-widest">ID da Transação Pix (Auditoria)</label>
+                 <div className="relative">
+                    <ArrowRight className="absolute left-4 top-1/2 -translate-y-1/2 text-brand-tactical" size={14} />
+                    <input 
+                      autoFocus
+                      value={pixTxId}
+                      onChange={e => setPixTxId(e.target.value)}
+                      placeholder="COLE O COMPROVANTE..."
+                      className="w-full bg-theme-bg-muted border border-theme-border/60 p-5 pl-12 text-[10px] font-black text-theme-text placeholder:text-theme-muted/30 focus:border-brand-tactical outline-none transition-all uppercase"
+                    />
+                 </div>
+                 <p className="text-[8px] text-theme-muted uppercase tracking-widest leading-relaxed italic opacity-60 font-medium">
+                    O REGISTRO SERVIRÁ COMO COMPROVANTE DE AUDITORIA INTERNA NA PLATAFORMA.
                  </p>
               </div>
 
-              <div className="grid grid-cols-2 gap-4 pt-4">
-                 <button 
-                   onClick={() => setPayoutModal(null)}
-                   className="p-4 border border-zinc-800 text-zinc-500 text-[9px] font-black uppercase tracking-widest hover:bg-white/5 transition-all"
-                 >
-                   CANCELAR
-                 </button>
-                 <button 
-                   onClick={confirmPayout}
-                   className="p-4 bg-brand-tactical text-black text-[9px] font-black uppercase tracking-widest hover:brightness-110 transition-all shadow-[0_0_20px_rgba(133,185,172,0.2)]"
-                 >
-                   CONFIRMAR PAGAMENTO
-                 </button>
+              <div className="grid grid-cols-2 gap-6 pt-4">
+                 <button onClick={() => setPayoutModal(null)} className="p-5 border border-theme-border text-theme-muted text-[9px] font-black uppercase tracking-widest hover:text-white transition-all">CANCELAR</button>
+                 <button onClick={confirmPayout} className="p-5 bg-brand-tactical text-zinc-950 text-[9px] font-black uppercase tracking-[0.4em] hover:brightness-110 transition-all shadow-xl font-black">CONFIRMAR LIQUIDAÇÃO</button>
               </div>
            </div>
         </div>
       )}
-      {/* NOTIFICATION (MIDNIGHT LUXURY) */}
+
       {notification && (
-        <div className="fixed bottom-10 right-10 z-[120] animate-in slide-in-from-right-10 duration-500">
-           <div className={`p-6 border ${notification.type === 'success' ? 'border-brand-tactical bg-zinc-950 shadow-[0_0_30px_rgba(133,185,172,0.1)]' : 'border-red-900 bg-zinc-950'} min-w-[300px] relative overflow-hidden shadow-2xl`}>
-              <div className="flex flex-col gap-1">
-                 <span className={`text-[8px] font-black uppercase tracking-[0.4em] ${notification.type === 'success' ? 'text-brand-tactical' : 'text-red-500'}`}>
-                    {notification.type === 'success' ? 'Protocolo Sincronizado' : 'Falha na Operação'}
-                 </span>
-                 <p className="text-[11px] font-bold text-white uppercase tracking-widest">{notification.message}</p>
+        <div className="fixed bottom-10 right-10 z-[700] animate-in slide-in-from-right-10 duration-500">
+           <div className={`p-8 border ${notification.type === 'success' ? 'border-brand-tactical bg-zinc-950 shadow-[0_0_40px_rgba(133,185,172,0.15)]' : 'border-red-900 bg-zinc-950'} min-w-[350px] relative overflow-hidden shadow-2xl`}>
+              <div className="flex flex-col gap-2">
+                 <span className={`text-[9px] font-black uppercase tracking-[0.5em] ${notification.type === 'success' ? 'text-brand-tactical' : 'text-red-500'}`}>Sincronização de Inteligência</span>
+                 <p className="text-[13px] font-bold text-white uppercase tracking-widest mt-1 leading-tight">{notification.message}</p>
               </div>
-              <div className={`absolute bottom-0 left-0 h-1 ${notification.type === 'success' ? 'bg-brand-tactical' : 'bg-red-900'} animate-out fade-out duration-[5000ms] w-full`} />
+              <div className={`absolute bottom-0 left-0 h-1.5 ${notification.type === 'success' ? 'bg-brand-tactical' : 'bg-red-900'} animate-out fade-out duration-[5000ms] w-full`} />
            </div>
         </div>
       )}

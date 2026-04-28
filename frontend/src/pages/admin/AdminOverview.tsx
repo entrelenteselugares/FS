@@ -7,6 +7,8 @@ import { T } from "../../lib/theme";
 
 interface OverviewStats {
   totalRevenue: number;
+  revenue30d: number;
+  growth: number;
   activeEvents: number;
   totalOrders: number;
   totalUsers: number;
@@ -66,7 +68,34 @@ export const AdminOverview: React.FC<OverviewProps> = ({ stats, recentOrders, pe
           <div style={{ 
             fontSize: 22, fontFamily: T.fontD, fontWeight: 900, color: T.text, textTransform: "uppercase" 
           }}>
-            R$ {Number(stats?.totalRevenue || 0).toFixed(2)}
+            R$ {Number(stats?.totalRevenue || 0).toLocaleString("pt-BR", { minimumFractionDigits: 2 })}
+          </div>
+        </div>
+
+        {/* Card 2: Receita 30d */}
+        <div style={{ 
+          background: T.bgField, border: `1px solid ${T.border}`, padding: "12px 16px", borderRadius: 0 
+        }}>
+          <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start" }}>
+            <label style={{ 
+              fontSize: 9, fontFamily: T.fontB, fontWeight: 700, 
+              textTransform: "uppercase", letterSpacing: 1, color: T.text3, display: "block", marginBottom: 4 
+            }}>
+              Últimos 30 Dias
+            </label>
+            {stats?.growth !== undefined && (
+              <span style={{ 
+                fontSize: 9, fontWeight: 900, 
+                color: stats.growth >= 0 ? "#10b981" : "#f43f5e" 
+              }}>
+                {stats.growth >= 0 ? "↑" : "↓"} {Math.abs(stats.growth)}%
+              </span>
+            )}
+          </div>
+          <div style={{ 
+            fontSize: 22, fontFamily: T.fontD, fontWeight: 900, color: T.brand, textTransform: "uppercase" 
+          }}>
+            R$ {Number(stats?.revenue30d || 0).toLocaleString("pt-BR", { minimumFractionDigits: 2 })}
           </div>
         </div>
 
