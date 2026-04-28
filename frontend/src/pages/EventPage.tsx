@@ -5,7 +5,6 @@ import { API as api } from "../lib/api";
 import { Helmet } from "react-helmet-async";
 import AccessTypeModal from "../components/AccessTypeModal";
 import { T, BtnPrimary, BtnSecondary, FieldLabel, FieldInput } from "../lib/theme";
-import { ThemeToggle } from "../components/ThemeToggle";
 import { AuthModal } from "../components/AuthModal";
 import { Modal } from "../components/UI/Modal";
 import { useAuth } from "../hooks/useAuth";

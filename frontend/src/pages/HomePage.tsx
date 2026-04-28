@@ -2,10 +2,8 @@ import { useState, useEffect, useRef, useCallback } from "react";
 import { useNavigate } from "react-router-dom";
 
 import { API } from "../lib/api";
-import { useAuth } from "../hooks/useAuth";
 import { Helmet } from "react-helmet-async";
-import { T, BtnPrimary, BtnSecondary } from "../lib/theme";
-import { ThemeToggle } from "../components/ThemeToggle";
+import { T } from "../lib/theme";
 import { DICT } from "../lib/dictionary";
 import { Navbar } from "../components/Navbar";
 
@@ -136,21 +134,14 @@ function FooterCol({ title, links }: { title: string; links: string[] }) {
 // ── HomePage ──────────────────────────────────────────────────────────────────
 export const HomePage = () => {
   const navigate = useNavigate();
-  const { user, logout } = useAuth();
   const [query, setQuery]       = useState("");
   const [cat, setCat]           = useState("Todos");
   const [events, setEvents]     = useState<Event[]>([]);
   const [loading, setLoading]   = useState(true);
   const [page, setPage]         = useState(1);
   const [totalPages, setTotal]  = useState(1);
-  const [userMenu, setUserMenu] = useState(false);
   const debounce = useRef<ReturnType<typeof setTimeout> | null>(null);
   const [isCtaHovered, setIsCtaHovered] = useState(false);
-
-  const dashPath = user?.role === "ADMIN" ? "/admin"
-    : user?.role === "PROFISSIONAL" ? "/profissional"
-    : (user?.role === "CARTORIO" || user?.role === "UNIDADE") ? "/unidade-fixa"
-    : "/minha-conta";
 
   const fetch = useCallback(async (q: string, pg: number) => {
     setLoading(true);
