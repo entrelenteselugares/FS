@@ -5,10 +5,8 @@ const JWT_SECRET = process.env.JWT_SECRET;
 const REFRESH_SECRET = process.env.REFRESH_SECRET;
 
 if (!JWT_SECRET || !REFRESH_SECRET) {
-  console.warn("⚠️ AVISO: JWT_SECRET ou REFRESH_SECRET não configurados. Autenticação irá falhar.");
-  if (process.env.NODE_ENV === "production") {
-    throw new Error("FATAL: Variáveis de ambiente JWT_SECRET e REFRESH_SECRET são obrigatórias em produção.");
-  }
+  console.error("❌ ERRO CRÍTICO: Variáveis de ambiente JWT_SECRET e REFRESH_SECRET não configuradas!");
+  console.error("Acesse o painel da Vercel e adicione essas chaves para habilitar a autenticação.");
 }
 
 export interface AuthPayload {
@@ -23,19 +21,23 @@ export interface AuthRequest extends ExpressRequest {
 
 /** Gera token de acesso (curta duração: 1 hora) */
 export const generateToken = (payload: AuthPayload): string => {
+  if (!JWT_SECRET) throw new Error("JWT_SECRET ausente.");
   return jwt.sign(payload, JWT_SECRET as string, { expiresIn: "1h" });
 };
 
 /** Gera token de renovação (longa duração: 7 dias) */
 export const generateRefreshToken = (payload: AuthPayload): string => {
+  if (!REFRESH_SECRET) throw new Error("REFRESH_SECRET ausente.");
   return jwt.sign(payload, REFRESH_SECRET as string, { expiresIn: "7d" });
 };
 
 export const verifyToken = (token: string): AuthPayload => {
+  if (!JWT_SECRET) throw new Error("JWT_SECRET ausente.");
   return jwt.verify(token, JWT_SECRET as string) as any;
 };
 
 export const verifyRefreshToken = (token: string): AuthPayload => {
+  if (!REFRESH_SECRET) throw new Error("REFRESH_SECRET ausente.");
   return jwt.verify(token, REFRESH_SECRET as string) as any;
 };
 
