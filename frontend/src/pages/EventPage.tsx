@@ -9,6 +9,7 @@ import { ThemeToggle } from "../components/ThemeToggle";
 import { AuthModal } from "../components/AuthModal";
 import { Modal } from "../components/UI/Modal";
 import { useAuth } from "../hooks/useAuth";
+import { Navbar } from "../components/Navbar";
 
 const Item = ({ val, label }: { val: number, label: string }) => (
   <div style={{ textAlign: "center" }}>
@@ -165,6 +166,29 @@ export default function EventPage() {
   const [medias, setMedias] = useState<EventMedia[]>([]);
   const [cart, setCart] = useState<string[]>([]); // Array de shortIds selecionados
   const [cartTotal, setCartTotal] = useState(0);
+
+  // Carrega carrinho do localStorage ao iniciar
+  useEffect(() => {
+    if (event?.id) {
+      const saved = localStorage.getItem(`fs_cart_${event.id}`);
+      if (saved) {
+        try {
+          const parsed = JSON.parse(saved);
+          setCart(parsed);
+          setCartTotal(parsed.length * (event.pricePerPhoto || 15));
+        } catch (e) {
+          console.error("Erro ao carregar carrinho:", e);
+        }
+      }
+    }
+  }, [event?.id, event?.pricePerPhoto]);
+
+  // Salva carrinho no localStorage sempre que mudar
+  useEffect(() => {
+    if (event?.id) {
+      localStorage.setItem(`fs_cart_${event.id}`, JSON.stringify(cart));
+    }
+  }, [cart, event?.id]);
 
   // Print Catalog States
   const [printProducts, setPrintProducts] = useState<PrintProductData[]>([]);
@@ -408,13 +432,7 @@ export default function EventPage() {
         }
       `}</style>
 
-      <nav style={{ height: 52, padding: "0 20px", borderBottom: `1px solid ${T.border}`, display: "flex", alignItems: "center", justifyContent: "space-between", background: T.bg, flexShrink: 0, zIndex: 10 }}>
-        <button onClick={() => navigate("/")} style={{ background: "none", border: "none", color: T.text3, cursor: "pointer", fontSize: 10, textTransform: "uppercase", letterSpacing: 2, display: "flex", alignItems: "center", gap: 6 }}>
-          ← Voltar
-        </button>
-        <img src="/logo-fs.png" alt="Foto Segundo" style={{ height: 18, objectFit: "contain", cursor: "pointer" }} onClick={() => navigate("/")} />
-        <ThemeToggle />
-      </nav>
+      <Navbar />
 
       <div className="ep-grid">
         <div className="ep-cover" style={{ position: "relative", overflow: "hidden", background: T.bgCard }}>
