@@ -23,13 +23,13 @@ export class PricingService {
     eventDate.setHours(0, 0, 0, 0);
 
     // 1. Se for Venda por Unidade (Clique Único / Venda Rápida Fixa)
-    if ((event as any).isUnitSale) {
-      return Number((event as any).priceUnit || (event as any).priceBase || 10);
+    if (event.isUnitSale) {
+      return Number(event.priceUnit || event.priceBase || 10);
     }
 
     // 2. Se for Marketplace (Venda por Foto Individual no Carrinho)
-    if ((event as any).type === "PHOTO_MARKETPLACE") {
-      return (cartCount ?? 0) * Number((event as any).pricePerPhoto ?? 15);
+    if (event.type === "PHOTO_MARKETPLACE") {
+      return (cartCount ?? 0) * Number(event.pricePerPhoto ?? 15);
     }
 
     // Se for Compra Coletiva (Crowdfund), o valor é o enviado pelo usuário (cota)

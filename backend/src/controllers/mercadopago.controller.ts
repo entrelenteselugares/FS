@@ -2,6 +2,7 @@ import { Response } from "express";
 import { MercadoPagoService } from "../services/mercadopago.service";
 import prisma from "../lib/prisma";
 import { AuthRequest } from "../lib/auth";
+import { FRONTEND_URL } from "../lib/config";
 
 export const MercadoPagoController = {
   /**
@@ -57,10 +58,9 @@ export const MercadoPagoController = {
       console.log(`[MP Callback] Sucesso! Conta conectada para o usuário ${user?.nome} (${user?.role})`);
 
       // Redireciona para o dashboard correto baseado no papel do usuário
-      const frontendUrl = process.env.FRONTEND_URL || "http://localhost:5173";
       const targetDashboard = user?.role === "CARTORIO" ? "/cartorio" : "/profissional";
-      
-      res.redirect(`${frontendUrl}${targetDashboard}?mp_connected=true`);
+
+      res.redirect(`${FRONTEND_URL}${targetDashboard}?mp_connected=true`);
     } catch (error: unknown) {
       const msg = error instanceof Error ? error.message : "Erro desconhecido";
       console.error("[MP Callback Error]:", msg);

@@ -6,6 +6,7 @@ import { PricingService } from "../services/pricing.service";
 import crypto from "crypto";
 import { supabaseAdmin } from "../lib/supabase";
 import { FRONTEND_URL } from "../lib/config";
+import { audit } from "../lib/audit";
 
 export class PaymentController {
   /**
@@ -27,10 +28,9 @@ export class PaymentController {
       });
 
       if (!event) return res.status(404).json({ error: "Evento não encontrado" });
-      const eventBase = event as any; // Temporary cast until Prisma types are updated
 
       // 2. Lógica de Precificação Dinâmica & Splits (Centralizada)
-      const preco = PricingService.calculateEventPrice(eventBase, contributionAmount);
+      const preco = PricingService.calculateEventPrice(event, contributionAmount);
       const { matriz: splitMatriz, captacao: splitCaptacao, edicao: splitEdicao, cartorio: splitCartorio } = 
         await PricingService.calculateSplits(preco);
 
@@ -127,6 +127,8 @@ export class PaymentController {
         where: { id: order.id },
         data: { paymentId: String(mpResponse.id) }
       });
+
+      audit(req, "CHECKOUT_PRO_STARTED", "Order", order.id, null, { eventId, amount: preco });
 
       return res.json({
         orderId: order.id,
@@ -243,6 +245,9 @@ export class PaymentController {
               orderId: order.id,
               amount: Number(order.valor)
             });
+
+            // 5. Auditoria
+            audit(req, "PAYMENT_APPROVED_WEBHOOK", "Order", order.id, null, { paymentId: String(data.id) });
           }
           console.log(`✅ Pagamento ${data.id} aprovado e notificação enviada.`);
         }
@@ -274,11 +279,10 @@ export class PaymentController {
         }
       });
       if (!event) return res.status(404).json({ error: "Evento não encontrado" });
-      const eventBase = event as any;
 
       // 2. Lógica de Precificação & Splits (Centralizada)
       const cartItems = cart || [];
-      let basePrice = PricingService.calculateEventPrice(eventBase, contributionAmount, cartItems.length);
+      let basePrice = PricingService.calculateEventPrice(event, contributionAmount, cartItems.length);
       
       // 2a. Produto Físico (Upsell Print Catalog)
       let finalPrintProductId = null;
@@ -325,9 +329,11 @@ export class PaymentController {
 
             if (authError) {
               if (authError.message.includes("already registered")) {
-                // Supabase já tem o usuário — sincroniza com Prisma via upsert
-                const { data: listUsers } = await supabaseAdmin.auth.admin.listUsers();
-                const sUser = listUsers.users.find(u => u.email === cleanEmail);
+                // Supabase já tem o usuário — busca por e-mail filtrado (O(1))
+                const { data: { users: supabaseUsers } } = await supabaseAdmin.auth.admin.listUsers({
+                  filter: `email.eq.${cleanEmail}`
+                } as any);
+                const sUser = supabaseUsers?.[0];
                 if (sUser) {
                   const syncedUser = await prisma.user.upsert({
                     where: { email: cleanEmail },
@@ -535,9 +541,12 @@ export class PaymentController {
         });
       }
 
-      return res.json({
-        orderId: order.id,
-        status: mpResponse?.status,
+      audit(req, "TRANSPARENT_PAYMENT_INITIATED", "Order", order.id, null, { status: mpResponse.status, paymentId: String(mpResponse.id) });
+
+      return res.json({ 
+        success: true, 
+        orderId: order.id, 
+        status: mpResponse.status,
         hasPaid: isApproved,
         details: mpResponse?.status_detail,
         // Dados de PIX para Checkout Transparente
@@ -582,6 +591,9 @@ export class PaymentController {
 
       if (!order) return res.status(404).json({ error: "Pedido não localizado." });
 
+      // 5. Auditoria de Checkout
+      audit(req, "CHECKOUT_STARTED", "Order", order.id, null, { eventId: order.eventId, valor: order.valor });
+
       return res.json({
         id: order.id,
         amount: Number(order.valor),
@@ -611,7 +623,7 @@ export class PaymentController {
         where: { id: String(id) },
         include: {
           event: { select: { id: true, nomeNoivos: true } },
-          cliente: { select: { email: true } }
+          cliente: { select: { email: true, nome: true } }
         }
       });
       if (!order) return res.status(404).json({ error: "Pedido não encontrado." });
@@ -644,7 +656,7 @@ export class PaymentController {
         });
         NotificationService.notifyNewSale({
           buyerEmail: order.buyerEmail || order.cliente?.email || "desconhecido",
-          eventTitle: (order.event as any)?.nomeNoivos || order.eventId,
+          eventTitle: order.event.nomeNoivos,
           orderId: order.id,
           amount: Number(order.valor)
         });
@@ -654,13 +666,16 @@ export class PaymentController {
         if (recipientEmail) {
           NotificationService.sendAccessEmail({
             to: recipientEmail,
-            buyerName: (order.cliente as any)?.nome || "Cliente",
-            eventTitle: (order.event as any)?.nomeNoivos || "Evento",
+            buyerName: order.cliente?.nome || "Cliente",
+            eventTitle: order.event.nomeNoivos,
             orderId: order.id,
             accessLink: `${FRONTEND_URL}/e/${order.eventId}`,
             tempPassword: order.tempPassword || undefined
           }).catch(e => console.error("Erro ao enviar e-mail via Polling:", e));
         }
+
+        // 3. Auditoria
+        audit(req, "PAYMENT_APPROVED_POLLING", "Order", order.id, null, { paymentId: order.paymentId });
 
         return res.json({ status: "APROVADO", eventId: order.eventId });
       }

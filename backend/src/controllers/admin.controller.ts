@@ -802,7 +802,7 @@ export async function adminApproveQuote(req: AuthRequest, res: Response): Promis
     }
 
     // 3. Gerar link de checkout
-    const checkoutUrl = `${process.env.VITE_APP_URL || 'http://localhost:5173'}/checkout?orderId=${order.id}`;
+    const checkoutUrl = `${APP_URL}/checkout?orderId=${order.id}`;
 
     // 4. Enviar E-mail Automático
     await NotificationService.sendQuotationPricedEmail({

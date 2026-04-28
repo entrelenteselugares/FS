@@ -1,5 +1,6 @@
 import { Request, Response } from "express";
 import { prisma } from "../lib/prisma";
+import { FRONTEND_URL } from "../lib/config";
 
 export const SEOController = {
   getEventPreview: async (req: Request, res: Response) => {
@@ -32,7 +33,7 @@ export const SEOController = {
       const description = isMarketplace
         ? `Escolha e compre suas fotos do evento: ${event.nomeNoivos} (${dateStr}). Seleção individual e download imediato.`
         : `Acesse as fotos e vídeos do evento: ${event.nomeNoivos} (${dateStr}). Registrado em ${event.cartorio || "Foto Segundo"}.`;
-      const image = event.coverPhotoUrl || "https://foto-segundo.vercel.app/og-default.png";
+      const image = event.coverPhotoUrl || `${FRONTEND_URL}/og-default.png`;
 
       // Se for bot, entrega o HTML com meta tags
       if (isBot) {
@@ -46,14 +47,14 @@ export const SEOController = {
               
               <!-- Open Graph / Facebook -->
               <meta property="og:type" content="website">
-              <meta property="og:url" content="https://foto-segundo.vercel.app/e/${id}">
+              <meta property="og:url" content="${FRONTEND_URL}/e/${id}">
               <meta property="og:title" content="${title}">
               <meta property="og:description" content="${description}">
               <meta property="og:image" content="${image}">
 
               <!-- Twitter -->
               <meta property="twitter:card" content="summary_large_image">
-              <meta property="twitter:url" content="https://foto-segundo.vercel.app/e/${id}">
+              <meta property="twitter:url" content="${FRONTEND_URL}/e/${id}">
               <meta property="twitter:title" content="${title}">
               <meta property="twitter:description" content="${description}">
               <meta property="twitter:image" content="${image}">

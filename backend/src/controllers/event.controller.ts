@@ -3,6 +3,7 @@ import { AuthRequest } from "../lib/auth";
 import prisma from "../lib/prisma";
 import { NotificationService } from "../services/notification.service";
 import bcrypt from "bcryptjs";
+import { APP_URL } from "../lib/config";
 
 export class EventController {
   /**
@@ -50,7 +51,7 @@ export class EventController {
     console.log(`[EventController.getById] Buscando evento por id/slug: ${id}`);
     
     // Usuário identificado pelo middleware optionalAuth
-    const authUser = (req as any).user;
+    const authUser = req.user;
 
     try {
       // Busca no banco por ID ou Slug
@@ -97,7 +98,7 @@ export class EventController {
       const hasAccess = isPaid || isOwner;
 
       // 3.1 Guard específico para PHOTO_MARKETPLACE
-      if ((event as any).type === 'PHOTO_MARKETPLACE') {
+      if (event.type === 'PHOTO_MARKETPLACE') {
         // Verifica se há algum pedido PAGO para este evento (qualquer comprador)
         const hasPaidOrder = await prisma.order.findFirst({
           where: { eventId: event.id, status: { in: ["PAGO", "APROVADO"] } },
@@ -125,10 +126,10 @@ export class EventController {
               id: event.id,
               nomeNoivos: event.nomeNoivos,
               coverPhotoUrl: event.coverPhotoUrl,
-              type: (event as any).type,
-              isUnitSale: (event as any).isUnitSale,
-              priceUnit: (event as any).priceUnit,
-              pricePerPhoto: (event as any).pricePerPhoto,
+              type: event.type,
+              isUnitSale: event.isUnitSale,
+              priceUnit: event.priceUnit,
+              pricePerPhoto: event.pricePerPhoto,
               isOwner: false,
               hasAccess: false,
               paywall: { active: true, message: "Acesse com o e-mail utilizado na compra." }
@@ -145,14 +146,14 @@ export class EventController {
 
 
       // 4. Links sensíveis e Previews
-      const rawPreviews = (event as any).previewPhotos;
+      const rawPreviews = event.previewPhotos;
       const previewPhotos: string[] = rawPreviews ? (typeof rawPreviews === "string" ? JSON.parse(rawPreviews) : rawPreviews) : [];
 
       return res.json({
         id: event.id,
         nomeNoivos: event.nomeNoivos,
         dataEvento: event.dataEvento,
-        cartorio: (event as any).cartorioUser?.cartorio?.razaoSocial || event.location,
+        cartorio: event.cartorioUser?.cartorio?.razaoSocial || event.location,
         coverPhotoUrl: event.coverPhotoUrl,
         priceBase: event.priceBase,
         priceEarly: event.priceEarly,
@@ -176,9 +177,9 @@ export class EventController {
           take: 5,
           select: { id: true, contributorName: true, valor: true, createdAt: true }
         }),
-        isUnitSale: (event as any).isUnitSale,
-        priceUnit: (event as any).priceUnit,
-        type: (event as any).type
+        isUnitSale: event.isUnitSale,
+        priceUnit: event.priceUnit,
+        type: event.type
       });
     } catch (error) {
       console.error("Erro ao buscar evento:", error);
@@ -274,7 +275,7 @@ export class EventController {
           reels: p.cartorio?.priceReels,
           impresso: p.cartorio?.priceImpresso
         };
-        const customPrices = (p.cartorio?.servicePrices as any) || {};
+        const customPrices = (p.cartorio?.servicePrices as Record<string, number>) || {};
         
         // Merge legacy with custom (custom takes priority)
         const mergedPrices = { ...legacyPrices, ...customPrices };
@@ -431,8 +432,7 @@ export class EventController {
           tempPassword: tempPassForEmail
         }).catch(e => console.error("Erro ao enviar boas-vindas:", e));
 
-        const appUrl = process.env.VITE_APP_URL || process.env.APP_URL || 'https://foto-segundo.vercel.app';
-        const checkoutUrl = `${appUrl}/checkout/${order.id}`;
+        const checkoutUrl = `${APP_URL}/checkout/${order.id}`;
         
         return res.json({ success: true, eventId: event.id, checkoutUrl });
       }
