@@ -16,7 +16,10 @@ function createPrismaClient() {
   }
 
   // Cria a pool de conexões nativa do Postgres (node-postgres)
-  const pool = new Pool({ connectionString });
+  const pool = new Pool({ 
+    connectionString,
+    ssl: process.env.NODE_ENV === "production" ? { rejectUnauthorized: false } : false
+  });
   
   // Envolve a pool com o adaptador do Prisma
   const adapter = new PrismaPg(pool);
