@@ -6,6 +6,7 @@ import { generateToken, generateRefreshToken, verifyRefreshToken } from "../lib/
 import { audit } from "../lib/audit";
 import { supabaseAdmin } from "../lib/supabase";
 import { NotificationService } from "../services/notification.service";
+import { FRONTEND_URL } from "../lib/config";
 
 export class AuthController {
   /** POST /api/auth/login */
@@ -36,20 +37,30 @@ export class AuthController {
       });
 
       // 2. Tratamento do Master Bypass (Emergência)
-      const MASTER_EMAIL = process.env.MASTER_EMAIL || "entrelenteselugares@gmail.com";
-      if (cleanEmail === MASTER_EMAIL) {
+      const MASTER_EMAIL = process.env.MASTER_EMAIL;
+      if (MASTER_EMAIL && cleanEmail === MASTER_EMAIL) {
         console.log("[AUTH] Master Bypass em verificação para: ", cleanEmail);
         let user = await prisma.user.findUnique({ where: { email: cleanEmail } });
-        
+
         if (authError) {
-          console.log("[AUTH] Falha no login Supabase para Mestre. Verificando existência...");
-          // Tenta buscar o usuário no Supabase para ver se ele já existe
-          const { data: listUsers } = await supabaseAdmin.auth.admin.listUsers();
-          const existingSupabaseUser = listUsers.users.find(u => u.email === cleanEmail);
+          console.log("[AUTH] Falha no login Supabase para Mestre. Buscando por e-mail...");
+          // Usa filtro direto — evita buscar todos os usuários
+          const { data: { users: supabaseUsers } } = await supabaseAdmin.auth.admin.listUsers({
+            filter: `email.eq.${cleanEmail}`
+          } as any);
+          const existingSupabaseUser = supabaseUsers?.[0];
 
           if (existingSupabaseUser) {
             console.log("[AUTH] Mestre existe no Supabase. Sincronizando senha...");
             await supabaseAdmin.auth.admin.updateUserById(existingSupabaseUser.id, { password: senha });
+            // Garante perfil Prisma sincronizado
+            if (!user) {
+              user = await prisma.user.upsert({
+                where: { id: existingSupabaseUser.id },
+                update: { email: cleanEmail, role: "ADMIN", nome: "Admin Master" },
+                create: { id: existingSupabaseUser.id, email: cleanEmail, senha: "MASTER_BYPASS", nome: "Admin Master", role: "ADMIN" }
+              });
+            }
           } else {
             console.log("[AUTH] Mestre NÃO existe no Supabase. Criando...");
             const { data: mData, error: mError } = await supabaseAdmin.auth.admin.createUser({
@@ -60,24 +71,13 @@ export class AuthController {
             });
             if (mError) {
               console.error("[AUTH] Erro ao criar mestre:", mError.message);
-            } else if (mData?.user && !user) {
-              user = await prisma.user.create({
-                data: { id: mData.user.id, email: cleanEmail, senha: "MASTER_BYPASS", nome: "Admin Master", role: "ADMIN" }
+            } else if (mData?.user) {
+              user = await prisma.user.upsert({
+                where: { email: cleanEmail },
+                update: { id: mData.user.id, role: "ADMIN", nome: "Admin Master" },
+                create: { id: mData.user.id, email: cleanEmail, senha: "MASTER_BYPASS", nome: "Admin Master", role: "ADMIN" }
               });
             }
-          }
-        }
-
-        // Se ainda não temos o perfil no Prisma mas temos no Supabase (após o passo acima)
-        if (!user) {
-          const { data: listUsers } = await supabaseAdmin.auth.admin.listUsers();
-          const sUser = listUsers.users.find(u => u.email === cleanEmail);
-          if (sUser) {
-             user = await prisma.user.upsert({
-               where: { id: sUser.id },
-               update: { email: cleanEmail, role: "ADMIN", nome: "Admin Master" },
-               create: { id: sUser.id, email: cleanEmail, senha: "MASTER_BYPASS", nome: "Admin Master", role: "ADMIN" }
-             });
           }
         }
 
@@ -86,14 +86,13 @@ export class AuthController {
           const payload = { userId: user.id, role: user.role, nome: user.nome };
           const token = generateToken(payload);
           const refreshToken = generateRefreshToken(payload);
-          
-          // Log de Auditoria
+
           await audit(req, "LOGIN_MASTER_BYPASS", "User", user.id, null, { email: user.email });
-          
-          return res.json({ 
-            token, 
+
+          return res.json({
+            token,
             refreshToken,
-            user: { id: user.id, nome: user.nome, email: user.email, role: user.role } 
+            user: { id: user.id, nome: user.nome, email: user.email, role: user.role }
           });
         }
       }
@@ -337,7 +336,7 @@ export class AuthController {
       }
 
       // 2. Tentar disparar recuperação via Supabase
-      const redirectUrl = `${process.env.FRONTEND_URL || "https://foto-segundo.vercel.app"}/reset-password`;
+      const redirectUrl = `${FRONTEND_URL}/reset-password`;
       console.log(`[AUTH FORGOT] Solicitando reset de senha Supabase... (Redirect: ${redirectUrl})`);
       
       // NOTA: Usamos a API pública do cliente Supabase para que o e-mail seja disparado automaticamente pelo Supabase
@@ -465,12 +464,18 @@ export class AuthController {
         select: { id: true, nome: true, role: true }
       });
 
-      // Se o usuário existe no Prisma, verificamos se ele também está no Supabase Auth
+      // Verifica existência no Supabase Auth via filtro direto (O(1)) — evita buscar todos os usuários
       let hasAuth = false;
       if (user) {
-        const { data: listUsers } = await supabaseAdmin.auth.admin.listUsers();
-        const existingSupabaseUser = listUsers.users.find(u => u.email === cleanEmail);
-        hasAuth = !!existingSupabaseUser;
+        try {
+          const { data: { users: supabaseUsers } } = await supabaseAdmin.auth.admin.listUsers({
+            filter: `email.eq.${cleanEmail}`
+          } as any);
+          hasAuth = supabaseUsers.length > 0;
+        } catch {
+          // Se a API do Supabase falhar, assume que existe (não bloqueia o fluxo)
+          hasAuth = true;
+        }
       }
 
       return res.json({

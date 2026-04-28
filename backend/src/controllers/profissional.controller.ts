@@ -6,6 +6,7 @@ import { supabaseAdmin as supabase } from "../lib/supabase";
 import { PricingService } from "../services/pricing.service";
 import { NotificationService } from "../services/notification.service";
 import { audit } from "../lib/audit";
+import { FRONTEND_URL } from "../lib/config";
 
 // GET /api/profissional/events — eventos atribuídos ao profissional logado
 export async function getMeusEventos(req: AuthRequest, res: Response): Promise<void> {
@@ -397,9 +398,7 @@ export async function registerManualSale(req: AuthRequest, res: Response): Promi
         eventId: event.id,
         valor: Number(amount),
         status: "APROVADO",
-        // @ts-ignore - Prisma types not updated yet due to Windows file lock
         isManual: true,
-        // @ts-ignore
         manualType: manualType || "SD_CARD",
         buyerEmail: customerEmail || null,
         buyerWhatsapp: whatsapp || null,
@@ -433,7 +432,7 @@ export async function registerManualSale(req: AuthRequest, res: Response): Promi
         buyerName: customerName || "Cliente",
         eventTitle: event.nomeNoivos,
         orderId: order.id,
-        accessLink: `${process.env.FRONTEND_URL || "https://foto-segundo.vercel.app"}/e/${event.id}`
+        accessLink: `${FRONTEND_URL}/e/${event.id}`
       }).catch((e: any) => console.error("Erro e-mail venda manual:", e));
     }
 

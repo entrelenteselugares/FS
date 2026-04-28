@@ -7,13 +7,18 @@ import routes from "./routes/index";
 const app = express();
 
 // ── VALIDAÇÃO DE AMBIENTE ───────────────────────────
-const REQUIRED_ENVS = ["JWT_SECRET", "SUPABASE_URL", "SUPABASE_SERVICE_ROLE_KEY"];
+const REQUIRED_ENVS = ["JWT_SECRET", "SUPABASE_URL", "SUPABASE_SERVICE_ROLE_KEY", "FRONTEND_URL", "APP_URL"];
 REQUIRED_ENVS.forEach(env => {
   if (!process.env[env]) {
     console.error(`❌ ERRO FATAL: Variável de ambiente ${env} não configurada.`);
     if (process.env.NODE_ENV === "production") process.exit(1);
   }
 });
+
+// Aviso não-fatal para variáveis opcionais importantes
+if (!process.env.MASTER_EMAIL) {
+  console.warn("⚠️  MASTER_EMAIL não configurada — Master Bypass desativado.");
+}
 
 // CRÍTICO: necessário para rate-limit funcionar na Vercel
 app.set("trust proxy", 1);

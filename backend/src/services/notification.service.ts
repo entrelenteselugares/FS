@@ -1,6 +1,7 @@
 import nodemailer from "nodemailer";
 import dotenv from "dotenv";
 import https from "https";
+import { FRONTEND_URL, APP_URL } from "../lib/config";
 
 dotenv.config();
 
@@ -148,7 +149,7 @@ export class NotificationService {
         `}
         
         <div style="text-align: center; margin: 30px 0;">
-          <a href="${process.env.APP_URL}/login" style="background: #000; color: #fff; padding: 12px 25px; text-decoration: none; border-radius: 4px; font-size: 12px; font-weight: bold; text-transform: uppercase;">Acessar Meu Painel</a>
+          <a href="${APP_URL}/login" style="background: #000; color: #fff; padding: 12px 25px; text-decoration: none; border-radius: 4px; font-size: 12px; font-weight: bold; text-transform: uppercase;">Acessar Meu Painel</a>
         </div>
 
         <hr style="border: 0.5px solid #eee; margin: 30px 0;" />

@@ -7,6 +7,7 @@ import bcrypt from "bcryptjs";
 import { supabaseAdmin as supabase } from "../lib/supabase";
 import { NotificationService } from "../services/notification.service";
 import { audit } from "../lib/audit";
+import { FRONTEND_URL } from "../lib/config";
 
 // ── DASHBOARD ─────────────────────────────────────────
 
@@ -915,9 +916,7 @@ export async function adminCreateManualSale(req: AuthRequest, res: Response): Pr
         status: "APROVADO",
         paymentId: `MANUAL-${Date.now()}`,
         accessType: "TOTAL",
-        // @ts-ignore
         isManual: true,
-        // @ts-ignore
         manualType: manualType || "ADMIN_DIRECT",
         contributorName: customerName,
         buyerEmail: customerEmail,
@@ -954,7 +953,7 @@ export async function adminCreateManualSale(req: AuthRequest, res: Response): Pr
       buyerName: customerName,
       eventTitle: event.nomeNoivos,
       orderId: order.id,
-      accessLink: `${process.env.FRONTEND_URL || "https://foto-segundo.vercel.app"}/e/${event.id}`
+      accessLink: `${FRONTEND_URL}/e/${event.id}`
     }).catch(e => console.error("Erro e-mail venda manual admin:", e));
 
     res.json({ message: "Venda registrada com sucesso!", orderId: order.id, userEmail: user.email });

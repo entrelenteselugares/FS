@@ -1,5 +1,7 @@
 import { prisma } from "../lib/prisma";
 import { audit } from "../lib/audit";
+import { NotificationService } from "../services/notification.service";
+import { FRONTEND_URL } from "../lib/config";
 
 export async function runExpirationJob(req?: any): Promise<void> {
   const now = new Date();
@@ -34,8 +36,19 @@ export async function runExpirationJob(req?: any): Promise<void> {
 
     console.log(`[EXPIRATION JOB] Aviso: pedido ${order.id} expira em ${dias} dias`);
 
-    // TODO: enviar e-mail/WhatsApp para order.buyerEmail
-    // await sendExpirationWarning(order.buyerEmail, order.event.nomeNoivos, dias);
+    // Envia aviso ao comprador por e-mail
+    const recipientEmail = order.buyerEmail;
+    if (recipientEmail) {
+      NotificationService.sendAccessEmail({
+        to: recipientEmail,
+        buyerName: "Cliente",
+        eventTitle: (order.event as any)?.nomeNoivos || "Seu álbum",
+        orderId: order.id,
+        accessLink: `${FRONTEND_URL}/minha-conta`,
+      }).catch((e: unknown) =>
+        console.error(`[EXPIRATION JOB] Erro ao enviar aviso para ${recipientEmail}:`, e)
+      );
+    }
 
     await prisma.order.update({
       where: { id: order.id },

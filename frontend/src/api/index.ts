@@ -25,21 +25,7 @@ export interface EventData {
   };
 }
 
-export const getEvent = async (id: string, userId?: string) => {
-  const { data } = await api.get<EventData>(`/events/${id}`, {
-    params: { userId },
-  });
-  return data;
-};
-
-export const createCheckout = async (checkoutData: {
-  eventId: string;
-  userId: string;
-  email: string;
-  method: string;
-}) => {
-  const { data } = await api.post("/checkout", checkoutData);
-  return data;
-};
+// NOTE: Use API from lib/api.ts for authenticated requests.
+// Routes: /public/events/:slug (public) | /checkout/payment (checkout)
 
 export default api;

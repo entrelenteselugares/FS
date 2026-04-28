@@ -1,6 +1,7 @@
 import { MercadoPagoConfig, Preference } from "mercadopago";
 import axios from "axios";
 import dotenv from "dotenv";
+import { APP_URL } from "../lib/config";
 
 dotenv.config();
 
@@ -102,9 +103,9 @@ export class MercadoPagoService {
             : { notification_url: data.notification_url }),
         
         back_urls: {
-          success: `${process.env.VITE_APP_URL || process.env.APP_URL || "https://foto-segundo.vercel.app"}/success`,
-          failure: `${process.env.VITE_APP_URL || process.env.APP_URL || "https://foto-segundo.vercel.app"}/failure`,
-          pending: `${process.env.VITE_APP_URL || process.env.APP_URL || "https://foto-segundo.vercel.app"}/pending`
+          success: `${APP_URL}/success`,
+          failure: `${APP_URL}/failure`,
+          pending: `${APP_URL}/pending`
         },
         auto_return: "approved" as const,
       };

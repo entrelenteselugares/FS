@@ -5,6 +5,7 @@ import { NotificationService } from "../services/notification.service";
 import { PricingService } from "../services/pricing.service";
 import crypto from "crypto";
 import { supabaseAdmin } from "../lib/supabase";
+import { FRONTEND_URL } from "../lib/config";
 
 export class PaymentController {
   /**
@@ -230,7 +231,7 @@ export class PaymentController {
                 buyerName: order.cliente?.nome || "Cliente",
                 eventTitle: order.event.nomeNoivos,
                 orderId: order.id,
-                accessLink: `${process.env.FRONTEND_URL || "https://foto-segundo.vercel.app"}/e/${order.eventId}`,
+                accessLink: `${FRONTEND_URL}/e/${order.eventId}`,
                 tempPassword: order.tempPassword || undefined
               }).catch(e => console.error("Erro ao enviar e-mail via Webhook:", e));
             }
@@ -364,20 +365,21 @@ export class PaymentController {
       if (finalAccessType === "PRIVATE") expiresAt.setDate(expiresAt.getDate() + 15);
       else expiresAt.setDate(expiresAt.getDate() + 90);
 
-      // Anti-duplicação: query Prisma sem .filter() que quebrava silenciosamente
+      // Anti-duplicação: query unificada com OR
       const cleanEmailForQuery = email ? email.toLowerCase().trim() : null;
       let existingPendingOrder = null;
 
-      if (cleanEmailForQuery) {
+      if (cleanEmailForQuery || finalUserId) {
         existingPendingOrder = await prisma.order.findFirst({
-          where: { eventId, status: "PENDENTE", buyerEmail: cleanEmailForQuery },
-          orderBy: { createdAt: "desc" }
-        });
-      }
-      if (!existingPendingOrder && finalUserId) {
-        existingPendingOrder = await prisma.order.findFirst({
-          where: { eventId, status: "PENDENTE", clienteId: finalUserId },
-          orderBy: { createdAt: "desc" }
+          where: {
+            eventId,
+            status: "PENDENTE",
+            OR: [
+              ...(cleanEmailForQuery ? [{ buyerEmail: cleanEmailForQuery }] : []),
+              ...(finalUserId ? [{ clienteId: finalUserId }] : []),
+            ],
+          },
+          orderBy: { createdAt: "desc" },
         });
       }
 
@@ -512,7 +514,7 @@ export class PaymentController {
           buyerName: req.body.buyerName || "Cliente",
           eventTitle: event.nomeNoivos,
           orderId: order.id,
-          accessLink: `${process.env.FRONTEND_URL || "https://foto-segundo.vercel.app"}/e/${event.id}`,
+          accessLink: `${FRONTEND_URL}/e/${event.id}`,
           tempPassword: isNewUser ? tempPassword : undefined
         }).catch(e => console.error("Erro ao enviar e-mail no checkout:", e));
 
@@ -655,7 +657,7 @@ export class PaymentController {
             buyerName: (order.cliente as any)?.nome || "Cliente",
             eventTitle: (order.event as any)?.nomeNoivos || "Evento",
             orderId: order.id,
-            accessLink: `${process.env.FRONTEND_URL || "https://foto-segundo.vercel.app"}/e/${order.eventId}`,
+            accessLink: `${FRONTEND_URL}/e/${order.eventId}`,
             tempPassword: order.tempPassword || undefined
           }).catch(e => console.error("Erro ao enviar e-mail via Polling:", e));
         }
