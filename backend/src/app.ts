@@ -11,9 +11,12 @@ const REQUIRED_ENVS = ["JWT_SECRET", "SUPABASE_URL", "SUPABASE_SERVICE_ROLE_KEY"
 REQUIRED_ENVS.forEach(env => {
   if (!process.env[env]) {
     console.error(`❌ AVISO CRÍTICO: Variável de ambiente ${env} não configurada.`);
-    // Removido process.exit para permitir diagnósticos via rota /api/diag
   }
 });
+
+// Rota de saúde ultra-precoce (antes de qualquer middleware)
+app.get("/api/health", (_req, res) => res.json({ status: "ok", boot: true }));
+app.get("/health", (_req, res) => res.json({ status: "ok", boot: true }));
 
 // Aviso não-fatal para variáveis opcionais importantes
 if (!process.env.MASTER_EMAIL) {
@@ -34,7 +37,8 @@ app.use(cors({
         /^https:\/\/foto-segundo-[a-z0-9]+-.*\.vercel\.app$/.test(origin)) {
       cb(null, true);
     } else {
-      cb(new Error(`CORS bloqueado - Origem: ${origin}`));
+      console.warn(`⚠️ CORS Mismatch: ${origin}`);
+      cb(null, false); // Não dá erro, apenas não autoriza o browser
     }
   },
   credentials: true,
@@ -66,11 +70,6 @@ app.use(express.json({ limit: "10mb" }));
 
 // ── ROTAS PRINCIPAIS ─────────────────────────────────────────────────────────
 app.use("/api", routes);
-
-app.get("/api/health", (_req, res) =>
-  res.json({ status: "ok", ts: new Date().toISOString() }));
-
-
 
 // Tratamento de erros global
 app.use((err: any, _req: express.Request, res: express.Response, _next: express.NextFunction) => {

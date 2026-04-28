@@ -12,7 +12,9 @@ const connectionString = process.env.DATABASE_URL;
 
 function createPrismaClient() {
   if (!connectionString) {
-    throw new Error("DATABASE_URL não configurada no ambiente.");
+    console.error("❌ ERRO CRÍTICO: DATABASE_URL não configurada no ambiente!");
+    // Retorna um cliente "vazio" para não travar o boot. Erros ocorrerão apenas nas queries.
+    return new PrismaClient();
   }
 
   // Cria a pool de conexões nativa do Postgres (node-postgres)
