@@ -150,7 +150,8 @@ export class AuthController {
       console.error("[AUTH FATAL ERROR]:", error);
       return res.status(500).json({ 
         error: "Erro interno no servidor de autenticação",
-        details: process.env.NODE_ENV !== "production" ? error.message : undefined
+        details: error.message, // Forçado para debug em produção
+        stack: error.stack
       });
     }
   }
