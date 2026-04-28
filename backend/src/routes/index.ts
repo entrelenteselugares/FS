@@ -2,6 +2,7 @@ import { Router } from "express";
 import { EventController } from "../controllers/event.controller";
 import { PaymentController } from "../controllers/payment.controller";
 import { AuthController } from "../controllers/auth.controller";
+import { diagnostics } from "../controllers/diag.controller";
 import {
   getDashboardStats,
   adminListEvents,
@@ -121,7 +122,8 @@ router.get("/public/auth/check",     AuthController.checkEmail);
 
 // ── Mercado Pago OAuth ────────────────────────────────────────────────────────
 router.get("/mercadopago/connect",  requireAuth, MercadoPagoController.connect);
-router.get("/mercadopago/callback", MercadoPagoController.callback);
+router.get("/health", (req, res) => res.json({ status: "ok", time: new Date().toISOString() }));
+router.get("/diag", diagnostics);
 
 // ── Eventos Públicos (Vitrine & Paywall) ──────────────────────────────────────
 router.get("/public/events",               EventController.listPublic);
