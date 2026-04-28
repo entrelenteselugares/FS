@@ -9,11 +9,13 @@
 module.exports = (req, res) => {
   try {
     // Carrega o servidor apenas quando a função é invocada
-    // Isso permite capturar erros de require() ausentes
-    const app = require("./server").default;
+    // Tenta carregar o export default (TS/ESM) ou o module.exports direto (CJS)
+    const serverModule = require("./server");
+    const app = serverModule.default || serverModule;
     
-    if (!app) {
-      throw new Error("Instância do servidor (Express) não encontrada no bundle.");
+    if (!app || typeof app !== "function") {
+      console.error("[BOOT ERROR] Objeto carregado não é uma função Express válida:", typeof app);
+      throw new Error("Instância do servidor (Express) não encontrada ou inválida no bundle.");
     }
 
     return app(req, res);

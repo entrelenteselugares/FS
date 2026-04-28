@@ -10,8 +10,8 @@ const app = express();
 const REQUIRED_ENVS = ["JWT_SECRET", "SUPABASE_URL", "SUPABASE_SERVICE_ROLE_KEY", "FRONTEND_URL", "APP_URL"];
 REQUIRED_ENVS.forEach(env => {
   if (!process.env[env]) {
-    console.error(`❌ ERRO FATAL: Variável de ambiente ${env} não configurada.`);
-    if (process.env.NODE_ENV === "production") process.exit(1);
+    console.error(`❌ AVISO CRÍTICO: Variável de ambiente ${env} não configurada.`);
+    // Removido process.exit para permitir diagnósticos via rota /api/diag
   }
 });
 
@@ -30,6 +30,7 @@ app.use(cors({
         origin.startsWith("http://localhost:") || 
         origin.startsWith("http://127.0.0.1:") ||
         origin === "https://foto-segundo.vercel.app" ||
+        origin === "https://fs-backend-beige.vercel.app" ||
         /^https:\/\/foto-segundo-[a-z0-9]+-.*\.vercel\.app$/.test(origin)) {
       cb(null, true);
     } else {
