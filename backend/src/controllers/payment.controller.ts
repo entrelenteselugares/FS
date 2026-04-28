@@ -14,7 +14,7 @@ export class PaymentController {
    * Inicia o fluxo de pagamento com precificação dinâmica.
    */
   static async checkout(req: Request, res: Response) {
-    const { eventId, userId, email, method, token, installments, issuer_id, contributionAmount } = req.body;
+    const { eventId, userId, email, method, token, installments, issuer_id, contributionAmount, cart, printProductId } = req.body;
 
     try {
       // 1. Buscar evento com os parceiros vinculados
@@ -30,11 +30,48 @@ export class PaymentController {
       if (!event) return res.status(404).json({ error: "Evento não encontrado" });
 
       // 2. Lógica de Precificação Dinâmica & Splits (Centralizada)
-      const preco = PricingService.calculateEventPrice(event, contributionAmount);
+      const cartItems = cart || [];
+      const basePrice = PricingService.calculateEventPrice(event, contributionAmount, cartItems.length);
+      
+      // 2a. Produto Físico (Upsell Print Catalog)
+      let finalPrintProductId = null;
+      let finalPrintPrice = 0;
+      if (printProductId) {
+        const product = await prisma.printProduct.findUnique({ where: { id: printProductId } });
+        if (product && product.active) {
+          finalPrintProductId = product.id;
+          finalPrintPrice = product.sellingPrice !== null ? Number(product.sellingPrice) : Number(product.supplierCost) * (1 + product.marginPct / 100);
+        }
+      }
+
+      const preco = basePrice + finalPrintPrice;
       const { matriz: splitMatriz, captacao: splitCaptacao, edicao: splitEdicao, cartorio: splitCartorio } = 
         await PricingService.calculateSplits(preco);
 
-      console.log(`[Checkout] Repasse Manual Calculado: Snapshot salvo.`);
+      console.log(`[Checkout] Repasse Manual Calculado: Snapshot salvo. Valor: ${preco}`);
+
+      // 3. Preparar itens do pedido (Marketplace)
+      let orderItemsData: any[] = [];
+      if (cartItems.length > 0) {
+        const dbMedias = await prisma.eventMedia.findMany({
+          where: {
+            eventId,
+            shortId: { in: cartItems }
+          }
+        });
+        orderItemsData = dbMedias.map(m => ({
+          mediaId: m.id,
+          price: m.price || event.pricePerPhoto || 15,
+          quantity: 1
+        }));
+      }
+      if (finalPrintProductId) {
+        orderItemsData.push({
+          printProductId: finalPrintProductId,
+          price: finalPrintPrice,
+          quantity: 1
+        });
+      }
 
       // 4. Criar ou Reutilizar Pedido no Banco
       let order;
@@ -86,7 +123,11 @@ export class PaymentController {
               splitMatriz,
               splitCaptacao,
               splitEdicao,
-              splitCartorio
+              splitCartorio,
+              items: orderItemsData.length > 0 ? {
+                deleteMany: {},
+                create: orderItemsData
+              } : undefined
             }
           });
         } else {
@@ -102,7 +143,10 @@ export class PaymentController {
               splitMatriz,
               splitCaptacao,
               splitEdicao,
-              splitCartorio
+              splitCartorio,
+              items: orderItemsData.length > 0 ? {
+                create: orderItemsData
+              } : undefined
             }
           });
         }
