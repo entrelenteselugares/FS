@@ -1,10 +1,10 @@
-import React, { useState, useEffect, useRef, useCallback } from "react";
+import React, { useState, useEffect, useCallback } from "react";
 
 import { useAuth } from "../hooks/useAuth";
 import { API } from "../lib/api";
-import { List, Calendar as CalendarIcon, TrendingUp, DollarSign, Award, ChevronLeft, ChevronRight, Settings, MessageCircle, Check, X, ShieldCheck, HardDrive, LayoutDashboard, Briefcase } from "lucide-react";
+import { List, Calendar as CalendarIcon, TrendingUp, DollarSign, Award, ChevronLeft, ChevronRight, Settings, MessageCircle, Check, X, ShieldCheck, LayoutDashboard, Briefcase, ArrowRight, MapPin, Clock, Zap } from "lucide-react";
 import { DashboardLayout, type NavItem } from "../components/DashboardLayout";
-import { T, StickyBottomCTA, BtnPrimary } from "../lib/theme";
+import { T } from "../lib/theme";
 
 interface EventItem {
   id: string;
@@ -25,6 +25,7 @@ interface EventItem {
   captacaoStatus: "PENDING" | "ACCEPTED" | "REJECTED";
   edicaoId: string | null;
   edicaoStatus: "PENDING" | "ACCEPTED" | "REJECTED";
+  location: string | null;
   _count: { pedidos: number };
 }
 
@@ -39,11 +40,6 @@ interface UnitInvite {
   }
 }
 
-interface EventMedia {
-  id: string;
-  url: string;
-  shortId: string;
-}
 
 interface ServiceCatalog {
   id: string;
@@ -64,6 +60,13 @@ interface ProfessionalService {
 }
 
 interface ProfileData {
+  user: {
+    nome: string | null;
+    email: string | null;
+    whatsapp: string | null;
+  };
+  pixKey: string | null;
+  pixType: string | null;
   services: string[];
   equipment: string | null;
   hourlyRate?: number;
@@ -90,7 +93,6 @@ interface ProfileData {
   }>;
 }
 
-type SaveStatus = "idle" | "saving" | "saved" | "error";
 
 function formatDate(d: string) {
   try {
@@ -123,8 +125,8 @@ function DeadlineTimer({ event, type }: { event: EventItem; type: "FOTO" | "VIDE
 
   if (isDelivered) {
     return (
-      <div style={{ display: "flex", alignItems: "center", gap: 5, color: "var(--brand-primary)", fontSize: 10, fontWeight: 700, textTransform: "uppercase" }}>
-        <span style={{ fontSize: 14 }}>✓</span> {type === "FOTO" ? "Fotos OK" : "Vídeo OK"}
+      <div className="flex items-center gap-2 text-brand-tactical text-[10px] font-black uppercase tracking-widest italic">
+        <Check size={12} /> {type === "FOTO" ? "FOTOS OK" : "VÍDEO OK"}
       </div>
     );
   }
@@ -138,19 +140,13 @@ function DeadlineTimer({ event, type }: { event: EventItem; type: "FOTO" | "VIDE
   const timeStr = h > 0 ? `${h}h ${m}m` : `${m}m ${s}s`;
 
   return (
-    <div style={{ color: isOverdue ? "#ef4444" : "#eab308", fontSize: 10, fontWeight: 600 }}>
-      {type === "FOTO" ? "📸 Foto: " : "🎬 Vídeo: "}
-      {isOverdue ? `Atrasado ${timeStr}` : `Faltam ${timeStr}`}
+    <div className={`text-[10px] font-black uppercase tracking-widest italic flex items-center gap-2 ${isOverdue ? 'text-red-500' : 'text-amber-500'}`}>
+       <div className={`w-1.5 h-1.5 rounded-full ${isOverdue ? 'bg-red-500 animate-pulse' : 'bg-amber-500'}`} />
+       {type === "FOTO" ? "📸 Foto: " : "🎬 Vídeo: "}
+       {isOverdue ? `Atrasado ${timeStr}` : `SLA ${timeStr}`}
     </div>
   );
 }
-
-const S = {
-  page: { fontFamily: "'Outfit', sans-serif", background: "var(--theme-bg)", color: "var(--theme-text)", minHeight: "100vh" } as React.CSSProperties,
-  input: { width: "100%", background: "transparent", border: "1px solid var(--theme-border)", borderRadius: 0, padding: "12px 14px", fontSize: 13, color: "var(--theme-text)", outline: "none", transition: "all 0.2s", fontFamily: "'Outfit', sans-serif" } as React.CSSProperties,
-  label: { fontSize: 11, color: "var(--theme-text-muted)", display: "block", marginBottom: 6, letterSpacing: "1px", textTransform: "uppercase" as const, fontWeight: 900, fontFamily: "'Outfit', sans-serif" } as React.CSSProperties,
-  card: { background: "var(--theme-bg-muted)", border: "1px solid var(--theme-border)", borderRadius: 0, overflow: "hidden" as const, transition: "transform 0.2s" } as React.CSSProperties,
-};
 
 export default function ProfissionalDashboard() {
   const { user } = useAuth();
@@ -191,28 +187,44 @@ export default function ProfissionalDashboard() {
 
   const fetchEvents = useCallback(() => {
     setLoading(true);
-    API.get("/profissional/events")
+    API.get("profissional/events")
       .then((r) => setEvents(r.data))
       .catch((err) => console.error("Erro ao buscar eventos:", err))
       .finally(() => setLoading(false));
   }, []);
 
   const fetchProfile = useCallback(() => {
-    API.get("/profissional/me")
+    API.get("profissional/me")
       .then((r) => setProfile(r.data))
       .catch((err) => console.error("Erro ao buscar perfil:", err));
   }, []);
 
   const fetchUnitInvites = useCallback(() => {
-    API.get("/profissional/unidades/convites")
+    API.get("profissional/unidades/convites")
       .then((r) => setUnitInvites(r.data))
       .catch((err) => console.error("Erro ao buscar convites de unidades:", err));
   }, []);
 
+  const fetchServiceCatalog = useCallback(async () => {
+    try {
+      const { data } = await API.get("public/service-catalog");
+      setCatalogServices(data);
+    } catch (err) {
+      console.error("Erro ao buscar catálogo global:", err);
+    }
+  }, []);
+
+  useEffect(() => {
+    fetchEvents();
+    fetchProfile();
+    fetchUnitInvites();
+    fetchServiceCatalog();
+  }, [fetchEvents, fetchProfile, fetchUnitInvites, fetchServiceCatalog]);
+
   const handleRespond = async (eventId: string, status: "ACCEPTED" | "REJECTED") => {
     try {
-      await API.patch(`/profissional/events/${eventId}/respond`, { status });
-      fetchEvents(); // Recarrega
+      await API.patch(`profissional/events/${eventId}/respond`, { status });
+      fetchEvents();
     } catch (err) {
       console.error("Erro ao responder convite:", err);
       alert("Erro ao processar resposta.");
@@ -221,7 +233,7 @@ export default function ProfissionalDashboard() {
 
   const handleRespondUnit = async (inviteId: string, status: "ACCEPTED" | "REJECTED") => {
     try {
-      await API.patch(`/profissional/unidades/convites/${inviteId}/respond`, { status });
+      await API.patch(`profissional/unidades/convites/${inviteId}/respond`, { status });
       fetchUnitInvites();
       fetchProfile();
     } catch (err) {
@@ -236,7 +248,6 @@ export default function ProfissionalDashboard() {
     try {
       const payload = {
         ...expressFormData,
-        // SD_CARD e ALBUM_IMPRESSO são entrega física — usa método MONEY
         method: (expressFormData.productType === 'SD_CARD' || expressFormData.productType === 'ALBUM_IMPRESSO')
           ? 'MONEY'
           : expressFormData.paymentMethod,
@@ -246,102 +257,30 @@ export default function ProfissionalDashboard() {
       
       if (data.isDigital) {
         showNotification("Venda registrada! Redirecionando para pagamento...");
-        setTimeout(() => {
-          window.location.href = `/checkout/${data.orderId}`;
-        }, 1500);
+        setTimeout(() => { window.location.href = `/checkout/${data.orderId}`; }, 1500);
         return;
       }
-
       showNotification("Venda e Operação registradas com sucesso!");
       setIsExpressModalOpen(false);
       fetchEvents();
-    } catch (err: unknown) {
-      const error = err as { response?: { data?: { error?: string } } };
-      showNotification(error.response?.data?.error || "Erro na venda expressa.", 'error');
+    } catch (err: any) {
+      showNotification(err.response?.data?.error || "Erro na venda expressa.", 'error');
     } finally {
       setLoading(false);
     }
   };
 
-  const fetchServiceCatalog = useCallback(async () => {
-    try {
-      const { data } = await API.get("/public/service-catalog");
-      setCatalogServices(data);
-    } catch (err) {
-      console.error("Erro ao buscar catálogo global:", err);
-    }
-  }, []);
-
-  useEffect(() => {
-    const timer = setTimeout(() => {
-      fetchEvents();
-      fetchProfile();
-      fetchUnitInvites();
-      fetchServiceCatalog();
-    }, 0);
-    return () => clearTimeout(timer);
-  }, [fetchEvents, fetchProfile, fetchUnitInvites, fetchServiceCatalog]);
-
-  // Ganhos reais do perfil
-  const totalRevenue = profile?.stats?.totalEarnings || 0;
-  const revenueThisMonth = profile?.stats?.monthEarnings || 0;
-  const completedEventsCount = profile?.stats?.completedEvents || 0;
-
-  const handleUpdated = useCallback((updated: Partial<EventItem>) => {
-    setSelected((prev) => prev ? { ...prev, ...updated } : prev);
-    setEvents((prev) =>
-      prev.map((e) => (selected && e.id === selected.id ? { ...e, ...updated } : e))
-    );
-  }, [selected]);
-
-  // Filtros de eventos
-  const pendingEvents = events.filter(ev => {
-    const isCaptacao = ev.captacaoId === user?.id && ev.captacaoStatus === "PENDING";
-    const isEdicao = ev.edicaoId === user?.id && ev.edicaoStatus === "PENDING";
-    return isCaptacao || isEdicao;
-  });
-
-  const acceptedEvents = events.filter(ev => {
-    const isCaptacao = ev.captacaoId === user?.id && ev.captacaoStatus === "ACCEPTED";
-    const isEdicao = ev.edicaoId === user?.id && ev.edicaoStatus === "ACCEPTED";
-    return isCaptacao || isEdicao;
-  });
-
-  const displayEvents = activeTab === "agenda" ? acceptedEvents : pendingEvents;
-
-  // Auto-show modal if there are new things
-  useEffect(() => {
-    if (!loading && !hasCheckedInvites) {
-      const timer = setTimeout(() => {
-        if (pendingEvents.length > 0 || unitInvites.length > 0) {
-          setShowNewServicesModal(true);
-        }
-        setHasCheckedInvites(true);
-      }, 0);
-      return () => clearTimeout(timer);
-    }
-  }, [loading, pendingEvents.length, unitInvites.length, hasCheckedInvites]);
-
-  const NAV_ITEMS = (activeTab: string, setActiveTab: (t: "agenda" | "convites" | "financeiro" | "servicos") => void, pendingCount: number): NavItem[] => [
-    { label: "Visão Geral", onClick: () => setActiveTab("agenda"), isActive: activeTab === "agenda", icon: <LayoutDashboard size={16} /> },
-    { label: "Convites Pendentes", onClick: () => setActiveTab("convites"), isActive: activeTab === "convites", icon: <MessageCircle size={16} />, badge: pendingCount },
-    { label: "Financeiro", onClick: () => setActiveTab("financeiro"), isActive: activeTab === "financeiro", icon: <DollarSign size={16} /> },
-    { label: "Serviços", onClick: () => setActiveTab("servicos"), isActive: activeTab === "servicos", icon: <Briefcase size={16} /> },
-    { label: "Meu Perfil", onClick: () => setIsProfileOpen(true), isActive: false, icon: <Settings size={16} /> },
-  ];
-
   const handleSavePricing = async () => {
     if (!profile) return;
     setSavingPrices(true);
     try {
-      const { data } = await API.patch("/profissional/me", {
+      const { data } = await API.patch("profissional/me", {
         hourlyRate: profile.hourlyRate,
         equipmentMultiplier: profile.equipmentMultiplier
       });
       setProfile(data);
       showNotification("Configurações de precificação atualizadas!", "success");
     } catch (error) {
-      console.error(error);
       showNotification("Erro ao atualizar precificação", "error");
     } finally {
       setSavingPrices(false);
@@ -349,12 +288,12 @@ export default function ProfissionalDashboard() {
   };
 
   const handleAddService = async (catalogService: ServiceCatalog) => {
-    const suggestedPrice = Math.max(
-      catalogService.basePrice,
-      ((profile?.hourlyRate || 150) * (catalogService.estimatedMinutes / 60)) * (profile?.equipmentMultiplier || 1.0)
-    );
+    const basePrice = Number(catalogService.basePrice) || 0;
+    const hourlyRate = Number(profile?.hourlyRate) || 150;
+    const multiplier = Number(profile?.equipmentMultiplier) || 1.0;
+    const suggestedPrice = Math.max(basePrice, (hourlyRate * (catalogService.estimatedMinutes / 60)) * multiplier);
     try {
-      await API.post("/profissional/services", {
+      await API.post("profissional/services", {
         catalogId: catalogService.id,
         name: catalogService.name,
         description: catalogService.description,
@@ -363,7 +302,6 @@ export default function ProfissionalDashboard() {
       fetchProfile();
       showNotification("Serviço adicionado à sua vitrine!", "success");
     } catch (error) {
-      console.error(error);
       showNotification("Erro ao adicionar serviço", "error");
     }
   };
@@ -375,10 +313,35 @@ export default function ProfissionalDashboard() {
       fetchProfile();
       showNotification("Serviço removido.", "success");
     } catch (error) {
-      console.error(error);
       showNotification("Erro ao remover serviço", "error");
     }
   };
+
+  const handleUpdated = (updated: Partial<EventItem>) => {
+    setSelected((prev) => prev ? { ...prev, ...updated } : prev);
+    setEvents((prev) => prev.map((e) => (selected && e.id === selected.id ? { ...e, ...updated } : e)));
+  };
+
+  const pendingEvents = events.filter(ev => (ev.captacaoId === user?.id && ev.captacaoStatus === "PENDING") || (ev.edicaoId === user?.id && ev.edicaoStatus === "PENDING"));
+  const acceptedEvents = events.filter(ev => (ev.captacaoId === user?.id && ev.captacaoStatus === "ACCEPTED") || (ev.edicaoId === user?.id && ev.edicaoStatus === "ACCEPTED"));
+  const displayEvents = activeTab === "agenda" ? acceptedEvents : pendingEvents;
+
+  useEffect(() => {
+    if (!loading && !hasCheckedInvites) {
+      if (pendingEvents.length > 0 || unitInvites.length > 0) {
+        setShowNewServicesModal(true);
+      }
+      setHasCheckedInvites(true);
+    }
+  }, [loading, pendingEvents.length, unitInvites.length, hasCheckedInvites]);
+
+  const NAV_ITEMS = (activeTab: string, setActiveTab: (t: any) => void, pendingCount: number): NavItem[] => [
+    { label: "Visão Geral", onClick: () => setActiveTab("agenda"), isActive: activeTab === "agenda", icon: <LayoutDashboard size={16} /> },
+    { label: "Convites Pendentes", onClick: () => setActiveTab("convites"), isActive: activeTab === "convites", icon: <MessageCircle size={16} />, badge: pendingCount },
+    { label: "Financeiro", onClick: () => setActiveTab("financeiro"), isActive: activeTab === "financeiro", icon: <DollarSign size={16} /> },
+    { label: "Serviços", onClick: () => setActiveTab("servicos"), isActive: activeTab === "servicos", icon: <Briefcase size={16} /> },
+    { label: "Meu Perfil", onClick: () => setIsProfileOpen(true), isActive: false, icon: <Settings size={16} /> },
+  ];
 
   return (
     <DashboardLayout 
@@ -389,678 +352,294 @@ export default function ProfissionalDashboard() {
         @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
         .lux-card { transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1); }
         .lux-card:hover { border-color: ${T.brand} !important; transform: translateY(-2px); }
-        @media (max-width: 768px) {
-          .mobile-hide { display: none !important; }
-          .mobile-stack { flex-direction: column !important; align-items: stretch !important; gap: 1rem !important; }
-          .mobile-padding { padding: 2rem 1.5rem !important; }
-          .mobile-grid-1 { grid-template-columns: 1fr !important; }
-          .mobile-detail-overlay {
-            position: fixed !important;
-            inset: 0 !important;
-            z-index: 2000 !important;
-            background: var(--theme-bg) !important;
-            padding: 2rem !important;
-            overflow-y: auto !important;
-            top: 0 !important;
-          }
-        }
       `}</style>
 
-      {/* POP-UP DE NOVOS SERVIÇOS (REQUISITO 3) */}
       {showNewServicesModal && (
-        <div style={{
-          position: "fixed", inset: 0, zIndex: 5000, 
-          display: "flex", alignItems: "center", justifyContent: "center",
-          background: "rgba(0,0,0,0.85)", backdropFilter: "blur(8px)",
-          padding: "1.5rem"
-        }}>
-          <div style={{
-            ...S.card, width: "100%", maxWidth: 450, padding: "2.5rem",
-            textAlign: "center", border: `2px solid ${T.brand}`,
-            animation: "fadeIn 0.4s ease-out", position: "relative"
-          }}>
-            <div style={{ 
-              width: 60, height: 60, borderRadius: "50%", background: `${T.brand}20`,
-              display: "flex", alignItems: "center", justifyContent: "center",
-              margin: "0 auto 1.5rem", color: T.brand
-            }}>
-              <Award size={32} />
-            </div>
-
-            <h2 style={{ fontSize: 22, fontWeight: 900, marginBottom: "0.5rem", textTransform: "uppercase", letterSpacing: 1 }}>
-              Novas Oportunidades!
-            </h2>
-            <p style={{ fontSize: 13, color: "var(--theme-text-muted)", marginBottom: "2rem" }}>
-              Existem convites pendentes que aguardam sua resposta.
-            </p>
-
-            <div style={{ display: "flex", flexDirection: "column", gap: "0.75rem" }}>
+        <div style={{ position: "fixed", inset: 0, zIndex: 5000, display: "flex", alignItems: "center", justifyContent: "center", background: "rgba(0,0,0,0.85)", backdropFilter: "blur(8px)", padding: "1.5rem" }}>
+          <div className="bg-theme-bg w-full max-w-lg p-10 text-center border-2 border-brand-tactical shadow-[0_0_50px_rgba(133,185,172,0.2)] animate-in fade-in zoom-in duration-300 relative">
+            <div className="w-16 h-16 rounded-full bg-brand-tactical/20 flex items-center justify-center mx-auto mb-6 text-brand-tactical"><Award size={32} /></div>
+            <h2 className="text-2xl font-heading font-black text-theme-text uppercase tracking-tight italic leading-none mb-2">Novas Oportunidades!</h2>
+            <p className="text-[11px] font-bold text-theme-muted uppercase tracking-widest mb-10">Existem convites pendentes aguardando sua resposta tática.</p>
+            <div className="space-y-3">
               {unitInvites.length > 0 && (
-                <div style={{ background: "rgba(133,185,172,0.1)", padding: "1rem", border: `1px solid ${T.brand}40` }}>
-                  <div style={{ fontSize: 10, fontWeight: 900, color: T.brand, textTransform: "uppercase", marginBottom: 4 }}>Parcerias de Unidade</div>
-                  <div style={{ fontSize: 14, fontWeight: 600 }}>{unitInvites.length} {unitInvites.length === 1 ? "novo convite" : "novos convites"}</div>
+                <div className="bg-brand-tactical/10 p-4 border border-brand-tactical/30">
+                  <div className="text-[8px] font-black text-brand-tactical uppercase tracking-[0.2em] mb-1">Parcerias de Unidade</div>
+                  <div className="text-lg font-heading font-black text-theme-text italic">{unitInvites.length} {unitInvites.length === 1 ? "NOVO CONVITE" : "NOVOS CONVITES"}</div>
                 </div>
               )}
               {pendingEvents.length > 0 && (
-                <div style={{ background: "rgba(133,185,172,0.1)", padding: "1rem", border: `1px solid ${T.brand}40` }}>
-                  <div style={{ fontSize: 10, fontWeight: 900, color: T.brand, textTransform: "uppercase", marginBottom: 4 }}>Chamados de Trabalho</div>
-                  <div style={{ fontSize: 14, fontWeight: 600 }}>{pendingEvents.length} {pendingEvents.length === 1 ? "trabalho disponível" : "trabalhos disponíveis"}</div>
+                <div className="bg-brand-tactical/10 p-4 border border-brand-tactical/30">
+                  <div className="text-[8px] font-black text-brand-tactical uppercase tracking-[0.2em] mb-1">Chamados de Trabalho</div>
+                  <div className="text-lg font-heading font-black text-theme-text italic">{pendingEvents.length} {pendingEvents.length === 1 ? "TRABALHO DISPONÍVEL" : "TRABALHOS DISPONÍVEIS"}</div>
                 </div>
               )}
             </div>
-
-            <button 
-              onClick={() => {
-                setShowNewServicesModal(false);
-                setActiveTab(unitInvites.length > 0 ? "convites" : "agenda");
-              }}
-              style={{
-                marginTop: "2.5rem", width: "100%", background: T.brand, color: "#000",
-                border: "none", padding: "1rem", fontWeight: 900, fontSize: 12,
-                textTransform: "uppercase", letterSpacing: 2, cursor: "pointer"
-              }}
-            >
-              Ver Detalhes e Responder
-            </button>
-
-            <button 
-              onClick={() => setShowNewServicesModal(false)}
-              style={{ 
-                marginTop: "1rem", background: "none", border: "none", 
-                color: "var(--theme-text-muted)", fontSize: 11, cursor: "pointer"
-              }}
-            >
-              Ignorar por enquanto
-            </button>
+            <button onClick={() => { setShowNewServicesModal(false); setActiveTab(unitInvites.length > 0 ? "convites" : "agenda"); }} className="w-full py-5 bg-brand-tactical text-zinc-950 text-[11px] font-black uppercase tracking-[0.3em] hover:brightness-110 shadow-xl shadow-brand-tactical/20 transition-all mt-8">VER DETALHES E RESPONDER</button>
+            <button onClick={() => setShowNewServicesModal(false)} className="mt-4 text-[9px] font-black text-theme-muted uppercase tracking-widest hover:text-theme-text transition-colors">IGNORAR POR ENQUANTO</button>
           </div>
         </div>
       )}
 
-      <div className="mobile-padding" style={{ maxWidth: 1200, margin: "0 auto", padding: "clamp(24px, 6vw, 64px)" }}>
+      <div className="max-w-7xl mx-auto px-6 lg:px-12 py-10 space-y-12 animate-in fade-in slide-in-from-bottom-4 duration-700">
         
-        {/* Header contextual */}
-        <div style={{ marginBottom: "3rem" }}>
-          <h1 style={{ fontFamily: T.fontD, fontWeight: 900, fontSize: "clamp(24px, 5vw, 36px)", color: T.text, textTransform: "uppercase", letterSpacing: 2, margin: 0, lineHeight: 1.1, paddingTop: 8 }}>
-            {activeTab === "agenda" ? "Minha Agenda" : 
-             activeTab === "convites" ? "Convites Pendentes" : 
-             "Fluxo Financeiro"}
-          </h1>
-          {profile?.cartorioProfissional && profile.cartorioProfissional.length > 0 && (
-            <div style={{ display: "flex", alignItems: "center", gap: 8, marginTop: 12 }}>
-              <ShieldCheck size={14} color="var(--brand-primary)" />
-              <p style={{ fontSize: 10, fontWeight: 800, color: "var(--brand-primary)", margin: 0, textTransform: "uppercase", letterSpacing: 1 }}>
-                Profissional Residente: {profile.cartorioProfissional.map(cp => cp.cartorio.razaoSocial).join(", ")}
-              </p>
+        <div className="flex flex-col lg:flex-row lg:items-end justify-between gap-6 border-b border-theme-border/60 pb-10">
+          <div className="space-y-4">
+            <h1 className="text-3xl md:text-5xl font-heading font-black text-theme-text uppercase tracking-tighter italic leading-none">
+              {activeTab === "agenda" ? "Meu Cockpit" : activeTab === "convites" ? "Central de Convites" : activeTab === "financeiro" ? "Fluxo de Caixa" : "Gestão de Ativos"}
+            </h1>
+            <div className="flex items-center gap-4">
+               <div className="h-1 w-12 bg-brand-tactical" />
+               {profile?.cartorioProfissional?.length ? (
+                 <div className="flex items-center gap-2">
+                   <ShieldCheck size={14} className="text-brand-tactical" />
+                   <p className="text-[10px] font-black text-brand-tactical uppercase tracking-widest italic">Residente: {profile.cartorioProfissional.map(cp => cp.cartorio.razaoSocial).join(", ")}</p>
+                 </div>
+               ) : null}
             </div>
-          )}
-          <div style={{ width: 40, height: 2, background: T.brand, marginTop: 12 }} />
+          </div>
+          
+          <div className="flex gap-4">
+             <button onClick={() => setViewTab("lista")} className={`px-6 py-3 text-[9px] font-black uppercase tracking-widest transition-all flex items-center gap-2 border ${viewTab === "lista" ? 'bg-brand-tactical text-zinc-950 border-brand-tactical shadow-lg shadow-brand-tactical/20' : 'text-theme-muted border-theme-border/60 hover:text-theme-text'}`}><List size={14} /> Lista</button>
+             <button onClick={() => setViewTab("calendario")} className={`px-6 py-3 text-[9px] font-black uppercase tracking-widest transition-all flex items-center gap-2 border ${viewTab === "calendario" ? 'bg-brand-tactical text-zinc-950 border-brand-tactical shadow-lg shadow-brand-tactical/20' : 'text-theme-muted border-theme-border/60 hover:text-theme-text'}`}><CalendarIcon size={14} /> Calendário</button>
+          </div>
         </div>
 
-        {/* BOTÃO VENDA RÁPIDA DESTAQUE */}
-        <div style={{ marginBottom: "3rem" }}>
-          <button 
-            onClick={() => {
-              setExpressFormData({ 
-                customerName: "", 
-                customerEmail: "", 
-                whatsapp: "",
-                amount: 30, 
-                location: "",
-                productType: "FOTOS",
-                paymentMethod: "MONEY",
-                internalNotes: ""
-              });
-              setExpressStep(1);
-              setIsExpressModalOpen(true);
-            }}
-            style={{ 
-              width: "100%", 
-              background: "linear-gradient(90deg, var(--brand-primary) 0%, #a8d5cb 100%)", 
-              color: "#000", 
-              border: "none", 
-              padding: "24px", 
-              display: "flex", 
-              alignItems: "center", 
-              justifyContent: "center", 
-              gap: 16,
-              boxShadow: "0 10px 30px rgba(var(--brand-primary-rgb), 0.2)",
-              cursor: "pointer"
-            }}
-          >
-            <DollarSign size={24} />
-            <div style={{ textAlign: "left" }}>
-               <div style={{ fontSize: 14, fontWeight: 900, textTransform: "uppercase", letterSpacing: 2 }}>Venda Rápida</div>
-               <div style={{ fontSize: 10, fontWeight: 600, opacity: 0.8, textTransform: "uppercase" }}>Registre a venda e crie a operação na hora</div>
+        <div className="relative group">
+          <div className="absolute inset-0 bg-brand-tactical/20 blur-2xl opacity-0 group-hover:opacity-100 transition-all duration-700" />
+          <button onClick={() => { setExpressFormData({ customerName: "", customerEmail: "", whatsapp: "", amount: 30, location: "", productType: "FOTOS", paymentMethod: "MONEY", internalNotes: "" }); setExpressStep(1); setIsExpressModalOpen(true); }} className="relative w-full bg-theme-bg-muted border border-brand-tactical/40 p-8 flex flex-col md:flex-row items-center justify-between gap-8 group hover:border-brand-tactical transition-all overflow-hidden shadow-2xl">
+            <div className="flex items-center gap-6">
+               <div className="p-5 bg-brand-tactical/10 border border-brand-tactical/20 text-brand-tactical"><DollarSign size={28} /></div>
+               <div className="text-left space-y-1">
+                  <div className="text-xl font-heading font-black text-theme-text uppercase tracking-tighter italic">Venda Rápida Foto Segundo</div>
+                  <div className="text-[10px] font-black text-theme-muted uppercase tracking-[0.3em] italic">Registre o recebimento e libere o acesso na hora</div>
+               </div>
             </div>
+            <div className="flex items-center gap-4 text-[10px] font-black text-brand-tactical uppercase tracking-[0.4em] group-hover:gap-6 transition-all">INICIAR OPERAÇÃO <ArrowRight size={14} /></div>
+            <div className="absolute right-0 top-0 h-full w-32 bg-gradient-to-l from-brand-tactical/5 to-transparent pointer-events-none" />
           </button>
         </div>
 
-
-        
-        {/* STATS CARDS */}
-        <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(280px, 1fr))", gap: "1.5rem", marginBottom: "3rem" }}>
-          <div style={{ ...S.card, padding: "1.5rem", position: "relative" }}>
-            <TrendingUp size={20} style={{ position: "absolute", top: 20, right: 20, color: "var(--brand-primary)", opacity: 0.3 }} />
-            <p style={{ fontSize: 10, fontWeight: 900, color: "var(--theme-text-muted)", marginBottom: 12, textTransform: "uppercase", letterSpacing: 1.5 }}>Entregas Concluídas</p>
-            <h3 style={{ fontSize: 28, fontWeight: 900, color: "var(--theme-text)" }}>{completedEventsCount} <span style={{ fontSize: 13, color: "var(--theme-text-muted)", fontWeight: 400 }}>Eventos</span></h3>
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+          <div className="bg-theme-bg border border-theme-border/60 p-8 space-y-4 group hover:border-brand-tactical/50 transition-all shadow-sm relative overflow-hidden">
+             <div className="flex justify-between items-start"><span className="text-[8px] font-black text-theme-muted uppercase tracking-widest italic">Performance de Entrega</span><TrendingUp className="text-brand-tactical opacity-40 group-hover:opacity-100 transition-all" size={16} /></div>
+             <div className="flex items-baseline gap-3"><span className="text-4xl font-heading font-black text-theme-text italic leading-none">{profile?.stats?.completedEvents || 0}</span><span className="text-[10px] font-bold text-theme-muted uppercase tracking-widest">Eventos</span></div>
+             <div className="w-full h-1 bg-theme-bg-muted mt-4"><div className="h-full bg-brand-tactical/30 w-full animate-pulse" /></div>
           </div>
-          
-          <div style={{ ...S.card, padding: "1.5rem", position: "relative" }}>
-            <DollarSign size={20} style={{ position: "absolute", top: 20, right: 20, color: "var(--brand-primary)", opacity: 0.3 }} />
-            <p style={{ fontSize: 10, fontWeight: 900, color: "var(--theme-text-muted)", marginBottom: 12, textTransform: "uppercase", letterSpacing: 1.5 }}>Receita Estimada</p>
-            <h3 style={{ fontSize: 28, fontWeight: 900, color: "var(--brand-primary)" }}>R$ {totalRevenue.toLocaleString()}</h3>
+          <div className="bg-theme-bg border border-theme-border/60 p-8 space-y-4 group hover:border-brand-tactical/50 transition-all shadow-sm relative overflow-hidden">
+             <div className="flex justify-between items-start"><span className="text-[8px] font-black text-theme-muted uppercase tracking-widest italic">Acumulado Global</span><DollarSign className="text-brand-tactical opacity-40 group-hover:opacity-100 transition-all" size={16} /></div>
+             <div className="flex items-baseline gap-3"><span className="text-4xl font-heading font-black text-brand-tactical italic leading-none">R$ {profile?.stats?.totalEarnings?.toLocaleString() || "0"}</span></div>
+             <div className="text-[8px] font-black text-theme-muted uppercase tracking-widest mt-2">Provisionado p/ Repasse</div>
           </div>
-
-          <div style={{ ...S.card, padding: "1.5rem", position: "relative" }}>
-            <Award size={20} style={{ position: "absolute", top: 20, right: 20, color: "var(--brand-primary)", opacity: 0.3 }} />
-            <p style={{ fontSize: 10, fontWeight: 900, color: "var(--theme-text-muted)", marginBottom: 12, textTransform: "uppercase", letterSpacing: 1.5 }}>Ganhos do Mês</p>
-            <h3 style={{ fontSize: 28, fontWeight: 900, color: "var(--theme-text)" }}>R$ {revenueThisMonth.toLocaleString()}</h3>
+          <div className="bg-theme-bg border border-theme-border/60 p-8 space-y-4 group hover:border-brand-tactical/50 transition-all shadow-sm relative overflow-hidden">
+             <div className="flex justify-between items-start"><span className="text-[8px] font-black text-theme-muted uppercase tracking-widest italic">Resultado do Mês</span><Award className="text-brand-tactical opacity-40 group-hover:opacity-100 transition-all" size={16} /></div>
+             <div className="flex items-baseline gap-3"><span className="text-4xl font-heading font-black text-theme-text italic leading-none">R$ {profile?.stats?.monthEarnings?.toLocaleString() || "0"}</span></div>
+             <div className="text-[8px] font-black text-theme-muted uppercase tracking-widest mt-2 flex items-center gap-2"><div className="w-1 h-1 rounded-full bg-green-500" /> Meta de Produção Ativa</div>
           </div>
         </div>
 
-        {/* SUB HEADER SUPPORT */}
-        <div className="mobile-stack" style={{ display: "flex", alignItems: "center", justifyContent: "space-between", background: "rgba(133,185,172,0.05)", border: "1px solid var(--brand-primary)", padding: "1.5rem 2rem", marginBottom: "3rem" }}>
-          <div>
-            <h4 style={{ fontSize: 13, fontWeight: 900, color: "var(--brand-primary)", margin: 0, textTransform: "uppercase" }}>Apoio à Rede Profissional</h4>
-            <p style={{ fontSize: 10, color: "var(--theme-text-muted)", margin: "4px 0 0 0" }}>Problemas técnicos ou dúvidas sobre pagamentos?</p>
+        <div className="bg-theme-bg-muted border-l-4 border-brand-tactical p-8 flex flex-col md:flex-row items-center justify-between gap-6 shadow-sm">
+          <div className="space-y-1">
+            <h4 className="text-[11px] font-black text-brand-tactical uppercase tracking-[0.4em] italic">Suporte de Campo</h4>
+            <p className="text-[10px] text-theme-muted uppercase tracking-widest font-medium">Linha direta com a matriz para dúvidas operacionais ou técnicas.</p>
           </div>
-          <a 
-            href="https://wa.me/5519984470420" 
-            target="_blank" 
-            rel="noopener noreferrer"
-            style={{ textDecoration: "none", background: "var(--brand-primary)", color: "#000", padding: "12px 24px", fontSize: 10, fontWeight: 900, textTransform: "uppercase", display: "flex", alignItems: "center", gap: 8, transition: "all .3s" }}
-          >
-            <MessageCircle size={14} /> Falar com Matriz
-          </a>
+          <a href="https://wa.me/5519984470420" target="_blank" rel="noopener noreferrer" className="w-full md:w-auto px-8 py-4 bg-brand-tactical text-zinc-950 text-[10px] font-black uppercase tracking-[0.3em] flex items-center justify-center gap-3 hover:brightness-110 transition-all shadow-lg shadow-brand-tactical/10"><MessageCircle size={16} /> Falar com Matriz</a>
         </div>
 
-        <div className="mobile-stack" style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: "2rem" }}>
-          <div style={{ display: "flex", gap: "2rem" }}>
-            <p style={{ fontSize: 11, color: T.text3, margin: 0, textTransform: "uppercase", letterSpacing: 1 }}>
-              Visualização:
-            </p>
-          </div>
-          
-          <div style={{ display: "flex", background: "rgba(255,255,255,0.02)", padding: 4, borderRadius: 8, border: `0.5px solid ${T.border}` }}>
-            <button 
-              onClick={() => setViewTab("lista")}
-              style={{ padding: "8px 16px", border: "none", background: viewTab === "lista" ? "rgba(133,185,172,0.1)" : "transparent", color: viewTab === "lista" ? T.brand : T.text3, fontSize: 10, fontWeight: 900, borderRadius: 6, cursor: "pointer", transition: "all .2s", display: "flex", alignItems: "center", gap: 6 }}
-            >
-              <List size={14} /> LISTA
-            </button>
-            <button 
-              onClick={() => setViewTab("calendario")}
-              style={{ padding: "8px 16px", border: "none", background: viewTab === "calendario" ? "rgba(133,185,172,0.1)" : "transparent", color: viewTab === "calendario" ? T.brand : T.text3, fontSize: 10, fontWeight: 900, borderRadius: 6, cursor: "pointer", transition: "all .2s", display: "flex", alignItems: "center", gap: 6 }}
-            >
-               <CalendarIcon size={14} /> CALENDÁRIO
-            </button>
-          </div>
-        </div>
-
-        {activeTab === "financeiro" ? (
-          <div style={{ animation: "fadeIn 0.4s ease-out" }}>
-            <div style={{ ...S.card, padding: "2rem" }}>
-              <h3 style={{ fontSize: 18, fontWeight: 900, color: T.text, marginBottom: "1.5rem", textTransform: "uppercase", letterSpacing: 1 }}>Histórico de Vendas e Comissões</h3>
-              <div style={{ display: "flex", flexDirection: "column", gap: 1 }}>
-                {profile?.payoutHistory?.map((p) => (
-                  <div key={p.id} style={{ display: "flex", justifyContent: "space-between", alignItems: "center", padding: "1.25rem", borderBottom: "1px solid var(--theme-border)", background: "rgba(255,255,255,0.01)" }}>
-                    <div>
-                      <p style={{ fontSize: 14, fontWeight: 800, color: T.text, margin: 0 }}>Repasse {p.payout?.weekStart ? formatDate(p.payout.weekStart) : 'Mensal'}</p>
-                      <p style={{ fontSize: 11, color: "var(--theme-text-muted)", margin: "4px 0 0 0" }}>{p.status === 'PAID' ? 'PAGO' : 'PROCESSANDO'} · {p.orderCount} vendas</p>
-                    </div>
-                    <div style={{ textAlign: "right" }}>
-                      <p style={{ fontSize: 10, color: "var(--theme-text-muted)", marginBottom: 4, textTransform: "uppercase", fontWeight: 700 }}>Valor Recebido</p>
-                      <p style={{ fontSize: 18, fontWeight: 900, color: "var(--brand-primary)", margin: 0 }}>R$ {Number(p.amount).toLocaleString()}</p>
-                    </div>
-                  </div>
-                ))}
-                {(!profile || !profile.payoutHistory?.length) && (
-                  <div style={{ padding: "4rem", textAlign: "center", color: "var(--theme-text-muted)" }}>
-                    Nenhum repasse liquidado encontrado. Continue produzindo!
-                  </div>
-                )}
-              </div>
-              <p style={{ fontSize: 10, color: "var(--theme-text-muted)", marginTop: "2rem", fontStyle: "italic" }}>
-                * Os valores acima referem-se a repasses liquidados via PIX. Ganhos de eventos em andamento aparecerão após a conciliação semanal.
-              </p>
-            </div>
-          </div>
-        ) : activeTab === "servicos" ? (
-          <div style={{ animation: "fadeIn 0.4s ease-out" }}>
-            <div style={{ ...S.card, padding: "2rem", marginBottom: "2rem" }}>
-              <h3 style={{ fontSize: 18, fontWeight: 900, color: T.text, marginBottom: "1.5rem", textTransform: "uppercase", letterSpacing: 1 }}>Precificação Base</h3>
-              <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(200px, 1fr))", gap: "1rem", marginBottom: "1.5rem" }}>
-                <div>
-                  <label style={S.label}>Valor da sua Hora (R$)</label>
-                  <input
-                    type="number"
-                    style={S.input}
-                    value={profile?.hourlyRate || ""}
-                    onChange={(e) => setProfile(p => p ? { ...p, hourlyRate: Number(e.target.value) } : null)}
-                    placeholder="Ex: 150"
-                  />
-                  <p style={{ fontSize: 10, color: T.text3, marginTop: 4 }}>O valor do seu trabalho por hora.</p>
-                </div>
-                <div>
-                  <label style={S.label}>Multiplicador de Equipamento</label>
-                  <input
-                    type="number"
-                    step="0.1"
-                    style={S.input}
-                    value={profile?.equipmentMultiplier || ""}
-                    onChange={(e) => setProfile(p => p ? { ...p, equipmentMultiplier: Number(e.target.value) } : null)}
-                    placeholder="Ex: 1.0"
-                  />
-                  <p style={{ fontSize: 10, color: T.text3, marginTop: 4 }}>1.0 = Padrão. 1.2 = Câmera de Cinema, etc.</p>
-                </div>
-              </div>
-              <button 
-                onClick={handleSavePricing}
-                disabled={savingPrices}
-                style={{ background: T.brand, color: "#000", border: "none", padding: "12px 24px", fontSize: 12, fontWeight: 900, textTransform: "uppercase", cursor: "pointer", display: "flex", alignItems: "center", gap: 8 }}
-              >
-                {savingPrices ? "SALVANDO..." : <><Check size={16} /> Salvar Configurações</>}
-              </button>
-            </div>
-
-            <div style={{ ...S.card, padding: "2rem", marginBottom: "2rem" }}>
-              <h3 style={{ fontSize: 18, fontWeight: 900, color: T.text, marginBottom: "1.5rem", textTransform: "uppercase", letterSpacing: 1 }}>Sua Vitrine de Serviços</h3>
-              {profile?.proServices && profile.proServices.length > 0 ? (
-                <div style={{ display: "flex", flexDirection: "column", gap: 10 }}>
-                  {profile.proServices.map(svc => (
-                    <div key={svc.id} style={{ display: "flex", justifyContent: "space-between", alignItems: "center", padding: "1rem", background: "rgba(255,255,255,0.02)", border: `1px solid ${T.border}` }}>
-                      <div>
-                        <div style={{ fontWeight: 900, color: T.brand, textTransform: "uppercase", fontSize: 13 }}>{svc.name}</div>
-                        {svc.description && <div style={{ fontSize: 11, color: T.text2, marginTop: 4 }}>{svc.description}</div>}
+        <div className="space-y-6">
+          {activeTab === "financeiro" && (
+            <div className="space-y-8 animate-in fade-in duration-500">
+              <div className="bg-theme-bg border border-theme-border/60 p-8 md:p-16 relative overflow-hidden">
+                 <div className="absolute top-0 right-0 w-64 h-64 bg-brand-tactical/5 rounded-full blur-[100px] -mr-32 -mt-32 pointer-events-none" />
+                 <div className="relative z-10 space-y-12">
+                    <div className="flex flex-col md:flex-row justify-between items-start md:items-end gap-6">
+                      <div className="space-y-2">
+                        <h3 className="text-2xl font-heading font-black text-theme-text uppercase tracking-widest italic">Performance Financeira</h3>
+                        <p className="text-[10px] text-theme-muted uppercase tracking-[0.4em] italic">Extrato Tático de Repasses e Comissões</p>
                       </div>
-                      <div style={{ display: "flex", alignItems: "center", gap: 20 }}>
-                        <div style={{ fontSize: 16, fontWeight: 900, fontFamily: T.fontD }}>R$ {Number(svc.price).toFixed(2)}</div>
-                        <button onClick={() => handleRemoveService(svc.id)} style={{ background: "transparent", color: "#ef4444", border: "none", cursor: "pointer", display: "flex", alignItems: "center" }} title="Remover Serviço">
-                          <X size={16} />
-                        </button>
+                      <div className="bg-brand-tactical/10 px-6 py-3 border border-brand-tactical/20 flex items-center gap-3">
+                         <div className="w-2 h-2 rounded-full bg-brand-tactical animate-pulse" />
+                         <span className="text-[10px] font-black text-brand-tactical uppercase tracking-widest">Ciclo de Repasse Ativo</span>
                       </div>
                     </div>
-                  ))}
-                </div>
-              ) : (
-                <p style={{ fontSize: 12, color: T.text3 }}>Você ainda não adicionou nenhum serviço na sua vitrine. Importe do catálogo abaixo.</p>
-              )}
-            </div>
-
-            <div style={{ ...S.card, padding: "2rem" }}>
-              <h3 style={{ fontSize: 18, fontWeight: 900, color: T.text, marginBottom: "1.5rem", textTransform: "uppercase", letterSpacing: 1 }}>Catálogo Global</h3>
-              <p style={{ fontSize: 11, color: T.text2, marginBottom: "1rem" }}>Importe os serviços padrão para sua vitrine. O valor sugerido é calculado com base no seu Valor/Hora.</p>
-              <div style={{ display: "grid", gridTemplateColumns: "1fr", gap: 10 }}>
-                {catalogServices.map(cat => {
-                  const alreadyAdded = profile?.proServices?.some(s => s.catalogId === cat.id);
-                  const suggested = Math.max(
-                    cat.basePrice,
-                    ((profile?.hourlyRate || 150) * (cat.estimatedMinutes / 60)) * (profile?.equipmentMultiplier || 1.0)
-                  );
-
-                  return (
-                    <div key={cat.id} style={{ display: "flex", justifyContent: "space-between", alignItems: "center", padding: "1rem", background: "rgba(133,185,172,0.05)", border: `1px solid ${T.brand}40` }}>
-                      <div>
-                        <div style={{ fontWeight: 900, color: T.text, textTransform: "uppercase", fontSize: 13 }}>{cat.name}</div>
-                        <div style={{ fontSize: 10, color: T.text3, marginTop: 4 }}>{cat.estimatedMinutes} min | Preço Mínimo: R$ {Number(cat.basePrice).toFixed(2)}</div>
-                      </div>
-                      <div style={{ display: "flex", alignItems: "center", gap: 16 }}>
-                        <div style={{ textAlign: "right" }}>
-                          <div style={{ fontSize: 10, color: T.text3, textTransform: "uppercase" }}>Sugerido</div>
-                          <div style={{ fontSize: 14, fontWeight: 900, color: T.brand }}>R$ {suggested.toFixed(2)}</div>
-                        </div>
-                        {alreadyAdded ? (
-                          <div style={{ display: "flex", alignItems: "center", gap: 4, color: T.brand, fontSize: 10, fontWeight: 900, textTransform: "uppercase" }}>
-                            <Check size={14} /> Na Vitrine
-                          </div>
-                        ) : (
-                          <button onClick={() => handleAddService(cat)} style={{ background: T.brand, color: "#000", border: "none", padding: "8px 16px", fontSize: 10, fontWeight: 900, cursor: "pointer", textTransform: "uppercase" }}>
-                            Importar
-                          </button>
-                        )}
-                      </div>
-                    </div>
-                  );
-                })}
-              </div>
-            </div>
-          </div>
-        ) : viewTab === "lista" ? (
-          <div style={{ animation: "fadeIn 0.4s ease-out" }}>
-            {/* LISTA */}
-            <div style={{ display: "flex", flexDirection: "column", gap: 14 }}>
-            {loading ? (
-                <div style={{ padding: "4rem", textAlign: "center", color: T.text3, fontSize: 11, textTransform: "uppercase", letterSpacing: 2 }}>INDEXANDO...</div>
-              ) : (displayEvents.length === 0 && unitInvites.length === 0) ? (
-                <div style={{ padding: "6rem 0", textAlign: "center", background: "rgba(255,255,255,0.01)", border: `1px dashed ${T.border}` }}>
-                  <p style={{ color: T.text2, fontSize: 12, textTransform: "uppercase", letterSpacing: 1, maxWidth: 300, margin: "0 auto", lineHeight: 1.6 }}>
-                    {activeTab === "agenda" 
-                      ? "Você ainda não possui eventos confirmados. Aguarde ser atribuído a um evento pelo administrador." 
-                      : "Você não possui novos convites de trabalho ou parcerias pendentes no momento."}
-                  </p>
-                </div>
-              ) : (
-                <>
-                  {/* Convites de Unidade Fixa */}
-                  {activeTab === "convites" && unitInvites.map(ui => (
-                    <div 
-                      key={ui.id} 
-                      className="lux-card"
-                      style={{ 
-                        ...S.card, 
-                        padding: "2rem", 
-                        background: "linear-gradient(135deg, rgba(133,185,172,0.05) 0%, rgba(133,185,172,0) 100%)",
-                        border: "1px solid var(--brand-primary)",
-                        marginBottom: 14,
-                        animation: "fadeIn 0.3s ease-out"
-                      }}
-                    >
-                      <div className="mobile-stack" style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
-                        <div>
-                          <div style={{ display: "flex", alignItems: "center", gap: 8, marginBottom: 8 }}>
-                            <ShieldCheck size={16} color="var(--brand-primary)" />
-                            <span style={{ fontSize: 9, fontWeight: 900, color: "var(--brand-primary)", textTransform: "uppercase", letterSpacing: 2 }}>Convite de Parceria Fixa</span>
-                          </div>
-                          <h3 style={{ fontSize: 20, fontWeight: 900, color: "var(--theme-text)", margin: 0, textTransform: "uppercase" }}>{ui.cartorio.razaoSocial}</h3>
-                          <p style={{ fontSize: 11, color: "var(--theme-text-muted)", marginTop: 4 }}>Unidade em {ui.cartorio.cidade} · Tipo: {ui.tipo}</p>
-                        </div>
-                        <div style={{ display: "flex", gap: 10 }}>
-                            <button 
-                              onClick={() => handleRespondUnit(ui.id, "REJECTED")}
-                              style={{ background: "rgba(239, 68, 68, 0.1)", color: "#ef4444", border: "1px solid #ef4444", padding: "12px 20px", fontSize: 9, fontWeight: 900, textTransform: "uppercase", cursor: "pointer", display: "flex", alignItems: "center", gap: 6 }}
-                            >
-                              <X size={14} /> Recusar
-                            </button>
-                            <button 
-                              onClick={() => handleRespondUnit(ui.id, "ACCEPTED")}
-                              style={{ background: "var(--brand-primary)", color: "#000", border: "none", padding: "12px 24px", fontSize: 10, fontWeight: 900, textTransform: "uppercase", cursor: "pointer", display: "flex", alignItems: "center", gap: 6 }}
-                            >
-                              <Check size={14} /> ACEITAR PARCERIA
-                            </button>
-                        </div>
-                      </div>
-                    </div>
-                  ))}
-
-                  {displayEvents.map((ev) => (
-                    <div 
-                      key={ev.id} 
-                      onClick={() => activeTab === "agenda" && setSelected(selected?.id === ev.id ? null : ev)}
-                      className="lux-card"
-                      style={{ 
-                        ...S.card, 
-                        padding: "1.25rem", 
-                        display: "flex", 
-                        gap: "1.5rem", 
-                        cursor: activeTab === "agenda" ? "pointer" : "default",
-                        borderColor: selected?.id === ev.id ? "var(--brand-primary)" : "var(--theme-border)",
-                        background: selected?.id === ev.id ? "rgba(133,185,172,0.03)" : "var(--theme-bg-muted)",
-                        marginBottom: 14
-                      }}
-                    >
-                  <div style={{ width: 84, height: 84, background: "#111", borderRadius: 0, flexShrink: 0, overflow: "hidden", border: "1px solid var(--theme-border)" }}>
-                    {ev.coverPhotoUrl ? <img src={ev.coverPhotoUrl} alt="" style={{ width: "100%", height: "100%", objectFit: "cover", opacity: 0.8 }} /> : <div style={{ width: "100%", height: "100%", display: "flex", alignItems: "center", justifyContent: "center", fontSize: 24 }}>📦</div>}
-                  </div>
-                  <div style={{ flex: 1, minWidth: 0, display: "flex", flexDirection: "column", justifyContent: "center" }}>
-                    <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start" }}>
-                      <div>
-                        <h3 style={{ fontSize: 18, fontWeight: 900, color: "var(--theme-text)", marginBottom: 4, whiteSpace: "nowrap", overflow: "hidden", textOverflow: "ellipsis", textTransform: "uppercase", letterSpacing: -0.5 }}>{ev.nomeNoivos}</h3>
-                      </div>
-                      
-                      {activeTab === "convites" && (
-                        <div style={{ display: "flex", gap: 10 }}>
-                          <button 
-                            onClick={(e) => { e.stopPropagation(); handleRespond(ev.id, "REJECTED"); }}
-                            style={{ background: "rgba(239, 68, 68, 0.1)", color: "#ef4444", border: "1px solid #ef4444", padding: "8px 12px", fontSize: 9, fontWeight: 900, textTransform: "uppercase", cursor: "pointer", display: "flex", alignItems: "center", gap: 4 }}
-                          >
-                            <X size={12} /> Recusar
-                          </button>
-                          <button 
-                            onClick={(e) => { e.stopPropagation(); handleRespond(ev.id, "ACCEPTED"); }}
-                            style={{ background: "var(--brand-primary)", color: "#000", border: "none", padding: "8px 12px", fontSize: 9, fontWeight: 900, textTransform: "uppercase", cursor: "pointer", display: "flex", alignItems: "center", gap: 4 }}
-                          >
-                            <Check size={12} /> Aceitar
-                          </button>
-                        </div>
-                      )}
-                    </div>
-                    
-                    <div className="mobile-stack" style={{ display: "flex", gap: "1.5rem", alignItems: "center" }}>
-                       {(ev.captacaoId === user?.id) && <div style={{ fontSize: 9, background: "rgba(133,185,172,0.1)", color: "var(--brand-primary)", padding: "4px 8px", fontWeight: 700, textTransform: "uppercase", border: "1px solid var(--brand-primary)" }}>Profissional da Rede</div>}
-                       {(ev.edicaoId === user?.id) && <div style={{ fontSize: 9, background: "rgba(133,185,172,0.1)", color: "var(--brand-primary)", padding: "4px 8px", fontWeight: 700, textTransform: "uppercase", border: "1px solid var(--brand-primary)" }}>Profissional da Rede</div>}
-                      
-                      <div className="mobile-hide" style={{ flex: 1 }} />
-                      
-                      {activeTab === "agenda" && (
-                        <>
-                          {ev.temFoto && <DeadlineTimer event={ev} type="FOTO" />}
-                          {ev.temVideo && <DeadlineTimer event={ev} type="VIDEO" />}
-                          <div style={{ textAlign: "right" }}>
-                             <div style={{ display: "flex", alignItems: "center", gap: 6, justifyContent: "flex-end" }}>
-                               {ev._count.pedidos > 5 && <span style={{ fontSize: 12 }}>🔥</span>}
-                               <p style={{ fontSize: 18, fontWeight: 900, color: ev._count.pedidos > 0 ? "var(--brand-primary)" : "var(--theme-text-muted)", letterSpacing: -1, margin: 0 }}>{ev._count?.pedidos}</p>
+                    <div className="space-y-4">
+                      {profile?.payoutHistory?.map((p) => (
+                        <div key={p.id} className="group flex flex-col md:flex-row justify-between md:items-center p-8 bg-theme-bg-muted/50 border border-theme-border/40 hover:border-brand-tactical/40 transition-all gap-8">
+                          <div className="flex items-center gap-6">
+                             <div className={`p-4 border ${p.status === 'PAID' ? 'bg-brand-tactical/10 border-brand-tactical/30 text-brand-tactical' : 'bg-amber-500/10 border-amber-500/30 text-amber-500'}`}>
+                                {p.status === 'PAID' ? <Check size={20} /> : <TrendingUp size={20} />}
                              </div>
-                             <p style={{ fontSize: 8, color: "var(--theme-text-muted)", fontWeight: 900, textTransform: "uppercase", letterSpacing: 1, margin: 0 }}>Vendas</p>
+                             <div className="space-y-1">
+                                <p className="text-base font-black text-theme-text uppercase tracking-tight italic">{p.payout?.weekStart ? formatDate(p.payout.weekStart) : 'REPASSE OPERACIONAL'}</p>
+                                <div className="flex items-center gap-3">
+                                   <span className={`text-[9px] font-black uppercase tracking-widest px-2 py-0.5 border ${p.status === 'PAID' ? 'bg-brand-tactical text-zinc-950 border-brand-tactical' : 'bg-amber-500/10 text-amber-500 border-amber-500/20'}`}>{p.status === 'PAID' ? 'LIQUIDADO' : 'EM PROCESSAMENTO'}</span>
+                                   <span className="text-[9px] font-bold text-theme-muted uppercase tracking-widest italic">{p.orderCount} VENDAS CONSOLIDADAS</span>
+                                </div>
+                             </div>
                           </div>
-                        </>
-                      )}
+                          <div className="text-left md:text-right border-t md:border-t-0 border-theme-border/40 pt-4 md:pt-0">
+                            <p className="text-[9px] font-black text-theme-muted uppercase tracking-widest mb-1 italic opacity-60">Montante Líquido</p>
+                            <p className="text-3xl font-heading font-black text-brand-tactical italic leading-none"><span className="text-sm mr-1 font-sans not-italic">R$</span>{Number(p.amount).toLocaleString('pt-BR', { minimumFractionDigits: 2 })}</p>
+                          </div>
+                        </div>
+                      ))}
+                      {(!profile?.payoutHistory?.length) && <div className="py-24 text-center space-y-6 bg-theme-bg-muted/20 border border-dashed border-theme-border/40"><div className="flex justify-center text-theme-muted opacity-20"><DollarSign size={64} /></div><p className="text-[11px] font-black text-theme-muted uppercase tracking-[0.4em] italic">Nenhum repasse liquidado</p></div>}
                     </div>
+                 </div>
+              </div>
+            </div>
+          )}
+
+          {activeTab === "servicos" && (
+            <div className="space-y-8 animate-in fade-in duration-500">
+              <div className="bg-theme-bg border border-theme-border/60 p-8 md:p-16 space-y-12">
+                 <div className="space-y-2">
+                    <h3 className="text-2xl font-heading font-black text-theme-text uppercase tracking-widest italic leading-none">Matriz de Precificação</h3>
+                    <p className="text-[10px] text-theme-muted uppercase tracking-[0.4em] italic">Configuração base para cálculo de orçamentos dinâmicos</p>
+                 </div>
+                 <div className="grid grid-cols-1 md:grid-cols-2 gap-12">
+                    <div className="space-y-4">
+                      <div className="flex items-center gap-3"><div className="p-2 bg-theme-bg-muted border border-theme-border/60 text-brand-tactical"><Clock size={16} /></div><label className="text-[11px] font-black text-theme-text uppercase tracking-widest italic">Valor Hora (R$)</label></div>
+                      <input type="number" className="w-full bg-theme-bg-muted border border-theme-border/60 p-5 text-xl font-heading font-black text-theme-text italic outline-none focus:border-brand-tactical transition-all" value={profile?.hourlyRate || ""} onChange={(e) => setProfile(p => p ? { ...p, hourlyRate: Number(e.target.value) } : null)} placeholder="0.00" />
+                    </div>
+                    <div className="space-y-4">
+                      <div className="flex items-center gap-3"><div className="p-2 bg-theme-bg-muted border border-theme-border/60 text-brand-tactical"><Zap size={16} /></div><label className="text-[11px] font-black text-theme-text uppercase tracking-widest italic">Multiplicador Técnico</label></div>
+                      <input type="number" step="0.1" className="w-full bg-theme-bg-muted border border-theme-border/60 p-5 text-xl font-heading font-black text-theme-text italic outline-none focus:border-brand-tactical transition-all" value={profile?.equipmentMultiplier || ""} onChange={(e) => setProfile(p => p ? { ...p, equipmentMultiplier: Number(e.target.value) } : null)} placeholder="1.0" />
+                    </div>
+                 </div>
+                 <button onClick={handleSavePricing} disabled={savingPrices} className="w-full md:w-auto px-12 py-5 bg-brand-tactical text-zinc-950 text-[11px] font-black uppercase tracking-[0.3em] flex items-center justify-center gap-4 hover:brightness-110 disabled:opacity-40 transition-all shadow-xl shadow-brand-tactical/20">{savingPrices ? "SINCRONIZANDO..." : <><Check size={20} /> ATUALIZAR MATRIZ DE PREÇOS</>}</button>
+              </div>
+
+              <div className="bg-theme-bg border border-theme-border/60 p-8 md:p-16 space-y-10">
+                <div className="flex justify-between items-end">
+                  <div className="space-y-2">
+                    <h3 className="text-2xl font-heading font-black text-theme-text uppercase tracking-widest italic leading-none">Vitrine de Ativos</h3>
+                    <p className="text-[10px] text-theme-muted uppercase tracking-[0.4em] italic">Serviços ativos e disponíveis para contratação</p>
+                  </div>
+                  <div className="text-right hidden md:block">
+                     <p className="text-[8px] font-black text-theme-muted uppercase tracking-widest italic opacity-60">Total em Portfólio</p>
+                     <p className="text-xl font-heading font-black text-theme-text italic leading-none">{profile?.proServices?.length || 0}</p>
                   </div>
                 </div>
-                ))}
-                </>
-              )}
-            </div>
+                {profile?.proServices?.length ? (
+                  <div className="grid grid-cols-1 gap-6">
+                    {profile.proServices.map(svc => (
+                      <div key={svc.id} className="group flex justify-between items-center p-8 bg-theme-bg-muted/30 border border-theme-border/40 hover:border-brand-tactical/40 transition-all relative overflow-hidden">
+                        <div className="absolute left-0 top-0 h-full w-1 bg-brand-tactical opacity-20 group-hover:opacity-100 transition-all" />
+                        <div className="space-y-2">
+                          <div className="flex items-center gap-3"><Briefcase size={14} className="text-brand-tactical" /><div className="text-base font-black text-theme-text uppercase italic tracking-tight">{svc.name}</div></div>
+                          {svc.description && <div className="text-[9px] text-theme-muted uppercase tracking-[0.2em] italic font-bold max-w-xl">{svc.description}</div>}
+                        </div>
+                        <div className="flex items-center gap-12">
+                          <div className="text-left md:text-right"><p className="text-[8px] font-black text-theme-muted uppercase tracking-widest mb-1 italic opacity-60">Preço Ativo</p><p className="text-2xl font-heading font-black text-theme-text italic leading-none">R$ {Number(svc.price).toLocaleString('pt-BR', { minimumFractionDigits: 2 })}</p></div>
+                          <button onClick={() => handleRemoveService(svc.id)} className="p-4 bg-red-500/10 text-red-500 hover:bg-red-500 hover:text-zinc-950 transition-all border border-red-500/20"><X size={18} /></button>
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                ) : <div className="py-12 text-center text-theme-muted uppercase text-[9px] font-black tracking-widest bg-theme-bg-muted/20 border border-dashed border-theme-border/40">Sua vitrine está vazia. Importe itens do catálogo abaixo.</div>}
+              </div>
 
-            {/* MODAL DE DETALHES DO EVENTO */}
-            {selected && (
-              <div 
-                onClick={() => setSelected(null)}
-                style={{ 
-                  position: "fixed", top: 0, left: 0, right: 0, bottom: 0, 
-                  background: "rgba(0,0,0,0.9)", backdropFilter: "blur(20px)", 
-                  zIndex: 1000, display: "flex", alignItems: "center", justifyContent: "center",
-                  padding: "20px"
-                }}
-              >
-                <div 
-                  onClick={e => e.stopPropagation()}
-                  style={{ 
-                    width: "100%", maxWidth: 600, maxHeight: "90vh", overflowY: "auto",
-                    background: "var(--theme-bg-muted)", border: "1px solid var(--theme-border)", borderRadius: 0,
-                    boxShadow: "0 25px 50px -12px rgba(0, 0, 0, 0.5)",
-                    animation: "zoomIn 0.3s ease-out"
-                  }}
-                >
-                  <EventEditPanel 
-                    key={selected.id}
-                    event={selected} 
-                    onClose={() => setSelected(null)} 
-                    onUpdated={handleUpdated} 
-                  />
+              <div className="bg-theme-bg border border-theme-border/60 p-8 md:p-16 space-y-12">
+                <div className="space-y-2"><h3 className="text-2xl font-heading font-black text-theme-text uppercase tracking-widest italic leading-none">Catálogo Geral da Rede</h3><p className="text-[10px] text-theme-muted uppercase tracking-[0.4em] italic">Benchmark de serviços e precificação sugerida por IA</p></div>
+                <div className="grid grid-cols-1 gap-6">
+                  {catalogServices.map(cat => {
+                    const alreadyAdded = profile?.proServices?.some(s => s.catalogId === cat.id);
+                    const suggested = Math.max(cat.basePrice, ((profile?.hourlyRate || 150) * (cat.estimatedMinutes / 60)) * (profile?.equipmentMultiplier || 1.0));
+                    return (
+                      <div key={cat.id} className="flex flex-col md:flex-row justify-between md:items-center p-8 bg-theme-bg-muted border border-theme-border/40 group hover:border-brand-tactical/30 transition-all gap-8 relative overflow-hidden">
+                        <div className="space-y-3"><div className="text-base font-black text-theme-text uppercase tracking-tight italic">{cat.name}</div><div className="flex items-center gap-4"><div className="flex items-center gap-2 text-[9px] font-bold text-theme-muted uppercase tracking-widest italic"><Clock size={12} className="text-brand-tactical" /> {cat.estimatedMinutes} MINUTOS</div><div className="w-1 h-1 rounded-full bg-theme-border" /><div className="text-[9px] font-bold text-theme-muted uppercase tracking-widest italic">PREÇO MÍNIMO: R$ {Number(cat.basePrice).toFixed(2)}</div></div></div>
+                        <div className="flex items-center justify-between md:justify-end gap-12">
+                          <div className="text-left md:text-right space-y-1"><div className="flex items-center md:justify-end gap-2 text-[8px] font-black text-brand-tactical uppercase tracking-widest italic"><TrendingUp size={10} /> Valor Sugerido p/ Você</div><div className="text-3xl font-heading font-black text-brand-tactical italic leading-none"><span className="text-sm mr-1 font-sans not-italic">R$</span>{suggested.toLocaleString('pt-BR', { minimumFractionDigits: 2 })}</div></div>
+                          {alreadyAdded ? <div className="px-6 py-3 bg-brand-tactical/10 border border-brand-tactical/30 text-brand-tactical text-[10px] font-black uppercase tracking-widest italic flex items-center gap-3"><Check size={18} /> EM VITRINE</div> : <button onClick={() => handleAddService(cat)} className="px-10 py-4 bg-brand-tactical text-zinc-950 text-[11px] font-black uppercase tracking-[0.2em] hover:brightness-110 shadow-lg shadow-brand-tactical/10 italic">IMPORTAR</button>}
+                        </div>
+                      </div>
+                    );
+                  })}
                 </div>
               </div>
-            )}
-          </div>
-        ) : (
-          <div style={{ animation: "fadeIn 0.4s ease-out" }}>
-             <CalendarView events={displayEvents} currentMonth={currentMonth} setCurrentMonth={setCurrentMonth} onSelect={(ev) => { if(activeTab === "agenda"){ setSelected(ev); setViewTab("lista"); } }} />
-          </div>
-        )}
+            </div>
+          )}
+
+          {(activeTab === "agenda" || activeTab === "convites") && (
+            <div className="space-y-8 animate-in fade-in duration-500">
+               {viewTab === "lista" ? (
+                 <div className="space-y-4">
+                   {loading ? <div className="py-24 text-center text-theme-muted text-[10px] font-black uppercase tracking-[0.4em]">Sincronizando Dados de Campo...</div> : (displayEvents.length === 0 && unitInvites.length === 0) ? <div className="py-24 text-center bg-theme-bg-muted/20 border border-dashed border-theme-border/40 text-theme-muted text-[10px] font-black uppercase tracking-[0.2em]">Nenhum registro encontrado para esta visualização.</div> : (
+                     <>
+                        {activeTab === "convites" && unitInvites.map(ui => (
+                          <div key={ui.id} className="lux-card bg-theme-bg border border-brand-tactical/60 p-8 md:p-10 relative overflow-hidden mb-6" style={{ background: "linear-gradient(145deg, rgba(133,185,172,0.08) 0%, rgba(10,10,10,1) 100%)" }}>
+                            <div className="flex flex-col lg:flex-row justify-between items-start lg:items-center gap-8 relative z-10">
+                              <div className="space-y-4">
+                                <div className="flex items-center gap-3"><div className="p-2 bg-brand-tactical text-zinc-950 rounded-sm"><ShieldCheck size={18} /></div><span className="text-[10px] font-black text-brand-tactical uppercase tracking-[0.4em] italic">Oportunidade de Parceria Fixa</span></div>
+                                <div className="space-y-1"><h3 className="text-2xl md:text-3xl font-heading font-black text-theme-text uppercase tracking-tighter italic leading-none">{ui.cartorio.razaoSocial}</h3><p className="text-[11px] font-bold text-theme-muted uppercase tracking-widest italic">Base Operacional: {ui.cartorio.cidade} · Modalidade: {ui.tipo}</p></div>
+                              </div>
+                              <div className="flex gap-4"><button onClick={() => handleRespondUnit(ui.id, "REJECTED")} className="px-8 py-4 border border-red-500/30 text-red-500 text-[10px] font-black uppercase tracking-widest hover:bg-red-500/10 italic flex items-center gap-2"><X size={16} /> Recusar</button><button onClick={() => handleRespondUnit(ui.id, "ACCEPTED")} className="px-10 py-4 bg-brand-tactical text-zinc-950 text-[11px] font-black uppercase tracking-[0.2em] hover:brightness-110 italic flex items-center gap-2 shadow-lg shadow-brand-tactical/20"><Check size={18} /> FIRMAR PARCERIA</button></div>
+                            </div>
+                          </div>
+                        ))}
+                        {displayEvents.map(ev => (
+                          <div key={ev.id} className={`lux-card bg-theme-bg border ${selected?.id === ev.id ? 'border-brand-tactical' : 'border-theme-border/60'} p-6 md:p-8 flex flex-col md:flex-row gap-8 items-center relative overflow-hidden`} onClick={() => activeTab === "agenda" && setSelected(selected?.id === ev.id ? null : ev)}>
+                            <div className={`absolute left-0 top-0 h-full w-1 ${ev.captacaoStatus === 'PENDING' ? 'bg-amber-500' : 'bg-brand-tactical'}`} />
+                            <div className="min-w-[100px] text-center md:text-left"><div className="text-[9px] font-black text-theme-muted uppercase italic mb-1">DATA</div><div className="text-2xl font-heading font-black text-theme-text italic leading-none uppercase">{new Date(ev.dataEvento).toLocaleDateString('pt-BR', { day: '2-digit', month: 'short' }).replace('.', '')}</div></div>
+                            <div className="flex-grow space-y-2"><div className="flex items-center gap-3"><h3 className="text-xl font-heading font-black text-theme-text uppercase italic">{ev.nomeNoivos}</h3><div className={`px-2 py-0.5 text-[7px] font-black border ${ev.captacaoStatus === 'ACCEPTED' ? 'bg-brand-tactical/10 text-brand-tactical border-brand-tactical/20' : 'bg-amber-500/10 text-amber-500 border-amber-500/20'}`}>{ev.captacaoStatus === 'ACCEPTED' ? 'CONFIRMADO' : 'PENDENTE'}</div></div><div className="flex gap-4 text-[9px] text-theme-muted font-bold uppercase"><span className="flex items-center gap-1"><MapPin size={10} /> {ev.location || "Campo"}</span><span className="flex items-center gap-1"><Briefcase size={10} /> {ev.captacaoId === user?.id ? 'CAPTAÇÃO' : 'EDIÇÃO'}</span><DeadlineTimer event={ev} type="FOTO" /></div></div>
+                            <div className="flex items-center gap-4">
+                              {activeTab === "convites" ? (
+                                <div className="flex gap-2"><button onClick={(e) => { e.stopPropagation(); handleRespond(ev.id, "REJECTED"); }} className="p-3 border border-red-500/30 text-red-500 hover:bg-red-500/10"><X size={14} /></button><button onClick={(e) => { e.stopPropagation(); handleRespond(ev.id, "ACCEPTED"); }} className="px-6 py-3 bg-brand-tactical text-zinc-950 text-[9px] font-black uppercase tracking-widest"><Check size={14} /> ACEITAR</button></div>
+                              ) : <ChevronRight size={20} className={`text-theme-muted transition-transform ${selected?.id === ev.id ? 'rotate-90 text-brand-tactical' : ''}`} />}
+                            </div>
+                          </div>
+                        ))}
+                     </>
+                   )}
+                 </div>
+               ) : (
+                 <CalendarView events={displayEvents} currentMonth={currentMonth} setCurrentMonth={setCurrentMonth} onSelect={(ev) => { if(activeTab === "agenda"){ setSelected(ev); setViewTab("lista"); } }} />
+               )}
+            </div>
+          )}
+        </div>
       </div>
 
-      {/* MODAL DE PERFIL */}
-      {isProfileOpen && profile && (
-        <ProfileModal 
-          profile={profile} 
-          onClose={() => setIsProfileOpen(false)} 
-          onUpdated={(p) => { setProfile(p); setIsProfileOpen(false); }}
-        />
+      {selected && (
+        <div onClick={() => setSelected(null)} className="fixed inset-0 z-[1000] flex items-center justify-center bg-black/90 backdrop-blur-xl p-6">
+          <div onClick={e => e.stopPropagation()} className="w-full max-w-2xl bg-theme-bg border border-theme-border/60 shadow-2xl animate-in zoom-in duration-300">
+            <EventEditPanel event={selected} onUpdated={handleUpdated} onClose={() => setSelected(null)} />
+          </div>
+        </div>
       )}
-      {/* MODAL VENDA EXPRESSA — WIZARD 3 ETAPAS */}
+
+      {isProfileOpen && profile && (
+        <ProfileModal profile={profile} onClose={() => setIsProfileOpen(false)} onUpdated={(p) => { setProfile(p); setIsProfileOpen(false); }} />
+      )}
+
       {isExpressModalOpen && (
-        <div style={{ position: "fixed", inset: 0, zIndex: 6000, display: "flex", alignItems: "center", justifyContent: "center", background: "rgba(0,0,0,0.95)", backdropFilter: "blur(20px)", padding: "1rem" }}>
-          <div style={{ width: "100%", maxWidth: 440, background: "var(--theme-bg)", border: "1px solid var(--theme-border)", position: "relative" }}>
-
-            {/* HEADER */}
-            <div style={{ padding: "1.5rem 1.5rem 1rem", borderBottom: "1px solid var(--theme-border)" }}>
-              <button onClick={() => { setIsExpressModalOpen(false); setExpressStep(1); }} style={{ position: "absolute", top: 16, right: 16, background: "none", border: "none", color: "var(--theme-text-muted)", cursor: "pointer" }}><X size={20} /></button>
-              <div style={{ fontSize: 9, fontWeight: 900, color: "var(--brand-primary)", textTransform: "uppercase", letterSpacing: 3, marginBottom: 4 }}>Venda Rápida · Etapa {expressStep} de 3</div>
-              <h2 style={{ fontSize: 20, fontWeight: 900, color: "var(--theme-text)", textTransform: "uppercase", letterSpacing: 1, margin: 0 }}>
-                {expressStep === 1 ? "Quem é o cliente?" : expressStep === 2 ? "O que foi vendido?" : "Como foi pago?"}
-              </h2>
-              {/* BARRA DE PROGRESSO */}
-              <div style={{ display: "flex", gap: 4, marginTop: 12 }}>
-                {[1,2,3].map(s => (
-                  <div key={s} style={{ flex: 1, height: 3, background: s <= expressStep ? "var(--brand-primary)" : "var(--theme-border)", transition: "background 0.3s" }} />
-                ))}
-              </div>
+        <div className="fixed inset-0 z-[7000] flex items-center justify-center bg-black/95 backdrop-blur-xl p-4 animate-in fade-in duration-300">
+          <div className="w-full max-w-lg bg-theme-bg border border-theme-border/60 shadow-2xl relative">
+            <div className="p-8 border-b border-theme-border/40 space-y-4">
+              <button onClick={() => setIsExpressModalOpen(false)} className="absolute top-6 right-6 text-theme-muted hover:text-white"><X size={24} /></button>
+              <div className="text-[10px] font-black text-brand-tactical uppercase tracking-[0.4em] italic">Venda Expressa · {expressStep}/3</div>
+              <h2 className="text-2xl font-heading font-black text-theme-text uppercase italic leading-none">{expressStep === 1 ? "Identificação" : expressStep === 2 ? "Produto" : "Pagamento"}</h2>
+              <div className="flex gap-2"><div className={`h-1 flex-1 ${expressStep >= 1 ? 'bg-brand-tactical' : 'bg-theme-border/20'}`} /><div className={`h-1 flex-1 ${expressStep >= 2 ? 'bg-brand-tactical' : 'bg-theme-border/20'}`} /><div className={`h-1 flex-1 ${expressStep >= 3 ? 'bg-brand-tactical' : 'bg-theme-border/20'}`} /></div>
             </div>
-
-            {/* BODY */}
-            <div style={{ padding: "1.5rem" }}>
-
-              {/* ETAPA 1: CLIENTE */}
+            <div className="p-8">
               {expressStep === 1 && (
-                <div style={{ display: "flex", flexDirection: "column", gap: "1rem" }}>
-                  <div>
-                    <label style={{ fontSize: 9, fontWeight: 900, color: "var(--theme-text-muted)", textTransform: "uppercase", letterSpacing: 2, display: "block", marginBottom: 6 }}>E-mail do Cliente *</label>
-                    <input
-                      type="email"
-                      autoFocus
-                      value={expressFormData.customerEmail}
-                      onChange={e => setExpressFormData(p => ({ ...p, customerEmail: e.target.value }))}
-                      style={{ width: "100%", background: "var(--theme-bg-muted)", border: "1px solid var(--theme-border)", padding: "14px", fontSize: 14, color: "var(--theme-text)", outline: "none", boxSizing: "border-box" }}
-                      placeholder="cliente@email.com"
-                    />
-                  </div>
-                  <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 12 }}>
-                    <div>
-                      <label style={{ fontSize: 9, fontWeight: 900, color: "var(--theme-text-muted)", textTransform: "uppercase", letterSpacing: 2, display: "block", marginBottom: 6 }}>Nome</label>
-                      <input
-                        type="text"
-                        value={expressFormData.customerName}
-                        onChange={e => setExpressFormData(p => ({ ...p, customerName: e.target.value }))}
-                        style={{ width: "100%", background: "var(--theme-bg-muted)", border: "1px solid var(--theme-border)", padding: "14px", fontSize: 14, color: "var(--theme-text)", outline: "none", boxSizing: "border-box" }}
-                        placeholder="Nome"
-                      />
-                    </div>
-                    <div>
-                      <label style={{ fontSize: 9, fontWeight: 900, color: "var(--theme-text-muted)", textTransform: "uppercase", letterSpacing: 2, display: "block", marginBottom: 6 }}>WhatsApp</label>
-                      <input
-                        type="tel"
-                        value={expressFormData.whatsapp}
-                        onChange={e => setExpressFormData(p => ({ ...p, whatsapp: e.target.value }))}
-                        style={{ width: "100%", background: "var(--theme-bg-muted)", border: "1px solid var(--theme-border)", padding: "14px", fontSize: 14, color: "var(--theme-text)", outline: "none", boxSizing: "border-box" }}
-                        placeholder="(00) 00000-0000"
-                      />
-                    </div>
-                  </div>
-                  <button
-                    onClick={() => { if (!expressFormData.customerEmail) { showNotification("E-mail do cliente é obrigatório.", "error"); return; } setExpressStep(2); }}
-                    style={{ width: "100%", background: "var(--brand-primary)", color: "#000", border: "none", padding: "16px", fontWeight: 900, fontSize: 11, textTransform: "uppercase", letterSpacing: 2, cursor: "pointer", marginTop: 4 }}
-                  >Próximo →</button>
+                <div className="space-y-6 animate-in slide-in-from-right-4">
+                  <div className="space-y-2"><label className="text-[9px] font-black text-theme-muted uppercase italic">E-mail *</label><input type="email" autoFocus value={expressFormData.customerEmail} onChange={e => setExpressFormData(p => ({ ...p, customerEmail: e.target.value }))} className="w-full bg-theme-bg-muted border border-theme-border/60 p-4 text-theme-text outline-none focus:border-brand-tactical" /></div>
+                  <div className="grid grid-cols-2 gap-4"><div className="space-y-2"><label className="text-[9px] font-black text-theme-muted uppercase italic">Nome</label><input type="text" value={expressFormData.customerName} onChange={e => setExpressFormData(p => ({ ...p, customerName: e.target.value }))} className="w-full bg-theme-bg-muted border border-theme-border/60 p-4 text-theme-text outline-none focus:border-brand-tactical" /></div><div className="space-y-2"><label className="text-[9px] font-black text-theme-muted uppercase italic">WhatsApp</label><input type="tel" value={expressFormData.whatsapp} onChange={e => setExpressFormData(p => ({ ...p, whatsapp: e.target.value }))} className="w-full bg-theme-bg-muted border border-theme-border/60 p-4 text-theme-text outline-none focus:border-brand-tactical" /></div></div>
+                  <button disabled={!expressFormData.customerEmail} onClick={() => setExpressStep(2)} className="w-full py-5 bg-brand-tactical text-zinc-950 text-[11px] font-black uppercase tracking-widest hover:brightness-110 disabled:opacity-40">PRÓXIMO</button>
                 </div>
               )}
-
-              {/* ETAPA 2: PRODUTO */}
               {expressStep === 2 && (
-                <div style={{ display: "flex", flexDirection: "column", gap: "1rem" }}>
-                  <div>
-                    <label style={{ fontSize: 9, fontWeight: 900, color: "var(--theme-text-muted)", textTransform: "uppercase", letterSpacing: 2, display: "block", marginBottom: 8 }}>Tipo de Produto *</label>
-                    <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 8 }}>
-                      {([
-                        { key: "FOTOS", label: "📷 Fotos Digitais", desc: "Entrega via link" },
-                        { key: "REELS", label: "🎬 Reels / Vídeo", desc: "Entrega via link" },
-                        { key: "SD_CARD", label: "💾 Cartão SD", desc: "Entrega física única" },
-                        { key: "ALBUM_IMPRESSO", label: "📚 Álbum Impresso", desc: "Entrega física" },
-                      ] as { key: typeof expressFormData.productType; label: string; desc: string }[]).map(opt => (
-                        <button
-                          key={opt.key}
-                          type="button"
-                          onClick={() => setExpressFormData(p => ({ ...p, productType: opt.key }))}
-                          style={{ padding: "12px 8px", border: `2px solid ${expressFormData.productType === opt.key ? "var(--brand-primary)" : "var(--theme-border)"}`, background: expressFormData.productType === opt.key ? "rgba(133,185,172,0.1)" : "var(--theme-bg-muted)", color: "var(--theme-text)", cursor: "pointer", textAlign: "center" }}
-                        >
-                          <div style={{ fontSize: 13, fontWeight: 900 }}>{opt.label}</div>
-                          <div style={{ fontSize: 9, color: "var(--theme-text-muted)", marginTop: 2 }}>{opt.desc}</div>
-                        </button>
-                      ))}
-                    </div>
-                    {expressFormData.productType === "SD_CARD" && (
-                      <div style={{ marginTop: 8, padding: "10px 12px", background: "rgba(255,165,0,0.08)", border: "1px solid rgba(255,165,0,0.3)", fontSize: 10, color: "#f59e0b" }}>
-                        ⚠️ Entrega física — o cliente fica com todo o material. Nenhum link de acesso digital será gerado.
-                      </div>
-                    )}
-                  </div>
-                  <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 12 }}>
-                    <div>
-                      <label style={{ fontSize: 9, fontWeight: 900, color: "var(--theme-text-muted)", textTransform: "uppercase", letterSpacing: 2, display: "block", marginBottom: 6 }}>Valor (R$) *</label>
-                      <input
-                        type="number"
-                        min="1"
-                        value={expressFormData.amount}
-                        onChange={e => setExpressFormData(p => ({ ...p, amount: Number(e.target.value) }))}
-                        style={{ width: "100%", background: "var(--theme-bg-muted)", border: "1px solid var(--theme-border)", padding: "14px", fontSize: 18, fontWeight: 900, color: "var(--brand-primary)", outline: "none", boxSizing: "border-box" }}
-                      />
-                    </div>
-                    <div>
-                      <label style={{ fontSize: 9, fontWeight: 900, color: "var(--theme-text-muted)", textTransform: "uppercase", letterSpacing: 2, display: "block", marginBottom: 6 }}>Local</label>
-                      <input
-                        type="text"
-                        value={expressFormData.location}
-                        onChange={e => setExpressFormData(p => ({ ...p, location: e.target.value }))}
-                        style={{ width: "100%", background: "var(--theme-bg-muted)", border: "1px solid var(--theme-border)", padding: "14px", fontSize: 14, color: "var(--theme-text)", outline: "none", boxSizing: "border-box" }}
-                        placeholder="Taquaral / Evento"
-                      />
-                    </div>
-                  </div>
-                  <div style={{ display: "flex", gap: 8, marginTop: 4 }}>
-                    <button onClick={() => setExpressStep(1)} style={{ flex: 1, background: "var(--theme-bg-muted)", color: "var(--theme-text-muted)", border: "1px solid var(--theme-border)", padding: "14px", fontWeight: 900, fontSize: 11, textTransform: "uppercase", cursor: "pointer" }}>← Voltar</button>
-                    <button onClick={() => { if (!expressFormData.amount || expressFormData.amount <= 0) { showNotification("Informe um valor válido.", "error"); return; } setExpressStep(3); }} style={{ flex: 2, background: "var(--brand-primary)", color: "#000", border: "none", padding: "14px", fontWeight: 900, fontSize: 11, textTransform: "uppercase", cursor: "pointer" }}>Próximo →</button>
-                  </div>
+                <div className="space-y-6 animate-in slide-in-from-right-4">
+                  <div className="grid grid-cols-2 gap-4"><div className="space-y-2"><label className="text-[9px] font-black text-theme-muted uppercase italic">Valor (R$)</label><input type="number" value={expressFormData.amount} onChange={e => setExpressFormData(p => ({ ...p, amount: Number(e.target.value) }))} className="w-full bg-theme-bg-muted border border-theme-border/60 p-4 text-theme-text font-bold" /></div><div className="space-y-2"><label className="text-[9px] font-black text-theme-muted uppercase italic">Produto</label><select value={expressFormData.productType} onChange={e => setExpressFormData(p => ({ ...p, productType: e.target.value as any }))} className="w-full bg-theme-bg-muted border border-theme-border/60 p-4 text-theme-text"><option value="FOTOS">FOTOS (DIGITAL)</option><option value="REELS">REELS</option><option value="SD_CARD">CARTÃO SD</option><option value="ALBUM_IMPRESSO">ÁLBUM IMPRESSO</option></select></div></div>
+                  <div className="flex gap-4"><button onClick={() => setExpressStep(1)} className="flex-1 py-4 bg-theme-bg-muted border border-theme-border/60 text-theme-muted text-[10px] font-black uppercase">VOLTAR</button><button onClick={() => setExpressStep(3)} className="flex-[2] py-4 bg-brand-tactical text-zinc-950 text-[10px] font-black uppercase">PRÓXIMO</button></div>
                 </div>
               )}
-
-              {/* ETAPA 3: PAGAMENTO */}
               {expressStep === 3 && (
-                <div style={{ display: "flex", flexDirection: "column", gap: "1rem" }}>
-                  {/* RESUMO */}
-                  <div style={{ padding: "12px", background: "rgba(133,185,172,0.06)", border: "1px solid var(--brand-primary)30", fontSize: 12 }}>
-                    <div style={{ fontWeight: 900, color: "var(--theme-text)" }}>{expressFormData.customerEmail}</div>
-                    <div style={{ color: "var(--theme-text-muted)", fontSize: 10, marginTop: 2 }}>
-                      {expressFormData.productType === "FOTOS" ? "Fotos Digitais" : expressFormData.productType === "REELS" ? "Reels / Vídeo" : expressFormData.productType === "SD_CARD" ? "Cartão SD (Físico)" : "Álbum Impresso"}
-                      {" · "}
-                      <strong style={{ color: "var(--brand-primary)" }}>R$ {expressFormData.amount}</strong>
-                    </div>
-                  </div>
-                  <div>
-                    <label style={{ fontSize: 9, fontWeight: 900, color: "var(--theme-text-muted)", textTransform: "uppercase", letterSpacing: 2, display: "block", marginBottom: 8 }}>Método de Pagamento *</label>
-                    <div style={{ display: "flex", gap: 8 }}>
-                      {(["MONEY", "PIX", "CARD"] as const).map(m => (
-                        <button key={m} type="button" onClick={() => setExpressFormData(p => ({ ...p, paymentMethod: m }))}
-                          style={{ flex: 1, padding: "14px 8px", border: `2px solid ${expressFormData.paymentMethod === m ? "var(--brand-primary)" : "var(--theme-border)"}`, background: expressFormData.paymentMethod === m ? "var(--brand-primary)" : "var(--theme-bg-muted)", color: expressFormData.paymentMethod === m ? "#000" : "var(--theme-text-muted)", fontWeight: 900, fontSize: 10, textTransform: "uppercase", cursor: "pointer" }}
-                        >{m === "MONEY" ? "💵 Dinheiro" : m === "PIX" ? "⚡ PIX" : "💳 Cartão"}</button>
-                      ))}
-                    </div>
-                  </div>
-                  <div>
-                    <label style={{ fontSize: 9, fontWeight: 900, color: "var(--theme-text-muted)", textTransform: "uppercase", letterSpacing: 2, display: "block", marginBottom: 6 }}>Notas Internas (oculto ao cliente)</label>
-                    <input
-                      type="text"
-                      value={expressFormData.internalNotes}
-                      onChange={e => setExpressFormData(p => ({ ...p, internalNotes: e.target.value }))}
-                      style={{ width: "100%", background: "var(--theme-bg-muted)", border: "1px solid var(--theme-border)", padding: "12px", fontSize: 13, color: "var(--theme-text)", outline: "none", boxSizing: "border-box" }}
-                      placeholder="Ex: VIP, indicação do Cartório X..."
-                    />
-                  </div>
-                  <div style={{ display: "flex", gap: 8, marginTop: 4 }}>
-                    <button onClick={() => setExpressStep(2)} style={{ flex: 1, background: "var(--theme-bg-muted)", color: "var(--theme-text-muted)", border: "1px solid var(--theme-border)", padding: "14px", fontWeight: 900, fontSize: 11, textTransform: "uppercase", cursor: "pointer" }}>← Voltar</button>
-                    <button
-                      onClick={handleExpressSaleSubmit as unknown as React.MouseEventHandler}
-                      disabled={loading}
-                      style={{ flex: 2, background: "var(--brand-primary)", color: "#000", border: "none", padding: "14px", fontWeight: 900, fontSize: 11, textTransform: "uppercase", letterSpacing: 1, cursor: loading ? "not-allowed" : "pointer" }}
-                    >{loading ? "PROCESSANDO..." : "✓ CONFIRMAR VENDA"}</button>
-                  </div>
+                <div className="space-y-6 animate-in slide-in-from-right-4">
+                  <div className="grid grid-cols-3 gap-2">{(["MONEY", "PIX", "CARD"] as const).map(m => (<button key={m} onClick={() => setExpressFormData(p => ({ ...p, paymentMethod: m }))} className={`py-4 border text-[9px] font-black uppercase ${expressFormData.paymentMethod === m ? 'bg-brand-tactical text-zinc-950 border-brand-tactical' : 'bg-theme-bg-muted border-theme-border/40 text-theme-muted'}`}>{m}</button>))}</div>
+                  <textarea value={expressFormData.internalNotes} onChange={e => setExpressFormData(p => ({ ...p, internalNotes: e.target.value }))} className="w-full bg-theme-bg-muted border border-theme-border/60 p-4 text-sm text-theme-text min-h-[80px] resize-none" placeholder="Notas internas..." />
+                  <div className="flex gap-4"><button onClick={() => setExpressStep(2)} className="flex-1 py-4 bg-theme-bg-muted border border-theme-border/60 text-theme-muted text-[10px] font-black uppercase">VOLTAR</button><button onClick={handleExpressSaleSubmit} disabled={loading} className="flex-[3] py-4 bg-brand-tactical text-zinc-950 text-[11px] font-black uppercase tracking-widest hover:brightness-110 disabled:opacity-40">{loading ? "PROCESSANDO..." : "FINALIZAR VENDA"}</button></div>
                 </div>
               )}
             </div>
@@ -1068,607 +647,85 @@ export default function ProfissionalDashboard() {
         </div>
       )}
 
-      {/* NOTIFICAÇÃO FLOATING */}
       {notification && (
-        <div style={{ 
-          position: "fixed", bottom: 32, right: 32, zIndex: 10000, 
-          background: "var(--theme-bg-muted)", border: `1px solid ${notification.type === 'success' ? T.brand : '#ef4444'}`,
-          padding: "16px 24px", animation: "fadeIn 0.5s ease-out"
-        }}>
-          <div style={{ display: "flex", alignItems: "center", gap: 12 }}>
-            <div style={{ width: 8, height: 8, borderRadius: "50%", background: notification.type === 'success' ? T.brand : '#ef4444' }} />
-            <span style={{ fontSize: 10, fontWeight: 900, color: "var(--theme-text)", textTransform: "uppercase", letterSpacing: 1 }}>{notification.message}</span>
-          </div>
+        <div className={`fixed bottom-8 right-8 z-[10000] p-5 border shadow-2xl animate-in slide-in-from-right-4 bg-theme-bg ${notification.type === 'success' ? 'border-brand-tactical/60' : 'border-red-500/60'}`}>
+          <div className="flex items-center gap-4"><div className={`w-2 h-2 rounded-full ${notification.type === 'success' ? 'bg-brand-tactical animate-pulse' : 'bg-red-500'}`} /><span className="text-[10px] font-black text-theme-text uppercase tracking-widest">{notification.message}</span></div>
         </div>
       )}
     </DashboardLayout>
   );
 }
 
-// ── Perfil do Profissional ───────────────────────────────────────────
-
-const EQUIPMENT_CATEGORIES = {
-  "Câmeras": ["Sony A7III/A7IV", "Sony A7R Series", "Canon R5/R6", "Nikon Z6/Z7", "Lumix GH5/GH6", "DJI Mavic/Mini"],
-  "Lentes": ["24-70mm f/2.8", "70-200mm f/2.8", "35mm Prime", "50mm Prime", "85mm Prime", "16-35mm Wide"],
-  "Acessórios": ["Flash Externo", "Gimbal (Ronin/Zhiyun)", "Tripé/Monopé", "Iluminação LED", "Drone"]
-};
-
-function ProfileModal({ profile, onClose, onUpdated }: { profile: ProfileData; onClose: () => void; onUpdated: (p: ProfileData) => void }) {
-  const [formData, setFormData] = useState<ProfileData>({ ...profile });
+function EventEditPanel({ event, onUpdated, onClose }: { event: EventItem; onUpdated: (u: Partial<EventItem>) => void; onClose: () => void; }) {
+  const [lrUrl, setLrUrl] = useState(event.lightroomUrl ?? "");
+  const [drUrl, setDrUrl] = useState(event.driveUrl ?? "");
   const [saving, setSaving] = useState(false);
-  const [otherEquip, setOtherEquip] = useState(() => {
-    if (profile.equipment) {
-      const allStandard = Object.values(EQUIPMENT_CATEGORIES).flat();
-      const items = profile.equipment.split(", ").filter(i => i.trim());
-      const others = items.filter(i => !allStandard.includes(i));
-      return others.join(", ");
-    }
-    return "";
-  });
 
   const handleSave = async () => {
     setSaving(true);
     try {
-      // Merge standard equipment + others
-      const { data } = await API.patch("/profissional/me", formData);
+      const { data } = await API.patch(`/profissional/events/${event.id}/links`, { lightroomUrl: lrUrl || null, driveUrl: drUrl || null });
       onUpdated(data);
+      onClose();
     } catch (err) {
-      console.error("Erro ao salvar perfil:", err);
-      alert("Erro ao salvar perfil.");
+      console.error(err);
     } finally {
       setSaving(false);
     }
   };
 
-  const toggleEquipment = (item: string) => {
-    const current = formData.equipment ? formData.equipment.split(", ").filter(i => i.trim()) : [];
-    const next = current.includes(item) ? current.filter(i => i !== item) : [...current, item];
-    setFormData({ ...formData, equipment: next.join(", ") });
-  };
-
-  const toggleSkill = (skill: string) => {
-    const current = formData.services || [];
-    const next = current.includes(skill) ? current.filter(s => s !== skill) : [...current, skill];
-    setFormData({ ...formData, services: next });
-  };
-
   return (
-    <div style={{ position: "fixed", inset: 0, background: "rgba(0,0,0,0.9)", backdropFilter: "blur(20px)", zIndex: 1000, display: "flex", justifyContent: "flex-end", animation: "fadeIn 0.2s ease-out" }}>
-      <div 
-        onClick={(e) => e.stopPropagation()}
-        style={{ width: "100%", maxWidth: 500, background: "var(--theme-bg)", height: "100%", borderLeft: "1px solid var(--theme-border)", padding: "4rem 3rem", overflowY: "auto", position: "relative" }}
-      >
-        <button onClick={onClose} style={{ position: "absolute", top: 30, right: 30, background: "none", border: "none", color: "var(--theme-text-muted)", fontSize: 24, cursor: "pointer" }}>×</button>
-        
-        <div style={{ marginBottom: "3rem" }}>
-          <ShieldCheck size={40} style={{ color: "var(--brand-primary)", marginBottom: 15 }} />
-          <h2 style={{ fontSize: 32, fontWeight: 900, color: "var(--theme-text)", textTransform: "uppercase", letterSpacing: -1 }}>Meu Perfil Técnico</h2>
-          <p style={{ fontSize: 11, color: "var(--theme-text-muted)", fontWeight: 900, textTransform: "uppercase", letterSpacing: 1.5, marginTop: 4 }}>Foto Segundo · Rede Coletiva</p>
-        </div>
-
-        <div style={{ display: "flex", flexDirection: "column", gap: "2.5rem" }}>
-          <section>
-            <label style={S.label}>Habilidades Ativas</label>
-            <div style={{ display: "flex", flexWrap: "wrap", gap: 10, marginTop: 15 }}>
-              {["FOTO", "VÍDEO", "EDIÇÃO"].map(skill => (
-                <button
-                  key={skill}
-                  onClick={() => toggleSkill(skill)}
-                  style={{ 
-                    padding: "10px 20px", 
-                    fontSize: 10, 
-                    fontWeight: 900, 
-                    background: formData.services?.includes(skill) ? "var(--brand-primary)" : "rgba(255,255,255,0.02)",
-                    color: formData.services?.includes(skill) ? "#000" : "#555",
-                    border: "1px solid",
-                    borderColor: formData.services?.includes(skill) ? "var(--brand-primary)" : "#1a1a1a",
-                    cursor: "pointer",
-                    transition: "all .2s"
-                  }}
-                >
-                  {skill}
-                </button>
-              ))}
-            </div>
-          </section>
-
-          <section>
-            <label style={S.label}>Meu Equipamento</label>
-            <div style={{ marginTop: 15, display: "flex", flexDirection: "column", gap: "1.5rem" }}>
-              {Object.entries(EQUIPMENT_CATEGORIES).map(([cat, items]) => (
-                <div key={cat}>
-                  <p style={{ fontSize: 9, fontWeight: 900, color: "var(--brand-primary)", textTransform: "uppercase", letterSpacing: 1, marginBottom: 10 }}>{cat}</p>
-                  <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 8 }}>
-                    {items.map(item => {
-                      const isSelected = formData.equipment?.includes(item);
-                      return (
-                        <button
-                          key={item}
-                          onClick={() => toggleEquipment(item)}
-                          style={{
-                            display: "flex",
-                            alignItems: "center",
-                            gap: 8,
-                            padding: "8px 12px",
-                            fontSize: 10,
-                            background: isSelected ? "rgba(133,185,172,0.1)" : "transparent",
-                            border: `1px solid ${isSelected ? "var(--brand-primary)" : "#1a1a1a"}`,
-                            color: isSelected ? "var(--brand-primary)" : "var(--theme-text-muted)",
-                            textAlign: "left",
-                            cursor: "pointer",
-                            transition: "all .2s"
-                          }}
-                        >
-                          <div style={{ width: 12, height: 12, border: "1px solid", borderColor: isSelected ? "var(--brand-primary)" : "#444", display: "flex", alignItems: "center", justifyContent: "center" }}>
-                            {isSelected && <Check size={8} />}
-                          </div>
-                          {item}
-                        </button>
-                      );
-                    })}
-                  </div>
-                </div>
-              ))}
-
-              <div>
-                <p style={{ fontSize: 9, fontWeight: 900, color: "var(--theme-text-muted)", textTransform: "uppercase", letterSpacing: 1, marginBottom: 10 }}>Outros Equipamentos</p>
-                <div style={{ position: "relative" }}>
-                  <HardDrive size={14} style={{ position: "absolute", left: 14, top: 14, color: "var(--theme-text-muted)" }} />
-                  <input 
-                    style={{ ...S.input, paddingLeft: 48 }}
-                    value={otherEquip}
-                    onChange={(e) => {
-                      const val = e.target.value;
-                      setOtherEquip(val);
-                      // Update main equipment string by merging standard ones and this new 'others'
-                      const allStandard = Object.values(EQUIPMENT_CATEGORIES).flat();
-                      const currentSelected = formData.equipment ? formData.equipment.split(", ").filter(i => allStandard.includes(i)) : [];
-                      setFormData({ ...formData, equipment: [...currentSelected, val].filter(i => i.trim()).join(", ") });
-                    }}
-                    placeholder="DIGITE OUTROS ITENS SEPARADOS POR VÍRGULA..."
-                  />
-                </div>
-              </div>
-            </div>
-          </section>
-
-          <section>
-            <label style={S.label}>Habilidades Complementares</label>
-            <textarea 
-              style={{ ...S.input, minHeight: 100, resize: "none", marginTop: 10 }}
-              value={formData.otherHabilities || ""}
-              onChange={(e) => setFormData({ ...formData, otherHabilities: e.target.value })}
-              placeholder="EX: COLOR GRADING, DRONE PILOT, AFTER EFFECTS..."
-            />
-          </section>
-
-          <div className="desktop-hide" style={StickyBottomCTA}>
-            <button
-              onClick={handleSave}
-              disabled={saving}
-              style={{ ...BtnPrimary, width: "100%", padding: "16px", borderRadius: 0, border: "none", fontSize: 11, fontWeight: 900, textTransform: "uppercase", letterSpacing: 2, cursor: saving ? "not-allowed" : "pointer", background: "var(--brand-primary)", color: "#000" }}
-            >
-              {saving ? "SALVANDO..." : "ATUALIZAR PERFIL"}
-            </button>
-          </div>
-
-          <button
-            onClick={handleSave}
-            disabled={saving}
-            className="mobile-hide"
-            style={{ width: "100%", padding: "20px", background: "var(--brand-primary)", color: "#000", border: "none", fontSize: 11, fontWeight: 900, textTransform: "uppercase", letterSpacing: 2, cursor: saving ? "not-allowed" : "pointer", marginTop: "1rem" }}
-          >
-            {saving ? "SALVANDO..." : "ATUALIZAR PERFIL"}
-          </button>
-        </div>
+    <div className="p-8 md:p-12 space-y-8 bg-theme-bg">
+      <div className="flex justify-between items-center border-b border-theme-border/40 pb-6">
+        <h3 className="text-xl font-heading font-black text-theme-text uppercase italic leading-none">{event.nomeNoivos}</h3>
+        <button onClick={onClose} className="text-theme-muted hover:text-white"><X size={24} /></button>
       </div>
+      <div className="space-y-6">
+        <div className="space-y-2"><label className="text-[9px] font-black text-theme-muted uppercase tracking-widest italic">Link Galeria (Adobe)</label><input value={lrUrl} onChange={e => setLrUrl(e.target.value)} className="w-full bg-theme-bg-muted border border-theme-border/60 p-4 text-theme-text outline-none focus:border-brand-tactical" /></div>
+        <div className="space-y-2"><label className="text-[9px] font-black text-theme-muted uppercase tracking-widest italic">Link Entrega (Drive)</label><input value={drUrl} onChange={e => setDrUrl(e.target.value)} className="w-full bg-theme-bg-muted border border-theme-border/60 p-4 text-theme-text outline-none focus:border-brand-tactical" /></div>
+      </div>
+      <button onClick={handleSave} disabled={saving} className="w-full py-4 bg-brand-tactical text-zinc-950 text-[10px] font-black uppercase tracking-widest hover:brightness-110">{saving ? "SINCRONIZANDO..." : "SALVAR ALTERAÇÕES"}</button>
     </div>
   );
 }
-
-// ── Painel de edição — extraído para componente separado ──────────────
-
-function EventEditPanel({ event, onUpdated, onClose }: {
-  event: EventItem;
-  onUpdated: (u: Partial<EventItem>) => void;
-  onClose: () => void;
-}) {
-  const [lrUrl, setLrUrl] = useState(event.lightroomUrl ?? "");
-  const [drUrl, setDrUrl] = useState(event.driveUrl ?? "");
-  const [uploadingMedia, setUploadingMedia] = useState(false);
-  const [marketplaceMedias, setMarketplaceMedias] = useState<EventMedia[]>([]);
-
-  const isMarketplace = (event as EventItem & { type?: string }).type === "PHOTO_MARKETPLACE";
-
-  useEffect(() => {
-    if (isMarketplace) {
-      API.get(`/marketplace/events/${event.id}/media`)
-        .then(res => setMarketplaceMedias(res.data))
-        .catch(err => console.error("Erro ao buscar mídias marketplace:", err));
-    }
-  }, [event.id, isMarketplace]);
-
-  const handleMediaUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
-    const files = e.target.files;
-    if (!files || files.length === 0) return;
-
-    setUploadingMedia(true);
-    let successCount = 0;
-
-    const fileToBase64 = (file: File): Promise<string> => {
-      return new Promise((resolve, reject) => {
-        const reader = new FileReader();
-        reader.readAsDataURL(file);
-        reader.onload = () => resolve(reader.result as string);
-        reader.onerror = error => reject(error);
-      });
-    };
-
-    try {
-      for (let i = 0; i < files.length; i++) {
-        const file = files[i];
-        const base64 = await fileToBase64(file);
-        
-        await API.post(`/marketplace/events/${event.id}/media`, {
-          imageBase64: base64,
-          mimeType: file.type
-        });
-        successCount++;
-      }
-
-      // Recarrega lista
-      const res = await API.get(`/marketplace/events/${event.id}/media`);
-      setMarketplaceMedias(res.data);
-      alert(`${successCount} fotos enviadas com sucesso!`);
-    } catch (err) {
-      console.error("Erro no upload marketplace:", err);
-      alert("Erro ao enviar algumas fotos. Verifique sua conexão.");
-    } finally {
-      setUploadingMedia(false);
-    }
-  };
-  const [linkStatus, setLinkStatus] = useState<SaveStatus>("idle");
-  const [coverStatus, setCoverStatus] = useState<SaveStatus>("idle");
-  const [coverPreview, setCoverPreview] = useState<string | null>(event.coverPhotoUrl);
-  const [saleStatus, setSaleStatus] = useState<SaveStatus>("idle");
-  const [manualSale, setManualSale] = useState({ amount: "", email: "", type: "SD_CARD" });
-  const fileRef = useRef<HTMLInputElement>(null);
-
-  const handleManualSale = async () => {
-    if (!manualSale.amount) return;
-    setSaleStatus("saving");
-    try {
-      await API.post(`/profissional/events/${event.id}/manual-sale`, {
-        amount: Number(manualSale.amount),
-        customerEmail: manualSale.email || null,
-        manualType: manualSale.type
-      });
-      setSaleStatus("saved");
-      setManualSale({ amount: "", email: "", type: "SD_CARD" });
-      setTimeout(() => setSaleStatus("idle"), 3000);
-      onUpdated({ _count: { pedidos: (event._count?.pedidos || 0) + 1 } });
-    } catch (err) {
-      console.error("handleManualSale:", err);
-      setSaleStatus("error");
-      setTimeout(() => setSaleStatus("idle"), 3000);
-    }
-  };
-
-
-  const saveLinks = async () => {
-    setLinkStatus("saving");
-    try {
-      const { data } = await API.patch(`/profissional/events/${event.id}/links`, {
-        lightroomUrl: lrUrl || null,
-        driveUrl: drUrl || null,
-      });
-      onUpdated({ lightroomUrl: data.lightroomUrl, driveUrl: data.driveUrl });
-      setLinkStatus("saved");
-      setTimeout(() => setLinkStatus("idle"), 2000);
-    } catch {
-      setLinkStatus("error");
-      setTimeout(() => setLinkStatus("idle"), 3000);
-    }
-  };
-
-  const handleCoverChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
-    const file = e.target.files?.[0];
-    if (!file) return;
-
-    // Preview imediato via FileReader
-    const reader = new FileReader();
-    reader.onload = async (ev) => {
-      const base64 = ev.target?.result as string;
-      setCoverPreview(base64);
-
-      // Inicia upload via base64 (Stateless / Vercel Ready)
-      setCoverStatus("saving");
-      try {
-        const { data } = await API.patch(`/profissional/events/${event.id}/cover`, {
-          imageBase64: base64,
-          mimeType: file.type
-        });
-        onUpdated({ coverPhotoUrl: data.coverPhotoUrl });
-        setCoverStatus("saved");
-        setTimeout(() => setCoverStatus("idle"), 2500);
-      } catch {
-        setCoverStatus("error");
-        setTimeout(() => setCoverStatus("idle"), 3000);
-      }
-    };
-    reader.readAsDataURL(file);
-  };
-
-  return (
-    <div style={{ ...S.card, position: "sticky", top: "6rem", height: "fit-content", padding: "2rem" }}>
-      {/* Header */}
-      <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start", marginBottom: "2rem" }}>
-        <div>
-          <p style={{ fontSize: 10, letterSpacing: "3px", textTransform: "uppercase", color: "var(--brand-primary)", marginBottom: 6, fontWeight: 900 }}>Gestão de Evento</p>
-          <h2 style={{ fontFamily: "'Outfit', sans-serif", fontSize: 28, color: "var(--theme-text)", margin: 0, fontWeight: 900, textTransform: "uppercase", letterSpacing: -0.5 }}>{event.nomeNoivos}</h2>
-          <p style={{ fontSize: 11, color: "var(--theme-text-muted)", marginTop: 4, fontWeight: 900, textTransform: "uppercase", letterSpacing: 1 }}>{formatDate(event.dataEvento)}</p>
-        </div>
-        <button onClick={onClose} style={{ background: "none", border: "none", color: "var(--theme-text-muted)", fontSize: 28, cursor: "pointer", lineHeight: 1 }}>×</button>
-      </div>
-
-      {/* Upload de Capa */}
-      <section style={{ marginBottom: "2.5rem" }}>
-        <label style={S.label}>Foto de Capa</label>
-        <div
-          onClick={() => fileRef.current?.click()}
-          style={{ width: "100%", aspectRatio: "16/9", background: "var(--theme-bg)", borderRadius: 0, border: "1px dashed var(--theme-border)", cursor: "pointer", overflow: "hidden", position: "relative" }}
-        >
-          {coverPreview ? (
-            <img src={coverPreview} alt="" style={{ width: "100%", height: "100%", objectFit: "cover" }} />
-          ) : (
-            <div style={{ height: "100%", display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center", gap: 10 }}>
-              <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5">
-                <path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4M17 8l-5-5-5 5M12 3v12" />
-              </svg>
-              <span style={{ fontSize: 12, color: "var(--theme-text-muted)" }}>Enviar Capa</span>
-              <span style={{ fontSize: 10, color: "var(--theme-text-muted)", opacity: 0.5 }}>JPG, PNG, WebP · Máx. 10MB</span>
-            </div>
-          )}
-          {coverStatus === "saving" && (
-            <div style={{ position: "absolute", inset: 0, background: "rgba(0,0,0,0.8)", display: "flex", alignItems: "center", justifyContent: "center" }}>
-              <div className="spin" style={{ width: 24, height: 24, border: "2px solid var(--brand-primary)", borderTopColor: "transparent", borderRadius: "50%" }} />
-            </div>
-          )}
-          {coverStatus === "saved" && (
-            <div style={{ position: "absolute", inset: 0, background: "rgba(0,0,0,0.5)", display: "flex", alignItems: "center", justifyContent: "center" }}>
-              <span style={{ color: "var(--brand-primary)", fontSize: 13 }}>✓ Capa atualizada</span>
-            </div>
-          )}
-        </div>
-        <input ref={fileRef} type="file" accept="image/jpeg,image/png,image/webp" hidden onChange={handleCoverChange} />
-      </section>
-
-      {/* Links de Entrega */}
-      <section style={{ display: "flex", flexDirection: "column", gap: "1.25rem" }}>
-        <div>
-          <label style={S.label}>📷 Adobe Portfolio (Galeria)</label>
-          <input
-            style={S.input}
-            type="url"
-            placeholder="https://fotosegundo.myportfolio.com/nome-casal"
-            value={lrUrl}
-            onChange={(e) => setLrUrl(e.target.value)}
-          />
-          <p style={{ fontSize: 10, color: "var(--theme-text-muted)", marginTop: 4 }}>Link da galeria do evento no Adobe Portfolio</p>
-        </div>
-        <div>
-          <label style={S.label}>🎬 Google Drive (Vídeo / Brutos)</label>
-          <input
-            style={S.input}
-            type="url"
-            placeholder="https://drive.google.com/drive/folders/..."
-            value={drUrl}
-            onChange={(e) => setDrUrl(e.target.value)}
-          />
-          <p style={{ fontSize: 10, color: "var(--theme-text-muted)", marginTop: 4 }}>Link da pasta compartilhada no Google Drive</p>
-        </div>
-
-        <div className="desktop-hide" style={StickyBottomCTA}>
-          <button
-            onClick={saveLinks}
-            disabled={linkStatus === "saving"}
-            style={{
-              width: "100%", padding: "16px", borderRadius: 0, border: "none", fontSize: 11, fontWeight: 900,
-              cursor: linkStatus === "saving" ? "not-allowed" : "pointer",
-              background: linkStatus === "saved" ? "var(--brand-primary)" : "var(--brand-primary)",
-              color: "#000",
-              textTransform: "uppercase", letterSpacing: 2
-            }}
-          >
-            {linkStatus === "saving" ? "SINCRONIZANDO..." : "SALVAR ALTERAÇÕES"}
-          </button>
-        </div>
-
-        <button
-          onClick={saveLinks}
-          disabled={linkStatus === "saving"}
-          className="mobile-hide"
-          style={{
-            width: "100%", padding: "18px", borderRadius: 0, border: "none", fontSize: 12, fontWeight: 800,
-            cursor: linkStatus === "saving" ? "not-allowed" : "pointer", transition: "all .3s",
-            background: linkStatus === "saved" ? "var(--brand-primary)" : linkStatus === "error" ? "#7f1d1d" : "var(--brand-primary)",
-            color: "var(--theme-text-on-brand)",
-            opacity: linkStatus === "saving" ? 0.7 : 1,
-            textTransform: "uppercase", letterSpacing: 2
-          }}
-        >
-          {linkStatus === "saving" ? "SINCRONIZANDO..." : linkStatus === "saved" ? "✓ SINCRONIZADO" : linkStatus === "error" ? "ERRO — REPETIR" : "SALVAR ALTERAÇÕES"}
-        </button>
-      </section>
-
-      {/* Venda Manual (SD Card / Álbum) */}
-      <section style={{ marginTop: "2.5rem", paddingTop: "2rem", borderTop: "1px solid var(--theme-border)" }}>
-        <div style={{ display: "flex", alignItems: "center", gap: 10, marginBottom: "1.25rem" }}>
-          <div style={{ width: 24, height: 24, borderRadius: "50%", background: "rgba(133,185,172,0.1)", color: "var(--brand-primary)", display: "flex", alignItems: "center", justifyContent: "center" }}>
-            <DollarSign size={14} />
-          </div>
-          <label style={{ ...S.label, marginBottom: 0 }}>Registrar Venda Física (Cartão SD / Álbum)</label>
-        </div>
-        
-        <div style={{ display: "flex", flexDirection: "column", gap: "1rem", background: "rgba(133,185,172,0.03)", padding: "1.5rem", border: "1px solid rgba(133,185,172,0.1)" }}>
-          <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 10 }}>
-            <div>
-              <label style={{ ...S.label, fontSize: 8 }}>Valor Recebido (R$)</label>
-              <input 
-                style={S.input} 
-                type="number" 
-                placeholder="0,00"
-                value={manualSale.amount}
-                onChange={e => setManualSale({...manualSale, amount: e.target.value})}
-              />
-            </div>
-            <div>
-              <label style={{ ...S.label, fontSize: 8 }}>Tipo de Venda</label>
-              <select 
-                style={S.input}
-                value={manualSale.type}
-                onChange={e => setManualSale({...manualSale, type: e.target.value})}
-              >
-                <option value="SD_CARD">CARTÃO SD</option>
-                <option value="ALBUM">ÁLBUM IMPRESSO</option>
-                <option value="CLIQUE_AVULSO">FOTO AVULSA / CLIQUE</option>
-                <option value="OTHER">OUTROS</option>
-              </select>
-            </div>
-          </div>
-          
-          <div>
-            <label style={{ ...S.label, fontSize: 8 }}>E-mail do Cliente (Opcional)</label>
-            <input 
-              style={S.input} 
-              type="email" 
-              placeholder="cliente@email.com"
-              value={manualSale.email}
-              onChange={e => setManualSale({...manualSale, email: e.target.value})}
-            />
-          </div>
-
-          <button
-            onClick={handleManualSale}
-            disabled={!manualSale.amount || Number(manualSale.amount) <= 0 || saleStatus === "saving"}
-            style={{
-              width: "100%", padding: "14px", borderRadius: 0, border: "none", fontSize: 10, fontWeight: 900,
-              cursor: "pointer", transition: "all .3s",
-              background: saleStatus === "saved" ? "var(--brand-primary)" : "var(--brand-primary)",
-              color: "#000",
-              opacity: (saleStatus === "saving" || !manualSale.amount) ? 0.6 : 1,
-              textTransform: "uppercase", letterSpacing: 1.5
-            }}
-          >
-            {saleStatus === "saving" ? "REGISTRANDO..." : saleStatus === "saved" ? "✓ VENDA REGISTRADA" : "REGISTRAR VENDA MANUAL"}
-          </button>
-          
-          <p style={{ fontSize: 9, color: "var(--theme-text-muted)", textAlign: "center", lineHeight: 1.4 }}>
-            * Esta venda será contabilizada no repasse semanal. Certifique-se de que o valor foi recebido fisicamente.
-          </p>
-        </div>
-      </section>
-
-      {isMarketplace && (
-        <section style={{ marginTop: "2.5rem", borderTop: `1px solid ${T.border}`, paddingTop: "2.5rem" }}>
-          <div style={{ display: "flex", alignItems: "center", gap: 10, marginBottom: "1.25rem" }}>
-            <div style={{ width: 24, height: 24, borderRadius: "50%", background: "rgba(133,185,172,0.1)", color: "var(--brand-primary)", display: "flex", alignItems: "center", justifyContent: "center" }}>
-              <HardDrive size={14} />
-            </div>
-            <label style={{ ...S.label, marginBottom: 0 }}>Gerenciar Galeria Marketplace</label>
-          </div>
-          <p style={{ fontSize: 10, color: "var(--theme-text-muted)", marginBottom: 20 }}>Suba as fotos individuais para que o cliente possa selecioná-las e comprar pelo site.</p>
-          
-          <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fill, minmax(80px, 1fr))", gap: 10, marginBottom: 20 }}>
-            {marketplaceMedias.map(m => (
-              <div key={m.id} style={{ aspectRatio: "1/1", border: `1px solid ${T.border}`, position: "relative", background: "#000" }}>
-                 <img src={m.url} alt="" style={{ width: "100%", height: "100%", objectFit: "cover", opacity: 0.6 }} />
-                 <div style={{ position: "absolute", bottom: 0, left: 0, right: 0, background: "rgba(0,0,0,0.8)", color: "white", fontSize: 8, textAlign: "center", padding: "2px 0", fontWeight: 700 }}>#{m.shortId}</div>
-              </div>
-            ))}
-            
-            <label style={{ 
-              aspectRatio: "1/1", border: `1px dashed ${T.brand}`, 
-              display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center",
-              cursor: uploadingMedia ? "not-allowed" : "pointer", color: T.brand, fontSize: 10, fontWeight: 900,
-              background: "rgba(133,185,172,0.05)"
-            }}>
-              {uploadingMedia ? "..." : "+ FOTOS"}
-              <input type="file" multiple accept="image/*" hidden onChange={handleMediaUpload} disabled={uploadingMedia} />
-            </label>
-          </div>
-          
-          <div style={{ background: "rgba(133,185,172,0.05)", padding: "12px 16px", border: `1px solid ${T.brand}40`, fontSize: 10, color: T.brand, fontWeight: 700, textAlign: "center", letterSpacing: 1 }}>
-             LINK DO CLIENTE: {window.location.origin}/e/{event.slug}
-          </div>
-        </section>
-      )}
-    </div>
-  );
-}
-
-// ── Componentes Internos ─────────────────────────────────────────
 
 function CalendarView({ events, currentMonth, setCurrentMonth, onSelect }: { events: EventItem[], currentMonth: Date, setCurrentMonth: (d: Date) => void, onSelect: (ev: EventItem) => void }) {
   const year = currentMonth.getFullYear();
   const month = currentMonth.getMonth();
-  
   const firstDay = new Date(year, month, 1).getDay();
   const daysInMonth = new Date(year, month + 1, 0).getDate();
-  
   const days = [];
   for (let i = 0; i < firstDay; i++) days.push(null);
   for (let i = 1; i <= daysInMonth; i++) days.push(i);
-
-  const prevMonth = () => setCurrentMonth(new Date(year, month - 1, 1));
-  const nextMonth = () => setCurrentMonth(new Date(year, month + 1, 1));
-
-  const getEventsOnDay = (d: number) => {
-    return events.filter(ev => {
-      const date = new Date(ev.dataEvento);
-      return date.getDate() === d && date.getMonth() === month && date.getFullYear() === year;
-    });
-  };
-
+  const getEventsOnDay = (d: number) => events.filter(ev => { const date = new Date(ev.dataEvento); return date.getDate() === d && date.getMonth() === month && date.getFullYear() === year; });
   const monthNames = ["Janeiro", "Fevereiro", "Março", "Abril", "Maio", "Junho", "Julho", "Agosto", "Setembro", "Outubro", "Novembro", "Dezembro"];
-
   return (
-    <div style={{ ...S.card, padding: "2rem" }}>
-      <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: "2rem" }}>
-        <h3 style={{ fontSize: 20, fontWeight: 900, color: "var(--theme-text)", textTransform: "uppercase", letterSpacing: 2 }}>{monthNames[month]} <span style={{ fontWeight: 300, color: "var(--theme-text-muted)" }}>{year}</span></h3>
-        <div style={{ display: "flex", gap: 10 }}>
-          <button onClick={prevMonth} style={{ padding: 8, background: "var(--theme-bg-muted)", border: "1px solid var(--theme-border)", color: "var(--theme-text)", cursor: "pointer" }}><ChevronLeft size={16} /></button>
-          <button onClick={nextMonth} style={{ padding: 8, background: "var(--theme-bg-muted)", border: "1px solid var(--theme-border)", color: "var(--theme-text)", cursor: "pointer" }}><ChevronRight size={16} /></button>
-        </div>
-      </div>
+    <div className="bg-theme-bg border border-theme-border/60 p-6 md:p-10 space-y-8">
+      <div className="flex items-center justify-between border-b border-theme-border/40 pb-6"><h3 className="text-xl font-heading font-black text-theme-text uppercase tracking-widest italic">{monthNames[month]} {year}</h3><div className="flex gap-2"><button onClick={() => setCurrentMonth(new Date(year, month - 1, 1))} className="p-2 border border-theme-border/60 text-theme-muted"><ChevronLeft size={18} /></button><button onClick={() => setCurrentMonth(new Date(year, month + 1, 1))} className="p-2 border border-theme-border/60 text-theme-muted"><ChevronRight size={18} /></button></div></div>
+      <div className="grid grid-cols-7 border-t border-l border-theme-border/40">{["Dom", "Seg", "Ter", "Qua", "Qui", "Sex", "Sab"].map(d => (<div key={d} className="text-center py-4 border-r border-b border-theme-border/40 bg-theme-bg-muted/30 text-[9px] font-black text-theme-muted uppercase italic">{d}</div>))}{days.map((d, i) => (<div key={i} className={`min-h-[100px] p-2 border-r border-b border-theme-border/40 relative`}>{d && <><span className="text-[10px] font-black text-theme-muted/60">{d}</span><div className="mt-2 space-y-1">{getEventsOnDay(d).map(ev => (<button key={ev.id} onClick={() => onSelect(ev)} className="w-full text-left p-1 bg-brand-tactical text-zinc-950 text-[7px] font-black uppercase truncate">{ev.nomeNoivos}</button>))}</div></>}</div>))}</div>
+    </div>
+  );
+}
 
-      <div style={{ display: "grid", gridTemplateColumns: "repeat(7, 1fr)", gap: 1 }}>
-        {["Dom", "Seg", "Ter", "Qua", "Qui", "Sex", "Sab"].map(d => (
-          <div key={d} style={{ textAlign: "center", padding: "12px", borderBottom: "1px solid #1a1a1a", fontSize: 10, fontWeight: 900, color: "#444", textTransform: "uppercase" }}>{d}</div>
-        ))}
-        {days.map((d, i) => {
-          const dayEvents = d ? getEventsOnDay(d) : [];
-          return (
-            <div key={i} style={{ minHeight: 100, padding: 8, border: "0.5px solid #1a1a1a", position: "relative", background: (d === new Date().getDate() && month === new Date().getMonth() && year === new Date().getFullYear()) ? "rgba(133,185,172,0.05)" : "transparent" }}>
-              {d && (
-                <>
-                  <span style={{ fontSize: 11, fontWeight: 900, color: (d === new Date().getDate() && month === new Date().getMonth() && year === new Date().getFullYear()) ? "var(--brand-primary)" : "#333", position: "absolute", top: 8, left: 10 }}>{d}</span>
-                  <div style={{ marginTop: 24, display: "flex", flexDirection: "column", gap: 4 }}>
-                    {dayEvents.map(ev => (
-                      <div 
-                        key={ev.id} 
-                        onClick={() => onSelect(ev)}
-                        style={{ padding: "4px 8px", background: "var(--brand-primary)", color: "#000", fontSize: 9, fontWeight: 900, overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap", cursor: "pointer", textTransform: "uppercase", borderRadius: 2 }}
-                      >
-                        {ev.nomeNoivos}
-                      </div>
-                    ))}
-                  </div>
-                </>
-              )}
-            </div>
-          );
-        })}
+function ProfileModal({ profile, onClose, onUpdated }: { profile: ProfileData; onClose: () => void; onUpdated: (p: ProfileData) => void }) {
+  const [formData, setFormData] = useState<ProfileData>({ ...profile });
+  const [saving, setSaving] = useState(false);
+  const handleSave = async () => { setSaving(true); try { const { data } = await API.patch("profissional/me", formData); onUpdated(data); } catch (err) { console.error(err); } finally { setSaving(false); } };
+  const toggleSkill = (skill: string) => { const current = formData.services || []; const next = current.includes(skill) ? current.filter(s => s !== skill) : [...current, skill]; setFormData({ ...formData, services: next }); };
+  return (
+    <div className="fixed inset-0 z-[6000] flex justify-end bg-black/90 backdrop-blur-md">
+      <div className="w-full md:max-w-md h-full bg-theme-bg border-l border-theme-border/60 p-8 md:p-12 overflow-y-auto relative">
+        <button onClick={onClose} className="absolute top-8 right-8 text-theme-muted"><X size={28} /></button>
+        <div className="space-y-10">
+          <h2 className="text-3xl font-heading font-black text-theme-text uppercase italic">Meu Perfil</h2>
+          <div className="space-y-6">
+            <div className="space-y-2"><label className="text-[9px] font-black text-theme-muted uppercase italic">Nome Completo</label><input className="w-full bg-theme-bg-muted border border-theme-border/60 p-4 text-theme-text" value={formData.user?.nome || ""} onChange={e => setFormData({ ...formData, user: { ...formData.user, nome: e.target.value } })} /></div>
+            <div className="space-y-2"><label className="text-[9px] font-black text-theme-muted uppercase italic">WhatsApp</label><input className="w-full bg-theme-bg-muted border border-theme-border/60 p-4 text-theme-text" value={formData.user?.whatsapp || ""} onChange={e => setFormData({ ...formData, user: { ...formData.user, whatsapp: e.target.value } })} /></div>
+            <div className="space-y-2"><label className="text-[9px] font-black text-theme-muted uppercase italic">Chave PIX</label><input className="w-full bg-theme-bg-muted border border-theme-border/60 p-4 text-theme-text" value={formData.pixKey || ""} onChange={e => setFormData({ ...formData, pixKey: e.target.value })} /></div>
+          </div>
+          <div className="space-y-4"><p className="text-[9px] font-black text-theme-muted uppercase italic">Especialidades</p><div className="flex gap-2">{["FOTO", "VÍDEO", "EDIÇÃO"].map(s => (<button key={s} onClick={() => toggleSkill(s)} className={`px-4 py-2 text-[9px] font-black border ${formData.services?.includes(s) ? 'bg-brand-tactical text-zinc-950' : 'text-theme-muted border-theme-border/60'}`}>{s}</button>))}</div></div>
+          <button onClick={handleSave} disabled={saving} className="w-full py-4 bg-brand-tactical text-zinc-950 text-[10px] font-black uppercase hover:brightness-110">{saving ? "SALVANDO..." : "SALVAR PERFIL"}</button>
+        </div>
       </div>
     </div>
   );
