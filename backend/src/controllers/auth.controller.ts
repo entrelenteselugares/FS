@@ -98,8 +98,14 @@ export class AuthController {
       }
 
       if (authError) {
-        console.error("[AUTH LOGIN ERROR]:", authError.message);
-        return res.status(401).json({ error: "Credenciais inválidas no Supabase" });
+        console.error("[AUTH LOGIN ERROR] Supabase:", authError.message, "(Status:", authError.status, ")");
+        
+        // Se for erro de credenciais, retorna 401. Se for outro erro, retorna 500 para diagnóstico.
+        const status = (authError.status === 400 || authError.status === 401) ? 401 : 500;
+        return res.status(status).json({ 
+          error: status === 401 ? "Credenciais inválidas." : "Erro na comunicação com o serviço de autenticação.",
+          message: authError.message
+        });
       }
 
       const supabaseUser = authData.user;
@@ -114,13 +120,10 @@ export class AuthController {
         const userByEmail = await prisma.user.findUnique({ where: { email: supabaseUser.email } });
         
         if (userByEmail) {
-          console.log(`[AUTH] Fixing UID for ${supabaseUser.email}: ${userByEmail.id} -> ${supabaseUser.id}`);
-          // Usamos raw query para trocar a PK (id) de forma segura
-          await prisma.$executeRawUnsafe(
-            `UPDATE users SET id = $1 WHERE email = $2`,
-            supabaseUser.id,
-            supabaseUser.email
-          );
+          console.log(`[AUTH] Corrigindo ID para ${supabaseUser.email}: ${userByEmail.id} -> ${supabaseUser.id}`);
+          // Usamos $executeRaw com placeholders seguros do Prisma
+          await prisma.$executeRaw`UPDATE users SET id = ${supabaseUser.id} WHERE email = ${supabaseUser.email}`;
+          
           // Recarrega o usuário com o novo ID
           user = await prisma.user.findUnique({ where: { id: supabaseUser.id } });
         }
