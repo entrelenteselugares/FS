@@ -1487,6 +1487,28 @@ function ProfileModal({ profile, onClose, onUpdated }: { profile: ProfileData; o
                       <div className="absolute right-4 top-1/2 -translate-y-1/2 text-[10px] font-black text-brand-tactical/40 uppercase italic tracking-widest">Anos</div>
                     </div>
                   </div>
+                  <div className="space-y-2 md:col-span-2">
+                    <label className="text-[9px] font-black text-theme-muted uppercase tracking-widest italic opacity-60">Perfil de Entrega Técnica</label>
+                    <div className="grid grid-cols-2 gap-4">
+                      {[
+                        { id: "TRADICIONAL", label: "Elite Tradicional", icon: <Camera size={14} />, desc: "Câmera Pro + PC" },
+                        { id: "MOBILE", label: "Mobile Maker", icon: <Phone size={14} />, desc: "Smartphone High-End" }
+                      ].map(type => (
+                        <button
+                          key={type.id}
+                          onClick={() => setFormData({ ...formData, workflowType: type.id })}
+                          className={`p-4 border text-left transition-all flex items-center gap-4 ${formData.workflowType === type.id ? 'bg-brand-tactical/5 border-brand-tactical' : 'bg-theme-bg-muted border-theme-border text-theme-muted hover:border-brand-tactical/20'}`}
+                        >
+                          <div className={`${formData.workflowType === type.id ? 'text-brand-tactical' : 'opacity-30'}`}>{type.icon}</div>
+                          <div>
+                            <p className={`text-[10px] font-black uppercase tracking-widest ${formData.workflowType === type.id ? 'text-theme-text' : 'text-theme-muted'}`}>{type.label}</p>
+                            <p className="text-[8px] font-bold uppercase opacity-60">{type.desc}</p>
+                          </div>
+                        </button>
+                      ))}
+                    </div>
+                  </div>
+
                 </div>
               </div>
 

@@ -8,17 +8,18 @@ interface User {
   email: string;
   role: string;
   active: boolean;
-  profissional?: {
-    captPct: number;
-    editPct: number;
-    otherHabilities?: string;
-    equipment?: string;
-  };
-  unidade?: {
-    razaoSocial: string;
-  };
-  pixKey?: string;
-}
+    profissional?: {
+      captPct: number;
+      editPct: number;
+      otherHabilities?: string;
+      equipment?: string;
+      workflowType?: string;
+    };
+    unidade?: {
+      razaoSocial: string;
+    };
+    pixKey?: string;
+  }
 
 export const AdminUsers: React.FC = () => {
   const [users, setUsers] = useState<User[]>([]);
@@ -30,7 +31,7 @@ export const AdminUsers: React.FC = () => {
   
   const [formData, setFormData] = useState({
     name: "", email: "", password: "", role: "PROFISSIONAL", pixKey: "",
-    otherHabilities: "", equipment: "",
+    otherHabilities: "", equipment: "", workflowType: "TRADICIONAL",
     captPct: 30, editPct: 10
   });
   const [confirmDelete, setConfirmDelete] = useState<User | null>(null);
@@ -102,7 +103,8 @@ export const AdminUsers: React.FC = () => {
                 otherHabilities: formData.otherHabilities,
                 equipment: formData.equipment,
                 captPct: Number(formData.captPct),
-                editPct: Number(formData.editPct)
+                editPct: Number(formData.editPct),
+                workflowType: formData.workflowType
               });
           }
       }
@@ -127,6 +129,7 @@ export const AdminUsers: React.FC = () => {
       pixKey: user.pixKey || "",
       otherHabilities: user.profissional?.otherHabilities || "",
       equipment: user.profissional?.equipment || "",
+      workflowType: user.profissional?.workflowType || "TRADICIONAL",
       captPct: user.profissional?.captPct || 30,
       editPct: user.profissional?.editPct || 10
     });
@@ -214,7 +217,14 @@ export const AdminUsers: React.FC = () => {
                       </div>
                       <div>
                         <div className="text-[13px] font-black text-theme-text uppercase tracking-tight leading-none">{u.nome}</div>
-                        <div className="text-[10px] text-theme-muted font-bold uppercase mt-1.5 opacity-60 tracking-wider">{u.email}</div>
+                        <div className="text-[10px] text-theme-muted font-bold uppercase mt-1.5 opacity-60 tracking-wider flex items-center gap-2">
+                          {u.email}
+                          {u.role === 'PROFISSIONAL' && u.profissional?.workflowType && (
+                            <span className={`px-1.5 py-0.5 rounded-sm text-[7px] font-black tracking-tighter ${u.profissional.workflowType === 'MOBILE' ? 'bg-amber-500/20 text-amber-500 border border-amber-500/20' : 'bg-blue-500/20 text-blue-500 border border-blue-500/20'}`}>
+                              {u.profissional.workflowType === 'MOBILE' ? 'MOBILE MAKER' : 'CAMERA/PC'}
+                            </span>
+                          )}
+                        </div>
                       </div>
                     </div>
                     <div className="col-span-2">
@@ -344,7 +354,22 @@ export const AdminUsers: React.FC = () => {
                            placeholder="Câmeras, Lentes, Drones..."
                          />
                       </div>
-                   </div>
+                       <div className="space-y-2">
+                          <label className="text-[9px] font-black text-theme-muted uppercase tracking-[0.4em]">Perfil de Entrega</label>
+                          <div className="grid grid-cols-2 gap-4">
+                             {['TRADICIONAL', 'MOBILE'].map(t => (
+                               <button 
+                                 key={t}
+                                 type="button"
+                                 onClick={() => setFormData({...formData, workflowType: t})}
+                                 className={`p-3 text-[9px] font-black uppercase tracking-widest border transition-all ${formData.workflowType === t ? 'bg-brand-tactical text-zinc-950 border-brand-tactical' : 'bg-theme-bg-muted border-theme-border text-theme-muted hover:border-brand-tactical/30'}`}
+                               >
+                                 {t === 'TRADICIONAL' ? 'Câmera/PC' : 'Mobile Maker'}
+                               </button>
+                             ))}
+                          </div>
+                       </div>
+                    </div>
                  )}
 
                  <div className="pt-6">

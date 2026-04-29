@@ -19,6 +19,8 @@ export const RegisterPage: React.FC = () => {
     habilidades: [] as string[],
     outrasHabilidades: "",
     equipamento: "",
+    workflowType: "TRADICIONAL", // "TRADICIONAL" | "MOBILE"
+
     // Campos Unidade
     razaoSocial: "",
     endereco: "",
@@ -267,6 +269,31 @@ export const RegisterPage: React.FC = () => {
                           }`}
                         >
                           {skill}
+                        </button>
+                      ))}
+                    </div>
+                  </div>
+
+                  <div className="space-y-3">
+                    <label className="text-[9px] font-black uppercase tracking-[0.3em] text-theme-muted opacity-60">Perfil de Entrega Técnica</label>
+                    <div className="grid grid-cols-2 gap-4">
+                      {[
+                        { id: "TRADICIONAL", label: "Elite Tradicional", desc: "Câmera Pro + PC", icon: <Camera size={14} /> },
+                        { id: "MOBILE", label: "Mobile Maker", desc: "Smartphone High-End", icon: <Phone size={14} /> }
+                      ].map(type => (
+                        <button
+                          key={type.id}
+                          type="button"
+                          onClick={() => setFormData({ ...formData, workflowType: type.id })}
+                          className={`p-4 border text-left transition-all ${
+                            formData.workflowType === type.id ? "bg-brand-tactical/5 border-brand-tactical shadow-[0_0_20px_rgba(133,185,172,0.1)]" : "border-theme-border/40 hover:border-brand-tactical/30"
+                          }`}
+                        >
+                          <div className="flex items-center gap-3 mb-2">
+                             <div className={`${formData.workflowType === type.id ? "text-brand-tactical" : "text-theme-muted opacity-40"}`}>{type.icon}</div>
+                             <span className={`text-[9px] font-black uppercase tracking-widest ${formData.workflowType === type.id ? "text-theme-text" : "text-theme-muted"}`}>{type.label}</span>
+                          </div>
+                          <p className="text-[8px] text-theme-muted font-bold uppercase opacity-60">{type.desc}</p>
                         </button>
                       ))}
                     </div>

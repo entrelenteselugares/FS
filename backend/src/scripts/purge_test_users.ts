@@ -10,8 +10,12 @@ import prisma from "../lib/prisma";
 const TARGET_EMAILS = [
   "hojetemchocolatebr@gmail.com",
   "matheuskurio@gmail.com",
+  "tlmagenciadigital@gmail.com",
   "tlimagenciadigital@gmail.com",
 ];
+
+const TARGET_EVENT_KEYWORDS = ["EXEMPLO", "TESTE", "SILVA"];
+
 // ─────────────────────────────────────────────────────────────────────────────
 
 async function main() {
@@ -24,14 +28,13 @@ async function main() {
   });
 
   if (users.length === 0) {
-    console.log("✅ Nenhum dos usuários-alvo encontrado no banco. Nada a fazer.");
-    await prisma.$disconnect();
-    return;
+    console.log("ℹ️  Nenhum usuário alvo específico encontrado para deleção direta.");
+  } else {
+    console.log(`📋 Usuários encontrados (${users.length}):`);
+    users.forEach(u => console.log(`   → ${u.email} | ${u.id} | ${u.role}`));
   }
-
-  console.log(`📋 Usuários encontrados (${users.length}):`);
-  users.forEach(u => console.log(`   → ${u.email} | ${u.id} | ${u.role}`));
   console.log("");
+
 
   const userIds = users.map(u => u.id);
 
@@ -143,7 +146,50 @@ async function main() {
     console.log(`🗑️  Perfis Cartório removidos: ${cartorioIds.length}`);
   }
 
-  // ─── 3. DELETAR OS USUÁRIOS ───────────────────────────────────────────────
+  // ─── 3. LIMPEZA TOTAL DE EVENTOS E PEDIDOS (RESET PARA TESTE) ───────────
+  console.log("🧹 Realizando limpeza total de eventos e pedidos para novos testes...");
+  
+  await prisma.photoLike.deleteMany({});
+  await prisma.eventMedia.deleteMany({});
+  await prisma.orderItem.deleteMany({});
+  await prisma.order.deleteMany({});
+  await prisma.printRedemption.deleteMany({});
+  await prisma.event.deleteMany({});
+  
+  console.log("🗑️  Todos os eventos, pedidos e mídias foram removidos.");
+
+  // ─── 4. LIMPEZA DE PERFIS ÓRFÃOS (CASO O USUÁRIO JÁ TENHA SIDO APAGADO) ─
+  console.log("🔍 Procurando por perfis profissionais ou cartórios órfãos...");
+  
+  const allUsers = await prisma.user.findMany({ select: { id: true } });
+  const allUserIds = allUsers.map(u => u.id);
+
+  const orphanProfs = await prisma.profissional.findMany({
+    where: { userId: { notIn: allUserIds } }
+  });
+  if (orphanProfs.length > 0) {
+    const ids = orphanProfs.map(p => p.id);
+    await prisma.cartorioProfissional.deleteMany({ where: { profissionalId: { in: ids } } });
+    await prisma.professionalService.deleteMany({ where: { profissionalId: { in: ids } } });
+    await prisma.profissional.deleteMany({ where: { id: { in: ids } } });
+    console.log(`🗑️  Perfis Profissionais órfãos removidos: ${orphanProfs.length}`);
+  }
+
+  const orphanCartorios = await prisma.cartorio.findMany({
+    where: { userId: { notIn: allUserIds } }
+  });
+  if (orphanCartorios.length > 0) {
+    const ids = orphanCartorios.map(c => c.id);
+    await prisma.cartorioProfissional.deleteMany({ where: { cartorioId: { in: ids } } });
+    await prisma.cartorio.deleteMany({ where: { id: { in: ids } } });
+    console.log(`🗑️  Perfis Cartórios órfãos removidos: ${orphanCartorios.length}`);
+  }
+
+
+  // ─── 5. DELETAR OS USUÁRIOS ALVO (REMANESCENTES) ─────────────────────────
+
+
+
   const deleted = await prisma.user.deleteMany({ where: { id: { in: userIds } } });
   console.log(`\n✅ Usuários removidos: ${deleted.count}`);
   console.log("\n🎉 Limpeza concluída com sucesso! Banco de dados normalizado.\n");

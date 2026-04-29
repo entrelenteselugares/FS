@@ -87,13 +87,7 @@ export class AuthController {
 
   /** POST /api/auth/register */
   static async register(req: Request, res: Response) {
-    const { 
-      email, senha, nome, role, whatsapp,
-      // Profissional
-      habilidades, equipamento, outrasHabilidades,
-      // Unidade
-      razaoSocial, endereco, cidade
-    } = req.body;
+    const { nome, email, senha, role, whatsapp, habilidades, equipamento, outrasHabilidades, workflowType, razaoSocial, endereco, cidade } = req.body;
 
     try {
       const hash = await bcrypt.hash(senha, 12);
@@ -137,6 +131,7 @@ export class AuthController {
               services: habilidades || [],
               equipment: equipamento || "",
               otherHabilities: outrasHabilidades || "",
+              workflowType: workflowType || "TRADICIONAL",
               hourlyRate: 150.00
             }
           });

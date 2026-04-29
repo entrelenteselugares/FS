@@ -257,7 +257,7 @@ export async function updateProfile(req: AuthRequest, res: Response): Promise<vo
   const userId = req.user?.userId;
   if (!userId) { res.status(401).json({ error: "Não autenticado." }); return; }
 
-  const { services, equipmentList, otherHabilities, experienceYears, hourlyRate } = req.body;
+  const { services, equipmentList, otherHabilities, experienceYears, workflowType, hourlyRate } = req.body;
 
   try {
     // ── LÓGICA DE EQUAÇÃO TÁTICA (AUTOMAÇÃO DE PRECIFICAÇÃO) ──
@@ -308,6 +308,7 @@ export async function updateProfile(req: AuthRequest, res: Response): Promise<vo
         ...(equipmentList !== undefined && { equipmentList }),
         ...(otherHabilities !== undefined && { otherHabilities }),
         ...(experienceYears !== undefined && { experienceYears: Number(experienceYears) }),
+        ...(workflowType !== undefined && { workflowType }),
         hourlyRate: autoHourlyRate, // Forçando o valor calculado
         equipmentMultiplier: finalMultiplier 
       }
