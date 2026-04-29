@@ -233,7 +233,7 @@ export const AdminConfigs: React.FC = () => {
                                type="number"
                                value={config.value}
                                onChange={(e) => handleChange(config.key, e.target.value)}
-                               className="w-20 bg-theme-bg-muted border-theme-border/60 border text-theme-text text-right py-2 px-4 text-xl font-heading font-black italic tracking-tighter focus:outline-none focus:border-brand-tactical transition-all"
+                               className="w-20 bg-theme-bg-muted border-theme-border/60 border text-theme-text text-right py-3 px-4 text-xl font-heading font-black italic tracking-tighter focus:outline-none focus:border-brand-tactical transition-all leading-none"
                              />
                              <span className="text-theme-muted font-black uppercase text-[10px] tracking-widest">%</span>
                           </div>

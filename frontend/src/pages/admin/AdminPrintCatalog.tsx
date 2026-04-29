@@ -127,9 +127,6 @@ export const AdminPrintCatalog: React.FC = () => {
         </div>
         
         <div className="flex gap-3">
-          <button onClick={handleSeedCK} disabled={seeding} className="px-6 py-3 bg-theme-bg border border-theme-border/60 text-[9px] font-black uppercase tracking-widest text-theme-muted hover:text-white transition-all flex items-center gap-2 group">
-            <RotateCcw size={12} className={seeding ? 'animate-spin' : 'group-hover:-rotate-180 transition-transform duration-500'} /> RESET CK
-          </button>
           <button onClick={() => setIsModalOpen(true)} className="px-8 py-3 bg-brand-tactical text-zinc-950 text-[9px] font-black uppercase tracking-[0.4em] shadow-xl hover:brightness-110 transition-all flex items-center gap-2">
             <Plus size={14} /> NOVO ITEM
           </button>
