@@ -1055,6 +1055,11 @@ export async function adminCreateManualSale(req: AuthRequest, res: Response): Pr
       }
     }
 
+    if (!user) {
+      res.status(500).json({ error: "Falha ao identificar ou criar usuário para a venda manual." });
+      return;
+    }
+
     // 2. Criar pedido aprovado
     const order = await prisma.order.create({
       data: {
