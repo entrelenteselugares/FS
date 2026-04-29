@@ -288,16 +288,8 @@ export async function updateProfile(req: AuthRequest, res: Response): Promise<vo
     const floorRate = eurRate * 10;
     const ceilingRate = 200;
     
-    // O teto permitido para este profissional baseado no seu Multiplicador Técnico
-    const maxAllowedRate = floorRate + (ceilingRate - floorRate) * (finalMultiplier - 1) / (5 - 1);
-    
-    let finalHourlyRate = Number(hourlyRate);
-    if (hourlyRate !== undefined) {
-      // Garante o piso de 10 Euros
-      if (finalHourlyRate < floorRate) finalHourlyRate = floorRate;
-      // Garante o teto baseado na meritocracia técnica
-      if (finalHourlyRate > maxAllowedRate) finalHourlyRate = maxAllowedRate;
-    }
+    // O Valor Hora é agora 100% AUTOMÁTICO baseado no Multiplicador Técnico
+    const autoHourlyRate = floorRate + (ceilingRate - floorRate) * (finalMultiplier - 1) / (5 - 1);
 
     const updated = await prisma.profissional.update({
       where: { userId },
@@ -306,7 +298,7 @@ export async function updateProfile(req: AuthRequest, res: Response): Promise<vo
         ...(equipmentList !== undefined && { equipmentList }),
         ...(otherHabilities !== undefined && { otherHabilities }),
         ...(experienceYears !== undefined && { experienceYears: Number(experienceYears) }),
-        ...(hourlyRate !== undefined && { hourlyRate: finalHourlyRate }),
+        hourlyRate: autoHourlyRate, // Forçando o valor calculado
         equipmentMultiplier: finalMultiplier 
       }
     });

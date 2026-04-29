@@ -680,24 +680,28 @@ export default function ProfissionalDashboard() {
                     <h3 className="text-2xl font-heading font-black text-theme-text uppercase tracking-widest italic leading-none">Matriz de Precificação</h3>
                     <p className="text-[10px] text-theme-muted uppercase tracking-[0.4em] italic">Configuração base para cálculo de orçamentos dinâmicos</p>
                  </div>
-                 <div className="grid grid-cols-1 md:grid-cols-2 gap-12">
-                    <div className="space-y-4">
-                      <div className="flex items-center gap-3"><div className="p-2 bg-theme-bg-muted border border-theme-border/60 text-brand-tactical"><Clock size={16} /></div><label className="text-[11px] font-black text-theme-text uppercase tracking-widest italic">Valor Hora (R$)</label></div>
-                      <input type="number" className="w-full bg-theme-bg-muted border border-theme-border/60 p-5 text-xl font-heading font-black text-theme-text italic outline-none focus:border-brand-tactical transition-all" value={profile?.hourlyRate || ""} onChange={(e) => setProfile(p => p ? { ...p, hourlyRate: Number(e.target.value) } : null)} placeholder="0.00" />
-                      <p className="text-[9px] text-theme-muted uppercase italic font-bold">Mínimo Global: 10 Euros | Meritocracia Ativa</p>
-                    </div>
-                    <div className="space-y-4">
-                      <div className="flex items-center gap-3"><div className="p-2 bg-theme-bg-muted border border-theme-border/60 text-brand-tactical"><Zap size={16} /></div><label className="text-[11px] font-black text-theme-text uppercase tracking-widest italic">Multiplicador Técnico</label></div>
-                      <div className="w-full bg-theme-bg-muted/50 border border-theme-border/60 p-5 text-xl font-heading font-black text-brand-tactical italic flex justify-between items-center group relative">
-                        <span>{profile?.equipmentMultiplier || "1.0"}</span>
-                        <div className="flex flex-col items-end">
-                          <span className="text-[8px] font-black uppercase text-theme-muted tracking-tighter">Escala de Meritocracia</span>
-                        </div>
-                      </div>
-                      <p className="text-[9px] text-theme-muted uppercase italic font-bold">Upgrade seu inventário para desbloquear maiores valores hora. <button onClick={() => setIsProfileOpen(true)} className="text-brand-tactical hover:underline cursor-pointer">GERENCIAR ATIVOS</button></p>
-                    </div>
-                 </div>
-                 <button onClick={handleSavePricing} disabled={savingPrices} className="w-full md:w-auto px-12 py-5 bg-brand-tactical text-zinc-950 text-[11px] font-black uppercase tracking-[0.3em] flex items-center justify-center gap-4 hover:brightness-110 disabled:opacity-40 transition-all shadow-xl shadow-brand-tactical/20">{savingPrices ? "SINCRONIZANDO..." : <><Check size={20} /> ATUALIZAR VALOR HORA</>}</button>
+                            <div className="grid grid-cols-1 md:grid-cols-2 gap-12">
+                     <div className="space-y-4">
+                       <div className="flex items-center gap-3"><div className="p-2 bg-theme-bg-muted border border-theme-border/60 text-brand-tactical"><Clock size={16} /></div><label className="text-[11px] font-black text-theme-text uppercase tracking-widest italic">Valor Hora Automático (R$)</label></div>
+                       <div className="w-full bg-theme-bg-muted/30 border border-theme-border/40 p-5 text-xl font-heading font-black text-theme-text/40 italic flex justify-between items-center group relative">
+                         <span>{Number(profile?.hourlyRate || 0).toLocaleString('pt-BR', { minimumFractionDigits: 2 })}</span>
+                         <div className="flex flex-col items-end">
+                           <ShieldCheck size={16} className="text-brand-tactical animate-pulse" />
+                         </div>
+                       </div>
+                       <p className="text-[9px] text-theme-muted uppercase italic font-bold">O seu valor hora é definido automaticamente pela sua meritocracia técnica.</p>
+                     </div>
+                     <div className="space-y-4">
+                       <div className="flex items-center gap-3"><div className="p-2 bg-theme-bg-muted border border-theme-border/60 text-brand-tactical"><Zap size={16} /></div><label className="text-[11px] font-black text-theme-text uppercase tracking-widest italic">Multiplicador Técnico</label></div>
+                       <div className="w-full bg-theme-bg-muted/50 border border-theme-border/60 p-5 text-xl font-heading font-black text-brand-tactical italic flex justify-between items-center group relative">
+                         <span>{profile?.equipmentMultiplier || "1.0"}</span>
+                         <div className="flex flex-col items-end">
+                           <span className="text-[8px] font-black uppercase text-theme-muted tracking-tighter">Nível de Ativos</span>
+                         </div>
+                       </div>
+                       <p className="text-[9px] text-theme-muted uppercase italic font-bold">Gerencie seus ativos para aumentar seu potencial de ganho. <button onClick={() => setIsProfileOpen(true)} className="text-brand-tactical hover:underline cursor-pointer">GERENCIAR INVENTÁRIO</button></p>
+                     </div>
+                  </div>
               </div>
 
               <div className="bg-theme-bg border border-theme-border/60 p-8 md:p-16 space-y-10">
