@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from "react";
-import { Shield, Database, Save, RotateCcw, Palette } from "lucide-react";
+import { Shield, Database, Save, RotateCcw, Palette, TrendingUp } from "lucide-react";
+
 import { API } from "../../lib/api";
 
 interface Config {
@@ -70,7 +71,7 @@ export const AdminSettings: React.FC = () => {
         </button>
       </div>
 
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-px bg-white/5 border border-white/5">
+      <div className="grid grid-cols-1 md:grid-cols-3 gap-px bg-white/5 border border-white/5">
         {/* Branding & Identity */}
         <div className="bg-theme-bg p-10 space-y-10 border-b md:border-b-0 md:border-r border-theme-border">
           <div className="flex items-center gap-4 mb-4">
@@ -153,8 +154,54 @@ export const AdminSettings: React.FC = () => {
           </div>
         </div>
 
-        {/* Segurança */}
-        <div className="bg-theme-bg p-10 space-y-8 md:col-span-2 border-t border-theme-border">
+        {/* Meritocracia de Valor Hora */}
+        <div className="bg-theme-bg p-10 space-y-8 border-b md:border-b-0 border-theme-border">
+          <div className="flex items-center gap-4 mb-4">
+             <TrendingUp className="text-brand-tactical" size={18} />
+             <h3 className="text-[11px] font-bold text-theme-text uppercase tracking-[0.4em]">Meritocracia — Valor Hora</h3>
+          </div>
+          <p className="text-[9px] text-zinc-600 uppercase tracking-widest leading-relaxed">
+            Piso e teto do valor/hora automático dos profissionais, em EUR. Convertido para BRL no cálculo usando a cotação em tempo real.
+          </p>
+          <div className="space-y-6">
+            <div className="space-y-2">
+              <label className="text-[9px] font-bold text-theme-muted uppercase tracking-[0.4em]">
+                Piso Mínimo (EUR/hora)
+              </label>
+              <div className="flex items-center gap-4 border-b border-theme-border">
+                <input
+                  type="number"
+                  step="1"
+                  min="1"
+                  value={getConfig("hourly_rate_floor_eur") || "10"}
+                  onChange={e => updateKey("hourly_rate_floor_eur", e.target.value)}
+                  className="w-full bg-transparent py-3 text-sm text-theme-text focus:outline-none"
+                />
+                <span className="text-theme-muted text-xs">€</span>
+              </div>
+              <p className="text-[8px] text-zinc-700 uppercase tracking-widest">Profissional com multiplicador 1.0 recebe este valor/hora.</p>
+            </div>
+            <div className="space-y-2">
+              <label className="text-[9px] font-bold text-theme-muted uppercase tracking-[0.4em]">
+                Teto Máximo (EUR/hora)
+              </label>
+              <div className="flex items-center gap-4 border-b border-theme-border">
+                <input
+                  type="number"
+                  step="1"
+                  min="1"
+                  value={getConfig("hourly_rate_ceiling_eur") || "55"}
+                  onChange={e => updateKey("hourly_rate_ceiling_eur", e.target.value)}
+                  className="w-full bg-transparent py-3 text-sm text-theme-text focus:outline-none"
+                />
+                <span className="text-theme-muted text-xs">€</span>
+              </div>
+              <p className="text-[8px] text-zinc-700 uppercase tracking-widest">Profissional com multiplicador 5.0 (topo) recebe este valor/hora.</p>
+            </div>
+          </div>
+        </div>
+
+        <div className="bg-theme-bg p-10 space-y-8 md:col-span-3 border-t border-theme-border">
           <div className="flex items-center gap-4 mb-4">
              <Shield className="text-brand-tactical" size={18} />
              <h3 className="text-[11px] font-bold text-theme-text uppercase tracking-[0.4em]">Protocolos de Acesso</h3>

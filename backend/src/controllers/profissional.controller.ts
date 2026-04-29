@@ -277,20 +277,29 @@ export async function updateProfile(req: AuthRequest, res: Response): Promise<vo
     // 3. Normalização: Piso 1.0 | Teto 5.0
     const finalMultiplier = Number(Math.min(Math.max(calculatedMultiplier, 1.0), 5.0).toFixed(2));
 
-    // 4. Regra de Meritocracia Dinâmica (Piso 10 EUR | Teto 200 BRL)
-    let eurRate = 6.0; // Fallback
+    // 4. Regra de Meritocracia Dinâmica — piso e teto em EUR, configuráveis pelo Admin
+    let eurRate = 6.0; // Fallback cambial
     try {
       const { data: coinData } = await axios.get("https://economia.awesomeapi.com.br/json/last/EUR-BRL");
       eurRate = Number(coinData.EURBRL.bid);
-    } catch (e) { 
-      console.warn("[Meritocracia] Erro ao buscar cotação, usando fallback."); 
+    } catch (e) {
+      console.warn("[Meritocracia] Erro ao buscar cotação EUR/BRL, usando fallback R$ 6,00.");
     }
 
-    const floorRate = eurRate * 10;
-    const ceilingRate = 200;
-    
-    // O Valor Hora é agora 100% AUTOMÁTICO baseado no Multiplicador Técnico
+    // Lê configurações do banco — padrão: piso 10 EUR, teto 55 EUR
+    const configs = await prisma.platformConfig.findMany({
+      where: { key: { in: ["hourly_rate_floor_eur", "hourly_rate_ceiling_eur"] } }
+    });
+    const configMap = Object.fromEntries(configs.map(c => [c.key, Number(c.value)]));
+    const floorEur   = configMap["hourly_rate_floor_eur"]   || 10;
+    const ceilingEur = configMap["hourly_rate_ceiling_eur"] || 55;
+
+    const floorRate   = eurRate * floorEur;
+    const ceilingRate = eurRate * ceilingEur;
+
+    // Valor Hora automático: interpolação linear entre piso e teto via multiplicador
     const autoHourlyRate = floorRate + (ceilingRate - floorRate) * (finalMultiplier - 1) / (5 - 1);
+
 
     const updated = await prisma.profissional.update({
       where: { userId },
