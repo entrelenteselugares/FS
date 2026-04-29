@@ -326,6 +326,23 @@ export default function ProfissionalDashboard() {
     if (!profile) return;
     setSavingPrices(true);
     try {
+      // Regra dos 10 Euros: Busca cotação atual
+      let minBrl = 60; // Fallback de segurança
+      try {
+        const resp = await fetch("https://economia.awesomeapi.com.br/json/last/EUR-BRL");
+        const coinData = await resp.json();
+        const eurRate = Number(coinData.EURBRL.bid);
+        minBrl = +(eurRate * 10).toFixed(2);
+      } catch (e) { 
+        console.warn("Erro ao buscar cotação, usando fallback.", e); 
+      }
+
+      if (Number(profile.hourlyRate) < minBrl) {
+        showNotification(`Valor muito baixo. O mínimo permitido pela plataforma é 10 Euros (R$ ${minBrl.toLocaleString('pt-BR', { minimumFractionDigits: 2 })}).`, "error");
+        setSavingPrices(false);
+        return;
+      }
+
       const { data } = await API.patch("profissional/me", {
         hourlyRate: profile.hourlyRate
       });
@@ -658,6 +675,7 @@ export default function ProfissionalDashboard() {
                     <div className="space-y-4">
                       <div className="flex items-center gap-3"><div className="p-2 bg-theme-bg-muted border border-theme-border/60 text-brand-tactical"><Clock size={16} /></div><label className="text-[11px] font-black text-theme-text uppercase tracking-widest italic">Valor Hora (R$)</label></div>
                       <input type="number" className="w-full bg-theme-bg-muted border border-theme-border/60 p-5 text-xl font-heading font-black text-theme-text italic outline-none focus:border-brand-tactical transition-all" value={profile?.hourlyRate || ""} onChange={(e) => setProfile(p => p ? { ...p, hourlyRate: Number(e.target.value) } : null)} placeholder="0.00" />
+                      <p className="text-[9px] text-theme-muted uppercase italic font-bold">Mínimo Global: 10 Euros (Baseado na cotação atual)</p>
                     </div>
                     <div className="space-y-4">
                       <div className="flex items-center gap-3"><div className="p-2 bg-theme-bg-muted border border-theme-border/60 text-brand-tactical"><Zap size={16} /></div><label className="text-[11px] font-black text-theme-text uppercase tracking-widest italic">Multiplicador Técnico</label></div>
