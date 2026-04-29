@@ -20,7 +20,6 @@ interface Event {
   temReels: boolean;
 }
 
-const CATEGORIES = ["Todos", "Foto", "Vídeo", "Reels", "Álbum"];
 
 function formatDate(d: string) {
   try { return new Intl.DateTimeFormat("pt-BR", { day: "2-digit", month: "short", year: "numeric" }).format(new Date(d)); }
@@ -135,7 +134,6 @@ function FooterCol({ title, links }: { title: string; links: string[] }) {
 export const HomePage = () => {
   const navigate = useNavigate();
   const [query, setQuery]       = useState("");
-  const [cat, setCat]           = useState("Todos");
   const [events, setEvents]     = useState<Event[]>([]);
   const [loading, setLoading]   = useState(true);
   const [page, setPage]         = useState(1);
@@ -242,26 +240,6 @@ export const HomePage = () => {
               {DICT.SEARCH_BUTTON}
             </button>
           </div>
-
-          {/* Category Chips */}
-          <div style={{ display: "flex", gap: 8, flexWrap: "wrap" }}>
-            {CATEGORIES.map(c => {
-              const active = cat === c;
-              return (
-                <button key={c} className="chip" onClick={() => setCat(c)} style={{
-                  fontSize: 10, fontFamily: T.fontB, fontWeight: 400,
-                  letterSpacing: "1.5px", textTransform: "uppercase",
-                  padding: "6px 14px", borderRadius: 0, cursor: "pointer",
-                  border: `1px solid ${active ? T.brand : T.border}`,
-                  color: active ? T.brand : T.text3,
-                  background: active ? T.brandDark : "transparent",
-                }}>
-                  {c}
-                </button>
-              );
-            })}
-          </div>
-
           {/* Stats */}
           <div style={{ display: "flex", gap: 32, flexWrap: "wrap", marginTop: 40, paddingTop: 32, borderTop: `1px solid ${T.border}` }}>
             {[["500+", DICT.STATS_EVENTS], ["24h", DICT.STATS_DELIVERY], ["4.9★", DICT.STATS_RATING]].map(([val, label]) => (
