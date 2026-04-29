@@ -29,4 +29,5 @@ Este documento lista as funcionalidades planejadas para as próximas fases da ev
 - [ ] **Upsell Inteligente**: Sugestão de álbuns impressos na página PEX baseada nas fotos mais visualizadas pelo cliente.
 
 ### 📅 Log de Atualização
+
 *Atualizado em: 29 de Abril de 2026*

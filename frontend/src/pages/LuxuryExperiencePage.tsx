@@ -1,8 +1,8 @@
-import React, { useState, useEffect } from "react";
+import { useState, useEffect } from "react";
 import { useParams } from "react-router-dom";
 import { API } from "../lib/api";
-import { Download, ExternalLink, Heart, Camera, Calendar, MapPin, Share2, ChevronDown, Check } from "lucide-react";
-import { motion, AnimatePresence } from "framer-motion";
+import { Download, ExternalLink, Heart, Camera, Calendar, MapPin, Share2, ChevronDown } from "lucide-react";
+import { motion } from "framer-motion";
 
 interface EventData {
   id: string;
