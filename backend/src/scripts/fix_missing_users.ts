@@ -26,7 +26,7 @@ async function main() {
     },
     {
       id: "430d88c2-ac57-48fd-947e-baf39883976b",
-      email: "entrelenteselugares@gmail.com",
+      email: "contatofotosegundo@gmail.com",
       nome: "Entrelentes",
       role: "ADMIN"
     }

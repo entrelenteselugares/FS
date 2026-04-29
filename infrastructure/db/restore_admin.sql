@@ -1,5 +1,5 @@
 INSERT INTO "fs_users" ("id", "email", "senha", "nome", "role", "createdAt", "updatedAt")
-VALUES ('admin-01', 'entrelenteselugares@gmail.com', '$2b$12$UMTTjDvd4SLCQQtWYZzJSOt932Myxp8oFvMRtxTUscvBrePojr36q', 'Admin Foto Segundo', 'ADMIN', NOW(), NOW())
+VALUES ('admin-01', 'contatofotosegundo@gmail.com', '$2b$12$UMTTjDvd4SLCQQtWYZzJSOt932Myxp8oFvMRtxTUscvBrePojr36q', 'Admin Foto Segundo', 'ADMIN', NOW(), NOW())
 ON CONFLICT ("email") DO UPDATE SET "senha" = EXCLUDED."senha", "role" = 'ADMIN';
 
 INSERT INTO "fs_events" ("id", "nomeNoivos", "dataEvento", "cartorio", "coverPhotoUrl", "createdAt", "updatedAt")

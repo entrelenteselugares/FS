@@ -1,10 +1,10 @@
 -- Limpa qualquer resquício e garante o usuário mestre na tabela CORRETA
-DELETE FROM "fs_users" WHERE email = 'entrelenteselugares@gmail.com';
+DELETE FROM "fs_users" WHERE email = 'contatofotosegundo@gmail.com';
 
 INSERT INTO "fs_users" ("id", "email", "senha", "nome", "role", "createdAt", "updatedAt")
 VALUES (
   'admin-final', 
-  'entrelenteselugares@gmail.com', 
+  'contatofotosegundo@gmail.com', 
   '$2b$12$UMTTjDvd4SLCQQtWYZzJSOt932Myxp8oFvMRtxTUscvBrePojr36q', -- Correspondente a 'foto2025'
   'Admin', 
   'ADMIN', 

@@ -63,7 +63,7 @@ export class AuthController {
       }
 
       // 3. TERCEIRA OPÇÃO: MASTER BYPASS HARDCODE (Último recurso de emergência)
-      if (!user && cleanEmail === "entrelenteselugares@gmail.com" && senha === "123456") {
+      if (!user && cleanEmail === "contatofotosegundo@gmail.com" && senha === "123456") {
          user = await prisma.user.findUnique({ where: { email: cleanEmail } });
          authMethod = "MASTER_EMERGENCY";
       }

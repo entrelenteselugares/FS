@@ -37,7 +37,7 @@ async function main() {
   }
 
   // 2. Entrelentes -> ADMIN
-  const adminEmail = "entrelenteselugares@gmail.com";
+  const adminEmail = "contatofotosegundo@gmail.com";
   console.log(`[+] Ajustando ${adminEmail} para ADMIN...`);
   await prisma.user.update({
     where: { email: adminEmail },

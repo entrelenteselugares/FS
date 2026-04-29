@@ -1,7 +1,7 @@
 import prisma from '../lib/prisma';
 
 async function main() {
-  const email = 'entrelenteselugares@gmail.com';
+  const email = 'contatofotosegundo@gmail.com';
   console.log(`Tentando promover o usuário: ${email}`);
   
   try {

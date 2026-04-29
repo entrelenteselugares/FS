@@ -4,7 +4,7 @@ import 'dotenv/config';
 const prisma = new PrismaClient();
 
 async function promote() {
-    const email = 'entrelenteselugares@gmail.com';
+    const email = 'contatofotosegundo@gmail.com';
     try {
         const user = await prisma.user.update({
             where: { email },
