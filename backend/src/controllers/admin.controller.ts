@@ -1063,34 +1063,3 @@ export async function adminCreateManualSale(req: AuthRequest, res: Response): Pr
   }
 }
 
-/**
- * DELETE /api/admin/orders/:id
- * Remove um pedido e seus itens do Ledger.
- */
-export async function adminDeleteOrder(req: AuthRequest, res: Response): Promise<void> {
-  const { id } = req.params;
-  try {
-    const order = await prisma.order.findUnique({
-      where: { id: String(id) },
-      select: { id: true, valor: true, buyerEmail: true }
-    });
-
-    if (!order) {
-      res.status(404).json({ error: "Pedido não localizado." });
-      return;
-    }
-
-    // Exclusão em Transação para garantir integridade
-    await prisma.$transaction([
-      prisma.orderItem.deleteMany({ where: { orderId: String(id) } }),
-      prisma.order.delete({ where: { id: String(id) } })
-    ]);
-
-    await audit(req, "ORDER_DELETED_ADMIN", "Order", String(id), null, { amount: order.valor, buyer: order.buyerEmail });
-    res.json({ success: true });
-  } catch (err) {
-    console.error("adminDeleteOrder:", err);
-    res.status(500).json({ error: "Erro ao excluir pedido no Ledger." });
-  }
-}
-
