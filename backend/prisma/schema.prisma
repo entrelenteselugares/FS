@@ -137,7 +137,7 @@ model Profissional {
   experienceYears     Int                    @default(0)
   cartorios           CartorioProfissional[]
   proServices         ProfessionalService[]
-  workflowType        String                 @default("TRADICIONAL")
+  workflowType        String[]               @default(["TRADICIONAL"])
   user                User                   @relation(fields: [userId], references: [id])
 
   @@map("profissionais")

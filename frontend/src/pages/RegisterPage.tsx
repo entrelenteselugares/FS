@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import { useNavigate, Link, useSearchParams } from "react-router-dom";
 
-import { ArrowRight, Camera, Mail, Lock, UserCircle, Phone, Eye, EyeOff, ShieldCheck } from "lucide-react";
+import { ArrowRight, Camera, Mail, Lock, UserCircle, Phone, Eye, EyeOff, ShieldCheck, CheckCircle2 } from "lucide-react";
 import { API } from "../lib/api";
 import { ThemeToggle } from "../components/ThemeToggle";
 
@@ -19,7 +19,7 @@ export const RegisterPage: React.FC = () => {
     habilidades: [] as string[],
     outrasHabilidades: "",
     equipamento: "",
-    workflowType: "TRADICIONAL", // "TRADICIONAL" | "MOBILE"
+    workflowType: ["TRADICIONAL"] as string[], // ["TRADICIONAL", "MOBILE"]
 
     // Campos Unidade
     razaoSocial: "",
@@ -284,14 +284,26 @@ export const RegisterPage: React.FC = () => {
                         <button
                           key={type.id}
                           type="button"
-                          onClick={() => setFormData({ ...formData, workflowType: type.id })}
-                          className={`p-4 border text-left transition-all ${
-                            formData.workflowType === type.id ? "bg-brand-tactical/5 border-brand-tactical shadow-[0_0_20px_rgba(133,185,172,0.1)]" : "border-theme-border/40 hover:border-brand-tactical/30"
+                          onClick={() => {
+                            const current = formData.workflowType;
+                            const exists = current.includes(type.id);
+                            const next = exists 
+                              ? current.filter(id => id !== type.id) 
+                              : [...current, type.id];
+                            if (next.length > 0) setFormData({ ...formData, workflowType: next });
+                          }}
+                          className={`p-4 border text-left transition-all relative ${
+                            formData.workflowType.includes(type.id) ? "bg-brand-tactical/5 border-brand-tactical shadow-[0_0_20px_rgba(133,185,172,0.1)]" : "border-theme-border/40 hover:border-brand-tactical/30"
                           }`}
                         >
+                          {formData.workflowType.includes(type.id) && (
+                            <div className="absolute top-2 right-2">
+                              <CheckCircle2 size={10} className="text-brand-tactical" />
+                            </div>
+                          )}
                           <div className="flex items-center gap-3 mb-2">
-                             <div className={`${formData.workflowType === type.id ? "text-brand-tactical" : "text-theme-muted opacity-40"}`}>{type.icon}</div>
-                             <span className={`text-[9px] font-black uppercase tracking-widest ${formData.workflowType === type.id ? "text-theme-text" : "text-theme-muted"}`}>{type.label}</span>
+                             <div className={`${formData.workflowType.includes(type.id) ? "text-brand-tactical" : "text-theme-muted opacity-40"}`}>{type.icon}</div>
+                             <span className={`text-[9px] font-black uppercase tracking-widest ${formData.workflowType.includes(type.id) ? "text-theme-text" : "text-theme-muted"}`}>{type.label}</span>
                           </div>
                           <p className="text-[8px] text-theme-muted font-bold uppercase opacity-60">{type.desc}</p>
                         </button>

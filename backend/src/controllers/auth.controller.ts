@@ -144,7 +144,7 @@ export class AuthController {
               services: habilidades || [],
               equipment: equipamento || "",
               otherHabilities: outrasHabilidades || "",
-              workflowType: workflowType || "TRADICIONAL",
+              workflowType: workflowType || ["TRADICIONAL"],
               hourlyRate: 150.00
             }
           });

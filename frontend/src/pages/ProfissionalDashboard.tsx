@@ -2,7 +2,7 @@ import React, { useState, useEffect, useCallback } from "react";
 
 import { useAuth } from "../hooks/useAuth";
 import { API } from "../lib/api";
-import { List, Calendar as CalendarIcon, TrendingUp, DollarSign, Award, ChevronLeft, ChevronRight, Settings, MessageCircle, Check, X, ShieldCheck, LayoutDashboard, Briefcase, ArrowRight, MapPin, Clock, Zap, Users, Search, Share2, Camera, Phone } from "lucide-react";
+import { List, Calendar as CalendarIcon, TrendingUp, DollarSign, Award, ChevronLeft, ChevronRight, Settings, MessageCircle, Check, X, ShieldCheck, LayoutDashboard, Briefcase, ArrowRight, MapPin, Clock, Zap, Users, Search, Share2, Camera, Phone, CheckCircle2 } from "lucide-react";
 import { DashboardLayout, type NavItem } from "../components/DashboardLayout";
 import { T } from "../lib/theme";
 import { PieChart, Pie, Cell, ResponsiveContainer, Tooltip } from 'recharts';
@@ -83,7 +83,7 @@ interface ProfileData {
   equipmentMultiplier?: number;
   proServices?: ProfessionalService[];
   otherHabilities: string | null;
-  workflowType?: string;
+  workflowType?: string[];
   stats?: {
     totalEarnings: number;
     monthEarnings: number;
@@ -1497,12 +1497,27 @@ function ProfileModal({ profile, onClose, onUpdated }: { profile: ProfileData; o
                       ].map(type => (
                         <button
                           key={type.id}
-                          onClick={() => setFormData({ ...formData, workflowType: type.id })}
-                          className={`p-4 border text-left transition-all flex items-center gap-4 ${formData.workflowType === type.id ? 'bg-brand-tactical/5 border-brand-tactical' : 'bg-theme-bg-muted border-theme-border text-theme-muted hover:border-brand-tactical/20'}`}
+                          type="button"
+                          onClick={() => {
+                            const current = formData.workflowType || [];
+                            const exists = current.includes(type.id);
+                            const next = exists 
+                              ? current.filter(id => id !== type.id) 
+                              : [...current, type.id];
+                            if (next.length > 0) setFormData({ ...formData, workflowType: next });
+                          }}
+                          className={`p-4 border text-left transition-all flex items-center gap-4 relative ${
+                            (formData.workflowType || []).includes(type.id) ? 'bg-brand-tactical/5 border-brand-tactical shadow-[0_0_20px_rgba(133,185,172,0.1)]' : 'bg-theme-bg-muted border-theme-border text-theme-muted hover:border-brand-tactical/20'
+                          }`}
                         >
-                          <div className={`${formData.workflowType === type.id ? 'text-brand-tactical' : 'opacity-30'}`}>{type.icon}</div>
+                          {(formData.workflowType || []).includes(type.id) && (
+                            <div className="absolute top-2 right-2">
+                              <CheckCircle2 size={10} className="text-brand-tactical" />
+                            </div>
+                          )}
+                          <div className={`flex-shrink-0 ${(formData.workflowType || []).includes(type.id) ? 'text-brand-tactical' : 'opacity-30'}`}>{type.icon}</div>
                           <div>
-                            <p className={`text-[10px] font-black uppercase tracking-widest ${formData.workflowType === type.id ? 'text-theme-text' : 'text-theme-muted'}`}>{type.label}</p>
+                            <p className={`text-[10px] font-black uppercase tracking-widest ${(formData.workflowType || []).includes(type.id) ? 'text-theme-text' : 'text-theme-muted'}`}>{type.label}</p>
                             <p className="text-[8px] font-bold uppercase opacity-60">{type.desc}</p>
                           </div>
                         </button>

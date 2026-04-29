@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useMemo } from "react";
 import { API } from "../../lib/api";
-import { X, UserPlus, Shield, Trash2, Edit3, Search } from "lucide-react";
+import { X, UserPlus, Shield, Trash2, Edit3, Search, CheckCircle2 } from "lucide-react";
 
 interface User {
   id: string;
@@ -13,7 +13,7 @@ interface User {
       editPct: number;
       otherHabilities?: string;
       equipment?: string;
-      workflowType?: string;
+      workflowType?: string[];
     };
     unidade?: {
       razaoSocial: string;
@@ -31,7 +31,7 @@ export const AdminUsers: React.FC = () => {
   
   const [formData, setFormData] = useState({
     name: "", email: "", password: "", role: "PROFISSIONAL", pixKey: "",
-    otherHabilities: "", equipment: "", workflowType: "TRADICIONAL",
+    otherHabilities: "", equipment: "", workflowType: ["TRADICIONAL"] as string[],
     captPct: 30, editPct: 10
   });
   const [confirmDelete, setConfirmDelete] = useState<User | null>(null);
@@ -111,7 +111,7 @@ export const AdminUsers: React.FC = () => {
 
       setIsModalOpen(false);
       setEditingUser(null);
-      setFormData({ name: "", email: "", password: "", role: "PROFISSIONAL", pixKey: "", otherHabilities: "", equipment: "", workflowType: "TRADICIONAL", captPct: 30, editPct: 10 });
+      setFormData({ name: "", email: "", password: "", role: "PROFISSIONAL", pixKey: "", otherHabilities: "", equipment: "", workflowType: ["TRADICIONAL"], captPct: 30, editPct: 10 });
       fetchUsers();
       showNotification(editingUser ? "Membro atualizado com sucesso!" : "Membro convocado com sucesso!");
     } catch {
@@ -129,7 +129,7 @@ export const AdminUsers: React.FC = () => {
       pixKey: user.pixKey || "",
       otherHabilities: user.profissional?.otherHabilities || "",
       equipment: user.profissional?.equipment || "",
-      workflowType: user.profissional?.workflowType || "TRADICIONAL",
+      workflowType: user.profissional?.workflowType || ["TRADICIONAL"],
       captPct: user.profissional?.captPct || 30,
       editPct: user.profissional?.editPct || 10
     });
@@ -156,7 +156,7 @@ export const AdminUsers: React.FC = () => {
             <p className="text-[10px] text-theme-muted uppercase tracking-[0.5em] mt-3 font-black italic">Operação de Times, Unidades e Parceiros</p>
           </div>
           <button 
-            onClick={() => { setIsModalOpen(true); setEditingUser(null); setFormData({ name: "", email: "", password: "", role: "PROFISSIONAL", pixKey: "", otherHabilities: "", equipment: "", workflowType: "TRADICIONAL", captPct: 30, editPct: 10 }); }}
+            onClick={() => { setIsModalOpen(true); setEditingUser(null); setFormData({ name: "", email: "", password: "", role: "PROFISSIONAL", pixKey: "", otherHabilities: "", equipment: "", workflowType: ["TRADICIONAL"], captPct: 30, editPct: 10 }); }}
             className="font-black uppercase tracking-[0.3em] px-8 py-4 bg-brand-tactical text-zinc-950 hover:brightness-110 transition-all shadow-xl shadow-brand-tactical/10 flex items-center gap-3 text-[10px]"
           >
             <UserPlus size={14} /> CONVOCAR MEMBRO
@@ -219,11 +219,11 @@ export const AdminUsers: React.FC = () => {
                         <div className="text-[13px] font-black text-theme-text uppercase tracking-tight leading-none">{u.nome}</div>
                         <div className="text-[10px] text-theme-muted font-bold uppercase mt-1.5 opacity-60 tracking-wider flex items-center gap-2">
                           {u.email}
-                          {u.role === 'PROFISSIONAL' && u.profissional?.workflowType && (
-                            <span className={`px-1.5 py-0.5 rounded-sm text-[7px] font-black tracking-tighter ${u.profissional.workflowType === 'MOBILE' ? 'bg-amber-500/20 text-amber-500 border border-amber-500/20' : 'bg-blue-500/20 text-blue-500 border border-blue-500/20'}`}>
-                              {u.profissional.workflowType === 'MOBILE' ? 'MOBILE MAKER' : 'CAMERA/PC'}
+                          {u.role === 'PROFISSIONAL' && u.profissional?.workflowType && u.profissional.workflowType.map(wt => (
+                            <span key={wt} className={`px-1.5 py-0.5 rounded-sm text-[7px] font-black tracking-tighter ${wt === 'MOBILE' ? 'bg-amber-500/20 text-amber-500 border border-amber-500/20' : 'bg-blue-500/20 text-blue-500 border border-blue-500/20'}`}>
+                              {wt === 'MOBILE' ? 'MOBILE MAKER' : 'CAMERA/PC'}
                             </span>
-                          )}
+                          ))}
                         </div>
                       </div>
                     </div>
@@ -361,9 +361,19 @@ export const AdminUsers: React.FC = () => {
                                <button 
                                  key={t}
                                  type="button"
-                                 onClick={() => setFormData({...formData, workflowType: t})}
-                                 className={`p-3 text-[9px] font-black uppercase tracking-widest border transition-all ${formData.workflowType === t ? 'bg-brand-tactical text-zinc-950 border-brand-tactical' : 'bg-theme-bg-muted border-theme-border text-theme-muted hover:border-brand-tactical/30'}`}
+                                 onClick={() => {
+                                   const current = formData.workflowType;
+                                   const exists = current.includes(t);
+                                   const next = exists ? current.filter(id => id !== t) : [...current, t];
+                                   if (next.length > 0) setFormData({...formData, workflowType: next});
+                                 }}
+                                 className={`p-3 text-[9px] font-black uppercase tracking-widest border transition-all relative ${formData.workflowType.includes(t) ? 'bg-brand-tactical text-zinc-950 border-brand-tactical' : 'bg-theme-bg-muted border-theme-border text-theme-muted hover:border-brand-tactical/30'}`}
                                >
+                                 {formData.workflowType.includes(t) && (
+                                   <div className="absolute top-1 right-1">
+                                      <CheckCircle2 size={8} />
+                                   </div>
+                                 )}
                                  {t === 'TRADICIONAL' ? 'Câmera/PC' : 'Mobile Maker'}
                                </button>
                              ))}
