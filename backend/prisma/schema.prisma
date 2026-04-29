@@ -132,7 +132,7 @@ model Profissional {
   otherHabilities     String?
   equipment           String?
   equipmentMultiplier Float                  @default(1.0)
-  hourlyRate          Decimal                @default(150.00) @db.Decimal(10, 2)
+  hourlyRate          Decimal                @default(60.00) @db.Decimal(10, 2)
   equipmentList       Json?                  @default("[]")
   experienceYears     Int                    @default(0)
   cartorios           CartorioProfissional[]
