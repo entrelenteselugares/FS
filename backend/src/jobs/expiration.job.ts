@@ -109,35 +109,43 @@ export async function runExpirationJob(req?: any): Promise<void> {
   console.log(`[EXPIRATION JOB] Concluído. ${proximosDeExpirar.length} avisos, ${expirados.length} exclusões, ${curtidasExpiradas.count} curtidas limpas.`);
 
   // ── 4. Auditoria de Privacidade de Marketplace (rede de segurança) ──
-  const expostos = await prisma.event.findMany({
+  // Verifica apenas eventos marketplace que foram INCORRETAMENTE marcados
+  // como públicos APÓS uma venda (isPrivate deveria ser false por padrão em marketplace).
+  // Não interfere em eventos públicos sem venda — esses são legítimos (à venda).
+  const vendidosExpostos = await prisma.event.findMany({
     where: {
       type: "PHOTO_MARKETPLACE",
-      isPrivate: false,
+      active: false, // Desativados incorretamente
     },
     include: {
       pedidos: { where: { status: "APROVADO" }, take: 1 },
     },
   });
 
-  for (const event of expostos) {
+  let correctedCount = 0;
+  for (const event of vendidosExpostos) {
     const temPedidoPago = event.pedidos.length > 0;
-    await prisma.event.update({
-      where: { id: event.id },
-      data: { active: temPedidoPago, isPrivate: true },
-    });
-    console.warn(`[PRIVACY AUDIT] Evento marketplace ${event.id} corrigido. temPedidoPago=${temPedidoPago}`);
+    if (temPedidoPago) {
+      // Reativa marketplace com vendas que foram desativados incorretamente
+      await prisma.event.update({
+        where: { id: event.id },
+        data: { active: true },
+      });
+      correctedCount++;
+      console.log(`[PRIVACY AUDIT] Marketplace ${event.id} reativado (tem pedido pago).`);
+    }
   }
 
-  if (expostos.length > 0) {
-    console.error(`[PRIVACY AUDIT] ⚠️  ${expostos.length} eventos marketplace com privacidade incorreta corrigidos.`);
+  if (correctedCount > 0) {
+    console.warn(`[PRIVACY AUDIT] ⚠️  ${correctedCount} eventos marketplace reativados.`);
   } else {
-    console.log(`[PRIVACY AUDIT] ✅ Nenhuma inconsistência de privacidade encontrada.`);
+    console.log(`[PRIVACY AUDIT] ✅ Nenhuma inconsistência de visibilidade encontrada.`);
   }
 
   if (req) {
     await audit(req, "CRON_JOB_FINISHED", "System", "CRON_EXPIRATION", null, { 
       endTime: new Date(), 
-      correctedCount: expostos.length 
+      correctedCount 
     });
   }
 }
