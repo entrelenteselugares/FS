@@ -50,6 +50,8 @@ export const AdminQuotes: React.FC = () => {
   const [notification, setNotification] = useState<{message: string, type: 'success' | 'error'} | null>(null);
   const [finalPrice, setFinalPrice] = useState<number>(0);
 
+  const [professionals, setProfessionals] = useState<{id: string, nome: string}[]>([]);
+
   // Advanced New Quote Form State
   const [newQuoteData, setNewQuoteData] = useState({
     nomeNoivos: "",
@@ -66,6 +68,15 @@ export const AdminQuotes: React.FC = () => {
     temReels: false
   });
 
+  const fetchProfessionals = useCallback(async () => {
+    try {
+      const { data } = await API.get("/admin/users", { params: { role: "PROFISSIONAL" } });
+      setProfessionals(data || []);
+    } catch (err) {
+      console.error("Erro ao carregar profissionais:", err);
+    }
+  }, []);
+
   const fetchQuotes = useCallback(async () => {
     setLoading(true);
     try {
@@ -80,7 +91,8 @@ export const AdminQuotes: React.FC = () => {
 
   useEffect(() => {
     fetchQuotes();
-  }, [fetchQuotes]);
+    fetchProfessionals();
+  }, [fetchQuotes, fetchProfessionals]);
 
   const staffTotal = selectedStaff.reduce((acc, s) => acc + s.cost, 0);
   const equipTotal = selectedEquip.reduce((acc, e) => {
@@ -158,8 +170,12 @@ export const AdminQuotes: React.FC = () => {
       setSelectedStaff(selectedStaff.filter(s => s.id !== roleId));
     } else {
       const role = STAFF_ROLES.find(r => r.id === roleId);
-      setSelectedStaff([...selectedStaff, { id: roleId, label: role?.name || "", cost: role?.avgCost || 0 }]);
+      setSelectedStaff([...selectedStaff, { id: roleId, label: role?.name || "", cost: role?.avgCost || 0, userId: "" }]);
     }
+  };
+
+  const updateStaffUser = (roleId: string, userId: string) => {
+    setSelectedStaff(selectedStaff.map(s => s.id === roleId ? { ...s, userId } : s));
   };
 
   const addEquip = (id: string) => {
@@ -175,8 +191,8 @@ export const AdminQuotes: React.FC = () => {
     <div className="space-y-10 animate-in fade-in slide-in-from-bottom-4 duration-700">
       <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-6 border-b border-theme-border pb-10">
         <div>
-          <h2 className="text-3xl md:text-4xl font-heading text-theme-text tracking-tighter uppercase font-black leading-none pt-2">Máquina de Vendas</h2>
-          <p className="text-[10px] text-theme-muted uppercase tracking-[0.5em] mt-3 font-black italic">Gestão de Leads e Orçamentos Customizados</p>
+          <h2 className="text-3xl md:text-4xl font-heading text-theme-text tracking-tighter uppercase font-black leading-none pt-2">Gestão de Orçamentos</h2>
+          <p className="text-[10px] text-theme-muted uppercase tracking-[0.5em] mt-3 font-black italic">Propostas, Equipes e Precificação Técnica</p>
         </div>
         
         <div className="flex flex-col md:flex-row items-center gap-6 w-full lg:w-auto">
@@ -210,7 +226,15 @@ export const AdminQuotes: React.FC = () => {
             quotes.map((quote) => (
               <div 
                 key={quote.id}
-                onClick={() => { setSelectedQuote(quote); setActiveTab("briefing"); }}
+                onClick={() => { 
+                   setSelectedQuote(quote); 
+                   setActiveTab("briefing"); 
+                   setSelectedStaff([]);
+                   setSelectedEquip([]);
+                   setTransportCost(0);
+                   setLodgingCost(0);
+                   setFinalPrice(0);
+                 }}
                 className={`p-5 border transition-all relative overflow-hidden group ${selectedQuote?.id === quote.id ? 'border-brand-tactical bg-brand-tactical/5 shadow-[inset_0_0_20px_rgba(133,185,172,0.05)]' : 'border-theme-border bg-theme-bg-muted hover:border-zinc-500'}`}
                 style={{ cursor: "pointer" }}
               >
@@ -274,7 +298,24 @@ export const AdminQuotes: React.FC = () => {
                  {(['briefing', 'equipe', 'locacao', 'fechamento'] as const).map(t => (
                    <button
                     key={t}
-                    onClick={() => setActiveTab(t)}
+                    onClick={() => {
+                      setActiveTab(t);
+                      if (t === 'equipe' && selectedStaff.length === 0 && selectedQuote.description.includes("[BUDGET_BREAKDOWN]")) {
+                        try {
+                          const jsonStr = selectedQuote.description.match(/\[BUDGET_BREAKDOWN\] (\{.*?\})/)?.[1];
+                          if (jsonStr) {
+                            const data = JSON.parse(jsonStr);
+                            if (data.STAFF) setSelectedStaff(data.STAFF.map((s: any) => ({
+                              id: s.ID, label: s.LABEL, cost: s.COST, userId: s.USER_ID || ""
+                            })));
+                            if (data.EQUIPMENT) setSelectedEquip(data.EQUIPMENT.map((e: any) => ({
+                              id: e.ID, qty: e.QTY
+                            })));
+                            if (data.MARGIN) setMargin(data.MARGIN);
+                          }
+                        } catch(e) { console.error("Erro ao restaurar breakdown:", e); }
+                      }
+                    }}
                     className={`pb-2 text-[9px] font-black uppercase tracking-[0.2em] transition-all relative whitespace-nowrap ${activeTab === t ? 'text-brand-tactical' : 'text-theme-muted hover:text-white'}`}
                    >
                      {t}
@@ -288,12 +329,12 @@ export const AdminQuotes: React.FC = () => {
                     <div className="space-y-10 animate-in fade-in duration-300">
                       <div className="grid grid-cols-2 md:grid-cols-4 gap-8 bg-zinc-950/5 p-6 border border-theme-border/20">
                          <div className="space-y-1.5"><span className="text-[8px] font-black text-brand-tactical uppercase tracking-widest opacity-60">Data</span><p className="text-[13px] font-black text-theme-text uppercase tracking-tight">{new Date(selectedQuote.dataEvento).toLocaleDateString("pt-BR")}</p></div>
-                         <div className="space-y-1.5"><span className="text-[8px] font-black text-brand-tactical uppercase tracking-widest opacity-60">Ticket Radar</span><p className="text-[13px] font-black text-brand-tactical uppercase tracking-tight truncate">R$ {selectedQuote.priceBase?.toLocaleString() || "---"}</p></div>
-                         <div className="space-y-1.5"><span className="text-[8px] font-black text-brand-tactical uppercase tracking-widest opacity-60">Lead</span><p className="text-[13px] font-black text-theme-text uppercase tracking-tight">{selectedQuote.clientName}</p></div>
+                         <div className="space-y-1.5"><span className="text-[8px] font-black text-brand-tactical uppercase tracking-widest opacity-60">Valor Previsto</span><p className="text-[13px] font-black text-brand-tactical uppercase tracking-tight truncate">R$ {selectedQuote.priceBase?.toLocaleString() || "---"}</p></div>
+                         <div className="space-y-1.5"><span className="text-[8px] font-black text-brand-tactical uppercase tracking-widest opacity-60">Cliente</span><p className="text-[13px] font-black text-theme-text uppercase tracking-tight">{selectedQuote.clientName}</p></div>
                          <div className="space-y-1.5"><span className="text-[8px] font-black text-brand-tactical uppercase tracking-widest opacity-60">WhatsApp</span><p className="text-[13px] font-black text-brand-tactical uppercase tracking-tight">{selectedQuote.clientPhone || "S/ CONTATO"}</p></div>
                       </div>
                       <div className="space-y-4">
-                        <h4 className="text-[10px] font-black text-theme-muted uppercase tracking-[0.3em] border-b border-theme-border pb-3">Perfil da Demanda</h4>
+                        <h4 className="text-[10px] font-black text-theme-muted uppercase tracking-[0.3em] border-b border-theme-border pb-3">Serviços Solicitados</h4>
                         <div className="flex flex-wrap gap-2">
                           {selectedQuote.temFoto && <span className="bg-brand-tactical/10 text-brand-tactical text-[9px] font-black px-4 py-2 border border-brand-tactical/20 uppercase tracking-widest flex items-center gap-2"><Camera size={10}/> Fotografia</span>}
                           {selectedQuote.temVideo && <span className="bg-brand-tactical/10 text-brand-tactical text-[9px] font-black px-4 py-2 border border-brand-tactical/20 uppercase tracking-widest flex items-center gap-2"><Video size={10}/> Vídeo</span>}
@@ -301,10 +342,38 @@ export const AdminQuotes: React.FC = () => {
                         </div>
                       </div>
                       <div className="space-y-3">
-                         <h4 className="text-[10px] font-black text-theme-muted uppercase tracking-[0.3em] border-b border-theme-border pb-3">Briefing de Campo</h4>
-                         <div className="bg-theme-bg p-8 border border-theme-border text-[11px] text-theme-text leading-relaxed uppercase tracking-widest font-bold opacity-80 italic whitespace-pre-wrap">
-                           {selectedQuote.description || "SEM OBSERVAÇÕES ADICIONAIS."}
-                         </div>
+                         <h4 className="text-[10px] font-black text-theme-muted uppercase tracking-[0.3em] border-b border-theme-border pb-3">Detalhamento do Evento</h4>
+                         {selectedQuote.description.includes("[BUDGET_BREAKDOWN]") ? (
+                           <div className="space-y-6">
+                             <div className="bg-zinc-950/20 p-4 border-l-2 border-brand-tactical space-y-2">
+                                <span className="text-[8px] font-black text-brand-tactical uppercase tracking-widest block mb-2">Simulação Original</span>
+                                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                                   <div className="text-[10px] text-theme-muted font-bold">
+                                      {(() => {
+                                         try {
+                                           const jsonStr = selectedQuote.description.match(/\[BUDGET_BREAKDOWN\] (\{.*?\})/)?.[1];
+                                           if (!jsonStr) return "NÃO DISPONÍVEL";
+                                           const data = JSON.parse(jsonStr);
+                                           return (
+                                             <div className="space-y-1">
+                                                <p className="text-white">EQUIPE: {data.STAFF?.map((s: any) => s.LABEL).join(", ") || "N/A"}</p>
+                                                <p className="text-white">MARGEM: {data.MARGIN}%</p>
+                                             </div>
+                                           );
+                                         } catch { return "ERRO AO PROCESSAR"; }
+                                      })()}
+                                   </div>
+                                </div>
+                             </div>
+                             <div className="bg-theme-bg p-8 border border-theme-border text-[11px] text-theme-text leading-relaxed uppercase tracking-widest font-bold opacity-80 italic whitespace-pre-wrap">
+                               {selectedQuote.description.replace(/\[BUDGET_BREAKDOWN\].*?(\n\n|$)/s, "").replace(/\[REJECTED_REASON\].*?$/s, "").trim() || "SEM OBSERVAÇÕES ADICIONAIS."}
+                             </div>
+                           </div>
+                         ) : (
+                           <div className="bg-theme-bg p-8 border border-theme-border text-[11px] text-theme-text leading-relaxed uppercase tracking-widest font-bold opacity-80 italic whitespace-pre-wrap">
+                             {selectedQuote.description || "SEM OBSERVAÇÕES ADICIONAIS."}
+                           </div>
+                         )}
                       </div>
                     </div>
                   )}
@@ -319,18 +388,41 @@ export const AdminQuotes: React.FC = () => {
 
                       {selectedStaff.length > 0 && (
                         <div className="space-y-4 pt-6 border-t border-theme-border/20">
-                           <h4 className="text-[9px] font-black text-theme-muted uppercase tracking-[0.3em]">Ajuste de Custos de Equipe</h4>
+                           <h4 className="text-[9px] font-black text-theme-muted uppercase tracking-[0.3em]">Atribuição de Profissionais da Plataforma</h4>
                            {selectedStaff.map(s => (
-                             <div key={s.id} className="flex items-center justify-between gap-4 bg-zinc-950/10 p-3 border border-theme-border/30">
-                                <span className="text-[10px] font-black uppercase tracking-widest">{s.label}</span>
-                                <div className="flex items-center gap-3">
-                                   <span className="text-[8px] text-theme-muted font-black">CUSTO (R$)</span>
-                                   <input 
-                                     type="number" 
-                                     value={s.cost} 
-                                     onChange={(e) => setSelectedStaff(selectedStaff.map(st => st.id === s.id ? {...st, cost: Number(e.target.value)} : st))}
-                                     className="w-24 bg-theme-bg border border-theme-border p-2 text-[11px] font-black text-brand-tactical outline-none focus:border-brand-tactical"
-                                   />
+                             <div key={s.id} className="grid grid-cols-1 md:grid-cols-12 items-center gap-4 bg-zinc-950/10 p-4 border border-theme-border/30 group hover:border-brand-tactical/50 transition-all">
+                                <div className="md:col-span-4">
+                                   <span className="text-[10px] font-black uppercase tracking-widest block mb-1">{s.label}</span>
+                                   <div className="flex items-center gap-2">
+                                      <span className="text-[8px] text-theme-muted font-bold">VALOR BASE:</span>
+                                      <span className="text-[9px] font-black text-brand-tactical">R$ {s.cost}</span>
+                                   </div>
+                                </div>
+                                
+                                <div className="md:col-span-5 relative">
+                                   <User className="absolute left-3 top-1/2 -translate-y-1/2 text-theme-muted" size={12} />
+                                   <select 
+                                     value={s.userId || ""} 
+                                     onChange={(e) => updateStaffUser(s.id, e.target.value)}
+                                     className="w-full bg-theme-bg border border-theme-border p-2.5 pl-10 text-[10px] font-black text-theme-text outline-none focus:border-brand-tactical appearance-none uppercase tracking-widest"
+                                   >
+                                      <option value="">BUSCAR PROFISSIONAL...</option>
+                                      {professionals.map(p => (
+                                        <option key={p.id} value={p.id}>{p.nome}</option>
+                                      ))}
+                                   </select>
+                                </div>
+
+                                <div className="md:col-span-3">
+                                   <div className="relative">
+                                      <span className="absolute left-3 top-1/2 -translate-y-1/2 text-[8px] font-black text-theme-muted">R$</span>
+                                      <input 
+                                        type="number" 
+                                        value={s.cost} 
+                                        onChange={(e) => setSelectedStaff(selectedStaff.map(st => st.id === s.id ? {...st, cost: Number(e.target.value)} : st))}
+                                        className="w-full bg-theme-bg border border-theme-border p-2.5 pl-8 text-[11px] font-black text-brand-tactical outline-none focus:border-brand-tactical"
+                                      />
+                                   </div>
                                 </div>
                              </div>
                            ))}
@@ -453,7 +545,7 @@ export const AdminQuotes: React.FC = () => {
                     </div>
                     <div className="space-y-1">
                        <label className="text-[7px] font-black text-theme-muted uppercase tracking-[0.4em]">Cliente</label>
-                       <input required placeholder="NOME" value={newQuoteData.clientName} onChange={e => setNewQuoteData({...newQuoteData, clientName: e.target.value.toUpperCase()})} className="w-full bg-theme-bg-muted border border-theme-border p-2 text-[10px] text-theme-text outline-none focus:border-brand-tactical font-black" />
+                       <input required placeholder="NOME COMPLETO" value={newQuoteData.clientName} onChange={e => setNewQuoteData({...newQuoteData, clientName: e.target.value.toUpperCase()})} className="w-full bg-theme-bg-muted border border-theme-border p-2 text-[10px] text-theme-text outline-none focus:border-brand-tactical font-black" />
                     </div>
                     <div className="space-y-1">
                        <label className="text-[7px] font-black text-theme-muted uppercase tracking-[0.4em]">WhatsApp</label>
@@ -467,7 +559,7 @@ export const AdminQuotes: React.FC = () => {
                        <input required type="email" placeholder="CLIENTE@EMAIL.COM" value={newQuoteData.clientEmail} onChange={e => setNewQuoteData({...newQuoteData, clientEmail: e.target.value})} className="w-full bg-theme-bg-muted border border-theme-border p-2 text-[10px] text-theme-text outline-none focus:border-brand-tactical font-black" />
                     </div>
                     <div className="space-y-1">
-                       <label className="text-[7px] font-black text-theme-muted uppercase tracking-[0.4em]">Budget Estimado (R$)</label>
+                       <label className="text-[7px] font-black text-theme-muted uppercase tracking-[0.4em]">Orçamento Estimado (R$)</label>
                        <div className="relative">
                           <DollarSign className="absolute left-2 top-1/2 -translate-y-1/2 text-brand-tactical" size={10} />
                           <input type="number" placeholder="VALOR" value={newQuoteData.priceBase} onChange={e => setNewQuoteData({...newQuoteData, priceBase: Number(e.target.value)})} className="w-full bg-theme-bg-muted border border-theme-border p-2 pl-6 text-[10px] text-brand-tactical outline-none focus:border-brand-tactical font-black" />
@@ -476,18 +568,18 @@ export const AdminQuotes: React.FC = () => {
                  </div>
 
                  <div className="space-y-2 pt-1">
-                    <label className="text-[7px] font-black text-theme-muted uppercase tracking-[0.4em]">Radar Urgency</label>
+                    <label className="text-[7px] font-black text-theme-muted uppercase tracking-[0.4em]">Prioridade de Atendimento</label>
                     <div className="grid grid-cols-3 gap-2">
                        {(['HIGH', 'MEDIUM', 'LOW'] as const).map(u => (
                          <button key={u} type="button" onClick={() => setNewQuoteData({...newQuoteData, urgency: u})} className={`flex items-center justify-center gap-1.5 py-2 border text-[7px] font-black uppercase tracking-widest transition-all ${newQuoteData.urgency === u ? 'border-brand-tactical bg-brand-tactical text-zinc-950 shadow-md' : 'border-theme-border text-theme-muted hover:border-zinc-500'}`}>
-                           {u === 'HIGH' ? <><Flame size={9}/> ALTA</> : u === 'MEDIUM' ? <><Thermometer size={9}/> MÉDIA</> : <><Snowflake size={9}/> BAIXA</>}
+                           {u === 'HIGH' ? <><Flame size={9}/> URGENTE</> : u === 'MEDIUM' ? <><Thermometer size={9}/> NORMAL</> : <><Snowflake size={9}/> BAIXA</>}
                          </button>
                        ))}
                     </div>
                  </div>
 
                  <div className="space-y-2 pt-1">
-                    <label className="text-[7px] font-black text-theme-muted uppercase tracking-[0.4em]">Serviços Pré-Engenharia</label>
+                    <label className="text-[7px] font-black text-theme-muted uppercase tracking-[0.4em]">Serviços Pré-Configurados</label>
                     <div className="flex gap-2">
                        <button type="button" onClick={() => setNewQuoteData({...newQuoteData, temFoto: !newQuoteData.temFoto})} className={`flex-1 py-2 border text-[8px] font-black uppercase tracking-widest flex items-center justify-center gap-1.5 transition-all ${newQuoteData.temFoto ? 'border-brand-tactical text-brand-tactical bg-brand-tactical/5' : 'border-theme-border text-theme-muted'}`}><Camera size={11}/> FOTO</button>
                        <button type="button" onClick={() => setNewQuoteData({...newQuoteData, temVideo: !newQuoteData.temVideo})} className={`flex-1 py-2 border text-[8px] font-black uppercase tracking-widest flex items-center justify-center gap-1.5 transition-all ${newQuoteData.temVideo ? 'border-brand-tactical text-brand-tactical bg-brand-tactical/5' : 'border-theme-border text-theme-muted'}`}><Video size={11}/> VÍDEO</button>
@@ -496,12 +588,12 @@ export const AdminQuotes: React.FC = () => {
                  </div>
 
                  <div className="space-y-1">
-                    <label className="text-[7px] font-black text-theme-muted uppercase tracking-[0.4em]">Local e Briefing</label>
-                    <textarea required placeholder="LOCAL E OBSERVAÇÕES RÁPIDAS..." value={newQuoteData.description} onChange={e => setNewQuoteData({...newQuoteData, description: e.target.value.toUpperCase()})} className="w-full bg-theme-bg-muted border border-theme-border p-2 text-[10px] text-theme-text outline-none focus:border-brand-tactical h-14 font-bold resize-none" />
+                    <label className="text-[7px] font-black text-theme-muted uppercase tracking-[0.4em]">Local e Observações</label>
+                    <textarea required placeholder="DESCREVA DETALHES DO LOCAL OU NECESSIDADES ESPECÍFICAS..." value={newQuoteData.description} onChange={e => setNewQuoteData({...newQuoteData, description: e.target.value.toUpperCase()})} className="w-full bg-theme-bg-muted border border-theme-border p-2 text-[10px] text-theme-text outline-none focus:border-brand-tactical h-14 font-bold resize-none" />
                  </div>
 
                  <div className="pt-2">
-                    <button type="submit" className="w-full bg-brand-tactical text-zinc-950 font-black uppercase tracking-[0.5em] py-3.5 text-[9px] shadow-xl hover:scale-[1.01] transition-all">CONVOCAR PARA O RADAR</button>
+                    <button type="submit" className="w-full bg-brand-tactical text-zinc-950 font-black uppercase tracking-[0.5em] py-3.5 text-[9px] shadow-xl hover:scale-[1.01] transition-all">CADASTRAR ORÇAMENTO</button>
                  </div>
               </form>
            </div>
