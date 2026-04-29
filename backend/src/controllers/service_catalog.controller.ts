@@ -2,13 +2,18 @@ import { Request, Response } from "express";
 import { AuthRequest } from "../lib/auth";
 import prisma from "../lib/prisma";
 
+const serializeService = (s: any) => ({
+  ...s,
+  basePrice: Number(s.basePrice),
+});
+
 export async function listServiceCatalog(req: Request, res: Response): Promise<void> {
   try {
     const services = await prisma.serviceCatalog.findMany({
       where: { active: true },
       orderBy: { name: 'asc' }
     });
-    res.json(services);
+    res.json(services.map(serializeService));
   } catch (err) {
     console.error("listServiceCatalog:", err);
     res.status(500).json({ error: "Erro ao listar catálogo de serviços." });
@@ -20,7 +25,7 @@ export async function adminListServiceCatalog(req: AuthRequest, res: Response): 
     const services = await prisma.serviceCatalog.findMany({
       orderBy: { name: 'asc' }
     });
-    res.json(services);
+    res.json(services.map(serializeService));
   } catch (err) {
     console.error("adminListServiceCatalog:", err);
     res.status(500).json({ error: "Erro ao listar catálogo de serviços." });
@@ -43,7 +48,7 @@ export async function adminCreateService(req: AuthRequest, res: Response): Promi
         estimatedMinutes: Number(estimatedMinutes || 60),
       }
     });
-    res.status(201).json(service);
+    res.status(201).json(serializeService(service));
   } catch (err) {
     console.error("adminCreateService:", err);
     res.status(500).json({ error: "Erro ao criar serviço." });
@@ -65,7 +70,7 @@ export async function adminUpdateService(req: AuthRequest, res: Response): Promi
         ...(active !== undefined && { active }),
       }
     });
-    res.json(service);
+    res.json(serializeService(service));
   } catch (err) {
     console.error("adminUpdateService:", err);
     res.status(500).json({ error: "Erro ao atualizar serviço." });
