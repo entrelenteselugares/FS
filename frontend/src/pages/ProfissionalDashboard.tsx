@@ -289,8 +289,8 @@ export default function ProfissionalDashboard() {
     }
   };
 
-  const handleExpressSaleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
+  const handleExpressSaleSubmit = async (e?: React.FormEvent) => {
+    e?.preventDefault();
     setLoading(true);
     try {
       const payload = {
@@ -960,9 +960,9 @@ export default function ProfissionalDashboard() {
                 </button>
               ) : (
                 <div className="flex gap-3">
-                  <button onClick={() => setExpressStep(expressStep - 1)} className="flex-1 py-4 bg-theme-bg-muted border border-theme-border text-theme-muted text-[11px] font-black uppercase tracking-widest italic">Voltar</button>
+                  <button onClick={() => setExpressStep((expressStep - 1) as 1 | 2 | 3 | 4)} className="flex-1 py-4 bg-theme-bg-muted border border-theme-border text-theme-muted text-[11px] font-black uppercase tracking-widest italic">Voltar</button>
                   <button 
-                    onClick={() => expressStep === 4 ? handleExpressSaleSubmit() : setExpressStep(expressStep + 1)} 
+                    onClick={() => expressStep === 4 ? handleExpressSaleSubmit() : setExpressStep((expressStep + 1) as 1 | 2 | 3 | 4)} 
                     disabled={loading} 
                     className="flex-[2] py-4 bg-brand-tactical text-brand-text text-[11px] font-black uppercase tracking-[0.3em] hover:brightness-110 shadow-xl shadow-brand-tactical/20 italic"
                   >
