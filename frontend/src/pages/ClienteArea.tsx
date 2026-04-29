@@ -334,7 +334,6 @@ export default function ClienteArea() {
             <PedidoDetalhe
               pedido={selected}
               loading={loadingDetalhe}
-              onClose={() => setSelected(null)}
               onGoToEvent={() => navigate(`/e/${selected.event.id}`)}
               onChangePrivacy={() => setIsPrivacyModalOpen(true)}
               onToggleVisibility={handleToggleVisibility}
@@ -498,10 +497,9 @@ function Tag({ label, color = "#444" }: { label: string; color?: string }) {
   );
 }
 
-function PedidoDetalhe({ pedido, loading, onClose, onGoToEvent, onChangePrivacy, onToggleVisibility }: {
+function PedidoDetalhe({ pedido, loading, onGoToEvent, onChangePrivacy, onToggleVisibility }: {
   pedido: Pedido;
   loading: boolean;
-  onClose: () => void;
   onGoToEvent: () => void;
   onChangePrivacy: () => void;
   onToggleVisibility: (id: string, showAlbum?: boolean, showVideo?: boolean) => void;
