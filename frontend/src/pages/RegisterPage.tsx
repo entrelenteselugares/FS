@@ -271,26 +271,6 @@ export const RegisterPage: React.FC = () => {
                       ))}
                     </div>
                   </div>
-                  <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                    <div className="space-y-3">
-                      <label className="text-[9px] font-black uppercase tracking-[0.3em] text-theme-muted opacity-60">Habilidades Extras</label>
-                      <input
-                        value={formData.outrasHabilidades}
-                        onChange={(e) => setFormData({ ...formData, outrasHabilidades: e.target.value })}
-                        className="w-full bg-transparent border-b border-theme-border/60 py-2 text-[11px] text-theme-text placeholder:text-theme-muted/20 focus:outline-none focus:border-brand-tactical transition-all"
-                        placeholder="EX: DRONE, COLOR GRADING..."
-                      />
-                    </div>
-                    <div className="space-y-3">
-                      <label className="text-[9px] font-black uppercase tracking-[0.3em] text-theme-muted opacity-60">Equipamentos</label>
-                      <input
-                        value={formData.equipamento}
-                        onChange={(e) => setFormData({ ...formData, equipamento: e.target.value })}
-                        className="w-full bg-transparent border-b border-theme-border/60 py-2 text-[11px] text-theme-text placeholder:text-theme-muted/20 focus:outline-none focus:border-brand-tactical transition-all"
-                        placeholder="EX: SONY A7IV, LENTE 35MM..."
-                      />
-                    </div>
-                  </div>
                 </div>
               )}
 
