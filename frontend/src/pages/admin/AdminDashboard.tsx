@@ -42,6 +42,8 @@ const NAV_ITEMS = (activeTab: string, setActiveTab: (t: string) => void, stats: 
 
 interface AdminStats {
   totalRevenue: number;
+  revenue30d: number;
+  growth: number;
   totalOrders: number;
   activeEvents: number;
   totalUsers: number;

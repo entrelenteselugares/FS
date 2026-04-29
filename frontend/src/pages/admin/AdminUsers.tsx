@@ -1,7 +1,6 @@
 import React, { useState, useEffect, useMemo } from "react";
 import { API } from "../../lib/api";
-import { X, UserPlus, Shield, Trash2, Edit3, Search, Filter } from "lucide-react";
-import { T, BtnPrimary } from "../../lib/theme";
+import { X, UserPlus, Shield, Trash2, Edit3, Search } from "lucide-react";
 
 interface User {
   id: string;

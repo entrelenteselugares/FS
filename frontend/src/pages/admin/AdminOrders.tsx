@@ -4,7 +4,7 @@ import {
   Search, ChevronDown, ChevronRight, 
   CheckCircle2, Clock, PieChart, 
   TrendingUp, CreditCard, DollarSign,
-  ArrowUpRight, Filter, Zap, X
+  ArrowUpRight, Filter, Zap
 } from "lucide-react";
 
 interface Order {

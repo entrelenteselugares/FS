@@ -27,10 +27,6 @@ interface Service {
   category: string;
 }
 
-interface ConfigItem {
-  key: string;
-  value: string;
-}
 
 const CATEGORY_ICONS: Record<string, React.ElementType> = {
   FOTOGRAFIA: Camera,
