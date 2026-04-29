@@ -328,6 +328,7 @@ export default function ClienteArea() {
           isOpen={!!selected}
           onClose={() => setSelected(null)}
           width="max-w-2xl"
+          title={selected?.event.nomeNoivos}
         >
           {selected && (
             <PedidoDetalhe
@@ -508,25 +509,6 @@ function PedidoDetalhe({ pedido, loading, onClose, onGoToEvent, onChangePrivacy,
   const navigate = useNavigate();
   return (
     <div className="flex flex-col bg-theme-bg overflow-hidden">
-      {/* Header */}
-      <div className="p-8 border-b border-theme-border/40 flex justify-between items-start bg-theme-bg-muted/5">
-        <div className="space-y-1">
-          <p className={`text-[9px] font-black uppercase tracking-[0.4em] ${pedido.hasPaid ? 'text-brand-tactical' : 'text-amber-500'}`}>
-            {pedido.hasPaid ? "Entrega Liberada" : "Processamento Ativo"}
-          </p>
-          <h2 className="text-3xl font-heading font-black italic text-theme-text uppercase tracking-tighter">
-            {pedido.event.nomeNoivos}
-          </h2>
-          <div className="flex items-center gap-3 text-[10px] font-bold text-theme-muted uppercase tracking-widest">
-            <span>Ref: {pedido.event.id.slice(0, 8).toUpperCase()}</span>
-            <span className="w-1 h-1 rounded-full bg-theme-border" />
-            <span>{formatDate(pedido.createdAt)}</span>
-          </div>
-        </div>
-        <button onClick={onClose} className="p-2 text-theme-muted hover:text-theme-text transition-colors">
-          <X size={20} />
-        </button>
-      </div>
 
       <div className="p-8 space-y-10">
         {/* Status Card */}

@@ -243,10 +243,11 @@ export const AdminEvents: React.FC<AdminEventsProps> = ({ initialEditEventId }) 
         services: expressFormData.services.join(", ")
       });
       
-      if (data.isDigital) {
-        showNotification("Venda registrada! Redirecionando para pagamento...");
+      if (data.isDigital && data.checkoutUrl) {
+        showNotification("Venda registrada! Abrindo link de pagamento...");
         setTimeout(() => {
-          window.location.href = `/checkout/payment?orderId=${data.orderId}`;
+          window.open(data.checkoutUrl, "_blank");
+          setIsExpressModalOpen(false);
         }, 1500);
         return;
       }

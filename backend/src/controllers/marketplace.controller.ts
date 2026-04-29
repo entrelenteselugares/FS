@@ -5,6 +5,7 @@ import { slugify } from "../lib/utils";
 import { supabaseAdmin } from "../lib/supabase";
 import { PricingService } from "../services/pricing.service";
 import { NotificationService } from "../services/notification.service";
+import { MercadoPagoService } from "../services/mercadopago.service";
 import { audit } from "../lib/audit";
 import { applyWatermark } from "../lib/image-processor";
 import bcrypt from "bcryptjs";
@@ -166,7 +167,7 @@ export class MarketplaceController {
         }));
       }
 
-      // 4. Cria o Pedido (Status APROVADO para visibilidade nos dashboards)
+      // 4. Cria o Pedido
       const isDigital = finalMethod === "PIX" || finalMethod === "CARD";
       const { matriz, captacao, edicao, cartorio } = await PricingService.calculateSplits(finalAmount);
 
@@ -193,6 +194,34 @@ export class MarketplaceController {
         }
       });
       
+      // 5. INTEGRAÇÃO MERCADO PAGO (Para Venda Digital via Marketplace)
+      let checkoutUrl = null;
+      if (isDigital) {
+        try {
+          const preference = await MercadoPagoService.createPreference({
+            items: [
+              {
+                id: order.id,
+                title: `FOTOS: ${event.nomeNoivos}`,
+                unit_price: finalAmount,
+                quantity: 1,
+                currency_id: "BRL"
+              }
+            ],
+            external_reference: order.id,
+            notification_url: `${process.env.BACKEND_URL}/api/mercadopago/webhook`,
+            payer: {
+              email: finalEmail,
+              name: finalName
+            }
+          });
+          checkoutUrl = preference.init_point;
+        } catch (mpError) {
+          console.error("[MP Preference Error]:", mpError);
+          // Não trava a criação do pedido, mas avisa o erro
+        }
+      }
+
       // Audit — Registro de Venda Expressa (P0)
       await audit(req, "EXPRESS_SALE_CREATED", "Event", event.id, null, {
         type: event.type,
@@ -200,19 +229,28 @@ export class MarketplaceController {
         method: finalMethod,
         location: finalLocation,
         buyerEmail: finalEmail,
-        buyerWhatsapp: whatsapp || null,
-        internalNotes: internalNotes || null,
         orderId: order.id,
-        isDigital
+        isDigital,
+        hasCheckout: !!checkoutUrl
       });
+
+      // ENVIO DE E-MAIL (Sempre após garantir o pedido)
+      if (user) {
+        NotificationService.sendWelcomeEmail({
+          to: finalEmail,
+          name: finalName,
+          tempPassword: tempPassword
+        }).catch(e => console.error("[ExpressSale Email Error]:", e));
+      }
 
       return res.json({ 
         success: true, 
         eventId: event.id, 
         orderId: order.id,
         isDigital,
+        checkoutUrl, // Enviando o link real para o frontend
         message: isDigital 
-          ? "Venda registrada. Redirecionando para pagamento..." 
+          ? "Venda registrada. Gerando link de pagamento..." 
           : "Venda registrada e liquidada com sucesso!"
       });
 
