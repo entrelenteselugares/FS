@@ -557,7 +557,7 @@ export default function ProfissionalDashboard() {
                 {profile?.proServices?.length ? (
                   <div className="grid grid-cols-1 gap-6">
                     {profile.proServices.map(svc => (
-                      <div key={svc.id} className="group flex justify-between items-center p-8 bg-theme-bg-muted/30 border border-theme-border/40 hover:border-brand-tactical/40 transition-all relative overflow-hidden">
+                      <div key={svc.id} className="group flex flex-col sm:flex-row justify-between items-start sm:items-center p-8 bg-theme-bg-muted/30 border border-theme-border/40 hover:border-brand-tactical/40 transition-all relative overflow-hidden gap-6">
                         <div className="absolute left-0 top-0 h-full w-1 bg-brand-tactical opacity-20 group-hover:opacity-100 transition-all" />
                         <div className="space-y-2">
                           <div className="flex items-center gap-3"><Briefcase size={14} className="text-brand-tactical" /><div className="text-base font-black text-theme-text uppercase italic tracking-tight">{svc.name}</div></div>

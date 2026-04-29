@@ -349,7 +349,7 @@ export default function UnidadeFixaDashboard() {
 
         {/* KPIs Dashboard */}
         {!loading && stats && (
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-px bg-theme-border/20 border border-theme-border/20 shadow-2xl">
+          <div className="grid grid-cols-2 lg:grid-cols-4 gap-px bg-theme-border/20 border border-theme-border/20 shadow-2xl">
             {[
               { label: "Operações / Mês", value: String(stats.eventosMes ?? 0), icon: <Calendar size={14} /> },
               { label: "Total Histórico", value: String(stats.totalEventos ?? 0), icon: <Camera size={14} /> },

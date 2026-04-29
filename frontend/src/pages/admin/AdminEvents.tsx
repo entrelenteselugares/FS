@@ -319,6 +319,7 @@ export const AdminEvents: React.FC<AdminEventsProps> = ({ initialEditEventId }) 
       `}</style>
 
       <div className="events-container">
+        {/* View Desktop */}
         <table className="events-table">
           <thead>
             <tr>
@@ -358,6 +359,44 @@ export const AdminEvents: React.FC<AdminEventsProps> = ({ initialEditEventId }) 
             ))}
           </tbody>
         </table>
+
+        {/* View Mobile */}
+        <div className="lg:hidden space-y-4">
+          {loading ? (
+            <div className="py-20 text-center text-[10px] text-theme-muted uppercase tracking-[0.3em]">Indexando Eventos...</div>
+          ) : events.length === 0 ? (
+            <div className="py-20 text-center text-[10px] text-theme-muted uppercase tracking-[0.3em]">Nenhum registro encontrado.</div>
+          ) : events.map((event) => (
+            <div key={event.id} className="event-card-mobile">
+              <div className="flex justify-between items-start border-b border-white/5 pb-3">
+                <div>
+                  <div className="text-[12px] font-black text-theme-text uppercase tracking-tight">{event.title}</div>
+                  <div className="text-[9px] text-theme-muted font-bold uppercase">{event.location}</div>
+                </div>
+                <div className="text-[10px] font-bold text-theme-text/80">{new Date(event.date).toLocaleDateString("pt-BR")}</div>
+              </div>
+              <div className="flex justify-between items-center pt-2">
+                <div className="flex gap-8">
+                  <div>
+                    <span className="text-[8px] font-black text-theme-muted uppercase block mb-1">Vendas</span>
+                    <span className="text-sm font-black text-brand-tactical">{event._count?.pedidos || 0}</span>
+                  </div>
+                  <div>
+                    <span className="text-[8px] font-black text-theme-muted uppercase block mb-1">Produção</span>
+                    <div className="flex gap-2">
+                      <div className={`w-2 h-2 rounded-full ${event.coverPhotoUrl ? 'bg-brand-tactical' : 'bg-zinc-800'}`} />
+                      <div className={`w-2 h-2 rounded-full ${(event.lightroomUrl || event.driveUrl) ? 'bg-brand-tactical' : 'bg-zinc-800'}`} />
+                    </div>
+                  </div>
+                </div>
+                <div className="flex gap-2">
+                  <button onClick={() => { setQrModalEvent(event); setCopied(false); }} className="p-3 border border-theme-border text-theme-muted"><QrCode size={16} /></button>
+                  <button onClick={() => handleEditOpen(event)} className="px-5 py-3 border border-theme-border text-[9px] font-black uppercase tracking-widest text-theme-text">Editar</button>
+                </div>
+              </div>
+            </div>
+          ))}
+        </div>
       </div>
 
       {isModalOpen && (
@@ -384,7 +423,7 @@ export const AdminEvents: React.FC<AdminEventsProps> = ({ initialEditEventId }) 
               <form onSubmit={handleCreate} className="flex-1 flex flex-col">
                   <div className="flex-1">
                     {activeTab === 'info' && (
-                      <div className="grid grid-cols-2 gap-12 animate-in fade-in duration-500">
+                      <div className="grid grid-cols-1 md:grid-cols-2 gap-12 animate-in fade-in duration-500">
                         <div className="space-y-12">
                           <div className="space-y-4">
                             <label className="text-[9px] font-black text-theme-muted uppercase tracking-[0.4em]">Capa da Vitrine</label>
@@ -424,7 +463,7 @@ export const AdminEvents: React.FC<AdminEventsProps> = ({ initialEditEventId }) 
                     )}
 
                     {activeTab === 'equipe' && (
-                      <div className="grid grid-cols-2 gap-12 animate-in fade-in duration-500">
+                      <div className="grid grid-cols-1 md:grid-cols-2 gap-12 animate-in fade-in duration-500">
                         <div className="space-y-12">
                           <div className="space-y-3">
                             <label className="text-[9px] font-black text-theme-muted uppercase tracking-[0.4em]">Unidade Fixa</label>
@@ -465,7 +504,7 @@ export const AdminEvents: React.FC<AdminEventsProps> = ({ initialEditEventId }) 
 
                     {activeTab === 'comercial' && (
                       <div className="animate-in fade-in duration-500 space-y-5">
-                        <div className="grid grid-cols-2 gap-12">
+                        <div className="grid grid-cols-1 md:grid-cols-2 gap-12">
                           <div className="space-y-4">
                             <div className="grid grid-cols-2 gap-6">
                               <div className="space-y-1.5">
@@ -565,7 +604,7 @@ export const AdminEvents: React.FC<AdminEventsProps> = ({ initialEditEventId }) 
           <div className="w-full max-w-5xl bg-theme-bg border border-theme-border p-10 relative shadow-2xl">
              <button onClick={() => setIsExpressModalOpen(false)} className="absolute top-8 right-8 text-theme-muted hover:text-white"><X size={20} /></button>
              <div className="mb-10"><h2 className="text-2xl font-black text-theme-text uppercase tracking-tighter">Venda Rápida</h2></div>
-             <form onSubmit={handleExpressSaleSubmit} className="grid grid-cols-2 gap-12">
+             <form onSubmit={handleExpressSaleSubmit} className="grid grid-cols-1 md:grid-cols-2 gap-12">
                 <div className="space-y-6">
                   <div className="space-y-2"><label className="text-[8px] font-black text-theme-muted uppercase tracking-[0.4em]">Cliente</label><input type="text" className="w-full bg-theme-bg border border-theme-border p-4 text-[12px] text-theme-text outline-none font-bold" value={expressFormData.customerName} onChange={e => setExpressFormData({...expressFormData, customerName: e.target.value})} placeholder="NOME" /></div>
                   <div className="space-y-2"><label className="text-[8px] font-black text-theme-muted uppercase tracking-[0.4em]">E-mail</label><input type="email" required className="w-full bg-theme-bg border border-theme-border p-4 text-[12px] text-theme-text outline-none font-bold" value={expressFormData.customerEmail} onChange={e => setExpressFormData({...expressFormData, customerEmail: e.target.value})} placeholder="EMAIL" /></div>
