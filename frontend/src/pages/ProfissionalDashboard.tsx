@@ -45,6 +45,7 @@ interface ServiceCatalog {
   id: string;
   name: string;
   description: string | null;
+  category: string;
   basePrice: number;
   estimatedMinutes: number;
 }
@@ -53,10 +54,16 @@ interface ProfessionalService {
   id: string;
   name: string;
   description: string | null;
+  category: string | null;
   price: number;
   catalogId: string | null;
   active: boolean;
   catalog?: ServiceCatalog;
+}
+
+interface EquipmentItem {
+  name: string;
+  value: number;
 }
 
 interface ProfileData {
@@ -69,6 +76,8 @@ interface ProfileData {
   pixType: string | null;
   services: string[];
   equipment: string | null;
+  equipmentList?: EquipmentItem[];
+  experienceYears?: number;
   hourlyRate?: number;
   equipmentMultiplier?: number;
   proServices?: ProfessionalService[];
@@ -207,8 +216,8 @@ export default function ProfissionalDashboard() {
 
   const fetchServiceCatalog = useCallback(async () => {
     try {
-      const { data } = await API.get("public/service-catalog");
-      setCatalogServices(data);
+      const { data } = await API.get("public/configs/services");
+      setCatalogServices(data.services || []);
     } catch (err) {
       console.error("Erro ao buscar catálogo global:", err);
     }
@@ -263,8 +272,9 @@ export default function ProfissionalDashboard() {
       showNotification("Venda e Operação registradas com sucesso!");
       setIsExpressModalOpen(false);
       fetchEvents();
-    } catch (err: any) {
-      showNotification(err.response?.data?.error || "Erro na venda expressa.", 'error');
+    } catch (err: unknown) {
+      const errorMessage = err instanceof Error ? err.message : "Erro na venda expressa.";
+      showNotification(errorMessage, 'error');
     } finally {
       setLoading(false);
     }
@@ -275,12 +285,11 @@ export default function ProfissionalDashboard() {
     setSavingPrices(true);
     try {
       const { data } = await API.patch("profissional/me", {
-        hourlyRate: profile.hourlyRate,
-        equipmentMultiplier: profile.equipmentMultiplier
+        hourlyRate: profile.hourlyRate
       });
       setProfile(data);
       showNotification("Configurações de precificação atualizadas!", "success");
-    } catch (error) {
+    } catch {
       showNotification("Erro ao atualizar precificação", "error");
     } finally {
       setSavingPrices(false);
@@ -301,7 +310,7 @@ export default function ProfissionalDashboard() {
       });
       fetchProfile();
       showNotification("Serviço adicionado à sua vitrine!", "success");
-    } catch (error) {
+    } catch {
       showNotification("Erro ao adicionar serviço", "error");
     }
   };
@@ -312,7 +321,7 @@ export default function ProfissionalDashboard() {
       await API.delete(`/profissional/services/${serviceId}`);
       fetchProfile();
       showNotification("Serviço removido.", "success");
-    } catch (error) {
+    } catch {
       showNotification("Erro ao remover serviço", "error");
     }
   };
@@ -335,7 +344,7 @@ export default function ProfissionalDashboard() {
     }
   }, [loading, pendingEvents.length, unitInvites.length, hasCheckedInvites]);
 
-  const NAV_ITEMS = (activeTab: string, setActiveTab: (t: any) => void, pendingCount: number): NavItem[] => [
+  const NAV_ITEMS = (activeTab: string, setActiveTab: (t: "agenda" | "convites" | "financeiro" | "servicos") => void, pendingCount: number): NavItem[] => [
     { label: "Visão Geral", onClick: () => setActiveTab("agenda"), isActive: activeTab === "agenda", icon: <LayoutDashboard size={16} /> },
     { label: "Convites Pendentes", onClick: () => setActiveTab("convites"), isActive: activeTab === "convites", icon: <MessageCircle size={16} />, badge: pendingCount },
     { label: "Financeiro", onClick: () => setActiveTab("financeiro"), isActive: activeTab === "financeiro", icon: <DollarSign size={16} /> },
@@ -355,27 +364,46 @@ export default function ProfissionalDashboard() {
       `}</style>
 
       {showNewServicesModal && (
-        <div style={{ position: "fixed", inset: 0, zIndex: 5000, display: "flex", alignItems: "center", justifyContent: "center", background: "rgba(0,0,0,0.85)", backdropFilter: "blur(8px)", padding: "1.5rem" }}>
-          <div className="bg-theme-bg w-full max-w-lg p-10 text-center border-2 border-brand-tactical shadow-[0_0_50px_rgba(133,185,172,0.2)] animate-in fade-in zoom-in duration-300 relative">
-            <div className="w-16 h-16 rounded-full bg-brand-tactical/20 flex items-center justify-center mx-auto mb-6 text-brand-tactical"><Award size={32} /></div>
-            <h2 className="text-2xl font-heading font-black text-theme-text uppercase tracking-tight italic leading-none mb-2">Novas Oportunidades!</h2>
-            <p className="text-[11px] font-bold text-theme-muted uppercase tracking-widest mb-10">Existem convites pendentes aguardando sua resposta tática.</p>
-            <div className="space-y-3">
+        <div className="fixed inset-0 z-[8000] flex items-center justify-center p-4 backdrop-blur-2xl bg-black/90 animate-in fade-in duration-500">
+          <div className="w-full max-w-lg bg-[#0c0c0c] border border-white/10 p-10 md:p-16 shadow-[0_0_150px_rgba(133,185,172,0.15)] relative overflow-hidden text-center space-y-10">
+            <div className="absolute top-0 left-0 w-full h-[3px] bg-gradient-to-r from-transparent via-brand-tactical to-transparent" />
+            <div className="flex justify-center">
+               <div className="p-6 bg-brand-tactical/10 border border-brand-tactical/30 rounded-full text-brand-tactical animate-bounce">
+                 <ShieldCheck size={48} />
+               </div>
+            </div>
+            <div className="space-y-4">
+              <h2 className="text-3xl font-heading font-black text-theme-text uppercase tracking-tighter italic leading-tight">Oportunidades Disponíveis</h2>
+              <p className="text-[10px] text-theme-muted uppercase tracking-[0.4em] italic font-bold">A matriz detectou novos chamados compatíveis com seu perfil</p>
+            </div>
+            <div className="grid grid-cols-1 gap-4">
               {unitInvites.length > 0 && (
-                <div className="bg-brand-tactical/10 p-4 border border-brand-tactical/30">
-                  <div className="text-[8px] font-black text-brand-tactical uppercase tracking-[0.2em] mb-1">Parcerias de Unidade</div>
-                  <div className="text-lg font-heading font-black text-theme-text italic">{unitInvites.length} {unitInvites.length === 1 ? "NOVO CONVITE" : "NOVOS CONVITES"}</div>
+                <div className="bg-brand-tactical/5 p-6 border border-brand-tactical/20 group hover:border-brand-tactical transition-all">
+                  <div className="text-[9px] font-black text-brand-tactical uppercase tracking-[0.2em] mb-2 italic">Expansão de Rede</div>
+                  <div className="text-xl font-heading font-black text-theme-text italic leading-none">{unitInvites.length} {unitInvites.length === 1 ? "CONVITE DE UNIDADE" : "CONVITES DE UNIDADE"}</div>
                 </div>
               )}
               {pendingEvents.length > 0 && (
-                <div className="bg-brand-tactical/10 p-4 border border-brand-tactical/30">
-                  <div className="text-[8px] font-black text-brand-tactical uppercase tracking-[0.2em] mb-1">Chamados de Trabalho</div>
-                  <div className="text-lg font-heading font-black text-theme-text italic">{pendingEvents.length} {pendingEvents.length === 1 ? "TRABALHO DISPONÍVEL" : "TRABALHOS DISPONÍVEIS"}</div>
+                <div className="bg-white/2 p-6 border border-white/5 group hover:border-brand-tactical/40 transition-all">
+                  <div className="text-[9px] font-black text-theme-muted uppercase tracking-[0.2em] mb-2 italic">Chamados de Campo</div>
+                  <div className="text-xl font-heading font-black text-theme-text italic leading-none">{pendingEvents.length} {pendingEvents.length === 1 ? "TRABALHO DISPONÍVEL" : "TRABALHOS DISPONÍVEIS"}</div>
                 </div>
               )}
             </div>
-            <button onClick={() => { setShowNewServicesModal(false); setActiveTab(unitInvites.length > 0 ? "convites" : "agenda"); }} className="w-full py-5 bg-brand-tactical text-zinc-950 text-[11px] font-black uppercase tracking-[0.3em] hover:brightness-110 shadow-xl shadow-brand-tactical/20 transition-all mt-8">VER DETALHES E RESPONDER</button>
-            <button onClick={() => setShowNewServicesModal(false)} className="mt-4 text-[9px] font-black text-theme-muted uppercase tracking-widest hover:text-theme-text transition-colors">IGNORAR POR ENQUANTO</button>
+            <div className="space-y-6 pt-4">
+              <button 
+                onClick={() => { setShowNewServicesModal(false); setActiveTab(unitInvites.length > 0 ? "convites" : "agenda"); }} 
+                className="w-full py-6 bg-brand-tactical text-brand-text text-[11px] font-black uppercase tracking-[0.3em] hover:brightness-110 shadow-2xl shadow-brand-tactical/20 transition-all italic flex items-center justify-center gap-3"
+              >
+                ACESSAR CENTRAL DE CONVITES <ArrowRight size={16} />
+              </button>
+              <button 
+                onClick={() => setShowNewServicesModal(false)} 
+                className="text-[9px] font-black text-theme-muted uppercase tracking-[0.3em] hover:text-brand-tactical transition-colors italic"
+              >
+                IGNORAR POR ENQUANTO
+              </button>
+            </div>
           </div>
         </div>
       )}
@@ -399,8 +427,8 @@ export default function ProfissionalDashboard() {
           </div>
           
           <div className="flex gap-4">
-             <button onClick={() => setViewTab("lista")} className={`px-6 py-3 text-[9px] font-black uppercase tracking-widest transition-all flex items-center gap-2 border ${viewTab === "lista" ? 'bg-brand-tactical text-zinc-950 border-brand-tactical shadow-lg shadow-brand-tactical/20' : 'text-theme-muted border-theme-border/60 hover:text-theme-text'}`}><List size={14} /> Lista</button>
-             <button onClick={() => setViewTab("calendario")} className={`px-6 py-3 text-[9px] font-black uppercase tracking-widest transition-all flex items-center gap-2 border ${viewTab === "calendario" ? 'bg-brand-tactical text-zinc-950 border-brand-tactical shadow-lg shadow-brand-tactical/20' : 'text-theme-muted border-theme-border/60 hover:text-theme-text'}`}><CalendarIcon size={14} /> Calendário</button>
+             <button onClick={() => setViewTab("lista")} className={`px-6 py-3 text-[9px] font-black uppercase tracking-widest transition-all flex items-center gap-2 border ${viewTab === "lista" ? 'bg-brand-tactical text-brand-text border-brand-tactical shadow-lg shadow-brand-tactical/20' : 'text-theme-muted border-theme-border/60 hover:text-theme-text'}`}><List size={14} /> Lista</button>
+             <button onClick={() => setViewTab("calendario")} className={`px-6 py-3 text-[9px] font-black uppercase tracking-widest transition-all flex items-center gap-2 border ${viewTab === "calendario" ? 'bg-brand-tactical text-brand-text border-brand-tactical shadow-lg shadow-brand-tactical/20' : 'text-theme-muted border-theme-border/60 hover:text-theme-text'}`}><CalendarIcon size={14} /> Calendário</button>
           </div>
         </div>
 
@@ -442,7 +470,7 @@ export default function ProfissionalDashboard() {
             <h4 className="text-[11px] font-black text-brand-tactical uppercase tracking-[0.4em] italic">Suporte de Campo</h4>
             <p className="text-[10px] text-theme-muted uppercase tracking-widest font-medium">Linha direta com a matriz para dúvidas operacionais ou técnicas.</p>
           </div>
-          <a href="https://wa.me/5519984470420" target="_blank" rel="noopener noreferrer" className="w-full md:w-auto px-8 py-4 bg-brand-tactical text-zinc-950 text-[10px] font-black uppercase tracking-[0.3em] flex items-center justify-center gap-3 hover:brightness-110 transition-all shadow-lg shadow-brand-tactical/10"><MessageCircle size={16} /> Falar com Matriz</a>
+          <a href="https://wa.me/5519984470420" target="_blank" rel="noopener noreferrer" className="w-full md:w-auto px-8 py-4 bg-brand-tactical text-brand-text text-[10px] font-black uppercase tracking-[0.3em] flex items-center justify-center gap-3 hover:brightness-110 transition-all shadow-lg shadow-brand-tactical/10"><MessageCircle size={16} /> Falar com Matriz</a>
         </div>
 
         <div className="space-y-6">
@@ -471,7 +499,7 @@ export default function ProfissionalDashboard() {
                              <div className="space-y-1">
                                 <p className="text-base font-black text-theme-text uppercase tracking-tight italic">{p.payout?.weekStart ? formatDate(p.payout.weekStart) : 'REPASSE OPERACIONAL'}</p>
                                 <div className="flex items-center gap-3">
-                                   <span className={`text-[9px] font-black uppercase tracking-widest px-2 py-0.5 border ${p.status === 'PAID' ? 'bg-brand-tactical text-zinc-950 border-brand-tactical' : 'bg-amber-500/10 text-amber-500 border-amber-500/20'}`}>{p.status === 'PAID' ? 'LIQUIDADO' : 'EM PROCESSAMENTO'}</span>
+                                   <span className={`text-[9px] font-black uppercase tracking-widest px-2 py-0.5 border ${p.status === 'PAID' ? 'bg-brand-tactical text-theme-bg border-brand-tactical' : 'bg-amber-500/10 text-amber-500 border-amber-500/20'}`}>{p.status === 'PAID' ? 'LIQUIDADO' : 'EM PROCESSAMENTO'}</span>
                                    <span className="text-[9px] font-bold text-theme-muted uppercase tracking-widest italic">{p.orderCount} VENDAS CONSOLIDADAS</span>
                                 </div>
                              </div>
@@ -503,10 +531,16 @@ export default function ProfissionalDashboard() {
                     </div>
                     <div className="space-y-4">
                       <div className="flex items-center gap-3"><div className="p-2 bg-theme-bg-muted border border-theme-border/60 text-brand-tactical"><Zap size={16} /></div><label className="text-[11px] font-black text-theme-text uppercase tracking-widest italic">Multiplicador Técnico</label></div>
-                      <input type="number" step="0.1" className="w-full bg-theme-bg-muted border border-theme-border/60 p-5 text-xl font-heading font-black text-theme-text italic outline-none focus:border-brand-tactical transition-all" value={profile?.equipmentMultiplier || ""} onChange={(e) => setProfile(p => p ? { ...p, equipmentMultiplier: Number(e.target.value) } : null)} placeholder="1.0" />
+                      <div className="w-full bg-theme-bg-muted/50 border border-theme-border/60 p-5 text-xl font-heading font-black text-brand-tactical italic flex justify-between items-center group relative">
+                        <span>{profile?.equipmentMultiplier || "1.0"}</span>
+                        <div className="flex flex-col items-end">
+                          <span className="text-[8px] font-black uppercase text-theme-muted tracking-tighter">Automação Ativa</span>
+                        </div>
+                      </div>
+                      <p className="text-[9px] text-theme-muted uppercase italic font-bold">O multiplicador é calculado com base no seu inventário e experiência. <button onClick={() => setIsProfileOpen(true)} className="text-brand-tactical hover:underline cursor-pointer">GERENCIAR ATIVOS</button></p>
                     </div>
                  </div>
-                 <button onClick={handleSavePricing} disabled={savingPrices} className="w-full md:w-auto px-12 py-5 bg-brand-tactical text-zinc-950 text-[11px] font-black uppercase tracking-[0.3em] flex items-center justify-center gap-4 hover:brightness-110 disabled:opacity-40 transition-all shadow-xl shadow-brand-tactical/20">{savingPrices ? "SINCRONIZANDO..." : <><Check size={20} /> ATUALIZAR MATRIZ DE PREÇOS</>}</button>
+                 <button onClick={handleSavePricing} disabled={savingPrices} className="w-full md:w-auto px-12 py-5 bg-brand-tactical text-zinc-950 text-[11px] font-black uppercase tracking-[0.3em] flex items-center justify-center gap-4 hover:brightness-110 disabled:opacity-40 transition-all shadow-xl shadow-brand-tactical/20">{savingPrices ? "SINCRONIZANDO..." : <><Check size={20} /> ATUALIZAR VALOR HORA</>}</button>
               </div>
 
               <div className="bg-theme-bg border border-theme-border/60 p-8 md:p-16 space-y-10">
@@ -531,7 +565,7 @@ export default function ProfissionalDashboard() {
                         </div>
                         <div className="flex items-center gap-12">
                           <div className="text-left md:text-right"><p className="text-[8px] font-black text-theme-muted uppercase tracking-widest mb-1 italic opacity-60">Preço Ativo</p><p className="text-2xl font-heading font-black text-theme-text italic leading-none">R$ {Number(svc.price).toLocaleString('pt-BR', { minimumFractionDigits: 2 })}</p></div>
-                          <button onClick={() => handleRemoveService(svc.id)} className="p-4 bg-red-500/10 text-red-500 hover:bg-red-500 hover:text-zinc-950 transition-all border border-red-500/20"><X size={18} /></button>
+                          <button onClick={() => handleRemoveService(svc.id)} className="p-4 bg-red-500/10 text-red-500 hover:bg-red-500 hover:text-brand-text transition-all border border-red-500/20"><X size={18} /></button>
                         </div>
                       </div>
                     ))}
@@ -550,7 +584,7 @@ export default function ProfissionalDashboard() {
                         <div className="space-y-3"><div className="text-base font-black text-theme-text uppercase tracking-tight italic">{cat.name}</div><div className="flex items-center gap-4"><div className="flex items-center gap-2 text-[9px] font-bold text-theme-muted uppercase tracking-widest italic"><Clock size={12} className="text-brand-tactical" /> {cat.estimatedMinutes} MINUTOS</div><div className="w-1 h-1 rounded-full bg-theme-border" /><div className="text-[9px] font-bold text-theme-muted uppercase tracking-widest italic">PREÇO MÍNIMO: R$ {Number(cat.basePrice).toFixed(2)}</div></div></div>
                         <div className="flex items-center justify-between md:justify-end gap-12">
                           <div className="text-left md:text-right space-y-1"><div className="flex items-center md:justify-end gap-2 text-[8px] font-black text-brand-tactical uppercase tracking-widest italic"><TrendingUp size={10} /> Valor Sugerido p/ Você</div><div className="text-3xl font-heading font-black text-brand-tactical italic leading-none"><span className="text-sm mr-1 font-sans not-italic">R$</span>{suggested.toLocaleString('pt-BR', { minimumFractionDigits: 2 })}</div></div>
-                          {alreadyAdded ? <div className="px-6 py-3 bg-brand-tactical/10 border border-brand-tactical/30 text-brand-tactical text-[10px] font-black uppercase tracking-widest italic flex items-center gap-3"><Check size={18} /> EM VITRINE</div> : <button onClick={() => handleAddService(cat)} className="px-10 py-4 bg-brand-tactical text-zinc-950 text-[11px] font-black uppercase tracking-[0.2em] hover:brightness-110 shadow-lg shadow-brand-tactical/10 italic">IMPORTAR</button>}
+                          {alreadyAdded ? <div className="px-6 py-3 bg-brand-tactical/10 border border-brand-tactical/30 text-brand-tactical text-[10px] font-black uppercase tracking-widest italic flex items-center gap-3"><Check size={18} /> EM VITRINE</div> : <button onClick={() => handleAddService(cat)} className="px-10 py-4 bg-brand-tactical text-brand-text text-[11px] font-black uppercase tracking-[0.2em] hover:brightness-110 shadow-lg shadow-brand-tactical/10 italic">IMPORTAR</button>}
                         </div>
                       </div>
                     );
@@ -584,7 +618,7 @@ export default function ProfissionalDashboard() {
                             <div className="flex-grow space-y-2"><div className="flex items-center gap-3"><h3 className="text-xl font-heading font-black text-theme-text uppercase italic">{ev.nomeNoivos}</h3><div className={`px-2 py-0.5 text-[7px] font-black border ${ev.captacaoStatus === 'ACCEPTED' ? 'bg-brand-tactical/10 text-brand-tactical border-brand-tactical/20' : 'bg-amber-500/10 text-amber-500 border-amber-500/20'}`}>{ev.captacaoStatus === 'ACCEPTED' ? 'CONFIRMADO' : 'PENDENTE'}</div></div><div className="flex gap-4 text-[9px] text-theme-muted font-bold uppercase"><span className="flex items-center gap-1"><MapPin size={10} /> {ev.location || "Campo"}</span><span className="flex items-center gap-1"><Briefcase size={10} /> {ev.captacaoId === user?.id ? 'CAPTAÇÃO' : 'EDIÇÃO'}</span><DeadlineTimer event={ev} type="FOTO" /></div></div>
                             <div className="flex items-center gap-4">
                               {activeTab === "convites" ? (
-                                <div className="flex gap-2"><button onClick={(e) => { e.stopPropagation(); handleRespond(ev.id, "REJECTED"); }} className="p-3 border border-red-500/30 text-red-500 hover:bg-red-500/10"><X size={14} /></button><button onClick={(e) => { e.stopPropagation(); handleRespond(ev.id, "ACCEPTED"); }} className="px-6 py-3 bg-brand-tactical text-zinc-950 text-[9px] font-black uppercase tracking-widest"><Check size={14} /> ACEITAR</button></div>
+                                <div className="flex gap-2"><button onClick={(e) => { e.stopPropagation(); handleRespond(ev.id, "REJECTED"); }} className="p-3 border border-red-500/30 text-red-500 hover:bg-red-500/10"><X size={14} /></button><button onClick={(e) => { e.stopPropagation(); handleRespond(ev.id, "ACCEPTED"); }} className="px-6 py-3 bg-brand-tactical text-brand-text text-[9px] font-black uppercase tracking-widest"><Check size={14} /> ACEITAR</button></div>
                               ) : <ChevronRight size={20} className={`text-theme-muted transition-transform ${selected?.id === ev.id ? 'rotate-90 text-brand-tactical' : ''}`} />}
                             </div>
                           </div>
@@ -601,7 +635,7 @@ export default function ProfissionalDashboard() {
       </div>
 
       {selected && (
-        <div onClick={() => setSelected(null)} className="fixed inset-0 z-[1000] flex items-center justify-center bg-black/90 backdrop-blur-xl p-6">
+        <div onClick={() => setSelected(null)} className="fixed inset-0 z-[1000] flex items-center justify-center p-6" style={{ background: T.overlay, backdropFilter: "blur(20px)" }}>
           <div onClick={e => e.stopPropagation()} className="w-full max-w-2xl bg-theme-bg border border-theme-border/60 shadow-2xl animate-in zoom-in duration-300">
             <EventEditPanel event={selected} onUpdated={handleUpdated} onClose={() => setSelected(null)} />
           </div>
@@ -613,33 +647,140 @@ export default function ProfissionalDashboard() {
       )}
 
       {isExpressModalOpen && (
-        <div className="fixed inset-0 z-[7000] flex items-center justify-center bg-black/95 backdrop-blur-xl p-4 animate-in fade-in duration-300">
-          <div className="w-full max-w-lg bg-theme-bg border border-theme-border/60 shadow-2xl relative">
-            <div className="p-8 border-b border-theme-border/40 space-y-4">
-              <button onClick={() => setIsExpressModalOpen(false)} className="absolute top-6 right-6 text-theme-muted hover:text-white"><X size={24} /></button>
-              <div className="text-[10px] font-black text-brand-tactical uppercase tracking-[0.4em] italic">Venda Expressa · {expressStep}/3</div>
-              <h2 className="text-2xl font-heading font-black text-theme-text uppercase italic leading-none">{expressStep === 1 ? "Identificação" : expressStep === 2 ? "Produto" : "Pagamento"}</h2>
-              <div className="flex gap-2"><div className={`h-1 flex-1 ${expressStep >= 1 ? 'bg-brand-tactical' : 'bg-theme-border/20'}`} /><div className={`h-1 flex-1 ${expressStep >= 2 ? 'bg-brand-tactical' : 'bg-theme-border/20'}`} /><div className={`h-1 flex-1 ${expressStep >= 3 ? 'bg-brand-tactical' : 'bg-theme-border/20'}`} /></div>
+        <div className="fixed inset-0 z-[7000] flex items-center justify-center p-4 backdrop-blur-xl bg-black/40 animate-in fade-in duration-300">
+          <div className="w-full max-w-xl bg-theme-bg border border-theme-border shadow-[0_0_100px_rgba(0,0,0,0.1)] relative overflow-hidden flex flex-col">
+            {/* Top accent */}
+            <div className="absolute top-0 left-0 w-full h-[2px] bg-gradient-to-r from-transparent via-brand-tactical to-transparent" />
+            <div className="absolute top-0 right-0 w-32 h-32 bg-brand-tactical/5 rounded-full blur-3xl -mr-16 -mt-16 pointer-events-none" />
+
+            <div className="p-8 md:p-12 border-b border-theme-border/60 space-y-6 relative z-10">
+              <button onClick={() => setIsExpressModalOpen(false)} className="absolute top-8 right-8 text-theme-muted hover:text-brand-tactical transition-all"><X size={28} /></button>
+              <div className="space-y-1">
+                <div className="text-[10px] font-black text-brand-tactical uppercase tracking-[0.4em] italic">Unidade de Venda Direta</div>
+                <h2 className="text-3xl font-heading font-black text-theme-text uppercase italic leading-none">{expressStep === 1 ? "Identificação" : expressStep === 2 ? "Configuração" : "Finalização"}</h2>
+              </div>
+              
+              {/* Progress Steps */}
+              <div className="flex gap-3 pt-2">
+                {[1, 2, 3].map(step => (
+                  <div key={step} className="flex-1 space-y-2">
+                    <div className={`h-[2px] transition-all duration-500 ${expressStep >= step ? 'bg-brand-tactical' : 'bg-theme-border/20'}`} />
+                    <div className={`text-[7px] font-black uppercase tracking-widest ${expressStep >= step ? 'text-brand-tactical' : 'text-theme-muted/20'}`}>Fase 0{step}</div>
+                  </div>
+                ))}
+              </div>
             </div>
-            <div className="p-8">
+
+            <div className="p-8 md:p-12 min-h-[300px] flex flex-col relative z-10">
               {expressStep === 1 && (
-                <div className="space-y-6 animate-in slide-in-from-right-4">
-                  <div className="space-y-2"><label className="text-[9px] font-black text-theme-muted uppercase italic">E-mail *</label><input type="email" autoFocus value={expressFormData.customerEmail} onChange={e => setExpressFormData(p => ({ ...p, customerEmail: e.target.value }))} className="w-full bg-theme-bg-muted border border-theme-border/60 p-4 text-theme-text outline-none focus:border-brand-tactical" /></div>
-                  <div className="grid grid-cols-2 gap-4"><div className="space-y-2"><label className="text-[9px] font-black text-theme-muted uppercase italic">Nome</label><input type="text" value={expressFormData.customerName} onChange={e => setExpressFormData(p => ({ ...p, customerName: e.target.value }))} className="w-full bg-theme-bg-muted border border-theme-border/60 p-4 text-theme-text outline-none focus:border-brand-tactical" /></div><div className="space-y-2"><label className="text-[9px] font-black text-theme-muted uppercase italic">WhatsApp</label><input type="tel" value={expressFormData.whatsapp} onChange={e => setExpressFormData(p => ({ ...p, whatsapp: e.target.value }))} className="w-full bg-theme-bg-muted border border-theme-border/60 p-4 text-theme-text outline-none focus:border-brand-tactical" /></div></div>
-                  <button disabled={!expressFormData.customerEmail} onClick={() => setExpressStep(2)} className="w-full py-5 bg-brand-tactical text-zinc-950 text-[11px] font-black uppercase tracking-widest hover:brightness-110 disabled:opacity-40">PRÓXIMO</button>
+                <div className="space-y-8 animate-in slide-in-from-right-4 flex-grow">
+                  <div className="space-y-6">
+                    <div className="space-y-3">
+                      <label className="text-[9px] font-black text-theme-muted uppercase tracking-widest italic opacity-60">E-mail do Cliente *</label>
+                      <input 
+                        type="email" 
+                        autoFocus 
+                        placeholder="cliente@exemplo.com"
+                        value={expressFormData.customerEmail} 
+                        onChange={e => setExpressFormData(p => ({ ...p, customerEmail: e.target.value }))} 
+                        className="w-full bg-theme-bg-muted border border-theme-border p-5 text-theme-text outline-none focus:border-brand-tactical/50 transition-all font-medium" 
+                      />
+                    </div>
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                      <div className="space-y-3">
+                        <label className="text-[9px] font-black text-theme-muted uppercase tracking-widest italic opacity-60">Nome Completo</label>
+                        <input 
+                          type="text" 
+                          placeholder="Ex: João Silva"
+                          value={expressFormData.customerName} 
+                          onChange={e => setExpressFormData(p => ({ ...p, customerName: e.target.value }))} 
+                          className="w-full bg-theme-bg-muted border border-theme-border p-5 text-theme-text outline-none focus:border-brand-tactical/50 transition-all font-medium" 
+                        />
+                      </div>
+                      <div className="space-y-3">
+                        <label className="text-[9px] font-black text-theme-muted uppercase tracking-widest italic opacity-60">WhatsApp</label>
+                        <input 
+                          type="tel" 
+                          placeholder="(00) 00000-0000"
+                          value={expressFormData.whatsapp} 
+                          onChange={e => setExpressFormData(p => ({ ...p, whatsapp: e.target.value }))} 
+                          className="w-full bg-theme-bg-muted border border-theme-border p-5 text-theme-text outline-none focus:border-brand-tactical/50 transition-all font-medium" 
+                        />
+                      </div>
+                    </div>
+                  </div>
+                  <button 
+                    disabled={!expressFormData.customerEmail} 
+                    onClick={() => setExpressStep(2)} 
+                    className="w-full py-6 bg-brand-tactical text-brand-text text-[11px] font-black uppercase tracking-[0.4em] hover:brightness-110 disabled:opacity-40 shadow-xl shadow-brand-tactical/20 italic"
+                  >
+                    CONTINUAR OPERAÇÃO
+                  </button>
                 </div>
               )}
+
               {expressStep === 2 && (
-                <div className="space-y-6 animate-in slide-in-from-right-4">
-                  <div className="grid grid-cols-2 gap-4"><div className="space-y-2"><label className="text-[9px] font-black text-theme-muted uppercase italic">Valor (R$)</label><input type="number" value={expressFormData.amount} onChange={e => setExpressFormData(p => ({ ...p, amount: Number(e.target.value) }))} className="w-full bg-theme-bg-muted border border-theme-border/60 p-4 text-theme-text font-bold" /></div><div className="space-y-2"><label className="text-[9px] font-black text-theme-muted uppercase italic">Produto</label><select value={expressFormData.productType} onChange={e => setExpressFormData(p => ({ ...p, productType: e.target.value as any }))} className="w-full bg-theme-bg-muted border border-theme-border/60 p-4 text-theme-text"><option value="FOTOS">FOTOS (DIGITAL)</option><option value="REELS">REELS</option><option value="SD_CARD">CARTÃO SD</option><option value="ALBUM_IMPRESSO">ÁLBUM IMPRESSO</option></select></div></div>
-                  <div className="flex gap-4"><button onClick={() => setExpressStep(1)} className="flex-1 py-4 bg-theme-bg-muted border border-theme-border/60 text-theme-muted text-[10px] font-black uppercase">VOLTAR</button><button onClick={() => setExpressStep(3)} className="flex-[2] py-4 bg-brand-tactical text-zinc-950 text-[10px] font-black uppercase">PRÓXIMO</button></div>
+                <div className="space-y-8 animate-in slide-in-from-right-4 flex-grow">
+                  <div className="space-y-6">
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                      <div className="space-y-3">
+                        <label className="text-[9px] font-black text-theme-muted uppercase tracking-widest italic opacity-60">Valor Nominal (R$)</label>
+                        <div className="relative">
+                          <input 
+                            type="number" 
+                            value={expressFormData.amount} 
+                            onChange={e => setExpressFormData(p => ({ ...p, amount: Number(e.target.value) }))} 
+                            className="w-full bg-theme-bg-muted border border-theme-border p-5 text-brand-tactical font-heading font-black italic text-2xl outline-none" 
+                          />
+                          <div className="absolute right-4 top-1/2 -translate-y-1/2 text-[10px] font-black text-theme-muted uppercase">BRL</div>
+                        </div>
+                      </div>
+                      <div className="space-y-3">
+                        <label className="text-[9px] font-black text-theme-muted uppercase tracking-widest italic opacity-60">Categoria de Ativo</label>
+                        <select 
+                          value={expressFormData.productType} 
+                          onChange={e => setExpressFormData(p => ({ ...p, productType: e.target.value as any }))} 
+                          className="w-full bg-theme-bg-muted border border-theme-border p-5 text-theme-text font-black text-[10px] uppercase outline-none focus:border-brand-tactical/50 appearance-none cursor-pointer"
+                        >
+                          <option value="FOTOS">FOTOS (ENTREGA DIGITAL)</option>
+                          <option value="REELS">REELS / VIDEO CURTO</option>
+                          <option value="SD_CARD">CARTÃO SD (FÍSICO)</option>
+                          <option value="ALBUM_IMPRESSO">ÁLBUM LUXO IMPRESSO</option>
+                        </select>
+                      </div>
+                    </div>
+                  </div>
+                  <div className="flex gap-4">
+                    <button onClick={() => setExpressStep(1)} className="flex-1 py-5 bg-theme-bg-muted border border-theme-border text-theme-muted text-[11px] font-black uppercase tracking-widest italic">Voltar</button>
+                    <button onClick={() => setExpressStep(3)} className="flex-[2] py-5 bg-brand-tactical text-brand-text text-[11px] font-black uppercase tracking-[0.4em] hover:brightness-110 shadow-xl shadow-brand-tactical/20 italic">REVISAR PAGAMENTO</button>
+                  </div>
                 </div>
               )}
+
               {expressStep === 3 && (
-                <div className="space-y-6 animate-in slide-in-from-right-4">
-                  <div className="grid grid-cols-3 gap-2">{(["MONEY", "PIX", "CARD"] as const).map(m => (<button key={m} onClick={() => setExpressFormData(p => ({ ...p, paymentMethod: m }))} className={`py-4 border text-[9px] font-black uppercase ${expressFormData.paymentMethod === m ? 'bg-brand-tactical text-zinc-950 border-brand-tactical' : 'bg-theme-bg-muted border-theme-border/40 text-theme-muted'}`}>{m}</button>))}</div>
-                  <textarea value={expressFormData.internalNotes} onChange={e => setExpressFormData(p => ({ ...p, internalNotes: e.target.value }))} className="w-full bg-theme-bg-muted border border-theme-border/60 p-4 text-sm text-theme-text min-h-[80px] resize-none" placeholder="Notas internas..." />
-                  <div className="flex gap-4"><button onClick={() => setExpressStep(2)} className="flex-1 py-4 bg-theme-bg-muted border border-theme-border/60 text-theme-muted text-[10px] font-black uppercase">VOLTAR</button><button onClick={handleExpressSaleSubmit} disabled={loading} className="flex-[3] py-4 bg-brand-tactical text-zinc-950 text-[11px] font-black uppercase tracking-widest hover:brightness-110 disabled:opacity-40">{loading ? "PROCESSANDO..." : "FINALIZAR VENDA"}</button></div>
+                <div className="space-y-8 animate-in zoom-in-95 duration-300 flex-grow">
+                  <div className="p-8 bg-brand-tactical/5 border border-brand-tactical/20 space-y-6">
+                    <div className="flex justify-between items-center border-b border-brand-tactical/10 pb-4">
+                      <span className="text-[10px] font-black text-brand-tactical uppercase tracking-widest italic">Resumo da Transação</span>
+                      <div className="w-2 h-2 rounded-full bg-brand-tactical animate-pulse" />
+                    </div>
+                    <div className="space-y-4">
+                      <div className="flex justify-between"><span className="text-[9px] font-bold text-theme-muted uppercase">Cliente</span><span className="text-[10px] font-black text-theme-text uppercase">{expressFormData.customerEmail}</span></div>
+                      <div className="flex justify-between"><span className="text-[9px] font-bold text-theme-muted uppercase">Produto</span><span className="text-[10px] font-black text-theme-text uppercase italic">{expressFormData.productType}</span></div>
+                      <div className="flex justify-between pt-4 border-t border-brand-tactical/10"><span className="text-xs font-black text-brand-tactical uppercase italic">Total a Liquidar</span><span className="text-3xl font-heading font-black text-brand-tactical italic">R$ {expressFormData.amount.toLocaleString('pt-BR', { minimumFractionDigits: 2 })}</span></div>
+                    </div>
+                  </div>
+                  
+                  <div className="flex gap-4">
+                    <button onClick={() => setExpressStep(2)} className="flex-1 py-5 bg-theme-bg-muted border border-theme-border text-theme-muted text-[11px] font-black uppercase tracking-widest italic">Ajustar</button>
+                    <button 
+                      onClick={handleExpressSaleSubmit} 
+                      disabled={loading} 
+                      className="flex-[2] py-5 bg-brand-tactical text-brand-text text-[11px] font-black uppercase tracking-[0.4em] hover:brightness-110 shadow-xl shadow-brand-tactical/20 italic"
+                    >
+                      {loading ? "GERANDO QR CODE..." : "GERAR COBRANÇA PIX"}
+                    </button>
+                  </div>
                 </div>
               )}
             </div>
@@ -675,16 +816,56 @@ function EventEditPanel({ event, onUpdated, onClose }: { event: EventItem; onUpd
   };
 
   return (
-    <div className="p-8 md:p-12 space-y-8 bg-theme-bg">
-      <div className="flex justify-between items-center border-b border-theme-border/40 pb-6">
-        <h3 className="text-xl font-heading font-black text-theme-text uppercase italic leading-none">{event.nomeNoivos}</h3>
-        <button onClick={onClose} className="text-theme-muted hover:text-white"><X size={24} /></button>
+    <div className="fixed inset-0 z-[7000] flex items-center justify-center p-4 backdrop-blur-xl bg-black/40 animate-in fade-in duration-300">
+      <div className="w-full max-w-xl bg-theme-bg border border-theme-border shadow-[0_0_100px_rgba(0,0,0,0.1)] relative overflow-hidden">
+        <div className="absolute top-0 left-0 w-full h-[2px] bg-gradient-to-r from-transparent via-brand-tactical/50 to-transparent" />
+        
+        <div className="p-8 md:p-12 space-y-10 relative z-10">
+          <div className="flex justify-between items-start">
+            <div className="space-y-1">
+              <div className="text-[10px] font-black text-brand-tactical uppercase tracking-[0.4em] italic mb-2">Painel de Entrega Técnica</div>
+              <h3 className="text-2xl font-heading font-black text-theme-text uppercase italic leading-none">{event.nomeNoivos}</h3>
+            </div>
+            <button onClick={onClose} className="p-2 hover:bg-theme-bg-muted text-theme-muted hover:text-brand-tactical transition-all"><X size={24} /></button>
+          </div>
+
+          <div className="space-y-8">
+            <div className="space-y-3">
+              <div className="flex justify-between items-center">
+                <label className="text-[9px] font-black text-theme-muted uppercase tracking-widest italic opacity-60">Matriz Lightroom (Adobe)</label>
+                <div className="text-[8px] font-bold text-brand-tactical uppercase tracking-tighter">Sincronização Ativa</div>
+              </div>
+              <input 
+                placeholder="https://adobe.ly/..."
+                value={lrUrl} 
+                onChange={e => setLrUrl(e.target.value)} 
+                className="w-full bg-theme-bg-muted border border-theme-border p-5 text-theme-text outline-none focus:border-brand-tactical/50 transition-all text-xs font-medium" 
+              />
+            </div>
+
+            <div className="space-y-3">
+              <label className="text-[9px] font-black text-theme-muted uppercase tracking-widest italic opacity-60">Repositório Final (Drive/Dropbox)</label>
+              <input 
+                placeholder="https://drive.google.com/..."
+                value={drUrl} 
+                onChange={e => setDrUrl(e.target.value)} 
+                className="w-full bg-theme-bg-muted border border-theme-border p-5 text-theme-text outline-none focus:border-brand-tactical/50 transition-all text-xs font-medium" 
+              />
+            </div>
+          </div>
+
+          <div className="flex gap-4 pt-4">
+             <button onClick={onClose} className="flex-1 py-5 bg-theme-bg-muted border border-theme-border text-theme-muted text-[11px] font-black uppercase tracking-widest hover:text-theme-text transition-all italic">Cancelar</button>
+             <button 
+               onClick={handleSave} 
+               disabled={saving} 
+               className="flex-[2] py-5 bg-brand-tactical text-brand-text text-[11px] font-black uppercase tracking-[0.3em] hover:brightness-110 disabled:opacity-40 transition-all shadow-xl shadow-brand-tactical/20 italic"
+             >
+               {saving ? "PROCESSANDO..." : "EFETIVAR LINKS"}
+             </button>
+          </div>
+        </div>
       </div>
-      <div className="space-y-6">
-        <div className="space-y-2"><label className="text-[9px] font-black text-theme-muted uppercase tracking-widest italic">Link Galeria (Adobe)</label><input value={lrUrl} onChange={e => setLrUrl(e.target.value)} className="w-full bg-theme-bg-muted border border-theme-border/60 p-4 text-theme-text outline-none focus:border-brand-tactical" /></div>
-        <div className="space-y-2"><label className="text-[9px] font-black text-theme-muted uppercase tracking-widest italic">Link Entrega (Drive)</label><input value={drUrl} onChange={e => setDrUrl(e.target.value)} className="w-full bg-theme-bg-muted border border-theme-border/60 p-4 text-theme-text outline-none focus:border-brand-tactical" /></div>
-      </div>
-      <button onClick={handleSave} disabled={saving} className="w-full py-4 bg-brand-tactical text-zinc-950 text-[10px] font-black uppercase tracking-widest hover:brightness-110">{saving ? "SINCRONIZANDO..." : "SALVAR ALTERAÇÕES"}</button>
     </div>
   );
 }
@@ -700,31 +881,237 @@ function CalendarView({ events, currentMonth, setCurrentMonth, onSelect }: { eve
   const getEventsOnDay = (d: number) => events.filter(ev => { const date = new Date(ev.dataEvento); return date.getDate() === d && date.getMonth() === month && date.getFullYear() === year; });
   const monthNames = ["Janeiro", "Fevereiro", "Março", "Abril", "Maio", "Junho", "Julho", "Agosto", "Setembro", "Outubro", "Novembro", "Dezembro"];
   return (
-    <div className="bg-theme-bg border border-theme-border/60 p-6 md:p-10 space-y-8">
-      <div className="flex items-center justify-between border-b border-theme-border/40 pb-6"><h3 className="text-xl font-heading font-black text-theme-text uppercase tracking-widest italic">{monthNames[month]} {year}</h3><div className="flex gap-2"><button onClick={() => setCurrentMonth(new Date(year, month - 1, 1))} className="p-2 border border-theme-border/60 text-theme-muted"><ChevronLeft size={18} /></button><button onClick={() => setCurrentMonth(new Date(year, month + 1, 1))} className="p-2 border border-theme-border/60 text-theme-muted"><ChevronRight size={18} /></button></div></div>
-      <div className="grid grid-cols-7 border-t border-l border-theme-border/40">{["Dom", "Seg", "Ter", "Qua", "Qui", "Sex", "Sab"].map(d => (<div key={d} className="text-center py-4 border-r border-b border-theme-border/40 bg-theme-bg-muted/30 text-[9px] font-black text-theme-muted uppercase italic">{d}</div>))}{days.map((d, i) => (<div key={i} className={`min-h-[100px] p-2 border-r border-b border-theme-border/40 relative`}>{d && <><span className="text-[10px] font-black text-theme-muted/60">{d}</span><div className="mt-2 space-y-1">{getEventsOnDay(d).map(ev => (<button key={ev.id} onClick={() => onSelect(ev)} className="w-full text-left p-1 bg-brand-tactical text-zinc-950 text-[7px] font-black uppercase truncate">{ev.nomeNoivos}</button>))}</div></>}</div>))}</div>
+    <div className="bg-theme-bg border border-theme-border p-6 md:p-10 space-y-8 shadow-2xl relative overflow-hidden">
+      <div className="absolute top-0 right-0 w-32 h-32 bg-brand-tactical/5 rounded-full blur-3xl -mr-16 -mt-16 pointer-events-none" />
+      <div className="flex items-center justify-between border-b border-theme-border pb-8 relative z-10">
+        <h3 className="text-2xl font-heading font-black text-theme-text uppercase tracking-widest italic">{monthNames[month]} {year}</h3>
+        <div className="flex gap-3">
+          <button onClick={() => setCurrentMonth(new Date(year, month - 1, 1))} className="p-3 bg-theme-bg-muted border border-theme-border text-theme-muted hover:text-brand-tactical transition-all"><ChevronLeft size={20} /></button>
+          <button onClick={() => setCurrentMonth(new Date(year, month + 1, 1))} className="p-3 bg-theme-bg-muted border border-theme-border text-theme-muted hover:text-brand-tactical transition-all"><ChevronRight size={20} /></button>
+        </div>
+      </div>
+      <div className="grid grid-cols-7 border-t border-l border-theme-border relative z-10">
+        {["Dom", "Seg", "Ter", "Qua", "Qui", "Sex", "Sab"].map(d => (
+          <div key={d} className="text-center py-5 border-r border-b border-theme-border bg-theme-bg-muted/50 text-[10px] font-black text-theme-muted uppercase italic tracking-widest">{d}</div>
+        ))}
+        {days.map((d, i) => (
+          <div key={i} className={`min-h-[120px] p-3 border-r border-b border-theme-border relative hover:bg-brand-tactical/5 transition-all`}>
+            {d && (
+              <>
+                <span className="text-[11px] font-black text-theme-muted/40">{d}</span>
+                <div className="mt-3 space-y-2">
+                  {getEventsOnDay(d).map(ev => (
+                    <button 
+                      key={ev.id} 
+                      onClick={() => onSelect(ev)} 
+                      className="w-full text-left p-2 bg-brand-tactical text-brand-text text-[8px] font-black uppercase truncate italic shadow-sm hover:brightness-110 transition-all"
+                    >
+                      {ev.nomeNoivos}
+                    </button>
+                  ))}
+                </div>
+              </>
+            )}
+          </div>
+        ))}
+      </div>
     </div>
   );
 }
 
 function ProfileModal({ profile, onClose, onUpdated }: { profile: ProfileData; onClose: () => void; onUpdated: (p: ProfileData) => void }) {
-  const [formData, setFormData] = useState<ProfileData>({ ...profile });
+  const [formData, setFormData] = useState<ProfileData>({ 
+    ...profile,
+    equipmentList: Array.isArray(profile.equipmentList) ? profile.equipmentList : [],
+    experienceYears: profile.experienceYears || 0
+  });
   const [saving, setSaving] = useState(false);
-  const handleSave = async () => { setSaving(true); try { const { data } = await API.patch("profissional/me", formData); onUpdated(data); } catch (err) { console.error(err); } finally { setSaving(false); } };
-  const toggleSkill = (skill: string) => { const current = formData.services || []; const next = current.includes(skill) ? current.filter(s => s !== skill) : [...current, skill]; setFormData({ ...formData, services: next }); };
+
+  const handleSave = async () => { 
+    setSaving(true); 
+    try { 
+      const { data } = await API.patch("profissional/me", formData); 
+      onUpdated(data); 
+      onClose();
+    } catch (err) { 
+      console.error(err); 
+    } finally { 
+      setSaving(false); 
+    } 
+  };
+
+  const toggleSkill = (skill: string) => { 
+    const current = formData.services || []; 
+    const next = current.includes(skill) ? current.filter(s => s !== skill) : [...current, skill]; 
+    setFormData({ ...formData, services: next }); 
+  };
+
+  const addEquipment = () => {
+    setFormData(prev => ({
+      ...prev,
+      equipmentList: [...(prev.equipmentList || []), { name: "", value: 0 }]
+    }));
+  };
+
+  const updateEquipment = (index: number, field: keyof EquipmentItem, val: string | number) => {
+    const newList = [...(formData.equipmentList || [])];
+    newList[index] = { ...newList[index], [field]: val };
+    setFormData({ ...formData, equipmentList: newList });
+  };
+
+  const removeEquipment = (index: number) => {
+    setFormData({
+      ...formData,
+      equipmentList: (formData.equipmentList || []).filter((_, i) => i !== index)
+    });
+  };
+
   return (
-    <div className="fixed inset-0 z-[6000] flex justify-end bg-black/90 backdrop-blur-md">
-      <div className="w-full md:max-w-md h-full bg-theme-bg border-l border-theme-border/60 p-8 md:p-12 overflow-y-auto relative">
-        <button onClick={onClose} className="absolute top-8 right-8 text-theme-muted"><X size={28} /></button>
-        <div className="space-y-10">
-          <h2 className="text-3xl font-heading font-black text-theme-text uppercase italic">Meu Perfil</h2>
-          <div className="space-y-6">
-            <div className="space-y-2"><label className="text-[9px] font-black text-theme-muted uppercase italic">Nome Completo</label><input className="w-full bg-theme-bg-muted border border-theme-border/60 p-4 text-theme-text" value={formData.user?.nome || ""} onChange={e => setFormData({ ...formData, user: { ...formData.user, nome: e.target.value } })} /></div>
-            <div className="space-y-2"><label className="text-[9px] font-black text-theme-muted uppercase italic">WhatsApp</label><input className="w-full bg-theme-bg-muted border border-theme-border/60 p-4 text-theme-text" value={formData.user?.whatsapp || ""} onChange={e => setFormData({ ...formData, user: { ...formData.user, whatsapp: e.target.value } })} /></div>
-            <div className="space-y-2"><label className="text-[9px] font-black text-theme-muted uppercase italic">Chave PIX</label><input className="w-full bg-theme-bg-muted border border-theme-border/60 p-4 text-theme-text" value={formData.pixKey || ""} onChange={e => setFormData({ ...formData, pixKey: e.target.value })} /></div>
+    <div className="fixed inset-0 z-[6000] flex items-center justify-center p-4 md:p-8 animate-in fade-in duration-300 backdrop-blur-xl bg-black/40">
+      <div className="w-full max-w-5xl max-h-[90vh] bg-theme-bg border border-theme-border flex flex-col relative overflow-hidden shadow-[0_0_100px_rgba(0,0,0,0.1)]">
+        {/* Header Decore */}
+        <div className="absolute top-0 left-0 w-full h-[2px] bg-gradient-to-r from-transparent via-brand-tactical/50 to-transparent" />
+        <div className="absolute top-0 right-0 w-64 h-64 bg-brand-tactical/5 rounded-full blur-[100px] -mr-32 -mt-32 pointer-events-none" />
+
+        {/* Top Bar */}
+        <div className="flex justify-between items-center px-8 md:px-12 py-8 border-b border-theme-border/60 relative z-10">
+          <div className="space-y-1">
+            <h2 className="text-3xl font-heading font-black text-theme-text uppercase italic tracking-tighter leading-none">Configuração de Perfil</h2>
+            <p className="text-[10px] text-theme-muted uppercase tracking-[0.4em] italic font-bold">Gerenciamento de Identidade e Ativos Técnicos</p>
           </div>
-          <div className="space-y-4"><p className="text-[9px] font-black text-theme-muted uppercase italic">Especialidades</p><div className="flex gap-2">{["FOTO", "VÍDEO", "EDIÇÃO"].map(s => (<button key={s} onClick={() => toggleSkill(s)} className={`px-4 py-2 text-[9px] font-black border ${formData.services?.includes(s) ? 'bg-brand-tactical text-zinc-950' : 'text-theme-muted border-theme-border/60'}`}>{s}</button>))}</div></div>
-          <button onClick={handleSave} disabled={saving} className="w-full py-4 bg-brand-tactical text-zinc-950 text-[10px] font-black uppercase hover:brightness-110">{saving ? "SALVANDO..." : "SALVAR PERFIL"}</button>
+          <button onClick={onClose} className="p-3 hover:bg-theme-bg-muted text-theme-muted hover:text-brand-tactical transition-all"><X size={32} /></button>
+        </div>
+
+        {/* Content */}
+        <div className="flex-grow overflow-y-auto p-8 md:p-12 relative z-10">
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-16">
+            
+            {/* Coluna Esquerda: Dados e Especialidades */}
+            <div className="space-y-12">
+              <div className="space-y-8">
+                <div className="flex items-center gap-4 text-brand-tactical">
+                   <div className="w-8 h-[1px] bg-brand-tactical/30" />
+                   <span className="text-[11px] font-black uppercase tracking-[0.3em] italic">Credenciais Operacionais</span>
+                </div>
+                
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                  <div className="space-y-2">
+                    <label className="text-[9px] font-black text-theme-muted uppercase tracking-widest italic opacity-60">Nome de Operação</label>
+                    <input className="w-full bg-theme-bg-muted border border-theme-border p-4 text-theme-text focus:border-brand-tactical/50 outline-none transition-all font-medium" value={formData.user?.nome || ""} onChange={e => setFormData({ ...formData, user: { ...formData.user, nome: e.target.value } })} />
+                  </div>
+                  <div className="space-y-2">
+                    <label className="text-[9px] font-black text-theme-muted uppercase tracking-widest italic opacity-60">Linha Segura (WhatsApp)</label>
+                    <input className="w-full bg-theme-bg-muted border border-theme-border p-4 text-theme-text focus:border-brand-tactical/50 outline-none transition-all font-medium" value={formData.user?.whatsapp || ""} onChange={e => setFormData({ ...formData, user: { ...formData.user, whatsapp: e.target.value } })} />
+                  </div>
+                  <div className="space-y-2">
+                    <label className="text-[9px] font-black text-theme-muted uppercase tracking-widest italic opacity-60">Chave de Liquidação (PIX)</label>
+                    <input className="w-full bg-theme-bg-muted border border-theme-border p-4 text-theme-text focus:border-brand-tactical/50 outline-none transition-all font-medium" value={formData.pixKey || ""} onChange={e => setFormData({ ...formData, pixKey: e.target.value })} placeholder="Email, CPF ou Aleatória" />
+                  </div>
+                  <div className="space-y-2">
+                    <label className="text-[9px] font-black text-theme-muted uppercase tracking-widest italic opacity-60">Tempo de Atuação (Anos)</label>
+                    <div className="relative">
+                      <input type="number" className="w-full bg-theme-bg-muted border border-theme-border p-4 text-theme-text focus:border-brand-tactical/50 outline-none transition-all font-heading font-black italic text-xl" value={formData.experienceYears} onChange={e => setFormData({ ...formData, experienceYears: Number(e.target.value) })} />
+                      <div className="absolute right-4 top-1/2 -translate-y-1/2 text-[10px] font-black text-brand-tactical/40 uppercase italic tracking-widest">Anos</div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              <div className="space-y-8">
+                <div className="flex items-center gap-4 text-brand-tactical">
+                   <div className="w-8 h-[1px] bg-brand-tactical/30" />
+                   <span className="text-[11px] font-black uppercase tracking-[0.3em] italic">Matriz de Especialidades</span>
+                </div>
+                <div className="flex flex-wrap gap-4">
+                  {["FOTO", "VÍDEO", "EDIÇÃO"].map(s => {
+                    const active = formData.services?.includes(s);
+                    return (
+                      <button 
+                        key={s} 
+                        onClick={() => toggleSkill(s)} 
+                        className={`flex-1 min-w-[120px] px-6 py-4 text-[10px] font-black border transition-all flex flex-col gap-2 items-center justify-center ${active ? 'bg-brand-tactical border-brand-tactical text-brand-text' : 'bg-theme-bg-muted border-theme-border text-theme-muted hover:border-brand-tactical/30'}`}
+                      >
+                        <span className="tracking-[0.4em] italic">{s}</span>
+                        <div className={`w-4 h-[1px] ${active ? 'bg-brand-text/40' : 'bg-brand-tactical/20'}`} />
+                      </button>
+                    );
+                  })}
+                </div>
+              </div>
+
+              <div className="space-y-4">
+                 <label className="text-[9px] font-black text-theme-muted uppercase tracking-widest italic opacity-60">Qualificações Complementares</label>
+                 <textarea 
+                   className="w-full bg-theme-bg-muted border border-theme-border p-6 text-theme-text text-xs min-h-[120px] resize-none focus:border-brand-tactical/40 outline-none transition-all leading-relaxed" 
+                   value={formData.otherHabilities || ""} 
+                   placeholder="Pilotagem de drone, certificações, color grading avançado..."
+                   onChange={e => setFormData({ ...formData, otherHabilities: e.target.value })} 
+                 />
+              </div>
+            </div>
+
+            {/* Coluna Direita: Inventário */}
+            <div className="space-y-10">
+              <div className="p-8 bg-theme-bg-muted/50 border border-theme-border space-y-8">
+                <div className="flex justify-between items-center">
+                  <div className="space-y-1">
+                    <p className="text-[11px] font-black text-brand-tactical uppercase tracking-[0.3em] italic">Inventário Técnico</p>
+                    <p className="text-[9px] text-theme-muted uppercase italic opacity-60 font-bold">Ativos usados para cálculo de multiplicador</p>
+                  </div>
+                  <button onClick={addEquipment} className="px-4 py-2 bg-brand-tactical/10 border border-brand-tactical/30 text-brand-tactical text-[9px] font-black uppercase tracking-widest hover:bg-brand-tactical hover:text-brand-text transition-all italic">+ Inserir Item</button>
+                </div>
+
+                <div className="space-y-4 max-h-[400px] overflow-y-auto pr-2 custom-scrollbar">
+                  {(formData.equipmentList || []).map((eq, i) => (
+                    <div key={i} className="group flex gap-3 animate-in slide-in-from-right-4 duration-300" style={{ animationDelay: `${i * 50}ms` }}>
+                      <div className="flex-[3] relative">
+                         <input 
+                           placeholder="Ex: Sony A7IV Body" 
+                           className="w-full bg-theme-bg border border-theme-border p-4 text-[11px] text-theme-text focus:border-brand-tactical/40 outline-none" 
+                           value={eq.name} 
+                           onChange={e => updateEquipment(i, "name", e.target.value)} 
+                         />
+                      </div>
+                      <div className="flex-[1.5] relative">
+                         <input 
+                           type="number" 
+                           placeholder="Valor" 
+                           className="w-full bg-theme-bg border border-theme-border p-4 text-[11px] text-brand-tactical font-black outline-none italic" 
+                           value={eq.value} 
+                           onChange={e => updateEquipment(i, "value", Number(e.target.value))} 
+                         />
+                         <div className="absolute right-3 top-1/2 -translate-y-1/2 text-[8px] font-black text-theme-muted/40 uppercase">BRL</div>
+                      </div>
+                      <button onClick={() => removeEquipment(i)} className="p-4 bg-red-500/5 text-red-500/40 hover:text-red-500 hover:bg-red-500/10 transition-all"><X size={16} /></button>
+                    </div>
+                  ))}
+                  {(formData.equipmentList || []).length === 0 && (
+                    <div className="py-20 text-center space-y-4 border border-dashed border-theme-border/40">
+                       <div className="flex justify-center text-theme-muted/20"><Briefcase size={48} /></div>
+                       <p className="text-[9px] text-theme-muted uppercase tracking-[0.2em] italic font-black">Nenhum ativo técnico registrado</p>
+                    </div>
+                  )}
+                </div>
+
+                <div className="pt-8 border-t border-theme-border flex justify-between items-center">
+                  <span className="text-[9px] font-black text-theme-muted uppercase tracking-[0.2em] italic">Patrimônio Técnico Estimado</span>
+                  <span className="text-xl font-heading font-black text-theme-text italic">R$ {(formData.equipmentList || []).reduce((acc, curr) => acc + (curr.value || 0), 0).toLocaleString('pt-BR')}</span>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        {/* Footer Actions */}
+        <div className="p-8 md:p-12 border-t border-theme-border/60 bg-theme-bg flex justify-end gap-6 relative z-10">
+          <button onClick={onClose} className="px-8 py-5 text-theme-muted text-[11px] font-black uppercase tracking-[0.3em] hover:text-theme-text transition-all italic">Descartar</button>
+          <button 
+            onClick={handleSave} 
+            disabled={saving} 
+            className="px-16 py-5 bg-brand-tactical text-brand-text text-[11px] font-black uppercase tracking-[0.4em] hover:brightness-110 disabled:opacity-40 transition-all shadow-2xl shadow-brand-tactical/20 italic flex items-center gap-4"
+          >
+            {saving ? "SINCRONIZANDO..." : <><Check size={20} /> EFETIVAR ATUALIZAÇÃO</>}
+          </button>
         </div>
       </div>
     </div>

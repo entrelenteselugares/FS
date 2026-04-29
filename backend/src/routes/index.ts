@@ -35,6 +35,7 @@ import {
   addProService,
   updateProService,
   deleteProService,
+  listProServices,
 } from "../controllers/profissional.controller";
 import { getMeusPedidos, getMeuPedidoDetalhe } from "../controllers/cliente.controller";
 import { CartorioController } from "../controllers/cartorio.controller";
@@ -86,6 +87,17 @@ import { requireMercadoPagoSignature } from "../middleware/webhook-auth";
 import express from "express";
 
 const router = Router();
+
+// ── PROFISSIONAIS (Rede Técnica) ────────────────────────────────────────────
+router.get("/profissional/events",               requireAuth, requireRole("ADMIN", "PROFISSIONAL"), getMeusEventos);
+router.patch("/profissional/events/:id/links",   requireAuth, requireRole("ADMIN", "PROFISSIONAL"), updateEventLinks);
+router.patch("/profissional/events/:id/cover",   requireAuth, requireRole("ADMIN", "PROFISSIONAL"), uploadEventCover);
+router.patch("/profissional/events/:id/respond", requireAuth, requireRole("ADMIN", "PROFISSIONAL"), respondToEvent);
+router.get("/profissional/me",                   requireAuth, requireRole("ADMIN", "PROFISSIONAL"), getProfile);
+router.patch("/profissional/me",                 requireAuth, requireRole("ADMIN", "PROFISSIONAL"), updateProfile);
+router.post("/profissional/events/:id/manual-sale", requireAuth, requireRole("ADMIN", "PROFISSIONAL"), registerManualSale);
+router.get("/profissional/unidades/convites", requireAuth, requireRole("ADMIN", "PROFISSIONAL"), getConvitesUnidade);
+router.patch("/profissional/unidades/convites/:id/respond", requireAuth, requireRole("ADMIN", "PROFISSIONAL"), respondConviteUnidade);
 
 // ── MARKETPLACE (Fotos Individuais & Venda Expressa) ──────────────────────────
 router.post("/marketplace/express-sale",      requireAuth, requireRole("ADMIN", "PROFISSIONAL"), MarketplaceController.expressSale);
@@ -139,6 +151,7 @@ router.get("/public/unidade-fixa/:slug",   getPartnerLandingData);
 // ── Configurações Públicas ─────────────────────────────────────────────────────
 router.get("/public/configs/theme",        getPublicThemeConfigs);
 router.get("/public/configs/services",     getPublicServices);
+router.get("/public/service-catalog",      ServiceCatalogController.adminListServiceCatalog); // Reutilizando a listagem para público
 
 // ── Gamificação Pública ───────────────────────────────────────────────────────
 router.get("/public/contests/active",      getActiveContest);
@@ -168,7 +181,7 @@ router.post(
 router.get("/public/orders/:id",               PaymentController.getOrderPublic);
 router.get("/public/orders/:id/check-payment", PaymentController.checkPaymentStatus);
 router.get("/public/print-catalog",            AdminPrintCatalog.getPublicPrintCatalog);
-router.get("/public/service-catalog",          ServiceCatalogController.listServiceCatalog);
+
 
 // ── LGPD / Acesso (pós-pagamento) ─────────────────────────────────────────────
 router.post("/orders/:id/access-type",  requireAuth, chooseAccessType);
@@ -179,18 +192,12 @@ router.post("/orders/:id/visibility",    requireAuth, toggleVisibility);
 router.get("/cliente/pedidos",     requireAuth, getMeusPedidos);
 router.get("/cliente/pedidos/:id", requireAuth, getMeuPedidoDetalhe);
 
-// ── PROFISSIONAIS (Rede Técnica) ────────────────────────────────────────────
-router.get("/profissional/events",               requireAuth, requireRole("ADMIN", "PROFISSIONAL"), getMeusEventos);
-router.patch("/profissional/events/:id/links",   requireAuth, requireRole("ADMIN", "PROFISSIONAL"), updateEventLinks);
-router.patch("/profissional/events/:id/cover",   requireAuth, requireRole("ADMIN", "PROFISSIONAL"), uploadEventCover);
-router.patch("/profissional/events/:id/respond", requireAuth, requireRole("ADMIN", "PROFISSIONAL"), respondToEvent);
-router.get("/profissional/me",                   requireAuth, requireRole("ADMIN", "PROFISSIONAL"), getProfile);
-router.patch("/profissional/me",                 requireAuth, requireRole("ADMIN", "PROFISSIONAL"), updateProfile);
-router.post("/profissional/events/:id/manual-sale", requireAuth, requireRole("ADMIN", "PROFISSIONAL"), registerManualSale);
-router.get("/profissional/unidades/convites", requireAuth, requireRole("ADMIN", "PROFISSIONAL"), getConvitesUnidade);
-router.patch("/profissional/unidades/convites/:id/respond", requireAuth, requireRole("ADMIN", "PROFISSIONAL"), respondConviteUnidade);
+// ── Cliente: Meus Pedidos ──────────────────────────────────────────────────────
+router.get("/cliente/pedidos",     requireAuth, getMeusPedidos);
+router.get("/cliente/pedidos/:id", requireAuth, getMeuPedidoDetalhe);
 
 // ── Gestão de Serviços (Vitrine do Profissional) ──────────────────────────────
+router.get("/profissional/services", requireAuth, requireRole("ADMIN", "PROFISSIONAL"), listProServices);
 router.post("/profissional/services", requireAuth, requireRole("ADMIN", "PROFISSIONAL"), addProService);
 router.patch("/profissional/services/:id", requireAuth, requireRole("ADMIN", "PROFISSIONAL"), updateProService);
 router.delete("/profissional/services/:id", requireAuth, requireRole("ADMIN", "PROFISSIONAL"), deleteProService);
@@ -270,5 +277,6 @@ router.post("/admin/print-catalog/seed", requireAuth, requireRole("ADMIN"), Admi
 router.get("/admin/service-catalog", requireAuth, requireRole("ADMIN"), ServiceCatalogController.adminListServiceCatalog);
 router.post("/admin/service-catalog", requireAuth, requireRole("ADMIN"), ServiceCatalogController.adminCreateService);
 router.patch("/admin/service-catalog/:id", requireAuth, requireRole("ADMIN"), ServiceCatalogController.adminUpdateService);
+router.delete("/admin/service-catalog/:id", requireAuth, requireRole("ADMIN"), ServiceCatalogController.adminDeleteService);
 
 export default router;

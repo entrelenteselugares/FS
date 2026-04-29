@@ -53,11 +53,8 @@ export const AdminServices: React.FC = () => {
   const fetchServices = useCallback(async () => {
     setLoading(true);
     try {
-      const { data } = await API.get("/admin/configs");
-      const catalog = data.configs.find((c: ConfigItem) => c.key === "services_catalog");
-      if (catalog && catalog.value) {
-        setServices(JSON.parse(catalog.value));
-      }
+      const { data } = await API.get("/admin/service-catalog");
+      setServices(data);
     } catch (err) {
       console.error("Erro ao carregar serviços:", err);
     } finally {
@@ -67,42 +64,40 @@ export const AdminServices: React.FC = () => {
 
   useEffect(() => { fetchServices(); }, [fetchServices]);
 
-  const persistServices = async (updatedList: Service[]) => {
+  const handleSave = async (serviceData: Omit<Service, 'id'>) => {
     setSaving(true);
     try {
-      await API.patch("/admin/configs", {
-        configs: [
-          { key: "services_catalog", value: JSON.stringify(updatedList) }
-        ]
-      });
-      setServices(updatedList);
-      setNotification({ message: "Catálogo sincronizado!", type: 'success' });
+      if (editingService) {
+        await API.patch(`/admin/service-catalog/${editingService.id}`, serviceData);
+        setNotification({ message: "Serviço atualizado!", type: 'success' });
+      } else {
+        await API.post("/admin/service-catalog", serviceData);
+        setNotification({ message: "Serviço criado!", type: 'success' });
+      }
+      fetchServices();
+      setIsModalOpen(false);
+      setEditingService(null);
       setTimeout(() => setNotification(null), 5000);
     } catch {
-      setNotification({ message: "Erro ao salvar catálogo.", type: 'error' });
+      setNotification({ message: "Erro ao salvar serviço.", type: 'error' });
       setTimeout(() => setNotification(null), 5000);
     } finally {
       setSaving(false);
     }
   };
 
-  const handleSave = async (serviceData: Omit<Service, 'id'>) => {
-    let updated: Service[];
-    if (editingService) {
-      updated = services.map(s => s.id === editingService.id ? { ...serviceData, id: editingService.id } : s);
-    } else {
-      updated = [...services, { ...serviceData, id: Date.now().toString() }];
-    }
-    await persistServices(updated);
-    setIsModalOpen(false);
-    setEditingService(null);
-  };
-
   const executeDelete = async () => {
     if (!confirmDelete) return;
-    const updated = services.filter(s => s.id !== confirmDelete);
-    await persistServices(updated);
-    setConfirmDelete(null);
+    try {
+      await API.delete(`/admin/service-catalog/${confirmDelete}`);
+      setNotification({ message: "Serviço removido!", type: 'success' });
+      fetchServices();
+      setConfirmDelete(null);
+      setTimeout(() => setNotification(null), 5000);
+    } catch {
+      setNotification({ message: "Erro ao remover serviço.", type: 'error' });
+      setTimeout(() => setNotification(null), 5000);
+    }
   };
 
   const filteredServices = useMemo(() => {

@@ -73,7 +73,6 @@ app.use("/api", routes);
 
 // Tratamento de erros global
 app.use((err: any, _req: express.Request, res: express.Response, _next: express.NextFunction) => {
-  console.error("❌ BACKEND ERROR:", err);
   res.status(500).json({ 
     error: "Erro interno no servidor", 
     details: err.message 

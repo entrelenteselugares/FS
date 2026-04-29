@@ -114,6 +114,8 @@ model Profissional {
   editPct         Float                  @default(20)
   otherHabilities     String?
   equipment           String?
+  equipmentList       Json?                  @default("[]")
+  experienceYears     Int                    @default(0)
   hourlyRate          Decimal                @db.Decimal(10, 2) @default(150.00)
   equipmentMultiplier Float                  @default(1.0)
   cartorios           CartorioProfissional[]
@@ -217,6 +219,7 @@ model ServiceCatalog {
   id               String                @id @default(cuid())
   name             String
   description      String?
+  category         String                @default("FOTOGRAFIA")
   basePrice        Decimal               @db.Decimal(10, 2)
   estimatedMinutes Int                   @default(60)
   active           Boolean               @default(true)
@@ -233,6 +236,7 @@ model ProfessionalService {
   catalogId      String?
   name           String
   description    String?
+  category       String?
   price          Decimal         @db.Decimal(10, 2)
   active         Boolean         @default(true)
   createdAt      DateTime        @default(now())

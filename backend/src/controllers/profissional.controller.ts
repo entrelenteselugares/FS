@@ -256,24 +256,43 @@ export async function updateProfile(req: AuthRequest, res: Response): Promise<vo
   const userId = req.user?.userId;
   if (!userId) { res.status(401).json({ error: "Não autenticado." }); return; }
 
-  const { services, equipment, otherHabilities, hourlyRate, equipmentMultiplier } = req.body;
+  const { services, equipmentList, otherHabilities, experienceYears, hourlyRate } = req.body;
 
   try {
+    // ── LÓGICA DE EQUAÇÃO TÁTICA (AUTOMAÇÃO DE PRECIFICAÇÃO) ──
+    let calculatedMultiplier = 1.0;
+    
+    // 1. Fator Equipamento: +0.2 a cada R$ 5.000 investidos
+    if (Array.isArray(equipmentList)) {
+      const totalValue = equipmentList.reduce((acc: number, curr: any) => acc + (Number(curr.value) || 0), 0);
+      calculatedMultiplier += (totalValue / 5000) * 0.2;
+    }
+
+    // 2. Fator Maturidade: +0.1 por ano de experiência
+    if (experienceYears) {
+      calculatedMultiplier += (Number(experienceYears) * 0.1);
+    }
+
+    // 3. Normalização: Piso 1.0 | Teto 5.0
+    const finalMultiplier = Number(Math.min(Math.max(calculatedMultiplier, 1.0), 5.0).toFixed(2));
+
     const updated = await prisma.profissional.update({
       where: { userId },
       data: {
         ...(services !== undefined && { services }),
-        ...(equipment !== undefined && { equipment }),
+        ...(equipmentList !== undefined && { equipmentList }),
         ...(otherHabilities !== undefined && { otherHabilities }),
+        ...(experienceYears !== undefined && { experienceYears: Number(experienceYears) }),
         ...(hourlyRate !== undefined && { hourlyRate: Number(hourlyRate) }),
-        ...(equipmentMultiplier !== undefined && { equipmentMultiplier: Number(equipmentMultiplier) }),
+        equipmentMultiplier: finalMultiplier // Campo agora é automatizado pelo sistema
       }
     });
-    // P1 — Alteração de perfil profissional
+
+    // P1 — Alteração de perfil profissional (Auditando nova equação)
     await audit(req, "PROFISSIONAL_PROFILE_UPDATED", "Profissional", userId, null, {
-      services: services ?? undefined,
-      equipment: equipment ?? undefined,
-      otherHabilities: otherHabilities ?? undefined,
+      experienceYears,
+      equipmentValue: Array.isArray(equipmentList) ? equipmentList.reduce((a, c) => a + Number(c.value), 0) : 0,
+      newMultiplier: finalMultiplier
     });
 
     res.json(updated);
@@ -463,7 +482,10 @@ export async function getConvitesUnidade(req: AuthRequest, res: Response) {
 
   try {
     const profissional = await prisma.profissional.findUnique({ where: { userId } });
-    if (!profissional) { res.status(404).json({ error: "Profissional não encontrado." }); return; }
+    if (!profissional) { 
+      res.json([]); 
+      return; 
+    }
 
     const invites = await prisma.cartorioProfissional.findMany({
       where: { profissionalId: profissional.id, status: "PENDING" },
@@ -590,5 +612,25 @@ export async function deleteProService(req: AuthRequest, res: Response): Promise
   } catch (err) {
     console.error("deleteProService:", err);
     res.status(500).json({ error: "Erro ao deletar serviço." });
+  }
+}
+
+export async function listProServices(req: AuthRequest, res: Response): Promise<void> {
+  const userId = req.user?.userId;
+  if (!userId) { res.status(401).json({ error: "Não autenticado." }); return; }
+
+  try {
+    const prof = await prisma.profissional.findUnique({ where: { userId } });
+    if (!prof) { res.status(404).json({ error: "Profissional não encontrado." }); return; }
+
+    const services = await prisma.professionalService.findMany({
+      where: { profissionalId: prof.id },
+      include: { catalog: true },
+      orderBy: { createdAt: "desc" }
+    });
+    res.json(services);
+  } catch (err) {
+    console.error("listProServices:", err);
+    res.status(500).json({ error: "Erro ao listar serviços." });
   }
 }

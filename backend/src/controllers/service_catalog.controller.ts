@@ -29,7 +29,7 @@ export async function adminListServiceCatalog(req: AuthRequest, res: Response): 
 
 export async function adminCreateService(req: AuthRequest, res: Response): Promise<void> {
   try {
-    const { name, description, basePrice, estimatedMinutes } = req.body;
+    const { name, description, category, basePrice, estimatedMinutes } = req.body;
     if (!name || basePrice === undefined) {
       res.status(400).json({ error: "Nome e Preço Base são obrigatórios." });
       return;
@@ -38,6 +38,7 @@ export async function adminCreateService(req: AuthRequest, res: Response): Promi
       data: {
         name,
         description,
+        category: category || "FOTOGRAFIA",
         basePrice: Number(basePrice),
         estimatedMinutes: Number(estimatedMinutes || 60),
       }
@@ -52,12 +53,13 @@ export async function adminCreateService(req: AuthRequest, res: Response): Promi
 export async function adminUpdateService(req: AuthRequest, res: Response): Promise<void> {
   try {
     const { id } = req.params;
-    const { name, description, basePrice, estimatedMinutes, active } = req.body;
+    const { name, description, category, basePrice, estimatedMinutes, active } = req.body;
     const service = await prisma.serviceCatalog.update({
       where: { id: String(id) },
       data: {
         ...(name && { name }),
         ...(description !== undefined && { description }),
+        ...(category !== undefined && { category }),
         ...(basePrice !== undefined && { basePrice: Number(basePrice) }),
         ...(estimatedMinutes !== undefined && { estimatedMinutes: Number(estimatedMinutes) }),
         ...(active !== undefined && { active }),
@@ -69,3 +71,17 @@ export async function adminUpdateService(req: AuthRequest, res: Response): Promi
     res.status(500).json({ error: "Erro ao atualizar serviço." });
   }
 }
+
+export async function adminDeleteService(req: AuthRequest, res: Response): Promise<void> {
+  try {
+    const { id } = req.params;
+    await prisma.serviceCatalog.delete({
+      where: { id: String(id) }
+    });
+    res.json({ ok: true });
+  } catch (err) {
+    console.error("adminDeleteService:", err);
+    res.status(500).json({ error: "Erro ao deletar serviço." });
+  }
+}
+
