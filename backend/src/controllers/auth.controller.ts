@@ -5,6 +5,9 @@ import prisma from "../lib/prisma";
 import { generateToken, generateRefreshToken, verifyRefreshToken } from "../lib/auth";
 import { audit } from "../lib/audit";
 import { supabaseAdmin } from "../lib/supabase";
+import { NotificationService } from "../services/notification.service";
+import crypto from "crypto";
+import { APP_URL } from "../lib/config";
 
 export class AuthController {
   /** 
@@ -184,6 +187,72 @@ export class AuthController {
     return res.json(updated);
   }
 
-  static async forgotPassword(req: Request, res: Response) { return res.json({ ok: true }); }
-  static async updatePassword(req: Request, res: Response) { return res.json({ ok: true }); }
+  static async forgotPassword(req: Request, res: Response) {
+    const { email } = req.body;
+    if (!email) return res.status(400).json({ error: "Email é obrigatório" });
+
+    try {
+      const user = await prisma.user.findUnique({ where: { email: email.toLowerCase().trim() } });
+      if (!user) {
+        // Por segurança, não informamos que o e-mail não existe
+        return res.json({ message: "Se o e-mail estiver cadastrado, você receberá instruções em breve." });
+      }
+
+      const token = crypto.randomBytes(32).toString("hex");
+      const expires = new Date(Date.now() + 3600000); // 1 hora
+
+      await prisma.user.update({
+        where: { id: user.id },
+        data: {
+          resetToken: token,
+          resetTokenExpires: expires
+        }
+      });
+
+      const recoveryLink = `${APP_URL}/reset-password?token=${token}`;
+      await NotificationService.sendPasswordRecoveryEmail({
+        to: user.email,
+        name: user.nome,
+        recoveryLink
+      });
+
+      return res.json({ message: "Instruções de recuperação enviadas com sucesso." });
+    } catch (error) {
+      console.error("[FORGOT PASSWORD ERROR]:", error);
+      return res.status(500).json({ error: "Erro ao processar solicitação" });
+    }
+  }
+
+  static async updatePassword(req: Request, res: Response) {
+    const { token, novaSenha } = req.body;
+    if (!token || !novaSenha) return res.status(400).json({ error: "Token e nova senha são obrigatórios" });
+
+    try {
+      const user = await prisma.user.findFirst({
+        where: {
+          resetToken: token,
+          resetTokenExpires: { gt: new Date() }
+        }
+      });
+
+      if (!user) {
+        return res.status(400).json({ error: "Token inválido ou expirado" });
+      }
+
+      const hash = await bcrypt.hash(novaSenha, 12);
+      await prisma.user.update({
+        where: { id: user.id },
+        data: {
+          senha: hash,
+          resetToken: null,
+          resetTokenExpires: null
+        }
+      });
+
+      return res.json({ message: "Senha atualizada com sucesso!" });
+    } catch (error) {
+      console.error("[RESET PASSWORD ERROR]:", error);
+      return res.status(500).json({ error: "Erro ao atualizar senha" });
+    }
+  }
 }

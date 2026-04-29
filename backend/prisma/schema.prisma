@@ -25,6 +25,8 @@ model User {
   mpPublicKey       String?
   mpRefreshToken    String?
   pixKey            String?
+  resetToken        String?
+  resetTokenExpires DateTime?
   acceptedPrivacyAt DateTime?
   acceptedTermsAt   DateTime?
   cartorio          Cartorio?

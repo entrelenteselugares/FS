@@ -1,26 +1,29 @@
 import { useState, useEffect } from "react";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useSearchParams } from "react-router-dom";
 import { isAxiosError } from "axios";
 import { API } from "../lib/api";
-import { T, BtnPrimary, FieldLabel, FieldInput } from "../lib/theme";
+import { ShieldCheck, ArrowRight, Lock, AlertTriangle, CheckCircle2 } from "lucide-react";
 
 export default function ResetPasswordPage() {
   const navigate = useNavigate();
+  const [searchParams] = useSearchParams();
   const [password, setPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
   const [loading, setLoading] = useState(false);
   const [message, setMessage] = useState({ type: "", text: "" });
 
-  // O Supabase coloca o token no hash da URL (#access_token=...)
-  // Se não houver hash, redirecionamos para o login
+  const token = searchParams.get("token");
+
   useEffect(() => {
-    if (!window.location.hash) {
-      navigate("/login");
+    if (!token) {
+      setMessage({ type: "error", text: "Token de recuperação ausente. Verifique o link no seu e-mail." });
     }
-  }, [navigate]);
+  }, [token]);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    if (!token) return;
+
     if (password.length < 6) {
       return setMessage({ type: "error", text: "A senha deve ter pelo menos 6 caracteres." });
     }
@@ -32,17 +35,8 @@ export default function ResetPasswordPage() {
     setMessage({ type: "", text: "" });
 
     try {
-      // Extrai o access_token do hash da URL (#access_token=XXX&...)
-      const hash = window.location.hash.substring(1);
-      const params = new URLSearchParams(hash);
-      const token = params.get("access_token");
-
-      if (!token) {
-        return setMessage({ type: "error", text: "Token de recuperação ausente. Solicite um novo link." });
-      }
-
-      await API.post("/auth/update-password", { password, token });
-      setMessage({ type: "success", text: "Senha alterada com sucesso! Redirecionando..." });
+      await API.post("/auth/reset-password", { token, novaSenha: password });
+      setMessage({ type: "success", text: "Senha atualizada com sucesso! Redirecionando..." });
       setTimeout(() => navigate("/login"), 3000);
     } catch (err: unknown) {
       const msg = isAxiosError(err)
@@ -55,64 +49,107 @@ export default function ResetPasswordPage() {
   };
 
   return (
-    <div style={{ minHeight: "100vh", background: T.bg, display: "flex", alignItems: "center", justifyContent: "center", padding: 20 }}>
-      <div style={{ width: "100%", maxWidth: 400, background: T.bgCard, border: `1px solid ${T.border}`, padding: 40, textAlign: "center" }}>
-        <img src="/logo-fs.png" alt="Foto Segundo" style={{ height: 30, marginBottom: 30 }} />
+    <div className="min-h-screen bg-theme-bg flex items-center justify-center p-6 transition-colors duration-700">
+      <div className="w-full max-w-lg space-y-10 animate-in fade-in slide-in-from-bottom-8 duration-1000">
         
-        <h1 style={{ fontFamily: T.fontD, fontSize: 24, fontWeight: 900, textTransform: "uppercase", color: T.text, margin: "0 0 10px" }}>
-          Nova Senha
-        </h1>
-        <p style={{ fontSize: 12, color: T.text2, marginBottom: 30 }}>
-          Digite sua nova senha de acesso abaixo.
-        </p>
-
-        <form onSubmit={handleSubmit} style={{ textAlign: "left", display: "flex", flexDirection: "column", gap: 20 }}>
-          <div>
-            <label style={FieldLabel}>Nova Senha</label>
-            <input 
-              type="password" 
-              style={FieldInput} 
-              value={password}
-              onChange={e => setPassword(e.target.value)}
-              placeholder="••••••••"
-              required
-            />
+        {/* Brand */}
+        <div className="text-center space-y-4">
+          <div className="inline-flex p-4 rounded-full bg-brand-tactical/10 text-brand-tactical mb-4">
+            <ShieldCheck size={32} />
           </div>
+          <h1 className="text-4xl font-heading font-black italic text-theme-text uppercase tracking-tighter">
+            Segurança de Conta
+          </h1>
+          <p className="text-[10px] font-black text-theme-muted uppercase tracking-[0.4em]">
+            Foto Segundo · Recuperação de Acesso
+          </p>
+        </div>
 
-          <div>
-            <label style={FieldLabel}>Confirmar Senha</label>
-            <input 
-              type="password" 
-              style={FieldInput} 
-              value={confirmPassword}
-              onChange={e => setConfirmPassword(e.target.value)}
-              placeholder="••••••••"
-              required
-            />
-          </div>
-
-          {message.text && (
-            <div style={{ 
-              padding: 12, 
-              fontSize: 11, 
-              fontWeight: 700,
-              background: message.type === "error" ? "rgba(239, 68, 68, 0.1)" : "rgba(133, 185, 172, 0.1)",
-              border: `1px solid ${message.type === "error" ? "#ef444433" : "#85b9ac33"}`,
-              color: message.type === "error" ? "#ef4444" : T.brand,
-              textAlign: "center"
-            }}>
-              {message.text}
+        {/* Card */}
+        <div className="lux-card p-10 space-y-8 border-l-4 border-l-brand-tactical bg-theme-bg-muted/5 backdrop-blur-sm">
+          {!token ? (
+            <div className="text-center space-y-6">
+              <div className="flex justify-center text-red-400">
+                <AlertTriangle size={48} />
+              </div>
+              <p className="text-[11px] font-bold text-theme-muted uppercase tracking-widest leading-relaxed">
+                Este link parece ser inválido ou expirou.<br/>
+                Solicite uma nova recuperação na tela de login.
+              </p>
+              <button 
+                onClick={() => navigate("/login")}
+                className="w-full py-4 border border-theme-border text-[10px] font-black uppercase tracking-[0.4em] text-theme-text hover:border-brand-tactical transition-all"
+              >
+                Voltar ao Login
+              </button>
             </div>
-          )}
+          ) : (
+            <>
+              <div className="space-y-2">
+                <h2 className="text-xl font-heading font-black text-theme-text uppercase italic tracking-tight">Criar Nova Senha</h2>
+                <p className="text-[9px] font-black text-theme-muted uppercase tracking-[0.3em]">Defina uma credencial forte e segura</p>
+              </div>
 
-          <button 
-            type="submit" 
-            disabled={loading}
-            style={{ ...BtnPrimary, width: "100%", justifyContent: "center", marginTop: 10 }}
-          >
-            {loading ? "ATUALIZANDO..." : "REDEFINIR SENHA"}
-          </button>
-        </form>
+              <form onSubmit={handleSubmit} className="space-y-6">
+                <div className="space-y-2">
+                  <label className="text-[9px] font-black uppercase tracking-[0.3em] text-theme-muted block">Nova Senha</label>
+                  <div className="relative group">
+                    <Lock size={14} className="absolute left-4 top-1/2 -translate-y-1/2 text-theme-muted group-focus-within:text-brand-tactical transition-colors" />
+                    <input 
+                      type="password" 
+                      value={password}
+                      onChange={e => setPassword(e.target.value)}
+                      className="w-full bg-theme-bg border border-theme-border p-4 pl-12 text-[13px] font-medium text-theme-text focus:border-brand-tactical outline-none transition-all" 
+                      placeholder="••••••••"
+                      required
+                    />
+                  </div>
+                </div>
+
+                <div className="space-y-2">
+                  <label className="text-[9px] font-black uppercase tracking-[0.3em] text-theme-muted block">Confirmar Senha</label>
+                  <div className="relative group">
+                    <Lock size={14} className="absolute left-4 top-1/2 -translate-y-1/2 text-theme-muted group-focus-within:text-brand-tactical transition-colors" />
+                    <input 
+                      type="password" 
+                      value={confirmPassword}
+                      onChange={e => setConfirmPassword(e.target.value)}
+                      className="w-full bg-theme-bg border border-theme-border p-4 pl-12 text-[13px] font-medium text-theme-text focus:border-brand-tactical outline-none transition-all" 
+                      placeholder="••••••••"
+                      required
+                    />
+                  </div>
+                </div>
+
+                {message.text && (
+                  <div className={`p-4 flex items-center gap-3 animate-in fade-in zoom-in-95 duration-300 ${
+                    message.type === "error" ? 'bg-red-400/10 border border-red-400/20 text-red-400' : 'bg-brand-tactical/10 border border-brand-tactical/20 text-brand-tactical'
+                  }`}>
+                    {message.type === "error" ? <AlertTriangle size={16} /> : <CheckCircle2 size={16} />}
+                    <p className="text-[10px] font-black uppercase tracking-widest">{message.text}</p>
+                  </div>
+                )}
+
+                <button 
+                  type="submit" 
+                  disabled={loading || message.type === "success"}
+                  className="w-full py-4 bg-brand-tactical text-brand-text text-[10px] font-black uppercase tracking-[0.4em] hover:brightness-110 transition-all disabled:opacity-50 flex items-center justify-center gap-3 group"
+                >
+                  {loading ? "Processando..." : (
+                    <>
+                      Atualizar Senha <ArrowRight size={14} className="group-hover:translate-x-1 transition-transform" />
+                    </>
+                  )}
+                </button>
+              </form>
+            </>
+          )}
+        </div>
+
+        {/* Footer */}
+        <p className="text-center text-[9px] font-bold text-theme-muted uppercase tracking-[0.3em]">
+          Ambiente Protegido por Foto Segundo &copy; {new Date().getFullYear()}
+        </p>
       </div>
     </div>
   );

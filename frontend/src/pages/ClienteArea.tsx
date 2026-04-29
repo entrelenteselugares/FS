@@ -4,7 +4,9 @@ import { useAuth } from "../hooks/useAuth";
 import { API } from "../lib/api";
 import { T, Card } from "../lib/theme";
 import AccessTypeModal from "../components/AccessTypeModal";
-import { ThemeToggle } from "../components/ThemeToggle";
+import { SideDrawer } from "../components/SideDrawer";
+import { DashboardLayout, type NavItem } from "../components/DashboardLayout";
+import { Image, Clock, ShieldCheck, ArrowRight, AlertTriangle, User, CheckCircle2, X } from "lucide-react";
 
 interface Pedido {
   id: string;
@@ -62,7 +64,7 @@ const S = {
 };
 
 export default function ClienteArea() {
-  const { user, logout } = useAuth();
+  const { user } = useAuth();
   const navigate = useNavigate();
   const [searchParams] = useSearchParams();
   const [pedidos, setPedidos] = useState<Pedido[]>([]);
@@ -71,6 +73,11 @@ export default function ClienteArea() {
   const [loadingDetalhe, setLoadingDetalhe] = useState(false);
   const [isPrivacyModalOpen, setIsPrivacyModalOpen] = useState(false);
   const [activeTab, setActiveTab] = useState<"files" | "profile">("files");
+  
+  const NAV_ITEMS: NavItem[] = [
+    { label: "Minhas Memórias", onClick: () => setActiveTab("files"), isActive: activeTab === "files", icon: <Image size={18} /> },
+    { label: "Meus Dados", onClick: () => setActiveTab("profile"), isActive: activeTab === "profile", icon: <User size={18} /> },
+  ];
   
   // Profile States
   const [profileData, setProfileData] = useState({ nome: "", whatsapp: "" });
@@ -156,86 +163,56 @@ export default function ClienteArea() {
   const pendentes = pedidos.filter((p) => !p.hasPaid);
 
   return (
-    <div style={S.page}>
+    <DashboardLayout title="Minha Conta" navItems={NAV_ITEMS}>
       <style>{`
-        @keyframes pulse { 0% { opacity: 1; } 50% { opacity: 0.5; } 100% { opacity: 1; } }
-        @media (max-width: 768px) {
-          .mobile-hide { display: none !important; }
-          .mobile-nav { padding: 1rem !important; }
-          .mobile-stack { flex-direction: column !important; align-items: flex-start !important; text-align: left !important; }
-          .mobile-title { font-size: 24px !important; }
-        }
+        @keyframes radarPulse { 0%,100% { transform:scale(1); opacity:.6; } 50% { transform:scale(1.4); opacity:0; } }
+        @media (max-width: 768px) { .mobile-stack { flex-direction:column !important; align-items:flex-start !important; } }
       `}</style>
-      
-      {/* NAV */}
-      <nav className="mobile-nav" style={{ display: "flex", alignItems: "center", justifyContent: "space-between", padding: "1.25rem 2rem", background: T.bg, borderBottom: `1px solid ${T.border}`, position: "sticky", top: 0, zIndex: 100 }}>
-        <button onClick={() => navigate("/")} style={{ background: "none", border: "none", color: T.text2, fontSize: 13, cursor: "pointer", transition: "color .2s" }} onMouseEnter={(e) => (e.currentTarget.style.color = T.text)} onMouseLeave={(e) => (e.currentTarget.style.color = T.text2)}>
-          ← <span className="mobile-hide">Voltar para Galeria</span><span className="md:hidden">Voltar</span>
-        </button>
-        <div style={{ display: "flex", alignItems: "center" }}>
-          <img src="/logo-fs.png" alt="Foto Segundo" style={{ height: 26, objectFit: "contain" }} />
+
+      <div className="max-w-5xl mx-auto px-6 lg:px-12 py-10 space-y-10 animate-in fade-in slide-in-from-bottom-4 duration-700">
+
+        {/* Expiring Alert Banner */}
+        {(() => {
+          const exp = aprovados.filter(p => { if (!p.accessExpiresAt) return false; const d = Math.ceil((new Date(p.accessExpiresAt).getTime()-Date.now())/(864e5)); return d>0&&d<=7; });
+          if (!exp.length) return null;
+          return (
+            <div className="flex items-center gap-4 px-6 py-4 bg-amber-500/10 border border-amber-500/30 text-amber-400">
+              <AlertTriangle size={16} />
+              <p className="text-[10px] font-black uppercase tracking-widest">Atenção: {exp.length} álbum(ns) expiram em menos de 7 dias. Faça o download agora.</p>
+            </div>
+          );
+        })()}
+
+        {/* Header */}
+        <div className="border-b border-theme-border/60 pb-10 space-y-3">
+          <h1 className="text-4xl md:text-5xl font-heading font-black text-theme-text uppercase tracking-tighter italic leading-none">
+            Minhas Memórias
+          </h1>
+          <div className="flex items-center gap-3">
+            <div className="h-1 w-10 bg-brand-tactical" />
+            <ShieldCheck size={13} className="text-brand-tactical" />
+            <p className="text-[10px] font-black text-brand-tactical uppercase tracking-widest italic">{user?.nome || "Área Exclusiva"}</p>
+          </div>
         </div>
-        <div style={{ display: "flex", alignItems: "center", gap: 12 }}>
-          <ThemeToggle />
-          <div className="mobile-hide" style={{ textAlign: "right" }}>
-            <p style={{ fontSize: 11, fontWeight: 600, color: T.text, margin: 0 }}>{user?.nome}</p>
-          </div>
-          <button onClick={logout} style={{ background: "transparent", border: `1px solid ${T.border2}`, borderRadius: 6, padding: "6px 14px", color: T.text, fontSize: 11, cursor: "pointer", transition: "all .2s" }}>
-            Sair
-          </button>
-        </div>
-      </nav>
-      {/* EXPIRING ALERT BANNER */}
-      {(() => {
-        const expiringOrders = aprovados.filter(p => {
-          if (!p.accessExpiresAt) return false;
-          const diff = new Date(p.accessExpiresAt).getTime() - Date.now();
-          const days = Math.ceil(diff / (1000 * 60 * 60 * 24));
-          return days > 0 && days <= 7;
-        });
 
-        if (expiringOrders.length === 0) return null;
-
-        return (
-          <div style={{ background: "#f59e0b", color: "#000", padding: "12px 2rem", textAlign: "center", fontSize: 12, fontWeight: 900, textTransform: "uppercase", letterSpacing: 1.5, display: "flex", alignItems: "center", justifyContent: "center", gap: 12 }}>
-            <span style={{ fontSize: 18 }}>⚠️</span>
-            ATENÇÃO: Você tem {expiringOrders.length} álbum(ns) que expiram em breve. Faça o download dos seus arquivos hoje mesmo!
+        {/* KPI Bar */}
+        {!loading && pedidos.length > 0 && (
+          <div className="grid grid-cols-3 gap-px bg-theme-border/20 border border-theme-border/20">
+            {[
+              { label: "Total Adquiridos", value: pedidos.length, icon: <Image size={14} /> },
+              { label: "Acesso Ativo", value: aprovados.length, icon: <CheckCircle2 size={14} />, highlight: true },
+              { label: "Aguardando", value: pendentes.length, icon: <Clock size={14} /> },
+            ].map(m => (
+              <div key={m.label} className="bg-theme-bg-muted/40 p-6 space-y-3 group hover:bg-theme-bg-muted/60 transition-all">
+                <div className="flex items-center gap-2">
+                  <div className={`p-1.5 ${m.highlight ? 'bg-brand-tactical text-brand-text' : 'bg-theme-border/40 text-theme-muted'}`}>{m.icon}</div>
+                  <p className="text-[9px] font-black text-theme-muted uppercase tracking-[0.2em]">{m.label}</p>
+                </div>
+                <p className={`text-3xl font-heading font-black italic tracking-tighter ${m.highlight ? 'text-brand-tactical' : 'text-theme-text'}`}>{m.value}</p>
+              </div>
+            ))}
           </div>
-        );
-      })()}
-
-      <div style={{ maxWidth: 1200, margin: "0 auto", padding: "1.5rem 1.5rem" }}>
-        {/* LISTA */}
-        <div>
-          <div style={{ marginBottom: "2.5rem" }}>
-            <h1 className="mobile-title" style={{ fontSize: 32, fontWeight: 800, color: "var(--theme-text)", marginBottom: 8, letterSpacing: -0.5 }}>
-              Minha Conta
-            </h1>
-            <div style={{ display: "flex", gap: 24, borderBottom: `1px solid ${T.border}`, marginTop: 24 }}>
-                <button 
-                  onClick={() => setActiveTab("files")}
-                  style={{ 
-                    padding: "12px 0", background: "none", border: "none", 
-                    color: activeTab === "files" ? T.brand : T.text3, 
-                    borderBottom: activeTab === "files" ? `2px solid ${T.brand}` : "none",
-                    fontSize: 12, fontWeight: 900, textTransform: "uppercase", letterSpacing: 2, cursor: "pointer"
-                  }}
-                >
-                  Meus Arquivos
-                </button>
-                <button 
-                  onClick={() => setActiveTab("profile")}
-                  style={{ 
-                    padding: "12px 0", background: "none", border: "none", 
-                    color: activeTab === "profile" ? T.brand : T.text3, 
-                    borderBottom: activeTab === "profile" ? `2px solid ${T.brand}` : "none",
-                    fontSize: 12, fontWeight: 900, textTransform: "uppercase", letterSpacing: 2, cursor: "pointer"
-                  }}
-                >
-                  Meus Dados
-                </button>
-          </div>
-          </div>
+        )}
 
           {activeTab === "files" ? (
             <>
@@ -256,63 +233,52 @@ export default function ClienteArea() {
                   ))}
                 </div>
               ) : pedidos.length === 0 ? (
-                <div style={{ textAlign: "center", padding: "6rem 0", background: "var(--theme-bg-muted)", borderRadius: 20, border: "1px dashed var(--theme-border)" }}>
-                  <p style={{ fontSize: 24, fontWeight: 700, color: "var(--theme-text)", marginBottom: 10 }}>
-                    Sua galeria está vazia
-                  </p>
-                  <p style={{ fontSize: 15, color: "var(--theme-text-muted)", marginBottom: "2rem" }}>
-                    Você ainda não adquiriu fotos de nenhum evento.
-                  </p>
-                  <button
-                    onClick={() => navigate("/")}
-                    style={{ background: "var(--brand-primary)", color: "var(--theme-text-on-brand)", border: "none", borderRadius: 0, padding: "12px 28px", fontSize: 13, fontWeight: 900, cursor: "pointer", transition: "transform .2s", textTransform: "uppercase", letterSpacing: 2 }}
-                    onMouseEnter={(e) => (e.currentTarget.style.transform = "scale(1.05)")}
-                    onMouseLeave={(e) => (e.currentTarget.style.transform = "scale(1)")}
-                  >
-                    Explorar Vitrine
-                  </button>
+                <div className="relative overflow-hidden border border-dashed border-theme-border/40 p-24 text-center space-y-8">
+                  <div className="absolute inset-0 bg-gradient-to-br from-brand-tactical/5 to-transparent opacity-50" />
+                  <div className="relative inline-block">
+                    <Image size={48} className="mx-auto text-theme-border/30" />
+                    <div className="absolute -top-2 -right-2 w-4 h-4 bg-brand-tactical rounded-full" style={{ animation: "radarPulse 2s ease-out infinite" }} />
+                    <div className="absolute -top-2 -right-2 w-4 h-4 bg-brand-tactical rounded-full" />
+                  </div>
+                  <div className="relative space-y-3">
+                    <p className="text-xl font-heading font-black text-theme-text uppercase italic tracking-tighter">Arquivo em Standby</p>
+                    <p className="text-[11px] font-bold text-theme-muted uppercase tracking-[0.3em] max-w-xs mx-auto leading-relaxed">Nenhuma memória adquirida ainda. Explore a vitrine ou solicite uma cobertura exclusiva.</p>
+                  </div>
+                  <div className="relative flex items-center justify-center gap-4 flex-wrap">
+                    <button onClick={() => navigate("/")} className="flex items-center gap-3 px-8 py-3 bg-brand-tactical text-brand-text text-[10px] font-black uppercase tracking-[0.4em] hover:brightness-110 transition-all">
+                      Explorar Vitrine <ArrowRight size={14} />
+                    </button>
+                    <button onClick={() => navigate("/cotacao")} className="flex items-center gap-3 px-8 py-3 bg-theme-bg border border-theme-border text-[10px] font-black uppercase tracking-[0.4em] text-theme-text hover:border-brand-tactical transition-all">
+                      Solicitar Cobertura <ArrowRight size={14} />
+                    </button>
+                  </div>
                 </div>
               ) : (
-                <div>
-                  {/* Liberados */}
+                <div className="space-y-10">
                   {aprovados.length > 0 && (
-                    <div style={{ marginBottom: "3.5rem" }}>
-                      <p style={{ fontSize: 11, fontWeight: 700, letterSpacing: 1.5, textTransform: "uppercase", color: T.brand, marginBottom: "1rem", display: "flex", alignItems: "center", gap: 8 }}>
-                        <span style={{ width: 6, height: 6, background: T.brand, borderRadius: "50%" }} />
-                        Acesso Liberado
-                      </p>
-                      <div style={{ display: "flex", flexDirection: "column", gap: 12 }}>
+                    <div className="space-y-4">
+                      <div className="flex items-center gap-4">
+                        <div className="w-2 h-2 rounded-full bg-brand-tactical animate-pulse" />
+                        <p className="text-[9px] font-black text-brand-tactical uppercase tracking-[0.4em]">Acesso Liberado</p>
+                        <div className="h-px flex-1 bg-gradient-to-r from-brand-tactical/30 to-transparent" />
+                      </div>
+                      <div className="flex flex-col gap-3">
                         {aprovados.map((p) => (
-                          <PedidoRow
-                            key={p.id}
-                            pedido={p}
-                            now={now}
-                            isSelected={selected?.id === p.id}
-                            onClick={() => handleSelect(p)}
-                            pedidos={pedidos}
-                          />
+                          <PedidoRow key={p.id} pedido={p} now={now} isSelected={selected?.id === p.id} onClick={() => handleSelect(p)} pedidos={pedidos} />
                         ))}
                       </div>
                     </div>
                   )}
-
-                  {/* Pendentes */}
                   {pendentes.length > 0 && (
-                    <div>
-                      <p style={{ fontSize: 11, fontWeight: 700, letterSpacing: 1.5, textTransform: "uppercase", color: "#f59e0b", marginBottom: "1rem", display: "flex", alignItems: "center", gap: 8 }}>
-                        <span style={{ width: 6, height: 6, background: "#f59e0b", borderRadius: "50%" }} />
-                        Aguardando Confirmação
-                      </p>
-                      <div style={{ display: "flex", flexDirection: "column", gap: 12 }}>
+                    <div className="space-y-4">
+                      <div className="flex items-center gap-4">
+                        <div className="w-2 h-2 rounded-full bg-amber-500" style={{ animation: "radarPulse 2s ease-out infinite" }} />
+                        <p className="text-[9px] font-black text-amber-500 uppercase tracking-[0.4em]">Aguardando Confirmação</p>
+                        <div className="h-px flex-1 bg-gradient-to-r from-amber-500/30 to-transparent" />
+                      </div>
+                      <div className="flex flex-col gap-3">
                         {pendentes.map((p) => (
-                          <PedidoRow
-                            key={p.id}
-                            pedido={p}
-                            now={now}
-                            isSelected={selected?.id === p.id}
-                            onClick={() => handleSelect(p)}
-                            pedidos={pedidos}
-                          />
+                          <PedidoRow key={p.id} pedido={p} now={now} isSelected={selected?.id === p.id} onClick={() => handleSelect(p)} pedidos={pedidos} />
                         ))}
                       </div>
                     </div>
@@ -321,94 +287,59 @@ export default function ClienteArea() {
               )}
             </>
           ) : (
-            <div style={{ ...S.card, padding: "2.5rem", maxWidth: 600, animation: "fadeUp 0.4s ease" }}>
-                <h2 style={{ fontSize: 20, fontWeight: 900, textTransform: "uppercase", letterSpacing: 1, marginBottom: 24 }}>Informações Pessoais</h2>
-                
-                <form onSubmit={handleUpdateProfile} style={{ display: "flex", flexDirection: "column", gap: 20 }}>
-                    <div>
-                        <label style={{ fontSize: 10, fontWeight: 900, textTransform: "uppercase", letterSpacing: 2, color: T.text3, marginBottom: 8, display: "block" }}>E-mail (Não editável)</label>
-                        <input type="text" disabled value={user?.email || ""} style={{ width: "100%", background: "rgba(255,255,255,0.03)", border: `1px solid ${T.border}`, padding: "14px", color: T.text3, opacity: 0.6, fontSize: 13 }} />
-                    </div>
-
-                    <div>
-                        <label style={{ fontSize: 10, fontWeight: 900, textTransform: "uppercase", letterSpacing: 2, color: T.text3, marginBottom: 8, display: "block" }}>Nome Completo</label>
-                        <input 
-                          type="text" 
-                          value={profileData.nome}
-                          onChange={e => setProfileData(p => ({ ...p, nome: e.target.value }))}
-                          style={{ width: "100%", background: T.bgField, border: `1px solid ${T.border}`, padding: "14px", color: T.text, fontSize: 13 }} 
-                          placeholder="Como quer ser chamado"
-                        />
-                    </div>
-
-                    <div>
-                        <label style={{ fontSize: 10, fontWeight: 900, textTransform: "uppercase", letterSpacing: 2, color: T.text3, marginBottom: 8, display: "block" }}>WhatsApp</label>
-                        <input 
-                          type="text" 
-                          value={profileData.whatsapp}
-                          onChange={e => setProfileData(p => ({ ...p, whatsapp: e.target.value }))}
-                          style={{ width: "100%", background: T.bgField, border: `1px solid ${T.border}`, padding: "14px", color: T.text, fontSize: 13 }} 
-                          placeholder="(00) 00000-0000"
-                        />
-                    </div>
-
-                    <div style={{ marginTop: 12 }}>
-                        <button 
-                          type="submit" 
-                          disabled={isSaving}
-                          style={{ 
-                            background: T.brand, color: "black", border: "none", padding: "14px 28px", 
-                            fontSize: 12, fontWeight: 900, textTransform: "uppercase", letterSpacing: 2, 
-                            cursor: "pointer", transition: "all .2s" 
-                          }}
-                        >
-                          {isSaving ? "Salvando..." : "Salvar Alterações"}
-                        </button>
-                        {saveSuccess && <span style={{ marginLeft: 16, color: T.brand, fontSize: 11, fontWeight: 700 }}>✓ Dados atualizados com sucesso</span>}
-                    </div>
-                </form>
-
-                <div style={{ marginTop: 40, paddingTop: 32, borderTop: `1px solid ${T.border}` }}>
-                     <h3 style={{ fontSize: 10, fontWeight: 900, textTransform: "uppercase", letterSpacing: 2, color: "#f87171", marginBottom: 16 }}>Área de Segurança</h3>
-                     <p style={{ fontSize: 12, color: T.text3, marginBottom: 20 }}>Precisa mudar sua senha ou excluir seus dados? Entre em contato com nosso suporte especializado.</p>
-                     <a href="https://wa.me/5519997843817" target="_blank" rel="noreferrer" style={{ fontSize: 11, fontWeight: 800, color: T.text, textDecoration: "underline" }}>Falar com Suporte</a>
+            <div className="lux-card p-10 max-w-xl space-y-8 border-l-4 border-l-brand-tactical bg-theme-bg-muted/10">
+              <div className="space-y-2">
+                <h2 className="text-xl font-heading font-black text-theme-text uppercase italic tracking-tight">Dados do Perfil</h2>
+                <p className="text-[9px] font-black text-theme-muted uppercase tracking-[0.3em]">Informações vinculadas à sua conta</p>
+              </div>
+              <form onSubmit={handleUpdateProfile} className="space-y-6">
+                <div className="space-y-2">
+                  <label className="text-[9px] font-black uppercase tracking-[0.3em] text-theme-muted block">E-mail (Não editável)</label>
+                  <input type="text" disabled value={user?.email || ""} className="w-full bg-theme-bg/50 border border-theme-border/40 p-4 text-[12px] font-bold text-theme-muted opacity-60 outline-none" />
                 </div>
+                <div className="space-y-2">
+                  <label className="text-[9px] font-black uppercase tracking-[0.3em] text-theme-muted block">Nome Completo</label>
+                  <input type="text" value={profileData.nome} onChange={e => setProfileData(p => ({ ...p, nome: e.target.value }))} className="w-full bg-theme-bg border border-theme-border p-4 text-[13px] font-medium text-theme-text focus:border-brand-tactical outline-none transition-all" placeholder="Como quer ser chamado" />
+                </div>
+                <div className="space-y-2">
+                  <label className="text-[9px] font-black uppercase tracking-[0.3em] text-theme-muted block">WhatsApp</label>
+                  <input type="text" value={profileData.whatsapp} onChange={e => setProfileData(p => ({ ...p, whatsapp: e.target.value }))} className="w-full bg-theme-bg border border-theme-border p-4 text-[13px] font-medium text-theme-text focus:border-brand-tactical outline-none transition-all" placeholder="(00) 00000-0000" />
+                </div>
+                <div className="flex items-center gap-6">
+                  <button type="submit" disabled={isSaving} className="px-10 py-4 bg-brand-tactical text-brand-text text-[10px] font-black uppercase tracking-[0.4em] hover:brightness-110 transition-all disabled:opacity-50">
+                    {isSaving ? "Salvando..." : "Salvar Alterações"}
+                  </button>
+                  {saveSuccess && <span className="text-brand-tactical text-[10px] font-black uppercase tracking-widest">✓ Atualizado</span>}
+                </div>
+              </form>
+              <div className="pt-6 border-t border-theme-border/40 space-y-4">
+                <h3 className="text-[9px] font-black text-red-400 uppercase tracking-[0.3em]">Zona de Suporte</h3>
+                <p className="text-[11px] text-theme-muted">Para redefinir sua senha ou solicitar exclusão de dados, entre em contato com nosso suporte.</p>
+                <a href="https://wa.me/5519997843817" target="_blank" rel="noreferrer" className="inline-flex items-center gap-2 text-[10px] font-black text-theme-text uppercase tracking-widest hover:text-brand-tactical transition-colors">
+                  Falar com Suporte <ArrowRight size={12} />
+                </a>
+              </div>
             </div>
           )}
         </div>
 
-        {/* MODAL DE DETALHES */}
-        {selected && (
-          <div 
-            onClick={() => setSelected(null)}
-            style={{ 
-              position: "fixed", top: 0, left: 0, right: 0, bottom: 0, 
-              background: "rgba(0,0,0,0.9)", backdropFilter: "blur(20px)", 
-              zIndex: 1000, display: "flex", alignItems: "center", justifyContent: "center",
-              padding: "20px"
-            }}
-          >
-            <div 
-              onClick={e => e.stopPropagation()}
-              style={{ 
-                width: "100%", maxWidth: 500, maxHeight: "90vh", overflowY: "auto",
-                background: T.bgCard, border: `1px solid ${T.border}`, borderRadius: 0,
-                boxShadow: "0 25px 50px -12px rgba(0, 0, 0, 0.5)"
-              }}
-            >
-               <PedidoDetalhe
-                  pedido={selected}
-                  now={now}
-                  loading={loadingDetalhe}
-                  onClose={() => setSelected(null)}
-                  onGoToEvent={() => navigate(`/e/${selected.event.id}`)}
-                  onChangePrivacy={() => setIsPrivacyModalOpen(true)}
-                  onToggleVisibility={handleToggleVisibility}
-              />
-            </div>
-          </div>
-        )}
-      </div>
+        {/* DETALHES DO PEDIDO (DRAWER) */}
+        <SideDrawer
+          isOpen={!!selected}
+          onClose={() => setSelected(null)}
+          width="max-w-2xl"
+        >
+          {selected && (
+            <PedidoDetalhe
+              pedido={selected}
+              loading={loadingDetalhe}
+              onClose={() => setSelected(null)}
+              onGoToEvent={() => navigate(`/e/${selected.event.id}`)}
+              onChangePrivacy={() => setIsPrivacyModalOpen(true)}
+              onToggleVisibility={handleToggleVisibility}
+            />
+          )}
+        </SideDrawer>
 
       {isPrivacyModalOpen && selected && (
         <AccessTypeModal
@@ -417,14 +348,13 @@ export default function ClienteArea() {
           onConfirmed={async () => {
             setIsPrivacyModalOpen(false);
             const data = await fetchPedidos();
-            // Atualiza o selecionado para refletir a mudança
             const updated = data.find((p: Pedido) => p.id === selected.id);
             if (updated) setSelected(updated);
             else setSelected(null);
           }}
         />
       )}
-    </div>
+    </DashboardLayout>
   );
 }
 
@@ -445,147 +375,105 @@ function PedidoRow({ pedido, now, isSelected, onClick, pedidos }: {
   return (
     <div
       onClick={onClick}
-      className="mobile-stack"
+      className={`relative group cursor-pointer border transition-all duration-500 overflow-hidden ${
+        isSelected ? 'border-brand-tactical bg-brand-tactical/5' : 'border-theme-border/40 bg-theme-bg-muted/10 hover:border-brand-tactical/60 hover:bg-theme-bg-muted/30'
+      } ${isExpiringSoon ? 'border-amber-500/40' : ''}`}
       style={{
-        ...S.card,
-        padding: "1.25rem 1.5rem",
-        cursor: "pointer",
-        display: "flex",
-        gap: "1.5rem",
-        alignItems: "flex-start",
-        borderColor: isExpiringSoon ? "#f59e0b" : (isSelected ? T.brand : T.border),
-        background: isSelected ? "rgba(133, 185, 172, 0.05)" : T.bgCard,
-        boxShadow: isExpiringSoon ? "0 0 15px rgba(245, 158, 11, 0.1)" : "none",
-        transition: "all .2s ease-out",
         transform: isSelected ? "translateY(-2px)" : "none",
+        boxShadow: isExpiringSoon ? "0 0 20px rgba(245, 158, 11, 0.05)" : isSelected ? "0 10px 30px -10px rgba(133, 185, 172, 0.1)" : "none"
       }}
-      onMouseEnter={(e) => !isSelected && ((e.currentTarget as HTMLDivElement).style.borderColor = "var(--brand-primary)")}
-      onMouseLeave={(e) => !isSelected && ((e.currentTarget as HTMLDivElement).style.borderColor = isExpiringSoon ? "#f59e0b" : "var(--theme-border)")}
     >
-      {/* Thumbnail */}
-      <div style={{ width: 84, height: 84, background: T.bgField, border: `1px solid ${T.border}`, borderRadius: 0, flexShrink: 0, overflow: "hidden", position: "relative" }}>
-        {pedido.event.coverPhotoUrl ? (
-          <img src={pedido.event.coverPhotoUrl} alt="" style={{ width: "100%", height: "100%", objectFit: "cover", filter: pedido.hasPaid ? "none" : "grayscale(80%) brightness(0.4)" }} />
-        ) : (
-          <div style={{ width: "100%", height: "100%", display: "flex", alignItems: "center", justifyContent: "center", fontSize: 28 }}>📦</div>
-        )}
-        {isExpiringSoon && (
-          <div style={{ position: "absolute", bottom: 0, left: 0, right: 0, background: "#f59e0b", color: "#000", fontSize: 8, fontWeight: 900, textAlign: "center", padding: "4px 0", textTransform: "uppercase", letterSpacing: 0.5 }}>
-            {daysLeft}d restantes
-          </div>
-        )}
-      </div>
+      <div className="flex flex-col md:flex-row items-stretch gap-6 p-6">
+        {/* Thumbnail */}
+        <div className="relative w-full md:w-32 aspect-square md:aspect-[4/5] bg-theme-bg overflow-hidden border border-theme-border/20">
+          {pedido.event.coverPhotoUrl ? (
+            <img 
+              src={pedido.event.coverPhotoUrl} 
+              alt="" 
+              className={`w-full h-full object-cover transition-all duration-1000 group-hover:scale-110 ${pedido.hasPaid ? 'grayscale-0' : 'grayscale brightness-50'}`} 
+            />
+          ) : (
+            <div className="w-full h-full flex items-center justify-center bg-theme-bg-muted/40">
+              <Image size={24} className="text-theme-muted/20" />
+            </div>
+          )}
+          
+          {isExpiringSoon && (
+            <div className="absolute inset-x-0 bottom-0 bg-amber-500 text-black text-[8px] font-black uppercase tracking-widest py-1.5 text-center">
+              {daysLeft} dias restantes
+            </div>
+          )}
 
-      {/* Info */}
-      <div style={{ flex: 1, minWidth: 0 }}>
-        <p style={{ fontSize: 16, fontWeight: 700, color: "var(--theme-text)", marginBottom: 4, whiteSpace: "nowrap", overflow: "hidden", textOverflow: "ellipsis" }}>
-          {pedido.event.nomeNoivos} <span style={{ fontSize: 10, color: "var(--brand-primary)", fontWeight: 900, marginLeft: 8, background: "rgba(133,185,172,0.1)", padding: "2px 6px", borderRadius: 4 }}>REF #{pedido.event.id.slice(0, 6).toUpperCase()}</span>
-        </p>
-        <p style={{ fontSize: 12, color: "var(--theme-text-muted)", marginBottom: 10 }}>
-          {formatDate(pedido.event.dataEvento)} · {pedido.event.city || pedido.event.location} · {new Date(pedido.event.dataEvento).toLocaleTimeString("pt-BR", { hour: "2-digit", minute: "2-digit" })}
-        </p>
-        <div style={{ display: "flex", gap: 8, flexWrap: "wrap" }}>
-          {pedido.event.temFoto && <Tag label="Foto" />}
-          {pedido.event.temVideo && <Tag label="Vídeo" />}
-          {pedido.event.temReels && <Tag label="Reels" color="var(--brand-primary)" />}
-          {pedido.manualType && <Tag label={pedido.manualType} color="#f59e0b" />}
+          {!pedido.hasPaid && (
+            <div className="absolute inset-0 flex items-center justify-center">
+              <div className="px-3 py-1 bg-black/60 backdrop-blur-md border border-white/10 text-[8px] font-black text-white uppercase tracking-widest">
+                Bloqueado
+              </div>
+            </div>
+          )}
         </div>
-        
-        {pedido.accessExpiresAt && pedido.hasPaid && (
-          <div style={{ marginTop: 8 }}>
-            {(() => {
-              const expires = new Date(pedido.accessExpiresAt ?? "");
-              if (isNaN(expires.getTime())) return null;
-              
-              // Cálculo de dias baseado no início do dia para evitar saltos por minutos
-              const expDate = new Date(expires);
-              expDate.setHours(23, 59, 59, 999);
-              const now = new Date();
-              const diffTime = expDate.getTime() - now.getTime();
-              const dias = Math.max(0, Math.ceil(diffTime / (1000 * 60 * 60 * 24)));
-              
-              const urgente = dias <= 5;
-              const expirado = dias <= 0;
-              return (
-                <span style={{
-                  fontSize: 9, padding: "3px 8px", letterSpacing: 0.5,
-                  textTransform: "uppercase", fontWeight: 700,
-                  background: expirado ? "var(--theme-bg-muted)" : urgente ? "rgba(245, 158, 11, 0.1)" : "var(--brand-dark)",
-                  border: `1px solid ${expirado ? "rgba(248, 113, 113, 0.3)" : urgente ? "rgba(245, 158, 11, 0.3)" : "var(--brand-border)"}`,
-                  color: expirado ? "#f87171" : urgente ? "#f59e0b" : "var(--brand-primary)",
-                  borderRadius: 4
-                }}>
-                  {expirado
-                    ? "Expirado"
-                    : `${dias}d restantes — ${pedido.accessType === "PUBLIC" ? "Público" : "Privado"}`}
-                </span>
-              );
-            })()}
-          </div>
-        )}
-      </div>
 
-      <div style={{ textAlign: "right", flexShrink: 0, display: "flex", flexDirection: "column", gap: 8, alignItems: "flex-end" }}>
-        <p style={{ fontSize: 18, color: "var(--theme-text)", fontWeight: 800, margin: 0 }}>
-          {formatCurrency(pedido.amount)}
-        </p>
-        {/* Botão Pagar com Regra de Dependência (Reserva antes de Quitação) */}
-        {!pedido.hasPaid && (
-          <button
-            onClick={() => {
-              // Regra: Se for Quitação, verifica se a Reserva do mesmo evento está paga
-              const isQuitacao = pedido.manualType?.toLowerCase().includes("quitação");
-              if (isQuitacao) {
-                const reservaPendente = pedidos.find(p => 
-                  p.event.id === pedido.event.id && 
-                  p.manualType?.toLowerCase().includes("reserva") && 
-                  !p.hasPaid
-                );
-                if (reservaPendente) {
-                  alert("Você precisa pagar a Reserva antes de realizar a Quitação.");
-                  return;
-                }
-              }
-              navigate(`/checkout?orderId=${pedido.id}`);
-            }}
-            disabled={(() => {
-              const isQuitacao = pedido.manualType?.toLowerCase().includes("quitação");
-              if (!isQuitacao) return false;
-              return pedidos.some(p => 
-                p.event.id === pedido.event.id && 
-                p.manualType?.toLowerCase().includes("reserva") && 
-                !p.hasPaid
-              );
-            })()}
-            className="lux-button-base lux-button-tactical"
-            style={{ 
-              padding: "8px 24px", 
-              fontSize: 10, 
-              background: "var(--brand-primary)",
-              color: "var(--theme-text-on-brand)",
-              opacity: (() => {
-                const isQuitacao = pedido.manualType?.toLowerCase().includes("quitação");
-                if (!isQuitacao) return 1;
-                const hasReservaPendente = pedidos.some(p => p.event.id === pedido.event.id && p.manualType?.toLowerCase().includes("reserva") && !p.hasPaid);
-                return hasReservaPendente ? 0.3 : 1;
-              })(),
-              cursor: (() => {
-                const isQuitacao = pedido.manualType?.toLowerCase().includes("quitação");
-                const hasReservaPendente = pedidos.some(p => p.event.id === pedido.event.id && p.manualType?.toLowerCase().includes("reserva") && !p.hasPaid);
-                return (isQuitacao && hasReservaPendente) ? "not-allowed" : "pointer";
-              })()
-            }}
-          >
-            {(() => {
-              const isQuitacao = pedido.manualType?.toLowerCase().includes("quitação");
-              const hasReservaPendente = pedidos.some(p => p.event.id === pedido.event.id && p.manualType?.toLowerCase().includes("reserva") && !p.hasPaid);
-              return (isQuitacao && hasReservaPendente) ? "AGUARD. RESERVA" : "PAGAR";
-            })()}
-          </button>
-        )}
-        <p style={{ fontSize: 10, color: "var(--theme-text-muted)", textTransform: "uppercase", letterSpacing: 0.5, margin: 0 }}>
-          ID: {pedido.id.slice(-6).toUpperCase()}
-        </p>
+        {/* Info */}
+        <div className="flex-1 min-w-0 flex flex-col justify-between py-1">
+          <div className="space-y-3">
+            <div className="flex items-start justify-between gap-4">
+              <div className="space-y-1">
+                <h4 className={`text-xl font-heading font-black italic tracking-tighter uppercase transition-colors ${isSelected ? 'text-brand-tactical' : 'text-theme-text group-hover:text-brand-tactical'}`}>
+                  {pedido.event.nomeNoivos}
+                </h4>
+                <div className="flex items-center gap-2 text-[9px] font-black text-theme-muted uppercase tracking-widest">
+                  <span>{formatDate(pedido.event.dataEvento)}</span>
+                  <span className="w-1 h-1 rounded-full bg-theme-border" />
+                  <span>{pedido.event.city || pedido.event.location}</span>
+                </div>
+              </div>
+              <p className="text-xl font-heading font-black italic tracking-tighter text-theme-text">
+                {formatCurrency(pedido.amount)}
+              </p>
+            </div>
+
+            <div className="flex flex-wrap gap-2">
+              {pedido.event.temFoto && <Tag label="Foto" />}
+              {pedido.event.temVideo && <Tag label="Vídeo" />}
+              {pedido.event.temReels && <Tag label="Reels" color="var(--brand-tactical)" />}
+              {pedido.manualType && <Tag label={pedido.manualType} color="#f59e0b" />}
+            </div>
+          </div>
+
+          <div className="mt-4 md:mt-0 flex items-end justify-between gap-4">
+            <div>
+              {pedido.accessExpiresAt && pedido.hasPaid && (
+                <div className="flex items-center gap-2">
+                  <div className={`w-1.5 h-1.5 rounded-full ${isExpiringSoon ? 'bg-amber-500 animate-pulse' : 'bg-brand-tactical'}`} />
+                  <p className={`text-[9px] font-black uppercase tracking-widest ${isExpiringSoon ? 'text-amber-500' : 'text-brand-tactical'}`}>
+                    {daysLeft && daysLeft <= 0 ? "Expirado" : `${daysLeft}d restantes — ${pedido.accessType === "PUBLIC" ? "Público" : "Privado"}`}
+                  </p>
+                </div>
+              )}
+            </div>
+
+            {!pedido.hasPaid ? (
+              <button
+                onClick={(e) => {
+                  e.stopPropagation();
+                  const isQuitacao = pedido.manualType?.toLowerCase().includes("quitação");
+                  if (isQuitacao) {
+                    const reservaPendente = pedidos.find(p => p.event.id === pedido.event.id && p.manualType?.toLowerCase().includes("reserva") && !p.hasPaid);
+                    if (reservaPendente) { alert("Pague a Reserva primeiro."); return; }
+                  }
+                  navigate(`/checkout?orderId=${pedido.id}`);
+                }}
+                className="px-6 py-2.5 bg-brand-tactical text-brand-text text-[9px] font-black uppercase tracking-[0.3em] hover:brightness-110 transition-all"
+              >
+                {pedido.manualType?.toLowerCase().includes("quitação") && pedidos.some(p => p.event.id === pedido.event.id && p.manualType?.toLowerCase().includes("reserva") && !p.hasPaid) ? "Aguard. Reserva" : "Pagar Agora"}
+              </button>
+            ) : (
+              <div className="flex items-center gap-2 text-[9px] font-black text-brand-tactical uppercase tracking-widest italic">
+                Acesso Liberado <ArrowRight size={12} />
+              </div>
+            )}
+          </div>
+        </div>
       </div>
     </div>
   );
@@ -598,7 +486,7 @@ function Tag({ label, color = "#444" }: { label: string; color?: string }) {
       padding: "3px 10px", 
       borderRadius: 4, 
       border: `1px solid ${color}`, 
-      background: `${color}15`, // Adiciona 15% de opacidade no fundo
+      background: `${color}15`,
       color: color, 
       letterSpacing: 0.5, 
       textTransform: "uppercase",
@@ -609,9 +497,8 @@ function Tag({ label, color = "#444" }: { label: string; color?: string }) {
   );
 }
 
-function PedidoDetalhe({ pedido, now, loading, onClose, onGoToEvent, onChangePrivacy, onToggleVisibility }: {
+function PedidoDetalhe({ pedido, loading, onClose, onGoToEvent, onChangePrivacy, onToggleVisibility }: {
   pedido: Pedido;
-  now: number;
   loading: boolean;
   onClose: () => void;
   onGoToEvent: () => void;
@@ -620,212 +507,141 @@ function PedidoDetalhe({ pedido, now, loading, onClose, onGoToEvent, onChangePri
 }) {
   const navigate = useNavigate();
   return (
-    <div style={{ ...S.card, position: "sticky", top: "100px", overflow: "hidden" }}>
-
+    <div className="flex flex-col bg-theme-bg overflow-hidden">
       {/* Header */}
-      <div style={{ padding: "1.5rem", borderBottom: "0.5px solid #1a1a1a", display: "flex", justifyContent: "space-between", alignItems: "flex-start" }}>
-        <div>
-          <p style={{ fontSize: 10, fontWeight: 800, letterSpacing: 1, textTransform: "uppercase", color: pedido.hasPaid ? T.brand : "#f59e0b", marginBottom: 6 }}>
-            {pedido.hasPaid ? "Entrega Liberada" : `Processamento — #${pedido.id.slice(-6).toUpperCase()}`}
+      <div className="p-8 border-b border-theme-border/40 flex justify-between items-start bg-theme-bg-muted/5">
+        <div className="space-y-1">
+          <p className={`text-[9px] font-black uppercase tracking-[0.4em] ${pedido.hasPaid ? 'text-brand-tactical' : 'text-amber-500'}`}>
+            {pedido.hasPaid ? "Entrega Liberada" : "Processamento Ativo"}
           </p>
-          <h2 style={{ fontSize: 22, fontWeight: 900, fontFamily: T.fontD, textTransform: "uppercase", color: T.text, margin: 0, letterSpacing: "-0.5px" }}>
-            {pedido.event.nomeNoivos} <span style={{ fontSize: 10, color: T.brand, opacity: 0.6, marginLeft: 10 }}>REF #{pedido.event.id.slice(0, 6).toUpperCase()}</span>
+          <h2 className="text-3xl font-heading font-black italic text-theme-text uppercase tracking-tighter">
+            {pedido.event.nomeNoivos}
           </h2>
+          <div className="flex items-center gap-3 text-[10px] font-bold text-theme-muted uppercase tracking-widest">
+            <span>Ref: {pedido.event.id.slice(0, 8).toUpperCase()}</span>
+            <span className="w-1 h-1 rounded-full bg-theme-border" />
+            <span>{formatDate(pedido.createdAt)}</span>
+          </div>
         </div>
-        <button onClick={onClose} style={{ background: "none", border: "none", color: "var(--theme-text-muted)", fontSize: 24, cursor: "pointer", padding: 0, lineHeight: 1 }} onMouseEnter={(e) => (e.currentTarget.style.color = "var(--theme-text)")} onMouseLeave={(e) => (e.currentTarget.style.color = "var(--theme-text-muted)")}>
-          ×
+        <button onClick={onClose} className="p-2 text-theme-muted hover:text-theme-text transition-colors">
+          <X size={20} />
         </button>
       </div>
 
-      {pedido.accessExpiresAt && pedido.hasPaid && (
-        <div style={{ 
-          margin: "0 1.5rem", 
-          marginTop: "1.5rem", 
-          padding: "10px 14px", 
-          background: "var(--brand-dark)", 
-          border: `1px solid var(--brand-border)`,
-          borderRadius: 4
-        }}>
-          <p style={{ fontSize: 11, color: "var(--brand-primary)", margin: 0, fontWeight: 600 }}>
-            {pedido.accessType === "PRIVATE" ? "⚠️ ACESSO PRIVADO" : "📅 ÁLBUM PÚBLICO"}
-          </p>
-          <p style={{ fontSize: 10, color: "var(--theme-text-muted)", margin: 0, marginTop: 4 }}>
-            Expira em: {new Date(pedido.accessExpiresAt).toLocaleDateString("pt-BR")} 
-            {(() => {
-              const expDate = new Date(pedido.accessExpiresAt ?? "");
-              expDate.setHours(23, 59, 59, 999);
-              const diff = expDate.getTime() - now;
-              const days = Math.max(0, Math.ceil(diff / (1000 * 60 * 60 * 24)));
-              if (days <= 0) return " (Expirado)";
-              return ` (${days}d restantes)`;
-            })()}
-          </p>
-        </div>
-      )}
+      <div className="p-8 space-y-10">
+        {/* Status Card */}
+        {pedido.accessExpiresAt && pedido.hasPaid && (
+          <div className="p-6 bg-brand-tactical/5 border border-brand-tactical/20 space-y-4">
+            <div className="flex items-center justify-between">
+              <div className="flex items-center gap-3">
+                <Clock size={16} className="text-brand-tactical" />
+                <p className="text-[10px] font-black text-brand-tactical uppercase tracking-widest italic">Validade do Acesso</p>
+              </div>
+              <p className="text-[10px] font-black text-theme-text uppercase tracking-widest">
+                {pedido.accessType === "PRIVATE" ? "Acesso Privado" : "Álbum Público"}
+              </p>
+            </div>
+            <p className="text-[11px] text-theme-muted leading-relaxed">
+              Este álbum expira em {new Date(pedido.accessExpiresAt).toLocaleDateString("pt-BR")}. 
+              Certifique-se de realizar o download de todos os arquivos antes desta data.
+            </p>
+          </div>
+        )}
 
-      <div style={{ padding: "1.5rem", display: "flex", flexDirection: "column", gap: "1.5rem" }}>
-        
-        {/* Visibilidade */}
+        {/* Visibility Toggles */}
         {pedido.hasPaid && (
-          <div style={{ display: "flex", flexDirection: "column", gap: 12 }}>
-            <p style={{ fontSize: 11, fontWeight: 600, color: "var(--theme-text-muted)", textTransform: "uppercase", letterSpacing: 1 }}>Visibilidade do Conteúdo</p>
-            <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 8 }}>
+          <div className="space-y-4">
+            <p className="text-[9px] font-black text-theme-muted uppercase tracking-[0.3em]">Gestão de Visibilidade</p>
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               <button 
                 onClick={() => onToggleVisibility(pedido.id, !pedido.showAlbum)}
-                style={{ 
-                  padding: "10px", background: pedido.showAlbum ? "var(--brand-dark)" : T.bgField, 
-                  border: `1px solid ${pedido.showAlbum ? T.brand : T.border}`, 
-                  color: pedido.showAlbum ? T.brand : T.text3, borderRadius: 4, cursor: "pointer", fontSize: 10, fontWeight: 700 
-                }}
+                className={`p-4 border text-[10px] font-black uppercase tracking-widest flex items-center justify-between transition-all ${
+                  pedido.showAlbum ? 'border-brand-tactical text-brand-tactical bg-brand-tactical/5' : 'border-theme-border/40 text-theme-muted grayscale'
+                }`}
               >
-                {pedido.showAlbum ? "📸 ÁLBUM ATIVO" : "📸 ÁLBUM OCULTO"}
+                <span>Álbum Digital</span>
+                {pedido.showAlbum ? <CheckCircle2 size={14} /> : <X size={14} />}
               </button>
               <button 
                 onClick={() => onToggleVisibility(pedido.id, undefined, !pedido.showVideo)}
-                style={{ 
-                  padding: "10px", background: pedido.showVideo ? "var(--brand-dark)" : T.bgField, 
-                  border: `1px solid ${pedido.showVideo ? T.brand : T.border}`, 
-                  color: pedido.showVideo ? T.brand : T.text3, borderRadius: 4, cursor: "pointer", fontSize: 10, fontWeight: 700 
-                }}
+                className={`p-4 border text-[10px] font-black uppercase tracking-widest flex items-center justify-between transition-all ${
+                  pedido.showVideo ? 'border-brand-tactical text-brand-tactical bg-brand-tactical/5' : 'border-theme-border/40 text-theme-muted grayscale'
+                }`}
               >
-                {pedido.showVideo ? "🎬 VÍDEO ATIVO" : "🎬 VÍDEO OCULTO"}
+                <span>Vídeo & Reels</span>
+                {pedido.showVideo ? <CheckCircle2 size={14} /> : <X size={14} />}
               </button>
             </div>
-            <p style={{ fontSize: 9, color: T.text3, margin: 0 }}>* Em álbuns públicos, ao menos um item deve estar visível.</p>
           </div>
         )}
 
-        {/* Links */}
-        {loading ? (
-          <div style={{ textAlign: "center", padding: "2rem 0" }}>
-            <div style={{ width: 30, height: 30, border: "2px solid var(--brand-primary)", borderTopColor: "transparent", borderRadius: "50%", margin: "0 auto", animation: "spin 1s linear infinite" }} />
-          </div>
-        ) : pedido.hasPaid ? (
-          <div style={{ display: "flex", flexDirection: "column", gap: 12 }}>
-            <p style={{ fontSize: 11, fontWeight: 600, color: "var(--theme-text-muted)", textTransform: "uppercase", letterSpacing: 1 }}>Links de Acesso</p>
-            
-            {pedido.event.lightroomUrl ? (
-              <a
-                href={pedido.event.lightroomUrl}
-                target="_blank"
-                rel="noopener noreferrer"
-                style={{ display: "flex", alignItems: "center", justifyContent: "space-between", background: T.bgField, border: `1px solid ${T.border}`, borderRadius: 0, padding: "14px 18px", textDecoration: "none", transition: "all .2s" }}
-                onMouseEnter={(e: React.MouseEvent<HTMLElement>) => { e.currentTarget.style.borderColor = T.brand; e.currentTarget.style.background = T.bgCard; }}
-                onMouseLeave={(e: React.MouseEvent<HTMLElement>) => { e.currentTarget.style.borderColor = T.border; e.currentTarget.style.background = T.bgField; }}
-              >
-                <div>
-                  <p style={{ fontSize: 13, fontWeight: 700, color: T.text, marginBottom: 2 }}>📸 Álbum Digital</p>
-                  <p style={{ fontSize: 10, color: T.text2, textTransform: "uppercase", letterSpacing: 0.5 }}>Curadoria em Alta Resolução</p>
+        {/* Content Links */}
+        <div className="space-y-6">
+          <p className="text-[9px] font-black text-theme-muted uppercase tracking-[0.3em]">Arquivos Disponíveis</p>
+          
+          {loading ? (
+            <div className="py-12 flex justify-center">
+              <div className="w-8 h-8 border-2 border-brand-tactical border-t-transparent rounded-full animate-spin" />
+            </div>
+          ) : pedido.hasPaid ? (
+            <div className="space-y-3">
+              {pedido.event.lightroomUrl ? (
+                <a href={pedido.event.lightroomUrl} target="_blank" rel="noreferrer" className="flex items-center justify-between p-6 bg-theme-bg-muted/20 border border-theme-border hover:border-brand-tactical transition-all group">
+                  <div className="flex items-center gap-4">
+                    <div className="p-3 bg-brand-tactical/10 text-brand-tactical"><Image size={18} /></div>
+                    <div>
+                      <p className="text-[12px] font-bold text-theme-text uppercase tracking-widest">Galeria Editorial</p>
+                      <p className="text-[9px] text-theme-muted uppercase tracking-widest">Visualização em Alta Definição</p>
+                    </div>
+                  </div>
+                  <ArrowRight size={16} className="text-theme-muted group-hover:text-brand-tactical transition-colors" />
+                </a>
+              ) : (
+                <div className="p-6 bg-theme-bg-muted/10 border border-theme-border/20 text-theme-muted italic text-[11px]">
+                  Fotos em fase de curadoria e edição final.
                 </div>
-                <span style={{ color: T.brand }}>↗</span>
-              </a>
-            ) : (
-                <div style={{ background: T.bgCard, border: `1px solid ${T.border}`, borderRadius: 0, padding: "14px 18px" }}>
-                   <p style={{ fontSize: 13, color: T.text3, margin: 0 }}>📸 Fotos em edição — disponível em breve</p>
-                </div>
-            )}
+              )}
 
-            {pedido.event.driveUrl ? (
-              <a
-                href={pedido.event.driveUrl}
-                target="_blank"
-                rel="noopener noreferrer"
-                style={{ display: "flex", alignItems: "center", justifyContent: "space-between", background: T.bgField, border: `1px solid ${T.border}`, borderRadius: 0, padding: "14px 18px", textDecoration: "none", transition: "all .2s" }}
-                onMouseEnter={(e: React.MouseEvent<HTMLElement>) => { e.currentTarget.style.borderColor = T.brand; e.currentTarget.style.background = T.bgCard; }}
-                onMouseLeave={(e: React.MouseEvent<HTMLElement>) => { e.currentTarget.style.borderColor = T.border; e.currentTarget.style.background = T.bgField; }}
-              >
-                <div>
-                  <p style={{ fontSize: 13, fontWeight: 700, color: T.text, marginBottom: 2 }}>🎬 Vídeos & Reels</p>
-                  <p style={{ fontSize: 10, color: T.text2, textTransform: "uppercase", letterSpacing: 0.5 }}>Download via Google Drive</p>
+              {pedido.event.driveUrl ? (
+                <a href={pedido.event.driveUrl} target="_blank" rel="noreferrer" className="flex items-center justify-between p-6 bg-theme-bg-muted/20 border border-theme-border hover:border-brand-tactical transition-all group">
+                  <div className="flex items-center gap-4">
+                    <div className="p-3 bg-brand-tactical/10 text-brand-tactical text-theme-text">🎬</div>
+                    <div>
+                      <p className="text-[12px] font-bold text-theme-text uppercase tracking-widest">Vídeo & Reels</p>
+                      <p className="text-[9px] text-theme-muted uppercase tracking-widest">Download via Google Drive</p>
+                    </div>
+                  </div>
+                  <ArrowRight size={16} className="text-theme-muted group-hover:text-brand-tactical transition-colors" />
+                </a>
+              ) : (pedido.event.temVideo || pedido.event.temReels) && (
+                <div className="p-6 bg-theme-bg-muted/10 border border-theme-border/20 text-theme-muted italic text-[11px]">
+                  Vídeos em fase de finalização técnica.
                 </div>
-                <span style={{ color: T.brand }}>↗</span>
-              </a>
-            ) : (pedido.event.temVideo || pedido.event.temReels) && (
-                 <div style={{ background: T.bgCard, border: `1px solid ${T.border}`, borderRadius: 0, padding: "14px 18px" }}>
-                    <p style={{ fontSize: 13, color: T.text3, margin: 0 }}>🎬 Vídeos em edição — disponível em breve</p>
-                 </div>
-            )}
-          </div>
-        ) : (
-          <div style={{ display: "flex", flexDirection: "column", gap: 15 }}>
-            <div style={{ background: "rgba(245,158,11,0.05)", border: "0.5px solid rgba(245,158,11,0.2)", borderRadius: 10, padding: "1.25rem" }}>
-              <p style={{ fontSize: 14, fontWeight: 700, color: "#f59e0b", marginBottom: 6 }}>Aguardando Pagamento</p>
-              <p style={{ fontSize: 12, color: "var(--theme-text-muted)", lineHeight: 1.6, margin: 0 }}>
-                Para confirmar sua reserva e liberar as opções do evento, realize o pagamento via Mercado Pago.
+              )}
+            </div>
+          ) : (
+            <div className="p-10 text-center border border-dashed border-theme-border/40 space-y-6">
+              <p className="text-[11px] text-theme-muted uppercase tracking-[0.2em] leading-relaxed">
+                O acesso aos arquivos é liberado imediatamente após a confirmação do pagamento.
               </p>
+              <button onClick={() => navigate(`/checkout?orderId=${pedido.id}`)} className="px-10 py-4 bg-brand-tactical text-brand-text text-[10px] font-black uppercase tracking-[0.4em] hover:brightness-110 shadow-lg shadow-brand-tactical/20 transition-all">
+                Pagar Agora
+              </button>
             </div>
-            
-            <button
-              onClick={() => navigate(`/checkout?orderId=${pedido.id}`)}
-              style={{ 
-                background: "var(--brand-primary)", 
-                color: "#000", 
-                border: "none", 
-                padding: "16px", 
-                fontSize: 13, 
-                fontWeight: 900, 
-                cursor: "pointer", 
-                textTransform: "uppercase", 
-                letterSpacing: 2,
-                boxShadow: "0 4px 15px rgba(133, 185, 172, 0.3)"
-              }}
-            >
-              PAGAR AGORA
-            </button>
-          </div>
-        )}
-
-        {/* Info */}
-        <div style={{ background: T.bgField, border: `1px solid ${T.border}`, borderRadius: 0, padding: "1rem", display: "flex", flexDirection: "column", gap: 10 }}>
-            <div style={{ display: "flex", justifyContent: "space-between", fontSize: 12 }}>
-                <span style={{ color: T.text3 }}>Data da Compra</span>
-                <span style={{ color: T.text }}>{formatDate(pedido.createdAt)}</span>
-            </div>
-            <div style={{ display: "flex", justifyContent: "space-between", fontSize: 12 }}>
-                <span style={{ color: T.text3 }}>Valor Total</span>
-                <span style={{ color: T.brand, fontWeight: 900 }}>{formatCurrency(pedido.amount)}</span>
-            </div>
-            <div style={{ display: "flex", justifyContent: "space-between", fontSize: 12 }}>
-                <span style={{ color: T.text3 }}>Status MP</span>
-                <span style={{ color: pedido.hasPaid ? T.brand : "#f59e0b", fontWeight: 700, textTransform: "uppercase", fontSize: 10 }}>{pedido.status}</span>
-            </div>
+          )}
         </div>
 
-        <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 12 }}>
-          <button
-            onClick={onGoToEvent}
-            style={{ background: "transparent", border: "1px solid var(--theme-border)", borderRadius: 0, padding: "14px", color: "var(--theme-text-muted)", fontSize: 10, fontWeight: 800, cursor: "pointer", transition: "all .2s", textTransform: "uppercase", letterSpacing: 1 }}
-            onMouseEnter={(e) => { e.currentTarget.style.borderColor = "var(--brand-primary)"; e.currentTarget.style.color = "var(--theme-text)"; }}
-            onMouseLeave={(e) => { e.currentTarget.style.borderColor = "var(--theme-border)"; e.currentTarget.style.color = "var(--theme-text-muted)"; }}
-          >
-            Página do Evento
+        {/* Quick Actions */}
+        <div className="pt-10 border-t border-theme-border/40 grid grid-cols-2 gap-4">
+          <button onClick={onGoToEvent} className="px-6 py-4 border border-theme-border text-[9px] font-black uppercase tracking-widest text-theme-text hover:border-brand-tactical transition-all">
+            Ir para Álbum
           </button>
-          <button
-            onClick={pedido.hasPaid ? onChangePrivacy : undefined}
-            disabled={!pedido.hasPaid}
-            style={{ 
-              background: pedido.hasPaid ? "transparent" : "rgba(255,255,255,0.03)", 
-              border: `1px solid ${pedido.hasPaid ? "var(--theme-border)" : "rgba(255,255,255,0.05)"}`, 
-              borderRadius: 0, padding: "14px", 
-              color: pedido.hasPaid ? "var(--theme-text-muted)" : "rgba(255,255,255,0.1)", 
-              fontSize: 10, fontWeight: 800, 
-              cursor: pedido.hasPaid ? "pointer" : "not-allowed", 
-              transition: "all .2s", textTransform: "uppercase", letterSpacing: 1,
-            }}
-            onMouseEnter={(e) => { 
-              if (pedido.hasPaid) {
-                e.currentTarget.style.borderColor = "#f87171"; 
-                e.currentTarget.style.color = "var(--theme-text)"; 
-              }
-            }}
-            onMouseLeave={(e) => { 
-              if (pedido.hasPaid) {
-                e.currentTarget.style.borderColor = "var(--theme-border)"; 
-                e.currentTarget.style.color = "var(--theme-text-muted)"; 
-              }
-            }}
+          <button 
+            onClick={onChangePrivacy} 
+            disabled={!pedido.hasPaid} 
+            className="px-6 py-4 border border-theme-border text-[9px] font-black uppercase tracking-widest text-theme-text hover:border-red-400 hover:text-red-400 transition-all disabled:opacity-30 disabled:cursor-not-allowed"
           >
-            Mudar Privacidade
+            Privacidade
           </button>
         </div>
       </div>

@@ -356,11 +356,11 @@ export const DashboardLayout: React.FC<DashboardLayoutProps> = ({
             >
               <MenuIcon />
             </button>
-            <div style={{ display: "flex", alignItems: "center" }}>
-            <Link to="/" style={{ textDecoration: "none", display: "inline-block" }}>
-              <img src="/logo-fs.png" alt="Foto Segundo" style={{ height: 24, objectFit: "contain" }} />
-            </Link>
-          </div>
+            <div style={{ display: "flex", alignItems: "center" }} className="dashboard-logo-topbar">
+              <Link to="/" style={{ textDecoration: "none", display: "inline-block" }}>
+                <img src="/logo-fs.png" alt="Foto Segundo" style={{ height: 24, objectFit: "contain" }} />
+              </Link>
+            </div>
           </div>
 
           {/* Right: user info + toggle + logout */}
@@ -392,6 +392,7 @@ export const DashboardLayout: React.FC<DashboardLayoutProps> = ({
           .dashboard-sidebar { display: block !important; }
           .dashboard-drawer  { display: none !important; }
           .dashboard-menu-btn { display: none !important; }
+          .dashboard-logo-topbar { display: none !important; }
         }
         /* Mobile: oculta sidebar, mostra topbar */
         @media (max-width: 1023px) {

@@ -126,7 +126,7 @@ router.get("/cron/expiration", async (req, res) => {
 router.post("/auth/login",           AuthController.login);
 router.post("/auth/register",        AuthController.register);
 router.post("/auth/forgot-password", AuthController.forgotPassword);
-router.post("/auth/update-password", AuthController.updatePassword);
+router.post("/auth/reset-password",  AuthController.updatePassword);
 router.get("/auth/me",               requireAuth, AuthController.me);
 router.patch("/auth/me",             requireAuth, AuthController.updateMe);
 router.post("/auth/refresh",          AuthController.refresh);
