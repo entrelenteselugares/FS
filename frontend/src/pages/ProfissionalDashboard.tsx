@@ -303,10 +303,10 @@ export default function ProfissionalDashboard() {
       };
       const { data } = await API.post("marketplace/express-sale", payload);
       
-      if (data.isDigital && data.checkoutUrl) {
-        showNotification("Venda registrada! Abrindo link de pagamento...");
+      if (data.isDigital && data.orderId) {
+        showNotification("Venda registrada! Abrindo portal de pagamento...");
         setTimeout(() => { 
-          window.open(data.checkoutUrl, "_blank"); 
+          window.location.href = `/checkout/${data.orderId}`; 
           setIsExpressModalOpen(false); 
         }, 1500);
         return;
