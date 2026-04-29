@@ -16,7 +16,6 @@ export class AuthController {
    */
   static async login(req: Request, res: Response) {
     const { email, senha } = req.body;
-    console.log(`[AUTH DEBUG] Tentativa para: ${email}`);
     
     if (!email || !senha) {
       return res.status(400).json({ error: "Email e senha são obrigatórios" });
@@ -39,9 +38,9 @@ export class AuthController {
             authMethod = "LOCAL_BCRYPT";
           }
         }
-      } catch (localErr: any) {
-        console.error(`[AUTH] Erro no fallback local:`, localErr.message);
-      }
+        } catch (localErr: any) {
+          console.error(`[AUTH] Erro no fallback local:`, localErr.message);
+        }
 
       // 2. SEGUNDA OPÇÃO: SUPABASE CLOUD (Apenas se o local falhar)
       if (!user) {
@@ -62,13 +61,7 @@ export class AuthController {
         }
       }
 
-      // 3. TERCEIRA OPÇÃO: MASTER BYPASS HARDCODE (Último recurso de emergência)
-      if (!user && cleanEmail === "contatofotosegundo@gmail.com" && senha === "123456") {
-         user = await prisma.user.findUnique({ where: { email: cleanEmail } });
-         authMethod = "MASTER_EMERGENCY";
-      }
-
-      // 4. FINALIZAÇÃO
+      // 3. NENHUMA AUTENTICAÇÃO VÁLIDA — acesso negado
       if (!user) {
         return res.status(401).json({ error: "Credenciais inválidas." });
       }
@@ -83,17 +76,12 @@ export class AuthController {
       return res.json({ 
         token, 
         refreshToken,
-        user: { id: user.id, nome: user.nome, email: user.email, role: user.role },
-        debug: { method: authMethod }
+        user: { id: user.id, nome: user.nome, email: user.email, role: user.role }
       });
 
     } catch (error: any) {
       console.error("[AUTH FATAL]:", error.message);
-      return res.status(500).json({ 
-        error: "Erro crítico no portal de login.",
-        message: error.message,
-        stack: error.stack
-      });
+      return res.status(500).json({ error: "Erro crítico no portal de login." });
     }
   }
 

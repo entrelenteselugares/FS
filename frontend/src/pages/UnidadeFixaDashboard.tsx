@@ -430,7 +430,7 @@ export default function UnidadeFixaDashboard() {
                       </p>
                     </div>
                     <button 
-                      onClick={() => navigate("/p/unidade-fixa")} 
+                      onClick={() => navigate(lpSlug ? `/p/${lpSlug}` : "/")} 
                       className="inline-flex items-center gap-4 px-8 py-3 bg-theme-bg border border-theme-border text-[9px] font-black uppercase tracking-[0.4em] text-theme-text hover:bg-brand-tactical hover:text-brand-text hover:border-brand-tactical transition-all italic"
                     >
                       Ver Vitrine da Rede <ArrowRight size={14} />

@@ -41,8 +41,7 @@ export const AdminSettings: React.FC = () => {
     try {
       await API.patch("/admin/configs", { configs: settings });
       setNotification({ message: "Configurações do sistema sincronizadas com sucesso! ✅", type: 'success' });
-      // Delay reload to let user see success notification
-      setTimeout(() => window.location.reload(), 2000);
+      setTimeout(() => setNotification(null), 4000);
     } catch (err) {
       const axiosError = err as import("axios").AxiosError<{ error: string }>;
       setNotification({ message: axiosError.response?.data?.error || "Erro ao salvar.", type: 'error' });

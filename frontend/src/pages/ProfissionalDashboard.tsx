@@ -1005,7 +1005,7 @@ export default function ProfissionalDashboard() {
       {selected && (
         <div onClick={() => setSelected(null)} className="fixed inset-0 z-[1000] flex items-center justify-center p-6" style={{ background: T.overlay, backdropFilter: "blur(20px)" }}>
           <div onClick={e => e.stopPropagation()} className="w-full max-w-2xl bg-theme-bg border border-theme-border/60 shadow-2xl animate-in zoom-in duration-300">
-            <EventEditPanel event={selected} onUpdated={handleUpdated} onClose={() => setSelected(null)} />
+            <EventEditPanel event={selected} onUpdated={handleUpdated} onClose={() => setSelected(null)} onNotify={showNotification} />
           </div>
         </div>
       )}
@@ -1234,7 +1234,7 @@ export default function ProfissionalDashboard() {
   );
 }
 
-function EventEditPanel({ event, onUpdated, onClose }: { event: EventItem; onUpdated: (u: Partial<EventItem>) => void; onClose: () => void; }) {
+function EventEditPanel({ event, onUpdated, onClose, onNotify }: { event: EventItem; onUpdated: (u: Partial<EventItem>) => void; onClose: () => void; onNotify?: (msg: string, type: 'success' | 'error') => void; }) {
   const [lrUrl, setLrUrl] = useState(event.lightroomUrl ?? "");
   const [drUrl, setDrUrl] = useState(event.driveUrl ?? "");
   const [saving, setSaving] = useState(false);
@@ -1253,9 +1253,11 @@ function EventEditPanel({ event, onUpdated, onClose }: { event: EventItem; onUpd
     try {
       const { data } = await API.patch(`/profissional/events/${event.id}/links`, { lightroomUrl: lrUrl || null, driveUrl: drUrl || null });
       onUpdated(data);
+      onNotify?.("Links de entrega atualizados com sucesso!", "success");
       onClose();
     } catch (err) {
       console.error(err);
+      onNotify?.("Erro ao salvar os links.", "error");
     } finally {
       setSaving(false);
     }

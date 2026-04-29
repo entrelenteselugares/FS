@@ -22,22 +22,25 @@ import {
   Printer, 
   Briefcase,
   Settings,
-  Layers
+  Layers,
+  Trophy,
+  Grid3X3
 } from "lucide-react";
 
 
 
 const NAV_ITEMS = (activeTab: string, setActiveTab: (t: string) => void, stats: AdminStats | null): NavItem[] => [
-  { label: "Visão Geral", onClick: () => setActiveTab("overview"), isActive: activeTab === "overview", icon: <LayoutDashboard size={16} /> },
-  { label: "Eventos", onClick: () => setActiveTab("events"), isActive: activeTab === "events", icon: <Camera size={16} />, badge: stats?.missingLinksCount },
-  { label: "Membros", onClick: () => setActiveTab("users"), isActive: activeTab === "users", icon: <Users size={16} />, badge: stats?.pendingInvitesCount },
-  { label: "Orçamentos", onClick: () => setActiveTab("quotes"), isActive: activeTab === "quotes", icon: <Briefcase size={16} />, badge: stats?.pendingQuotesCount },
-  { label: "Pedidos", onClick: () => setActiveTab("orders"), isActive: activeTab === "orders", icon: <FileText size={16} /> },
-  { label: "Financeiro", onClick: () => setActiveTab("finance"), isActive: activeTab === "finance", icon: <DollarSign size={16} /> },
-  { label: "Impressão", onClick: () => setActiveTab("printers"), isActive: activeTab === "printers", icon: <Printer size={16} /> },
+  { label: "Visão Geral",    onClick: () => setActiveTab("overview"),      isActive: activeTab === "overview",      icon: <LayoutDashboard size={16} /> },
+  { label: "Eventos",        onClick: () => setActiveTab("events"),        isActive: activeTab === "events",        icon: <Camera size={16} />,         badge: stats?.missingLinksCount },
+  { label: "Membros",        onClick: () => setActiveTab("users"),         isActive: activeTab === "users",         icon: <Users size={16} />,          badge: stats?.pendingInvitesCount },
+  { label: "Orçamentos",     onClick: () => setActiveTab("quotes"),        isActive: activeTab === "quotes",        icon: <Briefcase size={16} />,      badge: stats?.pendingQuotesCount },
+  { label: "Pedidos",        onClick: () => setActiveTab("orders"),        isActive: activeTab === "orders",        icon: <FileText size={16} /> },
+  { label: "Financeiro",     onClick: () => setActiveTab("finance"),       isActive: activeTab === "finance",       icon: <DollarSign size={16} /> },
+  { label: "Impressão",      onClick: () => setActiveTab("printers"),      isActive: activeTab === "printers",      icon: <Printer size={16} /> },
   { label: "Cat. Impressão", onClick: () => setActiveTab("print-catalog"), isActive: activeTab === "print-catalog", icon: <Layers size={16} /> },
-  { label: "Serviços", onClick: () => setActiveTab("services"), isActive: activeTab === "services", icon: <Briefcase size={16} /> },
-  { label: "Configurações", onClick: () => setActiveTab("settings"), isActive: activeTab === "settings", icon: <Settings size={16} /> },
+  { label: "Serviços",       onClick: () => setActiveTab("services"),      isActive: activeTab === "services",      icon: <Grid3X3 size={16} /> },
+  { label: "Concursos",      onClick: () => setActiveTab("contests"),      isActive: activeTab === "contests",      icon: <Trophy size={16} /> },
+  { label: "Configurações",  onClick: () => setActiveTab("settings"),      isActive: activeTab === "settings",      icon: <Settings size={16} /> },
 ];
 
 interface AdminStats {
@@ -86,7 +89,6 @@ export const AdminDashboard: React.FC = () => {
       setLoading(true);
       try {
         const { data } = await API.get("/admin/stats");
-        console.log("[AdminDashboard] Stats Data Received:", data);
         setStats(data.stats);
         setRecentOrders(data.recentOrders);
         setPendingEvents(data.pendingEvents);

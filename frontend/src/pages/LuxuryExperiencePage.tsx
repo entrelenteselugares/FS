@@ -34,7 +34,7 @@ export default function LuxuryExperiencePage() {
 
   useEffect(() => {
     if (id) {
-      API.get(`public/events/${id}`)
+      API.get(`/public/events/${id}`)
         .then(r => setEvent(r.data))
         .catch(err => console.error("Erro ao carregar experiência:", err))
         .finally(() => setLoading(false));
