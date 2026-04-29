@@ -17,6 +17,7 @@ import {
   adminDeleteOrder,
   adminListQuotes,
   adminApproveQuote,
+  adminRejectQuote,
   AdminEventController,
   adminUploadCover,
   adminGetLogs,
