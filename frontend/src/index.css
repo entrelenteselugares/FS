@@ -286,6 +286,7 @@ textarea:focus {
 .mobile-only { display: none; }
 @media (max-width: 768px) {
   .mobile-only { display: block; }
+  .mobile-hide { display: none !important; }
   .desktop-only { display: none; }
   .container-padding { padding-left: 16px !important; padding-right: 16px !important; }
   .mobile-padding { padding: 16px !important; }
