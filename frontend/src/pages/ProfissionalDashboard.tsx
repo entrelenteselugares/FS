@@ -968,12 +968,13 @@ export default function ProfissionalDashboard() {
                     >
                       {loading ? "PROCESSANDO..." : expressFormData.paymentMethod === 'MONEY' ? "FINALIZAR VENDA" : `GERAR COBRANÇA`}
                     </button>
+                    </div>
                   </div>
-                </div>
-              )}
+                )}
+              </div>
+            </div>
           </div>
-        </div>
-      )}
+        )}
 
       {notification && (
         <div className={`fixed bottom-8 right-8 z-[10000] p-5 border shadow-2xl animate-in slide-in-from-right-4 bg-theme-bg ${notification.type === 'success' ? 'border-brand-tactical/60' : 'border-red-500/60'}`}>
