@@ -1,15 +1,15 @@
 import React, { useState } from "react";
 import { useNavigate, Link, useSearchParams } from "react-router-dom";
 
-import { ArrowRight, User, Camera, Building2, Mail, Lock, UserCircle, Phone, Eye, EyeOff } from "lucide-react";
+import { ArrowRight, User, Camera, Building2, Mail, Lock, UserCircle, Phone, Eye, EyeOff, ShieldCheck } from "lucide-react";
 import { API } from "../lib/api";
 import { ThemeToggle } from "../components/ThemeToggle";
 
 export const RegisterPage: React.FC = () => {
   const [searchParams] = useSearchParams();
-  const initialRole = (searchParams.get("role") || "CLIENTE") as "CLIENTE" | "PROFISSIONAL" | "UNIDADE";
+  const initialRole = (searchParams.get("role") || "CLIENTE") as "CLIENTE" | "PROFISSIONAL" | "CARTORIO";
   
-  const [role, setRole] = useState<"CLIENTE" | "PROFISSIONAL" | "UNIDADE">(initialRole);
+  const [role, setRole] = useState<"CLIENTE" | "PROFISSIONAL" | "CARTORIO">(initialRole);
   const [formData, setFormData] = useState({
     nome: "",
     email: "",
@@ -83,7 +83,7 @@ export const RegisterPage: React.FC = () => {
       let finalPayload = { ...formData, role };
       
       // Se for Unidade, consolidamos o endereço
-      if (role === "UNIDADE") {
+      if (role === "CARTORIO") {
         const fullAddress = `${formData.logradouro}, ${formData.numero}${formData.referencia ? ` - ${formData.referencia}` : ""} | ${formData.bairro} | ${formData.cidade}-${formData.uf}`;
         finalPayload = { 
           ...finalPayload, 
@@ -132,330 +132,307 @@ export const RegisterPage: React.FC = () => {
   };
 
   const roles = [
-    { id: "CLIENTE", label: "Cliente Privado", icon: <User size={14} /> },
+    { id: "CLIENTE",      label: "Cliente Privado",   icon: <UserCircle size={14} /> },
     { id: "PROFISSIONAL", label: "Profissional da Rede", icon: <Camera size={14} /> },
-    { id: "UNIDADE", label: "Unidade Fixa", icon: <Building2 size={14} /> },
+    { id: "CARTORIO",     label: "Unidade Fixa",      icon: <ShieldCheck size={14} /> },
   ];
 
   return (
-    <div className="min-h-screen bg-theme-bg text-theme-text flex items-center justify-center px-6 py-20 relative overflow-hidden transition-colors duration-300">
+    <div className="min-h-screen bg-theme-bg text-theme-text flex items-center justify-center px-4 py-8 md:py-12 relative overflow-hidden transition-colors duration-300">
       {/* Back Button */}
-      <nav className="absolute top-0 left-0 w-full z-50 p-6 pointer-events-none flex justify-between items-center">
+      <nav className="absolute top-0 left-0 w-full z-50 p-4 pointer-events-none flex justify-between items-center">
         <button 
           onClick={() => navigate("/")} 
-          className="pointer-events-auto flex items-center gap-3 text-[10px] font-black uppercase tracking-[0.4em] text-theme-muted hover:text-theme-text transition-all bg-theme-bg-muted backdrop-blur-md px-6 py-3 border border-theme-border"
+          className="pointer-events-auto flex items-center gap-2 text-[9px] font-black uppercase tracking-[0.3em] text-theme-muted hover:text-theme-text transition-all bg-theme-bg-muted/50 backdrop-blur-md px-5 py-2.5 border border-theme-border"
         >
-          <span className="text-lg">←</span> Vitrine
+          <span className="text-base">←</span> Vitrine
         </button>
-        <div className="pointer-events-auto">
+        <div className="pointer-events-auto scale-90 origin-right">
           <ThemeToggle />
         </div>
       </nav>
 
       {/* Decorative Editorial Lines */}
-      <div className="absolute top-0 left-1/3 w-[1px] h-full bg-theme-border opacity-20" />
-      <div className="absolute top-0 right-1/3 w-[1px] h-full bg-theme-border opacity-20" />
+      <div className="absolute top-0 left-1/4 w-[1px] h-full bg-theme-border opacity-10" />
+      <div className="absolute top-0 right-1/4 w-[1px] h-full bg-theme-border opacity-10" />
       
       <div 
         key="register-container"
-        className="w-full max-w-2xl relative z-10"
+        className="w-full max-w-xl relative z-10"
       >
-        <div className="text-center mb-16">
-          <div className="flex justify-center mb-12">
-            <img src="/logo-fs.png" alt="Foto Segundo" style={{ height: 40, objectFit: "contain" }} />
+        <div className="text-center mb-8">
+          <div className="flex justify-center mb-6">
+            <img src="/logo-fs.png" alt="Foto Segundo" style={{ height: 32, objectFit: "contain" }} />
           </div>
-          <div className="text-proportional text-brand-primary mb-8">Solicitar Adesão</div>
-          <h1 className="heading-luxury">
-            SOLICITAR <span className="opacity-30">REGISTRO</span>
+          <div className="text-[10px] font-black text-brand-tactical uppercase tracking-[0.5em] mb-3 italic">Solicitar Adesão</div>
+          <h1 className="text-3xl md:text-5xl font-heading font-black text-theme-text uppercase italic leading-none tracking-tighter">
+            SOLICITAR <span className="opacity-20">REGISTRO</span>
           </h1>
-          <p className="text-proportional mt-6">Protocolo de Registro de Rede (Profissionais & Unidades)</p>
+          <p className="text-[9px] font-bold text-theme-muted uppercase tracking-[0.3em] mt-3 opacity-60">Protocolo de Registro de Rede (Técnico & Unidades)</p>
         </div>
 
-        <div className="lux-card editorial-shadow">
+        <div className="bg-theme-bg-muted/30 border border-theme-border shadow-2xl overflow-hidden">
           {error && (
-            <div className="border border-red-900/10 bg-red-900/5 text-red-600 text-[10px] font-bold uppercase tracking-[0.2em] p-6 mb-12 text-center font-bold">
+            <div className="bg-red-500/10 text-red-500 text-[9px] font-black uppercase tracking-[0.2em] p-4 text-center border-b border-red-500/10">
               {error}
             </div>
           )}
 
           {/* Role Selector Editorial */}
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-px bg-theme-border/5 border border-theme-border/5 mb-16">
+          <div className="grid grid-cols-3 gap-px bg-theme-border/20 border-b border-theme-border/20">
             {roles.map((r) => (
               <button
                 key={r.id}
                 type="button"
-                onClick={() => setRole(r.id as "CLIENTE" | "PROFISSIONAL" | "UNIDADE")}
-                className={`flex flex-col items-center justify-center py-8 px-4 transition-all duration-700 group rounded-none ${
-                  role === r.id ? "bg-brand-tactical text-theme-bg" : "text-zinc-500 hover:bg-theme-bg-muted hover:text-theme-text"
+                onClick={() => setRole(r.id as "CLIENTE" | "PROFISSIONAL" | "CARTORIO")}
+                className={`flex flex-col items-center justify-center py-5 px-2 transition-all duration-500 group relative overflow-hidden ${
+                  role === r.id ? "bg-brand-tactical text-brand-text" : "text-theme-muted hover:bg-theme-bg-muted hover:text-theme-text"
                 }`}
               >
-                <div className={`mb-4 transition-transform group-hover:scale-110 ${role === r.id ? "opacity-100" : "opacity-30 group-hover:opacity-100"}`}>
+                <div className={`mb-2 transition-transform group-hover:scale-110 ${role === r.id ? "opacity-100" : "opacity-30 group-hover:opacity-100"}`}>
                   {r.icon}
                 </div>
-                <span className="text-[9px] font-bold uppercase tracking-[0.3em] font-bold">{r.label}</span>
+                <span className="text-[8px] font-black uppercase tracking-[0.2em]">{r.label}</span>
+                {role === r.id && <div className="absolute bottom-0 left-0 w-full h-[3px] bg-theme-bg-muted/20" />}
               </button>
             ))}
           </div>
 
-          <form onSubmit={handleRegister} className="grid grid-cols-1 md:grid-cols-2 gap-10">
-            <div className="space-y-4 md:col-span-2">
-              <label className="text-[10px] font-bold uppercase tracking-[0.4em] text-theme-muted ml-1">Entidade / Nome Completo</label>
-              <div className="relative group">
-                <UserCircle className="absolute left-0 top-1/2 -translate-y-1/2 text-theme-muted group-focus-within:text-brand-tactical transition-colors" size={14} strokeWidth={1.5} />
-                <input
-                  type="text"
-                  required
-                  value={formData.nome}
-                  onChange={(e) => setFormData({ ...formData, nome: e.target.value })}
-                  className="w-full bg-transparent border-b border-theme-border py-3 pl-10 text-xs text-theme-text placeholder:text-theme-muted/40 focus:outline-none focus:border-brand-tactical transition-all"
-                  placeholder="EX: JOÃO DA SILVA"
-                  autoComplete="name"
-                />
-              </div>
-            </div>
-
-            <div className="space-y-4">
-              <label className="text-[10px] font-bold uppercase tracking-[0.4em] text-theme-muted ml-1">Comunicação (WhatsApp)</label>
-              <div className="relative group">
-                <Phone className="absolute left-0 top-1/2 -translate-y-1/2 text-theme-muted group-focus-within:text-brand-tactical transition-colors" size={14} strokeWidth={1.5} />
-                <input
-                  type="text"
-                  required
-                  value={formData.whatsapp}
-                  onChange={(e) => setFormData({ ...formData, whatsapp: e.target.value })}
-                  className="w-full bg-transparent border-b border-theme-border py-3 pl-10 text-xs text-theme-text placeholder:text-theme-muted/40 focus:outline-none focus:border-brand-tactical transition-all"
-                  placeholder="(00) 00000-0000"
-                />
-              </div>
-            </div>
-
-            <div className="space-y-4">
-              <label className="text-[10px] font-bold uppercase tracking-[0.4em] text-theme-muted ml-1">E-mail Cadastral</label>
-              <div className="relative group">
-                <Mail className="absolute left-0 top-1/2 -translate-y-1/2 text-theme-muted group-focus-within:text-brand-tactical transition-colors" size={14} strokeWidth={1.5} />
-                <input
-                  type="email"
-                  required
-                  value={formData.email}
-                  onChange={(e) => setFormData({ ...formData, email: e.target.value })}
-                  className="w-full bg-transparent border-b border-theme-border py-3 pl-10 text-xs text-theme-text placeholder:text-theme-muted/40 focus:outline-none focus:border-brand-tactical transition-all"
-                  placeholder="EMAIL@DOMINIO.COM"
-                  autoComplete="email"
-                />
-              </div>
-            </div>
-
-            {/* Campos Dinâmicos baseado no Role */}
-            {role === "PROFISSIONAL" && (
-              <div className="md:col-span-2 space-y-8 mt-4 border-l-2 border-brand-tactical/20 pl-8 py-4">
-                <div className="space-y-4">
-                  <label className="text-[10px] font-bold uppercase tracking-[0.4em] text-theme-muted">Minhas Especialidades</label>
-                  <div className="flex flex-wrap gap-4">
-                    {["FOTO", "VÍDEO", "EDIÇÃO"].map(skill => (
-                      <button
-                        key={skill}
-                        type="button"
-                        onClick={() => {
-                          const current = formData.habilidades;
-                          const next = current.includes(skill) ? current.filter(s => s !== skill) : [...current, skill];
-                          setFormData({ ...formData, habilidades: next });
-                        }}
-                        className={`px-6 py-3 text-[9px] font-black uppercase tracking-widest border transition-all ${
-                          formData.habilidades.includes(skill) ? "bg-brand-tactical text-theme-bg border-brand-tactical" : "border-theme-border/5 text-zinc-600 hover:border-theme-border/10"
-                        }`}
-                      >
-                        {skill}
-                      </button>
-                    ))}
-                  </div>
-                </div>
-                <div className="space-y-4">
-                  <label className="text-[10px] font-bold uppercase tracking-[0.4em] text-theme-muted">Habilidades Extras</label>
-                  <textarea
-                    value={formData.outrasHabilidades}
-                    onChange={(e) => setFormData({ ...formData, outrasHabilidades: e.target.value })}
-                    className="w-full bg-transparent border-b border-theme-border py-3 text-xs text-theme-text placeholder:text-theme-muted/40 focus:outline-none focus:border-brand-tactical transition-all resize-none"
-                    placeholder="EX: TRATAMENTO DE COR, EDIÇÃO ÁGIL..."
-                    rows={2}
-                  />
-                </div>
-                <div className="space-y-4">
-                  <label className="text-[10px] font-bold uppercase tracking-[0.4em] text-theme-muted">Meus Equipamentos</label>
-                  <textarea
-                    value={formData.equipamento}
-                    onChange={(e) => setFormData({ ...formData, equipamento: e.target.value })}
-                    className="w-full bg-transparent border-b border-theme-border py-3 text-xs text-theme-text placeholder:text-theme-muted/40 focus:outline-none focus:border-brand-tactical transition-all resize-none"
-                    placeholder="EX: DRONE, ILUMINAÇÃO, CÂMERA..."
-                    rows={2}
+          <form onSubmit={handleRegister} className="p-8 md:p-10 space-y-8">
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-x-8 gap-y-6">
+              <div className="space-y-3 md:col-span-2">
+                <label className="text-[9px] font-black uppercase tracking-[0.3em] text-theme-muted ml-1 opacity-60">Entidade / Nome Completo</label>
+                <div className="relative group">
+                  <UserCircle className="absolute left-0 top-1/2 -translate-y-1/2 text-theme-muted/40 group-focus-within:text-brand-tactical transition-colors" size={14} />
+                  <input
+                    type="text"
+                    required
+                    value={formData.nome}
+                    onChange={(e) => setFormData({ ...formData, nome: e.target.value })}
+                    className="w-full bg-transparent border-b border-theme-border/60 py-2.5 pl-8 text-xs text-theme-text placeholder:text-theme-muted/20 focus:outline-none focus:border-brand-tactical transition-all font-medium"
+                    placeholder="EX: JOÃO DA SILVA"
+                    autoComplete="name"
                   />
                 </div>
               </div>
-            )}
 
-            {role === "UNIDADE" && (
-              <div className="md:col-span-2 space-y-10 mt-8 border-l border-brand-tactical/20 pl-8 py-4 animate-in fade-in slide-in-from-left duration-700">
-                <div className="text-[10px] font-black uppercase tracking-[0.4em] text-brand-tactical mb-6 flex items-center gap-3">
-                  <div className="w-1.5 h-1.5 bg-brand-tactical rounded-full animate-pulse" />
-                  Dados de Identificação e LOGÍSTICA
+              <div className="space-y-3">
+                <label className="text-[9px] font-black uppercase tracking-[0.3em] text-theme-muted ml-1 opacity-60">Comunicação (WhatsApp)</label>
+                <div className="relative group">
+                  <Phone className="absolute left-0 top-1/2 -translate-y-1/2 text-theme-muted/40 group-focus-within:text-brand-tactical transition-colors" size={14} />
+                  <input
+                    type="text"
+                    required
+                    value={formData.whatsapp}
+                    onChange={(e) => setFormData({ ...formData, whatsapp: e.target.value })}
+                    className="w-full bg-transparent border-b border-theme-border/60 py-2.5 pl-8 text-xs text-theme-text placeholder:text-theme-muted/20 focus:outline-none focus:border-brand-tactical transition-all font-medium"
+                    placeholder="(00) 00000-0000"
+                  />
                 </div>
+              </div>
 
-                <div className="space-y-4">
-                  <label className="text-[10px] font-bold uppercase tracking-[0.4em] text-zinc-600">Razão Social / Nome Fantasia</label>
-                    <input
-                      type="text"
-                      required
-                      value={formData.razaoSocial}
-                      onChange={(e) => setFormData({ ...formData, razaoSocial: e.target.value })}
-                      className="w-full bg-transparent border-b border-theme-border py-3 text-xs text-theme-text placeholder:text-theme-muted/40 focus:outline-none focus:border-brand-tactical transition-all"
-                      placeholder="NOME OFICIAL DA UNIDADE"
-                    />
+              <div className="space-y-3">
+                <label className="text-[9px] font-black uppercase tracking-[0.3em] text-theme-muted ml-1 opacity-60">E-mail Cadastral</label>
+                <div className="relative group">
+                  <Mail className="absolute left-0 top-1/2 -translate-y-1/2 text-theme-muted/40 group-focus-within:text-brand-tactical transition-colors" size={14} />
+                  <input
+                    type="email"
+                    required
+                    value={formData.email}
+                    onChange={(e) => setFormData({ ...formData, email: e.target.value })}
+                    className="w-full bg-transparent border-b border-theme-border/60 py-2.5 pl-8 text-xs text-theme-text placeholder:text-theme-muted/20 focus:outline-none focus:border-brand-tactical transition-all font-medium"
+                    placeholder="EMAIL@DOMINIO.COM"
+                    autoComplete="email"
+                  />
                 </div>
+              </div>
 
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-10">
-                  <div className="space-y-4 relative">
-                    <label className="text-[10px] font-bold uppercase tracking-[0.4em] text-zinc-600">CEP</label>
-                    <input
-                      type="text"
-                      required
-                      value={formData.cep}
-                      onChange={(e) => handleCepChange(e.target.value)}
-                      className="w-full bg-transparent border-b border-theme-border py-3 text-xs text-theme-text placeholder:text-theme-muted/40 focus:outline-none focus:border-brand-tactical transition-all font-mono tracking-widest"
-                      placeholder="00000-000"
-                    />
-                    {isCepLoading && (
-                      <div className="absolute right-0 bottom-3">
-                        <div className="w-3 h-3 border-t-2 border-brand-tactical rounded-full animate-spin" />
-                      </div>
-                    )}
+              {/* Campos Dinâmicos baseado no Role */}
+              {role === "PROFISSIONAL" && (
+                <div className="md:col-span-2 space-y-6 pt-4 border-l-2 border-brand-tactical/20 pl-6 animate-in slide-in-from-left duration-500">
+                  <div className="space-y-3">
+                    <label className="text-[9px] font-black uppercase tracking-[0.3em] text-theme-muted opacity-60">Minhas Especialidades</label>
+                    <div className="flex flex-wrap gap-3">
+                      {["FOTO", "VÍDEO", "EDIÇÃO"].map(skill => (
+                        <button
+                          key={skill}
+                          type="button"
+                          onClick={() => {
+                            const current = formData.habilidades;
+                            const next = current.includes(skill) ? current.filter(s => s !== skill) : [...current, skill];
+                            setFormData({ ...formData, habilidades: next });
+                          }}
+                          className={`px-4 py-2.5 text-[8px] font-black uppercase tracking-widest border transition-all ${
+                            formData.habilidades.includes(skill) ? "bg-brand-tactical text-brand-text border-brand-tactical" : "border-theme-border/40 text-theme-muted hover:border-brand-tactical/30"
+                          }`}
+                        >
+                          {skill}
+                        </button>
+                      ))}
+                    </div>
                   </div>
-
-                  <div className="space-y-4">
-                    <label className="text-[10px] font-bold uppercase tracking-[0.4em] text-zinc-600">Cidade / UF</label>
-                    <div className="w-full bg-transparent border-b border-theme-border py-3 text-xs text-theme-text/50 flex justify-between">
-                      <span className="uppercase">{formData.cidade || "CIDADE"}</span>
-                      <span className="font-black text-brand-tactical">{formData.uf || "UF"}</span>
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    <div className="space-y-3">
+                      <label className="text-[9px] font-black uppercase tracking-[0.3em] text-theme-muted opacity-60">Habilidades Extras</label>
+                      <input
+                        value={formData.outrasHabilidades}
+                        onChange={(e) => setFormData({ ...formData, outrasHabilidades: e.target.value })}
+                        className="w-full bg-transparent border-b border-theme-border/60 py-2 text-[11px] text-theme-text placeholder:text-theme-muted/20 focus:outline-none focus:border-brand-tactical transition-all"
+                        placeholder="EX: DRONE, COLOR GRADING..."
+                      />
+                    </div>
+                    <div className="space-y-3">
+                      <label className="text-[9px] font-black uppercase tracking-[0.3em] text-theme-muted opacity-60">Equipamentos</label>
+                      <input
+                        value={formData.equipamento}
+                        onChange={(e) => setFormData({ ...formData, equipamento: e.target.value })}
+                        className="w-full bg-transparent border-b border-theme-border/60 py-2 text-[11px] text-theme-text placeholder:text-theme-muted/20 focus:outline-none focus:border-brand-tactical transition-all"
+                        placeholder="EX: SONY A7IV, LENTE 35MM..."
+                      />
                     </div>
                   </div>
                 </div>
+              )}
 
-                <div className="grid grid-cols-1 md:grid-cols-4 gap-10">
-                  <div className="md:col-span-3 space-y-4">
-                    <label className="text-[10px] font-bold uppercase tracking-[0.4em] text-zinc-600">Logradouro / Rua</label>
-                    <input
-                      type="text"
-                      required
-                      value={formData.logradouro}
-                      onChange={(e) => setFormData({ ...formData, logradouro: e.target.value })}
-                      className="w-full bg-transparent border-b border-theme-border py-3 text-xs text-theme-text placeholder:text-theme-muted/40 focus:outline-none focus:border-brand-tactical transition-all"
-                      placeholder="NOME DA RUA OU AVENIDA"
-                    />
+              {role === "CARTORIO" && (
+                <div className="md:col-span-2 space-y-6 pt-4 border-l-2 border-brand-tactical/20 pl-6 animate-in slide-in-from-left duration-500">
+                  <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+                    <div className="md:col-span-2 space-y-3">
+                      <label className="text-[9px] font-black uppercase tracking-[0.3em] text-theme-muted opacity-60">Razão Social / Nome Unidade</label>
+                      <input
+                        type="text"
+                        required
+                        value={formData.razaoSocial}
+                        onChange={(e) => setFormData({ ...formData, razaoSocial: e.target.value })}
+                        className="w-full bg-transparent border-b border-theme-border/60 py-2 text-[11px] text-theme-text placeholder:text-theme-muted/20 focus:outline-none focus:border-brand-tactical transition-all font-medium"
+                        placeholder="NOME OFICIAL DA UNIDADE"
+                      />
+                    </div>
+                    <div className="space-y-3 relative">
+                      <label className="text-[9px] font-black uppercase tracking-[0.3em] text-theme-muted opacity-60">CEP</label>
+                      <input
+                        type="text"
+                        required
+                        value={formData.cep}
+                        onChange={(e) => handleCepChange(e.target.value)}
+                        className="w-full bg-transparent border-b border-theme-border/60 py-2 text-[11px] text-theme-text focus:outline-none focus:border-brand-tactical transition-all font-mono"
+                        placeholder="00000-000"
+                      />
+                      {isCepLoading && <div className="absolute right-0 bottom-2 w-3 h-3 border-t-2 border-brand-tactical rounded-full animate-spin" />}
+                    </div>
                   </div>
-                  <div className="space-y-4">
-                    <label className="text-[10px] font-bold uppercase tracking-[0.4em] text-zinc-600">Número</label>
-                    <input
-                      type="text"
-                      required
-                      value={formData.numero}
-                      onChange={(e) => setFormData({ ...formData, numero: e.target.value })}
-                      className="w-full bg-transparent border-b border-theme-border py-3 text-xs text-theme-text placeholder:text-theme-muted/40 focus:outline-none focus:border-brand-tactical transition-all"
-                      placeholder="123"
-                    />
+
+                  <div className="grid grid-cols-1 md:grid-cols-4 gap-6">
+                    <div className="md:col-span-3 space-y-3">
+                      <label className="text-[9px] font-black uppercase tracking-[0.3em] text-theme-muted opacity-60">Logradouro / Rua</label>
+                      <input
+                        type="text"
+                        required
+                        value={formData.logradouro}
+                        onChange={(e) => setFormData({ ...formData, logradouro: e.target.value })}
+                        className="w-full bg-transparent border-b border-theme-border/60 py-2 text-[11px] text-theme-text placeholder:text-theme-muted/20 focus:outline-none focus:border-brand-tactical transition-all font-medium"
+                        placeholder="NOME DA RUA OU AVENIDA"
+                      />
+                    </div>
+                    <div className="space-y-3">
+                      <label className="text-[9px] font-black uppercase tracking-[0.3em] text-theme-muted opacity-60">Número</label>
+                      <input
+                        type="text"
+                        required
+                        value={formData.numero}
+                        onChange={(e) => setFormData({ ...formData, numero: e.target.value })}
+                        className="w-full bg-transparent border-b border-theme-border/60 py-2 text-[11px] text-theme-text focus:outline-none focus:border-brand-tactical transition-all font-medium"
+                        placeholder="S/N"
+                      />
+                    </div>
+                  </div>
+
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    <div className="space-y-3">
+                      <label className="text-[9px] font-black uppercase tracking-[0.3em] text-theme-muted opacity-60">Bairro / Localidade</label>
+                      <input
+                        type="text"
+                        required
+                        value={formData.bairro}
+                        onChange={(e) => setFormData({ ...formData, bairro: e.target.value })}
+                        className="w-full bg-transparent border-b border-theme-border/60 py-2 text-[11px] text-theme-text focus:outline-none focus:border-brand-tactical transition-all font-medium"
+                        placeholder="BAIRRO"
+                      />
+                    </div>
+                    <div className="space-y-3">
+                      <label className="text-[9px] font-black uppercase tracking-[0.3em] text-theme-muted opacity-60">Cidade / UF</label>
+                      <div className="w-full bg-transparent border-b border-theme-border/60 py-2 text-[11px] text-theme-text/40 flex justify-between uppercase">
+                        <span>{formData.cidade || "Cidade"}</span>
+                        <span className="font-black text-brand-tactical">{formData.uf || "UF"}</span>
+                      </div>
+                    </div>
                   </div>
                 </div>
+              )}
 
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-10">
-                  <div className="space-y-4">
-                    <label className="text-[10px] font-bold uppercase tracking-[0.4em] text-zinc-600">Bairro</label>
-                    <input
-                      type="text"
-                      required
-                      value={formData.bairro}
-                      onChange={(e) => setFormData({ ...formData, bairro: e.target.value })}
-                      className="w-full bg-transparent border-b border-theme-border py-3 text-xs text-theme-text placeholder:text-theme-muted/40 focus:outline-none focus:border-brand-tactical transition-all"
-                      placeholder="BAIRRO"
-                    />
-                  </div>
-                  <div className="space-y-4">
-                    <label className="text-[10px] font-bold uppercase tracking-[0.4em] text-zinc-600">Ponto de Referência</label>
-                    <input
-                      type="text"
-                      value={formData.referencia}
-                      onChange={(e) => setFormData({ ...formData, referencia: e.target.value })}
-                      className="w-full bg-transparent border-b border-theme-border py-3 text-xs text-theme-text placeholder:text-theme-muted/40 focus:outline-none focus:border-brand-tactical transition-all"
-                      placeholder="AO LADO DE... PRÓXIMO A..."
-                    />
-                  </div>
+              <div className="space-y-3 md:col-span-2">
+                <label className="text-[9px] font-black uppercase tracking-[0.3em] text-theme-muted ml-1 opacity-60">Senha de Acesso</label>
+                <div className="relative group flex items-center">
+                  <Lock className="absolute left-0 top-1/2 -translate-y-1/2 text-theme-muted/40 group-focus-within:text-brand-tactical transition-colors" size={14} />
+                  <input
+                    type={showSenha ? "text" : "password"}
+                    required
+                    value={formData.senha}
+                    onChange={(e) => setFormData({ ...formData, senha: e.target.value })}
+                    className="w-full bg-transparent border-b border-theme-border/60 py-2.5 pl-8 pr-10 text-xs text-theme-text placeholder:text-theme-muted/20 focus:outline-none focus:border-brand-tactical transition-all"
+                    placeholder="••••••••"
+                    autoComplete="new-password"
+                  />
+                  <button
+                    type="button"
+                    onClick={() => setShowSenha(!showSenha)}
+                    className="absolute right-0 top-1/2 -translate-y-1/2 text-theme-muted hover:text-theme-text transition-colors p-2"
+                  >
+                    {showSenha ? <EyeOff size={16} /> : <Eye size={16} />}
+                  </button>
                 </div>
-              </div>
-            )}
-
-            <div className="space-y-4 md:col-span-2">
-              <label className="text-[10px] font-bold uppercase tracking-[0.4em] text-theme-muted ml-1">Senha de Acesso</label>
-              <div className="relative group flex items-center">
-                <Lock className="absolute left-0 top-1/2 -translate-y-1/2 text-theme-muted group-focus-within:text-brand-tactical transition-colors" size={14} strokeWidth={1.5} />
-                <input
-                  type={showSenha ? "text" : "password"}
-                  required
-                  value={formData.senha}
-                  onChange={(e) => setFormData({ ...formData, senha: e.target.value })}
-                  className="w-full bg-transparent border-b border-theme-border py-3 pl-10 pr-10 text-xs text-theme-text placeholder:text-theme-muted/40 focus:outline-none focus:border-brand-tactical transition-all"
-                  placeholder="••••••••"
-                  autoComplete="new-password"
-                />
-                <button
-                  type="button"
-                  onClick={() => setShowSenha(!showSenha)}
-                  className="absolute right-0 top-1/2 -translate-y-1/2 text-theme-muted hover:text-theme-text transition-colors p-2"
-                  title={showSenha ? "Ocultar senha" : "Ver senha"}
-                >
-                  {showSenha ? <EyeOff size={16} /> : <Eye size={16} />}
-                </button>
               </div>
             </div>
 
             {/* LGPD Compliance */}
-            <div className="md:col-span-2 space-y-4 mt-6">
-              <div className="flex items-start gap-4 cursor-pointer" onClick={() => setFormData({ ...formData, acceptedTerms: !formData.acceptedTerms })}>
-                <div className={`mt-1 w-4 h-4 border transition-all flex items-center justify-center ${formData.acceptedTerms ? "bg-brand-tactical border-brand-tactical" : "border-theme-border bg-theme-bg-muted"}`}>
-                  {formData.acceptedTerms && <div className="w-1.5 h-1.5 bg-white" />}
+            <div className="md:col-span-2 space-y-3">
+              {[
+                { key: "acceptedTerms", label: "Aceito os Termos de Uso", link: "/termos" },
+                { key: "acceptedPrivacy", label: "Concordo com a Política de Privacidade", link: "/privacidade" }
+              ].map(item => (
+                <div key={item.key} className="flex items-center gap-3 cursor-pointer group" onClick={() => setFormData({ ...formData, [item.key]: !formData[item.key as keyof typeof formData] })}>
+                  <div className={`w-3.5 h-3.5 border transition-all flex items-center justify-center ${formData[item.key as keyof typeof formData] ? "bg-brand-tactical border-brand-tactical" : "border-theme-border bg-theme-bg-muted/50 group-hover:border-brand-tactical/50"}`}>
+                    {formData[item.key as keyof typeof formData] && <div className="w-1.5 h-1.5 bg-theme-bg" />}
+                  </div>
+                  <p className="text-[8px] text-theme-muted font-black uppercase tracking-[0.2em]">
+                    Eu {item.label.toLowerCase()} do <a href={item.link} target="_blank" className="text-theme-text underline decoration-brand-tactical/30">Foto Segundo</a>.
+                  </p>
                 </div>
-                <p className="text-[10px] text-theme-muted font-bold uppercase tracking-widest leading-relaxed">
-                  Eu aceito os <a href="/termos" target="_blank" className="text-theme-text underline underline-offset-4 decoration-brand-tactical/30">Termos de Uso</a> do Coletivo Foto Segundo.
-                </p>
-              </div>
-
-              <div className="flex items-start gap-4 cursor-pointer" onClick={() => setFormData({ ...formData, acceptedPrivacy: !formData.acceptedPrivacy })}>
-                <div className={`mt-1 w-4 h-4 border transition-all flex items-center justify-center ${formData.acceptedPrivacy ? "bg-brand-tactical border-brand-tactical" : "border-theme-border bg-theme-bg-muted"}`}>
-                  {formData.acceptedPrivacy && <div className="w-1.5 h-1.5 bg-white" />}
-                </div>
-                <p className="text-[10px] text-theme-muted font-bold uppercase tracking-widest leading-relaxed">
-                  Eu concordo com a <a href="/privacidade" target="_blank" className="text-theme-text underline underline-offset-4 decoration-brand-tactical/30">Política de Privacidade</a> e o uso de meus dados.
-                </p>
-              </div>
+              ))}
             </div>
 
             <button
               type="submit"
               disabled={loading || !formData.acceptedTerms || !formData.acceptedPrivacy}
-              className="md:col-span-2 bg-brand-tactical text-theme-text-on-brand hover:brightness-110 font-bold uppercase tracking-[0.5em] text-[11px] py-6 transition-all mt-6 flex items-center justify-center gap-4 group rounded-none disabled:opacity-30 disabled:grayscale transition-all"
+              className="w-full bg-brand-tactical text-brand-text hover:brightness-110 font-black uppercase tracking-[0.5em] text-[10px] py-5 transition-all flex items-center justify-center gap-4 group disabled:opacity-30 disabled:grayscale shadow-xl shadow-brand-tactical/10 italic"
             >
               {loading ? "PROCESSANDO SOLICITAÇÃO..." : (
                 <>
-                  Confirmar Inscrição <ArrowRight size={12} className="group-hover:translate-x-2 transition-transform" />
+                  Confirmar Inscrição <ArrowRight size={14} className="group-hover:translate-x-1 transition-transform" />
                 </>
               )}
             </button>
           </form>
 
-          <div className="mt-16 text-center border-t border-white/5 pt-10">
-            <p className="text-zinc-700 text-[9px] font-bold uppercase tracking-[0.3em] mb-4">
-              Já possui credenciais? <Link to="/login" className="text-white hover:text-brand-tactical ml-4 transition-all font-bold underline underline-offset-4 decoration-white/10">Fazer Login</Link>
+          <div className="px-10 py-6 border-t border-theme-border/40 text-center bg-theme-bg-muted/10">
+            <p className="text-theme-muted text-[8px] font-black uppercase tracking-[0.3em]">
+              Já possui credenciais? <Link to="/login" className="text-theme-text hover:text-brand-tactical ml-3 transition-all underline underline-offset-4 decoration-theme-border">Fazer Login</Link>
             </p>
           </div>
         </div>
 
-        <div className="mt-12 text-center">
-          <Link to="/" className="text-theme-muted hover:text-theme-text text-[9px] font-bold uppercase tracking-[0.5em] transition-all">
+        <div className="mt-8 text-center">
+          <Link to="/" className="text-theme-muted hover:text-theme-text text-[8px] font-black uppercase tracking-[0.5em] transition-all opacity-40 hover:opacity-100">
             Voltar para a Vitrine
           </Link>
         </div>

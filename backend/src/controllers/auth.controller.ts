@@ -96,20 +96,58 @@ export class AuthController {
 
   /** POST /api/auth/register */
   static async register(req: Request, res: Response) {
-    const { email, senha, nome, role, whatsapp } = req.body;
+    const { 
+      email, senha, nome, role, whatsapp,
+      // Profissional
+      habilidades, equipamento, outrasHabilidades,
+      // Unidade
+      razaoSocial, endereco, cidade
+    } = req.body;
+
     try {
       const hash = await bcrypt.hash(senha, 12);
-      const user = await prisma.user.create({
-        data: { 
-          email: email.toLowerCase().trim(), 
-          senha: hash, 
-          nome, 
-          role: (role?.toUpperCase() || "CLIENTE") as any, 
-          whatsapp 
+      const cleanRole = (role?.toUpperCase() || "CLIENTE") as any;
+
+      const result = await prisma.$transaction(async (tx) => {
+        // 1. Criar Usuário
+        const user = await tx.user.create({
+          data: { 
+            email: email.toLowerCase().trim(), 
+            senha: hash, 
+            nome, 
+            role: cleanRole, 
+            whatsapp 
+          }
+        });
+
+        // 2. Criar Perfil Específico se necessário
+        if (cleanRole === "PROFISSIONAL") {
+          await tx.profissional.create({
+            data: {
+              userId: user.id,
+              services: habilidades || [],
+              equipment: equipamento || "",
+              otherHabilities: outrasHabilidades || "",
+              hourlyRate: 150.00 // Default inicial
+            }
+          });
+        } else if (cleanRole === "CARTORIO") {
+          await tx.cartorio.create({
+            data: {
+              userId: user.id,
+              razaoSocial: razaoSocial || nome,
+              address: endereco || "",
+              cidade: cidade || ""
+            }
+          });
         }
+
+        return user;
       });
-      return res.status(201).json({ user: { id: user.id, nome: user.nome, email: user.email } });
+
+      return res.status(201).json({ user: { id: result.id, nome: result.nome, email: result.email } });
     } catch (e: any) {
+      console.error("[REGISTER ERROR]:", e);
       return res.status(500).json({ error: "Erro no registro", details: e.message });
     }
   }

@@ -85,7 +85,7 @@ export const LoginPage: React.FC = () => {
   };
 
   return (
-    <div style={{ minHeight: "100vh", background: T.bg, display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center", padding: "32px 20px", fontFamily: T.fontB }}>
+    <div style={{ minHeight: "100vh", background: T.bg, display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center", padding: "16px 20px", fontFamily: T.fontB }}>
       <Helmet>
         <title>Acesso — Foto Segundo</title>
         <meta name="description" content="Acesse sua conta e visualize as fotos e vídeos do seu evento." />
@@ -96,25 +96,25 @@ export const LoginPage: React.FC = () => {
         .lp-input::placeholder { color: ${T.text3}; }
         .lp-eye { background: none; border: none; cursor: pointer; color: ${T.text3}; padding: 4px; display: flex; align-items: center; transition: color 0.15s; }
         .lp-eye:hover { color: ${T.text2}; }
-        .lp-back { font-size: 10px; font-family: ${T.fontB}; color: ${T.text3}; text-decoration: none; letter-spacing: 0.15em; text-transform: uppercase; transition: color 0.15s; }
-        .lp-back:hover { color: ${T.text}; }
-        .lp-reg { color: ${T.brand}; text-decoration: none; font-size: 12px; font-family: ${T.fontB}; letter-spacing: 0.1em; text-transform: uppercase; transition: opacity 0.15s; }
+        .lp-back { font-size: 9px; font-family: ${T.fontB}; color: ${T.text3}; text-decoration: none; letter-spacing: 0.15em; text-transform: uppercase; transition: color 0.15s; opacity: 0.5; }
+        .lp-back:hover { color: ${T.text}; opacity: 1; }
+        .lp-reg { color: ${T.brand}; text-decoration: none; font-size: 11px; font-family: ${T.fontB}; letter-spacing: 0.1em; text-transform: uppercase; transition: opacity 0.15s; }
         .lp-reg:hover { opacity: 0.75; }
-        .lp-forgot { background: none; border: none; color: ${T.text3}; font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: 1px; cursor: pointer; padding: 10px 0; margin-top: 4px; transition: color 0.15s; align-self: flex-end; display: inline-block; }
-        .lp-forgot:hover { color: ${T.text}; }
+        .lp-forgot { background: none; border: none; color: ${T.text3}; font-size: 10px; font-weight: 700; text-transform: uppercase; letter-spacing: 1px; cursor: pointer; padding: 6px 0; margin-top: 2px; transition: color 0.15s; align-self: flex-end; display: inline-block; opacity: 0.6; }
+        .lp-forgot:hover { color: ${T.text}; opacity: 1; }
       `}</style>
 
-      <div style={{ position: "fixed", top: 20, right: 20 }}>
+      <div style={{ position: "fixed", top: 20, right: 20, zIndex: 100 }}>
         <ThemeToggle />
       </div>
 
-      <div style={{ width: "100%", maxWidth: 400 }}>
+      <div style={{ width: "100%", maxWidth: 380 }}>
 
         {/* ── Brand ── */}
-        <div style={{ textAlign: "center", marginBottom: 36, display: "flex", flexDirection: "column", alignItems: "center" }}>
-          <img src="/logo-fs.png" alt="Foto Segundo" style={{ height: 40, objectFit: "contain", marginBottom: 12 }} />
-          <p style={{ fontSize: 13, color: T.text2, fontWeight: 300, margin: 0, lineHeight: 1.5 }}>
-            Acesse sua conta para visualizar seu álbum.
+        <div style={{ textAlign: "center", marginBottom: 24, display: "flex", flexDirection: "column", alignItems: "center" }}>
+          <img src="/logo-fs.png" alt="Foto Segundo" style={{ height: 32, objectFit: "contain", marginBottom: 8 }} />
+          <p style={{ fontSize: 11, color: T.text3, fontWeight: 700, textTransform: "uppercase", letterSpacing: "0.2em", margin: 0 }}>
+            Painel de Controle
           </p>
         </div>
 

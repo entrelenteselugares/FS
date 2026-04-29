@@ -56,6 +56,10 @@ export async function getPartnerLandingData(req: Request, res: Response): Promis
         phone: partner.phone,
         description: partner.description,
         coverUrl: partner.coverUrl,
+        servicePrices: partner.servicePrices,
+        disabledServices: partner.disabledServices || [],
+        workingHours: partner.workingHours,
+        fixedDuration: partner.fixedDuration,
       },
       recentEvents,
     });
@@ -71,7 +75,7 @@ export async function getPartnerLandingData(req: Request, res: Response): Promis
  */
 export async function updatePartnerProfile(req: AuthRequest, res: Response): Promise<void> {
   const userId = req.user?.userId;
-  const { address, phone, description, coverUrl, slug, pixKey, servicePrices, fixedDuration, fixedTime, hideDuration } = req.body;
+  const { address, phone, description, coverUrl, slug, pixKey, servicePrices, fixedDuration, fixedTime, hideDuration, workingHours, disabledServices } = req.body;
 
   try {
     const before = await prisma.cartorio.findUnique({
@@ -91,6 +95,8 @@ export async function updatePartnerProfile(req: AuthRequest, res: Response): Pro
         ...(fixedDuration !== undefined && { fixedDuration: Number(fixedDuration) }),
         ...(fixedTime !== undefined && { fixedTime: Boolean(fixedTime) }),
         ...(hideDuration !== undefined && { hideDuration: Boolean(hideDuration) }),
+        ...(workingHours !== undefined && { workingHours }),
+        ...(disabledServices !== undefined && { disabledServices }),
         user: {
           update: {
             ...(pixKey !== undefined && { pixKey })

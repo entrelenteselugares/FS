@@ -36,7 +36,39 @@ const MONTHS_PT = ["Janeiro","Fevereiro","Março","Abril","Maio","Junho",
   "Julho","Agosto","Setembro","Outubro","Novembro","Dezembro"];
 const DAYS_PT = ["Dom","Seg","Ter","Qua","Qui","Sex","Sáb"];
 
-function DateTimePicker({ value, onChange }: { value: string; onChange: (v: string) => void }) {
+interface DayConfig {
+  open: string;
+  close: string;
+  closed: boolean;
+}
+
+type WorkingHours = Record<string, DayConfig>;
+
+interface Partner {
+  id: string;
+  name: string;
+  city: string;
+  prices?: Record<string, number>;
+  fixedDuration?: number;
+  fixedTime?: boolean;
+  hideDuration?: boolean;
+  workingHours?: WorkingHours;
+  disabledServices?: string[];
+}
+
+interface UserProfile {
+  nome?: string;
+  email?: string;
+  whatsapp?: string;
+}
+
+interface Service {
+  id: string;
+  name: string;
+  basePrice: number;
+}
+
+function DateTimePicker({ value, onChange, workingHours }: { value: string; onChange: (v: string) => void; workingHours?: WorkingHours | null }) {
   const [open, setOpen] = useState(false);
   const [viewDate, setViewDate] = useState(() => value ? new Date(value) : new Date());
   const [hour, setHour] = useState(() => value?.split("T")[1]?.substring(0,2) || "09");
@@ -171,21 +203,37 @@ function DateTimePicker({ value, onChange }: { value: string; onChange: (v: stri
                 const m = String(viewDate.getMonth() + 1).padStart(2, "0");
                 const dayStr = day ? `${y}-${m}-${String(day).padStart(2,"0")}` : "";
                 const isPast = dayStr && dayStr < today;
+                
+                // Lógica de dia fechado 🛡️
+                let isClosed = false;
+                if (day && workingHours) {
+                  const dateObj = new Date(y, Number(m) - 1, day);
+                  const weekDays = ["sun", "mon", "tue", "wed", "thu", "fri", "sat"];
+                  const dayKey = weekDays[dateObj.getDay()];
+                  if (workingHours[dayKey]?.closed) isClosed = true;
+                }
+
                 const isSelected = dayStr === selectedDate;
                 const isToday = dayStr === today;
+                const isDisabled = !day || isPast || isClosed;
+
                 return (
-                  <button key={i} disabled={!day || !!isPast}
-                    onClick={() => day && !isPast && selectDay(day)}
+                  <button key={i} disabled={isDisabled}
+                    onClick={() => day && !isDisabled && selectDay(day)}
                     style={{
                       height: 34, width: "100%", border: "none", borderRadius: 0,
                       fontSize: 12, fontWeight: isSelected ? 900 : 500,
-                      cursor: day && !isPast ? "pointer" : "default",
+                      cursor: !isDisabled ? "pointer" : "default",
                       background: isSelected ? THEME.accent : isToday ? `${THEME.accent}20` : "transparent",
-                      color: isSelected ? "var(--theme-text-on-brand)" : isPast ? "var(--theme-text-muted)" : !day ? "transparent" : THEME.text,
+                      color: isSelected ? "var(--theme-text-on-brand)" : (isPast || isClosed) ? "var(--theme-text-muted)" : !day ? "transparent" : THEME.text,
+                      opacity: isClosed ? 0.3 : 1,
                       outline: isToday && !isSelected ? `1px solid ${THEME.accent}50` : "none",
                       transition: "background 0.15s",
                     }}
-                  >{day || ""}</button>
+                  >
+                    {day || ""}
+                    {isClosed && <div style={{ fontSize: 6, position: "absolute", bottom: 2, left: "50%", transform: "translateX(-50%)" }}>✖</div>}
+                  </button>
                 );
               })}
             </div>
@@ -199,9 +247,21 @@ function DateTimePicker({ value, onChange }: { value: string; onChange: (v: stri
               <div style={{ display: "flex", alignItems: "center", gap: 10 }}>
                 <select value={hour} onChange={e => updateTime(e.target.value, minute)}
                   style={{ flex: 1, background: "var(--theme-bg-muted)", border: `1px solid ${THEME.border}`, color: THEME.text, padding: "10px 8px", fontSize: 18, fontWeight: 900, textAlign: "center", borderRadius: 0, cursor: "pointer" }}>
-                  {Array.from({length: 24}, (_, i) => String(i).padStart(2,"0")).map(h => (
-                    <option key={h} value={h}>{h}h</option>
-                  ))}
+                  {Array.from({length: 24}, (_, i) => String(i).padStart(2,"0")).map(h => {
+                     // Oculta horas fora do expediente se parceiro selecionado 🛡️
+                     let isWorkingHour = true;
+                     if (selectedDate && workingHours) {
+                       const dateObj = new Date(selectedDate + "T12:00");
+                       const weekDays = ["sun", "mon", "tue", "wed", "thu", "fri", "sat"];
+                       const dayKey = weekDays[dateObj.getDay()];
+                       const config = workingHours[dayKey];
+                       if (config && !config.closed) {
+                         if (h < config.open.split(":")[0] || h > config.close.split(":")[0]) isWorkingHour = false;
+                       }
+                     }
+                     if (!isWorkingHour) return null;
+                     return <option key={h} value={h}>{h}h</option>;
+                  })}
                 </select>
                 <span style={{ color: THEME.accent, fontSize: 22, fontWeight: 900 }}>:</span>
                 <select value={minute} onChange={e => updateTime(hour, e.target.value)}
@@ -226,28 +286,6 @@ function DateTimePicker({ value, onChange }: { value: string; onChange: (v: stri
   );
 }
 
-interface Service {
-  id: string;
-  name: string;
-  basePrice: number;
-}
-
-interface Partner {
-  id: string;
-  name: string;
-  city: string;
-  prices?: Record<string, number>;
-  fixedDuration?: number;
-  fixedTime?: boolean;
-  hideDuration?: boolean;
-}
-
-interface UserProfile {
-  nome?: string;
-  email?: string;
-  whatsapp?: string;
-}
-
 export const QuotePage = () => {
   const navigate = useNavigate();
   const [step, setStep] = useState(1);
@@ -268,13 +306,23 @@ export const QuotePage = () => {
       .catch(err => console.error("Erro ao carregar serviços:", err));
   }, []);
 
-  const availableServices = catalog.length > 0 
-    ? catalog 
-    : P.SERVICES.map(s => ({ id: s.id, name: s.label, basePrice: s.price }));
   const [attendees, setAttendees] = useState<string>("0");
   const [locationType, setLocationType] = useState<"PARTNER" | "OTHER">("PARTNER");
   const [usageType, setUsageType] = useState<"PESSOAL" | "EMPRESARIAL">("PESSOAL");
   const [selectedPartnerId, setSelectedPartnerId] = useState("");
+  const currentPartner = useMemo(() => partners.find(p => p.id === selectedPartnerId), [partners, selectedPartnerId]);
+
+  const availableServices = useMemo(() => {
+    const raw = catalog.length > 0 
+      ? catalog 
+      : P.SERVICES.map(s => ({ id: s.id, name: s.label, basePrice: s.price }));
+    
+    if (locationType === "PARTNER" && currentPartner) {
+      const disabled = currentPartner.disabledServices || [];
+      return raw.filter(s => !disabled.includes(s.id));
+    }
+    return raw;
+  }, [catalog, locationType, currentPartner]);
   const [customCep, setCustomCep] = useState("");
   const [addressData, setAddressData] = useState({ logradouro: "", bairro: "", cidade: "", uf: "" });
   const [addressNumber, setAddressNumber] = useState("");
@@ -288,7 +336,6 @@ export const QuotePage = () => {
   const [whatsapp, setWhatsapp] = useState("");
   const { user } = useAuth();
   const authUser = user as UserProfile | null;
-  const currentPartner = useMemo(() => partners.find(p => p.id === selectedPartnerId), [partners, selectedPartnerId]);
 
   useEffect(() => {
     if (authUser) {
@@ -592,7 +639,11 @@ export const QuotePage = () => {
               {/* Data e Horário */}
               <div style={{ display: "flex", flexDirection: "column", gap: 12 }}>
                 <label style={{ fontSize: 9, fontWeight: 800, textTransform: "uppercase", color: THEME.text }}>02. Data e Horário do Evento</label>
-                <DateTimePicker value={eventDate} onChange={setEventDate} />
+                <DateTimePicker 
+                  value={eventDate} 
+                  onChange={setEventDate} 
+                  workingHours={locationType === "PARTNER" ? currentPartner?.workingHours : null}
+                />
               </div>
 
               {/* Botões de Ação Passo 1 */}

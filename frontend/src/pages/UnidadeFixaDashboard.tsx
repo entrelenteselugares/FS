@@ -1,11 +1,10 @@
 import { useState, useEffect, useRef, useCallback } from "react";
-import { useSearchParams } from "react-router-dom";
+import { useSearchParams, useNavigate } from "react-router-dom";
 
 import { API } from "../lib/api";
 import { QRCodeSVG } from "qrcode.react";
-import { QrCode, Copy, Check, X, Download, Calendar, DollarSign, Settings, Users2, Camera, Star, ShieldCheck } from "lucide-react";
+import { QrCode, Copy, Check, X, Download, Calendar, DollarSign, Settings, Users2, Camera, Star, ShieldCheck, ArrowRight, Share2, MapPin, Phone, UserCircle } from "lucide-react";
 import { DashboardLayout, type NavItem } from "../components/DashboardLayout";
-import { T } from "../lib/theme";
 
 interface UnidadeStats {
   totalEventos: number;
@@ -39,9 +38,20 @@ interface EventoAgenda {
   title: string;
   date: string;
   location: string;
+  status: string;
+  clientName: string;
+  clientEmail: string;
   captacao?: { nome?: string; user?: { name?: string; nome?: string } } | null;
   _count?: { orders: number };
 }
+
+interface DayConfig {
+  open: string;
+  close: string;
+  closed: boolean;
+}
+
+type WorkingHours = Record<string, DayConfig>;
 
 interface PayoutItem {
   id: string;
@@ -81,16 +91,11 @@ function formatDateTime(d: string | null | undefined) {
   }).format(date);
 }
 
-const S = {
-  page: { fontFamily: "'Outfit', sans-serif", background: "var(--theme-bg)", color: "var(--theme-text)", minHeight: "100vh" } as React.CSSProperties,
-  card: { background: "var(--theme-bg-muted)", border: "1px solid var(--theme-border)", borderRadius: 0 } as React.CSSProperties,
-  input: { background: "transparent", border: "1px solid var(--theme-border)", borderRadius: 0, padding: "12px 16px", fontSize: 13, color: "var(--theme-text)", outline: "none" } as React.CSSProperties,
-};
-
 type Tab = "agenda" | "financas" | "equipe" | "configuracoes";
 
 export default function UnidadeFixaDashboard() {
   const [searchParams] = useSearchParams();
+  const navigate = useNavigate();
 
   const [tab, setTab] = useState<Tab>((searchParams.get("tab") as Tab) || "agenda");
   const [stats, setStats] = useState<UnidadeStats | null>(null);
@@ -110,7 +115,17 @@ export default function UnidadeFixaDashboard() {
   const [lpFixedDuration, setLpFixedDuration] = useState(2);
   const [lpFixedTime, setLpFixedTime] = useState(false);
   const [lpHideDuration, setLpHideDuration] = useState(false);
-  const [savingLp, setSavingLp] = useState(false);
+  const [workingHours, setWorkingHours] = useState<WorkingHours>({
+    mon: { open: "09:00", close: "18:00", closed: false },
+    tue: { open: "09:00", close: "18:00", closed: false },
+    wed: { open: "09:00", close: "18:00", closed: false },
+    thu: { open: "09:00", close: "18:00", closed: false },
+    fri: { open: "09:00", close: "18:00", closed: false },
+    sat: { open: "09:00", close: "12:00", closed: true },
+    sun: { open: "00:00", close: "00:00", closed: true },
+   });
+   const [disabledServices, setDisabledServices] = useState<string[]>([]);
+   const [savingLp, setSavingLp] = useState(false);
   const [savingPix, setSavingPix] = useState(false);
   const [qrModalEvent, setQrModalEvent] = useState<EventoAgenda | null>(null);
   const [copied, setCopied] = useState(false);
@@ -156,7 +171,9 @@ export default function UnidadeFixaDashboard() {
         setLpCoverUrl(statsData.cartorio.coverUrl ?? "");
         setLpFixedDuration(statsData.cartorio.fixedDuration || 2);
         setLpFixedTime(statsData.cartorio.fixedTime || false);
-        setLpHideDuration(statsData.cartorio.hideDuration || false);
+         setLpHideDuration(statsData.cartorio.hideDuration || false);
+         setDisabledServices(statsData.cartorio.disabledServices || []);
+         if (statsData.cartorio.workingHours) setWorkingHours(statsData.cartorio.workingHours);
         setLocalPrices(statsData.cartorio.servicePrices || {});
         setPixKey(statsData.pixKey ?? "");
       }
@@ -208,7 +225,8 @@ export default function UnidadeFixaDashboard() {
         coverUrl: lpCoverUrl,
         fixedDuration: lpFixedDuration,
         fixedTime: lpFixedTime,
-        hideDuration: lpHideDuration
+        hideDuration: lpHideDuration,
+        workingHours
       });
       setSuccess("Página pública atualizada com sucesso! ✨");
       setTimeout(() => setSuccess(""), 3000);
@@ -232,11 +250,14 @@ export default function UnidadeFixaDashboard() {
     }
   };
 
-  const saveServicePrices = async () => {
-    setSavingPrices(true);
-    try {
-      await API.patch("/unidade-fixa/profile", { servicePrices: localPrices });
-      setSuccess("Tabela de preços atualizada com sucesso! 🏷️");
+   const saveServicePrices = async () => {
+     setSavingPrices(true);
+     try {
+       await API.patch("/unidade-fixa/profile", { 
+         servicePrices: localPrices,
+         disabledServices 
+       });
+       setSuccess("Tabela de preços e catálogo atualizados! 🏷️");
       setTimeout(() => setSuccess(""), 3000);
     } catch {
       setError("Erro ao salvar tabela de preços.");
@@ -276,20 +297,11 @@ export default function UnidadeFixaDashboard() {
     return p.vinculo;
   };
 
-  useEffect(() => {
-    loadData();
-  }, [loadData]);
-
-  useEffect(() => {
-    if (tab === "configuracoes") loadLpData();
-  }, [tab, loadLpData]);
-
-
   const NAV_ITEMS = (tab: Tab, setTab: (t: Tab) => void): NavItem[] => [
-    { label: "Visão Geral", onClick: () => setTab("agenda"), isActive: tab === "agenda", icon: <Calendar size={18} /> },
-    { label: "Finanças", onClick: () => setTab("financas"), isActive: tab === "financas", icon: <ShieldCheck size={18} />, badge: repasses.filter(r => r.status !== "PAID").length || undefined },
-    { label: "Minha Equipe", onClick: () => { setTab("equipe"); if (!teamLoaded) loadTeam(); }, isActive: tab === "equipe", icon: <Users2 size={18} /> },
-    { label: "Unidade Fixa", onClick: () => setTab("configuracoes"), isActive: tab === "configuracoes", icon: <Settings size={18} /> },
+    { label: "Agenda Tática", onClick: () => setTab("agenda"), isActive: tab === "agenda", icon: <Calendar size={18} /> },
+    { label: "Fluxo Financeiro", onClick: () => setTab("financas"), isActive: tab === "financas", icon: <DollarSign size={18} />, badge: repasses.filter(r => r.status !== "PAID").length || undefined },
+    { label: "Rede Técnica", onClick: () => { setTab("equipe"); if (!teamLoaded) loadTeam(); }, isActive: tab === "equipe", icon: <Users2 size={18} /> },
+    { label: "Configuração", onClick: () => setTab("configuracoes"), isActive: tab === "configuracoes", icon: <Settings size={18} /> },
   ];
 
   return (
@@ -297,69 +309,61 @@ export default function UnidadeFixaDashboard() {
       title="Painel de Unidade" 
       navItems={NAV_ITEMS(tab, setTab)}
     >
-      <style>{`
-        * { box-sizing: border-box; }
-        input:focus { border-color: ${T.brand} !important; outline: none; }
-        @media (max-width: 768px) {
-          .mobile-grid-1 { grid-template-columns: 1fr !important; gap: 1rem !important; }
-          .mobile-grid-2 { grid-template-columns: repeat(2, 1fr) !important; gap: 1rem !important; }
-          .mobile-stack { flex-direction: column !important; align-items: stretch !important; gap: 1.5rem !important; }
-          .mobile-hide { display: none !important; }
-          .mobile-padding { padding: 1.5rem !important; }
-        }
-      `}</style>
+      <div className="max-w-7xl mx-auto px-6 lg:px-12 py-10 space-y-12 animate-in fade-in slide-in-from-bottom-4 duration-700">
 
-      <div className="mobile-padding" style={{ maxWidth: 1200, margin: "0 auto", padding: "clamp(24px, 6vw, 64px)" }}>
-
-        {/* Alertas */}
-        {error && (
-          <div style={{ background: "rgba(239, 68, 68, 0.1)", border: "1px solid rgba(239, 68, 68, 0.2)", borderRadius: 0, padding: "12px 16px", marginBottom: "1.5rem" }}>
-            <p style={{ fontSize: 13, color: "#ef4444", margin: 0, fontWeight: 600, textTransform: "uppercase", letterSpacing: 0.5 }}>{error}</p>
-          </div>
-        )}
-        {success && (
-          <div style={{ background: "rgba(133, 185, 172, 0.1)", border: "1px solid rgba(133, 185, 172, 0.2)", borderRadius: 0, padding: "12px 16px", marginBottom: "1.5rem" }}>
-            <p style={{ fontSize: 13, color: "var(--brand-primary)", margin: 0, fontWeight: 600, textTransform: "uppercase", letterSpacing: 0.5 }}>{success}</p>
+        {/* Alertas Premium */}
+        {(error || success) && (
+          <div className="fixed bottom-10 right-10 z-[100] animate-in slide-in-from-right duration-500">
+            {error && (
+              <div className="bg-red-500/10 border border-red-500/20 backdrop-blur-md px-8 py-4 flex items-center gap-4 shadow-2xl">
+                <X size={18} className="text-red-500" />
+                <p className="text-[10px] font-black text-red-500 uppercase tracking-widest">{error}</p>
+                <button onClick={() => setError("")} className="ml-4 opacity-40 hover:opacity-100"><X size={14} /></button>
+              </div>
+            )}
+            {success && (
+              <div className="bg-brand-tactical/10 border border-brand-tactical/20 backdrop-blur-md px-8 py-4 flex items-center gap-4 shadow-2xl">
+                <Check size={18} className="text-brand-tactical" />
+                <p className="text-[10px] font-black text-brand-tactical uppercase tracking-widest">{success}</p>
+                <button onClick={() => setSuccess("")} className="ml-4 opacity-40 hover:opacity-100"><X size={14} /></button>
+              </div>
+            )}
           </div>
         )}
 
-        {/* Header */}
-        <div className="mb-12">
-          <h1 className="heading-luxury text-theme-text mb-4">
-            {tab === "agenda" ? "Agenda & Eventos" : tab === "financas" ? "Finanças" : "Configurações"}
-          </h1>
-          <p className="text-proportional">
-          {unidadeName && `${unidadeName} · `}
-          {tab === "agenda" && "PAINEL DE GESTÃO TÁTICA"}
-          {tab === "financas" && "HISTÓRICO DE REPASSES"}
-          {tab === "equipe" && "GESTÃO DE EQUIPE"}
-          {tab === "configuracoes" && "CONFIGURAÇÕES"}
-          </p>
+        {/* Header Seção */}
+        <div className="flex flex-col lg:flex-row lg:items-end justify-between gap-6 border-b border-theme-border/60 pb-10">
+          <div className="space-y-4">
+            <h1 className="text-3xl md:text-5xl font-heading font-black text-theme-text uppercase tracking-tighter italic leading-none">
+              {tab === "agenda" ? "Agenda Tática" : tab === "financas" ? "Fluxo Financeiro" : tab === "equipe" ? "Rede Técnica" : "Cockpit da Unidade"}
+            </h1>
+            <div className="flex items-center gap-4">
+               <div className="h-1 w-12 bg-brand-tactical" />
+               <div className="flex items-center gap-2">
+                 <ShieldCheck size={14} className="text-brand-tactical" />
+                 <p className="text-[10px] font-black text-brand-tactical uppercase tracking-widest italic">{unidadeName || "Sua Unidade"}</p>
+               </div>
+            </div>
+          </div>
         </div>
 
-        {/* KPIs */}
+        {/* KPIs Dashboard */}
         {!loading && stats && (
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 mb-10">
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-px bg-theme-border/20 border border-theme-border/20 shadow-2xl">
             {[
-              { label: "Eventos este mês", value: String(stats.eventosMes ?? 0) },
-              { label: "Total de eventos", value: String(stats.totalEventos ?? 0) },
-              { label: "Vendas confirmadas", value: String(stats.totalVendas ?? 0) },
-              { label: "Repasse estimado", value: formatCurrency(stats.repasseEstimado ?? 0) },
+              { label: "Operações / Mês", value: String(stats.eventosMes ?? 0), icon: <Calendar size={14} /> },
+              { label: "Total Histórico", value: String(stats.totalEventos ?? 0), icon: <Camera size={14} /> },
+              { label: "Conversões", value: String(stats.totalVendas ?? 0), icon: <Users2 size={14} /> },
+              { label: "Crédito Previsto", value: formatCurrency(stats.repasseEstimado ?? 0), icon: <DollarSign size={14} />, highlight: true },
             ].map((m) => (
-              <div key={m.label} className="lux-card border-l-4 border-l-brand-primary">
-                <p className="text-proportional mb-4">{m.label}</p>
-                <p className="text-3xl font-black text-theme-text">{m.value}</p>
-              </div>
-            ))}
-          </div>
-        )}
-
-        {loading && (
-          <div className="mobile-grid-2" style={{ display: "grid", gridTemplateColumns: "repeat(4, 1fr)", gap: "1rem", marginBottom: "2rem" }}>
-            {[...Array(4)].map((_, i) => (
-              <div key={i} style={{ ...S.card, padding: "1.25rem" }}>
-                <div style={{ height: 10, background: "var(--theme-bg-muted)", borderRadius: 3, width: "60%", marginBottom: 12 }} />
-                <div style={{ height: 22, background: "var(--theme-bg-muted)", borderRadius: 3, width: "40%" }} />
+              <div key={m.label} className="bg-theme-bg-muted/40 p-8 space-y-4 group hover:bg-theme-bg-muted/60 transition-all duration-500">
+                <div className="flex items-center gap-3">
+                  <div className={`p-2 rounded-none ${m.highlight ? 'bg-brand-tactical text-brand-text' : 'bg-theme-border/40 text-theme-muted'}`}>
+                    {m.icon}
+                  </div>
+                  <p className="text-[9px] font-black text-theme-muted uppercase tracking-[0.2em]">{m.label}</p>
+                </div>
+                <p className={`text-2xl font-heading font-black italic tracking-tighter ${m.highlight ? 'text-brand-tactical' : 'text-theme-text'}`}>{m.value}</p>
               </div>
             ))}
           </div>
@@ -367,215 +371,364 @@ export default function UnidadeFixaDashboard() {
 
         {/* ── AGENDA ── */}
         {tab === "agenda" && (
-          <div style={S.card}>
-            <div style={{ padding: "1.25rem 1.5rem", borderBottom: "0.5px solid var(--theme-border)" }}>
-              <p style={{ fontSize: 11, fontWeight: 800, color: "var(--theme-text)", textTransform: "uppercase", letterSpacing: 2 }}>Próximos eventos</p>
+          <div className="space-y-10">
+            {/* Tactical Summary Bar */}
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-px bg-theme-border/20 border border-theme-border/20 shadow-xl overflow-hidden">
+               <div className="bg-theme-bg-muted/30 p-6 flex items-center gap-5">
+                  <div className="w-10 h-10 rounded-full bg-brand-tactical/10 flex items-center justify-center text-brand-tactical border border-brand-tactical/20">
+                    <Calendar size={18} />
+                  </div>
+                  <div>
+                    <p className="text-[8px] font-black text-theme-muted uppercase tracking-widest">Próximas 72h</p>
+                    <p className="text-sm font-black text-theme-text uppercase italic">{eventos.filter(e => {
+                      const d = new Date(e.date);
+                      const now = new Date();
+                      const diff = d.getTime() - now.getTime();
+                      return diff > 0 && diff < (72 * 60 * 60 * 1000);
+                    }).length} Missões</p>
+                  </div>
+               </div>
+               <div className="bg-theme-bg-muted/30 p-6 flex items-center gap-5">
+                  <div className="w-10 h-10 rounded-full bg-blue-500/10 flex items-center justify-center text-blue-500 border border-blue-500/20">
+                    <Users2 size={18} />
+                  </div>
+                  <div>
+                    <p className="text-[8px] font-black text-theme-muted uppercase tracking-widest">Rede Ativa</p>
+                    <p className="text-sm font-black text-theme-text uppercase italic">{teamData.length} Agentes</p>
+                  </div>
+               </div>
+               <div className="bg-theme-bg-muted/30 p-6 flex items-center gap-5">
+                  <div className="w-10 h-10 rounded-full bg-amber-500/10 flex items-center justify-center text-amber-500 border border-amber-500/20">
+                    <ShieldCheck size={18} />
+                  </div>
+                  <div>
+                    <p className="text-[8px] font-black text-theme-muted uppercase tracking-widest">Status de Unidade</p>
+                    <p className="text-sm font-black text-theme-text uppercase italic">Operacional</p>
+                  </div>
+               </div>
             </div>
-            {loading ? (
-              <p style={{ padding: "2rem", textAlign: "center", color: "var(--theme-text-muted)", fontSize: 13 }}>Carregando...</p>
-            ) : eventos.length === 0 ? (
-              <p style={{ padding: "2rem", textAlign: "center", color: "var(--theme-text-muted)", fontSize: 13 }}>
-                Nenhum evento agendado ainda.
-              </p>
-            ) : eventos.map((ev, i) => (
-              <div key={ev.id} style={{ padding: "0.875rem 1.25rem", borderBottom: i < eventos.length - 1 ? "0.5px solid var(--theme-border)" : "none", display: "flex", alignItems: "center", gap: "1rem" }}>
-                <div style={{ flex: 1, minWidth: 0 }}>
-                  <p style={{ fontSize: 14, fontWeight: 500, color: "var(--theme-text)", marginBottom: 2, whiteSpace: "nowrap", overflow: "hidden", textOverflow: "ellipsis" }}>
-                    {ev.title}
-                  </p>
-                  <p style={{ fontSize: 11, color: "var(--theme-text-muted)" }}>
-                    {formatDateTime(ev.date)} · {ev.location}
-                  </p>
+
+            <div className="space-y-6">
+              {loading ? (
+                <div className="p-24 text-center">
+                  <div className="w-12 h-12 border-2 border-brand-tactical border-t-transparent rounded-full animate-spin mx-auto mb-6" />
+                  <p className="text-[10px] font-black text-theme-muted uppercase tracking-[0.5em]">Sincronizando Vetores...</p>
                 </div>
-                <div style={{ textAlign: "right", flexShrink: 0 }}>
-                  {ev.captacao ? (
-                    <p style={{ fontSize: 12, color: "var(--brand-primary)", fontWeight: 700 }}>✓ {ev.captacao?.user?.name ?? ev.captacao?.user?.nome ?? ev.captacao?.nome ?? "Profissional da Rede"}</p>
-                  ) : (
-                    <p style={{ fontSize: 12, color: "#f59e0b", fontWeight: 700 }}>SEM PROFISSIONAL DESIGNADO</p>
-                  )}
-                  <p style={{ fontSize: 10, color: "var(--theme-text-muted)", marginTop: 2, fontWeight: 600 }}>{ev._count?.orders ?? 0} venda(s)</p>
+              ) : eventos.length === 0 ? (
+                <div className="relative group overflow-hidden">
+                  <div className="absolute inset-0 bg-gradient-to-br from-brand-tactical/5 to-transparent opacity-50" />
+                  <div className="relative p-24 border border-theme-border/40 text-center space-y-8 backdrop-blur-sm">
+                    <div className="relative inline-block">
+                      <Calendar size={48} className="mx-auto text-theme-border/30" />
+                      <div className="absolute -top-2 -right-2 w-4 h-4 bg-brand-tactical rounded-full animate-ping" />
+                      <div className="absolute -top-2 -right-2 w-4 h-4 bg-brand-tactical rounded-full" />
+                    </div>
+                    <div className="space-y-2">
+                      <p className="text-lg font-heading font-black text-theme-text uppercase italic tracking-tighter">Standby Estratégico</p>
+                      <p className="text-[10px] font-bold text-theme-muted uppercase tracking-[0.3em] max-w-xs mx-auto leading-relaxed">
+                        Nenhuma operação detectada nos radares desta unidade para o período atual.
+                      </p>
+                    </div>
+                    <button 
+                      onClick={() => navigate("/p/unidade-fixa")} 
+                      className="inline-flex items-center gap-4 px-8 py-3 bg-theme-bg border border-theme-border text-[9px] font-black uppercase tracking-[0.4em] text-theme-text hover:bg-brand-tactical hover:text-brand-text hover:border-brand-tactical transition-all italic"
+                    >
+                      Ver Vitrine da Rede <ArrowRight size={14} />
+                    </button>
+                  </div>
                 </div>
-                <div style={{ paddingLeft: "1rem", borderLeft: "0.5px solid var(--theme-border)" }}>
-                  <button 
-                    onClick={() => { setQrModalEvent(ev); setCopied(false); }}
-                    style={{ background: "rgba(133,185,172,0.1)", border: "1px solid rgba(133,185,172,0.2)", borderRadius: 6, padding: "8px", color: "var(--brand-primary)", cursor: "pointer", display: "flex", alignItems: "center", justifyContent: "center" }}
-                    title="QR Code do Evento"
-                  >
-                    <QrCode size={18} />
-                  </button>
+              ) : (
+                <div className="grid grid-cols-1 gap-4">
+                  {eventos.map((ev) => (
+                    <div key={ev.id} className="lux-card p-0 overflow-hidden group hover:border-brand-tactical/30 transition-all duration-700">
+                      <div className="flex flex-col md:flex-row">
+                        {/* Data Column */}
+                        <div className="md:w-32 bg-theme-bg-muted/40 p-6 flex flex-col items-center justify-center border-b md:border-b-0 md:border-r border-theme-border/60 group-hover:bg-brand-tactical/5 transition-colors">
+                           <span className="text-[9px] font-black text-brand-tactical uppercase tracking-tighter mb-1">{new Date(ev.date).toLocaleDateString('pt-BR', { month: 'long' })}</span>
+                           <span className="text-4xl font-heading font-black text-theme-text italic leading-none">{new Date(ev.date).getDate()}</span>
+                           <span className="text-[10px] font-bold text-theme-muted uppercase tracking-widest mt-2">{new Date(ev.date).getFullYear()}</span>
+                        </div>
+
+                        {/* Content Column */}
+                        <div className="flex-1 p-8 space-y-6">
+                           <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-6">
+                              <div className="space-y-3">
+                                 <div className="flex items-center gap-3">
+                                    <div className="w-2 h-2 rounded-full bg-brand-tactical animate-pulse" />
+                                    <h3 className="text-2xl font-heading font-black text-theme-text uppercase italic tracking-tight group-hover:text-brand-tactical transition-colors">{ev.title}</h3>
+                                 </div>
+                                 <div className="flex flex-wrap items-center gap-6">
+                                    <span className="flex items-center gap-2 text-[10px] font-black text-theme-muted uppercase tracking-widest"><MapPin size={12} className="text-brand-tactical" /> {ev.location}</span>
+                                    <span className="flex items-center gap-2 text-[10px] font-black text-theme-muted uppercase tracking-widest"><Calendar size={12} className="text-brand-tactical" /> {formatDateTime(ev.date)}</span>
+                                 </div>
+                              </div>
+
+                              <div className="flex items-center gap-8">
+                                 <div className="text-right">
+                                    {ev.captacao ? (
+                                      <div className="space-y-1">
+                                        <p className="text-[8px] font-black text-theme-muted uppercase tracking-[0.2em]">Agente Designado</p>
+                                        <p className="text-[11px] font-black text-theme-text uppercase italic">{ev.captacao?.user?.name ?? ev.captacao?.user?.nome ?? ev.captacao?.nome}</p>
+                                      </div>
+                                    ) : (
+                                      <div className="space-y-1">
+                                        <p className="text-[8px] font-black text-theme-muted uppercase tracking-[0.2em]">Status de Rede</p>
+                                        <p className="text-[11px] font-black text-amber-500 uppercase italic animate-pulse">Aguardando Agente</p>
+                                      </div>
+                                    )}
+                                 </div>
+                                 <button 
+                                    onClick={() => { setQrModalEvent(ev); setCopied(false); }}
+                                    className="p-5 bg-theme-bg border border-theme-border text-theme-text hover:bg-brand-tactical hover:text-brand-text hover:border-brand-tactical transition-all shadow-xl"
+                                 >
+                                    <QrCode size={20} />
+                                 </button>
+                              </div>
+                           </div>
+                           
+                           {/* Sub-bar */}
+                           <div className="pt-6 border-t border-theme-border/40 flex items-center justify-between">
+                              <div className="flex items-center gap-6">
+                                 <div className="flex items-center gap-2">
+                                    <DollarSign size={12} className="text-brand-tactical" />
+                                    <span className="text-[9px] font-bold text-theme-muted uppercase tracking-widest">{ev._count?.orders ?? 0} Transações</span>
+                                 </div>
+                                 <div className="flex items-center gap-2">
+                                    <ShieldCheck size={12} className="text-blue-400" />
+                                    <span className="text-[9px] font-bold text-theme-muted uppercase tracking-widest">Protocolo Ativo</span>
+                                 </div>
+                              </div>
+                              <ArrowRight size={16} className="text-theme-border group-hover:text-brand-tactical group-hover:translate-x-2 transition-all" />
+                           </div>
+                        </div>
+                      </div>
+                    </div>
+                  ))}
                 </div>
-              </div>
-            ))}
+              )}
+            </div>
           </div>
         )}
 
-        {/* ── FINANÇAS (NOVO REPASSE) ── */}
+        {/* ── FINANÇAS ── */}
         {tab === "financas" && (
-          <div style={{ display: "flex", flexDirection: "column", gap: "1.5rem" }}>
-            <div style={{ ...S.card, padding: "2rem", borderLeft: `4px solid var(--brand-primary)` }}>
-              <h3 style={{ fontFamily: "'Outfit', sans-serif", fontSize: 18, fontWeight: 900, color: "var(--theme-text)", textTransform: "uppercase", marginBottom: 8 }}>Repasses Consolidados</h3>
-              <p style={{ fontSize: 11, color: "var(--theme-text-muted)", lineHeight: 1.6, maxWidth: 500 }}>
-                Aqui você acompanha o fechamento semanal da sua unidade. Os repasses são processados todas as sextas-feiras referentes à semana anterior.
-              </p>
+          <div className="space-y-10">
+            <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
+              {/* Consolidation Info */}
+              <div className="lg:col-span-2 lux-card p-10 border-l-4 border-l-brand-tactical bg-gradient-to-br from-brand-tactical/[0.03] to-transparent relative overflow-hidden">
+                <div className="absolute top-0 right-0 p-10 opacity-[0.03] pointer-events-none">
+                  <ShieldCheck size={120} />
+                </div>
+                <div className="relative z-10 space-y-6">
+                  <h3 className="text-2xl font-heading font-black text-theme-text uppercase italic tracking-tight">Consolidação de Repasses</h3>
+                  <p className="text-[11px] font-bold text-theme-muted uppercase tracking-[0.2em] leading-relaxed max-w-2xl">
+                    O fechamento tático da unidade ocorre semanalmente. Créditos são liquidados em <span className="text-brand-tactical">D+7</span> após a consolidação da rede técnica. Todas as sextas-feiras, os saldos aprovados são transferidos para a conta estratégica designada.
+                  </p>
+                  <div className="flex items-center gap-8 pt-4">
+                     <div className="flex items-center gap-3">
+                        <div className="w-1.5 h-1.5 rounded-full bg-brand-tactical" />
+                        <span className="text-[9px] font-black text-theme-text uppercase tracking-widest">Janela de Ciclo: Semanal</span>
+                     </div>
+                     <div className="flex items-center gap-3">
+                        <div className="w-1.5 h-1.5 rounded-full bg-brand-tactical" />
+                        <span className="text-[9px] font-black text-theme-text uppercase tracking-widest">Taxa de Rede: 10%</span>
+                     </div>
+                  </div>
+                </div>
+              </div>
+
+              {/* PIX Destination Widget */}
+              <div className="lux-card p-10 flex flex-col justify-between bg-theme-bg-muted/20 border-dashed border-theme-border/60">
+                 <div className="space-y-4">
+                    <p className="text-[9px] font-black text-theme-muted uppercase tracking-[0.3em]">Destino da Liquidação</p>
+                    <div className="flex items-center gap-4">
+                       <div className="p-3 bg-brand-tactical/10 text-brand-tactical border border-brand-tactical/20">
+                          <DollarSign size={20} />
+                       </div>
+                       <div>
+                          <p className="text-[10px] font-black text-theme-text uppercase tracking-widest">{pixKey || "NÃO CONFIGURADA"}</p>
+                          <p className="text-[8px] font-bold text-theme-muted uppercase">CHAVE PIX ATIVA</p>
+                       </div>
+                    </div>
+                 </div>
+                 <button 
+                  onClick={() => setTab("configuracoes")}
+                  className="w-full mt-8 py-3 text-[9px] font-black uppercase tracking-[0.4em] border border-theme-border hover:border-brand-tactical hover:text-brand-tactical transition-all italic"
+                 >
+                   Alterar Destino
+                 </button>
+              </div>
             </div>
 
-            <div style={S.card}>
-              <div style={{ padding: "1.25rem", borderBottom: "0.5px solid var(--theme-border)", display: "flex", justifyContent: "space-between", alignItems: "center" }}>
-                <p style={{ fontSize: 12, fontWeight: 800, textTransform: "uppercase", letterSpacing: 1 }}>Histórico de Fechamentos</p>
-                <div style={{ fontSize: 10, color: "var(--brand-primary)", fontWeight: 700 }}>Total a receber: {formatCurrency(repasses.filter(r => r.status !== "PAID").reduce((acc, r) => acc + r.amount, 0))}</div>
+            {/* Financial History Table */}
+            <div className="lux-card overflow-hidden">
+              <div className="p-8 border-b border-theme-border/60 flex flex-col sm:flex-row justify-between items-center bg-theme-bg-muted/10 gap-6">
+                <div className="flex items-center gap-4">
+                   <div className="h-8 w-1 bg-brand-tactical" />
+                   <p className="text-[10px] font-black text-theme-text uppercase tracking-[0.4em] italic">Livro de Liquidações Históricas</p>
+                </div>
+                <div className="flex items-center gap-4">
+                  <span className="text-[9px] font-black text-theme-muted uppercase tracking-widest">Crédito Acumulado:</span>
+                  <div className="px-6 py-2.5 bg-brand-tactical text-brand-text shadow-lg shadow-brand-tactical/20">
+                    <p className="text-[11px] font-black uppercase tracking-widest">{formatCurrency(repasses.filter(r => r.status !== "PAID").reduce((acc, r) => acc + r.amount, 0))}</p>
+                  </div>
+                </div>
               </div>
 
               {repasses.length === 0 ? (
-                <div style={{ padding: "4rem 2rem", textAlign: "center" }}>
-                  <DollarSign size={32} style={{ color: "var(--theme-text-muted)", opacity: 0.2, margin: "0 auto 1rem" }} />
-                  <p style={{ fontSize: 11, color: "var(--theme-text-muted)", textTransform: "uppercase", letterSpacing: 1 }}>Nenhum fechamento semanal gerado ainda.</p>
+                <div className="p-32 text-center relative group">
+                  <div className="absolute inset-0 bg-gradient-to-b from-transparent to-brand-tactical/[0.02] pointer-events-none" />
+                  <DollarSign size={48} className="mx-auto mb-8 text-theme-border/20" />
+                  <p className="text-[10px] font-black text-theme-muted uppercase tracking-[0.5em] italic">Nenhum fluxo financeiro registrado até o momento.</p>
                 </div>
-              ) : repasses.map((r, i) => (
-                <div key={r.id} style={{ padding: "1.5rem", borderBottom: i < repasses.length - 1 ? "0.5px solid var(--theme-border)" : "none", display: "flex", alignItems: "center", gap: "1.5rem" }}>
-                  <div style={{ flex: 1 }}>
-                    <p style={{ fontSize: 11, color: "var(--theme-text-muted)", textTransform: "uppercase", letterSpacing: 1, fontWeight: 800, marginBottom: 4 }}>Semana de {formatDate(r.payout.weekStart)}</p>
-                    <div style={{ display: "flex", gap: 12, alignItems: "center" }}>
-                      <span style={{ fontSize: 16, fontWeight: 900, color: "var(--theme-text)" }}>{formatCurrency(r.amount)}</span>
-                      <span style={{ fontSize: 10, color: "var(--theme-text-muted)" }}>{r.orderCount} vendas (Base: {formatCurrency(r.grossRevenue)})</span>
+              ) : (
+                <div className="divide-y divide-theme-border/30">
+                  {repasses.map((r) => (
+                    <div key={r.id} className="p-8 flex flex-col md:flex-row items-center justify-between group hover:bg-brand-tactical/[0.02] transition-all duration-500">
+                      <div className="flex items-center gap-10">
+                        <div className="w-12 h-12 bg-theme-bg border border-theme-border flex items-center justify-center text-theme-muted group-hover:border-brand-tactical/40 group-hover:text-brand-tactical transition-all">
+                           <DollarSign size={20} />
+                        </div>
+                        <div className="space-y-2">
+                          <p className="text-[9px] font-black text-theme-muted uppercase tracking-[0.2em]">Protocolo Semanal · {formatDate(r.payout.weekStart)} — {formatDate(r.payout.weekEnd)}</p>
+                          <div className="flex items-center gap-6">
+                            <span className="text-3xl font-heading font-black italic text-theme-text tracking-tighter group-hover:scale-105 transition-transform origin-left">{formatCurrency(r.amount)}</span>
+                            <div className="flex items-center gap-3 px-3 py-1 bg-theme-bg border border-theme-border/60">
+                               <span className="text-[8px] font-black text-theme-muted uppercase tracking-widest">{r.orderCount} OPERAÇÕES</span>
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+                      
+                      <div className="flex items-center gap-8 mt-6 md:mt-0">
+                        <div className="text-right hidden sm:block">
+                           {r.paidAt && (
+                             <p className="text-[9px] font-bold text-theme-muted uppercase tracking-widest">Liquidado em {formatDate(r.paidAt)}</p>
+                           )}
+                           <p className="text-[8px] font-medium text-theme-muted/40 uppercase tracking-tighter">ID: {r.id.slice(-8).toUpperCase()}</p>
+                        </div>
+                        <span className={`text-[10px] font-black uppercase tracking-[0.2em] px-6 py-3 border-2 transition-all ${
+                          r.status === "PAID" 
+                            ? 'bg-brand-tactical/5 border-brand-tactical text-brand-tactical' 
+                            : 'bg-amber-500/5 border-amber-500 text-amber-500 animate-pulse'
+                        }`}>
+                          {r.status === "PAID" ? "LIQUIDADO" : "PENDENTE"}
+                        </span>
+                        <ArrowRight size={18} className="text-theme-border/40 group-hover:text-brand-tactical group-hover:translate-x-2 transition-all" />
+                      </div>
                     </div>
-                  </div>
-
-                  <div style={{ textAlign: "right" }}>
-                    <span style={{
-                      fontSize: 9, padding: "4px 10px", borderRadius: 2, letterSpacing: 1,
-                      textTransform: "uppercase",
-                      background: r.status === "PAID" ? "rgba(133, 185, 172, 0.1)" : "rgba(245, 158, 11, 0.1)",
-                      border: `1px solid ${r.status === "PAID" ? "var(--brand-primary)" : "#f59e0b"}`,
-                      color: r.status === "PAID" ? "var(--brand-primary)" : "#f59e0b",
-                    }}>
-                      {r.status === "PAID" ? "LIQUIDADO" : "PENDENTE"}
-                    </span>
-                    {r.paidAt && <p style={{ fontSize: 8, color: "var(--theme-text-muted)", marginTop: 6, textTransform: "uppercase" }}>Pago em {formatDate(r.paidAt)}</p>}
-                  </div>
+                  ))}
                 </div>
-              ))}
+              )}
             </div>
           </div>
         )}
 
         {/* ── EQUIPE ── */}
         {tab === "equipe" && (
-          <div style={{ display: "flex", flexDirection: "column", gap: "1.5rem" }}>
-            {/* Header Card */}
-            <div style={{ ...S.card, padding: "2rem" }}>
-              <div style={{ display: "flex", alignItems: "center", gap: 12, marginBottom: 12 }}>
-                <div style={{ width: 36, height: 36, borderRadius: "50%", background: "var(--brand-primary)", color: "var(--theme-text-on-brand)", display: "flex", alignItems: "center", justifyContent: "center" }}>
-                  <Users2 size={18} />
-                </div>
-                <h3 style={{ fontFamily: "'Outfit', sans-serif", fontSize: 24, fontWeight: 900, color: "var(--theme-text)", textTransform: "uppercase" }}>
-                  Configuração de Equipe
-                </h3>
+          <div className="space-y-10">
+            {/* Tactical Intro Card */}
+            <div className="lux-card p-10 border-l-4 border-l-brand-tactical bg-gradient-to-br from-brand-tactical/[0.03] to-transparent relative overflow-hidden">
+              <div className="absolute top-0 right-0 p-10 opacity-[0.03] pointer-events-none">
+                <Users2 size={120} />
               </div>
-              <p style={{ fontSize: 12, color: "var(--theme-text-muted)", maxWidth: 600, lineHeight: 1.6 }}>
-                Defina quais profissionais são <strong style={{ color: "var(--theme-text)" }}>fixos</strong> na sua unidade (sempre convocados) ou <strong style={{ color: "var(--theme-text)" }}>rotativos</strong> (entram no pool geral da rede). Profissionais sem vínculo não aparecem como preferência para os seus eventos.
-              </p>
-            </div>
-
-            {/* Legenda */}
-            <div style={{ display: "flex", gap: "1rem", flexWrap: "wrap" }}>
-              {[
-                { cor: "var(--theme-border)", label: "Sem vínculo — não entra no pool desta unidade" },
-                { cor: "#3b82f6", label: "Rotativo — pode ser convocado pela rede" },
-                { cor: "var(--brand-primary)", label: "Fixo — sempre convocado para seus eventos" },
-              ].map(l => (
-                <div key={l.label} style={{ display: "flex", alignItems: "center", gap: 8 }}>
-                  <div style={{ width: 10, height: 10, borderRadius: "50%", background: l.cor, flexShrink: 0 }} />
-                  <span style={{ fontSize: 10, color: "var(--theme-text-muted)", fontWeight: 600 }}>{l.label}</span>
-                </div>
-              ))}
-            </div>
-
-            {/* Lista de profissionais */}
-            {teamData.length === 0 ? (
-              <div style={{ ...S.card, padding: "4rem 2rem", textAlign: "center" }}>
-                <Camera size={32} style={{ color: "var(--theme-text-muted)", margin: "0 auto 1rem" }} />
-                <p style={{ fontSize: 13, color: "var(--theme-text-muted)", textTransform: "uppercase", letterSpacing: 2 }}>
-                  Nenhum profissional cadastrado na plataforma ainda.
+              <div className="relative z-10 space-y-6">
+                <h3 className="text-2xl font-heading font-black text-theme-text uppercase italic tracking-tight">Escalabilidade da Rede Técnica</h3>
+                <p className="text-[11px] font-bold text-theme-muted uppercase tracking-[0.2em] leading-relaxed max-w-3xl">
+                  Otimize sua operação designando profissionais <span className="text-brand-tactical font-black underline decoration-brand-tactical/30 underline-offset-4">FIXOS</span> para prioridade máxima em seus eventos ou integrando o pool <span className="text-blue-400 font-black">ROTATIVO</span> para demandas dinâmicas de rede.
                 </p>
+                <div className="flex items-center gap-6 pt-2">
+                   <div className="px-4 py-2 bg-theme-bg border border-theme-border flex items-center gap-3">
+                      <div className="w-2 h-2 rounded-full bg-brand-tactical animate-pulse" />
+                      <span className="text-[9px] font-black text-theme-text uppercase tracking-widest">{teamData.length} AGENTES IDENTIFICADOS</span>
+                   </div>
+                </div>
               </div>
-            ) : (
-              <div style={{ display: "flex", flexDirection: "column", gap: "0.75rem" }}>
-                {teamData.map(p => {
-                  const vinculo = getVinculo(p);
-                  return (
-                    <div key={p.id} style={{
-                      display: "flex", alignItems: "center", justifyContent: "space-between",
-                      padding: "1.25rem 1.75rem",
-                      background: "var(--theme-bg-muted)",
-                      border: `1px solid ${vinculo === "FIXO" ? "var(--brand-primary)" : vinculo === "ROTATIVO" ? "#3b82f620" : "var(--theme-border)"}`,
-                      transition: "border-color 0.3s"
-                    }} className="mobile-stack">
-                      {/* Info do profissional */}
-                      <div style={{ flex: 1, minWidth: 0, marginRight: "2rem" }}>
-                        <div style={{ display: "flex", alignItems: "center", gap: 10, marginBottom: 4 }}>
-                          {vinculo === "FIXO" && <Star size={13} style={{ color: "var(--brand-primary)", flexShrink: 0 }} />}
-                          <p style={{ fontSize: 14, fontWeight: 800, color: "var(--theme-text)", whiteSpace: "nowrap", overflow: "hidden", textOverflow: "ellipsis" }}>{p.nome}</p>
-                        </div>
-                        <p style={{ fontSize: 11, color: "var(--theme-text-muted)", marginBottom: 8 }}>{p.email}</p>
-                        <div style={{ display: "flex", gap: 6, flexWrap: "wrap" }}>
-                          {p.services.map(s => (
-                            <span key={s} style={{ fontSize: 9, fontWeight: 800, textTransform: "uppercase", letterSpacing: 1, padding: "3px 8px", background: "var(--theme-bg)", border: "1px solid var(--theme-border)", color: "var(--theme-text-muted)" }}>
-                              {s}
-                            </span>
-                          ))}
-                        </div>
-                      </div>
+            </div>
 
-                      {/* Seletor de vínculo */}
-                      <div style={{ display: "flex", gap: 6, flexShrink: 0 }}>
-                        {([null, "ROTATIVO", "FIXO"] as const).map(tipo => (
-                          <button
-                            key={String(tipo)}
-                            onClick={() => setTeamChanges(prev => ({ ...prev, [p.id]: tipo }))}
-                            style={{
-                              padding: "8px 14px",
-                              fontSize: 9,
-                              fontWeight: 900,
-                              textTransform: "uppercase",
-                              letterSpacing: 1.5,
-                              cursor: "pointer",
-                              border: "1px solid",
-                              borderRadius: 0,
-                              transition: "all 0.2s",
-                              borderColor: vinculo === tipo
-                                ? tipo === "FIXO" ? "var(--brand-primary)" : tipo === "ROTATIVO" ? "#3b82f6" : "var(--theme-border)"
-                                : "var(--theme-border)",
-                              background: vinculo === tipo
-                                ? tipo === "FIXO" ? "var(--brand-primary)" : tipo === "ROTATIVO" ? "#3b82f620" : "var(--theme-bg)"
-                                : "transparent",
-                              color: vinculo === tipo
-                                ? tipo === "FIXO" ? "var(--theme-text-on-brand)" : tipo === "ROTATIVO" ? "#3b82f6" : "var(--theme-text-muted)"
-                                : "var(--theme-text-muted)",
-                            }}
-                          >
-                            {tipo === null ? "Sem vínculo" : tipo === "ROTATIVO" ? "Rotativo" : "⭐ Fixo"}
-                          </button>
-                        ))}
-                      </div>
+            <div className="grid grid-cols-1 gap-6">
+              {teamData.map(p => {
+                const vinculo = getVinculo(p);
+                return (
+                  <div key={p.id} className={`lux-card p-0 overflow-hidden group transition-all duration-700 hover:border-brand-tactical/30 ${vinculo === "FIXO" ? 'border-brand-tactical/40 ring-1 ring-brand-tactical/10' : ''}`}>
+                    <div className="flex flex-col md:flex-row md:items-stretch">
+                       {/* Agent Identity Column */}
+                       <div className={`md:w-24 flex items-center justify-center border-b md:border-b-0 md:border-r border-theme-border/60 transition-colors ${vinculo === "FIXO" ? 'bg-brand-tactical/5' : 'bg-theme-bg-muted/20'}`}>
+                          {vinculo === "FIXO" ? (
+                            <Star size={24} className="text-brand-tactical fill-brand-tactical animate-in zoom-in duration-500" />
+                          ) : vinculo === "ROTATIVO" ? (
+                            <Users2 size={24} className="text-blue-400 opacity-60" />
+                          ) : (
+                            <UserCircle size={24} className="text-theme-muted/40" />
+                          )}
+                       </div>
+
+                       {/* Content Column */}
+                       <div className="flex-1 p-8 flex flex-col md:flex-row md:items-center justify-between gap-10">
+                          <div className="space-y-5">
+                             <div className="space-y-1">
+                                <div className="flex items-center gap-4">
+                                   <h4 className="text-xl font-heading font-black text-theme-text uppercase italic tracking-tight group-hover:text-brand-tactical transition-colors">{p.nome}</h4>
+                                   {vinculo === "FIXO" && (
+                                     <span className="px-3 py-1 bg-brand-tactical text-brand-text text-[8px] font-black uppercase tracking-widest italic">PRIORIDADE</span>
+                                   )}
+                                </div>
+                                <p className="text-[10px] font-bold text-theme-muted uppercase tracking-[0.2em]">{p.email}</p>
+                             </div>
+
+                             <div className="flex flex-wrap gap-3">
+                                {p.services.length > 0 ? p.services.map(s => (
+                                  <span key={s} className="px-4 py-1.5 bg-theme-bg border border-theme-border/60 text-[9px] font-black text-theme-text uppercase tracking-widest group-hover:border-brand-tactical/30 transition-colors">
+                                    {s}
+                                  </span>
+                                )) : (
+                                  <span className="text-[8px] font-bold text-theme-muted uppercase italic">Perfil em análise técnica</span>
+                                )}
+                             </div>
+                          </div>
+
+                          {/* Tactical Selector */}
+                          <div className="flex flex-col gap-3">
+                             <p className="text-[8px] font-black text-theme-muted uppercase tracking-[0.4em] text-center md:text-right mb-1 opacity-60">Status de Vínculo</p>
+                             <div className="flex items-center gap-1 bg-theme-bg-muted/40 p-1.5 border border-theme-border/60 rounded-sm">
+                                {([null, "ROTATIVO", "FIXO"] as const).map(tipo => (
+                                  <button
+                                    key={String(tipo)}
+                                    onClick={() => setTeamChanges(prev => ({ ...prev, [p.id]: tipo }))}
+                                    className={`px-6 py-2.5 text-[9px] font-black uppercase tracking-widest transition-all duration-500 relative overflow-hidden ${
+                                      vinculo === tipo 
+                                        ? tipo === "FIXO" ? "bg-brand-tactical text-brand-text shadow-lg shadow-brand-tactical/20" : tipo === "ROTATIVO" ? "bg-blue-500 text-white" : "bg-theme-border text-theme-text"
+                                        : "text-theme-muted hover:text-theme-text hover:bg-theme-border/20"
+                                    }`}
+                                  >
+                                    <span className="relative z-10">
+                                      {tipo === null ? "Livre" : tipo === "ROTATIVO" ? "Rotativo" : "⭐ Fixo"}
+                                    </span>
+                                  </button>
+                                ))}
+                             </div>
+                          </div>
+                       </div>
                     </div>
-                  );
-                })}
-              </div>
-            )}
+                  </div>
+                );
+              })}
+            </div>
 
-            {/* Botão Salvar */}
             {Object.keys(teamChanges).length > 0 && (
-              <div style={{ padding: "1.5rem", background: "var(--theme-bg-muted)", border: "1px solid var(--brand-primary)", display: "flex", alignItems: "center", justifyContent: "space-between", gap: "1rem" }}>
-                <p style={{ fontSize: 12, color: "var(--theme-text)", fontWeight: 700 }}>
-                  {Object.keys(teamChanges).length} alteração(ões) pendente(s)
-                </p>
-                <button
-                  disabled={savingTeam}
-                  onClick={saveTeam}
-                  style={{ background: "var(--brand-primary)", color: "black", border: "none", borderRadius: 0, padding: "12px 32px", fontSize: 11, fontWeight: 900, cursor: "pointer", textTransform: "uppercase", letterSpacing: 2, opacity: savingTeam ? 0.6 : 1 }}
-                >
-                  {savingTeam ? "SALVANDO..." : "SALVAR CONFIGURAÇÃO"}
-                </button>
+              <div className="fixed bottom-10 left-1/2 -translate-x-1/2 z-[100] animate-in slide-in-from-bottom-10 duration-500">
+                <div className="bg-theme-bg-muted/90 backdrop-blur-xl border border-brand-tactical p-8 shadow-2xl flex items-center gap-10">
+                  <p className="text-[10px] font-black text-theme-text uppercase tracking-[0.3em]">
+                    {Object.keys(teamChanges).length} ALTERAÇÃO(ÕES) PENDENTE(S) NO QUADRO TÁTICO
+                  </p>
+                  <button
+                    disabled={savingTeam}
+                    onClick={saveTeam}
+                    className="bg-brand-tactical text-brand-text px-10 py-4 text-[10px] font-black uppercase tracking-[0.4em] hover:brightness-110 transition-all italic"
+                  >
+                    {savingTeam ? "PROCESSANDO..." : "CONFIRMAR ESCALA"}
+                  </button>
+                </div>
               </div>
             )}
           </div>
@@ -583,212 +736,284 @@ export default function UnidadeFixaDashboard() {
 
         {/* ── CONFIGURAÇÕES ── */}
         {tab === "configuracoes" && (
-          <div style={{ display: "flex", flexDirection: "column", gap: "1rem" }}>
-            <div style={{ ...S.card, padding: "2rem" }}>
-              <div style={{ display: "flex", flexWrap: "wrap", justifyContent: "space-between", alignItems: "center", gap: 20 }}>
-                <div style={{ flex: 1, minWidth: "min(300px, 100%)" }}>
-                  <p style={{ fontSize: 13, fontWeight: 500, color: "var(--theme-text)", marginBottom: 4 }}>DADOS PARA REPASSE (PIX)</p>
-                  <p style={{ fontSize: 12, color: "var(--theme-text-muted)", marginBottom: 12 }}>
-                    Insira sua chave PIX para receber os repasses manuais das vendas (10% de comissão).
+          <div className="space-y-12">
+            {/* Header / Intro */}
+            <div className="lux-card p-10 border-l-4 border-l-brand-tactical bg-gradient-to-br from-brand-tactical/[0.03] to-transparent relative overflow-hidden">
+              <div className="absolute top-0 right-0 p-10 opacity-[0.03] pointer-events-none">
+                <Settings size={120} />
+              </div>
+              <div className="relative z-10 space-y-4">
+                <h3 className="text-2xl font-heading font-black text-theme-text uppercase italic tracking-tight">Diretrizes e Parâmetros</h3>
+                <p className="text-[11px] font-bold text-theme-muted uppercase tracking-[0.2em] leading-relaxed max-w-3xl">
+                  Configure os vetores estratégicos da sua unidade, desde a liquidação financeira (PIX) até o catálogo técnico de serviços e presença digital.
+                </p>
+              </div>
+            </div>
+
+            {/* PIX STRATEGIC KEY */}
+            <div className="lux-card p-10 bg-theme-bg-muted/10 border-dashed border-theme-border/60">
+              <div className="flex flex-col md:flex-row md:items-center justify-between gap-10">
+                <div className="space-y-4">
+                  <h4 className="text-[10px] font-black text-theme-text uppercase tracking-[0.5em] italic flex items-center gap-3">
+                    <DollarSign size={16} className="text-brand-tactical" />
+                    Chave Estratégica (PIX)
+                  </h4>
+                  <p className="text-[9px] font-bold text-theme-muted uppercase tracking-widest max-w-sm">
+                    Identificador único para liquidação. Recomenda-se CNPJ para conformidade tributária.
                   </p>
+                </div>
+                <div className="flex flex-col md:flex-row gap-4 flex-1 max-w-xl">
                   <input 
                     value={pixKey} 
                     onChange={e => setPixKey(e.target.value)} 
-                    style={{ ...S.input, width: "100%", maxWidth: 400 }} 
-                    placeholder="E-mail, CPF, CNPJ ou Chave Aleatória"
+                    className="flex-1 bg-theme-bg border border-theme-border p-4 text-xs font-black uppercase tracking-widest text-theme-text focus:border-brand-tactical outline-none transition-all"
+                    placeholder="CHAVE-ALEATORIA-OU-CNPJ"
                   />
+                  <button
+                    disabled={savingPix}
+                    onClick={savePixKey}
+                    className="bg-brand-tactical text-brand-text px-10 py-4 text-[10px] font-black uppercase tracking-[0.4em] hover:brightness-110 transition-all italic"
+                  >
+                    {savingPix ? "PROCESSANDO..." : "VINCULAR CHAVE"}
+                  </button>
                 </div>
-                <button
-                  disabled={savingPix}
-                  onClick={savePixKey}
-                  style={{ background: "var(--brand-primary)", color: "var(--theme-text-on-brand)", border: "none", borderRadius: 0, padding: "12px 24px", fontSize: 11, fontWeight: 800, cursor: "pointer", textTransform: "uppercase", letterSpacing: 2, opacity: savingPix ? 0.6 : 1, width: "auto" }}
-                >
-                  {savingPix ? "SALVANDO..." : "SALVAR CHAVE PIX"}
-                </button>
               </div>
             </div>
 
-            {/* ── GESTÃO DE PREÇOS ── */}
-            <div style={{ ...S.card, padding: "2rem" }}>
-              <div style={{ borderBottom: "1px solid var(--theme-border)", paddingBottom: 20, marginBottom: 40 }}>
-                <div style={{ display: "flex", alignItems: "center", gap: 12, marginBottom: 10 }}>
-                   <div style={{ width: 32, height: 32, borderRadius: "50%", background: "var(--brand-primary)", color: "var(--theme-text-on-brand)", display: "flex", alignItems: "center", justifyContent: "center" }}>
-                      <DollarSign size={16} />
-                   </div>
-                   <h3 style={{ fontFamily: "'Outfit', sans-serif", fontSize: 24, fontWeight: 900, color: "var(--theme-text)", textTransform: "uppercase", letterSpacing: -0.5 }}>Tabela de Preços Locais</h3>
-                </div>
-                <p style={{ fontSize: 12, color: "var(--theme-text-muted)", maxWidth: 600, lineHeight: 1.6 }}>
-                  Sua unidade tem autonomia para praticar preços diferenciados. 
-                  Abaixo, você pode configurar o valor final de venda para cada item do catálogo. 
-                  Deixe em branco para utilizar o valor base sugerido pela administração.
-                </p>
+            {/* PREÇOS LOCAIS - TABELA TÉCNICA */}
+            <div className="space-y-10">
+              <div className="flex items-center gap-6">
+                <h4 className="text-[11px] font-black text-theme-text uppercase tracking-[0.6em] italic whitespace-nowrap">Catálogo Técnico</h4>
+                <div className="h-px w-full bg-gradient-to-r from-theme-border/60 to-transparent" />
               </div>
 
-              <div style={{ display: "flex", flexDirection: "column", gap: "1rem" }}>
-                {globalServices.length === 0 ? (
-                  <div style={{ padding: "4rem 2rem", textAlign: "center", border: "1px dashed var(--theme-border)" }}>
-                    <p style={{ fontSize: 13, fontWeight: 800, color: "var(--theme-text)", textTransform: "uppercase", letterSpacing: 2, marginBottom: 8 }}>Catálogo não configurado</p>
-                    <p style={{ fontSize: 11, color: "var(--theme-text-muted)" }}>O administrador ainda não cadastrou os serviços da rede. Assim que o catálogo for publicado, os itens aparecerão aqui para customização.</p>
-                  </div>
-                ) : globalServices.map(svc => (
-                  <div key={svc.id} style={{ display: "flex", alignItems: "center", justifyContent: "space-between", padding: "1.5rem 2rem", background: "var(--theme-bg)", border: "1px solid var(--theme-border)", transition: "border-color 0.3s" }} className="mobile-stack group hover:border-brand-primary/30">
-                    <div style={{ flex: 1, marginRight: "2rem" }}>
-                      <div style={{ display: "flex", alignItems: "center", gap: 8, marginBottom: 4 }}>
-                        <p style={{ fontSize: 13, fontWeight: 900, color: "var(--theme-text)", textTransform: "uppercase", letterSpacing: 1 }}>{svc.name}</p>
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-px bg-theme-border/20 border border-theme-border/20 shadow-2xl overflow-hidden">
+                {globalServices.map(svc => {
+                  const isDisabled = disabledServices.includes(svc.id);
+                  return (
+                    <div key={svc.id} className={`p-8 flex flex-col justify-between gap-8 group transition-all duration-700 ${isDisabled ? 'bg-theme-bg-muted/10 opacity-50 grayscale' : 'bg-theme-bg-muted/30 hover:bg-theme-bg-muted/50'}`}>
+                      <div className="space-y-4">
+                        <div className="flex items-center justify-between">
+                          <div className="space-y-1">
+                            <h5 className="text-base font-heading font-black text-theme-text uppercase italic tracking-tight group-hover:text-brand-tactical transition-colors">
+                              {svc.name}
+                              {isDisabled && <span className="ml-3 text-[7px] bg-theme-border px-2 py-0.5 rounded text-theme-text-muted not-italic">INATIVO</span>}
+                            </h5>
+                            <span className="text-[8px] font-black text-theme-muted uppercase tracking-[0.3em]">Referência de Rede: {formatCurrency(svc.basePrice)}</span>
+                          </div>
+                          <button 
+                            onClick={() => {
+                              if (isDisabled) setDisabledServices(prev => prev.filter(id => id !== svc.id));
+                              else setDisabledServices(prev => [...prev, svc.id]);
+                            }}
+                            className={`p-2 border transition-all ${isDisabled ? 'border-theme-border text-theme-text-muted hover:text-brand-tactical' : 'border-brand-tactical/30 text-brand-tactical hover:bg-brand-tactical/10'}`}
+                            title={isDisabled ? "Ativar Serviço" : "Desativar Serviço"}
+                          >
+                            <Settings size={14} className={isDisabled ? "" : "animate-spin-slow"} />
+                          </button>
+                        </div>
+                        <p className="text-[10px] font-medium text-theme-muted leading-relaxed line-clamp-2 opacity-60 group-hover:opacity-100 transition-opacity">{svc.description}</p>
                       </div>
-                      <p style={{ fontSize: 11, color: "var(--theme-text-muted)", lineHeight: 1.5 }}>{svc.description}</p>
-                      <div style={{ marginTop: 12, display: "inline-flex", alignItems: "center", gap: 6, background: "var(--theme-bg-muted)", padding: "4px 10px", border: "1px solid var(--theme-border)" }}>
-                         <span style={{ fontSize: 8, fontWeight: 900, color: "var(--theme-text-muted)", textTransform: "uppercase", letterSpacing: 1 }}>Sugerido:</span>
-                         <span style={{ fontSize: 10, fontWeight: 800, color: "var(--theme-text)" }}>{formatCurrency(svc.basePrice)}</span>
+                      
+                      <div className="relative group/input">
+                        <span className="absolute left-5 top-1/2 -translate-y-1/2 text-brand-tactical font-black text-lg italic opacity-40 group-focus-within/input:opacity-100 transition-opacity">R$</span>
+                        <input 
+                          type="number"
+                          disabled={isDisabled}
+                          value={localPrices[svc.id] || ""} 
+                          onChange={e => setLocalPrices({ ...localPrices, [svc.id]: Number(e.target.value) })}
+                          className="w-full bg-theme-bg border border-theme-border/60 p-5 pl-14 text-2xl font-heading font-black text-theme-text focus:border-brand-tactical outline-none transition-all italic placeholder:text-theme-muted/10 disabled:opacity-30"
+                          placeholder={String(svc.basePrice)}
+                        />
                       </div>
                     </div>
-                    <div style={{ width: 220 }} className="mobile-stack">
-                       <div style={{ position: "relative" }}>
-                          <span style={{ position: "absolute", left: 15, top: "50%", transform: "translateY(-50%)", fontSize: 14, fontWeight: 900, color: "var(--brand-primary)" }}>R$</span>
-                          <input 
-                            type="number"
-                            value={localPrices[svc.id] || ""} 
-                            onChange={e => setLocalPrices({ ...localPrices, [svc.id]: Number(e.target.value) })}
-                            style={{ ...S.input, width: "100%", paddingLeft: 48, fontWeight: 900, fontSize: 18, border: "1px solid var(--theme-border)" }} 
-                            placeholder={String(svc.basePrice)}
-                          />
-                       </div>
-                    </div>
-                  </div>
-                ))}
+                  );
+                })}
               </div>
 
-              {globalServices.length > 0 && (
-              <div style={{ marginTop: "2.5rem", borderTop: "1px solid var(--theme-border)", paddingTop: "2.5rem" }}>
+              <div className="flex justify-end pt-4">
                 <button
                    disabled={savingPrices}
                    onClick={saveServicePrices}
-                   style={{ background: "var(--brand-primary)", color: "var(--theme-text-on-brand)", border: "none", borderRadius: 0, padding: "14px 40px", fontSize: 11, fontWeight: 800, cursor: "pointer", textTransform: "uppercase", letterSpacing: 2, opacity: savingPrices ? 0.6 : 1 }}
+                   className="bg-brand-tactical text-brand-text px-16 py-5 text-[10px] font-black uppercase tracking-[0.5em] hover:brightness-110 transition-all italic shadow-2xl shadow-brand-tactical/30 flex items-center gap-4 group"
                 >
-                   {savingPrices ? "SALVANDO..." : "ATUALIZAR TABELA DE PREÇOS"}
+                   {savingPrices ? "ATUALIZANDO MATRIZ..." : "CONSOLIDAR TABELA"}
+                   <ArrowRight size={16} className="group-hover:translate-x-2 transition-transform" />
                 </button>
               </div>
-              )}
             </div>
 
-            <div style={{ ...S.card, padding: "2rem", display: "flex", flexDirection: "column", gap: "2rem" }}>
-              <div style={{ borderBottom: "1px solid var(--theme-border)", paddingBottom: 20 }}>
-                <h3 style={{ fontFamily: "'Outfit', sans-serif", fontSize: 24, fontWeight: 800, color: "var(--theme-text)", marginBottom: 10 }}>PÁGINA PÚBLICA (SEO)</h3>
-                <p style={{ fontSize: 12, color: "var(--theme-text-muted)" }}>Configure como sua unidade fixa aparece nos motores de busca e para clientes que chegam via link direto.</p>
-              </div>
+            {/* SEO & LANDING - PRESENÇA DIGITAL */}
+            <div className="lux-card p-10 space-y-12 bg-theme-bg-muted/10 border-l-4 border-l-theme-text">
+               <div className="flex flex-col md:flex-row justify-between items-end gap-6 border-b border-theme-border/40 pb-10">
+                  <div className="space-y-3">
+                    <h3 className="text-2xl font-heading font-black text-theme-text uppercase italic tracking-tight flex items-center gap-4">
+                      <Share2 size={24} className="text-brand-tactical" />
+                      Protocolo Digital (Vitrine)
+                    </h3>
+                    <p className="text-[10px] font-bold text-theme-muted uppercase tracking-[0.3em]">Gestão de Identidade Visual e Regras de Cobertura da Unidade.</p>
+                  </div>
+                  {lpSlug && (
+                    <a href={`/p/${lpSlug}`} target="_blank" rel="noreferrer" className="flex items-center gap-4 text-[9px] font-black text-brand-tactical uppercase tracking-[0.4em] group pb-2 border-b-2 border-transparent hover:border-brand-tactical transition-all">
+                      Sincronizar Preview <ArrowRight size={14} className="group-hover:translate-x-2 transition-transform" />
+                    </a>
+                  )}
+               </div>
 
-              <div className="mobile-grid-1" style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "2rem" }}>
-                <div>
-                  <label style={{ fontSize: 10, fontWeight: 800, color: "var(--theme-text)", marginBottom: 8, display: "block", textTransform: "uppercase", letterSpacing: 1 }}>Slug URL (/p/xxxx)</label>
-                  <input value={lpSlug} onChange={e => setLpSlug(e.target.value)} style={{ ...S.input, width: "100%" }} placeholder="ex: unidade-centro-campinas" />
-                </div>
-                <div>
-                  <label style={{ fontSize: 10, fontWeight: 800, color: "var(--theme-text)", marginBottom: 8, display: "block", textTransform: "uppercase", letterSpacing: 1 }}>Telefone de Contato</label>
-                  <input value={lpPhone} onChange={e => setLpPhone(e.target.value)} style={{ ...S.input, width: "100%" }} placeholder="(19) 9..." />
-                </div>
-              </div>
-
-              <div>
-                <label style={{ fontSize: 10, fontWeight: 800, color: "var(--theme-text)", marginBottom: 8, display: "block", textTransform: "uppercase", letterSpacing: 1 }}>Endereço Completo</label>
-                <input value={lpAddress} onChange={e => setLpAddress(e.target.value)} style={{ ...S.input, width: "100%" }} placeholder="Rua, Número, Bairro, Cidade - UF" />
-              </div>
-
-              <div>
-                 <label style={{ fontSize: 10, fontWeight: 800, color: "var(--theme-text)", marginBottom: 8, display: "block", textTransform: "uppercase", letterSpacing: 1 }}>Breve Descrição (Até 300 caracteres)</label>
-                 <textarea value={lpDescription} onChange={e => setLpDescription(e.target.value)} rows={4} style={{ ...S.input, width: "100%", resize: "none" }} placeholder="Conte sobre a infraestrutura e horários da unidade..." />
-              </div>
-
-              <div>
-                 <label style={{ fontSize: 10, fontWeight: 800, color: "var(--theme-text)", marginBottom: 8, display: "block", textTransform: "uppercase", letterSpacing: 1 }}>URL da Foto de Capa</label>
-                 <input value={lpCoverUrl} onChange={e => setLpCoverUrl(e.target.value)} style={{ ...S.input, width: "100%" }} placeholder="https://..." />
-              </div>
-
-              <div>
-                  <label style={{ fontSize: 10, fontWeight: 800, color: "var(--theme-text)", marginBottom: 8, display: "block", textTransform: "uppercase", letterSpacing: 1 }}>Pontualidade de Horário (Duração Padrão)</label>
-                  <p style={{ fontSize: 11, color: "var(--theme-text-muted)", marginBottom: 12 }}>Defina quantas horas de cobertura são padrão para eventos nesta unidade fixa.</p>
-                  
-                  <div style={{ display: "flex", alignItems: "center", gap: "1rem", marginBottom: 20 }}>
-                    <input 
-                      type="number"
-                      value={lpFixedDuration} 
-                      onChange={e => setLpFixedDuration(Number(e.target.value))} 
-                      style={{ ...S.input, width: 80, textAlign: "center", fontWeight: 900, fontSize: 18 }} 
-                    />
-                    <span style={{ fontSize: 11, fontWeight: 800, color: "var(--theme-text-muted)", textTransform: "uppercase", letterSpacing: 1 }}>HORAS DE COBERTURA</span>
+               <div className="grid grid-cols-1 md:grid-cols-2 gap-x-12 gap-y-10">
+                  <div className="space-y-3">
+                    <label className="text-[9px] font-black text-theme-muted uppercase tracking-[0.4em] ml-1 opacity-60">Slug Identificador (URL)</label>
+                    <div className="flex items-center gap-2 text-theme-muted/40 font-black text-[10px] mb-1">fotosegundo.com/p/</div>
+                    <input value={lpSlug} onChange={e => setLpSlug(e.target.value)} className="w-full bg-transparent border-b border-theme-border/60 py-3 text-sm font-black text-theme-text focus:border-brand-tactical outline-none transition-all" placeholder="UNIDADE-EXEMPLO" />
                   </div>
 
-                  <div style={{ display: "flex", flexDirection: "column", gap: 15 }}>
-                    <div style={{ display: "flex", alignItems: "center", gap: 12, cursor: "pointer" }} onClick={() => setLpFixedTime(!lpFixedTime)}>
-                      <div style={{ width: 22, height: 22, border: `2px solid ${lpFixedTime ? "var(--brand-primary)" : "var(--theme-border)"}`, display: "flex", alignItems: "center", justifyContent: "center", background: lpFixedTime ? "var(--brand-primary)" : "transparent", transition: "all 0.2s" }}>
-                        {lpFixedTime && <div style={{ width: 10, height: 10, background: "var(--theme-bg)" }} />}
-                      </div>
-                      <div>
-                        <div style={{ fontSize: 11, fontWeight: 800, textTransform: "uppercase", letterSpacing: 1 }}>Tempo Fixo (Travar Horário)</div>
-                        <div style={{ fontSize: 9, color: "var(--theme-text-muted)", marginTop: 2 }}>O cliente verá a duração, mas não poderá alterá-la.</div>
-                      </div>
+                  <div className="space-y-3">
+                    <label className="text-[9px] font-black text-theme-muted uppercase tracking-[0.4em] ml-1 opacity-60">Contato de Operação (WhatsApp)</label>
+                    <div className="relative group">
+                      <Phone size={14} className="absolute left-0 top-1/2 -translate-y-1/2 text-theme-muted/40 group-focus-within:text-brand-tactical transition-colors" />
+                      <input value={lpPhone} onChange={e => setLpPhone(e.target.value)} className="w-full bg-transparent border-b border-theme-border/60 py-3 pl-8 text-sm font-black text-theme-text focus:border-brand-tactical outline-none transition-all" placeholder="(00) 00000-0000" />
                     </div>
+                  </div>
 
-                    <div style={{ display: "flex", alignItems: "center", gap: 12, cursor: "pointer" }} onClick={() => setLpHideDuration(!lpHideDuration)}>
-                      <div style={{ width: 22, height: 22, border: `2px solid ${lpHideDuration ? "var(--brand-primary)" : "var(--theme-border)"}`, display: "flex", alignItems: "center", justifyContent: "center", background: lpHideDuration ? "var(--brand-primary)" : "transparent", transition: "all 0.2s" }}>
-                        {lpHideDuration && <div style={{ width: 10, height: 10, background: "var(--theme-bg)" }} />}
-                      </div>
-                      <div>
-                        <div style={{ fontSize: 11, fontWeight: 800, textTransform: "uppercase", letterSpacing: 1 }}>Ocultar Seletor de Duração</div>
-                        <div style={{ fontSize: 9, color: "var(--theme-text-muted)", marginTop: 2 }}>Recomendado para Cartórios. Remove a opção de escolha de tempo.</div>
-                      </div>
+                  <div className="md:col-span-2 space-y-3">
+                    <label className="text-[9px] font-black text-theme-muted uppercase tracking-[0.4em] ml-1 opacity-60">Logradouro Institucional</label>
+                    <div className="relative group">
+                      <MapPin size={14} className="absolute left-0 top-1/2 -translate-y-1/2 text-theme-muted/40 group-focus-within:text-brand-tactical transition-colors" />
+                      <input value={lpAddress} onChange={e => setLpAddress(e.target.value)} className="w-full bg-transparent border-b border-theme-border/60 py-3 pl-8 text-sm font-black text-theme-text focus:border-brand-tactical outline-none transition-all" placeholder="RUA EXECUTIVA, 100 - CENTRO" />
                     </div>
+                  </div>
+
+                  <div className="md:col-span-2 space-y-3">
+                    <label className="text-[9px] font-black text-theme-muted uppercase tracking-[0.4em] ml-1 opacity-60">Manifesto / Descrição da Unidade</label>
+                    <textarea value={lpDescription} onChange={e => setLpDescription(e.target.value)} rows={3} className="w-full bg-transparent border-b border-theme-border/60 py-3 text-xs font-medium text-theme-text focus:border-brand-tactical outline-none resize-none leading-relaxed" placeholder="Descreva o propósito e a infraestrutura desta unidade..." />
+                  </div>
+
+                  {/* Operational Controls Bar */}
+                  <div className="md:col-span-2 bg-theme-bg-muted/30 p-8 border border-theme-border/40 space-y-8">
+                     <div className="flex flex-col sm:flex-row items-center justify-between gap-8">
+                        <div className="space-y-1">
+                          <p className="text-[10px] font-black text-theme-text uppercase italic">Parâmetros de Cobertura</p>
+                          <p className="text-[8px] font-bold text-theme-muted uppercase tracking-widest">Configuração padrão de tempo e visibilidade do cronômetro.</p>
+                        </div>
+                        <div className="flex items-center gap-6">
+                           <div className="flex items-center gap-4 bg-theme-bg px-5 py-2 border border-theme-border shadow-inner">
+                              <input 
+                                type="number"
+                                value={lpFixedDuration} 
+                                onChange={e => setLpFixedDuration(Number(e.target.value))} 
+                                className="w-12 bg-transparent text-center text-2xl font-heading font-black text-brand-tactical outline-none"
+                              />
+                              <span className="text-[9px] font-black text-theme-muted uppercase tracking-widest">Horas</span>
+                           </div>
+                           <div className="flex items-center gap-2 p-1 bg-theme-bg border border-theme-border">
+                              <button onClick={() => setLpFixedTime(!lpFixedTime)} className={`px-4 py-2 text-[8px] font-black uppercase tracking-widest border transition-all ${lpFixedTime ? 'bg-brand-tactical border-brand-tactical text-brand-text' : 'border-transparent text-theme-muted hover:text-theme-text'}`}>Fixo</button>
+                              <button onClick={() => setLpHideDuration(!lpHideDuration)} className={`px-4 py-2 text-[8px] font-black uppercase tracking-widest border transition-all ${lpHideDuration ? 'bg-brand-tactical border-brand-tactical text-brand-text' : 'border-transparent text-theme-muted hover:text-theme-text'}`}>Ocultar</button>
+                           </div>
+                        </div>
+                     </div>
+                  </div>
+                  
+                  {/* GRADE DE FUNCIONAMENTO */}
+                  <div className="md:col-span-2 space-y-10 border-t border-theme-border/60 pt-12">
+                     <div className="flex items-center gap-4">
+                       <div className="h-8 w-1 bg-brand-tactical" />
+                       <p className="text-[10px] font-black text-theme-text uppercase tracking-[0.4em] italic">Grade de Disponibilidade Semanal</p>
+                     </div>
+
+                     <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+                       {Object.entries(workingHours).map(([day, config]: [string, DayConfig]) => {
+                         const dayNames: Record<string, string> = { 
+                           mon: "Segunda", tue: "Terça", wed: "Quarta", 
+                           thu: "Quinta", fri: "Sexta", sat: "Sábado", sun: "Domingo" 
+                         };
+                         return (
+                           <div key={day} className={`p-6 border transition-all duration-500 ${config.closed ? 'bg-theme-bg-muted/10 border-theme-border/40 opacity-60' : 'bg-theme-bg border-theme-border/60 hover:border-brand-tactical/40 shadow-xl shadow-black/5'}`}>
+                              <div className="flex items-center justify-between mb-6">
+                                 <span className="text-[10px] font-black text-theme-text uppercase tracking-widest">{dayNames[day]}</span>
+                                 <button 
+                                   onClick={() => setWorkingHours({...workingHours, [day]: {...config, closed: !config.closed}})}
+                                   className={`px-3 py-1 text-[8px] font-black uppercase tracking-widest border transition-all ${config.closed ? 'bg-theme-border text-theme-text' : 'bg-brand-tactical/5 border-brand-tactical text-brand-tactical'}`}
+                                 >
+                                   {config.closed ? "FECHADO" : "ABERTO"}
+                                 </button>
+                              </div>
+                              
+                              {!config.closed && (
+                                <div className="space-y-4 animate-in slide-in-from-top-2 duration-300">
+                                   <div className="flex items-center justify-between gap-4">
+                                      <span className="text-[8px] font-bold text-theme-muted uppercase">Início</span>
+                                      <input 
+                                        type="time" 
+                                        value={config.open} 
+                                        onChange={(e) => setWorkingHours({...workingHours, [day]: {...config, open: e.target.value}})}
+                                        className="bg-transparent text-xs font-black text-theme-text focus:text-brand-tactical outline-none"
+                                      />
+                                   </div>
+                                   <div className="flex items-center justify-between gap-4">
+                                      <span className="text-[8px] font-bold text-theme-muted uppercase">Término</span>
+                                      <input 
+                                        type="time" 
+                                        value={config.close} 
+                                        onChange={(e) => setWorkingHours({...workingHours, [day]: {...config, close: e.target.value}})}
+                                        className="bg-transparent text-xs font-black text-theme-text focus:text-brand-tactical outline-none"
+                                      />
+                                   </div>
+                                </div>
+                              )}
+                           </div>
+                         );
+                       })}
+                     </div>
                   </div>
                </div>
 
-              <div style={{ display: "flex", gap: "1rem", alignItems: "center", paddingTop: 20 }}>
-                 <button
+               <div className="flex items-center justify-end pt-10">
+                  <button
                     disabled={savingLp}
                     onClick={saveLpProfile}
-                    style={{ background: "var(--brand-primary)", color: "var(--theme-text-on-brand)", border: "none", borderRadius: 0, padding: "14px 28px", fontSize: 11, fontWeight: 800, cursor: "pointer", textTransform: "uppercase", letterSpacing: 2, opacity: savingLp ? 0.6 : 1 }}
-                >
-                    {savingLp ? "SALVANDO..." : "ATUALIZAR PÁGINA PÚBLICA"}
-                </button>
-                {lpSlug && (
-                  <a href={`/p/${lpSlug}`} target="_blank" rel="noreferrer" style={{ fontSize: 10, color: "var(--brand-primary)", textDecoration: "none", fontWeight: 800, textTransform: "uppercase", letterSpacing: 1 }}>
-                    Visualizar Página ↗
-                  </a>
-                )}
-              </div>
+                    className="bg-theme-text text-theme-bg px-14 py-5 text-[10px] font-black uppercase tracking-[0.5em] hover:bg-brand-tactical hover:text-brand-text transition-all italic shadow-xl"
+                  >
+                    {savingLp ? "SINCRO..." : "PUBLICAR DIRETRIZES DIGITAIS"}
+                  </button>
+               </div>
             </div>
           </div>
         )}
       </div>
 
+      {/* Modal QR Code Premium */}
       {qrModalEvent && (
-        <div style={{ position: "fixed", inset: 0, background: "rgba(0,0,0,0.9)", backdropFilter: "blur(20px)", display: "flex", alignItems: "center", justifyContent: "center", zIndex: 1000, padding: "20px" }}>
-          <div style={{ ...S.card, width: "100%", maxWidth: 400, padding: "2rem", position: "relative", textAlign: "center", animation: "fadeIn 0.3s ease-out" }}>
+        <div className="fixed inset-0 z-[1000] flex items-center justify-center p-6 animate-in fade-in duration-500">
+          <div className="absolute inset-0 bg-theme-bg/80 backdrop-blur-2xl" onClick={() => setQrModalEvent(null)} />
+          
+          <div className="relative w-full max-w-lg bg-theme-bg border border-theme-border shadow-2xl animate-in zoom-in-95 duration-500">
             <button 
               onClick={() => setQrModalEvent(null)}
-              style={{ position: "absolute", top: 15, right: 15, background: "none", border: "none", color: "var(--theme-text-muted)", cursor: "pointer" }}
+              className="absolute top-6 right-6 text-theme-muted hover:text-theme-text transition-all"
             >
               <X size={24} />
             </button>
             
-            <div style={{ marginBottom: "1.5rem" }}>
-              <div style={{ width: 44, height: 44, borderRadius: "50%", background: "rgba(133,185,172,0.1)", color: "var(--brand-primary)", display: "flex", alignItems: "center", justifyContent: "center", margin: "0 auto 1rem" }}>
-                <QrCode size={24} />
+            <div className="p-10 space-y-10 text-center">
+              <div className="space-y-4">
+                <div className="w-16 h-16 bg-brand-tactical/10 text-brand-tactical flex items-center justify-center mx-auto border border-brand-tactical/20">
+                  <QrCode size={32} />
+                </div>
+                <h3 className="text-2xl font-heading font-black text-theme-text uppercase italic tracking-tight">QR Code Tático</h3>
+                <p className="text-[11px] font-bold text-theme-muted uppercase tracking-widest max-w-xs mx-auto">Imprima para acesso direto via balcão ou compartilhe o protocolo digital.</p>
               </div>
-              <h3 style={{ fontSize: 20, fontWeight: 800, color: "var(--theme-text)", marginBottom: 4 }}>QR Code do Evento</h3>
-              <p style={{ fontSize: 12, color: "var(--theme-text-muted)" }}>Imprima ou compartilhe para que os titulares e convidados acessem o álbum direto da unidade fixa.</p>
-            </div>
 
-            <div style={{ background: "#fff", padding: "1.5rem", borderRadius: 12, display: "inline-block", marginBottom: "1.5rem", boxShadow: "0 10px 30px rgba(0,0,0,0.5)" }}>
-              <QRCodeSVG 
-                id="qr-code-svg"
-                value={`${window.location.origin}/e/${qrModalEvent.slug}`}
-                size={220}
-                level="H"
-                includeMargin={true}
-              />
-            </div>
+              <div className="bg-white p-8 inline-block shadow-inner">
+                <QRCodeSVG 
+                  id="qr-code-svg"
+                  value={`${window.location.origin}/e/${qrModalEvent.slug}`}
+                  size={240}
+                  level="H"
+                  includeMargin={true}
+                />
+              </div>
 
-            <div style={{ display: "flex", flexDirection: "column", gap: "0.75rem" }}>
-              <div style={{ display: "flex", gap: "0.75rem" }}>
+              <div className="flex flex-col gap-3">
                 <button 
                   onClick={() => {
                     const url = `${window.location.origin}/e/${qrModalEvent.slug}`;
@@ -796,44 +1021,41 @@ export default function UnidadeFixaDashboard() {
                     setCopied(true);
                     setTimeout(() => setCopied(false), 2000);
                   }}
-                  style={{ flex: 1, display: "flex", alignItems: "center", justifyContent: "center", gap: 8, padding: "12px", background: "var(--theme-bg-muted)", border: "1px solid var(--theme-border)", color: "var(--theme-text)", fontSize: 12, fontWeight: 700, cursor: "pointer", transition: "all 0.2s" }}
+                  className="w-full flex items-center justify-center gap-4 py-4 bg-theme-bg-muted/50 border border-theme-border text-[10px] font-black uppercase tracking-widest hover:bg-theme-border transition-all italic"
                 >
-                  {copied ? <Check size={16} /> : <Copy size={16} />}
-                  {copied ? "Link Copiado!" : "Copiar Link"}
+                  {copied ? (
+                    <><Check size={16} className="text-brand-tactical" /> Protocolo Copiado</>
+                  ) : (
+                    <><Copy size={16} /> Copiar Link de Acesso</>
+                  )}
                 </button>
-                
                 <button 
                   onClick={() => {
-                    const svg = document.getElementById("qr-code-svg");
+                    const svg = document.querySelector("#qr-code-svg") as SVGGraphicsElement;
                     if (!svg) return;
                     const svgData = new XMLSerializer().serializeToString(svg);
                     const canvas = document.createElement("canvas");
+                    canvas.width = 1000;
+                    canvas.height = 1000;
                     const ctx = canvas.getContext("2d");
                     const img = new Image();
                     img.onload = () => {
-                      canvas.width = img.width;
-                      canvas.height = img.height;
-                      ctx?.drawImage(img, 0, 0);
+                      ctx?.drawImage(img, 0, 0, 1000, 1000);
                       const pngFile = canvas.toDataURL("image/png");
                       const downloadLink = document.createElement("a");
-                      downloadLink.download = `QRCode-${qrModalEvent.title.replace(/\s+/g, '-').toLowerCase()}.png`;
+                      downloadLink.download = `QR_CODE_${qrModalEvent.title}.png`;
                       downloadLink.href = pngFile;
                       downloadLink.click();
                     };
-                    img.src = "data:image/svg+xml;base64," + btoa(svgData);
+                    img.src = "data:image/svg+xml;base64," + btoa(unescape(encodeURIComponent(svgData)));
                   }}
-                  style={{ flex: 1, display: "flex", alignItems: "center", justifyContent: "center", gap: 8, padding: "12px", background: "var(--brand-primary)", border: "none", color: "var(--theme-text-on-brand)", fontSize: 12, fontWeight: 900, cursor: "pointer", transition: "all 0.2s", textTransform: "uppercase" }}
+                  className="w-full flex items-center justify-center gap-4 py-4 bg-brand-tactical text-brand-text text-[10px] font-black uppercase tracking-widest hover:brightness-110 transition-all italic"
                 >
-                  <Download size={16} /> DOWNLOAD
+                  <Download size={16} /> Exportar para Impressão
                 </button>
               </div>
-              
-              <p style={{ fontSize: 10, color: "var(--theme-text-muted)", fontStyle: "italic" }}>Dica: Imprima este QR Code e anexe à pasta de documentos do cliente.</p>
             </div>
           </div>
-          <style>{`
-            @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
-          `}</style>
         </div>
       )}
     </DashboardLayout>
