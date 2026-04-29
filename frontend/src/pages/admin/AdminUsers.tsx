@@ -111,7 +111,7 @@ export const AdminUsers: React.FC = () => {
 
       setIsModalOpen(false);
       setEditingUser(null);
-      setFormData({ name: "", email: "", password: "", role: "PROFISSIONAL", pixKey: "", otherHabilities: "", equipment: "", captPct: 30, editPct: 10 });
+      setFormData({ name: "", email: "", password: "", role: "PROFISSIONAL", pixKey: "", otherHabilities: "", equipment: "", workflowType: "TRADICIONAL", captPct: 30, editPct: 10 });
       fetchUsers();
       showNotification(editingUser ? "Membro atualizado com sucesso!" : "Membro convocado com sucesso!");
     } catch {
@@ -156,7 +156,7 @@ export const AdminUsers: React.FC = () => {
             <p className="text-[10px] text-theme-muted uppercase tracking-[0.5em] mt-3 font-black italic">Operação de Times, Unidades e Parceiros</p>
           </div>
           <button 
-            onClick={() => { setIsModalOpen(true); setEditingUser(null); setFormData({ name: "", email: "", password: "", role: "PROFISSIONAL", pixKey: "", otherHabilities: "", equipment: "", captPct: 30, editPct: 10 }); }}
+            onClick={() => { setIsModalOpen(true); setEditingUser(null); setFormData({ name: "", email: "", password: "", role: "PROFISSIONAL", pixKey: "", otherHabilities: "", equipment: "", workflowType: "TRADICIONAL", captPct: 30, editPct: 10 }); }}
             className="font-black uppercase tracking-[0.3em] px-8 py-4 bg-brand-tactical text-zinc-950 hover:brightness-110 transition-all shadow-xl shadow-brand-tactical/10 flex items-center gap-3 text-[10px]"
           >
             <UserPlus size={14} /> CONVOCAR MEMBRO

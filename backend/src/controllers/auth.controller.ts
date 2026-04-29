@@ -104,20 +104,33 @@ export class AuthController {
       });
 
       if (authError) {
-        console.error("[Supabase Auth Error]:", authError);
-        throw new Error(`Erro na autenticação externa: ${authError.message}`);
+        // Se o erro for que o usuário já existe no Supabase, tentamos recuperar o ID dele para prosseguir com o Prisma
+        if (authError.message.includes("already registered") || authError.status === 422) {
+           console.log(`[REGISTER] Usuário ${cleanEmail} já existe no Supabase. Tentando sincronização Prisma.`);
+           const { data: existingUser } = await supabaseAdmin.auth.admin.listUsers();
+           const found = existingUser.users.find(u => u.email?.toLowerCase() === cleanEmail);
+           if (!found) throw new Error("Usuário existe no Supabase mas não pôde ser localizado para sincronia.");
+           authData.user = found as any;
+        } else {
+          console.error("[Supabase Auth Error]:", authError);
+          throw new Error(`Erro na autenticação externa: ${authError.message}`);
+        }
       }
 
       if (!authData.user) throw new Error("Supabase não retornou dados do usuário.");
 
       // 2. Criar no Prisma (Dados de Negócio) usando o mesmo ID do Supabase
       const result = await prisma.$transaction(async (tx) => {
+        // Verifica se já existe no Prisma para evitar 500 por duplicidade
+        const existingPrismaUser = await tx.user.findUnique({ where: { email: cleanEmail } });
+        if (existingPrismaUser) return existingPrismaUser;
+
         const user = await tx.user.create({
           data: { 
-            id: authData.user.id,
+            id: authData.user!.id,
             email: cleanEmail, 
             senha: hash, 
-            nome, 
+            nome: nome || "Usuário", 
             role: cleanRole, 
             whatsapp 
           }
@@ -149,7 +162,16 @@ export class AuthController {
         return user;
       });
 
-      return res.status(201).json({ user: { id: result.id, nome: result.nome, email: result.email } });
+      // 4. Gerar Tokens para Login Imediato (Padrão do AuthContext)
+      const payload = { userId: result.id, role: result.role, nome: result.nome };
+      const token = generateToken(payload);
+      const refreshToken = generateRefreshToken(payload);
+
+      return res.status(201).json({ 
+        token,
+        refreshToken,
+        user: { id: result.id, nome: result.nome, email: result.email, role: result.role } 
+      });
     } catch (e: any) {
       console.error("[REGISTER ERROR]:", e);
       return res.status(500).json({ error: "Erro no registro", details: e.message });
