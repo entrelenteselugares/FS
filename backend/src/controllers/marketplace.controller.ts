@@ -37,18 +37,74 @@ export class MarketplaceController {
     }
 
     try {
-      // 1. Garante que o cliente existe
+      // 1. Garante que o cliente existe (Sincronizado com Supabase Auth)
       let user = await prisma.user.findUnique({ where: { email: finalEmail } });
+      
       if (!user) {
-        user = await prisma.user.create({
-          data: {
+        const tempPassword = "FS-" + Math.random().toString(36).slice(-8).toUpperCase();
+        try {
+          const hash = await bcrypt.hash(tempPassword, 12);
+          
+          // 1a. Criar no Supabase Auth para permitir Login e Recuperação
+          const { data: authData, error: authError } = await supabaseAdmin.auth.admin.createUser({
             email: finalEmail,
-            nome: finalName,
-            senha: "AUTH_EXTERNAL_SUPABASE",
-            whatsapp: whatsapp || null,
-            role: "CLIENTE"
+            password: tempPassword,
+            email_confirm: true,
+            user_metadata: { nome: finalName, role: "CLIENTE" }
+          });
+
+          if (authError) {
+            if (authError.message.includes("already registered")) {
+              // Sincroniza se já existe no Supabase
+              const { data: { users: sbUsers } } = await supabaseAdmin.auth.admin.listUsers({
+                filter: `email.eq.${finalEmail}`
+              } as any);
+              const sbUser = sbUsers?.[0];
+              if (sbUser) {
+                user = await prisma.user.create({
+                  data: {
+                    id: sbUser.id,
+                    email: finalEmail,
+                    nome: finalName,
+                    senha: hash, // Salva hash para resiliência de login local
+                    whatsapp: whatsapp || null,
+                    role: "CLIENTE"
+                  }
+                });
+              }
+            } else {
+              throw authError;
+            }
+          } else if (authData?.user) {
+            user = await prisma.user.create({
+              data: {
+                id: authData.user.id,
+                email: finalEmail,
+                nome: finalName,
+                senha: hash,
+                whatsapp: whatsapp || null,
+                role: "CLIENTE"
+              }
+            });
+            console.log(`[ExpressSale] Novo usuário criado: ${finalEmail} (Senha Prov: ${tempPassword})`);
           }
-        });
+        } catch (err: any) {
+          console.error("[ExpressSale Auto-Register Error]:", err.message);
+          const fallbackHash = await bcrypt.hash(tempPassword, 10);
+          user = await prisma.user.create({
+            data: {
+              email: finalEmail,
+              nome: finalName,
+              senha: fallbackHash,
+              whatsapp: whatsapp || null,
+              role: "CLIENTE"
+            }
+          });
+        }
+      }
+
+      if (!user) {
+        return res.status(500).json({ error: "Falha ao identificar ou criar usuário para a venda." });
       }
 
       // 2. Cria o Evento (Operação de Marketplace)
@@ -61,7 +117,7 @@ export class MarketplaceController {
           dataEvento: eventDate,
           location: finalLocation,
           type: "PHOTO_MARKETPLACE",
-          active: false,
+          active: true, // Venda rápida ativa o evento imediatamente
           isPrivate: true,
           slug,
           captacaoId: captacaoId || (req as any).user?.userId,
@@ -90,7 +146,7 @@ export class MarketplaceController {
         }));
       }
 
-      // 4. Cria o Pedido
+      // 4. Cria o Pedido (Status APROVADO para visibilidade nos dashboards)
       const isDigital = finalMethod === "PIX" || finalMethod === "CARD";
       const { matriz, captacao, edicao, cartorio } = await PricingService.calculateSplits(finalAmount);
 
@@ -99,7 +155,7 @@ export class MarketplaceController {
           eventId: event.id,
           clienteId: user.id,
           valor: finalAmount,
-          status: isDigital ? "PENDENTE" : "PAGO",
+          status: isDigital ? "PENDENTE" : "APROVADO",
           hasPaid: !isDigital,
           isManual: !isDigital,
           manualType: finalMethod,

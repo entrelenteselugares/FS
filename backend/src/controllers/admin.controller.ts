@@ -987,24 +987,72 @@ export async function adminCreateManualSale(req: AuthRequest, res: Response): Pr
       return;
     }
 
-    // 1. Encontrar ou criar usuário
+    // 1. Encontrar ou criar usuário (Sincronizado com Supabase Auth)
     let user = await prisma.user.findUnique({ where: { email: customerEmail } });
     
     if (!user) {
-      const tempPassword = Math.random().toString(36).slice(-8);
-      const hashedPassword = await bcrypt.hash(tempPassword, 10);
+      const tempPassword = "FS-" + Math.random().toString(36).slice(-8).toUpperCase();
       
-      user = await prisma.user.create({
-        data: {
-          nome: customerName,
+      try {
+        // 1a. Criar no Supabase Auth
+        const { data: authData, error: authError } = await supabase.auth.admin.createUser({
           email: customerEmail,
-          senha: hashedPassword,
-          role: "CLIENTE",
-          active: true,
+          password: tempPassword,
+          email_confirm: true,
+          user_metadata: { nome: customerName, role: "CLIENTE" }
+        });
+
+        if (authError) {
+          if (authError.message.includes("already registered")) {
+            // Sincroniza se já existe no Supabase
+            const { data: { users: sbUsers } } = await supabase.auth.admin.listUsers({
+              filter: `email.eq.${customerEmail}`
+            } as any);
+            const sbUser = sbUsers?.[0];
+            if (sbUser) {
+              const hash = await bcrypt.hash(tempPassword, 12);
+              user = await prisma.user.create({
+                data: {
+                  id: sbUser.id,
+                  nome: customerName,
+                  email: customerEmail,
+                  senha: hash,
+                  role: "CLIENTE",
+                  active: true,
+                }
+              });
+            }
+          } else {
+            throw authError;
+          }
+        } else if (authData?.user) {
+          const hash = await bcrypt.hash(tempPassword, 12);
+          user = await prisma.user.create({
+            data: {
+              id: authData.user.id,
+              nome: customerName,
+              email: customerEmail,
+              senha: hash,
+              role: "CLIENTE",
+              active: true,
+            }
+          });
+          console.log(`[ADMIN] Novo usuário criado no Supabase: ${customerEmail} (Pass: ${tempPassword})`);
         }
-      });
-      console.log(`[ADMIN] Novo usuário criado para venda manual: ${customerEmail} (Pass: ${tempPassword})`);
-      // TODO: Enviar e-mail/WhatsApp com as credenciais
+      } catch (err: any) {
+        console.error("[ADMIN Manual Sale Auto-Register Error]:", err.message);
+        // Fallback local
+        const hashedPassword = await bcrypt.hash(tempPassword, 10);
+        user = await prisma.user.create({
+          data: {
+            nome: customerName,
+            email: customerEmail,
+            senha: hashedPassword,
+            role: "CLIENTE",
+            active: true,
+          }
+        });
+      }
     }
 
     // 2. Criar pedido aprovado

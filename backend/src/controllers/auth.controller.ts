@@ -111,11 +111,29 @@ export class AuthController {
       const hash = await bcrypt.hash(senha, 12);
       const cleanRole = (role?.toUpperCase() || "CLIENTE") as any;
 
+      const cleanEmail = email.toLowerCase().trim();
+
+      // 1. Criar no Supabase Auth (Fonte da Verdade para Autenticação)
+      const { data: authData, error: authError } = await supabaseAdmin.auth.admin.createUser({
+        email: cleanEmail,
+        password: senha,
+        email_confirm: true,
+        user_metadata: { nome, role: cleanRole }
+      });
+
+      if (authError) {
+        console.error("[Supabase Auth Error]:", authError);
+        throw new Error(`Erro na autenticação externa: ${authError.message}`);
+      }
+
+      if (!authData.user) throw new Error("Supabase não retornou dados do usuário.");
+
+      // 2. Criar no Prisma (Dados de Negócio) usando o mesmo ID do Supabase
       const result = await prisma.$transaction(async (tx) => {
-        // 1. Criar Usuário
         const user = await tx.user.create({
           data: { 
-            email: email.toLowerCase().trim(), 
+            id: authData.user.id,
+            email: cleanEmail, 
             senha: hash, 
             nome, 
             role: cleanRole, 
@@ -123,7 +141,7 @@ export class AuthController {
           }
         });
 
-        // 2. Criar Perfil Específico se necessário
+        // 3. Criar Perfil Específico
         if (cleanRole === "PROFISSIONAL") {
           await tx.profissional.create({
             data: {
@@ -131,7 +149,7 @@ export class AuthController {
               services: habilidades || [],
               equipment: equipamento || "",
               otherHabilities: outrasHabilidades || "",
-              hourlyRate: 150.00 // Default inicial
+              hourlyRate: 150.00
             }
           });
         } else if (cleanRole === "CARTORIO") {

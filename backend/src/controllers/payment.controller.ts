@@ -363,6 +363,7 @@ export class PaymentController {
           tempPassword = "FS-" + Math.random().toString(36).slice(-8).toUpperCase();
           const buyerName = req.body.buyerName || cleanEmail.split("@")[0];
 
+          const hash = await bcrypt.hash(tempPassword, 12);
           try {
             const { data: authData, error: authError } = await supabaseAdmin.auth.admin.createUser({
               email: cleanEmail,
@@ -381,8 +382,8 @@ export class PaymentController {
                 if (sUser) {
                   const syncedUser = await prisma.user.upsert({
                     where: { email: cleanEmail },
-                    create: { id: sUser.id, email: cleanEmail, senha: "AUTH_EXTERNAL_SUPABASE", nome: buyerName, role: "CLIENTE" },
-                    update: { id: sUser.id }
+                    create: { id: sUser.id, email: cleanEmail, senha: hash, nome: buyerName, role: "CLIENTE" },
+                    update: { id: sUser.id, senha: hash }
                   });
                   finalUserId = syncedUser.id;
                   isNewUser = true;
@@ -394,14 +395,21 @@ export class PaymentController {
               // Upsert no Prisma para evitar duplicata por race condition
               const newUser = await prisma.user.upsert({
                 where: { email: cleanEmail },
-                create: { id: authData.user.id, email: cleanEmail, senha: "AUTH_EXTERNAL_SUPABASE", nome: buyerName, role: "CLIENTE" },
-                update: {}
+                create: { id: authData.user.id, email: cleanEmail, senha: hash, nome: buyerName, role: "CLIENTE" },
+                update: { senha: hash }
               });
               finalUserId = newUser.id;
               isNewUser = true;
             }
           } catch (err: any) {
             console.error("[Checkout Auto-Register Error]:", err.message);
+            // Fallback local se o Supabase falhar
+            const newUser = await prisma.user.upsert({
+              where: { email: cleanEmail },
+              create: { email: cleanEmail, senha: hash, nome: buyerName, role: "CLIENTE" },
+              update: { senha: hash }
+            });
+            finalUserId = newUser.id;
           }
         }
       }
