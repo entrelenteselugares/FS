@@ -288,7 +288,7 @@ export async function adminCreateEvent(req: AuthRequest, res: Response): Promise
         isCrowdfund: isCrowdfund ?? false,
         targetAmount: targetAmount ? Number(targetAmount) : null,
         // @ts-ignore
-        isPrivate: req.body.isPrivate ?? false,
+        isPrivate: req.body.isPrivate ?? true,
         // @ts-ignore
         isUnitSale: req.body.isUnitSale ?? false,
         // @ts-ignore

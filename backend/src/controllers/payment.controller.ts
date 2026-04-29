@@ -266,7 +266,7 @@ export class PaymentController {
                 active: true, 
                 isQuote: false,
                 // Marketplace continua público; outros eventos liberam acesso
-                isPrivate: isMarketplace ? (order.event?.isPrivate ?? false) : false
+                isPrivate: order.event?.isPrivate ?? true
               }
             });
 
@@ -564,7 +564,7 @@ export class PaymentController {
             active: true, 
             isQuote: false,
             // Marketplace continua público; outros eventos liberam acesso
-            isPrivate: isMarketplace ? (event.isPrivate ?? false) : false
+            isPrivate: event.isPrivate ?? true
           }
         });
 
@@ -716,7 +716,7 @@ export class PaymentController {
             active: true, 
             isQuote: false,
             // Marketplace continua público para outros comprarem; outros eventos respeitam privacidade original ou liberam
-            isPrivate: isMarketplace ? (evData?.isPrivate ?? false) : false
+            isPrivate: evData?.isPrivate ?? true
           }
         });
 
