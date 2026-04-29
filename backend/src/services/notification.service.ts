@@ -131,34 +131,38 @@ export class NotificationService {
     }
 
     const htmlContent = `
-      <div style="font-family: sans-serif; max-width: 600px; margin: 0 auto; padding: 20px; color: #000;">
-        <div style="text-align: center; margin-bottom: 30px;">
-          <h1 style="font-size: 24px; letter-spacing: 2px;">FOTO SEGUNDO.</h1>
-          <hr style="border: 0.5px solid #eee;" />
+      <div style="font-family: 'Outfit', sans-serif, Arial; max-width: 600px; margin: 0 auto; padding: 40px 20px; color: #111; background: #fff;">
+        <div style="text-align: center; margin-bottom: 40px;">
+          <h1 style="font-size: 28px; letter-spacing: 6px; font-weight: 900; text-transform: uppercase; margin: 0;">FOTO SEGUNDO.</h1>
+          <p style="font-size: 10px; letter-spacing: 4px; color: #85B9AC; text-transform: uppercase; margin-top: 10px; font-weight: bold;">Sincronizando Memórias</p>
+          <hr style="border: 0; border-top: 1px solid #eee; margin-top: 30px;" />
         </div>
         
-        <p>Olá, <strong>${data.name}</strong>,</p>
-        <p>Seja bem-vindo(a) à Foto Segundo! Recebemos sua solicitação de reserva.</p>
+        <p style="font-size: 16px; line-height: 1.6;">Olá, <strong>${data.name}</strong>,</p>
+        <p style="font-size: 14px; line-height: 1.6; color: #444;">É um prazer ter você conosco. Recebemos sua solicitação de reserva e nossa equipe técnica já está analisando todos os detalhes para garantir uma entrega impecável.</p>
         
         ${data.tempPassword ? `
-        <div style="background: #f9f9f9; padding: 30px; border-radius: 8px; margin: 30px 0;">
-          <p style="font-size: 14px; font-weight: bold; margin-bottom: 15px;">Seus dados de acesso:</p>
-          <p style="font-size: 13px; margin: 5px 0;">E-mail: <strong>${data.to}</strong></p>
-          <p style="font-size: 13px; margin: 5px 0;">Senha Temporária: <strong>${data.tempPassword}</strong></p>
-          <p style="font-size: 11px; color: #666; margin-top: 15px;">Você poderá acompanhar seus pedidos e acessar seus álbuns em nosso painel do cliente.</p>
+        <div style="background: #f8fcfb; border: 1px solid #e8f2f0; padding: 30px; border-radius: 4px; margin: 35px 0;">
+          <p style="font-size: 12px; font-weight: 900; text-transform: uppercase; letter-spacing: 2px; color: #85B9AC; margin-bottom: 20px;">Sua Conta Exclusiva</p>
+          <p style="font-size: 14px; margin: 8px 0; color: #222;">Acesso: <strong>${data.to}</strong></p>
+          <p style="font-size: 14px; margin: 8px 0; color: #222;">Chave Temporária: <span style="background: #eee; padding: 4px 8px; font-family: monospace;">${data.tempPassword}</span></p>
+          <p style="font-size: 11px; color: #777; margin-top: 20px; line-height: 1.5;">Através do seu painel, você poderá acompanhar o status do seu orçamento, gerenciar pagamentos e, em breve, acessar sua galeria de fotos e vídeos em alta resolução.</p>
         </div>
         ` : `
-        <p>Você já possui cadastro conosco. Utilize seu e-mail e senha habituais para acessar o painel e acompanhar seu pedido.</p>
+        <div style="padding: 20px 0; border-bottom: 1px solid #eee; margin-bottom: 30px;">
+          <p style="font-size: 14px; color: #444;">Você já possui um cadastro ativo. Utilize suas credenciais habituais para acessar o portal.</p>
+        </div>
         `}
         
-        <div style="text-align: center; margin: 30px 0;">
-          <a href="${APP_URL}/login" style="background: #000; color: #fff; padding: 12px 25px; text-decoration: none; border-radius: 4px; font-size: 12px; font-weight: bold; text-transform: uppercase;">Acessar Meu Painel</a>
+        <div style="text-align: center; margin: 40px 0;">
+          <a href="${APP_URL}/login" style="background: #111; color: #fff; padding: 18px 35px; text-decoration: none; border-radius: 2px; font-size: 12px; font-weight: 900; text-transform: uppercase; letter-spacing: 3px; display: inline-block;">Acessar Portal do Cliente</a>
         </div>
 
-        <hr style="border: 0.5px solid #eee; margin: 30px 0;" />
-        <p style="text-align: center; font-size: 10px; color: #bbb; text-transform: uppercase; letter-spacing: 1px;">
-          Foto Segundo &copy; ${new Date().getFullYear()} — Memórias que duram.
-        </p>
+        <div style="font-size: 11px; color: #999; line-height: 1.6; text-align: center; margin-top: 50px;">
+          <p>Este é um e-mail automático. Para falar com um consultor, responda a este e-mail ou utilize nossos canais oficiais.</p>
+          <hr style="border: 0; border-top: 1px solid #f5f5f5; margin: 30px 0;" />
+          <p style="text-transform: uppercase; letter-spacing: 2px;">Foto Segundo &copy; ${new Date().getFullYear()} — Excelência e Tecnologia</p>
+        </div>
       </div>
     `;
 
@@ -190,29 +194,43 @@ export class NotificationService {
     }
 
     const htmlContent = `
-      <div style="font-family: sans-serif; max-width: 600px; margin: 0 auto; padding: 20px; color: #000;">
-        <div style="text-align: center; margin-bottom: 30px;">
-          <h1 style="font-size: 24px; letter-spacing: 2px;">FOTO SEGUNDO.</h1>
-          <hr style="border: 0.5px solid #eee;" />
+      <div style="font-family: 'Outfit', sans-serif, Arial; max-width: 600px; margin: 0 auto; padding: 40px 20px; color: #111; background: #fff;">
+        <div style="text-align: center; margin-bottom: 40px;">
+          <h1 style="font-size: 28px; letter-spacing: 6px; font-weight: 900; text-transform: uppercase; margin: 0;">FOTO SEGUNDO.</h1>
+          <p style="font-size: 10px; letter-spacing: 4px; color: #85B9AC; text-transform: uppercase; margin-top: 10px; font-weight: bold;">Proposta de Investimento</p>
+          <hr style="border: 0; border-top: 1px solid #eee; margin-top: 30px;" />
         </div>
         
-        <p>Olá, <strong>${data.clientName}</strong>,</p>
-        <p>O orçamento para o seu evento <strong>${data.eventTitle}</strong> já está disponível e pronto para reserva!</p>
+        <p style="font-size: 16px; line-height: 1.6;">Olá, <strong>${data.clientName}</strong>,</p>
+        <p style="font-size: 14px; line-height: 1.6; color: #444;">Temos o prazer de informar que o orçamento para o seu evento <strong>${data.eventTitle}</strong> foi finalizado por nossa diretoria técnica.</p>
         
-        <div style="background: #f9f9f9; padding: 30px; border-radius: 8px; text-align: center; margin: 30px 0;">
-          <p style="font-size: 14px; color: #666; margin-bottom: 20px;">Para garantir sua data e confirmar a equipe, clique no botão abaixo para realizar o pagamento:</p>
-          <a href="${data.checkoutUrl}" style="background: #85B9AC; color: #fff; padding: 15px 30px; text-decoration: none; border-radius: 5px; font-weight: bold; display: inline-block;">
-            CONFIRMAR RESERVA AGORA
+        <div style="background: #f8fcfb; border: 1px solid #e8f2f0; padding: 35px; border-radius: 4px; margin: 35px 0; text-align: center;">
+          <p style="font-size: 10px; font-weight: 900; text-transform: uppercase; letter-spacing: 3px; color: #85B9AC; margin-bottom: 10px;">ID DA PROPOSTA</p>
+          <p style="font-size: 18px; font-weight: 900; color: #111; margin-bottom: 30px; letter-spacing: 1px;">ORC-${data.checkoutUrl.split("orderId=")[1]?.slice(-4).toUpperCase() || 'PROPOSTA'}</p>
+          
+          <p style="font-size: 13px; color: #666; margin-bottom: 25px; line-height: 1.6;">Para garantir a disponibilidade da nossa equipe e as condições exclusivas desta proposta, você pode realizar a reserva através do link seguro abaixo:</p>
+          
+          <a href="${data.checkoutUrl}" style="background: #111; color: #fff; padding: 20px 40px; text-decoration: none; border-radius: 2px; font-size: 13px; font-weight: 900; text-transform: uppercase; letter-spacing: 3px; display: inline-block; box-shadow: 0 10px 20px rgba(0,0,0,0.1);">
+            CONFIRMAR RESERVA IMEDIATA
           </a>
         </div>
         
-        <p style="font-size: 12px; color: #666;">
-          <strong>Importante:</strong> Após a confirmação do pagamento, seu álbum será gerado automaticamente e você poderá compartilhar o link com seus convidados.
+        <div style="border-left: 3px solid #85B9AC; padding: 20px; margin: 30px 0; background: #fafafa;">
+          <p style="font-size: 12px; color: #444; margin: 0; line-height: 1.6;">
+            <strong>Próximos Passos:</strong><br/>
+            1. Confirmação do pagamento seguro.<br/>
+            2. Atribuição imediata da equipe técnica.<br/>
+            3. Liberação do painel de acompanhamento tático.
+          </p>
+        </div>
+        
+        <p style="font-size: 11px; color: #999; text-align: center; margin-top: 40px;">
+          Esta proposta tem validade de 48 horas. Após este período, a disponibilidade da data pode ser alterada.
         </p>
         
-        <hr style="border: 0.5px solid #eee; margin: 30px 0;" />
-        <p style="text-align: center; font-size: 10px; color: #bbb; text-transform: uppercase; letter-spacing: 1px;">
-          Foto Segundo &copy; ${new Date().getFullYear()} — Excelência em fotografia.
+        <hr style="border: 0; border-top: 1px solid #eee; margin: 40px 0;" />
+        <p style="text-align: center; font-size: 10px; color: #bbb; text-transform: uppercase; letter-spacing: 2px;">
+          Foto Segundo &copy; ${new Date().getFullYear()} — Sincronizando Memórias com Excelência.
         </p>
       </div>
     `;

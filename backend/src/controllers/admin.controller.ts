@@ -928,6 +928,35 @@ export async function adminApproveQuote(req: AuthRequest, res: Response): Promis
   }
 }
 
+export async function adminRejectQuote(req: AuthRequest, res: Response): Promise<void> {
+  const { id } = req.params;
+  const { reason } = req.body;
+
+  try {
+    const quote = await prisma.event.findUnique({ where: { id: String(id) } });
+    if (!quote || !quote.isQuote) {
+      res.status(404).json({ error: "Orçamento não encontrado." });
+      return;
+    }
+
+    await prisma.event.update({
+      where: { id: String(id) },
+      data: { 
+        quoteStatus: "REJECTED",
+        active: false,
+        description: reason ? `${quote.description}\n\n[REJECTED_REASON] ${reason}` : quote.description
+      }
+    });
+
+    await audit(req, "QUOTE_REJECTED", "Event", String(id), null, { reason });
+
+    res.json({ success: true });
+  } catch (err) {
+    console.error("adminRejectQuote:", err);
+    res.status(500).json({ error: "Erro ao rejeitar orçamento." });
+  }
+}
+
 // ── LEGACY COMPATIBILITY ──────────────────────────────
 export class AdminEventController {
   static cartorioStats = async (req: AuthRequest, res: Response) => {

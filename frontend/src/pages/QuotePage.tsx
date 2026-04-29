@@ -309,6 +309,7 @@ export const QuotePage = () => {
   const [attendees, setAttendees] = useState<string>("0");
   const [locationType, setLocationType] = useState<"PARTNER" | "OTHER">("PARTNER");
   const [usageType, setUsageType] = useState<"PESSOAL" | "EMPRESARIAL">("PESSOAL");
+  const [workflowPref, setWorkflowPref] = useState<"MOBILE" | "TRADICIONAL">("TRADICIONAL");
   const [selectedPartnerId, setSelectedPartnerId] = useState("");
   const currentPartner = useMemo(() => partners.find(p => p.id === selectedPartnerId), [partners, selectedPartnerId]);
 
@@ -462,6 +463,7 @@ export const QuotePage = () => {
   const totalPrice = (servicesPrice + team.extraGuestsCost + freight) * eventDays;
 
   const [submitting, setSubmitting] = useState(false);
+  const [createdQuoteId, setCreatedQuoteId] = useState<string | null>(null);
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (submitting) return;
@@ -476,6 +478,7 @@ export const QuotePage = () => {
       customCep, 
       location: fullAddress,
       eventDate, eventHours, eventDays, description, selectedServices, totalPrice, 
+      workflowPref,
       status: "PENDING"
     };
 
@@ -487,6 +490,7 @@ export const QuotePage = () => {
         window.location.href = data.checkoutUrl;
       } else {
         // Se for orçamento sob consulta, mostra sucesso
+        setCreatedQuoteId(data.eventId);
         setStep(4); 
         window.scrollTo(0, 0);
       }
@@ -744,8 +748,8 @@ export const QuotePage = () => {
                 </div>
               )}
 
-              {/* Convidados e Tipo de Uso */}
-              <div className="mobile-grid-1" style={{ display: "grid", gridTemplateColumns: locationType === "OTHER" ? "1fr 1fr" : "1fr", gap: 20 }}>
+              {/* Convidados, Tipo de Uso e Preferência de Equipamento */}
+              <div className="mobile-grid-1" style={{ display: "grid", gridTemplateColumns: locationType === "OTHER" ? "1fr 1fr 1fr" : "1fr 1fr", gap: 20 }}>
                 <div>
                   <label style={{ fontSize: 10, fontWeight: 800, textTransform: "uppercase", marginBottom: 10, display: "block", color: THEME.text }}>Número de Convidados</label>
                   <div style={{ position: "relative", display: "flex", alignItems: "center" }}>
@@ -760,6 +764,15 @@ export const QuotePage = () => {
                     />
                   </div>
                 </div>
+
+                <div>
+                   <label style={{ fontSize: 10, fontWeight: 800, textTransform: "uppercase", marginBottom: 10, display: "block", color: THEME.text }}>Equipamento Preferencial</label>
+                   <div style={{ display: "flex", gap: 5 }}>
+                      <button type="button" onClick={() => setWorkflowPref("MOBILE")} style={{ flex: 1, padding: 12, fontSize: 8, fontWeight: 800, border: `1px solid ${workflowPref === "MOBILE" ? THEME.accent : THEME.border}`, background: workflowPref === "MOBILE" ? `${THEME.accent}10` : "transparent", color: workflowPref === "MOBILE" ? THEME.accent : THEME.text2, cursor: "pointer" }}>MOBILE MAKER</button>
+                      <button type="button" onClick={() => setWorkflowPref("TRADICIONAL")} style={{ flex: 1, padding: 12, fontSize: 8, fontWeight: 800, border: `1px solid ${workflowPref === "TRADICIONAL" ? THEME.accent : THEME.border}`, background: workflowPref === "TRADICIONAL" ? `${THEME.accent}10` : "transparent", color: workflowPref === "TRADICIONAL" ? THEME.accent : THEME.text2, cursor: "pointer" }}>TRADICIONAL</button>
+                   </div>
+                </div>
+
                 {locationType === "OTHER" && (
                   <div>
                     <label style={{ fontSize: 10, fontWeight: 800, textTransform: "uppercase", marginBottom: 10, display: "block", color: THEME.text }}>Tipo de Finalidade</label>
@@ -882,8 +895,16 @@ export const QuotePage = () => {
               <ShieldCheck size={40} color={THEME.accent} />
             </div>
             <h2 style={{ fontFamily: THEME.fontD, fontSize: 42, fontWeight: 900, textTransform: "uppercase", marginBottom: 20 }}>Solicitação Enviada</h2>
+            
+            {createdQuoteId && (
+              <div style={{ background: `${THEME.accent}10`, border: `1px solid ${THEME.border}`, padding: "15px", marginBottom: 30, display: "inline-block" }}>
+                <span style={{ fontSize: 10, fontWeight: 800, textTransform: "uppercase", color: THEME.text2, display: "block", marginBottom: 5 }}>Protocolo de Atendimento</span>
+                <span style={{ fontSize: 18, fontWeight: 900, color: THEME.accent, letterSpacing: 2 }}>ORC-{createdQuoteId.slice(-4).toUpperCase()}</span>
+              </div>
+            )}
+
             <p style={{ color: THEME.text2, fontSize: 13, maxWidth: 400, margin: "0 auto 40px", lineHeight: 1.7, fontWeight: 600, textTransform: 'uppercase', letterSpacing: 1 }}>
-              Recebemos seu pedido. Nossa equipe técnica analisará o briefing e entrará em contato em breve.
+              Recebemos seu pedido. Nossa equipe técnica analisará o briefing e entrará em contato em breve através do e-mail: <strong style={{ color: THEME.text }}>{email}</strong>.
             </p>
             <div style={{ display: "flex", flexDirection: "column", gap: 12, alignItems: "center" }}>
               <button 

@@ -384,7 +384,7 @@ export class EventController {
           eventHours: eventHours ? Number(eventHours) : 2,
           eventDays: eventDays ? Number(eventDays) : 1,
           location: locationType === "PARTNER" ? "Ponto Fixo" : `CEP: ${customCep}`,
-          description: `ORÇAMENTO AUTOMÁTICO\nConvidados: ${attendees}\nUso: ${usageType}\nServiços: ${selectedServices.join(", ")}\nDias: ${eventDays}\n\nDescrição do Cliente: ${description}`,
+          description: `ORÇAMENTO AUTOMÁTICO\nConvidados: ${attendees}\nUso: ${usageType}\nPreferência: ${req.body.workflowPref || 'TRADICIONAL'}\nServiços: ${selectedServices.join(", ")}\nDias: ${eventDays}\n\nDescrição do Cliente: ${description}`,
           usageType: usageType || "PESSOAL",
           isQuote: isQuote,
           quoteStatus: isQuote ? "PENDING" : "APROVADO", // Pontos fixos já nascem aprovados, apenas aguardando pagamento
@@ -448,7 +448,7 @@ export class EventController {
         tempPassword: tempPassForEmail
       }).catch(e => console.error("Erro ao enviar boas-vindas (lead):", e));
 
-      return res.json({ success: true, message: "Sua solicitação foi enviada! Em breve entraremos em contato com o orçamento detalhado." });
+      return res.json({ success: true, eventId: event.id, message: "Sua solicitação foi enviada! Em breve entraremos em contato com o orçamento detalhado." });
 
     } catch (error) {
       console.error("Erro ao processar orçamento:", error);

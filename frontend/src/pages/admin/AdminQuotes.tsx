@@ -42,10 +42,10 @@ export const AdminQuotes: React.FC = () => {
   // Pricing States
   const [selectedStaff, setSelectedStaff] = useState<{id: string, label: string, cost: number, userId?: string}[]>([]);
   const [selectedEquip, setSelectedEquip] = useState<{id: string, qty: number}[]>([]);
-  const [transportCost] = useState<number>(0);
-  const [lodgingCost] = useState<number>(0);
-  const [margin] = useState(30); 
-  const [isSplit] = useState(true);
+  const [transportCost, setTransportCost] = useState<number>(0);
+  const [lodgingCost, setLodgingCost] = useState<number>(0);
+  const [margin, setMargin] = useState(30); 
+  const [isSplit, setIsSplit] = useState(true);
   const [approving, setApproving] = useState(false);
   const [notification, setNotification] = useState<{message: string, type: 'success' | 'error'} | null>(null);
   const [finalPrice, setFinalPrice] = useState<number>(0);
@@ -119,6 +119,19 @@ export const AdminQuotes: React.FC = () => {
       setNotification({ message: "Erro ao aprovar orçamento.", type: 'error' });
     } finally {
       setApproving(false);
+    }
+  };
+
+  const handleReject = async () => {
+    if (!selectedQuote) return;
+    const reason = prompt("MOTIVO DA REJEIÇÃO (OPCIONAL):");
+    try {
+      await API.patch(`/admin/quotes/${selectedQuote.id}/reject`, { reason });
+      setNotification({ message: "Orçamento arquivado. 📁", type: 'success' });
+      setSelectedQuote(null);
+      fetchQuotes();
+    } catch {
+      setNotification({ message: "Erro ao rejeitar.", type: 'error' });
     }
   };
 
@@ -216,9 +229,14 @@ export const AdminQuotes: React.FC = () => {
                     </span>
                   </div>
                   
-                  <h3 className="text-xl font-heading font-black text-theme-text uppercase tracking-tighter leading-tight group-hover:text-brand-tactical transition-colors">
-                    {quote.nomeNoivos}
-                  </h3>
+                  <div className="flex items-center justify-between gap-4">
+                    <h3 className="text-xl font-heading font-black text-theme-text uppercase tracking-tighter leading-tight group-hover:text-brand-tactical transition-colors">
+                      {quote.nomeNoivos}
+                    </h3>
+                    <span className="text-[9px] font-black text-theme-muted uppercase tracking-[0.2em] bg-zinc-950/30 px-2 py-1 border border-theme-border/50">
+                      ORC-{quote.id.slice(-4).toUpperCase()}
+                    </span>
+                  </div>
                   
                   <div className="grid grid-cols-2 gap-4">
                     <div className="flex items-center gap-2 text-[9px] text-theme-muted font-black uppercase tracking-wider overflow-hidden truncate">
@@ -298,6 +316,26 @@ export const AdminQuotes: React.FC = () => {
                           <button key={role.id} onClick={() => toggleStaffPreset(role.id)} className={`px-4 py-3 text-[10px] font-black uppercase tracking-widest border transition-all ${selectedStaff.find(s => s.id === role.id) ? 'border-brand-tactical bg-brand-tactical text-zinc-950 shadow-lg' : 'border-theme-border text-theme-muted hover:border-zinc-500'}`}>{role.name}</button>
                         ))}
                       </div>
+
+                      {selectedStaff.length > 0 && (
+                        <div className="space-y-4 pt-6 border-t border-theme-border/20">
+                           <h4 className="text-[9px] font-black text-theme-muted uppercase tracking-[0.3em]">Ajuste de Custos de Equipe</h4>
+                           {selectedStaff.map(s => (
+                             <div key={s.id} className="flex items-center justify-between gap-4 bg-zinc-950/10 p-3 border border-theme-border/30">
+                                <span className="text-[10px] font-black uppercase tracking-widest">{s.label}</span>
+                                <div className="flex items-center gap-3">
+                                   <span className="text-[8px] text-theme-muted font-black">CUSTO (R$)</span>
+                                   <input 
+                                     type="number" 
+                                     value={s.cost} 
+                                     onChange={(e) => setSelectedStaff(selectedStaff.map(st => st.id === s.id ? {...st, cost: Number(e.target.value)} : st))}
+                                     className="w-24 bg-theme-bg border border-theme-border p-2 text-[11px] font-black text-brand-tactical outline-none focus:border-brand-tactical"
+                                   />
+                                </div>
+                             </div>
+                           ))}
+                        </div>
+                      )}
                     </div>
                   )}
 
@@ -311,18 +349,64 @@ export const AdminQuotes: React.FC = () => {
                           </div>
                         ))}
                       </div>
+
+                      <div className="grid grid-cols-2 gap-6 pt-6">
+                        <div className="space-y-2">
+                           <label className="text-[9px] font-black text-theme-muted uppercase tracking-widest">Transporte / Deslocamento</label>
+                           <input type="number" value={transportCost} onChange={e => setTransportCost(Number(e.target.value))} className="w-full bg-theme-bg border border-theme-border p-3 text-[12px] font-black text-theme-text outline-none focus:border-brand-tactical" />
+                        </div>
+                        <div className="space-y-2">
+                           <label className="text-[9px] font-black text-theme-muted uppercase tracking-widest">Hospedagem / Alimentação</label>
+                           <input type="number" value={lodgingCost} onChange={e => setLodgingCost(Number(e.target.value))} className="w-full bg-theme-bg border border-theme-border p-3 text-[12px] font-black text-theme-text outline-none focus:border-brand-tactical" />
+                        </div>
+                      </div>
                     </div>
                   )}
 
                   {activeTab === 'fechamento' && (
                     <div className="space-y-10 animate-in fade-in duration-300">
-                      <div className="bg-theme-bg p-10 border border-theme-border space-y-6 shadow-inner">
-                        <div className="flex justify-between text-[11px] font-black uppercase tracking-widest opacity-60"><span>Custo Operacional</span><span>R$ {costTotal.toLocaleString()}</span></div>
-                        <div className="pt-8 border-t border-brand-tactical/30 flex justify-between items-center"><span className="text-[13px] font-black uppercase tracking-[0.3em] text-theme-text">Preço de Engenharia</span><span className="text-3xl font-heading font-black text-brand-tactical italic">R$ {Math.ceil(suggestedPrice).toLocaleString()}</span></div>
+                      <div className="bg-theme-bg p-8 border border-theme-border space-y-4 shadow-inner">
+                        <div className="flex justify-between text-[10px] font-black uppercase tracking-widest opacity-60"><span>Soma de Custos</span><span>R$ {costTotal.toLocaleString()}</span></div>
+                        <div className="flex items-center justify-between pt-2">
+                           <span className="text-[10px] font-black uppercase tracking-widest opacity-60">Margem de Contribuição (%)</span>
+                           <input 
+                             type="number" 
+                             value={margin} 
+                             onChange={e => setMargin(Number(e.target.value))}
+                             className="w-20 bg-zinc-950 border border-theme-border p-2 text-[12px] font-black text-brand-tactical text-center outline-none" 
+                           />
+                        </div>
+                        <div className="flex items-center justify-between pt-2">
+                           <span className="text-[10px] font-black uppercase tracking-widest opacity-60">Dividir Pagamento (50/50)</span>
+                           <button 
+                             onClick={() => setIsSplit(!isSplit)}
+                             className={`px-4 py-2 text-[8px] font-black uppercase border transition-all ${isSplit ? 'border-brand-tactical text-brand-tactical bg-brand-tactical/10' : 'border-theme-border text-theme-muted'}`}
+                           >
+                             {isSplit ? 'ATIVADO' : 'DESATIVADO'}
+                           </button>
+                        </div>
+                        <div className="pt-6 border-t border-brand-tactical/30 flex justify-between items-center"><span className="text-[12px] font-black uppercase tracking-[0.3em] text-theme-text">Sugestão Merlin</span><span className="text-2xl font-heading font-black text-brand-tactical italic">R$ {Math.ceil(suggestedPrice).toLocaleString()}</span></div>
                       </div>
                       <div className="space-y-6">
-                        <input type="number" value={finalPrice} onChange={(e) => setFinalPrice(Number(e.target.value))} className="w-full bg-theme-bg border border-brand-tactical p-6 text-4xl font-heading font-black text-theme-text outline-none text-center tracking-tighter" />
-                        <button onClick={handleApprove} disabled={finalPrice <= 0 || approving} className="w-full bg-brand-tactical text-zinc-950 p-6 text-[12px] font-black uppercase tracking-[0.6em] hover:bg-white transition-all shadow-xl flex items-center justify-center gap-4">{approving ? "PROCESSANDO..." : <><Zap size={18} /> DISPARAR ORÇAMENTO OFICIAL</>}</button>
+                        <div className="space-y-2">
+                           <label className="text-[9px] font-black text-theme-muted uppercase tracking-widest text-center block">Valor Final do Orçamento</label>
+                           <input type="number" value={finalPrice} onChange={(e) => setFinalPrice(Number(e.target.value))} className="w-full bg-theme-bg border border-brand-tactical p-6 text-4xl font-heading font-black text-theme-text outline-none text-center tracking-tighter" />
+                        </div>
+                        <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
+                           <button 
+                             onClick={handleReject}
+                             className="bg-zinc-950 text-red-500 border border-red-900/30 p-6 text-[12px] font-black uppercase tracking-[0.3em] hover:bg-red-500 hover:text-white transition-all flex items-center justify-center gap-4"
+                           >
+                             ARQUIVAR
+                           </button>
+                           <button 
+                             onClick={handleApprove} 
+                             disabled={finalPrice <= 0 || approving} 
+                             className="md:col-span-3 bg-brand-tactical text-zinc-950 p-6 text-[12px] font-black uppercase tracking-[0.6em] hover:bg-white transition-all shadow-xl flex items-center justify-center gap-4"
+                           >
+                             {approving ? "PROCESSANDO..." : <><Zap size={18} /> DISPARAR ORÇAMENTO OFICIAL</>}
+                           </button>
+                        </div>
                       </div>
                     </div>
                   )}
