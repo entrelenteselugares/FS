@@ -7,6 +7,7 @@ import crypto from "crypto";
 import { supabaseAdmin } from "../lib/supabase";
 import { FRONTEND_URL } from "../lib/config";
 import { audit } from "../lib/audit";
+import bcrypt from "bcryptjs";
 
 export class PaymentController {
   /**

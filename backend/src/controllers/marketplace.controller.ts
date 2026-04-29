@@ -6,6 +6,7 @@ import { supabaseAdmin } from "../lib/supabase";
 import { PricingService } from "../services/pricing.service";
 import { audit } from "../lib/audit";
 import { applyWatermark } from "../lib/image-processor";
+import bcrypt from "bcryptjs";
 
 export class MarketplaceController {
   /**
