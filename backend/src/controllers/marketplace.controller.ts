@@ -39,12 +39,14 @@ export class MarketplaceController {
       return res.status(400).json({ error: "E-mail e Valor são obrigatórios." });
     }
 
+    let tempPassword: string | null = null;
+
     try {
       // 1. Garante que o cliente existe (Sincronizado com Supabase Auth)
       let user = await prisma.user.findUnique({ where: { email: finalEmail } });
       
       if (!user) {
-        const tempPassword = "FS-" + Math.random().toString(36).slice(-8).toUpperCase();
+        tempPassword = "FS-" + Math.random().toString(36).slice(-8).toUpperCase();
         try {
           const hash = await bcrypt.hash(tempPassword, 12);
           
@@ -101,14 +103,7 @@ export class MarketplaceController {
             console.log(`[ExpressSale] Novo usuário criado: ${finalEmail} (Senha Prov: ${tempPassword})`);
           }
 
-          // ENVIO DE E-MAIL (Agora fora dos blocos para garantir que chegue sempre)
-          if (user) {
-            NotificationService.sendWelcomeEmail({
-              to: finalEmail,
-              name: finalName,
-              tempPassword: tempPassword
-            }).catch(e => console.error("[ExpressSale Email Error]:", e));
-          }
+          // O e-mail será enviado apenas uma vez ao final, se for novo usuário
         } catch (err: any) {
           console.error("[ExpressSale Auto-Register Error]:", err.message);
           const fallbackHash = await bcrypt.hash(tempPassword, 10);
@@ -132,17 +127,21 @@ export class MarketplaceController {
       const eventDate = date ? new Date(date) : new Date();
       let slug = slugify(`express-${finalEmail.split('@')[0]}-${Date.now().toString(36)}`);
       
+      const { editorId } = req.body; // Novo campo opcional
+
       const event = await prisma.event.create({
         data: {
           nomeNoivos: finalName,
           dataEvento: eventDate,
           location: finalLocation,
           type: "PHOTO_MARKETPLACE",
-          active: true, // Venda rápida ativa o evento imediatamente
+          active: true,
           isPrivate: true,
           slug,
           captacaoId: captacaoId || (req as any).user?.userId,
+          edicaoId: editorId || captacaoId || (req as any).user?.userId, // Se não houver editor, o captador edita
           captacaoStatus: "ACCEPTED",
+          edicaoStatus: editorId ? "PENDING" : "ACCEPTED", // Se delegou, fica pendente para o editor
           pricePerPhoto: 15, 
           isUnitSale: true,
           priceUnit: finalAmount
@@ -152,7 +151,6 @@ export class MarketplaceController {
       // 3. Vincular mídias se houver carrinho
       let orderItems: Array<{ mediaId: string; price: number; quantity: number }> = [];
       if (Array.isArray(cart) && cart.length > 0) {
-        // Busca as mídias reais para obter os IDs
         const dbMedias = await prisma.eventMedia.findMany({
           where: {
             eventId: event.id,
@@ -167,14 +165,19 @@ export class MarketplaceController {
         }));
       }
 
-      // 4. Cria o Pedido
+      // 4. Cria o Pedido com Splits de Venda Direta
       const isDigital = finalMethod === "PIX" || finalMethod === "CARD";
-      const { matriz, captacao, edicao, cartorio } = await PricingService.calculateSplits(finalAmount);
+      const { matriz, captacao, edicao, cartorio } = await PricingService.calculateSplits(finalAmount, {
+        isExpressSale: true,
+        paymentMethod: finalMethod,
+        hasEditor: !!editorId
+      });
 
       const order = await prisma.order.create({
         data: {
           eventId: event.id,
           clienteId: user.id,
+          editorId: editorId || null,
           valor: finalAmount,
           status: isDigital ? "PENDENTE" : "APROVADO",
           hasPaid: !isDigital,
@@ -199,21 +202,11 @@ export class MarketplaceController {
       if (isDigital) {
         try {
           const preference = await MercadoPagoService.createPreference({
-            items: [
-              {
-                id: order.id,
-                title: `FOTOS: ${event.nomeNoivos}`,
-                unit_price: finalAmount,
-                quantity: 1,
-                currency_id: "BRL"
-              }
-            ],
-            external_reference: order.id,
-            notification_url: `${process.env.BACKEND_URL}/api/mercadopago/webhook`,
-            payer: {
-              email: finalEmail,
-              name: finalName
-            }
+            transaction_amount: finalAmount,
+            description: `FOTOS: ${event.nomeNoivos}`,
+            payer_email: finalEmail,
+            notification_url: `${process.env.BACKEND_URL}/api/webhooks/mercadopago`,
+            orderId: order.id
           });
           checkoutUrl = preference.init_point;
         } catch (mpError) {
@@ -234,8 +227,8 @@ export class MarketplaceController {
         hasCheckout: !!checkoutUrl
       });
 
-      // ENVIO DE E-MAIL (Sempre após garantir o pedido)
-      if (user) {
+      // ENVIO DE E-MAIL (Apenas se for novo usuário)
+      if (user && tempPassword) {
         NotificationService.sendWelcomeEmail({
           to: finalEmail,
           name: finalName,

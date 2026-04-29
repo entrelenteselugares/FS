@@ -194,8 +194,11 @@ export class AuthController {
 
   static async checkEmail(req: Request, res: Response) {
     const { email } = req.query;
-    const user = await prisma.user.findUnique({ where: { email: String(email).toLowerCase().trim() } });
-    return res.json({ exists: !!user, name: user?.nome, role: user?.role });
+    const user = await prisma.user.findUnique({ 
+      where: { email: String(email).toLowerCase().trim() },
+      select: { nome: true, role: true, whatsapp: true }
+    });
+    return res.json({ exists: !!user, name: user?.nome, role: user?.role, whatsapp: user?.whatsapp });
   }
 
   static async updateMe(req: AuthRequest, res: Response) {

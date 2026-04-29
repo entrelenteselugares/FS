@@ -47,9 +47,9 @@ export class PricingService {
 
   /**
    * Calcula a divisão de valores (Splits) com base nas configurações da plataforma.
-   * Retorna os valores arredondados para 2 casas decimais.
+   * Suporta o novo modelo de "Venda Direta" com 10% de comissão.
    */
-  static async calculateSplits(amount: number): Promise<SplitResult> {
+  static async calculateSplits(amount: number, options?: { isExpressSale?: boolean, paymentMethod?: string, hasEditor?: boolean }): Promise<SplitResult> {
     const keys = ["split_matriz", "split_captacao", "split_edicao", "split_cartorio"];
     const configs = await prisma.platformConfig.findMany({
       where: { key: { in: keys } },
@@ -57,7 +57,29 @@ export class PricingService {
 
     const getPct = (key: string) => Number(configs.find((c) => c.key === key)?.value ?? 0) / 100;
 
-    // ── Prevenção de Perda de Centavos (Regra de Resíduo na Matriz) ──
+    // ── LÓGICA DE VENDA DIRETA (10% MATRIZ) ──
+    if (options?.isExpressSale) {
+      // Taxa de Transação (Estimada em 5% para Pix/Card, 0% para Money)
+      const isDigital = options.paymentMethod === "PIX" || options.paymentMethod === "CARD";
+      const gatewayFee = isDigital ? amount * 0.0499 : 0; // Exemplo: 4.99% taxa MP
+      
+      const netAmount = amount - gatewayFee;
+      const matriz = +(amount * 0.10).toFixed(2); // 10% fixo do Bruto para a Plataforma
+      const remainder = +(netAmount - matriz).toFixed(2);
+
+      // Divide o restante entre Captação (Vendedor) e Edição (Editor)
+      if (options?.hasEditor) {
+        // Proporção sugerida: 60% Captação / 40% Edição do que sobrou
+        const captacao = +(remainder * 0.60).toFixed(2);
+        const edicao = +(remainder - captacao).toFixed(2);
+        return { matriz, captacao, edicao, cartorio: 0 };
+      } else {
+        // Sem editor delegado: Fotógrafo recebe 100% do valor líquido (Captação + Edição)
+        return { matriz, captacao: remainder, edicao: 0, cartorio: 0 };
+      }
+    }
+
+    // ── LÓGICA PADRÃO (MARKETPLACE) ──
     const captacao = +(amount * getPct("split_captacao")).toFixed(2);
     const edicao   = +(amount * getPct("split_edicao")).toFixed(2);
     const cartorio = +(amount * getPct("split_cartorio")).toFixed(2);

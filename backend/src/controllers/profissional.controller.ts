@@ -634,3 +634,85 @@ export async function listProServices(req: AuthRequest, res: Response): Promise<
     res.status(500).json({ error: "Erro ao listar serviços." });
   }
 }
+
+// ── REDE DE EMPATIA (PARCERIAS) ─────────────────────────────────────────────
+
+/**
+ * Busca profissionais na plataforma para parcerias.
+ */
+export async function searchProfessionals(req: AuthRequest, res: Response): Promise<void> {
+  const { query } = req.query;
+  const userId = req.user?.userId;
+  if (!userId) { res.status(401).json({ error: "Não autenticado." }); return; }
+
+  try {
+    const pros = await prisma.user.findMany({
+      where: {
+        role: { in: ["PROFISSIONAL", "ADMIN"] },
+        id: { not: userId },
+        OR: [
+          { nome: { contains: String(query || ""), mode: "insensitive" } },
+          { email: { contains: String(query || ""), mode: "insensitive" } }
+        ]
+      },
+      select: { id: true, nome: true, email: true, whatsapp: true },
+      take: 10
+    });
+    res.json(pros);
+  } catch (err) {
+    console.error("searchProfessionals:", err);
+    res.status(500).json({ error: "Erro ao buscar profissionais." });
+  }
+}
+
+/**
+ * Adiciona ou remove um profissional da rede de favoritos (Empatia).
+ */
+export async function toggleFavorite(req: AuthRequest, res: Response): Promise<void> {
+  const userId = req.user?.userId;
+  const { partnerId } = req.body;
+  if (!userId) { res.status(401).json({ error: "Não autenticado." }); return; }
+
+  try {
+    const existing = await prisma.professionalNetwork.findUnique({
+      where: { userId_partnerId: { userId, partnerId } }
+    });
+
+    if (existing) {
+      await prisma.professionalNetwork.delete({ where: { id: existing.id } });
+      res.json({ status: "REMOVED", message: "Parceiro removido da rede." });
+    } else {
+      await prisma.professionalNetwork.create({
+        data: { userId, partnerId }
+      });
+      res.json({ status: "ADDED", message: "Parceiro adicionado à rede de empatia." });
+    }
+  } catch (err) {
+    console.error("toggleFavorite:", err);
+    res.status(500).json({ error: "Erro ao atualizar rede de parcerias." });
+  }
+}
+
+/**
+ * Lista a rede de parceiros favoritos do profissional.
+ */
+export async function getNetwork(req: AuthRequest, res: Response): Promise<void> {
+  const userId = req.user?.userId;
+  if (!userId) { res.status(401).json({ error: "Não autenticado." }); return; }
+
+  try {
+    const network = await prisma.professionalNetwork.findMany({
+      where: { userId },
+      include: { 
+        partner: { 
+          select: { id: true, nome: true, email: true, whatsapp: true } 
+        } 
+      },
+      orderBy: { createdAt: "desc" }
+    });
+    res.json(network.map(n => n.partner));
+  } catch (err) {
+    console.error("getNetwork:", err);
+    res.status(500).json({ error: "Erro ao buscar rede de parcerias." });
+  }
+}

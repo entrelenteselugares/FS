@@ -2,7 +2,7 @@ import React, { useState, useEffect, useCallback } from "react";
 
 import { useAuth } from "../hooks/useAuth";
 import { API } from "../lib/api";
-import { List, Calendar as CalendarIcon, TrendingUp, DollarSign, Award, ChevronLeft, ChevronRight, Settings, MessageCircle, Check, X, ShieldCheck, LayoutDashboard, Briefcase, ArrowRight, MapPin, Clock, Zap } from "lucide-react";
+import { List, Calendar as CalendarIcon, TrendingUp, DollarSign, Award, ChevronLeft, ChevronRight, Settings, MessageCircle, Check, X, ShieldCheck, LayoutDashboard, Briefcase, ArrowRight, MapPin, Clock, Zap, Users, Search } from "lucide-react";
 import { DashboardLayout, type NavItem } from "../components/DashboardLayout";
 import { T } from "../lib/theme";
 
@@ -157,6 +157,13 @@ function DeadlineTimer({ event, type }: { event: EventItem; type: "FOTO" | "VIDE
   );
 }
 
+interface Partner {
+  id: string;
+  nome: string;
+  email: string;
+  whatsapp: string | null;
+}
+
 export default function ProfissionalDashboard() {
   const { user } = useAuth();
 
@@ -167,7 +174,7 @@ export default function ProfissionalDashboard() {
   const [profile, setProfile] = useState<ProfileData | null>(null);
   const [isProfileOpen, setIsProfileOpen] = useState(false);
   const [viewTab, setViewTab] = useState<"lista" | "calendario">("lista");
-  const [activeTab, setActiveTab] = useState<"agenda" | "convites" | "financeiro" | "servicos">("agenda");
+  const [activeTab, setActiveTab] = useState<"agenda" | "convites" | "financeiro" | "servicos" | "network">("agenda");
   const [catalogServices, setCatalogServices] = useState<ServiceCatalog[]>([]);
   const [savingPrices, setSavingPrices] = useState(false);
   const [unitInvites, setUnitInvites] = useState<UnitInvite[]>([]);
@@ -186,8 +193,33 @@ export default function ProfissionalDashboard() {
     location: "",
     productType: "FOTOS" as "FOTOS" | "REELS" | "SD_CARD" | "ALBUM_IMPRESSO",
     paymentMethod: "MONEY" as "PIX" | "CARD" | "MONEY",
-    internalNotes: ""
+    internalNotes: "",
+    editorId: ""
   });
+  const [network, setNetwork] = useState<Partner[]>([]);
+  const [networkSearch, setNetworkSearch] = useState("");
+  const [searchResults, setSearchResults] = useState<Partner[]>([]);
+
+  const handleSearchNetwork = async (q: string) => {
+    setNetworkSearch(q);
+    if (!q || q.length < 2) { setSearchResults([]); return; }
+    try {
+      const { data } = await API.get(`profissional/network/search?query=${q}`);
+      setSearchResults(data);
+    } catch (err) {
+      console.error("Erro na busca:", err);
+    }
+  };
+
+  const toggleFavorite = async (partnerId: string) => {
+    try {
+      await API.post("profissional/network/toggle", { partnerId });
+      fetchNetwork();
+      showNotification("Rede de empatia atualizada!", "success");
+    } catch {
+      showNotification("Erro ao atualizar rede", "error");
+    }
+  };
 
   const showNotification = (message: string, type: 'success' | 'error' = 'success') => {
     setNotification({ message, type });
@@ -223,12 +255,19 @@ export default function ProfissionalDashboard() {
     }
   }, []);
 
+  const fetchNetwork = useCallback(() => {
+    API.get("profissional/network")
+      .then((r) => setNetwork(r.data))
+      .catch((err) => console.error("Erro ao buscar rede:", err));
+  }, []);
+
   useEffect(() => {
     fetchEvents();
     fetchProfile();
     fetchUnitInvites();
     fetchServiceCatalog();
-  }, [fetchEvents, fetchProfile, fetchUnitInvites, fetchServiceCatalog]);
+    fetchNetwork();
+  }, [fetchEvents, fetchProfile, fetchUnitInvites, fetchServiceCatalog, fetchNetwork]);
 
   const handleRespond = async (eventId: string, status: "ACCEPTED" | "REJECTED") => {
     try {
@@ -264,9 +303,12 @@ export default function ProfissionalDashboard() {
       };
       const { data } = await API.post("marketplace/express-sale", payload);
       
-      if (data.isDigital) {
-        showNotification("Venda registrada! Redirecionando para pagamento...");
-        setTimeout(() => { window.location.href = `/checkout/${data.orderId}`; }, 1500);
+      if (data.isDigital && data.checkoutUrl) {
+        showNotification("Venda registrada! Abrindo link de pagamento...");
+        setTimeout(() => { 
+          window.open(data.checkoutUrl, "_blank"); 
+          setIsExpressModalOpen(false); 
+        }, 1500);
         return;
       }
       showNotification("Venda e Operação registradas com sucesso!");
@@ -344,11 +386,12 @@ export default function ProfissionalDashboard() {
     }
   }, [loading, pendingEvents.length, unitInvites.length, hasCheckedInvites]);
 
-  const NAV_ITEMS = (activeTab: string, setActiveTab: (t: "agenda" | "convites" | "financeiro" | "servicos") => void, pendingCount: number): NavItem[] => [
-    { label: "Visão Geral", onClick: () => setActiveTab("agenda"), isActive: activeTab === "agenda", icon: <LayoutDashboard size={16} /> },
-    { label: "Convites Pendentes", onClick: () => setActiveTab("convites"), isActive: activeTab === "convites", icon: <MessageCircle size={16} />, badge: pendingCount },
-    { label: "Financeiro", onClick: () => setActiveTab("financeiro"), isActive: activeTab === "financeiro", icon: <DollarSign size={16} /> },
-    { label: "Serviços", onClick: () => setActiveTab("servicos"), isActive: activeTab === "servicos", icon: <Briefcase size={16} /> },
+  const NAV_ITEMS = (active: typeof activeTab, setter: typeof setActiveTab, pendingCount: number): NavItem[] => [
+    { label: "Visão Geral", onClick: () => setter("agenda"), isActive: active === "agenda", icon: <LayoutDashboard size={16} /> },
+    { label: "Convites Pendentes", onClick: () => setter("convites"), isActive: active === "convites", icon: <MessageCircle size={16} />, badge: pendingCount },
+    { label: "Financeiro", onClick: () => setter("financeiro"), isActive: active === "financeiro", icon: <DollarSign size={16} /> },
+    { label: "Serviços", onClick: () => setter("servicos"), isActive: active === "servicos", icon: <Briefcase size={16} /> },
+    { label: "Minha Rede", onClick: () => setter("network"), isActive: active === "network", icon: <Users size={16} /> },
     { label: "Meu Perfil", onClick: () => setIsProfileOpen(true), isActive: false, icon: <Settings size={16} /> },
   ];
 
@@ -413,7 +456,7 @@ export default function ProfissionalDashboard() {
         <div className="flex flex-col lg:flex-row lg:items-end justify-between gap-6 border-b border-theme-border/60 pb-10">
           <div className="space-y-4">
             <h1 className="text-3xl md:text-5xl font-heading font-black text-theme-text uppercase tracking-tighter italic leading-none">
-              {activeTab === "agenda" ? "Meu Cockpit" : activeTab === "convites" ? "Central de Convites" : activeTab === "financeiro" ? "Fluxo de Caixa" : "Gestão de Ativos"}
+              {activeTab === "agenda" ? "Meu Cockpit" : activeTab === "convites" ? "Central de Convites" : activeTab === "financeiro" ? "Fluxo de Caixa" : activeTab === "network" ? "Rede de Empatia" : "Gestão de Ativos"}
             </h1>
             <div className="flex items-center gap-4">
                <div className="h-1 w-12 bg-brand-tactical" />
@@ -434,7 +477,7 @@ export default function ProfissionalDashboard() {
 
         <div className="relative group">
           <div className="absolute inset-0 bg-brand-tactical/20 blur-2xl opacity-0 group-hover:opacity-100 transition-all duration-700" />
-          <button onClick={() => { setExpressFormData({ customerName: "", customerEmail: "", whatsapp: "", amount: 30, location: "", productType: "FOTOS", paymentMethod: "MONEY", internalNotes: "" }); setExpressStep(1); setIsExpressModalOpen(true); }} className="relative w-full bg-theme-bg-muted border border-brand-tactical/40 p-8 flex flex-col md:flex-row items-center justify-between gap-8 group hover:border-brand-tactical transition-all overflow-hidden shadow-2xl">
+          <button onClick={() => { setExpressFormData({ customerName: "", customerEmail: "", whatsapp: "", amount: 30, location: "", productType: "FOTOS", paymentMethod: "MONEY" as "MONEY", internalNotes: "", editorId: "" }); setExpressStep(1); setIsExpressModalOpen(true); }} className="relative w-full bg-theme-bg-muted border border-brand-tactical/40 p-8 flex flex-col md:flex-row items-center justify-between gap-8 group hover:border-brand-tactical transition-all overflow-hidden shadow-2xl">
             <div className="flex items-center gap-6">
                <div className="p-5 bg-brand-tactical/10 border border-brand-tactical/20 text-brand-tactical"><DollarSign size={28} /></div>
                <div className="text-left space-y-1">
@@ -514,6 +557,93 @@ export default function ProfissionalDashboard() {
                     </div>
                  </div>
               </div>
+            </div>
+          )}
+
+          {activeTab === "network" && (
+            <div className="space-y-12 animate-in fade-in duration-500">
+               <div className="bg-theme-bg border border-theme-border/60 p-8 md:p-16 space-y-12">
+                  <div className="space-y-4">
+                     <h3 className="text-3xl font-heading font-black text-theme-text uppercase tracking-tighter italic leading-none">Rede de Empatia</h3>
+                     <p className="text-[10px] text-theme-muted uppercase tracking-[0.4em] italic font-bold">Conecte-se com outros profissionais para delegar edições e expandir sua operação</p>
+                  </div>
+
+                  <div className="relative">
+                    <div className="absolute left-6 top-1/2 -translate-y-1/2 text-brand-tactical"><Search size={20} /></div>
+                    <input 
+                      type="text" 
+                      placeholder="BUSCAR PROFISSIONAL PELO NOME OU E-MAIL..."
+                      className="w-full bg-theme-bg-muted border border-theme-border/60 p-8 pl-16 text-[11px] font-black uppercase tracking-[0.2em] text-theme-text outline-none focus:border-brand-tactical transition-all"
+                      value={networkSearch}
+                      onChange={(e) => handleSearchNetwork(e.target.value)}
+                    />
+                  </div>
+
+                  {searchResults.length > 0 && (
+                    <div className="grid grid-cols-1 gap-4 animate-in slide-in-from-top-4 duration-300">
+                      <p className="text-[9px] font-black text-brand-tactical uppercase tracking-widest italic mb-2">Resultados da Busca</p>
+                      {searchResults.map(p => (
+                        <div key={p.id} className="flex justify-between items-center p-6 bg-brand-tactical/5 border border-brand-tactical/20">
+                          <div className="space-y-1">
+                            <p className="text-sm font-black text-theme-text uppercase tracking-tight italic">{p.nome}</p>
+                            <p className="text-[9px] text-theme-muted uppercase font-bold">{p.email}</p>
+                          </div>
+                          <button 
+                            onClick={() => toggleFavorite(p.id)}
+                            className="px-6 py-3 bg-brand-tactical text-zinc-950 text-[9px] font-black uppercase tracking-widest hover:brightness-110 transition-all"
+                          >
+                            ADICIONAR À REDE
+                          </button>
+                        </div>
+                      ))}
+                    </div>
+                  )}
+
+                  <div className="space-y-8 pt-12 border-t border-theme-border/30">
+                    <div className="flex items-center gap-4">
+                      <div className="h-1 w-12 bg-brand-tactical" />
+                      <h4 className="text-xl font-heading font-black text-theme-text uppercase italic tracking-tighter">Meus Parceiros Favoritos</h4>
+                    </div>
+
+                    {network.length > 0 ? (
+                      <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                        {network.map(p => (
+                          <div key={p.id} className="group relative p-8 bg-theme-bg-muted border border-theme-border/40 hover:border-brand-tactical/40 transition-all">
+                             <div className="flex justify-between items-start">
+                               <div className="space-y-2">
+                                 <div className="flex items-center gap-3">
+                                   <div className="p-2 bg-brand-tactical/10 text-brand-tactical rounded-full"><Users size={16} /></div>
+                                   <p className="text-base font-black text-theme-text uppercase italic tracking-tight">{p.nome}</p>
+                                 </div>
+                                 <p className="text-[10px] text-theme-muted uppercase font-bold tracking-widest">{p.email}</p>
+                                 {p.whatsapp && (
+                                   <p className="text-[10px] text-brand-tactical font-black uppercase tracking-widest flex items-center gap-2 mt-2">
+                                     <MessageCircle size={12} /> {p.whatsapp}
+                                   </p>
+                                 )}
+                               </div>
+                               <button 
+                                 onClick={() => toggleFavorite(p.id)}
+                                 className="p-3 text-red-500/40 hover:text-red-500 transition-colors"
+                                 title="Remover da Rede"
+                               >
+                                 <X size={20} />
+                               </button>
+                             </div>
+                          </div>
+                        ))}
+                      </div>
+                    ) : (
+                      <div className="py-24 text-center space-y-6 bg-theme-bg-muted/10 border border-dashed border-theme-border/30">
+                        <div className="flex justify-center text-theme-muted opacity-10"><Users size={64} /></div>
+                        <div className="space-y-2">
+                          <p className="text-[11px] font-black text-theme-muted uppercase tracking-[0.4em] italic">Sua rede está vazia</p>
+                          <p className="text-[9px] text-theme-muted/60 uppercase font-bold tracking-widest">Busque profissionais acima para começar sua rede de empatia</p>
+                        </div>
+                      </div>
+                    )}
+                  </div>
+               </div>
             </div>
           )}
 
@@ -683,6 +813,22 @@ export default function ProfissionalDashboard() {
                         placeholder="cliente@exemplo.com"
                         value={expressFormData.customerEmail} 
                         onChange={e => setExpressFormData(p => ({ ...p, customerEmail: e.target.value }))} 
+                        onBlur={async () => {
+                          if (!expressFormData.customerEmail || !expressFormData.customerEmail.includes("@")) return;
+                          try {
+                            const { data } = await API.get(`/auth/check-email?email=${expressFormData.customerEmail}`);
+                            if (data.exists) {
+                              setExpressFormData(prev => ({
+                                ...prev,
+                                customerName: data.name || prev.customerName,
+                                whatsapp: data.whatsapp || prev.whatsapp || ""
+                              }));
+                              showNotification(`Cliente ${data.name} identificado.`);
+                            }
+                          } catch (err) {
+                            console.error("Erro ao checar email:", err);
+                          }
+                        }}
                         className="w-full bg-theme-bg-muted border border-theme-border p-5 text-theme-text outline-none focus:border-brand-tactical/50 transition-all font-medium" 
                       />
                     </div>
@@ -739,7 +885,7 @@ export default function ProfissionalDashboard() {
                         <label className="text-[9px] font-black text-theme-muted uppercase tracking-widest italic opacity-60">Categoria de Ativo</label>
                         <select 
                           value={expressFormData.productType} 
-                          onChange={e => setExpressFormData(p => ({ ...p, productType: e.target.value as any }))} 
+                          onChange={e => setExpressFormData(p => ({ ...p, productType: e.target.value as "FOTOS" | "REELS" | "SD_CARD" | "ALBUM_IMPRESSO" }))} 
                           className="w-full bg-theme-bg-muted border border-theme-border p-5 text-theme-text font-black text-[10px] uppercase outline-none focus:border-brand-tactical/50 appearance-none cursor-pointer"
                         >
                           <option value="FOTOS">FOTOS (ENTREGA DIGITAL)</option>
@@ -747,6 +893,40 @@ export default function ProfissionalDashboard() {
                           <option value="SD_CARD">CARTÃO SD (FÍSICO)</option>
                           <option value="ALBUM_IMPRESSO">ÁLBUM LUXO IMPRESSO</option>
                         </select>
+                      </div>
+
+                      {/* DELEGAÇÃO DE EDIÇÃO (Apenas para Digital) */}
+                      {(expressFormData.productType === "FOTOS" || expressFormData.productType === "REELS") && (
+                        <div className="space-y-3">
+                          <label className="text-[9px] font-black text-theme-muted uppercase tracking-widest italic opacity-60">Delegar Edição</label>
+                          <select 
+                            value={expressFormData.editorId} 
+                            onChange={e => setExpressFormData(p => ({ ...p, editorId: e.target.value }))} 
+                            className="w-full bg-theme-bg-muted border border-brand-tactical/30 p-5 text-theme-text font-black text-[10px] uppercase outline-none focus:border-brand-tactical appearance-none cursor-pointer"
+                          >
+                            <option value="">EU MESMO (RECEBER 90%)</option>
+                            {network.map(p => (
+                              <option key={p.id} value={p.id}>{p.nome.toUpperCase()} (REDE DE EMPATIA)</option>
+                            ))}
+                          </select>
+                          <p className="text-[8px] text-theme-muted italic">Ao delegar, o split de edição (40% do líquido) será enviado ao parceiro.</p>
+                        </div>
+                      )}
+                    </div>
+
+                    <div className="space-y-4">
+                      <label className="text-[9px] font-black text-theme-muted uppercase tracking-widest italic opacity-60">Metodologia de Pagamento</label>
+                      <div className="flex gap-3">
+                        {(["MONEY", "PIX", "CARD"] as const).map(m => (
+                          <button 
+                            key={m} 
+                            type="button" 
+                            onClick={() => setExpressFormData(p => ({ ...p, paymentMethod: m }))} 
+                            className={`flex-1 py-4 text-[9px] font-black uppercase tracking-widest border transition-all ${expressFormData.paymentMethod === m ? 'bg-brand-tactical text-zinc-950 border-brand-tactical' : 'bg-theme-bg-muted border-theme-border/60 text-theme-muted'}`}
+                          >
+                            {m}
+                          </button>
+                        ))}
                       </div>
                     </div>
                   </div>
@@ -778,7 +958,7 @@ export default function ProfissionalDashboard() {
                       disabled={loading} 
                       className="flex-[2] py-5 bg-brand-tactical text-brand-text text-[11px] font-black uppercase tracking-[0.4em] hover:brightness-110 shadow-xl shadow-brand-tactical/20 italic"
                     >
-                      {loading ? "GERANDO QR CODE..." : "GERAR COBRANÇA PIX"}
+                      {loading ? "PROCESSANDO..." : expressFormData.paymentMethod === 'MONEY' ? "FINALIZAR VENDA" : `GERAR COBRANÇA ${expressFormData.paymentMethod}`}
                     </button>
                   </div>
                 </div>

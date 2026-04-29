@@ -64,6 +64,7 @@ export const AdminEvents: React.FC<AdminEventsProps> = ({ initialEditEventId }) 
   const [expressFormData, setExpressFormData] = useState({
     customerName: "",
     customerEmail: "",
+    whatsapp: "",
     amount: 15,
     location: "Taquaral / Marketplace",
     paymentMethod: "MONEY" as "PIX" | "CARD" | "MONEY",
@@ -299,7 +300,7 @@ export const AdminEvents: React.FC<AdminEventsProps> = ({ initialEditEventId }) 
         <div className="flex flex-col md:flex-row gap-4">
           <button 
             onClick={() => {
-              setExpressFormData({ customerName: "", customerEmail: "", amount: 15, location: "Taquaral / Marketplace", paymentMethod: "MONEY", services: [] });
+              setExpressFormData({ customerName: "", customerEmail: "", whatsapp: "", amount: 15, location: "Taquaral / Marketplace", paymentMethod: "MONEY", services: [] });
               setIsExpressModalOpen(true);
             }}
             className="font-black uppercase tracking-[0.4em] px-8 py-4 hover:brightness-110 transition-all shadow-xl shadow-brand-tactical/10 rounded-none text-[9px] w-full md:w-auto border border-brand-tactical text-brand-tactical bg-transparent"
@@ -621,8 +622,35 @@ export const AdminEvents: React.FC<AdminEventsProps> = ({ initialEditEventId }) 
              <div className="mb-10"><h2 className="text-2xl font-black text-theme-text uppercase tracking-tighter">Venda Rápida</h2></div>
              <form onSubmit={handleExpressSaleSubmit} className="grid grid-cols-1 md:grid-cols-2 gap-12">
                 <div className="space-y-6">
+                  <div className="space-y-2">
+                    <label className="text-[8px] font-black text-theme-muted uppercase tracking-[0.4em]">E-mail</label>
+                    <input 
+                      type="email" 
+                      required 
+                      className="w-full bg-theme-bg border border-theme-border p-4 text-[12px] text-theme-text outline-none font-bold" 
+                      value={expressFormData.customerEmail} 
+                      onChange={e => setExpressFormData({...expressFormData, customerEmail: e.target.value})} 
+                      onBlur={async () => {
+                        if (!expressFormData.customerEmail || !expressFormData.customerEmail.includes("@")) return;
+                        try {
+                          const { data } = await API.get(`/auth/check-email?email=${expressFormData.customerEmail}`);
+                          if (data.exists) {
+                            setExpressFormData(prev => ({
+                              ...prev,
+                              customerName: data.name || prev.customerName,
+                              whatsapp: data.whatsapp || prev.whatsapp || ""
+                            }));
+                            showNotification(`Cliente ${data.name} identificado! Dados preenchidos.`);
+                          }
+                        } catch (err) {
+                          console.error("Erro ao checar email:", err);
+                        }
+                      }}
+                      placeholder="EMAIL" 
+                    />
+                  </div>
                   <div className="space-y-2"><label className="text-[8px] font-black text-theme-muted uppercase tracking-[0.4em]">Cliente</label><input type="text" className="w-full bg-theme-bg border border-theme-border p-4 text-[12px] text-theme-text outline-none font-bold" value={expressFormData.customerName} onChange={e => setExpressFormData({...expressFormData, customerName: e.target.value})} placeholder="NOME" /></div>
-                  <div className="space-y-2"><label className="text-[8px] font-black text-theme-muted uppercase tracking-[0.4em]">E-mail</label><input type="email" required className="w-full bg-theme-bg border border-theme-border p-4 text-[12px] text-theme-text outline-none font-bold" value={expressFormData.customerEmail} onChange={e => setExpressFormData({...expressFormData, customerEmail: e.target.value})} placeholder="EMAIL" /></div>
+                  <div className="space-y-2"><label className="text-[8px] font-black text-theme-muted uppercase tracking-[0.4em]">WhatsApp</label><input type="text" className="w-full bg-theme-bg border border-theme-border p-4 text-[12px] text-theme-text outline-none font-bold" value={expressFormData.whatsapp} onChange={e => setExpressFormData({...expressFormData, whatsapp: e.target.value})} placeholder="(00) 00000-0000" /></div>
                   
                   <div className="pt-4 border-t border-theme-border/30">
                     <label className="text-[8px] font-black text-theme-muted uppercase tracking-[0.4em] mb-4 block">Serviços Selecionados</label>

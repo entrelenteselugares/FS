@@ -56,17 +56,18 @@ export async function generateWeeklyPayout(req: AuthRequest, res: Response): Pro
       recipientId: string;
       recipientName: string;
       pixKey: string | null;
-      splitPct: number;
       grossRevenue: number;
       orderCount: number;
+      amount: number; // Valor líquido a receber
     }> = {};
 
-    const addBeneficiario = (
+    const addSplit = (
       type: string,
       userId: string,
       name: string,
-      splitPct: number,
-      orderAmount: number
+      orderAmount: number,
+      splitValue: number,
+      isMoneySale: boolean
     ) => {
       const key = `${type}_${userId}`;
       if (!beneficiarios[key]) {
@@ -75,39 +76,69 @@ export async function generateWeeklyPayout(req: AuthRequest, res: Response): Pro
           recipientId: userId,
           recipientName: name,
           pixKey: null,
-          splitPct: splitPct * 100,
           grossRevenue: 0,
           orderCount: 0,
+          amount: 0,
         };
       }
-      beneficiarios[key].grossRevenue += orderAmount;
-      beneficiarios[key].orderCount += 1;
+      
+      const b = beneficiarios[key];
+      b.grossRevenue += orderAmount;
+      b.orderCount += 1;
+
+      if (isMoneySale) {
+        // Modelo UBER: Se a venda foi em dinheiro, o profissional já está com 100% do valor.
+        // Se ele é o "Captador" (quem faz a venda), ele deve abater o que NÃO é dele.
+        // Se ele é o "Editor" e a venda foi em dinheiro, ele NÃO recebe nada agora (pois o dinheiro está com o captador).
+        if (type === "CAPTACAO") {
+          // O captador já tem o valor total. Ele deve o split da Matriz, Edição e Cartório.
+          // Logo, o "valor a receber" dele para este pedido é NEGATIVO (o que ele deve repassar).
+          // Valor a Repassar = Valor Total - Meu Split de Captação
+          const divida = orderAmount - splitValue;
+          b.amount -= divida;
+        } else {
+          // Editor ou Cartório em venda de dinheiro: Eles têm crédito, mas quem paga é o Captador via abatimento.
+          // Para a plataforma, o Editor tem R$ X a receber.
+          b.amount += splitValue;
+        }
+      } else {
+        // Venda Digital (Pix/Cartão): A plataforma tem o dinheiro, então apenas soma o crédito.
+        b.amount += splitValue;
+      }
     };
 
     for (const order of orders) {
       const amount = Number(order.valor);
+      const isMoney = order.manualType === "MONEY" || (order.isManual && order.manualType?.toUpperCase() === "DINHEIRO");
       const { captacao, edicao, cartorioUser } = order.event;
 
-      if (captacao) addBeneficiario("CAPTACAO", captacao.id, captacao.nome, getConfig("split_captacao"), amount);
-      if (edicao)   addBeneficiario("EDICAO", edicao.id, edicao.nome, getConfig("split_edicao"), amount);
-      if (cartorioUser) addBeneficiario("CARTORIO", cartorioUser.id, cartorioUser.nome, getConfig("split_cartorio"), amount);
+      // Usamos os splits gravados no pedido (garante integridade histórica)
+      if (captacao) addSplit("CAPTACAO", captacao.id, captacao.nome, amount, Number(order.splitCaptacao || 0), isMoney);
+      if (edicao)   addSplit("EDICAO", edicao.id, edicao.nome, amount, Number(order.splitEdicao || 0), isMoney);
+      if (cartorioUser) addSplit("CARTORIO", cartorioUser.id, cartorioUser.nome, amount, Number(order.splitCartorio || 0), isMoney);
     }
 
-    // Busca chaves Pix dos usuários
+    // Busca chaves Pix dos usuários e remove quem tem saldo zero ou negativo (dívida acumulada para próxima semana)
+    const items = [];
     for (const key of Object.keys(beneficiarios)) {
       const b = beneficiarios[key];
+      
+      // Se o saldo for negativo, não geramos item de repasse (a dívida fica registrada nos logs ou ordens)
+      // Idealmente, poderíamos criar um item com valor negativo se o sistema permitir, 
+      // mas para o Pix, só processamos valores positivos.
+      if (b.amount <= 0) continue;
+
       const user = await prisma.user.findUnique({
         where: { id: b.recipientId },
         select: { pixKey: true, whatsapp: true },
       });
-      beneficiarios[key].pixKey = user?.pixKey ?? user?.whatsapp ?? null;
+      b.pixKey = user?.pixKey ?? user?.whatsapp ?? null;
+      
+      items.push({
+        ...b,
+        splitPct: Number(((b.amount / b.grossRevenue) * 100).toFixed(2)) || 0
+      });
     }
-
-    // Calcula valores
-    const items = Object.values(beneficiarios).map((b) => ({
-      ...b,
-      amount: Number((b.grossRevenue * (b.splitPct / 100)).toFixed(2)),
-    }));
 
     const totalPayout = items.reduce((acc, i) => acc + i.amount, 0);
 

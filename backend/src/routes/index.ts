@@ -37,6 +37,9 @@ import {
   updateProService,
   deleteProService,
   listProServices,
+  getNetwork,
+  searchProfessionals,
+  toggleFavorite,
 } from "../controllers/profissional.controller";
 import { getMeusPedidos, getMeuPedidoDetalhe } from "../controllers/cliente.controller";
 import { CartorioController } from "../controllers/cartorio.controller";
@@ -99,6 +102,9 @@ router.patch("/profissional/me",                 requireAuth, requireRole("ADMIN
 router.post("/profissional/events/:id/manual-sale", requireAuth, requireRole("ADMIN", "PROFISSIONAL"), registerManualSale);
 router.get("/profissional/unidades/convites", requireAuth, requireRole("ADMIN", "PROFISSIONAL"), getConvitesUnidade);
 router.patch("/profissional/unidades/convites/:id/respond", requireAuth, requireRole("ADMIN", "PROFISSIONAL"), respondConviteUnidade);
+router.get("/profissional/network", requireAuth, requireRole("ADMIN", "PROFISSIONAL"), getNetwork);
+router.get("/profissional/network/search", requireAuth, requireRole("ADMIN", "PROFISSIONAL"), searchProfessionals);
+router.post("/profissional/network/toggle", requireAuth, requireRole("ADMIN", "PROFISSIONAL"), toggleFavorite);
 
 // ── MARKETPLACE (Fotos Individuais & Venda Expressa) ──────────────────────────
 router.post("/marketplace/express-sale",      requireAuth, requireRole("ADMIN", "PROFISSIONAL"), MarketplaceController.expressSale);
