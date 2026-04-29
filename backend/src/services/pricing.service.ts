@@ -49,7 +49,7 @@ export class PricingService {
    * Calcula a divisão de valores (Splits) com base nas configurações da plataforma.
    * Suporta o novo modelo de "Venda Direta" com 10% de comissão.
    */
-  static async calculateSplits(amount: number, options?: { isExpressSale?: boolean, paymentMethod?: string, hasEditor?: boolean }): Promise<SplitResult> {
+  static async calculateSplits(amount: number, options?: { isExpressSale?: boolean, paymentMethod?: string, hasEditor?: boolean, productType?: string }): Promise<SplitResult> {
     const keys = ["split_matriz", "split_captacao", "split_edicao", "split_cartorio"];
     const configs = await prisma.platformConfig.findMany({
       where: { key: { in: keys } },
@@ -61,20 +61,22 @@ export class PricingService {
     if (options?.isExpressSale) {
       // Taxa de Transação (Estimada em 5% para Pix/Card, 0% para Money)
       const isDigital = options.paymentMethod === "PIX" || options.paymentMethod === "CARD";
-      const gatewayFee = isDigital ? amount * 0.0499 : 0; // Exemplo: 4.99% taxa MP
+      const gatewayFee = isDigital ? amount * 0.0499 : 0; 
       
       const netAmount = amount - gatewayFee;
       const matriz = +(amount * 0.10).toFixed(2); // 10% fixo do Bruto para a Plataforma
       const remainder = +(netAmount - matriz).toFixed(2);
 
-      // Divide o restante entre Captação (Vendedor) e Edição (Editor)
-      if (options?.hasEditor) {
-        // Proporção sugerida: 60% Captação / 40% Edição do que sobrou
+      // Produtos Físicos (SD CARD / ÁLBUM) não têm fase de edição delegada
+      const isPhysical = options.productType === "SD_CARD" || options.productType === "ALBUM_IMPRESSO";
+
+      if (options?.hasEditor && !isPhysical) {
+        // Divide o restante entre Captação (Vendedor) e Edição (Editor)
         const captacao = +(remainder * 0.60).toFixed(2);
         const edicao = +(remainder - captacao).toFixed(2);
         return { matriz, captacao, edicao, cartorio: 0 };
       } else {
-        // Sem editor delegado: Fotógrafo recebe 100% do valor líquido (Captação + Edição)
+        // Sem editor ou produto físico: Fotógrafo recebe 100% do líquido
         return { matriz, captacao: remainder, edicao: 0, cartorio: 0 };
       }
     }

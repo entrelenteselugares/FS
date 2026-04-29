@@ -26,7 +26,8 @@ export class MarketplaceController {
       captacaoId,
       internalNotes,
       whatsapp,
-      cart // Array de shortIds selecionados
+      productType,
+      cart 
     } = req.body;
 
     const finalEmail = (customerEmail || email)?.toLowerCase().trim();
@@ -34,6 +35,7 @@ export class MarketplaceController {
     const finalMethod = (paymentMethod || method || "DINHEIRO").toUpperCase();
     const finalLocation = location || ponto || "Venda Direta";
     const finalName = customerName || finalEmail.split('@')[0].toUpperCase();
+    const finalProduct = productType || "FOTOS";
 
     if (!finalEmail || !finalAmount) {
       return res.status(400).json({ error: "E-mail e Valor são obrigatórios." });
@@ -42,15 +44,13 @@ export class MarketplaceController {
     let tempPassword: string | null = null;
 
     try {
-      // 1. Garante que o cliente existe (Sincronizado com Supabase Auth)
+      // 1. Garante que o cliente existe
       let user = await prisma.user.findUnique({ where: { email: finalEmail } });
       
       if (!user) {
         tempPassword = "FS-" + Math.random().toString(36).slice(-8).toUpperCase();
         try {
           const hash = await bcrypt.hash(tempPassword, 12);
-          
-          // 1a. Criar no Supabase Auth para permitir Login e Recuperação
           const { data: authData, error: authError } = await supabaseAdmin.auth.admin.createUser({
             email: finalEmail,
             password: tempPassword,
@@ -60,74 +60,41 @@ export class MarketplaceController {
 
           if (authError) {
             if (authError.message.includes("already registered")) {
-              // Sincroniza e ATUALIZA a senha para garantir acesso na venda rápida
               const { data: { users: sbUsers } } = await supabaseAdmin.auth.admin.listUsers({
                 filter: `email.eq.${finalEmail}`
               } as any);
               const sbUser = sbUsers?.[0];
               if (sbUser) {
-                // Atualiza senha no Supabase
                 await supabaseAdmin.auth.admin.updateUserById(sbUser.id, { password: tempPassword });
-                
                 user = await prisma.user.upsert({
                   where: { email: finalEmail },
-                  create: {
-                    id: sbUser.id,
-                    email: finalEmail,
-                    nome: finalName,
-                    senha: hash,
-                    whatsapp: whatsapp || null,
-                    role: "CLIENTE"
-                  },
-                  update: {
-                    id: sbUser.id,
-                    senha: hash
-                  }
+                  create: { id: sbUser.id, email: finalEmail, nome: finalName, senha: hash, whatsapp: whatsapp || null, role: "CLIENTE" },
+                  update: { id: sbUser.id, senha: hash }
                 });
               }
-            } else {
-              throw authError;
-            }
+            } else { throw authError; }
           } else if (authData?.user) {
-            // Caso de Sucesso: Novo usuário no Supabase
             user = await prisma.user.create({
-              data: {
-                id: authData.user.id,
-                email: finalEmail,
-                nome: finalName,
-                senha: hash,
-                whatsapp: whatsapp || null,
-                role: "CLIENTE"
-              }
+              data: { id: authData.user.id, email: finalEmail, nome: finalName, senha: hash, whatsapp: whatsapp || null, role: "CLIENTE" }
             });
-            console.log(`[ExpressSale] Novo usuário criado: ${finalEmail} (Senha Prov: ${tempPassword})`);
           }
-
-          // O e-mail será enviado apenas uma vez ao final, se for novo usuário
         } catch (err: any) {
           console.error("[ExpressSale Auto-Register Error]:", err.message);
           const fallbackHash = await bcrypt.hash(tempPassword, 10);
           user = await prisma.user.create({
-            data: {
-              email: finalEmail,
-              nome: finalName,
-              senha: fallbackHash,
-              whatsapp: whatsapp || null,
-              role: "CLIENTE"
-            }
+            data: { email: finalEmail, nome: finalName, senha: fallbackHash, whatsapp: whatsapp || null, role: "CLIENTE" }
           });
         }
       }
 
-      if (!user) {
-        return res.status(500).json({ error: "Falha ao identificar ou criar usuário para a venda." });
-      }
+      if (!user) return res.status(500).json({ error: "Falha ao identificar ou criar usuário." });
 
-      // 2. Cria o Evento (Operação de Marketplace)
+      // 2. Cria o Evento
       const eventDate = date ? new Date(date) : new Date();
       let slug = slugify(`express-${finalEmail.split('@')[0]}-${Date.now().toString(36)}`);
-      
-      const { editorId } = req.body; // Novo campo opcional
+      const { editorId } = req.body; 
+
+      const isPhysical = finalProduct === "SD_CARD" || finalProduct === "ALBUM_IMPRESSO";
 
       const event = await prisma.event.create({
         data: {
@@ -139,45 +106,42 @@ export class MarketplaceController {
           isPrivate: true,
           slug,
           captacaoId: captacaoId || (req as any).user?.userId,
-          edicaoId: editorId || captacaoId || (req as any).user?.userId, // Se não houver editor, o captador edita
+          edicaoId: isPhysical ? null : (editorId || captacaoId || (req as any).user?.userId), 
           captacaoStatus: "ACCEPTED",
-          edicaoStatus: editorId ? "PENDING" : "ACCEPTED", // Se delegou, fica pendente para o editor
+          edicaoStatus: (editorId && !isPhysical) ? "PENDING" : "ACCEPTED", 
           pricePerPhoto: 15, 
           isUnitSale: true,
           priceUnit: finalAmount
         }
       });
 
-      // 3. Vincular mídias se houver carrinho
+      // 3. Vincular mídias
       let orderItems: Array<{ mediaId: string; price: number; quantity: number }> = [];
       if (Array.isArray(cart) && cart.length > 0) {
         const dbMedias = await prisma.eventMedia.findMany({
-          where: {
-            eventId: event.id,
-            shortId: { in: cart }
-          }
+          where: { eventId: event.id, shortId: { in: cart } }
         });
-
         orderItems = dbMedias.map(m => ({
           mediaId: m.id,
-          price: Number(m.price ?? event.pricePerPhoto ?? 15),
+          price: Number(m.price ?? 15),
           quantity: 1
         }));
       }
 
-      // 4. Cria o Pedido com Splits de Venda Direta
+      // 4. Cria o Pedido
       const isDigital = finalMethod === "PIX" || finalMethod === "CARD";
       const { matriz, captacao, edicao, cartorio } = await PricingService.calculateSplits(finalAmount, {
         isExpressSale: true,
         paymentMethod: finalMethod,
-        hasEditor: !!editorId
+        hasEditor: !!editorId,
+        productType: finalProduct
       });
 
       const order = await prisma.order.create({
         data: {
           eventId: event.id,
           clienteId: user.id,
-          editorId: editorId || null,
+          editorId: (editorId && !isPhysical) ? editorId : null,
           valor: finalAmount,
           status: isDigital ? "PENDENTE" : "APROVADO",
           hasPaid: !isDigital,
