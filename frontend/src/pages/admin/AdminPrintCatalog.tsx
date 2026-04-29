@@ -9,7 +9,6 @@ import {
   Eye, 
   EyeOff, 
   Tag, 
-  RotateCcw,
   Search,
   TrendingUp,
   Package,
@@ -47,7 +46,6 @@ export const AdminPrintCatalog: React.FC = () => {
   const [products, setProducts] = useState<PrintProduct[]>([]);
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState<string | null>(null);
-  const [seeding, setSeeding] = useState(false);
   const [showInactive, setShowInactive] = useState(true);
   const [filterCategory, setFilterCategory] = useState("");
   const [searchTerm, setSearchTerm] = useState("");
@@ -84,12 +82,6 @@ export const AdminPrintCatalog: React.FC = () => {
     load();
   };
 
-  const handleSeedCK = async () => {
-    if (!confirm("Restaurar tabelas padrão CK?")) return;
-    setSeeding(true);
-    try { await API.post("/admin/print-catalog/seed", {}); load(); } 
-    finally { setSeeding(false); }
-  };
 
   const stats = useMemo(() => {
     const active = products.filter(p => p.active);
