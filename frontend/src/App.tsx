@@ -19,6 +19,7 @@ import { PartnerLP } from "./pages/PartnerLP";
 import { NotFoundPage } from "./pages/NotFoundPage";
 import { CheckoutPage } from "./pages/CheckoutPage";
 import ResetPasswordPage from "./pages/ResetPasswordPage";
+import LuxuryExperiencePage from "./pages/LuxuryExperiencePage";
 import { useState, useEffect } from "react";
 import { API as api } from "./lib/api";
 
@@ -60,6 +61,7 @@ const AnimatedRoutes = () => {
         <Route path="/p/:slug" element={<PartnerLP />} />
         <Route path="/checkout" element={<CheckoutPage />} />
         <Route path="/checkout/:orderId" element={<CheckoutPage />} />
+        <Route path="/delivery/:id" element={<LuxuryExperiencePage />} />
 
         {/* Redireciona para o painel correto */}
         <Route path="/dashboard" element={

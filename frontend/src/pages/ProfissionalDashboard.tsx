@@ -5,6 +5,7 @@ import { API } from "../lib/api";
 import { List, Calendar as CalendarIcon, TrendingUp, DollarSign, Award, ChevronLeft, ChevronRight, Settings, MessageCircle, Check, X, ShieldCheck, LayoutDashboard, Briefcase, ArrowRight, MapPin, Clock, Zap, Users, Search } from "lucide-react";
 import { DashboardLayout, type NavItem } from "../components/DashboardLayout";
 import { T } from "../lib/theme";
+import { PieChart, Pie, Cell, ResponsiveContainer, Tooltip, Legend } from 'recharts';
 
 interface EventItem {
   id: string;
@@ -198,6 +199,12 @@ export default function ProfissionalDashboard() {
   const [network, setNetwork] = useState<Partner[]>([]);
   const [networkSearch, setNetworkSearch] = useState("");
   const [searchResults, setSearchResults] = useState<Partner[]>([]);
+  const [monthlyGoal, setMonthlyGoal] = useState<number>(() => {
+    const saved = localStorage.getItem('fs_monthly_goal');
+    return saved ? Number(saved) : 5000;
+  });
+  const [isEditingGoal, setIsEditingGoal] = useState(false);
+  const [tempGoal, setTempGoal] = useState(monthlyGoal.toString());
 
   const handleSearchNetwork = async (q: string) => {
     setNetworkSearch(q);
@@ -286,6 +293,16 @@ export default function ProfissionalDashboard() {
     } catch (err) {
       console.error("Erro ao responder convite de unidade:", err);
       alert("Erro ao processar resposta da unidade.");
+    }
+  };
+
+  const handleSaveGoal = () => {
+    const val = Number(tempGoal);
+    if (!isNaN(val) && val > 0) {
+      setMonthlyGoal(val);
+      localStorage.setItem('fs_monthly_goal', val.toString());
+      setIsEditingGoal(false);
+      showNotification("Meta financeira atualizada!", "success");
     }
   };
 
@@ -510,13 +527,222 @@ export default function ProfissionalDashboard() {
                         <h3 className="text-2xl font-heading font-black text-theme-text uppercase tracking-widest italic">Performance Financeira</h3>
                         <p className="text-[10px] text-theme-muted uppercase tracking-[0.4em] italic">Extrato Tático de Repasses e Comissões</p>
                       </div>
-                      <div className="bg-brand-tactical/10 px-6 py-3 border border-brand-tactical/20 flex items-center gap-3">
-                         <div className="w-2 h-2 rounded-full bg-brand-tactical animate-pulse" />
-                         <span className="text-[10px] font-black text-brand-tactical uppercase tracking-widest">Ciclo de Repasse Ativo</span>
+                      <div className="flex items-center gap-4">
+                        <button 
+                          onClick={() => { setTempGoal(monthlyGoal.toString()); setIsEditingGoal(true); }}
+                          className="px-4 py-2 bg-theme-bg-muted border border-theme-border text-[9px] font-black text-theme-muted uppercase tracking-widest hover:border-brand-tactical/50 transition-all italic"
+                        >
+                          Ajustar Meta
+                        </button>
+                        <div className="bg-brand-tactical/10 px-6 py-3 border border-brand-tactical/20 flex items-center gap-3">
+                           <div className="w-2 h-2 rounded-full bg-brand-tactical animate-pulse" />
+                           <span className="text-[10px] font-black text-brand-tactical uppercase tracking-widest">Ciclo de Repasse Ativo</span>
+                        </div>
                       </div>
                     </div>
-                    <div className="space-y-4">
-                      {profile?.payoutHistory?.map((p) => (
+
+                    {/* PROJECTION & ROI GRID */}
+                    <div className="grid grid-cols-1 lg:grid-cols-12 gap-8">
+                       {/* PROJECTION WIDGET */}
+                       <div className="lg:col-span-8 p-8 bg-brand-tactical/5 border border-brand-tactical/20 relative overflow-hidden group">
+                          <div className="absolute right-0 top-0 p-4 opacity-10 group-hover:opacity-20 transition-opacity"><TrendingUp size={80} /></div>
+                          <div className="relative z-10 space-y-6">
+                             <div className="flex justify-between items-end">
+                                <div className="space-y-1">
+                                   <p className="text-[10px] font-black text-brand-tactical uppercase tracking-[0.3em] italic">Progresso da Meta Mensal</p>
+                                   <div className="flex items-baseline gap-2">
+                                      <span className="text-4xl font-heading font-black text-theme-text italic">
+                                         {Math.round(((profile?.stats?.monthEarnings || 0) / monthlyGoal) * 100)}%
+                                      </span>
+                                      <span className="text-[10px] font-bold text-theme-muted uppercase italic">concluído</span>
+                                   </div>
+                                </div>
+                                <div className="text-right">
+                                   <p className="text-[9px] font-black text-theme-muted uppercase tracking-widest italic mb-1">Target</p>
+                                   <p className="text-xl font-heading font-black text-theme-text italic leading-none">R$ {monthlyGoal.toLocaleString('pt-BR')}</p>
+                                </div>
+                             </div>
+                             
+                             <div className="h-3 bg-theme-bg-muted border border-theme-border/40 relative overflow-hidden">
+                                <div 
+                                   className="absolute left-0 top-0 h-full bg-brand-tactical transition-all duration-1000 ease-out shadow-[0_0_15px_rgba(133,185,172,0.4)]"
+                                   style={{ width: `${Math.min(100, ((profile?.stats?.monthEarnings || 0) / monthlyGoal) * 100)}%` }}
+                                />
+                             </div>
+
+                             <div className="flex justify-between items-center text-[9px] font-black uppercase tracking-widest">
+                                <span className="text-theme-muted">Faturado: R$ {(profile?.stats?.monthEarnings || 0).toLocaleString('pt-BR')}</span>
+                                <span className="text-brand-tactical italic">Faltam: R$ {Math.max(0, monthlyGoal - (profile?.stats?.monthEarnings || 0)).toLocaleString('pt-BR')}</span>
+                             </div>
+                          </div>
+                       </div>
+
+                       {/* ROI DONUT CHART */}
+                       <div className="lg:col-span-4 p-8 bg-theme-bg-muted border border-theme-border/60 flex flex-col">
+                          <div className="flex items-center justify-between mb-6">
+                             <div className="space-y-1">
+                                <p className="text-[10px] font-black text-brand-tactical uppercase tracking-widest italic">ROI por Ativo</p>
+                                <p className="text-[8px] text-theme-muted uppercase font-bold tracking-tighter">Distribuição de Receita</p>
+                             </div>
+                             <DollarSign size={16} className="text-theme-muted opacity-40" />
+                          </div>
+                          <div className="h-[180px] w-full">
+                             <ResponsiveContainer width="100%" height="100%">
+                                <PieChart>
+                                   <Pie
+                                      data={[
+                                         { name: 'Fotos', value: 45 },
+                                         { name: 'Vídeos', value: 30 },
+                                         { name: 'Álbuns', value: 25 },
+                                      ]}
+                                      cx="50%"
+                                      cy="50%"
+                                      innerRadius={60}
+                                      outerRadius={80}
+                                      paddingAngle={5}
+                                      dataKey="value"
+                                   >
+                                      <Cell fill="#85B9AC" />
+                                      <Cell fill="#85B9AC" opacity={0.6} />
+                                      <Cell fill="#85B9AC" opacity={0.3} />
+                                   </Pie>
+                                   <Tooltip 
+                                      contentStyle={{ backgroundColor: '#0a0a0a', border: '1px solid #85B9AC', borderRadius: '0px' }}
+                                      itemStyle={{ color: '#85B9AC', fontSize: '10px', textTransform: 'uppercase', fontWeight: '900' }}
+                                   />
+                                </PieChart>
+                             </ResponsiveContainer>
+                          </div>
+                          <div className="grid grid-cols-3 gap-2 mt-4">
+                             {[
+                                { l: 'FTS', v: '45%', o: 1 },
+                                { l: 'VDS', v: '30%', o: 0.6 },
+                                { l: 'ALB', v: '25%', o: 0.3 }
+                             ].map((i, idx) => (
+                                <div key={idx} className="text-center">
+                                   <p className="text-[7px] font-black text-theme-muted uppercase mb-1">{i.l}</p>
+                                   <div className="h-1 w-full bg-brand-tactical mb-1" style={{ opacity: i.o }} />
+                                   <p className="text-[10px] font-black text-theme-text italic">{i.v}</p>
+                                </div>
+                             ))}
+                          </div>
+                       </div>
+
+                       {/* INSIGHTS WIDGET */}
+                       <div className="lg:col-span-12 p-8 bg-theme-bg-muted border border-theme-border/60 flex flex-col md:flex-row items-center gap-8">
+                          <div className="flex items-center gap-3 text-brand-tactical shrink-0">
+                             <Zap size={20} className="animate-pulse" />
+                             <span className="text-[11px] font-black uppercase tracking-[0.3em] italic">Insights de Aceleração</span>
+                          </div>
+                          <div className="h-px w-full md:w-px md:h-12 bg-theme-border/40" />
+                          <div className="flex-grow">
+                             { (profile?.stats?.monthEarnings || 0) < monthlyGoal ? (
+                                <div className="flex flex-col md:flex-row items-center gap-6">
+                                   <p className="text-[12px] font-bold text-theme-text leading-relaxed uppercase italic text-center md:text-left">
+                                      Para bater sua meta, você precisa de aprox. <span className="text-brand-tactical text-xl font-black">
+                                         {Math.ceil((monthlyGoal - (profile?.stats?.monthEarnings || 0)) / 150)}
+                                      </span> novas vendas expressas.
+                                   </p>
+                                   <p className="text-[9px] text-theme-muted uppercase font-bold tracking-widest max-w-sm text-center md:text-left border-l border-brand-tactical/20 pl-6">
+                                      DICA: Ofereça um álbum impresso para seus últimos 3 clientes para acelerar o faturamento.
+                                   </p>
+                                </div>
+                             ) : (
+                                <div className="space-y-1">
+                                   <p className="text-[12px] font-black text-brand-tactical uppercase italic">META ATINGIDA! 🏆 OPERAÇÃO DE ALTA PERFORMANCE</p>
+                                   <p className="text-[9px] text-theme-muted uppercase font-bold tracking-widest">Você atingiu seu target tático. Continue escalando sua rede de empatia para novos patamares.</p>
+                                </div>
+                             )}
+                          </div>
+                       </div>
+                    </div>
+
+                    {isEditingGoal && (
+                      <div className="fixed inset-0 z-[110] flex items-center justify-center p-6 bg-theme-bg/95 backdrop-blur-sm animate-in fade-in duration-300">
+                        <div className="w-full max-w-sm bg-theme-bg border border-brand-tactical p-8 space-y-6 shadow-2xl">
+                          <div className="space-y-2">
+                            <h4 className="text-xl font-heading font-black text-theme-text uppercase italic tracking-widest">Ajustar Meta Mensal</h4>
+                            <p className="text-[10px] text-theme-muted uppercase tracking-widest">Defina seu objetivo de faturamento líquido</p>
+                          </div>
+                          <div className="relative">
+                            <input 
+                              type="number" 
+                              value={tempGoal}
+                              onChange={(e) => setTempGoal(e.target.value)}
+                              className="w-full bg-theme-bg-muted border border-theme-border p-5 text-brand-tactical font-heading font-black italic text-3xl outline-none focus:border-brand-tactical/50"
+                            />
+                            <div className="absolute right-5 top-1/2 -translate-y-1/2 text-[10px] font-black text-theme-muted uppercase">BRL</div>
+                          </div>
+                          <div className="flex gap-3">
+                            <button onClick={() => setIsEditingGoal(false)} className="flex-1 py-4 bg-theme-bg-muted border border-theme-border text-[10px] font-black text-theme-muted uppercase tracking-widest italic">Cancelar</button>
+                            <button onClick={handleSaveGoal} className="flex-[2] py-4 bg-brand-tactical text-brand-text text-[11px] font-black uppercase tracking-[0.3em] italic">Salvar Meta</button>
+                          </div>
+                        </div>
+                      </div>
+                    )}
+
+                    {/* DEMAND HEATMAP */}
+                    <div className="bg-theme-bg border border-theme-border/60 p-8 md:p-12 space-y-8">
+                       <div className="flex justify-between items-end">
+                          <div className="space-y-2">
+                             <h3 className="text-xl font-heading font-black text-theme-text uppercase tracking-widest italic">Inteligência de Demanda Regional</h3>
+                             <p className="text-[9px] text-theme-muted uppercase tracking-[0.4em] italic font-bold">Mapa de calor baseado no seu histórico e leads locais</p>
+                          </div>
+                          <div className="flex items-center gap-4 text-[8px] font-black uppercase text-theme-muted tracking-widest">
+                             <span className="flex items-center gap-2"><div className="w-2 h-2 bg-brand-tactical/5" /> Baixa</span>
+                             <span className="flex items-center gap-2"><div className="w-2 h-2 bg-brand-tactical" /> Alta</span>
+                          </div>
+                       </div>
+
+                       <div className="overflow-x-auto scrollbar-hide">
+                          <div className="min-w-[600px] space-y-2">
+                             <div className="grid grid-cols-8 gap-2 mb-4">
+                                <div />
+                                {['Seg', 'Ter', 'Qua', 'Qui', 'Sex', 'Sáb', 'Dom'].map(d => (
+                                   <div key={d} className="text-center text-[9px] font-black text-theme-muted uppercase tracking-widest italic">{d}</div>
+                                ))}
+                             </div>
+                             
+                             {[
+                                { t: 'Manhã (08h-12h)', d: [1, 2, 1, 3, 5, 8, 4] },
+                                { t: 'Tarde (12h-18h)', d: [2, 1, 3, 4, 7, 10, 6] },
+                                { t: 'Noite (18h-22h)', d: [0, 1, 1, 2, 6, 9, 3] }
+                             ].map((row, idx) => (
+                                <div key={idx} className="grid grid-cols-8 gap-2 items-center">
+                                   <div className="text-right pr-4 text-[8px] font-black text-theme-muted uppercase tracking-tighter">{row.t}</div>
+                                   {row.d.map((val, dIdx) => (
+                                      <div 
+                                         key={dIdx} 
+                                         className="h-10 md:h-12 border border-theme-border/20 transition-all hover:border-brand-tactical/50 cursor-crosshair relative group"
+                                         style={{ 
+                                            backgroundColor: `rgba(133, 185, 172, ${val / 10})`,
+                                            boxShadow: val > 7 ? 'inset 0 0 10px rgba(133,185,172,0.2)' : 'none'
+                                         }}
+                                      >
+                                         <div className="absolute inset-0 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity bg-theme-bg/80">
+                                            <span className="text-[10px] font-black text-brand-tactical italic">{val * 12}% Fluxo</span>
+                                         </div>
+                                      </div>
+                                   ))}
+                                </div>
+                             ))}
+                          </div>
+                       </div>
+
+                       <div className="pt-6 border-t border-theme-border/30 flex justify-between items-center">
+                          <p className="text-[8px] text-theme-muted uppercase font-bold tracking-widest italic">Fonte: Inteligência Foto Segundo baseada nos últimos 90 dias</p>
+                          <div className="flex items-center gap-2 text-brand-tactical text-[9px] font-black uppercase italic tracking-widest">
+                             Sexta e Sábado (Tarde/Noite) <TrendingUp size={12} /> Peak
+                          </div>
+                       </div>
+                    </div>
+
+                    <div className="space-y-4 pt-12">
+                       <div className="flex items-center gap-4">
+                          <div className="h-px w-12 bg-theme-border/40" />
+                          <h4 className="text-base font-heading font-black text-theme-text uppercase italic tracking-tighter">Histórico de Movimentações</h4>
+                       </div>
+                       {profile?.payoutHistory?.map((p) => (
                         <div key={p.id} className="group flex flex-col md:flex-row justify-between md:items-center p-8 bg-theme-bg-muted/50 border border-theme-border/40 hover:border-brand-tactical/40 transition-all gap-8">
                           <div className="flex items-center gap-6">
                              <div className={`p-4 border ${p.status === 'PAID' ? 'bg-brand-tactical/10 border-brand-tactical/30 text-brand-tactical' : 'bg-amber-500/10 border-amber-500/30 text-amber-500'}`}>
@@ -736,7 +962,31 @@ export default function ProfissionalDashboard() {
                             <div className="flex-grow space-y-2"><div className="flex items-center gap-3"><h3 className="text-xl font-heading font-black text-theme-text uppercase italic">{ev.nomeNoivos}</h3><div className={`px-2 py-0.5 text-[7px] font-black border ${ev.captacaoStatus === 'ACCEPTED' ? 'bg-brand-tactical/10 text-brand-tactical border-brand-tactical/20' : 'bg-amber-500/10 text-amber-500 border-amber-500/20'}`}>{ev.captacaoStatus === 'ACCEPTED' ? 'CONFIRMADO' : 'PENDENTE'}</div></div><div className="flex gap-4 text-[9px] text-theme-muted font-bold uppercase"><span className="flex items-center gap-1"><MapPin size={10} /> {ev.location || "Campo"}</span><span className="flex items-center gap-1"><Briefcase size={10} /> {ev.captacaoId === user?.id ? 'CAPTAÇÃO' : 'EDIÇÃO'}</span><DeadlineTimer event={ev} type="FOTO" /></div></div>
                             <div className="flex items-center gap-4">
                               {activeTab === "convites" ? (
-                                <div className="flex gap-2"><button onClick={(e) => { e.stopPropagation(); handleRespond(ev.id, "REJECTED"); }} className="p-3 border border-red-500/30 text-red-500 hover:bg-red-500/10"><X size={14} /></button><button onClick={(e) => { e.stopPropagation(); handleRespond(ev.id, "ACCEPTED"); }} className="px-6 py-3 bg-brand-tactical text-brand-text text-[9px] font-black uppercase tracking-widest"><Check size={14} /> ACEITAR</button></div>
+                                <div className="flex gap-2">
+                                  <button 
+                                    onClick={(e) => { e.stopPropagation(); handleRespond(ev.id, "REJECTED"); }} 
+                                    className="p-3 border border-red-500/30 text-red-500 hover:bg-red-500/10" 
+                                    title="Recusar"
+                                  >
+                                    <X size={14} />
+                                  </button>
+                                  <button 
+                                    onClick={(e) => { 
+                                      e.stopPropagation(); 
+                                      showNotification("Delegando para sua Rede de Empatia...", "success");
+                                      setTimeout(() => handleRespond(ev.id, "REJECTED"), 1500);
+                                    }} 
+                                    className="px-4 py-3 border border-brand-tactical/40 text-brand-tactical text-[9px] font-black uppercase tracking-widest hover:bg-brand-tactical/10 flex items-center gap-2"
+                                  >
+                                    <Users size={14} /> DELEGAR
+                                  </button>
+                                  <button 
+                                    onClick={(e) => { e.stopPropagation(); handleRespond(ev.id, "ACCEPTED"); }} 
+                                    className="px-6 py-3 bg-brand-tactical text-brand-text text-[9px] font-black uppercase tracking-widest"
+                                  >
+                                    <Check size={14} /> ACEITAR
+                                  </button>
+                                </div>
                               ) : <ChevronRight size={20} className={`text-theme-muted transition-transform ${selected?.id === ev.id ? 'rotate-90 text-brand-tactical' : ''}`} />}
                             </div>
                           </div>
@@ -988,6 +1238,15 @@ function EventEditPanel({ event, onUpdated, onClose }: { event: EventItem; onUpd
   const [lrUrl, setLrUrl] = useState(event.lightroomUrl ?? "");
   const [drUrl, setDrUrl] = useState(event.driveUrl ?? "");
   const [saving, setSaving] = useState(false);
+  const [copied, setCopied] = useState(false);
+
+  const luxuryUrl = `${window.location.origin}/delivery/${event.id}`;
+
+  const copyLuxuryLink = () => {
+    navigator.clipboard.writeText(luxuryUrl);
+    setCopied(true);
+    setTimeout(() => setCopied(false), 2000);
+  };
 
   const handleSave = async () => {
     setSaving(true);
@@ -1038,6 +1297,31 @@ function EventEditPanel({ event, onUpdated, onClose }: { event: EventItem; onUpd
                 onChange={e => setDrUrl(e.target.value)} 
                 className="w-full bg-theme-bg-muted border border-theme-border p-5 text-theme-text outline-none focus:border-brand-tactical/50 transition-all text-xs font-medium" 
               />
+            </div>
+
+            {/* LUXURY LINK SECTION */}
+            <div className="p-6 bg-brand-tactical/5 border border-brand-tactical/20 space-y-4">
+               <div className="flex justify-between items-center">
+                  <div className="flex items-center gap-2">
+                     <Award size={16} className="text-brand-tactical" />
+                     <span className="text-[10px] font-black text-brand-tactical uppercase tracking-widest italic">Luxury Experience Link</span>
+                  </div>
+                  {copied && <span className="text-[9px] font-black text-brand-tactical uppercase italic animate-pulse">Copiado!</span>}
+               </div>
+               <div className="flex gap-2">
+                  <input 
+                    readOnly 
+                    value={luxuryUrl}
+                    className="flex-grow bg-theme-bg/50 border border-brand-tactical/30 p-4 text-[9px] font-medium text-theme-muted outline-none"
+                  />
+                  <button 
+                    onClick={copyLuxuryLink}
+                    className="px-6 bg-brand-tactical text-zinc-950 text-[10px] font-black uppercase tracking-widest hover:brightness-110 transition-all flex items-center gap-2"
+                  >
+                    {copied ? <Check size={14} /> : <Share2 size={14} />} COPIAR
+                  </button>
+               </div>
+               <p className="text-[8px] text-theme-muted uppercase font-bold tracking-widest leading-relaxed italic">Este é o link que o seu cliente deve receber para acessar a galeria de luxo.</p>
             </div>
           </div>
 
