@@ -176,7 +176,6 @@ export default function ProfissionalDashboard() {
   const [viewTab, setViewTab] = useState<"lista" | "calendario">("lista");
   const [activeTab, setActiveTab] = useState<"agenda" | "convites" | "financeiro" | "servicos" | "network">("agenda");
   const [catalogServices, setCatalogServices] = useState<ServiceCatalog[]>([]);
-  const [savingPrices, setSavingPrices] = useState(false);
   const [unitInvites, setUnitInvites] = useState<UnitInvite[]>([]);
   const [showNewServicesModal, setShowNewServicesModal] = useState(false);
   const [hasCheckedInvites, setHasCheckedInvites] = useState(false);
@@ -319,48 +318,6 @@ export default function ProfissionalDashboard() {
       showNotification(errorMessage, 'error');
     } finally {
       setLoading(false);
-    }
-  };
-
-  const handleSavePricing = async () => {
-    if (!profile) return;
-    setSavingPrices(true);
-    try {
-      // Regra dos 10 Euros
-      let minBrl = 60;
-      try {
-        const resp = await fetch("https://economia.awesomeapi.com.br/json/last/EUR-BRL");
-        const coinData = await resp.json();
-        const eurRate = Number(coinData.EURBRL.bid);
-        minBrl = +(eurRate * 10).toFixed(2);
-      } catch (e) { console.warn("Erro ao buscar cotação, usando fallback.", e); }
-
-      // REGRA DE MERITOCRACIA (Escala Baseada em Equipamento)
-      const multiplier = profile.equipmentMultiplier || 1.0;
-      const ceilingRate = 200;
-      const maxAllowed = minBrl + (ceilingRate - minBrl) * (multiplier - 1) / (5 - 1);
-
-      if (Number(profile.hourlyRate) < minBrl) {
-        showNotification(`Valor muito baixo. O mínimo permitido é 10 Euros (R$ ${minBrl.toLocaleString('pt-BR', { minimumFractionDigits: 2 })}).`, "error");
-        setSavingPrices(false);
-        return;
-      }
-
-      if (Number(profile.hourlyRate) > maxAllowed) {
-        showNotification(`Teto de categoria atingido. Seu limite atual é R$ ${maxAllowed.toFixed(2)}. Cadastre mais equipamentos para subir de nível e cobrar mais.`, "error");
-        setSavingPrices(false);
-        return;
-      }
-
-      const { data } = await API.patch("profissional/me", {
-        hourlyRate: profile.hourlyRate
-      });
-      setProfile(data);
-      showNotification("Configurações de precificação atualizadas!", "success");
-    } catch {
-      showNotification("Erro ao atualizar precificação", "error");
-    } finally {
-      setSavingPrices(false);
     }
   };
 
