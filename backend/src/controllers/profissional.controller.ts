@@ -276,6 +276,29 @@ export async function updateProfile(req: AuthRequest, res: Response): Promise<vo
     // 3. Normalização: Piso 1.0 | Teto 5.0
     const finalMultiplier = Number(Math.min(Math.max(calculatedMultiplier, 1.0), 5.0).toFixed(2));
 
+    // 4. Regra de Meritocracia Dinâmica (Piso 10 EUR | Teto 200 BRL)
+    let eurRate = 6.0; // Fallback
+    try {
+      const { data: coinData } = await axios.get("https://economia.awesomeapi.com.br/json/last/EUR-BRL");
+      eurRate = Number(coinData.EURBRL.bid);
+    } catch (e) { 
+      console.warn("[Meritocracia] Erro ao buscar cotação, usando fallback."); 
+    }
+
+    const floorRate = eurRate * 10;
+    const ceilingRate = 200;
+    
+    // O teto permitido para este profissional baseado no seu Multiplicador Técnico
+    const maxAllowedRate = floorRate + (ceilingRate - floorRate) * (finalMultiplier - 1) / (5 - 1);
+    
+    let finalHourlyRate = Number(hourlyRate);
+    if (hourlyRate !== undefined) {
+      // Garante o piso de 10 Euros
+      if (finalHourlyRate < floorRate) finalHourlyRate = floorRate;
+      // Garante o teto baseado na meritocracia técnica
+      if (finalHourlyRate > maxAllowedRate) finalHourlyRate = maxAllowedRate;
+    }
+
     const updated = await prisma.profissional.update({
       where: { userId },
       data: {
@@ -283,8 +306,8 @@ export async function updateProfile(req: AuthRequest, res: Response): Promise<vo
         ...(equipmentList !== undefined && { equipmentList }),
         ...(otherHabilities !== undefined && { otherHabilities }),
         ...(experienceYears !== undefined && { experienceYears: Number(experienceYears) }),
-        ...(hourlyRate !== undefined && { hourlyRate: Number(hourlyRate) }),
-        equipmentMultiplier: finalMultiplier // Campo agora é automatizado pelo sistema
+        ...(hourlyRate !== undefined && { hourlyRate: finalHourlyRate }),
+        equipmentMultiplier: finalMultiplier 
       }
     });
 

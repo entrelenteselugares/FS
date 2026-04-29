@@ -326,19 +326,28 @@ export default function ProfissionalDashboard() {
     if (!profile) return;
     setSavingPrices(true);
     try {
-      // Regra dos 10 Euros: Busca cotação atual
-      let minBrl = 60; // Fallback de segurança
+      // Regra dos 10 Euros
+      let minBrl = 60;
       try {
         const resp = await fetch("https://economia.awesomeapi.com.br/json/last/EUR-BRL");
         const coinData = await resp.json();
         const eurRate = Number(coinData.EURBRL.bid);
         minBrl = +(eurRate * 10).toFixed(2);
-      } catch (e) { 
-        console.warn("Erro ao buscar cotação, usando fallback.", e); 
-      }
+      } catch (e) { console.warn("Erro ao buscar cotação, usando fallback.", e); }
+
+      // REGRA DE MERITOCRACIA (Escala Baseada em Equipamento)
+      const multiplier = profile.equipmentMultiplier || 1.0;
+      const ceilingRate = 200;
+      const maxAllowed = minBrl + (ceilingRate - minBrl) * (multiplier - 1) / (5 - 1);
 
       if (Number(profile.hourlyRate) < minBrl) {
-        showNotification(`Valor muito baixo. O mínimo permitido pela plataforma é 10 Euros (R$ ${minBrl.toLocaleString('pt-BR', { minimumFractionDigits: 2 })}).`, "error");
+        showNotification(`Valor muito baixo. O mínimo permitido é 10 Euros (R$ ${minBrl.toLocaleString('pt-BR', { minimumFractionDigits: 2 })}).`, "error");
+        setSavingPrices(false);
+        return;
+      }
+
+      if (Number(profile.hourlyRate) > maxAllowed) {
+        showNotification(`Teto de categoria atingido. Seu limite atual é R$ ${maxAllowed.toFixed(2)}. Cadastre mais equipamentos para subir de nível e cobrar mais.`, "error");
         setSavingPrices(false);
         return;
       }
@@ -675,17 +684,17 @@ export default function ProfissionalDashboard() {
                     <div className="space-y-4">
                       <div className="flex items-center gap-3"><div className="p-2 bg-theme-bg-muted border border-theme-border/60 text-brand-tactical"><Clock size={16} /></div><label className="text-[11px] font-black text-theme-text uppercase tracking-widest italic">Valor Hora (R$)</label></div>
                       <input type="number" className="w-full bg-theme-bg-muted border border-theme-border/60 p-5 text-xl font-heading font-black text-theme-text italic outline-none focus:border-brand-tactical transition-all" value={profile?.hourlyRate || ""} onChange={(e) => setProfile(p => p ? { ...p, hourlyRate: Number(e.target.value) } : null)} placeholder="0.00" />
-                      <p className="text-[9px] text-theme-muted uppercase italic font-bold">Mínimo Global: 10 Euros (Baseado na cotação atual)</p>
+                      <p className="text-[9px] text-theme-muted uppercase italic font-bold">Mínimo Global: 10 Euros | Meritocracia Ativa</p>
                     </div>
                     <div className="space-y-4">
                       <div className="flex items-center gap-3"><div className="p-2 bg-theme-bg-muted border border-theme-border/60 text-brand-tactical"><Zap size={16} /></div><label className="text-[11px] font-black text-theme-text uppercase tracking-widest italic">Multiplicador Técnico</label></div>
                       <div className="w-full bg-theme-bg-muted/50 border border-theme-border/60 p-5 text-xl font-heading font-black text-brand-tactical italic flex justify-between items-center group relative">
                         <span>{profile?.equipmentMultiplier || "1.0"}</span>
                         <div className="flex flex-col items-end">
-                          <span className="text-[8px] font-black uppercase text-theme-muted tracking-tighter">Automação Ativa</span>
+                          <span className="text-[8px] font-black uppercase text-theme-muted tracking-tighter">Escala de Meritocracia</span>
                         </div>
                       </div>
-                      <p className="text-[9px] text-theme-muted uppercase italic font-bold">O multiplicador é calculado com base no seu inventário e experiência. <button onClick={() => setIsProfileOpen(true)} className="text-brand-tactical hover:underline cursor-pointer">GERENCIAR ATIVOS</button></p>
+                      <p className="text-[9px] text-theme-muted uppercase italic font-bold">Upgrade seu inventário para desbloquear maiores valores hora. <button onClick={() => setIsProfileOpen(true)} className="text-brand-tactical hover:underline cursor-pointer">GERENCIAR ATIVOS</button></p>
                     </div>
                  </div>
                  <button onClick={handleSavePricing} disabled={savingPrices} className="w-full md:w-auto px-12 py-5 bg-brand-tactical text-zinc-950 text-[11px] font-black uppercase tracking-[0.3em] flex items-center justify-center gap-4 hover:brightness-110 disabled:opacity-40 transition-all shadow-xl shadow-brand-tactical/20">{savingPrices ? "SINCRONIZANDO..." : <><Check size={20} /> ATUALIZAR VALOR HORA</>}</button>
