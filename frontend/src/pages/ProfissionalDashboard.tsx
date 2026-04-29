@@ -790,14 +790,13 @@ export default function ProfissionalDashboard() {
                 ))}
               </div>
             </div>
-
-            <div className="p-6 md:p-8 flex flex-col flex-grow relative z-10">
+<div className="p-6 md:p-8 flex flex-col flex-grow relative z-10">
               {/* FASE 01: DADOS DO CLIENTE */}
               {expressStep === 1 && (
                 <div className="space-y-6 animate-in slide-in-from-right-4 flex flex-col h-full">
                   <div className="space-y-4 flex-grow">
                     <div className="space-y-2">
-                      <label className="text-[8px] font-black text-theme-muted uppercase tracking-widest italic opacity-60">E-mail do Cliente *</label>
+                      <label className="text-[10px] font-black text-theme-muted uppercase tracking-widest italic opacity-60">E-mail do Cliente *</label>
                       <input 
                         type="email" 
                         autoFocus 
@@ -814,12 +813,12 @@ export default function ProfissionalDashboard() {
                             }
                           } catch (err) { console.error(err); }
                         }}
-                        className="w-full bg-theme-bg-muted border border-theme-border p-4 text-theme-text outline-none focus:border-brand-tactical/50 transition-all font-medium text-base" 
+                        className="w-full bg-theme-bg-muted border border-theme-border p-4 text-theme-text outline-none focus:border-brand-tactical/50 transition-all font-medium text-sm" 
                       />
                     </div>
                     <div className="space-y-4">
                       <div className="space-y-2">
-                        <label className="text-[8px] font-black text-theme-muted uppercase tracking-widest italic opacity-60">Nome Completo</label>
+                        <label className="text-[10px] font-black text-theme-muted uppercase tracking-widest italic opacity-60">Nome Completo</label>
                         <input 
                           type="text" 
                           placeholder="Ex: João Silva"
@@ -829,7 +828,7 @@ export default function ProfissionalDashboard() {
                         />
                       </div>
                       <div className="space-y-2">
-                        <label className="text-[8px] font-black text-theme-muted uppercase tracking-widest italic opacity-60">WhatsApp</label>
+                        <label className="text-[10px] font-black text-theme-muted uppercase tracking-widest italic opacity-60">WhatsApp</label>
                         <input 
                           type="tel" 
                           placeholder="(00) 00000-0000"
@@ -843,7 +842,7 @@ export default function ProfissionalDashboard() {
                   <button 
                     disabled={!expressFormData.customerEmail} 
                     onClick={() => setExpressStep(2)} 
-                    className="w-full py-4 bg-brand-tactical text-brand-text text-[10px] font-black uppercase tracking-[0.4em] hover:brightness-110 disabled:opacity-40 shadow-xl shadow-brand-tactical/20 italic mt-auto"
+                    className="w-full py-4 bg-brand-tactical text-brand-text text-[11px] font-black uppercase tracking-[0.3em] hover:brightness-110 disabled:opacity-40 shadow-xl shadow-brand-tactical/20 italic mt-auto"
                   >
                     CONTINUAR OPERAÇÃO
                   </button>
@@ -855,7 +854,7 @@ export default function ProfissionalDashboard() {
                 <div className="space-y-6 animate-in slide-in-from-right-4 flex flex-col h-full">
                   <div className="space-y-4 flex-grow">
                     <div className="space-y-2">
-                      <label className="text-[8px] font-black text-theme-muted uppercase tracking-widest italic opacity-60">Valor Nominal (R$)</label>
+                      <label className="text-[10px] font-black text-theme-muted uppercase tracking-widest italic opacity-60">Valor Nominal (R$)</label>
                       <div className="relative">
                         <input 
                           type="number" 
@@ -863,11 +862,11 @@ export default function ProfissionalDashboard() {
                           onChange={e => setExpressFormData(p => ({ ...p, amount: Number(e.target.value) }))} 
                           className="w-full bg-theme-bg-muted border border-theme-border p-5 text-brand-tactical font-heading font-black italic text-3xl outline-none" 
                         />
-                        <div className="absolute right-5 top-1/2 -translate-y-1/2 text-[10px] font-black text-theme-muted uppercase tracking-widest">BRL</div>
+                        <div className="absolute right-5 top-1/2 -translate-y-1/2 text-[11px] font-black text-theme-muted uppercase tracking-widest">BRL</div>
                       </div>
                     </div>
                     <div className="space-y-2">
-                      <label className="text-[8px] font-black text-theme-muted uppercase tracking-widest italic opacity-60">Categoria de Ativo</label>
+                      <label className="text-[10px] font-black text-theme-muted uppercase tracking-widest italic opacity-60">Categoria de Ativo</label>
                       <div className="grid grid-cols-1 gap-2">
                         {([
                           { id: "FOTOS", label: "📸 FOTOS (ENTREGA DIGITAL)" },
@@ -878,7 +877,7 @@ export default function ProfissionalDashboard() {
                           <button 
                             key={p.id}
                             onClick={() => setExpressFormData(prev => ({ ...prev, productType: p.id }))}
-                            className={`p-4 text-left text-[9px] font-black uppercase tracking-widest border transition-all ${expressFormData.productType === p.id ? 'bg-brand-tactical text-zinc-950 border-brand-tactical shadow-lg' : 'bg-theme-bg-muted border-theme-border/60 text-theme-muted hover:border-brand-tactical/40'}`}
+                            className={`p-4 text-left text-[11px] font-black uppercase tracking-widest border transition-all ${expressFormData.productType === p.id ? 'bg-brand-tactical text-zinc-950 border-brand-tactical shadow-lg' : 'bg-theme-bg-muted border-theme-border/60 text-theme-muted hover:border-brand-tactical/40'}`}
                           >
                             {p.label}
                           </button>
@@ -887,8 +886,8 @@ export default function ProfissionalDashboard() {
                     </div>
                   </div>
                   <div className="flex gap-3 mt-auto">
-                    <button onClick={() => setExpressStep(1)} className="flex-1 py-4 bg-theme-bg-muted border border-theme-border text-theme-muted text-[10px] font-black uppercase tracking-widest italic">Voltar</button>
-                    <button onClick={() => setExpressStep(3)} className="flex-[2] py-4 bg-brand-tactical text-brand-text text-[10px] font-black uppercase tracking-[0.4em] hover:brightness-110 italic shadow-xl shadow-brand-tactical/20">LOGÍSTICA DE CAMPO</button>
+                    <button onClick={() => setExpressStep(1)} className="flex-1 py-4 bg-theme-bg-muted border border-theme-border text-theme-muted text-[11px] font-black uppercase tracking-widest italic">Voltar</button>
+                    <button onClick={() => setExpressStep(3)} className="flex-[2] py-4 bg-brand-tactical text-brand-text text-[11px] font-black uppercase tracking-[0.3em] hover:brightness-110 italic shadow-xl shadow-brand-tactical/20">LOGÍSTICA DE CAMPO</button>
                   </div>
                 </div>
               )}
@@ -899,11 +898,11 @@ export default function ProfissionalDashboard() {
                   <div className="space-y-4 flex-grow">
                     {(expressFormData.productType === "FOTOS" || expressFormData.productType === "REELS") && (
                       <div className="space-y-2">
-                        <label className="text-[8px] font-black text-theme-muted uppercase tracking-widest italic opacity-60">Delegar Edição (Split de 40%)</label>
+                        <label className="text-[10px] font-black text-theme-muted uppercase tracking-widest italic opacity-60">Delegar Edição (Split de 40%)</label>
                         <select 
                           value={expressFormData.editorId} 
                           onChange={e => setExpressFormData(p => ({ ...p, editorId: e.target.value }))} 
-                          className="w-full bg-theme-bg-muted border border-brand-tactical/30 p-4 text-theme-text font-black text-[10px] uppercase outline-none focus:border-brand-tactical appearance-none cursor-pointer"
+                          className="w-full bg-theme-bg-muted border border-brand-tactical/30 p-4 text-theme-text font-black text-[11px] uppercase outline-none focus:border-brand-tactical appearance-none cursor-pointer"
                         >
                           <option value="">EU MESMO (RECEBER 90%)</option>
                           {network.map(p => (
@@ -914,7 +913,7 @@ export default function ProfissionalDashboard() {
                     )}
 
                     <div className="space-y-2">
-                      <label className="text-[8px] font-black text-theme-muted uppercase tracking-widest italic opacity-60">Metodologia de Liquidação</label>
+                      <label className="text-[10px] font-black text-theme-muted uppercase tracking-widest italic opacity-60">Metodologia de Liquidação</label>
                       <div className="grid grid-cols-1 gap-2">
                         {([
                           { id: "MONEY", label: "💵 DINHEIRO (ABATER COMISSÃO)" },
@@ -924,7 +923,7 @@ export default function ProfissionalDashboard() {
                           <button 
                             key={m.id} 
                             onClick={() => setExpressFormData(p => ({ ...p, paymentMethod: m.id }))} 
-                            className={`p-4 text-left text-[9px] font-black uppercase tracking-widest border transition-all ${expressFormData.paymentMethod === m.id ? 'bg-brand-tactical text-zinc-950 border-brand-tactical shadow-lg' : 'bg-theme-bg-muted border-theme-border/60 text-theme-muted hover:border-brand-tactical/40'}`}
+                            className={`p-4 text-left text-[11px] font-black uppercase tracking-widest border transition-all ${expressFormData.paymentMethod === m.id ? 'bg-brand-tactical text-zinc-950 border-brand-tactical shadow-lg' : 'bg-theme-bg-muted border-theme-border/60 text-theme-muted hover:border-brand-tactical/40'}`}
                           >
                             {m.label}
                           </button>
@@ -933,8 +932,8 @@ export default function ProfissionalDashboard() {
                     </div>
                   </div>
                   <div className="flex gap-3 mt-auto">
-                    <button onClick={() => setExpressStep(2)} className="flex-1 py-4 bg-theme-bg-muted border border-theme-border text-theme-muted text-[10px] font-black uppercase tracking-widest italic">Voltar</button>
-                    <button onClick={() => setExpressStep(4)} className="flex-[2] py-4 bg-brand-tactical text-brand-text text-[10px] font-black uppercase tracking-[0.4em] hover:brightness-110 italic shadow-xl shadow-brand-tactical/20">REVISAR DADOS</button>
+                    <button onClick={() => setExpressStep(2)} className="flex-1 py-4 bg-theme-bg-muted border border-theme-border text-theme-muted text-[11px] font-black uppercase tracking-widest italic">Voltar</button>
+                    <button onClick={() => setExpressStep(4)} className="flex-[2] py-4 bg-brand-tactical text-brand-text text-[11px] font-black uppercase tracking-[0.3em] hover:brightness-110 italic shadow-xl shadow-brand-tactical/20">REVISAR DADOS</button>
                   </div>
                 </div>
               )}
@@ -944,16 +943,16 @@ export default function ProfissionalDashboard() {
                 <div className="space-y-6 animate-in zoom-in-95 duration-300 flex flex-col h-full">
                   <div className="p-6 bg-brand-tactical/5 border border-brand-tactical/20 space-y-4 flex-grow">
                     <div className="flex justify-between items-center border-b border-brand-tactical/10 pb-3">
-                      <span className="text-[10px] font-black text-brand-tactical uppercase tracking-widest italic">Borderô de Transação</span>
+                      <span className="text-[11px] font-black text-brand-tactical uppercase tracking-widest italic">Borderô de Transação</span>
                       <div className="w-2 h-2 rounded-full bg-brand-tactical animate-pulse" />
                     </div>
                     <div className="space-y-3">
-                      <div className="flex justify-between items-center"><span className="text-[9px] font-bold text-theme-muted uppercase tracking-widest">Cliente</span><span className="text-[10px] font-black text-theme-text uppercase">{expressFormData.customerEmail}</span></div>
-                      <div className="flex justify-between items-center"><span className="text-[9px] font-bold text-theme-muted uppercase tracking-widest">Produto</span><span className="text-[10px] font-black text-theme-text uppercase italic">{expressFormData.productType}</span></div>
+                      <div className="flex justify-between items-center"><span className="text-[10px] font-bold text-theme-muted uppercase tracking-widest">Cliente</span><span className="text-[11px] font-black text-theme-text uppercase">{expressFormData.customerEmail}</span></div>
+                      <div className="flex justify-between items-center"><span className="text-[10px] font-bold text-theme-muted uppercase tracking-widest">Produto</span><span className="text-[11px] font-black text-theme-text uppercase italic">{expressFormData.productType}</span></div>
                       
                       <div className="pt-4 border-t border-brand-tactical/10">
                         <div className="flex justify-between items-end">
-                          <span className="text-[10px] font-black text-brand-tactical uppercase italic">Total Líquido</span>
+                          <span className="text-[11px] font-black text-brand-tactical uppercase italic">Total Líquido</span>
                           <span className="text-3xl font-heading font-black text-brand-tactical italic">R$ {expressFormData.amount.toLocaleString('pt-BR', { minimumFractionDigits: 2 })}</span>
                         </div>
                       </div>
@@ -961,18 +960,17 @@ export default function ProfissionalDashboard() {
                   </div>
                   
                   <div className="flex gap-3 mt-auto">
-                    <button onClick={() => setExpressStep(3)} className="flex-1 py-4 bg-theme-bg-muted border border-theme-border text-theme-muted text-[10px] font-black uppercase tracking-widest italic">Ajustar</button>
+                    <button onClick={() => setExpressStep(3)} className="flex-1 py-4 bg-theme-bg-muted border border-theme-border text-theme-muted text-[11px] font-black uppercase tracking-widest italic">Ajustar</button>
                     <button 
                       onClick={handleExpressSaleSubmit} 
                       disabled={loading} 
-                      className="flex-[2] py-4 bg-brand-tactical text-brand-text text-[10px] font-black uppercase tracking-[0.4em] hover:brightness-110 shadow-xl shadow-brand-tactical/20 italic"
+                      className="flex-[2] py-4 bg-brand-tactical text-brand-text text-[11px] font-black uppercase tracking-[0.3em] hover:brightness-110 shadow-xl shadow-brand-tactical/20 italic"
                     >
                       {loading ? "PROCESSANDO..." : expressFormData.paymentMethod === 'MONEY' ? "FINALIZAR VENDA" : `GERAR COBRANÇA`}
                     </button>
                   </div>
                 </div>
               )}
-            </div>
           </div>
         </div>
       )}
