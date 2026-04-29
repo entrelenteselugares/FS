@@ -57,20 +57,28 @@ export class MarketplaceController {
 
           if (authError) {
             if (authError.message.includes("already registered")) {
-              // Sincroniza se já existe no Supabase mas não no Prisma
+              // Sincroniza e ATUALIZA a senha para garantir acesso na venda rápida
               const { data: { users: sbUsers } } = await supabaseAdmin.auth.admin.listUsers({
                 filter: `email.eq.${finalEmail}`
               } as any);
               const sbUser = sbUsers?.[0];
               if (sbUser) {
-                user = await prisma.user.create({
-                  data: {
+                // Atualiza senha no Supabase
+                await supabaseAdmin.auth.admin.updateUserById(sbUser.id, { password: tempPassword });
+                
+                user = await prisma.user.upsert({
+                  where: { email: finalEmail },
+                  create: {
                     id: sbUser.id,
                     email: finalEmail,
                     nome: finalName,
                     senha: hash,
                     whatsapp: whatsapp || null,
                     role: "CLIENTE"
+                  },
+                  update: {
+                    id: sbUser.id,
+                    senha: hash
                   }
                 });
               }
@@ -90,8 +98,10 @@ export class MarketplaceController {
               }
             });
             console.log(`[ExpressSale] Novo usuário criado: ${finalEmail} (Senha Prov: ${tempPassword})`);
+          }
 
-            // P0: Notifica o cliente imediatamente com as credenciais
+          // ENVIO DE E-MAIL (Agora fora dos blocos para garantir que chegue sempre)
+          if (user) {
             NotificationService.sendWelcomeEmail({
               to: finalEmail,
               name: finalName,
