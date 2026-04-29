@@ -63,6 +63,7 @@ export const AdminQuotes: React.FC = () => {
   const [selectedQuote, setSelectedQuote] = useState<Quote | null>(null);
   const [activeTab, setActiveTab] = useState<"briefing" | "equipe" | "locacao" | "fechamento">("briefing");
   const [isNewQuoteModalOpen, setIsNewQuoteModalOpen] = useState(false);
+  const [serviceCatalog, setServiceCatalog] = useState<{id: string, name: string}[]>([]);
 
   // Pricing States
   const [selectedStaff, setSelectedStaff] = useState<{id: string, label: string, cost: number, userId?: string}[]>([]);
@@ -114,6 +115,15 @@ export const AdminQuotes: React.FC = () => {
     }
   }, []);
 
+  const fetchServiceCatalog = useCallback(async () => {
+    try {
+      const { data } = await API.get("/public/service-catalog");
+      setServiceCatalog(data || []);
+    } catch (err) {
+      console.error("Erro ao carregar catálogo de serviços:", err);
+    }
+  }, []);
+
   const fetchQuotes = useCallback(async () => {
     setLoading(true);
     try {
@@ -129,7 +139,8 @@ export const AdminQuotes: React.FC = () => {
   useEffect(() => {
     fetchQuotes();
     fetchProfessionals();
-  }, [fetchQuotes, fetchProfessionals]);
+    fetchServiceCatalog();
+  }, [fetchQuotes, fetchProfessionals, fetchServiceCatalog]);
 
   // Sync pricing states with selected quote
   useEffect(() => {
@@ -403,7 +414,20 @@ export const AdminQuotes: React.FC = () => {
                                   </div>
                                 )}
                                 <div className="bg-theme-bg p-6 border border-theme-border text-[12px] text-theme-text leading-relaxed font-medium italic whitespace-pre-wrap rounded-sm shadow-inner">
-                                  {cleanText || "Nenhuma observação adicional fornecida."}
+                                  {(() => {
+                                    let text = cleanText;
+                                    // Resolve "Serviços: ID1, ID2..."
+                                    const serviceMatch = text.match(/Serviços: (.*)/);
+                                    if (serviceMatch && serviceCatalog.length > 0) {
+                                      const ids = serviceMatch[1].split(",").map(id => id.trim());
+                                      const names = ids.map(id => {
+                                        const s = serviceCatalog.find(sc => sc.id === id);
+                                        return s ? s.name : id;
+                                      });
+                                      text = text.replace(serviceMatch[0], `Serviços: ${names.join(", ")}`);
+                                    }
+                                    return text || "Nenhuma observação adicional fornecida.";
+                                  })()}
                                 </div>
                               </div>
                             );
