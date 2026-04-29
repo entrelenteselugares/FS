@@ -90,16 +90,11 @@ export const AdminFinance: React.FC = () => {
     return { grossRevenue, totalExpenses, netProfit, margin };
   }, [orders, expenses, payoutTab]);
 
-  const handleMarkAsPaid = async (orderId: string) => {
-    try {
-      await API.patch(`/admin/orders/${orderId}/payout`);
-      setOrders(prev => prev.filter(o => o.id !== orderId));
-      setConfirmModal(null);
-      setNotification({ message: "Repasse liquidado com sucesso! 💸", type: 'success' });
-      setTimeout(() => setNotification(null), 5000);
-    } catch {
-      setNotification({ message: "Erro ao marcar como pago.", type: 'error' });
-    }
+  const handleMarkAsPaid = async (_orderId: string) => {
+    // Liquidação de repasses é gerenciada pelo módulo Financeiro > Repasses (WeeklyPayout).
+    // Esta ação é apenas uma visualização de pedidos prontos para repasse.
+    setNotification({ message: "Use o módulo 'Repasses' para liquidar pagamentos.", type: 'error' });
+    setTimeout(() => setNotification(null), 5000);
   };
 
   const handleAddExpense = (e: React.FormEvent) => {
