@@ -57,7 +57,7 @@ export class MarketplaceController {
 
           if (authError) {
             if (authError.message.includes("already registered")) {
-              // Sincroniza se já existe no Supabase
+              // Sincroniza se já existe no Supabase mas não no Prisma
               const { data: { users: sbUsers } } = await supabaseAdmin.auth.admin.listUsers({
                 filter: `email.eq.${finalEmail}`
               } as any);
@@ -68,7 +68,7 @@ export class MarketplaceController {
                     id: sbUser.id,
                     email: finalEmail,
                     nome: finalName,
-                    senha: hash, // Salva hash para resiliência de login local
+                    senha: hash,
                     whatsapp: whatsapp || null,
                     role: "CLIENTE"
                   }
@@ -77,6 +77,8 @@ export class MarketplaceController {
             } else {
               throw authError;
             }
+          } else if (authData?.user) {
+            // Caso de Sucesso: Novo usuário no Supabase
             user = await prisma.user.create({
               data: {
                 id: authData.user.id,
