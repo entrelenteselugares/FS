@@ -771,11 +771,11 @@ export default function ProfissionalDashboard() {
             <div className="absolute top-0 left-0 w-full h-[2px] bg-gradient-r from-transparent via-brand-tactical to-transparent" />
             <div className="absolute top-0 right-0 w-24 h-24 bg-brand-tactical/5 rounded-full blur-3xl -mr-12 -mt-12 pointer-events-none" />
 
-            <div className="p-6 md:p-8 border-b border-theme-border/60 space-y-4 relative z-10">
-              <button onClick={() => setIsExpressModalOpen(false)} className="absolute top-6 right-6 text-theme-muted hover:text-brand-tactical transition-all"><X size={24} /></button>
+            <div className="p-5 md:p-8 border-b border-theme-border/60 space-y-3 relative z-10">
+              <button onClick={() => setIsExpressModalOpen(false)} className="absolute top-5 right-5 text-theme-muted hover:text-brand-tactical transition-all"><X size={20} /></button>
               <div className="space-y-0.5">
-                <div className="text-[9px] font-black text-brand-tactical uppercase tracking-[0.4em] italic">Unidade de Venda Direta</div>
-                <h2 className="text-2xl font-heading font-black text-theme-text uppercase italic leading-none">
+                <div className="text-[8px] md:text-[9px] font-black text-brand-tactical uppercase tracking-[0.4em] italic">Unidade de Venda Direta</div>
+                <h2 className="text-xl md:text-2xl font-heading font-black text-theme-text uppercase italic leading-none">
                   {expressStep === 1 ? "Identificação" : expressStep === 2 ? "Configuração" : expressStep === 3 ? "Logística" : "Finalização"}
                 </h2>
               </div>
@@ -790,7 +790,8 @@ export default function ProfissionalDashboard() {
                 ))}
               </div>
             </div>
-<div className="p-6 md:p-8 flex flex-col flex-grow relative z-10">
+
+            <div className="p-5 md:p-8 flex flex-col flex-grow relative z-10 overflow-y-auto max-h-[70vh] scrollbar-hide">
               {/* FASE 01: DADOS DO CLIENTE */}
               {expressStep === 1 && (
                 <div className="space-y-6 animate-in slide-in-from-right-4 flex flex-col h-full">
@@ -839,13 +840,7 @@ export default function ProfissionalDashboard() {
                       </div>
                     </div>
                   </div>
-                  <button 
-                    disabled={!expressFormData.customerEmail} 
-                    onClick={() => setExpressStep(2)} 
-                    className="w-full py-4 bg-brand-tactical text-brand-text text-[11px] font-black uppercase tracking-[0.3em] hover:brightness-110 disabled:opacity-40 shadow-xl shadow-brand-tactical/20 italic mt-auto"
-                  >
-                    CONTINUAR OPERAÇÃO
-                  </button>
+                  </div>
                 </div>
               )}
 
@@ -885,9 +880,6 @@ export default function ProfissionalDashboard() {
                       </div>
                     </div>
                   </div>
-                  <div className="flex gap-3 mt-auto">
-                    <button onClick={() => setExpressStep(1)} className="flex-1 py-4 bg-theme-bg-muted border border-theme-border text-theme-muted text-[11px] font-black uppercase tracking-widest italic">Voltar</button>
-                    <button onClick={() => setExpressStep(3)} className="flex-[2] py-4 bg-brand-tactical text-brand-text text-[11px] font-black uppercase tracking-[0.3em] hover:brightness-110 italic shadow-xl shadow-brand-tactical/20">LOGÍSTICA DE CAMPO</button>
                   </div>
                 </div>
               )}
@@ -931,9 +923,6 @@ export default function ProfissionalDashboard() {
                       </div>
                     </div>
                   </div>
-                  <div className="flex gap-3 mt-auto">
-                    <button onClick={() => setExpressStep(2)} className="flex-1 py-4 bg-theme-bg-muted border border-theme-border text-theme-muted text-[11px] font-black uppercase tracking-widest italic">Voltar</button>
-                    <button onClick={() => setExpressStep(4)} className="flex-[2] py-4 bg-brand-tactical text-brand-text text-[11px] font-black uppercase tracking-[0.3em] hover:brightness-110 italic shadow-xl shadow-brand-tactical/20">REVISAR DADOS</button>
                   </div>
                 </div>
               )}
@@ -959,19 +948,33 @@ export default function ProfissionalDashboard() {
                     </div>
                   </div>
                   
-                  <div className="flex gap-3 mt-auto">
-                    <button onClick={() => setExpressStep(3)} className="flex-1 py-4 bg-theme-bg-muted border border-theme-border text-theme-muted text-[11px] font-black uppercase tracking-widest italic">Ajustar</button>
-                    <button 
-                      onClick={handleExpressSaleSubmit} 
-                      disabled={loading} 
-                      className="flex-[2] py-4 bg-brand-tactical text-brand-text text-[11px] font-black uppercase tracking-[0.3em] hover:brightness-110 shadow-xl shadow-brand-tactical/20 italic"
-                    >
-                      {loading ? "PROCESSANDO..." : expressFormData.paymentMethod === 'MONEY' ? "FINALIZAR VENDA" : `GERAR COBRANÇA`}
-                    </button>
-                    </div>
                   </div>
-                )}
-              </div>
+                </div>
+              )}
+            </div>
+
+            {/* FIXED FOOTER NAVIGATION */}
+            <div className="p-5 md:p-8 border-t border-theme-border/60 bg-theme-bg-muted/30 relative z-20">
+              {expressStep === 1 ? (
+                <button 
+                  disabled={!expressFormData.customerEmail} 
+                  onClick={() => setExpressStep(2)} 
+                  className="w-full py-4 bg-brand-tactical text-brand-text text-[11px] font-black uppercase tracking-[0.3em] hover:brightness-110 disabled:opacity-40 shadow-xl shadow-brand-tactical/20 italic"
+                >
+                  CONTINUAR OPERAÇÃO
+                </button>
+              ) : (
+                <div className="flex gap-3">
+                  <button onClick={() => setExpressStep(expressStep - 1)} className="flex-1 py-4 bg-theme-bg-muted border border-theme-border text-theme-muted text-[11px] font-black uppercase tracking-widest italic">Voltar</button>
+                  <button 
+                    onClick={() => expressStep === 4 ? handleExpressSaleSubmit() : setExpressStep(expressStep + 1)} 
+                    disabled={loading} 
+                    className="flex-[2] py-4 bg-brand-tactical text-brand-text text-[11px] font-black uppercase tracking-[0.3em] hover:brightness-110 shadow-xl shadow-brand-tactical/20 italic"
+                  >
+                    {loading ? "PROCESSANDO..." : expressStep === 4 ? (expressFormData.paymentMethod === 'MONEY' ? "FINALIZAR VENDA" : "GERAR COBRANÇA") : "PRÓXIMA FASE"}
+                  </button>
+                </div>
+              )}
             </div>
           </div>
         )}
