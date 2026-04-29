@@ -42,7 +42,7 @@ export class ErrorBoundary extends Component<Props, State> {
             </div>
             <button
               onClick={() => window.location.reload()}
-              className="w-full py-4 bg-brand-primary hover:brightness-110 text-black font-black uppercase tracking-[0.4em] transition-all rounded-none text-[10px]"
+              className="w-full py-4 bg-brand-tactical hover:brightness-110 text-black font-black uppercase tracking-[0.4em] transition-all rounded-none text-[10px]"
             >
               RESTAURAR CONEXÃO
             </button>

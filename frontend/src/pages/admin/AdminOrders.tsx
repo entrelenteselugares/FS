@@ -4,7 +4,7 @@ import {
   Search, ChevronDown, ChevronRight, 
   CheckCircle2, Clock, PieChart, 
   TrendingUp, CreditCard, DollarSign,
-  ArrowUpRight, Filter, Zap
+  ArrowUpRight, Filter, Zap, Trash2
 } from "lucide-react";
 
 interface Order {
@@ -45,8 +45,8 @@ export const AdminOrders: React.FC = () => {
         params: { q: search, limit: 200 } 
       });
       setOrders(data.orders || []);
-    } catch (err) {
-      console.error("Erro ao carregar pedidos:", err);
+    } catch {
+      console.error("Erro ao carregar pedidos");
     } finally {
       setLoading(false);
     }
@@ -105,6 +105,16 @@ export const AdminOrders: React.FC = () => {
   }, [orders, groupedOrders]);
 
   const formatCurrency = (val: number) => new Intl.NumberFormat("pt-BR", { style: "currency", currency: "BRL" }).format(val);
+
+  const handleDeleteOrder = async (id: string) => {
+    if (!window.confirm("Confirmar EXCLUSÃO DEFINITIVA deste pedido do Ledger? Esta ação é irreversível.")) return;
+    try {
+      await API.delete(`/admin/orders/${id}`);
+      fetchOrders();
+    } catch {
+      alert("Erro ao excluir pedido.");
+    }
+  };
 
   return (
     <div className="space-y-10 animate-in fade-in slide-in-from-bottom-4 duration-700">
@@ -232,6 +242,7 @@ export const AdminOrders: React.FC = () => {
                              <th className="py-4 text-[9px] font-black text-theme-muted uppercase tracking-[0.3em] opacity-70">Método / Data</th>
                              <th className="py-4 text-right text-[9px] font-black text-theme-muted uppercase tracking-[0.3em] opacity-70">Montante</th>
                              <th className="py-4 text-center text-[9px] font-black text-theme-muted uppercase tracking-[0.3em] opacity-70">Status MP</th>
+                             <th className="py-4 text-center text-[9px] font-black text-theme-muted uppercase tracking-[0.3em] opacity-70">Ações</th>
                           </tr>
                        </thead>
                        <tbody className="divide-y divide-theme-border/20">
@@ -252,6 +263,14 @@ export const AdminOrders: React.FC = () => {
                                   <span className={`text-[8px] font-black uppercase tracking-[0.2em] px-3 py-1.5 border ${o.status === 'APROVADO' ? 'border-brand-tactical text-brand-tactical' : 'border-red-900 text-red-500'}`}>
                                      {o.status}
                                   </span>
+                               </td>
+                               <td className="py-5 text-center">
+                                  <button 
+                                    onClick={(e) => { e.stopPropagation(); handleDeleteOrder(o.id); }}
+                                    className="p-2 border border-theme-border text-red-500/40 hover:text-red-500 transition-all"
+                                  >
+                                    <Trash2 size={12} />
+                                  </button>
                                </td>
                             </tr>
                           ))}

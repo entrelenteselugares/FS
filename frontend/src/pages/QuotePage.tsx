@@ -24,7 +24,7 @@ const THEME = {
   bg: "var(--theme-bg)",
   bgCard: "var(--theme-bg-muted)",
   border: "var(--theme-border)",
-  accent: "var(--brand-primary)",
+  accent: "var(--brand-tactical)",
   text: "var(--theme-text)",
   text2: "var(--theme-text-muted)",
   fontD: "'Outfit', sans-serif",
@@ -507,7 +507,7 @@ export const QuotePage = () => {
     }}>
       <style>{`
         .fs-input { background: var(--theme-bg-muted) !important; border: 1px solid var(--theme-border) !important; color: var(--theme-text) !important; border-radius: 0 !important; box-sizing: border-box; font-family: 'Outfit', sans-serif !important; padding: 12px 15px; }
-        .fs-input:focus { border-color: var(--brand-primary) !important; outline: none !important; }
+        .fs-input:focus { border-color: var(--brand-tactical) !important; outline: none !important; }
         
         @media (max-width: 768px) {
           .mobile-grid-1 { grid-template-columns: 1fr !important; }
@@ -530,7 +530,7 @@ export const QuotePage = () => {
             />
           </div>
           <div 
-            className="text-proportional text-brand-primary mb-4" 
+            className="text-proportional text-brand-tactical mb-4" 
             style={{ 
               letterSpacing: 8, 
               opacity: 0.8,
@@ -589,7 +589,7 @@ export const QuotePage = () => {
                         />
                         {isCepLoading && (
                           <div style={{ position: "absolute", right: 15, top: "50%", transform: "translateY(-50%)" }}>
-                             <div className="w-4 h-4 border-t-2 border-brand-primary rounded-full animate-spin" />
+                             <div className="w-4 h-4 border-t-2 border-brand-tactical rounded-full animate-spin" />
                           </div>
                         )}
                       </div>
@@ -803,7 +803,7 @@ export const QuotePage = () => {
               <div style={{ borderTop: `1px solid ${THEME.border}`, paddingTop: 20, display: "flex", justifyContent: "space-between", alignItems: "center" }}>
                 <div>
                   <div style={{ fontSize: 10, fontWeight: 800, textTransform: "uppercase", color: THEME.text2 }}>Total Estimado</div>
-                  <div className="heading-luxury !text-brand-primary" style={{ fontSize: 24 }}>
+                  <div className="heading-luxury !text-brand-tactical" style={{ fontSize: 24 }}>
                     {showPrices ? new Intl.NumberFormat("pt-BR", { style: "currency", currency: "BRL" }).format(totalPrice) : "SOB CONSULTA"}
                   </div>
                 </div>

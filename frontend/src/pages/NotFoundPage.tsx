@@ -20,11 +20,11 @@ export function NotFoundPage() {
               opacity: [0.3, 0.6, 0.3]
             }}
             transition={{ duration: 4, repeat: Infinity }}
-            className="absolute inset-0 bg-brand-primary/20 blur-[100px] rounded-full"
+            className="absolute inset-0 bg-brand-tactical/20 blur-[100px] rounded-full"
           />
           <h1 className="text-[120px] font-black tracking-tighter leading-none opacity-10">404</h1>
           <div className="absolute inset-0 flex items-center justify-center">
-             <Search size={48} className="text-brand-primary" strokeWidth={1} />
+             <Search size={48} className="text-brand-tactical" strokeWidth={1} />
           </div>
         </div>
 
@@ -38,7 +38,7 @@ export function NotFoundPage() {
         <div className="pt-8">
           <button
             onClick={() => navigate("/")}
-            className="group flex items-center gap-4 mx-auto text-[10px] font-bold uppercase tracking-[0.4em] text-brand-primary border-b border-brand-primary/20 pb-2 hover:border-brand-primary transition-all"
+            className="group flex items-center gap-4 mx-auto text-[10px] font-bold uppercase tracking-[0.4em] text-brand-tactical border-b border-brand-tactical/20 pb-2 hover:border-brand-tactical transition-all"
           >
             <ArrowLeft size={14} className="group-hover:-translate-x-1 transition-transform" />
             Retornar à Vitrine

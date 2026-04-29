@@ -416,17 +416,73 @@ export async function adminUpdateEvent(req: AuthRequest, res: Response): Promise
 }
 
 export async function adminDeleteEvent(req: AuthRequest, res: Response): Promise<void> {
+  const { id } = req.params;
+  const hardDelete = req.query.hard === "true";
+
   try {
-    await prisma.event.update({
-      where: { id: String(req.params.id) },
-      data: { active: false },
+    const event = await prisma.event.findUnique({
+      where: { id: String(id) },
+      include: { _count: { select: { pedidos: { where: { status: "APROVADO" } } } } }
     });
 
-    await audit(req, "EVENT_DELETED", "Event", String(req.params.id));
+    if (!event) {
+      res.status(404).json({ error: "Evento não encontrado." });
+      return;
+    }
+
+    const hasPaidOrders = event._count.pedidos > 0;
+
+    // Se o usuário pediu hard delete OU se não tem pedidos aprovados, deletamos fisicamente
+    if (hardDelete || !hasPaidOrders) {
+      console.log(`[AdminDelete] Executando HARD DELETE para o evento ${id}`);
+      // Deleta relações em cascata se necessário (ou o Prisma lida se configurado)
+      await prisma.event.delete({ where: { id: String(id) } });
+    } else {
+      console.log(`[AdminDelete] Executando SOFT DELETE para o evento ${id} (possui pedidos pagos)`);
+      await prisma.event.update({
+        where: { id: String(id) },
+        data: { active: false },
+      });
+    }
+
+    await audit(req, "EVENT_DELETED", "Event", String(id), null, { hard: !hasPaidOrders });
+
+    res.json({ ok: true, deleted: !hasPaidOrders });
+  } catch (err: any) {
+    console.error("adminDeleteEvent Error:", err);
+    res.status(500).json({ 
+      error: "Erro ao excluir evento.", 
+      details: "Verifique se existem dependências ativas que impedem a exclusão física." 
+    });
+  }
+}
+
+export async function adminDeleteOrder(req: AuthRequest, res: Response): Promise<void> {
+  const { id } = req.params;
+
+  try {
+    // 1. Verifica se o pedido existe
+    const order = await prisma.order.findUnique({
+      where: { id: String(id) }
+    });
+
+    if (!order) {
+      res.status(404).json({ error: "Pedido não encontrado." });
+      return;
+    }
+
+    // 2. Deleta o pedido (Prisma deve lidar com o cascade nos OrderItems se configurado, senão deletamos manual)
+    await prisma.$transaction([
+      prisma.orderItem.deleteMany({ where: { orderId: String(id) } }),
+      prisma.order.delete({ where: { id: String(id) } })
+    ]);
+
+    await audit(req, "ORDER_DELETED", "Order", String(id), null, { valor: order.valor });
 
     res.json({ ok: true });
-  } catch {
-    res.status(500).json({ error: "Erro ao desativar evento." });
+  } catch (err: any) {
+    console.error("adminDeleteOrder Error:", err);
+    res.status(500).json({ error: "Erro ao excluir pedido.", details: err.message });
   }
 }
 
@@ -1004,6 +1060,37 @@ export async function adminCreateManualSale(req: AuthRequest, res: Response): Pr
   } catch (err) {
     console.error("adminCreateManualSale Error:", err);
     res.status(500).json({ error: "Erro ao registrar venda manual.", details: err instanceof Error ? err.message : String(err) });
+  }
+}
+
+/**
+ * DELETE /api/admin/orders/:id
+ * Remove um pedido e seus itens do Ledger.
+ */
+export async function adminDeleteOrder(req: AuthRequest, res: Response): Promise<void> {
+  const { id } = req.params;
+  try {
+    const order = await prisma.order.findUnique({
+      where: { id: String(id) },
+      select: { id: true, valor: true, buyerEmail: true }
+    });
+
+    if (!order) {
+      res.status(404).json({ error: "Pedido não localizado." });
+      return;
+    }
+
+    // Exclusão em Transação para garantir integridade
+    await prisma.$transaction([
+      prisma.orderItem.deleteMany({ where: { orderId: String(id) } }),
+      prisma.order.delete({ where: { id: String(id) } })
+    ]);
+
+    await audit(req, "ORDER_DELETED_ADMIN", "Order", String(id), null, { amount: order.valor, buyer: order.buyerEmail });
+    res.json({ success: true });
+  } catch (err) {
+    console.error("adminDeleteOrder:", err);
+    res.status(500).json({ error: "Erro ao excluir pedido no Ledger." });
   }
 }
 

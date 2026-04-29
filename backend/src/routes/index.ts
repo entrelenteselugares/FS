@@ -14,6 +14,7 @@ import {
   adminUpdateUser,
   adminDeleteUser,
   adminListOrders,
+  adminDeleteOrder,
   adminListQuotes,
   adminApproveQuote,
   AdminEventController,
@@ -236,6 +237,7 @@ router.delete("/admin/users/:id", requireAuth, requireRole("ADMIN"), adminDelete
 
 // ── Admin: Gestão de Pedidos ───────────────────────────────────────────────────
 router.get("/admin/orders",                   requireAuth, requireRole("ADMIN"), adminListOrders);
+router.delete("/admin/orders/:id",                requireAuth, requireRole("ADMIN"), adminDeleteOrder);
 router.post("/admin/orders/:id/delete-media", requireAuth, requireRole("ADMIN"), deleteMediaAdmin);
 
 // ── Admin: Orçamentos (Leads) ──────────────────────────────────────────────────

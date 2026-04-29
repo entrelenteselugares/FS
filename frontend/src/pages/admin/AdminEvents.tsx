@@ -3,7 +3,7 @@ import React, { useState, useEffect, useCallback } from "react";
 import { API } from "../../lib/api";
 import { T } from "../../lib/theme";
 import { QRCodeSVG } from "qrcode.react";
-import { QrCode, X } from "lucide-react";
+import { QrCode, X, Trash2 } from "lucide-react";
 
 interface User {
   id: string;
@@ -52,6 +52,8 @@ export const AdminEvents: React.FC<AdminEventsProps> = ({ initialEditEventId }) 
   const [qrModalEvent, setQrModalEvent] = useState<Event | null>(null);
   const [copied, setCopied] = useState(false);
   const [notification, setNotification] = useState<{message: string, type: 'success' | 'error'} | null>(null);
+  const [activeTab, setActiveTab] = useState<'info' | 'equipe' | 'comercial'>('info');
+  const [confirmDelete, setConfirmDelete] = useState<Event | null>(null);
 
   const showNotification = (message: string, type: 'success' | 'error' = 'success') => {
     setNotification({ message, type });
@@ -119,8 +121,6 @@ export const AdminEvents: React.FC<AdminEventsProps> = ({ initialEditEventId }) 
     pricePerPhoto: 15,
   });
 
-  const [activeTab, setActiveTab] = useState<'info' | 'equipe' | 'comercial'>('info');
-
   const handleFileChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (!file) return;
@@ -176,6 +176,18 @@ export const AdminEvents: React.FC<AdminEventsProps> = ({ initialEditEventId }) 
       showNotification("Erro ao processar evento.", 'error');
     } finally {
       setIsUploading(false);
+    }
+  };
+
+  const handleDelete = async (id: string) => {
+    try {
+      await API.delete(`/admin/events/${id}`);
+      showNotification("Evento removido com sucesso!");
+      setConfirmDelete(null);
+      const updatedEvents = await API.get("/admin/events");
+      setEvents(updatedEvents.data.events || []);
+    } catch {
+      showNotification("Erro ao excluir evento.", 'error');
     }
   };
 
@@ -354,6 +366,7 @@ export const AdminEvents: React.FC<AdminEventsProps> = ({ initialEditEventId }) 
                 <td className="p-4 flex gap-2">
                   <button onClick={() => { setQrModalEvent(event); setCopied(false); }} className="p-2 border border-theme-border text-theme-muted hover:text-white"><QrCode size={12} /></button>
                   <button onClick={() => handleEditOpen(event)} className="px-3 py-1.5 border border-theme-border text-[8px] font-black uppercase tracking-widest text-theme-text hover:bg-theme-border transition-all">Editar</button>
+                  <button onClick={() => setConfirmDelete(event)} className="p-2 border border-theme-border text-red-500/40 hover:text-red-500 transition-all"><Trash2 size={12} /></button>
                 </td>
               </tr>
             ))}
@@ -392,6 +405,7 @@ export const AdminEvents: React.FC<AdminEventsProps> = ({ initialEditEventId }) 
                 <div className="flex gap-2">
                   <button onClick={() => { setQrModalEvent(event); setCopied(false); }} className="p-3 border border-theme-border text-theme-muted"><QrCode size={16} /></button>
                   <button onClick={() => handleEditOpen(event)} className="px-5 py-3 border border-theme-border text-[9px] font-black uppercase tracking-widest text-theme-text">Editar</button>
+                  <button onClick={() => setConfirmDelete(event)} className="p-3 border border-theme-border text-red-500/40"><Trash2 size={16} /></button>
                 </div>
               </div>
             </div>
@@ -642,6 +656,36 @@ export const AdminEvents: React.FC<AdminEventsProps> = ({ initialEditEventId }) 
                   <button type="submit" disabled={isUploading} className="w-full bg-brand-tactical text-zinc-950 font-black uppercase tracking-[0.5em] py-5 text-[11px] shadow-lg">{isUploading ? "PROCESSANDO..." : "FINALIZAR VENDA"}</button>
                 </div>
              </form>
+          </div>
+        </div>
+      )}
+
+      {/* CONFIRM DELETE MODAL */}
+      {confirmDelete && (
+        <div className="fixed inset-0 z-[100] flex items-center justify-center p-6 bg-black/90 backdrop-blur-md">
+          <div className="bg-theme-bg border border-theme-border p-10 max-w-md w-full space-y-8 shadow-2xl">
+            <div className="space-y-2">
+              <span className="text-[10px] font-black text-red-500 uppercase tracking-[0.5em]">Protocolo de Exclusão</span>
+              <h3 className="text-xl font-black text-theme-text uppercase tracking-tight">Confirmar Remoção?</h3>
+              <p className="text-[11px] text-theme-muted leading-relaxed uppercase tracking-widest font-bold opacity-60">
+                Você está prestes a excluir o evento <span className="text-white">{confirmDelete.title}</span>. 
+                Se houver pedidos aprovados, o evento será apenas desativado. Caso contrário, será removido permanentemente.
+              </p>
+            </div>
+            <div className="flex gap-4">
+              <button 
+                onClick={() => setConfirmDelete(null)}
+                className="flex-1 py-4 border border-theme-border text-[10px] font-black uppercase tracking-widest text-theme-muted hover:text-white transition-colors"
+              >
+                Cancelar
+              </button>
+              <button 
+                onClick={() => handleDelete(confirmDelete.id)}
+                className="flex-1 py-4 bg-red-600 text-white text-[10px] font-black uppercase tracking-widest hover:bg-red-500 transition-colors"
+              >
+                Confirmar Exclusão
+              </button>
+            </div>
           </div>
         </div>
       )}

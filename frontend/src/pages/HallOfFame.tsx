@@ -28,7 +28,7 @@ interface ContestResult {
 const THEME = {
   bg: "#050505",
   card: "#0a0a0a",
-  accent: "var(--brand-primary)", // New Primary Brand Color
+  accent: "var(--brand-tactical)", // New Primary Brand Color
   gold: "#d4af37",
   silver: "#c0c0c0",
   bronze: "#cd7f32",

@@ -75,7 +75,7 @@ export const AdminSettings: React.FC = () => {
         {/* Branding & Identity */}
         <div className="bg-theme-bg p-10 space-y-10 border-b md:border-b-0 md:border-r border-theme-border">
           <div className="flex items-center gap-4 mb-4">
-             <Palette className="text-brand-primary" size={18} />
+             <Palette className="text-brand-tactical" size={18} />
              <h3 className="text-[11px] font-bold text-theme-text uppercase tracking-[0.4em]">Look & Feel (Identidade)</h3>
           </div>
           

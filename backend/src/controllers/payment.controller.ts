@@ -264,8 +264,8 @@ export class PaymentController {
               data: { 
                 active: true, 
                 isQuote: false,
-                // PHOTO_MARKETPLACE nunca vira pública na vitrine
-                isPrivate: isMarketplace ? true : false
+                // Marketplace continua público; outros eventos liberam acesso
+                isPrivate: isMarketplace ? (order.event?.isPrivate ?? false) : false
               }
             });
 
@@ -554,8 +554,8 @@ export class PaymentController {
           data: { 
             active: true, 
             isQuote: false,
-            // PHOTO_MARKETPLACE nunca vira pública na vitrine
-            isPrivate: isMarketplace ? true : false
+            // Marketplace continua público; outros eventos liberam acesso
+            isPrivate: isMarketplace ? (event.isPrivate ?? false) : false
           }
         });
 
@@ -686,19 +686,31 @@ export class PaymentController {
       if (mpData.status === "approved") {
         await prisma.order.update({
           where: { id: order.id },
-          data: { status: "APROVADO" }
+          data: { status: "APROVADO", hasPaid: true }
         });
+
+        // 1. Se for cota de presente, atualiza o montante do evento (Bug Fix: Polling Sync)
+        if (order.isContribution && order.eventId) {
+          await prisma.event.update({
+            where: { id: order.eventId },
+            data: { collectedAmount: { increment: order.valor } }
+          });
+        }
+
         // Busca o evento para verificar o tipo antes de ativar
-        const evData = await prisma.event.findUnique({ where: { id: order.eventId }, select: { type: true } });
+        const evData = await prisma.event.findUnique({ where: { id: order.eventId }, select: { type: true, isPrivate: true } });
         const isMarketplace = evData?.type === 'PHOTO_MARKETPLACE';
+        
         await prisma.event.update({
           where: { id: order.eventId },
           data: { 
             active: true, 
             isQuote: false,
-            isPrivate: isMarketplace ? true : false
+            // Marketplace continua público para outros comprarem; outros eventos respeitam privacidade original ou liberam
+            isPrivate: isMarketplace ? (evData?.isPrivate ?? false) : false
           }
         });
+
         NotificationService.notifyNewSale({
           buyerEmail: order.buyerEmail || order.cliente?.email || "desconhecido",
           eventTitle: order.event.nomeNoivos,

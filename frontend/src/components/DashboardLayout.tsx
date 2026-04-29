@@ -356,6 +356,9 @@ export const DashboardLayout: React.FC<DashboardLayoutProps> = ({
             >
               <MenuIcon />
             </button>
+            <Link to="/" style={{ display: "flex", alignItems: "center" }}>
+              <img src="/logo-fs.png" alt="Logo" style={{ height: 22, objectFit: "contain" }} className="dashboard-logo-mobile" />
+            </Link>
           </div>
 
           {/* Right: user info + toggle + logout */}

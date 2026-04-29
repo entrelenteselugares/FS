@@ -29,7 +29,7 @@ export function ThemeProvider({ children }: { children: ReactNode }) {
         const tactical = isLegacy(data.brand_tactical) ? "#85B9AC" : data.brand_tactical;
 
         if (primary) {
-          document.documentElement.style.setProperty("--brand-primary", primary);
+          document.documentElement.style.setProperty("--brand-tactical", primary);
         }
         if (tactical) {
           document.documentElement.style.setProperty("--brand-tactical", tactical);

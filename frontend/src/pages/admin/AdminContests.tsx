@@ -21,6 +21,12 @@ export const AdminContests: React.FC = () => {
   const [contests, setContests] = useState<Contest[]>([]);
   const [loading, setLoading] = useState(true);
   const [showModal, setShowModal] = useState(false);
+  const [notification, setNotification] = useState<{message: string, type: 'success' | 'error'} | null>(null);
+
+  const showNotification = (message: string, type: 'success' | 'error' = 'success') => {
+    setNotification({ message, type });
+    setTimeout(() => setNotification(null), 4000);
+  };
 
   const [formData, setFormData] = useState({
     title: "",
@@ -56,18 +62,20 @@ export const AdminContests: React.FC = () => {
     try {
       await API.post("/admin/contests", formData);
       setShowModal(false);
+      showNotification("Concurso lançado com sucesso!");
       fetchContests();
     } catch {
-      alert("Erro ao criar concurso.");
+      showNotification("Erro ao criar concurso.", "error");
     }
   };
 
   const updateStatus = async (id: string, status: string) => {
     try {
       await API.patch(`/admin/contests/${id}`, { status });
+      showNotification(`Status atualizado para ${status}`);
       fetchContests();
     } catch {
-      alert("Erro ao atualizar status.");
+      showNotification("Erro ao atualizar status.", "error");
     }
   };
 
@@ -180,6 +188,15 @@ export const AdminContests: React.FC = () => {
                 LANÇAR CONCURSO
               </button>
             </form>
+          </div>
+        </div>
+      )}
+
+      {notification && (
+        <div className="fixed bottom-10 right-10 z-[110] p-6 border border-brand-tactical bg-zinc-950 shadow-2xl min-w-[300px] animate-in slide-in-from-right-10 duration-500">
+          <div className="flex flex-col gap-1">
+             <span className="text-[8px] font-black uppercase tracking-[0.4em] text-brand-tactical">Notificação Sistema</span>
+             <p className="text-[11px] font-bold text-white uppercase tracking-widest">{notification.message}</p>
           </div>
         </div>
       )}

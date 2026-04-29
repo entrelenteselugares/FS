@@ -126,13 +126,13 @@ export const PartnerLP: React.FC = () => {
 
         <div className="relative z-10 text-center px-6 max-w-5xl">
           <motion.div initial={{ opacity: 0, y: 40 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 1, ease: [0.16, 1, 0.3, 1] }}>
-            <div className="text-proportional text-brand-primary mb-6">Unidade Fixa Autorizada</div>
+            <div className="text-proportional text-brand-tactical mb-6">Unidade Fixa Autorizada</div>
             <h1 className="heading-luxury mb-10 text-theme-text">
               {partner.razaoSocial}
             </h1>
             <div className="flex flex-wrap justify-center gap-8 text-proportional">
-              <div className="flex items-center gap-3"><MapPin size={14} className="text-brand-primary" /> {partner.address || "Campinas, SP"}</div>
-              <div className="flex items-center gap-3"><Phone size={14} className="text-brand-primary" /> {partner.phone || "(19) 98765-4321"}</div>
+              <div className="flex items-center gap-3"><MapPin size={14} className="text-brand-tactical" /> {partner.address || "Campinas, SP"}</div>
+              <div className="flex items-center gap-3"><Phone size={14} className="text-brand-tactical" /> {partner.phone || "(19) 98765-4321"}</div>
             </div>
           </motion.div>
         </div>
@@ -154,7 +154,7 @@ export const PartnerLP: React.FC = () => {
               "Sincronização imediata de álbuns digitais"
             ].map(feat => (
               <div key={feat} className="flex items-center gap-5 text-[10px] font-bold uppercase tracking-[0.25em] text-theme-muted group">
-                <div className="w-2 h-[1px] bg-brand-primary transition-all group-hover:w-8" />
+                <div className="w-2 h-[1px] bg-brand-tactical transition-all group-hover:w-8" />
                 {feat}
               </div>
             ))}
@@ -162,10 +162,10 @@ export const PartnerLP: React.FC = () => {
         </div>
 
         <div className="lux-card flex flex-col justify-center items-center text-center">
-          <Calendar className="text-brand-primary mb-10" size={56} strokeWidth={1} />
+          <Calendar className="text-brand-tactical mb-10" size={56} strokeWidth={1} />
           <h3 className="text-2xl md:text-4xl font-black tracking-tighter mb-6 uppercase leading-none">Agende seu Protocolo</h3>
           {partner.fixedDuration && (
-            <p className="text-brand-primary text-[10px] font-black uppercase tracking-[0.3em] mb-4">
+            <p className="text-brand-tactical text-[10px] font-black uppercase tracking-[0.3em] mb-4">
               Sessão de {partner.fixedDuration}h
             </p>
           )}
@@ -186,7 +186,7 @@ export const PartnerLP: React.FC = () => {
         <section className="max-w-7xl mx-auto px-6 py-24 md:py-32 border-b border-theme-border space-y-16">
           <div className="flex flex-col md:flex-row items-start md:items-end justify-between gap-6">
             <div className="space-y-3">
-              <p className="text-[9px] font-black text-brand-primary uppercase tracking-[0.5em]">Serviços Disponíveis</p>
+              <p className="text-[9px] font-black text-brand-tactical uppercase tracking-[0.5em]">Serviços Disponíveis</p>
               <h2 className="text-4xl md:text-5xl font-black tracking-tighter uppercase leading-none">Catálogo desta Unidade</h2>
             </div>
             <p className="text-[10px] text-theme-muted font-bold uppercase tracking-[0.3em] max-w-xs">
@@ -209,7 +209,7 @@ export const PartnerLP: React.FC = () => {
                 >
                   <div className="flex items-start justify-between mb-6">
                     <div className="space-y-2">
-                      <h3 className="text-lg font-black uppercase tracking-tight italic text-theme-text group-hover:text-brand-primary transition-colors">
+                      <h3 className="text-lg font-black uppercase tracking-tight italic text-theme-text group-hover:text-brand-tactical transition-colors">
                         {svc.name}
                       </h3>
                       {localPrice && localPrice !== svc.basePrice && (
@@ -218,7 +218,7 @@ export const PartnerLP: React.FC = () => {
                         </span>
                       )}
                     </div>
-                    <span className="text-2xl font-black italic text-brand-primary font-heading">
+                    <span className="text-2xl font-black italic text-brand-tactical font-heading">
                       {formatCurrency(displayPrice)}
                     </span>
                   </div>
@@ -236,7 +236,7 @@ export const PartnerLP: React.FC = () => {
       {hasSchedule && (
         <section className="max-w-7xl mx-auto px-6 py-24 md:py-32 border-b border-theme-border space-y-16">
           <div className="space-y-3">
-            <p className="text-[9px] font-black text-brand-primary uppercase tracking-[0.5em]">Disponibilidade</p>
+            <p className="text-[9px] font-black text-brand-tactical uppercase tracking-[0.5em]">Disponibilidade</p>
             <h2 className="text-4xl md:text-5xl font-black tracking-tighter uppercase leading-none">Horários de Funcionamento</h2>
           </div>
 
@@ -250,7 +250,7 @@ export const PartnerLP: React.FC = () => {
                   className={`p-6 border text-center transition-all ${
                     config.closed
                       ? "border-theme-border/30 bg-theme-bg-muted/10 opacity-50"
-                      : "border-brand-primary/20 bg-brand-primary/5 hover:bg-brand-primary/10"
+                      : "border-brand-tactical/20 bg-brand-tactical/5 hover:bg-brand-tactical/10"
                   }`}
                 >
                   <p className="text-[9px] font-black uppercase tracking-widest text-theme-muted mb-4">
@@ -263,9 +263,9 @@ export const PartnerLP: React.FC = () => {
                     </div>
                   ) : (
                     <div className="flex flex-col items-center gap-2">
-                      <CheckCircle2 size={20} className="text-brand-primary" />
+                      <CheckCircle2 size={20} className="text-brand-tactical" />
                       <div className="flex items-center gap-1 text-[10px] font-black text-theme-text">
-                        <Clock size={10} className="text-brand-primary" />
+                        <Clock size={10} className="text-brand-tactical" />
                         {config.open}
                       </div>
                       <div className="text-[9px] font-bold text-theme-muted">até {config.close}</div>
@@ -324,11 +324,11 @@ export const PartnerLP: React.FC = () => {
       {/* Footer / Contact */}
       <footer className="py-24 md:py-40 bg-theme-bg-muted text-theme-text text-center border-t border-theme-border mobile-py">
         <div className="max-w-xl mx-auto px-6">
-          <MessageSquare className="mx-auto mb-10 text-brand-primary" size={40} />
+          <MessageSquare className="mx-auto mb-10 text-brand-tactical" size={40} />
           <h2 className="text-4xl md:text-6xl font-black tracking-tighter mb-10 leading-none uppercase" style={{ fontFamily: "'Outfit', sans-serif" }}>Dúvidas sobre o Local?</h2>
           <p className="text-zinc-500 text-[11px] font-bold uppercase tracking-[0.3em] leading-relaxed mb-12">Entre em contato direto com a administração da unidade para suporte logístico e agendamento de visitas técnicas.</p>
           <div className="flex flex-col gap-4">
-            <button className="px-12 py-6 bg-brand-primary text-black text-[11px] font-black uppercase tracking-[0.4em] hover:brightness-110 transition-all">WhatsApp Unidade</button>
+            <button className="px-12 py-6 bg-brand-tactical text-black text-[11px] font-black uppercase tracking-[0.4em] hover:brightness-110 transition-all">WhatsApp Unidade</button>
             <button onClick={() => navigate("/")} className="text-[10px] font-bold uppercase tracking-[0.8em] text-zinc-600 hover:text-white transition-colors mt-8">Voltar para Vitrine Global</button>
           </div>
         </div>

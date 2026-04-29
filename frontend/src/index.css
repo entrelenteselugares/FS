@@ -32,7 +32,7 @@
   --theme-text:         var(--text);
   --theme-text-muted:   var(--text-2);
   --theme-border:       var(--border);
-  --brand-primary:      var(--brand);
+  --brand-tactical:      var(--brand);
   --brand-tactical:     var(--brand);
   --theme-bg-nav:       rgba(10, 10, 10, 0.85);
   --theme-text-on-brand: var(--brand-text);
@@ -66,7 +66,7 @@
   --theme-text:         var(--text);
   --theme-text-muted:   var(--text-2);
   --theme-border:       var(--border);
-  --brand-primary:      var(--brand);
+  --brand-tactical:      var(--brand);
   --brand-tactical:     var(--brand);
   --theme-bg-nav:       rgba(245, 243, 239, 0.85);
   --theme-text-on-brand: var(--brand-text);

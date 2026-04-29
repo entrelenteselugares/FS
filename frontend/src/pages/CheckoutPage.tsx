@@ -347,13 +347,13 @@ export const CheckoutPage = () => {
       <div className="max-w-lg w-full text-center animate-in fade-in zoom-in-95 duration-500">
         {/* Ícone animado */}
         <div className="relative mx-auto mb-10 w-32 h-32">
-          <div className="absolute inset-0 rounded-full bg-brand-primary/10 animate-ping" style={{ animationDuration: "2s" }} />
-          <div className="relative w-32 h-32 rounded-full bg-brand-primary/10 flex items-center justify-center border border-brand-primary/30">
-            <CheckCircle2 size={56} className="text-brand-primary" strokeWidth={1.5} />
+          <div className="absolute inset-0 rounded-full bg-brand-tactical/10 animate-ping" style={{ animationDuration: "2s" }} />
+          <div className="relative w-32 h-32 rounded-full bg-brand-tactical/10 flex items-center justify-center border border-brand-tactical/30">
+            <CheckCircle2 size={56} className="text-brand-tactical" strokeWidth={1.5} />
           </div>
         </div>
 
-        <p className="text-[10px] font-black uppercase tracking-[0.5em] text-brand-primary mb-4">
+        <p className="text-[10px] font-black uppercase tracking-[0.5em] text-brand-tactical mb-4">
           PAGAMENTO CONFIRMADO
         </p>
         <h1 className="heading-luxury text-4xl md:text-6xl tracking-tighter mb-6">
@@ -362,7 +362,7 @@ export const CheckoutPage = () => {
         <p className="text-proportional opacity-60 mb-3 max-w-sm mx-auto">
           Suas memórias estão prontas! Você já pode visualizá-las diretamente no seu painel de controle.
         </p>
-        <p className="text-proportional !text-brand-primary font-black mb-10">
+        <p className="text-proportional !text-brand-tactical font-black mb-10">
           {order.event?.nomeNoivos}
         </p>
 
@@ -400,7 +400,7 @@ export const CheckoutPage = () => {
           <img src="/logo-fs.png" alt="Foto Segundo" style={{ height: 22, objectFit: "contain" }} />
         </div>
         <div className="text-proportional flex items-center gap-2">
-          <ShieldCheck size={14} className="text-brand-primary" />
+          <ShieldCheck size={14} className="text-brand-tactical" />
           <span className="desktop-only">Checkout Seguro</span>
         </div>
       </nav>
@@ -409,8 +409,8 @@ export const CheckoutPage = () => {
 
         {/* Status do polling */}
         <div className="text-center">
-          <div className="inline-flex items-center gap-2 px-4 py-2 border border-brand-primary/20 bg-brand-primary/5 text-[10px] font-black uppercase tracking-widest text-brand-primary">
-            <span className="w-2 h-2 rounded-full bg-brand-primary animate-pulse" />
+          <div className="inline-flex items-center gap-2 px-4 py-2 border border-brand-tactical/20 bg-brand-tactical/5 text-[10px] font-black uppercase tracking-widest text-brand-tactical">
+            <span className="w-2 h-2 rounded-full bg-brand-tactical animate-pulse" />
             {pollingStatus === "polling" ? "Aguardando confirmação de pagamento..." : "Verificando..."}
           </div>
         </div>
@@ -459,7 +459,7 @@ export const CheckoutPage = () => {
                   setCopied(true);
                   setTimeout(() => setCopied(false), 2000);
                 }}
-                className="flex items-center gap-2 text-brand-primary text-[9px] font-black uppercase whitespace-nowrap tracking-widest hover:brightness-125 transition-all"
+                className="flex items-center gap-2 text-brand-tactical text-[9px] font-black uppercase whitespace-nowrap tracking-widest hover:brightness-125 transition-all"
               >
                 {copied ? <CheckCircle2 size={14} /> : <Copy size={14} />}
                 {copied ? "Copiado!" : "Copiar"}
@@ -487,7 +487,7 @@ export const CheckoutPage = () => {
     if (authStep === 'loading') {
       return (
         <div className="flex flex-col items-center justify-center py-12 gap-4">
-          <RefreshCw size={24} className="animate-spin text-brand-primary" />
+          <RefreshCw size={24} className="animate-spin text-brand-tactical" />
           <p className="text-[10px] font-black uppercase tracking-widest opacity-40">Verificando Credenciais...</p>
         </div>
       );
@@ -496,16 +496,16 @@ export const CheckoutPage = () => {
     if (authStep === 'authorized') {
       return (
         <div className="animate-in fade-in duration-500">
-          <div className="flex items-center gap-4 p-4 bg-brand-primary/5 border border-brand-primary/20 mb-8">
-            <div className="w-10 h-10 rounded-full bg-brand-primary/10 flex items-center justify-center">
-              <UserIcon size={18} className="text-brand-primary" />
+          <div className="flex items-center gap-4 p-4 bg-brand-tactical/5 border border-brand-tactical/20 mb-8">
+            <div className="w-10 h-10 rounded-full bg-brand-tactical/10 flex items-center justify-center">
+              <UserIcon size={18} className="text-brand-tactical" />
             </div>
             <div>
               <p className="text-[9px] font-black uppercase tracking-widest opacity-40">Logado como</p>
               <p className="text-xs font-bold">{authUser?.nome || authUser?.email}</p>
             </div>
             <div className="ml-auto">
-              <CheckCircle2 size={16} className="text-brand-primary" />
+              <CheckCircle2 size={16} className="text-brand-tactical" />
             </div>
           </div>
           <div id="paymentBrick_container" />
@@ -517,8 +517,8 @@ export const CheckoutPage = () => {
     return (
       <div className="animate-in fade-in slide-in-from-bottom-4 duration-700">
         <div className="flex flex-col items-center text-center mb-10">
-          <div className="w-16 h-16 rounded-full bg-brand-primary/10 flex items-center justify-center mb-6 border border-brand-primary/20">
-            <Lock size={28} className="text-brand-primary" />
+          <div className="w-16 h-16 rounded-full bg-brand-tactical/10 flex items-center justify-center mb-6 border border-brand-tactical/20">
+            <Lock size={28} className="text-brand-tactical" />
           </div>
           <h2 className="heading-luxury !text-2xl md:!text-3xl italic mb-3">
             {authStep === 'login' ? 'BEM-VINDO DE VOLTA' : 'QUASE LÁ!'}
@@ -534,7 +534,7 @@ export const CheckoutPage = () => {
         <form onSubmit={handleAuthSubmit} className="space-y-6 max-w-sm mx-auto">
           <div className="space-y-4">
             <div className="relative group">
-              <Mail size={16} className="absolute left-4 top-1/2 -translate-y-1/2 text-theme-muted group-focus-within:text-brand-primary transition-colors" />
+              <Mail size={16} className="absolute left-4 top-1/2 -translate-y-1/2 text-theme-muted group-focus-within:text-brand-tactical transition-colors" />
               <input 
                 type="email" 
                 value={order.buyerEmail} 
@@ -544,13 +544,13 @@ export const CheckoutPage = () => {
             </div>
             
             <div className="relative group">
-              <Key size={16} className="absolute left-4 top-1/2 -translate-y-1/2 text-theme-muted group-focus-within:text-brand-primary transition-colors" />
+              <Key size={16} className="absolute left-4 top-1/2 -translate-y-1/2 text-theme-muted group-focus-within:text-brand-tactical transition-colors" />
               <input 
                 type="password" 
                 placeholder={authStep === 'login' ? 'Sua senha' : 'Crie uma senha (mín. 6 dígitos)'}
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
-                className="w-full bg-theme-bg-muted border border-theme-border py-4 pl-12 pr-4 text-sm focus:border-brand-primary outline-none transition-all"
+                className="w-full bg-theme-bg-muted border border-theme-border py-4 pl-12 pr-4 text-sm focus:border-brand-tactical outline-none transition-all"
                 autoFocus
               />
             </div>
@@ -598,7 +598,7 @@ export const CheckoutPage = () => {
           <img src="/logo-fs.png" alt="Foto Segundo" style={{ height: 22, objectFit: "contain" }} />
         </div>
         <div className="text-proportional opacity-100 flex items-center gap-2">
-          <ShieldCheck size={14} className="text-brand-primary" />
+          <ShieldCheck size={14} className="text-brand-tactical" />
           <span className="desktop-only">Checkout Seguro</span>
         </div>
       </nav>
@@ -620,12 +620,12 @@ export const CheckoutPage = () => {
               </div>
               <div className="pt-6 border-t border-theme-border flex justify-between items-center">
                 <div className="text-proportional !opacity-100 font-black tracking-[0.4em]">Total</div>
-                <div className="text-3xl md:text-5xl font-black tracking-tighter text-brand-primary italic">
+                <div className="text-3xl md:text-5xl font-black tracking-tighter text-brand-tactical italic">
                   R$ {Number(order.amount).toFixed(2)}
                 </div>
               </div>
               <div className="flex justify-end">
-                <span className="bg-brand-primary/10 text-brand-primary text-[10px] font-black px-3 py-1 rounded-full uppercase tracking-widest animate-pulse">
+                <span className="bg-brand-tactical/10 text-brand-tactical text-[10px] font-black px-3 py-1 rounded-full uppercase tracking-widest animate-pulse">
                   ✨ Parcelamento em até 3x sem juros
                 </span>
               </div>

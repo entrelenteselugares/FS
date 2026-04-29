@@ -57,11 +57,14 @@ export class PricingService {
 
     const getPct = (key: string) => Number(configs.find((c) => c.key === key)?.value ?? 0) / 100;
 
-    return {
-      matriz:   +(amount * getPct("split_matriz")).toFixed(2),
-      captacao: +(amount * getPct("split_captacao")).toFixed(2),
-      edicao:   +(amount * getPct("split_edicao")).toFixed(2),
-      cartorio: +(amount * getPct("split_cartorio")).toFixed(2),
-    };
+    // ── Prevenção de Perda de Centavos (Regra de Resíduo na Matriz) ──
+    const captacao = +(amount * getPct("split_captacao")).toFixed(2);
+    const edicao   = +(amount * getPct("split_edicao")).toFixed(2);
+    const cartorio = +(amount * getPct("split_cartorio")).toFixed(2);
+    
+    // Matriz fica com o resto para garantir que a soma seja EXATA
+    const matriz = +(amount - (captacao + edicao + cartorio)).toFixed(2);
+
+    return { matriz, captacao, edicao, cartorio };
   }
 }
