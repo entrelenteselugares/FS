@@ -4,6 +4,7 @@ import prisma from "../lib/prisma";
 import { slugify } from "../lib/utils";
 import { supabaseAdmin } from "../lib/supabase";
 import { PricingService } from "../services/pricing.service";
+import { NotificationService } from "../services/notification.service";
 import { audit } from "../lib/audit";
 import { applyWatermark } from "../lib/image-processor";
 import bcrypt from "bcryptjs";
@@ -76,7 +77,6 @@ export class MarketplaceController {
             } else {
               throw authError;
             }
-          } else if (authData?.user) {
             user = await prisma.user.create({
               data: {
                 id: authData.user.id,
@@ -88,6 +88,13 @@ export class MarketplaceController {
               }
             });
             console.log(`[ExpressSale] Novo usuário criado: ${finalEmail} (Senha Prov: ${tempPassword})`);
+
+            // P0: Notifica o cliente imediatamente com as credenciais
+            NotificationService.sendWelcomeEmail({
+              to: finalEmail,
+              name: finalName,
+              tempPassword: tempPassword
+            }).catch(e => console.error("[ExpressSale Email Error]:", e));
           }
         } catch (err: any) {
           console.error("[ExpressSale Auto-Register Error]:", err.message);
