@@ -125,7 +125,10 @@ export class NotificationService {
     name: string;
     tempPassword?: string;
   }) {
-    if (!process.env.SMTP_USER || !process.env.SMTP_PASS) return;
+    if (!process.env.SMTP_USER || !process.env.SMTP_PASS) {
+       console.error("[Notification] ERRO: SMTP_USER ou SMTP_PASS não configurados para Boas-vindas.");
+       return;
+    }
 
     const htmlContent = `
       <div style="font-family: sans-serif; max-width: 600px; margin: 0 auto; padding: 20px; color: #000;">
@@ -319,7 +322,10 @@ export class NotificationService {
     name: string;
     recoveryLink: string;
   }) {
-    if (!process.env.SMTP_USER || !process.env.SMTP_PASS) return;
+    if (!process.env.SMTP_USER || !process.env.SMTP_PASS) {
+      console.error("[Notification] ERRO: SMTP_USER ou SMTP_PASS não configurados na Vercel.");
+      return false;
+    }
 
     const htmlContent = `
       <div style="font-family: sans-serif; max-width: 600px; margin: 0 auto; padding: 20px; color: #000;">
