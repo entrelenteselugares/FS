@@ -794,8 +794,8 @@ export default function ProfissionalDashboard() {
             <div className="p-5 md:p-8 flex flex-col flex-grow relative z-10 overflow-y-auto max-h-[70vh] scrollbar-hide">
               {/* FASE 01: DADOS DO CLIENTE */}
               {expressStep === 1 && (
-                <div className="space-y-6 animate-in slide-in-from-right-4 flex flex-col h-full">
-                  <div className="space-y-4 flex-grow">
+                <div className="space-y-6 animate-in slide-in-from-right-4">
+                  <div className="space-y-4">
                     <div className="space-y-2">
                       <label className="text-[10px] font-black text-theme-muted uppercase tracking-widest italic opacity-60">E-mail do Cliente *</label>
                       <input 
@@ -840,14 +840,13 @@ export default function ProfissionalDashboard() {
                       </div>
                     </div>
                   </div>
-                  </div>
                 </div>
               )}
 
               {/* FASE 02: VALORES E PRODUTOS */}
               {expressStep === 2 && (
-                <div className="space-y-6 animate-in slide-in-from-right-4 flex flex-col h-full">
-                  <div className="space-y-4 flex-grow">
+                <div className="space-y-6 animate-in slide-in-from-right-4">
+                  <div className="space-y-4">
                     <div className="space-y-2">
                       <label className="text-[10px] font-black text-theme-muted uppercase tracking-widest italic opacity-60">Valor Nominal (R$)</label>
                       <div className="relative">
@@ -880,14 +879,13 @@ export default function ProfissionalDashboard() {
                       </div>
                     </div>
                   </div>
-                  </div>
                 </div>
               )}
 
               {/* FASE 03: DELEGAÇÃO E PAGAMENTO */}
               {expressStep === 3 && (
-                <div className="space-y-6 animate-in slide-in-from-right-4 flex flex-col h-full">
-                  <div className="space-y-4 flex-grow">
+                <div className="space-y-6 animate-in slide-in-from-right-4">
+                  <div className="space-y-4">
                     {(expressFormData.productType === "FOTOS" || expressFormData.productType === "REELS") && (
                       <div className="space-y-2">
                         <label className="text-[10px] font-black text-theme-muted uppercase tracking-widest italic opacity-60">Delegar Edição (Split de 40%)</label>
@@ -923,14 +921,13 @@ export default function ProfissionalDashboard() {
                       </div>
                     </div>
                   </div>
-                  </div>
                 </div>
               )}
 
               {/* FASE 04: REVISÃO FINAL */}
               {expressStep === 4 && (
-                <div className="space-y-6 animate-in zoom-in-95 duration-300 flex flex-col h-full">
-                  <div className="p-6 bg-brand-tactical/5 border border-brand-tactical/20 space-y-4 flex-grow">
+                <div className="space-y-6 animate-in zoom-in-95 duration-300">
+                  <div className="p-6 bg-brand-tactical/5 border border-brand-tactical/20 space-y-4">
                     <div className="flex justify-between items-center border-b border-brand-tactical/10 pb-3">
                       <span className="text-[11px] font-black text-brand-tactical uppercase tracking-widest italic">Borderô de Transação</span>
                       <div className="w-2 h-2 rounded-full bg-brand-tactical animate-pulse" />
@@ -946,8 +943,6 @@ export default function ProfissionalDashboard() {
                         </div>
                       </div>
                     </div>
-                  </div>
-                  
                   </div>
                 </div>
               )}
@@ -975,6 +970,7 @@ export default function ProfissionalDashboard() {
                   </button>
                 </div>
               )}
+            </div>
             </div>
           </div>
         )}
