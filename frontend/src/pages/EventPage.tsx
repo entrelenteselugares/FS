@@ -9,6 +9,7 @@ import { AuthModal } from "../components/AuthModal";
 import { Modal } from "../components/UI/Modal";
 import { useAuth } from "../hooks/useAuth";
 import { Navbar } from "../components/Navbar";
+import { PrintStoreModal } from "../components/PrintStoreModal";
 
 const Item = ({ val, label }: { val: number, label: string }) => (
   <div style={{ textAlign: "center" }}>
@@ -164,6 +165,9 @@ export default function EventPage() {
   const [needsAccessChoice, setNeedsAccessChoice] = useState(false);
   const [accessType, setAccessType] = useState<"PUBLIC" | "PRIVATE" | null>(null);
   const { user } = useAuth();
+
+  // Print Store
+  const [showPrintStore, setShowPrintStore] = useState(false);
 
   // Marketplace States
   const [medias, setMedias] = useState<EventMedia[]>([]);
@@ -795,7 +799,7 @@ export default function EventPage() {
                       <p style={{ fontSize: 12, color: T.text2, margin: 0 }}>
                         {(orderId || justPaid) 
                           ? "Sua compra foi confirmada! O contador abaixo mostra o tempo restante para o grande dia."
-                          : "O grande dia est\u00e1 chegando! Fique atento, as fotos ser\u00e3o liberadas aqui ap\u00f3s o evento."}
+                          : "O grande dia está chegando! Fique atento, as fotos serão liberadas aqui após o evento."}
                       </p>
                       {event.dataEvento && <Countdown targetDate={event.dataEvento} />}
                       <button onClick={handleShare} style={{ ...BtnSecondary, width: "100%", justifyContent: "center", color: T.text }}>
@@ -805,12 +809,12 @@ export default function EventPage() {
                   ) : (
                     <>
                       <p style={{ fontSize: 10, fontWeight: 700, textTransform: "uppercase", letterSpacing: 2, color: T.brand, margin: 0 }}>
-                        {(orderId || justPaid) ? (justPaid ? "Tudo pronto!" : "Acesso Liberado") : "Fotos Dispon\u00edveis!"}
+                        {(orderId || justPaid) ? (justPaid ? "Tudo pronto!" : "Acesso Liberado") : "Fotos Disponíveis!"}
                       </p>
                       <p style={{ fontSize: 12, color: T.text2, margin: 0 }}>
                         {(orderId || justPaid) 
-                          ? "Seus arquivos est\u00e3o dispon\u00edveis nos bot\u00f5es abaixo."
-                          : "Confira as mem\u00f3rias desse dia incr\u00edvel nos links abaixo."}
+                          ? "Seus arquivos estão disponíveis nos botões abaixo."
+                          : "Confira as memórias desse dia incrível nos links abaixo."}
                       </p>
                       <div style={{ display: "flex", flexDirection: "column", gap: 10 }}>
                         {lightroomUrl && (
@@ -830,22 +834,20 @@ export default function EventPage() {
                             rel="noreferrer" 
                             style={{ ...BtnSecondary, color: T.text, borderColor: T.brand, textDecoration: "none", justifyContent: "center" }}
                           >
-                            🎬 V\u00eddeos
+                            🎬 Vídeos
                           </a>
                         )}
                         
-                        <a 
-                          href={`https://wa.me/5519997843817?text=Gostaria%20de%20encomendar%20um%20%C3%A1lbum%20impresso%20do%20evento%3A%20${encodeURIComponent(event.nomeNoivos)}`} 
-                          target="_blank" 
-                          rel="noreferrer" 
-                          style={{ ...BtnSecondary, color: T.brand, borderColor: T.brand, textDecoration: "none", justifyContent: "center", marginTop: 8, fontWeight: 900, borderStyle: 'dashed' }}
+                        <button 
+                          onClick={() => setShowPrintStore(true)}
+                          style={{ ...BtnSecondary, color: T.brand, borderColor: T.brand, justifyContent: "center", marginTop: 8, fontWeight: 900, borderStyle: 'dashed', width: "100%" }}
                         >
-                          ETERNIZE NO PAPEL: \u00c1LBUM IMPRESSO
-                        </a>
+                          📖 ETERNIZE NO PAPEL
+                        </button>
 
                         <div style={{ marginTop: 8, paddingTop: 16, borderTop: `1px solid ${T.border}` }}>
                           <button onClick={handleShare} style={{ ...BtnSecondary, width: "100%", justifyContent: "center", border: "none", color: T.text3, fontSize: 11, letterSpacing: 1 }}>
-                            {sharing ? "LINK COPIADO!" : "COMPARTILHAR \u00c1LBUM"}
+                            {sharing ? "LINK COPIADO!" : "COMPARTILHAR ÁLBUM"}
                           </button>
                         </div>
                       </div>
@@ -1124,6 +1126,14 @@ export default function EventPage() {
             } catch (err) { console.error("Erro ao atualizar links:", err); }
           }}
           onClose={() => setNeedsAccessChoice(false)}
+        />
+      )}
+
+      {showPrintStore && event && (
+        <PrintStoreModal
+          eventId={event.id}
+          eventTitle={event.nomeNoivos}
+          onClose={() => setShowPrintStore(false)}
         />
       )}
     </div>
