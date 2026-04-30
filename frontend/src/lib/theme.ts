@@ -34,9 +34,10 @@ export const T = {
   overlay:     "var(--overlay)",
 
   // ── Glassmorphism ────────────────────────────────
-  glass:       "rgba(10, 10, 10, 0.6)",
-  glassBorder: "rgba(255, 255, 255, 0.1)",
-  blur:        "blur(20px) saturate(180%)",
+  glass:       "rgba(10, 10, 10, 0.75)",
+  glassDeep:   "rgba(0, 0, 0, 0.9)",
+  glassBorder: "rgba(255, 255, 255, 0.12)",
+  blur:        "blur(30px) saturate(180%)",
 
   // ── Font Families ─────────────────────────────────
   fontD: "var(--font-d)", // Barlow Condensed — Display (900, uppercase)
@@ -58,6 +59,7 @@ export const ModalOverlay: React.CSSProperties = {
   bottom:         0,
   background:     T.glass,
   backdropFilter: T.blur,
+  WebkitBackdropFilter: T.blur,
   zIndex:         1000,
   display:        "flex",
   alignItems:     "center",

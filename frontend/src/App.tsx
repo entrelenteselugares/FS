@@ -43,7 +43,7 @@ const AnimatedRoutes = () => {
   return (
     <div
       key={location.pathname}
-      className="w-full h-full"
+      className="w-full h-full animate-reveal"
     >
       <Routes location={location}>
         {/* Público */}
@@ -125,10 +125,14 @@ function App() {
   return (
     <ThemeProvider>
       {isWakingUp ? (
-        <div className="min-h-screen bg-theme-bg flex flex-col items-center justify-center gap-6 transition-colors duration-500">
-          <div className="w-1.5 h-1.5 rounded-full bg-brand-tactical animate-ping mb-4" />
-          <div className="text-[14px] font-bold uppercase tracking-[0.6em] text-theme-text">FOTO SEGUNDO</div>
-          <div className="text-[10px] font-bold uppercase tracking-[0.3em] text-theme-text-muted animate-pulse">Sincronizando Rede de Profissionais...</div>
+        <div className="min-h-screen bg-[#050505] flex flex-col items-center justify-center gap-6 transition-colors duration-500 relative overflow-hidden">
+          <div className="absolute inset-0 bg-brand-tactical/5 blur-[120px] rounded-full -m-64 opacity-20" />
+          <div className="relative z-10 flex flex-col items-center gap-8">
+            <div className="w-px h-16 bg-gradient-to-b from-transparent via-brand-tactical to-transparent" />
+            <div className="text-[18px] font-black uppercase tracking-[0.8em] text-theme-text italic">FOTO SEGUNDO</div>
+            <div className="text-[9px] font-black uppercase tracking-[0.4em] text-brand-tactical animate-pulse-soft">Sincronizando Rede Global</div>
+            <div className="w-px h-16 bg-gradient-to-t from-transparent via-brand-tactical to-transparent" />
+          </div>
         </div>
       ) : (
         <AuthProvider>

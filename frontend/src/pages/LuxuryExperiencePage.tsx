@@ -49,10 +49,13 @@ export default function LuxuryExperiencePage() {
   }, []);
 
   if (loading) return (
-    <div className="min-h-screen bg-[#050505] flex items-center justify-center">
-      <div className="space-y-4 text-center">
-        <div className="w-12 h-12 border-2 border-brand-tactical/20 border-t-brand-tactical rounded-full animate-spin mx-auto" />
-        <p className="text-[10px] font-black text-brand-tactical uppercase tracking-[0.4em] animate-pulse">Preparando sua Galeria de Luxo...</p>
+    <div className="min-h-screen bg-[#050505] flex flex-col items-center justify-center gap-6 transition-colors duration-500 relative overflow-hidden">
+      <div className="absolute inset-0 bg-brand-tactical/5 blur-[120px] rounded-full -m-64 opacity-20" />
+      <div className="relative z-10 flex flex-col items-center gap-8">
+        <div className="w-px h-16 bg-gradient-to-b from-transparent via-brand-tactical to-transparent" />
+        <div className="text-[18px] font-black uppercase tracking-[0.8em] text-theme-text italic">FOTO SEGUNDO</div>
+        <div className="text-[9px] font-black uppercase tracking-[0.4em] text-brand-tactical animate-pulse-soft">Preparando Experiência de Luxo</div>
+        <div className="w-px h-16 bg-gradient-to-t from-transparent via-brand-tactical to-transparent" />
       </div>
     </div>
   );
@@ -71,7 +74,7 @@ export default function LuxuryExperiencePage() {
   return (
     <div className="min-h-screen bg-[#050505] text-theme-text font-sans selection:bg-brand-tactical selection:text-zinc-950">
       {/* NAVEGAÇÃO FLUTUANTE */}
-      <nav className={`fixed top-0 left-0 w-full z-50 transition-all duration-500 p-6 flex justify-between items-center ${scrolled ? 'bg-black/80 backdrop-blur-md py-4' : ''}`}>
+      <nav className={`fixed top-0 left-0 w-full z-50 transition-all duration-700 p-6 flex justify-between items-center ${scrolled ? 'lux-glass py-4 shadow-2xl' : ''}`}>
         <div className="text-xl font-heading font-black text-theme-text italic tracking-tighter">FOTO SEGUNDO</div>
         <button className="p-3 bg-brand-tactical/10 border border-brand-tactical/20 text-brand-tactical hover:bg-brand-tactical hover:text-zinc-950 transition-all">
           <Share2 size={18} />

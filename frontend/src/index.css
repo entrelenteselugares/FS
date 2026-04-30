@@ -153,7 +153,13 @@ textarea:focus {
     background: var(--theme-bg-muted);
     border: 1px solid var(--theme-border);
     padding: 1.25rem;
-    transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+    transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.lux-card:hover {
+  border-color: var(--brand);
+  transform: translateY(-4px);
+  box-shadow: 0 20px 40px rgba(0,0,0,0.4);
 }
 
 @media (min-width: 768px) {
@@ -161,10 +167,17 @@ textarea:focus {
 }
 
 .lux-glass {
-  background: var(--theme-bg-nav);
-  backdrop-filter: blur(24px);
-  -webkit-backdrop-filter: blur(24px);
-  border: 1px solid rgba(255, 255, 255, 0.04);
+  background: rgba(10, 10, 10, 0.6);
+  backdrop-filter: blur(20px) saturate(180%);
+  -webkit-backdrop-filter: blur(20px) saturate(180%);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+.lux-glass-deep {
+  background: rgba(0, 0, 0, 0.85);
+  backdrop-filter: blur(30px);
+  -webkit-backdrop-filter: blur(30px);
+  border: 1px solid rgba(133, 185, 172, 0.15);
 }
 
 /* ─── Shadow Utilities ────────────────────────────────────────────────────── */
@@ -205,7 +218,13 @@ textarea:focus {
   color: var(--text);
   outline: none;
   border-radius: 0;
-  transition: border-color 0.2s;
+  transition: all 0.3s ease;
+}
+
+.lux-input:focus {
+  background-color: var(--bg);
+  border-color: var(--brand);
+  box-shadow: 0 0 20px rgba(133, 185, 172, 0.1);
 }
 
 .lux-input::placeholder {
@@ -221,11 +240,11 @@ textarea:focus {
   text-align: center;
   text-transform: uppercase;
   font-family: var(--font-b);
-  font-weight: 500;
+  font-weight: 900;
   letter-spacing: 0.2em;
   font-size: 9px;
   padding: 0.75rem 1.5rem;
-  transition: all 0.2s;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
   cursor: pointer;
   border: none;
 }
@@ -234,7 +253,7 @@ textarea:focus {
   .lux-button-base {
     font-size: 10px;
     letter-spacing: 0.3em;
-    padding: 0.75rem 2rem;
+    padding: 0.875rem 2rem;
   }
 }
 
@@ -243,9 +262,21 @@ textarea:focus {
   color: var(--bg);
 }
 
+.lux-button-primary:hover {
+  background-color: var(--brand);
+  color: var(--bg);
+  letter-spacing: 0.4em;
+}
+
 .lux-button-tactical {
   background-color: var(--brand);
   color: var(--brand-text);
+  box-shadow: 0 10px 20px rgba(133, 185, 172, 0.15);
+}
+
+.lux-button-tactical:hover {
+  transform: scale(1.02);
+  box-shadow: 0 15px 30px rgba(133, 185, 172, 0.25);
 }
 
 .lux-button-ghost {
@@ -254,14 +285,39 @@ textarea:focus {
   border: 1px solid var(--border-2);
 }
 
+.lux-button-ghost:hover {
+  background-color: var(--border);
+  border-color: var(--text-3);
+}
+
 /* ─── Animation Utilities ─────────────────────────────────────────────────── */
 @keyframes reveal {
-  from { opacity: 0; transform: translateY(12px); }
+  from { opacity: 0; transform: translateY(20px); }
   to   { opacity: 1; transform: translateY(0); }
 }
 
+@keyframes float {
+  0%   { transform: translateY(0px); }
+  50%  { transform: translateY(-10px); }
+  100% { transform: translateY(0px); }
+}
+
+@keyframes pulse-soft {
+  0%   { opacity: 1; }
+  50%  { opacity: 0.6; }
+  100% { opacity: 1; }
+}
+
 .animate-reveal {
-  animation: reveal 0.9s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+  animation: reveal 1s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+
+.animate-float {
+  animation: float 6s ease-in-out infinite;
+}
+
+.animate-pulse-soft {
+  animation: pulse-soft 3s ease-in-out infinite;
 }
 
 /* ─── Brand Aura Effect ───────────────────────────────────────────────────── */
