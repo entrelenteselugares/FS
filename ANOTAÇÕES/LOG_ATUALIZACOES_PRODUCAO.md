@@ -20,7 +20,10 @@ Este documento resume as atualizações críticas, correções de segurança e n
 ### 3. Backend e Infraestrutura
 
 - **Criação Dinâmica de Pedidos**: Novo motor de criação de pedidos de impressão com persistência de seleções de fotos em notas internas para a produção.
-- **Resiliência Prisma**: Auditoria de queries para garantir performance em ambientes serverless.
+- **Trava de Fotos**: Implementada a coluna 'LMT FOTOS' no catálogo administrativo, permitindo controle real sobre a capacidade de cada produto físico.
+- **Modularização do Dashboard**: Refatoração profunda do Cockpit do Profissional para melhorar a manutenção e performance.
+- **Performance de Grid**: Otimização de carregamento de imagens (lazy loading) no Marketplace.
+- **Build Limpo**: Resolução de todos os avisos de renderização em cascata (cascading renders) no dashboard.
 
 ---
 

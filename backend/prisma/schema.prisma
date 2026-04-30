@@ -456,6 +456,7 @@ model PrintProduct {
   unit         String      @default("un")
   minQty       Int?
   maxQty       Int?
+  maxPhotos    Int?
   createdAt    DateTime    @default(now())
   updatedAt    DateTime    @updatedAt
   orderItems   OrderItem[]

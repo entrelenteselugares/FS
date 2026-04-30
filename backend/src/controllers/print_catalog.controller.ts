@@ -149,6 +149,9 @@ export async function updatePrintProduct(req: AuthRequest, res: Response): Promi
           sellingPrice: sellingPrice === null || sellingPrice === "" ? null : Number(sellingPrice),
         }),
         ...(description !== undefined && { description }),
+        ...(req.body.maxPhotos !== undefined && {
+          maxPhotos: req.body.maxPhotos === null || req.body.maxPhotos === "" ? null : Number(req.body.maxPhotos),
+        }),
       },
     });
 
@@ -174,7 +177,7 @@ export async function createPrintProduct(req: AuthRequest, res: Response): Promi
   const { 
     supplier, category, name, sku, supplierCost, 
     unit, marginPct, sellingPrice, description,
-    minQty, maxQty 
+    minQty, maxQty, maxPhotos 
   } = req.body;
 
   if (!supplier || !category || !name || !sku || supplierCost === undefined) {
@@ -202,6 +205,7 @@ export async function createPrintProduct(req: AuthRequest, res: Response): Promi
         description,
         minQty: minQty ? Number(minQty) : null,
         maxQty: maxQty ? Number(maxQty) : null,
+        maxPhotos: maxPhotos ? Number(maxPhotos) : null,
       }
     });
 
@@ -282,6 +286,7 @@ export async function importPrintProducts(req: AuthRequest, res: Response): Prom
             description: p.description || existing.description,
             minQty: p.minQty !== undefined ? Number(p.minQty) : existing.minQty,
             maxQty: p.maxQty !== undefined ? Number(p.maxQty) : existing.maxQty,
+            maxPhotos: p.maxPhotos !== undefined ? Number(p.maxPhotos) : existing.maxPhotos,
           }
         });
         updated++;
@@ -298,6 +303,7 @@ export async function importPrintProducts(req: AuthRequest, res: Response): Prom
             description: p.description,
             minQty: p.minQty !== undefined ? Number(p.minQty) : null,
             maxQty: p.maxQty !== undefined ? Number(p.maxQty) : null,
+            maxPhotos: p.maxPhotos !== undefined ? Number(p.maxPhotos) : null,
           }
         });
         created++;
@@ -368,7 +374,8 @@ export async function getPublicPrintCatalog(req: Request, res: Response): Promis
         : Number(p.supplierCost) * (1 + p.marginPct / 100),
       unit: p.unit,
       minQty: p.minQty,
-      maxQty: p.maxQty
+      maxQty: p.maxQty,
+      maxPhotos: p.maxPhotos
     }));
 
     res.json(result);
