@@ -8,12 +8,16 @@ import { Shield, Lock, Globe, AlertTriangle, CheckCircle2 } from "lucide-react";
 interface AccessTypeModalProps {
   orderId: string;
   eventTitle: string;
+  isPrimaryClient?: boolean;
   onConfirmed: (accessType: string, expiresAt: string) => void;
 }
 
-export default function AccessTypeModal({ orderId, eventTitle, onConfirmed }: AccessTypeModalProps) {
+export default function AccessTypeModal({ orderId, eventTitle, isPrimaryClient, onConfirmed }: AccessTypeModalProps) {
   useTheme();
   const [selected, setSelected] = useState<"PUBLIC" | "PRIVATE" | null>(null);
+
+  // SEGURANÇA: Se não for o cliente primário, não renderiza nada.
+  if (isPrimaryClient === false) return null;
   const [saving, setSaving] = useState(false);
   const [error, setError] = useState("");
 

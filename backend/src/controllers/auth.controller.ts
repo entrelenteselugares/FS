@@ -66,7 +66,7 @@ export class AuthController {
         return res.status(401).json({ error: "Credenciais inválidas." });
       }
 
-      const payload = { userId: user.id, role: user.role, nome: user.nome };
+      const payload = { userId: user.id, role: user.role, nome: user.nome, email: user.email };
       const token = generateToken(payload);
       const refreshToken = generateRefreshToken(payload);
       
@@ -103,6 +103,8 @@ export class AuthController {
         user_metadata: { nome, role: cleanRole }
       });
 
+      let sbUser = authData.user;
+      
       if (authError) {
         // Se o erro for que o usuário já existe no Supabase, tentamos recuperar o ID dele para prosseguir com o Prisma
         if (authError.message.includes("already registered") || authError.status === 422) {
@@ -110,14 +112,14 @@ export class AuthController {
            const { data: existingUserData } = await supabaseAdmin.auth.admin.listUsers();
            const found = existingUserData.users.find(u => u.email?.toLowerCase() === cleanEmail);
            if (!found) throw new Error("Usuário existe no Supabase mas não pôde ser localizado para sincronia.");
-           authData.user = found;
+           sbUser = found;
         } else {
           console.error("[Supabase Auth Error]:", authError);
           throw new Error(`Erro na autenticação externa: ${authError.message}`);
         }
       }
 
-      if (!authData.user) throw new Error("Supabase não retornou dados do usuário.");
+      if (!sbUser) throw new Error("Supabase não retornou dados do usuário.");
 
       // 2. Criar no Prisma (Dados de Negócio) usando o mesmo ID do Supabase
       const result = await prisma.$transaction(async (tx) => {
@@ -127,7 +129,7 @@ export class AuthController {
 
         const user = await tx.user.create({
           data: { 
-            id: authData.user!.id,
+            id: sbUser!.id,
             email: cleanEmail, 
             senha: hash, 
             nome: nome || "Usuário", 
@@ -163,7 +165,7 @@ export class AuthController {
       });
 
       // 4. Gerar Tokens para Login Imediato (Padrão do AuthContext)
-      const payload = { userId: result.id, role: result.role, nome: result.nome };
+      const payload = { userId: result.id, role: result.role, nome: result.nome, email: result.email };
       const token = generateToken(payload);
       const refreshToken = generateRefreshToken(payload);
 
@@ -190,7 +192,7 @@ export class AuthController {
       const payload = verifyRefreshToken(refreshToken);
       const user = await prisma.user.findUnique({ where: { id: payload.userId } });
       if (!user) throw new Error();
-      const newPayload = { userId: user.id, role: user.role, nome: user.nome };
+      const newPayload = { userId: user.id, role: user.role, nome: user.nome, email: user.email };
       return res.json({ token: generateToken(newPayload), refreshToken: generateRefreshToken(newPayload) });
     } catch (e) {
       return res.status(401).json({ error: "Token inválido" });

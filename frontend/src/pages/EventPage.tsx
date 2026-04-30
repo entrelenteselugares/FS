@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useCallback } from "react";
 import { Check } from "lucide-react";
 import { useParams, useNavigate, useSearchParams } from "react-router-dom";
 import { API as api } from "../lib/api";
@@ -76,6 +76,8 @@ interface EventData {
   pricePerPhoto?: number;
   isUnitSale?: boolean;
   recentOrders?: { id: string; contributorName: string; valor: number; createdAt: string }[];
+  clientEmail?: string | null;
+  isPrimaryClient?: boolean;
 }
 
 interface EventMedia {
@@ -244,13 +246,28 @@ export default function EventPage() {
       .catch(err => console.error("Erro ao carregar catálogo de impressão:", err));
   }, [slug, navigate, user?.id, user?.role]);
 
+  const handleAutoConfirmChoice = useCallback(async (oid: string) => {
+    try {
+      await api.post(`/orders/${oid}/access-type`, { accessType: "PUBLIC" });
+      const { data } = await api.get(`/orders/${oid}/access-status`);
+      setAccess({ lightroomUrl: data.lightroomUrl, driveUrl: data.driveUrl, expiresAt: data.expiresAt || "", eventTitle: event?.nomeNoivos || "" });
+    } catch (err) { console.error("Erro no auto-confirm:", err); }
+  }, [event?.nomeNoivos]);
+
   useEffect(() => {
     const checkAccessStatus = async (oid: string) => {
+      if (!event) return; // Aguarda o evento carregar para saber se o usuário é o dono
       try {
         const { data } = await api.get(`/orders/${oid}/access-status`);
         if (data.status === "PENDING_CHOICE") {
           setStep("success");
-          setNeedsAccessChoice(true);
+          if (event?.isPrimaryClient) {
+            setNeedsAccessChoice(true);
+          } else {
+            // Se não é o cliente primário, confirmamos automaticamente como PUBLIC 
+            // (apenas para o pedido dele, sem alterar o evento global se o backend permitir)
+            handleAutoConfirmChoice(oid);
+          }
         } else if (data.status === "ACTIVE") {
           setStep("success");
         }
@@ -260,7 +277,7 @@ export default function EventPage() {
     const savedOrderId = localStorage.getItem(`fs_order_${slug}`);
     const oid = urlOrderId ?? savedOrderId;
     if (oid) { setOrderId(oid); checkAccessStatus(oid); }
-  }, [slug, searchParams, event?.nomeNoivos, navigate, user?.role]);
+  }, [slug, searchParams, event?.nomeNoivos, event?.isPrimaryClient, navigate, user?.role, handleAutoConfirmChoice]);
 
   const handleTokenize = async () => {
     if (!MP_PUBLIC_KEY) { setError("Erro de configuração: Chave MP ausente."); return; }
@@ -329,7 +346,15 @@ export default function EventPage() {
       navigate(`/checkout?orderId=${event.pendingOrderId}`);
       return;
     }
-    setStep("choice"); 
+    
+    // Só mostramos a escolha de privacidade (Mestre) para o cliente primário do evento.
+    // Outros compradores (convidados/parceiros) pulam direto para o checkout/upsell.
+    if (event.isPrimaryClient) {
+      setStep("choice");
+    } else {
+      setAccessType("PUBLIC"); // Padrão para convidados
+      setStep(printProducts.length > 0 ? "upsell" : "checkout");
+    }
   };
   const handleChange = (k: string) => (e: React.ChangeEvent<HTMLInputElement>) => setCardData(p => ({ ...p, [k]: e.target.value }));
 
@@ -920,11 +945,26 @@ export default function EventPage() {
         )}
       </Modal>
 
-      {step === "auth" && <AuthModal onSuccess={() => setStep("choice")} onClose={() => setStep("paywall")} />}
+      {step === "auth" && (
+        <AuthModal 
+          onSuccess={() => {
+            if (event?.isPrimaryClient) {
+              setStep("choice");
+            } else {
+              setAccessType("PUBLIC");
+              setStep(printProducts.length > 0 ? "upsell" : "checkout");
+            }
+          }} 
+          onClose={() => setStep("paywall")} 
+        />
+      )}
 
       {needsAccessChoice && orderId && event && (
-        <AccessTypeModal orderId={orderId} eventTitle={event.nomeNoivos}
-          onConfirmed={async () => {
+        <AccessTypeModal 
+          orderId={orderId} 
+          eventTitle={event.nomeNoivos}
+          isPrimaryClient={event.isPrimaryClient}
+          onConfirmed={async (_type, _exp) => {
             setNeedsAccessChoice(false);
             try {
               const { data } = await api.get(`/orders/${orderId}/access-status`);

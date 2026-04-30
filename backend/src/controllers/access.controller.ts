@@ -64,10 +64,14 @@ export async function chooseAccessType(req: AuthRequest, res: Response): Promise
 
     // Se PUBLIC, o evento fica visível na Home
     // Se PRIVATE, ocultamos da vitrine
-    await prisma.event.update({
-      where: { id: order.eventId },
-      data: { isPrivate: accessType === "PRIVATE" },
-    });
+    // ── SEGURANÇA ────────────────────────────────────
+    // Apenas o cliente primário do evento pode alterar a visibilidade GLOBAL.
+    if (order.event.clientEmail && user.email === order.event.clientEmail) {
+      await prisma.event.update({
+        where: { id: order.eventId },
+        data: { isPrivate: accessType === "PRIVATE" },
+      });
+    }
 
     res.json({
       accessType: updated.accessType,
@@ -108,6 +112,7 @@ export async function getAccessStatus(req: AuthRequest, res: Response): Promise<
             isCrowdfund: true,
             targetAmount: true,
             collectedAmount: true,
+            clientEmail: true,
           },
         },
       },
@@ -129,6 +134,7 @@ export async function getAccessStatus(req: AuthRequest, res: Response): Promise<
         isCrowdfund: boolean;
         targetAmount: number | null;
         collectedAmount: number | null;
+        clientEmail: string | null;
       };
     }
 
@@ -162,9 +168,16 @@ export async function getAccessStatus(req: AuthRequest, res: Response): Promise<
 
     const isGoalMet = !order.event.isCrowdfund || (Number(order.event.collectedAmount) >= Number(order.event.targetAmount || 0));
 
+    const isPrimaryClient = !!(user.email && order.event.clientEmail && user.email === order.event.clientEmail);
+    const status = order.accessType 
+      ? (isGoalMet ? "ACTIVE" : "PENDING_GOAL") 
+      : aprovado 
+        ? (isPrimaryClient ? "PENDING_CHOICE" : "ACTIVE") // Se não for o dono, pula para ACTIVE (PUBLIC)
+        : "PENDING_PAYMENT";
+
     res.json({
-      status: order.accessType ? (isGoalMet ? "ACTIVE" : "PENDING_GOAL") : aprovado ? "PENDING_CHOICE" : "PENDING_PAYMENT",
-      accessType: order.accessType,
+      status,
+      accessType: order.accessType || (status === "ACTIVE" && !order.accessType ? "PUBLIC" : null),
       isCrowdfund: order.event.isCrowdfund,
       isGoalMet,
       collectedAmount: order.event.collectedAmount,
@@ -173,9 +186,9 @@ export async function getAccessStatus(req: AuthRequest, res: Response): Promise<
       diasRestantes,
       showAlbum: order.showAlbum,
       showVideo: order.showVideo,
-      // Links apenas se ativo e não expirado E meta atingida E visível
-      lightroomUrl: (order.accessType && !expirado && isGoalMet && order.showAlbum) ? order.event.lightroomUrl : null,
-      driveUrl: (order.accessType && !expirado && isGoalMet && order.showVideo) ? order.event.driveUrl : null,
+      // Links apenas se ativo e não expirado E visível
+      lightroomUrl: (status === "ACTIVE" && !expirado && order.showAlbum) ? order.event.lightroomUrl : null,
+      driveUrl: (status === "ACTIVE" && !expirado && order.showVideo) ? order.event.driveUrl : null,
       eventTitle: order.event.nomeNoivos,
       eventSlug: order.event.slug,
     });

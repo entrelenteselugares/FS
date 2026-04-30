@@ -179,7 +179,9 @@ export class EventController {
         }),
         isUnitSale: event.isUnitSale,
         priceUnit: event.priceUnit,
-        type: event.type
+        type: event.type,
+        clientEmail: event.clientEmail,
+        isPrimaryClient: !!(authUser && event.clientEmail && authUser.email === event.clientEmail)
       });
     } catch (error) {
       console.error("Erro ao buscar evento:", error);

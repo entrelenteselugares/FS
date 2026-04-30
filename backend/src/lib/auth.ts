@@ -13,6 +13,7 @@ export interface AuthPayload {
   userId: string;
   role: string;
   nome: string;
+  email: string;
 }
 
 export interface AuthRequest extends ExpressRequest {
