@@ -322,7 +322,10 @@ export default function ProfissionalDashboard() {
                 onSelectEvent={(ev) => setSelected(ev)}
                 onRespond={handleRespond}
                 onRespondUnit={handleRespondUnit}
-                onDelegate={handleDelegate}
+                onDelegate={(eventId) => {
+                  const ev = events.find(e => e.id === eventId);
+                  if (ev) setSelected(ev);
+                }}
               />
             )}
           </div>
@@ -350,17 +353,19 @@ export default function ProfissionalDashboard() {
 
       {isExpressModalOpen && (
         <ExpressSaleModal 
+          network={network}
           onClose={() => setIsExpressModalOpen(false)}
-          onSuccess={() => {
+          onSuccess={(msg) => {
             fetchEvents();
-            showNotification("Venda registrada com sucesso!");
+            showNotification(msg);
           }}
+          onError={(msg) => showNotification(msg, "error")}
         />
       )}
 
       {isProfileOpen && (
         <ProfileModal 
-          profile={profile}
+          profile={profile!}
           onClose={() => setIsProfileOpen(false)}
           onUpdated={fetchProfile}
         />
