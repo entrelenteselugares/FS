@@ -2,8 +2,8 @@ import { useState, useEffect, useCallback } from "react";
 import { useAuth } from "../hooks/useAuth";
 import { API } from "../lib/api";
 import {
-  List, Calendar as CalendarIcon, DollarSign, MessageCircle,
-  Settings, ShieldCheck, LayoutDashboard, Briefcase, ArrowRight, Users,
+  DollarSign, MessageCircle,
+  Settings, Briefcase, Users,
 } from "lucide-react";
 import { DashboardLayout, type NavItem } from "../components/DashboardLayout";
 import { T } from "../lib/theme";

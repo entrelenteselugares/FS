@@ -32,6 +32,7 @@ interface PrintProduct {
   finalPrice: number;
   description: string | null;
   unit: string;
+  maxPhotos: number | null;
 }
 
 const CATEGORY_LABELS: Record<string, { label: string; color: string }> = {
