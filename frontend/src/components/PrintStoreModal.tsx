@@ -51,6 +51,7 @@ export function PrintStoreModal({ eventId, eventTitle, medias = [], isOwner = fa
   const [selectedFiles, setSelectedFiles] = useState<File[]>([]);
   const [filePreviews, setFilePreviews] = useState<string[]>([]);
   const [activeCategory, setActiveCategory] = useState<string>("");
+  const scrollRef = useRef<HTMLDivElement>(null);
   const [step, setStep] = useState<"catalog" | "details" | "processing">("catalog");
   const [notes, setNotes] = useState("");
   const [submitting, setSubmitting] = useState(false);
@@ -145,6 +146,12 @@ export function PrintStoreModal({ eventId, eventTitle, medias = [], isOwner = fa
     const msg = `Olá! Quero encomendar:\n\n*Produto:* ${selectedProduct.name}\n*Quantidade:* ${quantity}\n*Evento:* ${eventTitle}\n*Total:* R$ ${totalPrice.toFixed(2).replace(".", ",")}\n\n${notes ? `*Obs:* ${notes}` : ""}`;
     window.open(`https://wa.me/5519997843817?text=${encodeURIComponent(msg)}`, "_blank");
   };
+
+  useEffect(() => {
+    if (scrollRef.current) {
+      scrollRef.current.scrollTop = 0;
+    }
+  }, [activeCategory, step]);
 
   return (
     <div style={{ position: "fixed", inset: 0, zIndex: 1000, display: "flex", alignItems: "center", justifyContent: "center", padding: "16px" }}>
@@ -403,7 +410,17 @@ export function PrintStoreModal({ eventId, eventTitle, medias = [], isOwner = fa
                     )}
                   </>
                 ) : (
-                  <div style={{ maxHeight: 300, overflowY: "auto", padding: 8, border: `1px solid ${T.border}`, background: T.bgCard }}>
+                  <div 
+                    ref={scrollRef}
+                    style={{ 
+                      maxHeight: 300, 
+                      overflowY: "auto", 
+                      padding: 8, 
+                      border: `1px solid ${T.border}`, 
+                      background: T.bgCard,
+                      scrollBehavior: "smooth"
+                    }}
+                  >
                     <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fill, minmax(100px, 1fr))", gap: 8 }}>
                       {medias.map((media) => (
                         <div 
@@ -417,7 +434,12 @@ export function PrintStoreModal({ eventId, eventTitle, medias = [], isOwner = fa
                             transition: "all 0.15s ease"
                           }}
                         >
-                          <img src={media.url} alt="album photo" style={{ width: "100%", height: "100%", objectFit: "cover" }} />
+                          <img 
+                            src={media.url} 
+                            alt="album photo" 
+                            loading="lazy"
+                            style={{ width: "100%", height: "100%", objectFit: "cover" }} 
+                          />
                           {selectedAlbumPhotos.includes(media.url) && (
                             <div style={{ position: "absolute", top: 4, right: 4, background: T.brand, color: "#000", borderRadius: "50%", width: 18, height: 18, display: "flex", alignItems: "center", justifyContent: "center", fontSize: 10, fontWeight: 900 }}>✓</div>
                           )}
