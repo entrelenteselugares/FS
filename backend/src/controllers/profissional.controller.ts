@@ -353,14 +353,14 @@ export async function respondToEvent(req: AuthRequest, res: Response): Promise<v
       return;
     }
 
-    const updateData: Prisma.EventUpdateInput = {};
+    const updateData: Prisma.EventUncheckedUpdateInput = {};
     if (event.captacaoId === userId) updateData.captacaoStatus = status as "ACCEPTED" | "REJECTED" | "PENDING";
     if (event.edicaoId === userId) updateData.edicaoStatus = status as "ACCEPTED" | "REJECTED" | "PENDING";
 
     // ─── LOGICA DE REDIRECIONAMENTO AUTOMÁTICO ───
     if (status === "REJECTED" && event.captacaoId === userId && event.cartorioUserId) {
       // 1. Atualiza lista de rejeições
-      const rejectedArray = Array.isArray(event.rejectedBy) ? [...event.rejectedBy] : [];
+      const rejectedArray = (Array.isArray(event.rejectedBy) ? [...event.rejectedBy] : []) as string[];
       if (!rejectedArray.includes(userId)) {
         rejectedArray.push(userId);
       }
@@ -392,7 +392,7 @@ export async function respondToEvent(req: AuthRequest, res: Response): Promise<v
         // 2. Busca na Rede de Empatia (Favoritos) do Cartório
         const favorites = await prisma.professionalNetwork.findMany({
           where: { userId: event.cartorioUserId },
-          include: { partner: { include: { profissional: true } } }
+          include: { partner: { include: { profissional: { include: { user: true } } } } }
         });
 
         const nextFav = favorites.find(f => 
@@ -423,7 +423,7 @@ export async function respondToEvent(req: AuthRequest, res: Response): Promise<v
           });
 
           if (localPros.length > 0) {
-            const chosen = localPros[0];
+            const chosen = localPros[0] as any;
             nextProId = chosen.user.id;
             nextProEmail = chosen.user.email;
             nextProName = chosen.user.nome;
@@ -508,10 +508,14 @@ export async function registerManualSale(req: AuthRequest, res: Response): Promi
     });
 
     // Forçar o evento como privado ao registrar venda (Privacidade LGPD)
-    await prisma.event.update({
-      where: { id: event.id },
-      data: { isPrivate: true }
-    });
+    // SEGURANÇA: Apenas se o usuário for o dono ou se não houver dono definido ainda.
+    const canForcePrivate = !event.clientEmail || req.user?.email === event.clientEmail;
+    if (canForcePrivate) {
+      await prisma.event.update({
+        where: { id: event.id },
+        data: { isPrivate: true }
+      });
+    }
 
     // 3. Notificações (Auditoria: Adicionando fluxos de alerta)
     NotificationService.notifyNewSale({

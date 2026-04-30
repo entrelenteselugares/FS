@@ -78,6 +78,7 @@ interface EventData {
   recentOrders?: { id: string; contributorName: string; valor: number; createdAt: string }[];
   clientEmail?: string | null;
   isPrimaryClient?: boolean;
+  isPrivate?: boolean;
 }
 
 interface EventMedia {
@@ -151,7 +152,7 @@ export default function EventPage() {
   const [event, setEvent] = useState<EventData | null>(null);
   const [loading, setLoading] = useState(true);
   const [sharing, setSharing] = useState(false);
-  const [step, setStep] = useState<Step>("paywall");
+  const [step, setStep] = useState<Step | "countdown" | "denied">("paywall");
   const [access, setAccess] = useState<AccessData | null>(null);
   const [orderId, setOrderId] = useState<string | null>(null);
   const [justPaid, setJustPaid] = useState(false);
@@ -226,18 +227,34 @@ export default function EventPage() {
     const params = user?.id ? { userId: user.id } : {};
     api.get(`/public/events/${slug}`, { params })
       .then((r) => {
-        setEvent(r.data);
-        if ((r.data.paywall && !r.data.paywall.active) || r.data.isOwner) {
+        const eventData = r.data;
+        setEvent(eventData);
+
+        const eventDate = eventData.dataEvento ? new Date(eventData.dataEvento) : null;
+        const isFuture = eventDate && eventDate > new Date();
+
+        if (isFuture) {
+          setStep("countdown");
+        } else if (eventData.isPrivate && !eventData.isPrimaryClient && !eventData.isOwner) {
+          setStep("denied");
+        } else if ((eventData.paywall && !eventData.paywall.active) || eventData.isOwner) {
           setStep("success"); 
         }
+
         // Se for marketplace, busca as mídias
-        if (r.data.type === 'PHOTO_MARKETPLACE') {
-          api.get(`/marketplace/events/${r.data.id}/media`)
+        if (eventData.type === 'PHOTO_MARKETPLACE') {
+          api.get(`/marketplace/events/${eventData.id}/media`)
             .then(res => setMedias(res.data))
             .catch(err => console.error("Erro ao carregar mídias:", err));
         }
       })
-      .catch(() => navigate("/404"))
+      .catch((err) => {
+        if (err.response?.status === 403) {
+          setStep("denied");
+        } else {
+          navigate("/404");
+        }
+      })
       .finally(() => setLoading(false));
 
     // Fetch Print Catalog
@@ -277,7 +294,7 @@ export default function EventPage() {
     const savedOrderId = localStorage.getItem(`fs_order_${slug}`);
     const oid = urlOrderId ?? savedOrderId;
     if (oid) { setOrderId(oid); checkAccessStatus(oid); }
-  }, [slug, searchParams, event?.nomeNoivos, event?.isPrimaryClient, navigate, user?.role, handleAutoConfirmChoice]);
+  }, [slug, searchParams, event, navigate, user?.role, handleAutoConfirmChoice]);
 
   const handleTokenize = async () => {
     if (!MP_PUBLIC_KEY) { setError("Erro de configuração: Chave MP ausente."); return; }
@@ -684,6 +701,45 @@ export default function EventPage() {
               </div>
             )}
 
+            {step === "countdown" && (
+              <div style={{ display: "flex", flexDirection: "column", gap: 16, animation: "fadeUp 0.3s ease", textAlign: "center" }}>
+                <p style={{ fontSize: 10, fontWeight: 700, textTransform: "uppercase", letterSpacing: 2, color: T.brand, margin: 0 }}>
+                  Evento em breve
+                </p>
+                <p style={{ fontSize: 14, color: T.text2, margin: "0 0 10px" }}>
+                  O grande dia está chegando! Fique atento, o álbum será liberado aqui após o evento.
+                </p>
+                {event.dataEvento && <Countdown targetDate={event.dataEvento} />}
+                <div style={{ marginTop: 20 }}>
+                  <button onClick={handleShare} style={{ ...BtnSecondary, width: "100%", justifyContent: "center", color: T.text }}>
+                    {sharing ? "LINK COPIADO!" : "COMPARTILHAR ESPERA"}
+                  </button>
+                </div>
+              </div>
+            )}
+
+            {step === "denied" && (
+              <div style={{ display: "flex", flexDirection: "column", gap: 16, animation: "fadeUp 0.3s ease", textAlign: "center" }}>
+                <div style={{ width: 64, height: 64, borderRadius: "50%", background: "rgba(255,255,255,0.05)", display: "flex", alignItems: "center", justifyContent: "center", margin: "0 auto 10px" }}>
+                  <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke={T.brand} strokeWidth="1.5"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
+                </div>
+                <p style={{ fontSize: 10, fontWeight: 700, textTransform: "uppercase", letterSpacing: 2, color: T.brand, margin: 0 }}>
+                  Álbum Privado
+                </p>
+                <p style={{ fontSize: 14, color: T.text2, margin: 0 }}>
+                  Este álbum foi configurado como privado pelo proprietário. O acesso é restrito apenas ao e-mail do cliente.
+                </p>
+                {!user ? (
+                   <button onClick={() => setStep("auth")} style={{ ...BtnPrimary, marginTop: 10, justifyContent: "center" }}>FAZER LOGIN PARA ACESSAR</button>
+                ) : (
+                   <p style={{ fontSize: 11, color: T.text3, marginTop: 10 }}>Logado como: {user.email}</p>
+                )}
+                <div style={{ marginTop: 20 }}>
+                   <button onClick={() => navigate("/")} style={{ ...BtnSecondary, width: "100%", justifyContent: "center", color: T.text }}>VOLTAR AO INÍCIO</button>
+                </div>
+              </div>
+            )}
+
             {step === "success" && (
               <div style={{ display: "flex", flexDirection: "column", gap: 16, animation: "fadeUp 0.3s ease" }}>
                 {!access?.lightroomUrl && !access?.driveUrl ? (
@@ -964,7 +1020,7 @@ export default function EventPage() {
           orderId={orderId} 
           eventTitle={event.nomeNoivos}
           isPrimaryClient={event.isPrimaryClient}
-          onConfirmed={async (_type, _exp) => {
+          onConfirmed={async () => {
             setNeedsAccessChoice(false);
             try {
               const { data } = await api.get(`/orders/${orderId}/access-status`);

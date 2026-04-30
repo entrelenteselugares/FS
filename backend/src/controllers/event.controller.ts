@@ -180,6 +180,7 @@ export class EventController {
         isUnitSale: event.isUnitSale,
         priceUnit: event.priceUnit,
         type: event.type,
+        isPrivate: event.isPrivate,
         clientEmail: event.clientEmail,
         isPrimaryClient: !!(authUser && event.clientEmail && authUser.email === event.clientEmail)
       });

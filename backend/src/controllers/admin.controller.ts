@@ -320,43 +320,52 @@ export async function adminUpdateEvent(req: AuthRequest, res: Response): Promise
   const { id } = req.params;
   const data: Prisma.EventUncheckedUpdateInput = {};
   
-  // Mapeamento de campos do body para o schema v4.0
-  if (req.body.title) data.nomeNoivos = req.body.title;
-  if (req.body.date) data.dataEvento = new Date(req.body.date);
-  if (req.body.location) data.location = req.body.location;
-  if (req.body.city) data.city = req.body.city;
-  if (req.body.description) data.description = req.body.description;
-  if (req.body.lightroomUrl !== undefined) data.lightroomUrl = req.body.lightroomUrl || null;
-  if (req.body.driveUrl !== undefined) data.driveUrl = req.body.driveUrl || null;
-  if (req.body.previewPhotos !== undefined) data.previewPhotos = req.body.previewPhotos ? JSON.stringify(req.body.previewPhotos) : null;
-  if (req.body.priceBase !== undefined) data.priceBase = Number(req.body.priceBase);
-  if (req.body.priceEarly !== undefined) data.priceEarly = Number(req.body.priceEarly);
-  if (req.body.cartorioId !== undefined) data.cartorioUserId = req.body.cartorioId || null;
-  if (req.body.captacaoId !== undefined) data.captacaoId = req.body.captacaoId || null;
-  if (req.body.edicaoId !== undefined) data.edicaoId = req.body.edicaoId || null;
-  if (req.body.active !== undefined) data.active = req.body.active;
-  if (req.body.temFoto !== undefined) data.temFoto = req.body.temFoto;
-  if (req.body.temVideo !== undefined) data.temVideo = req.body.temVideo;
-  if (req.body.temReels !== undefined) data.temReels = req.body.temReels;
-  if (req.body.temFotoImpressa !== undefined) data.temFotoImpressa = req.body.temFotoImpressa;
-  if (req.body.coverPhotoUrl !== undefined) data.coverPhotoUrl = req.body.coverPhotoUrl || null;
-  if (req.body.eventHours !== undefined) data.eventHours = Number(req.body.eventHours);
-  if (req.body.isCrowdfund !== undefined) data.isCrowdfund = req.body.isCrowdfund;
-  if (req.body.targetAmount !== undefined) data.targetAmount = req.body.targetAmount ? Number(req.body.targetAmount) : null;
-  if (req.body.isPrivate !== undefined) (data as Prisma.EventUpdateInput).isPrivate = req.body.isPrivate;
-  if (req.body.isUnitSale !== undefined) (data as Prisma.EventUpdateInput).isUnitSale = req.body.isUnitSale;
-  if (req.body.priceUnit !== undefined) (data as Prisma.EventUpdateInput).priceUnit = Number(req.body.priceUnit);
-  if (req.body.type !== undefined) (data as Prisma.EventUpdateInput).type = req.body.type;
-  if (req.body.pricePerPhoto !== undefined) (data as Prisma.EventUpdateInput).pricePerPhoto = Number(req.body.pricePerPhoto);
-  if (req.body.marketplaceConfigs !== undefined) (data as Prisma.EventUpdateInput).marketplaceConfigs = req.body.marketplaceConfigs;
-
   try {
-    // 1. Busca estado atual para saber se os links estão sendo adicionados agora
+    // 1. Busca estado atual para saber se o usuário é o dono e se links estão sendo adicionados
     const currentEvent = await prisma.event.findUnique({ where: { id: String(id) } });
     if (!currentEvent) {
       res.status(404).json({ error: "Evento não encontrado." });
       return;
     }
+
+    // Mapeamento de campos do body para o schema v4.0
+    if (req.body.title) data.nomeNoivos = req.body.title;
+    if (req.body.date) data.dataEvento = new Date(req.body.date);
+    if (req.body.location) data.location = req.body.location;
+    if (req.body.city) data.city = req.body.city;
+    if (req.body.description) data.description = req.body.description;
+    if (req.body.lightroomUrl !== undefined) data.lightroomUrl = req.body.lightroomUrl || null;
+    if (req.body.driveUrl !== undefined) data.driveUrl = req.body.driveUrl || null;
+    if (req.body.previewPhotos !== undefined) data.previewPhotos = req.body.previewPhotos ? JSON.stringify(req.body.previewPhotos) : null;
+    if (req.body.priceBase !== undefined) data.priceBase = Number(req.body.priceBase);
+    if (req.body.priceEarly !== undefined) data.priceEarly = Number(req.body.priceEarly);
+    if (req.body.cartorioId !== undefined) data.cartorioUserId = req.body.cartorioId || null;
+    if (req.body.captacaoId !== undefined) data.captacaoId = req.body.captacaoId || null;
+    if (req.body.edicaoId !== undefined) data.edicaoId = req.body.edicaoId || null;
+    if (req.body.active !== undefined) data.active = req.body.active;
+    if (req.body.temFoto !== undefined) data.temFoto = req.body.temFoto;
+    if (req.body.temVideo !== undefined) data.temVideo = req.body.temVideo;
+    if (req.body.temReels !== undefined) data.temReels = req.body.temReels;
+    if (req.body.temFotoImpressa !== undefined) data.temFotoImpressa = req.body.temFotoImpressa;
+    if (req.body.coverPhotoUrl !== undefined) data.coverPhotoUrl = req.body.coverPhotoUrl || null;
+    if (req.body.eventHours !== undefined) data.eventHours = Number(req.body.eventHours);
+    if (req.body.isCrowdfund !== undefined) data.isCrowdfund = req.body.isCrowdfund;
+    if (req.body.targetAmount !== undefined) data.targetAmount = req.body.targetAmount ? Number(req.body.targetAmount) : null;
+    if (req.body.isPrivate !== undefined) {
+      // REGRA ABSOLUTA: Apenas o dono do álbum (clientEmail) pode mudar a privacidade.
+      // Profissionais e Unidades Fixas (mesmo se ADMIN) não têm autonomia se o clientEmail estiver definido.
+      const canChangePrivacy = !currentEvent.clientEmail || req.user?.email === currentEvent.clientEmail;
+      if (canChangePrivacy) {
+        (data as Prisma.EventUpdateInput).isPrivate = req.body.isPrivate;
+      } else {
+        console.warn(`[SECURITY] Usuário ${req.user?.email} tentou mudar privacidade do evento ${id} sem ser o dono.`);
+      }
+    }
+    if (req.body.isUnitSale !== undefined) (data as Prisma.EventUpdateInput).isUnitSale = req.body.isUnitSale;
+    if (req.body.priceUnit !== undefined) (data as Prisma.EventUpdateInput).priceUnit = Number(req.body.priceUnit);
+    if (req.body.type !== undefined) (data as Prisma.EventUpdateInput).type = req.body.type;
+    if (req.body.pricePerPhoto !== undefined) (data as Prisma.EventUpdateInput).pricePerPhoto = Number(req.body.pricePerPhoto);
+    if (req.body.marketplaceConfigs !== undefined) (data as Prisma.EventUpdateInput).marketplaceConfigs = req.body.marketplaceConfigs;
 
     const wasEmpty = !currentEvent.lightroomUrl && !currentEvent.driveUrl;
     const isAddingLinks = (data.lightroomUrl || data.driveUrl) && wasEmpty;
@@ -1107,10 +1116,14 @@ export async function adminCreateManualSale(req: AuthRequest, res: Response): Pr
     });
 
     // 3. Forçar o evento como privado ao registrar venda (Privacidade LGPD)
-    await prisma.event.update({
-      where: { id: event.id },
-      data: { isPrivate: true }
-    });
+    // SEGURANÇA: Apenas se o usuário for o dono ou se não houver dono definido ainda.
+    const canForcePrivate = !event.clientEmail || req.user?.email === event.clientEmail;
+    if (canForcePrivate) {
+      await prisma.event.update({
+        where: { id: event.id },
+        data: { isPrivate: true }
+      });
+    }
 
     await audit(req, "ADMIN_MANUAL_SALE", "Order", order.id, null, { 
       eventId, 
