@@ -203,6 +203,7 @@ router.post(
 router.get("/public/orders/:id",               PaymentController.getOrderPublic);
 router.get("/public/orders/:id/check-payment", PaymentController.checkPaymentStatus);
 router.get("/public/print-catalog",            AdminPrintCatalog.getPublicPrintCatalog);
+router.post("/orders/print",                   PaymentController.createPrintOrder);
 
 
 // ── LGPD / Acesso (pós-pagamento) ─────────────────────────────────────────────

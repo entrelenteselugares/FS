@@ -771,4 +771,56 @@ export class PaymentController {
       return res.status(500).json({ error: "Erro ao verificar pagamento." });
     }
   }
+
+  /**
+   * POST /api/orders/print
+   * Cria um pedido para produto do catálogo de impressão.
+   */
+  static async createPrintOrder(req: Request, res: Response) {
+    const { eventId, productId, quantity, notes } = req.body;
+
+    try {
+      const product = await prisma.printProduct.findUnique({ where: { id: productId } });
+      if (!product || !product.active) {
+        return res.status(404).json({ error: "Produto não disponível" });
+      }
+
+      const event = await prisma.event.findUnique({ where: { id: eventId } });
+      if (!event) {
+        return res.status(404).json({ error: "Evento não encontrado" });
+      }
+
+      // Calcula o preço final
+      const unitPrice = product.sellingPrice !== null 
+        ? Number(product.sellingPrice) 
+        : Number(product.supplierCost) * (1 + product.marginPct / 100);
+      
+      const totalPrice = unitPrice * (quantity || 1);
+
+      // Cria o pedido com o item
+      const order = await prisma.order.create({
+        data: {
+          eventId: event.id,
+          valor: totalPrice,
+          status: "PENDENTE",
+          manualType: `Físico: ${product.name} (x${quantity})`,
+          internalNotes: notes || null,
+          items: {
+            create: [
+              {
+                printProductId: product.id,
+                price: unitPrice,
+                quantity: quantity || 1
+              }
+            ]
+          }
+        }
+      });
+
+      return res.json({ orderId: order.id });
+    } catch (error) {
+      console.error("[CreatePrintOrder Error]:", error);
+      return res.status(500).json({ error: "Erro ao criar pedido de impressão." });
+    }
+  }
 }
