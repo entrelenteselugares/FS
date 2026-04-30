@@ -9,6 +9,7 @@ interface PrintProduct {
   description: string | null;
   finalPrice: number;
   unit: string;
+  maxPhotos?: number | null;
 }
 
 const CATEGORY_LABELS: Record<string, string> = {
@@ -74,6 +75,16 @@ export function PrintStoreModal({ eventId, eventTitle, medias = [], isOwner = fa
 
   const handleFileSelect = (e: React.ChangeEvent<HTMLInputElement>) => {
     const files = Array.from(e.target.files || []);
+    
+    // Check limit
+    if (selectedProduct?.maxPhotos) {
+      const currentTotal = selectedFiles.length + selectedAlbumPhotos.length;
+      if (currentTotal + files.length > selectedProduct.maxPhotos) {
+        setError(`Limite de fotos atingido. Este produto permite no máximo ${selectedProduct.maxPhotos} fotos.`);
+        return;
+      }
+    }
+
     setSelectedFiles(prev => [...prev, ...files]);
     files.forEach(f => {
       const reader = new FileReader();
@@ -88,8 +99,18 @@ export function PrintStoreModal({ eventId, eventTitle, medias = [], isOwner = fa
   };
 
   const toggleAlbumPhoto = (url: string) => {
+    const isSelected = selectedAlbumPhotos.includes(url);
+    
+    if (!isSelected && selectedProduct?.maxPhotos) {
+      const currentTotal = selectedFiles.length + selectedAlbumPhotos.length;
+      if (currentTotal >= selectedProduct.maxPhotos) {
+        setError(`Limite de fotos atingido (${selectedProduct.maxPhotos}). Remova uma foto para adicionar outra.`);
+        return;
+      }
+    }
+
     setSelectedAlbumPhotos(prev => 
-      prev.includes(url) ? prev.filter(u => u !== url) : [...prev, url]
+      isSelected ? prev.filter(u => u !== url) : [...prev, url]
     );
   };
 
@@ -307,7 +328,7 @@ export function PrintStoreModal({ eventId, eventTitle, medias = [], isOwner = fa
               <div>
                 <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 12 }}>
                   <p style={{ fontSize: 9, letterSpacing: 3, color: T.text3, textTransform: "uppercase", fontWeight: 900, margin: 0 }}>
-                    Selecione as Fotos ({totalPhotoCount} selecionada{totalPhotoCount !== 1 ? "s" : ""})
+                    Selecione as Fotos ({totalPhotoCount} {selectedProduct.maxPhotos ? `de ${selectedProduct.maxPhotos}` : ""} selecionada{totalPhotoCount !== 1 ? "s" : ""})
                   </p>
                   
                   {isOwner && medias.length > 0 && (
@@ -326,7 +347,15 @@ export function PrintStoreModal({ eventId, eventTitle, medias = [], isOwner = fa
                   {photoSource === "upload" && (
                     <button
                       onClick={() => fileInputRef.current?.click()}
-                      style={{ ...BtnSecondary, padding: "8px 16px", fontSize: 9, color: T.brand, borderColor: T.brand }}
+                      disabled={selectedProduct.maxPhotos ? totalPhotoCount >= selectedProduct.maxPhotos : false}
+                      style={{ 
+                        ...BtnSecondary, 
+                        padding: "8px 16px", 
+                        fontSize: 9, 
+                        color: T.brand, 
+                        borderColor: T.brand,
+                        opacity: (selectedProduct.maxPhotos && totalPhotoCount >= selectedProduct.maxPhotos) ? 0.3 : 1
+                      }}
                     >
                       + Adicionar Fotos
                     </button>

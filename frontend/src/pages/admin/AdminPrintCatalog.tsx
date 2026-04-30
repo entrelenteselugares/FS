@@ -222,63 +222,73 @@ export const AdminPrintCatalog: React.FC = () => {
                   {isExpanded && (
                      <div className="divide-y divide-theme-border/20 overflow-x-auto">
                         {/* TABLE HEADER */}
-                        <div className="min-w-[700px] grid grid-cols-[40px_1fr_100px_100px_100px_100px_110px] gap-4 p-4 bg-theme-bg-muted/20 text-[7px] font-black uppercase tracking-widest text-theme-muted italic">
+                        <div className="min-w-[700px] grid grid-cols-[40px_1fr_100px_80px_80px_80px_80px_110px] gap-4 p-4 bg-theme-bg-muted/20 text-[7px] font-black uppercase tracking-widest text-theme-muted italic">
                            <div>STATUS</div>
                            <div>IDENTIFICAÇÃO DO PRODUTO</div>
                            <div className="text-right">CUSTO</div>
                            <div className="text-right">MARGEM %</div>
                            <div className="text-right">CALCULADO</div>
                            <div className="text-right">MANUAL</div>
+                           <div className="text-right">LMT FOTOS</div>
                            <div className="text-right">PREÇO FINAL</div>
                         </div>
 
                         {catProducts.map(p => (
-                           <div key={p.id} className={`min-w-[700px] grid grid-cols-[40px_1fr_100px_100px_100px_100px_110px] gap-4 p-4 items-center group transition-all ${!p.active ? 'opacity-40 grayscale' : 'hover:bg-theme-bg-muted/40'}`}>
-                              <button 
-                                 onClick={() => handleUpdate(p.id, { active: !p.active })}
-                                 className="text-theme-muted hover:text-brand-tactical transition-all"
-                              >
-                                 {p.active ? <ToggleRight size={24} className="text-brand-tactical" /> : <ToggleLeft size={24} />}
-                              </button>
+                              <div className={`min-w-[700px] grid grid-cols-[40px_1fr_100px_80px_80px_80px_80px_110px] gap-4 p-4 items-center group transition-all ${!p.active ? 'opacity-40 grayscale' : 'hover:bg-theme-bg-muted/40'}`}>
+                                 <button 
+                                    onClick={() => handleUpdate(p.id, { active: !p.active })}
+                                    className="text-theme-muted hover:text-brand-tactical transition-all"
+                                 >
+                                    {p.active ? <ToggleRight size={24} className="text-brand-tactical" /> : <ToggleLeft size={24} />}
+                                 </button>
 
-                              <div className="space-y-1">
-                                 <p className="text-[11px] font-bold text-theme-text uppercase tracking-tight leading-tight">{p.name}</p>
-                                 <div className="flex items-center gap-3 text-[7px] font-black text-theme-muted uppercase tracking-widest">
-                                    <Tag size={8} /> {p.sku} <span className="opacity-40">•</span> {p.unit}
+                                 <div className="space-y-1">
+                                    <p className="text-[11px] font-bold text-theme-text uppercase tracking-tight leading-tight">{p.name}</p>
+                                    <div className="flex items-center gap-3 text-[7px] font-black text-theme-muted uppercase tracking-widest">
+                                       <Tag size={8} /> {p.sku} <span className="opacity-40">•</span> {p.unit}
+                                    </div>
+                                 </div>
+
+                                 <div className="text-right text-[10px] font-black text-theme-text font-mono italic opacity-60">
+                                    {formatCurrency(p.supplierCost)}
+                                 </div>
+
+                                 <div className="text-right flex justify-end">
+                                    <input 
+                                       defaultValue={p.marginPct}
+                                       onBlur={e => handleUpdate(p.id, { marginPct: parseFloat(e.target.value) })}
+                                       className="w-14 bg-transparent border-b border-transparent focus:border-brand-tactical text-right text-[10px] font-black text-theme-text outline-none transition-all"
+                                    />
+                                 </div>
+
+                                 <div className="text-right text-[10px] font-black text-brand-tactical/60 font-mono italic">
+                                    {formatCurrency(p.calculatedPrice)}
+                                 </div>
+
+                                 <div className="text-right flex justify-end">
+                                    <input 
+                                       defaultValue={p.sellingPrice || ""}
+                                       placeholder="--"
+                                       onBlur={e => handleUpdate(p.id, { sellingPrice: e.target.value === "" ? null : parseFloat(e.target.value) })}
+                                       className="w-16 bg-transparent border-b border-transparent focus:border-brand-tactical text-right text-[10px] font-black text-theme-text outline-none transition-all placeholder:text-theme-muted/20"
+                                    />
+                                 </div>
+
+                                 <div className="text-right flex justify-end">
+                                    <input 
+                                       defaultValue={p.maxPhotos || ""}
+                                       placeholder="∞"
+                                       onBlur={e => handleUpdate(p.id, { maxPhotos: e.target.value === "" ? null : parseInt(e.target.value) })}
+                                       className="w-12 bg-transparent border-b border-transparent focus:border-brand-tactical text-right text-[10px] font-black text-theme-text outline-none transition-all placeholder:text-theme-muted/20"
+                                    />
+                                 </div>
+
+                                 <div className="text-right">
+                                    <span className={`text-[12px] font-black font-heading tracking-tighter ${saving === p.id ? 'animate-pulse' : ''} ${p.sellingPrice ? 'text-blue-500' : 'text-theme-text'}`}>
+                                       {formatCurrency(p.finalPrice)}
+                                    </span>
                                  </div>
                               </div>
-
-                              <div className="text-right text-[10px] font-black text-theme-text font-mono italic opacity-60">
-                                 {formatCurrency(p.supplierCost)}
-                              </div>
-
-                              <div className="text-right flex justify-end">
-                                 <input 
-                                    defaultValue={p.marginPct}
-                                    onBlur={e => handleUpdate(p.id, { marginPct: parseFloat(e.target.value) })}
-                                    className="w-14 bg-transparent border-b border-transparent focus:border-brand-tactical text-right text-[10px] font-black text-theme-text outline-none transition-all"
-                                 />
-                              </div>
-
-                              <div className="text-right text-[10px] font-black text-brand-tactical/60 font-mono italic">
-                                 {formatCurrency(p.calculatedPrice)}
-                              </div>
-
-                              <div className="text-right flex justify-end">
-                                 <input 
-                                    defaultValue={p.sellingPrice || ""}
-                                    placeholder="--"
-                                    onBlur={e => handleUpdate(p.id, { sellingPrice: e.target.value === "" ? null : parseFloat(e.target.value) })}
-                                    className="w-16 bg-transparent border-b border-transparent focus:border-brand-tactical text-right text-[10px] font-black text-theme-text outline-none transition-all placeholder:text-theme-muted/20"
-                                 />
-                              </div>
-
-                              <div className="text-right">
-                                 <span className={`text-[12px] font-black font-heading tracking-tighter ${saving === p.id ? 'animate-pulse' : ''} ${p.sellingPrice ? 'text-blue-500' : 'text-theme-text'}`}>
-                                    {formatCurrency(p.finalPrice)}
-                                 </span>
-                              </div>
-                           </div>
                         ))}
                      </div>
                   )}
