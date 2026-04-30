@@ -285,6 +285,12 @@ export class NotificationService {
   
   /** Alerta para orçamento aprovado (precificado) */
   static notifyQuotationApproved(data: { clientName: string; eventTitle: string; finalPrice: number }) {
+    sendWhatsApp(
+      `✨ *ORÇAMENTO PRECIFICADO — Foto Segundo*\n\n` +
+      `👤 Cliente: ${data.clientName}\n` +
+      `📸 Evento: ${data.eventTitle}\n` +
+      `💵 Valor Final: R$ ${Number(data.finalPrice).toFixed(2)}\n\n` +
+      `O cliente recebeu o e-mail para pagamento.`
     );
   }
 
