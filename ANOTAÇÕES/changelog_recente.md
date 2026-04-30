@@ -4,19 +4,39 @@ Este documento registra as atualizações críticas realizadas para estabilizaç
 
 ---
 
+## 📖 30/04/2026 (noite) — Sprint: Eternize no Papel (Loja de Impressões)
+
+### 🛒 Marketplace Físico (Print Store)
+
+- **PrintStoreModal**: Implementação de uma loja de produtos físicos (álbuns, quadros, revelações) integrada diretamente na página do evento.
+- **Seleção do Álbum (Owner Mode)**: Proprietários de álbuns agora podem selecionar fotos diretamente da galeria do sistema para compor seu pedido físico, além de fazer o upload manual.
+- **Integração de Checkout**: Fluxo duplo de finalização (WhatsApp para pedidos personalizados e Checkout padrão para pagamento direto).
+- **Backend Routing**: Criado o endpoint `POST /api/orders/print` para geração dinâmica de pedidos de produtos físicos com persistência de fotos selecionadas em notas internas.
+
+### 🔐 Segurança & UX (Hotfixes)
+
+- **Global Access Fix**: Corrigido bug onde eventos privados bloqueavam acesso 403 mesmo após pagamento global (`isGloballyPaid`). A hierarquia de permissões agora prioriza o status de pagamento sobre a flag de privacidade.
+- **External Link Overhaul**: Refatoração completa da UI de links externos (Adobe Share/Lightroom). Links agora aparecem como cards elegantes e clicáveis, integrados ao design "Midnight Luxury".
+- **Type Safety**: Resolvido erro de interface `EventData` no frontend, adicionando a propriedade `isOwner` para correta detecção de privilégios.
+
+---
+
 ## 💎 30/04/2026 — Auditoria de Tipagem & Resiliência de Backend
 
 ### 🛡️ TypeScript & Type Safety (Backend 100%)
+
 - **Eliminação de `: any`**: Auditoria completa em todos os controllers (`auth`, `admin`, `payment`, `marketplace`, `gamification`, etc.). Todos os tipos genéricos foram substituídos por interfaces explícitas ou `unknown` com type-guards.
 - **Prisma 6 Hardening**: Substituição de casts `as any` em queries complexas por tipagem robusta via `GetPayload` e validação de nulidade (`not: null as string | null`).
 - **Resiliência em Catch Blocks**: Padronização do tratamento de erros em blocos `catch (err: unknown)` com extração segura de mensagens via `instanceof Error`.
 
 ### ⚙️ Infraestrutura & Performance
+
 - **Prisma 6 Native Adapter**: Migração do motor de banco de dados para o adaptador nativo do Postgres (`@prisma/adapter-pg`). Redução do bundle-size e eliminação de binários Rust, otimizando o *Cold Start* na Vercel.
 - **Fix Router Duplicata**: Removidas rotas redundantes de `cliente/pedidos` que causavam avisos de conflito no boot do Express.
 - **Cron Job Hardening**: O `expiration.job.ts` foi estabilizado com importações corretas e tipagem rigorosa, garantindo a execução segura da limpeza de mídias expiradas.
 
 ### 💳 Checkout & Marketplace (Estabilização)
+
 - **Marketplace Syntax Fix**: Corrigidos erros de paridade de chaves no `MarketplaceController` que invalidavam os métodos `addMedia` e `listMedia`.
 - **Checkout Auth**: Refatoração do auto-cadastro de convidados no checkout para evitar race-conditions entre Supabase e Prisma.
 - **Audit Logging**: Garantia de `await` em todas as chamadas de auditoria críticas para evitar perda de logs em ambientes serverless.

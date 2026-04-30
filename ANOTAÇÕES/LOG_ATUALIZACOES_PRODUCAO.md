@@ -1,41 +1,44 @@
-# Log de Atualizações - Produção (29/04/2026)
+# Log de Atualizações - Produção (30/04/2026)
 
-Este documento resume as correções críticas e melhorias de UX implementadas hoje para estabilizar o módulo administrativo de orçamentos e garantir a integridade dos dados técnicos.
+Este documento resume as atualizações críticas, correções de segurança e novas funcionalidades implementadas hoje para a plataforma Foto Segundo.
 
 ## ✅ O Que Foi Corrigido e Melhorado
 
-### 1. Gestão Administrativa de Orçamentos (AdminQuotes)
+### 1. Eternize no Papel (Loja de Impressões)
 
-- **Estabilização da UI/UX**: Overhaul completo da interface do Dashboard de Orçamentos, seguindo rigorosamente os tokens do design system **Midnight Luxury**.
-- **Correção de Parsing JSON**: Implementação de um extrator robusto para metadados de orçamentos (`[BUDGET_BREAKDOWN]`), resolvendo o problema de informações "corrompidas" ou visíveis como texto bruto.
-- **Sincronização de Estados**: O simulador de preços agora restaura automaticamente a equipe, equipamentos e margens de lucro ao selecionar um orçamento existente. Corrigido o erro onde a sugestão de preço aparecia como "R$ 0".
-- **Contraste e Legibilidade**: Melhoria significativa no contraste da lista de orçamentos e nos estados de seleção. Labels e botões agora utilizam variáveis CSS dinâmicas para perfeito funcionamento em Light e Dark mode.
-- **Atribuição de Equipe**: Fluxo de designação de profissionais da plataforma simplificado e com feedback visual em tempo real.
-- **Fix de Tipagem (TypeScript)**: Eliminação de todos os tipos `any` e variáveis não utilizadas, garantindo um build estável e livre de erros de linting.
+- **Novo Módulo Marketplace**: Lançamento da lojinha in-app para venda de álbuns, quadros e revelações.
+- **Seleção do Álbum**: Clientes logados que são donos do evento agora podem escolher fotos diretamente da galeria para compor seus produtos físicos.
+- **Upload Híbrido**: Suporte para upload de novas fotos combinado com seleção de fotos existentes.
+- **Integração de Pagamento**: Endpoint `/api/orders/print` criado para converter seleções da loja em pedidos reais integrados ao checkout do Mercado Pago.
 
-### 2. Infraestrutura e Deploy
+### 2. Segurança e Controle de Acesso
 
-- **Build de Produção**: Deploy realizado com sucesso na Vercel (Branch `main`).
-- **Limpeza de Cache**: Recomenda-se um hard refresh (`Ctrl + F5`) para garantir o carregamento dos novos tokens de cores e scripts de parsing.
+- **Fix Acesso Global**: Corrigida falha onde álbuns privados pagos globalmente retornavam erro 403 para visitantes. O sistema agora reconhece o pagamento aprovado como prioridade sobre a flag de privacidade.
+- **UX de Links Externos**: Links para Adobe Share e Lightroom foram transformados em cards interativos premium, melhorando a taxa de clique e a apresentação visual.
+- **Type Safety**: Auditoria completa de tipos no frontend para evitar falhas de renderização em tempo de execução.
+
+### 3. Backend e Infraestrutura
+
+- **Criação Dinâmica de Pedidos**: Novo motor de criação de pedidos de impressão com persistência de seleções de fotos em notas internas para a produção.
+- **Resiliência Prisma**: Auditoria de queries para garantir performance em ambientes serverless.
 
 ---
 
 ## 🧪 Roteiro de Testes (O Que Validar Agora)
 
-1. **Seleção de Orçamentos**:
-   - Acesse o painel administrativo de orçamentos.
-   - Selecione um orçamento que já possua equipe definida.
-   - Navegue pelas abas (Briefing, Equipe, Custos, Fechamento) e verifique se os dados são restaurados corretamente.
+1. **Loja de Impressões**:
+   - Acesse um álbum (como dono ou visitante).
+   - Clique em "ETERNIZE NO PAPEL".
+   - Verifique se o catálogo carrega corretamente e se a seleção de quantidade funciona.
+   - Teste o upload de fotos e a seleção do álbum (se logado como dono).
+   - Simule o fechamento via WhatsApp e via Checkout.
 
-2. **Criação de Novo Lead**:
-   - Clique em "Novo Orçamento".
-   - Preencha os dados e salve.
-   - Verifique se o novo lead aparece no "Radar" com a urgência correta.
+2. **Acesso Pago**:
+   - Verifique se um álbum marcado como privado mas pago globalmente abre sem pedir login/senha para usuários anônimos.
 
-3. **Modo Claro / Escuro**:
-   - Alterne o tema da plataforma.
-   - Verifique se os textos do dashboard de orçamento permanecem legíveis e se o fundo se ajusta sem "artefatos" pretos ou brancos fixos.
+3. **Responsividade**:
+   - Verifique a visualização dos novos cards de "Destaques da Galeria" em dispositivos móveis.
 
 ---
 
-**Status**: Módulo Administrativo Estabilizado. Pronto para operação de escala.
+**Status**: Plataforma Estabilizada e Loja de Impressões Operacional.

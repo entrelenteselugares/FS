@@ -777,7 +777,7 @@ export class PaymentController {
    * Cria um pedido para produto do catálogo de impressão.
    */
   static async createPrintOrder(req: Request, res: Response) {
-    const { eventId, productId, quantity, notes } = req.body;
+    const { eventId, productId, quantity, notes, albumPhotos } = req.body;
 
     try {
       const product = await prisma.printProduct.findUnique({ where: { id: productId } });
@@ -797,6 +797,12 @@ export class PaymentController {
       
       const totalPrice = unitPrice * (quantity || 1);
 
+      // Prepara notas internas com fotos do álbum se houver
+      let finalInternalNotes = notes || "";
+      if (albumPhotos && Array.isArray(albumPhotos) && albumPhotos.length > 0) {
+        finalInternalNotes += `\n\n--- FOTOS SELECIONADAS DO ÁLBUM ---\n${albumPhotos.join("\n")}`;
+      }
+
       // Cria o pedido com o item
       const order = await prisma.order.create({
         data: {
@@ -804,7 +810,7 @@ export class PaymentController {
           valor: totalPrice,
           status: "PENDENTE",
           manualType: `Físico: ${product.name} (x${quantity})`,
-          internalNotes: notes || null,
+          internalNotes: finalInternalNotes.trim() || null,
           items: {
             create: [
               {

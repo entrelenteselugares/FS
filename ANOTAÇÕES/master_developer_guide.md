@@ -141,3 +141,17 @@ Para proteger a privacidade dos clientes e a integridade do conteÃºdo pago:
 >
 > [!NOTE]
 > **Unidade Fixa**: O mapeamento `CARTORIO` -> `Unidade Fixa` na visualizaÃ§Ã£o Ã© mandatÃ³rio.
+
+---
+
+## 13. Print Store e Fulfillment Físico
+
+A funcionalidade 'Eternize no Papel' opera como um marketplace de produtos físicos integrado às páginas de evento.
+
+### Fluxo de Pedido de Impressão
+- **Ponto de Entrada**: PrintStoreModal.tsx acionado pelo botão na sidebar.
+- **Seleção Híbrida**: Upload manual + seleção da galeria (para donos).
+- **Persistência**: URLs das fotos salvas em internalNotes.
+
+### Lógica de Precificação
+- Preço = Preço de Venda OU (Custo + Margem).
