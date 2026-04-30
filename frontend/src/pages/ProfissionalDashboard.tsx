@@ -128,46 +128,59 @@ export default function ProfissionalDashboard() {
       fetchEvents();
     } catch (err) {
       console.error("Erro ao responder convite:", err);
-      alert("Erro ao processar resposta.");
     }
-  };
-
-  const handleDelegate = (eventId: string) => {
-    showNotification("Delegando para sua Rede de Empatia...", "success");
-    setTimeout(() => handleRespond(eventId, "REJECTED"), 1500);
   };
 
   const handleRespondUnit = async (inviteId: string, status: "ACCEPTED" | "REJECTED") => {
     try {
-      await API.patch(`profissional/unidades/convites/${inviteId}/respond`, { status });
+      await API.patch(`profissional/unidades/convites/${inviteId}`, { status });
       fetchUnitInvites();
       fetchProfile();
     } catch (err) {
-      console.error("Erro ao responder convite de unidade:", err);
-      alert("Erro ao processar resposta da unidade.");
+      console.error("Erro ao responder unidade:", err);
     }
   };
 
-  const handleUpdated = (updated: Partial<EventItem>) => {
-    setSelected((prev) => (prev ? { ...prev, ...updated } : prev));
-    setEvents((prev) => prev.map((e) => (selected && e.id === selected.id ? { ...e, ...updated } : e)));
+  const handleDelegate = async (eventId: string, editorId: string) => {
+    try {
+      await API.patch(`profissional/events/${eventId}/delegate`, { editorId });
+      fetchEvents();
+    } catch (err) {
+      console.error("Erro ao delegar:", err);
+    }
   };
 
-  const handleSaveGoal = () => {
-    const val = Number(tempGoal);
-    if (!isNaN(val) && val > 0) {
-      setMonthlyGoal(val);
-      localStorage.setItem("fs_monthly_goal", val.toString());
-      setIsEditingGoal(false);
-      showNotification("Meta financeira atualizada!", "success");
+  const handleUpdated = () => {
+    fetchEvents();
+    setSelected(null);
+  };
+
+  const handleAddService = async (catalogId: string) => {
+    try {
+      await API.post("profissional/services", { catalogId });
+      fetchProfile();
+    } catch (err) {
+      console.error("Erro ao adicionar serviço:", err);
+    }
+  };
+
+  const handleRemoveService = async (serviceId: string) => {
+    try {
+      await API.delete(`profissional/services/${serviceId}`);
+      fetchProfile();
+    } catch (err) {
+      console.error("Erro ao remover serviço:", err);
     }
   };
 
   const handleSearchNetwork = async (q: string) => {
     setNetworkSearch(q);
-    if (!q || q.length < 2) { setSearchResults([]); return; }
+    if (q.length < 3) {
+      setSearchResults([]);
+      return;
+    }
     try {
-      const { data } = await API.get(`profissional/network/search?query=${q}`);
+      const { data } = await API.get(`profissional/network/search?q=${q}`);
       setSearchResults(data);
     } catch (err) {
       console.error("Erro na busca:", err);
@@ -176,62 +189,23 @@ export default function ProfissionalDashboard() {
 
   const handleToggleFavorite = async (partnerId: string) => {
     try {
-      await API.post("profissional/network/toggle", { partnerId });
+      await API.post(`profissional/network/favorite/${partnerId}`);
       fetchNetwork();
-      showNotification("Rede de empatia atualizada!", "success");
-    } catch {
-      showNotification("Erro ao atualizar rede", "error");
-    }
-  };
-
-  const handleAddService = async (catalogService: ServiceCatalog) => {
-    const basePrice = Number(catalogService.basePrice) || 0;
-    const hourlyRate = Number(profile?.hourlyRate) || 150;
-    const multiplier = Number(profile?.equipmentMultiplier) || 1.0;
-    const suggestedPrice = Math.max(basePrice, (hourlyRate * (catalogService.estimatedMinutes / 60)) * multiplier);
-    try {
-      await API.post("profissional/services", {
-        catalogId: catalogService.id,
-        name: catalogService.name,
-        description: catalogService.description,
-        price: suggestedPrice,
-      });
-      fetchProfile();
-      showNotification("Serviço adicionado à sua vitrine!", "success");
-    } catch {
-      showNotification("Erro ao adicionar serviço", "error");
-    }
-  };
-
-  const handleRemoveService = async (serviceId: string) => {
-    if (!confirm("Remover este serviço da sua vitrine?")) return;
-    try {
-      await API.delete(`/profissional/services/${serviceId}`);
-      fetchProfile();
-      showNotification("Serviço removido.", "success");
-    } catch {
-      showNotification("Erro ao remover serviço", "error");
-    }
-  };
-
-  const handleDownloadTaxReport = async () => {
-    try {
-      showNotification("Gerando relatório tributário...", "success");
-      const response = await API.get("profissional/finance/tax-report?format=csv", {
-        responseType: 'blob'
-      });
-      
-      const url = window.URL.createObjectURL(new Blob([response.data]));
-      const link = document.createElement('a');
-      link.href = url;
-      link.setAttribute('download', `relatorio-tributario-${Date.now()}.csv`);
-      document.body.appendChild(link);
-      link.click();
-      link.remove();
     } catch (err) {
-      console.error("Erro ao baixar relatório:", err);
-      showNotification("Erro ao gerar relatório", "error");
+      console.error("Erro favoritar:", err);
     }
+  };
+
+  const handleSaveGoal = async () => {
+    const val = Number(tempGoal);
+    if (isNaN(val)) return;
+    setMonthlyGoal(val);
+    localStorage.setItem("fs_monthly_goal", val.toString());
+    setIsEditingGoal(false);
+  };
+
+  const handleDownloadTaxReport = () => {
+    window.open(`${API.defaults.baseURL}/profissional/reports/tax`, "_blank");
   };
 
   // ─── Nav ──────────────────────────────────────────────────────────────────────
@@ -284,68 +258,74 @@ export default function ProfissionalDashboard() {
           residentUnits={residentUnits}
         />
 
-        {/* Express Sale Button */}
-        <ExpressSaleBanner onOpen={() => setIsExpressModalOpen(true)} />
-
-        {/* KPI Cards */}
-        <DashboardStats 
-          completedEvents={profile?.stats?.completedEvents || 0}
-          totalEarnings={profile?.stats?.totalEarnings || 0}
-          monthEarnings={profile?.stats?.monthEarnings || 0}
-        />
-
-        {/* Support Banner */}
-        <SupportBanner />
-
         {/* ── Tab Content ──────────────────────────────────────────────────── */}
-        <div className="space-y-6">
-          {activeTab === "financeiro" && (
-            <FinanceTab
-              profile={profile}
-              monthlyGoal={monthlyGoal}
-              isEditingGoal={isEditingGoal}
-              tempGoal={tempGoal}
-              onEditGoal={() => { setTempGoal(monthlyGoal.toString()); setIsEditingGoal(true); }}
-              onTempGoalChange={setTempGoal}
-              onSaveGoal={handleSaveGoal}
-              onCancelGoal={() => setIsEditingGoal(false)}
-              onDownloadTaxReport={handleDownloadTaxReport}
-            />
+        <div className="space-y-12">
+          {activeTab === "agenda" && (
+            <div className="space-y-12 animate-in fade-in duration-500">
+              {/* Express Sale Button */}
+              <ExpressSaleBanner onOpen={() => setIsExpressModalOpen(true)} />
+
+              {/* KPI Cards */}
+              <DashboardStats 
+                completedEvents={profile?.stats?.completedEvents || 0}
+                totalEarnings={profile?.stats?.totalEarnings || 0}
+                monthEarnings={profile?.stats?.monthEarnings || 0}
+              />
+
+              {/* Support Banner */}
+              <SupportBanner />
+            </div>
           )}
-          {activeTab === "network" && (
-            <NetworkTab
-              network={network}
-              networkSearch={networkSearch}
-              searchResults={searchResults}
-              onSearch={handleSearchNetwork}
-              onToggleFavorite={handleToggleFavorite}
-            />
-          )}
-          {activeTab === "servicos" && (
-            <ServicesTab
-              profile={profile}
-              catalogServices={catalogServices}
-              onAddService={handleAddService}
-              onRemoveService={handleRemoveService}
-              onOpenProfile={() => setIsProfileOpen(true)}
-            />
-          )}
-          {(activeTab === "agenda" || activeTab === "convites") && (
-            <AgendaTab
-              events={events}
-              unitInvites={unitInvites}
-              activeTab={activeTab}
-              viewTab={viewTab}
-              currentMonth={currentMonth}
-              loading={loading}
-              userId={user?.id}
-              onSetCurrentMonth={setCurrentMonth}
-              onSelectEvent={(ev) => setSelected(ev)}
-              onRespond={handleRespond}
-              onRespondUnit={handleRespondUnit}
-              onDelegate={handleDelegate}
-            />
-          )}
+
+          <div className="space-y-6">
+            {activeTab === "financeiro" && (
+              <FinanceTab
+                profile={profile}
+                monthlyGoal={monthlyGoal}
+                isEditingGoal={isEditingGoal}
+                tempGoal={tempGoal}
+                onEditGoal={() => { setTempGoal(monthlyGoal.toString()); setIsEditingGoal(true); }}
+                onTempGoalChange={setTempGoal}
+                onSaveGoal={handleSaveGoal}
+                onCancelGoal={() => setIsEditingGoal(false)}
+                onDownloadTaxReport={handleDownloadTaxReport}
+              />
+            )}
+            {activeTab === "network" && (
+              <NetworkTab
+                network={network}
+                networkSearch={networkSearch}
+                searchResults={searchResults}
+                onSearch={handleSearchNetwork}
+                onToggleFavorite={handleToggleFavorite}
+              />
+            )}
+            {activeTab === "servicos" && (
+              <ServicesTab
+                profile={profile}
+                catalogServices={catalogServices}
+                onAddService={handleAddService}
+                onRemoveService={handleRemoveService}
+                onOpenProfile={() => setIsProfileOpen(true)}
+              />
+            )}
+            {(activeTab === "agenda" || activeTab === "convites") && (
+              <AgendaTab
+                events={events}
+                unitInvites={unitInvites}
+                activeTab={activeTab}
+                viewTab={viewTab}
+                currentMonth={currentMonth}
+                loading={loading}
+                userId={user?.id}
+                onSetCurrentMonth={setCurrentMonth}
+                onSelectEvent={(ev) => setSelected(ev)}
+                onRespond={handleRespond}
+                onRespondUnit={handleRespondUnit}
+                onDelegate={handleDelegate}
+              />
+            )}
+          </div>
         </div>
       </div>
 
@@ -368,29 +348,38 @@ export default function ProfissionalDashboard() {
         </div>
       )}
 
-      {isProfileOpen && profile && (
-        <ProfileModal
+      {isExpressModalOpen && (
+        <ExpressSaleModal 
+          onClose={() => setIsExpressModalOpen(false)}
+          onSuccess={() => {
+            fetchEvents();
+            showNotification("Venda registrada com sucesso!");
+          }}
+        />
+      )}
+
+      {isProfileOpen && (
+        <ProfileModal 
           profile={profile}
           onClose={() => setIsProfileOpen(false)}
-          onUpdated={(p) => { setProfile(p); setIsProfileOpen(false); }}
+          onUpdated={fetchProfile}
         />
       )}
 
-      {isExpressModalOpen && (
-        <ExpressSaleModal
-          network={network}
-          onClose={() => setIsExpressModalOpen(false)}
-          onSuccess={(msg) => showNotification(msg, "success")}
-          onError={(msg) => showNotification(msg, "error")}
-        />
-      )}
-
+      {/* Global Notifications */}
       {notification && (
-        <div className={`fixed bottom-8 right-8 z-[10000] p-5 border shadow-2xl animate-in slide-in-from-right-4 bg-theme-bg ${notification.type === "success" ? "border-brand-tactical/60" : "border-red-500/60"}`}>
-          <div className="flex items-center gap-4">
-            <div className={`w-2 h-2 rounded-full ${notification.type === "success" ? "bg-brand-tactical animate-pulse" : "bg-red-500"}`} />
-            <span className="text-[10px] font-black text-theme-text uppercase tracking-widest">{notification.message}</span>
-          </div>
+        <div 
+          className="fixed bottom-10 right-10 z-[2000] px-8 py-4 shadow-2xl animate-in slide-in-from-right duration-500"
+          style={{ 
+            background: notification.type === "success" ? T.brand : "#f87171",
+            color: notification.type === "success" ? "#000" : "#fff",
+            fontWeight: 900,
+            fontSize: 10,
+            textTransform: "uppercase",
+            letterSpacing: 2
+          }}
+        >
+          {notification.message}
         </div>
       )}
     </DashboardLayout>
