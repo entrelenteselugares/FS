@@ -85,15 +85,6 @@ export default function ProfissionalDashboard() {
       .catch((err) => console.error("Erro ao buscar convites:", err));
   }, []);
 
-  const fetchServiceCatalog = useCallback(async () => {
-    try {
-      const { data } = await API.get("public/configs/services");
-      setCatalogServices(data.services || []);
-    } catch (err) {
-      console.error("Erro ao buscar catálogo:", err);
-    }
-  }, []);
-
   const fetchNetwork = useCallback(() => {
     API.get("profissional/network")
       .then((r) => setNetwork(r.data))
