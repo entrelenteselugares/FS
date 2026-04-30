@@ -25,6 +25,7 @@ export default function LuxuryExperiencePage() {
   const [event, setEvent] = useState<EventData | null>(null);
   const [loading, setLoading] = useState(true);
   const [scrolled, setScrolled] = useState(false);
+  const [products, setProducts] = useState<any[]>([]);
 
   useEffect(() => {
     const handleScroll = () => setScrolled(window.scrollY > 50);
@@ -40,6 +41,12 @@ export default function LuxuryExperiencePage() {
         .finally(() => setLoading(false));
     }
   }, [id]);
+
+  useEffect(() => {
+    API.get("/public/print-catalog")
+      .then(r => setProducts(r.data.filter((p: any) => p.active).slice(0, 3)))
+      .catch(err => console.error("Erro ao carregar catálogo:", err));
+  }, []);
 
   if (loading) return (
     <div className="min-h-screen bg-[#050505] flex items-center justify-center">
@@ -158,6 +165,71 @@ export default function LuxuryExperiencePage() {
              <button className="text-[10px] font-black text-brand-tactical uppercase tracking-widest border-b border-brand-tactical/30 pb-1 hover:border-brand-tactical transition-all w-fit">ENTRAR EM CONTATO</button>
           </div>
         </div>
+
+        {/* UPSELL SECTION (Inteligência de Venda) */}
+        {products.length > 0 && (
+          <div className="space-y-16 py-12">
+            <div className="text-center space-y-4">
+              <div className="flex justify-center items-center gap-4">
+                <div className="h-px w-12 bg-brand-tactical/30" />
+                <p className="text-[10px] font-black text-brand-tactical uppercase tracking-[0.4em] italic">Eternize seu Momento</p>
+                <div className="h-px w-12 bg-brand-tactical/30" />
+              </div>
+              <h3 className="text-4xl md:text-6xl font-heading font-black text-theme-text uppercase italic tracking-tighter">Produtos de Luxo</h3>
+              <p className="text-xs text-theme-muted uppercase font-bold tracking-[0.2em] max-w-xl mx-auto opacity-60">Transforme suas memórias digitais em obras de arte físicas com acabamento de alta costura.</p>
+            </div>
+            
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-12">
+              {products.map((p, idx) => (
+                <motion.div 
+                  key={p.id}
+                  initial={{ opacity: 0, y: 20 }}
+                  whileInView={{ opacity: 1, y: 0 }}
+                  transition={{ delay: idx * 0.2 }}
+                  className="bg-theme-bg-muted border border-theme-border/40 p-8 space-y-8 group hover:border-brand-tactical/40 transition-all relative overflow-hidden"
+                >
+                  <div className="absolute top-0 left-0 w-full h-[1px] bg-gradient-to-r from-transparent via-brand-tactical/20 to-transparent" />
+                  
+                  <div className="aspect-[4/5] bg-black/40 relative overflow-hidden flex items-center justify-center group-hover:scale-[1.02] transition-all duration-700">
+                    <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent opacity-0 group-hover:opacity-100 transition-opacity" />
+                    <div className="text-theme-muted/10 italic font-heading font-black text-6xl select-none uppercase tracking-tighter">
+                      {p.category.slice(0, 3)}
+                    </div>
+                    {/* Badge de Sugestão Inteligente (Simulação baseada em "Mais Vistas") */}
+                    {idx === 0 && (
+                      <div className="absolute top-4 left-4 bg-brand-tactical text-zinc-950 text-[8px] font-black px-3 py-1 uppercase tracking-widest shadow-xl">
+                        Mais Desejado
+                      </div>
+                    )}
+                  </div>
+
+                  <div className="space-y-3">
+                    <div className="flex justify-between items-center">
+                      <p className="text-[9px] font-black text-brand-tactical uppercase tracking-[0.2em] italic">{p.category}</p>
+                      <span className="text-[8px] font-bold text-theme-muted/40 uppercase tracking-widest">SKU: {p.sku}</span>
+                    </div>
+                    <h4 className="text-xl font-heading font-black text-theme-text uppercase italic tracking-tight">{p.name}</h4>
+                    <p className="text-[11px] text-theme-muted uppercase font-medium leading-relaxed line-clamp-2 opacity-60">{p.description || "Acabamento premium com materiais importados e durabilidade secular."}</p>
+                  </div>
+
+                  <div className="pt-6 border-t border-theme-border/20 flex justify-between items-end">
+                    <div className="space-y-1">
+                      <p className="text-[8px] font-black text-theme-muted uppercase tracking-widest">Investimento</p>
+                      <span className="text-2xl font-heading font-black text-brand-tactical italic">R$ {Number(p.sellingPrice).toLocaleString('pt-BR', { minimumFractionDigits: 2 })}</span>
+                    </div>
+                    <button className="px-8 py-4 bg-brand-tactical/10 border border-brand-tactical/20 text-brand-tactical text-[9px] font-black uppercase tracking-[0.2em] hover:bg-brand-tactical hover:text-zinc-950 transition-all shadow-lg shadow-brand-tactical/5">
+                      ENCOMENDAR
+                    </button>
+                  </div>
+                </motion.div>
+              ))}
+            </div>
+            
+            <div className="text-center pt-8">
+              <p className="text-[9px] text-theme-muted uppercase font-bold tracking-[0.4em] italic opacity-40">Frete tático incluso para todo o território nacional</p>
+            </div>
+          </div>
+        )}
 
         {/* FOOTER */}
         <footer className="text-center pt-32 space-y-6">

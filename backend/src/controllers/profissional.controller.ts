@@ -377,25 +377,75 @@ export async function respondToEvent(req: AuthRequest, res: Response): Promise<v
         }
       });
 
-      const nextPro = unit?.profissionais.find(p => !rejectedArray.includes(p.profissional.user.id));
+      let nextProId: string | null = null;
+      let nextProEmail: string | null = null;
+      let nextProName: string | null = null;
 
-      if (nextPro) {
-        console.log(`[Redirecionamento] Evento ${id} passado de ${userId} para ${nextPro.profissional.user.id}`);
-        updateData.captacaoId = nextPro.profissional.user.id;
+      const proInUnit = unit?.profissionais.find(p => !rejectedArray.includes(p.profissional.user.id));
+
+      if (proInUnit) {
+        nextProId = proInUnit.profissional.user.id;
+        nextProEmail = proInUnit.profissional.user.email;
+        nextProName = proInUnit.profissional.user.nome;
+      } else {
+        console.log(`[Matchmaking] Buscando na Rede de Empatia para o evento ${id}...`);
+        // 2. Busca na Rede de Empatia (Favoritos) do Cartório
+        const favorites = await prisma.professionalNetwork.findMany({
+          where: { userId: event.cartorioUserId },
+          include: { partner: { include: { profissional: true } } }
+        });
+
+        const nextFav = favorites.find(f => 
+          f.partner.role === "PROFISSIONAL" && 
+          !rejectedArray.includes(f.partner.id) &&
+          f.partner.profissional
+        );
+
+        if (nextFav) {
+          nextProId = nextFav.partner.id;
+          nextProEmail = nextFav.partner.email;
+          nextProName = nextFav.partner.nome;
+        } else if (event.city) {
+          console.log(`[Matchmaking] Buscando por Proximidade Geográfica (${event.city})...`);
+          // 3. Busca por Proximidade Geográfica (Mesma Cidade)
+          const localPros = await prisma.profissional.findMany({
+            where: {
+              user: { 
+                id: { notIn: rejectedArray },
+                active: true,
+                role: "PROFISSIONAL"
+              },
+              cartorios: {
+                some: { cartorio: { cidade: event.city } }
+              }
+            },
+            include: { user: true }
+          });
+
+          if (localPros.length > 0) {
+            const chosen = localPros[0];
+            nextProId = chosen.user.id;
+            nextProEmail = chosen.user.email;
+            nextProName = chosen.user.nome;
+          }
+        }
+      }
+
+      if (nextProId && nextProEmail && nextProName) {
+        console.log(`[Redirecionamento] Evento ${id} passado de ${userId} para ${nextProId}`);
+        updateData.captacaoId = nextProId;
         updateData.captacaoStatus = "PENDING";
 
         // Notifica o novo profissional
         NotificationService.notifyProfessionalNewAssignment({
-          to: nextPro.profissional.user.email,
-          profissionalName: nextPro.profissional.user.nome,
+          to: nextProEmail,
+          profissionalName: nextProName,
           eventTitle: event.nomeNoivos,
           eventDate: event.dataEvento.toISOString(),
           location: event.location || "Ponto Fixo"
         }).catch(e => console.error("Erro ao notificar novo profissional redirecionado:", e));
       } else {
-        console.log(`[Redirecionamento] Nenhum outro profissional disponível na unidade para o evento ${id}`);
-        // Se ninguém puder, o captacaoId permanece como o último que rejeitou, mas o status fica REJECTED. 
-        // O Admin verá isso no painel.
+        console.log(`[Redirecionamento] Nenhum outro profissional disponível (Unidade/Rede/Geo) para o evento ${id}`);
       }
     }
 

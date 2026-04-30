@@ -285,13 +285,40 @@ export class NotificationService {
   
   /** Alerta para orçamento aprovado (precificado) */
   static notifyQuotationApproved(data: { clientName: string; eventTitle: string; finalPrice: number }) {
-    sendWhatsApp(
-      `✨ *ORÇAMENTO PRECIFICADO — Foto Segundo*\n\n` +
-      `👤 Cliente: ${data.clientName}\n` +
-      `📸 Evento: ${data.eventTitle}\n` +
-      `💵 Valor Final: R$ ${Number(data.finalPrice).toFixed(2)}\n\n` +
-      `O cliente recebeu o e-mail para pagamento.`
     );
+  }
+
+  /** Mensagem de Re-engajamento (Loyalty) */
+  static sendLoyaltyMessage(data: { clientName: string; eventTitle: string; whatsapp: string; type: "6_MONTHS" | "1_YEAR" }) {
+    const timeLabel = data.type === "6_MONTHS" ? "6 meses" : "1 ano";
+    const message = 
+      `✨ *MEMÓRIAS ETERNAS — Foto Segundo*\n\n` +
+      `Olá, *${data.clientName}*! Faz ${timeLabel} que vivemos as emoções do evento *${data.eventTitle}*.\n\n` +
+      `Que tal transformar essas memórias digitais em algo palpável? 📸\n\n` +
+      `Aproveite nossa condição exclusiva para álbuns impressos de luxo esta semana. Acesse sua galeria ou responda aqui para saber mais!`;
+
+    // No NotificationService atual, sendWhatsApp usa CALLMEBOT_PHONE (notificação interna).
+    // Para o bot de fidelidade, precisamos enviar para o CLIENTE.
+    // Vou criar um helper sendWhatsAppToClient ou adaptar o sendWhatsApp.
+    this.sendWhatsAppToClient(data.whatsapp, message);
+  }
+
+  private static sendWhatsAppToClient(phone: string, message: string): void {
+    const apikey = (process.env.CALLMEBOT_APIKEY || "").replace(/"/g, "").trim();
+    if (!apikey) return;
+
+    // Limpa o telefone (apenas números)
+    const cleanPhone = phone.replace(/\D/g, "");
+    if (!cleanPhone) return;
+
+    const encodedMsg = encodeURIComponent(message);
+    const url = `https://api.callmebot.com/whatsapp.php?phone=${cleanPhone}&text=${encodedMsg}&apikey=${apikey}`;
+
+    https.get(url, (res) => {
+      console.log(`[LoyaltyBot] Enviado para ${cleanPhone} | Status: ${res.statusCode}`);
+    }).on("error", (err) => {
+      console.error("[LoyaltyBot] Erro:", err.message);
+    });
   }
 
   /** Alerta por E-mail para o Profissional quando um novo evento é atribuído a ele */

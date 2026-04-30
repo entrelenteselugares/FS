@@ -1,0 +1,20 @@
+# Foto Segundo - Refinamento e Inteligência (V3.0+)
+
+Status do Projeto: EM REFINAMENTO
+
+## 2. Inteligência e Automação [CONCLUÍDO]
+- [x] **Algoritmo de Matchmaking Global**: Busca automatizada em Rede de Empatia (Favoritos) e Proximidade Geográfica quando a unidade local está sem braço.
+- [x] **Loyalty Bot (WhatsApp)**: Cron job para disparos automáticos de re-engajamento após 6 meses/1 ano do evento.
+- [x] **Upsell Inteligente na PEX**: Widget de sugestão de produtos físicos (álbuns, quadros) integrado na Luxury Experience Page.
+
+## 3. Experiência de Luxo (PEX) [PRÓXIMA ETAPA]
+- [ ] **Slideshow Dinâmico**: Player de transição suave com música de fundo na entrada das galerias.
+- [ ] **Sistema de Feedback (5 Estrelas)**: Coleta de avaliações do cliente na página de entrega.
+
+## 4. Gestão Financeira Avançada
+- [ ] **Predição de Sazonalidade**: Algoritmo de análise histórica para alertas de baixa demanda.
+- [ ] **Relatório Tributário**: Exportador CSV/PDF com cálculo de taxas e impostos.
+
+## 5. Polimento de UI/UX
+- [ ] **Micro-interações**: Transições glassmorphism e animações fluidas.
+- [ ] **Consistência Total**: Revisão final de design tokens Midnight Luxury.

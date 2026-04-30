@@ -90,6 +90,7 @@ import {
 import { MarketplaceController } from "../controllers/marketplace.controller";
 import { requireMercadoPagoSignature } from "../middleware/webhook-auth";
 import { AuthRequest } from "../lib/auth";
+import { runLoyaltyBot } from "../controllers/cron.controller";
 import express from "express";
 
 const router = Router();
@@ -130,6 +131,14 @@ router.get("/cron/expiration", async (req, res) => {
     console.error("[Cron] Erro:", errorMsg);
     res.status(500).json({ error: errorMsg });
   }
+});
+
+router.get("/cron/loyalty-bot", async (req, res) => {
+  const token = req.headers["authorization"];
+  if (process.env.CRON_SECRET && token !== `Bearer ${process.env.CRON_SECRET}`) {
+    return res.status(401).json({ error: "Não autorizado." });
+  }
+  return runLoyaltyBot(req, res);
 });
 
 // ── Autenticação ─────────────────────────────────────────────────────────────
