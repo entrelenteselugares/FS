@@ -152,7 +152,8 @@ export class EventController {
           }
         }
       } else if (event.isPrivate && !hasAccess) {
-        // Fallback para outros tipos de eventos privados
+        // Evento privado sem acesso: bloqueia apenas se nenhum pagamento foi confirmado.
+        // Se isGloballyPaid = true, hasAccess já será true acima e não cairemos aqui.
         return res.status(403).json({ 
           error: "Este álbum é privado e não está vinculado à sua conta.",
           isPrivate: true 
@@ -197,7 +198,9 @@ export class EventController {
         type: event.type,
         isPrivate: event.isPrivate,
         clientEmail: event.clientEmail,
-        isPrimaryClient: !!(authUser && event.clientEmail && authUser.email === event.clientEmail)
+        isPrimaryClient: !!(authUser && event.clientEmail && authUser.email === event.clientEmail),
+        city: event.city,
+        location: event.location,
       });
     } catch (error) {
       console.error("Erro ao buscar evento:", error);

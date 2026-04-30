@@ -880,55 +880,63 @@ export default function EventPage() {
             {event.previewPhotos && event.previewPhotos.filter(p => !!p && (p.startsWith('http') || p.startsWith('data:'))).length > 0 && (
               <div style={{ marginTop: 32, paddingTop: 24, borderTop: `1px solid ${T.border}`, animation: "fadeUp 0.6s ease" }}>
                 <p style={{ fontSize: 9, letterSpacing: 2, color: T.text3, textTransform: "uppercase", margin: "0 0 16px", fontWeight: 700 }}>Destaques da Galeria</p>
-                <div style={{ display: "flex", flexDirection: "column", gap: 12 }}>
+                <div style={{ display: "flex", flexDirection: "column", gap: 10 }}>
                   {event.previewPhotos.filter(p => !!p).map((rawUrl, idx) => {
                     const url = rawUrl.trim().replace(/\s/g, '');
-                    // Se não for uma imagem direta, mostra um link elegante em vez de tentar renderizar img
                     const isDirectImage = url.match(/\.(jpeg|jpg|gif|png|webp|bmp)/i) || url.startsWith('data:image');
                     
-                    return (
-                      <div key={idx} style={{ 
-                        aspectRatio: isDirectImage ? "16/9" : "auto", 
-                        background: T.bgCard, 
-                        overflow: "hidden", 
-                        border: `1px solid ${T.border}`,
-                        position: "relative",
-                        padding: isDirectImage ? 0 : 20
-                      }}>
-                        {isDirectImage ? (
+                    if (isDirectImage) {
+                      return (
+                        <div key={idx} style={{ aspectRatio: "16/9", background: T.bgCard, overflow: "hidden", border: `1px solid ${T.border}`, position: "relative" }}>
                           <img 
                             src={url} 
                             alt={`Preview ${idx + 1}`} 
                             style={{ 
-                              width: "100%", 
-                              height: "100%", 
-                              objectFit: "cover",
+                              width: "100%", height: "100%", objectFit: "cover",
                               filter: paid ? "none" : "blur(4px) grayscale(1) opacity(0.6)",
                               transition: "filter 0.5s ease"
                             }}
-                            onError={(e) => {
-                              // Se falhar o carregamento (ex: link quebrado ou adobe share), esconde o elemento
-                              (e.target as HTMLImageElement).style.display = 'none';
-                            }}
+                            onError={(e) => { (e.target as HTMLImageElement).parentElement!.style.display = 'none'; }}
                           />
-                        ) : (
-                          <div style={{ display: "flex", flexDirection: "column", gap: 8, alignItems: "center", textAlign: "center" }}>
-                            <div style={{ fontSize: 9, color: T.brand, fontWeight: 900, textTransform: "uppercase" }}>Link Externo</div>
-                            <div style={{ fontSize: 11, color: T.text2 }}>{url.substring(0, 40)}...</div>
-                            <button 
-                              onClick={() => window.open(url, '_blank')}
-                              style={{ ...BtnSecondary, padding: "6px 12px", fontSize: 9 }}
-                            >
-                              ABRIR EM NOVA ABA
-                            </button>
-                          </div>
-                        )}
-                        {!paid && isDirectImage && (
-                          <div style={{ position: "absolute", inset: 0, display: "flex", alignItems: "center", justifyContent: "center" }}>
-                             <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="rgba(255,255,255,0.4)" strokeWidth="2"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
-                          </div>
-                        )}
-                      </div>
+                          {!paid && (
+                            <div style={{ position: "absolute", inset: 0, display: "flex", alignItems: "center", justifyContent: "center" }}>
+                              <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="rgba(255,255,255,0.4)" strokeWidth="2"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
+                            </div>
+                          )}
+                        </div>
+                      );
+                    }
+
+                    // Link externo (Adobe Share, etc.) — card clicável elegante
+                    return (
+                      <a 
+                        key={idx}
+                        href={url}
+                        target="_blank"
+                        rel="noreferrer"
+                        style={{
+                          display: "flex",
+                          alignItems: "center",
+                          gap: 12,
+                          padding: "14px 16px",
+                          background: `${T.brand}10`,
+                          border: `1px solid ${T.brand}40`,
+                          textDecoration: "none",
+                          transition: "background 0.2s ease",
+                          cursor: "pointer"
+                        }}
+                        onMouseEnter={e => (e.currentTarget.style.background = `${T.brand}20`)}
+                        onMouseLeave={e => (e.currentTarget.style.background = `${T.brand}10`)}
+                      >
+                        <div style={{ width: 32, height: 32, background: T.brand, display: "flex", alignItems: "center", justifyContent: "center", flexShrink: 0 }}>
+                          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#000" strokeWidth="2.5"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21 15 16 10 5 21"/></svg>
+                        </div>
+                        <div style={{ flex: 1, minWidth: 0 }}>
+                          <div style={{ fontSize: 10, fontWeight: 900, color: T.brand, textTransform: "uppercase", letterSpacing: 1 }}>Ver Galeria</div>
+                          <div style={{ fontSize: 9, color: T.text3, overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>{url}</div>
+                        </div>
+                        <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke={T.brand} strokeWidth="2"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg>
+                      </a>
                     );
                   })}
                 </div>
