@@ -235,27 +235,14 @@ export default function EventPage() {
         
         // Se o evento é hoje ou no futuro (com margem de 12h após o início para considerar 'em andamento')
         const now = new Date();
-        const isHappeningOrFinished = eventDate && now.getTime() > eventDate.getTime();
-        
+        const isFuture = eventDate && (eventDate.getTime() + (12 * 60 * 60 * 1000)) > now.getTime();
+
         if (isFuture && !eventData.lightroomUrl && !eventData.driveUrl && (!eventData.previewPhotos || eventData.previewPhotos.length === 0)) {
           setStep("countdown");
-        } else if (isHappeningOrFinished && !eventData.lightroomUrl && !eventData.driveUrl && (!eventData.paywall || eventData.paywall.active)) {
-          // Se passou da data mas não tem links ainda, podemos mostrar uma mensagem de "em edição"
-          // por enquanto mantemos no paywall ou countdown com texto alterado
-          setStep("countdown"); 
         } else if (eventData.isPrivate && !eventData.isPrimaryClient && !eventData.isOwner) {
           setStep("denied");
         } else if ((eventData.paywall && !eventData.paywall.active) || eventData.isOwner) {
           setStep("success"); 
-          // Se já tem acesso, popula o estado de access para liberar os links
-          if (eventData.lightroomUrl || eventData.driveUrl) {
-            setAccess({
-              lightroomUrl: eventData.lightroomUrl,
-              driveUrl: eventData.driveUrl,
-              expiresAt: "", // Global não expira via token
-              eventTitle: eventData.nomeNoivos
-            });
-          }
         }
 
         // Se for marketplace, busca as mídias
@@ -757,12 +744,10 @@ export default function EventPage() {
             {step === "countdown" && (
               <div style={{ display: "flex", flexDirection: "column", gap: 16, animation: "fadeUp 0.3s ease", textAlign: "center" }}>
                 <p style={{ fontSize: 10, fontWeight: 700, textTransform: "uppercase", letterSpacing: 2, color: T.brand, margin: 0 }}>
-                  {new Date() > (event?.dataEvento ? new Date(event.dataEvento) : new Date()) ? "Fotos em Curadoria" : "Evento em breve"}
+                  Evento em breve
                 </p>
                 <p style={{ fontSize: 14, color: T.text2, margin: "0 0 10px" }}>
-                  {new Date() > (event?.dataEvento ? new Date(event.dataEvento) : new Date()) 
-                    ? "O evento já aconteceu! Nossa equipe está trabalhando na curadoria e edição das suas fotos."
-                    : "O grande dia está chegando! Fique atento, o álbum será liberado aqui após o evento."}
+                  O grande dia está chegando! Fique atento, o álbum será liberado aqui após o evento.
                 </p>
                 {event.dataEvento && <Countdown targetDate={event.dataEvento} />}
                 <div style={{ marginTop: 20 }}>
@@ -822,39 +807,22 @@ export default function EventPage() {
                         ? "Seus arquivos estão disponíveis nos botões abaixo."
                         : "Confira as memórias desse dia incrível nos links abaixo."}
                     </p>
-                    <div style={{ display: "flex", flexDirection: "column", gap: 12 }}>
-                      {access.lightroomUrl && (
-                        <a href={access.lightroomUrl.trim().replace(/\s/g, '')} target="_blank" rel="noreferrer" 
-                           style={{ ...BtnPrimary, textDecoration: "none", height: "auto", padding: "24px 16px", display: "flex", flexDirection: "column", gap: 4, alignItems: "center", justifyContent: "center", background: `linear-gradient(45deg, ${T.brand}, #9BC9BC)` }}>
-                          <span style={{ fontSize: 13, fontWeight: 900, letterSpacing: 1 }}>ACESSAR ÁLBUM COMPLETO</span>
-                          <span style={{ fontSize: 9, opacity: 0.8, fontWeight: 400 }}>Fotos em alta resolução (Download Liberado)</span>
-                        </a>
-                      )}
+                    <div style={{ display: "flex", flexDirection: "column", gap: 10 }}>
+                      {access.lightroomUrl && <a href={access.lightroomUrl.trim().replace(/\s/g, '')} target="_blank" rel="noreferrer" style={{ ...BtnPrimary, textDecoration: "none", justifyContent: "center" }}>Álbum de Fotos</a>}
+                      {access.driveUrl && <a href={access.driveUrl.trim().replace(/\s/g, '')} target="_blank" rel="noreferrer" style={{ ...BtnSecondary, color: T.text, borderColor: T.brand, textDecoration: "none", justifyContent: "center" }}>Vídeos</a>}
                       
-                      {access.driveUrl && (
-                        <a href={access.driveUrl.trim().replace(/\s/g, '')} target="_blank" rel="noreferrer" 
-                           style={{ ...BtnSecondary, color: T.text, borderColor: T.brand, textDecoration: "none", height: "auto", padding: "16px", display: "flex", flexDirection: "column", gap: 4, alignItems: "center", justifyContent: "center" }}>
-                          <span style={{ fontSize: 11, fontWeight: 800 }}>ASSISTIR VÍDEOS / REELS</span>
-                          <span style={{ fontSize: 8, opacity: 0.6 }}>Acesso via Google Drive</span>
-                        </a>
-                      )}
-                      
-                      <div style={{ position: 'relative', marginTop: 8 }}>
-                        <a 
-                          href={`https://wa.me/5519997843817?text=Gostaria%20de%20encomendar%20um%20%C3%A1lbum%20impresso%20do%20evento%3A%20${encodeURIComponent(event.nomeNoivos)}`} 
-                          target="_blank" 
-                          rel="noreferrer" 
-                          style={{ ...BtnSecondary, color: T.brand, borderColor: T.brand, textDecoration: "none", height: "auto", padding: "20px 16px", display: "flex", flexDirection: "column", gap: 4, alignItems: "center", justifyContent: "center", fontWeight: 900, borderStyle: 'dashed' }}
-                        >
-                          <span style={{ fontSize: 11 }}>ETERNIZE NO PAPEL: ÁLBUM IMPRESSO</span>
-                          <span style={{ fontSize: 8, opacity: 0.8, fontWeight: 400 }}>Solicite um orçamento via WhatsApp</span>
-                        </a>
-                        <div style={{ position: 'absolute', top: -8, right: -4, background: '#D9B061', color: '#000', fontSize: 7, fontWeight: 900, padding: '2px 6px', borderRadius: 2, letterSpacing: 1 }}>PREMIUM</div>
-                      </div>
+                      <a 
+                        href={`https://wa.me/5519997843817?text=Gostaria%20de%20encomendar%20um%20%C3%A1lbum%20impresso%20do%20evento%3A%20${encodeURIComponent(event.nomeNoivos)}`} 
+                        target="_blank" 
+                        rel="noreferrer" 
+                        style={{ ...BtnSecondary, color: T.brand, borderColor: T.brand, textDecoration: "none", justifyContent: "center", marginTop: 8, fontWeight: 900, borderStyle: 'dashed' }}
+                      >
+                        ETERNIZE NO PAPEL: ÁLBUM IMPRESSO
+                      </a>
 
                       <div style={{ marginTop: 8, paddingTop: 16, borderTop: `1px solid ${T.border}` }}>
                         <button onClick={handleShare} style={{ ...BtnSecondary, width: "100%", justifyContent: "center", border: "none", color: T.text3, fontSize: 11, letterSpacing: 1 }}>
-                          {sharing ? "LINK COPIADO!" : "COMPARTILHAR MEMÓRIAS"}
+                          {sharing ? "LINK COPIADO!" : "COMPARTILHAR ÁLBUM"}
                         </button>
                       </div>
                     </div>
