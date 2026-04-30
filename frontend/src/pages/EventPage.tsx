@@ -80,6 +80,7 @@ interface EventData {
   clientEmail?: string | null;
   isPrimaryClient?: boolean;
   isPrivate?: boolean;
+  isOwner?: boolean;
 }
 
 interface EventMedia {
