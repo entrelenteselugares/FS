@@ -7,6 +7,12 @@ export { FinanceTab } from "./FinanceTab";
 export { NetworkTab } from "./NetworkTab";
 export { ProfileModal } from "./ProfileModal";
 export { ServicesTab } from "./ServicesTab";
+export { DashboardHeader } from "./DashboardHeader";
+export { DashboardStats } from "./DashboardStats";
+export { SupportBanner } from "./SupportBanner";
+export { OpportunitiesModal } from "./OpportunitiesModal";
+export { ExpressSaleBanner } from "./ExpressSaleBanner";
+
 export type {
   EventItem,
   UnitInvite,

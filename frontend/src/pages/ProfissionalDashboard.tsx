@@ -10,6 +10,8 @@ import { T } from "../lib/theme";
 import {
   AgendaTab, FinanceTab, NetworkTab, ServicesTab,
   EventEditPanel, ExpressSaleModal, ProfileModal,
+  DashboardHeader, DashboardStats, SupportBanner,
+  OpportunitiesModal, ExpressSaleBanner,
   type EventItem, type UnitInvite, type ServiceCatalog, type ProfileData, type Partner,
 } from "../components/profissional";
 
@@ -254,6 +256,8 @@ export default function ProfissionalDashboard() {
     { label: "Meu Perfil", onClick: () => setIsProfileOpen(true), isActive: false, icon: <Settings size={16} /> },
   ];
 
+  const residentUnits = profile?.cartorioProfissional?.map((cp) => cp.cartorio.razaoSocial) || [];
+
   // ─── Render ───────────────────────────────────────────────────────────────────
 
   return (
@@ -266,143 +270,37 @@ export default function ProfissionalDashboard() {
 
       {/* ── Opportunities Modal ─────────────────────────────────────────────── */}
       {showNewServicesModal && (
-        <div className="fixed inset-0 z-[8000] flex items-center justify-center p-4 backdrop-blur-2xl bg-black/90 animate-in fade-in duration-500">
-          <div className="w-full max-w-lg bg-[#0c0c0c] border border-white/10 p-10 md:p-16 shadow-[0_0_150px_rgba(133,185,172,0.15)] relative overflow-hidden text-center space-y-10">
-            <div className="absolute top-0 left-0 w-full h-[3px] bg-gradient-to-r from-transparent via-brand-tactical to-transparent" />
-            <div className="flex justify-center">
-              <div className="p-6 bg-brand-tactical/10 border border-brand-tactical/30 rounded-full text-brand-tactical animate-bounce">
-                <ShieldCheck size={48} />
-              </div>
-            </div>
-            <div className="space-y-4">
-              <h2 className="text-3xl font-heading font-black text-theme-text uppercase tracking-tighter italic leading-tight">Oportunidades Disponíveis</h2>
-              <p className="text-[10px] text-theme-muted uppercase tracking-[0.4em] italic font-bold">A matriz detectou novos chamados compatíveis com seu perfil</p>
-            </div>
-            <div className="grid grid-cols-1 gap-4">
-              {unitInvites.length > 0 && (
-                <div className="bg-brand-tactical/5 p-6 border border-brand-tactical/20 hover:border-brand-tactical transition-all">
-                  <div className="text-[9px] font-black text-brand-tactical uppercase tracking-[0.2em] mb-2 italic">Expansão de Rede</div>
-                  <div className="text-xl font-heading font-black text-theme-text italic leading-none">
-                    {unitInvites.length} {unitInvites.length === 1 ? "CONVITE DE UNIDADE" : "CONVITES DE UNIDADE"}
-                  </div>
-                </div>
-              )}
-              {pendingEvents.length > 0 && (
-                <div className="bg-white/2 p-6 border border-white/5 hover:border-brand-tactical/40 transition-all">
-                  <div className="text-[9px] font-black text-theme-muted uppercase tracking-[0.2em] mb-2 italic">Chamados de Campo</div>
-                  <div className="text-xl font-heading font-black text-theme-text italic leading-none">
-                    {pendingEvents.length} {pendingEvents.length === 1 ? "TRABALHO DISPONÍVEL" : "TRABALHOS DISPONÍVEIS"}
-                  </div>
-                </div>
-              )}
-            </div>
-            <div className="space-y-6 pt-4">
-              <button
-                onClick={() => { setShowNewServicesModal(false); setActiveTab(unitInvites.length > 0 ? "convites" : "agenda"); }}
-                className="w-full py-6 bg-brand-tactical text-brand-text text-[11px] font-black uppercase tracking-[0.3em] hover:brightness-110 shadow-2xl shadow-brand-tactical/20 transition-all italic flex items-center justify-center gap-3"
-              >
-                ACESSAR CENTRAL DE CONVITES <ArrowRight size={16} />
-              </button>
-              <button
-                onClick={() => setShowNewServicesModal(false)}
-                className="text-[9px] font-black text-theme-muted uppercase tracking-[0.3em] hover:text-brand-tactical transition-colors italic"
-              >
-                IGNORAR POR ENQUANTO
-              </button>
-            </div>
-          </div>
-        </div>
+        <OpportunitiesModal 
+          unitInvitesCount={unitInvites.length}
+          pendingEventsCount={pendingEvents.length}
+          onClose={() => setShowNewServicesModal(false)}
+          onAction={(tab) => setActiveTab(tab)}
+        />
       )}
 
       {/* ── Main Content ────────────────────────────────────────────────────── */}
       <div className="max-w-7xl mx-auto px-6 lg:px-12 py-10 space-y-12 animate-in fade-in slide-in-from-bottom-4 duration-700">
 
         {/* Page Header */}
-        <div className="flex flex-col lg:flex-row lg:items-end justify-between gap-6 border-b border-theme-border/60 pb-10">
-          <div className="space-y-4">
-            <h1 className="text-3xl md:text-5xl font-heading font-black text-theme-text uppercase tracking-tighter italic leading-none">
-              {activeTab === "agenda" ? "Meu Cockpit" : activeTab === "convites" ? "Central de Convites" : activeTab === "financeiro" ? "Fluxo de Caixa" : activeTab === "network" ? "Rede de Empatia" : "Gestão de Ativos"}
-            </h1>
-            <div className="flex items-center gap-4">
-              <div className="h-1 w-12 bg-brand-tactical" />
-              {profile?.cartorioProfissional?.length ? (
-                <div className="flex items-center gap-2">
-                  <ShieldCheck size={14} className="text-brand-tactical" />
-                  <p className="text-[10px] font-black text-brand-tactical uppercase tracking-widest italic">
-                    Residente: {profile.cartorioProfissional.map((cp) => cp.cartorio.razaoSocial).join(", ")}
-                  </p>
-                </div>
-              ) : null}
-            </div>
-          </div>
-          {(activeTab === "agenda" || activeTab === "convites") && (
-            <div className="flex gap-4">
-              <button
-                onClick={() => setViewTab("lista")}
-                className={`px-6 py-3 text-[9px] font-black uppercase tracking-widest transition-all flex items-center gap-2 border ${viewTab === "lista" ? "bg-brand-tactical text-brand-text border-brand-tactical shadow-lg shadow-brand-tactical/20" : "text-theme-muted border-theme-border/60 hover:text-theme-text"}`}
-              >
-                <List size={14} /> Lista
-              </button>
-              <button
-                onClick={() => setViewTab("calendario")}
-                className={`px-6 py-3 text-[9px] font-black uppercase tracking-widest transition-all flex items-center gap-2 border ${viewTab === "calendario" ? "bg-brand-tactical text-brand-text border-brand-tactical shadow-lg shadow-brand-tactical/20" : "text-theme-muted border-theme-border/60 hover:text-theme-text"}`}
-              >
-                <CalendarIcon size={14} /> Calendário
-              </button>
-            </div>
-          )}
-        </div>
+        <DashboardHeader 
+          activeTab={activeTab}
+          viewTab={viewTab}
+          onViewTabChange={setViewTab}
+          residentUnits={residentUnits}
+        />
 
         {/* Express Sale Button */}
-        <div className="relative group">
-          <div className="absolute inset-0 bg-brand-tactical/20 blur-2xl opacity-0 group-hover:opacity-100 transition-all duration-700" />
-          <button
-            onClick={() => setIsExpressModalOpen(true)}
-            className="relative w-full bg-theme-bg-muted border border-brand-tactical/40 p-8 flex flex-col md:flex-row items-center justify-between gap-8 group hover:border-brand-tactical transition-all overflow-hidden shadow-2xl"
-          >
-            <div className="flex items-center gap-6">
-              <div className="p-5 bg-brand-tactical/10 border border-brand-tactical/20 text-brand-tactical"><DollarSign size={28} /></div>
-              <div className="text-left space-y-1">
-                <div className="text-xl font-heading font-black text-theme-text uppercase tracking-tighter italic">Venda Rápida Foto Segundo</div>
-                <div className="text-[10px] font-black text-theme-muted uppercase tracking-[0.3em] italic">Registre o recebimento e libere o acesso na hora</div>
-              </div>
-            </div>
-            <div className="flex items-center gap-4 text-[10px] font-black text-brand-tactical uppercase tracking-[0.4em] group-hover:gap-6 transition-all">
-              INICIAR OPERAÇÃO <ArrowRight size={14} />
-            </div>
-          </button>
-        </div>
+        <ExpressSaleBanner onOpen={() => setIsExpressModalOpen(true)} />
 
         {/* KPI Cards */}
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-          {[
-            { label: "Performance de Entrega", value: `${profile?.stats?.completedEvents || 0}`, unit: "Eventos", icon: null },
-            { label: "Acumulado Global", value: `R$ ${profile?.stats?.totalEarnings?.toLocaleString() || "0"}`, unit: "Provisionado p/ Repasse", icon: null },
-            { label: "Resultado do Mês", value: `R$ ${profile?.stats?.monthEarnings?.toLocaleString() || "0"}`, unit: "Meta de Produção Ativa", icon: null },
-          ].map((kpi) => (
-            <div key={kpi.label} className="bg-theme-bg border border-theme-border/60 p-8 space-y-4 group hover:border-brand-tactical/50 transition-all shadow-sm">
-              <span className="text-[8px] font-black text-theme-muted uppercase tracking-widest italic">{kpi.label}</span>
-              <div className="text-4xl font-heading font-black text-brand-tactical italic leading-none">{kpi.value}</div>
-              <div className="text-[8px] font-black text-theme-muted uppercase tracking-widest mt-2">{kpi.unit}</div>
-            </div>
-          ))}
-        </div>
+        <DashboardStats 
+          completedEvents={profile?.stats?.completedEvents || 0}
+          totalEarnings={profile?.stats?.totalEarnings || 0}
+          monthEarnings={profile?.stats?.monthEarnings || 0}
+        />
 
         {/* Support Banner */}
-        <div className="bg-theme-bg-muted border-l-4 border-brand-tactical p-8 flex flex-col md:flex-row items-center justify-between gap-6">
-          <div className="space-y-1">
-            <h4 className="text-[11px] font-black text-brand-tactical uppercase tracking-[0.4em] italic">Suporte de Campo</h4>
-            <p className="text-[10px] text-theme-muted uppercase tracking-widest font-medium">Linha direta com a matriz para dúvidas operacionais ou técnicas.</p>
-          </div>
-          <a
-            href="https://wa.me/5519984470420"
-            target="_blank"
-            rel="noopener noreferrer"
-            className="w-full md:w-auto px-8 py-4 bg-brand-tactical text-brand-text text-[10px] font-black uppercase tracking-[0.3em] flex items-center justify-center gap-3 hover:brightness-110 transition-all shadow-lg shadow-brand-tactical/10"
-          >
-            <MessageCircle size={16} /> Falar com Matriz
-          </a>
-        </div>
+        <SupportBanner />
 
         {/* ── Tab Content ──────────────────────────────────────────────────── */}
         <div className="space-y-6">
