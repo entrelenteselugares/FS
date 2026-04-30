@@ -92,7 +92,7 @@ export default function ProfissionalDashboard() {
   }, []);
 
   useEffect(() => {
-    setLoading(true); // Initial load trigger
+    // setLoading(true); // Redundant as it's initialized to true
     Promise.all([
       API.get("profissional/events").then(r => setEvents(r.data)),
       API.get("profissional/me").then(r => setProfile(r.data)),
@@ -116,7 +116,7 @@ export default function ProfissionalDashboard() {
         // Use setTimeout to avoid synchronous cascading renders
         setTimeout(() => setShowNewServicesModal(true), 0);
       }
-      setHasCheckedInvites(true);
+      setTimeout(() => setHasCheckedInvites(true), 0);
     }
   }, [loading, pendingEvents.length, unitInvites.length, hasCheckedInvites]);
 
