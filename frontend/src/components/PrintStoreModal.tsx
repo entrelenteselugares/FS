@@ -28,13 +28,21 @@ const CATEGORY_ICONS: Record<string, string> = {
   ACESSORIOS:  "✨",
 };
 
+interface EventMedia {
+  id: string;
+  url: string;
+  shortId: string;
+}
+
 interface PrintStoreModalProps {
   eventId: string;
   eventTitle: string;
+  medias?: EventMedia[];
+  isOwner?: boolean;
   onClose: () => void;
 }
 
-export function PrintStoreModal({ eventId, eventTitle, onClose }: PrintStoreModalProps) {
+export function PrintStoreModal({ eventId, eventTitle, medias = [], isOwner = false, onClose }: PrintStoreModalProps) {
   const [products, setProducts] = useState<PrintProduct[]>([]);
   const [loading, setLoading] = useState(true);
   const [selectedProduct, setSelectedProduct] = useState<PrintProduct | null>(null);
@@ -46,6 +54,8 @@ export function PrintStoreModal({ eventId, eventTitle, onClose }: PrintStoreModa
   const [notes, setNotes] = useState("");
   const [submitting, setSubmitting] = useState(false);
   const [error, setError] = useState("");
+  const [photoSource, setPhotoSource] = useState<"upload" | "album">(isOwner && medias.length > 0 ? "album" : "upload");
+  const [selectedAlbumPhotos, setSelectedAlbumPhotos] = useState<string[]>([]);
   const fileInputRef = useRef<HTMLInputElement>(null);
 
   useEffect(() => {
@@ -77,6 +87,14 @@ export function PrintStoreModal({ eventId, eventTitle, onClose }: PrintStoreModa
     setFilePreviews(prev => prev.filter((_, i) => i !== idx));
   };
 
+  const toggleAlbumPhoto = (url: string) => {
+    setSelectedAlbumPhotos(prev => 
+      prev.includes(url) ? prev.filter(u => u !== url) : [...prev, url]
+    );
+  };
+
+  const totalPhotoCount = selectedFiles.length + selectedAlbumPhotos.length;
+
   const totalPrice = selectedProduct ? selectedProduct.finalPrice * quantity : 0;
 
   const handleCheckout = async () => {
@@ -90,8 +108,8 @@ export function PrintStoreModal({ eventId, eventTitle, onClose }: PrintStoreModa
         productId: selectedProduct.id,
         quantity,
         notes,
-        // Files would be uploaded separately in a real implementation
-        fileCount: selectedFiles.length,
+        fileCount: totalPhotoCount,
+        albumPhotos: selectedAlbumPhotos,
       });
       // Redirect to checkout with the order
       window.location.href = `/checkout?orderId=${data.orderId}`;
@@ -285,55 +303,98 @@ export function PrintStoreModal({ eventId, eventTitle, onClose }: PrintStoreModa
                 </div>
               </div>
 
-              {/* File upload */}
+              {/* File upload section */}
               <div>
                 <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 12 }}>
                   <p style={{ fontSize: 9, letterSpacing: 3, color: T.text3, textTransform: "uppercase", fontWeight: 900, margin: 0 }}>
-                    Selecione as Fotos ({selectedFiles.length} arquivo{selectedFiles.length !== 1 ? "s" : ""})
+                    Selecione as Fotos ({totalPhotoCount} selecionada{totalPhotoCount !== 1 ? "s" : ""})
                   </p>
-                  <button
-                    onClick={() => fileInputRef.current?.click()}
-                    style={{ ...BtnSecondary, padding: "8px 16px", fontSize: 9, color: T.brand, borderColor: T.brand }}
-                  >
-                    + Adicionar Fotos
-                  </button>
+                  
+                  {isOwner && medias.length > 0 && (
+                    <div style={{ display: "flex", gap: 4, background: T.bgCard, padding: 4, border: `1px solid ${T.border}` }}>
+                      <button 
+                        onClick={() => setPhotoSource("upload")}
+                        style={{ padding: "4px 8px", fontSize: 8, fontWeight: 900, textTransform: "uppercase", background: photoSource === "upload" ? T.brand : "transparent", color: photoSource === "upload" ? "#000" : T.text3, border: "none", cursor: "pointer" }}
+                      >UPLOAD</button>
+                      <button 
+                        onClick={() => setPhotoSource("album")}
+                        style={{ padding: "4px 8px", fontSize: 8, fontWeight: 900, textTransform: "uppercase", background: photoSource === "album" ? T.brand : "transparent", color: photoSource === "album" ? "#000" : T.text3, border: "none", cursor: "pointer" }}
+                      >DO ÁLBUM</button>
+                    </div>
+                  )}
+
+                  {photoSource === "upload" && (
+                    <button
+                      onClick={() => fileInputRef.current?.click()}
+                      style={{ ...BtnSecondary, padding: "8px 16px", fontSize: 9, color: T.brand, borderColor: T.brand }}
+                    >
+                      + Adicionar Fotos
+                    </button>
+                  )}
                 </div>
 
-                <input
-                  ref={fileInputRef}
-                  type="file"
-                  multiple
-                  accept="image/*"
-                  onChange={handleFileSelect}
-                  style={{ display: "none" }}
-                />
+                {photoSource === "upload" ? (
+                  <>
+                    <input
+                      ref={fileInputRef}
+                      type="file"
+                      multiple
+                      accept="image/*"
+                      onChange={handleFileSelect}
+                      style={{ display: "none" }}
+                    />
 
-                {filePreviews.length > 0 ? (
-                  <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fill, minmax(80px, 1fr))", gap: 8 }}>
-                    {filePreviews.map((src, idx) => (
-                      <div key={idx} style={{ position: "relative", aspectRatio: "1/1" }}>
-                        <img src={src} alt={`foto ${idx + 1}`} style={{ width: "100%", height: "100%", objectFit: "cover", border: `1px solid ${T.border}` }} />
-                        <button
-                          onClick={() => removeFile(idx)}
-                          style={{ position: "absolute", top: 2, right: 2, width: 18, height: 18, borderRadius: "50%", background: "rgba(0,0,0,0.8)", border: "none", color: "#fff", cursor: "pointer", fontSize: 10, display: "flex", alignItems: "center", justifyContent: "center" }}
-                        >✕</button>
+                    {filePreviews.length > 0 ? (
+                      <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fill, minmax(80px, 1fr))", gap: 8 }}>
+                        {filePreviews.map((src, idx) => (
+                          <div key={idx} style={{ position: "relative", aspectRatio: "1/1" }}>
+                            <img src={src} alt={`foto ${idx + 1}`} style={{ width: "100%", height: "100%", objectFit: "cover", border: `1px solid ${T.border}` }} />
+                            <button
+                              onClick={() => removeFile(idx)}
+                              style={{ position: "absolute", top: 2, right: 2, width: 18, height: 18, borderRadius: "50%", background: "rgba(0,0,0,0.8)", border: "none", color: "#fff", cursor: "pointer", fontSize: 10, display: "flex", alignItems: "center", justifyContent: "center" }}
+                            >✕</button>
+                          </div>
+                        ))}
+                        <div
+                          onClick={() => fileInputRef.current?.click()}
+                          style={{ aspectRatio: "1/1", border: `2px dashed ${T.border}`, display: "flex", alignItems: "center", justifyContent: "center", cursor: "pointer", color: T.text3, fontSize: 24 }}
+                        >+</div>
                       </div>
-                    ))}
-                    <div
-                      onClick={() => fileInputRef.current?.click()}
-                      style={{ aspectRatio: "1/1", border: `2px dashed ${T.border}`, display: "flex", alignItems: "center", justifyContent: "center", cursor: "pointer", color: T.text3, fontSize: 24 }}
-                    >+</div>
-                  </div>
+                    ) : (
+                      <div
+                        onClick={() => fileInputRef.current?.click()}
+                        style={{ border: `2px dashed ${T.border}`, padding: 32, display: "flex", flexDirection: "column", alignItems: "center", gap: 8, cursor: "pointer", textAlign: "center" }}
+                        onMouseEnter={e => (e.currentTarget.style.borderColor = T.brand)}
+                        onMouseLeave={e => (e.currentTarget.style.borderColor = T.border)}
+                      >
+                        <span style={{ fontSize: 32 }}>🖼️</span>
+                        <p style={{ fontSize: 11, color: T.text2, margin: 0 }}>Clique para selecionar as fotos que deseja imprimir</p>
+                        <p style={{ fontSize: 9, color: T.text3, margin: 0, textTransform: "uppercase", letterSpacing: 1 }}>JPG, PNG, WEBP</p>
+                      </div>
+                    )}
+                  </>
                 ) : (
-                  <div
-                    onClick={() => fileInputRef.current?.click()}
-                    style={{ border: `2px dashed ${T.border}`, padding: 32, display: "flex", flexDirection: "column", alignItems: "center", gap: 8, cursor: "pointer", textAlign: "center" }}
-                    onMouseEnter={e => (e.currentTarget.style.borderColor = T.brand)}
-                    onMouseLeave={e => (e.currentTarget.style.borderColor = T.border)}
-                  >
-                    <span style={{ fontSize: 32 }}>🖼️</span>
-                    <p style={{ fontSize: 11, color: T.text2, margin: 0 }}>Clique para selecionar as fotos que deseja imprimir</p>
-                    <p style={{ fontSize: 9, color: T.text3, margin: 0, textTransform: "uppercase", letterSpacing: 1 }}>JPG, PNG, WEBP</p>
+                  <div style={{ maxHeight: 300, overflowY: "auto", padding: 8, border: `1px solid ${T.border}`, background: T.bgCard }}>
+                    <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fill, minmax(100px, 1fr))", gap: 8 }}>
+                      {medias.map((media) => (
+                        <div 
+                          key={media.id} 
+                          onClick={() => toggleAlbumPhoto(media.url)}
+                          style={{ 
+                            position: "relative", 
+                            aspectRatio: "1/1", 
+                            cursor: "pointer",
+                            border: `2px solid ${selectedAlbumPhotos.includes(media.url) ? T.brand : "transparent"}`,
+                            transition: "all 0.15s ease"
+                          }}
+                        >
+                          <img src={media.url} alt="album photo" style={{ width: "100%", height: "100%", objectFit: "cover" }} />
+                          {selectedAlbumPhotos.includes(media.url) && (
+                            <div style={{ position: "absolute", top: 4, right: 4, background: T.brand, color: "#000", borderRadius: "50%", width: 18, height: 18, display: "flex", alignItems: "center", justifyContent: "center", fontSize: 10, fontWeight: 900 }}>✓</div>
+                          )}
+                        </div>
+                      ))}
+                    </div>
                   </div>
                 )}
               </div>

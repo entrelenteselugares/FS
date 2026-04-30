@@ -1133,6 +1133,8 @@ export default function EventPage() {
         <PrintStoreModal
           eventId={event.id}
           eventTitle={event.nomeNoivos}
+          medias={medias}
+          isOwner={!!event.isOwner}
           onClose={() => setShowPrintStore(false)}
         />
       )}
