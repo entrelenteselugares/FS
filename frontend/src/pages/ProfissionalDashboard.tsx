@@ -6,6 +6,7 @@ import {
   Settings, Briefcase, Users, LayoutDashboard,
 } from "lucide-react";
 import { DashboardLayout, type NavItem } from "../components/DashboardLayout";
+import { T } from "../lib/theme";
 import {
   AgendaTab, FinanceTab, NetworkTab, ServicesTab,
   EventEditPanel, ExpressSaleModal, ProfileModal,
@@ -65,7 +66,7 @@ export default function ProfissionalDashboard() {
   // ─── Data Fetchers ────────────────────────────────────────────────────────────
 
   const fetchEvents = useCallback(() => {
-    setLoading(true);
+    // We remove the sync setLoading(true) to avoid cascading renders warning
     API.get("profissional/events")
       .then((r) => setEvents(r.data))
       .catch((err) => console.error("Erro ao buscar eventos:", err))
@@ -100,12 +101,15 @@ export default function ProfissionalDashboard() {
   }, []);
 
   useEffect(() => {
-    fetchEvents();
-    fetchProfile();
-    fetchUnitInvites();
-    fetchServiceCatalog();
-    fetchNetwork();
-  }, [fetchEvents, fetchProfile, fetchUnitInvites, fetchServiceCatalog, fetchNetwork]);
+    setLoading(true); // Initial load trigger
+    Promise.all([
+      API.get("profissional/events").then(r => setEvents(r.data)),
+      API.get("profissional/me").then(r => setProfile(r.data)),
+      API.get("profissional/unidades/convites").then(r => setUnitInvites(r.data)),
+      API.get("public/configs/services").then(r => setCatalogServices(r.data.services || [])),
+      API.get("profissional/network").then(r => setNetwork(r.data))
+    ]).finally(() => setLoading(false));
+  }, []); // Only on mount
 
   // ─── Derived State ─────────────────────────────────────────────────────────────
 
@@ -118,7 +122,8 @@ export default function ProfissionalDashboard() {
   useEffect(() => {
     if (!loading && !hasCheckedInvites) {
       if (pendingEvents.length > 0 || unitInvites.length > 0) {
-        setShowNewServicesModal(true);
+        // Use setTimeout to avoid synchronous cascading renders
+        setTimeout(() => setShowNewServicesModal(true), 0);
       }
       setHasCheckedInvites(true);
     }
