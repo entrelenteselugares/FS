@@ -22,6 +22,7 @@ import ResetPasswordPage from "./pages/ResetPasswordPage";
 import LuxuryExperiencePage from "./pages/LuxuryExperiencePage";
 import { useState, useEffect } from "react";
 import { API as api } from "./lib/api";
+import { T } from "./lib/theme";
 
 /** Redireciona /dashboard para o painel correto baseado no role */
 const DashboardRedirect = () => {
@@ -125,11 +126,11 @@ function App() {
   return (
     <ThemeProvider>
       {isWakingUp ? (
-        <div className="min-h-screen bg-[#050505] flex flex-col items-center justify-center gap-6 transition-colors duration-500 relative overflow-hidden">
+        <div className="min-h-screen flex flex-col items-center justify-center gap-6 relative overflow-hidden transition-colors duration-700" style={{ background: T.bg }}>
           <div className="absolute inset-0 bg-brand-tactical/5 blur-[120px] rounded-full -m-64 opacity-20" />
           <div className="relative z-10 flex flex-col items-center gap-8">
             <div className="w-px h-16 bg-gradient-to-b from-transparent via-brand-tactical to-transparent" />
-            <div className="text-[18px] font-black uppercase tracking-[0.8em] text-theme-text italic">FOTO SEGUNDO</div>
+            <div className="text-[18px] font-black uppercase tracking-[0.8em] italic" style={{ color: T.text }}>FOTO SEGUNDO</div>
             <div className="text-[9px] font-black uppercase tracking-[0.4em] text-brand-tactical animate-pulse-soft">Sincronizando Rede Global</div>
             <div className="w-px h-16 bg-gradient-to-t from-transparent via-brand-tactical to-transparent" />
           </div>

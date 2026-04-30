@@ -767,18 +767,18 @@ export const QuotePage = () => {
 
                 <div>
                    <label style={{ fontSize: 10, fontWeight: 800, textTransform: "uppercase", marginBottom: 10, display: "block", color: THEME.text }}>Equipamento Preferencial</label>
-                   <div style={{ display: "flex", gap: 5 }}>
-                      <button type="button" onClick={() => setWorkflowPref("MOBILE")} style={{ flex: 1, padding: 12, fontSize: 8, fontWeight: 800, border: `1px solid ${workflowPref === "MOBILE" ? THEME.accent : THEME.border}`, background: workflowPref === "MOBILE" ? `${THEME.accent}10` : "transparent", color: workflowPref === "MOBILE" ? THEME.accent : THEME.text2, cursor: "pointer" }}>MOBILE MAKER</button>
-                      <button type="button" onClick={() => setWorkflowPref("TRADICIONAL")} style={{ flex: 1, padding: 12, fontSize: 8, fontWeight: 800, border: `1px solid ${workflowPref === "TRADICIONAL" ? THEME.accent : THEME.border}`, background: workflowPref === "TRADICIONAL" ? `${THEME.accent}10` : "transparent", color: workflowPref === "TRADICIONAL" ? THEME.accent : THEME.text2, cursor: "pointer" }}>TRADICIONAL</button>
+                   <div style={{ display: "flex", gap: 10 }}>
+                     <button type="button" onClick={() => setWorkflowPref("MOBILE")} style={{ flex: 1, minHeight: 52, padding: "0 12px", fontSize: 10, fontWeight: 800, border: `1px solid ${workflowPref === "MOBILE" ? THEME.accent : THEME.border}`, background: workflowPref === "MOBILE" ? `${THEME.accent}10` : "transparent", color: workflowPref === "MOBILE" ? THEME.accent : THEME.text2, cursor: "pointer", transition: "all 0.3s ease" }}>MOBILE MAKER</button>
+                     <button type="button" onClick={() => setWorkflowPref("TRADICIONAL")} style={{ flex: 1, minHeight: 52, padding: "0 12px", fontSize: 10, fontWeight: 800, border: `1px solid ${workflowPref === "TRADICIONAL" ? THEME.accent : THEME.border}`, background: workflowPref === "TRADICIONAL" ? `${THEME.accent}10` : "transparent", color: workflowPref === "TRADICIONAL" ? THEME.accent : THEME.text2, cursor: "pointer", transition: "all 0.3s ease" }}>TRADICIONAL</button>
                    </div>
                 </div>
 
                 {locationType === "OTHER" && (
                   <div>
                     <label style={{ fontSize: 10, fontWeight: 800, textTransform: "uppercase", marginBottom: 10, display: "block", color: THEME.text }}>Tipo de Finalidade</label>
-                    <div style={{ display: "flex", gap: 5 }}>
-                      <button type="button" onClick={() => setUsageType("PESSOAL")} style={{ flex: 1, padding: 12, fontSize: 8, fontWeight: 800, border: `1px solid ${usageType === "PESSOAL" ? THEME.accent : THEME.border}`, background: usageType === "PESSOAL" ? `${THEME.accent}10` : "transparent", color: usageType === "PESSOAL" ? THEME.accent : THEME.text2, cursor: "pointer" }}>PESSOAL</button>
-                      <button type="button" onClick={() => setUsageType("EMPRESARIAL")} style={{ flex: 1, padding: 12, fontSize: 8, fontWeight: 800, border: `1px solid ${usageType === "EMPRESARIAL" ? THEME.accent : THEME.border}`, background: usageType === "EMPRESARIAL" ? `${THEME.accent}10` : "transparent", color: usageType === "EMPRESARIAL" ? THEME.accent : THEME.text2, cursor: "pointer" }}>BUSINESS</button>
+                    <div style={{ display: "flex", gap: 10 }}>
+                      <button type="button" onClick={() => setUsageType("PESSOAL")} style={{ flex: 1, minHeight: 52, padding: "0 12px", fontSize: 10, fontWeight: 800, border: `1px solid ${usageType === "PESSOAL" ? THEME.accent : THEME.border}`, background: usageType === "PESSOAL" ? `${THEME.accent}10` : "transparent", color: usageType === "PESSOAL" ? THEME.accent : THEME.text2, cursor: "pointer", transition: "all 0.3s ease" }}>PESSOAL</button>
+                      <button type="button" onClick={() => setUsageType("EMPRESARIAL")} style={{ flex: 1, minHeight: 52, padding: "0 12px", fontSize: 10, fontWeight: 800, border: `1px solid ${usageType === "EMPRESARIAL" ? THEME.accent : THEME.border}`, background: usageType === "EMPRESARIAL" ? `${THEME.accent}10` : "transparent", color: usageType === "EMPRESARIAL" ? THEME.accent : THEME.text2, cursor: "pointer", transition: "all 0.3s ease" }}>BUSINESS</button>
                     </div>
                   </div>
                 )}

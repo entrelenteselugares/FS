@@ -3,16 +3,17 @@ import { API as api } from "../lib/api";
 import { useTheme } from "../contexts/ThemeContextCore";
 import { AxiosError } from "axios";
 
-import { Shield, Lock, Globe, AlertTriangle, CheckCircle2 } from "lucide-react";
+import { Shield, Lock, Globe, AlertTriangle, CheckCircle2, X } from "lucide-react";
 
 interface AccessTypeModalProps {
   orderId: string;
   eventTitle: string;
   isPrimaryClient?: boolean;
   onConfirmed: (accessType: string, expiresAt: string) => void;
+  onClose?: () => void;
 }
 
-export default function AccessTypeModal({ orderId, eventTitle, isPrimaryClient, onConfirmed }: AccessTypeModalProps) {
+export default function AccessTypeModal({ orderId, eventTitle, isPrimaryClient, onConfirmed, onClose }: AccessTypeModalProps) {
   useTheme();
   const [selected, setSelected] = useState<"PUBLIC" | "PRIVATE" | null>(null);
 
@@ -51,7 +52,15 @@ export default function AccessTypeModal({ orderId, eventTitle, isPrimaryClient, 
         className="bg-theme-bg border border-theme-border max-w-md w-full overflow-y-auto max-h-[95vh] shadow-2xl custom-scrollbar"
       >
         {/* Header */}
-        <div className="p-6 pb-0">
+        <div className="p-6 pb-0 relative">
+          {onClose && (
+            <button 
+              onClick={onClose}
+              className="absolute top-6 right-6 p-2 text-theme-muted hover:text-theme-text transition-colors"
+            >
+              <X size={20} />
+            </button>
+          )}
           <div className="flex items-center gap-3 text-[9px] font-bold uppercase tracking-[0.4em] text-brand-tactical mb-3">
              <Shield size={12} strokeWidth={2} />
              <span>Configurações de Privacidade</span>

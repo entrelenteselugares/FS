@@ -95,7 +95,22 @@ export class EventController {
       );
 
       const isPaid = order && (order.status === "PAGO" || order.status === "APROVADO");
-      const hasAccess = isPaid || isOwner;
+      
+      // Verifica se o álbum já foi "liberado" globalmente (pelo menos um pagamento aprovado de álbum completo)
+      // Nota: Para PHOTO_MARKETPLACE, o acesso continua sendo individual por pedido.
+      let isGloballyPaid = false;
+      if (event.type !== 'PHOTO_MARKETPLACE') {
+        const anyPaidOrder = await prisma.order.findFirst({
+          where: { 
+            eventId: event.id, 
+            status: { in: ["PAGO", "APROVADO"] },
+            manualType: { not: "Reserva (50%)" } // Reserva não libera o álbum todo
+          }
+        });
+        isGloballyPaid = !!anyPaidOrder;
+      }
+
+      const hasAccess = isPaid || isOwner || isGloballyPaid;
 
       // 3.1 Guard específico para PHOTO_MARKETPLACE
       if (event.type === 'PHOTO_MARKETPLACE') {

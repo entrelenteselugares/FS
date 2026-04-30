@@ -6,7 +6,7 @@ import { T, Card } from "../lib/theme";
 import AccessTypeModal from "../components/AccessTypeModal";
 import { SideDrawer } from "../components/SideDrawer";
 import { DashboardLayout, type NavItem } from "../components/DashboardLayout";
-import { Image, Clock, ShieldCheck, ArrowRight, AlertTriangle, User, CheckCircle2, X } from "lucide-react";
+import { Image, Clock, ShieldCheck, ArrowRight, AlertTriangle, User, CheckCircle2, X, ShoppingBag } from "lucide-react";
 
 interface Pedido {
   id: string;
@@ -159,8 +159,57 @@ export default function ClienteArea() {
 
   const now = useMemo(() => Date.now(), []);
 
-  const aprovados = pedidos.filter((p) => p.hasPaid);
-  const pendentes = pedidos.filter((p) => !p.hasPaid);
+  const groupedEvents = useMemo(() => {
+    const groups: Record<string, { 
+      event: Pedido["event"], 
+      pedidos: Pedido[],
+      hasAprovado: boolean,
+      hasPendente: boolean,
+      totalAprovado: number,
+      totalPendente: number,
+      latestAprovado?: Pedido,
+      firstPendente?: Pedido
+    }> = {};
+
+    pedidos.forEach(p => {
+      if (!groups[p.event.id]) {
+        groups[p.event.id] = { 
+          event: p.event, 
+          pedidos: [], 
+          hasAprovado: false, 
+          hasPendente: false,
+          totalAprovado: 0,
+          totalPendente: 0
+        };
+      }
+      groups[p.event.id].pedidos.push(p);
+      if (p.hasPaid) {
+        groups[p.event.id].hasAprovado = true;
+        groups[p.event.id].totalAprovado += Number(p.amount);
+        if (!groups[p.event.id].latestAprovado || new Date(p.createdAt) > new Date(groups[p.event.id].latestAprovado!.createdAt)) {
+          groups[p.event.id].latestAprovado = p;
+        }
+      } else {
+        groups[p.event.id].hasPendente = true;
+        groups[p.event.id].totalPendente += Number(p.amount);
+        if (!groups[p.event.id].firstPendente || new Date(p.createdAt) < new Date(groups[p.event.id].firstPendente!.createdAt)) {
+          groups[p.event.id].firstPendente = p;
+        }
+      }
+    });
+
+    return Object.values(groups).sort((a, b) => {
+      // Prioriza eventos com pendências, depois os mais recentes
+      if (a.hasPendente && !b.hasPendente) return -1;
+      if (!a.hasPendente && b.hasPendente) return 1;
+      const dateA = new Date(a.pedidos[0].createdAt).getTime();
+      const dateB = new Date(b.pedidos[0].createdAt).getTime();
+      return dateB - dateA;
+    });
+  }, [pedidos]);
+
+  const aprovados = groupedEvents.filter(g => g.hasAprovado);
+  const pendentes = groupedEvents.filter(g => g.hasPendente && !g.hasAprovado);
 
   return (
     <DashboardLayout title="Minha Conta" navItems={NAV_ITEMS}>
@@ -173,7 +222,12 @@ export default function ClienteArea() {
 
         {/* Expiring Alert Banner */}
         {(() => {
-          const exp = aprovados.filter(p => { if (!p.accessExpiresAt) return false; const d = Math.ceil((new Date(p.accessExpiresAt).getTime()-Date.now())/(864e5)); return d>0&&d<=7; });
+          const exp = aprovados.filter(g => { 
+            const expiry = g.latestAprovado?.accessExpiresAt;
+            if (!expiry) return false; 
+            const d = Math.ceil((new Date(expiry).getTime() - Date.now()) / (864e5)); 
+            return d > 0 && d <= 7; 
+          });
           if (!exp.length) return null;
           return (
             <div className="flex items-center gap-4 px-6 py-4 bg-amber-500/10 border border-amber-500/30 text-amber-400">
@@ -255,32 +309,16 @@ export default function ClienteArea() {
                 </div>
               ) : (
                 <div className="space-y-10">
-                  {aprovados.length > 0 && (
-                    <div className="space-y-4">
-                      <div className="flex items-center gap-4">
-                        <div className="w-2 h-2 rounded-full bg-brand-tactical animate-pulse" />
-                        <p className="text-[9px] font-black text-brand-tactical uppercase tracking-[0.4em]">Acesso Liberado</p>
-                        <div className="h-px flex-1 bg-gradient-to-r from-brand-tactical/30 to-transparent" />
-                      </div>
-                      <div className="flex flex-col gap-3">
-                        {aprovados.map((p) => (
-                          <PedidoRow key={p.id} pedido={p} now={now} isSelected={selected?.id === p.id} onClick={() => handleSelect(p)} pedidos={pedidos} />
-                        ))}
-                      </div>
-                    </div>
-                  )}
-                  {pendentes.length > 0 && (
-                    <div className="space-y-4">
-                      <div className="flex items-center gap-4">
-                        <div className="w-2 h-2 rounded-full bg-amber-500" style={{ animation: "radarPulse 2s ease-out infinite" }} />
-                        <p className="text-[9px] font-black text-amber-500 uppercase tracking-[0.4em]">Aguardando Confirmação</p>
-                        <div className="h-px flex-1 bg-gradient-to-r from-amber-500/30 to-transparent" />
-                      </div>
-                      <div className="flex flex-col gap-3">
-                        {pendentes.map((p) => (
-                          <PedidoRow key={p.id} pedido={p} now={now} isSelected={selected?.id === p.id} onClick={() => handleSelect(p)} pedidos={pedidos} />
-                        ))}
-                      </div>
+                  {groupedEvents.length > 0 && (
+                    <div className="space-y-6">
+                      {groupedEvents.map((group) => (
+                        <EventGroupRow 
+                          key={group.event.id} 
+                          group={group} 
+                          now={now} 
+                          onSelectPedido={(p) => handleSelect(p)}
+                        />
+                      ))}
                     </div>
                   )}
                 </div>
@@ -352,126 +390,213 @@ export default function ClienteArea() {
             if (updated) setSelected(updated);
             else setSelected(null);
           }}
+          onClose={() => setIsPrivacyModalOpen(false)}
         />
       )}
     </DashboardLayout>
   );
 }
 
-// ── Componentes Internos ─────────────────────────────────────────
-
-function PedidoRow({ pedido, now, isSelected, onClick, pedidos }: {
-  pedido: Pedido;
-  now: number;
-  isSelected: boolean;
-  onClick: () => void;
+interface EventGroup {
+  event: Pedido["event"];
   pedidos: Pedido[];
+  hasAprovado: boolean;
+  hasPendente: boolean;
+  totalAprovado: number;
+  totalPendente: number;
+  latestAprovado?: Pedido;
+  firstPendente?: Pedido;
+}
+
+function EventGroupRow({ group, now, onSelectPedido }: {
+  group: EventGroup;
+  now: number;
+  onSelectPedido: (p: Pedido) => void;
 }) {
   const navigate = useNavigate();
-  const diff = pedido.accessExpiresAt ? new Date(pedido.accessExpiresAt).getTime() - now : null;
+  const { event, pedidos, hasAprovado, hasPendente, latestAprovado, firstPendente } = group;
+
+  const getStatusMessage = (eventDate: string) => {
+    const dt = new Date(eventDate);
+    const diffDays = Math.ceil((dt.getTime() - now) / (1000 * 60 * 60 * 24));
+
+    if (diffDays > 30) return "Preparativos em andamento. O grande dia está sendo planejado!";
+    if (diffDays > 7) return "A contagem regressiva começou! Falta pouco para o seu evento.";
+    if (diffDays > 0) return "Chegou a hora! Estamos prontos para eternizar cada momento.";
+    if (diffDays > -30) return "Evento realizado! Seus arquivos estão em fase de curadoria técnica.";
+    return "Memórias eternizadas. Aproveite cada detalhe do seu álbum.";
+  };
+
+  const handleAddServices = (e?: React.MouseEvent) => {
+    e?.stopPropagation();
+    const dt = new Date(event.dataEvento);
+    const diffDays = Math.ceil((dt.getTime() - now) / (864e5));
+
+    if (diffDays > 10) {
+      navigate(`/e/${event.id}`);
+    } else {
+      const msg = `Olá! Gostaria de adicionar mais serviços ao meu evento "${event.nomeNoivos}". Vi que para pedidos com menos de 7 dias úteis da data, a inclusão está sujeita à disponibilidade da agenda dos profissionais.`;
+      window.open(`https://wa.me/5519997843817?text=${encodeURIComponent(msg)}`, "_blank");
+    }
+  };
+
+  const accessExpiresAt = latestAprovado?.accessExpiresAt;
+  const diff = accessExpiresAt ? new Date(accessExpiresAt).getTime() - now : null;
   const daysLeft = diff ? Math.ceil(diff / (1000 * 60 * 60 * 24)) : null;
   const isExpiringSoon = daysLeft !== null && daysLeft <= 7 && daysLeft > 0;
 
   return (
     <div
-      onClick={onClick}
-      className={`relative group cursor-pointer border transition-all duration-500 overflow-hidden ${
-        isSelected ? 'border-brand-tactical bg-brand-tactical/5' : 'border-theme-border/40 bg-theme-bg-muted/10 hover:border-brand-tactical/60 hover:bg-theme-bg-muted/30'
+      className={`relative group border transition-all duration-500 overflow-hidden ${
+        hasPendente ? 'border-amber-500/40 bg-amber-500/[0.02]' : 'border-theme-border/40 bg-theme-bg-muted/10'
       } ${isExpiringSoon ? 'border-amber-500/40' : ''}`}
       style={{
-        transform: isSelected ? "translateY(-2px)" : "none",
-        boxShadow: isExpiringSoon ? "0 0 20px rgba(245, 158, 11, 0.05)" : isSelected ? "0 10px 30px -10px rgba(133, 185, 172, 0.1)" : "none"
+        boxShadow: isExpiringSoon ? "0 0 20px rgba(245, 158, 11, 0.05)" : "none"
       }}
     >
-      <div className="flex flex-col md:flex-row items-stretch gap-6 p-6">
+      <div className="flex flex-col lg:flex-row items-stretch gap-8 p-8">
         {/* Thumbnail */}
-        <div className="relative w-full md:w-32 aspect-square md:aspect-[4/5] bg-theme-bg overflow-hidden border border-theme-border/20">
-          {pedido.event.coverPhotoUrl ? (
-            <img 
-              src={pedido.event.coverPhotoUrl} 
-              alt="" 
-              className={`w-full h-full object-cover transition-all duration-1000 group-hover:scale-110 ${pedido.hasPaid ? 'grayscale-0' : 'grayscale brightness-50'}`} 
-            />
-          ) : (
-            <div className="w-full h-full flex items-center justify-center bg-theme-bg-muted/40">
-              <Image size={24} className="text-theme-muted/20" />
-            </div>
-          )}
-          
-          {isExpiringSoon && (
-            <div className="absolute inset-x-0 bottom-0 bg-amber-500 text-black text-[8px] font-black uppercase tracking-widest py-1.5 text-center">
-              {daysLeft} dias restantes
-            </div>
-          )}
-
-          {!pedido.hasPaid && (
-            <div className="absolute inset-0 flex items-center justify-center">
-              <div className="px-3 py-1 bg-black/60 backdrop-blur-md border border-white/10 text-[8px] font-black text-white uppercase tracking-widest">
-                Bloqueado
+        <div className="flex flex-col gap-3">
+          <div className="relative w-full lg:w-48 aspect-square lg:aspect-[4/5] bg-theme-bg overflow-hidden border border-theme-border/20 shadow-inner">
+            {event.coverPhotoUrl ? (
+              <img 
+                src={event.coverPhotoUrl.toString().trim().replace(/\s/g, '')} 
+                alt="" 
+                className={`w-full h-full object-cover transition-all duration-1000 group-hover:scale-110 ${hasAprovado ? 'grayscale-0' : 'grayscale brightness-50'}`} 
+              />
+            ) : (
+              <div className="w-full h-full flex items-center justify-center bg-theme-bg-muted/40">
+                <Image size={24} className="text-theme-muted/20" />
               </div>
-            </div>
-          )}
-        </div>
+            )}
+            
+            {isExpiringSoon && (
+              <div className="absolute inset-x-0 bottom-0 bg-amber-500 text-black text-[8px] font-black uppercase tracking-widest py-2 text-center">
+                {daysLeft} dias restantes
+              </div>
+            )}
 
-        {/* Info */}
-        <div className="flex-1 min-w-0 flex flex-col justify-between py-1">
-          <div className="space-y-3">
-            <div className="flex items-start justify-between gap-4">
-              <div className="space-y-1">
-                <h4 className={`text-xl font-heading font-black italic tracking-tighter uppercase transition-colors ${isSelected ? 'text-brand-tactical' : 'text-theme-text group-hover:text-brand-tactical'}`}>
-                  {pedido.event.nomeNoivos}
-                </h4>
-                <div className="flex items-center gap-2 text-[9px] font-black text-theme-muted uppercase tracking-widest">
-                  <span>{formatDate(pedido.event.dataEvento)}</span>
-                  <span className="w-1 h-1 rounded-full bg-theme-border" />
-                  <span>{pedido.event.city || pedido.event.location}</span>
+            {!hasAprovado && (
+              <div className="absolute inset-0 flex items-center justify-center bg-black/40 backdrop-blur-[2px]">
+                <div className="px-3 py-1 bg-black/60 border border-white/10 text-[8px] font-black text-white uppercase tracking-widest">
+                  Acesso Bloqueado
                 </div>
               </div>
-              <p className="text-xl font-heading font-black italic tracking-tighter text-theme-text">
-                {formatCurrency(pedido.amount)}
-              </p>
+            )}
+          </div>
+        </div>
+
+        {/* Content */}
+        <div className="flex-1 flex flex-col justify-between min-w-0 py-2">
+          <div className="space-y-6">
+            <div className="flex flex-col md:flex-row md:items-start justify-between gap-6">
+              <div className="space-y-2">
+                <div className="flex items-center gap-3">
+                   <div className="h-0.5 w-6 bg-brand-tactical" />
+                   <p className="text-[9px] font-black text-brand-tactical uppercase tracking-[0.4em]">Álbum do Evento</p>
+                </div>
+                <h4 className="text-3xl md:text-4xl font-heading font-black italic tracking-tighter uppercase leading-none text-theme-text">
+                  {event.nomeNoivos}
+                </h4>
+                <div className="flex items-center gap-3 text-[10px] font-bold text-theme-muted uppercase tracking-widest">
+                  <div className="flex items-center gap-1.5"><Clock size={12} /> {formatDate(event.dataEvento)}</div>
+                  <span className="w-1 h-1 rounded-full bg-theme-border" />
+                  <span>{event.city || event.location}</span>
+                </div>
+              </div>
+
+              <div className="flex flex-wrap justify-end gap-1.5 pt-2">
+                {event.temFoto && <Tag label="Foto" />}
+                {event.temVideo && <Tag label="Vídeo" />}
+                {event.temReels && <Tag label="Reels" color="var(--brand-tactical)" />}
+              </div>
             </div>
 
-            <div className="flex flex-wrap gap-2">
-              {pedido.event.temFoto && <Tag label="Foto" />}
-              {pedido.event.temVideo && <Tag label="Vídeo" />}
-              {pedido.event.temReels && <Tag label="Reels" color="var(--brand-tactical)" />}
-              {pedido.manualType && <Tag label={pedido.manualType} color="#f59e0b" />}
+            {/* Jornada */}
+            <div className="p-5 bg-theme-bg/40 border-l-2 border-brand-tactical shadow-lg shadow-black/10 relative overflow-hidden">
+               <p className="text-[9px] font-black text-brand-tactical uppercase tracking-widest mb-1">Status da Jornada</p>
+               <p className="text-[12px] text-theme-text font-medium leading-relaxed">
+                  {getStatusMessage(event.dataEvento)}
+               </p>
+            </div>
+
+            {/* List of Payments/Orders */}
+            <div className="space-y-3">
+              <p className="text-[9px] font-black text-theme-muted uppercase tracking-[0.3em]">Histórico de Aquisições</p>
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
+                {pedidos.map((p: Pedido) => (
+                  <div 
+                    key={p.id} 
+                    onClick={() => onSelectPedido(p)}
+                    className={`flex items-center justify-between p-4 border transition-all cursor-pointer ${
+                      p.hasPaid ? 'border-theme-border/40 bg-theme-bg/20' : 'border-amber-500/30 bg-amber-500/5 hover:border-amber-500'
+                    }`}
+                  >
+                    <div className="min-w-0">
+                      <p className="text-[10px] font-black text-theme-text uppercase tracking-widest truncate">{p.manualType || "Investimento"}</p>
+                      <p className={`text-[8px] font-bold uppercase tracking-widest ${p.hasPaid ? 'text-brand-tactical' : 'text-amber-500'}`}>
+                        {p.hasPaid ? "✓ Pago" : "● Pendente"}
+                      </p>
+                    </div>
+                    <p className="text-sm font-black text-theme-text italic ml-4">
+                      {formatCurrency(p.amount)}
+                    </p>
+                  </div>
+                ))}
+              </div>
             </div>
           </div>
 
-          <div className="mt-4 md:mt-0 flex items-end justify-between gap-4">
-            <div>
-              {pedido.accessExpiresAt && pedido.hasPaid && (
-                <div className="flex items-center gap-2">
-                  <div className={`w-1.5 h-1.5 rounded-full ${isExpiringSoon ? 'bg-amber-500 animate-pulse' : 'bg-brand-tactical'}`} />
-                  <p className={`text-[9px] font-black uppercase tracking-widest ${isExpiringSoon ? 'text-amber-500' : 'text-brand-tactical'}`}>
-                    {daysLeft && daysLeft <= 0 ? "Expirado" : `${daysLeft}d restantes — ${pedido.accessType === "PUBLIC" ? "Público" : "Privado"}`}
+          <div className="mt-8 flex flex-col md:flex-row md:items-center justify-between gap-6 border-t border-theme-border/20 pt-6">
+            <div className="flex items-center gap-4">
+              {hasAprovado && (
+                <div className="flex items-center gap-3">
+                  <div className={`w-2 h-2 rounded-full ${isExpiringSoon ? 'bg-amber-500 animate-pulse' : 'bg-brand-tactical'}`} />
+                  <p className={`text-[10px] font-black uppercase tracking-widest ${isExpiringSoon ? 'text-amber-500' : 'text-brand-tactical'}`}>
+                    {daysLeft && daysLeft <= 0 ? "Expirado" : `${daysLeft}d restantes — ${latestAprovado?.accessType === "PUBLIC" ? "Público" : "Privado"}`}
                   </p>
                 </div>
               )}
             </div>
 
-            {!pedido.hasPaid ? (
-              <button
-                onClick={(e) => {
-                  e.stopPropagation();
-                  const isQuitacao = pedido.manualType?.toLowerCase().includes("quitação");
-                  if (isQuitacao) {
-                    const reservaPendente = pedidos.find(p => p.event.id === pedido.event.id && p.manualType?.toLowerCase().includes("reserva") && !p.hasPaid);
-                    if (reservaPendente) { alert("Pague a Reserva primeiro."); return; }
-                  }
-                  navigate(`/checkout?orderId=${pedido.id}`);
-                }}
-                className="px-6 py-2.5 bg-brand-tactical text-brand-text text-[9px] font-black uppercase tracking-[0.3em] hover:brightness-110 transition-all"
-              >
-                {pedido.manualType?.toLowerCase().includes("quitação") && pedidos.some(p => p.event.id === pedido.event.id && p.manualType?.toLowerCase().includes("reserva") && !p.hasPaid) ? "Aguard. Reserva" : "Pagar Agora"}
-              </button>
-            ) : (
-              <div className="flex items-center gap-2 text-[9px] font-black text-brand-tactical uppercase tracking-widest italic">
-                Acesso Liberado <ArrowRight size={12} />
-              </div>
-            )}
+            <div className="flex flex-wrap items-center gap-4">
+               <button 
+                  onClick={() => {
+                    if (new Date(event.dataEvento).getTime() > now) {
+                      handleAddServices();
+                    } else {
+                      navigate(`/e/${event.id}`);
+                    }
+                  }}
+                  className="px-6 py-3 border border-theme-border text-[9px] font-black text-theme-text uppercase tracking-widest hover:border-brand-tactical hover:text-brand-tactical transition-all flex items-center gap-2"
+                >
+                  {new Date(event.dataEvento).getTime() > now ? (
+                    <>
+                      {Math.ceil((new Date(event.dataEvento).getTime() - now) / 864e5) > 10 ? "Fazer Upgrade" : "Solicitar Inclusão"}
+                    </>
+                  ) : (
+                    <>
+                      <ShoppingBag size={12} className="text-brand-tactical" /> REVELAR MEMÓRIAS
+                    </>
+                  )}
+                </button>
+
+              {hasAprovado ? (
+                <button
+                  onClick={() => navigate(`/e/${event.id}`)}
+                  className="px-8 py-3 bg-brand-tactical text-brand-text text-[10px] font-black uppercase tracking-[0.4em] hover:brightness-110 shadow-lg shadow-brand-tactical/20 transition-all flex items-center gap-2"
+                >
+                  Acessar Álbum <ArrowRight size={14} />
+                </button>
+              ) : (
+                <button
+                  onClick={() => firstPendente && navigate(`/checkout?orderId=${firstPendente.id}`)}
+                  className="px-8 py-3 bg-amber-500 text-black text-[10px] font-black uppercase tracking-[0.4em] hover:brightness-110 shadow-lg shadow-amber-500/20 transition-all"
+                >
+                  Desbloquear Agora
+                </button>
+              )}
+            </div>
           </div>
         </div>
       </div>

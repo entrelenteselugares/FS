@@ -122,12 +122,28 @@ export const AdminEvents: React.FC<AdminEventsProps> = ({ initialEditEventId }) 
     pricePerPhoto: 15,
   });
 
+  const [previewPreviews, setPreviewPreviews] = useState<string[]>(["", "", ""]);
+  const previewInputRef = React.useRef<HTMLInputElement>(null);
+  const [currentPreviewIdx, setCurrentPreviewIdx] = useState<number | null>(null);
+
   const handleFileChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (!file) return;
 
     const reader = new FileReader();
     reader.onload = (ev) => setCoverPreview(ev.target?.result as string);
+    reader.readAsDataURL(file);
+  };
+
+  const handlePreviewFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file || currentPreviewIdx === null) return;
+    const reader = new FileReader();
+    reader.onload = (ev) => {
+      const newPreviews = [...previewPreviews];
+      newPreviews[currentPreviewIdx] = ev.target?.result as string;
+      setPreviewPreviews(newPreviews);
+    };
     reader.readAsDataURL(file);
   };
 
@@ -149,6 +165,18 @@ export const AdminEvents: React.FC<AdminEventsProps> = ({ initialEditEventId }) 
           imageBase64: coverPreview,
           mimeType: "image/jpeg" 
         });
+      }
+
+      // Upload Previews
+      for (let i = 0; i < previewPreviews.length; i++) {
+        const p = previewPreviews[i];
+        if (p && p.startsWith("data:image")) {
+          await API.patch(`/admin/events/${event.id}/preview`, {
+            imageBase64: p,
+            mimeType: "image/jpeg",
+            index: i
+          });
+        }
       }
 
       const updatedEvents = await API.get("/admin/events");
@@ -173,6 +201,7 @@ export const AdminEvents: React.FC<AdminEventsProps> = ({ initialEditEventId }) 
         pricePerPhoto: 15,
       });
       setCoverPreview(null);
+      setPreviewPreviews(["", "", ""]);
     } catch {
       showNotification("Erro ao processar evento.", 'error');
     } finally {
@@ -219,7 +248,12 @@ export const AdminEvents: React.FC<AdminEventsProps> = ({ initialEditEventId }) 
         lightroomUrl: data.lightroomUrl || "",
         driveUrl: data.driveUrl || "",
         previewPhotos: (() => {
-          try { const p = data.previewPhotos ? JSON.parse(data.previewPhotos) : []; return [p[0]||"", p[1]||"", p[2]||""] as [string,string,string]; } catch { return ["","",""] as [string,string,string]; }
+          try { 
+            const p = data.previewPhotos ? JSON.parse(data.previewPhotos) : []; 
+            return [p[0]||"", p[1]||"", p[2]||""] as [string,string,string]; 
+          } catch { 
+            return ["","",""] as [string,string,string]; 
+          }
         })(),
         isPrivate: data.isPrivate || false,
         isUnitSale: data.isUnitSale || false,
@@ -228,6 +262,12 @@ export const AdminEvents: React.FC<AdminEventsProps> = ({ initialEditEventId }) 
         pricePerPhoto: Number(data.pricePerPhoto || 15)
       });
       setCoverPreview(data.coverPhotoUrl);
+      try {
+        const p = data.previewPhotos ? JSON.parse(data.previewPhotos) : [];
+        setPreviewPreviews([p[0]||"", p[1]||"", p[2]||""]);
+      } catch {
+        setPreviewPreviews(["", "", ""]);
+      }
       setActiveTab('info');
       setIsModalOpen(true);
     } catch {
@@ -312,6 +352,7 @@ export const AdminEvents: React.FC<AdminEventsProps> = ({ initialEditEventId }) 
               setEditingEvent(null);
               setFormData({ title: "", slug: "", date: "", location: "", city: "", description: "", priceBase: 200, priceEarly: 190, cartorioId: "", captacaoId: "", edicaoId: "", temFoto: true, temVideo: false, temReels: false, temFotoImpressa: false, coverPhotoUrl: "", eventHours: 2, isCrowdfund: false, targetAmount: 0, lightroomUrl: "", driveUrl: "", previewPhotos: ["", "", ""], isPrivate: false, isUnitSale: false, priceUnit: 10, type: 'ALBUM_FULL', pricePerPhoto: 15 });
               setCoverPreview(null);
+              setPreviewPreviews(["", "", ""]);
               setIsModalOpen(true);
             }}
             className="font-black uppercase tracking-[0.4em] px-8 py-4 hover:brightness-110 transition-all shadow-xl shadow-brand-tactical/10 rounded-none text-[9px] w-full md:w-auto bg-brand-tactical text-zinc-950"
@@ -567,10 +608,34 @@ export const AdminEvents: React.FC<AdminEventsProps> = ({ initialEditEventId }) 
                           </div>
                         </div>
                         <div className="pt-4 border-t border-zinc-100">
-                          <label className="text-[9px] font-black text-zinc-800 uppercase tracking-[0.4em] mb-3 block">Fotos de Prévia (Vitrine)</label>
-                          <div className="grid grid-cols-3 gap-6">
-                            {[0, 1, 2].map(i => <input key={i} type="text" className="w-full bg-white border border-zinc-300 p-2 text-[10px] text-zinc-900 outline-none font-bold italic" value={formData.previewPhotos[i]} onChange={e => { const p = [...formData.previewPhotos] as [string,string,string]; p[i] = e.target.value; setFormData({...formData, previewPhotos: p}); }} placeholder={`URL ${i+1}`} />)}
+                          <div className="flex justify-between items-center mb-3">
+                            <label className="text-[9px] font-black text-zinc-800 uppercase tracking-[0.4em]">Fotos de Prévia (Vitrine - 3 slots)</label>
+                            <span className="text-[8px] text-zinc-400 font-bold uppercase italic">Clique para enviar as fotos do slideshow</span>
                           </div>
+                          <div className="grid grid-cols-3 gap-4">
+                            {[0, 1, 2].map(i => (
+                              <div 
+                                key={i}
+                                onClick={() => { setCurrentPreviewIdx(i); previewInputRef.current?.click(); }}
+                                className="aspect-video bg-zinc-50 border border-zinc-200 flex flex-col items-center justify-center cursor-pointer overflow-hidden relative group hover:border-brand-tactical transition-all"
+                              >
+                                {previewPreviews[i] ? (
+                                  <img src={previewPreviews[i]} alt={`Preview ${i+1}`} className="w-full h-full object-cover" />
+                                ) : (
+                                  <div className="text-center opacity-40 group-hover:opacity-100 transition-opacity">
+                                    <div className="text-xl">📸</div>
+                                    <div className="text-[7px] font-black uppercase">Foto {i+1}</div>
+                                  </div>
+                                )}
+                                {previewPreviews[i] && (
+                                  <div className="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 flex items-center justify-center transition-opacity">
+                                    <span className="text-[7px] text-white font-black uppercase">Trocar Foto</span>
+                                  </div>
+                                )}
+                              </div>
+                            ))}
+                          </div>
+                          <input type="file" ref={previewInputRef} hidden accept="image/*" onChange={handlePreviewFileChange} />
                         </div>
                       </div>
                     )}

@@ -20,6 +20,7 @@ import {
   adminRejectQuote,
   AdminEventController,
   adminUploadCover,
+  adminUploadPreview,
   adminGetLogs,
   adminCreateManualSale,
 } from "../controllers/admin.controller";
@@ -243,6 +244,7 @@ router.get("/admin/events/:id",         requireAuth, requireRole("ADMIN"), admin
 router.post("/admin/events",            requireAuth, requireRole("ADMIN"), adminCreateEvent);
 router.patch("/admin/events/:id",       requireAuth, requireRole("ADMIN"), adminUpdateEvent);
 router.patch("/admin/events/:id/cover", requireAuth, requireRole("ADMIN"), adminUploadCover);
+router.patch("/admin/events/:id/preview", requireAuth, requireRole("ADMIN"), adminUploadPreview);
 router.delete("/admin/events/:id",      requireAuth, requireRole("ADMIN"), adminDeleteEvent);
 
 // ── Admin: Gestão de Usuários ──────────────────────────────────────────────────

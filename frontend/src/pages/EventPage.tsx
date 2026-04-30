@@ -154,6 +154,7 @@ export default function EventPage() {
   const [sharing, setSharing] = useState(false);
   const [step, setStep] = useState<Step | "countdown" | "denied">("paywall");
   const [access, setAccess] = useState<AccessData | null>(null);
+  const [currentBannerIndex, setCurrentBannerIndex] = useState(0);
   const [orderId, setOrderId] = useState<string | null>(null);
   const [justPaid, setJustPaid] = useState(false);
   const [error, setError] = useState("");
@@ -231,9 +232,12 @@ export default function EventPage() {
         setEvent(eventData);
 
         const eventDate = eventData.dataEvento ? new Date(eventData.dataEvento) : null;
-        const isFuture = eventDate && eventDate > new Date();
+        
+        // Se o evento é hoje ou no futuro (com margem de 12h após o início para considerar 'em andamento')
+        const now = new Date();
+        const isFuture = eventDate && (eventDate.getTime() + (12 * 60 * 60 * 1000)) > now.getTime();
 
-        if (isFuture) {
+        if (isFuture && !eventData.lightroomUrl && !eventData.driveUrl && (!eventData.previewPhotos || eventData.previewPhotos.length === 0)) {
           setStep("countdown");
         } else if (eventData.isPrivate && !eventData.isPrimaryClient && !eventData.isOwner) {
           setStep("denied");
@@ -261,6 +265,12 @@ export default function EventPage() {
     api.get('/public/print-catalog')
       .then(res => setPrintProducts(res.data))
       .catch(err => console.error("Erro ao carregar catálogo de impressão:", err));
+
+    // Slideshow interval
+    const interval = setInterval(() => {
+      setCurrentBannerIndex(prev => (prev + 1) % 3);
+    }, 5000);
+    return () => clearInterval(interval);
   }, [slug, navigate, user?.id, user?.role]);
 
   const handleAutoConfirmChoice = useCallback(async (oid: string) => {
@@ -287,6 +297,12 @@ export default function EventPage() {
           }
         } else if (data.status === "ACTIVE") {
           setStep("success");
+          setAccess({ 
+            lightroomUrl: data.lightroomUrl, 
+            driveUrl: data.driveUrl, 
+            expiresAt: data.expiresAt || "", 
+            eventTitle: event?.nomeNoivos || "" 
+          });
         }
       } catch { /* not paid */ }
     };
@@ -376,24 +392,25 @@ export default function EventPage() {
   const handleChange = (k: string) => (e: React.ChangeEvent<HTMLInputElement>) => setCardData(p => ({ ...p, [k]: e.target.value }));
 
   // ── SEO & Fallback Logic ───────────────────────────────────────────────────
-  const getSEOData = () => {
-    if (!event) return { title: "Foto Segundo", description: "Plataforma de Fotografia", image: "" };
+  const getSEOData = (ev: EventData | null) => {
+    if (!ev) return { title: "Foto Segundo", description: "Plataforma de Fotografia", image: "", url: "" };
     const defaults = ["/defaults/cover1.png", "/defaults/cover2.png", "/defaults/cover3.png"];
-    const index = event.id.split('').reduce((acc, char) => acc + char.charCodeAt(0), 0) % defaults.length;
+    const idStr = ev.id || "0";
+    const index = idStr.split('').reduce((acc, char) => acc + char.charCodeAt(0), 0) % defaults.length;
     const fallback = window.location.origin + defaults[index];
-    const image = event.coverPhotoUrl || fallback;
-    const dateStr = event.dataEvento ? new Date(event.dataEvento).toLocaleDateString("pt-BR") : "";
-    const description = `Confira as fotos de ${event.nomeNoivos}${dateStr ? " em " + dateStr : ""}. Acesse suas memórias digitais e recorde os melhores momentos no Foto Segundo.`;
+    const image = ev.coverPhotoUrl || fallback;
+    const dateStr = ev.dataEvento ? new Date(ev.dataEvento).toLocaleDateString("pt-BR") : "";
+    const description = `Confira as fotos de ${ev.nomeNoivos}${dateStr ? " em " + dateStr : ""}. Acesse suas memórias digitais e recorde os melhores momentos no Foto Segundo.`;
 
     return {
-      title: `Álbum: ${event.nomeNoivos} | Foto Segundo`,
+      title: `Álbum: ${ev.nomeNoivos} | Foto Segundo`,
       description,
       image,
       url: window.location.href
     };
   };
 
-  const seo = getSEOData();
+  const seo = getSEOData(event);
 
   if (loading) return (
     <div style={{ height: "100vh", background: T.bg, display: "flex", alignItems: "center", justifyContent: "center" }}>
@@ -404,12 +421,13 @@ export default function EventPage() {
   if (!event) return null;
 
   const paid = step === "success";
-  const activeServices = SERVICES.filter(s => event[s.key as keyof EventData]);
-  const dateStr = event.dataEvento
-    ? new Date(event.dataEvento).toLocaleDateString("pt-BR", { day: "numeric", month: "long", year: "numeric" })
-    : "";
-
   const isMarketplace = event.type === 'PHOTO_MARKETPLACE';
+  
+  // Filtra apenas serviços ativos e que existem no objeto event
+  const activeServices = SERVICES.filter(s => {
+    const val = event[s.key as keyof EventData];
+    return val === true || val === "true";
+  });
 
   const toggleCart = (shortId: string) => {
     setCart(prev => {
@@ -477,47 +495,69 @@ export default function EventPage() {
 
       <div className="ep-grid">
         <div className="ep-cover" style={{ position: "relative", overflow: "hidden", background: T.bgCard }}>
-          {event.coverPhotoUrl ? (
-            <img src={event.coverPhotoUrl} alt={event.nomeNoivos}
-              style={{ width: "100%", height: "100%", objectFit: "cover", filter: paid ? "none" : "blur(6px) brightness(0.7)", transition: "filter 0.8s ease" }}
-            />
-          ) : (
-            <div style={{ 
-              width: "100%", height: "100%", display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center", 
-              background: `radial-gradient(circle at center, #1a1a1a 0%, #0a0a0a 100%)`,
-              position: "relative", overflow: "hidden"
-            }}>
-              {/* Marca d'água do nome do evento */}
+          {(() => {
+            const validPreviews = (event.previewPhotos || [])
+              .filter(p => !!p && (p.match(/\.(jpeg|jpg|gif|png|webp|bmp)/i) || p.startsWith('data:image')))
+              .map(p => p.trim().replace(/\s/g, ''));
+            
+            const bannerImages = [];
+            if (event.coverPhotoUrl) bannerImages.push(event.coverPhotoUrl.toString().trim().replace(/\s/g, ''));
+            bannerImages.push(...validPreviews);
+            
+            const finalBanners = bannerImages.slice(0, 3);
+
+            if (finalBanners.length > 0) {
+              return (
+                <div style={{ width: "100%", height: "100%", position: "relative" }}>
+                  {finalBanners.map((img, i) => (
+                    <img 
+                      key={i}
+                      src={img} 
+                      alt={`${event.nomeNoivos} ${i}`}
+                      style={{ 
+                        position: "absolute",
+                        inset: 0,
+                        width: "100%", 
+                        height: "100%", 
+                        objectFit: "cover", 
+                        filter: paid ? "none" : "blur(6px) brightness(0.7)", 
+                        transition: "opacity 1.5s ease-in-out, filter 0.8s ease",
+                        opacity: (currentBannerIndex % finalBanners.length) === i ? 1 : 0,
+                        zIndex: (currentBannerIndex % finalBanners.length) === i ? 1 : 0
+                      }}
+                    />
+                  ))}
+                </div>
+              );
+            }
+
+            return (
               <div style={{ 
-                position: "absolute", fontFamily: T.fontD, fontSize: "15vw", fontWeight: 900, 
-                color: "#fff", opacity: 0.03, textTransform: "uppercase", whiteSpace: "nowrap",
-                pointerEvents: "none", userSelect: "none"
+                width: "100%", height: "100%", display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center", 
+                background: `radial-gradient(circle at center, #1a1a1a 0%, #0a0a0a 100%)`,
+                position: "relative", overflow: "hidden"
               }}>
-                {event.nomeNoivos}
+                <div style={{ 
+                  position: "absolute", fontFamily: T.fontD, fontSize: "15vw", fontWeight: 900, 
+                  color: "#fff", opacity: 0.03, textTransform: "uppercase", whiteSpace: "nowrap",
+                  pointerEvents: "none", userSelect: "none"
+                }}>
+                  {event.nomeNoivos}
+                </div>
+                <img 
+                  src="/logo-fs.png" 
+                  alt="Foto Segundo" 
+                  style={{ height: "clamp(30px, 5vw, 60px)", opacity: 0.3, filter: "brightness(0) invert(1)", zIndex: 1 }} 
+                />
+                <div style={{ marginTop: 20, fontSize: 10, letterSpacing: 5, color: "#fff", opacity: 0.2, textTransform: "uppercase", fontWeight: 300, zIndex: 1 }}>
+                  Álbum em Processamento
+                </div>
               </div>
-              
-              {/* Logo Centralizada */}
-              <img 
-                src="/logo-fs.png" 
-                alt="Foto Segundo" 
-                style={{ 
-                  height: "clamp(30px, 5vw, 60px)", 
-                  opacity: 0.3, 
-                  filter: "brightness(0) invert(1)", // Torna a logo branca
-                  zIndex: 1 
-                }} 
-              />
-              <div style={{ 
-                marginTop: 20, fontSize: 10, letterSpacing: 5, color: "#fff", 
-                opacity: 0.2, textTransform: "uppercase", fontWeight: 300, zIndex: 1 
-              }}>
-                Álbum em Processamento
-              </div>
-            </div>
-          )}
+            );
+          })()}
 
           {/* Overlay gradiente unificado */}
-          <div style={{ position: "absolute", inset: 0, background: "linear-gradient(to top, rgba(0,0,0,0.9) 0%, rgba(0,0,0,0.2) 60%, transparent 100%)", display: "flex", flexDirection: "column", justifyContent: "flex-end", padding: "32px 36px" }}>
+          <div style={{ position: "absolute", inset: 0, zIndex: 10, background: "linear-gradient(to top, rgba(0,0,0,0.9) 0%, rgba(0,0,0,0.2) 60%, transparent 100%)", display: "flex", flexDirection: "column", justifyContent: "flex-end", padding: "32px 36px" }}>
             {!paid && (
               <div style={{ position: "absolute", inset: 0, display: "flex", alignItems: "center", justifyContent: "center" }}>
                 <div style={{ padding: 18, background: "rgba(0,0,0,0.55)", backdropFilter: "blur(4px)", borderRadius: "50%", color: "rgba(255,255,255,0.7)" }}>
@@ -538,7 +578,7 @@ export default function EventPage() {
             </h1>
 
             <div style={{ fontSize: 12, color: "rgba(255,255,255,0.55)", marginBottom: 20 }}>
-              {dateStr}{event.city ? ` · ${event.city}` : ""}
+              {event.dataEvento ? new Date(event.dataEvento).toLocaleDateString("pt-BR", { day: "numeric", month: "long", year: "numeric" }) : ""}{event.city ? ` · ${event.city}` : ""}
             </div>
 
             {activeServices.length > 0 && (
@@ -554,12 +594,12 @@ export default function EventPage() {
             {paid && access && (access.lightroomUrl || access.driveUrl) && (
               <div className="desktop-hide" style={{ display: "flex", gap: 10, marginTop: 24, animation: "fadeUp 0.5s ease" }}>
                 {access.lightroomUrl && (
-                  <a href={access.lightroomUrl} target="_blank" rel="noreferrer" style={{ ...BtnPrimary, flex: 1, justifyContent: "center", textDecoration: "none", fontSize: 11 }}>
+                  <a href={access.lightroomUrl.toString().trim().replace(/\s/g, '')} target="_blank" rel="noreferrer" style={{ ...BtnPrimary, flex: 1, justifyContent: "center", textDecoration: "none", fontSize: 11 }}>
                     Álbum de Fotos
                   </a>
                 )}
                 {access.driveUrl && (
-                  <a href={access.driveUrl} target="_blank" rel="noreferrer" style={{ ...BtnSecondary, flex: 1, justifyContent: "center", color: "#fff", borderColor: "rgba(255,255,255,0.4)", textDecoration: "none", fontSize: 11 }}>
+                  <a href={access.driveUrl.toString().trim().replace(/\s/g, '')} target="_blank" rel="noreferrer" style={{ ...BtnSecondary, flex: 1, justifyContent: "center", color: "#fff", borderColor: "rgba(255,255,255,0.4)", textDecoration: "none", fontSize: 11 }}>
                     Vídeos
                   </a>
                 )}
@@ -768,8 +808,8 @@ export default function EventPage() {
                         : "Confira as memórias desse dia incrível nos links abaixo."}
                     </p>
                     <div style={{ display: "flex", flexDirection: "column", gap: 10 }}>
-                      {access.lightroomUrl && <a href={access.lightroomUrl} target="_blank" rel="noreferrer" style={{ ...BtnPrimary, textDecoration: "none", justifyContent: "center" }}>Álbum de Fotos</a>}
-                      {access.driveUrl && <a href={access.driveUrl} target="_blank" rel="noreferrer" style={{ ...BtnSecondary, color: T.text, borderColor: T.brand, textDecoration: "none", justifyContent: "center" }}>Vídeos</a>}
+                      {access.lightroomUrl && <a href={access.lightroomUrl.trim().replace(/\s/g, '')} target="_blank" rel="noreferrer" style={{ ...BtnPrimary, textDecoration: "none", justifyContent: "center" }}>Álbum de Fotos</a>}
+                      {access.driveUrl && <a href={access.driveUrl.trim().replace(/\s/g, '')} target="_blank" rel="noreferrer" style={{ ...BtnSecondary, color: T.text, borderColor: T.brand, textDecoration: "none", justifyContent: "center" }}>Vídeos</a>}
                       
                       <a 
                         href={`https://wa.me/5519997843817?text=Gostaria%20de%20encomendar%20um%20%C3%A1lbum%20impresso%20do%20evento%3A%20${encodeURIComponent(event.nomeNoivos)}`} 
@@ -800,7 +840,7 @@ export default function EventPage() {
                       <div style={{ width: 6, height: 6, borderRadius: "50%", background: T.brand }}></div>
                       <div style={{ flex: 1 }}>
                         <p style={{ fontSize: 11, color: T.text, margin: 0, fontWeight: 700 }}>
-                          {ord.contributorName.split(' ')[0]} presenteou os noivos
+                          {(ord.contributorName || "Convidado").split(' ')[0]} presenteou os noivos
                         </p>
                         <p style={{ fontSize: 9, color: T.text3, margin: 0, textTransform: 'uppercase' }}>há pouco tempo</p>
                       </div>
@@ -813,36 +853,60 @@ export default function EventPage() {
               </div>
             )}
 
-            {event.previewPhotos && event.previewPhotos.filter(p => !!p).length > 0 && (
+            {event.previewPhotos && event.previewPhotos.filter(p => !!p && (p.startsWith('http') || p.startsWith('data:'))).length > 0 && (
               <div style={{ marginTop: 32, paddingTop: 24, borderTop: `1px solid ${T.border}`, animation: "fadeUp 0.6s ease" }}>
                 <p style={{ fontSize: 9, letterSpacing: 2, color: T.text3, textTransform: "uppercase", margin: "0 0 16px", fontWeight: 700 }}>Destaques da Galeria</p>
                 <div style={{ display: "flex", flexDirection: "column", gap: 12 }}>
-                  {event.previewPhotos.filter(p => !!p).map((url, idx) => (
-                    <div key={idx} style={{ 
-                      aspectRatio: "16/9", 
-                      background: T.bgCard, 
-                      overflow: "hidden", 
-                      border: `1px solid ${T.border}`,
-                      position: "relative"
-                    }}>
-                      <img 
-                        src={url} 
-                        alt={`Preview ${idx + 1}`} 
-                        style={{ 
-                          width: "100%", 
-                          height: "100%", 
-                          objectFit: "cover",
-                          filter: paid ? "none" : "blur(4px) grayscale(1) opacity(0.6)",
-                          transition: "filter 0.5s ease"
-                        }} 
-                      />
-                      {!paid && (
-                        <div style={{ position: "absolute", inset: 0, display: "flex", alignItems: "center", justifyContent: "center" }}>
-                           <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="rgba(255,255,255,0.4)" strokeWidth="2"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
-                        </div>
-                      )}
-                    </div>
-                  ))}
+                  {event.previewPhotos.filter(p => !!p).map((rawUrl, idx) => {
+                    const url = rawUrl.trim().replace(/\s/g, '');
+                    // Se não for uma imagem direta, mostra um link elegante em vez de tentar renderizar img
+                    const isDirectImage = url.match(/\.(jpeg|jpg|gif|png|webp|bmp)/i) || url.startsWith('data:image');
+                    
+                    return (
+                      <div key={idx} style={{ 
+                        aspectRatio: isDirectImage ? "16/9" : "auto", 
+                        background: T.bgCard, 
+                        overflow: "hidden", 
+                        border: `1px solid ${T.border}`,
+                        position: "relative",
+                        padding: isDirectImage ? 0 : 20
+                      }}>
+                        {isDirectImage ? (
+                          <img 
+                            src={url} 
+                            alt={`Preview ${idx + 1}`} 
+                            style={{ 
+                              width: "100%", 
+                              height: "100%", 
+                              objectFit: "cover",
+                              filter: paid ? "none" : "blur(4px) grayscale(1) opacity(0.6)",
+                              transition: "filter 0.5s ease"
+                            }}
+                            onError={(e) => {
+                              // Se falhar o carregamento (ex: link quebrado ou adobe share), esconde o elemento
+                              (e.target as HTMLImageElement).style.display = 'none';
+                            }}
+                          />
+                        ) : (
+                          <div style={{ display: "flex", flexDirection: "column", gap: 8, alignItems: "center", textAlign: "center" }}>
+                            <div style={{ fontSize: 9, color: T.brand, fontWeight: 900, textTransform: "uppercase" }}>Link Externo</div>
+                            <div style={{ fontSize: 11, color: T.text2 }}>{url.substring(0, 40)}...</div>
+                            <button 
+                              onClick={() => window.open(url, '_blank')}
+                              style={{ ...BtnSecondary, padding: "6px 12px", fontSize: 9 }}
+                            >
+                              ABRIR EM NOVA ABA
+                            </button>
+                          </div>
+                        )}
+                        {!paid && isDirectImage && (
+                          <div style={{ position: "absolute", inset: 0, display: "flex", alignItems: "center", justifyContent: "center" }}>
+                             <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="rgba(255,255,255,0.4)" strokeWidth="2"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
+                          </div>
+                        )}
+                      </div>
+                    );
+                  })}
                 </div>
               </div>
             )}
@@ -1027,6 +1091,7 @@ export default function EventPage() {
               setAccess({ lightroomUrl: data.lightroomUrl, driveUrl: data.driveUrl, expiresAt: data.expiresAt || "", eventTitle: event.nomeNoivos });
             } catch (err) { console.error("Erro ao atualizar links:", err); }
           }}
+          onClose={() => setNeedsAccessChoice(false)}
         />
       )}
     </div>

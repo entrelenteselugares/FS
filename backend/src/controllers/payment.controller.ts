@@ -8,6 +8,7 @@ import { supabaseAdmin } from "../lib/supabase";
 import { FRONTEND_URL } from "../lib/config";
 import { audit } from "../lib/audit";
 import bcrypt from "bcryptjs";
+import { Prisma } from "@prisma/client";
 
 export class PaymentController {
   /**
@@ -15,7 +16,7 @@ export class PaymentController {
    * Inicia o fluxo de pagamento com precificação dinâmica.
    */
   static async checkout(req: Request, res: Response) {
-    const { eventId, userId, email, method, token, installments, issuer_id, contributionAmount, cart, printProductId } = req.body;
+    const { eventId, userId, email, method, token, installments, issuer_id, contributionAmount, cart, printProductId, orderId: passedOrderId } = req.body;
 
     try {
       // 1. Buscar evento com os parceiros vinculados
@@ -45,7 +46,18 @@ export class PaymentController {
         }
       }
 
-      const preco = basePrice + finalPrintPrice;
+      // 2b. Respeitar valor do pedido se já existir (Ex: Reserva 50%)
+      let preco = basePrice + finalPrintPrice;
+      let orderToUse = null;
+
+      if (passedOrderId) {
+        orderToUse = await prisma.order.findUnique({ where: { id: passedOrderId } });
+        if (orderToUse && orderToUse.status === "PENDENTE") {
+          preco = Number(orderToUse.valor);
+          console.log(`[Checkout] Usando valor pré-definido do pedido ${passedOrderId}: ${preco}`);
+        }
+      }
+
       const { matriz: splitMatriz, captacao: splitCaptacao, edicao: splitEdicao, cartorio: splitCartorio } = 
         await PricingService.calculateSplits(preco);
 
@@ -76,7 +88,7 @@ export class PaymentController {
 
       // 4. Criar ou Reutilizar Pedido no Banco
       let order;
-      const existingOrderId = req.body.orderId;
+      let existingPending = orderToUse;
 
       // Resolve email → userId para evitar pedido como "Convidado" quando usuário já existe
       let resolvedClienteId = userId || null;
@@ -85,24 +97,9 @@ export class PaymentController {
         if (existingUser) resolvedClienteId = existingUser.id;
       }
 
-      if (existingOrderId) {
-        order = await prisma.order.findUnique({ where: { id: existingOrderId } });
-        if (!order) return res.status(404).json({ error: "Pedido original não encontrado." });
-        
-        order = await prisma.order.update({
-          where: { id: order.id },
-          data: {
-            valor: preco,
-            clienteId: resolvedClienteId ?? order.clienteId,
-            splitMatriz,
-            splitCaptacao,
-            splitEdicao,
-            splitCartorio
-          }
-        });
-      } else {
+      if (!existingPending && email) {
         // Anti-duplicação: verifica pedido PENDENTE já existente para esse evento+email
-        const existingPending = email ? await prisma.order.findFirst({
+        existingPending = await prisma.order.findFirst({
           where: {
             eventId,
             status: "PENDENTE",
@@ -112,45 +109,56 @@ export class PaymentController {
             ]
           },
           orderBy: { createdAt: "desc" }
-        }) : null;
+        });
+      }
 
-        if (existingPending) {
-          console.log(`[Checkout] Reutilizando pedido existente ${existingPending.id} para evitar duplicata.`);
-          order = await prisma.order.update({
-            where: { id: existingPending.id },
-            data: {
-              valor: preco,
-              clienteId: resolvedClienteId ?? existingPending.clienteId,
-              splitMatriz,
-              splitCaptacao,
-              splitEdicao,
-              splitCartorio,
-              items: orderItemsData.length > 0 ? {
-                deleteMany: {},
-                create: orderItemsData
-              } : undefined
-            }
-          });
-        } else {
-          order = await prisma.order.create({
-            data: {
-              eventId,
-              clienteId: resolvedClienteId,
-              buyerEmail: email || null,
-              valor: preco,
-              status: "PENDENTE",
-              isContribution: event.isCrowdfund,
-              contributorName: event.isCrowdfund ? (req.body.contributorName || null) : null,
-              splitMatriz,
-              splitCaptacao,
-              splitEdicao,
-              splitCartorio,
-              items: orderItemsData.length > 0 ? {
-                create: orderItemsData
-              } : undefined
-            }
-          });
-        }
+      if (existingPending) {
+        console.log(`[Checkout] Reutilizando pedido existente ${existingPending.id} para evitar duplicata.`);
+        // SEGURANÇA: Se não foi passado um orderId específico, e o pedido existente já tem um valor, 
+        // e NÃO é um caso de marketplace (onde o valor muda conforme o carrinho), mantemos o valor original.
+        const isCartUpdate = cartItems.length > 0 || !!finalPrintProductId;
+        const finalPreco = (existingPending && !passedOrderId && !isCartUpdate) 
+          ? Number(existingPending.valor) 
+          : preco;
+
+        // Recalcula os splits com o valor final que será usado
+        const { matriz: fMatriz, captacao: fCaptacao, edicao: fEdicao, cartorio: fCartorio } = 
+          await PricingService.calculateSplits(finalPreco);
+
+        order = await prisma.order.update({
+          where: { id: existingPending.id },
+          data: {
+            valor: finalPreco,
+            clienteId: resolvedClienteId ?? existingPending.clienteId,
+            splitMatriz: fMatriz,
+            splitCaptacao: fCaptacao,
+            splitEdicao: fEdicao,
+            splitCartorio: fCartorio,
+            items: orderItemsData.length > 0 ? {
+              deleteMany: {},
+              create: orderItemsData
+            } : undefined
+          }
+        });
+      } else {
+        order = await prisma.order.create({
+          data: {
+            eventId,
+            clienteId: resolvedClienteId,
+            buyerEmail: email || null,
+            valor: preco,
+            status: "PENDENTE",
+            isContribution: event.isCrowdfund,
+            contributorName: event.isCrowdfund ? (req.body.contributorName || null) : null,
+            splitMatriz,
+            splitCaptacao,
+            splitEdicao,
+            splitCartorio,
+            items: orderItemsData.length > 0 ? {
+              create: orderItemsData
+            } : undefined
+          }
+        });
       }
 
       // 5. Criar Preferência no Mercado Pago (Checkout Pro)
@@ -191,7 +199,7 @@ export class PaymentController {
       return res.status(500).json({ 
         error: "Erro no processamento do Mercado Pago",
         details: mpDetails,
-        fullError: error.response?.data || null
+        fullError: errorData || null
       });
     }
   }
@@ -313,7 +321,7 @@ export class PaymentController {
    * Processa o pagamento transparente vindo do frontend.
    */
   static async processPayment(req: Request, res: Response) {
-    const { eventId, userId, email, cpf, cardToken, installments, paymentMethodId, contributionAmount, accessType, cart, printProductId } = req.body;
+    const { eventId, userId, email, cpf, cardToken, installments, paymentMethodId, contributionAmount, accessType, cart, printProductId, orderId: passedOrderId } = req.body;
 
     try {
       // 1. Buscar evento com parceiros para cálculo de split
@@ -342,7 +350,17 @@ export class PaymentController {
         }
       }
 
-      const preco = basePrice + finalPrintPrice;
+      // 2b. Respeitar valor do pedido se já existir (Ex: Reserva 50% ou Quitação)
+      let preco = basePrice + finalPrintPrice;
+      let orderToUse = null;
+
+      if (passedOrderId) {
+        orderToUse = await prisma.order.findUnique({ where: { id: passedOrderId } });
+        if (orderToUse && orderToUse.status === "PENDENTE") {
+          preco = Number(orderToUse.valor);
+          console.log(`[processPayment] Usando valor pré-definido do pedido ${passedOrderId}: ${preco}`);
+        }
+      }
       
       if (preco <= 0) {
         return res.status(400).json({ error: "O valor do pagamento deve ser superior a zero. Verifique os itens selecionados." });
@@ -426,9 +444,9 @@ export class PaymentController {
 
       // Anti-duplicação: query unificada com OR
       const cleanEmailForQuery = email ? email.toLowerCase().trim() : null;
-      let existingPendingOrder = null;
+      let existingPendingOrder = orderToUse; // Prioriza o pedido passado
 
-      if (cleanEmailForQuery || finalUserId) {
+      if (!existingPendingOrder && (cleanEmailForQuery || finalUserId)) {
         existingPendingOrder = await prisma.order.findFirst({
           where: {
             eventId,

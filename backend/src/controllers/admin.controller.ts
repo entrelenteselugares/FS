@@ -53,6 +53,60 @@ export async function adminUploadCover(req: AuthRequest, res: Response): Promise
   }
 }
 
+export async function adminUploadPreview(req: AuthRequest, res: Response): Promise<void> {
+  const { id } = req.params;
+  const { imageBase64, mimeType, index } = req.body;
+
+  if (!imageBase64 || !mimeType || index === undefined) {
+    res.status(400).json({ error: "Imagem, MimeType e Index são obrigatórios." });
+    return;
+  }
+
+  try {
+    const event = await prisma.event.findUnique({ where: { id: String(id) } });
+    if (!event) { res.status(404).json({ error: "Evento não encontrado." }); return; }
+
+    const base64Data = String(imageBase64).replace(/^data:image\/\w+;base64,/, "");
+    const buffer = Buffer.from(base64Data, "base64");
+    const ext = String(mimeType).split("/")[1] || "jpg";
+    const fileName = `previews/admin-${id}-${index}-${Date.now()}.${ext}`;
+
+    const { error: uploadError } = await supabase.storage
+      .from("eventos")
+      .upload(fileName, buffer, { contentType: String(mimeType), upsert: true });
+
+    if (uploadError) throw uploadError;
+
+    const { data: { publicUrl } } = supabase.storage.from("eventos").getPublicUrl(fileName);
+
+    // Atualiza o array de previews
+    let previews: string[] = [];
+    try {
+      previews = event.previewPhotos ? JSON.parse(event.previewPhotos) : [];
+    } catch {
+      previews = [];
+    }
+
+    // Garante que o array tenha espaço
+    while (previews.length < 4) previews.push("");
+    
+    previews[Number(index)] = publicUrl;
+
+    const updated = await prisma.event.update({
+      where: { id: String(id) },
+      data: { previewPhotos: JSON.stringify(previews) },
+      select: { id: true, previewPhotos: true },
+    });
+
+    await audit(req, "ADMIN_UPLOAD_PREVIEW", "Event", String(id), null, { index, publicUrl });
+
+    res.json(updated);
+  } catch (err) {
+    console.error("adminUploadPreview:", err);
+    res.status(500).json({ error: "Erro ao salvar prévia via Admin." });
+  }
+}
+
 export async function getDashboardStats(req: AuthRequest, res: Response): Promise<void> {
   try {
     // Consultas sequenciais para evitar sobrecarga na pool de conexões

@@ -1,8 +1,11 @@
 import { useState, useEffect } from "react";
 import { useParams } from "react-router-dom";
 import { API } from "../lib/api";
-import { Download, ExternalLink, Heart, Camera, Calendar, MapPin, Share2, ChevronDown } from "lucide-react";
+import { Download, ExternalLink, Heart, Camera, Calendar, MapPin, ChevronDown } from "lucide-react";
 import { motion } from "framer-motion";
+import { useTheme } from "../contexts/ThemeContextCore";
+import { T, BtnPrimary, BtnSecondary } from "../lib/theme";
+import { Navbar } from "../components/Navbar";
 
 interface EventData {
   id: string;
@@ -20,15 +23,25 @@ interface EventData {
   } | null;
 }
 
+interface Product {
+  id: string;
+  name: string;
+  category: string;
+  sku: string;
+  description: string | null;
+  sellingPrice: number;
+  active: boolean;
+}
+
 export default function LuxuryExperiencePage() {
+  const { isDark } = useTheme();
   const { id } = useParams();
   const [event, setEvent] = useState<EventData | null>(null);
   const [loading, setLoading] = useState(true);
-  const [scrolled, setScrolled] = useState(false);
-  const [products, setProducts] = useState<any[]>([]);
+  const [products, setProducts] = useState<Product[]>([]);
 
   useEffect(() => {
-    const handleScroll = () => setScrolled(window.scrollY > 50);
+    const handleScroll = () => {}; // Mantido se precisar no futuro, mas removido o estado não usado
     window.addEventListener("scroll", handleScroll);
     return () => window.removeEventListener("scroll", handleScroll);
   }, []);
@@ -44,16 +57,16 @@ export default function LuxuryExperiencePage() {
 
   useEffect(() => {
     API.get("/public/print-catalog")
-      .then(r => setProducts(r.data.filter((p: any) => p.active).slice(0, 3)))
+      .then(r => setProducts(r.data.filter((p: Product) => p.active).slice(0, 3)))
       .catch(err => console.error("Erro ao carregar catálogo:", err));
   }, []);
 
   if (loading) return (
-    <div className="min-h-screen bg-[#050505] flex flex-col items-center justify-center gap-6 transition-colors duration-500 relative overflow-hidden">
+    <div className="min-h-screen flex flex-col items-center justify-center gap-6 relative overflow-hidden" style={{ background: T.bg }}>
       <div className="absolute inset-0 bg-brand-tactical/5 blur-[120px] rounded-full -m-64 opacity-20" />
       <div className="relative z-10 flex flex-col items-center gap-8">
         <div className="w-px h-16 bg-gradient-to-b from-transparent via-brand-tactical to-transparent" />
-        <div className="text-[18px] font-black uppercase tracking-[0.8em] text-theme-text italic">FOTO SEGUNDO</div>
+        <div className="text-[18px] font-black uppercase tracking-[0.8em] italic" style={{ color: T.text }}>FOTO SEGUNDO</div>
         <div className="text-[9px] font-black uppercase tracking-[0.4em] text-brand-tactical animate-pulse-soft">Preparando Experiência de Luxo</div>
         <div className="w-px h-16 bg-gradient-to-t from-transparent via-brand-tactical to-transparent" />
       </div>
@@ -61,9 +74,9 @@ export default function LuxuryExperiencePage() {
   );
 
   if (!event) return (
-    <div className="min-h-screen bg-[#050505] flex items-center justify-center p-6 text-center">
+    <div className="min-h-screen flex items-center justify-center p-6 text-center" style={{ background: T.bg }}>
       <div className="space-y-6 max-w-sm">
-        <p className="text-4xl font-heading font-black text-theme-text italic uppercase">404</p>
+        <p className="text-4xl font-heading font-black italic uppercase" style={{ color: T.text }}>404</p>
         <p className="text-[11px] font-bold text-theme-muted uppercase tracking-widest leading-relaxed">Não conseguimos localizar esta galeria. Verifique o link com o seu artista.</p>
       </div>
     </div>
@@ -72,25 +85,19 @@ export default function LuxuryExperiencePage() {
   const artistName = event.captacao?.user?.nome || "Artista Foto Segundo";
 
   return (
-    <div className="min-h-screen bg-[#050505] text-theme-text font-sans selection:bg-brand-tactical selection:text-zinc-950">
-      {/* NAVEGAÇÃO FLUTUANTE */}
-      <nav className={`fixed top-0 left-0 w-full z-50 transition-all duration-700 p-6 flex justify-between items-center ${scrolled ? 'lux-glass py-4 shadow-2xl' : ''}`}>
-        <div className="text-xl font-heading font-black text-theme-text italic tracking-tighter">FOTO SEGUNDO</div>
-        <button className="p-3 bg-brand-tactical/10 border border-brand-tactical/20 text-brand-tactical hover:bg-brand-tactical hover:text-zinc-950 transition-all">
-          <Share2 size={18} />
-        </button>
-      </nav>
+    <div className="min-h-screen font-sans selection:bg-brand-tactical selection:text-zinc-950" style={{ background: T.bg, color: T.text }}>
+      <Navbar />
 
       {/* HERO SECTION */}
-      <section className="relative h-screen flex items-center justify-center overflow-hidden">
+      <section className="relative h-[70vh] flex items-center justify-center overflow-hidden border-b" style={{ borderColor: T.border }}>
         <motion.div 
           initial={{ scale: 1.1, opacity: 0 }}
           animate={{ scale: 1, opacity: 0.6 }}
           transition={{ duration: 2 }}
           className="absolute inset-0 bg-cover bg-center bg-no-repeat"
-          style={{ backgroundImage: `url(${event.coverPhotoUrl || 'https://images.unsplash.com/photo-1511285560929-80b456fea0bc?q=80&w=2069&auto=format&fit=crop'})` }}
+          style={{ backgroundImage: `url(${(event.coverPhotoUrl || 'https://images.unsplash.com/photo-1511285560929-80b456fea0bc?q=80&w=2069&auto=format&fit=crop').trim().replace(/\s/g, '')})` }}
         />
-        <div className="absolute inset-0 bg-gradient-to-b from-transparent via-[#050505]/40 to-[#050505]" />
+        <div className="absolute inset-0" style={{ background: isDark ? "linear-gradient(to bottom, transparent, rgba(0,0,0,0.4), var(--bg))" : "linear-gradient(to bottom, transparent, rgba(255,255,255,0.2), var(--bg))" }} />
         
         <div className="relative z-10 text-center space-y-8 px-6">
           <motion.div
@@ -100,10 +107,10 @@ export default function LuxuryExperiencePage() {
             className="space-y-4"
           >
             <p className="text-[11px] font-black text-brand-tactical uppercase tracking-[0.6em] italic">Galeria Exclusiva</p>
-            <h1 className="text-5xl md:text-8xl font-heading font-black text-theme-text uppercase italic tracking-tighter leading-none">
+            <h1 className="text-5xl md:text-8xl font-heading font-black uppercase italic tracking-tighter leading-none" style={{ color: T.text }}>
               {event.nomeNoivos}
             </h1>
-            <div className="flex flex-wrap justify-center items-center gap-6 text-[10px] font-bold text-theme-muted uppercase tracking-widest mt-6">
+            <div className="flex flex-wrap justify-center items-center gap-6 text-[10px] font-bold uppercase tracking-widest mt-6" style={{ color: T.text2 }}>
               <span className="flex items-center gap-2"><Calendar size={12} className="text-brand-tactical" /> {new Date(event.dataEvento).toLocaleDateString('pt-BR', { day: '2-digit', month: 'long', year: 'numeric' })}</span>
               <span className="flex items-center gap-2"><MapPin size={12} className="text-brand-tactical" /> {event.location || "Localização Privada"}</span>
             </div>
@@ -121,65 +128,66 @@ export default function LuxuryExperiencePage() {
       </section>
 
       {/* CONTENT SECTION */}
-      <section className="max-w-7xl mx-auto px-6 py-32 space-y-32">
+      <section className="max-w-7xl mx-auto px-6 py-12 space-y-12">
         
         {/* ARTIST INFO */}
-        <div className="flex flex-col md:flex-row items-center gap-12 border-y border-theme-border/20 py-24">
+        <div className="flex flex-col md:flex-row items-center gap-12 border-y py-10" style={{ borderColor: T.border }}>
           <div className="relative group">
-            <div className="w-32 h-32 rounded-full border-2 border-brand-tactical/30 overflow-hidden">
-               <div className="w-full h-full bg-theme-bg-muted flex items-center justify-center text-brand-tactical text-2xl font-heading italic font-black">
+            <div className="w-24 h-24 rounded-full border border-brand-tactical/30 overflow-hidden shadow-xl" style={{ background: T.bgCard }}>
+               <div className="w-full h-full flex items-center justify-center text-brand-tactical text-2xl font-heading italic font-black">
                   {artistName.charAt(0)}
                </div>
             </div>
-            <div className="absolute -bottom-2 -right-2 p-2 bg-brand-tactical text-zinc-950 rounded-full shadow-lg"><Camera size={16} /></div>
+            <div className="absolute -bottom-1 -right-1 p-2 bg-brand-tactical text-zinc-950 rounded-full shadow-lg"><Camera size={14} /></div>
           </div>
           <div className="space-y-4 text-center md:text-left">
             <p className="text-[10px] font-black text-brand-tactical uppercase tracking-[0.4em] italic">Captura e Visão</p>
-            <h2 className="text-3xl font-heading font-black text-theme-text uppercase italic tracking-tight">{artistName}</h2>
-            <p className="text-xs text-theme-muted uppercase font-medium tracking-widest max-w-md leading-relaxed">Sua história capturada com precisão e alma sob a curadoria tática da Foto Segundo.</p>
+            <h2 className="text-3xl font-heading font-black uppercase italic tracking-tight" style={{ color: T.text }}>{artistName}</h2>
+            <p className="text-xs uppercase font-medium tracking-widest max-w-md leading-relaxed" style={{ color: T.text2 }}>Sua história capturada com precisão e alma sob a curadoria tática da Foto Segundo.</p>
           </div>
         </div>
 
         {/* ACCESS BOX */}
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-12">
-          <div className="space-y-8 p-12 bg-theme-bg-muted border border-theme-border/60 relative overflow-hidden group hover:border-brand-tactical/40 transition-all">
-            <div className="absolute top-0 right-0 p-8 opacity-5 group-hover:opacity-10 transition-opacity"><Download size={120} /></div>
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+          <div className="space-y-6 p-8 relative overflow-hidden group hover:border-brand-tactical/40 transition-all border" style={{ background: T.bgCard, borderColor: T.border }}>
+            <div className="absolute top-0 right-0 p-8 opacity-5 group-hover:opacity-10 transition-opacity" style={{ color: T.text }}><Download size={120} /></div>
             <div className="space-y-2 relative z-10">
-              <h3 className="text-2xl font-heading font-black text-theme-text uppercase italic">Seu Legado Digital</h3>
-              <p className="text-[10px] text-theme-muted uppercase tracking-widest font-bold">Galeria completa em alta resolução</p>
+              <h3 className="text-2xl font-heading font-black uppercase italic" style={{ color: T.text }}>Seu Legado Digital</h3>
+              <p className="text-[10px] uppercase tracking-widest font-bold" style={{ color: T.text2 }}>Galeria completa em alta resolução</p>
             </div>
-            <p className="text-xs text-theme-muted/60 uppercase font-medium leading-relaxed italic">Acesse todas as memórias do seu dia especial. Cada clique foi processado para garantir a máxima fidelidade técnica e estética.</p>
+            <p className="text-xs uppercase font-medium leading-relaxed italic" style={{ color: T.text3 }}>Acesse todas as memórias do seu dia especial. Cada clique foi processado para garantir a máxima fidelidade técnica e estética.</p>
             <a 
-              href={event.lightroomUrl || event.driveUrl || '#'} 
+              href={(event.lightroomUrl || event.driveUrl || '#').trim().replace(/\s/g, '')} 
               target="_blank" 
               rel="noopener noreferrer"
-              className="inline-flex items-center gap-4 px-10 py-5 bg-brand-tactical text-zinc-950 text-[11px] font-black uppercase tracking-[0.2em] shadow-xl shadow-brand-tactical/10 hover:brightness-110 transition-all"
+              style={BtnPrimary}
+              className="inline-flex items-center gap-4 px-10 py-5 shadow-xl shadow-brand-tactical/10 hover:brightness-110 transition-all"
             >
               ACESSAR GALERIA <ExternalLink size={14} />
             </a>
           </div>
 
-          <div className="space-y-8 p-12 bg-brand-tactical/5 border border-brand-tactical/20 flex flex-col justify-center">
+          <div className="space-y-6 p-8 border flex flex-col justify-center" style={{ background: "rgba(133,185,172,0.05)", borderColor: "rgba(133,185,172,0.2)" }}>
              <div className="flex items-center gap-3 text-brand-tactical">
                 <Heart size={20} fill="currentColor" />
                 <span className="text-[11px] font-black uppercase tracking-[0.3em] italic">Experiência de Suporte</span>
              </div>
-             <p className="text-xs text-theme-muted uppercase font-bold tracking-widest leading-relaxed">Precisa de ajuda com o download ou quer encomendar um álbum impresso de luxo? Nossa central está à disposição.</p>
+             <p className="text-xs uppercase font-bold tracking-widest leading-relaxed" style={{ color: T.text2 }}>Precisa de ajuda com o download ou quer encomendar um álbum impresso de luxo? Nossa central está à disposição.</p>
              <button className="text-[10px] font-black text-brand-tactical uppercase tracking-widest border-b border-brand-tactical/30 pb-1 hover:border-brand-tactical transition-all w-fit">ENTRAR EM CONTATO</button>
           </div>
         </div>
 
         {/* UPSELL SECTION (Inteligência de Venda) */}
         {products.length > 0 && (
-          <div className="space-y-16 py-12">
+          <div className="space-y-10 py-8">
             <div className="text-center space-y-4">
               <div className="flex justify-center items-center gap-4">
                 <div className="h-px w-12 bg-brand-tactical/30" />
                 <p className="text-[10px] font-black text-brand-tactical uppercase tracking-[0.4em] italic">Eternize seu Momento</p>
                 <div className="h-px w-12 bg-brand-tactical/30" />
               </div>
-              <h3 className="text-4xl md:text-6xl font-heading font-black text-theme-text uppercase italic tracking-tighter">Produtos de Luxo</h3>
-              <p className="text-xs text-theme-muted uppercase font-bold tracking-[0.2em] max-w-xl mx-auto opacity-60">Transforme suas memórias digitais em obras de arte físicas com acabamento de alta costura.</p>
+              <h3 className="text-4xl md:text-6xl font-heading font-black uppercase italic tracking-tighter" style={{ color: T.text }}>Produtos de Luxo</h3>
+              <p className="text-xs uppercase font-bold tracking-[0.2em] max-w-xl mx-auto opacity-60" style={{ color: T.text2 }}>Transforme suas memórias digitais em obras de arte físicas com acabamento de alta costura.</p>
             </div>
             
             <div className="grid grid-cols-1 md:grid-cols-3 gap-12">
@@ -189,15 +197,15 @@ export default function LuxuryExperiencePage() {
                   initial={{ opacity: 0, y: 20 }}
                   whileInView={{ opacity: 1, y: 0 }}
                   transition={{ delay: idx * 0.2 }}
-                  className="bg-theme-bg-muted border border-theme-border/40 p-8 space-y-8 group hover:border-brand-tactical/40 transition-all relative overflow-hidden"
                 >
-                  <div className="absolute top-0 left-0 w-full h-[1px] bg-gradient-to-r from-transparent via-brand-tactical/20 to-transparent" />
-                  
-                  <div className="aspect-[4/5] bg-black/40 relative overflow-hidden flex items-center justify-center group-hover:scale-[1.02] transition-all duration-700">
-                    <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent opacity-0 group-hover:opacity-100 transition-opacity" />
-                    <div className="text-theme-muted/10 italic font-heading font-black text-6xl select-none uppercase tracking-tighter">
-                      {p.category.slice(0, 3)}
-                    </div>
+                  <div className="p-8 space-y-8 group hover:border-brand-tactical/40 transition-all relative overflow-hidden border" style={{ background: T.bgCard, borderColor: T.border }}>
+                    <div className="absolute top-0 left-0 w-full h-[1px] bg-gradient-to-r from-transparent via-brand-tactical/20 to-transparent" />
+                    
+                    <div className="aspect-[4/5] bg-black/40 relative overflow-hidden flex items-center justify-center group-hover:scale-[1.02] transition-all duration-700">
+                      <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent opacity-0 group-hover:opacity-100 transition-opacity" />
+                      <div className="italic font-heading font-black text-6xl select-none uppercase tracking-tighter opacity-10" style={{ color: T.text }}>
+                        {p.category.slice(0, 3)}
+                      </div>
                     {/* Badge de Sugestão Inteligente (Simulação baseada em "Mais Vistas") */}
                     {idx === 0 && (
                       <div className="absolute top-4 left-4 bg-brand-tactical text-zinc-950 text-[8px] font-black px-3 py-1 uppercase tracking-widest shadow-xl">
@@ -206,23 +214,24 @@ export default function LuxuryExperiencePage() {
                     )}
                   </div>
 
-                  <div className="space-y-3">
-                    <div className="flex justify-between items-center">
-                      <p className="text-[9px] font-black text-brand-tactical uppercase tracking-[0.2em] italic">{p.category}</p>
-                      <span className="text-[8px] font-bold text-theme-muted/40 uppercase tracking-widest">SKU: {p.sku}</span>
+                    <div className="space-y-3">
+                      <div className="flex justify-between items-center">
+                        <p className="text-[9px] font-black text-brand-tactical uppercase tracking-[0.2em] italic">{p.category}</p>
+                        <span className="text-[8px] font-bold uppercase tracking-widest opacity-40" style={{ color: T.text2 }}>SKU: {p.sku}</span>
+                      </div>
+                      <h4 className="text-xl font-heading font-black uppercase italic tracking-tight" style={{ color: T.text }}>{p.name}</h4>
+                      <p className="text-[11px] uppercase font-medium leading-relaxed line-clamp-2 opacity-60" style={{ color: T.text2 }}>{p.description || "Acabamento premium com materiais importados e durabilidade secular."}</p>
                     </div>
-                    <h4 className="text-xl font-heading font-black text-theme-text uppercase italic tracking-tight">{p.name}</h4>
-                    <p className="text-[11px] text-theme-muted uppercase font-medium leading-relaxed line-clamp-2 opacity-60">{p.description || "Acabamento premium com materiais importados e durabilidade secular."}</p>
-                  </div>
 
-                  <div className="pt-6 border-t border-theme-border/20 flex justify-between items-end">
-                    <div className="space-y-1">
-                      <p className="text-[8px] font-black text-theme-muted uppercase tracking-widest">Investimento</p>
-                      <span className="text-2xl font-heading font-black text-brand-tactical italic">R$ {Number(p.sellingPrice).toLocaleString('pt-BR', { minimumFractionDigits: 2 })}</span>
+                    <div className="pt-6 border-t flex justify-between items-end" style={{ borderColor: T.border }}>
+                      <div className="space-y-1">
+                        <p className="text-[8px] font-black uppercase tracking-widest" style={{ color: T.text3 }}>Investimento</p>
+                        <span className="text-2xl font-heading font-black text-brand-tactical italic">R$ {Number(p.sellingPrice).toLocaleString('pt-BR', { minimumFractionDigits: 2 })}</span>
+                      </div>
+                      <button style={BtnSecondary} className="px-8 py-4 shadow-lg shadow-brand-tactical/5">
+                        ENCOMENDAR
+                      </button>
                     </div>
-                    <button className="px-8 py-4 bg-brand-tactical/10 border border-brand-tactical/20 text-brand-tactical text-[9px] font-black uppercase tracking-[0.2em] hover:bg-brand-tactical hover:text-zinc-950 transition-all shadow-lg shadow-brand-tactical/5">
-                      ENCOMENDAR
-                    </button>
                   </div>
                 </motion.div>
               ))}
@@ -235,9 +244,9 @@ export default function LuxuryExperiencePage() {
         )}
 
         {/* FOOTER */}
-        <footer className="text-center pt-32 space-y-6">
-           <div className="h-px w-24 bg-theme-border/60 mx-auto" />
-           <p className="text-[9px] text-theme-muted uppercase font-black tracking-[0.5em] italic">Foto Segundo · Midnight Luxury Experience</p>
+        <footer className="text-center pt-12 space-y-4 pb-12">
+           <div className="h-px w-24 mx-auto" style={{ background: T.border }} />
+           <p className="text-[9px] uppercase font-black tracking-[0.5em] italic" style={{ color: T.text3 }}>Foto Segundo · Midnight Luxury Experience</p>
         </footer>
 
       </section>
