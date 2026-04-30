@@ -8,7 +8,8 @@ Pasta de documentação técnica e planejamento do projeto.
 
 | Arquivo | Descrição |
 | --- | --- |
-| `AUDITORIA_SISTEMA_2026-04-27.md` | ⭐ **Auditoria completa** — stack, rotas, banco, fluxos, bugs, ENV |
+| `BACKEND_RESILIENCE_REPORT_2026-04-30.md` | ⭐ **Relatório de Estabilização** — Tipagem estrita, Prisma 6 e Resiliência |
+| `AUDITORIA_SISTEMA_2026-04-27.md` | Auditoria completa — stack, rotas, banco, fluxos, bugs, ENV |
 | `master_developer_guide.md` | Guia de padrões de código, segurança e deploy |
 | `mapa_sistema.md` | Mapa de todas as páginas, controllers e regras de negócio |
 | `changelog_recente.md` | Histórico de mudanças recentes por sprint |
@@ -41,4 +42,4 @@ Pasta de documentação técnica e planejamento do projeto.
 
 ---
 
-> **Última atualização:** 27/04/2026 — Auditoria completa e hotfix de privacidade do Marketplace.
+> **Última atualização:** 30/04/2026 — Auditoria de Tipagem (100% Strict) e migração para Prisma 6 Native Adapter.

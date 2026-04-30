@@ -96,7 +96,7 @@ export async function getAccessStatus(req: AuthRequest, res: Response): Promise<
   }
 
   try {
-    const order = await prisma.order.findFirst({
+    const orderRaw = await prisma.order.findFirst({
       where: { id: String(id), clienteId: user.userId },
       include: {
         event: {
@@ -111,7 +111,28 @@ export async function getAccessStatus(req: AuthRequest, res: Response): Promise<
           },
         },
       },
-    }) as any; // Cast as any because Prisma's deep inclusion types sometimes conflict with simplified Controller return types
+    });
+    
+    interface AccessOrder {
+      id: string;
+      status: string;
+      accessType: string | null;
+      accessExpiresAt: Date | null;
+      deletedAt: Date | null;
+      showAlbum: boolean;
+      showVideo: boolean;
+      event: {
+        nomeNoivos: string;
+        slug: string;
+        lightroomUrl: string | null;
+        driveUrl: string | null;
+        isCrowdfund: boolean;
+        targetAmount: number | null;
+        collectedAmount: number | null;
+      };
+    }
+
+    const order = orderRaw as unknown as AccessOrder;
 
     if (!order) {
       res.status(404).json({ error: "Pedido não encontrado." });

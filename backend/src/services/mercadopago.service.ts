@@ -114,11 +114,11 @@ export class MercadoPagoService {
       
       const response = await preference.create({ body });
       return response;
-    } catch (error: any) {
-      if (error.response?.data) {
-        console.error("[MP API ERROR]:", JSON.stringify(error.response.data, null, 2));
+    } catch (error: unknown) {
+      if ((error as { response?: { data?: unknown } }).response?.data) {
+        console.error("[MP API ERROR]:", JSON.stringify((error as { response: { data: unknown } }).response.data, null, 2));
       } else {
-        console.error("[MP Error CreatePreference]:", error.message || error);
+        console.error("[MP Error CreatePreference]:", error instanceof Error ? error.message : String(error));
       }
       throw error;
     }
@@ -130,8 +130,9 @@ export class MercadoPagoService {
         headers: { Authorization: `Bearer ${accessToken}` }
       });
       return response.data;
-    } catch (error: any) {
-      console.error("Erro ao consultar pagamento:", error.response?.data || error.message);
+    } catch (error: unknown) {
+      const axiosErr = error as { response?: { data?: unknown }; message: string };
+      console.error("Erro ao consultar pagamento:", axiosErr.response?.data || axiosErr.message);
       throw error;
     }
   }
@@ -153,7 +154,7 @@ export class MercadoPagoService {
     external_reference?: string;
   }) {
     try {
-      const body: any = {
+      const body: Record<string, unknown> = {
         transaction_amount: Number(data.transaction_amount.toFixed(2)),
         description: data.description,
         payment_method_id: data.payment_method_id,
@@ -176,17 +177,13 @@ export class MercadoPagoService {
         }
       );
       return response.data;
-    } catch (error: any) {
-      const errorData = error.response?.data;
-      const errorMsg = errorData?.message || error.message;
+    } catch (error: unknown) {
+      const axiosErr = error as { response?: { data?: { message?: string } }; message: string };
+      const errorData = axiosErr.response?.data;
+      const errorMsg = errorData?.message || axiosErr.message;
 
       // Log detalhado para o Diagnóstico do Desenvolvedor
       console.error("[MP API ERROR - Payment]:", JSON.stringify(errorData || errorMsg, null, 2));
-
-      // 🔍 Lógica de Auto-Correção Tática:
-      // Se o erro for "You cannot use application_fee" (comum em contas não-Marketplace),
-      // podemos tentar novamente SEM a taxa se o contexto permitir (OPCIONAL/CONFIGURÁVEL).
-      // Para agora, vamos apenas garantir que o erro retornado seja rico em detalhes.
       
       throw error;
     }

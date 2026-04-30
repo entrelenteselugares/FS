@@ -111,7 +111,7 @@ export async function listPrintProducts(req: AuthRequest, res: Response): Promis
     });
 
     // Calcula preço de venda calculado (quando sellingPrice é null)
-    const result = products.map((p: any) => ({
+    const result = products.map((p: Prisma.PrintProductGetPayload<{}>) => ({
       ...p,
       supplierCost: Number(p.supplierCost),
       sellingPrice: p.sellingPrice !== null ? Number(p.sellingPrice) : null,
@@ -358,7 +358,7 @@ export async function getPublicPrintCatalog(req: Request, res: Response): Promis
       orderBy: [{ category: "asc" }, { name: "asc" }]
     });
 
-    const result = products.map((p: any) => ({
+    const result = products.map((p: Prisma.PrintProductGetPayload<{}>) => ({
       id: p.id,
       category: p.category,
       name: p.name,

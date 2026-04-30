@@ -1,6 +1,8 @@
 import { Request } from "express";
 import prisma from "./prisma";
 
+import { AuthRequest } from "./auth";
+
 /**
  * Registra uma ação na trilha de auditoria (audit_logs).
  * Serializa todos os metadados extras no campo `details` (JSON string)
@@ -13,11 +15,11 @@ export async function audit(
   action: string,
   entityType: string,
   entityId?: string | string[],
-  oldValue?: any,
-  newValue?: any
+  oldValue?: unknown,
+  newValue?: unknown
 ) {
   try {
-    const authReq = req as any; // Cast para acessar .user injetado pelo auth middleware
+    const authReq = req as AuthRequest;
     const userId = authReq.user?.userId || null;
     const userEmail = authReq.user?.email || null;
     const ip = (req.headers["x-forwarded-for"] as string)?.split(",")[0].trim() || req.ip || null;

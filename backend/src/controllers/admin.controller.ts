@@ -343,12 +343,12 @@ export async function adminUpdateEvent(req: AuthRequest, res: Response): Promise
   if (req.body.eventHours !== undefined) data.eventHours = Number(req.body.eventHours);
   if (req.body.isCrowdfund !== undefined) data.isCrowdfund = req.body.isCrowdfund;
   if (req.body.targetAmount !== undefined) data.targetAmount = req.body.targetAmount ? Number(req.body.targetAmount) : null;
-  if (req.body.isPrivate !== undefined) (data as any).isPrivate = req.body.isPrivate;
-  if (req.body.isUnitSale !== undefined) (data as any).isUnitSale = req.body.isUnitSale;
-  if (req.body.priceUnit !== undefined) (data as any).priceUnit = Number(req.body.priceUnit);
-  if (req.body.type !== undefined) (data as any).type = req.body.type;
-  if (req.body.pricePerPhoto !== undefined) (data as any).pricePerPhoto = Number(req.body.pricePerPhoto);
-  if (req.body.marketplaceConfigs !== undefined) (data as any).marketplaceConfigs = req.body.marketplaceConfigs;
+  if (req.body.isPrivate !== undefined) (data as Prisma.EventUpdateInput).isPrivate = req.body.isPrivate;
+  if (req.body.isUnitSale !== undefined) (data as Prisma.EventUpdateInput).isUnitSale = req.body.isUnitSale;
+  if (req.body.priceUnit !== undefined) (data as Prisma.EventUpdateInput).priceUnit = Number(req.body.priceUnit);
+  if (req.body.type !== undefined) (data as Prisma.EventUpdateInput).type = req.body.type;
+  if (req.body.pricePerPhoto !== undefined) (data as Prisma.EventUpdateInput).pricePerPhoto = Number(req.body.pricePerPhoto);
+  if (req.body.marketplaceConfigs !== undefined) (data as Prisma.EventUpdateInput).marketplaceConfigs = req.body.marketplaceConfigs;
 
   try {
     // 1. Busca estado atual para saber se os links estão sendo adicionados agora
@@ -448,7 +448,7 @@ export async function adminDeleteEvent(req: AuthRequest, res: Response): Promise
     await audit(req, "EVENT_DELETED", "Event", String(id), null, { hard: !hasPaidOrders });
 
     res.json({ ok: true, deleted: !hasPaidOrders });
-  } catch (err: any) {
+  } catch (err: unknown) {
     console.error("adminDeleteEvent Error:", err);
     res.status(500).json({ 
       error: "Erro ao excluir evento.", 
@@ -480,9 +480,9 @@ export async function adminDeleteOrder(req: AuthRequest, res: Response): Promise
     await audit(req, "ORDER_DELETED", "Order", String(id), null, { valor: order.valor });
 
     res.json({ ok: true });
-  } catch (err: any) {
+  } catch (err: unknown) {
     console.error("adminDeleteOrder Error:", err);
-    res.status(500).json({ error: "Erro ao excluir pedido.", details: err.message });
+    res.status(500).json({ error: "Erro ao excluir pedido.", details: err instanceof Error ? err.message : String(err) });
   }
 }
 
@@ -1034,10 +1034,8 @@ export async function adminCreateManualSale(req: AuthRequest, res: Response): Pr
         if (authError) {
           if (authError.message.includes("already registered")) {
             // Sincroniza se já existe no Supabase
-            const { data: { users: sbUsers } } = await supabase.auth.admin.listUsers({
-              filter: `email.eq.${customerEmail}`
-            } as any);
-            const sbUser = sbUsers?.[0];
+            const { data: { users: sbUsers } } = await supabase.auth.admin.listUsers();
+            const sbUser = (sbUsers as { id: string, email?: string }[]).find(u => u.email === customerEmail);
             if (sbUser) {
               const hash = await bcrypt.hash(tempPassword, 12);
               user = await prisma.user.create({
@@ -1068,8 +1066,8 @@ export async function adminCreateManualSale(req: AuthRequest, res: Response): Pr
           });
           console.log(`[ADMIN] Novo usuário criado no Supabase: ${customerEmail} (Pass: ${tempPassword})`);
         }
-      } catch (err: any) {
-        console.error("[ADMIN Manual Sale Auto-Register Error]:", err.message);
+      } catch (err: unknown) {
+        console.error("[ADMIN Manual Sale Auto-Register Error]:", err instanceof Error ? err.message : String(err));
         // Fallback local
         const hashedPassword = await bcrypt.hash(tempPassword, 10);
         user = await prisma.user.create({

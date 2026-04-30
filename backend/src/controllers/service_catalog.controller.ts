@@ -1,8 +1,9 @@
 import { Request, Response } from "express";
 import { AuthRequest } from "../lib/auth";
 import prisma from "../lib/prisma";
+import { Prisma } from "@prisma/client";
 
-const serializeService = (s: any) => ({
+const serializeService = (s: Prisma.ServiceCatalogGetPayload<{}>) => ({
   ...s,
   basePrice: Number(s.basePrice),
 });

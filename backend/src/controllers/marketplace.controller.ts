@@ -60,10 +60,8 @@ export class MarketplaceController {
 
           if (authError) {
             if (authError.message.includes("already registered")) {
-              const { data: { users: sbUsers } } = await supabaseAdmin.auth.admin.listUsers({
-                filter: `email.eq.${finalEmail}`
-              } as any);
-              const sbUser = sbUsers?.[0];
+              const { data: { users: sbUsers } } = await supabaseAdmin.auth.admin.listUsers();
+              const sbUser = (sbUsers as { id: string, email?: string }[]).find(u => u.email === finalEmail);
               if (sbUser) {
                 await supabaseAdmin.auth.admin.updateUserById(sbUser.id, { password: tempPassword });
                 user = await prisma.user.upsert({
@@ -78,9 +76,9 @@ export class MarketplaceController {
               data: { id: authData.user.id, email: finalEmail, nome: finalName, senha: hash, whatsapp: whatsapp || null, role: "CLIENTE" }
             });
           }
-        } catch (err: any) {
-          console.error("[ExpressSale Auto-Register Error]:", err.message);
-          const fallbackHash = await bcrypt.hash(tempPassword, 10);
+        } catch (err: unknown) {
+          console.error("[ExpressSale Auto-Register Error]:", err instanceof Error ? err.message : String(err));
+          const fallbackHash = await bcrypt.hash(tempPassword as string, 10);
           user = await prisma.user.create({
             data: { email: finalEmail, nome: finalName, senha: fallbackHash, whatsapp: whatsapp || null, role: "CLIENTE" }
           });
@@ -105,8 +103,8 @@ export class MarketplaceController {
           active: true,
           isPrivate: true,
           slug,
-          captacaoId: captacaoId || (req as any).user?.userId,
-          edicaoId: isPhysical ? null : (editorId || captacaoId || (req as any).user?.userId), 
+          captacaoId: captacaoId || req.user?.userId,
+          edicaoId: isPhysical ? null : (editorId || captacaoId || req.user?.userId), 
           captacaoStatus: "ACCEPTED",
           edicaoStatus: (editorId && !isPhysical) ? "PENDING" : "ACCEPTED", 
           pricePerPhoto: 15, 
@@ -298,7 +296,7 @@ export class MarketplaceController {
    */
   static async listMedia(req: AuthRequest, res: Response) {
     const { id: eventId } = req.params;
-    const authUser = (req as any).user;
+    const authUser = req.user;
 
     try {
       // 1. Busca o evento para verificar privacidade

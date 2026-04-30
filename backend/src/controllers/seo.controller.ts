@@ -28,7 +28,7 @@ export const SEOController = {
 
       const title = `${event.nomeNoivos} | Foto Segundo`;
       const dateStr = new Intl.DateTimeFormat("pt-BR", { day: "2-digit", month: "long", year: "numeric" }).format(new Date(event.dataEvento));
-      const isMarketplace = (event as any).type === "PHOTO_MARKETPLACE";
+      const isMarketplace = event.type === "PHOTO_MARKETPLACE";
       
       const description = isMarketplace
         ? `Escolha e compre suas fotos do evento: ${event.nomeNoivos} (${dateStr}). Seleção individual e download imediato.`

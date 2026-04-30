@@ -23,7 +23,7 @@ export class AuthController {
 
     try {
       const cleanEmail = email.toLowerCase().trim();
-      let user: any = null;
+      let user: { id: string, nome: string, email: string, role: string, senha?: string | null } | null = null;
       let authMethod = "NONE";
 
       // 1. PRIORIDADE: BANCO LOCAL (BCRYPT)
@@ -38,8 +38,8 @@ export class AuthController {
             authMethod = "LOCAL_BCRYPT";
           }
         }
-        } catch (localErr: any) {
-          console.error(`[AUTH] Erro no fallback local:`, localErr.message);
+        } catch (localErr: unknown) {
+          console.error(`[AUTH] Erro no fallback local:`, localErr instanceof Error ? localErr.message : String(localErr));
         }
 
       // 2. SEGUNDA OPÇÃO: SUPABASE CLOUD (Apenas se o local falhar)
@@ -56,8 +56,8 @@ export class AuthController {
             authMethod = "SUPABASE";
             console.log(`[AUTH] Sucesso via Supabase Cloud: ${cleanEmail}`);
           }
-        } catch (sbErr: any) {
-          console.error(`[AUTH] Supabase indisponível:`, sbErr.message);
+        } catch (sbErr: unknown) {
+          console.error(`[AUTH] Supabase indisponível:`, sbErr instanceof Error ? sbErr.message : String(sbErr));
         }
       }
 
@@ -79,8 +79,8 @@ export class AuthController {
         user: { id: user.id, nome: user.nome, email: user.email, role: user.role }
       });
 
-    } catch (error: any) {
-      console.error("[AUTH FATAL]:", error.message);
+    } catch (error: unknown) {
+      console.error("[AUTH FATAL]:", error instanceof Error ? error.message : String(error));
       return res.status(500).json({ error: "Erro crítico no portal de login." });
     }
   }
@@ -91,7 +91,7 @@ export class AuthController {
 
     try {
       const hash = await bcrypt.hash(senha, 12);
-      const cleanRole = (role?.toUpperCase() || "CLIENTE") as any;
+      const cleanRole = (role?.toUpperCase() || "CLIENTE") as "ADMIN" | "PROFISSIONAL" | "CARTORIO" | "CLIENTE";
 
       const cleanEmail = email.toLowerCase().trim();
 
@@ -107,10 +107,10 @@ export class AuthController {
         // Se o erro for que o usuário já existe no Supabase, tentamos recuperar o ID dele para prosseguir com o Prisma
         if (authError.message.includes("already registered") || authError.status === 422) {
            console.log(`[REGISTER] Usuário ${cleanEmail} já existe no Supabase. Tentando sincronização Prisma.`);
-           const { data: existingUser } = await supabaseAdmin.auth.admin.listUsers();
-           const found = existingUser.users.find(u => u.email?.toLowerCase() === cleanEmail);
+           const { data: existingUserData } = await supabaseAdmin.auth.admin.listUsers();
+           const found = existingUserData.users.find(u => u.email?.toLowerCase() === cleanEmail);
            if (!found) throw new Error("Usuário existe no Supabase mas não pôde ser localizado para sincronia.");
-           authData.user = found as any;
+           authData.user = found;
         } else {
           console.error("[Supabase Auth Error]:", authError);
           throw new Error(`Erro na autenticação externa: ${authError.message}`);
@@ -172,9 +172,9 @@ export class AuthController {
         refreshToken,
         user: { id: result.id, nome: result.nome, email: result.email, role: result.role } 
       });
-    } catch (e: any) {
+    } catch (e: unknown) {
       console.error("[REGISTER ERROR]:", e);
-      return res.status(500).json({ error: "Erro no registro", details: e.message });
+      return res.status(500).json({ error: "Erro no registro", details: e instanceof Error ? e.message : String(e) });
     }
   }
 

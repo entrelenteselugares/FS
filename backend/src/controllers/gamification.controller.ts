@@ -76,8 +76,8 @@ export async function likePhoto(req: AuthRequest, res: Response): Promise<void> 
       }
 
       await logger.info(userId, "PHOTO_LIKED", { eventId: event.id, photoUrl });
-    } catch (err: any) {
-      if (err.code === "P2002") {
+    } catch (err: unknown) {
+      if ((err as { code?: string }).code === "P2002") {
         // Já curtiu — remove a curtida (toggle)
         await prisma.photoLike.deleteMany({
           where: {
@@ -113,7 +113,7 @@ export async function likePhoto(req: AuthRequest, res: Response): Promise<void> 
 
     res.json({ liked: true, totalLikes });
 
-  } catch (err: any) {
+  } catch (err: unknown) {
     console.error("likePhoto:", err);
     res.status(500).json({ error: "Erro ao registrar curtida." });
   }

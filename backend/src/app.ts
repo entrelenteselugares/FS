@@ -72,10 +72,10 @@ app.use(express.json({ limit: "10mb" }));
 app.use("/api", routes);
 
 // Tratamento de erros global
-app.use((err: any, _req: express.Request, res: express.Response, _next: express.NextFunction) => {
+app.use((err: Error, _req: express.Request, res: express.Response, _next: express.NextFunction) => {
   res.status(500).json({ 
     error: "Erro interno no servidor", 
-    details: err.message 
+    details: err.message || String(err)
   });
 });
 

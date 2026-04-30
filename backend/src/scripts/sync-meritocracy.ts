@@ -3,12 +3,23 @@ import axios from "axios";
 
 const prisma = new PrismaClient();
 
+interface EquipmentItem {
+  value: number;
+  name?: string;
+}
+
+interface CoinData {
+  EURBRL: {
+    bid: string;
+  };
+}
+
 async function syncMeritocracy() {
   console.log("🚀 Iniciando Sincronização de Meritocracia...");
   
   try {
     // 1. Busca cotação do Euro
-    const { data: coinData } = await axios.get("https://economia.awesomeapi.com.br/json/last/EUR-BRL");
+    const { data: coinData } = await axios.get<CoinData>("https://economia.awesomeapi.com.br/json/last/EUR-BRL");
     const eurRate = Number(coinData.EURBRL.bid);
     const floorRate = eurRate * 10;
     const ceilingRate = 200;
@@ -24,9 +35,9 @@ async function syncMeritocracy() {
       // Recalcula o multiplicador
       let calculatedMultiplier = 1.0;
       
-      const equipmentList = pro.equipmentList as any[];
+      const equipmentList = pro.equipmentList as unknown as EquipmentItem[];
       if (Array.isArray(equipmentList)) {
-        const totalValue = equipmentList.reduce((acc: number, curr: any) => acc + (Number(curr.value) || 0), 0);
+        const totalValue = equipmentList.reduce((acc: number, curr: EquipmentItem) => acc + (Number(curr.value) || 0), 0);
         calculatedMultiplier += (totalValue / 5000) * 0.2;
       }
 

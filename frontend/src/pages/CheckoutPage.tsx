@@ -157,9 +157,8 @@ export const CheckoutPage = () => {
       }
       setAuthStep('authorized');
     } catch (err: unknown) {
-      const msg = err && typeof err === 'object' && 'response' in err 
-        ? (err.response as any)?.data?.error 
-        : "Falha na autenticação. Verifique sua senha.";
+      const axiosError = err as { response?: { data?: { error?: string } } };
+      const msg = axiosError.response?.data?.error || "Falha na autenticação. Verifique sua senha.";
       setLocalAuthError(msg);
     } finally {
       setAuthLoading(false);

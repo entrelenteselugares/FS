@@ -4,7 +4,8 @@
 
 O Foto Segundo é uma plataforma de fornecimento de ativos visuais de luxo, operando sob uma arquitetura de microsserviços simulada (Back-end Express + Front-end React na Vercel).
 
-- **Backend**: Node.js/Express, Prisma ORM, PostgreSQL (Supabase).
+- **Backend**: Node.js/Express, Prisma ORM (Adapter Nativo `@prisma/adapter-pg`), PostgreSQL.
+- **Strictness**: Proibição absoluta de `: any`. Todo erro deve ser tratado como `unknown` e tipado via `instanceof Error`.
 - **Identidade**: "Midnight Luxury" (Dark Mode severo, Teal accents, Zero Border Radius).
 - **Tipografia**: Barlow Condensed (Display) + Inter (UI/Body).
 - **Assets**: Logotipo oficial `/logo-fs.png` (Minimalista).
@@ -54,9 +55,16 @@ A aplicação DEVE ter `app.set("trust proxy", 1)` no `app.ts`. Sem isso, o `exp
 
 ## 6. Diretrizes de Performance e Deploy (Vercel)
 
-### Sequential Query Pattern (Dashboard)
+### Sequential Query Pattern (Serverless Stability)
 
-Para evitar o erro 500 causado por concorrência de recursos ou estouro da pool de conexões (PGBouncer) no ambiente serverless, operações de dashboard (múltiplas contagens e agregações) DEVEM ser executadas de forma **sequencial** (`await` individual) em vez de paralelas (`Promise.all`).
+Para evitar o erro 500 causado por concorrência de recursos ou estouro da pool de conexões (PGBouncer) no ambiente serverless da Vercel, operações de dashboard (múltiplas contagens e agregações) DEVEM ser executadas de forma **sequencial** (`await` individual) em vez de paralelas (`Promise.all`).
+
+### Background Jobs (Cron)
+
+Jobs de manutenção (como `expiration.job.ts`) devem:
+- Utilizar `AuthRequest` para auditoria quando disparados via rota `/cron`.
+- Validar segredos de ambiente (`CRON_SECRET`) para evitar disparos externos.
+- Nunca lançar erros que interrompam o loop principal de processamento de múltiplos registros.
 
 ### Wizard Flow (QuotePage) Pattern
 

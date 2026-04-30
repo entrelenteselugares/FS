@@ -89,6 +89,7 @@ import {
 } from "../controllers/print_catalog.controller";
 import { MarketplaceController } from "../controllers/marketplace.controller";
 import { requireMercadoPagoSignature } from "../middleware/webhook-auth";
+import { AuthRequest } from "../lib/auth";
 import express from "express";
 
 const router = Router();
@@ -121,12 +122,13 @@ router.get("/cron/expiration", async (req, res) => {
     return res.status(401).json({ error: "Não autorizado." });
   }
   try {
-    await runExpirationJob(req);
+    await runExpirationJob(req as AuthRequest);
     console.log("[Cron] Job de expiração executado com sucesso.");
     res.json({ ok: true, ran: new Date().toISOString() });
-  } catch (err: any) {
-    console.error("[Cron] Erro:", err.message);
-    res.status(500).json({ error: err.message });
+  } catch (err: unknown) {
+    const errorMsg = err instanceof Error ? err.message : String(err);
+    console.error("[Cron] Erro:", errorMsg);
+    res.status(500).json({ error: errorMsg });
   }
 });
 
@@ -195,10 +197,6 @@ router.get("/public/print-catalog",            AdminPrintCatalog.getPublicPrintC
 router.post("/orders/:id/access-type",  requireAuth, chooseAccessType);
 router.get("/orders/:id/access-status", requireAuth, getAccessStatus);
 router.post("/orders/:id/visibility",    requireAuth, toggleVisibility);
-
-// ── Cliente: Meus Pedidos ──────────────────────────────────────────────────────
-router.get("/cliente/pedidos",     requireAuth, getMeusPedidos);
-router.get("/cliente/pedidos/:id", requireAuth, getMeuPedidoDetalhe);
 
 // ── Cliente: Meus Pedidos ──────────────────────────────────────────────────────
 router.get("/cliente/pedidos",     requireAuth, getMeusPedidos);

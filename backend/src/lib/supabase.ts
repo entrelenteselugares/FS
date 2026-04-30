@@ -40,7 +40,7 @@ export const supabaseAdmin = new Proxy({} as SupabaseClient, {
     if (!client) {
       throw new Error("SUPABASE_NOT_CONFIGURED: As variáveis SUPABASE_URL ou SERVICE_ROLE_KEY estão ausentes no Vercel.");
     }
-    return (client as any)[prop];
+    return Reflect.get(client, prop);
   }
 });
 

@@ -2,8 +2,9 @@ import { prisma } from "../lib/prisma";
 import { audit } from "../lib/audit";
 import { NotificationService } from "../services/notification.service";
 import { FRONTEND_URL } from "../lib/config";
+import { AuthRequest } from "../lib/auth";
 
-export async function runExpirationJob(req?: any): Promise<void> {
+export async function runExpirationJob(req?: AuthRequest): Promise<void> {
   const now = new Date();
   console.log(`[EXPIRATION JOB] Rodando em ${now.toISOString()}`);
   
@@ -16,7 +17,7 @@ export async function runExpirationJob(req?: any): Promise<void> {
 
   const proximosDeExpirar = await prisma.order.findMany({
     where: {
-      accessType: { not: null as any },
+      accessType: { not: null as string | null },
       accessExpiresAt: {
         gte: now,
         lte: tresDiasParaFrente,
@@ -42,7 +43,7 @@ export async function runExpirationJob(req?: any): Promise<void> {
       NotificationService.sendAccessEmail({
         to: recipientEmail,
         buyerName: "Cliente",
-        eventTitle: (order.event as any)?.nomeNoivos || "Seu álbum",
+        eventTitle: order.event?.nomeNoivos || "Seu álbum",
         orderId: order.id,
         accessLink: `${FRONTEND_URL}/minha-conta`,
       }).catch((e: unknown) =>
@@ -59,7 +60,7 @@ export async function runExpirationJob(req?: any): Promise<void> {
   // ── 2. Marca como excluído os pedidos expirados ───
   const expirados = await prisma.order.findMany({
     where: {
-      accessType: { not: null as any },
+      accessType: { not: null as string | null },
       accessExpiresAt: { lt: now },
       deletedAt: null,
     },

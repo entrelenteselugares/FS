@@ -33,12 +33,12 @@ export const generateRefreshToken = (payload: AuthPayload): string => {
 
 export const verifyToken = (token: string): AuthPayload => {
   if (!JWT_SECRET) throw new Error("JWT_SECRET ausente.");
-  return jwt.verify(token, JWT_SECRET as string) as any;
+  return jwt.verify(token, JWT_SECRET as string) as unknown as AuthPayload;
 };
 
 export const verifyRefreshToken = (token: string): AuthPayload => {
   if (!REFRESH_SECRET) throw new Error("REFRESH_SECRET ausente.");
-  return jwt.verify(token, REFRESH_SECRET as string) as any;
+  return jwt.verify(token, REFRESH_SECRET as string) as unknown as AuthPayload;
 };
 
 /** Middleware: requer JWT válido */
@@ -60,8 +60,8 @@ export const requireAuth = (req: ExpressRequest, res: Response, next: NextFuncti
   try {
     (req as AuthRequest).user = verifyToken(token);
     return next();
-  } catch (err: any) {
-    if (err.name === "TokenExpiredError") {
+  } catch (err: unknown) {
+    if ((err as { name?: string }).name === "TokenExpiredError") {
       return res.status(401).json({ error: "Token expirado", code: "TOKEN_EXPIRED" });
     }
     return res.status(401).json({ error: "Token inválido" });

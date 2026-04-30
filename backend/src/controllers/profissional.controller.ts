@@ -265,7 +265,7 @@ export async function updateProfile(req: AuthRequest, res: Response): Promise<vo
     
     // 1. Fator Equipamento: +0.2 a cada R$ 5.000 investidos
     if (Array.isArray(equipmentList)) {
-      const totalValue = equipmentList.reduce((acc: number, curr: any) => acc + (Number(curr.value) || 0), 0);
+      const totalValue = equipmentList.reduce((acc: number, curr: { value: number | string }) => acc + (Number(curr.value) || 0), 0);
       calculatedMultiplier += (totalValue / 5000) * 0.2;
     }
 
@@ -346,14 +346,14 @@ export async function respondToEvent(req: AuthRequest, res: Response): Promise<v
         id: String(id),
         OR: [{ captacaoId: userId }, { edicaoId: userId }]
       }
-    }) as any;
+    });
 
     if (!event) {
       res.status(404).json({ error: "Evento não encontrado ou acesso negado." });
       return;
     }
 
-    const updateData: any = {};
+    const updateData: Prisma.EventUpdateInput = {};
     if (event.captacaoId === userId) updateData.captacaoStatus = status as "ACCEPTED" | "REJECTED" | "PENDING";
     if (event.edicaoId === userId) updateData.edicaoStatus = status as "ACCEPTED" | "REJECTED" | "PENDING";
 
@@ -478,7 +478,7 @@ export async function registerManualSale(req: AuthRequest, res: Response): Promi
         eventTitle: event.nomeNoivos,
         orderId: order.id,
         accessLink: `${FRONTEND_URL}/e/${event.id}`
-      }).catch((e: any) => console.error("Erro e-mail venda manual:", e));
+      }).catch((e: unknown) => console.error("Erro e-mail venda manual:", e));
     }
 
     // P0 — Venda física (Cartão SD / Álbum): rastrear transação sem checkout digital

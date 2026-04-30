@@ -52,7 +52,7 @@ export class PaymentController {
       console.log(`[Checkout] Repasse Manual Calculado: Snapshot salvo. Valor: ${preco}`);
 
       // 3. Preparar itens do pedido (Marketplace)
-      let orderItemsData: any[] = [];
+      let orderItemsData: Prisma.OrderItemCreateManyOrderInput[] = [];
       if (cartItems.length > 0) {
         const dbMedias = await prisma.eventMedia.findMany({
           where: {
@@ -181,10 +181,12 @@ export class PaymentController {
         sandbox_init_point: mpResponse.sandbox_init_point
       });
 
-    } catch (error: any) {
-      console.error("[Checkout Error Full]:", error.response?.data || error.message || error);
+    } catch (error: unknown) {
+      const errorData = (error as { response?: { data?: unknown } })?.response?.data;
+      const errorMessage = (error as { message?: string })?.message || String(error);
+      console.error("[Checkout Error Full]:", errorData || errorMessage);
       
-      const mpDetails = error.response?.data?.message || error.message || "Erro desconhecido no MP";
+      const mpDetails = (errorData as { message?: string })?.message || errorMessage || "Erro desconhecido no MP";
 
       return res.status(500).json({ 
         error: "Erro no processamento do Mercado Pago",
@@ -376,10 +378,8 @@ export class PaymentController {
             if (authError) {
               if (authError.message.includes("already registered")) {
                 // Supabase já tem o usuário — busca por e-mail filtrado (O(1))
-                const { data: { users: supabaseUsers } } = await supabaseAdmin.auth.admin.listUsers({
-                  filter: `email.eq.${cleanEmail}`
-                } as any);
-                const sUser = supabaseUsers?.[0];
+                const { data: { users: supabaseUsers } } = await supabaseAdmin.auth.admin.listUsers();
+                const sUser = (supabaseUsers as { id: string, email?: string }[]).find(u => u.email === cleanEmail);
                 if (sUser) {
                   const syncedUser = await prisma.user.upsert({
                     where: { email: cleanEmail },
@@ -402,8 +402,8 @@ export class PaymentController {
               finalUserId = newUser.id;
               isNewUser = true;
             }
-          } catch (err: any) {
-            console.error("[Checkout Auto-Register Error]:", err.message);
+          } catch (err: unknown) {
+            console.error("[Checkout Auto-Register Error]:", err instanceof Error ? err.message : String(err));
             // Fallback local se o Supabase falhar
             const newUser = await prisma.user.upsert({
               where: { email: cleanEmail },
@@ -443,7 +443,7 @@ export class PaymentController {
       }
 
       // 4a. Busca as mídias reais para obter os IDs (Marketplace)
-      let orderItemsData: any[] = [];
+      let orderItemsData: Prisma.OrderItemCreateManyOrderInput[] = [];
       if (cartItems.length > 0) {
         const dbMedias = await prisma.eventMedia.findMany({
           where: {
@@ -557,7 +557,7 @@ export class PaymentController {
 
       // 7. Ativa o evento IMEDIATAMENTE (Checkout Transparente)
       if (isApproved) {
-        const isMarketplace = (event as any).type === 'PHOTO_MARKETPLACE';
+        const isMarketplace = event.type === 'PHOTO_MARKETPLACE';
         await prisma.event.update({
           where: { id: eventId },
           data: { 
@@ -609,12 +609,13 @@ export class PaymentController {
         ticket_url: mpResponse?.point_of_interaction?.transaction_data?.ticket_url
       });
 
-    } catch (error: any) {
-      const errorData = error.response?.data;
-      console.error("[Process Payment Error]:", errorData || error.message);
+    } catch (error: unknown) {
+      const errorData = (error as { response?: { data?: unknown } })?.response?.data;
+      const errorMessage = (error as { message?: string })?.message || String(error);
+      console.error("[Process Payment Error]:", errorData || errorMessage);
       return res.status(500).json({ 
         error: "Erro ao processar pagamento v2",
-        details: errorData || error.message
+        details: errorData || errorMessage
       });
     }
   }
@@ -654,8 +655,8 @@ export class PaymentController {
         status: order.status,
         eventId: order.eventId,
         clienteId: order.clienteId,
-        buyerEmail: order.buyerEmail || (order as any).cliente?.email,
-        event: (order as any).event,
+        buyerEmail: order.buyerEmail || order.cliente?.email,
+        event: order.event,
         contributorName: order.contributorName,
         manualType: order.manualType
       });

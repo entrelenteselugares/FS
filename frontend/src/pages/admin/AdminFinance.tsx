@@ -90,7 +90,7 @@ export const AdminFinance: React.FC = () => {
     return { grossRevenue, totalExpenses, netProfit, margin };
   }, [orders, expenses, payoutTab]);
 
-  const handleMarkAsPaid = async (_orderId: string) => {
+  const handleMarkAsPaid = async () => {
     // Liquidação de repasses é gerenciada pelo módulo Financeiro > Repasses (WeeklyPayout).
     // Esta ação é apenas uma visualização de pedidos prontos para repasse.
     setNotification({ message: "Use o módulo 'Repasses' para liquidar pagamentos.", type: 'error' });
@@ -345,7 +345,7 @@ export const AdminFinance: React.FC = () => {
               <p className="text-[10px] text-theme-muted font-bold uppercase tracking-wider leading-relaxed">VOCÊ CONFIRMA QUE JÁ EXECUTOU OS REPASSES PIX PARA TODOS OS PARCEIROS DESTE EVENTO?</p>
               <div className="grid grid-cols-2 gap-4 pt-4">
                  <button onClick={() => setConfirmModal(null)} className="p-4 border border-theme-border text-theme-muted text-[9px] font-black uppercase tracking-widest hover:bg-white/5 transition-all">CANCELAR</button>
-                 <button onClick={() => handleMarkAsPaid(confirmModal)} className="p-4 bg-brand-tactical text-zinc-950 text-[9px] font-black uppercase tracking-widest hover:brightness-110 transition-all shadow-lg">CONFIRMAR</button>
+                 <button onClick={() => handleMarkAsPaid()} className="p-4 bg-brand-tactical text-zinc-950 text-[9px] font-black uppercase tracking-widest hover:brightness-110 transition-all shadow-lg">CONFIRMAR</button>
               </div>
            </div>
         </div>

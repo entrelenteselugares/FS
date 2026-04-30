@@ -55,3 +55,4 @@ frontend/.env.production
 /scratch
 /backend/scratch
 /api/server.js
+/brain

@@ -108,11 +108,14 @@ export default function AdminSuppliers() {
 
   useEffect(() => {
     if (view === "roi" && selectedSupplierId) {
-      fetchBreakevenData(selectedSupplierId);
+      const loadROI = async () => {
+        await fetchBreakevenData(selectedSupplierId);
+      };
+      loadROI();
     }
   }, [view, selectedSupplierId, fetchBreakevenData]);
 
-  const handleCreateSupplier = async (formData: any) => {
+  const handleCreateSupplier = async (formData: SupplierFormData) => {
     try {
       await api.post("/admin/suppliers", formData);
       fetchSuppliers();
@@ -438,7 +441,19 @@ export default function AdminSuppliers() {
 
 // --- SUBCOMPONENTS ---
 
-function NewSupplierModal({ onClose, onSave }: { onClose: () => void; onSave: (data: any) => void }) {
+interface SupplierFormData {
+  name: string;
+  type: string;
+  printerModel: string;
+  printerCost: string;
+  costPer10x15: string;
+  boxCost: string;
+  labelCost: string;
+  uberCost: string;
+  baseCep: string;
+}
+
+function NewSupplierModal({ onClose, onSave }: { onClose: () => void; onSave: (data: SupplierFormData) => void }) {
   const [form, setForm] = useState({
     name: "",
     type: "OWN_PRINTER",

@@ -280,16 +280,26 @@ export class EventController {
         // Merge legacy with custom (custom takes priority)
         const mergedPrices = { ...legacyPrices, ...customPrices };
 
+        const cartorioConfig = p.cartorio as {
+          razaoSocial?: string;
+          cidade?: string;
+          fixedDuration?: number;
+          fixedTime?: boolean;
+          hideDuration?: boolean;
+          workingHours?: unknown;
+          disabledServices?: string[];
+        } | null;
+
         return {
           id: p.id,
-          name: p.cartorio?.razaoSocial || p.nome,
-          city: p.cartorio?.cidade || "Campinas",
+          name: cartorioConfig?.razaoSocial || p.nome,
+          city: cartorioConfig?.cidade || "Campinas",
           prices: mergedPrices,
-          fixedDuration: (p.cartorio as any)?.fixedDuration ?? 2,
-          fixedTime: (p.cartorio as any)?.fixedTime ?? false,
-          hideDuration: (p.cartorio as any)?.hideDuration ?? false,
-          workingHours: (p.cartorio as any)?.workingHours,
-          disabledServices: (p.cartorio as any)?.disabledServices || []
+          fixedDuration: cartorioConfig?.fixedDuration ?? 2,
+          fixedTime: cartorioConfig?.fixedTime ?? false,
+          hideDuration: cartorioConfig?.hideDuration ?? false,
+          workingHours: cartorioConfig?.workingHours,
+          disabledServices: cartorioConfig?.disabledServices || []
         };
       }));
     } catch (error) {
