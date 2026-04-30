@@ -114,45 +114,31 @@ export class EventController {
 
       // 3.1 Guard específico para PHOTO_MARKETPLACE
       if (event.type === 'PHOTO_MARKETPLACE') {
-        // Verifica se há algum pedido PAGO para este evento (qualquer comprador)
-        const hasPaidOrder = await prisma.order.findFirst({
-          where: { eventId: event.id, status: { in: ["PAGO", "APROVADO"] } },
-          select: { id: true, buyerEmail: true, clienteId: true }
-        });
-
-        if (!hasPaidOrder) {
-          // Sem pagamento confirmado: retorna 404 para não vazar
-          // a existência do evento (security through obscurity — LGPD)
-          console.warn(`[PRIVACY GUARD] Acesso negado (no_paid_order) ao evento marketplace ${event.id} por ${authUser?.userId ?? req.ip}`);
-          return res.status(404).json({ error: "Evento não encontrado" });
+        // Se for privado e não for o dono/comprador, negamos
+        if (event.isPrivate && !isOwner && !isPaid) {
+          console.warn(`[PRIVACY GUARD] Acesso negado (private_marketplace) ao evento ${event.id}`);
+          return res.status(403).json({ error: "Este álbum é privado." });
         }
-
-        // Tem pagamento: verifica se o usuário autenticado é o comprador ou dono
-        if (!isOwner) {
-          const isCorrectBuyer = currentUserId && (
-            hasPaidOrder.clienteId === currentUserId
-          );
-
-          if (!isCorrectBuyer) {
-            console.warn(`[PRIVACY GUARD] Acesso negado (wrong_buyer) ao evento marketplace ${event.id} por ${currentUserId ?? "anon"}`);
-            // Sem token ou comprador errado: retorna o evento SEM mídia + paywall ativo
-            // (o frontend vai pedir login/pagamento)
-            return res.json({
-              id: event.id,
-              nomeNoivos: event.nomeNoivos,
-              coverPhotoUrl: event.coverPhotoUrl,
-              type: event.type,
-              isUnitSale: event.isUnitSale,
-              priceUnit: event.priceUnit,
-              pricePerPhoto: event.pricePerPhoto,
-              isOwner: false,
-              hasAccess: false,
-              paywall: { active: true, message: "Acesse com o e-mail utilizado na compra." }
-            });
-          }
+        
+        // Se não for o dono nem comprador, retorna paywall (storefront)
+        if (!isOwner && !isPaid) {
+          return res.json({
+            id: event.id,
+            nomeNoivos: event.nomeNoivos,
+            coverPhotoUrl: event.coverPhotoUrl,
+            type: event.type,
+            isUnitSale: event.isUnitSale,
+            priceUnit: event.priceUnit,
+            pricePerPhoto: event.pricePerPhoto,
+            isOwner: false,
+            hasAccess: false,
+            paywall: { active: true, message: "Escolha suas fotos para comprar." }
+          });
         }
-      } else if (event.isPrivate && !hasAccess) {
-        // Fallback para outros tipos de eventos privados
+      }
+      
+      // 3.2 Guard para eventos PRIVADOS (não-marketplace)
+      if (event.isPrivate && !hasAccess) {
         return res.status(403).json({ 
           error: "Este álbum é privado e não está vinculado à sua conta.",
           isPrivate: true 
