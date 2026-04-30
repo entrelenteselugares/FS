@@ -141,23 +141,14 @@ export default function ProfissionalDashboard() {
     }
   };
 
-  const handleDelegate = async (eventId: string, editorId: string) => {
-    try {
-      await API.patch(`profissional/events/${eventId}/delegate`, { editorId });
-      fetchEvents();
-    } catch (err) {
-      console.error("Erro ao delegar:", err);
-    }
-  };
-
   const handleUpdated = () => {
     fetchEvents();
     setSelected(null);
   };
 
-  const handleAddService = async (catalogId: string) => {
+  const handleAddService = async (cat: ServiceCatalog) => {
     try {
-      await API.post("profissional/services", { catalogId });
+      await API.post("profissional/services", { catalogId: cat.id });
       fetchProfile();
     } catch (err) {
       console.error("Erro ao adicionar serviço:", err);
