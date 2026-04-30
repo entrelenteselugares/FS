@@ -89,6 +89,7 @@ import {
 } from "../controllers/print_catalog.controller";
 import { MarketplaceController } from "../controllers/marketplace.controller";
 import { requireMercadoPagoSignature } from "../middleware/webhook-auth";
+import { getTaxReport } from "../controllers/finance.controller";
 import { AuthRequest } from "../lib/auth";
 import { runLoyaltyBot } from "../controllers/cron.controller";
 import express from "express";
@@ -108,6 +109,7 @@ router.patch("/profissional/unidades/convites/:id/respond", requireAuth, require
 router.get("/profissional/network", requireAuth, requireRole("ADMIN", "PROFISSIONAL"), getNetwork);
 router.get("/profissional/network/search", requireAuth, requireRole("ADMIN", "PROFISSIONAL"), searchProfessionals);
 router.post("/profissional/network/toggle", requireAuth, requireRole("ADMIN", "PROFISSIONAL"), toggleFavorite);
+router.get("/profissional/finance/tax-report", requireAuth, requireRole("ADMIN", "PROFISSIONAL"), getTaxReport);
 
 // ── MARKETPLACE (Fotos Individuais & Venda Expressa) ──────────────────────────
 router.post("/marketplace/express-sale",      requireAuth, requireRole("ADMIN", "PROFISSIONAL"), MarketplaceController.expressSale);

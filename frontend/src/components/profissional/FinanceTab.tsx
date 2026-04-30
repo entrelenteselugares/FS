@@ -1,4 +1,4 @@
-import { TrendingUp, DollarSign, Zap, Check } from "lucide-react";
+import { TrendingUp, DollarSign, Zap, Check, Download } from "lucide-react";
 import type { ProfileData } from "./types";
 
 function formatDate(d: string) {
@@ -18,6 +18,7 @@ interface FinanceTabProps {
   onTempGoalChange: (val: string) => void;
   onSaveGoal: () => void;
   onCancelGoal: () => void;
+  onDownloadTaxReport: () => void;
 }
 
 export function FinanceTab({
@@ -29,6 +30,7 @@ export function FinanceTab({
   onTempGoalChange,
   onSaveGoal,
   onCancelGoal,
+  onDownloadTaxReport,
 }: FinanceTabProps) {
   const monthEarnings = profile?.stats?.monthEarnings || 0;
   const progressPct = Math.min(100, (monthEarnings / monthlyGoal) * 100);
@@ -59,6 +61,13 @@ export function FinanceTab({
                 className="px-4 py-2 bg-theme-bg-muted border border-theme-border text-[9px] font-black text-theme-muted uppercase tracking-widest hover:border-brand-tactical/50 transition-all italic"
               >
                 Ajustar Meta
+              </button>
+              <button
+                onClick={onDownloadTaxReport}
+                className="px-4 py-2 bg-brand-tactical/10 border border-brand-tactical/30 text-[9px] font-black text-brand-tactical uppercase tracking-widest hover:bg-brand-tactical hover:text-zinc-950 transition-all italic flex items-center gap-2"
+              >
+                <Download size={12} />
+                Relatório Tributário
               </button>
               <div className="bg-brand-tactical/10 px-6 py-3 border border-brand-tactical/20 flex items-center gap-3">
                 <div className="w-2 h-2 rounded-full bg-brand-tactical animate-pulse" />

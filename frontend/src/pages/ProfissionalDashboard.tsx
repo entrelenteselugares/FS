@@ -217,6 +217,26 @@ export default function ProfissionalDashboard() {
     }
   };
 
+  const handleDownloadTaxReport = async () => {
+    try {
+      showNotification("Gerando relatório tributário...", "success");
+      const response = await API.get("profissional/finance/tax-report?format=csv", {
+        responseType: 'blob'
+      });
+      
+      const url = window.URL.createObjectURL(new Blob([response.data]));
+      const link = document.createElement('a');
+      link.href = url;
+      link.setAttribute('download', `relatorio-tributario-${Date.now()}.csv`);
+      document.body.appendChild(link);
+      link.click();
+      link.remove();
+    } catch (err) {
+      console.error("Erro ao baixar relatório:", err);
+      showNotification("Erro ao gerar relatório", "error");
+    }
+  };
+
   // ─── Nav ──────────────────────────────────────────────────────────────────────
 
   const navItems: NavItem[] = [
@@ -396,6 +416,7 @@ export default function ProfissionalDashboard() {
               onTempGoalChange={setTempGoal}
               onSaveGoal={handleSaveGoal}
               onCancelGoal={() => setIsEditingGoal(false)}
+              onDownloadTaxReport={handleDownloadTaxReport}
             />
           )}
           {activeTab === "network" && (
@@ -482,4 +503,3 @@ export default function ProfissionalDashboard() {
     </DashboardLayout>
   );
 }
-
