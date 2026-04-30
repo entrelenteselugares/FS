@@ -780,56 +780,80 @@ export default function EventPage() {
               </div>
             )}
 
-            {step === "success" && (
-              <div style={{ display: "flex", flexDirection: "column", gap: 16, animation: "fadeUp 0.3s ease" }}>
-                {!access?.lightroomUrl && !access?.driveUrl ? (
-                  <>
-                    <p style={{ fontSize: 10, fontWeight: 700, textTransform: "uppercase", letterSpacing: 2, color: T.brand, margin: 0 }}>
-                      Evento em breve
-                    </p>
-                    <p style={{ fontSize: 12, color: T.text2, margin: 0 }}>
-                      {(orderId || justPaid) 
-                        ? "Sua compra foi confirmada! O contador abaixo mostra o tempo restante para o grande dia."
-                        : "O grande dia está chegando! Fique atento, as fotos serão liberadas aqui após o evento."}
-                    </p>
-                    {event.dataEvento && <Countdown targetDate={event.dataEvento} />}
-                    <button onClick={handleShare} style={{ ...BtnSecondary, width: "100%", justifyContent: "center", color: T.text }}>
-                      {sharing ? "LINK COPIADO!" : "COMPARTILHAR LINK"}
-                    </button>
-                  </>
-                ) : (
-                  <>
-                    <p style={{ fontSize: 10, fontWeight: 700, textTransform: "uppercase", letterSpacing: 2, color: T.brand, margin: 0 }}>
-                      {(orderId || justPaid) ? (justPaid ? "Tudo pronto!" : "Acesso Liberado") : "Fotos Disponíveis!"}
-                    </p>
-                    <p style={{ fontSize: 12, color: T.text2, margin: 0 }}>
-                      {(orderId || justPaid) 
-                        ? "Seus arquivos estão disponíveis nos botões abaixo."
-                        : "Confira as memórias desse dia incrível nos links abaixo."}
-                    </p>
-                    <div style={{ display: "flex", flexDirection: "column", gap: 10 }}>
-                      {access.lightroomUrl && <a href={access.lightroomUrl.trim().replace(/\s/g, '')} target="_blank" rel="noreferrer" style={{ ...BtnPrimary, textDecoration: "none", justifyContent: "center" }}>Álbum de Fotos</a>}
-                      {access.driveUrl && <a href={access.driveUrl.trim().replace(/\s/g, '')} target="_blank" rel="noreferrer" style={{ ...BtnSecondary, color: T.text, borderColor: T.brand, textDecoration: "none", justifyContent: "center" }}>Vídeos</a>}
-                      
-                      <a 
-                        href={`https://wa.me/5519997843817?text=Gostaria%20de%20encomendar%20um%20%C3%A1lbum%20impresso%20do%20evento%3A%20${encodeURIComponent(event.nomeNoivos)}`} 
-                        target="_blank" 
-                        rel="noreferrer" 
-                        style={{ ...BtnSecondary, color: T.brand, borderColor: T.brand, textDecoration: "none", justifyContent: "center", marginTop: 8, fontWeight: 900, borderStyle: 'dashed' }}
-                      >
-                        ETERNIZE NO PAPEL: ÁLBUM IMPRESSO
-                      </a>
+            {step === "success" && (() => {
+              // Usa o access do pedido do usuário OU os links diretos do evento (para acesso global)
+              const lightroomUrl = access?.lightroomUrl || event.lightroomUrl;
+              const driveUrl = access?.driveUrl || event.driveUrl;
+              
+              return (
+                <div style={{ display: "flex", flexDirection: "column", gap: 16, animation: "fadeUp 0.3s ease" }}>
+                  {!lightroomUrl && !driveUrl ? (
+                    <>
+                      <p style={{ fontSize: 10, fontWeight: 700, textTransform: "uppercase", letterSpacing: 2, color: T.brand, margin: 0 }}>
+                        Evento em breve
+                      </p>
+                      <p style={{ fontSize: 12, color: T.text2, margin: 0 }}>
+                        {(orderId || justPaid) 
+                          ? "Sua compra foi confirmada! O contador abaixo mostra o tempo restante para o grande dia."
+                          : "O grande dia est\u00e1 chegando! Fique atento, as fotos ser\u00e3o liberadas aqui ap\u00f3s o evento."}
+                      </p>
+                      {event.dataEvento && <Countdown targetDate={event.dataEvento} />}
+                      <button onClick={handleShare} style={{ ...BtnSecondary, width: "100%", justifyContent: "center", color: T.text }}>
+                        {sharing ? "LINK COPIADO!" : "COMPARTILHAR LINK"}
+                      </button>
+                    </>
+                  ) : (
+                    <>
+                      <p style={{ fontSize: 10, fontWeight: 700, textTransform: "uppercase", letterSpacing: 2, color: T.brand, margin: 0 }}>
+                        {(orderId || justPaid) ? (justPaid ? "Tudo pronto!" : "Acesso Liberado") : "Fotos Dispon\u00edveis!"}
+                      </p>
+                      <p style={{ fontSize: 12, color: T.text2, margin: 0 }}>
+                        {(orderId || justPaid) 
+                          ? "Seus arquivos est\u00e3o dispon\u00edveis nos bot\u00f5es abaixo."
+                          : "Confira as mem\u00f3rias desse dia incr\u00edvel nos links abaixo."}
+                      </p>
+                      <div style={{ display: "flex", flexDirection: "column", gap: 10 }}>
+                        {lightroomUrl && (
+                          <a 
+                            href={lightroomUrl.trim().replace(/\s/g, '')} 
+                            target="_blank" 
+                            rel="noreferrer" 
+                            style={{ ...BtnPrimary, textDecoration: "none", justifyContent: "center", fontSize: 13, padding: "16px 20px", letterSpacing: 2 }}
+                          >
+                            📸 VER TODAS AS FOTOS
+                          </a>
+                        )}
+                        {driveUrl && (
+                          <a 
+                            href={driveUrl.trim().replace(/\s/g, '')} 
+                            target="_blank" 
+                            rel="noreferrer" 
+                            style={{ ...BtnSecondary, color: T.text, borderColor: T.brand, textDecoration: "none", justifyContent: "center" }}
+                          >
+                            🎬 V\u00eddeos
+                          </a>
+                        )}
+                        
+                        <a 
+                          href={`https://wa.me/5519997843817?text=Gostaria%20de%20encomendar%20um%20%C3%A1lbum%20impresso%20do%20evento%3A%20${encodeURIComponent(event.nomeNoivos)}`} 
+                          target="_blank" 
+                          rel="noreferrer" 
+                          style={{ ...BtnSecondary, color: T.brand, borderColor: T.brand, textDecoration: "none", justifyContent: "center", marginTop: 8, fontWeight: 900, borderStyle: 'dashed' }}
+                        >
+                          ETERNIZE NO PAPEL: \u00c1LBUM IMPRESSO
+                        </a>
 
-                      <div style={{ marginTop: 8, paddingTop: 16, borderTop: `1px solid ${T.border}` }}>
-                        <button onClick={handleShare} style={{ ...BtnSecondary, width: "100%", justifyContent: "center", border: "none", color: T.text3, fontSize: 11, letterSpacing: 1 }}>
-                          {sharing ? "LINK COPIADO!" : "COMPARTILHAR ÁLBUM"}
-                        </button>
+                        <div style={{ marginTop: 8, paddingTop: 16, borderTop: `1px solid ${T.border}` }}>
+                          <button onClick={handleShare} style={{ ...BtnSecondary, width: "100%", justifyContent: "center", border: "none", color: T.text3, fontSize: 11, letterSpacing: 1 }}>
+                            {sharing ? "LINK COPIADO!" : "COMPARTILHAR \u00c1LBUM"}
+                          </button>
+                        </div>
                       </div>
-                    </div>
-                  </>
-                )}
-              </div>
-            )}
+                    </>
+                  )}
+                </div>
+              );
+            })()}
 
             {event.recentOrders && event.recentOrders.length > 0 && (
               <div style={{ marginTop: 32, paddingTop: 24, borderTop: `1px solid ${T.border}`, animation: "fadeUp 0.4s ease" }}>
