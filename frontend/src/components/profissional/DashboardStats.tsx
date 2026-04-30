@@ -1,5 +1,3 @@
-import { T } from "../../lib/theme";
-
 interface StatsProps {
   completedEvents: number;
   totalEarnings: number;

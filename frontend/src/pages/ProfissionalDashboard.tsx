@@ -3,10 +3,9 @@ import { useAuth } from "../hooks/useAuth";
 import { API } from "../lib/api";
 import {
   DollarSign, MessageCircle,
-  Settings, Briefcase, Users,
+  Settings, Briefcase, Users, LayoutDashboard,
 } from "lucide-react";
 import { DashboardLayout, type NavItem } from "../components/DashboardLayout";
-import { T } from "../lib/theme";
 import {
   AgendaTab, FinanceTab, NetworkTab, ServicesTab,
   EventEditPanel, ExpressSaleModal, ProfileModal,
