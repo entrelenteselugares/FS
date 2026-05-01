@@ -309,7 +309,16 @@ export const QuotePage = () => {
   const [attendees, setAttendees] = useState<string>("0");
   const [locationType, setLocationType] = useState<"PARTNER" | "OTHER">("PARTNER");
   const [usageType, setUsageType] = useState<"PESSOAL" | "EMPRESARIAL">("PESSOAL");
-  const [workflowPref, setWorkflowPref] = useState<"MOBILE" | "TRADICIONAL">("TRADICIONAL");
+  const [workflowPref, setWorkflowPref] = useState<string[]>(["TRADICIONAL"]);
+  const toggleWorkflow = (pref: string) => {
+    setWorkflowPref(prev => {
+      if (prev.includes(pref)) {
+        if (prev.length === 1) return prev; // Mantém pelo menos um selecionado
+        return prev.filter(p => p !== pref);
+      }
+      return [...prev, pref];
+    });
+  };
   const [selectedPartnerId, setSelectedPartnerId] = useState("");
   const currentPartner = useMemo(() => partners.find(p => p.id === selectedPartnerId), [partners, selectedPartnerId]);
 
@@ -479,7 +488,7 @@ export const QuotePage = () => {
       customCep, 
       location: fullAddress,
       eventDate, eventHours, eventDays, description, selectedServices, totalPrice, 
-      workflowPref,
+      workflowPref: workflowPref.join(" + "),
       status: "PENDING"
     };
 
@@ -768,10 +777,30 @@ export const QuotePage = () => {
 
                 <div>
                    <label style={{ fontSize: 10, fontWeight: 800, textTransform: "uppercase", marginBottom: 10, display: "block", color: THEME.text }}>Equipamento Preferencial</label>
-                   <div style={{ display: "flex", gap: 10 }}>
-                     <button type="button" onClick={() => setWorkflowPref("MOBILE")} style={{ flex: 1, minHeight: 52, padding: "0 12px", fontSize: 10, fontWeight: 800, border: `1px solid ${workflowPref === "MOBILE" ? THEME.accent : THEME.border}`, background: workflowPref === "MOBILE" ? `${THEME.accent}10` : "transparent", color: workflowPref === "MOBILE" ? THEME.accent : THEME.text2, cursor: "pointer", transition: "all 0.3s ease" }}>MOBILE MAKER</button>
-                     <button type="button" onClick={() => setWorkflowPref("TRADICIONAL")} style={{ flex: 1, minHeight: 52, padding: "0 12px", fontSize: 10, fontWeight: 800, border: `1px solid ${workflowPref === "TRADICIONAL" ? THEME.accent : THEME.border}`, background: workflowPref === "TRADICIONAL" ? `${THEME.accent}10` : "transparent", color: workflowPref === "TRADICIONAL" ? THEME.accent : THEME.text2, cursor: "pointer", transition: "all 0.3s ease" }}>TRADICIONAL</button>
-                   </div>
+                    <div style={{ display: "flex", gap: 10 }}>
+                      <button 
+                        type="button" 
+                        onClick={() => toggleWorkflow("MOBILE")} 
+                        style={{ 
+                          flex: 1, minHeight: 52, padding: "0 12px", fontSize: 10, fontWeight: 800, 
+                          border: `1px solid ${workflowPref.includes("MOBILE") ? THEME.accent : THEME.border}`, 
+                          background: workflowPref.includes("MOBILE") ? `${THEME.accent}10` : "transparent", 
+                          color: workflowPref.includes("MOBILE") ? THEME.accent : THEME.text2, 
+                          cursor: "pointer", transition: "all 0.3s ease" 
+                        }}
+                      >MOBILE MAKER</button>
+                      <button 
+                        type="button" 
+                        onClick={() => toggleWorkflow("TRADICIONAL")} 
+                        style={{ 
+                          flex: 1, minHeight: 52, padding: "0 12px", fontSize: 10, fontWeight: 800, 
+                          border: `1px solid ${workflowPref.includes("TRADICIONAL") ? THEME.accent : THEME.border}`, 
+                          background: workflowPref.includes("TRADICIONAL") ? `${THEME.accent}10` : "transparent", 
+                          color: workflowPref.includes("TRADICIONAL") ? THEME.accent : THEME.text2, 
+                          cursor: "pointer", transition: "all 0.3s ease" 
+                        }}
+                      >TRADICIONAL</button>
+                    </div>
                 </div>
 
                 {locationType === "OTHER" && (
