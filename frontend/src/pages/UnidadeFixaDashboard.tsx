@@ -576,10 +576,10 @@ export default function UnidadeFixaDashboard() {
               </div>
 
               {repasses.length === 0 ? (
-                <div className="p-32 text-center relative group">
+                <div className="p-12 md:p-32 text-center relative group">
                   <div className="absolute inset-0 bg-gradient-to-b from-transparent to-brand-tactical/[0.02] pointer-events-none" />
                   <DollarSign size={48} className="mx-auto mb-8 text-theme-border/20" />
-                  <p className="text-[10px] font-black text-theme-muted uppercase tracking-[0.5em] italic">Nenhum fluxo financeiro registrado até o momento.</p>
+                  <p className="text-[10px] font-black text-theme-muted uppercase tracking-[0.3em] italic max-w-sm mx-auto">Nenhum fluxo financeiro registrado até o momento.</p>
                 </div>
               ) : (
                 <div className="divide-y divide-theme-border/30">
@@ -1006,7 +1006,7 @@ export default function UnidadeFixaDashboard() {
               <div className="bg-white p-4 md:p-8 inline-block shadow-inner max-w-full overflow-hidden">
                 <QRCodeSVG 
                   id="qr-code-svg"
-                  value={`${window.location.origin}/e/${qrModalEvent.slug}`}
+                  value={`${window.location.origin}/e/${qrModalEvent.slug || qrModalEvent.id}`}
                   size={window.innerWidth < 400 ? 200 : 240}
                   level="H"
                   includeMargin={true}

@@ -184,8 +184,9 @@ export const HomePage = () => {
           .hp-search-input { border-right: 1px solid var(--border-2) !important; border-bottom: none !important; border-top: none !important; }
           .hp-step-item { border-right: none !important; padding: 16px 0 !important; border-bottom: 1px solid ${T.border} !important; }
           .hp-step-item:last-child { border-bottom: none !important; }
-          .hp-stats { gap: 16px !important; justify-content: space-between !important; }
-          .hp-stats-item { min-width: 80px; }
+          .hp-stats { gap: 10px !important; justify-content: space-between !important; flex-wrap: nowrap !important; }
+          .hp-stats-item { min-width: auto; }
+          .hp-stats-val { font-size: 22px !important; }
         }
       `}</style>
 
@@ -246,7 +247,7 @@ export const HomePage = () => {
           <div className="hp-stats" style={{ display: "flex", gap: 32, flexWrap: "wrap", marginTop: 32, paddingTop: 32, borderTop: `1px solid ${T.border}` }}>
             {[["500+", DICT.STATS_EVENTS], ["24h", DICT.STATS_DELIVERY], ["4.9★", DICT.STATS_RATING]].map(([val, label]) => (
               <div key={label} className="hp-stats-item">
-                <div style={{ fontFamily: T.fontD, fontWeight: 900, fontSize: 28, color: T.text, lineHeight: 1 }}>{val}</div>
+                <div className="hp-stats-val" style={{ fontFamily: T.fontD, fontWeight: 900, fontSize: 28, color: T.text, lineHeight: 1 }}>{val}</div>
                 <div style={{ fontSize: 10, fontFamily: T.fontB, color: T.text3, letterSpacing: "0.1em", textTransform: "uppercase", marginTop: 4 }}>{label}</div>
               </div>
             ))}
