@@ -126,7 +126,8 @@ export const CheckoutPage = () => {
     const verifyAuth = async () => {
       try {
         const { data } = await API.get(`/public/auth/check?email=${order.buyerEmail}`);
-        if (data.exists && data.hasAuth) {
+        // exists é suficiente para sugerir login
+        if (data.exists) {
           setAuthStep('login');
         } else {
           setAuthStep('register');
@@ -577,6 +578,16 @@ export const CheckoutPage = () => {
               </>
             )}
           </button>
+
+          <div className="text-center mt-6">
+             <button 
+                type="button"
+                onClick={() => setAuthStep(s => s === 'login' ? 'register' : 'login')}
+                className="text-[10px] font-black text-brand-tactical uppercase tracking-widest hover:underline"
+             >
+                {authStep === 'login' ? 'Não tem conta? Crie uma agora' : 'Já possui conta? Faça o login'}
+             </button>
+          </div>
 
           <p className="text-center text-[10px] opacity-30 tracking-widest uppercase mt-6">
             <ShieldCheck size={10} className="inline mr-1" /> Seus dados estão protegidos
