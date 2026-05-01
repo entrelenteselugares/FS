@@ -14,8 +14,8 @@ export function OpportunitiesModal({
   onAction 
 }: OpportunitiesModalProps) {
   return (
-    <div className="fixed inset-0 z-[8000] flex items-center justify-center p-4 backdrop-blur-2xl bg-black/90 animate-in fade-in duration-500">
-      <div className="w-full max-w-lg bg-[#0c0c0c] border border-white/10 p-10 md:p-16 shadow-[0_0_150px_rgba(133,185,172,0.15)] relative overflow-hidden text-center space-y-10">
+    <div className="fixed inset-0 z-[8000] flex items-center justify-center p-4 backdrop-blur-2xl animate-in fade-in duration-500" style={{ background: "var(--overlay)" }}>
+      <div className="w-full max-w-lg p-10 md:p-16 shadow-[0_0_150px_rgba(133,185,172,0.15)] relative overflow-hidden text-center space-y-10" style={{ background: "var(--bg)", border: "1px solid var(--border)" }}>
         <div className="absolute top-0 left-0 w-full h-[3px] bg-gradient-to-r from-transparent via-brand-tactical to-transparent" />
         <div className="flex justify-center">
           <div className="p-6 bg-brand-tactical/10 border border-brand-tactical/30 rounded-full text-brand-tactical animate-bounce">
@@ -36,7 +36,7 @@ export function OpportunitiesModal({
             </div>
           )}
           {pendingEventsCount > 0 && (
-            <div className="bg-white/2 p-6 border border-white/5 hover:border-brand-tactical/40 transition-all">
+            <div className="bg-theme-bg-muted/40 p-6 border border-theme-border/60 hover:border-brand-tactical/40 transition-all">
               <div className="text-[9px] font-black text-theme-muted uppercase tracking-[0.2em] mb-2 italic">Chamados de Campo</div>
               <div className="text-xl font-heading font-black text-theme-text italic leading-none">
                 {pendingEventsCount} {pendingEventsCount === 1 ? "TRABALHO DISPONÍVEL" : "TRABALHOS DISPONÍVEIS"}
