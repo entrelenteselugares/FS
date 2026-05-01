@@ -762,16 +762,18 @@ export async function toggleFavorite(req: AuthRequest, res: Response): Promise<v
 
     if (existing) {
       await prisma.professionalNetwork.delete({ where: { id: existing.id } });
-      return res.json({ status: "REMOVED", message: "Parceiro removido da rede." });
+      res.json({ status: "REMOVED", message: "Parceiro removido da rede." });
+      return;
     } else {
       const created = await prisma.professionalNetwork.create({
         data: { userId, partnerId }
       });
-      return res.json({ status: "ADDED", message: "Parceiro adicionado à rede de empatia.", data: created });
+      res.json({ status: "ADDED", message: "Parceiro adicionado à rede de empatia.", data: created });
+      return;
     }
   } catch (err: any) {
     console.error("[ERROR] toggleFavorite:", err);
-    return res.status(500).json({ 
+    res.status(500).json({ 
       error: "Erro interno ao atualizar rede.", 
       details: err.message,
       code: err.code 
