@@ -109,7 +109,7 @@ router.get("/profissional/unidades/convites", requireAuth, requireRole("ADMIN", 
 router.patch("/profissional/unidades/convites/:id/respond", requireAuth, requireRole("ADMIN", "PROFISSIONAL"), respondConviteUnidade);
 router.get("/profissional/network", requireAuth, requireRole("ADMIN", "PROFISSIONAL"), getNetwork);
 router.get("/profissional/network/search", requireAuth, requireRole("ADMIN", "PROFISSIONAL"), searchProfessionals);
-router.post("/profissional/network/toggle", requireAuth, requireRole("ADMIN", "PROFISSIONAL"), toggleFavorite);
+router.post("/profissional/network/favorite/:partnerId", requireAuth, requireRole("ADMIN", "PROFISSIONAL"), toggleFavorite);
 router.get("/profissional/finance/tax-report", requireAuth, requireRole("ADMIN", "PROFISSIONAL"), getTaxReport);
 
 // ── MARKETPLACE (Fotos Individuais & Venda Expressa) ──────────────────────────
