@@ -89,7 +89,7 @@ export default function LuxuryExperiencePage() {
       <Navbar />
 
       {/* HERO SECTION */}
-      <section className="relative h-[70vh] flex items-center justify-center overflow-hidden border-b" style={{ borderColor: T.border }}>
+      <section className="relative h-[50vh] md:h-[70vh] flex items-center justify-center overflow-hidden border-b" style={{ borderColor: T.border }}>
         <motion.div 
           initial={{ scale: 1.1, opacity: 0 }}
           animate={{ scale: 1, opacity: 0.6 }}
@@ -128,7 +128,7 @@ export default function LuxuryExperiencePage() {
       </section>
 
       {/* CONTENT SECTION */}
-      <section className="max-w-7xl mx-auto px-6 py-12 space-y-12">
+      <section className="max-w-7xl mx-auto px-6 py-6 md:py-12 space-y-8 md:space-y-12">
         
         {/* ARTIST INFO */}
         <div className="flex flex-col md:flex-row items-center gap-12 border-y py-10" style={{ borderColor: T.border }}>
@@ -220,7 +220,7 @@ export default function LuxuryExperiencePage() {
                         <span className="text-[8px] font-bold uppercase tracking-widest opacity-40" style={{ color: T.text2 }}>SKU: {p.sku}</span>
                       </div>
                       <h4 className="text-xl font-heading font-black uppercase italic tracking-tight" style={{ color: T.text }}>{p.name}</h4>
-                      <p className="text-[11px] uppercase font-medium leading-relaxed line-clamp-2 opacity-60" style={{ color: T.text2 }}>{p.description || "Acabamento premium com materiais importados e durabilidade secular."}</p>
+                      <p className="text-[11px] uppercase font-medium leading-relaxed opacity-60" style={{ color: T.text2 }}>{p.description || "Acabamento premium com materiais importados e durabilidade secular."}</p>
                     </div>
 
                     <div className="pt-6 border-t flex justify-between items-end" style={{ borderColor: T.border }}>

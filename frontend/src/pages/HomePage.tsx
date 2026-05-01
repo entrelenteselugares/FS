@@ -76,12 +76,12 @@ function EventCard({ event, onClick }: { event: Event; onClick: () => void }) {
 
         {/* Badge Hoje / Novo */}
         {today && (
-          <span style={{ position: "absolute", top: 12, left: 12, fontSize: 9, fontFamily: T.fontB, fontWeight: 500, letterSpacing: 1.5, textTransform: "uppercase", background: T.brand, color: "#0a0a0a", padding: "4px 10px", borderRadius: 0 }}>
+          <span style={{ position: "absolute", top: 12, left: 12, fontSize: 9, fontFamily: T.fontB, fontWeight: 500, letterSpacing: 1.5, textTransform: "uppercase", background: T.brand, color: T.brandText, padding: "4px 10px", borderRadius: 0 }}>
             Hoje
           </span>
         )}
         {novo && (
-          <span style={{ position: "absolute", top: 12, left: 12, fontSize: 9, fontFamily: T.fontB, fontWeight: 500, letterSpacing: 1.5, textTransform: "uppercase", background: T.brand, color: "#0a0a0a", padding: "4px 10px", borderRadius: 0 }}>
+          <span style={{ position: "absolute", top: 12, left: 12, fontSize: 9, fontFamily: T.fontB, fontWeight: 500, letterSpacing: 1.5, textTransform: "uppercase", background: T.brand, color: T.brandText, padding: "4px 10px", borderRadius: 0 }}>
             Novo
           </span>
         )}
@@ -178,12 +178,14 @@ export const HomePage = () => {
           .hp-hero-title { font-size: clamp(38px,10vw,60px) !important; line-height: 1 !important; }
           .hp-grid { grid-template-columns: repeat(auto-fill, minmax(260px,1fr)) !important; }
           .hp-steps { flex-direction: column !important; }
-          .hp-footer-inner { flex-direction: column !important; gap: 2.5rem !important; }
-          .hp-footer-cols { gap: 2rem !important; }
+          .hp-footer-inner { flex-direction: column !important; gap: 2rem !important; }
+          .hp-footer-cols { gap: 1.5rem !important; }
           .hp-search-container { flex-direction: column !important; }
-          .hp-search-input { border-right: 1px solid var(--border-2) !important; border-bottom: none !important; }
-          .hp-step-item { border-right: none !important; padding-left: 0 !important; padding-right: 0 !important; border-bottom: 1px solid ${T.border} !important; }
+          .hp-search-input { border-right: 1px solid var(--border-2) !important; border-bottom: none !important; border-top: none !important; }
+          .hp-step-item { border-right: none !important; padding: 16px 0 !important; border-bottom: 1px solid ${T.border} !important; }
           .hp-step-item:last-child { border-bottom: none !important; }
+          .hp-stats { gap: 16px !important; justify-content: space-between !important; }
+          .hp-stats-item { min-width: 80px; }
         }
       `}</style>
 
@@ -191,7 +193,7 @@ export const HomePage = () => {
       <Navbar />
 
       {/* ── HERO ─────────────────────────────────────────────────────────── */}
-      <section style={{ padding: "clamp(40px, 8vw, 80px) clamp(12px, 4vw, 28px) 64px", maxWidth: 1100, margin: "0 auto" }}>
+      <section style={{ padding: "clamp(24px, 6vw, 60px) clamp(16px, 4vw, 28px) 48px", maxWidth: 1100, margin: "0 auto" }}>
         <div style={{ opacity: 1 }}>
           <p style={{ fontSize: 10, fontFamily: T.fontB, fontWeight: 400, letterSpacing: "0.35em", textTransform: "uppercase", color: T.brand, marginBottom: 20 }}>
             {DICT.HERO_TAGLINE}
@@ -241,9 +243,9 @@ export const HomePage = () => {
             </button>
           </div>
           {/* Stats */}
-          <div style={{ display: "flex", gap: 32, flexWrap: "wrap", marginTop: 40, paddingTop: 32, borderTop: `1px solid ${T.border}` }}>
+          <div className="hp-stats" style={{ display: "flex", gap: 32, flexWrap: "wrap", marginTop: 32, paddingTop: 32, borderTop: `1px solid ${T.border}` }}>
             {[["500+", DICT.STATS_EVENTS], ["24h", DICT.STATS_DELIVERY], ["4.9★", DICT.STATS_RATING]].map(([val, label]) => (
-              <div key={label}>
+              <div key={label} className="hp-stats-item">
                 <div style={{ fontFamily: T.fontD, fontWeight: 900, fontSize: 28, color: T.text, lineHeight: 1 }}>{val}</div>
                 <div style={{ fontSize: 10, fontFamily: T.fontB, color: T.text3, letterSpacing: "0.1em", textTransform: "uppercase", marginTop: 4 }}>{label}</div>
               </div>
@@ -253,7 +255,7 @@ export const HomePage = () => {
       </section>
 
       {/* ── EVENT GRID ───────────────────────────────────────────────────── */}
-      <section style={{ padding: "0 0 80px" }}>
+      <section style={{ padding: "0 0 48px" }}>
         <div style={{ maxWidth: 1400, margin: "0 auto", padding: "0 28px" }}>
           <div style={{ display: "flex", alignItems: "flex-end", justifyContent: "space-between", marginBottom: 24 }}>
             <div style={{ borderLeft: `2px solid ${T.brand}`, paddingLeft: 16 }}>
@@ -309,7 +311,7 @@ export const HomePage = () => {
       </section>
 
       {/* ── COMO FUNCIONA ─────────────────────────────────────────────────── */}
-      <section style={{ padding: "80px 28px", borderTop: `1px solid ${T.border}`, borderBottom: `1px solid ${T.border}`, background: T.bgCard }}>
+      <section style={{ padding: "48px 28px", borderTop: `1px solid ${T.border}`, borderBottom: `1px solid ${T.border}`, background: T.bgCard }}>
         <div style={{ maxWidth: 1100, margin: "0 auto" }}>
           <p style={{ fontSize: 10, fontFamily: T.fontB, color: T.brand, letterSpacing: "0.35em", textTransform: "uppercase", marginBottom: 12 }}>Processo</p>
           <h2 style={{ fontFamily: T.fontD, fontWeight: 900, fontSize: "clamp(32px,5vw,52px)", color: T.text, textTransform: "uppercase", margin: "0 0 48px", lineHeight: 1 }}>
@@ -355,7 +357,7 @@ export const HomePage = () => {
       </section>
 
       {/* ── FOOTER ────────────────────────────────────────────────────────── */}
-      <footer style={{ borderTop: `1px solid ${T.border}`, padding: "56px 28px 32px" }}>
+      <footer style={{ borderTop: `1px solid ${T.border}`, padding: "32px 28px" }}>
         <div className="hp-footer-inner" style={{ maxWidth: 1100, margin: "0 auto", display: "flex", justifyContent: "space-between", alignItems: "flex-start", gap: "3rem" }}>
           <div>
             <div style={{ display: "flex", alignItems: "center", marginBottom: 12 }}>

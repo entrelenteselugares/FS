@@ -11,10 +11,10 @@ interface ServicesTabProps {
 
 export function ServicesTab({ profile, catalogServices, onAddService, onRemoveService, onOpenProfile }: ServicesTabProps) {
   return (
-    <div className="space-y-8 animate-in fade-in duration-500">
+    <div className="space-y-6 animate-in fade-in duration-500">
 
       {/* Pricing Matrix */}
-      <div className="bg-theme-bg border border-theme-border/60 p-8 md:p-16 space-y-12">
+      <div className="bg-theme-bg border border-theme-border/60 p-6 md:p-12 space-y-8 md:space-y-12">
         <div className="space-y-2">
           <h3 className="text-2xl font-heading font-black text-theme-text uppercase tracking-widest italic leading-none">
             Matriz de Precificação
@@ -24,7 +24,7 @@ export function ServicesTab({ profile, catalogServices, onAddService, onRemoveSe
           </p>
         </div>
 
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-12">
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-8 md:gap-12">
           <div className="space-y-4">
             <div className="flex items-center gap-3">
               <div className="p-2 bg-theme-bg-muted border border-theme-border/60 text-brand-tactical"><Clock size={16} /></div>
@@ -59,7 +59,7 @@ export function ServicesTab({ profile, catalogServices, onAddService, onRemoveSe
       </div>
 
       {/* My Services Vitrine */}
-      <div className="bg-theme-bg border border-theme-border/60 p-8 md:p-16 space-y-10">
+      <div className="bg-theme-bg border border-theme-border/60 p-6 md:p-12 space-y-8 md:space-y-10">
         <div className="flex justify-between items-end">
           <div className="space-y-2">
             <h3 className="text-2xl font-heading font-black text-theme-text uppercase tracking-widest italic leading-none">
@@ -80,7 +80,7 @@ export function ServicesTab({ profile, catalogServices, onAddService, onRemoveSe
             {profile.proServices.map((svc) => (
               <div
                 key={svc.id}
-                className="group flex flex-col sm:flex-row justify-between items-start sm:items-center p-8 bg-theme-bg-muted/30 border border-theme-border/40 hover:border-brand-tactical/40 transition-all relative overflow-hidden gap-6"
+                className="group flex flex-col sm:flex-row justify-between items-start sm:items-center p-6 bg-theme-bg-muted/30 border border-theme-border/40 hover:border-brand-tactical/40 transition-all relative overflow-hidden gap-6"
               >
                 <div className="absolute left-0 top-0 h-full w-1 bg-brand-tactical opacity-20 group-hover:opacity-100 transition-all" />
                 <div className="space-y-2">
@@ -117,7 +117,7 @@ export function ServicesTab({ profile, catalogServices, onAddService, onRemoveSe
       </div>
 
       {/* Global Catalog */}
-      <div className="bg-theme-bg border border-theme-border/60 p-8 md:p-16 space-y-12">
+      <div className="bg-theme-bg border border-theme-border/60 p-6 md:p-12 space-y-8 md:space-y-12">
         <div className="space-y-2">
           <h3 className="text-2xl font-heading font-black text-theme-text uppercase tracking-widest italic leading-none">
             Catálogo Geral da Rede
@@ -136,7 +136,7 @@ export function ServicesTab({ profile, catalogServices, onAddService, onRemoveSe
             return (
               <div
                 key={cat.id}
-                className="flex flex-col md:flex-row justify-between md:items-center p-8 bg-theme-bg-muted border border-theme-border/40 group hover:border-brand-tactical/30 transition-all gap-8 relative overflow-hidden"
+                className="flex flex-col md:flex-row justify-between md:items-center p-6 bg-theme-bg-muted border border-theme-border/40 group hover:border-brand-tactical/30 transition-all gap-8 relative overflow-hidden"
               >
                 <div className="space-y-3">
                   <div className="text-base font-black text-theme-text uppercase tracking-tight italic">{cat.name}</div>

@@ -15,9 +15,9 @@ export default {
           offwhite: '#fafafa'
         },
         brand: {
-          dark: '#050505',
-          primary: '#85B9AC', // Unified Premium Teal
-          tactical: '#85B9AC', // Aliased for consistency
+          dark: 'var(--brand-dark)',
+          primary: 'var(--brand-tactical)', // Unified Premium Teal
+          tactical: 'var(--brand-tactical)', // Aliased for consistency
           frost: '#ffffff',
           emerald: '#064e3b',
         },

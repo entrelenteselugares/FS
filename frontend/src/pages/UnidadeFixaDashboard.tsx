@@ -309,7 +309,7 @@ export default function UnidadeFixaDashboard() {
       title="Painel de Unidade" 
       navItems={NAV_ITEMS(tab, setTab)}
     >
-      <div className="max-w-[1600px] mx-auto px-2 md:px-6 py-6 md:py-10 space-y-8 md:space-y-12 animate-in fade-in slide-in-from-bottom-4 duration-700">
+      <div className="max-w-[1600px] mx-auto px-4 md:px-6 py-4 md:py-8 space-y-6 md:space-y-10 animate-in fade-in slide-in-from-bottom-4 duration-700">
 
         {/* Alertas Premium */}
         {(error || success) && (
@@ -332,7 +332,7 @@ export default function UnidadeFixaDashboard() {
         )}
 
         {/* Header Seção */}
-        <div className="flex flex-col lg:flex-row lg:items-end justify-between gap-6 border-b border-theme-border/60 pb-10">
+        <div className="flex flex-col lg:flex-row lg:items-end justify-between gap-4 border-b border-theme-border/60 pb-6">
           <div className="space-y-4">
             <h1 className="text-3xl md:text-5xl font-heading font-black text-theme-text uppercase tracking-tighter italic leading-none">
               {tab === "agenda" ? "Agenda Tática" : tab === "financas" ? "Fluxo Financeiro" : tab === "equipe" ? "Rede Técnica" : "Cockpit da Unidade"}
@@ -410,14 +410,14 @@ export default function UnidadeFixaDashboard() {
 
             <div className="space-y-6">
               {loading ? (
-                <div className="p-24 text-center">
+                <div className="p-12 md:p-24 text-center">
                   <div className="w-12 h-12 border-2 border-brand-tactical border-t-transparent rounded-full animate-spin mx-auto mb-6" />
                   <p className="text-[10px] font-black text-theme-muted uppercase tracking-[0.5em]">Sincronizando Vetores...</p>
                 </div>
               ) : eventos.length === 0 ? (
                 <div className="relative group overflow-hidden">
                   <div className="absolute inset-0 bg-gradient-to-br from-brand-tactical/5 to-transparent opacity-50" />
-                  <div className="relative p-24 border border-theme-border/40 text-center space-y-8 backdrop-blur-sm">
+                  <div className="relative p-12 md:p-24 border border-theme-border/40 text-center space-y-8 backdrop-blur-sm">
                     <div className="relative inline-block">
                       <Calendar size={48} className="mx-auto text-theme-border/30" />
                       <div className="absolute -top-2 -right-2 w-4 h-4 bg-brand-tactical rounded-full animate-ping" />
@@ -450,7 +450,7 @@ export default function UnidadeFixaDashboard() {
                         </div>
 
                         {/* Content Column */}
-                        <div className="flex-1 p-4 md:p-6 space-y-4 md:space-y-6">
+                        <div className="flex-1 p-4 md:p-6 space-y-3 md:space-y-4">
                            <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-4 md:gap-6">
                               <div className="space-y-2 md:space-y-3">
                                  <div className="flex items-center gap-3">
@@ -812,7 +812,7 @@ export default function UnidadeFixaDashboard() {
                             <Settings size={14} className={isDisabled ? "" : "animate-spin-slow"} />
                           </button>
                         </div>
-                        <p className="text-[10px] font-medium text-theme-muted leading-relaxed line-clamp-2 opacity-60 group-hover:opacity-100 transition-opacity">{svc.description}</p>
+                        <p className="text-[10px] font-medium text-theme-muted leading-relaxed opacity-60 group-hover:opacity-100 transition-opacity">{svc.description}</p>
                       </div>
                       
                       <div className="relative group/input">
@@ -986,7 +986,7 @@ export default function UnidadeFixaDashboard() {
         <div className="fixed inset-0 z-[1000] flex items-center justify-center p-6 animate-in fade-in duration-500">
           <div className="absolute inset-0 bg-theme-bg/80 backdrop-blur-2xl" onClick={() => setQrModalEvent(null)} />
           
-          <div className="relative w-full max-w-lg bg-theme-bg border border-theme-border shadow-2xl animate-in zoom-in-95 duration-500">
+          <div className="relative w-full max-w-[95vw] sm:max-w-lg bg-theme-bg border border-theme-border shadow-2xl animate-in zoom-in-95 duration-500">
             <button 
               onClick={() => setQrModalEvent(null)}
               className="absolute top-6 right-6 text-theme-muted hover:text-theme-text transition-all"
@@ -994,7 +994,7 @@ export default function UnidadeFixaDashboard() {
               <X size={24} />
             </button>
             
-            <div className="p-10 space-y-10 text-center">
+            <div className="p-6 md:p-10 space-y-6 md:space-y-10 text-center">
               <div className="space-y-4">
                 <div className="w-16 h-16 bg-brand-tactical/10 text-brand-tactical flex items-center justify-center mx-auto border border-brand-tactical/20">
                   <QrCode size={32} />
@@ -1003,11 +1003,11 @@ export default function UnidadeFixaDashboard() {
                 <p className="text-[11px] font-bold text-theme-muted uppercase tracking-widest max-w-xs mx-auto">Imprima para acesso direto via balcão ou compartilhe o protocolo digital.</p>
               </div>
 
-              <div className="bg-white p-8 inline-block shadow-inner">
+              <div className="bg-white p-4 md:p-8 inline-block shadow-inner max-w-full overflow-hidden">
                 <QRCodeSVG 
                   id="qr-code-svg"
                   value={`${window.location.origin}/e/${qrModalEvent.slug}`}
-                  size={240}
+                  size={window.innerWidth < 400 ? 200 : 240}
                   level="H"
                   includeMargin={true}
                 />

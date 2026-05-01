@@ -16,11 +16,11 @@ interface AccessTypeModalProps {
 export default function AccessTypeModal({ orderId, eventTitle, isPrimaryClient, onConfirmed, onClose }: AccessTypeModalProps) {
   useTheme();
   const [selected, setSelected] = useState<"PUBLIC" | "PRIVATE" | null>(null);
+  const [saving, setSaving] = useState(false);
+  const [error, setError] = useState("");
 
   // SEGURANÇA: Se não for o cliente primário, não renderiza nada.
   if (isPrimaryClient === false) return null;
-  const [saving, setSaving] = useState(false);
-  const [error, setError] = useState("");
 
   const handleConfirm = async () => {
     if (!selected) return;
@@ -99,7 +99,7 @@ export default function AccessTypeModal({ orderId, eventTitle, isPrimaryClient, 
                 90 DIAS
               </span>
             </div>
-            <p className="text-[11px] text-theme-muted line-clamp-2 font-bold uppercase tracking-tight ml-7">
+            <p className="text-[11px] text-theme-muted font-bold uppercase tracking-tight ml-7">
               Álbum listado na vitrine. Download ilimitado por 3 meses.
             </p>
             {selected === "PUBLIC" && (
@@ -135,7 +135,7 @@ export default function AccessTypeModal({ orderId, eventTitle, isPrimaryClient, 
                 15 DIAS
               </span>
             </div>
-            <p className="text-[11px] text-theme-muted line-clamp-2 font-bold uppercase tracking-tight ml-7">
+            <p className="text-[11px] text-theme-muted font-bold uppercase tracking-tight ml-7">
                Restrito ao seu login. Arquivos excluídos após 15 dias.
             </p>
             {selected === "PRIVATE" && (
