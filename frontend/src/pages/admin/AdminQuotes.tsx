@@ -63,6 +63,15 @@ export const AdminQuotes: React.FC = () => {
   const [search, setSearch] = useState("");
   const [statusFilter, setStatusFilter] = useState<Quote["quoteStatus"] | "ALL">("ALL");
   const [selectedQuote, setSelectedQuote] = useState<Quote | null>(null);
+  const detailsRef = React.useRef<HTMLDivElement>(null);
+
+  // Scroll to details on mobile when a quote is selected
+  useEffect(() => {
+    if (selectedQuote && window.innerWidth < 1024) {
+      detailsRef.current?.scrollIntoView({ behavior: "smooth", block: "start" });
+    }
+  }, [selectedQuote]);
+
   const [activeTab, setActiveTab] = useState<"briefing" | "equipe" | "locacao" | "fechamento">("briefing");
   const [isNewQuoteModalOpen, setIsNewQuoteModalOpen] = useState(false);
   const [serviceCatalog, setServiceCatalog] = useState<{id: string, name: string}[]>([]);
@@ -353,7 +362,7 @@ export const AdminQuotes: React.FC = () => {
                 <div 
                   key={quote.id}
                   onClick={() => setSelectedQuote(quote)}
-                  className={`p-6 border transition-all relative overflow-hidden group rounded-sm ${selectedQuote?.id === quote.id ? 'border-theme-text bg-theme-bg-muted ring-1 ring-theme-text shadow-2xl' : 'border-theme-border bg-theme-bg-muted/40 hover:border-theme-text-muted hover:bg-theme-bg-muted/60'}`}
+                  className={`p-4 md:p-5 border transition-all relative overflow-hidden group rounded-sm ${selectedQuote?.id === quote.id ? 'border-theme-text bg-theme-bg-muted ring-1 ring-theme-text shadow-2xl' : 'border-theme-border bg-theme-bg-muted/40 hover:border-theme-text-muted hover:bg-theme-bg-muted/60'}`}
                   style={{ cursor: "pointer" }}
                 >
                   <div className={`absolute top-0 left-0 w-1 h-full ${quote.urgency === 'HIGH' ? 'bg-red-500' : 'bg-brand-tactical opacity-20'}`} />
@@ -361,17 +370,17 @@ export const AdminQuotes: React.FC = () => {
                   <div className="space-y-4">
                     <div className="flex items-center justify-between">
                       <div className="flex items-center gap-2">
-                         <span className={`text-[8px] font-black uppercase tracking-widest px-2.5 py-1.5 border ${status.border} ${status.bg} ${status.color} rounded-[2px]`}>
+                         <span className={`text-[8px] font-black uppercase tracking-widest px-2 py-1 border ${status.border} ${status.bg} ${status.color} rounded-[2px]`}>
                            {status.label}
                          </span>
                          {quote.urgency === 'HIGH' && (
-                           <div className="flex items-center gap-1.5 bg-red-500/10 px-2 py-1 border border-red-500/20 rounded-[2px] animate-pulse">
-                             <Flame size={8} className="text-red-500" />
-                             <span className="text-[7px] font-black text-red-500 uppercase tracking-widest">Urgente</span>
+                           <div className="flex items-center gap-1 bg-red-500/10 px-1.5 py-0.5 border border-red-500/20 rounded-[2px] animate-pulse">
+                             <Flame size={7} className="text-red-500" />
+                             <span className="text-[6px] md:text-[7px] font-black text-red-500 uppercase tracking-widest">Urgente</span>
                            </div>
                          )}
                       </div>
-                      <span className="text-[12px] text-theme-text font-black italic tracking-tighter">
+                      <span className="text-[11px] md:text-[12px] text-theme-text font-black italic tracking-tighter">
                          {quote.priceBase ? `R$ ${quote.priceBase.toLocaleString()}` : "S/ VALOR"}
                       </span>
                     </div>
@@ -385,16 +394,16 @@ export const AdminQuotes: React.FC = () => {
                       </span>
                     </div>
                     
-                    <div className="flex items-center justify-between pt-4 border-t border-theme-border/10">
-                      <div className="flex items-center gap-3 text-[9px] text-theme-text-muted font-bold uppercase truncate max-w-[60%]">
-                        <div className="w-5 h-5 rounded-full bg-theme-bg border border-theme-border flex items-center justify-center">
-                          <User size={10} className="text-brand-tactical" />
+                    <div className="flex items-center justify-between pt-3 border-t border-theme-border/10">
+                      <div className="flex items-center gap-2 text-[8px] md:text-[9px] text-theme-text-muted font-bold uppercase truncate max-w-[60%]">
+                        <div className="w-4 h-4 md:w-5 md:h-5 rounded-full bg-theme-bg border border-theme-border flex items-center justify-center">
+                          <User size={8} className="text-brand-tactical" />
                         </div>
                         {quote.clientName || "NOME NÃO INFORMADO"}
                       </div>
                       {quote.clientPhone && (
-                        <div className="flex items-center gap-2 text-[9px] text-brand-tactical font-black tracking-widest bg-brand-tactical/5 px-2 py-1 rounded-sm border border-brand-tactical/10">
-                          <Phone size={10} /> {quote.clientPhone}
+                        <div className="flex items-center gap-1.5 text-[8px] md:text-[9px] text-brand-tactical font-black tracking-widest bg-brand-tactical/5 px-1.5 py-0.5 rounded-sm border border-brand-tactical/10">
+                          <Phone size={8} /> {quote.clientPhone}
                         </div>
                       )}
                     </div>
@@ -414,13 +423,13 @@ export const AdminQuotes: React.FC = () => {
         </div>
 
         {/* Selected Details & Budgeting Studio */}
-        <div className="lg:col-span-7 lg:sticky lg:top-10 h-fit">
+        <div ref={detailsRef} className="lg:col-span-7 lg:sticky lg:top-10 h-fit">
           {selectedQuote ? (
-            <div className="bg-theme-bg-muted border border-theme-border p-6 md:p-10 space-y-8 animate-in slide-in-from-right-4 duration-500 shadow-2xl rounded-sm">
-               <div className="flex justify-between items-center border-b border-theme-border pb-6">
+            <div className="bg-theme-bg-muted border border-theme-border p-4 md:p-8 space-y-6 md:space-y-8 animate-in slide-in-from-right-4 duration-500 shadow-2xl rounded-sm">
+               <div className="flex justify-between items-center border-b border-theme-border pb-4 md:pb-6">
                  <div className="space-y-1">
-                    <h3 className="text-2xl font-heading font-black text-theme-text uppercase tracking-tight leading-none">{selectedQuote.nomeNoivos}</h3>
-                    <p className="text-[10px] text-theme-text-muted font-bold uppercase tracking-widest">Protocolo: {selectedQuote.id.toUpperCase()}</p>
+                    <h3 className="text-xl md:text-2xl font-heading font-black text-theme-text uppercase tracking-tight leading-none">{selectedQuote.nomeNoivos}</h3>
+                    <p className="text-[9px] md:text-[10px] text-theme-text-muted font-bold uppercase tracking-widest">Protocolo: {selectedQuote.id.toUpperCase()}</p>
                  </div>
                  <button onClick={() => setSelectedQuote(null)} className="text-theme-text-muted hover:text-red-500 transition-colors"><X size={20}/></button>
                </div>

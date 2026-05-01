@@ -218,7 +218,7 @@ export default function ClienteArea() {
         @media (max-width: 768px) { .mobile-stack { flex-direction:column !important; align-items:flex-start !important; } }
       `}</style>
 
-      <div className="max-w-5xl mx-auto px-6 lg:px-12 py-10 space-y-10 animate-in fade-in slide-in-from-bottom-4 duration-700">
+      <div className="max-w-[1400px] mx-auto px-2 md:px-6 py-6 md:py-10 space-y-8 md:space-y-12 animate-in fade-in slide-in-from-bottom-4 duration-700">
 
         {/* Expiring Alert Banner */}
         {(() => {
@@ -238,14 +238,14 @@ export default function ClienteArea() {
         })()}
 
         {/* Header */}
-        <div className="border-b border-theme-border/60 pb-10 space-y-3">
-          <h1 className="text-4xl md:text-5xl font-heading font-black text-theme-text uppercase tracking-tighter italic leading-none">
+        <div className="border-b border-theme-border/60 pb-6 md:pb-10 space-y-2 md:space-y-3">
+          <h1 className="text-3xl md:text-5xl font-heading font-black text-theme-text uppercase tracking-tighter italic leading-none">
             Minhas Memórias
           </h1>
           <div className="flex items-center gap-3">
-            <div className="h-1 w-10 bg-brand-tactical" />
-            <ShieldCheck size={13} className="text-brand-tactical" />
-            <p className="text-[10px] font-black text-brand-tactical uppercase tracking-widest italic">{user?.nome || "Área Exclusiva"}</p>
+            <div className="h-1 w-8 md:w-10 bg-brand-tactical" />
+            <ShieldCheck size={12} className="text-brand-tactical" />
+            <p className="text-[9px] md:text-[10px] font-black text-brand-tactical uppercase tracking-widest italic">{user?.nome || "Área Exclusiva"}</p>
           </div>
         </div>
 
@@ -253,16 +253,16 @@ export default function ClienteArea() {
         {!loading && pedidos.length > 0 && (
           <div className="grid grid-cols-3 gap-px bg-theme-border/20 border border-theme-border/20">
             {[
-              { label: "Total Adquiridos", value: pedidos.length, icon: <Image size={14} /> },
-              { label: "Acesso Ativo", value: aprovados.length, icon: <CheckCircle2 size={14} />, highlight: true },
-              { label: "Aguardando", value: pendentes.length, icon: <Clock size={14} /> },
+              { label: "Total Adquiridos", value: pedidos.length, icon: <Image size={12} /> },
+              { label: "Acesso Ativo", value: aprovados.length, icon: <CheckCircle2 size={12} />, highlight: true },
+              { label: "Aguardando", value: pendentes.length, icon: <Clock size={12} /> },
             ].map(m => (
-              <div key={m.label} className="bg-theme-bg-muted/40 p-6 space-y-3 group hover:bg-theme-bg-muted/60 transition-all">
+              <div key={m.label} className="bg-theme-bg-muted/40 p-4 md:p-6 space-y-2 md:space-y-3 group hover:bg-theme-bg-muted/60 transition-all">
                 <div className="flex items-center gap-2">
                   <div className={`p-1.5 ${m.highlight ? 'bg-brand-tactical text-brand-text' : 'bg-theme-border/40 text-theme-muted'}`}>{m.icon}</div>
-                  <p className="text-[9px] font-black text-theme-muted uppercase tracking-[0.2em]">{m.label}</p>
+                  <p className="text-[8px] md:text-[9px] font-black text-theme-muted uppercase tracking-[0.2em]">{m.label}</p>
                 </div>
-                <p className={`text-3xl font-heading font-black italic tracking-tighter ${m.highlight ? 'text-brand-tactical' : 'text-theme-text'}`}>{m.value}</p>
+                <p className={`text-2xl md:text-3xl font-heading font-black italic tracking-tighter ${m.highlight ? 'text-brand-tactical' : 'text-theme-text'}`}>{m.value}</p>
               </div>
             ))}
           </div>
@@ -449,12 +449,12 @@ function EventGroupRow({ group, now, onSelectPedido }: {
     <div
       className={`relative group border transition-all duration-500 overflow-hidden ${
         hasPendente ? 'border-amber-500/40 bg-amber-500/[0.02]' : 'border-theme-border/40 bg-theme-bg-muted/10'
-      } ${isExpiringSoon ? 'border-amber-500/40' : ''}`}
+       } ${isExpiringSoon ? 'border-amber-500/40' : ''}`}
       style={{
         boxShadow: isExpiringSoon ? "0 0 20px rgba(245, 158, 11, 0.05)" : "none"
       }}
     >
-      <div className="flex flex-col lg:flex-row items-stretch gap-8 p-8">
+      <div className="flex flex-col lg:flex-row items-stretch gap-4 md:gap-8 p-4 md:p-6 lg:p-8">
         {/* Thumbnail */}
         <div className="flex flex-col gap-3">
           <div className="relative w-full lg:w-48 aspect-square lg:aspect-[4/5] bg-theme-bg overflow-hidden border border-theme-border/20 shadow-inner">
@@ -495,11 +495,11 @@ function EventGroupRow({ group, now, onSelectPedido }: {
                    <div className="h-0.5 w-6 bg-brand-tactical" />
                    <p className="text-[9px] font-black text-brand-tactical uppercase tracking-[0.4em]">Álbum do Evento</p>
                 </div>
-                <h4 className="text-3xl md:text-4xl font-heading font-black italic tracking-tighter uppercase leading-none text-theme-text">
+                <h4 className="text-2xl md:text-3xl lg:text-4xl font-heading font-black italic tracking-tighter uppercase leading-none text-theme-text">
                   {event.nomeNoivos}
                 </h4>
-                <div className="flex items-center gap-3 text-[10px] font-bold text-theme-muted uppercase tracking-widest">
-                  <div className="flex items-center gap-1.5"><Clock size={12} /> {formatDate(event.dataEvento)}</div>
+                <div className="flex items-center gap-3 text-[9px] md:text-[10px] font-bold text-theme-muted uppercase tracking-widest">
+                  <div className="flex items-center gap-1.5"><Clock size={11} /> {formatDate(event.dataEvento)}</div>
                   <span className="w-1 h-1 rounded-full bg-theme-border" />
                   <span>{event.city || event.location}</span>
                 </div>

@@ -103,7 +103,7 @@ export function AgendaTab({
                 unitInvites.map((ui) => (
                   <div
                     key={ui.id}
-                    className="bg-theme-bg border border-brand-tactical/60 p-8 md:p-10 relative overflow-hidden mb-6"
+                    className="bg-theme-bg border border-brand-tactical/60 p-4 md:p-6 relative overflow-hidden mb-4"
                     style={{ background: "linear-gradient(145deg, rgba(133,185,172,0.08) 0%, rgba(10,10,10,1) 100%)" }}
                   >
                     <div className="flex flex-col lg:flex-row justify-between items-start lg:items-center gap-8 relative z-10">
@@ -135,13 +135,13 @@ export function AgendaTab({
                   key={ev.id}
                   className={`bg-theme-bg border ${
                     activeTab === "agenda" ? "cursor-pointer hover:border-brand-tactical/50" : ""
-                  } border-theme-border/60 p-6 md:p-8 flex flex-col md:flex-row gap-8 items-center relative overflow-hidden transition-all`}
+                  } border-theme-border/60 p-4 md:p-5 flex flex-col md:flex-row gap-4 md:gap-8 items-center relative overflow-hidden transition-all`}
                   onClick={() => activeTab === "agenda" && onSelectEvent(ev)}
                 >
                   <div className={`absolute left-0 top-0 h-full w-1 ${ev.captacaoStatus === "PENDING" ? "bg-amber-500" : "bg-brand-tactical"}`} />
-                  <div className="min-w-[100px] text-center md:text-left">
-                    <div className="text-[9px] font-black text-theme-muted uppercase italic mb-1">DATA</div>
-                    <div className="text-2xl font-heading font-black text-theme-text italic leading-none uppercase">
+                  <div className="min-w-[70px] text-center md:text-left">
+                    <div className="text-[8px] font-black text-theme-muted uppercase italic mb-0.5">DATA</div>
+                    <div className="text-xl font-heading font-black text-theme-text italic leading-none uppercase">
                       {new Date(ev.dataEvento).toLocaleDateString("pt-BR", { day: "2-digit", month: "short" }).replace(".", "")}
                     </div>
                   </div>

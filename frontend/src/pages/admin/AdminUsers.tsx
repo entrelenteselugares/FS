@@ -190,7 +190,7 @@ export const AdminUsers: React.FC = () => {
 
         <div className="space-y-3">
           {/* HEADER TABLE */}
-          <div className="hidden md:grid grid-cols-12 gap-4 px-8 py-4 text-[9px] font-black text-theme-muted uppercase tracking-[0.4em] border-b border-theme-border/30 bg-zinc-900/20">
+          <div className="hidden md:grid grid-cols-12 gap-4 px-4 py-2.5 text-[8px] md:text-[9px] font-black text-theme-muted uppercase tracking-[0.4em] border-b border-theme-border/30 bg-zinc-900/20">
             <div className="col-span-1">Status</div>
             <div className="col-span-5">Membro / Identidade</div>
             <div className="col-span-2">Nível de Acesso</div>
@@ -207,7 +207,7 @@ export const AdminUsers: React.FC = () => {
               const styles = getRoleStyle(u.role);
               return (
                 <div key={u.id} className="bg-theme-bg-muted border border-theme-border hover:border-brand-tactical/30 transition-all group shadow-sm">
-                  <div className="grid grid-cols-1 md:grid-cols-12 gap-4 items-center px-8 py-4">
+                  <div className="grid grid-cols-1 md:grid-cols-12 gap-3 md:gap-4 items-center px-4 md:px-5 py-2.5">
                     <div className="col-span-1 flex items-center justify-center md:justify-start">
                       <div className={`w-2.5 h-2.5 rounded-full ${u.active ? 'bg-brand-tactical shadow-[0_0_10px_rgba(133,185,172,0.4)]' : 'bg-red-500 shadow-[0_0_10px_rgba(239,68,68,0.4)]'} ${u.active ? 'animate-pulse' : ''}`} />
                     </div>
@@ -263,9 +263,9 @@ export const AdminUsers: React.FC = () => {
 
       {/* MEMBER MODAL */}
       {isModalOpen && (
-        <div className="fixed inset-0 z-[110] flex items-center justify-center p-6 bg-zinc-950/60 backdrop-blur-md animate-in fade-in duration-300">
+        <div className="fixed inset-0 z-[110] flex items-center justify-center p-4 md:p-6 bg-zinc-950/60 backdrop-blur-md animate-in fade-in duration-300">
            <div className="absolute inset-0" onClick={() => setIsModalOpen(false)} />
-           <div className="relative border border-theme-border w-full max-w-xl p-10 space-y-10 overflow-y-auto max-h-[90vh] shadow-2xl bg-theme-bg animate-in zoom-in-95 duration-500">
+           <div className="relative border border-theme-border w-full max-w-xl p-6 md:p-8 space-y-8 md:space-y-10 overflow-y-auto max-h-[90vh] shadow-2xl bg-theme-bg animate-in zoom-in-95 duration-500">
               <div className="flex justify-between items-start">
                  <div className="space-y-2">
                     <span className="text-[10px] font-black text-brand-tactical uppercase tracking-[0.5em]">Protocolo Operacional</span>

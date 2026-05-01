@@ -57,7 +57,7 @@ export const AdminOverview: React.FC<OverviewProps> = ({ stats, recentOrders, pe
         
         {/* Card 1: Receita */}
         <div style={{ 
-          background: T.bgField, border: `1px solid ${T.border}`, padding: "12px 16px", borderRadius: 0 
+          background: T.bgField, border: `1px solid ${T.border}`, padding: "8px 12px", borderRadius: 0 
         }}>
           <label style={{ 
             fontSize: 9, fontFamily: T.fontB, fontWeight: 700, 
@@ -66,7 +66,7 @@ export const AdminOverview: React.FC<OverviewProps> = ({ stats, recentOrders, pe
             Receita Bruta
           </label>
           <div style={{ 
-            fontSize: 22, fontFamily: T.fontD, fontWeight: 900, color: T.text, textTransform: "uppercase" 
+            fontSize: 20, fontFamily: T.fontD, fontWeight: 900, color: T.text, textTransform: "uppercase" 
           }}>
             R$ {Number(stats?.totalRevenue || 0).toLocaleString("pt-BR", { minimumFractionDigits: 2 })}
           </div>
@@ -74,7 +74,7 @@ export const AdminOverview: React.FC<OverviewProps> = ({ stats, recentOrders, pe
 
         {/* Card 2: Receita 30d */}
         <div style={{ 
-          background: T.bgField, border: `1px solid ${T.border}`, padding: "12px 16px", borderRadius: 0 
+          background: T.bgField, border: `1px solid ${T.border}`, padding: "8px 12px", borderRadius: 0 
         }}>
           <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start" }}>
             <label style={{ 
@@ -93,14 +93,14 @@ export const AdminOverview: React.FC<OverviewProps> = ({ stats, recentOrders, pe
             )}
           </div>
           <div style={{ 
-            fontSize: 22, fontFamily: T.fontD, fontWeight: 900, color: T.brand, textTransform: "uppercase" 
+            fontSize: 20, fontFamily: T.fontD, fontWeight: 900, color: T.brand, textTransform: "uppercase" 
           }}>
             R$ {Number(stats?.revenue30d || 0).toLocaleString("pt-BR", { minimumFractionDigits: 2 })}
           </div>
         </div>
 
         <div style={{ 
-          background: T.bgField, border: `1px solid ${T.border}`, padding: "12px 16px", borderRadius: 0 
+          background: T.bgField, border: `1px solid ${T.border}`, padding: "8px 12px", borderRadius: 0 
         }}>
           <label style={{ 
             fontSize: 9, fontFamily: T.fontB, fontWeight: 700, 
@@ -109,7 +109,7 @@ export const AdminOverview: React.FC<OverviewProps> = ({ stats, recentOrders, pe
             Pedidos Liquidados
           </label>
           <div style={{ 
-            fontSize: 22, fontFamily: T.fontD, fontWeight: 900, color: T.text, textTransform: "uppercase" 
+            fontSize: 20, fontFamily: T.fontD, fontWeight: 900, color: T.text, textTransform: "uppercase" 
           }}>
             {stats?.totalOrders || 0}
           </div>
@@ -185,7 +185,7 @@ export const AdminOverview: React.FC<OverviewProps> = ({ stats, recentOrders, pe
         {/* Charts */}
         <div style={{ 
           border: `1px solid ${T.border}`, 
-          padding: "16px", 
+          padding: "12px", 
           background: `${T.bgCard}88`,
           minHeight: 280
         }}>
@@ -217,7 +217,7 @@ export const AdminOverview: React.FC<OverviewProps> = ({ stats, recentOrders, pe
         {/* Alertas */}
         <div style={{ 
           border: `1px solid ${T.border}`, 
-          padding: "16px", 
+          padding: "12px", 
           background: `${T.bgCard}88`
         }}>
           <h3 style={{ 

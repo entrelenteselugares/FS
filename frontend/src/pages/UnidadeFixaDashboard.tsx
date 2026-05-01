@@ -309,7 +309,7 @@ export default function UnidadeFixaDashboard() {
       title="Painel de Unidade" 
       navItems={NAV_ITEMS(tab, setTab)}
     >
-      <div className="max-w-7xl mx-auto px-6 lg:px-12 py-10 space-y-12 animate-in fade-in slide-in-from-bottom-4 duration-700">
+      <div className="max-w-[1600px] mx-auto px-2 md:px-6 py-6 md:py-10 space-y-8 md:space-y-12 animate-in fade-in slide-in-from-bottom-4 duration-700">
 
         {/* Alertas Premium */}
         {(error || success) && (
@@ -356,14 +356,14 @@ export default function UnidadeFixaDashboard() {
               { label: "Conversões", value: String(stats.totalVendas ?? 0), icon: <Users2 size={14} /> },
               { label: "Crédito Previsto", value: formatCurrency(stats.repasseEstimado ?? 0), icon: <DollarSign size={14} />, highlight: true },
             ].map((m) => (
-              <div key={m.label} className="bg-theme-bg-muted/40 p-8 space-y-4 group hover:bg-theme-bg-muted/60 transition-all duration-500">
-                <div className="flex items-center gap-3">
-                  <div className={`p-2 rounded-none ${m.highlight ? 'bg-brand-tactical text-brand-text' : 'bg-theme-border/40 text-theme-muted'}`}>
+              <div key={m.label} className="bg-theme-bg-muted/40 p-4 md:p-6 space-y-2 md:space-y-4 group hover:bg-theme-bg-muted/60 transition-all duration-500">
+                <div className="flex items-center gap-2 md:gap-3">
+                  <div className={`p-1.5 md:p-2 rounded-none ${m.highlight ? 'bg-brand-tactical text-brand-text' : 'bg-theme-border/40 text-theme-muted'}`}>
                     {m.icon}
                   </div>
-                  <p className="text-[9px] font-black text-theme-muted uppercase tracking-[0.2em]">{m.label}</p>
+                  <p className="text-[8px] md:text-[9px] font-black text-theme-muted uppercase tracking-[0.2em]">{m.label}</p>
                 </div>
-                <p className={`text-2xl font-heading font-black italic tracking-tighter ${m.highlight ? 'text-brand-tactical' : 'text-theme-text'}`}>{m.value}</p>
+                <p className={`text-xl md:text-2xl font-heading font-black italic tracking-tighter ${m.highlight ? 'text-brand-tactical' : 'text-theme-text'}`}>{m.value}</p>
               </div>
             ))}
           </div>
@@ -443,23 +443,23 @@ export default function UnidadeFixaDashboard() {
                     <div key={ev.id} className="lux-card p-0 overflow-hidden group hover:border-brand-tactical/30 transition-all duration-700">
                       <div className="flex flex-col md:flex-row">
                         {/* Data Column */}
-                        <div className="md:w-32 bg-theme-bg-muted/40 p-6 flex flex-col items-center justify-center border-b md:border-b-0 md:border-r border-theme-border/60 group-hover:bg-brand-tactical/5 transition-colors">
-                           <span className="text-[9px] font-black text-brand-tactical uppercase tracking-tighter mb-1">{new Date(ev.date).toLocaleDateString('pt-BR', { month: 'long' })}</span>
-                           <span className="text-4xl font-heading font-black text-theme-text italic leading-none">{new Date(ev.date).getDate()}</span>
-                           <span className="text-[10px] font-bold text-theme-muted uppercase tracking-widest mt-2">{new Date(ev.date).getFullYear()}</span>
+                        <div className="md:w-24 bg-theme-bg-muted/40 p-4 md:p-6 flex flex-col items-center justify-center border-b md:border-b-0 md:border-r border-theme-border/60 group-hover:bg-brand-tactical/5 transition-colors">
+                           <span className="text-[8px] font-black text-brand-tactical uppercase tracking-tighter mb-0.5">{new Date(ev.date).toLocaleDateString('pt-BR', { month: 'long' })}</span>
+                           <span className="text-2xl md:text-3xl font-heading font-black text-theme-text italic leading-none">{new Date(ev.date).getDate()}</span>
+                           <span className="text-[9px] font-bold text-theme-muted uppercase tracking-widest mt-1">{new Date(ev.date).getFullYear()}</span>
                         </div>
 
                         {/* Content Column */}
-                        <div className="flex-1 p-8 space-y-6">
-                           <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-6">
-                              <div className="space-y-3">
+                        <div className="flex-1 p-4 md:p-6 space-y-4 md:space-y-6">
+                           <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-4 md:gap-6">
+                              <div className="space-y-2 md:space-y-3">
                                  <div className="flex items-center gap-3">
-                                    <div className="w-2 h-2 rounded-full bg-brand-tactical animate-pulse" />
-                                    <h3 className="text-2xl font-heading font-black text-theme-text uppercase italic tracking-tight group-hover:text-brand-tactical transition-colors">{ev.title}</h3>
+                                    <div className="w-1.5 h-1.5 rounded-full bg-brand-tactical animate-pulse" />
+                                    <h3 className="text-lg md:text-xl font-heading font-black text-theme-text uppercase italic tracking-tight group-hover:text-brand-tactical transition-colors">{ev.title}</h3>
                                  </div>
-                                 <div className="flex flex-wrap items-center gap-6">
-                                    <span className="flex items-center gap-2 text-[10px] font-black text-theme-muted uppercase tracking-widest"><MapPin size={12} className="text-brand-tactical" /> {ev.location}</span>
-                                    <span className="flex items-center gap-2 text-[10px] font-black text-theme-muted uppercase tracking-widest"><Calendar size={12} className="text-brand-tactical" /> {formatDateTime(ev.date)}</span>
+                                 <div className="flex flex-wrap items-center gap-4 md:gap-6">
+                                    <span className="flex items-center gap-2 text-[9px] font-black text-theme-muted uppercase tracking-widest"><MapPin size={10} className="text-brand-tactical" /> {ev.location}</span>
+                                    <span className="flex items-center gap-2 text-[9px] font-black text-theme-muted uppercase tracking-widest"><Calendar size={10} className="text-brand-tactical" /> {formatDateTime(ev.date)}</span>
                                  </div>
                               </div>
 
@@ -515,12 +515,12 @@ export default function UnidadeFixaDashboard() {
           <div className="space-y-10">
             <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
               {/* Consolidation Info */}
-              <div className="lg:col-span-2 lux-card p-10 border-l-4 border-l-brand-tactical bg-gradient-to-br from-brand-tactical/[0.03] to-transparent relative overflow-hidden">
-                <div className="absolute top-0 right-0 p-10 opacity-[0.03] pointer-events-none">
-                  <ShieldCheck size={120} />
+              <div className="lg:col-span-2 lux-card p-6 md:p-8 border-l-4 border-l-brand-tactical bg-gradient-to-br from-brand-tactical/[0.03] to-transparent relative overflow-hidden">
+                <div className="absolute top-0 right-0 p-8 opacity-[0.03] pointer-events-none">
+                  <ShieldCheck size={100} />
                 </div>
-                <div className="relative z-10 space-y-6">
-                  <h3 className="text-2xl font-heading font-black text-theme-text uppercase italic tracking-tight">Consolidação de Repasses</h3>
+                <div className="relative z-10 space-y-4 md:space-y-6">
+                  <h3 className="text-xl md:text-2xl font-heading font-black text-theme-text uppercase italic tracking-tight">Consolidação de Repasses</h3>
                   <p className="text-[11px] font-bold text-theme-muted uppercase tracking-[0.2em] leading-relaxed max-w-2xl">
                     O fechamento tático da unidade ocorre semanalmente. Créditos são liquidados em <span className="text-brand-tactical">D+7</span> após a consolidação da rede técnica. Todas as sextas-feiras, os saldos aprovados são transferidos para a conta estratégica designada.
                   </p>
@@ -538,7 +538,7 @@ export default function UnidadeFixaDashboard() {
               </div>
 
               {/* PIX Destination Widget */}
-              <div className="lux-card p-10 flex flex-col justify-between bg-theme-bg-muted/20 border-dashed border-theme-border/60">
+              <div className="lux-card p-6 md:p-8 flex flex-col justify-between bg-theme-bg-muted/20 border-dashed border-theme-border/60">
                  <div className="space-y-4">
                     <p className="text-[9px] font-black text-theme-muted uppercase tracking-[0.3em]">Destino da Liquidação</p>
                     <div className="flex items-center gap-4">

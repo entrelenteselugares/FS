@@ -239,7 +239,7 @@ export default function ProfissionalDashboard() {
       )}
 
       {/* ── Main Content ────────────────────────────────────────────────────── */}
-      <div className="max-w-7xl mx-auto px-6 lg:px-12 py-10 space-y-12 animate-in fade-in slide-in-from-bottom-4 duration-700">
+      <div className="max-w-[1600px] mx-auto px-2 md:px-6 py-6 md:py-10 space-y-8 md:space-y-12 animate-in fade-in slide-in-from-bottom-4 duration-700">
 
         {/* Page Header */}
         <DashboardHeader 

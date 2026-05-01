@@ -141,7 +141,7 @@ export const AdminOrders: React.FC = () => {
 
       {/* DASHBOARD DE PERFORMANCE */}
       <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-        <div className="bg-theme-bg-muted border border-theme-border p-6 space-y-4 relative overflow-hidden group hover:border-brand-tactical/50 transition-all">
+        <div className="bg-theme-bg-muted border border-theme-border p-4 md:p-5 space-y-3 group hover:border-brand-tactical/50 transition-all">
            <div className="flex justify-between items-start">
               <span className="text-[9px] font-black text-theme-muted uppercase tracking-[0.3em]">Volume Bruto (Liquidado)</span>
               <DollarSign className="text-brand-tactical opacity-30" size={16} />
@@ -160,12 +160,12 @@ export const AdminOrders: React.FC = () => {
            <div className="text-3xl font-heading font-black text-theme-text tracking-tighter italic">{formatCurrency(stats.ticketMedio)}</div>
         </div>
 
-        <div className="bg-theme-bg-muted border border-theme-border p-6 space-y-4 relative overflow-hidden group hover:border-brand-tactical/50 transition-all">
+        <div className="bg-theme-bg-muted border border-theme-border p-4 space-y-3 relative overflow-hidden group hover:border-brand-tactical/50 transition-all">
            <div className="flex justify-between items-start">
               <span className="text-[9px] font-black text-theme-muted uppercase tracking-[0.3em]">Projetos Pendentes</span>
               <Clock className="text-zinc-500 opacity-30" size={16} />
            </div>
-           <div className="text-3xl font-heading font-black text-theme-text tracking-tighter italic">{stats.pendingCount}</div>
+           <div className="text-2xl md:text-3xl font-heading font-black text-theme-text tracking-tighter italic">{stats.pendingCount}</div>
         </div>
       </div>
 
@@ -194,14 +194,13 @@ export const AdminOrders: React.FC = () => {
             <div key={group.eventId} className="animate-in fade-in duration-500">
                <div 
                  onClick={() => setExpandedId(expandedId === group.eventId ? null : group.eventId)}
-                 className={`flex flex-col md:flex-row md:items-center justify-between gap-6 p-6 border transition-all cursor-pointer relative overflow-hidden ${expandedId === group.eventId ? 'border-brand-tactical bg-brand-tactical/5 shadow-inner' : 'border-theme-border bg-theme-bg-muted hover:border-zinc-500'}`}
+                 className={`flex flex-col md:flex-row md:items-center justify-between gap-4 md:gap-6 p-4 md:p-5 border transition-all cursor-pointer relative overflow-hidden ${expandedId === group.eventId ? 'border-brand-tactical bg-brand-tactical/5 shadow-inner' : 'border-theme-border bg-theme-bg-muted hover:border-zinc-500'}`}
                >
                   <div className="flex items-center gap-6">
                      <div className={`p-3 border ${expandedId === group.eventId ? 'border-brand-tactical text-brand-tactical' : 'border-theme-border text-theme-muted'}`}>
                         {expandedId === group.eventId ? <ChevronDown size={16} /> : <ChevronRight size={16} />}
                      </div>
                      <div className="space-y-1">
-                        <h4 className="text-lg font-heading font-black text-theme-text uppercase tracking-tighter leading-none">{group.eventTitle}</h4>
                         <p className="text-[10px] text-theme-muted font-bold uppercase tracking-wider opacity-60 truncate max-w-[300px]">{group.clientName} · {group.clientEmail}</p>
                      </div>
                   </div>
@@ -209,7 +208,7 @@ export const AdminOrders: React.FC = () => {
                   <div className="flex items-center gap-12 ml-auto md:ml-0">
                      <div className="text-right hidden sm:block">
                         <span className="text-[8px] font-black text-theme-muted uppercase tracking-widest block opacity-50 mb-1">Total Bruto</span>
-                        <div className="text-lg font-heading font-black text-theme-text italic">{formatCurrency(group.totalAmount)}</div>
+                        <div className="text-md md:text-lg font-heading font-black text-theme-text italic">{formatCurrency(group.totalAmount)}</div>
                      </div>
                      
                      <div className="text-center min-w-[120px]">
@@ -234,7 +233,7 @@ export const AdminOrders: React.FC = () => {
 
                {/* LEDGER DE PARCELAS */}
                {expandedId === group.eventId && (
-                 <div className="bg-theme-bg-muted/30 border-x border-b border-theme-border/40 p-6 md:p-10 animate-in slide-in-from-top-4 duration-500 overflow-x-auto no-scrollbar">
+                 <div className="bg-theme-bg-muted/30 border-x border-b border-theme-border/40 p-4 md:p-6 lg:p-8 animate-in slide-in-from-top-4 duration-500 overflow-x-auto no-scrollbar">
                     <table className="w-full text-left border-collapse min-w-[600px]">
                        <thead>
                           <tr className="border-b border-theme-border/20">

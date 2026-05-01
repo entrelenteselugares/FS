@@ -369,7 +369,7 @@ export const AdminEvents: React.FC<AdminEventsProps> = ({ initialEditEventId }) 
         .event-card-mobile { display: none; }
         @media (max-width: 1024px) {
           .events-table { display: none; }
-          .event-card-mobile { display: flex; flex-direction: column; gap: 10px; padding: 12px; background: ${T.bgCard}; border: 1px solid ${T.border}; margin-bottom: 8px; }
+          .event-card-mobile { display: flex; flex-direction: column; gap: 8px; padding: 10px; background: ${T.bgCard}; border: 1px solid ${T.border}; margin-bottom: 6px; }
         }
       `}</style>
 
@@ -390,23 +390,23 @@ export const AdminEvents: React.FC<AdminEventsProps> = ({ initialEditEventId }) 
               <tr><td colSpan={6} className="py-20 text-center text-[10px] text-theme-muted uppercase tracking-[0.3em]">Nenhum registro encontrado.</td></tr>
             ) : events.map((event, idx) => (
               <tr key={event.id} className={`${idx % 2 === 0 ? 'bg-theme-bg-muted/50' : 'bg-transparent'} border-b border-theme-border/30`}>
-                <td className="p-4">
-                  <div className="text-[12px] font-black text-theme-text uppercase tracking-tight">{event.title}</div>
-                  <div className="text-[10px] text-theme-muted font-bold uppercase">{event.location}</div>
+                <td className="p-2 md:p-3">
+                  <div className="text-[11px] md:text-[12px] font-black text-theme-text uppercase tracking-tight">{event.title}</div>
+                  <div className="text-[9px] text-theme-muted font-bold uppercase">{event.location}</div>
                 </td>
-                <td className="p-4 text-[11px] font-bold text-theme-text/80">{new Date(event.date).toLocaleDateString("pt-BR")}</td>
-                <td className="p-4">
-                   <div className="flex gap-3">
-                      <div className={`w-2 h-2 rounded-full ${event.coverPhotoUrl ? 'bg-brand-tactical' : 'bg-zinc-800'}`} />
-                      <div className={`w-2 h-2 rounded-full ${(event.lightroomUrl || event.driveUrl) ? 'bg-brand-tactical' : 'bg-zinc-800'}`} />
+                <td className="p-2 md:p-3 text-[10px] md:text-[11px] font-bold text-theme-text/80">{new Date(event.date).toLocaleDateString("pt-BR")}</td>
+                <td className="p-2 md:p-3">
+                   <div className="flex gap-2 md:gap-3">
+                      <div className={`w-1.5 h-1.5 md:w-2 md:h-2 rounded-full ${event.coverPhotoUrl ? 'bg-brand-tactical' : 'bg-zinc-800'}`} />
+                      <div className={`w-1.5 h-1.5 md:w-2 md:h-2 rounded-full ${(event.lightroomUrl || event.driveUrl) ? 'bg-brand-tactical' : 'bg-zinc-800'}`} />
                    </div>
                 </td>
-                <td className="p-4 font-black text-brand-tactical">{event._count?.pedidos || 0}</td>
-                <td className="p-4">
-                   <div className="text-[9px] font-black uppercase text-theme-text">{event.captacao?.nome || "—"}</div>
-                   <div className="text-[8px] uppercase text-theme-muted">{event.edicao?.nome || "—"}</div>
+                <td className="p-2 md:p-3 font-black text-brand-tactical">{event._count?.pedidos || 0}</td>
+                <td className="p-2 md:p-3">
+                   <div className="text-[8px] md:text-[9px] font-black uppercase text-theme-text">{event.captacao?.nome || "—"}</div>
+                   <div className="text-[7px] md:text-[8px] uppercase text-theme-muted">{event.edicao?.nome || "—"}</div>
                 </td>
-                <td className="p-4 flex gap-2">
+                <td className="p-2 md:p-3 flex gap-1.5 md:gap-2">
                   <button onClick={() => { setQrModalEvent(event); setCopied(false); }} className="p-2 border border-theme-border text-theme-muted hover:text-white"><QrCode size={12} /></button>
                   <button onClick={() => handleEditOpen(event)} className="px-3 py-1.5 border border-theme-border text-[8px] font-black uppercase tracking-widest text-theme-text hover:bg-theme-border transition-all">Editar</button>
                   <button onClick={() => setConfirmDelete(event)} className="p-2 border border-theme-border text-red-500/40 hover:text-red-500 transition-all"><Trash2 size={12} /></button>
