@@ -3,8 +3,8 @@ import { PrismaClient } from "@prisma/client";
 const prisma = new PrismaClient();
 
 async function main() {
-  const count = await prisma.serviceCatalog.count();
-  console.log(`CATALOG COUNT: ${count}`);
+  const catalog = await prisma.serviceCatalog.findMany();
+  console.log("CATALOG:", JSON.stringify(catalog, null, 2));
 }
 
 main().finally(() => prisma.$disconnect());

@@ -315,8 +315,8 @@ export const QuotePage = () => {
 
   const availableServices = useMemo(() => {
     const raw = catalog.length > 0 
-      ? catalog 
-      : P.SERVICES.map(s => ({ id: s.id, name: s.label, basePrice: s.price }));
+      ? catalog.map(s => ({ ...s, basePrice: Number(s.basePrice) }))
+      : P.SERVICES.map(s => ({ id: s.id, name: s.label, basePrice: Number(s.price) }));
     
     if (locationType === "PARTNER" && currentPartner) {
       const disabled = currentPartner.disabledServices || [];
@@ -441,16 +441,17 @@ export const QuotePage = () => {
   };
 
   const getServicePrice = (id: string, defaultPrice: number) => {
+    const dPrice = Number(defaultPrice);
     const hourMultiplier = 1 + ((eventHours - 1) * 0.4);
     if (locationType === "PARTNER" && selectedPartnerId) {
       // Preço fixo do parceiro — sem multiplicador de horas (valor tabelado)
       const partnerPrice = resolvePartnerPrice(id, currentPartner?.prices || {});
-      return partnerPrice !== undefined ? partnerPrice : defaultPrice;
+      return partnerPrice !== undefined ? Number(partnerPrice) : dPrice;
     }
     if (locationType === "OTHER" && usageType === "PESSOAL") {
-      return Math.round(defaultPrice * hourMultiplier);
+      return Math.round(dPrice * hourMultiplier);
     }
-    return defaultPrice;
+    return dPrice;
   };
 
   const servicesPrice = availableServices.filter(s => selectedServices.includes(s.id)).reduce((acc, s) => {
