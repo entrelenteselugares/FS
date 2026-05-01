@@ -2,6 +2,24 @@
 
 Este documento registra as atualizações críticas realizadas para estabilização da plataforma e lançamento da versão "Midnight Luxury".
 
+## 💎 01/05/2026 — Overhaul de Legibilidade & Validação Profissional
+
+### 🖥️ UI/UX: Legibilidade "Midnight Luxury" v3.0
+- **Redimensionamento Global de Fontes**: Auditoria completa e correção de fontes pequenas. 
+    - Sidebar/Navegação: aumentado de **11px para 13px**.
+    - Etiquetas (Labels) de Cards/Financeiro: aumentado de **7px/8px para 10px**.
+    - Valores e Títulos: escalados para garantir hierarquia visual em alta densidade de dados.
+- **Dashboard Admin & Financeiro**: Refatoração das tabelas DRE e Payouts para melhor visualização em desktops e tablets.
+
+### 🛡️ Autenticidade & Segurança
+- **Validação de Experiência (First Job)**: Implementado sistema de prova social para profissionais. Agora é obrigatório enviar o link do primeiro trabalho (`firstJobUrl`) para validar os anos de experiência afirmados.
+- **Imutabilidade de Perfil**: Os campos de experiência (`yearsOfExperience`) tornam-se somente-leitura após o primeiro preenchimento, garantindo a integridade do banco de talentos da rede.
+- **Fix Tipagem AdminQuotes**: Resolvido erro de TypeScript no componente de orçamentos, garantindo que o filtro de profissionais (Mobile vs Tradicional) funcione com 100% de precisão técnica.
+
+### ⚙️ Estabilidade & Build
+- **Build de Produção Validado**: Frontend e Backend compilando sem erros de tipos ou linting.
+- **Deploy Automático**: Integração Vercel sincronizada com o repositório principal.
+
 ---
 
 ## 📖 30/04/2026 (noite) — Sprint: Eternize no Papel (Loja de Impressões)

@@ -288,7 +288,7 @@ export const DashboardLayout: React.FC<DashboardLayoutProps> = ({
     }}>
       {/* ── Desktop Sidebar ── */}
       <aside style={{
-        width:     180,
+        width:     240,
         flexShrink: 0,
         display:   "none",  // overridden by media via className below
       }} className="dashboard-sidebar">

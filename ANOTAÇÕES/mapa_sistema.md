@@ -1,5 +1,5 @@
 # MAPEAMENTO COMPLETO DE PÁGINAS — FOTO SEGUNDO
-**Versão:** v2.4 | **Última atualização:** 27/04/2026
+**Versão:** v3.0 | **Última atualização:** 01/05/2026
 
 ---
 
@@ -95,6 +95,8 @@
 - **Reset de senha** → usa Supabase Auth nativo (sem SMTP próprio)
 - **Redirecionamento de convite** → se profissional recusa, sistema passa para o próximo da fila
 - **Splits** → calculados pelo `PricingService.calculateSplits()` — nunca manualmente
+- **Validação de Experiência** → profissionais devem fornecer o link do primeiro trabalho (`firstJobUrl`). Campo imutável após preenchimento.
+- **Legibilidade (UI)** → padrão de fontes Midnight Luxury v3.0 (Mínimo 10px para labels, 13px para navegação).
 
 ---
 

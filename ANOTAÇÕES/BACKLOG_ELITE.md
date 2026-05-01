@@ -20,7 +20,7 @@ Este documento lista as funcionalidades planejadas para as próximas fases da ev
 ## 🤝 3. Rede de Empatia (Matchmaking)
 
 - [x] **Botão "Delegar para Rede"**: Interface básica integrada aos convites (v3.0.1).
-- [ ] **Algoritmo de Matchmaking**: Lógica de backend para disparar notificações para os 3 parceiros mais próximos/disponíveis.
+- [x] **Algoritmo de Matchmaking**: Lógica de backend para disparar notificações baseadas em preferência (Mobile/Tradicional) (v3.0.1).
 - [ ] **Chat de Negociação**: Canal direto entre profissionais para alinhar detalhes da delegação.
 
 ## 🤖 4. Automações de Fidelização
@@ -30,4 +30,4 @@ Este documento lista as funcionalidades planejadas para as próximas fases da ev
 
 ### 📅 Log de Atualização
 
-*Atualizado em: 29 de Abril de 2026*
+*Atualizado em: 01 de Maio de 2026*

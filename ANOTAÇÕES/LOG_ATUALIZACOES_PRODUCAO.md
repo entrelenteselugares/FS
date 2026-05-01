@@ -1,8 +1,22 @@
-# Log de Atualizações - Produção (30/04/2026)
+# Log de Atualizações - Produção (01/05/2026)
 
-Este documento resume as atualizações críticas, correções de segurança e novas funcionalidades implementadas hoje para a plataforma Foto Segundo.
+Este documento resume as atualizações críticas, correções de segurança e novas funcionalidades implementadas na plataforma Foto Segundo.
 
-## ✅ O Que Foi Corrigido e Melhorado
+## 💎 01/05/2026 — Overhaul de Legibilidade & Validação Profissional
+
+### 1. Sistema de Validação Profissional
+
+- **Prova de Experiência**: Novo fluxo que exige o "Link do Primeiro Trabalho" para comprovar os anos de atuação.
+- **Trava de Integridade**: Campos de experiência bloqueados após o primeiro envio para evitar fraudes em perfis técnicos.
+
+### 2. Overhaul de Legibilidade (UI v3.0)
+
+- **Correção de Fontes Críticas**: Substituição de fontes de 7px/8px por padrões de **10px a 13px**.
+- **Admin & Financeiro**: Refatoração completa de cards, tabelas e DRE para melhor leitura.
+
+---
+
+## ✅ Atualizações Anteriores (30/04/2026)
 
 ### 1. Eternize no Papel (Loja de Impressões)
 
