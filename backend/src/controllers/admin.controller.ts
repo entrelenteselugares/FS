@@ -289,7 +289,8 @@ export async function adminCreateEvent(req: AuthRequest, res: Response): Promise
     temFoto, temVideo, temReels, temFotoImpressa,
     eventHours,
     isCrowdfund, targetAmount,
-    type, pricePerPhoto, marketplaceConfigs
+    type, pricePerPhoto, marketplaceConfigs,
+    clientEmail, clientName
   } = req.body;
 
   if (!title || !date || !location) {
@@ -350,6 +351,8 @@ export async function adminCreateEvent(req: AuthRequest, res: Response): Promise
         type: type || "ALBUM_FULL",
         pricePerPhoto: pricePerPhoto ? Number(pricePerPhoto) : null,
         marketplaceConfigs: marketplaceConfigs || {},
+        clientEmail: clientEmail || null,
+        clientName: clientName || null,
       },
       include: {
         captacao: { select: { nome: true } },
@@ -420,6 +423,8 @@ export async function adminUpdateEvent(req: AuthRequest, res: Response): Promise
     if (req.body.type !== undefined) (data as Prisma.EventUpdateInput).type = req.body.type;
     if (req.body.pricePerPhoto !== undefined) (data as Prisma.EventUpdateInput).pricePerPhoto = Number(req.body.pricePerPhoto);
     if (req.body.marketplaceConfigs !== undefined) (data as Prisma.EventUpdateInput).marketplaceConfigs = req.body.marketplaceConfigs;
+    if (req.body.clientEmail !== undefined) data.clientEmail = req.body.clientEmail || null;
+    if (req.body.clientName !== undefined) data.clientName = req.body.clientName || null;
 
     const wasEmpty = !currentEvent.lightroomUrl && !currentEvent.driveUrl;
     const isAddingLinks = (data.lightroomUrl || data.driveUrl) && wasEmpty;

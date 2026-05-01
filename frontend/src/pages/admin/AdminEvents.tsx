@@ -34,6 +34,8 @@ interface Event {
   _count: { pedidos: number };
   collectedAmount?: number;
   targetAmount?: number;
+  clientName?: string | null;
+  clientEmail?: string | null;
 }
 
 interface AdminEventsProps {
@@ -101,6 +103,8 @@ export const AdminEvents: React.FC<AdminEventsProps> = ({ initialEditEventId }) 
     priceUnit: number;
     type: 'ALBUM_FULL' | 'PHOTO_MARKETPLACE';
     pricePerPhoto: number;
+    clientName: string;
+    clientEmail: string;
   }
 
   const [formData, setFormData] = useState<EventFormData>({
@@ -120,6 +124,8 @@ export const AdminEvents: React.FC<AdminEventsProps> = ({ initialEditEventId }) 
     priceUnit: 10,
     type: 'ALBUM_FULL',
     pricePerPhoto: 15,
+    clientName: "",
+    clientEmail: "",
   });
 
   const [previewPreviews, setPreviewPreviews] = useState<string[]>(["", "", ""]);
@@ -199,6 +205,8 @@ export const AdminEvents: React.FC<AdminEventsProps> = ({ initialEditEventId }) 
         priceUnit: 10,
         type: 'ALBUM_FULL',
         pricePerPhoto: 15,
+        clientName: "",
+        clientEmail: "",
       });
       setCoverPreview(null);
       setPreviewPreviews(["", "", ""]);
@@ -259,7 +267,9 @@ export const AdminEvents: React.FC<AdminEventsProps> = ({ initialEditEventId }) 
         isUnitSale: data.isUnitSale || false,
         priceUnit: Number(data.priceUnit || 10),
         type: data.type || 'ALBUM_FULL',
-        pricePerPhoto: Number(data.pricePerPhoto || 15)
+        pricePerPhoto: Number(data.pricePerPhoto || 15),
+        clientName: data.clientName || "",
+        clientEmail: data.clientEmail || ""
       });
       setCoverPreview(data.coverPhotoUrl);
       try {
@@ -504,6 +514,17 @@ export const AdminEvents: React.FC<AdminEventsProps> = ({ initialEditEventId }) 
                           <div className="space-y-3">
                             <label className="text-[9px] font-black text-theme-muted uppercase tracking-[0.4em]">Identificador URL (Slug)</label>
                             <input type="text" className="w-full bg-theme-bg border border-theme-border p-4 text-[12px] text-theme-muted focus:border-brand-tactical outline-none font-black" value={formData.slug} onChange={e => setFormData({ ...formData, slug: e.target.value.toLowerCase().replace(/\s+/g, "-") })} placeholder="ex: taynan-e-felipe" />
+                          </div>
+
+                          <div className="grid grid-cols-2 gap-6 p-6 bg-brand-tactical/5 border border-brand-tactical/10">
+                            <div className="space-y-3">
+                              <label className="text-[9px] font-black text-brand-tactical uppercase tracking-[0.4em]">Nome do Cliente</label>
+                              <input type="text" className="w-full bg-theme-bg border border-theme-border p-4 text-[12px] text-theme-text focus:border-brand-tactical outline-none font-black" value={formData.clientName} onChange={e => setFormData({ ...formData, clientName: e.target.value })} placeholder="NOME DO NOIVO/CLIENTE" />
+                            </div>
+                            <div className="space-y-3">
+                              <label className="text-[9px] font-black text-brand-tactical uppercase tracking-[0.4em]">E-mail de Acesso</label>
+                              <input type="email" className="w-full bg-theme-bg border border-theme-border p-4 text-[12px] text-theme-text focus:border-brand-tactical outline-none font-black" value={formData.clientEmail} onChange={e => setFormData({ ...formData, clientEmail: e.target.value })} placeholder="ex: provisorio@gmail.com" />
+                            </div>
                           </div>
                           <div className="grid grid-cols-2 gap-6">
                             <div className="space-y-3">
