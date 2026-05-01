@@ -133,7 +133,7 @@ export default function ProfissionalDashboard() {
 
   const handleRespondUnit = async (inviteId: string, status: "ACCEPTED" | "REJECTED") => {
     try {
-      await API.patch(`profissional/unidades/convites/${inviteId}`, { status });
+      await API.patch(`profissional/unidades/convites/${inviteId}/respond`, { status });
       fetchUnitInvites();
       fetchProfile();
     } catch (err) {

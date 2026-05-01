@@ -103,8 +103,7 @@ export function AgendaTab({
                 unitInvites.map((ui) => (
                   <div
                     key={ui.id}
-                    className="bg-theme-bg border border-brand-tactical/60 p-4 md:p-6 relative overflow-hidden mb-4"
-                    style={{ background: "linear-gradient(145deg, rgba(133,185,172,0.08) 0%, rgba(10,10,10,1) 100%)" }}
+                    className="bg-theme-bg-muted/40 border border-brand-tactical/60 p-4 md:p-6 relative overflow-hidden mb-4"
                   >
                     <div className="flex flex-col lg:flex-row justify-between items-start lg:items-center gap-8 relative z-10">
                       <div className="space-y-4">
