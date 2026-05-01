@@ -72,12 +72,12 @@ export const AdminQuotes: React.FC = () => {
     }
   }, [selectedQuote]);
 
-  const [activeTab, setActiveTab] = useState<"briefing" | "equipe" | "locacao" | "fechamento">("briefing");
+  const [activeTab, setActiveTab] = useState<"briefing" | "equipe" | "locacao" | "custos" | "fechamento">("briefing");
   const [isNewQuoteModalOpen, setIsNewQuoteModalOpen] = useState(false);
   const [serviceCatalog, setServiceCatalog] = useState<{id: string, name: string}[]>([]);
 
   // Pricing States
-  const [selectedStaff, setSelectedStaff] = useState<{id: string, label: string, cost: number, userId?: string}[]>([]);
+  const [selectedStaff, setSelectedStaff] = useState<{instanceId: string, id: string, label: string, cost: number, userId?: string}[]>([]);
   const [selectedEquip, setSelectedEquip] = useState<{id: string, qty: number}[]>([]);
   const [transportCost, setTransportCost] = useState<number>(0);
   const [lodgingCost, setLodgingCost] = useState<number>(0);
@@ -87,7 +87,7 @@ export const AdminQuotes: React.FC = () => {
   const [notification, setNotification] = useState<{message: string, type: 'success' | 'error'} | null>(null);
   const [finalPrice, setFinalPrice] = useState<number>(0);
 
-  const [professionals, setProfessionals] = useState<{id: string, nome: string}[]>([]);
+  const [professionals, setProfessionals] = useState<{id: string, nome: string, profissional?: { workflowType: string }}[]>([]);
 
   // Advanced New Quote Form State
   const [newQuoteData, setNewQuoteData] = useState({
@@ -184,6 +184,7 @@ export const AdminQuotes: React.FC = () => {
       if (data) {
         const breakdown = data as BudgetBreakdown;
         if (breakdown.STAFF) setSelectedStaff(breakdown.STAFF.map((s) => ({
+          instanceId: Math.random().toString(36).substr(2, 9),
           id: s.ID || s.id || "", 
           label: s.LABEL || s.label || "", 
           cost: Number(s.COST || s.cost || 0), 
@@ -276,18 +277,31 @@ export const AdminQuotes: React.FC = () => {
     }
   };
 
-  const toggleStaffPreset = (roleId: string) => {
-    const exists = selectedStaff.find(s => s.id === roleId);
-    if (exists) {
-      setSelectedStaff(selectedStaff.filter(s => s.id !== roleId));
-    } else {
-      const role = STAFF_ROLES.find(r => r.id === roleId);
-      setSelectedStaff([...selectedStaff, { id: roleId, label: role?.name || "", cost: role?.avgCost || 0, userId: "" }]);
-    }
+  const addStaffPreset = (roleId: string) => {
+    const role = STAFF_ROLES.find(r => r.id === roleId) || { id: "custom", name: "OUTROS", avgCost: 0 };
+    const existingCount = selectedStaff.filter(s => s.id === roleId).length;
+    
+    let baseName = role.name.toUpperCase();
+    if (roleId === "photographer") baseName = "FOTÓGRAFO";
+    if (roleId === "videographer") baseName = "CINEGRAFISTA";
+    
+    const label = roleId === "custom" ? "NOVA FUNÇÃO" : `${existingCount + 1}º ${baseName}`;
+
+    setSelectedStaff([...selectedStaff, { 
+      instanceId: Math.random().toString(36).substr(2, 9),
+      id: roleId, 
+      label, 
+      cost: role.avgCost || 0, 
+      userId: "" 
+    }]);
   };
 
-  const updateStaffUser = (roleId: string, userId: string) => {
-    setSelectedStaff(selectedStaff.map(s => s.id === roleId ? { ...s, userId } : s));
+  const removeStaffInstance = (instanceId: string) => {
+    setSelectedStaff(selectedStaff.filter(s => s.instanceId !== instanceId));
+  };
+
+  const updateStaffUser = (instanceId: string, userId: string) => {
+    setSelectedStaff(selectedStaff.map(s => s.instanceId === instanceId ? { ...s, userId } : s));
   };
 
   const addEquip = (id: string) => {
@@ -304,18 +318,18 @@ export const AdminQuotes: React.FC = () => {
       <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-6 border-b border-theme-border pb-10">
         <div>
           <h2 className="text-3xl md:text-4xl font-heading text-theme-text uppercase font-black leading-none pt-2 tracking-tight">Gestão de Orçamentos</h2>
-          <p className="text-[10px] text-theme-text-muted uppercase tracking-[0.4em] mt-3 font-bold">Controle Administrativo de Propostas</p>
+          <p className="text-[12px] text-theme-text-muted uppercase tracking-[0.4em] mt-3 font-bold">Controle Administrativo de Propostas</p>
         </div>
         
-        <div className="flex flex-col md:flex-row items-center gap-6 w-full lg:w-auto">
-          <div className="flex flex-col gap-2 w-full md:w-auto">
-            <label className="text-[8px] font-black text-theme-text-muted uppercase tracking-widest ml-1">Filtro de Status</label>
-            <div className="flex items-center gap-1 bg-theme-bg-muted p-1 border border-theme-border rounded-sm">
+        <div className="flex flex-col md:flex-row items-center gap-8 w-full lg:w-auto">
+          <div className="flex flex-col gap-2.5 w-full md:w-auto">
+            <label className="text-[10px] font-black text-theme-text-muted uppercase tracking-widest ml-1">Filtro de Status</label>
+            <div className="flex items-center gap-1.5 bg-theme-bg-muted p-1.5 border border-theme-border rounded-sm">
               {(['ALL', 'PENDING', 'PRICED', 'APROVADO', 'REJECTED'] as const).map((s) => (
                 <button
                   key={s}
                   onClick={() => setStatusFilter(s)}
-                  className={`px-3 py-1.5 text-[8px] font-black uppercase tracking-widest transition-all rounded-sm ${statusFilter === s ? 'bg-theme-text text-theme-bg shadow-lg' : 'text-theme-text-muted hover:text-theme-text'}`}
+                  className={`px-4 py-2 text-[10px] font-black uppercase tracking-widest transition-all rounded-sm ${statusFilter === s ? 'bg-theme-text text-theme-bg shadow-lg' : 'text-theme-text-muted hover:text-white'}`}
                 >
                   {s === 'ALL' ? 'Todos' : s === 'APROVADO' ? 'Aprov.' : s}
                 </button>
@@ -323,16 +337,16 @@ export const AdminQuotes: React.FC = () => {
             </div>
           </div>
 
-          <div className="flex flex-col gap-2 w-full md:w-auto">
-            <label className="text-[8px] font-black text-theme-text-muted uppercase tracking-widest ml-1">Busca Rápida</label>
+          <div className="flex flex-col gap-2.5 w-full md:w-auto">
+            <label className="text-[10px] font-black text-theme-text-muted uppercase tracking-widest ml-1">Busca Rápida</label>
             <div className="relative group">
-              <Search className="absolute left-4 top-1/2 -translate-y-1/2 text-theme-text-muted" size={14} />
+              <Search className="absolute left-4 top-1/2 -translate-y-1/2 text-theme-text-muted" size={16} />
               <input
                 type="text"
                 placeholder="CLIENTE, ID..."
                 value={search}
                 onChange={(e) => setSearch(e.target.value)}
-                className="w-full md:w-64 bg-theme-bg-muted border border-theme-border p-3.5 pl-10 text-[10px] text-theme-text uppercase tracking-widest outline-none focus:border-brand-tactical transition-all font-bold rounded-sm"
+                className="w-full md:w-72 bg-theme-bg-muted border border-theme-border p-4 pl-12 text-[11px] text-theme-text uppercase tracking-widest outline-none focus:border-brand-tactical transition-all font-bold rounded-sm shadow-sm"
               />
             </div>
           </div>
@@ -340,9 +354,9 @@ export const AdminQuotes: React.FC = () => {
           <div className="flex flex-col gap-2 w-full md:w-auto self-end">
             <button 
               onClick={() => setIsNewQuoteModalOpen(true)}
-              className="bg-brand-tactical text-brand-text font-black uppercase tracking-[0.3em] px-8 py-4 text-[10px] flex items-center justify-center gap-2 hover:brightness-110 shadow-lg transition-all active:scale-95 rounded-sm"
+              className="bg-brand-tactical text-brand-text font-black uppercase tracking-[0.3em] px-10 py-4.5 text-[11px] flex items-center justify-center gap-2 hover:brightness-110 shadow-xl transition-all active:scale-95 rounded-sm"
             >
-              <Plus size={16} /> NOVO ORÇAMENTO
+              <Plus size={18} /> NOVO ORÇAMENTO
             </button>
           </div>
         </div>
@@ -370,40 +384,40 @@ export const AdminQuotes: React.FC = () => {
                   <div className="space-y-4">
                     <div className="flex items-center justify-between">
                       <div className="flex items-center gap-2">
-                         <span className={`text-[8px] font-black uppercase tracking-widest px-2 py-1 border ${status.border} ${status.bg} ${status.color} rounded-[2px]`}>
+                         <span className={`text-[10px] font-black uppercase tracking-widest px-3 py-1.5 border ${status.border} ${status.bg} ${status.color} rounded-[2px]`}>
                            {status.label}
                          </span>
                          {quote.urgency === 'HIGH' && (
-                           <div className="flex items-center gap-1 bg-red-500/10 px-1.5 py-0.5 border border-red-500/20 rounded-[2px] animate-pulse">
-                             <Flame size={7} className="text-red-500" />
-                             <span className="text-[6px] md:text-[7px] font-black text-red-500 uppercase tracking-widest">Urgente</span>
+                           <div className="flex items-center gap-1.5 bg-red-500/10 px-2 py-1 border border-red-500/20 rounded-[2px] animate-pulse">
+                             <Flame size={10} className="text-red-500" />
+                             <span className="text-[9px] font-black text-red-500 uppercase tracking-widest">Urgente</span>
                            </div>
                          )}
                       </div>
-                      <span className="text-[11px] md:text-[12px] text-theme-text font-black italic tracking-tighter">
+                      <span className="text-[14px] md:text-[16px] text-theme-text font-black italic tracking-tighter">
                          {quote.priceBase ? `R$ ${quote.priceBase.toLocaleString()}` : "S/ VALOR"}
                       </span>
                     </div>
                     
                     <div className="flex items-center justify-between gap-4">
-                      <h3 className="text-xl font-heading font-black text-theme-text uppercase tracking-tight group-hover:text-brand-tactical transition-colors">
+                      <h3 className="text-2xl font-heading font-black text-theme-text uppercase tracking-tight group-hover:text-brand-tactical transition-colors">
                         {quote.nomeNoivos}
                       </h3>
-                      <span className="text-[9px] font-black text-theme-text-muted uppercase tracking-[0.2em] bg-theme-bg/60 px-3 py-1.5 border border-theme-border/40 italic">
+                      <span className="text-[10px] font-black text-theme-text-muted uppercase tracking-[0.2em] bg-theme-bg/60 px-4 py-2 border border-theme-border/40 italic rounded-sm">
                         ID: {quote.id.slice(-6).toUpperCase()}
                       </span>
                     </div>
                     
-                    <div className="flex items-center justify-between pt-3 border-t border-theme-border/10">
-                      <div className="flex items-center gap-2 text-[8px] md:text-[9px] text-theme-text-muted font-bold uppercase truncate max-w-[60%]">
-                        <div className="w-4 h-4 md:w-5 md:h-5 rounded-full bg-theme-bg border border-theme-border flex items-center justify-center">
-                          <User size={8} className="text-brand-tactical" />
+                    <div className="flex items-center justify-between pt-4 border-t border-theme-border/10">
+                      <div className="flex items-center gap-2.5 text-[11px] md:text-[12px] text-theme-text-muted font-bold uppercase truncate max-w-[65%]">
+                        <div className="w-5 h-5 md:w-6 md:h-6 rounded-full bg-theme-bg border border-theme-border flex items-center justify-center">
+                          <User size={10} className="text-brand-tactical" />
                         </div>
                         {quote.clientName || "NOME NÃO INFORMADO"}
                       </div>
                       {quote.clientPhone && (
-                        <div className="flex items-center gap-1.5 text-[8px] md:text-[9px] text-brand-tactical font-black tracking-widest bg-brand-tactical/5 px-1.5 py-0.5 rounded-sm border border-brand-tactical/10">
-                          <Phone size={8} /> {quote.clientPhone}
+                        <div className="flex items-center gap-2 text-[10px] md:text-[11px] text-brand-tactical font-black tracking-widest bg-brand-tactical/5 px-2 py-1 rounded-sm border border-brand-tactical/10">
+                          <Phone size={10} /> {quote.clientPhone}
                         </div>
                       )}
                     </div>
@@ -435,13 +449,13 @@ export const AdminQuotes: React.FC = () => {
                </div>
 
                <div className="flex gap-4 border-b border-theme-border pb-4 overflow-x-auto no-scrollbar scroll-smooth">
-                 {(['briefing', 'equipe', 'locacao', 'fechamento'] as const).map(t => (
+                 {(['briefing', 'equipe', 'locacao', 'custos', 'fechamento'] as const).map(t => (
                    <button
                     key={t}
                     onClick={() => setActiveTab(t)}
                     className={`pb-2 text-[9px] font-black uppercase tracking-[0.2em] transition-all relative whitespace-nowrap px-4 ${activeTab === t ? 'text-brand-tactical' : 'text-theme-text-muted hover:text-theme-text'}`}
                    >
-                     {t === 'briefing' ? '1. Briefing' : t === 'equipe' ? '2. Equipe' : t === 'locacao' ? '3. Custos' : '4. Fechamento'}
+                     {t === 'briefing' ? '1. Briefing' : t === 'equipe' ? '2. Equipe' : t === 'locacao' ? '3. Locação' : t === 'custos' ? '4. Custos' : '5. Fechamento'}
                      {activeTab === t && <div className="absolute bottom-0 left-0 right-0 h-0.5 bg-brand-tactical" />}
                    </button>
                  ))}
@@ -450,17 +464,16 @@ export const AdminQuotes: React.FC = () => {
                <div className="min-h-[450px]">
                   {activeTab === 'briefing' && (
                     <div className="space-y-8 animate-in fade-in duration-300">
-                      <div className="grid grid-cols-2 md:grid-cols-4 gap-6 bg-theme-bg/5 p-6 border border-theme-border/20 rounded-sm">
-                         <div className="space-y-1"><span className="text-[8px] font-bold text-theme-text-muted uppercase tracking-widest">Data</span><p className="text-[12px] font-black text-theme-text uppercase">{new Date(selectedQuote.dataEvento).toLocaleDateString("pt-BR")}</p></div>
-                         <div className="space-y-1"><span className="text-[8px] font-bold text-theme-text-muted uppercase tracking-widest">Base Cliente</span><p className="text-[12px] font-black text-brand-tactical uppercase">R$ {selectedQuote.priceBase?.toLocaleString() || "---"}</p></div>
-                         <div className="space-y-1"><span className="text-[8px] font-bold text-theme-text-muted uppercase tracking-widest">Local</span><p className="text-[12px] font-black text-theme-text uppercase truncate">{selectedQuote.location || "N/A"}</p></div>
-                         <div className="space-y-1"><span className="text-[8px] font-bold text-theme-text-muted uppercase tracking-widest">Email</span><p className="text-[12px] font-black text-theme-text lowercase truncate">{selectedQuote.clientEmail}</p></div>
+                      <div className="grid grid-cols-2 md:grid-cols-4 gap-8 bg-theme-bg/5 p-8 border border-theme-border/20 rounded-sm">
+                         <div className="space-y-1.5"><span className="text-[10px] font-bold text-theme-text-muted uppercase tracking-widest">Data</span><p className="text-[14px] font-black text-theme-text uppercase tracking-tighter">{new Date(selectedQuote.dataEvento).toLocaleDateString("pt-BR")}</p></div>
+                         <div className="space-y-1.5"><span className="text-[10px] font-bold text-theme-text-muted uppercase tracking-widest">Base Cliente</span><p className="text-[14px] font-black text-brand-tactical uppercase tracking-tighter">R$ {selectedQuote.priceBase?.toLocaleString() || "---"}</p></div>
+                         <div className="space-y-1.5"><span className="text-[10px] font-bold text-theme-text-muted uppercase tracking-widest">Local</span><p className="text-[14px] font-black text-theme-text uppercase truncate tracking-tighter">{selectedQuote.location || "N/A"}</p></div>
+                         <div className="space-y-1.5"><span className="text-[10px] font-bold text-theme-text-muted uppercase tracking-widest">Email</span><p className="text-[14px] font-black text-theme-text lowercase truncate tracking-tighter">{selectedQuote.clientEmail}</p></div>
                       </div>
                       
                       <div className="space-y-4">
-                        <h4 className="text-[10px] font-black text-theme-text uppercase tracking-widest border-l-2 border-brand-tactical pl-3">Serviços Solicitados</h4>
+                        <h4 className="text-[11px] font-black text-theme-text uppercase tracking-widest border-l-2 border-brand-tactical pl-3">Serviços Solicitados</h4>
                         <div className="flex flex-wrap gap-2">
-                          {selectedQuote.temFoto && <span className="bg-brand-tactical/5 text-brand-tactical text-[9px] font-bold px-3 py-1.5 border border-brand-tactical/20 uppercase tracking-widest flex items-center gap-2"><Camera size={10}/> FOTOGRAFIA</span>}
                           {selectedQuote.temVideo && <span className="bg-brand-tactical/5 text-brand-tactical text-[9px] font-bold px-3 py-1.5 border border-brand-tactical/20 uppercase tracking-widest flex items-center gap-2"><Video size={10}/> VÍDEO</span>}
                           {selectedQuote.temReels && <span className="bg-brand-tactical/5 text-brand-tactical text-[9px] font-bold px-3 py-1.5 border border-brand-tactical/20 uppercase tracking-widest flex items-center gap-2"><Smartphone size={10}/> REELS</span>}
                         </div>
@@ -510,17 +523,25 @@ export const AdminQuotes: React.FC = () => {
                     <div className="space-y-8 animate-in fade-in duration-300">
                       <div className="grid grid-cols-2 md:grid-cols-3 gap-3">
                         {STAFF_ROLES.map(role => {
-                           const isSelected = !!selectedStaff.find(s => s.id === role.id);
+                           const instances = selectedStaff.filter(s => s.id === role.id).length;
                            return (
                             <button 
                               key={role.id} 
-                              onClick={() => toggleStaffPreset(role.id)} 
-                              className={`px-4 py-3 text-[10px] font-black uppercase tracking-widest border transition-all rounded-sm ${isSelected ? 'border-brand-tactical bg-brand-tactical text-brand-text' : 'border-theme-border bg-theme-bg text-theme-text-muted hover:border-brand-tactical/50'}`}
+                              onClick={() => addStaffPreset(role.id)} 
+                              className={`px-4 py-3 text-[10px] font-black uppercase tracking-widest border transition-all rounded-sm flex items-center justify-center gap-2 ${instances > 0 ? 'border-brand-tactical bg-brand-tactical/10 text-brand-tactical' : 'border-theme-border bg-theme-bg text-theme-text-muted hover:border-brand-tactical/50'}`}
                             >
                               {role.name}
+                              {instances > 0 && <span className="bg-brand-tactical text-brand-text px-1.5 py-0.5 rounded-full text-[8px]">{instances}</span>}
+                              <Plus size={12} className={instances > 0 ? "opacity-100" : "opacity-30"} />
                             </button>
                            );
                         })}
+                        <button 
+                          onClick={() => addStaffPreset("custom")} 
+                          className="px-4 py-3 text-[10px] font-black uppercase tracking-widest border border-dashed border-theme-border bg-theme-bg/40 text-theme-text-muted hover:border-brand-tactical hover:text-brand-tactical transition-all rounded-sm flex items-center justify-center gap-2"
+                        >
+                          OUTROS <Plus size={12} />
+                        </button>
                       </div>
 
                       <div className="space-y-4 pt-6 border-t border-theme-border/20">
@@ -528,39 +549,64 @@ export const AdminQuotes: React.FC = () => {
                          {selectedStaff.length > 0 ? (
                            <div className="space-y-3">
                              {selectedStaff.map(s => (
-                               <div key={s.id} className="grid grid-cols-1 md:grid-cols-12 items-center gap-4 bg-theme-bg p-4 border border-theme-border group hover:border-brand-tactical/30 transition-all rounded-sm">
-                                  <div className="md:col-span-4">
-                                     <span className="text-[11px] font-black uppercase tracking-tight block text-theme-text">{s.label}</span>
-                                     <span className="text-[9px] font-bold text-brand-tactical">Base: R$ {s.cost}</span>
-                                  </div>
-                                  
-                                  <div className="md:col-span-5 relative">
-                                     <User className="absolute left-3 top-1/2 -translate-y-1/2 text-theme-text-muted opacity-30" size={12} />
-                                     <select 
-                                       value={s.userId || ""} 
-                                       onChange={(e) => updateStaffUser(s.id, e.target.value)}
-                                       className="w-full bg-theme-bg-muted border border-theme-border p-2.5 pl-10 text-[10px] font-bold text-theme-text outline-none focus:border-brand-tactical appearance-none uppercase tracking-widest rounded-sm"
-                                     >
-                                        <option value="">PROFISSIONAL...</option>
-                                        {professionals.map(p => (
-                                          <option key={p.id} value={p.id}>{p.nome}</option>
-                                        ))}
-                                     </select>
-                                  </div>
+                                <div key={s.instanceId} className="grid grid-cols-1 md:grid-cols-12 items-center gap-4 bg-theme-bg p-4 border border-theme-border group hover:border-brand-tactical/30 transition-all rounded-sm relative">
+                                   <div className="md:col-span-4">
+                                      <input 
+                                        type="text"
+                                        value={s.label}
+                                        onChange={(e) => setSelectedStaff(selectedStaff.map(st => st.instanceId === s.instanceId ? { ...st, label: e.target.value.toUpperCase() } : st))}
+                                        className="w-full bg-transparent border-none text-[11px] font-black uppercase tracking-tight text-theme-text outline-none focus:text-brand-tactical p-0 mb-1"
+                                      />
+                                      <span className="text-[9px] font-bold text-brand-tactical">Sugerido: R$ {STAFF_ROLES.find(r => r.id === s.id)?.avgCost || s.cost}</span>
+                                   </div>
+                                   
+                                   <div className="md:col-span-5 relative">
+                                      <User className="absolute left-3 top-1/2 -translate-y-1/2 text-theme-text-muted opacity-30" size={12} />
+                                      <select 
+                                        value={s.userId || ""} 
+                                        onChange={(e) => updateStaffUser(s.instanceId, e.target.value)}
+                                        className="w-full bg-theme-bg-muted border border-theme-border p-2.5 pl-10 text-[10px] font-bold text-theme-text outline-none focus:border-brand-tactical appearance-none uppercase tracking-widest rounded-sm"
+                                      >
+                                         <option value="">PROFISSIONAL...</option>
+                                         {(() => {
+                                            const eventPref = selectedQuote?.description?.includes("Preferência: MOBILE") ? "MOBILE" : 
+                                                            selectedQuote?.description?.includes("Preferência: TRADICIONAL") ? "TRADICIONAL" : null;
+                                            
+                                            // Se houver preferência, filtramos. Se for AMBOS ou N/A, mostra todos.
+                                            const filtered = professionals.filter(p => {
+                                              if (!eventPref) return true;
+                                              const proType = p.profissional?.workflowType || "AMBOS";
+                                              return proType === "AMBOS" || proType === eventPref;
+                                            });
 
-                                  <div className="md:col-span-3">
-                                     <div className="relative">
-                                        <span className="absolute left-3 top-1/2 -translate-y-1/2 text-[9px] font-black text-theme-text-muted opacity-50">R$</span>
-                                        <input 
-                                          type="number" 
-                                          value={s.cost} 
-                                          onChange={(e) => setSelectedStaff(selectedStaff.map(st => st.id === s.id ? {...st, cost: Number(e.target.value)} : st))}
-                                          className="w-full bg-theme-bg-muted border border-theme-border p-2.5 pl-9 text-[11px] font-black text-brand-tactical outline-none focus:border-brand-tactical rounded-sm"
-                                        />
-                                     </div>
-                                  </div>
-                               </div>
-                             ))}
+                                            return filtered.map(p => (
+                                              <option key={p.id} value={p.id}>
+                                                {p.nome} {p.profissional?.workflowType ? `(${p.profissional.workflowType})` : ""}
+                                              </option>
+                                            ));
+                                          })()}
+                                      </select>
+                                   </div>
+
+                                   <div className="md:col-span-3 flex items-center gap-2">
+                                      <div className="relative flex-1">
+                                         <span className="absolute left-3 top-1/2 -translate-y-1/2 text-[9px] font-black text-theme-text-muted opacity-50">R$</span>
+                                         <input 
+                                           type="number" 
+                                           value={s.cost} 
+                                           onChange={(e) => setSelectedStaff(selectedStaff.map(st => st.instanceId === s.instanceId ? {...st, cost: Number(e.target.value)} : st))}
+                                           className="w-full bg-theme-bg-muted border border-theme-border p-2.5 pl-9 text-[11px] font-black text-brand-tactical outline-none focus:border-brand-tactical rounded-sm"
+                                         />
+                                      </div>
+                                      <button 
+                                        onClick={() => removeStaffInstance(s.instanceId)}
+                                        className="p-2.5 text-theme-text-muted hover:text-red-500 hover:bg-red-500/10 transition-all rounded-sm"
+                                      >
+                                        <X size={14} />
+                                      </button>
+                                   </div>
+                                </div>
+                              ))}
                            </div>
                          ) : (
                            <div className="py-12 text-center border border-dashed border-theme-border bg-theme-bg/5 rounded-sm">
@@ -573,19 +619,24 @@ export const AdminQuotes: React.FC = () => {
 
                   {activeTab === 'locacao' && (
                     <div className="space-y-8 animate-in fade-in duration-300">
-                      <div className="max-h-[350px] overflow-y-auto space-y-3 pr-3 custom-scrollbar border-b border-theme-border pb-6">
-                        <h4 className="text-[10px] font-black text-theme-text uppercase tracking-widest border-l-2 border-brand-tactical pl-3 mb-4">Equipamentos e Logística</h4>
+                      <div className="max-h-[450px] overflow-y-auto space-y-3 pr-3 custom-scrollbar border-b border-theme-border pb-6">
+                        <h4 className="text-[10px] font-black text-theme-text uppercase tracking-widest border-l-2 border-brand-tactical pl-3 mb-4">Locação de Equipamentos</h4>
                         {MERLIN_EQUIPMENT.map(item => (
                           <div key={item.id} className="flex items-center justify-between p-4 bg-theme-bg border border-theme-border hover:border-brand-tactical transition-all rounded-sm group">
                             <div>
                                <p className="text-[11px] font-black uppercase tracking-tight text-theme-text">{item.name}</p>
-                               <p className="text-[9px] text-theme-text-muted font-bold uppercase tracking-widest">Diária: R$ {item.price}</p>
+                               <p className="text-[9px] text-theme-text-muted font-bold uppercase tracking-widest">{item.category} | Diária: R$ {item.price}</p>
                             </div>
                             <button onClick={() => addEquip(item.id)} className="p-2 text-brand-tactical hover:bg-brand-tactical hover:text-brand-text transition-all rounded-sm"><Plus size={18} /></button>
                           </div>
                         ))}
                       </div>
+                    </div>
+                  )}
 
+                  {activeTab === 'custos' && (
+                    <div className="space-y-8 animate-in fade-in duration-300">
+                      <h4 className="text-[10px] font-black text-theme-text uppercase tracking-widest border-l-2 border-brand-tactical pl-3 mb-4">Logística e Despesas Extras</h4>
                       <div className="grid grid-cols-2 gap-6 pt-6">
                         <div className="space-y-2">
                            <label className="text-[9px] font-black text-theme-text-muted uppercase tracking-widest">Deslocamento (R$)</label>

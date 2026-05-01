@@ -301,15 +301,23 @@ export async function updateProfile(req: AuthRequest, res: Response): Promise<vo
     const autoHourlyRate = floorRate + (ceilingRate - floorRate) * (finalMultiplier - 1) / (5 - 1);
 
 
+    const existingProfile = await prisma.profissional.findUnique({
+      where: { userId },
+      select: { experienceYears: true, firstJobUrl: true }
+    });
+
+    const isLocked = !!(existingProfile?.experienceYears && existingProfile?.firstJobUrl);
+
     const updated = await prisma.profissional.update({
       where: { userId },
       data: {
         ...(services !== undefined && { services }),
         ...(equipmentList !== undefined && { equipmentList }),
         ...(otherHabilities !== undefined && { otherHabilities }),
-        ...(experienceYears !== undefined && { experienceYears: Number(experienceYears) }),
+        ...(!isLocked && experienceYears !== undefined && { experienceYears: Number(experienceYears) }),
+        ...(!isLocked && req.body.firstJobUrl !== undefined && { firstJobUrl: String(req.body.firstJobUrl) }),
         ...(workflowType !== undefined && { workflowType }),
-        hourlyRate: autoHourlyRate, // Forçando o valor calculado
+        hourlyRate: autoHourlyRate,
         equipmentMultiplier: finalMultiplier 
       }
     });

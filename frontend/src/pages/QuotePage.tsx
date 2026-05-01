@@ -341,6 +341,7 @@ export const QuotePage = () => {
   const [eventHours, setEventHours] = useState(2);
   const [eventDays, setEventDays] = useState(1);
   const [description, setDescription] = useState("");
+  const [availableBudget, setAvailableBudget] = useState<string>("");
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
   const [whatsapp, setWhatsapp] = useState("");
@@ -423,9 +424,7 @@ export const QuotePage = () => {
   // - Unidade Fixa com parceiro selecionado: mostra preço fixo do parceiro
   // - Outro Local + Pessoal: mostra preço estimado (simulado por hora)
   // - Outro Local + Empresarial: não mostra preços (negociação direta)
-  const showPrices =
-    (locationType === "PARTNER" && !!selectedPartnerId) ||
-    (locationType === "OTHER" && usageType === "PESSOAL");
+  const showPrices = (locationType === "PARTNER" && !!selectedPartnerId);
 
   // Mapeamento de IDs do catálogo para chaves de preço dos parceiros
   const PARTNER_PRICE_KEYS: Record<string, string[]> = {
@@ -488,6 +487,7 @@ export const QuotePage = () => {
       customCep, 
       location: fullAddress,
       eventDate, eventHours, eventDays, description, selectedServices, totalPrice, 
+      availableBudget,
       workflowPref: workflowPref.join(" + "),
       status: "PENDING"
     };
@@ -759,7 +759,7 @@ export const QuotePage = () => {
               )}
 
               {/* Convidados, Tipo de Uso e Preferência de Equipamento */}
-              <div className="mobile-grid-1" style={{ display: "grid", gridTemplateColumns: locationType === "OTHER" ? "1fr 1fr 1fr" : "1fr 1fr", gap: 20 }}>
+              <div className="mobile-grid-1" style={{ display: "grid", gridTemplateColumns: locationType === "OTHER" ? "repeat(4, 1fr)" : "1fr 1fr", gap: 20 }}>
                 <div>
                   <label style={{ fontSize: 10, fontWeight: 800, textTransform: "uppercase", marginBottom: 10, display: "block", color: THEME.text }}>Número de Convidados</label>
                   <div style={{ position: "relative", display: "flex", alignItems: "center" }}>
@@ -809,6 +809,23 @@ export const QuotePage = () => {
                     <div style={{ display: "flex", gap: 10 }}>
                       <button type="button" onClick={() => setUsageType("PESSOAL")} style={{ flex: 1, minHeight: 52, padding: "0 12px", fontSize: 10, fontWeight: 800, border: `1px solid ${usageType === "PESSOAL" ? THEME.accent : THEME.border}`, background: usageType === "PESSOAL" ? `${THEME.accent}10` : "transparent", color: usageType === "PESSOAL" ? THEME.accent : THEME.text2, cursor: "pointer", transition: "all 0.3s ease" }}>PESSOAL</button>
                       <button type="button" onClick={() => setUsageType("EMPRESARIAL")} style={{ flex: 1, minHeight: 52, padding: "0 12px", fontSize: 10, fontWeight: 800, border: `1px solid ${usageType === "EMPRESARIAL" ? THEME.accent : THEME.border}`, background: usageType === "EMPRESARIAL" ? `${THEME.accent}10` : "transparent", color: usageType === "EMPRESARIAL" ? THEME.accent : THEME.text2, cursor: "pointer", transition: "all 0.3s ease" }}>BUSINESS</button>
+                    </div>
+                  </div>
+                )}
+                {locationType === "OTHER" && (
+                  <div>
+                    <label style={{ fontSize: 10, fontWeight: 800, textTransform: "uppercase", marginBottom: 10, display: "block", color: THEME.text }}>Budget Disponível</label>
+                    <div style={{ position: "relative", display: "flex", alignItems: "center" }}>
+                      <span style={{ position: "absolute", left: 18, color: THEME.accent, fontWeight: 900, fontSize: 12 }}>R$</span>
+                      <input
+                        type="text"
+                        inputMode="numeric"
+                        value={availableBudget}
+                        placeholder="VALOR DISPONÍVEL"
+                        onChange={e => setAvailableBudget(e.target.value.replace(/\D/g, ""))}
+                        className="fs-input"
+                        style={{ width: "100%", paddingLeft: 42, minHeight: 52 }}
+                      />
                     </div>
                   </div>
                 )}

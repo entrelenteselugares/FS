@@ -574,7 +574,7 @@ export async function adminListUsers(req: AuthRequest, res: Response): Promise<v
       select: {
         id: true, nome: true, email: true, role: true, active: true, createdAt: true,
         profissional: {
-          select: { id: true, services: true, cameras: true, captPct: true, editPct: true, otherHabilities: true, equipment: true },
+          select: { id: true, services: true, cameras: true, captPct: true, editPct: true, otherHabilities: true, equipment: true, workflowType: true },
         },
         cartorio: { select: { id: true, razaoSocial: true } },
         pixKey: true,

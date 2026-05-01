@@ -81,7 +81,7 @@ export function ExpressSaleModal({ network, onClose, onSuccess, onError }: Expre
             {([1, 2, 3, 4] as const).map((s) => (
               <div key={s} className="flex-1 space-y-1">
                 <div className={`h-[2px] transition-all duration-500 ${step >= s ? "bg-brand-tactical" : "bg-theme-border/20"}`} />
-                <div className={`text-[6px] font-black uppercase tracking-widest ${step >= s ? "text-brand-tactical" : "text-theme-muted/20"}`}>
+                <div className={`text-[9px] font-black uppercase tracking-widest ${step >= s ? "text-brand-tactical" : "text-theme-muted/20"}`}>
                   Fase 0{s}
                 </div>
               </div>

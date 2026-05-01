@@ -103,11 +103,11 @@ const SidebarContent: React.FC<SidebarContentProps> = ({ navItems, onNavigate })
             display:       "flex",
             alignItems:    "center",
             gap:           12,
-            padding:       "8px 16px",
-            fontSize:      11,
+            padding:       "10px 20px",
+            fontSize:      13,
             fontFamily:    T.fontB,
-            fontWeight:    active ? 600 : 400,
-            letterSpacing: "0.01em",
+            fontWeight:    active ? 700 : 500,
+            letterSpacing: "0.02em",
             cursor:        "pointer",
             border:        "none",
             background:    active ? "var(--bg-field)" : "transparent",
@@ -135,10 +135,10 @@ const SidebarContent: React.FC<SidebarContentProps> = ({ navItems, onNavigate })
                   <span style={{
                     background: T.brand,
                     color: T.brandText,
-                    fontSize: 9,
+                    fontSize: 10,
                     fontWeight: 900,
-                    padding: "2px 6px",
-                    borderRadius: 2,
+                    padding: "3px 8px",
+                    borderRadius: 3,
                     minWidth: 16,
                     textAlign: "center",
                     letterSpacing: 0
@@ -178,9 +178,9 @@ const SidebarContent: React.FC<SidebarContentProps> = ({ navItems, onNavigate })
         {/* ── Visitar Site (bottom of nav) ── */}
         <Link to="/" style={{ 
           display: "flex", alignItems: "center", gap: 10,
-          padding: "8px 16px", fontSize: 9, fontFamily: T.fontB, fontWeight: 700,
+          padding: "12px 16px", fontSize: 11, fontFamily: T.fontB, fontWeight: 700,
           color: T.brand, textDecoration: "none", textTransform: "uppercase",
-          letterSpacing: 1, marginTop: 8, borderTop: `1px solid ${T.border}`,
+          letterSpacing: 1.5, marginTop: 12, borderTop: `1px solid ${T.border}`,
           paddingTop: 12, transition: "all 0.2s"
         }}
           onMouseEnter={(e) => (e.currentTarget.style.opacity = "0.7")}
@@ -200,9 +200,9 @@ const SidebarContent: React.FC<SidebarContentProps> = ({ navItems, onNavigate })
         {/* Info row */}
         <div style={{ marginBottom: 16 }}>
           <div style={{
-            fontSize:      12,
+            fontSize:      14,
             fontFamily:    T.fontB,
-            fontWeight:    600,
+            fontWeight:    700,
             color:         T.text,
             overflow:      "hidden",
             textOverflow:  "ellipsis",
@@ -212,14 +212,14 @@ const SidebarContent: React.FC<SidebarContentProps> = ({ navItems, onNavigate })
           </div>
           <div style={{
             display:       "inline-block",
-            fontSize:      8,
+            fontSize:      10,
             fontFamily:    T.fontB,
             fontWeight:    900,
             color:         T.brand,
             border:        `1px solid ${T.brand}44`,
-            padding:       "2px 6px",
+            padding:       "3px 8px",
             textTransform: "uppercase",
-            letterSpacing: 1.5,
+            letterSpacing: 2,
             marginTop:     6,
           }}>
             {user?.role === "ADMIN" ? "Administrador" : 

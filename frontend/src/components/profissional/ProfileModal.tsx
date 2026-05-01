@@ -122,12 +122,35 @@ export function ProfileModal({ profile, onClose, onUpdated }: ProfileModalProps)
                     <div className="relative">
                       <input
                         type="number"
-                        className="w-full bg-theme-bg-muted border border-theme-border p-4 text-theme-text focus:border-brand-tactical/50 outline-none transition-all font-heading font-black italic text-xl"
+                        disabled={!!profile.firstJobUrl && !!profile.experienceYears}
+                        className={`w-full bg-theme-bg-muted border border-theme-border p-4 text-theme-text focus:border-brand-tactical/50 outline-none transition-all font-heading font-black italic text-xl ${profile.firstJobUrl ? 'opacity-50 cursor-not-allowed' : ''}`}
                         value={formData.experienceYears}
                         onChange={(e) => setFormData({ ...formData, experienceYears: Number(e.target.value) })}
                       />
                       <div className="absolute right-4 top-1/2 -translate-y-1/2 text-[10px] font-black text-brand-tactical/40 uppercase italic tracking-widest">Anos</div>
                     </div>
+                  </div>
+
+                  <div className="space-y-2 md:col-span-2">
+                    <label className="text-[9px] font-black text-theme-muted uppercase tracking-widest italic opacity-60">Link do Primeiro Trabalho (Validação de Experiência)</label>
+                    <div className="relative">
+                      <input
+                        className={`w-full bg-theme-bg-muted border border-theme-border p-4 text-theme-text focus:border-brand-tactical/50 outline-none transition-all font-medium text-[11px] ${profile.firstJobUrl ? 'opacity-50 cursor-not-allowed' : ''}`}
+                        value={formData.firstJobUrl || ""}
+                        disabled={!!profile.firstJobUrl}
+                        onChange={(e) => setFormData({ ...formData, firstJobUrl: e.target.value })}
+                        placeholder="Link do Instagram, YouTube ou Portfolio de quando começou..."
+                      />
+                      {formData.firstJobUrl && (
+                        <div className="absolute right-4 top-1/2 -translate-y-1/2 flex items-center gap-2">
+                           <span className={`text-[8px] font-black uppercase tracking-widest ${profile.isExperienceValidated ? "text-brand-tactical" : "text-amber-500"}`}>
+                             {profile.isExperienceValidated ? "AUTENTICADO" : "EM ANÁLISE"}
+                           </span>
+                           {profile.isExperienceValidated ? <Check size={12} className="text-brand-tactical" /> : <div className="w-2 h-2 rounded-full bg-amber-500 animate-pulse" />}
+                        </div>
+                      )}
+                    </div>
+                    <p className="text-[8px] text-theme-muted/50 uppercase tracking-widest font-bold">O tempo de experiência será validado pela data de publicação deste link.</p>
                   </div>
 
                   <div className="space-y-2 md:col-span-2">

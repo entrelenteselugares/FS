@@ -76,6 +76,8 @@ export interface ProfileData {
   proServices?: ProfessionalService[];
   otherHabilities: string | null;
   workflowType?: string[];
+  firstJobUrl?: string | null;
+  isExperienceValidated?: boolean;
   stats?: {
     totalEarnings: number;
     monthEarnings: number;

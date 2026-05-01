@@ -135,6 +135,8 @@ model Profissional {
   hourlyRate          Decimal                @default(60.00) @db.Decimal(10, 2)
   equipmentList       Json?                  @default("[]")
   experienceYears     Int                    @default(0)
+  firstJobUrl         String?
+  isExperienceValidated Boolean               @default(false)
   cartorios           CartorioProfissional[]
   proServices         ProfessionalService[]
   workflowType        String[]               @default(["TRADICIONAL"])

@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import { Check, X, ShieldCheck, MapPin, Briefcase, Users, ChevronRight } from "lucide-react";
+import { Check, X, ShieldCheck, MapPin, Briefcase, Users, ChevronRight, Camera, Video, Smartphone, Clock } from "lucide-react";
 import type { EventItem, UnitInvite } from "./types";
 import { CalendarView } from "./CalendarView";
 
@@ -21,8 +21,8 @@ function DeadlineTimer({ event, type }: { event: EventItem; type: "FOTO" | "VIDE
 
   if (isDelivered) {
     return (
-      <div className="flex items-center gap-2 text-brand-tactical text-[10px] font-black uppercase tracking-widest italic">
-        <Check size={12} /> {type === "FOTO" ? "FOTOS OK" : "VÍDEO OK"}
+      <div className="flex items-center gap-1.5 text-brand-tactical text-[9px] font-black uppercase tracking-widest italic bg-brand-tactical/5 px-2 py-1 rounded-sm border border-brand-tactical/10">
+        <Check size={10} /> {type === "FOTO" ? "FOTOS OK" : "VÍDEO OK"}
       </div>
     );
   }
@@ -35,10 +35,9 @@ function DeadlineTimer({ event, type }: { event: EventItem; type: "FOTO" | "VIDE
   const timeStr = h > 0 ? `${h}h ${m}m` : `${m}m ${s}s`;
 
   return (
-    <div className={`text-[10px] font-black uppercase tracking-widest italic flex items-center gap-2 ${isOverdue ? "text-red-500" : "text-amber-500"}`}>
+    <div className={`text-[9px] font-black uppercase tracking-widest italic flex items-center gap-2 px-2 py-1 rounded-sm border ${isOverdue ? "text-red-500 bg-red-500/5 border-red-500/10" : "text-amber-500 bg-amber-500/5 border-amber-500/10"}`}>
       <div className={`w-1.5 h-1.5 rounded-full ${isOverdue ? "bg-red-500 animate-pulse" : "bg-amber-500"}`} />
-      {type === "FOTO" ? "📸 Foto: " : "🎬 Vídeo: "}
-      {isOverdue ? `Atrasado ${timeStr}` : `SLA ${timeStr}`}
+      {isOverdue ? `ATRASADO ${timeStr}` : `SLA ${timeStr}`}
     </div>
   );
 }
@@ -134,47 +133,75 @@ export function AgendaTab({
                   key={ev.id}
                   className={`bg-theme-bg border ${
                     activeTab === "agenda" ? "cursor-pointer hover:border-brand-tactical/50" : ""
-                  } border-theme-border/60 p-4 md:p-5 flex flex-col md:flex-row gap-4 md:gap-8 items-center relative overflow-hidden transition-all`}
+                  } border-theme-border/60 p-5 flex flex-col md:flex-row gap-6 md:gap-10 items-center relative overflow-hidden transition-all group`}
                   onClick={() => activeTab === "agenda" && onSelectEvent(ev)}
                 >
-                  <div className={`absolute left-0 top-0 h-full w-1 ${ev.captacaoStatus === "PENDING" ? "bg-amber-500" : "bg-brand-tactical"}`} />
-                  <div className="min-w-[70px] text-center md:text-left">
-                    <div className="text-[8px] font-black text-theme-muted uppercase italic mb-0.5">DATA</div>
-                    <div className="text-xl font-heading font-black text-theme-text italic leading-none uppercase">
-                      {new Date(ev.dataEvento).toLocaleDateString("pt-BR", { day: "2-digit", month: "short" }).replace(".", "")}
+                  <div className={`absolute left-0 top-0 h-full w-1.5 ${ev.captacaoStatus === "PENDING" ? "bg-amber-500" : "bg-brand-tactical"}`} />
+                  
+                  {/* DATA COL */}
+                  <div className="min-w-[80px] flex flex-col items-center md:items-start border-r border-theme-border/20 pr-6">
+                    <div className="text-[8px] font-black text-theme-muted uppercase tracking-[0.2em] mb-1">DATA</div>
+                    <div className="text-2xl font-heading font-black text-theme-text italic leading-none uppercase tracking-tighter">
+                      {new Date(ev.dataEvento).toLocaleDateString("pt-BR", { day: "2-digit" })}
+                    </div>
+                    <div className="text-[10px] font-bold text-brand-tactical uppercase tracking-widest mt-1">
+                      {new Date(ev.dataEvento).toLocaleDateString("pt-BR", { month: "short" }).replace(".", "")}
                     </div>
                   </div>
-                  <div className="flex-grow space-y-2">
-                    <div className="flex items-center gap-3">
-                      <h3 className="text-xl font-heading font-black text-theme-text uppercase italic">{ev.nomeNoivos}</h3>
-                      <div className={`px-2 py-0.5 text-[7px] font-black border ${ev.captacaoStatus === "ACCEPTED" ? "bg-brand-tactical/10 text-brand-tactical border-brand-tactical/20" : "bg-amber-500/10 text-amber-500 border-amber-500/20"}`}>
+
+                  {/* INFO COL */}
+                  <div className="flex-grow space-y-3">
+                    <div className="flex items-center gap-4">
+                      <h3 className="text-xl md:text-2xl font-heading font-black text-theme-text uppercase italic tracking-tight">{ev.nomeNoivos}</h3>
+                      <div className={`px-2 py-0.5 text-[8px] font-black border ${ev.captacaoStatus === "ACCEPTED" ? "bg-brand-tactical/10 text-brand-tactical border-brand-tactical/20" : "bg-amber-500/10 text-amber-500 border-amber-500/20"}`}>
                         {ev.captacaoStatus === "ACCEPTED" ? "CONFIRMADO" : "PENDENTE"}
                       </div>
                     </div>
-                    <div className="flex gap-4 text-[9px] text-theme-muted font-bold uppercase flex-wrap">
-                      <span className="flex items-center gap-1"><MapPin size={10} /> {ev.location || "Campo"}</span>
-                      <span className="flex items-center gap-1"><Briefcase size={10} /> {ev.captacaoId === userId ? "CAPTAÇÃO" : "EDIÇÃO"}</span>
-                      <DeadlineTimer event={ev} type="FOTO" />
+                    
+                    <div className="flex flex-wrap gap-5 items-center">
+                      <div className="flex gap-2.5">
+                        {ev.temFoto && <div className="p-1.5 bg-theme-bg-muted border border-theme-border/60 text-theme-text opacity-70" title="Foto"><Camera size={12} /></div>}
+                        {ev.temVideo && <div className="p-1.5 bg-theme-bg-muted border border-theme-border/60 text-theme-text opacity-70" title="Vídeo"><Video size={12} /></div>}
+                        {ev.temReels && <div className="p-1.5 bg-theme-bg-muted border border-theme-border/60 text-theme-text opacity-70" title="Reels/Mobile"><Smartphone size={12} /></div>}
+                      </div>
+                      
+                      <div className="h-4 w-[1px] bg-theme-border/20 hidden md:block" />
+                      
+                      <div className="flex gap-4 text-[9px] text-theme-muted font-black uppercase tracking-widest">
+                        <span className="flex items-center gap-1.5"><MapPin size={11} className="text-brand-tactical opacity-50" /> {ev.location || "Campo"}</span>
+                        <span className="flex items-center gap-1.5"><Briefcase size={11} className="text-brand-tactical opacity-50" /> {ev.captacaoId === userId ? "CAPTAÇÃO" : "EDIÇÃO"}</span>
+                        {ev.eventHours && <span className="flex items-center gap-1.5"><Clock size={11} className="text-brand-tactical opacity-50" /> {ev.eventHours}H</span>}
+                      </div>
                     </div>
                   </div>
-                  <div className="flex items-center gap-4">
+
+                  {/* STATUS/SLA COL */}
+                  <div className="flex flex-col items-center md:items-end gap-3 min-w-[150px]">
+                    <div className="flex flex-col gap-1.5 items-center md:items-end w-full">
+                      <DeadlineTimer event={ev} type="FOTO" />
+                      {ev.temVideo && <DeadlineTimer event={ev} type="VIDEO" />}
+                    </div>
+                    
                     {activeTab === "convites" ? (
-                      <div className="flex flex-wrap gap-2 justify-center md:justify-end">
-                        <button onClick={(e) => { e.stopPropagation(); onRespond(ev.id, "REJECTED"); }} className="p-2.5 border border-red-500/30 text-red-500 hover:bg-red-500/10" title="Recusar">
+                      <div className="flex gap-2">
+                        <button onClick={(e) => { e.stopPropagation(); onRespond(ev.id, "REJECTED"); }} className="p-2.5 border border-red-500/30 text-red-500 hover:bg-red-500/10 transition-all" title="Recusar">
                           <X size={14} />
                         </button>
                         <button
                           onClick={(e) => { e.stopPropagation(); onDelegate(ev.id); }}
-                          className="px-3 py-2.5 border border-brand-tactical/40 text-brand-tactical text-[8px] md:text-[9px] font-black uppercase tracking-widest hover:bg-brand-tactical/10 flex items-center gap-2"
+                          className="px-3 py-2.5 border border-brand-tactical/40 text-brand-tactical text-[9px] font-black uppercase tracking-widest hover:bg-brand-tactical/10 flex items-center gap-2 transition-all"
                         >
                           <Users size={14} /> DELEGAR
                         </button>
-                        <button onClick={(e) => { e.stopPropagation(); onRespond(ev.id, "ACCEPTED"); }} className="px-4 py-2.5 bg-brand-tactical text-brand-text text-[8px] md:text-[9px] font-black uppercase tracking-widest">
+                        <button onClick={(e) => { e.stopPropagation(); onRespond(ev.id, "ACCEPTED"); }} className="px-5 py-2.5 bg-brand-tactical text-brand-text text-[9px] font-black uppercase tracking-widest hover:brightness-110 transition-all">
                           <Check size={14} /> ACEITAR
                         </button>
                       </div>
                     ) : (
-                      <ChevronRight size={20} className="text-theme-muted" />
+                      <div className="flex items-center gap-3">
+                        <div className="hidden group-hover:block animate-in fade-in slide-in-from-right-2 text-[9px] font-black text-brand-tactical uppercase tracking-[0.2em]">GERENCIAR</div>
+                        <ChevronRight size={20} className="text-theme-muted group-hover:text-brand-tactical transition-all" />
+                      </div>
                     )}
                   </div>
                 </div>
