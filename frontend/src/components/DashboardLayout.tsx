@@ -356,7 +356,7 @@ export const DashboardLayout: React.FC<DashboardLayoutProps> = ({
             >
               <MenuIcon />
             </button>
-            <Link to="/" style={{ display: "flex", alignItems: "center" }} className="lg:hidden">
+            <Link to="/" style={{ display: "flex", alignItems: "center" }} className="dashboard-logo-topbar">
               <img src="/logo-fs.png" alt="Logo" style={{ height: 22, objectFit: "contain" }} />
             </Link>
           </div>
