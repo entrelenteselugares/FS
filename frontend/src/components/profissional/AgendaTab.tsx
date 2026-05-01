@@ -160,17 +160,17 @@ export function AgendaTab({
                   </div>
                   <div className="flex items-center gap-4">
                     {activeTab === "convites" ? (
-                      <div className="flex gap-2">
-                        <button onClick={(e) => { e.stopPropagation(); onRespond(ev.id, "REJECTED"); }} className="p-3 border border-red-500/30 text-red-500 hover:bg-red-500/10" title="Recusar">
+                      <div className="flex flex-wrap gap-2 justify-center md:justify-end">
+                        <button onClick={(e) => { e.stopPropagation(); onRespond(ev.id, "REJECTED"); }} className="p-2.5 border border-red-500/30 text-red-500 hover:bg-red-500/10" title="Recusar">
                           <X size={14} />
                         </button>
                         <button
                           onClick={(e) => { e.stopPropagation(); onDelegate(ev.id); }}
-                          className="px-4 py-3 border border-brand-tactical/40 text-brand-tactical text-[9px] font-black uppercase tracking-widest hover:bg-brand-tactical/10 flex items-center gap-2"
+                          className="px-3 py-2.5 border border-brand-tactical/40 text-brand-tactical text-[8px] md:text-[9px] font-black uppercase tracking-widest hover:bg-brand-tactical/10 flex items-center gap-2"
                         >
                           <Users size={14} /> DELEGAR
                         </button>
-                        <button onClick={(e) => { e.stopPropagation(); onRespond(ev.id, "ACCEPTED"); }} className="px-6 py-3 bg-brand-tactical text-brand-text text-[9px] font-black uppercase tracking-widest">
+                        <button onClick={(e) => { e.stopPropagation(); onRespond(ev.id, "ACCEPTED"); }} className="px-4 py-2.5 bg-brand-tactical text-brand-text text-[8px] md:text-[9px] font-black uppercase tracking-widest">
                           <Check size={14} /> ACEITAR
                         </button>
                       </div>

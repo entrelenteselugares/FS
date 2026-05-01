@@ -41,13 +41,13 @@ export function DashboardHeader({ activeTab, viewTab, onViewTabChange, residentU
         <div className="flex gap-4">
           <button
             onClick={() => onViewTabChange("lista")}
-            className={`px-6 py-3 text-[9px] font-black uppercase tracking-widest transition-all flex items-center gap-2 border ${viewTab === "lista" ? "bg-brand-tactical text-brand-text border-brand-tactical shadow-lg shadow-brand-tactical/20" : "text-theme-muted border-theme-border/60 hover:text-theme-text"}`}
+            className={`px-4 md:px-6 py-3 text-[9px] font-black uppercase tracking-widest transition-all flex items-center justify-center gap-2 border ${viewTab === "lista" ? "bg-brand-tactical text-brand-text border-brand-tactical shadow-lg shadow-brand-tactical/20" : "text-theme-muted border-theme-border/60 hover:text-theme-text"}`}
           >
             <List size={14} /> Lista
           </button>
           <button
             onClick={() => onViewTabChange("calendario")}
-            className={`px-6 py-3 text-[9px] font-black uppercase tracking-widest transition-all flex items-center gap-2 border ${viewTab === "calendario" ? "bg-brand-tactical text-brand-text border-brand-tactical shadow-lg shadow-brand-tactical/20" : "text-theme-muted border-theme-border/60 hover:text-theme-text"}`}
+            className={`px-4 md:px-6 py-3 text-[9px] font-black uppercase tracking-widest transition-all flex items-center justify-center gap-2 border ${viewTab === "calendario" ? "bg-brand-tactical text-brand-text border-brand-tactical shadow-lg shadow-brand-tactical/20" : "text-theme-muted border-theme-border/60 hover:text-theme-text"}`}
           >
             <CalendarIcon size={14} /> Calendário
           </button>
