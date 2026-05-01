@@ -1,6 +1,6 @@
 import { useState, useEffect, useRef, useLayoutEffect } from "react";
-import RW, { FixedSizeList as FixedSizeListType } from "react-window";
-const FixedSizeList = (RW as unknown as { FixedSizeList: typeof FixedSizeListType }).FixedSizeList;
+import * as RW from "react-window";
+const { FixedSizeList } = RW as unknown as { FixedSizeList: React.ComponentType<any> }; // eslint-disable-line @typescript-eslint/no-explicit-any
 import { API } from "../lib/api";
 import { T, BtnPrimary, BtnSecondary } from "../lib/theme";
 
