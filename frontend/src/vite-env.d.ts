@@ -6,13 +6,13 @@ interface ImportMetaEnv {
 }
 
 declare module 'react-window' {
-  import { Component, CSSProperties, ReactNode, Ref } from 'react';
+  import { Component, CSSProperties } from 'react';
   export interface FixedSizeListProps {
     height: number | string;
     itemCount: number;
     itemSize: number;
     width: number | string;
-    children: any;
+    children: (props: { index: number; style: CSSProperties }) => JSX.Element;
     overscanCount?: number;
     style?: CSSProperties;
     className?: string;

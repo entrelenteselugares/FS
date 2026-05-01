@@ -1,6 +1,6 @@
 import { useState, useEffect, useRef, useLayoutEffect } from "react";
-import RW from "react-window";
-const { FixedSizeList } = RW as any;
+import RW, { FixedSizeList as FixedSizeListType } from "react-window";
+const FixedSizeList = (RW as unknown as { FixedSizeList: typeof FixedSizeListType }).FixedSizeList;
 import { API } from "../lib/api";
 import { T, BtnPrimary, BtnSecondary } from "../lib/theme";
 
