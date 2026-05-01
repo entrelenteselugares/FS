@@ -18,6 +18,8 @@ declare module 'react-window' {
     className?: string;
   }
   export class FixedSizeList extends Component<FixedSizeListProps> {}
+  const rw: { FixedSizeList: typeof FixedSizeList };
+  export default rw;
 }
 
 interface ImportMeta {
