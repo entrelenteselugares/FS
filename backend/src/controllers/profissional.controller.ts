@@ -750,7 +750,7 @@ export async function searchProfessionals(req: AuthRequest, res: Response): Prom
  */
 export async function toggleFavorite(req: AuthRequest, res: Response): Promise<void> {
   const userId = req.user?.userId;
-  const { partnerId } = req.body;
+  const partnerId = req.params.partnerId as string;
   if (!userId) { res.status(401).json({ error: "Não autenticado." }); return; }
 
   try {
