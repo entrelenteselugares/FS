@@ -11,6 +11,7 @@
     "preview": "vite preview"
   },
   "dependencies": {
+    "@types/react-window": "^1.8.8",
     "axios": "^1.15.0",
     "foto-segundo": "file:..",
     "framer-motion": "^12.38.0",
@@ -20,6 +21,7 @@
     "react-dom": "^19.2.4",
     "react-helmet-async": "^3.0.0",
     "react-router-dom": "^7.14.1",
+    "react-window": "^2.2.7",
     "recharts": "^3.8.1"
   },
   "devDependencies": {

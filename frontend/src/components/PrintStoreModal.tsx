@@ -1,4 +1,5 @@
-import { useState, useEffect, useRef } from "react";
+import { useState, useEffect, useRef, useLayoutEffect } from "react";
+import { FixedSizeList } from "react-window";
 import { API } from "../lib/api";
 import { T, BtnPrimary, BtnSecondary } from "../lib/theme";
 
@@ -41,6 +42,90 @@ interface PrintStoreModalProps {
   medias?: EventMedia[];
   isOwner?: boolean;
   onClose: () => void;
+}
+
+// ── VIRTUALIZED GRID COMPONENT ───────────────────────────────────────────
+function AlbumPhotoGrid({ medias, selectedAlbumPhotos, toggleAlbumPhoto }: { 
+  medias: EventMedia[], 
+  selectedAlbumPhotos: string[], 
+  toggleAlbumPhoto: (url: string) => void 
+}) {
+  const containerRef = useRef<HTMLDivElement>(null);
+  const [dimensions, setDimensions] = useState({ width: 600, height: 350 });
+
+  useLayoutEffect(() => {
+    if (!containerRef.current) return;
+    const observer = new ResizeObserver((entries) => {
+      for (const entry of entries) {
+        setDimensions({
+          width: entry.contentRect.width,
+          height: entry.contentRect.height || 350
+        });
+      }
+    });
+    observer.observe(containerRef.current);
+    return () => observer.disconnect();
+  }, []);
+
+  const columnCount = Math.max(2, Math.floor(dimensions.width / 110)); // 100px + gap
+  const rowCount = Math.ceil(medias.length / columnCount);
+  const itemSize = dimensions.width / columnCount;
+
+  const Row = ({ index, style }: { index: number, style: React.CSSProperties }) => {
+    const items = [];
+    for (let i = 0; i < columnCount; i++) {
+      const mediaIndex = index * columnCount + i;
+      if (mediaIndex < medias.length) {
+        const media = medias[mediaIndex];
+        const isSelected = selectedAlbumPhotos.includes(media.url);
+        items.push(
+          <div 
+            key={media.id} 
+            onClick={() => toggleAlbumPhoto(media.url)}
+            style={{ 
+              width: itemSize - 8,
+              height: itemSize - 8,
+              margin: 4,
+              position: "relative", 
+              cursor: "pointer",
+              border: `2px solid ${isSelected ? T.brand : "transparent"}`,
+              transition: "all 0.15s ease",
+              flexShrink: 0
+            }}
+          >
+            <img 
+              src={media.url} 
+              alt="" 
+              style={{ width: "100%", height: "100%", objectFit: "cover" }} 
+            />
+            {isSelected && (
+              <div style={{ position: "absolute", top: 4, right: 4, background: T.brand, color: "#000", borderRadius: "50%", width: 18, height: 18, display: "flex", alignItems: "center", justifyContent: "center", fontSize: 10, fontWeight: 900 }}>✓</div>
+            )}
+          </div>
+        );
+      }
+    }
+
+    return (
+      <div style={{ ...style, display: "flex" }}>
+        {items}
+      </div>
+    );
+  };
+
+  return (
+    <div ref={containerRef} style={{ width: "100%", height: "100%" }}>
+      <FixedSizeList
+        height={dimensions.height}
+        itemCount={rowCount}
+        itemSize={itemSize}
+        width={dimensions.width}
+        overscanCount={2}
+      >
+        {Row}
+      </FixedSizeList>
+    </div>
+  );
 }
 
 export function PrintStoreModal({ eventId, eventTitle, medias = [], isOwner = false, onClose }: PrintStoreModalProps) {
@@ -413,39 +498,18 @@ export function PrintStoreModal({ eventId, eventTitle, medias = [], isOwner = fa
                   <div 
                     ref={scrollRef}
                     style={{ 
-                      maxHeight: 300, 
-                      overflowY: "auto", 
-                      padding: 8, 
+                      height: 350, 
+                      overflowY: "hidden", // Let react-window handle scroll
                       border: `1px solid ${T.border}`, 
                       background: T.bgCard,
-                      scrollBehavior: "smooth"
+                      position: "relative"
                     }}
                   >
-                    <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fill, minmax(100px, 1fr))", gap: 8 }}>
-                      {medias.map((media) => (
-                        <div 
-                          key={media.id} 
-                          onClick={() => toggleAlbumPhoto(media.url)}
-                          style={{ 
-                            position: "relative", 
-                            aspectRatio: "1/1", 
-                            cursor: "pointer",
-                            border: `2px solid ${selectedAlbumPhotos.includes(media.url) ? T.brand : "transparent"}`,
-                            transition: "all 0.15s ease"
-                          }}
-                        >
-                          <img 
-                            src={media.url} 
-                            alt="album photo" 
-                            loading="lazy"
-                            style={{ width: "100%", height: "100%", objectFit: "cover" }} 
-                          />
-                          {selectedAlbumPhotos.includes(media.url) && (
-                            <div style={{ position: "absolute", top: 4, right: 4, background: T.brand, color: "#000", borderRadius: "50%", width: 18, height: 18, display: "flex", alignItems: "center", justifyContent: "center", fontSize: 10, fontWeight: 900 }}>✓</div>
-                          )}
-                        </div>
-                      ))}
-                    </div>
+                    <AlbumPhotoGrid 
+                      medias={medias}
+                      selectedAlbumPhotos={selectedAlbumPhotos}
+                      toggleAlbumPhoto={toggleAlbumPhoto}
+                    />
                   </div>
                 )}
               </div>
