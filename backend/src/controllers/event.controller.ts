@@ -113,41 +113,34 @@ export class EventController {
       const hasAccess = isPaid || isOwner || isGloballyPaid;
 
       // 3.1 Guard específico para PHOTO_MARKETPLACE
+      // Removido o bloqueio agressivo de 404 que impedia o primeiro acesso para compra.
+      // A segurança agora é tratada pela lógica de paywall e hasAccess abaixo.
       if (event.type === 'PHOTO_MARKETPLACE') {
-        // Verifica se há algum pedido PAGO para este evento (qualquer comprador)
-        const hasPaidOrder = await prisma.order.findFirst({
-          where: { eventId: event.id, status: { in: ["PAGO", "APROVADO"] } },
-          select: { id: true, buyerEmail: true, clienteId: true }
-        });
-
-        if (!hasPaidOrder) {
-          // Sem pagamento confirmado: retorna 404 para não vazar
-          // a existência do evento (security through obscurity — LGPD)
-          console.warn(`[PRIVACY GUARD] Acesso negado (no_paid_order) ao evento marketplace ${event.id} por ${authUser?.userId ?? req.ip}`);
-          return res.status(404).json({ error: "Evento não encontrado" });
-        }
-
-        // Tem pagamento: verifica se o usuário autenticado é o comprador ou dono
         if (!isOwner) {
           const isCorrectBuyer = currentUserId && (
-            hasPaidOrder.clienteId === currentUserId
+            order && (order.status === "PAGO" || order.status === "APROVADO")
           );
 
           if (!isCorrectBuyer) {
-            console.warn(`[PRIVACY GUARD] Acesso negado (wrong_buyer) ao evento marketplace ${event.id} por ${currentUserId ?? "anon"}`);
             // Sem token ou comprador errado: retorna o evento SEM mídia + paywall ativo
             // (o frontend vai pedir login/pagamento)
+            const rawPreviews = event.previewPhotos;
+            const previewPhotos: string[] = rawPreviews ? (typeof rawPreviews === "string" ? JSON.parse(rawPreviews) : rawPreviews) : [];
+
             return res.json({
               id: event.id,
               nomeNoivos: event.nomeNoivos,
+              dataEvento: event.dataEvento,
+              cartorio: event.cartorioUser?.cartorio?.razaoSocial || event.location,
               coverPhotoUrl: event.coverPhotoUrl,
               type: event.type,
               isUnitSale: event.isUnitSale,
               priceUnit: event.priceUnit,
               pricePerPhoto: event.pricePerPhoto,
+              previewPhotos,
               isOwner: false,
               hasAccess: false,
-              paywall: { active: true, message: "Acesse com o e-mail utilizado na compra." }
+              paywall: { active: true, message: "Acesse com o e-mail utilizado na compra para liberar downloads." }
             });
           }
         }

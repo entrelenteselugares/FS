@@ -1,5 +1,6 @@
 import React, { useState, useEffect, useCallback, useMemo } from "react";
 import { API } from "../../lib/api";
+import { motion } from "framer-motion";
 import { 
   Briefcase, 
   Search, User, Plus, 
@@ -60,6 +61,7 @@ export const AdminQuotes: React.FC = () => {
   const [quotes, setQuotes] = useState<Quote[]>([]);
   const [loading, setLoading] = useState(true);
   const [search, setSearch] = useState("");
+  const [statusFilter, setStatusFilter] = useState<Quote["quoteStatus"] | "ALL">("ALL");
   const [selectedQuote, setSelectedQuote] = useState<Quote | null>(null);
   const [activeTab, setActiveTab] = useState<"briefing" | "equipe" | "locacao" | "fechamento">("briefing");
   const [isNewQuoteModalOpen, setIsNewQuoteModalOpen] = useState(false);
@@ -141,6 +143,30 @@ export const AdminQuotes: React.FC = () => {
     fetchProfessionals();
     fetchServiceCatalog();
   }, [fetchQuotes, fetchProfessionals, fetchServiceCatalog]);
+
+  const filteredQuotes = useMemo(() => {
+    return quotes.filter(q => {
+      const matchesSearch = !search || 
+        q.nomeNoivos.toLowerCase().includes(search.toLowerCase()) || 
+        q.id.toLowerCase().includes(search.toLowerCase()) ||
+        q.clientName.toLowerCase().includes(search.toLowerCase());
+      
+      const matchesStatus = statusFilter === "ALL" || q.quoteStatus === statusFilter;
+      
+      return matchesSearch && matchesStatus;
+    });
+  }, [quotes, search, statusFilter]);
+
+  const getStatusConfig = (status: Quote["quoteStatus"]) => {
+    const configs: Record<Quote["quoteStatus"], { label: string, color: string, bg: string, border: string }> = {
+      PENDING: { label: "PENDENTE", color: "text-amber-500", bg: "bg-amber-500/5", border: "border-amber-500/30" },
+      PRICED: { label: "PRECIFICADO", color: "text-blue-500", bg: "bg-blue-500/5", border: "border-blue-500/30" },
+      APROVADO: { label: "APROVADO", color: "text-brand-tactical", bg: "bg-brand-tactical/5", border: "border-brand-tactical/30" },
+      REJECTED: { label: "REJEITADO", color: "text-red-500", bg: "bg-red-500/5", border: "border-red-500/30" },
+      CONVERTED: { label: "CONVERTIDO", color: "text-emerald-500", bg: "bg-emerald-500/5", border: "border-emerald-500/30" }
+    };
+    return configs[status] || configs.PENDING;
+  };
 
   // Sync pricing states with selected quote
   useEffect(() => {
@@ -273,22 +299,43 @@ export const AdminQuotes: React.FC = () => {
         </div>
         
         <div className="flex flex-col md:flex-row items-center gap-6 w-full lg:w-auto">
-          <div className="relative flex-1 lg:w-80 group">
-            <Search className="absolute left-4 top-1/2 -translate-y-1/2 text-theme-text-muted" size={14} />
-            <input
-              type="text"
-              placeholder="PESQUISAR CLIENTE OU CÓDIGO..."
-              value={search}
-              onChange={(e) => setSearch(e.target.value)}
-              className="w-full bg-theme-bg-muted border border-theme-border p-3.5 pl-10 text-[10px] text-theme-text uppercase tracking-widest outline-none focus:border-brand-tactical transition-all font-bold"
-            />
+          <div className="flex flex-col gap-2 w-full md:w-auto">
+            <label className="text-[8px] font-black text-theme-text-muted uppercase tracking-widest ml-1">Filtro de Status</label>
+            <div className="flex items-center gap-1 bg-theme-bg-muted p-1 border border-theme-border rounded-sm">
+              {(['ALL', 'PENDING', 'PRICED', 'APROVADO', 'REJECTED'] as const).map((s) => (
+                <button
+                  key={s}
+                  onClick={() => setStatusFilter(s)}
+                  className={`px-3 py-1.5 text-[8px] font-black uppercase tracking-widest transition-all rounded-sm ${statusFilter === s ? 'bg-theme-text text-theme-bg shadow-lg' : 'text-theme-text-muted hover:text-theme-text'}`}
+                >
+                  {s === 'ALL' ? 'Todos' : s === 'APROVADO' ? 'Aprov.' : s}
+                </button>
+              ))}
+            </div>
           </div>
-          <button 
-            onClick={() => setIsNewQuoteModalOpen(true)}
-            className="w-full md:w-auto bg-brand-tactical text-brand-text font-black uppercase tracking-[0.3em] px-8 py-4 text-[10px] flex items-center justify-center gap-2 hover:brightness-110 shadow-lg transition-all active:scale-95"
-          >
-            <Plus size={16} /> NOVO ORÇAMENTO
-          </button>
+
+          <div className="flex flex-col gap-2 w-full md:w-auto">
+            <label className="text-[8px] font-black text-theme-text-muted uppercase tracking-widest ml-1">Busca Rápida</label>
+            <div className="relative group">
+              <Search className="absolute left-4 top-1/2 -translate-y-1/2 text-theme-text-muted" size={14} />
+              <input
+                type="text"
+                placeholder="CLIENTE, ID..."
+                value={search}
+                onChange={(e) => setSearch(e.target.value)}
+                className="w-full md:w-64 bg-theme-bg-muted border border-theme-border p-3.5 pl-10 text-[10px] text-theme-text uppercase tracking-widest outline-none focus:border-brand-tactical transition-all font-bold rounded-sm"
+              />
+            </div>
+          </div>
+
+          <div className="flex flex-col gap-2 w-full md:w-auto self-end">
+            <button 
+              onClick={() => setIsNewQuoteModalOpen(true)}
+              className="bg-brand-tactical text-brand-text font-black uppercase tracking-[0.3em] px-8 py-4 text-[10px] flex items-center justify-center gap-2 hover:brightness-110 shadow-lg transition-all active:scale-95 rounded-sm"
+            >
+              <Plus size={16} /> NOVO ORÇAMENTO
+            </button>
+          </div>
         </div>
       </div>
 
@@ -299,55 +346,69 @@ export const AdminQuotes: React.FC = () => {
              <div className="py-24 text-center border border-theme-border bg-theme-bg-muted/20 rounded-sm">
                 <div className="text-[10px] text-theme-text-muted animate-pulse uppercase tracking-[0.4em] font-bold">Carregando dados...</div>
              </div>
-          ) : quotes.length > 0 ? (
-            quotes.map((quote) => (
-              <div 
-                key={quote.id}
-                onClick={() => setSelectedQuote(quote)}
-                className={`p-5 border transition-all relative overflow-hidden group rounded-sm ${selectedQuote?.id === quote.id ? 'border-brand-tactical bg-brand-tactical/10 ring-1 ring-brand-tactical/30' : 'border-theme-border bg-theme-bg-muted hover:border-theme-text-muted'}`}
-                style={{ cursor: "pointer" }}
-              >
-                <div className={`absolute top-0 left-0 w-1 h-full ${quote.urgency === 'HIGH' ? 'bg-red-500' : 'bg-brand-tactical opacity-50'}`} />
-                
-                <div className="space-y-4">
-                  <div className="flex items-center justify-between">
-                    <div className="flex gap-2">
-                       <span className={`text-[8px] font-black uppercase tracking-widest px-2 py-1 border ${quote.quoteStatus === 'PENDING' ? 'border-brand-tactical text-brand-tactical' : 'border-theme-border text-theme-text-muted'}`}>
-                         {quote.quoteStatus}
-                       </span>
-                       {quote.urgency === 'HIGH' && <span className="text-[8px] font-black text-red-500 uppercase tracking-widest flex items-center gap-1 animate-pulse"><Flame size={8}/> URGENTE</span>}
-                    </div>
-                    <span className="text-[11px] text-theme-text font-black">
-                       {quote.priceBase ? `R$ ${quote.priceBase.toLocaleString()}` : "---"}
-                    </span>
-                  </div>
+          ) : filteredQuotes.length > 0 ? (
+            filteredQuotes.map((quote) => {
+              const status = getStatusConfig(quote.quoteStatus);
+              return (
+                <div 
+                  key={quote.id}
+                  onClick={() => setSelectedQuote(quote)}
+                  className={`p-6 border transition-all relative overflow-hidden group rounded-sm ${selectedQuote?.id === quote.id ? 'border-theme-text bg-theme-bg-muted ring-1 ring-theme-text shadow-2xl' : 'border-theme-border bg-theme-bg-muted/40 hover:border-theme-text-muted hover:bg-theme-bg-muted/60'}`}
+                  style={{ cursor: "pointer" }}
+                >
+                  <div className={`absolute top-0 left-0 w-1 h-full ${quote.urgency === 'HIGH' ? 'bg-red-500' : 'bg-brand-tactical opacity-20'}`} />
                   
-                  <div className="flex items-center justify-between gap-4">
-                    <h3 className="text-xl font-heading font-black text-theme-text uppercase tracking-tight group-hover:text-brand-tactical transition-colors">
-                      {quote.nomeNoivos}
-                    </h3>
-                    <span className="text-[9px] font-black text-theme-text-muted uppercase tracking-widest bg-theme-bg/40 px-2 py-1 border border-theme-border/50">
-                      ID: {quote.id.slice(-6).toUpperCase()}
-                    </span>
-                  </div>
-                  
-                  <div className="grid grid-cols-2 gap-4 border-t border-theme-border/10 pt-3">
-                    <div className="flex items-center gap-2 text-[9px] text-theme-text-muted font-bold uppercase truncate">
-                      <User size={10} className="text-brand-tactical" /> {quote.clientName || "N/A"}
-                    </div>
-                    {quote.clientPhone && (
-                      <div className="flex items-center gap-2 text-[9px] text-brand-tactical font-bold">
-                        <Phone size={10} /> {quote.clientPhone}
+                  <div className="space-y-4">
+                    <div className="flex items-center justify-between">
+                      <div className="flex items-center gap-2">
+                         <span className={`text-[8px] font-black uppercase tracking-widest px-2.5 py-1.5 border ${status.border} ${status.bg} ${status.color} rounded-[2px]`}>
+                           {status.label}
+                         </span>
+                         {quote.urgency === 'HIGH' && (
+                           <div className="flex items-center gap-1.5 bg-red-500/10 px-2 py-1 border border-red-500/20 rounded-[2px] animate-pulse">
+                             <Flame size={8} className="text-red-500" />
+                             <span className="text-[7px] font-black text-red-500 uppercase tracking-widest">Urgente</span>
+                           </div>
+                         )}
                       </div>
-                    )}
+                      <span className="text-[12px] text-theme-text font-black italic tracking-tighter">
+                         {quote.priceBase ? `R$ ${quote.priceBase.toLocaleString()}` : "S/ VALOR"}
+                      </span>
+                    </div>
+                    
+                    <div className="flex items-center justify-between gap-4">
+                      <h3 className="text-xl font-heading font-black text-theme-text uppercase tracking-tight group-hover:text-brand-tactical transition-colors">
+                        {quote.nomeNoivos}
+                      </h3>
+                      <span className="text-[9px] font-black text-theme-text-muted uppercase tracking-[0.2em] bg-theme-bg/60 px-3 py-1.5 border border-theme-border/40 italic">
+                        ID: {quote.id.slice(-6).toUpperCase()}
+                      </span>
+                    </div>
+                    
+                    <div className="flex items-center justify-between pt-4 border-t border-theme-border/10">
+                      <div className="flex items-center gap-3 text-[9px] text-theme-text-muted font-bold uppercase truncate max-w-[60%]">
+                        <div className="w-5 h-5 rounded-full bg-theme-bg border border-theme-border flex items-center justify-center">
+                          <User size={10} className="text-brand-tactical" />
+                        </div>
+                        {quote.clientName || "NOME NÃO INFORMADO"}
+                      </div>
+                      {quote.clientPhone && (
+                        <div className="flex items-center gap-2 text-[9px] text-brand-tactical font-black tracking-widest bg-brand-tactical/5 px-2 py-1 rounded-sm border border-brand-tactical/10">
+                          <Phone size={10} /> {quote.clientPhone}
+                        </div>
+                      )}
+                    </div>
                   </div>
                 </div>
-              </div>
-            ))
+              );
+            })
           ) : (
-            <div className="py-24 text-center border border-dashed border-theme-border flex flex-col items-center justify-center bg-theme-bg-muted/10 rounded-sm">
-              <Briefcase size={32} className="text-theme-text-muted mb-4 opacity-30" />
-              <p className="text-[10px] text-theme-text-muted uppercase tracking-widest font-bold">Nenhum lead encontrado.</p>
+            <div className="py-32 text-center border border-dashed border-theme-border/40 bg-theme-bg-muted/10 flex flex-col items-center justify-center rounded-sm">
+              <div className="w-16 h-16 bg-theme-bg-muted border border-theme-border flex items-center justify-center rounded-full mb-6 opacity-30">
+                <Briefcase size={24} className="text-theme-text-muted" />
+              </div>
+              <p className="text-[10px] text-theme-text-muted uppercase tracking-[0.4em] font-black max-w-[200px] leading-relaxed">Nenhum protocolo encontrado com estes filtros.</p>
+              <button onClick={() => { setStatusFilter("ALL"); setSearch(""); }} className="mt-6 text-[8px] font-black text-brand-tactical uppercase tracking-widest border-b border-brand-tactical/20 pb-1 hover:border-brand-tactical transition-all">Limpar Filtros</button>
             </div>
           )}
         </div>
@@ -597,19 +658,42 @@ export const AdminQuotes: React.FC = () => {
                </div>
             </div>
           ) : (
-            <div className="h-full border border-theme-border bg-theme-bg-muted/10 flex flex-col items-center justify-center p-12 text-center rounded-sm min-h-[600px]">
-               <div className="relative mb-12 flex items-center justify-center">
-                  <div className="w-48 h-48 border border-brand-tactical/10 rounded-full flex items-center justify-center">
-                    <Briefcase size={64} className="text-theme-text-muted opacity-20" />
-                  </div>
-                  <div className="absolute inset-0 border border-brand-tactical/5 rounded-full animate-ping" />
+            <div className="h-full border border-theme-border bg-theme-bg-muted/10 flex flex-col items-center justify-center p-12 text-center rounded-sm min-h-[600px] relative overflow-hidden">
+               {/* Background Decorative Elements */}
+               <div className="absolute top-0 left-0 w-full h-full opacity-[0.02] pointer-events-none">
+                  <div className="absolute top-[-10%] left-[-10%] w-[40%] h-[40%] bg-brand-tactical rounded-full blur-[120px]" />
+                  <div className="absolute bottom-[-10%] right-[-10%] w-[40%] h-[40%] bg-red-500 rounded-full blur-[120px]" />
                </div>
-               <h4 className="text-[10px] font-black text-theme-text-muted uppercase tracking-[0.5em] mb-12">Selecione um lead no radar para iniciar</h4>
+
+               <div className="relative mb-16 flex items-center justify-center">
+                  <div className="w-56 h-56 border border-theme-border/40 rounded-full flex items-center justify-center bg-theme-bg/40 backdrop-blur-sm shadow-inner">
+                    <Briefcase size={80} className="text-theme-text-muted opacity-10" strokeWidth={1} />
+                  </div>
+                  <motion.div 
+                    animate={{ rotate: 360 }}
+                    transition={{ duration: 20, repeat: Infinity, ease: "linear" }}
+                    className="absolute inset-0 border border-brand-tactical/5 rounded-full border-dashed" 
+                  />
+               </div>
+
+               <div className="space-y-4 mb-20 max-w-sm">
+                 <h4 className="text-[11px] font-black text-theme-text uppercase tracking-[0.6em] italic">Radar de Propostas</h4>
+                 <p className="text-[10px] text-theme-text-muted font-bold uppercase tracking-[0.2em] leading-relaxed opacity-40">Selecione um lead operacional na lista lateral para iniciar o processamento técnico e financeiro.</p>
+               </div>
                
-               <div className="grid grid-cols-3 gap-12 pt-10 border-t border-theme-border/50 w-full max-w-sm">
-                  <div className="space-y-1"><span className="text-[9px] text-theme-text-muted font-bold uppercase tracking-widest block">Pendentes</span><p className="text-2xl font-heading font-black text-theme-text">{stats.pending}</p></div>
-                  <div className="space-y-1"><span className="text-[9px] text-theme-text-muted font-bold uppercase tracking-widest block">Total</span><p className="text-2xl font-heading font-black text-brand-tactical">R$ {(stats.totalValue / 1000).toFixed(1)}k</p></div>
-                  <div className="space-y-1"><span className="text-[9px] text-theme-text-muted font-bold uppercase tracking-widest block">Urgentes</span><p className="text-2xl font-heading font-black text-red-500">{stats.highUrgency}</p></div>
+               <div className="grid grid-cols-3 gap-12 pt-16 border-t border-theme-border/30 w-full max-w-md">
+                  <div className="space-y-2">
+                    <span className="text-[8px] text-theme-text-muted font-black uppercase tracking-[0.3em] block opacity-50">Pendentes</span>
+                    <p className="text-4xl font-heading font-black text-theme-text tracking-tighter italic">{stats.pending}</p>
+                  </div>
+                  <div className="space-y-2">
+                    <span className="text-[8px] text-theme-text-muted font-black uppercase tracking-[0.3em] block opacity-50">Volume Total</span>
+                    <p className="text-4xl font-heading font-black text-brand-tactical tracking-tighter italic">R$ {(stats.totalValue / 1000).toFixed(1)}k</p>
+                  </div>
+                  <div className="space-y-2">
+                    <span className="text-[8px] text-theme-text-muted font-black uppercase tracking-[0.3em] block opacity-50">Alta Prioridade</span>
+                    <p className="text-4xl font-heading font-black text-red-500 tracking-tighter italic">{stats.highUrgency}</p>
+                  </div>
                </div>
             </div>
           )}
