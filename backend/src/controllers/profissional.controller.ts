@@ -765,9 +765,26 @@ export async function toggleFavorite(req: AuthRequest, res: Response): Promise<v
       res.json({ status: "REMOVED", message: "Parceiro removido da rede." });
       return;
     } else {
+      // Busca dados para notificação
+      const [user, partner] = await Promise.all([
+        prisma.user.findUnique({ where: { id: userId }, select: { nome: true } }),
+        prisma.user.findUnique({ where: { id: partnerId }, select: { nome: true, email: true, whatsapp: true } })
+      ]);
+
       const created = await prisma.professionalNetwork.create({
         data: { userId, partnerId }
       });
+
+      // Dispara notificação assíncrona
+      if (user && partner) {
+        NotificationService.notifyNewNetworkPartner({
+          to: partner.email,
+          partnerName: partner.nome,
+          userName: user.nome,
+          whatsapp: partner.whatsapp
+        }).catch(console.error);
+      }
+
       res.json({ status: "ADDED", message: "Parceiro adicionado à rede de empatia.", data: created });
       return;
     }

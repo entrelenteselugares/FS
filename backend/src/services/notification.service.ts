@@ -421,4 +421,50 @@ export class NotificationService {
       return false;
     }
   }
+
+  /**
+   * Notifica um profissional que ele foi adicionado à rede de outro profissional (Empatia)
+   */
+  static async notifyNewNetworkPartner(data: {
+    to: string;
+    partnerName: string;
+    userName: string;
+    whatsapp?: string | null;
+  }) {
+    // 1. Notificação por E-mail
+    if (process.env.SMTP_USER && process.env.SMTP_PASS) {
+      const htmlContent = `
+        <div style="font-family: sans-serif; max-width: 600px; margin: 0 auto; padding: 20px; color: #000;">
+          <h1 style="font-size: 20px; color: #85B9AC;">Você foi adicionado a uma Rede de Empatia! ✨</h1>
+          <p>Olá, <strong>${data.partnerName}</strong>,</p>
+          <p>O profissional <strong>${data.userName}</strong> acabou de adicionar você à rede de parceiros favoritos dele na Foto Segundo.</p>
+          <p>Isso significa que ele confia no seu trabalho e poderá delegar eventos ou edições para você no futuro.</p>
+          <div style="text-align: center; margin: 30px 0;">
+            <a href="${APP_URL}/profissional" style="background: #000; color: #fff; padding: 15px 30px; text-decoration: none; border-radius: 5px; font-weight: bold; display: inline-block;">
+              VER MEU PAINEL
+            </a>
+          </div>
+          <hr style="border: 0.5px solid #eee;" />
+          <p style="font-size: 10px; color: #999; text-align: center;">Foto Segundo — Conectando os melhores talentos.</p>
+        </div>
+      `;
+
+      try {
+        await this.transporter.sendMail({
+          from: `"Foto Segundo" <${process.env.SMTP_USER}>`,
+          to: data.to,
+          subject: `${data.userName} adicionou você à rede de parcerias! ✨`,
+          html: htmlContent,
+        });
+      } catch (e: any) {
+        console.error("[Notification] Erro e-mail parceria:", e.message);
+      }
+    }
+
+    // 2. Notificação por WhatsApp (se disponível)
+    if (data.whatsapp) {
+      const msg = `✨ *NOVA CONEXÃO — Foto Segundo*\n\nOlá, *${data.partnerName}*! O profissional *${data.userName}* adicionou você à rede de parcerias dele.\n\nFique atento aos novos chamados de delegacia de eventos e edições! 📸`;
+      this.sendWhatsAppToClient(data.whatsapp, msg);
+    }
+  }
 }
