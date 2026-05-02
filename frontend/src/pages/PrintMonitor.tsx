@@ -7,6 +7,7 @@ import {
   Clock, ExternalLink, Play, Pause, QrCode, X
 } from "lucide-react";
 import { QRCodeSVG } from "qrcode.react";
+import { T } from "../lib/theme";
 
 interface PhygitalPrint {
   id: string;
@@ -240,7 +241,8 @@ export default function PrintMonitor() {
         </div>
       </div>
 
-      {/* QR      {showQR && (
+      {/* QR CODE MODAL */}
+      {showQR && (
         <div className="fixed inset-0 z-[100] flex items-center justify-center bg-black/95 backdrop-blur-md p-4 animate-reveal" style={{ position: "fixed", top: 0, left: 0, right: 0, bottom: 0, display: "flex", alignItems: "center", justifyContent: "center" }}>
           <div className="bg-zinc-900 border border-white/10 p-8 md:p-12 max-w-md w-full relative flex flex-col items-center text-center gap-8 shadow-2xl" style={{ margin: "auto" }}>
             <button 
