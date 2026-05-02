@@ -44,33 +44,31 @@ export class PhygitalService {
       const w = width || 1200;
       const h = height || 1600;
 
-      // Adicionamos borda branca (Luxury Frame)
-      const borderSize = Math.floor(Math.min(w, h) * 0.08); // 8% de borda para mais luxo
+      // Adicionamos borda branca (Luxury Frame - Estilo Polaroid)
+      const borderSize = Math.floor(Math.min(w, h) * 0.10); // 10% de borda
       const finalWidth = w + (borderSize * 2);
-      const finalHeight = h + (borderSize * 3); // Espaço extra embaixo
-
+      
       pipeline = pipeline.extend({
         top: borderSize,
-        bottom: borderSize * 2, 
+        bottom: borderSize * 3, // Margem Polaroid clássica
         left: borderSize,
         right: borderSize,
         background: { r: 255, g: 255, b: 255, alpha: 1 }
       });
 
-      // 4. Criação dos Carimbos SVG (Proporcionais à imagem)
-      // Usamos uma fonte genérica e aumentamos drasticamente o tamanho para legibilidade
+      // 4. Criação dos Carimbos SVG (Com ViewBox para garantir escala)
       const refSvg = Buffer.from(`
-        <svg width="${finalWidth}" height="${borderSize * 2}">
-          <text x="50%" y="50%" font-family="DejaVu Sans, Arial, sans-serif" font-size="${Math.floor(borderSize * 1.2)}" font-weight="900" fill="#000000" text-anchor="middle" dominant-baseline="middle" style="text-transform: uppercase; letter-spacing: 2px;">
+        <svg width="${finalWidth}" height="${borderSize * 3}" viewBox="0 0 ${finalWidth} ${borderSize * 3}">
+          <text x="50%" y="50%" font-family="sans-serif" font-size="${Math.floor(borderSize * 1.5)}" font-weight="900" fill="#000000" text-anchor="middle" dominant-baseline="middle" style="text-transform: uppercase;">
             ${referenceCode}
           </text>
         </svg>
       `);
 
-      const logoFontSize = Math.floor(borderSize * 0.3);
+      const logoFontSize = Math.floor(borderSize * 0.4);
       const logoSvg = Buffer.from(`
-        <svg width="${finalWidth}" height="${borderSize}">
-          <text x="${finalWidth - borderSize}" y="50%" font-family="DejaVu Sans, Arial, sans-serif" font-size="${logoFontSize}" font-weight="900" fill="#000000" text-anchor="end" dominant-baseline="middle" style="text-transform: uppercase; letter-spacing: 5px; opacity: 0.5;">
+        <svg width="${finalWidth}" height="${borderSize * 2}" viewBox="0 0 ${finalWidth} ${borderSize * 2}">
+          <text x="${finalWidth - borderSize}" y="70%" font-family="sans-serif" font-size="${logoFontSize}" font-weight="900" fill="#000000" text-anchor="end" dominant-baseline="middle" style="text-transform: uppercase; letter-spacing: 5px; opacity: 0.6;">
             FOTO SEGUNDO
           </text>
         </svg>
