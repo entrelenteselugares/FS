@@ -59,6 +59,7 @@ export class NotificationService {
     orderId: string;
     accessLink: string;
     tempPassword?: string;
+    guestToken?: string;
   }) {
     if (!process.env.SMTP_USER || !process.env.SMTP_PASS) {
       console.warn("[Notification] SMTP credentials missing. Skipping email send.");
@@ -77,10 +78,16 @@ export class NotificationService {
         
         <div style="background: #f9f9f9; padding: 30px; border-radius: 8px; text-align: center; margin: 30px 0;">
           <p style="font-size: 14px; color: #666; margin-bottom: 20px;">Clique no botão abaixo para acessar sua galeria exclusiva:</p>
-          <a href="${data.accessLink}" style="background: #000; color: #fff; padding: 15px 30px; text-decoration: none; border-radius: 5px; font-weight: bold; display: inline-block;">
+          <a href="${data.accessLink}${data.guestToken ? `?token=${data.guestToken}` : ''}" style="background: #000; color: #fff; padding: 15px 30px; text-decoration: none; border-radius: 5px; font-weight: bold; display: inline-block;">
             ACESSAR MEUS ARQUIVOS
           </a>
         </div>
+
+        ${data.guestToken ? `
+        <div style="background: #fff8e1; border: 1px solid #ffe082; padding: 15px; border-radius: 4px; margin: 20px 0; font-size: 13px;">
+          <p style="margin: 0;"><strong>Acesso Direto (Magic Link):</strong> Use o botão acima para acessar sem precisar de login.</p>
+        </div>
+        ` : ""}
 
         ${data.tempPassword ? `
         <div style="border: 1px dashed #ccc; padding: 20px; margin: 20px 0; font-size: 13px;">

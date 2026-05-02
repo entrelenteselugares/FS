@@ -25,7 +25,7 @@ export class EventController {
             { id: orderId as string },
             { guestToken: guestToken as string }
           ],
-          eventId: id,
+          eventId: id as string,
           status: "APROVADO"
         },
         include: { event: true }
@@ -35,13 +35,14 @@ export class EventController {
         return res.status(403).json({ error: "Acesso ainda não liberado ou token inválido." });
       }
 
+      const o = order as any;
       return res.json({
-        lightroomUrl: order.showAlbum ? order.event.lightroomUrl : null,
-        driveUrl: order.showVideo ? order.event.driveUrl : null,
-        eventTitle: order.event.nomeNoivos,
-        accessType: order.accessType || "PRIVATE",
-        guestToken: order.guestToken,
-        isGuestOrder: order.isGuestOrder
+        lightroomUrl: o.showAlbum ? o.event?.lightroomUrl : null,
+        driveUrl: o.showVideo ? o.event?.driveUrl : null,
+        eventTitle: o.event?.nomeNoivos,
+        accessType: o.accessType || "PRIVATE",
+        guestToken: o.guestToken,
+        isGuestOrder: o.isGuestOrder
       });
     } catch (error) {
       console.error("Erro ao verificar acesso:", error);
@@ -503,7 +504,7 @@ export class EventController {
             startAt: start,
             endAt: end,
             title: `Reserva: ${name}`,
-            status: "BUSY",
+            status: "BLOCKED",
             source: "BOOKING"
           }
         });
