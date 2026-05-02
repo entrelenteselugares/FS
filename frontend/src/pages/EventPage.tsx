@@ -1,5 +1,5 @@
 import { useState, useEffect, useCallback } from "react";
-import { Check, Video, Zap, Printer, Smartphone } from "lucide-react";
+import { Check, Video, Zap, Printer } from "lucide-react";
 import { useParams, useNavigate, useSearchParams } from "react-router-dom";
 import { API as api } from "../lib/api";
 import { Helmet } from "react-helmet-async";
@@ -39,7 +39,7 @@ const Countdown: React.FC<{ targetDate: string }> = ({ targetDate }) => {
   }, [targetDate]);
 
   return (
-    <div style={{ display: "flex", gap: 20, padding: "20px 0", borderTop: `1px solid ${T.border}`, borderBottom: `1px solid ${T.border}`, margin: "10px 0" }}>
+    <div style={{ display: "flex", gap: 20, marginBottom: "1.25rem", borderBottom: `1px solid ${T.border}`, paddingBottom: "0.75rem" }}>
       <Item val={timeLeft.d} label="Dias" />
       <Item val={timeLeft.h} label="Horas" />
       <Item val={timeLeft.m} label="Min" />
@@ -81,6 +81,7 @@ interface EventData {
   isPrimaryClient?: boolean;
   isPrivate?: boolean;
   isOwner?: boolean;
+  active?: boolean;
 }
 
 interface EventMedia {
@@ -100,96 +101,99 @@ interface AccessData {
 
 interface PrintProductData {
   id: string;
-  category: string;
   name: string;
-  description?: string;
+  category: string;
+  basePrice: number;
   finalPrice: number;
+  description: string | null;
+  active: boolean;
 }
 
-interface ServiceCatalogItem {
+interface ServiceData {
   id: string;
   name: string;
-  description?: string;
-  category?: string;
+  category: string;
   basePrice: number;
+  description: string;
 }
-
-type Step = "paywall" | "auth" | "choice" | "upsell" | "checkout" | "processing" | "success";
 
 const Spinner = () => (
-  <div style={{ width: 28, height: 28, border: `2px solid ${T.brand}`, borderTopColor: "transparent", borderRadius: "50%", animation: "spin 0.8s linear infinite" }} />
+  <div style={{ width: 24, height: 24, border: `2px solid ${T.border}`, borderTopColor: T.brand, borderRadius: "50%", animation: "spin 0.8s linear infinite" }} />
 );
-
-function detectBrand(number: string): string {
-  const n = number.replace(/\s/g, "");
-  if (/^4/.test(n)) return "visa";
-  if (/^5[1-5]|^2[2-7]/.test(n)) return "master";
-  if (/^3[47]/.test(n)) return "amex";
-  return "visa";
-}
-
-const mpErrors: Record<string, string> = {
-  cc_rejected_insufficient_amount: "Cartão sem limite suficiente.",
-  cc_rejected_bad_filled_security_code: "CVV inválido.",
-  cc_rejected_bad_filled_date: "Data de validade incorreta.",
-  cc_rejected_call_for_authorize: "Pagamento não autorizado. Contate seu banco.",
-  cc_rejected_card_disabled: "Cartão desabilitado. Contate seu banco.",
-};
-
-const MP_PUBLIC_KEY = (import.meta.env.VITE_MP_PUBLIC_KEY ?? "").trim().replace(/[\r\n\t]/g, "");
-
-const loadMP = () => new Promise((resolve) => {
-  const win = window as Window & { MercadoPago?: unknown };
-  if (win.MercadoPago) return resolve(win.MercadoPago);
-  const script = document.createElement("script");
-  script.src = "https://sdk.mercadopago.com/js/v2";
-  script.onload = () => resolve(win.MercadoPago);
-  document.body.appendChild(script);
-});
 
 const SERVICES = [
   { key: "temFoto", label: "Fotos em Alta" },
   { key: "temVideo", label: "Vídeo Cinema" },
-  { key: "temReels", label: "Reels / Stories" },
-  { key: "temFotoImpressa", label: "Foto Impressa" },
+  { key: "temReels", label: "Reels Vertical" },
+  { key: "temFotoImpressa", label: "Impressão" }
 ];
 
+const mpErrors: Record<string, string> = {
+  "205": "Número do cartão inválido.",
+  "208": "Mês de vencimento inválido.",
+  "209": "Ano de vencimento inválido.",
+  "211": "CPF inválido.",
+  "E301": "Número do cartão incompleto.",
+  "E302": "Código de segurança inválido.",
+  "default": "Verifique os dados do cartão e tente novamente."
+};
+
+interface MPInstance {
+  createCardToken: (data: unknown) => Promise<{ token: string; error?: unknown }>;
+}
+type MPConstructor = new (key: string) => MPInstance;
+
+const MP_PUBLIC_KEY = import.meta.env.VITE_MP_PUBLIC_KEY;
+
+const loadMP = () => new Promise<unknown>((resolve) => {
+  const w = window as Window & { MercadoPago?: unknown };
+  if (w.MercadoPago) { resolve(w.MercadoPago); return; }
+  const script = document.createElement("script");
+  script.src = "https://sdk.mercadopago.com/js/v2";
+  script.onload = () => resolve(w.MercadoPago);
+  document.body.appendChild(script);
+});
+
+const detectBrand = (number: string) => {
+  const n = number.replace(/\s/g, "");
+  if (n.startsWith("4")) return "visa";
+  if (/^5[1-5]/.test(n)) return "mastercard";
+  if (/^3[47]/.test(n)) return "amex";
+  if (/^6(?:011|5)/.test(n)) return "discover";
+  return "visa";
+};
+
 export default function EventPage() {
-  const { slug } = useParams<{ slug: string }>();
+  const { slug } = useParams();
   const navigate = useNavigate();
   const [searchParams] = useSearchParams();
+  const { user } = useAuth();
 
-  const [event, setEvent] = useState<EventData | null>(null);
   const [loading, setLoading] = useState(true);
-  const [sharing, setSharing] = useState(false);
-  const [step, setStep] = useState<Step | "countdown" | "denied">("paywall");
+  const [event, setEvent] = useState<EventData | null>(null);
+  const [medias, setMedias] = useState<EventMedia[]>([]);
+  const [step, setStep] = useState<"paywall" | "auth" | "choice" | "upsell" | "checkout" | "processing" | "countdown" | "denied" | "success">("paywall");
   const [access, setAccess] = useState<AccessData | null>(null);
   const [currentBannerIndex, setCurrentBannerIndex] = useState(0);
   const [orderId, setOrderId] = useState<string | null>(null);
   const [justPaid, setJustPaid] = useState(false);
-  const [error, setError] = useState("");
-  const [tokenizing, setTokenizing] = useState(false);
-  const [cardToken, setCardToken] = useState<string | null>(null);
-  const [cardData, setCardData] = useState({ number: "", name: "", month: "", year: "", cvv: "", email: "", cpf: "" });
   const [needsAccessChoice, setNeedsAccessChoice] = useState(false);
-  const [accessType, setAccessType] = useState<"PUBLIC" | "PRIVATE" | null>(null);
-  const { user } = useAuth();
-
-  // Print Store
-  const [showPrintStore, setShowPrintStore] = useState(false);
-
-  // Service Catalog for Upgrades
-  const [serviceCatalog, setServiceCatalog] = useState<ServiceCatalogItem[]>([]);
+  const [accessType, setAccessType] = useState<"PUBLIC" | "PRIVATE">("PUBLIC");
+  
+  const [cart, setCart] = useState<string[]>([]);
+  const [cartTotal, setCartTotal] = useState(0);
+  const [serviceCatalog, setServiceCatalog] = useState<ServiceData[]>([]);
   const [selectedServices, setSelectedServices] = useState<string[]>([]);
   const [includeLivePrint, setIncludeLivePrint] = useState(false);
-  const [includeShipping, setIncludeShipping] = useState(false);
+  const [includeShipping] = useState(false);
 
-  // Marketplace States
-  const [medias, setMedias] = useState<EventMedia[]>([]);
-  const [cart, setCart] = useState<string[]>([]); // Array de shortIds selecionados
-  const [cartTotal, setCartTotal] = useState(0);
+  const [cardData, setCardData] = useState({ number: "", name: "", month: "", year: "", cvv: "", cpf: "", email: user?.email || "" });
+  const [cardToken, setCardToken] = useState<string | null>(null);
+  const [tokenizing, setTokenizing] = useState(false);
+  const [error, setError] = useState("");
+  const [showPrintStore, setShowPrintStore] = useState(false);
 
-  // Carrega carrinho do localStorage ao iniciar
+  // Carrega carrinho do localStorage
   useEffect(() => {
     if (event?.id) {
       const saved = localStorage.getItem(`fs_cart_${event.id}`);
@@ -214,7 +218,7 @@ export default function EventPage() {
 
   // Print Catalog States
   const [printProducts, setPrintProducts] = useState<PrintProductData[]>([]);
-  const [selectedPrintProductId, setSelectedPrintProductId] = useState<string | null>(null);
+  const [selectedPrintProductId] = useState<string | null>(null);
 
   const handleShare = async () => {
     if (access?.accessType === "PRIVATE") {
@@ -223,10 +227,14 @@ export default function EventPage() {
       return;
     }
 
-    const deliveryUrl = `${window.location.origin}/delivery/${event?.id}`;
+    const isMarketplace = event?.type === 'PHOTO_MARKETPLACE';
+    const deliveryUrl = isMarketplace 
+      ? `${window.location.origin}/e/${event?.slug || event?.id}`
+      : `${window.location.origin}/delivery/${event?.id}`;
+
     const shareData = {
       title: `Álbum: ${event?.nomeNoivos}`,
-      text: `Confira as fotos do evento ${event?.nomeNoivos} no Foto Segundo!`,
+      text: isMarketplace ? `Veja as fotos ao vivo de ${event?.nomeNoivos}!` : `Confira as fotos do evento ${event?.nomeNoivos} no Foto Segundo!`,
       url: deliveryUrl,
     };
 
@@ -235,8 +243,7 @@ export default function EventPage() {
         await navigator.share(shareData);
       } else {
         await navigator.clipboard.writeText(deliveryUrl);
-        setSharing(true);
-        setTimeout(() => setSharing(false), 2000);
+        alert("Link copiado com sucesso!");
       }
     } catch (err) {
       console.error("Erro ao compartilhar:", err);
@@ -253,7 +260,6 @@ export default function EventPage() {
 
         const eventDate = eventData.dataEvento ? new Date(eventData.dataEvento) : null;
         
-        // Se o evento é hoje ou no futuro (com margem de 12h após o início para considerar 'em andamento')
         const now = new Date();
         const isFuture = eventDate && (eventDate.getTime() + (12 * 60 * 60 * 1000)) > now.getTime();
 
@@ -263,17 +269,15 @@ export default function EventPage() {
           setStep("paywall");
         } else if (isFuture && !eventData.lightroomUrl && !eventData.driveUrl && (!eventData.previewPhotos || eventData.previewPhotos.length === 0)) {
           setStep("countdown");
-        } else if ((!isFuture || eventData.active) && eventData.type !== 'PHOTO_MARKETPLACE') {
-          // Se o evento já começou ou está ativo E NÃO É MARKETPLACE, redireciona para a delivery page
+        } else if ((!isFuture || eventData.active) && eventData.type === 'ALBUM_FULL') {
+          // Apenas álbuns tradicionais (ALBUM_FULL) vão para a página de entrega Luxury
           navigate(`/delivery/${eventData.id}`);
-          return;
         } else if (eventData.isPrivate && !eventData.isPrimaryClient && !eventData.isOwner) {
           setStep("denied");
         } else if ((eventData.paywall && !eventData.paywall.active) || eventData.isOwner || eventData.type === 'PHOTO_MARKETPLACE') {
           setStep("success"); 
         }
 
-        // Se for marketplace, busca as mídias
         if (eventData.type === 'PHOTO_MARKETPLACE') {
           api.get(`/marketplace/events/${eventData.id}/media`)
             .then(res => setMedias(res.data))
@@ -281,30 +285,17 @@ export default function EventPage() {
         }
       })
       .catch((err) => {
-        if (err.response?.status === 403) {
-          setStep("denied");
-        } else {
-          navigate("/404");
-        }
+        if (err.response?.status === 403) setStep("denied");
+        else navigate("/404");
       })
       .finally(() => setLoading(false));
 
-    // Fetch Print Catalog
-    api.get('/public/print-catalog')
-      .then(res => setPrintProducts(res.data))
-      .catch(err => console.error("Erro ao carregar catálogo de impressão:", err));
+    api.get('/public/print-catalog').then(res => setPrintProducts(res.data)).catch(err => console.error(err));
+    api.get('/public/service-catalog').then(res => setServiceCatalog(res.data || [])).catch(err => console.error(err));
 
-    // Fetch Service Catalog
-    api.get('/public/service-catalog')
-      .then(res => setServiceCatalog(res.data || []))
-      .catch(err => console.error("Erro ao carregar catálogo de serviços:", err));
-
-    // Slideshow interval
-    const interval = setInterval(() => {
-      setCurrentBannerIndex(prev => (prev + 1) % 3);
-    }, 5000);
+    const interval = setInterval(() => setCurrentBannerIndex(prev => (prev + 1) % 3), 5000);
     return () => clearInterval(interval);
-  }, [slug, navigate, user?.id, user?.role, searchParams]);
+  }, [slug, navigate, user?.id, searchParams]);
 
   const handleAutoConfirmChoice = useCallback(async (oid: string) => {
     try {
@@ -316,26 +307,16 @@ export default function EventPage() {
 
   useEffect(() => {
     const checkAccessStatus = async (oid: string) => {
-      if (!event) return; // Aguarda o evento carregar para saber se o usuário é o dono
+      if (!event) return; 
       try {
         const { data } = await api.get(`/orders/${oid}/access-status`);
         if (data.status === "PENDING_CHOICE") {
           setStep("success");
-          if (event?.isPrimaryClient) {
-            setNeedsAccessChoice(true);
-          } else {
-            // Se não é o cliente primário, confirmamos automaticamente como PUBLIC 
-            // (apenas para o pedido dele, sem alterar o evento global se o backend permitir)
-            handleAutoConfirmChoice(oid);
-          }
+          if (event?.isPrimaryClient) setNeedsAccessChoice(true);
+          else handleAutoConfirmChoice(oid);
         } else if (data.status === "ACTIVE") {
           setStep("success");
-          setAccess({ 
-            lightroomUrl: data.lightroomUrl, 
-            driveUrl: data.driveUrl, 
-            expiresAt: data.expiresAt || "", 
-            eventTitle: event?.nomeNoivos || "" 
-          });
+          setAccess({ lightroomUrl: data.lightroomUrl, driveUrl: data.driveUrl, expiresAt: data.expiresAt || "", eventTitle: event?.nomeNoivos || "" });
         }
       } catch { /* not paid */ }
     };
@@ -343,14 +324,14 @@ export default function EventPage() {
     const savedOrderId = localStorage.getItem(`fs_order_${slug}`);
     const oid = urlOrderId ?? savedOrderId;
     if (oid) { setOrderId(oid); checkAccessStatus(oid); }
-  }, [slug, searchParams, event, navigate, user?.role, handleAutoConfirmChoice]);
+  }, [slug, searchParams, event, handleAutoConfirmChoice]);
 
   const handleTokenize = async () => {
     if (!MP_PUBLIC_KEY) { setError("Erro de configuração: Chave MP ausente."); return; }
     setTokenizing(true); setError("");
     try {
-      const MP: unknown = await loadMP();
-      const mp = new (MP as { new(key: string): { createCardToken: (d: unknown) => Promise<{ token: string; error?: unknown }> } })(MP_PUBLIC_KEY);
+      const MP = (await loadMP()) as MPConstructor;
+      const mp = new MP(MP_PUBLIC_KEY);
       const { token, error: mpErr } = await mp.createCardToken({
         cardNumber: cardData.number.replace(/\s/g, ""),
         cardholderName: cardData.name,
@@ -388,18 +369,14 @@ export default function EventPage() {
       const { data } = await api.post("/checkout/payment", {
         eventId: event.id, userId: user?.id, email: cardData.email, cpf: cardData.cpf,
         cardToken, installments: 1, paymentMethodId: detectBrand(cardData.number), accessType,
-        cart, 
-        printProductId: selectedPrintProductId,
-        selectedServices,
-        includeLivePrint, // Novo: Estação de Impressão
-        includeShipping,  // Novo: Entrega Posterior
+        cart, printProductId: selectedPrintProductId, selectedServices, includeLivePrint, includeShipping,  
       });
       if (data.hasPaid) { setOrderId(data.orderId); setJustPaid(true); setStep("success"); }
       else pollPaymentStatus(data.orderId);
     } catch (err: unknown) {
-      const axiosErr = err as { response?: { data?: { code?: string; error?: string } } };
-      const msg = axiosErr.response?.data?.code
-        ? (mpErrors[axiosErr.response.data.code] || axiosErr.response.data.error || "Erro no processamento.")
+      const errorResponse = err as { response?: { data?: { code?: string; error?: string } } };
+      const msg = errorResponse.response?.data?.code 
+        ? (mpErrors[errorResponse.response.data.code] || errorResponse.response.data.error || "Erro no processamento.") 
         : "Erro no pagamento.";
       setError(msg); setStep("checkout"); setCardToken(null);
     }
@@ -407,69 +384,25 @@ export default function EventPage() {
 
   const handleUnlockClick = async () => { 
     if (!event) return;
-    if (!user) {
-      setStep("auth"); 
-      return;
-    }
-    if (event.pendingOrderId) {
-      navigate(`/checkout?orderId=${event.pendingOrderId}`);
-      return;
-    }
-    // Se for upgrade, pulamos a escolha de privacidade e geramos protocolo para o checkout padrão
+    if (!user) { setStep("auth"); return; }
+    if (event.pendingOrderId) { navigate(`/checkout?orderId=${event.pendingOrderId}`); return; }
     if (searchParams.get("intent") === "upgrade") {
       try {
         const { data } = await api.post("/checkout/pending", {
-          eventId: event.id,
-          userId: user?.id,
-          email: user?.email,
-          selectedServices,
-          includeLivePrint,
-          includeShipping
+          eventId: event.id, userId: user?.id, email: user?.email, selectedServices, includeLivePrint, includeShipping
         });
         navigate(`/checkout/${data.orderId}`);
-      } catch (err) {
-        console.error("Erro ao gerar upgrade:", err);
-        alert("Erro ao iniciar upgrade. Tente novamente.");
-      }
+      } catch (err) { console.error(err); alert("Erro ao iniciar upgrade. Tente novamente."); }
       return;
     }
-    
-    // Só mostramos a escolha de privacidade (Mestre) para o cliente primário do evento.
-    // Outros compradores (convidados/parceiros) pulam direto para o checkout/upsell.
-    if (event.isPrimaryClient) {
-      setStep("choice");
-    } else {
-      setAccessType("PUBLIC"); // Padrão para convidados
-      setStep(printProducts.length > 0 ? "upsell" : "checkout");
-    }
+    if (event.isPrimaryClient) setStep("choice");
+    else { setAccessType("PUBLIC"); setStep(printProducts.length > 0 ? "upsell" : "checkout"); }
   };
+  
   const handleChange = (k: string) => (e: React.ChangeEvent<HTMLInputElement>) => setCardData(p => ({ ...p, [k]: e.target.value }));
 
-  // ── SEO & Fallback Logic ───────────────────────────────────────────────────
-  const getSEOData = (ev: EventData | null) => {
-    if (!ev) return { title: "Foto Segundo", description: "Plataforma de Fotografia", image: "", url: "" };
-    const defaults = ["/defaults/cover1.png", "/defaults/cover2.png", "/defaults/cover3.png"];
-    const idStr = ev.id || "0";
-    const index = idStr.split('').reduce((acc, char) => acc + char.charCodeAt(0), 0) % defaults.length;
-    const fallback = window.location.origin + defaults[index];
-    const image = ev.coverPhotoUrl || fallback;
-    const dateStr = ev.dataEvento ? new Date(ev.dataEvento).toLocaleDateString("pt-BR") : "";
-    const description = `Confira as fotos de ${ev.nomeNoivos}${dateStr ? " em " + dateStr : ""}. Acesse suas memórias digitais e recorde os melhores momentos no Foto Segundo.`;
-
-    return {
-      title: `Álbum: ${ev.nomeNoivos} | Foto Segundo`,
-      description,
-      image,
-      url: window.location.href
-    };
-  };
-
-  const seo = getSEOData(event);
-
   if (loading) return (
-    <div style={{ height: "100vh", background: T.bg, display: "flex", alignItems: "center", justifyContent: "center" }}>
-      <Spinner />
-    </div>
+    <div style={{ height: "100vh", background: T.bg, display: "flex", alignItems: "center", justifyContent: "center" }}><Spinner /></div>
   );
 
   if (!event) return null;
@@ -477,7 +410,6 @@ export default function EventPage() {
   const paid = step === "success";
   const isMarketplace = event.type === 'PHOTO_MARKETPLACE';
   
-  // Filtra apenas serviços ativos e que existem no objeto event
   const activeServices = SERVICES.filter(s => {
     const val = event[s.key as keyof EventData];
     return val === true || val === "true";
@@ -487,7 +419,6 @@ export default function EventPage() {
     setCart(prev => {
       const exists = prev.includes(shortId);
       const next = exists ? prev.filter(s => s !== shortId) : [...prev, shortId];
-      // Calcula total
       const price = event.pricePerPhoto || 15;
       setCartTotal(next.length * price);
       return next;
@@ -499,49 +430,28 @@ export default function EventPage() {
       className="ep-main-container" 
       onContextMenu={(e) => e.preventDefault()}
       style={{ 
-        height: "100vh", 
-        background: T.bg, 
-        color: T.text, 
-        fontFamily: T.fontB, 
-        display: "flex", 
-        flexDirection: "column",
-        userSelect: "none",
-        overflow: "hidden"
+        height: "100vh", background: T.bg, color: T.text, fontFamily: T.fontB, 
+        display: "flex", flexDirection: "column", userSelect: "none", overflow: "hidden"
       }}
     >
-      <Helmet>
-        <title>{seo.title}</title>
-        <meta name="description" content={seo.description} />
-        
-        {/* OpenGraph / Facebook */}
-        <meta property="og:type" content="website" />
-        <meta property="og:url" content={seo.url} />
-        <meta property="og:title" content={seo.title} />
-        <meta property="og:description" content={seo.description} />
-        <meta property="og:image" content={seo.image} />
-
-        {/* Twitter */}
-        <meta property="twitter:card" content="summary_large_image" />
-        <meta property="twitter:url" content={seo.url} />
-        <meta property="twitter:title" content={seo.title} />
-        <meta property="twitter:description" content={seo.description} />
-        <meta property="twitter:image" content={seo.image} />
-      </Helmet>
+      <Helmet><title>{`Álbum: ${event.nomeNoivos} | Foto Segundo`}</title></Helmet>
 
       <style>{`
         @keyframes spin { from { transform: rotate(0deg); } to { transform: rotate(360deg); } }
         @keyframes fadeUp { from { opacity:0; transform: translateY(12px); } to { opacity:1; transform: translateY(0); } }
         .ep-grid { display: grid; grid-template-columns: 1fr 340px; height: calc(100vh - 52px); overflow: hidden; }
-        .ep-sidebar { overflow-y: auto; }
-        @media (min-width: 901px) {
-          .desktop-hide { display: none !important; }
-        }
-        .ep-main-container { overflow: hidden; }
+        .ep-sidebar { overflow-y: auto; scrollbar-width: thin; scrollbar-color: ${T.border} transparent; }
         @media (max-width: 900px) {
           .ep-main-container { overflow: auto !important; height: auto !important; }
-          .ep-grid { grid-template-columns: 1fr; grid-template-rows: auto; height: auto; overflow: auto; }
-          .ep-cover { height: 75vh; min-height: 480px; }
+          .ep-grid { grid-template-columns: 1fr; grid-template-rows: auto; height: auto; overflow: visible; }
+          .ep-cover { height: 65vh; min-height: 400px; }
           .mobile-hide { display: none !important; }
+          .ep-sidebar { border-left: none !important; border-top: 1px solid ${T.border}; margin-bottom: 80px; }
+          .ls-grid { grid-template-columns: repeat(2, 1fr) !important; gap: 8px !important; }
+          .ls-header { padding: 20px 16px 12px !important; }
+          .ls-body { padding: 0 16px 32px !important; }
+          .side-inner { padding: 24px 16px !important; }
+          .sticky-mobile-buy { display: flex !important; }
         }
       `}</style>
 
@@ -550,846 +460,229 @@ export default function EventPage() {
       <div className="ep-grid">
         <div className="ep-cover" style={{ position: "relative", overflow: "hidden", background: T.bgCard }}>
           {(() => {
-            const validPreviews = (event.previewPhotos || [])
-              .filter(p => !!p && (p.match(/\.(jpeg|jpg|gif|png|webp|bmp)/i) || p.startsWith('data:image')))
-              .map(p => p.trim().replace(/\s/g, ''));
-            
-            const bannerImages = [];
-            if (event.coverPhotoUrl) bannerImages.push(event.coverPhotoUrl.toString().trim().replace(/\s/g, ''));
-            bannerImages.push(...validPreviews);
-            
-            const finalBanners = bannerImages.slice(0, 3);
-
-            if (finalBanners.length > 0) {
-              return (
-                <div style={{ width: "100%", height: "100%", position: "relative" }}>
-                  {finalBanners.map((img, i) => (
-                    <img 
-                      key={i}
-                      src={img} 
-                      alt={`${event.nomeNoivos} ${i}`}
-                      style={{ 
-                        position: "absolute",
-                        inset: 0,
-                        width: "100%", 
-                        height: "100%", 
-                        objectFit: "cover", 
-                        filter: paid ? "none" : "blur(6px) brightness(0.7)", 
-                        transition: "opacity 1.5s ease-in-out, filter 0.8s ease",
-                        opacity: (currentBannerIndex % finalBanners.length) === i ? 1 : 0,
-                        zIndex: (currentBannerIndex % finalBanners.length) === i ? 1 : 0
-                      }}
-                    />
-                  ))}
-                </div>
-              );
-            }
-
+            const bannerImages = [event.coverPhotoUrl, ...(event.previewPhotos || [])].filter(Boolean).slice(0, 3);
             return (
-              <div style={{ 
-                width: "100%", height: "100%", display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center", 
-                background: `radial-gradient(circle at center, #1a1a1a 0%, #0a0a0a 100%)`,
-                position: "relative", overflow: "hidden"
-              }}>
-                <div style={{ 
-                  position: "absolute", fontFamily: T.fontD, fontSize: "15vw", fontWeight: 900, 
-                  color: "#fff", opacity: 0.03, textTransform: "uppercase", whiteSpace: "nowrap",
-                  pointerEvents: "none", userSelect: "none"
-                }}>
-                  {event.nomeNoivos}
-                </div>
-                <img 
-                  src="/logo-fs.png" 
-                  alt="Foto Segundo" 
-                  style={{ height: "clamp(30px, 5vw, 60px)", opacity: 0.3, filter: "brightness(0) invert(1)", zIndex: 1 }} 
-                />
-                <div style={{ marginTop: 20, fontSize: 10, letterSpacing: 5, color: "#fff", opacity: 0.2, textTransform: "uppercase", fontWeight: 300, zIndex: 1 }}>
-                  Álbum em Processamento
-                </div>
+              <div style={{ width: "100%", height: "100%", position: "relative" }}>
+                {bannerImages.length > 0 ? bannerImages.map((img, i) => (
+                  <img 
+                    key={i} src={img as string} alt=""
+                    style={{ 
+                      position: "absolute", inset: 0, width: "100%", height: "100%", objectFit: "cover", 
+                      filter: paid ? "none" : "blur(6px) brightness(0.7)", 
+                      transition: "opacity 1.5s ease-in-out",
+                      opacity: (currentBannerIndex % bannerImages.length) === i ? 1 : 0
+                    }}
+                  />
+                )) : (
+                  <div style={{ width: "100%", height: "100%", display: "flex", alignItems: "center", justifyContent: "center", background: "#0a0a0a" }}>
+                    <div style={{ fontFamily: T.fontD, fontSize: "10vw", color: "#fff", opacity: 0.05, textTransform: "uppercase" }}>{event.nomeNoivos}</div>
+                  </div>
+                )}
               </div>
             );
           })()}
 
-          {/* Overlay gradiente unificado */}
-          <div style={{ position: "absolute", inset: 0, zIndex: 10, background: "linear-gradient(to top, rgba(0,0,0,0.9) 0%, rgba(0,0,0,0.2) 60%, transparent 100%)", display: "flex", flexDirection: "column", justifyContent: "flex-end", padding: "32px 36px" }}>
-            {!paid && (
-              <div style={{ position: "absolute", inset: 0, display: "flex", alignItems: "center", justifyContent: "center" }}>
-                <div style={{ padding: 18, background: "rgba(0,0,0,0.55)", backdropFilter: "blur(4px)", borderRadius: "50%", color: "rgba(255,255,255,0.7)" }}>
-                  <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
-                </div>
-              </div>
-            )}
-
-            <div style={{ display: "flex", alignItems: "center", gap: 10, marginBottom: 10 }}>
-              <div style={{ width: 24, height: 2, background: T.brand }} />
-              <span style={{ fontSize: 9, letterSpacing: 3, textTransform: "uppercase", color: T.brand, fontWeight: 700 }}>
-                {typeof event.cartorio === "string" ? event.cartorio : "Registro Editorial"}
-              </span>
-            </div>
-
-            <h1 style={{ fontFamily: T.fontD, fontWeight: 900, fontSize: "clamp(28px, 4vw, 48px)", lineHeight: 1, color: "#fff", textTransform: "uppercase", margin: "0 0 8px" }}>
-              {event.nomeNoivos}
-            </h1>
-
-            <div style={{ fontSize: 12, color: "rgba(255,255,255,0.55)", marginBottom: 20 }}>
-              {event.dataEvento ? new Date(event.dataEvento).toLocaleDateString("pt-BR", { day: "numeric", month: "long", year: "numeric" }) : ""}{event.city ? ` · ${event.city}` : ""}
-            </div>
-
-            {activeServices.length > 0 && (
-              <div style={{ display: "flex", flexWrap: "wrap", gap: 8 }}>
-                {activeServices.map(s => (
-                  <span key={s.key} style={{ fontSize: 9, fontWeight: 700, textTransform: "uppercase", letterSpacing: 2, padding: "5px 10px", border: "1px solid rgba(255,255,255,0.2)", color: "rgba(255,255,255,0.65)", backdropFilter: "blur(4px)" }}>
-                    {s.label}
-                  </span>
-                ))}
-              </div>
-            )}
-
-            {paid && access && (access.lightroomUrl || access.driveUrl) && (
-              <div className="desktop-hide" style={{ display: "flex", gap: 10, marginTop: 24, animation: "fadeUp 0.5s ease" }}>
-                {access.lightroomUrl && (
-                  <a href={access.lightroomUrl.toString().trim().replace(/\s/g, '')} target="_blank" rel="noreferrer" style={{ ...BtnPrimary, flex: 1, justifyContent: "center", textDecoration: "none", fontSize: 11 }}>
-                    Álbum de Fotos
-                  </a>
-                )}
-                {access.driveUrl && (
-                  <a href={access.driveUrl.toString().trim().replace(/\s/g, '')} target="_blank" rel="noreferrer" style={{ ...BtnSecondary, flex: 1, justifyContent: "center", color: "#fff", borderColor: "rgba(255,255,255,0.4)", textDecoration: "none", fontSize: 11 }}>
-                    Vídeos
-                  </a>
-                )}
-              </div>
-            )}
-
-            {isMarketplace && !paid && medias.length > 0 && (
-              <div style={{ marginTop: 20, animation: "fadeUp 0.6s ease" }}>
-                <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fill, minmax(140px, 1fr))", gap: 10 }}>
-                  {medias.map(m => (
-                    <div 
-                      key={m.id} 
-                      onClick={() => toggleCart(m.shortId)}
-                      style={{ 
-                        aspectRatio: "1/1", 
-                        background: T.bgCard, 
-                        border: `1px solid ${cart.includes(m.shortId) ? T.brand : T.border}`,
-                        position: "relative",
-                        cursor: "pointer",
-                        overflow: "hidden"
-                      }}
-                    >
-                      <img src={m.url} alt={m.shortId} style={{ width: "100%", height: "100%", objectFit: "cover", filter: "blur(2px) grayscale(1) brightness(0.6)" }} />
-                      <div style={{ position: "absolute", top: 8, left: 8, background: cart.includes(m.shortId) ? T.brand : "rgba(0,0,0,0.5)", color: cart.includes(m.shortId) ? "black" : "white", padding: "2px 6px", fontSize: 9, fontWeight: 900 }}>
-                        #{m.shortId}
-                      </div>
-                      {cart.includes(m.shortId) && (
-                        <div style={{ position: "absolute", inset: 0, border: `3px solid ${T.brand}`, display: "flex", alignItems: "center", justifyContent: "center", background: "rgba(133,185,172,0.1)" }}>
-                          <Check size={32} color={T.brand} />
-                        </div>
-                      )}
-                      
-                      {paid && (
-                        <div style={{ position: "absolute", inset: 0, background: "rgba(0,0,0,0.4)", display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center", gap: 12 }}>
-                           <button 
-                            onClick={(e) => { e.stopPropagation(); window.open(m.url, '_blank'); }}
-                            style={{ background: T.brand, color: "black", border: "none", padding: "6px 12px", fontSize: 9, fontWeight: 900, cursor: "pointer", borderRadius: 2 }}
-                           >
-                            VER ORIGINAL
-                           </button>
-                           <a 
-                            href={m.url} 
-                            download={`foto-${m.shortId}.jpg`}
-                            onClick={e => e.stopPropagation()}
-                            style={{ background: "white", color: "black", padding: "6px 12px", fontSize: 9, fontWeight: 900, textDecoration: "none", borderRadius: 2 }}
-                           >
           {/* MARKETPLACE LIVE FEED */}
           {isMarketplace && (
-            <div style={{ position: "absolute", inset: 0, zIndex: 10, display: "flex", flexDirection: "column", background: "rgba(0,0,0,0.85)", backdropFilter: "blur(20px)" }}>
-               <div style={{ padding: "40px 30px 20px" }}>
+            <div style={{ position: "absolute", inset: 0, zIndex: 10, display: "flex", flexDirection: "column", background: "rgba(0,0,0,0.92)", backdropFilter: "blur(25px)" }}>
+               <div className="ls-header" style={{ padding: "40px 30px 20px" }}>
                   <div style={{ display: "flex", alignItems: "center", gap: 12, marginBottom: 8 }}>
-                    <div style={{ width: 8, height: 8, background: T.brand, borderRadius: "50%", animate: "pulse 2s infinite" }} />
-                    <h2 style={{ fontFamily: T.fontD, fontSize: 32, fontWeight: 900, color: T.text, margin: 0, textTransform: "uppercase", letterSpacing: 2 }}>Live Stream</h2>
+                    <div className="w-2 h-2 rounded-full animate-pulse" style={{ background: T.brand, boxShadow: `0 0 10px ${T.brand}` }} />
+                    <h2 style={{ fontFamily: T.fontD, fontSize: "clamp(24px, 5vw, 32px)", fontWeight: 900, color: T.text, margin: 0, textTransform: "uppercase", letterSpacing: 2 }}>Live Stream</h2>
                   </div>
-                  <p style={{ fontSize: 12, color: T.text3, margin: 0 }}>Fotos capturadas em tempo real. Selecione as suas favoritas para imprimir ou baixar.</p>
+                  <p style={{ fontSize: 11, color: T.text3, margin: 0, opacity: 0.8 }}>Capturas em tempo real. Selecione para imprimir ou baixar.</p>
                </div>
 
-               <div style={{ flex: 1, overflowY: "auto", padding: "0 30px 40px" }}>
-                  <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fill, minmax(180px, 1fr))", gap: 15 }}>
+               <div className="ls-body" style={{ flex: 1, overflowY: "auto", padding: "0 30px 40px" }}>
+                  <div className="ls-grid" style={{ display: "grid", gridTemplateColumns: "repeat(auto-fill, minmax(180px, 1fr))", gap: 15 }}>
                     {event.previewPhotos?.map((url, idx) => {
-                      // Extraímos o código de referência da URL se possível (ex: .../REF-1234.jpg)
                       const refCode = url.split('/').pop()?.split('.')[0] || `FOTO-${idx}`;
                       const isSelected = cart.includes(refCode);
-
                       return (
                         <div 
-                          key={idx} 
-                          onClick={() => toggleCart(refCode)}
+                          key={idx} onClick={() => toggleCart(refCode)}
                           style={{ 
-                            position: "relative", 
-                            aspectRatio: "3/4", 
-                            background: T.bgField, 
-                            cursor: "pointer",
-                            border: `2px solid ${isSelected ? T.brand : "transparent"}`,
-                            transition: "all 0.2s ease",
-                            transform: isSelected ? "scale(0.98)" : "none"
+                            position: "relative", aspectRatio: "3/4", background: T.bgField, cursor: "pointer",
+                            border: `2px solid ${isSelected ? T.brand : "transparent"}`, transition: "all 0.2s ease"
                           }}
                         >
-                           <img 
-                             src={url} 
-                             alt={refCode} 
-                             style={{ width: "100%", height: "100%", objectFit: "cover", opacity: isSelected ? 0.6 : 1 }} 
-                           />
-                           <div style={{ 
-                             position: "absolute", 
-                             bottom: 0, left: 0, right: 0, 
-                             padding: "10px", 
-                             background: "linear-gradient(to top, rgba(0,0,0,0.8), transparent)",
-                             display: "flex",
-                             justifyContent: "space-between",
-                             alignItems: "center"
-                           }}>
-                             <span style={{ fontSize: 10, fontWeight: 900, color: "#fff", letterSpacing: 1 }}>#{refCode}</span>
-                             <div style={{ 
-                               width: 20, height: 20, borderRadius: "50%", 
-                               background: isSelected ? T.brand : "rgba(255,255,255,0.2)",
-                               display: "flex", alignItems: "center", justifyContent: "center"
-                             }}>
-                               {isSelected && <Check size={12} color="#000" strokeWidth={4} />}
-                             </div>
-                           </div>
+                           <img src={url} alt={refCode} style={{ width: "100%", height: "100%", objectFit: "cover", opacity: isSelected ? 0.6 : 1 }} />
+                            {/* Reference Badge (White bar style) */}
+                            <div style={{ 
+                              position: "absolute", bottom: 0, left: 0, right: 0, 
+                              background: isSelected ? T.brand : "#fff", 
+                              padding: "8px 12px", zIndex: 10, display: "flex", justifyContent: "space-between", alignItems: "center"
+                            }}>
+                               <span style={{ fontSize: 13, fontWeight: 900, color: "#000", letterSpacing: 1 }}>
+                                 {refCode}
+                               </span>
+                               {isSelected && <Check size={14} color="#000" strokeWidth={4} />}
+                            </div>
                         </div>
                       );
                     })}
-                    {(!event.previewPhotos || event.previewPhotos.length === 0) && (
-                      <div style={{ gridColumn: "span 100%", padding: "100px 0", textAlign: "center", color: T.text3 }}>
-                        <div className="animate-pulse" style={{ fontSize: 14 }}>Aguardando as primeiras fotos do evento...</div>
-                      </div>
-                    )}
                   </div>
                </div>
+            </div>
+          )}
+
+          {/* Overlay unificado se não for marketplace */}
+          {!isMarketplace && (
+            <div className="mobile-w-full" style={{ position: "absolute", inset: 0, zIndex: 10, background: "linear-gradient(to top, rgba(0,0,0,0.9) 0%, transparent 100%)", display: "flex", flexDirection: "column", justifyContent: "flex-end", padding: "32px 36px" }}>
+              <div style={{ display: "flex", gap: 10, marginBottom: 12 }}>
+                {activeServices.map(s => (
+                  <span key={s.key} style={{ fontSize: 8, fontWeight: 900, textTransform: "uppercase", letterSpacing: 2, padding: "4px 8px", background: "rgba(255,255,255,0.1)", border: "1px solid rgba(255,255,255,0.2)", color: "#fff" }}>{s.label}</span>
+                ))}
+              </div>
+              <h1 style={{ fontFamily: T.fontD, fontWeight: 900, fontSize: "clamp(28px, 4vw, 48px)", color: "#fff", textTransform: "uppercase", margin: 0 }}>{event.nomeNoivos}</h1>
+              <div style={{ fontSize: 12, color: "rgba(255,255,255,0.6)", marginTop: 8 }}>{event.dataEvento ? new Date(event.dataEvento).toLocaleDateString() : ""}</div>
             </div>
           )}
         </div>
 
-        <aside className="ep-sidebar" style={{ borderLeft: `1px solid ${T.border}`, display: "flex", flexDirection: "column" }}>
-
+        <aside className="ep-sidebar" style={{ borderLeft: `1px solid ${T.border}`, display: "flex", flexDirection: "column", background: T.bg }}>
           {justPaid && (
-            <div style={{ padding: "10px 20px", background: "#4ade8012", borderBottom: `1px solid #4ade8030`, display: "flex", alignItems: "center", gap: 10, animation: "fadeUp 0.4s ease" }}>
-              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#4ade80" strokeWidth="3"><polyline points="20 6 9 17 4 12"/></svg>
-              <span style={{ fontSize: 10, fontWeight: 700, color: "#4ade80", textTransform: "uppercase", letterSpacing: 2 }}>Pagamento confirmado</span>
-              {orderId && <span style={{ fontSize: 9, fontFamily: "monospace", color: T.text3, marginLeft: "auto" }}>#{orderId.slice(-8).toUpperCase()}</span>}
+            <div style={{ padding: "12px 20px", background: "#4ade8008", borderBottom: `1px solid #4ade8020`, display: "flex", alignItems: "center", gap: 10 }}>
+              <Check size={14} color="#4ade80" strokeWidth={3} />
+              <span style={{ fontSize: 9, fontWeight: 800, color: "#4ade80", textTransform: "uppercase", letterSpacing: 2 }}>Pagamento confirmado</span>
             </div>
           )}
 
-          <div style={{ padding: "40px 28px 20px", flex: 1, overflowY: "auto", display: "flex", flexDirection: "column", gap: 24 }}>
-
+          <div className="side-inner" style={{ padding: "40px 28px", flex: 1, display: "flex", flexDirection: "column", gap: 24 }}>
             {step === "paywall" && (
               <div style={{ display: "flex", flexDirection: "column", gap: 24, animation: "fadeUp 0.3s ease" }}>
                 <div>
-                  <p style={{ fontSize: 9, letterSpacing: 3, color: T.brand, textTransform: "uppercase", margin: "0 0 8px", fontWeight: 700 }}>
-                    {searchParams.get("intent") === "upgrade" ? "Adicionar Novos Serviços" : (isMarketplace ? "Sua Galeria Particular" : (event.isUnitSale ? "Clique Único / Foto Avulsa" : "Exclusive Collection"))}
-                  </p>
-                  <p style={{ fontFamily: T.fontD, fontWeight: 900, fontSize: 40, color: T.text, margin: "0 0 2px", lineHeight: 1 }}>
-                    {searchParams.get("intent") === "upgrade"
-                      ? (selectedServices.length > 0 || includeLivePrint || includeShipping
-                          ? `R$ ${(
-                              serviceCatalog.filter(s => selectedServices.includes(s.id)).reduce((acc, s) => acc + Number(s.basePrice), 0) +
-                              (includeLivePrint ? 150 : 0) +
-                              (includeShipping ? 25 : 0)
-                            ).toFixed(2).replace(".", ",")}`
-                          : "Selecione...")
-                      : (isMarketplace 
-                          ? (cart.length > 0 ? `R$ ${cartTotal.toFixed(2).replace(".", ",")}` : "Selecione...")
-                          : `R$ ${Number(event.isUnitSale ? event.priceUnit : event.priceBase).toFixed(2).replace(".", ",")}`)
-                    }
-                  </p>
-                  <p style={{ fontSize: 11, color: T.text3, margin: 0 }}>
-                    {searchParams.get("intent") === "upgrade"
-                      ? "Selecione os upgrades desejados abaixo"
-                      : (isMarketplace 
-                          ? `${cart.length} fotos selecionadas (R$ ${event.pricePerPhoto}/cada)`
-                          : (event.isUnitSale ? "Download do arquivo original" : "Acesso vitalício · Download imediato"))
-                    }
+                  <p style={{ fontSize: 10, color: T.brand, textTransform: "uppercase", fontWeight: 900, letterSpacing: 2 }}>{searchParams.get("intent") === "upgrade" ? "Upgrades Disponíveis" : (isMarketplace ? "Sua Seleção" : "Álbum Completo")}</p>
+                  <p style={{ fontFamily: T.fontD, fontSize: 40, fontWeight: 900, color: T.text, margin: 0 }}>
+                    R$ {(searchParams.get("intent") === "upgrade" 
+                      ? (serviceCatalog.filter(s => selectedServices.includes(s.id)).reduce((acc, s) => acc + Number(s.basePrice), 0) + (includeLivePrint ? 150 : 0) + (includeShipping ? 25 : 0))
+                      : (isMarketplace ? cartTotal : event.priceBase)
+                    ).toFixed(2).replace(".", ",")}
                   </p>
                 </div>
 
                 {searchParams.get("intent") === "upgrade" && (
-                  <div style={{ display: "flex", flexDirection: "column", gap: 16, maxHeight: "60vh", overflowY: "auto", padding: "4px 8px 20px 4px", scrollbarWidth: "thin" }}>
-                    <div style={{ padding: "12px 16px", background: "linear-gradient(135deg, rgba(133,185,172,0.1) 0%, rgba(133,185,172,0) 100%)", border: `1px solid ${T.brand}33`, borderRadius: 8, marginBottom: 8 }}>
-                      <p style={{ fontSize: 10, color: T.brand, fontWeight: 900, textTransform: "uppercase", letterSpacing: 2, margin: "0 0 4px" }}>Vitrine de Upgrades</p>
-                      <p style={{ fontSize: 12, color: T.text, margin: 0, fontWeight: 500 }}>Personalize sua experiência antes do grande dia.</p>
-                    </div>
-
-                    {/* Serviços Digitais e Especiais */}
-                    <div style={{ display: "flex", flexDirection: "column", gap: 10 }}>
-                      <p style={{ fontSize: 9, fontWeight: 900, color: T.text3, textTransform: "uppercase", letterSpacing: 1 }}>Serviços Exclusivos</p>
-                      {serviceCatalog.length > 0 ? serviceCatalog.map(s => (
-                        <div 
-                          key={s.id}
-                          onClick={() => setSelectedServices(prev => prev.includes(s.id) ? prev.filter(id => id !== s.id) : [...prev, s.id])}
-                          style={{
-                            padding: 16,
-                            background: selectedServices.includes(s.id) ? `${T.brand}15` : "rgba(255,255,255,0.02)",
-                            border: `1px solid ${selectedServices.includes(s.id) ? T.brand : T.border}`,
-                            borderRadius: 12,
-                            cursor: "pointer",
-                            display: "flex",
-                            alignItems: "center",
-                            gap: 14,
-                            transition: "all 0.2s ease"
-                          }}
-                        >
-                          <div style={{ width: 40, height: 40, borderRadius: 10, background: selectedServices.includes(s.id) ? T.brand : "rgba(255,255,255,0.05)", display: "flex", alignItems: "center", justifyContent: "center", flexShrink: 0 }}>
-                            {s.category === 'VÍDEO' ? <Video size={20} color={selectedServices.includes(s.id) ? "black" : T.brand} /> : <Zap size={20} color={selectedServices.includes(s.id) ? "black" : T.brand} />}
-                          </div>
-                          <div style={{ flex: 1 }}>
-                            <div style={{ fontSize: 12, fontWeight: 900, color: T.text, marginBottom: 2 }}>{s.name}</div>
-                            <div style={{ fontSize: 10, color: T.text3, lineHeight: 1.3 }}>{s.description}</div>
-                          </div>
-                          <div style={{ textAlign: "right" }}>
-                            <div style={{ fontSize: 14, fontWeight: 900, color: T.brand, fontFamily: T.fontD }}>R${Number(s.basePrice).toFixed(0)}</div>
-                            <div style={{ width: 18, height: 18, borderRadius: "50%", border: `1px solid ${selectedServices.includes(s.id) ? T.brand : T.border}`, display: "flex", alignItems: "center", justifyContent: "center", margin: "6px 0 0 auto", background: selectedServices.includes(s.id) ? T.brand : "transparent" }}>
-                              {selectedServices.includes(s.id) && <Check size={10} color="black" strokeWidth={4} />}
-                            </div>
-                          </div>
+                   <div style={{ display: "flex", flexDirection: "column", gap: 10 }}>
+                      {serviceCatalog.map(s => (
+                        <div key={s.id} onClick={() => setSelectedServices(p => p.includes(s.id) ? p.filter(id => id !== s.id) : [...p, s.id])}
+                          style={{ padding: 12, border: `1px solid ${selectedServices.includes(s.id) ? T.brand : T.border}`, background: selectedServices.includes(s.id) ? `${T.brand}10` : "transparent", cursor: "pointer", display: "flex", alignItems: "center", gap: 12 }}>
+                           {s.category === 'VÍDEO' ? <Video size={16} color={T.brand} /> : <Zap size={16} color={T.brand} />}
+                           <div style={{ flex: 1 }}><div style={{ fontSize: 11, fontWeight: 700 }}>{s.name}</div><div style={{ fontSize: 9, color: T.text3 }}>R$ {Number(s.basePrice).toFixed(0)}</div></div>
+                           <div style={{ width: 14, height: 14, borderRadius: "50%", border: `1px solid ${T.border}`, background: selectedServices.includes(s.id) ? T.brand : "transparent", display: "flex", alignItems: "center", justifyContent: "center" }}>{selectedServices.includes(s.id) && <Check size={8} color="black" strokeWidth={4} />}</div>
                         </div>
-                      )) : (
-                        <div style={{ padding: 20, textAlign: "center", border: `1px dashed ${T.border}`, borderRadius: 12 }}>
-                           <p style={{ fontSize: 11, color: T.text3 }}>Nenhum serviço extra disponível no momento.</p>
-                        </div>
-                      )}
-                    </div>
-                    
-                    {/* Tecnologia Phygital */}
-                    <div style={{ marginTop: 8 }}>
-                      <p style={{ fontSize: 9, fontWeight: 900, color: T.brand, textTransform: "uppercase", letterSpacing: 2, marginBottom: 12 }}>Experiência Phygital</p>
-                      
-                      <div style={{ display: "grid", gap: 10 }}>
-                        <div 
-                          onClick={() => setIncludeLivePrint(!includeLivePrint)}
-                          style={{ 
-                            display: "flex", 
-                            alignItems: "center", 
-                            gap: 14, 
-                            padding: 16, 
-                            background: includeLivePrint ? `${T.brand}15` : "rgba(255,255,255,0.02)", 
-                            border: `1px solid ${includeLivePrint ? T.brand : T.border}`, 
-                            borderRadius: 12,
-                            cursor: "pointer",
-                            transition: "all 0.2s ease"
-                          }}
-                        >
-                           <div style={{ width: 40, height: 40, borderRadius: 10, background: includeLivePrint ? T.brand : "rgba(255,255,255,0.05)", display: "flex", alignItems: "center", justifyContent: "center", flexShrink: 0 }}>
-                             <Printer size={20} color={includeLivePrint ? "black" : T.brand} />
-                           </div>
-                           <div style={{ flex: 1 }}>
-                             <div style={{ fontSize: 12, fontWeight: 900, color: T.text, marginBottom: 2 }}>Totem de Impressão ao Vivo</div>
-                             <div style={{ fontSize: 10, color: T.text3 }}>Capture por QR Code e receba impresso na hora</div>
-                           </div>
-                           <div style={{ textAlign: "right" }}>
-                             <div style={{ fontSize: 14, fontWeight: 900, color: T.brand, fontFamily: T.fontD }}>+R$150</div>
-                             <div style={{ width: 18, height: 18, borderRadius: "50%", border: `1px solid ${includeLivePrint ? T.brand : T.border}`, display: "flex", alignItems: "center", justifyContent: "center", margin: "6px 0 0 auto", background: includeLivePrint ? T.brand : "transparent" }}>
-                               {includeLivePrint && <Check size={10} color="black" strokeWidth={4} />}
-                             </div>
-                           </div>
-                        </div>
-
-                        <div 
-                          onClick={() => setIncludeShipping(!includeShipping)}
-                          style={{ 
-                            display: "flex", 
-                            alignItems: "center", 
-                            gap: 14, 
-                            padding: 16, 
-                            background: includeShipping ? `${T.brand}15` : "rgba(255,255,255,0.02)", 
-                            border: `1px solid ${includeShipping ? T.brand : T.border}`, 
-                            borderRadius: 12,
-                            cursor: "pointer",
-                            transition: "all 0.2s ease"
-                          }}
-                        >
-                           <div style={{ width: 40, height: 40, borderRadius: 10, background: includeShipping ? T.brand : "rgba(255,255,255,0.05)", display: "flex", alignItems: "center", justifyContent: "center", flexShrink: 0 }}>
-                             <Smartphone size={20} color={includeShipping ? "black" : T.brand} />
-                           </div>
-                           <div style={{ flex: 1 }}>
-                             <div style={{ fontSize: 12, fontWeight: 900, color: T.text, marginBottom: 2 }}>Entrega em Casa (Correios)</div>
-                             <div style={{ fontSize: 10, color: T.text3 }}>Receba suas memórias físicas no conforto do lar</div>
-                           </div>
-                           <div style={{ textAlign: "right" }}>
-                             <div style={{ fontSize: 14, fontWeight: 900, color: T.brand, fontFamily: T.fontD }}>+R$25</div>
-                             <div style={{ width: 18, height: 18, borderRadius: "50%", border: `1px solid ${includeShipping ? T.brand : T.border}`, display: "flex", alignItems: "center", justifyContent: "center", margin: "6px 0 0 auto", background: includeShipping ? T.brand : "transparent" }}>
-                               {includeShipping && <Check size={10} color="black" strokeWidth={4} />}
-                             </div>
-                           </div>
-                        </div>
+                      ))}
+                      <div onClick={() => setIncludeLivePrint(!includeLivePrint)} style={{ padding: 12, border: `1px solid ${includeLivePrint ? T.brand : T.border}`, background: includeLivePrint ? `${T.brand}10` : "transparent", cursor: "pointer", display: "flex", alignItems: "center", gap: 12 }}>
+                        <Printer size={16} color={T.brand} /><div style={{ flex: 1 }}><div style={{ fontSize: 11, fontWeight: 700 }}>Totem de Impressão</div><div style={{ fontSize: 9, color: T.text3 }}>R$ 150</div></div>
+                        <div style={{ width: 14, height: 14, borderRadius: "50%", border: `1px solid ${T.border}`, background: includeLivePrint ? T.brand : "transparent", display: "flex", alignItems: "center", justifyContent: "center" }}>{includeLivePrint && <Check size={8} color="black" strokeWidth={4} />}</div>
                       </div>
-                    </div>
-                  </div>
+                   </div>
                 )}
 
-                {isMarketplace && (
-                  <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 8, maxHeight: 200, overflowY: "auto", padding: "10px", background: "rgba(255,255,255,0.02)", border: `1px solid ${T.border}` }}>
-                    {cart.map(id => (
-                      <div key={id} style={{ fontSize: 10, fontWeight: 900, color: T.brand, display: "flex", justifyContent: "space-between", alignItems: "center", padding: "6px 10px", background: "rgba(133,185,172,0.1)" }}>
-                        <span>#{id}</span>
-                        <button onClick={() => toggleCart(id)} style={{ background: "none", border: "none", color: "#ef4444", cursor: "pointer" }}>×</button>
-                      </div>
-                    ))}
-                    {cart.length === 0 && <div style={{ gridColumn: "span 2", textAlign: "center", fontSize: 9, color: T.text3, padding: 20 }}>Nenhuma foto selecionada</div>}
-                  </div>
-                )}
-
-                <div style={{ display: "flex", flexDirection: "column", gap: 10, paddingTop: 16, borderTop: `1px solid ${T.border}` }}>
-                  {isMarketplace 
-                    ? ["Arquivos em alta resolução", "Liberação instantânea após PIX", "Seleção protegida"].map(item => (
-                      <div key={item} style={{ display: "flex", alignItems: "center", gap: 8, fontSize: 11, color: T.text2 }}>
-                        <div style={{ width: 3, height: 3, borderRadius: "50%", background: T.brand, flexShrink: 0 }} /> {item}
-                      </div>
-                    ))
-                    : ["Arquivos originais em 4K", "Sem marcas d'água", "Direito de uso comercial"].map(item => (
-                      <div key={item} style={{ display: "flex", alignItems: "center", gap: 8, fontSize: 11, color: T.text2 }}>
-                        <div style={{ width: 3, height: 3, borderRadius: "50%", background: T.brand, flexShrink: 0 }} /> {item}
-                      </div>
-                    ))
-                  }
-                </div>
-                
-                <div style={{ 
-                  position: "sticky", 
-                  bottom: -20, // Adjust based on parent padding
-                  margin: "0 -28px -20px",
-                  padding: "20px 28px",
-                  background: T.bg,
-                  borderTop: `1px solid ${T.border}`,
-                  zIndex: 20,
-                  display: "flex",
-                  flexDirection: "column",
-                  gap: 12
-                }}>
-                  <button 
-                    onClick={handleUnlockClick} 
-                    disabled={(isMarketplace && cart.length === 0) || (searchParams.get("intent") === "upgrade" && selectedServices.length === 0 && !includeLivePrint && !includeShipping)}
-                    className="mobile-hide"
-                    style={{ ...BtnPrimary, width: "100%", justifyContent: "center", opacity: ((isMarketplace && cart.length === 0) || (searchParams.get("intent") === "upgrade" && selectedServices.length === 0 && !includeLivePrint && !includeShipping)) ? 0.5 : 1 }}
-                  >
-                    {event.pendingOrderId 
-                      ? "FINALIZAR AGORA" 
-                      : (searchParams.get("intent") === "upgrade" 
-                          ? "CONFIRMAR UPGRADE" 
-                          : (isMarketplace ? "COMPRAR SELEÇÃO" : "DESBLOQUEAR ÁLBUM"))}
-                  </button>
-
-                  <p style={{ fontSize: 9, color: T.text3, textAlign: "center", margin: 0 }}>Secure Payment · SSL · Instant Access</p>
-                </div>
-
-                {/* Mobile Sticky CTA */}
-                <div className="desktop-hide" style={{ position: "fixed", bottom: 0, left: 0, right: 0, padding: "16px 20px", background: "rgba(10,10,10,0.8)", backdropFilter: "blur(10px)", borderTop: `1px solid ${T.border}`, zIndex: 100, display: "flex", justifyContent: "center" }}>
-                   <button 
-                    onClick={handleUnlockClick} 
-                    disabled={(isMarketplace && cart.length === 0) || (searchParams.get("intent") === "upgrade" && selectedServices.length === 0 && !includeLivePrint && !includeShipping)}
-                    style={{ ...BtnPrimary, width: "100%", justifyContent: "center", opacity: ((isMarketplace && cart.length === 0) || (searchParams.get("intent") === "upgrade" && selectedServices.length === 0 && !includeLivePrint && !includeShipping)) ? 0.5 : 1 }}
-                  >
-                    {event.pendingOrderId 
-                      ? "FINALIZAR AGORA" 
-                      : (searchParams.get("intent") === "upgrade" 
-                          ? "CONFIRMAR UPGRADE" 
-                          : (isMarketplace ? "COMPRAR SELEÇÃO" : "DESBLOQUEAR ÁLBUM"))}
-                  </button>
-                </div>
+                <button onClick={handleUnlockClick} style={{ ...BtnPrimary, width: "100%", justifyContent: "center" }}>
+                  {searchParams.get("intent") === "upgrade" ? "CONFIRMAR UPGRADE" : (isMarketplace ? "COMPRAR SELEÇÃO" : "DESBLOQUEAR ÁLBUM")}
+                </button>
               </div>
             )}
 
             {step === "countdown" && (
-              <div style={{ display: "flex", flexDirection: "column", gap: 16, animation: "fadeUp 0.3s ease", textAlign: "center" }}>
-                <p style={{ fontSize: 10, fontWeight: 700, textTransform: "uppercase", letterSpacing: 2, color: T.brand, margin: 0 }}>
-                  Evento em breve
-                </p>
-                <p style={{ fontSize: 14, color: T.text2, margin: "0 0 10px" }}>
-                  O grande dia está chegando! Fique atento, o álbum será liberado aqui após o evento.
-                </p>
+              <div style={{ textAlign: "center", animation: "fadeUp 0.3s ease" }}>
+                <p style={{ color: T.brand, fontWeight: 900, textTransform: "uppercase", fontSize: 10, letterSpacing: 2 }}>Evento em breve</p>
+                <p style={{ fontSize: 12, color: T.text2, marginBottom: 24 }}>O álbum será liberado aqui após o evento.</p>
                 {event.dataEvento && <Countdown targetDate={event.dataEvento} />}
-                <div style={{ marginTop: 20 }}>
-                  <button onClick={handleShare} style={{ ...BtnSecondary, width: "100%", justifyContent: "center", color: T.text }}>
-                    {sharing ? "LINK COPIADO!" : "COMPARTILHAR ESPERA"}
-                  </button>
-                </div>
+                <button onClick={handleShare} style={{ ...BtnSecondary, width: "100%", marginTop: 32 }}>COMPARTILHAR ESPERA</button>
               </div>
             )}
 
-            {step === "denied" && (
-              <div style={{ display: "flex", flexDirection: "column", gap: 16, animation: "fadeUp 0.3s ease", textAlign: "center" }}>
-                <div style={{ width: 64, height: 64, borderRadius: "50%", background: "rgba(255,255,255,0.05)", display: "flex", alignItems: "center", justifyContent: "center", margin: "0 auto 10px" }}>
-                  <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke={T.brand} strokeWidth="1.5"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
-                </div>
-                <p style={{ fontSize: 10, fontWeight: 700, textTransform: "uppercase", letterSpacing: 2, color: T.brand, margin: 0 }}>
-                  Álbum Privado
-                </p>
-                <p style={{ fontSize: 14, color: T.text2, margin: 0 }}>
-                  Este álbum foi configurado como privado pelo proprietário. O acesso é restrito apenas ao e-mail do cliente.
-                </p>
-                {!user ? (
-                   <button onClick={() => setStep("auth")} style={{ ...BtnPrimary, marginTop: 10, justifyContent: "center" }}>FAZER LOGIN PARA ACESSAR</button>
-                ) : (
-                   <p style={{ fontSize: 11, color: T.text3, marginTop: 10 }}>Logado como: {user.email}</p>
+            {step === "success" && (
+              <div style={{ display: "flex", flexDirection: "column", gap: 20, animation: "fadeUp 0.3s ease" }}>
+                <p style={{ color: T.brand, fontWeight: 900, textTransform: "uppercase", fontSize: 10, letterSpacing: 2 }}>Acesso Liberado</p>
+                {event.lightroomUrl && (
+                  <a href={event.lightroomUrl} target="_blank" rel="noreferrer" style={{ ...BtnPrimary, textDecoration: "none", justifyContent: "center" }}>
+                    📸 VER TODAS AS FOTOS
+                  </a>
                 )}
-                <div style={{ marginTop: 20 }}>
-                   <button onClick={() => navigate("/")} style={{ ...BtnSecondary, width: "100%", justifyContent: "center", color: T.text }}>VOLTAR AO INÍCIO</button>
-                </div>
+                {event.driveUrl && (
+                  <a href={event.driveUrl} target="_blank" rel="noreferrer" style={{ ...BtnSecondary, textDecoration: "none", justifyContent: "center", color: T.text }}>
+                    🎬 VER VÍDEOS
+                  </a>
+                )}
+                <button onClick={() => setShowPrintStore(true)} style={{ ...BtnSecondary, color: T.brand, borderColor: T.brand }}>📖 ETERNIZE NO PAPEL</button>
               </div>
             )}
-
-            {step === "success" && (() => {
-              // Usa o access do pedido do usuário OU os links diretos do evento (para acesso global)
-              const lightroomUrl = access?.lightroomUrl || event.lightroomUrl;
-              const driveUrl = access?.driveUrl || event.driveUrl;
-              
-              return (
-                <div style={{ display: "flex", flexDirection: "column", gap: 16, animation: "fadeUp 0.3s ease" }}>
-                  {!lightroomUrl && !driveUrl ? (
-                    <>
-                      <p style={{ fontSize: 10, fontWeight: 700, textTransform: "uppercase", letterSpacing: 2, color: T.brand, margin: 0 }}>
-                        Evento em breve
-                      </p>
-                      <p style={{ fontSize: 12, color: T.text2, margin: 0 }}>
-                        {(orderId || justPaid) 
-                          ? "Sua compra foi confirmada! O contador abaixo mostra o tempo restante para o grande dia."
-                          : "O grande dia está chegando! Fique atento, as fotos serão liberadas aqui após o evento."}
-                      </p>
-                      {event.dataEvento && <Countdown targetDate={event.dataEvento} />}
-                      <button onClick={handleShare} style={{ ...BtnSecondary, width: "100%", justifyContent: "center", color: T.text }}>
-                        {sharing ? "LINK COPIADO!" : "COMPARTILHAR LINK"}
-                      </button>
-                    </>
-                  ) : (
-                    <>
-                      <p style={{ fontSize: 10, fontWeight: 700, textTransform: "uppercase", letterSpacing: 2, color: T.brand, margin: 0 }}>
-                        {(orderId || justPaid) ? (justPaid ? "Tudo pronto!" : "Acesso Liberado") : "Fotos Disponíveis!"}
-                      </p>
-                      <p style={{ fontSize: 12, color: T.text2, margin: 0 }}>
-                        {(orderId || justPaid) 
-                          ? "Seus arquivos estão disponíveis nos botões abaixo."
-                          : "Confira as memórias desse dia incrível nos links abaixo."}
-                      </p>
-                      <div style={{ display: "flex", flexDirection: "column", gap: 10 }}>
-                        {lightroomUrl && (
-                          <a 
-                            href={lightroomUrl.trim().replace(/\s/g, '')} 
-                            target="_blank" 
-                            rel="noreferrer" 
-                            style={{ ...BtnPrimary, textDecoration: "none", justifyContent: "center", fontSize: 13, padding: "16px 20px", letterSpacing: 2 }}
-                          >
-                            📸 VER TODAS AS FOTOS
-                          </a>
-                        )}
-                        {driveUrl && (
-                          <a 
-                            href={driveUrl.trim().replace(/\s/g, '')} 
-                            target="_blank" 
-                            rel="noreferrer" 
-                            style={{ ...BtnSecondary, color: T.text, borderColor: T.brand, textDecoration: "none", justifyContent: "center" }}
-                          >
-                            🎬 Vídeos
-                          </a>
-                        )}
-                        
-                        <button 
-                          onClick={() => setShowPrintStore(true)}
-                          style={{ ...BtnSecondary, color: T.brand, borderColor: T.brand, justifyContent: "center", marginTop: 8, fontWeight: 900, borderStyle: 'dashed', width: "100%" }}
-                        >
-                          📖 ETERNIZE NO PAPEL
-                        </button>
-
-                        <div style={{ marginTop: 8, paddingTop: 16, borderTop: `1px solid ${T.border}` }}>
-                          <button onClick={handleShare} style={{ ...BtnSecondary, width: "100%", justifyContent: "center", border: "none", color: T.text3, fontSize: 11, letterSpacing: 1 }}>
-                            {sharing ? "LINK COPIADO!" : "COMPARTILHAR ÁLBUM"}
-                          </button>
-                        </div>
-                      </div>
-                    </>
-                  )}
-                </div>
-              );
-            })()}
-
-            {event.recentOrders && event.recentOrders.length > 0 && (
-              <div style={{ marginTop: 32, paddingTop: 24, borderTop: `1px solid ${T.border}`, animation: "fadeUp 0.4s ease" }}>
-                <p style={{ fontSize: 9, letterSpacing: 2, color: T.brand, textTransform: "uppercase", margin: "0 0 16px", fontWeight: 700 }}>Mural de Contribuições</p>
-                <div style={{ display: "flex", flexDirection: "column", gap: 8 }}>
-                  {event.recentOrders.map((ord: { id: string; contributorName: string; valor: number }) => (
-                    <div key={ord.id} style={{ display: "flex", alignItems: "center", gap: 10, background: `${T.brand}08`, padding: "10px 14px", border: `1px solid ${T.border}` }}>
-                      <div style={{ width: 6, height: 6, borderRadius: "50%", background: T.brand }}></div>
-                      <div style={{ flex: 1 }}>
-                        <p style={{ fontSize: 11, color: T.text, margin: 0, fontWeight: 700 }}>
-                          {(ord.contributorName || "Convidado").split(' ')[0]} presenteou os noivos
-                        </p>
-                        <p style={{ fontSize: 9, color: T.text3, margin: 0, textTransform: 'uppercase' }}>há pouco tempo</p>
-                      </div>
-                      <div style={{ fontWeight: 900, color: T.brand, fontSize: 12 }}>
-                        R$ {Number(ord.valor).toFixed(0)}
-                      </div>
-                    </div>
-                  ))}
-                </div>
-              </div>
-            )}
-
-            {event.previewPhotos && event.previewPhotos.filter(p => !!p && (p.startsWith('http') || p.startsWith('data:'))).length > 0 && (
-              <div style={{ marginTop: 32, paddingTop: 24, borderTop: `1px solid ${T.border}`, animation: "fadeUp 0.6s ease" }}>
-                <p style={{ fontSize: 9, letterSpacing: 2, color: T.text3, textTransform: "uppercase", margin: "0 0 16px", fontWeight: 700 }}>Destaques da Galeria</p>
-                <div style={{ display: "flex", flexDirection: "column", gap: 10 }}>
-                  {event.previewPhotos.filter(p => !!p).map((rawUrl, idx) => {
-                    const url = rawUrl.trim().replace(/\s/g, '');
-                    const isDirectImage = url.match(/\.(jpeg|jpg|gif|png|webp|bmp)/i) || url.startsWith('data:image');
-                    
-                    if (isDirectImage) {
-                      return (
-                        <div key={idx} style={{ aspectRatio: "16/9", background: T.bgCard, overflow: "hidden", border: `1px solid ${T.border}`, position: "relative" }}>
-                          <img 
-                            src={url} 
-                            alt={`Preview ${idx + 1}`} 
-                            style={{ 
-                              width: "100%", height: "100%", objectFit: "cover",
-                              filter: paid ? "none" : "blur(4px) grayscale(1) opacity(0.6)",
-                              transition: "filter 0.5s ease"
-                            }}
-                            onError={(e) => { (e.target as HTMLImageElement).parentElement!.style.display = 'none'; }}
-                          />
-                          {!paid && (
-                            <div style={{ position: "absolute", inset: 0, display: "flex", alignItems: "center", justifyContent: "center" }}>
-                              <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="rgba(255,255,255,0.4)" strokeWidth="2"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
-                            </div>
-                          )}
-                        </div>
-                      );
-                    }
-
-                    // Link externo (Adobe Share, etc.) — card clicável elegante
-                    return (
-                      <a 
-                        key={idx}
-                        href={url}
-                        target="_blank"
-                        rel="noreferrer"
-                        style={{
-                          display: "flex",
-                          alignItems: "center",
-                          gap: 12,
-                          padding: "14px 16px",
-                          background: `${T.brand}10`,
-                          border: `1px solid ${T.brand}40`,
-                          textDecoration: "none",
-                          transition: "background 0.2s ease",
-                          cursor: "pointer"
-                        }}
-                        onMouseEnter={e => (e.currentTarget.style.background = `${T.brand}20`)}
-                        onMouseLeave={e => (e.currentTarget.style.background = `${T.brand}10`)}
-                      >
-                        <div style={{ width: 32, height: 32, background: T.brand, display: "flex", alignItems: "center", justifyContent: "center", flexShrink: 0 }}>
-                          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#000" strokeWidth="2.5"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21 15 16 10 5 21"/></svg>
-                        </div>
-                        <div style={{ flex: 1, minWidth: 0 }}>
-                          <div style={{ fontSize: 10, fontWeight: 900, color: T.brand, textTransform: "uppercase", letterSpacing: 1 }}>Ver Galeria</div>
-                          <div style={{ fontSize: 9, color: T.text3, overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>{url}</div>
-                        </div>
-                        <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke={T.brand} strokeWidth="2"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg>
-                      </a>
-                    );
-                  })}
-                </div>
-              </div>
-            )}
-
-          </div>
-
-          {/* Footer info */}
-          <div style={{ padding: "16px 28px", borderTop: `1px solid ${T.border}`, fontSize: 9, color: T.text3, letterSpacing: 1 }}>
-            FOTO SEGUNDO · {event.slug?.toUpperCase()}
           </div>
         </aside>
       </div>
 
-      {/* MODAL DE CHECKOUT UNIFICADO (v2.0) */}
-      <Modal 
-        isOpen={step === "choice" || step === "upsell" || step === "checkout" || step === "processing"} 
-        onClose={() => setStep("paywall")}
-        title={step === "choice" ? "Privacidade do Álbum" : step === "upsell" ? "Oferta Especial" : "Pagamento Seguro"}
-      >
-        {step === "choice" && (
-          <div style={{ display: "flex", flexDirection: "column", gap: 20 }}>
-            <p style={{ fontSize: 13, color: T.text2, lineHeight: 1.5 }}>
-              Como você deseja que seu acesso seja configurado?
-            </p>
-            <div style={{ display: "grid", gap: 12 }}>
-              <button 
-                onClick={() => { setAccessType("PUBLIC"); setStep(printProducts.length > 0 ? "upsell" : "checkout"); }}
-                style={{ ...BtnSecondary, justifyContent: "flex-start", padding: 20, textAlign: "left", flexDirection: "column", alignItems: "flex-start" }}
-              >
-                <div style={{ fontWeight: 900, color: T.brand, marginBottom: 4 }}>🔓 MODO PÚBLICO</div>
-                <div style={{ fontSize: 10, textTransform: "none", letterSpacing: 0 }}>Permite compartilhar o link com amigos e familiares.</div>
-              </button>
-              <button 
-                onClick={() => { setAccessType("PRIVATE"); setStep(printProducts.length > 0 ? "upsell" : "checkout"); }}
-                style={{ ...BtnSecondary, justifyContent: "flex-start", padding: 20, textAlign: "left", flexDirection: "column", alignItems: "flex-start" }}
-              >
-                <div style={{ fontWeight: 900, color: T.text, marginBottom: 4 }}>🔒 MODO PRIVADO</div>
-                <div style={{ fontSize: 10, textTransform: "none", letterSpacing: 0 }}>Apenas você (logado) poderá visualizar as fotos.</div>
-              </button>
-            </div>
+      {/* STICKY MOBILE BUY BAR (MARKETPLACE) */}
+      {isMarketplace && cart.length > 0 && (
+        <div className="sticky-mobile-buy" style={{ 
+          display: "none", position: "fixed", bottom: 0, left: 0, right: 0, 
+          background: T.bgCard, borderTop: `1px solid ${T.brand}`, 
+          padding: "16px 20px", zIndex: 100, alignItems: "center", justifyContent: "space-between",
+          boxShadow: "0 -10px 30px rgba(0,0,0,0.5)", backdropFilter: "blur(20px)"
+        }}>
+          <div>
+            <div style={{ fontSize: 9, color: T.text3, textTransform: "uppercase", letterSpacing: 1 }}>{cart.length} Selecionadas</div>
+            <div style={{ fontSize: 18, color: T.brand, fontFamily: T.fontD, fontWeight: 900 }}>{new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL' }).format(cartTotal)}</div>
           </div>
-        )}
+          <button 
+            onClick={handleUnlockClick} 
+            style={{ ...BtnPrimary, padding: "12px 24px", fontSize: 11 }}
+          >
+            COMPRAR AGORA
+          </button>
+        </div>
+      )}
 
-        {step === "upsell" && printProducts.length > 0 && (
-          <div style={{ display: "flex", flexDirection: "column", gap: 16 }}>
-            <p style={{ fontSize: 12, color: T.text2, lineHeight: 1.4 }}>
-              Deseja eternizar esse momento em um lindo álbum impresso? Enviamos para todo o Brasil.
-            </p>
-            <div style={{ display: "grid", gap: 12, maxHeight: "50vh", overflowY: "auto", paddingRight: 4 }}>
-              {printProducts.map((p) => (
-                <div 
-                  key={p.id}
-                  onClick={() => setSelectedPrintProductId(selectedPrintProductId === p.id ? null : p.id)}
-                  style={{
-                    border: `1px solid ${selectedPrintProductId === p.id ? T.brand : T.border}`,
-                    background: selectedPrintProductId === p.id ? "rgba(133,185,172,0.05)" : T.bgField,
-                    padding: 16,
-                    cursor: "pointer",
-                    display: "flex",
-                    alignItems: "center",
-                    justifyContent: "space-between",
-                    gap: 12
-                  }}
-                >
-                  <div style={{ flex: 1 }}>
-                    <div style={{ fontSize: 10, color: T.brand, fontWeight: 900, textTransform: "uppercase" }}>{p.category}</div>
-                    <div style={{ fontSize: 13, color: T.text, fontWeight: 700, margin: "4px 0" }}>{p.name}</div>
-                    {p.description && <div style={{ fontSize: 10, color: T.text3 }}>{p.description}</div>}
-                  </div>
-                  <div style={{ textAlign: "right" }}>
-                    <div style={{ fontSize: 14, fontFamily: T.fontD, fontWeight: 900, color: T.text }}>
-                      +R$ {p.finalPrice.toFixed(2)}
-                    </div>
-                    <div style={{ width: 20, height: 20, borderRadius: "50%", border: `1px solid ${selectedPrintProductId === p.id ? T.brand : T.border}`, display: "flex", alignItems: "center", justifyContent: "center", margin: "8px 0 0 auto", background: selectedPrintProductId === p.id ? T.brand : "transparent" }}>
-                      {selectedPrintProductId === p.id && <Check size={12} color="black" />}
-                    </div>
-                  </div>
-                </div>
-              ))}
-            </div>
-            <div style={{ display: "flex", gap: 10, marginTop: 10 }}>
-              <button onClick={() => { setSelectedPrintProductId(null); setStep("checkout"); }} style={{ ...BtnSecondary, flex: 1, justifyContent: "center" }}>
-                PULAR
-              </button>
-              <button onClick={() => setStep("checkout")} style={{ ...BtnPrimary, flex: 1, justifyContent: "center" }}>
-                CONTINUAR
-              </button>
-            </div>
-          </div>
-        )}
-
-        {step === "checkout" && (
-          <div style={{ display: "flex", flexDirection: "column", gap: 14 }}>
-            <div style={{ background: T.bgField, border: `1px solid ${T.border}`, padding: 14, marginBottom: 10 }}>
-              <div style={{ fontSize: 10, color: T.text2, textTransform: "uppercase", letterSpacing: 1 }}>{event.nomeNoivos}</div>
-              <div style={{ fontSize: 24, fontWeight: 900, color: T.text, fontFamily: T.fontD }}>
-                R$ {
-                  (
-                    (isMarketplace ? cartTotal : Number(event.isUnitSale ? event.priceUnit : event.priceBase)) + 
-                    (selectedPrintProductId ? printProducts.find(p => p.id === selectedPrintProductId)?.finalPrice || 0 : 0)
-                  ).toFixed(2)
-                }
-              </div>
-              {selectedPrintProductId && (
-                <div style={{ fontSize: 10, color: T.brand, marginTop: 4, fontWeight: 700 }}>
-                  + INCLUI: {printProducts.find(p => p.id === selectedPrintProductId)?.name}
-                </div>
-              )}
-            </div>
-
-            {(["number", "name"] as const).map(k => (
-              <div key={k}>
-                <label style={FieldLabel}>{k === "number" ? "Número do Cartão" : "Nome no Cartão"}</label>
-                <input style={FieldInput} value={cardData[k]} onChange={handleChange(k)} placeholder={k === "number" ? "0000 0000 0000 0000" : "NOME IMPRESSO"} />
-              </div>
-            ))}
-            <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr 1fr", gap: 8 }}>
-              {(["month", "year", "cvv"] as const).map(k => (
-                <div key={k}>
-                  <label style={FieldLabel}>{k === "month" ? "Mês" : k === "year" ? "Ano" : "CVV"}</label>
-                  <input style={FieldInput} value={cardData[k]} onChange={handleChange(k)} placeholder={k === "month" ? "MM" : k === "year" ? "AA" : "000"} />
-                </div>
-              ))}
-            </div>
-            {(["cpf", "email"] as const).map(k => (
-              <div key={k}>
-                <label style={FieldLabel}>{k === "cpf" ? "CPF" : "E-mail"}</label>
-                <input style={FieldInput} value={cardData[k]} onChange={handleChange(k)} placeholder={k === "cpf" ? "000.000.000-00" : "seu@email.com"} />
-              </div>
-            ))}
-
-            {error && <div style={{ fontSize: 11, color: "#f87171", background: "#f8717111", padding: 12, border: "1px solid #f8717133" }}>{error}</div>}
-
-            {!cardToken ? (
-              <button onClick={handleTokenize} disabled={tokenizing || !cardData.number || !cardData.cvv}
-                style={{ ...BtnPrimary, width: "100%", justifyContent: "center", marginTop: 10 }}>
-                {tokenizing ? "VALIDANDO..." : "PRÓXIMO PASSO"}
-              </button>
-            ) : (
-              <button onClick={handlePay} style={{ ...BtnPrimary, width: "100%", justifyContent: "center", marginTop: 10 }}>
-                FINALIZAR PAGAMENTO
-              </button>
-            )}
-            <p style={{ fontSize: 9, color: T.text3, textAlign: "center", marginTop: 10 }}>AMBIENTE SEGURO · MERCADO PAGO · SSL</p>
-          </div>
-        )}
-
-        {step === "processing" && (
-          <div style={{ display: "flex", flexDirection: "column", alignItems: "center", gap: 20, padding: "40px 0" }}>
-            <Spinner />
-            <div style={{ textAlign: "center" }}>
-              <h3 style={{ fontFamily: T.fontD, fontWeight: 900, fontSize: 18, textTransform: "uppercase", margin: "0 0 6px" }}>Processando</h3>
-              <p style={{ fontSize: 12, color: T.text3, margin: 0 }}>Validando sua transação com o banco...</p>
-            </div>
-          </div>
-        )}
+      <Modal isOpen={step === "checkout" || step === "processing" || step === "choice" || step === "upsell"} onClose={() => setStep("paywall")} title="Pagamento Seguro">
+         {step === "checkout" && (
+           <div style={{ display: "flex", flexDirection: "column", gap: 14 }}>
+             <div style={{ background: T.bgCard, padding: 16, border: `1px solid ${T.border}`, marginBottom: 8 }}>
+               <div style={{ fontSize: 10, color: T.text3, textTransform: "uppercase" }}>Total a Pagar</div>
+               <div style={{ fontSize: 24, fontWeight: 900, color: T.brand }}>R$ {((isMarketplace ? cartTotal : event.priceBase) + (selectedPrintProductId ? printProducts.find(p => p.id === selectedPrintProductId)?.finalPrice || 0 : 0)).toFixed(2)}</div>
+             </div>
+             <div><label style={FieldLabel}>Nome no Cartão</label><input style={FieldInput} placeholder="NOME IMPRESSO" value={cardData.name} onChange={handleChange("name")} /></div>
+             <div><label style={FieldLabel}>Número do Cartão</label><input style={FieldInput} placeholder="0000 0000 0000 0000" value={cardData.number} onChange={handleChange("number")} /></div>
+             <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr 1fr", gap: 10 }}>
+               <div><label style={FieldLabel}>Mês</label><input style={FieldInput} placeholder="MM" value={cardData.month} onChange={handleChange("month")} /></div>
+               <div><label style={FieldLabel}>Ano</label><input style={FieldInput} placeholder="AA" value={cardData.year} onChange={handleChange("year")} /></div>
+               <div><label style={FieldLabel}>CVV</label><input style={FieldInput} placeholder="000" value={cardData.cvv} onChange={handleChange("cvv")} /></div>
+             </div>
+             <div><label style={FieldLabel}>CPF</label><input style={FieldInput} placeholder="000.000.000-00" value={cardData.cpf} onChange={handleChange("cpf")} /></div>
+             <div><label style={FieldLabel}>E-mail</label><input style={FieldInput} placeholder="seu@email.com" value={cardData.email} onChange={handleChange("email")} /></div>
+             
+             {error && <div style={{ fontSize: 11, color: "#f87171", background: "#f8717111", padding: 10, border: "1px solid #f8717133" }}>{error}</div>}
+             
+             {!cardToken ? (
+               <button onClick={handleTokenize} disabled={tokenizing} style={{ ...BtnPrimary, width: "100%", justifyContent: "center", marginTop: 10 }}>{tokenizing ? "VALIDANDO..." : "PRÓXIMO PASSO"}</button>
+             ) : (
+               <button onClick={handlePay} style={{ ...BtnPrimary, width: "100%", justifyContent: "center", marginTop: 10 }}>FINALIZAR PAGAMENTO</button>
+             )}
+           </div>
+         )}
+         {step === "processing" && (
+           <div style={{ textAlign: "center", padding: "40px 0", display: "flex", flexDirection: "column", alignItems: "center", gap: 20 }}>
+             <Spinner /><p style={{ fontSize: 14, fontWeight: 700 }}>Processando seu pagamento...</p>
+           </div>
+         )}
+         {step === "choice" && (
+           <div style={{ display: "flex", flexDirection: "column", gap: 16 }}>
+             <p style={{ fontSize: 13, color: T.text2 }}>Como você deseja configurar o acesso ao álbum?</p>
+             <button onClick={() => { setAccessType("PUBLIC"); setStep("checkout"); }} style={{ ...BtnSecondary, padding: 20, textAlign: "left", display: "block" }}>
+               <div style={{ fontWeight: 900, color: T.brand }}>🔓 MODO PÚBLICO</div>
+               <div style={{ fontSize: 10, textTransform: "none" }}>O link poderá ser compartilhado com qualquer pessoa.</div>
+             </button>
+             <button onClick={() => { setAccessType("PRIVATE"); setStep("checkout"); }} style={{ ...BtnSecondary, padding: 20, textAlign: "left", display: "block" }}>
+               <div style={{ fontWeight: 900, color: T.text }}>🔒 MODO PRIVADO</div>
+               <div style={{ fontSize: 10, textTransform: "none" }}>Apenas você poderá acessar via login.</div>
+             </button>
+           </div>
+         )}
       </Modal>
 
-      {step === "auth" && (
-        <AuthModal 
-          onSuccess={() => {
-            if (event?.isPrimaryClient) {
-              setStep("choice");
-            } else {
-              setAccessType("PUBLIC");
-              setStep(printProducts.length > 0 ? "upsell" : "checkout");
-            }
-          }} 
-          onClose={() => setStep("paywall")} 
-        />
-      )}
-
-      {needsAccessChoice && orderId && event && (
-        <AccessTypeModal 
-          orderId={orderId} 
-          eventTitle={event.nomeNoivos}
-          isPrimaryClient={event.isPrimaryClient}
-          onConfirmed={async () => {
-            setNeedsAccessChoice(false);
-            try {
-              const { data } = await api.get(`/orders/${orderId}/access-status`);
-              setAccess({ lightroomUrl: data.lightroomUrl, driveUrl: data.driveUrl, expiresAt: data.expiresAt || "", eventTitle: event.nomeNoivos });
-            } catch (err) { console.error("Erro ao atualizar links:", err); }
-          }}
-          onClose={() => setNeedsAccessChoice(false)}
-        />
-      )}
-
-      {showPrintStore && event && (
-        <PrintStoreModal
-          eventId={event.id}
-          eventTitle={event.nomeNoivos}
-          medias={medias}
-          isOwner={!!event.isOwner}
-          onClose={() => setShowPrintStore(false)}
-        />
-      )}
+      {step === "auth" && <AuthModal onSuccess={() => setStep("paywall")} onClose={() => setStep("paywall")} />}
+      {showPrintStore && <PrintStoreModal eventId={event.id} eventTitle={event.nomeNoivos} medias={medias} onClose={() => setShowPrintStore(false)} />}
+      {needsAccessChoice && orderId && <AccessTypeModal orderId={orderId} eventTitle={event.nomeNoivos} isPrimaryClient={true} onConfirmed={() => setNeedsAccessChoice(false)} onClose={() => setNeedsAccessChoice(false)} />}
     </div>
   );
 }

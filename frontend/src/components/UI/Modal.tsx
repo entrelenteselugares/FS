@@ -48,15 +48,20 @@ export const Modal: React.FC<ModalProps> = ({
       onClick={(e) => e.target === e.currentTarget && onClose()}
       id="modal-overlay"
     >
-      <div style={{ ...ModalContent, maxWidth: maxWidth || ModalContent.maxWidth }}>
+      <div className="mobile-w-full" style={{ 
+        ...ModalContent, 
+        maxWidth: maxWidth || ModalContent.maxWidth,
+        padding: window.innerWidth < 768 ? "1.5rem" : ModalContent.padding,
+        margin: window.innerWidth < 768 ? "10px" : "0"
+      }}>
         {/* Header */}
         <div style={{ 
           display: "flex", 
           justifyContent: "space-between", 
           alignItems: "center", 
-          marginBottom: "1.5rem",
+          marginBottom: "1.25rem",
           borderBottom: `1px solid ${T.border}`,
-          paddingBottom: "1rem"
+          paddingBottom: "0.75rem"
         }}>
           {title && (
             <h3 style={{ 

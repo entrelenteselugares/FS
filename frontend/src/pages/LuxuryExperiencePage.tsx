@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import { useParams } from "react-router-dom";
+import { useParams, useNavigate } from "react-router-dom";
 import { API } from "../lib/api";
 import { Download, ExternalLink, Camera, Calendar, MapPin, ChevronDown } from "lucide-react";
 import { motion } from "framer-motion";
@@ -15,6 +15,8 @@ interface EventData {
   coverPhotoUrl: string | null;
   lightroomUrl: string | null;
   driveUrl: string | null;
+  type: 'ALBUM_FULL' | 'PHOTO_MARKETPLACE';
+  slug?: string;
   captacao: {
     nome: string;
     user: {
@@ -36,6 +38,7 @@ interface Product {
 export default function LuxuryExperiencePage() {
   const { isDark } = useTheme();
   const { id } = useParams();
+  const navigate = useNavigate();
   const [event, setEvent] = useState<EventData | null>(null);
   const [loading, setLoading] = useState(true);
   const [products, setProducts] = useState<Product[]>([]);
@@ -60,6 +63,12 @@ export default function LuxuryExperiencePage() {
       .then(r => setProducts(r.data.filter((p: Product) => p.active).slice(0, 3)))
       .catch(err => console.error("Erro ao carregar catálogo:", err));
   }, []);
+
+  useEffect(() => {
+    if (event?.type === 'PHOTO_MARKETPLACE') {
+      navigate(`/e/${event.slug || event.id}`);
+    }
+  }, [event, navigate]);
 
   if (loading) return (
     <div className="min-h-screen flex flex-col items-center justify-center gap-6 relative overflow-hidden" style={{ background: T.bg }}>

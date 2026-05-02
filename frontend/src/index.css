@@ -347,6 +347,9 @@ textarea:focus {
   .container-padding { padding-left: 16px !important; padding-right: 16px !important; }
   .mobile-padding { padding: 16px !important; }
   .mobile-grid-1 { grid-template-columns: 1fr !important; }
+  .mobile-gap-sm { gap: 12px !important; }
+  .mobile-text-center { text-align: center !important; }
+  .mobile-w-full { width: 100% !important; }
 }
 /* Garante que inputs em iOS não aplicam zoom automático ao focar (requer font-size >= 16px) */
 @media (max-width: 768px) {

@@ -9,13 +9,13 @@ import fs from "fs";
 export async function applyWatermark(imageBuffer: Buffer): Promise<Buffer> {
   try {
     // Caminho do logo (ajustado para o ambiente Vercel/Local)
-    const logoPath = path.resolve(process.cwd(), "..", "frontend", "public", "logo-fs.png");
+    const logoPath = path.resolve(__dirname, "..", "..", "assets", "logo-fs.png");
     
     let watermark: Buffer;
     
     if (fs.existsSync(logoPath)) {
       watermark = await sharp(logoPath)
-        .resize({ width: 300 })
+        .resize({ width: 400 })
         .ensureAlpha()
         .toBuffer();
     } else {
