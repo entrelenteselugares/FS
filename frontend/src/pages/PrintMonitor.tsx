@@ -204,7 +204,7 @@ export default function PrintMonitor() {
                   {/* Thumbnail */}
                   <div className="aspect-[3/2] overflow-hidden relative">
                     <img src={print.imageUrl} alt={print.referenceCode} className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110" />
-                    <div className="absolute top-4 right-4 px-3 py-1 bg-black/60 backdrop-blur-md text-[10px] font-black italic tracking-tighter">
+                    <div style={{ position: "absolute", top: 12, right: 12, padding: "6px 14px", background: "rgba(0,0,0,0.85)", backdropFilter: "blur(10px)", border: "1px solid rgba(255,255,255,0.1)", color: T.brand, fontSize: 16, fontWeight: 900, fontFamily: T.fontD, fontStyle: "italic", letterSpacing: 1, zIndex: 10 }}>
                       {print.referenceCode}
                     </div>
                   </div>
@@ -240,33 +240,40 @@ export default function PrintMonitor() {
         </div>
       </div>
 
-      {/* QR CODE MODAL */}
-      {showQR && (
-        <div className="fixed inset-0 z-[100] flex items-center justify-center p-6 bg-black/95 backdrop-blur-sm animate-reveal">
-          <div className="bg-zinc-900 border border-white/10 p-10 max-w-sm w-full relative flex flex-col items-center text-center gap-8 shadow-2xl">
+      {/* QR      {showQR && (
+        <div className="fixed inset-0 z-[100] flex items-center justify-center bg-black/95 backdrop-blur-md p-4 animate-reveal" style={{ position: "fixed", top: 0, left: 0, right: 0, bottom: 0, display: "flex", alignItems: "center", justifyContent: "center" }}>
+          <div className="bg-zinc-900 border border-white/10 p-8 md:p-12 max-w-md w-full relative flex flex-col items-center text-center gap-8 shadow-2xl" style={{ margin: "auto" }}>
             <button 
               onClick={() => setShowQR(false)}
-              className="absolute top-4 right-4 p-2 text-zinc-500 hover:text-white transition-all"
+              className="absolute top-6 right-6 p-2 text-zinc-500 hover:text-white transition-all bg-white/5 rounded-full"
             >
               <X size={20} />
             </button>
             
-            <div className="space-y-2">
-              <h3 className="text-xl font-black uppercase italic tracking-tighter">Captura ao Vivo</h3>
-              <p className="text-[10px] text-zinc-500 font-bold uppercase tracking-widest leading-relaxed">Aponte a câmera para enviar fotos</p>
-            </div>
-
-            <div className="p-6 bg-white rounded-2xl shadow-xl shadow-brand-tactical/5">
-              <QRCodeSVG value={captureUrl} size={240} />
-            </div>
-
-            <div className="space-y-4 w-full">
-              <div className="flex items-center gap-3 justify-center text-[9px] font-black text-brand-tactical uppercase tracking-[0.2em] italic">
-                <div className="h-px w-8 bg-brand-tactical/30" />
-                Sua Foto Impressa na Hora
-                <div className="h-px w-8 bg-brand-tactical/30" />
+            <div className="space-y-3">
+              <div className="flex items-center justify-center gap-3 mb-2">
+                <div className="w-2 h-2 rounded-full bg-brand-tactical animate-pulse" />
+                <h3 className="text-2xl font-black uppercase tracking-tighter" style={{ fontFamily: T.fontD, color: T.text }}>Captura ao Vivo</h3>
               </div>
-              <p className="text-[11px] text-zinc-400 font-medium">As fotos enviadas aparecem instantaneamente na nossa estação de impressão.</p>
+              <p className="text-[10px] text-zinc-500 font-bold uppercase tracking-[0.3em]">Aponte a câmera para enviar fotos</p>
+            </div>
+            
+            <div className="p-6 bg-white rounded-3xl shadow-2xl shadow-brand-tactical/10">
+              <QRCodeSVG value={captureUrl} size={280} level="H" />
+            </div>
+
+            <div className="space-y-6 w-full">
+              <button 
+                onClick={() => { navigator.clipboard.writeText(captureUrl); alert("Link de captura copiado!"); }}
+                className="w-full py-4 border border-brand-tactical/30 text-brand-tactical text-[10px] font-black uppercase tracking-[0.4em] hover:bg-brand-tactical/10 transition-all flex items-center justify-center gap-3"
+              >
+                <QrCode size={14} /> COPIAR LINK DE CAPTURA
+              </button>
+
+              <div className="space-y-3">
+                <p className="text-[9px] font-black text-zinc-600 uppercase tracking-[0.4em] italic">Sua Foto Impressa na Hora</p>
+                <p className="text-[11px] text-zinc-400 font-medium leading-relaxed">As fotos enviadas aparecem instantaneamente na nossa estação de comando.</p>
+              </div>
             </div>
           </div>
         </div>

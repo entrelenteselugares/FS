@@ -118,14 +118,14 @@ export default function PhygitalCapture() {
               ) : (
                 <div className="text-center p-8">
                   <Camera size={48} className="mx-auto mb-4 opacity-20" style={{ color: T.text }} />
-                  <p className="text-[11px] font-bold uppercase tracking-widest opacity-40">Tire uma foto para imprimir</p>
+                  <p className="text-[11px] font-bold uppercase tracking-[0.2em] opacity-40">Tire uma foto ou</p>
+                  <p className="text-[14px] font-black uppercase tracking-tighter mt-1" style={{ color: T.brand }}>Escolha da Galeria</p>
                 </div>
               )}
             </div>
             <input 
               type="file" 
               accept="image/*" 
-              capture="environment"
               onChange={handleFileChange} 
               className="absolute inset-0 w-full h-full opacity-0 cursor-pointer"
             />

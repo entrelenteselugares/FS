@@ -511,12 +511,12 @@ export default function EventPage() {
                             <div style={{ 
                               position: "absolute", bottom: 0, left: 0, right: 0, 
                               background: isSelected ? T.brand : "#fff", 
-                              padding: "8px 12px", zIndex: 10, display: "flex", justifyContent: "space-between", alignItems: "center"
+                              padding: "12px 16px", zIndex: 10, display: "flex", justifyContent: "space-between", alignItems: "center"
                             }}>
-                               <span style={{ fontSize: 13, fontWeight: 900, color: "#000", letterSpacing: 1 }}>
+                               <span style={{ fontSize: 20, fontWeight: 900, color: "#000", letterSpacing: 1, fontFamily: T.fontD }}>
                                  {refCode}
                                </span>
-                               {isSelected && <Check size={14} color="#000" strokeWidth={4} />}
+                               {isSelected && <Check size={20} color="#000" strokeWidth={5} />}
                             </div>
                         </div>
                       );
