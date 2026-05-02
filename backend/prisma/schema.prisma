@@ -113,6 +113,8 @@ model Event {
   pricePerPhoto      Decimal?          @db.Decimal(10, 2)
   marketplaceConfigs Json?             @default("{}")
   rejectedBy         Json?             @default("[]")
+  paymentModel       PaymentModel      @default(PRE_PAID)
+  deliveryType       DeliveryType      @default(DIGITAL_ONLY)
   media              EventMedia[]
   phygitalPrints     PhygitalPrint[]
   franchiseeId       String?
@@ -239,10 +241,24 @@ model Order {
   tempPassword    String?
   showAlbum       Boolean     @default(true)
   showVideo       Boolean     @default(true)
-  isManual        Boolean     @default(false)
+  isManual        Boolean             @default(false)
   manualType      String?
+  paymentMethod   OrderPaymentMethod?
   buyerWhatsapp   String?
   internalNotes   String?
+
+  // Guest Checkout (Magic Link)
+  isGuestOrder    Boolean             @default(false)
+  guestEmail      String?
+  guestPhone      String?
+  guestToken      String?             @unique
+
+  // Logística & Entrega
+  deliveryType    DeliveryType        @default(DIGITAL_ONLY)
+  paymentModel    PaymentModel        @default(PRE_PAID)
+  shippingFee     Decimal?            @db.Decimal(10, 2)
+  shippingAddress Json?
+
   items           OrderItem[]
   cliente         User?       @relation("ClienteOrders", fields: [clienteId], references: [id])
   event           Event       @relation(fields: [eventId], references: [id])
@@ -561,6 +577,25 @@ enum SlotSource {
   MANUAL       // Criado pelo profissional manualmente
   BOOKING      // Criado automaticamente por reserva confirmada
   GOOGLE_SYNC  // Importado da agenda pessoal do Google
+}
+
+enum DeliveryType {
+  LOCAL_PICKUP
+  SHIPPING
+  DIGITAL_ONLY
+}
+
+enum PaymentModel {
+  PRE_PAID
+  POST_PAID
+}
+
+enum OrderPaymentMethod {
+  CREDIT_CARD
+  PIX
+  CASH
+  MANUAL
+  FREE
 }
 
 // Credenciais OAuth2 por usuário (fotógrafo / franqueado)

@@ -321,53 +321,14 @@ export class PaymentController {
               where: { id: order.id },
               data: { 
                 status: "APROVADO",
-                paymentId: String(data.id) // Garante sincronização do ID real do MP
+                hasPaid: true,
+                paymentId: String(data.id), // Garante sincronização do ID real do MP
+                paymentMethod: "MANUAL" // No webhook do Pro, geralmente é cartão/pix mas marcamos como processado
               }
             });
 
-            // Se for cota de presente, atualiza o montante do evento
-            if (order.isContribution && order.eventId) {
-               await prisma.event.update({
-                 where: { id: order.eventId },
-                 data: { collectedAmount: { increment: order.valor } }
-               });
-            }
-
-            // 2. Ativação condicional por tipo de evento
-            const isMarketplace = order.event?.type === 'PHOTO_MARKETPLACE';
-            await prisma.event.update({
-              where: { id: order.eventId },
-              data: { 
-                active: true, 
-                isQuote: false,
-                // Marketplace continua público; outros eventos liberam acesso
-                isPrivate: order.event?.isPrivate ?? true
-              }
-            });
-
-            // 3. Dispara e-mail automático
-            const recipientEmail = order.buyerEmail || order.cliente?.email || paymentData.payer?.email;
-            if (recipientEmail) {
-              NotificationService.sendAccessEmail({
-                to: recipientEmail,
-                buyerName: order.cliente?.nome || "Cliente",
-                eventTitle: order.event.nomeNoivos,
-                orderId: order.id,
-                accessLink: `${FRONTEND_URL}/e/${order.eventId}`,
-                tempPassword: order.tempPassword || undefined
-              }).catch(e => console.error("Erro ao enviar e-mail via Webhook:", e));
-            }
-
-            // 4. Alerta WhatsApp para o admin
-            NotificationService.notifyNewSale({
-              buyerEmail: order.buyerEmail || order.cliente?.email || "desconhecido",
-              eventTitle: order.event.nomeNoivos,
-              orderId: order.id,
-              amount: Number(order.valor)
-            });
-
-            // 5. Auditoria
-            audit(req, "PAYMENT_APPROVED_WEBHOOK", "Order", order.id, null, { paymentId: String(data.id) });
+            // Usar o novo método unificado de finalização
+            await PaymentController.finalizeApprovedOrder(order, order.event, req);
           }
           console.log(`✅ Pagamento ${data.id} aprovado e notificação enviada.`);
         }
@@ -583,6 +544,7 @@ export class PaymentController {
           data: {
             clienteId: finalUserId,
             buyerEmail: email,
+            buyerWhatsapp: req.body.buyerWhatsapp || existingPendingOrder.buyerWhatsapp,
             valor: preco,
             accessType: accessType || existingPendingOrder.accessType || "PRIVATE",
             accessChosenAt: existingPendingOrder.accessChosenAt ?? new Date(),
@@ -592,6 +554,15 @@ export class PaymentController {
             splitEdicao,
             splitCartorio,
             tempPassword: isNewUser ? tempPassword : null,
+            // Order Engine Fields
+            deliveryType: req.body.deliveryType || existingPendingOrder.deliveryType || "DIGITAL_ONLY",
+            paymentModel: event.paymentModel,
+            shippingFee: req.body.shippingFee ? new Prisma.Decimal(req.body.shippingFee) : existingPendingOrder.shippingFee,
+            shippingAddress: req.body.shippingAddress || existingPendingOrder.shippingAddress,
+            isGuestOrder: !finalUserId,
+            guestEmail: !finalUserId ? email : null,
+            guestPhone: !finalUserId ? (req.body.buyerWhatsapp || null) : null,
+            guestToken: !finalUserId ? (existingPendingOrder.guestToken || crypto.randomBytes(32).toString("hex")) : null,
             // Limpa itens antigos e recria se necessário
             items: orderItemsData.length > 0 ? {
               deleteMany: {},
@@ -600,11 +571,13 @@ export class PaymentController {
           }
         });
       } else {
+        const isGuest = !finalUserId;
         order = await prisma.order.create({
           data: {
             eventId,
             clienteId: finalUserId,
             buyerEmail: email,
+            buyerWhatsapp: req.body.buyerWhatsapp || null,
             valor: preco,
             status: "PENDENTE",
             isContribution: event.isCrowdfund,
@@ -617,6 +590,15 @@ export class PaymentController {
             splitEdicao,
             splitCartorio,
             tempPassword: isNewUser ? tempPassword : null,
+            // Order Engine Fields
+            deliveryType: req.body.deliveryType || "DIGITAL_ONLY",
+            paymentModel: event.paymentModel,
+            shippingFee: req.body.shippingFee ? new Prisma.Decimal(req.body.shippingFee) : null,
+            shippingAddress: req.body.shippingAddress || null,
+            isGuestOrder: isGuest,
+            guestEmail: isGuest ? email : null,
+            guestPhone: isGuest ? (req.body.buyerWhatsapp || null) : null,
+            guestToken: isGuest ? crypto.randomBytes(32).toString("hex") : null,
             items: orderItemsData.length > 0 ? {
               create: orderItemsData
             } : undefined
@@ -624,7 +606,33 @@ export class PaymentController {
         });
       }
 
-      // 5. Chamada Real ao Mercado Pago
+      // 5. Pagamento em DINHEIRO (Cash) - Pulo do Gato
+      if (req.body.method === "CASH") {
+        // TODO: Validar se o executor tem permissão de Profissional/Franqueado
+        const updatedOrder = await prisma.order.update({
+          where: { id: order.id },
+          data: {
+            status: "APROVADO",
+            hasPaid: true,
+            paymentMethod: "CASH",
+            paymentId: `CASH-${order.id}-${Date.now()}`
+          }
+        });
+
+        // Ativa o evento/acesso imediatamente
+        await this.finalizeApprovedOrder(updatedOrder, event, req);
+
+        return res.json({
+          success: true,
+          orderId: order.id,
+          status: "approved",
+          hasPaid: true,
+          method: "CASH",
+          guestToken: order.guestToken
+        });
+      }
+
+      // 6. Chamada Real ao Mercado Pago (Fluxo Normal)
       const mpResponse = await MercadoPagoService.processPayment({
         transaction_amount: preco,
         token: cardToken,
@@ -650,7 +658,8 @@ export class PaymentController {
         data: { 
           status: finalStatus,
           hasPaid: isApproved,
-          paymentId: String(mpResponse.id)
+          paymentId: String(mpResponse.id),
+          paymentMethod: isApproved ? (paymentMethodId?.includes("pix") ? "PIX" : "CREDIT_CARD") : null
         }
       });
 
@@ -664,68 +673,7 @@ export class PaymentController {
 
       // 7. Ativa o evento IMEDIATAMENTE (Checkout Transparente)
       if (isApproved) {
-        const isMarketplace = event.type === 'PHOTO_MARKETPLACE';
-        await prisma.event.update({
-          where: { id: eventId },
-          data: { 
-            active: true, 
-            isQuote: false,
-            // Marketplace continua público; outros eventos liberam acesso
-            isPrivate: event.isPrivate ?? true
-          }
-        });
-
-        // 7a. E-mail de acesso ao comprador
-        NotificationService.sendAccessEmail({
-          to: email,
-          buyerName: req.body.buyerName || "Cliente",
-          eventTitle: event.nomeNoivos,
-          orderId: order.id,
-          accessLink: `${FRONTEND_URL}/e/${event.id}`,
-          tempPassword: isNewUser ? tempPassword : undefined
-        }).catch(e => console.error("Erro ao enviar e-mail no checkout:", e));
-
-        // 7b. Alerta WhatsApp para o admin (era disparado APENAS no webhook — bug corrigido)
-        NotificationService.notifyNewSale({
-          buyerEmail: email,
-          eventTitle: event.nomeNoivos,
-          orderId: order.id,
-          amount: Number(preco)
-        });
-
-        // 7c. Atualiza flags do evento se for upgrade
-        if (finalSelectedServices?.length > 0) {
-          const purchased = await prisma.serviceCatalog.findMany({
-            where: { id: { in: finalSelectedServices } }
-          });
-          const updateData: any = {};
-          if (purchased.some(p => p.name.toLowerCase().includes("video"))) updateData.temVideo = true;
-          if (purchased.some(p => p.name.toLowerCase().includes("reels"))) updateData.temReels = true;
-          if (purchased.some(p => p.name.toLowerCase().includes("impressa"))) updateData.temFotoImpressa = true;
-          
-          if (Object.keys(updateData).length > 0) {
-            await prisma.event.update({ where: { id: eventId }, data: updateData });
-          }
-        }
-
-        // 7d. Atualiza flags Phygital
-        if (finalIncludeLivePrint || finalIncludeShipping) {
-          const phygitalNotes = [];
-          if (finalIncludeLivePrint) phygitalNotes.push("ESTAÇÃO DE IMPRESSÃO AO VIVO");
-          if (finalIncludeShipping) phygitalNotes.push("ENTREGA POSTERIOR (CORREIOS)");
-          
-          await prisma.event.update({
-            where: { id: eventId },
-            data: { temFotoImpressa: true } // Ativa a flag geral de impressão
-          });
-          
-          // Mantém as notas legíveis para o admin
-          await prisma.order.update({
-            where: { id: order.id },
-            data: { internalNotes: `[PHYGITAL] ${phygitalNotes.join(" + ")}` }
-          });
-        }
-
+        await PaymentController.finalizeApprovedOrder(order, event, req);
       } else if (mpResponse.status === "rejected") {
         // 7c. Alerta de pagamento rejeitado
         NotificationService.notifyPaymentIssue({
@@ -949,6 +897,95 @@ export class PaymentController {
     } catch (error) {
       console.error("[CreatePrintOrder Error]:", error);
       return res.status(500).json({ error: "Erro ao criar pedido de impressão." });
+    }
+  /**
+   * Método Unificado para Finalizar Pedidos Aprovados
+   * (Usado por: Webhook, Transparent Checkout e Cash Payment)
+   */
+  static async finalizeApprovedOrder(order: any, event: any, req: Request) {
+    try {
+      // 1. Atualizar Montante Arrecadado (Crowdfunding)
+      if (order.isContribution && order.eventId) {
+        await prisma.event.update({
+          where: { id: order.eventId },
+          data: { collectedAmount: { increment: order.valor } }
+        });
+      }
+
+      // 2. Ativação do Evento e Visibilidade
+      await prisma.event.update({
+        where: { id: order.eventId },
+        data: { 
+          active: true, 
+          isQuote: false,
+          isPrivate: event.isPrivate ?? true
+        }
+      });
+
+      // 3. Notificações (E-mail e WhatsApp)
+      const recipientEmail = order.buyerEmail || order.cliente?.email;
+      if (recipientEmail) {
+        NotificationService.sendAccessEmail({
+          to: recipientEmail,
+          buyerName: order.cliente?.nome || "Cliente",
+          eventTitle: event.nomeNoivos,
+          orderId: order.id,
+          accessLink: `${FRONTEND_URL}/e/${event.id}`,
+          tempPassword: order.tempPassword || undefined,
+          // Se for Guest Order, podemos incluir o token no link no futuro
+          guestToken: order.isGuestOrder ? order.guestToken : undefined
+        }).catch(e => console.error("Erro ao enviar e-mail de acesso:", e));
+      }
+
+      NotificationService.notifyNewSale({
+        buyerEmail: recipientEmail || "desconhecido",
+        eventTitle: event.nomeNoivos,
+        orderId: order.id,
+        amount: Number(order.valor)
+      });
+
+      // 4. Lógica de Upgrades (Service Catalog) baseada nos itens do pedido
+      const orderItems = await prisma.orderItem.findMany({
+        where: { orderId: order.id },
+        include: { service: true }
+      });
+
+      const serviceItems = orderItems.filter(item => item.serviceId);
+      if (serviceItems.length > 0) {
+        const updateData: any = {};
+        if (serviceItems.some(i => i.service?.name.toLowerCase().includes("video"))) updateData.temVideo = true;
+        if (serviceItems.some(i => i.service?.name.toLowerCase().includes("reels"))) updateData.temReels = true;
+        if (serviceItems.some(i => i.service?.name.toLowerCase().includes("impressa"))) updateData.temFotoImpressa = true;
+        
+        if (Object.keys(updateData).length > 0) {
+          await prisma.event.update({ where: { id: order.eventId }, data: updateData });
+        }
+      }
+
+      // 5. Lógica Phygital e Logística (Order Engine)
+      if (order.deliveryType === "SHIPPING" || order.deliveryType === "LOCAL_PICKUP") {
+        await prisma.event.update({
+          where: { id: order.eventId },
+          data: { temFotoImpressa: true }
+        });
+
+        // Registrar nota logística se houver frete ou endereço
+        if (order.shippingAddress) {
+          const addr = typeof order.shippingAddress === 'string' ? JSON.parse(order.shippingAddress) : order.shippingAddress;
+          await prisma.order.update({
+            where: { id: order.id },
+            data: { 
+              internalNotes: `[LOGÍSTICA] Entrega via ${order.deliveryType}. Endereço: ${addr.rua}, ${addr.numero} - ${addr.cidade}/${addr.uf}` 
+            }
+          });
+        }
+      }
+
+      // 6. Auditoria Final
+      audit(req, "ORDER_FINALIZED_UNIFIED", "Order", order.id, null, { eventId: order.eventId });
+
+    } catch (err) {
+      console.error("[finalizeApprovedOrder Error]:", err);
     }
   }
 }

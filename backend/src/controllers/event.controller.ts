@@ -13,26 +13,35 @@ export class EventController {
   static async getAccess(req: AuthRequest, res: Response) {
     try {
       const { id } = req.params;
-      const { orderId } = req.query;
+      const { orderId, guestToken } = req.query;
 
-      if (!orderId) {
-        return res.status(400).json({ error: "ID do pedido é obrigatório" });
+      if (!orderId && !guestToken) {
+        return res.status(400).json({ error: "ID do pedido ou Token de convidado é obrigatório" });
       }
 
-      const order = await prisma.order.findUnique({
-        where: { id: orderId as string },
+      const order = await prisma.order.findFirst({
+        where: { 
+          OR: [
+            { id: orderId as string },
+            { guestToken: guestToken as string }
+          ],
+          eventId: id,
+          status: "APROVADO"
+        },
         include: { event: true }
       });
 
-      if (!order || order.eventId !== id || order.status !== "APROVADO") {
-        return res.status(403).json({ error: "Acesso ainda não liberado. Aguardando processamento." });
+      if (!order) {
+        return res.status(403).json({ error: "Acesso ainda não liberado ou token inválido." });
       }
 
       return res.json({
         lightroomUrl: order.showAlbum ? order.event.lightroomUrl : null,
         driveUrl: order.showVideo ? order.event.driveUrl : null,
         eventTitle: order.event.nomeNoivos,
-        accessType: order.accessType || "PRIVATE"
+        accessType: order.accessType || "PRIVATE",
+        guestToken: order.guestToken,
+        isGuestOrder: order.isGuestOrder
       });
     } catch (error) {
       console.error("Erro ao verificar acesso:", error);
@@ -76,15 +85,27 @@ export class EventController {
       // 1. Identifica o usuário (Query ou JWT)
       const currentUserId = (userId as string) || (authUser?.userId);
 
-      // 2. Busca qualquer pedido (Pendente ou Aprovado) para este usuário/evento
-      const order = currentUserId ? await prisma.order.findFirst({
-        where: { 
-          eventId: event.id, 
-          clienteId: currentUserId,
-          status: { not: "CANCELADO" }
-        },
-        orderBy: { createdAt: "desc" }
-      }) : null;
+      // 2. Busca qualquer pedido (Pendente ou Aprovado) para este usuário/evento/token
+      const { guestToken } = req.query;
+      
+      const order = currentUserId 
+        ? await prisma.order.findFirst({
+            where: { 
+              eventId: event.id, 
+              clienteId: currentUserId,
+              status: { not: "CANCELADO" }
+            },
+            orderBy: { createdAt: "desc" }
+          }) 
+        : (guestToken 
+          ? await prisma.order.findFirst({
+              where: {
+                eventId: event.id,
+                guestToken: String(guestToken),
+                status: { not: "CANCELADO" }
+              }
+            })
+          : null);
       
       // 3. Lógica de Acesso (Pivot)
       const isOwner = authUser && (

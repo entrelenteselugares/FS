@@ -98,6 +98,8 @@ interface AccessData {
   expiresAt: string;
   eventTitle: string;
   accessType?: "PUBLIC" | "PRIVATE";
+  guestToken?: string;
+  isGuestOrder?: boolean;
 }
 
 interface PrintProductData {
@@ -256,7 +258,11 @@ export default function EventPage() {
 
   useEffect(() => {
     if (!slug) return;
-    const params = user?.id ? { userId: user.id } : {};
+    const token = searchParams.get("token");
+    const params = {
+      ...(user?.id ? { userId: user.id } : {}),
+      ...(token ? { guestToken: token } : {})
+    };
     api.get(`/public/events/${slug}`, { params })
       .then((r) => {
         const eventData = r.data;
@@ -283,7 +289,7 @@ export default function EventPage() {
         }
 
         if (eventData.type === 'PHOTO_MARKETPLACE') {
-          api.get(`/marketplace/events/${eventData.id}/media`)
+          api.get(`/marketplace/events/${eventData.id}/media`, { params })
             .then(res => setMedias(res.data))
             .catch(err => console.error("Erro ao carregar mídias:", err));
         }
@@ -312,8 +318,11 @@ export default function EventPage() {
   useEffect(() => {
     const checkAccessStatus = async (oid: string) => {
       if (!event) return; 
+      const token = searchParams.get("token");
       try {
-        const { data } = await api.get(`/orders/${oid}/access-status`);
+        const { data } = await api.get(`/orders/${oid}/access-status`, { 
+          params: token ? { guestToken: token } : {} 
+        });
         if (data.status === "PENDING_CHOICE") {
           setStep("success");
           if (event?.isPrimaryClient) setNeedsAccessChoice(true);
@@ -329,6 +338,32 @@ export default function EventPage() {
     const oid = urlOrderId ?? savedOrderId;
     if (oid) { setOrderId(oid); checkAccessStatus(oid); }
   }, [slug, searchParams, event, handleAutoConfirmChoice]);
+
+  const handleManualPayment = async (method: "CASH") => {
+    if (!event) return;
+    setStep("processing");
+    try {
+      const { data } = await api.post("/checkout/payment", {
+        eventId: event.id,
+        email: cardData.email,
+        method: method,
+        cart: cart,
+        deliveryType: "DIGITAL_ONLY", // Padrão para venda rápida
+      });
+      if (data.status === "approved") {
+        setOrderId(data.orderId);
+        setStep("success");
+        // Adiciona o token na URL para que o cliente possa acessar o link que o fotógrafo vai enviar
+        if (data.guestToken) {
+          navigate(`?token=${data.guestToken}`, { replace: true });
+        }
+      }
+    } catch (err) {
+      console.error(err);
+      setError("Erro ao processar pagamento manual.");
+      setStep("checkout");
+    }
+  };
 
   const handleTokenize = async () => {
     if (!MP_PUBLIC_KEY) { setError("Erro de configuração: Chave MP ausente."); return; }
@@ -637,6 +672,19 @@ export default function EventPage() {
                 )}
                 <button onClick={() => setShowPrintStore(true)} style={{ ...BtnSecondary, color: T.brand, borderColor: T.brand }}>📖 ETERNIZE NO PAPEL</button>
                 
+                {access?.isGuestOrder && access?.guestToken && (
+                  <button 
+                    onClick={() => {
+                      const link = `${window.location.origin}/e/${event.slug || event.id}?token=${access.guestToken}`;
+                      navigator.clipboard.writeText(link);
+                      alert("Link de Acesso (Magic Link) copiado!");
+                    }}
+                    style={{ ...BtnSecondary, background: `${T.brand}10`, color: T.brand, borderColor: `${T.brand}40`, justifyContent: "center", gap: 8 }}
+                  >
+                    🔗 COPIAR LINK DE ACESSO (CONVIDADO)
+                  </button>
+                )}
+                
                 {event.isOwner && isMarketplace && (
                   <div style={{ display: "flex", flexDirection: "column", gap: 12, marginTop: 10, padding: 16, background: "rgba(255,255,255,0.05)", border: "1px dashed rgba(255,255,255,0.1)" }}>
                     <p style={{ fontSize: 9, fontWeight: 900, color: T.brand, textTransform: "uppercase", letterSpacing: 1, marginBottom: 4 }}>Controle do Profissional</p>
@@ -707,6 +755,18 @@ export default function EventPage() {
                <button onClick={handleTokenize} disabled={tokenizing} style={{ ...BtnPrimary, width: "100%", justifyContent: "center", marginTop: 10 }}>{tokenizing ? "VALIDANDO..." : "PRÓXIMO PASSO"}</button>
              ) : (
                <button onClick={handlePay} style={{ ...BtnPrimary, width: "100%", justifyContent: "center", marginTop: 10 }}>FINALIZAR PAGAMENTO</button>
+             )}
+
+             {event.isOwner && (
+               <div style={{ marginTop: 12, paddingTop: 16, borderTop: `1px solid ${T.border}` }}>
+                 <button 
+                   onClick={() => handleManualPayment("CASH")} 
+                   style={{ ...BtnSecondary, width: "100%", justifyContent: "center", background: "#4ade8011", color: "#4ade80", borderColor: "#4ade8033", fontSize: 10, fontWeight: 900 }}
+                 >
+                   💰 RECEBER EM DINHEIRO (OFFLINE)
+                 </button>
+                 <p style={{ fontSize: 8, color: T.text3, textAlign: "center", marginTop: 8, textTransform: "uppercase" }}>Uso exclusivo para Profissionais e Franqueados</p>
+               </div>
              )}
            </div>
          )}
