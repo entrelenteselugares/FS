@@ -58,18 +58,19 @@ export class PhygitalService {
       });
 
       // 4. Criação dos Carimbos SVG (Proporcionais à imagem)
+      // Usamos uma fonte genérica e aumentamos drasticamente o tamanho para legibilidade
       const refSvg = Buffer.from(`
         <svg width="${finalWidth}" height="${borderSize * 2}">
-          <text x="50%" y="40%" font-family="Arial, sans-serif" font-size="${Math.floor(borderSize * 0.7)}" font-weight="900" fill="#000000" text-anchor="middle" dominant-baseline="middle" style="text-transform: uppercase; letter-spacing: 4px;">
-            REF: ${referenceCode}
+          <text x="50%" y="50%" font-family="DejaVu Sans, Arial, sans-serif" font-size="${Math.floor(borderSize * 1.2)}" font-weight="900" fill="#000000" text-anchor="middle" dominant-baseline="middle" style="text-transform: uppercase; letter-spacing: 2px;">
+            ${referenceCode}
           </text>
         </svg>
       `);
 
-      const logoFontSize = Math.floor(borderSize * 0.25);
+      const logoFontSize = Math.floor(borderSize * 0.3);
       const logoSvg = Buffer.from(`
         <svg width="${finalWidth}" height="${borderSize}">
-          <text x="${finalWidth - borderSize}" y="50%" font-family="Arial, sans-serif" font-size="${logoFontSize}" font-weight="900" fill="#000000" text-anchor="end" dominant-baseline="middle" style="text-transform: uppercase; letter-spacing: 5px; opacity: 0.4;">
+          <text x="${finalWidth - borderSize}" y="50%" font-family="DejaVu Sans, Arial, sans-serif" font-size="${logoFontSize}" font-weight="900" fill="#000000" text-anchor="end" dominant-baseline="middle" style="text-transform: uppercase; letter-spacing: 5px; opacity: 0.5;">
             FOTO SEGUNDO
           </text>
         </svg>
