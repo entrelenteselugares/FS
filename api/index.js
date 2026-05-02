@@ -20,7 +20,7 @@ module.exports = (req, res) => {
 
     return app(req, res);
   } catch (err) {
-    return res.status(200).json({
+    return res.status(500).json({
       status: "BOOT_FAILURE",
       error: "Falha no carregamento do módulo do servidor.",
       message: err.message,

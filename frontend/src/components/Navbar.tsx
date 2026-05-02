@@ -51,7 +51,7 @@ export const Navbar: React.FC = () => {
         {user ? (
           <div style={{ position: "relative" }}>
             <button onClick={() => setUserMenu(v => !v)} style={{ ...BtnSecondary, fontSize: 10, padding: "8px 10px" }}>
-              {user.nome.split(" ")[0]} <span style={{ fontSize: 8, marginLeft: 2 }}>▾</span>
+              {user.nome?.split(" ")[0] || "CONTA"} <span style={{ fontSize: 8, marginLeft: 2 }}>▾</span>
             </button>
             {userMenu && (
               <div style={{ 
