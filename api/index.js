@@ -20,18 +20,20 @@ module.exports = (req, res) => {
 
     return app(req, res);
   } catch (err) {
-    console.error("[CRITICAL BOOT ERROR]:", err.message);
-    return res.status(500).json({
-      error: "Falha catastrófica no boot do servidor.",
+    return res.status(200).json({
+      status: "BOOT_FAILURE",
+      error: "Falha no carregamento do módulo do servidor.",
       message: err.message,
       diagnostic: {
         node: process.version,
-        has_server_bundle: true,
-        stack: err.stack,
+        time: new Date().toISOString(),
         env: {
           has_db_url: !!process.env.DATABASE_URL,
-          has_direct_url: !!process.env.DIRECT_URL
-        }
+          has_supabase_url: !!process.env.SUPABASE_URL,
+          has_jwt_secret: !!process.env.JWT_SECRET,
+          node_env: process.env.NODE_ENV
+        },
+        stack: err.stack?.split("\n").slice(0, 5)
       }
     });
   }

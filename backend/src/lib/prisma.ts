@@ -12,24 +12,26 @@ const connectionString = process.env.DATABASE_URL;
 
 function createPrismaClient() {
   if (!connectionString) {
-    console.error("❌ ERRO CRÍTICO: DATABASE_URL não configurada no ambiente!");
-    // Retorna um cliente "vazio" para não travar o boot. Erros ocorrerão apenas nas queries.
+    console.error("❌ AVISO: DATABASE_URL não configurada. Queries ao BD falharão.");
     return new PrismaClient();
   }
 
-  // Cria a pool de conexões nativa do Postgres (node-postgres)
-  const pool = new Pool({ 
-    connectionString,
-    ssl: process.env.NODE_ENV === "production" ? { rejectUnauthorized: false } : false
-  });
-  
-  // Envolve a pool com o adaptador do Prisma
-  const adapter = new PrismaPg(pool);
+  try {
+    const pool = new Pool({ 
+      connectionString,
+      ssl: process.env.NODE_ENV === "production" ? { rejectUnauthorized: false } : false
+    });
+    
+    const adapter = new PrismaPg(pool);
 
-  return new PrismaClient({
-    adapter,
-    log: process.env.NODE_ENV === "development" ? ["query", "error", "warn"] : ["error"],
-  });
+    return new PrismaClient({
+      adapter,
+      log: process.env.NODE_ENV === "development" ? ["query", "error", "warn"] : ["error"],
+    });
+  } catch (err) {
+    console.error("❌ Falha ao inicializar Prisma Client:", err);
+    return new PrismaClient();
+  }
 }
 
 export const prisma = globalForPrisma.prisma || createPrismaClient();
