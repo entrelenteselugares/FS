@@ -14,8 +14,12 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
         API.defaults.headers.common["Authorization"] = `Bearer ${stored}`;
         try {
           const r = await API.get("/auth/me");
-          setUser(r.data);
-          setToken(stored);
+          if (r.data && r.data.nome) {
+            setUser(r.data);
+            setToken(stored);
+          } else {
+            throw new Error("Dados de usuário inválidos");
+          }
         } catch {
           localStorage.removeItem("fs_token");
           delete API.defaults.headers.common["Authorization"];
