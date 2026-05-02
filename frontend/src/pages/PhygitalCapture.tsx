@@ -1,7 +1,7 @@
 import React, { useState, useRef } from 'react';
 import { useSearchParams } from 'react-router-dom';
 import { API } from '../lib/api';
-import { T, BtnPrimary, BtnSecondary } from '../lib/theme';
+import { T } from '../lib/theme';
 import { Camera, CheckCircle2, AlertCircle, Loader2, Image as ImageIcon } from 'lucide-react';
 
 export default function PhygitalCapture() {
