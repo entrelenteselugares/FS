@@ -32,24 +32,52 @@ export class PhygitalService {
       const shortEventId = metadata.eventId.substring(0, 5).toUpperCase();
       const referenceCode = `${shortEventId}-${Math.floor(1000 + Math.random() * 9000)}`;
 
-      // 3. Cria o Carimbo SVG Dinâmico
-      const svgWatermark = Buffer.from(`
-        <svg width="400" height="100">
-          <rect x="0" y="0" width="400" height="100" fill="black" fill-opacity="0.7" rx="10"/>
-          <text x="50%" y="50%" font-family="Arial, sans-serif" font-size="48" font-weight="bold" fill="#FFFFFF" text-anchor="middle" dominant-baseline="middle">
-            ${referenceCode}
+      // 3. Processamento de Imagem com Sharp (Luxo e Branding)
+      const image = sharp(fileBuffer);
+      const metadata_img = await image.metadata();
+      
+      // Auto-rotate baseado no EXIF (Corrige fotos de celular verticais)
+      let pipeline = image.rotate();
+
+      // Pegamos as dimensões após a rotação
+      const { width, height } = await pipeline.toBuffer().then(b => sharp(b).metadata());
+      const w = width || 1200;
+      const h = height || 1600;
+
+      // Adicionamos borda branca (Luxury Frame)
+      const borderSize = Math.floor(Math.min(w, h) * 0.05); // 5% de borda
+      pipeline = pipeline.extend({
+        top: borderSize,
+        bottom: borderSize * 2, // Espaço extra embaixo para a referência
+        left: borderSize,
+        right: borderSize,
+        background: { r: 255, g: 255, b: 255, alpha: 1 }
+      });
+
+      // 4. Criação dos Carimbos SVG
+      const refSvg = Buffer.from(`
+        <svg width="${w}" height="${borderSize * 2}">
+          <text x="50%" y="50%" font-family="Arial, sans-serif" font-size="${Math.floor(borderSize * 0.8)}" font-weight="900" fill="#000000" text-anchor="middle" dominant-baseline="middle" style="text-transform: uppercase; letter-spacing: 2px;">
+            REF: ${referenceCode}
           </text>
         </svg>
       `);
 
-      // 4. Processamento de Imagem com Sharp
-      const processedImageBuffer = await sharp(fileBuffer)
-        .composite([{
-          input: svgWatermark,
-          gravity: 'southeast',
-          blend: 'over'
-        }])
-        .jpeg({ quality: 95 })
+      const logoSvg = Buffer.from(`
+        <svg width="300" height="60">
+          <text x="95%" y="50%" font-family="Arial, sans-serif" font-size="14" font-weight="900" fill="#000000" text-anchor="end" dominant-baseline="middle" style="text-transform: uppercase; letter-spacing: 4px; opacity: 0.3;">
+            FOTO SEGUNDO
+          </text>
+        </svg>
+      `);
+
+      // 5. Composição Final
+      const processedImageBuffer = await pipeline
+        .composite([
+          { input: refSvg, gravity: 'south', blend: 'over' },
+          { input: logoSvg, gravity: 'southeast', blend: 'over' }
+        ])
+        .jpeg({ quality: 90 })
         .toBuffer();
 
       // 5. Upload para o Supabase Storage
