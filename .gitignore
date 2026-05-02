@@ -55,4 +55,8 @@ frontend/.env.production
 /scratch
 /backend/scratch
 /api/server.js
+# brain
 /brain
+
+# credentials
+ANOTAÇÕES/TECHNICAL/*.json

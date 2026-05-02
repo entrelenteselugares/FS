@@ -25,7 +25,7 @@ export function FlashEventModal({ onClose, onSuccess, onError }: FlashEventModal
       });
       onSuccess(data.slug);
     } catch (err: unknown) {
-      const errorMsg = err instanceof Error ? err.message : "Erro ao criar evento relâmpago.";
+      const errorMsg = err instanceof Error ? err.message : "Erro ao criar Foto Print Live.";
       onError(errorMsg);
     } finally {
       setLoading(false);
@@ -44,7 +44,7 @@ export function FlashEventModal({ onClose, onSuccess, onError }: FlashEventModal
                 <Zap size={14} fill="currentColor" />
                 <span className="text-[10px] font-black uppercase tracking-[0.3em] italic">Acesso Instantâneo</span>
               </div>
-              <h2 className="text-2xl font-heading font-black text-theme-text uppercase italic leading-none">Evento Relâmpago</h2>
+              <h2 className="text-2xl font-heading font-black text-theme-text uppercase italic leading-none">Foto Print Live</h2>
             </div>
             <button onClick={onClose} className="text-theme-muted hover:text-brand-tactical transition-colors">
               <X size={20} />

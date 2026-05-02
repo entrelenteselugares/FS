@@ -4,12 +4,12 @@ import { API } from "../lib/api";
 import { useNavigate } from "react-router-dom";
 import {
   DollarSign, MessageCircle,
-  Settings, Briefcase, Users, LayoutDashboard, Play, Zap
+  Settings, Briefcase, Users, LayoutDashboard, Play, Zap, Calendar, RefreshCw, LogOut, CheckCircle
 } from "lucide-react";
 import { DashboardLayout, type NavItem } from "../components/DashboardLayout";
 import { T } from "../lib/theme";
 import {
-  AgendaTab, FinanceTab, NetworkTab, ServicesTab,
+  AgendaTab, FinanceTab, NetworkTab, ServicesTab, ProfileTab,
   EventEditPanel, ExpressSaleModal, ProfileModal, FlashEventModal,
   DashboardHeader, DashboardStats, SupportBanner,
   OpportunitiesModal, ExpressSaleBanner,
@@ -20,7 +20,7 @@ import {
 
 import { Printer } from "lucide-react";
 
-type ActiveTab = "agenda" | "convites" | "financeiro" | "servicos" | "network" | "franquia";
+type ActiveTab = "agenda" | "convites" | "financeiro" | "servicos" | "network" | "franquia" | "calendar" | "perfil";
 type ViewTab = "lista" | "calendario";
 
 // ─── Main Component ────────────────────────────────────────────────────────────
@@ -48,6 +48,14 @@ export default function ProfissionalDashboard() {
   const [showNewServicesModal, setShowNewServicesModal] = useState(false);
   const [hasCheckedInvites, setHasCheckedInvites] = useState(false);
   const [notification, setNotification] = useState<{ message: string; type: "success" | "error" } | null>(null);
+  const [calendarStatus, setCalendarStatus] = useState<{ 
+    connected: boolean; 
+    credential: { 
+      calendarId?: string; 
+      updatedAt?: string; 
+    } 
+  } | null>(null);
+  const [isSyncing, setIsSyncing] = useState(false);
 
   // Network search state
   const [networkSearch, setNetworkSearch] = useState("");
@@ -96,6 +104,12 @@ export default function ProfissionalDashboard() {
       .catch((err) => console.error("Erro ao buscar rede:", err));
   }, []);
 
+  const fetchCalendarStatus = useCallback(() => {
+    API.get("calendar/status")
+      .then(r => setCalendarStatus(r.data))
+      .catch(err => console.error("Erro ao buscar status do calendário:", err));
+  }, []);
+
   useEffect(() => {
     // setLoading(true); // Redundant as it's initialized to true
     Promise.all([
@@ -103,9 +117,21 @@ export default function ProfissionalDashboard() {
       API.get("profissional/me").then(r => setProfile(r.data)),
       API.get("profissional/unidades/convites").then(r => setUnitInvites(r.data)),
       API.get("public/configs/services").then(r => setCatalogServices(r.data.services || [])),
-      API.get("profissional/network").then(r => setNetwork(r.data))
+      API.get("profissional/network").then(r => setNetwork(r.data)),
+      API.get("calendar/status").then(r => setCalendarStatus(r.data))
     ]).finally(() => setLoading(false));
-  }, []); // Only on mount
+
+    // Handle calendar return notifications
+    const params = new URLSearchParams(window.location.search);
+    if (params.get("calendar") === "connected") {
+      showNotification("Google Calendar conectado com sucesso!", "success");
+      // Clean URL
+      window.history.replaceState({}, document.title, window.location.pathname);
+    } else if (params.get("calendar") === "error") {
+      showNotification("Erro ao conectar Google Calendar.", "error");
+      window.history.replaceState({}, document.title, window.location.pathname);
+    }
+  }, [showNotification]); // Only on mount
 
   // ─── Derived State ─────────────────────────────────────────────────────────────
 
@@ -204,6 +230,37 @@ export default function ProfissionalDashboard() {
     window.open(`${API.defaults.baseURL}/profissional/reports/tax`, "_blank");
   };
 
+  const handleConnectCalendar = () => {
+    // Redirect to backend OAuth initiator
+    window.location.href = `${API.defaults.baseURL}/calendar/connect?token=${localStorage.getItem("fs_token")}`;
+  };
+
+  const handleDisconnectCalendar = async () => {
+    if (!confirm("Deseja realmente desconectar seu Google Calendar? Isso removerá os bloqueios automáticos da sua vitrine.")) return;
+    try {
+      await API.delete("calendar/disconnect");
+      showNotification("Calendário desconectado.");
+      fetchCalendarStatus();
+    } catch (err) {
+      console.error("[Calendar] Erro ao desconectar:", err);
+      showNotification("Erro ao desconectar.", "error");
+    }
+  };
+
+  const handleManualSync = async () => {
+    setIsSyncing(true);
+    try {
+      const { data } = await API.post("calendar/sync");
+      showNotification(`Sincronização concluída: ${data.synced} slots atualizados.`);
+      fetchCalendarStatus();
+    } catch (err) {
+      console.error("[Calendar] Erro na sincronização manual:", err);
+      showNotification("Erro na sincronização.", "error");
+    } finally {
+      setIsSyncing(false);
+    }
+  };
+
   // ─── Nav ──────────────────────────────────────────────────────────────────────
 
   const navItems: NavItem[] = [
@@ -218,13 +275,14 @@ export default function ProfissionalDashboard() {
     { label: "Financeiro", onClick: () => setActiveTab("financeiro"), isActive: activeTab === "financeiro", icon: <DollarSign size={16} /> },
     { label: "Serviços", onClick: () => setActiveTab("servicos"), isActive: activeTab === "servicos", icon: <Briefcase size={16} /> },
     { label: "Minha Rede", onClick: () => setActiveTab("network"), isActive: activeTab === "network", icon: <Users size={16} /> },
-    { label: "Meu Perfil", onClick: () => setIsProfileOpen(true), isActive: false, icon: <Settings size={16} /> },
+    { label: "Agenda Google", onClick: () => setActiveTab("calendar"), isActive: activeTab === "calendar", icon: <Calendar size={16} /> },
     ...( (user?.franchiseProfile || (profile?.cartorioProfissional && profile.cartorioProfissional.length > 0)) ? [{ 
       label: "Franquia Print", 
       onClick: () => setActiveTab("franquia"), 
       isActive: activeTab === "franquia", 
       icon: <Printer size={16} /> 
     }] : []),
+    { label: "Meu Perfil", onClick: () => setActiveTab("perfil"), isActive: activeTab === "perfil", icon: <Settings size={16} /> },
   ];
 
   const residentUnits = profile?.cartorioProfissional?.map((cp) => cp.cartorio.razaoSocial) || [];
@@ -269,7 +327,7 @@ export default function ProfissionalDashboard() {
                 <ExpressSaleBanner onOpen={() => setIsExpressModalOpen(true)} />
                 <div 
                   onClick={() => setIsFlashModalOpen(true)}
-                  className="bg-theme-bg-muted border border-yellow-400/30 p-6 flex items-center justify-between cursor-pointer hover:border-yellow-400/60 transition-all group overflow-hidden relative"
+                  className="bg-theme-bg-muted border border-yellow-400/30 p-6 h-full flex items-center justify-between cursor-pointer hover:border-yellow-400/60 transition-all group overflow-hidden relative"
                 >
                   <div className="absolute top-0 left-0 w-1 h-full bg-yellow-400" />
                   <div className="space-y-1 relative z-10">
@@ -277,7 +335,7 @@ export default function ProfissionalDashboard() {
                       <Zap size={14} fill="currentColor" />
                       <span className="text-[10px] font-black uppercase tracking-[0.3em] italic">Oportunidade Agora</span>
                     </div>
-                    <h3 className="text-xl font-heading font-black text-theme-text uppercase italic">Evento Relâmpago</h3>
+                    <h3 className="text-xl font-heading font-black text-theme-text uppercase italic">Foto Print Live</h3>
                     <p className="text-[10px] text-theme-muted uppercase font-bold tracking-widest">Ative um QR Code instantaneamente</p>
                   </div>
                   <div className="text-yellow-400/10 group-hover:text-yellow-400/30 transition-colors">
@@ -327,7 +385,98 @@ export default function ProfissionalDashboard() {
                 catalogServices={catalogServices}
                 onAddService={handleAddService}
                 onRemoveService={handleRemoveService}
-                onOpenProfile={() => setIsProfileOpen(true)}
+                onOpenProfile={() => setActiveTab("perfil")}
+              />
+            )}
+            {activeTab === "calendar" && (
+              <div className="space-y-8 animate-in fade-in duration-500">
+                <div>
+                  <h2 className="text-3xl font-black text-theme-text uppercase tracking-tighter">Agenda Google</h2>
+                  <p className="text-[10px] text-theme-muted uppercase tracking-[0.4em] mt-2 font-black italic">Sincronização com seu Calendário Pessoal</p>
+                </div>
+
+                <div className="max-w-3xl space-y-6">
+                  {!calendarStatus?.connected ? (
+                    <div className="bg-theme-bg border border-theme-border p-10 text-center space-y-6">
+                      <div className="w-20 h-20 bg-zinc-900 border border-theme-border flex items-center justify-center text-theme-muted mx-auto">
+                        <Calendar size={32} />
+                      </div>
+                      <div className="space-y-2">
+                        <h3 className="text-xl font-black text-theme-text uppercase italic">Conecte sua Agenda</h3>
+                        <p className="text-[10px] text-theme-muted uppercase font-bold tracking-widest max-w-sm mx-auto leading-relaxed">
+                          Sincronize seu Google Calendar para que o sistema bloqueie automaticamente sua vitrine quando você tiver compromissos pessoais.
+                        </p>
+                      </div>
+                      <button 
+                        onClick={handleConnectCalendar}
+                        className="px-10 py-4 bg-white text-black text-[11px] font-black uppercase tracking-[0.2em] hover:bg-brand-tactical transition-all shadow-xl"
+                      >
+                        CONECTAR GOOGLE CALENDAR
+                      </button>
+                    </div>
+                  ) : (
+                    <div className="space-y-6">
+                      <div className="bg-theme-bg border border-brand-tactical/30 p-8 flex items-center justify-between group">
+                        <div className="flex items-center gap-6">
+                          <div className="w-16 h-16 bg-brand-tactical/10 border border-brand-tactical/20 flex items-center justify-center text-brand-tactical">
+                            <CheckCircle size={24} />
+                          </div>
+                          <div>
+                            <p className="text-xs font-black text-brand-tactical uppercase tracking-widest italic">Status: Conectado</p>
+                            <p className="text-[10px] text-theme-muted font-bold uppercase tracking-widest mt-1">
+                              ID da Agenda: {calendarStatus.credential?.calendarId}
+                            </p>
+                          </div>
+                        </div>
+                        <button 
+                          onClick={handleDisconnectCalendar}
+                          className="p-3 text-theme-muted hover:text-red-500 transition-colors"
+                          title="Desconectar"
+                        >
+                          <LogOut size={18} />
+                        </button>
+                      </div>
+
+                      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                        <div className="bg-theme-bg border border-theme-border p-8 space-y-4">
+                          <label className="text-[9px] font-black text-theme-muted uppercase tracking-widest block">Última Sincronização</label>
+                          <p className="text-sm font-black text-theme-text uppercase italic tracking-tight">
+                            {calendarStatus.credential?.updatedAt 
+                              ? new Date(calendarStatus.credential.updatedAt).toLocaleString('pt-BR') 
+                              : "Nenhuma sincronização"}
+                          </p>
+                          <button 
+                            onClick={handleManualSync}
+                            disabled={isSyncing}
+                            className="flex items-center gap-2 text-[10px] font-black text-brand-tactical uppercase tracking-widest hover:underline disabled:opacity-50"
+                          >
+                            <RefreshCw size={12} className={isSyncing ? "animate-spin" : ""} />
+                            {isSyncing ? "Sincronizando..." : "Sincronizar Agora"}
+                          </button>
+                        </div>
+                        <div className="bg-theme-bg border border-theme-border p-8 space-y-4">
+                          <label className="text-[9px] font-black text-theme-muted uppercase tracking-widest block">Configurações</label>
+                          <p className="text-[10px] text-theme-muted font-bold uppercase leading-relaxed">
+                            O sistema lê apenas os horários ocupados para bloquear sua vitrine. Nenhum detalhe privado é exposto.
+                          </p>
+                        </div>
+                      </div>
+
+                      <div className="p-6 border border-theme-border bg-theme-bg-muted/30">
+                        <p className="text-[9px] text-theme-muted uppercase font-black tracking-widest text-center italic">
+                          DICA: Todas as reservas confirmadas no sistema são enviadas automaticamente para o seu Google Calendar.
+                        </p>
+                      </div>
+                    </div>
+                  )}
+                </div>
+              </div>
+            )}
+            {activeTab === "perfil" && profile && (
+              <ProfileTab 
+                profile={profile}
+                onUpdated={setProfile}
+                onNotify={showNotification}
               />
             )}
             {activeTab === "franquia" && user?.franchiseProfile && (
@@ -518,12 +667,12 @@ export default function ProfissionalDashboard() {
           {notification.message}
         </div>
       )}
-      {/* Modal de Evento Relâmpago (Express) */}
+      {/* Modal de Foto Print Live (Express) */}
       {isFlashModalOpen && (
         <FlashEventModal 
           onClose={() => setIsFlashModalOpen(false)}
           onSuccess={(slug) => {
-            showNotification("Evento Relâmpago Ativado!", "success");
+            showNotification("Foto Print Live Ativado!", "success");
             setIsFlashModalOpen(false);
             navigate(`/e/${slug}`);
           }}

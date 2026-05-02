@@ -3,7 +3,7 @@ import { randomBytes } from 'crypto';
 import { generateAuthUrl, exchangeCodeAndSave } from '../lib/calendar.service';
 import { syncUserCalendar } from '../services/calendar-sync.service';
 import { prisma } from '../lib/prisma';
-import { authMiddleware } from '../middleware/authMiddleware';
+import { requireAuth } from '../lib/auth';
 
 const router = Router();
 
@@ -16,7 +16,7 @@ const pendingStates = new Map<string, { userId: string; expiresAt: number }>();
  * Inicia o fluxo OAuth2. Gera URL e redireciona para o Google.
  * Requer autenticação JWT.
  */
-router.get('/connect', authMiddleware, (req: Request, res: Response) => {
+router.get('/connect', requireAuth, (req: Request, res: Response) => {
   const userId = (req as any).user?.userId;
   if (!userId) return res.status(401).json({ error: 'Não autorizado.' });
 
@@ -80,7 +80,7 @@ router.get('/callback', async (req: Request, res: Response) => {
  * DELETE /api/calendar/disconnect
  * Remove as credenciais do Google Calendar do usuário.
  */
-router.delete('/disconnect', authMiddleware, async (req: Request, res: Response) => {
+router.delete('/disconnect', requireAuth, async (req: Request, res: Response) => {
   const userId = (req as any).user?.userId;
   try {
     await prisma.userCalendarCredential.delete({ where: { userId } });
@@ -98,7 +98,7 @@ router.delete('/disconnect', authMiddleware, async (req: Request, res: Response)
  * GET /api/calendar/status
  * Retorna se o usuário tem o Google Calendar conectado.
  */
-router.get('/status', authMiddleware, async (req: Request, res: Response) => {
+router.get('/status', requireAuth, async (req: Request, res: Response) => {
   const userId = (req as any).user?.userId;
   const cred = await prisma.userCalendarCredential.findUnique({
     where: { userId },
@@ -111,7 +111,7 @@ router.get('/status', authMiddleware, async (req: Request, res: Response) => {
  * POST /api/calendar/sync
  * Dispara sincronização manual para o usuário autenticado.
  */
-router.post('/sync', authMiddleware, async (req: Request, res: Response) => {
+router.post('/sync', requireAuth, async (req: Request, res: Response) => {
   const userId = (req as any).user?.userId;
   try {
     const result = await syncUserCalendar(userId);

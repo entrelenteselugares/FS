@@ -307,6 +307,7 @@ export const DashboardLayout: React.FC<DashboardLayoutProps> = ({
             background: "var(--overlay)",
             backdropFilter: "blur(4px)",
             zIndex:     40,
+            pointerEvents: "auto", // Garantia de que o click no backdrop funcione para fechar
           }}
         />
       )}
@@ -392,17 +393,19 @@ export const DashboardLayout: React.FC<DashboardLayoutProps> = ({
           .dashboard-drawer  { display: none !important; }
           .dashboard-menu-btn { display: none !important; }
           .dashboard-logo-topbar { display: none !important; }
+          .dashboard-drawer-backdrop { 
+            display: none !important; 
+            pointer-events: none !important; 
+            visibility: hidden !important;
+          }
         }
         /* Mobile: oculta sidebar, mostra topbar */
         @media (max-width: 1023px) {
           .dashboard-sidebar { display: none !important; }
           .dashboard-topbar  { border-bottom: 1px solid ${T.border}; }
         }
-        /* Garantia de que o backdrop NUNCA apareça em desktop */
-        @media (min-width: 1024px) {
-          .dashboard-drawer-backdrop { display: none !important; }
-        }
       `}</style>
     </div>
+
   );
 };

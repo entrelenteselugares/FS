@@ -1,45 +1,40 @@
 # 📁 ANOTAÇÕES — Foto Segundo
 
-Pasta de documentação técnica e planejamento do projeto.
+Pasta de documentação técnica, planejamento e ativos do projeto organizada por categorias.
 
 ---
 
-## 📄 Documentos Técnicos (ler primeiro)
+## 🏗️ [TECHNICAL](./TECHNICAL/) — Arquitetura e Engenharia
+Documentação profunda sobre o motor do sistema, segurança e banco de dados.
 
-| Arquivo | Descrição |
-| --- | --- |
-| `BACKEND_RESILIENCE_REPORT_2026-04-30.md` | ⭐ **Relatório de Estabilização** — Tipagem estrita, Prisma 6 e Resiliência |
-| `AUDITORIA_SISTEMA_2026-04-27.md` | Auditoria completa — stack, rotas, banco, fluxos, bugs, ENV |
-| `master_developer_guide.md` | Guia de padrões de código, segurança e deploy |
-| `mapa_sistema.md` | Mapa de todas as páginas, controllers e regras de negócio |
-| `changelog_recente.md` | Histórico de mudanças recentes por sprint |
-| `api_and_database_reference.md` | Referência rápida de endpoints e modelos |
+- **`master_developer_guide.md`**: Guia mestre de padrões e segurança.
+- **`AUDITORIA_AGENDA_2026.md`**: Auditoria completa do sistema de agenda Google.
+- **`changelog_recente.md`**: Histórico detalhado de mudanças por sprint.
+- **`mapa_sistema.md`**: Mapeamento de rotas e regras de negócio.
+- **`BACKEND_RESILIENCE_REPORT_*.md`**: Relatórios de estabilização e performance.
 
-## 📋 Planejamento e Produto
+## 📋 [BACKLOG](./BACKLOG/) — Produto e Estratégia
+Roadmaps, planejamentos de novas features e backlog de elite.
 
-| Arquivo | Descrição |
-| --- | --- |
-| `PLANEJAMENTO_MARKETPLACE_FOTOGRAFO.md` | Roadmap do módulo de Marketplace |
-| `plano_auditoria_tecnica.md` | Checklist de auditoria técnica |
-| `relatorio_auditoria_tecnica.md` | Relatório de auditoria anterior |
-| `release_report_v1.0.0.md` | Relatório do primeiro lançamento |
-| `system_mind_map.md` | Mapa mental da arquitetura do sistema |
-| `dicionario_revisao.md` | Dicionário de termos e revisões de nomenclatura |
+- **`ROADMAP_ELITE.md`**: Visão de futuro da plataforma.
+- **`BACKLOG_ELITE.md`**: Tarefas prioritárias e dívida técnica.
+- **`PLANEJAMENTO_MARKETPLACE_*.md`**: Estratégia do módulo de vendas.
 
-## 📦 Catálogos de Fornecedores
+## ⚙️ [OPERATIONAL](./OPERATIONAL/) — Logística e Operações
+Guias para franqueados, catálogos de fornecedores e manuais de campo.
 
-| Arquivo | Descrição |
-| --- | --- |
-| `catalogo_ck.md` | Catálogo de impressão CK (produtos e preços) |
-| `catalogo_merlin.md` | Catálogo de locação Merlin |
+- **`GUIA_LOGISTICA_PHYGITAL.md`**: Manual do motor de impressão autônoma.
+- **`SISTEMA_FRANQUIAS.md`**: Regras e fluxos para micro-franqueados.
+- **`catalogo_ck.md`** / **`catalogo_merlin.md`**: Tabelas de preços e produtos de parceiros.
 
-## 🗃️ Arquivos de Referência
-
-| Arquivo | Descrição |
-| --- | --- |
-| `LOG_ATUALIZACOES_PRODUCAO.md` | Log de atualizações em produção |
-| `Logotipo Minimalista Fotosegundo*.png` | Logos oficiais da marca |
+## 🎨 [ASSETS](./ASSETS/) — Ativos Visuais
+Logos, imagens de teste e recursos gráficos oficiais.
 
 ---
 
-> **Última atualização:** 30/04/2026 — Auditoria de Tipagem (100% Strict) e migração para Prisma 6 Native Adapter.
+## 🗃️ [OBSOLETO](./OBSOLETO/) / [ARQUIVO_HISTORICO](./ARQUIVO_HISTORICO/)
+Documentos legados e históricos de versões anteriores mantidos para referência.
+
+---
+
+> **Última atualização:** 02/05/2026 — Implementação da Agenda Descentralizada e Reorganização de Diretórios.

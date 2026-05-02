@@ -1,5 +1,6 @@
-import { useState, useEffect, useCallback } from "react";
-import { Check, Video, Zap, Printer } from "lucide-react";
+import { useState, useEffect, useCallback, useRef } from "react";
+import { Check, Video, Zap, Printer, Upload, QrCode } from "lucide-react";
+import { QRCodeCanvas } from "qrcode.react";
 import { useParams, useNavigate, useSearchParams } from "react-router-dom";
 import { API as api } from "../lib/api";
 import { Helmet } from "react-helmet-async";
@@ -192,6 +193,9 @@ export default function EventPage() {
   const [tokenizing, setTokenizing] = useState(false);
   const [error, setError] = useState("");
   const [showPrintStore, setShowPrintStore] = useState(false);
+  const [showQrModal, setShowQrModal] = useState(false);
+  const [isUploading, setIsUploading] = useState(false);
+  const fileInputRef = useRef<HTMLInputElement>(null);
 
   // Carrega carrinho do localStorage
   useEffect(() => {
@@ -397,6 +401,31 @@ export default function EventPage() {
     }
     if (event.isPrimaryClient) setStep("choice");
     else { setAccessType("PUBLIC"); setStep(printProducts.length > 0 ? "upsell" : "checkout"); }
+  };
+
+  const handleLiveUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    if (!e.target.files?.[0] || !event) return;
+    setIsUploading(true);
+    const file = e.target.files[0];
+    const reader = new FileReader();
+    reader.onload = async () => {
+      try {
+        await api.post(`/marketplace/events/${event.id}/media`, {
+          imageBase64: reader.result,
+          mimeType: file.type
+        });
+        // Recarrega mídias
+        const { data } = await api.get(`/marketplace/events/${event.id}/media`);
+        setMedias(data);
+        alert("Foto enviada ao Feed Live!");
+      } catch (err) {
+        console.error(err);
+        alert("Erro ao subir foto.");
+      } finally {
+        setIsUploading(false);
+      }
+    };
+    reader.readAsDataURL(file);
   };
   
   const handleChange = (k: string) => (e: React.ChangeEvent<HTMLInputElement>) => setCardData(p => ({ ...p, [k]: e.target.value }));
@@ -607,6 +636,27 @@ export default function EventPage() {
                   </a>
                 )}
                 <button onClick={() => setShowPrintStore(true)} style={{ ...BtnSecondary, color: T.brand, borderColor: T.brand }}>📖 ETERNIZE NO PAPEL</button>
+                
+                {event.isOwner && isMarketplace && (
+                  <div style={{ display: "flex", flexDirection: "column", gap: 12, marginTop: 10, padding: 16, background: "rgba(255,255,255,0.05)", border: "1px dashed rgba(255,255,255,0.1)" }}>
+                    <p style={{ fontSize: 9, fontWeight: 900, color: T.brand, textTransform: "uppercase", letterSpacing: 1, marginBottom: 4 }}>Controle do Profissional</p>
+                    <button 
+                      onClick={() => fileInputRef.current?.click()} 
+                      disabled={isUploading}
+                      style={{ ...BtnPrimary, background: "#fff", color: "#000", justifyContent: "center", gap: 10 }}
+                    >
+                      {isUploading ? <Spinner /> : <><Upload size={16} /> SUBIR FOTO LIVE</>}
+                    </button>
+                    <input ref={fileInputRef} type="file" accept="image/*" onChange={handleLiveUpload} className="hidden" />
+                    
+                    <button 
+                      onClick={() => setShowQrModal(true)}
+                      style={{ ...BtnSecondary, justifyContent: "center", gap: 10, fontSize: 10 }}
+                    >
+                      <QrCode size={16} /> QR CODE DE CAPTURA
+                    </button>
+                  </div>
+                )}
               </div>
             )}
           </div>
@@ -680,9 +730,53 @@ export default function EventPage() {
          )}
       </Modal>
 
+      <Modal isOpen={showQrModal} onClose={() => setShowQrModal(false)} title="Captura Phygital">
+         <div style={{ display: "flex", flexDirection: "column", alignItems: "center", gap: 20, padding: "20px 0" }}>
+            <p style={{ fontSize: 12, textAlign: "center", color: T.text2 }}>Peça para os convidados lerem este código para enviarem suas próprias fotos para o sistema.</p>
+            <div style={{ padding: 20, background: "#fff", borderRadius: 12 }}>
+               <QRCodeCanvas 
+                 value={`${window.location.origin}/phygital-capture?e=${event.id}`} 
+                 size={200}
+               />
+            </div>
+            <div style={{ fontSize: 10, fontWeight: 900, color: T.brand, letterSpacing: 1 }}>{window.location.origin}/phygital-capture?e={event.id}</div>
+         </div>
+      </Modal>
+
       {step === "auth" && <AuthModal onSuccess={() => setStep("paywall")} onClose={() => setStep("paywall")} />}
       {showPrintStore && <PrintStoreModal eventId={event.id} eventTitle={event.nomeNoivos} medias={medias} onClose={() => setShowPrintStore(false)} />}
       {needsAccessChoice && orderId && <AccessTypeModal orderId={orderId} eventTitle={event.nomeNoivos} isPrimaryClient={true} onConfirmed={() => setNeedsAccessChoice(false)} onClose={() => setNeedsAccessChoice(false)} />}
+
+      {/* STICKY MOBILE CHECKOUT BAR */}
+      {isMarketplace && step === "paywall" && cart.length > 0 && (
+        <div style={{
+          position: "fixed", bottom: 0, left: 0, right: 0, zIndex: 100,
+          background: T.bgCard, borderTop: `1px solid ${T.border}`,
+          padding: "16px 20px", display: "flex", alignItems: "center", justifyContent: "space-between",
+          boxShadow: "0 -10px 40px rgba(0,0,0,0.4)",
+          animation: "fadeUp 0.3s ease"
+        }} className="desktop-hide">
+          <div>
+            <div style={{ fontSize: 9, fontWeight: 900, color: T.brand, textTransform: "uppercase", letterSpacing: 1.5 }}>{cart.length} fotos selecionadas</div>
+            <div style={{ fontSize: 18, fontFamily: T.fontD, fontWeight: 900, color: T.text }}>R$ {cartTotal.toFixed(2).replace(".", ",")}</div>
+          </div>
+          <button 
+            onClick={handleUnlockClick}
+            style={{ 
+              ...BtnPrimary, padding: "12px 20px", fontSize: 11,
+              boxShadow: `0 8px 20px ${T.brand}33`
+            }}
+          >
+            FINALIZAR COMPRA
+          </button>
+        </div>
+      )}
+
+      <style>{`
+        @media (min-width: 901px) {
+          .desktop-hide { display: none !important; }
+        }
+      `}</style>
     </div>
   );
 }

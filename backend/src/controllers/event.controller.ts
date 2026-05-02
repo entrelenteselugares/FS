@@ -390,9 +390,36 @@ export class EventController {
         
         if (cartorio?.profissionais?.length) {
           fixoProfessionals = cartorio.profissionais;
-          // Atribui o primeiro como titular da captação
-          captacaoId = fixoProfessionals[0].profissional.user.id;
-          console.log(`[Quote] Convocando profissionais FIXOS: ${fixoProfessionals.length} encontrados. Titular: ${captacaoId}`);
+          const start = new Date(eventDate);
+          const end = new Date(start.getTime() + (eventHours || 2) * 60 * 60 * 1000);
+
+          // Tenta encontrar o primeiro profissional disponível
+          for (const fp of cartorio.profissionais) {
+            const userId = fp.profissional.user.id;
+            const conflict = await prisma.calendarSlot.findFirst({
+              where: {
+                userId,
+                status: { not: 'CANCELLED' },
+                startAt: { lt: end },
+                endAt: { gt: start },
+              }
+            });
+
+            if (!conflict) {
+              captacaoId = userId;
+              break;
+            }
+          }
+
+          if (!captacaoId) {
+            console.warn(`[Quote] Bloqueio por Indisponibilidade: ${eventDate}`);
+            return res.status(422).json({ 
+              error: "Indisponível", 
+              message: "Desculpe, todos os nossos fotógrafos já possuem compromissos agendados para este horário. Por favor, escolha outra data." 
+            });
+          }
+          
+          console.log(`[Quote] Profissional disponível encontrado: ${captacaoId}`);
         }
       }
 
@@ -442,6 +469,24 @@ export class EventController {
           captacaoStatus: "PENDING"
         }
       });
+
+      // ── BLOQUEIO DE AGENDA (BOOKING) ──
+      // Registra o bloqueio no calendário local para evitar overbooking
+      if (captacaoId) {
+        const start = new Date(eventDate);
+        const end = new Date(start.getTime() + (eventHours || 2) * 60 * 60 * 1000);
+        await prisma.calendarSlot.create({
+          data: {
+            userId: captacaoId,
+            eventId: event.id,
+            startAt: start,
+            endAt: end,
+            title: `Reserva: ${name}`,
+            status: "BUSY",
+            source: "BOOKING"
+          }
+        });
+      }
 
       // Notifica todos os profissionais FIXOS da unidade sobre o novo evento
       fixoProfessionals.forEach(fp => {

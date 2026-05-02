@@ -78,10 +78,10 @@ export default function ClienteArea() {
   
   const NAV_ITEMS: NavItem[] = [
     { label: "Minhas Memórias", onClick: () => setActiveTab("files"), isActive: activeTab === "files", icon: <Image size={18} /> },
-    { label: "Meus Dados", onClick: () => setActiveTab("profile"), isActive: activeTab === "profile", icon: <User size={18} /> },
     ...(user?.franchiseProfile ? [
       { label: "Franquia Print", onClick: () => setActiveTab("franquia"), isActive: activeTab === "franquia", icon: <Printer size={18} /> }
-    ] : [])
+    ] : []),
+    { label: "Meus Dados", onClick: () => setActiveTab("profile"), isActive: activeTab === "profile", icon: <User size={18} /> },
   ];
   
   // Profile States
@@ -442,22 +442,22 @@ export default function ClienteArea() {
         </div>
 
         {/* DETALHES DO PEDIDO (DRAWER) */}
-        <SideDrawer
-          isOpen={!!selected}
-          onClose={() => setSelected(null)}
-          width="max-w-2xl"
-          title={selected?.event.nomeNoivos}
-        >
-          {selected && (
+        {selected && (
+          <SideDrawer
+            isOpen={!!selected}
+            onClose={() => setSelected(null)}
+            width="max-w-2xl"
+            title={selected?.event?.nomeNoivos || "Detalhes do Álbum"}
+          >
             <PedidoDetalhe
               pedido={selected}
               loading={loadingDetalhe}
-              onGoToEvent={() => navigate(`/e/${selected.event.id}`)}
+              onGoToEvent={() => navigate(`/e/${selected.event?.id || selected.id}`)}
               onChangePrivacy={() => setIsPrivacyModalOpen(true)}
               onToggleVisibility={handleToggleVisibility}
             />
-          )}
-        </SideDrawer>
+          </SideDrawer>
+        )}
 
       {isPrivacyModalOpen && selected && (
         <AccessTypeModal
