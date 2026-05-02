@@ -29,19 +29,21 @@ model User {
   acceptedTermsAt   DateTime?
   resetToken        String?
   resetTokenExpires DateTime?
-  cartorio          Cartorio?
-  eventsCaptacao    Event[]               @relation("CaptacaoEvents")
-  eventsCartorio    Event[]               @relation("CartorioUserEvents")
-  eventsEdicao      Event[]               @relation("EdicaoEvents")
-  pedidos           Order[]               @relation("ClienteOrders")
-  likes             PhotoLike[]
-  redemptions       PrintRedemption[]
-  profissional      Profissional?
-  points            UserPoints?
-  favorites         ProfessionalNetwork[] @relation("UserFavorites")
-  favoritedBy       ProfessionalNetwork[] @relation("FavoritedBy")
-  ordersToEdit      Order[]               @relation("EditorOrders")
-  franchiseProfile  FranchiseProfile?
+  cartorio               Cartorio?
+  eventsCaptacao         Event[]                    @relation("CaptacaoEvents")
+  eventsCartorio         Event[]                    @relation("CartorioUserEvents")
+  eventsEdicao           Event[]                    @relation("EdicaoEvents")
+  pedidos                Order[]                    @relation("ClienteOrders")
+  likes                  PhotoLike[]
+  redemptions            PrintRedemption[]
+  profissional           Profissional?
+  points                 UserPoints?
+  favorites              ProfessionalNetwork[]      @relation("UserFavorites")
+  favoritedBy            ProfessionalNetwork[]      @relation("FavoritedBy")
+  ordersToEdit           Order[]                    @relation("EditorOrders")
+  franchiseProfile       FranchiseProfile?
+  calendarCredential     UserCalendarCredential?
+  calendarSlots          CalendarSlot[]
 
   @@map("users")
 }
@@ -120,6 +122,7 @@ model Event {
   edicao             User?             @relation("EdicaoEvents", fields: [edicaoId], references: [id])
   pedidos            Order[]
   likes              PhotoLike[]
+  calendarSlots      CalendarSlot[]
 
   @@map("events")
 }
@@ -546,6 +549,68 @@ enum PayoutStatus {
 enum EventType {
   ALBUM_FULL
   PHOTO_MARKETPLACE
+}
+
+enum SlotStatus {
+  BLOCKED    // Indisponível (importado do Google ou bloqueio manual)
+  CONFIRMED  // Reserva confirmada via sistema
+  CANCELLED  // Cancelado — horário liberado
+}
+
+enum SlotSource {
+  MANUAL       // Criado pelo profissional manualmente
+  BOOKING      // Criado automaticamente por reserva confirmada
+  GOOGLE_SYNC  // Importado da agenda pessoal do Google
+}
+
+// Credenciais OAuth2 por usuário (fotógrafo / franqueado)
+// Os campos accessToken e refreshToken DEVEM ser armazenados criptografados (AES-256-GCM)
+model UserCalendarCredential {
+  id           String   @id @default(cuid())
+  userId       String   @unique
+  user         User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  provider     String   @default("google") // Extensível: "apple", "outlook"
+  accessToken  String   // Encriptado em repouso
+  refreshToken String   // Encriptado em repouso
+  expiresAt    DateTime // Quando o accessToken expira
+  calendarId   String   @default("primary") // ID da agenda no Google Calendar
+  scope        String   // Escopos concedidos pelo usuário
+
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+
+  @@map("user_calendar_credentials")
+}
+
+// Reservas e bloqueios de horários — FONTE DA VERDADE de disponibilidade
+// O sistema NUNCA consulta a API do Google para checar disponibilidade em tempo real.
+// A disponibilidade é sempre lida desta tabela.
+model CalendarSlot {
+  id            String      @id @default(cuid())
+
+  userId        String
+  user          User        @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  startAt       DateTime    // Início do bloqueio (UTC)
+  endAt         DateTime    // Fim do bloqueio (UTC)
+
+  status        SlotStatus  @default(BLOCKED)
+  source        SlotSource  @default(MANUAL)
+
+  // Rastreabilidade
+  eventId       String?     // Vinculado a um Event do sistema
+  event         Event?      @relation(fields: [eventId], references: [id], onDelete: SetNull)
+  googleEventId String?     // ID do evento espelhado no Google Calendar (para deleção)
+
+  title         String?     // Título sanitizado (sem dados sensíveis do cliente)
+  notes         String?
+
+  createdAt     DateTime    @default(now())
+  updatedAt     DateTime    @updatedAt
+
+  @@index([userId, startAt, endAt])
+  @@map("calendar_slots")
 }
 
 model FranchiseProfile {

@@ -95,6 +95,8 @@ import { AuthRequest } from "../lib/auth";
 import { runLoyaltyBot } from "../controllers/cron.controller";
 import { PhygitalController } from "../controllers/phygital.controller";
 import { FranchiseController } from "../controllers/franchise.controller";
+import calendarRoutes from "./calendar.routes";
+import { syncAllCalendars } from "../services/calendar-sync.service";
 import multer from "multer";
 import express from "express";
 
@@ -147,6 +149,26 @@ router.get("/cron/loyalty-bot", async (req, res) => {
     return res.status(401).json({ error: "Não autorizado." });
   }
   return runLoyaltyBot(req, res);
+});
+
+// ── Google Calendar (OAuth2 + Disponibilidade) ──────────────────────────────
+router.use("/calendar", calendarRoutes);
+
+// ── Cron: Sync de Calendários (Google → PostgreSQL) ─────────────────────────
+// Chamado pela Vercel a cada 15 minutos. Protegido por CRON_SECRET.
+router.get("/cron/calendar-sync", async (req, res) => {
+  const token = req.headers["authorization"];
+  if (process.env.CRON_SECRET && token !== `Bearer ${process.env.CRON_SECRET}`) {
+    return res.status(401).json({ error: "Não autorizado." });
+  }
+  try {
+    await syncAllCalendars();
+    res.json({ ok: true, ran: new Date().toISOString() });
+  } catch (err: unknown) {
+    const msg = err instanceof Error ? err.message : String(err);
+    console.error("[Cron/CalendarSync] Erro:", msg);
+    res.status(500).json({ error: msg });
+  }
 });
 
 // ── Autenticação ─────────────────────────────────────────────────────────────
