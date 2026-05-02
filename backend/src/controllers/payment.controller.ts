@@ -898,6 +898,7 @@ export class PaymentController {
       console.error("[CreatePrintOrder Error]:", error);
       return res.status(500).json({ error: "Erro ao criar pedido de impressão." });
     }
+  }
   /**
    * Método Unificado para Finalizar Pedidos Aprovados
    * (Usado por: Webhook, Transparent Checkout e Cash Payment)
