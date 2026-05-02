@@ -6,7 +6,7 @@ import { Camera, CheckCircle2, AlertCircle, Loader2 } from 'lucide-react';
 
 export default function PhygitalCapture() {
   const [searchParams] = useSearchParams();
-  const eventId = searchParams.get('e') || 'EVENT_TESTE';
+  const eventId = searchParams.get('eventId') || searchParams.get('e') || 'EVENT_TESTE';
 
   const [file, setFile] = useState<File | null>(null);
   const [preview, setPreview] = useState<string | null>(null);
