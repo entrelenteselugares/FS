@@ -45,27 +45,31 @@ export class PhygitalService {
       const h = height || 1600;
 
       // Adicionamos borda branca (Luxury Frame)
-      const borderSize = Math.floor(Math.min(w, h) * 0.05); // 5% de borda
+      const borderSize = Math.floor(Math.min(w, h) * 0.08); // 8% de borda para mais luxo
+      const finalWidth = w + (borderSize * 2);
+      const finalHeight = h + (borderSize * 3); // Espaço extra embaixo
+
       pipeline = pipeline.extend({
         top: borderSize,
-        bottom: borderSize * 2, // Espaço extra embaixo para a referência
+        bottom: borderSize * 2, 
         left: borderSize,
         right: borderSize,
         background: { r: 255, g: 255, b: 255, alpha: 1 }
       });
 
-      // 4. Criação dos Carimbos SVG
+      // 4. Criação dos Carimbos SVG (Proporcionais à imagem)
       const refSvg = Buffer.from(`
-        <svg width="${w}" height="${borderSize * 2}">
-          <text x="50%" y="50%" font-family="Arial, sans-serif" font-size="${Math.floor(borderSize * 0.8)}" font-weight="900" fill="#000000" text-anchor="middle" dominant-baseline="middle" style="text-transform: uppercase; letter-spacing: 2px;">
+        <svg width="${finalWidth}" height="${borderSize * 2}">
+          <text x="50%" y="40%" font-family="Arial, sans-serif" font-size="${Math.floor(borderSize * 0.7)}" font-weight="900" fill="#000000" text-anchor="middle" dominant-baseline="middle" style="text-transform: uppercase; letter-spacing: 4px;">
             REF: ${referenceCode}
           </text>
         </svg>
       `);
 
+      const logoFontSize = Math.floor(borderSize * 0.25);
       const logoSvg = Buffer.from(`
-        <svg width="300" height="60">
-          <text x="95%" y="50%" font-family="Arial, sans-serif" font-size="14" font-weight="900" fill="#000000" text-anchor="end" dominant-baseline="middle" style="text-transform: uppercase; letter-spacing: 4px; opacity: 0.3;">
+        <svg width="${finalWidth}" height="${borderSize}">
+          <text x="${finalWidth - borderSize}" y="50%" font-family="Arial, sans-serif" font-size="${logoFontSize}" font-weight="900" fill="#000000" text-anchor="end" dominant-baseline="middle" style="text-transform: uppercase; letter-spacing: 5px; opacity: 0.4;">
             FOTO SEGUNDO
           </text>
         </svg>

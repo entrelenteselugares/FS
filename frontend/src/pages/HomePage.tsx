@@ -287,9 +287,9 @@ export const HomePage = () => {
             <div style={{ display: "flex", flexDirection: "column", gap: 64 }}>
               {/* FOTO POINT SECTION */}
               {events.filter(e => e.type === 'PHOTO_MARKETPLACE').length > 0 && (
-                <div style={{ animate: "fadeUp 1s ease" }}>
+                <div className="animate-reveal">
                   <div style={{ display: "flex", alignItems: "center", gap: 16, marginBottom: 24 }}>
-                    <div style={{ width: 12, h: 12, background: T.brand, borderRadius: "50%", animate: "pulse 2s infinite" }} />
+                    <div style={{ width: 12, height: 12, background: T.brand, borderRadius: "50%" }} className="animate-pulse" />
                     <h3 style={{ fontFamily: T.fontD, fontWeight: 900, fontSize: 24, color: T.text, textTransform: "uppercase", margin: 0, letterSpacing: 2 }}>Foto Point Live</h3>
                   </div>
                   <div className="hp-grid" style={{ display: "grid", gridTemplateColumns: "repeat(auto-fill, minmax(300px, 1fr))", gap: 1, background: T.border }}>
