@@ -19,7 +19,8 @@ function createPrismaClient() {
   try {
     const pool = new Pool({ 
       connectionString,
-      ssl: process.env.NODE_ENV === "production" ? { rejectUnauthorized: false } : false
+      ssl: process.env.NODE_ENV === "production" ? { rejectUnauthorized: false } : false,
+      connectionTimeoutMillis: 5000, // Não deixa o servidor travado esperando o banco
     });
     
     const adapter = new PrismaPg(pool);
