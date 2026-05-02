@@ -2,7 +2,9 @@
 
 ## ✅ Concluído (Estável - DEPLOY REALIZADO)
 
-- **Release "Midnight Luxury" v3.0**: Build de produção validado e deploy executado na Vercel via GitHub.
+- **Release v3.0**: LIVE (Deployment em andamento - Unified Order Engine v1.0)
+- **Unified Order Engine**: Implementado (Cash Payment, Magic Link, Guest Checkout).
+- **Banco de Dados**: Atualizado e Sincronizado.
 - **Segurança**: Auditoria de segredos concluída e `.gitignore` atualizado para proteger credenciais.
 - **Design System**: v3.0 implementada com tipagem robusta e fontes escaladas (13px base).
 - **Foto Print Live (Marketplace)**: Fluxo de venda rápida de fotos individuais operacional, com QR Code de captura phygital funcional.
