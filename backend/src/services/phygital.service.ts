@@ -157,7 +157,7 @@ export class PhygitalService {
   static async updateStatus(printId: string, status: string) {
     return prisma.phygitalPrint.update({
       where: { id: printId },
-      data: { status }
+      data: { status: status as any }
     });
   }
 }
