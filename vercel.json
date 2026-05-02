@@ -17,7 +17,7 @@
     },
     {
       "path": "/api/cron/calendar-sync",
-      "schedule": "*/15 * * * *"
+      "schedule": "0 7 * * *"
     }
   ]
 
