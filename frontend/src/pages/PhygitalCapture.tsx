@@ -1,12 +1,15 @@
-import React, { useState } from 'react';
+import React, { useState, useRef } from 'react';
 import { useSearchParams } from 'react-router-dom';
 import { API } from '../lib/api';
-import { T } from '../lib/theme';
-import { Camera, CheckCircle2, AlertCircle, Loader2 } from 'lucide-react';
+import { T, BtnPrimary, BtnSecondary } from '../lib/theme';
+import { Camera, CheckCircle2, AlertCircle, Loader2, Image as ImageIcon } from 'lucide-react';
 
 export default function PhygitalCapture() {
   const [searchParams] = useSearchParams();
   const eventId = searchParams.get('eventId') || searchParams.get('e') || 'EVENT_TESTE';
+  
+  const cameraInputRef = useRef<HTMLInputElement>(null);
+  const galleryInputRef = useRef<HTMLInputElement>(null);
 
   const [file, setFile] = useState<File | null>(null);
   const [preview, setPreview] = useState<string | null>(null);
@@ -108,26 +111,57 @@ export default function PhygitalCapture() {
         </div>
 
         <form onSubmit={handleSubmit} className="space-y-8">
-          {/* Upload Area */}
-          <div className="relative group">
-            <div 
-              className={`aspect-[4/3] rounded-2xl border-2 border-dashed flex flex-col items-center justify-center transition-all overflow-hidden ${preview ? 'border-brand-tactical/50' : 'border-white/10 hover:border-brand-tactical/30 bg-white/[0.02]'}`}
-            >
-              {preview ? (
-                <img src={preview} alt="Preview" className="w-full h-full object-cover" />
-              ) : (
-                <div className="text-center p-8">
-                  <Camera size={48} className="mx-auto mb-4 opacity-20" style={{ color: T.text }} />
-                  <p className="text-[11px] font-bold uppercase tracking-[0.2em] opacity-40">Tire uma foto ou</p>
-                  <p className="text-[14px] font-black uppercase tracking-tighter mt-1" style={{ color: T.brand }}>Escolha da Galeria</p>
-                </div>
-              )}
-            </div>
+          {/* Choice Area */}
+          <div className="space-y-4">
+            {preview ? (
+              <div className="relative aspect-[4/3] rounded-2xl border border-brand-tactical/30 overflow-hidden shadow-2xl bg-black">
+                <img src={preview} alt="Preview" className="w-full h-full object-contain" />
+                <button 
+                  type="button"
+                  onClick={() => { setFile(null); setPreview(null); }}
+                  className="absolute top-4 right-4 bg-black/60 backdrop-blur-md text-white p-2 rounded-full border border-white/20"
+                >
+                  Trocar Foto
+                </button>
+              </div>
+            ) : (
+              <div className="grid grid-cols-1 gap-4">
+                <button
+                  type="button"
+                  onClick={() => cameraInputRef.current?.click()}
+                  className="flex flex-col items-center justify-center gap-4 p-8 bg-brand-tactical rounded-2xl text-zinc-950 hover:brightness-110 transition-all shadow-xl shadow-brand-tactical/20"
+                >
+                  <Camera size={32} strokeWidth={2.5} />
+                  <span className="text-xs font-black uppercase tracking-[0.2em]">Tirar Foto Agora</span>
+                </button>
+
+                <button
+                  type="button"
+                  onClick={() => galleryInputRef.current?.click()}
+                  className="flex flex-col items-center justify-center gap-4 p-8 bg-white/[0.03] border border-white/10 rounded-2xl hover:bg-white/[0.06] transition-all"
+                  style={{ color: T.text }}
+                >
+                  <ImageIcon size={32} className="opacity-40" />
+                  <span className="text-xs font-black uppercase tracking-[0.2em] opacity-60">Escolher da Galeria</span>
+                </button>
+              </div>
+            )}
+
+            {/* Hidden Inputs */}
             <input 
+              ref={cameraInputRef}
+              type="file" 
+              accept="image/*" 
+              capture="environment"
+              onChange={handleFileChange} 
+              className="hidden" 
+            />
+            <input 
+              ref={galleryInputRef}
               type="file" 
               accept="image/*" 
               onChange={handleFileChange} 
-              className="absolute inset-0 w-full h-full opacity-0 cursor-pointer"
+              className="hidden" 
             />
           </div>
 
