@@ -37,11 +37,11 @@ interface OverviewProps {
   onEditEvent: (id: string) => void;
 }
 
-export const AdminOverview: React.FC<OverviewProps> = ({ stats, recentOrders, pendingEvents, onEditEvent }) => {
+export const AdminOverview: React.FC<OverviewProps> = ({ stats, recentOrders = [], pendingEvents = [], onEditEvent }) => {
   // Prepara dados para os gráficos
-  const chartData = recentOrders.map(o => ({
-    name: new Date(o.createdAt).toLocaleDateString("pt-BR", { day: "2-digit", month: "2-digit" }),
-    valor: Number(o.total)
+  const chartData = (recentOrders || []).map(o => ({
+    name: o.createdAt ? new Date(o.createdAt).toLocaleDateString("pt-BR", { day: "2-digit", month: "2-digit" }) : "---",
+    valor: Number(o.total || 0)
   })).reverse();
 
 
