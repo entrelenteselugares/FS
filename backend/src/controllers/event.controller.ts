@@ -233,10 +233,11 @@ export class EventController {
           "coverPhotoUrl",
           "priceBase",
           "priceEarly",
+          type,
           true as "temFoto" -- Ativando badges por padrão para estética
         FROM events
         WHERE active = true AND "isPrivate" = false AND "isQuote" = false
-          AND type = 'ALBUM_FULL'
+          AND type IN ('ALBUM_FULL', 'PHOTO_MARKETPLACE')
           AND (
           REPLACE(LOWER("nomeNoivos"), '&', 'e') LIKE ${term} 
           OR REPLACE(LOWER(cartorio), '&', 'e') LIKE ${term}
@@ -485,7 +486,7 @@ export class EventController {
    * Cria um evento instantâneo (Flash) para franqueados/profissionais em campo.
    */
   static async createFlashEvent(req: AuthRequest, res: Response) {
-    const { name, pricePerPhoto } = req.body;
+    const { name, pricePerPhoto, isPrivate } = req.body;
     const { userId } = req.user!;
 
     if (!name) return res.status(400).json({ error: "Nome do evento é obrigatório" });
@@ -513,7 +514,7 @@ export class EventController {
           temFotoImpressa: true,
           quoteStatus: "APROVADO",
           isQuote: false,
-          isPrivate: false
+          isPrivate: !!isPrivate
         }
       });
 

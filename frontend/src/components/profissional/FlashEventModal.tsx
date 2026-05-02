@@ -12,6 +12,7 @@ export function FlashEventModal({ onClose, onSuccess, onError }: FlashEventModal
   const [name, setName] = useState("");
   const [price, setPrice] = useState("30");
   const [loading, setLoading] = useState(false);
+  const [isPrivate, setIsPrivate] = useState(false);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -19,7 +20,8 @@ export function FlashEventModal({ onClose, onSuccess, onError }: FlashEventModal
     try {
       const { data } = await API.post("/profissional/flash-event", {
         name,
-        pricePerPhoto: Number(price)
+        pricePerPhoto: Number(price),
+        isPrivate
       });
       onSuccess(data.slug);
     } catch (err: unknown) {
@@ -74,6 +76,22 @@ export function FlashEventModal({ onClose, onSuccess, onError }: FlashEventModal
                   className="w-full bg-theme-bg-muted border border-theme-border p-4 pl-12 text-theme-text outline-none focus:border-yellow-400/50 transition-all font-black text-xl italic"
                 />
               </div>
+            </div>
+
+            <div className="flex items-center justify-between p-4 bg-theme-bg-muted border border-theme-border">
+              <div className="space-y-1">
+                <p className="text-[10px] font-black text-theme-text uppercase tracking-widest italic">Visibilidade</p>
+                <p className="text-[8px] text-theme-muted uppercase font-bold tracking-widest">
+                  {isPrivate ? 'Privado (Link Direto)' : 'Público (Aparece no Site)'}
+                </p>
+              </div>
+              <button
+                type="button"
+                onClick={() => setIsPrivate(!isPrivate)}
+                className={`w-12 h-6 rounded-full transition-all relative ${isPrivate ? 'bg-zinc-700' : 'bg-brand-tactical'}`}
+              >
+                <div className={`absolute top-1 w-4 h-4 rounded-full bg-white transition-all ${isPrivate ? 'left-1' : 'left-7'}`} />
+              </button>
             </div>
 
             <button

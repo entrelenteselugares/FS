@@ -18,6 +18,7 @@ interface Event {
   temFoto: boolean;
   temVideo: boolean;
   temReels: boolean;
+  type?: string;
 }
 
 
@@ -98,7 +99,8 @@ function EventCard({ event, onClick }: { event: Event; onClick: () => void }) {
         </div>
         <div style={{ display: "flex", alignItems: "center", justifyContent: "flex-end" }}>
           <div style={{ display: "flex", gap: 6 }}>
-            {event.temFoto  && <span style={{ fontSize: 9, fontFamily: T.fontB, color: T.text3, letterSpacing: 1, textTransform: "uppercase", border: `1px solid ${T.border}`, padding: "2px 7px" }}>Foto</span>}
+            {event.temFoto  && <span style={{ fontSize: 9, fontFamily: T.fontB, color: T.text3, letterSpacing: 1, textTransform: "uppercase", border: `1px solid ${T.border}`, padding: "2px 7px" }}>{event.type === 'PHOTO_MARKETPLACE' ? 'Phygital' : 'Foto'}</span>}
+            {event.type === 'PHOTO_MARKETPLACE' && <span style={{ fontSize: 9, fontFamily: T.fontB, color: T.brand, letterSpacing: 1, textTransform: "uppercase", border: `1px solid ${T.brand}`, padding: "2px 7px", fontWeight: 900 }}>Live Print</span>}
             {event.temVideo && <span style={{ fontSize: 9, fontFamily: T.fontB, color: T.text3, letterSpacing: 1, textTransform: "uppercase", border: `1px solid ${T.border}`, padding: "2px 7px" }}>Vídeo</span>}
             {event.temReels && <span style={{ fontSize: 9, fontFamily: T.fontB, color: T.text3, letterSpacing: 1, textTransform: "uppercase", border: `1px solid ${T.border}`, padding: "2px 7px" }}>Reels</span>}
           </div>
@@ -271,7 +273,6 @@ export const HomePage = () => {
           </div>
 
           {loading ? (
-            // Skeleton grid — gap 1px, background #1c1c1c cria o "divisor"
             <div className="hp-grid" style={{ display: "grid", gridTemplateColumns: "repeat(auto-fill, minmax(300px, 1fr))", gap: 1, background: T.border }}>
               {[...Array(6)].map((_, i) => (
                 <div key={i} style={{ background: T.bgCard, aspectRatio: "4/3", animation: "pulse 1.8s infinite" }} />
@@ -283,12 +284,37 @@ export const HomePage = () => {
               <p style={{ fontSize: 12, color: T.text3, fontFamily: T.fontB, marginTop: 8 }}>Tente buscar pelo nome completo do evento ou titular.</p>
             </div>
           ) : (
-            <div className="hp-grid" style={{ display: "grid", gridTemplateColumns: "repeat(auto-fill, minmax(300px, 1fr))", gap: 1, background: T.border }}>
-              {events.map(ev => (
-                <div key={ev.id} className="card-hover">
-                  <EventCard event={ev} onClick={() => navigate(`/e/${ev.slug || ev.id}`)} />
+            <div style={{ display: "flex", flexDirection: "column", gap: 64 }}>
+              {/* FOTO POINT SECTION */}
+              {events.filter(e => e.type === 'PHOTO_MARKETPLACE').length > 0 && (
+                <div style={{ animate: "fadeUp 1s ease" }}>
+                  <div style={{ display: "flex", alignItems: "center", gap: 16, marginBottom: 24 }}>
+                    <div style={{ width: 12, h: 12, background: T.brand, borderRadius: "50%", animate: "pulse 2s infinite" }} />
+                    <h3 style={{ fontFamily: T.fontD, fontWeight: 900, fontSize: 24, color: T.text, textTransform: "uppercase", margin: 0, letterSpacing: 2 }}>Foto Point Live</h3>
+                  </div>
+                  <div className="hp-grid" style={{ display: "grid", gridTemplateColumns: "repeat(auto-fill, minmax(300px, 1fr))", gap: 1, background: T.border }}>
+                    {events.filter(e => e.type === 'PHOTO_MARKETPLACE').map(ev => (
+                      <div key={ev.id} className="card-hover">
+                        <EventCard event={ev} onClick={() => navigate(`/e/${ev.slug || ev.id}`)} />
+                      </div>
+                    ))}
+                  </div>
                 </div>
-              ))}
+              )}
+
+              {/* ALBUMS SECTION */}
+              <div>
+                <div style={{ display: "flex", alignItems: "center", gap: 16, marginBottom: 24 }}>
+                  <h3 style={{ fontFamily: T.fontD, fontWeight: 900, fontSize: 24, color: T.text, textTransform: "uppercase", margin: 0, letterSpacing: 2 }}>Galeria de Álbuns</h3>
+                </div>
+                <div className="hp-grid" style={{ display: "grid", gridTemplateColumns: "repeat(auto-fill, minmax(300px, 1fr))", gap: 1, background: T.border }}>
+                  {events.filter(e => e.type !== 'PHOTO_MARKETPLACE').map(ev => (
+                    <div key={ev.id} className="card-hover">
+                      <EventCard event={ev} onClick={() => navigate(`/e/${ev.slug || ev.id}`)} />
+                    </div>
+                  ))}
+                </div>
+              </div>
             </div>
           )}
 
