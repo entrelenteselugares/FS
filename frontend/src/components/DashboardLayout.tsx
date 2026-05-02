@@ -14,6 +14,7 @@ export interface NavItem {
   icon: React.ReactNode;
   isActive?: boolean;
   badge?: string | number;
+  hide?: boolean;
 }
 
 interface DashboardLayoutProps {
