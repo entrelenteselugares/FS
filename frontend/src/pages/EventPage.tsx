@@ -263,13 +263,13 @@ export default function EventPage() {
           setStep("paywall");
         } else if (isFuture && !eventData.lightroomUrl && !eventData.driveUrl && (!eventData.previewPhotos || eventData.previewPhotos.length === 0)) {
           setStep("countdown");
-        } else if (!isFuture || eventData.active) {
-          // Se o evento já começou ou está ativo, redireciona para a delivery page (landing page)
+        } else if ((!isFuture || eventData.active) && eventData.type !== 'PHOTO_MARKETPLACE') {
+          // Se o evento já começou ou está ativo E NÃO É MARKETPLACE, redireciona para a delivery page
           navigate(`/delivery/${eventData.id}`);
           return;
         } else if (eventData.isPrivate && !eventData.isPrimaryClient && !eventData.isOwner) {
           setStep("denied");
-        } else if ((eventData.paywall && !eventData.paywall.active) || eventData.isOwner) {
+        } else if ((eventData.paywall && !eventData.paywall.active) || eventData.isOwner || eventData.type === 'PHOTO_MARKETPLACE') {
           setStep("success"); 
         }
 
@@ -700,16 +700,73 @@ export default function EventPage() {
                             onClick={e => e.stopPropagation()}
                             style={{ background: "white", color: "black", padding: "6px 12px", fontSize: 9, fontWeight: 900, textDecoration: "none", borderRadius: 2 }}
                            >
-                            DOWNLOAD
-                           </a>
+          {/* MARKETPLACE LIVE FEED */}
+          {isMarketplace && (
+            <div style={{ position: "absolute", inset: 0, zIndex: 10, display: "flex", flexDirection: "column", background: "rgba(0,0,0,0.85)", backdropFilter: "blur(20px)" }}>
+               <div style={{ padding: "40px 30px 20px" }}>
+                  <div style={{ display: "flex", alignItems: "center", gap: 12, marginBottom: 8 }}>
+                    <div style={{ width: 8, height: 8, background: T.brand, borderRadius: "50%", animate: "pulse 2s infinite" }} />
+                    <h2 style={{ fontFamily: T.fontD, fontSize: 32, fontWeight: 900, color: T.text, margin: 0, textTransform: "uppercase", letterSpacing: 2 }}>Live Stream</h2>
+                  </div>
+                  <p style={{ fontSize: 12, color: T.text3, margin: 0 }}>Fotos capturadas em tempo real. Selecione as suas favoritas para imprimir ou baixar.</p>
+               </div>
+
+               <div style={{ flex: 1, overflowY: "auto", padding: "0 30px 40px" }}>
+                  <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fill, minmax(180px, 1fr))", gap: 15 }}>
+                    {event.previewPhotos?.map((url, idx) => {
+                      // Extraímos o código de referência da URL se possível (ex: .../REF-1234.jpg)
+                      const refCode = url.split('/').pop()?.split('.')[0] || `FOTO-${idx}`;
+                      const isSelected = cart.includes(refCode);
+
+                      return (
+                        <div 
+                          key={idx} 
+                          onClick={() => toggleCart(refCode)}
+                          style={{ 
+                            position: "relative", 
+                            aspectRatio: "3/4", 
+                            background: T.bgField, 
+                            cursor: "pointer",
+                            border: `2px solid ${isSelected ? T.brand : "transparent"}`,
+                            transition: "all 0.2s ease",
+                            transform: isSelected ? "scale(0.98)" : "none"
+                          }}
+                        >
+                           <img 
+                             src={url} 
+                             alt={refCode} 
+                             style={{ width: "100%", height: "100%", objectFit: "cover", opacity: isSelected ? 0.6 : 1 }} 
+                           />
+                           <div style={{ 
+                             position: "absolute", 
+                             bottom: 0, left: 0, right: 0, 
+                             padding: "10px", 
+                             background: "linear-gradient(to top, rgba(0,0,0,0.8), transparent)",
+                             display: "flex",
+                             justifyContent: "space-between",
+                             alignItems: "center"
+                           }}>
+                             <span style={{ fontSize: 10, fontWeight: 900, color: "#fff", letterSpacing: 1 }}>#{refCode}</span>
+                             <div style={{ 
+                               width: 20, height: 20, borderRadius: "50%", 
+                               background: isSelected ? T.brand : "rgba(255,255,255,0.2)",
+                               display: "flex", alignItems: "center", justifyContent: "center"
+                             }}>
+                               {isSelected && <Check size={12} color="#000" strokeWidth={4} />}
+                             </div>
+                           </div>
                         </div>
-                      )}
-                    </div>
-                  ))}
-                </div>
-              </div>
-            )}
-          </div>
+                      );
+                    })}
+                    {(!event.previewPhotos || event.previewPhotos.length === 0) && (
+                      <div style={{ gridColumn: "span 100%", padding: "100px 0", textAlign: "center", color: T.text3 }}>
+                        <div className="animate-pulse" style={{ fontSize: 14 }}>Aguardando as primeiras fotos do evento...</div>
+                      </div>
+                    )}
+                  </div>
+               </div>
+            </div>
+          )}
         </div>
 
         <aside className="ep-sidebar" style={{ borderLeft: `1px solid ${T.border}`, display: "flex", flexDirection: "column" }}>

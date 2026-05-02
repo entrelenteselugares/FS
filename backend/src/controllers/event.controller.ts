@@ -155,8 +155,23 @@ export class EventController {
 
 
       // 4. Links sensíveis e Previews
+      let previewPhotos: string[] = [];
       const rawPreviews = event.previewPhotos;
-      const previewPhotos: string[] = rawPreviews ? (typeof rawPreviews === "string" ? JSON.parse(rawPreviews) : rawPreviews) : [];
+      const jsonPreviews: string[] = rawPreviews ? (typeof rawPreviews === "string" ? JSON.parse(rawPreviews) : rawPreviews) : [];
+      
+      if (event.type === 'PHOTO_MARKETPLACE') {
+        const prints = await prisma.phygitalPrint.findMany({
+          where: { eventId: event.id },
+          orderBy: { createdAt: 'desc' },
+          take: 50,
+          select: { imageUrl: true }
+        });
+        previewPhotos = prints.map(p => p.imageUrl);
+        // Se houver previews manuais, adicionamos no final
+        previewPhotos = [...previewPhotos, ...jsonPreviews];
+      } else {
+        previewPhotos = jsonPreviews;
+      }
 
       return res.json({
         id: event.id,
