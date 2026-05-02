@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { DashboardLayout, type NavItem } from "../../components/DashboardLayout";
 import { API } from "../../lib/api";
+import { useAuth } from "../../hooks/useAuth";
 
 const AdminOverview = React.lazy(() => import("./AdminOverview").then(m => ({ default: m.AdminOverview })));
 const AdminEvents = React.lazy(() => import("./AdminEvents").then(m => ({ default: m.AdminEvents })));
@@ -13,6 +14,7 @@ const AdminQuotes = React.lazy(() => import("./AdminQuotes").then(m => ({ defaul
 const AdminServices = React.lazy(() => import("./AdminServices").then(m => ({ default: m.AdminServices })));
 const AdminConfigs = React.lazy(() => import("./AdminConfigs").then(m => ({ default: m.AdminConfigs })));
 const AdminPrintCatalog = React.lazy(() => import("./AdminPrintCatalog").then(m => ({ default: m.AdminPrintCatalog })));
+const AdminFranchises = React.lazy(() => import("./AdminFranchises"));
 import { 
   LayoutDashboard, 
   Camera, 
@@ -24,24 +26,30 @@ import {
   Settings,
   Layers,
   Trophy,
-  Grid3X3
+  Grid3X3,
+  ShieldCheck
 } from "lucide-react";
 
 
 
-const NAV_ITEMS = (activeTab: string, setActiveTab: (t: string) => void, stats: AdminStats | null): NavItem[] => [
-  { label: "Visão Geral",    onClick: () => setActiveTab("overview"),      isActive: activeTab === "overview",      icon: <LayoutDashboard size={16} /> },
-  { label: "Eventos",        onClick: () => setActiveTab("events"),        isActive: activeTab === "events",        icon: <Camera size={16} />,         badge: stats?.missingLinksCount },
-  { label: "Membros",        onClick: () => setActiveTab("users"),         isActive: activeTab === "users",         icon: <Users size={16} />,          badge: stats?.pendingInvitesCount },
-  { label: "Orçamentos",     onClick: () => setActiveTab("quotes"),        isActive: activeTab === "quotes",        icon: <Briefcase size={16} />,      badge: stats?.pendingQuotesCount },
-  { label: "Pedidos",        onClick: () => setActiveTab("orders"),        isActive: activeTab === "orders",        icon: <FileText size={16} /> },
-  { label: "Financeiro",     onClick: () => setActiveTab("finance"),       isActive: activeTab === "finance",       icon: <DollarSign size={16} /> },
-  { label: "Impressão",      onClick: () => setActiveTab("printers"),      isActive: activeTab === "printers",      icon: <Printer size={16} /> },
-  { label: "Cat. Impressão", onClick: () => setActiveTab("print-catalog"), isActive: activeTab === "print-catalog", icon: <Layers size={16} /> },
-  { label: "Serviços",       onClick: () => setActiveTab("services"),      isActive: activeTab === "services",      icon: <Grid3X3 size={16} /> },
-  { label: "Concursos",      onClick: () => setActiveTab("contests"),      isActive: activeTab === "contests",      icon: <Trophy size={16} /> },
-  { label: "Configurações",  onClick: () => setActiveTab("settings"),      isActive: activeTab === "settings",      icon: <Settings size={16} /> },
-];
+const NAV_ITEMS = (activeTab: string, setActiveTab: (t: string) => void, stats: AdminStats | null, role: string): NavItem[] => {
+  const allItems: NavItem[] = [
+    { label: "Visão Geral",    onClick: () => setActiveTab("overview"),      isActive: activeTab === "overview",      icon: <LayoutDashboard size={16} />, hide: role === 'FRANCHISEE' },
+    { label: "Eventos",        onClick: () => setActiveTab("events"),        isActive: activeTab === "events",        icon: <Camera size={16} />,         badge: stats?.missingLinksCount },
+    { label: "Membros",        onClick: () => setActiveTab("users"),         isActive: activeTab === "users",         icon: <Users size={16} />,          badge: stats?.pendingInvitesCount, hide: role === 'FRANCHISEE' },
+    { label: "Orçamentos",     onClick: () => setActiveTab("quotes"),        isActive: activeTab === "quotes",        icon: <Briefcase size={16} />,      badge: stats?.pendingQuotesCount, hide: role === 'FRANCHISEE' },
+    { label: "Pedidos",        onClick: () => setActiveTab("orders"),        isActive: activeTab === "orders",        icon: <FileText size={16} />, hide: role === 'FRANCHISEE' },
+    { label: "Financeiro",     onClick: () => setActiveTab("finance"),       isActive: activeTab === "finance",       icon: <DollarSign size={16} />, hide: role === 'FRANCHISEE' },
+    { label: "Impressão",      onClick: () => setActiveTab("printers"),      isActive: activeTab === "printers",      icon: <Printer size={16} />, hide: role === 'FRANCHISEE' },
+    { label: "Franquias",      onClick: () => setActiveTab("franchises"),    isActive: activeTab === "franchises",     icon: <ShieldCheck size={16} /> },
+    { label: "Cat. Impressão", onClick: () => setActiveTab("print-catalog"), isActive: activeTab === "print-catalog", icon: <Layers size={16} />, hide: role === 'FRANCHISEE' },
+    { label: "Serviços",       onClick: () => setActiveTab("services"),      isActive: activeTab === "services",      icon: <Grid3X3 size={16} />, hide: role === 'FRANCHISEE' },
+    { label: "Concursos",      onClick: () => setActiveTab("contests"),      isActive: activeTab === "contests",      icon: <Trophy size={16} />, hide: role === 'FRANCHISEE' },
+    { label: "Configurações",  onClick: () => setActiveTab("settings"),      isActive: activeTab === "settings",      icon: <Settings size={16} />, hide: role === 'FRANCHISEE' },
+  ];
+
+  return allItems.filter(item => !item.hide);
+};
 
 interface AdminStats {
   totalRevenue: number;
@@ -72,6 +80,7 @@ interface AdminEvent {
 }
 
 export const AdminDashboard: React.FC = () => {
+  const { user } = useAuth();
   const [activeTab, setActiveTab] = useState("overview");
   const [stats, setStats] = useState<AdminStats | null>(null);
   const [recentOrders, setRecentOrders] = useState<AdminOrder[]>([]);
@@ -83,6 +92,12 @@ export const AdminDashboard: React.FC = () => {
     setEditingEventId(id);
     setActiveTab("events");
   };
+
+  useEffect(() => {
+    if (user?.role === 'FRANCHISEE' && activeTab === 'overview') {
+      setActiveTab('franchises');
+    }
+  }, [user, activeTab]);
 
   useEffect(() => {
     const fetchGlobalStats = async () => {
@@ -102,7 +117,7 @@ export const AdminDashboard: React.FC = () => {
   }, []);
 
   return (
-    <DashboardLayout title="Operações Centrais" variant="tactical" navItems={NAV_ITEMS(activeTab, setActiveTab, stats)}>
+    <DashboardLayout title="Operações Centrais" variant="tactical" navItems={NAV_ITEMS(activeTab, setActiveTab, stats, user?.role || '')}>
       <div style={{ padding: "clamp(8px, 2vw, 32px)", maxWidth: "100%", margin: "0 auto", minHeight: "100vh" }}>
         {/* Tab Content */}
         {loading && activeTab === "overview" ? (
@@ -129,6 +144,7 @@ export const AdminDashboard: React.FC = () => {
               {activeTab === "contests" && <AdminContests />}
               {activeTab === "services" && <AdminServices />}
               {activeTab === "settings" && <AdminConfigs />}
+              {activeTab === "franchises" && <AdminFranchises />}
             </React.Suspense>
           </div>
         )}

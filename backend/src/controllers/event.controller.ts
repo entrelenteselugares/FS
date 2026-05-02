@@ -479,4 +479,91 @@ export class EventController {
       return res.status(500).json({ error: "Falha na Máquina de Vendas. Tente novamente." });
     }
   }
+
+  /**
+   * POST /api/profissional/flash-event
+   * Cria um evento instantâneo (Flash) para franqueados/profissionais em campo.
+   */
+  static async createFlashEvent(req: AuthRequest, res: Response) {
+    const { name, pricePerPhoto } = req.body;
+    const { userId } = req.user!;
+
+    if (!name) return res.status(400).json({ error: "Nome do evento é obrigatório" });
+
+    try {
+      const profile = await prisma.franchiseProfile.findUnique({
+        where: { userId }
+      });
+
+      const slug = `${name.toLowerCase().replace(/\s+/g, "-")}-${Math.random().toString(36).substring(2, 6)}`;
+      
+      const event = await prisma.event.create({
+        data: {
+          nomeNoivos: name,
+          slug,
+          type: "PHOTO_MARKETPLACE",
+          dataEvento: new Date(),
+          active: true,
+          captacaoId: userId,
+          franchiseeId: profile?.id,
+          priceBase: Number(pricePerPhoto) || 30,
+          priceEarly: Number(pricePerPhoto) || 30,
+          description: "EVENTO FLASH - Criado instantaneamente via App Franqueado",
+          temFoto: true,
+          temFotoImpressa: true,
+          quoteStatus: "APROVADO",
+          isQuote: false,
+          isPrivate: false
+        }
+      });
+
+      return res.json({ success: true, eventId: event.id, slug: event.slug });
+    } catch (error) {
+      console.error("Erro ao criar evento flash:", error);
+      return res.status(500).json({ error: "Erro ao criar evento instantâneo." });
+    }
+  }
+
+  /**
+   * GET /api/profissional/events
+   * Lista eventos vinculados ao profissional (captação, edição ou parceiro fixo).
+   */
+  static async listByProfessional(req: AuthRequest, res: Response) {
+    const { userId } = req.user!;
+    try {
+      const events = await prisma.event.findMany({
+        where: {
+          OR: [
+            { captacaoId: userId },
+            { edicaoId: userId },
+            { cartorioUserId: userId }
+          ]
+        },
+        orderBy: { dataEvento: "desc" },
+        include: {
+          pedidos: {
+            where: { status: "APROVADO" },
+            select: { valor: true }
+          }
+        }
+      });
+
+      const mapped = events.map(e => ({
+        id: e.id,
+        nomeNoivos: e.nomeNoivos,
+        dataEvento: e.dataEvento,
+        location: e.location,
+        type: e.type,
+        active: e.active,
+        slug: e.slug,
+        captacaoId: e.captacaoId,
+        collected: e.pedidos.reduce((acc: number, o: any) => acc + Number(o.valor), 0)
+      }));
+
+      return res.json(mapped);
+    } catch (error) {
+      console.error("Erro ao listar eventos profissionais:", error);
+      return res.status(500).json({ error: "Erro ao carregar sua agenda." });
+    }
+  }
 }

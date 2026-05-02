@@ -1,5 +1,5 @@
 # MAPEAMENTO COMPLETO DE PÁGINAS — FOTO SEGUNDO
-**Versão:** v3.0 | **Última atualização:** 01/05/2026
+**Versão:** v3.1 | **Última atualização:** 02/05/2026
 
 ---
 
@@ -43,6 +43,7 @@
 | Cotações | `AdminQuotes.tsx` | Leads, aprovação e precificação |
 | Finanças | `AdminFinance.tsx` | Repasses semanais, histórico de pagamentos PIX |
 | Catálogo Impressão | `AdminPrintCatalog.tsx` | Produtos CK com margem e preços |
+| **Franquias** | **`AdminFranchises.tsx`** | **Gestão de Micro-Franquias, créditos de impressão e status dos pontos** |
 | Configurações | `AdminConfigs.tsx` | Taxas globais, splits, variáveis do sistema |
 | Serviços | `AdminServices.tsx` | Tipos de serviços oferecidos |
 | Fornecedores | `AdminSuppliers.tsx` | Parceiros externos, breakeven |
@@ -74,6 +75,7 @@
 | `supplier.controller.ts` | Fornecedores, breakeven, resgates |
 | `seo.controller.ts` | Preview SEO/OG para compartilhamento social |
 | `mercadopago.controller.ts` | OAuth MP Connect/Callback |
+| `franchise.controller.ts` | Gestão de FranchiseProfile: ativar, suspender, remover, recarregar créditos |
 
 ---
 
@@ -97,6 +99,7 @@
 - **Splits** → calculados pelo `PricingService.calculateSplits()` — nunca manualmente
 - **Validação de Experiência** → profissionais devem fornecer o link do primeiro trabalho (`firstJobUrl`). Campo imutável após preenchimento.
 - **Legibilidade (UI)** → padrão de fontes Midnight Luxury v3.0 (Mínimo 10px para labels, 13px para navegação).
+- **Franquia de Impressão** → A promoção a franqueado **nunca altera o `role`**. Cria apenas um `FranchiseProfile`. O role `FRANCHISEE` está depreciado. Ver `SISTEMA_FRANQUIAS.md`.
 
 ---
 

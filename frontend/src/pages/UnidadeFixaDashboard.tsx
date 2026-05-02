@@ -3,7 +3,8 @@ import { useSearchParams, useNavigate } from "react-router-dom";
 
 import { API } from "../lib/api";
 import { QRCodeSVG } from "qrcode.react";
-import { QrCode, Copy, Check, X, Download, Calendar, DollarSign, Settings, Users2, Camera, Star, ShieldCheck, ArrowRight, Share2, MapPin, Phone, UserCircle } from "lucide-react";
+import { QrCode, Copy, Check, X, Download, Calendar, DollarSign, Settings, Users2, Camera, Star, ShieldCheck, ArrowRight, Share2, MapPin, Phone, UserCircle, Printer, AlertTriangle } from "lucide-react";
+import { useAuth } from "../hooks/useAuth";
 import { DashboardLayout, type NavItem } from "../components/DashboardLayout";
 
 interface UnidadeStats {
@@ -91,9 +92,10 @@ function formatDateTime(d: string | null | undefined) {
   }).format(date);
 }
 
-type Tab = "agenda" | "financas" | "equipe" | "configuracoes";
+type Tab = "agenda" | "financas" | "equipe" | "configuracoes" | "franquia";
 
 export default function UnidadeFixaDashboard() {
+  const { user } = useAuth();
   const [searchParams] = useSearchParams();
   const navigate = useNavigate();
 
@@ -302,6 +304,9 @@ export default function UnidadeFixaDashboard() {
     { label: "Fluxo Financeiro", onClick: () => setTab("financas"), isActive: tab === "financas", icon: <DollarSign size={18} />, badge: repasses.filter(r => r.status !== "PAID").length || undefined },
     { label: "Rede Técnica", onClick: () => { setTab("equipe"); if (!teamLoaded) loadTeam(); }, isActive: tab === "equipe", icon: <Users2 size={18} /> },
     { label: "Configuração", onClick: () => setTab("configuracoes"), isActive: tab === "configuracoes", icon: <Settings size={18} /> },
+    ...(user?.franchiseProfile ? [
+      { label: "Franquia Print", onClick: () => setTab("franquia"), isActive: tab === "franquia", icon: <Printer size={18} /> }
+    ] : [])
   ];
 
   return (
@@ -967,16 +972,89 @@ export default function UnidadeFixaDashboard() {
                   </div>
                </div>
 
-               <div className="flex items-center justify-end pt-10">
-                  <button
-                    disabled={savingLp}
-                    onClick={saveLpProfile}
-                    className="bg-theme-text text-theme-bg px-14 py-5 text-[10px] font-black uppercase tracking-[0.5em] hover:bg-brand-tactical hover:text-brand-text transition-all italic shadow-xl"
-                  >
-                    {savingLp ? "SINCRO..." : "PUBLICAR DIRETRIZES DIGITAIS"}
-                  </button>
+                <div className="flex items-center justify-end pt-10">
+                   <button
+                     disabled={savingLp}
+                     onClick={saveLpProfile}
+                     className="bg-theme-text text-theme-bg px-14 py-5 text-[10px] font-black uppercase tracking-[0.5em] hover:bg-brand-tactical hover:text-brand-text transition-all italic shadow-xl"
+                   >
+                     {savingLp ? "SINCRO..." : "PUBLICAR DIRETRIZES DIGITAIS"}
+                   </button>
+                </div>
+             </div>
+          </div>
+        )}
+
+        {/* ── FRANQUIA ── */}
+        {tab === "franquia" && user?.franchiseProfile && (
+          <div className="space-y-10 animate-in fade-in duration-500">
+            <div className="lux-card p-10 border-l-4 border-l-brand-tactical bg-gradient-to-br from-brand-tactical/[0.03] to-transparent relative overflow-hidden">
+               <div className="absolute top-0 right-0 p-10 opacity-[0.03] pointer-events-none">
+                 <Printer size={120} />
+               </div>
+               <div className="relative z-10 space-y-4">
+                 <h3 className="text-2xl font-heading font-black text-theme-text uppercase italic tracking-tight">Franquia de Impressão Phygital</h3>
+                 <p className="text-[11px] font-bold text-theme-muted uppercase tracking-[0.2em] leading-relaxed max-w-3xl">
+                   Esta unidade está habilitada como ponto oficial de impressão Foto Segundo. Gerencie seus créditos de impressão e status de operação em tempo real.
+                 </p>
                </div>
             </div>
+
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-px bg-theme-border/20 border border-theme-border/20 shadow-2xl">
+              <div className="bg-theme-bg-muted/40 p-8 space-y-4">
+                 <div className="flex items-center gap-3">
+                   <div className="p-2 bg-brand-tactical/10 text-brand-tactical">
+                     <Printer size={16} />
+                   </div>
+                   <p className="text-[9px] font-black text-theme-muted uppercase tracking-widest">Saldo de Créditos</p>
+                 </div>
+                 <p className={`text-5xl font-heading font-black italic tracking-tighter ${user.franchiseProfile.printCredits < 50 ? 'text-amber-500' : 'text-brand-tactical'}`}>
+                   {user.franchiseProfile.printCredits}
+                 </p>
+                 <p className="text-[9px] font-bold text-theme-muted uppercase tracking-widest">FOTOS DISPONÍVEIS</p>
+              </div>
+
+              <div className="bg-theme-bg-muted/40 p-8 space-y-4">
+                 <div className="flex items-center gap-3">
+                   <div className="p-2 bg-blue-500/10 text-blue-500">
+                     <ShieldCheck size={16} />
+                   </div>
+                   <p className="text-[9px] font-black text-theme-muted uppercase tracking-widest">Status da Franquia</p>
+                 </div>
+                 <p className={`text-xl font-heading font-black italic tracking-tighter uppercase ${user.franchiseProfile.active ? 'text-emerald-500' : 'text-red-500'}`}>
+                   {user.franchiseProfile.active ? '● OPERACIONAL' : '● INATIVO'}
+                 </p>
+                 <p className="text-[9px] font-bold text-theme-muted uppercase tracking-widest">VINCULADO À REDE</p>
+              </div>
+
+              <div className="bg-theme-bg-muted/40 p-8 space-y-4">
+                 <div className="flex items-center gap-3">
+                   <div className="p-2 bg-theme-border/40 text-theme-muted">
+                     <DollarSign size={16} />
+                   </div>
+                   <p className="text-[9px] font-black text-theme-muted uppercase tracking-widest">Recarga de Saldo</p>
+                 </div>
+                 <p className="text-[10px] font-bold text-theme-muted uppercase leading-relaxed tracking-widest">
+                   Para adquirir novos créditos de impressão, entre em contato com a central de suporte.
+                 </p>
+                 <button 
+                  onClick={() => window.open("https://wa.me/5519997843817", "_blank")}
+                  className="mt-2 text-[9px] font-black text-brand-tactical uppercase tracking-widest hover:underline"
+                 >
+                   SOLICITAR RECARGA →
+                 </button>
+              </div>
+            </div>
+
+            {user.franchiseProfile.printCredits < 50 && (
+              <div className="border border-amber-500/30 bg-amber-500/5 p-8 flex items-center gap-6 shadow-xl">
+                 <AlertTriangle size={24} className="text-amber-500" />
+                 <div>
+                    <p className="text-[11px] font-black text-amber-500 uppercase tracking-widest">ALERTA DE SEGURANÇA: SALDO CRÍTICO</p>
+                    <p className="text-[10px] font-bold text-theme-muted uppercase tracking-widest mt-1">Seu saldo está abaixo de 50 impressões. A operação pode ser suspensa automaticamente em breve.</p>
+                 </div>
+              </div>
+            )}
           </div>
         )}
       </div>

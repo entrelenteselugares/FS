@@ -20,6 +20,8 @@ import { NotFoundPage } from "./pages/NotFoundPage";
 import { CheckoutPage } from "./pages/CheckoutPage";
 import ResetPasswordPage from "./pages/ResetPasswordPage";
 import LuxuryExperiencePage from "./pages/LuxuryExperiencePage";
+import PhygitalCapture from "./pages/PhygitalCapture";
+import PrintMonitor from "./pages/PrintMonitor";
 import { useState, useEffect } from "react";
 import { API as api } from "./lib/api";
 import { T } from "./lib/theme";
@@ -33,6 +35,7 @@ const DashboardRedirect = () => {
     PROFISSIONAL: "/profissional",
     CARTORIO:     "/unidade-fixa",
     UNIDADE:      "/unidade-fixa",
+    FRANCHISEE:   "/profissional",
     CLIENTE:      "/minha-conta",
   };
   return <Navigate to={map[user.role] || "/"} replace />;
@@ -63,6 +66,7 @@ const AnimatedRoutes = () => {
         <Route path="/checkout" element={<CheckoutPage />} />
         <Route path="/checkout/:orderId" element={<CheckoutPage />} />
         <Route path="/delivery/:id" element={<LuxuryExperiencePage />} />
+        <Route path="/captura" element={<PhygitalCapture />} />
 
         {/* Redireciona para o painel correto */}
         <Route path="/dashboard" element={
@@ -79,8 +83,13 @@ const AnimatedRoutes = () => {
 
         {/* Painel do Profissional (PROFISSIONAIS) */}
         <Route path="/profissional" element={
-          <ProtectedRoute roles={["ADMIN", "PROFISSIONAL"]}>
+          <ProtectedRoute roles={["ADMIN", "PROFISSIONAL", "FRANCHISEE"]}>
             <ProfissionalDashboard />
+          </ProtectedRoute>
+        } />
+        <Route path="/profissional/monitor/:eventId" element={
+          <ProtectedRoute roles={["ADMIN", "PROFISSIONAL", "FRANCHISEE"]}>
+            <PrintMonitor />
           </ProtectedRoute>
         } />
 

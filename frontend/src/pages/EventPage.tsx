@@ -1,5 +1,5 @@
 import { useState, useEffect, useCallback } from "react";
-import { Check } from "lucide-react";
+import { Check, Video, Zap, Printer, Smartphone } from "lucide-react";
 import { useParams, useNavigate, useSearchParams } from "react-router-dom";
 import { API as api } from "../lib/api";
 import { Helmet } from "react-helmet-async";
@@ -106,6 +106,14 @@ interface PrintProductData {
   finalPrice: number;
 }
 
+interface ServiceCatalogItem {
+  id: string;
+  name: string;
+  description?: string;
+  category?: string;
+  basePrice: number;
+}
+
 type Step = "paywall" | "auth" | "choice" | "upsell" | "checkout" | "processing" | "success";
 
 const Spinner = () => (
@@ -170,6 +178,12 @@ export default function EventPage() {
   // Print Store
   const [showPrintStore, setShowPrintStore] = useState(false);
 
+  // Service Catalog for Upgrades
+  const [serviceCatalog, setServiceCatalog] = useState<ServiceCatalogItem[]>([]);
+  const [selectedServices, setSelectedServices] = useState<string[]>([]);
+  const [includeLivePrint, setIncludeLivePrint] = useState(false);
+  const [includeShipping, setIncludeShipping] = useState(false);
+
   // Marketplace States
   const [medias, setMedias] = useState<EventMedia[]>([]);
   const [cart, setCart] = useState<string[]>([]); // Array de shortIds selecionados
@@ -209,17 +223,18 @@ export default function EventPage() {
       return;
     }
 
+    const deliveryUrl = `${window.location.origin}/delivery/${event?.id}`;
     const shareData = {
       title: `Álbum: ${event?.nomeNoivos}`,
       text: `Confira as fotos do evento ${event?.nomeNoivos} no Foto Segundo!`,
-      url: window.location.href,
+      url: deliveryUrl,
     };
 
     try {
       if (navigator.share) {
         await navigator.share(shareData);
       } else {
-        await navigator.clipboard.writeText(window.location.href);
+        await navigator.clipboard.writeText(deliveryUrl);
         setSharing(true);
         setTimeout(() => setSharing(false), 2000);
       }
@@ -242,8 +257,16 @@ export default function EventPage() {
         const now = new Date();
         const isFuture = eventDate && (eventDate.getTime() + (12 * 60 * 60 * 1000)) > now.getTime();
 
-        if (isFuture && !eventData.lightroomUrl && !eventData.driveUrl && (!eventData.previewPhotos || eventData.previewPhotos.length === 0)) {
+        const intent = searchParams.get("intent");
+
+        if (intent === "upgrade") {
+          setStep("paywall");
+        } else if (isFuture && !eventData.lightroomUrl && !eventData.driveUrl && (!eventData.previewPhotos || eventData.previewPhotos.length === 0)) {
           setStep("countdown");
+        } else if (!isFuture || eventData.active) {
+          // Se o evento já começou ou está ativo, redireciona para a delivery page (landing page)
+          navigate(`/delivery/${eventData.id}`);
+          return;
         } else if (eventData.isPrivate && !eventData.isPrimaryClient && !eventData.isOwner) {
           setStep("denied");
         } else if ((eventData.paywall && !eventData.paywall.active) || eventData.isOwner) {
@@ -271,12 +294,17 @@ export default function EventPage() {
       .then(res => setPrintProducts(res.data))
       .catch(err => console.error("Erro ao carregar catálogo de impressão:", err));
 
+    // Fetch Service Catalog
+    api.get('/public/service-catalog')
+      .then(res => setServiceCatalog(res.data || []))
+      .catch(err => console.error("Erro ao carregar catálogo de serviços:", err));
+
     // Slideshow interval
     const interval = setInterval(() => {
       setCurrentBannerIndex(prev => (prev + 1) % 3);
     }, 5000);
     return () => clearInterval(interval);
-  }, [slug, navigate, user?.id, user?.role]);
+  }, [slug, navigate, user?.id, user?.role, searchParams]);
 
   const handleAutoConfirmChoice = useCallback(async (oid: string) => {
     try {
@@ -360,8 +388,11 @@ export default function EventPage() {
       const { data } = await api.post("/checkout/payment", {
         eventId: event.id, userId: user?.id, email: cardData.email, cpf: cardData.cpf,
         cardToken, installments: 1, paymentMethodId: detectBrand(cardData.number), accessType,
-        cart, // Envia os shortIds selecionados
-        printProductId: selectedPrintProductId, // Envia o produto impresso se houver
+        cart, 
+        printProductId: selectedPrintProductId,
+        selectedServices,
+        includeLivePrint, // Novo: Estação de Impressão
+        includeShipping,  // Novo: Entrega Posterior
       });
       if (data.hasPaid) { setOrderId(data.orderId); setJustPaid(true); setStep("success"); }
       else pollPaymentStatus(data.orderId);
@@ -374,7 +405,7 @@ export default function EventPage() {
     }
   };
 
-  const handleUnlockClick = () => { 
+  const handleUnlockClick = async () => { 
     if (!event) return;
     if (!user) {
       setStep("auth"); 
@@ -382,6 +413,24 @@ export default function EventPage() {
     }
     if (event.pendingOrderId) {
       navigate(`/checkout?orderId=${event.pendingOrderId}`);
+      return;
+    }
+    // Se for upgrade, pulamos a escolha de privacidade e geramos protocolo para o checkout padrão
+    if (searchParams.get("intent") === "upgrade") {
+      try {
+        const { data } = await api.post("/checkout/pending", {
+          eventId: event.id,
+          userId: user?.id,
+          email: user?.email,
+          selectedServices,
+          includeLivePrint,
+          includeShipping
+        });
+        navigate(`/checkout/${data.orderId}`);
+      } catch (err) {
+        console.error("Erro ao gerar upgrade:", err);
+        alert("Erro ao iniciar upgrade. Tente novamente.");
+      }
       return;
     }
     
@@ -673,27 +722,151 @@ export default function EventPage() {
             </div>
           )}
 
-          <div style={{ padding: 28, flex: 1 }}>
+          <div style={{ padding: "40px 28px 20px", flex: 1, overflowY: "auto", display: "flex", flexDirection: "column", gap: 24 }}>
 
             {step === "paywall" && (
               <div style={{ display: "flex", flexDirection: "column", gap: 24, animation: "fadeUp 0.3s ease" }}>
                 <div>
                   <p style={{ fontSize: 9, letterSpacing: 3, color: T.brand, textTransform: "uppercase", margin: "0 0 8px", fontWeight: 700 }}>
-                    {isMarketplace ? "Sua Galeria Particular" : (event.isUnitSale ? "Clique Único / Foto Avulsa" : "Exclusive Collection")}
+                    {searchParams.get("intent") === "upgrade" ? "Adicionar Novos Serviços" : (isMarketplace ? "Sua Galeria Particular" : (event.isUnitSale ? "Clique Único / Foto Avulsa" : "Exclusive Collection"))}
                   </p>
                   <p style={{ fontFamily: T.fontD, fontWeight: 900, fontSize: 40, color: T.text, margin: "0 0 2px", lineHeight: 1 }}>
-                    {isMarketplace 
-                      ? (cart.length > 0 ? `R$ ${cartTotal.toFixed(2).replace(".", ",")}` : "Selecione...")
-                      : `R$ ${Number(event.isUnitSale ? event.priceUnit : event.priceBase).toFixed(2).replace(".", ",")}`
+                    {searchParams.get("intent") === "upgrade"
+                      ? (selectedServices.length > 0 || includeLivePrint || includeShipping
+                          ? `R$ ${(
+                              serviceCatalog.filter(s => selectedServices.includes(s.id)).reduce((acc, s) => acc + Number(s.basePrice), 0) +
+                              (includeLivePrint ? 150 : 0) +
+                              (includeShipping ? 25 : 0)
+                            ).toFixed(2).replace(".", ",")}`
+                          : "Selecione...")
+                      : (isMarketplace 
+                          ? (cart.length > 0 ? `R$ ${cartTotal.toFixed(2).replace(".", ",")}` : "Selecione...")
+                          : `R$ ${Number(event.isUnitSale ? event.priceUnit : event.priceBase).toFixed(2).replace(".", ",")}`)
                     }
                   </p>
                   <p style={{ fontSize: 11, color: T.text3, margin: 0 }}>
-                    {isMarketplace 
-                      ? `${cart.length} fotos selecionadas (R$ ${event.pricePerPhoto}/cada)`
-                      : (event.isUnitSale ? "Download do arquivo original" : "Acesso vitalício · Download imediato")
+                    {searchParams.get("intent") === "upgrade"
+                      ? "Selecione os upgrades desejados abaixo"
+                      : (isMarketplace 
+                          ? `${cart.length} fotos selecionadas (R$ ${event.pricePerPhoto}/cada)`
+                          : (event.isUnitSale ? "Download do arquivo original" : "Acesso vitalício · Download imediato"))
                     }
                   </p>
                 </div>
+
+                {searchParams.get("intent") === "upgrade" && (
+                  <div style={{ display: "flex", flexDirection: "column", gap: 16, maxHeight: "60vh", overflowY: "auto", padding: "4px 8px 20px 4px", scrollbarWidth: "thin" }}>
+                    <div style={{ padding: "12px 16px", background: "linear-gradient(135deg, rgba(133,185,172,0.1) 0%, rgba(133,185,172,0) 100%)", border: `1px solid ${T.brand}33`, borderRadius: 8, marginBottom: 8 }}>
+                      <p style={{ fontSize: 10, color: T.brand, fontWeight: 900, textTransform: "uppercase", letterSpacing: 2, margin: "0 0 4px" }}>Vitrine de Upgrades</p>
+                      <p style={{ fontSize: 12, color: T.text, margin: 0, fontWeight: 500 }}>Personalize sua experiência antes do grande dia.</p>
+                    </div>
+
+                    {/* Serviços Digitais e Especiais */}
+                    <div style={{ display: "flex", flexDirection: "column", gap: 10 }}>
+                      <p style={{ fontSize: 9, fontWeight: 900, color: T.text3, textTransform: "uppercase", letterSpacing: 1 }}>Serviços Exclusivos</p>
+                      {serviceCatalog.length > 0 ? serviceCatalog.map(s => (
+                        <div 
+                          key={s.id}
+                          onClick={() => setSelectedServices(prev => prev.includes(s.id) ? prev.filter(id => id !== s.id) : [...prev, s.id])}
+                          style={{
+                            padding: 16,
+                            background: selectedServices.includes(s.id) ? `${T.brand}15` : "rgba(255,255,255,0.02)",
+                            border: `1px solid ${selectedServices.includes(s.id) ? T.brand : T.border}`,
+                            borderRadius: 12,
+                            cursor: "pointer",
+                            display: "flex",
+                            alignItems: "center",
+                            gap: 14,
+                            transition: "all 0.2s ease"
+                          }}
+                        >
+                          <div style={{ width: 40, height: 40, borderRadius: 10, background: selectedServices.includes(s.id) ? T.brand : "rgba(255,255,255,0.05)", display: "flex", alignItems: "center", justifyContent: "center", flexShrink: 0 }}>
+                            {s.category === 'VÍDEO' ? <Video size={20} color={selectedServices.includes(s.id) ? "black" : T.brand} /> : <Zap size={20} color={selectedServices.includes(s.id) ? "black" : T.brand} />}
+                          </div>
+                          <div style={{ flex: 1 }}>
+                            <div style={{ fontSize: 12, fontWeight: 900, color: T.text, marginBottom: 2 }}>{s.name}</div>
+                            <div style={{ fontSize: 10, color: T.text3, lineHeight: 1.3 }}>{s.description}</div>
+                          </div>
+                          <div style={{ textAlign: "right" }}>
+                            <div style={{ fontSize: 14, fontWeight: 900, color: T.brand, fontFamily: T.fontD }}>R${Number(s.basePrice).toFixed(0)}</div>
+                            <div style={{ width: 18, height: 18, borderRadius: "50%", border: `1px solid ${selectedServices.includes(s.id) ? T.brand : T.border}`, display: "flex", alignItems: "center", justifyContent: "center", margin: "6px 0 0 auto", background: selectedServices.includes(s.id) ? T.brand : "transparent" }}>
+                              {selectedServices.includes(s.id) && <Check size={10} color="black" strokeWidth={4} />}
+                            </div>
+                          </div>
+                        </div>
+                      )) : (
+                        <div style={{ padding: 20, textAlign: "center", border: `1px dashed ${T.border}`, borderRadius: 12 }}>
+                           <p style={{ fontSize: 11, color: T.text3 }}>Nenhum serviço extra disponível no momento.</p>
+                        </div>
+                      )}
+                    </div>
+                    
+                    {/* Tecnologia Phygital */}
+                    <div style={{ marginTop: 8 }}>
+                      <p style={{ fontSize: 9, fontWeight: 900, color: T.brand, textTransform: "uppercase", letterSpacing: 2, marginBottom: 12 }}>Experiência Phygital</p>
+                      
+                      <div style={{ display: "grid", gap: 10 }}>
+                        <div 
+                          onClick={() => setIncludeLivePrint(!includeLivePrint)}
+                          style={{ 
+                            display: "flex", 
+                            alignItems: "center", 
+                            gap: 14, 
+                            padding: 16, 
+                            background: includeLivePrint ? `${T.brand}15` : "rgba(255,255,255,0.02)", 
+                            border: `1px solid ${includeLivePrint ? T.brand : T.border}`, 
+                            borderRadius: 12,
+                            cursor: "pointer",
+                            transition: "all 0.2s ease"
+                          }}
+                        >
+                           <div style={{ width: 40, height: 40, borderRadius: 10, background: includeLivePrint ? T.brand : "rgba(255,255,255,0.05)", display: "flex", alignItems: "center", justifyContent: "center", flexShrink: 0 }}>
+                             <Printer size={20} color={includeLivePrint ? "black" : T.brand} />
+                           </div>
+                           <div style={{ flex: 1 }}>
+                             <div style={{ fontSize: 12, fontWeight: 900, color: T.text, marginBottom: 2 }}>Totem de Impressão ao Vivo</div>
+                             <div style={{ fontSize: 10, color: T.text3 }}>Capture por QR Code e receba impresso na hora</div>
+                           </div>
+                           <div style={{ textAlign: "right" }}>
+                             <div style={{ fontSize: 14, fontWeight: 900, color: T.brand, fontFamily: T.fontD }}>+R$150</div>
+                             <div style={{ width: 18, height: 18, borderRadius: "50%", border: `1px solid ${includeLivePrint ? T.brand : T.border}`, display: "flex", alignItems: "center", justifyContent: "center", margin: "6px 0 0 auto", background: includeLivePrint ? T.brand : "transparent" }}>
+                               {includeLivePrint && <Check size={10} color="black" strokeWidth={4} />}
+                             </div>
+                           </div>
+                        </div>
+
+                        <div 
+                          onClick={() => setIncludeShipping(!includeShipping)}
+                          style={{ 
+                            display: "flex", 
+                            alignItems: "center", 
+                            gap: 14, 
+                            padding: 16, 
+                            background: includeShipping ? `${T.brand}15` : "rgba(255,255,255,0.02)", 
+                            border: `1px solid ${includeShipping ? T.brand : T.border}`, 
+                            borderRadius: 12,
+                            cursor: "pointer",
+                            transition: "all 0.2s ease"
+                          }}
+                        >
+                           <div style={{ width: 40, height: 40, borderRadius: 10, background: includeShipping ? T.brand : "rgba(255,255,255,0.05)", display: "flex", alignItems: "center", justifyContent: "center", flexShrink: 0 }}>
+                             <Smartphone size={20} color={includeShipping ? "black" : T.brand} />
+                           </div>
+                           <div style={{ flex: 1 }}>
+                             <div style={{ fontSize: 12, fontWeight: 900, color: T.text, marginBottom: 2 }}>Entrega em Casa (Correios)</div>
+                             <div style={{ fontSize: 10, color: T.text3 }}>Receba suas memórias físicas no conforto do lar</div>
+                           </div>
+                           <div style={{ textAlign: "right" }}>
+                             <div style={{ fontSize: 14, fontWeight: 900, color: T.brand, fontFamily: T.fontD }}>+R$25</div>
+                             <div style={{ width: 18, height: 18, borderRadius: "50%", border: `1px solid ${includeShipping ? T.brand : T.border}`, display: "flex", alignItems: "center", justifyContent: "center", margin: "6px 0 0 auto", background: includeShipping ? T.brand : "transparent" }}>
+                               {includeShipping && <Check size={10} color="black" strokeWidth={4} />}
+                             </div>
+                           </div>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                )}
 
                 {isMarketplace && (
                   <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 8, maxHeight: 200, overflowY: "auto", padding: "10px", background: "rgba(255,255,255,0.02)", border: `1px solid ${T.border}` }}>
@@ -722,27 +895,48 @@ export default function EventPage() {
                   }
                 </div>
                 
-                <button 
-                  onClick={handleUnlockClick} 
-                  disabled={isMarketplace && cart.length === 0}
-                  className="mobile-hide"
-                  style={{ ...BtnPrimary, width: "100%", justifyContent: "center", opacity: (isMarketplace && cart.length === 0) ? 0.5 : 1 }}
-                >
-                  {event.pendingOrderId ? "FINALIZAR AGORA" : (isMarketplace ? "COMPRAR SELEÇÃO" : "DESBLOQUEAR ÁLBUM")}
-                </button>
+                <div style={{ 
+                  position: "sticky", 
+                  bottom: -20, // Adjust based on parent padding
+                  margin: "0 -28px -20px",
+                  padding: "20px 28px",
+                  background: T.bg,
+                  borderTop: `1px solid ${T.border}`,
+                  zIndex: 20,
+                  display: "flex",
+                  flexDirection: "column",
+                  gap: 12
+                }}>
+                  <button 
+                    onClick={handleUnlockClick} 
+                    disabled={(isMarketplace && cart.length === 0) || (searchParams.get("intent") === "upgrade" && selectedServices.length === 0 && !includeLivePrint && !includeShipping)}
+                    className="mobile-hide"
+                    style={{ ...BtnPrimary, width: "100%", justifyContent: "center", opacity: ((isMarketplace && cart.length === 0) || (searchParams.get("intent") === "upgrade" && selectedServices.length === 0 && !includeLivePrint && !includeShipping)) ? 0.5 : 1 }}
+                  >
+                    {event.pendingOrderId 
+                      ? "FINALIZAR AGORA" 
+                      : (searchParams.get("intent") === "upgrade" 
+                          ? "CONFIRMAR UPGRADE" 
+                          : (isMarketplace ? "COMPRAR SELEÇÃO" : "DESBLOQUEAR ÁLBUM"))}
+                  </button>
+
+                  <p style={{ fontSize: 9, color: T.text3, textAlign: "center", margin: 0 }}>Secure Payment · SSL · Instant Access</p>
+                </div>
 
                 {/* Mobile Sticky CTA */}
                 <div className="desktop-hide" style={{ position: "fixed", bottom: 0, left: 0, right: 0, padding: "16px 20px", background: "rgba(10,10,10,0.8)", backdropFilter: "blur(10px)", borderTop: `1px solid ${T.border}`, zIndex: 100, display: "flex", justifyContent: "center" }}>
                    <button 
                     onClick={handleUnlockClick} 
-                    disabled={isMarketplace && cart.length === 0}
-                    style={{ ...BtnPrimary, width: "100%", justifyContent: "center", opacity: (isMarketplace && cart.length === 0) ? 0.5 : 1 }}
+                    disabled={(isMarketplace && cart.length === 0) || (searchParams.get("intent") === "upgrade" && selectedServices.length === 0 && !includeLivePrint && !includeShipping)}
+                    style={{ ...BtnPrimary, width: "100%", justifyContent: "center", opacity: ((isMarketplace && cart.length === 0) || (searchParams.get("intent") === "upgrade" && selectedServices.length === 0 && !includeLivePrint && !includeShipping)) ? 0.5 : 1 }}
                   >
-                    {event.pendingOrderId ? "FINALIZAR AGORA" : (isMarketplace ? "COMPRAR SELEÇÃO" : "DESBLOQUEAR ÁLBUM")}
+                    {event.pendingOrderId 
+                      ? "FINALIZAR AGORA" 
+                      : (searchParams.get("intent") === "upgrade" 
+                          ? "CONFIRMAR UPGRADE" 
+                          : (isMarketplace ? "COMPRAR SELEÇÃO" : "DESBLOQUEAR ÁLBUM"))}
                   </button>
                 </div>
-
-                <p style={{ fontSize: 9, color: T.text3, textAlign: "center", margin: 0 }}>Secure Payment · SSL · Instant Access</p>
               </div>
             )}
 

@@ -168,7 +168,12 @@ export async function getProfile(req: AuthRequest, res: Response): Promise<void>
     const profile = await prisma.profissional.findUnique({
       where: { userId },
       include: { 
-        user: { select: { nome: true, email: true, whatsapp: true } },
+        user: { 
+          select: { 
+            nome: true, email: true, whatsapp: true,
+            franchiseProfile: { select: { printCredits: true, active: true } }
+          } 
+        },
         cartorios: {
           where: { status: "ACCEPTED" },
           include: { cartorio: { select: { razaoSocial: true } } }

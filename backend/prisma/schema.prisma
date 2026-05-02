@@ -11,15 +11,15 @@ datasource db {
 }
 
 model User {
-  id                String            @id @default(cuid())
-  email             String            @unique
+  id                String                @id @default(cuid())
+  email             String                @unique
   senha             String
   nome              String
-  role              Role              @default(CLIENTE)
+  role              Role                  @default(CLIENTE)
   whatsapp          String?
-  active            Boolean           @default(true)
-  createdAt         DateTime          @default(now())
-  updatedAt         DateTime          @updatedAt
+  active            Boolean               @default(true)
+  createdAt         DateTime              @default(now())
+  updatedAt         DateTime              @updatedAt
   mpUserId          String?
   mpAccessToken     String?
   mpPublicKey       String?
@@ -30,10 +30,10 @@ model User {
   resetToken        String?
   resetTokenExpires DateTime?
   cartorio          Cartorio?
-  eventsCaptacao    Event[]           @relation("CaptacaoEvents")
-  eventsCartorio    Event[]           @relation("CartorioUserEvents")
-  eventsEdicao      Event[]           @relation("EdicaoEvents")
-  pedidos           Order[]           @relation("ClienteOrders")
+  eventsCaptacao    Event[]               @relation("CaptacaoEvents")
+  eventsCartorio    Event[]               @relation("CartorioUserEvents")
+  eventsEdicao      Event[]               @relation("EdicaoEvents")
+  pedidos           Order[]               @relation("ClienteOrders")
   likes             PhotoLike[]
   redemptions       PrintRedemption[]
   profissional      Profissional?
@@ -41,6 +41,7 @@ model User {
   favorites         ProfessionalNetwork[] @relation("UserFavorites")
   favoritedBy       ProfessionalNetwork[] @relation("FavoritedBy")
   ordersToEdit      Order[]               @relation("EditorOrders")
+  franchiseProfile  FranchiseProfile?
 
   @@map("users")
 }
@@ -58,89 +59,110 @@ model ProfessionalNetwork {
 }
 
 model Event {
-  id                 String           @id @default(cuid())
+  id                 String            @id @default(cuid())
   nomeNoivos         String
   dataEvento         DateTime
   cartorio           String?
   coverPhotoUrl      String?
   lightroomUrl       String?
   driveUrl           String?
-  createdAt          DateTime         @default(now())
-  updatedAt          DateTime         @updatedAt
+  createdAt          DateTime          @default(now())
+  updatedAt          DateTime          @updatedAt
   cartorioUserId     String?
-  priceBase          Decimal          @default(190) @db.Decimal(10, 2)
-  priceEarly         Decimal          @default(190) @db.Decimal(10, 2)
+  priceBase          Decimal           @default(190) @db.Decimal(10, 2)
+  priceEarly         Decimal           @default(190) @db.Decimal(10, 2)
   captacaoId         String?
   edicaoId           String?
-  active             Boolean          @default(false)
+  active             Boolean           @default(false)
   city               String?
   description        String?
   location           String?
-  slug               String?          @unique
-  temFoto            Boolean          @default(true)
-  temFotoImpressa    Boolean          @default(false)
-  temReels           Boolean          @default(false)
-  temVideo           Boolean          @default(false)
-  priceAlbum         Decimal?         @db.Decimal(10, 2)
-  priceFoto          Decimal?         @db.Decimal(10, 2)
-  priceFotoEditada   Decimal?         @db.Decimal(10, 2)
-  priceReels         Decimal?         @db.Decimal(10, 2)
-  priceVideo         Decimal?         @db.Decimal(10, 2)
-  priceVideoEditado  Decimal?         @db.Decimal(10, 2)
-  temAlbumImpresso   Boolean          @default(false)
-  temFotoEditada     Boolean          @default(false)
-  temVideoEditado    Boolean          @default(false)
-  eventHours         Int?             @default(2)
-  eventDays          Int?             @default(1)
-  collectedAmount    Decimal          @default(0) @db.Decimal(10, 2)
-  isCrowdfund        Boolean          @default(false)
-  targetAmount       Decimal?         @db.Decimal(10, 2)
+  slug               String?           @unique
+  temFoto            Boolean           @default(true)
+  temFotoImpressa    Boolean           @default(false)
+  temReels           Boolean           @default(false)
+  temVideo           Boolean           @default(false)
+  priceAlbum         Decimal?          @db.Decimal(10, 2)
+  priceFoto          Decimal?          @db.Decimal(10, 2)
+  priceFotoEditada   Decimal?          @db.Decimal(10, 2)
+  priceReels         Decimal?          @db.Decimal(10, 2)
+  priceVideo         Decimal?          @db.Decimal(10, 2)
+  priceVideoEditado  Decimal?          @db.Decimal(10, 2)
+  temAlbumImpresso   Boolean           @default(false)
+  temFotoEditada     Boolean           @default(false)
+  temVideoEditado    Boolean           @default(false)
+  eventHours         Int?              @default(2)
+  eventDays          Int?              @default(1)
+  collectedAmount    Decimal           @default(0) @db.Decimal(10, 2)
+  isCrowdfund        Boolean           @default(false)
+  targetAmount       Decimal?          @db.Decimal(10, 2)
   clientEmail        String?
   clientName         String?
-  isQuote            Boolean          @default(false)
+  isQuote            Boolean           @default(false)
   quoteStatus        QuoteStatus?
   usageType          String?
-  captacaoStatus     AcceptanceStatus @default(PENDING)
-  edicaoStatus       AcceptanceStatus @default(PENDING)
+  captacaoStatus     AcceptanceStatus  @default(PENDING)
+  edicaoStatus       AcceptanceStatus  @default(PENDING)
   previewPhotos      String?
-  isPrivate          Boolean          @default(true)
-  isUnitSale         Boolean          @default(false)
-  priceUnit          Decimal          @default(10) @db.Decimal(10, 2)
-  type               EventType        @default(ALBUM_FULL)
-  pricePerPhoto      Decimal?         @db.Decimal(10, 2)
-  marketplaceConfigs Json?            @default("{}")
-  rejectedBy         Json?            @default("[]")
+  isPrivate          Boolean           @default(true)
+  isUnitSale         Boolean           @default(false)
+  priceUnit          Decimal           @default(10) @db.Decimal(10, 2)
+  type               EventType         @default(ALBUM_FULL)
+  pricePerPhoto      Decimal?          @db.Decimal(10, 2)
+  marketplaceConfigs Json?             @default("{}")
+  rejectedBy         Json?             @default("[]")
   media              EventMedia[]
-  captacao           User?            @relation("CaptacaoEvents", fields: [captacaoId], references: [id])
-  cartorioUser       User?            @relation("CartorioUserEvents", fields: [cartorioUserId], references: [id])
-  edicao             User?            @relation("EdicaoEvents", fields: [edicaoId], references: [id])
+  phygitalPrints     PhygitalPrint[]
+  franchiseeId       String?
+  franchisee         FranchiseProfile? @relation(fields: [franchiseeId], references: [id])
+  captacao           User?             @relation("CaptacaoEvents", fields: [captacaoId], references: [id])
+  cartorioUser       User?             @relation("CartorioUserEvents", fields: [cartorioUserId], references: [id])
+  edicao             User?             @relation("EdicaoEvents", fields: [edicaoId], references: [id])
   pedidos            Order[]
   likes              PhotoLike[]
 
   @@map("events")
 }
 
+model PhygitalPrint {
+  id                 String            @id @default(cuid())
+  referenceCode      String            @unique
+  imageUrl           String
+  customerName       String
+  customerPhone      String
+  customerCep        String
+  status             PrintStatus       @default(PENDING_PRINT)
+  eventId            String
+  event              Event             @relation(fields: [eventId], references: [id])
+  franchiseProfileId String?
+  franchiseProfile   FranchiseProfile? @relation(fields: [franchiseProfileId], references: [id])
+  createdAt          DateTime          @default(now())
+  updatedAt          DateTime          @updatedAt
+
+  @@map("phygital_prints")
+}
+
 model Profissional {
-  id                  String                 @id @default(cuid())
-  userId              String                 @unique
-  services            String[]
-  cameras             String[]
-  lenses              String[]
-  lighting            String[]
-  captPct             Float                  @default(30)
-  editPct             Float                  @default(20)
-  otherHabilities     String?
-  equipment           String?
-  equipmentMultiplier Float                  @default(1.0)
-  hourlyRate          Decimal                @default(60.00) @db.Decimal(10, 2)
-  equipmentList       Json?                  @default("[]")
-  experienceYears     Int                    @default(0)
-  firstJobUrl         String?
-  isExperienceValidated Boolean               @default(false)
-  cartorios           CartorioProfissional[]
-  proServices         ProfessionalService[]
-  workflowType        String[]               @default(["TRADICIONAL"])
-  user                User                   @relation(fields: [userId], references: [id])
+  id                    String                 @id @default(cuid())
+  userId                String                 @unique
+  services              String[]
+  cameras               String[]
+  lenses                String[]
+  lighting              String[]
+  captPct               Float                  @default(30)
+  editPct               Float                  @default(20)
+  otherHabilities       String?
+  equipment             String?
+  equipmentMultiplier   Float                  @default(1.0)
+  hourlyRate            Decimal                @default(60.00) @db.Decimal(10, 2)
+  equipmentList         Json?                  @default("[]")
+  experienceYears       Int                    @default(0)
+  firstJobUrl           String?
+  isExperienceValidated Boolean                @default(false)
+  cartorios             CartorioProfissional[]
+  proServices           ProfessionalService[]
+  workflowType          String[]               @default(["TRADICIONAL"])
+  user                  User                   @relation(fields: [userId], references: [id])
 
   @@map("profissionais")
 }
@@ -168,6 +190,7 @@ model Cartorio {
   disabledServices String[]               @default([])
   workingHours     Json?                  @default("{\"fri\": {\"open\": \"09:00\", \"close\": \"18:00\", \"closed\": false}, \"mon\": {\"open\": \"09:00\", \"close\": \"18:00\", \"closed\": false}, \"sat\": {\"open\": \"09:00\", \"close\": \"12:00\", \"closed\": true}, \"sun\": {\"open\": \"00:00\", \"close\": \"00:00\", \"closed\": true}, \"thu\": {\"open\": \"09:00\", \"close\": \"18:00\", \"closed\": false}, \"tue\": {\"open\": \"09:00\", \"close\": \"18:00\", \"closed\": false}, \"wed\": {\"open\": \"09:00\", \"close\": \"18:00\", \"closed\": false}}")
   profissionais    CartorioProfissional[]
+  quotes           Quote[]
   user             User                   @relation(fields: [userId], references: [id])
 
   @@map("cartorios")
@@ -440,8 +463,12 @@ model Quote {
   notes            String?
   status           QuoteStatus @default(PENDING)
   convertedEventId String?
+  cartorioId       String?
+  cartorio         Cartorio?   @relation(fields: [cartorioId], references: [id])
   createdAt        DateTime    @default(now())
   updatedAt        DateTime    @updatedAt
+
+  @@map("quotes")
 }
 
 model PrintProduct {
@@ -471,6 +498,13 @@ enum Role {
   CARTORIO
   PROFISSIONAL
   CLIENTE
+  FRANCHISEE // @deprecated — usar FranchiseProfile. Mantido apenas para compatibilidade.
+}
+
+enum PrintStatus {
+  PENDING_PRINT
+  PRINTED
+  DISPATCHED_MAIL
 }
 
 enum AcceptanceStatus {
@@ -512,4 +546,32 @@ enum PayoutStatus {
 enum EventType {
   ALBUM_FULL
   PHOTO_MARKETPLACE
+}
+
+model FranchiseProfile {
+  id           String              @id @default(cuid())
+  userId       String              @unique
+  user         User                @relation(fields: [userId], references: [id])
+  printCredits Int                 @default(0)
+  active       Boolean             @default(true)
+  events       Event[]
+  prints       PhygitalPrint[]
+  transactions CreditTransaction[]
+  createdAt    DateTime            @default(now())
+  updatedAt    DateTime            @updatedAt
+
+  @@map("franchise_profiles")
+}
+
+model CreditTransaction {
+  id          String           @id @default(cuid())
+  profileId   String
+  profile     FranchiseProfile @relation(fields: [profileId], references: [id])
+  amount      Int // Positivo para recarga, negativo para gasto
+  type        String // RECHARGE, PRINT_CONSUMPTION, ADJUSTMENT
+  description String?
+  referenceId String? // ID da PhygitalPrint se for consumo
+  createdAt   DateTime         @default(now())
+
+  @@map("credit_transactions")
 }

@@ -1,7 +1,7 @@
 import { useState, useEffect } from "react";
 import { useParams } from "react-router-dom";
 import { API } from "../lib/api";
-import { Download, ExternalLink, Heart, Camera, Calendar, MapPin, ChevronDown } from "lucide-react";
+import { Download, ExternalLink, Camera, Calendar, MapPin, ChevronDown } from "lucide-react";
 import { motion } from "framer-motion";
 import { useTheme } from "../contexts/ThemeContextCore";
 import { T, BtnPrimary, BtnSecondary } from "../lib/theme";
@@ -147,7 +147,7 @@ export default function LuxuryExperiencePage() {
           </div>
         </div>
 
-        {/* ACCESS BOX */}
+        {/* ACCESS BOX & PHYGITAL CAPTURE */}
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
           <div className="space-y-6 p-8 relative overflow-hidden group hover:border-brand-tactical/40 transition-all border" style={{ background: T.bgCard, borderColor: T.border }}>
             <div className="absolute top-0 right-0 p-8 opacity-5 group-hover:opacity-10 transition-opacity" style={{ color: T.text }}><Download size={120} /></div>
@@ -167,13 +167,26 @@ export default function LuxuryExperiencePage() {
             </a>
           </div>
 
-          <div className="space-y-6 p-8 border flex flex-col justify-center" style={{ background: "rgba(133,185,172,0.05)", borderColor: "rgba(133,185,172,0.2)" }}>
-             <div className="flex items-center gap-3 text-brand-tactical">
-                <Heart size={20} fill="currentColor" />
-                <span className="text-[11px] font-black uppercase tracking-[0.3em] italic">Experiência de Suporte</span>
+          <div className="space-y-6 p-8 border flex flex-col justify-between group hover:border-brand-tactical/40 transition-all" style={{ background: "rgba(133,185,172,0.05)", borderColor: "rgba(133,185,172,0.2)" }}>
+             <div className="space-y-4">
+               <div className="flex items-center gap-3 text-brand-tactical">
+                  <Camera size={20} />
+                  <span className="text-[11px] font-black uppercase tracking-[0.3em] italic">Captura Phygital</span>
+               </div>
+               <h3 className="text-2xl font-heading font-black uppercase italic" style={{ color: T.text }}>Envie sua Foto</h3>
+               <p className="text-xs uppercase font-bold tracking-widest leading-relaxed" style={{ color: T.text2 }}>Faça parte do evento! Envie suas fotos agora para serem impressas na hora pelo nosso artista.</p>
              </div>
-             <p className="text-xs uppercase font-bold tracking-widest leading-relaxed" style={{ color: T.text2 }}>Precisa de ajuda com o download ou quer encomendar um álbum impresso de luxo? Nossa central está à disposição.</p>
-             <button className="text-[10px] font-black text-brand-tactical uppercase tracking-widest border-b border-brand-tactical/30 pb-1 hover:border-brand-tactical transition-all w-fit">ENTRAR EM CONTATO</button>
+             
+             <div className="pt-6">
+                <a 
+                  href={`${window.location.origin}/captura?eventId=${event.id}`}
+                  style={BtnSecondary}
+                  className="inline-flex items-center gap-4 px-8 py-4 border-brand-tactical text-brand-tactical hover:bg-brand-tactical hover:text-zinc-950 transition-all"
+                >
+                  ABRIR CÂMERA <Camera size={14} />
+                </a>
+                <p className="text-[8px] uppercase font-bold tracking-widest mt-4 opacity-40">Disponível apenas durante o evento</p>
+             </div>
           </div>
         </div>
 

@@ -235,7 +235,7 @@ export const AdminPrintCatalog: React.FC = () => {
                         </div>
 
                         {catProducts.map(p => (
-                              <div className={`min-w-[700px] grid grid-cols-[40px_1fr_100px_80px_80px_80px_80px_110px] gap-4 p-4 items-center group transition-all ${!p.active ? 'opacity-40 grayscale' : 'hover:bg-theme-bg-muted/40'}`}>
+                              <div key={p.id} className={`min-w-[700px] grid grid-cols-[40px_1fr_100px_80px_80px_80px_80px_110px] gap-4 p-4 items-center group transition-all ${!p.active ? 'opacity-40 grayscale' : 'hover:bg-theme-bg-muted/40'}`}>
                                  <button 
                                     onClick={() => handleUpdate(p.id, { active: !p.active })}
                                     className="text-theme-muted hover:text-brand-tactical transition-all"

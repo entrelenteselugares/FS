@@ -8,6 +8,18 @@ export interface AuthUser {
   whatsapp?: string | null;
   mpUserId?: string | null;
   mpPublicKey?: string | null;
+  franchiseProfile?: {
+    id: string;
+    printCredits: number;
+    active: boolean;
+    transactions?: Array<{
+      id: string;
+      amount: number;
+      type: string;
+      description: string | null;
+      createdAt: string;
+    }>;
+  } | null;
 }
 
 export interface AuthContextType {

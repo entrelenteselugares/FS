@@ -2,6 +2,18 @@
 
 Este documento registra as atualizações críticas realizadas para estabilização da plataforma e lançamento da versão "Midnight Luxury".
 
+## 🚀 01/05/2026 — Lançamento da Era Phygital: Automação Web-to-Print
+
+### 🖨️ Logística & Impressão Autônoma
+- **Implementação do Phygital Motor**: Motor de processamento Sharp para carimbar fotos automaticamente com código de referência (SVG Overlay).
+- **Printer Agent v1.0**: Lançamento do agente IoT multiplataforma (Windows/Linux) que "pesca" fotos do servidor e imprime localmente sem intervenção humana.
+- **Radar Phygital**: Dashboard administrativo em tempo real para monitorar a fila de impressão e status dos jobs durante o evento.
+- **Gerador de QR Code Duplo**: Sistema integrado para gerar QR Codes de Venda (Álbum) e de Captura (Envio Phygital) em um único modal.
+
+### ⚙️ Backend & Storage
+- **Sincronização Supabase Storage**: Migração da infraestrutura de ativos phygital para armazenamento na nuvem com buckets organizados por Event ID.
+- **Endpoints Padronizados**: Criação das rotas `/queue`, `/all` e `/confirm` para comunicação segura com agentes IoT de campo.
+
 ## 💎 01/05/2026 — Overhaul de Legibilidade & Validação Profissional
 
 ### 🖥️ UI/UX: Legibilidade "Midnight Luxury" v3.0

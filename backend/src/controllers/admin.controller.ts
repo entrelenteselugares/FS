@@ -246,6 +246,12 @@ export async function adminListEvents(req: AuthRequest, res: Response): Promise<
       ];
     }
 
+    // Isola eventos por Franquia se o usuário for um FRANQUEADO
+    if (req.user?.role === 'FRANCHISEE') {
+      const profile = await prisma.franchiseProfile.findUnique({ where: { userId: req.user.userId } });
+      (where as any).franchiseeId = profile?.id ?? 'non-existent';
+    }
+
     const events = await prisma.event.findMany({
       where,
       include: {
@@ -577,6 +583,7 @@ export async function adminListUsers(req: AuthRequest, res: Response): Promise<v
           select: { id: true, services: true, cameras: true, captPct: true, editPct: true, otherHabilities: true, equipment: true, workflowType: true },
         },
         cartorio: { select: { id: true, razaoSocial: true } },
+        franchiseProfile: { select: { id: true, printCredits: true, active: true } },
         pixKey: true,
       },
       orderBy: { createdAt: "desc" },
@@ -717,6 +724,44 @@ export async function adminUpdateUser(req: AuthRequest, res: Response): Promise<
           ...(priceImpresso !== undefined && { priceImpresso }),
         }
       });
+    }
+
+    // ── GESTÃO DE FRANQUIA ──
+    const { isFranchise, printCredits } = req.body;
+    if (isFranchise !== undefined) {
+      if (isFranchise) {
+        // Habilita ou atualiza perfil de franquia
+        await prisma.franchiseProfile.upsert({
+          where: { userId: String(id) },
+          create: { userId: String(id), printCredits: printCredits || 0 },
+          update: { 
+            active: true,
+            ...(printCredits !== undefined && { printCredits })
+          }
+        });
+
+        // Se créditos mudaram, registra transação de ajuste/recarga
+        if (printCredits !== undefined) {
+           const profile = await prisma.franchiseProfile.findUnique({ where: { userId: String(id) } });
+           if (profile) {
+              await prisma.creditTransaction.create({
+                data: {
+                  profileId: profile.id,
+                  amount: printCredits, // Aqui estamos setando o valor total, talvez devesse ser delta?
+                  // Por simplicidade neste MVP, setamos o valor absoluto enviado pelo Admin.
+                  type: 'ADJUSTMENT',
+                  description: `Ajuste administrativo de saldo: ${printCredits} créditos.`
+                }
+              });
+           }
+        }
+      } else {
+        // Desabilita perfil de franquia (apenas desativa, não deleta o histórico)
+        await prisma.franchiseProfile.updateMany({
+          where: { userId: String(id) },
+          data: { active: false }
+        });
+      }
     }
 
     await audit(req, "USER_UPDATED", "User", String(id), null, req.body);

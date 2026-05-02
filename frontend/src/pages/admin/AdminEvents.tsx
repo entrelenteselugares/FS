@@ -3,12 +3,18 @@ import React, { useState, useEffect, useCallback } from "react";
 import { API } from "../../lib/api";
 import { T } from "../../lib/theme";
 import { QRCodeSVG } from "qrcode.react";
-import { QrCode, X, Trash2 } from "lucide-react";
+import { QrCode, X, Trash2, Radar } from "lucide-react";
+import AdminPhygitalQueue from "./AdminPhygitalQueue";
 
 interface User {
   id: string;
   nome: string;
   role: string;
+  franchiseProfile?: {
+    id: string;
+    printCredits: number;
+    active: boolean;
+  };
 }
 
 interface Event {
@@ -56,6 +62,7 @@ export const AdminEvents: React.FC<AdminEventsProps> = ({ initialEditEventId }) 
   const [notification, setNotification] = useState<{message: string, type: 'success' | 'error'} | null>(null);
   const [activeTab, setActiveTab] = useState<'info' | 'equipe' | 'comercial'>('info');
   const [confirmDelete, setConfirmDelete] = useState<Event | null>(null);
+  const [phygitalQueueEvent, setPhygitalQueueEvent] = useState<Event | null>(null);
 
   const showNotification = (message: string, type: 'success' | 'error' = 'success') => {
     setNotification({ message, type });
@@ -105,6 +112,7 @@ export const AdminEvents: React.FC<AdminEventsProps> = ({ initialEditEventId }) 
     pricePerPhoto: number;
     clientName: string;
     clientEmail: string;
+    franchiseeId: string;
   }
 
   const [formData, setFormData] = useState<EventFormData>({
@@ -126,6 +134,7 @@ export const AdminEvents: React.FC<AdminEventsProps> = ({ initialEditEventId }) 
     pricePerPhoto: 15,
     clientName: "",
     clientEmail: "",
+    franchiseeId: "",
   });
 
   const [previewPreviews, setPreviewPreviews] = useState<string[]>(["", "", ""]);
@@ -207,6 +216,7 @@ export const AdminEvents: React.FC<AdminEventsProps> = ({ initialEditEventId }) 
         pricePerPhoto: 15,
         clientName: "",
         clientEmail: "",
+        franchiseeId: "",
       });
       setCoverPreview(null);
       setPreviewPreviews(["", "", ""]);
@@ -269,7 +279,8 @@ export const AdminEvents: React.FC<AdminEventsProps> = ({ initialEditEventId }) 
         type: data.type || 'ALBUM_FULL',
         pricePerPhoto: Number(data.pricePerPhoto || 15),
         clientName: data.clientName || "",
-        clientEmail: data.clientEmail || ""
+        clientEmail: data.clientEmail || "",
+        franchiseeId: data.franchiseeId || ""
       });
       setCoverPreview(data.coverPhotoUrl);
       try {
@@ -360,7 +371,7 @@ export const AdminEvents: React.FC<AdminEventsProps> = ({ initialEditEventId }) 
           <button 
             onClick={() => {
               setEditingEvent(null);
-              setFormData({ title: "", slug: "", date: "", location: "", city: "", description: "", priceBase: 200, priceEarly: 190, cartorioId: "", captacaoId: "", edicaoId: "", temFoto: true, temVideo: false, temReels: false, temFotoImpressa: false, coverPhotoUrl: "", eventHours: 2, isCrowdfund: false, targetAmount: 0, lightroomUrl: "", driveUrl: "", previewPhotos: ["", "", ""], isPrivate: false, isUnitSale: false, priceUnit: 10, type: 'ALBUM_FULL', pricePerPhoto: 15, clientName: "", clientEmail: "" });
+              setFormData({ title: "", slug: "", date: "", location: "", city: "", description: "", priceBase: 200, priceEarly: 190, cartorioId: "", captacaoId: "", edicaoId: "", temFoto: true, temVideo: false, temReels: false, temFotoImpressa: false, coverPhotoUrl: "", eventHours: 2, isCrowdfund: false, targetAmount: 0, lightroomUrl: "", driveUrl: "", previewPhotos: ["", "", ""], isPrivate: false, isUnitSale: false, priceUnit: 10, type: 'ALBUM_FULL', pricePerPhoto: 15, clientName: "", clientEmail: "", franchiseeId: "" });
               setCoverPreview(null);
               setPreviewPreviews(["", "", ""]);
               setIsModalOpen(true);
@@ -417,7 +428,8 @@ export const AdminEvents: React.FC<AdminEventsProps> = ({ initialEditEventId }) 
                    <div className="text-[7px] md:text-[8px] uppercase text-theme-muted">{event.edicao?.nome || "—"}</div>
                 </td>
                 <td className="p-2 md:p-3 flex gap-1.5 md:gap-2">
-                  <button onClick={() => { setQrModalEvent(event); setCopied(false); }} className="p-2 border border-theme-border text-theme-muted hover:text-white"><QrCode size={12} /></button>
+                  <button onClick={() => { setQrModalEvent(event); setCopied(false); }} className="p-2 border border-theme-border text-theme-muted hover:text-white" title="QR Codes"><QrCode size={12} /></button>
+                  <button onClick={() => setPhygitalQueueEvent(event)} className="p-2 border border-theme-border text-brand-tactical hover:bg-brand-tactical/10" title="Radar Phygital"><Radar size={12} /></button>
                   <button onClick={() => handleEditOpen(event)} className="px-3 py-1.5 border border-theme-border text-[8px] font-black uppercase tracking-widest text-theme-text hover:bg-theme-border transition-all">Editar</button>
                   <button onClick={() => setConfirmDelete(event)} className="p-2 border border-theme-border text-red-500/40 hover:text-red-500 transition-all"><Trash2 size={12} /></button>
                 </td>
@@ -457,6 +469,7 @@ export const AdminEvents: React.FC<AdminEventsProps> = ({ initialEditEventId }) 
                 </div>
                 <div className="flex gap-2">
                   <button onClick={() => { setQrModalEvent(event); setCopied(false); }} className="p-3 border border-theme-border text-theme-muted"><QrCode size={16} /></button>
+                  <button onClick={() => setPhygitalQueueEvent(event)} className="p-3 border border-theme-border text-brand-tactical"><Radar size={16} /></button>
                   <button onClick={() => handleEditOpen(event)} className="px-5 py-3 border border-theme-border text-[9px] font-black uppercase tracking-widest text-theme-text">Editar</button>
                   <button onClick={() => setConfirmDelete(event)} className="p-3 border border-theme-border text-red-500/40"><Trash2 size={16} /></button>
                 </div>
@@ -548,6 +561,17 @@ export const AdminEvents: React.FC<AdminEventsProps> = ({ initialEditEventId }) 
                             <select value={formData.cartorioId} onChange={e => setFormData({...formData, cartorioId: e.target.value})} className="w-full bg-theme-bg border border-theme-border p-4 text-[12px] text-theme-text focus:border-brand-tactical outline-none font-black cursor-pointer appearance-none">
                               <option value="">SELECIONE A UNIDADE</option>
                               {users.filter(u => u.role === "UNIDADE" || u.role === "CARTORIO").map(u => <option key={u.id} value={u.id}>{u.nome.toUpperCase()}</option>)}
+                            </select>
+                          </div>
+                          <div className="space-y-3">
+                            <label className="text-[9px] font-black text-brand-tactical uppercase tracking-[0.4em]">Logística (Franqueado)</label>
+                            <select value={formData.franchiseeId} onChange={e => setFormData({...formData, franchiseeId: e.target.value})} className="w-full bg-theme-bg border border-theme-border p-4 text-[12px] text-theme-text focus:border-brand-tactical outline-none font-black cursor-pointer appearance-none">
+                              <option value="">FOTO SEGUNDO MATRIZ</option>
+                              {users.filter(u => u.franchiseProfile).map(u => (
+                                <option key={u.franchiseProfile!.id} value={u.franchiseProfile!.id}>
+                                  {u.nome.toUpperCase()} ({ u.franchiseProfile!.printCredits } CRÉDITOS)
+                                </option>
+                              ))}
                             </select>
                           </div>
                           <div className="space-y-3">
@@ -677,19 +701,86 @@ export const AdminEvents: React.FC<AdminEventsProps> = ({ initialEditEventId }) 
 
       {qrModalEvent && (
         <div className="fixed inset-0 z-[60] flex items-center justify-center p-4 bg-black/90 backdrop-blur-2xl">
-          <div className="w-full max-w-sm bg-theme-bg border border-theme-border p-10 relative text-center shadow-2xl">
+          <div className="w-full max-w-xl bg-theme-bg border border-theme-border p-10 relative shadow-2xl">
             <button onClick={() => setQrModalEvent(null)} className="absolute top-6 right-6 text-theme-muted hover:text-white"><X size={20} /></button>
-            <div className="mb-8">
-               <h3 className="text-2xl font-black text-theme-text uppercase tracking-tighter">QR Code</h3>
-               <p className="text-[10px] text-theme-muted uppercase tracking-widest mt-1">Acesso Direto</p>
+            
+            <div className="flex flex-col md:flex-row gap-12">
+              {/* QR Code de Venda (Álbum) */}
+              <div className="flex-1 text-center">
+                <div className="mb-6">
+                  <h3 className="text-sm font-black text-theme-text uppercase tracking-[0.3em]">Vitrine Online</h3>
+                  <p className="text-[9px] text-theme-muted uppercase tracking-widest mt-1 italic">Para os clientes comprarem</p>
+                </div>
+                <div className="bg-white p-4 inline-block mb-6 rounded-xl">
+                  <QRCodeSVG value={`${window.location.origin}/e/${qrModalEvent.slug}`} size={180} level="H" />
+                </div>
+                <button 
+                  onClick={() => { navigator.clipboard.writeText(`${window.location.origin}/e/${qrModalEvent.slug}`); setCopied(true); setTimeout(()=>setCopied(false),2000); }} 
+                  className="w-full bg-theme-bg-muted border border-theme-border text-theme-text py-3 text-[9px] font-black uppercase tracking-widest hover:bg-white/5 transition-all"
+                >
+                  {copied ? "COPIADO!" : "COPIAR LINK ÁLBUM"}
+                </button>
+              </div>
+
+              <div className="w-px bg-white/5 hidden md:block" />
+
+              {/* QR Code Phygital (Captura) */}
+              <div className="flex-1 text-center">
+                <div className="mb-6">
+                  <h3 className="text-sm font-black text-brand-tactical uppercase tracking-[0.3em]">Captura Phygital</h3>
+                  <p className="text-[9px] text-theme-muted uppercase tracking-widest mt-1 italic">Para os convidados enviarem fotos</p>
+                </div>
+                <div className="bg-white p-4 inline-block mb-6 rounded-xl border-4 border-brand-tactical/20">
+                  <QRCodeSVG value={`${window.location.origin}/captura?e=${qrModalEvent.id}`} size={180} level="H" />
+                </div>
+                <button 
+                  onClick={() => { navigator.clipboard.writeText(`${window.location.origin}/captura?e=${qrModalEvent.id}`); setNotification({ message: "Link de Captura Copiado!", type: 'success' }); }} 
+                  className="w-full bg-brand-tactical text-zinc-950 py-3 text-[9px] font-black uppercase tracking-widest hover:brightness-110 transition-all shadow-lg"
+                >
+                  COPIAR LINK CAPTURA
+                </button>
+              </div>
             </div>
-            <div className="bg-white p-6 inline-block mb-10"><QRCodeSVG value={`${window.location.origin}/e/${qrModalEvent.slug}`} size={240} level="H" /></div>
-            <div className="space-y-3">
-              <button onClick={() => { const url = `${window.location.origin}/e/${qrModalEvent.slug}`; const w = window.open("", "_blank"); if(w){ w.document.write(`<html><body style="display:flex;flex-direction:column;align-items:center;justify-content:center;height:100vh;font-family:sans-serif;"><h1>${qrModalEvent.title}</h1><div id="q"></div><button onclick="window.print()" style="margin-top:20px;padding:10px 20px;">Imprimir</button><script src="https://cdn.jsdelivr.net/npm/qrcodejs@1.0.0/qrcode.min.js"></script><script>new QRCode(document.getElementById("q"), {text:"${url}",width:250,height:250});</script></body></html>`); w.document.close(); } }} className="w-full bg-brand-tactical text-zinc-950 py-4 text-[10px] font-black uppercase tracking-widest">Imprimir Kit</button>
-              <button onClick={() => { navigator.clipboard.writeText(`${window.location.origin}/e/${qrModalEvent.slug}`); setCopied(true); setTimeout(()=>setCopied(false),2000); }} className="w-full bg-theme-bg-muted border border-theme-border text-theme-text py-4 text-[10px] font-black uppercase tracking-widest">{copied ? "COPIADO!" : "COPIAR LINK"}</button>
+
+            <div className="mt-10 pt-8 border-t border-white/5 text-center">
+               <button 
+                onClick={() => { 
+                  const url = `${window.location.origin}/captura?e=${qrModalEvent.id}`; 
+                  const w = window.open("", "_blank"); 
+                  if(w){ 
+                    w.document.write(`
+                      <html>
+                        <body style="display:flex;flex-direction:column;align-items:center;justify-content:center;height:100vh;font-family:sans-serif;background:#000;color:#fff;">
+                          <div style="border: 2px solid #289a8e; padding: 40px; border-radius: 20px; text-align: center;">
+                            <h1 style="text-transform:uppercase;letter-spacing:10px;font-size:24px;margin-bottom:10px;">FOTO SEGUNDO</h1>
+                            <p style="text-transform:uppercase;letter-spacing:4px;font-size:10px;opacity:0.6;margin-bottom:30px;">Tire sua foto e receba impressa agora!</p>
+                            <div id="q" style="background:#fff;padding:20px;display:inline-block;border-radius:10px;"></div>
+                            <h2 style="margin-top:30px;font-size:18px;letter-spacing:2px;">${qrModalEvent.title}</h2>
+                            <button onclick="window.print()" style="margin-top:40px;padding:15px 30px;background:#289a8e;border:none;color:#000;font-weight:900;text-transform:uppercase;letter-spacing:2px;cursor:pointer;">Imprimir QR Code</button>
+                          </div>
+                          <script src="https://cdn.jsdelivr.net/npm/qrcodejs@1.0.0/qrcode.min.js"></script>
+                          <script>new QRCode(document.getElementById("q"), {text:"${url}",width:250,height:250,colorDark:"#000000",colorLight:"#ffffff",correctLevel:QRCode.CorrectLevel.H});</script>
+                        </body>
+                      </html>
+                    `); 
+                    w.document.close(); 
+                  } 
+                }} 
+                className="text-[10px] font-black text-theme-muted uppercase tracking-[0.4em] hover:text-brand-tactical transition-all"
+               >
+                 Gerar Cartaz de Mesa (Print Kit)
+               </button>
             </div>
           </div>
         </div>
+      )}
+
+      {phygitalQueueEvent && (
+        <AdminPhygitalQueue 
+          eventId={phygitalQueueEvent.id} 
+          eventTitle={phygitalQueueEvent.title} 
+          onClose={() => setPhygitalQueueEvent(null)} 
+        />
       )}
 
       {notification && (

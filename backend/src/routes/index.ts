@@ -93,7 +93,12 @@ import { requireMercadoPagoSignature } from "../middleware/webhook-auth";
 import { getTaxReport } from "../controllers/finance.controller";
 import { AuthRequest } from "../lib/auth";
 import { runLoyaltyBot } from "../controllers/cron.controller";
+import { PhygitalController } from "../controllers/phygital.controller";
+import { FranchiseController } from "../controllers/franchise.controller";
+import multer from "multer";
 import express from "express";
+
+const upload = multer({ storage: multer.memoryStorage() });
 
 const router = Router();
 
@@ -163,6 +168,13 @@ router.get("/diag", diagnostics);
 router.get("/public/events",               EventController.listPublic);
 router.get("/public/events/:slug",         optionalAuth, EventController.getById);       // busca por slug ou id
 router.get("/public/events/:slug/access",  EventController.getAccess);     // ?orderId=xxx
+router.get("/profissional/events",      requireAuth, EventController.listByProfessional);
+router.get("/profissional/events/:slug", requireAuth, EventController.getById);
+router.post("/profissional/flash-event", requireAuth, EventController.createFlashEvent);
+router.get("/profissional/unidades/convites", requireAuth, getConvitesUnidade);
+
+router.get("/phygital/events/:eventId/prints", requireAuth, PhygitalController.listAllByEvent);
+router.patch("/phygital/prints/:id/status", requireAuth, PhygitalController.confirmPrint);
 router.get("/public/partners",             EventController.listPartners);   // alias legado
 router.get("/public/unidades-fixas",       EventController.listPartners);   // alias compatível
 router.post("/public/quotes",              EventController.createQuote);
@@ -184,6 +196,7 @@ router.get("/events/:slug/likes",          getEventLikes);
 router.get("/share/e/:id", SEOController.getEventPreview);
 
 // ── Checkout & Webhook ─────────────────────────────────────────────────────────
+router.post("/checkout/pending",     PaymentController.createPendingOrder);
 router.post("/checkout/payment",     PaymentController.processPayment);
 router.post(
   "/webhooks/mercadopago",
@@ -227,12 +240,12 @@ router.get("/me/points",                 requireAuth, getMyPoints);
 router.post("/me/redeem-print",          requireAuth, redeemPrint);
 
 // ── Unidade Fixa ──────────────────────────────────────────────────────────────
-router.get("/unidade-fixa/stats",    requireAuth, requireRole("ADMIN", "CARTORIO", "UNIDADE"), CartorioController.getStats);
-router.get("/unidade-fixa/events",   requireAuth, requireRole("ADMIN", "CARTORIO", "UNIDADE"), CartorioController.getEvents);
-router.get("/unidade-fixa/orders",   requireAuth, requireRole("ADMIN", "CARTORIO", "UNIDADE"), CartorioController.getOrders);
-router.patch("/unidade-fixa/profile",requireAuth, requireRole("ADMIN", "CARTORIO", "UNIDADE"), updatePartnerProfile);
-router.get("/unidade-fixa/team",     requireAuth, requireRole("ADMIN", "CARTORIO", "UNIDADE"), getTeam);
-router.put("/unidade-fixa/team",     requireAuth, requireRole("ADMIN", "CARTORIO", "UNIDADE"), saveTeam);
+router.get("/unidade-fixa/stats",    requireAuth, requireRole("ADMIN", "CARTORIO"), CartorioController.getStats);
+router.get("/unidade-fixa/events",   requireAuth, requireRole("ADMIN", "CARTORIO"), CartorioController.getEvents);
+router.get("/unidade-fixa/orders",   requireAuth, requireRole("ADMIN", "CARTORIO"), CartorioController.getOrders);
+router.patch("/unidade-fixa/profile",requireAuth, requireRole("ADMIN", "CARTORIO"), updatePartnerProfile);
+router.get("/unidade-fixa/team",     requireAuth, requireRole("ADMIN", "CARTORIO"), getTeam);
+router.put("/unidade-fixa/team",     requireAuth, requireRole("ADMIN", "CARTORIO"), saveTeam);
 
 // ── Admin: Stats & Logs ────────────────────────────────────────────────────────
 router.get("/admin/stats", requireAuth, requireRole("ADMIN"), getDashboardStats);
@@ -300,5 +313,19 @@ router.get("/admin/service-catalog", requireAuth, requireRole("ADMIN"), ServiceC
 router.post("/admin/service-catalog", requireAuth, requireRole("ADMIN"), ServiceCatalogController.adminCreateService);
 router.patch("/admin/service-catalog/:id", requireAuth, requireRole("ADMIN"), ServiceCatalogController.adminUpdateService);
 router.delete("/admin/service-catalog/:id", requireAuth, requireRole("ADMIN"), ServiceCatalogController.adminDeleteService);
+
+// ── FRANCHISES (Gestão de Micro-Franquias) ──────────────────────────────────
+router.get("/admin/franchises",                              requireAuth, requireRole("ADMIN"), FranchiseController.listAll);
+router.post("/admin/franchises/promote",                    requireAuth, requireRole("ADMIN"), FranchiseController.promote);
+router.post("/admin/franchises/credits",                    requireAuth, requireRole("ADMIN"), FranchiseController.addCredits);
+router.patch("/admin/franchises/:profileId/toggle",         requireAuth, requireRole("ADMIN"), FranchiseController.toggleActive);
+router.delete("/admin/franchises/:profileId",               requireAuth, requireRole("ADMIN"), FranchiseController.remove);
+router.get("/admin/franchises/:profileId/statement",        requireAuth, requireRole("ADMIN"), FranchiseController.getStatement);
+
+// ── PHYGITAL (Fluxo QR Code & Impressão) ──────────────────────────────────────
+router.post("/public/phygital/upload", upload.single("photo"), PhygitalController.upload);
+router.get("/admin/phygital/queue", requireAuth, requireRole("ADMIN"), PhygitalController.listPending);
+router.get("/admin/phygital/all", requireAuth, requireRole("ADMIN"), PhygitalController.listAllByEvent);
+router.post("/admin/phygital/confirm", requireAuth, requireRole("ADMIN"), PhygitalController.confirmPrint);
 
 export default router;

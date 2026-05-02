@@ -7,6 +7,7 @@ export { FinanceTab } from "./FinanceTab";
 export { NetworkTab } from "./NetworkTab";
 export { ProfileModal } from "./ProfileModal";
 export { ServicesTab } from "./ServicesTab";
+export { FlashEventModal } from "./FlashEventModal";
 export { DashboardHeader } from "./DashboardHeader";
 export { DashboardStats } from "./DashboardStats";
 export { SupportBanner } from "./SupportBanner";

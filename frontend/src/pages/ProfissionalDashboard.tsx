@@ -1,15 +1,16 @@
 import { useState, useEffect, useCallback } from "react";
 import { useAuth } from "../hooks/useAuth";
 import { API } from "../lib/api";
+import { useNavigate } from "react-router-dom";
 import {
   DollarSign, MessageCircle,
-  Settings, Briefcase, Users, LayoutDashboard,
+  Settings, Briefcase, Users, LayoutDashboard, Play, Zap
 } from "lucide-react";
 import { DashboardLayout, type NavItem } from "../components/DashboardLayout";
 import { T } from "../lib/theme";
 import {
   AgendaTab, FinanceTab, NetworkTab, ServicesTab,
-  EventEditPanel, ExpressSaleModal, ProfileModal,
+  EventEditPanel, ExpressSaleModal, ProfileModal, FlashEventModal,
   DashboardHeader, DashboardStats, SupportBanner,
   OpportunitiesModal, ExpressSaleBanner,
   type EventItem, type UnitInvite, type ServiceCatalog, type ProfileData, type Partner,
@@ -17,13 +18,16 @@ import {
 
 // ─── Types ────────────────────────────────────────────────────────────────────
 
-type ActiveTab = "agenda" | "convites" | "financeiro" | "servicos" | "network";
+import { Printer } from "lucide-react";
+
+type ActiveTab = "agenda" | "convites" | "financeiro" | "servicos" | "network" | "franquia";
 type ViewTab = "lista" | "calendario";
 
 // ─── Main Component ────────────────────────────────────────────────────────────
 
 export default function ProfissionalDashboard() {
   const { user } = useAuth();
+  const navigate = useNavigate();
 
   // Core data state
   const [events, setEvents] = useState<EventItem[]>([]);
@@ -40,6 +44,7 @@ export default function ProfissionalDashboard() {
   const [selected, setSelected] = useState<EventItem | null>(null);
   const [isProfileOpen, setIsProfileOpen] = useState(false);
   const [isExpressModalOpen, setIsExpressModalOpen] = useState(false);
+  const [isFlashModalOpen, setIsFlashModalOpen] = useState(false);
   const [showNewServicesModal, setShowNewServicesModal] = useState(false);
   const [hasCheckedInvites, setHasCheckedInvites] = useState(false);
   const [notification, setNotification] = useState<{ message: string; type: "success" | "error" } | null>(null);
@@ -214,6 +219,12 @@ export default function ProfissionalDashboard() {
     { label: "Serviços", onClick: () => setActiveTab("servicos"), isActive: activeTab === "servicos", icon: <Briefcase size={16} /> },
     { label: "Minha Rede", onClick: () => setActiveTab("network"), isActive: activeTab === "network", icon: <Users size={16} /> },
     { label: "Meu Perfil", onClick: () => setIsProfileOpen(true), isActive: false, icon: <Settings size={16} /> },
+    ...( (user?.franchiseProfile || (profile?.cartorioProfissional && profile.cartorioProfissional.length > 0)) ? [{ 
+      label: "Franquia Print", 
+      onClick: () => setActiveTab("franquia"), 
+      isActive: activeTab === "franquia", 
+      icon: <Printer size={16} /> 
+    }] : []),
   ];
 
   const residentUnits = profile?.cartorioProfissional?.map((cp) => cp.cartorio.razaoSocial) || [];
@@ -253,8 +264,27 @@ export default function ProfissionalDashboard() {
         <div className="space-y-12">
           {activeTab === "agenda" && (
             <div className="space-y-12 animate-in fade-in duration-500">
-              {/* Express Sale Button */}
-              <ExpressSaleBanner onOpen={() => setIsExpressModalOpen(true)} />
+              {/* Banner de Venda Expressa & Flash Event */}
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <ExpressSaleBanner onOpen={() => setIsExpressModalOpen(true)} />
+                <div 
+                  onClick={() => setIsFlashModalOpen(true)}
+                  className="bg-theme-bg-muted border border-yellow-400/30 p-6 flex items-center justify-between cursor-pointer hover:border-yellow-400/60 transition-all group overflow-hidden relative"
+                >
+                  <div className="absolute top-0 left-0 w-1 h-full bg-yellow-400" />
+                  <div className="space-y-1 relative z-10">
+                    <div className="flex items-center gap-2 text-yellow-400">
+                      <Zap size={14} fill="currentColor" />
+                      <span className="text-[10px] font-black uppercase tracking-[0.3em] italic">Oportunidade Agora</span>
+                    </div>
+                    <h3 className="text-xl font-heading font-black text-theme-text uppercase italic">Evento Relâmpago</h3>
+                    <p className="text-[10px] text-theme-muted uppercase font-bold tracking-widest">Ative um QR Code instantaneamente</p>
+                  </div>
+                  <div className="text-yellow-400/10 group-hover:text-yellow-400/30 transition-colors">
+                    <Zap size={40} strokeWidth={3} />
+                  </div>
+                </div>
+              </div>
 
               {/* KPI Cards */}
               <DashboardStats 
@@ -299,6 +329,116 @@ export default function ProfissionalDashboard() {
                 onRemoveService={handleRemoveService}
                 onOpenProfile={() => setIsProfileOpen(true)}
               />
+            )}
+            {activeTab === "franquia" && user?.franchiseProfile && (
+              <div className="space-y-8 animate-in fade-in duration-500">
+                <div>
+                  <h2 className="text-3xl font-black text-theme-text uppercase tracking-tighter">Franquia de Impressão</h2>
+                  <p className="text-[10px] text-theme-muted uppercase tracking-[0.4em] mt-2 font-black italic">Seu Ponto de Impressão Phygital</p>
+                </div>
+                <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                  <div className="bg-theme-bg border border-theme-border p-8 space-y-3">
+                    <label className="text-[9px] font-black text-theme-muted uppercase tracking-widest block">Créditos Disponíveis</label>
+                    <div className={`text-5xl font-black ${user.franchiseProfile.printCredits < 50 ? 'text-amber-500' : 'text-brand-tactical'}`}>
+                      {user.franchiseProfile.printCredits}
+                    </div>
+                    <p className="text-[9px] text-theme-muted font-bold uppercase tracking-widest">fotos restantes</p>
+                  </div>
+                  <div className="bg-theme-bg border border-theme-border p-8 space-y-3">
+                    <label className="text-[9px] font-black text-theme-muted uppercase tracking-widest block">Status</label>
+                    <div className={`text-sm font-black uppercase tracking-widest ${user.franchiseProfile.active ? 'text-emerald-500' : 'text-red-500'}`}>
+                      {user.franchiseProfile.active ? '● Ponto Ativo' : '● Inativo'}
+                    </div>
+                    <p className="text-[9px] text-theme-muted font-bold uppercase tracking-widest">modo de operação</p>
+                  </div>
+                  <div className="bg-theme-bg border border-theme-border p-8 space-y-3">
+                    <label className="text-[9px] font-black text-theme-muted uppercase tracking-widest block">Precisa de Créditos?</label>
+                    <p className="text-[10px] text-theme-muted font-bold leading-relaxed">
+                      Entre em contato com o administrador da rede para recarregar seu saldo de impressões.
+                    </p>
+                  </div>
+                </div>
+                {user.franchiseProfile.printCredits < 50 && (
+                  <div className="border border-amber-500/30 bg-amber-500/5 p-6 flex items-start gap-4">
+                    <div className="text-amber-500 text-2xl">⚠</div>
+                    <div>
+                      <p className="text-xs font-black text-amber-500 uppercase tracking-widest">Saldo Baixo</p>
+                      <p className="text-[10px] text-theme-muted font-bold mt-1">Seu saldo está abaixo de 50 fotos. Solicite recarga ao administrador para não interromper a operação.</p>
+                    </div>
+                  </div>
+                )}
+
+                {/* ── OPERAÇÕES DE IMPRESSÃO ── */}
+                <div className="space-y-6">
+                   <div className="flex items-center gap-3">
+                      <div className="h-0.5 w-6 bg-brand-tactical" />
+                      <p className="text-[9px] font-black text-theme-muted uppercase tracking-[0.4em]">Operações em Campo</p>
+                   </div>
+                   
+                   <div className="grid grid-cols-1 gap-4">
+                      {events.filter(ev => ev.captacaoId === user.id).length > 0 ? (
+                        events.filter(ev => ev.captacaoId === user.id).map(ev => (
+                          <div key={ev.id} className="bg-theme-bg border border-theme-border p-6 flex flex-col md:flex-row items-center justify-between gap-6 hover:border-brand-tactical/30 transition-all group">
+                             <div className="flex items-center gap-5">
+                                <div className="w-12 h-12 bg-zinc-900 border border-theme-border flex items-center justify-center text-brand-tactical group-hover:scale-110 transition-transform">
+                                   <Printer size={20} />
+                                </div>
+                                <div>
+                                   <p className="text-sm font-black text-theme-text uppercase italic tracking-tight">{ev.nomeNoivos}</p>
+                                   <p className="text-[9px] text-theme-muted font-bold uppercase tracking-widest mt-1">{new Date(ev.dataEvento).toLocaleDateString('pt-BR')} · {ev.location}</p>
+                                </div>
+                             </div>
+                             <button 
+                               onClick={() => navigate(`/profissional/monitor/${ev.id}`)}
+                               className="px-8 py-3 bg-brand-tactical text-zinc-950 text-[10px] font-black uppercase tracking-widest hover:brightness-110 transition-all flex items-center gap-3 shadow-lg shadow-brand-tactical/10"
+                             >
+                               <Play size={12} /> ABRIR MONITOR
+                             </button>
+                          </div>
+                        ))
+                      ) : (
+                        <div className="p-10 border border-dashed border-theme-border/40 text-center space-y-4">
+                           <p className="text-[10px] text-theme-muted uppercase font-black italic tracking-widest">Nenhum evento designado para você neste momento.</p>
+                           <p className="text-[8px] text-theme-muted/60 uppercase font-bold max-w-xs mx-auto leading-relaxed">Fique atento à sua agenda. Quando um admin vincular sua franquia a um evento, ele aparecerá aqui para impressão.</p>
+                        </div>
+                      )}
+                   </div>
+                </div>
+
+                {/* ── ATIVIDADE RECENTE ── */}
+                <div className="space-y-6">
+                   <div className="flex items-center gap-3">
+                      <div className="h-0.5 w-6 bg-brand-tactical" />
+                      <p className="text-[9px] font-black text-theme-muted uppercase tracking-[0.4em]">Histórico de Operações</p>
+                   </div>
+
+                   <div className="bg-theme-bg border border-theme-border overflow-hidden">
+                      {user.franchiseProfile.transactions && user.franchiseProfile.transactions.length > 0 ? (
+                        <div className="divide-y divide-theme-border/30">
+                          {user.franchiseProfile.transactions.map(tx => (
+                            <div key={tx.id} className="p-5 flex items-center justify-between hover:bg-theme-bg-muted/30 transition-all group">
+                               <div className="space-y-1">
+                                  <p className="text-[11px] font-black text-theme-text uppercase tracking-tight italic">
+                                    {tx.description || (tx.type === 'PRINT_CONSUMPTION' ? 'Impressão Phygital' : 'Recarga de Créditos')}
+                                  </p>
+                                  <p className="text-[8px] text-theme-muted font-bold uppercase tracking-widest">
+                                    {new Date(tx.createdAt).toLocaleString('pt-BR')}
+                                  </p>
+                               </div>
+                               <div className={`text-sm font-black italic tracking-tighter ${tx.amount > 0 ? 'text-brand-tactical' : 'text-red-400'}`}>
+                                  {tx.amount > 0 ? '+' : ''}{tx.amount}
+                               </div>
+                            </div>
+                          ))}
+                        </div>
+                      ) : (
+                        <div className="p-10 text-center text-[10px] text-theme-muted uppercase font-black italic tracking-widest opacity-40">
+                          Nenhuma atividade registrada.
+                        </div>
+                      )}
+                   </div>
+                </div>
+              </div>
             )}
             {(activeTab === "agenda" || activeTab === "convites") && (
               <AgendaTab
@@ -377,6 +517,18 @@ export default function ProfissionalDashboard() {
         >
           {notification.message}
         </div>
+      )}
+      {/* Modal de Evento Relâmpago (Express) */}
+      {isFlashModalOpen && (
+        <FlashEventModal 
+          onClose={() => setIsFlashModalOpen(false)}
+          onSuccess={(slug) => {
+            showNotification("Evento Relâmpago Ativado!", "success");
+            setIsFlashModalOpen(false);
+            navigate(`/e/${slug}`);
+          }}
+          onError={(msg) => showNotification(msg, "error")}
+        />
       )}
     </DashboardLayout>
   );

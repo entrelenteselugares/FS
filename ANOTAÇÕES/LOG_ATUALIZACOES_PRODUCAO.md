@@ -2,6 +2,17 @@
 
 Este documento resume as atualizações críticas, correções de segurança e novas funcionalidades implementadas na plataforma Foto Segundo.
 
+## 🚀 01/05/2026 — Expansão B2B: Infraestrutura de Micro-Franquias
+- **Engine de Créditos Phygital**: Implementação de carteira digital para franqueados com débito automático por impressão.
+- **Painel de Expansão**: Interface administrativa para gestão de parceiros, recarga de saldo e monitoramento de rede.
+- **Logística Multitenant**: Atribuição de eventos a pontos de impressão independentes.
+- **Livro-Razão de Auditoria**: Registro detalhado de cada transação de crédito e consumo de ativos físicos.
+
+## 🖨️ 01/05/2026 — Era Phygital: Automação Web-to-Print
+- **Phygital Motor**: Processamento Sharp para carimbo dinâmico de fotos.
+- **Printer Agent v1.0**: Agente IoT multiplataforma para impressão autônoma.
+- **Radar Phygital**: Monitoramento em tempo real da fila de impressão.
+
 ## 💎 01/05/2026 — Overhaul de Legibilidade & Validação Profissional
 
 ### 1. Sistema de Validação Profissional

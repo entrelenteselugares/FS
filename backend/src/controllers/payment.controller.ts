@@ -12,11 +12,63 @@ import { Prisma } from "@prisma/client";
 
 export class PaymentController {
   /**
+   * POST /api/checkout/pending
+   * Cria um pedido pendente para ser processado no checkout padrão.
+   */
+  static async createPendingOrder(req: Request, res: Response) {
+    const { eventId, userId, email, selectedServices, includeLivePrint, includeShipping, cart } = req.body;
+
+    try {
+      const event = await prisma.event.findUnique({ where: { id: eventId } });
+      if (!event) return res.status(404).json({ error: "Evento não encontrado" });
+
+      // 1. Cálculo de Preço (Simplificado para Upgrade)
+      const cartItems = cart || [];
+      const basePrice = PricingService.calculateEventPrice(event, 0, cartItems.length);
+      
+      const selectedServicesIds = selectedServices || [];
+      let upgradePrice = 0;
+      if (selectedServicesIds.length > 0) {
+        const catalogItems = await prisma.serviceCatalog.findMany({
+          where: { id: { in: selectedServicesIds } }
+        });
+        upgradePrice = catalogItems.reduce((acc, s) => acc + Number(s.basePrice), 0);
+      }
+
+      const phygitalPrice = (includeLivePrint ? 150 : 0) + (includeShipping ? 25 : 0);
+      const total = basePrice + upgradePrice + phygitalPrice;
+
+      // 2. Criação do Pedido
+      const order = await prisma.order.create({
+        data: {
+          eventId,
+          clienteId: userId || null,
+          buyerEmail: email,
+          valor: total,
+          status: "PENDENTE",
+          manualType: "Upgrade de Serviços",
+          internalNotes: JSON.stringify({
+            type: "UPGRADE",
+            selectedServicesIds,
+            includeLivePrint,
+            includeShipping
+          }),
+        }
+      });
+
+      res.json({ orderId: order.id });
+    } catch (err) {
+      console.error("createPendingOrder error:", err);
+      res.status(500).json({ error: "Erro ao gerar protocolo de upgrade." });
+    }
+  }
+
+  /**
    * POST /api/checkout
    * Inicia o fluxo de pagamento com precificação dinâmica.
    */
   static async checkout(req: Request, res: Response) {
-    const { eventId, userId, email, method, token, installments, issuer_id, contributionAmount, cart, printProductId, orderId: passedOrderId } = req.body;
+    const { eventId, userId, email, method, token, installments, issuer_id, contributionAmount, cart, printProductId, orderId: passedOrderId, includeLivePrint, includeShipping, selectedServices } = req.body;
 
     try {
       // 1. Buscar evento com os parceiros vinculados
@@ -45,9 +97,22 @@ export class PaymentController {
           finalPrintPrice = product.sellingPrice !== null ? Number(product.sellingPrice) : Number(product.supplierCost) * (1 + product.marginPct / 100);
         }
       }
+      
+      // 2c. Upgrades de Serviços (Service Catalog)
+      const selectedServicesIds = req.body.selectedServices || [];
+      let upgradePrice = 0;
+      if (selectedServicesIds.length > 0) {
+        const catalogItems = await prisma.serviceCatalog.findMany({
+          where: { id: { in: selectedServicesIds } }
+        });
+        upgradePrice = catalogItems.reduce((acc, s) => acc + Number(s.basePrice), 0);
+      }
+
+      // 2d. Adicionais Phygital (Switches)
+      const phygitalPrice = (includeLivePrint ? 150 : 0) + (includeShipping ? 25 : 0);
 
       // 2b. Respeitar valor do pedido se já existir (Ex: Reserva 50%)
-      let preco = basePrice + finalPrintPrice;
+      let preco = basePrice + finalPrintPrice + upgradePrice + phygitalPrice;
       let orderToUse = null;
 
       if (passedOrderId) {
@@ -321,7 +386,7 @@ export class PaymentController {
    * Processa o pagamento transparente vindo do frontend.
    */
   static async processPayment(req: Request, res: Response) {
-    const { eventId, userId, email, cpf, cardToken, installments, paymentMethodId, contributionAmount, accessType, cart, printProductId, orderId: passedOrderId } = req.body;
+    const { eventId, userId, email, cpf, cardToken, installments, paymentMethodId, contributionAmount, accessType, cart, printProductId, orderId: passedOrderId, includeLivePrint, includeShipping, selectedServices } = req.body;
 
     try {
       // 1. Buscar evento com parceiros para cálculo de split
@@ -350,17 +415,41 @@ export class PaymentController {
         }
       }
 
-      // 2b. Respeitar valor do pedido se já existir (Ex: Reserva 50% ou Quitação)
-      let preco = basePrice + finalPrintPrice;
+      // 2c. Upgrades de Serviços (Service Catalog)
+      const selectedServicesIds = selectedServices || [];
+      let upgradePrice = 0;
+      if (selectedServicesIds.length > 0) {
+        const catalogItems = await prisma.serviceCatalog.findMany({
+          where: { id: { in: selectedServicesIds } }
+        });
+        upgradePrice = catalogItems.reduce((acc, s) => acc + Number(s.basePrice), 0);
+      }
+
+      // 2d. Adicionais Phygital (Switches)
+      let finalIncludeLivePrint = includeLivePrint;
+      let finalIncludeShipping = includeShipping;
+      let finalSelectedServices = selectedServicesIds;
       let orderToUse = null;
 
       if (passedOrderId) {
         orderToUse = await prisma.order.findUnique({ where: { id: passedOrderId } });
         if (orderToUse && orderToUse.status === "PENDENTE") {
-          preco = Number(orderToUse.valor);
-          console.log(`[processPayment] Usando valor pré-definido do pedido ${passedOrderId}: ${preco}`);
+          // Se for upgrade, recupera as configs das notas
+          if (orderToUse.internalNotes?.startsWith('{"type":"UPGRADE"')) {
+            try {
+              const upgradeData = JSON.parse(orderToUse.internalNotes);
+              finalIncludeLivePrint = upgradeData.includeLivePrint;
+              finalIncludeShipping = upgradeData.includeShipping;
+              finalSelectedServices = upgradeData.selectedServicesIds;
+            } catch (e) { console.error("Erro ao parsear upgrade notes:", e); }
+          }
         }
       }
+
+      const phygitalPrice = (finalIncludeLivePrint ? 150 : 0) + (finalIncludeShipping ? 25 : 0);
+
+      // 2b. Respeitar valor do pedido se já existir (Ex: Reserva 50% ou Quitação)
+      let preco = orderToUse ? Number(orderToUse.valor) : (basePrice + finalPrintPrice + upgradePrice + phygitalPrice);
       
       if (preco <= 0) {
         return res.status(400).json({ error: "O valor do pagamento deve ser superior a zero. Verifique os itens selecionados." });
@@ -603,6 +692,39 @@ export class PaymentController {
           orderId: order.id,
           amount: Number(preco)
         });
+
+        // 7c. Atualiza flags do evento se for upgrade
+        if (finalSelectedServices?.length > 0) {
+          const purchased = await prisma.serviceCatalog.findMany({
+            where: { id: { in: finalSelectedServices } }
+          });
+          const updateData: any = {};
+          if (purchased.some(p => p.name.toLowerCase().includes("video"))) updateData.temVideo = true;
+          if (purchased.some(p => p.name.toLowerCase().includes("reels"))) updateData.temReels = true;
+          if (purchased.some(p => p.name.toLowerCase().includes("impressa"))) updateData.temFotoImpressa = true;
+          
+          if (Object.keys(updateData).length > 0) {
+            await prisma.event.update({ where: { id: eventId }, data: updateData });
+          }
+        }
+
+        // 7d. Atualiza flags Phygital
+        if (finalIncludeLivePrint || finalIncludeShipping) {
+          const phygitalNotes = [];
+          if (finalIncludeLivePrint) phygitalNotes.push("ESTAÇÃO DE IMPRESSÃO AO VIVO");
+          if (finalIncludeShipping) phygitalNotes.push("ENTREGA POSTERIOR (CORREIOS)");
+          
+          await prisma.event.update({
+            where: { id: eventId },
+            data: { temFotoImpressa: true } // Ativa a flag geral de impressão
+          });
+          
+          // Mantém as notas legíveis para o admin
+          await prisma.order.update({
+            where: { id: order.id },
+            data: { internalNotes: `[PHYGITAL] ${phygitalNotes.join(" + ")}` }
+          });
+        }
 
       } else if (mpResponse.status === "rejected") {
         // 7c. Alerta de pagamento rejeitado

@@ -182,7 +182,19 @@ export class AuthController {
 
   static async me(req: AuthRequest, res: Response) {
     if (!req.user) return res.status(401).json({ error: "Não logado" });
-    const user = await prisma.user.findUnique({ where: { id: req.user.userId } });
+    const user = await prisma.user.findUnique({ 
+      where: { id: req.user.userId },
+      include: {
+        franchiseProfile: {
+          include: {
+            transactions: {
+              orderBy: { createdAt: 'desc' },
+              take: 10
+            }
+          }
+        }
+      }
+    });
     return res.json(user);
   }
 

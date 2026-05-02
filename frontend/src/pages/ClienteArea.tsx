@@ -6,7 +6,9 @@ import { T, Card } from "../lib/theme";
 import AccessTypeModal from "../components/AccessTypeModal";
 import { SideDrawer } from "../components/SideDrawer";
 import { DashboardLayout, type NavItem } from "../components/DashboardLayout";
-import { Image, Clock, ShieldCheck, ArrowRight, AlertTriangle, User, CheckCircle2, X, ShoppingBag } from "lucide-react";
+import { Image, Clock, ShieldCheck, ArrowRight, AlertTriangle, User, CheckCircle2, X, ShoppingBag, Printer } from "lucide-react";
+
+type ActiveTab = "files" | "profile" | "franquia";
 
 interface Pedido {
   id: string;
@@ -72,11 +74,14 @@ export default function ClienteArea() {
   const [loading, setLoading] = useState(true);
   const [loadingDetalhe, setLoadingDetalhe] = useState(false);
   const [isPrivacyModalOpen, setIsPrivacyModalOpen] = useState(false);
-  const [activeTab, setActiveTab] = useState<"files" | "profile">("files");
+  const [activeTab, setActiveTab] = useState<ActiveTab>("files");
   
   const NAV_ITEMS: NavItem[] = [
     { label: "Minhas Memórias", onClick: () => setActiveTab("files"), isActive: activeTab === "files", icon: <Image size={18} /> },
     { label: "Meus Dados", onClick: () => setActiveTab("profile"), isActive: activeTab === "profile", icon: <User size={18} /> },
+    ...(user?.franchiseProfile ? [
+      { label: "Franquia Print", onClick: () => setActiveTab("franquia"), isActive: activeTab === "franquia", icon: <Printer size={18} /> }
+    ] : [])
   ];
   
   // Profile States
@@ -324,7 +329,7 @@ export default function ClienteArea() {
                 </div>
               )}
             </>
-          ) : (
+          ) : activeTab === "profile" ? (
             <div className="lux-card p-10 max-w-xl space-y-8 border-l-4 border-l-brand-tactical bg-theme-bg-muted/10">
               <div className="space-y-2">
                 <h2 className="text-xl font-heading font-black text-theme-text uppercase italic tracking-tight">Dados do Perfil</h2>
@@ -358,7 +363,82 @@ export default function ClienteArea() {
                 </a>
               </div>
             </div>
-          )}
+          ) : activeTab === "franquia" && user?.franchiseProfile ? (
+            <div className="space-y-8 animate-in fade-in duration-500">
+              <div className="border-b border-theme-border/60 pb-6">
+                <h2 className="text-3xl font-black text-theme-text uppercase tracking-tighter italic">Franquia de Impressão</h2>
+                <p className="text-[10px] text-theme-muted uppercase tracking-[0.4em] mt-2 font-black italic">Seu Ponto de Impressão Phygital</p>
+              </div>
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-px bg-theme-border/20 border border-theme-border/20">
+                <div className="bg-theme-bg-muted/30 p-8 space-y-3">
+                  <label className="text-[9px] font-black text-theme-muted uppercase tracking-widest block">Créditos Disponíveis</label>
+                  <div className={`text-5xl font-black italic tracking-tighter ${user.franchiseProfile.printCredits < 50 ? 'text-amber-500' : 'text-brand-tactical'}`}>
+                    {user.franchiseProfile.printCredits}
+                  </div>
+                  <p className="text-[9px] text-theme-muted font-bold uppercase tracking-widest">fotos restantes</p>
+                </div>
+                <div className="bg-theme-bg-muted/30 p-8 space-y-3">
+                  <label className="text-[9px] font-black text-theme-muted uppercase tracking-widest block">Status do Ponto</label>
+                  <div className={`text-sm font-black uppercase tracking-widest ${user.franchiseProfile.active ? 'text-emerald-500' : 'text-red-500'}`}>
+                    {user.franchiseProfile.active ? '● Operacional' : '● Inativo'}
+                  </div>
+                  <p className="text-[9px] text-theme-muted font-bold uppercase tracking-widest">modo de rede</p>
+                </div>
+                <div className="bg-theme-bg-muted/30 p-8 space-y-3">
+                  <label className="text-[9px] font-black text-theme-muted uppercase tracking-widest block">Suporte à Franquia</label>
+                  <p className="text-[10px] text-theme-muted font-bold leading-relaxed uppercase tracking-widest">
+                    Entre em contato para recarregar créditos ou suporte técnico.
+                  </p>
+                  <a href="https://wa.me/5519997843817" target="_blank" rel="noreferrer" className="inline-flex items-center gap-2 text-[9px] font-black text-brand-tactical uppercase tracking-widest hover:underline mt-2">
+                    RECARREGAR CRÉDITOS →
+                  </a>
+                </div>
+              </div>
+              {user.franchiseProfile.printCredits < 50 && (
+                <div className="border border-amber-500/30 bg-amber-500/5 p-6 flex items-start gap-4">
+                  <AlertTriangle className="text-amber-500" size={18} />
+                  <div>
+                    <p className="text-xs font-black text-amber-500 uppercase tracking-widest">Alerta de Saldo</p>
+                    <p className="text-[10px] text-theme-muted font-bold mt-1 uppercase tracking-widest">Seu saldo está baixo. Solicite recarga para evitar interrupções.</p>
+                  </div>
+                </div>
+              )}
+
+              {/* ── ATIVIDADE RECENTE ── */}
+              <div className="space-y-6">
+                 <div className="flex items-center gap-3">
+                    <div className="h-0.5 w-6 bg-brand-tactical" />
+                    <p className="text-[9px] font-black text-theme-muted uppercase tracking-[0.4em]">Histórico de Operações</p>
+                 </div>
+
+                 <div className="bg-theme-bg/20 border border-theme-border/30 overflow-hidden">
+                    {user.franchiseProfile.transactions && user.franchiseProfile.transactions.length > 0 ? (
+                      <div className="divide-y divide-theme-border/10">
+                        {user.franchiseProfile.transactions.map(tx => (
+                          <div key={tx.id} className="p-4 flex items-center justify-between hover:bg-theme-bg-muted/10 transition-all">
+                             <div className="space-y-1">
+                                <p className="text-[10px] font-black text-theme-text uppercase tracking-tight italic">
+                                  {tx.description || (tx.type === 'PRINT_CONSUMPTION' ? 'Impressão Phygital' : 'Recarga')}
+                                </p>
+                                <p className="text-[8px] text-theme-muted font-bold uppercase tracking-widest">
+                                  {new Date(tx.createdAt).toLocaleDateString('pt-BR')} {new Date(tx.createdAt).toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit' })}
+                                </p>
+                             </div>
+                             <div className={`text-[12px] font-black italic tracking-tighter ${tx.amount > 0 ? 'text-brand-tactical' : 'text-red-400'}`}>
+                                {tx.amount > 0 ? '+' : ''}{tx.amount}
+                             </div>
+                          </div>
+                        ))}
+                      </div>
+                    ) : (
+                      <div className="p-10 text-center text-[10px] text-theme-muted uppercase font-black italic tracking-widest opacity-30">
+                        Nenhuma atividade registrada.
+                      </div>
+                    )}
+                 </div>
+              </div>
+            </div>
+          ) : null}
         </div>
 
         {/* DETALHES DO PEDIDO (DRAWER) */}
@@ -433,7 +513,7 @@ function EventGroupRow({ group, now, onSelectPedido }: {
     const diffDays = Math.ceil((dt.getTime() - now) / (864e5));
 
     if (diffDays > 10) {
-      navigate(`/e/${event.id}`);
+      navigate(`/e/${event.id}?intent=upgrade`);
     } else {
       const msg = `Olá! Gostaria de adicionar mais serviços ao meu evento "${event.nomeNoivos}". Vi que para pedidos com menos de 7 dias úteis da data, a inclusão está sujeita à disponibilidade da agenda dos profissionais.`;
       window.open(`https://wa.me/5519997843817?text=${encodeURIComponent(msg)}`, "_blank");

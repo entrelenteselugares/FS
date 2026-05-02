@@ -1,5 +1,5 @@
 import { useState, useEffect, useRef, useMemo } from "react";
-import { Users, Calendar, ArrowRight, ShieldCheck, ChevronLeft, ChevronRight, Clock, Home } from "lucide-react";
+import { Users, Calendar, ArrowRight, ShieldCheck, ChevronLeft, ChevronRight, Clock, Home, Zap, Camera, Video, Printer, Smartphone, Building2, GraduationCap, Utensils } from "lucide-react";
 import { API } from "../lib/api";
 import { useNavigate } from "react-router-dom";
 import { useAuth } from "../hooks/useAuth";
@@ -13,10 +13,10 @@ const P = {
   BASE_FREIGHT: 15,
   KM_RATE: 2.50,
   SERVICES: [
-    { id: "foto", label: "FOTOGRAFIA DIGITAL", price: 190, required: true },
-    { id: "video", label: "VÍDEO BRUTO", price: 190 },
-    { id: "reels", label: "REELS / MOBILE", price: 120 },
-    { id: "impresso", label: "ÁLBUM / IMPRESSA", price: 120 },
+    { id: "foto", label: "FOTOGRAFIA DIGITAL", price: 190, required: true, category: "Geral", description: "Cobertura fotográfica profissional." },
+    { id: "video", label: "VÍDEO BRUTO", price: 190, category: "Geral", description: "Captação de vídeo sem edição." },
+    { id: "reels", label: "REELS / MOBILE", price: 120, category: "Geral", description: "Vídeos curtos otimizados para redes sociais." },
+    { id: "impresso", label: "ÁLBUM / IMPRESSA", price: 120, category: "Phygital", description: "Impressão de fotos durante o evento." },
   ]
 };
 
@@ -66,6 +66,8 @@ interface Service {
   id: string;
   name: string;
   basePrice: number;
+  category?: string;
+  description?: string;
 }
 
 function DateTimePicker({ value, onChange, workingHours }: { value: string; onChange: (v: string) => void; workingHours?: WorkingHours | null }) {
@@ -323,9 +325,9 @@ export const QuotePage = () => {
   const currentPartner = useMemo(() => partners.find(p => p.id === selectedPartnerId), [partners, selectedPartnerId]);
 
   const availableServices = useMemo(() => {
-    const raw = catalog.length > 0 
+    const raw: Service[] = catalog.length > 0 
       ? catalog.map(s => ({ ...s, basePrice: Number(s.basePrice) }))
-      : P.SERVICES.map(s => ({ id: s.id, name: s.label, basePrice: Number(s.price) }));
+      : P.SERVICES.map(s => ({ id: s.id, name: s.label, basePrice: Number(s.price), category: s.category, description: s.description }));
     
     if (locationType === "PARTNER" && currentPartner) {
       const disabled = currentPartner.disabledServices || [];
@@ -831,32 +833,100 @@ export const QuotePage = () => {
                 )}
               </div>
 
-              {/* Serviços */}
+              {/* Serviços Categorizados */}
               <div>
-                <label style={{ fontSize: 10, fontWeight: 800, textTransform: "uppercase", marginBottom: 12, display: "block", color: THEME.text }}>Selecione os Serviços</label>
-                <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(170px, 1fr))", gap: 10 }}>
-                  {availableServices.map(s => (
-                    <div key={s.id} onClick={() => {
-                      if (selectedServices.includes(s.id)) setSelectedServices(prev => prev.filter(x => x !== s.id));
-                      else setSelectedServices(prev => [...prev, s.id]);
-                    }} style={{
-                      padding: "12px 15px", border: `1px solid ${selectedServices.includes(s.id) ? THEME.accent : THEME.border}`,
-                      cursor: "pointer", background: "var(--theme-bg-muted)", transition: "all 0.2s"
-                    }}>
-                      <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 4 }}>
-                        <div style={{ fontSize: 9, fontWeight: 900, textTransform: "uppercase", letterSpacing: 0.5 }}>{s.name}</div>
-                        {selectedServices.includes(s.id) && <div style={{ width: 6, height: 6, background: THEME.accent }} />}
+                <label style={{ fontSize: 10, fontWeight: 800, textTransform: "uppercase", marginBottom: 16, display: "block", color: THEME.text, letterSpacing: 2 }}>Selecione os Serviços</label>
+                
+                {(() => {
+                  const categories = Array.from(new Set(availableServices.map(s => s.category || "Geral")));
+                  
+                  return categories.map(cat => (
+                    <div key={cat} style={{ marginBottom: 32 }}>
+                      <h4 style={{ fontSize: 9, fontWeight: 900, textTransform: "uppercase", color: THEME.accent, letterSpacing: 3, marginBottom: 12, display: "flex", alignItems: "center", gap: 10 }}>
+                        <div style={{ width: 12, height: 1, background: THEME.accent }} /> {cat}
+                      </h4>
+                      <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(240px, 1fr))", gap: 12 }}>
+                        {availableServices.filter(s => (s.category || "Geral") === cat).map(s => {
+                          const isSelected = selectedServices.includes(s.id);
+                          const cleanName = s.name.replace(/\(UPGRADE\)/gi, "").trim();
+                          
+                          // Mapeamento de Ícones
+                          const getIcon = (_id: string, name: string) => {
+                            const n = name.toLowerCase();
+                            if (n.includes("phygital") || n.includes("impressa")) return <Printer size={18} />;
+                            if (n.includes("video") || n.includes("cinema")) return <Video size={18} />;
+                            if (n.includes("reels") || n.includes("smartphone")) return <Smartphone size={18} />;
+                            if (n.includes("corporativo") || n.includes("linkedin")) return <Building2 size={18} />;
+                            if (n.includes("gastronômico")) return <Utensils size={18} />;
+                            if (n.includes("escolar")) return <GraduationCap size={18} />;
+                            if (n.includes("casamento")) return <Zap size={18} />;
+                            return <Camera size={18} />;
+                          };
+
+                          return (
+                            <div 
+                              key={s.id} 
+                              onClick={() => {
+                                if (isSelected) setSelectedServices(prev => prev.filter(x => x !== s.id));
+                                else setSelectedServices(prev => [...prev, s.id]);
+                              }} 
+                              style={{
+                                padding: "20px", 
+                                border: `1px solid ${isSelected ? THEME.accent : THEME.border}`,
+                                cursor: "pointer", 
+                                background: isSelected ? `${THEME.accent}05` : "rgba(255,255,255,0.02)", 
+                                transition: "all 0.3s cubic-bezier(0.4, 0, 0.2, 1)",
+                                position: "relative",
+                                overflow: "hidden",
+                                display: "flex",
+                                flexDirection: "column",
+                                gap: 12
+                              }}
+                            >
+                              {/* Checkbox Visual */}
+                              <div style={{ 
+                                position: "absolute", top: 12, right: 12, 
+                                width: 16, height: 16, 
+                                border: `1.5px solid ${isSelected ? THEME.accent : THEME.border}`,
+                                display: "flex", alignItems: "center", justifyContent: "center",
+                                background: isSelected ? THEME.accent : "transparent"
+                              }}>
+                                {isSelected && <ShieldCheck size={10} color="black" strokeWidth={3} />}
+                              </div>
+
+                              <div style={{ display: "flex", alignItems: "center", gap: 12 }}>
+                                <div style={{ color: isSelected ? THEME.accent : THEME.text2, transition: "color 0.3s" }}>
+                                  {getIcon(s.id, s.name)}
+                                </div>
+                                <div style={{ flex: 1 }}>
+                                  <div style={{ fontSize: 11, fontWeight: 900, textTransform: "uppercase", letterSpacing: 0.5, color: isSelected ? THEME.accent : THEME.text }}>
+                                    {cleanName}
+                                  </div>
+                                </div>
+                              </div>
+
+                              {s.description && (
+                                <p style={{ fontSize: 9, color: THEME.text2, margin: 0, lineHeight: 1.5, opacity: 0.7 }}>
+                                  {s.description}
+                                </p>
+                              )}
+
+                              <div style={{ marginTop: "auto", display: "flex", justifyContent: "space-between", alignItems: "baseline" }}>
+                                {showPrices ? (
+                                  <div style={{ fontSize: 14, fontWeight: 900, color: THEME.accent }}>
+                                    {new Intl.NumberFormat("pt-BR", { style: "currency", currency: "BRL" }).format(getServicePrice(s.id, s.basePrice))}
+                                  </div>
+                                ) : (
+                                  <div style={{ fontSize: 8, color: THEME.text2, fontStyle: "italic", textTransform: "uppercase", letterSpacing: 1 }}>sob consulta</div>
+                                )}
+                              </div>
+                            </div>
+                          );
+                        })}
                       </div>
-                      {showPrices ? (
-                        <div style={{ fontSize: 12, fontWeight: 900, color: THEME.accent }}>
-                          {new Intl.NumberFormat("pt-BR", { style: "currency", currency: "BRL" }).format(getServicePrice(s.id, s.basePrice))}
-                        </div>
-                      ) : (
-                        <div style={{ fontSize: 8, color: THEME.text2, fontStyle: "italic" }}>sob consulta</div>
-                      )}
                     </div>
-                  ))}
-                </div>
+                  ));
+                })()}
               </div>
 
               {/* Rodapé Dinâmico de Preço */}

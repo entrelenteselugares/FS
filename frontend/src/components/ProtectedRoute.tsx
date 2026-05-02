@@ -5,7 +5,7 @@ import { T } from "../lib/theme";
 
 interface Props {
   children: React.ReactNode;
-  roles?: Array<"ADMIN" | "CARTORIO" | "UNIDADE" | "PROFISSIONAL" | "CLIENTE">;
+  roles?: Array<"ADMIN" | "CARTORIO" | "UNIDADE" | "PROFISSIONAL" | "CLIENTE" | "FRANCHISEE">;
 }
 
 export const ProtectedRoute: React.FC<Props> = ({ children, roles }) => {

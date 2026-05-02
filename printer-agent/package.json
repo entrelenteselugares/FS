@@ -1,0 +1,13 @@
+{
+  "name": "foto-segundo-printer-agent",
+  "version": "1.0.0",
+  "description": "Agente autônomo de impressão para Raspberry Pi",
+  "main": "agent.js",
+  "scripts": {
+    "start": "node agent.js"
+  },
+  "dependencies": {
+    "node-fetch": "^2.6.7",
+    "dotenv": "^16.0.3"
+  }
+}
