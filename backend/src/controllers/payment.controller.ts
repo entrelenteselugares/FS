@@ -9,6 +9,7 @@ import { FRONTEND_URL } from "../lib/config";
 import { audit } from "../lib/audit";
 import bcrypt from "bcryptjs";
 import { Prisma } from "@prisma/client";
+import { AuthRequest } from "../lib/auth";
 
 export class PaymentController {
   /**
@@ -746,7 +747,11 @@ export class PaymentController {
         buyerEmail: order.buyerEmail || order.cliente?.email,
         event: order.event,
         contributorName: order.contributorName,
-        manualType: order.manualType
+        manualType: order.manualType,
+        isGuestOrder: order.isGuestOrder,
+        deliveryType: order.deliveryType,
+        paymentModel: order.paymentModel,
+        shippingAddress: order.shippingAddress
       });
 
     } catch (error) {
@@ -839,6 +844,62 @@ export class PaymentController {
     } catch (error) {
       console.error("[CheckPaymentStatus Error]:", error);
       return res.status(500).json({ error: "Erro ao verificar pagamento." });
+    }
+  }
+
+  /**
+   * POST /api/public/orders/:id/manual-payment
+   * Baixa manual (DINHEIRO) feita por um operador autorizado (Admin/Profissional).
+   */
+  static async manualPayment(req: Request, res: Response) {
+    const { id } = req.params;
+    const { method } = req.body;
+    const authReq = req as AuthRequest;
+
+    try {
+      // 1. Verificação de Poder (Apenas Admin, Profissional ou Franqueado Ativo)
+      const user = await prisma.user.findUnique({
+        where: { id: authReq.user?.userId },
+        include: { franchiseProfile: true }
+      });
+
+      if (!user || (user.role !== "ADMIN" && user.role !== "PROFISSIONAL" && !user.franchiseProfile)) {
+        return res.status(403).json({ error: "Acesso negado. Apenas operadores podem confirmar recebimento em dinheiro." });
+      }
+
+      const order = await prisma.order.findUnique({
+        where: { id: String(id) },
+        include: { event: true }
+      });
+
+      if (!order) return res.status(404).json({ error: "Pedido não localizado." });
+      if (order.status === "APROVADO") return res.json({ success: true, alreadyPaid: true });
+
+      // 2. Atualização Atômica para APROVADO
+      const updatedOrder = await prisma.order.update({
+        where: { id: order.id },
+        data: {
+          status: "APROVADO",
+          hasPaid: true,
+          paymentMethod: method || "CASH",
+          paymentId: `MANUAL-${user.id}-${Date.now()}`
+        }
+      });
+
+      // 3. Finalização (Liberação de mídias, impressão, etc.)
+      await PaymentController.finalizeApprovedOrder(updatedOrder, order.event, req);
+
+      audit(req, "MANUAL_PAYMENT_CONFIRMED", "Order", order.id, null, { operatorId: user.id, method: method || "CASH" });
+
+      return res.json({
+        success: true,
+        orderId: order.id,
+        status: "approved"
+      });
+
+    } catch (error) {
+      console.error("[ManualPayment Error]:", error);
+      return res.status(500).json({ error: "Erro ao processar baixa manual." });
     }
   }
 

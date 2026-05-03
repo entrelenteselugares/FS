@@ -12,13 +12,13 @@ O **Foto Segundo** é uma plataforma **Phygital** (Physical + Digital) de alta p
 
 ## 🛠️ Stack Tecnológica
 
-- **Frontend**: Next.js 14+ (App/Pages Router), React, Lucide Icons, Design System "Midnight Luxury" (Vanila CSS + Design Tokens).
-- **Backend**: Node.js com Express, Prisma ORM (PostgreSQL via Supabase).
-- **Infraestrutura**: Vercel (Hosting), Supabase Storage (S3 API) para mídias, Cloudinary (opcional).
+- **Frontend**: React, Design System **"Midnight Luxury" v3.1** (Foco em alta densidade de dados, modo escuro nativo e tipografia editorial).
+- **Backend**: Node.js, Express, Prisma ORM (Unified Order Engine para transações agnósticas).
+- **Infraestrutura**: Vercel (Edge Functions), Supabase (PostgreSQL + Auth + Storage).
 - **IoT / Phygital**:
-  - **Print Agent**: Node.js executado localmente (Windows/Linux) que consome a fila `/queue` do backend.
-  - **Sharp**: Processamento de imagem no backend para overlays, marcas d'água e carimbos SVG de referência.
-- **Integrações**: Google OAuth2 (Calendar), CallMeBot (WhatsApp API), Iugu/MercadoPago (Pagamentos).
+  - **Print Agent**: Agente autônomo local para automação Web-to-Print.
+  - **Sharp Engine**: Processamento dinâmico de mídias Phygital com carimbos de referência.
+- **Integrações**: Google OAuth2 (Calendar), CallMeBot (WhatsApp), MercadoPago (Checkout Transparente).
 
 ## 📊 Motor de Créditos e Impressão
 

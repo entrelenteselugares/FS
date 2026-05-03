@@ -604,15 +604,47 @@ export default function EventPage() {
           )}
         </div>
 
-        <aside className="ep-sidebar" style={{ borderLeft: `1px solid ${T.border}`, display: "flex", flexDirection: "column", background: T.bg }}>
+        <aside className="ep-sidebar" style={{ 
+          borderLeft: `1px solid ${T.border}`, 
+          display: "flex", 
+          flexDirection: "column", 
+          background: `linear-gradient(180deg, ${T.bgCard} 0%, ${T.bg} 100%)`,
+          position: "relative"
+        }}>
+          {/* Luxury Aura Decoration */}
+          <div style={{ position: "absolute", top: 0, right: 0, width: "100%", height: "200px", background: `radial-gradient(circle at top right, ${T.brand}08 0%, transparent 70%)`, pointerEvents: "none" }} />
+
           {justPaid && (
-            <div style={{ padding: "12px 20px", background: "#4ade8008", borderBottom: `1px solid #4ade8020`, display: "flex", alignItems: "center", gap: 10 }}>
-              <Check size={14} color="#4ade80" strokeWidth={3} />
-              <span style={{ fontSize: 9, fontWeight: 800, color: "#4ade80", textTransform: "uppercase", letterSpacing: 2 }}>Pagamento confirmado</span>
+            <div style={{ padding: "20px 28px", background: "rgba(133, 185, 172, 0.08)", borderBottom: `1px solid ${T.brand}20`, display: "flex", alignItems: "center", gap: 12, position: "relative", zIndex: 2 }}>
+              <div className="w-2 h-2 rounded-full animate-pulse" style={{ background: T.brand, boxShadow: `0 0 12px ${T.brand}` }} />
+              <span style={{ fontSize: 11, fontWeight: 900, color: T.brand, textTransform: "uppercase", letterSpacing: 2 }}>Coleção Adquirida</span>
             </div>
           )}
 
-          <div className="side-inner" style={{ padding: "40px 28px", flex: 1, display: "flex", flexDirection: "column", gap: 24 }}>
+          <div className="side-inner" style={{ padding: "56px 36px", flex: 1, display: "flex", flexDirection: "column", gap: 40, position: "relative", zIndex: 2 }}>
+            <div style={{ marginBottom: -10 }}>
+              <p style={{ fontSize: 10, color: T.text3, textTransform: "uppercase", fontWeight: 900, letterSpacing: 4, marginBottom: 8 }}>Membro Exclusive</p>
+              <div style={{ width: 30, height: 2, background: T.brand }} />
+            </div>
+
+            {/* Jornada do Cliente — Sentido e Usabilidade */}
+            <div style={{ padding: "20px", background: "rgba(255,255,255,0.02)", border: `1px dashed ${T.border}`, display: "flex", flexDirection: "column", gap: 12 }}>
+              <p style={{ fontSize: 10, fontWeight: 900, color: T.text2, margin: 0, letterSpacing: 1.5, textTransform: "uppercase" }}>Sua Experiência:</p>
+              <div style={{ display: "flex", flexDirection: "column", gap: 10 }}>
+                <div style={{ display: "flex", gap: 10, alignItems: "center" }}>
+                  <div style={{ width: 14, height: 14, borderRadius: "50%", background: `${T.brand}20`, display: "flex", alignItems: "center", justifyContent: "center", fontSize: 8, color: T.brand, fontWeight: 900 }}>1</div>
+                  <span style={{ fontSize: 10, color: T.text3 }}>Explore as memórias do seu evento</span>
+                </div>
+                <div style={{ display: "flex", gap: 10, alignItems: "center" }}>
+                  <div style={{ width: 14, height: 14, borderRadius: "50%", background: `${T.brand}20`, display: "flex", alignItems: "center", justifyContent: "center", fontSize: 8, color: T.brand, fontWeight: 900 }}>2</div>
+                  <span style={{ fontSize: 10, color: T.text3 }}>Selecione as fotos favoritas</span>
+                </div>
+                <div style={{ display: "flex", gap: 10, alignItems: "center" }}>
+                  <div style={{ width: 14, height: 14, borderRadius: "50%", background: `${T.brand}20`, display: "flex", alignItems: "center", justifyContent: "center", fontSize: 8, color: T.brand, fontWeight: 900 }}>3</div>
+                  <span style={{ fontSize: 10, color: T.text3 }}>Eternize no papel premium</span>
+                </div>
+              </div>
+            </div>
             {step === "paywall" && (
               <div style={{ display: "flex", flexDirection: "column", gap: 24, animation: "fadeUp 0.3s ease" }}>
                 <div>
@@ -660,17 +692,55 @@ export default function EventPage() {
             {step === "success" && (
               <div style={{ display: "flex", flexDirection: "column", gap: 20, animation: "fadeUp 0.3s ease" }}>
                 <p style={{ color: T.brand, fontWeight: 900, textTransform: "uppercase", fontSize: 10, letterSpacing: 2 }}>Acesso Liberado</p>
-                {event.lightroomUrl && (
-                  <a href={event.lightroomUrl} target="_blank" rel="noreferrer" style={{ ...BtnPrimary, textDecoration: "none", justifyContent: "center" }}>
+                {event.lightroomUrl && event.lightroomUrl.trim() !== "" && (
+                  <a href={event.lightroomUrl} target="_blank" rel="noreferrer" style={{ ...BtnPrimary, width: "100%", textDecoration: "none", justifyContent: "center" }}>
                     📸 VER TODAS AS FOTOS
                   </a>
                 )}
-                {event.driveUrl && (
-                  <a href={event.driveUrl} target="_blank" rel="noreferrer" style={{ ...BtnSecondary, textDecoration: "none", justifyContent: "center", color: T.text }}>
+                {event.driveUrl && event.driveUrl.trim() !== "" && (
+                  <a href={event.driveUrl} target="_blank" rel="noreferrer" style={{ ...BtnSecondary, width: "100%", textDecoration: "none", justifyContent: "center", color: T.text }}>
                     🎬 VER VÍDEOS
                   </a>
                 )}
-                <button onClick={() => setShowPrintStore(true)} style={{ ...BtnSecondary, color: T.brand, borderColor: T.brand }}>📖 ETERNIZE NO PAPEL</button>
+                <div style={{ 
+                  marginTop: 8, 
+                  padding: "32px 24px", 
+                  border: `1px solid ${T.brand}20`, 
+                  background: `linear-gradient(145deg, ${T.brand}05 0%, transparent 100%)`,
+                  display: "flex", 
+                  flexDirection: "column", 
+                  gap: 20,
+                  position: "relative",
+                  overflow: "hidden"
+                }}>
+                  <div style={{ position: "absolute", top: -10, right: -10, opacity: 0.1 }}>
+                    <Printer size={80} color={T.brand} />
+                  </div>
+
+                  <div style={{ position: "relative", zIndex: 2 }}>
+                    <p style={{ color: T.brand, fontWeight: 900, textTransform: "uppercase", fontSize: 10, letterSpacing: 3, marginBottom: 4 }}>Phygital Experience</p>
+                    <h4 style={{ fontFamily: T.fontD, fontSize: 24, fontWeight: 900, margin: "0 0 16px 0", lineHeight: 1.1 }}>MEMÓRIAS QUE VOCÊ PODE TOCAR</h4>
+                    
+                    <button 
+                      onClick={() => setShowPrintStore(true)} 
+                      style={{ 
+                        ...BtnPrimary, 
+                        width: "100%", 
+                        justifyContent: "center", 
+                        fontSize: 12, 
+                        padding: "20px 24px",
+                        boxShadow: `0 15px 30px -10px ${T.brand}50`,
+                        border: `1px solid ${T.brand}40`
+                      }}
+                    >
+                      <Printer size={18} style={{ marginRight: 8 }} /> ETERNIZE NO PAPEL
+                    </button>
+
+                    <p style={{ fontSize: 9, color: T.text2, textAlign: "center", marginTop: 16, textTransform: "uppercase", letterSpacing: 1.5, opacity: 0.7 }}>
+                      Álbuns e Revelações Premium
+                    </p>
+                  </div>
+                </div>
                 
                 {access?.isGuestOrder && access?.guestToken && (
                   <button 
@@ -679,9 +749,19 @@ export default function EventPage() {
                       navigator.clipboard.writeText(link);
                       alert("Link de Acesso (Magic Link) copiado!");
                     }}
-                    style={{ ...BtnSecondary, background: `${T.brand}10`, color: T.brand, borderColor: `${T.brand}40`, justifyContent: "center", gap: 8 }}
+                    style={{ 
+                      ...BtnSecondary, 
+                      width: "100%", 
+                      background: "transparent", 
+                      color: T.text3, 
+                      borderColor: T.border, 
+                      justifyContent: "center", 
+                      gap: 8, 
+                      fontSize: 9,
+                      letterSpacing: 2
+                    }}
                   >
-                    🔗 COPIAR LINK DE ACESSO (CONVIDADO)
+                    🔗 LINK DE CONVIDADO
                   </button>
                 )}
                 

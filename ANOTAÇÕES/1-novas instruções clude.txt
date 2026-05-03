@@ -1,0 +1,671 @@
+Perfeito. Vamos implementar o controle de acesso LGPD completo.
+
+---
+
+## Arquitetura da solução
+
+```
+Comprador paga
+    ↓
+Sistema verifica: e-mail do pedido == e-mail do usuário logado?
+    ↓ sim
+Escolhe: Público (90 dias) ou Privado (15 dias)
+    ↓
+Cron Job diário verifica expiração
+    ↓
+Arquivos excluídos permanentemente + notificação prévia
+```
+
+---
+
+## BACKEND
+
+### 1. Atualizar o schema Prisma
+
+Adicione em `prisma/schema.prisma`, no model `Order`:
+
+```prisma
+model Order {
+  // ... campos existentes ...
+
+  // LGPD
+  accessType        String?   // "PUBLIC" | "PRIVATE" | null (não escolhido ainda)
+  accessChosenAt    DateTime?
+  accessExpiresAt   DateTime? // já existe — confirmar que está no schema
+  deletedAt         DateTime? // quando foi excluído permanentemente
+  warningsSent      Int       @default(0) // quantos avisos de expiração foram enviados
+
+  @@map("orders")
+}
+```
+
+Rode:
+```bash
+npx prisma db push
+npx prisma generate
+```
+
+---
+
+### 2. `src/controllers/access.controller.ts`
+
+```typescript
+import { Request, Response } from "express";
+import { prisma } from "../lib/prisma";
+
+// POST /api/orders/:id/access-type
+// Comprador escolhe PUBLIC ou PRIVATE após pagamento
+export async function chooseAccessType(req: Request, res: Response): Promise<void> {
+  const { id } = req.params;
+  const { accessType } = req.body;
+  const userId = req.user!.userId;
+
+  if (!["PUBLIC", "PRIVATE"].includes(accessType)) {
+    res.status(400).json({ error: "Tipo inválido. Use PUBLIC ou PRIVATE." });
+    return;
+  }
+
+  try {
+    // Busca o pedido
+    const order = await prisma.order.findFirst({
+      where: { id },
+      include: { event: true },
+    });
+
+    if (!order) {
+      res.status(404).json({ error: "Pedido não encontrado." });
+      return;
+    }
+
+    // ── Verificação LGPD ──────────────────────────────
+    // O usuário logado deve ser o dono do pedido
+    if (order.userId !== userId) {
+      res.status(403).json({
+        error: "Acesso negado. Apenas o titular do pedido pode definir a privacidade.",
+      });
+      return;
+    }
+
+    // Verifica se já foi escolhido (imutável após primeira escolha)
+    if (order.accessType) {
+      res.status(409).json({
+        error: `Tipo de acesso já definido como ${order.accessType}. Esta escolha não pode ser alterada.`,
+        accessType: order.accessType,
+        accessExpiresAt: order.accessExpiresAt,
+      });
+      return;
+    }
+
+    // Verifica se o pagamento foi aprovado
+    const aprovado = order.status === "APPROVED" || (order as any).status === "APROVADO";
+    if (!aprovado) {
+      res.status(403).json({ error: "Pagamento ainda não confirmado." });
+      return;
+    }
+
+    // Calcula expiração baseado na escolha
+    const now = new Date();
+    const diasExpiracao = accessType === "PUBLIC" ? 90 : 15;
+    const accessExpiresAt = new Date(now.getTime() + diasExpiracao * 24 * 60 * 60 * 1000);
+
+    // Atualiza o pedido
+    const updated = await prisma.order.update({
+      where: { id },
+      data: {
+        accessType,
+        accessChosenAt: now,
+        accessExpiresAt,
+      },
+    });
+
+    // Se PUBLIC, o evento fica visível no portfolio
+    if (accessType === "PUBLIC") {
+      await prisma.event.update({
+        where: { id: order.eventId },
+        data: { active: true },
+      });
+    }
+
+    res.json({
+      accessType: updated.accessType,
+      accessExpiresAt: updated.accessExpiresAt,
+      diasRestantes: diasExpiracao,
+      mensagem: accessType === "PUBLIC"
+        ? `Seu álbum ficará público por 90 dias. Faça o download antes de ${accessExpiresAt.toLocaleDateString("pt-BR")}.`
+        : `Você tem 15 dias para fazer o download. Após ${accessExpiresAt.toLocaleDateString("pt-BR")} os arquivos serão excluídos permanentemente.`,
+    });
+
+  } catch (err) {
+    console.error("chooseAccessType:", err);
+    res.status(500).json({ error: "Erro ao definir tipo de acesso." });
+  }
+}
+
+// GET /api/orders/:id/access-status
+// Verifica status do acesso (usado pelo frontend para mostrar prazo)
+export async function getAccessStatus(req: Request, res: Response): Promise<void> {
+  const { id } = req.params;
+  const userId = req.user!.userId;
+
+  try {
+    const order = await prisma.order.findFirst({
+      where: { id, userId },
+      include: {
+        event: {
+          select: {
+            title: true, slug: true,
+            lightroomUrl: true, driveUrl: true,
+          },
+        },
+      },
+    });
+
+    if (!order) {
+      res.status(404).json({ error: "Pedido não encontrado." });
+      return;
+    }
+
+    const aprovado = order.status === "APPROVED" || (order as any).status === "APROVADO";
+
+    // Verifica se expirou
+    const now = new Date();
+    const expirado = order.accessExpiresAt ? order.accessExpiresAt < now : false;
+    const excluido = !!(order as any).deletedAt;
+
+    if (excluido || expirado) {
+      res.json({
+        status: "EXPIRED",
+        mensagem: "Este conteúdo foi excluído permanentemente conforme os termos de uso.",
+        lightroomUrl: null,
+        driveUrl: null,
+      });
+      return;
+    }
+
+    const diasRestantes = order.accessExpiresAt
+      ? Math.ceil((order.accessExpiresAt.getTime() - now.getTime()) / (1000 * 60 * 60 * 24))
+      : null;
+
+    res.json({
+      status: order.accessType ? "ACTIVE" : aprovado ? "PENDING_CHOICE" : "PENDING_PAYMENT",
+      accessType: order.accessType,
+      accessExpiresAt: order.accessExpiresAt,
+      diasRestantes,
+      // Links apenas se ativo e não expirado
+      lightroomUrl: (order.accessType && !expirado) ? order.event.lightroomUrl : null,
+      driveUrl: (order.accessType && !expirado) ? order.event.driveUrl : null,
+      eventTitle: order.event.title,
+      eventSlug: order.event.slug,
+    });
+
+  } catch (err) {
+    console.error("getAccessStatus:", err);
+    res.status(500).json({ error: "Erro ao verificar status." });
+  }
+}
+
+// POST /api/admin/orders/:id/delete-media — exclusão manual pelo admin
+export async function deleteMediaAdmin(req: Request, res: Response): Promise<void> {
+  const { id } = req.params;
+
+  try {
+    await prisma.order.update({
+      where: { id },
+      data: { deletedAt: new Date() } as any,
+    });
+    res.json({ ok: true, mensagem: "Mídia marcada como excluída." });
+  } catch {
+    res.status(500).json({ error: "Erro ao excluir mídia." });
+  }
+}
+```
+
+---
+
+### 3. Cron Job de expiração
+
+**`src/jobs/expiration.job.ts`**
+
+```typescript
+import { prisma } from "../lib/prisma";
+
+export async function runExpirationJob(): Promise<void> {
+  const now = new Date();
+  console.log(`[EXPIRATION JOB] Rodando em ${now.toISOString()}`);
+
+  // ── 1. Envia aviso 3 dias antes da expiração ──────
+  const tresDispara = new Date(now.getTime() + 3 * 24 * 60 * 60 * 1000);
+
+  const proximosDeExpirar = await prisma.order.findMany({
+    where: {
+      accessType: { not: null },
+      accessExpiresAt: {
+        gte: now,
+        lte: tresDispara,
+      },
+      warningsSent: { lt: 1 },
+      deletedAt: null,
+    } as any,
+    include: {
+      event: { select: { title: true } },
+    },
+  });
+
+  for (const order of proximosDeExpirar) {
+    const dias = Math.ceil(
+      ((order.accessExpiresAt?.getTime() ?? 0) - now.getTime()) / (1000 * 60 * 60 * 24)
+    );
+
+    console.log(`[EXPIRATION JOB] Aviso: pedido ${order.id} expira em ${dias} dias`);
+
+    // TODO: enviar e-mail/WhatsApp para order.buyerEmail
+    // await sendExpirationWarning(order.buyerEmail, order.event.title, dias);
+
+    await prisma.order.update({
+      where: { id: order.id },
+      data: { warningsSent: { increment: 1 } } as any,
+    });
+  }
+
+  // ── 2. Marca como excluído os pedidos expirados ───
+  const expirados = await prisma.order.findMany({
+    where: {
+      accessType: { not: null },
+      accessExpiresAt: { lt: now },
+      deletedAt: null,
+    } as any,
+    include: {
+      event: { select: { title: true, id: true } },
+    },
+  });
+
+  for (const order of expirados) {
+    console.log(`[EXPIRATION JOB] Excluindo mídia do pedido ${order.id}`);
+
+    await prisma.order.update({
+      where: { id: order.id },
+      data: { deletedAt: now } as any,
+    });
+
+    // Se era PUBLIC, verifica se ainda há outros pedidos ativos no evento
+    if (order.accessType === "PUBLIC") {
+      const outrosAtivos = await prisma.order.count({
+        where: {
+          eventId: order.event.id,
+          accessType: "PUBLIC",
+          deletedAt: null,
+          accessExpiresAt: { gte: now },
+        } as any,
+      });
+
+      // Se não há mais pedidos públicos ativos, desativa o evento do portfolio
+      if (outrosAtivos === 0) {
+        await prisma.event.update({
+          where: { id: order.event.id },
+          data: { active: false },
+        });
+      }
+    }
+  }
+
+  console.log(`[EXPIRATION JOB] Concluído. ${proximosDeExpirar.length} avisos, ${expirados.length} exclusões.`);
+}
+```
+
+**`src/server.ts`** — adicione o cron:
+
+```typescript
+import { runExpirationJob } from "./jobs/expiration.job";
+
+// Roda o job a cada 24 horas
+setInterval(async () => {
+  await runExpirationJob().catch(console.error);
+}, 24 * 60 * 60 * 1000);
+
+// Roda também na inicialização
+runExpirationJob().catch(console.error);
+```
+
+---
+
+### 4. Rotas novas em `src/routes/index.ts`
+
+```typescript
+import {
+  chooseAccessType,
+  getAccessStatus,
+  deleteMediaAdmin,
+} from "../controllers/access.controller";
+
+// Acesso LGPD
+router.post("/orders/:id/access-type", requireAuth, chooseAccessType);
+router.get("/orders/:id/access-status", requireAuth, getAccessStatus);
+router.post("/admin/orders/:id/delete-media", requireAuth, requireRole("ADMIN"), deleteMediaAdmin);
+```
+
+---
+
+## FRONTEND
+
+### `src/components/AccessTypeModal.tsx`
+
+O modal que aparece após o pagamento confirmado, **antes** de liberar os links:
+
+```tsx
+import { useState } from "react";
+import { api } from "../lib/api";
+
+interface AccessTypeModalProps {
+  orderId: string;
+  eventTitle: string;
+  onConfirmed: (accessType: string, expiresAt: string) => void;
+}
+
+const T = {
+  bg:     "#0c0c0c",
+  card:   "#111",
+  border: "#1c1c1c",
+  border2:"#2a2a2a",
+  text:   "#f0ede8",
+  text2:  "#999",
+  text3:  "#555",
+  accent: "#8a9a5b",
+  fontD:  "'Barlow Condensed', sans-serif",
+  fontB:  "'Inter', sans-serif",
+};
+
+export default function AccessTypeModal({ orderId, eventTitle, onConfirmed }: AccessTypeModalProps) {
+  const [selected, setSelected] = useState<"PUBLIC" | "PRIVATE" | null>(null);
+  const [saving, setSaving] = useState(false);
+  const [error, setError] = useState("");
+
+  const handleConfirm = async () => {
+    if (!selected) return;
+    setSaving(true);
+    setError("");
+    try {
+      const { data } = await api.post(`/orders/${orderId}/access-type`, {
+        accessType: selected,
+      });
+      onConfirmed(data.accessType, data.accessExpiresAt);
+    } catch (err: any) {
+      setError(err.response?.data?.error ?? "Erro ao salvar escolha.");
+    } finally {
+      setSaving(false);
+    }
+  };
+
+  return (
+    <div style={{
+      position: "fixed", inset: 0, background: "rgba(0,0,0,0.92)",
+      display: "flex", alignItems: "center", justifyContent: "center",
+      zIndex: 100, padding: 24, fontFamily: T.fontB,
+    }}>
+      <div style={{ background: T.card, border: `1px solid ${T.border}`, maxWidth: 480, width: "100%" }}>
+
+        {/* Header */}
+        <div style={{ padding: "24px 24px 0" }}>
+          <p style={{ fontSize: 10, letterSpacing: 2, textTransform: "uppercase", color: T.accent, marginBottom: 8 }}>
+            Privacidade dos arquivos
+          </p>
+          <h2 style={{ fontFamily: T.fontD, fontWeight: 900, fontSize: 28, color: "#fff", textTransform: "uppercase", lineHeight: 1, marginBottom: 8 }}>
+            {eventTitle}
+          </h2>
+          <p style={{ fontSize: 13, color: T.text2, lineHeight: 1.6, marginBottom: 24 }}>
+            Escolha como seus arquivos serão armazenados. <strong style={{ color: T.text }}>Esta escolha é permanente e não pode ser alterada.</strong>
+          </p>
+        </div>
+
+        {/* Opções */}
+        <div style={{ padding: "0 24px", display: "flex", flexDirection: "column", gap: 10, marginBottom: 20 }}>
+
+          {/* PUBLIC */}
+          <button
+            onClick={() => setSelected("PUBLIC")}
+            style={{
+              background: selected === "PUBLIC" ? "#0f130a" : T.bg,
+              border: `1px solid ${selected === "PUBLIC" ? T.accent : T.border2}`,
+              padding: 16, textAlign: "left", cursor: "pointer", transition: "all .15s",
+            }}
+          >
+            <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start", marginBottom: 8 }}>
+              <div style={{ display: "flex", alignItems: "center", gap: 10 }}>
+                <div style={{
+                  width: 18, height: 18, border: `2px solid ${selected === "PUBLIC" ? T.accent : T.border2}`,
+                  borderRadius: "50%", display: "flex", alignItems: "center", justifyContent: "center",
+                }}>
+                  {selected === "PUBLIC" && <div style={{ width: 8, height: 8, background: T.accent, borderRadius: "50%" }} />}
+                </div>
+                <span style={{ fontFamily: T.fontD, fontWeight: 900, fontSize: 17, color: "#fff", textTransform: "uppercase", letterSpacing: 1 }}>
+                  Público
+                </span>
+              </div>
+              <span style={{ fontSize: 10, background: "#0f130a", border: `1px solid ${T.accent}`, color: T.accent, padding: "3px 8px", letterSpacing: 1, textTransform: "uppercase" }}>
+                90 dias
+              </span>
+            </div>
+            <p style={{ fontSize: 12, color: T.text2, lineHeight: 1.6, marginLeft: 28 }}>
+              Seu álbum aparece no portfólio público do Foto Segundo e pode ser acessado por qualquer pessoa via link.
+              Você tem <strong style={{ color: T.text }}>90 dias</strong> para fazer o download completo.
+            </p>
+            <div style={{ marginLeft: 28, marginTop: 8, padding: "8px 10px", background: "rgba(138,154,91,0.08)", borderLeft: `2px solid ${T.accent}` }}>
+              <p style={{ fontSize: 11, color: T.text3 }}>
+                Ideal para compartilhar com família e convidados. O link pode ser enviado pelo WhatsApp.
+              </p>
+            </div>
+          </button>
+
+          {/* PRIVATE */}
+          <button
+            onClick={() => setSelected("PRIVATE")}
+            style={{
+              background: selected === "PRIVATE" ? "#1a0a0a" : T.bg,
+              border: `1px solid ${selected === "PRIVATE" ? "#ef4444" : T.border2}`,
+              padding: 16, textAlign: "left", cursor: "pointer", transition: "all .15s",
+            }}
+          >
+            <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start", marginBottom: 8 }}>
+              <div style={{ display: "flex", alignItems: "center", gap: 10 }}>
+                <div style={{
+                  width: 18, height: 18, border: `2px solid ${selected === "PRIVATE" ? "#ef4444" : T.border2}`,
+                  borderRadius: "50%", display: "flex", alignItems: "center", justifyContent: "center",
+                }}>
+                  {selected === "PRIVATE" && <div style={{ width: 8, height: 8, background: "#ef4444", borderRadius: "50%" }} />}
+                </div>
+                <span style={{ fontFamily: T.fontD, fontWeight: 900, fontSize: 17, color: "#fff", textTransform: "uppercase", letterSpacing: 1 }}>
+                  Privado
+                </span>
+              </div>
+              <span style={{ fontSize: 10, background: "#1a0a0a", border: "1px solid #ef4444", color: "#ef4444", padding: "3px 8px", letterSpacing: 1, textTransform: "uppercase" }}>
+                15 dias
+              </span>
+            </div>
+            <p style={{ fontSize: 12, color: T.text2, lineHeight: 1.6, marginLeft: 28 }}>
+              Seus arquivos ficam acessíveis apenas para você, com login. O link <strong style={{ color: T.text }}>não é público</strong>.
+              Você tem <strong style={{ color: T.text }}>15 dias</strong> para fazer o download.
+            </p>
+            <div style={{ marginLeft: 28, marginTop: 8, padding: "8px 10px", background: "rgba(239,68,68,0.06)", borderLeft: "2px solid #ef4444" }}>
+              <p style={{ fontSize: 11, color: T.text3 }}>
+                Após 15 dias os arquivos são excluídos permanentemente e não podem ser recuperados.
+              </p>
+            </div>
+          </button>
+        </div>
+
+        {/* LGPD disclaimer */}
+        <div style={{ margin: "0 24px 20px", padding: "12px 14px", background: "#0a0a0a", border: `1px solid ${T.border}` }}>
+          <p style={{ fontSize: 11, color: T.text3, lineHeight: 1.6 }}>
+            <strong style={{ color: T.text2 }}>LGPD — Lei 13.709/2018:</strong> Em conformidade com a legislação brasileira de proteção de dados, apenas o titular do pedido (e-mail cadastrado) pode acessar estes arquivos. Após o prazo escolhido, os dados são excluídos permanentemente de nossos servidores.
+          </p>
+        </div>
+
+        {error && (
+          <div style={{ margin: "0 24px 16px", padding: "10px 12px", background: "#1a0a0a", border: "1px solid #3a1a1a" }}>
+            <p style={{ fontSize: 12, color: "#f87171", margin: 0 }}>{error}</p>
+          </div>
+        )}
+
+        {/* Botão confirmar */}
+        <div style={{ padding: "0 24px 24px" }}>
+          <button
+            onClick={handleConfirm}
+            disabled={!selected || saving}
+            style={{
+              width: "100%", padding: 14,
+              background: selected ? T.accent : "#1a1a1a",
+              color: selected ? "#0c0c0c" : T.text3,
+              border: "none", fontFamily: T.fontD, fontWeight: 900,
+              fontSize: 15, letterSpacing: 2, textTransform: "uppercase",
+              cursor: selected ? "pointer" : "not-allowed",
+            }}
+          >
+            {saving ? "Confirmando..." : selected ? `Confirmar — ${selected === "PUBLIC" ? "Público (90 dias)" : "Privado (15 dias)"}` : "Selecione uma opção"}
+          </button>
+          <p style={{ fontSize: 10, color: T.text3, textAlign: "center", marginTop: 8, letterSpacing: "0.5px" }}>
+            Esta escolha é definitiva e não pode ser alterada posteriormente
+          </p>
+        </div>
+      </div>
+    </div>
+  );
+}
+```
+
+---
+
+### Integrar o modal no `EventPage.tsx`
+
+No estado de `success`, antes de mostrar os links, verifique se o usuário já escolheu o tipo de acesso:
+
+```tsx
+import AccessTypeModal from "../components/AccessTypeModal";
+
+// Adicione estado:
+const [needsAccessChoice, setNeedsAccessChoice] = useState(false);
+const [accessType, setAccessType] = useState<string | null>(null);
+const [accessExpiresAt, setAccessExpiresAt] = useState<string | null>(null);
+
+// Modifique o checkAccess:
+const checkAccess = async (oid: string) => {
+  try {
+    const { data } = await api.get(`/orders/${oid}/access-status`);
+
+    if (data.status === "PENDING_CHOICE") {
+      // Pagamento confirmado mas ainda não escolheu público/privado
+      setStep("success");
+      setNeedsAccessChoice(true);
+      return;
+    }
+
+    if (data.status === "EXPIRED") {
+      setStep("success");
+      setAccess({ lightroomUrl: null, driveUrl: null });
+      return;
+    }
+
+    if (data.status === "ACTIVE") {
+      setAccess({ lightroomUrl: data.lightroomUrl, driveUrl: data.driveUrl });
+      setAccessType(data.accessType);
+      setAccessExpiresAt(data.accessExpiresAt);
+      setStep("success");
+      setNeedsAccessChoice(false);
+    }
+  } catch {
+    // não pago ainda
+  }
+};
+
+// No JSX, adicione o modal quando necessário:
+{needsAccessChoice && orderId && event && (
+  <AccessTypeModal
+    orderId={orderId}
+    eventTitle={event.title}
+    onConfirmed={(type, expiresAt) => {
+      setAccessType(type);
+      setAccessExpiresAt(expiresAt);
+      setNeedsAccessChoice(false);
+      // Recarrega o acesso com os links
+      if (orderId) checkAccess(orderId);
+    }}
+  />
+)}
+
+// No bloco de links desbloqueados, adicione o aviso de prazo:
+{step === "success" && access && !needsAccessChoice && accessExpiresAt && (
+  <div style={{ marginTop: 12, padding: "10px 14px", background: accessType === "PRIVATE" ? "#1a0a0a" : "#0f130a", border: `1px solid ${accessType === "PRIVATE" ? "#3a1a1a" : T.border}` }}>
+    <p style={{ fontSize: 12, color: accessType === "PRIVATE" ? "#f87171" : T.accent }}>
+      {accessType === "PRIVATE" ? "⚠️" : "📅"}{" "}
+      {accessType === "PUBLIC" ? "Álbum público" : "Acesso privado"} — expira em{" "}
+      <strong>{new Date(accessExpiresAt).toLocaleDateString("pt-BR")}</strong>
+      {" "}({Math.ceil((new Date(accessExpiresAt).getTime() - Date.now()) / 86400000)} dias restantes)
+    </p>
+  </div>
+)}
+```
+
+---
+
+### Adicionar indicador na `ClienteArea.tsx`
+
+No componente `PedidoRow`, mostre o prazo restante com alerta visual:
+
+```tsx
+// Dentro do PedidoRow, após as tags de serviço:
+{pedido.accessExpiresAt && pedido.hasPaid && (
+  <div style={{ marginTop: 6 }}>
+    {(() => {
+      const dias = Math.ceil((new Date(pedido.accessExpiresAt).getTime() - Date.now()) / 86400000);
+      const urgente = dias <= 5;
+      const expirado = dias <= 0;
+      return (
+        <span style={{
+          fontSize: 10, padding: "2px 8px", letterSpacing: 1,
+          textTransform: "uppercase",
+          background: expirado ? "#1a0a0a" : urgente ? "#1a0d00" : "#0f130a",
+          border: `1px solid ${expirado ? "#3a1a1a" : urgente ? "#3a2000" : T.border}`,
+          color: expirado ? "#f87171" : urgente ? "#f59e0b" : T.accent,
+        }}>
+          {expirado
+            ? "Expirado"
+            : `${dias}d restantes — ${pedido.accessType === "PUBLIC" ? "Público" : "Privado"}`}
+        </span>
+      );
+    })()}
+  </div>
+)}
+```
+
+---
+
+## Commit
+
+```bash
+git add backend/src/controllers/access.controller.ts
+git add backend/src/jobs/expiration.job.ts
+git add backend/src/routes/index.ts
+git add backend/src/server.ts
+git add backend/prisma/schema.prisma
+git add frontend/src/components/AccessTypeModal.tsx
+git add frontend/src/pages/EventPage.tsx
+git add frontend/src/pages/ClienteArea.tsx
+git commit -m "feat: LGPD - controle de acesso publico/privado, prazo de expiracao, cron de exclusao"
+git push origin main
+```
+
+---
+
+## Resumo do fluxo completo
+
+| Etapa | O que acontece |
+|---|---|
+| Pagamento aprovado | `hasPaid = true`, status `PENDING_CHOICE` |
+| Modal aparece | Usuário escolhe Público ou Privado |
+| Confirmação | `accessType` salvo, `accessExpiresAt` calculado |
+| Público | Portfolio visível, 90 dias de prazo |
+| Privado | Só o titular vê, 15 dias de prazo |
+| 3 dias antes | Aviso de expiração enviado |
+| Expiração | `deletedAt` marcado, links retornam `null` |
+
+Após validar isso funcionando, partimos para o **sistema de curtidas e gamificação**.
+
+

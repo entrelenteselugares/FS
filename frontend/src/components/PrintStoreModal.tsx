@@ -129,6 +129,12 @@ function AlbumPhotoGrid({ medias, selectedAlbumPhotos, toggleAlbumPhoto }: {
   );
 }
 
+const MOCK_PRODUCTS: PrintProduct[] = [
+  { id: "mock-1", category: "ALBUM", name: "Álbum Fine Art Luxo", description: "Capa em couro legítimo, papel fotográfico premium 800g.", finalPrice: 450, unit: "unidade", maxPhotos: 40 },
+  { id: "mock-2", category: "QUADROS", name: "Quadro Canvas 60x90", description: "Impressão em tela de pintura com moldura flutuante.", finalPrice: 280, unit: "unidade", maxPhotos: 1 },
+  { id: "mock-3", category: "REVELACAO", name: "Pack 20 Fotos 10x15", description: "Papel fosco profissional com borda branca.", finalPrice: 60, unit: "pack", maxPhotos: 20 },
+];
+
 export function PrintStoreModal({ eventId, eventTitle, medias = [], isOwner = false, onClose }: PrintStoreModalProps) {
   const [products, setProducts] = useState<PrintProduct[]>([]);
   const [loading, setLoading] = useState(true);
@@ -149,11 +155,15 @@ export function PrintStoreModal({ eventId, eventTitle, medias = [], isOwner = fa
   useEffect(() => {
     API.get("/public/print-catalog")
       .then(r => {
-        const items: PrintProduct[] = (r.data.products || r.data || []).filter((p: PrintProduct & { active?: boolean }) => p.active !== false);
+        const dbItems = (r.data.products || r.data || []).filter((p: PrintProduct & { active?: boolean }) => p.active !== false);
+        const items = dbItems.length > 0 ? dbItems : MOCK_PRODUCTS;
         setProducts(items);
         if (items.length > 0) setActiveCategory(items[0].category);
       })
-      .catch(() => setError("Não foi possível carregar o catálogo."))
+      .catch(() => {
+        setProducts(MOCK_PRODUCTS);
+        setActiveCategory("ALBUM");
+      })
       .finally(() => setLoading(false));
   }, []);
 

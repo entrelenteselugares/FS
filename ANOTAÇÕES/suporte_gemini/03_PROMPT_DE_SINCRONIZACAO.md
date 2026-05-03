@@ -17,11 +17,11 @@
 
 ## 📍 ESTADO ATUAL (HANDOFF)
 
-- **Deploy**: Release "Midnight Luxury" v3.0 está **LIVE** em produção.
-- **Schema**: Estável e auditado. Pedidos (`Order`) vinculados a `Event` e `User`.
-- **UI/UX**: Sidebar e área do cliente corrigidas (sem máscaras de bloqueio). Tabs nativas para perfil.
-- **Integração**: OAuth2 Google Calendar em fase de refinamento. Sincronização manual operacional; bloqueio de vitrine em progresso.
-- **Branding**: Nome unificado para **Foto Print Live**.
+- **Deploy (Vercel)**: Unified Order Engine estabilizado com diagnóstico de boot (`api/index.js`).
+- **Resiliência**: AuthController com fallback local (Supabase failover) e Theme anti-flicker no index.html.
+- **Phygital Store**: EventPage com UI "Midnight Luxury" v3.1, catálogo mock para testes e guia de jornada.
+- **Data Integrity**: Database cleanup concluído (remoção de strings "null" em links).
+- **Branding**: Estética Editorial Phygital consolidada como diferencial de mercado.
 
 ## 🎯 DIRETRIZES DE CODIFICAÇÃO
 

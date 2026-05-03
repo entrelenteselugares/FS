@@ -7,7 +7,7 @@ import { ThemeContext, type Theme } from "./ThemeContextCore";
 export function ThemeProvider({ children }: { children: ReactNode }) {
   const [theme, setTheme] = useState<Theme>(() => {
     const saved = localStorage.getItem("fs_theme") as Theme;
-    return saved ?? "light";
+    return saved || (document.documentElement.getAttribute("data-theme") as Theme) || "dark";
   });
 
   // ── Sync Theme (Light/Dark) ──
@@ -19,6 +19,7 @@ export function ThemeProvider({ children }: { children: ReactNode }) {
   }, [theme]);
 
   // ── Fetch Brand Identity (Dynamic Colors) ──
+
   useEffect(() => {
     API.get("/public/configs/theme")
       .then(({ data }) => {

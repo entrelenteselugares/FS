@@ -237,6 +237,7 @@ router.post(
 // ── Pedido e Catálogo Público ────────────────────────────────────────────────
 router.get("/public/orders/:id",               PaymentController.getOrderPublic);
 router.get("/public/orders/:id/check-payment", PaymentController.checkPaymentStatus);
+router.post("/public/orders/:id/manual-payment", requireAuth, PaymentController.manualPayment);
 router.get("/public/print-catalog",            AdminPrintCatalog.getPublicPrintCatalog);
 router.post("/orders/print",                   PaymentController.createPrintOrder);
 

@@ -1,0 +1,887 @@
+🎮 Sistema de Gamificação — Especificação Completa
+Visão Geral
+
+Foto publicada no portfolio público
+        ↓
+Convidados curtem as fotos
+        ↓
+Curtidas acumulam pontos para o titular do álbum
+        ↓
+Pontos trocados por fotos impressas
+        ↓
+Impressora própria ou fornecedor externo entrega
+
+1. Regras de Negócio
+Quem pode curtir: qualquer pessoa logada, exceto o próprio titular do álbum.
+Limite de curtidas: 1 curtida por usuário por foto. Sem spam.
+Conversão de pontos:
+
+1 curtida = 1 ponto
+12 pontos = 1 foto impressa 10x15
+24 pontos = 2 fotos impressas
+36 pontos = 3 fotos impressas
+
+Validade dos pontos: 365 dias a partir da data da curtida.
+Concursos: o admin cria um concurso vinculado a um período. As fotos com mais curtidas no período ganham premiação extra.
+
+2. Schema Prisma — adicionar ao schema.prisma
+
+// ─────────────────────────────────────────
+// GAMIFICAÇÃO
+// ─────────────────────────────────────────
+
+model PhotoLike {
+  id        String   @id @default(cuid())
+  userId    String
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  eventId   String
+  event     Event    @relation(fields: [eventId], references: [id], onDelete: Cascade)
+  photoUrl  String   // URL da foto específica curtida
+  createdAt DateTime @default(now())
+  expiresAt DateTime // +365 dias
+
+  @@unique([userId, eventId, photoUrl])
+  @@map("photo_likes")
+}
+
+model UserPoints {
+  id        String   @id @default(cuid())
+  userId    String   @unique
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  total     Int      @default(0)
+  redeemed  Int      @default(0) // já resgatados
+  updatedAt DateTime @updatedAt
+
+  @@map("user_points")
+}
+
+model PrintRedemption {
+  id            String            @id @default(cuid())
+  userId        String
+  user          User              @relation(fields: [userId], references: [id])
+  pointsUsed    Int
+  quantity      Int               // qtd de fotos
+  packageType   String            // "12" | "24" | "36"
+  status        RedemptionStatus  @default(PENDING)
+  // Fotos escolhidas (URLs)
+  selectedPhotos String[]
+  // Entrega
+  deliveryType  String            // "PICKUP" | "MAIL" | "SEDEX"
+  addressJson   String?           // JSON com endereço
+  trackingCode  String?
+  // Fornecedor
+  supplierId    String?
+  supplier      PrintSupplier?    @relation(fields: [supplierId], references: [id])
+  // Financeiro
+  unitCost      Decimal?          @db.Decimal(10, 2)
+  shippingCost  Decimal?          @db.Decimal(10, 2)
+  totalCost     Decimal?          @db.Decimal(10, 2)
+  // Timestamps
+  createdAt     DateTime          @default(now())
+  updatedAt     DateTime          @updatedAt
+
+  @@map("print_redemptions")
+}
+
+enum RedemptionStatus {
+  PENDING
+  APPROVED
+  PRINTING
+  SHIPPED
+  DELIVERED
+  CANCELLED
+}
+
+model PrintSupplier {
+  id            String   @id @default(cuid())
+  name          String
+  type          String   // "OWN_PRINTER" | "EXTERNAL"
+  printerModel  String?
+  printerCost   Decimal? @db.Decimal(10, 2)
+  costPer10x15  Decimal  @db.Decimal(10, 4) // custo por foto 10x15
+  costPer4x6    Decimal? @db.Decimal(10, 4)
+  // Embalagem e envio
+  boxCost       Decimal? @db.Decimal(10, 4)
+  labelCost     Decimal? @db.Decimal(10, 4)
+  uberCost      Decimal? @db.Decimal(10, 2) // custo do Uber até os Correios
+  baseCep       String?  // CEP de origem (13050-251)
+  active        Boolean  @default(true)
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+
+  redemptions   PrintRedemption[]
+
+  @@map("print_suppliers")
+}
+
+model Contest {
+  id          String        @id @default(cuid())
+  title       String
+  description String?
+  startDate   DateTime
+  endDate     DateTime
+  status      ContestStatus @default(DRAFT)
+  // Premiação
+  prize1st    String        // "3 fotos impressas"
+  prize2nd    String?
+  prize3rd    String?
+  prize1stPts Int           // pontos extras para 1º lugar
+  prize2ndPts Int?
+  prize3rdPts Int?
+  createdAt   DateTime      @default(now())
+
+  @@map("contests")
+}
+
+enum ContestStatus {
+  DRAFT
+  ACTIVE
+  FINISHED
+}
+
+Rode:
+
+npx prisma db push
+npx prisma generate
+
+3. Backend — Controllers
+src/controllers/gamification.controller.ts
+
+import { Request, Response } from "express";
+import { prisma } from "../lib/prisma";
+
+// ── CURTIDAS ──────────────────────────────────────────
+
+// POST /api/events/:slug/photos/like
+export async function likePhoto(req: Request, res: Response): Promise<void> {
+  const userId = req.user!.userId;
+  const { slug } = req.params;
+  const { photoUrl } = req.body;
+
+  if (!photoUrl) {
+    res.status(400).json({ error: "photoUrl obrigatório." });
+    return;
+  }
+
+  try {
+    const event = await prisma.event.findUnique({ where: { slug } });
+    if (!event) { res.status(404).json({ error: "Evento não encontrado." }); return; }
+
+    // Titular não pode curtir o próprio álbum
+    if (event.titularId === userId) {
+      res.status(403).json({ error: "Você não pode curtir seu próprio álbum." });
+      return;
+    }
+
+    // Verifica se o evento tem acesso público
+    const haPublicOrder = await prisma.order.findFirst({
+      where: {
+        eventId: event.id,
+        accessType: "PUBLIC",
+        deletedAt: null,
+        accessExpiresAt: { gte: new Date() },
+      } as any,
+    });
+    if (!haPublicOrder) {
+      res.status(403).json({ error: "Este álbum não está disponível para curtidas." });
+      return;
+    }
+
+    const expiresAt = new Date(Date.now() + 365 * 24 * 60 * 60 * 1000);
+
+    // Cria a curtida (unique constraint evita duplicata)
+    await prisma.photoLike.create({
+      data: { userId, eventId: event.id, photoUrl, expiresAt },
+    });
+
+    // Adiciona ponto para o titular do evento
+    if (event.titularId) {
+      await prisma.userPoints.upsert({
+        where: { userId: event.titularId },
+        create: { userId: event.titularId, total: 1 },
+        update: { total: { increment: 1 } },
+      });
+    }
+
+    // Conta total de curtidas desta foto
+    const totalLikes = await prisma.photoLike.count({
+      where: { eventId: event.id, photoUrl },
+    });
+
+    res.json({ liked: true, totalLikes });
+
+  } catch (err: any) {
+    if (err.code === "P2002") {
+      // Já curtiu — remove a curtida (toggle)
+      await prisma.photoLike.deleteMany({
+        where: {
+          userId,
+          eventId: (await prisma.event.findUnique({ where: { slug } }))?.id ?? "",
+          photoUrl,
+        },
+      });
+
+      // Remove ponto do titular
+      const event = await prisma.event.findUnique({ where: { slug } });
+      if (event?.titularId) {
+        await prisma.userPoints.update({
+          where: { userId: event.titularId },
+          data: { total: { decrement: 1 } },
+        });
+      }
+
+      const totalLikes = await prisma.photoLike.count({
+        where: {
+          eventId: event?.id ?? "",
+          photoUrl,
+        },
+      });
+
+      res.json({ liked: false, totalLikes });
+      return;
+    }
+    console.error("likePhoto:", err);
+    res.status(500).json({ error: "Erro ao registrar curtida." });
+  }
+}
+
+// GET /api/events/:slug/likes
+export async function getEventLikes(req: Request, res: Response): Promise<void> {
+  const { slug } = req.params;
+  const userId = req.user?.userId;
+
+  try {
+    const event = await prisma.event.findUnique({ where: { slug } });
+    if (!event) { res.status(404).json({ error: "Evento não encontrado." }); return; }
+
+    // Curtidas agrupadas por foto
+    const likes = await prisma.photoLike.groupBy({
+      by: ["photoUrl"],
+      where: { eventId: event.id, expiresAt: { gte: new Date() } },
+      _count: { photoUrl: true },
+      orderBy: { _count: { photoUrl: "desc" } },
+    });
+
+    // Fotos que o usuário atual curtiu
+    let myLikes: string[] = [];
+    if (userId) {
+      const userLikes = await prisma.photoLike.findMany({
+        where: { userId, eventId: event.id },
+        select: { photoUrl: true },
+      });
+      myLikes = userLikes.map((l) => l.photoUrl);
+    }
+
+    res.json({
+      likes: likes.map((l) => ({
+        photoUrl: l.photoUrl,
+        count: l._count.photoUrl,
+        likedByMe: myLikes.includes(l.photoUrl),
+      })),
+      totalLikes: likes.reduce((acc, l) => acc + l._count.photoUrl, 0),
+    });
+
+  } catch (err) {
+    console.error("getEventLikes:", err);
+    res.status(500).json({ error: "Erro ao buscar curtidas." });
+  }
+}
+
+// ── PONTOS ────────────────────────────────────────────
+
+// GET /api/me/points
+export async function getMyPoints(req: Request, res: Response): Promise<void> {
+  const userId = req.user!.userId;
+
+  try {
+    const points = await prisma.userPoints.findUnique({ where: { userId } });
+    const available = (points?.total ?? 0) - (points?.redeemed ?? 0);
+
+    // Calcula pacotes disponíveis
+    const packages = [
+      { name: "1 foto impressa", points: 12, quantity: 1, key: "12" },
+      { name: "2 fotos impressas", points: 24, quantity: 2, key: "24" },
+      { name: "3 fotos impressas", points: 36, quantity: 3, key: "36" },
+    ].map((pkg) => ({
+      ...pkg,
+      available: available >= pkg.points,
+      pointsNeeded: Math.max(0, pkg.points - available),
+    }));
+
+    res.json({
+      total: points?.total ?? 0,
+      redeemed: points?.redeemed ?? 0,
+      available,
+      packages,
+    });
+  } catch (err) {
+    res.status(500).json({ error: "Erro ao buscar pontos." });
+  }
+}
+
+// POST /api/me/redeem-print
+export async function redeemPrint(req: Request, res: Response): Promise<void> {
+  const userId = req.user!.userId;
+  const { packageType, selectedPhotos, deliveryType, address } = req.body;
+
+  const packageCosts: Record<string, { points: number; quantity: number }> = {
+    "12": { points: 12, quantity: 1 },
+    "24": { points: 24, quantity: 2 },
+    "36": { points: 36, quantity: 3 },
+  };
+
+  const pkg = packageCosts[packageType];
+  if (!pkg) {
+    res.status(400).json({ error: "Pacote inválido." });
+    return;
+  }
+
+  if (!selectedPhotos || selectedPhotos.length < pkg.quantity) {
+    res.status(400).json({ error: `Selecione ${pkg.quantity} foto(s) para imprimir.` });
+    return;
+  }
+
+  try {
+    const points = await prisma.userPoints.findUnique({ where: { userId } });
+    const available = (points?.total ?? 0) - (points?.redeemed ?? 0);
+
+    if (available < pkg.points) {
+      res.status(400).json({
+        error: `Pontos insuficientes. Você tem ${available} pontos e precisa de ${pkg.points}.`,
+      });
+      return;
+    }
+
+    // Busca fornecedor ativo
+    const supplier = await prisma.printSupplier.findFirst({
+      where: { active: true },
+    });
+
+    // Calcula custo estimado
+    const unitCost = Number(supplier?.costPer10x15 ?? 0);
+    const boxCost = Number(supplier?.boxCost ?? 0);
+    const labelCost = Number(supplier?.labelCost ?? 0);
+    const shippingCost = deliveryType === "MAIL"
+      ? Number(supplier?.uberCost ?? 40)
+      : 0;
+    const totalCost = (unitCost * pkg.quantity) + boxCost + labelCost + shippingCost;
+
+    // Cria o resgate em transaction
+    const redemption = await prisma.$transaction(async (tx) => {
+      const r = await tx.printRedemption.create({
+        data: {
+          userId,
+          pointsUsed: pkg.points,
+          quantity: pkg.quantity,
+          packageType,
+          selectedPhotos: selectedPhotos.slice(0, pkg.quantity),
+          deliveryType,
+          addressJson: address ? JSON.stringify(address) : null,
+          supplierId: supplier?.id,
+          unitCost,
+          shippingCost,
+          totalCost,
+        },
+      });
+
+      await tx.userPoints.update({
+        where: { userId },
+        data: { redeemed: { increment: pkg.points } },
+      });
+
+      return r;
+    });
+
+    res.status(201).json({
+      redemptionId: redemption.id,
+      status: redemption.status,
+      quantity: redemption.quantity,
+      totalCost,
+      mensagem: `Resgate criado! ${pkg.quantity} foto(s) serão impressas e enviadas.`,
+    });
+
+  } catch (err) {
+    console.error("redeemPrint:", err);
+    res.status(500).json({ error: "Erro ao criar resgate." });
+  }
+}
+
+
+src/controllers/supplier.controller.ts
+
+import { Request, Response } from "express";
+import { prisma } from "../lib/prisma";
+
+// GET /api/admin/suppliers
+export async function listSuppliers(req: Request, res: Response): Promise<void> {
+  try {
+    const suppliers = await prisma.printSupplier.findMany({
+      orderBy: { createdAt: "desc" },
+      include: { _count: { select: { redemptions: true } } },
+    });
+    res.json(suppliers);
+  } catch {
+    res.status(500).json({ error: "Erro ao listar fornecedores." });
+  }
+}
+
+// POST /api/admin/suppliers
+export async function createSupplier(req: Request, res: Response): Promise<void> {
+  const {
+    name, type, printerModel, printerCost,
+    costPer10x15, costPer4x6,
+    boxCost, labelCost, uberCost, baseCep,
+  } = req.body;
+
+  if (!name || !type || !costPer10x15) {
+    res.status(400).json({ error: "Nome, tipo e custo por foto são obrigatórios." });
+    return;
+  }
+
+  try {
+    const supplier = await prisma.printSupplier.create({
+      data: {
+        name, type, printerModel,
+        printerCost: printerCost ?? null,
+        costPer10x15,
+        costPer4x6: costPer4x6 ?? null,
+        boxCost: boxCost ?? null,
+        labelCost: labelCost ?? null,
+        uberCost: uberCost ?? null,
+        baseCep: baseCep ?? "13050-251",
+      },
+    });
+    res.status(201).json(supplier);
+  } catch (err) {
+    console.error("createSupplier:", err);
+    res.status(500).json({ error: "Erro ao criar fornecedor." });
+  }
+}
+
+// GET /api/admin/suppliers/:id/breakeven
+// Calcula quantas fotos precisam ser impressas para pagar a impressora
+export async function getBreakeven(req: Request, res: Response): Promise<void> {
+  const { id } = req.params;
+
+  try {
+    const supplier = await prisma.printSupplier.findUnique({ where: { id } });
+    if (!supplier || !supplier.printerCost) {
+      res.status(400).json({ error: "Fornecedor não encontrado ou sem custo de impressora." });
+      return;
+    }
+
+    const printerCost = Number(supplier.printerCost);
+    const costPerPhoto = Number(supplier.costPer10x15);
+    const boxCostUnit = Number(supplier.boxCost ?? 0) / 1; // por pedido
+    const labelCostUnit = Number(supplier.labelCost ?? 0);
+    const uberCostUnit = Number(supplier.uberCost ?? 40);
+
+    // Custo total por foto impressa e enviada
+    const totalCostPerPhoto = costPerPhoto + (boxCostUnit / 1) + labelCostUnit + (uberCostUnit / 3); // média de 3 fotos por envio
+
+    // Break-even: quantas fotos para pagar a impressora
+    const photosToBreakeven = Math.ceil(printerCost / totalCostPerPhoto);
+
+    // Pacotes (12/24/36 curtidas)
+    const packages = [
+      { curtidas: 12, photos: 1 },
+      { curtidas: 24, photos: 2 },
+      { curtidas: 36, photos: 3 },
+    ];
+
+    res.json({
+      printerCost,
+      costPerPhoto: totalCostPerPhoto.toFixed(4),
+      photosToBreakeven,
+      estimatedConcursos: Math.ceil(photosToBreakeven / 2), // ~2 fotos por concurso
+      packages: packages.map((p) => ({
+        ...p,
+        totalCost: (p.photos * totalCostPerPhoto).toFixed(2),
+        costBreakdown: {
+          impressao: (costPerPhoto * p.photos).toFixed(2),
+          embalagem: boxCostUnit.toFixed(2),
+          etiqueta: labelCostUnit.toFixed(2),
+          frete: uberCostUnit.toFixed(2),
+        },
+      })),
+      // Cenários de impressora
+      scenarios: [1500, 3000, 5000, 10000].map((priceImp) => ({
+        printerPrice: priceImp,
+        photosNeeded: Math.ceil(priceImp / totalCostPerPhoto),
+        monthsAt10PerMonth: Math.ceil(priceImp / (totalCostPerPhoto * 10)),
+      })),
+    });
+
+  } catch (err) {
+    console.error("getBreakeven:", err);
+    res.status(500).json({ error: "Erro ao calcular break-even." });
+  }
+}
+
+// PATCH /api/admin/redemptions/:id/status
+export async function updateRedemptionStatus(req: Request, res: Response): Promise<void> {
+  const { id } = req.params;
+  const { status, trackingCode } = req.body;
+
+  try {
+    const updated = await prisma.printRedemption.update({
+      where: { id },
+      data: {
+        status,
+        ...(trackingCode && { trackingCode }),
+      },
+    });
+    res.json(updated);
+  } catch {
+    res.status(500).json({ error: "Erro ao atualizar status." });
+  }
+}
+
+
+Adicionar rotas em src/routes/index.ts
+
+import {
+  likePhoto,
+  getEventLikes,
+  getMyPoints,
+  redeemPrint,
+} from "../controllers/gamification.controller";
+
+import {
+  listSuppliers,
+  createSupplier,
+  getBreakeven,
+  updateRedemptionStatus,
+} from "../controllers/supplier.controller";
+
+// Gamificação — públicas com auth opcional
+router.post("/events/:slug/photos/like", requireAuth, likePhoto);
+router.get("/events/:slug/likes", getEventLikes); // pública
+
+// Pontos e resgates
+router.get("/me/points", requireAuth, getMyPoints);
+router.post("/me/redeem-print", requireAuth, redeemPrint);
+
+// Admin — fornecedores e operação
+router.get("/admin/suppliers", requireAuth, requireRole("ADMIN"), listSuppliers);
+router.post("/admin/suppliers", requireAuth, requireRole("ADMIN"), createSupplier);
+router.get("/admin/suppliers/:id/breakeven", requireAuth, requireRole("ADMIN"), getBreakeven);
+router.patch("/admin/redemptions/:id/status", requireAuth, requireRole("ADMIN"), updateRedemptionStatus);
+
+
+4. Frontend — Calculadora de Break-even
+Essa é a ferramenta mais crítica para a operação. Gero como um componente standalone no painel admin:
+frontend/src/pages/admin/AdminSuppliers.tsx
+
+import { useState, useEffect } from "react";
+import { api } from "../../lib/api";
+
+const T = {
+  bg: "#0c0c0c", card: "#111", border: "#1c1c1c", border2: "#2a2a2a",
+  text: "#f0ede8", text2: "#999", text3: "#555", accent: "#8a9a5b",
+  fontD: "'Barlow Condensed', sans-serif", fontB: "'Inter', sans-serif",
+};
+
+interface Breakeven {
+  printerCost: number;
+  costPerPhoto: string;
+  photosToBreakeven: number;
+  estimatedConcursos: number;
+  packages: Array<{
+    curtidas: number; photos: number; totalCost: string;
+    costBreakdown: { impressao: string; embalagem: string; etiqueta: string; frete: string };
+  }>;
+  scenarios: Array<{ printerPrice: number; photosNeeded: number; monthsAt10PerMonth: number }>;
+}
+
+function formatCurrency(v: number | string) {
+  return new Intl.NumberFormat("pt-BR", { style: "currency", currency: "BRL" }).format(Number(v));
+}
+
+export default function AdminSuppliers() {
+  const [suppliers, setSuppliers] = useState<any[]>([]);
+  const [breakeven, setBreakeven] = useState<Breakeven | null>(null);
+  const [showForm, setShowForm] = useState(false);
+  const [saving, setSaving] = useState(false);
+  const [form, setForm] = useState({
+    name: "", type: "OWN_PRINTER", printerModel: "",
+    printerCost: "", costPer10x15: "", boxCost: "",
+    labelCost: "", uberCost: "40", baseCep: "13050-251",
+  });
+
+  useEffect(() => {
+    api.get("/admin/suppliers").then((r) => setSuppliers(r.data)).catch(console.error);
+  }, []);
+
+  const loadBreakeven = async (id: string) => {
+    try {
+      const { data } = await api.get(`/admin/suppliers/${id}/breakeven`);
+      setBreakeven(data);
+    } catch { /* sem impressora cadastrada */ }
+  };
+
+  const handleCreate = async () => {
+    setSaving(true);
+    try {
+      const { data } = await api.post("/admin/suppliers", {
+        ...form,
+        printerCost: form.printerCost ? Number(form.printerCost) : null,
+        costPer10x15: Number(form.costPer10x15),
+        boxCost: form.boxCost ? Number(form.boxCost) : null,
+        labelCost: form.labelCost ? Number(form.labelCost) : null,
+        uberCost: Number(form.uberCost),
+      });
+      setSuppliers((p) => [data, ...p]);
+      setShowForm(false);
+      loadBreakeven(data.id);
+    } catch (err: any) {
+      alert(err.response?.data?.error ?? "Erro ao salvar.");
+    } finally {
+      setSaving(false);
+    }
+  };
+
+  const set = (k: string) => (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) =>
+    setForm((p) => ({ ...p, [k]: e.target.value }));
+
+  const inputStyle = {
+    width: "100%", background: "#0c0c0c", border: `1px solid ${T.border2}`,
+    padding: "9px 12px", fontSize: 13, color: T.text, fontFamily: T.fontB, outline: "none",
+  };
+  const labelStyle = {
+    fontSize: 10, letterSpacing: 1.5, textTransform: "uppercase" as const,
+    color: T.text3, display: "block", marginBottom: 5,
+  };
+
+  return (
+    <div style={{ fontFamily: T.fontB }}>
+      <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "1.5rem" }}>
+        <div>
+          <h2 style={{ fontFamily: T.fontD, fontWeight: 900, fontSize: 24, color: "#fff", textTransform: "uppercase", marginBottom: 4 }}>
+            Operação de Impressão
+          </h2>
+          <p style={{ fontSize: 13, color: T.text3 }}>Fornecedores, custos e break-even</p>
+        </div>
+        <button onClick={() => setShowForm(true)}
+          style={{ background: T.accent, color: "#0c0c0c", border: "none", padding: "9px 18px", fontFamily: T.fontD, fontWeight: 900, fontSize: 14, letterSpacing: 1.5, textTransform: "uppercase", cursor: "pointer" }}>
+          + Novo Fornecedor
+        </button>
+      </div>
+
+      {/* Lista de fornecedores */}
+      {suppliers.length > 0 && (
+        <div style={{ background: T.card, border: `1px solid ${T.border}`, marginBottom: "2rem" }}>
+          {suppliers.map((s, i) => (
+            <div key={s.id} style={{ padding: "1rem 1.25rem", borderBottom: i < suppliers.length - 1 ? `1px solid #161616` : "none", display: "flex", justifyContent: "space-between", alignItems: "center" }}>
+              <div>
+                <p style={{ fontSize: 14, fontWeight: 500, color: T.text, marginBottom: 2 }}>{s.name}</p>
+                <p style={{ fontSize: 11, color: T.text3 }}>
+                  {s.type === "OWN_PRINTER" ? "Impressora própria" : "Fornecedor externo"} ·
+                  Custo/foto: {formatCurrency(s.costPer10x15)}
+                </p>
+              </div>
+              <div style={{ display: "flex", gap: 8 }}>
+                {s.printerCost && (
+                  <button onClick={() => loadBreakeven(s.id)}
+                    style={{ background: "transparent", border: `1px solid ${T.accent}`, color: T.accent, padding: "6px 14px", fontSize: 11, letterSpacing: 1, textTransform: "uppercase", cursor: "pointer", fontFamily: T.fontB }}>
+                    Ver break-even
+                  </button>
+                )}
+                <span style={{ fontSize: 10, padding: "4px 10px", background: s.active ? "#0f130a" : "#1a1a1a", border: `1px solid ${s.active ? T.accent : T.border}`, color: s.active ? T.accent : T.text3, letterSpacing: 1, textTransform: "uppercase" }}>
+                  {s.active ? "ativo" : "inativo"}
+                </span>
+              </div>
+            </div>
+          ))}
+        </div>
+      )}
+
+      {/* Calculadora Break-even */}
+      {breakeven && (
+        <div style={{ background: T.card, border: `1px solid ${T.border}`, padding: "1.5rem", marginBottom: "2rem" }}>
+          <p style={{ fontSize: 10, letterSpacing: 2, textTransform: "uppercase", color: T.accent, marginBottom: "1rem" }}>
+            Calculadora de Break-even
+          </p>
+
+          {/* Métricas principais */}
+          <div style={{ display: "grid", gridTemplateColumns: "repeat(3, 1fr)", gap: "1rem", marginBottom: "1.5rem" }}>
+            {[
+              { label: "Custo por foto", value: formatCurrency(breakeven.costPerPhoto) },
+              { label: "Fotos p/ break-even", value: breakeven.photosToBreakeven.toLocaleString("pt-BR") },
+              { label: "Concursos estimados", value: `~${breakeven.estimatedConcursos}` },
+            ].map((m) => (
+              <div key={m.label} style={{ background: T.bg, border: `1px solid ${T.border}`, padding: "1rem" }}>
+                <p style={{ fontSize: 10, color: T.text3, letterSpacing: 1, textTransform: "uppercase", marginBottom: 8 }}>{m.label}</p>
+                <p style={{ fontFamily: T.fontD, fontSize: 24, fontWeight: 900, color: "#fff" }}>{m.value}</p>
+              </div>
+            ))}
+          </div>
+
+          {/* Pacotes */}
+          <p style={{ fontSize: 10, letterSpacing: 2, textTransform: "uppercase", color: T.text3, marginBottom: "0.875rem" }}>
+            Custo por pacote de resgate
+          </p>
+          <div style={{ display: "grid", gridTemplateColumns: "repeat(3, 1fr)", gap: "0.75rem", marginBottom: "1.5rem" }}>
+            {breakeven.packages.map((pkg) => (
+              <div key={pkg.curtidas} style={{ background: T.bg, border: `1px solid ${T.border}`, padding: "1rem" }}>
+                <div style={{ display: "flex", justifyContent: "space-between", marginBottom: 8 }}>
+                  <p style={{ fontFamily: T.fontD, fontSize: 18, fontWeight: 900, color: "#fff", textTransform: "uppercase" }}>
+                    {pkg.photos} foto{pkg.photos > 1 ? "s" : ""}
+                  </p>
+                  <span style={{ fontSize: 10, background: "#0f130a", border: `1px solid ${T.accent}`, color: T.accent, padding: "3px 8px", letterSpacing: 1 }}>
+                    {pkg.curtidas} curtidas
+                  </span>
+                </div>
+                <p style={{ fontFamily: T.fontD, fontSize: 22, fontWeight: 900, color: T.accent, marginBottom: 8 }}>
+                  {formatCurrency(pkg.totalCost)}
+                </p>
+                <div style={{ borderTop: `1px solid ${T.border}`, paddingTop: 8 }}>
+                  {Object.entries(pkg.costBreakdown).map(([k, v]) => (
+                    <div key={k} style={{ display: "flex", justifyContent: "space-between", fontSize: 11, color: T.text3, marginBottom: 3 }}>
+                      <span style={{ textTransform: "capitalize" }}>{k}</span>
+                      <span>{formatCurrency(v)}</span>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            ))}
+          </div>
+
+          {/* Cenários de impressora */}
+          <p style={{ fontSize: 10, letterSpacing: 2, textTransform: "uppercase", color: T.text3, marginBottom: "0.875rem" }}>
+            Cenários de retorno da impressora
+          </p>
+          <div style={{ background: T.bg, border: `1px solid ${T.border}` }}>
+            <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr 1fr", padding: "10px 16px", borderBottom: `1px solid #161616` }}>
+              {["Valor da impressora", "Fotos para pagar", "Meses (10 fotos/mês)"].map((h) => (
+                <span key={h} style={{ fontSize: 10, color: T.text3, letterSpacing: 1, textTransform: "uppercase" }}>{h}</span>
+              ))}
+            </div>
+            {breakeven.scenarios.map((s, i) => (
+              <div key={s.printerPrice} style={{ display: "grid", gridTemplateColumns: "1fr 1fr 1fr", padding: "12px 16px", borderBottom: i < breakeven.scenarios.length - 1 ? `1px solid #161616` : "none", alignItems: "center" }}>
+                <span style={{ fontFamily: T.fontD, fontSize: 16, fontWeight: 700, color: "#fff" }}>
+                  {formatCurrency(s.printerPrice)}
+                </span>
+                <span style={{ fontSize: 14, color: T.text2 }}>
+                  {s.photosNeeded.toLocaleString("pt-BR")} fotos
+                </span>
+                <span style={{ fontSize: 14, color: s.monthsAt10PerMonth <= 12 ? "#4ade80" : s.monthsAt10PerMonth <= 24 ? "#f59e0b" : T.text3 }}>
+                  {s.monthsAt10PerMonth} meses
+                </span>
+              </div>
+            ))}
+          </div>
+
+          <div style={{ marginTop: "1rem", padding: "12px 14px", background: "#0f130a", border: `1px solid ${T.border}` }}>
+            <p style={{ fontSize: 12, color: T.text2, lineHeight: 1.6 }}>
+              <strong style={{ color: T.accent }}>Recomendação:</strong> Com base nos custos atuais, uma impressora de <strong style={{ color: "#fff" }}>R$ 1.500</strong> se paga em aproximadamente <strong style={{ color: "#fff" }}>{breakeven.scenarios[0]?.monthsAt10PerMonth} meses</strong> imprimindo 10 fotos/mês via resgates de curtidas. Para volume maior, a de <strong style={{ color: "#fff" }}>R$ 3.000</strong> reduz o custo por foto significativamente.
+            </p>
+          </div>
+        </div>
+      )}
+
+      {/* Modal criar fornecedor */}
+      {showForm && (
+        <div style={{ position: "fixed", inset: 0, background: "rgba(0,0,0,0.9)", display: "flex", alignItems: "center", justifyContent: "center", zIndex: 50, padding: 24 }}>
+          <div style={{ background: T.card, border: `1px solid ${T.border}`, width: "100%", maxWidth: 560, maxHeight: "90vh", overflowY: "auto" }}>
+            <div style={{ padding: "1.25rem", borderBottom: `1px solid ${T.border}`, display: "flex", justifyContent: "space-between" }}>
+              <h3 style={{ fontFamily: T.fontD, fontWeight: 900, fontSize: 20, color: "#fff", textTransform: "uppercase", margin: 0 }}>
+                Novo Fornecedor / Impressora
+              </h3>
+              <button onClick={() => setShowForm(false)} style={{ background: "none", border: "none", color: T.text3, fontSize: 20, cursor: "pointer" }}>×</button>
+            </div>
+            <div style={{ padding: "1.25rem", display: "flex", flexDirection: "column", gap: "1rem" }}>
+
+              <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "0.875rem" }}>
+                <div>
+                  <label style={labelStyle}>Nome</label>
+                  <input style={inputStyle} placeholder="Canon Selphy CP1500" value={form.name} onChange={set("name")} />
+                </div>
+                <div>
+                  <label style={labelStyle}>Tipo</label>
+                  <select style={{ ...inputStyle }} value={form.type} onChange={set("type")}>
+                    <option value="OWN_PRINTER">Impressora própria</option>
+                    <option value="EXTERNAL">Fornecedor externo</option>
+                  </select>
+                </div>
+              </div>
+
+              {form.type === "OWN_PRINTER" && (
+                <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "0.875rem" }}>
+                  <div>
+                    <label style={labelStyle}>Modelo da impressora</label>
+                    <input style={inputStyle} placeholder="Canon Selphy CP1500" value={form.printerModel} onChange={set("printerModel")} />
+                  </div>
+                  <div>
+                    <label style={labelStyle}>Valor da impressora (R$)</label>
+                    <input style={inputStyle} type="number" placeholder="1500" value={form.printerCost} onChange={set("printerCost")} />
+                  </div>
+                </div>
+              )}
+
+              <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "0.875rem" }}>
+                <div>
+                  <label style={labelStyle}>Custo por foto 10x15 (R$)</label>
+                  <input style={inputStyle} type="number" step="0.01" placeholder="0.85" value={form.costPer10x15} onChange={set("costPer10x15")} />
+                </div>
+                <div>
+                  <label style={labelStyle}>Custo da embalagem/caixa (R$)</label>
+                  <input style={inputStyle} type="number" step="0.01" placeholder="1.20" value={form.boxCost} onChange={set("boxCost")} />
+                </div>
+              </div>
+
+              <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr 1fr", gap: "0.875rem" }}>
+                <div>
+                  <label style={labelStyle}>Etiqueta (R$)</label>
+                  <input style={inputStyle} type="number" step="0.01" placeholder="0.30" value={form.labelCost} onChange={set("labelCost")} />
+                </div>
+                <div>
+                  <label style={labelStyle}>Uber Correios ida/volta (R$)</label>
+                  <input style={inputStyle} type="number" step="0.01" placeholder="40" value={form.uberCost} onChange={set("uberCost")} />
+                </div>
+                <div>
+                  <label style={labelStyle}>CEP de origem</label>
+                  <input style={inputStyle} placeholder="13050-251" value={form.baseCep} onChange={set("baseCep")} />
+                </div>
+              </div>
+
+              <div style={{ padding: "12px 14px", background: T.bg, border: `1px solid ${T.border}` }}>
+                <p style={{ fontSize: 11, color: T.text3, lineHeight: 1.6 }}>
+                  <strong style={{ color: T.text2 }}>Referência Canon Selphy CP1500:</strong> Custo ~R$ 0,85/foto no kit oficial. Embalagem ~R$ 1,20. Etiqueta ~R$ 0,30. Uber ~R$ 40 (até 2 fotos vai de carta pelo Correio, acima usa Sedex).
+                </p>
+              </div>
+            </div>
+            <div style={{ padding: "1rem 1.25rem", borderTop: `1px solid ${T.border}`, display: "flex", gap: 8, justifyContent: "flex-end" }}>
+              <button onClick={() => setShowForm(false)} style={{ padding: "9px 16px", background: "transparent", border: `1px solid ${T.border}`, color: T.text3, fontSize: 13, cursor: "pointer" }}>
+                Cancelar
+              </button>
+              <button onClick={handleCreate} disabled={saving}
+                style={{ padding: "9px 22px", background: T.accent, color: "#0c0c0c", border: "none", fontFamily: T.fontD, fontWeight: 900, fontSize: 14, letterSpacing: 1.5, textTransform: "uppercase", cursor: "pointer" }}>
+                {saving ? "Salvando..." : "Salvar Fornecedor"}
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+    </div>
+  );
+}
+
+Commit
+
+git add backend/prisma/schema.prisma
+git add backend/src/controllers/gamification.controller.ts
+git add backend/src/controllers/supplier.controller.ts
+git add backend/src/routes/index.ts
+git add frontend/src/pages/admin/AdminSuppliers.tsx
+git commit -m "feat: gamificacao - curtidas, pontos, resgates de impressao, calculadora break-even, fornecedores"
+git push origin main
+
+
+Resposta ao cálculo de break-even com seus dados
+Com base nas imagens do Mercado Livre e seu CEP 13050-251:
+ItemCustoPapel Kodak 10x15 200g (50 fls)R$ 28 → R$ 0,56/fotoEmbalagem caixa 10x15~R$ 1,20Etiqueta + plástico~R$ 0,50Uber ida/volta CorreiosR$ 40Carta (até 2 fotos)ver site CorreiosSedex (3+ fotos)calcular no site
+Impressora R$ 1.500 → ~1.200 fotos para pagar = 100 resgates de 12 curtidas
+Impressora R$ 3.000 → ~2.400 fotos = 200 resgates
+A calculadora no painel admin vai mostrar esses números dinamicamente assim que você cadastrar o fornecedor com os custos reais.
+

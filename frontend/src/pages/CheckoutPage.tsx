@@ -1,9 +1,8 @@
 import { useState, useEffect, useRef, useCallback } from "react";
 import { useParams, useNavigate, useSearchParams } from "react-router-dom";
-import { ShieldCheck, ArrowLeft, Copy, CheckCircle2, Clock, RefreshCw, Lock, Mail, Key, User as UserIcon } from "lucide-react";
+import { ShieldCheck, ArrowLeft, CheckCircle2, Clock, RefreshCw, Lock } from "lucide-react";
 import { QRCodeSVG } from "qrcode.react";
 import { API } from "../lib/api";
-import { useTheme } from "../contexts/ThemeContextCore";
 import { AuthContext } from "../contexts/AuthContextBase";
 import { useContext } from "react";
 
@@ -27,6 +26,9 @@ interface OrderDetail {
   isContribution: boolean;
   contributorName?: string;
   manualType?: string | null;
+  isGuestOrder?: boolean;
+  deliveryType?: string;
+  shippingAddress?: unknown;
 }
 
 interface MPFormData {
@@ -60,11 +62,7 @@ interface MPBrickSettings {
   };
 }
 
-interface MPMediator {
-  bricks: () => {
-    create: (type: string, containerId: string, settings: MPBrickSettings) => Promise<{ unmount: () => void }>;
-  };
-}
+
 
 export const CheckoutPage = () => {
   const { orderId } = useParams();
@@ -86,7 +84,6 @@ export const CheckoutPage = () => {
   const brickController = useRef<{ unmount: () => void } | null>(null);
   const initializationStarted = useRef(false);
   const pollingRef = useRef<ReturnType<typeof setInterval> | null>(null);
-  const { theme } = useTheme();
   const { user: authUser, login: authLogin, register: authRegister } = useContext(AuthContext)!;
 
   // Estados de Autenticação Tática
@@ -94,6 +91,17 @@ export const CheckoutPage = () => {
   const [password, setPassword] = useState("");
   const [localAuthError, setLocalAuthError] = useState("");
   const [authLoading, setAuthLoading] = useState(false);
+
+  // Estados de Logística
+  const [shippingData, setShippingData] = useState({
+    cep: "",
+    street: "",
+    number: "",
+    complement: "",
+    city: "",
+    state: ""
+  });
+  const [isShippingLoading, setIsShippingLoading] = useState(false);
 
   // ── Carrega o pedido ─────────────────────────────────────────────────────────
   useEffect(() => {
@@ -112,9 +120,15 @@ export const CheckoutPage = () => {
       .finally(() => setLoading(false));
   }, [effectiveOrderId]);
 
-  // ── Controle de Autenticação ────────────────────────────────────────────────
+  // ── Controle de Autenticação (Bypass para Guest Checkout) ────────────────────
   useEffect(() => {
     if (loading || !order) return;
+
+    // SE FOR GUEST ORDER (Magic Link), AUTORIZA DIRETO!
+    if (order.isGuestOrder) {
+      setAuthStep('authorized');
+      return;
+    }
 
     // Se já está logado, autoriza
     if (authUser) {
@@ -126,7 +140,6 @@ export const CheckoutPage = () => {
     const verifyAuth = async () => {
       try {
         const { data } = await API.get(`/public/auth/check?email=${order.buyerEmail}`);
-        // exists é suficiente para sugerir login
         if (data.exists) {
           setAuthStep('login');
         } else {
@@ -134,7 +147,7 @@ export const CheckoutPage = () => {
         }
       } catch (err) {
         console.error("Erro ao verificar auth:", err);
-        setAuthStep('register'); // Fallback para cadastro
+        setAuthStep('register');
       }
     };
 
@@ -166,6 +179,45 @@ export const CheckoutPage = () => {
     }
   };
 
+  // ── Lógica de Frete/Logística ───────────────────────────────────────────────
+  const handleCepBlur = async () => {
+    if (shippingData.cep.replace(/\D/g, "").length !== 8) return;
+    setIsShippingLoading(true);
+    try {
+      const resp = await fetch(`https://viacep.com.br/ws/${shippingData.cep}/json/`);
+      const data = await resp.json();
+      if (!data.erro) {
+        setShippingData(prev => ({
+          ...prev,
+          street: data.logradouro,
+          city: data.localidade,
+          state: data.uf
+        }));
+      }
+    } catch {
+      console.error("Erro ao buscar CEP");
+    } finally {
+      setIsShippingLoading(false);
+    }
+  };
+
+  // ── Baixa em Dinheiro (Admin/Franqueado) ────────────────────────────────────
+  const handleCashPayment = async () => {
+    if (!confirm("Confirmar recebimento em dinheiro e liberar acesso/impressão agora?")) return;
+    setAuthLoading(true);
+    try {
+      await API.post(`/public/orders/${order!.id}/manual-payment`, {
+        method: "CASH"
+      });
+      setPaymentSuccess(true);
+    } catch {
+      console.error("Erro ao processar pagamento manual");
+      alert("Erro ao confirmar pagamento manual.");
+    } finally {
+      setAuthLoading(false);
+    }
+  };
+
   // ── Polling de status do Pix ─────────────────────────────────────────────────
   const stopPolling = useCallback(() => {
     if (pollingRef.current) {
@@ -180,7 +232,6 @@ export const CheckoutPage = () => {
 
     pollingRef.current = setInterval(async () => {
       try {
-        // Usa o endpoint que consulta o MP diretamente — não depende de webhook
         const { data } = await API.get(`/public/orders/${pOrderId}/check-payment`);
         if (data.status === "APROVADO") {
           stopPolling();
@@ -188,33 +239,26 @@ export const CheckoutPage = () => {
           setPaymentSuccess(true);
         }
       } catch {
-        // Ignora erros de rede e continua tentando
+        // Continue trying
       }
     }, 4000);
   }, [stopPolling]);
 
-  // Quando pixData chega, inicia polling e timer de expiração
+  // Timer effects... (Same as before)
   useEffect(() => {
     if (!pixData) return;
-    Promise.resolve().then(() => {
-      startPolling(pixData.orderId);
-    });
-
-    // Timer regressivo do QR (30 min)
+    startPolling(pixData.orderId);
     const timer = setInterval(() => {
       setPixSecondsLeft(s => {
         if (s <= 1) { clearInterval(timer); return 0; }
         return s - 1;
       });
     }, 1000);
-
     return () => { clearInterval(timer); stopPolling(); };
   }, [pixData, startPolling, stopPolling]);
 
-  // Cleanup ao desmontar
   useEffect(() => () => stopPolling(), [stopPolling]);
 
-  // Countdown de redirecionamento após pagamento confirmado
   useEffect(() => {
     if (!paymentSuccess || !order) return;
     const timer = setInterval(() => {
@@ -230,32 +274,29 @@ export const CheckoutPage = () => {
     return () => clearInterval(timer);
   }, [paymentSuccess, order, navigate]);
 
-  // ── MP Bricks ────────────────────────────────────────────────────────────────
+  // ── MP Bricks Initialization ────────────────────────────────────────────────
   useEffect(() => {
     if (!order || pixData || paymentSuccess || loading || authStep !== 'authorized' || initializationStarted.current) return;
-    initializationStarted.current = true;
+    
+    // Se for SHIPPING e não preencheu endereço, não renderiza brick ainda
+    if (order.deliveryType === 'SHIPPING' && !shippingData.street) return;
 
+    initializationStarted.current = true;
     const mpPublicKey = "APP_USR-18f8ccc4-8ed4-4f99-bb6d-e333d026e578";
-    const win = window as Window & { MercadoPago?: new (key: string, options: { locale: string }) => MPMediator };
+    const win = window as unknown as Record<string, { new (k: string, o: { locale: string }): { bricks: () => { create: (a: string, b: string, c: unknown) => Promise<{ unmount: () => void }> } } }>;
     if (!win.MercadoPago) {
-      console.warn("Mercado Pago SDK não detectado.");
       initializationStarted.current = false;
       return;
     }
 
     const renderPaymentBrick = async () => {
-      // Pequeno delay para garantir que o React renderizou o container no DOM
       await new Promise(resolve => setTimeout(resolve, 100));
-      
       const container = document.getElementById("paymentBrick_container");
       if (!container) {
-        console.warn("Aguardando container do Payment Brick...");
         initializationStarted.current = false;
         return;
       }
       container.innerHTML = "";
-      if (!win.MercadoPago) return;
-
       const mp = new win.MercadoPago(mpPublicKey, { locale: "pt-BR" });
       const bricksBuilder = mp.bricks();
 
@@ -266,7 +307,7 @@ export const CheckoutPage = () => {
         },
         customization: {
           paymentMethods: { creditCard: "all", bankTransfer: ["pix"], maxInstallments: 12 },
-          visual: { style: { theme: theme === "dark" ? "dark" : "default" } },
+          visual: { style: { theme: "dark" } },
         },
         callbacks: {
           onReady: () => console.log("[Payment Brick] Ready"),
@@ -281,6 +322,7 @@ export const CheckoutPage = () => {
                 cardToken: formData.token,
                 installments: formData.installments,
                 paymentMethodId: formData.payment_method_id,
+                shippingAddress: order.deliveryType === 'SHIPPING' ? shippingData : null
               });
 
               if (data.hasPaid) {
@@ -292,12 +334,9 @@ export const CheckoutPage = () => {
                   ticketUrl: data.ticket_url,
                   orderId: data.orderId || order.id,
                 });
-              } else {
-                alert(`Status: ${data.status || "Pendente"}`);
               }
-            } catch (err: unknown) {
-              console.error("Erro no pagamento:", err);
-              alert("Erro ao processar pagamento. Verifique seus dados.");
+            } catch {
+              alert("Erro ao processar pagamento.");
             }
           },
           onError: (error: unknown) => {
@@ -315,353 +354,229 @@ export const CheckoutPage = () => {
       if (brickController.current) { brickController.current.unmount(); brickController.current = null; }
       initializationStarted.current = false;
     };
-  }, [order, pixData, paymentSuccess, loading, theme, authStep]);
+  }, [order, pixData, paymentSuccess, loading, authStep, shippingData]);
 
-  // ── Formatação do timer ───────────────────────────────────────────────────────
   const fmtTimer = (s: number) => {
     const m = Math.floor(s / 60).toString().padStart(2, "0");
     const sec = (s % 60).toString().padStart(2, "0");
     return `${m}:${sec}`;
   };
 
-  // ── Loading / Error ───────────────────────────────────────────────────────────
+  // ── Render Helpers ──────────────────────────────────────────────────────────
   if (loading) return (
-    <div className="min-h-screen bg-theme-bg flex items-center justify-center">
-      <div className="text-proportional animate-pulse">Sincronizando Protocolo de Pagamento...</div>
+    <div className="min-h-screen bg-[#0a0a0a] flex items-center justify-center">
+      <div className="text-[10px] font-black tracking-[0.5em] text-brand-tactical animate-pulse uppercase">Protocolo Midnight Seguro...</div>
     </div>
   );
 
   if (error || !order) return (
-    <div className="min-h-screen bg-theme-bg flex flex-col items-center justify-center p-6 text-center">
-      <h2 className="heading-luxury mb-4 text-red-500">ERRO</h2>
-      <p className="text-proportional mb-8">{error || "Pedido não encontrado."}</p>
-      <button onClick={() => navigate("/")} className="lux-button-ghost">Voltar para a home</button>
+    <div className="min-h-screen bg-[#0a0a0a] flex flex-col items-center justify-center p-6 text-center">
+      <h2 className="text-4xl font-black text-red-500 italic mb-4">FALHA NO PROTOCOLO</h2>
+      <p className="text-xs uppercase tracking-widest text-zinc-500 mb-8 max-w-xs">{error || "Pedido não encontrado."}</p>
+      <button onClick={() => navigate("/")} className="px-10 py-4 border border-zinc-800 text-[10px] font-black uppercase tracking-widest hover:bg-zinc-900 transition-all">Voltar para a home</button>
     </div>
   );
 
   const eventTarget = order.event?.id || order.eventId;
 
-  // ── Tela de Sucesso ───────────────────────────────────────────────────────────
   if (paymentSuccess) return (
-    <div className="min-h-screen bg-theme-bg flex items-center justify-center p-4">
+    <div className="min-h-screen bg-[#0a0a0a] flex items-center justify-center p-4">
       <div className="max-w-lg w-full text-center animate-in fade-in zoom-in-95 duration-500">
-        {/* Ícone animado */}
         <div className="relative mx-auto mb-10 w-32 h-32">
-          <div className="absolute inset-0 rounded-full bg-brand-tactical/10 animate-ping" style={{ animationDuration: "2s" }} />
-          <div className="relative w-32 h-32 rounded-full bg-brand-tactical/10 flex items-center justify-center border border-brand-tactical/30">
-            <CheckCircle2 size={56} className="text-brand-tactical" strokeWidth={1.5} />
+          <div className="absolute inset-0 rounded-full bg-emerald-500/10 animate-ping" />
+          <div className="relative w-32 h-32 rounded-full bg-emerald-500/10 flex items-center justify-center border border-emerald-500/30">
+            <CheckCircle2 size={56} className="text-emerald-500" strokeWidth={1} />
           </div>
         </div>
-
-        <p className="text-[10px] font-black uppercase tracking-[0.5em] text-brand-tactical mb-4">
-          PAGAMENTO CONFIRMADO
-        </p>
-        <h1 className="heading-luxury text-4xl md:text-6xl tracking-tighter mb-6">
-          ACESSO LIBERADO
-        </h1>
-        <p className="text-proportional opacity-60 mb-3 max-w-sm mx-auto">
-          Suas memórias estão prontas! Você já pode visualizá-las diretamente no seu painel de controle.
-        </p>
-        <p className="text-proportional !text-brand-tactical font-black mb-10">
-          {order.event?.nomeNoivos}
-        </p>
-
-        {/* Countdown de redirecionamento */}
-        <div className="mb-8 flex items-center justify-center gap-3 text-proportional opacity-40">
-          <RefreshCw size={12} className="animate-spin" style={{ animationDuration: "2s" }} />
-          Redirecionando em {redirectCountdown}s...
-        </div>
-
-        <button
-          onClick={() => navigate(`/e/${eventTarget}`)}
-          className="lux-button-base lux-button-tactical w-full py-5 text-base tracking-widest"
-        >
-          ACESSAR MINHA GALERIA AGORA
-        </button>
-
-        <button
-          onClick={() => navigate("/")}
-          className="mt-4 text-proportional opacity-30 hover:opacity-60 transition-opacity w-full py-3"
-        >
-          Voltar para a Vitrine
-        </button>
+        <p className="text-[10px] font-black uppercase tracking-[0.5em] text-emerald-500 mb-4">PAGAMENTO CONFIRMADO</p>
+        <h1 className="text-4xl md:text-6xl font-black text-white italic tracking-tighter mb-6 uppercase">Acesso Liberado</h1>
+        <p className="text-xs text-zinc-500 mb-10">Suas memórias estão prontas. Redirecionando em {redirectCountdown}s...</p>
+        <button onClick={() => navigate(`/e/${eventTarget}`)} className="w-full py-5 bg-emerald-600 text-black text-xs font-black uppercase tracking-widest hover:brightness-110 transition-all">ACESSAR GALERIA AGORA</button>
       </div>
     </div>
   );
 
-  // ── Tela de Pix (QR Code + Polling) ──────────────────────────────────────────
   if (pixData) return (
-    <div className="min-h-screen bg-theme-bg text-theme-text">
-      <nav className="h-16 flex items-center justify-between px-6 border-b border-theme-border sticky top-0 z-50 bg-theme-bg/80 backdrop-blur-md">
-        <button onClick={() => navigate(-1)} className="text-proportional opacity-40 hover:opacity-100 transition-all flex items-center gap-2">
-          <ArrowLeft size={16} /> Voltar
-        </button>
-        <div className="absolute left-1/2 -translate-x-1/2">
-          <img src="/logo-fs.png" alt="Foto Segundo" style={{ height: 22, objectFit: "contain" }} />
+    <div className="min-h-screen bg-[#0a0a0a] text-white">
+      <nav className="h-20 flex items-center justify-between px-8 border-b border-zinc-900 sticky top-0 z-50 bg-[#0a0a0a]/90 backdrop-blur-xl">
+        <button onClick={() => navigate(-1)} className="text-[10px] font-black uppercase tracking-widest text-zinc-500 hover:text-white transition-all flex items-center gap-2"><ArrowLeft size={14} /> Voltar</button>
+        <img src="/logo-fs.png" alt="Foto Segundo" className="h-5" />
+        <div className="flex items-center gap-2 text-emerald-500 text-[9px] font-black uppercase tracking-widest"><ShieldCheck size={14} /> Checkout Blindado</div>
+      </nav>
+      <div className="max-w-md mx-auto px-6 py-12 space-y-8">
+        <div className="text-center">
+          <div className="inline-flex items-center gap-3 px-5 py-2.5 bg-emerald-500/5 border border-emerald-500/20 text-[9px] font-black uppercase tracking-[0.2em] text-emerald-500 italic">
+            <RefreshCw size={12} className="animate-spin" /> {pollingStatus === "polling" ? "Aguardando Confirmação..." : "Verificando..."}
+          </div>
         </div>
-        <div className="text-proportional flex items-center gap-2">
-          <ShieldCheck size={14} className="text-brand-tactical" />
-          <span className="desktop-only">Checkout Seguro</span>
+        <div className="bg-zinc-950 border border-zinc-900 p-8 space-y-8">
+          <div className="text-center space-y-2">
+            <h1 className="text-2xl font-black italic">QUASE LÁ!</h1>
+            <p className="text-[9px] text-zinc-500 uppercase tracking-widest">Escaneie para liberação imediata</p>
+          </div>
+          <div className="flex justify-center">
+            <div className="bg-white p-4 shadow-2xl"><QRCodeSVG value={pixData.qrCode} size={200} level="H" includeMargin /></div>
+          </div>
+          <div className="flex items-center justify-center gap-2 text-zinc-500">
+            <Clock size={12} /> <span className="text-[9px] font-black uppercase tracking-widest">Expira em {fmtTimer(pixSecondsLeft)}</span>
+          </div>
+          <div className="p-5 bg-black border border-zinc-900 space-y-3">
+             <label className="text-[8px] font-black text-zinc-600 uppercase tracking-widest">Pix Copia e Cola</label>
+             <div className="flex items-center gap-4 overflow-hidden">
+                <input readOnly value={pixData.qrCode} className="bg-transparent text-[10px] w-full outline-none truncate font-mono text-zinc-400" />
+                <button onClick={() => { navigator.clipboard.writeText(pixData.qrCode); setCopied(true); setTimeout(() => setCopied(false), 2000); }} className="text-emerald-500 text-[9px] font-black uppercase tracking-widest">{copied ? "COPIADO" : "COPIAR"}</button>
+             </div>
+          </div>
         </div>
+      </div>
+    </div>
+  );
+
+  return (
+    <div className="min-h-screen bg-[#0a0a0a] text-white">
+      <nav className="h-20 flex items-center justify-between px-8 border-b border-zinc-900 sticky top-0 z-50 bg-[#0a0a0a]/90 backdrop-blur-xl">
+        <button onClick={() => navigate(-1)} className="text-[10px] font-black uppercase tracking-widest text-zinc-500 hover:text-white transition-all flex items-center gap-2"><ArrowLeft size={14} /> Voltar</button>
+        <img src="/logo-fs.png" alt="Foto Segundo" className="h-5" />
+        <div className="flex items-center gap-2 text-brand-tactical text-[9px] font-black uppercase tracking-widest"><ShieldCheck size={14} /> Checkout Blindado</div>
       </nav>
 
-      <div className="max-w-md mx-auto px-4 py-12 space-y-8">
-
-        {/* Status do polling */}
-        <div className="text-center">
-          <div className="inline-flex items-center gap-2 px-4 py-2 border border-brand-tactical/20 bg-brand-tactical/5 text-[10px] font-black uppercase tracking-widest text-brand-tactical">
-            <span className="w-2 h-2 rounded-full bg-brand-tactical animate-pulse" />
-            {pollingStatus === "polling" ? "Aguardando confirmação de pagamento..." : "Verificando..."}
-          </div>
-        </div>
-
-        {/* Card principal */}
-        <div className="lux-card editorial-shadow rounded-none border-theme-border">
-          <div className="border-b border-theme-border pb-6 mb-6 text-center">
-            <h1 className="heading-luxury !text-2xl md:!text-3xl italic mb-1">QUASE LÁ!</h1>
-            <p className="text-proportional opacity-50 text-[10px]">
-              Escaneie o código PIX para liberação imediata
-            </p>
+      <div className="max-w-4xl mx-auto px-6 py-12 grid grid-cols-1 lg:grid-cols-2 gap-12">
+        {/* Lado Esquerdo: Resumo e Logística */}
+        <div className="space-y-8">
+          <div>
+            <p className="text-[10px] font-black text-brand-tactical uppercase tracking-[0.4em] mb-4">Investimento</p>
+            <h1 className="text-4xl md:text-5xl font-black italic tracking-tighter uppercase leading-none">{order.event?.nomeNoivos}</h1>
+            <p className="text-zinc-500 text-sm mt-4">Memórias Eternizadas no Papel · {order.manualType || "Álbum Digital Completo"}</p>
           </div>
 
-          {/* QR Code — Gerado localmente para garantir visibilidade instantânea */}
-          <div className="flex justify-center mb-6">
-            <div className="bg-white p-4 border border-zinc-100 shadow-2xl">
-              <QRCodeSVG 
-                value={pixData.qrCode}
-                size={220}
-                level="H"
-                includeMargin={true}
-              />
+          <div className="p-8 bg-zinc-950 border border-zinc-900 space-y-6 relative overflow-hidden">
+            <div className="absolute top-0 left-0 w-1 h-full bg-brand-tactical/20" />
+            <div className="flex justify-between items-center text-[10px] font-black text-zinc-500 uppercase tracking-widest">
+              <span>Subtotal</span>
+              <span className="text-white">R$ {Number(order.amount).toFixed(2)}</span>
+            </div>
+            {order.deliveryType === 'SHIPPING' && (
+              <div className="flex justify-between items-center text-[10px] font-black text-zinc-500 uppercase tracking-widest">
+                <span>Frete</span>
+                <span className="text-emerald-500">GRÁTIS</span>
+              </div>
+            )}
+            <div className="pt-6 border-t border-zinc-900 flex justify-between items-end">
+              <span className="text-[10px] font-black text-brand-tactical uppercase tracking-[0.4em]">Total</span>
+              <span className="text-4xl font-black italic tracking-tighter text-white">R$ {Number(order.amount).toFixed(2)}</span>
             </div>
           </div>
 
-          {/* Timer de expiração */}
-          <div className={`flex items-center justify-center gap-2 mb-6 ${pixSecondsLeft < 300 ? "text-red-400" : "text-proportional opacity-40"}`}>
-            <Clock size={12} />
-            <span className="text-[10px] font-black uppercase tracking-widest">
-              {pixSecondsLeft > 0 ? `Expira em ${fmtTimer(pixSecondsLeft)}` : "CÓDIGO EXPIRADO — Tente novamente"}
-            </span>
-          </div>
-
-          {/* Pix Copia e Cola */}
-          <div className="p-4 bg-theme-bg-muted border border-theme-border">
-            <p className="text-[9px] font-black uppercase tracking-widest opacity-40 mb-3">Pix Copia e Cola</p>
-            <div className="flex items-center gap-4">
-              <input
-                readOnly
-                value={pixData.qrCode}
-                className="bg-transparent text-[11px] w-full outline-none truncate font-mono text-theme-text"
-              />
-              <button
-                onClick={() => {
-                  navigator.clipboard.writeText(pixData.qrCode);
-                  setCopied(true);
-                  setTimeout(() => setCopied(false), 2000);
-                }}
-                className="flex items-center gap-2 text-brand-tactical text-[9px] font-black uppercase whitespace-nowrap tracking-widest hover:brightness-125 transition-all"
-              >
-                {copied ? <CheckCircle2 size={14} /> : <Copy size={14} />}
-                {copied ? "Copiado!" : "Copiar"}
-              </button>
-            </div>
-          </div>
-        </div>
-
-        {/* Instrução */}
-        <div className="text-center space-y-2">
-          <p className="text-[10px] uppercase tracking-[0.3em] opacity-30 font-bold">
-            Esta página atualiza automaticamente
-          </p>
-          <p className="text-[9px] opacity-20">
-            Abra seu banco, escaneie o QR code ou use o código copia e cola
-          </p>
-        </div>
-
-      </div>
-    </div>
-  );
-
-  // ── Renderização do Checkout Autenticado ─────────────────────────────────────
-  const renderCheckout = () => {
-    if (authStep === 'loading') {
-      return (
-        <div className="flex flex-col items-center justify-center py-12 gap-4">
-          <RefreshCw size={24} className="animate-spin text-brand-tactical" />
-          <p className="text-[10px] font-black uppercase tracking-widest opacity-40">Verificando Credenciais...</p>
-        </div>
-      );
-    }
-
-    if (authStep === 'authorized') {
-      return (
-        <div className="animate-in fade-in duration-500">
-          <div className="flex items-center gap-4 p-4 bg-brand-tactical/5 border border-brand-tactical/20 mb-8">
-            <div className="w-10 h-10 rounded-full bg-brand-tactical/10 flex items-center justify-center">
-              <UserIcon size={18} className="text-brand-tactical" />
-            </div>
-            <div>
-              <p className="text-[9px] font-black uppercase tracking-widest opacity-40">Logado como</p>
-              <p className="text-xs font-bold">{authUser?.nome || authUser?.email}</p>
-            </div>
-            <div className="ml-auto">
-              <CheckCircle2 size={16} className="text-brand-tactical" />
-            </div>
-          </div>
-          <div id="paymentBrick_container" />
-        </div>
-      );
-    }
-
-    // Fluxo de Autenticação Intermediário
-    return (
-      <div className="animate-in fade-in slide-in-from-bottom-4 duration-700">
-        <div className="flex flex-col items-center text-center mb-10">
-          <div className="w-16 h-16 rounded-full bg-brand-tactical/10 flex items-center justify-center mb-6 border border-brand-tactical/20">
-            <Lock size={28} className="text-brand-tactical" />
-          </div>
-          <h2 className="heading-luxury !text-2xl md:!text-3xl italic mb-3">
-            {authStep === 'login' ? 'BEM-VINDO DE VOLTA' : 'QUASE LÁ!'}
-          </h2>
-          <p className="text-proportional opacity-60 text-xs max-w-xs">
-            {authStep === 'login' 
-              ? 'Identificamos que você já possui uma conta. Por favor, faça o login para prosseguir com o pagamento.'
-              : 'Para garantir o acesso às suas memórias após o pagamento, escolha uma senha para sua nova conta.'
-            }
-          </p>
-        </div>
-
-        <form onSubmit={handleAuthSubmit} className="space-y-6 max-w-sm mx-auto">
-          <div className="space-y-4">
-            <div className="relative group">
-              <Mail size={16} className="absolute left-4 top-1/2 -translate-y-1/2 text-theme-muted group-focus-within:text-brand-tactical transition-colors" />
-              <input 
-                type="email" 
-                value={order.buyerEmail} 
-                disabled 
-                className="w-full bg-theme-bg-muted border border-theme-border py-4 pl-12 pr-4 text-sm opacity-50 cursor-not-allowed"
-              />
-            </div>
-            
-            <div className="relative group">
-              <Key size={16} className="absolute left-4 top-1/2 -translate-y-1/2 text-theme-muted group-focus-within:text-brand-tactical transition-colors" />
-              <input 
-                type="password" 
-                placeholder={authStep === 'login' ? 'Sua senha' : 'Crie uma senha (mín. 6 dígitos)'}
-                value={password}
-                onChange={(e) => setPassword(e.target.value)}
-                className="w-full bg-theme-bg-muted border border-theme-border py-4 pl-12 pr-4 text-sm focus:border-brand-tactical outline-none transition-all"
-                autoFocus
-              />
-            </div>
-          </div>
-
-          {localAuthError && (
-            <div className="p-3 bg-red-500/10 border border-red-500/20 text-red-500 text-[10px] font-black uppercase tracking-widest text-center animate-in fade-in zoom-in-95">
-              {localAuthError}
+          {/* Logística Condicional */}
+          {order.deliveryType === 'SHIPPING' && authStep === 'authorized' && (
+            <div className="animate-in slide-in-from-top-4 duration-500 space-y-6 p-8 bg-zinc-950 border border-brand-tactical/20">
+               <div className="flex items-center gap-3">
+                  <div className="h-0.5 w-6 bg-brand-tactical" />
+                  <p className="text-[9px] font-black text-brand-tactical uppercase tracking-widest">Endereço de Entrega</p>
+               </div>
+               <div className="grid grid-cols-2 gap-4">
+                  <div className="col-span-2">
+                    <input 
+                      placeholder="CEP" 
+                      value={shippingData.cep}
+                      onBlur={handleCepBlur}
+                      onChange={e => setShippingData({...shippingData, cep: e.target.value})}
+                      className="w-full bg-black border border-zinc-800 py-4 px-4 text-xs focus:border-brand-tactical outline-none transition-all font-mono"
+                    />
+                  </div>
+                  <div className="col-span-2">
+                    <input 
+                      placeholder="Endereço" 
+                      value={shippingData.street}
+                      disabled={isShippingLoading}
+                      onChange={e => setShippingData({...shippingData, street: e.target.value})}
+                      className="w-full bg-black border border-zinc-800 py-4 px-4 text-xs outline-none opacity-80"
+                    />
+                  </div>
+                  <input 
+                    placeholder="Número" 
+                    value={shippingData.number}
+                    onChange={e => setShippingData({...shippingData, number: e.target.value})}
+                    className="bg-black border border-zinc-800 py-4 px-4 text-xs outline-none"
+                  />
+                  <input 
+                    placeholder="Cidade" 
+                    value={shippingData.city}
+                    disabled
+                    className="bg-black border border-zinc-800 py-4 px-4 text-xs outline-none opacity-50"
+                  />
+               </div>
+               {isShippingLoading && <p className="text-[8px] animate-pulse text-brand-tactical uppercase font-black">Buscando endereço...</p>}
             </div>
           )}
 
-          <button 
-            type="submit" 
-            disabled={authLoading}
-            className="lux-button-base lux-button-tactical w-full py-4 text-xs font-black tracking-[0.3em] flex items-center justify-center gap-3"
-          >
-            {authLoading ? (
-              <>
-                <RefreshCw size={14} className="animate-spin" />
-                {authStep === 'login' ? 'AUTENTICANDO...' : 'CRIANDO CONTA...'}
-              </>
-            ) : (
-              <>
-                {authStep === 'login' ? 'ENTRAR E PAGAR' : 'CRIAR CONTA E CONTINUAR'}
-              </>
-            )}
-          </button>
-
-          <div className="text-center mt-6">
-             <button 
-                type="button"
-                onClick={() => setAuthStep(s => s === 'login' ? 'register' : 'login')}
-                className="text-[10px] font-black text-brand-tactical uppercase tracking-widest hover:underline"
-             >
-                {authStep === 'login' ? 'Não tem conta? Crie uma agora' : 'Já possui conta? Faça o login'}
-             </button>
-          </div>
-
-          <p className="text-center text-[10px] opacity-30 tracking-widest uppercase mt-6">
-            <ShieldCheck size={10} className="inline mr-1" /> Seus dados estão protegidos
-          </p>
-        </form>
-      </div>
-    );
-  };
-
-  // ── Tela Principal: Resumo + MP Brick ────────────────────────────────────────
-  return (
-    <div className="min-h-screen bg-theme-bg text-theme-text">
-      <nav className="h-16 flex items-center justify-between px-6 border-b border-theme-border sticky top-0 z-50 bg-theme-bg/80 backdrop-blur-md">
-        <button onClick={() => navigate(-1)} className="text-proportional opacity-40 hover:opacity-100 transition-all flex items-center gap-2">
-          <ArrowLeft size={16} /> Voltar
-        </button>
-        <div className="absolute left-1/2 -translate-x-1/2">
-          <img src="/logo-fs.png" alt="Foto Segundo" style={{ height: 22, objectFit: "contain" }} />
+          {/* Botão de Caixa (Dinheiro) */}
+          {(authUser?.role === 'ADMIN' || authUser?.role === 'PROFISSIONAL' || authUser?.franchiseProfile) && authStep === 'authorized' && (
+            <button 
+              onClick={handleCashPayment}
+              disabled={authLoading}
+              className="w-full py-5 border-2 border-brand-tactical/30 bg-brand-tactical/5 text-brand-tactical text-[10px] font-black uppercase tracking-[0.3em] hover:bg-brand-tactical hover:text-black transition-all"
+            >
+              {authLoading ? "PROCESSANDO..." : "Confirmar Recebimento em Dinheiro"}
+            </button>
+          )}
         </div>
-        <div className="text-proportional opacity-100 flex items-center gap-2">
-          <ShieldCheck size={14} className="text-brand-tactical" />
-          <span className="desktop-only">Checkout Seguro</span>
-        </div>
-      </nav>
 
-      <div className="max-w-3xl mx-auto px-4 py-12 space-y-10">
-        {/* Resumo do Pedido */}
-        <div className="lux-aura">
-          <div className="lux-card editorial-shadow !bg-theme-bg-muted !border-theme-border rounded-none animate-reveal">
-            <div className="flex flex-col items-center gap-6 border-b border-theme-border pb-8 mb-8 text-center">
-              <h1 className="heading-luxury !text-3xl md:!text-5xl italic tracking-tighter">
-                {order.event?.nomeNoivos}
-              </h1>
-              <div className="text-proportional !opacity-100 tracking-[0.4em] font-black">Resumo da Aquisição</div>
-            </div>
-            <div className="space-y-6">
-              <div className="flex justify-between items-center text-proportional font-black">
-                <span>{order.manualType || "Investimento"}</span>
-                <span className="opacity-100 text-theme-text">R$ {Number(order.amount).toFixed(2)}</span>
-              </div>
-              <div className="pt-6 border-t border-theme-border flex justify-between items-center">
-                <div className="text-proportional !opacity-100 font-black tracking-[0.4em]">Total</div>
-                <div className="text-3xl md:text-5xl font-black tracking-tighter text-brand-tactical italic">
-                  R$ {Number(order.amount).toFixed(2)}
+        {/* Lado Direito: Auth ou Payment Brick */}
+        <div className="lg:border-l lg:border-zinc-900 lg:pl-12">
+           <div className="mb-8">
+              <p className="text-[10px] font-black text-zinc-500 uppercase tracking-widest mb-2">Finalizar Pagamento</p>
+              <p className="text-[9px] text-zinc-600 uppercase tracking-widest leading-relaxed">Sua transação é processada em ambiente seguro com criptografia de ponta.</p>
+           </div>
+
+           {authStep === 'authorized' ? (
+             <div className="space-y-8 animate-in fade-in duration-700">
+                {order.deliveryType === 'SHIPPING' && !shippingData.street && (
+                  <div className="p-10 border border-dashed border-zinc-800 text-center">
+                    <p className="text-[10px] text-zinc-600 uppercase font-black italic">Preencha o endereço de entrega para liberar o pagamento.</p>
+                  </div>
+                )}
+                <div id="paymentBrick_container" className="lux-brick-midnight" />
+             </div>
+           ) : (
+             <div className="space-y-8 animate-in slide-in-from-bottom-4 duration-700">
+                <div className="space-y-2">
+                   <h2 className="text-2xl font-black italic uppercase">{authStep === 'login' ? "Bem-vindo de Volta" : "Sua Nova Conta"}</h2>
+                   <p className="text-xs text-zinc-500">{authStep === 'login' ? "Identificamos seu e-mail. Digite sua senha." : "Defina uma senha para acessar suas memórias depois."}</p>
                 </div>
-              </div>
-              <div className="flex justify-end">
-                <span className="bg-brand-tactical/10 text-brand-tactical text-[10px] font-black px-3 py-1 rounded-full uppercase tracking-widest animate-pulse">
-                  ✨ Parcelamento em até 3x sem juros
-                </span>
-              </div>
-            </div>
-          </div>
-        </div>
+                <form onSubmit={handleAuthSubmit} className="space-y-4">
+                   <input type="email" value={order.buyerEmail} disabled className="w-full bg-zinc-900/50 border border-zinc-800 py-4 px-4 text-xs opacity-50" />
+                   <input 
+                      type="password" 
+                      placeholder="Senha (mín. 6 dígitos)" 
+                      value={password}
+                      onChange={e => setPassword(e.target.value)}
+                      className="w-full bg-black border border-zinc-800 py-4 px-4 text-xs focus:border-brand-tactical outline-none"
+                      autoFocus
+                   />
+                   {localAuthError && <p className="text-[9px] text-red-500 font-black uppercase tracking-widest">{localAuthError}</p>}
+                   <button type="submit" disabled={authLoading} className="w-full py-4 bg-white text-black text-[10px] font-black uppercase tracking-widest hover:bg-brand-tactical transition-all">
+                      {authLoading ? "AUTENTICANDO..." : (authStep === 'login' ? "ENTRAR E PAGAR" : "CRIAR CONTA E CONTINUAR")}
+                   </button>
+                   <button type="button" onClick={() => setAuthStep(s => s === 'login' ? 'register' : 'login')} className="w-full text-[9px] text-zinc-500 font-black uppercase tracking-widest hover:text-brand-tactical">
+                      {authStep === 'login' ? "Não tem conta? Registre-se" : "Já tem conta? Faça login"}
+                   </button>
+                </form>
+             </div>
+           )}
 
-        {/* Brick de Pagamento */}
-        <div className="lux-card editorial-shadow !p-4 md:!p-10 min-h-[400px] rounded-none border-theme-border animate-reveal" style={{ animationDelay: "0.2s" }}>
-          <div className="mb-8 text-center">
-            <div className="text-proportional mb-3 tracking-[0.3em] font-black">Forma de Pagamento</div>
-            <p className="text-[10px] uppercase tracking-widest opacity-40 mb-10">
-              Processamento via Mercado Pago com criptografia 256 bits
-            </p>
-            {renderCheckout()}
-          </div>
-        </div>
-
-        {/* Selos de segurança */}
-        <div className="text-center flex items-center justify-center gap-6 opacity-20 animate-reveal" style={{ animationDelay: "0.4s" }}>
-          <img src="https://static.mlstatic.com/org-img/vendors/br/logo-mercado-pago.png" alt="MP" className="h-4 grayscale brightness-0 dark:brightness-200" />
-          <div className="w-px h-4 bg-theme-border" />
-          <ShieldCheck size={16} />
-          <span className="text-[10px] font-black tracking-[0.3em] uppercase italic">PAGAMENTO BLINDADO</span>
+           <div className="mt-12 pt-8 border-t border-zinc-900 flex items-center justify-between opacity-30">
+              <img src="https://static.mlstatic.com/org-img/vendors/br/logo-mercado-pago.png" alt="MP" className="h-3 grayscale brightness-200" />
+              <div className="flex items-center gap-2 text-[8px] font-black uppercase tracking-widest"><Lock size={10} /> 256-bit SSL</div>
+           </div>
         </div>
       </div>
+      
+      <style>{`
+        .lux-brick-midnight { min-height: 400px; }
+        #paymentBrick_container { border-radius: 0 !important; }
+        #paymentBrick_container iframe { border-radius: 0 !important; }
+      `}</style>
     </div>
   );
 };

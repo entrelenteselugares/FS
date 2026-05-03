@@ -11,6 +11,15 @@
     <title>Foto Segundo | Suas memórias, entregues agora.</title>
     <!-- Mercado Pago SDK -->
     <script src="https://sdk.mercadopago.com/js/v2"></script>
+    <script>
+      (function() {
+        const saved = localStorage.getItem("fs_theme");
+        const theme = (saved && saved !== "light") ? saved : "dark";
+        document.documentElement.setAttribute("data-theme", theme);
+        document.documentElement.classList.add(theme);
+        if (!saved) localStorage.setItem("fs_theme", "dark");
+      })();
+    </script>
   </head>
   <body>
     <div id="root"></div>

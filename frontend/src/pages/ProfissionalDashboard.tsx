@@ -1,4 +1,4 @@
-import { useState, useEffect, useCallback } from "react";
+import { useState, useEffect, useCallback, useMemo } from "react";
 import { useAuth } from "../hooks/useAuth";
 import { API } from "../lib/api";
 import { useNavigate } from "react-router-dom";
@@ -263,7 +263,7 @@ export default function ProfissionalDashboard() {
 
   // ─── Nav ──────────────────────────────────────────────────────────────────────
 
-  const navItems: NavItem[] = [
+  const navItems: NavItem[] = useMemo(() => [
     { label: "Visão Geral", onClick: () => setActiveTab("agenda"), isActive: activeTab === "agenda", icon: <LayoutDashboard size={16} /> },
     {
       label: "Convites Pendentes",
@@ -283,7 +283,7 @@ export default function ProfissionalDashboard() {
       icon: <Printer size={16} /> 
     }] : []),
     { label: "Meu Perfil", onClick: () => setActiveTab("perfil"), isActive: activeTab === "perfil", icon: <Settings size={16} /> },
-  ];
+  ], [activeTab, pendingEvents.length, unitInvites.length, user?.franchiseProfile, profile?.cartorioProfissional]);
 
   const residentUnits = profile?.cartorioProfissional?.map((cp) => cp.cartorio.razaoSocial) || [];
 
