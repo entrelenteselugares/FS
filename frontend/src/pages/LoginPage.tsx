@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+﻿import React, { useState } from "react";
 import { isAxiosError } from "axios";
 import { useNavigate, Link } from "react-router-dom";
 import { useAuth } from "../hooks/useAuth";
@@ -85,7 +85,7 @@ export const LoginPage: React.FC = () => {
   };
 
   return (
-    <div className="min-h-screen flex flex-col items-center justify-center bg-[#0a0a0a] relative overflow-hidden px-6 py-12">
+    <div className="min-h-screen flex flex-col items-center justify-center bg-theme-bg relative overflow-hidden px-6 py-12">
       {/* Ambient Glow */}
       <div className="absolute inset-0 bg-emerald-500/5 blur-[120px] rounded-full -m-64 opacity-20" />
       <div className="absolute bottom-0 right-0 w-[500px] h-[500px] bg-emerald-500/5 blur-[150px] rounded-full -mr-64 -mb-64 opacity-20" />
@@ -122,7 +122,7 @@ export const LoginPage: React.FC = () => {
         </div>
 
         {/* ── Card ── */}
-        <div className="bg-[#111] border border-white/5 p-8 md:p-12 relative shadow-2xl">
+        <div className="bg-theme-card border border-theme-border p-8 md:p-12 relative shadow-2xl">
           <div className="absolute top-0 left-0 w-full h-px bg-gradient-to-r from-transparent via-emerald-500/20 to-transparent" />
 
           {/* Success Reset */}
@@ -145,7 +145,7 @@ export const LoginPage: React.FC = () => {
 
             {/* E-mail */}
             <div className="space-y-2">
-              <label className="text-[10px] font-black uppercase tracking-widest text-white/40 block">Identificação</label>
+              <label className="text-[10px] font-black uppercase tracking-widest text-theme-muted block">Identificação</label>
               <input
                 id="lp-email"
                 className="fs-input w-full"
@@ -161,7 +161,7 @@ export const LoginPage: React.FC = () => {
             {/* Senha */}
             <div className="space-y-2">
               <div className="flex justify-between items-center">
-                <label className="text-[10px] font-black uppercase tracking-widest text-white/40 block">Chave de Acesso</label>
+                <label className="text-[10px] font-black uppercase tracking-widest text-theme-muted block">Chave de Acesso</label>
                 <button type="button" onClick={handleForgotPassword} className="text-[9px] font-black uppercase tracking-widest text-emerald-500/60 hover:text-emerald-500 transition-colors">
                   ESQUECI A SENHA
                 </button>
@@ -179,7 +179,7 @@ export const LoginPage: React.FC = () => {
                 />
                 <button
                   type="button"
-                  className="absolute right-4 text-white/20 hover:text-emerald-500 transition-colors"
+                  className="absolute right-4 text-theme-subtle hover:text-emerald-500 transition-colors"
                   onClick={() => setShowSenha(v => !v)}
                 >
                   <EyeIcon open={showSenha} />
@@ -192,15 +192,15 @@ export const LoginPage: React.FC = () => {
               id="btn-login-submit"
               type="submit"
               disabled={loading}
-              className="w-full py-5 bg-emerald-500 text-black font-display font-black text-xs uppercase tracking-[0.4em] hover:bg-white transition-all shadow-xl shadow-emerald-500/10 disabled:opacity-50 disabled:cursor-not-allowed mt-4"
+              className="w-full py-5 bg-emerald-500 text-theme-text font-display font-black text-xs uppercase tracking-[0.4em] hover:bg-white transition-all shadow-xl shadow-emerald-500/10 disabled:opacity-50 disabled:cursor-not-allowed mt-4"
             >
               {loading ? "VALIDANDO..." : "ENTRAR NO SISTEMA"}
             </button>
           </form>
 
           {/* Registro */}
-          <div className="mt-12 pt-8 border-t border-white/5 text-center">
-            <p className="text-[9px] font-black text-white/20 uppercase tracking-widest mb-4">
+          <div className="mt-12 pt-8 border-t border-theme-border text-center">
+            <p className="text-[9px] font-black text-theme-subtle uppercase tracking-widest mb-4">
               Solicitação de novas credenciais
             </p>
             <Link to="/register" className="text-[11px] font-display font-black text-emerald-500 uppercase tracking-widest hover:text-white transition-colors">
@@ -211,7 +211,7 @@ export const LoginPage: React.FC = () => {
 
         {/* Voltar */}
         <div className="text-center mt-12">
-          <Link to="/" className="text-[10px] font-black text-white/20 uppercase tracking-[0.3em] hover:text-emerald-500 transition-colors">
+          <Link to="/" className="text-[10px] font-black text-theme-subtle uppercase tracking-[0.3em] hover:text-emerald-500 transition-colors">
             ← VOLTAR PARA VITRINE PÚBLICA
           </Link>
         </div>

@@ -1,4 +1,4 @@
-import { useNavigate } from "react-router-dom";
+﻿import { useNavigate } from "react-router-dom";
 import { motion } from "framer-motion";
 import { ArrowLeft, Search } from "lucide-react";
 
@@ -6,7 +6,7 @@ export function NotFoundPage() {
   const navigate = useNavigate();
 
   return (
-    <div className="min-h-screen bg-[#0A0A0A] text-white flex flex-col items-center justify-center p-6 text-center">
+    <div className="min-h-screen bg-theme-bg text-theme-text flex flex-col items-center justify-center p-6 text-center">
       <motion.div
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
@@ -30,7 +30,7 @@ export function NotFoundPage() {
 
         <div className="space-y-4">
           <h2 className="text-3xl font-extrabold tracking-tight uppercase">Protocolo Não Encontrado</h2>
-          <p className="text-white/40 text-[11px] font-bold uppercase tracking-[0.3em] leading-relaxed">
+          <p className="text-theme-muted text-[11px] font-bold uppercase tracking-[0.3em] leading-relaxed">
             O registro solicitado não existe em nossa rede ou foi movido para um diretório privado.
           </p>
         </div>

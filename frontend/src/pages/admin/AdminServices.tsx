@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useCallback, useMemo } from "react";
+﻿import React, { useState, useEffect, useCallback, useMemo } from "react";
 import { 
   Plus, 
   Trash2, 
@@ -278,7 +278,7 @@ export const AdminServices: React.FC = () => {
               </p>
               <div className="grid grid-cols-2 gap-4">
                  <button onClick={() => setConfirmDelete(null)} className="p-4 border border-theme-border text-theme-muted text-[9px] font-black uppercase tracking-widest hover:text-white transition-all">CANCELAR</button>
-                 <button onClick={executeDelete} className="p-4 bg-red-900 text-white text-[9px] font-black uppercase tracking-widest hover:brightness-110 transition-all">REMOVER AGORA</button>
+                 <button onClick={executeDelete} className="p-4 bg-red-900 text-theme-text text-[9px] font-black uppercase tracking-widest hover:brightness-110 transition-all">REMOVER AGORA</button>
               </div>
            </div>
         </div>
@@ -287,10 +287,10 @@ export const AdminServices: React.FC = () => {
       {/* NOTIFICATION */}
       {notification && (
         <div className="fixed bottom-10 right-10 z-[700] animate-in slide-in-from-right-10 duration-500">
-           <div className={`p-8 border ${notification.type === 'success' ? 'border-brand-tactical bg-zinc-950 shadow-[0_0_40px_rgba(133,185,172,0.15)]' : 'border-red-900 bg-zinc-950'} min-w-[350px] relative overflow-hidden shadow-2xl`}>
+           <div className={`p-8 border ${notification.type === 'success' ? 'border-brand-tactical bg-theme-bg shadow-[0_0_40px_rgba(133,185,172,0.15)]' : 'border-red-900 bg-theme-bg'} min-w-[350px] relative overflow-hidden shadow-2xl`}>
               <div className="flex flex-col gap-2">
                  <span className={`text-[9px] font-black uppercase tracking-[0.5em] ${notification.type === 'success' ? 'text-brand-tactical' : 'text-red-500'}`}>Sincronização de Ativos</span>
-                 <p className="text-[13px] font-bold text-white uppercase tracking-widest mt-1 leading-tight">{notification.message}</p>
+                 <p className="text-[13px] font-bold text-theme-text uppercase tracking-widest mt-1 leading-tight">{notification.message}</p>
               </div>
               <div className={`absolute bottom-0 left-0 h-1.5 ${notification.type === 'success' ? 'bg-brand-tactical' : 'bg-red-900'} animate-out fade-out duration-[5000ms] w-full`} />
            </div>

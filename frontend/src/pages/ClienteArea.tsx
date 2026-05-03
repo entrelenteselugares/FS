@@ -1,4 +1,4 @@
-import { useState, useEffect, useCallback, useMemo } from "react";
+﻿import { useState, useEffect, useCallback, useMemo } from "react";
 import { useNavigate, useSearchParams } from "react-router-dom";
 import { useAuth } from "../hooks/useAuth";
 import { API } from "../lib/api";
@@ -551,14 +551,14 @@ function EventGroupRow({ group, now, onSelectPedido }: {
             )}
             
             {isExpiringSoon && (
-              <div className="absolute inset-x-0 bottom-0 bg-amber-500 text-black text-[8px] font-black uppercase tracking-widest py-2 text-center">
+              <div className="absolute inset-x-0 bottom-0 bg-amber-500 text-theme-text text-[8px] font-black uppercase tracking-widest py-2 text-center">
                 {daysLeft} dias restantes
               </div>
             )}
 
             {!hasAprovado && (
               <div className="absolute inset-0 flex items-center justify-center bg-black/40 backdrop-blur-[2px]">
-                <div className="px-3 py-1 bg-black/60 border border-white/10 text-[8px] font-black text-white uppercase tracking-widest">
+                <div className="px-3 py-1 bg-black/60 border border-theme-border text-[8px] font-black text-theme-text uppercase tracking-widest">
                   Acesso Bloqueado
                 </div>
               </div>
@@ -671,7 +671,7 @@ function EventGroupRow({ group, now, onSelectPedido }: {
               ) : (
                 <button
                   onClick={() => firstPendente && navigate(`/checkout?orderId=${firstPendente.id}`)}
-                  className="px-8 py-3 bg-amber-500 text-black text-[10px] font-black uppercase tracking-[0.4em] hover:brightness-110 shadow-lg shadow-amber-500/20 transition-all"
+                  className="px-8 py-3 bg-amber-500 text-theme-text text-[10px] font-black uppercase tracking-[0.4em] hover:brightness-110 shadow-lg shadow-amber-500/20 transition-all"
                 >
                   Desbloquear Agora
                 </button>

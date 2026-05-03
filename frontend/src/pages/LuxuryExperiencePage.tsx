@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+﻿import { useState, useEffect } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import { API } from "../lib/api";
 import { Download, ExternalLink, Camera, Calendar, MapPin, ChevronDown } from "lucide-react";
@@ -70,11 +70,11 @@ export default function LuxuryExperiencePage() {
   }, [event, navigate]);
 
   if (loading) return (
-    <div className="min-h-screen flex flex-col items-center justify-center gap-6 relative overflow-hidden bg-[#0a0a0a]">
+    <div className="min-h-screen flex flex-col items-center justify-center gap-6 relative overflow-hidden bg-theme-bg">
       <div className="absolute inset-0 bg-emerald-500/5 blur-[120px] rounded-full -m-64 opacity-20" />
       <div className="relative z-10 flex flex-col items-center gap-8">
         <div className="w-px h-16 bg-gradient-to-b from-transparent via-emerald-500 to-transparent" />
-        <div className="text-[18px] font-display font-black uppercase tracking-[0.8em] italic text-white">FOTO SEGUNDO</div>
+        <div className="text-[18px] font-display font-black uppercase tracking-[0.8em] italic text-theme-text">FOTO SEGUNDO</div>
         <div className="text-[9px] font-black uppercase tracking-[0.4em] text-emerald-500 animate-pulse">Preparando Experiência de Luxo</div>
         <div className="w-px h-16 bg-gradient-to-t from-transparent via-emerald-500 to-transparent" />
       </div>
@@ -115,10 +115,10 @@ export default function LuxuryExperiencePage() {
             className="space-y-4"
           >
             <p className="text-[11px] font-black text-emerald-500 uppercase tracking-[0.6em] italic">Galeria Exclusiva</p>
-            <h1 className="text-5xl md:text-8xl font-display font-black uppercase italic tracking-tighter leading-none text-white">
+            <h1 className="text-5xl md:text-8xl font-display font-black uppercase italic tracking-tighter leading-none text-theme-text">
               {event.nomeNoivos}
             </h1>
-            <div className="flex flex-wrap justify-center items-center gap-6 text-[10px] font-bold uppercase tracking-widest mt-6 text-white/40">
+            <div className="flex flex-wrap justify-center items-center gap-6 text-[10px] font-bold uppercase tracking-widest mt-6 text-theme-muted">
               <span className="flex items-center gap-2"><Calendar size={12} className="text-emerald-500" /> {new Date(event.dataEvento).toLocaleDateString('pt-BR', { day: '2-digit', month: 'long', year: 'numeric' })}</span>
               <span className="flex items-center gap-2"><MapPin size={12} className="text-emerald-500" /> {event.location || "Localização Privada"}</span>
             </div>
@@ -141,7 +141,7 @@ export default function LuxuryExperiencePage() {
         {/* ARTIST INFO */}
         <div className="flex flex-col md:flex-row items-center gap-12 border-y py-10" style={{ borderColor: T.border }}>
           <div className="relative group">
-            <div className="w-24 h-24 rounded-full border border-emerald-500/30 overflow-hidden shadow-xl bg-[#111111]">
+            <div className="w-24 h-24 rounded-full border border-emerald-500/30 overflow-hidden shadow-xl bg-theme-card">
                <div className="w-full h-full flex items-center justify-center text-emerald-500 text-2xl font-display italic font-black">
                   {artistName.charAt(0)}
                </div>
@@ -160,15 +160,15 @@ export default function LuxuryExperiencePage() {
           <div className="space-y-6 p-8 relative overflow-hidden group hover:border-brand-tactical/40 transition-all border" style={{ background: T.bgCard, borderColor: T.border }}>
             <div className="absolute top-0 right-0 p-8 opacity-5 group-hover:opacity-10 transition-opacity" style={{ color: T.text }}><Download size={120} /></div>
             <div className="space-y-2 relative z-10">
-              <h3 className="text-2xl font-display font-black uppercase italic text-white">Seu Legado Digital</h3>
-              <p className="text-[10px] uppercase tracking-widest font-bold text-white/40">Galeria completa em alta resolução</p>
+              <h3 className="text-2xl font-display font-black uppercase italic text-theme-text">Seu Legado Digital</h3>
+              <p className="text-[10px] uppercase tracking-widest font-bold text-theme-muted">Galeria completa em alta resolução</p>
             </div>
-            <p className="text-xs uppercase font-medium leading-relaxed italic text-white/60">Acesse todas as memórias do seu dia especial. Cada clique foi processado para garantir a máxima fidelidade técnica e estética.</p>
+            <p className="text-xs uppercase font-medium leading-relaxed italic text-theme-muted">Acesse todas as memórias do seu dia especial. Cada clique foi processado para garantir a máxima fidelidade técnica e estética.</p>
             <a 
               href={(event.lightroomUrl || event.driveUrl || '#').trim().replace(/\s/g, '')} 
               target="_blank" 
               rel="noopener noreferrer"
-              className="inline-flex items-center gap-4 px-10 py-5 bg-emerald-500 text-black font-display font-black text-sm uppercase tracking-widest shadow-xl shadow-emerald-500/10 hover:scale-[1.02] transition-all"
+              className="inline-flex items-center gap-4 px-10 py-5 bg-emerald-500 text-theme-text font-display font-black text-sm uppercase tracking-widest shadow-xl shadow-emerald-500/10 hover:scale-[1.02] transition-all"
             >
               ACESSAR GALERIA <ExternalLink size={14} />
             </a>
@@ -180,8 +180,8 @@ export default function LuxuryExperiencePage() {
                   <Camera size={20} />
                   <span className="text-[11px] font-black uppercase tracking-[0.3em] italic">Captura Phygital</span>
                </div>
-               <h3 className="text-2xl font-display font-black uppercase italic text-white">Envie sua Foto</h3>
-               <p className="text-xs uppercase font-bold tracking-widest leading-relaxed text-white/60">Faça parte do evento! Envie suas fotos agora para serem impressas na hora pelo nosso artista.</p>
+               <h3 className="text-2xl font-display font-black uppercase italic text-theme-text">Envie sua Foto</h3>
+               <p className="text-xs uppercase font-bold tracking-widest leading-relaxed text-theme-muted">Faça parte do evento! Envie suas fotos agora para serem impressas na hora pelo nosso artista.</p>
              </div>
              
              <div className="pt-6">
@@ -191,7 +191,7 @@ export default function LuxuryExperiencePage() {
                 >
                   ABRIR CÂMERA <Camera size={14} />
                 </a>
-                <p className="text-[8px] uppercase font-bold tracking-widest mt-4 text-white/20">Disponível apenas durante o evento</p>
+                <p className="text-[8px] uppercase font-bold tracking-widest mt-4 text-theme-subtle">Disponível apenas durante o evento</p>
              </div>
           </div>
         </div>
@@ -205,8 +205,8 @@ export default function LuxuryExperiencePage() {
                 <p className="text-[10px] font-black text-emerald-500 uppercase tracking-[0.4em] italic">Eternize seu Momento</p>
                 <div className="h-px w-12 bg-emerald-500/30" />
               </div>
-              <h3 className="text-4xl md:text-6xl font-display font-black uppercase italic tracking-tighter text-white">Produtos de Luxo</h3>
-              <p className="text-xs uppercase font-bold tracking-[0.2em] max-w-xl mx-auto text-white/40">Transforme suas memórias digitais em obras de arte físicas com acabamento de alta costura.</p>
+              <h3 className="text-4xl md:text-6xl font-display font-black uppercase italic tracking-tighter text-theme-text">Produtos de Luxo</h3>
+              <p className="text-xs uppercase font-bold tracking-[0.2em] max-w-xl mx-auto text-theme-muted">Transforme suas memórias digitais em obras de arte físicas com acabamento de alta costura.</p>
             </div>
             
             <div className="grid grid-cols-1 md:grid-cols-3 gap-12">
@@ -217,17 +217,17 @@ export default function LuxuryExperiencePage() {
                   whileInView={{ opacity: 1, y: 0 }}
                   transition={{ delay: idx * 0.2 }}
                 >
-                  <div className="p-8 space-y-8 group hover:border-emerald-500/40 transition-all relative overflow-hidden border border-white/5 bg-[#111111]">
+                  <div className="p-8 space-y-8 group hover:border-emerald-500/40 transition-all relative overflow-hidden border border-theme-border bg-theme-card">
                     <div className="absolute top-0 left-0 w-full h-[1px] bg-gradient-to-r from-transparent via-emerald-500/20 to-transparent" />
                     
                     <div className="aspect-[4/5] bg-black/40 relative overflow-hidden flex items-center justify-center group-hover:scale-[1.02] transition-all duration-700">
                       <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent opacity-0 group-hover:opacity-100 transition-opacity" />
-                      <div className="italic font-display font-black text-6xl select-none uppercase tracking-tighter opacity-10 text-white">
+                      <div className="italic font-display font-black text-6xl select-none uppercase tracking-tighter opacity-10 text-theme-text">
                         {p.category.slice(0, 3)}
                       </div>
                     {/* Badge de Sugestão Inteligente */}
                     {idx === 0 && (
-                      <div className="absolute top-4 left-4 bg-emerald-500 text-black text-[8px] font-black px-3 py-1 uppercase tracking-widest shadow-xl">
+                      <div className="absolute top-4 left-4 bg-emerald-500 text-theme-text text-[8px] font-black px-3 py-1 uppercase tracking-widest shadow-xl">
                         Mais Desejado
                       </div>
                     )}
@@ -236,18 +236,18 @@ export default function LuxuryExperiencePage() {
                     <div className="space-y-3">
                       <div className="flex justify-between items-center">
                         <p className="text-[9px] font-black text-emerald-500 uppercase tracking-[0.2em] italic">{p.category}</p>
-                        <span className="text-[8px] font-bold uppercase tracking-widest text-white/20">SKU: {p.sku}</span>
+                        <span className="text-[8px] font-bold uppercase tracking-widest text-theme-subtle">SKU: {p.sku}</span>
                       </div>
-                      <h4 className="text-xl font-display font-black uppercase italic tracking-tight text-white">{p.name}</h4>
-                      <p className="text-[11px] uppercase font-medium leading-relaxed text-white/40">{p.description || "Acabamento premium com materiais importados e durabilidade secular."}</p>
+                      <h4 className="text-xl font-display font-black uppercase italic tracking-tight text-theme-text">{p.name}</h4>
+                      <p className="text-[11px] uppercase font-medium leading-relaxed text-theme-muted">{p.description || "Acabamento premium com materiais importados e durabilidade secular."}</p>
                     </div>
 
-                    <div className="pt-6 border-t border-white/5 flex justify-between items-end">
+                    <div className="pt-6 border-t border-theme-border flex justify-between items-end">
                       <div className="space-y-1">
-                        <p className="text-[8px] font-black uppercase tracking-widest text-white/20">Investimento</p>
+                        <p className="text-[8px] font-black uppercase tracking-widest text-theme-subtle">Investimento</p>
                         <span className="text-2xl font-display font-black text-emerald-500 italic">R$ {Number(p.sellingPrice).toLocaleString('pt-BR', { minimumFractionDigits: 2 })}</span>
                       </div>
-                      <button className="px-8 py-4 bg-white/5 border border-white/10 text-white font-display font-black text-[10px] uppercase tracking-widest hover:bg-white hover:text-black transition-all">
+                      <button className="px-8 py-4 bg-white/5 border border-theme-border text-theme-text font-display font-black text-[10px] uppercase tracking-widest hover:bg-white hover:text-black transition-all">
                         ENCOMENDAR
                       </button>
                     </div>

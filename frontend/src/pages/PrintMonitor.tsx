@@ -1,4 +1,4 @@
-import { useState, useEffect, useCallback } from "react";
+﻿import { useState, useEffect, useCallback } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import { API } from "../lib/api";
 import { useAuth } from "../hooks/useAuth";
@@ -77,7 +77,7 @@ export default function PrintMonitor() {
 
   if (loading && !event) {
     return (
-      <div className="min-h-screen bg-zinc-950 flex flex-col items-center justify-center gap-6">
+      <div className="min-h-screen bg-theme-bg flex flex-col items-center justify-center gap-6">
         <div className="w-12 h-12 border-2 border-brand-tactical border-t-transparent rounded-full animate-spin" />
         <p className="text-[10px] font-black text-theme-muted uppercase tracking-[0.5em]">Sincronizando Radar...</p>
       </div>
@@ -85,9 +85,9 @@ export default function PrintMonitor() {
   }
 
   return (
-    <div className="min-h-screen bg-zinc-950 text-white font-sans selection:bg-brand-tactical/30">
+    <div className="min-h-screen bg-theme-bg text-theme-text font-sans selection:bg-brand-tactical/30">
       {/* Header Fixo */}
-      <div className="sticky top-0 z-50 bg-zinc-950/80 backdrop-blur-xl border-b border-white/5 px-6 py-4 flex items-center justify-between">
+      <div className="sticky top-0 z-50 bg-zinc-950/80 backdrop-blur-xl border-b border-theme-border px-6 py-4 flex items-center justify-between">
         <div className="flex items-center gap-6">
           <button onClick={() => navigate(-1)} className="p-2 hover:bg-white/5 rounded-full transition-all text-zinc-400 hover:text-white">
             <ArrowLeft size={20} />
@@ -129,12 +129,12 @@ export default function PrintMonitor() {
           />
           <button 
             onClick={() => document.getElementById('manual-upload')?.click()}
-            className="hidden md:flex items-center gap-2 px-6 py-2.5 rounded-full text-[9px] font-black uppercase tracking-widest bg-zinc-800 text-zinc-300 border border-white/10 hover:bg-zinc-700 transition-all"
+            className="hidden md:flex items-center gap-2 px-6 py-2.5 rounded-full text-[9px] font-black uppercase tracking-widest bg-theme-border text-zinc-300 border border-theme-border hover:bg-zinc-700 transition-all"
           >
             <ExternalLink size={12} /> Enviar Fotos
           </button>
 
-          <div className="hidden md:flex items-center gap-2 px-4 py-2 bg-zinc-900 border border-white/5 rounded-full">
+          <div className="hidden md:flex items-center gap-2 px-4 py-2 bg-theme-card border border-theme-border rounded-full">
             <div className={`w-1.5 h-1.5 rounded-full ${autoPrint ? 'bg-emerald-500 animate-pulse' : 'bg-zinc-600'}`} />
             <span className="text-[9px] font-black uppercase tracking-widest">{autoPrint ? 'Auto-Print Ativo' : 'Manual'}</span>
           </div>
@@ -158,24 +158,24 @@ export default function PrintMonitor() {
       <div className="max-w-6xl mx-auto p-6 space-y-10">
         {/* Status Bar */}
         <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
-          <div className="bg-zinc-900/50 border border-white/5 p-6 space-y-2">
+          <div className="bg-theme-card/60 border border-theme-border p-6 space-y-2">
             <p className="text-[9px] font-black text-zinc-500 uppercase tracking-widest">Fila de Espera</p>
             <p className="text-4xl font-black italic tracking-tighter text-brand-tactical">{pendingCount}</p>
             <p className="text-[8px] text-zinc-500 uppercase font-bold">fotos pendentes</p>
           </div>
-          <div className="bg-zinc-900/50 border border-white/5 p-6 space-y-2">
+          <div className="bg-theme-card/60 border border-theme-border p-6 space-y-2">
             <p className="text-[9px] font-black text-zinc-500 uppercase tracking-widest">Sincronização</p>
             <div className="flex items-center gap-2 text-sm font-black italic text-zinc-300">
               <Clock size={14} /> {lastSync.toLocaleTimeString()}
             </div>
             <p className="text-[8px] text-zinc-500 uppercase font-bold">última atualização</p>
           </div>
-          <div className="bg-zinc-900/50 border border-white/5 p-6 space-y-2">
+          <div className="bg-theme-card/60 border border-theme-border p-6 space-y-2">
             <p className="text-[9px] font-black text-zinc-500 uppercase tracking-widest">Créditos Unidade</p>
             <p className="text-xl font-black italic text-zinc-300">{user?.franchiseProfile?.printCredits || 0}</p>
             <p className="text-[8px] text-zinc-500 uppercase font-bold">fotos restantes</p>
           </div>
-          <div className="bg-zinc-900/50 border border-white/5 p-6 space-y-2">
+          <div className="bg-theme-card/60 border border-theme-border p-6 space-y-2">
              <p className="text-[9px] font-black text-zinc-500 uppercase tracking-widest">Configuração</p>
              <div className="flex items-center gap-2 text-[10px] font-bold text-emerald-500 uppercase">
                <Printer size={12} /> Epson L8050
@@ -194,14 +194,14 @@ export default function PrintMonitor() {
           </div>
 
           {prints.length === 0 ? (
-            <div className="py-20 border border-dashed border-white/10 rounded-2xl flex flex-col items-center justify-center gap-4">
+            <div className="py-20 border border-dashed border-theme-border rounded-2xl flex flex-col items-center justify-center gap-4">
               <Printer size={48} className="text-zinc-800" />
               <p className="text-[10px] font-black text-zinc-600 uppercase tracking-[0.3em]">Aguardando Capturas Phygital...</p>
             </div>
           ) : (
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
               {prints.map((print) => (
-                <div key={print.id} className={`group relative bg-zinc-900 border transition-all duration-500 overflow-hidden ${print.status === 'PENDING_PRINT' ? 'border-brand-tactical/30' : 'border-white/5 opacity-60'}`}>
+                <div key={print.id} className={`group relative bg-theme-card border transition-all duration-500 overflow-hidden ${print.status === 'PENDING_PRINT' ? 'border-brand-tactical/30' : 'border-theme-border opacity-60'}`}>
                   {/* Thumbnail */}
                   <div className="aspect-[3/2] overflow-hidden relative">
                     <img src={print.imageUrl} alt={print.referenceCode} className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110" />
@@ -228,7 +228,7 @@ export default function PrintMonitor() {
 
                     <button 
                       onClick={() => handlePrint(print)}
-                      className={`w-full py-3 text-[10px] font-black uppercase tracking-widest flex items-center justify-center gap-2 transition-all ${print.status === 'PRINTED' ? 'bg-zinc-800 text-zinc-400' : 'bg-brand-tactical text-zinc-950 hover:brightness-110 shadow-lg shadow-brand-tactical/20'}`}
+                      className={`w-full py-3 text-[10px] font-black uppercase tracking-widest flex items-center justify-center gap-2 transition-all ${print.status === 'PRINTED' ? 'bg-theme-border text-zinc-400' : 'bg-brand-tactical text-zinc-950 hover:brightness-110 shadow-lg shadow-brand-tactical/20'}`}
                     >
                       <Printer size={14} />
                       {print.status === 'PRINTED' ? 'REIMPRIMIR' : 'IMPRIMIR AGORA'}
@@ -244,7 +244,7 @@ export default function PrintMonitor() {
       {/* QR CODE MODAL */}
       {showQR && (
         <div className="fixed inset-0 z-[100] flex items-center justify-center bg-black/95 backdrop-blur-md p-4 animate-reveal" style={{ position: "fixed", top: 0, left: 0, right: 0, bottom: 0, display: "flex", alignItems: "center", justifyContent: "center" }}>
-          <div className="bg-zinc-900 border border-white/10 p-8 md:p-12 max-w-md w-full relative flex flex-col items-center text-center gap-8 shadow-2xl" style={{ margin: "auto" }}>
+          <div className="bg-theme-card border border-theme-border p-8 md:p-12 max-w-md w-full relative flex flex-col items-center text-center gap-8 shadow-2xl" style={{ margin: "auto" }}>
             <button 
               onClick={() => setShowQR(false)}
               className="absolute top-6 right-6 p-2 text-zinc-500 hover:text-white transition-all bg-white/5 rounded-full"

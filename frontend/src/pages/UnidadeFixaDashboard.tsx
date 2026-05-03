@@ -1,4 +1,4 @@
-import { useState, useEffect, useRef, useCallback } from "react";
+﻿import { useState, useEffect, useRef, useCallback } from "react";
 import { useSearchParams, useNavigate } from "react-router-dom";
 
 import { API } from "../lib/api";
@@ -702,7 +702,7 @@ export default function UnidadeFixaDashboard() {
                                     onClick={() => setTeamChanges(prev => ({ ...prev, [p.id]: tipo }))}
                                     className={`px-6 py-2.5 text-[9px] font-black uppercase tracking-widest transition-all duration-500 relative overflow-hidden ${
                                       vinculo === tipo 
-                                        ? tipo === "FIXO" ? "bg-brand-tactical text-brand-text shadow-lg shadow-brand-tactical/20" : tipo === "ROTATIVO" ? "bg-blue-500 text-white" : "bg-theme-border text-theme-text"
+                                        ? tipo === "FIXO" ? "bg-brand-tactical text-brand-text shadow-lg shadow-brand-tactical/20" : tipo === "ROTATIVO" ? "bg-blue-500 text-theme-text" : "bg-theme-border text-theme-text"
                                         : "text-theme-muted hover:text-theme-text hover:bg-theme-border/20"
                                     }`}
                                   >

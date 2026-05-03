@@ -1,4 +1,4 @@
-import { useState, useEffect, useCallback, useMemo } from "react";
+﻿import { useState, useEffect, useCallback, useMemo } from "react";
 import { useAuth } from "../hooks/useAuth";
 import { API } from "../lib/api";
 import { useNavigate } from "react-router-dom";
@@ -398,7 +398,7 @@ export default function ProfissionalDashboard() {
                 <div className="max-w-3xl space-y-6">
                   {!calendarStatus?.connected ? (
                     <div className="bg-theme-bg border border-theme-border p-10 text-center space-y-6">
-                      <div className="w-20 h-20 bg-zinc-900 border border-theme-border flex items-center justify-center text-theme-muted mx-auto">
+                      <div className="w-20 h-20 bg-theme-card border border-theme-border flex items-center justify-center text-theme-muted mx-auto">
                         <Calendar size={32} />
                       </div>
                       <div className="space-y-2">
@@ -409,7 +409,7 @@ export default function ProfissionalDashboard() {
                       </div>
                       <button 
                         onClick={handleConnectCalendar}
-                        className="px-10 py-4 bg-white text-black text-[11px] font-black uppercase tracking-[0.2em] hover:bg-brand-tactical transition-all shadow-xl"
+                        className="px-10 py-4 bg-white text-theme-text text-[11px] font-black uppercase tracking-[0.2em] hover:bg-brand-tactical transition-all shadow-xl"
                       >
                         CONECTAR GOOGLE CALENDAR
                       </button>
@@ -494,7 +494,7 @@ export default function ProfissionalDashboard() {
                     <div className={`text-7xl font-display font-black italic tracking-tighter ${user.franchiseProfile.printCredits < 50 ? 'text-amber-500' : 'text-emerald-500'}`}>
                       {user.franchiseProfile.printCredits}
                     </div>
-                    <p className="text-[10px] text-white/40 font-black uppercase tracking-[0.2em] mt-2 italic">Fotos para Impressão</p>
+                    <p className="text-[10px] text-theme-muted font-black uppercase tracking-[0.2em] mt-2 italic">Fotos para Impressão</p>
                   </div>
                   
                   <div className="bg-theme-bg border border-theme-border p-10 relative group">
@@ -504,14 +504,14 @@ export default function ProfissionalDashboard() {
                     </div>
                     <div className="mt-4 flex items-center gap-2">
                       <div className={`w-2 h-2 rounded-full ${user.franchiseProfile.active ? 'bg-emerald-500 animate-pulse' : 'bg-red-500'}`} />
-                      <span className="text-[9px] text-white/40 font-black uppercase tracking-widest">Sincronizado com a Nuvem</span>
+                      <span className="text-[9px] text-theme-muted font-black uppercase tracking-widest">Sincronizado com a Nuvem</span>
                     </div>
                   </div>
 
                   <div className="bg-theme-bg border border-theme-border p-10 flex flex-col justify-between">
                     <div>
                       <label className="text-[9px] font-black text-theme-muted uppercase tracking-widest block mb-2">Recarga de Créditos</label>
-                      <p className="text-[10px] text-white/40 font-bold leading-relaxed uppercase tracking-wider">
+                      <p className="text-[10px] text-theme-muted font-bold leading-relaxed uppercase tracking-wider">
                         O limite de impressões é gerenciado pela administração central. Solicite uma nova carga para continuar operando.
                       </p>
                     </div>
@@ -542,7 +542,7 @@ export default function ProfissionalDashboard() {
                         events.filter(ev => ev.captacaoId === user.id).map(ev => (
                           <div key={ev.id} className="bg-theme-bg border border-theme-border p-6 flex flex-col md:flex-row items-center justify-between gap-6 hover:border-brand-tactical/30 transition-all group">
                              <div className="flex items-center gap-5">
-                                <div className="w-12 h-12 bg-zinc-900 border border-theme-border flex items-center justify-center text-brand-tactical group-hover:scale-110 transition-transform">
+                                <div className="w-12 h-12 bg-theme-card border border-theme-border flex items-center justify-center text-brand-tactical group-hover:scale-110 transition-transform">
                                    <Printer size={20} />
                                 </div>
                                 <div>
@@ -576,7 +576,7 @@ export default function ProfissionalDashboard() {
  
                     <div className="bg-theme-bg border border-theme-border overflow-hidden">
                        {user.franchiseProfile.transactions && user.franchiseProfile.transactions.length > 0 ? (
-                         <div className="divide-y divide-white/5">
+                         <div className="divide-y divide-theme-border">
                            {user.franchiseProfile.transactions.map(tx => (
                              <div key={tx.id} className="p-6 flex items-center justify-between hover:bg-white/[0.02] transition-all group">
                                 <div className="space-y-1">
@@ -584,16 +584,16 @@ export default function ProfissionalDashboard() {
                                      {tx.description || (tx.type === 'PRINT_CONSUMPTION' ? 'Impressão Phygital' : 'Recarga de Créditos')}
                                    </p>
                                    <div className="flex items-center gap-3">
-                                     <p className="text-[8px] text-white/20 font-black uppercase tracking-widest">
+                                     <p className="text-[8px] text-theme-subtle font-black uppercase tracking-widest">
                                        {new Date(tx.createdAt).toLocaleString('pt-BR')}
                                      </p>
                                      <div className="w-1 h-1 rounded-full bg-white/10" />
-                                     <p className="text-[8px] text-white/20 font-black uppercase tracking-widest">
+                                     <p className="text-[8px] text-theme-subtle font-black uppercase tracking-widest">
                                        Hash: {tx.id.slice(-8).toUpperCase()}
                                      </p>
                                    </div>
                                 </div>
-                                <div className={`text-lg font-display font-black italic tracking-tighter ${tx.amount > 0 ? 'text-emerald-500' : 'text-white/40'}`}>
+                                <div className={`text-lg font-display font-black italic tracking-tighter ${tx.amount > 0 ? 'text-emerald-500' : 'text-theme-muted'}`}>
                                    {tx.amount > 0 ? '+' : ''}{tx.amount}
                                 </div>
                              </div>

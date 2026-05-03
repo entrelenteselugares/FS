@@ -1,4 +1,4 @@
-import { useState, useEffect, useCallback } from 'react';
+﻿import { useState, useEffect, useCallback } from 'react';
 import { API } from '../../lib/api';
 import { X, RefreshCw, Printer, CheckCircle, Clock } from 'lucide-react';
 
@@ -49,17 +49,17 @@ export default function AdminPhygitalQueue({ eventId, eventTitle, onClose }: Pro
 
   return (
     <div className="fixed inset-0 z-[70] flex items-center justify-end bg-black/80 backdrop-blur-sm">
-      <div className="w-full max-w-2xl h-screen bg-zinc-950 border-l border-white/5 flex flex-col shadow-2xl animate-in slide-in-from-right duration-500">
+      <div className="w-full max-w-2xl h-screen bg-theme-bg border-l border-theme-border flex flex-col shadow-2xl animate-in slide-in-from-right duration-500">
         {/* Header */}
-        <div className="p-8 border-b border-white/5 flex items-center justify-between">
+        <div className="p-8 border-b border-theme-border flex items-center justify-between">
           <div>
-            <h2 className="text-xl font-black text-white uppercase tracking-tighter">Radar Phygital</h2>
+            <h2 className="text-xl font-black text-theme-text uppercase tracking-tighter">Radar Phygital</h2>
             <p className="text-[10px] text-zinc-500 uppercase tracking-widest mt-1 italic">{eventTitle}</p>
           </div>
           <div className="flex items-center gap-4">
             <button 
               onClick={() => setAutoRefresh(!autoRefresh)}
-              className={`p-2 rounded-lg border transition-all ${autoRefresh ? 'bg-brand-tactical/10 border-brand-tactical text-brand-tactical' : 'border-white/5 text-zinc-500'}`}
+              className={`p-2 rounded-lg border transition-all ${autoRefresh ? 'bg-brand-tactical/10 border-brand-tactical text-brand-tactical' : 'border-theme-border text-zinc-500'}`}
               title="Atualização Automática"
             >
               <RefreshCw size={18} className={autoRefresh ? 'animate-spin' : ''} style={{ animationDuration: '3s' }} />
@@ -78,16 +78,16 @@ export default function AdminPhygitalQueue({ eventId, eventTitle, onClose }: Pro
               <p className="text-[10px] font-black uppercase tracking-widest">Sincronizando Fila...</p>
             </div>
           ) : jobs.length === 0 ? (
-            <div className="h-64 flex flex-col items-center justify-center text-zinc-500 gap-4 border-2 border-dashed border-white/5 rounded-2xl">
+            <div className="h-64 flex flex-col items-center justify-center text-zinc-500 gap-4 border-2 border-dashed border-theme-border rounded-2xl">
               <Printer size={40} className="opacity-20" />
               <p className="text-[10px] font-black uppercase tracking-widest opacity-40">Nenhuma foto enviada ainda.</p>
             </div>
           ) : (
             <div className="grid grid-cols-1 gap-4">
               {jobs.map((job) => (
-                <div key={job.id} className="bg-white/[0.02] border border-white/5 rounded-2xl overflow-hidden flex gap-6 p-4 hover:border-brand-tactical/30 transition-all group">
+                <div key={job.id} className="bg-white/[0.02] border border-theme-border rounded-2xl overflow-hidden flex gap-6 p-4 hover:border-brand-tactical/30 transition-all group">
                   {/* Miniatura */}
-                  <div className="w-24 h-24 bg-zinc-900 rounded-xl overflow-hidden flex-shrink-0 border border-white/5 relative">
+                  <div className="w-24 h-24 bg-theme-card rounded-xl overflow-hidden flex-shrink-0 border border-theme-border relative">
                     <img src={job.imageUrl} alt="Print" className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500" />
                     <div className="absolute top-1 right-1 bg-black/80 px-2 py-0.5 rounded text-[8px] font-black text-brand-tactical uppercase">
                       {job.referenceCode}
@@ -97,7 +97,7 @@ export default function AdminPhygitalQueue({ eventId, eventTitle, onClose }: Pro
                   {/* Info */}
                   <div className="flex-1 flex flex-col justify-center">
                     <div className="flex items-center justify-between mb-1">
-                      <span className="text-[12px] font-black text-white uppercase tracking-tight">{job.customerName}</span>
+                      <span className="text-[12px] font-black text-theme-text uppercase tracking-tight">{job.customerName}</span>
                       {job.status === 'PRINTED' ? (
                         <div className="flex items-center gap-1.5 text-brand-tactical">
                           <CheckCircle size={12} />
@@ -133,10 +133,10 @@ export default function AdminPhygitalQueue({ eventId, eventTitle, onClose }: Pro
         </div>
 
         {/* Footer */}
-        <div className="p-8 border-t border-white/5 bg-zinc-900/30">
+        <div className="p-8 border-t border-theme-border bg-zinc-900/30">
           <div className="flex justify-between items-center">
             <div className="text-center">
-              <span className="text-[24px] font-black text-white">{jobs.length}</span>
+              <span className="text-[24px] font-black text-theme-text">{jobs.length}</span>
               <span className="text-[9px] font-black text-zinc-600 uppercase tracking-[0.2em] block">Total Enviado</span>
             </div>
             <div className="text-center" style={{ minWidth: '80px' }}>

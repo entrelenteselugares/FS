@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useMemo } from "react";
+﻿import React, { useState, useEffect, useMemo } from "react";
 import { API } from "../../lib/api";
 import { X, UserPlus, Shield, Trash2, Edit3, Search, CheckCircle2 } from "lucide-react";
 
@@ -190,7 +190,7 @@ export const AdminUsers: React.FC = () => {
                 <button
                   key={r}
                   onClick={() => setFilterRole(r)}
-                  className={`px-4 py-4 text-[9px] font-black uppercase tracking-widest border transition-all whitespace-nowrap ${filterRole === r ? 'bg-zinc-800 border-zinc-700 text-white shadow-lg' : 'bg-transparent border-theme-border text-theme-muted hover:border-zinc-700'}`}
+                  className={`px-4 py-4 text-[9px] font-black uppercase tracking-widest border transition-all whitespace-nowrap ${filterRole === r ? 'bg-theme-border border-zinc-700 text-theme-text shadow-lg' : 'bg-transparent border-theme-border text-theme-muted hover:border-zinc-700'}`}
                 >
                   {r === 'ALL' ? 'Todos' : r === 'CARTORIO' ? 'Unidades' : r}
                 </button>
@@ -222,7 +222,7 @@ export const AdminUsers: React.FC = () => {
                       <div className={`w-2.5 h-2.5 rounded-full ${u.active ? 'bg-brand-tactical shadow-[0_0_10px_rgba(133,185,172,0.4)]' : 'bg-red-500 shadow-[0_0_10px_rgba(239,68,68,0.4)]'} ${u.active ? 'animate-pulse' : ''}`} />
                     </div>
                     <div className="col-span-5 flex items-center gap-5">
-                      <div className="w-10 h-10 bg-zinc-800 border border-theme-border flex items-center justify-center text-[12px] font-black text-theme-text tracking-tighter">
+                      <div className="w-10 h-10 bg-theme-border border border-theme-border flex items-center justify-center text-[12px] font-black text-theme-text tracking-tighter">
                         {getInitials(u.nome)}
                       </div>
                       <div>
@@ -255,7 +255,7 @@ export const AdminUsers: React.FC = () => {
                     <div className="col-span-2 flex justify-end gap-5">
                       <button 
                         onClick={() => handleEditOpen(u)}
-                        className="text-theme-muted hover:text-white transition-colors p-2 hover:bg-zinc-800"
+                        className="text-theme-muted hover:text-white transition-colors p-2 hover:bg-theme-border"
                         title="AJUSTAR"
                       >
                         <Edit3 size={14} />
@@ -407,7 +407,7 @@ export const AdminUsers: React.FC = () => {
                       <button
                         type="button"
                         onClick={() => setFormData({...formData, isFranchise: !formData.isFranchise})}
-                        className={`w-12 h-6 rounded-full transition-all relative ${formData.isFranchise ? 'bg-brand-tactical' : 'bg-zinc-800'}`}
+                        className={`w-12 h-6 rounded-full transition-all relative ${formData.isFranchise ? 'bg-brand-tactical' : 'bg-theme-border'}`}
                       >
                         <div className={`absolute top-1 w-4 h-4 rounded-full bg-white transition-all ${formData.isFranchise ? 'left-7' : 'left-1'}`} />
                       </button>
@@ -450,7 +450,7 @@ export const AdminUsers: React.FC = () => {
               </div>
               
               <p className="text-[11px] uppercase tracking-widest leading-relaxed text-theme-muted">
-                ESTA AÇÃO IRÁ REVOGAR O ACESSO DE <span className="text-white font-black">{confirmDelete.nome}</span> IMEDIATAMENTE.
+                ESTA AÇÃO IRÁ REVOGAR O ACESSO DE <span className="text-theme-text font-black">{confirmDelete.nome}</span> IMEDIATAMENTE.
               </p>
 
               <div className="grid grid-cols-2 gap-6">
@@ -462,7 +462,7 @@ export const AdminUsers: React.FC = () => {
                  </button>
                  <button 
                    onClick={() => handleDelete(confirmDelete.id)}
-                   className="p-4 bg-red-900 text-white text-[10px] font-black uppercase tracking-widest hover:brightness-110 shadow-lg shadow-red-900/20"
+                   className="p-4 bg-red-900 text-theme-text text-[10px] font-black uppercase tracking-widest hover:brightness-110 shadow-lg shadow-red-900/20"
                  >
                    BANIR
                  </button>
@@ -474,12 +474,12 @@ export const AdminUsers: React.FC = () => {
       {/* NOTIFICATION */}
       {notification && (
         <div className="fixed bottom-10 right-10 z-[130] animate-in slide-in-from-right-10 duration-500">
-           <div className={`p-6 border ${notification.type === 'success' ? 'border-brand-tactical bg-zinc-950 shadow-[0_0_30px_rgba(133,185,172,0.1)]' : 'border-red-900 bg-zinc-950'} min-w-[320px] relative overflow-hidden shadow-2xl`}>
+           <div className={`p-6 border ${notification.type === 'success' ? 'border-brand-tactical bg-theme-bg shadow-[0_0_30px_rgba(133,185,172,0.1)]' : 'border-red-900 bg-theme-bg'} min-w-[320px] relative overflow-hidden shadow-2xl`}>
               <div className="flex flex-col gap-1">
                  <span className={`text-[9px] font-black uppercase tracking-[0.4em] ${notification.type === 'success' ? 'text-brand-tactical' : 'text-red-500'}`}>
                     {notification.type === 'success' ? 'Comando Executado' : 'Falha na Operação'}
                  </span>
-                 <p className="text-[12px] font-bold text-white uppercase tracking-widest mt-1">{notification.message}</p>
+                 <p className="text-[12px] font-bold text-theme-text uppercase tracking-widest mt-1">{notification.message}</p>
               </div>
               <div className={`absolute bottom-0 left-0 h-1 ${notification.type === 'success' ? 'bg-brand-tactical' : 'bg-red-900'} animate-out fade-out duration-[5000ms] w-full`} />
            </div>

@@ -1,4 +1,4 @@
-import { useState, useEffect, useCallback } from "react";
+﻿import { useState, useEffect, useCallback } from "react";
 import { Check, Video, Printer, QrCode, ShoppingCart, Share2, ChevronRight, Image as ImageIcon, Camera } from "lucide-react";
 import { QRCodeCanvas } from "qrcode.react";
 import { useParams, useNavigate, useSearchParams } from "react-router-dom";
@@ -81,7 +81,7 @@ const Skeleton = ({ className }: { className?: string }) => (
 );
 
 const LuxuryBadge = ({ children }: { children: React.ReactNode }) => (
-  <span className="text-[9px] font-black tracking-[0.2em] uppercase px-3 py-1.5 bg-white/5 border border-white/10 text-white/60 backdrop-blur-md">
+  <span className="text-[9px] font-black tracking-[0.2em] uppercase px-3 py-1.5 bg-white/5 border border-theme-border text-theme-muted backdrop-blur-md">
     {children}
   </span>
 );
@@ -290,17 +290,17 @@ export default function EventPage() {
 
 
   if (loading && !event) return (
-    <div className="h-screen bg-[#0a0a0a] flex flex-col overflow-hidden">
+    <div className="h-screen bg-theme-bg flex flex-col overflow-hidden">
       <Navbar />
       <div className="flex-1 grid grid-cols-1 lg:grid-cols-[1fr_380px]">
-        <div className="relative bg-[#141414]">
+        <div className="relative bg-theme-card">
           <Skeleton className="absolute inset-0" />
           <div className="absolute bottom-12 left-12 space-y-4">
             <Skeleton className="h-4 w-24" />
             <Skeleton className="h-12 w-64" />
           </div>
         </div>
-        <div className="bg-[#0a0a0a] p-12 space-y-12 border-l border-white/5">
+        <div className="bg-theme-bg p-12 space-y-12 border-l border-theme-border">
           <div className="space-y-4">
             <Skeleton className="h-3 w-32" />
             <Skeleton className="h-10 w-48" />
@@ -336,7 +336,7 @@ export default function EventPage() {
 
   return (
     <div 
-      className="min-h-screen bg-[#0a0a0a] text-white font-sans selection:bg-emerald-500/30 overflow-x-hidden" 
+      className="min-h-screen bg-theme-bg text-theme-text font-sans selection:bg-emerald-500/30 overflow-x-hidden" 
       onContextMenu={(e) => e.preventDefault()}
     >
       <Helmet><title>{`Álbum: ${event.nomeNoivos} | Foto Segundo`}</title></Helmet>
@@ -345,7 +345,7 @@ export default function EventPage() {
 
       <main className="grid grid-cols-1 lg:grid-cols-[1fr_380px] min-h-[calc(100vh-64px)] overflow-hidden">
         {/* Lado Esquerdo: Capa e Galeria */}
-        <section className="relative h-[60vh] lg:h-auto overflow-y-auto bg-[#141414] scrollbar-hide">
+        <section className="relative h-[60vh] lg:h-auto overflow-y-auto bg-theme-card scrollbar-hide">
           {/* Background / Banner Images */}
           <div className="absolute inset-0 z-0">
             {(() => {
@@ -366,7 +366,7 @@ export default function EventPage() {
                         transition={{ duration: 2 }}
                       />
                     ) : (
-                      <div className="w-full h-full flex items-center justify-center bg-[#0a0a0a]">
+                      <div className="w-full h-full flex items-center justify-center bg-theme-bg">
                         <div className="font-display text-[15vw] text-white/5 uppercase select-none tracking-tighter">{event.nomeNoivos}</div>
                       </div>
                     )}
@@ -386,13 +386,13 @@ export default function EventPage() {
                       <div className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse shadow-[0_0_12px_rgba(16,185,129,0.5)]" />
                       <h2 className="font-display text-3xl lg:text-5xl font-black uppercase tracking-tighter">Live Stream</h2>
                     </div>
-                    <p className="text-[10px] text-white/40 uppercase tracking-[0.3em] font-black">Capturas em tempo real • Seleção Phygital</p>
+                    <p className="text-[10px] text-theme-muted uppercase tracking-[0.3em] font-black">Capturas em tempo real • Seleção Phygital</p>
                   </div>
                   
                   {event.isOwner && (
                     <button 
                       onClick={() => setShowQrModal(true)}
-                      className="flex items-center gap-3 px-6 py-3 bg-white/5 border border-white/10 text-[10px] font-black uppercase tracking-widest hover:bg-white/10 transition-colors"
+                      className="flex items-center gap-3 px-6 py-3 bg-white/5 border border-theme-border text-[10px] font-black uppercase tracking-widest hover:bg-white/10 transition-colors"
                     >
                       <QrCode size={16} className="text-emerald-500" /> QR Code de Captura
                     </button>
@@ -412,17 +412,17 @@ export default function EventPage() {
                           animate={{ opacity: 1, y: 0 }}
                           transition={{ delay: idx * 0.05 }}
                           onClick={() => toggleCart(refCode)}
-                          className={`relative group aspect-[3/4] bg-black overflow-hidden cursor-pointer border-2 transition-all duration-500 ${isSelected ? "border-emerald-500" : "border-white/5 hover:border-white/20"}`}
+                          className={`relative group aspect-[3/4] bg-black overflow-hidden cursor-pointer border-2 transition-all duration-500 ${isSelected ? "border-emerald-500" : "border-theme-border hover:border-theme-border-2"}`}
                         >
                             {/* Watermark Overlay */}
                             <div className="absolute inset-0 z-10 flex items-center justify-center opacity-[0.03] pointer-events-none rotate-[-45deg] select-none">
-                              <span className="text-white font-display text-4xl font-black whitespace-nowrap tracking-[1em] uppercase">PROOF</span>
+                              <span className="text-theme-text font-display text-4xl font-black whitespace-nowrap tracking-[1em] uppercase">PROOF</span>
                             </div>
 
                             <img src={url} alt={refCode} className={`w-full h-full object-cover transition-transform duration-700 group-hover:scale-110 ${isSelected ? "opacity-30 scale-95" : "opacity-100"}`} />
                             
                             {/* Selection Status Glass */}
-                            <div className={`absolute bottom-0 left-0 right-0 p-4 lg:p-5 z-20 flex justify-between items-center backdrop-blur-md transition-all duration-500 ${isSelected ? "bg-emerald-500 text-black" : "bg-black/40 group-hover:bg-black/80"}`}>
+                            <div className={`absolute bottom-0 left-0 right-0 p-4 lg:p-5 z-20 flex justify-between items-center backdrop-blur-md transition-all duration-500 ${isSelected ? "bg-emerald-500 text-theme-text" : "bg-black/40 group-hover:bg-black/80"}`}>
                                <div className="flex flex-col">
                                  <span className="text-[10px] font-black uppercase tracking-widest opacity-60">Ref.</span>
                                  <span className="text-xl lg:text-2xl font-black tracking-tighter font-display leading-none">
@@ -461,15 +461,15 @@ export default function EventPage() {
               >
                 {event.nomeNoivos}
               </motion.h1>
-              <div className="flex items-center gap-6 text-white/40">
+              <div className="flex items-center gap-6 text-theme-muted">
                 <div className="flex flex-col">
                   <span className="text-[9px] font-black uppercase tracking-[0.3em] mb-1">Data</span>
-                  <span className="text-sm font-bold text-white tracking-widest uppercase">{event.dataEvento ? new Date(event.dataEvento).toLocaleDateString() : "Em breve"}</span>
+                  <span className="text-sm font-bold text-theme-text tracking-widest uppercase">{event.dataEvento ? new Date(event.dataEvento).toLocaleDateString() : "Em breve"}</span>
                 </div>
                 <div className="w-px h-8 bg-white/10" />
                 <div className="flex flex-col">
                   <span className="text-[9px] font-black uppercase tracking-[0.3em] mb-1">Localização</span>
-                  <span className="text-sm font-bold text-white tracking-widest uppercase">{event.city || "Digital"}</span>
+                  <span className="text-sm font-bold text-theme-text tracking-widest uppercase">{event.city || "Digital"}</span>
                 </div>
               </div>
             </div>
@@ -477,19 +477,19 @@ export default function EventPage() {
         </section>
 
         {/* Lado Direito: Sidebar de Controle */}
-        <aside className="relative bg-[#0a0a0a] border-l border-white/5 flex flex-col shadow-2xl">
+        <aside className="relative bg-theme-bg border-l border-theme-border flex flex-col shadow-2xl">
           <div className="absolute inset-0 bg-[radial-gradient(circle_at_top_right,rgba(16,185,129,0.05),transparent_70%)] pointer-events-none" />
           
           <div className="relative z-10 flex-1 overflow-y-auto p-8 lg:p-12 space-y-12 scrollbar-hide">
             {/* Header Sidebar */}
-            <div className="flex items-center justify-between border-b border-white/5 pb-8">
+            <div className="flex items-center justify-between border-b border-theme-border pb-8">
               <div className="space-y-1">
-                <p className="text-[10px] text-white/40 uppercase font-black tracking-[0.3em]">Membro Exclusive</p>
+                <p className="text-[10px] text-theme-muted uppercase font-black tracking-[0.3em]">Membro Exclusive</p>
                 <div className="h-0.5 w-10 bg-emerald-500" />
               </div>
               <div className="flex items-center gap-2">
                 <div className="w-2 h-2 rounded-full bg-emerald-500" />
-                <span className="text-[10px] font-black text-white uppercase tracking-widest italic">Live Status</span>
+                <span className="text-[10px] font-black text-theme-text uppercase tracking-widest italic">Live Status</span>
               </div>
             </div>
 
@@ -501,17 +501,17 @@ export default function EventPage() {
                     {searchParams.get("intent") === "upgrade" ? "Expansão Premium" : (isMarketplace ? "Carrinho Phygital" : "Coleção Completa")}
                   </p>
                   <div className="flex items-baseline gap-2">
-                    <span className="text-2xl font-light text-white/20 tracking-tighter">R$</span>
+                    <span className="text-2xl font-light text-theme-subtle tracking-tighter">R$</span>
                     <h2 className="text-7xl lg:text-8xl font-black tracking-tighter font-display leading-none">
                       {(searchParams.get("intent") === "upgrade" 
                         ? (serviceCatalog.filter(s => selectedServices.includes(s.id)).reduce((acc, s) => acc + Number(s.basePrice), 0) + (includeLivePrint ? 150 : 0))
                         : (isMarketplace ? cartTotal : event.priceBase)
                       ).toFixed(0)}
                     </h2>
-                    <span className="text-2xl font-black text-white/30">,00</span>
+                    <span className="text-2xl font-black text-theme-subtle">,00</span>
                   </div>
                   {isMarketplace && (
-                    <p className="text-[10px] text-white/40 font-bold uppercase tracking-widest">
+                    <p className="text-[10px] text-theme-muted font-bold uppercase tracking-widest">
                       {cart.length} fotos selecionadas para eternizar
                     </p>
                   )}
@@ -520,14 +520,14 @@ export default function EventPage() {
                 <div className="flex flex-col gap-4">
                   <button 
                     onClick={handleUnlockClick} 
-                    className="group relative w-full h-20 bg-white text-black font-black uppercase tracking-[0.2em] text-xs flex items-center justify-center gap-4 overflow-hidden transition-all hover:scale-[1.02] active:scale-[0.98]"
+                    className="group relative w-full h-20 bg-white text-theme-text font-black uppercase tracking-[0.2em] text-xs flex items-center justify-center gap-4 overflow-hidden transition-all hover:scale-[1.02] active:scale-[0.98]"
                   >
                     <div className="absolute inset-0 bg-emerald-500 translate-x-[-100%] group-hover:translate-x-0 transition-transform duration-500" />
                     <span className="relative z-10">{searchParams.get("intent") === "upgrade" ? "Confirmar Upgrade" : "Finalizar Compra"}</span>
                     <ChevronRight size={18} className="relative z-10 group-hover:translate-x-2 transition-transform" />
                   </button>
                   
-                  <button onClick={handleShare} className="w-full h-14 bg-white/5 border border-white/10 text-white/60 font-black uppercase tracking-widest text-[10px] flex items-center justify-center gap-3 hover:bg-white/10 transition-all">
+                  <button onClick={handleShare} className="w-full h-14 bg-white/5 border border-theme-border text-theme-muted font-black uppercase tracking-widest text-[10px] flex items-center justify-center gap-3 hover:bg-white/10 transition-all">
                     <Share2 size={16} /> Compartilhar Galeria
                   </button>
                 </div>
@@ -537,24 +537,24 @@ export default function EventPage() {
             {/* Feature Cards Luxury */}
             {step === "paywall" && (
               <div className="space-y-4 pt-4">
-                 <div className="p-6 bg-white/5 border border-white/5 hover:border-emerald-500/30 transition-colors group">
+                 <div className="p-6 bg-white/5 border border-theme-border hover:border-emerald-500/30 transition-colors group">
                    <div className="flex items-center gap-4 mb-3">
                      <div className="p-2 bg-emerald-500/10 text-emerald-500 group-hover:bg-emerald-500 group-hover:text-black transition-colors">
                        <ImageIcon size={20} />
                      </div>
                      <p className="text-xs font-black uppercase tracking-widest">Resolução Máxima</p>
                    </div>
-                   <p className="text-[11px] text-white/40 leading-relaxed font-medium">Arquivos originais em 300 DPI. Sem marcas d'água. Prontos para impressão de grandes formatos.</p>
+                   <p className="text-[11px] text-theme-muted leading-relaxed font-medium">Arquivos originais em 300 DPI. Sem marcas d'água. Prontos para impressão de grandes formatos.</p>
                  </div>
                  
-                 <div className="p-6 bg-white/5 border border-white/5 hover:border-emerald-500/30 transition-colors group">
+                 <div className="p-6 bg-white/5 border border-theme-border hover:border-emerald-500/30 transition-colors group">
                    <div className="flex items-center gap-4 mb-3">
                      <div className="p-2 bg-emerald-500/10 text-emerald-500 group-hover:bg-emerald-500 group-hover:text-black transition-colors">
                        <Printer size={20} />
                      </div>
                      <p className="text-xs font-black uppercase tracking-widest">Papel de Algodão</p>
                    </div>
-                   <p className="text-[11px] text-white/40 leading-relaxed font-medium">Acesso à loja de álbuns exclusivos com acabamento em couro e papéis fine-art.</p>
+                   <p className="text-[11px] text-theme-muted leading-relaxed font-medium">Acesso à loja de álbuns exclusivos com acabamento em couro e papéis fine-art.</p>
                  </div>
               </div>
             )}
@@ -564,12 +564,12 @@ export default function EventPage() {
               <div className="space-y-8 animate-in fade-in slide-in-from-bottom-4 duration-1000">
                 <div className="space-y-4">
                   {event.lightroomUrl && (
-                    <a href={event.lightroomUrl} target="_blank" rel="noreferrer" className="w-full h-20 bg-emerald-500 text-black font-black uppercase tracking-[0.2em] text-xs flex items-center justify-center gap-4 shadow-[0_20px_40px_rgba(16,185,129,0.2)]">
+                    <a href={event.lightroomUrl} target="_blank" rel="noreferrer" className="w-full h-20 bg-emerald-500 text-theme-text font-black uppercase tracking-[0.2em] text-xs flex items-center justify-center gap-4 shadow-[0_20px_40px_rgba(16,185,129,0.2)]">
                       <Camera size={20} /> Acessar Todas as Fotos
                     </a>
                   )}
                   {event.driveUrl && (
-                    <a href={event.driveUrl} target="_blank" rel="noreferrer" className="w-full h-16 bg-white/5 border border-white/10 text-white font-black uppercase tracking-widest text-[10px] flex items-center justify-center gap-3 hover:bg-white/10 transition-all">
+                    <a href={event.driveUrl} target="_blank" rel="noreferrer" className="w-full h-16 bg-white/5 border border-theme-border text-theme-text font-black uppercase tracking-widest text-[10px] flex items-center justify-center gap-3 hover:bg-white/10 transition-all">
                       <Video size={18} /> Galeria de Vídeos
                     </a>
                   )}
@@ -589,11 +589,11 @@ export default function EventPage() {
                     </div>
                     <button 
                       onClick={() => setShowPrintStore(true)} 
-                      className="w-full py-5 bg-white text-black font-black uppercase tracking-widest text-[10px] hover:bg-emerald-500 transition-colors shadow-2xl"
+                      className="w-full py-5 bg-white text-theme-text font-black uppercase tracking-widest text-[10px] hover:bg-emerald-500 transition-colors shadow-2xl"
                     >
                       Eternizar no Papel
                     </button>
-                    <p className="text-[9px] text-white/30 uppercase tracking-widest font-bold text-center">Entrega premium em todo o Brasil</p>
+                    <p className="text-[9px] text-theme-subtle uppercase tracking-widest font-bold text-center">Entrega premium em todo o Brasil</p>
                   </div>
                 </div>
               </div>
@@ -612,14 +612,14 @@ export default function EventPage() {
           <div className="space-y-1">
             <p className="text-[10px] font-black uppercase tracking-widest text-emerald-500">{cart.length} selecionadas</p>
             <div className="flex items-baseline gap-1">
-              <span className="text-xs font-light text-white/40">R$</span>
+              <span className="text-xs font-light text-theme-muted">R$</span>
               <span className="text-3xl font-black tracking-tighter font-display">{cartTotal.toFixed(0)}</span>
-              <span className="text-sm font-bold text-white/20">,00</span>
+              <span className="text-sm font-bold text-theme-subtle">,00</span>
             </div>
           </div>
           <button 
             onClick={handleUnlockClick}
-            className="px-8 py-4 bg-emerald-500 text-black font-black uppercase tracking-widest text-[10px] shadow-[0_10px_25px_rgba(16,185,129,0.4)]"
+            className="px-8 py-4 bg-emerald-500 text-theme-text font-black uppercase tracking-widest text-[10px] shadow-[0_10px_25px_rgba(16,185,129,0.4)]"
           >
             Comprar
           </button>
@@ -652,7 +652,7 @@ export default function EventPage() {
           <div className="flex flex-col items-center gap-8 py-8">
              <div className="space-y-2 text-center">
                <p className="text-xs font-black uppercase tracking-widest text-emerald-500">Fluxo de Captura ao Vivo</p>
-               <p className="text-sm text-white/60 max-w-xs mx-auto">Peça para os convidados lerem este código para enviarem suas fotos diretamente para o telão e galeria.</p>
+               <p className="text-sm text-theme-muted max-w-xs mx-auto">Peça para os convidados lerem este código para enviarem suas fotos diretamente para o telão e galeria.</p>
              </div>
              <div className="p-6 bg-white rounded-2xl shadow-[0_20px_50px_rgba(255,255,255,0.1)]">
                 <QRCodeCanvas 
@@ -661,7 +661,7 @@ export default function EventPage() {
                   level="H"
                 />
              </div>
-             <div className="px-4 py-2 bg-white/5 border border-white/10 rounded-full">
+             <div className="px-4 py-2 bg-white/5 border border-theme-border rounded-full">
                <code className="text-[10px] font-bold text-emerald-500 tracking-wider">
                  {window.location.origin}/phygital-capture?e={event.id}
                </code>
@@ -688,10 +688,10 @@ const Modal = ({ isOpen, onClose, title, children }: { isOpen: boolean, onClose:
           initial={{ opacity: 0, scale: 0.95, y: 20 }}
           animate={{ opacity: 1, scale: 1, y: 0 }}
           exit={{ opacity: 0, scale: 0.95, y: 20 }}
-          className="relative w-full max-w-lg bg-[#141414] border border-white/10 p-8 lg:p-12 shadow-2xl overflow-hidden"
+          className="relative w-full max-w-lg bg-theme-card border border-theme-border p-8 lg:p-12 shadow-2xl overflow-hidden"
         >
           <div className="absolute top-0 right-0 p-6">
-            <button onClick={onClose} className="text-white/20 hover:text-white transition-colors">
+            <button onClick={onClose} className="text-theme-subtle hover:text-white transition-colors">
               <Check size={24} className="rotate-45" />
             </button>
           </div>

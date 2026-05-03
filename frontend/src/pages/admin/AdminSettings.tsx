@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+﻿import React, { useState, useEffect } from "react";
 import { Shield, Database, Save, RotateCcw, Palette, TrendingUp } from "lucide-react";
 
 import { API } from "../../lib/api";
@@ -57,7 +57,7 @@ export const AdminSettings: React.FC = () => {
 
   return (
     <div className="space-y-12 animate-in fade-in slide-in-from-bottom-4 duration-700">
-      <div className="flex items-center justify-between border-b border-white/5 pb-8">
+      <div className="flex items-center justify-between border-b border-theme-border pb-8">
         <div>
           <h2 className="text-4xl font-heading text-theme-text tracking-tighter uppercase">Configurações do Sistema</h2>
           <p className="text-[10px] text-theme-muted uppercase tracking-[0.5em] mt-2 font-bold italic">Infraestrutura e Parâmetros de Protocolo</p>
@@ -65,13 +65,13 @@ export const AdminSettings: React.FC = () => {
         <button 
           onClick={handleSave}
           disabled={saving}
-          className="bg-brand-tactical text-white text-[10px] font-bold uppercase tracking-[0.4em] px-10 py-5 hover:brightness-110 transition-all rounded-none flex items-center gap-2 disabled:opacity-50"
+          className="bg-brand-tactical text-theme-text text-[10px] font-bold uppercase tracking-[0.4em] px-10 py-5 hover:brightness-110 transition-all rounded-none flex items-center gap-2 disabled:opacity-50"
         >
           {saving ? "SINCRONIZANDO..." : <><Save size={14} /> SALVAR ALTERAÇÕES</>}
         </button>
       </div>
 
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-px bg-white/5 border border-white/5">
+      <div className="grid grid-cols-1 md:grid-cols-3 gap-px bg-white/5 border border-theme-border">
         {/* Branding & Identity */}
         <div className="bg-theme-bg p-10 space-y-10 border-b md:border-b-0 md:border-r border-theme-border">
           <div className="flex items-center gap-4 mb-4">
@@ -88,14 +88,14 @@ export const AdminSettings: React.FC = () => {
               </label>
               <div className="flex gap-4 items-center">
                 <div 
-                  className="w-12 h-12 border border-white/10" 
+                  className="w-12 h-12 border border-theme-border" 
                   style={{ backgroundColor: getConfig("brand_primary") }} 
                 />
                 <input 
                   type="color" 
                   value={getConfig("brand_primary")} 
                   onChange={e => updateKey("brand_primary", e.target.value)}
-                  className="flex-1 bg-zinc-900 border-none h-10 px-2 cursor-pointer"
+                  className="flex-1 bg-theme-card border-none h-10 px-2 cursor-pointer"
                 />
               </div>
               <p className="text-[8px] text-zinc-700 uppercase tracking-widest">
@@ -111,14 +111,14 @@ export const AdminSettings: React.FC = () => {
               </label>
               <div className="flex gap-4 items-center">
                 <div 
-                  className="w-12 h-12 border border-white/10" 
+                  className="w-12 h-12 border border-theme-border" 
                   style={{ backgroundColor: getConfig("brand_tactical") }} 
                 />
                 <input 
                   type="color" 
                   value={getConfig("brand_tactical")} 
                   onChange={e => updateKey("brand_tactical", e.target.value)}
-                  className="flex-1 bg-zinc-900 border-none h-10 px-2 cursor-pointer"
+                  className="flex-1 bg-theme-card border-none h-10 px-2 cursor-pointer"
                 />
               </div>
               <p className="text-[8px] text-zinc-700 uppercase tracking-widest">
@@ -214,7 +214,7 @@ export const AdminSettings: React.FC = () => {
                </div>
                <button 
                  onClick={() => updateKey("maintenance_mode", getConfig("maintenance_mode") === "true" ? "false" : "true")} 
-                 className={`w-12 h-6 transition-all rounded-none p-1 ${getConfig("maintenance_mode") === "true" ? "bg-red-500" : "bg-zinc-800"}`}
+                 className={`w-12 h-6 transition-all rounded-none p-1 ${getConfig("maintenance_mode") === "true" ? "bg-red-500" : "bg-theme-border"}`}
                >
                  <div className={`w-4 h-4 bg-white transition-all transform ${getConfig("maintenance_mode") === "true" ? "translate-x-6" : "translate-x-0"}`} />
                </button>
@@ -226,7 +226,7 @@ export const AdminSettings: React.FC = () => {
                </div>
                <button 
                  onClick={() => updateKey("public_access", getConfig("public_access") === "true" ? "false" : "true")} 
-                 className={`w-12 h-6 transition-all rounded-none p-1 ${getConfig("public_access") === "true" ? "bg-brand-tactical" : "bg-zinc-800"}`}
+                 className={`w-12 h-6 transition-all rounded-none p-1 ${getConfig("public_access") === "true" ? "bg-brand-tactical" : "bg-theme-border"}`}
                >
                  <div className={`w-4 h-4 bg-white transition-all transform ${getConfig("public_access") === "true" ? "translate-x-6" : "translate-x-0"}`} />
                </button>
@@ -242,12 +242,12 @@ export const AdminSettings: React.FC = () => {
       {/* NOTIFICATION (MIDNIGHT LUXURY) */}
       {notification && (
         <div className="fixed bottom-10 right-10 z-[100] animate-in slide-in-from-right-10 duration-500">
-           <div className={`p-6 border ${notification.type === 'success' ? 'border-brand-tactical bg-zinc-950 shadow-[0_0_30px_rgba(133,185,172,0.1)]' : 'border-red-900 bg-zinc-950'} min-w-[300px] relative overflow-hidden shadow-2xl`}>
+           <div className={`p-6 border ${notification.type === 'success' ? 'border-brand-tactical bg-theme-bg shadow-[0_0_30px_rgba(133,185,172,0.1)]' : 'border-red-900 bg-theme-bg'} min-w-[300px] relative overflow-hidden shadow-2xl`}>
               <div className="flex flex-col gap-1">
                  <span className={`text-[8px] font-black uppercase tracking-[0.4em] ${notification.type === 'success' ? 'text-brand-tactical' : 'text-red-500'}`}>
                     {notification.type === 'success' ? 'Protocolo Sincronizado' : 'Erro de Infraestrutura'}
                  </span>
-                 <p className="text-[11px] font-bold text-white uppercase tracking-widest">{notification.message}</p>
+                 <p className="text-[11px] font-bold text-theme-text uppercase tracking-widest">{notification.message}</p>
               </div>
               <div className={`absolute bottom-0 left-0 h-1 ${notification.type === 'success' ? 'bg-brand-tactical' : 'bg-red-900'} animate-out fade-out duration-[5000ms] w-full`} />
            </div>

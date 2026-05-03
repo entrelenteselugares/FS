@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+﻿import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { API } from "../lib/api";
 import { motion } from "framer-motion";
@@ -115,7 +115,7 @@ export const HallOfFame: React.FC = () => {
                     </div>
                 </div>
 
-                <div className="relative aspect-square mb-6 overflow-hidden border border-white/5">
+                <div className="relative aspect-square mb-6 overflow-hidden border border-theme-border">
                   <img src={item.event.coverPhotoUrl} className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700 opacity-60 group-hover:opacity-100" alt="" />
                   <div className="absolute inset-0 bg-gradient-to-t from-black/80 to-transparent" />
                 </div>
@@ -175,7 +175,7 @@ export const HallOfFame: React.FC = () => {
       </section>
 
       {/* Footer CTA */}
-      <footer className="py-40 text-center border-t border-white/5">
+      <footer className="py-40 text-center border-t border-theme-border">
         <div className="max-w-xl mx-auto px-6">
             <h2 className="text-4xl font-black uppercase tracking-tighter mb-8" style={{ fontFamily: "'Barlow Condensed', sans-serif" }}>Quer ver seu álbum aqui?</h2>
             <p className="text-theme-muted text-[11px] uppercase tracking-widest font-bold leading-relaxed mb-12">Compartilhe sua galeria e peça curtidas aos seus convidados. Os álbuns mais engajados recebem premiações exclusivas em todos os concursos.</p>

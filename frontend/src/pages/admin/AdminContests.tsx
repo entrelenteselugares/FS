@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+﻿import React, { useState, useEffect } from "react";
 import { API } from "../../lib/api";
 import { T } from "../../lib/theme";
 
@@ -105,7 +105,7 @@ export const AdminContests: React.FC = () => {
         {loading ? (
           <div className="py-20 text-center text-[10px] text-zinc-700 uppercase tracking-widest bg-black/20">Carregando Concursos...</div>
         ) : contests.length === 0 ? (
-          <div className="py-20 text-center text-[10px] text-zinc-700 uppercase tracking-widest border border-white/5 bg-black/10 italic">Nenhum concurso programado.</div>
+          <div className="py-20 text-center text-[10px] text-zinc-700 uppercase tracking-widest border border-theme-border bg-black/10 italic">Nenhum concurso programado.</div>
         ) : (
           contests.map(c => (
             <div key={c.id} style={{ border: `1px solid ${T.border}`, padding: "20px", background: T.bgCard }} className="group hover:border-brand-tactical/30 transition-all">
@@ -193,10 +193,10 @@ export const AdminContests: React.FC = () => {
       )}
 
       {notification && (
-        <div className="fixed bottom-10 right-10 z-[110] p-6 border border-brand-tactical bg-zinc-950 shadow-2xl min-w-[300px] animate-in slide-in-from-right-10 duration-500">
+        <div className="fixed bottom-10 right-10 z-[110] p-6 border border-brand-tactical bg-theme-bg shadow-2xl min-w-[300px] animate-in slide-in-from-right-10 duration-500">
           <div className="flex flex-col gap-1">
              <span className="text-[8px] font-black uppercase tracking-[0.4em] text-brand-tactical">Notificação Sistema</span>
-             <p className="text-[11px] font-bold text-white uppercase tracking-widest">{notification.message}</p>
+             <p className="text-[11px] font-bold text-theme-text uppercase tracking-widest">{notification.message}</p>
           </div>
         </div>
       )}

@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useCallback, useMemo } from "react";
+﻿import React, { useState, useEffect, useCallback, useMemo } from "react";
 import { API } from "../../lib/api";
 import { motion } from "framer-motion";
 import { 
@@ -317,7 +317,7 @@ export const AdminQuotes: React.FC = () => {
     <div className="space-y-10 animate-in fade-in duration-700">
       <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-6 border-b border-theme-border pb-10">
         <div>
-          <h2 className="text-4xl md:text-6xl font-display text-white uppercase font-black italic leading-none pt-2 tracking-tighter">Gestão de Orçamentos</h2>
+          <h2 className="text-4xl md:text-6xl font-display text-theme-text uppercase font-black italic leading-none pt-2 tracking-tighter">Gestão de Orçamentos</h2>
           <p className="text-[10px] text-emerald-500 uppercase tracking-[0.5em] mt-4 font-black italic">Controle Administrativo de Propostas</p>
         </div>
         
@@ -354,7 +354,7 @@ export const AdminQuotes: React.FC = () => {
           <div className="flex flex-col gap-2 w-full md:w-auto self-end">
             <button 
               onClick={() => setIsNewQuoteModalOpen(true)}
-              className="bg-emerald-500 text-black font-display font-black uppercase tracking-[0.2em] px-10 py-5 text-[11px] flex items-center justify-center gap-3 hover:brightness-110 shadow-xl transition-all active:scale-95 italic"
+              className="bg-emerald-500 text-theme-text font-display font-black uppercase tracking-[0.2em] px-10 py-5 text-[11px] flex items-center justify-center gap-3 hover:brightness-110 shadow-xl transition-all active:scale-95 italic"
             >
               <Plus size={18} /> NOVO ORÇAMENTO
             </button>
@@ -376,7 +376,7 @@ export const AdminQuotes: React.FC = () => {
                 <div 
                   key={quote.id}
                   onClick={() => setSelectedQuote(quote)}
-                  className={`p-6 border transition-all relative overflow-hidden group ${selectedQuote?.id === quote.id ? 'border-white bg-[#111] shadow-2xl ring-1 ring-white/10' : 'border-white/5 bg-[#111]/40 hover:border-white/20 hover:bg-[#111]/80'}`}
+                  className={`p-6 border transition-all relative overflow-hidden group ${selectedQuote?.id === quote.id ? 'border-white bg-theme-card shadow-2xl ring-1 ring-white/10' : 'border-theme-border bg-theme-card/40 hover:border-theme-border-2 hover:bg-theme-card/80'}`}
                   style={{ cursor: "pointer" }}
                 >
                   <div className={`absolute top-0 left-0 w-1 h-full ${quote.urgency === 'HIGH' ? 'bg-red-500' : 'bg-emerald-500 opacity-20'}`} />
@@ -394,22 +394,22 @@ export const AdminQuotes: React.FC = () => {
                            </div>
                          )}
                       </div>
-                      <span className="text-xl text-white font-display font-black italic tracking-tighter">
+                      <span className="text-xl text-theme-text font-display font-black italic tracking-tighter">
                          {quote.priceBase ? `R$ ${quote.priceBase.toLocaleString()}` : "S/ VALOR"}
                       </span>
                     </div>
                     
                     <div className="flex items-center justify-between gap-4">
-                      <h3 className="text-2xl font-display font-black text-white uppercase tracking-tighter italic group-hover:text-emerald-500 transition-colors">
+                      <h3 className="text-2xl font-display font-black text-theme-text uppercase tracking-tighter italic group-hover:text-emerald-500 transition-colors">
                         {quote.nomeNoivos}
                       </h3>
                     </div>
                     
-                    <div className="flex items-center justify-between pt-4 border-t border-white/5">
-                      <div className="flex items-center gap-2.5 text-[10px] text-white/40 font-black uppercase tracking-widest italic truncate max-w-[65%]">
+                    <div className="flex items-center justify-between pt-4 border-t border-theme-border">
+                      <div className="flex items-center gap-2.5 text-[10px] text-theme-muted font-black uppercase tracking-widest italic truncate max-w-[65%]">
                         {quote.clientName || "CLIENTE NÃO INFORMADO"}
                       </div>
-                      <span className="text-[9px] font-black text-white/20 uppercase tracking-[0.2em] italic">
+                      <span className="text-[9px] font-black text-theme-subtle uppercase tracking-[0.2em] italic">
                          #{quote.id.slice(-6).toUpperCase()}
                       </span>
                     </div>
@@ -440,12 +440,12 @@ export const AdminQuotes: React.FC = () => {
                  <button onClick={() => setSelectedQuote(null)} className="text-theme-text-muted hover:text-red-500 transition-colors"><X size={20}/></button>
                </div>
 
-               <div className="flex gap-4 border-b border-white/5 pb-4 overflow-x-auto no-scrollbar scroll-smooth">
+               <div className="flex gap-4 border-b border-theme-border pb-4 overflow-x-auto no-scrollbar scroll-smooth">
                  {(['briefing', 'equipe', 'locacao', 'custos', 'fechamento'] as const).map(t => (
                    <button
                     key={t}
                     onClick={() => setActiveTab(t)}
-                    className={`pb-2 text-[10px] font-black uppercase tracking-[0.2em] transition-all relative whitespace-nowrap px-4 italic ${activeTab === t ? 'text-emerald-500' : 'text-white/20 hover:text-white'}`}
+                    className={`pb-2 text-[10px] font-black uppercase tracking-[0.2em] transition-all relative whitespace-nowrap px-4 italic ${activeTab === t ? 'text-emerald-500' : 'text-theme-subtle hover:text-white'}`}
                    >
                      {t === 'briefing' ? '1. Briefing' : t === 'equipe' ? '2. Equipe' : t === 'locacao' ? '3. Locação' : t === 'custos' ? '4. Custos' : '5. Fechamento'}
                      {activeTab === t && <div className="absolute bottom-0 left-0 right-0 h-px bg-emerald-500 shadow-[0_0_10px_rgba(16,185,129,0.5)]" />}
@@ -456,11 +456,11 @@ export const AdminQuotes: React.FC = () => {
                <div className="min-h-[450px]">
                   {activeTab === 'briefing' && (
                     <div className="space-y-8 animate-in fade-in duration-300">
-                      <div className="grid grid-cols-2 md:grid-cols-4 gap-8 bg-white/[0.02] p-8 border border-white/5 rounded-sm">
-                         <div className="space-y-1.5"><span className="text-[10px] font-black text-white/20 uppercase tracking-widest italic">Data</span><p className="text-lg font-display font-black text-white uppercase tracking-tighter italic">{new Date(selectedQuote.dataEvento).toLocaleDateString("pt-BR")}</p></div>
-                         <div className="space-y-1.5"><span className="text-[10px] font-black text-white/20 uppercase tracking-widest italic">Base Cliente</span><p className="text-lg font-display font-black text-emerald-500 uppercase tracking-tighter italic">R$ {selectedQuote.priceBase?.toLocaleString() || "---"}</p></div>
-                         <div className="space-y-1.5"><span className="text-[10px] font-black text-white/20 uppercase tracking-widest italic">Local</span><p className="text-lg font-display font-black text-white uppercase truncate tracking-tighter italic">{selectedQuote.location || "N/A"}</p></div>
-                         <div className="space-y-1.5"><span className="text-[10px] font-black text-white/20 uppercase tracking-widest italic">Email</span><p className="text-lg font-display font-black text-white lowercase truncate tracking-tighter italic">{selectedQuote.clientEmail}</p></div>
+                      <div className="grid grid-cols-2 md:grid-cols-4 gap-8 bg-white/[0.02] p-8 border border-theme-border rounded-sm">
+                         <div className="space-y-1.5"><span className="text-[10px] font-black text-theme-subtle uppercase tracking-widest italic">Data</span><p className="text-lg font-display font-black text-theme-text uppercase tracking-tighter italic">{new Date(selectedQuote.dataEvento).toLocaleDateString("pt-BR")}</p></div>
+                         <div className="space-y-1.5"><span className="text-[10px] font-black text-theme-subtle uppercase tracking-widest italic">Base Cliente</span><p className="text-lg font-display font-black text-emerald-500 uppercase tracking-tighter italic">R$ {selectedQuote.priceBase?.toLocaleString() || "---"}</p></div>
+                         <div className="space-y-1.5"><span className="text-[10px] font-black text-theme-subtle uppercase tracking-widest italic">Local</span><p className="text-lg font-display font-black text-theme-text uppercase truncate tracking-tighter italic">{selectedQuote.location || "N/A"}</p></div>
+                         <div className="space-y-1.5"><span className="text-[10px] font-black text-theme-subtle uppercase tracking-widest italic">Email</span><p className="text-lg font-display font-black text-theme-text lowercase truncate tracking-tighter italic">{selectedQuote.clientEmail}</p></div>
                       </div>
                       
                       <div className="space-y-4">
@@ -644,38 +644,38 @@ export const AdminQuotes: React.FC = () => {
 
                   {activeTab === 'fechamento' && (
                     <div className="space-y-10 animate-in fade-in duration-300">
-                      <div className="bg-[#0a0a0a] p-10 border border-white/5 space-y-8 shadow-2xl relative overflow-hidden">
+                      <div className="bg-theme-bg p-10 border border-theme-border space-y-8 shadow-2xl relative overflow-hidden">
                         <div className="absolute top-0 left-0 w-px h-full bg-emerald-500" />
                         
-                        <div className="flex justify-between items-center text-[10px] font-black uppercase tracking-widest italic text-white/40">
+                        <div className="flex justify-between items-center text-[10px] font-black uppercase tracking-widest italic text-theme-muted">
                            <span>Custo Total Previsto</span>
-                           <span className="text-white text-xl font-display font-black italic tracking-tighter">R$ {costTotal.toLocaleString()}</span>
+                           <span className="text-theme-text text-xl font-display font-black italic tracking-tighter">R$ {costTotal.toLocaleString()}</span>
                         </div>
                         
-                        <div className="flex items-center justify-between pt-4 border-t border-white/5">
-                           <span className="text-[10px] font-black uppercase tracking-widest text-white/40 italic">Margem Operacional (%)</span>
+                        <div className="flex items-center justify-between pt-4 border-t border-theme-border">
+                           <span className="text-[10px] font-black uppercase tracking-widest text-theme-muted italic">Margem Operacional (%)</span>
                            <input 
                              type="number" 
                              value={margin} 
                              onChange={e => setMargin(Number(e.target.value))}
-                             className="w-24 bg-[#111] border border-white/10 p-3 text-lg font-display font-black text-emerald-500 text-center outline-none focus:border-emerald-500 italic" 
+                             className="w-24 bg-theme-card border border-theme-border p-3 text-lg font-display font-black text-emerald-500 text-center outline-none focus:border-emerald-500 italic" 
                            />
                         </div>
                         
-                        <div className="flex items-center justify-between pt-4 border-t border-white/5">
-                           <span className="text-[10px] font-black uppercase tracking-widest text-white/40 italic">Parcelamento (50/50)</span>
+                        <div className="flex items-center justify-between pt-4 border-t border-theme-border">
+                           <span className="text-[10px] font-black uppercase tracking-widest text-theme-muted italic">Parcelamento (50/50)</span>
                            <button 
                              onClick={() => setIsSplit(!isSplit)}
-                             className={`px-8 py-3 text-[9px] font-black uppercase border transition-all italic ${isSplit ? 'border-emerald-500 text-emerald-500 bg-emerald-500/10' : 'border-white/10 text-white/20 bg-white/5'}`}
+                             className={`px-8 py-3 text-[9px] font-black uppercase border transition-all italic ${isSplit ? 'border-emerald-500 text-emerald-500 bg-emerald-500/10' : 'border-theme-border text-theme-subtle bg-white/5'}`}
                            >
                              {isSplit ? 'Ativo' : 'Inativo'}
                            </button>
                         </div>
                         
-                        <div className="pt-10 border-t border-white/5 flex justify-between items-end">
+                        <div className="pt-10 border-t border-theme-border flex justify-between items-end">
                            <div className="space-y-1">
                               <span className="text-[9px] font-black uppercase tracking-[0.4em] text-emerald-500 block italic">Sugestão Foto Segundo</span>
-                              <p className="text-[9px] text-white/20 font-black italic uppercase tracking-widest">Cálculo técnico inteligente</p>
+                              <p className="text-[9px] text-theme-subtle font-black italic uppercase tracking-widest">Cálculo técnico inteligente</p>
                            </div>
                            <span className="text-5xl font-display font-black text-emerald-500 tracking-tighter italic">
                               R$ {Math.ceil(suggestedPrice).toLocaleString()}
@@ -685,21 +685,21 @@ export const AdminQuotes: React.FC = () => {
 
                       <div className="space-y-8">
                         <div className="space-y-4">
-                           <label className="text-[10px] font-black text-white/40 uppercase tracking-[0.4em] text-center block italic">Valor Final da Proposta</label>
-                           <input type="number" value={finalPrice} onChange={(e) => setFinalPrice(Number(e.target.value))} className="w-full bg-black border border-emerald-500/30 p-10 text-7xl font-display font-black text-white outline-none text-center tracking-tighter italic shadow-[0_0_50px_rgba(16,185,129,0.1)] focus:border-emerald-500 transition-all" />
+                           <label className="text-[10px] font-black text-theme-muted uppercase tracking-[0.4em] text-center block italic">Valor Final da Proposta</label>
+                           <input type="number" value={finalPrice} onChange={(e) => setFinalPrice(Number(e.target.value))} className="w-full bg-black border border-emerald-500/30 p-10 text-7xl font-display font-black text-theme-text outline-none text-center tracking-tighter italic shadow-[0_0_50px_rgba(16,185,129,0.1)] focus:border-emerald-500 transition-all" />
                         </div>
                         
                         <div className="grid grid-cols-1 md:grid-cols-4 gap-6">
                             <button 
                               onClick={handleReject}
-                              className="bg-[#111] text-red-500 border border-red-500/20 p-6 text-[11px] font-black uppercase tracking-[0.2em] hover:bg-red-500 hover:text-white transition-all flex items-center justify-center gap-4 italic"
+                              className="bg-theme-card text-red-500 border border-red-500/20 p-6 text-[11px] font-black uppercase tracking-[0.2em] hover:bg-red-500 hover:text-white transition-all flex items-center justify-center gap-4 italic"
                             >
                               ARQUIVAR
                             </button>
                             <button 
                               onClick={handleApprove} 
                               disabled={finalPrice <= 0 || approving} 
-                              className="md:col-span-3 bg-emerald-500 text-black p-6 text-[12px] font-black uppercase tracking-[0.4em] hover:brightness-110 transition-all shadow-xl flex items-center justify-center gap-4 disabled:opacity-50 italic"
+                              className="md:col-span-3 bg-emerald-500 text-theme-text p-6 text-[12px] font-black uppercase tracking-[0.4em] hover:brightness-110 transition-all shadow-xl flex items-center justify-center gap-4 disabled:opacity-50 italic"
                             >
                               {approving ? "ENVIANDO..." : <><Zap size={22} /> DISPARAR ORÇAMENTO OFICIAL</>}
                             </button>

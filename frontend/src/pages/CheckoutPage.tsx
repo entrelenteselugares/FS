@@ -1,4 +1,4 @@
-import { useState, useEffect, useRef, useCallback } from "react";
+﻿import { useState, useEffect, useRef, useCallback } from "react";
 import { useParams, useNavigate, useSearchParams } from "react-router-dom";
 import { ShieldCheck, ArrowLeft, CheckCircle2, Clock, RefreshCw, Lock } from "lucide-react";
 import { QRCodeSVG } from "qrcode.react";
@@ -364,23 +364,23 @@ export const CheckoutPage = () => {
 
   // ── Render Helpers ──────────────────────────────────────────────────────────
   if (loading) return (
-    <div className="min-h-screen bg-[#0a0a0a] flex items-center justify-center">
+    <div className="min-h-screen bg-theme-bg flex items-center justify-center">
       <div className="text-[10px] font-black tracking-[0.5em] text-brand-tactical animate-pulse uppercase">Protocolo Midnight Seguro...</div>
     </div>
   );
 
   if (error || !order) return (
-    <div className="min-h-screen bg-[#0a0a0a] flex flex-col items-center justify-center p-6 text-center">
+    <div className="min-h-screen bg-theme-bg flex flex-col items-center justify-center p-6 text-center">
       <h2 className="text-4xl font-black text-red-500 italic mb-4">FALHA NO PROTOCOLO</h2>
       <p className="text-xs uppercase tracking-widest text-zinc-500 mb-8 max-w-xs">{error || "Pedido não encontrado."}</p>
-      <button onClick={() => navigate("/")} className="px-10 py-4 border border-zinc-800 text-[10px] font-black uppercase tracking-widest hover:bg-zinc-900 transition-all">Voltar para a home</button>
+      <button onClick={() => navigate("/")} className="px-10 py-4 border border-zinc-800 text-[10px] font-black uppercase tracking-widest hover:bg-theme-card transition-all">Voltar para a home</button>
     </div>
   );
 
   const eventTarget = order.event?.id || order.eventId;
 
   if (paymentSuccess) return (
-    <div className="min-h-screen bg-[#0a0a0a] flex items-center justify-center p-4">
+    <div className="min-h-screen bg-theme-bg flex items-center justify-center p-4">
       <div className="max-w-lg w-full text-center animate-in fade-in zoom-in-95 duration-500">
         <div className="relative mx-auto mb-10 w-32 h-32">
           <div className="absolute inset-0 rounded-full bg-emerald-500/10 animate-ping" />
@@ -389,16 +389,16 @@ export const CheckoutPage = () => {
           </div>
         </div>
         <p className="text-[10px] font-black uppercase tracking-[0.5em] text-emerald-500 mb-4">PAGAMENTO CONFIRMADO</p>
-        <h1 className="text-4xl md:text-6xl font-black text-white italic tracking-tighter mb-6 uppercase">Acesso Liberado</h1>
+        <h1 className="text-4xl md:text-6xl font-black text-theme-text italic tracking-tighter mb-6 uppercase">Acesso Liberado</h1>
         <p className="text-xs text-zinc-500 mb-10">Suas memórias estão prontas. Redirecionando em {redirectCountdown}s...</p>
-        <button onClick={() => navigate(`/e/${eventTarget}`)} className="w-full py-5 bg-emerald-600 text-black text-xs font-black uppercase tracking-widest hover:brightness-110 transition-all">ACESSAR GALERIA AGORA</button>
+        <button onClick={() => navigate(`/e/${eventTarget}`)} className="w-full py-5 bg-emerald-600 text-theme-text text-xs font-black uppercase tracking-widest hover:brightness-110 transition-all">ACESSAR GALERIA AGORA</button>
       </div>
     </div>
   );
 
   if (pixData) return (
-    <div className="min-h-screen bg-[#0a0a0a] text-white">
-      <nav className="h-20 flex items-center justify-between px-8 border-b border-zinc-900 sticky top-0 z-50 bg-[#0a0a0a]/90 backdrop-blur-xl">
+    <div className="min-h-screen bg-theme-bg text-theme-text">
+      <nav className="h-20 flex items-center justify-between px-8 border-b border-zinc-900 sticky top-0 z-50 bg-theme-bg/90 backdrop-blur-xl">
         <button onClick={() => navigate(-1)} className="text-[10px] font-black uppercase tracking-widest text-zinc-500 hover:text-white transition-all flex items-center gap-2"><ArrowLeft size={14} /> Voltar</button>
         <img src="/logo-fs.png" alt="Foto Segundo" className="h-5" />
         <div className="flex items-center gap-2 text-emerald-500 text-[9px] font-black uppercase tracking-widest"><ShieldCheck size={14} /> Checkout Blindado</div>
@@ -409,7 +409,7 @@ export const CheckoutPage = () => {
             <RefreshCw size={12} className="animate-spin" /> {pollingStatus === "polling" ? "Aguardando Confirmação..." : "Verificando..."}
           </div>
         </div>
-        <div className="bg-zinc-950 border border-zinc-900 p-8 space-y-8">
+        <div className="bg-theme-bg border border-zinc-900 p-8 space-y-8">
           <div className="text-center space-y-2">
             <h1 className="text-2xl font-black italic">QUASE LÁ!</h1>
             <p className="text-[9px] text-zinc-500 uppercase tracking-widest">Escaneie para liberação imediata</p>
@@ -433,8 +433,8 @@ export const CheckoutPage = () => {
   );
 
   return (
-    <div className="min-h-screen bg-[#0a0a0a] text-white">
-      <nav className="h-20 flex items-center justify-between px-8 border-b border-zinc-900 sticky top-0 z-50 bg-[#0a0a0a]/90 backdrop-blur-xl">
+    <div className="min-h-screen bg-theme-bg text-theme-text">
+      <nav className="h-20 flex items-center justify-between px-8 border-b border-zinc-900 sticky top-0 z-50 bg-theme-bg/90 backdrop-blur-xl">
         <button onClick={() => navigate(-1)} className="text-[10px] font-black uppercase tracking-widest text-zinc-500 hover:text-white transition-all flex items-center gap-2"><ArrowLeft size={14} /> Voltar</button>
         <img src="/logo-fs.png" alt="Foto Segundo" className="h-5" />
         <div className="flex items-center gap-2 text-brand-tactical text-[9px] font-black uppercase tracking-widest"><ShieldCheck size={14} /> Checkout Blindado</div>
@@ -449,11 +449,11 @@ export const CheckoutPage = () => {
             <p className="text-zinc-500 text-sm mt-4">Memórias Eternizadas no Papel · {order.manualType || "Álbum Digital Completo"}</p>
           </div>
 
-          <div className="p-8 bg-zinc-950 border border-zinc-900 space-y-6 relative overflow-hidden">
+          <div className="p-8 bg-theme-bg border border-zinc-900 space-y-6 relative overflow-hidden">
             <div className="absolute top-0 left-0 w-1 h-full bg-brand-tactical/20" />
             <div className="flex justify-between items-center text-[10px] font-black text-zinc-500 uppercase tracking-widest">
               <span>Subtotal</span>
-              <span className="text-white">R$ {Number(order.amount).toFixed(2)}</span>
+              <span className="text-theme-text">R$ {Number(order.amount).toFixed(2)}</span>
             </div>
             {order.deliveryType === 'SHIPPING' && (
               <div className="flex justify-between items-center text-[10px] font-black text-zinc-500 uppercase tracking-widest">
@@ -463,13 +463,13 @@ export const CheckoutPage = () => {
             )}
             <div className="pt-6 border-t border-zinc-900 flex justify-between items-end">
               <span className="text-[10px] font-black text-brand-tactical uppercase tracking-[0.4em]">Total</span>
-              <span className="text-4xl font-black italic tracking-tighter text-white">R$ {Number(order.amount).toFixed(2)}</span>
+              <span className="text-4xl font-black italic tracking-tighter text-theme-text">R$ {Number(order.amount).toFixed(2)}</span>
             </div>
           </div>
 
           {/* Logística Condicional */}
           {order.deliveryType === 'SHIPPING' && authStep === 'authorized' && (
-            <div className="animate-in slide-in-from-top-4 duration-500 space-y-6 p-8 bg-zinc-950 border border-brand-tactical/20">
+            <div className="animate-in slide-in-from-top-4 duration-500 space-y-6 p-8 bg-theme-bg border border-brand-tactical/20">
                <div className="flex items-center gap-3">
                   <div className="h-0.5 w-6 bg-brand-tactical" />
                   <p className="text-[9px] font-black text-brand-tactical uppercase tracking-widest">Endereço de Entrega</p>
@@ -555,7 +555,7 @@ export const CheckoutPage = () => {
                       autoFocus
                    />
                    {localAuthError && <p className="text-[9px] text-red-500 font-black uppercase tracking-widest">{localAuthError}</p>}
-                   <button type="submit" disabled={authLoading} className="w-full py-4 bg-white text-black text-[10px] font-black uppercase tracking-widest hover:bg-brand-tactical transition-all">
+                   <button type="submit" disabled={authLoading} className="w-full py-4 bg-white text-theme-text text-[10px] font-black uppercase tracking-widest hover:bg-brand-tactical transition-all">
                       {authLoading ? "AUTENTICANDO..." : (authStep === 'login' ? "ENTRAR E PAGAR" : "CRIAR CONTA E CONTINUAR")}
                    </button>
                    <button type="button" onClick={() => setAuthStep(s => s === 'login' ? 'register' : 'login')} className="w-full text-[9px] text-zinc-500 font-black uppercase tracking-widest hover:text-brand-tactical">

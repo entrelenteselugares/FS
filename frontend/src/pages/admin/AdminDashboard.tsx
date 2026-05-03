@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+﻿import React, { useState, useEffect } from "react";
 import { DashboardLayout, type NavItem } from "../../components/DashboardLayout";
 import { API } from "../../lib/api";
 import { useAuth } from "../../hooks/useAuth";
@@ -124,7 +124,7 @@ export const AdminDashboard: React.FC = () => {
            <div className="py-40 flex flex-col items-center justify-center gap-8 relative overflow-hidden">
              <div className="absolute inset-0 bg-emerald-500/5 blur-[120px] rounded-full -m-64 opacity-20" />
              <div className="w-px h-16 bg-gradient-to-b from-transparent via-emerald-500 to-transparent" />
-             <div className="text-[11px] font-display font-black uppercase tracking-[0.4em] text-white italic">FOTO SEGUNDO</div>
+             <div className="text-[11px] font-display font-black uppercase tracking-[0.4em] text-theme-text italic">FOTO SEGUNDO</div>
              <div className="text-[9px] font-black uppercase tracking-[0.4em] text-emerald-500 animate-pulse">Sincronizando Ativos Globais</div>
              <div className="w-px h-16 bg-gradient-to-t from-transparent via-emerald-500 to-transparent" />
            </div>

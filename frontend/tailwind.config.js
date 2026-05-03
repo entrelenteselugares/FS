@@ -23,11 +23,17 @@ export default {
         },
         // ── Semantic theme tokens (driven by CSS variables) ──
         theme: {
-          bg:         'var(--theme-bg)',
-          'bg-muted': 'var(--theme-bg-muted)',
-          text:       'var(--theme-text)',
-          muted:      'var(--theme-text-muted)',
-          border:     'var(--theme-border)',
+          bg:         'var(--bg)',
+          card:       'var(--bg-card)',
+          field:      'var(--bg-field)',
+          text:       'var(--text)',
+          muted:      'var(--text-2)',
+          subtle:     'var(--text-3)',
+          border:     'var(--border)',
+          'border-2': 'var(--border-2)',
+          brand:      'var(--brand)',
+          // Legacy aliases kept for backwards-compat
+          'bg-muted': 'var(--bg-card)',
         }
       },
       fontFamily: {

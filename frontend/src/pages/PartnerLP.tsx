@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+﻿import React, { useEffect, useState } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import { API } from "../lib/api";
 
@@ -65,11 +65,11 @@ export const PartnerLP: React.FC = () => {
   }, [slug, navigate]);
 
   if (loading || !data) return (
-    <div className="min-h-screen flex flex-col items-center justify-center gap-6 relative overflow-hidden bg-[#0a0a0a]">
+    <div className="min-h-screen flex flex-col items-center justify-center gap-6 relative overflow-hidden bg-theme-bg">
       <div className="absolute inset-0 bg-emerald-500/5 blur-[120px] rounded-full -m-64 opacity-20" />
       <div className="relative z-10 flex flex-col items-center gap-8">
         <div className="w-px h-16 bg-gradient-to-b from-transparent via-emerald-500 to-transparent" />
-        <div className="text-[18px] font-display font-black uppercase tracking-[0.8em] italic text-white">FOTO SEGUNDO</div>
+        <div className="text-[18px] font-display font-black uppercase tracking-[0.8em] italic text-theme-text">FOTO SEGUNDO</div>
         <div className="text-[9px] font-black uppercase tracking-[0.4em] text-emerald-500 animate-pulse">Sincronizando Localização...</div>
         <div className="w-px h-16 bg-gradient-to-t from-transparent via-emerald-500 to-transparent" />
       </div>
@@ -87,13 +87,13 @@ export const PartnerLP: React.FC = () => {
   const hasSchedule = workingHours && Object.keys(workingHours).length > 0;
 
   return (
-    <div className="min-h-screen bg-[#0a0a0a] text-white transition-colors duration-500 overflow-x-hidden selection:bg-emerald-500/30">
+    <div className="min-h-screen bg-theme-bg text-theme-text transition-colors duration-500 overflow-x-hidden selection:bg-emerald-500/30">
 
       {/* Navigation */}
       <nav className="fixed top-0 left-0 w-full z-50 p-6 flex justify-between items-center pointer-events-none">
         <button
           onClick={() => navigate("/")}
-          className="pointer-events-auto flex items-center gap-3 text-[10px] font-black uppercase tracking-[0.3em] text-white/60 hover:text-white transition-all bg-black/80 backdrop-blur-xl px-6 py-3 border border-white/10"
+          className="pointer-events-auto flex items-center gap-3 text-[10px] font-black uppercase tracking-[0.3em] text-theme-muted hover:text-white transition-all bg-black/80 backdrop-blur-xl px-6 py-3 border border-theme-border"
         >
           <ArrowLeft size={14} /> Vitrine
         </button>
@@ -122,10 +122,10 @@ export const PartnerLP: React.FC = () => {
         <div className="relative z-10 text-center px-6 max-w-5xl">
           <motion.div initial={{ opacity: 0, y: 40 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 1, ease: [0.16, 1, 0.3, 1] }}>
             <div className="text-[10px] font-black text-emerald-500 mb-6 uppercase tracking-[0.5em] italic">Unidade Fixa Autorizada</div>
-            <h1 className="text-5xl md:text-9xl font-display font-black mb-10 text-white uppercase tracking-tighter leading-[0.85]">
+            <h1 className="text-5xl md:text-9xl font-display font-black mb-10 text-theme-text uppercase tracking-tighter leading-[0.85]">
               {partner.razaoSocial}
             </h1>
-            <div className="flex flex-wrap justify-center gap-8 text-[11px] font-black uppercase tracking-widest text-white/40">
+            <div className="flex flex-wrap justify-center gap-8 text-[11px] font-black uppercase tracking-widest text-theme-muted">
               <div className="flex items-center gap-3"><MapPin size={14} className="text-emerald-500" /> {partner.address || "Campinas, SP"}</div>
               <div className="flex items-center gap-3"><Phone size={14} className="text-emerald-500" /> {partner.phone || "(19) 98765-4321"}</div>
             </div>
@@ -134,10 +134,10 @@ export const PartnerLP: React.FC = () => {
       </section>
 
       {/* Info + CTA */}
-      <section className="max-w-7xl mx-auto px-6 grid grid-cols-1 lg:grid-cols-2 gap-12 lg:gap-20 py-12 md:py-24 border-b border-white/5">
+      <section className="max-w-7xl mx-auto px-6 grid grid-cols-1 lg:grid-cols-2 gap-12 lg:gap-20 py-12 md:py-24 border-b border-theme-border">
         <div>
-          <h2 className="text-3xl md:text-5xl font-display font-black tracking-tighter mb-10 uppercase leading-none text-white">Sobre a Unidade</h2>
-          <p className="text-white/40 leading-relaxed tracking-widest text-[12px] font-bold mb-12 uppercase">
+          <h2 className="text-3xl md:text-5xl font-display font-black tracking-tighter mb-10 uppercase leading-none text-theme-text">Sobre a Unidade</h2>
+          <p className="text-theme-muted leading-relaxed tracking-widest text-[12px] font-bold mb-12 uppercase">
             {partner.description || "Esta unidade é um parceiro estratégico da plataforma Foto Segundo, oferecendo infraestrutura otimizada para capturas profissionais de alto padrão."}
           </p>
 
@@ -148,7 +148,7 @@ export const PartnerLP: React.FC = () => {
               "Área privativa para fotos e cinema familiar",
               "Sincronização imediata de álbuns digitais"
             ].map(feat => (
-              <div key={feat} className="flex items-center gap-5 text-[10px] font-black uppercase tracking-[0.25em] text-white/40 group">
+              <div key={feat} className="flex items-center gap-5 text-[10px] font-black uppercase tracking-[0.25em] text-theme-muted group">
                 <div className="w-2 h-[1px] bg-emerald-500 transition-all group-hover:w-8" />
                 {feat}
               </div>
@@ -156,23 +156,23 @@ export const PartnerLP: React.FC = () => {
           </div>
         </div>
 
-        <div className="p-12 md:p-16 bg-[#111111] border border-white/5 flex flex-col justify-center items-center text-center shadow-2xl relative overflow-hidden group">
+        <div className="p-12 md:p-16 bg-theme-card border border-theme-border flex flex-col justify-center items-center text-center shadow-2xl relative overflow-hidden group">
           <div className="absolute top-0 right-0 p-8 opacity-5 group-hover:scale-110 transition-transform duration-1000">
              <Calendar size={180} className="text-emerald-500" />
           </div>
           <Calendar className="text-emerald-500 mb-10 relative z-10" size={56} strokeWidth={1} />
-          <h3 className="text-2xl md:text-4xl font-display font-black tracking-tighter mb-6 uppercase leading-none text-white relative z-10">Agende seu Protocolo</h3>
+          <h3 className="text-2xl md:text-4xl font-display font-black tracking-tighter mb-6 uppercase leading-none text-theme-text relative z-10">Agende seu Protocolo</h3>
           {partner.fixedDuration && (
             <p className="text-emerald-500 text-[10px] font-black uppercase tracking-[0.3em] mb-4 relative z-10">
               Sessão de {partner.fixedDuration}h
             </p>
           )}
-          <p className="text-white/40 text-[11px] font-bold uppercase tracking-[0.2em] leading-relaxed mb-12 relative z-10">
+          <p className="text-theme-muted text-[11px] font-bold uppercase tracking-[0.2em] leading-relaxed mb-12 relative z-10">
             Solicite cobertura fotográfica ou cinematográfica exclusiva para este local com condições especiais de unidade fixa parceira.
           </p>
           <button
             onClick={() => navigate(`/cotacao?partner=${partner.slug}`)}
-            className="w-full py-6 bg-white text-black text-[11px] font-black uppercase tracking-[0.4em] hover:bg-emerald-500 transition-all relative z-10"
+            className="w-full py-6 bg-white text-theme-text text-[11px] font-black uppercase tracking-[0.4em] hover:bg-emerald-500 transition-all relative z-10"
           >
             INICIAR ORÇAMENTO EXPRESS
           </button>
@@ -181,18 +181,18 @@ export const PartnerLP: React.FC = () => {
 
       {/* ── CATÁLOGO DE SERVIÇOS ── */}
       {activeServices.length > 0 && (
-        <section className="max-w-7xl mx-auto px-6 py-24 md:py-32 border-b border-white/5 space-y-16">
+        <section className="max-w-7xl mx-auto px-6 py-24 md:py-32 border-b border-theme-border space-y-16">
           <div className="flex flex-col md:flex-row items-start md:items-end justify-between gap-6">
             <div className="space-y-3">
               <p className="text-[9px] font-black text-emerald-500 uppercase tracking-[0.5em]">Serviços Disponíveis</p>
-              <h2 className="text-4xl md:text-5xl font-display font-black tracking-tighter uppercase leading-none text-white">Catálogo desta Unidade</h2>
+              <h2 className="text-4xl md:text-5xl font-display font-black tracking-tighter uppercase leading-none text-theme-text">Catálogo desta Unidade</h2>
             </div>
-            <p className="text-[10px] text-white/40 font-bold uppercase tracking-[0.3em] max-w-xs">
+            <p className="text-[10px] text-theme-muted font-bold uppercase tracking-[0.3em] max-w-xs">
               Preços configurados especificamente para {partner.razaoSocial}.
             </p>
           </div>
 
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-px bg-white/5 border border-white/10 shadow-2xl overflow-hidden">
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-px bg-white/5 border border-theme-border shadow-2xl overflow-hidden">
             {activeServices.map((svc) => {
               const localPrice = (partner.servicePrices as Record<string, number> | null)?.[svc.id];
               const displayPrice = localPrice ?? svc.basePrice;
@@ -203,15 +203,15 @@ export const PartnerLP: React.FC = () => {
                   whileInView={{ opacity: 1, y: 0 }}
                   viewport={{ once: true }}
                   transition={{ duration: 0.5 }}
-                  className="bg-[#0a0a0a] p-10 group hover:bg-[#111111] transition-all duration-500"
+                  className="bg-theme-bg p-10 group hover:bg-theme-card transition-all duration-500"
                 >
                   <div className="flex items-start justify-between mb-6">
                     <div className="space-y-2">
-                      <h3 className="text-lg font-display font-black uppercase tracking-tight italic text-white group-hover:text-emerald-500 transition-colors">
+                      <h3 className="text-lg font-display font-black uppercase tracking-tight italic text-theme-text group-hover:text-emerald-500 transition-colors">
                         {svc.name}
                       </h3>
                       {localPrice && localPrice !== svc.basePrice && (
-                        <span className="text-[8px] font-black text-white/20 uppercase tracking-widest line-through">
+                        <span className="text-[8px] font-black text-theme-subtle uppercase tracking-widest line-through">
                           Rede: {formatCurrency(svc.basePrice)}
                         </span>
                       )}
@@ -220,7 +220,7 @@ export const PartnerLP: React.FC = () => {
                       {formatCurrency(displayPrice)}
                     </span>
                   </div>
-                  <p className="text-[10px] text-white/40 font-medium leading-relaxed tracking-wide">
+                  <p className="text-[10px] text-theme-muted font-medium leading-relaxed tracking-wide">
                     {svc.description}
                   </p>
                 </motion.div>
@@ -280,8 +280,8 @@ export const PartnerLP: React.FC = () => {
       <section className="py-24 md:py-40 px-6 max-w-7xl mx-auto mobile-py">
         <div className="flex flex-col md:flex-row items-center justify-between mb-16 md:mb-24 mobile-center">
           <div>
-            <h2 className="text-5xl font-display font-black tracking-tighter uppercase text-white">Registros Recentes</h2>
-            <p className="text-[11px] text-white/40 font-black uppercase tracking-[0.35em] mt-3">Curadoria Editorial neste Local</p>
+            <h2 className="text-5xl font-display font-black tracking-tighter uppercase text-theme-text">Registros Recentes</h2>
+            <p className="text-[11px] text-theme-muted font-black uppercase tracking-[0.35em] mt-3">Curadoria Editorial neste Local</p>
           </div>
           <div className="hidden md:flex items-center gap-3 text-theme-muted opacity-30">
             <Star size={18} fill="currentColor" />
@@ -309,7 +309,7 @@ export const PartnerLP: React.FC = () => {
                   alt={evt.nomeNoivos}
                 />
                 <div className="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center">
-                  <span className="text-white text-[10px] font-black uppercase tracking-[0.5em] border border-white/20 px-6 py-3 backdrop-blur-md">Ver Galeria</span>
+                  <span className="text-theme-text text-[10px] font-black uppercase tracking-[0.5em] border border-theme-border-2 px-6 py-3 backdrop-blur-md">Ver Galeria</span>
                 </div>
               </div>
               <h4 className="text-2xl font-black uppercase tracking-tighter mb-1 leading-none">{evt.nomeNoivos}</h4>
@@ -323,11 +323,11 @@ export const PartnerLP: React.FC = () => {
       <footer className="py-24 md:py-40 bg-theme-bg-muted text-theme-text text-center border-t border-theme-border mobile-py">
         <div className="max-w-xl mx-auto px-6">
           <MessageSquare className="mx-auto mb-10 text-emerald-500" size={40} />
-          <h2 className="text-4xl md:text-6xl font-display font-black tracking-tighter mb-10 leading-none uppercase text-white">Dúvidas sobre o Local?</h2>
-          <p className="text-white/40 text-[11px] font-bold uppercase tracking-[0.3em] leading-relaxed mb-12">Entre em contato direto com a administração da unidade para suporte logístico e agendamento de visitas técnicas.</p>
+          <h2 className="text-4xl md:text-6xl font-display font-black tracking-tighter mb-10 leading-none uppercase text-theme-text">Dúvidas sobre o Local?</h2>
+          <p className="text-theme-muted text-[11px] font-bold uppercase tracking-[0.3em] leading-relaxed mb-12">Entre em contato direto com a administração da unidade para suporte logístico e agendamento de visitas técnicas.</p>
           <div className="flex flex-col gap-4">
-            <button className="px-12 py-6 bg-emerald-500 text-black text-[11px] font-black uppercase tracking-[0.4em] hover:bg-white transition-all">WhatsApp Unidade</button>
-            <button onClick={() => navigate("/")} className="text-[10px] font-black uppercase tracking-[0.8em] text-white/20 hover:text-white transition-colors mt-8">Voltar para Vitrine Global</button>
+            <button className="px-12 py-6 bg-emerald-500 text-theme-text text-[11px] font-black uppercase tracking-[0.4em] hover:bg-white transition-all">WhatsApp Unidade</button>
+            <button onClick={() => navigate("/")} className="text-[10px] font-black uppercase tracking-[0.8em] text-theme-subtle hover:text-white transition-colors mt-8">Voltar para Vitrine Global</button>
           </div>
         </div>
       </footer>

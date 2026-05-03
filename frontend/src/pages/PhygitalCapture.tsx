@@ -1,4 +1,4 @@
-import React, { useState, useRef } from 'react';
+﻿import React, { useState, useRef } from 'react';
 import { useSearchParams } from 'react-router-dom';
 import { API } from '../lib/api';
 import { T } from '../lib/theme';
@@ -83,7 +83,7 @@ export default function PhygitalCapture() {
         <h1 className="text-3xl font-black uppercase tracking-[0.2em] mb-2" style={{ color: T.text }}>Foto Recebida</h1>
         <p className="text-[11px] uppercase tracking-widest opacity-50 mb-10">Sua lembrança já está na fila de impressão</p>
         
-        <div className="w-full max-w-sm p-8 rounded-2xl border border-white/5 bg-white/[0.02] backdrop-blur-xl relative overflow-hidden">
+        <div className="w-full max-w-sm p-8 rounded-2xl border border-theme-border bg-white/[0.02] backdrop-blur-xl relative overflow-hidden">
           <div className="absolute top-0 left-0 w-full h-1 bg-brand-tactical" />
           <p className="text-[10px] font-bold uppercase tracking-[0.3em] opacity-40 mb-4">Código de Referência</p>
           <p className="text-5xl font-black tracking-tighter text-brand-tactical font-mono">{result.referenceCode}</p>
@@ -91,7 +91,7 @@ export default function PhygitalCapture() {
 
         <button 
           onClick={() => window.location.reload()}
-          className="mt-12 text-[10px] font-black uppercase tracking-[0.3em] py-4 px-8 border border-white/10 hover:bg-white/5 transition-all"
+          className="mt-12 text-[10px] font-black uppercase tracking-[0.3em] py-4 px-8 border border-theme-border hover:bg-white/5 transition-all"
           style={{ color: T.text }}
         >
           Enviar Outra Foto
@@ -119,7 +119,7 @@ export default function PhygitalCapture() {
                 <button 
                   type="button"
                   onClick={() => { setFile(null); setPreview(null); }}
-                  className="absolute top-4 right-4 bg-black/60 backdrop-blur-md text-white p-2 rounded-full border border-white/20"
+                  className="absolute top-4 right-4 bg-black/60 backdrop-blur-md text-theme-text p-2 rounded-full border border-theme-border-2"
                 >
                   Trocar Foto
                 </button>
@@ -138,7 +138,7 @@ export default function PhygitalCapture() {
                 <button
                   type="button"
                   onClick={() => galleryInputRef.current?.click()}
-                  className="flex flex-col items-center justify-center gap-4 p-8 bg-white/[0.03] border border-white/10 rounded-2xl hover:bg-white/[0.06] transition-all"
+                  className="flex flex-col items-center justify-center gap-4 p-8 bg-white/[0.03] border border-theme-border rounded-2xl hover:bg-white/[0.06] transition-all"
                   style={{ color: T.text }}
                 >
                   <ImageIcon size={32} className="opacity-40" />
@@ -175,7 +175,7 @@ export default function PhygitalCapture() {
                 name="customerName" 
                 value={formData.customerName} 
                 onChange={handleInputChange} 
-                className="w-full bg-white/[0.03] border border-white/5 p-4 rounded-xl text-sm focus:border-brand-tactical/50 transition-all outline-none"
+                className="w-full bg-white/[0.03] border border-theme-border p-4 rounded-xl text-sm focus:border-brand-tactical/50 transition-all outline-none"
                 placeholder="Ex: João Silva"
                 style={{ color: T.text }}
               />
@@ -190,7 +190,7 @@ export default function PhygitalCapture() {
                   name="customerPhone" 
                   value={formData.customerPhone} 
                   onChange={handleInputChange} 
-                  className="w-full bg-white/[0.03] border border-white/5 p-4 rounded-xl text-sm focus:border-brand-tactical/50 transition-all outline-none"
+                  className="w-full bg-white/[0.03] border border-theme-border p-4 rounded-xl text-sm focus:border-brand-tactical/50 transition-all outline-none"
                   placeholder="(00) 00000-0000"
                   style={{ color: T.text }}
                 />
@@ -203,7 +203,7 @@ export default function PhygitalCapture() {
                   name="customerCep" 
                   value={formData.customerCep} 
                   onChange={handleInputChange} 
-                  className="w-full bg-white/[0.03] border border-white/5 p-4 rounded-xl text-sm focus:border-brand-tactical/50 transition-all outline-none"
+                  className="w-full bg-white/[0.03] border border-theme-border p-4 rounded-xl text-sm focus:border-brand-tactical/50 transition-all outline-none"
                   placeholder="00000-000"
                   style={{ color: T.text }}
                 />

@@ -1,4 +1,4 @@
-// Optimized Admin Dashboard - Foto Segundo
+﻿// Optimized Admin Dashboard - Foto Segundo
 import React, { useState, useEffect, useCallback } from "react";
 import { API } from "../../lib/api";
 import { T } from "../../lib/theme";
@@ -354,7 +354,7 @@ export const AdminEvents: React.FC<AdminEventsProps> = ({ initialEditEventId }) 
 
   return (
     <div className="space-y-12 animate-in fade-in slide-in-from-bottom-4 duration-700">
-      <div className="flex flex-col md:flex-row md:items-center justify-between border-b border-white/5 pb-8 gap-6">
+      <div className="flex flex-col md:flex-row md:items-center justify-between border-b border-theme-border pb-8 gap-6">
         <div>
           <p className="text-[9px] text-theme-muted uppercase tracking-[0.4em] mt-2 font-bold italic">Logística de Captação e Unidades Fixas</p>
         </div>
@@ -418,8 +418,8 @@ export const AdminEvents: React.FC<AdminEventsProps> = ({ initialEditEventId }) 
                 <td className="p-2 md:p-3 text-[10px] md:text-[11px] font-bold text-theme-text/80">{new Date(event.date).toLocaleDateString("pt-BR")}</td>
                 <td className="p-2 md:p-3">
                    <div className="flex gap-2 md:gap-3">
-                      <div className={`w-1.5 h-1.5 md:w-2 md:h-2 rounded-full ${event.coverPhotoUrl ? 'bg-brand-tactical' : 'bg-zinc-800'}`} />
-                      <div className={`w-1.5 h-1.5 md:w-2 md:h-2 rounded-full ${(event.lightroomUrl || event.driveUrl) ? 'bg-brand-tactical' : 'bg-zinc-800'}`} />
+                      <div className={`w-1.5 h-1.5 md:w-2 md:h-2 rounded-full ${event.coverPhotoUrl ? 'bg-brand-tactical' : 'bg-theme-border'}`} />
+                      <div className={`w-1.5 h-1.5 md:w-2 md:h-2 rounded-full ${(event.lightroomUrl || event.driveUrl) ? 'bg-brand-tactical' : 'bg-theme-border'}`} />
                    </div>
                 </td>
                 <td className="p-2 md:p-3 font-black text-brand-tactical">{event._count?.pedidos || 0}</td>
@@ -446,7 +446,7 @@ export const AdminEvents: React.FC<AdminEventsProps> = ({ initialEditEventId }) 
             <div className="py-20 text-center text-[10px] text-theme-muted uppercase tracking-[0.3em]">Nenhum registro encontrado.</div>
           ) : events.map((event) => (
             <div key={event.id} className="event-card-mobile">
-              <div className="flex justify-between items-start border-b border-white/5 pb-3">
+              <div className="flex justify-between items-start border-b border-theme-border pb-3">
                 <div>
                   <div className="text-[12px] font-black text-theme-text uppercase tracking-tight">{event.title}</div>
                   <div className="text-[9px] text-theme-muted font-bold uppercase">{event.location}</div>
@@ -462,8 +462,8 @@ export const AdminEvents: React.FC<AdminEventsProps> = ({ initialEditEventId }) 
                   <div>
                     <span className="text-[8px] font-black text-theme-muted uppercase block mb-1">Produção</span>
                     <div className="flex gap-2">
-                      <div className={`w-2 h-2 rounded-full ${event.coverPhotoUrl ? 'bg-brand-tactical' : 'bg-zinc-800'}`} />
-                      <div className={`w-2 h-2 rounded-full ${(event.lightroomUrl || event.driveUrl) ? 'bg-brand-tactical' : 'bg-zinc-800'}`} />
+                      <div className={`w-2 h-2 rounded-full ${event.coverPhotoUrl ? 'bg-brand-tactical' : 'bg-theme-border'}`} />
+                      <div className={`w-2 h-2 rounded-full ${(event.lightroomUrl || event.driveUrl) ? 'bg-brand-tactical' : 'bg-theme-border'}`} />
                     </div>
                   </div>
                 </div>
@@ -514,7 +514,7 @@ export const AdminEvents: React.FC<AdminEventsProps> = ({ initialEditEventId }) 
                                   <div className="text-[9px] uppercase tracking-[0.4em] text-zinc-600 font-black">Enviar Capa</div>
                                 </div>
                               )}
-                              {isUploading && <div className="absolute inset-0 bg-black/80 flex items-center justify-center text-[9px] text-white uppercase tracking-widest animate-pulse font-black">Processando...</div>}
+                              {isUploading && <div className="absolute inset-0 bg-black/80 flex items-center justify-center text-[9px] text-theme-text uppercase tracking-widest animate-pulse font-black">Processando...</div>}
                             </div>
                             <input type="file" ref={fileInputRef} hidden accept="image/*" onChange={handleFileChange} />
                           </div>
@@ -674,7 +674,7 @@ export const AdminEvents: React.FC<AdminEventsProps> = ({ initialEditEventId }) 
                                 )}
                                 {previewPreviews[i] && (
                                   <div className="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 flex items-center justify-center transition-opacity">
-                                    <span className="text-[7px] text-white font-black uppercase">Trocar Foto</span>
+                                    <span className="text-[7px] text-theme-text font-black uppercase">Trocar Foto</span>
                                   </div>
                                 )}
                               </div>
@@ -689,7 +689,7 @@ export const AdminEvents: React.FC<AdminEventsProps> = ({ initialEditEventId }) 
                   <div className="mt-auto pt-10 border-t border-theme-border flex justify-end gap-6">
                     <button type="button" onClick={() => setIsModalOpen(false)} className="px-10 py-4 text-[10px] font-black uppercase tracking-[0.4em] text-theme-muted hover:text-white transition-all">Cancelar</button>
                     {activeTab !== 'comercial' ? (
-                      <button type="button" onClick={() => { const t: Array<'info' | 'equipe' | 'comercial'> = ['info','equipe','comercial']; setActiveTab(t[t.indexOf(activeTab)+1]); }} className="px-10 py-4 bg-zinc-800 text-white text-[10px] font-black uppercase tracking-[0.4em] hover:bg-zinc-700 transition-all">Próximo Passo</button>
+                      <button type="button" onClick={() => { const t: Array<'info' | 'equipe' | 'comercial'> = ['info','equipe','comercial']; setActiveTab(t[t.indexOf(activeTab)+1]); }} className="px-10 py-4 bg-theme-border text-theme-text text-[10px] font-black uppercase tracking-[0.4em] hover:bg-zinc-700 transition-all">Próximo Passo</button>
                     ) : (
                       <button type="submit" disabled={isUploading} className="px-12 py-4 bg-brand-tactical text-zinc-950 text-[10px] font-black uppercase tracking-[0.4em] hover:brightness-110 shadow-lg">{isUploading ? "PROCESSANDO..." : (editingEvent ? "SALVAR ALTERAÇÕES" : "CADASTRAR EVENTO")}</button>
                     )}
@@ -742,7 +742,7 @@ export const AdminEvents: React.FC<AdminEventsProps> = ({ initialEditEventId }) 
               </div>
             </div>
 
-            <div className="mt-10 pt-8 border-t border-white/5 text-center">
+            <div className="mt-10 pt-8 border-t border-theme-border text-center">
                <button 
                 onClick={() => { 
                   const url = `${window.location.origin}/captura?e=${qrModalEvent.id}`; 
@@ -784,10 +784,10 @@ export const AdminEvents: React.FC<AdminEventsProps> = ({ initialEditEventId }) 
       )}
 
       {notification && (
-        <div className="fixed bottom-10 right-10 z-[100] p-6 border border-brand-tactical bg-zinc-950 shadow-2xl min-w-[300px] animate-in slide-in-from-right-10 duration-500">
+        <div className="fixed bottom-10 right-10 z-[100] p-6 border border-brand-tactical bg-theme-bg shadow-2xl min-w-[300px] animate-in slide-in-from-right-10 duration-500">
           <div className="flex flex-col gap-1">
              <span className="text-[8px] font-black uppercase tracking-[0.4em] text-brand-tactical">Notificação</span>
-             <p className="text-[11px] font-bold text-white uppercase tracking-widest">{notification.message}</p>
+             <p className="text-[11px] font-bold text-theme-text uppercase tracking-widest">{notification.message}</p>
           </div>
         </div>
       )}
@@ -874,7 +874,7 @@ export const AdminEvents: React.FC<AdminEventsProps> = ({ initialEditEventId }) 
               <span className="text-[10px] font-black text-red-500 uppercase tracking-[0.5em]">Protocolo de Exclusão</span>
               <h3 className="text-xl font-black text-theme-text uppercase tracking-tight">Confirmar Remoção?</h3>
               <p className="text-[11px] text-theme-muted leading-relaxed uppercase tracking-widest font-bold opacity-60">
-                Você está prestes a excluir o evento <span className="text-white">{confirmDelete.title}</span>. 
+                Você está prestes a excluir o evento <span className="text-theme-text">{confirmDelete.title}</span>. 
                 Se houver pedidos aprovados, o evento será apenas desativado. Caso contrário, será removido permanentemente.
               </p>
             </div>
@@ -887,7 +887,7 @@ export const AdminEvents: React.FC<AdminEventsProps> = ({ initialEditEventId }) 
               </button>
               <button 
                 onClick={() => handleDelete(confirmDelete.id)}
-                className="flex-1 py-4 bg-red-600 text-white text-[10px] font-black uppercase tracking-widest hover:bg-red-500 transition-colors"
+                className="flex-1 py-4 bg-red-600 text-theme-text text-[10px] font-black uppercase tracking-widest hover:bg-red-500 transition-colors"
               >
                 Confirmar Exclusão
               </button>

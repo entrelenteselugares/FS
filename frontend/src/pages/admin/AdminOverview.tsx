@@ -1,4 +1,4 @@
-import React from "react";
+﻿import React from "react";
 import {
   AreaChart, Area, XAxis, CartesianGrid, Tooltip,
   ResponsiveContainer,
@@ -50,27 +50,27 @@ export const AdminOverview: React.FC<OverviewProps> = ({ stats, recentOrders = [
       {/* Ambient Glow */}
       <div className="absolute top-0 right-0 w-[600px] h-[600px] bg-emerald-500/5 blur-[150px] rounded-full -mr-64 -mt-64 opacity-20 pointer-events-none" />
 
-      <div className="border-b border-white/5 pb-8">
-        <h2 className="text-4xl md:text-6xl font-display text-white tracking-tighter uppercase font-black leading-none pt-2 italic">Visão Geral</h2>
+      <div className="border-b border-theme-border pb-8">
+        <h2 className="text-4xl md:text-6xl font-display text-theme-text tracking-tighter uppercase font-black leading-none pt-2 italic">Visão Geral</h2>
         <p className="text-[10px] text-emerald-500 uppercase tracking-[0.5em] mt-4 font-black italic">Consolidado da Operação Nacional</p>
       </div>
 
       {/* KPI Section */}
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-px bg-white/5 border border-white/5 shadow-2xl">
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-px bg-white/5 border border-theme-border shadow-2xl">
         
         {/* KPI Card Template */}
         {[
-          { label: "Receita Bruta", value: `R$ ${Number(stats?.totalRevenue || 0).toLocaleString("pt-BR")}`, color: "text-white" },
+          { label: "Receita Bruta", value: `R$ ${Number(stats?.totalRevenue || 0).toLocaleString("pt-BR")}`, color: "text-theme-text" },
           { label: "Últimos 30 Dias", value: `R$ ${Number(stats?.revenue30d || 0).toLocaleString("pt-BR")}`, color: "text-emerald-500", growth: stats?.growth },
-          { label: "Pedidos Liquidados", value: stats?.totalOrders || 0, color: "text-white" },
-          { label: "Eventos Ativos", value: stats?.activeEvents || 0, color: "text-white" },
-          { label: "Convites Pendentes", value: stats?.pendingInvitesCount || 0, color: (stats?.pendingInvitesCount || 0) > 0 ? "text-red-500" : "text-white" },
-          { label: "Vendas sem Entrega", value: stats?.missingLinksCount || 0, color: (stats?.missingLinksCount || 0) > 0 ? "text-emerald-500" : "text-white" },
-          { label: "Novos Leads", value: stats?.pendingQuotesCount || 0, color: (stats?.pendingQuotesCount || 0) > 0 ? "text-emerald-500" : "text-white" }
+          { label: "Pedidos Liquidados", value: stats?.totalOrders || 0, color: "text-theme-text" },
+          { label: "Eventos Ativos", value: stats?.activeEvents || 0, color: "text-theme-text" },
+          { label: "Convites Pendentes", value: stats?.pendingInvitesCount || 0, color: (stats?.pendingInvitesCount || 0) > 0 ? "text-red-500" : "text-theme-text" },
+          { label: "Vendas sem Entrega", value: stats?.missingLinksCount || 0, color: (stats?.missingLinksCount || 0) > 0 ? "text-emerald-500" : "text-theme-text" },
+          { label: "Novos Leads", value: stats?.pendingQuotesCount || 0, color: (stats?.pendingQuotesCount || 0) > 0 ? "text-emerald-500" : "text-theme-text" }
         ].map((kpi, idx) => (
-          <div key={idx} className="bg-[#111] p-8 group hover:bg-white/[0.02] transition-colors relative">
+          <div key={idx} className="bg-theme-card p-8 group hover:bg-white/[0.02] transition-colors relative">
             <div className="absolute top-0 left-0 w-full h-px bg-gradient-to-r from-transparent via-white/5 to-transparent opacity-0 group-hover:opacity-100 transition-opacity" />
-            <label className="text-[9px] font-black uppercase tracking-widest text-white/20 block mb-4 italic">{kpi.label}</label>
+            <label className="text-[9px] font-black uppercase tracking-widest text-theme-subtle block mb-4 italic">{kpi.label}</label>
             <div className="flex items-baseline justify-between">
               <div className={`text-2xl md:text-3xl font-display font-black italic tracking-tighter ${kpi.color}`}>
                 {kpi.value}
@@ -87,9 +87,9 @@ export const AdminOverview: React.FC<OverviewProps> = ({ stats, recentOrders = [
 
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
         {/* Charts */}
-        <div className="bg-[#111] border border-white/5 p-8 shadow-2xl relative group">
+        <div className="bg-theme-card border border-theme-border p-8 shadow-2xl relative group">
           <div className="absolute top-0 left-0 w-1 h-full bg-emerald-500 opacity-20 group-hover:opacity-100 transition-opacity" />
-          <h3 className="text-[10px] font-black uppercase tracking-[0.5em] text-white/40 mb-8 italic">Timeline de Conversão</h3>
+          <h3 className="text-[10px] font-black uppercase tracking-[0.5em] text-theme-muted mb-8 italic">Timeline de Conversão</h3>
           <div className="h-[250px] w-full">
              <ResponsiveContainer width="100%" height="100%">
                 <AreaChart data={chartData} margin={{ top: 10, right: 10, left: -20, bottom: 0 }}>
@@ -109,13 +109,13 @@ export const AdminOverview: React.FC<OverviewProps> = ({ stats, recentOrders = [
        </div>
 
         {/* Alertas */}
-        <div className="bg-[#111] border border-white/5 p-8 shadow-2xl relative">
-          <h3 className="text-[10px] font-black uppercase tracking-[0.5em] text-white/40 mb-8 italic">Pendências de Curadoria</h3>
+        <div className="bg-theme-card border border-theme-border p-8 shadow-2xl relative">
+          <h3 className="text-[10px] font-black uppercase tracking-[0.5em] text-theme-muted mb-8 italic">Pendências de Curadoria</h3>
           <div className="space-y-4">
             {pendingEvents.length > 0 ? pendingEvents.map(event => (
-              <div key={event.id} className="flex items-center justify-between p-5 border border-white/5 bg-white/[0.02] hover:border-emerald-500/30 transition-all group">
+              <div key={event.id} className="flex items-center justify-between p-5 border border-theme-border bg-white/[0.02] hover:border-emerald-500/30 transition-all group">
                 <div className="space-y-2">
-                  <div className="text-sm font-display font-black text-white uppercase italic tracking-widest">{event.title}</div>
+                  <div className="text-sm font-display font-black text-theme-text uppercase italic tracking-widest">{event.title}</div>
                   <div className="flex gap-4">
                      {!event.coverPhotoUrl && <span className="text-[8px] font-black bg-red-500/10 text-red-500 px-2 py-0.5 uppercase tracking-widest border border-red-500/20">Sem Capa</span>}
                      {!event.lightroomUrl && <span className="text-[8px] font-black bg-emerald-500/10 text-emerald-500 px-2 py-0.5 uppercase tracking-widest border border-emerald-500/20">Sem Fotos</span>}
@@ -123,12 +123,12 @@ export const AdminOverview: React.FC<OverviewProps> = ({ stats, recentOrders = [
                 </div>
                 <button 
                   onClick={() => onEditEvent(event.id)}
-                  className="px-6 py-2 border border-white/10 text-[9px] font-black uppercase tracking-widest text-white/40 hover:text-emerald-500 hover:border-emerald-500 transition-all"
+                  className="px-6 py-2 border border-theme-border text-[9px] font-black uppercase tracking-widest text-theme-muted hover:text-emerald-500 hover:border-emerald-500 transition-all"
                 >Ajustar</button>
               </div>
             )) : (
               <div className="py-20 text-center">
-                <div className="text-[10px] font-black text-white/20 uppercase tracking-[0.4em] italic">Ativos Normalizados</div>
+                <div className="text-[10px] font-black text-theme-subtle uppercase tracking-[0.4em] italic">Ativos Normalizados</div>
               </div>
             )}
           </div>

@@ -1,4 +1,4 @@
-import { useState, useEffect, useRef, useMemo } from "react";
+﻿import { useState, useEffect, useRef, useMemo } from "react";
 import { Users, Calendar, ArrowRight, ShieldCheck, ChevronLeft, ChevronRight, Clock, Home, Zap, Camera, Video, Printer, Smartphone, Building2, GraduationCap, Utensils } from "lucide-react";
 import { API } from "../lib/api";
 import { useNavigate } from "react-router-dom";
@@ -120,7 +120,7 @@ function DateTimePicker({ value, onChange, workingHours }: { value: string; onCh
       <div onClick={() => setOpen(o => !o)} className="relative flex items-center cursor-pointer group">
         <Calendar size={18} className="absolute left-5 text-emerald-500 z-10 group-hover:scale-110 transition-transform" />
         <div
-          className="fs-input w-full pl-14 text-xs font-black uppercase tracking-widest min-h-[60px] flex items-center border border-white/10 bg-white/5 hover:border-emerald-500/40 transition-colors"
+          className="fs-input w-full pl-14 text-xs font-black uppercase tracking-widest min-h-[60px] flex items-center border border-theme-border bg-white/5 hover:border-emerald-500/40 transition-colors"
           style={{
             color: displayValue ? "#fff" : "rgba(255,255,255,0.2)"
           }}
@@ -514,13 +514,13 @@ export const QuotePage = () => {
   };
 
   return (
-    <div className="min-h-screen bg-[#0a0a0a] text-white font-b selection:bg-emerald-500 selection:text-black py-10 md:py-20 px-4">
+    <div className="min-h-screen bg-theme-bg text-theme-text font-b selection:bg-emerald-500 selection:text-black py-10 md:py-20 px-4">
       {loading && (
-        <div className="fixed inset-0 z-[100] flex flex-col items-center justify-center gap-6 bg-[#0a0a0a]">
+        <div className="fixed inset-0 z-[100] flex flex-col items-center justify-center gap-6 bg-theme-bg">
           <div className="absolute inset-0 bg-emerald-500/5 blur-[120px] rounded-full -m-64 opacity-20" />
           <div className="relative z-10 flex flex-col items-center gap-8">
             <div className="w-px h-16 bg-gradient-to-b from-transparent via-emerald-500 to-transparent" />
-            <div className="text-[18px] font-display font-black uppercase tracking-[0.8em] italic text-white">FOTO SEGUNDO</div>
+            <div className="text-[18px] font-display font-black uppercase tracking-[0.8em] italic text-theme-text">FOTO SEGUNDO</div>
             <div className="text-[9px] font-black uppercase tracking-[0.4em] text-emerald-500 animate-pulse">Configurando Motor Tático</div>
             <div className="w-px h-16 bg-gradient-to-t from-transparent via-emerald-500 to-transparent" />
           </div>
@@ -556,8 +556,8 @@ export const QuotePage = () => {
             className="text-[10px] font-black text-emerald-500 mb-4 uppercase tracking-[0.5em] italic" 
             style={{ opacity: 0.8 }}
           >Solicitação de Orçamento</div>
-          <h1 className="text-4xl md:text-7xl font-display font-black uppercase tracking-tighter leading-none text-white">
-            ETERNIZE SEU <span className="text-white/20 italic">EVENTO</span>
+          <h1 className="text-4xl md:text-7xl font-display font-black uppercase tracking-tighter leading-none text-theme-text">
+            ETERNIZE SEU <span className="text-theme-subtle italic">EVENTO</span>
           </h1>
         </header>
 
@@ -941,7 +941,7 @@ export const QuotePage = () => {
                   </div>
                 </div>
                 <div style={{ display: "flex", gap: 10 }}>
-                  <button onClick={() => setStep(1)} className="px-8 py-4 border border-white/10 text-white/40 font-display font-black text-[10px] uppercase tracking-widest hover:text-white transition-all">VOLTAR</button>
+                  <button onClick={() => setStep(1)} className="px-8 py-4 border border-theme-border text-theme-muted font-display font-black text-[10px] uppercase tracking-widest hover:text-white transition-all">VOLTAR</button>
                   <button 
                     onClick={() => {
                       if (selectedServices.length > 0) {
@@ -951,7 +951,7 @@ export const QuotePage = () => {
                         alert("Por favor, selecione pelo menos um serviço.");
                       }
                     }}
-                    className="px-8 py-4 bg-emerald-500 text-black font-display font-black text-[10px] uppercase tracking-widest hover:bg-white transition-all shadow-xl shadow-emerald-500/10"
+                    className="px-8 py-4 bg-emerald-500 text-theme-text font-display font-black text-[10px] uppercase tracking-widest hover:bg-white transition-all shadow-xl shadow-emerald-500/10"
                   >CONTINUAR &rarr;</button>
                 </div>
               </div>
@@ -1017,29 +1017,29 @@ export const QuotePage = () => {
               <div style={{ width: 80, height: 80, background: "rgba(133,185,172,0.1)", display: "flex", alignItems: "center", justifyContent: "center", margin: "0 auto 30px", border: "1px solid rgba(133,185,172,0.3)" }}>
                 <ShieldCheck size={40} className="text-emerald-500" />
               </div>
-              <h2 className="text-4xl md:text-6xl font-display font-black text-white uppercase italic tracking-tighter mb-8 leading-none">Solicitação Enviada</h2>
+              <h2 className="text-4xl md:text-6xl font-display font-black text-theme-text uppercase italic tracking-tighter mb-8 leading-none">Solicitação Enviada</h2>
               
               {createdQuoteId && (
                 <div style={{ background: "rgba(255,255,255,0.02)", border: "1px solid rgba(255,255,255,0.05)", padding: "20px 40px", marginBottom: 40, display: "inline-block" }}>
-                  <span className="text-[9px] font-black text-white/40 uppercase tracking-[0.3em] block mb-2">Protocolo de Segurança</span>
+                  <span className="text-[9px] font-black text-theme-muted uppercase tracking-[0.3em] block mb-2">Protocolo de Segurança</span>
                   <span className="text-2xl font-display font-black text-emerald-500 tracking-[0.15em] italic">ORC-{createdQuoteId.slice(-6).toUpperCase()}</span>
                 </div>
               )}
 
-              <p className="text-xs font-bold text-white/40 uppercase tracking-widest max-w-md mx-auto leading-relaxed mb-12">
-                Recebemos seu briefing técnico. Nossa curadoria analisará a viabilidade e entrará em contato através de <span className="text-white">{email}</span> para os próximos passos.
+              <p className="text-xs font-bold text-theme-muted uppercase tracking-widest max-w-md mx-auto leading-relaxed mb-12">
+                Recebemos seu briefing técnico. Nossa curadoria analisará a viabilidade e entrará em contato através de <span className="text-theme-text">{email}</span> para os próximos passos.
               </p>
               
               <div className="flex flex-col gap-4 max-w-sm mx-auto">
                 <button 
                   onClick={() => window.open('https://wa.me/5519997843817', '_blank')}
-                  className="w-full py-6 bg-emerald-500 text-black font-display font-black text-xs uppercase tracking-[0.3em] hover:bg-white transition-all shadow-2xl shadow-emerald-500/20"
+                  className="w-full py-6 bg-emerald-500 text-theme-text font-display font-black text-xs uppercase tracking-[0.3em] hover:bg-white transition-all shadow-2xl shadow-emerald-500/20"
                 >
                   FALAR COM ESPECIALISTA
                 </button>
                 <button 
                   onClick={() => navigate("/")}
-                  className="w-full py-4 text-white/20 font-display font-black text-[10px] uppercase tracking-[0.5em] hover:text-white transition-colors"
+                  className="w-full py-4 text-theme-subtle font-display font-black text-[10px] uppercase tracking-[0.5em] hover:text-white transition-colors"
                 >
                   VOLTAR PARA VITRINE
                 </button>
