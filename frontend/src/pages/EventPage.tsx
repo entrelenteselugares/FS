@@ -1,53 +1,17 @@
-import { useState, useEffect, useCallback, useRef } from "react";
-import { Check, Video, Zap, Printer, Upload, QrCode } from "lucide-react";
+import { useState, useEffect, useCallback } from "react";
+import { Check, Video, Printer, QrCode, ShoppingCart, Share2, ChevronRight, Image as ImageIcon, Camera } from "lucide-react";
 import { QRCodeCanvas } from "qrcode.react";
 import { useParams, useNavigate, useSearchParams } from "react-router-dom";
 import { API as api } from "../lib/api";
 import { Helmet } from "react-helmet-async";
 import AccessTypeModal from "../components/AccessTypeModal";
-import { T, BtnPrimary, BtnSecondary, FieldLabel, FieldInput } from "../lib/theme";
 import { AuthModal } from "../components/AuthModal";
-import { Modal } from "../components/UI/Modal";
 import { useAuth } from "../hooks/useAuth";
 import { Navbar } from "../components/Navbar";
 import { PrintStoreModal } from "../components/PrintStoreModal";
+import { motion, AnimatePresence } from "framer-motion";
 
-const Item = ({ val, label }: { val: number, label: string }) => (
-  <div style={{ textAlign: "center" }}>
-    <div style={{ fontFamily: T.fontD, fontSize: 24, fontWeight: 900, color: T.text, lineHeight: 1 }}>{String(val).padStart(2, "0")}</div>
-    <div style={{ fontSize: 8, letterSpacing: 1, textTransform: "uppercase", color: T.text3, marginTop: 4 }}>{label}</div>
-  </div>
-);
 
-const Countdown: React.FC<{ targetDate: string }> = ({ targetDate }) => {
-  const [timeLeft, setTimeLeft] = useState({ d: 0, h: 0, m: 0, s: 0 });
-
-  useEffect(() => {
-    const timer = setInterval(() => {
-      const diff = new Date(targetDate).getTime() - Date.now();
-      if (diff <= 0) {
-        clearInterval(timer);
-        return;
-      }
-      setTimeLeft({
-        d: Math.floor(diff / (1000 * 60 * 60 * 24)),
-        h: Math.floor((diff / (1000 * 60 * 60)) % 24),
-        m: Math.floor((diff / 1000 / 60) % 60),
-        s: Math.floor((diff / 1000) % 60),
-      });
-    }, 1000);
-    return () => clearInterval(timer);
-  }, [targetDate]);
-
-  return (
-    <div style={{ display: "flex", gap: 20, marginBottom: "1.25rem", borderBottom: `1px solid ${T.border}`, paddingBottom: "0.75rem" }}>
-      <Item val={timeLeft.d} label="Dias" />
-      <Item val={timeLeft.h} label="Horas" />
-      <Item val={timeLeft.m} label="Min" />
-      <Item val={timeLeft.s} label="Seg" />
-    </div>
-  );
-};
 
 interface EventData {
   id: string;
@@ -102,15 +66,7 @@ interface AccessData {
   isGuestOrder?: boolean;
 }
 
-interface PrintProductData {
-  id: string;
-  name: string;
-  category: string;
-  basePrice: number;
-  finalPrice: number;
-  description: string | null;
-  active: boolean;
-}
+
 
 interface ServiceData {
   id: string;
@@ -120,8 +76,14 @@ interface ServiceData {
   description: string;
 }
 
-const Spinner = () => (
-  <div style={{ width: 24, height: 24, border: `2px solid ${T.border}`, borderTopColor: T.brand, borderRadius: "50%", animation: "spin 0.8s linear infinite" }} />
+const Skeleton = ({ className }: { className?: string }) => (
+  <div className={`animate-pulse bg-white/5 rounded-sm ${className}`} />
+);
+
+const LuxuryBadge = ({ children }: { children: React.ReactNode }) => (
+  <span className="text-[9px] font-black tracking-[0.2em] uppercase px-3 py-1.5 bg-white/5 border border-white/10 text-white/60 backdrop-blur-md">
+    {children}
+  </span>
 );
 
 const SERVICES = [
@@ -131,40 +93,7 @@ const SERVICES = [
   { key: "temFotoImpressa", label: "Impressão" }
 ];
 
-const mpErrors: Record<string, string> = {
-  "205": "Número do cartão inválido.",
-  "208": "Mês de vencimento inválido.",
-  "209": "Ano de vencimento inválido.",
-  "211": "CPF inválido.",
-  "E301": "Número do cartão incompleto.",
-  "E302": "Código de segurança inválido.",
-  "default": "Verifique os dados do cartão e tente novamente."
-};
 
-interface MPInstance {
-  createCardToken: (data: unknown) => Promise<{ token: string; error?: unknown }>;
-}
-type MPConstructor = new (key: string) => MPInstance;
-
-const MP_PUBLIC_KEY = import.meta.env.VITE_MP_PUBLIC_KEY;
-
-const loadMP = () => new Promise<unknown>((resolve) => {
-  const w = window as Window & { MercadoPago?: unknown };
-  if (w.MercadoPago) { resolve(w.MercadoPago); return; }
-  const script = document.createElement("script");
-  script.src = "https://sdk.mercadopago.com/js/v2";
-  script.onload = () => resolve(w.MercadoPago);
-  document.body.appendChild(script);
-});
-
-const detectBrand = (number: string) => {
-  const n = number.replace(/\s/g, "");
-  if (n.startsWith("4")) return "visa";
-  if (/^5[1-5]/.test(n)) return "mastercard";
-  if (/^3[47]/.test(n)) return "amex";
-  if (/^6(?:011|5)/.test(n)) return "discover";
-  return "visa";
-};
 
 export default function EventPage() {
   const { slug } = useParams();
@@ -179,25 +108,17 @@ export default function EventPage() {
   const [access, setAccess] = useState<AccessData | null>(null);
   const [currentBannerIndex, setCurrentBannerIndex] = useState(0);
   const [orderId, setOrderId] = useState<string | null>(null);
-  const [justPaid, setJustPaid] = useState(false);
   const [needsAccessChoice, setNeedsAccessChoice] = useState(false);
-  const [accessType, setAccessType] = useState<"PUBLIC" | "PRIVATE">("PUBLIC");
   
   const [cart, setCart] = useState<string[]>([]);
   const [cartTotal, setCartTotal] = useState(0);
   const [serviceCatalog, setServiceCatalog] = useState<ServiceData[]>([]);
-  const [selectedServices, setSelectedServices] = useState<string[]>([]);
-  const [includeLivePrint, setIncludeLivePrint] = useState(false);
-  const [includeShipping] = useState(false);
+  const [selectedServices] = useState<string[]>([]);
+  const [includeLivePrint] = useState(false);
 
-  const [cardData, setCardData] = useState({ number: "", name: "", month: "", year: "", cvv: "", cpf: "", email: user?.email || "" });
-  const [cardToken, setCardToken] = useState<string | null>(null);
-  const [tokenizing, setTokenizing] = useState(false);
-  const [error, setError] = useState("");
   const [showPrintStore, setShowPrintStore] = useState(false);
   const [showQrModal, setShowQrModal] = useState(false);
-  const [isUploading, setIsUploading] = useState(false);
-  const fileInputRef = useRef<HTMLInputElement>(null);
+
 
   // Carrega carrinho do localStorage
   useEffect(() => {
@@ -223,8 +144,6 @@ export default function EventPage() {
   }, [cart, event?.id]);
 
   // Print Catalog States
-  const [printProducts, setPrintProducts] = useState<PrintProductData[]>([]);
-  const [selectedPrintProductId] = useState<string | null>(null);
 
   const handleShare = async () => {
     if (access?.accessType === "PRIVATE") {
@@ -300,7 +219,7 @@ export default function EventPage() {
       })
       .finally(() => setLoading(false));
 
-    api.get('/public/print-catalog').then(res => setPrintProducts(res.data)).catch(err => console.error(err));
+
     api.get('/public/service-catalog').then(res => setServiceCatalog(res.data || [])).catch(err => console.error(err));
 
     const interval = setInterval(() => setCurrentBannerIndex(prev => (prev + 1) % 3), 5000);
@@ -339,134 +258,60 @@ export default function EventPage() {
     if (oid) { setOrderId(oid); checkAccessStatus(oid); }
   }, [slug, searchParams, event, handleAutoConfirmChoice]);
 
-  const handleManualPayment = async (method: "CASH") => {
-    if (!event) return;
-    setStep("processing");
-    try {
-      const { data } = await api.post("/checkout/payment", {
-        eventId: event.id,
-        email: cardData.email,
-        method: method,
-        cart: cart,
-        deliveryType: "DIGITAL_ONLY", // Padrão para venda rápida
-      });
-      if (data.status === "approved") {
-        setOrderId(data.orderId);
-        setStep("success");
-        // Adiciona o token na URL para que o cliente possa acessar o link que o fotógrafo vai enviar
-        if (data.guestToken) {
-          navigate(`?token=${data.guestToken}`, { replace: true });
-        }
-      }
-    } catch (err) {
-      console.error(err);
-      setError("Erro ao processar pagamento manual.");
-      setStep("checkout");
-    }
-  };
-
-  const handleTokenize = async () => {
-    if (!MP_PUBLIC_KEY) { setError("Erro de configuração: Chave MP ausente."); return; }
-    setTokenizing(true); setError("");
-    try {
-      const MP = (await loadMP()) as MPConstructor;
-      const mp = new MP(MP_PUBLIC_KEY);
-      const { token, error: mpErr } = await mp.createCardToken({
-        cardNumber: cardData.number.replace(/\s/g, ""),
-        cardholderName: cardData.name,
-        cardExpirationMonth: cardData.month,
-        cardExpirationYear: cardData.year,
-        securityCode: cardData.cvv,
-        identificationType: "CPF",
-        identificationNumber: cardData.cpf.replace(/\D/g, ""),
-      });
-      if (mpErr) { setError("Dados do cartão inválidos. Verifique os campos."); return; }
-      setCardToken(token);
-    } catch { setError("Erro ao validar cartão."); }
-    finally { setTokenizing(false); }
-  };
-
-  const pollPaymentStatus = async (oid: string) => {
-    let count = 0;
-    const interval = setInterval(async () => {
-      count++;
-      if (count > 10) { clearInterval(interval); setError("O pagamento está demorando. Verifique seu e-mail."); setStep("checkout"); return; }
-      try {
-        const { data } = await api.get(`/orders/${oid}/access-status`);
-        if (data.status === "PENDING_CHOICE" || data.status === "ACTIVE") {
-          clearInterval(interval);
-          navigate("/minha-conta");
-        }
-      } catch { /* keep polling */ }
-    }, 3000);
-  };
-
-  const handlePay = async () => {
-    if (!event || !cardToken) return;
-    setStep("processing"); setError("");
-    try {
-      const { data } = await api.post("/checkout/payment", {
-        eventId: event.id, userId: user?.id, email: cardData.email, cpf: cardData.cpf,
-        cardToken, installments: 1, paymentMethodId: detectBrand(cardData.number), accessType,
-        cart, printProductId: selectedPrintProductId, selectedServices, includeLivePrint, includeShipping,  
-      });
-      if (data.hasPaid) { setOrderId(data.orderId); setJustPaid(true); setStep("success"); }
-      else pollPaymentStatus(data.orderId);
-    } catch (err: unknown) {
-      const errorResponse = err as { response?: { data?: { code?: string; error?: string } } };
-      const msg = errorResponse.response?.data?.code 
-        ? (mpErrors[errorResponse.response.data.code] || errorResponse.response.data.error || "Erro no processamento.") 
-        : "Erro no pagamento.";
-      setError(msg); setStep("checkout"); setCardToken(null);
-    }
-  };
 
   const handleUnlockClick = async () => { 
     if (!event) return;
-    if (!user) { setStep("auth"); return; }
-    if (event.pendingOrderId) { navigate(`/checkout?orderId=${event.pendingOrderId}`); return; }
-    if (searchParams.get("intent") === "upgrade") {
-      try {
-        const { data } = await api.post("/checkout/pending", {
-          eventId: event.id, userId: user?.id, email: user?.email, selectedServices, includeLivePrint, includeShipping
-        });
-        navigate(`/checkout/${data.orderId}`);
-      } catch (err) { console.error(err); alert("Erro ao iniciar upgrade. Tente novamente."); }
-      return;
+    
+    // Se já é dono ou já pagou, não faz sentido "desbloquear"
+    if (event.isOwner || paid) return;
+
+    setLoading(true);
+    try {
+      // 1. Criar pedido pendente unificado
+      const { data } = await api.post("/checkout/pending", {
+        eventId: event.id,
+        userId: user?.id,
+        email: user?.email,
+        selectedServices,
+        includeLivePrint,
+        includeShipping: false, // Vitrine não decide frete, o checkout sim
+        cart: cart
+      });
+
+      // 2. Redirecionar para o Checkout Unificado v3.1
+      navigate(`/checkout/${data.orderId}`);
+    } catch (err) {
+      console.error("[Unlock Click Error]:", err);
+      alert("Não foi possível iniciar o processo de compra. Tente novamente.");
+    } finally {
+      setLoading(false);
     }
-    if (event.isPrimaryClient) setStep("choice");
-    else { setAccessType("PUBLIC"); setStep(printProducts.length > 0 ? "upsell" : "checkout"); }
   };
 
-  const handleLiveUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
-    if (!e.target.files?.[0] || !event) return;
-    setIsUploading(true);
-    const file = e.target.files[0];
-    const reader = new FileReader();
-    reader.onload = async () => {
-      try {
-        await api.post(`/marketplace/events/${event.id}/media`, {
-          imageBase64: reader.result,
-          mimeType: file.type
-        });
-        // Recarrega mídias
-        const { data } = await api.get(`/marketplace/events/${event.id}/media`);
-        setMedias(data);
-        alert("Foto enviada ao Feed Live!");
-      } catch (err) {
-        console.error(err);
-        alert("Erro ao subir foto.");
-      } finally {
-        setIsUploading(false);
-      }
-    };
-    reader.readAsDataURL(file);
-  };
-  
-  const handleChange = (k: string) => (e: React.ChangeEvent<HTMLInputElement>) => setCardData(p => ({ ...p, [k]: e.target.value }));
 
-  if (loading) return (
-    <div style={{ height: "100vh", background: T.bg, display: "flex", alignItems: "center", justifyContent: "center" }}><Spinner /></div>
+  if (loading && !event) return (
+    <div className="h-screen bg-[#0a0a0a] flex flex-col overflow-hidden">
+      <Navbar />
+      <div className="flex-1 grid grid-cols-1 lg:grid-cols-[1fr_380px]">
+        <div className="relative bg-[#141414]">
+          <Skeleton className="absolute inset-0" />
+          <div className="absolute bottom-12 left-12 space-y-4">
+            <Skeleton className="h-4 w-24" />
+            <Skeleton className="h-12 w-64" />
+          </div>
+        </div>
+        <div className="bg-[#0a0a0a] p-12 space-y-12 border-l border-white/5">
+          <div className="space-y-4">
+            <Skeleton className="h-3 w-32" />
+            <Skeleton className="h-10 w-48" />
+          </div>
+          <div className="space-y-4">
+            <Skeleton className="h-20 w-full" />
+            <Skeleton className="h-14 w-full" />
+          </div>
+        </div>
+      </div>
+    </div>
   );
 
   if (!event) return null;
@@ -491,98 +336,104 @@ export default function EventPage() {
 
   return (
     <div 
-      className="ep-main-container" 
+      className="min-h-screen bg-[#0a0a0a] text-white font-sans selection:bg-emerald-500/30 overflow-x-hidden" 
       onContextMenu={(e) => e.preventDefault()}
-      style={{ 
-        height: "100vh", background: T.bg, color: T.text, fontFamily: T.fontB, 
-        display: "flex", flexDirection: "column", userSelect: "none", overflow: "hidden"
-      }}
     >
       <Helmet><title>{`Álbum: ${event.nomeNoivos} | Foto Segundo`}</title></Helmet>
 
-      <style>{`
-        @keyframes spin { from { transform: rotate(0deg); } to { transform: rotate(360deg); } }
-        @keyframes fadeUp { from { opacity:0; transform: translateY(12px); } to { opacity:1; transform: translateY(0); } }
-        .ep-grid { display: grid; grid-template-columns: 1fr 340px; height: calc(100vh - 52px); overflow: hidden; }
-        .ep-sidebar { overflow-y: auto; scrollbar-width: thin; scrollbar-color: ${T.border} transparent; }
-        @media (max-width: 900px) {
-          .ep-main-container { overflow: auto !important; height: auto !important; }
-          .ep-grid { grid-template-columns: 1fr; grid-template-rows: auto; height: auto; overflow: visible; }
-          .ep-cover { height: 65vh; min-height: 400px; }
-          .mobile-hide { display: none !important; }
-          .ep-sidebar { border-left: none !important; border-top: 1px solid ${T.border}; margin-bottom: 80px; }
-          .ls-grid { grid-template-columns: repeat(2, 1fr) !important; gap: 8px !important; }
-          .ls-header { padding: 20px 16px 12px !important; }
-          .ls-body { padding: 0 16px 32px !important; }
-          .side-inner { padding: 24px 16px !important; }
-          .sticky-mobile-buy { display: flex !important; }
-        }
-      `}</style>
-
       <Navbar />
 
-      <div className="ep-grid">
-        <div className="ep-cover" style={{ position: "relative", overflow: "hidden", background: T.bgCard }}>
-          {(() => {
-            const bannerImages = [event.coverPhotoUrl, ...(event.previewPhotos || [])].filter(Boolean).slice(0, 3);
-            return (
-              <div style={{ width: "100%", height: "100%", position: "relative" }}>
-                {bannerImages.length > 0 ? bannerImages.map((img, i) => (
-                  <img 
-                    key={i} src={img as string} alt=""
-                    style={{ 
-                      position: "absolute", inset: 0, width: "100%", height: "100%", objectFit: "cover", 
-                      filter: paid ? "none" : "blur(6px) brightness(0.7)", 
-                      transition: "opacity 1.5s ease-in-out",
-                      opacity: (currentBannerIndex % bannerImages.length) === i ? 1 : 0
-                    }}
-                  />
-                )) : (
-                  <div style={{ width: "100%", height: "100%", display: "flex", alignItems: "center", justifyContent: "center", background: "#0a0a0a" }}>
-                    <div style={{ fontFamily: T.fontD, fontSize: "10vw", color: "#fff", opacity: 0.05, textTransform: "uppercase" }}>{event.nomeNoivos}</div>
-                  </div>
-                )}
-              </div>
-            );
-          })()}
+      <main className="grid grid-cols-1 lg:grid-cols-[1fr_380px] min-h-[calc(100vh-64px)] overflow-hidden">
+        {/* Lado Esquerdo: Capa e Galeria */}
+        <section className="relative h-[60vh] lg:h-auto overflow-y-auto bg-[#141414] scrollbar-hide">
+          {/* Background / Banner Images */}
+          <div className="absolute inset-0 z-0">
+            {(() => {
+              const bannerImages = [event.coverPhotoUrl, ...(event.previewPhotos || [])].filter(Boolean).slice(0, 3);
+              return (
+                <div className="w-full h-full relative">
+                  <AnimatePresence mode="wait">
+                    {bannerImages.length > 0 ? (
+                      <motion.img 
+                        key={currentBannerIndex % bannerImages.length}
+                        src={bannerImages[currentBannerIndex % bannerImages.length] as string} 
+                        alt=""
+                        className="absolute inset-0 w-full h-full object-cover"
+                        style={{ filter: paid ? "none" : "blur(12px) brightness(0.4)" }}
+                        initial={{ opacity: 0, scale: 1.1 }}
+                        animate={{ opacity: 1, scale: 1 }}
+                        exit={{ opacity: 0 }}
+                        transition={{ duration: 2 }}
+                      />
+                    ) : (
+                      <div className="w-full h-full flex items-center justify-center bg-[#0a0a0a]">
+                        <div className="font-display text-[15vw] text-white/5 uppercase select-none tracking-tighter">{event.nomeNoivos}</div>
+                      </div>
+                    )}
+                  </AnimatePresence>
+                </div>
+              );
+            })()}
+            <div className="absolute inset-0 bg-gradient-to-t from-[#141414] via-[#141414]/40 to-transparent z-[1]" />
+          </div>
 
           {/* MARKETPLACE LIVE FEED */}
           {isMarketplace && (
-            <div style={{ position: "absolute", inset: 0, zIndex: 10, display: "flex", flexDirection: "column", background: "rgba(0,0,0,0.92)", backdropFilter: "blur(25px)" }}>
-               <div className="ls-header" style={{ padding: "40px 30px 20px" }}>
-                  <div style={{ display: "flex", alignItems: "center", gap: 12, marginBottom: 8 }}>
-                    <div className="w-2 h-2 rounded-full animate-pulse" style={{ background: T.brand, boxShadow: `0 0 10px ${T.brand}` }} />
-                    <h2 style={{ fontFamily: T.fontD, fontSize: "clamp(24px, 5vw, 32px)", fontWeight: 900, color: T.text, margin: 0, textTransform: "uppercase", letterSpacing: 2 }}>Live Stream</h2>
+            <div className="absolute inset-0 z-10 flex flex-col bg-black/40 backdrop-blur-3xl">
+               <header className="p-8 lg:p-12 pb-4 flex flex-col md:flex-row md:items-end justify-between gap-6">
+                  <div className="space-y-2">
+                    <div className="flex items-center gap-3">
+                      <div className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse shadow-[0_0_12px_rgba(16,185,129,0.5)]" />
+                      <h2 className="font-display text-3xl lg:text-5xl font-black uppercase tracking-tighter">Live Stream</h2>
+                    </div>
+                    <p className="text-[10px] text-white/40 uppercase tracking-[0.3em] font-black">Capturas em tempo real • Seleção Phygital</p>
                   </div>
-                  <p style={{ fontSize: 11, color: T.text3, margin: 0, opacity: 0.8 }}>Capturas em tempo real. Selecione para imprimir ou baixar.</p>
-               </div>
+                  
+                  {event.isOwner && (
+                    <button 
+                      onClick={() => setShowQrModal(true)}
+                      className="flex items-center gap-3 px-6 py-3 bg-white/5 border border-white/10 text-[10px] font-black uppercase tracking-widest hover:bg-white/10 transition-colors"
+                    >
+                      <QrCode size={16} className="text-emerald-500" /> QR Code de Captura
+                    </button>
+                  )}
+               </header>
 
-               <div className="ls-body" style={{ flex: 1, overflowY: "auto", padding: "0 30px 40px" }}>
-                  <div className="ls-grid" style={{ display: "grid", gridTemplateColumns: "repeat(auto-fill, minmax(180px, 1fr))", gap: 15 }}>
+               <div className="flex-1 overflow-y-auto px-8 lg:px-12 pb-32 lg:pb-12 scrollbar-hide">
+                  <div className="grid grid-cols-2 md:grid-cols-3 xl:grid-cols-4 2xl:grid-cols-5 gap-4 lg:gap-6">
                     {event.previewPhotos?.map((url, idx) => {
                       const refCode = url.split('/').pop()?.split('.')[0] || `FOTO-${idx}`;
                       const isSelected = cart.includes(refCode);
                       return (
-                        <div 
-                          key={idx} onClick={() => toggleCart(refCode)}
-                          style={{ 
-                            position: "relative", aspectRatio: "3/4", background: T.bgField, cursor: "pointer",
-                            border: `2px solid ${isSelected ? T.brand : "transparent"}`, transition: "all 0.2s ease"
-                          }}
+                        <motion.div 
+                          key={idx} 
+                          layout
+                          initial={{ opacity: 0, y: 20 }}
+                          animate={{ opacity: 1, y: 0 }}
+                          transition={{ delay: idx * 0.05 }}
+                          onClick={() => toggleCart(refCode)}
+                          className={`relative group aspect-[3/4] bg-black overflow-hidden cursor-pointer border-2 transition-all duration-500 ${isSelected ? "border-emerald-500" : "border-white/5 hover:border-white/20"}`}
                         >
-                           <img src={url} alt={refCode} style={{ width: "100%", height: "100%", objectFit: "cover", opacity: isSelected ? 0.6 : 1 }} />
-                            {/* Reference Badge (White bar style) */}
-                            <div style={{ 
-                              position: "absolute", bottom: 0, left: 0, right: 0, 
-                              background: isSelected ? T.brand : "#fff", 
-                              padding: "12px 16px", zIndex: 10, display: "flex", justifyContent: "space-between", alignItems: "center"
-                            }}>
-                               <span style={{ fontSize: 20, fontWeight: 900, color: "#000", letterSpacing: 1, fontFamily: T.fontD }}>
-                                 {refCode}
-                               </span>
-                               {isSelected && <Check size={20} color="#000" strokeWidth={5} />}
+                            {/* Watermark Overlay */}
+                            <div className="absolute inset-0 z-10 flex items-center justify-center opacity-[0.03] pointer-events-none rotate-[-45deg] select-none">
+                              <span className="text-white font-display text-4xl font-black whitespace-nowrap tracking-[1em] uppercase">PROOF</span>
                             </div>
-                        </div>
+
+                            <img src={url} alt={refCode} className={`w-full h-full object-cover transition-transform duration-700 group-hover:scale-110 ${isSelected ? "opacity-30 scale-95" : "opacity-100"}`} />
+                            
+                            {/* Selection Status Glass */}
+                            <div className={`absolute bottom-0 left-0 right-0 p-4 lg:p-5 z-20 flex justify-between items-center backdrop-blur-md transition-all duration-500 ${isSelected ? "bg-emerald-500 text-black" : "bg-black/40 group-hover:bg-black/80"}`}>
+                               <div className="flex flex-col">
+                                 <span className="text-[10px] font-black uppercase tracking-widest opacity-60">Ref.</span>
+                                 <span className="text-xl lg:text-2xl font-black tracking-tighter font-display leading-none">
+                                   {refCode}
+                                 </span>
+                               </div>
+                               <div className={`w-10 h-10 rounded-full flex items-center justify-center transition-all ${isSelected ? "bg-black text-emerald-500" : "bg-white/10 group-hover:bg-emerald-500 group-hover:text-black"}`}>
+                                 {isSelected ? <Check size={20} strokeWidth={4} /> : <ShoppingCart size={18} />}
+                               </div>
+                            </div>
+                        </motion.div>
                       );
                     })}
                   </div>
@@ -590,333 +441,264 @@ export default function EventPage() {
             </div>
           )}
 
-          {/* Overlay unificado se não for marketplace */}
+          {/* Hero Overlay (quando não é marketplace) */}
           {!isMarketplace && (
-            <div className="mobile-w-full" style={{ position: "absolute", inset: 0, zIndex: 10, background: "linear-gradient(to top, rgba(0,0,0,0.9) 0%, transparent 100%)", display: "flex", flexDirection: "column", justifyContent: "flex-end", padding: "32px 36px" }}>
-              <div style={{ display: "flex", gap: 10, marginBottom: 12 }}>
+            <div className="relative z-10 h-full flex flex-col justify-end p-8 lg:p-20">
+              <motion.div 
+                initial={{ opacity: 0, x: -20 }}
+                animate={{ opacity: 1, x: 0 }}
+                className="flex flex-wrap gap-2 mb-8"
+              >
                 {activeServices.map(s => (
-                  <span key={s.key} style={{ fontSize: 8, fontWeight: 900, textTransform: "uppercase", letterSpacing: 2, padding: "4px 8px", background: "rgba(255,255,255,0.1)", border: "1px solid rgba(255,255,255,0.2)", color: "#fff" }}>{s.label}</span>
+                  <LuxuryBadge key={s.key}>{s.label}</LuxuryBadge>
                 ))}
-              </div>
-              <h1 style={{ fontFamily: T.fontD, fontWeight: 900, fontSize: "clamp(28px, 4vw, 48px)", color: "#fff", textTransform: "uppercase", margin: 0 }}>{event.nomeNoivos}</h1>
-              <div style={{ fontSize: 12, color: "rgba(255,255,255,0.6)", marginTop: 8 }}>{event.dataEvento ? new Date(event.dataEvento).toLocaleDateString() : ""}</div>
-            </div>
-          )}
-        </div>
-
-        <aside className="ep-sidebar" style={{ 
-          borderLeft: `1px solid ${T.border}`, 
-          display: "flex", 
-          flexDirection: "column", 
-          background: `linear-gradient(180deg, ${T.bgCard} 0%, ${T.bg} 100%)`,
-          position: "relative"
-        }}>
-          {/* Luxury Aura Decoration */}
-          <div style={{ position: "absolute", top: 0, right: 0, width: "100%", height: "200px", background: `radial-gradient(circle at top right, ${T.brand}08 0%, transparent 70%)`, pointerEvents: "none" }} />
-
-          {justPaid && (
-            <div style={{ padding: "20px 28px", background: "rgba(133, 185, 172, 0.08)", borderBottom: `1px solid ${T.brand}20`, display: "flex", alignItems: "center", gap: 12, position: "relative", zIndex: 2 }}>
-              <div className="w-2 h-2 rounded-full animate-pulse" style={{ background: T.brand, boxShadow: `0 0 12px ${T.brand}` }} />
-              <span style={{ fontSize: 11, fontWeight: 900, color: T.brand, textTransform: "uppercase", letterSpacing: 2 }}>Coleção Adquirida</span>
-            </div>
-          )}
-
-          <div className="side-inner" style={{ padding: "56px 36px", flex: 1, display: "flex", flexDirection: "column", gap: 40, position: "relative", zIndex: 2 }}>
-            <div style={{ marginBottom: -10 }}>
-              <p style={{ fontSize: 10, color: T.text3, textTransform: "uppercase", fontWeight: 900, letterSpacing: 4, marginBottom: 8 }}>Membro Exclusive</p>
-              <div style={{ width: 30, height: 2, background: T.brand }} />
-            </div>
-
-            {/* Jornada do Cliente — Sentido e Usabilidade */}
-            <div style={{ padding: "20px", background: "rgba(255,255,255,0.02)", border: `1px dashed ${T.border}`, display: "flex", flexDirection: "column", gap: 12 }}>
-              <p style={{ fontSize: 10, fontWeight: 900, color: T.text2, margin: 0, letterSpacing: 1.5, textTransform: "uppercase" }}>Sua Experiência:</p>
-              <div style={{ display: "flex", flexDirection: "column", gap: 10 }}>
-                <div style={{ display: "flex", gap: 10, alignItems: "center" }}>
-                  <div style={{ width: 14, height: 14, borderRadius: "50%", background: `${T.brand}20`, display: "flex", alignItems: "center", justifyContent: "center", fontSize: 8, color: T.brand, fontWeight: 900 }}>1</div>
-                  <span style={{ fontSize: 10, color: T.text3 }}>Explore as memórias do seu evento</span>
+              </motion.div>
+              <motion.h1 
+                initial={{ opacity: 0, y: 30 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ delay: 0.2 }}
+                className="font-display font-black text-5xl lg:text-8xl uppercase leading-[0.9] tracking-tighter mb-8 max-w-5xl"
+              >
+                {event.nomeNoivos}
+              </motion.h1>
+              <div className="flex items-center gap-6 text-white/40">
+                <div className="flex flex-col">
+                  <span className="text-[9px] font-black uppercase tracking-[0.3em] mb-1">Data</span>
+                  <span className="text-sm font-bold text-white tracking-widest uppercase">{event.dataEvento ? new Date(event.dataEvento).toLocaleDateString() : "Em breve"}</span>
                 </div>
-                <div style={{ display: "flex", gap: 10, alignItems: "center" }}>
-                  <div style={{ width: 14, height: 14, borderRadius: "50%", background: `${T.brand}20`, display: "flex", alignItems: "center", justifyContent: "center", fontSize: 8, color: T.brand, fontWeight: 900 }}>2</div>
-                  <span style={{ fontSize: 10, color: T.text3 }}>Selecione as fotos favoritas</span>
-                </div>
-                <div style={{ display: "flex", gap: 10, alignItems: "center" }}>
-                  <div style={{ width: 14, height: 14, borderRadius: "50%", background: `${T.brand}20`, display: "flex", alignItems: "center", justifyContent: "center", fontSize: 8, color: T.brand, fontWeight: 900 }}>3</div>
-                  <span style={{ fontSize: 10, color: T.text3 }}>Eternize no papel premium</span>
+                <div className="w-px h-8 bg-white/10" />
+                <div className="flex flex-col">
+                  <span className="text-[9px] font-black uppercase tracking-[0.3em] mb-1">Localização</span>
+                  <span className="text-sm font-bold text-white tracking-widest uppercase">{event.city || "Digital"}</span>
                 </div>
               </div>
             </div>
+          )}
+        </section>
+
+        {/* Lado Direito: Sidebar de Controle */}
+        <aside className="relative bg-[#0a0a0a] border-l border-white/5 flex flex-col shadow-2xl">
+          <div className="absolute inset-0 bg-[radial-gradient(circle_at_top_right,rgba(16,185,129,0.05),transparent_70%)] pointer-events-none" />
+          
+          <div className="relative z-10 flex-1 overflow-y-auto p-8 lg:p-12 space-y-12 scrollbar-hide">
+            {/* Header Sidebar */}
+            <div className="flex items-center justify-between border-b border-white/5 pb-8">
+              <div className="space-y-1">
+                <p className="text-[10px] text-white/40 uppercase font-black tracking-[0.3em]">Membro Exclusive</p>
+                <div className="h-0.5 w-10 bg-emerald-500" />
+              </div>
+              <div className="flex items-center gap-2">
+                <div className="w-2 h-2 rounded-full bg-emerald-500" />
+                <span className="text-[10px] font-black text-white uppercase tracking-widest italic">Live Status</span>
+              </div>
+            </div>
+
+            {/* Price & Primary CTA */}
             {step === "paywall" && (
-              <div style={{ display: "flex", flexDirection: "column", gap: 24, animation: "fadeUp 0.3s ease" }}>
-                <div>
-                  <p style={{ fontSize: 10, color: T.brand, textTransform: "uppercase", fontWeight: 900, letterSpacing: 2 }}>{searchParams.get("intent") === "upgrade" ? "Upgrades Disponíveis" : (isMarketplace ? "Sua Seleção" : "Álbum Completo")}</p>
-                  <p style={{ fontFamily: T.fontD, fontSize: 40, fontWeight: 900, color: T.text, margin: 0 }}>
-                    R$ {(searchParams.get("intent") === "upgrade" 
-                      ? (serviceCatalog.filter(s => selectedServices.includes(s.id)).reduce((acc, s) => acc + Number(s.basePrice), 0) + (includeLivePrint ? 150 : 0) + (includeShipping ? 25 : 0))
-                      : (isMarketplace ? cartTotal : event.priceBase)
-                    ).toFixed(2).replace(".", ",")}
+              <div className="space-y-10">
+                <div className="space-y-2">
+                  <p className="text-[10px] text-emerald-500 font-black uppercase tracking-[0.4em]">
+                    {searchParams.get("intent") === "upgrade" ? "Expansão Premium" : (isMarketplace ? "Carrinho Phygital" : "Coleção Completa")}
                   </p>
+                  <div className="flex items-baseline gap-2">
+                    <span className="text-2xl font-light text-white/20 tracking-tighter">R$</span>
+                    <h2 className="text-7xl lg:text-8xl font-black tracking-tighter font-display leading-none">
+                      {(searchParams.get("intent") === "upgrade" 
+                        ? (serviceCatalog.filter(s => selectedServices.includes(s.id)).reduce((acc, s) => acc + Number(s.basePrice), 0) + (includeLivePrint ? 150 : 0))
+                        : (isMarketplace ? cartTotal : event.priceBase)
+                      ).toFixed(0)}
+                    </h2>
+                    <span className="text-2xl font-black text-white/30">,00</span>
+                  </div>
+                  {isMarketplace && (
+                    <p className="text-[10px] text-white/40 font-bold uppercase tracking-widest">
+                      {cart.length} fotos selecionadas para eternizar
+                    </p>
+                  )}
                 </div>
 
-                {searchParams.get("intent") === "upgrade" && (
-                   <div style={{ display: "flex", flexDirection: "column", gap: 10 }}>
-                      {serviceCatalog.map(s => (
-                        <div key={s.id} onClick={() => setSelectedServices(p => p.includes(s.id) ? p.filter(id => id !== s.id) : [...p, s.id])}
-                          style={{ padding: 12, border: `1px solid ${selectedServices.includes(s.id) ? T.brand : T.border}`, background: selectedServices.includes(s.id) ? `${T.brand}10` : "transparent", cursor: "pointer", display: "flex", alignItems: "center", gap: 12 }}>
-                           {s.category === 'VÍDEO' ? <Video size={16} color={T.brand} /> : <Zap size={16} color={T.brand} />}
-                           <div style={{ flex: 1 }}><div style={{ fontSize: 11, fontWeight: 700 }}>{s.name}</div><div style={{ fontSize: 9, color: T.text3 }}>R$ {Number(s.basePrice).toFixed(0)}</div></div>
-                           <div style={{ width: 14, height: 14, borderRadius: "50%", border: `1px solid ${T.border}`, background: selectedServices.includes(s.id) ? T.brand : "transparent", display: "flex", alignItems: "center", justifyContent: "center" }}>{selectedServices.includes(s.id) && <Check size={8} color="black" strokeWidth={4} />}</div>
-                        </div>
-                      ))}
-                      <div onClick={() => setIncludeLivePrint(!includeLivePrint)} style={{ padding: 12, border: `1px solid ${includeLivePrint ? T.brand : T.border}`, background: includeLivePrint ? `${T.brand}10` : "transparent", cursor: "pointer", display: "flex", alignItems: "center", gap: 12 }}>
-                        <Printer size={16} color={T.brand} /><div style={{ flex: 1 }}><div style={{ fontSize: 11, fontWeight: 700 }}>Totem de Impressão</div><div style={{ fontSize: 9, color: T.text3 }}>R$ 150</div></div>
-                        <div style={{ width: 14, height: 14, borderRadius: "50%", border: `1px solid ${T.border}`, background: includeLivePrint ? T.brand : "transparent", display: "flex", alignItems: "center", justifyContent: "center" }}>{includeLivePrint && <Check size={8} color="black" strokeWidth={4} />}</div>
-                      </div>
+                <div className="flex flex-col gap-4">
+                  <button 
+                    onClick={handleUnlockClick} 
+                    className="group relative w-full h-20 bg-white text-black font-black uppercase tracking-[0.2em] text-xs flex items-center justify-center gap-4 overflow-hidden transition-all hover:scale-[1.02] active:scale-[0.98]"
+                  >
+                    <div className="absolute inset-0 bg-emerald-500 translate-x-[-100%] group-hover:translate-x-0 transition-transform duration-500" />
+                    <span className="relative z-10">{searchParams.get("intent") === "upgrade" ? "Confirmar Upgrade" : "Finalizar Compra"}</span>
+                    <ChevronRight size={18} className="relative z-10 group-hover:translate-x-2 transition-transform" />
+                  </button>
+                  
+                  <button onClick={handleShare} className="w-full h-14 bg-white/5 border border-white/10 text-white/60 font-black uppercase tracking-widest text-[10px] flex items-center justify-center gap-3 hover:bg-white/10 transition-all">
+                    <Share2 size={16} /> Compartilhar Galeria
+                  </button>
+                </div>
+              </div>
+            )}
+
+            {/* Feature Cards Luxury */}
+            {step === "paywall" && (
+              <div className="space-y-4 pt-4">
+                 <div className="p-6 bg-white/5 border border-white/5 hover:border-emerald-500/30 transition-colors group">
+                   <div className="flex items-center gap-4 mb-3">
+                     <div className="p-2 bg-emerald-500/10 text-emerald-500 group-hover:bg-emerald-500 group-hover:text-black transition-colors">
+                       <ImageIcon size={20} />
+                     </div>
+                     <p className="text-xs font-black uppercase tracking-widest">Resolução Máxima</p>
                    </div>
-                )}
-
-                <button onClick={handleUnlockClick} style={{ ...BtnPrimary, width: "100%", justifyContent: "center" }}>
-                  {searchParams.get("intent") === "upgrade" ? "CONFIRMAR UPGRADE" : (isMarketplace ? "COMPRAR SELEÇÃO" : "DESBLOQUEAR ÁLBUM")}
-                </button>
+                   <p className="text-[11px] text-white/40 leading-relaxed font-medium">Arquivos originais em 300 DPI. Sem marcas d'água. Prontos para impressão de grandes formatos.</p>
+                 </div>
+                 
+                 <div className="p-6 bg-white/5 border border-white/5 hover:border-emerald-500/30 transition-colors group">
+                   <div className="flex items-center gap-4 mb-3">
+                     <div className="p-2 bg-emerald-500/10 text-emerald-500 group-hover:bg-emerald-500 group-hover:text-black transition-colors">
+                       <Printer size={20} />
+                     </div>
+                     <p className="text-xs font-black uppercase tracking-widest">Papel de Algodão</p>
+                   </div>
+                   <p className="text-[11px] text-white/40 leading-relaxed font-medium">Acesso à loja de álbuns exclusivos com acabamento em couro e papéis fine-art.</p>
+                 </div>
               </div>
             )}
 
-            {step === "countdown" && (
-              <div style={{ textAlign: "center", animation: "fadeUp 0.3s ease" }}>
-                <p style={{ color: T.brand, fontWeight: 900, textTransform: "uppercase", fontSize: 10, letterSpacing: 2 }}>Evento em breve</p>
-                <p style={{ fontSize: 12, color: T.text2, marginBottom: 24 }}>O álbum será liberado aqui após o evento.</p>
-                {event.dataEvento && <Countdown targetDate={event.dataEvento} />}
-                <button onClick={handleShare} style={{ ...BtnSecondary, width: "100%", marginTop: 32 }}>COMPARTILHAR ESPERA</button>
-              </div>
-            )}
+            {/* Paid / Success State */}
+            {paid && (
+              <div className="space-y-8 animate-in fade-in slide-in-from-bottom-4 duration-1000">
+                <div className="space-y-4">
+                  {event.lightroomUrl && (
+                    <a href={event.lightroomUrl} target="_blank" rel="noreferrer" className="w-full h-20 bg-emerald-500 text-black font-black uppercase tracking-[0.2em] text-xs flex items-center justify-center gap-4 shadow-[0_20px_40px_rgba(16,185,129,0.2)]">
+                      <Camera size={20} /> Acessar Todas as Fotos
+                    </a>
+                  )}
+                  {event.driveUrl && (
+                    <a href={event.driveUrl} target="_blank" rel="noreferrer" className="w-full h-16 bg-white/5 border border-white/10 text-white font-black uppercase tracking-widest text-[10px] flex items-center justify-center gap-3 hover:bg-white/10 transition-all">
+                      <Video size={18} /> Galeria de Vídeos
+                    </a>
+                  )}
+                </div>
 
-            {step === "success" && (
-              <div style={{ display: "flex", flexDirection: "column", gap: 20, animation: "fadeUp 0.3s ease" }}>
-                <p style={{ color: T.brand, fontWeight: 900, textTransform: "uppercase", fontSize: 10, letterSpacing: 2 }}>Acesso Liberado</p>
-                {event.lightroomUrl && event.lightroomUrl.trim() !== "" && (
-                  <a href={event.lightroomUrl} target="_blank" rel="noreferrer" style={{ ...BtnPrimary, width: "100%", textDecoration: "none", justifyContent: "center" }}>
-                    📸 VER TODAS AS FOTOS
-                  </a>
-                )}
-                {event.driveUrl && event.driveUrl.trim() !== "" && (
-                  <a href={event.driveUrl} target="_blank" rel="noreferrer" style={{ ...BtnSecondary, width: "100%", textDecoration: "none", justifyContent: "center", color: T.text }}>
-                    🎬 VER VÍDEOS
-                  </a>
-                )}
-                <div style={{ 
-                  marginTop: 8, 
-                  padding: "32px 24px", 
-                  border: `1px solid ${T.brand}20`, 
-                  background: `linear-gradient(145deg, ${T.brand}05 0%, transparent 100%)`,
-                  display: "flex", 
-                  flexDirection: "column", 
-                  gap: 20,
-                  position: "relative",
-                  overflow: "hidden"
-                }}>
-                  <div style={{ position: "absolute", top: -10, right: -10, opacity: 0.1 }}>
-                    <Printer size={80} color={T.brand} />
+                <div className="p-10 bg-emerald-500/5 border border-emerald-500/20 relative overflow-hidden group rounded-sm">
+                  <div className="absolute -right-12 -bottom-12 opacity-10 group-hover:scale-110 transition-transform duration-1000">
+                    <Printer size={160} className="text-emerald-500" />
                   </div>
-
-                  <div style={{ position: "relative", zIndex: 2 }}>
-                    <p style={{ color: T.brand, fontWeight: 900, textTransform: "uppercase", fontSize: 10, letterSpacing: 3, marginBottom: 4 }}>Phygital Experience</p>
-                    <h4 style={{ fontFamily: T.fontD, fontSize: 24, fontWeight: 900, margin: "0 0 16px 0", lineHeight: 1.1 }}>MEMÓRIAS QUE VOCÊ PODE TOCAR</h4>
-                    
+                  <div className="relative z-10 space-y-6">
+                    <div className="space-y-2">
+                      <div className="flex items-center gap-2">
+                        <div className="w-1.5 h-1.5 bg-emerald-500 rounded-full" />
+                        <p className="text-[10px] text-emerald-500 font-black uppercase tracking-[0.4em]">Sessão de Impressão</p>
+                      </div>
+                      <h4 className="font-display text-3xl font-black uppercase leading-none tracking-tighter">Memórias táteis<br/>em alta gramatura</h4>
+                    </div>
                     <button 
                       onClick={() => setShowPrintStore(true)} 
-                      style={{ 
-                        ...BtnPrimary, 
-                        width: "100%", 
-                        justifyContent: "center", 
-                        fontSize: 12, 
-                        padding: "20px 24px",
-                        boxShadow: `0 15px 30px -10px ${T.brand}50`,
-                        border: `1px solid ${T.brand}40`
-                      }}
+                      className="w-full py-5 bg-white text-black font-black uppercase tracking-widest text-[10px] hover:bg-emerald-500 transition-colors shadow-2xl"
                     >
-                      <Printer size={18} style={{ marginRight: 8 }} /> ETERNIZE NO PAPEL
+                      Eternizar no Papel
                     </button>
-
-                    <p style={{ fontSize: 9, color: T.text2, textAlign: "center", marginTop: 16, textTransform: "uppercase", letterSpacing: 1.5, opacity: 0.7 }}>
-                      Álbuns e Revelações Premium
-                    </p>
+                    <p className="text-[9px] text-white/30 uppercase tracking-widest font-bold text-center">Entrega premium em todo o Brasil</p>
                   </div>
                 </div>
-                
-                {access?.isGuestOrder && access?.guestToken && (
-                  <button 
-                    onClick={() => {
-                      const link = `${window.location.origin}/e/${event.slug || event.id}?token=${access.guestToken}`;
-                      navigator.clipboard.writeText(link);
-                      alert("Link de Acesso (Magic Link) copiado!");
-                    }}
-                    style={{ 
-                      ...BtnSecondary, 
-                      width: "100%", 
-                      background: "transparent", 
-                      color: T.text3, 
-                      borderColor: T.border, 
-                      justifyContent: "center", 
-                      gap: 8, 
-                      fontSize: 9,
-                      letterSpacing: 2
-                    }}
-                  >
-                    🔗 LINK DE CONVIDADO
-                  </button>
-                )}
-                
-                {event.isOwner && isMarketplace && (
-                  <div style={{ display: "flex", flexDirection: "column", gap: 12, marginTop: 10, padding: 16, background: "rgba(255,255,255,0.05)", border: "1px dashed rgba(255,255,255,0.1)" }}>
-                    <p style={{ fontSize: 9, fontWeight: 900, color: T.brand, textTransform: "uppercase", letterSpacing: 1, marginBottom: 4 }}>Controle do Profissional</p>
-                    <button 
-                      onClick={() => fileInputRef.current?.click()} 
-                      disabled={isUploading}
-                      style={{ ...BtnPrimary, background: "#fff", color: "#000", justifyContent: "center", gap: 10 }}
-                    >
-                      {isUploading ? <Spinner /> : <><Upload size={16} /> SUBIR FOTO LIVE</>}
-                    </button>
-                    <input ref={fileInputRef} type="file" accept="image/*" onChange={handleLiveUpload} className="hidden" />
-                    
-                    <button 
-                      onClick={() => setShowQrModal(true)}
-                      style={{ ...BtnSecondary, justifyContent: "center", gap: 10, fontSize: 10 }}
-                    >
-                      <QrCode size={16} /> QR CODE DE CAPTURA
-                    </button>
-                  </div>
-                )}
               </div>
             )}
           </div>
         </aside>
-      </div>
+      </main>
 
-      {/* STICKY MOBILE BUY BAR (MARKETPLACE) */}
-      {isMarketplace && cart.length > 0 && (
-        <div className="sticky-mobile-buy" style={{ 
-          display: "none", position: "fixed", bottom: 0, left: 0, right: 0, 
-          background: T.bgCard, borderTop: `1px solid ${T.brand}`, 
-          padding: "16px 20px", zIndex: 100, alignItems: "center", justifyContent: "space-between",
-          boxShadow: "0 -10px 30px rgba(0,0,0,0.5)", backdropFilter: "blur(20px)"
-        }}>
-          <div>
-            <div style={{ fontSize: 9, color: T.text3, textTransform: "uppercase", letterSpacing: 1 }}>{cart.length} Selecionadas</div>
-            <div style={{ fontSize: 18, color: T.brand, fontFamily: T.fontD, fontWeight: 900 }}>{new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL' }).format(cartTotal)}</div>
-          </div>
-          <button 
-            onClick={handleUnlockClick} 
-            style={{ ...BtnPrimary, padding: "12px 24px", fontSize: 11 }}
-          >
-            COMPRAR AGORA
-          </button>
-        </div>
-      )}
-
-      <Modal isOpen={step === "checkout" || step === "processing" || step === "choice" || step === "upsell"} onClose={() => setStep("paywall")} title="Pagamento Seguro">
-         {step === "checkout" && (
-           <div style={{ display: "flex", flexDirection: "column", gap: 14 }}>
-             <div style={{ background: T.bgCard, padding: 16, border: `1px solid ${T.border}`, marginBottom: 8 }}>
-               <div style={{ fontSize: 10, color: T.text3, textTransform: "uppercase" }}>Total a Pagar</div>
-               <div style={{ fontSize: 24, fontWeight: 900, color: T.brand }}>R$ {((isMarketplace ? cartTotal : event.priceBase) + (selectedPrintProductId ? printProducts.find(p => p.id === selectedPrintProductId)?.finalPrice || 0 : 0)).toFixed(2)}</div>
-             </div>
-             <div><label style={FieldLabel}>Nome no Cartão</label><input style={FieldInput} placeholder="NOME IMPRESSO" value={cardData.name} onChange={handleChange("name")} /></div>
-             <div><label style={FieldLabel}>Número do Cartão</label><input style={FieldInput} placeholder="0000 0000 0000 0000" value={cardData.number} onChange={handleChange("number")} /></div>
-             <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr 1fr", gap: 10 }}>
-               <div><label style={FieldLabel}>Mês</label><input style={FieldInput} placeholder="MM" value={cardData.month} onChange={handleChange("month")} /></div>
-               <div><label style={FieldLabel}>Ano</label><input style={FieldInput} placeholder="AA" value={cardData.year} onChange={handleChange("year")} /></div>
-               <div><label style={FieldLabel}>CVV</label><input style={FieldInput} placeholder="000" value={cardData.cvv} onChange={handleChange("cvv")} /></div>
-             </div>
-             <div><label style={FieldLabel}>CPF</label><input style={FieldInput} placeholder="000.000.000-00" value={cardData.cpf} onChange={handleChange("cpf")} /></div>
-             <div><label style={FieldLabel}>E-mail</label><input style={FieldInput} placeholder="seu@email.com" value={cardData.email} onChange={handleChange("email")} /></div>
-             
-             {error && <div style={{ fontSize: 11, color: "#f87171", background: "#f8717111", padding: 10, border: "1px solid #f8717133" }}>{error}</div>}
-             
-             {!cardToken ? (
-               <button onClick={handleTokenize} disabled={tokenizing} style={{ ...BtnPrimary, width: "100%", justifyContent: "center", marginTop: 10 }}>{tokenizing ? "VALIDANDO..." : "PRÓXIMO PASSO"}</button>
-             ) : (
-               <button onClick={handlePay} style={{ ...BtnPrimary, width: "100%", justifyContent: "center", marginTop: 10 }}>FINALIZAR PAGAMENTO</button>
-             )}
-
-             {event.isOwner && (
-               <div style={{ marginTop: 12, paddingTop: 16, borderTop: `1px solid ${T.border}` }}>
-                 <button 
-                   onClick={() => handleManualPayment("CASH")} 
-                   style={{ ...BtnSecondary, width: "100%", justifyContent: "center", background: "#4ade8011", color: "#4ade80", borderColor: "#4ade8033", fontSize: 10, fontWeight: 900 }}
-                 >
-                   💰 RECEBER EM DINHEIRO (OFFLINE)
-                 </button>
-                 <p style={{ fontSize: 8, color: T.text3, textAlign: "center", marginTop: 8, textTransform: "uppercase" }}>Uso exclusivo para Profissionais e Franqueados</p>
-               </div>
-             )}
-           </div>
-         )}
-         {step === "processing" && (
-           <div style={{ textAlign: "center", padding: "40px 0", display: "flex", flexDirection: "column", alignItems: "center", gap: 20 }}>
-             <Spinner /><p style={{ fontSize: 14, fontWeight: 700 }}>Processando seu pagamento...</p>
-           </div>
-         )}
-         {step === "choice" && (
-           <div style={{ display: "flex", flexDirection: "column", gap: 16 }}>
-             <p style={{ fontSize: 13, color: T.text2 }}>Como você deseja configurar o acesso ao álbum?</p>
-             <button onClick={() => { setAccessType("PUBLIC"); setStep("checkout"); }} style={{ ...BtnSecondary, padding: 20, textAlign: "left", display: "block" }}>
-               <div style={{ fontWeight: 900, color: T.brand }}>🔓 MODO PÚBLICO</div>
-               <div style={{ fontSize: 10, textTransform: "none" }}>O link poderá ser compartilhado com qualquer pessoa.</div>
-             </button>
-             <button onClick={() => { setAccessType("PRIVATE"); setStep("checkout"); }} style={{ ...BtnSecondary, padding: 20, textAlign: "left", display: "block" }}>
-               <div style={{ fontWeight: 900, color: T.text }}>🔒 MODO PRIVADO</div>
-               <div style={{ fontSize: 10, textTransform: "none" }}>Apenas você poderá acessar via login.</div>
-             </button>
-           </div>
-         )}
-      </Modal>
-
-      <Modal isOpen={showQrModal} onClose={() => setShowQrModal(false)} title="Captura Phygital">
-         <div style={{ display: "flex", flexDirection: "column", alignItems: "center", gap: 20, padding: "20px 0" }}>
-            <p style={{ fontSize: 12, textAlign: "center", color: T.text2 }}>Peça para os convidados lerem este código para enviarem suas próprias fotos para o sistema.</p>
-            <div style={{ padding: 20, background: "#fff", borderRadius: 12 }}>
-               <QRCodeCanvas 
-                 value={`${window.location.origin}/phygital-capture?e=${event.id}`} 
-                 size={200}
-               />
+      {/* STICKY MOBILE BUY BAR */}
+      {isMarketplace && cart.length > 0 && !paid && (
+        <motion.div 
+          initial={{ y: 100 }}
+          animate={{ y: 0 }}
+          className="lg:hidden fixed bottom-0 left-0 right-0 z-[100] bg-black/80 backdrop-blur-2xl border-t border-emerald-500/30 p-6 pb-10 flex items-center justify-between shadow-[0_-20px_50px_rgba(0,0,0,0.8)]"
+        >
+          <div className="space-y-1">
+            <p className="text-[10px] font-black uppercase tracking-widest text-emerald-500">{cart.length} selecionadas</p>
+            <div className="flex items-baseline gap-1">
+              <span className="text-xs font-light text-white/40">R$</span>
+              <span className="text-3xl font-black tracking-tighter font-display">{cartTotal.toFixed(0)}</span>
+              <span className="text-sm font-bold text-white/20">,00</span>
             </div>
-            <div style={{ fontSize: 10, fontWeight: 900, color: T.brand, letterSpacing: 1 }}>{window.location.origin}/phygital-capture?e={event.id}</div>
-         </div>
-      </Modal>
-
-      {step === "auth" && <AuthModal onSuccess={() => setStep("paywall")} onClose={() => setStep("paywall")} />}
-      {showPrintStore && <PrintStoreModal eventId={event.id} eventTitle={event.nomeNoivos} medias={medias} onClose={() => setShowPrintStore(false)} />}
-      {needsAccessChoice && orderId && <AccessTypeModal orderId={orderId} eventTitle={event.nomeNoivos} isPrimaryClient={true} onConfirmed={() => setNeedsAccessChoice(false)} onClose={() => setNeedsAccessChoice(false)} />}
-
-      {/* STICKY MOBILE CHECKOUT BAR */}
-      {isMarketplace && step === "paywall" && cart.length > 0 && (
-        <div style={{
-          position: "fixed", bottom: 0, left: 0, right: 0, zIndex: 100,
-          background: T.bgCard, borderTop: `1px solid ${T.border}`,
-          padding: "16px 20px", display: "flex", alignItems: "center", justifyContent: "space-between",
-          boxShadow: "0 -10px 40px rgba(0,0,0,0.4)",
-          animation: "fadeUp 0.3s ease"
-        }} className="desktop-hide">
-          <div>
-            <div style={{ fontSize: 9, fontWeight: 900, color: T.brand, textTransform: "uppercase", letterSpacing: 1.5 }}>{cart.length} fotos selecionadas</div>
-            <div style={{ fontSize: 18, fontFamily: T.fontD, fontWeight: 900, color: T.text }}>R$ {cartTotal.toFixed(2).replace(".", ",")}</div>
           </div>
           <button 
             onClick={handleUnlockClick}
-            style={{ 
-              ...BtnPrimary, padding: "12px 20px", fontSize: 11,
-              boxShadow: `0 8px 20px ${T.brand}33`
-            }}
+            className="px-8 py-4 bg-emerald-500 text-black font-black uppercase tracking-widest text-[10px] shadow-[0_10px_25px_rgba(16,185,129,0.4)]"
           >
-            FINALIZAR COMPRA
+            Comprar
           </button>
-        </div>
+        </motion.div>
       )}
 
-      <style>{`
-        @media (min-width: 901px) {
-          .desktop-hide { display: none !important; }
-        }
-      `}</style>
+      {/* MODALS */}
+      <AuthModal onSuccess={() => setStep("paywall")} onClose={() => setStep("paywall")} />
+      
+      {showPrintStore && (
+        <PrintStoreModal 
+          eventId={event.id} 
+          eventTitle={event.nomeNoivos} 
+          medias={medias} 
+          onClose={() => setShowPrintStore(false)} 
+        />
+      )}
+
+      {needsAccessChoice && orderId && (
+        <AccessTypeModal 
+          orderId={orderId} 
+          eventTitle={event.nomeNoivos} 
+          isPrimaryClient={true} 
+          onConfirmed={() => setNeedsAccessChoice(false)} 
+          onClose={() => setNeedsAccessChoice(false)} 
+        />
+      )}
+
+      <Modal isOpen={showQrModal} onClose={() => setShowQrModal(false)} title="Captura Phygital">
+          <div className="flex flex-col items-center gap-8 py-8">
+             <div className="space-y-2 text-center">
+               <p className="text-xs font-black uppercase tracking-widest text-emerald-500">Fluxo de Captura ao Vivo</p>
+               <p className="text-sm text-white/60 max-w-xs mx-auto">Peça para os convidados lerem este código para enviarem suas fotos diretamente para o telão e galeria.</p>
+             </div>
+             <div className="p-6 bg-white rounded-2xl shadow-[0_20px_50px_rgba(255,255,255,0.1)]">
+                <QRCodeCanvas 
+                  value={`${window.location.origin}/phygital-capture?e=${event.id}`} 
+                  size={240}
+                  level="H"
+                />
+             </div>
+             <div className="px-4 py-2 bg-white/5 border border-white/10 rounded-full">
+               <code className="text-[10px] font-bold text-emerald-500 tracking-wider">
+                 {window.location.origin}/phygital-capture?e={event.id}
+               </code>
+             </div>
+          </div>
+      </Modal>
     </div>
   );
 }
+
+// Sub-componente Modal adaptado para o novo padrão
+const Modal = ({ isOpen, onClose, title, children }: { isOpen: boolean, onClose: () => void, title: string, children: React.ReactNode }) => (
+  <AnimatePresence>
+    {isOpen && (
+      <div className="fixed inset-0 z-[200] flex items-center justify-center p-6">
+        <motion.div 
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          exit={{ opacity: 0 }}
+          onClick={onClose}
+          className="absolute inset-0 bg-black/90 backdrop-blur-md"
+        />
+        <motion.div 
+          initial={{ opacity: 0, scale: 0.95, y: 20 }}
+          animate={{ opacity: 1, scale: 1, y: 0 }}
+          exit={{ opacity: 0, scale: 0.95, y: 20 }}
+          className="relative w-full max-w-lg bg-[#141414] border border-white/10 p-8 lg:p-12 shadow-2xl overflow-hidden"
+        >
+          <div className="absolute top-0 right-0 p-6">
+            <button onClick={onClose} className="text-white/20 hover:text-white transition-colors">
+              <Check size={24} className="rotate-45" />
+            </button>
+          </div>
+          <h3 className="font-display text-2xl font-black uppercase tracking-tighter mb-8">{title}</h3>
+          {children}
+        </motion.div>
+      </div>
+    )}
+  </AnimatePresence>
+);

@@ -21,14 +21,14 @@ const P = {
 };
 
 const THEME = {
-  bg: "var(--theme-bg)",
-  bgCard: "var(--theme-bg-muted)",
-  border: "var(--theme-border)",
-  accent: "var(--brand-tactical)",
-  text: "var(--theme-text)",
-  text2: "var(--theme-text-muted)",
-  fontD: "'Outfit', sans-serif",
-  fontB: "'Outfit', sans-serif",
+  bg: "#0a0a0a",
+  bgCard: "#111111",
+  border: "rgba(255,255,255,0.05)",
+  accent: "#85B9AC",
+  text: "#ffffff",
+  text2: "rgba(255,255,255,0.4)",
+  fontD: "var(--font-d)",
+  fontB: "var(--font-b)",
 };
 
 // ── DateTimePicker Customizado (Tactical Theme) 📅🛡️ ─────────────────
@@ -117,15 +117,12 @@ function DateTimePicker({ value, onChange, workingHours }: { value: string; onCh
   return (
     <div ref={ref} style={{ position: "relative" }}>
       {/* Trigger */}
-      <div onClick={() => setOpen(o => !o)} style={{ position: "relative", display: "flex", alignItems: "center", cursor: "pointer" }}>
-        <Calendar size={18} style={{ position: "absolute", left: 18, color: THEME.accent, pointerEvents: "none", zIndex: 1 }} />
+      <div onClick={() => setOpen(o => !o)} className="relative flex items-center cursor-pointer group">
+        <Calendar size={18} className="absolute left-5 text-emerald-500 z-10 group-hover:scale-110 transition-transform" />
         <div
-          className="fs-input"
+          className="fs-input w-full pl-14 text-xs font-black uppercase tracking-widest min-h-[60px] flex items-center border border-white/10 bg-white/5 hover:border-emerald-500/40 transition-colors"
           style={{
-            width: "100%", paddingLeft: 52, fontSize: "clamp(11px, 3vw, 13px)",
-            userSelect: "none", minHeight: 52, display: "flex", alignItems: "center",
-            color: displayValue ? THEME.text : "#555",
-            textTransform: "uppercase", letterSpacing: 1
+            color: displayValue ? "#fff" : "rgba(255,255,255,0.2)"
           }}
         >
           {displayValue || "SELECIONE A DATA E HORÁRIO"}
@@ -291,21 +288,27 @@ function DateTimePicker({ value, onChange, workingHours }: { value: string; onCh
 export const QuotePage = () => {
   const navigate = useNavigate();
   const [step, setStep] = useState(1);
+  const [loading, setLoading] = useState(true);
   const [partners, setPartners] = useState<Partner[]>([]);
   
   // Form State
   const [selectedServices, setSelectedServices] = useState<string[]>([]);
   const [catalog, setCatalog] = useState<Service[]>([]);
 
-  // Carregar catálogo global
+  // Carregar dados iniciais
   useEffect(() => {
-    API.get("/public/configs/services")
-      .then(res => {
-        if (res.data?.services?.length > 0) {
-          setCatalog(res.data.services);
+    Promise.all([
+      API.get("/public/configs/services"),
+      API.get("/public/unidades-fixas")
+    ])
+      .then(([catalogRes, partnersRes]) => {
+        if (catalogRes.data?.services?.length > 0) {
+          setCatalog(catalogRes.data.services);
         }
+        setPartners(partnersRes.data || []);
       })
-      .catch(err => console.error("Erro ao carregar serviços:", err));
+      .catch(err => console.error("Erro ao carregar dados:", err))
+      .finally(() => setLoading(false));
   }, []);
 
   const [attendees, setAttendees] = useState<string>("0");
@@ -358,10 +361,7 @@ export const QuotePage = () => {
     }
   }, [authUser, name, email, whatsapp]);
 
-  useEffect(() => {
-    // Busca parceiros cadastrados (Unidades Fixas)
-    API.get("/public/unidades-fixas").then(res => setPartners(res.data)).catch(() => {});
-  }, []);
+  // Removido useEffect duplicado de busca de parceiros
 
   // Sincronizar horas e dias se parceiro selecionado
   useEffect(() => {
@@ -514,22 +514,29 @@ export const QuotePage = () => {
   };
 
   return (
-    <div style={{ 
-      background: THEME.bg, 
-      color: THEME.text, 
-      minHeight: "100vh", 
-      fontFamily: THEME.fontB, 
-      padding: "20px clamp(10px, 4vw, 20px)" 
-    }}>
+    <div className="min-h-screen bg-[#0a0a0a] text-white font-b selection:bg-emerald-500 selection:text-black py-10 md:py-20 px-4">
+      {loading && (
+        <div className="fixed inset-0 z-[100] flex flex-col items-center justify-center gap-6 bg-[#0a0a0a]">
+          <div className="absolute inset-0 bg-emerald-500/5 blur-[120px] rounded-full -m-64 opacity-20" />
+          <div className="relative z-10 flex flex-col items-center gap-8">
+            <div className="w-px h-16 bg-gradient-to-b from-transparent via-emerald-500 to-transparent" />
+            <div className="text-[18px] font-display font-black uppercase tracking-[0.8em] italic text-white">FOTO SEGUNDO</div>
+            <div className="text-[9px] font-black uppercase tracking-[0.4em] text-emerald-500 animate-pulse">Configurando Motor Tático</div>
+            <div className="w-px h-16 bg-gradient-to-t from-transparent via-emerald-500 to-transparent" />
+          </div>
+        </div>
+      )}
       <style>{`
-        .fs-input { background: var(--theme-bg-muted) !important; border: 1px solid var(--theme-border) !important; color: var(--theme-text) !important; border-radius: 0 !important; box-sizing: border-box; font-family: 'Outfit', sans-serif !important; padding: 12px 15px; }
-        .fs-input:focus { border-color: var(--brand-tactical) !important; outline: none !important; }
+        .fs-input { background: #111 !important; border: 1px solid rgba(255,255,255,0.05) !important; color: #fff !important; border-radius: 0 !important; box-sizing: border-box; font-family: var(--font-b) !important; padding: 15px 20px; font-weight: 500; }
+        .fs-input:focus { border-color: #85B9AC !important; outline: none !important; }
         
+        input[type=range] { -webkit-appearance: none; background: rgba(255,255,255,0.05); height: 4px; border-radius: 0; }
+        input[type=range]::-webkit-slider-thumb { -webkit-appearance: none; height: 20px; width: 20px; background: #85B9AC; border-radius: 0; cursor: pointer; box-shadow: 0 0 15px rgba(133,185,172,0.4); }
+
         @media (max-width: 768px) {
           .mobile-grid-1 { grid-template-columns: 1fr !important; }
           .mobile-stack { flex-direction: column !important; align-items: stretch !important; gap: 15px !important; }
-          .mobile-padding { padding: 20px !important; }
-          .mobile-text-center { text-align: center !important; }
+          .mobile-padding { padding: 25px !important; }
         }
       `}</style>
 
@@ -546,15 +553,11 @@ export const QuotePage = () => {
             />
           </div>
           <div 
-            className="text-proportional text-brand-tactical mb-4" 
-            style={{ 
-              letterSpacing: 8, 
-              opacity: 0.8,
-              fontSize: 10
-            }}
+            className="text-[10px] font-black text-emerald-500 mb-4 uppercase tracking-[0.5em] italic" 
+            style={{ opacity: 0.8 }}
           >Solicitação de Orçamento</div>
-          <h1 className="heading-luxury" style={{ fontSize: "clamp(24px, 4vw, 42px)" }}>
-            ETERNIZE SEU <span className="text-theme-text-muted">EVENTO</span>
+          <h1 className="text-4xl md:text-7xl font-display font-black uppercase tracking-tighter leading-none text-white">
+            ETERNIZE SEU <span className="text-white/20 italic">EVENTO</span>
           </h1>
         </header>
 
@@ -932,13 +935,13 @@ export const QuotePage = () => {
               {/* Rodapé Dinâmico de Preço */}
               <div style={{ borderTop: `1px solid ${THEME.border}`, paddingTop: 20, display: "flex", justifyContent: "space-between", alignItems: "center" }}>
                 <div>
-                  <div style={{ fontSize: 10, fontWeight: 800, textTransform: "uppercase", color: THEME.text2 }}>Total Estimado</div>
-                  <div className="heading-luxury !text-brand-tactical" style={{ fontSize: 24 }}>
+                  <div style={{ fontSize: 10, fontWeight: 800, textTransform: "uppercase", color: THEME.text2, letterSpacing: 2 }}>Total Estimado</div>
+                  <div className="font-display font-black text-emerald-500 italic" style={{ fontSize: 32 }}>
                     {showPrices ? new Intl.NumberFormat("pt-BR", { style: "currency", currency: "BRL" }).format(totalPrice) : "SOB CONSULTA"}
                   </div>
                 </div>
                 <div style={{ display: "flex", gap: 10 }}>
-                  <button onClick={() => setStep(1)} style={{ border: `1px solid ${THEME.border}`, color: THEME.text, padding: "15px 25px", fontWeight: 800, fontSize: 11, textTransform: "uppercase", background: "none", cursor: "pointer" }}>VOLTAR</button>
+                  <button onClick={() => setStep(1)} className="px-8 py-4 border border-white/10 text-white/40 font-display font-black text-[10px] uppercase tracking-widest hover:text-white transition-all">VOLTAR</button>
                   <button 
                     onClick={() => {
                       if (selectedServices.length > 0) {
@@ -948,7 +951,7 @@ export const QuotePage = () => {
                         alert("Por favor, selecione pelo menos um serviço.");
                       }
                     }}
-                    style={{ background: THEME.accent, color: "black", padding: "15px 25px", fontWeight: 900, fontSize: 11, textTransform: "uppercase", border: "none", cursor: "pointer" }}
+                    className="px-8 py-4 bg-emerald-500 text-black font-display font-black text-[10px] uppercase tracking-widest hover:bg-white transition-all shadow-xl shadow-emerald-500/10"
                   >CONTINUAR &rarr;</button>
                 </div>
               </div>
@@ -1007,35 +1010,40 @@ export const QuotePage = () => {
         )}
 
         {step === 4 && (
-          <div style={{ textAlign: "center", padding: 60, background: THEME.bgCard, border: `1px solid ${THEME.border}` }}>
-            <div style={{ width: 80, height: 80, borderRadius: "50%", background: `${THEME.accent}20`, display: "flex", alignItems: "center", justifyContent: "center", margin: "0 auto 30px" }}>
-              <ShieldCheck size={40} color={THEME.accent} />
-            </div>
-            <h2 style={{ fontFamily: THEME.fontD, fontSize: 42, fontWeight: 900, textTransform: "uppercase", marginBottom: 20 }}>Solicitação Enviada</h2>
+          <div style={{ textAlign: "center", padding: "80px 40px", background: "#111", border: "1px solid rgba(255,255,255,0.05)" }} className="relative overflow-hidden">
+            <div className="absolute inset-0 bg-emerald-500/5 blur-[100px] rounded-full opacity-30" />
             
-            {createdQuoteId && (
-              <div style={{ background: `${THEME.accent}10`, border: `1px solid ${THEME.border}`, padding: "15px", marginBottom: 30, display: "inline-block" }}>
-                <span style={{ fontSize: 10, fontWeight: 800, textTransform: "uppercase", color: THEME.text2, display: "block", marginBottom: 5 }}>Protocolo de Atendimento</span>
-                <span style={{ fontSize: 18, fontWeight: 900, color: THEME.accent, letterSpacing: 2 }}>ORC-{createdQuoteId.slice(-4).toUpperCase()}</span>
+            <div className="relative z-10">
+              <div style={{ width: 80, height: 80, background: "rgba(133,185,172,0.1)", display: "flex", alignItems: "center", justifyContent: "center", margin: "0 auto 30px", border: "1px solid rgba(133,185,172,0.3)" }}>
+                <ShieldCheck size={40} className="text-emerald-500" />
               </div>
-            )}
+              <h2 className="text-4xl md:text-6xl font-display font-black text-white uppercase italic tracking-tighter mb-8 leading-none">Solicitação Enviada</h2>
+              
+              {createdQuoteId && (
+                <div style={{ background: "rgba(255,255,255,0.02)", border: "1px solid rgba(255,255,255,0.05)", padding: "20px 40px", marginBottom: 40, display: "inline-block" }}>
+                  <span className="text-[9px] font-black text-white/40 uppercase tracking-[0.3em] block mb-2">Protocolo de Segurança</span>
+                  <span className="text-2xl font-display font-black text-emerald-500 tracking-[0.15em] italic">ORC-{createdQuoteId.slice(-6).toUpperCase()}</span>
+                </div>
+              )}
 
-            <p style={{ color: THEME.text2, fontSize: 13, maxWidth: 400, margin: "0 auto 40px", lineHeight: 1.7, fontWeight: 600, textTransform: 'uppercase', letterSpacing: 1 }}>
-              Recebemos seu pedido. Nossa equipe técnica analisará o briefing e entrará em contato em breve através do e-mail: <strong style={{ color: THEME.text }}>{email}</strong>.
-            </p>
-            <div style={{ display: "flex", flexDirection: "column", gap: 12, alignItems: "center" }}>
-              <button 
-                onClick={() => window.open('https://wa.me/5519997843817?text=Gostaria%20de%20saber%20mais%20sobre%20os%20albuns%20impressos%20Foto%20Segundo', '_blank')}
-                style={{ background: THEME.accent, color: "black", padding: "18px 50px", fontSize: 13, fontWeight: 900, textTransform: "uppercase", border: "none", cursor: "pointer", letterSpacing: 2, width: '100%' }}
-              >
-                ETERNIZE NO PAPEL: ENCOMENDE SEU ÁLBUM
-              </button>
-              <button 
-                onClick={() => navigate("/")}
-                style={{ border: `1px solid ${THEME.border}`, padding: "15px 40px", fontSize: 11, fontWeight: 800, textTransform: "uppercase", background: "none", color: THEME.text2, cursor: "pointer", width: '100%' }}
-              >
-                VOLTAR PARA O INÍCIO
-              </button>
+              <p className="text-xs font-bold text-white/40 uppercase tracking-widest max-w-md mx-auto leading-relaxed mb-12">
+                Recebemos seu briefing técnico. Nossa curadoria analisará a viabilidade e entrará em contato através de <span className="text-white">{email}</span> para os próximos passos.
+              </p>
+              
+              <div className="flex flex-col gap-4 max-w-sm mx-auto">
+                <button 
+                  onClick={() => window.open('https://wa.me/5519997843817', '_blank')}
+                  className="w-full py-6 bg-emerald-500 text-black font-display font-black text-xs uppercase tracking-[0.3em] hover:bg-white transition-all shadow-2xl shadow-emerald-500/20"
+                >
+                  FALAR COM ESPECIALISTA
+                </button>
+                <button 
+                  onClick={() => navigate("/")}
+                  className="w-full py-4 text-white/20 font-display font-black text-[10px] uppercase tracking-[0.5em] hover:text-white transition-colors"
+                >
+                  VOLTAR PARA VITRINE
+                </button>
+              </div>
             </div>
           </div>
         )}

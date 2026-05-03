@@ -121,16 +121,19 @@ export const AdminDashboard: React.FC = () => {
       <div style={{ padding: "clamp(8px, 2vw, 32px)", maxWidth: "100%", margin: "0 auto", minHeight: "100vh" }}>
         {/* Tab Content */}
         {loading && activeTab === "overview" ? (
-           <div className="py-40 flex flex-col items-center gap-8">
-             <div className="w-[1px] h-20 bg-white/5 animate-pulse" />
-             <div className="text-[9px] text-zinc-800 uppercase tracking-widest font-bold">Consolidando Ativos...</div>
+           <div className="py-40 flex flex-col items-center justify-center gap-8 relative overflow-hidden">
+             <div className="absolute inset-0 bg-emerald-500/5 blur-[120px] rounded-full -m-64 opacity-20" />
+             <div className="w-px h-16 bg-gradient-to-b from-transparent via-emerald-500 to-transparent" />
+             <div className="text-[11px] font-display font-black uppercase tracking-[0.4em] text-white italic">FOTO SEGUNDO</div>
+             <div className="text-[9px] font-black uppercase tracking-[0.4em] text-emerald-500 animate-pulse">Sincronizando Ativos Globais</div>
+             <div className="w-px h-16 bg-gradient-to-t from-transparent via-emerald-500 to-transparent" />
            </div>
         ) : (
           <div className="pb-32">
             <React.Suspense fallback={
               <div className="py-20 flex flex-col items-center gap-6">
-                <div className="w-1 h-1 rounded-full bg-brand-tactical animate-ping" />
-                <div className="text-[10px] font-bold uppercase tracking-[0.3em] text-theme-text/20">Acessando Módulo...</div>
+                <div className="w-px h-8 bg-gradient-to-b from-transparent via-emerald-500 to-transparent" />
+                <div className="text-[10px] font-display font-black uppercase tracking-[0.3em] text-emerald-500/40 animate-pulse">Acessando Módulo...</div>
               </div>
             }>
               {activeTab === "overview" && <AdminOverview stats={stats} recentOrders={recentOrders} pendingEvents={pendingEvents} onEditEvent={handleEditEvent} />}

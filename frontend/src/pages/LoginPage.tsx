@@ -3,7 +3,7 @@ import { isAxiosError } from "axios";
 import { useNavigate, Link } from "react-router-dom";
 import { useAuth } from "../hooks/useAuth";
 import { Helmet } from "react-helmet-async";
-import { T, BtnPrimary, FieldLabel, FieldInput } from "../lib/theme";
+import { T } from "../lib/theme";
 import { ThemeToggle } from "../components/ThemeToggle";
 import { API } from "../lib/api";
 
@@ -85,7 +85,10 @@ export const LoginPage: React.FC = () => {
   };
 
   return (
-    <div style={{ minHeight: "100vh", background: T.bg, display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center", padding: "16px 20px", fontFamily: T.fontB }}>
+    <div className="min-h-screen flex flex-col items-center justify-center bg-[#0a0a0a] relative overflow-hidden px-6 py-12">
+      {/* Ambient Glow */}
+      <div className="absolute inset-0 bg-emerald-500/5 blur-[120px] rounded-full -m-64 opacity-20" />
+      <div className="absolute bottom-0 right-0 w-[500px] h-[500px] bg-emerald-500/5 blur-[150px] rounded-full -mr-64 -mb-64 opacity-20" />
       <Helmet>
         <title>Acesso — Foto Segundo</title>
         <meta name="description" content="Acesse sua conta e visualize as fotos e vídeos do seu evento." />
@@ -111,83 +114,77 @@ export const LoginPage: React.FC = () => {
       <div style={{ width: "100%", maxWidth: 380 }}>
 
         {/* ── Brand ── */}
-        <div style={{ textAlign: "center", marginBottom: 24, display: "flex", flexDirection: "column", alignItems: "center" }}>
-          <img src="/logo-fs.png" alt="Foto Segundo" style={{ height: 32, objectFit: "contain", marginBottom: 8 }} />
-          <p style={{ fontSize: 11, color: T.text3, fontWeight: 700, textTransform: "uppercase", letterSpacing: "0.2em", margin: 0 }}>
-            Painel de Controle
-          </p>
+        <div className="text-center mb-10 flex flex-col items-center">
+          <img src="/logo-fs.png" alt="Foto Segundo" className="h-8 object-contain mb-6" />
+          <h1 className="text-[10px] font-black text-emerald-500 uppercase tracking-[0.5em] italic">
+            Portal de Acesso Exclusivo
+          </h1>
         </div>
 
         {/* ── Card ── */}
-        <div style={{
-          background:   "var(--bg-card)",
-          border:       `1px solid ${T.border}`,
-          borderRadius: 0,
-          padding:      32,
-        }}>
+        <div className="bg-[#111] border border-white/5 p-8 md:p-12 relative shadow-2xl">
+          <div className="absolute top-0 left-0 w-full h-px bg-gradient-to-r from-transparent via-emerald-500/20 to-transparent" />
 
           {/* Success Reset */}
           {resetSent && (
-            <div style={{ background: "rgba(133, 185, 172, 0.1)", border: `1px solid ${T.brand}33`, padding: "12px 16px", marginBottom: 24 }}>
-              <p style={{ margin: 0, fontSize: 11, color: T.brand, fontWeight: 700, fontFamily: T.fontB, letterSpacing: "0.05em" }}>
-                E-mail de recuperação enviado! Verifique sua caixa de entrada (e spam).
+            <div className="bg-emerald-500/10 border border-emerald-500/20 p-4 mb-8">
+              <p className="text-[11px] text-emerald-500 font-black uppercase tracking-widest leading-relaxed">
+                E-mail de recuperação enviado com sucesso.
               </p>
             </div>
           )}
 
           {/* Error */}
           {error && (
-            <div style={{ background: "#1a0a0a", border: "1px solid #3a1a1a", padding: "12px 16px", marginBottom: 24 }}>
-              <p style={{ margin: 0, fontSize: 11, color: "#f87171", fontFamily: T.fontB, letterSpacing: "0.05em" }}>{error}</p>
+            <div className="bg-red-500/10 border border-red-500/20 p-4 mb-8">
+              <p className="text-[11px] text-red-500 font-black uppercase tracking-widest leading-relaxed">{error}</p>
             </div>
           )}
 
           <form onSubmit={handleSubmit} style={{ display: "flex", flexDirection: "column", gap: 20 }}>
 
             {/* E-mail */}
-            <div>
-              <label style={FieldLabel} htmlFor="lp-email">E-mail</label>
+            <div className="space-y-2">
+              <label className="text-[10px] font-black uppercase tracking-widest text-white/40 block">Identificação</label>
               <input
                 id="lp-email"
-                className="lp-input"
+                className="fs-input w-full"
                 type="email"
                 value={email}
                 onChange={e => setEmail(e.target.value)}
-                placeholder="seu@email.com"
+                placeholder="USUÁRIO OU E-MAIL"
                 autoComplete="username"
                 required
-                style={{ ...FieldInput, borderRadius: 0 }}
               />
             </div>
 
             {/* Senha */}
-            <div style={{ display: "flex", flexDirection: "column" }}>
-              <label style={FieldLabel} htmlFor="lp-senha">Senha</label>
-              <div style={{ position: "relative", display: "flex", alignItems: "center" }}>
+            <div className="space-y-2">
+              <div className="flex justify-between items-center">
+                <label className="text-[10px] font-black uppercase tracking-widest text-white/40 block">Chave de Acesso</label>
+                <button type="button" onClick={handleForgotPassword} className="text-[9px] font-black uppercase tracking-widest text-emerald-500/60 hover:text-emerald-500 transition-colors">
+                  ESQUECI A SENHA
+                </button>
+              </div>
+              <div className="relative flex items-center group">
                 <input
                   id="lp-senha"
-                  className="lp-input"
+                  className="fs-input w-full pr-12"
                   type={showSenha ? "text" : "password"}
                   value={senha}
                   onChange={e => setSenha(e.target.value)}
                   placeholder="••••••••"
                   autoComplete="current-password"
                   required
-                  style={{ ...FieldInput, borderRadius: 0, paddingRight: 40 }}
                 />
                 <button
                   type="button"
-                  className="lp-eye"
+                  className="absolute right-4 text-white/20 hover:text-emerald-500 transition-colors"
                   onClick={() => setShowSenha(v => !v)}
-                  title={showSenha ? "Ocultar senha" : "Mostrar senha"}
-                  style={{ position: "absolute", right: 12 }}
                 >
                   <EyeIcon open={showSenha} />
                 </button>
               </div>
-              <button type="button" onClick={handleForgotPassword} className="lp-forgot">
-                Esqueci minha senha
-              </button>
             </div>
 
             {/* Submit */}
@@ -195,36 +192,27 @@ export const LoginPage: React.FC = () => {
               id="btn-login-submit"
               type="submit"
               disabled={loading}
-              style={{
-                ...BtnPrimary,
-                width:          "100%",
-                justifyContent: "center",
-                padding:        "14px 24px",
-                fontSize:       13,
-                opacity:        loading ? 0.6 : 1,
-                cursor:         loading ? "not-allowed" : "pointer",
-                marginTop:      4,
-              }}
+              className="w-full py-5 bg-emerald-500 text-black font-display font-black text-xs uppercase tracking-[0.4em] hover:bg-white transition-all shadow-xl shadow-emerald-500/10 disabled:opacity-50 disabled:cursor-not-allowed mt-4"
             >
-              {loading ? "Autenticando..." : "Entrar"}
+              {loading ? "VALIDANDO..." : "ENTRAR NO SISTEMA"}
             </button>
           </form>
 
           {/* Registro */}
-          <div style={{ marginTop: 28, paddingTop: 24, borderTop: `1px solid ${T.border}`, textAlign: "center" }}>
-            <p style={{ margin: "0 0 10px", fontSize: 10, fontFamily: T.fontB, color: T.text3, letterSpacing: "0.1em", textTransform: "uppercase" }}>
-              Ainda não tem conta?
+          <div className="mt-12 pt-8 border-t border-white/5 text-center">
+            <p className="text-[9px] font-black text-white/20 uppercase tracking-widest mb-4">
+              Solicitação de novas credenciais
             </p>
-            <Link to="/register" className="lp-reg">
-              Solicitar Registro →
+            <Link to="/register" className="text-[11px] font-display font-black text-emerald-500 uppercase tracking-widest hover:text-white transition-colors">
+              INICIAR REGISTRO PROFISSIONAL →
             </Link>
           </div>
         </div>
 
         {/* Voltar */}
-        <div style={{ textAlign: "center", marginTop: 24 }}>
-          <Link to="/" className="lp-back">
-            ← Voltar para a vitrine
+        <div className="text-center mt-12">
+          <Link to="/" className="text-[10px] font-black text-white/20 uppercase tracking-[0.3em] hover:text-emerald-500 transition-colors">
+            ← VOLTAR PARA VITRINE PÚBLICA
           </Link>
         </div>
       </div>

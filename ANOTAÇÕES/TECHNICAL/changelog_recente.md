@@ -1,6 +1,22 @@
 # Changelog Recente - Foto Segundo
 
-Este documento registra as atualizações críticas realizadas para estabilização da plataforma e lançamento da versão "Midnight Luxury".
+## [3.1.0] - 2026-05-03
+
+### Finalização da Auditoria Global de UI/UX (Midnight Luxury v3.1)
+
+- **Padronização Estética**: Unificação de todas as rotas sob o sistema de tokens `emerald-500`, `#0a0a0a` e `font-display` (Barlow Condensed).
+- **Refatoração de Rotas Públicas**:
+  - `EventPage`: Nova vitrine mobile-first com ambient glow e redirecionamento para o Checkout Unificado.
+  - `CheckoutPage`: Consolidação do motor de pedidos unificado para todos os fluxos de venda.
+  - `LuxuryExperiencePage`: Experiência de entrega de fotos com visual de luxo e unboxing digital.
+  - `PartnerLP`: Landing page para pontos fixos sincronizada com o design system nacional.
+  - `QuotePage`: Fluxo de orçamento (CPQ) refatorado para alta conversão e feedback visual tático.
+- **Refatoração de Portais de Gestão**:
+  - `LoginPage`: Redesign completo da porta de entrada com ambient glow e tipografia display.
+  - `AdminDashboard`: Centro de comando com KPIs de alta densidade e gráficos premium.
+  - `ProfissionalDashboard`: Gestão de créditos e agenda com estética tática unificada.
+- **Infraestrutura de UI**: Implementação de Skeleton Loaders premium (App Shell) em todas as rotas para eliminar o "flash" de carregamento.
+- **Componentização**: Migração massiva de estilos inline para Tailwind CSS em todos os módulos auditados.
 
 ## 🚀 01/05/2026 — Lançamento da Era Phygital: Automação Web-to-Print
 

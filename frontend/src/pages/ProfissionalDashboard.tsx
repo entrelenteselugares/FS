@@ -481,30 +481,43 @@ export default function ProfissionalDashboard() {
             )}
             {activeTab === "franquia" && user?.franchiseProfile && (
               <div className="space-y-8 animate-in fade-in duration-500">
-                <div>
-                  <h2 className="text-3xl font-black text-theme-text uppercase tracking-tighter">Franquia de Impressão</h2>
-                  <p className="text-[10px] text-theme-muted uppercase tracking-[0.4em] mt-2 font-black italic">Seu Ponto de Impressão Phygital</p>
+                <div className="flex flex-col md:flex-row md:items-end justify-between gap-4">
+                  <div>
+                    <h2 className="text-4xl md:text-6xl font-display font-black text-theme-text uppercase tracking-tighter italic leading-none">Franquia Print</h2>
+                    <p className="text-[10px] text-emerald-500 uppercase tracking-[0.4em] mt-4 font-black italic">Gestão de Créditos e Operações Phygital</p>
+                  </div>
                 </div>
-                <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-                  <div className="bg-theme-bg border border-theme-border p-8 space-y-3">
-                    <label className="text-[9px] font-black text-theme-muted uppercase tracking-widest block">Créditos Disponíveis</label>
-                    <div className={`text-5xl font-black ${user.franchiseProfile.printCredits < 50 ? 'text-amber-500' : 'text-brand-tactical'}`}>
+                <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+                  <div className="bg-theme-bg border border-theme-border p-10 relative overflow-hidden group">
+                    <div className="absolute top-0 left-0 w-full h-1 bg-emerald-500/20 group-hover:bg-emerald-500 transition-colors" />
+                    <label className="text-[9px] font-black text-theme-muted uppercase tracking-widest block mb-4">Saldo Disponível</label>
+                    <div className={`text-7xl font-display font-black italic tracking-tighter ${user.franchiseProfile.printCredits < 50 ? 'text-amber-500' : 'text-emerald-500'}`}>
                       {user.franchiseProfile.printCredits}
                     </div>
-                    <p className="text-[9px] text-theme-muted font-bold uppercase tracking-widest">fotos restantes</p>
+                    <p className="text-[10px] text-white/40 font-black uppercase tracking-[0.2em] mt-2 italic">Fotos para Impressão</p>
                   </div>
-                  <div className="bg-theme-bg border border-theme-border p-8 space-y-3">
-                    <label className="text-[9px] font-black text-theme-muted uppercase tracking-widest block">Status</label>
-                    <div className={`text-sm font-black uppercase tracking-widest ${user.franchiseProfile.active ? 'text-emerald-500' : 'text-red-500'}`}>
-                      {user.franchiseProfile.active ? '● Ponto Ativo' : '● Inativo'}
+                  
+                  <div className="bg-theme-bg border border-theme-border p-10 relative group">
+                    <label className="text-[9px] font-black text-theme-muted uppercase tracking-widest block mb-4">Status do Terminal</label>
+                    <div className={`text-xl font-display font-black uppercase italic tracking-widest ${user.franchiseProfile.active ? 'text-emerald-500' : 'text-red-500'}`}>
+                      {user.franchiseProfile.active ? 'Terminal Ativo' : 'Terminal Inativo'}
                     </div>
-                    <p className="text-[9px] text-theme-muted font-bold uppercase tracking-widest">modo de operação</p>
+                    <div className="mt-4 flex items-center gap-2">
+                      <div className={`w-2 h-2 rounded-full ${user.franchiseProfile.active ? 'bg-emerald-500 animate-pulse' : 'bg-red-500'}`} />
+                      <span className="text-[9px] text-white/40 font-black uppercase tracking-widest">Sincronizado com a Nuvem</span>
+                    </div>
                   </div>
-                  <div className="bg-theme-bg border border-theme-border p-8 space-y-3">
-                    <label className="text-[9px] font-black text-theme-muted uppercase tracking-widest block">Precisa de Créditos?</label>
-                    <p className="text-[10px] text-theme-muted font-bold leading-relaxed">
-                      Entre em contato com o administrador da rede para recarregar seu saldo de impressões.
-                    </p>
+
+                  <div className="bg-theme-bg border border-theme-border p-10 flex flex-col justify-between">
+                    <div>
+                      <label className="text-[9px] font-black text-theme-muted uppercase tracking-widest block mb-2">Recarga de Créditos</label>
+                      <p className="text-[10px] text-white/40 font-bold leading-relaxed uppercase tracking-wider">
+                        O limite de impressões é gerenciado pela administração central. Solicite uma nova carga para continuar operando.
+                      </p>
+                    </div>
+                    <button className="w-full py-4 mt-6 border border-emerald-500/30 text-emerald-500 font-display font-black text-[10px] uppercase tracking-widest hover:bg-emerald-500 hover:text-black transition-all">
+                      SOLICITAR RECARGA
+                    </button>
                   </div>
                 </div>
                 {user.franchiseProfile.printCredits < 50 && (
@@ -555,38 +568,44 @@ export default function ProfissionalDashboard() {
                 </div>
 
                 {/* ── ATIVIDADE RECENTE ── */}
-                <div className="space-y-6">
-                   <div className="flex items-center gap-3">
-                      <div className="h-0.5 w-6 bg-brand-tactical" />
-                      <p className="text-[9px] font-black text-theme-muted uppercase tracking-[0.4em]">Histórico de Operações</p>
-                   </div>
-
-                   <div className="bg-theme-bg border border-theme-border overflow-hidden">
-                      {user.franchiseProfile.transactions && user.franchiseProfile.transactions.length > 0 ? (
-                        <div className="divide-y divide-theme-border/30">
-                          {user.franchiseProfile.transactions.map(tx => (
-                            <div key={tx.id} className="p-5 flex items-center justify-between hover:bg-theme-bg-muted/30 transition-all group">
-                               <div className="space-y-1">
-                                  <p className="text-[11px] font-black text-theme-text uppercase tracking-tight italic">
-                                    {tx.description || (tx.type === 'PRINT_CONSUMPTION' ? 'Impressão Phygital' : 'Recarga de Créditos')}
-                                  </p>
-                                  <p className="text-[8px] text-theme-muted font-bold uppercase tracking-widest">
-                                    {new Date(tx.createdAt).toLocaleString('pt-BR')}
-                                  </p>
-                               </div>
-                               <div className={`text-sm font-black italic tracking-tighter ${tx.amount > 0 ? 'text-brand-tactical' : 'text-red-400'}`}>
-                                  {tx.amount > 0 ? '+' : ''}{tx.amount}
-                               </div>
-                            </div>
-                          ))}
-                        </div>
-                      ) : (
-                        <div className="p-10 text-center text-[10px] text-theme-muted uppercase font-black italic tracking-widest opacity-40">
-                          Nenhuma atividade registrada.
-                        </div>
-                      )}
-                   </div>
-                </div>
+                 <div className="space-y-6">
+                    <div className="flex items-center gap-4">
+                       <div className="h-px w-8 bg-emerald-500" />
+                       <p className="text-[10px] font-black text-theme-muted uppercase tracking-[0.5em] italic">Registro de Atividades</p>
+                    </div>
+ 
+                    <div className="bg-theme-bg border border-theme-border overflow-hidden">
+                       {user.franchiseProfile.transactions && user.franchiseProfile.transactions.length > 0 ? (
+                         <div className="divide-y divide-white/5">
+                           {user.franchiseProfile.transactions.map(tx => (
+                             <div key={tx.id} className="p-6 flex items-center justify-between hover:bg-white/[0.02] transition-all group">
+                                <div className="space-y-1">
+                                   <p className="text-[11px] font-black text-theme-text uppercase tracking-widest italic">
+                                     {tx.description || (tx.type === 'PRINT_CONSUMPTION' ? 'Impressão Phygital' : 'Recarga de Créditos')}
+                                   </p>
+                                   <div className="flex items-center gap-3">
+                                     <p className="text-[8px] text-white/20 font-black uppercase tracking-widest">
+                                       {new Date(tx.createdAt).toLocaleString('pt-BR')}
+                                     </p>
+                                     <div className="w-1 h-1 rounded-full bg-white/10" />
+                                     <p className="text-[8px] text-white/20 font-black uppercase tracking-widest">
+                                       Hash: {tx.id.slice(-8).toUpperCase()}
+                                     </p>
+                                   </div>
+                                </div>
+                                <div className={`text-lg font-display font-black italic tracking-tighter ${tx.amount > 0 ? 'text-emerald-500' : 'text-white/40'}`}>
+                                   {tx.amount > 0 ? '+' : ''}{tx.amount}
+                                </div>
+                             </div>
+                           ))}
+                         </div>
+                       ) : (
+                         <div className="p-20 text-center text-[10px] text-theme-muted uppercase font-black italic tracking-widest">
+                           Nenhuma atividade registrada no ledger.
+                         </div>
+                       )}
+                    </div>
+                 </div>
               </div>
             )}
             {(activeTab === "agenda" || activeTab === "convites") && (

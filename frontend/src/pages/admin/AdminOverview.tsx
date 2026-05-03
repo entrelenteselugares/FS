@@ -3,7 +3,7 @@ import {
   AreaChart, Area, XAxis, CartesianGrid, Tooltip,
   ResponsiveContainer,
 } from "recharts";
-import { T } from "../../lib/theme";
+
 
 interface OverviewStats {
   totalRevenue: number;
@@ -46,219 +46,90 @@ export const AdminOverview: React.FC<OverviewProps> = ({ stats, recentOrders = [
 
 
   return (
-    <div className="space-y-12 animate-in fade-in slide-in-from-bottom-4 duration-700">
-      <div className="border-b border-theme-border pb-8">
-        <h2 className="text-3xl md:text-4xl font-heading text-theme-text tracking-tighter uppercase font-black leading-none pt-2">Visão Geral</h2>
-        <p className="text-[10px] text-theme-muted uppercase tracking-[0.5em] mt-2 font-black italic">Consolidado da Operação Nacional</p>
+    <div className="space-y-12 animate-in fade-in slide-in-from-bottom-4 duration-700 relative">
+      {/* Ambient Glow */}
+      <div className="absolute top-0 right-0 w-[600px] h-[600px] bg-emerald-500/5 blur-[150px] rounded-full -mr-64 -mt-64 opacity-20 pointer-events-none" />
+
+      <div className="border-b border-white/5 pb-8">
+        <h2 className="text-4xl md:text-6xl font-display text-white tracking-tighter uppercase font-black leading-none pt-2 italic">Visão Geral</h2>
+        <p className="text-[10px] text-emerald-500 uppercase tracking-[0.5em] mt-4 font-black italic">Consolidado da Operação Nacional</p>
       </div>
 
-      {/* KPI Section — 3 Cards side-by-side */}
-      <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(200px, 1fr))", gap: 1, border: `1px solid ${T.border}` }}>
+      {/* KPI Section */}
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-px bg-white/5 border border-white/5 shadow-2xl">
         
-        {/* Card 1: Receita */}
-        <div style={{ 
-          background: T.bgField, border: `1px solid ${T.border}`, padding: "8px 12px", borderRadius: 0 
-        }}>
-          <label style={{ 
-            fontSize: 9, fontFamily: T.fontB, fontWeight: 700, 
-            textTransform: "uppercase", letterSpacing: 1, color: T.text3, display: "block", marginBottom: 4 
-          }}>
-            Receita Bruta
-          </label>
-          <div style={{ 
-            fontSize: 20, fontFamily: T.fontD, fontWeight: 900, color: T.text, textTransform: "uppercase" 
-          }}>
-            R$ {Number(stats?.totalRevenue || 0).toLocaleString("pt-BR", { minimumFractionDigits: 2 })}
+        {/* KPI Card Template */}
+        {[
+          { label: "Receita Bruta", value: `R$ ${Number(stats?.totalRevenue || 0).toLocaleString("pt-BR")}`, color: "text-white" },
+          { label: "Últimos 30 Dias", value: `R$ ${Number(stats?.revenue30d || 0).toLocaleString("pt-BR")}`, color: "text-emerald-500", growth: stats?.growth },
+          { label: "Pedidos Liquidados", value: stats?.totalOrders || 0, color: "text-white" },
+          { label: "Eventos Ativos", value: stats?.activeEvents || 0, color: "text-white" },
+          { label: "Convites Pendentes", value: stats?.pendingInvitesCount || 0, color: (stats?.pendingInvitesCount || 0) > 0 ? "text-red-500" : "text-white" },
+          { label: "Vendas sem Entrega", value: stats?.missingLinksCount || 0, color: (stats?.missingLinksCount || 0) > 0 ? "text-emerald-500" : "text-white" },
+          { label: "Novos Leads", value: stats?.pendingQuotesCount || 0, color: (stats?.pendingQuotesCount || 0) > 0 ? "text-emerald-500" : "text-white" }
+        ].map((kpi, idx) => (
+          <div key={idx} className="bg-[#111] p-8 group hover:bg-white/[0.02] transition-colors relative">
+            <div className="absolute top-0 left-0 w-full h-px bg-gradient-to-r from-transparent via-white/5 to-transparent opacity-0 group-hover:opacity-100 transition-opacity" />
+            <label className="text-[9px] font-black uppercase tracking-widest text-white/20 block mb-4 italic">{kpi.label}</label>
+            <div className="flex items-baseline justify-between">
+              <div className={`text-2xl md:text-3xl font-display font-black italic tracking-tighter ${kpi.color}`}>
+                {kpi.value}
+              </div>
+              {kpi.growth !== undefined && (
+                <span className={`text-[10px] font-black ${kpi.growth >= 0 ? "text-emerald-500" : "text-red-500"}`}>
+                  {kpi.growth >= 0 ? "↑" : "↓"} {Math.abs(kpi.growth)}%
+                </span>
+              )}
+            </div>
           </div>
-        </div>
-
-        {/* Card 2: Receita 30d */}
-        <div style={{ 
-          background: T.bgField, border: `1px solid ${T.border}`, padding: "8px 12px", borderRadius: 0 
-        }}>
-          <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start" }}>
-            <label style={{ 
-              fontSize: 9, fontFamily: T.fontB, fontWeight: 700, 
-              textTransform: "uppercase", letterSpacing: 1, color: T.text3, display: "block", marginBottom: 4 
-            }}>
-              Últimos 30 Dias
-            </label>
-            {stats?.growth !== undefined && (
-              <span style={{ 
-                fontSize: 9, fontWeight: 900, 
-                color: stats.growth >= 0 ? "#10b981" : "#f43f5e" 
-              }}>
-                {stats.growth >= 0 ? "↑" : "↓"} {Math.abs(stats.growth)}%
-              </span>
-            )}
-          </div>
-          <div style={{ 
-            fontSize: 20, fontFamily: T.fontD, fontWeight: 900, color: T.brand, textTransform: "uppercase" 
-          }}>
-            R$ {Number(stats?.revenue30d || 0).toLocaleString("pt-BR", { minimumFractionDigits: 2 })}
-          </div>
-        </div>
-
-        <div style={{ 
-          background: T.bgField, border: `1px solid ${T.border}`, padding: "8px 12px", borderRadius: 0 
-        }}>
-          <label style={{ 
-            fontSize: 9, fontFamily: T.fontB, fontWeight: 700, 
-            textTransform: "uppercase", letterSpacing: 1, color: T.text3, display: "block", marginBottom: 4 
-          }}>
-            Pedidos Liquidados
-          </label>
-          <div style={{ 
-            fontSize: 20, fontFamily: T.fontD, fontWeight: 900, color: T.text, textTransform: "uppercase" 
-          }}>
-            {stats?.totalOrders || 0}
-          </div>
-        </div>
-
-        <div style={{ 
-          background: T.bgField, border: `1px solid ${T.border}`, padding: "12px 16px", borderRadius: 0 
-        }}>
-          <label style={{ 
-            fontSize: 9, fontFamily: T.fontB, fontWeight: 700, 
-            textTransform: "uppercase", letterSpacing: 1, color: T.text3, display: "block", marginBottom: 4 
-          }}>
-            Eventos Ativos
-          </label>
-          <div style={{ 
-            fontSize: 22, fontFamily: T.fontD, fontWeight: 900, color: T.text, textTransform: "uppercase" 
-          }}>
-            {stats?.activeEvents || 0}
-          </div>
-        </div>
-
-        <div style={{ 
-          background: T.bgField, border: `1px solid ${T.border}`, padding: "12px 16px", borderRadius: 0 
-        }}>
-          <label style={{ 
-            fontSize: 9, fontFamily: T.fontB, fontWeight: 700, 
-            textTransform: "uppercase", letterSpacing: 1, color: T.text3, display: "block", marginBottom: 4 
-          }}>
-            Convites Pendentes
-          </label>
-          <div style={{ 
-            fontSize: 22, fontFamily: T.fontD, fontWeight: 900, color: (stats?.pendingInvitesCount || 0) > 0 ? "#f87171" : T.text, textTransform: "uppercase" 
-          }}>
-            {stats?.pendingInvitesCount || 0}
-          </div>
-        </div>
-
-        <div style={{ 
-          background: T.bgField, border: `1px solid ${T.border}`, padding: "12px 16px", borderRadius: 0 
-        }}>
-          <label style={{ 
-            fontSize: 9, fontFamily: T.fontB, fontWeight: 700, 
-            textTransform: "uppercase", letterSpacing: 1, color: T.text3, display: "block", marginBottom: 4 
-          }}>
-            Vendas sem Entrega
-          </label>
-          <div style={{ 
-            fontSize: 22, fontFamily: T.fontD, fontWeight: 900, color: (stats?.missingLinksCount || 0) > 0 ? T.brand : T.text, textTransform: "uppercase" 
-          }}>
-            {stats?.missingLinksCount || 0}
-          </div>
-        </div>
-
-        <div style={{ 
-          background: T.bgField, border: `1px solid ${T.border}`, padding: "12px 16px", borderRadius: 0 
-        }}>
-          <label style={{ 
-            fontSize: 9, fontFamily: T.fontB, fontWeight: 700, 
-            textTransform: "uppercase", letterSpacing: 1, color: T.text3, display: "block", marginBottom: 4 
-          }}>
-            Novos Leads (Orçamentos)
-          </label>
-          <div style={{ 
-            fontSize: 22, fontFamily: T.fontD, fontWeight: 900, color: (stats?.pendingQuotesCount || 0) > 0 ? T.brand : T.text, textTransform: "uppercase" 
-          }}>
-            {stats?.pendingQuotesCount || 0}
-          </div>
-        </div>
-
+        ))}
       </div>
 
-      <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(min(100%, 500px), 1fr))", gap: 16 }}>
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
         {/* Charts */}
-        <div style={{ 
-          border: `1px solid ${T.border}`, 
-          padding: "12px", 
-          background: `${T.bgCard}88`,
-          minHeight: 280
-        }}>
-          <h3 style={{ 
-            fontSize: 9, fontWeight: 900, textTransform: "uppercase", 
-            letterSpacing: "0.4em", color: T.text3, marginBottom: 16,
-            borderBottom: `1px solid ${T.border}`, paddingBottom: 8
-          }}>
-            Timeline de Conversão
-          </h3>
-          <div className="h-[200px] w-full" style={{ minWidth: "0", minHeight: "200px" }}>
+        <div className="bg-[#111] border border-white/5 p-8 shadow-2xl relative group">
+          <div className="absolute top-0 left-0 w-1 h-full bg-emerald-500 opacity-20 group-hover:opacity-100 transition-opacity" />
+          <h3 className="text-[10px] font-black uppercase tracking-[0.5em] text-white/40 mb-8 italic">Timeline de Conversão</h3>
+          <div className="h-[250px] w-full">
              <ResponsiveContainer width="100%" height="100%">
                 <AreaChart data={chartData} margin={{ top: 10, right: 10, left: -20, bottom: 0 }}>
                    <defs>
                       <linearGradient id="gradValor" x1="0" y1="0" x2="0" y2="1">
-                         <stop offset="5%" stopColor={T.brand} stopOpacity={0.2}/>
-                         <stop offset="95%" stopColor={T.brand} stopOpacity={0}/>
+                         <stop offset="5%" stopColor="#10b981" stopOpacity={0.2}/>
+                         <stop offset="95%" stopColor="#10b981" stopOpacity={0}/>
                       </linearGradient>
                    </defs>
-                   <CartesianGrid strokeDasharray="3 3" vertical={false} stroke={T.border} opacity={0.1} />
-                   <XAxis dataKey="name" axisLine={false} tickLine={false} tick={{fontSize: 9, fill: T.text3}} dy={10} />
-                   <Tooltip contentStyle={{background: T.bg, border: `1px solid ${T.border}`, fontSize: 10, borderRadius: 0, color: T.text}} />
-                   <Area type="monotone" dataKey="valor" stroke={T.brand} fillOpacity={1} fill="url(#gradValor)" strokeWidth={2} />
+                   <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="rgba(255,255,255,0.05)" />
+                   <XAxis dataKey="name" axisLine={false} tickLine={false} tick={{fontSize: 9, fill: "rgba(255,255,255,0.2)", fontWeight: 800}} dy={10} />
+                   <Tooltip contentStyle={{background: "#0a0a0a", border: "1px solid rgba(255,255,255,0.05)", fontSize: 10, borderRadius: 0, color: "#fff"}} />
+                   <Area type="monotone" dataKey="valor" stroke="#10b981" fillOpacity={1} fill="url(#gradValor)" strokeWidth={3} />
                 </AreaChart>
              </ResponsiveContainer>
           </div>
        </div>
 
         {/* Alertas */}
-        <div style={{ 
-          border: `1px solid ${T.border}`, 
-          padding: "12px", 
-          background: `${T.bgCard}88`
-        }}>
-          <h3 style={{ 
-            fontSize: 9, fontWeight: 900, textTransform: "uppercase", 
-            letterSpacing: "0.4em", color: T.text3, marginBottom: 16,
-            borderBottom: `1px solid ${T.border}`, paddingBottom: 8
-          }}>
-            Pendências de Curadoria
-          </h3>
-          <div style={{ display: "flex", flexDirection: "column", gap: 8 }}>
+        <div className="bg-[#111] border border-white/5 p-8 shadow-2xl relative">
+          <h3 className="text-[10px] font-black uppercase tracking-[0.5em] text-white/40 mb-8 italic">Pendências de Curadoria</h3>
+          <div className="space-y-4">
             {pendingEvents.length > 0 ? pendingEvents.map(event => (
-              <div key={event.id} style={{ 
-                display: "flex", alignItems: "center", justifyContent: "space-between", 
-                padding: "10px 12px", border: `1px solid ${T.border}`, 
-                background: T.bgCard, transition: "all 0.2s" 
-              }}>
-                <div>
-                  <div style={{ 
-                    fontSize: 12, color: T.text, fontWeight: 900, 
-                    textTransform: "uppercase", letterSpacing: -0.5 
-                  }}>{event.title}</div>
-
-                  <div style={{ display: "flex", gap: 8, marginTop: 4 }}>
-                     {!event.coverPhotoUrl && <span style={{ fontSize: 8, color: "#f87171", textTransform: "uppercase", fontWeight: 900, letterSpacing: 1 }}>Sem Capa</span>}
-                     {!event.lightroomUrl && <span style={{ fontSize: 8, color: T.brand, textTransform: "uppercase", fontWeight: 900, letterSpacing: 1 }}>Sem Fotos</span>}
+              <div key={event.id} className="flex items-center justify-between p-5 border border-white/5 bg-white/[0.02] hover:border-emerald-500/30 transition-all group">
+                <div className="space-y-2">
+                  <div className="text-sm font-display font-black text-white uppercase italic tracking-widest">{event.title}</div>
+                  <div className="flex gap-4">
+                     {!event.coverPhotoUrl && <span className="text-[8px] font-black bg-red-500/10 text-red-500 px-2 py-0.5 uppercase tracking-widest border border-red-500/20">Sem Capa</span>}
+                     {!event.lightroomUrl && <span className="text-[8px] font-black bg-emerald-500/10 text-emerald-500 px-2 py-0.5 uppercase tracking-widest border border-emerald-500/20">Sem Fotos</span>}
                   </div>
                 </div>
                 <button 
                   onClick={() => onEditEvent(event.id)}
-                  style={{ 
-                    background: "transparent", border: `1px solid ${T.border2}`, color: T.text2, 
-                    fontSize: 10, fontWeight: 900, textTransform: "uppercase", 
-                    letterSpacing: 1.5, cursor: "pointer", padding: "6px 12px",
-                    transition: "all 0.2s"
-                  }}
-                  onMouseEnter={(e) => { e.currentTarget.style.borderColor = T.brand; e.currentTarget.style.color = T.brand; }}
-                  onMouseLeave={(e) => { e.currentTarget.style.borderColor = T.border2; e.currentTarget.style.color = T.text2; }}
+                  className="px-6 py-2 border border-white/10 text-[9px] font-black uppercase tracking-widest text-white/40 hover:text-emerald-500 hover:border-emerald-500 transition-all"
                 >Ajustar</button>
               </div>
             )) : (
-              <div style={{ padding: "40px 0", textAlign: "center", fontSize: 9, color: T.text3, textTransform: "uppercase", fontWeight: 900, letterSpacing: 2 }}>Todos os ativos estão normalizados</div>
+              <div className="py-20 text-center">
+                <div className="text-[10px] font-black text-white/20 uppercase tracking-[0.4em] italic">Ativos Normalizados</div>
+              </div>
             )}
           </div>
         </div>

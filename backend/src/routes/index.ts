@@ -350,5 +350,6 @@ router.post("/public/phygital/upload", upload.single("photo"), PhygitalControlle
 router.get("/admin/phygital/queue", requireAuth, requireRole("ADMIN"), PhygitalController.listPending);
 router.get("/admin/phygital/all", requireAuth, requireRole("ADMIN"), PhygitalController.listAllByEvent);
 router.post("/admin/phygital/confirm", requireAuth, requireRole("ADMIN"), PhygitalController.confirmPrint);
+router.post("/admin/phygital/simulate", requireAuth, requireRole("ADMIN"), PhygitalController.simulate);
 
 export default router;

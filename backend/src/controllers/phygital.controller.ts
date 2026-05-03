@@ -82,4 +82,31 @@ export class PhygitalController {
       res.status(500).json({ error: "Falha ao confirmar impressão." });
     }
   }
+
+  /**
+   * Endpoint de Simulação para Stress Test
+   */
+  static async simulate(req: Request, res: Response) {
+    try {
+      const { eventId, referenceCode, imageUrl, customerName } = req.body;
+      
+      if (!eventId || !referenceCode) {
+        return res.status(400).json({ error: "eventId e referenceCode são obrigatórios." });
+      }
+
+      const print = await prisma.phygitalPrint.create({
+        data: {
+          eventId,
+          referenceCode,
+          imageUrl: imageUrl || 'https://images.unsplash.com/photo-1511285560929-80b456fea0bc?q=80&w=2069&auto=format&fit=crop',
+          customerName: customerName || 'Simulado',
+          status: 'PENDING_PRINT'
+        }
+      });
+
+      res.status(201).json({ success: true, print });
+    } catch (error: any) {
+      res.status(500).json({ error: "Falha na simulação.", details: error.message });
+    }
+  }
 }
