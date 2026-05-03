@@ -3,7 +3,6 @@ import { isAxiosError } from "axios";
 import { useNavigate, Link } from "react-router-dom";
 import { useAuth } from "../hooks/useAuth";
 import { Helmet } from "react-helmet-async";
-import { T } from "../lib/theme";
 import { ThemeToggle } from "../components/ThemeToggle";
 import { API } from "../lib/api";
 
