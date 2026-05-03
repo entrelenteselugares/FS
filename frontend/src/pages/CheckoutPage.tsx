@@ -3,6 +3,8 @@ import { useParams, useNavigate, useSearchParams } from "react-router-dom";
 import { ShieldCheck, ArrowLeft, CheckCircle2, Clock, RefreshCw, Lock } from "lucide-react";
 
 
+import { QRCodeSVG } from "qrcode.react";
+
 import { API } from "../lib/api";
 import { AuthContext } from "../contexts/AuthContextBase";
 import { useContext } from "react";
@@ -419,9 +421,36 @@ export const CheckoutPage = () => {
           </div>
         </div>
         <div className="bg-theme-bg-muted border border-theme-border p-8 space-y-8 rounded-sm">
-          <div className="text-center space-y-3">
+          <div className="text-center space-y-2">
             <h1 className="text-2xl font-black italic tracking-tighter text-theme-text">QUASE LÁ!</h1>
-            <p className="text-[11px] text-theme-text-muted uppercase tracking-widest">Complete o pagamento na página do Mercado Pago</p>
+            <p className="text-[11px] text-brand-tactical font-black uppercase tracking-[0.3em]">Escaneie para liberação imediata</p>
+          </div>
+
+          <div className="flex justify-center">
+            <div className="bg-white p-6 rounded-xl shadow-2xl border-4 border-white flex justify-center">
+              {pixData.qrCodeBase64 ? (
+                <img 
+                  src={`data:image/png;base64,${pixData.qrCodeBase64}`}
+                  alt="Pix QR Code"
+                  width={240}
+                  height={240}
+                  className="block"
+                />
+              ) : (
+                <QRCodeSVG 
+                  value={pixData.qrCode}
+                  size={240}
+                  level="H"
+                  includeMargin={true}
+                  fgColor="#000000"
+                  bgColor="#FFFFFF"
+                />
+              )}
+            </div>
+          </div>
+
+          <div className="flex items-center justify-center gap-2 text-theme-text-muted">
+            <Clock size={12} /> <span className="text-[11px] font-black uppercase tracking-widest">Expira em {fmtTimer(pixSecondsLeft)}</span>
           </div>
 
           {pixData.ticketUrl && (
@@ -430,18 +459,13 @@ export const CheckoutPage = () => {
                 href={pixData.ticketUrl} 
                 target="_blank" 
                 rel="noreferrer"
-                className="inline-flex items-center justify-center gap-3 w-full px-8 py-5 bg-[#00B1EA] text-white text-[12px] font-black uppercase tracking-widest hover:brightness-110 transition-all rounded-sm shadow-lg shadow-[#00B1EA]/20"
+                className="inline-flex items-center justify-center gap-3 w-full px-8 py-5 bg-brand-tactical/10 border border-brand-tactical/30 text-brand-tactical text-[12px] font-black uppercase tracking-widest hover:bg-brand-tactical/20 transition-all rounded-sm"
               >
                 <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg>
-                Pagar com Pix no Mercado Pago
+                Abrir QR Code no Mercado Pago
               </a>
-              <p className="text-[9px] text-theme-text-muted uppercase tracking-widest">A página de pagamento abrirá em uma nova aba</p>
             </div>
           )}
-
-          <div className="flex items-center justify-center gap-2 text-theme-text-muted">
-            <Clock size={12} /> <span className="text-[11px] font-black uppercase tracking-widest">Expira em {fmtTimer(pixSecondsLeft)}</span>
-          </div>
 
           <div className="p-5 bg-theme-bg border border-theme-border space-y-3">
              <label className="text-[10px] font-black text-theme-text-muted uppercase tracking-widest opacity-60">Pix Copia e Cola</label>
