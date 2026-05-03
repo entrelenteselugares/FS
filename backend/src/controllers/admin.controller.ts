@@ -509,8 +509,22 @@ export async function adminDeleteEvent(req: AuthRequest, res: Response): Promise
     // Se o usuário pediu hard delete OU se não tem pedidos aprovados, deletamos fisicamente
     if (hardDelete || !hasPaidOrders) {
       console.log(`[AdminDelete] Executando HARD DELETE para o evento ${id}`);
-      // Deleta relações em cascata se necessário (ou o Prisma lida se configurado)
-      await prisma.event.delete({ where: { id: String(id) } });
+      
+      await prisma.$transaction([
+        // Limpeza profunda de dependências
+        prisma.photoLike.deleteMany({ where: { eventId: String(id) } }),
+        prisma.calendarSlot.deleteMany({ where: { eventId: String(id) } }),
+        prisma.eventMedia.deleteMany({ where: { eventId: String(id) } }),
+        prisma.phygitalPrint.deleteMany({ where: { eventId: String(id) } }),
+        prisma.orderItem.deleteMany({ where: { order: { eventId: String(id) } } }),
+        prisma.order.deleteMany({ where: { eventId: String(id), status: { not: "APROVADO" } } }),
+        
+        // Se houver pedidos aprovados e ainda assim for HARD DELETE (forçado), deleta eles também
+        ...(hardDelete ? [prisma.order.deleteMany({ where: { eventId: String(id) } })] : []),
+
+        // Finalmente deleta o evento
+        prisma.event.delete({ where: { id: String(id) } })
+      ]);
     } else {
       console.log(`[AdminDelete] Executando SOFT DELETE para o evento ${id} (possui pedidos pagos)`);
       await prisma.event.update({
@@ -519,14 +533,14 @@ export async function adminDeleteEvent(req: AuthRequest, res: Response): Promise
       });
     }
 
-    await audit(req, "EVENT_DELETED", "Event", String(id), null, { hard: !hasPaidOrders });
+    await audit(req, "EVENT_DELETED", "Event", String(id), null, { hard: hardDelete || !hasPaidOrders });
 
-    res.json({ ok: true, deleted: !hasPaidOrders });
-  } catch (err: unknown) {
+    res.json({ ok: true, deleted: hardDelete || !hasPaidOrders });
+  } catch (err: any) {
     console.error("adminDeleteEvent Error:", err);
     res.status(500).json({ 
       error: "Erro ao excluir evento.", 
-      details: "Verifique se existem dependências ativas que impedem a exclusão física." 
+      details: err.message || "Verifique se existem dependências ativas que impedem a exclusão física." 
     });
   }
 }
