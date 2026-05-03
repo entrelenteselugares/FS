@@ -45,25 +45,27 @@ export class AuthController {
       // 2. SEGUNDA OPÇÃO: SUPABASE CLOUD (Apenas se o local falhar)
       if (!user) {
         try {
-          // Usamos o supabaseAdmin direto
-          const { data: authData, error: authError } = await supabaseAdmin.auth.signInWithPassword({
-            email: cleanEmail,
-            password: senha
-          });
+          // Verifica se o Supabase está configurado antes de tentar usar
+          if (process.env.SUPABASE_URL && process.env.SUPABASE_SERVICE_ROLE_KEY) {
+            const { data: authData, error: authError } = await supabaseAdmin.auth.signInWithPassword({
+              email: cleanEmail,
+              password: senha
+            });
 
-          if (!authError && authData.user) {
-            user = await prisma.user.findUnique({ where: { email: cleanEmail } });
-            authMethod = "SUPABASE";
-            console.log(`[AUTH] Sucesso via Supabase Cloud: ${cleanEmail}`);
+            if (!authError && authData.user) {
+              user = await prisma.user.findUnique({ where: { email: cleanEmail } });
+              authMethod = "SUPABASE";
+              console.log(`[AUTH] Sucesso via Supabase Cloud: ${cleanEmail}`);
+            }
           }
         } catch (sbErr: unknown) {
-          console.error(`[AUTH] Supabase indisponível:`, sbErr instanceof Error ? sbErr.message : String(sbErr));
+          console.error(`[AUTH] Supabase indisponível ou mal configurado:`, sbErr instanceof Error ? sbErr.message : String(sbErr));
         }
       }
 
       // 3. NENHUMA AUTENTICAÇÃO VÁLIDA — acesso negado
       if (!user) {
-        return res.status(401).json({ error: "Credenciais inválidas." });
+        return res.status(401).json({ error: "Credenciais inválidas ou usuário não encontrado." });
       }
 
       const payload = { userId: user.id, role: user.role, nome: user.nome, email: user.email };
@@ -80,8 +82,16 @@ export class AuthController {
       });
 
     } catch (error: unknown) {
-      console.error("[AUTH FATAL]:", error instanceof Error ? error.message : String(error));
-      return res.status(500).json({ error: "Erro crítico no portal de login." });
+      const msg = error instanceof Error ? error.message : String(error);
+      console.error("[AUTH FATAL]:", msg);
+      return res.status(500).json({ 
+        error: "Erro crítico no portal de login.",
+        details: msg,
+        diagnostic: {
+          has_db: !!process.env.DATABASE_URL,
+          has_sb: !!process.env.SUPABASE_URL
+        }
+      });
     }
   }
 
