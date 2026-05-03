@@ -108,6 +108,8 @@ export class PhygitalController {
           referenceCode,
           imageUrl: imageUrl || 'https://images.unsplash.com/photo-1511285560929-80b456fea0bc?q=80&w=2069&auto=format&fit=crop',
           customerName: customerName || 'Simulado',
+          customerPhone: '00000000000',
+          customerCep: '00000000',
           status: 'PENDING_PRINT'
         }
       });
