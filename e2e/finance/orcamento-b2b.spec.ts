@@ -52,17 +52,39 @@ test.describe('Financial Flow: Orçamento B2B (Full Cycle)', () => {
     await expect(nextBtn).toBeVisible({ timeout: 5000 });
     await nextBtn.click();
 
-    // — Passo 2: Serviços —
-    console.log('[TEST] Phase 1: Selecting services...');
+    // — Passo 2: Configuração e Serviços —
+    console.log('[TEST] Phase 1: Configuring duration and services...');
     await expect(page.getByText(/Passo 2/i)).toBeVisible({ timeout: 10000 });
     
-    // Seleciona um serviço específico
-    const serviceText = page.getByText(/CASAMENTO CIVIL PHYGITAL PREMIUM/i);
+    // Interage com o slider de Duração (6 horas)
+    const durationSlider = page.locator('input[type="range"]').first();
+    await durationSlider.fill('6');
+    await expect(page.getByText(/6 HORAS/i)).toBeVisible();
+    console.log('[TEST] ✅ Duration set to 6 hours.');
+
+    // Interage com o slider de Dias (2 dias)
+    const daysSlider = page.locator('input[type="range"]').nth(1);
+    await daysSlider.fill('2');
+    await expect(page.getByText(/2 DIAS/i)).toBeVisible();
+    console.log('[TEST] ✅ Days set to 2.');
+
+    // Seleciona Equipamento: MOBILE MAKER
+    const mobileMakerBtn = page.getByRole('button', { name: 'MOBILE MAKER' });
+    await mobileMakerBtn.click();
+    console.log('[TEST] ✅ Mobile Maker selected.');
+
+    // Seleciona Finalidade: BUSINESS
+    const businessBtn = page.getByRole('button', { name: 'BUSINESS' });
+    await businessBtn.click();
+    console.log('[TEST] ✅ Business usage selected.');
+
+    // Seleciona um serviço de B2B/Corporativo visível na interface
+    const serviceText = page.getByText(/Ativação Phygital Corporativa/i).first();
     await expect(serviceText).toBeVisible({ timeout: 10000 });
     await serviceText.click();
     
     await page.waitForTimeout(1000);
-    console.log('[TEST] Service selected.');
+    console.log('[TEST] ✅ Service selected.');
 
     const continueBtn = page.getByRole('button', { name: /^CONTINUAR/i });
     await expect(continueBtn).toBeVisible({ timeout: 5000 });

@@ -41,6 +41,12 @@ test.describe('Venda Rápida - Guest Checkout (Atrito Zero)', () => {
     const mpBrickContainer = page.locator('#paymentBrick_container iframe').first();
     await expect(mpBrickContainer).toBeVisible({ timeout: 15000 });
     console.log('[TEST] ✅ Brick do Mercado Pago renderizado no estado authorized.');
+    
+    // ── Validação do Botão de Pagamento ──────────────────────────────
+    // O texto "Pix Copia e Cola" só aparece após clicar em Pagar.
+    // Para este teste de atrito zero, validamos que o botão de checkout está pronto.
+    await expect(page.getByRole('button', { name: /Pagar/i })).toBeVisible({ timeout: 10000 });
+    console.log('[TEST] ✅ Gateway pronto para receber pagamento do Guest.');
 
     console.log('[TEST] 🎉 Venda Rápida (Magic Link / Atrito Zero) — PASSOU!');
   });
