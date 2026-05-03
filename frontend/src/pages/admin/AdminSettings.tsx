@@ -65,7 +65,7 @@ export const AdminSettings: React.FC = () => {
         <button 
           onClick={handleSave}
           disabled={saving}
-          className="bg-brand-tactical text-theme-text text-[10px] font-bold uppercase tracking-[0.4em] px-10 py-5 hover:brightness-110 transition-all rounded-none flex items-center gap-2 disabled:opacity-50"
+          className="bg-brand-tactical text-brand-text text-[10px] font-bold uppercase tracking-[0.4em] px-10 py-5 hover:brightness-110 transition-all rounded-none flex items-center gap-2 disabled:opacity-50"
         >
           {saving ? "SINCRONIZANDO..." : <><Save size={14} /> SALVAR ALTERAÇÕES</>}
         </button>

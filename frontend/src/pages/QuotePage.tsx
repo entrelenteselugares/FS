@@ -951,7 +951,7 @@ export const QuotePage = () => {
                         alert("Por favor, selecione pelo menos um serviço.");
                       }
                     }}
-                    className="px-8 py-4 bg-emerald-500 text-theme-text font-display font-black text-[10px] uppercase tracking-widest hover:bg-white transition-all shadow-xl shadow-emerald-500/10"
+                    className="px-8 py-4 bg-emerald-500 text-white font-display font-black text-[10px] uppercase tracking-widest hover:bg-white transition-all shadow-xl shadow-emerald-500/10"
                   >CONTINUAR &rarr;</button>
                 </div>
               </div>
@@ -1033,7 +1033,7 @@ export const QuotePage = () => {
               <div className="flex flex-col gap-4 max-w-sm mx-auto">
                 <button 
                   onClick={() => window.open('https://wa.me/5519997843817', '_blank')}
-                  className="w-full py-6 bg-emerald-500 text-theme-text font-display font-black text-xs uppercase tracking-[0.3em] hover:bg-white transition-all shadow-2xl shadow-emerald-500/20"
+                  className="w-full py-6 bg-emerald-500 text-white font-display font-black text-xs uppercase tracking-[0.3em] hover:bg-white transition-all shadow-2xl shadow-emerald-500/20"
                 >
                   FALAR COM ESPECIALISTA
                 </button>

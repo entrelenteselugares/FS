@@ -1,4 +1,4 @@
-﻿import React, { useState } from "react";
+import React, { useState } from "react";
 import { isAxiosError } from "axios";
 import { useNavigate, Link } from "react-router-dom";
 import { useAuth } from "../hooks/useAuth";
@@ -192,7 +192,7 @@ export const LoginPage: React.FC = () => {
               id="btn-login-submit"
               type="submit"
               disabled={loading}
-              className="w-full py-5 bg-emerald-500 text-theme-text font-display font-black text-xs uppercase tracking-[0.4em] hover:bg-white transition-all shadow-xl shadow-emerald-500/10 disabled:opacity-50 disabled:cursor-not-allowed mt-4"
+              className="w-full py-5 bg-emerald-500 text-white font-display font-black text-xs uppercase tracking-[0.4em] hover:bg-emerald-600 transition-all shadow-xl shadow-emerald-500/10 disabled:opacity-50 disabled:cursor-not-allowed mt-4"
             >
               {loading ? "VALIDANDO..." : "ENTRAR NO SISTEMA"}
             </button>
@@ -203,7 +203,7 @@ export const LoginPage: React.FC = () => {
             <p className="text-[9px] font-black text-theme-subtle uppercase tracking-widest mb-4">
               Solicitação de novas credenciais
             </p>
-            <Link to="/register" className="text-[11px] font-display font-black text-emerald-500 uppercase tracking-widest hover:text-white transition-colors">
+            <Link to="/register" className="text-[11px] font-display font-black text-emerald-500 uppercase tracking-widest hover:text-emerald-700 transition-colors">
               INICIAR REGISTRO PROFISSIONAL →
             </Link>
           </div>

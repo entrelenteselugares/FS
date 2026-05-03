@@ -911,8 +911,8 @@ export default function UnidadeFixaDashboard() {
                               <span className="text-[9px] font-black text-theme-muted uppercase tracking-widest">Horas</span>
                            </div>
                            <div className="flex items-center gap-2 p-1 bg-theme-bg border border-theme-border">
-                              <button onClick={() => setLpFixedTime(!lpFixedTime)} className={`px-4 py-2 text-[8px] font-black uppercase tracking-widest border transition-all ${lpFixedTime ? 'bg-brand-tactical border-brand-tactical text-brand-text' : 'border-transparent text-theme-muted hover:text-theme-text'}`}>Fixo</button>
-                              <button onClick={() => setLpHideDuration(!lpHideDuration)} className={`px-4 py-2 text-[8px] font-black uppercase tracking-widest border transition-all ${lpHideDuration ? 'bg-brand-tactical border-brand-tactical text-brand-text' : 'border-transparent text-theme-muted hover:text-theme-text'}`}>Ocultar</button>
+                              <button onClick={() => setLpFixedTime(!lpFixedTime)} className={`px-4 py-2 text-[8px] font-black uppercase tracking-widest border transition-all ${lpFixedTime ? 'bg-brand-tactical border-brand-tactical text-brand-text' : 'border-transparent text-theme-muted hover:text-brand-text'}`}>Fixo</button>
+                              <button onClick={() => setLpHideDuration(!lpHideDuration)} className={`px-4 py-2 text-[8px] font-black uppercase tracking-widest border transition-all ${lpHideDuration ? 'bg-brand-tactical border-brand-tactical text-brand-text' : 'border-transparent text-theme-muted hover:text-brand-text'}`}>Ocultar</button>
                            </div>
                         </div>
                      </div>

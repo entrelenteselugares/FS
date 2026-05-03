@@ -278,7 +278,7 @@ export const AdminServices: React.FC = () => {
               </p>
               <div className="grid grid-cols-2 gap-4">
                  <button onClick={() => setConfirmDelete(null)} className="p-4 border border-theme-border text-theme-muted text-[9px] font-black uppercase tracking-widest hover:text-white transition-all">CANCELAR</button>
-                 <button onClick={executeDelete} className="p-4 bg-red-900 text-theme-text text-[9px] font-black uppercase tracking-widest hover:brightness-110 transition-all">REMOVER AGORA</button>
+                 <button onClick={executeDelete} className="p-4 bg-red-900 text-white text-[9px] font-black uppercase tracking-widest hover:brightness-110 transition-all">REMOVER AGORA</button>
               </div>
            </div>
         </div>

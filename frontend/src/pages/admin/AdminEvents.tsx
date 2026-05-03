@@ -887,7 +887,7 @@ export const AdminEvents: React.FC<AdminEventsProps> = ({ initialEditEventId }) 
               </button>
               <button 
                 onClick={() => handleDelete(confirmDelete.id)}
-                className="flex-1 py-4 bg-red-600 text-theme-text text-[10px] font-black uppercase tracking-widest hover:bg-red-500 transition-colors"
+                className="flex-1 py-4 bg-red-600 text-white text-[10px] font-black uppercase tracking-widest hover:bg-red-500 transition-colors"
               >
                 Confirmar Exclusão
               </button>

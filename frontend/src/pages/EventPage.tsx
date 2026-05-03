@@ -422,7 +422,7 @@ export default function EventPage() {
                             <img src={url} alt={refCode} className={`w-full h-full object-cover transition-transform duration-700 group-hover:scale-110 ${isSelected ? "opacity-30 scale-95" : "opacity-100"}`} />
                             
                             {/* Selection Status Glass */}
-                            <div className={`absolute bottom-0 left-0 right-0 p-4 lg:p-5 z-20 flex justify-between items-center backdrop-blur-md transition-all duration-500 ${isSelected ? "bg-emerald-500 text-theme-text" : "bg-black/40 group-hover:bg-black/80"}`}>
+                            <div className={`absolute bottom-0 left-0 right-0 p-4 lg:p-5 z-20 flex justify-between items-center backdrop-blur-md transition-all duration-500 ${isSelected ? "bg-emerald-500 text-white" : "bg-black/40 group-hover:bg-black/80"}`}>
                                <div className="flex flex-col">
                                  <span className="text-[10px] font-black uppercase tracking-widest opacity-60">Ref.</span>
                                  <span className="text-xl lg:text-2xl font-black tracking-tighter font-display leading-none">
@@ -564,7 +564,7 @@ export default function EventPage() {
               <div className="space-y-8 animate-in fade-in slide-in-from-bottom-4 duration-1000">
                 <div className="space-y-4">
                   {event.lightroomUrl && (
-                    <a href={event.lightroomUrl} target="_blank" rel="noreferrer" className="w-full h-20 bg-emerald-500 text-theme-text font-black uppercase tracking-[0.2em] text-xs flex items-center justify-center gap-4 shadow-[0_20px_40px_rgba(16,185,129,0.2)]">
+                    <a href={event.lightroomUrl} target="_blank" rel="noreferrer" className="w-full h-20 bg-emerald-500 text-white font-black uppercase tracking-[0.2em] text-xs flex items-center justify-center gap-4 shadow-[0_20px_40px_rgba(16,185,129,0.2)]">
                       <Camera size={20} /> Acessar Todas as Fotos
                     </a>
                   )}
@@ -619,7 +619,7 @@ export default function EventPage() {
           </div>
           <button 
             onClick={handleUnlockClick}
-            className="px-8 py-4 bg-emerald-500 text-theme-text font-black uppercase tracking-widest text-[10px] shadow-[0_10px_25px_rgba(16,185,129,0.4)]"
+            className="px-8 py-4 bg-emerald-500 text-white font-black uppercase tracking-widest text-[10px] shadow-[0_10px_25px_rgba(16,185,129,0.4)]"
           >
             Comprar
           </button>

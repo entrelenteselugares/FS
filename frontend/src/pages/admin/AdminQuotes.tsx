@@ -354,7 +354,7 @@ export const AdminQuotes: React.FC = () => {
           <div className="flex flex-col gap-2 w-full md:w-auto self-end">
             <button 
               onClick={() => setIsNewQuoteModalOpen(true)}
-              className="bg-emerald-500 text-theme-text font-display font-black uppercase tracking-[0.2em] px-10 py-5 text-[11px] flex items-center justify-center gap-3 hover:brightness-110 shadow-xl transition-all active:scale-95 italic"
+              className="bg-emerald-500 text-white font-display font-black uppercase tracking-[0.2em] px-10 py-5 text-[11px] flex items-center justify-center gap-3 hover:brightness-110 shadow-xl transition-all active:scale-95 italic"
             >
               <Plus size={18} /> NOVO ORÇAMENTO
             </button>
@@ -699,7 +699,7 @@ export const AdminQuotes: React.FC = () => {
                             <button 
                               onClick={handleApprove} 
                               disabled={finalPrice <= 0 || approving} 
-                              className="md:col-span-3 bg-emerald-500 text-theme-text p-6 text-[12px] font-black uppercase tracking-[0.4em] hover:brightness-110 transition-all shadow-xl flex items-center justify-center gap-4 disabled:opacity-50 italic"
+                              className="md:col-span-3 bg-emerald-500 text-white p-6 text-[12px] font-black uppercase tracking-[0.4em] hover:brightness-110 transition-all shadow-xl flex items-center justify-center gap-4 disabled:opacity-50 italic"
                             >
                               {approving ? "ENVIANDO..." : <><Zap size={22} /> DISPARAR ORÇAMENTO OFICIAL</>}
                             </button>
@@ -800,7 +800,7 @@ export const AdminQuotes: React.FC = () => {
                     <label className="text-[9px] font-black text-theme-text-muted uppercase tracking-widest">Urgência</label>
                     <div className="grid grid-cols-3 gap-2">
                        {(['HIGH', 'MEDIUM', 'LOW'] as const).map(u => (
-                         <button key={u} type="button" onClick={() => setNewQuoteData({...newQuoteData, urgency: u})} className={`py-2.5 border text-[8px] font-black uppercase tracking-widest transition-all rounded-sm ${newQuoteData.urgency === u ? 'border-brand-tactical bg-brand-tactical text-brand-text shadow-md' : 'border-theme-border text-theme-text-muted hover:border-theme-text'}`}>
+                         <button key={u} type="button" onClick={() => setNewQuoteData({...newQuoteData, urgency: u})} className={`py-2.5 border text-[8px] font-black uppercase tracking-widest transition-all rounded-sm ${newQuoteData.urgency === u ? 'border-brand-tactical bg-brand-tactical text-brand-text shadow-md' : 'border-theme-border text-brand-text-muted hover:border-theme-text'}`}>
                            {u === 'HIGH' ? 'Urgente' : u === 'MEDIUM' ? 'Normal' : 'Baixa'}
                          </button>
                        ))}

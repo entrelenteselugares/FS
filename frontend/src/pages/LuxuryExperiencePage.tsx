@@ -168,7 +168,7 @@ export default function LuxuryExperiencePage() {
               href={(event.lightroomUrl || event.driveUrl || '#').trim().replace(/\s/g, '')} 
               target="_blank" 
               rel="noopener noreferrer"
-              className="inline-flex items-center gap-4 px-10 py-5 bg-emerald-500 text-theme-text font-display font-black text-sm uppercase tracking-widest shadow-xl shadow-emerald-500/10 hover:scale-[1.02] transition-all"
+              className="inline-flex items-center gap-4 px-10 py-5 bg-emerald-500 text-white font-display font-black text-sm uppercase tracking-widest shadow-xl shadow-emerald-500/10 hover:scale-[1.02] transition-all"
             >
               ACESSAR GALERIA <ExternalLink size={14} />
             </a>
@@ -227,7 +227,7 @@ export default function LuxuryExperiencePage() {
                       </div>
                     {/* Badge de Sugestão Inteligente */}
                     {idx === 0 && (
-                      <div className="absolute top-4 left-4 bg-emerald-500 text-theme-text text-[8px] font-black px-3 py-1 uppercase tracking-widest shadow-xl">
+                      <div className="absolute top-4 left-4 bg-emerald-500 text-white text-[8px] font-black px-3 py-1 uppercase tracking-widest shadow-xl">
                         Mais Desejado
                       </div>
                     )}

@@ -175,19 +175,19 @@ export default function AdminSuppliers() {
         <div className="flex bg-theme-bg border border-theme-border/60 p-1.5 shadow-sm">
           <button 
             onClick={() => setView("production")} 
-            className={`px-6 py-3 text-[9px] font-black uppercase tracking-widest transition-all whitespace-nowrap ${view === "production" ? 'bg-brand-tactical text-zinc-950 shadow-md' : 'text-theme-muted hover:text-theme-text'}`}
+            className={`px-6 py-3 text-[9px] font-black uppercase tracking-widest transition-all whitespace-nowrap ${view === "production" ? 'bg-brand-tactical text-zinc-950 shadow-md' : 'text-theme-muted hover:text-brand-text'}`}
           >
             Fila de Produção
           </button>
           <button 
             onClick={() => setView("roi")} 
-            className={`px-6 py-3 text-[9px] font-black uppercase tracking-widest transition-all whitespace-nowrap ${view === "roi" ? 'bg-brand-tactical text-zinc-950 shadow-md' : 'text-theme-muted hover:text-theme-text'}`}
+            className={`px-6 py-3 text-[9px] font-black uppercase tracking-widest transition-all whitespace-nowrap ${view === "roi" ? 'bg-brand-tactical text-zinc-950 shadow-md' : 'text-theme-muted hover:text-brand-text'}`}
           >
             Engenharia de ROI
           </button>
           <button 
             onClick={() => setView("suppliers")} 
-            className={`px-6 py-3 text-[9px] font-black uppercase tracking-widest transition-all whitespace-nowrap ${view === "suppliers" ? 'bg-brand-tactical text-zinc-950 shadow-md' : 'text-theme-muted hover:text-theme-text'}`}
+            className={`px-6 py-3 text-[9px] font-black uppercase tracking-widest transition-all whitespace-nowrap ${view === "suppliers" ? 'bg-brand-tactical text-zinc-950 shadow-md' : 'text-theme-muted hover:text-brand-text'}`}
           >
             Ativos / Hardware
           </button>

@@ -326,7 +326,7 @@ export const PartnerLP: React.FC = () => {
           <h2 className="text-4xl md:text-6xl font-display font-black tracking-tighter mb-10 leading-none uppercase text-theme-text">Dúvidas sobre o Local?</h2>
           <p className="text-theme-muted text-[11px] font-bold uppercase tracking-[0.3em] leading-relaxed mb-12">Entre em contato direto com a administração da unidade para suporte logístico e agendamento de visitas técnicas.</p>
           <div className="flex flex-col gap-4">
-            <button className="px-12 py-6 bg-emerald-500 text-theme-text text-[11px] font-black uppercase tracking-[0.4em] hover:bg-white transition-all">WhatsApp Unidade</button>
+            <button className="px-12 py-6 bg-emerald-500 text-white text-[11px] font-black uppercase tracking-[0.4em] hover:bg-white transition-all">WhatsApp Unidade</button>
             <button onClick={() => navigate("/")} className="text-[10px] font-black uppercase tracking-[0.8em] text-theme-subtle hover:text-white transition-colors mt-8">Voltar para Vitrine Global</button>
           </div>
         </div>

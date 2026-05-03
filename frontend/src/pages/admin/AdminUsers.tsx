@@ -462,7 +462,7 @@ export const AdminUsers: React.FC = () => {
                  </button>
                  <button 
                    onClick={() => handleDelete(confirmDelete.id)}
-                   className="p-4 bg-red-900 text-theme-text text-[10px] font-black uppercase tracking-widest hover:brightness-110 shadow-lg shadow-red-900/20"
+                   className="p-4 bg-red-900 text-white text-[10px] font-black uppercase tracking-widest hover:brightness-110 shadow-lg shadow-red-900/20"
                  >
                    BANIR
                  </button>
