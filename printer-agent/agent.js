@@ -69,15 +69,45 @@ async function downloadAndPrint(job) {
         fs.writeFileSync(filePath, Buffer.from(buffer));
         console.log(`📥 Download: ${job.referenceCode} OK`);
 
-        // 2. Impressão
+        // 2. Lógica de Simulação (MOCK_MODE)
+        if (process.env.MOCK_MODE === 'true') {
+            console.log(`🖨️ Simulando impressão física da foto ${job.referenceCode}...`);
+            
+            await new Promise((resolve) => {
+                setTimeout(async () => {
+                    console.log(`✅ Papel "impresso" com sucesso!`);
+                    
+                    // Avisa o servidor central para tirar da fila
+                    try {
+                        await fetch(`${BACKEND_URL}/api/admin/phygital/confirm`, {
+                            method: 'POST',
+                            headers: {
+                                'Content-Type': 'application/json',
+                                'Authorization': `Bearer ${AGENT_TOKEN}`
+                            },
+                            body: JSON.stringify({ id: job.id, status: 'PRINTED' })
+                        });
+                        console.log(`✅ Status atualizado no banco de dados.`);
+                    } catch (fetchErr) {
+                        console.error(`⚠️ Erro ao confirmar no servidor:`, fetchErr.message);
+                    }
+                    
+                    // Limpa a foto do seu PC
+                    if (fs.existsSync(filePath)) fs.unlinkSync(filePath); 
+                    resolve();
+                }, 4000);
+            });
+            return; // Ciclo concluído no modo mock
+        }
+
+        // 3. Impressão Real
         await runPrintCommand(job, filePath);
 
-        // 3. Confirmação e Limpeza
+        // 4. Confirmação e Limpeza Real
         await confirmAndCleanup(job, filePath);
 
     } catch (err) {
         console.error(`❌ Erro fatal no job ${job.referenceCode}:`, err.message);
-        // Não remove o arquivo para permitir inspeção manual se necessário
     }
 }
 

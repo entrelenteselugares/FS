@@ -143,10 +143,27 @@ export async function runExpirationJob(req?: AuthRequest): Promise<void> {
     console.log(`[PRIVACY AUDIT] ✅ Nenhuma inconsistência de visibilidade encontrada.`);
   }
 
+  // ── 5. Liberação Automática de Repasses (Phase 06) ──
+  const liberaveis = await prisma.order.updateMany({
+    where: {
+      payoutStatus: "PENDING",
+      payoutReadyAt: { lt: now },
+      status: "APROVADO"
+    },
+    data: {
+      payoutStatus: "AVAILABLE"
+    }
+  });
+
+  if (liberaveis.count > 0) {
+    console.log(`[EXPIRATION JOB] Financeiro: ${liberaveis.count} repasses liberados para repasse.`);
+  }
+
   if (req) {
     await audit(req, "CRON_JOB_FINISHED", "System", "CRON_EXPIRATION", null, { 
       endTime: new Date(), 
-      correctedCount 
+      correctedCount,
+      payoutsReleased: liberaveis.count
     });
   }
 }

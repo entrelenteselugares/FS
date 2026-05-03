@@ -1,4 +1,4 @@
-﻿import { useState, useEffect, useCallback, useMemo } from "react";
+import { useState, useEffect, useCallback, useMemo } from "react";
 import { useNavigate, useSearchParams } from "react-router-dom";
 import { useAuth } from "../hooks/useAuth";
 import { API } from "../lib/api";
@@ -304,10 +304,10 @@ export default function ClienteArea() {
                     <p className="text-[11px] font-bold text-theme-muted uppercase tracking-[0.3em] max-w-xs mx-auto leading-relaxed">Nenhuma memória adquirida ainda. Explore a vitrine ou solicite uma cobertura exclusiva.</p>
                   </div>
                   <div className="relative flex items-center justify-center gap-4 flex-wrap">
-                    <button onClick={() => navigate("/")} className="flex items-center gap-3 px-8 py-3 bg-brand-tactical text-brand-text text-[10px] font-black uppercase tracking-[0.4em] hover:brightness-110 transition-all">
+                    <button onClick={() => navigate("/")} className="fs-btn bg-brand-tactical text-brand-text flex items-center gap-3">
                       Explorar Vitrine <ArrowRight size={14} />
                     </button>
-                    <button onClick={() => navigate("/cotacao")} className="flex items-center gap-3 px-8 py-3 bg-theme-bg border border-theme-border text-[10px] font-black uppercase tracking-[0.4em] text-theme-text hover:border-brand-tactical transition-all">
+                    <button onClick={() => navigate("/cotacao")} className="fs-btn border border-theme-border text-theme-text hover:border-brand-tactical flex items-center gap-3">
                       Solicitar Cobertura <ArrowRight size={14} />
                     </button>
                   </div>
@@ -338,18 +338,18 @@ export default function ClienteArea() {
               <form onSubmit={handleUpdateProfile} className="space-y-6">
                 <div className="space-y-2">
                   <label className="text-[9px] font-black uppercase tracking-[0.3em] text-theme-muted block">E-mail (Não editável)</label>
-                  <input type="text" disabled value={user?.email || ""} className="w-full bg-theme-bg/50 border border-theme-border/40 p-4 text-[12px] font-bold text-theme-muted opacity-60 outline-none" />
+                  <input type="text" disabled value={user?.email || ""} className="fs-input opacity-60" />
                 </div>
                 <div className="space-y-2">
                   <label className="text-[9px] font-black uppercase tracking-[0.3em] text-theme-muted block">Nome Completo</label>
-                  <input type="text" value={profileData.nome} onChange={e => setProfileData(p => ({ ...p, nome: e.target.value }))} className="w-full bg-theme-bg border border-theme-border p-4 text-[13px] font-medium text-theme-text focus:border-brand-tactical outline-none transition-all" placeholder="Como quer ser chamado" />
+                  <input type="text" value={profileData.nome} onChange={e => setProfileData(p => ({ ...p, nome: e.target.value }))} className="fs-input" placeholder="Como quer ser chamado" />
                 </div>
                 <div className="space-y-2">
                   <label className="text-[9px] font-black uppercase tracking-[0.3em] text-theme-muted block">WhatsApp</label>
-                  <input type="text" value={profileData.whatsapp} onChange={e => setProfileData(p => ({ ...p, whatsapp: e.target.value }))} className="w-full bg-theme-bg border border-theme-border p-4 text-[13px] font-medium text-theme-text focus:border-brand-tactical outline-none transition-all" placeholder="(00) 00000-0000" />
+                  <input type="text" value={profileData.whatsapp} onChange={e => setProfileData(p => ({ ...p, whatsapp: e.target.value }))} className="fs-input" placeholder="(00) 00000-0000" />
                 </div>
                 <div className="flex items-center gap-6">
-                  <button type="submit" disabled={isSaving} className="px-10 py-4 bg-brand-tactical text-brand-text text-[10px] font-black uppercase tracking-[0.4em] hover:brightness-110 transition-all disabled:opacity-50">
+                  <button type="submit" disabled={isSaving} className="fs-btn bg-brand-tactical text-brand-text disabled:opacity-50">
                     {isSaving ? "Salvando..." : "Salvar Alterações"}
                   </button>
                   {saveSuccess && <span className="text-brand-tactical text-[10px] font-black uppercase tracking-widest">✓ Atualizado</span>}
@@ -648,7 +648,7 @@ function EventGroupRow({ group, now, onSelectPedido }: {
                       navigate(`/e/${event.id}`);
                     }
                   }}
-                  className="px-6 py-3 border border-theme-border text-[9px] font-black text-theme-text uppercase tracking-widest hover:border-brand-tactical hover:text-brand-tactical transition-all flex items-center gap-2"
+                  className="fs-btn border border-theme-border text-theme-text hover:border-brand-tactical hover:text-brand-tactical flex items-center gap-2"
                 >
                   {new Date(event.dataEvento).getTime() > now ? (
                     <>
@@ -664,14 +664,14 @@ function EventGroupRow({ group, now, onSelectPedido }: {
               {hasAprovado ? (
                 <button
                   onClick={() => navigate(`/e/${event.id}`)}
-                  className="px-8 py-3 bg-brand-tactical text-brand-text text-[10px] font-black uppercase tracking-[0.4em] hover:brightness-110 shadow-lg shadow-brand-tactical/20 transition-all flex items-center gap-2"
+                  className="fs-btn bg-brand-tactical text-brand-text shadow-lg shadow-brand-tactical/20 flex items-center gap-2"
                 >
                   Acessar Álbum <ArrowRight size={14} />
                 </button>
               ) : (
                 <button
                   onClick={() => firstPendente && navigate(`/checkout?orderId=${firstPendente.id}`)}
-                  className="px-8 py-3 bg-amber-500 text-theme-text text-[10px] font-black uppercase tracking-[0.4em] hover:brightness-110 shadow-lg shadow-amber-500/20 transition-all"
+                  className="fs-btn bg-amber-500 text-theme-text shadow-lg shadow-amber-500/20"
                 >
                   Desbloquear Agora
                 </button>

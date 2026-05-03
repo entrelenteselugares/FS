@@ -16,5 +16,6 @@
 
 ## Backend Patterns
 - **Controller/Service**: Routes call controllers, controllers call services for logic.
-- **Prisma Transactions**: Use `$transaction` for operations requiring atomicity.
+- **Prisma Transactions**: Use `$transaction` for operations requiring atomicity (CRITICAL for financial logic).
+- **Financial Logic**: Calculations MUST be performed in the Backend (`PricingService`).
 - **Security**: Mandatory `x-master-key` or JWT validation for sensitive endpoints.

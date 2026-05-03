@@ -97,7 +97,7 @@ export class AuthController {
 
   /** POST /api/auth/register */
   static async register(req: Request, res: Response) {
-    const { nome, email, senha, role, whatsapp, habilidades, equipamento, outrasHabilidades, workflowType, razaoSocial, endereco, cidade } = req.body;
+    const { nome, email, senha, role, whatsapp, habilidades, equipamento, outrasHabilidades, workflowType, razaoSocial, endereco, cidade, ref } = req.body;
 
     try {
       const hash = await bcrypt.hash(senha, 12);
@@ -116,7 +116,6 @@ export class AuthController {
       let sbUser = authData.user;
       
       if (authError) {
-        // Se o erro for que o usuário já existe no Supabase, tentamos recuperar o ID dele para prosseguir com o Prisma
         if (authError.message.includes("already registered") || authError.status === 422) {
            console.log(`[REGISTER] Usuário ${cleanEmail} já existe no Supabase. Tentando sincronização Prisma.`);
            const { data: existingUserData } = await supabaseAdmin.auth.admin.listUsers();
@@ -133,7 +132,6 @@ export class AuthController {
 
       // 2. Criar no Prisma (Dados de Negócio) usando o mesmo ID do Supabase
       const result = await prisma.$transaction(async (tx) => {
-        // Verifica se já existe no Prisma para evitar 500 por duplicidade
         const existingPrismaUser = await tx.user.findUnique({ where: { email: cleanEmail } });
         if (existingPrismaUser) return existingPrismaUser;
 
@@ -174,7 +172,13 @@ export class AuthController {
         return user;
       });
 
-      // 4. Gerar Tokens para Login Imediato (Padrão do AuthContext)
+      // 4. Lógica de Referral (B2B Hub)
+      if (result.role === "PROFISSIONAL" && ref) {
+        const { ReferralService } = await import("../services/referral.service");
+        ReferralService.linkByCode(result.id, ref).catch(e => console.error("[Referral Error]:", e));
+      }
+
+      // 5. Gerar Tokens para Login Imediato
       const payload = { userId: result.id, role: result.role, nome: result.nome, email: result.email };
       const token = generateToken(payload);
       const refreshToken = generateRefreshToken(payload);

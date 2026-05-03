@@ -6,6 +6,8 @@ export interface SplitResult {
   captacao: number;
   edicao: number;
   cartorio: number;
+  franchisee: number;
+  passiveFranchiseeId?: string;
 }
 
 /**
@@ -47,10 +49,16 @@ export class PricingService {
 
   /**
    * Calcula a divisão de valores (Splits) com base nas configurações da plataforma.
-   * Suporta o novo modelo de "Venda Direta" com 10% de comissão.
+   * Suporta o novo modelo de "Venda Direta" com 10% de comissão e "Comissão Passiva B2B".
    */
-  static async calculateSplits(amount: number, options?: { isExpressSale?: boolean, paymentMethod?: string, hasEditor?: boolean, productType?: string }): Promise<SplitResult> {
-    const keys = ["split_matriz", "split_captacao", "split_edicao", "split_cartorio"];
+  static async calculateSplits(amount: number, options?: { 
+    isExpressSale?: boolean, 
+    paymentMethod?: string, 
+    hasEditor?: boolean, 
+    productType?: string,
+    professionalId?: string 
+  }): Promise<SplitResult> {
+    const keys = ["split_matriz", "split_captacao", "split_edicao", "split_cartorio", "split_franchisee"];
     const configs = await prisma.platformConfig.findMany({
       where: { key: { in: keys } },
     });
@@ -74,10 +82,27 @@ export class PricingService {
         // Divide o restante entre Captação (Vendedor) e Edição (Editor)
         const captacao = +(remainder * 0.60).toFixed(2);
         const edicao = +(remainder - captacao).toFixed(2);
-        return { matriz, captacao, edicao, cartorio: 0 };
+        return { matriz, captacao, edicao, cartorio: 0, franchisee: 0 };
       } else {
         // Sem editor ou produto físico: Fotógrafo recebe 100% do líquido
-        return { matriz, captacao: remainder, edicao: 0, cartorio: 0 };
+        return { matriz, captacao: remainder, edicao: 0, cartorio: 0, franchisee: 0 };
+      }
+    }
+
+    // ── BUSCA COMISSÃO PASSIVA (FRANQUIA) ──
+    let franchisee = 0;
+    let passiveFranchiseeId: string | undefined = undefined;
+
+    if (options?.professionalId) {
+      const network = await prisma.professionalNetwork.findFirst({
+        where: { userId: options.professionalId }
+      });
+
+      if (network) {
+        const franchiseePct = getPct("split_franchisee");
+        franchisee = +(amount * franchiseePct).toFixed(2);
+        passiveFranchiseeId = network.partnerId;
+        console.log(`[Pricing] Comissão Passiva detectada (${(franchiseePct * 100).toFixed(1)}%): ${franchisee} para ${passiveFranchiseeId}`);
       }
     }
 
@@ -87,8 +112,8 @@ export class PricingService {
     const cartorio = +(amount * getPct("split_cartorio")).toFixed(2);
     
     // Matriz fica com o resto para garantir que a soma seja EXATA
-    const matriz = +(amount - (captacao + edicao + cartorio)).toFixed(2);
+    const matriz = +(amount - (captacao + edicao + cartorio + franchisee)).toFixed(2);
 
-    return { matriz, captacao, edicao, cartorio };
+    return { matriz, captacao, edicao, cartorio, franchisee, passiveFranchiseeId };
   }
 }

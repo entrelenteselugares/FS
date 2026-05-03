@@ -8,6 +8,7 @@ interface User {
   email: string;
   role: string;
   active: boolean;
+  isVerified: boolean;
     profissional?: {
       captPct: number;
       editPct: number;
@@ -38,7 +39,8 @@ export const AdminUsers: React.FC = () => {
     name: "", email: "", password: "", role: "PROFISSIONAL", pixKey: "",
     otherHabilities: "", equipment: "", workflowType: ["TRADICIONAL"] as string[],
     captPct: 30, editPct: 10,
-    isFranchise: false, printCredits: 0
+    isFranchise: false, printCredits: 0,
+    isVerified: false
   });
   const [confirmDelete, setConfirmDelete] = useState<User | null>(null);
   const [notification, setNotification] = useState<{message: string, type: 'success' | 'error'} | null>(null);
@@ -98,6 +100,7 @@ export const AdminUsers: React.FC = () => {
           pixKey: formData.pixKey,
           isFranchise: formData.isFranchise,
           printCredits: formData.printCredits,
+          isVerified: formData.isVerified,
           ...(formData.password ? { senha: formData.password } : {})
         });
       } else {
@@ -119,7 +122,7 @@ export const AdminUsers: React.FC = () => {
 
       setIsModalOpen(false);
       setEditingUser(null);
-      setFormData({ name: "", email: "", password: "", role: "PROFISSIONAL", pixKey: "", otherHabilities: "", equipment: "", workflowType: ["TRADICIONAL"], captPct: 30, editPct: 10, isFranchise: false, printCredits: 0 });
+      setFormData({ name: "", email: "", password: "", role: "PROFISSIONAL", pixKey: "", otherHabilities: "", equipment: "", workflowType: ["TRADICIONAL"], captPct: 30, editPct: 10, isFranchise: false, printCredits: 0, isVerified: false });
       fetchUsers();
       showNotification(editingUser ? "Membro atualizado com sucesso!" : "Membro convocado com sucesso!");
     } catch {
@@ -141,7 +144,8 @@ export const AdminUsers: React.FC = () => {
       captPct: user.profissional?.captPct || 30,
       editPct: user.profissional?.editPct || 10,
       isFranchise: !!user.franchiseProfile,
-      printCredits: user.franchiseProfile?.printCredits || 0
+      printCredits: user.franchiseProfile?.printCredits || 0,
+      isVerified: user.isVerified
     });
     setIsModalOpen(true);
   };
@@ -166,7 +170,7 @@ export const AdminUsers: React.FC = () => {
             <p className="text-[10px] text-theme-muted uppercase tracking-[0.5em] mt-3 font-black italic">Operação de Times, Unidades e Parceiros</p>
           </div>
           <button 
-            onClick={() => { setIsModalOpen(true); setEditingUser(null); setFormData({ name: "", email: "", password: "", role: "PROFISSIONAL", pixKey: "", otherHabilities: "", equipment: "", workflowType: ["TRADICIONAL"], captPct: 30, editPct: 10, isFranchise: false, printCredits: 0 }); }}
+            onClick={() => { setIsModalOpen(true); setEditingUser(null); setFormData({ name: "", email: "", password: "", role: "PROFISSIONAL", pixKey: "", otherHabilities: "", equipment: "", workflowType: ["TRADICIONAL"], captPct: 30, editPct: 10, isFranchise: false, printCredits: 0, isVerified: false }); }}
             className="font-black uppercase tracking-[0.3em] px-8 py-4 bg-brand-tactical text-zinc-950 hover:brightness-110 transition-all shadow-xl shadow-brand-tactical/10 flex items-center gap-3 text-[10px]"
           >
             <UserPlus size={14} /> CONVOCAR MEMBRO
@@ -241,6 +245,11 @@ export const AdminUsers: React.FC = () => {
                       <span className={`px-3 py-1.5 border ${styles.bg} ${styles.border} ${styles.text} text-[8px] font-black uppercase tracking-[0.2em] inline-flex items-center gap-2`}>
                         {u.role === 'ADMIN' && <Shield size={8} />} {u.role === 'UNIDADE_FIXA' ? 'CARTÓRIO' : u.role}
                       </span>
+                      {u.isVerified && (
+                        <span className="ml-2 px-2 py-1 bg-brand-tactical/10 border border-brand-tactical/30 text-brand-tactical text-[7px] font-black uppercase tracking-widest flex items-center gap-1">
+                          <CheckCircle2 size={8} /> PRO VERIFICADO
+                        </span>
+                      )}
                       {u.franchiseProfile && (
                         <span className="ml-2 px-2 py-1 bg-emerald-500/10 border border-emerald-500/30 text-emerald-500 text-[7px] font-black uppercase tracking-widest">
                           FRANQUIA: {u.franchiseProfile.printCredits} CR
@@ -428,6 +437,25 @@ export const AdminUsers: React.FC = () => {
                       </div>
                     )}
                   </div>
+
+                  {/* ── VERIFICAÇÃO PRO (FINANCEIRO) ── */}
+                  {formData.role === "PROFISSIONAL" && (
+                    <div className="space-y-6 pt-10 border-t border-theme-border/30">
+                      <div className="flex items-center justify-between">
+                        <div className="space-y-1">
+                          <label className="text-[9px] font-black text-brand-tactical uppercase tracking-[0.4em]">Status PRO (Verificado)</label>
+                          <p className="text-[8px] text-theme-muted uppercase font-bold">Habilitar repasse direto e imediato (Baixo Risco)</p>
+                        </div>
+                        <button
+                          type="button"
+                          onClick={() => setFormData({...formData, isVerified: !formData.isVerified})}
+                          className={`w-12 h-6 rounded-full transition-all relative ${formData.isVerified ? 'bg-brand-tactical' : 'bg-theme-border'}`}
+                        >
+                          <div className={`absolute top-1 w-4 h-4 rounded-full bg-white transition-all ${formData.isVerified ? 'left-7' : 'left-1'}`} />
+                        </button>
+                      </div>
+                    </div>
+                  )}
 
                  <div className="pt-6">
                     <button type="submit" className="w-full bg-brand-tactical text-zinc-950 font-black uppercase tracking-[0.5em] py-5 text-[11px] shadow-lg shadow-brand-tactical/10 hover:brightness-110 transition-all">

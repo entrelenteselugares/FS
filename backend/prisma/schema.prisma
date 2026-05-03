@@ -42,8 +42,13 @@ model User {
   favoritedBy            ProfessionalNetwork[]      @relation("FavoritedBy")
   ordersToEdit           Order[]                    @relation("EditorOrders")
   franchiseProfile       FranchiseProfile?
+  passiveCommissions     Order[]               @relation("FranchiseePassiveCommissions")
   calendarCredential     UserCalendarCredential?
   calendarSlots          CalendarSlot[]
+  isVerified             Boolean               @default(false)
+  verificationStatus     String                @default("PENDING")
+  verificationDocs       Json?
+  referralCode           String?               @unique
 
   @@map("users")
 }
@@ -226,10 +231,12 @@ model Order {
   eventId         String
   buyerEmail      String?
   editorId        String?
-  splitCaptacao   Decimal?    @db.Decimal(10, 2)
-  splitCartorio   Decimal?    @db.Decimal(10, 2)
-  splitEdicao     Decimal?    @db.Decimal(10, 2)
-  splitMatriz     Decimal?    @db.Decimal(10, 2)
+  splitCaptacao      Decimal?            @db.Decimal(10, 2)
+  splitCartorio      Decimal?            @db.Decimal(10, 2)
+  splitEdicao        Decimal?            @db.Decimal(10, 2)
+  splitMatriz        Decimal?            @db.Decimal(10, 2)
+  splitFranchisee    Decimal?            @db.Decimal(10, 2)
+  passiveFranchiseeId String?            // O franqueado que recebe comissão passiva
   accessChosenAt  DateTime?
   accessExpiresAt DateTime?
   accessType      String?
@@ -263,6 +270,11 @@ model Order {
   cliente         User?       @relation("ClienteOrders", fields: [clienteId], references: [id])
   event           Event       @relation(fields: [eventId], references: [id])
   editor          User?       @relation("EditorOrders", fields: [editorId], references: [id])
+  passiveFranchisee User?     @relation("FranchiseePassiveCommissions", fields: [passiveFranchiseeId], references: [id])
+
+  payoutStatus    PayoutStatus        @default(PENDING)
+  payoutReadyAt   DateTime?
+  payoutPaidAt    DateTime?
 
   @@map("orders")
 }
@@ -557,6 +569,7 @@ enum ContestStatus {
 
 enum PayoutStatus {
   PENDING
+  AVAILABLE
   PROCESSING
   PAID
   CANCELLED
@@ -653,6 +666,8 @@ model FranchiseProfile {
   userId       String              @unique
   user         User                @relation(fields: [userId], references: [id])
   printCredits Int                 @default(0)
+  inventoryAlertThreshold Int      @default(50)
+  lastSupplyOrderAt DateTime?
   active       Boolean             @default(true)
   events       Event[]
   prints       PhygitalPrint[]

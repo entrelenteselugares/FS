@@ -1,4 +1,4 @@
-﻿import React, { useState, useEffect, useCallback, useMemo } from "react";
+import React, { useState, useEffect, useCallback, useMemo } from "react";
 import { API } from "../../lib/api";
 import { 
   ShieldCheck, 
@@ -17,19 +17,14 @@ interface Expense {
   date: string;
 }
 
-const fmtDate = (iso: string | null | undefined) => {
-  if (!iso) return "—";
-  const d = new Date(iso);
-  if (isNaN(d.getTime())) return "—";
-  return new Intl.DateTimeFormat("pt-BR", { day: "2-digit", month: "short", year: "numeric" }).format(d).toUpperCase();
-};
+import { formatCurrency, formatDateShort as fmtDate } from "../../lib/utils/formatters";
 
 interface PayoutOrder {
   id: string;
   amount: number;
   updatedAt: string;
-  payoutDone: boolean;
-  payoutDate?: string;
+  payoutStatus: "PENDING" | "AVAILABLE" | "PAID" | "CANCELLED";
+  payoutPaidAt?: string;
   event: {
     title: string;
     partners: {
@@ -66,7 +61,7 @@ export const AdminFinance: React.FC = () => {
     try {
       const url = payoutTab === "pending"
         ? "/admin/orders?readyForPayout=true"
-        : "/admin/orders?payoutDone=true&status=APROVADO";
+        : "/admin/orders?payoutStatus=PAID&status=APROVADO";
       const { data } = await API.get(url);
       setOrders(data.orders || []);
     } catch (err) {
@@ -82,7 +77,11 @@ export const AdminFinance: React.FC = () => {
 
   // Financial Stats Calculation
   const financialData = useMemo(() => {
-    const grossRevenue = orders.filter(o => o.payoutDone || payoutTab === 'pending').reduce((acc, o) => acc + (o.splitMatriz || o.amount * 0.4), 0);
+    // Rely strictly on backend snapshots for split data
+    const grossRevenue = orders
+      .filter(o => o.payoutStatus === 'PAID' || payoutTab === 'pending')
+      .reduce((acc, o) => acc + (Number(o.splitMatriz) || 0), 0);
+      
     const totalExpenses = expenses.reduce((acc, e) => acc + e.amount, 0);
     const netProfit = grossRevenue - totalExpenses;
     const margin = grossRevenue > 0 ? (netProfit / grossRevenue) * 100 : 0;
@@ -91,9 +90,15 @@ export const AdminFinance: React.FC = () => {
   }, [orders, expenses, payoutTab]);
 
   const handleMarkAsPaid = async () => {
-    // Liquidação de repasses é gerenciada pelo módulo Financeiro > Repasses (WeeklyPayout).
-    // Esta ação é apenas uma visualização de pedidos prontos para repasse.
-    setNotification({ message: "Use o módulo 'Repasses' para liquidar pagamentos.", type: 'error' });
+    if (!confirmModal) return;
+    try {
+      await API.patch(`/admin/orders/${confirmModal}/payout`);
+      setNotification({ message: "Repasse liquidado com sucesso! 💸", type: 'success' });
+      setConfirmModal(null);
+      fetchPayouts();
+    } catch (err) {
+      setNotification({ message: "Erro ao liquidar repasse.", type: 'error' });
+    }
     setTimeout(() => setNotification(null), 5000);
   };
 
@@ -110,7 +115,6 @@ export const AdminFinance: React.FC = () => {
     setExpenses(expenses.filter(e => e.id !== id));
   };
 
-  const formatCurrency = (val: number = 0) => new Intl.NumberFormat("pt-BR", { style: "currency", currency: "BRL" }).format(val);
 
   return (
     <div className="space-y-10 animate-in fade-in slide-in-from-bottom-4 duration-700">
@@ -164,29 +168,63 @@ export const AdminFinance: React.FC = () => {
                  <ShieldCheck size={32} className="mx-auto text-theme-muted opacity-30" />
                  <p className="text-[10px] text-theme-muted uppercase tracking-[0.4em] font-black italic">Fluxo de repasses em conformidade.</p>
               </div>
-            ) : orders.map(order => (
-              <div key={order.id} className="bg-theme-bg-muted border border-theme-border p-4 md:p-5 flex flex-col md:flex-row justify-between gap-4 md:gap-6 hover:border-brand-tactical/30 transition-all">
-                 <div className="space-y-4 flex-1">
-                    <div className="flex items-center gap-3">
-                       <span className="text-[10px] font-black px-2 py-1 bg-brand-tactical text-zinc-950 uppercase tracking-widest">#{order.id.slice(-4).toUpperCase()}</span>
-                       <h4 className="text-lg font-heading font-black text-theme-text uppercase tracking-tighter leading-none">{order.event.title}</h4>
+            ) : (
+              <div className="grid grid-cols-1 gap-4">
+                {orders.map(order => (
+                  <React.Fragment key={order.id}>
+                    {/* DESKTOP VIEW */}
+                    <div className="hidden md:flex bg-theme-bg-muted border border-theme-border p-4 md:p-5 justify-between gap-4 md:gap-6 hover:border-brand-tactical/30 transition-all group">
+                       <div className="space-y-4 flex-1">
+                          <div className="flex items-center gap-3">
+                             <span className="text-[10px] font-black px-2 py-1 bg-brand-tactical text-zinc-950 uppercase tracking-widest">#{order.id.slice(-4).toUpperCase()}</span>
+                             <h4 className="text-lg font-heading font-black text-theme-text uppercase tracking-tighter leading-none">{order.event.title}</h4>
+                          </div>
+                          <div className="grid grid-cols-4 gap-6 pt-5 border-t border-theme-border/10">
+                             <div className="space-y-1.5"><span className="text-[10px] font-black text-theme-muted uppercase tracking-widest opacity-60">Matriz</span><p className="text-base font-black text-theme-text italic">{formatCurrency(Number(order.splitMatriz) || 0)}</p></div>
+                             {order.event.partners.captacao && <div className="space-y-1.5"><span className="text-[10px] font-black text-brand-tactical uppercase tracking-widest opacity-60">Captação</span><p className="text-base font-black text-theme-text italic">{formatCurrency(Number(order.splitCaptacao) || 0)}</p></div>}
+                             {order.event.partners.edicao && <div className="space-y-1.5"><span className="text-[10px] font-black text-brand-tactical uppercase tracking-widest opacity-60">Edição</span><p className="text-base font-black text-theme-text italic">{formatCurrency(Number(order.splitEdicao) || 0)}</p></div>}
+                             {order.event.partners.cartorio && <div className="space-y-1.5"><span className="text-[10px] font-black text-theme-muted uppercase tracking-widest opacity-60">Unidade</span><p className="text-base font-black text-theme-text italic">{formatCurrency(Number(order.splitCartorio) || 0)}</p></div>}
+                          </div>
+                       </div>
+                       <div className="flex items-center justify-center">
+                          {payoutTab === 'pending' ? (
+                            <button onClick={() => setConfirmModal(order.id)} className="bg-brand-tactical text-zinc-950 px-8 py-4 text-[10px] font-black uppercase tracking-[0.2em] shadow-xl hover:scale-[1.02] transition-all flex items-center gap-3 active:scale-95"><Zap size={14} /> LIQUIDAR REPASSE</button>
+                          ) : (
+                            <div className="text-right border-l border-theme-border pl-8"><span className="text-[10px] font-black text-theme-muted uppercase tracking-widest block mb-2">Pago em</span><span className="text-[12px] font-black text-brand-tactical uppercase tracking-tighter">{fmtDate(order.payoutPaidAt)}</span></div>
+                          )}
+                       </div>
                     </div>
-                    <div className="grid grid-cols-2 md:grid-cols-4 gap-6 pt-5 border-t border-theme-border/10">
-                       <div className="space-y-1.5"><span className="text-[10px] font-black text-theme-muted uppercase tracking-widest opacity-60">Matriz</span><p className="text-base font-black text-theme-text italic">{formatCurrency(order.splitMatriz || order.amount * 0.4)}</p></div>
-                       {order.event.partners.captacao && <div className="space-y-1.5"><span className="text-[10px] font-black text-brand-tactical uppercase tracking-widest opacity-60">Captação</span><p className="text-base font-black text-theme-text italic">{formatCurrency(order.splitCaptacao || 0)}</p></div>}
-                       {order.event.partners.edicao && <div className="space-y-1.5"><span className="text-[10px] font-black text-brand-tactical uppercase tracking-widest opacity-60">Edição</span><p className="text-base font-black text-theme-text italic">{formatCurrency(order.splitEdicao || 0)}</p></div>}
-                       {order.event.partners.cartorio && <div className="space-y-1.5"><span className="text-[10px] font-black text-theme-muted uppercase tracking-widest opacity-60">Unidade</span><p className="text-base font-black text-theme-text italic">{formatCurrency(order.splitCartorio || 0)}</p></div>}
+
+                    {/* MOBILE VIEW (CARD) */}
+                    <div className="md:hidden bg-theme-bg-muted border border-theme-border p-5 space-y-6 hover:border-brand-tactical/30 transition-all">
+                       <div className="flex justify-between items-start">
+                          <div className="space-y-2">
+                             <span className="text-[9px] font-black px-2 py-0.5 bg-brand-tactical text-zinc-950 uppercase tracking-widest">#{order.id.slice(-4).toUpperCase()}</span>
+                             <h4 className="text-base font-heading font-black text-theme-text uppercase tracking-tight">{order.event.title}</h4>
+                          </div>
+                          {payoutTab === 'history' && (
+                             <div className="text-right">
+                                <span className="text-[8px] font-black text-theme-muted uppercase tracking-widest block">Pago em</span>
+                                <span className="text-[10px] font-black text-brand-tactical uppercase tracking-tighter">{fmtDate(order.payoutPaidAt)}</span>
+                             </div>
+                          )}
+                       </div>
+
+                       <div className="grid grid-cols-2 gap-y-4 gap-x-2 pt-4 border-t border-theme-border/10">
+                          <div className="space-y-1"><span className="text-[8px] font-black text-theme-muted uppercase tracking-widest opacity-60">Matriz</span><p className="text-sm font-black text-theme-text italic">{formatCurrency(Number(order.splitMatriz) || 0)}</p></div>
+                          {order.event.partners.captacao && <div className="space-y-1"><span className="text-[8px] font-black text-brand-tactical uppercase tracking-widest opacity-60">Captação</span><p className="text-sm font-black text-theme-text italic">{formatCurrency(Number(order.splitCaptacao) || 0)}</p></div>}
+                          {order.event.partners.edicao && <div className="space-y-1"><span className="text-[8px] font-black text-brand-tactical uppercase tracking-widest opacity-60">Edição</span><p className="text-sm font-black text-theme-text italic">{formatCurrency(Number(order.splitEdicao) || 0)}</p></div>}
+                          {order.event.partners.cartorio && <div className="space-y-1"><span className="text-[8px] font-black text-theme-muted uppercase tracking-widest opacity-60">Unidade</span><p className="text-sm font-black text-theme-text italic">{formatCurrency(Number(order.splitCartorio) || 0)}</p></div>}
+                       </div>
+
+                       {payoutTab === 'pending' && (
+                          <button onClick={() => setConfirmModal(order.id)} className="w-full bg-brand-tactical text-zinc-950 py-4 text-[9px] font-black uppercase tracking-[0.2em] shadow-lg active:scale-95 transition-all flex items-center justify-center gap-2"><Zap size={12} /> LIQUIDAR REPASSE</button>
+                       )}
                     </div>
-                 </div>
-                 <div className="flex items-center justify-center">
-                    {payoutTab === 'pending' ? (
-                      <button onClick={() => setConfirmModal(order.id)} className="bg-brand-tactical text-zinc-950 px-8 py-4 text-[10px] font-black uppercase tracking-[0.2em] shadow-xl hover:scale-[1.02] transition-all flex items-center gap-3 active:scale-95"><Zap size={14} /> LIQUIDAR REPASSE</button>
-                    ) : (
-                      <div className="text-right border-l border-theme-border pl-8"><span className="text-[10px] font-black text-theme-muted uppercase tracking-widest block mb-2">Pago em</span><span className="text-[12px] font-black text-brand-tactical uppercase tracking-tighter">{fmtDate(order.payoutDate)}</span></div>
-                    )}
-                 </div>
+                  </React.Fragment>
+                ))}
               </div>
-            ))}
+            )}
           </div>
         </div>
       )}
@@ -263,7 +301,7 @@ export const AdminFinance: React.FC = () => {
                          </tr>
                        ) : expenses.map(exp => (
                          <tr key={exp.id} className="group hover:bg-white/5 transition-all">
-                            <td className="p-4 text-[11px] text-theme-muted font-black">{new Date(exp.date).toLocaleDateString("pt-BR")}</td>
+                             <td className="p-4 text-[11px] text-theme-muted font-black">{fmtDate(exp.date)}</td>
                             <td className="p-4 text-[11px] text-theme-text font-black uppercase tracking-tight">{exp.description}</td>
                             <td className="p-4 text-center">
                                <span className="text-[10px] font-black px-2 py-1 border border-theme-border text-theme-muted uppercase group-hover:border-zinc-500">{exp.category}</span>

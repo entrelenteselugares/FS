@@ -18,8 +18,10 @@
 - **Database**: PostgreSQL (via Supabase)
 - **File Storage**: Supabase Storage / AWS S3 SDK
 - **Runtime**: Node.js 20+
+- **IoT Agent**: Node.js 20 (Windows/Linux) + CUPS / Windows Print Spooler
 
 ## Development Tools
 - **Build**: Vite / esbuild (Backend bundle)
 - **Linting**: ESLint 9 / TypeScript ESLint 8
 - **Database GUI**: Prisma Studio / Supabase Dashboard
+- **E2E Testing**: Playwright 1.59

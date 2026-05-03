@@ -1,5 +1,8 @@
 import { Request, Response } from "express";
 import prisma from "../lib/prisma";
+import { AuthRequest } from '../lib/auth';
+import { SupplyService } from '../services/supply.service';
+import { ReferralService } from '../services/referral.service';
 
 export class FranchiseController {
   /**
@@ -153,6 +156,144 @@ export class FranchiseController {
       res.json({ success: true, transactions });
     } catch (error) {
       res.status(500).json({ error: "Erro ao buscar extrato." });
+    }
+  }
+
+  // ── B2B HUB DASHBOARD METHODS ──────────────────────────────────────────────
+
+  /**
+   * Returns inventory status and low-stock alerts
+   */
+  static async getInventory(req: AuthRequest, res: Response) {
+    try {
+      const user = await prisma.user.findUnique({
+        where: { id: req.user!.userId },
+        include: { franchiseProfile: true }
+      });
+
+      if (!user?.franchiseProfile) {
+        return res.status(403).json({ error: "Access denied. Not a franchisee." });
+      }
+
+      const inventory = await SupplyService.getFranchiseInventory(user.franchiseProfile.id);
+      return res.json(inventory);
+    } catch (error) {
+      console.error("[Franchise Inventory Error]:", error);
+      return res.status(500).json({ error: "Failed to fetch inventory status" });
+    }
+  }
+
+  /**
+   * Triggers a 1-click supply reorder
+   */
+  static async postReorder(req: AuthRequest, res: Response) {
+    const { packType } = req.body;
+    try {
+      const user = await prisma.user.findUnique({
+        where: { id: req.user!.userId },
+        include: { franchiseProfile: true }
+      });
+
+      if (!user?.franchiseProfile) {
+        return res.status(403).json({ error: "Access denied." });
+      }
+
+      const order = await SupplyService.createSupplyOrder(user.franchiseProfile.id, packType);
+      return res.status(201).json(order);
+    } catch (error) {
+      console.error("[Franchise Reorder Error]:", error);
+      return res.status(500).json({ error: "Failed to generate supply order" });
+    }
+  }
+
+  /**
+   * Returns (and generates) the referral code for the franchisee
+   */
+  static async getReferralCode(req: AuthRequest, res: Response) {
+    try {
+      const code = await ReferralService.generateCode(req.user!.userId);
+      return res.json({ code });
+    } catch (error) {
+      console.error("[Franchise Referral Error]:", error);
+      return res.status(500).json({ error: "Failed to manage referral code" });
+    }
+  }
+
+  /**
+   * Returns the list of photographers in the franchisee's network
+   */
+  static async getNetwork(req: AuthRequest, res: Response) {
+    try {
+      const network = await prisma.professionalNetwork.findMany({
+        where: { partnerId: req.user!.userId },
+        include: {
+          user: {
+            select: {
+              id: true,
+              nome: true,
+              email: true,
+              isVerified: true,
+              verificationStatus: true,
+              profissional: {
+                select: {
+                  experienceYears: true
+                }
+              }
+            }
+          }
+        }
+      });
+
+      return res.json(network);
+    } catch (error) {
+      console.error("[Franchise Network Error]:", error);
+      return res.status(500).json({ error: "Failed to fetch network partners" });
+    }
+  }
+
+  /**
+   * Returns financial statistics (Passive Income) for the franchisee
+   */
+  static async getFinanceStats(req: AuthRequest, res: Response) {
+    try {
+      const stats = await prisma.order.aggregate({
+        where: {
+          passiveFranchiseeId: req.user!.userId,
+          status: "APROVADO"
+        },
+        _sum: {
+          splitFranchisee: true
+        },
+        _count: {
+          id: true
+        }
+      });
+
+      const recentCommissions = await prisma.order.findMany({
+        where: {
+          passiveFranchiseeId: req.user!.userId,
+          status: "APROVADO"
+        },
+        include: {
+          event: { select: { nomeNoivos: true } }
+        },
+        orderBy: { updatedAt: 'desc' },
+        take: 5
+      });
+
+      return res.json({
+        totalEarned: Number(stats._sum.splitFranchisee || 0),
+        totalOrders: stats._count.id,
+        recentCommissions: recentCommissions.map(c => ({
+          id: c.id,
+          amount: Number(c.splitFranchisee || 0),
+          eventTitle: c.event.nomeNoivos,
+          date: c.updatedAt
+        }))
+      });
+    } catch (error) {
+      console.error("[Franchise Finance Error]:", error);
+      return res.status(500).json({ error: "Failed to fetch financial stats" });
     }
   }
 }

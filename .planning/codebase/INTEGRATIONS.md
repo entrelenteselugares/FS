@@ -7,11 +7,12 @@
 - **Supabase Auth/DB**: Core identity management and relational data persistence.
 
 ## Internal Services
-- **Printer Agent (IoT)**: Multi-platform agent (Windows/Linux) for automated physical photo printing.
+- **Printer Agent (IoT)**: Multi-platform agent (Windows/Linux) for automated physical photo printing (Poll-based, sequential queue).
 - **Phygital Motor**: Image processing engine using Sharp for SVG overlays and reference codes.
-- **Unified Checkout**: Internal payment orchestration layer linking orders to gateways.
+- **Order Engine (Unified)**: Centralized logic for Marketplace, Budgets, and Totems, managing payment models and item fulfillment.
 
 ## Data Flows
 - **Web-to-Print**: Client Order -> Backend Queue -> IoT Agent -> Local Printer.
 - **Sync Agenda**: Professional Profile -> Google OAuth -> CalendarSlot Sync -> Frontend Booking.
-- **Finance**: Purchase -> Mercado Pago IPN -> Order Status Update -> Franchise Credit Transaction.
+- **Finance Split**: Purchase -> Mercado Pago IPN -> Order Update -> Split Calculation (Matriz/PRO/Edição/Franchise) -> Escrow Engine.
+- **Passive Income**: Referral Link -> Professional Onboarding -> Linked Franchisee -> 5% Automated Split on Sales.

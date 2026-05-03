@@ -709,6 +709,8 @@ export async function adminUpdateUser(req: AuthRequest, res: Response): Promise<
         ...(role && { role }),
         ...(active !== undefined && { active }),
         ...(pixKey !== undefined && { pixKey }),
+        ...(req.body.isVerified !== undefined && { isVerified: req.body.isVerified }),
+        ...(req.body.verificationStatus && { verificationStatus: req.body.verificationStatus }),
       },
     });
 
@@ -840,22 +842,20 @@ export async function adminDeleteUser(req: AuthRequest, res: Response): Promise<
 // ── PEDIDOS ───────────────────────────────────────────
 
 export async function adminListOrders(req: AuthRequest, res: Response): Promise<void> {
-  const { status, page = "1", q, readyForPayout } = req.query;
-  const take = 20;
-  const skip = (Number(page) - 1) * take;
-
-  try {
-    const where: Prisma.OrderWhereInput = {};
-    if (status) where.status = String(status);
-    
-    // Filtro Uber Style: Pronto para Repasse (Status APROVADO, > 7 dias, payoutDone=false)
-    if (readyForPayout === "true") {
-      const sevenDaysAgo = new Date();
-      sevenDaysAgo.setDate(sevenDaysAgo.getDate() - 7);
+    const { status, page = "1", q, readyForPayout, payoutStatus } = req.query;
+    const take = 20;
+    const skip = (Number(page) - 1) * take;
+  
+    try {
+      const where: Prisma.OrderWhereInput = {};
+      if (status) where.status = String(status);
+      if (payoutStatus) where.payoutStatus = String(payoutStatus) as any;
       
-      where.status = "APROVADO";
-      where.updatedAt = { lte: sevenDaysAgo };
-    }
+      // Filtro Phase 06: Pronto para Repasse
+      if (readyForPayout === "true") {
+        where.status = "APROVADO";
+        where.payoutStatus = "AVAILABLE";
+      }
 
     if (q) {
       const searchString = String(q);
@@ -877,6 +877,7 @@ export async function adminListOrders(req: AuthRequest, res: Response): Promise<
           } 
         },
         cliente:  { select: { nome: true, email: true } },
+        passiveFranchisee: { select: { nome: true } },
       },
       orderBy: { updatedAt: "desc" },
       take,
@@ -897,7 +898,8 @@ export async function adminListOrders(req: AuthRequest, res: Response): Promise<
             captacao: o.event.captacao,
             edicao: o.event.edicao,
             cartorio: o.event.cartorioUser
-          }
+          },
+          passiveFranchisee: o.passiveFranchisee?.nome
         } 
       })), 
       total, page: Number(page), pages: Math.ceil(total / take) 
@@ -908,8 +910,23 @@ export async function adminListOrders(req: AuthRequest, res: Response): Promise<
   }
 }
 
-export async function adminMarkOrderPaid(req: AuthRequest, res: Response): Promise<void> {
-  res.status(400).json({ error: "Funcionalidade migrada para Repasses Semanais." });
+export async function adminMarkPayoutPaid(req: AuthRequest, res: Response): Promise<void> {
+  const { id } = req.params;
+  try {
+    const order = await prisma.order.update({
+      where: { id: String(id) },
+      data: { 
+        payoutStatus: "PAID",
+        payoutPaidAt: new Date()
+      }
+    });
+    
+    await audit(req, "PAYOUT_MARK_PAID", "Order", order.id, null, { valor: order.valor });
+    res.json({ ok: true, order });
+  } catch (err) {
+    console.error("adminMarkPayoutPaid:", err);
+    res.status(500).json({ error: "Erro ao liquidar repasse." });
+  }
 }
 
 // ── ORÇAMENTOS (LEADS) ─────────────────────────────

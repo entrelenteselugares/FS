@@ -17,6 +17,12 @@ interface Order {
   manualType?: string;
   event: { title: string; slug: string };
   user?: { nome: string; email: string };
+  splitMatriz?: number;
+  splitCaptacao?: number;
+  splitEdicao?: number;
+  splitCartorio?: number;
+  splitFranchisee?: number;
+  passiveFranchisee?: string;
 }
 
 interface OrderGroup {
@@ -239,6 +245,7 @@ export const AdminOrders: React.FC = () => {
                           <tr className="border-b border-theme-border/20">
                              <th className="py-4 text-[9px] font-black text-theme-muted uppercase tracking-[0.3em] opacity-70">ID Ledger</th>
                              <th className="py-4 text-[9px] font-black text-theme-muted uppercase tracking-[0.3em] opacity-70">Método / Data</th>
+                             <th className="py-4 text-center text-[9px] font-black text-theme-muted uppercase tracking-[0.3em] opacity-70">Divisão (Splits)</th>
                              <th className="py-4 text-right text-[9px] font-black text-theme-muted uppercase tracking-[0.3em] opacity-70">Montante</th>
                              <th className="py-4 text-center text-[9px] font-black text-theme-muted uppercase tracking-[0.3em] opacity-70">Status MP</th>
                              <th className="py-4 text-center text-[9px] font-black text-theme-muted uppercase tracking-[0.3em] opacity-70">Ações</th>
@@ -254,9 +261,20 @@ export const AdminOrders: React.FC = () => {
                                      <div>
                                         <div className="text-[11px] font-black text-theme-text uppercase tracking-widest">{o.manualType || "PARCELA DIGITAL"}</div>
                                         <div className="text-[9px] text-theme-muted font-bold opacity-60 uppercase">{new Date(o.createdAt).toLocaleString("pt-BR")}</div>
-                                     </div>
-                                  </div>
-                               </td>
+                                      </div>
+                                   </div>
+                                </td>
+                                <td className="py-5 text-center">
+                                   <div className="flex flex-wrap justify-center gap-1.5 max-w-[200px] mx-auto">
+                                      {o.splitMatriz && <span className="px-2 py-0.5 bg-zinc-800 text-[8px] text-theme-text font-black rounded-sm border border-theme-border">MT: {formatCurrency(Number(o.splitMatriz))}</span>}
+                                      {o.splitCaptacao && <span className="px-2 py-0.5 bg-brand-tactical/10 text-[8px] text-brand-tactical font-black rounded-sm border border-brand-tactical/20">CP: {formatCurrency(Number(o.splitCaptacao))}</span>}
+                                      {o.splitFranchisee && o.splitFranchisee > 0 && (
+                                        <span className="px-2 py-0.5 bg-blue-500/10 text-[8px] text-blue-400 font-black rounded-sm border border-blue-500/20" title={`Franqueado: ${o.passiveFranchisee}`}>
+                                          FR: {formatCurrency(Number(o.splitFranchisee))}
+                                        </span>
+                                      )}
+                                   </div>
+                                </td>
                                <td className="py-5 text-right font-heading font-black text-theme-text italic text-lg">{formatCurrency(o.amount)}</td>
                                <td className="py-5 text-center">
                                   <span className={`text-[8px] font-black uppercase tracking-[0.2em] px-3 py-1.5 border ${o.status === 'APROVADO' ? 'border-brand-tactical text-brand-tactical' : 'border-red-900 text-red-500'}`}>

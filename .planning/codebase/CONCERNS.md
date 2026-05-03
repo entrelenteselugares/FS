@@ -12,7 +12,10 @@
 ## Reliability
 - **IoT Connection**: Printer agent depends on stable local internet; lack of offline queue handling in agent v1.0.
 - **Supabase Quotas**: Storage limits for high-resolution photo events.
+- **Print Credits**: Franchisee inventory management for physical prints (preventing negative credits).
 
 ## Security
-- **OAuth Tokens**: `user_calendar_credentials` should be encrypted in transit and at rest (verification needed).
-- **Master Key**: `x-master-key` bypass is a convenience for testing that must be strictly controlled in production.
+- **OAuth Tokens**: `user_calendar_credentials` are encrypted (AES-256-GCM verified).
+- **Master Key**: `x-master-key` bypass must be strictly controlled in production.
+- **Payout Fraud**: High-value payouts (>R$ 5.000) or unverified professionals trigger mandatory 7-day safety escrow.
+- **Split Integrity**: Automated verification of split sums to prevent rounding leaks.

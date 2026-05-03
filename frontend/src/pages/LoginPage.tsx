@@ -4,24 +4,14 @@ import { useNavigate, Link } from "react-router-dom";
 import { useAuth } from "../hooks/useAuth";
 import { Helmet } from "react-helmet-async";
 import { ThemeToggle } from "../components/ThemeToggle";
-import { API } from "../lib/api";
-
-const EyeIcon = ({ open }: { open: boolean }) => open ? (
-  <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5">
-    <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/>
-  </svg>
-) : (
-  <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5">
-    <path d="M17.94 17.94A10.07 10.07 0 0 1 12 20c-7 0-11-8-11-8a18.45 18.45 0 0 1 5.06-5.94M9.9 4.24A9.12 9.12 0 0 1 12 4c7 0 11 8 11 8a18.5 18.5 0 0 1-2.16 3.19m-6.72-1.07a3 3 0 1 1-4.24-4.24"/>
-    <line x1="1" y1="1" x2="23" y2="23"/>
-  </svg>
-);
+import { Mail, Lock, Eye, EyeOff, ArrowRight } from "lucide-react";
 
 const ROLE_DESTINATIONS: Record<string, string> = {
   ADMIN:        "/admin",
   PROFISSIONAL: "/profissional",
   CARTORIO:     "/unidade-fixa",
   UNIDADE:      "/unidade-fixa",
+  FRANCHISEE:   "/franquia",
   CLIENTE:      "/minha-conta",
 };
 
@@ -34,16 +24,17 @@ export const LoginPage: React.FC = () => {
 
   const { login }  = useAuth();
   const navigate   = useNavigate();
-  const [resetSent, setResetSent] = useState(false);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    if (loading) return;
     setError("");
     setLoading(true);
+    
     try {
+      console.log("[LOGIN ATTEMPT]", email.toLowerCase());
       const authUser = await login(email.trim().toLowerCase(), senha);
 
-      // Redireciona para evento pendente se existir
       const pending = localStorage.getItem("pending_purchase_event_id");
       if (pending) {
         localStorage.removeItem("pending_purchase_event_id");
@@ -53,6 +44,7 @@ export const LoginPage: React.FC = () => {
 
       navigate(ROLE_DESTINATIONS[authUser.role] ?? "/");
     } catch (err: unknown) {
+      console.error("[LOGIN ERROR]", err);
       const msg = isAxiosError(err)
         ? (err.response?.data?.error ?? "Credenciais inválidas.")
         : "Erro ao autenticar. Tente novamente.";
@@ -62,143 +54,110 @@ export const LoginPage: React.FC = () => {
     }
   };
 
-  const handleForgotPassword = async () => {
-    if (!email) {
-      setError("Por favor, digite seu e-mail primeiro para solicitar a recuperação.");
-      return;
-    }
-    setError("");
-    setLoading(true);
-    try {
-      await API.post("/auth/forgot-password", { email: email.trim().toLowerCase() });
-      setResetSent(true);
-      setError("");
-    } catch (err: unknown) {
-      const msg = isAxiosError(err)
-        ? (err.response?.data?.error ?? "Erro ao solicitar recuperação.")
-        : "Erro ao solicitar recuperação.";
-      setError(msg);
-    } finally {
-      setLoading(false);
-    }
-  };
-
   return (
-    <div className="min-h-screen flex flex-col items-center justify-center bg-theme-bg relative overflow-hidden px-6 py-12">
-      {/* Ambient Glow */}
-      <div className="absolute inset-0 bg-emerald-500/5 blur-[120px] rounded-full -m-64 opacity-20" />
-      <div className="absolute bottom-0 right-0 w-[500px] h-[500px] bg-emerald-500/5 blur-[150px] rounded-full -mr-64 -mb-64 opacity-20" />
+    <div className="min-h-screen flex flex-col items-center justify-center bg-theme-bg relative overflow-hidden px-6 py-12 transition-colors duration-300">
       <Helmet>
         <title>Acesso — Foto Segundo</title>
-        <meta name="description" content="Acesse sua conta e visualize as fotos e vídeos do seu evento." />
       </Helmet>
 
-      <div style={{ position: "fixed", top: 20, right: 20, zIndex: 100 }}>
+      {/* Decorative Editorial Lines */}
+      <div className="absolute top-0 left-1/4 w-[1px] h-full bg-theme-border opacity-10" />
+      <div className="absolute top-0 right-1/4 w-[1px] h-full bg-theme-border opacity-10" />
+
+      <div className="absolute top-6 right-6 z-50 scale-90">
         <ThemeToggle />
       </div>
 
-      <div style={{ width: "100%", maxWidth: 380 }}>
-
+      <div className="w-full max-w-[400px] relative z-10">
         {/* ── Brand ── */}
-        <div className="text-center mb-10 flex flex-col items-center">
-          <img src="/logo-fs.png" alt="Foto Segundo" className="h-8 object-contain mb-6" />
-          <h1 className="text-[10px] font-black text-emerald-500 uppercase tracking-[0.5em] italic">
-            Portal de Acesso Exclusivo
+        <div className="text-center mb-10">
+          <div className="flex justify-center mb-6">
+            <img src="/logo-fs.png" alt="Foto Segundo" className="h-8 object-contain" />
+          </div>
+          <div className="text-[10px] font-black text-brand-tactical uppercase tracking-[0.5em] mb-3 italic">Portal de Acesso</div>
+          <h1 className="text-3xl md:text-5xl font-heading font-black text-theme-text uppercase italic leading-none tracking-tighter">
+            EFETUAR <span className="opacity-20">LOGIN</span>
           </h1>
         </div>
 
         {/* ── Card ── */}
-        <div className="bg-theme-card border border-theme-border p-8 md:p-12 relative shadow-2xl">
-          <div className="absolute top-0 left-0 w-full h-px bg-gradient-to-r from-transparent via-emerald-500/20 to-transparent" />
-
-          {/* Success Reset */}
-          {resetSent && (
-            <div className="bg-emerald-500/10 border border-emerald-500/20 p-4 mb-8">
-              <p className="text-[11px] text-emerald-500 font-black uppercase tracking-widest leading-relaxed">
-                E-mail de recuperação enviado com sucesso.
-              </p>
-            </div>
-          )}
-
-          {/* Error */}
+        <div className="bg-theme-bg-muted/30 border border-theme-border shadow-2xl overflow-hidden">
           {error && (
-            <div className="bg-red-500/10 border border-red-500/20 p-4 mb-8">
-              <p className="text-[11px] text-red-500 font-black uppercase tracking-widest leading-relaxed">{error}</p>
+            <div className="bg-red-500/10 text-red-500 text-[9px] font-black uppercase tracking-[0.2em] p-4 text-center border-b border-red-500/10">
+              {error}
             </div>
           )}
 
-          <form onSubmit={handleSubmit} style={{ display: "flex", flexDirection: "column", gap: 20 }}>
-
+          <form onSubmit={handleSubmit} className="p-8 md:p-10 space-y-8">
             {/* E-mail */}
-            <div className="space-y-2">
-              <label className="text-[10px] font-bold uppercase tracking-widest text-theme-muted block">Identificação</label>
-              <input
-                id="lp-email"
-                className="fs-input w-full"
-                type="email"
-                value={email}
-                onChange={e => setEmail(e.target.value)}
-                placeholder="USUÁRIO OU E-MAIL"
-                autoComplete="username"
-                required
-              />
+            <div className="space-y-3">
+              <label className="text-[9px] font-black uppercase tracking-[0.3em] text-theme-muted ml-1 opacity-60">Identificação</label>
+              <div className="relative group">
+                <Mail className="absolute left-0 top-1/2 -translate-y-1/2 text-theme-muted/40 group-focus-within:text-brand-tactical transition-colors" size={14} />
+                <input
+                  type="email"
+                  required
+                  value={email}
+                  onChange={e => setEmail(e.target.value)}
+                  className="w-full bg-transparent border-b border-theme-border/60 py-2.5 pl-8 text-xs text-theme-text placeholder:text-theme-muted/20 focus:outline-none focus:border-brand-tactical transition-all font-medium"
+                  placeholder="USUÁRIO@DOMINIO.COM"
+                  autoComplete="email"
+                />
+              </div>
             </div>
 
             {/* Senha */}
-            <div className="space-y-2">
+            <div className="space-y-3">
               <div className="flex justify-between items-center">
-                <label className="text-[10px] font-bold uppercase tracking-widest text-theme-muted block">Chave de Acesso</label>
-                <button type="button" onClick={handleForgotPassword} className="text-[9px] font-black uppercase tracking-widest text-emerald-500/60 hover:text-emerald-500 transition-colors">
-                  ESQUECI A SENHA
-                </button>
+                <label className="text-[9px] font-black uppercase tracking-[0.3em] text-theme-muted ml-1 opacity-60">Chave de Acesso</label>
               </div>
-              <div className="relative flex items-center group">
+              <div className="relative group flex items-center">
+                <Lock className="absolute left-0 top-1/2 -translate-y-1/2 text-theme-muted/40 group-focus-within:text-brand-tactical transition-colors" size={14} />
                 <input
-                  id="lp-senha"
-                  className="fs-input w-full pr-12"
                   type={showSenha ? "text" : "password"}
+                  required
                   value={senha}
                   onChange={e => setSenha(e.target.value)}
+                  className="w-full bg-transparent border-b border-theme-border/60 py-2.5 pl-8 pr-10 text-xs text-theme-text placeholder:text-theme-muted/20 focus:outline-none focus:border-brand-tactical transition-all"
                   placeholder="••••••••"
                   autoComplete="current-password"
-                  required
                 />
                 <button
                   type="button"
-                  className="absolute right-4 text-theme-subtle hover:text-emerald-500 transition-colors"
-                  onClick={() => setShowSenha(v => !v)}
+                  onClick={() => setShowSenha(!showSenha)}
+                  className="absolute right-0 top-1/2 -translate-y-1/2 text-theme-muted hover:text-theme-text transition-colors p-2"
                 >
-                  <EyeIcon open={showSenha} />
+                  {showSenha ? <EyeOff size={16} /> : <Eye size={16} />}
                 </button>
               </div>
             </div>
 
             {/* Submit */}
             <button
-              id="btn-login-submit"
               type="submit"
               disabled={loading}
-              className="w-full py-5 bg-emerald-500 text-white font-display font-black text-xs uppercase tracking-[0.4em] hover:bg-emerald-600 transition-all shadow-xl shadow-emerald-500/10 disabled:opacity-50 disabled:cursor-not-allowed mt-4"
+              className="w-full bg-brand-tactical text-brand-text hover:brightness-110 font-black uppercase tracking-[0.5em] text-[10px] py-5 transition-all flex items-center justify-center gap-4 group disabled:opacity-30 disabled:grayscale shadow-xl shadow-brand-tactical/10 italic"
             >
-              {loading ? "VALIDANDO..." : "ENTRAR NO SISTEMA"}
+              {loading ? "VALIDANDO ACESSO..." : (
+                <>
+                  Entrar no Sistema <ArrowRight size={14} className="group-hover:translate-x-1 transition-transform" />
+                </>
+              )}
             </button>
           </form>
 
           {/* Registro */}
-          <div className="mt-12 pt-8 border-t border-theme-border text-center">
-            <p className="text-[9px] font-black text-theme-subtle uppercase tracking-widest mb-4">
-              Solicitação de novas credenciais
+          <div className="px-10 py-6 border-t border-theme-border/40 text-center bg-theme-bg-muted/10">
+            <p className="text-theme-muted text-[8px] font-black uppercase tracking-[0.3em]">
+              Novo por aqui? <Link to="/register" className="text-theme-text hover:text-brand-tactical ml-3 transition-all underline underline-offset-4 decoration-theme-border">Solicitar Cadastro</Link>
             </p>
-            <Link to="/register" className="text-[11px] font-display font-bold text-emerald-500 uppercase tracking-widest hover:text-brand transition-colors">
-              INICIAR REGISTRO PROFISSIONAL →
-            </Link>
           </div>
         </div>
 
         {/* Voltar */}
-        <div className="text-center mt-12">
-          <Link to="/" className="text-[10px] font-black text-theme-subtle uppercase tracking-[0.3em] hover:text-emerald-500 transition-colors">
-            ← VOLTAR PARA VITRINE PÚBLICA
+        <div className="mt-8 text-center">
+          <Link to="/" className="text-theme-muted hover:text-theme-text text-[8px] font-black uppercase tracking-[0.5em] transition-all opacity-40 hover:opacity-100">
+            ← Voltar para a Vitrine
           </Link>
         </div>
       </div>

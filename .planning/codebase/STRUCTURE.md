@@ -18,6 +18,8 @@
 
 ## Key Files
 - `backend/prisma/schema.prisma`: Source of truth for the data model.
+- `backend/src/services/pricing.service.ts`: Central logic for pricing and splits.
+- `backend/src/services/phygital.service.ts`: IoT queue and image processing logic.
 - `frontend/tailwind.config.js`: Design system and theme tokens.
 - `api/server.js`: Compiled backend entry point for Vercel.
 - `.agent/settings.json`: GSD configuration.

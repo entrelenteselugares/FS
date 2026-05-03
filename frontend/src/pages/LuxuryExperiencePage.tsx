@@ -1,11 +1,11 @@
-﻿import { useState, useEffect } from "react";
+import { useState, useEffect } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import { API } from "../lib/api";
 import { Download, ExternalLink, Camera, Calendar, MapPin, ChevronDown } from "lucide-react";
 import { motion } from "framer-motion";
 
 import { T } from "../lib/theme";
-import { Navbar } from "../components/Navbar";
+import { useAuth } from "../hooks/useAuth";
 
 interface EventData {
   id: string;
@@ -38,6 +38,7 @@ interface Product {
 export default function LuxuryExperiencePage() {
   const { id } = useParams();
   const navigate = useNavigate();
+  const { user } = useAuth();
   const [event, setEvent] = useState<EventData | null>(null);
   const [loading, setLoading] = useState(true);
   const [products, setProducts] = useState<Product[]>([]);
@@ -50,12 +51,13 @@ export default function LuxuryExperiencePage() {
 
   useEffect(() => {
     if (id) {
-      API.get(`/public/events/${id}`)
+      const params = user?.id ? { userId: user.id } : {};
+      API.get(`/public/events/${id}`, { params })
         .then(r => setEvent(r.data))
         .catch(err => console.error("Erro ao carregar experiência:", err))
         .finally(() => setLoading(false));
     }
-  }, [id]);
+  }, [id, user?.id]);
 
   useEffect(() => {
     API.get("/public/print-catalog")

@@ -1,7 +1,8 @@
-﻿import { useState, useEffect, useRef, useCallback } from "react";
+import { useState, useEffect, useRef, useCallback } from "react";
 import { useParams, useNavigate, useSearchParams } from "react-router-dom";
 import { ShieldCheck, ArrowLeft, CheckCircle2, Clock, RefreshCw, Lock } from "lucide-react";
-import { QRCodeSVG } from "qrcode.react";
+
+
 import { API } from "../lib/api";
 import { AuthContext } from "../contexts/AuthContextBase";
 import { useContext } from "react";
@@ -89,6 +90,7 @@ export const CheckoutPage = () => {
   // Estados de Autenticação Tática
   const [authStep, setAuthStep] = useState<'loading' | 'required' | 'login' | 'register' | 'authorized'>('loading');
   const [password, setPassword] = useState("");
+  const [email, setEmail] = useState("");
   const [localAuthError, setLocalAuthError] = useState("");
   const [authLoading, setAuthLoading] = useState(false);
 
@@ -163,11 +165,18 @@ export const CheckoutPage = () => {
     setAuthLoading(true);
     setLocalAuthError("");
 
+    const targetEmail = order!.buyerEmail || email;
+    if (!targetEmail) {
+      setLocalAuthError("O e-mail é obrigatório.");
+      setAuthLoading(false);
+      return;
+    }
+
     try {
       if (authStep === 'login') {
-        await authLogin(order!.buyerEmail!, password);
+        await authLogin(targetEmail, password);
       } else {
-        await authRegister(order!.buyerEmail!, password, order!.contributorName || order!.event.nomeNoivos || "Cliente");
+        await authRegister(targetEmail, password, order!.contributorName || order!.event.nomeNoivos || "Cliente");
       }
       setAuthStep('authorized');
     } catch (err: unknown) {
@@ -398,35 +407,50 @@ export const CheckoutPage = () => {
 
   if (pixData) return (
     <div className="min-h-screen bg-theme-bg text-theme-text">
-      <nav className="h-20 flex items-center justify-between px-8 border-b border-zinc-900 sticky top-0 z-50 bg-theme-bg/90 backdrop-blur-xl">
-        <button onClick={() => navigate(-1)} className="text-[10px] font-black uppercase tracking-widest text-zinc-500 hover:text-white transition-all flex items-center gap-2"><ArrowLeft size={14} /> Voltar</button>
+      <nav className="h-20 flex items-center justify-between px-8 border-b border-theme-border sticky top-0 z-50 bg-theme-bg/90 backdrop-blur-xl">
+        <button onClick={() => navigate(-1)} className="text-[11px] font-black uppercase tracking-widest text-theme-text-muted hover:text-theme-text transition-all flex items-center gap-2"><ArrowLeft size={14} /> Voltar</button>
         <img src="/logo-fs.png" alt="Foto Segundo" className="h-5" />
-        <div className="flex items-center gap-2 text-emerald-500 text-[9px] font-black uppercase tracking-widest"><ShieldCheck size={14} /> Checkout Blindado</div>
+        <div className="flex items-center gap-2 text-brand-tactical text-[11px] font-black uppercase tracking-widest"><ShieldCheck size={14} /> Checkout Blindado</div>
       </nav>
       <div className="max-w-md mx-auto px-6 py-12 space-y-8">
         <div className="text-center">
-          <div className="inline-flex items-center gap-3 px-5 py-2.5 bg-emerald-500/5 border border-emerald-500/20 text-[9px] font-black uppercase tracking-[0.2em] text-emerald-500 italic">
+          <div className="inline-flex items-center gap-3 px-5 py-2.5 bg-brand-tactical/5 border border-brand-tactical/20 text-[11px] font-black uppercase tracking-[0.2em] text-brand-tactical italic">
             <RefreshCw size={12} className="animate-spin" /> {pollingStatus === "polling" ? "Aguardando Confirmação..." : "Verificando..."}
           </div>
         </div>
-        <div className="bg-theme-bg border border-zinc-900 p-8 space-y-8">
-          <div className="text-center space-y-2">
-            <h1 className="text-2xl font-black italic">QUASE LÁ!</h1>
-            <p className="text-[9px] text-zinc-500 uppercase tracking-widest">Escaneie para liberação imediata</p>
+        <div className="bg-theme-bg-muted border border-theme-border p-8 space-y-8 rounded-sm">
+          <div className="text-center space-y-3">
+            <h1 className="text-2xl font-black italic tracking-tighter text-theme-text">QUASE LÁ!</h1>
+            <p className="text-[11px] text-theme-text-muted uppercase tracking-widest">Complete o pagamento na página do Mercado Pago</p>
           </div>
-          <div className="flex justify-center">
-            <div className="bg-white p-4 shadow-2xl"><QRCodeSVG value={pixData.qrCode} size={200} level="H" includeMargin /></div>
+
+          {pixData.ticketUrl && (
+            <div className="text-center space-y-4">
+              <a 
+                href={pixData.ticketUrl} 
+                target="_blank" 
+                rel="noreferrer"
+                className="inline-flex items-center justify-center gap-3 w-full px-8 py-5 bg-[#00B1EA] text-white text-[12px] font-black uppercase tracking-widest hover:brightness-110 transition-all rounded-sm shadow-lg shadow-[#00B1EA]/20"
+              >
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg>
+                Pagar com Pix no Mercado Pago
+              </a>
+              <p className="text-[9px] text-theme-text-muted uppercase tracking-widest">A página de pagamento abrirá em uma nova aba</p>
+            </div>
+          )}
+
+          <div className="flex items-center justify-center gap-2 text-theme-text-muted">
+            <Clock size={12} /> <span className="text-[11px] font-black uppercase tracking-widest">Expira em {fmtTimer(pixSecondsLeft)}</span>
           </div>
-          <div className="flex items-center justify-center gap-2 text-zinc-500">
-            <Clock size={12} /> <span className="text-[9px] font-black uppercase tracking-widest">Expira em {fmtTimer(pixSecondsLeft)}</span>
-          </div>
-          <div className="p-5 bg-black border border-zinc-900 space-y-3">
-             <label className="text-[8px] font-black text-zinc-600 uppercase tracking-widest">Pix Copia e Cola</label>
+
+          <div className="p-5 bg-theme-bg border border-theme-border space-y-3">
+             <label className="text-[10px] font-black text-theme-text-muted uppercase tracking-widest opacity-60">Pix Copia e Cola</label>
              <div className="flex items-center gap-4 overflow-hidden">
-                <input readOnly value={pixData.qrCode} className="bg-transparent text-[10px] w-full outline-none truncate font-mono text-zinc-400" />
-                <button onClick={() => { navigator.clipboard.writeText(pixData.qrCode); setCopied(true); setTimeout(() => setCopied(false), 2000); }} className="text-emerald-500 text-[9px] font-black uppercase tracking-widest">{copied ? "COPIADO" : "COPIAR"}</button>
+                <input readOnly value={pixData.qrCode} className="bg-transparent text-[11px] w-full outline-none truncate font-mono text-theme-text-muted" />
+                <button onClick={() => { navigator.clipboard.writeText(pixData.qrCode); setCopied(true); setTimeout(() => setCopied(false), 2000); }} className="text-brand-tactical text-[11px] font-black uppercase tracking-widest">{copied ? "COPIADO" : "COPIAR"}</button>
              </div>
           </div>
+
         </div>
       </div>
     </div>
@@ -481,7 +505,7 @@ export const CheckoutPage = () => {
                       value={shippingData.cep}
                       onBlur={handleCepBlur}
                       onChange={e => setShippingData({...shippingData, cep: e.target.value})}
-                      className="w-full bg-black border border-zinc-800 py-4 px-4 text-xs focus:border-brand-tactical outline-none transition-all font-mono"
+                      className="fs-input font-mono"
                     />
                   </div>
                   <div className="col-span-2">
@@ -490,20 +514,20 @@ export const CheckoutPage = () => {
                       value={shippingData.street}
                       disabled={isShippingLoading}
                       onChange={e => setShippingData({...shippingData, street: e.target.value})}
-                      className="w-full bg-black border border-zinc-800 py-4 px-4 text-xs outline-none opacity-80"
+                      className="fs-input opacity-80"
                     />
                   </div>
                   <input 
                     placeholder="Número" 
                     value={shippingData.number}
                     onChange={e => setShippingData({...shippingData, number: e.target.value})}
-                    className="bg-black border border-zinc-800 py-4 px-4 text-xs outline-none"
+                    className="fs-input"
                   />
                   <input 
                     placeholder="Cidade" 
                     value={shippingData.city}
                     disabled
-                    className="bg-black border border-zinc-800 py-4 px-4 text-xs outline-none opacity-50"
+                    className="fs-input opacity-50"
                   />
                </div>
                {isShippingLoading && <p className="text-[8px] animate-pulse text-brand-tactical uppercase font-black">Buscando endereço...</p>}
@@ -545,17 +569,31 @@ export const CheckoutPage = () => {
                    <p className="text-xs text-zinc-500">{authStep === 'login' ? "Identificamos seu e-mail. Digite sua senha." : "Defina uma senha para acessar suas memórias depois."}</p>
                 </div>
                 <form onSubmit={handleAuthSubmit} className="space-y-4">
-                   <input type="email" value={order.buyerEmail} disabled className="w-full bg-zinc-900/50 border border-zinc-800 py-4 px-4 text-xs opacity-50" />
                    <input 
-                      type="password" 
-                      placeholder="Senha (mín. 6 dígitos)" 
-                      value={password}
-                      onChange={e => setPassword(e.target.value)}
-                      className="w-full bg-black border border-zinc-800 py-4 px-4 text-xs focus:border-brand-tactical outline-none"
-                      autoFocus
-                   />
+                      type="email" 
+                      value={order.buyerEmail || email} 
+                      onChange={(e) => setEmail(e.target.value)}
+                      disabled={!!order.buyerEmail} 
+                      placeholder="seu@email.com"
+                      className={`fs-input ${order.buyerEmail ? 'opacity-50' : ''}`} 
+                    />
+                   <div className="relative group">
+                      <div className="absolute left-4 top-1/2 -translate-y-1/2 text-zinc-600 group-focus-within:text-brand-tactical transition-colors z-10 pointer-events-none">
+                        <Lock size={16} />
+                      </div>
+                      <input 
+                        placeholder="Senha (mín. 6 dígitos)" 
+                        className="fs-input" 
+                        style={{ paddingLeft: "3.5rem" }}
+                        type="password" 
+                        autoComplete="current-password"
+                        value={password} 
+                        onChange={(e) => setPassword(e.target.value)} 
+                        autoFocus
+                      />
+                    </div>
                    {localAuthError && <p className="text-[9px] text-red-500 font-black uppercase tracking-widest">{localAuthError}</p>}
-                   <button type="submit" disabled={authLoading} className="w-full py-4 bg-white text-theme-text text-[10px] font-black uppercase tracking-widest hover:bg-brand-tactical transition-all">
+                   <button type="submit" disabled={authLoading} className="fs-btn w-full bg-white text-theme-text">
                       {authLoading ? "AUTENTICANDO..." : (authStep === 'login' ? "ENTRAR E PAGAR" : "CRIAR CONTA E CONTINUAR")}
                    </button>
                    <button type="button" onClick={() => setAuthStep(s => s === 'login' ? 'register' : 'login')} className="w-full text-[9px] text-zinc-500 font-black uppercase tracking-widest hover:text-brand-tactical">

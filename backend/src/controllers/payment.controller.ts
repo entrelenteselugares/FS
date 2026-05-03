@@ -47,12 +47,13 @@ export class PaymentController {
           buyerEmail: email,
           valor: total,
           status: "PENDENTE",
-          manualType: "Upgrade de Serviços",
+          manualType: event.type === "PHOTO_MARKETPLACE" ? "Aquisição de Fotos" : "Upgrade de Serviços",
           internalNotes: JSON.stringify({
-            type: "UPGRADE",
+            type: event.type === "PHOTO_MARKETPLACE" ? "MARKETPLACE" : "UPGRADE",
             selectedServicesIds,
             includeLivePrint,
-            includeShipping
+            includeShipping,
+            cart: cartItems
           }),
         }
       });
@@ -124,25 +125,53 @@ export class PaymentController {
         }
       }
 
-      const { matriz: splitMatriz, captacao: splitCaptacao, edicao: splitEdicao, cartorio: splitCartorio } = 
-        await PricingService.calculateSplits(preco);
+      const { 
+        matriz: splitMatriz, 
+        captacao: splitCaptacao, 
+        edicao: splitEdicao, 
+        cartorio: splitCartorio,
+        franchisee: splitFranchisee,
+        passiveFranchiseeId 
+      } = await PricingService.calculateSplits(preco, { professionalId: event.captacaoId || undefined });
 
       console.log(`[Checkout] Repasse Manual Calculado: Snapshot salvo. Valor: ${preco}`);
 
       // 3. Preparar itens do pedido (Marketplace)
       let orderItemsData: Prisma.OrderItemCreateManyOrderInput[] = [];
       if (cartItems.length > 0) {
-        const dbMedias = await prisma.eventMedia.findMany({
-          where: {
-            eventId,
-            shortId: { in: cartItems }
+        for (const shortId of cartItems) {
+          // 1. Tenta achar em EventMedia
+          let media = await prisma.eventMedia.findFirst({
+            where: { eventId, shortId }
+          });
+
+          // 2. Se não achar, tenta PhygitalPrint e "promove" para Media
+          if (!media) {
+            const print = await prisma.phygitalPrint.findFirst({
+              where: { eventId, referenceCode: shortId }
+            });
+
+            if (print) {
+              media = await prisma.eventMedia.create({
+                data: {
+                  eventId,
+                  shortId: print.referenceCode,
+                  url: print.imageUrl,
+                  price: event.pricePerPhoto || 15,
+                  type: "PHOTO"
+                }
+              });
+            }
           }
-        });
-        orderItemsData = dbMedias.map(m => ({
-          mediaId: m.id,
-          price: m.price || event.pricePerPhoto || 15,
-          quantity: 1
-        }));
+
+          if (media) {
+            orderItemsData.push({
+              mediaId: media.id,
+              price: media.price || event.pricePerPhoto || 15,
+              quantity: 1
+            });
+          }
+        }
       }
       if (finalPrintProductId) {
         orderItemsData.push({
@@ -188,8 +217,14 @@ export class PaymentController {
           : preco;
 
         // Recalcula os splits com o valor final que será usado
-        const { matriz: fMatriz, captacao: fCaptacao, edicao: fEdicao, cartorio: fCartorio } = 
-          await PricingService.calculateSplits(finalPreco);
+        const { 
+          matriz: fMatriz, 
+          captacao: fCaptacao, 
+          edicao: fEdicao, 
+          cartorio: fCartorio,
+          franchisee: fFranchisee,
+          passiveFranchiseeId: fPassiveId
+        } = await PricingService.calculateSplits(finalPreco, { professionalId: event.captacaoId || undefined });
 
         order = await prisma.order.update({
           where: { id: existingPending.id },
@@ -200,6 +235,8 @@ export class PaymentController {
             splitCaptacao: fCaptacao,
             splitEdicao: fEdicao,
             splitCartorio: fCartorio,
+            splitFranchisee: fFranchisee,
+            passiveFranchiseeId: fPassiveId,
             items: orderItemsData.length > 0 ? {
               deleteMany: {},
               create: orderItemsData
@@ -220,6 +257,8 @@ export class PaymentController {
             splitCaptacao,
             splitEdicao,
             splitCartorio,
+            splitFranchisee,
+            passiveFranchiseeId,
             items: orderItemsData.length > 0 ? {
               create: orderItemsData
             } : undefined
@@ -417,8 +456,14 @@ export class PaymentController {
         return res.status(400).json({ error: "O valor do pagamento deve ser superior a zero. Verifique os itens selecionados." });
       }
 
-      const { matriz: splitMatriz, captacao: splitCaptacao, edicao: splitEdicao, cartorio: splitCartorio } = 
-        await PricingService.calculateSplits(preco);
+      const { 
+        matriz: splitMatriz, 
+        captacao: splitCaptacao, 
+        edicao: splitEdicao, 
+        cartorio: splitCartorio,
+        franchisee: splitFranchisee,
+        passiveFranchiseeId
+      } = await PricingService.calculateSplits(preco, { professionalId: event.captacaoId || undefined });
 
       // 4. Identificação do Comprador (Lead -> Customer)
       let finalUserId = userId;
@@ -514,18 +559,37 @@ export class PaymentController {
       // 4a. Busca as mídias reais para obter os IDs (Marketplace)
       let orderItemsData: Prisma.OrderItemCreateManyOrderInput[] = [];
       if (cartItems.length > 0) {
-        const dbMedias = await prisma.eventMedia.findMany({
-          where: {
-            eventId,
-            shortId: { in: cartItems }
-          }
-        });
+        for (const shortId of cartItems) {
+          let media = await prisma.eventMedia.findFirst({
+            where: { eventId, shortId }
+          });
 
-        orderItemsData = dbMedias.map(m => ({
-          mediaId: m.id,
-          price: m.price || event.pricePerPhoto || 15,
-          quantity: 1
-        }));
+          if (!media) {
+            const print = await prisma.phygitalPrint.findFirst({
+              where: { eventId, referenceCode: shortId }
+            });
+
+            if (print) {
+              media = await prisma.eventMedia.create({
+                data: {
+                  eventId,
+                  shortId: print.referenceCode,
+                  url: print.imageUrl,
+                  price: event.pricePerPhoto || 15,
+                  type: "PHOTO"
+                }
+              });
+            }
+          }
+
+          if (media) {
+            orderItemsData.push({
+              mediaId: media.id,
+              price: media.price || event.pricePerPhoto || 15,
+              quantity: 1
+            });
+          }
+        }
       }
 
       // Adiciona o produto impresso aos items se selecionado
@@ -554,6 +618,8 @@ export class PaymentController {
             splitCaptacao,
             splitEdicao,
             splitCartorio,
+            splitFranchisee,
+            passiveFranchiseeId,
             tempPassword: isNewUser ? tempPassword : null,
             // Order Engine Fields
             deliveryType: req.body.deliveryType || existingPendingOrder.deliveryType || "DIGITAL_ONLY",
@@ -590,6 +656,8 @@ export class PaymentController {
             splitCaptacao,
             splitEdicao,
             splitCartorio,
+            splitFranchisee,
+            passiveFranchiseeId,
             tempPassword: isNewUser ? tempPassword : null,
             // Order Engine Fields
             deliveryType: req.body.deliveryType || "DIGITAL_ONLY",
@@ -965,26 +1033,73 @@ export class PaymentController {
    * (Usado por: Webhook, Transparent Checkout e Cash Payment)
    */
   static async finalizeApprovedOrder(order: any, event: any, req: Request) {
-    try {
-      // 1. Atualizar Montante Arrecadado (Crowdfunding)
-      if (order.isContribution && order.eventId) {
-        await prisma.event.update({
-          where: { id: order.eventId },
-          data: { collectedAmount: { increment: order.valor } }
-        });
-      }
+    const MAX_LOW_RISK_PAYOUT = 5000;
+    const ESCROW_DAYS = 7;
 
-      // 2. Ativação do Evento e Visibilidade
-      await prisma.event.update({
-        where: { id: order.eventId },
-        data: { 
-          active: true, 
+    try {
+      await prisma.$transaction(async (tx) => {
+        const eventUpdateData: any = {
+          active: true,
           isQuote: false,
           isPrivate: event.isPrivate ?? true
+        };
+
+        // 1. Atualizar Montante Arrecadado (Crowdfunding)
+        if (order.isContribution && order.eventId) {
+          eventUpdateData.collectedAmount = { increment: order.valor };
         }
+
+        // 2. Lógica de Upgrades (Service Catalog)
+        const orderItems = await tx.orderItem.findMany({
+          where: { orderId: order.id },
+          include: { service: true }
+        });
+
+        const serviceItems = orderItems.filter(item => item.serviceId);
+        if (serviceItems.length > 0) {
+          if (serviceItems.some(i => i.service?.name.toLowerCase().includes("video"))) eventUpdateData.temVideo = true;
+          if (serviceItems.some(i => i.service?.name.toLowerCase().includes("reels"))) eventUpdateData.temReels = true;
+          if (serviceItems.some(i => i.service?.name.toLowerCase().includes("impressa"))) eventUpdateData.temFotoImpressa = true;
+        }
+
+        // 3. Lógica Phygital e Logística
+        let logisticNote = "";
+        if (order.deliveryType === "SHIPPING" || order.deliveryType === "LOCAL_PICKUP") {
+          eventUpdateData.temFotoImpressa = true;
+          if (order.shippingAddress) {
+            try {
+              const addr = typeof order.shippingAddress === 'string' ? JSON.parse(order.shippingAddress) : order.shippingAddress;
+              logisticNote = `[LOGÍSTICA] Entrega via ${order.deliveryType}. Endereço: ${addr.rua}, ${addr.numero} - ${addr.cidade}/${addr.uf}`;
+            } catch (e) {
+              console.warn("Falha ao parsear endereço logístico:", e);
+            }
+          }
+        }
+
+        // 4. Executar Update Único do Evento
+        await tx.event.update({
+          where: { id: order.eventId },
+          data: eventUpdateData
+        });
+
+        // 5. Lógica de Payout & Escrow
+        const captacaoUser = event.captacaoId ? await tx.user.findUnique({ where: { id: event.captacaoId } }) : null;
+        const isLowRisk = !!(captacaoUser?.isVerified && Number(order.valor) < MAX_LOW_RISK_PAYOUT);
+        
+        const payoutReadyAt = new Date(event.dataEvento);
+        payoutReadyAt.setDate(payoutReadyAt.getDate() + ESCROW_DAYS);
+
+        await tx.order.update({
+          where: { id: order.id },
+          data: {
+            payoutStatus: isLowRisk ? "AVAILABLE" : "PENDING",
+            payoutReadyAt: isLowRisk ? new Date() : payoutReadyAt,
+            ...(logisticNote ? { internalNotes: logisticNote } : {})
+          }
+        });
       });
 
-      // 3. Notificações (E-mail e WhatsApp)
+      // 6. Notificações (E-mail e WhatsApp) - Fora da transação para evitar rollback se falhar
       const recipientEmail = order.buyerEmail || order.cliente?.email;
       if (recipientEmail) {
         NotificationService.sendAccessEmail({
@@ -994,7 +1109,6 @@ export class PaymentController {
           orderId: order.id,
           accessLink: `${FRONTEND_URL}/e/${event.id}`,
           tempPassword: order.tempPassword || undefined,
-          // Se for Guest Order, podemos incluir o token no link no futuro
           guestToken: order.isGuestOrder ? order.guestToken : undefined
         }).catch(e => console.error("Erro ao enviar e-mail de acesso:", e));
       }
@@ -1006,48 +1120,12 @@ export class PaymentController {
         amount: Number(order.valor)
       });
 
-      // 4. Lógica de Upgrades (Service Catalog) baseada nos itens do pedido
-      const orderItems = await prisma.orderItem.findMany({
-        where: { orderId: order.id },
-        include: { service: true }
-      });
-
-      const serviceItems = orderItems.filter(item => item.serviceId);
-      if (serviceItems.length > 0) {
-        const updateData: any = {};
-        if (serviceItems.some(i => i.service?.name.toLowerCase().includes("video"))) updateData.temVideo = true;
-        if (serviceItems.some(i => i.service?.name.toLowerCase().includes("reels"))) updateData.temReels = true;
-        if (serviceItems.some(i => i.service?.name.toLowerCase().includes("impressa"))) updateData.temFotoImpressa = true;
-        
-        if (Object.keys(updateData).length > 0) {
-          await prisma.event.update({ where: { id: order.eventId }, data: updateData });
-        }
-      }
-
-      // 5. Lógica Phygital e Logística (Order Engine)
-      if (order.deliveryType === "SHIPPING" || order.deliveryType === "LOCAL_PICKUP") {
-        await prisma.event.update({
-          where: { id: order.eventId },
-          data: { temFotoImpressa: true }
-        });
-
-        // Registrar nota logística se houver frete ou endereço
-        if (order.shippingAddress) {
-          const addr = typeof order.shippingAddress === 'string' ? JSON.parse(order.shippingAddress) : order.shippingAddress;
-          await prisma.order.update({
-            where: { id: order.id },
-            data: { 
-              internalNotes: `[LOGÍSTICA] Entrega via ${order.deliveryType}. Endereço: ${addr.rua}, ${addr.numero} - ${addr.cidade}/${addr.uf}` 
-            }
-          });
-        }
-      }
-
-      // 6. Auditoria Final
-      audit(req, "ORDER_FINALIZED_UNIFIED", "Order", order.id, null, { eventId: order.eventId });
+      // 7. Auditoria Final
+      audit(req, "ORDER_FINALIZED_TX", "Order", order.id, null, { eventId: order.eventId });
 
     } catch (err) {
       console.error("[finalizeApprovedOrder Error]:", err);
+      throw err; // Re-throw para garantir que o webhook receba erro se a TX falhar
     }
   }
 }

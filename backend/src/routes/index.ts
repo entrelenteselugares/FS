@@ -14,6 +14,7 @@ import {
   adminUpdateUser,
   adminDeleteUser,
   adminListOrders,
+  adminMarkPayoutPaid,
   adminDeleteOrder,
   adminListQuotes,
   adminApproveQuote,
@@ -292,6 +293,7 @@ router.delete("/admin/users/:id", requireAuth, requireRole("ADMIN"), adminDelete
 
 // ── Admin: Gestão de Pedidos ───────────────────────────────────────────────────
 router.get("/admin/orders",                   requireAuth, requireRole("ADMIN"), adminListOrders);
+router.patch("/admin/orders/:id/payout",      requireAuth, requireRole("ADMIN"), adminMarkPayoutPaid);
 router.delete("/admin/orders/:id",                requireAuth, requireRole("ADMIN"), adminDeleteOrder);
 router.post("/admin/orders/:id/delete-media", requireAuth, requireRole("ADMIN"), deleteMediaAdmin);
 
@@ -344,6 +346,13 @@ router.post("/admin/franchises/credits",                    requireAuth, require
 router.patch("/admin/franchises/:profileId/toggle",         requireAuth, requireRole("ADMIN"), FranchiseController.toggleActive);
 router.delete("/admin/franchises/:profileId",               requireAuth, requireRole("ADMIN"), FranchiseController.remove);
 router.get("/admin/franchises/:profileId/statement",        requireAuth, requireRole("ADMIN"), FranchiseController.getStatement);
+
+// B2B Hub (Franchisee Dashboard)
+router.get("/franchise/inventory", requireAuth, requireRole("FRANCHISEE"), FranchiseController.getInventory);
+router.get("/franchise/referral", requireAuth, requireRole("FRANCHISEE"), FranchiseController.getReferralCode);
+router.get("/franchise/network", requireAuth, requireRole("FRANCHISEE"), FranchiseController.getNetwork);
+router.get("/franchise/finance", requireAuth, requireRole("FRANCHISEE"), FranchiseController.getFinanceStats);
+router.post("/franchise/reorder", requireAuth, requireRole("FRANCHISEE"), FranchiseController.postReorder);
 
 // ── PHYGITAL (Fluxo QR Code & Impressão) ──────────────────────────────────────
 router.post("/public/phygital/upload", upload.single("photo"), PhygitalController.upload);

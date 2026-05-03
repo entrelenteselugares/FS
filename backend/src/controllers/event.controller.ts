@@ -188,11 +188,40 @@ export class EventController {
           take: 50,
           select: { imageUrl: true }
         });
-        previewPhotos = prints.map(p => p.imageUrl);
-        // Se houver previews manuais, adicionamos no final
-        previewPhotos = [...previewPhotos, ...jsonPreviews];
+        const printUrls = prints.map(p => p.imageUrl);
+        // Deduplica e unifica fontes: prints + previews manuais
+        previewPhotos = Array.from(new Set([...printUrls, ...jsonPreviews]));
       } else {
         previewPhotos = jsonPreviews;
+      }
+
+      // 4. Se for Marketplace, buscamos quais mídias específicas foram compradas
+      let unlockedMediaIds: string[] = [];
+      if (event.type === 'PHOTO_MARKETPLACE' && currentUserId) {
+        const paidOrders = await prisma.order.findMany({
+          where: { 
+            eventId: event.id, 
+            clienteId: currentUserId,
+            status: { in: ["PAGO", "APROVADO"] }
+          },
+          include: { items: { include: { media: true } } }
+        });
+        paidOrders.forEach(o => {
+          o.items.forEach(item => {
+            if (item.mediaId) unlockedMediaIds.push(item.mediaId);
+            // Também permitimos busca pelo ShortID da mídia se for o caso
+            if (item.media?.shortId) unlockedMediaIds.push(item.media.shortId);
+          });
+          // FALLBACK TÁTICO: Se o pedido não tem itens vinculados, tenta recuperar do internalNotes (JSON do carrinho)
+          if (o.items.length === 0 && o.internalNotes) {
+            try {
+              const notes = JSON.parse(o.internalNotes);
+              if (notes.cart && Array.isArray(notes.cart)) {
+                unlockedMediaIds.push(...notes.cart);
+              }
+            } catch (e) { /* ignore parse error */ }
+          }
+        });
       }
 
       return res.json({
@@ -203,18 +232,21 @@ export class EventController {
         coverPhotoUrl: event.coverPhotoUrl,
         priceBase: event.priceBase,
         priceEarly: event.priceEarly,
+        pricePerPhoto: event.pricePerPhoto,
         temFoto: event.temFoto,
         temVideo: event.temVideo,
         temReels: event.temReels,
         temFotoImpressa: event.temFotoImpressa,
         previewPhotos,
+        unlockedMediaIds,
         pendingOrderId: (order && order.status === "PENDENTE") ? order.id : null,
-        isOwner: hasAccess,
+        isOwner: isOwner,
+        hasAccess: hasAccess,
         // Links sensíveis só aparecem se aprovado e visível
         lightroomUrl: (hasAccess && (!order || order.showAlbum)) ? event.lightroomUrl : null,
         driveUrl: (hasAccess && (!order || order.showVideo)) ? event.driveUrl : null,
         paywall: {
-          active: !hasAccess,
+          active: !hasAccess && !isOwner,
           message: hasAccess ? "Entrega liberada." : "Galeria protegida."
         },
         recentOrders: await prisma.order.findMany({

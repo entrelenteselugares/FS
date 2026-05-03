@@ -72,8 +72,7 @@ export class PhygitalController {
    */
   static async confirmPrint(req: Request, res: Response) {
     try {
-      const id = req.params.id as string;
-      const { status } = req.body;
+      const { id, status } = req.body;
       if (!id || !status) return res.status(400).json({ error: "id e status são obrigatórios." });
 
       const updated = await PhygitalService.updateStatus(String(id), status);

@@ -9,11 +9,12 @@ interface AccessTypeModalProps {
   orderId: string;
   eventTitle: string;
   isPrimaryClient?: boolean;
+  isMarketplace?: boolean;
   onConfirmed: (accessType: string, expiresAt: string) => void;
   onClose?: () => void;
 }
 
-export default function AccessTypeModal({ orderId, eventTitle, isPrimaryClient, onConfirmed, onClose }: AccessTypeModalProps) {
+export default function AccessTypeModal({ orderId, eventTitle, isPrimaryClient, isMarketplace, onConfirmed, onClose }: AccessTypeModalProps) {
   useTheme();
   const [selected, setSelected] = useState<"PUBLIC" | "PRIVATE" | null>(null);
   const [saving, setSaving] = useState(false);
@@ -99,8 +100,10 @@ export default function AccessTypeModal({ orderId, eventTitle, isPrimaryClient, 
                 90 DIAS
               </span>
             </div>
-            <p className="text-[11px] text-theme-muted font-bold uppercase tracking-tight ml-7">
-              Álbum listado na vitrine. Download ilimitado por 3 meses.
+            <p className="text-[11px] text-theme-muted font-bold uppercase tracking-tight ml-7 leading-relaxed">
+              {isMarketplace 
+                ? "Galeria aberta na vitrine para que visitantes possam adquirir fotos."
+                : "Álbum listado na vitrine. Download ilimitado por 3 meses."}
             </p>
             {selected === "PUBLIC" && (
                 <div 
@@ -135,8 +138,10 @@ export default function AccessTypeModal({ orderId, eventTitle, isPrimaryClient, 
                 15 DIAS
               </span>
             </div>
-            <p className="text-[11px] text-theme-muted font-bold uppercase tracking-tight ml-7">
-               Restrito ao seu login. Arquivos excluídos após 15 dias.
+            <p className="text-[11px] text-theme-muted font-bold uppercase tracking-tight ml-7 leading-relaxed">
+               {isMarketplace
+                 ? "Galeria oculta da vitrine. Apenas você (com login) pode acessar e comprar."
+                 : "Restrito ao seu login. Arquivos excluídos após 15 dias."}
             </p>
             {selected === "PRIVATE" && (
                 <div 

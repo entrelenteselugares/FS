@@ -301,6 +301,26 @@ export class NotificationService {
     );
   }
 
+  /** Alerta de Baixo Estoque (B2B Hub) */
+  static async notifyLowStock(data: { to: string; name: string; currentBalance: number }) {
+    // Notificação Interna (CallMeBot Principal)
+    sendWhatsApp(
+      `⚠️ *ALERTA DE ESTOQUE — B2B Hub*\n\n` +
+      `🏢 Franquia: ${data.name}\n` +
+      `📉 Saldo Atual: ${data.currentBalance} créditos\n` +
+      `🚨 Status: ABAIXO DO LIMITE CRÍTICO\n\n` +
+      `Sugerida recompra imediata via painel.`
+    );
+
+    // Notificação para o Franqueado (Bot Direto)
+    this.sendWhatsAppToClient(data.to, 
+      `🚨 *ALERTA DE INSUMOS — Foto Segundo*\n\n` +
+      `Olá, *${data.name}*! Notamos que seu saldo de créditos atingiu um nível crítico (*${data.currentBalance} fotos*).\n\n` +
+      `Para evitar interrupções na sua máquina de impressão, realize a recarga agora pelo seu dashboard:\n` +
+      `👉 ${APP_URL}/franquia`
+    );
+  }
+
   /** Mensagem de Re-engajamento (Loyalty) */
   static sendLoyaltyMessage(data: { clientName: string; eventTitle: string; whatsapp: string; type: "6_MONTHS" | "1_YEAR" }) {
     const timeLabel = data.type === "6_MONTHS" ? "6 meses" : "1 ano";

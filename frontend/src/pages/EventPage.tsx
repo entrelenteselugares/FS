@@ -1,4 +1,4 @@
-﻿import { useState, useEffect, useCallback } from "react";
+import { useState, useEffect, useCallback } from "react";
 import { Check, Video, Printer, QrCode, ShoppingCart, Share2, ChevronRight, Image as ImageIcon, Camera } from "lucide-react";
 import { QRCodeCanvas } from "qrcode.react";
 import { useParams, useNavigate, useSearchParams } from "react-router-dom";
@@ -47,6 +47,7 @@ interface EventData {
   isPrivate?: boolean;
   isOwner?: boolean;
   active?: boolean;
+  unlockedMediaIds?: string[];
 }
 
 interface EventMedia {
@@ -262,8 +263,13 @@ export default function EventPage() {
   const handleUnlockClick = async () => { 
     if (!event) return;
     
-    // Se já é dono ou já pagou, não faz sentido "desbloquear"
-    if (event.isOwner || paid) return;
+    // Para PHOTO_MARKETPLACE: paid é sempre true (step forçado para 'success'),
+    // mas isso não significa que as fotos do carrinho já foram compradas.
+    // Permitimos o checkout se houver itens no carrinho.
+    const isMarketplaceWithCart = event.type === 'PHOTO_MARKETPLACE' && cart.length > 0;
+
+    // Para álbuns normais: bloqueia se já pagou ou é dono
+    if (!isMarketplaceWithCart && (event.isOwner || paid)) return;
 
     setLoading(true);
     try {
@@ -374,7 +380,7 @@ export default function EventPage() {
                 </div>
               );
             })()}
-            <div className="absolute inset-0 bg-gradient-to-t from-[#141414] via-[#141414]/40 to-transparent z-[1]" />
+            <div className="absolute inset-0 bg-gradient-to-t from-theme-bg via-theme-bg/40 to-transparent z-[1]" />
           </div>
 
           {/* MARKETPLACE LIVE FEED */}
@@ -386,52 +392,85 @@ export default function EventPage() {
                       <div className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse shadow-[0_0_12px_rgba(16,185,129,0.5)]" />
                       <h2 className="font-display text-3xl lg:text-5xl font-black uppercase tracking-tighter">Live Stream</h2>
                     </div>
-                    <p className="text-[10px] text-theme-muted uppercase tracking-[0.3em] font-black">Capturas em tempo real • Seleção Phygital</p>
+                    <p className="text-[11px] text-theme-text-muted uppercase tracking-[0.3em] font-black">Capturas em tempo real • Seleção Phygital</p>
                   </div>
                   
                   {event.isOwner && (
                     <button 
                       onClick={() => setShowQrModal(true)}
-                      className="flex items-center gap-3 px-6 py-3 bg-white/5 border border-theme-border text-[10px] font-black uppercase tracking-widest hover:bg-white/10 transition-colors"
+                      className="flex items-center gap-3 px-6 py-3 bg-white/5 border border-theme-border text-[11px] font-black uppercase tracking-widest hover:bg-white/10 transition-colors"
                     >
-                      <QrCode size={16} className="text-emerald-500" /> QR Code de Captura
+                      <QrCode size={16} className="text-brand-tactical" /> QR Code de Captura
                     </button>
                   )}
                </header>
 
                <div className="flex-1 overflow-y-auto px-8 lg:px-12 pb-32 lg:pb-12 scrollbar-hide">
+                  {isMarketplace && (
+                    <div className="mb-12 p-6 bg-brand-tactical/5 border-l-4 border-brand-tactical">
+                      <div className="flex gap-4">
+                        <div className="p-3 bg-brand-tactical/10 rounded-full h-fit">
+                          <ImageIcon size={24} className="text-brand-tactical" />
+                        </div>
+                        <div>
+                          <h3 className="text-lg font-black uppercase tracking-tighter text-theme-text mb-1">Galeria de Venda Avulsa</h3>
+                          <p className="text-[11px] font-bold text-theme-text-muted uppercase tracking-widest leading-relaxed max-w-2xl">
+                            Selecione as fotos que deseja eternizar. Ao finalizar a compra, o <span className="text-brand-tactical">arquivo digital original</span> será desbloqueado para download ilimitado e as marcas d'água serão removidas.
+                          </p>
+                        </div>
+                      </div>
+                    </div>
+                  )}
+
                   <div className="grid grid-cols-2 md:grid-cols-3 xl:grid-cols-4 2xl:grid-cols-5 gap-4 lg:gap-6">
-                    {event.previewPhotos?.map((url, idx) => {
+                    {Array.from(new Set(event.previewPhotos || [])).map((url, idx) => {
                       const refCode = url.split('/').pop()?.split('.')[0] || `FOTO-${idx}`;
                       const isSelected = cart.includes(refCode);
+                      const isUnlocked = event.unlockedMediaIds?.includes(refCode) || event.isOwner;
+
                       return (
                         <motion.div 
-                          key={idx} 
+                          key={url} 
                           layout
                           initial={{ opacity: 0, y: 20 }}
                           animate={{ opacity: 1, y: 0 }}
-                          transition={{ delay: idx * 0.05 }}
-                          onClick={() => toggleCart(refCode)}
-                          className={`relative group aspect-[3/4] bg-black overflow-hidden cursor-pointer border-2 transition-all duration-500 ${isSelected ? "border-emerald-500" : "border-theme-border hover:border-theme-border-2"}`}
+                          transition={{ delay: (idx % 20) * 0.05 }}
+                          onClick={() => !isUnlocked && toggleCart(refCode)}
+                          className={`relative group aspect-[3/4] bg-black overflow-hidden border-2 transition-all duration-500 ${isUnlocked ? "border-brand-tactical cursor-default" : (isSelected ? "border-emerald-500 cursor-pointer" : "border-theme-border hover:border-theme-border-2 cursor-pointer")}`}
                         >
-                            {/* Watermark Overlay */}
-                            <div className="absolute inset-0 z-10 flex items-center justify-center opacity-[0.03] pointer-events-none rotate-[-45deg] select-none">
-                              <span className="text-theme-text font-display text-4xl font-black whitespace-nowrap tracking-[1em] uppercase">PROOF</span>
-                            </div>
+                            {/* Watermark Overlay (Only if locked) */}
+                            {!isUnlocked && (
+                              <div className="absolute inset-0 z-10 flex items-center justify-center opacity-[0.03] pointer-events-none rotate-[-45deg] select-none">
+                                <span className="text-theme-text font-display text-4xl font-black whitespace-nowrap tracking-[1em] uppercase">PROOF</span>
+                              </div>
+                            )}
 
-                            <img src={url} alt={refCode} className={`w-full h-full object-cover transition-transform duration-700 group-hover:scale-110 ${isSelected ? "opacity-30 scale-95" : "opacity-100"}`} />
+                            <img src={url} alt={refCode} className={`w-full h-full object-cover transition-transform duration-700 ${!isUnlocked && "group-hover:scale-110"} ${isSelected ? "opacity-30 scale-95" : "opacity-100"}`} />
                             
                             {/* Selection Status Glass */}
-                            <div className={`absolute bottom-0 left-0 right-0 p-4 lg:p-5 z-20 flex justify-between items-center backdrop-blur-md transition-all duration-500 ${isSelected ? "bg-emerald-500 text-white" : "bg-black/40 group-hover:bg-black/80"}`}>
+                            <div className={`absolute bottom-0 left-0 right-0 p-4 lg:p-5 z-20 flex justify-between items-center transition-all duration-500 ${isUnlocked ? "bg-brand-tactical/90 text-white" : (isSelected ? "bg-emerald-500 text-white backdrop-blur-md" : "bg-black/40 group-hover:bg-black/80 backdrop-blur-md")}`}>
                                <div className="flex flex-col">
                                  <span className="text-[10px] font-black uppercase tracking-widest opacity-60">Ref.</span>
                                  <span className="text-xl lg:text-2xl font-black tracking-tighter font-display leading-none">
                                    {refCode}
                                  </span>
                                </div>
-                               <div className={`w-10 h-10 rounded-full flex items-center justify-center transition-all ${isSelected ? "bg-black text-emerald-500" : "bg-white/10 group-hover:bg-emerald-500 group-hover:text-black"}`}>
-                                 {isSelected ? <Check size={20} strokeWidth={4} /> : <ShoppingCart size={18} />}
-                               </div>
+                               {isUnlocked ? (
+                                 <button 
+                                   onClick={(e) => {
+                                      e.stopPropagation();
+                                      window.open(url, '_blank');
+                                   }}
+                                   className="w-10 h-10 rounded-full bg-white text-brand-tactical flex items-center justify-center hover:scale-110 transition-all shadow-xl"
+                                   title="Baixar Foto"
+                                 >
+                                   <ImageIcon size={18} />
+                                 </button>
+                               ) : (
+                                 <div className={`w-10 h-10 rounded-full flex items-center justify-center transition-all ${isSelected ? "bg-black text-emerald-500" : "bg-white/10 group-hover:bg-emerald-500 group-hover:text-black"}`}>
+                                   {isSelected ? <Check size={20} strokeWidth={4} /> : <ShoppingCart size={18} />}
+                                 </div>
+                               )}
                             </div>
                         </motion.div>
                       );
@@ -503,7 +542,7 @@ export default function EventPage() {
                   <div className="flex items-baseline gap-2">
                     <span className="text-2xl font-light text-theme-subtle tracking-tighter">R$</span>
                     <h2 className="text-7xl lg:text-8xl font-black tracking-tighter font-display leading-none">
-                      {(searchParams.get("intent") === "upgrade" 
+                      {Number(searchParams.get("intent") === "upgrade" 
                         ? (serviceCatalog.filter(s => selectedServices.includes(s.id)).reduce((acc, s) => acc + Number(s.basePrice), 0) + (includeLivePrint ? 150 : 0))
                         : (isMarketplace ? cartTotal : event.priceBase)
                       ).toFixed(0)}
@@ -562,6 +601,36 @@ export default function EventPage() {
             {/* Paid / Success State */}
             {paid && (
               <div className="space-y-8 animate-in fade-in slide-in-from-bottom-4 duration-1000">
+
+                {/* ── Carrinho do Marketplace (Foto Avulsa) ────────────────────
+                    Para PHOTO_MARKETPLACE, o step é sempre 'success' (sem paywall).
+                    Exibimos o resumo do carrinho + botão de checkout aqui. */}
+                {isMarketplace && cart.length > 0 && (
+                  <div className="space-y-4">
+                    <div className="space-y-2">
+                      <p className="text-[10px] text-emerald-500 font-black uppercase tracking-[0.4em]">Carrinho Phygital</p>
+                      <div className="flex items-baseline gap-2">
+                        <span className="text-2xl font-light text-theme-subtle tracking-tighter">R$</span>
+                        <span className="text-7xl font-black tracking-tighter font-display leading-none">
+                          {cartTotal.toFixed(0)}
+                        </span>
+                        <span className="text-2xl font-black text-theme-subtle">,00</span>
+                      </div>
+                      <p className="text-[10px] text-theme-muted font-bold uppercase tracking-widest">
+                        {cart.length} {cart.length === 1 ? 'foto selecionada' : 'fotos selecionadas'}
+                      </p>
+                    </div>
+                    <button
+                      onClick={handleUnlockClick}
+                      className="group relative w-full h-20 bg-white text-theme-text font-black uppercase tracking-[0.2em] text-xs flex items-center justify-center gap-4 overflow-hidden transition-all hover:scale-[1.02] active:scale-[0.98]"
+                    >
+                      <div className="absolute inset-0 bg-emerald-500 translate-x-[-100%] group-hover:translate-x-0 transition-transform duration-500" />
+                      <span className="relative z-10">Finalizar Compra</span>
+                      <ChevronRight size={18} className="relative z-10 group-hover:translate-x-2 transition-transform" />
+                    </button>
+                  </div>
+                )}
+
                 <div className="space-y-4">
                   {event.lightroomUrl && (
                     <a href={event.lightroomUrl} target="_blank" rel="noreferrer" className="w-full h-20 bg-emerald-500 text-white font-black uppercase tracking-[0.2em] text-xs flex items-center justify-center gap-4 shadow-[0_20px_40px_rgba(16,185,129,0.2)]">
@@ -602,8 +671,9 @@ export default function EventPage() {
         </aside>
       </main>
 
-      {/* STICKY MOBILE BUY BAR */}
-      {isMarketplace && cart.length > 0 && !paid && (
+      {/* STICKY MOBILE BUY BAR — aparece no mobile quando há fotos no carrinho.
+           Para marketplace, paid=true mas ainda queremos mostrar o total. */}
+      {isMarketplace && cart.length > 0 && (
         <motion.div 
           initial={{ y: 100 }}
           animate={{ y: 0 }}
@@ -627,13 +697,18 @@ export default function EventPage() {
       )}
 
       {/* MODALS */}
-      <AuthModal onSuccess={() => setStep("paywall")} onClose={() => setStep("paywall")} />
+      {step === "denied" && (
+        <AuthModal onSuccess={() => setStep("success")} onClose={() => setStep("paywall")} />
+      )}
       
       {showPrintStore && (
         <PrintStoreModal 
           eventId={event.id} 
           eventTitle={event.nomeNoivos} 
           medias={medias} 
+          unlockedMediaIds={event.unlockedMediaIds}
+          isMarketplace={isMarketplace}
+          isOwner={event.isOwner}
           onClose={() => setShowPrintStore(false)} 
         />
       )}
@@ -643,6 +718,7 @@ export default function EventPage() {
           orderId={orderId} 
           eventTitle={event.nomeNoivos} 
           isPrimaryClient={true} 
+          isMarketplace={isMarketplace}
           onConfirmed={() => setNeedsAccessChoice(false)} 
           onClose={() => setNeedsAccessChoice(false)} 
         />

@@ -1,4 +1,4 @@
-﻿import { useState, useEffect, useRef, useMemo } from "react";
+import { useState, useEffect, useRef, useMemo } from "react";
 import { Users, Calendar, ArrowRight, ShieldCheck, ChevronLeft, ChevronRight, Clock, Home, Zap, Camera, Video, Printer, Smartphone, Building2, GraduationCap, Utensils } from "lucide-react";
 import { API } from "../lib/api";
 import { useNavigate } from "react-router-dom";
@@ -21,12 +21,12 @@ const P = {
 };
 
 const THEME = {
-  bg: "#0a0a0a",
-  bgCard: "#111111",
-  border: "rgba(255,255,255,0.05)",
-  accent: "#85B9AC",
-  text: "#ffffff",
-  text2: "rgba(255,255,255,0.4)",
+  bg: "var(--bg)",
+  bgCard: "var(--bg-card)",
+  border: "var(--border)",
+  accent: "var(--brand)",
+  text: "var(--text)",
+  text2: "var(--text-2)",
   fontD: "var(--font-d)",
   fontB: "var(--font-b)",
 };
@@ -118,11 +118,11 @@ function DateTimePicker({ value, onChange, workingHours }: { value: string; onCh
     <div ref={ref} style={{ position: "relative" }}>
       {/* Trigger */}
       <div onClick={() => setOpen(o => !o)} className="relative flex items-center cursor-pointer group">
-        <Calendar size={18} className="absolute left-5 text-emerald-500 z-10 group-hover:scale-110 transition-transform" />
+        <Calendar size={18} className="absolute left-6 text-emerald-500 z-10 group-hover:scale-110 transition-transform" />
         <div
-          className="fs-input w-full pl-14 text-xs font-black uppercase tracking-widest min-h-[60px] flex items-center border border-theme-border bg-white/5 hover:border-emerald-500/40 transition-colors"
+          className="fs-input w-full !pl-16 text-[11px] font-black uppercase tracking-widest min-h-[64px] flex items-center border border-theme-border bg-theme-bg-muted hover:border-emerald-500/40 transition-colors"
           style={{
-            color: displayValue ? "#fff" : "rgba(255,255,255,0.2)"
+            color: displayValue ? "var(--text)" : "var(--text-3)"
           }}
         >
           {displayValue || "SELECIONE A DATA E HORÁRIO"}
@@ -134,10 +134,18 @@ function DateTimePicker({ value, onChange, workingHours }: { value: string; onCh
           <div
             key="picker"
             style={{
-              position: "absolute", bottom: "calc(100% + 12px)", left: "50%", transform: "translateX(-50%)", zIndex: 999,
-              background: "var(--theme-bg)", border: `1px solid var(--theme-border)`,
-              width: "min(320px, 95vw)", padding: "clamp(12px, 3vw, 20px)", boxShadow: "0 24px 60px rgba(0,0,0,0.5)",
-              transition: "all 0.18s"
+              position: "absolute", 
+              bottom: "calc(100% + 15px)", 
+              left: "50%", 
+              transform: "translateX(-50%)", 
+              zIndex: 9999,
+              background: "var(--bg-card)", 
+              border: "1px solid var(--border)",
+              width: "min(340px, 92vw)", 
+              padding: "24px", 
+              boxShadow: "0 30px 90px rgba(0,0,0,0.4)",
+              borderRadius: "0",
+              transition: "all 0.2s cubic-bezier(0.16, 1, 0.3, 1)"
             }}
           >
             {/* Month Navigation */}
@@ -149,8 +157,8 @@ function DateTimePicker({ value, onChange, workingHours }: { value: string; onCh
                   setViewDate(new Date(viewDate.getFullYear(), viewDate.getMonth() - 1, 1));
                 }}
                 style={{ 
-                  background: `${THEME.accent}15`, border: `1px solid ${THEME.accent}30`, 
-                  color: THEME.accent, cursor: "pointer", padding: 8, borderRadius: 4,
+                  background: "var(--brand-dark)", border: "1px solid var(--brand-border)", 
+                  color: "var(--brand)", cursor: "pointer", padding: 8, borderRadius: 4,
                   display: "flex", alignItems: "center", justifyContent: "center",
                   transition: "all 0.2s"
                 }}
@@ -175,8 +183,8 @@ function DateTimePicker({ value, onChange, workingHours }: { value: string; onCh
                   setViewDate(new Date(viewDate.getFullYear(), viewDate.getMonth() + 1, 1));
                 }}
                 style={{ 
-                  background: `${THEME.accent}15`, border: `1px solid ${THEME.accent}30`, 
-                  color: THEME.accent, cursor: "pointer", padding: 8, borderRadius: 4,
+                  background: "var(--brand-dark)", border: "1px solid var(--brand-border)", 
+                  color: "var(--brand)", cursor: "pointer", padding: 8, borderRadius: 4,
                   display: "flex", alignItems: "center", justifyContent: "center",
                   transition: "all 0.2s"
                 }}
@@ -223,10 +231,10 @@ function DateTimePicker({ value, onChange, workingHours }: { value: string; onCh
                       height: 34, width: "100%", border: "none", borderRadius: 0,
                       fontSize: 12, fontWeight: isSelected ? 900 : 500,
                       cursor: !isDisabled ? "pointer" : "default",
-                      background: isSelected ? THEME.accent : isToday ? `${THEME.accent}20` : "transparent",
-                      color: isSelected ? "var(--theme-text-on-brand)" : (isPast || isClosed) ? "var(--theme-text-muted)" : !day ? "transparent" : THEME.text,
+                      background: isSelected ? "var(--brand)" : isToday ? "var(--brand-dark)" : "transparent",
+                      color: isSelected ? "var(--brand-text)" : (isPast || isClosed) ? "var(--text-3)" : !day ? "transparent" : "var(--text)",
                       opacity: isClosed ? 0.3 : 1,
-                      outline: isToday && !isSelected ? `1px solid ${THEME.accent}50` : "none",
+                      outline: isToday && !isSelected ? "1px solid var(--brand)" : "none",
                       transition: "background 0.15s",
                     }}
                   >
@@ -498,8 +506,9 @@ export const QuotePage = () => {
       const { data } = await API.post("/public/quotes", payload);
       
       if (data.checkoutUrl) {
-        // Se houver link de checkout (Unidade Fixa), redireciona direto
-        window.location.href = data.checkoutUrl;
+        // Normaliza para caminho relativo para evitar conflitos de porta em dev
+        const url = new URL(data.checkoutUrl, window.location.origin);
+        navigate(url.pathname);
       } else {
         // Se for orçamento sob consulta, mostra sucesso
         setCreatedQuoteId(data.eventId);
@@ -527,9 +536,6 @@ export const QuotePage = () => {
         </div>
       )}
       <style>{`
-        .fs-input { background: #111 !important; border: 1px solid rgba(255,255,255,0.05) !important; color: #fff !important; border-radius: 0 !important; box-sizing: border-box; font-family: var(--font-b) !important; padding: 15px 20px; font-weight: 500; }
-        .fs-input:focus { border-color: #85B9AC !important; outline: none !important; }
-        
         input[type=range] { -webkit-appearance: none; background: rgba(255,255,255,0.05); height: 4px; border-radius: 0; }
         input[type=range]::-webkit-slider-thumb { -webkit-appearance: none; height: 20px; width: 20px; background: #85B9AC; border-radius: 0; cursor: pointer; box-shadow: 0 0 15px rgba(133,185,172,0.4); }
 

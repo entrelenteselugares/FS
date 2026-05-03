@@ -1,17 +1,24 @@
 # ROADMAP: Foto Segundo
 
 ## Milestone 1: Midnight Luxury v3.1 & Data Integrity (DONE)
+
 - [x] Global UI/UX audit for "Midnight Luxury" consistency.
 - [x] Full operational data reset for fresh testing.
 - [x] Definition of Supabase cleanup SQL scripts.
 - [x] Technical codebase mapping via GSD-MAP.
 
-## Milestone 2: Production Hardening & Scalability (ACTIVE)
-- [ ] **Phase 1: Stress Testing**: Execute high-load simulations on production endpoints.
-- [ ] **Phase 2: Error Handling Audit**: Verify IoT agent resilience and offline queueing.
-- [ ] **Phase 3: Security Review**: Audit OAuth token encryption and API key access.
+## Milestone 2: Production Hardening & Scalability (DONE)
 
-## Milestone 3: Ecosystem Expansion (PLANNED)
-- [ ] **Phase 1: Franchise Onboarding**: Refine the partner registration and credit management flow.
-- [ ] **Phase 2: Gamification v2**: Enhance user points and redemption incentives.
-- [ ] **Phase 3: Public Launch**: Final validation for multi-event scale.
+- [x] **Phase 1: Stress Testing**: Execute high-load simulations on production endpoints.
+- [x] **Phase 2: IoT Resilience**: Refactor printer agent with sequential queue and error handling.
+- [x] **Phase 3: Security Review**: Audit OAuth token encryption and API key access.
+- [x] **Phase 4: UI Standardization**: Align Admin and Client dashboards with Midnight Luxury tokens.
+- [x] **Phase 5: E2E Hardening**: Implement Playwright automated tests for the registration flow.
+- [x] **Phase 6: Financial Security**: Implement PRO verification flow, escrow logic, and admin payout management.
+
+## Milestone 3: Ecosystem Expansion (ACTIVE)
+
+- [x] **Phase 08: B2B Hub (Automação de Insumos e Networking)**: Supply monitoring, referral links, and operational dashboard. (DONE)
+- [x] **Phase 09: Split de Comissões & Marketplace (Passive Income)**: Automated transaction splitting between platform, photographer, and referring franchisee. (DONE)
+- [ ] **Phase 10: Gamification v2**: Enhance user points and redemption incentives.
+- [ ] **Phase 11: Public Launch**: Final validation for multi-event scale.

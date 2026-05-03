@@ -22,6 +22,7 @@ import ResetPasswordPage from "./pages/ResetPasswordPage";
 import LuxuryExperiencePage from "./pages/LuxuryExperiencePage";
 import PhygitalCapture from "./pages/PhygitalCapture";
 import PrintMonitor from "./pages/PrintMonitor";
+import FranchiseDashboard from "./pages/franchise/FranchiseDashboard";
 import { useState, useEffect } from "react";
 import { API as api } from "./lib/api";
 import { T } from "./lib/theme";
@@ -35,7 +36,7 @@ const DashboardRedirect = () => {
     PROFISSIONAL: "/profissional",
     CARTORIO:     "/unidade-fixa",
     UNIDADE:      "/unidade-fixa",
-    FRANCHISEE:   "/profissional",
+    FRANCHISEE:   "/franquia",
     CLIENTE:      "/minha-conta",
   };
   return <Navigate to={map[user.role] || "/"} replace />;
@@ -97,6 +98,13 @@ const AnimatedRoutes = () => {
         <Route path="/unidade-fixa" element={
           <ProtectedRoute roles={["ADMIN", "CARTORIO", "UNIDADE"]}>
             <UnidadeFixaDashboard />
+          </ProtectedRoute>
+        } />
+
+        {/* Painel da Franquia (B2B Hub) */}
+        <Route path="/franquia" element={
+          <ProtectedRoute roles={["ADMIN", "FRANCHISEE"]}>
+            <FranchiseDashboard />
           </ProtectedRoute>
         } />
 

@@ -1,6 +1,7 @@
 import { useState, useEffect, useRef, useLayoutEffect } from "react";
-import * as RW from "react-window";
-const { FixedSizeList } = RW as unknown as { FixedSizeList: React.ComponentType<any> }; // eslint-disable-line @typescript-eslint/no-explicit-any
+import * as reactWindow from "react-window";
+// @ts-ignore
+const FixedSizeList = reactWindow.FixedSizeList || reactWindow.default?.FixedSizeList || reactWindow.default;
 import { API } from "../lib/api";
 import { T, BtnPrimary, BtnSecondary } from "../lib/theme";
 
@@ -41,6 +42,8 @@ interface PrintStoreModalProps {
   eventId: string;
   eventTitle: string;
   medias?: EventMedia[];
+  unlockedMediaIds?: string[];
+  isMarketplace?: boolean;
   isOwner?: boolean;
   onClose: () => void;
 }
@@ -135,7 +138,7 @@ const MOCK_PRODUCTS: PrintProduct[] = [
   { id: "mock-3", category: "REVELACAO", name: "Pack 20 Fotos 10x15", description: "Papel fosco profissional com borda branca.", finalPrice: 60, unit: "pack", maxPhotos: 20 },
 ];
 
-export function PrintStoreModal({ eventId, eventTitle, medias = [], isOwner = false, onClose }: PrintStoreModalProps) {
+export function PrintStoreModal({ eventId, eventTitle, medias = [], unlockedMediaIds = [], isMarketplace = false, isOwner = false, onClose }: PrintStoreModalProps) {
   const [products, setProducts] = useState<PrintProduct[]>([]);
   const [loading, setLoading] = useState(true);
   const [selectedProduct, setSelectedProduct] = useState<PrintProduct | null>(null);
@@ -148,7 +151,14 @@ export function PrintStoreModal({ eventId, eventTitle, medias = [], isOwner = fa
   const [notes, setNotes] = useState("");
   const [submitting, setSubmitting] = useState(false);
   const [error, setError] = useState("");
-  const [photoSource, setPhotoSource] = useState<"upload" | "album">(isOwner && medias.length > 0 ? "album" : "upload");
+
+  const availableMedias = isMarketplace && unlockedMediaIds && unlockedMediaIds.length > 0
+    ? (medias || []).filter(m => unlockedMediaIds.includes(m.id) || unlockedMediaIds.includes(m.shortId))
+    : (medias || []);
+
+  const [photoSource, setPhotoSource] = useState<"upload" | "album">(
+    (isOwner || availableMedias.length > 0) ? "album" : "upload"
+  );
   const [selectedAlbumPhotos, setSelectedAlbumPhotos] = useState<string[]>([]);
   const fileInputRef = useRef<HTMLInputElement>(null);
 
@@ -434,7 +444,7 @@ export function PrintStoreModal({ eventId, eventTitle, medias = [], isOwner = fa
                     Selecione as Fotos ({totalPhotoCount} {selectedProduct.maxPhotos ? `de ${selectedProduct.maxPhotos}` : ""} selecionada{totalPhotoCount !== 1 ? "s" : ""})
                   </p>
                   
-                  {isOwner && medias.length > 0 && (
+                  {(isOwner || availableMedias.length > 0) && (
                     <div style={{ display: "flex", gap: 4, background: T.bgCard, padding: 4, border: `1px solid ${T.border}` }}>
                       <button 
                         onClick={() => setPhotoSource("upload")}
@@ -517,7 +527,7 @@ export function PrintStoreModal({ eventId, eventTitle, medias = [], isOwner = fa
                     }}
                   >
                     <AlbumPhotoGrid 
-                      medias={medias}
+                      medias={availableMedias}
                       selectedAlbumPhotos={selectedAlbumPhotos}
                       toggleAlbumPhoto={toggleAlbumPhoto}
                     />
