@@ -1,4 +1,4 @@
-﻿import React, { useState, useEffect, useMemo } from "react";
+import React, { useState, useEffect, useMemo } from "react";
 import { API } from "../../lib/api";
 import { X, UserPlus, Shield, Trash2, Edit3, Search, CheckCircle2 } from "lucide-react";
 
@@ -182,7 +182,7 @@ export const AdminUsers: React.FC = () => {
                 placeholder="PROCURAR MEMBRO POR NOME OU E-MAIL..."
                 value={searchTerm}
                 onChange={(e) => setSearchTerm(e.target.value)}
-                className="w-full bg-theme-bg-muted border border-theme-border p-4 pl-12 text-[11px] font-bold text-theme-text uppercase tracking-widest outline-none focus:border-brand-tactical transition-all"
+                className="fs-input pl-12 uppercase tracking-widest"
               />
            </div>
            <div className="flex gap-2 overflow-x-auto pb-2 md:pb-0 w-full md:w-auto">
@@ -190,7 +190,7 @@ export const AdminUsers: React.FC = () => {
                 <button
                   key={r}
                   onClick={() => setFilterRole(r)}
-                  className={`px-4 py-4 text-[9px] font-black uppercase tracking-widest border transition-all whitespace-nowrap ${filterRole === r ? 'bg-theme-border border-zinc-700 text-theme-text shadow-lg' : 'bg-transparent border-theme-border text-theme-muted hover:border-zinc-700'}`}
+                  className={`fs-btn border transition-all whitespace-nowrap ${filterRole === r ? 'bg-theme-border border-zinc-700 text-theme-text shadow-lg' : 'bg-transparent border-theme-border text-theme-muted hover:border-zinc-700'}`}
                 >
                   {r === 'ALL' ? 'Todos' : r === 'CARTORIO' ? 'Unidades' : r}
                 </button>
@@ -317,7 +317,7 @@ export const AdminUsers: React.FC = () => {
                        <label className="text-[9px] font-black text-theme-muted uppercase tracking-[0.4em]">Função Tática</label>
                        <select 
                          value={formData.role} onChange={e => setFormData({...formData, role: e.target.value})}
-                         className="w-full bg-theme-bg-muted border border-theme-border p-4 text-[11px] text-theme-text outline-none focus:border-brand-tactical font-black cursor-pointer appearance-none uppercase tracking-widest"
+                         className="fs-input cursor-pointer appearance-none uppercase tracking-widest"
                        >
                           <option value="ADMIN">ADMINISTRADOR</option>
                           <option value="PROFISSIONAL">PROFISSIONAL / PARCEIRO</option>
@@ -331,7 +331,7 @@ export const AdminUsers: React.FC = () => {
                     <label className="text-[9px] font-black text-theme-muted uppercase tracking-[0.4em]">Chave PIX (Financeiro)</label>
                     <input 
                       value={formData.pixKey} onChange={e => setFormData({...formData, pixKey: e.target.value})}
-                      className="w-full bg-theme-bg-muted border border-theme-border p-4 text-[13px] text-theme-text outline-none focus:border-brand-tactical font-black transition-all italic"
+                      className="fs-input italic"
                       placeholder="CPF, E-mail ou Aleatória"
                     />
                  </div>
@@ -344,7 +344,7 @@ export const AdminUsers: React.FC = () => {
                             <div className="relative">
                                <input 
                                  type="number" value={formData.captPct} onChange={e => setFormData({...formData, captPct: Number(e.target.value)})}
-                                 className="w-full bg-theme-bg-muted border border-theme-border p-4 text-lg text-brand-tactical outline-none font-black"
+                                 className="fs-input text-lg text-brand-tactical"
                                />
                                <span className="absolute right-4 top-1/2 -translate-y-1/2 text-[12px] font-black text-theme-muted opacity-40">%</span>
                             </div>
@@ -354,7 +354,7 @@ export const AdminUsers: React.FC = () => {
                             <div className="relative">
                                <input 
                                  type="number" value={formData.editPct} onChange={e => setFormData({...formData, editPct: Number(e.target.value)})}
-                                 className="w-full bg-theme-bg-muted border border-theme-border p-4 text-lg text-brand-tactical outline-none font-black"
+                                 className="fs-input text-lg text-brand-tactical"
                                />
                                <span className="absolute right-4 top-1/2 -translate-y-1/2 text-[12px] font-black text-theme-muted opacity-40">%</span>
                             </div>
@@ -421,7 +421,7 @@ export const AdminUsers: React.FC = () => {
                              type="number" 
                              value={formData.printCredits} 
                              onChange={e => setFormData({...formData, printCredits: Number(e.target.value)})}
-                             className="w-full bg-theme-bg-muted border border-theme-border p-4 text-lg text-brand-tactical outline-none font-black"
+                             className="fs-input text-lg text-brand-tactical"
                            />
                            <p className="text-[7px] text-theme-muted uppercase font-bold mt-1">Créditos de impressão disponíveis</p>
                         </div>

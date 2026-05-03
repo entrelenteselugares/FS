@@ -1,4 +1,4 @@
-﻿// Optimized Admin Dashboard - Foto Segundo
+// Optimized Admin Dashboard - Foto Segundo
 import React, { useState, useEffect, useCallback } from "react";
 import { API } from "../../lib/api";
 import { T } from "../../lib/theme";
@@ -522,31 +522,31 @@ export const AdminEvents: React.FC<AdminEventsProps> = ({ initialEditEventId }) 
                         <div className="space-y-12">
                           <div className="space-y-3">
                             <label className="text-[9px] font-black text-theme-muted uppercase tracking-[0.4em]">Título do Evento</label>
-                            <input type="text" required className="w-full bg-theme-bg border border-theme-border p-4 text-[12px] text-theme-text focus:border-brand-tactical outline-none font-black" value={formData.title} onChange={e => setFormData({ ...formData, title: e.target.value })} />
+                            <input type="text" required className="fs-input" value={formData.title} onChange={e => setFormData({ ...formData, title: e.target.value })} />
                           </div>
                           <div className="space-y-3">
                             <label className="text-[9px] font-black text-theme-muted uppercase tracking-[0.4em]">Identificador URL (Slug)</label>
-                            <input type="text" className="w-full bg-theme-bg border border-theme-border p-4 text-[12px] text-theme-muted focus:border-brand-tactical outline-none font-black" value={formData.slug} onChange={e => setFormData({ ...formData, slug: e.target.value.toLowerCase().replace(/\s+/g, "-") })} placeholder="ex: taynan-e-felipe" />
+                            <input type="text" className="fs-input text-theme-muted" value={formData.slug} onChange={e => setFormData({ ...formData, slug: e.target.value.toLowerCase().replace(/\s+/g, "-") })} placeholder="ex: taynan-e-felipe" />
                           </div>
 
                           <div className="grid grid-cols-2 gap-6 p-6 bg-brand-tactical/5 border border-brand-tactical/10">
                             <div className="space-y-3">
                               <label className="text-[9px] font-black text-brand-tactical uppercase tracking-[0.4em]">Nome do Cliente</label>
-                              <input type="text" className="w-full bg-theme-bg border border-theme-border p-4 text-[12px] text-theme-text focus:border-brand-tactical outline-none font-black" value={formData.clientName} onChange={e => setFormData({ ...formData, clientName: e.target.value })} placeholder="NOME DO NOIVO/CLIENTE" />
+                              <input type="text" className="fs-input" value={formData.clientName} onChange={e => setFormData({ ...formData, clientName: e.target.value })} placeholder="NOME DO NOIVO/CLIENTE" />
                             </div>
                             <div className="space-y-3">
                               <label className="text-[9px] font-black text-brand-tactical uppercase tracking-[0.4em]">E-mail de Acesso</label>
-                              <input type="email" className="w-full bg-theme-bg border border-theme-border p-4 text-[12px] text-theme-text focus:border-brand-tactical outline-none font-black" value={formData.clientEmail} onChange={e => setFormData({ ...formData, clientEmail: e.target.value })} placeholder="ex: provisorio@gmail.com" />
+                              <input type="email" className="fs-input" value={formData.clientEmail} onChange={e => setFormData({ ...formData, clientEmail: e.target.value })} placeholder="ex: provisorio@gmail.com" />
                             </div>
                           </div>
                           <div className="grid grid-cols-2 gap-6">
                             <div className="space-y-3">
                               <label className="text-[9px] font-black text-theme-muted uppercase tracking-[0.4em]">Data</label>
-                              <input type="date" required className="w-full bg-theme-bg border border-theme-border p-4 text-[12px] text-theme-text focus:border-brand-tactical outline-none font-black" value={formData.date} onChange={e => setFormData({...formData, date: e.target.value})} />
+                              <input type="date" required className="fs-input" value={formData.date} onChange={e => setFormData({...formData, date: e.target.value})} />
                             </div>
                             <div className="space-y-3">
                               <label className="text-[9px] font-black text-theme-muted uppercase tracking-[0.4em]">Local</label>
-                              <input type="text" required className="w-full bg-theme-bg border border-theme-border p-4 text-[12px] text-theme-text focus:border-brand-tactical outline-none font-black" value={formData.location} onChange={e => setFormData({...formData, location: e.target.value})} placeholder="EX: CARTÓRIO X" />
+                              <input type="text" required className="fs-input" value={formData.location} onChange={e => setFormData({...formData, location: e.target.value})} placeholder="EX: CARTÓRIO X" />
                             </div>
                           </div>
                         </div>
@@ -558,14 +558,14 @@ export const AdminEvents: React.FC<AdminEventsProps> = ({ initialEditEventId }) 
                         <div className="space-y-12">
                           <div className="space-y-3">
                             <label className="text-[9px] font-black text-theme-muted uppercase tracking-[0.4em]">Unidade Fixa</label>
-                            <select value={formData.cartorioId} onChange={e => setFormData({...formData, cartorioId: e.target.value})} className="w-full bg-theme-bg border border-theme-border p-4 text-[12px] text-theme-text focus:border-brand-tactical outline-none font-black cursor-pointer appearance-none">
+                            <select value={formData.cartorioId} onChange={e => setFormData({...formData, cartorioId: e.target.value})} className="fs-input cursor-pointer appearance-none">
                               <option value="">SELECIONE A UNIDADE</option>
                               {users.filter(u => u.role === "UNIDADE" || u.role === "CARTORIO").map(u => <option key={u.id} value={u.id}>{u.nome.toUpperCase()}</option>)}
                             </select>
                           </div>
                           <div className="space-y-3">
                             <label className="text-[9px] font-black text-brand-tactical uppercase tracking-[0.4em]">Logística (Franqueado)</label>
-                            <select value={formData.franchiseeId} onChange={e => setFormData({...formData, franchiseeId: e.target.value})} className="w-full bg-theme-bg border border-theme-border p-4 text-[12px] text-theme-text focus:border-brand-tactical outline-none font-black cursor-pointer appearance-none">
+                            <select value={formData.franchiseeId} onChange={e => setFormData({...formData, franchiseeId: e.target.value})} className="fs-input cursor-pointer appearance-none">
                               <option value="">FOTO SEGUNDO MATRIZ</option>
                               {users.filter(u => u.franchiseProfile).map(u => (
                                 <option key={u.franchiseProfile!.id} value={u.franchiseProfile!.id}>
@@ -576,21 +576,21 @@ export const AdminEvents: React.FC<AdminEventsProps> = ({ initialEditEventId }) 
                           </div>
                           <div className="space-y-3">
                             <label className="text-[9px] font-black text-theme-muted uppercase tracking-[0.4em]">Cidade / UF</label>
-                            <input type="text" className="w-full bg-theme-bg border border-theme-border p-4 text-[12px] text-theme-text focus:border-brand-tactical outline-none font-black" value={formData.city} onChange={e => setFormData({ ...formData, city: e.target.value })} placeholder="EX: SÃO PAULO - SP" />
+                            <input type="text" className="fs-input" value={formData.city} onChange={e => setFormData({ ...formData, city: e.target.value })} placeholder="EX: SÃO PAULO - SP" />
                           </div>
                         </div>
                         <div className="space-y-12">
                           <div className="grid grid-cols-2 gap-6">
                             <div className="space-y-3">
                               <label className="text-[9px] font-black text-theme-muted uppercase tracking-[0.4em]">Captação</label>
-                              <select value={formData.captacaoId} onChange={e => setFormData({...formData, captacaoId: e.target.value})} className="w-full bg-theme-bg border border-theme-border p-4 text-[12px] text-theme-text focus:border-brand-tactical outline-none font-black cursor-pointer appearance-none">
+                              <select value={formData.captacaoId} onChange={e => setFormData({...formData, captacaoId: e.target.value})} className="fs-input cursor-pointer appearance-none">
                                 <option value="">PROFISSIONAL</option>
                                 {users.filter(u => u.role === "PROFISSIONAL").map(u => <option key={u.id} value={u.id}>{u.nome.toUpperCase()}</option>)}
                               </select>
                             </div>
                             <div className="space-y-3">
                               <label className="text-[9px] font-black text-theme-muted uppercase tracking-[0.4em]">Edição</label>
-                              <select value={formData.edicaoId} onChange={e => setFormData({...formData, edicaoId: e.target.value})} className="w-full bg-theme-bg border border-theme-border p-4 text-[12px] text-theme-text focus:border-brand-tactical outline-none font-black cursor-pointer appearance-none">
+                              <select value={formData.edicaoId} onChange={e => setFormData({...formData, edicaoId: e.target.value})} className="fs-input cursor-pointer appearance-none">
                                 <option value="">PROFISSIONAL</option>
                                 {users.filter(u => u.role === "PROFISSIONAL").map(u => <option key={u.id} value={u.id}>{u.nome.toUpperCase()}</option>)}
                               </select>
@@ -598,7 +598,7 @@ export const AdminEvents: React.FC<AdminEventsProps> = ({ initialEditEventId }) 
                           </div>
                           <div className="space-y-3">
                             <label className="text-[9px] font-black text-theme-muted uppercase tracking-[0.4em]">Horas de Trabalho</label>
-                            <input type="number" required value={formData.eventHours} onChange={e => setFormData({...formData, eventHours: Number(e.target.value)})} className="w-full bg-theme-bg border border-theme-border p-4 text-[12px] text-theme-text focus:border-brand-tactical outline-none font-black" />
+                            <input type="number" required value={formData.eventHours} onChange={e => setFormData({...formData, eventHours: Number(e.target.value)})} className="fs-input" />
                           </div>
                         </div>
                       </div>
@@ -611,20 +611,20 @@ export const AdminEvents: React.FC<AdminEventsProps> = ({ initialEditEventId }) 
                             <div className="grid grid-cols-2 gap-6">
                               <div className="space-y-1.5">
                                 <label className="text-[9px] font-black text-zinc-800 uppercase tracking-[0.4em]">Preço Álbum (R$)</label>
-                                <input type="number" className="w-full bg-white border border-zinc-300 p-2.5 text-[13px] text-zinc-950 outline-none font-black" value={formData.priceBase} onChange={e => setFormData({ ...formData, priceBase: Number(e.target.value) })} />
+                                <input type="number" className="fs-input" value={formData.priceBase} onChange={e => setFormData({ ...formData, priceBase: Number(e.target.value) })} />
                               </div>
                               <div className="space-y-1.5">
                                 <label className="text-[9px] font-black text-zinc-800 uppercase tracking-[0.4em]">Antecipado (R$)</label>
-                                <input type="number" className="w-full bg-white border border-zinc-300 p-2.5 text-[13px] text-zinc-950 outline-none font-black" value={formData.priceEarly} onChange={e => setFormData({...formData, priceEarly: Number(e.target.value)})} />
+                                <input type="number" className="fs-input" value={formData.priceEarly} onChange={e => setFormData({...formData, priceEarly: Number(e.target.value)})} />
                               </div>
                             </div>
                             <div className="space-y-1.5">
                               <label className="text-[9px] font-black text-zinc-800 uppercase tracking-[0.4em]">Google Drive</label>
-                              <input type="text" className="w-full bg-white border border-zinc-300 p-2.5 text-[11px] text-zinc-950 outline-none font-bold italic" value={formData.driveUrl} onChange={e => setFormData({ ...formData, driveUrl: e.target.value })} placeholder="https://..." />
+                              <input type="text" className="fs-input text-[11px] font-bold italic" value={formData.driveUrl} onChange={e => setFormData({ ...formData, driveUrl: e.target.value })} placeholder="https://..." />
                             </div>
                             <div className="space-y-1.5">
                               <label className="text-[9px] font-black text-zinc-800 uppercase tracking-[0.4em]">Lightroom / Galeria</label>
-                              <input type="text" className="w-full bg-white border border-zinc-300 p-2.5 text-[11px] text-zinc-950 outline-none font-bold italic" value={formData.lightroomUrl} onChange={e => setFormData({ ...formData, lightroomUrl: e.target.value })} placeholder="https://..." />
+                              <input type="text" className="fs-input text-[11px] font-bold italic" value={formData.lightroomUrl} onChange={e => setFormData({ ...formData, lightroomUrl: e.target.value })} placeholder="https://..." />
                             </div>
                           </div>
                           <div className="space-y-4">

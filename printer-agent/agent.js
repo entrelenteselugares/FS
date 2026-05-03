@@ -4,7 +4,7 @@ import path from 'path';
 import 'dotenv/config';
 
 /**
- * PRINTER AGENT FOTO SEGUNDO v1.0
+ * PRINTER AGENT FOTO SEGUNDO v1.1 (Resilience Update)
  * Script para rodar no Raspberry Pi (IoT)
  */
 
@@ -20,32 +20,39 @@ if (!fs.existsSync(tempDir)) {
 }
 
 console.log('---');
-console.log(`📡 Printer Agent iniciado para o evento: ${EVENT_ID}`);
-console.log(`🖨️  Conectado à impressora: ${PRINTER_NAME}`);
+console.log(`📡 Printer Agent v1.1 iniciado`);
+console.log(`🎟️  Evento: ${EVENT_ID}`);
+console.log(`🖨️  Impressora: ${PRINTER_NAME}`);
 console.log('---');
 
+let isProcessing = false;
+
 async function checkPrintQueue() {
+    if (isProcessing) return; // Evita múltiplas instâncias rodando
+
     try {
-        // 1. Pergunta ao backend se tem foto nova
         const res = await fetch(`${BACKEND_URL}/api/admin/phygital/queue?eventId=${EVENT_ID}`, {
             headers: { 'Authorization': `Bearer ${AGENT_TOKEN}` }
         });
         
         const data = await res.json();
 
-        // 2. Se tiver foto pendente, inicia o processo
         if (data.success && data.pendingPrints && data.pendingPrints.length > 0) {
-            console.log(`\n📸 ${data.pendingPrints.length} fotos detectadas na fila.`);
+            console.log(`\n📸 ${data.pendingPrints.length} fotos novas detectadas.`);
+            isProcessing = true;
             
+            // Processa SEQUENCIALMENTE para não engasgar a impressora
             for (const job of data.pendingPrints) {
-                console.log(`🚀 Processando: ${job.referenceCode}`);
+                console.log(`🚀 Iniciando: ${job.referenceCode}`);
                 await downloadAndPrint(job);
             }
+            
+            isProcessing = false;
+            console.log(`\n✅ Lote concluído. Aguardando novos disparos...`);
         }
     } catch (error) {
-        console.error("⏳ Aguardando conexão com o servidor ou verificando fila...");
+        console.error("⏳ Sem conexão ou servidor offline...");
     } finally {
-        // Loop de 5 segundos
         setTimeout(checkPrintQueue, 5000);
     }
 }
@@ -54,20 +61,33 @@ async function downloadAndPrint(job) {
     const filePath = path.join(tempDir, `${job.referenceCode}.jpg`);
 
     try {
-        // Baixa a imagem carimbada do Supabase
+        // 1. Download
         const imageRes = await fetch(job.imageUrl);
+        if (!imageRes.ok) throw new Error(`Falha no download: ${imageRes.statusText}`);
+        
         const buffer = await imageRes.arrayBuffer();
         fs.writeFileSync(filePath, Buffer.from(buffer));
-        console.log(`📥 Download concluído: ${job.referenceCode}`);
+        console.log(`📥 Download: ${job.referenceCode} OK`);
 
-        // COMANDO DE IMPRESSÃO (Multi-plataforma com Modo Simulado)
+        // 2. Impressão
+        await runPrintCommand(job, filePath);
+
+        // 3. Confirmação e Limpeza
+        await confirmAndCleanup(job, filePath);
+
+    } catch (err) {
+        console.error(`❌ Erro fatal no job ${job.referenceCode}:`, err.message);
+        // Não remove o arquivo para permitir inspeção manual se necessário
+    }
+}
+
+function runPrintCommand(job, filePath) {
+    return new Promise((resolve, reject) => {
         if (process.env.MOCK_MODE === "true") {
-            console.log(`✨ [MOCK] Simulando impressão da foto: ${job.referenceCode}`);
-            console.log(`✨ [MOCK] Aguardando 3 segundos para simular a saída do papel...`);
-            
-            setTimeout(async () => {
-                console.log(`✅ [MOCK] ${job.referenceCode} "impresso" com sucesso!`);
-                await confirmAndCleanup(job, filePath);
+            console.log(`✨ [MOCK] Imprimindo: ${job.referenceCode}`);
+            setTimeout(() => {
+                console.log(`✨ [MOCK] Saída concluída.`);
+                resolve();
             }, 3000);
             return;
         }
@@ -79,37 +99,41 @@ async function downloadAndPrint(job) {
             printCommand = `lp -d ${PRINTER_NAME} -o fit-to-page ${filePath}`;
         }
 
-        exec(printCommand, async (error) => {
+        exec(printCommand, (error) => {
             if (error) {
-                console.error(`❌ Erro na impressora: ${error.message}`);
+                console.error(`❌ Erro de Spooler: ${error.message}`);
+                reject(error);
                 return;
             }
-            await confirmAndCleanup(job, filePath);
+            console.log(`🖨️  Spooler: ${job.referenceCode} enviado.`);
+            resolve();
         });
-    } catch (err) {
-        console.error(`Erro ao processar a foto ${job.referenceCode}:`, err);
-    }
+    });
 }
 
 async function confirmAndCleanup(job, filePath) {
-    console.log(`✅ Enviado para a fila de impressão!`);
+    try {
+        const res = await fetch(`${BACKEND_URL}/api/admin/phygital/confirm`, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'Authorization': `Bearer ${AGENT_TOKEN}`
+            },
+            body: JSON.stringify({ id: job.id, status: 'PRINTED' })
+        });
 
-    // Avisa o servidor que já imprimiu
-    await fetch(`${BACKEND_URL}/api/admin/phygital/confirm`, {
-        method: 'POST',
-        headers: {
-            'Content-Type': 'application/json',
-            'Authorization': `Bearer ${AGENT_TOKEN}`
-        },
-        body: JSON.stringify({ id: job.id, status: 'PRINTED' })
-    });
-    console.log(`✅ Status atualizado no sistema central.`);
-    
-    // Limpa o arquivo local
-    setTimeout(() => {
-        if (fs.existsSync(filePath)) fs.unlinkSync(filePath);
-    }, 5000);
+        if (res.ok) {
+            console.log(`✅ Servidor Notificado: ${job.referenceCode}`);
+            // Limpa o arquivo local após 10 segundos (segurança para o spooler)
+            setTimeout(() => {
+                if (fs.existsSync(filePath)) fs.unlinkSync(filePath);
+            }, 10000);
+        } else {
+            console.warn(`⚠️  Falha ao confirmar no servidor: ${job.referenceCode}`);
+        }
+    } catch (err) {
+        console.error(`⚠️  Erro de rede na confirmação:`, err.message);
+    }
 }
 
-// Inicia o ciclo
 checkPrintQueue();
