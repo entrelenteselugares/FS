@@ -77,17 +77,37 @@ export class FranchiseController {
   }
 
   /**
-   * Remove o FranchiseProfile sem afetar o role do usuário
+   * Remove o FranchiseProfile sem afetar o role do usuário.
+   * Agora lida com as dependências (eventos, prints, transações).
    */
   static async remove(req: Request, res: Response) {
     try {
       const profileId = String(req.params.profileId);
 
-      await prisma.franchiseProfile.delete({ where: { id: profileId } });
+      await prisma.$transaction([
+        // 1. Deleta histórico de créditos (depende diretamente do profile)
+        prisma.creditTransaction.deleteMany({ where: { profileId } }),
+        
+        // 2. Desvincula eventos (seta franchiseeId para null)
+        prisma.event.updateMany({
+          where: { franchiseeId: profileId },
+          data: { franchiseeId: null }
+        }),
+        
+        // 3. Desvincula histórico de impressões phygital
+        prisma.phygitalPrint.updateMany({
+          where: { franchiseProfileId: profileId },
+          data: { franchiseProfileId: null }
+        }),
+        
+        // 4. Finalmente remove o perfil
+        prisma.franchiseProfile.delete({ where: { id: profileId } })
+      ]);
 
       res.json({ success: true });
-    } catch (error) {
-      res.status(500).json({ error: "Erro ao remover franquia." });
+    } catch (error: any) {
+      console.error("Erro ao remover franquia:", error);
+      res.status(500).json({ error: "Erro ao remover franquia.", details: error.message });
     }
   }
 
