@@ -117,18 +117,47 @@ textarea:focus {
 }
 
 .fs-btn {
-    padding: 10px 20px;
+    padding: 12px 24px;
     font-size: 10px;
     font-weight: 900;
     text-transform: uppercase;
     letter-spacing: 0.2em;
     cursor: pointer;
-    transition: all 0.2s;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
     border: none;
     display: inline-flex;
     align-items: center;
     justify-content: center;
     gap: 8px;
+}
+
+.fs-btn:hover {
+    transform: translateY(-1px);
+    box-shadow: 0 10px 20px -10px rgba(0,0,0,0.5);
+}
+
+.fs-input {
+    width: 100%;
+    background-color: var(--bg-field);
+    border: 1px solid var(--border);
+    padding: 1rem 1.25rem;
+    font-size: 13px;
+    font-family: var(--font-b);
+    color: var(--text);
+    outline: none;
+    border-radius: 4px;
+    transition: all 0.2s ease;
+}
+
+.fs-input:focus {
+    border-color: var(--brand);
+    background-color: var(--bg);
+    box-shadow: 0 0 0 4px var(--brand-border);
+}
+
+.fs-input::placeholder {
+    color: var(--text-3);
+    opacity: 0.5;
 }
 
 .text-proportional {

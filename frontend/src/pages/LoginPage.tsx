@@ -94,19 +94,6 @@ export const LoginPage: React.FC = () => {
         <meta name="description" content="Acesse sua conta e visualize as fotos e vídeos do seu evento." />
       </Helmet>
 
-      <style>{`
-        .lp-input:focus { border-color: ${T.brand} !important; }
-        .lp-input::placeholder { color: ${T.text3}; }
-        .lp-eye { background: none; border: none; cursor: pointer; color: ${T.text3}; padding: 4px; display: flex; align-items: center; transition: color 0.15s; }
-        .lp-eye:hover { color: ${T.text2}; }
-        .lp-back { font-size: 9px; font-family: ${T.fontB}; color: ${T.text3}; text-decoration: none; letter-spacing: 0.15em; text-transform: uppercase; transition: color 0.15s; opacity: 0.5; }
-        .lp-back:hover { color: ${T.text}; opacity: 1; }
-        .lp-reg { color: ${T.brand}; text-decoration: none; font-size: 11px; font-family: ${T.fontB}; letter-spacing: 0.1em; text-transform: uppercase; transition: opacity 0.15s; }
-        .lp-reg:hover { opacity: 0.75; }
-        .lp-forgot { background: none; border: none; color: ${T.text3}; font-size: 10px; font-weight: 700; text-transform: uppercase; letter-spacing: 1px; cursor: pointer; padding: 6px 0; margin-top: 2px; transition: color 0.15s; align-self: flex-end; display: inline-block; opacity: 0.6; }
-        .lp-forgot:hover { color: ${T.text}; opacity: 1; }
-      `}</style>
-
       <div style={{ position: "fixed", top: 20, right: 20, zIndex: 100 }}>
         <ThemeToggle />
       </div>
@@ -145,7 +132,7 @@ export const LoginPage: React.FC = () => {
 
             {/* E-mail */}
             <div className="space-y-2">
-              <label className="text-[10px] font-black uppercase tracking-widest text-theme-muted block">Identificação</label>
+              <label className="text-[10px] font-bold uppercase tracking-widest text-theme-muted block">Identificação</label>
               <input
                 id="lp-email"
                 className="fs-input w-full"
@@ -161,7 +148,7 @@ export const LoginPage: React.FC = () => {
             {/* Senha */}
             <div className="space-y-2">
               <div className="flex justify-between items-center">
-                <label className="text-[10px] font-black uppercase tracking-widest text-theme-muted block">Chave de Acesso</label>
+                <label className="text-[10px] font-bold uppercase tracking-widest text-theme-muted block">Chave de Acesso</label>
                 <button type="button" onClick={handleForgotPassword} className="text-[9px] font-black uppercase tracking-widest text-emerald-500/60 hover:text-emerald-500 transition-colors">
                   ESQUECI A SENHA
                 </button>
@@ -203,7 +190,7 @@ export const LoginPage: React.FC = () => {
             <p className="text-[9px] font-black text-theme-subtle uppercase tracking-widest mb-4">
               Solicitação de novas credenciais
             </p>
-            <Link to="/register" className="text-[11px] font-display font-black text-emerald-500 uppercase tracking-widest hover:text-emerald-700 transition-colors">
+            <Link to="/register" className="text-[11px] font-display font-bold text-emerald-500 uppercase tracking-widest hover:text-brand transition-colors">
               INICIAR REGISTRO PROFISSIONAL →
             </Link>
           </div>
