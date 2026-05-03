@@ -1,20 +1,23 @@
+# 06-UAT: E2E Financial Flow
+
 ---
+
 status: complete
 phase: 06-e2e-financial-flow
 source: [06-SUMMARY.md]
 started: 2026-05-03T17:01:00Z
 updated: 2026-05-03T18:55:00Z
----
 
-# 06-UAT: E2E Financial Flow
+---
 
 ## Automated Test Suite Results
 
-> **Commit:** `8f68708` — `test(e2e): complete financial E2E suite - all 3 verticals green`
-> **Run date:** 2026-05-03 | **Duration:** 26s | **Workers:** 1 (sequential)
+Commit: `8f68708` — `test(e2e): complete financial E2E suite - all 3 verticals green`
+
+Run date: 2026-05-03 | Duration: 26s | Workers: 1 (sequential)
 
 | # | Test File | Vertical | Result | Time |
-|---|-----------|----------|--------|------|
+| - | --------- | -------- | ------ | ---- |
 | 1 | `orcamento-b2b.spec.ts` | Orçamento B2B (Full Cycle) | ✅ PASS | 9.5s |
 | 2 | `ponto-fixo-cash.spec.ts` | Ponto Fixo (Cash / Gateway Bypass) | ✅ PASS | 5.3s |
 | 3 | `venda-rapida-guest.spec.ts` | Venda Rápida (Magic Link / Atrito Zero) | ✅ PASS | 2.8s |
@@ -27,11 +30,12 @@ updated: 2026-05-03T18:55:00Z
 
 ### 1. PRO Verification Toggle
 
-**Expected:** |
-  1. Acesse o Painel Admin -> Membros.
-  2. Localize um usuário com papel 'PROFISSIONAL'.
-  3. Abra a edição do usuário e ative o switch "Status PRO (Verificado)".
-  4. Salve e verifique se o badge "PRO VERIFICADO" aparece na listagem.
+Expected:
+
+1. Acesse o Painel Admin -> Membros.
+2. Localize um usuário com papel 'PROFISSIONAL'.
+3. Abra a edição do usuário e ative o switch "Status PRO (Verificado)".
+4. Salve e verifique se o badge "PRO VERIFICADO" aparece na listagem.
 
 **Result:** pass
 
@@ -39,9 +43,10 @@ updated: 2026-05-03T18:55:00Z
 
 ### 2. Ponto Fixo — Cash Payment Bypass
 
-**Automated:** `e2e/finance/ponto-fixo-cash.spec.ts`
+Automated: `e2e/finance/ponto-fixo-cash.spec.ts`
 
-**Flow validated:**
+Flow validated:
+
 1. Login como `e2e-profissional@fotosegundo.test`
 2. Acessa marketplace `/e/e2e-marketplace-test`
 3. Seleciona foto disponível (cursor-pointer, não desbloqueada)
@@ -53,17 +58,19 @@ updated: 2026-05-03T18:55:00Z
 
 **Result:** ✅ pass (automated)
 
-**Key decisions:**
-- O bypass de gateway é 100% condicionado ao `role` do usuário logado
+Key decisions:
+
+- O bypass de gateway é condicionado ao `role` do usuário logado
 - A seleção filtra `.cursor-pointer` para evitar fotos já desbloqueadas
 
 ---
 
 ### 3. Venda Rápida — Guest Checkout (Magic Link / Atrito Zero)
 
-**Automated:** `e2e/finance/venda-rapida-guest.spec.ts`
+Automated: `e2e/finance/venda-rapida-guest.spec.ts`
 
-**Flow validated:**
+Flow validated:
+
 1. Script `setup-guest-order.ts` cria pedido com `isGuestOrder=true` + `guestToken`
 2. Playwright navega para `/checkout?orderId=...&token=...`
 3. CheckoutPage detecta `order.isGuestOrder` → `setAuthStep('authorized')` imediatamente
@@ -73,17 +80,19 @@ updated: 2026-05-03T18:55:00Z
 
 **Result:** ✅ pass (automated)
 
-**Key decisions:**
-- `isGuestOrder` bypass é implementado no `useEffect` de autenticação (linha 128 do CheckoutPage)
+Key decisions:
+
+- `isGuestOrder` bypass é implementado no `useEffect` de autenticação (CheckoutPage linha 128)
 - O `guestToken` é único e garante que somente o portador do link pode acessar
 
 ---
 
 ### 4. Orçamento B2B — Full Cycle (Lead → Admin → Payment Ready)
 
-**Automated:** `e2e/finance/orcamento-b2b.spec.ts`
+Automated: `e2e/finance/orcamento-b2b.spec.ts`
 
-**Flow validated:**
+Flow validated:
+
 1. **Fase 1 (Cliente):** Submete cotação em `/cotacao` (CEP, data, serviço, contato)
 2. **Fase 2 (Admin):** Login, acessa "Gestão de Orçamentos", localiza cotação pelo nome
 3. **Fase 3 (Admin Approves):** Clica na linha → painel abre → navega para aba "5. Fechamento"
@@ -93,20 +102,22 @@ updated: 2026-05-03T18:55:00Z
 
 **Result:** ✅ pass (automated)
 
-**Key decisions:**
+Key decisions:
+
 - O botão de aprovação é "DISPARAR ORÇAMENTO OFICIAL" (não "APROVAR E ENVIAR CHECKOUT")
-- O input de preço é um `<spinbutton>` sem placeholder — selecionado por role
+- O input de preço é um `spinbutton` sem placeholder — selecionado por role
 - O backend `adminApproveQuote` cria o pedido pendente e envia e-mail com link de checkout
 
 ---
 
 ### 5. Escrow Policy Enforcement (Standard)
 
-**Expected:** |
-  1. Realize uma compra em um evento de um fotógrafo NÃO verificado.
-  2. Acesse Admin -> Financeiro.
-  3. O pedido deve aparecer com status "PENDENTE" na aba de repasses.
-  4. O campo "Pronto em" deve exibir uma data de 7 dias após o evento.
+Expected:
+
+1. Realize uma compra em um evento de um fotógrafo NÃO verificado.
+2. Acesse Admin -> Financeiro.
+3. O pedido deve aparecer com status "PENDENTE" na aba de repasses.
+4. O campo "Pronto em" deve exibir uma data de 7 dias após o evento.
 
 **Result:** [pending — UAT manual]
 
@@ -114,10 +125,11 @@ updated: 2026-05-03T18:55:00Z
 
 ### 6. Escrow Policy Enforcement (PRO)
 
-**Expected:** |
-  1. Realize uma compra em um evento de um fotógrafo "PRO VERIFICADO".
-  2. Acesse Admin -> Financeiro.
-  3. O pedido deve aparecer com status "DISPONÍVEL" imediatamente.
+Expected:
+
+1. Realize uma compra em um evento de um fotógrafo "PRO VERIFICADO".
+2. Acesse Admin -> Financeiro.
+3. O pedido deve aparecer com status "DISPONÍVEL" imediatamente.
 
 **Result:** [pending — UAT manual]
 
@@ -125,10 +137,11 @@ updated: 2026-05-03T18:55:00Z
 
 ### 7. Manual Payout Liquidation
 
-**Expected:** |
-  1. No Admin -> Financeiro, localize um repasse com status "DISPONÍVEL".
-  2. Clique em "Liquidar Repasse".
-  3. O status deve mudar para "PAGO" e o pedido deve ser movido para histórico.
+Expected:
+
+1. No Admin -> Financeiro, localize um repasse com status "DISPONÍVEL".
+2. Clique em "Liquidar Repasse".
+3. O status deve mudar para "PAGO" e o pedido deve ser movido para histórico.
 
 **Result:** [pending — UAT manual]
 
