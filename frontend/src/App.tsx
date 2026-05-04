@@ -69,6 +69,7 @@ const AnimatedRoutes = () => {
         <Route path="/checkout/:orderId" element={<CheckoutPage />} />
         <Route path="/delivery/:id" element={<LuxuryExperiencePage />} />
         <Route path="/captura" element={<PhygitalCapture />} />
+        <Route path="/phygital-capture" element={<PhygitalCapture />} />
         <Route path="/negocios" element={<BusinessLanding />} />
 
         {/* Redireciona para o painel correto */}
