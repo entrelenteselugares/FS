@@ -65,6 +65,16 @@ export interface EquipmentItem {
   value: number;
 }
 
+export interface ResidentUnit {
+  id: string;
+  tipo: string;
+  cartorio: {
+    razaoSocial: string;
+    endereco: string | null;
+    cidade: string | null;
+  };
+}
+
 export interface ProfileData {
   user: {
     nome: string | null;
@@ -99,10 +109,7 @@ export interface ProfileData {
       weekStart: string;
     };
   }>;
-  cartorioProfissional?: Array<{
-    tipo: string;
-    cartorio: { razaoSocial: string };
-  }>;
+  cartorioProfissional?: ResidentUnit[];
 }
 
 export interface Partner {

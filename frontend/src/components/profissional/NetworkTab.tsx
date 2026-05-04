@@ -1,11 +1,11 @@
 import { Search, Users, MessageCircle, X } from "lucide-react";
-import type { Partner } from "./types";
+import type { Partner, ResidentUnit } from "./types";
 
 interface NetworkTabProps {
   network: Partner[];
   networkSearch: string;
   searchResults: Partner[];
-  residentUnits: any[];
+  residentUnits: ResidentUnit[];
   onSearch: (q: string) => void;
   onToggleFavorite: (partnerId: string) => void;
 }
