@@ -289,11 +289,11 @@ export const HomePage = () => {
               <p style={{ fontSize: 12, color: T.text3, fontFamily: T.fontB, marginTop: 8 }}>Tente buscar pelo nome completo do evento ou titular.</p>
             </div>
           ) : (
-            <div style={{ display: "flex", flexDirection: "column", gap: 64 }}>
+            <div style={{ display: "flex", flexDirection: "column", gap: 120 }}>
               {/* FOTO POINT SECTION */}
               {events.filter(e => e.type === 'FOTO_POINT').length > 0 && (
                 <div className="animate-reveal">
-                  <div style={{ display: "flex", alignItems: "center", gap: 16, marginBottom: 24 }}>
+                  <div style={{ display: "flex", alignItems: "center", gap: 16, marginBottom: 32 }}>
                     <div style={{ width: 12, height: 12, background: "#22d3ee", borderRadius: "50%" }} className="animate-pulse" />
                     <h3 style={{ fontFamily: T.fontD, fontWeight: 900, fontSize: 24, color: T.text, textTransform: "uppercase", margin: 0, letterSpacing: 2 }}>Foto Point</h3>
                   </div>
@@ -310,7 +310,7 @@ export const HomePage = () => {
               {/* LIVE PRINT SECTION */}
               {events.filter(e => e.type === 'PHOTO_MARKETPLACE').length > 0 && (
                 <div className="animate-reveal">
-                  <div style={{ display: "flex", alignItems: "center", gap: 16, marginBottom: 24 }}>
+                  <div style={{ display: "flex", alignItems: "center", gap: 16, marginBottom: 32 }}>
                     <div style={{ width: 12, height: 12, background: T.brand, borderRadius: "50%" }} className="animate-pulse" />
                     <h3 style={{ fontFamily: T.fontD, fontWeight: 900, fontSize: 24, color: T.text, textTransform: "uppercase", margin: 0, letterSpacing: 2 }}>Foto Print Live</h3>
                   </div>
@@ -325,18 +325,20 @@ export const HomePage = () => {
               )}
 
               {/* ALBUMS SECTION */}
-              <div>
-                <div style={{ display: "flex", alignItems: "center", gap: 16, marginBottom: 24 }}>
-                  <h3 style={{ fontFamily: T.fontD, fontWeight: 900, fontSize: 24, color: T.text, textTransform: "uppercase", margin: 0, letterSpacing: 2 }}>Galeria de Álbuns</h3>
+              {events.filter(e => e.type !== 'PHOTO_MARKETPLACE' && e.type !== 'FOTO_POINT').length > 0 && (
+                <div className="animate-reveal">
+                  <div style={{ display: "flex", alignItems: "center", gap: 16, marginBottom: 32 }}>
+                    <h3 style={{ fontFamily: T.fontD, fontWeight: 900, fontSize: 24, color: T.text, textTransform: "uppercase", margin: 0, letterSpacing: 2 }}>Galeria de Álbuns</h3>
+                  </div>
+                  <div className="hp-grid" style={{ display: "grid", gridTemplateColumns: "repeat(auto-fill, minmax(300px, 1fr))", gap: 1, background: T.border }}>
+                    {events.filter(e => e.type !== 'PHOTO_MARKETPLACE' && e.type !== 'FOTO_POINT').map(ev => (
+                      <div key={ev.id} className="card-hover">
+                        <EventCard event={ev} onClick={() => navigate(`/e/${ev.slug || ev.id}`)} />
+                      </div>
+                    ))}
+                  </div>
                 </div>
-                <div className="hp-grid" style={{ display: "grid", gridTemplateColumns: "repeat(auto-fill, minmax(300px, 1fr))", gap: 1, background: T.border }}>
-                  {events.filter(e => e.type !== 'PHOTO_MARKETPLACE' && e.type !== 'FOTO_POINT').map(ev => (
-                    <div key={ev.id} className="card-hover">
-                      <EventCard event={ev} onClick={() => navigate(`/e/${ev.slug || ev.id}`)} />
-                    </div>
-                  ))}
-                </div>
-              </div>
+              )}
             </div>
           )}
 
