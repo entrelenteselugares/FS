@@ -143,10 +143,10 @@ export const AdminPrintCatalog: React.FC = () => {
             </div>
          </div>
          <div className="bg-theme-bg border border-theme-border/60 p-6 space-y-3 shadow-sm group hover:border-brand-tactical/40 transition-all">
-            <div className="flex justify-between items-start"><span className="text-[8px] font-black text-theme-muted uppercase tracking-widest italic">Fulfillment</span><Layers className="text-brand-tactical" size={14} /></div>
+            <div className="flex justify-between items-start"><span className="text-[8px] font-black text-theme-muted uppercase tracking-widest italic">Hub de Produção</span><Layers className="text-brand-tactical" size={14} /></div>
             <div className="flex items-baseline gap-2">
                <span className="text-3xl font-heading font-black text-theme-text italic">CK</span>
-               <span className="text-[10px] font-bold text-theme-muted uppercase tracking-widest">ENCADERNADORA</span>
+               <span className="text-[10px] font-bold text-theme-muted uppercase tracking-widest">LOGÍSTICA ATIVA</span>
             </div>
          </div>
       </div>
@@ -355,10 +355,11 @@ function NewProductModal({ onClose, onSave }: { onClose: () => void; onSave: (da
              <form onSubmit={handleSubmit} className="space-y-8">
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                    <div className="space-y-1.5">
-                      <label className={labelClass}>Fulfillment</label>
+                      <label className={labelClass}>Operador Logístico</label>
                       <select className={inputClass} value={form.supplier} onChange={e => setForm({...form, supplier: e.target.value})}>
-                         <option value="CK">CK ENCADERNADORA</option>
-                         <option value="INTERNO">PRODUÇÃO LOCAL</option>
+                         <option value="CK">CK ENCADERNADORA (Padrão)</option>
+                         <option value="INTERNO">PRODUÇÃO LOCAL / PRÓPRIA</option>
+                         <option value="TERCEIRO">OUTRO FORNECEDOR TÉCNICO</option>
                       </select>
                    </div>
                    <div className="space-y-1.5">

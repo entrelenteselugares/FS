@@ -42,8 +42,11 @@ export const CountdownTimer = ({ targetDate, onComplete }: CountdownTimerProps) 
 
   if (timeLeft.isComplete) return null;
 
+  const showDays = timeLeft.days > 0;
+  const showHours = timeLeft.hours > 0 || showDays; // Mostrar horas se houver dias ou se houver horas
+
   const TimeUnit = ({ value, label }: { value: number; label: string }) => (
-    <div className="flex flex-col items-center">
+    <div className="flex flex-col items-center flex-1 min-w-[60px]">
       <motion.div 
         key={value}
         initial={{ y: 10, opacity: 0 }}
@@ -61,12 +64,22 @@ export const CountdownTimer = ({ targetDate, onComplete }: CountdownTimerProps) 
       <motion.div 
         initial={{ opacity: 0, scale: 0.9 }}
         animate={{ opacity: 1, scale: 1 }}
-        className="flex items-center gap-4 lg:gap-8 bg-white/5 border border-theme-border backdrop-blur-xl px-6 py-4 lg:px-10 lg:py-6 rounded-sm"
+        className="flex items-center justify-center gap-2 lg:gap-4 bg-white/5 border border-theme-border backdrop-blur-xl px-4 py-4 lg:px-8 lg:py-6 rounded-sm w-full max-w-fit mx-auto"
       >
-        <TimeUnit value={timeLeft.days} label="Dias" />
-        <div className="h-8 w-px bg-white/10" />
-        <TimeUnit value={timeLeft.hours} label="Horas" />
-        <div className="h-8 w-px bg-white/10" />
+        {showDays && (
+          <>
+            <TimeUnit value={timeLeft.days} label="Dias" />
+            <div className="h-8 w-px bg-white/10" />
+          </>
+        )}
+        
+        {showHours && (
+          <>
+            <TimeUnit value={timeLeft.hours} label="Horas" />
+            <div className="h-8 w-px bg-white/10" />
+          </>
+        )}
+        
         <TimeUnit value={timeLeft.minutes} label="Min" />
         <div className="h-8 w-px bg-white/10" />
         <TimeUnit value={timeLeft.seconds} label="Seg" />

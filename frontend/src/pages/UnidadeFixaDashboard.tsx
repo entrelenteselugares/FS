@@ -948,9 +948,11 @@ export default function UnidadeFixaDashboard() {
                            <div className="flex items-center gap-4 bg-theme-bg px-5 py-2 border border-theme-border shadow-inner">
                               <input 
                                 type="number"
+                                step="0.1"
+                                min="0.1"
                                 value={lpFixedDuration} 
                                 onChange={e => setLpFixedDuration(Number(e.target.value))} 
-                                className="w-12 bg-transparent text-center text-2xl font-heading font-black text-brand-tactical outline-none"
+                                className="w-14 bg-transparent text-center text-2xl font-heading font-black text-brand-tactical outline-none"
                               />
                               <span className="text-[9px] font-black text-theme-muted uppercase tracking-widest">Horas</span>
                            </div>
