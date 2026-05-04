@@ -11,46 +11,46 @@ datasource db {
 }
 
 model User {
-  id                String                @id @default(cuid())
-  email             String                @unique
-  senha             String
-  nome              String
-  role              Role                  @default(CLIENTE)
-  whatsapp          String?
-  active            Boolean               @default(true)
-  createdAt         DateTime              @default(now())
-  updatedAt         DateTime              @updatedAt
-  mpUserId          String?
-  mpAccessToken     String?
-  mpPublicKey       String?
-  mpRefreshToken    String?
-  pixKey            String?
-  acceptedPrivacyAt DateTime?
-  acceptedTermsAt   DateTime?
-  resetToken        String?
-  resetTokenExpires DateTime?
-  cartorio               Cartorio?
-  eventsCaptacao         Event[]                    @relation("CaptacaoEvents")
-  eventsCartorio         Event[]                    @relation("CartorioUserEvents")
-  eventsEdicao           Event[]                    @relation("EdicaoEvents")
-  pedidos                Order[]                    @relation("ClienteOrders")
-  likes                  PhotoLike[]
-  redemptions            PrintRedemption[]
-  profissional           Profissional?
-  points                 UserPoints?
-  favorites              ProfessionalNetwork[]      @relation("UserFavorites")
-  favoritedBy            ProfessionalNetwork[]      @relation("FavoritedBy")
-  ordersToEdit           Order[]                    @relation("EditorOrders")
-  franchiseProfile       FranchiseProfile?
-  passiveCommissions     Order[]               @relation("FranchiseePassiveCommissions")
-  calendarCredential     UserCalendarCredential?
-  calendarSlots          CalendarSlot[]
-  isVerified             Boolean               @default(false)
-  verificationStatus     String                @default("PENDING")
-  verificationDocs       Json?
-  referralCode           String?               @unique
-  rewardCredits          Decimal               @default(0) @db.Decimal(10, 2)
-  gamificationLogs       GamificationLedger[]
+  id                 String                  @id @default(cuid())
+  email              String                  @unique
+  senha              String
+  nome               String
+  role               Role                    @default(CLIENTE)
+  whatsapp           String?
+  active             Boolean                 @default(true)
+  createdAt          DateTime                @default(now())
+  updatedAt          DateTime                @updatedAt
+  mpUserId           String?
+  mpAccessToken      String?
+  mpPublicKey        String?
+  mpRefreshToken     String?
+  pixKey             String?
+  acceptedPrivacyAt  DateTime?
+  acceptedTermsAt    DateTime?
+  resetToken         String?
+  resetTokenExpires  DateTime?
+  isVerified         Boolean                 @default(false)
+  verificationDocs   Json?
+  verificationStatus String                  @default("PENDING")
+  referralCode       String?                 @unique
+  rewardCredits      Decimal                 @default(0) @db.Decimal(10, 2)
+  calendarSlots      CalendarSlot[]
+  cartorio           Cartorio?
+  eventsCaptacao     Event[]                 @relation("CaptacaoEvents")
+  eventsCartorio     Event[]                 @relation("CartorioUserEvents")
+  eventsEdicao       Event[]                 @relation("EdicaoEvents")
+  franchiseProfile   FranchiseProfile?
+  gamificationLogs   GamificationLedger[]
+  pedidos            Order[]                 @relation("ClienteOrders")
+  ordersToEdit       Order[]                 @relation("EditorOrders")
+  passiveCommissions Order[]                 @relation("FranchiseePassiveCommissions")
+  likes              PhotoLike[]
+  redemptions        PrintRedemption[]
+  favoritedBy        ProfessionalNetwork[]   @relation("FavoritedBy")
+  favorites          ProfessionalNetwork[]   @relation("UserFavorites")
+  profissional       Profissional?
+  calendarCredential UserCalendarCredential?
+  points             UserPoints?
 
   @@map("users")
 }
@@ -58,13 +58,13 @@ model User {
 model GamificationLedger {
   id          String   @id @default(cuid())
   userId      String
-  user        User     @relation(fields: [userId], references: [id])
-  type        String   // EARN, REDEEM, BONUS, ADJUSTMENT
+  type        String
   points      Int      @default(0)
-  amount      Decimal? @db.Decimal(10, 2) // Caso o ponto tenha valor monetário (Cashback)
+  amount      Decimal? @db.Decimal(10, 2)
   description String?
   orderId     String?
   createdAt   DateTime @default(now())
+  user        User     @relation(fields: [userId], references: [id])
 
   @@map("gamification_ledger")
 }
@@ -74,8 +74,8 @@ model ProfessionalNetwork {
   userId    String
   partnerId String
   createdAt DateTime @default(now())
-  user      User     @relation("UserFavorites", fields: [userId], references: [id], onDelete: Cascade)
   partner   User     @relation("FavoritedBy", fields: [partnerId], references: [id], onDelete: Cascade)
+  user      User     @relation("UserFavorites", fields: [userId], references: [id], onDelete: Cascade)
 
   @@unique([userId, partnerId])
   @@map("professional_networks")
@@ -91,8 +91,6 @@ model Event {
   driveUrl           String?
   createdAt          DateTime          @default(now())
   updatedAt          DateTime          @updatedAt
-  eventEndTime       DateTime?         // Para tracking de SLA
-  galleryUploadTime  DateTime?         // Para tracking de SLA
   cartorioUserId     String?
   priceBase          Decimal           @default(190) @db.Decimal(10, 2)
   priceEarly         Decimal           @default(190) @db.Decimal(10, 2)
@@ -136,20 +134,22 @@ model Event {
   pricePerPhoto      Decimal?          @db.Decimal(10, 2)
   marketplaceConfigs Json?             @default("{}")
   rejectedBy         Json?             @default("[]")
-  paymentModel       PaymentModel      @default(PRE_PAID)
+  franchiseeId       String?
   deliveryType       DeliveryType      @default(DIGITAL_ONLY)
+  paymentModel       PaymentModel      @default(PRE_PAID)
+  eventEndTime       DateTime?
+  galleryUploadTime  DateTime?
   itinerary          String?
   references         Json?             @default("[]")
+  calendarSlots      CalendarSlot[]
   media              EventMedia[]
-  phygitalPrints     PhygitalPrint[]
-  franchiseeId       String?
-  franchisee         FranchiseProfile? @relation(fields: [franchiseeId], references: [id])
   captacao           User?             @relation("CaptacaoEvents", fields: [captacaoId], references: [id])
   cartorioUser       User?             @relation("CartorioUserEvents", fields: [cartorioUserId], references: [id])
   edicao             User?             @relation("EdicaoEvents", fields: [edicaoId], references: [id])
+  franchisee         FranchiseProfile? @relation(fields: [franchiseeId], references: [id])
   pedidos            Order[]
   likes              PhotoLike[]
-  calendarSlots      CalendarSlot[]
+  phygitalPrints     PhygitalPrint[]
 
   @@map("events")
 }
@@ -161,13 +161,13 @@ model PhygitalPrint {
   customerName       String
   customerPhone      String
   customerCep        String
-  status             PrintStatus       @default(PENDING_PRINT)
   eventId            String
-  event              Event             @relation(fields: [eventId], references: [id])
-  franchiseProfileId String?
-  franchiseProfile   FranchiseProfile? @relation(fields: [franchiseProfileId], references: [id])
   createdAt          DateTime          @default(now())
   updatedAt          DateTime          @updatedAt
+  franchiseProfileId String?
+  status             PrintStatus       @default(PENDING_PRINT)
+  event              Event             @relation(fields: [eventId], references: [id])
+  franchiseProfile   FranchiseProfile? @relation(fields: [franchiseProfileId], references: [id])
 
   @@map("phygital_prints")
 }
@@ -187,17 +187,14 @@ model Profissional {
   hourlyRate            Decimal                @default(60.00) @db.Decimal(10, 2)
   equipmentList         Json?                  @default("[]")
   experienceYears       Int                    @default(0)
+  workflowType          String[]               @default(["TRADICIONAL"])
   firstJobUrl           String?
   isExperienceValidated Boolean                @default(false)
-  
-  // Gamification & Performance
   agilityPoints         Int                    @default(0)
   avgDeliveryHours      Float                  @default(0)
   totalMissions         Int                    @default(0)
-
   cartorios             CartorioProfissional[]
   proServices           ProfessionalService[]
-  workflowType          String[]               @default(["TRADICIONAL"])
   user                  User                   @relation(fields: [userId], references: [id])
 
   @@map("profissionais")
@@ -226,8 +223,8 @@ model Cartorio {
   disabledServices String[]               @default([])
   workingHours     Json?                  @default("{\"fri\": {\"open\": \"09:00\", \"close\": \"18:00\", \"closed\": false}, \"mon\": {\"open\": \"09:00\", \"close\": \"18:00\", \"closed\": false}, \"sat\": {\"open\": \"09:00\", \"close\": \"12:00\", \"closed\": true}, \"sun\": {\"open\": \"00:00\", \"close\": \"00:00\", \"closed\": true}, \"thu\": {\"open\": \"09:00\", \"close\": \"18:00\", \"closed\": false}, \"tue\": {\"open\": \"09:00\", \"close\": \"18:00\", \"closed\": false}, \"wed\": {\"open\": \"09:00\", \"close\": \"18:00\", \"closed\": false}}")
   profissionais    CartorioProfissional[]
-  quotes           Quote[]
   user             User                   @relation(fields: [userId], references: [id])
+  quotes           Quote[]
 
   @@map("cartorios")
 }
@@ -247,63 +244,55 @@ model CartorioProfissional {
 }
 
 model Order {
-  id              String      @id @default(cuid())
-  valor           Decimal     @db.Decimal(10, 2)
-  status          String      @default("PENDENTE")
-  paymentId       String?     @unique
-  createdAt       DateTime    @default(now())
-  updatedAt       DateTime    @updatedAt
-  clienteId       String?
-  eventId         String
-  buyerEmail      String?
-  editorId        String?
-  splitCaptacao      Decimal?            @db.Decimal(10, 2)
-  splitCartorio      Decimal?            @db.Decimal(10, 2)
-  splitEdicao        Decimal?            @db.Decimal(10, 2)
-  splitMatriz        Decimal?            @db.Decimal(10, 2)
-  splitFranchisee    Decimal?            @db.Decimal(10, 2)
-  passiveFranchiseeId String?            // O franqueado que recebe comissão passiva
-  accessChosenAt  DateTime?
-  accessExpiresAt DateTime?
-  accessType      String?
-  deletedAt       DateTime?
-  warningsSent    Int         @default(0)
-  contributorName String?
-  isContribution  Boolean     @default(false)
-  hasPaid         Boolean     @default(false)
-  tempPassword    String?
-  showAlbum       Boolean     @default(true)
-  showVideo       Boolean     @default(true)
-  isManual        Boolean             @default(false)
-  manualType      String?
-  paymentMethod   OrderPaymentMethod?
-  buyerWhatsapp   String?
-  internalNotes   String?
-
-  // Gamification link
-  rewardsUsed     Decimal?            @db.Decimal(10, 2) // Créditos usados nesta compra
-
-  // Guest Checkout (Magic Link)
-  isGuestOrder    Boolean             @default(false)
-  guestEmail      String?
-  guestPhone      String?
-  guestToken      String?             @unique
-
-  // Logística & Entrega
-  deliveryType    DeliveryType        @default(DIGITAL_ONLY)
-  paymentModel    PaymentModel        @default(PRE_PAID)
-  shippingFee     Decimal?            @db.Decimal(10, 2)
-  shippingAddress Json?
-
-  items           OrderItem[]
-  cliente         User?       @relation("ClienteOrders", fields: [clienteId], references: [id])
-  event           Event       @relation(fields: [eventId], references: [id])
-  editor          User?       @relation("EditorOrders", fields: [editorId], references: [id])
-  passiveFranchisee User?     @relation("FranchiseePassiveCommissions", fields: [passiveFranchiseeId], references: [id])
-
-  payoutStatus    PayoutStatus        @default(PENDING)
-  payoutReadyAt   DateTime?
-  payoutPaidAt    DateTime?
+  id                  String              @id @default(cuid())
+  valor               Decimal             @db.Decimal(10, 2)
+  status              String              @default("PENDENTE")
+  paymentId           String?             @unique
+  createdAt           DateTime            @default(now())
+  updatedAt           DateTime            @updatedAt
+  clienteId           String?
+  eventId             String
+  buyerEmail          String?
+  splitCaptacao       Decimal?            @db.Decimal(10, 2)
+  splitCartorio       Decimal?            @db.Decimal(10, 2)
+  splitEdicao         Decimal?            @db.Decimal(10, 2)
+  splitMatriz         Decimal?            @db.Decimal(10, 2)
+  accessChosenAt      DateTime?
+  accessExpiresAt     DateTime?
+  accessType          String?
+  deletedAt           DateTime?
+  warningsSent        Int                 @default(0)
+  contributorName     String?
+  isContribution      Boolean             @default(false)
+  hasPaid             Boolean             @default(false)
+  tempPassword        String?
+  showAlbum           Boolean             @default(true)
+  showVideo           Boolean             @default(true)
+  isManual            Boolean             @default(false)
+  manualType          String?
+  buyerWhatsapp       String?
+  internalNotes       String?
+  editorId            String?
+  deliveryType        DeliveryType        @default(DIGITAL_ONLY)
+  guestEmail          String?
+  guestPhone          String?
+  guestToken          String?             @unique
+  isGuestOrder        Boolean             @default(false)
+  paymentMethod       OrderPaymentMethod?
+  paymentModel        PaymentModel        @default(PRE_PAID)
+  shippingAddress     Json?
+  shippingFee         Decimal?            @db.Decimal(10, 2)
+  payoutPaidAt        DateTime?
+  payoutReadyAt       DateTime?
+  payoutStatus        PayoutStatus        @default(PENDING)
+  passiveFranchiseeId String?
+  splitFranchisee     Decimal?            @db.Decimal(10, 2)
+  rewardsUsed         Decimal?            @db.Decimal(10, 2)
+  items               OrderItem[]
+  cliente             User?               @relation("ClienteOrders", fields: [clienteId], references: [id])
+  editor              User?               @relation("EditorOrders", fields: [editorId], references: [id])
+  event               Event               @relation(fields: [eventId], references: [id])
+  passiveFranchisee   User?               @relation("FranchiseePassiveCommissions", fields: [passiveFranchiseeId], references: [id])
 
   @@map("orders")
 }
@@ -524,9 +513,9 @@ model Quote {
   status           QuoteStatus @default(PENDING)
   convertedEventId String?
   cartorioId       String?
-  cartorio         Cartorio?   @relation(fields: [cartorioId], references: [id])
   createdAt        DateTime    @default(now())
   updatedAt        DateTime    @updatedAt
+  cartorio         Cartorio?   @relation(fields: [cartorioId], references: [id])
 
   @@map("quotes")
 }
@@ -545,12 +534,80 @@ model PrintProduct {
   unit         String      @default("un")
   minQty       Int?
   maxQty       Int?
-  maxPhotos    Int?
   createdAt    DateTime    @default(now())
   updatedAt    DateTime    @updatedAt
+  maxPhotos    Int?
   orderItems   OrderItem[]
 
   @@map("print_products")
+}
+
+model UserCalendarCredential {
+  id           String   @id @default(cuid())
+  userId       String   @unique
+  provider     String   @default("google")
+  accessToken  String
+  refreshToken String
+  expiresAt    DateTime
+  calendarId   String   @default("primary")
+  scope        String
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+  user         User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@map("user_calendar_credentials")
+}
+
+model CalendarSlot {
+  id            String     @id @default(cuid())
+  userId        String
+  startAt       DateTime
+  endAt         DateTime
+  status        SlotStatus @default(BLOCKED)
+  source        SlotSource @default(MANUAL)
+  eventId       String?
+  googleEventId String?
+  title         String?
+  notes         String?
+  createdAt     DateTime   @default(now())
+  updatedAt     DateTime   @updatedAt
+  event         Event?     @relation(fields: [eventId], references: [id])
+  user          User       @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId, startAt, endAt])
+  @@map("calendar_slots")
+}
+
+model FranchiseProfile {
+  id                      String              @id @default(cuid())
+  userId                  String              @unique
+  printCredits            Int                 @default(0)
+  active                  Boolean             @default(true)
+  createdAt               DateTime            @default(now())
+  updatedAt               DateTime            @updatedAt
+  inventoryAlertThreshold Int                 @default(50)
+  lastSupplyOrderAt       DateTime?
+  tier                    FranchiseTier       @default(BRONZE)
+  approvedSalesVolume     Int                 @default(0)
+  transactions            CreditTransaction[]
+  events                  Event[]
+  user                    User                @relation(fields: [userId], references: [id])
+  prints                  PhygitalPrint[]
+
+  @@map("franchise_profiles")
+}
+
+model CreditTransaction {
+  id          String           @id @default(cuid())
+  profileId   String
+  amount      Int
+  type        String
+  description String?
+  referenceId String?
+  createdAt   DateTime         @default(now())
+  profile     FranchiseProfile @relation(fields: [profileId], references: [id])
+
+  @@map("credit_transactions")
 }
 
 enum Role {
@@ -558,7 +615,7 @@ enum Role {
   CARTORIO
   PROFISSIONAL
   CLIENTE
-  FRANCHISEE // @deprecated — usar FranchiseProfile. Mantido apenas para compatibilidade.
+  FRANCHISEE
 }
 
 enum PrintStatus {
@@ -598,10 +655,10 @@ enum ContestStatus {
 
 enum PayoutStatus {
   PENDING
-  AVAILABLE
   PROCESSING
   PAID
   CANCELLED
+  AVAILABLE
 }
 
 enum EventType {
@@ -611,15 +668,15 @@ enum EventType {
 }
 
 enum SlotStatus {
-  BLOCKED    // Indisponível (importado do Google ou bloqueio manual)
-  CONFIRMED  // Reserva confirmada via sistema
-  CANCELLED  // Cancelado — horário liberado
+  BLOCKED
+  CONFIRMED
+  CANCELLED
 }
 
 enum SlotSource {
-  MANUAL       // Criado pelo profissional manualmente
-  BOOKING      // Criado automaticamente por reserva confirmada
-  GOOGLE_SYNC  // Importado da agenda pessoal do Google
+  MANUAL
+  BOOKING
+  GOOGLE_SYNC
 }
 
 enum DeliveryType {
@@ -646,87 +703,4 @@ enum FranchiseTier {
   SILVER
   GOLD
   DIAMOND
-}
-
-// Credenciais OAuth2 por usuário (fotógrafo / franqueado)
-// Os campos accessToken e refreshToken DEVEM ser armazenados criptografados (AES-256-GCM)
-model UserCalendarCredential {
-  id           String   @id @default(cuid())
-  userId       String   @unique
-  user         User     @relation(fields: [userId], references: [id], onDelete: Cascade)
-
-  provider     String   @default("google") // Extensível: "apple", "outlook"
-  accessToken  String   // Encriptado em repouso
-  refreshToken String   // Encriptado em repouso
-  expiresAt    DateTime // Quando o accessToken expira
-  calendarId   String   @default("primary") // ID da agenda no Google Calendar
-  scope        String   // Escopos concedidos pelo usuário
-
-  createdAt    DateTime @default(now())
-  updatedAt    DateTime @updatedAt
-
-  @@map("user_calendar_credentials")
-}
-
-// Reservas e bloqueios de horários — FONTE DA VERDADE de disponibilidade
-// O sistema NUNCA consulta a API do Google para checar disponibilidade em tempo real.
-// A disponibilidade é sempre lida desta tabela.
-model CalendarSlot {
-  id            String      @id @default(cuid())
-
-  userId        String
-  user          User        @relation(fields: [userId], references: [id], onDelete: Cascade)
-
-  startAt       DateTime    // Início do bloqueio (UTC)
-  endAt         DateTime    // Fim do bloqueio (UTC)
-
-  status        SlotStatus  @default(BLOCKED)
-  source        SlotSource  @default(MANUAL)
-
-  // Rastreabilidade
-  eventId       String?     // Vinculado a um Event do sistema
-  event         Event?      @relation(fields: [eventId], references: [id], onDelete: SetNull)
-  googleEventId String?     // ID do evento espelhado no Google Calendar (para deleção)
-
-  title         String?     // Título sanitizado (sem dados sensíveis do cliente)
-  notes         String?
-
-  createdAt     DateTime    @default(now())
-  updatedAt     DateTime    @updatedAt
-
-  @@index([userId, startAt, endAt])
-  @@map("calendar_slots")
-}
-
-model FranchiseProfile {
-  id           String              @id @default(cuid())
-  userId       String              @unique
-  user         User                @relation(fields: [userId], references: [id])
-  printCredits Int                 @default(0)
-  tier         FranchiseTier       @default(BRONZE)
-  approvedSalesVolume Int           @default(0)
-  
-  inventoryAlertThreshold Int      @default(50)
-  lastSupplyOrderAt DateTime?
-  active       Boolean             @default(true)
-  events       Event[]
-  prints       PhygitalPrint[]
-  transactions CreditTransaction[]
-  createdAt    DateTime            @default(now())
-  updatedAt    DateTime            @updatedAt
-
-  @@map("franchise_profiles")
-}
-
-model CreditTransaction {
-  id          String           @id @default(cuid())
-  profileId   String
-  profile     FranchiseProfile @relation(fields: [profileId], references: [id])
-  amount      Int // Positivo para recarga, negativo para gasto
-  type        String // RECHARGE, PRINT_CONSUMPTION, ADJUSTMENT
-  description String?
-  referenceId String? // ID da PhygitalPrint se for consumo
-  createdAt   DateTime         @default(now())
-
-  @@map("credit_transactions")
 }

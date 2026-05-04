@@ -407,78 +407,6 @@ export const CheckoutPage = () => {
     </div>
   );
 
-  if (pixData) return (
-    <div className="min-h-screen bg-theme-bg text-theme-text">
-      <nav className="h-20 flex items-center justify-between px-8 border-b border-theme-border sticky top-0 z-50 bg-theme-bg/90 backdrop-blur-xl">
-        <button onClick={() => navigate(-1)} className="text-[11px] font-black uppercase tracking-widest text-theme-text-muted hover:text-theme-text transition-all flex items-center gap-2"><ArrowLeft size={14} /> Voltar</button>
-        <img src="/logo-fs.png" alt="Foto Segundo" className="h-5" />
-        <div className="flex items-center gap-2 text-brand-tactical text-[11px] font-black uppercase tracking-widest"><ShieldCheck size={14} /> Checkout Blindado</div>
-      </nav>
-      <div className="max-w-md mx-auto px-6 py-12 space-y-8">
-        <div className="text-center">
-          <div className="inline-flex items-center gap-3 px-5 py-2.5 bg-brand-tactical/5 border border-brand-tactical/20 text-[11px] font-black uppercase tracking-[0.2em] text-brand-tactical italic">
-            <RefreshCw size={12} className="animate-spin" /> {pollingStatus === "polling" ? "Aguardando Confirmação..." : "Verificando..."}
-          </div>
-        </div>
-        <div className="bg-theme-bg-muted border border-theme-border p-8 space-y-8 rounded-sm">
-          <div className="text-center space-y-2">
-            <h1 className="text-2xl font-black italic tracking-tighter text-theme-text">QUASE LÁ!</h1>
-            <p className="text-[11px] text-brand-tactical font-black uppercase tracking-[0.3em]">Escaneie para liberação imediata</p>
-          </div>
-
-          <div className="flex justify-center">
-            <div className="bg-white p-6 rounded-xl shadow-2xl border-4 border-white flex justify-center">
-              {pixData.qrCodeBase64 ? (
-                <img 
-                  src={`data:image/png;base64,${pixData.qrCodeBase64}`}
-                  alt="Pix QR Code"
-                  width={240}
-                  height={240}
-                  className="block"
-                />
-              ) : (
-                <QRCodeSVG 
-                  value={pixData.qrCode}
-                  size={240}
-                  level="H"
-                  includeMargin={true}
-                  fgColor="#000000"
-                  bgColor="#FFFFFF"
-                />
-              )}
-            </div>
-          </div>
-
-          <div className="flex items-center justify-center gap-2 text-theme-text-muted">
-            <Clock size={12} /> <span className="text-[11px] font-black uppercase tracking-widest">Expira em {fmtTimer(pixSecondsLeft)}</span>
-          </div>
-
-          {pixData.ticketUrl && (
-            <div className="text-center space-y-4">
-              <a 
-                href={pixData.ticketUrl} 
-                target="_blank" 
-                rel="noreferrer"
-                className="inline-flex items-center justify-center gap-3 w-full px-8 py-5 bg-brand-tactical/10 border border-brand-tactical/30 text-brand-tactical text-[12px] font-black uppercase tracking-widest hover:bg-brand-tactical/20 transition-all rounded-sm"
-              >
-                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg>
-                Abrir QR Code no Mercado Pago
-              </a>
-            </div>
-          )}
-
-          <div className="p-5 bg-theme-bg border border-theme-border space-y-3">
-             <label className="text-[10px] font-black text-theme-text-muted uppercase tracking-widest opacity-60">Pix Copia e Cola</label>
-             <div className="flex items-center gap-4 overflow-hidden">
-                <input readOnly value={pixData.qrCode} className="bg-transparent text-[11px] w-full outline-none truncate font-mono text-theme-text-muted" />
-                <button onClick={() => { navigator.clipboard.writeText(pixData.qrCode); setCopied(true); setTimeout(() => setCopied(false), 2000); }} className="text-brand-tactical text-[11px] font-black uppercase tracking-widest">{copied ? "COPIADO" : "COPIAR"}</button>
-             </div>
-          </div>
-
-        </div>
-      </div>
-    </div>
-  );
 
   return (
     <div className="min-h-screen bg-theme-bg text-theme-text">
@@ -584,7 +512,68 @@ export const CheckoutPage = () => {
                     <p className="text-[10px] text-zinc-600 uppercase font-black italic">Preencha o endereço de entrega para liberar o pagamento.</p>
                   </div>
                 )}
-                <div id="paymentBrick_container" className="lux-brick-midnight" />
+                <div className="relative">
+                  {/* Container do Brick - Mantido no DOM para evitar crash do script do MP */}
+                  <div 
+                    id="paymentBrick_container" 
+                    className={`lux-brick-midnight transition-opacity duration-500 ${pixData ? "opacity-0 pointer-events-none absolute inset-0" : "opacity-100"}`} 
+                  />
+
+                  {/* QR Code Integrado */}
+                  {pixData && (
+                    <div className="space-y-6 animate-in zoom-in-95 duration-500 bg-theme-bg relative z-10">
+                      <div className="p-6 bg-brand-tactical/5 border border-brand-tactical/20 text-center space-y-4">
+                        <div className="flex items-center justify-center gap-2 text-[10px] font-black text-brand-tactical uppercase tracking-[0.3em] italic">
+                          <RefreshCw size={12} className="animate-spin" /> {pollingStatus === "polling" ? "Aguardando Confirmação..." : "Verificando..."}
+                        </div>
+                        
+                        <div className="bg-white p-4 inline-block rounded-lg shadow-xl border-2 border-white">
+                          {pixData.qrCodeBase64 ? (
+                            <img 
+                              src={`data:image/png;base64,${pixData.qrCodeBase64}`} 
+                              alt="Pix" 
+                              width="200"
+                              height="200"
+                              style={{ width: "200px", height: "200px" }}
+                              className="block" 
+                            />
+                          ) : (
+                            <QRCodeSVG 
+                              value={String(pixData.qrCode || "invalid")} 
+                              size={200}
+                              level="H"
+                              includeMargin={true}
+                            />
+                          )}
+                        </div>
+
+                        <div className="flex items-center justify-center gap-2 text-[10px] font-black text-zinc-500 uppercase tracking-widest">
+                          <Clock size={12} /> Expira em {fmtTimer(pixSecondsLeft)}
+                        </div>
+
+                        <div className="p-4 bg-black/40 border border-zinc-800 space-y-2 text-left">
+                          <label className="text-[8px] font-black text-zinc-500 uppercase tracking-widest">Copia e Cola</label>
+                          <div className="flex items-center gap-3">
+                            <input readOnly value={pixData.qrCode} className="bg-transparent text-[10px] w-full outline-none truncate font-mono text-zinc-400" />
+                            <button 
+                              onClick={() => { navigator.clipboard.writeText(pixData.qrCode); setCopied(true); setTimeout(() => setCopied(false), 2000); }} 
+                              className="text-brand-tactical text-[10px] font-black uppercase"
+                            >
+                              {copied ? "OK" : "COPIAR"}
+                            </button>
+                          </div>
+                        </div>
+
+                        <button 
+                          onClick={() => { setPixData(null); initializationStarted.current = false; }} 
+                          className="w-full py-3 text-[9px] font-black text-zinc-500 uppercase tracking-widest hover:text-white transition-all"
+                        >
+                          Trocar Forma de Pagamento
+                        </button>
+                      </div>
+                    </div>
+                  )}
+                </div>
              </div>
            ) : (
              <div className="space-y-8 animate-in slide-in-from-bottom-4 duration-700">
