@@ -38,11 +38,11 @@ export function ExpressSaleModal({ network, onClose, onSuccess, onError }: Expre
   const [customProductName, setCustomProductName] = useState("");
   const [customPrice, setCustomPrice] = useState(30);
 
-  useState(() => {
+  useEffect(() => {
     API.get("profissional/me").then(r => {
       setProfessionalServices(r.data.proServices || []);
     });
-  });
+  }, []);
 
   const addToCart = (name: string, price: number) => {
     const newItem = { id: Math.random().toString(36).substr(2, 9), name, price };
