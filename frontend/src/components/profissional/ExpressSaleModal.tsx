@@ -26,17 +26,27 @@ export function ExpressSaleModal({ network, onClose, onSuccess, onError }: Expre
   const [step, setStep] = useState<1 | 2 | 3 | 4>(1);
   const [form, setForm] = useState<ExpressFormData>(INITIAL_FORM);
   const [loading, setLoading] = useState(false);
+  const [professionalServices, setProfessionalServices] = useState<any[]>([]);
+  const [isCustomProduct, setIsCustomProduct] = useState(false);
+  const [customProductName, setCustomProductName] = useState("");
+
+  useState(() => {
+    API.get("profissional/me").then(r => {
+      setProfessionalServices(r.data.services || []);
+    });
+  });
 
   const handleSubmit = async () => {
     setLoading(true);
     try {
       const payload = {
         ...form,
+        productType: isCustomProduct ? customProductName.toUpperCase() : form.productType,
         method:
-          form.productType === "SD_CARD" || form.productType === "ALBUM_IMPRESSO"
+          form.productType === "SD_CARD" || form.productType === "ALBUM_IMPRESSO" || isCustomProduct
             ? "MONEY"
             : form.paymentMethod,
-        internalNotes: `[${form.productType}] ${form.internalNotes}`.trim(),
+        internalNotes: `[${isCustomProduct ? 'CUSTOM' : form.productType}] ${form.internalNotes}`.trim(),
       };
       const { data } = await API.post("marketplace/express-sale", payload);
 
@@ -158,24 +168,48 @@ export function ExpressSaleModal({ network, onClose, onSuccess, onError }: Expre
                 <div className="space-y-2">
                   <label className="text-[10px] font-black text-theme-muted uppercase tracking-widest italic opacity-60">Categoria de Ativo</label>
                   <div className="grid grid-cols-1 gap-2">
-                    {([
-                      { id: "FOTOS", label: "📸 FOTOS (ENTREGA DIGITAL)" },
-                      { id: "REELS", label: "🎬 REELS / VÍDEO CURTO" },
-                      { id: "SD_CARD", label: "💾 CARTÃO SD (FÍSICO)" },
-                      { id: "ALBUM_IMPRESSO", label: "📖 ÁLBUM LUXO IMPRESSO" },
-                    ] as const).map((p) => (
+                    {/* Lista Dinâmica de Serviços do Profissional */}
+                    {professionalServices.map((s) => (
                       <button
-                        key={p.id}
-                        onClick={() => setForm((prev) => ({ ...prev, productType: p.id }))}
+                        key={s.id}
+                        onClick={() => {
+                          setIsCustomProduct(false);
+                          setForm((prev) => ({ ...prev, productType: s.catalogService.name, amount: Number(s.catalogService.basePrice) }));
+                        }}
                         className={`p-4 text-left text-[11px] font-black uppercase tracking-widest border transition-all ${
-                          form.productType === p.id
+                          !isCustomProduct && form.productType === s.catalogService.name
                             ? "bg-brand-tactical text-zinc-950 border-brand-tactical shadow-lg"
                             : "bg-theme-bg-muted border-theme-border/60 text-theme-muted hover:border-brand-tactical/40"
                         }`}
                       >
-                        {p.label}
+                        🏷 {s.catalogService.name}
                       </button>
                     ))}
+
+                    {/* Opção de Venda Livre */}
+                    <button
+                      onClick={() => setIsCustomProduct(true)}
+                      className={`p-4 text-left text-[11px] font-black uppercase tracking-widest border transition-all ${
+                        isCustomProduct
+                          ? "bg-brand-tactical text-zinc-950 border-brand-tactical shadow-lg"
+                          : "bg-theme-bg-muted border-theme-border/60 text-theme-muted hover:border-brand-tactical/40"
+                      }`}
+                    >
+                      ✨ OUTRO / VENDA LIVRE
+                    </button>
+
+                    {isCustomProduct && (
+                      <div className="space-y-2 mt-2 animate-in fade-in slide-in-from-top-2">
+                        <label className="text-[8px] font-black text-brand-tactical uppercase tracking-widest italic ml-1">Descreva o Ativo / Serviço</label>
+                        <input 
+                          autoFocus
+                          placeholder="EX: QUADRO PERSONALIZADO 50X70"
+                          value={customProductName}
+                          onChange={(e) => setCustomProductName(e.target.value.toUpperCase())}
+                          className="w-full bg-theme-bg border-b-2 border-brand-tactical p-3 text-[11px] font-black text-theme-text outline-none uppercase placeholder:text-theme-muted/20"
+                        />
+                      </div>
+                    )}
                   </div>
                 </div>
               </div>
