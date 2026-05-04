@@ -11,7 +11,7 @@ module.exports = (req, res) => {
   try {
     // Carrega o servidor apenas quando a função é invocada
     // Tenta carregar o export default (TS/ESM) ou o module.exports direto (CJS)
-    const serverModule = require("./server");
+    const serverModule = require("./server-v2");
     const app = serverModule.default || serverModule;
     
     if (!app || typeof app !== "function") {
