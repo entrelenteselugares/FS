@@ -60,11 +60,14 @@ export function FotoPointEditModal({ event, onClose, onSuccess, onError }: FotoP
   };
 
   return (
-    <div className="fixed inset-0 z-[8000] flex items-center justify-center p-4 backdrop-blur-2xl bg-black/60 animate-in fade-in duration-500">
-      <div className="w-full max-w-2xl bg-theme-bg border border-white/10 shadow-[0_0_100px_rgba(34,211,238,0.15)] relative overflow-hidden">
-        <div className="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-transparent via-cyan-400 to-transparent" />
+    <div 
+      className="fixed inset-0 z-[8000] flex items-center justify-center p-4 backdrop-blur-2xl bg-black/60 animate-in fade-in duration-500"
+      onClick={(e) => e.target === e.currentTarget && onClose()}
+    >
+      <div className="w-full max-w-2xl bg-theme-bg border border-white/10 shadow-[0_0_100px_rgba(34,211,238,0.15)] relative overflow-hidden max-h-[95vh] flex flex-col">
+        <div className="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-transparent via-cyan-400 to-transparent z-10" />
         
-        <form onSubmit={handleSubmit} className="p-8 md:p-12 space-y-10">
+        <form onSubmit={handleSubmit} className="p-8 md:p-12 space-y-10 overflow-y-auto custom-scrollbar">
           <div className="flex justify-between items-start">
             <div className="space-y-1">
               <div className="text-[10px] font-black text-cyan-400 uppercase tracking-[0.4em] italic mb-2">
