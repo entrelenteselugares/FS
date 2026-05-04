@@ -912,7 +912,7 @@ export default function UnidadeFixaDashboard() {
                <div className="grid grid-cols-1 md:grid-cols-2 gap-x-12 gap-y-10">
                   <div className="space-y-3">
                     <label className="text-[9px] font-black text-theme-muted uppercase tracking-[0.4em] ml-1 opacity-60">Slug Identificador (URL)</label>
-                    <div className="flex items-center gap-2 text-theme-muted/40 font-black text-[10px] mb-1">fotosegundo.com/p/</div>
+                    <div className="flex items-center gap-2 text-theme-muted/40 font-black text-[10px] mb-1">{window.location.host.toLowerCase()}/p/</div>
                     <input value={lpSlug} onChange={e => setLpSlug(e.target.value)} className="w-full bg-transparent border-b border-theme-border/60 py-3 text-sm font-black text-theme-text focus:border-brand-tactical outline-none transition-all" placeholder="UNIDADE-EXEMPLO" />
                   </div>
 
