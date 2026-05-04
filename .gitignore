@@ -53,7 +53,7 @@ frontend/.env.production
  
 # scratch
 /scratch
-/api/index.js
+/api/server.js
 # brain
 /brain
 
