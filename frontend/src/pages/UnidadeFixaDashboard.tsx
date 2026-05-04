@@ -149,7 +149,7 @@ export default function UnidadeFixaDashboard() {
   const [savingTeam, setSavingTeam] = useState(false);
   const [teamLoaded, setTeamLoaded] = useState(false);
 
-  const [unidadeName, setUnidadeName] = useState("");
+
 
   // Evitar setState loop no useEffect
   const handledRef = useRef(false);
@@ -200,7 +200,6 @@ export default function UnidadeFixaDashboard() {
       setStats(statsRes.data);
       setEventos(eventosRes.data.events ?? eventosRes.data);
       setRepasses(repassesRes.data || []);
-      setUnidadeName(statsRes.data.razaoSocial ?? "");
       await loadLpData();
     } catch (err: unknown) {
       const error = err as { response?: { status: number } };
