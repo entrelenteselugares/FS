@@ -176,14 +176,24 @@ export const CheckoutPage = () => {
 
     try {
       if (authStep === 'login') {
-        await authLogin(targetEmail, password);
+        try {
+          await authLogin(targetEmail, password);
+        } catch (loginErr: any) {
+          // Se o erro for "usuário não encontrado", tentamos registrar automaticamente
+          if (loginErr.response?.status === 404 || loginErr.response?.data?.error?.includes("encontrado")) {
+            setAuthStep('register');
+            await authRegister(targetEmail, password, order!.contributorName || order!.event.nomeNoivos || "Cliente");
+          } else {
+            throw loginErr;
+          }
+        }
       } else {
         await authRegister(targetEmail, password, order!.contributorName || order!.event.nomeNoivos || "Cliente");
       }
       setAuthStep('authorized');
     } catch (err: unknown) {
       const axiosError = err as { response?: { data?: { error?: string } } };
-      const msg = axiosError.response?.data?.error || "Falha na autenticação. Verifique sua senha.";
+      const msg = axiosError.response?.data?.error || "Falha na identificação. Verifique sua senha.";
       setLocalAuthError(msg);
     } finally {
       setAuthLoading(false);
@@ -584,8 +594,8 @@ export const CheckoutPage = () => {
             ) : (
               <div className="space-y-8 animate-in slide-in-from-bottom-4 duration-700">
                 <div className="space-y-2">
-                  <h2 className="text-2xl font-black italic uppercase">{authStep === 'login' ? "Bem-vindo de Volta" : "Sua Nova Conta"}</h2>
-                  <p className="text-xs text-zinc-500">{authStep === 'login' ? "Identificamos seu e-mail. Digite sua senha." : "Defina uma senha para acessar suas memórias depois."}</p>
+                  <h2 className="text-2xl font-black italic uppercase">Identificação</h2>
+                  <p className="text-xs text-zinc-500">{authStep === 'login' ? "Identificamos seu e-mail. Digite sua senha de acesso." : "Defina uma senha para acessar suas fotos após o pagamento."}</p>
                 </div>
                 <form onSubmit={handleAuthSubmit} className="space-y-4">
                   <input 
@@ -605,7 +615,8 @@ export const CheckoutPage = () => {
                       placeholder="Senha (mín. 6 dígitos)" 
                       value={password}
                       onChange={(e) => setPassword(e.target.value)}
-                      className="fs-input pl-12"
+                      className="fs-input"
+                      style={{ paddingLeft: '3.5rem' }}
                       required
                     />
                   </div>
@@ -613,9 +624,9 @@ export const CheckoutPage = () => {
                   <button 
                     disabled={authLoading}
                     type="submit" 
-                    className="w-full py-5 bg-brand-tactical text-black text-xs font-black uppercase tracking-widest hover:brightness-110 transition-all shadow-xl shadow-brand-tactical/10"
+                    className="w-full py-5 bg-brand-tactical text-black text-xs font-black uppercase tracking-widest hover:brightness-110 transition-all shadow-xl shadow-brand-tactical/10 italic"
                   >
-                    {authLoading ? "PROCESSANDO..." : (authStep === 'login' ? "DESBLOQUEAR CHECKOUT" : "CRIAR CONTA E CONTINUAR")}
+                    {authLoading ? "PROCESSANDO..." : "CONTINUAR PARA PAGAMENTO"}
                   </button>
                   <button 
                     type="button"
