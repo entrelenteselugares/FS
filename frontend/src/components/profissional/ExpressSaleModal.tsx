@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { X } from "lucide-react";
 import { API } from "../../lib/api";
-import type { Partner, ExpressFormData } from "./types";
+import type { Partner, ExpressFormData, ProfessionalService } from "./types";
 
 interface ExpressSaleModalProps {
   network: Partner[];
@@ -26,7 +26,7 @@ export function ExpressSaleModal({ network, onClose, onSuccess, onError }: Expre
   const [step, setStep] = useState<1 | 2 | 3 | 4>(1);
   const [form, setForm] = useState<ExpressFormData>(INITIAL_FORM);
   const [loading, setLoading] = useState(false);
-  const [professionalServices, setProfessionalServices] = useState<any[]>([]);
+  const [professionalServices, setProfessionalServices] = useState<ProfessionalService[]>([]);
   const [isCustomProduct, setIsCustomProduct] = useState(false);
   const [customProductName, setCustomProductName] = useState("");
 
