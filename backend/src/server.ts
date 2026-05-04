@@ -1,11 +1,13 @@
 import "dotenv/config";
 import app from "./app";
+import { runExpirationJob } from "./jobs/expiration.job";
 
-// Para rodar localmente (npm run dev)
+const PORT = Number(process.env.PORT ?? 3001);
+
 if (process.env.NODE_ENV !== "production") {
-  const PORT = Number(process.env.PORT ?? 3001);
   app.listen(PORT, "0.0.0.0", () => {
-    console.log(`✅ Backend rodando na porta ${PORT} [LOCAL]`);
+    console.log(`✅ Backend rodando na porta ${PORT} [v2]`);
+    runExpirationJob();
   });
 }
 
