@@ -176,10 +176,23 @@ export default function ProfissionalDashboard() {
 
   const handleAddService = async (cat: ServiceCatalog) => {
     try {
-      await API.post("profissional/services", { catalogId: cat.id });
+      const suggestedPrice = Math.max(
+        cat.basePrice,
+        ((profile?.hourlyRate || 150) * (cat.estimatedMinutes / 60)) * (profile?.equipmentMultiplier || 1.0)
+      );
+
+      await API.post("profissional/services", { 
+        catalogId: cat.id,
+        name: cat.name,
+        description: `Serviço de ${cat.name} importado do catálogo.`,
+        price: suggestedPrice
+      });
+      
       fetchProfile();
+      showNotification(`Serviço "${cat.name}" importado com sucesso!`);
     } catch (err) {
       console.error("Erro ao adicionar serviço:", err);
+      showNotification("Erro ao importar serviço do catálogo.", "error");
     }
   };
 

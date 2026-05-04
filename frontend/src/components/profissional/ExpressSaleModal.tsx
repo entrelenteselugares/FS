@@ -10,13 +10,19 @@ interface ExpressSaleModalProps {
   onError: (msg: string) => void;
 }
 
+interface CartItem {
+  id: string;
+  name: string;
+  price: number;
+}
+
 const INITIAL_FORM: ExpressFormData = {
   customerName: "",
   customerEmail: "",
   whatsapp: "",
-  amount: 30,
+  amount: 0,
   location: "",
-  productType: "FOTOS",
+  productType: "MULTIPLE",
   paymentMethod: "MONEY",
   internalNotes: "",
   editorId: "",
@@ -26,9 +32,11 @@ export function ExpressSaleModal({ network, onClose, onSuccess, onError }: Expre
   const [step, setStep] = useState<1 | 2 | 3 | 4>(1);
   const [form, setForm] = useState<ExpressFormData>(INITIAL_FORM);
   const [loading, setLoading] = useState(false);
+  const [cartItems, setCartItems] = useState<CartItem[]>([]);
   const [professionalServices, setProfessionalServices] = useState<ProfessionalService[]>([]);
-  const [isCustomProduct, setIsCustomProduct] = useState(false);
+  const [showCustomForm, setShowCustomForm] = useState(false);
   const [customProductName, setCustomProductName] = useState("");
+  const [customPrice, setCustomPrice] = useState(30);
 
   useState(() => {
     API.get("profissional/me").then(r => {
@@ -36,17 +44,25 @@ export function ExpressSaleModal({ network, onClose, onSuccess, onError }: Expre
     });
   });
 
+  const addToCart = (name: string, price: number) => {
+    const newItem = { id: Math.random().toString(36).substr(2, 9), name, price };
+    setCartItems(prev => [...prev, newItem]);
+    setForm(prev => ({ ...prev, amount: prev.amount + price }));
+  };
+
+  const removeFromCart = (id: string, price: number) => {
+    setCartItems(prev => prev.filter(item => item.id !== id));
+    setForm(prev => ({ ...prev, amount: Math.max(0, prev.amount - price) }));
+  };
+
   const handleSubmit = async () => {
     setLoading(true);
     try {
+      const itemsList = cartItems.map(i => `${i.name} (R$${i.price})`).join(", ");
       const payload = {
         ...form,
-        productType: isCustomProduct ? customProductName.toUpperCase() : form.productType,
-        method:
-          form.productType === "SD_CARD" || form.productType === "ALBUM_IMPRESSO" || isCustomProduct
-            ? "MONEY"
-            : form.paymentMethod,
-        internalNotes: `[${isCustomProduct ? 'CUSTOM' : form.productType}] ${form.internalNotes}`.trim(),
+        productType: cartItems.length === 1 ? cartItems[0].name : "PDV_MULTIPLO",
+        internalNotes: `[CARRINHO: ${itemsList}] ${form.internalNotes}`.trim(),
       };
       const { data } = await API.post("marketplace/express-sale", payload);
 
@@ -144,76 +160,110 @@ export function ExpressSaleModal({ network, onClose, onSuccess, onError }: Expre
                     onChange={(e) => setForm((p) => ({ ...p, whatsapp: e.target.value }))}
                     className="w-full bg-theme-bg-muted border border-theme-border p-4 text-theme-text outline-none focus:border-brand-tactical/50 transition-all font-medium text-sm"
                   />
-                </div>
-              </div>
             </div>
           )}
 
-          {/* PHASE 2: Product & Amount */}
+          {/* PHASE 2: Tactical POS (PDV) */}
           {step === 2 && (
             <div className="space-y-6 animate-in slide-in-from-right-4">
               <div className="space-y-4">
                 <div className="space-y-2">
-                  <label className="text-[10px] font-black text-theme-muted uppercase tracking-widest italic opacity-60">Valor Nominal (R$)</label>
-                  <div className="relative">
-                    <input
-                      type="number"
-                      value={form.amount}
-                      onChange={(e) => setForm((p) => ({ ...p, amount: Number(e.target.value) }))}
-                      className="w-full bg-theme-bg-muted border border-theme-border p-5 text-brand-tactical font-heading font-black italic text-3xl outline-none"
-                    />
-                    <div className="absolute right-5 top-1/2 -translate-y-1/2 text-[11px] font-black text-theme-muted uppercase tracking-widest">BRL</div>
-                  </div>
-                </div>
-                <div className="space-y-2">
-                  <label className="text-[10px] font-black text-theme-muted uppercase tracking-widest italic opacity-60">Categoria de Ativo</label>
-                  <div className="grid grid-cols-1 gap-2">
-                    {/* Lista Dinâmica de Serviços do Profissional */}
-                    {professionalServices.filter(s => s.catalogService || s.catalog).map((s) => {
-                      const serviceName = s.catalogService?.name || s.catalog?.name || "Serviço Sem Nome";
-                      const servicePrice = s.catalogService?.basePrice || s.catalog?.basePrice || 0;
-                      
-                      return (
-                        <button
-                          key={s.id}
-                          onClick={() => {
-                            setIsCustomProduct(false);
-                            setForm((prev) => ({ ...prev, productType: serviceName, amount: Number(servicePrice) }));
-                          }}
-                          className={`p-4 text-left text-[11px] font-black uppercase tracking-widest border transition-all ${
-                            !isCustomProduct && form.productType === serviceName
-                              ? "bg-brand-tactical text-zinc-950 border-brand-tactical shadow-lg"
-                              : "bg-theme-bg-muted border-theme-border/60 text-theme-muted hover:border-brand-tactical/40"
-                          }`}
-                        >
-                          🏷 {serviceName}
-                        </button>
-                      );
-                    })}
-
-                    {/* Opção de Venda Livre */}
+                  <label className="text-[10px] font-black text-theme-muted uppercase tracking-widest italic opacity-60">Seleção de Itens (Atalhos)</label>
+                  <div className="grid grid-cols-2 gap-2">
+                    {/* Grade de 6-8 Serviços Principais */}
+                    {professionalServices
+                      .filter(s => s.catalogService || s.catalog)
+                      .slice(0, 8)
+                      .map((s) => {
+                        const name = s.catalogService?.name || s.catalog?.name || "Serviço";
+                        const price = s.catalogService?.basePrice || s.catalog?.basePrice || 0;
+                        return (
+                          <button
+                            key={s.id}
+                            onClick={() => addToCart(name, price)}
+                            className="p-3 text-center border border-theme-border/60 bg-theme-bg-muted hover:border-brand-tactical hover:bg-brand-tactical/5 transition-all group"
+                          >
+                            <div className="text-[10px] font-black text-theme-text uppercase truncate mb-1">{name}</div>
+                            <div className="text-[11px] font-black text-brand-tactical italic">R$ {price}</div>
+                          </button>
+                        );
+                      })}
+                    
+                    {/* Botão Outros */}
                     <button
-                      onClick={() => setIsCustomProduct(true)}
-                      className={`p-4 text-left text-[11px] font-black uppercase tracking-widest border transition-all ${
-                        isCustomProduct
-                          ? "bg-brand-tactical text-zinc-950 border-brand-tactical shadow-lg"
-                          : "bg-theme-bg-muted border-theme-border/60 text-theme-muted hover:border-brand-tactical/40"
-                      }`}
+                      onClick={() => setShowCustomForm(!showCustomForm)}
+                      className="p-3 text-center border border-dashed border-theme-border/60 hover:border-brand-tactical transition-all"
                     >
-                      ✨ OUTRO / VENDA LIVRE
+                      <div className="text-[10px] font-black text-theme-muted uppercase mb-1">✨ OUTROS</div>
+                      <div className="text-[11px] font-black text-theme-muted italic">PERSONALIZADO</div>
                     </button>
+                  </div>
 
-                    {isCustomProduct && (
-                      <div className="space-y-2 mt-2 animate-in fade-in slide-in-from-top-2">
-                        <label className="text-[8px] font-black text-brand-tactical uppercase tracking-widest italic ml-1">Descreva o Ativo / Serviço</label>
+                  {showCustomForm && (
+                    <div className="p-4 bg-brand-tactical/5 border border-brand-tactical/20 space-y-3 animate-in slide-in-from-top-2">
+                      <div className="grid grid-cols-2 gap-2">
                         <input 
                           autoFocus
-                          placeholder="EX: QUADRO PERSONALIZADO 50X70"
+                          placeholder="NOME DO ITEM"
                           value={customProductName}
                           onChange={(e) => setCustomProductName(e.target.value.toUpperCase())}
-                          className="w-full bg-theme-bg border-b-2 border-brand-tactical p-3 text-[11px] font-black text-theme-text outline-none uppercase placeholder:text-theme-muted/20"
+                          className="bg-theme-bg border border-theme-border p-2 text-[10px] font-black text-theme-text outline-none"
+                        />
+                        <input 
+                          type="number"
+                          placeholder="PREÇO (R$)"
+                          value={customPrice}
+                          onChange={(e) => setCustomPrice(Number(e.target.value))}
+                          className="bg-theme-bg border border-theme-border p-2 text-[10px] font-black text-brand-tactical outline-none"
                         />
                       </div>
+                      <button 
+                        onClick={() => {
+                          if (!customProductName) return;
+                          addToCart(customProductName, customPrice);
+                          setCustomProductName("");
+                          setShowCustomForm(false);
+                        }}
+                        className="w-full py-2 bg-brand-tactical text-zinc-950 text-[9px] font-black uppercase tracking-widest"
+                      >
+                        ADICIONAR AO CUPOM
+                      </button>
+                    </div>
+                  )}
+                </div>
+
+                {/* Cupom de Compras (Cart) */}
+                <div className="space-y-3 pt-4 border-t border-theme-border/30">
+                  <div className="flex justify-between items-center">
+                    <label className="text-[10px] font-black text-theme-muted uppercase tracking-widest italic opacity-60">Resumo do Cupom</label>
+                    <span className="text-[9px] font-black text-brand-tactical uppercase tracking-widest bg-brand-tactical/10 px-2 py-0.5">{cartItems.length} ITENS</span>
+                  </div>
+                  
+                  <div className="space-y-2 max-h-[150px] overflow-y-auto no-scrollbar pr-1">
+                    {cartItems.length === 0 ? (
+                      <div className="py-8 text-center border border-dashed border-theme-border/40 text-[9px] text-theme-muted uppercase tracking-[0.2em] font-black italic">Aguardando seleção de itens...</div>
+                    ) : (
+                      cartItems.map(item => (
+                        <div key={item.id} className="flex justify-between items-center p-3 bg-theme-bg-muted/50 border border-theme-border/40 group">
+                          <div className="flex flex-col">
+                            <span className="text-[10px] font-black text-theme-text uppercase tracking-tight">{item.name}</span>
+                            <span className="text-[11px] font-black text-brand-tactical italic">R$ {item.price.toFixed(2)}</span>
+                          </div>
+                          <button onClick={() => removeFromCart(item.id, item.price)} className="text-theme-muted hover:text-red-500 transition-colors opacity-0 group-hover:opacity-100 p-2">
+                            <X size={14} />
+                          </button>
+                        </div>
+                      ))
+                    )}
+                  </div>
+
+                  <div className="pt-4 flex justify-between items-end border-t border-theme-border/60">
+                    <div className="space-y-1">
+                      <span className="text-[9px] font-black text-theme-muted uppercase tracking-widest block opacity-40">Total do Cupom</span>
+                      <div className="text-3xl font-heading font-black text-brand-tactical italic leading-none">R$ {form.amount.toFixed(2).replace(".", ",")}</div>
+                    </div>
+                    {cartItems.length > 0 && (
+                      <button onClick={() => setStep(3)} className="bg-brand-tactical text-zinc-950 px-6 py-3 text-[10px] font-black uppercase tracking-[0.2em] shadow-lg active:scale-95 transition-all">AVANÇAR</button>
                     )}
                   </div>
                 </div>
@@ -279,9 +329,13 @@ export function ExpressSaleModal({ network, onClose, onSuccess, onError }: Expre
                     <span className="text-[10px] font-bold text-theme-muted uppercase tracking-widest">Cliente</span>
                     <span className="text-[11px] font-black text-theme-text uppercase">{form.customerEmail}</span>
                   </div>
-                  <div className="flex justify-between items-center">
-                    <span className="text-[10px] font-bold text-theme-muted uppercase tracking-widest">Produto</span>
-                    <span className="text-[11px] font-black text-theme-text uppercase italic">{form.productType}</span>
+                  <div className="flex justify-between items-start">
+                    <span className="text-[10px] font-bold text-theme-muted uppercase tracking-widest">Itens</span>
+                    <div className="text-right flex flex-col gap-1">
+                      {cartItems.map(item => (
+                        <span key={item.id} className="text-[10px] font-black text-theme-text uppercase italic">{item.name} (R$ {item.price})</span>
+                      ))}
+                    </div>
                   </div>
                   <div className="pt-4 border-t border-brand-tactical/10">
                     <div className="flex justify-between items-end">
