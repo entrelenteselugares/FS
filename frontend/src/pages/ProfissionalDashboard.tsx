@@ -395,6 +395,7 @@ export default function ProfissionalDashboard() {
                 network={network}
                 networkSearch={networkSearch}
                 searchResults={searchResults}
+                residentUnits={profile?.cartorioProfissional || []}
                 onSearch={handleSearchNetwork}
                 onToggleFavorite={handleToggleFavorite}
               />

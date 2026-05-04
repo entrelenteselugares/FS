@@ -5,22 +5,67 @@ interface NetworkTabProps {
   network: Partner[];
   networkSearch: string;
   searchResults: Partner[];
+  residentUnits: any[];
   onSearch: (q: string) => void;
   onToggleFavorite: (partnerId: string) => void;
 }
 
-export function NetworkTab({ network, networkSearch, searchResults, onSearch, onToggleFavorite }: NetworkTabProps) {
+export function NetworkTab({ network, networkSearch, searchResults, residentUnits, onSearch, onToggleFavorite }: NetworkTabProps) {
   return (
     <div className="space-y-12 animate-in fade-in duration-500">
       <div className="bg-theme-bg border border-theme-border/60 p-8 md:p-16 space-y-12">
         <div className="space-y-4">
           <h3 className="text-3xl font-heading font-black text-theme-text uppercase tracking-tighter italic leading-none">
-            Rede de Empatia
+            Minha Rede e Alianças
           </h3>
           <p className="text-[10px] text-theme-muted uppercase tracking-[0.4em] italic font-bold">
-            Conecte-se com outros profissionais para delegar edições e expandir sua operação
+            Gestão de parcerias oficiais com unidades e conexões com outros profissionais
           </p>
         </div>
+
+        {/* --- NOVO: SEÇÃO DE UNIDADES RESIDENTES --- */}
+        {residentUnits.length > 0 && (
+          <div className="space-y-6 animate-in slide-in-from-left-4 duration-500">
+            <div className="flex items-center gap-4">
+              <div className="h-1 w-12 bg-cyan-400" />
+              <h4 className="text-sm font-black text-theme-text uppercase tracking-widest italic">Unidades que Sou Residente</h4>
+            </div>
+            
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+              {residentUnits.map((u) => (
+                <div key={u.id} className="bg-theme-bg-muted border border-cyan-400/20 p-8 relative group hover:border-cyan-400/50 transition-all">
+                  <div className="absolute top-0 left-0 w-full h-[1px] bg-cyan-400/30" />
+                  <div className="space-y-4">
+                    <div className="flex justify-between items-start">
+                      <div className="px-3 py-1 bg-cyan-400/10 border border-cyan-400/30 text-[8px] font-black text-cyan-400 uppercase tracking-widest italic">
+                        Parceria Ativa
+                      </div>
+                      <div className="text-cyan-400/20 group-hover:text-cyan-400/50 transition-colors">
+                        <Users size={20} />
+                      </div>
+                    </div>
+                    <div className="space-y-1">
+                      <h5 className="text-base font-heading font-black text-theme-text uppercase italic leading-tight tracking-tight">
+                        {u.cartorio.razaoSocial}
+                      </h5>
+                      <p className="text-[9px] text-theme-muted font-bold uppercase tracking-widest">
+                        {u.cartorio.endereco}
+                      </p>
+                    </div>
+                    <div className="pt-4 border-t border-theme-border/20">
+                      <div className="flex items-center gap-2">
+                        <div className="w-1.5 h-1.5 rounded-full bg-cyan-400 animate-pulse" />
+                        <span className="text-[8px] font-black text-theme-muted uppercase tracking-widest">Sincronizado com Vitrine Oficial</span>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              ))}
+            </div>
+          </div>
+        )}
+
+        <div className="h-px bg-theme-border/20" />
 
         {/* Search */}
         <div className="relative">
