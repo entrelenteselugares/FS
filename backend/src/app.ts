@@ -17,6 +17,17 @@ app.get("/api/health", (_req, res) => {
 });
 
 // ── VALIDAÇÃO DE AMBIENTE ───────────────────────────
+const REQUIRED_ENVS = ["JWT_SECRET", "SUPABASE_URL", "SUPABASE_SERVICE_ROLE_KEY", "FRONTEND_URL", "APP_URL"];
+REQUIRED_ENVS.forEach(env => {
+  if (!process.env[env]) {
+    console.error(`❌ AVISO CRÍTICO: Variável de ambiente ${env} não configurada.`);
+  }
+});
+
+// Aviso não-fatal para variáveis opcionais importantes
+if (!process.env.MASTER_EMAIL) {
+  console.warn("⚠️  MASTER_EMAIL não configurada — Master Bypass desativado.");
+}
 
 // CRÍTICO: necessário para rate-limit funcionar na Vercel
 app.set("trust proxy", 1);
