@@ -11,6 +11,7 @@ app.get("/api/health", (_req, res) => {
   res.json({ 
     status: "ok", 
     boot: true, 
+    version: "v2.0.1-adapter-fix",
     time: new Date().toISOString(),
     env: process.env.NODE_ENV 
   });
