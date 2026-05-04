@@ -160,6 +160,8 @@ export function ExpressSaleModal({ network, onClose, onSuccess, onError }: Expre
                     onChange={(e) => setForm((p) => ({ ...p, whatsapp: e.target.value }))}
                     className="w-full bg-theme-bg-muted border border-theme-border p-4 text-theme-text outline-none focus:border-brand-tactical/50 transition-all font-medium text-sm"
                   />
+                </div>
+              </div>
             </div>
           )}
 
