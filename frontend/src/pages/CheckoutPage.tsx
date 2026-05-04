@@ -367,12 +367,6 @@ export const CheckoutPage = () => {
     };
   }, [order, pixData, paymentSuccess, loading, authStep, shippingData]);
 
-  const fmtTimer = (s: number) => {
-    const m = Math.floor(s / 60).toString().padStart(2, "0");
-    const sec = (s % 60).toString().padStart(2, "0");
-    return `${m}:${sec}`;
-  };
-
   // ── Render Helpers ──────────────────────────────────────────────────────────
   if (loading) return (
     <div className="min-h-screen bg-theme-bg flex items-center justify-center">
@@ -505,116 +499,134 @@ export const CheckoutPage = () => {
               <p className="text-[9px] text-zinc-600 uppercase tracking-widest leading-relaxed">Sua transação é processada em ambiente seguro com criptografia de ponta.</p>
            </div>
 
-           {authStep === 'authorized' ? (
-             <div className="space-y-8 animate-in fade-in duration-700">
+            {authStep === 'authorized' ? (
+              <div className="space-y-8 animate-in fade-in duration-700">
                 {order.deliveryType === 'SHIPPING' && !shippingData.street && (
                   <div className="p-10 border border-dashed border-zinc-800 text-center">
                     <p className="text-[10px] text-zinc-600 uppercase font-black italic">Preencha o endereço de entrega para liberar o pagamento.</p>
                   </div>
                 )}
                 <div className="relative">
-                  {/* Container do Brick - Mantido no DOM para evitar crash do script do MP */}
-                  <div 
-                    id="paymentBrick_container" 
-                    className={`lux-brick-midnight transition-opacity duration-500 ${pixData ? "opacity-0 pointer-events-none absolute inset-0" : "opacity-100"}`} 
-                  />
+                  {/* Container do Brick - Ocultado se houver PIX */}
+                  {!pixData && (
+                    <div id="paymentBrick_container" className="lux-brick-midnight animate-in fade-in duration-500" />
+                  )}
 
                   {/* QR Code Integrado */}
                   {pixData && (
-                    <div className="space-y-6 animate-in zoom-in-95 duration-500 bg-theme-bg relative z-10">
-                      <div className="p-6 bg-brand-tactical/5 border border-brand-tactical/20 text-center space-y-4">
-                        <div className="flex items-center justify-center gap-2 text-[10px] font-black text-brand-tactical uppercase tracking-[0.3em] italic">
-                          <RefreshCw size={12} className="animate-spin" /> {pollingStatus === "polling" ? "Aguardando Confirmação..." : "Verificando..."}
+                    <div className="space-y-8 animate-in zoom-in-95 duration-500 bg-theme-bg relative z-10">
+                      <div className="p-6 md:p-10 bg-brand-tactical/5 border border-brand-tactical/20 text-center space-y-8 shadow-2xl">
+                        <div className="flex flex-col items-center gap-2">
+                          <div className="flex items-center gap-2 text-[10px] font-black text-brand-tactical uppercase tracking-[0.3em] italic">
+                            <RefreshCw size={12} className="animate-spin" /> {pollingStatus === "polling" ? "Aguardando Confirmação..." : "Verificando..."}
+                          </div>
+                          <p className="text-[9px] text-zinc-500 uppercase tracking-widest">Escaneie o código abaixo com o app do seu banco</p>
                         </div>
                         
-                        <div className="bg-white p-4 inline-block rounded-lg shadow-xl border-2 border-white">
+                        <div className="bg-white p-4 inline-block rounded-xl shadow-[0_0_50px_rgba(133,185,172,0.15)] border-4 border-white">
                           {pixData.qrCodeBase64 ? (
                             <img 
                               src={`data:image/png;base64,${pixData.qrCodeBase64}`} 
                               alt="Pix" 
-                              width="200"
-                              height="200"
-                              style={{ width: "200px", height: "200px" }}
+                              width="240"
+                              height="240"
+                              style={{ width: "240px", height: "240px" }}
                               className="block" 
                             />
                           ) : (
                             <QRCodeSVG 
                               value={String(pixData.qrCode || "invalid")} 
-                              size={200}
+                              size={240}
                               level="H"
                               includeMargin={true}
                             />
                           )}
                         </div>
 
-                        <div className="flex items-center justify-center gap-2 text-[10px] font-black text-zinc-500 uppercase tracking-widest">
-                          <Clock size={12} /> Expira em {fmtTimer(pixSecondsLeft)}
-                        </div>
+                        <div className="space-y-4">
+                           <div className="flex flex-col gap-3">
+                             <button 
+                               onClick={() => {
+                                 navigator.clipboard.writeText(pixData.qrCode);
+                                 setCopied(true);
+                                 setTimeout(() => setCopied(false), 2000);
+                               }}
+                               className={`w-full py-4 text-[10px] font-black uppercase tracking-widest transition-all border flex items-center justify-center gap-3 ${copied ? 'bg-emerald-500 border-emerald-500 text-white' : 'bg-theme-bg border-zinc-800 text-theme-text hover:border-brand-tactical'}`}
+                             >
+                               {copied ? <><CheckCircle2 size={14} /> COPIADO!</> : <><RefreshCw size={14} /> COPIAR CÓDIGO PIX</>}
+                             </button>
+                             
+                             <button 
+                               onClick={() => { setPixData(null); initializationStarted.current = false; }}
+                               className="w-full py-4 text-[9px] font-black uppercase tracking-[0.2em] text-zinc-500 hover:text-white transition-all"
+                             >
+                               ← ALTERAR MÉTODO DE PAGAMENTO
+                             </button>
+                           </div>
 
-                        <div className="p-4 bg-black/40 border border-zinc-800 space-y-2 text-left">
-                          <label className="text-[8px] font-black text-zinc-500 uppercase tracking-widest">Copia e Cola</label>
-                          <div className="flex items-center gap-3">
-                            <input readOnly value={pixData.qrCode} className="bg-transparent text-[10px] w-full outline-none truncate font-mono text-zinc-400" />
-                            <button 
-                              onClick={() => { navigator.clipboard.writeText(pixData.qrCode); setCopied(true); setTimeout(() => setCopied(false), 2000); }} 
-                              className="text-brand-tactical text-[10px] font-black uppercase"
-                            >
-                              {copied ? "OK" : "COPIAR"}
-                            </button>
-                          </div>
+                           <div className="pt-6 border-t border-zinc-900/50 flex items-center justify-center gap-4 text-zinc-500">
+                              <Clock size={14} />
+                              <span className="text-[10px] font-black tabular-nums">EXPIRA EM {Math.floor(pixSecondsLeft / 60)}:{(pixSecondsLeft % 60).toString().padStart(2, '0')}</span>
+                           </div>
                         </div>
+                      </div>
 
-                        <button 
-                          onClick={() => { setPixData(null); initializationStarted.current = false; }} 
-                          className="w-full py-3 text-[9px] font-black text-zinc-500 uppercase tracking-widest hover:text-white transition-all"
-                        >
-                          Trocar Forma de Pagamento
-                        </button>
+                      <div className="p-6 border border-zinc-900 bg-zinc-900/20 rounded-lg flex items-start gap-4">
+                         <Lock size={16} className="text-brand-tactical mt-0.5" />
+                         <p className="text-[10px] text-zinc-500 leading-relaxed uppercase tracking-tight">
+                           Sua segurança é nossa prioridade. Após o pagamento, o acesso será liberado instantaneamente nesta mesma tela.
+                         </p>
                       </div>
                     </div>
                   )}
                 </div>
-             </div>
-           ) : (
-             <div className="space-y-8 animate-in slide-in-from-bottom-4 duration-700">
+              </div>
+            ) : (
+              <div className="space-y-8 animate-in slide-in-from-bottom-4 duration-700">
                 <div className="space-y-2">
-                   <h2 className="text-2xl font-black italic uppercase">{authStep === 'login' ? "Bem-vindo de Volta" : "Sua Nova Conta"}</h2>
-                   <p className="text-xs text-zinc-500">{authStep === 'login' ? "Identificamos seu e-mail. Digite sua senha." : "Defina uma senha para acessar suas memórias depois."}</p>
+                  <h2 className="text-2xl font-black italic uppercase">{authStep === 'login' ? "Bem-vindo de Volta" : "Sua Nova Conta"}</h2>
+                  <p className="text-xs text-zinc-500">{authStep === 'login' ? "Identificamos seu e-mail. Digite sua senha." : "Defina uma senha para acessar suas memórias depois."}</p>
                 </div>
                 <form onSubmit={handleAuthSubmit} className="space-y-4">
-                   <input 
-                      type="email" 
-                      value={order.buyerEmail || email} 
-                      onChange={(e) => setEmail(e.target.value)}
-                      disabled={!!order.buyerEmail} 
-                      placeholder="seu@email.com"
-                      className={`fs-input ${order.buyerEmail ? 'opacity-50' : ''}`} 
-                    />
-                   <div className="relative group">
-                      <div className="absolute left-4 top-1/2 -translate-y-1/2 text-zinc-600 group-focus-within:text-brand-tactical transition-colors z-10 pointer-events-none">
-                        <Lock size={16} />
-                      </div>
-                      <input 
-                        placeholder="Senha (mín. 6 dígitos)" 
-                        className="fs-input" 
-                        style={{ paddingLeft: "3.5rem" }}
-                        type="password" 
-                        autoComplete="current-password"
-                        value={password} 
-                        onChange={(e) => setPassword(e.target.value)} 
-                        autoFocus
-                      />
+                  <input 
+                    type="email" 
+                    value={order.buyerEmail || email} 
+                    onChange={(e) => setEmail(e.target.value)}
+                    disabled={!!order.buyerEmail} 
+                    placeholder="seu@email.com"
+                    className={`fs-input ${order.buyerEmail ? 'opacity-50' : ''}`} 
+                  />
+                  <div className="relative group">
+                    <div className="absolute left-4 top-1/2 -translate-y-1/2 text-zinc-600 group-focus-within:text-brand-tactical transition-colors z-10 pointer-events-none">
+                      <Lock size={16} />
                     </div>
-                   {localAuthError && <p className="text-[9px] text-red-500 font-black uppercase tracking-widest">{localAuthError}</p>}
-                   <button type="submit" disabled={authLoading} className="fs-btn w-full bg-white text-theme-text">
-                      {authLoading ? "AUTENTICANDO..." : (authStep === 'login' ? "ENTRAR E PAGAR" : "CRIAR CONTA E CONTINUAR")}
-                   </button>
-                   <button type="button" onClick={() => setAuthStep(s => s === 'login' ? 'register' : 'login')} className="w-full text-[9px] text-zinc-500 font-black uppercase tracking-widest hover:text-brand-tactical">
-                      {authStep === 'login' ? "Não tem conta? Registre-se" : "Já tem conta? Faça login"}
-                   </button>
+                    <input 
+                      type="password"
+                      placeholder="Senha (mín. 6 dígitos)" 
+                      value={password}
+                      onChange={(e) => setPassword(e.target.value)}
+                      className="fs-input pl-12"
+                      required
+                    />
+                  </div>
+                  {localAuthError && <p className="text-[10px] font-black text-red-500 uppercase tracking-widest">{localAuthError}</p>}
+                  <button 
+                    disabled={authLoading}
+                    type="submit" 
+                    className="w-full py-5 bg-brand-tactical text-black text-xs font-black uppercase tracking-widest hover:brightness-110 transition-all shadow-xl shadow-brand-tactical/10"
+                  >
+                    {authLoading ? "PROCESSANDO..." : (authStep === 'login' ? "DESBLOQUEAR CHECKOUT" : "CRIAR CONTA E CONTINUAR")}
+                  </button>
+                  <button 
+                    type="button"
+                    onClick={() => setAuthStep(authStep === 'login' ? 'register' : 'login')}
+                    className="w-full text-[9px] font-black text-zinc-500 uppercase tracking-widest hover:text-white transition-all"
+                  >
+                    {authStep === 'login' ? "NÃO SOU EU / CRIAR NOVA CONTA" : "JÁ TENHO CONTA / FAZER LOGIN"}
+                  </button>
                 </form>
-             </div>
-           )}
+              </div>
+            )}
 
            <div className="mt-12 pt-8 border-t border-zinc-900 flex items-center justify-between opacity-30">
               <img src="https://static.mlstatic.com/org-img/vendors/br/logo-mercado-pago.png" alt="MP" className="h-3 grayscale brightness-200" />
