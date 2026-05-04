@@ -2,7 +2,7 @@
   "version": 2,
   "functions": {
     "api/index.js": {
-      "includeFiles": "{api/index.js,node_modules/.prisma/client/**/*,node_modules/pg/**/*,node_modules/@prisma/adapter-pg/**/*,backend/assets/**}"
+      "includeFiles": "{api/index.js,backend/assets/**}"
     }
   },
   "rewrites": [

@@ -79,9 +79,11 @@ app.use("/api", routes);
 
 // Tratamento de erros global
 app.use((err: Error, _req: express.Request, res: express.Response, _next: express.NextFunction) => {
+  console.error("🔥 ERRO NO SERVIDOR:", err);
   res.status(500).json({ 
     error: "Erro interno no servidor", 
-    details: err.message || String(err)
+    message: err.message,
+    stack: process.env.NODE_ENV !== "production" ? err.stack : undefined
   });
 });
 
