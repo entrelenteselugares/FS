@@ -17,10 +17,10 @@ app.get("/api/health", (_req, res) => {
 });
 
 // ── VALIDAÇÃO DE AMBIENTE ───────────────────────────
-const REQUIRED_ENVS = ["JWT_SECRET", "SUPABASE_URL", "SUPABASE_SERVICE_ROLE_KEY", "FRONTEND_URL", "APP_URL"];
+const REQUIRED_ENVS = ["JWT_SECRET", "SUPABASE_URL", "SUPABASE_SERVICE_ROLE_KEY", "FRONTEND_URL", "APP_URL", "DATABASE_URL"];
 REQUIRED_ENVS.forEach(env => {
   if (!process.env[env]) {
-    console.error(`❌ AVISO CRÍTICO: Variável de ambiente ${env} não configurada.`);
+    console.error(`❌ AVISO CRÍTICO: Variável de ambiente ${env} não configurada no ambiente de produção.`);
   }
 });
 
