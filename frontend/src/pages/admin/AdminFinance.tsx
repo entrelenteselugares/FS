@@ -96,7 +96,7 @@ export const AdminFinance: React.FC = () => {
       setNotification({ message: "Repasse liquidado com sucesso! 💸", type: 'success' });
       setConfirmModal(null);
       fetchPayouts();
-    } catch (err) {
+    } catch {
       setNotification({ message: "Erro ao liquidar repasse.", type: 'error' });
     }
     setTimeout(() => setNotification(null), 5000);

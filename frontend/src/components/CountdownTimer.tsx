@@ -45,20 +45,6 @@ export const CountdownTimer = ({ targetDate, onComplete }: CountdownTimerProps) 
   const showDays = timeLeft.days > 0;
   const showHours = timeLeft.hours > 0 || showDays; // Mostrar horas se houver dias ou se houver horas
 
-  const TimeUnit = ({ value, label }: { value: number; label: string }) => (
-    <div className="flex flex-col items-center flex-1 min-w-[60px]">
-      <motion.div 
-        key={value}
-        initial={{ y: 10, opacity: 0 }}
-        animate={{ y: 0, opacity: 1 }}
-        className="text-2xl lg:text-4xl font-black font-display tracking-tighter"
-      >
-        {value.toString().padStart(2, '0')}
-      </motion.div>
-      <span className="text-[8px] font-black uppercase tracking-[0.2em] text-theme-muted mt-1">{label}</span>
-    </div>
-  );
-
   return (
     <AnimatePresence>
       <motion.div 
@@ -87,3 +73,17 @@ export const CountdownTimer = ({ targetDate, onComplete }: CountdownTimerProps) 
     </AnimatePresence>
   );
 };
+
+const TimeUnit = ({ value, label }: { value: number; label: string }) => (
+  <div className="flex flex-col items-center flex-1 min-w-[60px]">
+    <motion.div 
+      key={value}
+      initial={{ y: 10, opacity: 0 }}
+      animate={{ y: 0, opacity: 1 }}
+      className="text-2xl lg:text-4xl font-black font-display tracking-tighter"
+    >
+      {value.toString().padStart(2, '0')}
+    </motion.div>
+    <span className="text-[8px] font-black uppercase tracking-[0.2em] text-theme-muted mt-1">{label}</span>
+  </div>
+);

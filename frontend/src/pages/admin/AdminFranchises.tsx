@@ -67,7 +67,7 @@ export default function AdminFranchises() {
         fetchFranchisees();
         setSelectedUserId('');
       }
-    } catch (err) {
+    } catch {
       alert('Erro ao promover usuário');
     } finally {
       setIsPromoting(false);

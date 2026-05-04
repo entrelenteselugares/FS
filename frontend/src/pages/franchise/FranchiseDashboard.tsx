@@ -73,8 +73,8 @@ const FranchiseDashboard: React.FC = () => {
         setReferralCode(refRes.data.code);
         setPartners(netRes.data);
         setFinance(finRes.data);
-      } catch (error) {
-        console.error("Failed to fetch dashboard data:", error);
+      } catch {
+        console.error("Failed to fetch dashboard data:");
       } finally {
         setLoading(false);
       }
@@ -93,7 +93,7 @@ const FranchiseDashboard: React.FC = () => {
       await api.post('/franchise/reorder', { packType });
       alert("Pedido de reabastecimento gerado! Redirecionando para pagamento...");
       // In a real scenario, we'd redirect to the checkout page of the new order
-    } catch (error) {
+    } catch {
       alert("Erro ao gerar pedido.");
     }
   };
