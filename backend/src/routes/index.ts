@@ -1,4 +1,5 @@
-import { Router } from "express";
+import { Router, Request, Response, NextFunction } from "express";
+import { prisma } from "../lib/prisma";
 import { EventController } from "../controllers/event.controller";
 import { PaymentController } from "../controllers/payment.controller";
 import { AuthController } from "../controllers/auth.controller";
@@ -110,7 +111,7 @@ const router = Router();
  * Middleware especial que permite acesso se o usuário for ADMIN, PROFISSIONAL 
  * OU se possuir um FranchiseProfile ativo (mesmo sendo CLIENTE).
  */
-const requireProOrFranchise = async (req: any, res: Response, next: any) => {
+const requireProOrFranchise = async (req: any, res: Response, next: NextFunction) => {
   const user = req.user;
   if (!user) return res.status(401).json({ error: "Não autenticado." });
   if (user.role === "ADMIN" || user.role === "PROFISSIONAL") return next();
@@ -121,7 +122,7 @@ const requireProOrFranchise = async (req: any, res: Response, next: any) => {
     });
     if (profile && profile.active) return next();
   } catch (err) {
-    console.error("[requireProOrFranchise] Erro:", err);
+    console.error("[requireProOrFranchise] Erro ao verificar perfil de franquia:", err);
   }
   
   return res.status(403).json({ error: "Acesso negado. Requer perfil profissional ou franquia ativa." });
@@ -206,7 +207,6 @@ router.get("/public/auth/check",     AuthController.checkEmail);
 
 // ── Mercado Pago OAuth ────────────────────────────────────────────────────────
 router.get("/mercadopago/connect",  requireAuth, MercadoPagoController.connect);
-router.get("/health", (req, res) => res.json({ status: "ok", time: new Date().toISOString() }));
 router.get("/diag", diagnostics);
 
 // ── Eventos Públicos (Vitrine & Paywall) ──────────────────────────────────────
