@@ -58,6 +58,7 @@ export interface ProfessionalService {
   catalogId: string | null;
   active: boolean;
   catalog?: ServiceCatalog;
+  catalogService?: ServiceCatalog;
 }
 
 export interface EquipmentItem {
