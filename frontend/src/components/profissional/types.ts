@@ -126,7 +126,7 @@ export type ExpressFormData = {
   whatsapp: string;
   amount: number;
   location: string;
-  productType: "FOTOS" | "REELS" | "SD_CARD" | "ALBUM_IMPRESSO";
+  productType: string;
   paymentMethod: "PIX" | "CARD" | "MONEY";
   internalNotes: string;
   editorId: string;

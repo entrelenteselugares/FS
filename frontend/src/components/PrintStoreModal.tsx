@@ -1,7 +1,7 @@
 import { useState, useEffect, useRef, useLayoutEffect } from "react";
 import * as reactWindow from "react-window";
-// @ts-expect-error virtualized-grid-compatibility
-const FixedSizeList = reactWindow.FixedSizeList || reactWindow.default?.FixedSizeList || reactWindow.default;
+// @ts-ignore
+const FixedSizeList = (reactWindow.FixedSizeList || reactWindow.default?.FixedSizeList || reactWindow.default) as any;
 import { API } from "../lib/api";
 import { T, BtnPrimary, BtnSecondary } from "../lib/theme";
 
