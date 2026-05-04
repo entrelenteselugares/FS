@@ -24,6 +24,7 @@ import {
   adminUploadPreview,
   adminGetLogs,
   adminCreateManualSale,
+  checkDbStatus,
 } from "../controllers/admin.controller";
 import { MercadoPagoController } from "../controllers/mercadopago.controller";
 import {
@@ -384,5 +385,9 @@ router.get("/admin/phygital/queue", requireAuth, requireRole("ADMIN"), PhygitalC
 router.get("/admin/phygital/all", requireAuth, requireRole("ADMIN"), PhygitalController.listAllByEvent);
 router.post("/admin/phygital/confirm", requireAuth, requireRole("ADMIN"), PhygitalController.confirmPrint);
 router.post("/admin/phygital/simulate", optionalAuth, PhygitalController.simulate);
+
+// 🔍 DIAGNÓSTICOS
+router.get("/diag/db", checkDbStatus);
+router.get("/health", (req, res) => res.json({ status: "ok", time: new Date().toISOString() }));
 
 export default router;

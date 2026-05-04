@@ -1303,3 +1303,46 @@ export async function adminCreateManualSale(req: AuthRequest, res: Response): Pr
   }
 }
 
+
+/**
+ * GET /api/diag/db
+ * Diagnóstico ultra-rápido de conectividade com o banco para debug em produção.
+ */
+export async function checkDbStatus(_req: any, res: any) {
+  try {
+    const counts = await Promise.race([
+      Promise.all([
+        prisma.event.count(),
+        prisma.event.count({ where: { active: true, isPrivate: false, isQuote: false } }),
+        prisma.user.count()
+      ]),
+      new Promise((_, reject) => setTimeout(() => reject(new Error("Timeout na conexão com o banco")), 5000))
+    ]);
+
+    return res.json({
+      status: "CONNECTED",
+      database: "Supabase Postgres",
+      timestamp: new Date().toISOString(),
+      counts: {
+        totalEvents: (counts as any)[0],
+        publicEvents: (counts as any)[1],
+        users: (counts as any)[2]
+      },
+      env: {
+        node_env: process.env.NODE_ENV,
+        has_db_url: !!process.env.DATABASE_URL
+      }
+    });
+  } catch (error: any) {
+    console.error("[DIAG] Erro no banco:", error);
+    return res.status(500).json({
+      status: "ERROR",
+      message: "Falha na conexão com o banco de dados.",
+      error: error.message,
+      env: {
+        node_env: process.env.NODE_ENV,
+        has_db_url: !!process.env.DATABASE_URL
+      }
+    });
+  }
+}
