@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { X } from "lucide-react";
 import { API } from "../../lib/api";
 import type { Partner, ExpressFormData, ProfessionalService } from "./types";
