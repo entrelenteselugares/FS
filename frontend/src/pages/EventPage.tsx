@@ -1,5 +1,5 @@
 import { useState, useEffect, useCallback } from "react";
-import { Check, Video, Printer, QrCode, ShoppingCart, Share2, ChevronRight, Image as ImageIcon, Camera, MapPin, ListChecks } from "lucide-react";
+import { Check, Printer, QrCode, ShoppingCart, Share2, ChevronRight, Image as ImageIcon, Camera, MapPin, ListChecks, Clock, ShieldCheck, CheckCircle2 } from "lucide-react";
 import { QRCodeCanvas } from "qrcode.react";
 import { useParams, useNavigate, useSearchParams } from "react-router-dom";
 import { API as api } from "../lib/api";
@@ -10,7 +10,25 @@ import { useAuth } from "../hooks/useAuth";
 import { Navbar } from "../components/Navbar";
 import { PrintStoreModal } from "../components/PrintStoreModal";
 import { motion, AnimatePresence } from "framer-motion";
-import { CountdownTimer } from "../components/CountdownTimer";
+
+const formatDate = (date: string | null | undefined) => {
+  if (!date) return "Em breve";
+  return new Date(date).toLocaleDateString('pt-BR', { day: '2-digit', month: 'long', year: 'numeric' });
+};
+
+function TacticalBenefit({ icon, title, desc }: { icon: React.ReactNode; title: string; desc: string }) {
+  return (
+    <div className="flex gap-4 p-4 bg-white/5 border border-white/5 hover:border-brand-tactical/20 transition-colors group">
+      <div className="p-2 h-fit bg-zinc-900 border border-white/5 text-brand-tactical group-hover:bg-brand-tactical group-hover:text-black transition-all">
+        {icon}
+      </div>
+      <div className="space-y-1">
+        <p className="text-[10px] font-black text-white uppercase tracking-widest">{title}</p>
+        <p className="text-[10px] text-zinc-500 font-medium leading-relaxed">{desc}</p>
+      </div>
+    </div>
+  );
+}
 
 interface EventData {
   id: string;
@@ -80,11 +98,7 @@ const Skeleton = ({ className }: { className?: string }) => (
   <div className={`animate-pulse bg-white/5 rounded-sm ${className}`} />
 );
 
-const LuxuryBadge = ({ children }: { children: React.ReactNode }) => (
-  <span className="text-[9px] font-black tracking-[0.2em] uppercase px-3 py-1.5 bg-white/5 border border-theme-border text-theme-muted backdrop-blur-md">
-    {children}
-  </span>
-);
+
 
 const SERVICES = [
   { key: "temFoto", label: "Fotos em Alta" },
@@ -307,11 +321,7 @@ export default function EventPage() {
 
   const paid = step === "success";
   const isMarketplace = event.type === 'PHOTO_MARKETPLACE' || event.type === 'FOTO_POINT';
-  
-  const activeServices = SERVICES.filter(s => {
-    const val = event[s.key as keyof EventData];
-    return val === true || val === "true";
-  });
+
 
   const toggleCart = (shortId: string) => {
     setCart(prev => {
