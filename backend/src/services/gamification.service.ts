@@ -1,6 +1,6 @@
 import prisma from "../lib/prisma";
 import { logger } from "../lib/logger";
-import { Decimal } from "@prisma/client/runtime/library";
+import { Prisma } from "@prisma/client";
 
 /**
  * GamificationService
@@ -22,7 +22,7 @@ export class GamificationService {
 
       // 1. Cálculo de Cashback (5%)
       const cashbackPct = 0.05;
-      const rewardAmount = new Decimal(Number(order.valor) * cashbackPct).toDecimalPlaces(2);
+      const rewardAmount = new Prisma.Decimal(Number(order.valor) * cashbackPct).toDecimalPlaces(2);
 
       if (rewardAmount.lte(0)) return;
 
