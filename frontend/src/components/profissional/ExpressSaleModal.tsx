@@ -32,7 +32,7 @@ export function ExpressSaleModal({ network, onClose, onSuccess, onError }: Expre
 
   useState(() => {
     API.get("profissional/me").then(r => {
-      setProfessionalServices(r.data.services || []);
+      setProfessionalServices(r.data.proServices || []);
     });
   });
 
@@ -169,22 +169,27 @@ export function ExpressSaleModal({ network, onClose, onSuccess, onError }: Expre
                   <label className="text-[10px] font-black text-theme-muted uppercase tracking-widest italic opacity-60">Categoria de Ativo</label>
                   <div className="grid grid-cols-1 gap-2">
                     {/* Lista Dinâmica de Serviços do Profissional */}
-                    {professionalServices.map((s) => (
-                      <button
-                        key={s.id}
-                        onClick={() => {
-                          setIsCustomProduct(false);
-                          setForm((prev) => ({ ...prev, productType: s.catalogService.name, amount: Number(s.catalogService.basePrice) }));
-                        }}
-                        className={`p-4 text-left text-[11px] font-black uppercase tracking-widest border transition-all ${
-                          !isCustomProduct && form.productType === s.catalogService.name
-                            ? "bg-brand-tactical text-zinc-950 border-brand-tactical shadow-lg"
-                            : "bg-theme-bg-muted border-theme-border/60 text-theme-muted hover:border-brand-tactical/40"
-                        }`}
-                      >
-                        🏷 {s.catalogService.name}
-                      </button>
-                    ))}
+                    {professionalServices.filter(s => s.catalogService || s.catalog).map((s) => {
+                      const serviceName = s.catalogService?.name || s.catalog?.name || "Serviço Sem Nome";
+                      const servicePrice = s.catalogService?.basePrice || s.catalog?.basePrice || 0;
+                      
+                      return (
+                        <button
+                          key={s.id}
+                          onClick={() => {
+                            setIsCustomProduct(false);
+                            setForm((prev) => ({ ...prev, productType: serviceName, amount: Number(servicePrice) }));
+                          }}
+                          className={`p-4 text-left text-[11px] font-black uppercase tracking-widest border transition-all ${
+                            !isCustomProduct && form.productType === serviceName
+                              ? "bg-brand-tactical text-zinc-950 border-brand-tactical shadow-lg"
+                              : "bg-theme-bg-muted border-theme-border/60 text-theme-muted hover:border-brand-tactical/40"
+                          }`}
+                        >
+                          🏷 {serviceName}
+                        </button>
+                      );
+                    })}
 
                     {/* Opção de Venda Livre */}
                     <button
