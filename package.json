@@ -12,7 +12,6 @@
     "build": "npx prisma generate --schema=backend/prisma/schema.prisma && npm install --prefix frontend && npx esbuild backend/src/server.ts --bundle --platform=node --target=node20 --outfile=api/server-v2.js --external:multer --external:nodemailer --external:sharp --external:googleapis --external:pg-native --external:@prisma/client --external:.prisma/client && npm run build --prefix frontend && node -e \"const fs=require('fs'); if(fs.existsSync('public')) fs.rmSync('public', {recursive:true,force:true}); fs.renameSync('frontend/dist', 'public')\"",
     "vercel-build": "npx prisma generate --schema=backend/prisma/schema.prisma && npm install --prefix frontend && npx esbuild backend/src/server.ts --bundle --platform=node --target=node20 --outfile=api/server-v2.js --external:multer --external:nodemailer --external:sharp --external:googleapis --external:pg-native --external:@prisma/client --external:.prisma/client && npm run build --prefix frontend && node -e \"const fs=require('fs'); if(fs.existsSync('public')) fs.rmSync('public', {recursive:true,force:true}); fs.renameSync('frontend/dist', 'public')\"",
     "start": "node api/index.js",
-    "postinstall": "npx prisma generate --schema=backend/prisma/schema.prisma",
     "test:e2e:all": "npx playwright test"
   },
   "dependencies": {
