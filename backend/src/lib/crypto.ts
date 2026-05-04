@@ -4,7 +4,7 @@ const ALGORITHM = 'aes-256-gcm';
 const KEY_HEX = process.env.CALENDAR_ENCRYPTION_KEY;
 
 if (!KEY_HEX && process.env.NODE_ENV === 'production') {
-  throw new Error('[Security] CALENDAR_ENCRYPTION_KEY não está definida. Impossível iniciar em produção.');
+  console.error('[CRITICAL SECURITY] CALENDAR_ENCRYPTION_KEY não está definida. Funções de calendário falharão!');
 }
 
 // Fallback para desenvolvimento local (NÃO usar em produção)
