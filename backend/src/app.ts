@@ -6,22 +6,17 @@ import routes from "./routes/index";
 
 const app = express();
 
-// ── VALIDAÇÃO DE AMBIENTE ───────────────────────────
-const REQUIRED_ENVS = ["JWT_SECRET", "SUPABASE_URL", "SUPABASE_SERVICE_ROLE_KEY", "FRONTEND_URL", "APP_URL"];
-REQUIRED_ENVS.forEach(env => {
-  if (!process.env[env]) {
-    console.error(`❌ AVISO CRÍTICO: Variável de ambiente ${env} não configurada.`);
-  }
+// ── ROTA DE SAÚDE ULTRA-PRECOCE (Blindada) ───────────────────────────
+app.get("/api/health", (_req, res) => {
+  res.json({ 
+    status: "ok", 
+    boot: true, 
+    time: new Date().toISOString(),
+    env: process.env.NODE_ENV 
+  });
 });
 
-// Rota de saúde ultra-precoce (antes de qualquer middleware)
-app.get("/api/health", (_req, res) => res.json({ status: "ok", boot: true }));
-app.get("/health", (_req, res) => res.json({ status: "ok", boot: true }));
-
-// Aviso não-fatal para variáveis opcionais importantes
-if (!process.env.MASTER_EMAIL) {
-  console.warn("⚠️  MASTER_EMAIL não configurada — Master Bypass desativado.");
-}
+// ── VALIDAÇÃO DE AMBIENTE ───────────────────────────
 
 // CRÍTICO: necessário para rate-limit funcionar na Vercel
 app.set("trust proxy", 1);
