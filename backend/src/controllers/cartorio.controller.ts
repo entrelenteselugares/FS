@@ -122,7 +122,19 @@ export class CartorioController {
       if (!isAdmin) {
         cartorioData = await prisma.cartorio.findUnique({ 
           where: { userId: user.userId },
-          include: { user: { select: { pixKey: true } } }
+          include: { 
+            user: { 
+              select: { 
+                pixKey: true,
+                franchiseProfile: {
+                  select: {
+                    tier: true,
+                    approvedSalesVolume: true
+                  }
+                }
+              } 
+            } 
+          }
         });
       } else {
         cartorioData = events[0]?.cartorioUser?.cartorio || null;

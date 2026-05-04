@@ -105,24 +105,45 @@ const upload = multer({ storage: multer.memoryStorage() });
 
 const router = Router();
 
+/**
+ * Middleware especial que permite acesso se o usuário for ADMIN, PROFISSIONAL 
+ * OU se possuir um FranchiseProfile ativo (mesmo sendo CLIENTE).
+ */
+const requireProOrFranchise = async (req: any, res: Response, next: any) => {
+  const user = req.user;
+  if (!user) return res.status(401).json({ error: "Não autenticado." });
+  if (user.role === "ADMIN" || user.role === "PROFISSIONAL") return next();
+
+  try {
+    const profile = await prisma.franchiseProfile.findUnique({ 
+      where: { userId: user.userId } 
+    });
+    if (profile && profile.active) return next();
+  } catch (err) {
+    console.error("[requireProOrFranchise] Erro:", err);
+  }
+  
+  return res.status(403).json({ error: "Acesso negado. Requer perfil profissional ou franquia ativa." });
+};
+
 // ── PROFISSIONAIS (Rede Técnica) ────────────────────────────────────────────
-router.get("/profissional/events",               requireAuth, requireRole("ADMIN", "PROFISSIONAL"), getMeusEventos);
-router.patch("/profissional/events/:id/links",   requireAuth, requireRole("ADMIN", "PROFISSIONAL"), updateEventLinks);
-router.patch("/profissional/events/:id/cover",   requireAuth, requireRole("ADMIN", "PROFISSIONAL"), uploadEventCover);
-router.patch("/profissional/events/:id/respond", requireAuth, requireRole("ADMIN", "PROFISSIONAL"), respondToEvent);
-router.get("/profissional/me",                   requireAuth, requireRole("ADMIN", "PROFISSIONAL"), getProfile);
-router.patch("/profissional/me",                 requireAuth, requireRole("ADMIN", "PROFISSIONAL"), updateProfile);
-router.post("/profissional/events/:id/manual-sale", requireAuth, requireRole("ADMIN", "PROFISSIONAL"), registerManualSale);
-router.get("/profissional/unidades/convites", requireAuth, requireRole("ADMIN", "PROFISSIONAL"), getConvitesUnidade);
-router.patch("/profissional/unidades/convites/:id/respond", requireAuth, requireRole("ADMIN", "PROFISSIONAL"), respondConviteUnidade);
-router.get("/profissional/network", requireAuth, requireRole("ADMIN", "PROFISSIONAL"), getNetwork);
-router.get("/profissional/network/search", requireAuth, requireRole("ADMIN", "PROFISSIONAL"), searchProfessionals);
-router.post("/profissional/network/favorite/:partnerId", requireAuth, requireRole("ADMIN", "PROFISSIONAL"), toggleFavorite);
-router.get("/profissional/finance/tax-report", requireAuth, requireRole("ADMIN", "PROFISSIONAL"), getTaxReport);
+router.get("/profissional/events",               requireAuth, requireProOrFranchise, getMeusEventos);
+router.patch("/profissional/events/:id/links",   requireAuth, requireProOrFranchise, updateEventLinks);
+router.patch("/profissional/events/:id/cover",   requireAuth, requireProOrFranchise, uploadEventCover);
+router.patch("/profissional/events/:id/respond", requireAuth, requireProOrFranchise, respondToEvent);
+router.get("/profissional/me",                   requireAuth, requireProOrFranchise, getProfile);
+router.patch("/profissional/me",                 requireAuth, requireProOrFranchise, updateProfile);
+router.post("/profissional/events/:id/manual-sale", requireAuth, requireProOrFranchise, registerManualSale);
+router.get("/profissional/unidades/convites", requireAuth, requireProOrFranchise, getConvitesUnidade);
+router.patch("/profissional/unidades/convites/:id/respond", requireAuth, requireProOrFranchise, respondConviteUnidade);
+router.get("/profissional/network", requireAuth, requireProOrFranchise, getNetwork);
+router.get("/profissional/network/search", requireAuth, requireProOrFranchise, searchProfessionals);
+router.post("/profissional/network/favorite/:partnerId", requireAuth, requireProOrFranchise, toggleFavorite);
+router.get("/profissional/finance/tax-report", requireAuth, requireProOrFranchise, getTaxReport);
 
 // ── MARKETPLACE (Fotos Individuais & Venda Expressa) ──────────────────────────
-router.post("/marketplace/express-sale",      requireAuth, requireRole("ADMIN", "PROFISSIONAL"), MarketplaceController.expressSale);
-router.post("/marketplace/events/:id/media",  requireAuth, requireRole("ADMIN", "PROFISSIONAL"), MarketplaceController.addMedia);
+router.post("/marketplace/express-sale",      requireAuth, requireProOrFranchise, MarketplaceController.expressSale);
+router.post("/marketplace/events/:id/media",  requireAuth, requireProOrFranchise, MarketplaceController.addMedia);
 router.get("/marketplace/events/:id/media",   optionalAuth, MarketplaceController.listMedia);
 
 
@@ -191,10 +212,13 @@ router.get("/diag", diagnostics);
 router.get("/public/events",               EventController.listPublic);
 router.get("/public/events/:slug",         optionalAuth, EventController.getById);       // busca por slug ou id
 router.get("/public/events/:slug/access",  EventController.getAccess);     // ?orderId=xxx
-router.get("/profissional/events",      requireAuth, EventController.listByProfessional);
-router.get("/profissional/events/:slug", requireAuth, EventController.getById);
-router.post("/profissional/flash-event", requireAuth, EventController.createFlashEvent);
-router.get("/profissional/unidades/convites", requireAuth, getConvitesUnidade);
+router.get("/profissional/events",      requireAuth, requireProOrFranchise, EventController.listByProfessional);
+router.get("/profissional/events/:slug", requireAuth, requireProOrFranchise, EventController.getById);
+router.post("/profissional/flash-event", requireAuth, requireProOrFranchise, EventController.createFlashEvent);
+router.post("/profissional/foto-point", requireAuth, requireProOrFranchise, EventController.createFotoPoint);
+router.patch("/profissional/events/:id/foto-point", requireAuth, requireProOrFranchise, EventController.updateFotoPoint);
+router.patch("/profissional/events/:id/cover",      requireAuth, requireProOrFranchise, uploadEventCover);
+router.get("/profissional/unidades/convites", requireAuth, requireProOrFranchise, getConvitesUnidade);
 
 router.get("/phygital/events/:eventId/prints", requireAuth, PhygitalController.listAllByEvent);
 router.patch("/phygital/prints/:id/status", requireAuth, PhygitalController.confirmPrint);

@@ -1,16 +1,16 @@
-﻿import { useState, useEffect, useCallback, useMemo } from "react";
+import { useState, useEffect, useCallback, useMemo } from "react";
 import { useAuth } from "../hooks/useAuth";
 import { API } from "../lib/api";
 import { useNavigate } from "react-router-dom";
 import {
   DollarSign, MessageCircle,
-  Settings, Briefcase, Users, LayoutDashboard, Play, Zap, Calendar, RefreshCw, LogOut, CheckCircle
+  Settings, Briefcase, Users, LayoutDashboard, Play, Zap, Calendar, RefreshCw, LogOut, CheckCircle, Camera
 } from "lucide-react";
 import { DashboardLayout, type NavItem } from "../components/DashboardLayout";
 import { T } from "../lib/theme";
 import {
   AgendaTab, FinanceTab, NetworkTab, ServicesTab, ProfileTab,
-  EventEditPanel, ExpressSaleModal, ProfileModal, FlashEventModal,
+  EventEditPanel, ExpressSaleModal, ProfileModal, FlashEventModal, FotoPointModal, FotoPointEditModal,
   DashboardHeader, DashboardStats, SupportBanner,
   OpportunitiesModal, ExpressSaleBanner,
   type EventItem, type UnitInvite, type ServiceCatalog, type ProfileData, type Partner,
@@ -45,6 +45,7 @@ export default function ProfissionalDashboard() {
   const [isProfileOpen, setIsProfileOpen] = useState(false);
   const [isExpressModalOpen, setIsExpressModalOpen] = useState(false);
   const [isFlashModalOpen, setIsFlashModalOpen] = useState(false);
+  const [isFotoPointModalOpen, setIsFotoPointModalOpen] = useState(false);
   const [showNewServicesModal, setShowNewServicesModal] = useState(false);
   const [hasCheckedInvites, setHasCheckedInvites] = useState(false);
   const [notification, setNotification] = useState<{ message: string; type: "success" | "error" } | null>(null);
@@ -172,10 +173,6 @@ export default function ProfissionalDashboard() {
     }
   };
 
-  const handleUpdated = () => {
-    fetchEvents();
-    setSelected(null);
-  };
 
   const handleAddService = async (cat: ServiceCatalog) => {
     try {
@@ -323,25 +320,47 @@ export default function ProfissionalDashboard() {
           {activeTab === "agenda" && (
             <div className="space-y-12 animate-in fade-in duration-500">
               {/* Banner de Venda Expressa & Flash Event */}
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
                 <ExpressSaleBanner onOpen={() => setIsExpressModalOpen(true)} />
+                
+                {/* Foto Point (Novo) */}
                 <div 
-                  onClick={() => setIsFlashModalOpen(true)}
-                  className="bg-theme-bg-muted border border-yellow-400/30 p-6 h-full flex items-center justify-between cursor-pointer hover:border-yellow-400/60 transition-all group overflow-hidden relative"
+                  onClick={() => setIsFotoPointModalOpen(true)}
+                  className="bg-theme-bg-muted border border-cyan-400/30 p-6 h-full flex items-center justify-between cursor-pointer hover:border-cyan-400/60 transition-all group overflow-hidden relative"
                 >
-                  <div className="absolute top-0 left-0 w-1 h-full bg-yellow-400" />
+                  <div className="absolute top-0 left-0 w-1 h-full bg-cyan-400" />
                   <div className="space-y-1 relative z-10">
-                    <div className="flex items-center gap-2 text-yellow-400">
-                      <Zap size={14} fill="currentColor" />
-                      <span className="text-[10px] font-black uppercase tracking-[0.3em] italic">Oportunidade Agora</span>
+                    <div className="flex items-center gap-2 text-cyan-400">
+                      <Camera size={14} fill="currentColor" />
+                      <span className="text-[10px] font-black uppercase tracking-[0.3em] italic">Nova Categoria</span>
                     </div>
-                    <h3 className="text-xl font-heading font-black text-theme-text uppercase italic">Foto Print Live</h3>
-                    <p className="text-[10px] text-theme-muted uppercase font-bold tracking-widest">Ative um QR Code instantaneamente</p>
+                    <h3 className="text-xl font-heading font-black text-theme-text uppercase italic leading-tight">Foto Point</h3>
+                    <p className="text-[10px] text-theme-muted uppercase font-bold tracking-widest">Crie um ponto de venda local</p>
                   </div>
-                  <div className="text-yellow-400/10 group-hover:text-yellow-400/30 transition-colors">
-                    <Zap size={40} strokeWidth={3} />
+                  <div className="text-cyan-400/10 group-hover:text-cyan-400/30 transition-colors">
+                    <Camera size={40} strokeWidth={3} />
                   </div>
                 </div>
+
+                {user?.franchiseProfile && (
+                  <div 
+                    onClick={() => setIsFlashModalOpen(true)}
+                    className="bg-theme-bg-muted border border-yellow-400/30 p-6 h-full flex items-center justify-between cursor-pointer hover:border-yellow-400/60 transition-all group overflow-hidden relative"
+                  >
+                    <div className="absolute top-0 left-0 w-1 h-full bg-yellow-400" />
+                    <div className="space-y-1 relative z-10">
+                      <div className="flex items-center gap-2 text-yellow-400">
+                        <Zap size={14} fill="currentColor" />
+                        <span className="text-[10px] font-black uppercase tracking-[0.3em] italic">Oportunidade Agora</span>
+                      </div>
+                      <h3 className="text-xl font-heading font-black text-theme-text uppercase italic leading-tight">Foto Print Live</h3>
+                      <p className="text-[10px] text-theme-muted uppercase font-bold tracking-widest">Ative um QR Code instantaneamente</p>
+                    </div>
+                    <div className="text-yellow-400/10 group-hover:text-yellow-400/30 transition-colors">
+                      <Zap size={40} strokeWidth={3} />
+                    </div>
+                  </div>
+                )}
               </div>
 
               {/* KPI Cards */}
@@ -349,6 +368,7 @@ export default function ProfissionalDashboard() {
                 completedEvents={profile?.stats?.completedEvents || 0}
                 totalEarnings={profile?.stats?.totalEarnings || 0}
                 monthEarnings={profile?.stats?.monthEarnings || 0}
+                agilityPoints={profile?.stats?.agilityPoints || 0}
               />
 
               {/* Support Banner */}
@@ -640,12 +660,26 @@ export default function ProfissionalDashboard() {
           style={{ background: T.overlay, backdropFilter: "blur(20px)" }}
         >
           <div onClick={(e) => e.stopPropagation()} className="w-full max-w-2xl bg-theme-bg border border-theme-border/60 shadow-2xl animate-in zoom-in duration-300">
-            <EventEditPanel
-              event={selected}
-              onUpdated={handleUpdated}
-              onClose={() => setSelected(null)}
-              onNotify={showNotification}
-            />
+            {selected.type === 'FOTO_POINT' ? (
+              <FotoPointEditModal
+                event={selected}
+                onClose={() => setSelected(null)}
+                onSuccess={(updated) => {
+                  setEvents(prev => prev.map(e => e.id === selected.id ? { ...e, ...updated } : e));
+                  showNotification("Foto Point Atualizado!", "success");
+                }}
+                onError={(msg) => showNotification(msg, "error")}
+              />
+            ) : (
+              <EventEditPanel 
+                event={selected}
+                onUpdated={(u) => {
+                  setEvents(prev => prev.map(e => e.id === selected.id ? { ...e, ...u } : e));
+                }}
+                onClose={() => setSelected(null)}
+                onNotify={showNotification}
+              />
+            )}
           </div>
         </div>
       )}
@@ -686,6 +720,19 @@ export default function ProfissionalDashboard() {
           {notification.message}
         </div>
       )}
+      {/* Modal de Foto Point */}
+      {isFotoPointModalOpen && (
+        <FotoPointModal 
+          onClose={() => setIsFotoPointModalOpen(false)}
+          onSuccess={() => {
+            showNotification("Foto Point Ativado com Sucesso!", "success");
+            setIsFotoPointModalOpen(false);
+            fetchEvents();
+          }}
+          onError={(msg) => showNotification(msg, "error")}
+        />
+      )}
+
       {/* Modal de Foto Print Live (Express) */}
       {isFlashModalOpen && (
         <FlashEventModal 

@@ -1,4 +1,4 @@
-﻿import { useState, useEffect, useRef, useCallback } from "react";
+import { useState, useEffect, useRef, useCallback } from "react";
 import { useSearchParams, useNavigate } from "react-router-dom";
 
 import { API } from "../lib/api";
@@ -13,6 +13,12 @@ interface UnidadeStats {
   repasseEstimado: number;
   eventosMes: number;
   razaoSocial?: string;
+  user?: {
+    franchiseProfile?: {
+      tier: "BRONZE" | "SILVER" | "GOLD" | "DIAMOND";
+      approvedSalesVolume: number;
+    } | null;
+  };
 }
 
 interface GlobalService {
@@ -337,20 +343,59 @@ export default function UnidadeFixaDashboard() {
         )}
 
         {/* Header Seção */}
-        <div className="flex flex-col lg:flex-row lg:items-end justify-between gap-4 border-b border-theme-border/60 pb-6">
-          <div className="space-y-4">
-            <h1 className="text-3xl md:text-5xl font-heading font-black text-theme-text uppercase tracking-tighter italic leading-none">
-              {tab === "agenda" ? "Agenda Tática" : tab === "financas" ? "Fluxo Financeiro" : tab === "equipe" ? "Rede Técnica" : "Cockpit da Unidade"}
-            </h1>
-            <div className="flex items-center gap-4">
-               <div className="h-1 w-12 bg-brand-tactical" />
-               <div className="flex items-center gap-2">
-                 <ShieldCheck size={14} className="text-brand-tactical" />
-                 <p className="text-[10px] font-black text-brand-tactical uppercase tracking-widest italic">{unidadeName || "Sua Unidade"}</p>
+        {/* Tier & Growth Section */}
+        {!loading && stats?.user?.franchiseProfile && (
+          <div className="bg-theme-bg border-l-4 border-l-brand-tactical border border-theme-border/60 p-6 md:p-10 flex flex-col md:flex-row items-center justify-between gap-10 group overflow-hidden relative">
+            <div className="absolute top-0 right-0 p-10 opacity-[0.02] pointer-events-none group-hover:scale-110 transition-transform duration-700">
+               <Star size={120} />
+            </div>
+            
+            <div className="flex items-center gap-8 relative z-10">
+               <div className="w-20 h-20 md:w-24 md:h-24 bg-theme-bg-muted/40 border-2 border-brand-tactical flex items-center justify-center rotate-45 group-hover:rotate-[135deg] transition-all duration-700">
+                  <div className="-rotate-45 group-hover:-rotate-[135deg] transition-all duration-700 text-brand-tactical text-center">
+                    <p className="text-[8px] font-black uppercase tracking-widest leading-none mb-1">Nível</p>
+                    <Star size={24} fill="currentColor" className="mx-auto" />
+                  </div>
+               </div>
+               <div className="space-y-2">
+                  <div className="flex items-center gap-3">
+                    <h2 className="text-3xl md:text-5xl font-display font-black text-theme-text uppercase tracking-tighter italic">
+                      {stats.user.franchiseProfile.tier}
+                    </h2>
+                    <span className="px-3 py-1 bg-brand-tactical/10 border border-brand-tactical/30 text-brand-tactical text-[8px] font-black uppercase tracking-[0.2em] italic">Franqueado Verificado</span>
+                  </div>
+                  <p className="text-[10px] text-theme-muted uppercase font-bold tracking-[0.4em] italic">Selo de Qualidade & Performance B2B</p>
                </div>
             </div>
+
+            <div className="flex-1 max-w-xl w-full space-y-4 relative z-10">
+               <div className="flex justify-between items-end">
+                  <div className="space-y-1">
+                    <p className="text-[9px] font-black text-theme-muted uppercase tracking-widest">Volume de Vendas Aprovadas</p>
+                    <p className="text-xl font-heading font-black text-theme-text italic tracking-tight">{stats.user.franchiseProfile.approvedSalesVolume} / {
+                      stats.user.franchiseProfile.tier === "BRONZE" ? "50" :
+                      stats.user.franchiseProfile.tier === "SILVER" ? "150" :
+                      stats.user.franchiseProfile.tier === "GOLD" ? "500" : "MAX"
+                    }</p>
+                  </div>
+                  <p className="text-[9px] font-black text-brand-tactical uppercase tracking-widest italic">Próximo Nível</p>
+               </div>
+               <div className="h-1.5 w-full bg-theme-border/30 rounded-full overflow-hidden">
+                  <div 
+                    className="h-full bg-brand-tactical transition-all duration-1000 ease-out" 
+                    style={{ width: `${Math.min(100, (stats.user.franchiseProfile.approvedSalesVolume / (
+                      stats.user.franchiseProfile.tier === "BRONZE" ? 50 :
+                      stats.user.franchiseProfile.tier === "SILVER" ? 150 :
+                      stats.user.franchiseProfile.tier === "GOLD" ? 500 : 1000
+                    )) * 100)}%` }}
+                  />
+               </div>
+               <p className="text-[8px] text-theme-muted font-bold uppercase tracking-widest text-right">
+                 {stats.user.franchiseProfile.tier === "DIAMOND" ? "Tier Máximo Alcançado" : "Mantenha o volume para o próximo upgrade automático"}
+               </p>
+            </div>
           </div>
-        </div>
+        )}
 
         {/* KPIs Dashboard */}
         {!loading && stats && (

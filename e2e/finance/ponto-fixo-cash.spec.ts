@@ -1,6 +1,20 @@
 import { test, expect, Page } from '@playwright/test';
+import { prisma } from '../../backend/src/lib/prisma';
+import * as dotenv from 'dotenv';
+import path from 'path';
+
+dotenv.config({ path: path.resolve(__dirname, '../../backend/.env') });
 
 const E2E_EVENT_SLUG = 'e2e-marketplace-test';
+
+test.beforeAll(async () => {
+  console.log(`[CLEANUP] Resetting orders and calendar for event: ${E2E_EVENT_SLUG}`);
+  const event = await prisma.event.findUnique({ where: { slug: E2E_EVENT_SLUG } });
+  if (event) {
+    await prisma.calendarSlot.deleteMany({ where: { eventId: event.id } });
+    await prisma.order.deleteMany({ where: { eventId: event.id } });
+  }
+});
 
 async function loginAsProfissional(page: Page) {
   await page.goto('/login');

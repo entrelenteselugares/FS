@@ -431,9 +431,15 @@ export async function adminUpdateEvent(req: AuthRequest, res: Response): Promise
     if (req.body.marketplaceConfigs !== undefined) (data as Prisma.EventUpdateInput).marketplaceConfigs = req.body.marketplaceConfigs;
     if (req.body.clientEmail !== undefined) data.clientEmail = req.body.clientEmail || null;
     if (req.body.clientName !== undefined) data.clientName = req.body.clientName || null;
+    if (req.body.eventEndTime !== undefined) data.eventEndTime = req.body.eventEndTime ? new Date(req.body.eventEndTime) : null;
 
     const wasEmpty = !currentEvent.lightroomUrl && !currentEvent.driveUrl;
     const isAddingLinks = (data.lightroomUrl || data.driveUrl) && wasEmpty;
+
+    // Se estiver adicionando links pela primeira vez, registra o momento da entrega para o SLA
+    if (isAddingLinks) {
+      data.galleryUploadTime = new Date();
+    }
 
     // 2. Executa a atualização do evento
     const event = await prisma.event.update({
@@ -447,7 +453,13 @@ export async function adminUpdateEvent(req: AuthRequest, res: Response): Promise
       },
     });
 
-    // 3. Se os links foram liberados agora, dispara os prazos de expiração dos pedidos
+    // 3. Processa Gamificação de Agilidade (SLA)
+    if (isAddingLinks) {
+      const { GamificationService } = require("../services/gamification.service");
+      GamificationService.processSLA(event.id).catch((e: any) => console.error("Erro ao processar SLA:", e));
+    }
+
+    // 4. Se os links foram liberados agora, dispara os prazos de expiração dos pedidos
     if (isAddingLinks) {
       console.log(`[FAIR EXPIRE] Links adicionados ao evento ${id}. Disparando prazos...`);
       

@@ -1,0 +1,218 @@
+import { useState } from "react";
+import { X, Camera, DollarSign, MapPin, ListChecks, Check, Trash2, Eye, EyeOff } from "lucide-react";
+import { API } from "../../lib/api";
+import type { EventItem } from "./types";
+import { CoverPhotoInput } from "./CoverPhotoInput";
+
+interface FotoPointEditModalProps {
+  event: EventItem;
+  onClose: () => void;
+  onSuccess: (updated: EventItem) => void;
+  onError: (msg: string) => void;
+}
+
+export function FotoPointEditModal({ event, onClose, onSuccess, onError }: FotoPointEditModalProps) {
+  const [loading, setLoading] = useState(false);
+  const [formData, setFormData] = useState({
+    nomeNoivos: event.nomeNoivos,
+    priceUnit: event.priceUnit || 20,
+    location: event.location || "",
+    city: event.cartorio || "", 
+    itinerary: event.itinerary || "",
+    references: Array.isArray(event.references) ? event.references : [],
+    isPrivate: event.isPrivate,
+    active: event.active
+  });
+  const [coverUrl, setCoverUrl] = useState<string | null>(event.coverPhotoUrl ?? null);
+
+  const [newRef, setNewRef] = useState("");
+
+  const addRef = () => {
+    if (newRef.trim()) {
+      setFormData(prev => ({ ...prev, references: [...prev.references, newRef.trim()] }));
+      setNewRef("");
+    }
+  };
+
+  const removeRef = (index: number) => {
+    setFormData(prev => ({
+      ...prev,
+      references: prev.references.filter((_: string, i: number) => i !== index)
+    }));
+  };
+
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setLoading(true);
+    try {
+      const { data } = await API.patch(`/profissional/events/${event.id}/foto-point`, {
+        ...formData,
+        coverPhotoUrl: coverUrl,
+      });
+      onSuccess(data);
+      onClose();
+    } catch (err: unknown) {
+      const errMsg = (err && typeof err === "object" && "response" in err) ? (err as { response?: { data?: { error?: string } } }).response?.data?.error : undefined;
+      onError(errMsg || "Erro ao atualizar Foto Point.");
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  return (
+    <div className="fixed inset-0 z-[8000] flex items-center justify-center p-4 backdrop-blur-2xl bg-black/60 animate-in fade-in duration-500">
+      <div className="w-full max-w-2xl bg-theme-bg border border-white/10 shadow-[0_0_100px_rgba(34,211,238,0.15)] relative overflow-hidden">
+        <div className="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-transparent via-cyan-400 to-transparent" />
+        
+        <form onSubmit={handleSubmit} className="p-8 md:p-12 space-y-10">
+          <div className="flex justify-between items-start">
+            <div className="space-y-1">
+              <div className="text-[10px] font-black text-cyan-400 uppercase tracking-[0.4em] italic mb-2">
+                Painel de Gestão • Foto Point
+              </div>
+              <h3 className="text-3xl font-heading font-black text-theme-text uppercase italic leading-none tracking-tighter">
+                Editar {event.nomeNoivos}
+              </h3>
+            </div>
+            <button type="button" onClick={onClose} className="p-2 hover:bg-white/5 text-theme-muted hover:text-cyan-400 transition-all">
+              <X size={24} />
+            </button>
+          </div>
+
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+            <div className="space-y-3">
+              <label className="text-[9px] font-black text-theme-muted uppercase tracking-widest italic opacity-60">Nome do Ponto / Evento</label>
+              <div className="relative group">
+                <Camera size={16} className="absolute left-5 top-1/2 -translate-y-1/2 text-cyan-400/50 group-focus-within:text-cyan-400 transition-colors" />
+                <input
+                  required
+                  value={formData.nomeNoivos}
+                  onChange={e => setFormData({ ...formData, nomeNoivos: e.target.value })}
+                  className="w-full bg-white/5 border border-white/10 p-5 pl-14 text-theme-text outline-none focus:border-cyan-400/50 transition-all text-xs font-bold"
+                  placeholder="Ex: Foto Point Morumbi"
+                />
+              </div>
+            </div>
+
+            <div className="space-y-3">
+              <label className="text-[9px] font-black text-theme-muted uppercase tracking-widest italic opacity-60">Valor por Click (Digital)</label>
+              <div className="relative group">
+                <DollarSign size={16} className="absolute left-5 top-1/2 -translate-y-1/2 text-cyan-400/50 group-focus-within:text-cyan-400 transition-colors" />
+                <input
+                  type="number"
+                  required
+                  value={formData.priceUnit}
+                  onChange={e => setFormData({ ...formData, priceUnit: Number(e.target.value) })}
+                  className="w-full bg-white/5 border border-white/10 p-5 pl-14 text-theme-text outline-none focus:border-cyan-400/50 transition-all text-xs font-bold"
+                  placeholder="R$ 20,00"
+                />
+              </div>
+            </div>
+
+            <div className="space-y-3">
+              <label className="text-[9px] font-black text-theme-muted uppercase tracking-widest italic opacity-60">Ponto de Encontro / Local</label>
+              <div className="relative group">
+                <MapPin size={16} className="absolute left-5 top-1/2 -translate-y-1/2 text-cyan-400/50 group-focus-within:text-cyan-400 transition-colors" />
+                <input
+                  required
+                  value={formData.location}
+                  onChange={e => setFormData({ ...formData, location: e.target.value })}
+                  className="w-full bg-white/5 border border-white/10 p-5 pl-14 text-theme-text outline-none focus:border-cyan-400/50 transition-all text-xs font-bold"
+                  placeholder="Ex: Em frente ao Portal Principal"
+                />
+              </div>
+            </div>
+
+             <div className="space-y-3">
+              <label className="text-[9px] font-black text-theme-muted uppercase tracking-widest italic opacity-60">Visibilidade na Home</label>
+              <div className="flex gap-2">
+                <button
+                  type="button"
+                  onClick={() => setFormData({ ...formData, isPrivate: !formData.isPrivate })}
+                  className={`flex-1 p-5 border text-[10px] font-black uppercase tracking-widest flex items-center justify-center gap-3 transition-all ${!formData.isPrivate ? "bg-cyan-400 text-black border-cyan-400" : "bg-white/5 border-white/10 text-theme-muted hover:text-white"}`}
+                >
+                  {formData.isPrivate ? <EyeOff size={16} /> : <Eye size={16} />}
+                  {formData.isPrivate ? "Privado" : "Público"}
+                </button>
+                <button
+                  type="button"
+                  onClick={() => setFormData({ ...formData, active: !formData.active })}
+                  className={`flex-1 p-5 border text-[10px] font-black uppercase tracking-widest flex items-center justify-center gap-3 transition-all ${formData.active ? "bg-emerald-500 text-black border-emerald-500" : "bg-red-500/20 border-red-500/30 text-red-400"}`}
+                >
+                  <Check size={16} />
+                  {formData.active ? "Ativo" : "Inativo"}
+                </button>
+              </div>
+            </div>
+
+            <div className="md:col-span-2 space-y-3">
+              <label className="text-[9px] font-black text-theme-muted uppercase tracking-widest italic opacity-60">Roteiro da Sessão (O que será entregue?)</label>
+              <div className="relative group">
+                <ListChecks size={16} className="absolute left-5 top-6 text-cyan-400/50 group-focus-within:text-cyan-400 transition-colors" />
+                <textarea
+                  required
+                  value={formData.itinerary}
+                  onChange={e => setFormData({ ...formData, itinerary: e.target.value })}
+                  className="w-full bg-white/5 border border-white/10 p-5 pl-14 text-theme-text outline-none focus:border-cyan-400/50 transition-all text-xs font-bold min-h-[100px]"
+                  placeholder="Ex: 5 fotos posadas, entrega digital em 24h..."
+                />
+              </div>
+            </div>
+
+            <div className="md:col-span-2 space-y-4">
+              <label className="text-[9px] font-black text-theme-muted uppercase tracking-widest italic opacity-60">Referências de Estilo / Pose</label>
+              <div className="flex gap-2">
+                <input
+                  value={newRef}
+                  onChange={e => setNewRef(e.target.value)}
+                  className="flex-1 bg-white/5 border border-white/10 p-4 text-theme-text outline-none focus:border-cyan-400/50 transition-all text-xs"
+                  placeholder="Ex: Estilo P&B, Pose Dramática..."
+                />
+                <button
+                  type="button"
+                  onClick={addRef}
+                  className="px-6 bg-white/10 text-theme-text text-[10px] font-black uppercase tracking-widest hover:bg-cyan-400 hover:text-black transition-all"
+                >
+                  Adicionar
+                </button>
+              </div>
+              <div className="flex flex-wrap gap-2">
+                {formData.references.map((ref: string, i: number) => (
+                  <div key={i} className="flex items-center gap-2 bg-cyan-400/10 border border-cyan-400/20 px-3 py-2 text-[10px] font-bold text-cyan-400 uppercase tracking-tighter">
+                    {ref}
+                    <button type="button" onClick={() => removeRef(i)} className="hover:text-red-400 transition-colors"><Trash2 size={12} /></button>
+                  </div>
+                ))}
+              </div>
+            </div>
+
+            <div className="md:col-span-2">
+              <CoverPhotoInput
+                currentUrl={coverUrl}
+                eventId={event.id}
+                onChange={setCoverUrl}
+              />
+            </div>
+          </div>
+
+          <div className="flex gap-4 pt-6">
+            <button
+              type="button"
+              onClick={onClose}
+              className="flex-1 py-5 bg-white/5 border border-white/10 text-theme-muted text-[11px] font-black uppercase tracking-widest hover:text-white transition-all italic"
+            >
+              Descartar
+            </button>
+            <button
+              type="submit"
+              disabled={loading}
+              className="flex-[2] py-5 bg-cyan-400 text-black text-[11px] font-black uppercase tracking-[0.3em] hover:brightness-110 disabled:opacity-40 transition-all shadow-xl shadow-cyan-400/20 italic"
+            >
+              {loading ? "SALVANDO..." : "SALVAR ALTERAÇÕES"}
+            </button>
+          </div>
+        </form>
+      </div>
+    </div>
+  );
+}

@@ -1,5 +1,20 @@
 import { test, expect } from '@playwright/test';
-import { generateTestEmail } from '../utils/auth-helpers';
+import { prisma } from '../../backend/src/lib/prisma';
+import * as dotenv from 'dotenv';
+import path from 'path';
+
+dotenv.config({ path: path.resolve(__dirname, '../../backend/.env') });
+
+test.beforeAll(async () => {
+  console.log('[CLEANUP] Resetting calendar for cotacao tests...');
+  // Limpa ordens e slots associados a parceiros (Ponto Fixo)
+  const orders = await prisma.order.findMany({ where: { event: { partnerId: { not: null } } } });
+  const orderIds = orders.map(o => o.id);
+  const eventIds = orders.map(o => o.eventId).filter((id): id is string => !!id);
+  
+  await prisma.calendarSlot.deleteMany({ where: { eventId: { in: eventIds } } });
+  await prisma.order.deleteMany({ where: { id: { in: orderIds } } });
+});
 
 test.describe('Financial Flow: Quotation & Checkout', () => {
 
@@ -16,9 +31,10 @@ test.describe('Financial Flow: Quotation & Checkout', () => {
     const dateTrigger = page.getByText(/SELECIONE A DATA E HORÁRIO/i);
     await dateTrigger.click();
 
-    // Select a day (e.g., 20)
-    const day25 = page.getByRole('button', { name: /^25$/ }).first();
-    await day25.click();
+    // Select a random day (1-20) to avoid scheduling conflicts
+    const randomDay = Math.floor(Math.random() * 20) + 1;
+    const dayBtn = page.getByRole('button', { name: new RegExp(`^${randomDay}$`) }).first();
+    await dayBtn.click();
 
     // Confirm Date/Time
     const confirmDateBtn = page.getByRole('button', { name: /CONFIRMAR DATA/i });

@@ -8,9 +8,19 @@ export interface AuthUser {
   whatsapp?: string | null;
   mpUserId?: string | null;
   mpPublicKey?: string | null;
+  rewardCredits?: number | null;
+  gamificationLedger?: Array<{
+    id: string;
+    type: string;
+    amount: number | null;
+    points: number | null;
+    description: string | null;
+    createdAt: string;
+  }>;
   franchiseProfile?: {
     id: string;
     printCredits: number;
+    tier?: "BRONZE" | "SILVER" | "GOLD" | "DIAMOND";
     active: boolean;
     transactions?: Array<{
       id: string;

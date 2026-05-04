@@ -1,27 +1,35 @@
-# Tech Stack - Foto Segundo
+# Technical Stack: Foto Segundo
 
-## Core Frameworks
-- **Frontend**: React 19 (Vite 8)
-- **Backend**: Express 5 (Node.js 20/22)
-- **Language**: TypeScript 6.0
-- **ORM**: Prisma 6.19
+## Core Technologies
 
-## Styling & UI
-- **CSS**: Tailwind CSS 3.4 (Custom semantic tokens)
-- **Animations**: Framer Motion 12.38
-- **Icons**: Lucide React
-- **Charts**: Recharts 3.8
-- **Visualization**: React Window 2.2 (Virtualized Lists)
+- **Frontend**: React (Vite) with TypeScript.
+- **Backend**: Node.js (Express) with TypeScript.
+- **Database**: PostgreSQL (Supabase) via Prisma ORM.
+- **Deployment**: Vercel (Frontend & Backend).
 
-## Infrastructure
-- **Hosting**: Vercel (Production)
-- **Database**: PostgreSQL (via Supabase)
-- **File Storage**: Supabase Storage / AWS S3 SDK
-- **Runtime**: Node.js 20+
-- **IoT Agent**: Node.js 20 (Windows/Linux) + CUPS / Windows Print Spooler
+## Design System
 
-## Development Tools
-- **Build**: Vite / esbuild (Backend bundle)
-- **Linting**: ESLint 9 / TypeScript ESLint 8
-- **Database GUI**: Prisma Studio / Supabase Dashboard
-- **E2E Testing**: Playwright 1.59
+- **Theme**: Midnight Luxury (Dark mode, gold/brand-tactical accents).
+- **Icons**: Lucide React.
+- **Components**: Custom luxury-themed components with CSS Modules/Vanilla CSS.
+
+## Data & ORM
+
+- **ORM**: Prisma (client-side generation).
+- **Storage**: Supabase Storage for event photos and profile assets.
+- **Ledger**: GamificationLedger for immutable transaction history.
+
+## Payments & Finance
+
+- **Gateway**: Mercado Pago (Credit Card & PIX).
+- **Engine**: PricingService for automated commission splits.
+
+## Automation & IoT
+
+- **Printer Agent**: Node.js local agent for phygital operations.
+- **WebSocket/Polling**: For real-time print spooling.
+
+## Testing
+
+- **E2E**: Playwright (Full Regression Suite).
+- **Unit**: Vitest (planned for core logic).

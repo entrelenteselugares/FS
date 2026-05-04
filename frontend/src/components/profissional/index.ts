@@ -8,12 +8,15 @@ export { NetworkTab } from "./NetworkTab";
 export { ProfileModal } from "./ProfileModal";
 export { ProfileTab } from "./ProfileTab";
 export { ServicesTab } from "./ServicesTab";
-export { FlashEventModal } from "./FlashEventModal";
+export * from "./FlashEventModal";
+export * from "./FotoPointModal";
+export * from "./FotoPointEditModal";
 export { DashboardHeader } from "./DashboardHeader";
 export { DashboardStats } from "./DashboardStats";
 export { SupportBanner } from "./SupportBanner";
 export { OpportunitiesModal } from "./OpportunitiesModal";
 export { ExpressSaleBanner } from "./ExpressSaleBanner";
+export { CoverPhotoInput } from "./CoverPhotoInput";
 
 export type {
   EventItem,

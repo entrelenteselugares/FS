@@ -6,9 +6,10 @@ import { T, Card } from "../lib/theme";
 import AccessTypeModal from "../components/AccessTypeModal";
 import { SideDrawer } from "../components/SideDrawer";
 import { DashboardLayout, type NavItem } from "../components/DashboardLayout";
-import { Image, Clock, ShieldCheck, ArrowRight, AlertTriangle, User, CheckCircle2, X, ShoppingBag, Printer } from "lucide-react";
+import { Image, Clock, ShieldCheck, ArrowRight, AlertTriangle, User, CheckCircle2, X, ShoppingBag, Printer, Zap, Play } from "lucide-react";
+import { ExpressSaleModal, FlashEventModal, ExpressSaleBanner, type EventItem, type Partner } from "../components/profissional";
 
-type ActiveTab = "files" | "profile" | "franquia";
+type ActiveTab = "files" | "profile" | "wallet" | "franquia";
 
 interface Pedido {
   id: string;
@@ -76,8 +77,21 @@ export default function ClienteArea() {
   const [isPrivacyModalOpen, setIsPrivacyModalOpen] = useState(false);
   const [activeTab, setActiveTab] = useState<ActiveTab>("files");
   
+  // Franchise States
+  const [events, setEvents] = useState<EventItem[]>([]);
+  const [network, setNetwork] = useState<Partner[]>([]);
+  const [isExpressModalOpen, setIsExpressModalOpen] = useState(false);
+  const [isFlashModalOpen, setIsFlashModalOpen] = useState(false);
+  const [notification, setNotification] = useState<{ message: string; type: "success" | "error" } | null>(null);
+
+  const showNotification = useCallback((message: string, type: "success" | "error" = "success") => {
+    setNotification({ message, type });
+    setTimeout(() => setNotification(null), 5000);
+  }, []);
+  
   const NAV_ITEMS: NavItem[] = [
     { label: "Minhas Memórias", onClick: () => setActiveTab("files"), isActive: activeTab === "files", icon: <Image size={18} /> },
+    { label: "Minha Carteira", onClick: () => setActiveTab("wallet"), isActive: activeTab === "wallet", icon: <ShoppingBag size={18} /> },
     ...(user?.franchiseProfile ? [
       { label: "Franquia Print", onClick: () => setActiveTab("franquia"), isActive: activeTab === "franquia", icon: <Printer size={18} /> }
     ] : []),
@@ -144,6 +158,11 @@ export default function ClienteArea() {
         nome: user.nome || "",
         whatsapp: user.whatsapp || ""
       });
+
+      if (user.franchiseProfile) {
+        API.get("profissional/events").then(r => setEvents(r.data)).catch(() => {});
+        API.get("profissional/network").then(r => setNetwork(r.data)).catch(() => {});
+      }
     }
   }, [searchParams, handleSelect, fetchPedidos, user]);
 
@@ -256,18 +275,19 @@ export default function ClienteArea() {
 
         {/* KPI Bar */}
         {!loading && pedidos.length > 0 && (
-          <div className="grid grid-cols-3 gap-px bg-theme-border/20 border border-theme-border/20">
+          <div className="grid grid-cols-2 md:grid-cols-4 gap-px bg-theme-border/20 border border-theme-border/20">
             {[
               { label: "Total Adquiridos", value: pedidos.length, icon: <Image size={12} /> },
               { label: "Acesso Ativo", value: aprovados.length, icon: <CheckCircle2 size={12} />, highlight: true },
               { label: "Aguardando", value: pendentes.length, icon: <Clock size={12} /> },
+              { label: "Créditos Reward", value: formatCurrency(user?.rewardCredits || 0), icon: <ShoppingBag size={12} />, isCash: true },
             ].map(m => (
               <div key={m.label} className="bg-theme-bg-muted/40 p-4 md:p-6 space-y-2 md:space-y-3 group hover:bg-theme-bg-muted/60 transition-all">
                 <div className="flex items-center gap-2">
                   <div className={`p-1.5 ${m.highlight ? 'bg-brand-tactical text-brand-text' : 'bg-theme-border/40 text-theme-muted'}`}>{m.icon}</div>
                   <p className="text-[8px] md:text-[9px] font-black text-theme-muted uppercase tracking-[0.2em]">{m.label}</p>
                 </div>
-                <p className={`text-2xl md:text-3xl font-heading font-black italic tracking-tighter ${m.highlight ? 'text-brand-tactical' : 'text-theme-text'}`}>{m.value}</p>
+                <p className={`text-2xl md:text-3xl font-heading font-black italic tracking-tighter ${m.highlight || m.isCash ? 'text-brand-tactical' : 'text-theme-text'}`}>{m.value}</p>
               </div>
             ))}
           </div>
@@ -363,6 +383,81 @@ export default function ClienteArea() {
                 </a>
               </div>
             </div>
+          ) : activeTab === "wallet" ? (
+            <div className="space-y-10 animate-in fade-in duration-500">
+              <div className="border-b border-theme-border/60 pb-6">
+                <h2 className="text-3xl font-black text-theme-text uppercase tracking-tighter italic">Minha Carteira</h2>
+                <p className="text-[10px] text-theme-muted uppercase tracking-[0.4em] mt-2 font-black italic">Créditos de Recompensa e Cashback</p>
+              </div>
+
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-px bg-theme-border/20 border border-theme-border/20">
+                <div className="bg-theme-bg-muted/30 p-10 space-y-4">
+                  <label className="text-[9px] font-black text-theme-muted uppercase tracking-widest block">Saldo Disponível</label>
+                  <div className="text-6xl font-black italic tracking-tighter text-brand-tactical">
+                    {formatCurrency(user?.rewardCredits || 0)}
+                  </div>
+                  <p className="text-[10px] text-theme-muted font-bold leading-relaxed uppercase tracking-widest max-w-xs">
+                    Use seu saldo para abater em novos pedidos, impressões ou upgrades Phygital.
+                  </p>
+                </div>
+                <div className="bg-theme-bg-muted/30 p-10 space-y-6">
+                  <div className="space-y-2">
+                    <p className="text-[10px] font-black text-theme-text uppercase tracking-widest italic">Como ganhar mais?</p>
+                    <p className="text-[11px] text-theme-muted">Toda compra no marketplace gera 5% de cashback imediato para você.</p>
+                  </div>
+                  <button onClick={() => navigate("/")} className="fs-btn bg-brand-tactical text-brand-text w-full flex items-center justify-center gap-3">
+                    Explorar Marketplace <ArrowRight size={14} />
+                  </button>
+                </div>
+              </div>
+
+              {/* ── HISTÓRICO DO LEDGER ── */}
+              <div className="space-y-6">
+                 <div className="flex items-center gap-3">
+                    <div className="h-0.5 w-6 bg-brand-tactical" />
+                    <p className="text-[9px] font-black text-theme-muted uppercase tracking-[0.4em]">Extrato de Recompensas</p>
+                 </div>
+
+                 <div className="bg-theme-bg/20 border border-theme-border/30 overflow-hidden">
+                    {user?.gamificationLedger && user.gamificationLedger.length > 0 ? (
+                      <div className="divide-y divide-theme-border/10">
+                        {user.gamificationLedger.map(item => (
+                          <div key={item.id} className="p-5 flex items-center justify-between hover:bg-theme-bg-muted/10 transition-all">
+                             <div className="space-y-1">
+                                <div className="flex items-center gap-2">
+                                  <div className="w-1.5 h-1.5 rounded-full bg-brand-tactical" />
+                                  <p className="text-[11px] font-black text-theme-text uppercase tracking-tight italic">
+                                    {item.description}
+                                  </p>
+                                </div>
+                                <p className="text-[8px] text-theme-muted font-bold uppercase tracking-widest ml-3">
+                                  {new Date(item.createdAt).toLocaleDateString('pt-BR')} • {item.type}
+                                </p>
+                             </div>
+                             <div className="text-right">
+                               <p className="text-[14px] font-black italic tracking-tighter text-brand-tactical">
+                                  +{formatCurrency(item.amount || 0)}
+                               </p>
+                               {item.points && (
+                                 <p className="text-[8px] font-black text-theme-muted uppercase tracking-widest">
+                                   +{item.points} pts
+                                 </p>
+                               )}
+                             </div>
+                          </div>
+                        ))}
+                      </div>
+                    ) : (
+                      <div className="p-16 text-center space-y-4">
+                        <ShoppingBag size={32} className="mx-auto text-theme-border/20" />
+                        <p className="text-[10px] text-theme-muted uppercase font-black italic tracking-widest opacity-40">
+                          Sua carteira está aguardando as primeiras recompensas.
+                        </p>
+                      </div>
+                    )}
+                 </div>
+              </div>
+            </div>
           ) : activeTab === "franquia" && user?.franchiseProfile ? (
             <div className="space-y-8 animate-in fade-in duration-500">
               <div className="border-b border-theme-border/60 pb-6">
@@ -403,6 +498,65 @@ export default function ClienteArea() {
                   </div>
                 </div>
               )}
+
+              {/* ── OPERAÇÕES EXPRESSAS (VENDA RÁPIDA) ── */}
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <ExpressSaleBanner onOpen={() => setIsExpressModalOpen(true)} />
+                <div 
+                  onClick={() => setIsFlashModalOpen(true)}
+                  className="bg-theme-bg-muted border border-yellow-400/30 p-6 h-full flex items-center justify-between cursor-pointer hover:border-yellow-400/60 transition-all group overflow-hidden relative"
+                >
+                  <div className="absolute top-0 left-0 w-1 h-full bg-yellow-400" />
+                  <div className="space-y-1 relative z-10">
+                    <div className="flex items-center gap-2 text-yellow-400">
+                      <Zap size={14} fill="currentColor" />
+                      <span className="text-[10px] font-black uppercase tracking-[0.3em] italic">Oportunidade Agora</span>
+                    </div>
+                    <h3 className="text-xl font-heading font-black text-theme-text uppercase italic">Foto Print Live</h3>
+                    <p className="text-[10px] text-theme-muted uppercase font-bold tracking-widest">Ative um QR Code instantaneamente</p>
+                  </div>
+                  <div className="text-yellow-400/10 group-hover:text-yellow-400/30 transition-colors">
+                    <Zap size={40} strokeWidth={3} />
+                  </div>
+                </div>
+              </div>
+
+              {/* ── OPERAÇÕES EM CAMPO ── */}
+              <div className="space-y-6">
+                <div className="flex items-center gap-3">
+                  <div className="h-0.5 w-6 bg-brand-tactical" />
+                  <p className="text-[9px] font-black text-theme-muted uppercase tracking-[0.4em]">Operações em Campo</p>
+                </div>
+                
+                <div className="grid grid-cols-1 gap-4">
+                  {events.filter(ev => ev.captacaoId === user.id).length > 0 ? (
+                    events.filter(ev => ev.captacaoId === user.id).map(ev => (
+                      <div key={ev.id} className="bg-theme-bg border border-theme-border p-6 flex flex-col md:flex-row items-center justify-between gap-6 hover:border-brand-tactical/30 transition-all group">
+                          <div className="flex items-center gap-5">
+                            <div className="w-12 h-12 bg-theme-card border border-theme-border flex items-center justify-center text-brand-tactical group-hover:scale-110 transition-transform">
+                                <Printer size={20} />
+                            </div>
+                            <div>
+                                <p className="text-sm font-black text-theme-text uppercase italic tracking-tight">{ev.nomeNoivos}</p>
+                                <p className="text-[9px] text-theme-muted font-bold uppercase tracking-widest mt-1">{new Date(ev.dataEvento).toLocaleDateString('pt-BR')} · {ev.location}</p>
+                            </div>
+                          </div>
+                          <button 
+                            onClick={() => navigate(`/profissional/monitor/${ev.id}`)}
+                            className="px-8 py-3 bg-brand-tactical text-zinc-950 text-[10px] font-black uppercase tracking-widest hover:brightness-110 transition-all flex items-center gap-3 shadow-lg shadow-brand-tactical/10"
+                          >
+                            <Play size={12} /> ABRIR MONITOR
+                          </button>
+                      </div>
+                    ))
+                  ) : (
+                    <div className="p-10 border border-dashed border-theme-border/40 text-center space-y-4">
+                        <p className="text-[10px] text-theme-muted uppercase font-black italic tracking-widest">Nenhum evento designado para você neste momento.</p>
+                        <p className="text-[8px] text-theme-muted/60 uppercase font-bold max-w-xs mx-auto leading-relaxed">Fique atento à sua agenda. Quando um admin vincular sua franquia a um evento, ele aparecerá aqui para impressão.</p>
+                    </div>
+                  )}
+                </div>
+              </div>
 
               {/* ── ATIVIDADE RECENTE ── */}
               <div className="space-y-6">
@@ -472,6 +626,48 @@ export default function ClienteArea() {
           }}
           onClose={() => setIsPrivacyModalOpen(false)}
         />
+      )}
+
+      {/* Franchise Modals */}
+      {isExpressModalOpen && (
+        <ExpressSaleModal 
+          network={network}
+          onClose={() => setIsExpressModalOpen(false)}
+          onSuccess={(msg) => {
+            API.get("profissional/events").then(r => setEvents(r.data)).catch(() => {});
+            showNotification(msg);
+          }}
+          onError={(msg) => showNotification(msg, "error")}
+        />
+      )}
+
+      {isFlashModalOpen && (
+        <FlashEventModal 
+          onClose={() => setIsFlashModalOpen(false)}
+          onSuccess={(slug) => {
+            showNotification("Foto Print Live Ativado!", "success");
+            setIsFlashModalOpen(false);
+            navigate(`/e/${slug}`);
+          }}
+          onError={(msg) => showNotification(msg, "error")}
+        />
+      )}
+
+      {/* Global Notifications */}
+      {notification && (
+        <div 
+          className="fixed bottom-10 right-10 z-[2000] px-8 py-4 shadow-2xl animate-in slide-in-from-right duration-500"
+          style={{ 
+            background: notification.type === "success" ? T.brand : "#f87171",
+            color: notification.type === "success" ? "#000" : "#fff",
+            fontWeight: 900,
+            fontSize: 10,
+            textTransform: "uppercase",
+            letterSpacing: 2
+          }}
+        >
+          {notification.message}
+        </div>
       )}
     </DashboardLayout>
   );

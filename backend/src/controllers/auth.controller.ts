@@ -206,6 +206,10 @@ export class AuthController {
               take: 10
             }
           }
+        },
+        gamificationLogs: {
+          orderBy: { createdAt: 'desc' },
+          take: 20
         }
       }
     });

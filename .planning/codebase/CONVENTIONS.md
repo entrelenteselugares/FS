@@ -1,21 +1,28 @@
-# Conventions - Foto Segundo
+# Coding Conventions: Foto Segundo
 
-## Coding Standards
-- **Strong Typing**: Absolute avoidance of `: any`. Use explicit interfaces or `unknown`.
-- **Semantic UI**: Use theme-based design tokens (e.g., `bg-theme-bg`, `text-theme-text`) instead of hardcoded hex colors or Tailwind zinc/slate.
-- **Naming**: 
-  - Components: PascalCase.
-  - Utilities/Variables: camelCase.
-  - Database Tables: snake_case (mapped in Prisma).
-- **Error Handling**: Use `try/catch` with `instanceof Error` checks and meaningful log messages.
+## General Rules
 
-## React Patterns
-- **Functional Components**: Use arrow functions and hooks.
-- **Prop Typing**: Explicit TypeScript interfaces for all component props.
-- **Separation of Concerns**: Business logic in hooks/services, UI in components.
+- **Type Safety**: TypeScript is mandatory. Use interfaces for all data structures. Avoid `any`.
+- **Naming**: camelCase for variables/functions, PascalCase for components/interfaces, snake_case for database maps.
 
-## Backend Patterns
-- **Controller/Service**: Routes call controllers, controllers call services for logic.
-- **Prisma Transactions**: Use `$transaction` for operations requiring atomicity (CRITICAL for financial logic).
-- **Financial Logic**: Calculations MUST be performed in the Backend (`PricingService`).
-- **Security**: Mandatory `x-master-key` or JWT validation for sensitive endpoints.
+## Design Patterns
+
+- **Controllers**: Should be thin, delegating complex logic to Services.
+- **Services**: Pure business logic, independent of request/response objects.
+- **Auditing**: Every critical business mutation (Sale, Payout, Profile Update) MUST call the `audit()` utility.
+
+## Styling (Midnight Luxury)
+
+- Use CSS Variables defined in `index.css`.
+- Colors: `theme-bg`, `theme-text`, `brand-tactical` (Gold).
+- Font: Heading (Playfair Display/Outfit), Body (Inter).
+
+## Data Integrity
+
+- **Transactions**: Use `prisma.$transaction` for multi-table writes.
+- **Ledger**: Never modify reward credits without an accompanying `GamificationLedger` entry.
+
+## Git & Workflow
+
+- GSD-based planning before implementation.
+- Commit messages should be descriptive and linked to phase/objective.

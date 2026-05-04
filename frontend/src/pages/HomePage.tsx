@@ -99,8 +99,9 @@ function EventCard({ event, onClick }: { event: Event; onClick: () => void }) {
         </div>
         <div style={{ display: "flex", alignItems: "center", justifyContent: "flex-end" }}>
           <div style={{ display: "flex", gap: 6 }}>
-            {event.temFoto  && <span style={{ fontSize: 9, fontFamily: T.fontB, color: T.text3, letterSpacing: 1, textTransform: "uppercase", border: `1px solid ${T.border}`, padding: "2px 7px" }}>{event.type === 'PHOTO_MARKETPLACE' ? 'Phygital' : 'Foto'}</span>}
+            {event.temFoto  && <span style={{ fontSize: 9, fontFamily: T.fontB, color: T.text3, letterSpacing: 1, textTransform: "uppercase", border: `1px solid ${T.border}`, padding: "2px 7px" }}>{(event.type === 'PHOTO_MARKETPLACE' || event.type === 'FOTO_POINT') ? 'Phygital' : 'Foto'}</span>}
             {event.type === 'PHOTO_MARKETPLACE' && <span style={{ fontSize: 9, fontFamily: T.fontB, color: T.brand, letterSpacing: 1, textTransform: "uppercase", border: `1px solid ${T.brand}`, padding: "2px 7px", fontWeight: 900 }}>Live Print</span>}
+            {event.type === 'FOTO_POINT' && <span style={{ fontSize: 9, fontFamily: T.fontB, color: "#22d3ee", letterSpacing: 1, textTransform: "uppercase", border: `1px solid #22d3ee`, padding: "2px 7px", fontWeight: 900 }}>Foto Point</span>}
             {event.temVideo && <span style={{ fontSize: 9, fontFamily: T.fontB, color: T.text3, letterSpacing: 1, textTransform: "uppercase", border: `1px solid ${T.border}`, padding: "2px 7px" }}>Vídeo</span>}
             {event.temReels && <span style={{ fontSize: 9, fontFamily: T.fontB, color: T.text3, letterSpacing: 1, textTransform: "uppercase", border: `1px solid ${T.border}`, padding: "2px 7px" }}>Reels</span>}
           </div>
@@ -119,11 +120,15 @@ const STEPS = [
 
 // ── FOOTER NAV ────────────────────────────────────────────────────────────────
 function FooterCol({ title, links }: { title: string; links: string[] }) {
+  const navigate = useNavigate();
   return (
     <div style={{ display: "flex", flexDirection: "column", gap: 14 }}>
       <span style={{ fontSize: 10, fontFamily: T.fontB, fontWeight: 500, letterSpacing: "0.2em", textTransform: "uppercase", color: T.text }}>{title}</span>
       {links.map(l => (
-        <span key={l} style={{ fontSize: 11, fontFamily: T.fontB, color: T.text3, cursor: "pointer", textTransform: "uppercase", letterSpacing: "0.1em" }}
+        <span 
+          key={l} 
+          onClick={() => l === "Negócios" && navigate("/negocios")}
+          style={{ fontSize: 11, fontFamily: T.fontB, color: T.text3, cursor: "pointer", textTransform: "uppercase", letterSpacing: "0.1em" }}
           onMouseOver={e => (e.currentTarget.style.color = T.text)} onMouseOut={e => (e.currentTarget.style.color = T.text3)}>
           {l}
         </span>
@@ -286,6 +291,23 @@ export const HomePage = () => {
           ) : (
             <div style={{ display: "flex", flexDirection: "column", gap: 64 }}>
               {/* FOTO POINT SECTION */}
+              {events.filter(e => e.type === 'FOTO_POINT').length > 0 && (
+                <div className="animate-reveal">
+                  <div style={{ display: "flex", alignItems: "center", gap: 16, marginBottom: 24 }}>
+                    <div style={{ width: 12, height: 12, background: "#22d3ee", borderRadius: "50%" }} className="animate-pulse" />
+                    <h3 style={{ fontFamily: T.fontD, fontWeight: 900, fontSize: 24, color: T.text, textTransform: "uppercase", margin: 0, letterSpacing: 2 }}>Foto Point</h3>
+                  </div>
+                  <div className="hp-grid" style={{ display: "grid", gridTemplateColumns: "repeat(auto-fill, minmax(300px, 1fr))", gap: 1, background: T.border }}>
+                    {events.filter(e => e.type === 'FOTO_POINT').map(ev => (
+                      <div key={ev.id} className="card-hover">
+                        <EventCard event={ev} onClick={() => navigate(`/e/${ev.slug || ev.id}`)} />
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              )}
+
+              {/* LIVE PRINT SECTION */}
               {events.filter(e => e.type === 'PHOTO_MARKETPLACE').length > 0 && (
                 <div className="animate-reveal">
                   <div style={{ display: "flex", alignItems: "center", gap: 16, marginBottom: 24 }}>
@@ -308,7 +330,7 @@ export const HomePage = () => {
                   <h3 style={{ fontFamily: T.fontD, fontWeight: 900, fontSize: 24, color: T.text, textTransform: "uppercase", margin: 0, letterSpacing: 2 }}>Galeria de Álbuns</h3>
                 </div>
                 <div className="hp-grid" style={{ display: "grid", gridTemplateColumns: "repeat(auto-fill, minmax(300px, 1fr))", gap: 1, background: T.border }}>
-                  {events.filter(e => e.type !== 'PHOTO_MARKETPLACE').map(ev => (
+                  {events.filter(e => e.type !== 'PHOTO_MARKETPLACE' && e.type !== 'FOTO_POINT').map(ev => (
                     <div key={ev.id} className="card-hover">
                       <EventCard event={ev} onClick={() => navigate(`/e/${ev.slug || ev.id}`)} />
                     </div>
@@ -395,7 +417,7 @@ export const HomePage = () => {
             </p>
           </div>
           <div className="hp-footer-cols" style={{ display: "flex", gap: "3.5rem", flexWrap: "wrap" }}>
-            <FooterCol title="Plataforma" links={["Sobre", "Parcerias"]} />
+            <FooterCol title="Plataforma" links={["Sobre", "Parcerias", "Negócios"]} />
             <FooterCol title="Jurídico" links={["Termos de Uso", "Privacidade", "LGPD"]} />
             <FooterCol title="Suporte" links={["Central de Ajuda", "Contato", "Status"]} />
           </div>

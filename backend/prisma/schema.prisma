@@ -49,8 +49,24 @@ model User {
   verificationStatus     String                @default("PENDING")
   verificationDocs       Json?
   referralCode           String?               @unique
+  rewardCredits          Decimal               @default(0) @db.Decimal(10, 2)
+  gamificationLogs       GamificationLedger[]
 
   @@map("users")
+}
+
+model GamificationLedger {
+  id          String   @id @default(cuid())
+  userId      String
+  user        User     @relation(fields: [userId], references: [id])
+  type        String   // EARN, REDEEM, BONUS, ADJUSTMENT
+  points      Int      @default(0)
+  amount      Decimal? @db.Decimal(10, 2) // Caso o ponto tenha valor monetário (Cashback)
+  description String?
+  orderId     String?
+  createdAt   DateTime @default(now())
+
+  @@map("gamification_ledger")
 }
 
 model ProfessionalNetwork {
@@ -75,6 +91,8 @@ model Event {
   driveUrl           String?
   createdAt          DateTime          @default(now())
   updatedAt          DateTime          @updatedAt
+  eventEndTime       DateTime?         // Para tracking de SLA
+  galleryUploadTime  DateTime?         // Para tracking de SLA
   cartorioUserId     String?
   priceBase          Decimal           @default(190) @db.Decimal(10, 2)
   priceEarly         Decimal           @default(190) @db.Decimal(10, 2)
@@ -120,6 +138,8 @@ model Event {
   rejectedBy         Json?             @default("[]")
   paymentModel       PaymentModel      @default(PRE_PAID)
   deliveryType       DeliveryType      @default(DIGITAL_ONLY)
+  itinerary          String?
+  references         Json?             @default("[]")
   media              EventMedia[]
   phygitalPrints     PhygitalPrint[]
   franchiseeId       String?
@@ -169,6 +189,12 @@ model Profissional {
   experienceYears       Int                    @default(0)
   firstJobUrl           String?
   isExperienceValidated Boolean                @default(false)
+  
+  // Gamification & Performance
+  agilityPoints         Int                    @default(0)
+  avgDeliveryHours      Float                  @default(0)
+  totalMissions         Int                    @default(0)
+
   cartorios             CartorioProfissional[]
   proServices           ProfessionalService[]
   workflowType          String[]               @default(["TRADICIONAL"])
@@ -253,6 +279,9 @@ model Order {
   paymentMethod   OrderPaymentMethod?
   buyerWhatsapp   String?
   internalNotes   String?
+
+  // Gamification link
+  rewardsUsed     Decimal?            @db.Decimal(10, 2) // Créditos usados nesta compra
 
   // Guest Checkout (Magic Link)
   isGuestOrder    Boolean             @default(false)
@@ -578,6 +607,7 @@ enum PayoutStatus {
 enum EventType {
   ALBUM_FULL
   PHOTO_MARKETPLACE
+  FOTO_POINT
 }
 
 enum SlotStatus {
@@ -609,6 +639,13 @@ enum OrderPaymentMethod {
   CASH
   MANUAL
   FREE
+}
+
+enum FranchiseTier {
+  BRONZE
+  SILVER
+  GOLD
+  DIAMOND
 }
 
 // Credenciais OAuth2 por usuário (fotógrafo / franqueado)
@@ -666,6 +703,9 @@ model FranchiseProfile {
   userId       String              @unique
   user         User                @relation(fields: [userId], references: [id])
   printCredits Int                 @default(0)
+  tier         FranchiseTier       @default(BRONZE)
+  approvedSalesVolume Int           @default(0)
+  
   inventoryAlertThreshold Int      @default(50)
   lastSupplyOrderAt DateTime?
   active       Boolean             @default(true)

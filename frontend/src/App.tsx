@@ -23,6 +23,7 @@ import LuxuryExperiencePage from "./pages/LuxuryExperiencePage";
 import PhygitalCapture from "./pages/PhygitalCapture";
 import PrintMonitor from "./pages/PrintMonitor";
 import FranchiseDashboard from "./pages/franchise/FranchiseDashboard";
+import { BusinessLanding } from "./pages/BusinessLanding";
 import { useState, useEffect } from "react";
 import { API as api } from "./lib/api";
 import { T } from "./lib/theme";
@@ -68,6 +69,7 @@ const AnimatedRoutes = () => {
         <Route path="/checkout/:orderId" element={<CheckoutPage />} />
         <Route path="/delivery/:id" element={<LuxuryExperiencePage />} />
         <Route path="/captura" element={<PhygitalCapture />} />
+        <Route path="/negocios" element={<BusinessLanding />} />
 
         {/* Redireciona para o painel correto */}
         <Route path="/dashboard" element={

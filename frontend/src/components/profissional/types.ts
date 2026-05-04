@@ -20,6 +20,12 @@ export interface EventItem {
   edicaoId: string | null;
   edicaoStatus: "PENDING" | "ACCEPTED" | "REJECTED";
   location: string | null;
+  type: "ALBUM_FULL" | "PHOTO_MARKETPLACE" | "FOTO_POINT";
+  priceUnit: number | null;
+  itinerary: string | null;
+  references: string[];
+  isPrivate: boolean;
+  active: boolean;
   _count: { pedidos: number };
 }
 
@@ -82,6 +88,7 @@ export interface ProfileData {
     totalEarnings: number;
     monthEarnings: number;
     completedEvents: number;
+    agilityPoints: number;
   };
   payoutHistory?: Array<{
     id: string;

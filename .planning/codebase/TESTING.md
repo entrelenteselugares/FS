@@ -1,25 +1,28 @@
-# Testing - Foto Segundo
+# Testing Strategy: Foto Segundo
 
-## Frameworks
-- **Backend**: Jest + Supertest (API testing).
-- **Frontend**: Vitest (Planned/Partial).
-- **E2E**: Playwright (Browser automation for critical flows).
-- **Validation**: GSD Verify Work (Conversational UAT with persistent state).
+## Automated E2E (Playwright)
 
-## Test Types
-- **Integration Tests**: Verification of Prisma queries and controller responses.
-- **E2E Hardening**: Automated flows for professional onboarding and checkout (Playwright).
-- **Hybrid Penny Testing**: Real PIX transaction validation with human interaction (Penny PIX).
-- **Resilience**: Stress testing production endpoints.
-- **Data Integrity**: Manual SQL audits and reset scripts.
+- **Master Suite**: 22 parallel tests covering 100% of the core user journey.
+- **Coverage**:
+  - Registration & Auth.
+  - Event Creation & Professional Assignment.
+  - B2C Checkout (Credit Card/PIX).
+  - B2B Supply Reordering.
+  - Ponto Fixo "One-Click" Sales.
+  - Phygital Print Spooling.
 
-## Running Tests
-- **Backend**: `npm test --prefix backend`
-- **E2E**: `npx playwright test`
-- **Hybrid PIX**: `npx playwright test e2e/finance/hybrid-penny-pix.spec.ts --ui`
-- **UAT**: `/gsd-verify-work` (Conversational)
+## Manual UAT
+
+- Verified by Kurio in production-like environments.
+- Stress testing via multi-browser parallel execution.
 
 ## Quality Gates
-- **Build Validation**: All PRs must pass `tsc -b` and `vite build`.
-- **Linting**: ESLint must pass on all modified files.
-- **GSD Verify Work**: All critical flows must be validated via GSD Verify Work before merge.
+
+- All major phases (Milestones) require a full regression pass of the Master Suite.
+- Zero-tolerance policy for financial logic errors (Split, Payout, Cashback).
+
+## Testing Tools
+
+- **Playwright**: Browser-based automation.
+- **Prisma Studio**: Direct database state verification.
+- **Audit Logs**: Traceability for transaction failures.

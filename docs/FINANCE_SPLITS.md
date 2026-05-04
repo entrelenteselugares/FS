@@ -37,3 +37,11 @@ To prevent fraud and manage chargebacks, the system follows a risk-based release
 - **Connection Pool Safety**: All financial splits are performed within `prisma.$transaction` to guarantee that either everyone gets paid or no one does.
 - **Admin Liquidation**: Franchisees and Professionals can view their "Available" balance and request liquidation. The Master Admin verifies the request and executes the payout, updating the status to `PAGO`.
 - **Transparency**: Every order contains a snapshot of the split percentages at the moment of purchase, protecting participants against future configuration changes.
+
+## 5. Cashback & Reward Credits
+
+Beyond active splits, the platform manages a secondary loyalty currency:
+
+- **Customer Cashback**: 5% of the gross sale is converted into `rewardCredits` for the buyer.
+- **Funding**: These credits are funded by the platform's marketing budget (Matriz split) to incentivize repeat purchases.
+- **Audit Trail**: Every credit mutation is mirrored in the `GamificationLedger` for absolute financial transparency.

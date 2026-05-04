@@ -103,13 +103,14 @@ export class MercadoPagoService {
             : { notification_url: data.notification_url }),
         
         back_urls: {
-          success: `${APP_URL}/success`,
-          failure: `${APP_URL}/failure`,
-          pending: `${APP_URL}/pending`
+          success: `https://foto-segundo.vercel.app/success`,
+          failure: `https://foto-segundo.vercel.app/failure`,
+          pending: `https://foto-segundo.vercel.app/pending`
         },
         auto_return: "approved" as const,
       };
 
+      console.log(`[MP] Preference Body:`, JSON.stringify(body, null, 2));
       console.log(`[MP] Criando Preferência Integral: R$ ${data.transaction_amount} | Pedido: ${data.orderId}`);
       
       const response = await preference.create({ body });

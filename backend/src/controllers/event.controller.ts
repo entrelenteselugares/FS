@@ -56,7 +56,7 @@ export class EventController {
    */
   static async getById(req: AuthRequest, res: Response) {
     const { slug: id } = req.params; // O express mapeia :slug para req.params.slug
-    const { userId } = req.query;
+    const { userId, orderId, guestToken } = req.query;
 
     console.log(`[EventController.getById] Buscando evento por id/slug: ${id}`);
     
@@ -87,7 +87,6 @@ export class EventController {
       const currentUserId = (userId as string) || (authUser?.userId);
 
       // 2. Busca qualquer pedido (Pendente ou Aprovado) para este usuário/evento/token
-      const { guestToken } = req.query;
       
       const order = currentUserId 
         ? await prisma.order.findFirst({
@@ -137,36 +136,8 @@ export class EventController {
       // 3.1 Guard específico para PHOTO_MARKETPLACE
       // Removido o bloqueio agressivo de 404 que impedia o primeiro acesso para compra.
       // A segurança agora é tratada pela lógica de paywall e hasAccess abaixo.
-      if (event.type === 'PHOTO_MARKETPLACE') {
-        if (!isOwner) {
-          const isCorrectBuyer = currentUserId && (
-            order && (order.status === "PAGO" || order.status === "APROVADO")
-          );
-
-          if (!isCorrectBuyer) {
-            // Sem token ou comprador errado: retorna o evento SEM mídia + paywall ativo
-            // (o frontend vai pedir login/pagamento)
-            const rawPreviews = event.previewPhotos;
-            const previewPhotos: string[] = rawPreviews ? (typeof rawPreviews === "string" ? JSON.parse(rawPreviews) : rawPreviews) : [];
-
-            return res.json({
-              id: event.id,
-              nomeNoivos: event.nomeNoivos,
-              dataEvento: event.dataEvento,
-              cartorio: event.cartorioUser?.cartorio?.razaoSocial || event.location,
-              coverPhotoUrl: event.coverPhotoUrl,
-              type: event.type,
-              isUnitSale: event.isUnitSale,
-              priceUnit: event.priceUnit,
-              pricePerPhoto: event.pricePerPhoto,
-              previewPhotos,
-              isOwner: false,
-              hasAccess: false,
-              paywall: { active: true, message: "Acesse com o e-mail utilizado na compra para liberar downloads." }
-            });
-          }
-        }
-      } else if (event.isPrivate && !hasAccess) {
+      // 3.1 Acesso granular tratado na lógica de unlockedMediaIds abaixo.
+      if (event.isPrivate && !hasAccess) {
         // Evento privado sem acesso: bloqueia apenas se nenhum pagamento foi confirmado.
         // Se isGloballyPaid = true, hasAccess já será true acima e não cairemos aqui.
         return res.status(403).json({ 
@@ -197,29 +168,34 @@ export class EventController {
 
       // 4. Se for Marketplace, buscamos quais mídias específicas foram compradas
       let unlockedMediaIds: string[] = [];
-      if (event.type === 'PHOTO_MARKETPLACE' && currentUserId) {
+
+      if (event.type === 'PHOTO_MARKETPLACE' && (currentUserId || guestToken || orderId)) {
         const paidOrders = await prisma.order.findMany({
           where: { 
             eventId: event.id, 
-            clienteId: currentUserId,
+            OR: [
+              ...(currentUserId ? [{ clienteId: currentUserId }] : []),
+              ...(guestToken ? [{ guestToken: String(guestToken) }] : []),
+              ...(orderId ? [{ id: String(orderId) }] : [])
+            ],
             status: { in: ["PAGO", "APROVADO"] }
           },
           include: { items: { include: { media: true } } }
         });
+
         paidOrders.forEach(o => {
           o.items.forEach(item => {
             if (item.mediaId) unlockedMediaIds.push(item.mediaId);
-            // Também permitimos busca pelo ShortID da mídia se for o caso
             if (item.media?.shortId) unlockedMediaIds.push(item.media.shortId);
           });
-          // FALLBACK TÁTICO: Se o pedido não tem itens vinculados, tenta recuperar do internalNotes (JSON do carrinho)
+          // FALLBACK TÁTICO: Recuperar do internalNotes (JSON do carrinho)
           if (o.items.length === 0 && o.internalNotes) {
             try {
               const notes = JSON.parse(o.internalNotes);
               if (notes.cart && Array.isArray(notes.cart)) {
                 unlockedMediaIds.push(...notes.cart);
               }
-            } catch (e) { /* ignore parse error */ }
+            } catch (e) { /* ignore */ }
           }
         });
       }
@@ -306,7 +282,7 @@ export class EventController {
           true as "temFoto" -- Ativando badges por padrão para estética
         FROM events
         WHERE active = true AND "isPrivate" = false AND "isQuote" = false
-          AND type IN ('ALBUM_FULL', 'PHOTO_MARKETPLACE')
+          AND type IN ('ALBUM_FULL', 'PHOTO_MARKETPLACE', 'FOTO_POINT')
           AND (
           REPLACE(LOWER("nomeNoivos"), '&', 'e') LIKE ${term} 
           OR REPLACE(LOWER(cartorio), '&', 'e') LIKE ${term}
@@ -319,7 +295,7 @@ export class EventController {
       const countResult: Array<{ count: number }> = await prisma.$queryRaw`
         SELECT COUNT(*)::int as count FROM events
         WHERE active = true AND "isPrivate" = false AND "isQuote" = false
-          AND type = 'ALBUM_FULL'
+          AND type IN ('ALBUM_FULL', 'PHOTO_MARKETPLACE', 'FOTO_POINT')
           AND (
           REPLACE(LOWER("nomeNoivos"), '&', 'e') LIKE ${term} 
           OR REPLACE(LOWER(cartorio), '&', 'e') LIKE ${term}
@@ -640,6 +616,57 @@ export class EventController {
   }
 
   /**
+   * POST /api/profissional/foto-point
+   * Cria um ponto de venda por click para fotógrafos.
+   */
+  static async createFotoPoint(req: AuthRequest, res: Response) {
+    const { name, priceUnit, location, itinerary, references, isPrivate, coverPhotoUrl } = req.body;
+    const { userId } = req.user!;
+
+    if (!name) return res.status(400).json({ error: "Nome do ponto é obrigatório" });
+
+    // Converte link de compartilhamento do Google Drive para URL de thumbnail direto
+    const normalizeCoverUrl = (url?: string): string | null => {
+      if (!url) return null;
+      const driveMatch = url.match(/\/file\/d\/([a-zA-Z0-9_-]+)/);
+      if (driveMatch) {
+        return `https://drive.google.com/thumbnail?id=${driveMatch[1]}&sz=w1200`;
+      }
+      return url;
+    };
+
+    try {
+      const slug = `fp-${name.toLowerCase().replace(/\s+/g, "-")}-${Math.random().toString(36).substring(2, 6)}`;
+      
+      const event = await prisma.event.create({
+        data: {
+          nomeNoivos: name,
+          slug,
+          type: "FOTO_POINT",
+          dataEvento: new Date(),
+          active: true,
+          captacaoId: userId,
+          priceUnit: Number(priceUnit) || 10,
+          location,
+          itinerary,
+          references: references || [],
+          isPrivate: !!isPrivate,
+          isUnitSale: true,
+          temFoto: true,
+          quoteStatus: "APROVADO",
+          isQuote: false,
+          coverPhotoUrl: normalizeCoverUrl(coverPhotoUrl),
+        }
+      });
+
+      return res.json({ success: true, eventId: event.id, slug: event.slug });
+    } catch (error) {
+      console.error("createFotoPoint:", error);
+      return res.status(500).json({ error: "Falha ao criar Foto Point." });
+    }
+  }
+
+  /**
    * GET /api/profissional/events
    * Lista eventos vinculados ao profissional (captação, edição ou parceiro fixo).
    */
@@ -679,6 +706,51 @@ export class EventController {
     } catch (error) {
       console.error("Erro ao listar eventos profissionais:", error);
       return res.status(500).json({ error: "Erro ao carregar sua agenda." });
+    }
+  }
+
+  /**
+   * PATCH /api/profissional/events/:id/foto-point
+   * Atualiza as configurações de um Foto Point existente.
+   */
+  static async updateFotoPoint(req: AuthRequest, res: Response) {
+    try {
+      const { id } = req.params;
+      const { nomeNoivos, priceUnit, location, city, itinerary, references, isPrivate, active, coverPhotoUrl } = req.body;
+
+      const event = await prisma.event.findUnique({ where: { id } });
+      if (!event) return res.status(404).json({ error: "Evento não encontrado." });
+
+      const isOwner = req.authUser && (req.authUser.role === "ADMIN" || req.authUser.userId === event.captacaoId);
+      if (!isOwner) return res.status(403).json({ error: "Acesso negado." });
+
+      // Converte Google Drive share links para thumbnail direto
+      const normalizeCoverUrl = (url?: string | null): string | null | undefined => {
+        if (url === null) return null;
+        if (!url) return undefined;
+        const driveMatch = url.match(/\/file\/d\/([a-zA-Z0-9_-]+)/);
+        if (driveMatch) return `https://drive.google.com/thumbnail?id=${driveMatch[1]}&sz=w1200`;
+        return url;
+      };
+
+      const updated = await prisma.event.update({
+        where: { id },
+        data: {
+          nomeNoivos: nomeNoivos ?? undefined,
+          priceUnit: priceUnit !== undefined ? Number(priceUnit) : undefined,
+          location: location ?? undefined,
+          city: city ?? undefined,
+          itinerary: itinerary ?? undefined,
+          references: references ?? undefined,
+          isPrivate: isPrivate !== undefined ? !!isPrivate : undefined,
+          active: active !== undefined ? !!active : undefined,
+          coverPhotoUrl: normalizeCoverUrl(coverPhotoUrl),
+        }
+      });
+      return res.json(updated);
+    } catch (error) {
+      console.error("updateFotoPoint:", error);
+      return res.status(500).json({ error: "Erro ao atualizar Foto Point." });
     }
   }
 }

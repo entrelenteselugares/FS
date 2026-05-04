@@ -2,6 +2,7 @@ import { useState } from "react";
 import { Check, X, Award, Share2 } from "lucide-react";
 import { API } from "../../lib/api";
 import type { EventItem } from "./types";
+import { CoverPhotoInput } from "./CoverPhotoInput";
 
 interface EventEditPanelProps {
   event: EventItem;
@@ -91,6 +92,12 @@ export function EventEditPanel({ event, onUpdated, onClose, onNotify }: EventEdi
                 className="w-full bg-theme-bg-muted border border-theme-border p-5 text-theme-text outline-none focus:border-brand-tactical/50 transition-all text-xs font-medium"
               />
             </div>
+
+            <CoverPhotoInput
+              currentUrl={event.coverPhotoUrl}
+              eventId={event.id}
+              onChange={() => {/* saved directly via /cover endpoint */}}
+            />
 
             <div className="p-6 bg-brand-tactical/5 border border-brand-tactical/20 space-y-4">
               <div className="flex justify-between items-center">

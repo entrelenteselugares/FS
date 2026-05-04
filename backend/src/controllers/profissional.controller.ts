@@ -248,7 +248,8 @@ export async function getProfile(req: AuthRequest, res: Response): Promise<void>
       stats: {
         totalEarnings: totalEstimated, // Mostra o total real acumulado
         monthEarnings: monthEstimated, // Mostra o acumulado do mês
-        completedEvents
+        completedEvents,
+        agilityPoints: profile?.agilityPoints || 0
       }
     });
   } catch (err) {

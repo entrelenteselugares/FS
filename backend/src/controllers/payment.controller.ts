@@ -10,6 +10,7 @@ import { audit } from "../lib/audit";
 import bcrypt from "bcryptjs";
 import { Prisma } from "@prisma/client";
 import { AuthRequest } from "../lib/auth";
+import { GamificationService } from "../services/gamification.service";
 
 export class PaymentController {
   /**
@@ -1028,6 +1029,7 @@ export class PaymentController {
       return res.status(500).json({ error: "Erro ao criar pedido de impressão." });
     }
   }
+
   /**
    * Método Unificado para Finalizar Pedidos Aprovados
    * (Usado por: Webhook, Transparent Checkout e Cash Payment)
@@ -1098,6 +1100,9 @@ export class PaymentController {
           }
         });
       });
+
+      // 5a. Processar Gamificação (Cashback)
+      GamificationService.processOrderRewards(order.id).catch(e => console.error("Erro ao processar cashback:", e));
 
       // 6. Notificações (E-mail e WhatsApp) - Fora da transação para evitar rollback se falhar
       const recipientEmail = order.buyerEmail || order.cliente?.email;
