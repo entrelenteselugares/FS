@@ -261,33 +261,59 @@ export default function ClienteArea() {
           );
         })()}
 
-        {/* Header */}
-        <div className="border-b border-theme-border/60 pb-6 md:pb-10 space-y-2 md:space-y-3">
-          <h1 className="text-3xl md:text-5xl font-heading font-black text-theme-text uppercase tracking-tighter italic leading-none">
-            Minhas Memórias
-          </h1>
-          <div className="flex items-center gap-3">
-            <div className="h-1 w-8 md:w-10 bg-brand-tactical" />
-            <ShieldCheck size={12} className="text-brand-tactical" />
-            <p className="text-[9px] md:text-[10px] font-black text-brand-tactical uppercase tracking-widest italic">{user?.nome || "Área Exclusiva"}</p>
+        {/* Header Section */}
+        <div className="relative border-b border-theme-border/60 pb-8 md:pb-12 space-y-4 md:space-y-6">
+          <div className="absolute -top-10 -left-10 w-40 h-40 bg-brand-tactical/5 blur-3xl rounded-full" />
+          
+          <div className="space-y-1 relative z-10">
+            <div className="flex items-center gap-3 mb-2">
+              <div className="h-0.5 w-12 bg-brand-tactical" />
+              <p className="text-[10px] font-black text-brand-tactical uppercase tracking-[0.5em] italic">Central de Arquivos</p>
+            </div>
+            <h1 className="text-4xl md:text-7xl font-heading font-black text-white uppercase tracking-tighter italic leading-[0.9]">
+              Minhas Memórias
+            </h1>
+          </div>
+          
+          <div className="flex items-center gap-4 relative z-10">
+            <div className="flex items-center gap-2 px-3 py-1.5 bg-brand-tactical/10 border border-brand-tactical/30">
+              <ShieldCheck size={12} className="text-brand-tactical" />
+              <p className="text-[10px] font-black text-brand-tactical uppercase tracking-widest italic">{user?.nome || "Área Exclusiva"}</p>
+            </div>
+            <div className="h-px flex-1 bg-gradient-to-r from-theme-border/60 to-transparent" />
           </div>
         </div>
 
         {/* KPI Bar */}
         {!loading && pedidos.length > 0 && (
-          <div className="grid grid-cols-2 md:grid-cols-4 gap-px bg-theme-border/20 border border-theme-border/20">
+          <div className="grid grid-cols-1 md:grid-cols-4 gap-4 md:gap-6 animate-in fade-in slide-in-from-top-4 duration-1000 delay-300">
             {[
-              { label: "Total Adquiridos", value: pedidos.length, icon: <Image size={12} /> },
-              { label: "Acesso Ativo", value: aprovados.length, icon: <CheckCircle2 size={12} />, highlight: true },
-              { label: "Aguardando", value: pendentes.length, icon: <Clock size={12} /> },
-              { label: "Créditos Reward", value: formatCurrency(user?.rewardCredits || 0), icon: <ShoppingBag size={12} />, isCash: true },
-            ].map(m => (
-              <div key={m.label} className="bg-theme-bg-muted/40 p-4 md:p-6 space-y-2 md:space-y-3 group hover:bg-theme-bg-muted/60 transition-all">
-                <div className="flex items-center gap-2">
-                  <div className={`p-1.5 ${m.highlight ? 'bg-brand-tactical text-brand-text' : 'bg-theme-border/40 text-theme-muted'}`}>{m.icon}</div>
-                  <p className="text-[8px] md:text-[9px] font-black text-theme-muted uppercase tracking-[0.2em]">{m.label}</p>
+              { label: "Total Adquiridos", value: pedidos.length, icon: <Image size={16} /> },
+              { label: "Acesso Ativo", value: aprovados.length, icon: <CheckCircle2 size={16} />, highlight: true },
+              { label: "Aguardando", value: pendentes.length, icon: <Clock size={16} /> },
+              { label: "Créditos Reward", value: formatCurrency(user?.rewardCredits || 0), icon: <ShoppingBag size={16} />, isCash: true },
+            ].map((m, idx) => (
+              <div 
+                key={m.label} 
+                className={`relative overflow-hidden p-6 md:p-8 border transition-all duration-500 group ${
+                  m.highlight ? 'bg-brand-tactical/5 border-brand-tactical/30' : 'bg-theme-bg-muted/10 border-theme-border/40 hover:border-theme-border/80'
+                }`}
+                style={{ animationDelay: `${idx * 150}ms` }}
+              >
+                <div className="absolute top-0 right-0 w-24 h-24 bg-gradient-to-br from-white/5 to-transparent rotate-45 translate-x-12 -translate-y-12" />
+                <div className="relative z-10 space-y-4">
+                  <div className="flex items-center gap-3">
+                    <div className={`p-2 ${m.highlight ? 'bg-brand-tactical text-black' : 'bg-zinc-800 text-zinc-400'}`}>
+                      {m.icon}
+                    </div>
+                    <p className="text-[10px] font-black text-zinc-500 uppercase tracking-widest">{m.label}</p>
+                  </div>
+                  <p className={`text-3xl md:text-4xl font-heading font-black italic tracking-tighter leading-none ${
+                    m.highlight || m.isCash ? 'text-brand-tactical' : 'text-white'
+                  }`}>
+                    {m.value}
+                  </p>
                 </div>
-                <p className={`text-2xl md:text-3xl font-heading font-black italic tracking-tighter ${m.highlight || m.isCash ? 'text-brand-tactical' : 'text-theme-text'}`}>{m.value}</p>
               </div>
             ))}
           </div>
@@ -731,34 +757,46 @@ function EventGroupRow({ group, now, onSelectPedido }: {
       }}
     >
       <div className="flex flex-col lg:flex-row items-stretch gap-4 md:gap-8 p-4 md:p-6 lg:p-8">
-        {/* Thumbnail */}
-        <div className="flex flex-col gap-3">
-          <div className="relative w-full lg:w-48 aspect-square lg:aspect-[4/5] bg-theme-bg overflow-hidden border border-theme-border/20 shadow-inner">
+        {/* Thumbnail Section */}
+        <div className="flex flex-col gap-4">
+          <div className="relative w-full lg:w-56 aspect-[3/4] bg-zinc-950 overflow-hidden border border-theme-border/40 group-hover:border-brand-tactical/40 transition-colors shadow-2xl">
             {event.coverPhotoUrl ? (
               <img 
                 src={event.coverPhotoUrl.toString().trim().replace(/\s/g, '')} 
                 alt="" 
-                className={`w-full h-full object-cover transition-all duration-1000 group-hover:scale-110 ${hasAprovado ? 'grayscale-0' : 'grayscale brightness-50'}`} 
+                className={`w-full h-full object-cover transition-all duration-1000 group-hover:scale-110 ${hasAprovado ? 'grayscale-0 brightness-110' : 'grayscale brightness-40 blur-[2px]'}`} 
               />
             ) : (
-              <div className="w-full h-full flex items-center justify-center bg-theme-bg-muted/40">
-                <Image size={24} className="text-theme-muted/20" />
+              <div className="w-full h-full flex items-center justify-center bg-zinc-900">
+                <Image size={32} className="text-zinc-800" />
               </div>
             )}
             
-            {isExpiringSoon && (
-              <div className="absolute inset-x-0 bottom-0 bg-amber-500 text-theme-text text-[8px] font-black uppercase tracking-widest py-2 text-center">
-                {daysLeft} dias restantes
+            {/* Tactical Overlays */}
+            <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-transparent to-transparent pointer-events-none" />
+            
+            {!hasAprovado && (
+              <div className="absolute inset-0 flex flex-col items-center justify-center gap-3 bg-black/40 backdrop-blur-[1px]">
+                 <div className="p-3 bg-black/80 border border-white/10 rounded-full">
+                   <Clock size={20} className="text-amber-500 animate-pulse" />
+                 </div>
+                 <p className="text-[9px] font-black text-white uppercase tracking-[0.3em]">Acesso Bloqueado</p>
               </div>
             )}
 
-            {!hasAprovado && (
-              <div className="absolute inset-0 flex items-center justify-center bg-black/40 backdrop-blur-[2px]">
-                <div className="px-3 py-1 bg-black/60 border border-theme-border text-[8px] font-black text-theme-text uppercase tracking-widest">
-                  Acesso Bloqueado
-                </div>
+            {isExpiringSoon && (
+              <div className="absolute top-4 right-4 px-2 py-1 bg-amber-500 text-black text-[8px] font-black uppercase tracking-widest">
+                Expira em {daysLeft}d
               </div>
             )}
+            
+            <div className="absolute bottom-4 left-4 right-4 flex justify-between items-center z-10">
+               <p className="text-[9px] font-black text-zinc-400 uppercase tracking-widest italic">{event.city || "Digital"}</p>
+               <div className="flex gap-1">
+                 {event.temFoto && <div className="w-1 h-1 rounded-full bg-brand-tactical" />}
+                 {event.temVideo && <div className="w-1 h-1 rounded-full bg-emerald-400" />}
+               </div>
+            </div>
           </div>
         </div>
 
@@ -788,36 +826,55 @@ function EventGroupRow({ group, now, onSelectPedido }: {
               </div>
             </div>
 
-            {/* Jornada */}
-            <div className="p-5 bg-theme-bg/40 border-l-2 border-brand-tactical shadow-lg shadow-black/10 relative overflow-hidden">
-               <p className="text-[9px] font-black text-brand-tactical uppercase tracking-widest mb-1">Status da Jornada</p>
-               <p className="text-[12px] text-theme-text font-medium leading-relaxed">
-                  {getStatusMessage(event.dataEvento)}
-               </p>
+            {/* Tactical Status Card */}
+            <div className="relative p-6 bg-zinc-900/40 border border-theme-border/30 overflow-hidden group/jornada">
+               <div className="absolute top-0 left-0 w-1 h-full bg-brand-tactical opacity-50 group-hover/jornada:opacity-100 transition-opacity" />
+               <div className="relative z-10 space-y-2">
+                 <div className="flex items-center gap-3">
+                    <Zap size={12} className="text-brand-tactical" />
+                    <p className="text-[10px] font-black text-brand-tactical uppercase tracking-widest italic">Status da Operação</p>
+                 </div>
+                 <p className="text-sm md:text-base text-zinc-300 font-medium leading-relaxed italic">
+                    "{getStatusMessage(event.dataEvento)}"
+                 </p>
+               </div>
+               <div className="absolute top-0 right-0 p-4 opacity-5">
+                  <Clock size={60} />
+               </div>
             </div>
 
-            {/* List of Payments/Orders */}
-            <div className="space-y-3">
-              <p className="text-[9px] font-black text-theme-muted uppercase tracking-[0.3em]">Histórico de Aquisições</p>
+            {/* Order History Grid */}
+            <div className="space-y-4">
+              <div className="flex items-center gap-3">
+                 <div className="h-px w-6 bg-zinc-800" />
+                 <p className="text-[9px] font-black text-zinc-500 uppercase tracking-[0.3em]">Histórico de Aquisições</p>
+              </div>
               <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
                 {pedidos.map((p: Pedido) => (
-                  <div 
+                  <button 
                     key={p.id} 
                     onClick={() => onSelectPedido(p)}
-                    className={`flex items-center justify-between p-4 border transition-all cursor-pointer ${
-                      p.hasPaid ? 'border-theme-border/40 bg-theme-bg/20' : 'border-amber-500/30 bg-amber-500/5 hover:border-amber-500'
+                    className={`flex items-center justify-between p-4 border transition-all duration-300 text-left group/order ${
+                      p.hasPaid 
+                        ? 'border-emerald-500/10 bg-emerald-500/5 hover:border-emerald-500/30' 
+                        : 'border-amber-500/20 bg-amber-500/5 hover:border-amber-500/40'
                     }`}
                   >
-                    <div className="min-w-0">
-                      <p className="text-[10px] font-black text-theme-text uppercase tracking-widest truncate">{p.manualType || "Investimento"}</p>
-                      <p className={`text-[8px] font-bold uppercase tracking-widest ${p.hasPaid ? 'text-brand-tactical' : 'text-amber-500'}`}>
-                        {p.hasPaid ? "✓ Pago" : "● Pendente"}
-                      </p>
+                    <div className="min-w-0 flex items-center gap-3">
+                      <div className={`p-2 ${p.hasPaid ? 'bg-emerald-500/10 text-emerald-400' : 'bg-amber-500/10 text-amber-400'}`}>
+                        {p.hasPaid ? <CheckCircle2 size={14} /> : <Clock size={14} />}
+                      </div>
+                      <div className="min-w-0">
+                        <p className="text-[10px] font-black text-white uppercase tracking-widest truncate group-hover/order:text-brand-tactical transition-colors">{p.manualType || "Investimento"}</p>
+                        <p className={`text-[8px] font-black uppercase tracking-widest opacity-60`}>
+                          {p.hasPaid ? "Confirmado" : "Pendente"}
+                        </p>
+                      </div>
                     </div>
-                    <p className="text-sm font-black text-theme-text italic ml-4">
+                    <p className={`text-sm font-black italic ml-4 ${p.hasPaid ? 'text-emerald-400' : 'text-amber-400'}`}>
                       {formatCurrency(p.amount)}
                     </p>
-                  </div>
+                  </button>
                 ))}
               </div>
             </div>
@@ -906,126 +963,219 @@ function PedidoDetalhe({ pedido, loading, onGoToEvent, onChangePrivacy, onToggle
   onToggleVisibility: (id: string, showAlbum?: boolean, showVideo?: boolean) => void;
 }) {
   const navigate = useNavigate();
+  
   return (
-    <div className="flex flex-col bg-theme-bg overflow-hidden">
+    <div className="flex flex-col bg-theme-bg min-h-full overflow-x-hidden">
+      {/* Header Visual */}
+      <div className="relative h-48 md:h-64 bg-zinc-900 overflow-hidden">
+        {pedido.event.coverPhotoUrl ? (
+          <>
+            <img 
+              src={pedido.event.coverPhotoUrl.toString().trim().replace(/\s/g, '')} 
+              alt="" 
+              className="w-full h-full object-cover opacity-40 blur-sm scale-110"
+            />
+            <div className="absolute inset-0 bg-gradient-to-t from-theme-bg via-theme-bg/60 to-transparent" />
+          </>
+        ) : (
+          <div className="absolute inset-0 bg-gradient-to-br from-brand-tactical/20 to-transparent" />
+        )}
+        
+        <div className="absolute bottom-0 left-0 right-0 p-8 space-y-2">
+          <div className="flex items-center gap-2">
+             <div className="h-0.5 w-8 bg-brand-tactical" />
+             <p className="text-[10px] font-black text-brand-tactical uppercase tracking-[0.4em]">Detalhes da Coleção</p>
+          </div>
+          <h3 className="text-3xl md:text-4xl font-heading font-black italic tracking-tighter uppercase text-white leading-tight">
+            {pedido.event.nomeNoivos}
+          </h3>
+          <p className="text-[10px] font-bold text-zinc-400 uppercase tracking-widest">
+            {formatDate(pedido.event.dataEvento)} • {pedido.event.city || pedido.event.location}
+          </p>
+        </div>
+      </div>
 
-      <div className="p-8 space-y-10">
-        {/* Status Card */}
-        {pedido.accessExpiresAt && pedido.hasPaid && (
-          <div className="p-6 bg-brand-tactical/5 border border-brand-tactical/20 space-y-4">
+      <div className="p-8 space-y-12 pb-32">
+        {/* Access Status Card */}
+        <div className="relative group overflow-hidden border border-theme-border/60 bg-theme-bg-muted/5 p-6">
+          <div className="absolute top-0 left-0 w-1 h-full bg-brand-tactical" />
+          <div className="space-y-4">
             <div className="flex items-center justify-between">
               <div className="flex items-center gap-3">
-                <Clock size={16} className="text-brand-tactical" />
-                <p className="text-[10px] font-black text-brand-tactical uppercase tracking-widest italic">Validade do Acesso</p>
+                <ShieldCheck size={16} className="text-brand-tactical" />
+                <p className="text-[10px] font-black text-brand-tactical uppercase tracking-widest italic">Protocolo de Acesso</p>
               </div>
-              <p className="text-[10px] font-black text-theme-text uppercase tracking-widest">
-                {pedido.accessType === "PRIVATE" ? "Acesso Privado" : "Álbum Público"}
+              <span className={`px-3 py-1 text-[8px] font-black uppercase tracking-widest border ${pedido.hasPaid ? 'border-emerald-500/50 text-emerald-400 bg-emerald-500/5' : 'border-amber-500/50 text-amber-400 bg-amber-500/5'}`}>
+                {pedido.hasPaid ? "Acesso Liberado" : "Aguardando Pagamento"}
+              </span>
+            </div>
+            
+            {pedido.hasPaid ? (
+              <div className="space-y-3">
+                <div className="flex items-baseline gap-2">
+                  <p className="text-[10px] text-zinc-500 uppercase font-bold tracking-wider">Válido até:</p>
+                  <p className="text-sm font-black text-white italic">{formatDate(pedido.accessExpiresAt)}</p>
+                </div>
+                <p className="text-[11px] text-zinc-400 leading-relaxed">
+                  Suas memórias estão protegidas e disponíveis para download. O álbum está configurado como <span className="text-white font-bold">{pedido.accessType === 'PRIVATE' ? 'PRIVADO' : 'PÚBLICO'}</span>.
+                </p>
+              </div>
+            ) : (
+              <p className="text-[11px] text-amber-400/80 italic font-medium">
+                Conclua o pagamento para desbloquear os arquivos originais e remover marcas d'água.
               </p>
-            </div>
-            <p className="text-[11px] text-theme-muted leading-relaxed">
-              Este álbum expira em {new Date(pedido.accessExpiresAt).toLocaleDateString("pt-BR")}. 
-              Certifique-se de realizar o download de todos os arquivos antes desta data.
-            </p>
+            )}
           </div>
-        )}
+        </div>
 
-        {/* Visibility Toggles */}
+        {/* Visibility Controls */}
         {pedido.hasPaid && (
-          <div className="space-y-4">
-            <p className="text-[9px] font-black text-theme-muted uppercase tracking-[0.3em]">Gestão de Visibilidade</p>
+          <div className="space-y-6">
+            <div className="flex items-center gap-3">
+               <div className="w-1.5 h-1.5 rounded-full bg-brand-tactical" />
+               <p className="text-[10px] font-black text-theme-text uppercase tracking-[0.3em]">Gestão de Visibilidade</p>
+            </div>
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-              <button 
-                onClick={() => onToggleVisibility(pedido.id, !pedido.showAlbum)}
-                className={`p-4 border text-[10px] font-black uppercase tracking-widest flex items-center justify-between transition-all ${
-                  pedido.showAlbum ? 'border-brand-tactical text-brand-tactical bg-brand-tactical/5' : 'border-theme-border/40 text-theme-muted grayscale'
-                }`}
-              >
-                <span>Álbum Digital</span>
-                {pedido.showAlbum ? <CheckCircle2 size={14} /> : <X size={14} />}
-              </button>
-              <button 
-                onClick={() => onToggleVisibility(pedido.id, undefined, !pedido.showVideo)}
-                className={`p-4 border text-[10px] font-black uppercase tracking-widest flex items-center justify-between transition-all ${
-                  pedido.showVideo ? 'border-brand-tactical text-brand-tactical bg-brand-tactical/5' : 'border-theme-border/40 text-theme-muted grayscale'
-                }`}
-              >
-                <span>Vídeo & Reels</span>
-                {pedido.showVideo ? <CheckCircle2 size={14} /> : <X size={14} />}
-              </button>
+              <VisibilityToggle 
+                label="Álbum Digital" 
+                active={!!pedido.showAlbum} 
+                onClick={() => onToggleVisibility(pedido.id, !pedido.showAlbum)} 
+              />
+              <VisibilityToggle 
+                label="Vídeo & Reels" 
+                active={!!pedido.showVideo} 
+                onClick={() => onToggleVisibility(pedido.id, undefined, !pedido.showVideo)} 
+              />
             </div>
           </div>
         )}
 
-        {/* Content Links */}
+        {/* Media Links */}
         <div className="space-y-6">
-          <p className="text-[9px] font-black text-theme-muted uppercase tracking-[0.3em]">Arquivos Disponíveis</p>
+          <div className="flex items-center gap-3">
+             <div className="w-1.5 h-1.5 rounded-full bg-brand-tactical" />
+             <p className="text-[10px] font-black text-theme-text uppercase tracking-[0.3em]">Arquivos Disponíveis</p>
+          </div>
           
           {loading ? (
-            <div className="py-12 flex justify-center">
-              <div className="w-8 h-8 border-2 border-brand-tactical border-t-transparent rounded-full animate-spin" />
+            <div className="py-20 flex flex-col items-center gap-4">
+              <div className="w-10 h-10 border-2 border-brand-tactical border-t-transparent rounded-full animate-spin" />
+              <p className="text-[9px] font-black text-brand-tactical uppercase tracking-widest animate-pulse">Sincronizando Arquivos...</p>
             </div>
           ) : pedido.hasPaid ? (
-            <div className="space-y-3">
-              {pedido.event.lightroomUrl ? (
-                <a href={pedido.event.lightroomUrl} target="_blank" rel="noreferrer" className="flex items-center justify-between p-6 bg-theme-bg-muted/20 border border-theme-border hover:border-brand-tactical transition-all group">
-                  <div className="flex items-center gap-4">
-                    <div className="p-3 bg-brand-tactical/10 text-brand-tactical"><Image size={18} /></div>
-                    <div>
-                      <p className="text-[12px] font-bold text-theme-text uppercase tracking-widest">Galeria Editorial</p>
-                      <p className="text-[9px] text-theme-muted uppercase tracking-widest">Visualização em Alta Definição</p>
-                    </div>
-                  </div>
-                  <ArrowRight size={16} className="text-theme-muted group-hover:text-brand-tactical transition-colors" />
-                </a>
-              ) : (
-                <div className="p-6 bg-theme-bg-muted/10 border border-theme-border/20 text-theme-muted italic text-[11px]">
-                  Fotos em fase de curadoria e edição final.
-                </div>
-              )}
-
-              {pedido.event.driveUrl ? (
-                <a href={pedido.event.driveUrl} target="_blank" rel="noreferrer" className="flex items-center justify-between p-6 bg-theme-bg-muted/20 border border-theme-border hover:border-brand-tactical transition-all group">
-                  <div className="flex items-center gap-4">
-                    <div className="p-3 bg-brand-tactical/10 text-brand-tactical text-theme-text">🎬</div>
-                    <div>
-                      <p className="text-[12px] font-bold text-theme-text uppercase tracking-widest">Vídeo & Reels</p>
-                      <p className="text-[9px] text-theme-muted uppercase tracking-widest">Download via Google Drive</p>
-                    </div>
-                  </div>
-                  <ArrowRight size={16} className="text-theme-muted group-hover:text-brand-tactical transition-colors" />
-                </a>
-              ) : (pedido.event.temVideo || pedido.event.temReels) && (
-                <div className="p-6 bg-theme-bg-muted/10 border border-theme-border/20 text-theme-muted italic text-[11px]">
-                  Vídeos em fase de finalização técnica.
-                </div>
-              )}
+            <div className="grid grid-cols-1 gap-4">
+              <MediaActionCard 
+                icon={<Image size={20} />}
+                title="Galeria Editorial"
+                subtitle="Visualização & Download HD"
+                url={pedido.event.lightroomUrl}
+                disabled={!pedido.event.lightroomUrl}
+                emptyText="Fotos em fase de curadoria técnica."
+              />
+              <MediaActionCard 
+                icon={<Play size={20} />}
+                title="Vídeo & Reels"
+                subtitle="Download via Cloud Drive"
+                url={pedido.event.driveUrl}
+                disabled={!pedido.event.driveUrl}
+                emptyText={(pedido.event.temVideo || pedido.event.temReels) ? "Vídeos em fase de finalização." : "Este pacote não inclui vídeo."}
+              />
             </div>
           ) : (
-            <div className="p-10 text-center border border-dashed border-theme-border/40 space-y-6">
-              <p className="text-[11px] text-theme-muted uppercase tracking-[0.2em] leading-relaxed">
-                O acesso aos arquivos é liberado imediatamente após a confirmação do pagamento.
-              </p>
-              <button onClick={() => navigate(`/checkout?orderId=${pedido.id}`)} className="px-10 py-4 bg-brand-tactical text-brand-text text-[10px] font-black uppercase tracking-[0.4em] hover:brightness-110 shadow-lg shadow-brand-tactical/20 transition-all">
-                Pagar Agora
+            <div className="p-12 text-center border border-dashed border-theme-border/40 space-y-8 bg-brand-tactical/5">
+              <ShoppingBag size={40} className="mx-auto text-brand-tactical opacity-30" />
+              <div className="space-y-3">
+                <p className="text-xs font-black text-white uppercase tracking-widest italic">Acesso Restrito</p>
+                <p className="text-[11px] text-zinc-500 uppercase font-bold tracking-widest leading-relaxed">
+                  Liberação imediata após a confirmação do pagamento.
+                </p>
+              </div>
+              <button 
+                onClick={() => navigate(`/checkout?orderId=${pedido.id}`)}
+                className="w-full py-5 bg-brand-tactical text-black text-xs font-black uppercase tracking-[0.4em] hover:brightness-110 transition-all shadow-xl shadow-brand-tactical/20 italic"
+              >
+                EFETUAR PAGAMENTO
               </button>
             </div>
           )}
         </div>
 
-        {/* Quick Actions */}
-        <div className="pt-10 border-t border-theme-border/40 grid grid-cols-2 gap-4">
-          <button onClick={onGoToEvent} className="px-6 py-4 border border-theme-border text-[9px] font-black uppercase tracking-widest text-theme-text hover:border-brand-tactical transition-all">
-            Ir para Álbum
+        {/* Bottom Actions */}
+        <div className="pt-8 border-t border-theme-border/40 grid grid-cols-2 gap-4">
+          <button 
+            onClick={onGoToEvent} 
+            className="group px-6 py-5 border border-theme-border text-[9px] font-black uppercase tracking-[0.3em] text-white hover:border-brand-tactical hover:text-brand-tactical transition-all flex items-center justify-center gap-3 italic"
+          >
+            VOLTAR AO ÁLBUM <ArrowRight size={14} className="group-hover:translate-x-1 transition-transform" />
           </button>
           <button 
             onClick={onChangePrivacy} 
             disabled={!pedido.hasPaid} 
-            className="px-6 py-4 border border-theme-border text-[9px] font-black uppercase tracking-widest text-theme-text hover:border-red-400 hover:text-red-400 transition-all disabled:opacity-30 disabled:cursor-not-allowed"
+            className="px-6 py-5 border border-theme-border text-[9px] font-black uppercase tracking-[0.3em] text-white hover:border-red-500 hover:text-red-500 transition-all disabled:opacity-20 disabled:cursor-not-allowed italic"
           >
-            Privacidade
+            PRIVACIDADE
           </button>
         </div>
       </div>
     </div>
+  );
+}
+
+function VisibilityToggle({ label, active, onClick }: { label: string; active: boolean; onClick: () => void }) {
+  return (
+    <button 
+      onClick={onClick}
+      className={`group relative p-5 border transition-all flex items-center justify-between overflow-hidden ${
+        active 
+          ? 'border-brand-tactical/40 bg-brand-tactical/5 text-brand-tactical shadow-lg shadow-brand-tactical/5' 
+          : 'border-theme-border/40 bg-zinc-900/50 text-zinc-500 grayscale'
+      }`}
+    >
+      {active && <div className="absolute top-0 right-0 w-8 h-8 bg-brand-tactical/10 rotate-45 translate-x-4 -translate-y-4" />}
+      <span className="text-[10px] font-black uppercase tracking-widest italic">{label}</span>
+      {active ? <CheckCircle2 size={16} strokeWidth={3} /> : <X size={16} strokeWidth={3} className="opacity-40" />}
+    </button>
+  );
+}
+
+function MediaActionCard({ icon, title, subtitle, url, disabled, emptyText }: { 
+  icon: React.ReactNode; 
+  title: string; 
+  subtitle: string; 
+  url?: string | null; 
+  disabled?: boolean;
+  emptyText: string;
+}) {
+  if (disabled) {
+    return (
+      <div className="p-6 bg-zinc-900/40 border border-theme-border/30 text-zinc-600 flex items-center gap-5">
+        <div className="p-3 bg-zinc-900 border border-theme-border/20 opacity-40">{icon}</div>
+        <div>
+          <p className="text-[11px] font-black uppercase tracking-widest mb-1 italic">{title}</p>
+          <p className="text-[10px] font-bold italic opacity-60">{emptyText}</p>
+        </div>
+      </div>
+    );
+  }
+
+  return (
+    <a 
+      href={url || '#'} 
+      target="_blank" 
+      rel="noreferrer" 
+      className="group relative flex items-center justify-between p-6 bg-theme-bg-muted/10 border border-theme-border/60 hover:border-brand-tactical hover:bg-brand-tactical/5 transition-all duration-500 overflow-hidden"
+    >
+      <div className="absolute inset-0 bg-gradient-to-r from-brand-tactical/0 to-brand-tactical/5 translate-x-[-100%] group-hover:translate-x-0 transition-transform duration-700" />
+      <div className="relative z-10 flex items-center gap-5">
+        <div className="p-3 bg-brand-tactical/10 text-brand-tactical group-hover:bg-brand-tactical group-hover:text-black transition-all duration-500">
+          {icon}
+        </div>
+        <div>
+          <p className="text-[12px] font-black text-white uppercase tracking-widest italic group-hover:text-brand-tactical transition-colors">{title}</p>
+          <p className="text-[9px] text-zinc-500 uppercase font-bold tracking-[0.2em]">{subtitle}</p>
+        </div>
+      </div>
+      <ArrowRight size={18} className="relative z-10 text-zinc-700 group-hover:text-brand-tactical group-hover:translate-x-2 transition-all duration-500" />
+    </a>
   );
 }
