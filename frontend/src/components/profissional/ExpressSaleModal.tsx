@@ -44,7 +44,8 @@ export function ExpressSaleModal({ network, onClose, onSuccess, onError }: Expre
     });
   }, []);
 
-  const addToCart = (name: string, price: number) => {
+  const addToCart = (name: string, rawPrice: number | string) => {
+    const price = Number(rawPrice);
     const newItem = { id: Math.random().toString(36).substr(2, 9), name, price };
     setCartItems(prev => [...prev, newItem]);
     setForm(prev => ({ ...prev, amount: prev.amount + price }));
@@ -249,7 +250,7 @@ export function ExpressSaleModal({ network, onClose, onSuccess, onError }: Expre
                         <div key={item.id} className="flex justify-between items-center p-3 bg-theme-bg-muted/50 border border-theme-border/40 group">
                           <div className="flex flex-col">
                             <span className="text-[10px] font-black text-theme-text uppercase tracking-tight">{item.name}</span>
-                            <span className="text-[11px] font-black text-brand-tactical italic">R$ {item.price.toFixed(2)}</span>
+                            <span className="text-[11px] font-black text-brand-tactical italic">R$ {Number(item.price).toFixed(2)}</span>
                           </div>
                           <button onClick={() => removeFromCart(item.id, item.price)} className="text-theme-muted hover:text-red-500 transition-colors opacity-0 group-hover:opacity-100 p-2">
                             <X size={14} />
@@ -262,7 +263,7 @@ export function ExpressSaleModal({ network, onClose, onSuccess, onError }: Expre
                   <div className="pt-4 flex justify-between items-end border-t border-theme-border/60">
                     <div className="space-y-1">
                       <span className="text-[9px] font-black text-theme-muted uppercase tracking-widest block opacity-40">Total do Cupom</span>
-                      <div className="text-3xl font-heading font-black text-brand-tactical italic leading-none">R$ {form.amount.toFixed(2).replace(".", ",")}</div>
+                      <div className="text-3xl font-heading font-black text-brand-tactical italic leading-none">R$ {Number(form.amount).toFixed(2).replace(".", ",")}</div>
                     </div>
                     {cartItems.length > 0 && (
                       <button onClick={() => setStep(3)} className="bg-brand-tactical text-zinc-950 px-6 py-3 text-[10px] font-black uppercase tracking-[0.2em] shadow-lg active:scale-95 transition-all">AVANÇAR</button>
