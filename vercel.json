@@ -1,10 +1,5 @@
 {
   "version": 2,
-  "functions": {
-    "api/server.js": {
-      "includeFiles": "api/server.js"
-    }
-  },
   "rewrites": [
     {
       "source": "/api/(.*)",
