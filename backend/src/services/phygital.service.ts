@@ -163,4 +163,33 @@ export class PhygitalService {
       data: { status: status as any }
     });
   }
+
+  /**
+   * Converte um item de pedido de impressão em uma entrada na fila do Agente IoT.
+   */
+  static async createQueueEntryFromOrder(order: any, photos: string[]) {
+    try {
+      const results = [];
+      for (const photoUrl of photos) {
+        const referenceCode = `PRT-${order.id.substring(order.id.length - 4).toUpperCase()}-${Math.floor(1000 + Math.random() * 9000)}`;
+        
+        const print = await prisma.phygitalPrint.create({
+          data: {
+            eventId: order.eventId,
+            referenceCode,
+            imageUrl: photoUrl,
+            customerName: order.cliente?.nome || order.buyerEmail || "Cliente Print",
+            customerPhone: order.buyerWhatsapp || "",
+            customerCep: (order.shippingAddress as any)?.cep || "LOCAL",
+            status: 'PENDING_PRINT'
+          }
+        });
+        results.push(print);
+      }
+      return results;
+    } catch (error) {
+      console.error("[PhygitalService] Erro ao criar entrada de fila:", error);
+      throw error;
+    }
+  }
 }

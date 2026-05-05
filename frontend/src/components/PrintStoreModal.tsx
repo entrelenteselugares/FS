@@ -3,7 +3,24 @@ import * as reactWindow from "react-window";
 // @ts-ignore
 const FixedSizeList = (reactWindow.FixedSizeList || reactWindow.default?.FixedSizeList || reactWindow.default) as any;
 import { API } from "../lib/api";
-import { T, BtnPrimary, BtnSecondary } from "../lib/theme";
+import { T, BtnPrimary, BtnSecondary, ModalOverlay, ModalContent, FieldLabel, FieldInput, FieldSelect } from "../lib/theme";
+import { motion, AnimatePresence } from "framer-motion";
+import { 
+  Package, 
+  Truck, 
+  MapPin, 
+  Camera, 
+  Trash2, 
+  ShoppingCart, 
+  ChevronLeft, 
+  Plus, 
+  Minus,
+  Check,
+  X,
+  CreditCard,
+  Phone,
+  Image as ImageIcon
+} from "lucide-react";
 
 interface PrintProduct {
   id: string;
@@ -18,18 +35,17 @@ interface PrintProduct {
 const CATEGORY_LABELS: Record<string, string> = {
   ALBUM:       "Álbuns Encadernados",
   ALBUM_30X40: "Álbuns 30×40",
-  QUADROS:     "Quadros & Cadernos",
-  REVELACAO:   "Revelação de Fotos",
-  ACESSORIOS:  "Acessórios",
+  QUADROS:     "Quadros & Telas",
+  REVELACAO:   "Revelação Fine Art",
+  ACESSORIOS:  "Acessórios & Mimos",
 };
 
-// Category representative images (illustration)
-const CATEGORY_ICONS: Record<string, string> = {
-  ALBUM:       "📚",
-  ALBUM_30X40: "🖼️",
-  QUADROS:     "🎨",
-  REVELACAO:   "🖨️",
-  ACESSORIOS:  "✨",
+const CATEGORY_ICONS: Record<string, React.ReactNode> = {
+  ALBUM:       <Package size={24} />,
+  ALBUM_30X40: <Package size={24} />,
+  QUADROS:     <ImageIcon size={24} />,
+  REVELACAO:   <Camera size={24} />,
+  ACESSORIOS:  <Plus size={24} />,
 };
 
 interface EventMedia {
@@ -71,7 +87,7 @@ function AlbumPhotoGrid({ medias, selectedAlbumPhotos, toggleAlbumPhoto }: {
     return () => observer.disconnect();
   }, []);
 
-  const columnCount = Math.max(2, Math.floor(dimensions.width / 110)); // 100px + gap
+  const columnCount = Math.max(2, Math.floor(dimensions.width / 110));
   const rowCount = Math.ceil(medias.length / columnCount);
   const itemSize = dimensions.width / columnCount;
 
@@ -86,24 +102,21 @@ function AlbumPhotoGrid({ medias, selectedAlbumPhotos, toggleAlbumPhoto }: {
           <div 
             key={media.id} 
             onClick={() => toggleAlbumPhoto(media.url)}
+            className={`relative cursor-pointer transition-all duration-300 border-2 ${isSelected ? "border-brand-tactical" : "border-transparent"}`}
             style={{ 
               width: itemSize - 8,
               height: itemSize - 8,
               margin: 4,
-              position: "relative", 
-              cursor: "pointer",
-              border: `2px solid ${isSelected ? T.brand : "transparent"}`,
-              transition: "all 0.15s ease",
               flexShrink: 0
             }}
           >
             <img 
               src={media.url} 
               alt="" 
-              style={{ width: "100%", height: "100%", objectFit: "cover" }} 
+              className="w-full h-full object-cover"
             />
             {isSelected && (
-              <div style={{ position: "absolute", top: 4, right: 4, background: T.brand, color: "#000", borderRadius: "50%", width: 18, height: 18, display: "flex", alignItems: "center", justifyContent: "center", fontSize: 10, fontWeight: 900 }}>✓</div>
+              <div className="absolute top-2 right-2 bg-brand-tactical text-black w-5 h-5 flex items-center justify-center text-[10px] font-black">✓</div>
             )}
           </div>
         );
@@ -118,7 +131,7 @@ function AlbumPhotoGrid({ medias, selectedAlbumPhotos, toggleAlbumPhoto }: {
   };
 
   return (
-    <div ref={containerRef} style={{ width: "100%", height: "100%" }}>
+    <div ref={containerRef} className="w-full h-full bg-theme-bg-muted/20">
       <FixedSizeList
         height={dimensions.height}
         itemCount={rowCount}
@@ -147,7 +160,8 @@ export function PrintStoreModal({ eventId, eventTitle, medias = [], unlockedMedi
   const [filePreviews, setFilePreviews] = useState<string[]>([]);
   const [activeCategory, setActiveCategory] = useState<string>("");
   const scrollRef = useRef<HTMLDivElement>(null);
-  const [step, setStep] = useState<"catalog" | "details" | "processing">("catalog");
+  const [step, setStep] = useState<"catalog" | "details" | "delivery" | "processing">("catalog");
+  const [deliveryMethod, setDeliveryMethod] = useState<"LOCAL_PICKUP" | "SHIPPING">("LOCAL_PICKUP");
   const [notes, setNotes] = useState("");
   const [submitting, setSubmitting] = useState(false);
   const [error, setError] = useState("");
@@ -182,8 +196,6 @@ export function PrintStoreModal({ eventId, eventTitle, medias = [], unlockedMedi
 
   const handleFileSelect = (e: React.ChangeEvent<HTMLInputElement>) => {
     const files = Array.from(e.target.files || []);
-    
-    // Check limit
     if (selectedProduct?.maxPhotos) {
       const currentTotal = selectedFiles.length + selectedAlbumPhotos.length;
       if (currentTotal + files.length > selectedProduct.maxPhotos) {
@@ -207,7 +219,6 @@ export function PrintStoreModal({ eventId, eventTitle, medias = [], unlockedMedi
 
   const toggleAlbumPhoto = (url: string) => {
     const isSelected = selectedAlbumPhotos.includes(url);
-    
     if (!isSelected && selectedProduct?.maxPhotos) {
       const currentTotal = selectedFiles.length + selectedAlbumPhotos.length;
       if (currentTotal >= selectedProduct.maxPhotos) {
@@ -215,14 +226,10 @@ export function PrintStoreModal({ eventId, eventTitle, medias = [], unlockedMedi
         return;
       }
     }
-
-    setSelectedAlbumPhotos(prev => 
-      isSelected ? prev.filter(u => u !== url) : [...prev, url]
-    );
+    setSelectedAlbumPhotos(prev => isSelected ? prev.filter(u => u !== url) : [...prev, url]);
   };
 
   const totalPhotoCount = selectedFiles.length + selectedAlbumPhotos.length;
-
   const totalPrice = selectedProduct ? selectedProduct.finalPrice * quantity : 0;
 
   const handleCheckout = async () => {
@@ -230,7 +237,6 @@ export function PrintStoreModal({ eventId, eventTitle, medias = [], unlockedMedi
     setSubmitting(true);
     setError("");
     try {
-      // Cria um pedido de produto impresso via API
       const { data } = await API.post("/orders/print", {
         eventId,
         productId: selectedProduct.id,
@@ -238,8 +244,8 @@ export function PrintStoreModal({ eventId, eventTitle, medias = [], unlockedMedi
         notes,
         fileCount: totalPhotoCount,
         albumPhotos: selectedAlbumPhotos,
+        deliveryMethod
       });
-      // Redirect to checkout with the order
       window.location.href = `/checkout?orderId=${data.orderId}`;
     } catch {
       setError("Erro ao processar pedido. Tente novamente.");
@@ -249,342 +255,291 @@ export function PrintStoreModal({ eventId, eventTitle, medias = [], unlockedMedi
 
   const handleWhatsAppCheckout = () => {
     if (!selectedProduct) return;
-    const msg = `Olá! Quero encomendar:\n\n*Produto:* ${selectedProduct.name}\n*Quantidade:* ${quantity}\n*Evento:* ${eventTitle}\n*Total:* R$ ${totalPrice.toFixed(2).replace(".", ",")}\n\n${notes ? `*Obs:* ${notes}` : ""}`;
+    const msg = `Olá! Quero encomendar:\n\n*Produto:* ${selectedProduct.name}\n*Quantidade:* ${quantity}\n*Entrega:* ${deliveryMethod === 'LOCAL_PICKUP' ? 'Retirada no Ponto' : 'Envio para Endereço'}\n*Evento:* ${eventTitle}\n*Total:* R$ ${totalPrice.toFixed(2).replace(".", ",")}\n\n${notes ? `*Obs:* ${notes}` : ""}`;
     window.open(`https://wa.me/5519997843817?text=${encodeURIComponent(msg)}`, "_blank");
   };
 
-  useEffect(() => {
-    if (scrollRef.current) {
-      scrollRef.current.scrollTop = 0;
-    }
-  }, [activeCategory, step]);
-
   return (
-    <div style={{ position: "fixed", inset: 0, zIndex: 1000, display: "flex", alignItems: "center", justifyContent: "center", padding: "16px" }}>
-      {/* Backdrop */}
-      <div onClick={onClose} style={{ position: "absolute", inset: 0, background: "rgba(0,0,0,0.92)", backdropFilter: "blur(12px)" }} />
+    <AnimatePresence>
+      <motion.div 
+        initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}
+        className="fixed inset-0 z-[500] flex items-center justify-center p-4 lg:p-10"
+      >
+        <div onClick={onClose} className="absolute inset-0 bg-black/95 backdrop-blur-3xl" />
 
-      {/* Modal */}
-      <div style={{
-        position: "relative",
-        width: "100%",
-        maxWidth: 760,
-        maxHeight: "90vh",
-        overflowY: "auto",
-        background: T.bg,
-        border: `1px solid ${T.border}`,
-        animation: "fadeUp 0.3s ease",
-        display: "flex",
-        flexDirection: "column",
-      }}>
-        {/* Header */}
-        <div style={{ padding: "24px 28px", borderBottom: `1px solid ${T.border}`, display: "flex", alignItems: "center", justifyContent: "space-between", flexShrink: 0 }}>
-          <div>
-            <p style={{ fontSize: 9, letterSpacing: 4, color: T.brand, textTransform: "uppercase", fontWeight: 900, margin: "0 0 4px" }}>Eternize no Papel</p>
-            <h2 style={{ fontFamily: T.fontD, fontSize: 22, fontWeight: 900, color: T.text, textTransform: "uppercase", margin: 0, lineHeight: 1 }}>Loja de Impressões</h2>
-          </div>
-          <button onClick={onClose} style={{ background: "none", border: "none", color: T.text3, cursor: "pointer", fontSize: 20, lineHeight: 1, padding: 8 }}>✕</button>
-        </div>
+        <motion.div 
+          initial={{ y: 50, scale: 0.95 }} animate={{ y: 0, scale: 1 }} exit={{ y: 50, scale: 0.95 }}
+          className="relative w-full max-w-5xl h-[90vh] bg-theme-bg border border-theme-border flex flex-col lg:flex-row overflow-hidden shadow-[0_50px_100px_-20px_rgba(0,0,0,0.8)]"
+        >
+          {/* Lado Esquerdo: Navegação/Status (Apenas Mobile/Tablet fixo ou Desktop lateral) */}
+          <div className="w-full lg:w-[320px] bg-theme-bg-muted/40 border-r border-theme-border flex flex-col shrink-0">
+             <div className="p-8 border-b border-theme-border">
+                <p className="text-[10px] font-black text-brand-tactical uppercase tracking-[0.5em] italic mb-3">Eternize no Papel</p>
+                <h2 className="text-3xl font-heading font-black text-theme-text uppercase tracking-tighter leading-none italic">Print Store</h2>
+             </div>
 
-        <div style={{ padding: "24px 28px", flex: 1 }}>
-
-          {/* ── STEP 1: CATALOG ── */}
-          {step === "catalog" && (
-            <>
-              {loading ? (
-                <div style={{ textAlign: "center", padding: "60px 0", color: T.text3, fontSize: 12 }}>
-                  Carregando catálogo...
-                </div>
-              ) : error ? (
-                <div style={{ textAlign: "center", padding: "40px 0", color: "#ef4444", fontSize: 12 }}>{error}</div>
-              ) : (
-                <>
-                  {/* Category tabs */}
-                  <div style={{ display: "flex", gap: 8, marginBottom: 24, flexWrap: "wrap" }}>
-                    {categories.map(cat => (
-                      <button
-                        key={cat}
-                        onClick={() => setActiveCategory(cat)}
-                        style={{
-                          padding: "8px 16px",
-                          fontSize: 9,
-                          fontWeight: 900,
-                          textTransform: "uppercase",
-                          letterSpacing: 2,
-                          background: activeCategory === cat ? T.brand : "transparent",
-                          color: activeCategory === cat ? "#000" : T.text3,
-                          border: `1px solid ${activeCategory === cat ? T.brand : T.border}`,
-                          cursor: "pointer",
-                          transition: "all 0.15s ease",
-                        }}
-                      >
-                        {CATEGORY_ICONS[cat]} {CATEGORY_LABELS[cat] || cat}
-                      </button>
-                    ))}
+             <div className="flex-1 overflow-y-auto p-6 space-y-4">
+                <p className="text-[10px] font-black text-theme-text-muted uppercase tracking-[0.2em] mb-6 italic">Protocolo de Seleção</p>
+                
+                {[
+                  { id: 'catalog', label: 'Catálogo', icon: <ShoppingCart size={14} />, status: step === 'catalog' ? 'active' : (step !== 'catalog' ? 'completed' : 'pending') },
+                  { id: 'details', label: 'Configuração', icon: <Plus size={14} />, status: step === 'details' ? 'active' : (step === 'delivery' ? 'completed' : 'pending') },
+                  { id: 'delivery', label: 'Logística', icon: <Truck size={14} />, status: step === 'delivery' ? 'active' : 'pending' },
+                ].map((s, idx) => (
+                  <div key={s.id} className="flex items-center gap-4 group">
+                     <div className={`w-8 h-8 flex items-center justify-center border transition-all ${s.status === 'active' ? 'border-brand-tactical bg-brand-tactical text-black shadow-[0_0_15px_rgba(20,184,166,0.4)]' : (s.status === 'completed' ? 'border-brand-tactical text-brand-tactical' : 'border-theme-border text-theme-text-muted')}`}>
+                        {s.status === 'completed' ? <Check size={14} /> : s.icon}
+                     </div>
+                     <span className={`text-[11px] font-black uppercase tracking-widest italic ${s.status === 'active' ? 'text-theme-text' : 'text-theme-text-muted'}`}>{s.label}</span>
+                     {idx < 2 && <div className="ml-auto w-px h-4 bg-theme-border" />}
                   </div>
+                ))}
 
-                  {/* Product grid */}
-                  <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fill, minmax(200px, 1fr))", gap: 12 }}>
-                    {filteredProducts.map(product => (
-                      <div
-                        key={product.id}
-                        onClick={() => { setSelectedProduct(product); setStep("details"); }}
-                        style={{
-                          border: `1px solid ${T.border}`,
-                          background: T.bgCard,
-                          padding: 0,
-                          cursor: "pointer",
-                          transition: "border-color 0.15s ease, transform 0.15s ease",
-                          overflow: "hidden",
-                        }}
-                        onMouseEnter={e => {
-                          (e.currentTarget as HTMLDivElement).style.borderColor = T.brand;
-                          (e.currentTarget as HTMLDivElement).style.transform = "translateY(-2px)";
-                        }}
-                        onMouseLeave={e => {
-                          (e.currentTarget as HTMLDivElement).style.borderColor = T.border;
-                          (e.currentTarget as HTMLDivElement).style.transform = "translateY(0)";
-                        }}
-                      >
-                        {/* Product visual */}
-                        <div style={{
-                          height: 120,
-                          background: `linear-gradient(135deg, ${T.brand}15, ${T.brand}05)`,
-                          display: "flex",
-                          alignItems: "center",
-                          justifyContent: "center",
-                          fontSize: 48,
-                          borderBottom: `1px solid ${T.border}`,
-                        }}>
-                          {CATEGORY_ICONS[product.category]}
-                        </div>
-                        <div style={{ padding: 14 }}>
-                          <p style={{ fontSize: 11, fontWeight: 900, color: T.text, margin: "0 0 4px", lineHeight: 1.3, textTransform: "uppercase" }}>
-                            {product.name}
-                          </p>
-                          {product.description && (
-                            <p style={{ fontSize: 9, color: T.text3, margin: "0 0 10px", lineHeight: 1.4 }}>{product.description}</p>
-                          )}
-                          <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between" }}>
-                            <span style={{ fontFamily: T.fontD, fontSize: 18, fontWeight: 900, color: T.brand }}>
-                              R$ {product.finalPrice.toFixed(2).replace(".", ",")}
-                            </span>
-                            <span style={{ fontSize: 8, color: T.text3, textTransform: "uppercase" }}>/{product.unit}</span>
-                          </div>
-                        </div>
+                {selectedProduct && (
+                   <div className="pt-10 space-y-6">
+                      <div className="h-px bg-theme-border/40" />
+                      <div className="space-y-2">
+                        <p className="text-[9px] font-black text-brand-tactical uppercase tracking-widest italic">Item Selecionado</p>
+                        <p className="text-sm font-black text-theme-text uppercase italic leading-tight">{selectedProduct.name}</p>
                       </div>
-                    ))}
-                  </div>
+                      <div className="flex items-end justify-between">
+                         <div className="space-y-1">
+                            <p className="text-[9px] font-black text-theme-text-muted uppercase tracking-widest italic">Total Estimado</p>
+                            <p className="text-2xl font-black text-brand-tactical italic tracking-tighter">R$ {totalPrice.toFixed(0)}<span className="text-sm">,00</span></p>
+                         </div>
+                         <div className="text-[10px] font-black text-theme-text-muted uppercase italic">x{quantity}</div>
+                      </div>
+                   </div>
+                )}
+             </div>
 
-                  {filteredProducts.length === 0 && (
-                    <div style={{ textAlign: "center", padding: "40px 0", color: T.text3, fontSize: 12 }}>
-                      Nenhum produto disponível nesta categoria.
+             <div className="p-8 border-t border-theme-border bg-brand-tactical/5">
+                <button onClick={onClose} className="w-full py-4 border border-theme-border text-[10px] font-black text-theme-text-muted uppercase tracking-widest hover:text-white hover:border-white transition-all italic">Fechar Loja</button>
+             </div>
+          </div>
+
+          {/* Lado Direito: Conteúdo Dinâmico */}
+          <div className="flex-1 flex flex-col bg-theme-bg overflow-hidden relative">
+             <div className="flex-1 overflow-y-auto p-8 lg:p-14 scrollbar-hide">
+                {step === 'catalog' && (
+                  <div className="space-y-12 max-w-4xl mx-auto">
+                    <div className="flex flex-wrap gap-4">
+                      {categories.map(cat => (
+                        <button
+                          key={cat}
+                          onClick={() => setActiveCategory(cat)}
+                          className={`px-8 py-3 text-[10px] font-black uppercase tracking-[0.2em] transition-all italic ${activeCategory === cat ? 'bg-brand-tactical text-black shadow-[0_10px_30px_rgba(20,184,166,0.3)]' : 'border border-theme-border text-theme-text-muted hover:border-brand-tactical hover:text-brand-tactical'}`}
+                        >
+                          {CATEGORY_LABELS[cat] || cat}
+                        </button>
+                      ))}
                     </div>
-                  )}
-                </>
-              )}
-            </>
-          )}
 
-          {/* ── STEP 2: PRODUCT DETAILS ── */}
-          {step === "details" && selectedProduct && (
-            <div style={{ display: "flex", flexDirection: "column", gap: 24 }}>
-              {/* Back */}
-              <button
-                onClick={() => setStep("catalog")}
-                style={{ background: "none", border: "none", color: T.brand, cursor: "pointer", fontSize: 11, fontWeight: 900, textTransform: "uppercase", letterSpacing: 2, padding: 0, display: "flex", alignItems: "center", gap: 6, width: "fit-content" }}
-              >
-                ← Voltar ao Catálogo
-              </button>
-
-              {/* Product summary */}
-              <div style={{ display: "flex", gap: 20, padding: 20, background: T.bgCard, border: `1px solid ${T.border}` }}>
-                <div style={{ width: 80, height: 80, background: `${T.brand}15`, display: "flex", alignItems: "center", justifyContent: "center", fontSize: 36, flexShrink: 0 }}>
-                  {CATEGORY_ICONS[selectedProduct.category]}
-                </div>
-                <div>
-                  <p style={{ fontSize: 9, color: T.brand, fontWeight: 900, textTransform: "uppercase", letterSpacing: 2, margin: "0 0 4px" }}>
-                    {CATEGORY_LABELS[selectedProduct.category]}
-                  </p>
-                  <p style={{ fontSize: 14, fontWeight: 900, color: T.text, textTransform: "uppercase", margin: "0 0 4px", lineHeight: 1.2 }}>
-                    {selectedProduct.name}
-                  </p>
-                  {selectedProduct.description && (
-                    <p style={{ fontSize: 11, color: T.text2, margin: 0 }}>{selectedProduct.description}</p>
-                  )}
-                </div>
-              </div>
-
-              {/* Quantity */}
-              <div>
-                <p style={{ fontSize: 9, letterSpacing: 3, color: T.text3, textTransform: "uppercase", fontWeight: 900, margin: "0 0 12px" }}>Quantidade</p>
-                <div style={{ display: "flex", alignItems: "center", gap: 16 }}>
-                  <button
-                    onClick={() => setQuantity(q => Math.max(1, q - 1))}
-                    style={{ width: 40, height: 40, border: `1px solid ${T.border}`, background: T.bgCard, color: T.text, fontSize: 20, cursor: "pointer", display: "flex", alignItems: "center", justifyContent: "center" }}
-                  >−</button>
-                  <span style={{ fontFamily: T.fontD, fontSize: 28, fontWeight: 900, color: T.text, minWidth: 40, textAlign: "center" }}>{quantity}</span>
-                  <button
-                    onClick={() => setQuantity(q => q + 1)}
-                    style={{ width: 40, height: 40, border: `1px solid ${T.border}`, background: T.bgCard, color: T.text, fontSize: 20, cursor: "pointer", display: "flex", alignItems: "center", justifyContent: "center" }}
-                  >+</button>
-                  <div style={{ marginLeft: "auto", textAlign: "right" }}>
-                    <p style={{ fontSize: 9, color: T.text3, margin: "0 0 2px", textTransform: "uppercase" }}>Total</p>
-                    <p style={{ fontFamily: T.fontD, fontSize: 28, fontWeight: 900, color: T.brand, margin: 0 }}>
-                      R$ {totalPrice.toFixed(2).replace(".", ",")}
-                    </p>
-                  </div>
-                </div>
-              </div>
-
-              {/* File upload section */}
-              <div>
-                <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 12 }}>
-                  <p style={{ fontSize: 9, letterSpacing: 3, color: T.text3, textTransform: "uppercase", fontWeight: 900, margin: 0 }}>
-                    Selecione as Fotos ({totalPhotoCount} {selectedProduct.maxPhotos ? `de ${selectedProduct.maxPhotos}` : ""} selecionada{totalPhotoCount !== 1 ? "s" : ""})
-                  </p>
-                  
-                  {(isOwner || availableMedias.length > 0) && (
-                    <div style={{ display: "flex", gap: 4, background: T.bgCard, padding: 4, border: `1px solid ${T.border}` }}>
-                      <button 
-                        onClick={() => setPhotoSource("upload")}
-                        style={{ padding: "4px 8px", fontSize: 8, fontWeight: 900, textTransform: "uppercase", background: photoSource === "upload" ? T.brand : "transparent", color: photoSource === "upload" ? "#000" : T.text3, border: "none", cursor: "pointer" }}
-                      >UPLOAD</button>
-                      <button 
-                        onClick={() => setPhotoSource("album")}
-                        style={{ padding: "4px 8px", fontSize: 8, fontWeight: 900, textTransform: "uppercase", background: photoSource === "album" ? T.brand : "transparent", color: photoSource === "album" ? "#000" : T.text3, border: "none", cursor: "pointer" }}
-                      >DO ÁLBUM</button>
-                    </div>
-                  )}
-
-                  {photoSource === "upload" && (
-                    <button
-                      onClick={() => fileInputRef.current?.click()}
-                      disabled={selectedProduct.maxPhotos ? totalPhotoCount >= selectedProduct.maxPhotos : false}
-                      style={{ 
-                        ...BtnSecondary, 
-                        padding: "8px 16px", 
-                        fontSize: 9, 
-                        color: T.brand, 
-                        borderColor: T.brand,
-                        opacity: (selectedProduct.maxPhotos && totalPhotoCount >= selectedProduct.maxPhotos) ? 0.3 : 1
-                      }}
-                    >
-                      + Adicionar Fotos
-                    </button>
-                  )}
-                </div>
-
-                {photoSource === "upload" ? (
-                  <>
-                    <input
-                      ref={fileInputRef}
-                      type="file"
-                      multiple
-                      accept="image/*"
-                      onChange={handleFileSelect}
-                      style={{ display: "none" }}
-                    />
-
-                    {filePreviews.length > 0 ? (
-                      <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fill, minmax(80px, 1fr))", gap: 8 }}>
-                        {filePreviews.map((src, idx) => (
-                          <div key={idx} style={{ position: "relative", aspectRatio: "1/1" }}>
-                            <img src={src} alt={`foto ${idx + 1}`} style={{ width: "100%", height: "100%", objectFit: "cover", border: `1px solid ${T.border}` }} />
-                            <button
-                              onClick={() => removeFile(idx)}
-                              style={{ position: "absolute", top: 2, right: 2, width: 18, height: 18, borderRadius: "50%", background: "rgba(0,0,0,0.8)", border: "none", color: "#fff", cursor: "pointer", fontSize: 10, display: "flex", alignItems: "center", justifyContent: "center" }}
-                            >✕</button>
-                          </div>
-                        ))}
-                        <div
-                          onClick={() => fileInputRef.current?.click()}
-                          style={{ aspectRatio: "1/1", border: `2px dashed ${T.border}`, display: "flex", alignItems: "center", justifyContent: "center", cursor: "pointer", color: T.text3, fontSize: 24 }}
-                        >+</div>
+                    {loading ? (
+                      <div className="py-20 flex flex-col items-center gap-4 opacity-40">
+                         <div className="w-12 h-12 border-2 border-brand-tactical border-t-transparent rounded-full animate-spin" />
+                         <p className="text-[10px] font-black uppercase tracking-widest italic">Sincronizando Catálogo...</p>
                       </div>
                     ) : (
-                      <div
-                        onClick={() => fileInputRef.current?.click()}
-                        style={{ border: `2px dashed ${T.border}`, padding: 32, display: "flex", flexDirection: "column", alignItems: "center", gap: 8, cursor: "pointer", textAlign: "center" }}
-                        onMouseEnter={e => (e.currentTarget.style.borderColor = T.brand)}
-                        onMouseLeave={e => (e.currentTarget.style.borderColor = T.border)}
-                      >
-                        <span style={{ fontSize: 32 }}>🖼️</span>
-                        <p style={{ fontSize: 11, color: T.text2, margin: 0 }}>Clique para selecionar as fotos que deseja imprimir</p>
-                        <p style={{ fontSize: 9, color: T.text3, margin: 0, textTransform: "uppercase", letterSpacing: 1 }}>JPG, PNG, WEBP</p>
+                      <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+                        {filteredProducts.map(product => (
+                          <div 
+                            key={product.id}
+                            onClick={() => { setSelectedProduct(product); setStep("details"); }}
+                            className="group relative bg-theme-bg-muted/30 border border-theme-border p-10 cursor-pointer hover:border-brand-tactical transition-all duration-500 overflow-hidden"
+                          >
+                             <div className="absolute top-0 right-0 p-6 opacity-5 group-hover:opacity-20 transition-opacity">
+                                {CATEGORY_ICONS[product.category]}
+                             </div>
+                             <p className="text-[10px] font-black text-brand-tactical uppercase tracking-[0.3em] mb-4 italic">{product.category}</p>
+                             <h3 className="text-2xl font-black text-theme-text uppercase tracking-tight italic mb-4 group-hover:text-brand-tactical transition-colors">{product.name}</h3>
+                             <p className="text-xs text-theme-text-muted leading-relaxed mb-10 italic">{product.description || "Acabamento premium com durabilidade vitalícia."}</p>
+                             <div className="flex items-end justify-between">
+                                <div className="flex items-baseline gap-1">
+                                   <span className="text-xs text-theme-text-muted font-black italic uppercase">R$</span>
+                                   <span className="text-3xl font-black text-theme-text italic tracking-tighter">{product.finalPrice.toFixed(0)}</span>
+                                   <span className="text-xs text-theme-text-muted font-black italic uppercase">,00</span>
+                                </div>
+                                <button className="p-4 bg-brand-tactical/10 border border-brand-tactical/30 text-brand-tactical group-hover:bg-brand-tactical group-hover:text-black transition-all">
+                                   <Plus size={20} />
+                                </button>
+                             </div>
+                          </div>
+                        ))}
                       </div>
                     )}
-                  </>
-                ) : (
-                  <div 
-                    ref={scrollRef}
-                    style={{ 
-                      height: 350, 
-                      overflowY: "hidden", // Let react-window handle scroll
-                      border: `1px solid ${T.border}`, 
-                      background: T.bgCard,
-                      position: "relative"
-                    }}
-                  >
-                    <AlbumPhotoGrid 
-                      medias={availableMedias}
-                      selectedAlbumPhotos={selectedAlbumPhotos}
-                      toggleAlbumPhoto={toggleAlbumPhoto}
-                    />
                   </div>
                 )}
-              </div>
 
-              {/* Notes */}
-              <div>
-                <p style={{ fontSize: 9, letterSpacing: 3, color: T.text3, textTransform: "uppercase", fontWeight: 900, margin: "0 0 8px" }}>Observações (opcional)</p>
-                <textarea
-                  value={notes}
-                  onChange={e => setNotes(e.target.value)}
-                  placeholder="Ex: Capa com foto do casal, nome e data. Lâminas em sequência..."
-                  rows={3}
-                  style={{ width: "100%", background: T.bgCard, border: `1px solid ${T.border}`, padding: 12, fontSize: 12, color: T.text, outline: "none", resize: "vertical", fontFamily: "inherit", boxSizing: "border-box" }}
+                {step === 'details' && selectedProduct && (
+                  <div className="space-y-16 max-w-4xl mx-auto animate-in fade-in slide-in-from-bottom-8 duration-700">
+                    <button onClick={() => setStep('catalog')} className="flex items-center gap-3 text-[10px] font-black text-theme-text-muted uppercase tracking-widest hover:text-brand-tactical transition-all italic">
+                       <ChevronLeft size={16} /> Voltar ao Catálogo
+                    </button>
+
+                    <div className="grid grid-cols-1 xl:grid-cols-2 gap-16">
+                       <div className="space-y-10">
+                          <div className="space-y-4">
+                             <h2 className="text-[10px] font-black text-brand-tactical uppercase tracking-[0.4em] italic">Configuração do Item</h2>
+                             <div className="h-px w-20 bg-brand-tactical" />
+                          </div>
+
+                          <div className="space-y-6">
+                             <p className="text-[10px] font-black text-theme-text-muted uppercase tracking-widest italic">Quantidade</p>
+                             <div className="flex items-center gap-10">
+                                <button onClick={() => setQuantity(q => Math.max(1, q - 1))} className="w-14 h-14 border border-theme-border flex items-center justify-center text-theme-text-muted hover:border-brand-tactical hover:text-brand-tactical transition-all"><Minus size={20} /></button>
+                                <span className="text-5xl font-black text-theme-text italic tracking-tighter">{quantity}</span>
+                                <button onClick={() => setQuantity(q => q + 1)} className="w-14 h-14 border border-theme-border flex items-center justify-center text-theme-text-muted hover:border-brand-tactical hover:text-brand-tactical transition-all"><Plus size={20} /></button>
+                             </div>
+                          </div>
+
+                          <div className="space-y-6">
+                             <p className="text-[10px] font-black text-theme-text-muted uppercase tracking-widest italic">Observações de Produção</p>
+                             <textarea 
+                                value={notes}
+                                onChange={e => setNotes(e.target.value)}
+                                placeholder="Ex: Capa com foto do casal, nome e data..."
+                                className="w-full bg-theme-bg-muted/40 border border-theme-border p-8 text-sm text-theme-text placeholder:text-zinc-700 outline-none focus:border-brand-tactical transition-all italic min-h-[120px]"
+                             />
+                          </div>
+                       </div>
+
+                       <div className="space-y-10">
+                          <div className="flex items-center justify-between">
+                            <h2 className="text-[10px] font-black text-theme-text uppercase tracking-[0.4em] italic">Mídias de Captura</h2>
+                            {(isOwner || availableMedias.length > 0) && (
+                              <div className="flex p-1 bg-theme-bg-muted border border-theme-border">
+                                 <button onClick={() => setPhotoSource('album')} className={`px-4 py-2 text-[8px] font-black uppercase tracking-widest italic transition-all ${photoSource === 'album' ? 'bg-brand-tactical text-black' : 'text-theme-text-muted'}`}>ÁLBUM</button>
+                                 <button onClick={() => setPhotoSource('upload')} className={`px-4 py-2 text-[8px] font-black uppercase tracking-widest italic transition-all ${photoSource === 'upload' ? 'bg-brand-tactical text-black' : 'text-theme-text-muted'}`}>UPLOAD</button>
+                              </div>
+                            )}
+                          </div>
+
+                          {photoSource === 'album' ? (
+                            <div className="h-[400px] border border-theme-border relative overflow-hidden group">
+                               <AlbumPhotoGrid 
+                                 medias={availableMedias}
+                                 selectedAlbumPhotos={selectedAlbumPhotos}
+                                 toggleAlbumPhoto={toggleAlbumPhoto}
+                               />
+                               <div className="absolute bottom-0 left-0 right-0 p-4 bg-black/80 backdrop-blur-md text-[9px] font-black text-brand-tactical uppercase tracking-widest text-center italic">
+                                  {selectedAlbumPhotos.length} / {selectedProduct.maxPhotos || "∞"} selecionadas
+                               </div>
+                            </div>
+                          ) : (
+                            <div className="space-y-6">
+                               <button 
+                                 onClick={() => fileInputRef.current?.click()}
+                                 className="w-full aspect-video border-2 border-dashed border-theme-border flex flex-col items-center justify-center gap-4 text-theme-text-muted hover:border-brand-tactical hover:text-brand-tactical transition-all group"
+                               >
+                                  <div className="p-5 rounded-full bg-theme-bg-muted border border-theme-border group-hover:scale-110 transition-transform"><Camera size={32} /></div>
+                                  <p className="text-[10px] font-black uppercase tracking-[0.3em] italic">Selecionar do Dispositivo</p>
+                               </button>
+                               <input ref={fileInputRef} type="file" multiple accept="image/*" onChange={handleFileSelect} className="hidden" />
+                               
+                               <div className="grid grid-cols-4 gap-2">
+                                  {filePreviews.map((src, idx) => (
+                                    <div key={idx} className="relative aspect-square border border-theme-border overflow-hidden">
+                                       <img src={src} className="w-full h-full object-cover" />
+                                       <button onClick={() => removeFile(idx)} className="absolute top-1 right-1 p-1 bg-black text-white"><X size={10} /></button>
+                                    </div>
+                                  ))}
+                               </div>
+                            </div>
+                          )}
+                       </div>
+                    </div>
+                    
+                    <div className="pt-10 flex justify-end">
+                       <button 
+                        onClick={() => setStep('delivery')}
+                        className="px-12 py-5 bg-brand-tactical text-black text-[11px] font-black uppercase tracking-[0.4em] italic shadow-[0_20px_50px_rgba(20,184,166,0.3)] hover:scale-105 transition-all"
+                       >
+                          Prosseguir para Entrega
+                       </button>
+                    </div>
+                  </div>
+                )}
+
+                {step === 'delivery' && selectedProduct && (
+                   <div className="space-y-16 max-w-2xl mx-auto animate-in fade-in slide-in-from-bottom-8 duration-700">
+                      <button onClick={() => setStep('details')} className="flex items-center gap-3 text-[10px] font-black text-theme-text-muted uppercase tracking-widest hover:text-brand-tactical transition-all italic">
+                         <ChevronLeft size={16} /> Voltar para Configuração
+                      </button>
+
+                      <div className="space-y-12">
+                         <div className="space-y-4">
+                            <h2 className="text-[10px] font-black text-brand-tactical uppercase tracking-[0.4em] italic">Método de Distribuição</h2>
+                            <div className="h-px w-20 bg-brand-tactical" />
+                         </div>
+
+                         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                            <button 
+                              onClick={() => setDeliveryMethod('LOCAL_PICKUP')}
+                              className={`p-10 border text-left transition-all space-y-6 relative overflow-hidden group ${deliveryMethod === 'LOCAL_PICKUP' ? 'border-brand-tactical bg-brand-tactical/5' : 'border-theme-border hover:border-zinc-700'}`}
+                            >
+                               <div className={`w-12 h-12 flex items-center justify-center border transition-all ${deliveryMethod === 'LOCAL_PICKUP' ? 'bg-brand-tactical text-black' : 'text-theme-text-muted'}`}><MapPin size={24} /></div>
+                               <div className="space-y-2">
+                                  <p className="text-[11px] font-black text-theme-text uppercase tracking-widest italic">Retirada no Ponto</p>
+                                  <p className="text-[9px] text-theme-text-muted uppercase italic">Sem custo adicional • Retirada no local do evento ou sede.</p>
+                               </div>
+                               {deliveryMethod === 'LOCAL_PICKUP' && <div className="absolute top-4 right-4 text-brand-tactical"><Check size={20} /></div>}
+                            </button>
+
+                            <button 
+                              onClick={() => setDeliveryMethod('SHIPPING')}
+                              className={`p-10 border text-left transition-all space-y-6 relative overflow-hidden group ${deliveryMethod === 'SHIPPING' ? 'border-brand-tactical bg-brand-tactical/5' : 'border-theme-border hover:border-zinc-700'}`}
+                            >
+                               <div className={`w-12 h-12 flex items-center justify-center border transition-all ${deliveryMethod === 'SHIPPING' ? 'bg-brand-tactical text-black' : 'text-theme-text-muted'}`}><Truck size={24} /></div>
+                               <div className="space-y-2">
+                                  <p className="text-[11px] font-black text-theme-text uppercase tracking-widest italic">Envio por Transportadora</p>
+                                  <p className="text-[9px] text-theme-text-muted uppercase italic">Taxa tática calculada no checkout • Entrega em domicílio.</p>
+                               </div>
+                               {deliveryMethod === 'SHIPPING' && <div className="absolute top-4 right-4 text-brand-tactical"><Check size={20} /></div>}
+                            </button>
+                         </div>
+                         
+                         <div className="p-8 bg-zinc-900/50 border border-theme-border space-y-4">
+                            <div className="flex items-center gap-3">
+                               <Package size={16} className="text-brand-tactical" />
+                               <p className="text-[10px] font-black text-theme-text uppercase tracking-widest italic">Protocolo de Produção</p>
+                            </div>
+                            <p className="text-[10px] text-theme-text-muted uppercase italic leading-relaxed">
+                               Este item entra em produção imediatamente após a confirmação do pagamento. O prazo médio de finalização é de 7 a 12 dias úteis, seguindo o padrão de qualidade Foto Segundo.
+                            </p>
+                         </div>
+                      </div>
+
+                      <div className="pt-10 space-y-4">
+                        <button 
+                          onClick={handleCheckout}
+                          disabled={submitting}
+                          className="w-full py-6 bg-brand-tactical text-black text-[12px] font-black uppercase tracking-[0.5em] italic shadow-[0_30px_60px_rgba(20,184,166,0.3)] hover:scale-[1.02] transition-all flex items-center justify-center gap-4"
+                        >
+                           {submitting ? "Sincronizando Gateway..." : <><CreditCard size={20} /> FINALIZAR PEDIDO NO CHECKOUT</>}
+                        </button>
+                        <button 
+                          onClick={handleWhatsAppCheckout}
+                          className="w-full py-5 border border-theme-border text-[10px] font-black text-theme-text-muted uppercase tracking-widest hover:text-white hover:border-brand-tactical transition-all italic flex items-center justify-center gap-3"
+                        >
+                           <Phone size={16} /> Encomendar via Consultoria WhatsApp
+                        </button>
+                      </div>
+                   </div>
+                )}
+             </div>
+
+             {/* Progress bar fixed at bottom of content area */}
+             <div className="h-1 bg-theme-border relative">
+                <motion.div 
+                  className="absolute top-0 left-0 h-full bg-brand-tactical shadow-[0_0_10px_rgba(20,184,166,0.8)]" 
+                  initial={{ width: "0%" }}
+                  animate={{ width: step === 'catalog' ? "33%" : (step === 'details' ? "66%" : "100%") }}
                 />
-              </div>
-
-              {error && <p style={{ fontSize: 11, color: "#ef4444", textAlign: "center" }}>{error}</p>}
-
-              {/* CTA */}
-              <div style={{ display: "flex", flexDirection: "column", gap: 10, paddingTop: 8 }}>
-                <button
-                  onClick={handleWhatsAppCheckout}
-                  disabled={submitting}
-                  style={{ ...BtnPrimary, width: "100%", justifyContent: "center", fontSize: 13, padding: "16px 20px", letterSpacing: 2 }}
-                >
-                  💬 ENCOMENDAR VIA WHATSAPP
-                </button>
-                <p style={{ fontSize: 9, color: T.text3, textAlign: "center", margin: 0 }}>
-                  Você será redirecionado para o WhatsApp com o resumo do pedido. Nossa equipe confirmará os detalhes e enviará o link de pagamento.
-                </p>
-                <div style={{ display: "flex", alignItems: "center", gap: 12, margin: "4px 0" }}>
-                  <div style={{ flex: 1, height: 1, background: T.border }} />
-                  <span style={{ fontSize: 9, color: T.text3, textTransform: "uppercase", letterSpacing: 1 }}>ou</span>
-                  <div style={{ flex: 1, height: 1, background: T.border }} />
-                </div>
-                <button
-                  onClick={handleCheckout}
-                  disabled={submitting}
-                  style={{ ...BtnSecondary, width: "100%", justifyContent: "center", color: T.text }}
-                >
-                  {submitting ? "Processando..." : "PAGAR AGORA (CHECKOUT)"}
-                </button>
-              </div>
-            </div>
-          )}
-        </div>
-
-        {/* Footer info */}
-        <div style={{ padding: "16px 28px", borderTop: `1px solid ${T.border}`, background: `${T.brand}06`, flexShrink: 0 }}>
-          <p style={{ fontSize: 9, color: T.text3, margin: 0, textAlign: "center", letterSpacing: 1 }}>
-            🔒 Pagamento seguro · Produção em até 7 dias úteis · Entrega em todo o Brasil
-          </p>
-        </div>
-      </div>
-    </div>
+             </div>
+          </div>
+        </motion.div>
+      </motion.div>
+    </AnimatePresence>
   );
 }

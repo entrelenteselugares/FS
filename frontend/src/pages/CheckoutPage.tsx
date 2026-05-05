@@ -11,6 +11,7 @@ import { useContext } from "react";
 
 interface OrderEvent {
   id: string;
+  slug?: string;
   nomeNoivos: string;
   dataEvento: string;
   location?: string;
@@ -282,6 +283,12 @@ export const CheckoutPage = () => {
 
   useEffect(() => {
     if (!paymentSuccess || !order) return;
+    
+    // Limpa estado local após sucesso
+    const slug = order.event.slug || order.event.id;
+    localStorage.removeItem(`fs_order_${slug}`);
+    localStorage.removeItem(`fs_cart_${order.event.id}`);
+
     const timer = setInterval(() => {
       setRedirectCountdown(c => {
         if (c <= 1) {
@@ -433,12 +440,14 @@ export const CheckoutPage = () => {
             <div className="absolute top-0 left-0 w-1 h-full bg-brand-tactical/20" />
             <div className="flex justify-between items-center text-[10px] font-black text-zinc-500 uppercase tracking-widest">
               <span>Subtotal</span>
-              <span className="text-theme-text">R$ {Number(order.amount).toFixed(2)}</span>
+              <span className="text-theme-text">R$ {(Number(order.amount) - Number(order.shippingFee || 0)).toFixed(2)}</span>
             </div>
             {order.deliveryType === 'SHIPPING' && (
               <div className="flex justify-between items-center text-[10px] font-black text-zinc-500 uppercase tracking-widest">
                 <span>Frete</span>
-                <span className="text-emerald-500">GRÁTIS</span>
+                <span className={Number(order.shippingFee) === 0 ? "text-emerald-500" : "text-theme-text"}>
+                  {Number(order.shippingFee) === 0 ? "GRÁTIS" : `R$ ${Number(order.shippingFee).toFixed(2)}`}
+                </span>
               </div>
             )}
             <div className="pt-6 border-t border-zinc-900 flex justify-between items-end">

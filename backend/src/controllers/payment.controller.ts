@@ -11,6 +11,7 @@ import bcrypt from "bcryptjs";
 import { Prisma } from "@prisma/client";
 import { AuthRequest } from "../lib/auth";
 import { GamificationService } from "../services/gamification.service";
+import { PhygitalService } from "../services/phygital.service";
 
 export class PaymentController {
   /**
@@ -977,7 +978,7 @@ export class PaymentController {
    * Cria um pedido para produto do catálogo de impressão.
    */
   static async createPrintOrder(req: Request, res: Response) {
-    const { eventId, productId, quantity, notes, albumPhotos } = req.body;
+    const { eventId, productId, quantity, notes, albumPhotos, deliveryMethod } = req.body;
 
     try {
       const product = await prisma.printProduct.findUnique({ where: { id: productId } });
@@ -990,27 +991,45 @@ export class PaymentController {
         return res.status(404).json({ error: "Evento não encontrado" });
       }
 
-      // Calcula o preço final
+      // 1. Calcula o preço final do produto
       const unitPrice = product.sellingPrice !== null 
         ? Number(product.sellingPrice) 
         : Number(product.supplierCost) * (1 + product.marginPct / 100);
       
-      const totalPrice = unitPrice * (quantity || 1);
+      const subtotal = unitPrice * (quantity || 1);
 
-      // Prepara notas internas com fotos do álbum se houver
+      // 2. Lógica de Frete Tático (Fixo: R$ 25 se SHIPPING)
+      const shippingFee = deliveryMethod === "SHIPPING" ? 25 : 0;
+      const totalPrice = subtotal + shippingFee;
+
+      // 3. Calcula Splits Reais baseados no custo e margem
+      const { matriz, captacao, edicao, cartorio, franchisee, passiveFranchiseeId } = await PricingService.calculateSplits(totalPrice, {
+        professionalId: event.captacaoId || undefined,
+        productType: "ALBUM_IMPRESSO" // Trata como produto físico para splits
+      });
+
+      // 4. Prepara notas internas com fotos do álbum se houver
       let finalInternalNotes = notes || "";
       if (albumPhotos && Array.isArray(albumPhotos) && albumPhotos.length > 0) {
         finalInternalNotes += `\n\n--- FOTOS SELECIONADAS DO ÁLBUM ---\n${albumPhotos.join("\n")}`;
       }
 
-      // Cria o pedido com o item
+      // 5. Cria o pedido unificado
       const order = await prisma.order.create({
         data: {
           eventId: event.id,
           valor: totalPrice,
           status: "PENDENTE",
+          deliveryType: deliveryMethod || "LOCAL_PICKUP",
+          shippingFee,
           manualType: `Físico: ${product.name} (x${quantity})`,
           internalNotes: finalInternalNotes.trim() || null,
+          splitMatriz: matriz,
+          splitCaptacao: captacao,
+          splitEdicao: edicao,
+          splitCartorio: cartorio,
+          splitFranchisee: franchisee,
+          passiveFranchiseeId,
           items: {
             create: [
               {
@@ -1064,7 +1083,27 @@ export class PaymentController {
           if (serviceItems.some(i => i.service?.name.toLowerCase().includes("impressa"))) eventUpdateData.temFotoImpressa = true;
         }
 
-        // 3. Lógica Phygital e Logística
+        // 3. Lógica de Impressão Automática (Print Catalog Integration)
+        const printItems = orderItems.filter(item => item.printProductId);
+        if (printItems.length > 0) {
+          eventUpdateData.temFotoImpressa = true;
+          for (const item of printItems) {
+            // Extraímos URLs das fotos se houver
+            let photos: string[] = [];
+            if (order.internalNotes && order.internalNotes.includes("--- FOTOS SELECIONADAS DO ÁLBUM ---")) {
+               const parts = order.internalNotes.split("--- FOTOS SELECIONADAS DO ÁLBUM ---");
+               if (parts.length > 1) {
+                 photos = parts[1].trim().split("\n").filter((url: string) => url.startsWith("http"));
+               }
+            }
+            
+            if (photos.length > 0) {
+              await PhygitalService.createQueueEntryFromOrder(order, photos);
+            }
+          }
+        }
+
+        // 4. Lógica Phygital e Logística
         let logisticNote = "";
         if (order.deliveryType === "SHIPPING" || order.deliveryType === "LOCAL_PICKUP") {
           eventUpdateData.temFotoImpressa = true;
