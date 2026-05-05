@@ -187,7 +187,7 @@ export function ProfileTab({ profile, onUpdated, onNotify }: ProfileTabProps) {
               <span className="text-[11px] font-black uppercase tracking-[0.3em] italic">Matriz de Especialidades</span>
             </div>
             <div className="flex flex-wrap gap-4">
-              {["FOTO", "VÍDEO", "EDIÇÃO"].map((s) => {
+              {["FOTO", "VÍDEO", "EDIÇÃO", "IMPRESSÃO"].map((s) => {
                 const active = formData.services?.includes(s);
                 return (
                   <button

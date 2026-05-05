@@ -69,17 +69,25 @@ export class AuthController {
         return res.status(401).json({ error: "Credenciais inválidas ou usuário não encontrado." });
       }
 
-      const payload = { userId: user.id, role: user.role, nome: user.nome, email: user.email };
+      // 4. Busca dados extras (Franquia, etc) para o frontend
+      const fullUser = await prisma.user.findUnique({
+        where: { id: user.id },
+        include: { franchiseProfile: true }
+      });
+
+      if (!fullUser) return res.status(404).json({ error: "Usuário não sincronizado." });
+
+      const payload = { userId: fullUser.id, role: fullUser.role, nome: fullUser.nome, email: fullUser.email };
       const token = generateToken(payload);
       const refreshToken = generateRefreshToken(payload);
       
       // Audit opcional (não bloqueia o login se falhar)
-      try { await audit(req, "LOGIN", "User", user.id, null, { method: authMethod }); } catch (e) {}
+      try { await audit(req, "LOGIN", "User", fullUser.id, null, { method: authMethod }); } catch (e) {}
 
       return res.json({ 
         token, 
         refreshToken,
-        user: { id: user.id, nome: user.nome, email: user.email, role: user.role }
+        user: fullUser
       });
 
     } catch (error: unknown) {
@@ -165,7 +173,8 @@ export class AuthController {
               userId: user.id,
               razaoSocial: razaoSocial || nome,
               address: endereco || "",
-              cidade: cidade || ""
+              cidade: cidade || "",
+              services: habilidades || []
             }
           });
         }
@@ -183,10 +192,15 @@ export class AuthController {
       const token = generateToken(payload);
       const refreshToken = generateRefreshToken(payload);
 
+      const fullResult = await prisma.user.findUnique({
+        where: { id: result.id },
+        include: { franchiseProfile: true }
+      });
+
       return res.status(201).json({ 
         token,
         refreshToken,
-        user: { id: result.id, nome: result.nome, email: result.email, role: result.role } 
+        user: fullResult || result
       });
     } catch (e: unknown) {
       console.error("[REGISTER ERROR]:", e);

@@ -35,11 +35,7 @@ export const Navbar: React.FC = () => {
           />
         </div>
 
-        {/* Desktop Quick Links */}
-        <div className="hidden md:flex items-center gap-6 ml-4">
-          <button onClick={() => navigate("/")} className="text-[11px] font-display font-black text-theme-text/60 hover:text-brand-tactical uppercase tracking-widest italic transition-colors">Home</button>
-          <button onClick={() => navigate("/?buscar=1")} className="text-[11px] font-display font-black text-theme-text/60 hover:text-brand-tactical uppercase tracking-widest italic transition-colors">Explorar</button>
-        </div>
+
       </div>
 
       <div style={{ display: "flex", alignItems: "center", gap: "clamp(4px, 2vw, 12px)" }}>

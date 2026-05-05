@@ -113,6 +113,7 @@ export interface ProfileData {
     };
   }>;
   cartorioProfissional?: ResidentUnit[];
+  cartorios?: ResidentUnit[];
 }
 
 export interface Partner {

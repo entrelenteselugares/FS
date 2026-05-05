@@ -439,10 +439,10 @@ export default function ClienteArea() {
                 <div className="bg-theme-bg-muted/30 p-10 space-y-6">
                   <div className="space-y-2">
                     <p className="text-[10px] font-black text-theme-text uppercase tracking-widest italic">Como ganhar mais?</p>
-                    <p className="text-[11px] text-theme-muted">Toda compra no marketplace gera 5% de cashback imediato para você.</p>
+                    <p className="text-[11px] text-theme-muted">Toda compra no Live Print gera 5% de cashback imediato para você.</p>
                   </div>
                   <button onClick={() => navigate("/")} className="fs-btn bg-brand-tactical text-brand-text w-full flex items-center justify-center gap-3">
-                    Explorar Marketplace <ArrowRight size={14} />
+                    Explorar Live Print <ArrowRight size={14} />
                   </button>
                 </div>
               </div>

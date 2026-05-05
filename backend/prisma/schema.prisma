@@ -150,6 +150,7 @@ model Event {
   pedidos            Order[]
   likes              PhotoLike[]
   phygitalPrints     PhygitalPrint[]
+  retentionDays      Int?              @default(15)
   printProducts      EventPrintProduct[]
 
   @@map("events")
@@ -223,6 +224,7 @@ model Cartorio {
   hideDuration     Boolean                @default(false)
   disabledServices String[]               @default([])
   workingHours     Json?                  @default("{\"fri\": {\"open\": \"09:00\", \"close\": \"18:00\", \"closed\": false}, \"mon\": {\"open\": \"09:00\", \"close\": \"18:00\", \"closed\": false}, \"sat\": {\"open\": \"09:00\", \"close\": \"12:00\", \"closed\": true}, \"sun\": {\"open\": \"00:00\", \"close\": \"00:00\", \"closed\": true}, \"thu\": {\"open\": \"09:00\", \"close\": \"18:00\", \"closed\": false}, \"tue\": {\"open\": \"09:00\", \"close\": \"18:00\", \"closed\": false}, \"wed\": {\"open\": \"09:00\", \"close\": \"18:00\", \"closed\": false}}")
+  services         String[]               @default([])
   profissionais    CartorioProfissional[]
   user             User                   @relation(fields: [userId], references: [id])
   quotes           Quote[]
@@ -605,6 +607,8 @@ model FranchiseProfile {
   lastSupplyOrderAt       DateTime?
   tier                    FranchiseTier       @default(BRONZE)
   approvedSalesVolume     Int                 @default(0)
+  hideFromBooking         Boolean             @default(false)
+  printServices           Json?               @default("[]")
   transactions            CreditTransaction[]
   events                  Event[]
   user                    User                @relation(fields: [userId], references: [id])

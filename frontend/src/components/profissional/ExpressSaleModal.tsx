@@ -75,7 +75,7 @@ export function ExpressSaleModal({ network, onClose, onSuccess, onError }: Expre
         }, 1500);
         return;
       }
-      onSuccess("Venda e Operação registradas com sucesso!");
+      onSuccess("Venda e Operação Live Print registradas com sucesso!");
       onClose();
     } catch (err: unknown) {
       const msg = err instanceof Error ? err.message : "Erro na venda expressa.";

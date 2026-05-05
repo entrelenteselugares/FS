@@ -139,8 +139,12 @@ export class EventController {
       // Removido o bloqueio agressivo de 404 que impedia o primeiro acesso para compra.
       // A segurança agora é tratada pela lógica de paywall e hasAccess abaixo.
       // 3.1 Acesso granular tratado na lógica de unlockedMediaIds abaixo.
-      // 3.1 Guard específico para PHOTO_MARKETPLACE
-      // Permite acesso se for o dono, se tiver pago, se for o cliente principal ou se for globalmente pago.
+      // 3.2 Lógica de Expiração de Galeria (Downloads) 🛡️⌛
+      // Álbuns privados: 7 dias | Públicos: 15 dias | Customizado via DB
+      const retentionDays = event.retentionDays || (event.isPrivate ? 7 : 15);
+      const expirationDate = new Date(new Date(event.dataEvento).getTime() + retentionDays * 24 * 60 * 60 * 1000);
+      const isExpired = !isOwner && new Date() > expirationDate;
+
       if (event.isPrivate && !hasAccess && !(authUser && event.clientEmail && authUser.email === event.clientEmail)) {
         return res.status(403).json({ 
           error: "Este álbum é privado e não está vinculado à sua conta.",
@@ -221,11 +225,11 @@ export class EventController {
         isOwner: isOwner,
         hasAccess: hasAccess,
         // Links sensíveis só aparecem se aprovado e visível
-        lightroomUrl: (hasAccess && (!order || order.showAlbum)) ? event.lightroomUrl : null,
-        driveUrl: (hasAccess && (!order || order.showVideo)) ? event.driveUrl : null,
+        lightroomUrl: (hasAccess && !isExpired && (!order || order.showAlbum)) ? event.lightroomUrl : null,
+        driveUrl: (hasAccess && !isExpired && (!order || order.showVideo)) ? event.driveUrl : null,
         paywall: {
           active: !hasAccess && !isOwner,
-          message: hasAccess ? "Entrega liberada." : "Galeria protegida."
+          message: isExpired ? "Prazo de download expirado." : (hasAccess ? "Entrega liberada." : "Galeria protegida.")
         },
         recentOrders: await prisma.order.findMany({
           where: { eventId: event.id, status: "APROVADO", contributorName: { not: null } },
@@ -245,6 +249,9 @@ export class EventController {
         description: event.description,
         references: event.references,
         photographer: event.captacao ? { id: event.captacao.id, nome: event.captacao.nome } : null,
+        isExpired,
+        retentionDays,
+        expirationDate
       });
     } catch (error) {
       console.error("Erro ao buscar evento:", error);
@@ -275,6 +282,8 @@ export class EventController {
       if (city) {
         where.city = { contains: String(city), mode: 'insensitive' };
       }
+
+      console.log("[DEBUG] listPublic where:", JSON.stringify(where, null, 2));
 
       if (query) {
         where.OR = [
@@ -329,7 +338,14 @@ export class EventController {
   static async listPartners(req: AuthRequest, res: Response) {
     try {
       const partners = await prisma.user.findMany({
-        where: { role: "CARTORIO" },
+        where: { 
+          role: "CARTORIO",
+          cartorio: {
+            profissionais: {
+              some: { status: "ACCEPTED" }
+            }
+          }
+        },
         include: { cartorio: true },
         orderBy: { nome: "asc" }
       });
@@ -501,7 +517,8 @@ export class EventController {
           clientEmail: email,
           clientName: name,
           captacaoId: captacaoId,
-          captacaoStatus: "PENDING"
+          captacaoStatus: "PENDING",
+          retentionDays: 15 // Orçamentos padrão começam com 15 dias de vitrine após aprovação
         }
       });
 
@@ -612,7 +629,8 @@ export class EventController {
           temFotoImpressa: true,
           quoteStatus: "APROVADO",
           isQuote: false,
-          isPrivate: !!isPrivate
+          isPrivate: !!isPrivate,
+          retentionDays: isPrivate ? 7 : 15
         }
       });
 
@@ -671,6 +689,7 @@ export class EventController {
           quoteStatus: "APROVADO",
           isQuote: false,
           coverPhotoUrl: normalizeCoverUrl(coverPhotoUrl),
+          retentionDays: isPrivate ? 7 : 15
         }
       });
 

@@ -166,4 +166,48 @@ export async function runExpirationJob(req?: AuthRequest): Promise<void> {
       payoutsReleased: liberaveis.count
     });
   }
+
+  // ── 6. Encerramento Automático de Eventos baseada em Política de Retenção ──
+  // Buscamos todos os eventos ativos para verificar o tempo de retenção
+  const eventosAtivos = await prisma.event.findMany({
+    where: {
+      active: true,
+      isQuote: false,
+      type: { in: ['FOTO_POINT', 'PHOTO_MARKETPLACE', 'FLASH_EVENT'] }
+    },
+    include: {
+      captacao: { select: { email: true, nome: true } },
+      cartorioUser: { select: { email: true, nome: true } }
+    }
+  });
+
+  for (const event of eventosAtivos) {
+    const dataEvento = new Date(event.dataEvento);
+    const diffTime = now.getTime() - dataEvento.getTime();
+    const diffDays = Math.floor(diffTime / (1000 * 60 * 60 * 24));
+    
+    // @ts-ignore - retentionDays existe no DB
+    const retentionLimit = event.retentionDays || (event.isPrivate ? 7 : 15);
+
+    if (diffDays >= retentionLimit) {
+      console.log(`[EXPIRATION JOB] Encerrando evento ${event.id} (${event.nomeNoivos}) por expiração de retenção (${diffDays}/${retentionLimit} dias)`);
+      
+      await prisma.event.update({
+        where: { id: event.id },
+        data: { active: false }
+      });
+
+      // Notifica o dono (Captação ou Unidade Fixa)
+      const ownerEmail = event.captacao?.email || event.cartorioUser?.email;
+      const ownerName = event.captacao?.nome || event.cartorioUser?.nome || "Parceiro";
+
+      if (ownerEmail) {
+        NotificationService.notifyEventAutoClosed({
+          to: ownerEmail,
+          ownerName,
+          eventTitle: event.nomeNoivos
+        }).catch(e => console.error(`[EXPIRATION JOB] Erro ao notificar dono de ${event.id}:`, e));
+      }
+    }
+  }
 }

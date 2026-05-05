@@ -69,6 +69,9 @@ interface EventData {
   itinerary?: string | null;
   references?: string[];
   photographer?: { id: string; nome: string } | null;
+  expirationDate?: string | null;
+  isExpired?: boolean;
+  retentionDays?: number;
 }
 
 interface EventMedia {
@@ -294,7 +297,7 @@ export default function EventPage() {
 
     const interval = setInterval(() => setCurrentBannerIndex(prev => (prev + 1) % 3), 5000);
     return () => clearInterval(interval);
-  }, [slug, navigate, user?.id, searchParams]);
+  }, [slug, navigate, user, searchParams]);
 
   const handleAutoConfirmChoice = useCallback(async (oid: string) => {
     try {
@@ -383,6 +386,7 @@ export default function EventPage() {
 
   const paid = step === "success";
   const isMarketplace = event.type === 'PHOTO_MARKETPLACE' || event.type === 'FOTO_POINT';
+  const isEventOver = event.dataEvento ? new Date(event.dataEvento).setHours(23, 59, 59, 999) < new Date().getTime() : false;
 
 
   const toggleCart = (shortId: string) => {
@@ -431,7 +435,7 @@ return (
                 <span className="text-[10px] font-black text-brand-tactical uppercase tracking-[0.5em] italic">
                   {step === 'countdown' ? "Contagem Regressiva" : (
                     event.type === 'FOTO_POINT' ? "Tactical Point Operation" : 
-                    event.type === 'PHOTO_MARKETPLACE' ? "Live Marketplace System" : 
+                    event.type === 'PHOTO_MARKETPLACE' ? "Live Print System" : 
                     "Premium Event Delivery"
                   )}
                 </span>
@@ -620,21 +624,33 @@ return (
               {/* ── Galeria Principal (Marketplace / Live Stream) - PRIORIDADE ── */}
               {isMarketplace && (
                 <div className="space-y-16 animate-in fade-in slide-in-from-bottom-8 duration-1000 delay-300">
-                  <div className="flex flex-col md:flex-row md:items-end justify-between gap-8 border-b border-theme-border/60 pb-12">
-                    <div className="space-y-3">
-                      <div className="flex items-center gap-4 cursor-pointer group" onClick={() => setShowLiveOps(!showLiveOps)}>
-                        <div className="w-2.5 h-2.5 rounded-full bg-emerald-500 animate-pulse shadow-[0_0_15px_rgba(16,185,129,0.6)]" />
-                        <h2 className="text-4xl lg:text-6xl font-heading font-black italic uppercase tracking-tighter text-theme-text group-hover:text-brand-tactical transition-colors flex items-center gap-4">
+                  <div className="pt-20">
+                    <div className="flex items-center gap-4 mb-10 cursor-pointer group" onClick={() => setShowLiveOps(!showLiveOps)}>
+                      <div className="h-px flex-1 bg-theme-border/20 group-hover:bg-brand-tactical/30 transition-colors" />
+                      
+                      <div className="flex items-center gap-4">
+                        <div className={`w-2.5 h-2.5 rounded-full animate-pulse ${
+                          (event.isExpired || event.active === false || isEventOver) ? 'bg-red-500 shadow-[0_0_15px_rgba(239,68,68,0.6)]' :
+                          (event.expirationDate && (new Date(event.expirationDate).getTime() - new Date().getTime()) < 2 * 24 * 60 * 60 * 1000) ? 'bg-yellow-500 shadow-[0_0_15px_rgba(245,158,11,0.6)]' :
+                          'bg-emerald-500 shadow-[0_0_15px_rgba(16,185,129,0.6)]'
+                        }`} />
+                        
+                        <h2 className="font-heading font-black text-2xl lg:text-4xl text-theme-text uppercase italic tracking-widest flex items-center gap-4 group-hover:text-brand-tactical transition-colors">
                           Live Operations
                           <motion.span animate={{ rotate: showLiveOps ? 90 : 0 }}>
-                            <ChevronRight size={32} className="text-zinc-800 group-hover:text-brand-tactical" />
+                            <ChevronRight size={24} className="text-theme-text-muted group-hover:text-brand-tactical" />
                           </motion.span>
                         </h2>
                       </div>
-                      <p className="text-[11px] text-theme-text-muted uppercase tracking-[0.5em] font-black italic">Curadoria instantânea • Alta Performance Phygital</p>
+
+                      <div className="h-px flex-1 bg-theme-border/20 group-hover:bg-brand-tactical/30 transition-colors" />
                     </div>
                     
-                    <div className="flex gap-4">
+                    <p className="text-[11px] text-center text-theme-text-muted uppercase tracking-[0.5em] font-black italic -mt-6 mb-12">
+                      Curadoria instantânea • Alta Performance Phygital
+                    </p>
+
+                    <div className="flex justify-end mb-8">
                       {event.isOwner && (
                         <button onClick={() => setShowQrModal(true)} className="flex items-center gap-3 px-8 py-5 bg-brand-tactical/10 border border-brand-tactical/40 text-[10px] font-black text-brand-tactical uppercase tracking-widest hover:bg-brand-tactical/20 transition-all italic">
                           <QrCode size={18} /> PAINEL DE CAPTURA
@@ -652,18 +668,22 @@ return (
                         className="overflow-hidden"
                       >
                         {medias.length === 0 ? (
-                          <div className="py-32 border border-dashed border-theme-border/40 bg-theme-bg/20 flex flex-col items-center justify-center text-center px-10 group relative overflow-hidden">
+                          <div className="py-16 border border-dashed border-theme-border/40 bg-theme-bg/20 flex flex-col items-center justify-center text-center px-10 group relative overflow-hidden">
                             <div className="absolute inset-0 bg-[radial-gradient(circle_at_center,rgba(20,184,166,0.05),transparent_70%)] pointer-events-none" />
-                            <div className="relative mb-10">
+                            <div className="relative mb-6">
                               <div className="absolute inset-0 bg-brand-tactical/20 blur-3xl rounded-full scale-150 animate-pulse" />
                               <div className="relative w-24 h-24 rounded-full border border-brand-tactical/30 flex items-center justify-center bg-theme-bg shadow-2xl">
                                 <Camera size={40} className="text-brand-tactical group-hover:scale-110 transition-transform duration-700" />
                               </div>
                             </div>
                             <p className="text-[10px] font-black text-brand-tactical uppercase tracking-[0.6em] mb-4 italic">Transmissão Tática</p>
-                            <h3 className="text-3xl font-heading font-black text-theme-text uppercase italic tracking-tighter mb-4">Galeria em Formação</h3>
-                            <p className="max-w-md text-xs text-theme-text-muted uppercase tracking-widest leading-relaxed mb-10">
-                              Nossa equipe técnica está processando as capturas deste ponto em tempo real. As memórias aparecerão aqui instantaneamente.
+                            <h3 className="text-3xl font-heading font-black text-theme-text uppercase italic tracking-tighter mb-4">
+                              {isEventOver ? "Operação Encerrada" : "Galeria em Formação"}
+                            </h3>
+                            <p className="max-w-md text-xs text-theme-text-muted uppercase tracking-widest leading-relaxed mb-6">
+                              {isEventOver 
+                                ? "O período de capturas ao vivo para este evento foi concluído. A galeria agora está em modo de exposição e venda."
+                                : "Nossa equipe técnica está processando as capturas deste ponto em tempo real. As memórias aparecerão aqui instantaneamente."}
                             </p>
                             <div className="flex flex-col sm:flex-row gap-4">
                               <button 
@@ -672,7 +692,7 @@ return (
                               >
                                 Sincronizar Galeria
                               </button>
-                              {isMarketplace && (
+                              {(isMarketplace && !isEventOver) && (
                                 <button 
                                   onClick={() => setShowQrModal(true)}
                                   className="px-8 py-4 bg-brand-tactical text-black font-black uppercase tracking-widest text-[10px] italic shadow-[0_15px_30px_rgba(20,184,166,0.3)] flex items-center gap-3"
@@ -735,14 +755,14 @@ return (
               {event.id && (
                 <div className="pt-20">
                   <div className="flex items-center gap-4 mb-10 cursor-pointer group" onClick={() => setShowPhygital(!showPhygital)}>
-                    <div className="h-px flex-1 bg-white/5 group-hover:bg-brand-tactical/30 transition-colors" />
-                    <h3 className="font-heading font-black text-2xl lg:text-4xl text-white uppercase italic tracking-widest flex items-center gap-4 group-hover:text-brand-tactical transition-colors">
+                    <div className="h-px flex-1 bg-theme-border/20 group-hover:bg-brand-tactical/30 transition-colors" />
+                    <h3 className="font-heading font-black text-2xl lg:text-4xl text-theme-text uppercase italic tracking-widest flex items-center gap-4 group-hover:text-brand-tactical transition-colors">
                       Upgrade Phygital
                       <motion.span animate={{ rotate: showPhygital ? 90 : 0 }}>
-                        <ChevronRight size={24} className="text-zinc-800 group-hover:text-brand-tactical" />
+                        <ChevronRight size={24} className="text-theme-text-muted group-hover:text-brand-tactical" />
                       </motion.span>
                     </h3>
-                    <div className="h-px flex-1 bg-white/5 group-hover:bg-brand-tactical/30 transition-colors" />
+                    <div className="h-px flex-1 bg-theme-border/20 group-hover:bg-brand-tactical/30 transition-colors" />
                   </div>
 
                   <AnimatePresence>
@@ -784,9 +804,9 @@ return (
                 <div className="h-0.5 w-12 bg-brand-tactical" />
               </div>
               <div className="flex items-center gap-3 px-4 py-2 bg-theme-bg border border-theme-border/60">
-                <div className={`w-2 h-2 rounded-full ${step === 'countdown' ? 'bg-amber-500' : 'bg-emerald-500 animate-pulse shadow-[0_0_10px_rgba(16,185,129,0.5)]'}`} />
+                <div className={`w-2 h-2 rounded-full ${isEventOver ? 'bg-red-500 shadow-[0_0_10px_rgba(239,68,68,0.5)]' : (step === 'countdown' ? 'bg-amber-500' : 'bg-emerald-500 animate-pulse shadow-[0_0_10px_rgba(16,185,129,0.5)]')}`} />
                 <span className="text-[10px] font-black text-theme-text uppercase tracking-widest italic">
-                  {step === 'countdown' ? 'Evento Agendado' : (event.type === 'FOTO_POINT' ? "Canon Live Link" : "Live Status")}
+                  {isEventOver ? 'Operação Encerrada' : (step === 'countdown' ? 'Evento Agendado' : (event.type === 'FOTO_POINT' ? "Canon Live Link" : "Live Status"))}
                 </span>
               </div>
             </div>
@@ -800,10 +820,11 @@ return (
                  </div>
                  <div className="grid grid-cols-1 gap-2">
                     <button 
-                      onClick={() => setShowQrModal(true)}
-                      className="w-full py-4 bg-zinc-950 border border-brand-tactical/30 text-brand-tactical text-[10px] font-black uppercase tracking-widest hover:bg-brand-tactical hover:text-black transition-all italic flex items-center justify-center gap-3"
+                      onClick={() => !isEventOver && setShowQrModal(true)}
+                      className={`w-full py-4 bg-zinc-950 border border-brand-tactical/30 text-brand-tactical text-[10px] font-black uppercase tracking-widest transition-all italic flex items-center justify-center gap-3 ${isEventOver ? 'opacity-30 cursor-not-allowed grayscale' : 'hover:bg-brand-tactical hover:text-black'}`}
+                      disabled={isEventOver}
                     >
-                      <QrCode size={16} /> QR CODE DE CAPTURA
+                      <QrCode size={16} /> {isEventOver ? 'CAPTURAS ENCERRADAS' : 'QR CODE DE CAPTURA'}
                     </button>
                     <button 
                       onClick={() => navigate('/minha-conta')}
@@ -819,18 +840,22 @@ return (
             {(!event.isOwner && isMarketplace) && (
               <div className="p-6 bg-theme-bg-muted border border-theme-border/40 space-y-4">
                  <div className="flex items-center gap-2">
-                    <QrCode size={16} className="text-brand-tactical" />
-                    <span className="text-[10px] font-black text-theme-text uppercase tracking-widest italic">Participe da Galeria Live</span>
+                    <QrCode size={16} className={isEventOver ? "text-zinc-600" : "text-brand-tactical"} />
+                    <span className="text-[10px] font-black text-theme-text uppercase tracking-widest italic">Galeria Live</span>
                  </div>
                  <p className="text-[9px] text-theme-text-muted leading-relaxed uppercase tracking-wider italic">
-                   Envie suas fotos agora para o painel do evento e apareça na transmissão oficial!
+                   {isEventOver 
+                     ? "O período de envio de fotos em tempo real para este evento foi encerrado." 
+                     : "Envie suas fotos agora para o painel do evento e apareça na transmissão oficial!"}
                  </p>
-                 <button 
-                   onClick={() => setShowQrModal(true)}
-                   className="w-full py-4 bg-brand-tactical text-black text-[10px] font-black uppercase tracking-widest hover:brightness-110 transition-all italic flex items-center justify-center gap-3"
-                 >
-                   MOSTRAR QR CODE
-                 </button>
+                 {!isEventOver && (
+                   <button 
+                     onClick={() => setShowQrModal(true)}
+                     className="w-full py-4 bg-brand-tactical text-black text-[10px] font-black uppercase tracking-widest hover:brightness-110 transition-all italic flex items-center justify-center gap-3"
+                   >
+                     MOSTRAR QR CODE
+                   </button>
+                 )}
               </div>
             )}
 

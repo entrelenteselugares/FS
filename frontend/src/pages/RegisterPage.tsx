@@ -255,7 +255,7 @@ export const RegisterPage: React.FC = () => {
                   <div className="space-y-3">
                     <label className="text-[9px] font-black uppercase tracking-[0.3em] text-theme-muted opacity-60">Minhas Especialidades</label>
                     <div className="flex flex-wrap gap-3">
-                      {["FOTO", "VÍDEO", "EDIÇÃO"].map(skill => (
+                      {["FOTO", "VÍDEO", "EDIÇÃO", "IMPRESSÃO"].map(skill => (
                         <button
                           key={skill}
                           type="button"
@@ -326,6 +326,28 @@ export const RegisterPage: React.FC = () => {
                         className="w-full bg-transparent border-b border-theme-border/60 py-2 text-[11px] text-theme-text placeholder:text-theme-muted/20 focus:outline-none focus:border-brand-tactical transition-all font-medium"
                         placeholder="NOME OFICIAL DA UNIDADE"
                       />
+                    </div>
+
+                    <div className="md:col-span-2 space-y-3">
+                      <label className="text-[9px] font-black uppercase tracking-[0.3em] text-theme-muted opacity-60">Serviços / Capacidades</label>
+                      <div className="flex flex-wrap gap-3">
+                        {["RECEPÇÃO", "IMPRESSÃO", "COLETA", "ESTÚDIO"].map(skill => (
+                          <button
+                            key={skill}
+                            type="button"
+                            onClick={() => {
+                              const current = formData.habilidades;
+                              const next = current.includes(skill) ? current.filter(s => s !== skill) : [...current, skill];
+                              setFormData({ ...formData, habilidades: next });
+                            }}
+                            className={`px-4 py-2.5 text-[8px] font-black uppercase tracking-widest border transition-all ${
+                              formData.habilidades.includes(skill) ? "bg-brand-tactical text-brand-text border-brand-tactical" : "border-theme-border/40 text-theme-muted hover:border-brand-tactical/30"
+                            }`}
+                          >
+                            {skill}
+                          </button>
+                        ))}
+                      </div>
                     </div>
                     <div className="space-y-3 relative">
                       <label className="text-[9px] font-black uppercase tracking-[0.3em] text-theme-muted opacity-60">CEP</label>

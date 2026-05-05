@@ -62,7 +62,6 @@ export function BottomNav() {
   // Resolve the correct dashboard path per role
   // We add unique dummy search params so isActive can distinguish them even if they point to /login
   const tabs = [
-    { id: "home",    label: "Home",       icon: Home,       path: "/" },
     { id: "buscar",  label: "Buscar",     icon: Search,     path: "/?buscar=1" },
     { id: "carrinho",label: "Pedidos",    icon: ShoppingBag,path: user ? "/minha-conta?s=pedidos" : "/login?s=pedidos" },
     { id: "fotos",   label: "Minhas Fotos",icon: Image,     path: user ? "/minha-conta?s=fotos" : "/login?s=fotos" },

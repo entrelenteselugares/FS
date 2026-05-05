@@ -146,7 +146,7 @@ export const HomePage = () => {
   const debounce = useRef<ReturnType<typeof setTimeout> | null>(null);
 
 
-  const fetch = useCallback(async (q: string, pg: number, type?: string, city?: string) => {
+  const fetchEvents = useCallback(async (q: string, pg: number, type?: string, city?: string) => {
     setLoading(true);
     try {
       const { data } = await API.get("/public/events", { 
@@ -164,17 +164,16 @@ export const HomePage = () => {
   }, []);
 
   useEffect(() => {
-    if (debounce.current) clearTimeout(debounce.current);
-    debounce.current = setTimeout(() => { 
-      setPage(1); 
-      fetch(query, 1, selectedType, selectedCity); 
-    }, 400);
-    return () => { if (debounce.current) clearTimeout(debounce.current); };
-  }, [query, fetch, selectedType, selectedCity]);
+    const handler = setTimeout(() => {
+      fetchEvents(query, page, selectedType, selectedCity);
+    }, 300);
+    return () => clearTimeout(handler);
+  }, [query, page, selectedType, selectedCity, fetchEvents]);
 
-  useEffect(() => { 
-    fetch(query, page, selectedType, selectedCity); 
-  }, [page, query, fetch, selectedType, selectedCity]);
+  // Reset page when filters change
+  useEffect(() => {
+    setPage(1);
+  }, [query, selectedType, selectedCity]);
 
   return (
     <div style={{ background: T.bg, color: T.text, minHeight: "100vh", fontFamily: T.fontB }}>
@@ -298,7 +297,10 @@ export const HomePage = () => {
           <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-8 mb-4 border-b border-theme-border/40 pb-12 pt-12 px-8">
             <div style={{ borderLeft: `2px solid ${T.brand}`, paddingLeft: 16 }}>
               <p style={{ fontSize: 10, fontFamily: T.fontD, fontWeight: 900, color: "var(--theme-text-muted)", letterSpacing: "0.2em", textTransform: "uppercase", margin: "0 0 4px", fontStyle: 'italic' }}>{DICT.LATEST_REGISTERS_TAG}</p>
-              <h2 style={{ fontFamily: T.fontD, fontWeight: 900, fontSize: "clamp(28px,4vw,36px)", color: "var(--text)", textTransform: "uppercase", margin: 0, lineHeight: 1 }}>{DICT.LATEST_REGISTERS_TITLE}</h2>
+              <h2 style={{ fontFamily: T.fontD, fontWeight: 900, fontSize: "clamp(28px,4vw,36px)", color: "var(--text)", textTransform: "uppercase", margin: 0, lineHeight: 1 }}>
+                {DICT.LATEST_REGISTERS_TITLE}
+                <span style={{ fontSize: 14, verticalAlign: 'middle', opacity: 0.3, marginLeft: 16 }}>({events.length})</span>
+              </h2>
             </div>
 
             <div className="flex flex-col md:flex-row items-stretch md:items-center gap-3 flex-1 max-w-4xl lg:justify-end">
@@ -334,8 +336,9 @@ export const HomePage = () => {
                 >
                   <option value="" className="bg-theme-bg text-theme-text">Todas as Categorias</option>
                   <option value="ALBUM_FULL" className="bg-theme-bg text-theme-text">Álbum Completo</option>
-                  <option value="PHOTO_MARKETPLACE" className="bg-theme-bg text-theme-text">Marketplace</option>
+                  <option value="PHOTO_MARKETPLACE" className="bg-theme-bg text-theme-text">Live Print</option>
                   <option value="FOTO_POINT" className="bg-theme-bg text-theme-text">Foto Point</option>
+                  <option value="FLASH_EVENT" className="bg-theme-bg text-theme-text">Flash Event / Venda Direta</option>
                 </select>
               </div>
             </div>

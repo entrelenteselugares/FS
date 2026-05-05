@@ -42,6 +42,7 @@ interface Event {
   targetAmount?: number;
   clientName?: string | null;
   clientEmail?: string | null;
+  retentionDays?: number;
 }
 
 interface AdminEventsProps {
@@ -75,7 +76,7 @@ export const AdminEvents: React.FC<AdminEventsProps> = ({ initialEditEventId }) 
     customerEmail: "",
     whatsapp: "",
     amount: 15,
-    location: "Taquaral / Marketplace",
+    location: "Taquaral / Live Print",
     paymentMethod: "MONEY" as "PIX" | "CARD" | "MONEY",
     services: [] as string[]
   });
@@ -113,6 +114,7 @@ export const AdminEvents: React.FC<AdminEventsProps> = ({ initialEditEventId }) 
     clientName: string;
     clientEmail: string;
     franchiseeId: string;
+    retentionDays: number;
   }
 
   const [formData, setFormData] = useState<EventFormData>({
@@ -135,6 +137,7 @@ export const AdminEvents: React.FC<AdminEventsProps> = ({ initialEditEventId }) 
     clientName: "",
     clientEmail: "",
     franchiseeId: "",
+    retentionDays: 15,
   });
 
   const [previewPreviews, setPreviewPreviews] = useState<string[]>(["", "", ""]);
@@ -217,6 +220,7 @@ export const AdminEvents: React.FC<AdminEventsProps> = ({ initialEditEventId }) 
         clientName: "",
         clientEmail: "",
         franchiseeId: "",
+        retentionDays: 15,
       });
       setCoverPreview(null);
       setPreviewPreviews(["", "", ""]);
@@ -280,7 +284,8 @@ export const AdminEvents: React.FC<AdminEventsProps> = ({ initialEditEventId }) 
         pricePerPhoto: Number(data.pricePerPhoto || 15),
         clientName: data.clientName || "",
         clientEmail: data.clientEmail || "",
-        franchiseeId: data.franchiseeId || ""
+        franchiseeId: data.franchiseeId || "",
+        retentionDays: data.retentionDays || 15,
       });
       setCoverPreview(data.coverPhotoUrl);
       try {
@@ -314,7 +319,7 @@ export const AdminEvents: React.FC<AdminEventsProps> = ({ initialEditEventId }) 
         return;
       }
 
-      showNotification("Venda e Operação Marketplace registradas!");
+      showNotification("Venda e Operação Live Print registradas!");
       setIsExpressModalOpen(false);
       const updatedEvents = await API.get("/admin/events");
       setEvents(updatedEvents.data.events || []);
@@ -366,12 +371,12 @@ export const AdminEvents: React.FC<AdminEventsProps> = ({ initialEditEventId }) 
             }}
             className="font-black uppercase tracking-[0.4em] px-8 py-4 hover:brightness-110 transition-all shadow-xl shadow-brand-tactical/10 rounded-none text-[9px] w-full md:w-auto border border-brand-tactical text-brand-tactical bg-transparent"
           >
-            VENDA RÁPIDA (MARKETPLACE)
+            VENDA RÁPIDA (LIVE PRINT)
           </button>
           <button 
             onClick={() => {
               setEditingEvent(null);
-              setFormData({ title: "", slug: "", date: "", location: "", city: "", description: "", priceBase: 200, priceEarly: 190, cartorioId: "", captacaoId: "", edicaoId: "", temFoto: true, temVideo: false, temReels: false, temFotoImpressa: false, coverPhotoUrl: "", eventHours: 2, isCrowdfund: false, targetAmount: 0, lightroomUrl: "", driveUrl: "", previewPhotos: ["", "", ""], isPrivate: false, isUnitSale: false, priceUnit: 10, type: 'ALBUM_FULL', pricePerPhoto: 15, clientName: "", clientEmail: "", franchiseeId: "" });
+              setFormData({ title: "", slug: "", date: "", location: "", city: "", description: "", priceBase: 200, priceEarly: 190, cartorioId: "", captacaoId: "", edicaoId: "", temFoto: true, temVideo: false, temReels: false, temFotoImpressa: false, coverPhotoUrl: "", eventHours: 2, isCrowdfund: false, targetAmount: 0, lightroomUrl: "", driveUrl: "", previewPhotos: ["", "", ""], isPrivate: false, isUnitSale: false, priceUnit: 10, type: 'ALBUM_FULL', pricePerPhoto: 15, clientName: "", clientEmail: "", franchiseeId: "", retentionDays: 15 });
               setCoverPreview(null);
               setPreviewPreviews(["", "", ""]);
               setIsModalOpen(true);
@@ -626,13 +631,18 @@ export const AdminEvents: React.FC<AdminEventsProps> = ({ initialEditEventId }) 
                               <label className="text-[9px] font-black text-zinc-800 uppercase tracking-[0.4em]">Lightroom / Galeria</label>
                               <input type="text" className="fs-input text-[11px] font-bold italic" value={formData.lightroomUrl} onChange={e => setFormData({ ...formData, lightroomUrl: e.target.value })} placeholder="https://..." />
                             </div>
+                            <div className="space-y-1.5">
+                              <label className="text-[9px] font-black text-zinc-800 uppercase tracking-[0.4em]">Retenção Galeria (Dias)</label>
+                              <input type="number" className="fs-input" value={formData.retentionDays} onChange={e => setFormData({ ...formData, retentionDays: Number(e.target.value) })} />
+                              <p className="text-[7px] text-zinc-400 italic">Sugestão: 7 (Privado) | 15 (Público) | 90 (Shows)</p>
+                            </div>
                           </div>
                           <div className="space-y-4">
                             <div className="space-y-2">
                               <label className="text-[9px] font-black text-zinc-800 uppercase tracking-[0.4em]">Modelo e Serviços</label>
                               <div className="flex gap-4">
                                 <button type="button" onClick={() => setFormData({ ...formData, type: 'ALBUM_FULL' })} className={`flex-1 p-2.5 border text-[9px] font-black uppercase tracking-widest transition-all ${formData.type === 'ALBUM_FULL' ? 'bg-brand-tactical border-brand-tactical text-zinc-950 shadow-sm' : 'bg-zinc-50 border-zinc-300 text-zinc-500'}`}>Álbum Completo</button>
-                                <button type="button" onClick={() => setFormData({ ...formData, type: 'PHOTO_MARKETPLACE' })} className={`flex-1 p-2.5 border text-[9px] font-black uppercase tracking-widest transition-all ${formData.type === 'PHOTO_MARKETPLACE' ? 'bg-brand-tactical border-brand-tactical text-zinc-950 shadow-sm' : 'bg-zinc-50 border-zinc-300 text-zinc-500'}`}>Marketplace</button>
+                                <button type="button" onClick={() => setFormData({ ...formData, type: 'PHOTO_MARKETPLACE' })} className={`flex-1 p-2.5 border text-[9px] font-black uppercase tracking-widest transition-all ${formData.type === 'PHOTO_MARKETPLACE' ? 'bg-brand-tactical border-brand-tactical text-zinc-950 shadow-sm' : 'bg-zinc-50 border-zinc-300 text-zinc-500'}`}>Live Print</button>
                               </div>
                               <div className="grid grid-cols-2 gap-x-6 gap-y-3 pt-3 border-t border-zinc-100">
                                 {["temFoto", "temVideo", "temReels", "temFotoImpressa", "isCrowdfund", "isPrivate"].map(f => (

@@ -392,6 +392,33 @@ export class NotificationService {
     }
   }
 
+  /** Notifica o dono que o evento foi encerrado automaticamente */
+  static async notifyEventAutoClosed(data: { to: string; ownerName: string; eventTitle: string }) {
+    if (!process.env.SMTP_USER || !process.env.SMTP_PASS) return;
+
+    const htmlContent = `
+      <div style="font-family: sans-serif; max-width: 600px; margin: 0 auto; padding: 20px; color: #000;">
+        <h1 style="font-size: 20px; color: #ff4444;">Evento Encerrado 🔒</h1>
+        <p>Olá, <strong>${data.ownerName}</strong>,</p>
+        <p>O evento <strong>${data.eventTitle}</strong> atingiu o prazo limite e foi encerrado automaticamente pelo sistema.</p>
+        <p>A galeria pública não está mais disponível para novas compras. Você ainda pode gerenciar o evento através do seu painel profissional.</p>
+        <hr style="border: 0.5px solid #eee;" />
+        <p style="font-size: 10px; color: #999; text-align: center;">Foto Segundo — Gestão Automatizada</p>
+      </div>
+    `;
+
+    try {
+      await this.transporter.sendMail({
+        from: `"Foto Segundo" <${process.env.SMTP_USER}>`,
+        to: data.to,
+        subject: `Evento Encerrado: ${data.eventTitle}`,
+        html: htmlContent,
+      });
+    } catch (error) {
+      console.error("[Notification] Erro ao notificar encerramento de evento:", error);
+    }
+  }
+
   /**
    * Envia e-mail de recuperação de senha
    */

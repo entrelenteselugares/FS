@@ -9,20 +9,20 @@ import { NotificationService } from "../services/notification.service";
 import { audit } from "../lib/audit";
 import { FRONTEND_URL } from "../lib/config";
 
-// ── DASHBOARD ─────────────────────────────────────────
+// â”€â”€ DASHBOARD â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 
 export async function adminUploadCover(req: AuthRequest, res: Response): Promise<void> {
   const { id } = req.params;
   const { imageBase64, mimeType } = req.body;
 
   if (!imageBase64 || !mimeType) {
-    res.status(400).json({ error: "Imagem e MimeType são obrigatórios." });
+    res.status(400).json({ error: "Imagem e MimeType sÃ£o obrigatÃ³rios." });
     return;
   }
 
   try {
     const exists = await prisma.event.findUnique({ where: { id: String(id) } });
-    if (!exists) { res.status(404).json({ error: "Evento não encontrado." }); return; }
+    if (!exists) { res.status(404).json({ error: "Evento nÃ£o encontrado." }); return; }
 
     const base64Data = String(imageBase64).replace(/^data:image\/\w+;base64,/, "");
     const buffer = Buffer.from(base64Data, "base64");
@@ -58,13 +58,13 @@ export async function adminUploadPreview(req: AuthRequest, res: Response): Promi
   const { imageBase64, mimeType, index } = req.body;
 
   if (!imageBase64 || !mimeType || index === undefined) {
-    res.status(400).json({ error: "Imagem, MimeType e Index são obrigatórios." });
+    res.status(400).json({ error: "Imagem, MimeType e Index sÃ£o obrigatÃ³rios." });
     return;
   }
 
   try {
     const event = await prisma.event.findUnique({ where: { id: String(id) } });
-    if (!event) { res.status(404).json({ error: "Evento não encontrado." }); return; }
+    if (!event) { res.status(404).json({ error: "Evento nÃ£o encontrado." }); return; }
 
     const base64Data = String(imageBase64).replace(/^data:image\/\w+;base64,/, "");
     const buffer = Buffer.from(base64Data, "base64");
@@ -87,7 +87,7 @@ export async function adminUploadPreview(req: AuthRequest, res: Response): Promi
       previews = [];
     }
 
-    // Garante que o array tenha espaço
+    // Garante que o array tenha espaÃ§o
     while (previews.length < 4) previews.push("");
     
     previews[Number(index)] = publicUrl;
@@ -103,13 +103,13 @@ export async function adminUploadPreview(req: AuthRequest, res: Response): Promi
     res.json(updated);
   } catch (err) {
     console.error("adminUploadPreview:", err);
-    res.status(500).json({ error: "Erro ao salvar prévia via Admin." });
+    res.status(500).json({ error: "Erro ao salvar prÃ©via via Admin." });
   }
 }
 
 export async function getDashboardStats(req: AuthRequest, res: Response): Promise<void> {
   try {
-    // Consultas sequenciais para evitar sobrecarga na pool de conexões
+    // Consultas sequenciais para evitar sobrecarga na pool de conexÃµes
     const totalEvents = await prisma.event.count({ where: { active: true, isQuote: false } });
     const totalOrders = await prisma.order.count({ where: { status: "APROVADO" } });
     const totalRevenueResult = await prisma.order.aggregate({
@@ -162,7 +162,7 @@ export async function getDashboardStats(req: AuthRequest, res: Response): Promis
       }
     });
 
-    // ── MÉTRICAS DE PERFORMANCE (30 DIAS) ──
+    // â”€â”€ MÃ‰TRICAS DE PERFORMANCE (30 DIAS) â”€â”€
     const now = new Date();
     const thirtyDaysAgo = new Date();
     thirtyDaysAgo.setDate(now.getDate() - 30);
@@ -220,7 +220,7 @@ export async function getDashboardStats(req: AuthRequest, res: Response): Promis
   }
 }
 
-// ── EVENTOS ───────────────────────────────────────────
+// â”€â”€ EVENTOS â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 
 export async function adminListEvents(req: AuthRequest, res: Response): Promise<void> {
   const { q, page = "1", status } = req.query;
@@ -246,7 +246,7 @@ export async function adminListEvents(req: AuthRequest, res: Response): Promise<
       ];
     }
 
-    // Isola eventos por Franquia se o usuário for um FRANQUEADO
+    // Isola eventos por Franquia se o usuÃ¡rio for um FRANQUEADO
     if (req.user?.role === 'FRANCHISEE') {
       const profile = await prisma.franchiseProfile.findUnique({ where: { userId: req.user.userId } });
       (where as any).franchiseeId = profile?.id ?? 'non-existent';
@@ -300,20 +300,20 @@ export async function adminCreateEvent(req: AuthRequest, res: Response): Promise
   } = req.body;
 
   if (!title || !date || !location) {
-    res.status(400).json({ error: "Título (Noivos), data e local são obrigatórios." });
+    res.status(400).json({ error: "TÃ­tulo (Noivos), data e local sÃ£o obrigatÃ³rios." });
     return;
   }
 
   try {
-    // Gera slug único
+    // Gera slug Ãºnico
     let slug = slugify(`${title}-${new Date(date).getFullYear()}`);
     const exists = await prisma.event.findUnique({ where: { slug } });
     if (exists) slug = `${slug}-${Date.now().toString(36)}`;
 
     let finalCaptacaoId = captacaoId || null;
 
-    // ── LOGICA DE CONVOCAÇÃO TÁTICA ──
-    // Se selecionou um cartório e não selecionou profissional, busca o FIXO da unidade
+    // â”€â”€ LOGICA DE CONVOCAÃ‡ÃƒO TÃTICA â”€â”€
+    // Se selecionou um cartÃ³rio e nÃ£o selecionou profissional, busca o FIXO da unidade
     if (!finalCaptacaoId && cartorioId) {
       const cartorio = await prisma.cartorio.findUnique({
         where: { userId: cartorioId },
@@ -337,7 +337,7 @@ export async function adminCreateEvent(req: AuthRequest, res: Response): Promise
         previewPhotos: previewPhotos ? JSON.stringify(previewPhotos) : null,
         priceBase: priceBase ?? 200,
         priceEarly: priceEarly ?? 190,
-        active: true, // Eventos criados pelo Admin já nascem ativos
+        active: true, // Eventos criados pelo Admin jÃ¡ nascem ativos
         cartorioUserId: cartorioId || null,
         captacaoId: finalCaptacaoId,
         edicaoId: edicaoId || null,
@@ -359,6 +359,8 @@ export async function adminCreateEvent(req: AuthRequest, res: Response): Promise
         marketplaceConfigs: marketplaceConfigs || {},
         clientEmail: clientEmail || null,
         clientName: clientName || null,
+        // @ts-ignore
+        retentionDays: req.body.retentionDays ? Number(req.body.retentionDays) : (req.body.isPrivate ? 7 : 15),
       },
       include: {
         captacao: { select: { nome: true } },
@@ -371,7 +373,7 @@ export async function adminCreateEvent(req: AuthRequest, res: Response): Promise
     res.status(201).json(event);
   } catch (err) {
     if (err instanceof Error && (err as NodeJS.ErrnoException & { code?: string }).code === "P2002") {
-      res.status(409).json({ error: "Slug duplicado. Tente um título diferente." });
+      res.status(409).json({ error: "Slug duplicado. Tente um tÃ­tulo diferente." });
       return;
     }
     console.error("adminCreateEvent:", err);
@@ -384,10 +386,10 @@ export async function adminUpdateEvent(req: AuthRequest, res: Response): Promise
   const data: Prisma.EventUncheckedUpdateInput = {};
   
   try {
-    // 1. Busca estado atual para saber se o usuário é o dono e se links estão sendo adicionados
+    // 1. Busca estado atual para saber se o usuÃ¡rio Ã© o dono e se links estÃ£o sendo adicionados
     const currentEvent = await prisma.event.findUnique({ where: { id: String(id) } });
     if (!currentEvent) {
-      res.status(404).json({ error: "Evento não encontrado." });
+      res.status(404).json({ error: "Evento nÃ£o encontrado." });
       return;
     }
 
@@ -415,13 +417,13 @@ export async function adminUpdateEvent(req: AuthRequest, res: Response): Promise
     if (req.body.isCrowdfund !== undefined) data.isCrowdfund = req.body.isCrowdfund;
     if (req.body.targetAmount !== undefined) data.targetAmount = req.body.targetAmount ? Number(req.body.targetAmount) : null;
     if (req.body.isPrivate !== undefined) {
-      // REGRA ABSOLUTA: Apenas o dono do álbum (clientEmail) pode mudar a privacidade.
-      // Profissionais e Unidades Fixas (mesmo se ADMIN) não têm autonomia se o clientEmail estiver definido.
+      // REGRA ABSOLUTA: Apenas o dono do Ã¡lbum (clientEmail) pode mudar a privacidade.
+      // Profissionais e Unidades Fixas (mesmo se ADMIN) nÃ£o tÃªm autonomia se o clientEmail estiver definido.
       const canChangePrivacy = !currentEvent.clientEmail || req.user?.email === currentEvent.clientEmail;
       if (canChangePrivacy) {
         (data as Prisma.EventUpdateInput).isPrivate = req.body.isPrivate;
       } else {
-        console.warn(`[SECURITY] Usuário ${req.user?.email} tentou mudar privacidade do evento ${id} sem ser o dono.`);
+        console.warn(`[SECURITY] UsuÃ¡rio ${req.user?.email} tentou mudar privacidade do evento ${id} sem ser o dono.`);
       }
     }
     if (req.body.isUnitSale !== undefined) (data as Prisma.EventUpdateInput).isUnitSale = req.body.isUnitSale;
@@ -431,6 +433,8 @@ export async function adminUpdateEvent(req: AuthRequest, res: Response): Promise
     if (req.body.marketplaceConfigs !== undefined) (data as Prisma.EventUpdateInput).marketplaceConfigs = req.body.marketplaceConfigs;
     if (req.body.clientEmail !== undefined) data.clientEmail = req.body.clientEmail || null;
     if (req.body.clientName !== undefined) data.clientName = req.body.clientName || null;
+    // @ts-ignore
+    if (req.body.retentionDays !== undefined) data.retentionDays = Number(req.body.retentionDays);
     if (req.body.eventEndTime !== undefined) data.eventEndTime = req.body.eventEndTime ? new Date(req.body.eventEndTime) : null;
 
     const wasEmpty = !currentEvent.lightroomUrl && !currentEvent.driveUrl;
@@ -441,7 +445,7 @@ export async function adminUpdateEvent(req: AuthRequest, res: Response): Promise
       data.galleryUploadTime = new Date();
     }
 
-    // 2. Executa a atualização do evento
+    // 2. Executa a atualizaÃ§Ã£o do evento
     const event = await prisma.event.update({
       where: { id: String(id) },
       data,
@@ -453,13 +457,13 @@ export async function adminUpdateEvent(req: AuthRequest, res: Response): Promise
       },
     });
 
-    // 3. Processa Gamificação de Agilidade (SLA)
+    // 3. Processa GamificaÃ§Ã£o de Agilidade (SLA)
     if (isAddingLinks) {
       const { GamificationService } = require("../services/gamification.service");
       GamificationService.processSLA(event.id).catch((e: any) => console.error("Erro ao processar SLA:", e));
     }
 
-    // 4. Se os links foram liberados agora, dispara os prazos de expiração dos pedidos
+    // 4. Se os links foram liberados agora, dispara os prazos de expiraÃ§Ã£o dos pedidos
     if (isAddingLinks) {
       console.log(`[FAIR EXPIRE] Links adicionados ao evento ${id}. Disparando prazos...`);
       
@@ -493,7 +497,7 @@ export async function adminUpdateEvent(req: AuthRequest, res: Response): Promise
     });
   } catch (err) {
     if (err instanceof Error && (err as NodeJS.ErrnoException & { code?: string }).code === "P2025") {
-      res.status(404).json({ error: "Evento não encontrado." });
+      res.status(404).json({ error: "Evento nÃ£o encontrado." });
       return;
     }
     console.error("adminUpdateEvent:", err);
@@ -512,18 +516,18 @@ export async function adminDeleteEvent(req: AuthRequest, res: Response): Promise
     });
 
     if (!event) {
-      res.status(404).json({ error: "Evento não encontrado." });
+      res.status(404).json({ error: "Evento nÃ£o encontrado." });
       return;
     }
 
     const hasPaidOrders = event._count.pedidos > 0;
 
-    // Se o usuário pediu hard delete OU se não tem pedidos aprovados, deletamos fisicamente
+    // Se o usuÃ¡rio pediu hard delete OU se nÃ£o tem pedidos aprovados, deletamos fisicamente
     if (hardDelete || !hasPaidOrders) {
       console.log(`[AdminDelete] Executando HARD DELETE para o evento ${id}`);
       
       await prisma.$transaction([
-        // Limpeza profunda de dependências
+        // Limpeza profunda de dependÃªncias
         prisma.photoLike.deleteMany({ where: { eventId: String(id) } }),
         prisma.calendarSlot.deleteMany({ where: { eventId: String(id) } }),
         prisma.eventMedia.deleteMany({ where: { eventId: String(id) } }),
@@ -531,7 +535,7 @@ export async function adminDeleteEvent(req: AuthRequest, res: Response): Promise
         prisma.orderItem.deleteMany({ where: { order: { eventId: String(id) } } }),
         prisma.order.deleteMany({ where: { eventId: String(id), status: { not: "APROVADO" } } }),
         
-        // Se houver pedidos aprovados e ainda assim for HARD DELETE (forçado), deleta eles também
+        // Se houver pedidos aprovados e ainda assim for HARD DELETE (forÃ§ado), deleta eles tambÃ©m
         ...(hardDelete ? [prisma.order.deleteMany({ where: { eventId: String(id) } })] : []),
 
         // Finalmente deleta o evento
@@ -552,7 +556,7 @@ export async function adminDeleteEvent(req: AuthRequest, res: Response): Promise
     console.error("adminDeleteEvent Error:", err);
     res.status(500).json({ 
       error: "Erro ao excluir evento.", 
-      details: err.message || "Verifique se existem dependências ativas que impedem a exclusão física." 
+      details: err.message || "Verifique se existem dependÃªncias ativas que impedem a exclusÃ£o fÃ­sica." 
     });
   }
 }
@@ -567,11 +571,11 @@ export async function adminDeleteOrder(req: AuthRequest, res: Response): Promise
     });
 
     if (!order) {
-      res.status(404).json({ error: "Pedido não encontrado." });
+      res.status(404).json({ error: "Pedido nÃ£o encontrado." });
       return;
     }
 
-    // 2. Deleta o pedido (Prisma deve lidar com o cascade nos OrderItems se configurado, senão deletamos manual)
+    // 2. Deleta o pedido (Prisma deve lidar com o cascade nos OrderItems se configurado, senÃ£o deletamos manual)
     await prisma.$transaction([
       prisma.orderItem.deleteMany({ where: { orderId: String(id) } }),
       prisma.order.delete({ where: { id: String(id) } })
@@ -586,7 +590,7 @@ export async function adminDeleteOrder(req: AuthRequest, res: Response): Promise
   }
 }
 
-// ── USUÁRIOS / PROFISSIONAIS ──────────────────────────
+// â”€â”€ USUÃRIOS / PROFISSIONAIS â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 
 export async function adminListUsers(req: AuthRequest, res: Response): Promise<void> {
   const { role, q } = req.query;
@@ -622,7 +626,7 @@ export async function adminListUsers(req: AuthRequest, res: Response): Promise<v
     })));
   } catch (err) {
     console.error("adminListUsers:", err);
-    res.status(500).json({ error: "Erro ao listar usuários." });
+    res.status(500).json({ error: "Erro ao listar usuÃ¡rios." });
   }
 }
 
@@ -632,13 +636,13 @@ export async function adminCreateUser(req: AuthRequest, res: Response): Promise<
     captPct, editPct, equipment, otherHabilities 
   } = req.body;
   if (!name || !email || !password || !role) {
-    res.status(400).json({ error: "Todos os campos são obrigatórios." });
+    res.status(400).json({ error: "Todos os campos sÃ£o obrigatÃ³rios." });
     return;
   }
 
   try {
     const exists = await prisma.user.findUnique({ where: { email } });
-    if (exists) { res.status(409).json({ error: "E-mail já cadastrado." }); return; }
+    if (exists) { res.status(409).json({ error: "E-mail jÃ¡ cadastrado." }); return; }
 
     const hash = await bcrypt.hash(password, 12);
 
@@ -652,12 +656,12 @@ export async function adminCreateUser(req: AuthRequest, res: Response): Promise<
 
     if (sbError) {
       console.error("Erro Supabase Auth:", sbError);
-      res.status(500).json({ error: `Erro na autenticação externa: ${sbError.message}` });
+      res.status(500).json({ error: `Erro na autenticaÃ§Ã£o externa: ${sbError.message}` });
       return;
     }
 
     const sbUser = sbData.user;
-    if (!sbUser) throw new Error("Supabase não retornou usuário.");
+    if (!sbUser) throw new Error("Supabase nÃ£o retornou usuÃ¡rio.");
 
     // 2. Criar no Prisma com o mesmo ID
     const user = await prisma.user.create({
@@ -671,7 +675,7 @@ export async function adminCreateUser(req: AuthRequest, res: Response): Promise<
       },
     });
 
-    // Cria perfil específico baseado no role
+    // Cria perfil especÃ­fico baseado no role
     if (role === "PROFISSIONAL") {
       await prisma.profissional.create({
         data: { 
@@ -690,7 +694,7 @@ export async function adminCreateUser(req: AuthRequest, res: Response): Promise<
       await prisma.cartorio.create({
         data: {
           userId: user.id,
-          razaoSocial: name, // Usa o nome cadastrado como Razão Social inicial
+          razaoSocial: name, // Usa o nome cadastrado como RazÃ£o Social inicial
         },
       });
     }
@@ -702,7 +706,7 @@ export async function adminCreateUser(req: AuthRequest, res: Response): Promise<
     });
   } catch (err) {
     console.error("adminCreateUser:", err);
-    res.status(500).json({ error: "Erro ao criar usuário." });
+    res.status(500).json({ error: "Erro ao criar usuÃ¡rio." });
   }
 }
 
@@ -739,7 +743,7 @@ export async function adminUpdateUser(req: AuthRequest, res: Response): Promise<
       });
     }
 
-    // Atualiza campos do cartório se enviados
+    // Atualiza campos do cartÃ³rio se enviados
     if (role === "CARTORIO") {
       await prisma.cartorio.update({
         where: { userId: String(id) },
@@ -754,7 +758,7 @@ export async function adminUpdateUser(req: AuthRequest, res: Response): Promise<
       });
     }
 
-    // ── GESTÃO DE FRANQUIA ──
+    // â”€â”€ GESTÃƒO DE FRANQUIA â”€â”€
     const { isFranchise, printCredits } = req.body;
     if (isFranchise !== undefined) {
       if (isFranchise) {
@@ -768,7 +772,7 @@ export async function adminUpdateUser(req: AuthRequest, res: Response): Promise<
           }
         });
 
-        // Se créditos mudaram, registra transação de ajuste/recarga
+        // Se crÃ©ditos mudaram, registra transaÃ§Ã£o de ajuste/recarga
         if (printCredits !== undefined) {
            const profile = await prisma.franchiseProfile.findUnique({ where: { userId: String(id) } });
            if (profile) {
@@ -778,13 +782,13 @@ export async function adminUpdateUser(req: AuthRequest, res: Response): Promise<
                   amount: printCredits, // Aqui estamos setando o valor total, talvez devesse ser delta?
                   // Por simplicidade neste MVP, setamos o valor absoluto enviado pelo Admin.
                   type: 'ADJUSTMENT',
-                  description: `Ajuste administrativo de saldo: ${printCredits} créditos.`
+                  description: `Ajuste administrativo de saldo: ${printCredits} crÃ©ditos.`
                 }
               });
            }
         }
       } else {
-        // Desabilita perfil de franquia (apenas desativa, não deleta o histórico)
+        // Desabilita perfil de franquia (apenas desativa, nÃ£o deleta o histÃ³rico)
         await prisma.franchiseProfile.updateMany({
           where: { userId: String(id) },
           data: { active: false }
@@ -797,7 +801,7 @@ export async function adminUpdateUser(req: AuthRequest, res: Response): Promise<
     res.json({ ok: true });
   } catch (err) {
     console.error("adminUpdateUser:", err);
-    res.status(500).json({ error: "Erro ao atualizar usuário." });
+    res.status(500).json({ error: "Erro ao atualizar usuÃ¡rio." });
   }
 }
 
@@ -814,7 +818,7 @@ export async function adminDeleteUser(req: AuthRequest, res: Response): Promise<
     });
 
     if (!user) {
-      res.status(404).json({ error: "Usuário não encontrado." });
+      res.status(404).json({ error: "UsuÃ¡rio nÃ£o encontrado." });
       return;
     }
 
@@ -822,11 +826,11 @@ export async function adminDeleteUser(req: AuthRequest, res: Response): Promise<
     try {
       const { error: sbError } = await supabase.auth.admin.deleteUser(user.id);
       if (sbError) {
-        console.warn(`[Supabase] Erro ao remover usuário auth: ${sbError.message}`);
-        // Prosseguimos mesmo com erro no Supabase (ex: usuário já removido lá)
+        console.warn(`[Supabase] Erro ao remover usuÃ¡rio auth: ${sbError.message}`);
+        // Prosseguimos mesmo com erro no Supabase (ex: usuÃ¡rio jÃ¡ removido lÃ¡)
       }
     } catch (err) {
-      console.warn(`[Supabase] Exceção ao remover usuário auth`, err);
+      console.warn(`[Supabase] ExceÃ§Ã£o ao remover usuÃ¡rio auth`, err);
     }
 
     // 2. Remover perfis associados (Opcional se houver cascade, mas vamos garantir)
@@ -847,11 +851,11 @@ export async function adminDeleteUser(req: AuthRequest, res: Response): Promise<
     res.json({ ok: true });
   } catch (err) {
     console.error("adminDeleteUser:", err);
-    res.status(500).json({ error: "Erro ao excluir usuário. Verifique se existem dependências (eventos/pedidos)." });
+    res.status(500).json({ error: "Erro ao excluir usuÃ¡rio. Verifique se existem dependÃªncias (eventos/pedidos)." });
   }
 }
 
-// ── PEDIDOS ───────────────────────────────────────────
+// â”€â”€ PEDIDOS â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 
 export async function adminListOrders(req: AuthRequest, res: Response): Promise<void> {
     const { status, page = "1", q, readyForPayout, payoutStatus } = req.query;
@@ -941,7 +945,7 @@ export async function adminMarkPayoutPaid(req: AuthRequest, res: Response): Prom
   }
 }
 
-// ── ORÇAMENTOS (LEADS) ─────────────────────────────
+// â”€â”€ ORÃ‡AMENTOS (LEADS) â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 
 export async function adminListQuotes(req: AuthRequest, res: Response): Promise<void> {
   const { page = "1", q } = req.query;
@@ -971,7 +975,7 @@ export async function adminListQuotes(req: AuthRequest, res: Response): Promise<
     res.json({ quotes, total, page: Number(page), pages: Math.ceil(total / take) });
   } catch (err) {
     console.error("adminListQuotes:", err);
-    res.status(500).json({ error: "Erro ao listar orçamentos." });
+    res.status(500).json({ error: "Erro ao listar orÃ§amentos." });
   }
 }
 
@@ -980,7 +984,7 @@ export async function adminApproveQuote(req: AuthRequest, res: Response): Promis
   const { finalPrice } = req.body;
 
   if (!finalPrice || Number(finalPrice) <= 0) {
-    res.status(400).json({ error: "O preço final deve ser maior que zero." });
+    res.status(400).json({ error: "O preÃ§o final deve ser maior que zero." });
     return;
   }
 
@@ -990,11 +994,11 @@ export async function adminApproveQuote(req: AuthRequest, res: Response): Promis
     });
 
     if (!quote || !quote.isQuote) {
-      res.status(404).json({ error: "Orçamento não encontrado." });
+      res.status(404).json({ error: "OrÃ§amento nÃ£o encontrado." });
       return;
     }
 
-    // 1. Atualizar o evento com o preço, status e breakdown no description (JSON)
+    // 1. Atualizar o evento com o preÃ§o, status e breakdown no description (JSON)
     const updatedQuote = await prisma.event.update({
       where: { id: String(id) },
       data: {
@@ -1012,7 +1016,7 @@ export async function adminApproveQuote(req: AuthRequest, res: Response): Promis
     const isSplit = req.body.isSplit === true;
     let order;
 
-    // Busca o usuário pelo e-mail para vincular o pedido
+    // Busca o usuÃ¡rio pelo e-mail para vincular o pedido
     const targetUser = await prisma.user.findUnique({ where: { email: quote.clientEmail! } });
 
     if (isSplit) {
@@ -1025,33 +1029,33 @@ export async function adminApproveQuote(req: AuthRequest, res: Response): Promis
           eventId: updatedQuote.id,
           valor: halfPrice,
           buyerEmail: quote.clientEmail,
-          clienteId: targetUser?.id, // Vincula ao usuário se existir
+          clienteId: targetUser?.id, // Vincula ao usuÃ¡rio se existir
           status: "PENDENTE",
           manualType: "Reserva (50%)",
           paymentId: `QUOTE-RESERVA-${Date.now()}`
         }
       });
 
-      // Pedido 2: Quitação (50%) - Sem paymentId imediato, ou gerado depois
+      // Pedido 2: QuitaÃ§Ã£o (50%) - Sem paymentId imediato, ou gerado depois
       await prisma.order.create({
         data: {
           eventId: updatedQuote.id,
           valor: halfPrice,
           buyerEmail: quote.clientEmail,
-          clienteId: targetUser?.id, // Vincula ao usuário se existir
+          clienteId: targetUser?.id, // Vincula ao usuÃ¡rio se existir
           status: "PENDENTE",
-          manualType: "Quitação (50%)",
+          manualType: "QuitaÃ§Ã£o (50%)",
           paymentId: `QUOTE-FINAL-${Date.now()}`
         }
       });
     } else {
-      // Pedido único
+      // Pedido Ãºnico
       order = await prisma.order.create({
         data: {
           eventId: updatedQuote.id,
           valor: Number(finalPrice),
           buyerEmail: quote.clientEmail,
-          clienteId: targetUser?.id, // Vincula ao usuário se existir
+          clienteId: targetUser?.id, // Vincula ao usuÃ¡rio se existir
           status: "PENDENTE"
         }
       });
@@ -1060,7 +1064,7 @@ export async function adminApproveQuote(req: AuthRequest, res: Response): Promis
     // 3. Gerar link de checkout
     const checkoutUrl = `${FRONTEND_URL}/checkout?orderId=${order.id}`;
 
-    // 4. Enviar E-mail Automático
+    // 4. Enviar E-mail AutomÃ¡tico
     await NotificationService.sendQuotationPricedEmail({
       to: quote.clientEmail!,
       clientName: quote.clientName || "Cliente",
@@ -1080,7 +1084,7 @@ export async function adminApproveQuote(req: AuthRequest, res: Response): Promis
     res.json({ success: true, updatedQuote, checkoutUrl });
   } catch (err) {
     console.error("adminApproveQuote:", err);
-    res.status(500).json({ error: "Erro ao aprovar orçamento." });
+    res.status(500).json({ error: "Erro ao aprovar orÃ§amento." });
   }
 }
 
@@ -1091,7 +1095,7 @@ export async function adminRejectQuote(req: AuthRequest, res: Response): Promise
   try {
     const quote = await prisma.event.findUnique({ where: { id: String(id) } });
     if (!quote || !quote.isQuote) {
-      res.status(404).json({ error: "Orçamento não encontrado." });
+      res.status(404).json({ error: "OrÃ§amento nÃ£o encontrado." });
       return;
     }
 
@@ -1109,11 +1113,11 @@ export async function adminRejectQuote(req: AuthRequest, res: Response): Promise
     res.json({ success: true });
   } catch (err) {
     console.error("adminRejectQuote:", err);
-    res.status(500).json({ error: "Erro ao rejeitar orçamento." });
+    res.status(500).json({ error: "Erro ao rejeitar orÃ§amento." });
   }
 }
 
-// ── LEGACY COMPATIBILITY ──────────────────────────────
+// â”€â”€ LEGACY COMPATIBILITY â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 export class AdminEventController {
   static cartorioStats = async (req: AuthRequest, res: Response) => {
     try {
@@ -1126,12 +1130,12 @@ export class AdminEventController {
       });
       res.json({ eventos: events });
     } catch {
-      res.status(500).json({ error: "Erro ao carregar dados do cartório." });
+      res.status(500).json({ error: "Erro ao carregar dados do cartÃ³rio." });
     }
   }
 }
 
-// ── AUDIT LOGS ────────────────────────────────────────
+// â”€â”€ AUDIT LOGS â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 
 export async function adminGetLogs(req: AuthRequest, res: Response): Promise<void> {
   try {
@@ -1161,18 +1165,18 @@ export async function adminCreateManualSale(req: AuthRequest, res: Response): Pr
   const { eventId, customerName, customerEmail, whatsapp, amount, manualType, internalNotes } = req.body;
 
   if (!eventId || !customerName || !customerEmail || !amount) {
-    res.status(400).json({ error: "Todos os campos são obrigatórios." });
+    res.status(400).json({ error: "Todos os campos sÃ£o obrigatÃ³rios." });
     return;
   }
 
   try {
     const event = await prisma.event.findUnique({ where: { id: eventId } });
     if (!event) {
-      res.status(404).json({ error: "Evento não encontrado." });
+      res.status(404).json({ error: "Evento nÃ£o encontrado." });
       return;
     }
 
-    // 1. Encontrar ou criar usuário (Sincronizado com Supabase Auth)
+    // 1. Encontrar ou criar usuÃ¡rio (Sincronizado com Supabase Auth)
     let user = await prisma.user.findUnique({ where: { email: customerEmail } });
     
     if (!user) {
@@ -1189,7 +1193,7 @@ export async function adminCreateManualSale(req: AuthRequest, res: Response): Pr
 
         if (authError) {
           if (authError.message.includes("already registered")) {
-            // Sincroniza se já existe no Supabase
+            // Sincroniza se jÃ¡ existe no Supabase
             const { data: { users: sbUsers } } = await supabase.auth.admin.listUsers();
             const sbUser = (sbUsers as { id: string, email?: string }[]).find(u => u.email === customerEmail);
             if (sbUser) {
@@ -1220,7 +1224,7 @@ export async function adminCreateManualSale(req: AuthRequest, res: Response): Pr
               active: true,
             }
           });
-          console.log(`[ADMIN] Novo usuário criado no Supabase: ${customerEmail} (Pass: ${tempPassword})`);
+          console.log(`[ADMIN] Novo usuÃ¡rio criado no Supabase: ${customerEmail} (Pass: ${tempPassword})`);
         }
       } catch (err: unknown) {
         console.error("[ADMIN Manual Sale Auto-Register Error]:", err instanceof Error ? err.message : String(err));
@@ -1239,7 +1243,7 @@ export async function adminCreateManualSale(req: AuthRequest, res: Response): Pr
     }
 
     if (!user) {
-      res.status(500).json({ error: "Falha ao identificar ou criar usuário para a venda manual." });
+      res.status(500).json({ error: "Falha ao identificar ou criar usuÃ¡rio para a venda manual." });
       return;
     }
 
@@ -1262,8 +1266,8 @@ export async function adminCreateManualSale(req: AuthRequest, res: Response): Pr
       }
     });
 
-    // 3. Forçar o evento como privado ao registrar venda (Privacidade LGPD)
-    // SEGURANÇA: Apenas se o usuário for o dono ou se não houver dono definido ainda.
+    // 3. ForÃ§ar o evento como privado ao registrar venda (Privacidade LGPD)
+    // SEGURANÃ‡A: Apenas se o usuÃ¡rio for o dono ou se nÃ£o houver dono definido ainda.
     const canForcePrivate = !event.clientEmail || req.user?.email === event.clientEmail;
     if (canForcePrivate) {
       await prisma.event.update({
@@ -1280,7 +1284,7 @@ export async function adminCreateManualSale(req: AuthRequest, res: Response): Pr
       amount 
     });
 
-    // 3. Notificações (Auditoria: Corrigindo lacuna de comunicação)
+    // 3. NotificaÃ§Ãµes (Auditoria: Corrigindo lacuna de comunicaÃ§Ã£o)
     NotificationService.notifyNewSale({
       buyerEmail: customerEmail,
       eventTitle: event.nomeNoivos,
@@ -1306,7 +1310,7 @@ export async function adminCreateManualSale(req: AuthRequest, res: Response): Pr
 
 /**
  * GET /api/diag/db
- * Diagn�stico ultra-r�pido de conectividade com o banco para debug em produ��o.
+ * Diagnóstico ultra-rápido de conectividade com o banco para debug em produção.
  */
 export async function checkDbStatus(_req: any, res: any) {
   try {
@@ -1316,7 +1320,7 @@ export async function checkDbStatus(_req: any, res: any) {
         prisma.event.count({ where: { active: true, isPrivate: false, isQuote: false } }),
         prisma.user.count()
       ]),
-      new Promise((_, reject) => setTimeout(() => reject(new Error("Timeout na conex�o com o banco")), 5000))
+      new Promise((_, reject) => setTimeout(() => reject(new Error("Timeout na conexão com o banco")), 5000))
     ]);
 
     return res.json({
@@ -1337,7 +1341,7 @@ export async function checkDbStatus(_req: any, res: any) {
     console.error("[DIAG] Erro no banco:", error);
     return res.status(500).json({
       status: "ERROR",
-      message: "Falha na conex�o com o banco de dados.",
+      message: "Falha na conexão com o banco de dados.",
       error: error.message,
       env: {
         node_env: process.env.NODE_ENV,

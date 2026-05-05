@@ -3,7 +3,7 @@ import { useSearchParams, useNavigate } from "react-router-dom";
 
 import { API } from "../lib/api";
 import { QRCodeSVG } from "qrcode.react";
-import { QrCode, Copy, Check, X, Download, Calendar, DollarSign, Settings, Users2, Camera, Star, ShieldCheck, ArrowRight, Share2, MapPin, Phone, UserCircle, Printer, AlertTriangle } from "lucide-react";
+import { QrCode, Copy, Check, X, Download, Calendar, DollarSign, Settings, Users2, Camera, Star, ShieldCheck, ArrowRight, Share2, MapPin, Phone, UserCircle, Printer, AlertTriangle, Play } from "lucide-react";
 import { useAuth } from "../hooks/useAuth";
 import { DashboardLayout, type NavItem } from "../components/DashboardLayout";
 
@@ -105,7 +105,7 @@ export default function UnidadeFixaDashboard() {
   const [searchParams] = useSearchParams();
   const navigate = useNavigate();
 
-  const [tab, setTab] = useState<Tab>((searchParams.get("tab") as Tab) || "agenda");
+  const [tab, setTab] = useState<Tab>((searchParams.get("tab") as Tab) || (user?.franchiseProfile ? "franquia" : "agenda"));
   const [stats, setStats] = useState<UnidadeStats | null>(null);
   const [eventos, setEventos] = useState<EventoAgenda[]>([]);
   const [loading, setLoading] = useState(true);
@@ -305,13 +305,13 @@ export default function UnidadeFixaDashboard() {
   };
 
   const NAV_ITEMS = (tab: Tab, setTab: (t: Tab) => void): NavItem[] => [
+    ...(user?.franchiseProfile ? [
+      { label: "Franquia Print", onClick: () => setTab("franquia"), isActive: tab === "franquia", icon: <Printer size={18} /> }
+    ] : []),
     { label: "Agenda Tática", onClick: () => setTab("agenda"), isActive: tab === "agenda", icon: <Calendar size={18} /> },
     { label: "Fluxo Financeiro", onClick: () => setTab("financas"), isActive: tab === "financas", icon: <DollarSign size={18} />, badge: repasses.filter(r => r.status !== "PAID").length || undefined },
     { label: "Rede Técnica", onClick: () => { setTab("equipe"); if (!teamLoaded) loadTeam(); }, isActive: tab === "equipe", icon: <Users2 size={18} /> },
     { label: "Configuração", onClick: () => setTab("configuracoes"), isActive: tab === "configuracoes", icon: <Settings size={18} /> },
-    ...(user?.franchiseProfile ? [
-      { label: "Franquia Print", onClick: () => setTab("franquia"), isActive: tab === "franquia", icon: <Printer size={18} /> }
-    ] : [])
   ];
 
   return (
@@ -401,9 +401,11 @@ export default function UnidadeFixaDashboard() {
           <div className="grid grid-cols-2 lg:grid-cols-4 gap-px bg-theme-border/20 border border-theme-border/20 shadow-2xl">
             {[
               { label: "Operações / Mês", value: String(stats.eventosMes ?? 0), icon: <Calendar size={14} /> },
-              { label: "Total Histórico", value: String(stats.totalEventos ?? 0), icon: <Camera size={14} /> },
+              user?.franchiseProfile 
+                ? { label: "Créditos Print", value: String(user.franchiseProfile.printCredits), icon: <Printer size={14} />, highlight: true }
+                : { label: "Total Histórico", value: String(stats.totalEventos ?? 0), icon: <Camera size={14} /> },
               { label: "Conversões", value: String(stats.totalVendas ?? 0), icon: <Users2 size={14} /> },
-              { label: "Crédito Previsto", value: formatCurrency(stats.repasseEstimado ?? 0), icon: <DollarSign size={14} />, highlight: true },
+              { label: "Repasse Previsto", value: formatCurrency(stats.repasseEstimado ?? 0), icon: <DollarSign size={14} />, highlight: !user?.franchiseProfile },
             ].map((m) => (
               <div key={m.label} className="bg-theme-bg-muted/40 p-4 md:p-6 space-y-2 md:space-y-4 group hover:bg-theme-bg-muted/60 transition-all duration-500">
                 <div className="flex items-center gap-2 md:gap-3">
@@ -1101,6 +1103,83 @@ export default function UnidadeFixaDashboard() {
                  </div>
               </div>
             )}
+
+            {/* ── OPERAÇÕES DE IMPRESSÃO ── */}
+            <div className="space-y-6">
+               <div className="flex items-center gap-3">
+                  <div className="h-0.5 w-6 bg-brand-tactical" />
+                  <p className="text-[9px] font-black text-theme-muted uppercase tracking-[0.4em]">Operações em Campo</p>
+               </div>
+               
+               <div className="grid grid-cols-1 gap-4">
+                  {eventos.length > 0 ? (
+                    eventos.map(ev => (
+                      <div key={ev.id} className="bg-theme-bg border border-theme-border p-6 flex flex-col md:flex-row items-center justify-between gap-6 hover:border-brand-tactical/30 transition-all group">
+                         <div className="flex items-center gap-5">
+                            <div className="w-12 h-12 bg-theme-bg-muted/40 border border-theme-border flex items-center justify-center text-brand-tactical group-hover:scale-110 transition-transform">
+                               <Printer size={20} />
+                            </div>
+                            <div>
+                               <p className="text-sm font-black text-theme-text uppercase italic tracking-tight">{ev.title}</p>
+                               <p className="text-[9px] text-theme-muted font-bold uppercase tracking-widest mt-1">{new Date(ev.date).toLocaleDateString('pt-BR')} · {ev.location}</p>
+                            </div>
+                         </div>
+                         <button 
+                           onClick={() => navigate(`/profissional/monitor/${ev.id}`)}
+                           className="px-8 py-3 bg-brand-tactical text-zinc-950 text-[10px] font-black uppercase tracking-widest hover:brightness-110 transition-all flex items-center gap-3 shadow-lg shadow-brand-tactical/10"
+                         >
+                           <Play size={12} /> ABRIR MONITOR
+                         </button>
+                      </div>
+                    ))
+                  ) : (
+                    <div className="p-10 border border-dashed border-theme-border/40 text-center space-y-4">
+                       <p className="text-[10px] font-black text-theme-muted uppercase font-black italic tracking-widest">Nenhum evento vinculado à sua unidade.</p>
+                       <p className="text-[8px] text-theme-muted/60 uppercase font-bold max-w-xs mx-auto leading-relaxed">Quando um admin vincular sua franquia a um evento, ele aparecerá aqui para controle de Live Print.</p>
+                    </div>
+                  )}
+               </div>
+            </div>
+
+            {/* ── ATIVIDADE RECENTE ── */}
+             <div className="space-y-6">
+                <div className="flex items-center gap-4">
+                   <div className="h-px w-8 bg-emerald-500" />
+                   <p className="text-[10px] font-black text-theme-muted uppercase tracking-[0.5em] italic">Registro de Atividades</p>
+                </div>
+
+                <div className="bg-theme-bg border border-theme-border overflow-hidden">
+                   {user.franchiseProfile.transactions && user.franchiseProfile.transactions.length > 0 ? (
+                     <div className="divide-y divide-theme-border">
+                       {user.franchiseProfile.transactions.map((tx: { id: string; description?: string; type: string; createdAt: string; amount: number }) => (
+                         <div key={tx.id} className="p-6 flex items-center justify-between hover:bg-white/[0.02] transition-all group">
+                            <div className="space-y-1">
+                               <p className="text-[11px] font-black text-theme-text uppercase tracking-widest italic">
+                                 {tx.description || (tx.type === 'PRINT_CONSUMPTION' ? 'Impressão Phygital' : 'Recarga de Créditos')}
+                               </p>
+                               <div className="flex items-center gap-3">
+                                 <p className="text-[8px] text-theme-muted font-black uppercase tracking-widest">
+                                   {new Date(tx.createdAt).toLocaleString('pt-BR')}
+                                 </p>
+                                 <div className="w-1 h-1 rounded-full bg-white/10" />
+                                 <p className="text-[8px] text-theme-muted font-black uppercase tracking-widest">
+                                   Hash: {tx.id.slice(-8).toUpperCase()}
+                                 </p>
+                               </div>
+                            </div>
+                            <div className={`text-lg font-display font-black italic tracking-tighter ${tx.amount > 0 ? 'text-emerald-500' : 'text-theme-muted'}`}>
+                               {tx.amount > 0 ? '+' : ''}{tx.amount}
+                            </div>
+                         </div>
+                       ))}
+                     </div>
+                   ) : (
+                     <div className="p-20 text-center text-[10px] text-theme-muted uppercase font-black italic tracking-widest">
+                       Nenhuma atividade registrada no ledger.
+                     </div>
+                   )}
+                </div>
+             </div>
           </div>
         )}
       </div>
