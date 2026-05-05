@@ -154,7 +154,7 @@ export default function ProfissionalDashboard() {
       }
       setTimeout(() => setHasCheckedInvites(true), 0);
     }
-  }, [loading, pendingEvents.length, unitInvites.length, hasCheckedInvites]);
+  }, [loading, pendingEvents.length, opportunities.length, unitInvites.length, hasCheckedInvites]);
 
   // ─── Event Handlers ───────────────────────────────────────────────────────────
 

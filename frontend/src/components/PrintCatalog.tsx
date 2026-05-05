@@ -1,7 +1,7 @@
 import { useState, useEffect } from "react";
 import { API as api } from "../lib/api";
-import { ShoppingCart, Check, Loader2, Info } from "lucide-react";
-import { motion, AnimatePresence } from "framer-motion";
+import { ShoppingCart, Check, Loader2 } from "lucide-react";
+import { motion } from "framer-motion";
 
 interface Product {
   id: string;

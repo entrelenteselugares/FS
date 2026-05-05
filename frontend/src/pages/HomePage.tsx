@@ -144,7 +144,7 @@ export const HomePage = () => {
   const [selectedType, setSelectedType] = useState("");
   const [selectedCity, setSelectedCity] = useState("");
   const debounce = useRef<ReturnType<typeof setTimeout> | null>(null);
-  const [isCtaHovered, setIsCtaHovered] = useState(false);
+
 
   const fetch = useCallback(async (q: string, pg: number, type?: string, city?: string) => {
     setLoading(true);
