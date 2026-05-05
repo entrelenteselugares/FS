@@ -21,6 +21,7 @@ export async function getMeusEventos(req: AuthRequest, res: Response): Promise<v
         OR: [
           { captacaoId: userId, captacaoStatus: { not: "REJECTED" } },
           { edicaoId: userId, edicaoStatus: { not: "REJECTED" } },
+          { isPublicCall: true, captacaoId: null, captacaoStatus: "PENDING" }
         ],
       },
       select: {
@@ -52,7 +53,7 @@ export async function getMeusEventos(req: AuthRequest, res: Response): Promise<v
 // PATCH /api/profissional/events/:id/links — atualiza lightroomUrl e driveUrl
 export async function updateEventLinks(req: AuthRequest, res: Response): Promise<void> {
   const { id } = req.params;
-  const { lightroomUrl, driveUrl } = req.body;
+  const { lightroomUrl, driveUrl, dataEvento } = req.body;
   const userId = req.user?.userId;
   if (!userId) { res.status(401).json({ error: "Não autenticado." }); return; }
 
@@ -80,6 +81,7 @@ export async function updateEventLinks(req: AuthRequest, res: Response): Promise
       data: {
         ...(lightroomUrl !== undefined && { lightroomUrl: String(lightroomUrl) || null }),
         ...(driveUrl !== undefined && { driveUrl: String(driveUrl) || null }),
+        ...(dataEvento !== undefined && { dataEvento: dataEvento ? new Date(dataEvento) : null }),
       },
     });
 
@@ -358,7 +360,11 @@ export async function respondToEvent(req: AuthRequest, res: Response): Promise<v
     const event = await prisma.event.findFirst({
       where: {
         id: String(id),
-        OR: [{ captacaoId: userId }, { edicaoId: userId }]
+        OR: [
+          { captacaoId: userId },
+          { edicaoId: userId },
+          { isPublicCall: true, captacaoId: null }
+        ]
       }
     });
 
@@ -368,8 +374,16 @@ export async function respondToEvent(req: AuthRequest, res: Response): Promise<v
     }
 
     const updateData: Prisma.EventUncheckedUpdateInput = {};
-    if (event.captacaoId === userId) updateData.captacaoStatus = status as "ACCEPTED" | "REJECTED" | "PENDING";
-    if (event.edicaoId === userId) updateData.edicaoStatus = status as "ACCEPTED" | "REJECTED" | "PENDING";
+    
+    if (event.isPublicCall && !event.captacaoId && status === "ACCEPTED") {
+      updateData.captacaoId = userId;
+      updateData.captacaoStatus = "ACCEPTED";
+      updateData.isPublicCall = false; // Não é mais pública
+      updateData.active = true; // Ativa o evento
+    } else {
+      if (event.captacaoId === userId) updateData.captacaoStatus = status as "ACCEPTED" | "REJECTED" | "PENDING";
+      if (event.edicaoId === userId) updateData.edicaoStatus = status as "ACCEPTED" | "REJECTED" | "PENDING";
+    }
 
     // ─── LOGICA DE REDIRECIONAMENTO AUTOMÁTICO ───
     if (status === "REJECTED" && event.captacaoId === userId && event.cartorioUserId) {

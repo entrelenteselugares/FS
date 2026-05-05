@@ -125,13 +125,15 @@ model Event {
   captacaoStatus     AcceptanceStatus  @default(PENDING)
   edicaoStatus       AcceptanceStatus  @default(PENDING)
   previewPhotos      String?
-  isPrivate          Boolean           @default(true)
+  isPrivate          Boolean           @default(false)
+  isPublicCall       Boolean           @default(false)
   isUnitSale         Boolean           @default(false)
   priceUnit          Decimal           @default(10) @db.Decimal(10, 2)
   type               EventType         @default(ALBUM_FULL)
   pricePerPhoto      Decimal?          @db.Decimal(10, 2)
   marketplaceConfigs Json?             @default("{}")
   rejectedBy         Json?             @default("[]")
+  ownerId            String?
   franchiseeId       String?
   deliveryType       DeliveryType      @default(DIGITAL_ONLY)
   paymentModel       PaymentModel      @default(PRE_PAID)
@@ -663,6 +665,7 @@ enum EventType {
   ALBUM_FULL
   PHOTO_MARKETPLACE
   FOTO_POINT
+  FLASH_EVENT
 }
 
 enum SlotStatus {

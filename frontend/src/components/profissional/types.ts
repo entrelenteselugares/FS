@@ -20,6 +20,8 @@ export interface EventItem {
   edicaoId: string | null;
   edicaoStatus: "PENDING" | "ACCEPTED" | "REJECTED";
   location: string | null;
+  ownerId?: string | null;
+  isPublicCall?: boolean;
   type: "ALBUM_FULL" | "PHOTO_MARKETPLACE" | "FOTO_POINT";
   priceUnit: number | null;
   itinerary: string | null;

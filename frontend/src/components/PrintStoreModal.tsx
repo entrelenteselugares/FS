@@ -3,14 +3,12 @@ import * as reactWindow from "react-window";
 // @ts-ignore
 const FixedSizeList = (reactWindow.FixedSizeList || reactWindow.default?.FixedSizeList || reactWindow.default) as any;
 import { API } from "../lib/api";
-import { T, BtnPrimary, BtnSecondary, ModalOverlay, ModalContent, FieldLabel, FieldInput, FieldSelect } from "../lib/theme";
 import { motion, AnimatePresence } from "framer-motion";
 import { 
   Package, 
   Truck, 
   MapPin, 
   Camera, 
-  Trash2, 
   ShoppingCart, 
   ChevronLeft, 
   Plus, 
@@ -159,7 +157,6 @@ export function PrintStoreModal({ eventId, eventTitle, medias = [], unlockedMedi
   const [selectedFiles, setSelectedFiles] = useState<File[]>([]);
   const [filePreviews, setFilePreviews] = useState<string[]>([]);
   const [activeCategory, setActiveCategory] = useState<string>("");
-  const scrollRef = useRef<HTMLDivElement>(null);
   const [step, setStep] = useState<"catalog" | "details" | "delivery" | "processing">("catalog");
   const [deliveryMethod, setDeliveryMethod] = useState<"LOCAL_PICKUP" | "SHIPPING">("LOCAL_PICKUP");
   const [notes, setNotes] = useState("");
@@ -282,8 +279,8 @@ export function PrintStoreModal({ eventId, eventTitle, medias = [], unlockedMedi
                 <p className="text-[10px] font-black text-theme-text-muted uppercase tracking-[0.2em] mb-6 italic">Protocolo de Seleção</p>
                 
                 {[
-                  { id: 'catalog', label: 'Catálogo', icon: <ShoppingCart size={14} />, status: step === 'catalog' ? 'active' : (step !== 'catalog' ? 'completed' : 'pending') },
-                  { id: 'details', label: 'Configuração', icon: <Plus size={14} />, status: step === 'details' ? 'active' : (step === 'delivery' ? 'completed' : 'pending') },
+                  { id: 'catalog', label: 'Catálogo', icon: <ShoppingCart size={14} />, status: step === 'catalog' ? 'active' : 'completed' },
+                  { id: 'details', label: 'Configuração', icon: <Plus size={14} />, status: step === 'details' ? 'active' : (step === 'delivery' || step === 'processing' ? 'completed' : 'pending') },
                   { id: 'delivery', label: 'Logística', icon: <Truck size={14} />, status: step === 'delivery' ? 'active' : 'pending' },
                 ].map((s, idx) => (
                   <div key={s.id} className="flex items-center gap-4 group">
@@ -321,6 +318,12 @@ export function PrintStoreModal({ eventId, eventTitle, medias = [], unlockedMedi
           {/* Lado Direito: Conteúdo Dinâmico */}
           <div className="flex-1 flex flex-col bg-theme-bg overflow-hidden relative">
              <div className="flex-1 overflow-y-auto p-8 lg:p-14 scrollbar-hide">
+                {error && (
+                  <div className="mb-10 p-6 bg-red-500/10 border border-red-500 text-red-500 text-[10px] font-black uppercase tracking-widest italic flex items-center justify-between">
+                    <span>{error}</span>
+                    <button onClick={() => setError("")}><X size={14} /></button>
+                  </div>
+                )}
                 {step === 'catalog' && (
                   <div className="space-y-12 max-w-4xl mx-auto">
                     <div className="flex flex-wrap gap-4">

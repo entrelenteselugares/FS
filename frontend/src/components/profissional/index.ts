@@ -15,6 +15,7 @@ export { DashboardHeader } from "./DashboardHeader";
 export { DashboardStats } from "./DashboardStats";
 export { SupportBanner } from "./SupportBanner";
 export { OpportunitiesModal } from "./OpportunitiesModal";
+export * from "./TeamSelector";
 export { ExpressSaleBanner } from "./ExpressSaleBanner";
 export { CoverPhotoInput } from "./CoverPhotoInput";
 

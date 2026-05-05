@@ -1,1 +1,0 @@
-import{n as e}from"./http-DWHuB-LO.js";var t=e.create({baseURL:`/api`});t.interceptors.request.use(e=>{let t=localStorage.getItem(`fs_token`);return t&&(e.headers.Authorization=`Bearer ${t}`),e});export{t};

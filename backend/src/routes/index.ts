@@ -129,7 +129,7 @@ const requireProOrFranchise = async (req: any, res: Response, next: NextFunction
 };
 
 // ── PROFISSIONAIS (Rede Técnica) ────────────────────────────────────────────
-router.get("/profissional/events",               requireAuth, requireProOrFranchise, getMeusEventos);
+// Rota removida (duplicada abaixo)
 router.patch("/profissional/events/:id/links",   requireAuth, requireProOrFranchise, updateEventLinks);
 router.patch("/profissional/events/:id/cover",   requireAuth, requireProOrFranchise, uploadEventCover);
 router.patch("/profissional/events/:id/respond", requireAuth, requireProOrFranchise, respondToEvent);

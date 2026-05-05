@@ -1,18 +1,24 @@
 import { useState } from "react";
-import { X, Zap, Sparkles } from "lucide-react";
+import { X, Zap, Sparkles, Calendar } from "lucide-react";
 import { API } from "../../lib/api";
+import { TeamSelector } from "./TeamSelector";
+import type { Partner } from "./types";
 
 interface FlashEventModalProps {
   onClose: () => void;
   onSuccess: (slug: string) => void;
   onError: (msg: string) => void;
+  network: Partner[];
 }
 
-export function FlashEventModal({ onClose, onSuccess, onError }: FlashEventModalProps) {
+export function FlashEventModal({ onClose, onSuccess, onError, network }: FlashEventModalProps) {
   const [name, setName] = useState("");
   const [price, setPrice] = useState("30");
   const [loading, setLoading] = useState(false);
   const [isPrivate, setIsPrivate] = useState(false);
+  const [date, setDate] = useState(new Date().toISOString().split('T')[0]);
+  const [delegatedUserId, setDelegatedUserId] = useState<string | null>(null);
+  const [isPublicCall, setIsPublicCall] = useState(false);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -21,6 +27,9 @@ export function FlashEventModal({ onClose, onSuccess, onError }: FlashEventModal
       const { data } = await API.post("/profissional/flash-event", {
         name,
         pricePerPhoto: Number(price),
+        dataEvento: date,
+        captacaoId: delegatedUserId,
+        isPublicCall,
         isPrivate
       });
       onSuccess(data.slug);
@@ -41,7 +50,7 @@ export function FlashEventModal({ onClose, onSuccess, onError }: FlashEventModal
           <div className="flex justify-between items-start">
             <div className="space-y-1">
               <div className="flex items-center gap-2 text-yellow-400">
-                <Zap size={14} fill="currentColor" />
+                < Zap size={14} fill="currentColor" />
                 <span className="text-[10px] font-black uppercase tracking-[0.3em] italic">Acesso Instantâneo</span>
               </div>
               <h2 className="text-2xl font-heading font-black text-theme-text uppercase italic leading-none">Foto Print Live</h2>
@@ -76,6 +85,30 @@ export function FlashEventModal({ onClose, onSuccess, onError }: FlashEventModal
                   className="w-full bg-theme-bg-muted border border-theme-border p-4 pl-12 text-theme-text outline-none focus:border-yellow-400/50 transition-all font-black text-xl italic"
                 />
               </div>
+            </div>
+            
+            <div className="space-y-2">
+              <label className="text-[10px] font-black text-theme-muted uppercase tracking-widest italic flex items-center gap-2">
+                <Calendar size={12} /> Data do Evento
+              </label>
+              <input
+                type="date"
+                required
+                value={date}
+                onChange={e => setDate(e.target.value)}
+                className="w-full bg-theme-bg-muted border border-theme-border p-4 text-theme-text outline-none focus:border-yellow-400/50 transition-all font-medium"
+              />
+            </div>
+
+            <div className="pt-4 border-t border-theme-border/30">
+              <TeamSelector 
+                label="Quem irá capturar?"
+                network={network}
+                onSelect={(uid, pub) => {
+                  setDelegatedUserId(uid);
+                  setIsPublicCall(pub);
+                }}
+              />
             </div>
 
             <div className="flex items-center justify-between p-4 bg-theme-bg-muted border border-theme-border">

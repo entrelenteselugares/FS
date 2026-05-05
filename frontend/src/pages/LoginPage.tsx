@@ -99,7 +99,7 @@ export const LoginPage: React.FC = () => {
                   required
                   value={email}
                   onChange={e => setEmail(e.target.value)}
-                  className="w-full bg-transparent border-b border-theme-border/60 py-2.5 pl-8 text-xs text-theme-text placeholder:text-theme-muted/20 focus:outline-none focus:border-brand-tactical transition-all font-medium"
+                  className="w-full bg-transparent border-b border-theme-border/60 py-2.5 pl-10 text-xs text-theme-text placeholder:text-theme-muted/20 focus:outline-none focus:border-brand-tactical transition-all font-medium"
                   placeholder="USUÁRIO@DOMINIO.COM"
                   autoComplete="email"
                 />
@@ -118,7 +118,7 @@ export const LoginPage: React.FC = () => {
                   required
                   value={senha}
                   onChange={e => setSenha(e.target.value)}
-                  className="w-full bg-transparent border-b border-theme-border/60 py-2.5 pl-8 pr-10 text-xs text-theme-text placeholder:text-theme-muted/20 focus:outline-none focus:border-brand-tactical transition-all"
+                  className="w-full bg-transparent border-b border-theme-border/60 py-2.5 pl-10 pr-10 text-xs text-theme-text placeholder:text-theme-muted/20 focus:outline-none focus:border-brand-tactical transition-all"
                   placeholder="••••••••"
                   autoComplete="current-password"
                 />

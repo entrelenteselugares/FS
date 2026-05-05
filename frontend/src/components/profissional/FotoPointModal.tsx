@@ -1,15 +1,19 @@
 import { useState } from "react";
-import { X, Camera, Sparkles, MapPin, ListChecks, Link as LinkIcon } from "lucide-react";
+import { X, Camera, Sparkles, MapPin, ListChecks, Link as LinkIcon, Calendar } from "lucide-react";
 import { API } from "../../lib/api";
 import { CoverPhotoInput } from "./CoverPhotoInput";
+
+import { TeamSelector } from "./TeamSelector";
+import type { Partner } from "./types";
 
 interface FotoPointModalProps {
   onClose: () => void;
   onSuccess: (slug: string) => void;
   onError: (msg: string) => void;
+  network: Partner[];
 }
 
-export function FotoPointModal({ onClose, onSuccess, onError }: FotoPointModalProps) {
+export function FotoPointModal({ onClose, onSuccess, onError, network }: FotoPointModalProps) {
   const [name, setName] = useState("");
   const [price, setPrice] = useState("10");
   const [location, setLocation] = useState("");
@@ -17,7 +21,10 @@ export function FotoPointModal({ onClose, onSuccess, onError }: FotoPointModalPr
   const [references, setReferences] = useState("");
   const [loading, setLoading] = useState(false);
   const [isPrivate, setIsPrivate] = useState(false);
+  const [date, setDate] = useState(new Date().toISOString().split('T')[0]);
   const [coverPhotoUrl, setCoverPhotoUrl] = useState<string | null>(null);
+  const [delegatedUserId, setDelegatedUserId] = useState<string | null>(null);
+  const [isPublicCall, setIsPublicCall] = useState(false);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -28,6 +35,9 @@ export function FotoPointModal({ onClose, onSuccess, onError }: FotoPointModalPr
         priceUnit: Number(price),
         location,
         itinerary,
+        dataEvento: date,
+        captacaoId: delegatedUserId,
+        isPublicCall,
         references: references.split("\n").filter(r => r.trim() !== ""),
         isPrivate,
         coverPhotoUrl,
@@ -104,6 +114,19 @@ export function FotoPointModal({ onClose, onSuccess, onError }: FotoPointModalPr
                     </div>
                 </div>
             </div>
+            
+            <div className="space-y-2">
+                <label className="text-[10px] font-black text-theme-muted uppercase tracking-widest italic flex items-center gap-2">
+                    <Calendar size={12} /> Data da Operação
+                </label>
+                <input
+                    type="date"
+                    required
+                    value={date}
+                    onChange={e => setDate(e.target.value)}
+                    className="w-full bg-theme-bg-muted border border-theme-border p-4 text-theme-text outline-none focus:border-cyan-400/50 transition-all font-medium"
+                />
+            </div>
 
             <div className="space-y-2">
                 <label className="text-[10px] font-black text-theme-muted uppercase tracking-widest italic flex items-center gap-2">
@@ -144,6 +167,17 @@ export function FotoPointModal({ onClose, onSuccess, onError }: FotoPointModalPr
             </div>
 
             <CoverPhotoInput onChange={setCoverPhotoUrl} />
+
+            <div className="pt-4 border-t border-theme-border/30">
+              <TeamSelector 
+                label="Responsável pela Captação"
+                network={network}
+                onSelect={(uid, pub) => {
+                  setDelegatedUserId(uid);
+                  setIsPublicCall(pub);
+                }}
+              />
+            </div>
 
             <div className="flex items-center justify-between p-4 bg-theme-bg-muted border border-theme-border">
               <div className="space-y-1">

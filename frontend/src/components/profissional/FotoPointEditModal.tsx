@@ -1,17 +1,19 @@
 import { useState } from "react";
-import { X, Camera, DollarSign, MapPin, ListChecks, Check, Trash2, Eye, EyeOff } from "lucide-react";
+import { X, Camera, DollarSign, MapPin, ListChecks, Check, Trash2, Eye, EyeOff, Calendar } from "lucide-react";
 import { API } from "../../lib/api";
-import type { EventItem } from "./types";
+import type { EventItem, Partner } from "./types";
 import { CoverPhotoInput } from "./CoverPhotoInput";
+import { TeamSelector } from "./TeamSelector";
 
 interface FotoPointEditModalProps {
   event: EventItem;
   onClose: () => void;
   onSuccess: (updated: EventItem) => void;
   onError: (msg: string) => void;
+  network: Partner[];
 }
 
-export function FotoPointEditModal({ event, onClose, onSuccess, onError }: FotoPointEditModalProps) {
+export function FotoPointEditModal({ event, onClose, onSuccess, onError, network }: FotoPointEditModalProps) {
   const [loading, setLoading] = useState(false);
   const [formData, setFormData] = useState({
     nomeNoivos: event.nomeNoivos,
@@ -21,7 +23,10 @@ export function FotoPointEditModal({ event, onClose, onSuccess, onError }: FotoP
     itinerary: event.itinerary || "",
     references: Array.isArray(event.references) ? event.references : [],
     isPrivate: event.isPrivate,
-    active: event.active
+    active: event.active,
+    dataEvento: event.dataEvento ? new Date(event.dataEvento).toISOString().split('T')[0] : "",
+    captacaoId: event.captacaoId,
+    isPublicCall: event.isPublicCall
   });
   const [coverUrl, setCoverUrl] = useState<string | null>(event.coverPhotoUrl ?? null);
 
@@ -126,6 +131,19 @@ export function FotoPointEditModal({ event, onClose, onSuccess, onError }: FotoP
               </div>
             </div>
 
+            <div className="space-y-3">
+              <label className="text-[9px] font-black text-theme-muted uppercase tracking-widest italic opacity-60 flex items-center gap-2">
+                <Calendar size={12} /> Data da Operação
+              </label>
+              <input
+                type="date"
+                required
+                value={formData.dataEvento}
+                onChange={e => setFormData({ ...formData, dataEvento: e.target.value })}
+                className="w-full bg-white/5 border border-white/10 p-5 text-theme-text outline-none focus:border-cyan-400/50 transition-all text-xs font-bold"
+              />
+            </div>
+
              <div className="space-y-3">
               <label className="text-[9px] font-black text-theme-muted uppercase tracking-widest italic opacity-60">Visibilidade na Home</label>
               <div className="flex gap-2">
@@ -195,6 +213,16 @@ export function FotoPointEditModal({ event, onClose, onSuccess, onError }: FotoP
                 eventId={event.id}
                 onChange={setCoverUrl}
               />
+            </div>
+
+            <div className="md:col-span-2 pt-4 border-t border-white/5">
+               <TeamSelector 
+                 label="Equipe / Responsável"
+                 network={network}
+                 onSelect={(uid, pub) => {
+                   setFormData(prev => ({ ...prev, captacaoId: uid, isPublicCall: pub }));
+                 }}
+               />
             </div>
           </div>
 

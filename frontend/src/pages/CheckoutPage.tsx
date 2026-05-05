@@ -33,6 +33,7 @@ interface OrderDetail {
   isGuestOrder?: boolean;
   deliveryType?: string;
   shippingAddress?: unknown;
+  shippingFee?: number | string;
 }
 
 interface MPFormData {

@@ -50,6 +50,7 @@ export class EventController {
     }
   }
 
+
   /**
    * GET /api/events/:id
    * Lógica de Pivot: Retorna URLs de entrega baseando-se no acesso.
@@ -74,8 +75,8 @@ export class EventController {
         },
         include: {
           cartorioUser: { select: { cartorio: { select: { razaoSocial: true } } } },
-          captacao: { select: { id: true } },
-          edicao: { select: { id: true } }
+          captacao: { select: { id: true, nome: true } },
+          edicao: { select: { id: true, nome: true } }
         }
       });
 
@@ -112,6 +113,7 @@ export class EventController {
         authUser.role === "ADMIN" || 
         authUser.userId === event.captacaoId || 
         authUser.userId === event.edicaoId || 
+        authUser.userId === event.ownerId ||
         authUser.userId === event.cartorioUserId
       );
 
@@ -239,6 +241,10 @@ export class EventController {
         isPrimaryClient: !!(authUser && event.clientEmail && authUser.email === event.clientEmail),
         city: event.city,
         location: event.location,
+        itinerary: event.itinerary,
+        description: event.description,
+        references: event.references,
+        photographer: event.captacao ? { id: event.captacao.id, nome: event.captacao.nome } : null,
       });
     } catch (error) {
       console.error("Erro ao buscar evento:", error);
@@ -256,53 +262,48 @@ export class EventController {
       const query = q as string;
       const take = 20;
       const skip = (Number(page) - 1) * take;
-      // Normalização robusta: transforma "&" em "e" para busca flexível
-      const term = query ? `%${query.toLowerCase().replace(/&/g, "e")}%` : "%";
 
-      // 1. Busca os eventos com SQL Nativo para máxima estabilidade (contornando Case-Sensitivity)
-      const events: Array<{
-        id: string;
-        nomeNoivos: string;
-        dataEvento: Date;
-        cartorio: string | null;
-        coverPhotoUrl: string | null;
-        priceBase: number;
-        priceEarly: number;
-        temFoto: boolean;
-      }> = await prisma.$queryRaw`
-        SELECT 
-          id, 
-          "nomeNoivos", 
-          "dataEvento", 
-          cartorio, 
-          "coverPhotoUrl",
-          "priceBase",
-          "priceEarly",
-          type,
-          true as "temFoto" -- Ativando badges por padrão para estética
-        FROM events
-        WHERE active = true AND "isPrivate" = false AND "isQuote" = false
-          AND type IN ('ALBUM_FULL', 'PHOTO_MARKETPLACE', 'FOTO_POINT')
-          AND (
-          REPLACE(LOWER("nomeNoivos"), '&', 'e') LIKE ${term} 
-          OR REPLACE(LOWER(cartorio), '&', 'e') LIKE ${term}
-        )
-        ORDER BY "dataEvento" DESC
-        LIMIT ${take} OFFSET ${skip}
-      `;
+      const where: any = {
+        active: true,
+        isPrivate: false,
+        isQuote: false,
+        type: {
+          in: ['ALBUM_FULL', 'PHOTO_MARKETPLACE', 'FOTO_POINT', 'FLASH_EVENT']
+        }
+      };
 
-      // 2. Busca o total para cálculo de páginas
-      const countResult: Array<{ count: number }> = await prisma.$queryRaw`
-        SELECT COUNT(*)::int as count FROM events
-        WHERE active = true AND "isPrivate" = false AND "isQuote" = false
-          AND type IN ('ALBUM_FULL', 'PHOTO_MARKETPLACE', 'FOTO_POINT')
-          AND (
-          REPLACE(LOWER("nomeNoivos"), '&', 'e') LIKE ${term} 
-          OR REPLACE(LOWER(cartorio), '&', 'e') LIKE ${term}
-        )
-      `;
-      
-      const total = countResult[0].count;
+      if (query) {
+        where.OR = [
+          { nomeNoivos: { contains: query, mode: 'insensitive' } },
+          { location: { contains: query, mode: 'insensitive' } },
+          { clientName: { contains: query, mode: 'insensitive' } }
+        ];
+      }
+
+      const [events, total] = await Promise.all([
+        prisma.event.findMany({
+          where,
+          take,
+          skip,
+          orderBy: { dataEvento: 'desc' },
+          select: {
+            id: true,
+            slug: true,
+            nomeNoivos: true,
+            dataEvento: true,
+            location: true,
+            coverPhotoUrl: true,
+            priceBase: true,
+            priceEarly: true,
+            type: true,
+            temFoto: true,
+            temVideo: true,
+            temReels: true
+          }
+        }),
+        prisma.event.count({ where })
+      ]);
+
       const pages = Math.ceil(total / take);
 
       return res.json({
@@ -312,8 +313,8 @@ export class EventController {
         pages
       });
     } catch (error) {
-      console.error("Erro ao listar eventos públicos:", error);
-      return res.status(500).json({ error: "Erro ao carregar vitrine", details: error instanceof Error ? error.message : String(error) });
+      console.error("[listPublic] Erro ao listar eventos públicos:", error);
+      return res.status(500).json({ error: "Erro ao carregar vitrine" });
     }
   }
 
@@ -576,7 +577,7 @@ export class EventController {
    * Cria um evento instantâneo (Flash) para franqueados/profissionais em campo.
    */
   static async createFlashEvent(req: AuthRequest, res: Response) {
-    const { name, pricePerPhoto, isPrivate } = req.body;
+    const { name, pricePerPhoto, isPrivate, dataEvento, captacaoId: delegatedCaptacaoId, isPublicCall } = req.body;
     const { userId } = req.user!;
 
     if (!name) return res.status(400).json({ error: "Nome do evento é obrigatório" });
@@ -593,10 +594,14 @@ export class EventController {
           nomeNoivos: name,
           slug,
           type: "PHOTO_MARKETPLACE",
-          dataEvento: new Date(),
-          active: true,
-          captacaoId: userId,
+          active: !delegatedCaptacaoId && !isPublicCall, // Se delegar, fica inativo até aceitarem
+          captacaoId: delegatedCaptacaoId || (isPublicCall ? null : userId),
+          captacaoStatus: (delegatedCaptacaoId || isPublicCall) ? "PENDING" : "ACCEPTED",
+          dataEvento: dataEvento ? new Date(dataEvento) : new Date(),
+          isPublicCall: !!isPublicCall,
+          ownerId: userId,
           franchiseeId: profile?.id,
+          active: (!delegatedCaptacaoId && !isPublicCall), // Ativo apenas se eu mesmo for o executor
           priceBase: Number(pricePerPhoto) || 30,
           priceEarly: Number(pricePerPhoto) || 30,
           description: "EVENTO FLASH - Criado instantaneamente via App Franqueado",
@@ -620,7 +625,11 @@ export class EventController {
    * Cria um ponto de venda por click para fotógrafos.
    */
   static async createFotoPoint(req: AuthRequest, res: Response) {
-    const { name, priceUnit, location, itinerary, references, isPrivate, coverPhotoUrl } = req.body;
+    const { 
+      name, priceUnit, location, itinerary, references, 
+      isPrivate, coverPhotoUrl, dataEvento, 
+      captacaoId: delegatedCaptacaoId, isPublicCall 
+    } = req.body;
     const { userId } = req.user!;
 
     if (!name) return res.status(400).json({ error: "Nome do ponto é obrigatório" });
@@ -643,9 +652,13 @@ export class EventController {
           nomeNoivos: name,
           slug,
           type: "FOTO_POINT",
-          dataEvento: new Date(),
-          active: true,
-          captacaoId: userId,
+          dataEvento: dataEvento ? new Date(dataEvento) : new Date(),
+          active: !delegatedCaptacaoId && !isPublicCall,
+          captacaoId: delegatedCaptacaoId || (isPublicCall ? null : userId),
+          captacaoStatus: (delegatedCaptacaoId || isPublicCall) ? "PENDING" : "ACCEPTED",
+          isPublicCall: !!isPublicCall,
+          ownerId: userId,
+          active: (!delegatedCaptacaoId && !isPublicCall),
           priceUnit: Number(priceUnit) || 10,
           location,
           itinerary,
@@ -678,7 +691,9 @@ export class EventController {
           OR: [
             { captacaoId: userId },
             { edicaoId: userId },
-            { cartorioUserId: userId }
+            { cartorioUserId: userId },
+            { ownerId: userId },
+            { isPublicCall: true, captacaoId: null, captacaoStatus: "PENDING" }
           ]
         },
         orderBy: { dataEvento: "desc" },
@@ -716,7 +731,11 @@ export class EventController {
   static async updateFotoPoint(req: AuthRequest, res: Response) {
     try {
       const { id } = req.params;
-      const { nomeNoivos, priceUnit, location, city, itinerary, references, isPrivate, active, coverPhotoUrl } = req.body;
+      const { 
+        nomeNoivos, priceUnit, location, city, itinerary, 
+        references, isPrivate, active, coverPhotoUrl, 
+        dataEvento, captacaoId, isPublicCall 
+      } = req.body;
 
       const event = await prisma.event.findUnique({ where: { id } });
       if (!event) return res.status(404).json({ error: "Evento não encontrado." });
@@ -745,6 +764,10 @@ export class EventController {
           isPrivate: isPrivate !== undefined ? !!isPrivate : undefined,
           active: active !== undefined ? !!active : undefined,
           coverPhotoUrl: normalizeCoverUrl(coverPhotoUrl),
+          dataEvento: dataEvento ? new Date(dataEvento) : undefined,
+          captacaoId: captacaoId ?? undefined,
+          isPublicCall: isPublicCall !== undefined ? !!isPublicCall : undefined,
+          captacaoStatus: (captacaoId || isPublicCall) ? "PENDING" : undefined
         }
       });
       return res.json(updated);

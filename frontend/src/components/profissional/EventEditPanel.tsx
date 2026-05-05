@@ -14,6 +14,7 @@ interface EventEditPanelProps {
 export function EventEditPanel({ event, onUpdated, onClose, onNotify }: EventEditPanelProps) {
   const [lrUrl, setLrUrl] = useState(event.lightroomUrl ?? "");
   const [drUrl, setDrUrl] = useState(event.driveUrl ?? "");
+  const [date, setDate] = useState(event.dataEvento ? new Date(event.dataEvento).toISOString().split('T')[0] : "");
   const [saving, setSaving] = useState(false);
   const [copied, setCopied] = useState(false);
 
@@ -31,13 +32,14 @@ export function EventEditPanel({ event, onUpdated, onClose, onNotify }: EventEdi
       const { data } = await API.patch(`/profissional/events/${event.id}/links`, {
         lightroomUrl: lrUrl || null,
         driveUrl: drUrl || null,
+        dataEvento: date,
       });
       onUpdated(data);
-      onNotify?.("Links de entrega atualizados com sucesso!", "success");
+      onNotify?.("Evento atualizado com sucesso!", "success");
       onClose();
     } catch (err) {
       console.error(err);
-      onNotify?.("Erro ao salvar os links.", "error");
+      onNotify?.("Erro ao salvar alterações.", "error");
     } finally {
       setSaving(false);
     }
@@ -77,6 +79,18 @@ export function EventEditPanel({ event, onUpdated, onClose, onNotify }: EventEdi
                 placeholder="https://adobe.ly/..."
                 value={lrUrl}
                 onChange={(e) => setLrUrl(e.target.value)}
+                className="w-full bg-theme-bg-muted border border-theme-border p-5 text-theme-text outline-none focus:border-brand-tactical/50 transition-all text-xs font-medium"
+              />
+            </div>
+
+            <div className="space-y-3">
+              <label className="text-[9px] font-black text-theme-muted uppercase tracking-widest italic opacity-60">
+                Data do Evento
+              </label>
+              <input
+                type="date"
+                value={date}
+                onChange={(e) => setDate(e.target.value)}
                 className="w-full bg-theme-bg-muted border border-theme-border p-5 text-theme-text outline-none focus:border-brand-tactical/50 transition-all text-xs font-medium"
               />
             </div>

@@ -142,9 +142,13 @@ export default function ProfissionalDashboard() {
       (ev.edicaoId === user?.id && ev.edicaoStatus === "PENDING")
   );
 
+  const opportunities = events.filter(
+    (ev) => ev.isPublicCall && !ev.captacaoId
+  );
+
   useEffect(() => {
     if (!loading && !hasCheckedInvites) {
-      if (pendingEvents.length > 0 || unitInvites.length > 0) {
+      if (pendingEvents.length > 0 || opportunities.length > 0 || unitInvites.length > 0) {
         // Use setTimeout to avoid synchronous cascading renders
         setTimeout(() => setShowNewServicesModal(true), 0);
       }
@@ -312,6 +316,7 @@ export default function ProfissionalDashboard() {
         <OpportunitiesModal 
           unitInvitesCount={unitInvites.length}
           pendingEventsCount={pendingEvents.length}
+          opportunitiesCount={opportunities.length}
           onClose={() => setShowNewServicesModal(false)}
           onAction={(tab) => setActiveTab(tab)}
         />
@@ -659,6 +664,7 @@ export default function ProfissionalDashboard() {
                   const ev = events.find(e => e.id === eventId);
                   if (ev) setSelected(ev);
                 }}
+                opportunities={opportunities}
               />
             )}
           </div>
@@ -677,6 +683,7 @@ export default function ProfissionalDashboard() {
             {selected.type === 'FOTO_POINT' ? (
               <FotoPointEditModal
                 event={selected}
+                network={network}
                 onClose={() => setSelected(null)}
                 onSuccess={(updated) => {
                   setEvents(prev => prev.map(e => e.id === selected.id ? { ...e, ...updated } : e));
@@ -737,6 +744,7 @@ export default function ProfissionalDashboard() {
       {/* Modal de Foto Point */}
       {isFotoPointModalOpen && (
         <FotoPointModal 
+          network={network}
           onClose={() => setIsFotoPointModalOpen(false)}
           onSuccess={() => {
             showNotification("Foto Point Ativado com Sucesso!", "success");
@@ -750,6 +758,7 @@ export default function ProfissionalDashboard() {
       {/* Modal de Foto Print Live (Express) */}
       {isFlashModalOpen && (
         <FlashEventModal 
+          network={network}
           onClose={() => setIsFlashModalOpen(false)}
           onSuccess={(slug) => {
             showNotification("Foto Print Live Ativado!", "success");

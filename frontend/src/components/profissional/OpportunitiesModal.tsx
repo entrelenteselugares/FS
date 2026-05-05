@@ -3,6 +3,7 @@ import { ShieldCheck, ArrowRight } from "lucide-react";
 interface OpportunitiesModalProps {
   unitInvitesCount: number;
   pendingEventsCount: number;
+  opportunitiesCount: number;
   onClose: () => void;
   onAction: (tab: "agenda" | "convites") => void;
 }
@@ -10,6 +11,7 @@ interface OpportunitiesModalProps {
 export function OpportunitiesModal({ 
   unitInvitesCount, 
   pendingEventsCount, 
+  opportunitiesCount,
   onClose, 
   onAction 
 }: OpportunitiesModalProps) {
@@ -40,6 +42,14 @@ export function OpportunitiesModal({
               <div className="text-[9px] font-black text-theme-muted uppercase tracking-[0.2em] mb-2 italic">Chamados de Campo</div>
               <div className="text-xl font-heading font-black text-theme-text italic leading-none">
                 {pendingEventsCount} {pendingEventsCount === 1 ? "TRABALHO DISPONÍVEL" : "TRABALHOS DISPONÍVEIS"}
+              </div>
+            </div>
+          )}
+          {opportunitiesCount > 0 && (
+            <div className="bg-yellow-400/5 p-6 border border-yellow-400/20 hover:border-yellow-400/40 transition-all">
+              <div className="text-[9px] font-black text-yellow-400 uppercase tracking-[0.2em] mb-2 italic">Chamada Aberta</div>
+              <div className="text-xl font-heading font-black text-theme-text italic leading-none">
+                {opportunitiesCount} {opportunitiesCount === 1 ? "OPORTUNIDADE DISPONÍVEL" : "OPORTUNIDADES DISPONÍVEIS"}
               </div>
             </div>
           )}

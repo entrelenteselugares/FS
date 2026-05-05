@@ -308,14 +308,14 @@ export const HomePage = () => {
               )}
 
               {/* LIVE PRINT SECTION */}
-              {events.filter(e => e.type === 'PHOTO_MARKETPLACE').length > 0 && (
+              {events.filter(e => e.type === 'PHOTO_MARKETPLACE' || e.type === 'FLASH_EVENT').length > 0 && (
                 <div className="animate-reveal">
                   <div style={{ display: "flex", alignItems: "center", gap: 16, marginBottom: 32 }}>
                     <div style={{ width: 12, height: 12, background: T.brand, borderRadius: "50%" }} className="animate-pulse" />
                     <h3 style={{ fontFamily: T.fontD, fontWeight: 900, fontSize: 24, color: T.text, textTransform: "uppercase", margin: 0, letterSpacing: 2 }}>Foto Print Live</h3>
                   </div>
                   <div className="hp-grid" style={{ display: "grid", gridTemplateColumns: "repeat(auto-fill, minmax(300px, 1fr))", gap: 1, background: T.border }}>
-                    {events.filter(e => e.type === 'PHOTO_MARKETPLACE').map(ev => (
+                    {events.filter(e => e.type === 'PHOTO_MARKETPLACE' || e.type === 'FLASH_EVENT').map(ev => (
                       <div key={ev.id} className="card-hover">
                         <EventCard event={ev} onClick={() => navigate(`/e/${ev.slug || ev.id}`)} />
                       </div>
@@ -325,7 +325,8 @@ export const HomePage = () => {
               )}
 
               {/* ALBUMS SECTION */}
-              {events.filter(e => e.type !== 'PHOTO_MARKETPLACE' && e.type !== 'FOTO_POINT').length > 0 && (
+              {events.filter(e => e.type !== 'PHOTO_MARKETPLACE' && e.type !== 'FOTO_POINT' && e.type !== 'FLASH_EVENT').length > 0 && (
+
                 <div className="animate-reveal">
                   <div style={{ display: "flex", alignItems: "center", gap: 16, marginBottom: 32 }}>
                     <h3 style={{ fontFamily: T.fontD, fontWeight: 900, fontSize: 24, color: T.text, textTransform: "uppercase", margin: 0, letterSpacing: 2 }}>Galeria de Álbuns</h3>
@@ -362,7 +363,7 @@ export const HomePage = () => {
       </section>
 
       {/* ── COMO FUNCIONA ─────────────────────────────────────────────────── */}
-      <section style={{ padding: "48px 28px", borderTop: `1px solid ${T.border}`, borderBottom: `1px solid ${T.border}`, background: T.bgCard }}>
+      <section style={{ padding: "100px 28px", marginTop: 60, borderTop: `1px solid ${T.border}`, borderBottom: `1px solid ${T.border}`, background: T.bgCard }}>
         <div style={{ maxWidth: 1100, margin: "0 auto" }}>
           <p style={{ fontSize: 10, fontFamily: T.fontB, color: T.brand, letterSpacing: "0.35em", textTransform: "uppercase", marginBottom: 12 }}>Processo</p>
           <h2 style={{ fontFamily: T.fontD, fontWeight: 900, fontSize: "clamp(32px,5vw,52px)", color: T.text, textTransform: "uppercase", margin: "0 0 48px", lineHeight: 1 }}>

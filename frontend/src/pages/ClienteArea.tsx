@@ -669,6 +669,7 @@ export default function ClienteArea() {
 
       {isFlashModalOpen && (
         <FlashEventModal 
+          network={network}
           onClose={() => setIsFlashModalOpen(false)}
           onSuccess={(slug) => {
             showNotification("Foto Print Live Ativado!", "success");

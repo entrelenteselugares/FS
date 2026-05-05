@@ -55,6 +55,7 @@ interface AgendaTabProps {
   onRespond: (eventId: string, status: "ACCEPTED" | "REJECTED") => void;
   onRespondUnit: (inviteId: string, status: "ACCEPTED" | "REJECTED") => void;
   onDelegate: (eventId: string) => void;
+  opportunities: EventItem[];
 }
 
 export function AgendaTab({
@@ -70,6 +71,7 @@ export function AgendaTab({
   onRespond,
   onRespondUnit,
   onDelegate,
+  opportunities,
 }: AgendaTabProps) {
   const pendingEvents = events.filter(
     (ev) =>
@@ -91,12 +93,58 @@ export function AgendaTab({
             <div className="py-24 text-center text-theme-muted text-[10px] font-black uppercase tracking-[0.4em]">
               Sincronizando Dados de Campo...
             </div>
-          ) : displayEvents.length === 0 && unitInvites.length === 0 ? (
+          ) : displayEvents.length === 0 && unitInvites.length === 0 && (activeTab !== 'convites' || opportunities.length === 0) ? (
             <div className="py-24 text-center bg-theme-bg-muted/20 border border-dashed border-theme-border/40 text-theme-muted text-[10px] font-black uppercase tracking-[0.2em]">
               Nenhum registro encontrado para esta visualização.
             </div>
           ) : (
             <>
+              {/* Opportunities (Public Calls) */}
+              {activeTab === "convites" && opportunities.map((ev) => (
+                <div
+                  key={ev.id}
+                  className="bg-yellow-400/5 border border-yellow-400/30 p-5 flex flex-col md:flex-row gap-6 md:gap-10 items-center relative overflow-hidden transition-all group mb-4"
+                >
+                  <div className="absolute left-0 top-0 h-full w-1.5 bg-yellow-400" />
+                  
+                  {/* DATA COL */}
+                  <div className="min-w-[80px] flex flex-col items-center md:items-start border-r border-theme-border/20 pr-6">
+                    <div className="text-[8px] font-black text-theme-muted uppercase tracking-[0.2em] mb-1">DATA</div>
+                    <div className="text-2xl font-heading font-black text-theme-text italic leading-none uppercase tracking-tighter">
+                      {new Date(ev.dataEvento).toLocaleDateString("pt-BR", { day: "2-digit" })}
+                    </div>
+                    <div className="text-[10px] font-bold text-yellow-400 uppercase tracking-widest mt-1">
+                      {new Date(ev.dataEvento).toLocaleDateString("pt-BR", { month: "short" }).replace(".", "")}
+                    </div>
+                  </div>
+
+                  {/* INFO COL */}
+                  <div className="flex-grow space-y-3">
+                    <div className="flex items-center gap-4">
+                      <h3 className="text-xl md:text-2xl font-heading font-black text-theme-text uppercase italic tracking-tight">{ev.nomeNoivos}</h3>
+                      <div className="px-2 py-0.5 text-[8px] font-black border bg-yellow-400/10 text-yellow-400 border-yellow-400/20">
+                        CHAMADA ABERTA
+                      </div>
+                    </div>
+                    
+                    <div className="flex flex-wrap gap-5 items-center">
+                      <div className="flex gap-4 text-[9px] text-theme-muted font-black uppercase tracking-widest">
+                        <span className="flex items-center gap-1.5"><MapPin size={11} className="text-yellow-400 opacity-50" /> {ev.location || "Campo"}</span>
+                        <span className="flex items-center gap-1.5 text-yellow-400"><Briefcase size={11} /> PEGAR TRABALHO</span>
+                      </div>
+                    </div>
+                  </div>
+
+                  <div className="flex flex-col items-center md:items-end gap-3 min-w-[150px]">
+                    <button 
+                      onClick={() => onRespond(ev.id, "ACCEPTED")} 
+                      className="px-8 py-3 bg-yellow-400 text-black text-[10px] font-black uppercase tracking-widest hover:brightness-110 transition-all flex items-center gap-2 italic shadow-lg shadow-yellow-400/10"
+                    >
+                      <Check size={14} /> PEGAR AGORA
+                    </button>
+                  </div>
+                </div>
+              ))}
               {/* Unit Invites */}
               {activeTab === "convites" &&
                 unitInvites.map((ui) => (
