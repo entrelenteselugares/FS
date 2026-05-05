@@ -1,4 +1,4 @@
-import { useState, useEffect, useRef, useCallback } from "react";
+import { useState, useEffect, useCallback } from "react";
 import { useNavigate } from "react-router-dom";
 import { API } from "../lib/api";
 import { Helmet } from "react-helmet-async";
@@ -143,7 +143,6 @@ export const HomePage = () => {
   const [totalPages, setTotal]  = useState(1);
   const [selectedType, setSelectedType] = useState("");
   const [selectedCity, setSelectedCity] = useState("");
-  const debounce = useRef<ReturnType<typeof setTimeout> | null>(null);
 
 
   const fetchEvents = useCallback(async (q: string, pg: number, type?: string, city?: string) => {
@@ -221,7 +220,7 @@ export const HomePage = () => {
           <input
             value={query}
             onChange={e => setQuery(e.target.value)}
-            onKeyDown={e => e.key === "Enter" && fetch(query, 1)}
+            onKeyDown={e => e.key === "Enter" && fetchEvents(query, 1)}
             placeholder="Nome do evento, fotografo..."
             style={{ flex: 1, background: "none", border: "none", outline: "none", fontSize: 13, color: T.text, fontFamily: T.fontB }}
           />
@@ -310,7 +309,7 @@ export const HomePage = () => {
                 <input
                   value={query}
                   onChange={e => setQuery(e.target.value)}
-                  onKeyDown={e => e.key === "Enter" && fetch(query, 1)}
+                  onKeyDown={e => e.key === "Enter" && fetchEvents(query, 1)}
                   placeholder="Nome do evento ou titular..."
                   className="w-full bg-theme-bg-muted border border-theme-border/40 pl-12 pr-4 py-4 text-[11px] font-display font-black uppercase tracking-widest text-theme-text focus:bg-theme-bg-muted/80 transition-all outline-none italic"
                 />

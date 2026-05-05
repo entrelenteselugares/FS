@@ -1151,7 +1151,7 @@ export default function UnidadeFixaDashboard() {
                 <div className="bg-theme-bg border border-theme-border overflow-hidden">
                    {user.franchiseProfile.transactions && user.franchiseProfile.transactions.length > 0 ? (
                      <div className="divide-y divide-theme-border">
-                       {user.franchiseProfile.transactions.map((tx: { id: string; description?: string; type: string; createdAt: string; amount: number }) => (
+                       {user.franchiseProfile.transactions.map((tx) => (
                          <div key={tx.id} className="p-6 flex items-center justify-between hover:bg-white/[0.02] transition-all group">
                             <div className="space-y-1">
                                <p className="text-[11px] font-black text-theme-text uppercase tracking-widest italic">

@@ -1,7 +1,7 @@
 import { useState, useEffect } from "react";
 import { useNavigate, useLocation } from "react-router-dom";
 import { useAuth } from "../hooks/useAuth";
-import { Home, Search, ShoppingBag, Image, Menu } from "lucide-react";
+import { Search, ShoppingBag, Image, Menu } from "lucide-react";
 import { T } from "../lib/theme";
 
 /**
@@ -17,15 +17,9 @@ export function BottomNav() {
   const [isVisible, setIsVisible] = useState(true);
   const [lastScrollY, setLastScrollY] = useState(0);
 
-  // Routes where BottomNav should never appear (Camera, Checkout, etc.)
-  const hiddenRoutes = ["/captura", "/phygital-capture", "/checkout"];
-  if (hiddenRoutes.some(r => location.pathname.startsWith(r))) {
-    return null;
-  }
-
   // Scroll visibility logic
   useEffect(() => {
-    let scrollTimeout: any;
+    let scrollTimeout: ReturnType<typeof setTimeout>;
     
     const handleScroll = () => {
       const currentScrollY = window.scrollY;
@@ -85,6 +79,12 @@ export function BottomNav() {
     // 3. Fallback for simple paths
     return pathname === tabPath || pathname.startsWith(tabPath + "/");
   };
+
+  // Routes where BottomNav should never appear (Camera, Checkout, etc.)
+  const hiddenRoutes = ["/captura", "/phygital-capture", "/checkout"];
+  if (hiddenRoutes.some(r => location.pathname.startsWith(r))) {
+    return null;
+  }
 
   return (
     <>
