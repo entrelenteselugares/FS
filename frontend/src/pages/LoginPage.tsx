@@ -110,6 +110,12 @@ export const LoginPage: React.FC = () => {
             <div className="space-y-3">
               <div className="flex justify-between items-center">
                 <label className="text-[9px] font-black uppercase tracking-[0.3em] text-theme-muted ml-1 opacity-60">Chave de Acesso</label>
+                <Link
+                  to="/forgot-password"
+                  className="text-[8px] font-black uppercase tracking-[0.2em] text-brand-tactical hover:opacity-70 transition-opacity italic"
+                >
+                  Esqueci a Senha →
+                </Link>
               </div>
               <div className="relative group flex items-center">
                 <Lock className="absolute left-0 top-1/2 -translate-y-1/2 text-theme-muted/40 group-focus-within:text-brand-tactical transition-colors" size={14} />

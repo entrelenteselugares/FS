@@ -16,7 +16,7 @@ export function DashboardStats({ completedEvents, totalEarnings, monthEarnings, 
   return (
     <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
       {kpis.map((kpi) => (
-        <div key={kpi.label} className={`bg-theme-bg border ${kpi.highlight ? 'border-brand-tactical/50 shadow-brand-tactical/5' : 'border-theme-border/60'} p-4 md:p-6 space-y-2 md:space-y-4 group hover:border-brand-tactical transition-all shadow-sm`}>
+        <div key={kpi.label} className={`lux-card p-4 md:p-6 space-y-2 md:space-y-4 group ${kpi.highlight ? 'border-brand-tactical/50 shadow-brand-tactical/5 bg-brand-tactical/[0.02]' : 'border-theme-border/60'} transition-all`}>
           <span className="text-[8px] font-black text-theme-muted uppercase tracking-widest italic">{kpi.label}</span>
           <div className={`text-2xl md:text-3xl font-heading font-black italic leading-none ${kpi.highlight ? 'text-brand-tactical' : 'text-theme-text'}`}>{kpi.value}</div>
           <div className="text-[8px] font-black text-theme-muted uppercase tracking-widest">{kpi.unit}</div>

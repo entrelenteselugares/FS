@@ -45,7 +45,7 @@ export function FinanceTab({
 
   return (
     <div className="space-y-8 animate-in fade-in duration-500">
-      <div className="bg-theme-bg border border-theme-border/60 p-8 md:p-16 relative overflow-hidden">
+      <div className="lux-card p-8 md:p-16 relative overflow-hidden bg-theme-bg">
         <div className="absolute top-0 right-0 w-64 h-64 bg-brand-tactical/5 rounded-full blur-[100px] -mr-32 -mt-32 pointer-events-none" />
         <div className="relative z-10 space-y-12">
 
@@ -79,7 +79,7 @@ export function FinanceTab({
           {/* Projection & ROI Grid */}
           <div className="grid grid-cols-1 lg:grid-cols-12 gap-8">
             {/* Goal Progress */}
-            <div className="lg:col-span-8 p-8 bg-brand-tactical/5 border border-brand-tactical/20 relative overflow-hidden group">
+            <div className="lg:col-span-8 p-8 bg-brand-tactical/[0.03] border border-brand-tactical/30 relative overflow-hidden group shadow-inner">
               <div className="absolute right-0 top-0 p-4 opacity-10 group-hover:opacity-20 transition-opacity"><TrendingUp size={80} /></div>
               <div className="relative z-10 space-y-6">
                 <div className="flex justify-between items-end">
@@ -109,7 +109,7 @@ export function FinanceTab({
             </div>
 
             {/* ROI Donut (static representation) */}
-            <div className="lg:col-span-4 p-8 bg-theme-bg-muted border border-theme-border/60 flex flex-col">
+            <div className="lg:col-span-4 lux-card p-8 flex flex-col bg-theme-bg-muted/40">
               <div className="flex items-center justify-between mb-6">
                 <div className="space-y-1">
                   <p className="text-[10px] font-black text-brand-tactical uppercase tracking-widest italic">ROI por Ativo</p>

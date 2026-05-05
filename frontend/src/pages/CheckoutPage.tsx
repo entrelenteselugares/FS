@@ -1,6 +1,6 @@
 import { useState, useEffect, useRef, useCallback } from "react";
 import { useParams, useNavigate, useSearchParams } from "react-router-dom";
-import { ShieldCheck, ArrowLeft, CheckCircle2, Clock, RefreshCw, Lock } from "lucide-react";
+import { ShieldCheck, ArrowLeft, CheckCircle2, Clock, RefreshCw, Lock, Image as ImageIcon, Printer } from "lucide-react";
 
 
 import { QRCodeSVG } from "qrcode.react";
@@ -34,6 +34,13 @@ interface OrderDetail {
   deliveryType?: string;
   shippingAddress?: unknown;
   shippingFee?: number | string;
+  items?: {
+    id: string;
+    price: number;
+    quantity: number;
+    media?: { shortId: string; url: string };
+    printProduct?: { name: string; sku: string };
+  }[];
 }
 
 interface MPFormData {
@@ -435,6 +442,30 @@ export const CheckoutPage = () => {
             <p className="text-[10px] font-black text-brand-tactical uppercase tracking-[0.4em] mb-4">Investimento</p>
             <h1 className="text-4xl md:text-5xl font-black italic tracking-tighter uppercase leading-none">{order.event?.nomeNoivos}</h1>
             <p className="text-zinc-500 text-sm mt-4">Memórias Eternizadas no Papel · {order.manualType || "Álbum Digital Completo"}</p>
+          </div>
+
+          <div className="space-y-4">
+            <p className="text-[9px] font-black text-zinc-500 uppercase tracking-widest italic">Resumo da Seleção</p>
+            <div className="space-y-2">
+              {order.items?.map((item) => (
+                <div key={item.id} className="flex justify-between items-center p-4 bg-white/5 border border-white/5">
+                  <div className="flex items-center gap-4">
+                    <div className="w-10 h-10 bg-zinc-900 border border-white/10 flex items-center justify-center">
+                      {item.media ? <ImageIcon size={14} className="text-brand-tactical" /> : <Printer size={14} className="text-brand-tactical" />}
+                    </div>
+                    <div className="flex flex-col">
+                      <span className="text-[10px] font-black text-white uppercase italic">
+                        {item.media ? `Foto #${item.media.shortId}` : item.printProduct?.name}
+                      </span>
+                      <span className="text-[8px] text-zinc-500 font-bold uppercase tracking-widest">
+                        {item.media ? "Digital HD" : "Produto Físico"}
+                      </span>
+                    </div>
+                  </div>
+                  <span className="text-xs font-black italic text-white">R$ {Number(item.price).toFixed(2)}</span>
+                </div>
+              ))}
+            </div>
           </div>
 
           <div className="p-8 bg-theme-bg border border-zinc-900 space-y-6 relative overflow-hidden">

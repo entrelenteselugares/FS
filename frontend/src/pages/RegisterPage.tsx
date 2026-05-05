@@ -113,7 +113,7 @@ export const RegisterPage: React.FC = () => {
       
       // Navegação imediata sem resetar loading local para evitar crash de remoção de nó no mobile
       if (hasPending) {
-        window.location.href = `/public/events/${hasPending}`;
+        window.location.href = `/e/${hasPending}`;
       } else {
         window.location.href = target;
       }

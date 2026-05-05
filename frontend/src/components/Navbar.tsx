@@ -22,8 +22,24 @@ export const Navbar: React.FC = () => {
       background: "var(--theme-bg-nav)", backdropFilter: "blur(20px)",
       position: "sticky", top: 0, zIndex: 100,
     }}>
-      <div onClick={() => navigate("/")} style={{ cursor: "pointer", display: "flex", alignItems: "center" }}>
-        <img src="/logo-fs.png" alt="Foto Segundo" style={{ height: 26, objectFit: "contain" }} />
+      <div className="flex items-center gap-8">
+        <div onClick={() => navigate("/")} style={{ cursor: "pointer", display: "flex", alignItems: "center" }}>
+          <img 
+            src="/logo-fs.png" 
+            alt="Foto Segundo" 
+            style={{ 
+              height: 26, 
+              objectFit: "contain",
+              filter: document.documentElement.getAttribute('data-theme') === 'dark' ? "brightness(0) invert(1)" : "none"
+            }} 
+          />
+        </div>
+
+        {/* Desktop Quick Links */}
+        <div className="hidden md:flex items-center gap-6 ml-4">
+          <button onClick={() => navigate("/")} className="text-[11px] font-display font-black text-theme-text/60 hover:text-brand-tactical uppercase tracking-widest italic transition-colors">Home</button>
+          <button onClick={() => navigate("/?buscar=1")} className="text-[11px] font-display font-black text-theme-text/60 hover:text-brand-tactical uppercase tracking-widest italic transition-colors">Explorar</button>
+        </div>
       </div>
 
       <div style={{ display: "flex", alignItems: "center", gap: "clamp(4px, 2vw, 12px)" }}>
@@ -49,7 +65,7 @@ export const Navbar: React.FC = () => {
         )}
 
         {user ? (
-          <div style={{ position: "relative" }}>
+          <div style={{ position: "relative" }} className="mobile-hide">
             <button onClick={() => setUserMenu(v => !v)} style={{ ...BtnSecondary, fontSize: 10, padding: "8px 10px" }}>
               {user.nome?.split(" ")[0] || "CONTA"} <span style={{ fontSize: 8, marginLeft: 2 }}>▾</span>
             </button>
@@ -57,9 +73,10 @@ export const Navbar: React.FC = () => {
               <div style={{ 
                 position: "absolute", right: 0, top: "calc(100% + 8px)", 
                 background: T.bgCard, border: `1px solid ${T.border}`, 
-                minWidth: 160, zIndex: 200, boxShadow: '0 10px 30px rgba(0,0,0,0.5)' 
+                minWidth: 180, zIndex: 200, boxShadow: '0 20px 50px rgba(0,0,0,0.3)' 
               }}>
-                <button onClick={() => { setUserMenu(false); navigate(dashPath); }} style={{ width: "100%", textAlign: "left", padding: "12px 16px", background: "transparent", border: "none", borderBottom: `1px solid ${T.border}`, color: T.text, fontSize: 11, fontFamily: T.fontB, letterSpacing: "0.08em", textTransform: "uppercase", cursor: "pointer" }}>Meu Painel</button>
+                <button onClick={() => { setUserMenu(false); navigate("/minha-conta?s=fotos"); }} style={{ width: "100%", textAlign: "left", padding: "14px 16px", background: "transparent", border: "none", borderBottom: `1px solid ${T.border}`, color: T.text, fontSize: 11, fontFamily: T.fontD, fontWeight: 900, letterSpacing: "0.1em", textTransform: "uppercase", cursor: "pointer", fontStyle: 'italic' }}>📸 Minhas Fotos</button>
+                <button onClick={() => { setUserMenu(false); navigate(dashPath); }} style={{ width: "100%", textAlign: "left", padding: "14px 16px", background: "transparent", border: "none", borderBottom: `1px solid ${T.border}`, color: T.text, fontSize: 11, fontFamily: T.fontD, fontWeight: 900, letterSpacing: "0.1em", textTransform: "uppercase", cursor: "pointer", fontStyle: 'italic' }}>👤 Meu Painel</button>
                 <div className="mobile-only" style={{ borderBottom: `1px solid ${T.border}`, padding: "8px 16px" }}>
                   <ThemeToggle />
                 </div>
@@ -68,7 +85,7 @@ export const Navbar: React.FC = () => {
             )}
           </div>
         ) : (
-          <button onClick={() => navigate("/login")} style={{ ...BtnSecondary, fontSize: 10, padding: "8px 10px" }}>
+          <button onClick={() => navigate("/login")} className="mobile-hide" style={{ ...BtnSecondary, fontSize: 10, padding: "8px 10px" }}>
             LOGIN
           </button>
         )}

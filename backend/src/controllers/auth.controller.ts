@@ -6,6 +6,7 @@ import { generateToken, generateRefreshToken, verifyRefreshToken } from "../lib/
 import { audit } from "../lib/audit";
 import { supabaseAdmin } from "../lib/supabase";
 import { NotificationService } from "../services/notification.service";
+import { ReferralService } from "../services/referral.service";
 import crypto from "crypto";
 import { APP_URL } from "../lib/config";
 
@@ -174,8 +175,7 @@ export class AuthController {
 
       // 4. Lógica de Referral (B2B Hub)
       if (result.role === "PROFISSIONAL" && ref) {
-        const { ReferralService } = await import("../services/referral.service");
-        ReferralService.linkByCode(result.id, ref).catch(e => console.error("[Referral Error]:", e));
+        ReferralService.linkByCode(result.id, ref).catch((e: unknown) => console.error("[Referral Error]:", e));
       }
 
       // 5. Gerar Tokens para Login Imediato
@@ -268,11 +268,15 @@ export class AuthController {
       });
 
       const recoveryLink = `${APP_URL}/reset-password?token=${token}`;
-      await NotificationService.sendPasswordRecoveryEmail({
+      const sent = await NotificationService.sendPasswordRecoveryEmail({
         to: user.email,
         name: user.nome,
         recoveryLink
       });
+
+      if (!sent) {
+        return res.status(500).json({ error: "Falha ao disparar e-mail de recuperação. Verifique as configurações de SMTP." });
+      }
 
       return res.json({ message: "Instruções de recuperação enviadas com sucesso." });
     } catch (error) {

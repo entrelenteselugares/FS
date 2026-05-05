@@ -790,6 +790,12 @@ export class PaymentController {
         where: { id: String(id) },
         include: {
           cliente: { select: { email: true, nome: true } },
+          items: {
+            include: {
+              media: { select: { shortId: true, url: true } },
+              printProduct: { select: { name: true, sku: true } }
+            }
+          },
           event: {
             select: {
               id: true,
@@ -821,7 +827,8 @@ export class PaymentController {
         isGuestOrder: order.isGuestOrder,
         deliveryType: order.deliveryType,
         paymentModel: order.paymentModel,
-        shippingAddress: order.shippingAddress
+        shippingAddress: order.shippingAddress,
+        items: order.items
       });
 
     } catch (error) {

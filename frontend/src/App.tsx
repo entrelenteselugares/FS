@@ -4,6 +4,7 @@ import { ThemeProvider } from "./contexts/ThemeContext";
 import { useAuth } from "./hooks/useAuth";
 import { HelmetProvider } from "react-helmet-async";
 import { ProtectedRoute } from "./components/ProtectedRoute";
+import { BottomNav } from "./components/BottomNav";
 
 import EventPage from "./pages/EventPage";
 import { LoginPage } from "./pages/LoginPage";
@@ -19,6 +20,7 @@ import { PartnerLP } from "./pages/PartnerLP";
 import { NotFoundPage } from "./pages/NotFoundPage";
 import { CheckoutPage } from "./pages/CheckoutPage";
 import ResetPasswordPage from "./pages/ResetPasswordPage";
+import ForgotPasswordPage from "./pages/ForgotPasswordPage";
 import LuxuryExperiencePage from "./pages/LuxuryExperiencePage";
 import PhygitalCapture from "./pages/PhygitalCapture";
 import PrintMonitor from "./pages/PrintMonitor";
@@ -49,7 +51,7 @@ const AnimatedRoutes = () => {
   return (
     <div
       key={location.pathname}
-      className="w-full h-full animate-reveal"
+      className="w-full h-full animate-reveal pb-20 md:pb-0"
     >
       <Routes location={location}>
         {/* Público */}
@@ -59,6 +61,7 @@ const AnimatedRoutes = () => {
         <Route path="/e/:slug" element={<EventPage />} />
         <Route path="/auth" element={<AuthSelectionPage />} />
         <Route path="/reset-password" element={<ResetPasswordPage />} />
+        <Route path="/forgot-password" element={<ForgotPasswordPage />} />
         <Route path="/cotacao" element={<QuotePage />} />
         {/* 
         <Route path="/hall-da-fama" element={<HallOfFame />} />
@@ -160,6 +163,7 @@ function App() {
           <HelmetProvider>
             <Router>
               <AnimatedRoutes />
+              <BottomNav />
             </Router>
           </HelmetProvider>
         </AuthProvider>

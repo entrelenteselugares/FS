@@ -37,9 +37,9 @@ export default {
         }
       },
       fontFamily: {
-        sans:    ['Outfit', 'sans-serif'],
-        serif:   ['Outfit', 'sans-serif'],
-        heading: ['Outfit', 'sans-serif'],
+        sans:    ['Inter', 'sans-serif'],
+        display: ['Barlow Condensed', 'sans-serif'],
+        heading: ['Barlow Condensed', 'sans-serif'],
       },
       animation: {
         'fade-in': 'fadeIn 0.5s ease-out',

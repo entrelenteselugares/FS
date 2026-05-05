@@ -239,8 +239,8 @@ export const Badge = {
   },
   /** PENDENTE / AGUARDANDO */
   pending: {
-    background:   "#1a0d00",
-    border:       "1px solid #3a2000",
+    background:   "rgba(245, 158, 11, 0.1)",
+    border:       "1px solid rgba(245, 158, 11, 0.3)",
     color:        "#f59e0b",
     padding:      "3px 10px",
     fontSize:     10,
@@ -252,8 +252,8 @@ export const Badge = {
   },
   /** ERRO / RECUSADO / CANCELADO */
   rejected: {
-    background:   "#1a0a0a",
-    border:       "1px solid #3a1a1a",
+    background:   "rgba(248, 113, 113, 0.1)",
+    border:       "1px solid rgba(248, 113, 113, 0.3)",
     color:        "#f87171",
     padding:      "3px 10px",
     fontSize:     10,
@@ -265,8 +265,8 @@ export const Badge = {
   },
   /** PROCESSANDO / EM TRÂNSITO */
   processing: {
-    background:   "#0d0d1a",
-    border:       "1px solid #1a1a3a",
+    background:   "rgba(129, 140, 248, 0.1)",
+    border:       "1px solid rgba(129, 140, 248, 0.3)",
     color:        "#818cf8",
     padding:      "3px 10px",
     fontSize:     10,

@@ -151,6 +151,16 @@ export default function ClienteArea() {
         const found = data.find((p: Pedido) => p.id === urlOrderId);
         if (found) handleSelect(found);
       }
+
+      // Handle section param from BottomNav
+      const section = searchParams.get("s");
+      if (section === "pedidos" || section === "wallet") {
+        setActiveTab("wallet");
+      } else if (section === "fotos" || section === "files") {
+        setActiveTab("files");
+      } else if (section === "menu") {
+        setActiveTab("profile");
+      }
     });
 
     if (user) {
@@ -270,7 +280,7 @@ export default function ClienteArea() {
               <div className="h-0.5 w-12 bg-brand-tactical" />
               <p className="text-[10px] font-black text-brand-tactical uppercase tracking-[0.5em] italic">Central de Arquivos</p>
             </div>
-            <h1 className="text-4xl md:text-7xl font-heading font-black text-white uppercase tracking-tighter italic leading-[0.9]">
+            <h1 className="text-4xl md:text-7xl font-heading font-black text-theme-text uppercase tracking-tighter italic leading-[0.9]">
               Minhas Memórias
             </h1>
           </div>
@@ -303,13 +313,13 @@ export default function ClienteArea() {
                 <div className="absolute top-0 right-0 w-24 h-24 bg-gradient-to-br from-white/5 to-transparent rotate-45 translate-x-12 -translate-y-12" />
                 <div className="relative z-10 space-y-4">
                   <div className="flex items-center gap-3">
-                    <div className={`p-2 ${m.highlight ? 'bg-brand-tactical text-black' : 'bg-zinc-800 text-zinc-400'}`}>
+                    <div className={`p-2 ${m.highlight ? 'bg-brand-tactical text-black' : 'bg-theme-bg-muted text-theme-text-muted'}`}>
                       {m.icon}
                     </div>
-                    <p className="text-[10px] font-black text-zinc-500 uppercase tracking-widest">{m.label}</p>
+                    <p className="text-[10px] font-black text-theme-text-muted uppercase tracking-widest">{m.label}</p>
                   </div>
                   <p className={`text-3xl md:text-4xl font-heading font-black italic tracking-tighter leading-none ${
-                    m.highlight || m.isCash ? 'text-brand-tactical' : 'text-white'
+                    m.highlight || m.isCash ? 'text-brand-tactical' : 'text-theme-text'
                   }`}>
                     {m.value}
                   </p>
@@ -777,11 +787,11 @@ function EventGroupRow({ group, now, onSelectPedido }: {
             <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-transparent to-transparent pointer-events-none" />
             
             {!hasAprovado && (
-              <div className="absolute inset-0 flex flex-col items-center justify-center gap-3 bg-black/40 backdrop-blur-[1px]">
-                 <div className="p-3 bg-black/80 border border-white/10 rounded-full">
+              <div className="absolute inset-0 flex flex-col items-center justify-center gap-3 bg-theme-bg-muted/80 backdrop-blur-[1px]">
+                 <div className="p-3 bg-theme-bg border border-theme-border/20 rounded-full">
                    <Clock size={20} className="text-amber-500 animate-pulse" />
                  </div>
-                 <p className="text-[9px] font-black text-white uppercase tracking-[0.3em]">Acesso Bloqueado</p>
+                 <p className="text-[9px] font-black text-theme-text uppercase tracking-[0.3em]">Acesso Bloqueado</p>
               </div>
             )}
 
@@ -835,7 +845,7 @@ function EventGroupRow({ group, now, onSelectPedido }: {
                     <Zap size={12} className="text-brand-tactical" />
                     <p className="text-[10px] font-black text-brand-tactical uppercase tracking-widest italic">Status da Operação</p>
                  </div>
-                 <p className="text-sm md:text-base text-zinc-300 font-medium leading-relaxed italic">
+                 <p className="text-sm md:text-base text-theme-text-muted font-medium leading-relaxed italic">
                     "{getStatusMessage(event.dataEvento)}"
                  </p>
                </div>
@@ -847,8 +857,8 @@ function EventGroupRow({ group, now, onSelectPedido }: {
             {/* Order History Grid */}
             <div className="space-y-4">
               <div className="flex items-center gap-3">
-                 <div className="h-px w-6 bg-zinc-800" />
-                 <p className="text-[9px] font-black text-zinc-500 uppercase tracking-[0.3em]">Histórico de Aquisições</p>
+                 <div className="h-px w-6 bg-theme-border/40" />
+                 <p className="text-[9px] font-black text-theme-text-muted uppercase tracking-[0.3em]">Histórico de Aquisições</p>
               </div>
               <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
                 {pedidos.map((p: Pedido) => (
@@ -866,7 +876,7 @@ function EventGroupRow({ group, now, onSelectPedido }: {
                         {p.hasPaid ? <CheckCircle2 size={14} /> : <Clock size={14} />}
                       </div>
                       <div className="min-w-0">
-                        <p className="text-[10px] font-black text-white uppercase tracking-widest truncate group-hover/order:text-brand-tactical transition-colors">{p.manualType || "Investimento"}</p>
+                        <p className="text-[10px] font-black text-theme-text uppercase tracking-widest truncate group-hover/order:text-brand-tactical transition-colors">{p.manualType || "Investimento"}</p>
                         <p className={`text-[8px] font-black uppercase tracking-widest opacity-60`}>
                           {p.hasPaid ? "Confirmado" : "Pendente"}
                         </p>
@@ -987,10 +997,10 @@ function PedidoDetalhe({ pedido, loading, onGoToEvent, onChangePrivacy, onToggle
              <div className="h-0.5 w-8 bg-brand-tactical" />
              <p className="text-[10px] font-black text-brand-tactical uppercase tracking-[0.4em]">Detalhes da Coleção</p>
           </div>
-          <h3 className="text-3xl md:text-4xl font-heading font-black italic tracking-tighter uppercase text-white leading-tight">
+          <h3 className="text-3xl md:text-4xl font-heading font-black italic tracking-tighter uppercase text-theme-text leading-tight">
             {pedido.event.nomeNoivos}
           </h3>
-          <p className="text-[10px] font-bold text-zinc-400 uppercase tracking-widest">
+          <p className="text-[10px] font-bold text-theme-muted uppercase tracking-widest">
             {formatDate(pedido.event.dataEvento)} • {pedido.event.city || pedido.event.location}
           </p>
         </div>
@@ -1014,11 +1024,11 @@ function PedidoDetalhe({ pedido, loading, onGoToEvent, onChangePrivacy, onToggle
             {pedido.hasPaid ? (
               <div className="space-y-3">
                 <div className="flex items-baseline gap-2">
-                  <p className="text-[10px] text-zinc-500 uppercase font-bold tracking-wider">Válido até:</p>
-                  <p className="text-sm font-black text-white italic">{formatDate(pedido.accessExpiresAt)}</p>
+                  <p className="text-[10px] text-theme-muted uppercase font-bold tracking-wider">Válido até:</p>
+                  <p className="text-sm font-black text-theme-text italic">{formatDate(pedido.accessExpiresAt)}</p>
                 </div>
-                <p className="text-[11px] text-zinc-400 leading-relaxed">
-                  Suas memórias estão protegidas e disponíveis para download. O álbum está configurado como <span className="text-white font-bold">{pedido.accessType === 'PRIVATE' ? 'PRIVADO' : 'PÚBLICO'}</span>.
+                <p className="text-[11px] text-theme-muted leading-relaxed">
+                  Suas memórias estão protegidas e disponíveis para download. O álbum está configurado como <span className="text-theme-text font-bold">{pedido.accessType === 'PRIVATE' ? 'PRIVADO' : 'PÚBLICO'}</span>.
                 </p>
               </div>
             ) : (
@@ -1086,8 +1096,8 @@ function PedidoDetalhe({ pedido, loading, onGoToEvent, onChangePrivacy, onToggle
             <div className="p-12 text-center border border-dashed border-theme-border/40 space-y-8 bg-brand-tactical/5">
               <ShoppingBag size={40} className="mx-auto text-brand-tactical opacity-30" />
               <div className="space-y-3">
-                <p className="text-xs font-black text-white uppercase tracking-widest italic">Acesso Restrito</p>
-                <p className="text-[11px] text-zinc-500 uppercase font-bold tracking-widest leading-relaxed">
+                <p className="text-xs font-black text-theme-text uppercase tracking-widest italic">Acesso Restrito</p>
+                <p className="text-[11px] text-theme-muted uppercase font-bold tracking-widest leading-relaxed">
                   Liberação imediata após a confirmação do pagamento.
                 </p>
               </div>
@@ -1105,14 +1115,14 @@ function PedidoDetalhe({ pedido, loading, onGoToEvent, onChangePrivacy, onToggle
         <div className="pt-8 border-t border-theme-border/40 grid grid-cols-2 gap-4">
           <button 
             onClick={onGoToEvent} 
-            className="group px-6 py-5 border border-theme-border text-[9px] font-black uppercase tracking-[0.3em] text-white hover:border-brand-tactical hover:text-brand-tactical transition-all flex items-center justify-center gap-3 italic"
+            className="group px-6 py-5 border border-theme-border text-[9px] font-black uppercase tracking-[0.3em] text-theme-text hover:border-brand-tactical hover:text-brand-tactical transition-all flex items-center justify-center gap-3 italic"
           >
             VOLTAR AO ÁLBUM <ArrowRight size={14} className="group-hover:translate-x-1 transition-transform" />
           </button>
           <button 
             onClick={onChangePrivacy} 
             disabled={!pedido.hasPaid} 
-            className="px-6 py-5 border border-theme-border text-[9px] font-black uppercase tracking-[0.3em] text-white hover:border-red-500 hover:text-red-500 transition-all disabled:opacity-20 disabled:cursor-not-allowed italic"
+            className="px-6 py-5 border border-theme-border text-[9px] font-black uppercase tracking-[0.3em] text-theme-text hover:border-red-500 hover:text-red-500 transition-all disabled:opacity-20 disabled:cursor-not-allowed italic"
           >
             PRIVACIDADE
           </button>
@@ -1129,7 +1139,7 @@ function VisibilityToggle({ label, active, onClick }: { label: string; active: b
       className={`group relative p-5 border transition-all flex items-center justify-between overflow-hidden ${
         active 
           ? 'border-brand-tactical/40 bg-brand-tactical/5 text-brand-tactical shadow-lg shadow-brand-tactical/5' 
-          : 'border-theme-border/40 bg-zinc-900/50 text-zinc-500 grayscale'
+          : 'border-theme-border/40 bg-theme-bg-muted/30 text-theme-muted grayscale'
       }`}
     >
       {active && <div className="absolute top-0 right-0 w-8 h-8 bg-brand-tactical/10 rotate-45 translate-x-4 -translate-y-4" />}
@@ -1149,8 +1159,8 @@ function MediaActionCard({ icon, title, subtitle, url, disabled, emptyText }: {
 }) {
   if (disabled) {
     return (
-      <div className="p-6 bg-zinc-900/40 border border-theme-border/30 text-zinc-600 flex items-center gap-5">
-        <div className="p-3 bg-zinc-900 border border-theme-border/20 opacity-40">{icon}</div>
+      <div className="p-6 bg-theme-bg-muted/30 border border-theme-border/30 text-theme-muted flex items-center gap-5">
+        <div className="p-3 bg-theme-bg-muted border border-theme-border/20 opacity-40">{icon}</div>
         <div>
           <p className="text-[11px] font-black uppercase tracking-widest mb-1 italic">{title}</p>
           <p className="text-[10px] font-bold italic opacity-60">{emptyText}</p>
@@ -1172,11 +1182,11 @@ function MediaActionCard({ icon, title, subtitle, url, disabled, emptyText }: {
           {icon}
         </div>
         <div>
-          <p className="text-[12px] font-black text-white uppercase tracking-widest italic group-hover:text-brand-tactical transition-colors">{title}</p>
-          <p className="text-[9px] text-zinc-500 uppercase font-bold tracking-[0.2em]">{subtitle}</p>
+          <p className="text-[12px] font-black text-theme-text uppercase tracking-widest italic group-hover:text-brand-tactical transition-colors">{title}</p>
+          <p className="text-[9px] text-theme-muted uppercase font-bold tracking-[0.2em]">{subtitle}</p>
         </div>
       </div>
-      <ArrowRight size={18} className="relative z-10 text-zinc-700 group-hover:text-brand-tactical group-hover:translate-x-2 transition-all duration-500" />
+      <ArrowRight size={18} className="relative z-10 text-theme-muted group-hover:text-brand-tactical group-hover:translate-x-2 transition-all duration-500" />
     </a>
   );
 }

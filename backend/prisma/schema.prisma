@@ -150,6 +150,7 @@ model Event {
   pedidos            Order[]
   likes              PhotoLike[]
   phygitalPrints     PhygitalPrint[]
+  printProducts      EventPrintProduct[]
 
   @@map("events")
 }
@@ -285,6 +286,7 @@ model Order {
   payoutPaidAt        DateTime?
   payoutReadyAt       DateTime?
   payoutStatus        PayoutStatus        @default(PENDING)
+  fulfillmentStatus   FulfillmentStatus   @default(PENDING)
   passiveFranchiseeId String?
   splitFranchisee     Decimal?            @db.Decimal(10, 2)
   rewardsUsed         Decimal?            @db.Decimal(10, 2)
@@ -538,8 +540,22 @@ model PrintProduct {
   updatedAt    DateTime    @updatedAt
   maxPhotos    Int?
   orderItems   OrderItem[]
+  events       EventPrintProduct[]
 
   @@map("print_products")
+}
+
+model EventPrintProduct {
+  id             String       @id @default(cuid())
+  eventId        String
+  printProductId String
+  customPrice    Decimal?     @db.Decimal(10, 2)
+  active         Boolean      @default(true)
+  event          Event        @relation(fields: [eventId], references: [id], onDelete: Cascade)
+  product        PrintProduct @relation(fields: [printProductId], references: [id], onDelete: Cascade)
+
+  @@unique([eventId, printProductId])
+  @@map("event_print_products")
 }
 
 model UserCalendarCredential {
@@ -704,4 +720,12 @@ enum FranchiseTier {
   SILVER
   GOLD
   DIAMOND
+}
+
+enum FulfillmentStatus {
+  PENDING
+  LOCAL_QUEUE
+  LAB_PROCESSING
+  SHIPPED
+  DELIVERED
 }

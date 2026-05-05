@@ -384,3 +384,53 @@ export async function getPublicPrintCatalog(req: Request, res: Response): Promis
     res.status(500).json({ error: "Erro ao carregar catálogo." });
   }
 }
+
+// ── GET /public/events/:eventId/print-products ──────────────────────────────
+export async function getEventPrintProducts(req: Request, res: Response): Promise<void> {
+  const { eventId } = req.params;
+  try {
+    const eventProducts = await prisma.eventPrintProduct.findMany({
+      where: { eventId: String(eventId), active: true },
+      include: { product: true }
+    });
+
+    if (eventProducts.length > 0) {
+      const result = eventProducts.map(ep => ({
+        id: ep.product.id,
+        category: ep.product.category,
+        name: ep.product.name,
+        description: ep.product.description,
+        sellingPrice: ep.customPrice !== null 
+          ? Number(ep.customPrice) 
+          : ep.product.sellingPrice !== null 
+            ? Number(ep.product.sellingPrice) 
+            : Number(ep.product.supplierCost) * (1 + ep.product.marginPct / 100),
+        maxPhotos: ep.product.maxPhotos
+      }));
+      res.json(result);
+      return;
+    }
+
+    // Fallback para catálogo global se não houver customização
+    const products = await prisma.printProduct.findMany({
+      where: { active: true },
+      orderBy: [{ category: "asc" }, { name: "asc" }]
+    });
+
+    const result = products.map(p => ({
+      id: p.id,
+      category: p.category,
+      name: p.name,
+      description: p.description,
+      sellingPrice: p.sellingPrice !== null
+        ? Number(p.sellingPrice)
+        : Number(p.supplierCost) * (1 + p.marginPct / 100),
+      maxPhotos: p.maxPhotos
+    }));
+
+    res.json(result);
+  } catch (err) {
+    console.error("getEventPrintProducts:", err);
+    res.status(500).json({ error: "Erro ao carregar catálogo do evento." });
+  }
+}

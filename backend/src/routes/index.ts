@@ -265,6 +265,7 @@ router.get("/public/orders/:id",               PaymentController.getOrderPublic)
 router.get("/public/orders/:id/check-payment", PaymentController.checkPaymentStatus);
 router.post("/public/orders/:id/manual-payment", requireAuth, PaymentController.manualPayment);
 router.get("/public/print-catalog",            AdminPrintCatalog.getPublicPrintCatalog);
+router.get("/public/events/:eventId/print-products", AdminPrintCatalog.getEventPrintProducts);
 router.post("/orders/print",                   PaymentController.createPrintOrder);
 
 

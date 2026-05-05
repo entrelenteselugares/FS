@@ -1,11 +1,11 @@
 import { useState, useEffect, useRef, useCallback } from "react";
 import { useNavigate } from "react-router-dom";
-
 import { API } from "../lib/api";
 import { Helmet } from "react-helmet-async";
 import { T } from "../lib/theme";
 import { DICT } from "../lib/dictionary";
 import { Navbar } from "../components/Navbar";
+import { MapPin, Calendar, Search } from "lucide-react";
 
 interface Event {
   id: string;
@@ -13,6 +13,8 @@ interface Event {
   nomeNoivos: string;
   dataEvento: string;
   cartorio: string | null;
+  location?: string;
+  city?: string;
   coverPhotoUrl: string | null;
   priceBase?: number;
   temFoto: boolean;
@@ -20,7 +22,6 @@ interface Event {
   temReels: boolean;
   type?: string;
 }
-
 
 function formatDate(d: string) {
   try { return new Intl.DateTimeFormat("pt-BR", { day: "2-digit", month: "short", year: "numeric" }).format(new Date(d)); }
@@ -36,74 +37,69 @@ function isRecent(d: string) {
   return Date.now() - new Date(d).getTime() < 7 * 24 * 60 * 60 * 1000;
 }
 
-// ── EventCard ─────────────────────────────────────────────────────────────────
+// ── EventCard — Unified Immersive Version ───────────────────────────────────
 function EventCard({ event, onClick }: { event: Event; onClick: () => void }) {
   const today = isToday(event.dataEvento);
   const novo  = !today && isRecent(event.dataEvento);
+  const defaults = ["/defaults/cover1.png", "/defaults/cover2.png", "/defaults/cover3.png"];
+  const index = event.id.split('').reduce((acc, char) => acc + char.charCodeAt(0), 0) % defaults.length;
+  const fallback = defaults[index];
 
   return (
     <div
       onClick={onClick}
-      style={{ cursor: "pointer", background: T.bgCard, display: "flex", flexDirection: "column" }}
+      className="group relative overflow-hidden aspect-[16/10] md:aspect-[4/3] bg-zinc-900 cursor-pointer border-none transition-all duration-700 hover:z-10"
     >
-      {/* Thumbnail */}
-      <div style={{ position: "relative", aspectRatio: "4/3", background: "#161616", overflow: "hidden" }}>
-        {(() => {
-          const defaults = ["/defaults/cover1.png", "/defaults/cover2.png", "/defaults/cover3.png"];
-          // Determina uma capa fixa baseada no ID do evento para não mudar no reload
-          const index = event.id.split('').reduce((acc, char) => acc + char.charCodeAt(0), 0) % defaults.length;
-          const fallback = defaults[index];
+      {/* Background Image with Hover Effect */}
+      <img
+        src={event.coverPhotoUrl || fallback}
+        alt={event.nomeNoivos}
+        className="absolute inset-0 w-full h-full object-cover transition-transform duration-1000 group-hover:scale-105"
+        onError={e => { e.currentTarget.src = fallback; }}
+      />
 
-          if (event.coverPhotoUrl) {
-            return (
-              <img
-                src={event.coverPhotoUrl}
-                alt={event.nomeNoivos}
-                style={{ width: "100%", height: "100%", objectFit: "cover", transition: "transform 0.6s ease" }}
-                onMouseOver={e => (e.currentTarget.style.transform = "scale(1.04)")}
-                onMouseOut={e  => (e.currentTarget.style.transform = "scale(1)")}
-                onError={e => { e.currentTarget.src = fallback; }}
-              />
-            );
-          }
-          return (
-            <img
-              src={fallback}
-              alt="Capa Padrão"
-              style={{ width: "100%", height: "100%", objectFit: "cover", opacity: 0.6 }}
-            />
-          );
-        })()}
+      {/* Immersive Gradient Overlay - Deeper and more subtle */}
+      <div className="absolute inset-0 bg-gradient-to-t from-black/100 via-black/40 to-transparent z-[1] opacity-90 group-hover:opacity-100 transition-opacity" />
 
-        {/* Badge Hoje / Novo */}
+      {/* Professional Badge (Pílula) - Top Left */}
+      {event.cartorio && (
+        <div className="absolute top-4 left-4 z-10 flex items-center gap-2 bg-black/40 backdrop-blur-md border border-white/10 rounded-full pl-1.5 pr-4 py-1.5 transition-all duration-300 group-hover:bg-black/60">
+          <div className="w-5 h-5 rounded-full bg-brand-tactical flex items-center justify-center text-[9px] font-black text-black">
+            {event.cartorio.charAt(0).toUpperCase()}
+          </div>
+          <span className="text-[9px] font-black text-white uppercase tracking-widest truncate max-w-[100px]">
+            {event.cartorio}
+          </span>
+        </div>
+      )}
+
+      {/* Status Badges - Top Right */}
+      <div className="absolute top-4 right-4 z-10 flex flex-col gap-1 items-end">
         {today && (
-          <span style={{ position: "absolute", top: 12, left: 12, fontSize: 9, fontFamily: T.fontB, fontWeight: 500, letterSpacing: 1.5, textTransform: "uppercase", background: T.brand, color: T.brandText, padding: "4px 10px", borderRadius: 0 }}>
-            Hoje
+          <span className="px-2 py-0.5 bg-brand-tactical text-black text-[8px] font-black uppercase tracking-widest rounded-sm shadow-2xl">
+            HOJE
           </span>
         )}
         {novo && (
-          <span style={{ position: "absolute", top: 12, left: 12, fontSize: 9, fontFamily: T.fontB, fontWeight: 500, letterSpacing: 1.5, textTransform: "uppercase", background: T.brand, color: T.brandText, padding: "4px 10px", borderRadius: 0 }}>
-            Novo
+          <span className="px-2 py-0.5 bg-brand-tactical text-black text-[8px] font-black uppercase tracking-widest rounded-sm shadow-2xl">
+            NOVO
           </span>
         )}
       </div>
 
-      {/* Info */}
-      <div style={{ padding: "14px 16px 18px" }}>
-        <h3 style={{ fontFamily: T.fontD, fontWeight: 800, fontSize: 19, textTransform: "uppercase", color: T.text, margin: "0 0 6px", lineHeight: 1.1 }}>
+      {/* Content Overlay - Bottom */}
+      <div className="absolute bottom-0 left-0 w-full p-6 md:p-8 z-10 space-y-1">
+        <h3 className="text-xl md:text-2xl font-heading font-black text-white uppercase italic tracking-tight leading-none drop-shadow-2xl">
           {event.nomeNoivos}
         </h3>
-        <div style={{ fontSize: 11, color: T.text3, fontFamily: T.fontB, fontWeight: 400, display: "flex", gap: 10, marginBottom: 10 }}>
-          <span>{formatDate(event.dataEvento)}</span>
-          {event.cartorio && <><span>·</span><span>{event.cartorio}</span></>}
-        </div>
-        <div style={{ display: "flex", alignItems: "center", justifyContent: "flex-end" }}>
-          <div style={{ display: "flex", gap: 6 }}>
-            {event.temFoto  && <span style={{ fontSize: 9, fontFamily: T.fontB, color: T.text3, letterSpacing: 1, textTransform: "uppercase", border: `1px solid ${T.border}`, padding: "2px 7px" }}>{(event.type === 'PHOTO_MARKETPLACE' || event.type === 'FOTO_POINT') ? 'Phygital' : 'Foto'}</span>}
-            {event.type === 'PHOTO_MARKETPLACE' && <span style={{ fontSize: 9, fontFamily: T.fontB, color: T.brand, letterSpacing: 1, textTransform: "uppercase", border: `1px solid ${T.brand}`, padding: "2px 7px", fontWeight: 900 }}>Live Print</span>}
-            {event.type === 'FOTO_POINT' && <span style={{ fontSize: 9, fontFamily: T.fontB, color: "#22d3ee", letterSpacing: 1, textTransform: "uppercase", border: `1px solid #22d3ee`, padding: "2px 7px", fontWeight: 900 }}>Foto Point</span>}
-            {event.temVideo && <span style={{ fontSize: 9, fontFamily: T.fontB, color: T.text3, letterSpacing: 1, textTransform: "uppercase", border: `1px solid ${T.border}`, padding: "2px 7px" }}>Vídeo</span>}
-            {event.temReels && <span style={{ fontSize: 9, fontFamily: T.fontB, color: T.text3, letterSpacing: 1, textTransform: "uppercase", border: `1px solid ${T.border}`, padding: "2px 7px" }}>Reels</span>}
+        <div className="flex flex-wrap items-center gap-x-3 gap-y-1 text-white/50 text-[8px] md:text-[9px] font-black uppercase tracking-[0.2em] italic">
+          <div className="flex items-center gap-1.5">
+            <MapPin size={10} className="text-brand-tactical" />
+            <span>{event.location || event.city || "PONTO DESIGNADO"}</span>
+          </div>
+          <div className="flex items-center gap-1.5">
+            <Calendar size={10} className="text-brand-tactical" />
+            <span>{formatDate(event.dataEvento)}</span>
           </div>
         </div>
       </div>
@@ -123,12 +119,12 @@ function FooterCol({ title, links }: { title: string; links: string[] }) {
   const navigate = useNavigate();
   return (
     <div style={{ display: "flex", flexDirection: "column", gap: 14 }}>
-      <span style={{ fontSize: 10, fontFamily: T.fontB, fontWeight: 500, letterSpacing: "0.2em", textTransform: "uppercase", color: T.text }}>{title}</span>
+      <span style={{ fontSize: 10, fontFamily: T.fontD, fontWeight: 900, letterSpacing: "0.4em", textTransform: "uppercase", color: T.text, fontStyle: 'italic' }}>{title}</span>
       {links.map(l => (
         <span 
           key={l} 
           onClick={() => l === "Negócios" && navigate("/negocios")}
-          style={{ fontSize: 11, fontFamily: T.fontB, color: T.text3, cursor: "pointer", textTransform: "uppercase", letterSpacing: "0.1em" }}
+          style={{ fontSize: 11, fontFamily: T.fontD, fontWeight: 900, color: T.text3, cursor: "pointer", textTransform: "uppercase", letterSpacing: "0.2em", fontStyle: 'italic' }}
           onMouseOver={e => (e.currentTarget.style.color = T.text)} onMouseOut={e => (e.currentTarget.style.color = T.text3)}>
           {l}
         </span>
@@ -145,13 +141,22 @@ export const HomePage = () => {
   const [loading, setLoading]   = useState(true);
   const [page, setPage]         = useState(1);
   const [totalPages, setTotal]  = useState(1);
+  const [selectedType, setSelectedType] = useState("");
+  const [selectedCity, setSelectedCity] = useState("");
   const debounce = useRef<ReturnType<typeof setTimeout> | null>(null);
   const [isCtaHovered, setIsCtaHovered] = useState(false);
 
-  const fetch = useCallback(async (q: string, pg: number) => {
+  const fetch = useCallback(async (q: string, pg: number, type?: string, city?: string) => {
     setLoading(true);
     try {
-      const { data } = await API.get("/public/events", { params: { q: q.trim() || undefined, page: pg } });
+      const { data } = await API.get("/public/events", { 
+        params: { 
+          q: q.trim() || undefined, 
+          page: pg,
+          type: type || undefined,
+          city: city || undefined
+        } 
+      });
       setEvents(data.events ?? []);
       setTotal(data.pages ?? 1);
     } catch { /* silencioso */ }
@@ -160,11 +165,16 @@ export const HomePage = () => {
 
   useEffect(() => {
     if (debounce.current) clearTimeout(debounce.current);
-    debounce.current = setTimeout(() => { setPage(1); fetch(query, 1); }, 400);
+    debounce.current = setTimeout(() => { 
+      setPage(1); 
+      fetch(query, 1, selectedType, selectedCity); 
+    }, 400);
     return () => { if (debounce.current) clearTimeout(debounce.current); };
-  }, [query, fetch]);
+  }, [query, fetch, selectedType, selectedCity]);
 
-  useEffect(() => { fetch(query, page); }, [page, query, fetch]);
+  useEffect(() => { 
+    fetch(query, page, selectedType, selectedCity); 
+  }, [page, query, fetch, selectedType, selectedCity]);
 
   return (
     <div style={{ background: T.bg, color: T.text, minHeight: "100vh", fontFamily: T.fontB }}>
@@ -179,11 +189,8 @@ export const HomePage = () => {
         .hp-search-input:focus { outline: none; }
         .hp-search-input::placeholder { color: ${T.text3}; }
         .chip { transition: all 0.15s; cursor: pointer; }
-        .card-hover { transition: opacity 0.2s; }
-        .card-hover:hover { opacity: 0.88; }
         @media(max-width:768px){
-          .hp-hero-title { font-size: clamp(38px,10vw,60px) !important; line-height: 1 !important; }
-          .hp-grid { grid-template-columns: repeat(auto-fill, minmax(260px,1fr)) !important; }
+          .hp-hero-title { font-size: clamp(34px,8vw,52px) !important; line-height: 1 !important; }
           .hp-steps { flex-direction: column !important; }
           .hp-footer-inner { flex-direction: column !important; gap: 2rem !important; }
           .hp-footer-cols { gap: 1.5rem !important; }
@@ -194,68 +201,89 @@ export const HomePage = () => {
           .hp-stats { gap: 10px !important; justify-content: space-between !important; flex-wrap: nowrap !important; }
           .hp-stats-item { min-width: auto; }
           .hp-stats-val { font-size: 22px !important; }
+          .hp-hero-search-desktop { display: none !important; }
+          .hp-mobile-search { display: flex !important; }
+          .hp-event-section { padding: 0 0 100px !important; }
+          .hp-hero-tagline { display: none !important; }
+          .hp-hero-desc { display: none !important; }
+        }
+        @media(min-width:769px){
+          .hp-mobile-search { display: none !important; }
         }
       `}</style>
 
       {/* ── NAV ─────────────────────────────────────────────────────────── */}
       <Navbar />
 
+      {/* -- MOBILE FLOATING SEARCH -- hidden on desktop via CSS */}
+      <div className="hp-mobile-search" style={{ padding: "12px 16px 4px", gap: 10, alignItems: "center" }}>
+        <div style={{ flex: 1, display: "flex", alignItems: "center", gap: 10, background: "var(--bg-card)", border: `1px solid ${T.border}`, borderRadius: 40, padding: "10px 16px", height: 48 }}>
+          <Search size={16} style={{ color: T.text3, flexShrink: 0 }} />
+          <input
+            value={query}
+            onChange={e => setQuery(e.target.value)}
+            onKeyDown={e => e.key === "Enter" && fetch(query, 1)}
+            placeholder="Nome do evento, fotografo..."
+            style={{ flex: 1, background: "none", border: "none", outline: "none", fontSize: 13, color: T.text, fontFamily: T.fontB }}
+          />
+        </div>
+      </div>
+
       {/* ── HERO ─────────────────────────────────────────────────────────── */}
-      <section style={{ padding: "clamp(24px, 6vw, 60px) clamp(16px, 4vw, 28px) 48px", maxWidth: 1100, margin: "0 auto" }}>
-        <div style={{ opacity: 1 }}>
-          <p style={{ fontSize: 10, fontFamily: T.fontB, fontWeight: 400, letterSpacing: "0.35em", textTransform: "uppercase", color: T.brand, marginBottom: 20 }}>
+      <section style={{ 
+        padding: "clamp(60px, 12vw, 140px) 28px", 
+        background: "linear-gradient(to bottom, var(--bg-card), var(--bg))",
+        display: "flex",
+        flexDirection: "column",
+        alignItems: "center",
+        textAlign: "center",
+        position: "relative",
+        overflow: "hidden"
+      }}>
+        {/* Subtle Background Glow */}
+        <div className="absolute top-0 left-1/2 -translate-x-1/2 w-full h-full bg-brand-tactical/5 blur-[120px] rounded-full opacity-30 -translate-y-1/2 pointer-events-none" />
+
+        <div style={{ maxWidth: 1200, position: "relative", zIndex: 10 }}>
+          <p className="hp-hero-tagline animate-reveal" style={{ fontSize: 10, fontFamily: T.fontB, fontWeight: 400, letterSpacing: "0.5em", textTransform: "uppercase", color: T.brand, marginBottom: 24, opacity: 0.8 }}>
             {DICT.HERO_TAGLINE}
           </p>
 
-          <h1 className="hp-hero-title" style={{
+          <h1 className="hp-hero-title animate-reveal" style={{
             fontFamily: T.fontD, fontWeight: 900,
-            fontSize: "clamp(48px, 7vw, 80px)",
-            lineHeight: 0.95, color: T.text,
-            textTransform: "uppercase", letterSpacing: "0.5px",
-            margin: "0 0 24px",
+            fontSize: "clamp(42px, 8.5vw, 110px)",
+            lineHeight: 0.8, color: "var(--text)",
+            textTransform: "uppercase", letterSpacing: "-0.04em",
+            margin: "0 0 32px",
           }}>
-            {DICT.HERO_TITLE_PART1}
-            <em style={{ fontStyle: "italic", color: T.brand }}>{DICT.HERO_TITLE_PART2_ITALIC}</em>
+            <span style={{ display: "block", whiteSpace: "nowrap" }}>{DICT.HERO_TITLE_PART1}</span>
+            <em style={{ fontStyle: "italic", color: T.brand, display: "block", whiteSpace: "nowrap" }}>{DICT.HERO_TITLE_PART2_ITALIC}</em>
           </h1>
 
-          <p style={{ fontSize: 14, color: T.text2, fontWeight: 300, maxWidth: 440, lineHeight: 1.6, margin: "0 0 36px", fontFamily: T.fontB }}>
+          <p className="hp-hero-desc animate-reveal" style={{ fontSize: 14, color: "var(--text-2)", fontWeight: 300, maxWidth: 480, lineHeight: 1.6, margin: "0 auto 48px", fontFamily: T.fontB }}>
             {DICT.HERO_DESCRIPTION}
           </p>
 
-          {/* Search bar — input + botão UNIDOS, sem gap, sem border-radius */}
-          <div className="hp-search-container" style={{ display: "flex", maxWidth: 560, marginBottom: 20 }}>
-            <input
-              className="hp-search-input"
-              value={query}
-              onChange={e => setQuery(e.target.value)}
-              onKeyDown={e => e.key === "Enter" && fetch(query, 1)}
-              placeholder={DICT.SEARCH_PLACEHOLDER}
-              style={{
-                flex: 1, background: "var(--bg-field)",
-                border: `1px solid var(--border-2)`, borderRight: "none",
-                padding: "13px 16px", fontSize: 13,
-                color: T.text, fontFamily: T.fontB, fontWeight: 300,
-                borderRadius: 0, outline: "none",
-              }}
-            />
+          <div className="hp-hero-search-desktop animate-reveal" style={{ display: "flex", gap: 16, justifyContent: "center" }}>
             <button
-              onClick={() => fetch(query, 1)}
-              style={{
-                background: T.brand, color: T.brandText, border: "none",
-                padding: "13px 22px", fontFamily: T.fontD, fontWeight: 900,
-                fontSize: 13, letterSpacing: 1.5, textTransform: "uppercase",
-                cursor: "pointer", borderRadius: 0, flexShrink: 0,
-              }}
+              onClick={() => document.getElementById('vitrine')?.scrollIntoView({ behavior: 'smooth' })}
+              className="lux-button-tactical px-14 py-5 text-[11px] font-display font-black uppercase tracking-[0.5em] italic shadow-2xl shadow-brand-tactical/20"
             >
-              {DICT.SEARCH_BUTTON}
+              Explorar Vitrine
+            </button>
+            <button
+              onClick={() => navigate("/cotacao")}
+              className="px-10 py-5 text-[11px] font-display font-black uppercase tracking-[0.3em] italic bg-white/5 border border-white/10 text-theme-text hover:bg-theme-text/10 transition-all"
+            >
+              Agendar Cobertura
             </button>
           </div>
+          
           {/* Stats */}
-          <div className="hp-stats" style={{ display: "flex", gap: 32, flexWrap: "wrap", marginTop: 32, paddingTop: 32, borderTop: `1px solid ${T.border}` }}>
+          <div className="hp-stats animate-reveal" style={{ display: "flex", gap: "clamp(24px, 5vw, 64px)", justifyContent: "center", marginTop: 80, opacity: 0.8 }}>
             {[["500+", DICT.STATS_EVENTS], ["24h", DICT.STATS_DELIVERY], ["4.9★", DICT.STATS_RATING]].map(([val, label]) => (
-              <div key={label} className="hp-stats-item">
-                <div className="hp-stats-val" style={{ fontFamily: T.fontD, fontWeight: 900, fontSize: 28, color: T.text, lineHeight: 1 }}>{val}</div>
-                <div style={{ fontSize: 10, fontFamily: T.fontB, color: T.text3, letterSpacing: "0.1em", textTransform: "uppercase", marginTop: 4 }}>{label}</div>
+              <div key={label} className="hp-stats-item text-center">
+                <div className="hp-stats-val" style={{ fontFamily: T.fontD, fontWeight: 900, fontSize: 32, color: "var(--text)", lineHeight: 1 }}>{val}</div>
+                <div style={{ fontSize: 9, fontFamily: T.fontD, fontWeight: 900, color: "var(--text-muted)", letterSpacing: "0.2em", textTransform: "uppercase", marginTop: 6, fontStyle: 'italic' }}>{label}</div>
               </div>
             ))}
           </div>
@@ -263,98 +291,90 @@ export const HomePage = () => {
       </section>
 
       {/* ── EVENT GRID ───────────────────────────────────────────────────── */}
-      <section style={{ padding: "0 0 48px" }}>
-        <div style={{ maxWidth: 1400, margin: "0 auto", padding: "0 28px" }}>
-          <div style={{ display: "flex", alignItems: "flex-end", justifyContent: "space-between", marginBottom: 24 }}>
+      <section id="vitrine" className="hp-event-section" style={{ padding: "0 0 100px", background: T.bg }}>
+        <div style={{ maxWidth: 1600, margin: "0 auto", padding: "0 2px" }}>
+          
+          {/* Header with Search & Filters (Clean & Discrete) */}
+          <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-8 mb-4 border-b border-theme-border/40 pb-12 pt-12 px-8">
             <div style={{ borderLeft: `2px solid ${T.brand}`, paddingLeft: 16 }}>
-              <p style={{ fontSize: 10, fontFamily: T.fontB, color: T.text3, letterSpacing: "0.2em", textTransform: "uppercase", margin: "0 0 4px" }}>{DICT.LATEST_REGISTERS_TAG}</p>
-              <h2 style={{ fontFamily: T.fontD, fontWeight: 900, fontSize: "clamp(28px,4vw,42px)", color: T.text, textTransform: "uppercase", margin: 0, lineHeight: 1 }}>{DICT.LATEST_REGISTERS_TITLE}</h2>
+              <p style={{ fontSize: 10, fontFamily: T.fontD, fontWeight: 900, color: "var(--theme-text-muted)", letterSpacing: "0.2em", textTransform: "uppercase", margin: "0 0 4px", fontStyle: 'italic' }}>{DICT.LATEST_REGISTERS_TAG}</p>
+              <h2 style={{ fontFamily: T.fontD, fontWeight: 900, fontSize: "clamp(28px,4vw,36px)", color: "var(--text)", textTransform: "uppercase", margin: 0, lineHeight: 1 }}>{DICT.LATEST_REGISTERS_TITLE}</h2>
             </div>
-            {totalPages > 1 && (
-              <span style={{ fontSize: 11, fontFamily: T.fontB, color: T.text3, letterSpacing: "0.1em", textTransform: "uppercase" }}>
-                Pág. {page} / {totalPages}
-              </span>
-            )}
+
+            <div className="flex flex-col md:flex-row items-stretch md:items-center gap-3 flex-1 max-w-4xl lg:justify-end">
+              {/* Desktop Search Input */}
+              <div className="relative flex-1 group">
+                <Search size={14} className="absolute left-4 top-1/2 -translate-y-1/2 text-theme-text-muted group-focus-within:text-brand-tactical transition-colors" />
+                <input
+                  value={query}
+                  onChange={e => setQuery(e.target.value)}
+                  onKeyDown={e => e.key === "Enter" && fetch(query, 1)}
+                  placeholder="Nome do evento ou titular..."
+                  className="w-full bg-theme-bg-muted border border-theme-border/40 pl-12 pr-4 py-4 text-[11px] font-display font-black uppercase tracking-widest text-theme-text focus:bg-theme-bg-muted/80 transition-all outline-none italic"
+                />
+              </div>
+
+              {/* Filters Dropdowns */}
+              <div className="flex items-center gap-2">
+                <select 
+                  value={selectedCity}
+                  onChange={e => { setSelectedCity(e.target.value); setPage(1); }}
+                  className="bg-theme-bg-muted border border-theme-border/40 px-4 py-4 text-[9px] font-black uppercase tracking-widest text-theme-text/40 focus:text-theme-text outline-none cursor-pointer hover:bg-theme-bg-muted/80 transition-colors italic appearance-none"
+                >
+                  <option value="" className="bg-theme-bg text-theme-text">Todas as Cidades</option>
+                  <option value="Campinas" className="bg-theme-bg text-theme-text">Campinas</option>
+                  <option value="São Paulo" className="bg-theme-bg text-theme-text">São Paulo</option>
+                  <option value="Valinhos" className="bg-theme-bg text-theme-text">Valinhos</option>
+                </select>
+
+                <select 
+                  value={selectedType}
+                  onChange={e => { setSelectedType(e.target.value); setPage(1); }}
+                  className="bg-theme-bg-muted border border-theme-border/40 px-4 py-4 text-[9px] font-black uppercase tracking-widest text-theme-text/40 focus:text-theme-text outline-none cursor-pointer hover:bg-theme-bg-muted/80 transition-colors italic appearance-none"
+                >
+                  <option value="" className="bg-theme-bg text-theme-text">Todas as Categorias</option>
+                  <option value="ALBUM_FULL" className="bg-theme-bg text-theme-text">Álbum Completo</option>
+                  <option value="PHOTO_MARKETPLACE" className="bg-theme-bg text-theme-text">Marketplace</option>
+                  <option value="FOTO_POINT" className="bg-theme-bg text-theme-text">Foto Point</option>
+                </select>
+              </div>
+            </div>
           </div>
 
           {loading ? (
-            <div className="hp-grid" style={{ display: "grid", gridTemplateColumns: "repeat(auto-fill, minmax(300px, 1fr))", gap: 1, background: T.border }}>
-              {[...Array(6)].map((_, i) => (
-                <div key={i} style={{ background: T.bgCard, aspectRatio: "4/3", animation: "pulse 1.8s infinite" }} />
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-1">
+              {[...Array(8)].map((_, i) => (
+                <div key={i} className="bg-white/5 aspect-[4/3] animate-pulse" />
               ))}
             </div>
           ) : events.length === 0 ? (
-            <div style={{ textAlign: "center", padding: "6rem 0", border: `1px dashed ${T.border}` }}>
-              <p style={{ fontFamily: T.fontD, fontWeight: 900, fontSize: 32, color: T.text2, textTransform: "uppercase" }}>Nenhum resultado encontrado.</p>
-              <p style={{ fontSize: 12, color: T.text3, fontFamily: T.fontB, marginTop: 8 }}>Tente buscar pelo nome completo do evento ou titular.</p>
+            <div className="py-40 text-center opacity-20">
+              <p className="font-heading font-black text-4xl text-white uppercase italic">Nada encontrado.</p>
+              <p className="text-[10px] text-white font-black uppercase tracking-widest mt-4">Redefina os filtros ou a busca.</p>
             </div>
           ) : (
-            <div style={{ display: "flex", flexDirection: "column", gap: 120 }}>
-              {/* FOTO POINT SECTION */}
-              {events.filter(e => e.type === 'FOTO_POINT').length > 0 && (
-                <div className="animate-reveal">
-                  <div style={{ display: "flex", alignItems: "center", gap: 16, marginBottom: 32 }}>
-                    <div style={{ width: 12, height: 12, background: "#22d3ee", borderRadius: "50%" }} className="animate-pulse" />
-                    <h3 style={{ fontFamily: T.fontD, fontWeight: 900, fontSize: 24, color: T.text, textTransform: "uppercase", margin: 0, letterSpacing: 2 }}>Foto Point</h3>
-                  </div>
-                  <div className="hp-grid" style={{ display: "grid", gridTemplateColumns: "repeat(auto-fill, minmax(300px, 1fr))", gap: 1, background: T.border }}>
-                    {events.filter(e => e.type === 'FOTO_POINT').map(ev => (
-                      <div key={ev.id} className="card-hover">
-                        <EventCard event={ev} onClick={() => navigate(`/e/${ev.slug || ev.id}`)} />
-                      </div>
-                    ))}
-                  </div>
-                </div>
-              )}
-
-              {/* LIVE PRINT SECTION */}
-              {events.filter(e => e.type === 'PHOTO_MARKETPLACE' || e.type === 'FLASH_EVENT').length > 0 && (
-                <div className="animate-reveal">
-                  <div style={{ display: "flex", alignItems: "center", gap: 16, marginBottom: 32 }}>
-                    <div style={{ width: 12, height: 12, background: T.brand, borderRadius: "50%" }} className="animate-pulse" />
-                    <h3 style={{ fontFamily: T.fontD, fontWeight: 900, fontSize: 24, color: T.text, textTransform: "uppercase", margin: 0, letterSpacing: 2 }}>Foto Print Live</h3>
-                  </div>
-                  <div className="hp-grid" style={{ display: "grid", gridTemplateColumns: "repeat(auto-fill, minmax(300px, 1fr))", gap: 1, background: T.border }}>
-                    {events.filter(e => e.type === 'PHOTO_MARKETPLACE' || e.type === 'FLASH_EVENT').map(ev => (
-                      <div key={ev.id} className="card-hover">
-                        <EventCard event={ev} onClick={() => navigate(`/e/${ev.slug || ev.id}`)} />
-                      </div>
-                    ))}
-                  </div>
-                </div>
-              )}
-
-              {/* ALBUMS SECTION */}
-              {events.filter(e => e.type !== 'PHOTO_MARKETPLACE' && e.type !== 'FOTO_POINT' && e.type !== 'FLASH_EVENT').length > 0 && (
-
-                <div className="animate-reveal">
-                  <div style={{ display: "flex", alignItems: "center", gap: 16, marginBottom: 32 }}>
-                    <h3 style={{ fontFamily: T.fontD, fontWeight: 900, fontSize: 24, color: T.text, textTransform: "uppercase", margin: 0, letterSpacing: 2 }}>Galeria de Álbuns</h3>
-                  </div>
-                  <div className="hp-grid" style={{ display: "grid", gridTemplateColumns: "repeat(auto-fill, minmax(300px, 1fr))", gap: 1, background: T.border }}>
-                    {events.filter(e => e.type !== 'PHOTO_MARKETPLACE' && e.type !== 'FOTO_POINT').map(ev => (
-                      <div key={ev.id} className="card-hover">
-                        <EventCard event={ev} onClick={() => navigate(`/e/${ev.slug || ev.id}`)} />
-                      </div>
-                    ))}
-                  </div>
-                </div>
-              )}
+            <div className="space-y-1">
+              {/* SECTIONS MERGED INTO ONE CONTINUOUS GRID FOR MAXIMUM IMPACT */}
+              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-1">
+                {events.map(ev => (
+                  <EventCard key={ev.id} event={ev} onClick={() => navigate(`/e/${ev.slug || ev.id}`)} />
+                ))}
+              </div>
             </div>
           )}
 
           {/* Pagination */}
           {totalPages > 1 && (
-            <div style={{ display: "flex", justifyContent: "center", alignItems: "center", gap: 32, marginTop: 48 }}>
+            <div style={{ display: "flex", justifyContent: "center", alignItems: "center", gap: 32, marginTop: 80, padding: "40px 0" }}>
               <button onClick={() => setPage(p => Math.max(1, p - 1))} disabled={page === 1}
-                style={{ background: "none", border: "none", color: page === 1 ? T.border : T.text2, cursor: page === 1 ? "default" : "pointer", fontSize: 11, fontFamily: T.fontB, letterSpacing: "0.2em", textTransform: "uppercase" }}>
+                style={{ background: "none", border: "none", color: page === 1 ? "var(--text-3)" : "var(--text-2)", cursor: page === 1 ? "default" : "pointer", fontSize: 10, fontFamily: T.fontB, letterSpacing: "0.2em", textTransform: "uppercase" }}>
                 ← Anterior
               </button>
-              <span style={{ fontFamily: T.fontD, fontWeight: 900, fontSize: 20, color: T.text }}>
-                {page} <span style={{ color: T.border, margin: "0 8px" }}>—</span> {totalPages}
+              <span style={{ fontFamily: T.fontD, fontWeight: 900, fontSize: 18, color: "var(--text)" }}>
+                {page} <span style={{ color: "rgba(255,255,255,0.1)", margin: "0 8px" }}>/</span> {totalPages}
               </span>
               <button onClick={() => setPage(p => Math.min(totalPages, p + 1))} disabled={page === totalPages}
-                style={{ background: "none", border: "none", color: page === totalPages ? T.border : T.text, cursor: page === totalPages ? "default" : "pointer", fontSize: 11, fontFamily: T.fontB, letterSpacing: "0.2em", textTransform: "uppercase" }}>
+                style={{ background: "none", border: "none", color: page === totalPages ? "rgba(255,255,255,0.1)" : "rgba(255,255,255,0.8)", cursor: page === totalPages ? "default" : "pointer", fontSize: 10, fontFamily: T.fontB, letterSpacing: "0.2em", textTransform: "uppercase" }}>
                 Próximo →
               </button>
             </div>
@@ -363,10 +383,10 @@ export const HomePage = () => {
       </section>
 
       {/* ── COMO FUNCIONA ─────────────────────────────────────────────────── */}
-      <section style={{ padding: "100px 28px", marginTop: 60, borderTop: `1px solid ${T.border}`, borderBottom: `1px solid ${T.border}`, background: T.bgCard }}>
+      <section style={{ padding: "120px 28px", borderTop: `1px solid ${T.border}`, background: "var(--bg-card)" }}>
         <div style={{ maxWidth: 1100, margin: "0 auto" }}>
-          <p style={{ fontSize: 10, fontFamily: T.fontB, color: T.brand, letterSpacing: "0.35em", textTransform: "uppercase", marginBottom: 12 }}>Processo</p>
-          <h2 style={{ fontFamily: T.fontD, fontWeight: 900, fontSize: "clamp(32px,5vw,52px)", color: T.text, textTransform: "uppercase", margin: "0 0 48px", lineHeight: 1 }}>
+          <p style={{ fontSize: 10, fontFamily: T.fontD, fontWeight: 900, color: T.brand, letterSpacing: "0.5em", textTransform: "uppercase", marginBottom: 16, fontStyle: 'italic' }}>Processo</p>
+          <h2 style={{ fontFamily: T.fontD, fontWeight: 900, fontSize: "clamp(32px,5vw,56px)", color: "var(--text)", textTransform: "uppercase", margin: "0 0 64px", lineHeight: 0.9 }}>
             {DICT.HOW_IT_WORKS_TITLE}
           </h2>
           <div className="hp-steps" style={{ display: "flex", gap: 0 }}>
@@ -376,50 +396,37 @@ export const HomePage = () => {
                 className="hp-step-item"
                 style={{ 
                   flex: 1, 
-                  padding: "32px 0", 
-                  borderRight: i < STEPS.length - 1 ? `1px solid ${T.border}` : "none", 
-                  paddingRight: i < STEPS.length - 1 ? 40 : 0, 
-                  paddingLeft: i > 0 ? 40 : 0 
+                  padding: "48px 0", 
+                  borderRight: i < STEPS.length - 1 ? "1px solid rgba(255,255,255,0.05)" : "none", 
+                  paddingRight: i < STEPS.length - 1 ? 60 : 0, 
+                  paddingLeft: i > 0 ? 60 : 0 
                 }}
               >
-                <div style={{ fontFamily: T.fontD, fontWeight: 900, fontSize: 48, color: T.brand, lineHeight: 1, marginBottom: 16, opacity: 0.6 }}>{step.n}</div>
-                <h3 style={{ fontFamily: T.fontD, fontWeight: 900, fontSize: 22, color: T.text, textTransform: "uppercase", margin: "0 0 10px", letterSpacing: "0.5px" }}>{step.title}</h3>
-                <p style={{ fontSize: 13, color: T.text2, fontFamily: T.fontB, fontWeight: 300, lineHeight: 1.6, margin: 0 }}>{step.desc}</p>
+                <div style={{ fontFamily: T.fontD, fontWeight: 900, fontSize: 56, color: T.brand, lineHeight: 1, marginBottom: 24, opacity: 0.3 }}>{step.n}</div>
+                <h3 style={{ fontFamily: T.fontD, fontWeight: 900, fontSize: 24, color: "var(--text)", textTransform: "uppercase", margin: "0 0 12px", letterSpacing: "0.5px" }}>{step.title}</h3>
+                <p style={{ fontSize: 14, color: "var(--theme-text-muted)", fontFamily: T.fontB, fontWeight: 300, lineHeight: 1.6, margin: 0 }}>{step.desc}</p>
               </div>
             ))}
           </div>
         </div>
       </section>
 
-      <section 
-        onClick={() => navigate("/cotacao")} 
-        style={{ 
-          padding: "48px 28px", textAlign: "center", cursor: "pointer", 
-          borderBottom: `1px solid ${T.border}`,
-          background: isCtaHovered ? T.bgCard : "transparent",
-          transition: "background 0.3s ease"
-        }}
-        onMouseEnter={() => setIsCtaHovered(true)} 
-        onMouseLeave={() => setIsCtaHovered(false)}
-      >
-        <span style={{ fontSize: 13, fontFamily: T.fontB, color: T.text2, fontWeight: 300 }}>
-          {DICT.CTA_EXCLUSIVE}{" "}
-          <span style={{ color: T.brand, fontWeight: 500, borderBottom: `1px solid ${T.brand}` }}>{DICT.CTA_REQUEST_QUOTE}</span>
-        </span>
-      </section>
-
       {/* ── FOOTER ────────────────────────────────────────────────────────── */}
-      <footer style={{ borderTop: `1px solid ${T.border}`, padding: "32px 28px" }}>
-        <div className="hp-footer-inner" style={{ maxWidth: 1100, margin: "0 auto", display: "flex", justifyContent: "space-between", alignItems: "flex-start", gap: "3rem" }}>
+      <footer style={{ borderTop: `1px solid ${T.border}`, padding: "80px 28px", background: "var(--bg)" }}>
+        <div className="hp-footer-inner" style={{ maxWidth: 1100, margin: "0 auto", display: "flex", justifyContent: "space-between", alignItems: "flex-start", gap: "4rem" }}>
           <div>
-            <div style={{ display: "flex", alignItems: "center", marginBottom: 12 }}>
-              <img src="/logo-fs.png" alt="Foto Segundo" style={{ height: 20, objectFit: "contain" }} />
+            <div style={{ display: "flex", alignItems: "center", marginBottom: 20 }}>
+              <img src="/logo-fs.png" alt="Foto Segundo" style={{ 
+                height: 24, 
+                objectFit: "contain", 
+                filter: document.documentElement.getAttribute('data-theme') === 'dark' ? "brightness(0) invert(1)" : "none"
+              }} />
             </div>
-            <p style={{ fontSize: 11, fontFamily: T.fontB, color: T.text3, lineHeight: 1.8, maxWidth: 260, margin: 0, whiteSpace: "pre-line" }}>
+            <p style={{ fontSize: 11, fontFamily: T.fontB, color: "rgba(255,255,255,0.3)", lineHeight: 1.8, maxWidth: 280, margin: 0, whiteSpace: "pre-line" }}>
               {DICT.FOOTER_COPYRIGHT}
             </p>
           </div>
-          <div className="hp-footer-cols" style={{ display: "flex", gap: "3.5rem", flexWrap: "wrap" }}>
+          <div className="hp-footer-cols" style={{ display: "flex", gap: "4rem", flexWrap: "wrap" }}>
             <FooterCol title="Plataforma" links={["Sobre", "Parcerias", "Negócios"]} />
             <FooterCol title="Jurídico" links={["Termos de Uso", "Privacidade", "LGPD"]} />
             <FooterCol title="Suporte" links={["Central de Ajuda", "Contato", "Status"]} />

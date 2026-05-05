@@ -81,7 +81,7 @@ export async function updateEventLinks(req: AuthRequest, res: Response): Promise
       data: {
         ...(lightroomUrl !== undefined && { lightroomUrl: String(lightroomUrl) || null }),
         ...(driveUrl !== undefined && { driveUrl: String(driveUrl) || null }),
-        ...(dataEvento !== undefined && { dataEvento: dataEvento ? new Date(dataEvento) : null }),
+        ...(dataEvento !== undefined && { dataEvento: dataEvento ? new Date(dataEvento) : { set: new Date() } }),
       },
     });
 

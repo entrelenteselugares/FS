@@ -536,7 +536,7 @@ export const QuotePage = () => {
         </div>
       )}
       <style>{`
-        input[type=range] { -webkit-appearance: none; background: rgba(255,255,255,0.05); height: 4px; border-radius: 0; }
+        input[type=range] { -webkit-appearance: none; background: var(--theme-border); height: 4px; border-radius: 0; }
         input[type=range]::-webkit-slider-thumb { -webkit-appearance: none; height: 20px; width: 20px; background: #85B9AC; border-radius: 0; cursor: pointer; box-shadow: 0 0 15px rgba(133,185,172,0.4); }
 
         @media (max-width: 768px) {
@@ -554,7 +554,8 @@ export const QuotePage = () => {
               alt="Logo" 
               style={{ 
                 height: 32, 
-                objectFit: "contain"
+                objectFit: "contain",
+                filter: document.documentElement.getAttribute('data-theme') === 'dark' ? "brightness(0) invert(1)" : "none"
               }} 
             />
           </div>
@@ -628,7 +629,7 @@ export const QuotePage = () => {
                                  readOnly 
                                  value={addressData.logradouro} 
                                  className="fs-input" 
-                                 style={{ width: "100%", padding: "12px 12px 12px 35px", background: "rgba(255,255,255,0.03)", fontSize: 11 }} 
+                                 style={{ width: "100%", padding: "12px 12px 12px 35px", background: "var(--theme-bg-muted)", fontSize: 11 }} 
                                />
                              </div>
                              <input 
@@ -645,13 +646,13 @@ export const QuotePage = () => {
                                readOnly 
                                value={addressData.bairro} 
                                className="fs-input" 
-                               style={{ flex: 2, padding: "12px", background: "rgba(255,255,255,0.03)", fontSize: 11 }} 
+                               style={{ flex: 2, padding: "12px", background: "var(--theme-bg-muted)", fontSize: 11 }} 
                              />
                              <input 
                                readOnly 
                                value={`${addressData.cidade}/${addressData.uf}`} 
                                className="fs-input" 
-                               style={{ flex: 2, padding: "12px", background: "rgba(255,255,255,0.03)", fontSize: 11 }} 
+                               style={{ flex: 2, padding: "12px", background: "var(--theme-bg-muted)", fontSize: 11 }} 
                              />
                           </div>
                         </div>
@@ -883,7 +884,7 @@ export const QuotePage = () => {
                                 padding: "20px", 
                                 border: `1px solid ${isSelected ? THEME.accent : THEME.border}`,
                                 cursor: "pointer", 
-                                background: isSelected ? `${THEME.accent}05` : "rgba(255,255,255,0.02)", 
+                                background: isSelected ? `${THEME.accent}05` : "var(--theme-bg-muted)", 
                                 transition: "all 0.3s cubic-bezier(0.4, 0, 0.2, 1)",
                                 position: "relative",
                                 overflow: "hidden",
@@ -947,7 +948,7 @@ export const QuotePage = () => {
                   </div>
                 </div>
                 <div style={{ display: "flex", gap: 10 }}>
-                  <button onClick={() => setStep(1)} className="px-8 py-4 border border-theme-border text-theme-muted font-display font-black text-[10px] uppercase tracking-widest hover:text-white transition-all">VOLTAR</button>
+                  <button onClick={() => setStep(1)} className="px-8 py-4 border border-theme-border text-theme-muted font-display font-black text-[10px] uppercase tracking-widest hover:text-theme-text transition-all">VOLTAR</button>
                   <button 
                     onClick={() => {
                       if (selectedServices.length > 0) {
@@ -1016,17 +1017,17 @@ export const QuotePage = () => {
         )}
 
         {step === 4 && (
-          <div style={{ textAlign: "center", padding: "80px 40px", background: "#111", border: "1px solid rgba(255,255,255,0.05)" }} className="relative overflow-hidden">
+          <div style={{ textAlign: "center", padding: "80px 40px", background: "var(--theme-bg-muted)", border: "1px solid var(--theme-border)" }} className="relative overflow-hidden">
             <div className="absolute inset-0 bg-emerald-500/5 blur-[100px] rounded-full opacity-30" />
             
             <div className="relative z-10">
-              <div style={{ width: 80, height: 80, background: "rgba(133,185,172,0.1)", display: "flex", alignItems: "center", justifyContent: "center", margin: "0 auto 30px", border: "1px solid rgba(133,185,172,0.3)" }}>
+              <div style={{ width: 80, height: 80, background: "var(--theme-bg)", display: "flex", alignItems: "center", justifyContent: "center", margin: "0 auto 30px", border: "1px solid var(--theme-border)" }}>
                 <ShieldCheck size={40} className="text-emerald-500" />
               </div>
               <h2 className="text-4xl md:text-6xl font-display font-black text-theme-text uppercase italic tracking-tighter mb-8 leading-none">Solicitação Enviada</h2>
               
               {createdQuoteId && (
-                <div style={{ background: "rgba(255,255,255,0.02)", border: "1px solid rgba(255,255,255,0.05)", padding: "20px 40px", marginBottom: 40, display: "inline-block" }}>
+                <div style={{ background: "var(--theme-bg)", border: "1px solid var(--theme-border)", padding: "20px 40px", marginBottom: 40, display: "inline-block" }}>
                   <span className="text-[9px] font-black text-theme-muted uppercase tracking-[0.3em] block mb-2">Protocolo de Segurança</span>
                   <span className="text-2xl font-display font-black text-emerald-500 tracking-[0.15em] italic">ORC-{createdQuoteId.slice(-6).toUpperCase()}</span>
                 </div>

@@ -139,9 +139,9 @@ export class EventController {
       // Removido o bloqueio agressivo de 404 que impedia o primeiro acesso para compra.
       // A segurança agora é tratada pela lógica de paywall e hasAccess abaixo.
       // 3.1 Acesso granular tratado na lógica de unlockedMediaIds abaixo.
-      if (event.isPrivate && !hasAccess) {
-        // Evento privado sem acesso: bloqueia apenas se nenhum pagamento foi confirmado.
-        // Se isGloballyPaid = true, hasAccess já será true acima e não cairemos aqui.
+      // 3.1 Guard específico para PHOTO_MARKETPLACE
+      // Permite acesso se for o dono, se tiver pago, se for o cliente principal ou se for globalmente pago.
+      if (event.isPrivate && !hasAccess && !(authUser && event.clientEmail && authUser.email === event.clientEmail)) {
         return res.status(403).json({ 
           error: "Este álbum é privado e não está vinculado à sua conta.",
           isPrivate: true 
@@ -258,7 +258,7 @@ export class EventController {
    */
   static async listPublic(req: AuthRequest, res: Response) {
     try {
-      const { q, page = "1" } = req.query;
+      const { q, page = "1", type, city } = req.query;
       const query = q as string;
       const take = 20;
       const skip = (Number(page) - 1) * take;
@@ -267,10 +267,14 @@ export class EventController {
         active: true,
         isPrivate: false,
         isQuote: false,
-        type: {
+        type: type ? String(type) : {
           in: ['ALBUM_FULL', 'PHOTO_MARKETPLACE', 'FOTO_POINT', 'FLASH_EVENT']
         }
       };
+
+      if (city) {
+        where.city = { contains: String(city), mode: 'insensitive' };
+      }
 
       if (query) {
         where.OR = [
@@ -594,14 +598,13 @@ export class EventController {
           nomeNoivos: name,
           slug,
           type: "PHOTO_MARKETPLACE",
-          active: !delegatedCaptacaoId && !isPublicCall, // Se delegar, fica inativo até aceitarem
+          active: !delegatedCaptacaoId && !isPublicCall,
           captacaoId: delegatedCaptacaoId || (isPublicCall ? null : userId),
           captacaoStatus: (delegatedCaptacaoId || isPublicCall) ? "PENDING" : "ACCEPTED",
           dataEvento: dataEvento ? new Date(dataEvento) : new Date(),
           isPublicCall: !!isPublicCall,
           ownerId: userId,
           franchiseeId: profile?.id,
-          active: (!delegatedCaptacaoId && !isPublicCall), // Ativo apenas se eu mesmo for o executor
           priceBase: Number(pricePerPhoto) || 30,
           priceEarly: Number(pricePerPhoto) || 30,
           description: "EVENTO FLASH - Criado instantaneamente via App Franqueado",
@@ -658,7 +661,6 @@ export class EventController {
           captacaoStatus: (delegatedCaptacaoId || isPublicCall) ? "PENDING" : "ACCEPTED",
           isPublicCall: !!isPublicCall,
           ownerId: userId,
-          active: (!delegatedCaptacaoId && !isPublicCall),
           priceUnit: Number(priceUnit) || 10,
           location,
           itinerary,
@@ -730,7 +732,7 @@ export class EventController {
    */
   static async updateFotoPoint(req: AuthRequest, res: Response) {
     try {
-      const { id } = req.params;
+      const id = String(req.params.id);
       const { 
         nomeNoivos, priceUnit, location, city, itinerary, 
         references, isPrivate, active, coverPhotoUrl, 
@@ -740,7 +742,7 @@ export class EventController {
       const event = await prisma.event.findUnique({ where: { id } });
       if (!event) return res.status(404).json({ error: "Evento não encontrado." });
 
-      const isOwner = req.authUser && (req.authUser.role === "ADMIN" || req.authUser.userId === event.captacaoId);
+      const isOwner = req.user && (req.user.role === "ADMIN" || req.user.userId === event.captacaoId || req.user.userId === event.ownerId);
       if (!isOwner) return res.status(403).json({ error: "Acesso negado." });
 
       // Converte Google Drive share links para thumbnail direto
@@ -757,15 +759,15 @@ export class EventController {
         data: {
           nomeNoivos: nomeNoivos ?? undefined,
           priceUnit: priceUnit !== undefined ? Number(priceUnit) : undefined,
-          location: location ?? undefined,
-          city: city ?? undefined,
-          itinerary: itinerary ?? undefined,
+          location: location !== undefined ? String(location) : undefined,
+          city: city !== undefined ? String(city) : undefined,
+          itinerary: itinerary !== undefined ? String(itinerary) : undefined,
           references: references ?? undefined,
           isPrivate: isPrivate !== undefined ? !!isPrivate : undefined,
           active: active !== undefined ? !!active : undefined,
           coverPhotoUrl: normalizeCoverUrl(coverPhotoUrl),
           dataEvento: dataEvento ? new Date(dataEvento) : undefined,
-          captacaoId: captacaoId ?? undefined,
+          captacaoId: captacaoId !== undefined ? String(captacaoId) : undefined,
           isPublicCall: isPublicCall !== undefined ? !!isPublicCall : undefined,
           captacaoStatus: (captacaoId || isPublicCall) ? "PENDING" : undefined
         }

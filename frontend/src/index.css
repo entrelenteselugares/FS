@@ -42,15 +42,15 @@
 
 /* ── TEMA CLARO ──────────────────────────────── */
 [data-theme="light"] {
-  --bg:           #ffffff;   /* Branco Galeria para máxima amplitude */
-  --bg-card:      #f9fafb;   /* Cinza gelo sutil para separação de planos */
-  --bg-field:     #f3f4f6;   /* Cinza funcional para campos */
-  --border:       #e5e7eb;   /* Border clean (Tailwind 200) */
-  --border-2:     #d1d5db;   /* Border ativa */
-  --text:         #000000;   /* Preto absoluto para legibilidade máxima */
-  --text-2:       #374151;   /* Cinza ardósia para corpo */
-  --text-3:       #6b7280;   /* Cinza médio para labels */
-  --brand:        #2d8a7a;   /* Teal tático com contraste diurno */
+  --bg:           #ffffff;   /* Blanco Galeria */
+  --bg-card:      #f1f5f9;   /* Slate-100 para separação clara de planos */
+  --bg-field:     #e2e8f0;   /* Slate-200 para campos */
+  --border:       #cbd5e1;   /* Slate-300 para bordas padrão */
+  --border-2:     #94a3b8;   /* Slate-400 para bordas ativas/divisórias */
+  --text:         #020617;   /* Slate-950 para contraste máximo */
+  --text-2:       #334155;   /* Slate-700 para corpo */
+  --text-3:       #475569;   /* Slate-600 para labels */
+  --brand:        #2d8a7a;   /* Teal tático */
   --brand-dark:   #f0fdfa;
   --brand-border: #ccfbf1;
   --brand-text:   #ffffff;
@@ -129,11 +129,16 @@ textarea:focus {
     align-items: center;
     justify-content: center;
     gap: 8px;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.1);
 }
 
 .fs-btn:hover {
-    transform: translateY(-1px);
-    box-shadow: 0 10px 20px -10px rgba(0,0,0,0.5);
+    transform: translateY(-2px);
+    box-shadow: 0 12px 24px -8px rgba(0,0,0,0.3);
+}
+
+.fs-btn:active {
+    transform: translateY(0);
 }
 
 .fs-input {
@@ -182,13 +187,14 @@ textarea:focus {
     background: var(--theme-bg-muted);
     border: 1px solid var(--theme-border);
     padding: 1.25rem;
+    box-shadow: 0 4px 20px -5px rgba(0,0,0,0.05);
     transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
 }
 
 .lux-card:hover {
   border-color: var(--brand);
   transform: translateY(-4px);
-  box-shadow: 0 20px 40px rgba(0,0,0,0.4);
+  box-shadow: 0 20px 40px -10px rgba(0,0,0,0.15);
 }
 
 @media (min-width: 768px) {
@@ -309,14 +315,17 @@ textarea:focus {
 }
 
 .lux-button-ghost {
-  background-color: transparent;
+  background-color: var(--bg-card);
   color: var(--text);
   border: 1px solid var(--border-2);
+  box-shadow: 0 2px 4px rgba(0,0,0,0.05);
 }
 
 .lux-button-ghost:hover {
-  background-color: var(--border);
-  border-color: var(--text-3);
+  background-color: var(--text);
+  color: var(--bg);
+  border-color: var(--text);
+  box-shadow: 0 8px 16px rgba(0,0,0,0.15);
 }
 
 /* ─── Animation Utilities ─────────────────────────────────────────────────── */

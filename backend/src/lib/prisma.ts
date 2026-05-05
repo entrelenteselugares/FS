@@ -15,10 +15,10 @@ function createPrismaClient(): PrismaClient {
     const pool = new Pool({ connectionString: process.env.DATABASE_URL });
     const adapter = new PrismaPg(pool);
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    return new PrismaClient({ adapter, log } as any);
+    return new PrismaClient({ adapter, log: [...log] } as any);
   }
 
-  return new PrismaClient({ log });
+  return new PrismaClient({ log: [...log] });
 }
 
 export const prisma = globalForPrisma.prisma || createPrismaClient();

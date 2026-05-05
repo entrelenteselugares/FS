@@ -7,6 +7,7 @@ export interface SplitResult {
   edicao: number;
   cartorio: number;
   franchisee: number;
+  lab?: number;
   passiveFranchiseeId?: string;
 }
 
@@ -45,6 +46,26 @@ export class PricingService {
     }
 
     return Number(event.priceBase ?? 200);
+  }
+
+  /**
+   * Calcula o total de um carrinho híbrido (Digital + Físico)
+   */
+  static async calculateHybridTotal(eventId: string, cart: string[], printProductId?: string): Promise<number> {
+    const event = await prisma.event.findUnique({ where: { id: eventId } });
+    if (!event) return 0;
+
+    const basePrice = this.calculateEventPrice(event, 0, cart.length);
+    
+    let printPrice = 0;
+    if (printProductId) {
+      const product = await prisma.printProduct.findUnique({ where: { id: printProductId } });
+      if (product && product.active) {
+        printPrice = product.sellingPrice ? Number(product.sellingPrice) : Number(product.supplierCost) * (1 + product.marginPct / 100);
+      }
+    }
+
+    return basePrice + printPrice;
   }
 
   /**

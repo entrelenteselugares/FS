@@ -65,27 +65,28 @@ export const AuthSelectionPage: React.FC = () => {
         </div>
       </div>
 
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-0 max-w-7xl w-full relative z-10 border border-theme-border/5 bg-theme-bg-muted/10">
+      <div className="grid grid-cols-1 md:grid-cols-3 gap-8 max-w-7xl w-full relative z-10 px-4">
         {options.map((opt) => (
           <div
             key={opt.id}
             onClick={() => navigate(`/login?role=${opt.role}`)}
-            className="group p-8 md:p-16 flex flex-col items-start border-r border-theme-border/5 last:border-r-0 md:last:border-b-0 last:border-b-0 hover:bg-theme-bg-muted/20 cursor-pointer transition-all duration-1000"
+            className="lux-card group p-10 md:p-16 flex flex-col items-start cursor-pointer transition-all duration-700 bg-theme-bg-muted/40 backdrop-blur-md"
           >
-            <div className="mb-12 opacity-40 group-hover:opacity-100 group-hover:text-brand-tactical transition-all transform group-hover:scale-110 duration-500">
+            <div className="mb-12 p-5 bg-theme-bg rounded-2xl border border-theme-border shadow-inner opacity-60 group-hover:opacity-100 group-hover:text-brand-tactical transition-all transform group-hover:scale-110 duration-500">
               {opt.icon}
             </div>
-            <h3 className="text-2xl md:text-4xl font-sans text-theme-text mb-4 md:mb-6 tracking-tighter transition-all duration-500 font-extrabold uppercase">
+            <h3 className="text-3xl md:text-4xl font-display text-theme-text mb-4 md:mb-6 tracking-tighter transition-all duration-500 font-black uppercase italic">
               {opt.title}
             </h3>
-            <p className="text-theme-muted text-[11px] leading-[1.8] mb-8 md:mb-16 font-bold lg:pr-10 uppercase tracking-widest">
+            <p className="text-theme-muted text-[11px] leading-[1.8] mb-12 md:mb-20 font-bold uppercase tracking-[0.2em]">
               {opt.description}
             </p>
             
-            <div className="mt-auto flex items-center gap-6 text-[10px] font-black uppercase tracking-[0.5em] text-theme-muted group-hover:text-brand-tactical transition-all duration-500">
-              <span className="w-8 h-1 bg-theme-border group-hover:bg-brand-tactical transition-all" />
+            <button 
+              className="lux-button-ghost w-full py-5 text-[10px] font-black uppercase tracking-[0.5em] group-hover:bg-brand-tactical group-hover:text-black group-hover:border-brand-tactical transition-all duration-500"
+            >
               {opt.label}
-            </div>
+            </button>
           </div>
         ))}
       </div>
