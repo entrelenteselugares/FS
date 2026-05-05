@@ -9,7 +9,7 @@ import { T } from "../lib/theme";
 
 interface InvitationData {
   album: {
-    name: string;
+    nome: string;
     _count: {
       members: number;
       media: number;
@@ -83,7 +83,7 @@ export default function InvitationPage() {
   return (
     <div className="min-h-screen font-sans" style={{ background: T.bg, color: T.text }}>
       <Helmet>
-        <title>Convite para {invitation?.album?.name} | Foto Segundo</title>
+        <title>Convite para {invitation?.album?.nome} | Foto Segundo</title>
       </Helmet>
       <Navbar />
 
@@ -95,7 +95,7 @@ export default function InvitationPage() {
         <p className="text-[10px] font-black text-emerald-500 uppercase tracking-[0.4em] mb-4">Você foi convidado</p>
         
         <h1 className="text-4xl md:text-5xl font-black uppercase italic tracking-tighter leading-none mb-6">
-          {invitation?.album?.name}
+          {invitation?.album?.nome}
         </h1>
 
         <div className="flex items-center gap-6 mb-12 py-4 px-8 bg-white/5 border border-white/10 rounded-2xl">

@@ -53,6 +53,7 @@ model User {
   albumMemberships   AlbumMember[]
   sharedAlbumMedia   SharedAlbumMedia[]
   mediaVotes         MediaVote[]
+  subscriptions      Subscription[]
 
   @@map("users")
 }
@@ -84,77 +85,77 @@ model ProfessionalNetwork {
 }
 
 model Event {
-  id                 String            @id @default(cuid())
+  id                 String              @id @default(cuid())
   nomeNoivos         String
   dataEvento         DateTime
   cartorio           String?
   coverPhotoUrl      String?
   lightroomUrl       String?
   driveUrl           String?
-  createdAt          DateTime          @default(now())
-  updatedAt          DateTime          @updatedAt
+  createdAt          DateTime            @default(now())
+  updatedAt          DateTime            @updatedAt
   cartorioUserId     String?
-  priceBase          Decimal           @default(190) @db.Decimal(10, 2)
-  priceEarly         Decimal           @default(190) @db.Decimal(10, 2)
+  priceBase          Decimal             @default(190) @db.Decimal(10, 2)
+  priceEarly         Decimal             @default(190) @db.Decimal(10, 2)
   captacaoId         String?
   edicaoId           String?
-  active             Boolean           @default(false)
+  active             Boolean             @default(false)
   city               String?
   description        String?
   location           String?
-  slug               String?           @unique
-  temFoto            Boolean           @default(true)
-  temFotoImpressa    Boolean           @default(false)
-  temReels           Boolean           @default(false)
-  temVideo           Boolean           @default(false)
-  priceAlbum         Decimal?          @db.Decimal(10, 2)
-  priceFoto          Decimal?          @db.Decimal(10, 2)
-  priceFotoEditada   Decimal?          @db.Decimal(10, 2)
-  priceReels         Decimal?          @db.Decimal(10, 2)
-  priceVideo         Decimal?          @db.Decimal(10, 2)
-  priceVideoEditado  Decimal?          @db.Decimal(10, 2)
-  temAlbumImpresso   Boolean           @default(false)
-  temFotoEditada     Boolean           @default(false)
-  temVideoEditado    Boolean           @default(false)
-  eventHours         Int?              @default(2)
-  eventDays          Int?              @default(1)
-  collectedAmount    Decimal           @default(0) @db.Decimal(10, 2)
-  isCrowdfund        Boolean           @default(false)
-  targetAmount       Decimal?          @db.Decimal(10, 2)
+  slug               String?             @unique
+  temFoto            Boolean             @default(true)
+  temFotoImpressa    Boolean             @default(false)
+  temReels           Boolean             @default(false)
+  temVideo           Boolean             @default(false)
+  priceAlbum         Decimal?            @db.Decimal(10, 2)
+  priceFoto          Decimal?            @db.Decimal(10, 2)
+  priceFotoEditada   Decimal?            @db.Decimal(10, 2)
+  priceReels         Decimal?            @db.Decimal(10, 2)
+  priceVideo         Decimal?            @db.Decimal(10, 2)
+  priceVideoEditado  Decimal?            @db.Decimal(10, 2)
+  temAlbumImpresso   Boolean             @default(false)
+  temFotoEditada     Boolean             @default(false)
+  temVideoEditado    Boolean             @default(false)
+  eventHours         Int?                @default(2)
+  eventDays          Int?                @default(1)
+  collectedAmount    Decimal             @default(0) @db.Decimal(10, 2)
+  isCrowdfund        Boolean             @default(false)
+  targetAmount       Decimal?            @db.Decimal(10, 2)
   clientEmail        String?
   clientName         String?
-  isQuote            Boolean           @default(false)
+  isQuote            Boolean             @default(false)
   quoteStatus        QuoteStatus?
   usageType          String?
-  captacaoStatus     AcceptanceStatus  @default(PENDING)
-  edicaoStatus       AcceptanceStatus  @default(PENDING)
+  captacaoStatus     AcceptanceStatus    @default(PENDING)
+  edicaoStatus       AcceptanceStatus    @default(PENDING)
   previewPhotos      String?
-  isPrivate          Boolean           @default(false)
-  isPublicCall       Boolean           @default(false)
-  isUnitSale         Boolean           @default(false)
-  priceUnit          Decimal           @default(10) @db.Decimal(10, 2)
-  type               EventType         @default(ALBUM_FULL)
-  pricePerPhoto      Decimal?          @db.Decimal(10, 2)
-  marketplaceConfigs Json?             @default("{}")
-  rejectedBy         Json?             @default("[]")
+  isPrivate          Boolean             @default(false)
+  isPublicCall       Boolean             @default(false)
+  isUnitSale         Boolean             @default(false)
+  priceUnit          Decimal             @default(10) @db.Decimal(10, 2)
+  type               EventType           @default(ALBUM_FULL)
+  pricePerPhoto      Decimal?            @db.Decimal(10, 2)
+  marketplaceConfigs Json?               @default("{}")
+  rejectedBy         Json?               @default("[]")
   ownerId            String?
   franchiseeId       String?
-  deliveryType       DeliveryType      @default(DIGITAL_ONLY)
-  paymentModel       PaymentModel      @default(PRE_PAID)
+  deliveryType       DeliveryType        @default(DIGITAL_ONLY)
+  paymentModel       PaymentModel        @default(PRE_PAID)
   eventEndTime       DateTime?
   galleryUploadTime  DateTime?
   itinerary          String?
-  references         Json?             @default("[]")
+  references         Json?               @default("[]")
   calendarSlots      CalendarSlot[]
   media              EventMedia[]
-  captacao           User?             @relation("CaptacaoEvents", fields: [captacaoId], references: [id])
-  cartorioUser       User?             @relation("CartorioUserEvents", fields: [cartorioUserId], references: [id])
-  edicao             User?             @relation("EdicaoEvents", fields: [edicaoId], references: [id])
-  franchisee         FranchiseProfile? @relation(fields: [franchiseeId], references: [id])
+  captacao           User?               @relation("CaptacaoEvents", fields: [captacaoId], references: [id])
+  cartorioUser       User?               @relation("CartorioUserEvents", fields: [cartorioUserId], references: [id])
+  edicao             User?               @relation("EdicaoEvents", fields: [edicaoId], references: [id])
+  franchisee         FranchiseProfile?   @relation(fields: [franchiseeId], references: [id])
   pedidos            Order[]
   likes              PhotoLike[]
   phygitalPrints     PhygitalPrint[]
-  retentionDays      Int?              @default(15)
+  retentionDays      Int?                @default(15)
   printProducts      EventPrintProduct[]
 
   @@map("events")
@@ -529,21 +530,21 @@ model Quote {
 }
 
 model PrintProduct {
-  id           String      @id @default(cuid())
+  id           String              @id @default(cuid())
   category     String
   name         String
-  sku          String      @unique
-  supplierCost Decimal     @db.Decimal(10, 2)
-  supplier     String      @default("CK")
-  active       Boolean     @default(true)
-  marginPct    Float       @default(30)
-  sellingPrice Decimal?    @db.Decimal(10, 2)
+  sku          String              @unique
+  supplierCost Decimal             @db.Decimal(10, 2)
+  supplier     String              @default("CK")
+  active       Boolean             @default(true)
+  marginPct    Float               @default(30)
+  sellingPrice Decimal?            @db.Decimal(10, 2)
   description  String?
-  unit         String      @default("un")
+  unit         String              @default("un")
   minQty       Int?
   maxQty       Int?
-  createdAt    DateTime    @default(now())
-  updatedAt    DateTime    @updatedAt
+  createdAt    DateTime            @default(now())
+  updatedAt    DateTime            @updatedAt
   maxPhotos    Int?
   orderItems   OrderItem[]
   events       EventPrintProduct[]
@@ -656,7 +657,7 @@ enum AcceptanceStatus {
 
 enum QuoteStatus {
   PENDING
-  APROVADO
+  APPROVED
   REJECTED
   CONVERTED
   PRICED
@@ -737,9 +738,11 @@ enum FulfillmentStatus {
   SHIPPED
   DELIVERED
 }
+
 model SharedAlbum {
   id          String   @id @default(cuid())
-  name        String
+  nome        String
+  slug        String   @unique
   folderId    String?  @unique // Google Drive Folder ID
   goalPoses   Int      @default(36)
   status      String   @default("OPEN")
@@ -747,11 +750,12 @@ model SharedAlbum {
   ownerId     String
   createdAt   DateTime @default(now())
   updatedAt   DateTime @updatedAt
-  
-  owner       User     @relation("OwnedAlbums", fields: [ownerId], references: [id])
-  members     AlbumMember[]
-  media       SharedAlbumMedia[]
-  accessLinks AccessLink[]
+
+  owner        User               @relation("OwnedAlbums", fields: [ownerId], references: [id])
+  members      AlbumMember[]
+  media        SharedAlbumMedia[]
+  accessLinks  AccessLink[]
+  subscription Subscription?
 
   @@map("shared_albums")
 }
@@ -762,26 +766,26 @@ model AlbumMember {
   userId    String
   role      String   @default("COLLABORATOR") // OWNER, COLLABORATOR, SPECTATOR
   createdAt DateTime @default(now())
-  
-  album     SharedAlbum @relation(fields: [albumId], references: [id], onDelete: Cascade)
-  user      User        @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  album SharedAlbum @relation(fields: [albumId], references: [id], onDelete: Cascade)
+  user  User        @relation(fields: [userId], references: [id], onDelete: Cascade)
 
   @@unique([albumId, userId])
   @@map("album_members")
 }
 
 model SharedAlbumMedia {
-  id           String      @id @default(cuid())
-  albumId      String
-  fileId       String      @unique // Google Drive File ID
-  webViewLink  String
+  id            String   @id @default(cuid())
+  albumId       String
+  fileId        String   @unique // Google Drive File ID
+  webViewLink   String
   thumbnailLink String?
-  uploadedById String
-  createdAt    DateTime    @default(now())
-  
-  album        SharedAlbum @relation(fields: [albumId], references: [id], onDelete: Cascade)
-  uploadedBy   User        @relation(fields: [uploadedById], references: [id])
-  votes        MediaVote[]
+  uploadedById  String
+  createdAt     DateTime @default(now())
+
+  album      SharedAlbum @relation(fields: [albumId], references: [id], onDelete: Cascade)
+  uploadedBy User        @relation(fields: [uploadedById], references: [id])
+  votes      MediaVote[]
 
   @@map("shared_album_media")
 }
@@ -790,23 +794,47 @@ model MediaVote {
   id      String @id @default(cuid())
   mediaId String
   userId  String
-  
-  media   SharedAlbumMedia @relation(fields: [mediaId], references: [id], onDelete: Cascade)
-  user    User             @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  media SharedAlbumMedia @relation(fields: [mediaId], references: [id], onDelete: Cascade)
+  user  User             @relation(fields: [userId], references: [id], onDelete: Cascade)
 
   @@unique([mediaId, userId])
   @@map("media_votes")
 }
 
 model AccessLink {
-  id        String   @id @default(cuid())
+  id        String    @id @default(cuid())
   albumId   String
-  code      String   @unique
-  type      String   @default("TEMPORARY") // PERMANENT, TEMPORARY
+  code      String    @unique
+  type      String    @default("TEMPORARY") // PERMANENT, TEMPORARY
   expiresAt DateTime?
-  createdAt DateTime @default(now())
-  
-  album     SharedAlbum @relation(fields: [albumId], references: [id], onDelete: Cascade)
+  createdAt DateTime  @default(now())
+
+  album SharedAlbum @relation(fields: [albumId], references: [id], onDelete: Cascade)
 
   @@map("access_links")
+}
+
+enum SubscriptionStatus {
+  ACTIVE
+  CANCELED
+  PAST_DUE
+  PENDING
+}
+
+model Subscription {
+  id              String             @id @default(cuid())
+  userId          String
+  albumId         String             @unique
+  status          SubscriptionStatus @default(PENDING)
+  planLimit       Int                @default(36)
+  gatewaySubId    String?
+  nextBillingDate DateTime?
+  createdAt       DateTime           @default(now())
+  updatedAt       DateTime           @updatedAt
+
+  user  User        @relation(fields: [userId], references: [id])
+  album SharedAlbum @relation(fields: [albumId], references: [id])
+
+  @@map("subscriptions")
 }

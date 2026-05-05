@@ -10,7 +10,7 @@ import { T } from "../lib/theme";
 
 interface Vault {
   id: string;
-  name: string;
+  nome: string;
   status: string;
   goalPoses: number;
   cycleEndDay: number | null;
@@ -56,7 +56,7 @@ function VaultCard({ vault, onClick }: { vault: Vault; onClick: () => void }) {
 
       {/* Name */}
       <h3 className="text-xl font-black text-white uppercase italic tracking-tight leading-tight mb-1">
-        {vault.name}
+        {vault.nome}
       </h3>
 
       {/* Stats */}
@@ -104,7 +104,7 @@ function NewVaultModal({ onClose, onCreated }: { onClose: () => void; onCreated:
     setLoading(true);
     setError("");
     try {
-      await api.post("/vaults", { name: name.trim(), goalPoses });
+      await api.post("/vaults", { nome: name.trim(), goalPoses });
       onCreated();
       onClose();
     } catch (err) {
@@ -151,7 +151,7 @@ function NewVaultModal({ onClose, onCreated }: { onClose: () => void; onCreated:
               Meta de fotos do ciclo: <span className="text-emerald-500">{goalPoses}</span>
             </label>
             <input
-              type="range" min={12} max={120} step={12}
+              type="range" min={12} max={120} step={4}
               value={goalPoses}
               onChange={e => setGoalPoses(Number(e.target.value))}
               className="w-full accent-emerald-500"

@@ -6,7 +6,7 @@ import { T, Card } from "../lib/theme";
 import AccessTypeModal from "../components/AccessTypeModal";
 import { SideDrawer } from "../components/SideDrawer";
 import { DashboardLayout, type NavItem } from "../components/DashboardLayout";
-import { Image, Clock, ShieldCheck, ArrowRight, AlertTriangle, User, CheckCircle2, X, ShoppingBag, Printer, Zap, Play } from "lucide-react";
+import { Image, Clock, ShieldCheck, ArrowRight, AlertTriangle, User, CheckCircle2, X, ShoppingBag, Printer, Zap, Play, Lock } from "lucide-react";
 import { ExpressSaleModal, FlashEventModal, ExpressSaleBanner, type EventItem, type Partner } from "../components/profissional";
 
 type ActiveTab = "files" | "profile" | "wallet" | "franquia";
@@ -91,6 +91,7 @@ export default function ClienteArea() {
   
   const NAV_ITEMS: NavItem[] = [
     { label: "Minhas Memórias", onClick: () => setActiveTab("files"), isActive: activeTab === "files", icon: <Image size={18} /> },
+    { label: "Cofres de Memórias", onClick: () => navigate("/cofres"), isActive: false, icon: <Lock size={18} /> },
     { label: "Minha Carteira", onClick: () => setActiveTab("wallet"), isActive: activeTab === "wallet", icon: <ShoppingBag size={18} /> },
     ...(user?.franchiseProfile ? [
       { label: "Franquia Print", onClick: () => setActiveTab("franquia"), isActive: activeTab === "franquia", icon: <Printer size={18} /> }

@@ -13,21 +13,34 @@ export class GoogleDriveService {
   private drive;
 
   constructor() {
-    const email = process.env.GOOGLE_SERVICE_ACCOUNT_EMAIL;
-    const privateKey = process.env.GOOGLE_SERVICE_ACCOUNT_PRIVATE_KEY?.replace(/\\n/g, '\n');
+    const clientId = process.env.GOOGLE_DRIVE_CLIENT_ID;
+    const clientSecret = process.env.GOOGLE_DRIVE_CLIENT_SECRET;
+    const refreshToken = process.env.GOOGLE_DRIVE_REFRESH_TOKEN;
 
-    if (!email || !privateKey || privateKey.includes('SUA_CHAVE_AQUI')) {
-      console.warn('⚠️ Google Drive Service Account não configurada ou usando placeholder. O sistema operará em MODO MOCK para Cofres.');
+    console.log(`[DRIVE DEBUG] ClientID: ${clientId ? 'Presente' : 'MISSING'}`);
+    console.log(`[DRIVE DEBUG] Secret: ${clientSecret ? 'Presente' : 'MISSING'}`);
+    console.log(`[DRIVE DEBUG] RefreshToken: ${refreshToken ? 'Presente' : 'MISSING'}`);
+
+    if (!clientId || !clientSecret || !refreshToken) {
+      console.warn('⚠️ Google Drive OAuth2 não configurado. O sistema operará em MODO MOCK para Cofres.');
       this.drive = null;
       return;
     }
 
-    const auth = new google.auth.JWT({
-      email,
-      key: privateKey,
-      scopes: SCOPES
-    });
-    this.drive = google.drive({ version: 'v3', auth });
+    try {
+      const oauth2Client = new google.auth.OAuth2(
+        clientId,
+        clientSecret,
+        process.env.GOOGLE_DRIVE_REDIRECT_URI
+      );
+
+      oauth2Client.setCredentials({ refresh_token: refreshToken });
+      this.drive = google.drive({ version: 'v3', auth: oauth2Client });
+      console.log(`[DRIVE] Serviço OAuth2 inicializado com sucesso.`);
+    } catch (err: any) {
+      console.error(`[DRIVE] Falha ao inicializar OAuth2:`, err.message);
+      this.drive = null;
+    }
   }
 
   /**
@@ -54,6 +67,16 @@ export class GoogleDriveService {
       });
 
       console.log(`[DRIVE] Pasta criada para álbum: ${albumName} (ID: ${folder.data.id})`);
+
+      // Liberar acesso de leitura para a pasta (Ajuda na exibição de miniaturas)
+      await this.drive.permissions.create({
+        fileId: folder.data.id!,
+        requestBody: {
+          role: 'reader',
+          type: 'anyone',
+        },
+      });
+
       return folder.data;
     } catch (error: any) {
       console.error('[DRIVE] Erro ao criar pasta:', error.message);
@@ -65,7 +88,7 @@ export class GoogleDriveService {
    * Realiza o upload de uma mídia diretamente para a pasta do álbum.
    * Utiliza thumbnailLink para performance no frontend conforme diretrizes executivas.
    */
-  async uploadMedia(folderId: string, fileName: string, buffer: Buffer, mimeType: string) {
+  async uploadMedia({ folderId, fileName, buffer, mimeType }: { folderId: string, fileName: string, buffer: Buffer, mimeType: string }) {
     if (!this.drive) {
       console.warn(`[DRIVE MOCK] Gravando arquivo localmente: ${fileName}`);
       const mockId = `mock-file-${Date.now()}`;
@@ -88,22 +111,18 @@ export class GoogleDriveService {
       };
     }
 
-    const fileMetadata = {
-      name: fileName,
-      parents: [folderId],
-    };
-
-    const media = {
-      mimeType,
-      body: Readable.from(buffer),
-    };
-
     try {
       const file = await this.drive.files.create({
-        requestBody: fileMetadata,
-        media: media,
+        resource: {
+          name: fileName,
+          parents: [folderId],
+        },
+        media: {
+          mimeType: mimeType,
+          body: Readable.from(buffer),
+        },
         fields: 'id, name, webViewLink, thumbnailLink',
-      });
+      } as any);
 
       // Liberar acesso de leitura para quem tem o link (Necessário para exibição no App)
       await this.drive.permissions.create({
@@ -131,6 +150,17 @@ export class GoogleDriveService {
     } catch (error: any) {
       console.error('[DRIVE] Erro ao deletar item:', error.message);
     }
+  }
+
+  /**
+   * Obtém o stream de um arquivo para proxy.
+   */
+  async getMediaStream(fileId: string) {
+    if (!this.drive) throw new Error("Drive service not initialized");
+    return this.drive.files.get(
+      { fileId, alt: 'media' },
+      { responseType: 'stream' }
+    );
   }
 }
 

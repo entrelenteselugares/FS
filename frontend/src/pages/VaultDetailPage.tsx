@@ -16,6 +16,7 @@ interface Media {
   id: string;
   thumbnailLink: string;
   webViewLink: string;
+  fileId: string;
   uploadedBy: { nome: string };
   createdAt: string;
   _count: { votes: number };
@@ -24,7 +25,7 @@ interface Media {
 
 interface Vault {
   id: string;
-  name: string;
+  nome: string;
   goalPoses: number;
   status: string;
   myRole: string;
@@ -113,10 +114,10 @@ export default function VaultDetailPage() {
     if (!vault) return;
     try {
       const { data } = await api.post(`/vaults/${vaultId}/invite`);
-      const text = `Venha compartilhar memórias comigo no cofre "${vault.name}"!\n\nLink de acesso:\n${data.url}`;
+      const text = `Venha compartilhar memórias comigo no cofre "${vault.nome}"!\n\nLink de acesso:\n${data.url}`;
       
       if (navigator.share) {
-        await navigator.share({ title: vault.name, text, url: data.url });
+        await navigator.share({ title: vault.nome, text, url: data.url });
       } else {
         await navigator.clipboard.writeText(text);
         alert("Link de convite copiado para a área de transferência!");
@@ -181,7 +182,7 @@ export default function VaultDetailPage() {
   return (
     <div className="min-h-screen font-sans flex flex-col" style={{ background: T.bg, color: T.text }}>
       <Helmet>
-        <title>{vault.name} | Cofre de Memórias</title>
+        <title>{vault.nome || "Cofre"} | Cofre de Memórias</title>
       </Helmet>
       <div className="hidden md:block">
         <Navbar />
@@ -200,7 +201,7 @@ export default function VaultDetailPage() {
             </button>
             <div>
               <h1 className="text-3xl md:text-5xl font-black uppercase italic tracking-tighter leading-none" style={{ color: T.text }}>
-              {vault.name}
+              {vault.nome}
             </h1>
               <div className="flex items-center gap-3 mt-1">
                 <span className="text-[9px] font-black text-emerald-500 uppercase tracking-widest">
@@ -217,6 +218,21 @@ export default function VaultDetailPage() {
           </div>
 
           <div className="flex items-center gap-2">
+            {vault.myRole === "OWNER" && (
+              <button 
+                onClick={handleCheckout}
+                disabled={checkingOut}
+                className={`flex items-center justify-center gap-2 text-[10px] font-black uppercase tracking-widest px-5 py-2.5 rounded-lg transition-all shadow-lg ${
+                  media.length >= vault.goalPoses 
+                    ? "bg-emerald-500 text-black shadow-emerald-500/40 animate-pulse" 
+                    : "bg-white/5 border border-white/10 text-gray-400 hover:bg-white/10"
+                }`}
+              >
+                {checkingOut ? <Loader2 size={14} className="animate-spin" /> : <Printer size={14} />}
+                Materializar
+              </button>
+            )}
+            
             <button 
               onClick={handleInvite}
               className="flex-1 md:flex-none flex items-center justify-center gap-2 bg-white/5 border border-white/10 hover:bg-white/10 text-[10px] font-black uppercase tracking-widest px-4 py-2.5 rounded-lg transition-all"
@@ -224,10 +240,17 @@ export default function VaultDetailPage() {
               <Share2 size={14} />
               Convidar
             </button>
-            <label className="flex-1 md:flex-none flex items-center justify-center gap-2 bg-emerald-500 hover:bg-emerald-400 text-black text-[10px] font-black uppercase tracking-widest px-5 py-2.5 rounded-lg cursor-pointer transition-all shadow-lg shadow-emerald-500/20">
+            
+            <label className={`flex-1 md:flex-none flex items-center justify-center gap-2 text-[10px] font-black uppercase tracking-widest px-5 py-2.5 rounded-lg transition-all shadow-lg ${
+              media.length >= vault.goalPoses
+                ? "bg-zinc-800 text-gray-500 cursor-not-allowed opacity-50"
+                : "bg-emerald-500 hover:bg-emerald-400 text-black shadow-emerald-500/20 cursor-pointer"
+            }`}>
               <Upload size={14} />
-              Enviar Foto
-              <input type="file" className="hidden" onChange={handleFileUpload} accept="image/*" />
+              {media.length >= vault.goalPoses ? "Meta Atingida" : "Enviar Foto"}
+              {media.length < vault.goalPoses && (
+                <input type="file" className="hidden" onChange={handleFileUpload} accept="image/*" />
+              )}
             </label>
           </div>
         </div>
@@ -272,7 +295,7 @@ export default function VaultDetailPage() {
                   className="relative aspect-square bg-zinc-900 overflow-hidden group cursor-pointer"
                 >
                   <img 
-                    src={item.thumbnailLink} 
+                    src={`${import.meta.env.VITE_API_URL || '/api'}/vaults/media/proxy/${item.fileId}`} 
                     alt="Memory" 
                     className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110"
                     onDoubleClick={(evt) => { evt.stopPropagation(); handleDoubleTap(item.id); }}
@@ -332,7 +355,11 @@ export default function VaultDetailPage() {
           <button 
             onClick={handleCheckout}
             disabled={checkingOut}
-            className="flex-1 max-w-[200px] mx-4 bg-emerald-500 hover:bg-emerald-400 text-black rounded-full py-3 px-4 flex items-center justify-center gap-2 shadow-xl shadow-emerald-500/20 transition-all active:scale-95 disabled:opacity-50"
+            className={`flex-1 max-w-[200px] mx-4 rounded-full py-3 px-4 flex items-center justify-center gap-2 shadow-xl transition-all active:scale-95 disabled:opacity-50 ${
+              media.length >= vault.goalPoses
+                ? "bg-emerald-500 text-black shadow-emerald-500/40"
+                : "bg-zinc-800 text-gray-400"
+            }`}
           >
             {checkingOut ? (
               <Loader2 size={18} className="animate-spin" />
@@ -340,7 +367,7 @@ export default function VaultDetailPage() {
               <>
                 <Printer size={18} />
                 <span className="text-[10px] font-black uppercase tracking-widest whitespace-nowrap">
-                  Materializar (R$ 49,90)
+                  {media.length >= vault.goalPoses ? "Materializar Agora" : "Imprimir em Breve"}
                 </span>
               </>
             )}

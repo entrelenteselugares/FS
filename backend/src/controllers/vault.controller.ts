@@ -3,6 +3,7 @@ import { AuthRequest } from "../lib/auth";
 import { prisma } from "../lib/prisma";
 import { driveService } from "../services/googleDrive.service";
 import { MercadoPagoService } from "../services/mercadopago.service";
+import { SubscriptionService } from "../services/subscription.service";
 
 /**
  * VaultController - Orquestrador da Fase 11 (Cofres de Memórias).
@@ -14,24 +15,39 @@ export class VaultController {
    * Cria um novo cofre privado, gerando a pasta correspondente no Drive.
    */
   static async createVault(req: AuthRequest, res: Response) {
-    const { name, goalPoses, cycleEndDay } = req.body;
+    const { name, nome, goalPoses, cycleEndDay } = req.body;
+    const finalName = nome || name;
     const userId = req.user?.userId;
 
     if (!userId) return res.status(401).json({ error: "Não autenticado." });
-    if (!name) return res.status(400).json({ error: "O nome do cofre é obrigatório." });
+    if (!finalName) return res.status(400).json({ error: "O nome do cofre é obrigatório." });
 
     try {
-      console.log(`[VAULT] Iniciando criação de cofre: ${name} para usuário ${userId}`);
+      console.log(`[VAULT] Iniciando criação de cofre: ${finalName} para usuário ${userId}`);
 
-      // 1. Criar a estrutura física no Cold Storage (Google Drive)
-      // Nota: driveService já utiliza o GOOGLE_DRIVE_ROOT_FOLDER_ID como parent.
-      const driveFolder = await driveService.createAlbumFolder(name);
+      // Gerar slug amigável
+      const slug = finalName.toLowerCase()
+        .normalize("NFD").replace(/[\u0300-\u036f]/g, "") // Remove acentos
+        .replace(/[^a-z0-z0-9]/g, "-") // Troca tudo que não é letra/número por hífen
+        .replace(/-+/g, "-") // Remove hífens duplicados
+        .replace(/^-|-$/g, ""); // Remove hífens no início/fim
+      
+      const uniqueSlug = `${slug}-${Date.now().toString(36)}`;
 
-      // 2. Persistir metadados e hierarquia no Prisma
+      // 1. Validar Meta (Regra da Folha A4: Múltiplos de 4, mínimo 12)
+      let finalGoal = Number(goalPoses) || 12;
+      if (finalGoal < 12) finalGoal = 12;
+      if (finalGoal % 4 !== 0) finalGoal = Math.ceil(finalGoal / 4) * 4;
+
+      // 2. Criar a estrutura física no Cold Storage (Google Drive)
+      const driveFolder = await driveService.createAlbumFolder(finalName);
+
+      // 3. Persistir metadados e hierarquia no Prisma
       const album = await prisma.sharedAlbum.create({
         data: {
-          name,
-          goalPoses: Number(goalPoses) || 36,
+          nome: finalName,
+          slug: uniqueSlug,
+          goalPoses: finalGoal,
           folderId: driveFolder.id,
           status: "OPEN",
           cycleEndDay: Number(cycleEndDay) || 30,
@@ -73,10 +89,22 @@ export class VaultController {
       // Validar existência do cofre e permissão do membro
       const album = await prisma.sharedAlbum.findUnique({
         where: { id: albumId },
-        include: { members: true }
+        include: { 
+          members: true,
+          _count: { select: { media: true } }
+        }
       });
 
       if (!album) return res.status(404).json({ error: "Cofre não encontrado." });
+      
+      // Regra de Negócio: Impedir upload além da meta
+      if (album._count.media >= album.goalPoses) {
+        return res.status(400).json({ 
+          error: "Cofre cheio!", 
+          details: `Você atingiu a meta de ${album.goalPoses} fotos. Feche o ciclo para imprimir ou aumente a meta.` 
+        });
+      }
+
       if (!album.folderId) return res.status(400).json({ error: "Infraestrutura de storage não inicializada para este cofre." });
 
       const isMember = (album as any).members.some((m: any) => m.userId === userId);
@@ -84,12 +112,12 @@ export class VaultController {
 
       // 1. Upload para o Cold Storage
       const fileName = `${Date.now()}-${file.originalname.replace(/\s+/g, '_')}`;
-      const driveFile = await driveService.uploadMedia(
-        album.folderId,
+      const driveFile = await driveService.uploadMedia({
+        folderId: album.folderId,
         fileName,
-        file.buffer,
-        file.mimetype
-      );
+        buffer: file.buffer,
+        mimeType: file.mimetype
+      });
 
       // 2. Persistir metadados no Prisma (incluindo o thumbnailLink para performance)
       const media = await prisma.sharedAlbumMedia.create({
@@ -280,7 +308,7 @@ export class VaultController {
           album: {
             select: {
               id: true,
-              name: true,
+              nome: true,
               _count: { select: { members: true, media: true } }
             }
           }
@@ -407,7 +435,7 @@ export class VaultController {
           isManual: true,
           manualType: "VAULT_ONDEMAND",
           shippingFee: shippingPrice,
-          internalNotes: `Checkout Avulso do cofre: ${album.name}`,
+          internalNotes: `Checkout Avulso do cofre: ${album.nome}`,
           items: {
             create: topMedia.map(m => ({
               price: 0,
@@ -422,7 +450,7 @@ export class VaultController {
       const backendUrl = process.env.BACKEND_URL || `http://localhost:3001`;
       const mpResponse = await MercadoPagoService.createPreference({
         transaction_amount: total,
-        description: `Materialização Cofre: ${album.name}`,
+        description: `Materialização Cofre: ${album.nome}`,
         payer_email: album.owner.email,
         notification_url: `${backendUrl}/api/webhooks/mercadopago`,
         orderId: order.id
@@ -444,6 +472,47 @@ export class VaultController {
     } catch (error: any) {
       console.error("[VAULT CHECKOUT] Erro:", error.message);
       return res.status(500).json({ error: "Erro ao processar checkout do cofre.", details: error.message });
+    }
+  }
+
+  /**
+   * Ativa a assinatura recorrente para o cofre.
+   */
+  static async subscribeVault(req: AuthRequest, res: Response) {
+    const albumId = req.params.albumId as string;
+    const userId = req.user?.userId;
+    const { planLimit } = req.body;
+
+    if (!userId) return res.status(401).json({ error: "Não autenticado." });
+
+    try {
+      const result = await SubscriptionService.createVaultSubscription(userId, albumId, planLimit || 36);
+      
+      return res.json(result);
+    } catch (error: any) {
+      console.error("[VAULT SUBSCRIBE] Erro:", error.message);
+      return res.status(500).json({ error: error.message || "Erro ao processar assinatura do cofre." });
+    }
+  }
+
+  /**
+   * Proxy de mídia para contornar restrições de CORS do Google Drive.
+   */
+  static async proxyMedia(req: Request, res: Response) {
+    const fileId = req.params.fileId as string;
+    if (!fileId) return res.status(400).send("File ID missing");
+
+    try {
+      const driveRes = await driveService.getMediaStream(fileId);
+      
+      const contentType = driveRes.headers['content-type'] || 'image/jpeg';
+      res.setHeader('Content-Type', contentType);
+      res.setHeader('Cache-Control', 'public, max-age=86400');
+
+      (driveRes.data as any).pipe(res);
+    } catch (error: any) {
+      console.error("[PROXY MEDIA] Erro:", error.message);
+      res.status(500).send("Erro ao carregar mídia");
     }
   }
 }

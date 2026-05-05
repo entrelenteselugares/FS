@@ -233,59 +233,60 @@ export const HomePage = () => {
 
       {/* ── HERO ─────────────────────────────────────────────────────────── */}
       <section className="hp-hero-section" style={{ 
-        padding: "clamp(40px, 8vw, 80px) 24px", 
+        padding: "clamp(24px, 5vw, 40px) 24px 32px", 
         background: "linear-gradient(to bottom, var(--bg-card), var(--bg))",
         display: "flex",
         flexDirection: "column",
         alignItems: "center",
         textAlign: "center",
         position: "relative",
-        overflow: "hidden"
+        overflow: "hidden",
+        minHeight: "auto"
       }}>
         {/* Subtle Background Glow */}
         <div className="absolute top-0 left-1/2 -translate-x-1/2 w-full h-full bg-brand-tactical/5 blur-[120px] rounded-full opacity-30 -translate-y-1/2 pointer-events-none" />
 
         <div style={{ maxWidth: 1200, position: "relative", zIndex: 10 }}>
-          <p className="hp-hero-tagline animate-reveal" style={{ fontSize: 10, fontFamily: T.fontB, fontWeight: 400, letterSpacing: "0.5em", textTransform: "uppercase", color: T.brand, marginBottom: 24, opacity: 0.8 }}>
+          <p className="hp-hero-tagline animate-reveal" style={{ fontSize: 10, fontFamily: T.fontB, fontWeight: 400, letterSpacing: "0.5em", textTransform: "uppercase", color: T.brand, marginBottom: 16, opacity: 0.8 }}>
             {DICT.HERO_TAGLINE}
           </p>
 
           <h1 className="hp-hero-title animate-reveal" style={{
             fontFamily: T.fontD, fontWeight: 900,
-            fontSize: "clamp(42px, 8.5vw, 110px)",
-            lineHeight: 0.8, color: "var(--text)",
+            fontSize: "clamp(32px, 7vw, 80px)",
+            lineHeight: 0.85, color: "var(--text)",
             textTransform: "uppercase", letterSpacing: "-0.04em",
-            margin: "0 0 32px",
+            margin: "0 0 24px",
           }}>
             <span style={{ display: "block", whiteSpace: "nowrap" }}>{DICT.HERO_TITLE_PART1}</span>
             <em style={{ fontStyle: "italic", color: T.brand, display: "block", whiteSpace: "nowrap" }}>{DICT.HERO_TITLE_PART2_ITALIC}</em>
           </h1>
 
-          <p className="hp-hero-desc animate-reveal" style={{ fontSize: 14, color: "var(--text-2)", fontWeight: 300, maxWidth: 480, lineHeight: 1.6, margin: "0 auto 48px", fontFamily: T.fontB }}>
+          <p className="hp-hero-desc animate-reveal" style={{ fontSize: 13, color: "var(--text-2)", fontWeight: 300, maxWidth: 460, lineHeight: 1.5, margin: "0 auto 32px", fontFamily: T.fontB }}>
             {DICT.HERO_DESCRIPTION}
           </p>
 
-          <div className="hp-hero-search-desktop animate-reveal" style={{ display: "flex", gap: 16, justifyContent: "center" }}>
+          <div className="hp-hero-search-desktop animate-reveal" style={{ display: "flex", gap: 12, justifyContent: "center" }}>
             <button
               onClick={() => document.getElementById('vitrine')?.scrollIntoView({ behavior: 'smooth' })}
-              className="lux-button-tactical px-14 py-5 text-[11px] font-display font-black uppercase tracking-[0.5em] italic shadow-2xl shadow-brand-tactical/20"
+              className="lux-button-tactical px-10 py-4 text-[10px] font-display font-black uppercase tracking-[0.4em] italic shadow-2xl shadow-brand-tactical/20"
             >
               Explorar Vitrine
             </button>
             <button
               onClick={() => navigate("/cotacao")}
-              className="px-10 py-5 text-[11px] font-display font-black uppercase tracking-[0.3em] italic bg-white/5 border border-white/10 text-theme-text hover:bg-theme-text/10 transition-all"
+              className="px-8 py-4 text-[10px] font-display font-black uppercase tracking-[0.2em] italic bg-white/5 border border-white/10 text-theme-text hover:bg-theme-text/10 transition-all"
             >
               Agendar Cobertura
             </button>
           </div>
           
           {/* Stats */}
-          <div className="hp-stats animate-reveal" style={{ display: "flex", gap: "clamp(24px, 5vw, 64px)", justifyContent: "center", marginTop: 40, opacity: 0.8 }}>
+          <div className="hp-stats animate-reveal" style={{ display: "flex", gap: "clamp(16px, 4vw, 48px)", justifyContent: "center", marginTop: 24, opacity: 0.8 }}>
             {[["500+", DICT.STATS_EVENTS], ["24h", DICT.STATS_DELIVERY], ["4.9★", DICT.STATS_RATING]].map(([val, label]) => (
               <div key={label} className="hp-stats-item text-center">
-                <div className="hp-stats-val" style={{ fontFamily: T.fontD, fontWeight: 900, fontSize: 32, color: "var(--text)", lineHeight: 1 }}>{val}</div>
-                <div style={{ fontSize: 9, fontFamily: T.fontD, fontWeight: 900, color: "var(--text-muted)", letterSpacing: "0.2em", textTransform: "uppercase", marginTop: 6, fontStyle: 'italic' }}>{label}</div>
+                <div className="hp-stats-val" style={{ fontFamily: T.fontD, fontWeight: 900, fontSize: 24, color: "var(--text)", lineHeight: 1 }}>{val}</div>
+                <div style={{ fontSize: 8, fontFamily: T.fontD, fontWeight: 900, color: "var(--text-muted)", letterSpacing: "0.2em", textTransform: "uppercase", marginTop: 4, fontStyle: 'italic' }}>{label}</div>
               </div>
             ))}
           </div>
@@ -293,11 +294,11 @@ export const HomePage = () => {
       </section>
 
       {/* ── EVENT GRID ───────────────────────────────────────────────────── */}
-      <section id="vitrine" className="hp-event-section" style={{ padding: "0 0 100px", background: T.bg }}>
+      <section id="vitrine" className="hp-event-section" style={{ padding: "0 0 80px", background: T.bg }}>
         <div style={{ maxWidth: 1600, margin: "0 auto", padding: "0 2px" }}>
           
           {/* Mobile compact vitrine header */}
-          <div className="hp-mobile-vitrine-header" style={{ padding: "8px 16px 4px", flexDirection: "column", gap: 6 }}>
+          <div className="hp-mobile-vitrine-header" style={{ padding: "4px 16px 2px", flexDirection: "column", gap: 4 }}>
             <div style={{ display: "flex", gap: 6 }}>
               <select 
                 value={selectedCity}
@@ -324,12 +325,12 @@ export const HomePage = () => {
           </div>
 
           {/* Header with Search & Filters (Desktop — hidden on mobile) */}
-          <div className="hp-vitrine-header-desktop flex flex-col lg:flex-row lg:items-center justify-between gap-4 mb-4 border-b border-theme-border/40 pb-6 pt-6 px-8">
-            <div style={{ borderLeft: `2px solid ${T.brand}`, paddingLeft: 16 }}>
-              <p style={{ fontSize: 10, fontFamily: T.fontD, fontWeight: 900, color: "var(--theme-text-muted)", letterSpacing: "0.2em", textTransform: "uppercase", margin: "0 0 4px", fontStyle: 'italic' }}>{DICT.LATEST_REGISTERS_TAG}</p>
-              <h2 style={{ fontFamily: T.fontD, fontWeight: 900, fontSize: "clamp(28px,4vw,36px)", color: "var(--text)", textTransform: "uppercase", margin: 0, lineHeight: 1 }}>
+          <div className="hp-vitrine-header-desktop flex flex-col lg:flex-row lg:items-center justify-between gap-3 mb-2 border-b border-theme-border/20 pb-4 pt-2 px-8">
+            <div style={{ borderLeft: `2px solid ${T.brand}`, paddingLeft: 12 }}>
+              <p style={{ fontSize: 9, fontFamily: T.fontD, fontWeight: 900, color: "var(--theme-text-muted)", letterSpacing: "0.2em", textTransform: "uppercase", margin: "0 0 2px", fontStyle: 'italic' }}>{DICT.LATEST_REGISTERS_TAG}</p>
+              <h2 style={{ fontFamily: T.fontD, fontWeight: 900, fontSize: "clamp(24px,3.5vw,32px)", color: "var(--text)", textTransform: "uppercase", margin: 0, lineHeight: 1 }}>
                 {DICT.LATEST_REGISTERS_TITLE}
-                <span style={{ fontSize: 14, verticalAlign: 'middle', opacity: 0.3, marginLeft: 16 }}>({events.length})</span>
+                <span style={{ fontSize: 12, verticalAlign: 'middle', opacity: 0.3, marginLeft: 12 }}>({events.length})</span>
               </h2>
             </div>
 

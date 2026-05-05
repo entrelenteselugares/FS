@@ -107,7 +107,12 @@ import express from "express";
 
 const upload = multer({ storage: multer.memoryStorage() });
 
+import driveAuthRoutes from "./driveAuth.routes";
+
 const router = Router();
+
+// ... existing routes ...
+router.use("/auth", driveAuthRoutes);
 
 /**
  * Middleware especial que permite acesso se o usuário for ADMIN, PROFISSIONAL 
@@ -396,6 +401,8 @@ router.post("/vaults/:albumId/upload",  requireAuth, upload.single("file"), Vaul
 router.post("/vaults/:albumId/invite",  requireAuth, VaultController.generateInvite);
 router.post("/vaults/media/:mediaId/vote", requireAuth, (req: any, res: any, next: any) => VaultController.voteMedia(req, res, next));
 router.post("/vaults/:albumId/checkout", requireAuth, VaultController.checkoutVault);
+router.post("/vaults/:albumId/subscribe", requireAuth, VaultController.subscribeVault);
+router.get("/vaults/media/proxy/:fileId", VaultController.proxyMedia);
 
 // ── PHYGITAL (Fluxo QR Code & Impressão) ──────────────────────────────────────
 router.post("/public/phygital/upload", upload.single("photo"), PhygitalController.upload);
