@@ -49,6 +49,10 @@ model User {
   profissional       Profissional?
   calendarCredential UserCalendarCredential?
   points             UserPoints?
+  ownedAlbums        SharedAlbum[]           @relation("OwnedAlbums")
+  albumMemberships   AlbumMember[]
+  sharedAlbumMedia   SharedAlbumMedia[]
+  mediaVotes         MediaVote[]
 
   @@map("users")
 }
@@ -732,4 +736,77 @@ enum FulfillmentStatus {
   LAB_PROCESSING
   SHIPPED
   DELIVERED
+}
+model SharedAlbum {
+  id          String   @id @default(cuid())
+  name        String
+  folderId    String?  @unique // Google Drive Folder ID
+  goalPoses   Int      @default(36)
+  status      String   @default("OPEN")
+  cycleEndDay Int?     @default(30)
+  ownerId     String
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+  
+  owner       User     @relation("OwnedAlbums", fields: [ownerId], references: [id])
+  members     AlbumMember[]
+  media       SharedAlbumMedia[]
+  accessLinks AccessLink[]
+
+  @@map("shared_albums")
+}
+
+model AlbumMember {
+  id        String   @id @default(cuid())
+  albumId   String
+  userId    String
+  role      String   @default("COLLABORATOR") // OWNER, COLLABORATOR, SPECTATOR
+  createdAt DateTime @default(now())
+  
+  album     SharedAlbum @relation(fields: [albumId], references: [id], onDelete: Cascade)
+  user      User        @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([albumId, userId])
+  @@map("album_members")
+}
+
+model SharedAlbumMedia {
+  id           String      @id @default(cuid())
+  albumId      String
+  fileId       String      @unique // Google Drive File ID
+  webViewLink  String
+  thumbnailLink String?
+  uploadedById String
+  createdAt    DateTime    @default(now())
+  
+  album        SharedAlbum @relation(fields: [albumId], references: [id], onDelete: Cascade)
+  uploadedBy   User        @relation(fields: [uploadedById], references: [id])
+  votes        MediaVote[]
+
+  @@map("shared_album_media")
+}
+
+model MediaVote {
+  id      String @id @default(cuid())
+  mediaId String
+  userId  String
+  
+  media   SharedAlbumMedia @relation(fields: [mediaId], references: [id], onDelete: Cascade)
+  user    User             @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([mediaId, userId])
+  @@map("media_votes")
+}
+
+model AccessLink {
+  id        String   @id @default(cuid())
+  albumId   String
+  code      String   @unique
+  type      String   @default("TEMPORARY") // PERMANENT, TEMPORARY
+  expiresAt DateTime?
+  createdAt DateTime @default(now())
+  
+  album     SharedAlbum @relation(fields: [albumId], references: [id], onDelete: Cascade)
+
+  @@map("access_links")
 }

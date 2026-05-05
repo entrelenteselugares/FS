@@ -6,29 +6,35 @@
 
 ## 🚀 CONTEXTO DO PROJETO: FOTO SEGUNDO
 
-**Modelo**: B2B2C Phygital (Physical + Digital). Marketplace de fotos para eventos com impressão instantânea via Micro-franquias.
-**Tech Stack**: Next.js 14, Node.js/Express, Prisma (PostgreSQL), Sharp (Image processing), Google OAuth2 (Calendar).
+**Modelo**: B2B2C Phygital (Physical + Digital). Marketplace de fotos para eventos com impressão instantânea via Micro-franquias e Assinatura de Cofres de Memórias (Vault Sharing).
+**Tech Stack**: Next.js 14, Node.js/Express, Prisma (PostgreSQL), Sharp (Image processing), Google OAuth2 (Calendar), **Google Drive API (Service Account / Cold Storage)**.
 
 ## 🛠️ ARQUITETURA CHAVE
 
 1. **Foto Print Live**: O coração do Phygital. Convidado tira foto -> Sobe via QR Code -> Fotógrafo edita/carimba via Sharp -> Convidado compra -> Impressão automática no local.
 2. **Print Agent**: App Node local que "pesca" da rota `/api/phygital/queue` e manda para a impressora.
 3. **Design System**: "Midnight Luxury" (v3.0). Tokens em `theme.ts`, fontes 13px+, visual premium escuro/dourado.
+4. **Cofres de Memórias (Vaults)**: Nova arquitetura da Fase 11 conectando o backend via *Service Account* diretamente à pastas raiz do Google Drive (Cold Storage), diminuindo custos de storage primário e automatizando processos (CronJobs).
 
 ## 📍 ESTADO ATUAL (HANDOFF)
 
-- **Deploy (Vercel)**: Unified Order Engine estabilizado com diagnóstico de boot (`api/index.js`).
-- **Resiliência**: AuthController com fallback local (Supabase failover) e Theme anti-flicker no index.html.
-- **Phygital Store**: EventPage com UI "Midnight Luxury" v3.1, catálogo mock para testes e guia de jornada.
-- **Data Integrity**: Database cleanup concluído (remoção de strings "null" em links).
-- **Branding**: Estética Editorial Phygital consolidada como diferencial de mercado.
+- **Cofres de Memórias (Fase 11) Concluídos**:
+  - Infraestrutura do Google Drive 100% mapeada no `.env` e testada (Backend).
+  - CronJob diário (`vault-cycle.job.ts`) configurado para avaliar cofres abertos e gerar pedidos pendentes (`Order Engine`) para materialização automática.
+  - Endpoint de Checkout Avulso / On-Demand integrado com Mercado Pago.
+- **UI/UX App-Like (Midnight Luxury)**:
+  - Navegação do usuário em cofres repaginada com remoção da `Navbar` no mobile em favor de um **BottomNav Imersivo**.
+  - Interação gamificada: **Double-Tap to Vote** com animação Framer Motion nas fotos.
+  - Botão de Materialização Imediata (R$ 49,90 + Frete Fixo).
+- **Type Safety**: Backend e Frontend refatorados e aprovados pelo compilador sem erros (TSX/TS).
+- **Resiliência e Deploy**: AuthController com fallback local, Theme anti-flicker e testes e2e de integração passando perfeitamente (77/77).
 
 ## 🎯 DIRETRIZES DE CODIFICAÇÃO
 
 - SEMPRE use os tokens de `T` em `lib/theme.ts`.
-- Mantenha a tipagem rigorosa (TypeScript). Evite `any`.
+- Mantenha a tipagem rigorosa (TypeScript). Evite `any` ou `unknown` se possível prever a estrutura (como fizemos no Axios Error).
 - Documente mudanças críticas no diretório `ANOTAÇÕES/suporte_gemini/`.
 
 ---
 
-**Kurio, o sistema está pronto para continuar. O que vamos codar agora?**
+**Kurio, o sistema está mapeado, testado e pronto para continuar. O que vamos codar agora?**

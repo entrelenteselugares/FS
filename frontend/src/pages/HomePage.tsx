@@ -202,11 +202,15 @@ export const HomePage = () => {
           .hp-hero-search-desktop { display: none !important; }
           .hp-mobile-search { display: flex !important; }
           .hp-event-section { padding: 0 0 100px !important; }
-          .hp-hero-tagline { display: none !important; }
-          .hp-hero-desc { display: none !important; }
+          /* On mobile: collapse hero entirely so the grid is above the fold */
+          .hp-hero-section { display: none !important; }
+          /* Collapse the desktop vitrine header — show inline compact header instead */
+          .hp-vitrine-header-desktop { display: none !important; }
+          .hp-mobile-vitrine-header { display: flex !important; }
         }
         @media(min-width:769px){
           .hp-mobile-search { display: none !important; }
+          .hp-mobile-vitrine-header { display: none !important; }
         }
       `}</style>
 
@@ -228,8 +232,8 @@ export const HomePage = () => {
       </div>
 
       {/* ── HERO ─────────────────────────────────────────────────────────── */}
-      <section style={{ 
-        padding: "clamp(60px, 12vw, 140px) 28px", 
+      <section className="hp-hero-section" style={{ 
+        padding: "clamp(40px, 8vw, 80px) 24px", 
         background: "linear-gradient(to bottom, var(--bg-card), var(--bg))",
         display: "flex",
         flexDirection: "column",
@@ -277,7 +281,7 @@ export const HomePage = () => {
           </div>
           
           {/* Stats */}
-          <div className="hp-stats animate-reveal" style={{ display: "flex", gap: "clamp(24px, 5vw, 64px)", justifyContent: "center", marginTop: 80, opacity: 0.8 }}>
+          <div className="hp-stats animate-reveal" style={{ display: "flex", gap: "clamp(24px, 5vw, 64px)", justifyContent: "center", marginTop: 40, opacity: 0.8 }}>
             {[["500+", DICT.STATS_EVENTS], ["24h", DICT.STATS_DELIVERY], ["4.9★", DICT.STATS_RATING]].map(([val, label]) => (
               <div key={label} className="hp-stats-item text-center">
                 <div className="hp-stats-val" style={{ fontFamily: T.fontD, fontWeight: 900, fontSize: 32, color: "var(--text)", lineHeight: 1 }}>{val}</div>
@@ -292,8 +296,35 @@ export const HomePage = () => {
       <section id="vitrine" className="hp-event-section" style={{ padding: "0 0 100px", background: T.bg }}>
         <div style={{ maxWidth: 1600, margin: "0 auto", padding: "0 2px" }}>
           
-          {/* Header with Search & Filters (Clean & Discrete) */}
-          <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-8 mb-4 border-b border-theme-border/40 pb-12 pt-12 px-8">
+          {/* Mobile compact vitrine header */}
+          <div className="hp-mobile-vitrine-header" style={{ padding: "8px 16px 4px", flexDirection: "column", gap: 6 }}>
+            <div style={{ display: "flex", gap: 6 }}>
+              <select 
+                value={selectedCity}
+                onChange={e => { setSelectedCity(e.target.value); setPage(1); }}
+                style={{ flex: 1, background: "var(--bg-card)", border: `1px solid ${T.border}`, color: T.text, padding: "10px 12px", fontSize: 11, fontFamily: T.fontD, fontWeight: 900, textTransform: "uppercase", letterSpacing: "0.1em", fontStyle: "italic", outline: "none", appearance: "none" }}
+              >
+                <option value="">Todas as Cidades</option>
+                <option value="Campinas">Campinas</option>
+                <option value="São Paulo">São Paulo</option>
+                <option value="Valinhos">Valinhos</option>
+              </select>
+              <select 
+                value={selectedType}
+                onChange={e => { setSelectedType(e.target.value); setPage(1); }}
+                style={{ flex: 1, background: "var(--bg-card)", border: `1px solid ${T.border}`, color: T.text, padding: "10px 12px", fontSize: 11, fontFamily: T.fontD, fontWeight: 900, textTransform: "uppercase", letterSpacing: "0.1em", fontStyle: "italic", outline: "none", appearance: "none" }}
+              >
+                <option value="">Todas as Categorias</option>
+                <option value="ALBUM_FULL">Álbum Completo</option>
+                <option value="PHOTO_MARKETPLACE">Live Print</option>
+                <option value="FOTO_POINT">Foto Point</option>
+                <option value="FLASH_EVENT">Flash Event</option>
+              </select>
+            </div>
+          </div>
+
+          {/* Header with Search & Filters (Desktop — hidden on mobile) */}
+          <div className="hp-vitrine-header-desktop flex flex-col lg:flex-row lg:items-center justify-between gap-4 mb-4 border-b border-theme-border/40 pb-6 pt-6 px-8">
             <div style={{ borderLeft: `2px solid ${T.brand}`, paddingLeft: 16 }}>
               <p style={{ fontSize: 10, fontFamily: T.fontD, fontWeight: 900, color: "var(--theme-text-muted)", letterSpacing: "0.2em", textTransform: "uppercase", margin: "0 0 4px", fontStyle: 'italic' }}>{DICT.LATEST_REGISTERS_TAG}</p>
               <h2 style={{ fontFamily: T.fontD, fontWeight: 900, fontSize: "clamp(28px,4vw,36px)", color: "var(--text)", textTransform: "uppercase", margin: 0, lineHeight: 1 }}>

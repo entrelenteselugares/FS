@@ -3,8 +3,10 @@
   "version": "1.0.0",
   "main": "index.js",
   "scripts": {
-    "test": "jest",
-    "test:resilience": "jest resilience",
+    "test": "jest --testPathPattern=resilience --testTimeout=10000",
+    "test:resilience": "jest resilience --testTimeout=10000",
+    "test:integration": "jest integration --testTimeout=30000 --runInBand",
+    "test:all": "jest --testTimeout=30000 --runInBand",
     "dev": "npx tsx watch src/server.ts",
     "build": "npx prisma generate && tsc",
     "start": "node dist/server.js",

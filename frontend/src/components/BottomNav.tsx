@@ -1,7 +1,7 @@
 import { useState, useEffect } from "react";
 import { useNavigate, useLocation } from "react-router-dom";
 import { useAuth } from "../hooks/useAuth";
-import { Search, ShoppingBag, Image, Menu } from "lucide-react";
+import { Search, ShoppingBag, Lock, Menu } from "lucide-react";
 import { T } from "../lib/theme";
 
 /**
@@ -56,10 +56,10 @@ export function BottomNav() {
   // Resolve the correct dashboard path per role
   // We add unique dummy search params so isActive can distinguish them even if they point to /login
   const tabs = [
-    { id: "buscar",  label: "Buscar",     icon: Search,     path: "/?buscar=1" },
-    { id: "carrinho",label: "Pedidos",    icon: ShoppingBag,path: user ? "/minha-conta?s=pedidos" : "/login?s=pedidos" },
-    { id: "fotos",   label: "Minhas Fotos",icon: Image,     path: user ? "/minha-conta?s=fotos" : "/login?s=fotos" },
-    { id: "menu",    label: "Menu",       icon: Menu,       path: user ? (user.role === 'CLIENTE' ? "/minha-conta?s=menu" : "/dashboard") : "/auth" },
+    { id: "buscar",  label: "Buscar",    icon: Search,     path: "/?buscar=1" },
+    { id: "pedidos", label: "Pedidos",   icon: ShoppingBag, path: user ? "/minha-conta?s=pedidos" : "/login?s=pedidos" },
+    { id: "cofres",  label: "Cofres",   icon: Lock,        path: user ? "/cofres" : "/login?next=cofres" },
+    { id: "menu",    label: "Menu",     icon: Menu,        path: user ? (user.role === 'CLIENTE' ? "/minha-conta?s=menu" : "/dashboard") : "/auth" },
   ];
 
   const isActive = (tabPath: string) => {

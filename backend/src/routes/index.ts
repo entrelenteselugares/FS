@@ -87,6 +87,7 @@ import {
 import { getTeam, saveTeam } from "../controllers/team.controller";
 import { adminGetEventById } from "../controllers/admin_event_detail.controller";
 import { runExpirationJob } from "../jobs/expiration.job";
+import { runVaultCycleJob } from "../jobs/vault-cycle.job";
 import {
   bulkUpdateMargin,
   seedCkCatalog,
@@ -98,6 +99,7 @@ import { AuthRequest } from "../lib/auth";
 import { runLoyaltyBot } from "../controllers/cron.controller";
 import { PhygitalController } from "../controllers/phygital.controller";
 import { FranchiseController } from "../controllers/franchise.controller";
+import { VaultController } from "../controllers/vault.controller";
 import calendarRoutes from "./calendar.routes";
 import { syncAllCalendars } from "../services/calendar-sync.service";
 import multer from "multer";
@@ -158,7 +160,8 @@ router.get("/cron/expiration", async (req, res) => {
   }
   try {
     await runExpirationJob(req as AuthRequest);
-    console.log("[Cron] Job de expiração executado com sucesso.");
+    await runVaultCycleJob();
+    console.log("[Cron] Job de expiração e Cofres executados com sucesso.");
     res.json({ ok: true, ran: new Date().toISOString() });
   } catch (err: unknown) {
     const errorMsg = err instanceof Error ? err.message : String(err);
@@ -379,6 +382,20 @@ router.get("/franchise/referral", requireAuth, requireRole("FRANCHISEE"), Franch
 router.get("/franchise/network", requireAuth, requireRole("FRANCHISEE"), FranchiseController.getNetwork);
 router.get("/franchise/finance", requireAuth, requireRole("FRANCHISEE"), FranchiseController.getFinanceStats);
 router.post("/franchise/reorder", requireAuth, requireRole("FRANCHISEE"), FranchiseController.postReorder);
+
+// ── VAULTS (Cofres de Memórias - Fase 11) ──────────────────────────────────
+router.get("/vaults",                   requireAuth, VaultController.listMyVaults);
+router.post("/vaults",                  requireAuth, VaultController.createVault);
+
+// Invitation routes MUST come before /:albumId routes to avoid Express capturing "invitation" as albumId
+router.get("/vaults/invitation/:code",          (req, res, next) => VaultController.getInvitationDetails(req, res, next));
+router.post("/vaults/invitation/:code/accept",  requireAuth, (req: any, res: any, next: any) => VaultController.acceptInvite(req, res, next));
+
+router.get("/vaults/:albumId/media",    requireAuth, VaultController.listMedia);
+router.post("/vaults/:albumId/upload",  requireAuth, upload.single("file"), VaultController.uploadMedia);
+router.post("/vaults/:albumId/invite",  requireAuth, VaultController.generateInvite);
+router.post("/vaults/media/:mediaId/vote", requireAuth, (req: any, res: any, next: any) => VaultController.voteMedia(req, res, next));
+router.post("/vaults/:albumId/checkout", requireAuth, VaultController.checkoutVault);
 
 // ── PHYGITAL (Fluxo QR Code & Impressão) ──────────────────────────────────────
 router.post("/public/phygital/upload", upload.single("photo"), PhygitalController.upload);

@@ -25,6 +25,9 @@ import LuxuryExperiencePage from "./pages/LuxuryExperiencePage";
 import PhygitalCapture from "./pages/PhygitalCapture";
 import PrintMonitor from "./pages/PrintMonitor";
 import FranchiseDashboard from "./pages/franchise/FranchiseDashboard";
+import VaultsPage from "./pages/VaultsPage";
+import VaultDetailPage from "./pages/VaultDetailPage";
+import InvitationPage from "./pages/InvitationPage";
 import { BusinessLanding } from "./pages/BusinessLanding";
 import { useState, useEffect } from "react";
 import { API as api } from "./lib/api";
@@ -47,6 +50,11 @@ const DashboardRedirect = () => {
 
 const AnimatedRoutes = () => {
   const location = useLocation();
+
+  // Safety: Clear body overflow on every route change to prevent stuck overlays
+  useEffect(() => {
+    document.body.style.overflow = "unset";
+  }, [location]);
   
   return (
     <div
@@ -119,7 +127,21 @@ const AnimatedRoutes = () => {
           <ProtectedRoute roles={["ADMIN", "CLIENTE", "PROFISSIONAL", "CARTORIO", "UNIDADE"]}>
             <ClienteArea />
           </ProtectedRoute>
+        }
+        />
+
+        {/* Cofres de Memórias (Fase 11) */}
+        <Route path="/cofres" element={
+          <ProtectedRoute>
+            <VaultsPage />
+          </ProtectedRoute>
         } />
+        <Route path="/cofres/:vaultId" element={
+          <ProtectedRoute>
+            <VaultDetailPage />
+          </ProtectedRoute>
+        } />
+        <Route path="/invitation/:code" element={<InvitationPage />} />
 
         {/* Home e 404 */}
         <Route path="/404" element={<NotFoundPage />} />

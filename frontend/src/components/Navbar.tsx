@@ -71,7 +71,7 @@ export const Navbar: React.FC = () => {
                 background: T.bgCard, border: `1px solid ${T.border}`, 
                 minWidth: 180, zIndex: 200, boxShadow: '0 20px 50px rgba(0,0,0,0.3)' 
               }}>
-                <button onClick={() => { setUserMenu(false); navigate("/minha-conta?s=fotos"); }} style={{ width: "100%", textAlign: "left", padding: "14px 16px", background: "transparent", border: "none", borderBottom: `1px solid ${T.border}`, color: T.text, fontSize: 11, fontFamily: T.fontD, fontWeight: 900, letterSpacing: "0.1em", textTransform: "uppercase", cursor: "pointer", fontStyle: 'italic' }}>📸 Minhas Fotos</button>
+                <button onClick={() => { setUserMenu(false); navigate("/cofres"); }} style={{ width: "100%", textAlign: "left", padding: "14px 16px", background: "transparent", border: "none", borderBottom: `1px solid ${T.border}`, color: T.text, fontSize: 11, fontFamily: T.fontD, fontWeight: 900, letterSpacing: "0.1em", textTransform: "uppercase", cursor: "pointer", fontStyle: 'italic' }}>🔒 Cofres de Memórias</button>
                 <button onClick={() => { setUserMenu(false); navigate(dashPath); }} style={{ width: "100%", textAlign: "left", padding: "14px 16px", background: "transparent", border: "none", borderBottom: `1px solid ${T.border}`, color: T.text, fontSize: 11, fontFamily: T.fontD, fontWeight: 900, letterSpacing: "0.1em", textTransform: "uppercase", cursor: "pointer", fontStyle: 'italic' }}>👤 Meu Painel</button>
                 <div className="mobile-only" style={{ borderBottom: `1px solid ${T.border}`, padding: "8px 16px" }}>
                   <ThemeToggle />

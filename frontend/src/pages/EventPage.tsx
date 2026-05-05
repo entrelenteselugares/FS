@@ -406,7 +406,7 @@ return (
         {/* Lado Esquerdo: Conteúdo Principal */}
         <section className="relative flex flex-col bg-theme-bg overflow-y-auto scrollbar-hide">
           {/* Header Visual Cinematográfico (Sempre Visível para Consistência) */}
-          <div className="relative h-[45vh] lg:h-[55vh] shrink-0 overflow-hidden">
+          <div className="relative h-[35vh] lg:h-[45vh] shrink-0 overflow-hidden">
             <AnimatePresence mode="wait">
               <motion.div 
                 key={currentBannerIndex}
@@ -429,7 +429,7 @@ return (
             </AnimatePresence>
             <div className="absolute inset-0 bg-gradient-to-t from-theme-bg via-theme-bg/60 to-transparent" />
             
-            <div className="absolute inset-0 flex flex-col justify-end p-8 lg:p-20 space-y-6">
+            <div className="absolute inset-0 flex flex-col justify-end p-6 lg:p-12 space-y-4">
               <motion.div initial={{ opacity: 0, x: -20 }} animate={{ opacity: 1, x: 0 }} className="flex items-center gap-4 mb-6">
                 <div className="h-px w-12 bg-brand-tactical" />
                 <span className="text-[10px] font-black text-brand-tactical uppercase tracking-[0.5em] italic">

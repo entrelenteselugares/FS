@@ -279,6 +279,15 @@ export const DashboardLayout: React.FC<DashboardLayoutProps> = ({
     onNavigate: () => setDrawerOpen(false),
   };
 
+  // Force close drawer on resize to desktop
+  React.useEffect(() => {
+    const handleResize = () => {
+      if (window.innerWidth >= 1024) setDrawerOpen(false);
+    };
+    window.addEventListener("resize", handleResize);
+    return () => window.removeEventListener("resize", handleResize);
+  }, []);
+
   return (
     <div style={{
       display:   "flex",
@@ -304,12 +313,22 @@ export const DashboardLayout: React.FC<DashboardLayoutProps> = ({
           style={{
             position:   "fixed",
             inset:      0,
-            background: "var(--overlay)",
+            background: "rgba(0,0,0,0.6)",
             backdropFilter: "blur(4px)",
             zIndex:     40,
-            pointerEvents: "auto", // Garantia de que o click no backdrop funcione para fechar
+            display:    "flex",
+            alignItems: "center",
+            justifyContent: "center",
+            cursor:     "pointer",
           }}
-        />
+        >
+          <div className="flex flex-col items-center gap-4 text-white/40 animate-pulse md:hidden">
+            <div className="p-4 rounded-full border border-white/20">
+              <LogoutIcon /> {/* Usando LogoutIcon como X ou CloseIcon se disponível */}
+            </div>
+            <span className="text-[10px] font-black uppercase tracking-[0.5em]">Tocar para fechar</span>
+          </div>
+        </div>
       )}
 
       {/* ── Mobile Drawer ── */}
