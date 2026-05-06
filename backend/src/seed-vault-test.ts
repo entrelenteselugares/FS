@@ -23,6 +23,7 @@ async function seedVaultTest() {
   const album = await prisma.sharedAlbum.create({
     data: {
       nome: "Cofre de Teste Recorrência",
+      slug: "cofre-teste-recorrencia-123",
       ownerId: user.id,
       goalPoses: 36,
       folderId: "mock-folder-subscription-123",

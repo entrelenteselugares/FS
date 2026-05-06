@@ -505,7 +505,7 @@ export class EventController {
           description: `ORÇAMENTO AUTOMÁTICO\nConvidados: ${attendees}\nUso: ${usageType}\nPreferência: ${req.body.workflowPref || 'TRADICIONAL'}\nOrçamento Disponível: ${req.body.availableBudget || 'Não informado'}\nServiços: ${selectedServices.join(", ")}\nDias: ${eventDays}\n\nDescrição do Cliente: ${description}`,
           usageType: usageType || "PESSOAL",
           isQuote: isQuote,
-          quoteStatus: isQuote ? "PENDING" : "APROVADO", // Pontos fixos já nascem aprovados, apenas aguardando pagamento
+          quoteStatus: isQuote ? "PENDING" : "APPROVED", // Pontos fixos já nascem aprovados, apenas aguardando pagamento
           priceBase: totalPrice,
           priceEarly: totalPrice,
           active: false, // MANDATÓRIO: Inativo até confirmação de pagamento
@@ -627,7 +627,7 @@ export class EventController {
           description: "EVENTO FLASH - Criado instantaneamente via App Franqueado",
           temFoto: true,
           temFotoImpressa: true,
-          quoteStatus: "APROVADO",
+          quoteStatus: "APPROVED",
           isQuote: false,
           isPrivate: !!isPrivate,
           retentionDays: isPrivate ? 7 : 15
@@ -686,7 +686,7 @@ export class EventController {
           isPrivate: !!isPrivate,
           isUnitSale: true,
           temFoto: true,
-          quoteStatus: "APROVADO",
+          quoteStatus: "APPROVED",
           isQuote: false,
           coverPhotoUrl: normalizeCoverUrl(coverPhotoUrl),
           retentionDays: isPrivate ? 7 : 15
