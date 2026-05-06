@@ -51,9 +51,9 @@ test.describe('Jornada do Cliente (Consumidor)', () => {
     await page.getByRole('combobox').selectOption({ label: 'CARTÓRIO CENTRAL - CAMPINAS' });
     await page.getByText(/SELECIONE A DATA E HORÁRIO/i).click();
     
-    // Dia aleatório para evitar conflitos de workers
-    const randomDay = Math.floor(Math.random() * 20) + 1;
-    await page.getByRole('button', { name: new RegExp(`^${randomDay}$`) }).first().click();
+    // Avança para o próximo mês para garantir uma data válida no futuro
+    await page.getByTitle('Próximo Mês').click();
+    await page.getByRole('button', { name: '15', exact: true }).first().click();
     
     await page.getByRole('button', { name: 'CONFIRMAR DATA E HORÁRIO' }).click();
     await page.getByRole('button', { name: /PRÓXIMO: CONFIGURAÇÃO/i }).click();
@@ -92,8 +92,9 @@ test.describe('Jornada do Cliente (Consumidor)', () => {
       await page.getByPlaceholder('Nº').fill('123');
       await page.getByText(/SELECIONE A DATA E HORÁRIO/i).click();
       
-      const randomDay = Math.floor(Math.random() * 25) + 1;
-      await page.getByRole('button', { name: new RegExp(`^${randomDay}$`) }).first().click();
+      // Avança para o próximo mês para garantir uma data válida no futuro
+      await page.getByTitle('Próximo Mês').click();
+      await page.getByRole('button', { name: '15', exact: true }).first().click();
       
       await page.getByRole('button', { name: 'CONFIRMAR DATA E HORÁRIO' }).click();
       await page.getByRole('button', { name: /PRÓXIMO: CONFIGURAÇÃO/i }).click();

@@ -4,6 +4,7 @@ import { NotificationService } from "../services/notification.service";
 import { FRONTEND_URL } from "../lib/config";
 import { AuthRequest } from "../lib/auth";
 import { VaultCycleService } from "../services/vaultCycle.service";
+import { IoTService } from "../services/iot.service";
 
 export async function runExpirationJob(req?: AuthRequest): Promise<void> {
   const now = new Date();
@@ -214,4 +215,7 @@ export async function runExpirationJob(req?: AuthRequest): Promise<void> {
 
   // ── 7. Processamento de Assinaturas de Cofres (Fase 13) ──
   await VaultCycleService.processAllDueSubscriptions();
+
+  // ── 8. Monitoramento IoT (Heartbeats) ──
+  await IoTService.checkOfflineDevices();
 }

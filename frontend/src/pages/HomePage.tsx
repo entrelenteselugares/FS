@@ -48,57 +48,57 @@ function EventCard({ event, onClick }: { event: Event; onClick: () => void }) {
   return (
     <div
       onClick={onClick}
-      className="group relative overflow-hidden aspect-[16/10] md:aspect-[4/3] bg-zinc-900 cursor-pointer border-none transition-all duration-700 hover:z-10"
+      className="group relative overflow-hidden rounded-2xl aspect-[4/5] md:aspect-[4/3] bg-[#0a0a0a] cursor-pointer border-none transition-transform duration-300 md:hover:scale-105"
     >
-      {/* Background Image with Hover Effect */}
+      {/* Background Image */}
       <img
         src={event.coverPhotoUrl || fallback}
         alt={event.nomeNoivos}
-        className="absolute inset-0 w-full h-full object-cover transition-transform duration-1000 group-hover:scale-105"
+        className="absolute inset-0 w-full h-full object-cover transition-transform duration-700 md:group-hover:scale-110"
         onError={e => { e.currentTarget.src = fallback; }}
       />
 
-      {/* Immersive Gradient Overlay - Deeper and more subtle */}
-      <div className="absolute inset-0 bg-gradient-to-t from-black/100 via-black/40 to-transparent z-[1] opacity-90 group-hover:opacity-100 transition-opacity" />
+      {/* Immersive Gradient Overlay */}
+      <div className="absolute inset-0 bg-gradient-to-t from-black/95 via-black/20 to-transparent z-[1] opacity-90 group-hover:opacity-100 transition-opacity" />
 
       {/* Professional Badge (Pílula) - Top Left */}
       {event.cartorio && (
-        <div className="absolute top-4 left-4 z-10 flex items-center gap-2 bg-black/40 backdrop-blur-md border border-white/10 rounded-full pl-1.5 pr-4 py-1.5 transition-all duration-300 group-hover:bg-black/60">
-          <div className="w-5 h-5 rounded-full bg-brand-tactical flex items-center justify-center text-[9px] font-black text-black">
+        <div className="absolute top-3 left-3 z-10 backdrop-blur-md bg-white/10 border border-white/10 rounded-full px-2 py-1 md:px-3 md:py-1.5 flex items-center gap-1.5 transition-all">
+          <div className="w-4 h-4 md:w-5 md:h-5 rounded-full bg-emerald-500 flex items-center justify-center text-[8px] md:text-[9px] font-black text-black">
             {event.cartorio.charAt(0).toUpperCase()}
           </div>
-          <span className="text-[9px] font-black text-white uppercase tracking-widest truncate max-w-[100px]">
+          <span className="text-[8px] md:text-[9px] font-black text-white uppercase tracking-widest truncate max-w-[80px] md:max-w-[100px]">
             {event.cartorio}
           </span>
         </div>
       )}
 
       {/* Status Badges - Top Right */}
-      <div className="absolute top-4 right-4 z-10 flex flex-col gap-1 items-end">
+      <div className="absolute top-3 right-3 z-10 flex flex-col gap-1 items-end">
         {today && (
-          <span className="px-2 py-0.5 bg-brand-tactical text-black text-[8px] font-black uppercase tracking-widest rounded-sm shadow-2xl">
+          <span className="px-2 py-0.5 bg-emerald-500 text-black text-[7px] md:text-[8px] font-black uppercase tracking-widest rounded-sm shadow-xl">
             HOJE
           </span>
         )}
         {novo && (
-          <span className="px-2 py-0.5 bg-brand-tactical text-black text-[8px] font-black uppercase tracking-widest rounded-sm shadow-2xl">
+          <span className="px-2 py-0.5 bg-emerald-500 text-black text-[7px] md:text-[8px] font-black uppercase tracking-widest rounded-sm shadow-xl">
             NOVO
           </span>
         )}
       </div>
 
       {/* Content Overlay - Bottom */}
-      <div className="absolute bottom-0 left-0 w-full p-6 md:p-8 z-10 space-y-1">
-        <h3 className="text-xl md:text-2xl font-heading font-black text-white uppercase italic tracking-tight leading-none drop-shadow-2xl">
+      <div className="absolute bottom-0 left-0 w-full p-4 md:p-5 z-10 space-y-1">
+        <h3 className="text-lg md:text-xl font-heading font-black text-white uppercase italic tracking-tight leading-none drop-shadow-lg truncate">
           {event.nomeNoivos}
         </h3>
-        <div className="flex flex-wrap items-center gap-x-3 gap-y-1 text-white/50 text-[8px] md:text-[9px] font-black uppercase tracking-[0.2em] italic">
+        <div className="flex flex-col gap-1 text-white/70 text-[8px] md:text-[9px] font-black uppercase tracking-widest italic">
           <div className="flex items-center gap-1.5">
-            <MapPin size={10} className="text-brand-tactical" />
-            <span>{event.location || event.city || "PONTO DESIGNADO"}</span>
+            <MapPin size={10} className="text-emerald-500" />
+            <span className="truncate">{event.location || event.city || "PONTO DESIGNADO"}</span>
           </div>
           <div className="flex items-center gap-1.5">
-            <Calendar size={10} className="text-brand-tactical" />
+            <Calendar size={10} className="text-emerald-500" />
             <span>{formatDate(event.dataEvento)}</span>
           </div>
         </div>
@@ -297,15 +297,16 @@ export const HomePage = () => {
       <section id="vitrine" className="hp-event-section" style={{ padding: "0 0 80px", background: T.bg }}>
         <div style={{ maxWidth: 1600, margin: "0 auto", padding: "0 2px" }}>
           
-          {/* Mobile compact vitrine header */}
-          <div className="hp-mobile-vitrine-header" style={{ padding: "4px 16px 2px", flexDirection: "column", gap: 4 }}>
-            <div style={{ display: "flex", gap: 6 }}>
+          {/* Mobile compact vitrine header & Filters (horizontal scroll) */}
+          <div className="hp-mobile-vitrine-header flex-col gap-2 p-4">
+            <div className="flex gap-2 overflow-x-auto custom-scrollbar pb-2" style={{ scrollSnapType: "x mandatory" }}>
               <select 
                 value={selectedCity}
                 onChange={e => { setSelectedCity(e.target.value); setPage(1); }}
-                style={{ flex: 1, background: "var(--bg-card)", border: `1px solid ${T.border}`, color: T.text, padding: "10px 12px", fontSize: 11, fontFamily: T.fontD, fontWeight: 900, textTransform: "uppercase", letterSpacing: "0.1em", fontStyle: "italic", outline: "none", appearance: "none" }}
+                className="flex-shrink-0 bg-[#1a1a1a] border border-[#2a2a2a] text-white px-4 py-3 rounded-full text-[10px] font-black uppercase tracking-widest outline-none appearance-none"
+                style={{ scrollSnapAlign: "start" }}
               >
-                <option value="">Todas as Cidades</option>
+                <option value="">Cidades</option>
                 <option value="Campinas">Campinas</option>
                 <option value="São Paulo">São Paulo</option>
                 <option value="Valinhos">Valinhos</option>
@@ -313,10 +314,11 @@ export const HomePage = () => {
               <select 
                 value={selectedType}
                 onChange={e => { setSelectedType(e.target.value); setPage(1); }}
-                style={{ flex: 1, background: "var(--bg-card)", border: `1px solid ${T.border}`, color: T.text, padding: "10px 12px", fontSize: 11, fontFamily: T.fontD, fontWeight: 900, textTransform: "uppercase", letterSpacing: "0.1em", fontStyle: "italic", outline: "none", appearance: "none" }}
+                className="flex-shrink-0 bg-[#1a1a1a] border border-[#2a2a2a] text-white px-4 py-3 rounded-full text-[10px] font-black uppercase tracking-widest outline-none appearance-none"
+                style={{ scrollSnapAlign: "start" }}
               >
-                <option value="">Todas as Categorias</option>
-                <option value="ALBUM_FULL">Álbum Completo</option>
+                <option value="">Categorias</option>
+                <option value="ALBUM_FULL">Álbuns</option>
                 <option value="PHOTO_MARKETPLACE">Live Print</option>
                 <option value="FOTO_POINT">Foto Point</option>
                 <option value="FLASH_EVENT">Flash Event</option>
@@ -389,7 +391,7 @@ export const HomePage = () => {
           ) : (
             <div className="space-y-1">
               {/* SECTIONS MERGED INTO ONE CONTINUOUS GRID FOR MAXIMUM IMPACT */}
-              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-1">
+              <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-3 md:gap-6 px-3 md:px-8">
                 {events.map(ev => (
                   <EventCard key={ev.id} event={ev} onClick={() => navigate(`/e/${ev.slug || ev.id}`)} />
                 ))}

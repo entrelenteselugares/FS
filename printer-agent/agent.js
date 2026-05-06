@@ -12,6 +12,22 @@ const BACKEND_URL = process.env.BACKEND_URL || 'http://localhost:3001';
 const EVENT_ID = process.env.EVENT_ID;
 const PRINTER_NAME = process.env.PRINTER_NAME || 'EPSON_L3250';
 const AGENT_TOKEN = process.env.AGENT_TOKEN;
+const AGENT_ID = process.env.AGENT_ID || 'iot-agent-001';
+
+async function sendHeartbeat() {
+    try {
+        await fetch(`${BACKEND_URL}/api/iot/heartbeat`, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ agentId: AGENT_ID, name: `Printer Agent (${PRINTER_NAME})` })
+        });
+    } catch (err) {
+        // Silencioso para não poluir o log da impressora se o servidor oscilar
+    } finally {
+        setTimeout(sendHeartbeat, 60000); // Heartbeat a cada minuto
+    }
+}
+sendHeartbeat();
 
 // Cria a pasta temporária para as fotos
 const tempDir = path.join(process.cwd(), 'temp');

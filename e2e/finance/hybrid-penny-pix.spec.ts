@@ -45,9 +45,8 @@ test.describe('Hybrid Financial Protocol: Penny PIX (R$ 1,00)', () => {
     
     // Seleção de Data
     await page.getByText(/2026/i).or(page.getByText(/SELECIONE A DATA/i)).first().click();
-    await page.waitForTimeout(1000);
-    const availableDay = page.locator('button:not([disabled])').filter({ hasText: /^[0-9]+$/ }).first();
-    await availableDay.click();
+    await page.getByTitle('Próximo Mês').click();
+    await page.getByRole('button', { name: '15', exact: true }).first().click();
     await page.getByRole('button', { name: /CONFIRMAR/i }).click();
     await page.getByRole('button', { name: /PRÓXIMO/i }).click();
 

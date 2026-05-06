@@ -850,3 +850,15 @@ model Subscription {
 
   @@map("subscriptions")
 }
+model IoTDevice {
+  id        String   @id @default(cuid())
+  name      String
+  agentId   String   @unique
+  lastSeen  DateTime @default(now())
+  status    String   @default("ONLINE") // ONLINE, OFFLINE, WARNING
+  eventId   String?
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@map("iot_devices")
+}

@@ -147,7 +147,10 @@ export class GoogleDriveService {
       if (fs.existsSync(tmpFilePath)) {
         fs.unlinkSync(tmpFilePath);
       }
-      console.error('[DRIVE] Erro no upload de mídia:', error.message);
+      console.error('[DRIVE] Erro CRÍTICO no upload de mídia:', error);
+      if (error.response) {
+        console.error('[DRIVE] Detalhes da API Google (Response):', JSON.stringify(error.response.data, null, 2));
+      }
       throw error;
     }
   }

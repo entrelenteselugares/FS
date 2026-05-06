@@ -233,7 +233,7 @@ export class PaymentController {
         console.log(`[Checkout] Reutilizando pedido existente ${existingPending.id} para evitar duplicata.`);
         // SEGURANÇA: Se não foi passado um orderId específico, e o pedido existente já tem um valor, 
         // e NÃO é um caso de marketplace (onde o valor muda conforme o carrinho), mantemos o valor original.
-        const isCartUpdate = cartItems.length > 0 || !!finalPrintProductId;
+        const isCartUpdate = cartItems.length > 0 || physicalItems.length > 0;
         const finalPreco = (existingPending && !passedOrderId && !isCartUpdate) 
           ? Number(existingPending.valor) 
           : preco;

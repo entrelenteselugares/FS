@@ -101,6 +101,7 @@ import { runLoyaltyBot } from "../controllers/cron.controller";
 import { PhygitalController } from "../controllers/phygital.controller";
 import { FranchiseController } from "../controllers/franchise.controller";
 import { VaultController } from "../controllers/vault.controller";
+import { IoTController } from "../controllers/iot.controller";
 import calendarRoutes from "./calendar.routes";
 import { VaultCycleService } from "../services/vaultCycle.service";
 import { syncAllCalendars } from "../services/calendar-sync.service";
@@ -429,5 +430,9 @@ router.post("/admin/phygital/simulate", optionalAuth, PhygitalController.simulat
 // 🔍 DIAGNÓSTICOS
 router.get("/diag/db", checkDbStatus);
 router.get("/health", (req, res) => res.json({ status: "ok", time: new Date().toISOString() }));
+
+// 📡 IoT & TELEMETRIA
+router.post("/iot/heartbeat", IoTController.heartbeat);
+router.get("/admin/iot/devices", requireAuth, requireRole("ADMIN"), IoTController.listDevices);
 
 export default router;

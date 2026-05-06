@@ -1,7 +1,7 @@
 import { useState, useEffect } from "react";
 import { useNavigate, useLocation } from "react-router-dom";
 import { useAuth } from "../hooks/useAuth";
-import { Search, ShoppingBag, Lock, Menu } from "lucide-react";
+import { Search, ShoppingBag, Lock, Menu, Home } from "lucide-react";
 import { T } from "../lib/theme";
 
 /**
@@ -56,10 +56,11 @@ export function BottomNav() {
   // Resolve the correct dashboard path per role
   // We add unique dummy search params so isActive can distinguish them even if they point to /login
   const tabs = [
+    { id: "home",    label: "Home",      icon: Home,       path: "/" },
     { id: "buscar",  label: "Buscar",    icon: Search,     path: "/?buscar=1" },
-    { id: "pedidos", label: "Pedidos",   icon: ShoppingBag, path: user ? "/minha-conta?s=pedidos" : "/login?s=pedidos" },
-    { id: "cofres",  label: "Cofres",   icon: Lock,        path: user ? "/cofres" : "/login?next=cofres" },
-    { id: "menu",    label: "Menu",     icon: Menu,        path: user ? (user.role === 'CLIENTE' ? "/minha-conta?s=menu" : "/dashboard") : "/auth" },
+    { id: "pedidos", label: "Carrinho",  icon: ShoppingBag, path: user ? "/minha-conta?s=pedidos" : "/login?s=pedidos" },
+    { id: "cofres",  label: "Fotos",     icon: Lock,        path: user ? "/cofres" : "/login?next=cofres" },
+    { id: "menu",    label: "Opções",    icon: Menu,        path: user ? (user.role === 'CLIENTE' ? "/minha-conta?s=menu" : "/dashboard") : "/auth" },
   ];
 
   const isActive = (tabPath: string) => {
@@ -89,11 +90,8 @@ export function BottomNav() {
   return (
     <>
       <nav
-        className="fixed bottom-0 left-0 right-0 z-50 md:hidden"
+        className="fixed bottom-0 w-full z-50 bg-[#141414] border-t border-[#2a2a2a] md:hidden"
         style={{
-          background: "rgba(8,8,8,0.97)",
-          backdropFilter: "blur(24px)",
-          borderTop: `1px solid ${T.border}`,
           paddingBottom: "env(safe-area-inset-bottom, 8px)",
           transform: isVisible ? "translateY(0)" : "translateY(100%)",
           transition: "transform 0.4s cubic-bezier(0.23, 1, 0.32, 1)",

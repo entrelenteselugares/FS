@@ -6,6 +6,9 @@
 - [x] Full operational data reset for fresh testing.
 - [x] Definition of Supabase cleanup SQL scripts.
 - [x] Technical codebase mapping via GSD-MAP.
+- [x] Configure CI/CD automation with Playwright Master Suite.
+- [x] Implement IoT telemetry (Heartbeat) for Printer Agents.
+- [x] Finalize administrative and technical documentation.
 
 ## Milestone 2: Production Hardening & Scalability (DONE)
 
@@ -24,4 +27,3 @@
 - [x] **Phase 11: Cofres de Memórias (Private Photo Vaults & SaaS B2C)**: Implementation of private analog-style sharing, Google Drive storage integration, and subscription-based automated printing. (DONE)
 - [x] **Phase 12: Print-Shop Integration (Physical Product Expansion)**: Hybrid cart logic, shipping engine integration, and fulfillment routing for instant and premium products. (DONE)
 - [x] **Phase 13: Recurring Billing & Gamification V3**: Automation of monthly cycles and loyalty incentives based on subscription activity. (DONE)
-

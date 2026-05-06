@@ -16,11 +16,9 @@ export const Navbar: React.FC = () => {
     : "/minha-conta";
 
   return (
-    <nav style={{
-      display: "flex", alignItems: "center", justifyContent: "space-between",
+    <nav className="hidden md:flex items-center justify-between sticky top-0 z-[100]" style={{
       padding: "12px clamp(12px, 4vw, 28px)", borderBottom: `1px solid ${T.border}`,
       background: "var(--theme-bg-nav)", backdropFilter: "blur(20px)",
-      position: "sticky", top: 0, zIndex: 100,
     }}>
       <div className="flex items-center gap-8">
         <div onClick={() => navigate("/")} style={{ cursor: "pointer", display: "flex", alignItems: "center" }}>

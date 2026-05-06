@@ -155,10 +155,10 @@ export class VaultController {
         media
       });
     } catch (error: any) {
-      console.error("[VAULT] Erro no upload de mídia:", error.message);
+      console.error("[VAULT] Erro no upload de mídia (Controller):", error);
       return res.status(500).json({ 
         error: "Falha no upload.", 
-        details: error.message 
+        details: error.message || "Erro interno na comunicação com o Drive."
       });
     }
   }

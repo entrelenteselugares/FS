@@ -58,7 +58,7 @@ frontend/.env.production
 /brain
 
 # credentials
-ANOTAÇÕES/TECHNICAL/*.json
+ANOTAÇÕES/**/*.json
 # playwright
 /playwright-report
 /test-results
