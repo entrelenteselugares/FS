@@ -81,7 +81,8 @@ export function AgendaTab({
   const acceptedEvents = events.filter(
     (ev) =>
       (ev.captacaoId === userId && ev.captacaoStatus === "ACCEPTED") ||
-      (ev.edicaoId === userId && ev.edicaoStatus === "ACCEPTED")
+      (ev.edicaoId === userId && ev.edicaoStatus === "ACCEPTED") ||
+      (ev.ownerId === userId)
   );
   const displayEvents = activeTab === "agenda" ? acceptedEvents : pendingEvents;
 

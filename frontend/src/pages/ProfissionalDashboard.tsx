@@ -142,6 +142,7 @@ export default function ProfissionalDashboard() {
       (ev.edicaoId === user?.id && ev.edicaoStatus === "PENDING")
   );
 
+
   const opportunities = events.filter(
     (ev) => ev.isPublicCall && !ev.captacaoId
   );

@@ -710,8 +710,8 @@ export class EventController {
       const events = await prisma.event.findMany({
         where: {
           OR: [
-            { captacaoId: userId },
-            { edicaoId: userId },
+            { captacaoId: userId, captacaoStatus: { not: "REJECTED" } },
+            { edicaoId: userId, edicaoStatus: { not: "REJECTED" } },
             { cartorioUserId: userId },
             { ownerId: userId },
             { isPublicCall: true, captacaoId: null, captacaoStatus: "PENDING" }
@@ -722,19 +722,15 @@ export class EventController {
           pedidos: {
             where: { status: "APROVADO" },
             select: { valor: true }
-          }
+          },
+          _count: { select: { pedidos: true } },
+          cartorioUser: { include: { cartorio: { select: { razaoSocial: true } } } }
         }
       });
 
       const mapped = events.map(e => ({
-        id: e.id,
-        nomeNoivos: e.nomeNoivos,
-        dataEvento: e.dataEvento,
-        location: e.location,
-        type: e.type,
-        active: e.active,
-        slug: e.slug,
-        captacaoId: e.captacaoId,
+        ...e,
+        cartorio: e.cartorioUser?.cartorio?.razaoSocial || null,
         collected: e.pedidos.reduce((acc: number, o: any) => acc + Number(o.valor), 0)
       }));
 

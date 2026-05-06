@@ -240,9 +240,13 @@ export async function adminListEvents(req: AuthRequest, res: Response): Promise<
     
     const searchString = q ? String(q) : undefined;
     if (searchString) {
-      where.OR = [
-        { nomeNoivos: { contains: searchString, mode: "insensitive" } },
-        { location: { contains: searchString, mode: "insensitive" } },
+      where.AND = [
+        {
+          OR: [
+            { nomeNoivos: { contains: searchString, mode: "insensitive" } },
+            { location: { contains: searchString, mode: "insensitive" } },
+          ]
+        }
       ];
     }
 
