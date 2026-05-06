@@ -115,12 +115,17 @@ export class VaultController {
       const fileName = `${Date.now()}-${file.originalname.replace(/\s+/g, '_')}`;
       
       let uploadBuffer = file.buffer;
+      let finalMimeType = file.mimetype;
+      let finalFileName = fileName;
+
       if (file.mimetype.startsWith('image/')) {
         try {
           uploadBuffer = await sharp(file.buffer)
             .resize(2000, 2000, { fit: 'inside', withoutEnlargement: true })
             .jpeg({ quality: 80 })
             .toBuffer();
+          finalMimeType = 'image/jpeg';
+          finalFileName = fileName.replace(/\.[^/.]+$/, "") + ".jpeg";
           console.log(`[VAULT] Imagem comprimida de ${file.size} para ${uploadBuffer.length} bytes.`);
         } catch (sharpError) {
           console.warn("[VAULT] Falha na compressão Sharp, enviando original:", sharpError);
@@ -129,9 +134,9 @@ export class VaultController {
 
       const driveFile = await driveService.uploadMedia({
         folderId: album.folderId,
-        fileName,
+        fileName: finalFileName,
         buffer: uploadBuffer,
-        mimeType: file.mimetype
+        mimeType: finalMimeType
       });
 
       // 2. Persistir metadados no Prisma (incluindo o thumbnailLink para performance)

@@ -113,7 +113,7 @@ export class GoogleDriveService {
 
     try {
       const file = await this.drive.files.create({
-        requestBody: {
+        resource: {
           name: fileName,
           parents: [folderId],
         },
