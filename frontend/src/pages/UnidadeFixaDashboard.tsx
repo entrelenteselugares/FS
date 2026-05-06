@@ -100,7 +100,7 @@ function formatDateTime(d: string | null | undefined) {
   }).format(date);
 }
 
-type Tab = "agenda" | "financas" | "equipe" | "configuracoes" | "franquia";
+type Tab = "agenda" | "financas" | "equipe" | "configuracoes" | "franquia" | "monitor";
 
 export default function UnidadeFixaDashboard() {
   const { user } = useAuth();
@@ -312,6 +312,7 @@ export default function UnidadeFixaDashboard() {
       { label: "Franquia Print", onClick: () => setTab("franquia"), isActive: tab === "franquia", icon: <Printer size={18} /> }
     ] : []),
     { label: "Agenda Tática", onClick: () => setTab("agenda"), isActive: tab === "agenda", icon: <Calendar size={18} /> },
+    { label: "Monitor de Fila", onClick: () => setTab("monitor"), isActive: tab === "monitor", icon: <Printer size={18} /> },
     { label: "Fluxo Financeiro", onClick: () => setTab("financas"), isActive: tab === "financas", icon: <DollarSign size={18} />, badge: repasses.filter(r => r.status !== "PAID").length || undefined },
     { label: "Rede Técnica", onClick: () => { setTab("equipe"); if (!teamLoaded) loadTeam(); }, isActive: tab === "equipe", icon: <Users2 size={18} /> },
     { label: "Configuração", onClick: () => setTab("configuracoes"), isActive: tab === "configuracoes", icon: <Settings size={18} /> },
@@ -785,6 +786,58 @@ export default function UnidadeFixaDashboard() {
                 </div>
               </div>
             )}
+          </div>
+        )}
+
+        {/* ── MONITOR DE FILA ── */}
+        {tab === "monitor" && (
+          <div className="space-y-10">
+            <div className="lux-card p-10 border-l-4 border-l-brand-tactical bg-gradient-to-br from-brand-tactical/[0.03] to-transparent relative overflow-hidden">
+              <div className="absolute top-0 right-0 p-10 opacity-[0.03] pointer-events-none">
+                <Printer size={120} />
+              </div>
+              <div className="relative z-10 space-y-6">
+                <h3 className="text-2xl font-heading font-black text-theme-text uppercase italic tracking-tight">Monitor de Operação Phygital</h3>
+                <p className="text-[11px] font-bold text-theme-muted uppercase tracking-[0.2em] leading-relaxed max-w-3xl">
+                  Acompanhe em tempo real a fila de impressão de cada evento. Gerencie capturas pendentes e garanta a entrega instantânea das memórias físicas.
+                </p>
+              </div>
+            </div>
+
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+              {eventos.map(ev => (
+                <div key={ev.id} className="lux-card p-6 space-y-6 group hover:border-brand-tactical/40 transition-all duration-500">
+                  <div className="space-y-2">
+                    <div className="flex items-center gap-2">
+                       <div className="w-2 h-2 rounded-full bg-brand-tactical animate-pulse" />
+                       <p className="text-[10px] font-black text-theme-muted uppercase tracking-widest italic">Operação Ativa</p>
+                    </div>
+                    <h4 className="text-xl font-heading font-black text-theme-text uppercase italic tracking-tight truncate">{ev.title}</h4>
+                    <p className="text-[9px] font-bold text-theme-muted uppercase tracking-widest">{formatDate(ev.date)} · {ev.location}</p>
+                  </div>
+
+                  <div className="pt-4 border-t border-theme-border/30 flex items-center justify-between">
+                    <div className="space-y-1">
+                      <p className="text-[8px] font-black text-theme-muted uppercase tracking-widest">Status da Fila</p>
+                      <p className="text-[11px] font-black text-theme-text uppercase italic">Monitor de Rede</p>
+                    </div>
+                    <button 
+                      onClick={() => navigate(`/print-monitor/${ev.id}`)}
+                      className="px-6 py-3 bg-brand-tactical text-brand-text text-[9px] font-black uppercase tracking-[0.4em] hover:brightness-110 transition-all italic flex items-center gap-2"
+                    >
+                      ABRIR MONITOR <ArrowRight size={12} />
+                    </button>
+                  </div>
+                </div>
+              ))}
+              
+              {eventos.length === 0 && (
+                <div className="col-span-full py-20 border border-dashed border-theme-border flex flex-col items-center justify-center gap-4 text-center">
+                   <Printer size={48} className="text-theme-border/30" />
+                   <p className="text-[10px] font-black text-theme-muted uppercase tracking-[0.4em]">Nenhum evento detectado para monitoramento.</p>
+                </div>
+              )}
+            </div>
           </div>
         )}
 

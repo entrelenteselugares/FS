@@ -260,21 +260,27 @@ export default function EventPage() {
 
         const eventDate = eventData.dataEvento ? new Date(eventData.dataEvento) : null;
         const now = new Date();
-        const isFuture = eventDate && (eventDate.getTime() + (12 * 60 * 60 * 1000)) > now.getTime();
+        const isFuture = eventData.dataEvento ? (() => {
+          try {
+            const datePart = String(eventData.dataEvento).split('T')[0];
+            const [year, month, day] = datePart.split('-').map(Number);
+            const startOfDay = new Date(year, month - 1, day, 0, 0, 0, 0);
+            return startOfDay.getTime() > now.getTime();
+          } catch { return false; }
+        })() : false;
+        
         const intent = searchParams.get("intent");
 
         if (intent === "upgrade") {
           setStep("paywall");
-        } else if (isFuture && !eventData.lightroomUrl && !eventData.driveUrl && (!eventData.previewPhotos || eventData.previewPhotos.length === 0) && eventData.type === 'ALBUM_FULL') {
-          // Apenas Album Full entra em countdown estrito se for futuro e sem fotos
+        } else if (isFuture) {
           setStep("countdown");
         } else if (eventData.isPrivate && !eventData.isPrimaryClient && !eventData.isOwner) {
           setStep("denied");
         } else if ((eventData.paywall && !eventData.paywall.active) || eventData.isOwner || eventData.type === 'PHOTO_MARKETPLACE' || eventData.type === 'FOTO_POINT') {
           setStep("success"); 
-        } else if (isFuture) {
-          // Fallback para countdown se nada acima capturou
-          setStep("countdown");
+        } else {
+          setStep("paywall");
         }
 
         if (eventData.type === 'PHOTO_MARKETPLACE' || eventData.type === 'FOTO_POINT') {
@@ -295,7 +301,7 @@ export default function EventPage() {
                 } : null);
               }
 
-              if (mediaList.length > 0) {
+              if (mediaList.length > 0 && !isFuture) {
                 setStep("success");
               }
             })
