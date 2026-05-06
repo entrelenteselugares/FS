@@ -282,9 +282,20 @@ export default function EventPage() {
           const mParams = { ...params, ...(mOid ? { orderId: mOid } : {}) };
           api.get(`/marketplace/events/${eventData.id}/media`, { params: mParams })
             .then(res => {
-              setMedias(res.data);
-              // Se tiver fotos, forçamos sair do countdown para mostrar a galeria
-              if (res.data && res.data.length > 0) {
+              const data = res.data;
+              const mediaList = Array.isArray(data) ? data : (data.media || []);
+              const mUnlocked = data.unlockedMediaIds || [];
+              
+              setMedias(mediaList);
+              
+              if (mUnlocked.length > 0) {
+                setEvent(prev => prev ? { 
+                  ...prev, 
+                  unlockedMediaIds: Array.from(new Set([...(prev.unlockedMediaIds || []), ...mUnlocked])) 
+                } : null);
+              }
+
+              if (mediaList.length > 0) {
                 setStep("success");
               }
             })
@@ -402,7 +413,7 @@ export default function EventPage() {
       // Give 12 hours grace period into the next day
       const endOfEvent = new Date(endOfDay.getTime() + (12 * 60 * 60 * 1000));
       return endOfEvent.getTime() < new Date().getTime();
-    } catch(e) {
+    } catch {
       return false;
     }
   })() : false;

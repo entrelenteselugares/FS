@@ -29,6 +29,9 @@ export async function getMeusPedidos(req: AuthRequest, res: Response): Promise<v
             temFotoImpressa: true,
           },
         },
+        items: {
+          include: { media: true }
+        }
       },
       orderBy: { createdAt: "desc" },
     });
@@ -43,6 +46,7 @@ export async function getMeusPedidos(req: AuthRequest, res: Response): Promise<v
       accessType: p.accessType,
       accessExpiresAt: p.accessExpiresAt,
       manualType: p.manualType,
+      items: p.items
     }));
 
     res.json(resultado);
@@ -81,6 +85,9 @@ export async function getMeuPedidoDetalhe(req: AuthRequest, res: Response): Prom
             temFotoImpressa: true,
           },
         },
+        items: {
+          include: { media: true }
+        }
       },
     });
 
@@ -119,6 +126,7 @@ export async function getMeuPedidoDetalhe(req: AuthRequest, res: Response): Prom
         lightroomUrl: canAccess ? pedido.event?.lightroomUrl ?? null : null,
         driveUrl: canAccess ? pedido.event?.driveUrl ?? null : null,
       },
+      items: pedido.items,
     });
   } catch (err) {
     console.error("getMeuPedidoDetalhe:", err);

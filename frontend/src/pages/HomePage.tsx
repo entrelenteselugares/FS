@@ -478,17 +478,17 @@ export const HomePage = () => {
       </section>
 
       {/* ── FOOTER ────────────────────────────────────────────────────────── */}
-      <footer style={{ borderTop: `1px solid ${T.border}`, padding: "80px 28px", background: "var(--bg)" }}>
+      <footer style={{ borderTop: `1px solid ${T.border}`, padding: "80px 28px", background: T.bgCard }}>
         <div className="hp-footer-inner" style={{ maxWidth: 1100, margin: "0 auto", display: "flex", justifyContent: "space-between", alignItems: "flex-start", gap: "4rem" }}>
           <div>
             <div style={{ display: "flex", alignItems: "center", marginBottom: 20 }}>
               <img src="/logo-fs.png" alt="Foto Segundo" style={{ 
                 height: 24, 
                 objectFit: "contain", 
-                filter: document.documentElement.getAttribute('data-theme') === 'dark' ? "brightness(0) invert(1)" : "none"
+                filter: "var(--logo-filter)"
               }} />
             </div>
-            <p style={{ fontSize: 11, fontFamily: T.fontB, color: "rgba(255,255,255,0.3)", lineHeight: 1.8, maxWidth: 280, margin: 0, whiteSpace: "pre-line" }}>
+            <p style={{ fontSize: 11, fontFamily: T.fontB, color: T.textMuted, lineHeight: 1.8, maxWidth: 280, margin: 0, whiteSpace: "pre-line" }}>
               {DICT.FOOTER_COPYRIGHT}
             </p>
           </div>

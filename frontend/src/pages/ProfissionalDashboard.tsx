@@ -291,14 +291,14 @@ export default function ProfissionalDashboard() {
     { label: "Serviços", onClick: () => setActiveTab("servicos"), isActive: activeTab === "servicos", icon: <Briefcase size={16} /> },
     { label: "Minha Rede", onClick: () => setActiveTab("network"), isActive: activeTab === "network", icon: <Users size={16} /> },
     { label: "Agenda Google", onClick: () => setActiveTab("calendar"), isActive: activeTab === "calendar", icon: <Calendar size={16} /> },
-    ...( (user?.franchiseProfile || (profile?.cartorios && profile.cartorios.length > 0)) ? [{ 
+    ...(user?.franchiseProfile ? [{ 
       label: "Franquia Print", 
       onClick: () => setActiveTab("franquia"), 
       isActive: activeTab === "franquia", 
       icon: <Printer size={16} /> 
     }] : []),
     { label: "Meu Perfil", onClick: () => setActiveTab("perfil"), isActive: activeTab === "perfil", icon: <Settings size={16} /> },
-  ], [activeTab, pendingEvents.length, unitInvites.length, user?.franchiseProfile, profile?.cartorios]);
+  ], [activeTab, pendingEvents.length, unitInvites.length, user?.franchiseProfile]);
 
   const residentUnits = profile?.cartorios?.map((cp) => cp.cartorio.razaoSocial) || [];
 

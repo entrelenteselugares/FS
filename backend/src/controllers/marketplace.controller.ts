@@ -347,7 +347,28 @@ export class MarketplaceController {
         orderBy: { shortId: "asc" }
       });
 
-      return res.json(media);
+      // 4. Se logado, retorna IDs desbloqueados
+      let unlockedMediaIds: string[] = [];
+      if (authUser) {
+        const paidOrders = await prisma.order.findMany({
+          where: { 
+            eventId: event.id, 
+            clienteId: authUser.userId,
+            status: { in: ["PAGO", "APROVADO"] }
+          },
+          include: { items: true }
+        });
+        paidOrders.forEach(o => {
+          o.items.forEach(item => {
+            if (item.mediaId) unlockedMediaIds.push(item.mediaId);
+          });
+        });
+      }
+
+      return res.json({
+        media,
+        unlockedMediaIds
+      });
     } catch (error) {
       console.error("[Marketplace.listMedia] Erro:", error);
       return res.status(500).json({ error: "Erro ao listar mídias." });

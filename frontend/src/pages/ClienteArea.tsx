@@ -36,6 +36,15 @@ interface Pedido {
   showAlbum: boolean;
   showVideo: boolean;
   manualType?: string | null;
+  items?: Array<{
+    id: string;
+    mediaId: string;
+    media?: {
+      id: string;
+      url: string;
+      shortId: string;
+    };
+  }>;
 }
 
 function formatCurrency(v: number) {
@@ -1069,6 +1078,34 @@ function PedidoDetalhe({ pedido, loading, onGoToEvent, onChangePrivacy, onToggle
              <p className="text-[10px] font-black text-theme-text uppercase tracking-[0.3em]">Arquivos Disponíveis</p>
           </div>
           
+          {/* Individual Purchased Photos (Marketplace) */}
+          {pedido.items && pedido.items.length > 0 && (
+            <div className="space-y-6">
+              <div className="flex items-center gap-3">
+                 <div className="w-1.5 h-1.5 rounded-full bg-emerald-500" />
+                 <p className="text-[10px] font-black text-theme-text uppercase tracking-[0.3em]">Mídias Adquiridas</p>
+              </div>
+              <div className="grid grid-cols-2 md:grid-cols-3 gap-3">
+                {pedido.items.map(item => item.media && (
+                  <div key={item.id} className="relative group aspect-[3/4] bg-zinc-900 border border-theme-border/40 overflow-hidden">
+                    <img src={item.media.url} className="w-full h-full object-cover" />
+                    <div className="absolute inset-0 bg-black/60 opacity-0 group-hover:opacity-100 transition-all flex items-center justify-center gap-2">
+                       <button 
+                         onClick={() => window.open(item.media?.url, '_blank')}
+                         className="p-3 bg-brand-tactical text-black rounded-full hover:scale-110 transition-transform"
+                       >
+                         <Zap size={16} fill="currentColor" />
+                       </button>
+                    </div>
+                    <div className="absolute bottom-2 left-2 px-2 py-0.5 bg-black/80 text-[8px] font-black text-brand-tactical uppercase tracking-widest">
+                       {item.media.shortId}
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </div>
+          )}
+
           {loading ? (
             <div className="py-20 flex flex-col items-center gap-4">
               <div className="w-10 h-10 border-2 border-brand-tactical border-t-transparent rounded-full animate-spin" />
