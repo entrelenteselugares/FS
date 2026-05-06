@@ -18,13 +18,16 @@ export function TeamSelector({ label, onSelect, network }: TeamSelectorProps) {
     p.email.toLowerCase().includes(search.toLowerCase())
   );
 
-  const handleModeChange = (newMode: "me" | "direct" | "public") => {
+  const handleModeChange = (newMode: "me" | "direct" | "public" | "none") => {
     setMode(newMode);
     if (newMode === "me") {
       onSelect(null, false);
       setSelectedPartnerId(null);
     } else if (newMode === "public") {
       onSelect(null, true);
+      setSelectedPartnerId(null);
+    } else if (newMode === "none") {
+      onSelect("NONE", false); // Special flag for no capture
       setSelectedPartnerId(null);
     } else if (newMode === "direct" && selectedPartnerId) {
       onSelect(selectedPartnerId, false);
@@ -42,30 +45,38 @@ export function TeamSelector({ label, onSelect, network }: TeamSelectorProps) {
         <Users size={12} /> {label}
       </label>
 
-      <div className="grid grid-cols-3 gap-2">
+      <div className="grid grid-cols-2 sm:grid-cols-4 gap-2">
         <button
           type="button"
           onClick={() => handleModeChange("me")}
-          className={`p-3 border text-center transition-all flex flex-col items-center gap-1 ${mode === "me" ? "border-brand-tactical bg-brand-tactical/10 text-brand-tactical" : "border-theme-border bg-theme-bg-muted text-theme-muted"}`}
+          className={`p-3 border text-center transition-all flex flex-col items-center justify-center gap-1 ${mode === "me" ? "border-brand-tactical bg-brand-tactical/10 text-brand-tactical shadow-[0_0_15px_rgba(133,185,172,0.1)]" : "border-theme-border bg-theme-bg-muted text-theme-muted"}`}
         >
           <Check size={14} />
-          <span className="text-[9px] font-black uppercase tracking-widest">Eu Mesmo</span>
+          <span className="text-[8px] font-black uppercase tracking-widest leading-none">Eu Mesmo</span>
         </button>
         <button
           type="button"
           onClick={() => handleModeChange("direct")}
-          className={`p-3 border text-center transition-all flex flex-col items-center gap-1 ${mode === "direct" ? "border-cyan-400 bg-cyan-400/10 text-cyan-400" : "border-theme-border bg-theme-bg-muted text-theme-muted"}`}
+          className={`p-3 border text-center transition-all flex flex-col items-center justify-center gap-1 ${mode === "direct" ? "border-cyan-400 bg-cyan-400/10 text-cyan-400" : "border-theme-border bg-theme-bg-muted text-theme-muted"}`}
         >
           <UserPlus size={14} />
-          <span className="text-[9px] font-black uppercase tracking-widest">Minha Rede</span>
+          <span className="text-[8px] font-black uppercase tracking-widest leading-none">Minha Rede</span>
         </button>
         <button
           type="button"
           onClick={() => handleModeChange("public")}
-          className={`p-3 border text-center transition-all flex flex-col items-center gap-1 ${mode === "public" ? "border-yellow-400 bg-yellow-400/10 text-yellow-400" : "border-theme-border bg-theme-bg-muted text-theme-muted"}`}
+          className={`p-3 border text-center transition-all flex flex-col items-center justify-center gap-1 ${mode === "public" ? "border-yellow-400 bg-yellow-400/10 text-yellow-400" : "border-theme-border bg-theme-bg-muted text-theme-muted"}`}
         >
           <Globe size={14} />
-          <span className="text-[9px] font-black uppercase tracking-widest">Solicitar</span>
+          <span className="text-[8px] font-black uppercase tracking-widest leading-none">Solicitar</span>
+        </button>
+        <button
+          type="button"
+          onClick={() => handleModeChange("none")}
+          className={`p-3 border text-center transition-all flex flex-col items-center justify-center gap-1 ${mode === "none" ? "border-red-500 bg-red-500/10 text-red-500 shadow-[0_0_15px_rgba(239,68,68,0.1)]" : "border-theme-border bg-theme-bg-muted text-theme-muted"}`}
+        >
+          <X size={14} />
+          <span className="text-[8px] font-black uppercase tracking-widest leading-none">Nenhum</span>
         </button>
       </div>
 

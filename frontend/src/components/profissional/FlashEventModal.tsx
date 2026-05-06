@@ -17,6 +17,8 @@ export function FlashEventModal({ onClose, onSuccess, onError, network }: FlashE
   const [loading, setLoading] = useState(false);
   const [isPrivate, setIsPrivate] = useState(false);
   const [date, setDate] = useState(new Date().toISOString().split('T')[0]);
+  const [startTime, setStartTime] = useState("19:00");
+  const [endTime, setEndTime] = useState("23:00");
   const [delegatedUserId, setDelegatedUserId] = useState<string | null>(null);
   const [isPublicCall, setIsPublicCall] = useState(false);
 
@@ -28,6 +30,8 @@ export function FlashEventModal({ onClose, onSuccess, onError, network }: FlashE
         name,
         pricePerPhoto: Number(price),
         dataEvento: date,
+        startTime,
+        endTime,
         captacaoId: delegatedUserId,
         isPublicCall,
         isPrivate
@@ -87,17 +91,39 @@ export function FlashEventModal({ onClose, onSuccess, onError, network }: FlashE
               </div>
             </div>
             
-            <div className="space-y-2">
-              <label className="text-[10px] font-black text-theme-muted uppercase tracking-widest italic flex items-center gap-2">
-                <Calendar size={12} /> Data do Evento
-              </label>
-              <input
-                type="date"
-                required
-                value={date}
-                onChange={e => setDate(e.target.value)}
-                className="w-full bg-theme-bg-muted border border-theme-border p-4 text-theme-text outline-none focus:border-yellow-400/50 transition-all font-medium"
-              />
+            <div className="grid grid-cols-2 gap-4">
+              <div className="space-y-2">
+                <label className="text-[10px] font-black text-theme-muted uppercase tracking-widest italic flex items-center gap-2">
+                  <Calendar size={12} /> Data
+                </label>
+                <input
+                  type="date"
+                  required
+                  value={date}
+                  onChange={e => setDate(e.target.value)}
+                  className="w-full bg-theme-bg-muted border border-theme-border p-4 text-theme-text outline-none focus:border-yellow-400/50 transition-all font-medium text-xs"
+                />
+              </div>
+
+              <div className="space-y-2">
+                <label className="text-[10px] font-black text-theme-muted uppercase tracking-widest italic">Início — Término</label>
+                <div className="flex items-center gap-2">
+                  <input
+                    type="time"
+                    required
+                    value={startTime}
+                    onChange={e => setStartTime(e.target.value)}
+                    className="w-full bg-theme-bg-muted border border-theme-border p-4 text-theme-text outline-none focus:border-yellow-400/50 transition-all font-black text-xs italic"
+                  />
+                  <input
+                    type="time"
+                    required
+                    value={endTime}
+                    onChange={e => setEndTime(e.target.value)}
+                    className="w-full bg-theme-bg-muted border border-theme-border p-4 text-theme-text outline-none focus:border-yellow-400/50 transition-all font-black text-xs italic"
+                  />
+                </div>
+              </div>
             </div>
 
             <div className="pt-4 border-t border-theme-border/30">

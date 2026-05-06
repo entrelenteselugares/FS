@@ -598,7 +598,7 @@ export class EventController {
    * Cria um evento instantâneo (Flash) para franqueados/profissionais em campo.
    */
   static async createFlashEvent(req: AuthRequest, res: Response) {
-    const { name, pricePerPhoto, isPrivate, dataEvento, captacaoId: delegatedCaptacaoId, isPublicCall } = req.body;
+    const { name, pricePerPhoto, isPrivate, dataEvento, startTime, endTime, captacaoId: delegatedCaptacaoId, isPublicCall } = req.body;
     const { userId } = req.user!;
 
     if (!name) return res.status(400).json({ error: "Nome do evento é obrigatório" });
@@ -610,15 +610,22 @@ export class EventController {
 
       const slug = `${name.toLowerCase().replace(/\s+/g, "-")}-${Math.random().toString(36).substring(2, 6)}`;
       
+      // Parse local time
+      const finalStartTime = dataEvento && startTime ? new Date(`${dataEvento}T${startTime}:00-03:00`) : (dataEvento ? new Date(dataEvento) : new Date());
+      const finalEndTime = dataEvento && endTime ? new Date(`${dataEvento}T${endTime}:00-03:00`) : null;
+
+      const isNone = delegatedCaptacaoId === "NONE";
+
       const event = await prisma.event.create({
         data: {
           nomeNoivos: name,
           slug,
           type: "FLASH_EVENT",
           active: !delegatedCaptacaoId && !isPublicCall,
-          captacaoId: delegatedCaptacaoId || (isPublicCall ? null : userId),
-          captacaoStatus: (delegatedCaptacaoId || isPublicCall) ? "PENDING" : "ACCEPTED",
-          dataEvento: dataEvento ? new Date(dataEvento) : new Date(),
+          captacaoId: isNone ? null : (delegatedCaptacaoId || (isPublicCall ? null : userId)),
+          captacaoStatus: isNone ? "ACCEPTED" : ((delegatedCaptacaoId || isPublicCall) ? "PENDING" : "ACCEPTED"),
+          dataEvento: finalStartTime,
+          eventEndTime: finalEndTime,
           isPublicCall: !!isPublicCall,
           ownerId: userId,
           franchiseeId: profile?.id,
