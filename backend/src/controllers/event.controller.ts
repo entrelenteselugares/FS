@@ -620,7 +620,7 @@ export class EventController {
         data: {
           nomeNoivos: name,
           slug,
-          type: "FLASH_EVENT",
+          type: "PHOTO_MARKETPLACE",
           active: !delegatedCaptacaoId && !isPublicCall,
           captacaoId: isNone ? null : (delegatedCaptacaoId || (isPublicCall ? null : userId)),
           captacaoStatus: isNone ? "ACCEPTED" : ((delegatedCaptacaoId || isPublicCall) ? "PENDING" : "ACCEPTED"),

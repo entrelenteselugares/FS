@@ -14,6 +14,7 @@ export const T = {
   bg:      "var(--bg)",       // #0a0a0a
   bgCard:  "var(--bg-card)",  // #111111
   bgField: "var(--bg-field)", // #0c0c0c
+  bgNav:   "var(--theme-bg-nav)",
 
   // ── Borders ───────────────────────────────────────
   border:  "var(--border)",   // #1c1c1c
@@ -35,9 +36,9 @@ export const T = {
   overlay:     "var(--overlay)",
 
   // ── Glassmorphism ────────────────────────────────
-  glass:       "rgba(10, 10, 10, 0.75)",
-  glassDeep:   "rgba(0, 0, 0, 0.9)",
-  glassBorder: "rgba(255, 255, 255, 0.12)",
+  glass:       "var(--glass)",
+  glassDeep:   "var(--glass-deep)",
+  glassBorder: "var(--glass-border)",
   blur:        "blur(30px) saturate(180%)",
 
   // ── Font Families ─────────────────────────────────

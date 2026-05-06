@@ -291,7 +291,7 @@ export default function ProfissionalDashboard() {
     { label: "Serviços", onClick: () => setActiveTab("servicos"), isActive: activeTab === "servicos", icon: <Briefcase size={16} /> },
     { label: "Minha Rede", onClick: () => setActiveTab("network"), isActive: activeTab === "network", icon: <Users size={16} /> },
     { label: "Agenda Google", onClick: () => setActiveTab("calendar"), isActive: activeTab === "calendar", icon: <Calendar size={16} /> },
-    ...(user?.franchiseProfile ? [{ 
+    ...(user?.franchiseProfile && user?.franchiseProfile.active ? [{ 
       label: "Franquia Print", 
       onClick: () => setActiveTab("franquia"), 
       isActive: activeTab === "franquia", 
@@ -361,7 +361,7 @@ export default function ProfissionalDashboard() {
                   </div>
                 </div>
 
-                {user?.franchiseProfile && (
+                {user?.franchiseProfile && user?.franchiseProfile.active && (
                   <div 
                     onClick={() => setIsFlashModalOpen(true)}
                     className="bg-theme-bg-muted border border-yellow-400/30 p-6 h-full flex items-center justify-between cursor-pointer hover:border-yellow-400/60 transition-all group overflow-hidden relative"

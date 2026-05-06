@@ -18,7 +18,7 @@ export const Navbar: React.FC = () => {
   return (
     <nav className="flex items-center justify-between sticky top-0 z-[100]" style={{
       padding: "8px 16px", borderBottom: `1px solid ${T.border}`,
-      background: T.bg, backdropFilter: "blur(20px)",
+      background: T.bgNav, backdropFilter: "blur(20px)",
     }}>
       <div className="flex items-center gap-8">
         <div onClick={() => navigate("/")} style={{ cursor: "pointer", display: "flex", alignItems: "center" }}>

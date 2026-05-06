@@ -415,7 +415,7 @@ export const HomePage = () => {
                       onChange={e => setQuery(e.target.value)}
                       onKeyDown={e => e.key === "Enter" && fetchEvents(query, 1)}
                       placeholder="Pesquisar evento ou fotógrafo..."
-                      className="w-full bg-[#1a1a1a] border border-[#2a2a2a] pl-12 pr-4 py-4 rounded-xl text-[11px] font-black uppercase tracking-widest text-white outline-none focus:border-brand-tactical/50 transition-all italic"
+                      className="w-full bg-[var(--bg-field)] border border-[var(--border)] pl-12 pr-4 py-4 rounded-xl text-[11px] font-black uppercase tracking-widest text-[var(--text)] outline-none focus:border-brand-tactical/50 transition-all italic"
                     />
                   </div>
                 </div>
@@ -437,10 +437,10 @@ export const HomePage = () => {
                 ← Anterior
               </button>
               <span style={{ fontFamily: T.fontD, fontWeight: 900, fontSize: 18, color: "var(--text)" }}>
-                {page} <span style={{ color: "rgba(255,255,255,0.1)", margin: "0 8px" }}>/</span> {totalPages}
+                {page} <span style={{ color: "var(--border)", margin: "0 8px" }}>/</span> {totalPages}
               </span>
               <button onClick={() => setPage(p => Math.min(totalPages, p + 1))} disabled={page === totalPages}
-                style={{ background: "none", border: "none", color: page === totalPages ? "rgba(255,255,255,0.1)" : "rgba(255,255,255,0.8)", cursor: page === totalPages ? "default" : "pointer", fontSize: 10, fontFamily: T.fontB, letterSpacing: "0.2em", textTransform: "uppercase" }}>
+                style={{ background: "none", border: "none", color: page === totalPages ? "var(--border)" : "var(--text-2)", cursor: page === totalPages ? "default" : "pointer", fontSize: 10, fontFamily: T.fontB, letterSpacing: "0.2em", textTransform: "uppercase" }}>
                 Próximo →
               </button>
             </div>
@@ -463,7 +463,7 @@ export const HomePage = () => {
                 style={{ 
                   flex: 1, 
                   padding: "48px 0", 
-                  borderRight: i < STEPS.length - 1 ? "1px solid rgba(255,255,255,0.05)" : "none", 
+                  borderRight: i < STEPS.length - 1 ? "1px solid var(--border)" : "none", 
                   paddingRight: i < STEPS.length - 1 ? 60 : 0, 
                   paddingLeft: i > 0 ? 60 : 0 
                 }}
