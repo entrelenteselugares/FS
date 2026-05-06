@@ -267,7 +267,7 @@ router.get("/share/e/:id", SEOController.getEventPreview);
 
 // ── Checkout & Webhook ─────────────────────────────────────────────────────────
 router.post("/checkout/pending",     PaymentController.createPendingOrder);
-router.post("/checkout/payment",     PaymentController.processPayment);
+router.post("/checkout/payment",     optionalAuth, PaymentController.processPayment);
 router.get("/checkout/shipping-quote", optionalAuth, PaymentController.calculateShipping);
 router.post(
   "/webhooks/mercadopago",

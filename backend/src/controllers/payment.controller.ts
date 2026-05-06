@@ -725,7 +725,17 @@ export class PaymentController {
 
       // 5. Pagamento em DINHEIRO (Cash) - Pulo do Gato
       if (req.body.method === "CASH") {
-        // TODO: Validar se o executor tem permissão de Profissional/Franqueado
+        // Validação de Segurança: Apenas Profissionais, Franqueados ou Admins podem aprovar CASH
+        const authUser = (req as any).user;
+        const canApproveCash = authUser && ["ADMIN", "PROFISSIONAL", "CARTORIO", "FRANCHISEE"].includes(authUser.role);
+
+        if (!canApproveCash) {
+          console.warn(`[SECURITY ALERT] Tentativa de pagamento CASH não autorizada por usuário: ${authUser?.email || 'ANÔNIMO'}`);
+          return res.status(403).json({ 
+            error: "Não autorizado", 
+            message: "Apenas profissionais autorizados podem registrar pagamentos em dinheiro." 
+          });
+        }
         const updatedOrder = await prisma.order.update({
           where: { id: order.id },
           data: {
