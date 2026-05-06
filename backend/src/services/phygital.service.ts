@@ -111,6 +111,18 @@ export class PhygitalService {
         include: { event: true }
       });
 
+      // 6.1. Adicionar à Galeria Live (EventMedia) para aparecer no painel imediatamente
+      const count = await prisma.eventMedia.count({ where: { eventId: metadata.eventId } });
+      const shortId = `F${(count + 1).toString().padStart(3, '0')}`;
+      await prisma.eventMedia.create({
+        data: {
+          eventId: metadata.eventId,
+          url: publicUrl,
+          shortId: shortId,
+          price: printJob.event.pricePerPhoto || 15
+        }
+      });
+
       // 7. Lógica de Créditos de Franquia
       if (printJob.event.franchiseeId) {
         const profile = await prisma.franchiseProfile.findUnique({
