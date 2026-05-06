@@ -1,7 +1,7 @@
 import { useState, useEffect } from "react";
 import { useNavigate, useLocation } from "react-router-dom";
 import { useAuth } from "../hooks/useAuth";
-import { Search, ShoppingBag, Lock, Menu, Home, UserCircle } from "lucide-react";
+import { Search, ShoppingBag, Lock, Home, UserCircle } from "lucide-react";
 import { T } from "../lib/theme";
 
 /**
