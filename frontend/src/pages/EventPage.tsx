@@ -884,26 +884,26 @@ return (
 
             {step === "paywall" || step === "success" ? (
               <div className="space-y-14 animate-in fade-in slide-in-from-right-8 duration-1000">
-                <div className="space-y-4">
-                  <p className="text-[10px] text-brand-tactical font-black uppercase tracking-[0.6em] italic">Investimento</p>
-                  <div className="flex items-baseline gap-2">
-                    <span className="text-3xl font-light text-theme-text-muted/60 tracking-tighter italic">R$</span>
-                    <h2 className="text-8xl lg:text-9xl font-black tracking-tighter font-heading italic leading-none text-theme-text">
-                      {Number(searchParams.get("intent") === "upgrade" 
-                        ? (serviceCatalog.filter(s => selectedServices.includes(s.id)).reduce((acc, s) => acc + Number(s.basePrice), 0) + (includeLivePrint ? 150 : 0))
-                        : (isMarketplace ? cartTotal : event.priceBase)
-                      ).toFixed(0)}
-                    </h2>
-                    <span className="text-3xl font-black text-theme-text-muted/60 italic">,00</span>
-                  </div>
-                  {isMarketplace && (
+                {isMarketplace && (
+                  <div className="space-y-4">
+                    <p className="text-[10px] text-brand-tactical font-black uppercase tracking-[0.6em] italic">Investimento</p>
+                    <div className="flex items-baseline gap-2">
+                      <span className="text-3xl font-light text-theme-text-muted/60 tracking-tighter italic">R$</span>
+                      <h2 className="text-8xl lg:text-9xl font-black tracking-tighter font-heading italic leading-none text-theme-text">
+                        {Number(searchParams.get("intent") === "upgrade" 
+                          ? (serviceCatalog.filter(s => selectedServices.includes(s.id)).reduce((acc, s) => acc + Number(s.basePrice), 0) + (includeLivePrint ? 150 : 0))
+                          : (isMarketplace ? cartTotal : event.priceBase)
+                        ).toFixed(0)}
+                      </h2>
+                      <span className="text-3xl font-black text-theme-text-muted/60 italic">,00</span>
+                    </div>
                     <div className="p-4 bg-brand-tactical/5 border-l-2 border-brand-tactical">
                       <p className="text-[10px] text-theme-text-muted font-black uppercase tracking-widest italic">
                         {cart.length} {cart.length === 1 ? 'memória selecionada' : 'memórias selecionadas'}
                       </p>
                     </div>
-                  )}
-                </div>
+                  </div>
+                )}
 
                 <div className="flex flex-col gap-4">
                   <button 
