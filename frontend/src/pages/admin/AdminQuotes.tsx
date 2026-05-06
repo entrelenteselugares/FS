@@ -1,4 +1,4 @@
-﻿import React, { useState, useEffect, useCallback, useMemo } from "react";
+import React, { useState, useEffect, useCallback, useMemo } from "react";
 import { API } from "../../lib/api";
 import { motion } from "framer-motion";
 import { 
@@ -87,7 +87,7 @@ export const AdminQuotes: React.FC = () => {
   const [notification, setNotification] = useState<{message: string, type: 'success' | 'error'} | null>(null);
   const [finalPrice, setFinalPrice] = useState<number>(0);
 
-  const [professionals, setProfessionals] = useState<{id: string, nome: string, profissional?: { workflowType: string }}[]>([]);
+  const [professionals, setProfessionals] = useState<{id: string, nome: string, profissional?: { workflowType: string[] }}[]>([]);
 
   // Advanced New Quote Form State
   const [newQuoteData, setNewQuoteData] = useState({
@@ -567,15 +567,19 @@ export const AdminQuotes: React.FC = () => {
                                             // Se houver preferência, filtramos. Se for AMBOS ou N/A, mostra todos.
                                             const filtered = professionals.filter(p => {
                                               if (!eventPref) return true;
-                                              const proType = p.profissional?.workflowType || "AMBOS";
-                                              return proType === "AMBOS" || proType === eventPref;
+                                              const proTypes = p.profissional?.workflowType || [];
+                                              if (proTypes.length === 0) return true; // Se não tem preferência cadastrada, mostra
+                                              return proTypes.includes(eventPref);
                                             });
 
-                                            return filtered.map(p => (
-                                              <option key={p.id} value={p.id}>
-                                                {p.nome} {p.profissional?.workflowType ? `(${p.profissional.workflowType})` : ""}
-                                              </option>
-                                            ));
+                                            return filtered.map(p => {
+                                              const workflowStr = p.profissional?.workflowType ? p.profissional.workflowType.join(", ") : "";
+                                              return (
+                                                <option key={p.id} value={p.id}>
+                                                  {p.nome} {workflowStr ? `(${workflowStr})` : ""}
+                                                </option>
+                                              );
+                                            });
                                           })()}
                                       </select>
                                    </div>
