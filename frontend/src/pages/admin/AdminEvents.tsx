@@ -144,25 +144,64 @@ export const AdminEvents: React.FC<AdminEventsProps> = ({ initialEditEventId }) 
   const previewInputRef = React.useRef<HTMLInputElement>(null);
   const [currentPreviewIdx, setCurrentPreviewIdx] = useState<number | null>(null);
 
+  const compressImageToBase64 = (file: File, maxWidth = 1200): Promise<string> => {
+    return new Promise((resolve, reject) => {
+      const img = new window.Image();
+      img.src = URL.createObjectURL(file);
+      img.onload = () => {
+        const canvas = document.createElement("canvas");
+        let { width, height } = img;
+        if (width > maxWidth) {
+          height = Math.round((height * maxWidth) / width);
+          width = maxWidth;
+        }
+        canvas.width = width;
+        canvas.height = height;
+        const ctx = canvas.getContext("2d");
+        if (!ctx) return reject("Canvas context is null");
+        ctx.drawImage(img, 0, 0, width, height);
+        resolve(canvas.toDataURL("image/jpeg", 0.7)); // 0.7 quality to keep payload small
+      };
+      img.onerror = (err) => reject(err);
+    });
+  };
+
   const handleFileChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (!file) return;
 
-    const reader = new FileReader();
-    reader.onload = (ev) => setCoverPreview(ev.target?.result as string);
-    reader.readAsDataURL(file);
+    try {
+      const compressed = await compressImageToBase64(file, 800);
+      setCoverPreview(compressed);
+    } catch (err) {
+      console.error("Erro na compressão:", err);
+      // Fallback
+      const reader = new FileReader();
+      reader.onload = (ev) => setCoverPreview(ev.target?.result as string);
+      reader.readAsDataURL(file);
+    }
   };
 
-  const handlePreviewFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+  const handlePreviewFileChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (!file || currentPreviewIdx === null) return;
-    const reader = new FileReader();
-    reader.onload = (ev) => {
+    
+    try {
+      const compressed = await compressImageToBase64(file, 800);
       const newPreviews = [...previewPreviews];
-      newPreviews[currentPreviewIdx] = ev.target?.result as string;
+      newPreviews[currentPreviewIdx] = compressed;
       setPreviewPreviews(newPreviews);
-    };
-    reader.readAsDataURL(file);
+    } catch (err) {
+      console.error("Erro na compressão preview:", err);
+      // Fallback
+      const reader = new FileReader();
+      reader.onload = (ev) => {
+        const newPreviews = [...previewPreviews];
+        newPreviews[currentPreviewIdx] = ev.target?.result as string;
+        setPreviewPreviews(newPreviews);
+      };
+      reader.readAsDataURL(file);
+    }
   };
 
   const handleCreate = async (e: React.FormEvent) => {
