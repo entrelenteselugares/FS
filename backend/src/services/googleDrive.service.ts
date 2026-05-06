@@ -26,12 +26,11 @@ export class GoogleDriveService {
     }
 
     try {
-      const jwtClient = new google.auth.JWT(
-        clientEmail,
-        undefined,
-        privateKey,
-        SCOPES
-      );
+      const jwtClient = new google.auth.JWT({
+        email: clientEmail,
+        key: privateKey,
+        scopes: SCOPES
+      });
 
       this.drive = google.drive({ version: 'v3', auth: jwtClient });
       console.log(`[DRIVE] Serviço JWT (Service Account) inicializado com sucesso.`);
