@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { Users, UserPlus, Globe, Search, Check, ShieldCheck } from "lucide-react";
+import { Users, UserPlus, Globe, Search, Check, ShieldCheck, X } from "lucide-react";
 import type { Partner } from "./types";
 
 interface TeamSelectorProps {
@@ -9,7 +9,7 @@ interface TeamSelectorProps {
 }
 
 export function TeamSelector({ label, onSelect, network }: TeamSelectorProps) {
-  const [mode, setMode] = useState<"me" | "direct" | "public">("me");
+  const [mode, setMode] = useState<"me" | "direct" | "public" | "none">("me");
   const [selectedPartnerId, setSelectedPartnerId] = useState<string | null>(null);
   const [search, setSearch] = useState("");
 
