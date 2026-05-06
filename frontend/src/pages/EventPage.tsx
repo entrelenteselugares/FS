@@ -265,21 +265,29 @@ export default function EventPage() {
 
         if (intent === "upgrade") {
           setStep("paywall");
-        } else if (isFuture && !eventData.lightroomUrl && !eventData.driveUrl && (!eventData.previewPhotos || eventData.previewPhotos.length === 0)) {
+        } else if (isFuture && !eventData.lightroomUrl && !eventData.driveUrl && (!eventData.previewPhotos || eventData.previewPhotos.length === 0) && eventData.type === 'ALBUM_FULL') {
+          // Apenas Album Full entra em countdown estrito se for futuro e sem fotos
           setStep("countdown");
-        } else if ((!isFuture || eventData.active) && eventData.type === 'ALBUM_FULL') {
-          navigate(`/delivery/${eventData.id}`);
         } else if (eventData.isPrivate && !eventData.isPrimaryClient && !eventData.isOwner) {
           setStep("denied");
         } else if ((eventData.paywall && !eventData.paywall.active) || eventData.isOwner || eventData.type === 'PHOTO_MARKETPLACE' || eventData.type === 'FOTO_POINT') {
           setStep("success"); 
+        } else if (isFuture) {
+          // Fallback para countdown se nada acima capturou
+          setStep("countdown");
         }
 
         if (eventData.type === 'PHOTO_MARKETPLACE' || eventData.type === 'FOTO_POINT') {
           const mOid = localStorage.getItem(`fs_order_${slug}`);
           const mParams = { ...params, ...(mOid ? { orderId: mOid } : {}) };
           api.get(`/marketplace/events/${eventData.id}/media`, { params: mParams })
-            .then(res => setMedias(res.data))
+            .then(res => {
+              setMedias(res.data);
+              // Se tiver fotos, forçamos sair do countdown para mostrar a galeria
+              if (res.data && res.data.length > 0) {
+                setStep("success");
+              }
+            })
             .catch(err => console.error("Erro ao carregar mídias:", err));
         }
       })
