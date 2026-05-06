@@ -11,34 +11,39 @@
 ## 💎 Diferenciais Estratégicos
 
 ### ⚡ Flash Event (Fricção Zero)
+
 Entrega de fotos anônima via QR Code e PIN de 6 dígitos. O cliente visualiza sua foto instantaneamente e a resgata criando uma conta — eliminando a barreira de entrada e aumentando a conversão em eventos de alto volume.
 
 ### 🏛️ Memory Vaults
+
 Infraestrutura de armazenamento em nuvem (Google Drive Cold Storage) integrada para preservação de ativos digitais de longo prazo, permitindo que clientes mantenham suas memórias seguras e acessíveis para sempre.
 
 ### 🖨️ IoT Print Engine
+
 Agente de impressão local em tempo real que monitora a fila de pedidos e realiza o fulfillment físico automático, garantindo que o "unboxing" da memória aconteça ainda durante o evento.
 
 ---
 
 ## 🛠️ Stack Tecnológica
 
-*   **Frontend:** React, Vite, TailwindCSS (Midnight Luxury Theme), Framer Motion.
-*   **Backend:** Node.js, Express, TypeScript.
-*   **Banco de Dados:** PostgreSQL (Supabase) via Prisma ORM.
-*   **Storage:** Google Drive API (OAuth2 Hybrid Flow).
-*   **Infra:** Vercel (Serverless Functions).
+* **Frontend:** React, Vite, TailwindCSS (Midnight Luxury Theme), Framer Motion.
+* **Backend:** Node.js, Express, TypeScript.
+* **Banco de Dados:** PostgreSQL (Supabase) via Prisma ORM.
+* **Storage:** Google Drive API (OAuth2 Hybrid Flow).
+* **Infra:** Vercel (Serverless Functions).
 
 ---
 
 ## 🚀 Início Rápido
 
 ### Pré-requisitos
-- Node.js 20.x
-- Instância PostgreSQL (Supabase recomendado)
-- Credenciais Google Cloud (Drive API)
+
+* Node.js 20.x
+* Instância PostgreSQL (Supabase recomendado)
+* Credenciais Google Cloud (Drive API)
 
 ### Instalação
+
 ```bash
 # Instalar dependências (Raiz)
 npm install
@@ -52,6 +57,7 @@ cp .env.example .env
 ```
 
 ### Desenvolvimento
+
 ```bash
 # Rodar Backend + Frontend simultaneamente
 npm run dev
@@ -61,14 +67,15 @@ npm run dev
 
 ## 📂 Estrutura do Projeto
 
-- `/backend`: API REST, Serviços Google Drive, Integração Mercado Pago.
-- `/frontend`: Interface do usuário, Dashboards (Master, Partner, Cliente).
-- `/api`: Entrypoint para deploy na Vercel.
-- `/docs`: Documentação técnica detalhada.
-- `/.planning`: Roadmaps, especificações GSD e histórico de decisões.
+* **/backend**: API REST, Serviços Google Drive, Integração Mercado Pago.
+* **/frontend**: Interface do usuário, Dashboards (Master, Partner, Cliente).
+* **/api**: Entrypoint para deploy na Vercel.
+* **/docs**: Documentação técnica detalhada.
+* **/.planning**: Roadmaps, especificações GSD e histórico de decisões.
 
 ---
 
 ## 📜 Licença
+
 © 2026 Foto Segundo. Todos os direitos reservados.
 Projetado para a excelência na fotografia phygital.
