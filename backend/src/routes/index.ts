@@ -406,9 +406,9 @@ router.get("/vaults/media/proxy/:fileId", VaultController.proxyMedia);
 
 // ── PHYGITAL (Fluxo QR Code & Impressão) ──────────────────────────────────────
 router.post("/public/phygital/upload", upload.single("photo"), PhygitalController.upload);
-router.get("/admin/phygital/queue", requireAuth, requireRole("ADMIN"), PhygitalController.listPending);
-router.get("/admin/phygital/all", requireAuth, requireRole("ADMIN"), PhygitalController.listAllByEvent);
-router.post("/admin/phygital/confirm", requireAuth, requireRole("ADMIN"), PhygitalController.confirmPrint);
+router.get("/phygital/events/:eventId/queue", requireAuth, PhygitalController.listPending);
+router.get("/phygital/events/:eventId/prints", requireAuth, PhygitalController.listAllByEvent);
+router.patch("/phygital/prints/:id/status", requireAuth, PhygitalController.confirmPrint);
 router.post("/admin/phygital/simulate", optionalAuth, PhygitalController.simulate);
 
 // 🔍 DIAGNÓSTICOS
