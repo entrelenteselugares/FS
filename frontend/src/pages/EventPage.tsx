@@ -829,7 +829,7 @@ return (
                     <button 
                       onClick={() => {
                         if (user?.role === 'ADMIN') navigate('/admin');
-                        else if (user?.role === 'PROFISSIONAL' || user?.role === 'FRANCHISE') navigate('/profissional');
+                        else if (user?.role === 'PROFISSIONAL' || user?.role === 'FRANCHISEE') navigate('/profissional');
                         else navigate('/minha-conta');
                       }}
                       className="w-full py-4 border border-zinc-800 text-zinc-500 text-[10px] font-black uppercase tracking-widest hover:text-white transition-all italic flex items-center justify-center gap-3"
