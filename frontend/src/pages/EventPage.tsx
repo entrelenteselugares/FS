@@ -826,16 +826,17 @@ return (
                     >
                       <QrCode size={16} /> {isEventOver ? 'CAPTURAS ENCERRADAS' : 'QR CODE DE CAPTURA'}
                     </button>
-                    <button 
-                      onClick={() => {
-                        if (user?.role === 'ADMIN') navigate('/admin');
-                        else if (user?.role === 'PROFISSIONAL' || user?.role === 'FRANCHISEE') navigate('/profissional');
-                        else navigate('/minha-conta');
-                      }}
-                      className="w-full py-4 border border-zinc-800 text-zinc-500 text-[10px] font-black uppercase tracking-widest hover:text-white transition-all italic flex items-center justify-center gap-3"
-                    >
-                      <Camera size={16} /> EDITAR CONFIGURAÇÕES
-                    </button>
+                    {(user?.role === 'ADMIN' || user?.role === 'PROFISSIONAL' || user?.role === 'FRANCHISEE') && (
+                      <button 
+                        onClick={() => {
+                          if (user?.role === 'ADMIN') navigate('/admin');
+                          else if (user?.role === 'PROFISSIONAL' || user?.role === 'FRANCHISEE') navigate('/profissional');
+                        }}
+                        className="w-full py-4 border border-zinc-800 text-zinc-500 text-[10px] font-black uppercase tracking-widest hover:text-white transition-all italic flex items-center justify-center gap-3"
+                      >
+                        <Camera size={16} /> EDITAR CONFIGURAÇÕES
+                      </button>
+                    )}
                  </div>
               </div>
             )}
