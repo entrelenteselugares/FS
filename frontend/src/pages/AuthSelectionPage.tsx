@@ -35,16 +35,6 @@ export const AuthSelectionPage: React.FC = () => {
 
   return (
     <div className="min-h-screen bg-theme-bg text-theme-text flex flex-col items-center justify-center px-4 py-8 overflow-hidden relative transition-colors duration-300">
-      {/* Back Button */}
-      <nav className="absolute top-0 left-0 w-full z-50 p-6 pointer-events-none">
-        <button 
-          onClick={() => navigate("/")} 
-          className="pointer-events-auto flex items-center gap-3 text-[10px] font-black uppercase tracking-[0.4em] text-theme-text/40 hover:text-theme-text transition-all bg-theme-bg-muted/20 backdrop-blur-md px-6 py-3 border border-theme-border/5"
-        >
-          <span className="text-lg">←</span> Vitrine
-        </button>
-      </nav>
-
       {/* Editorial Background Lines */}
       <div className="absolute inset-0 z-0 opacity-20 pointer-events-none">
         <div className="absolute top-0 left-1/4 w-[1px] h-full bg-theme-border/5" />

@@ -224,20 +224,6 @@ export const HomePage = () => {
       {/* ── NAV ─────────────────────────────────────────────────────────── */}
       <Navbar />
 
-      {/* -- MOBILE FLOATING SEARCH -- hidden on desktop via CSS */}
-      <div className="hp-mobile-search" style={{ padding: "12px 16px 4px", gap: 10, alignItems: "center" }}>
-        <div style={{ flex: 1, display: "flex", alignItems: "center", gap: 10, background: "var(--bg-card)", border: `1px solid ${T.border}`, borderRadius: 40, padding: "10px 16px", height: 48 }}>
-          <Search size={16} style={{ color: T.text3, flexShrink: 0 }} />
-          <input
-            value={query}
-            onChange={e => setQuery(e.target.value)}
-            onKeyDown={e => e.key === "Enter" && fetchEvents(query, 1)}
-            placeholder="Nome do evento, fotografo..."
-            style={{ flex: 1, background: "none", border: "none", outline: "none", fontSize: 13, color: T.text, fontFamily: T.fontB }}
-          />
-        </div>
-      </div>
-
       {/* ── HERO ─────────────────────────────────────────────────────────── */}
       <section className="hp-hero-section" style={{ 
         padding: "clamp(24px, 5vw, 40px) 24px 32px", 
@@ -304,32 +290,43 @@ export const HomePage = () => {
       <section id="vitrine" className="hp-event-section" style={{ padding: "0 0 80px", background: T.bg }}>
         <div style={{ maxWidth: 1600, margin: "0 auto", padding: "0 2px" }}>
           
-          {/* Mobile compact vitrine header & Filters (horizontal scroll) */}
-          <div className="hp-mobile-vitrine-header flex-col gap-2 p-4">
-            <div className="flex gap-2 overflow-x-auto custom-scrollbar pb-2" style={{ scrollSnapType: "x mandatory" }}>
-              <select 
-                value={selectedCity}
-                onChange={e => { setSelectedCity(e.target.value); setPage(1); }}
-                className="flex-shrink-0 bg-[#1a1a1a] border border-[#2a2a2a] text-white px-4 py-3 rounded-full text-[10px] font-black uppercase tracking-widest outline-none appearance-none"
-                style={{ scrollSnapAlign: "start" }}
-              >
-                <option value="">Cidades</option>
-                <option value="Campinas">Campinas</option>
-                <option value="São Paulo">São Paulo</option>
-                <option value="Valinhos">Valinhos</option>
-              </select>
-              <select 
-                value={selectedType}
-                onChange={e => { setSelectedType(e.target.value); setPage(1); }}
-                className="flex-shrink-0 bg-[#1a1a1a] border border-[#2a2a2a] text-white px-4 py-3 rounded-full text-[10px] font-black uppercase tracking-widest outline-none appearance-none"
-                style={{ scrollSnapAlign: "start" }}
-              >
-                <option value="">Categorias</option>
-                <option value="ALBUM_FULL">Álbuns</option>
-                <option value="PHOTO_MARKETPLACE">Live Print</option>
-                <option value="FOTO_POINT">Foto Point</option>
-                <option value="FLASH_EVENT">Flash Event</option>
-              </select>
+          {/* Mobile compact vitrine header & Filters (proportional grid) */}
+          <div className="hp-mobile-vitrine-header flex flex-col gap-4 p-4">
+            <div className="grid grid-cols-3 gap-2 w-full">
+              <div className="relative">
+                <select 
+                  value={selectedCity}
+                  onChange={e => { setSelectedCity(e.target.value); setPage(1); }}
+                  className="w-full bg-[#1a1a1a] border border-[#2a2a2a] text-white px-2 py-3 rounded-xl text-[8px] font-black uppercase tracking-widest outline-none appearance-none text-center"
+                >
+                  <option value="">Cidades</option>
+                  <option value="Campinas">Campinas</option>
+                  <option value="São Paulo">São Paulo</option>
+                  <option value="Valinhos">Valinhos</option>
+                </select>
+              </div>
+              <div className="relative">
+                <select 
+                  value={selectedType}
+                  onChange={e => { setSelectedType(e.target.value); setPage(1); }}
+                  className="w-full bg-[#1a1a1a] border border-[#2a2a2a] text-white px-2 py-3 rounded-xl text-[8px] font-black uppercase tracking-widest outline-none appearance-none text-center"
+                >
+                  <option value="">Categorias</option>
+                  <option value="ALBUM_FULL">Álbuns</option>
+                  <option value="PHOTO_MARKETPLACE">Live Print</option>
+                  <option value="FOTO_POINT">Foto Point</option>
+                  <option value="FLASH_EVENT">Flash Event</option>
+                </select>
+              </div>
+              <div className="relative">
+                <select 
+                  className="w-full bg-[#1a1a1a] border border-[#2a2a2a] text-white px-2 py-3 rounded-xl text-[8px] font-black uppercase tracking-widest outline-none appearance-none text-center opacity-60"
+                >
+                  <option value="">Proximidade</option>
+                  <option value="km">Até 10km</option>
+                  <option value="km2">Até 50km</option>
+                </select>
+              </div>
             </div>
           </div>
 
@@ -398,7 +395,7 @@ export const HomePage = () => {
           ) : (
               <div className="space-y-4 px-4 md:px-8">
                 {/* Categorias Grid (2 Colunas) */}
-                <div className="grid grid-cols-2 gap-3 mb-6 md:hidden">
+                <div className="grid grid-cols-2 gap-3 mb-4 md:hidden">
                    {["Casamentos", "Ensaios", "Eventos", "Venda Direta"].map(cat => (
                      <div key={cat} className="relative h-24 rounded-xl overflow-hidden group">
                         <img src={`https://images.unsplash.com/photo-1511285560929-80b456fea0bc?q=80&w=400`} className="absolute inset-0 w-full h-full object-cover brightness-50 group-hover:scale-110 transition-transform" />
@@ -407,6 +404,20 @@ export const HomePage = () => {
                         </div>
                      </div>
                    ))}
+                </div>
+
+                {/* Mobile Specific Search (Repositioned) */}
+                <div className="md:hidden px-0 mb-6">
+                  <div className="relative group">
+                    <Search size={16} className="absolute left-4 top-1/2 -translate-y-1/2 text-theme-text-muted group-focus-within:text-brand-tactical transition-colors" />
+                    <input
+                      value={query}
+                      onChange={e => setQuery(e.target.value)}
+                      onKeyDown={e => e.key === "Enter" && fetchEvents(query, 1)}
+                      placeholder="Pesquisar evento ou fotógrafo..."
+                      className="w-full bg-[#1a1a1a] border border-[#2a2a2a] pl-12 pr-4 py-4 rounded-xl text-[11px] font-black uppercase tracking-widest text-white outline-none focus:border-brand-tactical/50 transition-all italic"
+                    />
+                  </div>
                 </div>
 
                 {/* Eventos Grid (Full Width on Mobile) */}
