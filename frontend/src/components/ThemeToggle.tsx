@@ -8,7 +8,8 @@ export function ThemeToggle() {
   return (
     <button
       onClick={toggle}
-      className="p-3 bg-white/5 border border-white/10 hover:border-brand-tactical transition-all group relative overflow-hidden"
+      className="p-3 transition-all group relative overflow-hidden"
+      style={{ background: T.bgCard, border: `1px solid ${T.border}`, borderRadius: 0 }}
       title={theme === 'dark' ? "Ativar Modo Diurno" : "Ativar Modo Noturno"}
     >
       <div className="relative z-10 flex items-center justify-center">
