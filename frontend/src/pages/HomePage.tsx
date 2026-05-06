@@ -449,10 +449,10 @@ export const HomePage = () => {
       </section>
 
       {/* ── COMO FUNCIONA ─────────────────────────────────────────────────── */}
-      <section style={{ padding: "120px 28px", borderTop: `1px solid ${T.border}`, background: "var(--bg-card)" }}>
+      <section style={{ padding: "60px 28px", borderTop: `1px solid ${T.border}`, background: "var(--bg-card)" }}>
         <div style={{ maxWidth: 1100, margin: "0 auto" }}>
           <p style={{ fontSize: 10, fontFamily: T.fontD, fontWeight: 900, color: T.brand, letterSpacing: "0.5em", textTransform: "uppercase", marginBottom: 16, fontStyle: 'italic' }}>Processo</p>
-          <h2 style={{ fontFamily: T.fontD, fontWeight: 900, fontSize: "clamp(32px,5vw,56px)", color: "var(--text)", textTransform: "uppercase", margin: "0 0 64px", lineHeight: 0.9 }}>
+          <h2 style={{ fontFamily: T.fontD, fontWeight: 900, fontSize: "clamp(32px,5vw,56px)", color: "var(--text)", textTransform: "uppercase", margin: "0 0 32px", lineHeight: 0.9 }}>
             {DICT.HOW_IT_WORKS_TITLE}
           </h2>
           <div className="hp-steps" style={{ display: "flex", gap: 0 }}>
@@ -462,13 +462,13 @@ export const HomePage = () => {
                 className="hp-step-item"
                 style={{ 
                   flex: 1, 
-                  padding: "48px 0", 
+                  padding: "24px 0", 
                   borderRight: i < STEPS.length - 1 ? "1px solid var(--border)" : "none", 
-                  paddingRight: i < STEPS.length - 1 ? 60 : 0, 
-                  paddingLeft: i > 0 ? 60 : 0 
+                  paddingRight: i < STEPS.length - 1 ? 30 : 0, 
+                  paddingLeft: i > 0 ? 30 : 0 
                 }}
               >
-                <div style={{ fontFamily: T.fontD, fontWeight: 900, fontSize: 56, color: T.brand, lineHeight: 1, marginBottom: 24, opacity: 0.3 }}>{step.n}</div>
+                <div style={{ fontFamily: T.fontD, fontWeight: 900, fontSize: 56, color: T.brand, lineHeight: 1, marginBottom: 12, opacity: 0.3 }}>{step.n}</div>
                 <h3 style={{ fontFamily: T.fontD, fontWeight: 900, fontSize: 24, color: "var(--text)", textTransform: "uppercase", margin: "0 0 12px", letterSpacing: "0.5px" }}>{step.title}</h3>
                 <p style={{ fontSize: 14, color: "var(--theme-text-muted)", fontFamily: T.fontB, fontWeight: 300, lineHeight: 1.6, margin: 0 }}>{step.desc}</p>
               </div>
@@ -478,7 +478,7 @@ export const HomePage = () => {
       </section>
 
       {/* ── FOOTER ────────────────────────────────────────────────────────── */}
-      <footer style={{ borderTop: `1px solid ${T.border}`, padding: "80px 28px", background: T.bgCard }}>
+      <footer style={{ borderTop: `1px solid ${T.border}`, padding: "40px 28px", background: T.bgCard }}>
         <div className="hp-footer-inner" style={{ maxWidth: 1100, margin: "0 auto", display: "flex", justifyContent: "space-between", alignItems: "flex-start", gap: "4rem" }}>
           <div>
             <div style={{ display: "flex", alignItems: "center", marginBottom: 20 }}>
