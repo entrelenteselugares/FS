@@ -86246,6 +86246,120 @@ async function adminGetEventById(req, res) {
 
 // backend/src/jobs/expiration.job.ts
 init_prisma();
+
+// backend/src/services/vaultCycle.service.ts
+init_prisma();
+init_gamification_service();
+var VaultCycleService = class {
+  /**
+   * Executa o fechamento de ciclo para um cofre específico.
+   * Seleciona as fotos mais votadas e gera a ordem de produção.
+   */
+  static async closeVaultCycle(albumId) {
+    console.log(`[VAULT CYCLE] Iniciando fechamento do cofre: ${albumId}`);
+    const album = await prisma.sharedAlbum.findUnique({
+      where: { id: albumId },
+      include: {
+        subscription: true,
+        owner: true,
+        media: {
+          include: {
+            votes: true
+          }
+        }
+      }
+    });
+    if (!album || !album.subscription || album.subscription.status !== "ACTIVE") {
+      console.error(`[VAULT CYCLE] Erro: Cofre ${albumId} n\xE3o possui assinatura ativa.`);
+      return;
+    }
+    const limit = album.subscription.planLimit;
+    const sortedMedia = album.media.sort((a, b) => (b.votes.length || 0) - (a.votes.length || 0));
+    const selectedMedia = sortedMedia.slice(0, limit);
+    if (selectedMedia.length === 0) {
+      console.log(`[VAULT CYCLE] Nenhuma m\xEDdia encontrada para o cofre ${albumId}.`);
+      return;
+    }
+    console.log(`[VAULT CYCLE] Selecionadas ${selectedMedia.length} fotos baseadas em votos.`);
+    let systemEvent = await prisma.event.findFirst({
+      where: { slug: "clube-recorrencia" }
+    });
+    if (!systemEvent) {
+      systemEvent = await prisma.event.create({
+        data: {
+          slug: "clube-recorrencia",
+          nomeNoivos: "Sistema: Clube de Mem\xF3rias",
+          active: true,
+          dataEvento: /* @__PURE__ */ new Date(),
+          ownerId: album.ownerId
+          // Vinculado ao primeiro dono que disparou, ou um admin
+        }
+      });
+    }
+    const order = await prisma.order.create({
+      data: {
+        eventId: systemEvent.id,
+        clienteId: album.ownerId,
+        buyerEmail: album.owner.email,
+        valor: 0,
+        // Já pago via assinatura
+        status: "PAGO",
+        paymentMethod: "FREE",
+        paymentModel: "PRE_PAID",
+        deliveryType: "SHIPPING",
+        fulfillmentStatus: "PENDING",
+        internalNotes: JSON.stringify({
+          type: "VAULT_CYCLE_CLOSURE",
+          albumId,
+          subscriptionId: album.subscription.id,
+          selectedMediaIds: selectedMedia.map((m) => m.id)
+        }),
+        items: {
+          create: selectedMedia.map((m) => ({
+            price: 0,
+            quantity: 1
+          }))
+        }
+      }
+    });
+    const nextBilling = new Date(album.subscription.nextBillingDate || /* @__PURE__ */ new Date());
+    nextBilling.setMonth(nextBilling.getMonth() + 1);
+    await prisma.subscription.update({
+      where: { id: album.subscription.id },
+      data: {
+        nextBillingDate: nextBilling,
+        updatedAt: /* @__PURE__ */ new Date()
+      }
+    });
+    console.log(`[VAULT CYCLE] Ciclo conclu\xEDdo. Pedido #${order.id} gerado.`);
+    await GamificationService.processCycleClosureRewards(album.ownerId, album.nome);
+    return order;
+  }
+  /**
+   * Varre todas as assinaturas e processa as que venceram hoje.
+   */
+  static async processAllDueSubscriptions() {
+    const today = /* @__PURE__ */ new Date();
+    const dueSubscriptions = await prisma.subscription.findMany({
+      where: {
+        status: "ACTIVE",
+        nextBillingDate: {
+          lte: today
+        }
+      }
+    });
+    console.log(`[VAULT CYCLE] Processando ${dueSubscriptions.length} assinaturas vencidas.`);
+    for (const sub of dueSubscriptions) {
+      try {
+        await this.closeVaultCycle(sub.albumId);
+      } catch (err) {
+        console.error(`[VAULT CYCLE] Erro ao processar album ${sub.albumId}:`, err);
+      }
+    }
+  }
+};
+
+// backend/src/jobs/expiration.job.ts
 async function runExpirationJob(req) {
   const now = /* @__PURE__ */ new Date();
   console.log(`[EXPIRATION JOB] Rodando em ${now.toISOString()}`);
@@ -86409,119 +86523,8 @@ async function runExpirationJob(req) {
       }
     }
   }
+  await VaultCycleService.processAllDueSubscriptions();
 }
-
-// backend/src/services/vaultCycle.service.ts
-init_prisma();
-init_gamification_service();
-var VaultCycleService = class {
-  /**
-   * Executa o fechamento de ciclo para um cofre específico.
-   * Seleciona as fotos mais votadas e gera a ordem de produção.
-   */
-  static async closeVaultCycle(albumId) {
-    console.log(`[VAULT CYCLE] Iniciando fechamento do cofre: ${albumId}`);
-    const album = await prisma.sharedAlbum.findUnique({
-      where: { id: albumId },
-      include: {
-        subscription: true,
-        owner: true,
-        media: {
-          include: {
-            votes: true
-          }
-        }
-      }
-    });
-    if (!album || !album.subscription || album.subscription.status !== "ACTIVE") {
-      console.error(`[VAULT CYCLE] Erro: Cofre ${albumId} n\xE3o possui assinatura ativa.`);
-      return;
-    }
-    const limit = album.subscription.planLimit;
-    const sortedMedia = album.media.sort((a, b) => (b.votes.length || 0) - (a.votes.length || 0));
-    const selectedMedia = sortedMedia.slice(0, limit);
-    if (selectedMedia.length === 0) {
-      console.log(`[VAULT CYCLE] Nenhuma m\xEDdia encontrada para o cofre ${albumId}.`);
-      return;
-    }
-    console.log(`[VAULT CYCLE] Selecionadas ${selectedMedia.length} fotos baseadas em votos.`);
-    let systemEvent = await prisma.event.findFirst({
-      where: { slug: "clube-recorrencia" }
-    });
-    if (!systemEvent) {
-      systemEvent = await prisma.event.create({
-        data: {
-          slug: "clube-recorrencia",
-          nomeNoivos: "Sistema: Clube de Mem\xF3rias",
-          active: true,
-          dataEvento: /* @__PURE__ */ new Date(),
-          ownerId: album.ownerId
-          // Vinculado ao primeiro dono que disparou, ou um admin
-        }
-      });
-    }
-    const order = await prisma.order.create({
-      data: {
-        eventId: systemEvent.id,
-        clienteId: album.ownerId,
-        buyerEmail: album.owner.email,
-        valor: 0,
-        // Já pago via assinatura
-        status: "PAGO",
-        paymentMethod: "FREE",
-        paymentModel: "PRE_PAID",
-        deliveryType: "SHIPPING",
-        fulfillmentStatus: "PENDING",
-        internalNotes: JSON.stringify({
-          type: "VAULT_CYCLE_CLOSURE",
-          albumId,
-          subscriptionId: album.subscription.id,
-          selectedMediaIds: selectedMedia.map((m) => m.id)
-        }),
-        items: {
-          create: selectedMedia.map((m) => ({
-            price: 0,
-            quantity: 1
-          }))
-        }
-      }
-    });
-    const nextBilling = new Date(album.subscription.nextBillingDate || /* @__PURE__ */ new Date());
-    nextBilling.setMonth(nextBilling.getMonth() + 1);
-    await prisma.subscription.update({
-      where: { id: album.subscription.id },
-      data: {
-        nextBillingDate: nextBilling,
-        updatedAt: /* @__PURE__ */ new Date()
-      }
-    });
-    console.log(`[VAULT CYCLE] Ciclo conclu\xEDdo. Pedido #${order.id} gerado.`);
-    await GamificationService.processCycleClosureRewards(album.ownerId, album.nome);
-    return order;
-  }
-  /**
-   * Varre todas as assinaturas e processa as que venceram hoje.
-   */
-  static async processAllDueSubscriptions() {
-    const today = /* @__PURE__ */ new Date();
-    const dueSubscriptions = await prisma.subscription.findMany({
-      where: {
-        status: "ACTIVE",
-        nextBillingDate: {
-          lte: today
-        }
-      }
-    });
-    console.log(`[VAULT CYCLE] Processando ${dueSubscriptions.length} assinaturas vencidas.`);
-    for (const sub of dueSubscriptions) {
-      try {
-        await this.closeVaultCycle(sub.albumId);
-      } catch (err) {
-        console.error(`[VAULT CYCLE] Erro ao processar album ${sub.albumId}:`, err);
-      }
-    }
-  }
-};
 
 // backend/src/jobs/vault-cycle.job.ts
 async function runVaultCycleJob() {
