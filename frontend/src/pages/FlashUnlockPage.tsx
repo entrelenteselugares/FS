@@ -1,10 +1,10 @@
-import React, { useState, useEffect, useRef } from "react";
+import React, { useState, useRef } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import axios from "axios";
 import { motion, AnimatePresence } from "framer-motion";
-import { Lock, Unlock, Camera, ArrowRight, Download, UserPlus } from "lucide-react";
+import { Lock, Unlock, Camera, Download, UserPlus } from "lucide-react";
 
-const FlashUnlockPage: React.useState = () => {
+const FlashUnlockPage: React.FC = () => {
   const { shortId } = useParams<{ shortId: string }>();
   const navigate = useNavigate();
   const [pin, setPin] = useState<string[]>(new Array(6).fill(""));
@@ -93,7 +93,7 @@ const FlashUnlockPage: React.useState = () => {
               {pin.map((digit, idx) => (
                 <input
                   key={idx}
-                  ref={(el) => (inputRefs.current[idx] = el)}
+                  ref={(el) => { inputRefs.current[idx] = el; }}
                   type="text"
                   inputMode="numeric"
                   maxLength={1}
