@@ -13,28 +13,32 @@ export class GoogleDriveService {
   private drive;
 
   constructor() {
-    const email = process.env.GOOGLE_SERVICE_ACCOUNT_EMAIL;
-    const privateKey = process.env.GOOGLE_SERVICE_ACCOUNT_PRIVATE_KEY?.replace(/\\n/g, '\n');
+    const clientId = process.env.GOOGLE_DRIVE_CLIENT_ID;
+    const clientSecret = process.env.GOOGLE_DRIVE_CLIENT_SECRET;
+    const refreshToken = process.env.GOOGLE_DRIVE_REFRESH_TOKEN;
 
-    console.log(`[DRIVE DEBUG] Service Account Email: ${email ? 'Presente' : 'MISSING'}`);
-    console.log(`[DRIVE DEBUG] Private Key: ${privateKey ? 'Presente' : 'MISSING'}`);
+    console.log(`[DRIVE DEBUG] ClientID: ${clientId ? 'Presente' : 'MISSING'}`);
+    console.log(`[DRIVE DEBUG] Secret: ${clientSecret ? 'Presente' : 'MISSING'}`);
+    console.log(`[DRIVE DEBUG] RefreshToken: ${refreshToken ? 'Presente' : 'MISSING'}`);
 
-    if (!email || !privateKey || privateKey.includes('SUA_CHAVE_AQUI')) {
-      console.warn('⚠️ Google Drive Service Account não configurada ou usando placeholder. O sistema operará em MODO MOCK para Cofres.');
+    if (!clientId || !clientSecret || !refreshToken) {
+      console.warn('⚠️ Google Drive OAuth2 não configurado. O sistema operará em MODO MOCK para Cofres.');
       this.drive = null;
       return;
     }
 
     try {
-      const auth = new google.auth.JWT({
-        email,
-        key: privateKey,
-        scopes: SCOPES
-      });
-      this.drive = google.drive({ version: 'v3', auth });
-      console.log(`[DRIVE] Serviço Account (JWT) inicializado com sucesso.`);
+      const oauth2Client = new google.auth.OAuth2(
+        clientId,
+        clientSecret,
+        process.env.GOOGLE_DRIVE_REDIRECT_URI
+      );
+
+      oauth2Client.setCredentials({ refresh_token: refreshToken });
+      this.drive = google.drive({ version: 'v3', auth: oauth2Client });
+      console.log(`[DRIVE] Serviço OAuth2 inicializado com sucesso.`);
     } catch (err: any) {
-      console.error(`[DRIVE] Falha ao inicializar JWT:`, err.message);
+      console.error(`[DRIVE] Falha ao inicializar OAuth2:`, err.message);
       this.drive = null;
     }
   }
@@ -64,18 +68,7 @@ export class GoogleDriveService {
 
       console.log(`[DRIVE] Pasta criada para álbum: ${albumName} (ID: ${folder.data.id})`);
 
-      // Compartilhar explicitamente com o email de admin do Foto Segundo para garantir visibilidade
-      await this.drive.permissions.create({
-        fileId: folder.data.id!,
-        requestBody: {
-          role: 'writer',
-          type: 'user',
-          emailAddress: 'contatofotosegundo@gmail.com'
-        },
-        sendNotificationEmail: false // Não precisa enviar email toda vez
-      });
-
-      // Liberar acesso de leitura global para a pasta (Ajuda na exibição de miniaturas)
+      // Liberar acesso de leitura para a pasta (Ajuda na exibição de miniaturas)
       await this.drive.permissions.create({
         fileId: folder.data.id!,
         requestBody: {
@@ -97,10 +90,11 @@ export class GoogleDriveService {
    */
   async uploadMedia({ folderId, fileName, buffer, mimeType }: { folderId: string, fileName: string, buffer: Buffer, mimeType: string }) {
     if (!this.drive) {
-      console.warn(`[DRIVE MOCK] Gravando arquivo localmente: ${fileName}`);
+      console.warn(`[DRIVE MOCK] Gravando arquivo localmente (em /tmp): ${fileName}`);
       const mockId = `mock-file-${Date.now()}`;
       
-      const uploadDir = path.join(process.cwd(), 'uploads', 'vaults');
+      const os = require('os');
+      const uploadDir = path.join(os.tmpdir(), 'vaults');
       if (!fs.existsSync(uploadDir)) {
         fs.mkdirSync(uploadDir, { recursive: true });
       }
@@ -126,7 +120,7 @@ export class GoogleDriveService {
 
     try {
       const file = await this.drive.files.create({
-        resource: {
+        requestBody: {
           name: fileName,
           parents: [folderId],
         },
