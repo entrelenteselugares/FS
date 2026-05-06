@@ -59,3 +59,11 @@ frontend/.env.production
 
 # credentials
 ANOTAÇÕES/TECHNICAL/*.json
+# playwright
+/playwright-report
+/test-results
+/blob-report
+/test-results-output
+
+# build
+/api/server-v2.js

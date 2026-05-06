@@ -16,18 +16,28 @@ test.describe('Onboarding Robot: System Population', () => {
 
     const createUser = async (data: any) => {
       console.log(`[ROBOT] Criando ${data.role}: ${data.email}...`);
-      await page.goto('/admin/users');
-      await page.getByRole('button', { name: /CONVOCAR MEMBRO/i }).click();
+      await page.goto('/admin');
+      await page.waitForLoadState('networkidle');
+      
+      // Clica na aba Membros
+      await page.getByRole('button', { name: /Membros/i }).click();
+      await page.waitForTimeout(1000); // Aguarda transição de aba
+      
+      const btn = page.getByRole('button', { name: /CONVOCAR MEMBRO/i });
+      await expect(btn).toBeVisible();
+      await btn.click();
 
-      await page.locator('input[required]').nth(0).fill(data.name); // Nome
-      await page.locator('input[type="email"]').fill(data.email);
-      await page.locator('input[type="password"]').fill('123456');
+      // Aguarda o modal abrir
+      await expect(page.locator('h3:has-text("Novo Membro")')).toBeVisible();
+      await page.locator('label:has-text("Nome de Guerra") + input').fill(data.name);
+      await page.locator('label:has-text("E-mail de Acesso") + input').fill(data.email);
+      await page.locator('label:has-text("Nova Senha") + input').fill('123456');
       await page.locator('select').selectOption(data.role);
 
       if (data.role === 'PROFISSIONAL') {
-        if (data.captPct !== undefined) await page.locator('input[type="number"]').nth(0).fill(data.captPct.toString());
-        if (data.editPct !== undefined) await page.locator('input[type="number"]').nth(1).fill(data.editPct.toString());
-        if (data.equipment) await page.locator('textarea').fill(data.equipment);
+        if (data.captPct !== undefined) await page.locator('label:has-text("% Captação") + div input').fill(data.captPct.toString());
+        if (data.editPct !== undefined) await page.locator('label:has-text("% Edição") + div input').fill(data.editPct.toString());
+        if (data.equipment) await page.locator('label:has-text("Equipamento Operacional") + textarea').fill(data.equipment);
         
         if (data.workflowType === 'MOBILE') {
              await page.getByRole('button', { name: /Mobile Maker/i }).click();
@@ -37,12 +47,13 @@ test.describe('Onboarding Robot: System Population', () => {
         if (data.isFranchise) {
              const toggle = page.locator('button:has(div.bg-white)').nth(0);
              await toggle.click();
-             await page.locator('input[type="number"]').nth(2).fill(data.printCredits.toString());
+             await page.locator('label:has-text("Saldo de Créditos") + input').fill(data.printCredits.toString());
         }
       }
 
       await page.getByRole('button', { name: /CONFIRMAR CONVOCAÇÃO/i }).click();
-      await page.waitForTimeout(2000); // Aguarda animação e processamento
+      await page.waitForTimeout(3000); // Aguarda animação e processamento
+      console.log(`[ROBOT] ✅ Criado: ${data.email}`);
     };
 
     // --- PROFISSIONAIS ---

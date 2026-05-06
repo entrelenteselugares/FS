@@ -21,6 +21,7 @@
 - [x] **Phase 08: B2B Hub (Automação de Insumos e Networking)**: Supply monitoring, referral links, and operational dashboard. (DONE)
 - [x] **Phase 09: Split de Comissões & Marketplace (Passive Income)**: Automated transaction splitting between platform, photographer, and referring franchisee. (DONE)
 - [x] **Phase 10: Gamification v2**: Enhance user points and redemption incentives. (DONE)
-- [ ] **Phase 11: Cofres de Memórias (Private Photo Vaults & SaaS B2C)**: Implementation of private analog-style sharing, Google Drive storage integration, and subscription-based automated printing.
-- [ ] **Phase 12: Print-Shop Integration (Physical Product Expansion)**: Hybrid cart logic, shipping engine integration, and fulfillment routing for instant and premium products.
+- [x] **Phase 11: Cofres de Memórias (Private Photo Vaults & SaaS B2C)**: Implementation of private analog-style sharing, Google Drive storage integration, and subscription-based automated printing. (DONE)
+- [x] **Phase 12: Print-Shop Integration (Physical Product Expansion)**: Hybrid cart logic, shipping engine integration, and fulfillment routing for instant and premium products. (DONE)
+- [ ] **Phase 13: Recurring Billing & Gamification V3**: Automation of monthly cycles and loyalty incentives based on subscription activity.
 

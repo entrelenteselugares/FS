@@ -12,6 +12,7 @@ import { Prisma } from "@prisma/client";
 import { AuthRequest } from "../lib/auth";
 import { GamificationService } from "../services/gamification.service";
 import { PhygitalService } from "../services/phygital.service";
+import { IntegrationService } from "../services/integration.service";
 import { SubscriptionService } from "../services/subscription.service";
 import { ShippingService, ShippingItem } from "../services/shipping.service";
 
@@ -1219,15 +1220,7 @@ export class PaymentController {
               } else {
                 // Roteia para Laboratório Parceiro via API (Motor Logístico Externo)
                 console.log(`[Fulfillment] Roteando pedido ${order.id} para LAB Parceiro Externo`);
-                // TODO: Chamar IntegrationService.dispatchToLabPartner() quando API estiver pronta
-                await tx.order.update({
-                  where: { id: order.id },
-                  data: {
-                    internalNotes: order.internalNotes 
-                      ? `${order.internalNotes}\n\n[LOGÍSTICA] Despachado para Lab Parceiro.`
-                      : `[LOGÍSTICA] Despachado para Lab Parceiro.`
-                  }
-                });
+                await IntegrationService.dispatchToLabPartner(order.id, printItems, photos);
               }
             }
           }

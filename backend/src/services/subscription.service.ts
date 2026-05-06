@@ -2,6 +2,8 @@ import { prisma } from "../lib/prisma";
 import { MercadoPagoService } from "./mercadopago.service";
 import { SubscriptionStatus } from "@prisma/client";
 
+import { GamificationService } from "./gamification.service";
+
 export class SubscriptionService {
   /**
    * Inicializa uma assinatura para um Cofre de Memórias.
@@ -89,5 +91,11 @@ export class SubscriptionService {
         nextBillingDate: subStatus === "ACTIVE" ? nextBilling : undefined
       }
     });
+
+    const updatedSub = await prisma.subscription.findFirst({ where: { gatewaySubId } });
+    
+    if (updatedSub && subStatus === "ACTIVE") {
+      await GamificationService.processSubscriptionRewards(updatedSub.userId, updatedSub.id);
+    }
   }
 }

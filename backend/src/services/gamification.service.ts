@@ -162,4 +162,67 @@ export class GamificationService {
       console.error("[GamificationService.updateFranchiseTier Error]:", error);
     }
   }
+
+  /**
+   * Processa recompensas por fidelidade em assinaturas recorrentes.
+   * Lógica: 100 pontos por cada faturamento mensal bem-sucedido.
+   */
+  static async processSubscriptionRewards(userId: string, subscriptionId: string) {
+    try {
+      const points = 100;
+      
+      await prisma.$transaction(async (tx) => {
+        // 1. Registro no Ledger
+        await tx.gamificationLedger.create({
+          data: {
+            userId,
+            type: "SUBSCRIPTION_LOYALTY",
+            points,
+            description: `Bônus de fidelidade: Ciclo mensal da assinatura #${subscriptionId.slice(-6).toUpperCase()} processado.`
+          }
+        });
+
+        // 2. Atualização dos pontos estéticos do usuário (Fase 10 compatibilidade)
+        await tx.userPoints.upsert({
+          where: { userId },
+          create: { userId, total: points },
+          update: { total: { increment: points } }
+        });
+      });
+
+      console.log(`[Gamification] Bônus de fidelidade (${points} pts) creditado para usuário ${userId}`);
+    } catch (error) {
+      console.error("[GamificationService.processSubscriptionRewards Error]:", error);
+    }
+  }
+
+  /**
+   * Processa recompensas ao completar um ciclo mensal de cofre.
+   */
+  static async processCycleClosureRewards(userId: string, albumName: string) {
+    try {
+      const points = 250; // Bônus maior por completar o ciclo (materialização)
+      
+      await prisma.$transaction(async (tx) => {
+        await tx.gamificationLedger.create({
+          data: {
+            userId,
+            type: "CYCLE_COMPLETED",
+            points,
+            description: `Meta atingida! Ciclo do cofre "${albumName}" concluído e enviado para impressão.`
+          }
+        });
+
+        await tx.userPoints.upsert({
+          where: { userId },
+          create: { userId, total: points },
+          update: { total: { increment: points } }
+        });
+      });
+
+      console.log(`[Gamification] Bônus de ciclo concluído (${points} pts) para usuário ${userId}`);
+    } catch (error) {
+      console.error("[GamificationService.processCycleClosureRewards Error]:", error);
+    }
+  }
 }

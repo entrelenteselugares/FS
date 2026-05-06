@@ -59914,6 +59914,59 @@ var init_gamification_service = __esm({
           console.error("[GamificationService.updateFranchiseTier Error]:", error);
         }
       }
+      /**
+       * Processa recompensas por fidelidade em assinaturas recorrentes.
+       * Lógica: 100 pontos por cada faturamento mensal bem-sucedido.
+       */
+      static async processSubscriptionRewards(userId, subscriptionId) {
+        try {
+          const points = 100;
+          await prisma_default.$transaction(async (tx) => {
+            await tx.gamificationLedger.create({
+              data: {
+                userId,
+                type: "SUBSCRIPTION_LOYALTY",
+                points,
+                description: `B\xF4nus de fidelidade: Ciclo mensal da assinatura #${subscriptionId.slice(-6).toUpperCase()} processado.`
+              }
+            });
+            await tx.userPoints.upsert({
+              where: { userId },
+              create: { userId, total: points },
+              update: { total: { increment: points } }
+            });
+          });
+          console.log(`[Gamification] B\xF4nus de fidelidade (${points} pts) creditado para usu\xE1rio ${userId}`);
+        } catch (error) {
+          console.error("[GamificationService.processSubscriptionRewards Error]:", error);
+        }
+      }
+      /**
+       * Processa recompensas ao completar um ciclo mensal de cofre.
+       */
+      static async processCycleClosureRewards(userId, albumName) {
+        try {
+          const points = 250;
+          await prisma_default.$transaction(async (tx) => {
+            await tx.gamificationLedger.create({
+              data: {
+                userId,
+                type: "CYCLE_COMPLETED",
+                points,
+                description: `Meta atingida! Ciclo do cofre "${albumName}" conclu\xEDdo e enviado para impress\xE3o.`
+              }
+            });
+            await tx.userPoints.upsert({
+              where: { userId },
+              create: { userId, total: points },
+              update: { total: { increment: points } }
+            });
+          });
+          console.log(`[Gamification] B\xF4nus de ciclo conclu\xEDdo (${points} pts) para usu\xE1rio ${userId}`);
+        } catch (error) {
+          console.error("[GamificationService.processCycleClosureRewards Error]:", error);
+        }
+      }
     };
   }
 });
@@ -80492,8 +80545,79 @@ var PhygitalService = class {
   }
 };
 
+// backend/src/services/integration.service.ts
+init_prisma();
+var IntegrationService = class {
+  /**
+   * Dispatches a premium product order to a laboratory partner.
+   * Generates the CK-Order JSON and logs the transaction.
+   */
+  static async dispatchToLabPartner(orderId, items, photos) {
+    console.log(`[Integration] Preparing dispatch for Order: ${orderId}`);
+    try {
+      const order = await prisma.order.findUnique({
+        where: { id: orderId },
+        include: { event: true, cliente: true }
+      });
+      if (!order) throw new Error(`Order ${orderId} not found.`);
+      const ckPayload = {
+        partnerId: "FOTO_SEGUNDO_HUB",
+        externalId: order.id,
+        customer: {
+          name: order.cliente?.nome || order.contributorName || "Cliente",
+          email: order.buyerEmail || order.cliente?.email,
+          whatsapp: order.buyerWhatsapp || order.cliente?.whatsapp,
+          address: order.shippingAddress
+        },
+        items: items.map((item) => ({
+          sku: item.printProduct?.sku,
+          name: item.printProduct?.name,
+          quantity: item.quantity,
+          photos
+          // Currently same photos for all items in order
+        })),
+        metadata: {
+          eventSlug: order.event.slug,
+          dispatchTime: (/* @__PURE__ */ new Date()).toISOString()
+        }
+      };
+      console.log(`[Integration] CK-Payload generated for Order ${orderId}:`, JSON.stringify(ckPayload, null, 2));
+      const simulatedApiResponse = {
+        success: true,
+        partnerOrderId: `CK-${Math.floor(Math.random() * 1e6)}`,
+        status: "RECEIVED"
+      };
+      if (simulatedApiResponse.success) {
+        await prisma.order.update({
+          where: { id: orderId },
+          data: {
+            fulfillmentStatus: "LAB_PROCESSING",
+            internalNotes: order.internalNotes ? `${order.internalNotes}
+
+[LOG\xCDSTICA] Despachado para Lab Parceiro: ${simulatedApiResponse.partnerOrderId}` : `[LOG\xCDSTICA] Despachado para Lab Parceiro: ${simulatedApiResponse.partnerOrderId}`
+          }
+        });
+        console.log(`[Integration] Order ${orderId} successfully dispatched to Partner.`);
+        return { success: true, partnerId: simulatedApiResponse.partnerOrderId };
+      } else {
+        throw new Error("Partner API returned failure.");
+      }
+    } catch (error) {
+      console.error(`[Integration] Error dispatching Order ${orderId}:`, error.message);
+      await prisma.order.update({
+        where: { id: orderId },
+        data: {
+          internalNotes: `[LOG\xCDSTICA ERROR] Falha no despacho autom\xE1tico: ${error.message}`
+        }
+      });
+      throw error;
+    }
+  }
+};
+
 // backend/src/services/subscription.service.ts
 init_prisma();
+init_gamification_service();
 var SubscriptionService = class {
   /**
    * Inicializa uma assinatura para um Cofre de Memórias.
@@ -80563,6 +80687,10 @@ var SubscriptionService = class {
         nextBillingDate: subStatus === "ACTIVE" ? nextBilling : void 0
       }
     });
+    const updatedSub = await prisma.subscription.findFirst({ where: { gatewaySubId } });
+    if (updatedSub && subStatus === "ACTIVE") {
+      await GamificationService.processSubscriptionRewards(updatedSub.userId, updatedSub.id);
+    }
   }
 };
 
@@ -81609,14 +81737,7 @@ ${albumPhotos.join("\n")}`;
                 await PhygitalService.createQueueEntryFromOrder(order, photos);
               } else {
                 console.log(`[Fulfillment] Roteando pedido ${order.id} para LAB Parceiro Externo`);
-                await tx.order.update({
-                  where: { id: order.id },
-                  data: {
-                    internalNotes: order.internalNotes ? `${order.internalNotes}
-
-[LOG\xCDSTICA] Despachado para Lab Parceiro.` : `[LOG\xCDSTICA] Despachado para Lab Parceiro.`
-                  }
-                });
+                await IntegrationService.dispatchToLabPartner(order.id, printItems, photos);
               }
             }
           }
@@ -86292,6 +86413,7 @@ async function runExpirationJob(req) {
 
 // backend/src/services/vaultCycle.service.ts
 init_prisma();
+init_gamification_service();
 var VaultCycleService = class {
   /**
    * Executa o fechamento de ciclo para um cofre específico.
@@ -86374,6 +86496,7 @@ var VaultCycleService = class {
       }
     });
     console.log(`[VAULT CYCLE] Ciclo conclu\xEDdo. Pedido #${order.id} gerado.`);
+    await GamificationService.processCycleClosureRewards(album.ownerId, album.nome);
     return order;
   }
   /**
@@ -87719,6 +87842,7 @@ var VaultController = class {
         include: {
           album: {
             include: {
+              subscription: true,
               _count: {
                 select: { media: true, members: true }
               }

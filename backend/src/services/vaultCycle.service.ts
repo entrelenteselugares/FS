@@ -1,5 +1,6 @@
 import { prisma } from "../lib/prisma";
 import { GoogleDriveService } from "./googleDrive.service";
+import { GamificationService } from "./gamification.service";
 
 export class VaultCycleService {
   /**
@@ -98,6 +99,10 @@ export class VaultCycleService {
     });
 
     console.log(`[VAULT CYCLE] Ciclo concluído. Pedido #${order.id} gerado.`);
+
+    // 5. Gamificação: Bônus por completar meta mensal
+    await GamificationService.processCycleClosureRewards(album.ownerId, album.nome);
+
     return order;
   }
 

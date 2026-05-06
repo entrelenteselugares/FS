@@ -7,7 +7,7 @@ import { motion, AnimatePresence } from "framer-motion";
 import { 
   Lock, Upload, Heart, Share2, 
   ChevronLeft, Loader2, Camera,
-  Printer
+  Printer, Zap, Star
 } from "lucide-react";
 import { Helmet } from "react-helmet-async";
 import { T } from "../lib/theme";
@@ -29,6 +29,11 @@ interface Vault {
   goalPoses: number;
   status: string;
   myRole: string;
+  subscription?: {
+    id: string;
+    status: string;
+    nextBillingDate?: string;
+  };
 }
 
 export default function VaultDetailPage() {
@@ -43,6 +48,7 @@ export default function VaultDetailPage() {
   const [uploadProgress, setUploadProgress] = useState(0);
   const [checkingOut, setCheckingOut] = useState(false);
   const [doubleTapId, setDoubleTapId] = useState<string | null>(null);
+  const [subscribing, setSubscribing] = useState(false);
 
   const fetchVaultDetails = useCallback(async () => {
     try {
@@ -107,6 +113,24 @@ export default function VaultDetailPage() {
       alert(msg);
     } finally {
       setCheckingOut(false);
+    }
+  };
+
+  const handleSubscribe = async () => {
+    if (!vault) return;
+    setSubscribing(true);
+    try {
+      const res = await api.post(`/vaults/${vaultId}/subscribe`, { planLimit: 36 });
+      if (res.data.init_point) {
+        window.location.href = res.data.init_point;
+      } else {
+        alert("Erro ao iniciar assinatura.");
+      }
+    } catch (err: any) {
+      console.error("[Subscribe] Erro:", err);
+      alert(err.response?.data?.error || "Erro ao processar assinatura.");
+    } finally {
+      setSubscribing(false);
     }
   };
 
@@ -317,6 +341,56 @@ export default function VaultDetailPage() {
             </label>
           </div>
         </div>
+
+        {/* Subscription / Membership Banner (Phase 13 Integration) */}
+        {(!vault.subscription || vault.subscription.status !== 'ACTIVE') ? (
+          vault.myRole === 'OWNER' && (
+            <div className="max-w-7xl mx-auto px-4 mt-4">
+              <div className="bg-gradient-to-r from-emerald-600/20 to-teal-600/20 border border-emerald-500/30 rounded-2xl p-6 flex flex-col md:flex-row items-center justify-between gap-6 backdrop-blur-md">
+                <div className="flex items-center gap-4">
+                  <div className="w-12 h-12 bg-emerald-500 rounded-full flex items-center justify-center shadow-[0_0_20px_rgba(16,185,129,0.4)]">
+                    <Zap className="text-black" size={24} fill="currentColor" />
+                  </div>
+                  <div>
+                    <h3 className="text-lg font-black uppercase italic tracking-tight">Clube de Memórias</h3>
+                    <p className="text-[11px] text-zinc-400 uppercase tracking-widest leading-relaxed max-w-md">
+                      Assine por apenas <span className="text-white font-bold">R$ 49,90/mês</span> e tenha 36 fotos impressas e entregues automaticamente todo mês baseadas nos votos da galera.
+                    </p>
+                  </div>
+                </div>
+                <button 
+                  onClick={handleSubscribe}
+                  disabled={subscribing}
+                  className="w-full md:w-auto bg-emerald-500 hover:bg-emerald-400 text-black font-black uppercase tracking-widest text-[11px] px-8 py-3.5 rounded-full transition-all shadow-xl shadow-emerald-500/20 active:scale-95 disabled:opacity-50"
+                >
+                  {subscribing ? <Loader2 className="animate-spin" size={16} /> : "Ativar Assinatura"}
+                </button>
+              </div>
+            </div>
+          )
+        ) : (
+          <div className="max-w-7xl mx-auto px-4 mt-4">
+            <div className="bg-zinc-900/50 border border-emerald-500/10 rounded-2xl p-4 flex items-center justify-between gap-4">
+              <div className="flex items-center gap-3">
+                <div className="w-8 h-8 bg-emerald-500/10 rounded-full flex items-center justify-center">
+                  <Star className="text-emerald-500" size={16} fill="currentColor" />
+                </div>
+                <div>
+                  <div className="flex items-center gap-2">
+                    <span className="text-[10px] font-black uppercase tracking-tight">Assinatura Ativa</span>
+                    <span className="px-2 py-0.5 bg-emerald-500 text-black text-[8px] font-black rounded-full uppercase">Premium</span>
+                  </div>
+                  <p className="text-[9px] text-zinc-500 uppercase tracking-widest">
+                    Próximo ciclo: {vault.subscription.nextBillingDate ? new Date(vault.subscription.nextBillingDate).toLocaleDateString() : '—'}
+                  </p>
+                </div>
+              </div>
+              <div className="text-right">
+                <span className="block text-[10px] font-black text-emerald-500 uppercase">36 POSES / MÊS</span>
+              </div>
+            </div>
+          </div>
+        )}
       </div>
 
       {/* Main Content */}

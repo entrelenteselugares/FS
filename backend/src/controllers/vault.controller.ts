@@ -215,6 +215,7 @@ export class VaultController {
         include: {
           album: {
             include: {
+              subscription: true,
               _count: {
                 select: { media: true, members: true }
               }
