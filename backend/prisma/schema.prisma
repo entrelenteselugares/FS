@@ -294,6 +294,7 @@ model Order {
   payoutReadyAt       DateTime?
   payoutStatus        PayoutStatus        @default(PENDING)
   fulfillmentStatus   FulfillmentStatus   @default(PENDING)
+  trackingCode        String?
   passiveFranchiseeId String?
   splitFranchisee     Decimal?            @db.Decimal(10, 2)
   rewardsUsed         Decimal?            @db.Decimal(10, 2)
@@ -434,6 +435,7 @@ model PrintSupplier {
   createdAt    DateTime          @default(now())
   updatedAt    DateTime          @updatedAt
   redemptions  PrintRedemption[]
+  products     PrintProduct[]
 
   @@map("print_suppliers")
 }
@@ -546,8 +548,18 @@ model PrintProduct {
   createdAt    DateTime            @default(now())
   updatedAt    DateTime            @updatedAt
   maxPhotos    Int?
+  
+  // Logistics & Routing Flags
+  weightKg         Decimal?            @db.Decimal(10, 3)
+  widthCm          Decimal?            @db.Decimal(10, 2)
+  heightCm         Decimal?            @db.Decimal(10, 2)
+  lengthCm         Decimal?            @db.Decimal(10, 2)
+  fulfillmentType  String              @default("LAB") // "INSTANT_PRINT" or "LAB"
+  supplierId       String?
+  
   orderItems   OrderItem[]
   events       EventPrintProduct[]
+  printSupplier PrintSupplier?         @relation(fields: [supplierId], references: [id])
 
   @@map("print_products")
 }

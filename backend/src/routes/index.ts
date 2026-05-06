@@ -226,11 +226,6 @@ router.get("/profissional/events/:slug", requireAuth, requireProOrFranchise, Eve
 router.post("/profissional/flash-event", requireAuth, requireProOrFranchise, EventController.createFlashEvent);
 router.post("/profissional/foto-point", requireAuth, requireProOrFranchise, EventController.createFotoPoint);
 router.patch("/profissional/events/:id/foto-point", requireAuth, requireProOrFranchise, EventController.updateFotoPoint);
-router.patch("/profissional/events/:id/cover",      requireAuth, requireProOrFranchise, uploadEventCover);
-router.get("/profissional/unidades/convites", requireAuth, requireProOrFranchise, getConvitesUnidade);
-
-router.get("/phygital/events/:eventId/prints", requireAuth, PhygitalController.listAllByEvent);
-router.patch("/phygital/prints/:id/status", requireAuth, PhygitalController.confirmPrint);
 router.get("/public/partners",             EventController.listPartners);   // alias legado
 router.get("/public/unidades-fixas",       EventController.listPartners);   // alias compatível
 router.post("/public/quotes",              EventController.createQuote);

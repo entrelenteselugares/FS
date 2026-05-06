@@ -614,7 +614,7 @@ export class EventController {
         data: {
           nomeNoivos: name,
           slug,
-          type: "PHOTO_MARKETPLACE",
+          type: "FLASH_EVENT",
           active: !delegatedCaptacaoId && !isPublicCall,
           captacaoId: delegatedCaptacaoId || (isPublicCall ? null : userId),
           captacaoStatus: (delegatedCaptacaoId || isPublicCall) ? "PENDING" : "ACCEPTED",
@@ -648,7 +648,7 @@ export class EventController {
   static async createFotoPoint(req: AuthRequest, res: Response) {
     const { 
       name, priceUnit, location, itinerary, references, 
-      isPrivate, coverPhotoUrl, dataEvento, 
+      isPrivate, coverPhotoUrl, dataEvento, startTime, endTime,
       captacaoId: delegatedCaptacaoId, isPublicCall 
     } = req.body;
     const { userId } = req.user!;
@@ -668,12 +668,17 @@ export class EventController {
     try {
       const slug = `fp-${name.toLowerCase().replace(/\s+/g, "-")}-${Math.random().toString(36).substring(2, 6)}`;
       
+      // Parse local time
+      const finalStartTime = dataEvento && startTime ? new Date(`${dataEvento}T${startTime}:00-03:00`) : (dataEvento ? new Date(dataEvento) : new Date());
+      const finalEndTime = dataEvento && endTime ? new Date(`${dataEvento}T${endTime}:00-03:00`) : null;
+
       const event = await prisma.event.create({
         data: {
           nomeNoivos: name,
           slug,
           type: "FOTO_POINT",
-          dataEvento: dataEvento ? new Date(dataEvento) : new Date(),
+          dataEvento: finalStartTime,
+          eventEndTime: finalEndTime,
           active: !delegatedCaptacaoId && !isPublicCall,
           captacaoId: delegatedCaptacaoId || (isPublicCall ? null : userId),
           captacaoStatus: (delegatedCaptacaoId || isPublicCall) ? "PENDING" : "ACCEPTED",
@@ -751,7 +756,7 @@ export class EventController {
       const { 
         nomeNoivos, priceUnit, location, city, itinerary, 
         references, isPrivate, active, coverPhotoUrl, 
-        dataEvento, captacaoId, isPublicCall 
+        dataEvento, startTime, endTime, captacaoId, isPublicCall 
       } = req.body;
 
       const event = await prisma.event.findUnique({ where: { id } });
@@ -781,7 +786,8 @@ export class EventController {
           isPrivate: isPrivate !== undefined ? !!isPrivate : undefined,
           active: active !== undefined ? !!active : undefined,
           coverPhotoUrl: normalizeCoverUrl(coverPhotoUrl),
-          dataEvento: dataEvento ? new Date(dataEvento) : undefined,
+          dataEvento: dataEvento && startTime ? new Date(`${dataEvento}T${startTime}:00-03:00`) : (dataEvento ? new Date(dataEvento) : undefined),
+          eventEndTime: dataEvento && endTime ? new Date(`${dataEvento}T${endTime}:00-03:00`) : undefined,
           captacaoId: captacaoId !== undefined ? String(captacaoId) : undefined,
           isPublicCall: isPublicCall !== undefined ? !!isPublicCall : undefined,
           captacaoStatus: (captacaoId || isPublicCall) ? "PENDING" : undefined

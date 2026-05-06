@@ -36,7 +36,7 @@ export default defineConfig({
     },
     {
       command: 'npm run dev:backend',
-      url: 'http://localhost:3001/health',
+      url: 'http://localhost:3001/api/health',
       reuseExistingServer: true,
       stdout: 'pipe',
       stderr: 'pipe',

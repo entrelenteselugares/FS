@@ -1077,10 +1077,13 @@ export class PaymentController {
           eventUpdateData.collectedAmount = { increment: order.valor };
         }
 
-        // 2. Lógica de Upgrades (Service Catalog)
+        // 2. Lógica de Upgrades (Service Catalog) e Print Catalog
         const orderItems = await tx.orderItem.findMany({
           where: { orderId: order.id },
-          include: { service: true }
+          include: { 
+            service: true,
+            printProduct: true
+          }
         });
 
         const serviceItems = orderItems.filter(item => item.serviceId);
@@ -1090,12 +1093,12 @@ export class PaymentController {
           if (serviceItems.some(i => i.service?.name.toLowerCase().includes("impressa"))) eventUpdateData.temFotoImpressa = true;
         }
 
-        // 3. Lógica de Impressão Automática (Print Catalog Integration)
+        // 3. Lógica de Impressão Automática (Print Catalog Integration) e Routing
         const printItems = orderItems.filter(item => item.printProductId);
         if (printItems.length > 0) {
           eventUpdateData.temFotoImpressa = true;
           for (const item of printItems) {
-            // Extraímos URLs das fotos se houver
+            // Extraímos URLs das fotos se houver (ex: álbuns ou fotos avulsas selecionadas)
             let photos: string[] = [];
             if (order.internalNotes && order.internalNotes.includes("--- FOTOS SELECIONADAS DO ÁLBUM ---")) {
                const parts = order.internalNotes.split("--- FOTOS SELECIONADAS DO ÁLBUM ---");
@@ -1105,7 +1108,24 @@ export class PaymentController {
             }
             
             if (photos.length > 0) {
-              await PhygitalService.createQueueEntryFromOrder(order, photos);
+              const fulfillment = item.printProduct?.fulfillmentType || "LAB";
+              if (fulfillment === "INSTANT_PRINT") {
+                // Roteia para Fila Local (Raspberry Pi/IoT/ZPL)
+                console.log(`[Fulfillment] Roteando pedido ${order.id} para INSTANT_PRINT (Fila Local IoT)`);
+                await PhygitalService.createQueueEntryFromOrder(order, photos);
+              } else {
+                // Roteia para Laboratório Parceiro via API (Motor Logístico Externo)
+                console.log(`[Fulfillment] Roteando pedido ${order.id} para LAB Parceiro Externo`);
+                // TODO: Chamar IntegrationService.dispatchToLabPartner() quando API estiver pronta
+                await tx.order.update({
+                  where: { id: order.id },
+                  data: {
+                    internalNotes: order.internalNotes 
+                      ? `${order.internalNotes}\n\n[LOGÍSTICA] Despachado para Lab Parceiro.`
+                      : `[LOGÍSTICA] Despachado para Lab Parceiro.`
+                  }
+                });
+              }
             }
           }
         }
