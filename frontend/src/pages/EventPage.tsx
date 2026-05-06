@@ -386,8 +386,18 @@ export default function EventPage() {
 
   const paid = step === "success";
   const isMarketplace = event.type === 'PHOTO_MARKETPLACE' || event.type === 'FOTO_POINT';
-  const isEventOver = event.dataEvento ? new Date(event.dataEvento).setHours(23, 59, 59, 999) < new Date().getTime() : false;
-
+  const isEventOver = event.dataEvento ? (() => {
+    try {
+      const datePart = String(event.dataEvento).split('T')[0];
+      const [year, month, day] = datePart.split('-').map(Number);
+      const endOfDay = new Date(year, month - 1, day, 23, 59, 59, 999);
+      // Give 12 hours grace period into the next day
+      const endOfEvent = new Date(endOfDay.getTime() + (12 * 60 * 60 * 1000));
+      return endOfEvent.getTime() < new Date().getTime();
+    } catch(e) {
+      return false;
+    }
+  })() : false;
 
   const toggleCart = (shortId: string) => {
     setCart(prev => {
