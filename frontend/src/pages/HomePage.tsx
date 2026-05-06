@@ -297,7 +297,7 @@ export const HomePage = () => {
                 <select 
                   value={selectedCity}
                   onChange={e => { setSelectedCity(e.target.value); setPage(1); }}
-                  className="w-full bg-[#1a1a1a] border border-[#2a2a2a] text-white px-2 py-3 rounded-xl text-[8px] font-black uppercase tracking-widest outline-none appearance-none text-center"
+                  className="w-full bg-[var(--bg-field)] border border-[var(--border)] text-[var(--text)] px-2 py-3 rounded-xl text-[8px] font-black uppercase tracking-widest outline-none appearance-none text-center"
                 >
                   <option value="">Cidades</option>
                   <option value="Campinas">Campinas</option>
@@ -309,7 +309,7 @@ export const HomePage = () => {
                 <select 
                   value={selectedType}
                   onChange={e => { setSelectedType(e.target.value); setPage(1); }}
-                  className="w-full bg-[#1a1a1a] border border-[#2a2a2a] text-white px-2 py-3 rounded-xl text-[8px] font-black uppercase tracking-widest outline-none appearance-none text-center"
+                  className="w-full bg-[var(--bg-field)] border border-[var(--border)] text-[var(--text)] px-2 py-3 rounded-xl text-[8px] font-black uppercase tracking-widest outline-none appearance-none text-center"
                 >
                   <option value="">Categorias</option>
                   <option value="ALBUM_FULL">Álbuns</option>
