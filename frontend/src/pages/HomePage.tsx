@@ -58,41 +58,39 @@ function EventCard({ event, onClick }: { event: Event; onClick: () => void }) {
         onError={e => { e.currentTarget.src = fallback; }}
       />
 
-      {/* Immersive Gradient Overlay */}
-      <div className="absolute inset-0 bg-gradient-to-t from-black/95 via-black/20 to-transparent z-[1] opacity-90 group-hover:opacity-100 transition-opacity" />
+      {/* Immersive Gradient Overlay - REQUIRED for legibility */}
+      <div className="absolute inset-0 bg-gradient-to-t from-black/90 via-black/20 to-transparent z-[1] opacity-90 group-hover:opacity-100 transition-opacity" />
 
-      {/* Professional Badge (Pílula) - Top Left */}
-      {event.cartorio && (
-        <div className="absolute top-3 left-3 z-10 backdrop-blur-md bg-white/10 border border-white/10 rounded-full px-2 py-1 md:px-3 md:py-1.5 flex items-center gap-1.5 transition-all">
-          <div className="w-4 h-4 md:w-5 md:h-5 rounded-full bg-emerald-500 flex items-center justify-center text-[8px] md:text-[9px] font-black text-black">
-            {event.cartorio.charAt(0).toUpperCase()}
-          </div>
-          <span className="text-[8px] md:text-[9px] font-black text-white uppercase tracking-widest truncate max-w-[80px] md:max-w-[100px]">
-            {event.cartorio}
-          </span>
+      {/* Badge de Autoria (Pílula Glassmorphism) - Top Left */}
+      <div className="absolute top-4 left-4 z-10 backdrop-blur-md bg-white/10 border border-white/20 rounded-full px-3 py-1 flex items-center gap-2">
+        <div className="w-5 h-5 rounded-full bg-emerald-500/80 flex items-center justify-center text-[10px] font-black text-black">
+          {event.cartorio?.charAt(0).toUpperCase() || "FS"}
         </div>
-      )}
+        <span className="text-[10px] font-black text-white uppercase tracking-widest truncate max-w-[120px]">
+          {event.cartorio || "Foto Segundo"}
+        </span>
+      </div>
 
       {/* Status Badges - Top Right */}
-      <div className="absolute top-3 right-3 z-10 flex flex-col gap-1 items-end">
+      <div className="absolute top-4 right-4 z-10 flex flex-col gap-1 items-end">
         {today && (
-          <span className="px-2 py-0.5 bg-emerald-500 text-black text-[7px] md:text-[8px] font-black uppercase tracking-widest rounded-sm shadow-xl">
+          <span className="px-2 py-0.5 bg-emerald-500 text-black text-[8px] font-black uppercase tracking-widest rounded-sm shadow-xl">
             HOJE
           </span>
         )}
         {novo && (
-          <span className="px-2 py-0.5 bg-emerald-500 text-black text-[7px] md:text-[8px] font-black uppercase tracking-widest rounded-sm shadow-xl">
+          <span className="px-3 py-1 bg-white/10 backdrop-blur-md text-white text-[8px] font-black uppercase tracking-widest rounded-full border border-white/20 shadow-xl">
             NOVO
           </span>
         )}
       </div>
 
       {/* Content Overlay - Bottom */}
-      <div className="absolute bottom-0 left-0 w-full p-4 md:p-5 z-10 space-y-1">
-        <h3 className="text-lg md:text-xl font-heading font-black text-white uppercase italic tracking-tight leading-none drop-shadow-lg truncate">
+      <div className="absolute bottom-0 left-0 w-full p-5 z-10 space-y-1">
+        <h3 className="text-xl font-heading font-black text-white uppercase italic tracking-tight leading-tight drop-shadow-lg truncate">
           {event.nomeNoivos}
         </h3>
-        <div className="flex flex-col gap-1 text-white/70 text-[8px] md:text-[9px] font-black uppercase tracking-widest italic">
+        <div className="flex flex-col gap-1 text-white/70 text-[9px] font-black uppercase tracking-widest italic">
           <div className="flex items-center gap-1.5">
             <MapPin size={10} className="text-emerald-500" />
             <span className="truncate">{event.location || event.city || "PONTO DESIGNADO"}</span>
@@ -175,7 +173,7 @@ export const HomePage = () => {
   }, [query, selectedType, selectedCity]);
 
   return (
-    <div style={{ background: T.bg, color: T.text, minHeight: "100vh", fontFamily: T.fontB }}>
+    <div style={{ background: "#0a0a0a", color: T.text, minHeight: "100vh", fontFamily: T.fontB }}>
       <Helmet>
         <title>Foto Segundo | {DICT.HERO_TITLE_PART1}{DICT.HERO_TITLE_PART2_ITALIC}</title>
         <meta name="description" content={DICT.HERO_DESCRIPTION} />
@@ -199,15 +197,24 @@ export const HomePage = () => {
           .hp-stats { gap: 10px !important; justify-content: space-between !important; flex-wrap: nowrap !important; }
           .hp-stats-item { min-width: auto; }
           .hp-stats-val { font-size: 22px !important; }
-          .hp-hero-search-desktop { display: none !important; }
-          .hp-mobile-search { display: flex !important; }
-          .hp-event-section { padding: 0 0 100px !important; }
-          /* On mobile: collapse hero entirely so the grid is above the fold */
-          .hp-hero-section { display: none !important; }
-          /* Collapse the desktop vitrine header — show inline compact header instead */
-          .hp-vitrine-header-desktop { display: none !important; }
-          .hp-mobile-vitrine-header { display: flex !important; }
-        }
+           .hp-mobile-search { display: flex !important; }
+           .hp-event-section { padding: 0 0 100px !important; }
+           /* Compressed Hero on Mobile */
+           .hp-hero-section { 
+             display: flex !important; 
+             padding: 40px 20px !important;
+             text-align: left !important;
+             align-items: flex-start !important;
+           }
+           .hp-hero-title { font-size: 32px !important; line-height: 1 !important; margin-bottom: 8px !important; }
+           .hp-hero-desc { font-size: 11px !important; margin-bottom: 16px !important; text-align: left !important; }
+           .hp-stats { display: none !important; }
+           .hp-hero-tagline { display: none !important; }
+
+           /* Vitrine Headers */
+           .hp-vitrine-header-desktop { display: none !important; }
+           .hp-mobile-vitrine-header { display: flex !important; }
+         }
         @media(min-width:769px){
           .hp-mobile-search { display: none !important; }
           .hp-mobile-vitrine-header { display: none !important; }
@@ -389,14 +396,26 @@ export const HomePage = () => {
               <p className="text-[10px] text-white font-black uppercase tracking-widest mt-4">Redefina os filtros ou a busca.</p>
             </div>
           ) : (
-            <div className="space-y-1">
-              {/* SECTIONS MERGED INTO ONE CONTINUOUS GRID FOR MAXIMUM IMPACT */}
-              <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-3 md:gap-6 px-3 md:px-8">
-                {events.map(ev => (
-                  <EventCard key={ev.id} event={ev} onClick={() => navigate(`/e/${ev.slug || ev.id}`)} />
-                ))}
+              <div className="space-y-4 px-4 md:px-8">
+                {/* Categorias Grid (2 Colunas) */}
+                <div className="grid grid-cols-2 gap-3 mb-6 md:hidden">
+                   {["Casamentos", "Ensaios", "Eventos", "Venda Direta"].map(cat => (
+                     <div key={cat} className="relative h-24 rounded-xl overflow-hidden group">
+                        <img src={`https://images.unsplash.com/photo-1511285560929-80b456fea0bc?q=80&w=400`} className="absolute inset-0 w-full h-full object-cover brightness-50 group-hover:scale-110 transition-transform" />
+                        <div className="absolute inset-0 flex items-center justify-center">
+                           <span className="text-white font-black uppercase italic tracking-widest text-xs">{cat}</span>
+                        </div>
+                     </div>
+                   ))}
+                </div>
+
+                {/* Eventos Grid (Full Width on Mobile) */}
+                <div className="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-4 gap-4 md:gap-6">
+                  {events.map(ev => (
+                    <EventCard key={ev.id} event={ev} onClick={() => navigate(`/e/${ev.slug || ev.id}`)} />
+                  ))}
+                </div>
               </div>
-            </div>
           )}
 
           {/* Pagination */}
