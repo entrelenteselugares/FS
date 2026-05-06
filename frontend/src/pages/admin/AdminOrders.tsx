@@ -23,6 +23,10 @@ interface Order {
   splitCartorio?: number;
   splitFranchisee?: number;
   passiveFranchisee?: string;
+  shippingFee?: number;
+  fulfillmentStatus?: string;
+  trackingCode?: string;
+  deliveryType?: string;
 }
 
 interface OrderGroup {
@@ -119,6 +123,15 @@ export const AdminOrders: React.FC = () => {
       fetchOrders();
     } catch {
       alert("Erro ao excluir pedido.");
+    }
+  };
+
+  const handleUpdateLogistics = async (id: string, fulfillmentStatus: string, trackingCode?: string) => {
+    try {
+      await API.patch(`/admin/orders/${id}/logistics`, { fulfillmentStatus, trackingCode });
+      fetchOrders();
+    } catch {
+      alert("Erro ao atualizar logística.");
     }
   };
 
@@ -276,19 +289,47 @@ export const AdminOrders: React.FC = () => {
                                    </div>
                                 </td>
                                <td className="py-5 text-right font-heading font-black text-theme-text italic text-lg">{formatCurrency(o.amount)}</td>
-                               <td className="py-5 text-center">
-                                  <span className={`text-[8px] font-black uppercase tracking-[0.2em] px-3 py-1.5 border ${o.status === 'APROVADO' ? 'border-brand-tactical text-brand-tactical' : 'border-red-900 text-red-500'}`}>
-                                     {o.status}
-                                  </span>
-                               </td>
-                               <td className="py-5 text-center">
-                                  <button 
-                                    onClick={(e) => { e.stopPropagation(); handleDeleteOrder(o.id); }}
-                                    className="p-2 border border-theme-border text-red-500/40 hover:text-red-500 transition-all"
-                                  >
-                                    <Trash2 size={12} />
-                                  </button>
-                               </td>
+                                <td className="py-5 text-center">
+                                   <div className="flex flex-col items-center gap-2">
+                                      <span className={`text-[8px] font-black uppercase tracking-[0.2em] px-3 py-1.5 border ${o.status === 'APROVADO' ? 'border-brand-tactical text-brand-tactical' : 'border-red-900 text-red-500'}`}>
+                                         {o.status}
+                                      </span>
+                                      {o.deliveryType === 'SHIPPING' && (
+                                        <div className="flex flex-col items-center gap-1">
+                                          <select 
+                                            value={o.fulfillmentStatus}
+                                            onChange={(e) => handleUpdateLogistics(o.id, e.target.value)}
+                                            className={`text-[7px] font-black uppercase px-2 py-0.5 border bg-transparent outline-none cursor-pointer ${o.fulfillmentStatus === 'SHIPPED' ? 'border-green-500 text-green-500' : 'border-zinc-600 text-zinc-500 hover:border-zinc-400'}`}
+                                          >
+                                            <option value="PENDING">PENDENTE</option>
+                                            <option value="PROCESSING">PROCESSANDO</option>
+                                            <option value="SHIPPED">ENVIADO</option>
+                                            <option value="DELIVERED">ENTREGUE</option>
+                                            <option value="CANCELLED">CANCELADO</option>
+                                          </select>
+                                          <input 
+                                            type="text"
+                                            placeholder="CÓD. RASTREIO"
+                                            defaultValue={o.trackingCode}
+                                            onBlur={(e) => handleUpdateLogistics(o.id, o.fulfillmentStatus || 'PENDING', e.target.value)}
+                                            className="text-[7px] text-theme-text font-bold bg-theme-bg-muted border border-theme-border px-1 py-0.5 w-20 text-center uppercase"
+                                          />
+                                          {o.shippingFee && <span className="text-[7px] text-theme-muted font-bold">Frete: {formatCurrency(Number(o.shippingFee))}</span>}
+                                        </div>
+                                      )}
+                                   </div>
+                                </td>
+                                <td className="py-5 text-center">
+                                   <div className="flex items-center justify-center gap-2">
+                                      <button 
+                                        onClick={(e) => { e.stopPropagation(); handleDeleteOrder(o.id); }}
+                                        className="p-2 border border-theme-border text-red-500/40 hover:text-red-500 transition-all"
+                                        title="Excluir Pedido"
+                                      >
+                                        <Trash2 size={12} />
+                                      </button>
+                                   </div>
+                                </td>
                             </tr>
                           ))}
                        </tbody>

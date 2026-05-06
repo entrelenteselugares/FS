@@ -12,6 +12,8 @@ import { Prisma } from "@prisma/client";
 import { AuthRequest } from "../lib/auth";
 import { GamificationService } from "../services/gamification.service";
 import { PhygitalService } from "../services/phygital.service";
+import { SubscriptionService } from "../services/subscription.service";
+import { ShippingService, ShippingItem } from "../services/shipping.service";
 
 export class PaymentController {
   /**
@@ -90,15 +92,23 @@ export class PaymentController {
       // 2. Lógica de Precificação Dinâmica & Splits (Centralizada)
       const cartItems = cart || [];
       const basePrice = PricingService.calculateEventPrice(event, contributionAmount, cartItems.length);
+      let totalSupplierCost = 0;
       
       // 2a. Produto Físico (Upsell Print Catalog)
-      let finalPrintProductId = null;
+      // 2a. Produtos Físicos (Hybrid Cart Support)
       let finalPrintPrice = 0;
-      if (printProductId) {
-        const product = await prisma.printProduct.findUnique({ where: { id: printProductId } });
+      let physicalItems = req.body.physicalItems || []; // [{ id, quantity }]
+      if (printProductId && !physicalItems.find((i: any) => i.id === printProductId)) {
+        physicalItems.push({ id: printProductId, quantity: 1 });
+      }
+
+      for (const item of physicalItems) {
+        const product = await prisma.printProduct.findUnique({ where: { id: item.id } });
         if (product && product.active) {
-          finalPrintProductId = product.id;
-          finalPrintPrice = product.sellingPrice !== null ? Number(product.sellingPrice) : Number(product.supplierCost) * (1 + product.marginPct / 100);
+          const qty = Number(item.quantity) || 1;
+          const pPrice = product.sellingPrice !== null ? Number(product.sellingPrice) : Number(product.supplierCost) * (1 + product.marginPct / 100);
+          finalPrintPrice += pPrice * qty;
+          totalSupplierCost += Number(product.supplierCost) * qty;
         }
       }
       
@@ -134,7 +144,10 @@ export class PaymentController {
         cartorio: splitCartorio,
         franchisee: splitFranchisee,
         passiveFranchiseeId 
-      } = await PricingService.calculateSplits(preco, { professionalId: event.captacaoId || undefined });
+      } = await PricingService.calculateSplits(preco, { 
+        professionalId: event.captacaoId || undefined,
+        supplierCost: totalSupplierCost
+      });
 
       console.log(`[Checkout] Repasse Manual Calculado: Snapshot salvo. Valor: ${preco}`);
 
@@ -175,12 +188,18 @@ export class PaymentController {
           }
         }
       }
-      if (finalPrintProductId) {
-        orderItemsData.push({
-          printProductId: finalPrintProductId,
-          price: finalPrintPrice,
-          quantity: 1
-        });
+      // 5. Adiciona os itens físicos se selecionados
+      for (const item of physicalItems) {
+        const product = await prisma.printProduct.findUnique({ where: { id: item.id } });
+        if (product && product.active) {
+          const qty = Number(item.quantity) || 1;
+          const pPrice = product.sellingPrice !== null ? Number(product.sellingPrice) : Number(product.supplierCost) * (1 + product.marginPct / 100);
+          orderItemsData.push({
+            printProductId: product.id,
+            price: pPrice,
+            quantity: qty
+          });
+        }
       }
 
       // 4. Criar ou Reutilizar Pedido no Banco
@@ -351,6 +370,17 @@ export class PaymentController {
           // Fallback tático: Caso o checkout Pro ainda não tenha salvo o PaymentID, usamos a Referência Externa
           if (updatedOrders.length === 0 && paymentData.external_reference) {
             console.log(`[Webhook] Pedido não achado por ID ${data.id}. Tentando por Ref: ${paymentData.external_reference}`);
+            
+            // ── VERIFICA SE É ASSINATURA (COFRE) ──
+            const sub = await prisma.subscription.findUnique({
+              where: { id: paymentData.external_reference }
+            });
+            if (sub) {
+              await SubscriptionService.handleSubscriptionPayment(sub.gatewaySubId || String(data.id), paymentData.status);
+              console.log(`✅ Assinatura ${sub.id} ativada via Webhook.`);
+              return res.json({ ok: true, type: "subscription" });
+            }
+
             const orderRef = await prisma.order.findUnique({
               where: { id: paymentData.external_reference },
               include: { event: true, cliente: true }
@@ -406,15 +436,32 @@ export class PaymentController {
       // 2. Lógica de Precificação & Splits (Centralizada)
       const cartItems = cart || [];
       let basePrice = PricingService.calculateEventPrice(event, contributionAmount, cartItems.length);
+      let totalSupplierCost = 0;
       
       // 2a. Produto Físico (Upsell Print Catalog)
-      let finalPrintProductId = null;
+      // 2a. Produtos Físicos (Hybrid Cart Support)
       let finalPrintPrice = 0;
-      if (printProductId) {
-        const product = await prisma.printProduct.findUnique({ where: { id: printProductId } });
+      let physicalItems = req.body.physicalItems || []; // [{ id, quantity }]
+      if (printProductId && !physicalItems.find((i: any) => i.id === printProductId)) {
+        physicalItems.push({ id: printProductId, quantity: 1 });
+      }
+
+      let orderItemsData: Prisma.OrderItemCreateManyOrderInput[] = [];
+
+      for (const item of physicalItems) {
+        const product = await prisma.printProduct.findUnique({ where: { id: item.id } });
         if (product && product.active) {
-          finalPrintProductId = product.id;
-          finalPrintPrice = product.sellingPrice !== null ? Number(product.sellingPrice) : Number(product.supplierCost) * (1 + product.marginPct / 100);
+          const qty = Number(item.quantity) || 1;
+          const pPrice = product.sellingPrice !== null ? Number(product.sellingPrice) : Number(product.supplierCost) * (1 + product.marginPct / 100);
+          
+          finalPrintPrice += pPrice * qty;
+          totalSupplierCost += Number(product.supplierCost) * qty;
+
+          orderItemsData.push({
+            printProductId: product.id,
+            price: pPrice,
+            quantity: qty
+          });
         }
       }
 
@@ -465,7 +512,11 @@ export class PaymentController {
         cartorio: splitCartorio,
         franchisee: splitFranchisee,
         passiveFranchiseeId
-      } = await PricingService.calculateSplits(preco, { professionalId: event.captacaoId || undefined });
+      } = await PricingService.calculateSplits(preco, { 
+        professionalId: event.captacaoId || undefined,
+        shippingFee: Number(req.body.shippingFee || 0),
+        supplierCost: totalSupplierCost
+      });
 
       // 4. Identificação do Comprador (Lead -> Customer)
       let finalUserId = userId;
@@ -559,7 +610,7 @@ export class PaymentController {
       }
 
       // 4a. Busca as mídias reais para obter os IDs (Marketplace)
-      let orderItemsData: Prisma.OrderItemCreateManyOrderInput[] = [];
+      // orderItemsData já foi inicializado com produtos físicos se houver (Regra Híbrida)
       if (cartItems.length > 0) {
         for (const shortId of cartItems) {
           let media = await prisma.eventMedia.findFirst({
@@ -594,14 +645,8 @@ export class PaymentController {
         }
       }
 
-      // Adiciona o produto impresso aos items se selecionado
-      if (finalPrintProductId) {
-        orderItemsData.push({
-          printProductId: finalPrintProductId,
-          price: finalPrintPrice,
-          quantity: 1
-        });
-      }
+      // 5. Adiciona os itens físicos processados anteriormente
+      // (orderItemsData já contém os produtos físicos se houver)
 
       let order;
       if (existingPendingOrder) {
@@ -834,6 +879,64 @@ export class PaymentController {
     } catch (error) {
       console.error("[GetOrderPublic Error]:", error);
       return res.status(500).json({ error: "Erro ao recuperar dados do pedido." });
+    }
+  }
+
+  /**
+   * GET /api/checkout/shipping-quote
+   * Calcula o frete para um carrinho/pedido baseado no CEP.
+   */
+  static async calculateShipping(req: Request, res: Response) {
+    const { cep, orderId, cart, printProductId } = req.query;
+
+    try {
+      if (!cep) return res.status(400).json({ error: "CEP é obrigatório." });
+
+      // 1. Identificar produtos no carrinho
+      let items: ShippingItem[] = [];
+
+      if (orderId) {
+        const order = await prisma.order.findUnique({
+          where: { id: String(orderId) },
+          include: { items: true }
+        });
+        if (order) {
+          items = order.items
+            .filter(i => i.printProductId)
+            .map(i => ({ id: i.printProductId!, quantity: i.quantity }));
+        }
+      } else if (printProductId) {
+        items.push({ id: String(printProductId), quantity: 1 });
+      } else if (req.query.physicalItems) {
+        try {
+          const pItems = typeof req.query.physicalItems === 'string' ? JSON.parse(req.query.physicalItems) : req.query.physicalItems;
+          if (Array.isArray(pItems)) {
+            items = pItems.map((i: any) => ({ id: i.id, quantity: Number(i.quantity) || 1 }));
+          }
+        } catch (e) { console.error("Error parsing physicalItems for shipping:", e); }
+      }
+
+      // Se houver cartItems (digital) mas nenhum físico, frete é zero
+      const cartItems = Array.isArray(cart) ? cart : (cart ? [cart] : []);
+      if (items.length === 0 && cartItems.length > 0) {
+        return res.json({ quotes: [{ id: 'free', name: 'Entrega Digital (E-mail)', price: 0, currency: 'BRL', deliveryTimeDays: 0 }] });
+      }
+
+      if (items.length === 0) {
+        return res.status(400).json({ error: "Nenhum produto físico identificado para cálculo de frete." });
+      }
+
+      // 2. Buscar CEP de Origem (do Evento ou da Franquia vinculada)
+      // Por simplicidade na Phase 12, usamos um CEP fixo de origem (CD Central)
+      const originCep = "01001000"; 
+
+      // 3. Chamar ShippingService
+      const quotes = await ShippingService.calculateFreight(originCep, String(cep), items);
+
+      return res.json({ quotes });
+    } catch (err) {
+      console.error("calculateShipping error:", err);
+      res.status(500).json({ error: "Erro ao calcular frete." });
     }
   }
 

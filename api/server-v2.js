@@ -37,8 +37,8 @@ var __toCommonJS = (mod) => __copyProps(__defProp({}, "__esModule", { value: tru
 // backend/node_modules/dotenv/lib/main.js
 var require_main = __commonJS({
   "backend/node_modules/dotenv/lib/main.js"(exports2, module2) {
-    var fs2 = require("fs");
-    var path2 = require("path");
+    var fs3 = require("fs");
+    var path4 = require("path");
     var os = require("os");
     var crypto11 = require("crypto");
     var TIPS = [
@@ -169,7 +169,7 @@ var require_main = __commonJS({
       if (options && options.path && options.path.length > 0) {
         if (Array.isArray(options.path)) {
           for (const filepath of options.path) {
-            if (fs2.existsSync(filepath)) {
+            if (fs3.existsSync(filepath)) {
               possibleVaultPath = filepath.endsWith(".vault") ? filepath : `${filepath}.vault`;
             }
           }
@@ -177,15 +177,15 @@ var require_main = __commonJS({
           possibleVaultPath = options.path.endsWith(".vault") ? options.path : `${options.path}.vault`;
         }
       } else {
-        possibleVaultPath = path2.resolve(process.cwd(), ".env.vault");
+        possibleVaultPath = path4.resolve(process.cwd(), ".env.vault");
       }
-      if (fs2.existsSync(possibleVaultPath)) {
+      if (fs3.existsSync(possibleVaultPath)) {
         return possibleVaultPath;
       }
       return null;
     }
     function _resolveHome(envPath) {
-      return envPath[0] === "~" ? path2.join(os.homedir(), envPath.slice(1)) : envPath;
+      return envPath[0] === "~" ? path4.join(os.homedir(), envPath.slice(1)) : envPath;
     }
     function _configVault(options) {
       const debug3 = parseBoolean(process.env.DOTENV_CONFIG_DEBUG || options && options.debug);
@@ -202,7 +202,7 @@ var require_main = __commonJS({
       return { parsed };
     }
     function configDotenv(options) {
-      const dotenvPath = path2.resolve(process.cwd(), ".env");
+      const dotenvPath = path4.resolve(process.cwd(), ".env");
       let encoding = "utf8";
       let processEnv2 = process.env;
       if (options && options.processEnv != null) {
@@ -230,13 +230,13 @@ var require_main = __commonJS({
       }
       let lastError;
       const parsedAll = {};
-      for (const path3 of optionPaths) {
+      for (const path5 of optionPaths) {
         try {
-          const parsed = DotenvModule.parse(fs2.readFileSync(path3, { encoding }));
+          const parsed = DotenvModule.parse(fs3.readFileSync(path5, { encoding }));
           DotenvModule.populate(parsedAll, parsed, options);
         } catch (e) {
           if (debug3) {
-            _debug(`failed to load ${path3} ${e.message}`);
+            _debug(`failed to load ${path5} ${e.message}`);
           }
           lastError = e;
         }
@@ -249,7 +249,7 @@ var require_main = __commonJS({
         const shortPaths = [];
         for (const filePath of optionPaths) {
           try {
-            const relative = path2.relative(process.cwd(), filePath);
+            const relative = path4.relative(process.cwd(), filePath);
             shortPaths.push(relative);
           } catch (e) {
             if (debug3) {
@@ -15671,11 +15671,11 @@ var require_mime_types = __commonJS({
       }
       return exts[0];
     }
-    function lookup(path2) {
-      if (!path2 || typeof path2 !== "string") {
+    function lookup(path4) {
+      if (!path4 || typeof path4 !== "string") {
         return false;
       }
-      var extension2 = extname("x." + path2).toLowerCase().slice(1);
+      var extension2 = extname("x." + path4).toLowerCase().slice(1);
       if (!extension2) {
         return false;
       }
@@ -19146,13 +19146,13 @@ var require_view = __commonJS({
   "backend/node_modules/express/lib/view.js"(exports2, module2) {
     "use strict";
     var debug3 = require_src()("express:view");
-    var path2 = require("node:path");
-    var fs2 = require("node:fs");
-    var dirname = path2.dirname;
-    var basename = path2.basename;
-    var extname = path2.extname;
-    var join = path2.join;
-    var resolve = path2.resolve;
+    var path4 = require("node:path");
+    var fs3 = require("node:fs");
+    var dirname = path4.dirname;
+    var basename = path4.basename;
+    var extname = path4.extname;
+    var join = path4.join;
+    var resolve = path4.resolve;
     module2.exports = View;
     function View(name2, options) {
       var opts = options || {};
@@ -19181,17 +19181,17 @@ var require_view = __commonJS({
       this.path = this.lookup(fileName);
     }
     View.prototype.lookup = function lookup(name2) {
-      var path3;
+      var path5;
       var roots = [].concat(this.root);
       debug3('lookup "%s"', name2);
-      for (var i = 0; i < roots.length && !path3; i++) {
+      for (var i = 0; i < roots.length && !path5; i++) {
         var root = roots[i];
         var loc = resolve(root, name2);
         var dir = dirname(loc);
         var file = basename(loc);
-        path3 = this.resolve(dir, file);
+        path5 = this.resolve(dir, file);
       }
-      return path3;
+      return path5;
     };
     View.prototype.render = function render(options, callback) {
       var sync = true;
@@ -19213,21 +19213,21 @@ var require_view = __commonJS({
     };
     View.prototype.resolve = function resolve2(dir, file) {
       var ext = this.ext;
-      var path3 = join(dir, file);
-      var stat = tryStat(path3);
+      var path5 = join(dir, file);
+      var stat = tryStat(path5);
       if (stat && stat.isFile()) {
-        return path3;
+        return path5;
       }
-      path3 = join(dir, basename(file, ext), "index" + ext);
-      stat = tryStat(path3);
+      path5 = join(dir, basename(file, ext), "index" + ext);
+      stat = tryStat(path5);
       if (stat && stat.isFile()) {
-        return path3;
+        return path5;
       }
     };
-    function tryStat(path3) {
-      debug3('stat "%s"', path3);
+    function tryStat(path5) {
+      debug3('stat "%s"', path5);
       try {
-        return fs2.statSync(path3);
+        return fs3.statSync(path5);
       } catch (e) {
         return void 0;
       }
@@ -20363,15 +20363,15 @@ var require_dist = __commonJS({
       let index = 0;
       function consumeUntil(end) {
         const output = [];
-        let path2 = "";
+        let path4 = "";
         function writePath() {
-          if (!path2)
+          if (!path4)
             return;
           output.push({
             type: "text",
-            value: encodePath(path2)
+            value: encodePath(path4)
           });
-          path2 = "";
+          path4 = "";
         }
         while (index < chars.length) {
           const value = chars[index++];
@@ -20383,7 +20383,7 @@ var require_dist = __commonJS({
             if (index === chars.length) {
               throw new PathError(`Unexpected end after \\ at index ${index}`, str);
             }
-            path2 += chars[index++];
+            path4 += chars[index++];
             continue;
           }
           if (value === ":" || value === "*") {
@@ -20427,7 +20427,7 @@ var require_dist = __commonJS({
           if (value === "}" || value === "(" || value === ")" || value === "[" || value === "]" || value === "+" || value === "?" || value === "!") {
             throw new PathError(`Unexpected ${value} at index ${index - 1}`, str);
           }
-          path2 += value;
+          path4 += value;
         }
         if (end) {
           throw new PathError(`Unexpected end at index ${index}, expected ${end}`, str);
@@ -20437,17 +20437,17 @@ var require_dist = __commonJS({
       }
       return new TokenData(consumeUntil(""), str);
     }
-    function compile(path2, options = {}) {
+    function compile(path4, options = {}) {
       const { encode: encode3 = encodeURIComponent, delimiter = DEFAULT_DELIMITER } = options;
-      const data = typeof path2 === "object" ? path2 : parse2(path2, options);
+      const data = typeof path4 === "object" ? path4 : parse2(path4, options);
       const fn = tokensToFunction(data.tokens, delimiter, encode3);
-      return function path3(params = {}) {
+      return function path5(params = {}) {
         const missing = [];
-        const path4 = fn(params, missing);
+        const path6 = fn(params, missing);
         if (missing.length) {
           throw new TypeError(`Missing parameters: ${missing.join(", ")}`);
         }
-        return path4;
+        return path6;
       };
     }
     function tokensToFunction(tokens, delimiter, encode3) {
@@ -20509,9 +20509,9 @@ var require_dist = __commonJS({
         return encodeValue(value);
       };
     }
-    function match(path2, options = {}) {
+    function match(path4, options = {}) {
       const { decode = decodeURIComponent, delimiter = DEFAULT_DELIMITER } = options;
-      const { regexp, keys } = pathToRegexp(path2, options);
+      const { regexp, keys } = pathToRegexp(path4, options);
       const decoders = keys.map((key) => {
         if (decode === false)
           return NOOP_VALUE;
@@ -20523,7 +20523,7 @@ var require_dist = __commonJS({
         const m = regexp.exec(input);
         if (!m)
           return false;
-        const path3 = m[0];
+        const path5 = m[0];
         const params = /* @__PURE__ */ Object.create(null);
         for (let i = 1; i < m.length; i++) {
           if (m[i] === void 0)
@@ -20532,21 +20532,21 @@ var require_dist = __commonJS({
           const decoder = decoders[i - 1];
           params[key.name] = decoder(m[i]);
         }
-        return { path: path3, params };
+        return { path: path5, params };
       };
     }
-    function pathToRegexp(path2, options = {}) {
+    function pathToRegexp(path4, options = {}) {
       const { delimiter = DEFAULT_DELIMITER, end = true, sensitive = false, trailing = true } = options;
       const keys = [];
       let source = "";
       let combinations = 0;
-      function process2(path3) {
-        if (Array.isArray(path3)) {
-          for (const p of path3)
+      function process2(path5) {
+        if (Array.isArray(path5)) {
+          for (const p of path5)
             process2(p);
           return;
         }
-        const data = typeof path3 === "object" ? path3 : parse2(path3, options);
+        const data = typeof path5 === "object" ? path5 : parse2(path5, options);
         flatten(data.tokens, 0, [], (tokens) => {
           if (combinations >= 256) {
             throw new PathError("Too many path combinations", data.originalPath);
@@ -20557,7 +20557,7 @@ var require_dist = __commonJS({
           combinations++;
         });
       }
-      process2(path2);
+      process2(path4);
       let pattern = `^(?:${source})`;
       if (trailing)
         pattern += "(?:" + escape2(delimiter) + "$)?";
@@ -20697,18 +20697,18 @@ var require_layer = __commonJS({
     var TRAILING_SLASH_REGEXP = /\/+$/;
     var MATCHING_GROUP_REGEXP = /\((?:\?<(.*?)>)?(?!\?)/g;
     module2.exports = Layer;
-    function Layer(path2, options, fn) {
+    function Layer(path4, options, fn) {
       if (!(this instanceof Layer)) {
-        return new Layer(path2, options, fn);
+        return new Layer(path4, options, fn);
       }
-      debug3("new %o", path2);
+      debug3("new %o", path4);
       const opts = options || {};
       this.handle = fn;
       this.keys = [];
       this.name = fn.name || "<anonymous>";
       this.params = void 0;
       this.path = void 0;
-      this.slash = path2 === "/" && opts.end === false;
+      this.slash = path4 === "/" && opts.end === false;
       function matcher(_path) {
         if (_path instanceof RegExp) {
           const keys = [];
@@ -20747,7 +20747,7 @@ var require_layer = __commonJS({
           decode: decodeParam
         });
       }
-      this.matchers = Array.isArray(path2) ? path2.map(matcher) : [matcher(path2)];
+      this.matchers = Array.isArray(path4) ? path4.map(matcher) : [matcher(path4)];
     }
     Layer.prototype.handleError = function handleError2(error, req, res, next) {
       const fn = this.handle;
@@ -20787,9 +20787,9 @@ var require_layer = __commonJS({
         next(err);
       }
     };
-    Layer.prototype.match = function match(path2) {
+    Layer.prototype.match = function match(path4) {
       let match2;
-      if (path2 != null) {
+      if (path4 != null) {
         if (this.slash) {
           this.params = {};
           this.path = "";
@@ -20797,7 +20797,7 @@ var require_layer = __commonJS({
         }
         let i = 0;
         while (!match2 && i < this.matchers.length) {
-          match2 = this.matchers[i](path2);
+          match2 = this.matchers[i](path4);
           i++;
         }
       }
@@ -20825,13 +20825,13 @@ var require_layer = __commonJS({
         throw err;
       }
     }
-    function loosen(path2) {
-      if (path2 instanceof RegExp || path2 === "/") {
-        return path2;
+    function loosen(path4) {
+      if (path4 instanceof RegExp || path4 === "/") {
+        return path4;
       }
-      return Array.isArray(path2) ? path2.map(function(p) {
+      return Array.isArray(path4) ? path4.map(function(p) {
         return loosen(p);
-      }) : String(path2).replace(TRAILING_SLASH_REGEXP, "");
+      }) : String(path4).replace(TRAILING_SLASH_REGEXP, "");
     }
   }
 });
@@ -20847,9 +20847,9 @@ var require_route = __commonJS({
     var flatten = Array.prototype.flat;
     var methods = METHODS.map((method) => method.toLowerCase());
     module2.exports = Route;
-    function Route(path2) {
-      debug3("new %o", path2);
-      this.path = path2;
+    function Route(path4) {
+      debug3("new %o", path4);
+      this.path = path4;
       this.stack = [];
       this.methods = /* @__PURE__ */ Object.create(null);
     }
@@ -20970,27 +20970,27 @@ var require_router = __commonJS({
     var slice = Array.prototype.slice;
     var flatten = Array.prototype.flat;
     var methods = METHODS.map((method) => method.toLowerCase());
-    module2.exports = Router3;
+    module2.exports = Router4;
     module2.exports.Route = Route;
-    function Router3(options) {
-      if (!(this instanceof Router3)) {
-        return new Router3(options);
+    function Router4(options) {
+      if (!(this instanceof Router4)) {
+        return new Router4(options);
       }
       const opts = options || {};
-      function router3(req, res, next) {
-        router3.handle(req, res, next);
+      function router4(req, res, next) {
+        router4.handle(req, res, next);
       }
-      Object.setPrototypeOf(router3, this);
-      router3.caseSensitive = opts.caseSensitive;
-      router3.mergeParams = opts.mergeParams;
-      router3.params = {};
-      router3.strict = opts.strict;
-      router3.stack = [];
-      return router3;
+      Object.setPrototypeOf(router4, this);
+      router4.caseSensitive = opts.caseSensitive;
+      router4.mergeParams = opts.mergeParams;
+      router4.params = {};
+      router4.strict = opts.strict;
+      router4.stack = [];
+      return router4;
     }
-    Router3.prototype = function() {
+    Router4.prototype = function() {
     };
-    Router3.prototype.param = function param(name2, fn) {
+    Router4.prototype.param = function param(name2, fn) {
       if (!name2) {
         throw new TypeError("argument name is required");
       }
@@ -21010,7 +21010,7 @@ var require_router = __commonJS({
       params.push(fn);
       return this;
     };
-    Router3.prototype.handle = function handle(req, res, callback) {
+    Router4.prototype.handle = function handle(req, res, callback) {
       if (!callback) {
         throw new TypeError("argument callback is required");
       }
@@ -21057,8 +21057,8 @@ var require_router = __commonJS({
         if (++sync > 100) {
           return setImmediate(next, err);
         }
-        const path2 = getPathname(req);
-        if (path2 == null) {
+        const path4 = getPathname(req);
+        if (path4 == null) {
           return done(layerError);
         }
         let layer;
@@ -21066,7 +21066,7 @@ var require_router = __commonJS({
         let route;
         while (match !== true && idx < stack.length) {
           layer = stack[idx++];
-          match = matchLayer(layer, path2);
+          match = matchLayer(layer, path4);
           route = layer.route;
           if (typeof match !== "boolean") {
             layerError = layerError || match;
@@ -21104,18 +21104,18 @@ var require_router = __commonJS({
           } else if (route) {
             layer.handleRequest(req, res, next);
           } else {
-            trimPrefix(layer, layerError, layerPath, path2);
+            trimPrefix(layer, layerError, layerPath, path4);
           }
           sync = 0;
         });
       }
-      function trimPrefix(layer, layerError, layerPath, path2) {
+      function trimPrefix(layer, layerError, layerPath, path4) {
         if (layerPath.length !== 0) {
-          if (layerPath !== path2.substring(0, layerPath.length)) {
+          if (layerPath !== path4.substring(0, layerPath.length)) {
             next(layerError);
             return;
           }
-          const c = path2[layerPath.length];
+          const c = path4[layerPath.length];
           if (c && c !== "/") {
             next(layerError);
             return;
@@ -21137,9 +21137,9 @@ var require_router = __commonJS({
         }
       }
     };
-    Router3.prototype.use = function use(handler) {
+    Router4.prototype.use = function use(handler) {
       let offset = 0;
-      let path2 = "/";
+      let path4 = "/";
       if (typeof handler !== "function") {
         let arg = handler;
         while (Array.isArray(arg) && arg.length !== 0) {
@@ -21147,7 +21147,7 @@ var require_router = __commonJS({
         }
         if (typeof arg !== "function") {
           offset = 1;
-          path2 = handler;
+          path4 = handler;
         }
       }
       const callbacks = flatten.call(slice.call(arguments, offset), Infinity);
@@ -21159,8 +21159,8 @@ var require_router = __commonJS({
         if (typeof fn !== "function") {
           throw new TypeError("argument handler must be a function");
         }
-        debug3("use %o %s", path2, fn.name || "<anonymous>");
-        const layer = new Layer(path2, {
+        debug3("use %o %s", path4, fn.name || "<anonymous>");
+        const layer = new Layer(path4, {
           sensitive: this.caseSensitive,
           strict: false,
           end: false
@@ -21170,9 +21170,9 @@ var require_router = __commonJS({
       }
       return this;
     };
-    Router3.prototype.route = function route(path2) {
-      const route2 = new Route(path2);
-      const layer = new Layer(path2, {
+    Router4.prototype.route = function route(path4) {
+      const route2 = new Route(path4);
+      const layer = new Layer(path4, {
         sensitive: this.caseSensitive,
         strict: this.strict,
         end: true
@@ -21185,8 +21185,8 @@ var require_router = __commonJS({
       return route2;
     };
     methods.concat("all").forEach(function(method) {
-      Router3.prototype[method] = function(path2) {
-        const route = this.route(path2);
+      Router4.prototype[method] = function(path4) {
+        const route = this.route(path4);
         route[method].apply(route, slice.call(arguments, 1));
         return this;
       };
@@ -21215,9 +21215,9 @@ var require_router = __commonJS({
       const fqdnIndex = url2.substring(0, pathLength).indexOf("://");
       return fqdnIndex !== -1 ? url2.substring(0, url2.indexOf("/", 3 + fqdnIndex)) : void 0;
     }
-    function matchLayer(layer, path2) {
+    function matchLayer(layer, path4) {
       try {
-        return layer.match(path2);
+        return layer.match(path4);
       } catch (err) {
         return err;
       }
@@ -21368,13 +21368,13 @@ var require_application = __commonJS({
     var compileTrust = require_utils3().compileTrust;
     var resolve = require("node:path").resolve;
     var once = require_once();
-    var Router3 = require_router();
+    var Router4 = require_router();
     var slice = Array.prototype.slice;
     var flatten = Array.prototype.flat;
     var app2 = exports2 = module2.exports = {};
     var trustProxyDefaultSymbol = "@@symbol:trust_proxy_default";
     app2.init = function init2() {
-      var router3 = null;
+      var router4 = null;
       this.cache = /* @__PURE__ */ Object.create(null);
       this.engines = /* @__PURE__ */ Object.create(null);
       this.settings = /* @__PURE__ */ Object.create(null);
@@ -21383,13 +21383,13 @@ var require_application = __commonJS({
         configurable: true,
         enumerable: true,
         get: function getrouter() {
-          if (router3 === null) {
-            router3 = new Router3({
+          if (router4 === null) {
+            router4 = new Router4({
               caseSensitive: this.enabled("case sensitive routing"),
               strict: this.enabled("strict routing")
             });
           }
-          return router3;
+          return router4;
         }
       });
     };
@@ -21445,7 +21445,7 @@ var require_application = __commonJS({
     };
     app2.use = function use(fn) {
       var offset = 0;
-      var path2 = "/";
+      var path4 = "/";
       if (typeof fn !== "function") {
         var arg = fn;
         while (Array.isArray(arg) && arg.length !== 0) {
@@ -21453,22 +21453,22 @@ var require_application = __commonJS({
         }
         if (typeof arg !== "function") {
           offset = 1;
-          path2 = fn;
+          path4 = fn;
         }
       }
       var fns = flatten.call(slice.call(arguments, offset), Infinity);
       if (fns.length === 0) {
         throw new TypeError("app.use() requires a middleware function");
       }
-      var router3 = this.router;
+      var router4 = this.router;
       fns.forEach(function(fn2) {
         if (!fn2 || !fn2.handle || !fn2.set) {
-          return router3.use(path2, fn2);
+          return router4.use(path4, fn2);
         }
-        debug3(".use app under %s", path2);
-        fn2.mountpath = path2;
+        debug3(".use app under %s", path4);
+        fn2.mountpath = path4;
         fn2.parent = this;
-        router3.use(path2, function mounted_app(req, res, next) {
+        router4.use(path4, function mounted_app(req, res, next) {
           var orig = req.app;
           fn2.handle(req, res, function(err) {
             Object.setPrototypeOf(req, orig.request);
@@ -21480,8 +21480,8 @@ var require_application = __commonJS({
       }, this);
       return this;
     };
-    app2.route = function route(path2) {
-      return this.router.route(path2);
+    app2.route = function route(path4) {
+      return this.router.route(path4);
     };
     app2.engine = function engine(ext, fn) {
       if (typeof fn !== "function") {
@@ -21524,7 +21524,7 @@ var require_application = __commonJS({
       }
       return this;
     };
-    app2.path = function path2() {
+    app2.path = function path4() {
       return this.parent ? this.parent.path() + this.mountpath : "";
     };
     app2.enabled = function enabled(setting) {
@@ -21540,17 +21540,17 @@ var require_application = __commonJS({
       return this.set(setting, false);
     };
     methods.forEach(function(method) {
-      app2[method] = function(path2) {
+      app2[method] = function(path4) {
         if (method === "get" && arguments.length === 1) {
-          return this.set(path2);
+          return this.set(path4);
         }
-        var route = this.route(path2);
+        var route = this.route(path4);
         route[method].apply(route, slice.call(arguments, 1));
         return this;
       };
     });
-    app2.all = function all3(path2) {
-      var route = this.route(path2);
+    app2.all = function all3(path4) {
+      var route = this.route(path4);
       var args = slice.call(arguments, 1);
       for (var i = 0; i < methods.length; i++) {
         route[methods[i]].apply(route, args);
@@ -22460,7 +22460,7 @@ var require_request = __commonJS({
       var subdomains2 = !isIP2(hostname) ? hostname.split(".").reverse() : [hostname];
       return subdomains2.slice(offset);
     });
-    defineGetter(req, "path", function path2() {
+    defineGetter(req, "path", function path4() {
       return parse2(this).pathname;
     });
     defineGetter(req, "host", function host() {
@@ -22671,8 +22671,8 @@ var require_content_disposition = __commonJS({
       this.type = type;
       this.parameters = parameters;
     }
-    function basename(path2) {
-      const normalized = path2.replaceAll("\\", "/");
+    function basename(path4) {
+      const normalized = path4.replaceAll("\\", "/");
       let end = normalized.length;
       while (end > 0 && normalized[end - 1] === "/") {
         end--;
@@ -22913,32 +22913,32 @@ var require_send = __commonJS({
     var escapeHtml = require_escape_html();
     var etag = require_etag();
     var fresh = require_fresh();
-    var fs2 = require("fs");
+    var fs3 = require("fs");
     var mime = require_mime_types();
     var ms = require_ms();
     var onFinished = require_on_finished();
     var parseRange = require_range_parser();
-    var path2 = require("path");
+    var path4 = require("path");
     var statuses = require_statuses();
     var Stream = require("stream");
     var util3 = require("util");
-    var extname = path2.extname;
-    var join = path2.join;
-    var normalize = path2.normalize;
-    var resolve = path2.resolve;
-    var sep = path2.sep;
+    var extname = path4.extname;
+    var join = path4.join;
+    var normalize = path4.normalize;
+    var resolve = path4.resolve;
+    var sep = path4.sep;
     var BYTES_RANGE_REGEXP = /^ *bytes=/;
     var MAX_MAXAGE = 60 * 60 * 24 * 365 * 1e3;
     var UP_PATH_REGEXP = /(?:^|[\\/])\.\.(?:[\\/]|$)/;
     module2.exports = send;
-    function send(req, path3, options) {
-      return new SendStream(req, path3, options);
+    function send(req, path5, options) {
+      return new SendStream(req, path5, options);
     }
-    function SendStream(req, path3, options) {
+    function SendStream(req, path5, options) {
       Stream.call(this);
       var opts = options || {};
       this.options = opts;
-      this.path = path3;
+      this.path = path5;
       this.req = req;
       this._acceptRanges = opts.acceptRanges !== void 0 ? Boolean(opts.acceptRanges) : true;
       this._cacheControl = opts.cacheControl !== void 0 ? Boolean(opts.cacheControl) : true;
@@ -23052,10 +23052,10 @@ var require_send = __commonJS({
       var lastModified = this.res.getHeader("Last-Modified");
       return parseHttpDate(lastModified) <= parseHttpDate(ifRange);
     };
-    SendStream.prototype.redirect = function redirect(path3) {
+    SendStream.prototype.redirect = function redirect(path5) {
       var res = this.res;
       if (hasListeners(this, "directory")) {
-        this.emit("directory", res, path3);
+        this.emit("directory", res, path5);
         return;
       }
       if (this.hasTrailingSlash()) {
@@ -23075,38 +23075,38 @@ var require_send = __commonJS({
     SendStream.prototype.pipe = function pipe(res) {
       var root = this._root;
       this.res = res;
-      var path3 = decode(this.path);
-      if (path3 === -1) {
+      var path5 = decode(this.path);
+      if (path5 === -1) {
         this.error(400);
         return res;
       }
-      if (~path3.indexOf("\0")) {
+      if (~path5.indexOf("\0")) {
         this.error(400);
         return res;
       }
       var parts;
       if (root !== null) {
-        if (path3) {
-          path3 = normalize("." + sep + path3);
+        if (path5) {
+          path5 = normalize("." + sep + path5);
         }
-        if (UP_PATH_REGEXP.test(path3)) {
-          debug3('malicious path "%s"', path3);
+        if (UP_PATH_REGEXP.test(path5)) {
+          debug3('malicious path "%s"', path5);
           this.error(403);
           return res;
         }
-        parts = path3.split(sep);
-        path3 = normalize(join(root, path3));
+        parts = path5.split(sep);
+        path5 = normalize(join(root, path5));
       } else {
-        if (UP_PATH_REGEXP.test(path3)) {
-          debug3('malicious path "%s"', path3);
+        if (UP_PATH_REGEXP.test(path5)) {
+          debug3('malicious path "%s"', path5);
           this.error(403);
           return res;
         }
-        parts = normalize(path3).split(sep);
-        path3 = resolve(path3);
+        parts = normalize(path5).split(sep);
+        path5 = resolve(path5);
       }
       if (containsDotFile(parts)) {
-        debug3('%s dotfile "%s"', this._dotfiles, path3);
+        debug3('%s dotfile "%s"', this._dotfiles, path5);
         switch (this._dotfiles) {
           case "allow":
             break;
@@ -23120,13 +23120,13 @@ var require_send = __commonJS({
         }
       }
       if (this._index.length && this.hasTrailingSlash()) {
-        this.sendIndex(path3);
+        this.sendIndex(path5);
         return res;
       }
-      this.sendFile(path3);
+      this.sendFile(path5);
       return res;
     };
-    SendStream.prototype.send = function send2(path3, stat) {
+    SendStream.prototype.send = function send2(path5, stat) {
       var len = stat.size;
       var options = this.options;
       var opts = {};
@@ -23138,9 +23138,9 @@ var require_send = __commonJS({
         this.headersAlreadySent();
         return;
       }
-      debug3('pipe "%s"', path3);
-      this.setHeader(path3, stat);
-      this.type(path3);
+      debug3('pipe "%s"', path5);
+      this.setHeader(path5, stat);
+      this.type(path5);
       if (this.isConditionalGET()) {
         if (this.isPreconditionFailure()) {
           this.error(412);
@@ -23189,30 +23189,30 @@ var require_send = __commonJS({
         res.end();
         return;
       }
-      this.stream(path3, opts);
+      this.stream(path5, opts);
     };
-    SendStream.prototype.sendFile = function sendFile(path3) {
+    SendStream.prototype.sendFile = function sendFile(path5) {
       var i = 0;
       var self2 = this;
-      debug3('stat "%s"', path3);
-      fs2.stat(path3, function onstat(err, stat) {
-        var pathEndsWithSep = path3[path3.length - 1] === sep;
-        if (err && err.code === "ENOENT" && !extname(path3) && !pathEndsWithSep) {
+      debug3('stat "%s"', path5);
+      fs3.stat(path5, function onstat(err, stat) {
+        var pathEndsWithSep = path5[path5.length - 1] === sep;
+        if (err && err.code === "ENOENT" && !extname(path5) && !pathEndsWithSep) {
           return next(err);
         }
         if (err) return self2.onStatError(err);
-        if (stat.isDirectory()) return self2.redirect(path3);
+        if (stat.isDirectory()) return self2.redirect(path5);
         if (pathEndsWithSep) return self2.error(404);
-        self2.emit("file", path3, stat);
-        self2.send(path3, stat);
+        self2.emit("file", path5, stat);
+        self2.send(path5, stat);
       });
       function next(err) {
         if (self2._extensions.length <= i) {
           return err ? self2.onStatError(err) : self2.error(404);
         }
-        var p = path3 + "." + self2._extensions[i++];
+        var p = path5 + "." + self2._extensions[i++];
         debug3('stat "%s"', p);
-        fs2.stat(p, function(err2, stat) {
+        fs3.stat(p, function(err2, stat) {
           if (err2) return next(err2);
           if (stat.isDirectory()) return next();
           self2.emit("file", p, stat);
@@ -23220,7 +23220,7 @@ var require_send = __commonJS({
         });
       }
     };
-    SendStream.prototype.sendIndex = function sendIndex(path3) {
+    SendStream.prototype.sendIndex = function sendIndex(path5) {
       var i = -1;
       var self2 = this;
       function next(err) {
@@ -23228,9 +23228,9 @@ var require_send = __commonJS({
           if (err) return self2.onStatError(err);
           return self2.error(404);
         }
-        var p = join(path3, self2._index[i]);
+        var p = join(path5, self2._index[i]);
         debug3('stat "%s"', p);
-        fs2.stat(p, function(err2, stat) {
+        fs3.stat(p, function(err2, stat) {
           if (err2) return next(err2);
           if (stat.isDirectory()) return next();
           self2.emit("file", p, stat);
@@ -23239,10 +23239,10 @@ var require_send = __commonJS({
       }
       next();
     };
-    SendStream.prototype.stream = function stream4(path3, options) {
+    SendStream.prototype.stream = function stream4(path5, options) {
       var self2 = this;
       var res = this.res;
-      var stream5 = fs2.createReadStream(path3, options);
+      var stream5 = fs3.createReadStream(path5, options);
       this.emit("stream", stream5);
       stream5.pipe(res);
       function cleanup() {
@@ -23257,17 +23257,17 @@ var require_send = __commonJS({
         self2.emit("end");
       });
     };
-    SendStream.prototype.type = function type(path3) {
+    SendStream.prototype.type = function type(path5) {
       var res = this.res;
       if (res.getHeader("Content-Type")) return;
-      var ext = extname(path3);
+      var ext = extname(path5);
       var type2 = mime.contentType(ext) || "application/octet-stream";
       debug3("content-type %s", type2);
       res.setHeader("Content-Type", type2);
     };
-    SendStream.prototype.setHeader = function setHeader(path3, stat) {
+    SendStream.prototype.setHeader = function setHeader(path5, stat) {
       var res = this.res;
-      this.emit("headers", res, path3, stat);
+      this.emit("headers", res, path5, stat);
       if (this._acceptRanges && !res.getHeader("Accept-Ranges")) {
         debug3("accept ranges");
         res.setHeader("Accept-Ranges", "bytes");
@@ -23325,9 +23325,9 @@ var require_send = __commonJS({
       }
       return err instanceof Error ? createError(status, err, { expose: false }) : createError(status, err);
     }
-    function decode(path3) {
+    function decode(path5) {
       try {
-        return decodeURIComponent(path3);
+        return decodeURIComponent(path5);
       } catch (err) {
         return -1;
       }
@@ -23471,7 +23471,7 @@ var require_response = __commonJS({
     var http3 = require("node:http");
     var onFinished = require_on_finished();
     var mime = require_mime_types();
-    var path2 = require("node:path");
+    var path4 = require("node:path");
     var pathIsAbsolute = require("node:path").isAbsolute;
     var statuses = require_statuses();
     var sign = require_cookie_signature().sign;
@@ -23480,8 +23480,8 @@ var require_response = __commonJS({
     var setCharset = require_utils3().setCharset;
     var cookie = require_cookie();
     var send = require_send();
-    var extname = path2.extname;
-    var resolve = path2.resolve;
+    var extname = path4.extname;
+    var resolve = path4.resolve;
     var vary = require_vary();
     var { Buffer: Buffer3 } = require("node:buffer");
     var res = Object.create(http3.ServerResponse.prototype);
@@ -23627,26 +23627,26 @@ var require_response = __commonJS({
       this.type("txt");
       return this.send(body);
     };
-    res.sendFile = function sendFile(path3, options, callback) {
+    res.sendFile = function sendFile(path5, options, callback) {
       var done = callback;
       var req = this.req;
       var res2 = this;
       var next = req.next;
       var opts = options || {};
-      if (!path3) {
+      if (!path5) {
         throw new TypeError("path argument is required to res.sendFile");
       }
-      if (typeof path3 !== "string") {
+      if (typeof path5 !== "string") {
         throw new TypeError("path must be a string to res.sendFile");
       }
       if (typeof options === "function") {
         done = options;
         opts = {};
       }
-      if (!opts.root && !pathIsAbsolute(path3)) {
+      if (!opts.root && !pathIsAbsolute(path5)) {
         throw new TypeError("path must be absolute or specify root to res.sendFile");
       }
-      var pathname = encodeURI(path3);
+      var pathname = encodeURI(path5);
       opts.etag = this.app.enabled("etag");
       var file = send(req, pathname, opts);
       sendfile(res2, file, opts, function(err) {
@@ -23657,7 +23657,7 @@ var require_response = __commonJS({
         }
       });
     };
-    res.download = function download(path3, filename, options, callback) {
+    res.download = function download(path5, filename, options, callback) {
       var done = callback;
       var name2 = filename;
       var opts = options || null;
@@ -23674,7 +23674,7 @@ var require_response = __commonJS({
         opts = filename;
       }
       var headers = {
-        "Content-Disposition": contentDisposition(name2 || path3)
+        "Content-Disposition": contentDisposition(name2 || path5)
       };
       if (opts && opts.headers) {
         var keys = Object.keys(opts.headers);
@@ -23687,7 +23687,7 @@ var require_response = __commonJS({
       }
       opts = Object.create(opts);
       opts.headers = headers;
-      var fullPath = !opts.root ? resolve(path3) : path3;
+      var fullPath = !opts.root ? resolve(path5) : path5;
       return this.sendFile(fullPath, opts, done);
     };
     res.contentType = res.type = function contentType(type) {
@@ -23970,11 +23970,11 @@ var require_serve_static = __commonJS({
         }
         var forwardError = !fallthrough;
         var originalUrl = parseUrl2.original(req);
-        var path2 = parseUrl2(req).pathname;
-        if (path2 === "/" && originalUrl.pathname.substr(-1) !== "/") {
-          path2 = "";
+        var path4 = parseUrl2(req).pathname;
+        if (path4 === "/" && originalUrl.pathname.substr(-1) !== "/") {
+          path4 = "";
         }
-        var stream4 = send(req, path2, opts);
+        var stream4 = send(req, path4, opts);
         stream4.on("directory", onDirectory);
         if (setHeaders) {
           stream4.on("headers", setHeaders);
@@ -24041,7 +24041,7 @@ var require_express = __commonJS({
     var EventEmitter2 = require("node:events").EventEmitter;
     var mixin = require_merge_descriptors();
     var proto = require_application();
-    var Router3 = require_router();
+    var Router4 = require_router();
     var req = require_request();
     var res = require_response();
     exports2 = module2.exports = createApplication;
@@ -24063,8 +24063,8 @@ var require_express = __commonJS({
     exports2.application = proto;
     exports2.request = req;
     exports2.response = res;
-    exports2.Route = Router3.Route;
-    exports2.Router = Router3;
+    exports2.Route = Router4.Route;
+    exports2.Router = Router4;
     exports2.json = bodyParser.json;
     exports2.raw = bodyParser.raw;
     exports2.static = require_serve_static();
@@ -27655,15 +27655,15 @@ var require_pg_connection_string = __commonJS({
       if (config.sslcert || config.sslkey || config.sslrootcert || config.sslmode) {
         config.ssl = {};
       }
-      const fs2 = config.sslcert || config.sslkey || config.sslrootcert ? require("fs") : null;
+      const fs3 = config.sslcert || config.sslkey || config.sslrootcert ? require("fs") : null;
       if (config.sslcert) {
-        config.ssl.cert = fs2.readFileSync(config.sslcert).toString();
+        config.ssl.cert = fs3.readFileSync(config.sslcert).toString();
       }
       if (config.sslkey) {
-        config.ssl.key = fs2.readFileSync(config.sslkey).toString();
+        config.ssl.key = fs3.readFileSync(config.sslkey).toString();
       }
       if (config.sslrootcert) {
-        config.ssl.ca = fs2.readFileSync(config.sslrootcert).toString();
+        config.ssl.ca = fs3.readFileSync(config.sslrootcert).toString();
       }
       if (options.useLibpqCompat && config.uselibpqcompat) {
         throw new Error("Both useLibpqCompat and uselibpqcompat are set. Please use only one of them.");
@@ -29421,7 +29421,7 @@ var require_split2 = __commonJS({
 var require_helper = __commonJS({
   "backend/node_modules/pgpass/lib/helper.js"(exports2, module2) {
     "use strict";
-    var path2 = require("path");
+    var path4 = require("path");
     var Stream = require("stream").Stream;
     var split = require_split2();
     var util3 = require("util");
@@ -29460,7 +29460,7 @@ var require_helper = __commonJS({
     };
     module2.exports.getFileName = function(rawEnv) {
       var env = rawEnv || process.env;
-      var file = env.PGPASSFILE || (isWin ? path2.join(env.APPDATA || "./", "postgresql", "pgpass.conf") : path2.join(env.HOME || "./", ".pgpass"));
+      var file = env.PGPASSFILE || (isWin ? path4.join(env.APPDATA || "./", "postgresql", "pgpass.conf") : path4.join(env.HOME || "./", ".pgpass"));
       return file;
     };
     module2.exports.usePgPass = function(stats, fname) {
@@ -29592,16 +29592,16 @@ var require_helper = __commonJS({
 var require_lib4 = __commonJS({
   "backend/node_modules/pgpass/lib/index.js"(exports2, module2) {
     "use strict";
-    var path2 = require("path");
-    var fs2 = require("fs");
+    var path4 = require("path");
+    var fs3 = require("fs");
     var helper = require_helper();
     module2.exports = function(connInfo, cb) {
       var file = helper.getFileName();
-      fs2.stat(file, function(err, stat) {
+      fs3.stat(file, function(err, stat) {
         if (err || !helper.usePgPass(stat, file)) {
           return cb(void 0);
         }
-        var st = fs2.createReadStream(file);
+        var st = fs3.createReadStream(file);
         helper.getPassword(connInfo, st, cb);
       });
     };
@@ -31875,9 +31875,9 @@ function createPrismaClient() {
   if (process.env.DATABASE_URL) {
     const pool = new import_pg3.Pool({ connectionString: process.env.DATABASE_URL });
     const adapter2 = new PrismaPgAdapterFactory(pool);
-    return new import_client.PrismaClient({ adapter: adapter2, log });
+    return new import_client.PrismaClient({ adapter: adapter2, log: [...log] });
   }
-  return new import_client.PrismaClient({ log });
+  return new import_client.PrismaClient({ log: [...log] });
 }
 var import_client, import_pg3, globalForPrisma, prisma, prisma_default;
 var init_prisma = __esm({
@@ -32641,14 +32641,14 @@ var require_url_state_machine = __commonJS({
       return url2.replace(/\u0009|\u000A|\u000D/g, "");
     }
     function shortenPath(url2) {
-      const path2 = url2.path;
-      if (path2.length === 0) {
+      const path4 = url2.path;
+      if (path4.length === 0) {
         return;
       }
-      if (url2.scheme === "file" && path2.length === 1 && isNormalizedWindowsDriveLetter(path2[0])) {
+      if (url2.scheme === "file" && path4.length === 1 && isNormalizedWindowsDriveLetter(path4[0])) {
         return;
       }
-      path2.pop();
+      path4.pop();
     }
     function includesCredentials(url2) {
       return url2.username !== "" || url2.password !== "";
@@ -46184,11 +46184,11 @@ var require_mime_types2 = __commonJS({
       }
       return exts[0];
     }
-    function lookup(path2) {
-      if (!path2 || typeof path2 !== "string") {
+    function lookup(path4) {
+      if (!path4 || typeof path4 !== "string") {
         return false;
       }
-      var extension2 = extname("x." + path2).toLowerCase().substr(1);
+      var extension2 = extname("x." + path4).toLowerCase().substr(1);
       if (!extension2) {
         return false;
       }
@@ -46490,11 +46490,11 @@ var require_form_data = __commonJS({
     "use strict";
     var CombinedStream = require_combined_stream();
     var util3 = require("util");
-    var path2 = require("path");
+    var path4 = require("path");
     var http3 = require("http");
     var https3 = require("https");
     var parseUrl2 = require("url").parse;
-    var fs2 = require("fs");
+    var fs3 = require("fs");
     var Stream = require("stream").Stream;
     var crypto11 = require("crypto");
     var mime = require_mime_types2();
@@ -46561,7 +46561,7 @@ var require_form_data = __commonJS({
         if (value.end != void 0 && value.end != Infinity && value.start != void 0) {
           callback(null, value.end + 1 - (value.start ? value.start : 0));
         } else {
-          fs2.stat(value.path, function(err, stat) {
+          fs3.stat(value.path, function(err, stat) {
             if (err) {
               callback(err);
               return;
@@ -46618,11 +46618,11 @@ var require_form_data = __commonJS({
     FormData3.prototype._getContentDisposition = function(value, options) {
       var filename;
       if (typeof options.filepath === "string") {
-        filename = path2.normalize(options.filepath).replace(/\\/g, "/");
+        filename = path4.normalize(options.filepath).replace(/\\/g, "/");
       } else if (options.filename || value && (value.name || value.path)) {
-        filename = path2.basename(options.filename || value && (value.name || value.path));
+        filename = path4.basename(options.filename || value && (value.name || value.path));
       } else if (value && value.readable && hasOwn(value, "httpVersion")) {
-        filename = path2.basename(value.client._httpMessage.path || "");
+        filename = path4.basename(value.client._httpMessage.path || "");
       }
       if (filename) {
         return 'filename="' + filename + '"';
@@ -47763,13 +47763,13 @@ function __disposeResources(env) {
   }
   return next();
 }
-function __rewriteRelativeImportExtension(path2, preserveJsx) {
-  if (typeof path2 === "string" && /^\.\.?\//.test(path2)) {
-    return path2.replace(/\.(tsx)$|((?:\.d)?)((?:\.[^./]+?)?)\.([cm]?)ts$/i, function(m, tsx, d, ext, cm) {
+function __rewriteRelativeImportExtension(path4, preserveJsx) {
+  if (typeof path4 === "string" && /^\.\.?\//.test(path4)) {
+    return path4.replace(/\.(tsx)$|((?:\.d)?)((?:\.[^./]+?)?)\.([cm]?)ts$/i, function(m, tsx, d, ext, cm) {
       return tsx ? preserveJsx ? ".jsx" : ".js" : d && (!ext || !cm) ? m : d + ext + "." + cm.toLowerCase() + "js";
     });
   }
-  return path2;
+  return path4;
 }
 var extendStatics, __assign, __createBinding, __setModuleDefault, ownKeys, _SuppressedError, tslib_es6_default;
 var init_tslib_es6 = __esm({
@@ -63667,72 +63667,14 @@ var require_jsonwebtoken = __commonJS({
   }
 });
 
-// backend/src/services/referral.service.ts
-var referral_service_exports = {};
-__export(referral_service_exports, {
-  ReferralService: () => ReferralService
-});
-var import_client4, import_crypto8, prisma2, ReferralService;
-var init_referral_service = __esm({
-  "backend/src/services/referral.service.ts"() {
-    "use strict";
-    import_client4 = require("@prisma/client");
-    import_crypto8 = __toESM(require("crypto"));
-    prisma2 = new import_client4.PrismaClient();
-    ReferralService = class {
-      /**
-       * Generates a unique referral code for a user
-       */
-      static async generateCode(userId) {
-        const user = await prisma2.user.findUnique({ where: { id: userId } });
-        if (!user) throw new Error("User not found");
-        if (user.referralCode) return user.referralCode;
-        const namePart = user.nome.split(" ")[0].toUpperCase().replace(/[^A-Z0-0]/g, "");
-        const randomPart = import_crypto8.default.randomBytes(2).toString("hex").toUpperCase();
-        const code = `FS-${namePart}-${randomPart}`;
-        await prisma2.user.update({
-          where: { id: userId },
-          data: { referralCode: code }
-        });
-        return code;
-      }
-      /**
-       * Links a new professional to a franchisee's network via referral code
-       */
-      static async linkByCode(newUserId, referralCode) {
-        const referrer = await prisma2.user.findUnique({
-          where: { referralCode },
-          include: { franchiseProfile: true }
-        });
-        if (!referrer || !referrer.franchiseProfile) {
-          console.warn(`[Referral] Invalid or non-franchise code: ${referralCode}`);
-          return;
-        }
-        await prisma2.professionalNetwork.upsert({
-          where: {
-            userId_partnerId: {
-              userId: newUserId,
-              partnerId: referrer.id
-            }
-          },
-          update: {},
-          create: {
-            userId: newUserId,
-            partnerId: referrer.id
-          }
-        });
-        console.log(`[Referral] Linked user ${newUserId} to franchisee ${referrer.id}`);
-      }
-    };
-  }
-});
-
 // backend/src/server.ts
 var server_exports = {};
 __export(server_exports, {
   default: () => server_default
 });
 module.exports = __toCommonJS(server_exports);
+var import_dotenv3 = __toESM(require_main());
+var import_path3 = __toESM(require("path"));
 
 // backend/node_modules/dotenv/config.js
 (function() {
@@ -63746,7 +63688,7 @@ module.exports = __toCommonJS(server_exports);
 })();
 
 // backend/src/app.ts
-var import_express4 = __toESM(require_express2());
+var import_express5 = __toESM(require_express2());
 var import_cors = __toESM(require_lib3());
 
 // backend/node_modules/express-rate-limit/dist/index.mjs
@@ -64664,7 +64606,7 @@ var rateLimit = (passedOptions) => {
 var rate_limit_default = rateLimit;
 
 // backend/src/routes/index.ts
-var import_express2 = __toESM(require_express2());
+var import_express3 = __toESM(require_express2());
 init_prisma();
 
 // backend/src/controllers/event.controller.ts
@@ -65020,6 +64962,30 @@ Aproveite nossa condi\xE7\xE3o exclusiva para \xE1lbuns impressos de luxo esta s
       });
     } catch (error) {
       console.error("[Notification] Erro ao notificar profissional:", error instanceof Error ? error.message : error);
+    }
+  }
+  /** Notifica o dono que o evento foi encerrado automaticamente */
+  static async notifyEventAutoClosed(data) {
+    if (!process.env.SMTP_USER || !process.env.SMTP_PASS) return;
+    const htmlContent = `
+      <div style="font-family: sans-serif; max-width: 600px; margin: 0 auto; padding: 20px; color: #000;">
+        <h1 style="font-size: 20px; color: #ff4444;">Evento Encerrado \u{1F512}</h1>
+        <p>Ol\xE1, <strong>${data.ownerName}</strong>,</p>
+        <p>O evento <strong>${data.eventTitle}</strong> atingiu o prazo limite e foi encerrado automaticamente pelo sistema.</p>
+        <p>A galeria p\xFAblica n\xE3o est\xE1 mais dispon\xEDvel para novas compras. Voc\xEA ainda pode gerenciar o evento atrav\xE9s do seu painel profissional.</p>
+        <hr style="border: 0.5px solid #eee;" />
+        <p style="font-size: 10px; color: #999; text-align: center;">Foto Segundo \u2014 Gest\xE3o Automatizada</p>
+      </div>
+    `;
+    try {
+      await this.transporter.sendMail({
+        from: `"Foto Segundo" <${process.env.SMTP_USER}>`,
+        to: data.to,
+        subject: `Evento Encerrado: ${data.eventTitle}`,
+        html: htmlContent
+      });
+    } catch (error) {
+      console.error("[Notification] Erro ao notificar encerramento de evento:", error);
     }
   }
   /**
@@ -66897,8 +66863,8 @@ var EventController = class {
         },
         include: {
           cartorioUser: { select: { cartorio: { select: { razaoSocial: true } } } },
-          captacao: { select: { id: true } },
-          edicao: { select: { id: true } }
+          captacao: { select: { id: true, nome: true } },
+          edicao: { select: { id: true, nome: true } }
         }
       });
       if (!event) {
@@ -66919,7 +66885,7 @@ var EventController = class {
           status: { not: "CANCELADO" }
         }
       }) : null;
-      const isOwner = authUser && (authUser.role === "ADMIN" || authUser.userId === event.captacaoId || authUser.userId === event.edicaoId || authUser.userId === event.cartorioUserId);
+      const isOwner = authUser && (authUser.role === "ADMIN" || authUser.userId === event.captacaoId || authUser.userId === event.edicaoId || authUser.userId === event.ownerId || authUser.userId === event.cartorioUserId);
       const isPaid = order && (order.status === "PAGO" || order.status === "APROVADO");
       let isGloballyPaid = false;
       if (event.type !== "PHOTO_MARKETPLACE") {
@@ -66934,7 +66900,10 @@ var EventController = class {
         isGloballyPaid = !!anyPaidOrder;
       }
       const hasAccess = isPaid || isOwner || isGloballyPaid;
-      if (event.isPrivate && !hasAccess) {
+      const retentionDays = event.retentionDays || (event.isPrivate ? 7 : 15);
+      const expirationDate = new Date(new Date(event.dataEvento).getTime() + retentionDays * 24 * 60 * 60 * 1e3);
+      const isExpired = !isOwner && /* @__PURE__ */ new Date() > expirationDate;
+      if (event.isPrivate && !hasAccess && !(authUser && event.clientEmail && authUser.email === event.clientEmail)) {
         return res.status(403).json({
           error: "Este \xE1lbum \xE9 privado e n\xE3o est\xE1 vinculado \xE0 sua conta.",
           isPrivate: true
@@ -67004,11 +66973,11 @@ var EventController = class {
         isOwner,
         hasAccess,
         // Links sensíveis só aparecem se aprovado e visível
-        lightroomUrl: hasAccess && (!order || order.showAlbum) ? event.lightroomUrl : null,
-        driveUrl: hasAccess && (!order || order.showVideo) ? event.driveUrl : null,
+        lightroomUrl: hasAccess && !isExpired && (!order || order.showAlbum) ? event.lightroomUrl : null,
+        driveUrl: hasAccess && !isExpired && (!order || order.showVideo) ? event.driveUrl : null,
         paywall: {
           active: !hasAccess && !isOwner,
-          message: hasAccess ? "Entrega liberada." : "Galeria protegida."
+          message: isExpired ? "Prazo de download expirado." : hasAccess ? "Entrega liberada." : "Galeria protegida."
         },
         recentOrders: await prisma_default.order.findMany({
           where: { eventId: event.id, status: "APROVADO", contributorName: { not: null } },
@@ -67023,7 +66992,14 @@ var EventController = class {
         clientEmail: event.clientEmail,
         isPrimaryClient: !!(authUser && event.clientEmail && authUser.email === event.clientEmail),
         city: event.city,
-        location: event.location
+        location: event.location,
+        itinerary: event.itinerary,
+        description: event.description,
+        references: event.references,
+        photographer: event.captacao ? { id: event.captacao.id, nome: event.captacao.nome } : null,
+        isExpired,
+        retentionDays,
+        expirationDate
       });
     } catch (error) {
       console.error("Erro ao buscar evento:", error);
@@ -67036,42 +67012,52 @@ var EventController = class {
    */
   static async listPublic(req, res) {
     try {
-      const { q, page = "1" } = req.query;
+      const { q, page = "1", type, city } = req.query;
       const query = q;
       const take = 20;
       const skip = (Number(page) - 1) * take;
-      const term = query ? `%${query.toLowerCase().replace(/&/g, "e")}%` : "%";
-      const events = await prisma_default.$queryRaw`
-        SELECT 
-          id, 
-          "nomeNoivos", 
-          "dataEvento", 
-          cartorio, 
-          "coverPhotoUrl",
-          "priceBase",
-          "priceEarly",
-          type,
-          true as "temFoto" -- Ativando badges por padrão para estética
-        FROM events
-        WHERE active = true AND "isPrivate" = false AND "isQuote" = false
-          AND type IN ('ALBUM_FULL', 'PHOTO_MARKETPLACE', 'FOTO_POINT')
-          AND (
-          REPLACE(LOWER("nomeNoivos"), '&', 'e') LIKE ${term} 
-          OR REPLACE(LOWER(cartorio), '&', 'e') LIKE ${term}
-        )
-        ORDER BY "dataEvento" DESC
-        LIMIT ${take} OFFSET ${skip}
-      `;
-      const countResult = await prisma_default.$queryRaw`
-        SELECT COUNT(*)::int as count FROM events
-        WHERE active = true AND "isPrivate" = false AND "isQuote" = false
-          AND type IN ('ALBUM_FULL', 'PHOTO_MARKETPLACE', 'FOTO_POINT')
-          AND (
-          REPLACE(LOWER("nomeNoivos"), '&', 'e') LIKE ${term} 
-          OR REPLACE(LOWER(cartorio), '&', 'e') LIKE ${term}
-        )
-      `;
-      const total = countResult[0].count;
+      const where = {
+        active: true,
+        isPrivate: false,
+        isQuote: false,
+        type: type ? String(type) : {
+          in: ["ALBUM_FULL", "PHOTO_MARKETPLACE", "FOTO_POINT", "FLASH_EVENT"]
+        }
+      };
+      if (city) {
+        where.city = { contains: String(city), mode: "insensitive" };
+      }
+      console.log("[DEBUG] listPublic where:", JSON.stringify(where, null, 2));
+      if (query) {
+        where.OR = [
+          { nomeNoivos: { contains: query, mode: "insensitive" } },
+          { location: { contains: query, mode: "insensitive" } },
+          { clientName: { contains: query, mode: "insensitive" } }
+        ];
+      }
+      const [events, total] = await Promise.all([
+        prisma_default.event.findMany({
+          where,
+          take,
+          skip,
+          orderBy: { dataEvento: "desc" },
+          select: {
+            id: true,
+            slug: true,
+            nomeNoivos: true,
+            dataEvento: true,
+            location: true,
+            coverPhotoUrl: true,
+            priceBase: true,
+            priceEarly: true,
+            type: true,
+            temFoto: true,
+            temVideo: true,
+            temReels: true
+          }
+        }),
+        prisma_default.event.count({ where })
+      ]);
       const pages = Math.ceil(total / take);
       return res.json({
         events,
@@ -67080,8 +67066,8 @@ var EventController = class {
         pages
       });
     } catch (error) {
-      console.error("Erro ao listar eventos p\xFAblicos:", error);
-      return res.status(500).json({ error: "Erro ao carregar vitrine", details: error instanceof Error ? error.message : String(error) });
+      console.error("[listPublic] Erro ao listar eventos p\xFAblicos:", error);
+      return res.status(500).json({ error: "Erro ao carregar vitrine" });
     }
   }
   /**
@@ -67091,7 +67077,14 @@ var EventController = class {
   static async listPartners(req, res) {
     try {
       const partners = await prisma_default.user.findMany({
-        where: { role: "CARTORIO" },
+        where: {
+          role: "CARTORIO",
+          cartorio: {
+            profissionais: {
+              some: { status: "ACCEPTED" }
+            }
+          }
+        },
         include: { cartorio: true },
         orderBy: { nome: "asc" }
       });
@@ -67234,7 +67227,7 @@ Dias: ${eventDays}
 Descri\xE7\xE3o do Cliente: ${description}`,
           usageType: usageType || "PESSOAL",
           isQuote,
-          quoteStatus: isQuote ? "PENDING" : "APROVADO",
+          quoteStatus: isQuote ? "PENDING" : "APPROVED",
           // Pontos fixos já nascem aprovados, apenas aguardando pagamento
           priceBase: totalPrice,
           priceEarly: totalPrice,
@@ -67248,7 +67241,9 @@ Descri\xE7\xE3o do Cliente: ${description}`,
           clientEmail: email,
           clientName: name2,
           captacaoId,
-          captacaoStatus: "PENDING"
+          captacaoStatus: "PENDING",
+          retentionDays: 15
+          // Orçamentos padrão começam com 15 dias de vitrine após aprovação
         }
       });
       if (captacaoId) {
@@ -67312,7 +67307,7 @@ Descri\xE7\xE3o do Cliente: ${description}`,
    * Cria um evento instantâneo (Flash) para franqueados/profissionais em campo.
    */
   static async createFlashEvent(req, res) {
-    const { name: name2, pricePerPhoto, isPrivate } = req.body;
+    const { name: name2, pricePerPhoto, isPrivate, dataEvento, captacaoId: delegatedCaptacaoId, isPublicCall } = req.body;
     const { userId } = req.user;
     if (!name2) return res.status(400).json({ error: "Nome do evento \xE9 obrigat\xF3rio" });
     try {
@@ -67324,19 +67319,23 @@ Descri\xE7\xE3o do Cliente: ${description}`,
         data: {
           nomeNoivos: name2,
           slug,
-          type: "PHOTO_MARKETPLACE",
-          dataEvento: /* @__PURE__ */ new Date(),
-          active: true,
-          captacaoId: userId,
+          type: "FLASH_EVENT",
+          active: !delegatedCaptacaoId && !isPublicCall,
+          captacaoId: delegatedCaptacaoId || (isPublicCall ? null : userId),
+          captacaoStatus: delegatedCaptacaoId || isPublicCall ? "PENDING" : "ACCEPTED",
+          dataEvento: dataEvento ? new Date(dataEvento) : /* @__PURE__ */ new Date(),
+          isPublicCall: !!isPublicCall,
+          ownerId: userId,
           franchiseeId: profile?.id,
           priceBase: Number(pricePerPhoto) || 30,
           priceEarly: Number(pricePerPhoto) || 30,
           description: "EVENTO FLASH - Criado instantaneamente via App Franqueado",
           temFoto: true,
           temFotoImpressa: true,
-          quoteStatus: "APROVADO",
+          quoteStatus: "APPROVED",
           isQuote: false,
-          isPrivate: !!isPrivate
+          isPrivate: !!isPrivate,
+          retentionDays: isPrivate ? 7 : 15
         }
       });
       return res.json({ success: true, eventId: event.id, slug: event.slug });
@@ -67350,7 +67349,20 @@ Descri\xE7\xE3o do Cliente: ${description}`,
    * Cria um ponto de venda por click para fotógrafos.
    */
   static async createFotoPoint(req, res) {
-    const { name: name2, priceUnit, location: location2, itinerary, references, isPrivate, coverPhotoUrl } = req.body;
+    const {
+      name: name2,
+      priceUnit,
+      location: location2,
+      itinerary,
+      references,
+      isPrivate,
+      coverPhotoUrl,
+      dataEvento,
+      startTime,
+      endTime,
+      captacaoId: delegatedCaptacaoId,
+      isPublicCall
+    } = req.body;
     const { userId } = req.user;
     if (!name2) return res.status(400).json({ error: "Nome do ponto \xE9 obrigat\xF3rio" });
     const normalizeCoverUrl = (url2) => {
@@ -67363,14 +67375,20 @@ Descri\xE7\xE3o do Cliente: ${description}`,
     };
     try {
       const slug = `fp-${name2.toLowerCase().replace(/\s+/g, "-")}-${Math.random().toString(36).substring(2, 6)}`;
+      const finalStartTime = dataEvento && startTime ? /* @__PURE__ */ new Date(`${dataEvento}T${startTime}:00-03:00`) : dataEvento ? new Date(dataEvento) : /* @__PURE__ */ new Date();
+      const finalEndTime = dataEvento && endTime ? /* @__PURE__ */ new Date(`${dataEvento}T${endTime}:00-03:00`) : null;
       const event = await prisma_default.event.create({
         data: {
           nomeNoivos: name2,
           slug,
           type: "FOTO_POINT",
-          dataEvento: /* @__PURE__ */ new Date(),
-          active: true,
-          captacaoId: userId,
+          dataEvento: finalStartTime,
+          eventEndTime: finalEndTime,
+          active: !delegatedCaptacaoId && !isPublicCall,
+          captacaoId: delegatedCaptacaoId || (isPublicCall ? null : userId),
+          captacaoStatus: delegatedCaptacaoId || isPublicCall ? "PENDING" : "ACCEPTED",
+          isPublicCall: !!isPublicCall,
+          ownerId: userId,
           priceUnit: Number(priceUnit) || 10,
           location: location2,
           itinerary,
@@ -67378,9 +67396,10 @@ Descri\xE7\xE3o do Cliente: ${description}`,
           isPrivate: !!isPrivate,
           isUnitSale: true,
           temFoto: true,
-          quoteStatus: "APROVADO",
+          quoteStatus: "APPROVED",
           isQuote: false,
-          coverPhotoUrl: normalizeCoverUrl(coverPhotoUrl)
+          coverPhotoUrl: normalizeCoverUrl(coverPhotoUrl),
+          retentionDays: isPrivate ? 7 : 15
         }
       });
       return res.json({ success: true, eventId: event.id, slug: event.slug });
@@ -67399,9 +67418,11 @@ Descri\xE7\xE3o do Cliente: ${description}`,
       const events = await prisma_default.event.findMany({
         where: {
           OR: [
-            { captacaoId: userId },
-            { edicaoId: userId },
-            { cartorioUserId: userId }
+            { captacaoId: userId, captacaoStatus: { not: "REJECTED" } },
+            { edicaoId: userId, edicaoStatus: { not: "REJECTED" } },
+            { cartorioUserId: userId },
+            { ownerId: userId },
+            { isPublicCall: true, captacaoId: null, captacaoStatus: "PENDING" }
           ]
         },
         orderBy: { dataEvento: "desc" },
@@ -67409,18 +67430,14 @@ Descri\xE7\xE3o do Cliente: ${description}`,
           pedidos: {
             where: { status: "APROVADO" },
             select: { valor: true }
-          }
+          },
+          _count: { select: { pedidos: true } },
+          cartorioUser: { include: { cartorio: { select: { razaoSocial: true } } } }
         }
       });
       const mapped = events.map((e) => ({
-        id: e.id,
-        nomeNoivos: e.nomeNoivos,
-        dataEvento: e.dataEvento,
-        location: e.location,
-        type: e.type,
-        active: e.active,
-        slug: e.slug,
-        captacaoId: e.captacaoId,
+        ...e,
+        cartorio: e.cartorioUser?.cartorio?.razaoSocial || null,
         collected: e.pedidos.reduce((acc, o) => acc + Number(o.valor), 0)
       }));
       return res.json(mapped);
@@ -67435,11 +67452,26 @@ Descri\xE7\xE3o do Cliente: ${description}`,
    */
   static async updateFotoPoint(req, res) {
     try {
-      const { id } = req.params;
-      const { nomeNoivos, priceUnit, location: location2, city, itinerary, references, isPrivate, active, coverPhotoUrl } = req.body;
+      const id = String(req.params.id);
+      const {
+        nomeNoivos,
+        priceUnit,
+        location: location2,
+        city,
+        itinerary,
+        references,
+        isPrivate,
+        active,
+        coverPhotoUrl,
+        dataEvento,
+        startTime,
+        endTime,
+        captacaoId,
+        isPublicCall
+      } = req.body;
       const event = await prisma_default.event.findUnique({ where: { id } });
       if (!event) return res.status(404).json({ error: "Evento n\xE3o encontrado." });
-      const isOwner = req.authUser && (req.authUser.role === "ADMIN" || req.authUser.userId === event.captacaoId);
+      const isOwner = req.user && (req.user.role === "ADMIN" || req.user.userId === event.captacaoId || req.user.userId === event.ownerId);
       if (!isOwner) return res.status(403).json({ error: "Acesso negado." });
       const normalizeCoverUrl = (url2) => {
         if (url2 === null) return null;
@@ -67453,13 +67485,18 @@ Descri\xE7\xE3o do Cliente: ${description}`,
         data: {
           nomeNoivos: nomeNoivos ?? void 0,
           priceUnit: priceUnit !== void 0 ? Number(priceUnit) : void 0,
-          location: location2 ?? void 0,
-          city: city ?? void 0,
-          itinerary: itinerary ?? void 0,
+          location: location2 !== void 0 ? String(location2) : void 0,
+          city: city !== void 0 ? String(city) : void 0,
+          itinerary: itinerary !== void 0 ? String(itinerary) : void 0,
           references: references ?? void 0,
           isPrivate: isPrivate !== void 0 ? !!isPrivate : void 0,
           active: active !== void 0 ? !!active : void 0,
-          coverPhotoUrl: normalizeCoverUrl(coverPhotoUrl)
+          coverPhotoUrl: normalizeCoverUrl(coverPhotoUrl),
+          dataEvento: dataEvento && startTime ? /* @__PURE__ */ new Date(`${dataEvento}T${startTime}:00-03:00`) : dataEvento ? new Date(dataEvento) : void 0,
+          eventEndTime: dataEvento && endTime ? /* @__PURE__ */ new Date(`${dataEvento}T${endTime}:00-03:00`) : void 0,
+          captacaoId: captacaoId !== void 0 ? String(captacaoId) : void 0,
+          isPublicCall: isPublicCall !== void 0 ? !!isPublicCall : void 0,
+          captacaoStatus: captacaoId || isPublicCall ? "PENDING" : void 0
         }
       });
       return res.json(updated);
@@ -67996,9 +68033,9 @@ function isVisitable(thing) {
 function removeBrackets(key) {
   return utils_default.endsWith(key, "[]") ? key.slice(0, -2) : key;
 }
-function renderKey(path2, key, dots) {
-  if (!path2) return key;
-  return path2.concat(key).map(function each(token, i) {
+function renderKey(path4, key, dots) {
+  if (!path4) return key;
+  return path4.concat(key).map(function each(token, i) {
     token = removeBrackets(token);
     return !dots && i ? "[" + token + "]" : token;
   }).join(dots ? "." : "");
@@ -68051,13 +68088,13 @@ function toFormData(obj, formData, options) {
     }
     return value;
   }
-  function defaultVisitor(value, key, path2) {
+  function defaultVisitor(value, key, path4) {
     let arr = value;
     if (utils_default.isReactNative(formData) && utils_default.isReactNativeBlob(value)) {
-      formData.append(renderKey(path2, key, dots), convertValue(value));
+      formData.append(renderKey(path4, key, dots), convertValue(value));
       return false;
     }
-    if (value && !path2 && typeof value === "object") {
+    if (value && !path4 && typeof value === "object") {
       if (utils_default.endsWith(key, "{}")) {
         key = metaTokens ? key : key.slice(0, -2);
         value = JSON.stringify(value);
@@ -68076,7 +68113,7 @@ function toFormData(obj, formData, options) {
     if (isVisitable(value)) {
       return true;
     }
-    formData.append(renderKey(path2, key, dots), convertValue(value));
+    formData.append(renderKey(path4, key, dots), convertValue(value));
     return false;
   }
   const stack = [];
@@ -68085,16 +68122,16 @@ function toFormData(obj, formData, options) {
     convertValue,
     isVisitable
   });
-  function build(value, path2) {
+  function build(value, path4) {
     if (utils_default.isUndefined(value)) return;
     if (stack.indexOf(value) !== -1) {
-      throw Error("Circular reference detected in " + path2.join("."));
+      throw Error("Circular reference detected in " + path4.join("."));
     }
     stack.push(value);
     utils_default.forEach(value, function each(el, key) {
-      const result = !(utils_default.isUndefined(el) || el === null) && visitor.call(formData, el, utils_default.isString(key) ? key.trim() : key, path2, exposedHelpers);
+      const result = !(utils_default.isUndefined(el) || el === null) && visitor.call(formData, el, utils_default.isString(key) ? key.trim() : key, path4, exposedHelpers);
       if (result === true) {
-        build(el, path2 ? path2.concat(key) : [key]);
+        build(el, path4 ? path4.concat(key) : [key]);
       }
     });
     stack.pop();
@@ -68306,7 +68343,7 @@ var platform_default = {
 // backend/node_modules/axios/lib/helpers/toURLEncodedForm.js
 function toURLEncodedForm(data, options) {
   return toFormData_default(data, new platform_default.classes.URLSearchParams(), {
-    visitor: function(value, key, path2, helpers) {
+    visitor: function(value, key, path4, helpers) {
       if (platform_default.isNode && utils_default.isBuffer(value)) {
         this.append(key, value.toString("base64"));
         return false;
@@ -68336,11 +68373,11 @@ function arrayToObject(arr) {
   return obj;
 }
 function formDataToJSON(formData) {
-  function buildPath(path2, value, target, index) {
-    let name2 = path2[index++];
+  function buildPath(path4, value, target, index) {
+    let name2 = path4[index++];
     if (name2 === "__proto__") return true;
     const isNumericKey = Number.isFinite(+name2);
-    const isLast = index >= path2.length;
+    const isLast = index >= path4.length;
     name2 = !name2 && utils_default.isArray(target) ? target.length : name2;
     if (isLast) {
       if (utils_default.hasOwnProp(target, name2)) {
@@ -68353,7 +68390,7 @@ function formDataToJSON(formData) {
     if (!target[name2] || !utils_default.isObject(target[name2])) {
       target[name2] = [];
     }
-    const result = buildPath(path2, value, target[name2], index);
+    const result = buildPath(path4, value, target[name2], index);
     if (result && utils_default.isArray(target[name2])) {
       target[name2] = arrayToObject(target[name2]);
     }
@@ -69907,9 +69944,9 @@ var http_default = isHttpAdapterSupported && function httpAdapter(config) {
       auth = urlUsername + ":" + urlPassword;
     }
     auth && headers.delete("authorization");
-    let path2;
+    let path4;
     try {
-      path2 = buildURL(
+      path4 = buildURL(
         parsed.pathname + parsed.search,
         config.params,
         config.paramsSerializer
@@ -69927,7 +69964,7 @@ var http_default = isHttpAdapterSupported && function httpAdapter(config) {
       false
     );
     const options = {
-      path: path2,
+      path: path4,
       method,
       headers: headers.toJSON(),
       agents: { http: config.httpAgent, https: config.httpsAgent },
@@ -70176,14 +70213,14 @@ var isURLSameOrigin_default = platform_default.hasStandardBrowserEnv ? /* @__PUR
 var cookies_default = platform_default.hasStandardBrowserEnv ? (
   // Standard browser envs support document.cookie
   {
-    write(name2, value, expires, path2, domain, secure, sameSite) {
+    write(name2, value, expires, path4, domain, secure, sameSite) {
       if (typeof document === "undefined") return;
       const cookie = [`${name2}=${encodeURIComponent(value)}`];
       if (utils_default.isNumber(expires)) {
         cookie.push(`expires=${new Date(expires).toUTCString()}`);
       }
-      if (utils_default.isString(path2)) {
-        cookie.push(`path=${path2}`);
+      if (utils_default.isString(path4)) {
+        cookie.push(`path=${path4}`);
       }
       if (utils_default.isString(domain)) {
         cookie.push(`domain=${domain}`);
@@ -71611,6 +71648,22 @@ var PricingService = class {
     return Number(event.priceBase ?? 200);
   }
   /**
+   * Calcula o total de um carrinho híbrido (Digital + Físico)
+   */
+  static async calculateHybridTotal(eventId, cart, printProductId) {
+    const event = await prisma_default.event.findUnique({ where: { id: eventId } });
+    if (!event) return 0;
+    const basePrice = this.calculateEventPrice(event, 0, cart.length);
+    let printPrice = 0;
+    if (printProductId) {
+      const product = await prisma_default.printProduct.findUnique({ where: { id: printProductId } });
+      if (product && product.active) {
+        printPrice = product.sellingPrice ? Number(product.sellingPrice) : Number(product.supplierCost) * (1 + product.marginPct / 100);
+      }
+    }
+    return basePrice + printPrice;
+  }
+  /**
    * Calcula a divisão de valores (Splits) com base nas configurações da plataforma.
    * Suporta o novo modelo de "Venda Direta" com 10% de comissão e "Comissão Passiva B2B".
    */
@@ -71623,9 +71676,9 @@ var PricingService = class {
     if (options?.isExpressSale) {
       const isDigital = options.paymentMethod === "PIX" || options.paymentMethod === "CARD";
       const gatewayFee = isDigital ? amount * 0.0499 : 0;
-      const netAmount = amount - gatewayFee;
+      const netAmount2 = amount - gatewayFee;
       const matriz2 = +(amount * 0.1).toFixed(2);
-      const remainder = +(netAmount - matriz2).toFixed(2);
+      const remainder = +(netAmount2 - matriz2).toFixed(2);
       const isPhysical = options.productType === "SD_CARD" || options.productType === "ALBUM_IMPRESSO";
       if (options?.hasEditor && !isPhysical) {
         const captacao2 = +(remainder * 0.6).toFixed(2);
@@ -71648,9 +71701,15 @@ var PricingService = class {
         console.log(`[Pricing] Comiss\xE3o Passiva detectada (${(franchiseePct * 100).toFixed(1)}%): ${franchisee} para ${passiveFranchiseeId}`);
       }
     }
-    const captacao = +(amount * getPct("split_captacao")).toFixed(2);
-    const edicao = +(amount * getPct("split_edicao")).toFixed(2);
-    const cartorio = +(amount * getPct("split_cartorio")).toFixed(2);
+    const shippingFee = options?.shippingFee || 0;
+    const supplierCost = options?.supplierCost || 0;
+    const netAmount = amount - shippingFee - supplierCost;
+    if (netAmount <= 0) {
+      return { matriz: amount, captacao: 0, edicao: 0, cartorio: 0, franchisee: 0 };
+    }
+    const captacao = +(netAmount * getPct("split_captacao")).toFixed(2);
+    const edicao = +(netAmount * getPct("split_edicao")).toFixed(2);
+    const cartorio = +(netAmount * getPct("split_cartorio")).toFixed(2);
     const matriz = +(amount - (captacao + edicao + cartorio + franchisee)).toFixed(2);
     return { matriz, captacao, edicao, cartorio, franchisee, passiveFranchiseeId };
   }
@@ -76610,8 +76669,8 @@ var IcebergError = class extends Error {
     return this.status === 419;
   }
 };
-function buildUrl(baseUrl, path2, query) {
-  const url2 = new URL(path2, baseUrl);
+function buildUrl(baseUrl, path4, query) {
+  const url2 = new URL(path4, baseUrl);
   if (query) {
     for (const [key, value] of Object.entries(query)) {
       if (value !== void 0) {
@@ -76641,12 +76700,12 @@ function createFetchClient(options) {
   return {
     async request({
       method,
-      path: path2,
+      path: path4,
       query,
       body,
       headers
     }) {
-      const url2 = buildUrl(options.baseUrl, path2, query);
+      const url2 = buildUrl(options.baseUrl, path4, query);
       const authHeaders = await buildAuthHeaders(options.auth);
       const res = await fetchFn(url2, {
         method,
@@ -77478,7 +77537,7 @@ var StorageFileApi = class extends BaseApiClient {
   * @param path The relative file path. Should be of the format `folder/subfolder/filename.png`. The bucket must already exist before attempting to upload.
   * @param fileBody The body of the file to be stored in the bucket.
   */
-  async uploadOrUpdate(method, path2, fileBody, fileOptions) {
+  async uploadOrUpdate(method, path4, fileBody, fileOptions) {
     var _this = this;
     return _this.handleOperation(async () => {
       let body;
@@ -77502,7 +77561,7 @@ var StorageFileApi = class extends BaseApiClient {
         if ((typeof ReadableStream !== "undefined" && body instanceof ReadableStream || body && typeof body === "object" && "pipe" in body && typeof body.pipe === "function") && !options.duplex) options.duplex = "half";
       }
       if (fileOptions === null || fileOptions === void 0 ? void 0 : fileOptions.headers) headers = _objectSpread22(_objectSpread22({}, headers), fileOptions.headers);
-      const cleanPath = _this._removeEmptyFolders(path2);
+      const cleanPath = _this._removeEmptyFolders(path4);
       const _path = _this._getFinalPath(cleanPath);
       const data = await (method == "PUT" ? put : post)(_this.fetch, `${_this.url}/object/${_path}`, body, _objectSpread22({ headers }, (options === null || options === void 0 ? void 0 : options.duplex) ? { duplex: options.duplex } : {}));
       return {
@@ -77563,8 +77622,8 @@ var StorageFileApi = class extends BaseApiClient {
   * - Refer to the [Storage guide](/docs/guides/storage/security/access-control) on how access control works
   * - For React Native, using either `Blob`, `File` or `FormData` does not work as intended. Upload file using `ArrayBuffer` from base64 file data instead, see example below.
   */
-  async upload(path2, fileBody, fileOptions) {
-    return this.uploadOrUpdate("POST", path2, fileBody, fileOptions);
+  async upload(path4, fileBody, fileOptions) {
+    return this.uploadOrUpdate("POST", path4, fileBody, fileOptions);
   }
   /**
   * Upload a file with a token generated from `createSignedUploadUrl`.
@@ -77603,9 +77662,9 @@ var StorageFileApi = class extends BaseApiClient {
   *   - `objects` table permissions: none
   * - Refer to the [Storage guide](/docs/guides/storage/security/access-control) on how access control works
   */
-  async uploadToSignedUrl(path2, token, fileBody, fileOptions) {
+  async uploadToSignedUrl(path4, token, fileBody, fileOptions) {
     var _this3 = this;
-    const cleanPath = _this3._removeEmptyFolders(path2);
+    const cleanPath = _this3._removeEmptyFolders(path4);
     const _path = _this3._getFinalPath(cleanPath);
     const url2 = new URL(_this3.url + `/object/upload/sign/${_path}`);
     url2.searchParams.set("token", token);
@@ -77667,10 +77726,10 @@ var StorageFileApi = class extends BaseApiClient {
   *   - `objects` table permissions: `insert`
   * - Refer to the [Storage guide](/docs/guides/storage/security/access-control) on how access control works
   */
-  async createSignedUploadUrl(path2, options) {
+  async createSignedUploadUrl(path4, options) {
     var _this4 = this;
     return _this4.handleOperation(async () => {
-      let _path = _this4._getFinalPath(path2);
+      let _path = _this4._getFinalPath(path4);
       const headers = _objectSpread22({}, _this4.headers);
       if (options === null || options === void 0 ? void 0 : options.upsert) headers["x-upsert"] = "true";
       const data = await post(_this4.fetch, `${_this4.url}/object/upload/sign/${_path}`, {}, { headers });
@@ -77679,7 +77738,7 @@ var StorageFileApi = class extends BaseApiClient {
       if (!token) throw new StorageError("No token returned by API");
       return {
         signedUrl: url2.toString(),
-        path: path2,
+        path: path4,
         token
       };
     });
@@ -77735,8 +77794,8 @@ var StorageFileApi = class extends BaseApiClient {
   * - Refer to the [Storage guide](/docs/guides/storage/security/access-control) on how access control works
   * - For React Native, using either `Blob`, `File` or `FormData` does not work as intended. Update file using `ArrayBuffer` from base64 file data instead, see example below.
   */
-  async update(path2, fileBody, fileOptions) {
-    return this.uploadOrUpdate("PUT", path2, fileBody, fileOptions);
+  async update(path4, fileBody, fileOptions) {
+    return this.uploadOrUpdate("PUT", path4, fileBody, fileOptions);
   }
   /**
   * Moves an existing file to a new path in the same bucket.
@@ -77884,10 +77943,10 @@ var StorageFileApi = class extends BaseApiClient {
   *   - `objects` table permissions: `select`
   * - Refer to the [Storage guide](/docs/guides/storage/security/access-control) on how access control works
   */
-  async createSignedUrl(path2, expiresIn, options) {
+  async createSignedUrl(path4, expiresIn, options) {
     var _this8 = this;
     return _this8.handleOperation(async () => {
-      let _path = _this8._getFinalPath(path2);
+      let _path = _this8._getFinalPath(path4);
       const hasTransform = typeof (options === null || options === void 0 ? void 0 : options.transform) === "object" && options.transform !== null && Object.keys(options.transform).length > 0;
       let data = await post(_this8.fetch, `${_this8.url}/object/sign/${_path}`, _objectSpread22({ expiresIn }, hasTransform ? { transform: options.transform } : {}), { headers: _this8.headers });
       const query = new URLSearchParams();
@@ -78021,13 +78080,13 @@ var StorageFileApi = class extends BaseApiClient {
   *   - `objects` table permissions: `select`
   * - Refer to the [Storage guide](/docs/guides/storage/security/access-control) on how access control works
   */
-  download(path2, options, parameters) {
+  download(path4, options, parameters) {
     const renderPath = typeof (options === null || options === void 0 ? void 0 : options.transform) === "object" && options.transform !== null && Object.keys(options.transform).length > 0 ? "render/image/authenticated" : "object";
     const query = new URLSearchParams();
     if (options === null || options === void 0 ? void 0 : options.transform) this.applyTransformOptsToQuery(query, options.transform);
     if ((options === null || options === void 0 ? void 0 : options.cacheNonce) != null) query.set("cacheNonce", String(options.cacheNonce));
     const queryString = query.toString();
-    const _path = this._getFinalPath(path2);
+    const _path = this._getFinalPath(path4);
     const downloadFn = () => get(this.fetch, `${this.url}/${renderPath}/${_path}${queryString ? `?${queryString}` : ""}`, {
       headers: this.headers,
       noResolveJson: true
@@ -78057,9 +78116,9 @@ var StorageFileApi = class extends BaseApiClient {
   * }
   * ```
   */
-  async info(path2) {
+  async info(path4) {
     var _this10 = this;
-    const _path = _this10._getFinalPath(path2);
+    const _path = _this10._getFinalPath(path4);
     return _this10.handleOperation(async () => {
       return recursiveToCamel(await get(_this10.fetch, `${_this10.url}/object/info/${_path}`, { headers: _this10.headers }));
     });
@@ -78079,9 +78138,9 @@ var StorageFileApi = class extends BaseApiClient {
   *   .exists('folder/avatar1.png')
   * ```
   */
-  async exists(path2) {
+  async exists(path4) {
     var _this11 = this;
-    const _path = _this11._getFinalPath(path2);
+    const _path = _this11._getFinalPath(path4);
     try {
       await head(_this11.fetch, `${_this11.url}/object/${_path}`, { headers: _this11.headers });
       return {
@@ -78159,8 +78218,8 @@ var StorageFileApi = class extends BaseApiClient {
   *   - `objects` table permissions: none
   * - Refer to the [Storage guide](/docs/guides/storage/security/access-control) on how access control works
   */
-  getPublicUrl(path2, options) {
-    const _path = this._getFinalPath(path2);
+  getPublicUrl(path4, options) {
+    const _path = this._getFinalPath(path4);
     const query = new URLSearchParams();
     if (options === null || options === void 0 ? void 0 : options.download) query.set("download", options.download === true ? "" : options.download);
     if (options === null || options === void 0 ? void 0 : options.transform) this.applyTransformOptsToQuery(query, options.transform);
@@ -78297,10 +78356,10 @@ var StorageFileApi = class extends BaseApiClient {
   *   - `objects` table permissions: `select`
   * - Refer to the [Storage guide](/docs/guides/storage/security/access-control) on how access control works
   */
-  async list(path2, options, parameters) {
+  async list(path4, options, parameters) {
     var _this13 = this;
     return _this13.handleOperation(async () => {
-      const body = _objectSpread22(_objectSpread22(_objectSpread22({}, DEFAULT_SEARCH_OPTIONS), options), {}, { prefix: path2 || "" });
+      const body = _objectSpread22(_objectSpread22(_objectSpread22({}, DEFAULT_SEARCH_OPTIONS), options), {}, { prefix: path4 || "" });
       return await post(_this13.fetch, `${_this13.url}/object/list/${_this13.bucketId}`, body, { headers: _this13.headers }, parameters);
     });
   }
@@ -78364,11 +78423,11 @@ var StorageFileApi = class extends BaseApiClient {
     if (typeof Buffer !== "undefined") return Buffer.from(data).toString("base64");
     return btoa(data);
   }
-  _getFinalPath(path2) {
-    return `${this.bucketId}/${path2.replace(/^\/+/, "")}`;
+  _getFinalPath(path4) {
+    return `${this.bucketId}/${path4.replace(/^\/+/, "")}`;
   }
-  _removeEmptyFolders(path2) {
-    return path2.replace(/^\/|\/$/g, "").replace(/\/+/g, "/");
+  _removeEmptyFolders(path4) {
+    return path4.replace(/^\/|\/$/g, "").replace(/\/+/g, "/");
   }
   /** Modifies the `query`, appending values the from `transform` */
   applyTransformOptsToQuery(query, transform) {
@@ -80275,8 +80334,297 @@ async function audit(req, action, entityType, entityId, oldValue, newValue) {
 }
 
 // backend/src/controllers/payment.controller.ts
-var import_client3 = require("@prisma/client");
+var import_client5 = require("@prisma/client");
 init_gamification_service();
+
+// backend/src/services/phygital.service.ts
+var import_sharp = __toESM(require("sharp"));
+var import_client3 = require("@prisma/client");
+var prisma2 = new import_client3.PrismaClient();
+var PhygitalService = class {
+  /**
+   * Processa o upload de uma foto via QR Code, aplica o carimbo de referência e salva no Supabase Storage.
+   */
+  static async processUpload(fileBuffer, metadata) {
+    try {
+      const { eventId, customerName, customerPhone, customerCep } = metadata;
+      const event = await prisma2.event.findUnique({ where: { id: eventId } });
+      if (!event) {
+        const eventBySlug = await prisma2.event.findUnique({ where: { slug: eventId } });
+        if (!eventBySlug) throw new Error(`Evento ${eventId} n\xE3o encontrado no sistema.`);
+        metadata.eventId = eventBySlug.id;
+      }
+      const shortEventId = metadata.eventId.substring(0, 5).toUpperCase();
+      const referenceCode = `${shortEventId}-${Math.floor(1e3 + Math.random() * 9e3)}`;
+      const image = (0, import_sharp.default)(fileBuffer);
+      const metadata_img = await image.metadata();
+      let pipeline = image.rotate();
+      const { width, height } = await pipeline.toBuffer().then((b) => (0, import_sharp.default)(b).metadata());
+      const w = width || 1200;
+      const h = height || 1600;
+      const borderSize = Math.floor(Math.min(w, h) * 0.1);
+      const finalWidth = w + borderSize * 2;
+      pipeline = pipeline.extend({
+        top: borderSize,
+        bottom: borderSize * 3,
+        // Margem Polaroid clássica
+        left: borderSize,
+        right: borderSize,
+        background: { r: 255, g: 255, b: 255, alpha: 1 }
+      });
+      const refSvg = Buffer.from(`
+        <svg width="${finalWidth}" height="${borderSize * 3}" viewBox="0 0 ${finalWidth} ${borderSize * 3}">
+          <text x="50%" y="50%" font-family="sans-serif" font-size="${Math.floor(borderSize * 1.5)}" font-weight="900" fill="#000000" text-anchor="middle" dominant-baseline="middle" style="text-transform: uppercase;">
+            ${referenceCode}
+          </text>
+        </svg>
+      `);
+      const logoFontSize = Math.floor(borderSize * 0.4);
+      const logoSvg = Buffer.from(`
+        <svg width="${finalWidth}" height="${borderSize * 2}" viewBox="0 0 ${finalWidth} ${borderSize * 2}">
+          <text x="${finalWidth - borderSize}" y="70%" font-family="sans-serif" font-size="${logoFontSize}" font-weight="900" fill="#000000" text-anchor="end" dominant-baseline="middle" style="text-transform: uppercase; letter-spacing: 5px; opacity: 0.6;">
+            FOTO SEGUNDO
+          </text>
+        </svg>
+      `);
+      const processedImageBuffer = await pipeline.composite([
+        { input: refSvg, gravity: "south", blend: "over" },
+        { input: logoSvg, gravity: "southeast", blend: "over" }
+      ]).jpeg({ quality: 90 }).toBuffer();
+      const fileName = `phygital/${metadata.eventId}/${referenceCode}.jpg`;
+      const { data: uploadData, error: uploadError } = await supabaseAdmin.storage.from("eventos").upload(fileName, processedImageBuffer, {
+        contentType: "image/jpeg",
+        upsert: true
+      });
+      if (uploadError) throw uploadError;
+      const { data: { publicUrl } } = supabaseAdmin.storage.from("eventos").getPublicUrl(fileName);
+      const printJob = await prisma2.phygitalPrint.create({
+        data: {
+          referenceCode,
+          imageUrl: publicUrl,
+          customerName,
+          customerPhone,
+          customerCep,
+          status: "PENDING_PRINT",
+          eventId: metadata.eventId
+        },
+        include: { event: true }
+      });
+      const count = await prisma2.eventMedia.count({ where: { eventId: metadata.eventId } });
+      const shortId = `F${(count + 1).toString().padStart(3, "0")}`;
+      await prisma2.eventMedia.create({
+        data: {
+          eventId: metadata.eventId,
+          url: publicUrl,
+          shortId,
+          price: printJob.event.pricePerPhoto || 15
+        }
+      });
+      if (printJob.event.franchiseeId) {
+        const profile = await prisma2.franchiseProfile.findUnique({
+          where: { id: printJob.event.franchiseeId }
+        });
+        if (profile) {
+          await prisma2.franchiseProfile.update({
+            where: { id: profile.id },
+            data: { printCredits: { decrement: 1 } }
+          });
+          await prisma2.creditTransaction.create({
+            data: {
+              profileId: profile.id,
+              amount: -1,
+              type: "PRINT_CONSUMPTION",
+              description: `Impress\xE3o Phygital: ${referenceCode}`,
+              referenceId: printJob.id
+            }
+          });
+        }
+      }
+      return {
+        success: true,
+        referenceCode: printJob.referenceCode,
+        imageUrl: printJob.imageUrl,
+        id: printJob.id
+      };
+    } catch (error) {
+      console.error("Erro no PhygitalService (Supabase):", error);
+      throw error;
+    }
+  }
+  static async getPendingPrints(eventId) {
+    return prisma2.phygitalPrint.findMany({
+      where: { eventId, status: "PENDING_PRINT" },
+      orderBy: { createdAt: "asc" }
+    });
+  }
+  static async updateStatus(printId, status) {
+    return prisma2.phygitalPrint.update({
+      where: { id: printId },
+      data: { status }
+    });
+  }
+  /**
+   * Converte um item de pedido de impressão em uma entrada na fila do Agente IoT.
+   */
+  static async createQueueEntryFromOrder(order, photos) {
+    try {
+      const results = [];
+      for (const photoUrl of photos) {
+        const referenceCode = `PRT-${order.id.substring(order.id.length - 4).toUpperCase()}-${Math.floor(1e3 + Math.random() * 9e3)}`;
+        const print = await prisma2.phygitalPrint.create({
+          data: {
+            eventId: order.eventId,
+            referenceCode,
+            imageUrl: photoUrl,
+            customerName: order.cliente?.nome || order.buyerEmail || "Cliente Print",
+            customerPhone: order.buyerWhatsapp || "",
+            customerCep: order.shippingAddress?.cep || "LOCAL",
+            status: "PENDING_PRINT"
+          }
+        });
+        results.push(print);
+      }
+      return results;
+    } catch (error) {
+      console.error("[PhygitalService] Erro ao criar entrada de fila:", error);
+      throw error;
+    }
+  }
+};
+
+// backend/src/services/subscription.service.ts
+init_prisma();
+var SubscriptionService = class {
+  /**
+   * Inicializa uma assinatura para um Cofre de Memórias.
+   * Cria o registro PENDING e gera a URL de checkout no gateway.
+   */
+  static async createVaultSubscription(userId, albumId, planLimit = 36) {
+    const existing = await prisma.subscription.findUnique({
+      where: { albumId }
+    });
+    if (existing && existing.status === "ACTIVE") {
+      throw new Error("Este cofre j\xE1 possui uma assinatura ativa.");
+    }
+    const album = await prisma.sharedAlbum.findUnique({
+      where: { id: albumId },
+      include: { owner: true }
+    });
+    if (!album) throw new Error("Cofre n\xE3o encontrado.");
+    if (album.ownerId !== userId) throw new Error("Apenas o propriet\xE1rio pode assinar este cofre.");
+    const price = 49.9;
+    const subscription = await prisma.subscription.upsert({
+      where: { albumId },
+      update: {
+        status: "PENDING",
+        planLimit
+      },
+      create: {
+        userId,
+        albumId,
+        planLimit,
+        status: "PENDING"
+      }
+    });
+    const backendUrl = process.env.BACKEND_URL || "http://localhost:3001";
+    const mpResponse = await MercadoPagoService.createPreference({
+      transaction_amount: price,
+      description: `Assinatura Cofre de Mem\xF3rias: ${album.nome}`,
+      payer_email: album.owner.email,
+      notification_url: `${backendUrl}/api/webhooks/mercadopago`,
+      orderId: subscription.id
+      // vinculando ID da assinatura em vez do Order
+    });
+    await prisma.subscription.update({
+      where: { id: subscription.id },
+      data: { gatewaySubId: String(mpResponse.id) }
+    });
+    return {
+      subscriptionId: subscription.id,
+      init_point: mpResponse.init_point
+    };
+  }
+  /**
+   * Processa a atualização de status vinda do webhook (ex: Pix Automático Pago)
+   */
+  static async handleSubscriptionPayment(gatewaySubId, status) {
+    let subStatus = "PENDING";
+    if (status === "approved" || status === "authorized") {
+      subStatus = "ACTIVE";
+    } else if (status === "cancelled") {
+      subStatus = "CANCELED";
+    }
+    const nextBilling = /* @__PURE__ */ new Date();
+    nextBilling.setDate(nextBilling.getDate() + 30);
+    await prisma.subscription.updateMany({
+      where: { gatewaySubId },
+      data: {
+        status: subStatus,
+        nextBillingDate: subStatus === "ACTIVE" ? nextBilling : void 0
+      }
+    });
+  }
+};
+
+// backend/src/services/shipping.service.ts
+var import_client4 = require("@prisma/client");
+var prisma3 = new import_client4.PrismaClient();
+var ShippingService = class {
+  /**
+   * Calcula o frete baseado nos produtos físicos do carrinho.
+   * Utiliza uma lógica simulada (ex: Melhor Envio ou Correios).
+   */
+  static async calculateFreight(originCep, destinationCep, items) {
+    if (!items || items.length === 0) {
+      return [
+        { id: "free", name: "Frete Gr\xE1tis (Digital)", price: 0, currency: "BRL", deliveryTimeDays: 0 }
+      ];
+    }
+    let totalWeight = 0;
+    let totalVolume = 0;
+    for (const item of items) {
+      const product = await prisma3.printProduct.findUnique({
+        where: { id: item.id }
+      });
+      if (product) {
+        const weight = Number(product.weightKg || 0.5);
+        const w = Number(product.widthCm || 20);
+        const h = Number(product.heightCm || 2);
+        const l = Number(product.lengthCm || 30);
+        totalWeight += weight * item.quantity;
+        totalVolume += w * h * l * item.quantity;
+      }
+    }
+    if (totalWeight === 0 && totalVolume === 0) {
+      return [
+        { id: "free", name: "Frete Gr\xE1tis (Digital)", price: 0, currency: "BRL", deliveryTimeDays: 0 }
+      ];
+    }
+    const baseCost = 15;
+    const weightCost = totalWeight * 2.5;
+    const volumeCost = totalVolume * 1e-3;
+    const pacPrice = Math.round((baseCost + weightCost + volumeCost) * 100) / 100;
+    const sedexPrice = Math.round(pacPrice * 1.6 * 100) / 100;
+    return [
+      {
+        id: "pac",
+        name: "Correios PAC",
+        price: pacPrice,
+        currency: "BRL",
+        deliveryTimeDays: 7
+      },
+      {
+        id: "sedex",
+        name: "Correios SEDEX",
+        price: sedexPrice,
+        currency: "BRL",
+        deliveryTimeDays: 3
+      }
+    ];
+  }
+};
+
+// backend/src/controllers/payment.controller.ts
 var PaymentController = class _PaymentController {
   /**
    * POST /api/checkout/pending
@@ -80340,13 +80688,19 @@ var PaymentController = class _PaymentController {
       if (!event) return res.status(404).json({ error: "Evento n\xE3o encontrado" });
       const cartItems = cart || [];
       const basePrice = PricingService.calculateEventPrice(event, contributionAmount, cartItems.length);
-      let finalPrintProductId = null;
+      let totalSupplierCost = 0;
       let finalPrintPrice = 0;
-      if (printProductId) {
-        const product = await prisma_default.printProduct.findUnique({ where: { id: printProductId } });
+      let physicalItems = req.body.physicalItems || [];
+      if (printProductId && !physicalItems.find((i) => i.id === printProductId)) {
+        physicalItems.push({ id: printProductId, quantity: 1 });
+      }
+      for (const item of physicalItems) {
+        const product = await prisma_default.printProduct.findUnique({ where: { id: item.id } });
         if (product && product.active) {
-          finalPrintProductId = product.id;
-          finalPrintPrice = product.sellingPrice !== null ? Number(product.sellingPrice) : Number(product.supplierCost) * (1 + product.marginPct / 100);
+          const qty = Number(item.quantity) || 1;
+          const pPrice = product.sellingPrice !== null ? Number(product.sellingPrice) : Number(product.supplierCost) * (1 + product.marginPct / 100);
+          finalPrintPrice += pPrice * qty;
+          totalSupplierCost += Number(product.supplierCost) * qty;
         }
       }
       const selectedServicesIds = req.body.selectedServices || [];
@@ -80374,7 +80728,10 @@ var PaymentController = class _PaymentController {
         cartorio: splitCartorio,
         franchisee: splitFranchisee,
         passiveFranchiseeId
-      } = await PricingService.calculateSplits(preco, { professionalId: event.captacaoId || void 0 });
+      } = await PricingService.calculateSplits(preco, {
+        professionalId: event.captacaoId || void 0,
+        supplierCost: totalSupplierCost
+      });
       console.log(`[Checkout] Repasse Manual Calculado: Snapshot salvo. Valor: ${preco}`);
       let orderItemsData = [];
       if (cartItems.length > 0) {
@@ -80407,12 +80764,17 @@ var PaymentController = class _PaymentController {
           }
         }
       }
-      if (finalPrintProductId) {
-        orderItemsData.push({
-          printProductId: finalPrintProductId,
-          price: finalPrintPrice,
-          quantity: 1
-        });
+      for (const item of physicalItems) {
+        const product = await prisma_default.printProduct.findUnique({ where: { id: item.id } });
+        if (product && product.active) {
+          const qty = Number(item.quantity) || 1;
+          const pPrice = product.sellingPrice !== null ? Number(product.sellingPrice) : Number(product.supplierCost) * (1 + product.marginPct / 100);
+          orderItemsData.push({
+            printProductId: product.id,
+            price: pPrice,
+            quantity: qty
+          });
+        }
       }
       let order;
       let existingPending = orderToUse;
@@ -80544,6 +80906,14 @@ var PaymentController = class _PaymentController {
           });
           if (updatedOrders.length === 0 && paymentData.external_reference) {
             console.log(`[Webhook] Pedido n\xE3o achado por ID ${data.id}. Tentando por Ref: ${paymentData.external_reference}`);
+            const sub = await prisma_default.subscription.findUnique({
+              where: { id: paymentData.external_reference }
+            });
+            if (sub) {
+              await SubscriptionService.handleSubscriptionPayment(sub.gatewaySubId || String(data.id), paymentData.status);
+              console.log(`\u2705 Assinatura ${sub.id} ativada via Webhook.`);
+              return res.json({ ok: true, type: "subscription" });
+            }
             const orderRef = await prisma_default.order.findUnique({
               where: { id: paymentData.external_reference },
               include: { event: true, cliente: true }
@@ -80591,13 +80961,25 @@ var PaymentController = class _PaymentController {
       if (!event) return res.status(404).json({ error: "Evento n\xE3o encontrado" });
       const cartItems = cart || [];
       let basePrice = PricingService.calculateEventPrice(event, contributionAmount, cartItems.length);
-      let finalPrintProductId = null;
+      let totalSupplierCost = 0;
       let finalPrintPrice = 0;
-      if (printProductId) {
-        const product = await prisma_default.printProduct.findUnique({ where: { id: printProductId } });
+      let physicalItems = req.body.physicalItems || [];
+      if (printProductId && !physicalItems.find((i) => i.id === printProductId)) {
+        physicalItems.push({ id: printProductId, quantity: 1 });
+      }
+      let orderItemsData = [];
+      for (const item of physicalItems) {
+        const product = await prisma_default.printProduct.findUnique({ where: { id: item.id } });
         if (product && product.active) {
-          finalPrintProductId = product.id;
-          finalPrintPrice = product.sellingPrice !== null ? Number(product.sellingPrice) : Number(product.supplierCost) * (1 + product.marginPct / 100);
+          const qty = Number(item.quantity) || 1;
+          const pPrice = product.sellingPrice !== null ? Number(product.sellingPrice) : Number(product.supplierCost) * (1 + product.marginPct / 100);
+          finalPrintPrice += pPrice * qty;
+          totalSupplierCost += Number(product.supplierCost) * qty;
+          orderItemsData.push({
+            printProductId: product.id,
+            price: pPrice,
+            quantity: qty
+          });
         }
       }
       const selectedServicesIds = selectedServices || [];
@@ -80639,7 +81021,11 @@ var PaymentController = class _PaymentController {
         cartorio: splitCartorio,
         franchisee: splitFranchisee,
         passiveFranchiseeId
-      } = await PricingService.calculateSplits(preco, { professionalId: event.captacaoId || void 0 });
+      } = await PricingService.calculateSplits(preco, {
+        professionalId: event.captacaoId || void 0,
+        shippingFee: Number(req.body.shippingFee || 0),
+        supplierCost: totalSupplierCost
+      });
       let finalUserId = userId;
       let isNewUser = false;
       let tempPassword = "";
@@ -80717,7 +81103,6 @@ var PaymentController = class _PaymentController {
           orderBy: { createdAt: "desc" }
         });
       }
-      let orderItemsData = [];
       if (cartItems.length > 0) {
         for (const shortId of cartItems) {
           let media = await prisma_default.eventMedia.findFirst({
@@ -80748,13 +81133,6 @@ var PaymentController = class _PaymentController {
           }
         }
       }
-      if (finalPrintProductId) {
-        orderItemsData.push({
-          printProductId: finalPrintProductId,
-          price: finalPrintPrice,
-          quantity: 1
-        });
-      }
       let order;
       if (existingPendingOrder) {
         console.log(`[processPayment] Reutilizando pedido ${existingPendingOrder.id} (anti-duplicata).`);
@@ -80778,7 +81156,7 @@ var PaymentController = class _PaymentController {
             // Order Engine Fields
             deliveryType: req.body.deliveryType || existingPendingOrder.deliveryType || "DIGITAL_ONLY",
             paymentModel: event.paymentModel,
-            shippingFee: req.body.shippingFee ? new import_client3.Prisma.Decimal(req.body.shippingFee) : existingPendingOrder.shippingFee,
+            shippingFee: req.body.shippingFee ? new import_client5.Prisma.Decimal(req.body.shippingFee) : existingPendingOrder.shippingFee,
             shippingAddress: req.body.shippingAddress || existingPendingOrder.shippingAddress,
             isGuestOrder: !finalUserId,
             guestEmail: !finalUserId ? email : null,
@@ -80816,7 +81194,7 @@ var PaymentController = class _PaymentController {
             // Order Engine Fields
             deliveryType: req.body.deliveryType || "DIGITAL_ONLY",
             paymentModel: event.paymentModel,
-            shippingFee: req.body.shippingFee ? new import_client3.Prisma.Decimal(req.body.shippingFee) : null,
+            shippingFee: req.body.shippingFee ? new import_client5.Prisma.Decimal(req.body.shippingFee) : null,
             shippingAddress: req.body.shippingAddress || null,
             isGuestOrder: isGuest,
             guestEmail: isGuest ? email : null,
@@ -80922,6 +81300,12 @@ var PaymentController = class _PaymentController {
         where: { id: String(id) },
         include: {
           cliente: { select: { email: true, nome: true } },
+          items: {
+            include: {
+              media: { select: { shortId: true, url: true } },
+              printProduct: { select: { name: true, sku: true } }
+            }
+          },
           event: {
             select: {
               id: true,
@@ -80949,11 +81333,56 @@ var PaymentController = class _PaymentController {
         isGuestOrder: order.isGuestOrder,
         deliveryType: order.deliveryType,
         paymentModel: order.paymentModel,
-        shippingAddress: order.shippingAddress
+        shippingAddress: order.shippingAddress,
+        items: order.items
       });
     } catch (error) {
       console.error("[GetOrderPublic Error]:", error);
       return res.status(500).json({ error: "Erro ao recuperar dados do pedido." });
+    }
+  }
+  /**
+   * GET /api/checkout/shipping-quote
+   * Calcula o frete para um carrinho/pedido baseado no CEP.
+   */
+  static async calculateShipping(req, res) {
+    const { cep, orderId, cart, printProductId } = req.query;
+    try {
+      if (!cep) return res.status(400).json({ error: "CEP \xE9 obrigat\xF3rio." });
+      let items = [];
+      if (orderId) {
+        const order = await prisma_default.order.findUnique({
+          where: { id: String(orderId) },
+          include: { items: true }
+        });
+        if (order) {
+          items = order.items.filter((i) => i.printProductId).map((i) => ({ id: i.printProductId, quantity: i.quantity }));
+        }
+      } else if (printProductId) {
+        items.push({ id: String(printProductId), quantity: 1 });
+      } else if (req.query.physicalItems) {
+        try {
+          const pItems = typeof req.query.physicalItems === "string" ? JSON.parse(req.query.physicalItems) : req.query.physicalItems;
+          if (Array.isArray(pItems)) {
+            items = pItems.map((i) => ({ id: i.id, quantity: Number(i.quantity) || 1 }));
+          }
+        } catch (e) {
+          console.error("Error parsing physicalItems for shipping:", e);
+        }
+      }
+      const cartItems = Array.isArray(cart) ? cart : cart ? [cart] : [];
+      if (items.length === 0 && cartItems.length > 0) {
+        return res.json({ quotes: [{ id: "free", name: "Entrega Digital (E-mail)", price: 0, currency: "BRL", deliveryTimeDays: 0 }] });
+      }
+      if (items.length === 0) {
+        return res.status(400).json({ error: "Nenhum produto f\xEDsico identificado para c\xE1lculo de frete." });
+      }
+      const originCep = "01001000";
+      const quotes = await ShippingService.calculateFreight(originCep, String(cep), items);
+      return res.json({ quotes });
+    } catch (err) {
+      console.error("calculateShipping error:", err);
+      res.status(500).json({ error: "Erro ao calcular frete." });
     }
   }
   /**
@@ -81074,7 +81503,7 @@ var PaymentController = class _PaymentController {
    * Cria um pedido para produto do catálogo de impressão.
    */
   static async createPrintOrder(req, res) {
-    const { eventId, productId, quantity, notes, albumPhotos } = req.body;
+    const { eventId, productId, quantity, notes, albumPhotos, deliveryMethod } = req.body;
     try {
       const product = await prisma_default.printProduct.findUnique({ where: { id: productId } });
       if (!product || !product.active) {
@@ -81085,7 +81514,14 @@ var PaymentController = class _PaymentController {
         return res.status(404).json({ error: "Evento n\xE3o encontrado" });
       }
       const unitPrice = product.sellingPrice !== null ? Number(product.sellingPrice) : Number(product.supplierCost) * (1 + product.marginPct / 100);
-      const totalPrice = unitPrice * (quantity || 1);
+      const subtotal = unitPrice * (quantity || 1);
+      const shippingFee = deliveryMethod === "SHIPPING" ? 25 : 0;
+      const totalPrice = subtotal + shippingFee;
+      const { matriz, captacao, edicao, cartorio, franchisee, passiveFranchiseeId } = await PricingService.calculateSplits(totalPrice, {
+        professionalId: event.captacaoId || void 0,
+        productType: "ALBUM_IMPRESSO"
+        // Trata como produto físico para splits
+      });
       let finalInternalNotes = notes || "";
       if (albumPhotos && Array.isArray(albumPhotos) && albumPhotos.length > 0) {
         finalInternalNotes += `
@@ -81098,8 +81534,16 @@ ${albumPhotos.join("\n")}`;
           eventId: event.id,
           valor: totalPrice,
           status: "PENDENTE",
+          deliveryType: deliveryMethod || "LOCAL_PICKUP",
+          shippingFee,
           manualType: `F\xEDsico: ${product.name} (x${quantity})`,
           internalNotes: finalInternalNotes.trim() || null,
+          splitMatriz: matriz,
+          splitCaptacao: captacao,
+          splitEdicao: edicao,
+          splitCartorio: cartorio,
+          splitFranchisee: franchisee,
+          passiveFranchiseeId,
           items: {
             create: [
               {
@@ -81136,13 +81580,46 @@ ${albumPhotos.join("\n")}`;
         }
         const orderItems = await tx.orderItem.findMany({
           where: { orderId: order.id },
-          include: { service: true }
+          include: {
+            service: true,
+            printProduct: true
+          }
         });
         const serviceItems = orderItems.filter((item) => item.serviceId);
         if (serviceItems.length > 0) {
           if (serviceItems.some((i) => i.service?.name.toLowerCase().includes("video"))) eventUpdateData.temVideo = true;
           if (serviceItems.some((i) => i.service?.name.toLowerCase().includes("reels"))) eventUpdateData.temReels = true;
           if (serviceItems.some((i) => i.service?.name.toLowerCase().includes("impressa"))) eventUpdateData.temFotoImpressa = true;
+        }
+        const printItems = orderItems.filter((item) => item.printProductId);
+        if (printItems.length > 0) {
+          eventUpdateData.temFotoImpressa = true;
+          for (const item of printItems) {
+            let photos = [];
+            if (order.internalNotes && order.internalNotes.includes("--- FOTOS SELECIONADAS DO \xC1LBUM ---")) {
+              const parts = order.internalNotes.split("--- FOTOS SELECIONADAS DO \xC1LBUM ---");
+              if (parts.length > 1) {
+                photos = parts[1].trim().split("\n").filter((url2) => url2.startsWith("http"));
+              }
+            }
+            if (photos.length > 0) {
+              const fulfillment = item.printProduct?.fulfillmentType || "LAB";
+              if (fulfillment === "INSTANT_PRINT") {
+                console.log(`[Fulfillment] Roteando pedido ${order.id} para INSTANT_PRINT (Fila Local IoT)`);
+                await PhygitalService.createQueueEntryFromOrder(order, photos);
+              } else {
+                console.log(`[Fulfillment] Roteando pedido ${order.id} para LAB Parceiro Externo`);
+                await tx.order.update({
+                  where: { id: order.id },
+                  data: {
+                    internalNotes: order.internalNotes ? `${order.internalNotes}
+
+[LOG\xCDSTICA] Despachado para Lab Parceiro.` : `[LOG\xCDSTICA] Despachado para Lab Parceiro.`
+                  }
+                });
+              }
+            }
+          }
         }
         let logisticNote = "";
         if (order.deliveryType === "SHIPPING" || order.deliveryType === "LOCAL_PICKUP") {
@@ -81275,6 +81752,56 @@ var requireRole = (...roles) => {
   };
 };
 
+// backend/src/services/referral.service.ts
+var import_client6 = require("@prisma/client");
+var import_crypto8 = __toESM(require("crypto"));
+var prisma4 = new import_client6.PrismaClient();
+var ReferralService = class {
+  /**
+   * Generates a unique referral code for a user
+   */
+  static async generateCode(userId) {
+    const user = await prisma4.user.findUnique({ where: { id: userId } });
+    if (!user) throw new Error("User not found");
+    if (user.referralCode) return user.referralCode;
+    const namePart = user.nome.split(" ")[0].toUpperCase().replace(/[^A-Z0-0]/g, "");
+    const randomPart = import_crypto8.default.randomBytes(2).toString("hex").toUpperCase();
+    const code = `FS-${namePart}-${randomPart}`;
+    await prisma4.user.update({
+      where: { id: userId },
+      data: { referralCode: code }
+    });
+    return code;
+  }
+  /**
+   * Links a new professional to a franchisee's network via referral code
+   */
+  static async linkByCode(newUserId, referralCode) {
+    const referrer = await prisma4.user.findUnique({
+      where: { referralCode },
+      include: { franchiseProfile: true }
+    });
+    if (!referrer || !referrer.franchiseProfile) {
+      console.warn(`[Referral] Invalid or non-franchise code: ${referralCode}`);
+      return;
+    }
+    await prisma4.professionalNetwork.upsert({
+      where: {
+        userId_partnerId: {
+          userId: newUserId,
+          partnerId: referrer.id
+        }
+      },
+      update: {},
+      create: {
+        userId: newUserId,
+        partnerId: referrer.id
+      }
+    });
+    console.log(`[Referral] Linked user ${newUserId} to franchisee ${referrer.id}`);
+  }
+};
+
 // backend/src/controllers/auth.controller.ts
 var import_crypto9 = __toESM(require("crypto"));
 var AuthController = class {
@@ -81324,17 +81851,22 @@ var AuthController = class {
       if (!user) {
         return res.status(401).json({ error: "Credenciais inv\xE1lidas ou usu\xE1rio n\xE3o encontrado." });
       }
-      const payload = { userId: user.id, role: user.role, nome: user.nome, email: user.email };
+      const fullUser = await prisma_default.user.findUnique({
+        where: { id: user.id },
+        include: { franchiseProfile: true }
+      });
+      if (!fullUser) return res.status(404).json({ error: "Usu\xE1rio n\xE3o sincronizado." });
+      const payload = { userId: fullUser.id, role: fullUser.role, nome: fullUser.nome, email: fullUser.email };
       const token = generateToken(payload);
       const refreshToken = generateRefreshToken(payload);
       try {
-        await audit(req, "LOGIN", "User", user.id, null, { method: authMethod });
+        await audit(req, "LOGIN", "User", fullUser.id, null, { method: authMethod });
       } catch (e) {
       }
       return res.json({
         token,
         refreshToken,
-        user: { id: user.id, nome: user.nome, email: user.email, role: user.role }
+        user: fullUser
       });
     } catch (error) {
       const msg = error instanceof Error ? error.message : String(error);
@@ -81406,23 +81938,27 @@ var AuthController = class {
               userId: user.id,
               razaoSocial: razaoSocial || nome,
               address: endereco || "",
-              cidade: cidade || ""
+              cidade: cidade || "",
+              services: habilidades || []
             }
           });
         }
         return user;
       });
       if (result.role === "PROFISSIONAL" && ref) {
-        const { ReferralService: ReferralService2 } = await Promise.resolve().then(() => (init_referral_service(), referral_service_exports));
-        ReferralService2.linkByCode(result.id, ref).catch((e) => console.error("[Referral Error]:", e));
+        ReferralService.linkByCode(result.id, ref).catch((e) => console.error("[Referral Error]:", e));
       }
       const payload = { userId: result.id, role: result.role, nome: result.nome, email: result.email };
       const token = generateToken(payload);
       const refreshToken = generateRefreshToken(payload);
+      const fullResult = await prisma_default.user.findUnique({
+        where: { id: result.id },
+        include: { franchiseProfile: true }
+      });
       return res.status(201).json({
         token,
         refreshToken,
-        user: { id: result.id, nome: result.nome, email: result.email, role: result.role }
+        user: fullResult || result
       });
     } catch (e) {
       console.error("[REGISTER ERROR]:", e);
@@ -81494,11 +82030,14 @@ var AuthController = class {
         }
       });
       const recoveryLink = `${APP_URL}/reset-password?token=${token}`;
-      await NotificationService.sendPasswordRecoveryEmail({
+      const sent = await NotificationService.sendPasswordRecoveryEmail({
         to: user.email,
         name: user.nome,
         recoveryLink
       });
+      if (!sent) {
+        return res.status(500).json({ error: "Falha ao disparar e-mail de recupera\xE7\xE3o. Verifique as configura\xE7\xF5es de SMTP." });
+      }
       return res.json({ message: "Instru\xE7\xF5es de recupera\xE7\xE3o enviadas com sucesso." });
     } catch (error) {
       console.error("[FORGOT PASSWORD ERROR]:", error);
@@ -81586,13 +82125,13 @@ async function adminUploadCover(req, res) {
   const { id } = req.params;
   const { imageBase64, mimeType } = req.body;
   if (!imageBase64 || !mimeType) {
-    res.status(400).json({ error: "Imagem e MimeType s\xE3o obrigat\xF3rios." });
+    res.status(400).json({ error: "Imagem e MimeType s\xC3\xA3o obrigat\xC3\xB3rios." });
     return;
   }
   try {
     const exists = await prisma_default.event.findUnique({ where: { id: String(id) } });
     if (!exists) {
-      res.status(404).json({ error: "Evento n\xE3o encontrado." });
+      res.status(404).json({ error: "Evento n\xC3\xA3o encontrado." });
       return;
     }
     const base64Data = String(imageBase64).replace(/^data:image\/\w+;base64,/, "");
@@ -81619,13 +82158,13 @@ async function adminUploadPreview(req, res) {
   const { id } = req.params;
   const { imageBase64, mimeType, index } = req.body;
   if (!imageBase64 || !mimeType || index === void 0) {
-    res.status(400).json({ error: "Imagem, MimeType e Index s\xE3o obrigat\xF3rios." });
+    res.status(400).json({ error: "Imagem, MimeType e Index s\xC3\xA3o obrigat\xC3\xB3rios." });
     return;
   }
   try {
     const event = await prisma_default.event.findUnique({ where: { id: String(id) } });
     if (!event) {
-      res.status(404).json({ error: "Evento n\xE3o encontrado." });
+      res.status(404).json({ error: "Evento n\xC3\xA3o encontrado." });
       return;
     }
     const base64Data = String(imageBase64).replace(/^data:image\/\w+;base64,/, "");
@@ -81652,7 +82191,7 @@ async function adminUploadPreview(req, res) {
     res.json(updated);
   } catch (err) {
     console.error("adminUploadPreview:", err);
-    res.status(500).json({ error: "Erro ao salvar pr\xE9via via Admin." });
+    res.status(500).json({ error: "Erro ao salvar pr\xC3\xA9via via Admin." });
   }
 }
 async function getDashboardStats(req, res) {
@@ -81773,9 +82312,13 @@ async function adminListEvents(req, res) {
     if (status === "inactive") where.active = false;
     const searchString = q ? String(q) : void 0;
     if (searchString) {
-      where.OR = [
-        { nomeNoivos: { contains: searchString, mode: "insensitive" } },
-        { location: { contains: searchString, mode: "insensitive" } }
+      where.AND = [
+        {
+          OR: [
+            { nomeNoivos: { contains: searchString, mode: "insensitive" } },
+            { location: { contains: searchString, mode: "insensitive" } }
+          ]
+        }
       ];
     }
     if (req.user?.role === "FRANCHISEE") {
@@ -81843,7 +82386,7 @@ async function adminCreateEvent(req, res) {
     clientName
   } = req.body;
   if (!title || !date || !location2) {
-    res.status(400).json({ error: "T\xEDtulo (Noivos), data e local s\xE3o obrigat\xF3rios." });
+    res.status(400).json({ error: "T\xC3\xADtulo (Noivos), data e local s\xC3\xA3o obrigat\xC3\xB3rios." });
     return;
   }
   try {
@@ -81875,7 +82418,7 @@ async function adminCreateEvent(req, res) {
         priceBase: priceBase ?? 200,
         priceEarly: priceEarly ?? 190,
         active: true,
-        // Eventos criados pelo Admin já nascem ativos
+        // Eventos criados pelo Admin jÃ¡ nascem ativos
         cartorioUserId: cartorioId || null,
         captacaoId: finalCaptacaoId,
         edicaoId: edicaoId || null,
@@ -81896,7 +82439,9 @@ async function adminCreateEvent(req, res) {
         pricePerPhoto: pricePerPhoto ? Number(pricePerPhoto) : null,
         marketplaceConfigs: marketplaceConfigs || {},
         clientEmail: clientEmail || null,
-        clientName: clientName || null
+        clientName: clientName || null,
+        // @ts-ignore
+        retentionDays: req.body.retentionDays ? Number(req.body.retentionDays) : req.body.isPrivate ? 7 : 15
       },
       include: {
         captacao: { select: { nome: true } },
@@ -81907,7 +82452,7 @@ async function adminCreateEvent(req, res) {
     res.status(201).json(event);
   } catch (err) {
     if (err instanceof Error && err.code === "P2002") {
-      res.status(409).json({ error: "Slug duplicado. Tente um t\xEDtulo diferente." });
+      res.status(409).json({ error: "Slug duplicado. Tente um t\xC3\xADtulo diferente." });
       return;
     }
     console.error("adminCreateEvent:", err);
@@ -81920,7 +82465,7 @@ async function adminUpdateEvent(req, res) {
   try {
     const currentEvent = await prisma_default.event.findUnique({ where: { id: String(id) } });
     if (!currentEvent) {
-      res.status(404).json({ error: "Evento n\xE3o encontrado." });
+      res.status(404).json({ error: "Evento n\xC3\xA3o encontrado." });
       return;
     }
     if (req.body.title) data.nomeNoivos = req.body.title;
@@ -81950,7 +82495,7 @@ async function adminUpdateEvent(req, res) {
       if (canChangePrivacy) {
         data.isPrivate = req.body.isPrivate;
       } else {
-        console.warn(`[SECURITY] Usu\xE1rio ${req.user?.email} tentou mudar privacidade do evento ${id} sem ser o dono.`);
+        console.warn(`[SECURITY] Usu\xC3\xA1rio ${req.user?.email} tentou mudar privacidade do evento ${id} sem ser o dono.`);
       }
     }
     if (req.body.isUnitSale !== void 0) data.isUnitSale = req.body.isUnitSale;
@@ -81960,6 +82505,7 @@ async function adminUpdateEvent(req, res) {
     if (req.body.marketplaceConfigs !== void 0) data.marketplaceConfigs = req.body.marketplaceConfigs;
     if (req.body.clientEmail !== void 0) data.clientEmail = req.body.clientEmail || null;
     if (req.body.clientName !== void 0) data.clientName = req.body.clientName || null;
+    if (req.body.retentionDays !== void 0) data.retentionDays = Number(req.body.retentionDays);
     if (req.body.eventEndTime !== void 0) data.eventEndTime = req.body.eventEndTime ? new Date(req.body.eventEndTime) : null;
     const wasEmpty = !currentEvent.lightroomUrl && !currentEvent.driveUrl;
     const isAddingLinks = (data.lightroomUrl || data.driveUrl) && wasEmpty;
@@ -82009,7 +82555,7 @@ async function adminUpdateEvent(req, res) {
     });
   } catch (err) {
     if (err instanceof Error && err.code === "P2025") {
-      res.status(404).json({ error: "Evento n\xE3o encontrado." });
+      res.status(404).json({ error: "Evento n\xC3\xA3o encontrado." });
       return;
     }
     console.error("adminUpdateEvent:", err);
@@ -82025,21 +82571,21 @@ async function adminDeleteEvent(req, res) {
       include: { _count: { select: { pedidos: { where: { status: "APROVADO" } } } } }
     });
     if (!event) {
-      res.status(404).json({ error: "Evento n\xE3o encontrado." });
+      res.status(404).json({ error: "Evento n\xC3\xA3o encontrado." });
       return;
     }
     const hasPaidOrders = event._count.pedidos > 0;
     if (hardDelete || !hasPaidOrders) {
       console.log(`[AdminDelete] Executando HARD DELETE para o evento ${id}`);
       await prisma_default.$transaction([
-        // Limpeza profunda de dependências
+        // Limpeza profunda de dependÃªncias
         prisma_default.photoLike.deleteMany({ where: { eventId: String(id) } }),
         prisma_default.calendarSlot.deleteMany({ where: { eventId: String(id) } }),
         prisma_default.eventMedia.deleteMany({ where: { eventId: String(id) } }),
         prisma_default.phygitalPrint.deleteMany({ where: { eventId: String(id) } }),
         prisma_default.orderItem.deleteMany({ where: { order: { eventId: String(id) } } }),
         prisma_default.order.deleteMany({ where: { eventId: String(id), status: { not: "APROVADO" } } }),
-        // Se houver pedidos aprovados e ainda assim for HARD DELETE (forçado), deleta eles também
+        // Se houver pedidos aprovados e ainda assim for HARD DELETE (forÃ§ado), deleta eles tambÃ©m
         ...hardDelete ? [prisma_default.order.deleteMany({ where: { eventId: String(id) } })] : [],
         // Finalmente deleta o evento
         prisma_default.event.delete({ where: { id: String(id) } })
@@ -82057,7 +82603,7 @@ async function adminDeleteEvent(req, res) {
     console.error("adminDeleteEvent Error:", err);
     res.status(500).json({
       error: "Erro ao excluir evento.",
-      details: err.message || "Verifique se existem depend\xEAncias ativas que impedem a exclus\xE3o f\xEDsica."
+      details: err.message || "Verifique se existem depend\xC3\xAAncias ativas que impedem a exclus\xC3\xA3o f\xC3\xADsica."
     });
   }
 }
@@ -82068,7 +82614,7 @@ async function adminDeleteOrder(req, res) {
       where: { id: String(id) }
     });
     if (!order) {
-      res.status(404).json({ error: "Pedido n\xE3o encontrado." });
+      res.status(404).json({ error: "Pedido n\xC3\xA3o encontrado." });
       return;
     }
     await prisma_default.$transaction([
@@ -82119,7 +82665,7 @@ async function adminListUsers(req, res) {
     })));
   } catch (err) {
     console.error("adminListUsers:", err);
-    res.status(500).json({ error: "Erro ao listar usu\xE1rios." });
+    res.status(500).json({ error: "Erro ao listar usu\xC3\xA1rios." });
   }
 }
 async function adminCreateUser(req, res) {
@@ -82135,13 +82681,13 @@ async function adminCreateUser(req, res) {
     otherHabilities
   } = req.body;
   if (!name2 || !email || !password || !role) {
-    res.status(400).json({ error: "Todos os campos s\xE3o obrigat\xF3rios." });
+    res.status(400).json({ error: "Todos os campos s\xC3\xA3o obrigat\xC3\xB3rios." });
     return;
   }
   try {
     const exists = await prisma_default.user.findUnique({ where: { email } });
     if (exists) {
-      res.status(409).json({ error: "E-mail j\xE1 cadastrado." });
+      res.status(409).json({ error: "E-mail j\xC3\xA1 cadastrado." });
       return;
     }
     const hash2 = await bcryptjs_default.hash(password, 12);
@@ -82153,11 +82699,11 @@ async function adminCreateUser(req, res) {
     });
     if (sbError) {
       console.error("Erro Supabase Auth:", sbError);
-      res.status(500).json({ error: `Erro na autentica\xE7\xE3o externa: ${sbError.message}` });
+      res.status(500).json({ error: `Erro na autentica\xC3\xA7\xC3\xA3o externa: ${sbError.message}` });
       return;
     }
     const sbUser = sbData.user;
-    if (!sbUser) throw new Error("Supabase n\xE3o retornou usu\xE1rio.");
+    if (!sbUser) throw new Error("Supabase n\xC3\xA3o retornou usu\xC3\xA1rio.");
     const user = await prisma_default.user.create({
       data: {
         id: sbUser.id,
@@ -82187,7 +82733,7 @@ async function adminCreateUser(req, res) {
         data: {
           userId: user.id,
           razaoSocial: name2
-          // Usa o nome cadastrado como Razão Social inicial
+          // Usa o nome cadastrado como RazÃ£o Social inicial
         }
       });
     }
@@ -82200,7 +82746,7 @@ async function adminCreateUser(req, res) {
     });
   } catch (err) {
     console.error("adminCreateUser:", err);
-    res.status(500).json({ error: "Erro ao criar usu\xE1rio." });
+    res.status(500).json({ error: "Erro ao criar usu\xC3\xA1rio." });
   }
 }
 async function adminUpdateUser(req, res) {
@@ -82276,7 +82822,7 @@ async function adminUpdateUser(req, res) {
                 // Aqui estamos setando o valor total, talvez devesse ser delta?
                 // Por simplicidade neste MVP, setamos o valor absoluto enviado pelo Admin.
                 type: "ADJUSTMENT",
-                description: `Ajuste administrativo de saldo: ${printCredits} cr\xE9ditos.`
+                description: `Ajuste administrativo de saldo: ${printCredits} cr\xC3\xA9ditos.`
               }
             });
           }
@@ -82292,7 +82838,7 @@ async function adminUpdateUser(req, res) {
     res.json({ ok: true });
   } catch (err) {
     console.error("adminUpdateUser:", err);
-    res.status(500).json({ error: "Erro ao atualizar usu\xE1rio." });
+    res.status(500).json({ error: "Erro ao atualizar usu\xC3\xA1rio." });
   }
 }
 async function adminDeleteUser(req, res) {
@@ -82306,16 +82852,16 @@ async function adminDeleteUser(req, res) {
       }
     });
     if (!user) {
-      res.status(404).json({ error: "Usu\xE1rio n\xE3o encontrado." });
+      res.status(404).json({ error: "Usu\xC3\xA1rio n\xC3\xA3o encontrado." });
       return;
     }
     try {
       const { error: sbError } = await supabaseAdmin.auth.admin.deleteUser(user.id);
       if (sbError) {
-        console.warn(`[Supabase] Erro ao remover usu\xE1rio auth: ${sbError.message}`);
+        console.warn(`[Supabase] Erro ao remover usu\xC3\xA1rio auth: ${sbError.message}`);
       }
     } catch (err) {
-      console.warn(`[Supabase] Exce\xE7\xE3o ao remover usu\xE1rio auth`, err);
+      console.warn(`[Supabase] Exce\xC3\xA7\xC3\xA3o ao remover usu\xC3\xA1rio auth`, err);
     }
     if (user.profissional) {
       await prisma_default.profissional.delete({ where: { id: user.profissional.id } });
@@ -82330,7 +82876,25 @@ async function adminDeleteUser(req, res) {
     res.json({ ok: true });
   } catch (err) {
     console.error("adminDeleteUser:", err);
-    res.status(500).json({ error: "Erro ao excluir usu\xE1rio. Verifique se existem depend\xEAncias (eventos/pedidos)." });
+    res.status(500).json({ error: "Erro ao excluir usu\xC3\xA1rio. Verifique se existem depend\xC3\xAAncias (eventos/pedidos)." });
+  }
+}
+async function adminUpdateOrderLogistics(req, res) {
+  const { id } = req.params;
+  const { fulfillmentStatus, trackingCode } = req.body;
+  try {
+    const order = await prisma_default.order.update({
+      where: { id: String(id) },
+      data: {
+        ...fulfillmentStatus && { fulfillmentStatus },
+        ...trackingCode !== void 0 && { trackingCode }
+      }
+    });
+    await audit(req, "ORDER_LOGISTICS_UPDATED", "Order", order.id, null, { fulfillmentStatus, trackingCode });
+    res.json({ ok: true, order });
+  } catch (err) {
+    console.error("adminUpdateOrderLogistics:", err);
+    res.status(500).json({ error: "Erro ao atualizar log\xEDstica." });
   }
 }
 async function adminListOrders(req, res) {
@@ -82438,14 +83002,14 @@ async function adminListQuotes(req, res) {
     res.json({ quotes, total, page: Number(page), pages: Math.ceil(total / take) });
   } catch (err) {
     console.error("adminListQuotes:", err);
-    res.status(500).json({ error: "Erro ao listar or\xE7amentos." });
+    res.status(500).json({ error: "Erro ao listar or\xC3\xA7amentos." });
   }
 }
 async function adminApproveQuote(req, res) {
   const { id } = req.params;
   const { finalPrice } = req.body;
   if (!finalPrice || Number(finalPrice) <= 0) {
-    res.status(400).json({ error: "O pre\xE7o final deve ser maior que zero." });
+    res.status(400).json({ error: "O pre\xC3\xA7o final deve ser maior que zero." });
     return;
   }
   try {
@@ -82453,7 +83017,7 @@ async function adminApproveQuote(req, res) {
       where: { id: String(id) }
     });
     if (!quote || !quote.isQuote) {
-      res.status(404).json({ error: "Or\xE7amento n\xE3o encontrado." });
+      res.status(404).json({ error: "Or\xC3\xA7amento n\xC3\xA3o encontrado." });
       return;
     }
     const updatedQuote = await prisma_default.event.update({
@@ -82480,7 +83044,7 @@ Original: ${quote.description}` : quote.description
           valor: halfPrice,
           buyerEmail: quote.clientEmail,
           clienteId: targetUser?.id,
-          // Vincula ao usuário se existir
+          // Vincula ao usuÃ¡rio se existir
           status: "PENDENTE",
           manualType: "Reserva (50%)",
           paymentId: `QUOTE-RESERVA-${Date.now()}`
@@ -82492,9 +83056,9 @@ Original: ${quote.description}` : quote.description
           valor: halfPrice,
           buyerEmail: quote.clientEmail,
           clienteId: targetUser?.id,
-          // Vincula ao usuário se existir
+          // Vincula ao usuÃ¡rio se existir
           status: "PENDENTE",
-          manualType: "Quita\xE7\xE3o (50%)",
+          manualType: "Quita\xC3\xA7\xC3\xA3o (50%)",
           paymentId: `QUOTE-FINAL-${Date.now()}`
         }
       });
@@ -82505,7 +83069,7 @@ Original: ${quote.description}` : quote.description
           valor: Number(finalPrice),
           buyerEmail: quote.clientEmail,
           clienteId: targetUser?.id,
-          // Vincula ao usuário se existir
+          // Vincula ao usuÃ¡rio se existir
           status: "PENDENTE"
         }
       });
@@ -82526,7 +83090,7 @@ Original: ${quote.description}` : quote.description
     res.json({ success: true, updatedQuote, checkoutUrl });
   } catch (err) {
     console.error("adminApproveQuote:", err);
-    res.status(500).json({ error: "Erro ao aprovar or\xE7amento." });
+    res.status(500).json({ error: "Erro ao aprovar or\xC3\xA7amento." });
   }
 }
 async function adminRejectQuote(req, res) {
@@ -82535,7 +83099,7 @@ async function adminRejectQuote(req, res) {
   try {
     const quote = await prisma_default.event.findUnique({ where: { id: String(id) } });
     if (!quote || !quote.isQuote) {
-      res.status(404).json({ error: "Or\xE7amento n\xE3o encontrado." });
+      res.status(404).json({ error: "Or\xC3\xA7amento n\xC3\xA3o encontrado." });
       return;
     }
     await prisma_default.event.update({
@@ -82552,7 +83116,7 @@ async function adminRejectQuote(req, res) {
     res.json({ success: true });
   } catch (err) {
     console.error("adminRejectQuote:", err);
-    res.status(500).json({ error: "Erro ao rejeitar or\xE7amento." });
+    res.status(500).json({ error: "Erro ao rejeitar or\xC3\xA7amento." });
   }
 }
 var AdminEventController = class {
@@ -82568,7 +83132,7 @@ var AdminEventController = class {
         });
         res.json({ eventos: events });
       } catch {
-        res.status(500).json({ error: "Erro ao carregar dados do cart\xF3rio." });
+        res.status(500).json({ error: "Erro ao carregar dados do cart\xC3\xB3rio." });
       }
     };
   }
@@ -82595,13 +83159,13 @@ async function adminGetLogs(req, res) {
 async function adminCreateManualSale(req, res) {
   const { eventId, customerName, customerEmail, whatsapp, amount, manualType, internalNotes } = req.body;
   if (!eventId || !customerName || !customerEmail || !amount) {
-    res.status(400).json({ error: "Todos os campos s\xE3o obrigat\xF3rios." });
+    res.status(400).json({ error: "Todos os campos s\xC3\xA3o obrigat\xC3\xB3rios." });
     return;
   }
   try {
     const event = await prisma_default.event.findUnique({ where: { id: eventId } });
     if (!event) {
-      res.status(404).json({ error: "Evento n\xE3o encontrado." });
+      res.status(404).json({ error: "Evento n\xC3\xA3o encontrado." });
       return;
     }
     let user = await prisma_default.user.findUnique({ where: { email: customerEmail } });
@@ -82646,7 +83210,7 @@ async function adminCreateManualSale(req, res) {
               active: true
             }
           });
-          console.log(`[ADMIN] Novo usu\xE1rio criado no Supabase: ${customerEmail} (Pass: ${tempPassword})`);
+          console.log(`[ADMIN] Novo usu\xC3\xA1rio criado no Supabase: ${customerEmail} (Pass: ${tempPassword})`);
         }
       } catch (err) {
         console.error("[ADMIN Manual Sale Auto-Register Error]:", err instanceof Error ? err.message : String(err));
@@ -82663,7 +83227,7 @@ async function adminCreateManualSale(req, res) {
       }
     }
     if (!user) {
-      res.status(500).json({ error: "Falha ao identificar ou criar usu\xE1rio para a venda manual." });
+      res.status(500).json({ error: "Falha ao identificar ou criar usu\xC3\xA1rio para a venda manual." });
       return;
     }
     const order = await prisma_default.order.create({
@@ -82724,7 +83288,7 @@ async function checkDbStatus(_req, res) {
         prisma_default.event.count({ where: { active: true, isPrivate: false, isQuote: false } }),
         prisma_default.user.count()
       ]),
-      new Promise((_, reject) => setTimeout(() => reject(new Error("Timeout na conex\uFFFDo com o banco")), 5e3))
+      new Promise((_, reject) => setTimeout(() => reject(new Error("Timeout na conex\xE3o com o banco")), 5e3))
     ]);
     return res.json({
       status: "CONNECTED",
@@ -82744,7 +83308,7 @@ async function checkDbStatus(_req, res) {
     console.error("[DIAG] Erro no banco:", error);
     return res.status(500).json({
       status: "ERROR",
-      message: "Falha na conex\uFFFDo com o banco de dados.",
+      message: "Falha na conex\xE3o com o banco de dados.",
       error: error.message,
       env: {
         node_env: process.env.NODE_ENV,
@@ -82810,48 +83374,9 @@ var MercadoPagoController = {
 
 // backend/src/controllers/profissional.controller.ts
 init_prisma();
-async function getMeusEventos(req, res) {
-  const userId = req.user?.userId;
-  if (!userId) {
-    res.status(401).json({ error: "N\xE3o autenticado." });
-    return;
-  }
-  try {
-    const events = await prisma_default.event.findMany({
-      where: {
-        active: true,
-        OR: [
-          { captacaoId: userId, captacaoStatus: { not: "REJECTED" } },
-          { edicaoId: userId, edicaoStatus: { not: "REJECTED" } }
-        ]
-      },
-      select: {
-        id: true,
-        nomeNoivos: true,
-        dataEvento: true,
-        createdAt: true,
-        cartorio: true,
-        coverPhotoUrl: true,
-        lightroomUrl: true,
-        driveUrl: true,
-        temFotoImpressa: true,
-        captacaoId: true,
-        captacaoStatus: true,
-        edicaoId: true,
-        edicaoStatus: true,
-        _count: { select: { pedidos: true } }
-      },
-      orderBy: { dataEvento: "desc" }
-    });
-    res.json(events);
-  } catch (err) {
-    console.error("getMeusEventos:", err);
-    res.status(500).json({ error: "Erro ao buscar eventos." });
-  }
-}
 async function updateEventLinks(req, res) {
   const { id } = req.params;
-  const { lightroomUrl, driveUrl } = req.body;
+  const { lightroomUrl, driveUrl, dataEvento } = req.body;
   const userId = req.user?.userId;
   if (!userId) {
     res.status(401).json({ error: "N\xE3o autenticado." });
@@ -82881,7 +83406,8 @@ async function updateEventLinks(req, res) {
       where: { id: String(id) },
       data: {
         ...lightroomUrl !== void 0 && { lightroomUrl: String(lightroomUrl) || null },
-        ...driveUrl !== void 0 && { driveUrl: String(driveUrl) || null }
+        ...driveUrl !== void 0 && { driveUrl: String(driveUrl) || null },
+        ...dataEvento !== void 0 && { dataEvento: dataEvento ? new Date(dataEvento) : { set: /* @__PURE__ */ new Date() } }
       }
     });
     await audit(req, "DELIVERY_LINKS_SAVED", "Event", String(id), null, {
@@ -83110,7 +83636,11 @@ async function respondToEvent(req, res) {
     const event = await prisma_default.event.findFirst({
       where: {
         id: String(id),
-        OR: [{ captacaoId: userId }, { edicaoId: userId }]
+        OR: [
+          { captacaoId: userId },
+          { edicaoId: userId },
+          { isPublicCall: true, captacaoId: null }
+        ]
       }
     });
     if (!event) {
@@ -83118,8 +83648,15 @@ async function respondToEvent(req, res) {
       return;
     }
     const updateData = {};
-    if (event.captacaoId === userId) updateData.captacaoStatus = status;
-    if (event.edicaoId === userId) updateData.edicaoStatus = status;
+    if (event.isPublicCall && !event.captacaoId && status === "ACCEPTED") {
+      updateData.captacaoId = userId;
+      updateData.captacaoStatus = "ACCEPTED";
+      updateData.isPublicCall = false;
+      updateData.active = true;
+    } else {
+      if (event.captacaoId === userId) updateData.captacaoStatus = status;
+      if (event.edicaoId === userId) updateData.edicaoStatus = status;
+    }
     if (status === "REJECTED" && event.captacaoId === userId && event.cartorioUserId) {
       const rejectedArray = Array.isArray(event.rejectedBy) ? [...event.rejectedBy] : [];
       if (!rejectedArray.includes(userId)) {
@@ -84991,6 +85528,43 @@ async function getPublicPrintCatalog(req, res) {
     res.status(500).json({ error: "Erro ao carregar cat\xE1logo." });
   }
 }
+async function getEventPrintProducts(req, res) {
+  const { eventId } = req.params;
+  try {
+    const eventProducts = await prisma_default.eventPrintProduct.findMany({
+      where: { eventId: String(eventId), active: true },
+      include: { product: true }
+    });
+    if (eventProducts.length > 0) {
+      const result2 = eventProducts.map((ep) => ({
+        id: ep.product.id,
+        category: ep.product.category,
+        name: ep.product.name,
+        description: ep.product.description,
+        sellingPrice: ep.customPrice !== null ? Number(ep.customPrice) : ep.product.sellingPrice !== null ? Number(ep.product.sellingPrice) : Number(ep.product.supplierCost) * (1 + ep.product.marginPct / 100),
+        maxPhotos: ep.product.maxPhotos
+      }));
+      res.json(result2);
+      return;
+    }
+    const products = await prisma_default.printProduct.findMany({
+      where: { active: true },
+      orderBy: [{ category: "asc" }, { name: "asc" }]
+    });
+    const result = products.map((p) => ({
+      id: p.id,
+      category: p.category,
+      name: p.name,
+      description: p.description,
+      sellingPrice: p.sellingPrice !== null ? Number(p.sellingPrice) : Number(p.supplierCost) * (1 + p.marginPct / 100),
+      maxPhotos: p.maxPhotos
+    }));
+    res.json(result);
+  } catch (err) {
+    console.error("getEventPrintProducts:", err);
+    res.status(500).json({ error: "Erro ao carregar cat\xE1logo do evento." });
+  }
+}
 
 // backend/src/controllers/service_catalog.controller.ts
 init_prisma();
@@ -85681,13 +86255,171 @@ async function runExpirationJob(req) {
       payoutsReleased: liberaveis.count
     });
   }
+  const eventosAtivos = await prisma.event.findMany({
+    where: {
+      active: true,
+      isQuote: false,
+      type: { in: ["FOTO_POINT", "PHOTO_MARKETPLACE", "FLASH_EVENT"] }
+    },
+    include: {
+      captacao: { select: { email: true, nome: true } },
+      cartorioUser: { select: { email: true, nome: true } }
+    }
+  });
+  for (const event of eventosAtivos) {
+    const dataEvento = new Date(event.dataEvento);
+    const diffTime = now.getTime() - dataEvento.getTime();
+    const diffDays = Math.floor(diffTime / (1e3 * 60 * 60 * 24));
+    const retentionLimit = event.retentionDays || (event.isPrivate ? 7 : 15);
+    if (diffDays >= retentionLimit) {
+      console.log(`[EXPIRATION JOB] Encerrando evento ${event.id} (${event.nomeNoivos}) por expira\xE7\xE3o de reten\xE7\xE3o (${diffDays}/${retentionLimit} dias)`);
+      await prisma.event.update({
+        where: { id: event.id },
+        data: { active: false }
+      });
+      const ownerEmail = event.captacao?.email || event.cartorioUser?.email;
+      const ownerName = event.captacao?.nome || event.cartorioUser?.nome || "Parceiro";
+      if (ownerEmail) {
+        NotificationService.notifyEventAutoClosed({
+          to: ownerEmail,
+          ownerName,
+          eventTitle: event.nomeNoivos
+        }).catch((e) => console.error(`[EXPIRATION JOB] Erro ao notificar dono de ${event.id}:`, e));
+      }
+    }
+  }
+}
+
+// backend/src/services/vaultCycle.service.ts
+init_prisma();
+var VaultCycleService = class {
+  /**
+   * Executa o fechamento de ciclo para um cofre específico.
+   * Seleciona as fotos mais votadas e gera a ordem de produção.
+   */
+  static async closeVaultCycle(albumId) {
+    console.log(`[VAULT CYCLE] Iniciando fechamento do cofre: ${albumId}`);
+    const album = await prisma.sharedAlbum.findUnique({
+      where: { id: albumId },
+      include: {
+        subscription: true,
+        owner: true,
+        media: {
+          include: {
+            votes: true
+          }
+        }
+      }
+    });
+    if (!album || !album.subscription || album.subscription.status !== "ACTIVE") {
+      console.error(`[VAULT CYCLE] Erro: Cofre ${albumId} n\xE3o possui assinatura ativa.`);
+      return;
+    }
+    const limit = album.subscription.planLimit;
+    const sortedMedia = album.media.sort((a, b) => (b.votes.length || 0) - (a.votes.length || 0));
+    const selectedMedia = sortedMedia.slice(0, limit);
+    if (selectedMedia.length === 0) {
+      console.log(`[VAULT CYCLE] Nenhuma m\xEDdia encontrada para o cofre ${albumId}.`);
+      return;
+    }
+    console.log(`[VAULT CYCLE] Selecionadas ${selectedMedia.length} fotos baseadas em votos.`);
+    let systemEvent = await prisma.event.findFirst({
+      where: { slug: "clube-recorrencia" }
+    });
+    if (!systemEvent) {
+      systemEvent = await prisma.event.create({
+        data: {
+          slug: "clube-recorrencia",
+          nomeNoivos: "Sistema: Clube de Mem\xF3rias",
+          active: true,
+          dataEvento: /* @__PURE__ */ new Date(),
+          ownerId: album.ownerId
+          // Vinculado ao primeiro dono que disparou, ou um admin
+        }
+      });
+    }
+    const order = await prisma.order.create({
+      data: {
+        eventId: systemEvent.id,
+        clienteId: album.ownerId,
+        buyerEmail: album.owner.email,
+        valor: 0,
+        // Já pago via assinatura
+        status: "PAGO",
+        paymentMethod: "FREE",
+        paymentModel: "PRE_PAID",
+        deliveryType: "SHIPPING",
+        fulfillmentStatus: "PENDING",
+        internalNotes: JSON.stringify({
+          type: "VAULT_CYCLE_CLOSURE",
+          albumId,
+          subscriptionId: album.subscription.id,
+          selectedMediaIds: selectedMedia.map((m) => m.id)
+        }),
+        items: {
+          create: selectedMedia.map((m) => ({
+            price: 0,
+            quantity: 1
+          }))
+        }
+      }
+    });
+    const nextBilling = new Date(album.subscription.nextBillingDate || /* @__PURE__ */ new Date());
+    nextBilling.setMonth(nextBilling.getMonth() + 1);
+    await prisma.subscription.update({
+      where: { id: album.subscription.id },
+      data: {
+        nextBillingDate: nextBilling,
+        updatedAt: /* @__PURE__ */ new Date()
+      }
+    });
+    console.log(`[VAULT CYCLE] Ciclo conclu\xEDdo. Pedido #${order.id} gerado.`);
+    return order;
+  }
+  /**
+   * Varre todas as assinaturas e processa as que venceram hoje.
+   */
+  static async processAllDueSubscriptions() {
+    const today = /* @__PURE__ */ new Date();
+    const dueSubscriptions = await prisma.subscription.findMany({
+      where: {
+        status: "ACTIVE",
+        nextBillingDate: {
+          lte: today
+        }
+      }
+    });
+    console.log(`[VAULT CYCLE] Processando ${dueSubscriptions.length} assinaturas vencidas.`);
+    for (const sub of dueSubscriptions) {
+      try {
+        await this.closeVaultCycle(sub.albumId);
+      } catch (err) {
+        console.error(`[VAULT CYCLE] Erro ao processar album ${sub.albumId}:`, err);
+      }
+    }
+  }
+};
+
+// backend/src/jobs/vault-cycle.job.ts
+async function runVaultCycleJob() {
+  const now = /* @__PURE__ */ new Date();
+  console.log(`[JOB: vault-cycle] Iniciando execu\xE7\xE3o em ${now.toISOString()}`);
+  try {
+    await VaultCycleService.processAllDueSubscriptions();
+    console.log(`[JOB: vault-cycle] Execu\xE7\xE3o conclu\xEDda com sucesso.`);
+  } catch (err) {
+    console.error(`[JOB: vault-cycle] Falha cr\xEDtica na execu\xE7\xE3o do job:`, err);
+  }
+}
+if (require.main === module) {
+  runVaultCycleJob();
 }
 
 // backend/src/controllers/marketplace.controller.ts
 init_prisma();
 
 // backend/src/lib/image-processor.ts
-var import_sharp = __toESM(require("sharp"));
+var import_sharp2 = __toESM(require("sharp"));
 var import_path = __toESM(require("path"));
 var import_fs = __toESM(require("fs"));
 async function applyWatermark(imageBuffer) {
@@ -85701,7 +86433,7 @@ async function applyWatermark(imageBuffer) {
     let watermark;
     if (logoPath) {
       console.log("[Watermark] Logo encontrado em:", logoPath);
-      watermark = await (0, import_sharp.default)(logoPath).resize({ width: 350 }).ensureAlpha().composite([{
+      watermark = await (0, import_sharp2.default)(logoPath).resize({ width: 350 }).ensureAlpha().composite([{
         input: Buffer.from([0, 0, 0, Math.round(255 * 0.4)]),
         raw: { width: 1, height: 1, channels: 4 },
         tile: true,
@@ -85724,9 +86456,9 @@ async function applyWatermark(imageBuffer) {
                 filter="url(#shadow)">FOTO SEGUNDO</text>
         </svg>
       `;
-      watermark = await (0, import_sharp.default)(Buffer.from(svgText)).png().toBuffer();
+      watermark = await (0, import_sharp2.default)(Buffer.from(svgText)).png().toBuffer();
     }
-    return await (0, import_sharp.default)(imageBuffer).composite([
+    return await (0, import_sharp2.default)(imageBuffer).composite([
       { input: watermark, gravity: "center", blend: "over" },
       { input: watermark, gravity: "northwest", blend: "over" },
       { input: watermark, gravity: "southeast", blend: "over" }
@@ -86231,127 +86963,9 @@ async function runLoyaltyBot(req, res) {
   }
 }
 
-// backend/src/services/phygital.service.ts
-var import_sharp2 = __toESM(require("sharp"));
-var import_client5 = require("@prisma/client");
-var prisma3 = new import_client5.PrismaClient();
-var PhygitalService = class {
-  /**
-   * Processa o upload de uma foto via QR Code, aplica o carimbo de referência e salva no Supabase Storage.
-   */
-  static async processUpload(fileBuffer, metadata) {
-    try {
-      const { eventId, customerName, customerPhone, customerCep } = metadata;
-      const event = await prisma3.event.findUnique({ where: { id: eventId } });
-      if (!event) {
-        const eventBySlug = await prisma3.event.findUnique({ where: { slug: eventId } });
-        if (!eventBySlug) throw new Error(`Evento ${eventId} n\xE3o encontrado no sistema.`);
-        metadata.eventId = eventBySlug.id;
-      }
-      const shortEventId = metadata.eventId.substring(0, 5).toUpperCase();
-      const referenceCode = `${shortEventId}-${Math.floor(1e3 + Math.random() * 9e3)}`;
-      const image = (0, import_sharp2.default)(fileBuffer);
-      const metadata_img = await image.metadata();
-      let pipeline = image.rotate();
-      const { width, height } = await pipeline.toBuffer().then((b) => (0, import_sharp2.default)(b).metadata());
-      const w = width || 1200;
-      const h = height || 1600;
-      const borderSize = Math.floor(Math.min(w, h) * 0.1);
-      const finalWidth = w + borderSize * 2;
-      pipeline = pipeline.extend({
-        top: borderSize,
-        bottom: borderSize * 3,
-        // Margem Polaroid clássica
-        left: borderSize,
-        right: borderSize,
-        background: { r: 255, g: 255, b: 255, alpha: 1 }
-      });
-      const refSvg = Buffer.from(`
-        <svg width="${finalWidth}" height="${borderSize * 3}" viewBox="0 0 ${finalWidth} ${borderSize * 3}">
-          <text x="50%" y="50%" font-family="sans-serif" font-size="${Math.floor(borderSize * 1.5)}" font-weight="900" fill="#000000" text-anchor="middle" dominant-baseline="middle" style="text-transform: uppercase;">
-            ${referenceCode}
-          </text>
-        </svg>
-      `);
-      const logoFontSize = Math.floor(borderSize * 0.4);
-      const logoSvg = Buffer.from(`
-        <svg width="${finalWidth}" height="${borderSize * 2}" viewBox="0 0 ${finalWidth} ${borderSize * 2}">
-          <text x="${finalWidth - borderSize}" y="70%" font-family="sans-serif" font-size="${logoFontSize}" font-weight="900" fill="#000000" text-anchor="end" dominant-baseline="middle" style="text-transform: uppercase; letter-spacing: 5px; opacity: 0.6;">
-            FOTO SEGUNDO
-          </text>
-        </svg>
-      `);
-      const processedImageBuffer = await pipeline.composite([
-        { input: refSvg, gravity: "south", blend: "over" },
-        { input: logoSvg, gravity: "southeast", blend: "over" }
-      ]).jpeg({ quality: 90 }).toBuffer();
-      const fileName = `phygital/${metadata.eventId}/${referenceCode}.jpg`;
-      const { data: uploadData, error: uploadError } = await supabaseAdmin.storage.from("eventos").upload(fileName, processedImageBuffer, {
-        contentType: "image/jpeg",
-        upsert: true
-      });
-      if (uploadError) throw uploadError;
-      const { data: { publicUrl } } = supabaseAdmin.storage.from("eventos").getPublicUrl(fileName);
-      const printJob = await prisma3.phygitalPrint.create({
-        data: {
-          referenceCode,
-          imageUrl: publicUrl,
-          customerName,
-          customerPhone,
-          customerCep,
-          status: "PENDING_PRINT",
-          eventId: metadata.eventId
-        },
-        include: { event: true }
-      });
-      if (printJob.event.franchiseeId) {
-        const profile = await prisma3.franchiseProfile.findUnique({
-          where: { id: printJob.event.franchiseeId }
-        });
-        if (profile) {
-          await prisma3.franchiseProfile.update({
-            where: { id: profile.id },
-            data: { printCredits: { decrement: 1 } }
-          });
-          await prisma3.creditTransaction.create({
-            data: {
-              profileId: profile.id,
-              amount: -1,
-              type: "PRINT_CONSUMPTION",
-              description: `Impress\xE3o Phygital: ${referenceCode}`,
-              referenceId: printJob.id
-            }
-          });
-        }
-      }
-      return {
-        success: true,
-        referenceCode: printJob.referenceCode,
-        imageUrl: printJob.imageUrl,
-        id: printJob.id
-      };
-    } catch (error) {
-      console.error("Erro no PhygitalService (Supabase):", error);
-      throw error;
-    }
-  }
-  static async getPendingPrints(eventId) {
-    return prisma3.phygitalPrint.findMany({
-      where: { eventId, status: "PENDING_PRINT" },
-      orderBy: { createdAt: "asc" }
-    });
-  }
-  static async updateStatus(printId, status) {
-    return prisma3.phygitalPrint.update({
-      where: { id: printId },
-      data: { status }
-    });
-  }
-};
-
 // backend/src/controllers/phygital.controller.ts
-var import_client6 = require("@prisma/client");
-var prisma4 = new import_client6.PrismaClient();
+var import_client7 = require("@prisma/client");
+var prisma5 = new import_client7.PrismaClient();
 var PhygitalController = class {
   /**
    * Endpoint público para upload via QR Code
@@ -86397,7 +87011,7 @@ var PhygitalController = class {
     try {
       const eventId = req.params.eventId;
       if (!eventId) return res.status(400).json({ error: "eventId \xE9 obrigat\xF3rio." });
-      const prints = await prisma4.phygitalPrint.findMany({
+      const prints = await prisma5.phygitalPrint.findMany({
         where: { eventId: String(eventId) },
         orderBy: { createdAt: "desc" }
       });
@@ -86411,7 +87025,8 @@ var PhygitalController = class {
    */
   static async confirmPrint(req, res) {
     try {
-      const { id, status } = req.body;
+      const id = req.params.id || req.body.id;
+      const { status } = req.body;
       if (!id || !status) return res.status(400).json({ error: "id e status s\xE3o obrigat\xF3rios." });
       const updated = await PhygitalService.updateStatus(String(id), status);
       res.json({ success: true, updated });
@@ -86433,7 +87048,7 @@ var PhygitalController = class {
       if (!eventId || !referenceCode) {
         return res.status(400).json({ error: "eventId e referenceCode s\xE3o obrigat\xF3rios." });
       }
-      const print = await prisma4.phygitalPrint.create({
+      const print = await prisma5.phygitalPrint.create({
         data: {
           eventId,
           referenceCode,
@@ -86455,15 +87070,15 @@ var PhygitalController = class {
 init_prisma();
 
 // backend/src/services/supply.service.ts
-var import_client7 = require("@prisma/client");
-var prisma5 = new import_client7.PrismaClient();
+var import_client8 = require("@prisma/client");
+var prisma6 = new import_client8.PrismaClient();
 var SupplyService = class {
   /**
    * Calculates the real-time available credits for a franchisee
    * by cross-referencing total recharged credits and actual usage.
    */
   static async getFranchiseInventory(franchiseId) {
-    const profile = await prisma5.franchiseProfile.findUnique({
+    const profile = await prisma6.franchiseProfile.findUnique({
       where: { id: franchiseId },
       include: {
         _count: {
@@ -86484,7 +87099,7 @@ var SupplyService = class {
    * Background task to check all franchises for low stock and trigger alerts
    */
   static async auditAllInventory() {
-    const franchises = await prisma5.franchiseProfile.findMany({
+    const franchises = await prisma6.franchiseProfile.findMany({
       where: { active: true },
       include: { user: true }
     });
@@ -86505,7 +87120,7 @@ var SupplyService = class {
    * Generates a 1-click order for supply replenishment
    */
   static async createSupplyOrder(franchiseId, packType) {
-    const profile = await prisma5.franchiseProfile.findUnique({
+    const profile = await prisma6.franchiseProfile.findUnique({
       where: { id: franchiseId },
       include: { user: true }
     });
@@ -86515,7 +87130,7 @@ var SupplyService = class {
       "CREDITS_500": 850,
       "PHYSICAL_KIT": 1200
     };
-    const order = await prisma5.order.create({
+    const order = await prisma6.order.create({
       data: {
         valor: prices[packType],
         status: "PENDENTE",
@@ -86528,7 +87143,7 @@ var SupplyService = class {
         // Virtual event for supply orders
       }
     });
-    await prisma5.franchiseProfile.update({
+    await prisma6.franchiseProfile.update({
       where: { id: franchiseId },
       data: { lastSupplyOrderAt: /* @__PURE__ */ new Date() }
     });
@@ -86537,7 +87152,6 @@ var SupplyService = class {
 };
 
 // backend/src/controllers/franchise.controller.ts
-init_referral_service();
 var FranchiseController = class {
   /**
    * Lista todos os usuários com FranchiseProfile (independente do role).
@@ -86798,12 +87412,582 @@ var FranchiseController = class {
   }
 };
 
+// backend/src/controllers/vault.controller.ts
+init_prisma();
+
+// backend/src/services/googleDrive.service.ts
+var import_googleapis = require("googleapis");
+var import_fs2 = __toESM(require("fs"));
+var import_path2 = __toESM(require("path"));
+var SCOPES = ["https://www.googleapis.com/auth/drive.file"];
+var GoogleDriveService = class {
+  constructor() {
+    const clientEmail = process.env.GOOGLE_SERVICE_ACCOUNT_EMAIL;
+    const privateKey = process.env.GOOGLE_SERVICE_ACCOUNT_PRIVATE_KEY?.replace(/\\n/g, "\n");
+    console.log(`[DRIVE DEBUG] ServiceAccountEmail: ${clientEmail ? "Presente" : "MISSING"}`);
+    console.log(`[DRIVE DEBUG] PrivateKey: ${privateKey ? "Presente" : "MISSING"}`);
+    if (!clientEmail || !privateKey) {
+      console.warn("\u26A0\uFE0F Google Drive Service Account n\xE3o configurado. O sistema operar\xE1 em MODO MOCK para Cofres.");
+      this.drive = null;
+      return;
+    }
+    try {
+      const jwtClient = new import_googleapis.google.auth.JWT({
+        email: clientEmail,
+        key: privateKey,
+        scopes: SCOPES
+      });
+      this.drive = import_googleapis.google.drive({ version: "v3", auth: jwtClient });
+      console.log(`[DRIVE] Servi\xE7o JWT (Service Account) inicializado com sucesso.`);
+    } catch (err) {
+      console.error(`[DRIVE] Falha ao inicializar JWT:`, err.message);
+      this.drive = null;
+    }
+  }
+  /**
+   * Cria uma pasta para um novo Álbum compartilhado.
+   */
+  async createAlbumFolder(albumName) {
+    if (!this.drive) {
+      console.warn(`[DRIVE MOCK] Criando pasta mock para: ${albumName}`);
+      return { id: `mock-folder-${Date.now()}`, name: albumName };
+    }
+    const rootFolderId = process.env.GOOGLE_DRIVE_ROOT_FOLDER_ID;
+    const fileMetadata = {
+      name: `Vault: ${albumName}`,
+      mimeType: "application/vnd.google-apps.folder",
+      parents: rootFolderId ? [rootFolderId] : []
+    };
+    try {
+      const folder = await this.drive.files.create({
+        requestBody: fileMetadata,
+        fields: "id, name"
+      });
+      console.log(`[DRIVE] Pasta criada para \xE1lbum: ${albumName} (ID: ${folder.data.id})`);
+      await this.drive.permissions.create({
+        fileId: folder.data.id,
+        requestBody: {
+          role: "reader",
+          type: "anyone"
+        }
+      });
+      return folder.data;
+    } catch (error) {
+      console.error("[DRIVE] Erro ao criar pasta:", error.message);
+      throw error;
+    }
+  }
+  /**
+   * Realiza o upload de uma mídia diretamente para a pasta do álbum.
+   * Utiliza thumbnailLink para performance no frontend conforme diretrizes executivas.
+   */
+  async uploadMedia({ folderId, fileName, buffer, mimeType }) {
+    if (!this.drive) {
+      console.warn(`[DRIVE MOCK] Gravando arquivo localmente (em /tmp): ${fileName}`);
+      const mockId = `mock-file-${Date.now()}`;
+      const os2 = require("os");
+      const uploadDir = import_path2.default.join(os2.tmpdir(), "vaults");
+      if (!import_fs2.default.existsSync(uploadDir)) {
+        import_fs2.default.mkdirSync(uploadDir, { recursive: true });
+      }
+      const filePath = import_path2.default.join(uploadDir, fileName);
+      import_fs2.default.writeFileSync(filePath, buffer);
+      const appUrl = process.env.APP_URL || "http://localhost:3001";
+      const fileUrl = `${appUrl}/uploads/vaults/${fileName}`;
+      return {
+        id: mockId,
+        webViewLink: fileUrl,
+        thumbnailLink: fileUrl
+      };
+    }
+    const os = require("os");
+    const tmpFilePath = import_path2.default.join(os.tmpdir(), fileName);
+    import_fs2.default.writeFileSync(tmpFilePath, buffer);
+    try {
+      const file = await this.drive.files.create({
+        requestBody: {
+          name: fileName,
+          parents: [folderId]
+        },
+        media: {
+          mimeType,
+          body: import_fs2.default.createReadStream(tmpFilePath)
+        },
+        fields: "id, name, webViewLink, thumbnailLink"
+      });
+      if (import_fs2.default.existsSync(tmpFilePath)) {
+        import_fs2.default.unlinkSync(tmpFilePath);
+      }
+      await this.drive.permissions.create({
+        fileId: file.data.id,
+        requestBody: {
+          role: "reader",
+          type: "anyone"
+        }
+      });
+      return file.data;
+    } catch (error) {
+      if (import_fs2.default.existsSync(tmpFilePath)) {
+        import_fs2.default.unlinkSync(tmpFilePath);
+      }
+      console.error("[DRIVE] Erro no upload de m\xEDdia:", error.message);
+      throw error;
+    }
+  }
+  /**
+   * Remove um arquivo ou pasta do Drive.
+   */
+  async deleteItem(fileId) {
+    if (!this.drive) return;
+    try {
+      await this.drive.files.delete({ fileId });
+    } catch (error) {
+      console.error("[DRIVE] Erro ao deletar item:", error.message);
+    }
+  }
+  /**
+   * Obtém o stream de um arquivo para proxy.
+   */
+  async getMediaStream(fileId) {
+    if (!this.drive) throw new Error("Drive service not initialized");
+    return this.drive.files.get(
+      { fileId, alt: "media" },
+      { responseType: "stream" }
+    );
+  }
+};
+var driveService = new GoogleDriveService();
+
+// backend/src/controllers/vault.controller.ts
+var import_sharp3 = __toESM(require("sharp"));
+var VaultController = class {
+  /**
+   * Cria um novo cofre privado, gerando a pasta correspondente no Drive.
+   */
+  static async createVault(req, res) {
+    const { name: name2, nome, goalPoses, cycleEndDay } = req.body;
+    const finalName = nome || name2;
+    const userId = req.user?.userId;
+    if (!userId) return res.status(401).json({ error: "N\xE3o autenticado." });
+    if (!finalName) return res.status(400).json({ error: "O nome do cofre \xE9 obrigat\xF3rio." });
+    try {
+      console.log(`[VAULT] Iniciando cria\xE7\xE3o de cofre: ${finalName} para usu\xE1rio ${userId}`);
+      const slug = finalName.toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "").replace(/[^a-z0-z0-9]/g, "-").replace(/-+/g, "-").replace(/^-|-$/g, "");
+      const uniqueSlug = `${slug}-${Date.now().toString(36)}`;
+      let finalGoal = Number(goalPoses) || 12;
+      if (finalGoal < 12) finalGoal = 12;
+      if (finalGoal % 4 !== 0) finalGoal = Math.ceil(finalGoal / 4) * 4;
+      const driveFolder = await driveService.createAlbumFolder(finalName);
+      const album = await prisma.sharedAlbum.create({
+        data: {
+          nome: finalName,
+          slug: uniqueSlug,
+          goalPoses: finalGoal,
+          folderId: driveFolder.id,
+          status: "OPEN",
+          cycleEndDay: Number(cycleEndDay) || 30,
+          ownerId: userId,
+          members: {
+            create: {
+              userId,
+              role: "OWNER"
+            }
+          }
+        }
+      });
+      return res.status(201).json({
+        message: "Cofre criado com sucesso.",
+        album
+      });
+    } catch (error) {
+      console.error("[VAULT] Erro ao criar cofre:", error.message);
+      return res.status(500).json({
+        error: "Falha na cria\xE7\xE3o do cofre.",
+        details: error.message
+      });
+    }
+  }
+  /**
+   * Realiza o upload de mídias para o cofre, salvando metadados e thumbnailLink.
+   */
+  static async uploadMedia(req, res) {
+    const albumId = req.params.albumId;
+    const file = req.file;
+    const userId = req.user?.userId;
+    if (!userId) return res.status(401).json({ error: "N\xE3o autenticado." });
+    if (!file) return res.status(400).json({ error: "Nenhum arquivo enviado." });
+    try {
+      const album = await prisma.sharedAlbum.findUnique({
+        where: { id: albumId },
+        include: {
+          members: true,
+          _count: { select: { media: true } }
+        }
+      });
+      if (!album) return res.status(404).json({ error: "Cofre n\xE3o encontrado." });
+      if (album._count.media >= album.goalPoses) {
+        return res.status(400).json({
+          error: "Cofre cheio!",
+          details: `Voc\xEA atingiu a meta de ${album.goalPoses} fotos. Feche o ciclo para imprimir ou aumente a meta.`
+        });
+      }
+      if (!album.folderId) return res.status(400).json({ error: "Infraestrutura de storage n\xE3o inicializada para este cofre." });
+      const isMember = album.members.some((m) => m.userId === userId);
+      if (!isMember) return res.status(403).json({ error: "Voc\xEA n\xE3o tem permiss\xE3o para enviar m\xEDdias para este cofre." });
+      const fileName = `${Date.now()}-${file.originalname.replace(/\s+/g, "_")}`;
+      let uploadBuffer = file.buffer;
+      let finalMimeType = file.mimetype;
+      let finalFileName = fileName;
+      if (file.mimetype.startsWith("image/")) {
+        try {
+          uploadBuffer = await (0, import_sharp3.default)(file.buffer).resize(2e3, 2e3, { fit: "inside", withoutEnlargement: true }).jpeg({ quality: 80 }).toBuffer();
+          finalMimeType = "image/jpeg";
+          finalFileName = fileName.replace(/\.[^/.]+$/, "") + ".jpeg";
+          console.log(`[VAULT] Imagem comprimida de ${file.size} para ${uploadBuffer.length} bytes.`);
+        } catch (sharpError) {
+          console.warn("[VAULT] Falha na compress\xE3o Sharp, enviando original:", sharpError);
+        }
+      }
+      const driveFile = await driveService.uploadMedia({
+        folderId: album.folderId,
+        fileName: finalFileName,
+        buffer: uploadBuffer,
+        mimeType: finalMimeType
+      });
+      const media = await prisma.sharedAlbumMedia.create({
+        data: {
+          albumId,
+          fileId: driveFile.id,
+          webViewLink: driveFile.webViewLink,
+          thumbnailLink: driveFile.thumbnailLink,
+          uploadedById: userId
+        }
+      });
+      return res.status(201).json({
+        message: "Upload conclu\xEDdo com sucesso.",
+        media
+      });
+    } catch (error) {
+      console.error("[VAULT] Erro no upload de m\xEDdia:", error.message);
+      return res.status(500).json({
+        error: "Falha no upload.",
+        details: error.message
+      });
+    }
+  }
+  /**
+   * Lista as mídias de um cofre.
+   */
+  static async listMedia(req, res) {
+    const albumId = req.params.albumId;
+    const userId = req.user?.userId;
+    if (!userId) return res.status(401).json({ error: "N\xE3o autenticado." });
+    try {
+      const membership = await prisma.albumMember.findUnique({
+        where: {
+          albumId_userId: { albumId, userId }
+        }
+      });
+      if (!membership) return res.status(403).json({ error: "Acesso negado a este cofre." });
+      const media = await prisma.sharedAlbumMedia.findMany({
+        where: { albumId },
+        orderBy: { createdAt: "desc" },
+        include: {
+          uploadedBy: {
+            select: { nome: true }
+          },
+          _count: {
+            select: { votes: true }
+          }
+        }
+      });
+      return res.json(media);
+    } catch (error) {
+      return res.status(500).json({ error: "Erro ao listar m\xEDdias do cofre." });
+    }
+  }
+  /**
+   * Lista os cofres onde o usuário é membro.
+   */
+  static async listMyVaults(req, res) {
+    const userId = req.user?.userId;
+    if (!userId) return res.status(401).json({ error: "N\xE3o autenticado." });
+    try {
+      console.log(`[VAULT] Listando cofres para usu\xE1rio: ${userId}`);
+      const memberships = await prisma.albumMember.findMany({
+        where: { userId },
+        include: {
+          album: {
+            include: {
+              _count: {
+                select: { media: true, members: true }
+              }
+            }
+          }
+        },
+        orderBy: { createdAt: "desc" }
+      });
+      return res.json(memberships.map((m) => ({
+        ...m.album,
+        myRole: m.role
+      })));
+    } catch (error) {
+      console.error("[VAULT] Erro ao listar cofres:", error.message);
+      return res.status(500).json({ error: "Erro ao listar seus cofres.", details: error.message });
+    }
+  }
+  /**
+   * Gera um link de convite (AccessLink) para o cofre.
+   */
+  static async generateInvite(req, res) {
+    const albumId = req.params.albumId;
+    const userId = req.user?.userId;
+    if (!userId) return res.status(401).json({ error: "N\xE3o autenticado." });
+    try {
+      const membership = await prisma.albumMember.findUnique({
+        where: { albumId_userId: { albumId, userId } }
+      });
+      if (!membership || membership.role !== "OWNER") {
+        return res.status(403).json({ error: "Apenas o propriet\xE1rio pode gerar convites." });
+      }
+      const expiresAt = /* @__PURE__ */ new Date();
+      expiresAt.setDate(expiresAt.getDate() + 7);
+      const link = await prisma.accessLink.create({
+        data: {
+          albumId,
+          code: Math.random().toString(36).substring(2, 12).toUpperCase(),
+          expiresAt
+        }
+      });
+      return res.json({
+        inviteCode: link.code,
+        expiresAt: link.expiresAt,
+        url: `${process.env.FRONTEND_URL || "http://localhost:3000"}/invitation/${link.code}`
+      });
+    } catch (error) {
+      console.error("[INVITE] Erro:", error.message);
+      return res.status(500).json({ error: "Erro ao gerar convite.", details: error.message });
+    }
+  }
+  /**
+   * Registra um voto em uma mídia.
+   */
+  static async voteMedia(req, res, next) {
+    const mediaId = req.params.mediaId;
+    const userId = req.user?.userId;
+    if (!userId) return res.status(401).json({ error: "N\xE3o autenticado." });
+    try {
+      const media = await prisma.sharedAlbumMedia.findUnique({
+        where: { id: mediaId }
+      });
+      if (!media) return res.status(404).json({ error: "M\xEDdia n\xE3o encontrada." });
+      const membership = await prisma.albumMember.findUnique({
+        where: { albumId_userId: { albumId: media.albumId, userId } }
+      });
+      if (!membership) return res.status(403).json({ error: "Acesso negado." });
+      const existingVote = await prisma.mediaVote.findUnique({
+        where: { mediaId_userId: { mediaId, userId } }
+      });
+      if (existingVote) {
+        await prisma.mediaVote.delete({ where: { id: existingVote.id } });
+        return res.json({ voted: false });
+      } else {
+        await prisma.mediaVote.create({
+          data: { mediaId, userId }
+        });
+        return res.json({ voted: true });
+      }
+    } catch (error) {
+      console.error("[VOTE] Erro:", error.message);
+      return res.status(500).json({ error: "Erro ao processar voto.", details: error.message });
+    }
+  }
+  /**
+   * Obtém detalhes de um convite pelo código.
+   */
+  static async getInvitationDetails(req, res, next) {
+    const code = req.params.code;
+    try {
+      const link = await prisma.accessLink.findUnique({
+        where: { code },
+        include: {
+          album: {
+            select: {
+              id: true,
+              nome: true,
+              _count: { select: { members: true, media: true } }
+            }
+          }
+        }
+      });
+      if (!link) return res.status(404).json({ error: "Convite n\xE3o encontrado." });
+      if (link.expiresAt && link.expiresAt < /* @__PURE__ */ new Date()) return res.status(410).json({ error: "Convite expirado." });
+      return res.json(link);
+    } catch (error) {
+      return res.status(500).json({ error: "Erro ao buscar convite." });
+    }
+  }
+  /**
+   * Aceita um convite e adiciona o usuário ao cofre.
+   */
+  static async acceptInvite(req, res, next) {
+    const code = req.params.code;
+    const userId = req.user?.userId;
+    if (!userId) return res.status(401).json({ error: "N\xE3o autenticado." });
+    try {
+      const link = await prisma.accessLink.findUnique({
+        where: { code }
+      });
+      if (!link) return res.status(404).json({ error: "Convite n\xE3o encontrado." });
+      if (link.expiresAt && link.expiresAt < /* @__PURE__ */ new Date()) return res.status(410).json({ error: "Convite expirado." });
+      const existing = await prisma.albumMember.findUnique({
+        where: { albumId_userId: { albumId: link.albumId, userId } }
+      });
+      if (existing) {
+        return res.json({ message: "Voc\xEA j\xE1 \xE9 membro deste cofre.", albumId: link.albumId });
+      }
+      await prisma.albumMember.create({
+        data: {
+          albumId: link.albumId,
+          userId,
+          role: "GUEST"
+        }
+      });
+      return res.status(201).json({
+        message: "Convite aceito com sucesso!",
+        albumId: link.albumId
+      });
+    } catch (error) {
+      console.error("[INVITE] Erro ao aceitar:", error.message);
+      return res.status(500).json({ error: "Erro ao aceitar convite." });
+    }
+  }
+  /**
+   * Checkout On-Demand: Permite materializar as fotos do cofre manualmente.
+   */
+  static async checkoutVault(req, res) {
+    const albumId = req.params.albumId;
+    const userId = req.user?.userId;
+    if (!userId) return res.status(401).json({ error: "N\xE3o autenticado." });
+    try {
+      const album = await prisma.sharedAlbum.findUnique({
+        where: { id: albumId },
+        include: { owner: true }
+      });
+      if (!album) return res.status(404).json({ error: "Cofre n\xE3o encontrado." });
+      if (album.ownerId !== userId) return res.status(403).json({ error: "Apenas o propriet\xE1rio pode solicitar a materializa\xE7\xE3o do cofre." });
+      const media = await prisma.sharedAlbumMedia.findMany({
+        where: { albumId },
+        include: { _count: { select: { votes: true } } }
+      });
+      const sortedMedia = media.sort((a, b) => b._count.votes - a._count.votes);
+      const topMedia = sortedMedia.slice(0, album.goalPoses);
+      if (topMedia.length === 0) {
+        return res.status(400).json({ error: "N\xE3o h\xE1 fotos no cofre para materializar." });
+      }
+      const basePrice = 49.9;
+      const shippingPrice = 15;
+      const total = basePrice + shippingPrice;
+      let systemEvent = await prisma.event.findFirst({
+        where: { slug: "vaults-system" }
+      });
+      if (!systemEvent) {
+        systemEvent = await prisma.event.create({
+          data: {
+            slug: "vaults-system",
+            nomeNoivos: "System: Vaults Orders",
+            active: true,
+            dataEvento: /* @__PURE__ */ new Date(),
+            ownerId: album.ownerId
+          }
+        });
+      }
+      const order = await prisma.order.create({
+        data: {
+          valor: total,
+          status: "PENDENTE",
+          eventId: systemEvent.id,
+          clienteId: userId,
+          buyerEmail: album.owner.email,
+          deliveryType: "SHIPPING",
+          fulfillmentStatus: "PENDING",
+          isManual: true,
+          manualType: "VAULT_ONDEMAND",
+          shippingFee: shippingPrice,
+          internalNotes: `Checkout Avulso do cofre: ${album.nome}`,
+          items: {
+            create: topMedia.map((m) => ({
+              price: 0,
+              quantity: 1
+            }))
+          }
+        }
+      });
+      const backendUrl = process.env.BACKEND_URL || `http://localhost:3001`;
+      const mpResponse = await MercadoPagoService.createPreference({
+        transaction_amount: total,
+        description: `Materializa\xE7\xE3o Cofre: ${album.nome}`,
+        payer_email: album.owner.email,
+        notification_url: `${backendUrl}/api/webhooks/mercadopago`,
+        orderId: order.id
+      });
+      await prisma.order.update({
+        where: { id: order.id },
+        data: { paymentId: String(mpResponse.id) }
+      });
+      return res.json({
+        orderId: order.id,
+        init_point: mpResponse.init_point,
+        sandbox_init_point: mpResponse.sandbox_init_point,
+        total,
+        photosCount: topMedia.length
+      });
+    } catch (error) {
+      console.error("[VAULT CHECKOUT] Erro:", error.message);
+      return res.status(500).json({ error: "Erro ao processar checkout do cofre.", details: error.message });
+    }
+  }
+  /**
+   * Ativa a assinatura recorrente para o cofre.
+   */
+  static async subscribeVault(req, res) {
+    const albumId = req.params.albumId;
+    const userId = req.user?.userId;
+    const { planLimit } = req.body;
+    if (!userId) return res.status(401).json({ error: "N\xE3o autenticado." });
+    try {
+      const result = await SubscriptionService.createVaultSubscription(userId, albumId, planLimit || 36);
+      return res.json(result);
+    } catch (error) {
+      console.error("[VAULT SUBSCRIBE] Erro:", error.message);
+      return res.status(500).json({ error: error.message || "Erro ao processar assinatura do cofre." });
+    }
+  }
+  /**
+   * Proxy de mídia para contornar restrições de CORS do Google Drive.
+   */
+  static async proxyMedia(req, res) {
+    const fileId = req.params.fileId;
+    if (!fileId) return res.status(400).send("File ID missing");
+    try {
+      const driveRes = await driveService.getMediaStream(fileId);
+      const contentType = driveRes.headers["content-type"] || "image/jpeg";
+      res.setHeader("Content-Type", contentType);
+      res.setHeader("Cache-Control", "public, max-age=86400");
+      driveRes.data.pipe(res);
+    } catch (error) {
+      console.error("[PROXY MEDIA] Erro:", error.message);
+      res.status(500).send("Erro ao carregar m\xEDdia");
+    }
+  }
+};
+
 // backend/src/routes/calendar.routes.ts
 var import_express = __toESM(require_express2());
 var import_crypto13 = require("crypto");
 
 // backend/src/lib/calendar.service.ts
-var import_googleapis = require("googleapis");
+var import_googleapis2 = require("googleapis");
 init_prisma();
 
 // backend/src/lib/crypto.ts
@@ -86837,12 +88021,12 @@ function decryptToken(payload) {
 var CLIENT_ID = process.env.GOOGLE_CLIENT_ID;
 var CLIENT_SECRET = process.env.GOOGLE_CLIENT_SECRET;
 var REDIRECT_URI = process.env.GOOGLE_CALENDAR_REDIRECT_URI;
-var SCOPES = [
+var SCOPES2 = [
   "https://www.googleapis.com/auth/calendar.events",
   "https://www.googleapis.com/auth/calendar.readonly"
 ];
 function createOAuthClient() {
-  return new import_googleapis.google.auth.OAuth2(CLIENT_ID, CLIENT_SECRET, REDIRECT_URI);
+  return new import_googleapis2.google.auth.OAuth2(CLIENT_ID, CLIENT_SECRET, REDIRECT_URI);
 }
 function generateAuthUrl(state) {
   const client2 = createOAuthClient();
@@ -86851,7 +88035,7 @@ function generateAuthUrl(state) {
     // Obtém refresh_token
     prompt: "consent",
     // Força re-consentimento para garantir refresh_token
-    scope: SCOPES,
+    scope: SCOPES2,
     state,
     // Parâmetro anti-CSRF (validado no callback)
     include_granted_scopes: true
@@ -86870,7 +88054,7 @@ async function exchangeCodeAndSave(userId, code) {
       accessToken: encryptToken(tokens.access_token),
       refreshToken: encryptToken(tokens.refresh_token),
       expiresAt,
-      scope: tokens.scope || SCOPES.join(" ")
+      scope: tokens.scope || SCOPES2.join(" ")
     },
     create: {
       userId,
@@ -86879,7 +88063,7 @@ async function exchangeCodeAndSave(userId, code) {
       refreshToken: encryptToken(tokens.refresh_token),
       expiresAt,
       calendarId: "primary",
-      scope: tokens.scope || SCOPES.join(" ")
+      scope: tokens.scope || SCOPES2.join(" ")
     }
   });
 }
@@ -86905,7 +88089,7 @@ async function getAuthenticatedClient(userId) {
 }
 async function fetchBusySlots(userId, timeMin, timeMax) {
   const auth = await getAuthenticatedClient(userId);
-  const calendar = import_googleapis.google.calendar({ version: "v3", auth });
+  const calendar = import_googleapis2.google.calendar({ version: "v3", auth });
   const cred = await prisma.userCalendarCredential.findUnique({ where: { userId } });
   const calendarId = cred?.calendarId || "primary";
   const res = await calendar.freebusy.query({
@@ -87078,9 +88262,51 @@ var calendar_routes_default = router;
 
 // backend/src/routes/index.ts
 var import_multer = __toESM(require("multer"));
-var import_express3 = __toESM(require_express2());
-var upload = (0, import_multer.default)({ storage: import_multer.default.memoryStorage() });
+var import_express4 = __toESM(require_express2());
+
+// backend/src/routes/driveAuth.routes.ts
+var import_express2 = __toESM(require_express2());
+var import_googleapis3 = require("googleapis");
 var router2 = (0, import_express2.Router)();
+router2.get("/google/callback", async (req, res) => {
+  const { code } = req.query;
+  if (!code) {
+    return res.status(400).send("C\xF3digo de autoriza\xE7\xE3o n\xE3o fornecido.");
+  }
+  try {
+    const oauth2Client = new import_googleapis3.google.auth.OAuth2(
+      process.env.GOOGLE_DRIVE_CLIENT_ID,
+      process.env.GOOGLE_DRIVE_CLIENT_SECRET,
+      process.env.GOOGLE_DRIVE_REDIRECT_URI
+    );
+    const { tokens } = await oauth2Client.getToken(code);
+    if (!tokens.refresh_token) {
+      return res.send(`
+        <h1>Autorizado com sucesso!</h1>
+        <p>Aten\xE7\xE3o: O Google n\xE3o retornou um <b>Refresh Token</b> (chave permanente).</p>
+        <p>Isso acontece porque voc\xEA j\xE1 autorizou este app antes.</p>
+        <p><b>Solu\xE7\xE3o:</b> V\xE1 em <a href="https://myaccount.google.com/permissions">Seguran\xE7a da Conta Google</a>, remova o app 'Foto Segundo' e tente o link de autoriza\xE7\xE3o novamente.</p>
+      `);
+    }
+    res.send(`
+      <h1>Sucesso Absoluto!</h1>
+      <p>Copie o c\xF3digo abaixo e cole no chat do Antigravity:</p>
+      <div style="background: #f4f4f4; padding: 20px; border: 1px solid #ddd; font-family: monospace; word-break: break-all;">
+        ${tokens.refresh_token}
+      </div>
+      <p><i>Este token permitir\xE1 que o sistema use seus 15GB de armazenamento pessoal.</i></p>
+    `);
+  } catch (error) {
+    console.error("Erro no callback do Google Drive:", error.message);
+    res.status(500).send("Erro ao processar autoriza\xE7\xE3o: " + error.message);
+  }
+});
+var driveAuth_routes_default = router2;
+
+// backend/src/routes/index.ts
+var upload = (0, import_multer.default)({ storage: import_multer.default.memoryStorage() });
+var router3 = (0, import_express3.Router)();
+router3.use("/auth", driveAuth_routes_default);
 var requireProOrFranchise = async (req, res, next) => {
   const user = req.user;
   if (!user) return res.status(401).json({ error: "N\xE3o autenticado." });
@@ -87095,23 +88321,22 @@ var requireProOrFranchise = async (req, res, next) => {
   }
   return res.status(403).json({ error: "Acesso negado. Requer perfil profissional ou franquia ativa." });
 };
-router2.get("/profissional/events", requireAuth, requireProOrFranchise, getMeusEventos);
-router2.patch("/profissional/events/:id/links", requireAuth, requireProOrFranchise, updateEventLinks);
-router2.patch("/profissional/events/:id/cover", requireAuth, requireProOrFranchise, uploadEventCover);
-router2.patch("/profissional/events/:id/respond", requireAuth, requireProOrFranchise, respondToEvent);
-router2.get("/profissional/me", requireAuth, requireProOrFranchise, getProfile);
-router2.patch("/profissional/me", requireAuth, requireProOrFranchise, updateProfile);
-router2.post("/profissional/events/:id/manual-sale", requireAuth, requireProOrFranchise, registerManualSale);
-router2.get("/profissional/unidades/convites", requireAuth, requireProOrFranchise, getConvitesUnidade);
-router2.patch("/profissional/unidades/convites/:id/respond", requireAuth, requireProOrFranchise, respondConviteUnidade);
-router2.get("/profissional/network", requireAuth, requireProOrFranchise, getNetwork);
-router2.get("/profissional/network/search", requireAuth, requireProOrFranchise, searchProfessionals);
-router2.post("/profissional/network/favorite/:partnerId", requireAuth, requireProOrFranchise, toggleFavorite);
-router2.get("/profissional/finance/tax-report", requireAuth, requireProOrFranchise, getTaxReport);
-router2.post("/marketplace/express-sale", requireAuth, requireProOrFranchise, MarketplaceController.expressSale);
-router2.post("/marketplace/events/:id/media", requireAuth, requireProOrFranchise, MarketplaceController.addMedia);
-router2.get("/marketplace/events/:id/media", optionalAuth, MarketplaceController.listMedia);
-router2.get("/cron/expiration", async (req, res) => {
+router3.patch("/profissional/events/:id/links", requireAuth, requireProOrFranchise, updateEventLinks);
+router3.patch("/profissional/events/:id/cover", requireAuth, requireProOrFranchise, uploadEventCover);
+router3.patch("/profissional/events/:id/respond", requireAuth, requireProOrFranchise, respondToEvent);
+router3.get("/profissional/me", requireAuth, requireProOrFranchise, getProfile);
+router3.patch("/profissional/me", requireAuth, requireProOrFranchise, updateProfile);
+router3.post("/profissional/events/:id/manual-sale", requireAuth, requireProOrFranchise, registerManualSale);
+router3.get("/profissional/unidades/convites", requireAuth, requireProOrFranchise, getConvitesUnidade);
+router3.patch("/profissional/unidades/convites/:id/respond", requireAuth, requireProOrFranchise, respondConviteUnidade);
+router3.get("/profissional/network", requireAuth, requireProOrFranchise, getNetwork);
+router3.get("/profissional/network/search", requireAuth, requireProOrFranchise, searchProfessionals);
+router3.post("/profissional/network/favorite/:partnerId", requireAuth, requireProOrFranchise, toggleFavorite);
+router3.get("/profissional/finance/tax-report", requireAuth, requireProOrFranchise, getTaxReport);
+router3.post("/marketplace/express-sale", requireAuth, requireProOrFranchise, MarketplaceController.expressSale);
+router3.post("/marketplace/events/:id/media", requireAuth, requireProOrFranchise, MarketplaceController.addMedia);
+router3.get("/marketplace/events/:id/media", optionalAuth, MarketplaceController.listMedia);
+router3.get("/cron/expiration", async (req, res) => {
   const token = req.headers["authorization"];
   if (process.env.CRON_SECRET && token !== `Bearer ${process.env.CRON_SECRET}`) {
     console.warn("[Cron] Tentativa de acesso n\xE3o autorizada.");
@@ -87119,7 +88344,8 @@ router2.get("/cron/expiration", async (req, res) => {
   }
   try {
     await runExpirationJob(req);
-    console.log("[Cron] Job de expira\xE7\xE3o executado com sucesso.");
+    await runVaultCycleJob();
+    console.log("[Cron] Job de expira\xE7\xE3o e Cofres executados com sucesso.");
     res.json({ ok: true, ran: (/* @__PURE__ */ new Date()).toISOString() });
   } catch (err) {
     const errorMsg = err instanceof Error ? err.message : String(err);
@@ -87127,15 +88353,15 @@ router2.get("/cron/expiration", async (req, res) => {
     res.status(500).json({ error: errorMsg });
   }
 });
-router2.get("/cron/loyalty-bot", async (req, res) => {
+router3.get("/cron/loyalty-bot", async (req, res) => {
   const token = req.headers["authorization"];
   if (process.env.CRON_SECRET && token !== `Bearer ${process.env.CRON_SECRET}`) {
     return res.status(401).json({ error: "N\xE3o autorizado." });
   }
   return runLoyaltyBot(req, res);
 });
-router2.use("/calendar", calendar_routes_default);
-router2.get("/cron/calendar-sync", async (req, res) => {
+router3.use("/calendar", calendar_routes_default);
+router3.get("/cron/calendar-sync", async (req, res) => {
   const token = req.headers["authorization"];
   if (process.env.CRON_SECRET && token !== `Bearer ${process.env.CRON_SECRET}`) {
     return res.status(401).json({ error: "N\xE3o autorizado." });
@@ -87149,45 +88375,56 @@ router2.get("/cron/calendar-sync", async (req, res) => {
     res.status(500).json({ error: msg });
   }
 });
-router2.post("/auth/login", AuthController.login);
-router2.post("/auth/register", AuthController.register);
-router2.post("/auth/forgot-password", AuthController.forgotPassword);
-router2.post("/auth/reset-password", AuthController.updatePassword);
-router2.get("/auth/me", requireAuth, AuthController.me);
-router2.patch("/auth/me", requireAuth, AuthController.updateMe);
-router2.post("/auth/refresh", AuthController.refresh);
-router2.get("/public/auth/check", AuthController.checkEmail);
-router2.get("/mercadopago/connect", requireAuth, MercadoPagoController.connect);
-router2.get("/diag", diagnostics);
-router2.get("/public/events", EventController.listPublic);
-router2.get("/public/events/:slug", optionalAuth, EventController.getById);
-router2.get("/public/events/:slug/access", EventController.getAccess);
-router2.get("/profissional/events", requireAuth, requireProOrFranchise, EventController.listByProfessional);
-router2.get("/profissional/events/:slug", requireAuth, requireProOrFranchise, EventController.getById);
-router2.post("/profissional/flash-event", requireAuth, requireProOrFranchise, EventController.createFlashEvent);
-router2.post("/profissional/foto-point", requireAuth, requireProOrFranchise, EventController.createFotoPoint);
-router2.patch("/profissional/events/:id/foto-point", requireAuth, requireProOrFranchise, EventController.updateFotoPoint);
-router2.patch("/profissional/events/:id/cover", requireAuth, requireProOrFranchise, uploadEventCover);
-router2.get("/profissional/unidades/convites", requireAuth, requireProOrFranchise, getConvitesUnidade);
-router2.get("/phygital/events/:eventId/prints", requireAuth, PhygitalController.listAllByEvent);
-router2.patch("/phygital/prints/:id/status", requireAuth, PhygitalController.confirmPrint);
-router2.get("/public/partners", EventController.listPartners);
-router2.get("/public/unidades-fixas", EventController.listPartners);
-router2.post("/public/quotes", EventController.createQuote);
-router2.get("/public/unidade-fixa/:slug", getPartnerLandingData);
-router2.get("/public/configs/theme", getPublicThemeConfigs);
-router2.get("/public/configs/services", getPublicServices);
-router2.get("/public/service-catalog", adminListServiceCatalog);
-router2.get("/public/contests/active", getActiveContest);
-router2.get("/public/contests/hall-of-fame", getHallOfFame);
-router2.get("/events/:slug/likes", getEventLikes);
-router2.get("/share/e/:id", SEOController.getEventPreview);
-router2.post("/checkout/pending", PaymentController.createPendingOrder);
-router2.post("/checkout/payment", PaymentController.processPayment);
-router2.post(
+router3.get("/cron/vault-cycle", async (req, res) => {
+  const token = req.headers["authorization"];
+  if (process.env.CRON_SECRET && token !== `Bearer ${process.env.CRON_SECRET}`) {
+    return res.status(401).json({ error: "N\xE3o autorizado." });
+  }
+  try {
+    await VaultCycleService.processAllDueSubscriptions();
+    res.json({ ok: true, ran: (/* @__PURE__ */ new Date()).toISOString() });
+  } catch (err) {
+    const msg = err instanceof Error ? err.message : String(err);
+    console.error("[Cron/VaultCycle] Erro:", msg);
+    res.status(500).json({ error: msg });
+  }
+});
+router3.post("/auth/login", AuthController.login);
+router3.post("/auth/register", AuthController.register);
+router3.post("/auth/forgot-password", AuthController.forgotPassword);
+router3.post("/auth/reset-password", AuthController.updatePassword);
+router3.get("/auth/me", requireAuth, AuthController.me);
+router3.patch("/auth/me", requireAuth, AuthController.updateMe);
+router3.post("/auth/refresh", AuthController.refresh);
+router3.get("/public/auth/check", AuthController.checkEmail);
+router3.get("/mercadopago/connect", requireAuth, MercadoPagoController.connect);
+router3.get("/diag", diagnostics);
+router3.get("/public/events", EventController.listPublic);
+router3.get("/public/events/:slug", optionalAuth, EventController.getById);
+router3.get("/public/events/:slug/access", EventController.getAccess);
+router3.get("/profissional/events", requireAuth, requireProOrFranchise, EventController.listByProfessional);
+router3.get("/profissional/events/:slug", requireAuth, requireProOrFranchise, EventController.getById);
+router3.post("/profissional/flash-event", requireAuth, requireProOrFranchise, EventController.createFlashEvent);
+router3.post("/profissional/foto-point", requireAuth, requireProOrFranchise, EventController.createFotoPoint);
+router3.patch("/profissional/events/:id/foto-point", requireAuth, requireProOrFranchise, EventController.updateFotoPoint);
+router3.get("/public/partners", EventController.listPartners);
+router3.get("/public/unidades-fixas", EventController.listPartners);
+router3.post("/public/quotes", EventController.createQuote);
+router3.get("/public/unidade-fixa/:slug", getPartnerLandingData);
+router3.get("/public/configs/theme", getPublicThemeConfigs);
+router3.get("/public/configs/services", getPublicServices);
+router3.get("/public/service-catalog", adminListServiceCatalog);
+router3.get("/public/contests/active", getActiveContest);
+router3.get("/public/contests/hall-of-fame", getHallOfFame);
+router3.get("/events/:slug/likes", getEventLikes);
+router3.get("/share/e/:id", SEOController.getEventPreview);
+router3.post("/checkout/pending", PaymentController.createPendingOrder);
+router3.post("/checkout/payment", PaymentController.processPayment);
+router3.get("/checkout/shipping-quote", optionalAuth, PaymentController.calculateShipping);
+router3.post(
   "/webhooks/mercadopago",
   // Raw body antes do JSON parser — garante integridade do HMAC
-  import_express3.default.raw({ type: "application/json" }),
+  import_express4.default.raw({ type: "application/json" }),
   (req, _res, next) => {
     if (Buffer.isBuffer(req.body)) {
       try {
@@ -87201,97 +88438,110 @@ router2.post(
   requireMercadoPagoSignature,
   PaymentController.webhook
 );
-router2.get("/public/orders/:id", PaymentController.getOrderPublic);
-router2.get("/public/orders/:id/check-payment", PaymentController.checkPaymentStatus);
-router2.post("/public/orders/:id/manual-payment", requireAuth, PaymentController.manualPayment);
-router2.get("/public/print-catalog", getPublicPrintCatalog);
-router2.post("/orders/print", PaymentController.createPrintOrder);
-router2.post("/orders/:id/access-type", requireAuth, chooseAccessType);
-router2.get("/orders/:id/access-status", requireAuth, getAccessStatus);
-router2.post("/orders/:id/visibility", requireAuth, toggleVisibility);
-router2.get("/cliente/pedidos", requireAuth, getMeusPedidos);
-router2.get("/cliente/pedidos/:id", requireAuth, getMeuPedidoDetalhe);
-router2.get("/profissional/services", requireAuth, requireRole("ADMIN", "PROFISSIONAL"), listProServices);
-router2.post("/profissional/services", requireAuth, requireRole("ADMIN", "PROFISSIONAL"), addProService);
-router2.patch("/profissional/services/:id", requireAuth, requireRole("ADMIN", "PROFISSIONAL"), updateProService);
-router2.delete("/profissional/services/:id", requireAuth, requireRole("ADMIN", "PROFISSIONAL"), deleteProService);
-router2.post("/events/:slug/photos/like", requireAuth, likePhoto);
-router2.get("/me/points", requireAuth, getMyPoints);
-router2.post("/me/redeem-print", requireAuth, redeemPrint);
-router2.get("/unidade-fixa/stats", requireAuth, requireRole("ADMIN", "CARTORIO"), CartorioController.getStats);
-router2.get("/unidade-fixa/events", requireAuth, requireRole("ADMIN", "CARTORIO"), CartorioController.getEvents);
-router2.get("/unidade-fixa/orders", requireAuth, requireRole("ADMIN", "CARTORIO"), CartorioController.getOrders);
-router2.patch("/unidade-fixa/profile", requireAuth, requireRole("ADMIN", "CARTORIO"), updatePartnerProfile);
-router2.get("/unidade-fixa/team", requireAuth, requireRole("ADMIN", "CARTORIO"), getTeam);
-router2.put("/unidade-fixa/team", requireAuth, requireRole("ADMIN", "CARTORIO"), saveTeam);
-router2.get("/admin/stats", requireAuth, requireRole("ADMIN"), getDashboardStats);
-router2.get("/admin/logs", requireAuth, requireRole("ADMIN"), adminGetLogs);
-router2.post("/admin/orders/manual", requireAuth, requireRole("ADMIN"), adminCreateManualSale);
-router2.get("/admin/events", requireAuth, requireRole("ADMIN"), adminListEvents);
-router2.get("/admin/events/:id", requireAuth, requireRole("ADMIN"), adminGetEventById);
-router2.post("/admin/events", requireAuth, requireRole("ADMIN"), adminCreateEvent);
-router2.patch("/admin/events/:id", requireAuth, requireRole("ADMIN"), adminUpdateEvent);
-router2.patch("/admin/events/:id/cover", requireAuth, requireRole("ADMIN"), adminUploadCover);
-router2.patch("/admin/events/:id/preview", requireAuth, requireRole("ADMIN"), adminUploadPreview);
-router2.delete("/admin/events/:id", requireAuth, requireRole("ADMIN"), adminDeleteEvent);
-router2.get("/admin/users", requireAuth, requireRole("ADMIN"), adminListUsers);
-router2.post("/admin/users", requireAuth, requireRole("ADMIN"), adminCreateUser);
-router2.patch("/admin/users/:id", requireAuth, requireRole("ADMIN"), adminUpdateUser);
-router2.delete("/admin/users/:id", requireAuth, requireRole("ADMIN"), adminDeleteUser);
-router2.get("/admin/orders", requireAuth, requireRole("ADMIN"), adminListOrders);
-router2.patch("/admin/orders/:id/payout", requireAuth, requireRole("ADMIN"), adminMarkPayoutPaid);
-router2.delete("/admin/orders/:id", requireAuth, requireRole("ADMIN"), adminDeleteOrder);
-router2.post("/admin/orders/:id/delete-media", requireAuth, requireRole("ADMIN"), deleteMediaAdmin);
-router2.get("/admin/quotes", requireAuth, requireRole("ADMIN"), adminListQuotes);
-router2.patch("/admin/quotes/:id/approve", requireAuth, requireRole("ADMIN"), adminApproveQuote);
-router2.patch("/admin/quotes/:id/reject", requireAuth, requireRole("ADMIN"), adminRejectQuote);
-router2.post("/admin/payouts/generate", requireAuth, requireRole("ADMIN"), generateWeeklyPayout);
-router2.get("/admin/payouts", requireAuth, requireRole("ADMIN"), listPayouts);
-router2.get("/admin/payouts/export", requireAuth, requireRole("ADMIN"), exportPayoutCSV);
-router2.patch("/admin/payouts/:id/items/:itemId/paid", requireAuth, requireRole("ADMIN"), markItemPaid);
-router2.get("/payouts/me", requireAuth, getMeusRepasses);
-router2.get("/admin/configs", requireAuth, requireRole("ADMIN"), getConfigs);
-router2.patch("/admin/configs", requireAuth, requireRole("ADMIN"), updateConfigs);
-router2.get("/admin/suppliers", requireAuth, requireRole("ADMIN"), listSuppliers);
-router2.post("/admin/suppliers", requireAuth, requireRole("ADMIN"), createSupplier);
-router2.get("/admin/suppliers/:id/breakeven", requireAuth, requireRole("ADMIN"), getBreakeven);
-router2.get("/admin/redemptions", requireAuth, requireRole("ADMIN"), listRedemptions);
-router2.patch("/admin/redemptions/:id/status", requireAuth, requireRole("ADMIN"), updateRedemptionStatus);
-router2.get("/admin/contests", requireAuth, requireRole("ADMIN"), adminListContests);
-router2.post("/admin/contests", requireAuth, requireRole("ADMIN"), adminCreateContest);
-router2.patch("/admin/contests/:id", requireAuth, requireRole("ADMIN"), adminUpdateContest);
-router2.get("/admin/print-catalog", requireAuth, requireRole("ADMIN"), listPrintProducts);
-router2.post("/admin/print-catalog", requireAuth, requireRole("ADMIN"), createPrintProduct);
-router2.post("/admin/print-catalog/import", requireAuth, requireRole("ADMIN"), importPrintProducts);
-router2.patch("/admin/print-catalog/bulk-margin", requireAuth, requireRole("ADMIN"), bulkUpdateMargin);
-router2.patch("/admin/print-catalog/:id", requireAuth, requireRole("ADMIN"), updatePrintProduct);
-router2.post("/admin/print-catalog/seed", requireAuth, requireRole("ADMIN"), seedCkCatalog);
-router2.get("/admin/service-catalog", requireAuth, requireRole("ADMIN"), adminListServiceCatalog);
-router2.post("/admin/service-catalog", requireAuth, requireRole("ADMIN"), adminCreateService);
-router2.patch("/admin/service-catalog/:id", requireAuth, requireRole("ADMIN"), adminUpdateService);
-router2.delete("/admin/service-catalog/:id", requireAuth, requireRole("ADMIN"), adminDeleteService);
-router2.get("/admin/franchises", requireAuth, requireRole("ADMIN"), FranchiseController.listAll);
-router2.post("/admin/franchises/promote", requireAuth, requireRole("ADMIN"), FranchiseController.promote);
-router2.post("/admin/franchises/credits", requireAuth, requireRole("ADMIN"), FranchiseController.addCredits);
-router2.patch("/admin/franchises/:profileId/toggle", requireAuth, requireRole("ADMIN"), FranchiseController.toggleActive);
-router2.delete("/admin/franchises/:profileId", requireAuth, requireRole("ADMIN"), FranchiseController.remove);
-router2.get("/admin/franchises/:profileId/statement", requireAuth, requireRole("ADMIN"), FranchiseController.getStatement);
-router2.get("/franchise/inventory", requireAuth, requireRole("FRANCHISEE"), FranchiseController.getInventory);
-router2.get("/franchise/referral", requireAuth, requireRole("FRANCHISEE"), FranchiseController.getReferralCode);
-router2.get("/franchise/network", requireAuth, requireRole("FRANCHISEE"), FranchiseController.getNetwork);
-router2.get("/franchise/finance", requireAuth, requireRole("FRANCHISEE"), FranchiseController.getFinanceStats);
-router2.post("/franchise/reorder", requireAuth, requireRole("FRANCHISEE"), FranchiseController.postReorder);
-router2.post("/public/phygital/upload", upload.single("photo"), PhygitalController.upload);
-router2.get("/admin/phygital/queue", requireAuth, requireRole("ADMIN"), PhygitalController.listPending);
-router2.get("/admin/phygital/all", requireAuth, requireRole("ADMIN"), PhygitalController.listAllByEvent);
-router2.post("/admin/phygital/confirm", requireAuth, requireRole("ADMIN"), PhygitalController.confirmPrint);
-router2.post("/admin/phygital/simulate", optionalAuth, PhygitalController.simulate);
-router2.get("/diag/db", checkDbStatus);
-router2.get("/health", (req, res) => res.json({ status: "ok", time: (/* @__PURE__ */ new Date()).toISOString() }));
-var routes_default = router2;
+router3.get("/public/orders/:id", PaymentController.getOrderPublic);
+router3.get("/public/orders/:id/check-payment", PaymentController.checkPaymentStatus);
+router3.post("/public/orders/:id/manual-payment", requireAuth, PaymentController.manualPayment);
+router3.get("/public/print-catalog", getPublicPrintCatalog);
+router3.get("/public/events/:eventId/print-products", getEventPrintProducts);
+router3.post("/orders/print", PaymentController.createPrintOrder);
+router3.post("/orders/:id/access-type", requireAuth, chooseAccessType);
+router3.get("/orders/:id/access-status", requireAuth, getAccessStatus);
+router3.post("/orders/:id/visibility", requireAuth, toggleVisibility);
+router3.get("/cliente/pedidos", requireAuth, getMeusPedidos);
+router3.get("/cliente/pedidos/:id", requireAuth, getMeuPedidoDetalhe);
+router3.get("/profissional/services", requireAuth, requireRole("ADMIN", "PROFISSIONAL"), listProServices);
+router3.post("/profissional/services", requireAuth, requireRole("ADMIN", "PROFISSIONAL"), addProService);
+router3.patch("/profissional/services/:id", requireAuth, requireRole("ADMIN", "PROFISSIONAL"), updateProService);
+router3.delete("/profissional/services/:id", requireAuth, requireRole("ADMIN", "PROFISSIONAL"), deleteProService);
+router3.post("/events/:slug/photos/like", requireAuth, likePhoto);
+router3.get("/me/points", requireAuth, getMyPoints);
+router3.post("/me/redeem-print", requireAuth, redeemPrint);
+router3.get("/unidade-fixa/stats", requireAuth, requireRole("ADMIN", "CARTORIO"), CartorioController.getStats);
+router3.get("/unidade-fixa/events", requireAuth, requireRole("ADMIN", "CARTORIO"), CartorioController.getEvents);
+router3.get("/unidade-fixa/orders", requireAuth, requireRole("ADMIN", "CARTORIO"), CartorioController.getOrders);
+router3.patch("/unidade-fixa/profile", requireAuth, requireRole("ADMIN", "CARTORIO"), updatePartnerProfile);
+router3.get("/unidade-fixa/team", requireAuth, requireRole("ADMIN", "CARTORIO"), getTeam);
+router3.put("/unidade-fixa/team", requireAuth, requireRole("ADMIN", "CARTORIO"), saveTeam);
+router3.get("/admin/stats", requireAuth, requireRole("ADMIN"), getDashboardStats);
+router3.get("/admin/logs", requireAuth, requireRole("ADMIN"), adminGetLogs);
+router3.post("/admin/orders/manual", requireAuth, requireRole("ADMIN"), adminCreateManualSale);
+router3.get("/admin/events", requireAuth, requireRole("ADMIN"), adminListEvents);
+router3.get("/admin/events/:id", requireAuth, requireRole("ADMIN"), adminGetEventById);
+router3.post("/admin/events", requireAuth, requireRole("ADMIN"), adminCreateEvent);
+router3.patch("/admin/events/:id", requireAuth, requireRole("ADMIN"), adminUpdateEvent);
+router3.patch("/admin/events/:id/cover", requireAuth, requireRole("ADMIN"), adminUploadCover);
+router3.patch("/admin/events/:id/preview", requireAuth, requireRole("ADMIN"), adminUploadPreview);
+router3.delete("/admin/events/:id", requireAuth, requireRole("ADMIN"), adminDeleteEvent);
+router3.get("/admin/users", requireAuth, requireRole("ADMIN"), adminListUsers);
+router3.post("/admin/users", requireAuth, requireRole("ADMIN"), adminCreateUser);
+router3.patch("/admin/users/:id", requireAuth, requireRole("ADMIN"), adminUpdateUser);
+router3.delete("/admin/users/:id", requireAuth, requireRole("ADMIN"), adminDeleteUser);
+router3.get("/admin/orders", requireAuth, requireRole("ADMIN"), adminListOrders);
+router3.patch("/admin/orders/:id/payout", requireAuth, requireRole("ADMIN"), adminMarkPayoutPaid);
+router3.patch("/admin/orders/:id/logistics", requireAuth, requireRole("ADMIN"), adminUpdateOrderLogistics);
+router3.delete("/admin/orders/:id", requireAuth, requireRole("ADMIN"), adminDeleteOrder);
+router3.post("/admin/orders/:id/delete-media", requireAuth, requireRole("ADMIN"), deleteMediaAdmin);
+router3.get("/admin/quotes", requireAuth, requireRole("ADMIN"), adminListQuotes);
+router3.patch("/admin/quotes/:id/approve", requireAuth, requireRole("ADMIN"), adminApproveQuote);
+router3.patch("/admin/quotes/:id/reject", requireAuth, requireRole("ADMIN"), adminRejectQuote);
+router3.post("/admin/payouts/generate", requireAuth, requireRole("ADMIN"), generateWeeklyPayout);
+router3.get("/admin/payouts", requireAuth, requireRole("ADMIN"), listPayouts);
+router3.get("/admin/payouts/export", requireAuth, requireRole("ADMIN"), exportPayoutCSV);
+router3.patch("/admin/payouts/:id/items/:itemId/paid", requireAuth, requireRole("ADMIN"), markItemPaid);
+router3.get("/payouts/me", requireAuth, getMeusRepasses);
+router3.get("/admin/configs", requireAuth, requireRole("ADMIN"), getConfigs);
+router3.patch("/admin/configs", requireAuth, requireRole("ADMIN"), updateConfigs);
+router3.get("/admin/suppliers", requireAuth, requireRole("ADMIN"), listSuppliers);
+router3.post("/admin/suppliers", requireAuth, requireRole("ADMIN"), createSupplier);
+router3.get("/admin/suppliers/:id/breakeven", requireAuth, requireRole("ADMIN"), getBreakeven);
+router3.get("/admin/redemptions", requireAuth, requireRole("ADMIN"), listRedemptions);
+router3.patch("/admin/redemptions/:id/status", requireAuth, requireRole("ADMIN"), updateRedemptionStatus);
+router3.get("/admin/contests", requireAuth, requireRole("ADMIN"), adminListContests);
+router3.post("/admin/contests", requireAuth, requireRole("ADMIN"), adminCreateContest);
+router3.patch("/admin/contests/:id", requireAuth, requireRole("ADMIN"), adminUpdateContest);
+router3.get("/admin/print-catalog", requireAuth, requireRole("ADMIN"), listPrintProducts);
+router3.post("/admin/print-catalog", requireAuth, requireRole("ADMIN"), createPrintProduct);
+router3.post("/admin/print-catalog/import", requireAuth, requireRole("ADMIN"), importPrintProducts);
+router3.patch("/admin/print-catalog/bulk-margin", requireAuth, requireRole("ADMIN"), bulkUpdateMargin);
+router3.patch("/admin/print-catalog/:id", requireAuth, requireRole("ADMIN"), updatePrintProduct);
+router3.post("/admin/print-catalog/seed", requireAuth, requireRole("ADMIN"), seedCkCatalog);
+router3.get("/admin/service-catalog", requireAuth, requireRole("ADMIN"), adminListServiceCatalog);
+router3.post("/admin/service-catalog", requireAuth, requireRole("ADMIN"), adminCreateService);
+router3.patch("/admin/service-catalog/:id", requireAuth, requireRole("ADMIN"), adminUpdateService);
+router3.delete("/admin/service-catalog/:id", requireAuth, requireRole("ADMIN"), adminDeleteService);
+router3.get("/admin/franchises", requireAuth, requireRole("ADMIN"), FranchiseController.listAll);
+router3.post("/admin/franchises/promote", requireAuth, requireRole("ADMIN"), FranchiseController.promote);
+router3.post("/admin/franchises/credits", requireAuth, requireRole("ADMIN"), FranchiseController.addCredits);
+router3.patch("/admin/franchises/:profileId/toggle", requireAuth, requireRole("ADMIN"), FranchiseController.toggleActive);
+router3.delete("/admin/franchises/:profileId", requireAuth, requireRole("ADMIN"), FranchiseController.remove);
+router3.get("/admin/franchises/:profileId/statement", requireAuth, requireRole("ADMIN"), FranchiseController.getStatement);
+router3.get("/franchise/inventory", requireAuth, requireRole("FRANCHISEE"), FranchiseController.getInventory);
+router3.get("/franchise/referral", requireAuth, requireRole("FRANCHISEE"), FranchiseController.getReferralCode);
+router3.get("/franchise/network", requireAuth, requireRole("FRANCHISEE"), FranchiseController.getNetwork);
+router3.get("/franchise/finance", requireAuth, requireRole("FRANCHISEE"), FranchiseController.getFinanceStats);
+router3.post("/franchise/reorder", requireAuth, requireRole("FRANCHISEE"), FranchiseController.postReorder);
+router3.get("/vaults", requireAuth, VaultController.listMyVaults);
+router3.post("/vaults", requireAuth, VaultController.createVault);
+router3.get("/vaults/invitation/:code", (req, res, next) => VaultController.getInvitationDetails(req, res, next));
+router3.post("/vaults/invitation/:code/accept", requireAuth, (req, res, next) => VaultController.acceptInvite(req, res, next));
+router3.get("/vaults/:albumId/media", requireAuth, VaultController.listMedia);
+router3.post("/vaults/:albumId/upload", requireAuth, upload.single("file"), VaultController.uploadMedia);
+router3.post("/vaults/:albumId/invite", requireAuth, VaultController.generateInvite);
+router3.post("/vaults/media/:mediaId/vote", requireAuth, (req, res, next) => VaultController.voteMedia(req, res, next));
+router3.post("/vaults/:albumId/checkout", requireAuth, VaultController.checkoutVault);
+router3.post("/vaults/:albumId/subscribe", requireAuth, VaultController.subscribeVault);
+router3.get("/vaults/media/proxy/:fileId", VaultController.proxyMedia);
+router3.post("/public/phygital/upload", upload.single("photo"), PhygitalController.upload);
+router3.get("/phygital/events/:eventId/queue", requireAuth, PhygitalController.listPending);
+router3.get("/phygital/events/:eventId/prints", requireAuth, PhygitalController.listAllByEvent);
+router3.patch("/phygital/prints/:id/status", requireAuth, PhygitalController.confirmPrint);
+router3.post("/admin/phygital/simulate", optionalAuth, PhygitalController.simulate);
+router3.get("/diag/db", checkDbStatus);
+router3.get("/health", (req, res) => res.json({ status: "ok", time: (/* @__PURE__ */ new Date()).toISOString() }));
+var routes_default = router3;
 
 // backend/src/app.ts
-var app = (0, import_express4.default)();
+var app = (0, import_express5.default)();
 app.get("/api/health", (_req, res) => {
   res.json({
     status: "ok",
@@ -87338,9 +88588,10 @@ app.use("/api/public", rate_limit_default({
   windowMs: 60 * 1e3,
   max: 60
 }));
-app.use("/api/webhooks", import_express4.default.raw({ type: "application/json" }));
-app.use(import_express4.default.urlencoded({ extended: true, limit: "10mb" }));
-app.use(import_express4.default.json({ limit: "10mb" }));
+app.use("/api/webhooks", import_express5.default.raw({ type: "application/json" }));
+app.use(import_express5.default.urlencoded({ extended: true, limit: "50mb" }));
+app.use(import_express5.default.json({ limit: "50mb" }));
+app.use("/uploads", import_express5.default.static("uploads"));
 app.use("/api", routes_default);
 app.use((err, _req, res, _next) => {
   console.error("\u{1F525} ERRO NO SERVIDOR:", err);
@@ -87353,6 +88604,7 @@ app.use((err, _req, res, _next) => {
 var app_default = app;
 
 // backend/src/server.ts
+import_dotenv3.default.config({ path: import_path3.default.resolve(__dirname, "../../.env") });
 var PORT = Number(process.env.PORT ?? 3001);
 if (process.env.NODE_ENV !== "production") {
   app_default.listen(PORT, "0.0.0.0", () => {

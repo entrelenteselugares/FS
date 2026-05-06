@@ -17,6 +17,7 @@ import {
   adminListOrders,
   adminMarkPayoutPaid,
   adminDeleteOrder,
+  adminUpdateOrderLogistics,
   adminListQuotes,
   adminApproveQuote,
   adminRejectQuote,
@@ -101,6 +102,7 @@ import { PhygitalController } from "../controllers/phygital.controller";
 import { FranchiseController } from "../controllers/franchise.controller";
 import { VaultController } from "../controllers/vault.controller";
 import calendarRoutes from "./calendar.routes";
+import { VaultCycleService } from "../services/vaultCycle.service";
 import { syncAllCalendars } from "../services/calendar-sync.service";
 import multer from "multer";
 import express from "express";
@@ -203,6 +205,22 @@ router.get("/cron/calendar-sync", async (req, res) => {
   }
 });
 
+// ── Cron: Vault Cycle (Processamento de Assinaturas Vencidas) ────────────────
+router.get("/cron/vault-cycle", async (req, res) => {
+  const token = req.headers["authorization"];
+  if (process.env.CRON_SECRET && token !== `Bearer ${process.env.CRON_SECRET}`) {
+    return res.status(401).json({ error: "Não autorizado." });
+  }
+  try {
+    await VaultCycleService.processAllDueSubscriptions();
+    res.json({ ok: true, ran: new Date().toISOString() });
+  } catch (err: unknown) {
+    const msg = err instanceof Error ? err.message : String(err);
+    console.error("[Cron/VaultCycle] Erro:", msg);
+    res.status(500).json({ error: msg });
+  }
+});
+
 // ── Autenticação ─────────────────────────────────────────────────────────────
 router.post("/auth/login",           AuthController.login);
 router.post("/auth/register",        AuthController.register);
@@ -249,6 +267,7 @@ router.get("/share/e/:id", SEOController.getEventPreview);
 // ── Checkout & Webhook ─────────────────────────────────────────────────────────
 router.post("/checkout/pending",     PaymentController.createPendingOrder);
 router.post("/checkout/payment",     PaymentController.processPayment);
+router.get("/checkout/shipping-quote", optionalAuth, PaymentController.calculateShipping);
 router.post(
   "/webhooks/mercadopago",
   // Raw body antes do JSON parser — garante integridade do HMAC
@@ -323,6 +342,7 @@ router.delete("/admin/users/:id", requireAuth, requireRole("ADMIN"), adminDelete
 // ── Admin: Gestão de Pedidos ───────────────────────────────────────────────────
 router.get("/admin/orders",                   requireAuth, requireRole("ADMIN"), adminListOrders);
 router.patch("/admin/orders/:id/payout",      requireAuth, requireRole("ADMIN"), adminMarkPayoutPaid);
+router.patch("/admin/orders/:id/logistics",     requireAuth, requireRole("ADMIN"), adminUpdateOrderLogistics);
 router.delete("/admin/orders/:id",                requireAuth, requireRole("ADMIN"), adminDeleteOrder);
 router.post("/admin/orders/:id/delete-media", requireAuth, requireRole("ADMIN"), deleteMediaAdmin);
 

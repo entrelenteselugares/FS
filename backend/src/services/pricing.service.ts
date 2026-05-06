@@ -77,7 +77,9 @@ export class PricingService {
     paymentMethod?: string, 
     hasEditor?: boolean, 
     productType?: string,
-    professionalId?: string 
+    professionalId?: string,
+    shippingFee?: number,
+    supplierCost?: number
   }): Promise<SplitResult> {
     const keys = ["split_matriz", "split_captacao", "split_edicao", "split_cartorio", "split_franchisee"];
     const configs = await prisma.platformConfig.findMany({
@@ -128,11 +130,20 @@ export class PricingService {
     }
 
     // ── LÓGICA PADRÃO (MARKETPLACE) ──
-    const captacao = +(amount * getPct("split_captacao")).toFixed(2);
-    const edicao   = +(amount * getPct("split_edicao")).toFixed(2);
-    const cartorio = +(amount * getPct("split_cartorio")).toFixed(2);
+    const shippingFee = options?.shippingFee || 0;
+    const supplierCost = options?.supplierCost || 0;
+    const netAmount = amount - shippingFee - supplierCost;
+
+    // Se o valor líquido for zero ou negativo (ex: venda promocional), parceiros não recebem split
+    if (netAmount <= 0) {
+      return { matriz: amount, captacao: 0, edicao: 0, cartorio: 0, franchisee: 0 };
+    }
+
+    const captacao = +(netAmount * getPct("split_captacao")).toFixed(2);
+    const edicao   = +(netAmount * getPct("split_edicao")).toFixed(2);
+    const cartorio = +(netAmount * getPct("split_cartorio")).toFixed(2);
     
-    // Matriz fica com o resto para garantir que a soma seja EXATA
+    // Matriz fica com o resto (incluindo custos de envio e fornecedor)
     const matriz = +(amount - (captacao + edicao + cartorio + franchisee)).toFixed(2);
 
     return { matriz, captacao, edicao, cartorio, franchisee, passiveFranchiseeId };

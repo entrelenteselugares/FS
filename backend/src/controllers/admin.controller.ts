@@ -861,6 +861,25 @@ export async function adminDeleteUser(req: AuthRequest, res: Response): Promise<
 
 // â”€â”€ PEDIDOS â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 
+export async function adminUpdateOrderLogistics(req: AuthRequest, res: Response): Promise<void> {
+  const { id } = req.params;
+  const { fulfillmentStatus, trackingCode } = req.body;
+  try {
+    const order = await prisma.order.update({
+      where: { id: String(id) },
+      data: {
+        ...(fulfillmentStatus && { fulfillmentStatus: fulfillmentStatus as any }),
+        ...(trackingCode !== undefined && { trackingCode })
+      }
+    });
+    await audit(req, "ORDER_LOGISTICS_UPDATED", "Order", order.id, null, { fulfillmentStatus, trackingCode });
+    res.json({ ok: true, order });
+  } catch (err: any) {
+    console.error("adminUpdateOrderLogistics:", err);
+    res.status(500).json({ error: "Erro ao atualizar logística." });
+  }
+}
+
 export async function adminListOrders(req: AuthRequest, res: Response): Promise<void> {
     const { status, page = "1", q, readyForPayout, payoutStatus } = req.query;
     const take = 20;

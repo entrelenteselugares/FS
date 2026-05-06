@@ -115,6 +115,8 @@ export const CheckoutPage = () => {
     state: ""
   });
   const [isShippingLoading, setIsShippingLoading] = useState(false);
+  const [shippingOptions, setShippingOptions] = useState<any[]>([]);
+  const [selectedShipping, setSelectedShipping] = useState<any>(null);
 
   // ── Carrega o pedido ─────────────────────────────────────────────────────────
   useEffect(() => {
@@ -211,10 +213,11 @@ export const CheckoutPage = () => {
 
   // ── Lógica de Frete/Logística ───────────────────────────────────────────────
   const handleCepBlur = async () => {
-    if (shippingData.cep.replace(/\D/g, "").length !== 8) return;
+    const cleanCep = shippingData.cep.replace(/\D/g, "");
+    if (cleanCep.length !== 8) return;
     setIsShippingLoading(true);
     try {
-      const resp = await fetch(`https://viacep.com.br/ws/${shippingData.cep}/json/`);
+      const resp = await fetch(`https://viacep.com.br/ws/${cleanCep}/json/`);
       const data = await resp.json();
       if (!data.erro) {
         setShippingData(prev => ({
@@ -223,9 +226,16 @@ export const CheckoutPage = () => {
           city: data.localidade,
           state: data.uf
         }));
+
+        // Busca cotação real no backend
+        const { data: quoteData } = await API.get(`/checkout/shipping-quote?cep=${cleanCep}&orderId=${order?.id}`);
+        if (quoteData.quotes && quoteData.quotes.length > 0) {
+          setShippingOptions(quoteData.quotes);
+          setSelectedShipping(quoteData.quotes[0]); // Seleciona o primeiro (geralmente mais barato)
+        }
       }
-    } catch {
-      console.error("Erro ao buscar CEP");
+    } catch (err) {
+      console.error("Erro ao buscar CEP/Frete:", err);
     } finally {
       setIsShippingLoading(false);
     }
@@ -338,7 +348,7 @@ export const CheckoutPage = () => {
 
       const settings: MPBrickSettings = {
         initialization: {
-          amount: Number(order.amount),
+          amount: Number(order.amount) - Number(order.shippingFee || 0) + Number(selectedShipping?.price || 0),
           payer: { email: order.buyerEmail || "cliente@fotosegundo.com.br", entityType: "individual" },
         },
         customization: {
@@ -358,7 +368,9 @@ export const CheckoutPage = () => {
                 cardToken: formData.token,
                 installments: formData.installments,
                 paymentMethodId: formData.payment_method_id,
-                shippingAddress: order.deliveryType === 'SHIPPING' ? shippingData : null
+                shippingAddress: order.deliveryType === 'SHIPPING' ? shippingData : null,
+                shippingFee: selectedShipping?.price || 0,
+                shippingMethod: selectedShipping?.name || null
               });
 
               if (data.hasPaid) {
@@ -390,7 +402,7 @@ export const CheckoutPage = () => {
       if (brickController.current) { brickController.current.unmount(); brickController.current = null; }
       initializationStarted.current = false;
     };
-  }, [order, pixData, paymentSuccess, loading, authStep, shippingData]);
+  }, [order, pixData, paymentSuccess, loading, authStep, shippingData, selectedShipping]);
 
   // ── Render Helpers ──────────────────────────────────────────────────────────
   if (loading) return (
@@ -484,7 +496,7 @@ export const CheckoutPage = () => {
             )}
             <div className="pt-6 border-t border-zinc-900 flex justify-between items-end">
               <span className="text-[10px] font-black text-brand-tactical uppercase tracking-[0.4em]">Total</span>
-              <span className="text-4xl font-black italic tracking-tighter text-theme-text">R$ {Number(order.amount).toFixed(2)}</span>
+              <span className="text-4xl font-black italic tracking-tighter text-theme-text">R$ {(Number(order.amount) - Number(order.shippingFee || 0) + Number(selectedShipping?.price || 0)).toFixed(2)}</span>
             </div>
           </div>
 
@@ -527,7 +539,27 @@ export const CheckoutPage = () => {
                     className="fs-input opacity-50"
                   />
                </div>
-               {isShippingLoading && <p className="text-[8px] animate-pulse text-brand-tactical uppercase font-black">Buscando endereço...</p>}
+               
+               {shippingOptions.length > 0 && (
+                 <div className="space-y-3 mt-6">
+                   <p className="text-[8px] font-black text-zinc-500 uppercase tracking-widest italic">Opções de Envio</p>
+                   {shippingOptions.map(opt => (
+                     <button
+                       key={opt.id}
+                       onClick={() => setSelectedShipping(opt)}
+                       className={`w-full p-4 flex justify-between items-center border transition-all ${selectedShipping?.id === opt.id ? 'border-brand-tactical bg-brand-tactical/10' : 'border-zinc-800 hover:border-zinc-700'}`}
+                     >
+                       <div className="text-left">
+                         <p className="text-[10px] font-black uppercase text-white">{opt.name}</p>
+                         <p className="text-[8px] text-zinc-500 uppercase">Entrega em até {opt.deliveryTimeDays} dias úteis</p>
+                       </div>
+                       <span className="text-xs font-black italic text-brand-tactical">R$ {opt.price.toFixed(2)}</span>
+                     </button>
+                   ))}
+                 </div>
+               )}
+
+               {isShippingLoading && <p className="text-[8px] animate-pulse text-brand-tactical uppercase font-black">Buscando opções de frete...</p>}
             </div>
           )}
 

@@ -1276,7 +1276,7 @@ export default function UnidadeFixaDashboard() {
       {/* Modal de Foto Print Live (Express) */}
       {isFlashModalOpen && (
         <FlashEventModal 
-          network={teamData.map(t => ({ partner: { id: t.userId, nome: t.nome, email: t.email } }))}
+          network={teamData.map(t => ({ id: t.userId, nome: t.nome, email: t.email, whatsapp: t.whatsapp }))}
           onClose={() => setIsFlashModalOpen(false)}
           onSuccess={(slug) => {
             setSuccess("Foto Print Live Ativado!");
