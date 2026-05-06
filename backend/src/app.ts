@@ -72,8 +72,8 @@ app.use("/api/public", rateLimit({
 // Body parsers
 // Webhook precisa do raw body para algumas validações de assinatura (se necessário)
 app.use("/api/webhooks", express.raw({ type: "application/json" }));
-app.use(express.urlencoded({ extended: true, limit: "10mb" }));
-app.use(express.json({ limit: "10mb" }));
+app.use(express.urlencoded({ extended: true, limit: "50mb" }));
+app.use(express.json({ limit: "50mb" }));
 app.use("/uploads", express.static("uploads"));
 
 // ── ROTAS PRINCIPAIS ─────────────────────────────────────────────────────────

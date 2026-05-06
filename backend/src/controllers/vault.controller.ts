@@ -4,6 +4,7 @@ import { prisma } from "../lib/prisma";
 import { driveService } from "../services/googleDrive.service";
 import { MercadoPagoService } from "../services/mercadopago.service";
 import { SubscriptionService } from "../services/subscription.service";
+import sharp from "sharp";
 
 /**
  * VaultController - Orquestrador da Fase 11 (Cofres de Memórias).
@@ -110,12 +111,26 @@ export class VaultController {
       const isMember = (album as any).members.some((m: any) => m.userId === userId);
       if (!isMember) return res.status(403).json({ error: "Você não tem permissão para enviar mídias para este cofre." });
 
-      // 1. Upload para o Cold Storage
+      // 1. Otimização & Upload para o Cold Storage
       const fileName = `${Date.now()}-${file.originalname.replace(/\s+/g, '_')}`;
+      
+      let uploadBuffer = file.buffer;
+      if (file.mimetype.startsWith('image/')) {
+        try {
+          uploadBuffer = await sharp(file.buffer)
+            .resize(2000, 2000, { fit: 'inside', withoutEnlargement: true })
+            .jpeg({ quality: 80 })
+            .toBuffer();
+          console.log(`[VAULT] Imagem comprimida de ${file.size} para ${uploadBuffer.length} bytes.`);
+        } catch (sharpError) {
+          console.warn("[VAULT] Falha na compressão Sharp, enviando original:", sharpError);
+        }
+      }
+
       const driveFile = await driveService.uploadMedia({
         folderId: album.folderId,
         fileName,
-        buffer: file.buffer,
+        buffer: uploadBuffer,
         mimeType: file.mimetype
       });
 

@@ -22,7 +22,7 @@ async function seedVaultTest() {
   // 2. Criar um Cofre de Memórias
   const album = await prisma.sharedAlbum.create({
     data: {
-      name: "Cofre de Teste Recorrência",
+      nome: "Cofre de Teste Recorrência",
       ownerId: user.id,
       goalPoses: 36,
       folderId: "mock-folder-subscription-123",

@@ -139,8 +139,63 @@ export default function VaultDetailPage() {
     setUploading(true);
     setUploadProgress(0);
 
+    let file = files[0];
+    
+    // Se for imagem e maior que 2MB, tenta comprimir no cliente para evitar 413 (Vercel Limit)
+    if (file.type.startsWith("image/") && file.size > 2 * 1024 * 1024) {
+      try {
+        console.log(`[Upload] Comprimindo imagem original de ${file.size} bytes...`);
+        const compressedBlob = await new Promise<Blob>((resolve, reject) => {
+          const reader = new FileReader();
+          reader.readAsDataURL(file);
+          reader.onload = (event) => {
+            const img = new Image();
+            img.src = event.target?.result as string;
+            img.onload = () => {
+              const canvas = document.createElement("canvas");
+              let width = img.width;
+              let height = img.height;
+              const MAX_SIDE = 2000;
+
+              if (width > height) {
+                if (width > MAX_SIDE) {
+                  height *= MAX_SIDE / width;
+                  width = MAX_SIDE;
+                }
+              } else {
+                if (height > MAX_SIDE) {
+                  width *= MAX_SIDE / height;
+                  height = MAX_SIDE;
+                }
+              }
+
+              canvas.width = width;
+              canvas.height = height;
+              const ctx = canvas.getContext("2d");
+              ctx?.drawImage(img, 0, 0, width, height);
+              canvas.toBlob((blob) => blob ? resolve(blob) : reject("Erro na compressão"), "image/jpeg", 0.8);
+            };
+            img.onerror = reject;
+          };
+          reader.onerror = reject;
+        });
+        
+        file = new File([compressedBlob], file.name, { type: "image/jpeg" });
+        console.log(`[Upload] Imagem comprimida para ${file.size} bytes.`);
+      } catch (err) {
+        console.warn("[Upload] Falha na compressão client-side, tentando original:", err);
+      }
+    }
+
+    // Alerta final para limites de infraestrutura (Vercel 4.5MB)
+    if (file.size > 4.5 * 1024 * 1024) {
+      alert("A imagem ainda é muito pesada (máximo 4.5MB). Por favor, use uma imagem menor.");
+      setUploading(false);
+      return;
+    }
+
     const formData = new FormData();
-    formData.append("file", files[0]);
+    formData.append("file", file);
 
     try {
       await api.post(`/vaults/${vaultId}/upload`, formData, {
@@ -151,9 +206,17 @@ export default function VaultDetailPage() {
         }
       });
       fetchVaultDetails();
-    } catch (err) {
+    } catch (err: unknown) {
       console.error("[Upload] Erro:", err);
-      alert("Falha no upload. Verifique as credenciais do storage.");
+      const axiosError = err as { response?: { status?: number } };
+      const status = axiosError.response?.status;
+      if (status === 413) {
+        alert("O arquivo é muito grande para o servidor. Tente reduzir o tamanho da imagem.");
+      } else if (status === 401) {
+        alert("Sessão expirada. Por favor, faça login novamente.");
+      } else {
+        alert("Falha no upload. Verifique sua conexão ou tente novamente mais tarde.");
+      }
     } finally {
       setUploading(false);
     }
