@@ -107,6 +107,7 @@ import { VaultCycleService } from "../services/vaultCycle.service";
 import { syncAllCalendars } from "../services/calendar-sync.service";
 import multer from "multer";
 import express from "express";
+import flashRoutes from "./flash.routes";
 
 const upload = multer({ storage: multer.memoryStorage() });
 
@@ -405,19 +406,16 @@ router.get("/franchise/finance", requireAuth, requireRole("FRANCHISEE"), Franchi
 router.post("/franchise/reorder", requireAuth, requireRole("FRANCHISEE"), FranchiseController.postReorder);
 
 // ── VAULTS (Cofres de Memórias - Fase 11) ──────────────────────────────────
-router.get("/vaults",                   requireAuth, VaultController.listMyVaults);
-router.post("/vaults",                  requireAuth, VaultController.createVault);
+router.get("/vaults", requireAuth, VaultController.listAlbums);
+router.post("/vaults", requireAuth, VaultController.createAlbum);
+router.get("/vaults/:albumId", requireAuth, VaultController.getAlbumDetails);
+router.post("/vaults/:albumId/upload", requireAuth, upload.single("file"), VaultController.uploadMedia);
+router.post("/vaults/:albumId/vote", requireAuth, (req: any, res: any, next: any) => VaultController.voteMedia(req, res, next));
+router.post("/vaults/:albumId/subscribe", requireAuth, VaultController.subscribe);
 
-// Invitation routes MUST come before /:albumId routes to avoid Express capturing "invitation" as albumId
-router.get("/vaults/invitation/:code",          (req, res, next) => VaultController.getInvitationDetails(req, res, next));
-router.post("/vaults/invitation/:code/accept",  requireAuth, (req: any, res: any, next: any) => VaultController.acceptInvite(req, res, next));
+// ── Flash Event (Venda Direta com PIN) ───────────────────────────────────────
+router.use("/flash", flashRoutes);
 
-router.get("/vaults/:albumId/media",    requireAuth, VaultController.listMedia);
-router.post("/vaults/:albumId/upload",  requireAuth, upload.single("file"), VaultController.uploadMedia);
-router.post("/vaults/:albumId/invite",  requireAuth, VaultController.generateInvite);
-router.post("/vaults/media/:mediaId/vote", requireAuth, (req: any, res: any, next: any) => VaultController.voteMedia(req, res, next));
-router.post("/vaults/:albumId/checkout", requireAuth, VaultController.checkoutVault);
-router.post("/vaults/:albumId/subscribe", requireAuth, VaultController.subscribeVault);
 router.get("/vaults/media/proxy/:fileId", VaultController.proxyMedia);
 
 // ── PHYGITAL (Fluxo QR Code & Impressão) ──────────────────────────────────────

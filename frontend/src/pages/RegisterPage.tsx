@@ -82,7 +82,8 @@ export const RegisterPage: React.FC = () => {
     try {
       console.log(`[REGISTERING] User Role: ${role}`);
       
-      let finalPayload = { ...formData, role };
+      const claim = searchParams.get("claim");
+      let finalPayload = { ...formData, role, claim };
       
       // Se for Unidade, consolidamos o endereço
       if (role === "CARTORIO") {
@@ -111,8 +112,10 @@ export const RegisterPage: React.FC = () => {
 
       const hasPending = localStorage.getItem("pending_purchase_event_id");
       
-      // Navegação imediata sem resetar loading local para evitar crash de remoção de nó no mobile
-      if (hasPending) {
+      // Navegação imediata
+      if (claim) {
+        window.location.href = "/minha-conta?claimed=true";
+      } else if (hasPending) {
         window.location.href = `/e/${hasPending}`;
       } else {
         window.location.href = target;

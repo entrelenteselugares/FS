@@ -15,7 +15,7 @@ export class VaultController {
   /**
    * Cria um novo cofre privado, gerando a pasta correspondente no Drive.
    */
-  static async createVault(req: AuthRequest, res: Response) {
+  static async createAlbum(req: AuthRequest, res: Response) {
     const { name, nome, goalPoses, cycleEndDay } = req.body;
     const finalName = nome || name;
     const userId = req.user?.userId;
@@ -215,7 +215,7 @@ export class VaultController {
   /**
    * Lista os cofres onde o usuário é membro.
    */
-  static async listMyVaults(req: AuthRequest, res: Response) {
+  static async listAlbums(req: AuthRequest, res: Response) {
     const userId = req.user?.userId;
     if (!userId) return res.status(401).json({ error: "Não autenticado." });
 
@@ -243,6 +243,38 @@ export class VaultController {
     } catch (error: any) {
       console.error("[VAULT] Erro ao listar cofres:", error.message);
       return res.status(500).json({ error: "Erro ao listar seus cofres.", details: error.message });
+    }
+  }
+
+  /**
+   * Obtém detalhes de um cofre específico.
+   */
+  static async getAlbumDetails(req: AuthRequest, res: Response) {
+    const albumId = req.params.albumId as string;
+    const userId = req.user?.userId;
+
+    if (!userId) return res.status(401).json({ error: "Não autenticado." });
+
+    try {
+      const album = await prisma.sharedAlbum.findUnique({
+        where: { id: albumId },
+        include: {
+          members: true,
+          subscription: true,
+          _count: {
+            select: { media: true, members: true }
+          }
+        }
+      });
+
+      if (!album) return res.status(404).json({ error: "Cofre não encontrado." });
+
+      const isMember = album.members.some(m => m.userId === userId);
+      if (!isMember) return res.status(403).json({ error: "Acesso negado." });
+
+      return res.json(album);
+    } catch (error: any) {
+      return res.status(500).json({ error: "Erro ao buscar detalhes do cofre." });
     }
   }
   /**
@@ -510,7 +542,7 @@ export class VaultController {
   /**
    * Ativa a assinatura recorrente para o cofre.
    */
-  static async subscribeVault(req: AuthRequest, res: Response) {
+  static async subscribe(req: AuthRequest, res: Response) {
     const albumId = req.params.albumId as string;
     const userId = req.user?.userId;
     const { planLimit } = req.body;

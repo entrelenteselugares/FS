@@ -29,6 +29,7 @@ import VaultsPage from "./pages/VaultsPage";
 import VaultDetailPage from "./pages/VaultDetailPage";
 import InvitationPage from "./pages/InvitationPage";
 import { BusinessLanding } from "./pages/BusinessLanding";
+import FlashUnlockPage from "./pages/FlashUnlockPage";
 import { useState, useEffect } from "react";
 import { API as api } from "./lib/api";
 import { T } from "./lib/theme";
@@ -82,6 +83,7 @@ const AnimatedRoutes = () => {
         <Route path="/captura" element={<PhygitalCapture />} />
         <Route path="/phygital-capture" element={<PhygitalCapture />} />
         <Route path="/negocios" element={<BusinessLanding />} />
+        <Route path="/flash/:shortId" element={<FlashUnlockPage />} />
 
         {/* Redireciona para o painel correto */}
         <Route path="/dashboard" element={

@@ -106,7 +106,7 @@ export class AuthController {
 
   /** POST /api/auth/register */
   static async register(req: Request, res: Response) {
-    const { nome, email, senha, role, whatsapp, habilidades, equipamento, outrasHabilidades, workflowType, razaoSocial, endereco, cidade, ref } = req.body;
+    const { nome, email, senha, role, whatsapp, habilidades, equipamento, outrasHabilidades, workflowType, razaoSocial, endereco, cidade, ref, claim } = req.body;
 
     try {
       const hash = await bcrypt.hash(senha, 12);
@@ -142,39 +142,59 @@ export class AuthController {
       // 2. Criar no Prisma (Dados de Negócio) usando o mesmo ID do Supabase
       const result = await prisma.$transaction(async (tx) => {
         const existingPrismaUser = await tx.user.findUnique({ where: { email: cleanEmail } });
-        if (existingPrismaUser) return existingPrismaUser;
-
-        const user = await tx.user.create({
-          data: { 
-            id: sbUser!.id,
-            email: cleanEmail, 
-            senha: hash, 
-            nome: nome || "Usuário", 
-            role: cleanRole, 
-            whatsapp 
-          }
-        });
+        
+        let user;
+        if (existingPrismaUser) {
+          user = existingPrismaUser;
+        } else {
+          user = await tx.user.create({
+            data: { 
+              id: sbUser!.id,
+              email: cleanEmail, 
+              senha: hash, 
+              nome: nome || "Usuário", 
+              role: cleanRole, 
+              whatsapp 
+            }
+          });
+        }
 
         // 3. Criar Perfil Específico
         if (cleanRole === "PROFISSIONAL") {
-          await tx.profissional.create({
-            data: {
+          await tx.profissional.upsert({
+            where: { userId: user.id },
+            create: {
               userId: user.id,
               services: habilidades || [],
               equipment: equipamento || "",
               otherHabilities: outrasHabilidades || "",
               workflowType: workflowType || ["TRADICIONAL"],
               hourlyRate: 150.00
-            }
+            },
+            update: {}
           });
         } else if (cleanRole === "CARTORIO") {
-          await tx.cartorio.create({
-            data: {
+          await tx.cartorio.upsert({
+            where: { userId: user.id },
+            create: {
               userId: user.id,
               razaoSocial: razaoSocial || nome,
               address: endereco || "",
               cidade: cidade || "",
               services: habilidades || []
+            },
+            update: {}
+          });
+        }
+
+        // 4. Se houver um "claim" (Flash Card), vinculamos ao novo usuário
+        if (claim) {
+          console.log(`[FLASH CLAIM] Vinculando cartão ${claim} ao usuário ${user.id}`);
+          await tx.flashCard.updateMany({
+            where: { shortId: claim },
+            data: { 
+              userId: user.id,
+              status: "CLAIMED"
             }
           });
         }

@@ -54,6 +54,7 @@ model User {
   sharedAlbumMedia   SharedAlbumMedia[]
   mediaVotes         MediaVote[]
   subscriptions      Subscription[]
+  flashCards         FlashCard[]
 
   @@map("users")
 }
@@ -157,6 +158,7 @@ model Event {
   phygitalPrints     PhygitalPrint[]
   retentionDays      Int?                @default(15)
   printProducts      EventPrintProduct[]
+  flashCards         FlashCard[]
 
   @@map("events")
 }
@@ -364,6 +366,7 @@ model EventMedia {
   createdAt  DateTime    @default(now())
   event      Event       @relation(fields: [eventId], references: [id], onDelete: Cascade)
   orderItems OrderItem[]
+  flashCard  FlashCard?
 
   @@unique([eventId, shortId])
   @@map("event_media")
@@ -861,4 +864,22 @@ model IoTDevice {
   updatedAt DateTime @updatedAt
 
   @@map("iot_devices")
+}
+
+model FlashCard {
+  id        String   @id @default(cuid())
+  shortId   String   @unique
+  pin       String   // 6 dígitos
+  eventId   String
+  mediaId   String?  @unique
+  status    String   @default("UNUSED") // UNUSED, USED, CLAIMED
+  userId    String?  // Usuário que resgatou
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  
+  event     Event       @relation(fields: [eventId], references: [id], onDelete: Cascade)
+  user      User?       @relation(fields: [userId], references: [id])
+  media     EventMedia? @relation(fields: [mediaId], references: [id])
+
+  @@map("flash_cards")
 }
