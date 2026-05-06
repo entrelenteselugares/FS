@@ -13,32 +13,30 @@ export class GoogleDriveService {
   private drive;
 
   constructor() {
-    const clientId = process.env.GOOGLE_DRIVE_CLIENT_ID;
-    const clientSecret = process.env.GOOGLE_DRIVE_CLIENT_SECRET;
-    const refreshToken = process.env.GOOGLE_DRIVE_REFRESH_TOKEN;
+    const clientEmail = process.env.GOOGLE_SERVICE_ACCOUNT_EMAIL;
+    const privateKey = process.env.GOOGLE_SERVICE_ACCOUNT_PRIVATE_KEY?.replace(/\\n/g, '\n');
 
-    console.log(`[DRIVE DEBUG] ClientID: ${clientId ? 'Presente' : 'MISSING'}`);
-    console.log(`[DRIVE DEBUG] Secret: ${clientSecret ? 'Presente' : 'MISSING'}`);
-    console.log(`[DRIVE DEBUG] RefreshToken: ${refreshToken ? 'Presente' : 'MISSING'}`);
+    console.log(`[DRIVE DEBUG] ServiceAccountEmail: ${clientEmail ? 'Presente' : 'MISSING'}`);
+    console.log(`[DRIVE DEBUG] PrivateKey: ${privateKey ? 'Presente' : 'MISSING'}`);
 
-    if (!clientId || !clientSecret || !refreshToken) {
-      console.warn('⚠️ Google Drive OAuth2 não configurado. O sistema operará em MODO MOCK para Cofres.');
+    if (!clientEmail || !privateKey) {
+      console.warn('⚠️ Google Drive Service Account não configurado. O sistema operará em MODO MOCK para Cofres.');
       this.drive = null;
       return;
     }
 
     try {
-      const oauth2Client = new google.auth.OAuth2(
-        clientId,
-        clientSecret,
-        process.env.GOOGLE_DRIVE_REDIRECT_URI
+      const jwtClient = new google.auth.JWT(
+        clientEmail,
+        undefined,
+        privateKey,
+        SCOPES
       );
 
-      oauth2Client.setCredentials({ refresh_token: refreshToken });
-      this.drive = google.drive({ version: 'v3', auth: oauth2Client });
-      console.log(`[DRIVE] Serviço OAuth2 inicializado com sucesso.`);
+      this.drive = google.drive({ version: 'v3', auth: jwtClient });
+      console.log(`[DRIVE] Serviço JWT (Service Account) inicializado com sucesso.`);
     } catch (err: any) {
-      console.error(`[DRIVE] Falha ao inicializar OAuth2:`, err.message);
+      console.error(`[DRIVE] Falha ao inicializar JWT:`, err.message);
       this.drive = null;
     }
   }
