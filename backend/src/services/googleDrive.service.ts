@@ -111,6 +111,12 @@ export class GoogleDriveService {
       };
     }
 
+    // Workaround para Serverless (Vercel): O googleapis precisa do tamanho exato do arquivo
+    // para fazer o upload corretamente. Readable.from(buffer) frequentemente falha com erro 500.
+    const os = require('os');
+    const tmpFilePath = path.join(os.tmpdir(), fileName);
+    fs.writeFileSync(tmpFilePath, buffer);
+
     try {
       const file = await this.drive.files.create({
         resource: {
@@ -119,10 +125,15 @@ export class GoogleDriveService {
         },
         media: {
           mimeType: mimeType,
-          body: Readable.from(buffer),
+          body: fs.createReadStream(tmpFilePath),
         },
         fields: 'id, name, webViewLink, thumbnailLink',
       } as any);
+
+      // Limpar o arquivo temporário
+      if (fs.existsSync(tmpFilePath)) {
+        fs.unlinkSync(tmpFilePath);
+      }
 
       // Liberar acesso de leitura para quem tem o link (Necessário para exibição no App)
       await this.drive.permissions.create({
@@ -135,6 +146,9 @@ export class GoogleDriveService {
 
       return file.data;
     } catch (error: any) {
+      if (fs.existsSync(tmpFilePath)) {
+        fs.unlinkSync(tmpFilePath);
+      }
       console.error('[DRIVE] Erro no upload de mídia:', error.message);
       throw error;
     }
