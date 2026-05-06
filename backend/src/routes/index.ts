@@ -409,6 +409,7 @@ router.post("/franchise/reorder", requireAuth, requireRole("FRANCHISEE"), Franch
 router.get("/vaults", requireAuth, VaultController.listAlbums);
 router.post("/vaults", requireAuth, VaultController.createAlbum);
 router.get("/vaults/:albumId", requireAuth, VaultController.getAlbumDetails);
+router.get("/vaults/:albumId/media", requireAuth, VaultController.listMedia);
 router.post("/vaults/:albumId/upload", requireAuth, upload.single("file"), VaultController.uploadMedia);
 router.post("/vaults/:albumId/vote", requireAuth, (req: any, res: any, next: any) => VaultController.voteMedia(req, res, next));
 router.post("/vaults/:albumId/subscribe", requireAuth, VaultController.subscribe);
