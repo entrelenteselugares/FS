@@ -6,6 +6,8 @@ import { QRCodeSVG } from "qrcode.react";
 import { QrCode, Copy, Check, X, Download, Calendar, DollarSign, Settings, Users2, Camera, Star, ShieldCheck, ArrowRight, Share2, MapPin, Phone, UserCircle, Printer, AlertTriangle, Play } from "lucide-react";
 import { useAuth } from "../hooks/useAuth";
 import { DashboardLayout, type NavItem } from "../components/DashboardLayout";
+import { FlashEventModal } from "../components/profissional";
+import { Zap } from "lucide-react";
 
 interface UnidadeStats {
   totalEventos: number;
@@ -137,6 +139,7 @@ export default function UnidadeFixaDashboard() {
   const [savingPix, setSavingPix] = useState(false);
   const [qrModalEvent, setQrModalEvent] = useState<EventoAgenda | null>(null);
   const [copied, setCopied] = useState(false);
+  const [isFlashModalOpen, setIsFlashModalOpen] = useState(false);
 
   // Custom Prices State
   const [globalServices, setGlobalServices] = useState<GlobalService[]>([]);
@@ -1106,9 +1109,17 @@ export default function UnidadeFixaDashboard() {
 
             {/* ── OPERAÇÕES DE IMPRESSÃO ── */}
             <div className="space-y-6">
-               <div className="flex items-center gap-3">
-                  <div className="h-0.5 w-6 bg-brand-tactical" />
-                  <p className="text-[9px] font-black text-theme-muted uppercase tracking-[0.4em]">Operações em Campo</p>
+               <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+                 <div className="flex items-center gap-3">
+                    <div className="h-0.5 w-6 bg-brand-tactical" />
+                    <p className="text-[9px] font-black text-theme-muted uppercase tracking-[0.4em]">Operações em Campo</p>
+                 </div>
+                 <button 
+                   onClick={() => setIsFlashModalOpen(true)}
+                   className="px-6 py-3 bg-brand-tactical text-zinc-950 text-[9px] font-black uppercase tracking-widest hover:brightness-110 transition-all flex items-center justify-center gap-2"
+                 >
+                   <Zap size={14} /> NOVA OPERAÇÃO (LIVE PRINT)
+                 </button>
                </div>
                
                <div className="grid grid-cols-1 gap-4">
@@ -1260,6 +1271,24 @@ export default function UnidadeFixaDashboard() {
             </div>
           </div>
         </div>
+      )}
+
+      {/* Modal de Foto Print Live (Express) */}
+      {isFlashModalOpen && (
+        <FlashEventModal 
+          network={teamData.map(t => ({ partner: { id: t.userId, nome: t.nome, email: t.email } }))}
+          onClose={() => setIsFlashModalOpen(false)}
+          onSuccess={(slug) => {
+            setSuccess("Foto Print Live Ativado!");
+            setIsFlashModalOpen(false);
+            setTimeout(() => setSuccess(""), 3000);
+            navigate(`/e/${slug}`);
+          }}
+          onError={(msg) => {
+            setError(msg);
+            setTimeout(() => setError(""), 3000);
+          }}
+        />
       )}
     </DashboardLayout>
   );
