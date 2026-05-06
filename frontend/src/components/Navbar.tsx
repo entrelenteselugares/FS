@@ -18,7 +18,7 @@ export const Navbar: React.FC = () => {
   return (
     <nav className="flex items-center justify-between sticky top-0 z-[100]" style={{
       padding: "8px 16px", borderBottom: `1px solid ${T.border}`,
-      background: "rgba(10, 10, 10, 0.8)", backdropFilter: "blur(20px)",
+      background: T.bg + "cc", backdropFilter: "blur(20px)",
     }}>
       <div className="flex items-center gap-8">
         <div onClick={() => navigate("/")} style={{ cursor: "pointer", display: "flex", alignItems: "center" }}>
@@ -28,7 +28,7 @@ export const Navbar: React.FC = () => {
             style={{ 
               height: 26, 
               objectFit: "contain",
-              filter: document.documentElement.getAttribute('data-theme') === 'dark' ? "brightness(0) invert(1)" : "none"
+              filter: "var(--logo-filter)"
             }} 
           />
         </div>
