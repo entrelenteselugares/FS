@@ -155,7 +155,18 @@ export class VaultController {
         media
       });
     } catch (error: any) {
-      console.error("[VAULT] Erro no upload de mídia (Controller):", error);
+      console.error("\n=======================================================");
+      console.error("[VAULT] 🚨 ERRO CRÍTICO NO UPLOAD DE MÍDIA (Controller)");
+      console.error("=======================================================");
+      console.error(" - Mensagem:", error.message);
+      if (error.response && error.response.data) {
+        console.error(" - Google API Response (Detalhes do Bloqueio):");
+        console.error(JSON.stringify(error.response.data, null, 2));
+      } else {
+        console.error(" - Nenhum detalhe de resposta da API (Pode ser falha local de Buffer ou Rede).");
+      }
+      console.error("=======================================================\n");
+
       return res.status(500).json({ 
         error: "Falha no upload.", 
         details: error.message || "Erro interno na comunicação com o Drive."

@@ -13,31 +13,71 @@ export class GoogleDriveService {
   private drive;
 
   constructor() {
+    const clientId = process.env.GOOGLE_DRIVE_CLIENT_ID;
+    const clientSecret = process.env.GOOGLE_DRIVE_CLIENT_SECRET;
+    const refreshToken = process.env.GOOGLE_DRIVE_REFRESH_TOKEN;
+
     const clientEmail = process.env.GOOGLE_SERVICE_ACCOUNT_EMAIL;
     const privateKey = process.env.GOOGLE_SERVICE_ACCOUNT_PRIVATE_KEY?.replace(/\\n/g, '\n');
 
-    console.log(`[DRIVE DEBUG] ServiceAccountEmail: ${clientEmail ? 'Presente' : 'MISSING'}`);
-    console.log(`[DRIVE DEBUG] PrivateKey: ${privateKey ? 'Presente' : 'MISSING'}`);
-
-    if (!clientEmail || !privateKey) {
-      console.warn('⚠️ Google Drive Service Account não configurado. O sistema operará em MODO MOCK para Cofres.');
-      this.drive = null;
-      return;
+    // 1. Tentar OAuth2 (Recomendado para evitar erro de Storage Quota em contas pessoais)
+    if (clientId && clientSecret && refreshToken) {
+      try {
+        const oauth2Client = new google.auth.OAuth2(clientId, clientSecret);
+        oauth2Client.setCredentials({ refresh_token: refreshToken });
+        this.drive = google.drive({ version: 'v3', auth: oauth2Client });
+        console.log(`[DRIVE] 🚀 Modo OAuth2 (Refresh Token) ativado. Usando cota de armazenamento do usuário.`);
+        return;
+      } catch (oauthErr: any) {
+        console.error(`[DRIVE] Falha ao inicializar OAuth2:`, oauthErr.message);
+      }
     }
 
-    try {
-      const jwtClient = new google.auth.JWT({
-        email: clientEmail,
-        key: privateKey,
-        scopes: SCOPES
-      });
+    // 2. Fallback para Service Account
+    if (clientEmail && privateKey) {
+      try {
+        const jwtClient = new google.auth.JWT({
+          email: clientEmail,
+          key: privateKey,
+          scopes: SCOPES
+        });
 
-      this.drive = google.drive({ version: 'v3', auth: jwtClient });
-      console.log(`[DRIVE] Serviço JWT (Service Account) inicializado com sucesso.`);
-    } catch (err: any) {
-      console.error(`[DRIVE] Falha ao inicializar JWT:`, err.message);
-      this.drive = null;
+        this.drive = google.drive({ version: 'v3', auth: jwtClient });
+        console.log(`[DRIVE] 🛡️ Modo Service Account ativado. (Atenção: Requer Shared Drive ou Quota de SA).`);
+        return;
+      } catch (err: any) {
+        console.error(`[DRIVE] Falha ao inicializar JWT:`, err.message);
+      }
     }
+
+    console.warn('⚠️ Google Drive não configurado (OAuth2 ou Service Account). O sistema operará em MODO MOCK.');
+    this.drive = null;
+  }
+
+  /**
+   * Helper method to retry operations with exponential backoff
+   */
+  private async withRetry<T>(operation: () => Promise<T>, maxRetries = 3): Promise<T> {
+    let attempt = 0;
+    while (attempt < maxRetries) {
+      try {
+        return await operation();
+      } catch (error: any) {
+        attempt++;
+        console.warn(`\n[DRIVE RETRY] ⚠️ Tentativa ${attempt}/${maxRetries} falhou.`);
+        console.warn(` - Mensagem: ${error.message}`);
+        if (error.response) {
+          console.warn(` - Google API Error:`, JSON.stringify(error.response.data, null, 2));
+        }
+        
+        if (attempt >= maxRetries) {
+          console.error(`[DRIVE] ❌ Esgotadas todas as retentativas para a operação.`);
+          throw error;
+        }
+        await new Promise(res => setTimeout(res, 1000 * Math.pow(2, attempt))); // Exponential backoff
+      }
+    }
+    throw new Error('Unreachable');
   }
 
   /**
@@ -58,25 +98,25 @@ export class GoogleDriveService {
     };
 
     try {
-      const folder = await this.drive.files.create({
+      const folder = await this.withRetry(() => this.drive!.files.create({
         requestBody: fileMetadata,
         fields: 'id, name',
-      });
+      }));
 
       console.log(`[DRIVE] Pasta criada para álbum: ${albumName} (ID: ${folder.data.id})`);
 
       // Liberar acesso de leitura para a pasta (Ajuda na exibição de miniaturas)
-      await this.drive.permissions.create({
+      await this.withRetry(() => this.drive!.permissions.create({
         fileId: folder.data.id!,
         requestBody: {
           role: 'reader',
           type: 'anyone',
         },
-      });
+      }));
 
       return folder.data;
     } catch (error: any) {
-      console.error('[DRIVE] Erro ao criar pasta:', error.message);
+      console.error('[DRIVE] Erro ao criar pasta após retentativas:', error.message);
       throw error;
     }
   }
@@ -116,7 +156,7 @@ export class GoogleDriveService {
     fs.writeFileSync(tmpFilePath, buffer);
 
     try {
-      const file = await this.drive.files.create({
+      const file = await this.withRetry(() => this.drive!.files.create({
         requestBody: {
           name: fileName,
           parents: [folderId],
@@ -126,7 +166,7 @@ export class GoogleDriveService {
           body: fs.createReadStream(tmpFilePath),
         },
         fields: 'id, name, webViewLink, thumbnailLink',
-      } as any);
+      } as any));
 
       // Limpar o arquivo temporário
       if (fs.existsSync(tmpFilePath)) {
@@ -134,20 +174,20 @@ export class GoogleDriveService {
       }
 
       // Liberar acesso de leitura para quem tem o link (Necessário para exibição no App)
-      await this.drive.permissions.create({
+      await this.withRetry(() => this.drive!.permissions.create({
         fileId: file.data.id!,
         requestBody: {
           role: 'reader',
           type: 'anyone',
         },
-      });
+      }));
 
       return file.data;
     } catch (error: any) {
       if (fs.existsSync(tmpFilePath)) {
         fs.unlinkSync(tmpFilePath);
       }
-      console.error('[DRIVE] Erro CRÍTICO no upload de mídia:', error);
+      console.error('[DRIVE] Erro CRÍTICO no upload de mídia após retentativas:', error);
       if (error.response) {
         console.error('[DRIVE] Detalhes da API Google (Response):', JSON.stringify(error.response.data, null, 2));
       }
