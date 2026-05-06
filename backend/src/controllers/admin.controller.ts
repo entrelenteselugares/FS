@@ -1285,7 +1285,9 @@ export async function adminCreateManualSale(req: AuthRequest, res: Response): Pr
         buyerEmail: customerEmail,
         buyerWhatsapp: whatsapp || null,
         internalNotes: internalNotes || null,
-        hasPaid: true
+        hasPaid: true,
+        payoutStatus: "AVAILABLE",
+        payoutReadyAt: new Date()
       }
     });
 

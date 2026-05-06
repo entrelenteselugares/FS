@@ -142,13 +142,13 @@ export const AdminPrintCatalog: React.FC = () => {
                <span className="text-[10px] font-bold text-theme-muted uppercase tracking-widest">PROPORCIONAL</span>
             </div>
          </div>
-         <div className="bg-theme-bg border border-theme-border/60 p-6 space-y-3 shadow-sm group hover:border-brand-tactical/40 transition-all">
+          <div className="bg-theme-bg border border-theme-border/60 p-6 space-y-3 shadow-sm group hover:border-brand-tactical/40 transition-all">
             <div className="flex justify-between items-start"><span className="text-[8px] font-black text-theme-muted uppercase tracking-widest italic">Hub de Produção</span><Layers className="text-brand-tactical" size={14} /></div>
             <div className="flex items-baseline gap-2">
-               <span className="text-3xl font-heading font-black text-theme-text italic">CK</span>
+               <span className="text-3xl font-heading font-black text-theme-text italic">OPERACIONAL</span>
                <span className="text-[10px] font-bold text-theme-muted uppercase tracking-widest">LOGÍSTICA ATIVA</span>
             </div>
-         </div>
+          </div>
       </div>
 
       {/* FILTROS TÁTICOS */}
