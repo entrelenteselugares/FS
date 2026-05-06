@@ -12,8 +12,10 @@ To be the national standard for phygital (physical + digital) photography experi
 
 1. **Midnight Luxury UI/UX**: High-end aesthetic with dark mode priority and Barlow Condensed typography.
 2. **Web-to-Print Automation**: Real-time IoT printing agent for immediate physical delivery.
-3. **Professional Management**: Integrated CRM, scheduling (Google Calendar), and financial payout engine.
-4. **Resilient Infrastructure**: Supabase-backed backend with Prisma ORM and Vercel serverless deployment.
+3. **Flash Event Fulfillment**: Frictionless QR/PIN based anonymous photo delivery and conversion.
+4. **Memory Vaults**: Production-grade cold storage integration (Google Drive) for long-term media persistence.
+5. **Professional Management**: Integrated CRM, scheduling (Google Calendar), and financial payout engine.
+6. **Resilient Infrastructure**: Supabase-backed backend with Prisma ORM and Vercel serverless deployment.
 
 ## Success Criteria
 

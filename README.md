@@ -1,36 +1,74 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# 📸 Foto Segundo | Midnight Luxury Experience
 
-## Getting Started
+[![Vercel Deployment](https://img.shields.io/badge/Deploy-Vercel-black?style=for-the-badge&logo=vercel)](https://vercel.com)
+[![Prisma](https://img.shields.io/badge/Prisma-ORM-2D3748?style=for-the-badge&logo=prisma)](https://prisma.io)
+[![Supabase](https://img.shields.io/badge/Supabase-Database-3ECF8E?style=for-the-badge&logo=supabase)](https://supabase.com)
 
-First, run the development server:
+**Foto Segundo** é uma plataforma phygital de elite que redefine a entrega de fotografia profissional. Unindo a estética *Midnight Luxury* com automação industrial de impressão, transformamos pixels em memórias físicas tangíveis em segundos.
 
+---
+
+## 💎 Diferenciais Estratégicos
+
+### ⚡ Flash Event (Fricção Zero)
+Entrega de fotos anônima via QR Code e PIN de 6 dígitos. O cliente visualiza sua foto instantaneamente e a resgata criando uma conta — eliminando a barreira de entrada e aumentando a conversão em eventos de alto volume.
+
+### 🏛️ Memory Vaults
+Infraestrutura de armazenamento em nuvem (Google Drive Cold Storage) integrada para preservação de ativos digitais de longo prazo, permitindo que clientes mantenham suas memórias seguras e acessíveis para sempre.
+
+### 🖨️ IoT Print Engine
+Agente de impressão local em tempo real que monitora a fila de pedidos e realiza o fulfillment físico automático, garantindo que o "unboxing" da memória aconteça ainda durante o evento.
+
+---
+
+## 🛠️ Stack Tecnológica
+
+*   **Frontend:** React, Vite, TailwindCSS (Midnight Luxury Theme), Framer Motion.
+*   **Backend:** Node.js, Express, TypeScript.
+*   **Banco de Dados:** PostgreSQL (Supabase) via Prisma ORM.
+*   **Storage:** Google Drive API (OAuth2 Hybrid Flow).
+*   **Infra:** Vercel (Serverless Functions).
+
+---
+
+## 🚀 Início Rápido
+
+### Pré-requisitos
+- Node.js 20.x
+- Instância PostgreSQL (Supabase recomendado)
+- Credenciais Google Cloud (Drive API)
+
+### Instalação
 ```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
+# Instalar dependências (Raiz)
+npm install
+
+# Instalar dependências (Módulos)
+npm install --prefix backend
+npm install --prefix frontend
+
+# Configurar variáveis de ambiente
+cp .env.example .env
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+### Desenvolvimento
+```bash
+# Rodar Backend + Frontend simultaneamente
+npm run dev
+```
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+---
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+## 📂 Estrutura do Projeto
 
-## Learn More
+- `/backend`: API REST, Serviços Google Drive, Integração Mercado Pago.
+- `/frontend`: Interface do usuário, Dashboards (Master, Partner, Cliente).
+- `/api`: Entrypoint para deploy na Vercel.
+- `/docs`: Documentação técnica detalhada.
+- `/.planning`: Roadmaps, especificações GSD e histórico de decisões.
 
-To learn more about Next.js, take a look at the following resources:
+---
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
-
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
-
-## Deploy on Vercel
-
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
-
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+## 📜 Licença
+© 2026 Foto Segundo. Todos os direitos reservados.
+Projetado para a excelência na fotografia phygital.
