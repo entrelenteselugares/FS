@@ -1,7 +1,7 @@
 import { useState, useEffect } from "react";
 import { useNavigate, useLocation } from "react-router-dom";
 import { useAuth } from "../hooks/useAuth";
-import { Search, ShoppingBag, Lock, Menu, Home } from "lucide-react";
+import { Search, ShoppingBag, Lock, Menu, Home, UserCircle } from "lucide-react";
 import { T } from "../lib/theme";
 
 /**
@@ -60,7 +60,7 @@ export function BottomNav() {
     { id: "buscar",  label: "Buscar",    icon: Search,     path: "/?buscar=1" },
     { id: "pedidos", label: "Carrinho",  icon: ShoppingBag, path: user ? "/minha-conta?s=pedidos" : "/login?s=pedidos" },
     { id: "cofres",  label: "Fotos",     icon: Lock,        path: user ? "/cofres" : "/login?next=cofres" },
-    { id: "menu",    label: "Opções",    icon: Menu,        path: user ? (user.role === 'CLIENTE' ? "/minha-conta?s=menu" : "/dashboard") : "/auth" },
+    { id: "menu",    label: user ? "Painel" : "Entrar",  icon: UserCircle,  path: user ? "/dashboard" : "/auth" },
   ];
 
   const isActive = (tabPath: string) => {
