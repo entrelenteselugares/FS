@@ -29,8 +29,15 @@ export async function getTeam(req: AuthRequest, res: Response): Promise<void> {
       return;
     }
 
-    // Todos profissionais cadastrados na plataforma
+    // Todos profissionais cadastrados na plataforma (Filtrando por Role)
     const allProfissionais = await prisma.profissional.findMany({
+      where: {
+        user: {
+          role: {
+            in: ["PROFISSIONAL", "FRANCHISEE"]
+          }
+        }
+      },
       include: {
         user: { select: { id: true, nome: true, email: true, whatsapp: true } }
       },

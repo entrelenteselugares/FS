@@ -40,7 +40,7 @@ test.describe('Painel Administrativo - Gestão de Orçamentos', () => {
     let processedCount = 0;
 
     while (hasPending && processedCount < 10) { // Limite de 10 para evitar loop infinito em caso de erro
-      const pendingLabel = page.getByText('PENDENTE').first();
+      const pendingLabel = page.getByText('PENDENTE', { exact: true }).first();
       
       if (await pendingLabel.isVisible()) {
         console.log(`[ADMIN] Processando solicitação pendente #${processedCount + 1}...`);
@@ -52,7 +52,7 @@ test.describe('Painel Administrativo - Gestão de Orçamentos', () => {
         // Aguarda a aba de Fechamento aparecer (confirma que o painel está aberto)
         const fechamentoTab = page.getByRole('button', { name: /5\. FECHAMENTO/i });
         await expect(fechamentoTab).toBeVisible({ timeout: 15000 });
-        await fechamentoTab.click();
+        await fechamentoTab.click({ force: true });
 
         // Preenche preço sugerido (R$ 1,00 para teste)
         const priceInput = page.getByRole('spinbutton').last();

@@ -17,7 +17,7 @@ test.describe('Marketplace Hybrid Flow: Unit Photo Sale (Flow D)', () => {
   const proEmail = 'hibrido@brasil.com.br'; 
   const eventName = `MKT Hybrid ${Date.now()}`;
 
-  test('should process a real marketplace sale and unlock photo', async ({ page }) => {
+  test('should process a real marketplace sale and unlock photo', async ({ page, browser }) => {
     test.setTimeout(240000); // 4 minutos
 
     // ─── 1. Login do Profissional ───────────────────────────

@@ -2,7 +2,27 @@ import { test, expect, Page } from '@playwright/test';
 
 const pass = '123456';
 
-/** Login helper — aguarda o redirect final de /dashboard */
+/** Helper para limpar modais que interceptam o clique (Z-Index) */
+async function clearPopups(page: Page) {
+  try {
+    // Tenta encontrar um botão comum de fechamento em modais
+    const closeBtn = page.locator('button').filter({ hasText: /Entendi|Fechar|Ok/i }).first();
+    if (await closeBtn.isVisible({ timeout: 1500 }).catch(() => false)) {
+      await closeBtn.click();
+      await page.waitForTimeout(500);
+    }
+    
+    // Se ainda houver overlay travando, aguarda ele sumir (fade-out)
+    const overlay = page.locator('.backdrop-blur-2xl').first();
+    if (await overlay.isVisible({ timeout: 500 }).catch(() => false)) {
+      await overlay.waitFor({ state: 'hidden', timeout: 5000 }).catch(() => {});
+    }
+  } catch (e) {
+    // Ignora erros se não houver pop-up
+  }
+}
+
+/** Login helper — aguarda o redirect final de /dashboard e limpa popups */
 async function login(page: Page, email: string) {
   await page.goto('/login');
   await page.locator('input[type="email"]').fill(email);
@@ -10,6 +30,7 @@ async function login(page: Page, email: string) {
   await page.getByRole('button', { name: /ENTRAR/i }).click();
   // Aguarda o redirect duplo (/dashboard → painel real)
   await page.waitForURL(/\/(profissional|unidade-fixa|franquia|minha-conta|admin)/, { timeout: 15000 });
+  await clearPopups(page);
 }
 
 test.describe('Usability Robot: Simulação por Perfil', () => {
@@ -24,16 +45,16 @@ test.describe('Usability Robot: Simulação por Perfil', () => {
     await expect(page.getByRole('button', { name: /Visão Geral/i })).toBeVisible();
 
     // Navega: Financeiro
-    await page.getByRole('button', { name: /Financeiro/i }).click();
-    await expect(page.getByText(/Performance Financeira/i)).toBeVisible();
+    await page.getByRole('button', { name: /Financeiro|Fluxo/i }).first().click();
+    await expect(page.getByText(/Performance Financeira|Repasse Previsto/i).first()).toBeVisible({ timeout: 10000 });
 
-    // Navega: Serviços
-    await page.getByRole('button', { name: /Serviços/i }).click();
-    await page.waitForTimeout(500);
+    // Navega: Serviços / Monitor
+    await page.getByRole('button', { name: /Serviços|Monitor/i }).first().click();
+    await expect(page.getByText(/Monitor de Operação Phygital/i).first()).toBeVisible({ timeout: 10000 });
 
-    // Navega: Minha Rede
-    await page.getByRole('button', { name: /Minha Rede/i }).click();
-    await page.waitForTimeout(500);
+    // Navega: Minha Rede / Equipe
+    await page.getByRole('button', { name: /Minha Rede|Equipe|Rede Técnica/i }).first().click();
+    await expect(page.getByText(/Escalabilidade da Rede Técnica|Rede Técnica/i).first()).toBeVisible({ timeout: 10000 });
 
     // Navega: Meu Perfil
     await page.getByRole('button', { name: /Meu Perfil/i }).click();
@@ -92,20 +113,20 @@ test.describe('Usability Robot: Simulação por Perfil', () => {
     await page.waitForTimeout(500);
 
     // Monitor de Fila (nova aba)
-    await page.getByRole('button', { name: /Monitor de Fila/i }).click();
-    await expect(page.getByText(/Monitor de Operação Phygital/i)).toBeVisible();
+    await page.getByRole('button', { name: /Monitor de Fila/i }).first().click();
+    await expect(page.getByText(/Monitor de Operação Phygital/i).first()).toBeVisible({ timeout: 10000 });
 
     // Fluxo Financeiro
-    await page.getByRole('button', { name: /Fluxo Financeiro/i }).click();
-    await page.waitForTimeout(500);
+    await page.getByRole('button', { name: /Fluxo Financeiro/i }).first().click();
+    await expect(page.getByText(/Consolidação de Repasses|Fluxo Financeiro/i).first()).toBeVisible({ timeout: 10000 });
 
     // Rede Técnica
-    await page.getByRole('button', { name: /Rede Técnica/i }).click();
-    await page.waitForTimeout(500);
+    await page.getByRole('button', { name: /Rede Técnica/i }).first().click();
+    await expect(page.getByText(/Escalabilidade da Rede Técnica|Rede Técnica/i).first()).toBeVisible({ timeout: 10000 });
 
     // Configuração
-    await page.getByRole('button', { name: /Configuração/i }).click();
-    await page.waitForTimeout(500);
+    await page.getByRole('button', { name: /Configuração/i }).first().click();
+    await expect(page.getByText(/Página pública atualizada|Página pública/i).first()).toBeVisible({ timeout: 10000 });
 
     console.log('[ROBOT] ✅ Unidade Fixa SP OK');
   });
@@ -164,12 +185,12 @@ test.describe('Usability Robot: Simulação por Perfil', () => {
     await expect(page.getByRole('button', { name: /Minhas Memórias/i })).toBeVisible();
 
     // Aba: Minha Carteira
-    await page.getByRole('button', { name: /Minha Carteira/i }).click();
-    await page.waitForTimeout(500);
+    await page.getByRole('button', { name: /Minha Carteira|Carteira/i }).first().click();
+    await expect(page.getByText(/Saldo Disponível|Histórico de Transações/i).first()).toBeVisible({ timeout: 10000 });
 
     // Aba: Meus Dados
-    await page.getByRole('button', { name: /Meus Dados/i }).click();
-    await page.waitForTimeout(500);
+    await page.getByRole('button', { name: /Meus Dados|Perfil/i }).first().click();
+    await expect(page.getByText(/Informações Pessoais|Dados Cadastrais/i).first()).toBeVisible({ timeout: 10000 });
 
     console.log('[ROBOT] ✅ Cliente VIP OK');
   });

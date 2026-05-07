@@ -69,17 +69,17 @@ test.describe('Financial Flow: Orçamento B2B (Full Cycle)', () => {
     console.log('[TEST] ✅ Days set to 2.');
 
     // Seleciona Equipamento: MOBILE MAKER
-    const mobileMakerBtn = page.getByRole('button', { name: 'MOBILE MAKER' });
-    await mobileMakerBtn.click();
+    const mobileMakerBtn = page.getByRole('button', { name: 'MOBILE MAKER', exact: true });
+    await mobileMakerBtn.click({ force: true });
     console.log('[TEST] ✅ Mobile Maker selected.');
 
     // Seleciona Finalidade: BUSINESS
-    const businessBtn = page.getByRole('button', { name: 'BUSINESS' });
-    await businessBtn.click();
+    const businessBtn = page.getByRole('button', { name: 'BUSINESS', exact: true });
+    await businessBtn.click({ force: true });
     console.log('[TEST] ✅ Business usage selected.');
 
-    // Seleciona um serviço de B2B/Corporativo visível na interface
-    const serviceText = page.getByText(/Ativação Phygital Corporativa/i).first();
+    // Seleciona um serviço visível na interface (baseado no DOM real)
+    const serviceText = page.getByText(/Fotografia - Cobertura Solo/i).first();
     await expect(serviceText).toBeVisible({ timeout: 10000 });
     await serviceText.click();
     

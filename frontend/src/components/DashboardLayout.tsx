@@ -366,18 +366,9 @@ export const DashboardLayout: React.FC<DashboardLayoutProps> = ({
           background:     T.bg,
           flexShrink:     0,
         }} className="dashboard-topbar">
-          {/* Left: hamburguer + brand */}
+          {/* Left: Brand Only on Desktop */}
           <div style={{ display: "flex", alignItems: "center", gap: 14 }}>
-            <button
-              id="btn-mobile-menu"
-              onClick={() => setDrawerOpen(true)}
-              style={{ ...BtnGhost, padding: "8px" }}
-              aria-label="Abrir menu"
-              className="dashboard-menu-btn"
-            >
-              <MenuIcon />
-            </button>
-            <Link to="/" style={{ display: "flex", alignItems: "center" }} className="dashboard-logo-topbar">
+            <Link to="/" style={{ display: "flex", alignItems: "center" }}>
               <img src="/logo-fs.png" alt="Logo" style={{ height: 22, objectFit: "contain" }} />
             </Link>
           </div>
@@ -399,9 +390,38 @@ export const DashboardLayout: React.FC<DashboardLayoutProps> = ({
         </nav>
 
         {/* Scrollable page content */}
-        <main style={{ flex: 1, overflowY: "auto", background: T.bg }}>
+        <main style={{ flex: 1, overflowY: "auto", background: T.bg }} className="pb-24 md:pb-0">
           {children}
         </main>
+
+        {/* ── Dashboard Bottom Nav (Mobile Only) ── */}
+        <nav 
+          className="fixed bottom-0 w-full z-50 bg-[#0a0a0a]/90 backdrop-blur-2xl border-t border-white/5 lg:hidden"
+          style={{ paddingBottom: "env(safe-area-inset-bottom, 12px)" }}
+        >
+          <div className="flex items-center justify-around px-2">
+            {navItems.filter(item => !item.hide).map((item, idx) => {
+              const active = item.isActive;
+              return (
+                <button
+                  key={idx}
+                  onClick={item.onClick}
+                  className={`flex flex-col items-center gap-1.5 py-4 flex-1 transition-all active:scale-90`}
+                >
+                  <div className={`transition-colors duration-300 ${active ? 'text-brand-tactical' : 'text-white/30'}`}>
+                    {item.icon}
+                  </div>
+                  <span className={`text-[8px] font-black uppercase tracking-widest transition-colors duration-300 ${active ? 'text-brand-tactical' : 'text-white/30'}`}>
+                    {item.label.split(' ')[0]}
+                  </span>
+                  {active && (
+                    <div className="absolute top-0 w-8 h-0.5 bg-brand-tactical shadow-[0_0_10px_rgba(133,185,172,0.5)]" />
+                  )}
+                </button>
+              );
+            })}
+          </div>
+        </nav>
       </div>
 
       {/* ── Responsive CSS via <style> ── */}
@@ -418,10 +438,11 @@ export const DashboardLayout: React.FC<DashboardLayoutProps> = ({
             visibility: hidden !important;
           }
         }
-        /* Mobile: oculta sidebar, mostra topbar */
+        /* Mobile: oculta sidebar, mostra topbar simplificada */
         @media (max-width: 1023px) {
           .dashboard-sidebar { display: none !important; }
-          .dashboard-topbar  { border-bottom: 1px solid ${T.border}; }
+          .dashboard-topbar  { border-bottom: 1px solid ${T.border}; padding: 12px 16px !important; }
+          .mobile-hide { display: none !important; }
         }
       `}</style>
     </div>

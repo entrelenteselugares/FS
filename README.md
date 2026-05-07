@@ -133,3 +133,10 @@ Veja [CONTRIBUTING.md](CONTRIBUTING.md) para diretrizes de desenvolvimento. Este
 
 © 2026 Foto Segundo. Todos os direitos reservados.
 Projetado para a excelência na fotografia phygital.
+
+## 📊 Estado do Evento (Event Status)
+
+* Implementamos `calcEventStatus`, `useEventStatus` e o componente `EventStatusDot` para visualização de cores de status em tempo real.
+* As cores mudam dinamicamente entre **azul → verde → amarelo → laranja → vermelho** conforme o tempo avança.
+* Deploy em produção: [Foto‑Segundo](https://foto-segundo-x1tw9dp56-fotosegundo.vercel.app)
+

@@ -96,7 +96,8 @@ export const CheckoutPage = () => {
   const brickController = useRef<{ unmount: () => void } | null>(null);
   const initializationStarted = useRef(false);
   const pollingRef = useRef<ReturnType<typeof setInterval> | null>(null);
-  const { user: authUser, login: authLogin, register: authRegister } = useContext(AuthContext)!;
+  const { user: authUser, login: authLogin, register: authRegister, loading: authGlobalLoading } = useContext(AuthContext)!;
+  console.log("[Checkout] Component Mounting...", { orderId, orderIdFromQuery, effectiveOrderId, hasAuthUser: !!authUser, authGlobalLoading });
 
   // Estados de Autenticação Tática
   const [authStep, setAuthStep] = useState<'loading' | 'required' | 'login' | 'register' | 'authorized'>('loading');
@@ -137,16 +138,19 @@ export const CheckoutPage = () => {
 
   // ── Controle de Autenticação (Bypass para Guest Checkout) ────────────────────
   useEffect(() => {
-    if (loading || !order) return;
+    console.log("[Checkout] useEffect auth check:", { loading, authGlobalLoading, hasOrder: !!order, hasUser: !!authUser });
+    if (loading || authGlobalLoading || !order) return;
 
     // SE FOR GUEST ORDER (Magic Link), AUTORIZA DIRETO!
     if (order.isGuestOrder) {
+      console.log("[Checkout] Authorized via Guest Order");
       setAuthStep('authorized');
       return;
     }
 
     // Se já está logado, autoriza
     if (authUser) {
+      console.log("[Checkout] Authorized via Global AuthContext:", authUser.email);
       setAuthStep('authorized');
       return;
     }
@@ -167,7 +171,7 @@ export const CheckoutPage = () => {
     };
 
     verifyAuth();
-  }, [loading, order, authUser]);
+  }, [loading, order, authUser, authGlobalLoading]);
 
   const handleAuthSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -329,21 +333,28 @@ export const CheckoutPage = () => {
 
     initializationStarted.current = true;
     const mpPublicKey = "APP_USR-18f8ccc4-8ed4-4f99-bb6d-e333d026e578";
-    const win = window as unknown as Record<string, { new (k: string, o: { locale: string }): { bricks: () => { create: (a: string, b: string, c: unknown) => Promise<{ unmount: () => void }> } } }>;
-    if (!win.MercadoPago) {
-      initializationStarted.current = false;
-      return;
-    }
 
     const renderPaymentBrick = async () => {
-      await new Promise(resolve => setTimeout(resolve, 100));
+      // Polling for MercadoPago SDK (Max 15s)
+      let attempts = 0;
+      while (!(window as any).MercadoPago && attempts < 30) {
+        await new Promise(resolve => setTimeout(resolve, 500));
+        attempts++;
+      }
+
+      if (!(window as any).MercadoPago) {
+        console.error("[Checkout] MercadoPago SDK not found.");
+        initializationStarted.current = false;
+        return;
+      }
+
       const container = document.getElementById("paymentBrick_container");
       if (!container) {
         initializationStarted.current = false;
         return;
       }
       container.innerHTML = "";
-      const mp = new win.MercadoPago(mpPublicKey, { locale: "pt-BR" });
+      const mp = new (window as any).MercadoPago(mpPublicKey, { locale: "pt-BR" });
       const bricksBuilder = mp.bricks();
 
       const settings: MPBrickSettings = {
@@ -387,8 +398,9 @@ export const CheckoutPage = () => {
               alert("Erro ao processar pagamento.");
             }
           },
-          onError: (error: unknown) => {
-            console.error("[Payment Brick] Error:", error);
+          onError: (error: any) => {
+            console.error("[Payment Brick] Fatal Error:", error);
+            if (error?.message) console.error("[Payment Brick] Error Message:", error.message);
             initializationStarted.current = false;
           },
         },

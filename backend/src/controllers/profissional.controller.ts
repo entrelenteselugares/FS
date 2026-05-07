@@ -793,11 +793,19 @@ export async function toggleFavorite(req: AuthRequest, res: Response): Promise<v
       res.json({ status: "REMOVED", message: "Parceiro removido da rede." });
       return;
     } else {
-      // Busca dados para notificação
+      // Busca dados para notificação e validação de role
       const [user, partner] = await Promise.all([
         prisma.user.findUnique({ where: { id: userId }, select: { nome: true } }),
-        prisma.user.findUnique({ where: { id: partnerId }, select: { nome: true, email: true, whatsapp: true } })
+        prisma.user.findUnique({ 
+          where: { id: partnerId }, 
+          select: { nome: true, email: true, whatsapp: true, role: true } 
+        })
       ]);
+
+      if (!partner || !["PROFISSIONAL", "FRANCHISEE", "ADMIN"].includes(partner.role)) {
+        res.status(403).json({ error: "Apenas perfis profissionais ou franquias podem ser adicionados à rede." });
+        return;
+      }
 
       const created = await prisma.professionalNetwork.create({
         data: { userId, partnerId }

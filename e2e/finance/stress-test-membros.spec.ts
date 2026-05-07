@@ -17,31 +17,23 @@ const MEMBERS = [
 ];
 
 /**
- * Limpador de Trilhos: Lida com convites/popups dinâmicos
+ * Limpador de Trilhos: Lida com convites/popups dinâmicos (OpportunitiesModal)
  */
 async function clearPopups(page) {
-  // Aguarda um momento para popups dinâmicos (Oportunidades) carregarem após o cockpit
-  await page.waitForTimeout(1500);
+  try {
+    await page.waitForLoadState('networkidle', { timeout: 10000 });
+  } catch (e) {}
   
-  const opportunitiesBtn = page.locator('button').filter({ hasText: /CENTRAL DE CONVITES|Convites Pendentes/i });
-  const ignoreBtn = page.getByRole('button', { name: /IGNORAR POR ENQUANTO|FECHAR/i });
+  const ignoreBtn = page.getByRole('button', { name: /IGNORAR POR ENQUANTO|FECHAR/i }).first();
 
-  if (await opportunitiesBtn.first().isVisible()) {
-    console.log(`[STRESS] Invitation detected. Handling...`);
-    await opportunitiesBtn.first().click({ force: true });
-    await page.waitForTimeout(1000);
-    
-    // Tenta recusar ou ignorar para limpar a tela rapidamente
-    const dismissBtn = page.locator('button').filter({ hasText: /RECUSAR|IGNORAR|FECHAR/i }).first();
-    if (await dismissBtn.isVisible()) {
-      await dismissBtn.click({ force: true });
-    } else {
-      // Se for forçado a ir para a central, volta para o profissional
-      await page.goto('/profissional');
-    }
-    await page.waitForLoadState('networkidle');
-  } else if (await ignoreBtn.isVisible()) {
+  try {
+    // Dá uma chance de 3 segundos para o modal de oportunidade aparecer
+    await ignoreBtn.waitFor({ state: 'visible', timeout: 3000 });
+    console.log(`[STRESS] Invitation detected. Ignorando para manter fluxo...`);
     await ignoreBtn.click({ force: true });
+    await page.waitForTimeout(1000);
+  } catch (e) {
+    // Se o modal não apareceu nesse tempo, segue o jogo (não há convites)
   }
 }
 
@@ -60,6 +52,11 @@ test.describe('Stress Test: Fluxo de Pagamento Multi-Membro', () => {
       await page.getByRole('button', { name: /ENTRAR/i }).click();
       
       await expect(page).toHaveURL(/.*(profissional|minha-conta)/, { timeout: 20000 });
+      if (page.url().includes('minha-conta')) {
+        console.log('[STRESS] Redirected to /minha-conta. Forcing /profissional...');
+        await page.goto('/profissional');
+        await page.waitForLoadState('networkidle');
+      }
       await clearPopups(page);
 
       // Inicia Venda Rápida
@@ -79,17 +76,15 @@ test.describe('Stress Test: Fluxo de Pagamento Multi-Membro', () => {
       // Passo 2: Configuração
       await clearPopups(page);
       await expect(page.getByText(/Configuração/i)).toBeVisible({ timeout: 10000 });
-      const valueInput = page.locator('input').filter({ hasText: '' }).last(); 
-      await valueInput.fill('10');
-
-      if (member.service.includes('Vídeo') || member.service.includes('Reels')) {
-        await page.getByText(/REELS/i).click();
-      } else if (member.service.includes('Impresso')) {
-        await page.getByText(/ÁLBUM/i).click();
-      } else {
-        await page.getByText(/FOTOS/i).click();
-      }
-      await page.getByRole('button', { name: /PRÓXIMA FASE/i }).click({ force: true });
+      const valueInput = page.getByRole('button', { name: /OUTROS/i }).first();
+      await valueInput.click();
+      
+      await page.getByPlaceholder(/NOME DO ITEM/i).fill(member.service);
+      await page.getByPlaceholder(/PREÇO/i).fill('10');
+      await page.getByRole('button', { name: /ADICIONAR AO CUPOM/i }).click();
+      
+      await expect(page.getByText(/1 ITENS/i)).toBeVisible({ timeout: 5000 });
+      await page.getByRole('button', { name: /AVANÇAR/i }).click({ force: true });
 
       // Passo 3: Logística e Pagamento
       await clearPopups(page);

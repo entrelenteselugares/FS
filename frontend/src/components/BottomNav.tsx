@@ -81,8 +81,8 @@ export function BottomNav() {
     return pathname === tabPath || pathname.startsWith(tabPath + "/");
   };
 
-  // Routes where BottomNav should never appear (Camera, Checkout, etc.)
-  const hiddenRoutes = ["/captura", "/phygital-capture", "/checkout"];
+  // Routes where BottomNav should never appear (Camera, Checkout, Dashboards, etc.)
+  const hiddenRoutes = ["/captura", "/phygital-capture", "/checkout", "/admin", "/profissional", "/unidade-fixa", "/franquia"];
   if (hiddenRoutes.some(r => location.pathname.startsWith(r))) {
     return null;
   }

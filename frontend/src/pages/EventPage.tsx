@@ -180,6 +180,7 @@ export default function EventPage() {
   const [showLiveOps, setShowLiveOps] = useState(true);
   const [showPhygital, setShowPhygital] = useState(true);
 
+  const eventStatus = useEventStatus(event?.dataEvento, null, 2, event?.isExpired, event?.active);
   // Carrega carrinho do localStorage
   useEffect(() => {
     if (event?.id) {
@@ -413,14 +414,7 @@ export default function EventPage() {
   const paid = step === "success";
   const isMarketplace = event.type === 'PHOTO_MARKETPLACE' || event.type === 'FOTO_POINT' || event.type === 'FLASH_EVENT';
 
-  // Lifecycle status dot
-  const eventStatus = useEventStatus(
-    event.dataEvento,
-    null, // eventEndTime — not on EventData yet, falls back to dataEvento + eventHours
-    2,
-    event.isExpired,
-    event.active
-  );
+
   const isEventOver = event.dataEvento ? (() => {
     try {
       const datePart = String(event.dataEvento).split('T')[0];

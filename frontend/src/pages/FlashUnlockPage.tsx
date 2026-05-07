@@ -93,7 +93,7 @@ const FlashUnlockPage: React.FC = () => {
               {pin.map((digit, idx) => (
                 <input
                   key={idx}
-                  ref={(el) => { inputRefs.current[idx] = el; }}
+                  ref={(el: HTMLInputElement | null): void => { inputRefs.current[idx] = el; }}
                   type="text"
                   inputMode="numeric"
                   maxLength={1}
