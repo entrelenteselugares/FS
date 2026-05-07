@@ -11,9 +11,9 @@ test.describe('Mobile UI Audit: Responsiveness & UX', () => {
     const title = page.locator('h1');
     await expect(title).toBeVisible();
     
-    // Verifica se a grade de eventos é responsiva (1 coluna no mobile)
-    const eventGrid = page.locator('.grid');
-    // No mobile, a grade costuma ser 1 coluna. Vamos verificar se não há overflow horizontal.
+    // Verifica se a grade de eventos é responsiva (2 colunas no mobile como Banlek)
+    const eventGrid = page.locator('.hp-event-grid');
+    // No mobile, a grade agora tem 2 colunas.
     const bodyWidth = await page.evaluate(() => document.body.clientWidth);
     expect(bodyWidth).toBeLessThanOrEqual(375);
     

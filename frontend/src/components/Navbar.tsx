@@ -16,11 +16,14 @@ export const Navbar: React.FC = () => {
     : "/minha-conta";
 
   return (
-    <nav className="flex items-center justify-between md:justify-between sticky top-0 z-[100]" style={{
+    <nav className="flex items-center justify-between sticky top-0 z-[100]" style={{
       padding: "12px 16px", borderBottom: `1px solid ${T.border}`,
       background: T.bgNav, backdropFilter: "blur(20px)",
     }}>
-      <div className="flex items-center justify-center md:justify-start w-full md:w-auto">
+      {/* Mobile Back Button Placeholder (if needed, but for now just empty div to keep balance) */}
+      <div className="md:hidden w-8" />
+
+      <div className="flex items-center justify-center md:justify-start flex-1 md:flex-none">
         <div onClick={() => navigate("/")} style={{ cursor: "pointer", display: "flex", alignItems: "center" }}>
           <img 
             src="/logo-fs.png" 
@@ -32,6 +35,11 @@ export const Navbar: React.FC = () => {
             }} 
           />
         </div>
+      </div>
+
+      {/* Mobile Country Selector */}
+      <div className="md:hidden flex items-center gap-1 w-8 justify-end">
+        <span style={{ fontSize: 16 }}>🇧🇷</span>
       </div>
 
       <div style={{ display: "flex", alignItems: "center", gap: "clamp(4px, 2vw, 12px)" }} className="mobile-hide md:flex">

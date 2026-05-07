@@ -482,7 +482,7 @@ return (
               
               <motion.h1 
                 initial={{ opacity: 0, y: 30 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.2 }}
-                className="text-4xl md:text-6xl lg:text-7xl font-heading font-black text-theme-text uppercase tracking-tighter leading-[0.9] italic max-w-[12ch] md:max-w-[15ch]"
+                className="text-5xl md:text-6xl lg:text-7xl font-heading font-black text-theme-text uppercase tracking-tighter leading-[0.9] italic max-w-[12ch] md:max-w-[15ch]"
               >
                 {event.nomeNoivos}
               </motion.h1>

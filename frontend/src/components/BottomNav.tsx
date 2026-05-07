@@ -1,6 +1,6 @@
 import React from "react";
 import { useNavigate, useLocation } from "react-router-dom";
-import { Home, Search, ShoppingBag, User, Briefcase } from "lucide-react";
+import { Home, Search, ShoppingBag, User, Briefcase, Image, Menu } from "lucide-react";
 import { useAuth } from "../hooks/useAuth";
 
 export const BottomNav: React.FC = () => {
@@ -22,15 +22,18 @@ export const BottomNav: React.FC = () => {
         className={`flex flex-col items-center gap-1 transition-colors ${isActive("/") ? "text-emerald-500" : "text-[var(--text)]/40"}`}
       >
         <Home size={20} />
-        <span className="text-[8px] font-black uppercase tracking-widest italic">Home</span>
+        <span className="text-[7.5px] font-bold uppercase tracking-tight">Home</span>
       </button>
 
       <button 
-        onClick={() => document.getElementById("vitrine")?.scrollIntoView({ behavior: 'smooth' })}
+        onClick={() => {
+          if (location.pathname !== "/") navigate("/");
+          setTimeout(() => document.getElementById("vitrine")?.scrollIntoView({ behavior: 'smooth' }), 100);
+        }}
         className="flex flex-col items-center gap-1 text-[var(--text)]/40"
       >
         <Search size={20} />
-        <span className="text-[8px] font-black uppercase tracking-widest italic">Buscar</span>
+        <span className="text-[7.5px] font-bold uppercase tracking-tight">Buscar</span>
       </button>
 
       <button 
@@ -38,26 +41,24 @@ export const BottomNav: React.FC = () => {
         className={`flex flex-col items-center gap-1 transition-colors ${isActive("/minha-conta") ? "text-emerald-500" : "text-[var(--text)]/40"}`}
       >
         <ShoppingBag size={20} />
-        <span className="text-[8px] font-black uppercase tracking-widest italic">Pedidos</span>
+        <span className="text-[7.5px] font-bold uppercase tracking-tight">Carrinho</span>
       </button>
 
-      {user ? (
-        <button 
-          onClick={() => navigate(dashPath)}
-          className={`flex flex-col items-center gap-1 transition-colors ${isActive(dashPath) ? "text-emerald-500" : "text-[var(--text)]/40"}`}
-        >
-          {user.role === "PROFISSIONAL" ? <Briefcase size={20} /> : <User size={20} />}
-          <span className="text-[8px] font-black uppercase tracking-widest italic">Painel</span>
-        </button>
-      ) : (
-        <button 
-          onClick={() => navigate("/login")}
-          className={`flex flex-col items-center gap-1 transition-colors ${isActive("/login") ? "text-emerald-500" : "text-[var(--text)]/40"}`}
-        >
-          <User size={20} />
-          <span className="text-[8px] font-black uppercase tracking-widest italic">Entrar</span>
-        </button>
-      )}
+      <button 
+        onClick={() => navigate("/cofres")}
+        className={`flex flex-col items-center gap-1 transition-colors ${isActive("/cofres") ? "text-emerald-500" : "text-[var(--text)]/40"}`}
+      >
+        <Image size={20} />
+        <span className="text-[7.5px] font-bold uppercase tracking-tight">Suas fotos</span>
+      </button>
+
+      <button 
+        onClick={() => navigate(user ? dashPath : "/login")}
+        className={`flex flex-col items-center gap-1 transition-colors ${isActive(dashPath) || isActive("/login") ? "text-emerald-500" : "text-[var(--text)]/40"}`}
+      >
+        <Menu size={20} />
+        <span className="text-[7.5px] font-bold uppercase tracking-tight">Opções</span>
+      </button>
     </div>
   );
 };

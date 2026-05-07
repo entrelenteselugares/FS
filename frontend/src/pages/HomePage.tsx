@@ -85,12 +85,18 @@ function EventCard({ event, onClick }: { event: Event; onClick: () => void }) {
         )}
       </div>
 
-      {/* Content Overlay - Bottom */}
-      <div className="absolute bottom-0 left-0 w-full p-5 z-10 space-y-1">
+      {/* Content Overlay - Centered on Mobile, Bottom on Desktop */}
+      <div className="absolute inset-0 flex flex-col items-center justify-center p-4 z-10 text-center md:hidden">
+        <h3 className="text-xl font-heading font-black text-white uppercase italic tracking-tighter leading-none drop-shadow-2xl">
+          {event.nomeNoivos}
+        </h3>
+      </div>
+
+      <div className="absolute bottom-0 left-0 w-full p-5 z-10 space-y-1 hidden md:block">
         <h3 className="text-xl font-heading font-black text-white uppercase italic tracking-tight leading-tight drop-shadow-lg truncate">
           {event.nomeNoivos}
         </h3>
-        <div className="flex flex-col gap-1 text-white/70 text-[9px] font-black uppercase tracking-widest italic">
+        <div className="hidden md:flex flex-col gap-1 text-white/70 text-[9px] font-black uppercase tracking-widest italic">
           <div className="flex items-center gap-1.5">
             <MapPin size={10} className="text-emerald-500" />
             <span className="truncate">{event.location || event.city || "PONTO DESIGNADO"}</span>
@@ -202,13 +208,14 @@ export const HomePage = () => {
            /* Compressed Hero on Mobile */
            .hp-hero-section { 
              display: flex !important; 
-             padding: 24px 16px 32px !important;
-             text-align: left !important;
-             align-items: flex-start !important;
+             padding: 40px 20px 48px !important;
+             text-align: center !important;
+             align-items: center !important;
              min-height: auto !important;
+             background: linear-gradient(to bottom, var(--bg-card), var(--bg)) !important;
            }
-           .hp-hero-title { font-size: 38px !important; line-height: 0.9 !important; margin-bottom: 12px !important; }
-           .hp-hero-desc { font-size: 12px !important; margin-bottom: 24px !important; text-align: left !important; opacity: 0.8; }
+           .hp-hero-title { font-size: 42px !important; line-height: 0.85 !important; margin-bottom: 16px !important; text-align: center !important; letter-spacing: -0.04em !important; font-weight: 900 !important; }
+           .hp-hero-desc { font-size: 14px !important; margin-bottom: 32px !important; text-align: center !important; opacity: 0.7; max-width: 280px !important; margin-left: auto !important; margin-right: auto !important; }
            .hp-stats { display: none !important; }
            .hp-hero-tagline { display: none !important; }
            .hp-hero-search-desktop { flex-direction: column !important; width: 100% !important; gap: 8px !important; }
@@ -219,8 +226,8 @@ export const HomePage = () => {
            .hp-mobile-vitrine-header { display: flex !important; padding: 0 16px 20px !important; }
            
            /* Immersive Feed for Mobile */
-           .hp-event-grid-container { padding: 0 !important; }
-           .hp-event-grid { gap: 1px !important; grid-template-columns: 1fr !important; }
+           .hp-event-grid-container { padding: 8px !important; }
+           .hp-event-grid { gap: 8px !important; grid-template-columns: repeat(2, 1fr) !important; }
          }
         @media(min-width:769px){
           .hp-mobile-search { display: none !important; }
@@ -267,15 +274,27 @@ export const HomePage = () => {
           </p>
 
           <div className="hp-hero-search-desktop animate-reveal" style={{ display: "flex", gap: 12, justifyContent: "center" }}>
+            {/* Mobile-only Search Bar inside Hero */}
+            <div className="md:hidden w-full relative mb-4">
+              <Search size={18} className="absolute left-5 top-1/2 -translate-y-1/2 text-theme-text-muted" />
+              <input
+                value={query}
+                onChange={e => setQuery(e.target.value)}
+                onKeyDown={e => e.key === "Enter" && fetchEvents(query, 1)}
+                placeholder="Pesquise seus fotos...."
+                className="w-full bg-white text-black pl-14 pr-6 py-5 rounded-2xl text-sm font-bold shadow-2xl outline-none"
+              />
+            </div>
+
             <button
               onClick={() => document.getElementById('vitrine')?.scrollIntoView({ behavior: 'smooth' })}
-              className="lux-button-tactical px-10 py-4 text-[10px] font-display font-black uppercase tracking-[0.4em] italic shadow-2xl shadow-brand-tactical/20"
+              className="lux-button-tactical px-10 py-4 text-[10px] font-display font-black uppercase tracking-[0.4em] italic shadow-2xl shadow-brand-tactical/20 hidden md:block"
             >
               Explorar Vitrine
             </button>
             <button
               onClick={() => navigate("/cotacao")}
-              className="px-8 py-4 text-[10px] font-display font-black uppercase tracking-[0.2em] italic bg-white/5 border border-white/10 text-theme-text hover:bg-theme-text/10 transition-all"
+              className="px-8 py-4 text-[10px] font-display font-black uppercase tracking-[0.2em] italic bg-white/5 border border-white/10 text-theme-text hover:bg-theme-text/10 transition-all hidden md:block"
             >
               Agendar Cobertura
             </button>
@@ -298,7 +317,32 @@ export const HomePage = () => {
         <div style={{ maxWidth: 1600, margin: "0 auto", padding: "0" }}>
           
           {/* Mobile compact vitrine header & Filters (proportional grid) */}
-          <div className="hp-mobile-vitrine-header flex flex-col gap-4 p-4">
+          <div className="hp-mobile-vitrine-header flex flex-col gap-5 p-4 pb-6">
+            <div className="flex items-center justify-between px-1">
+              <h3 className="text-base font-black text-[var(--text)] uppercase tracking-tighter italic">Categorias</h3>
+              <button className="text-[10px] font-bold text-emerald-500 uppercase tracking-widest">Ver tudo</button>
+            </div>
+            
+            <div className="flex gap-2 overflow-x-auto scrollbar-hide -mx-4 px-4">
+              {[
+                { id: 'ALBUM_FULL', label: 'Álbuns', icon: '📖' },
+                { id: 'PHOTO_MARKETPLACE', label: 'Live Print', icon: '🖨️' },
+                { id: 'FOTO_POINT', label: 'Foto Point', icon: '📸' },
+                { id: 'FLASH_EVENT', label: 'Flash', icon: '⚡' }
+              ].map(cat => (
+                <button 
+                  key={cat.id}
+                  onClick={() => { setSelectedType(cat.id === selectedType ? '' : cat.id); setPage(1); }}
+                  className={`flex items-center gap-2 whitespace-nowrap px-5 py-3 rounded-2xl text-[10px] font-black uppercase tracking-widest transition-all ${selectedType === cat.id ? 'bg-emerald-500 text-black shadow-lg' : 'bg-[var(--bg-card)] border border-[var(--border)] text-[var(--text-muted)]'}`}
+                >
+                  <span className="text-xs">{cat.icon}</span>
+                  {cat.label}
+                </button>
+              ))}
+            </div>
+
+            <div className="h-px bg-[var(--border)] opacity-20 w-full" />
+
             <div className="grid grid-cols-3 gap-2 w-full">
               <div className="relative">
                 <select 

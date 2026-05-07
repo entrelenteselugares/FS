@@ -101,7 +101,7 @@ export default function ClienteArea() {
   const NAV_ITEMS: NavItem[] = [
     { label: "Minhas Memórias", onClick: () => setActiveTab("files"), isActive: activeTab === "files", icon: <Image size={18} /> },
     { label: "Cofres de Memórias", onClick: () => navigate("/cofres"), isActive: false, icon: <Lock size={18} /> },
-    { label: "Minha Carteira", onClick: () => setActiveTab("wallet"), isActive: activeTab === "wallet", icon: <ShoppingBag size={18} /> },
+    { label: "Carrinho", onClick: () => setActiveTab("wallet"), isActive: activeTab === "wallet", icon: <ShoppingBag size={18} /> },
     ...(user?.franchiseProfile ? [
       { label: "Franquia Print", onClick: () => setActiveTab("franquia"), isActive: activeTab === "franquia", icon: <Printer size={18} /> }
     ] : []),
@@ -432,7 +432,7 @@ export default function ClienteArea() {
           ) : activeTab === "wallet" ? (
             <div className="space-y-10 animate-in fade-in duration-500">
               <div className="border-b border-theme-border/60 pb-6">
-                <h2 className="text-3xl font-black text-theme-text uppercase tracking-tighter italic">Minha Carteira</h2>
+                <h2 className="text-3xl font-black text-theme-text uppercase tracking-tighter italic">Carrinho</h2>
                 <p className="text-[10px] text-theme-muted uppercase tracking-[0.4em] mt-2 font-black italic">Créditos de Recompensa e Cashback</p>
               </div>
 
