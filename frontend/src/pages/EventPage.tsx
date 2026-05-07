@@ -1,4 +1,5 @@
 import { useState, useEffect, useCallback } from "react";
+import { useEventStatus } from "../hooks/useEventStatus";
 import { Check, Printer, QrCode, ShoppingCart, Share2, ChevronRight, Image as ImageIcon, Camera, MapPin, ListChecks, Clock, ShieldCheck, CheckCircle2, Lock } from "lucide-react";
 import { QRCodeCanvas } from "qrcode.react";
 import { useParams, useNavigate, useSearchParams } from "react-router-dom";
@@ -411,6 +412,15 @@ export default function EventPage() {
 
   const paid = step === "success";
   const isMarketplace = event.type === 'PHOTO_MARKETPLACE' || event.type === 'FOTO_POINT' || event.type === 'FLASH_EVENT';
+
+  // Lifecycle status dot
+  const eventStatus = useEventStatus(
+    event.dataEvento,
+    null, // eventEndTime — not on EventData yet, falls back to dataEvento + eventHours
+    2,
+    event.isExpired,
+    event.active
+  );
   const isEventOver = event.dataEvento ? (() => {
     try {
       const datePart = String(event.dataEvento).split('T')[0];
@@ -664,11 +674,10 @@ return (
                       <div className="h-px flex-1 bg-theme-border/20 group-hover:bg-brand-tactical/30 transition-colors" />
                       
                       <div className="flex items-center gap-4">
-                        <div className={`w-2.5 h-2.5 rounded-full animate-pulse ${
-                          (event.isExpired || event.active === false || isEventOver) ? 'bg-red-500 shadow-[0_0_15px_rgba(239,68,68,0.6)]' :
-                          (event.expirationDate && (new Date(event.expirationDate).getTime() - new Date().getTime()) < 2 * 24 * 60 * 60 * 1000) ? 'bg-yellow-500 shadow-[0_0_15px_rgba(245,158,11,0.6)]' :
-                          'bg-emerald-500 shadow-[0_0_15px_rgba(16,185,129,0.6)]'
-                        }`} />
+                        <div
+                          className={`w-2.5 h-2.5 rounded-full ${eventStatus.dotClass}`}
+                          title={eventStatus.label}
+                        />
                         
                         <h2 className="font-heading font-black text-2xl lg:text-4xl text-theme-text uppercase italic tracking-widest flex items-center gap-4 group-hover:text-brand-tactical transition-colors">
                           Live Operations
@@ -841,9 +850,12 @@ return (
                 <div className="h-0.5 w-12 bg-brand-tactical" />
               </div>
               <div className="flex items-center gap-3 px-4 py-2 bg-theme-bg border border-theme-border/60">
-                <div className={`w-2 h-2 rounded-full ${isEventOver ? 'bg-red-500 shadow-[0_0_10px_rgba(239,68,68,0.5)]' : (step === 'countdown' ? 'bg-amber-500' : 'bg-emerald-500 animate-pulse shadow-[0_0_10px_rgba(16,185,129,0.5)]')}`} />
+                <div
+                  className={`w-2 h-2 rounded-full ${eventStatus.dotClass}`}
+                  title={eventStatus.label}
+                />
                 <span className="text-[10px] font-black text-theme-text uppercase tracking-widest italic">
-                  {isEventOver ? 'Operação Encerrada' : (step === 'countdown' ? 'Evento Agendado' : (event.type === 'FOTO_POINT' ? "Canon Live Link" : "Live Status"))}
+                  {eventStatus.label}
                 </span>
               </div>
             </div>

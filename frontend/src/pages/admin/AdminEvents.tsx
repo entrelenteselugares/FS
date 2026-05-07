@@ -5,6 +5,7 @@ import { T } from "../../lib/theme";
 import { QRCodeSVG } from "qrcode.react";
 import { QrCode, X, Trash2, Radar } from "lucide-react";
 import AdminPhygitalQueue from "./AdminPhygitalQueue";
+import { EventStatusDot } from "../../components/EventStatusDot";
 
 interface User {
   id: string;
@@ -456,7 +457,10 @@ export const AdminEvents: React.FC<AdminEventsProps> = ({ initialEditEventId }) 
             ) : events.map((event, idx) => (
               <tr key={event.id} className={`${idx % 2 === 0 ? 'bg-theme-bg-muted/50' : 'bg-transparent'} border-b border-theme-border/30`}>
                 <td className="p-2 md:p-3">
-                  <div className="text-[11px] md:text-[12px] font-black text-theme-text uppercase tracking-tight">{event.title}</div>
+                  <div className="flex items-center gap-2 mb-1">
+                    <EventStatusDot eventDate={event.date} active={event.active} size="w-1.5 h-1.5" />
+                    <div className="text-[11px] md:text-[12px] font-black text-theme-text uppercase tracking-tight">{event.title}</div>
+                  </div>
                   <div className="text-[9px] text-theme-muted font-bold uppercase">{event.location}</div>
                 </td>
                 <td className="p-2 md:p-3 text-[10px] md:text-[11px] font-bold text-theme-text/80">{new Date(event.date).toLocaleDateString("pt-BR")}</td>
@@ -492,6 +496,9 @@ export const AdminEvents: React.FC<AdminEventsProps> = ({ initialEditEventId }) 
             <div key={event.id} className="event-card-mobile">
               <div className="flex justify-between items-start border-b border-theme-border pb-3">
                 <div>
+                  <div className="flex items-center gap-2 mb-1">
+                    <EventStatusDot eventDate={event.date} active={event.active} size="w-2 h-2" showLabel />
+                  </div>
                   <div className="text-[12px] font-black text-theme-text uppercase tracking-tight">{event.title}</div>
                   <div className="text-[9px] text-theme-muted font-bold uppercase">{event.location}</div>
                 </div>
