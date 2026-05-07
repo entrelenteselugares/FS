@@ -13,8 +13,9 @@ The system is now fully production-grade. The "Fricção Zero" Flash Event fulfi
 - Flash Events: ✅ Frictionless QR/PIN fulfillment and auto-claim implemented.
 - CI/CD: ✅ Master Suite automation configured and code pushed.
 - IoT: ✅ Heartbeat telemetry implemented and documented.
-- Tests: ✅ Playwright E2E tests (Master Logic & Finance) passing 100%.
+- Tests: ✅ Playwright E2E tests (Master Logic & Finance) passing 100%. Multi-profile usability testing implemented and passing for all 13 identity variations.
 - Theme: ✅ Midnight Luxury consistency verified.
+- Fixes: ✅ Resolved Prisma/UI `CARTORIO` vs `UNIDADE_FIXA` enum mapping conflict and stabilized the Double-Redirect auth flow.
 
 ## 🚀 Next Objectives (Scaling & AI)
 

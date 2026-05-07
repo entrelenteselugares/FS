@@ -75,6 +75,60 @@ npm run dev
 
 ---
 
+## 📖 Exemplos de Uso
+
+### 1. Criar um Flash Event (Dashboard Profissional)
+
+Profissionais podem criar eventos de alta conversão onde fotos são resgatadas via PIN:
+
+```bash
+POST /api/profissional/flash-event
+Authorization: Bearer <seu_token>
+Content-Type: application/json
+
+{
+  "nome": "Casamento Silva & Santos",
+  "data": "2026-06-15",
+  "local": "Villa Borghese"
+}
+```
+
+### 2. Upload de Foto via Phygital Flow
+
+Para fluxos de impressão instantânea (QR Code no evento):
+
+```bash
+POST /api/public/phygital/upload
+Content-Type: multipart/form-data
+
+file: <buffer_da_imagem>
+eventId: <id_do_evento>
+shortId: "FS-123"
+```
+
+### 3. Telemetria do Printer Agent
+
+O agente de impressão local deve enviar heartbeats para manter a conexão ativa:
+
+```bash
+POST /api/iot/heartbeat
+Content-Type: application/json
+
+{
+  "deviceId": "PRINTER-01",
+  "status": "online",
+  "queueCount": 5
+}
+```
+
+---
+
+## 🤝 Contribuição
+
+Veja [CONTRIBUTING.md](CONTRIBUTING.md) para diretrizes de desenvolvimento. Este projeto segue o framework GSD para planejamento e execução.
+
+---
+
 ## 📜 Licença
 
 © 2026 Foto Segundo. Todos os direitos reservados.

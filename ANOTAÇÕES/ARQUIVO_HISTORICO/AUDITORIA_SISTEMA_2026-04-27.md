@@ -1,4 +1,5 @@
 # 🔍 AUDITORIA COMPLETA DO SISTEMA — FOTO SEGUNDO
+
 **Data:** 27/04/2026  
 **Versão:** v2.4 (Sprint: CRM de Campo + Marketplace)  
 **Status Geral:** ✅ Estável em produção | ⚠️ 2 bugs críticos abertos
@@ -40,6 +41,7 @@ Protegido por `CRON_SECRET` no header Authorization.
 ## 3. MAPA DE ROTAS (Backend)
 
 ### 🔓 Públicas (sem autenticação)
+
 | Método | Rota | Controller | Função |
 |---|---|---|---|
 | POST | `/auth/login` | AuthController | Login com JWT |
@@ -58,6 +60,7 @@ Protegido por `CRON_SECRET` no header Authorization.
 | POST | `/webhooks/mercadopago` | PaymentController | Webhook MP |
 
 ### 🔐 Profissional (requireAuth + requireRole PROFISSIONAL/ADMIN)
+
 | Método | Rota | Função |
 |---|---|---|
 | GET | `/profissional/events` | Lista eventos atribuídos |
@@ -69,6 +72,7 @@ Protegido por `CRON_SECRET` no header Authorization.
 | PATCH | `/profissional/me` | Atualiza perfil profissional |
 
 ### 🏪 Marketplace (requireAuth + requireRole PROFISSIONAL/ADMIN)
+
 | Método | Rota | Função |
 |---|---|---|
 | POST | `/marketplace/express-sale` | **Venda Rápida** — cria evento + pedido |
@@ -76,6 +80,7 @@ Protegido por `CRON_SECRET` no header Authorization.
 | GET | `/marketplace/events/:id/media` | Lista fotos para venda |
 
 ### 🏢 Unidade Fixa (requireRole CARTORIO/UNIDADE/ADMIN)
+
 | Método | Rota | Função |
 |---|---|---|
 | GET | `/unidade-fixa/stats` | Estatísticas da unidade |
@@ -85,6 +90,7 @@ Protegido por `CRON_SECRET` no header Authorization.
 | GET/PUT | `/unidade-fixa/team` | Gestão da equipe |
 
 ### 👑 Admin (requireRole ADMIN)
+
 | Área | Rotas |
 |---|---|
 | Stats | `GET /admin/stats` |
@@ -103,6 +109,7 @@ Protegido por `CRON_SECRET` no header Authorization.
 ## 4. MAPA DE PÁGINAS (Frontend)
 
 ### Públicas
+
 | Rota | Arquivo | Descrição |
 |---|---|---|
 | `/` | `HomePage.tsx` | Vitrine com busca de álbuns |
@@ -118,6 +125,7 @@ Protegido por `CRON_SECRET` no header Authorization.
 | `*` | `NotFoundPage.tsx` | 404 |
 
 ### Área Logada
+
 | Rota | Arquivo | Acesso |
 |---|---|---|
 | `/minha-conta` | `ClienteArea.tsx` | CLIENTE |
@@ -125,6 +133,7 @@ Protegido por `CRON_SECRET` no header Authorization.
 | `/unidade-fixa` | `UnidadeFixaDashboard.tsx` | CARTORIO/UNIDADE |
 
 ### Admin (`/admin/*`)
+
 | Sub-rota | Arquivo | Descrição |
 |---|---|---|
 | `/admin` | `AdminDashboard.tsx` | Shell com navegação lateral |
@@ -162,6 +171,7 @@ Protegido por `CRON_SECRET` no header Authorization.
 | `contests` | Concursos de fotos | `status`, `startDate`, `endDate` |
 
 ### Enums
+
 - **Role:** `ADMIN`, `CARTORIO`, `PROFISSIONAL`, `CLIENTE`
 - **EventType:** `ALBUM_FULL`, `PHOTO_MARKETPLACE`
 - **AcceptanceStatus:** `PENDING`, `ACCEPTED`, `REJECTED`
@@ -173,15 +183,18 @@ Protegido por `CRON_SECRET` no header Authorization.
 ## 6. SERVIÇOS E LÓGICAS CRÍTICAS
 
 ### PricingService (`backend/src/services/pricing.service.ts`)
+
 - **`calculateEventPrice(event, contributionAmount?, cartItems?)`** — preço dinâmico (early bird, crowdfund, marketplace)
 - **`calculateSplits(amount)`** — distribui splits: Matriz, Captação, Edição, Cartório
 
 ### NotificationService (`backend/src/services/notification.service.ts`)
+
 - Envio de e-mail via SMTP (quando configurado) ou Supabase nativo
 - Métodos: `sendAccessEmail`, `notifyNewSale`, `notifyPaymentIssue`, `notifyProfessionalNewAssignment`
 - ⚠️ **SMTP não configurado no ambiente atual** — depende do Supabase Auth para reset de senha
 
 ### MercadoPagoService (`backend/src/services/mercadopago.service.ts`)
+
 - Criação de preferências (Checkout Pro)
 - Pagamento transparente (Cartão/PIX)
 - Consulta de status de pagamento
@@ -191,6 +204,7 @@ Protegido por `CRON_SECRET` no header Authorization.
 ## 7. FLUXOS PRINCIPAIS
 
 ### Fluxo de Venda Rápida (Marketplace)
+
 ```
 Fotógrafo → Modal "Venda Rápida" → POST /marketplace/express-sale
   → Cria User (se não existir)
@@ -201,6 +215,7 @@ Fotógrafo → Modal "Venda Rápida" → POST /marketplace/express-sale
 ```
 
 ### Fluxo de Pagamento Digital
+
 ```
 Cliente → /e/:slug → Seleciona itens → POST /checkout/payment
   → MercadoPago processa
@@ -210,6 +225,7 @@ Cliente → /e/:slug → Seleciona itens → POST /checkout/payment
 ```
 
 ### Fluxo de Recuperação de Senha
+
 ```
 Cliente → /login → "Esqueci minha senha"
   → POST /auth/forgot-password
@@ -219,6 +235,7 @@ Cliente → /login → "Esqueci minha senha"
 ```
 
 ### Fluxo de Cotação (Orçamento)
+
 ```
 Cliente → /cotacao (Wizard 5 etapas)
   → Seleção de Unidade Fixa OU local personalizado
@@ -233,6 +250,7 @@ Cliente → /cotacao (Wizard 5 etapas)
 ## 8. BUGS ABERTOS (27/04/2026)
 
 ### 🔴 BUG CRÍTICO #1 — Eventos do Marketplace aparecendo na Homepage
+
 **Sintoma:** Álbuns criados via "Venda Rápida" aparecem na vitrine pública (`/`), mesmo com pagamento pendente.  
 **Causa confirmada:** Os eventos estão sendo salvos como `active: true` e `isPrivate: false` no banco, ao contrário do que o código especifica (`active: false`, `isPrivate: true`).  
 **Hipótese:** O banco de dados (Supabase) pode estar aplicando um migration conflitante ou o Prisma Client gerado está desatualizado em produção.  
@@ -240,6 +258,7 @@ Cliente → /cotacao (Wizard 5 etapas)
 **Workaround imediato:** Script de limpeza executado para eventos existentes.
 
 ### 🔴 BUG CRÍTICO #2 — Álbum de Venda Rápida acessível sem pagamento
+
 **Sintoma:** A página do evento (`/e/:slug`) exibe a interface de seleção de fotos mesmo com o pedido em status `PENDENTE`.  
 **Causa:** O `EventController.getById` não bloqueia o acesso ao evento para pedidos pendentes do tipo PHOTO_MARKETPLACE.  
 **Status:** 🔍 Requer correção no `event.controller.ts`
@@ -249,6 +268,7 @@ Cliente → /cotacao (Wizard 5 etapas)
 ## 9. VARIÁVEIS DE AMBIENTE NECESSÁRIAS
 
 ### Backend (`.env`)
+
 ```
 DATABASE_URL=          # Connection pooling (PgBouncer)
 DIRECT_URL=            # Conexão direta Supabase
@@ -263,12 +283,14 @@ BACKEND_URL=           # https://foto-segundo.vercel.app
 ```
 
 ### Frontend (`.env.local`)
+
 ```
 VITE_API_URL=          # URL da API backend
 VITE_MP_PUBLIC_KEY=    # Chave pública Mercado Pago
 ```
 
 ### ⚠️ NÃO CONFIGURADAS (funcionalidades degradadas)
+
 - `SMTP_USER` / `SMTP_PASS` — Notificações por e-mail via SMTP próprio desativadas
 - `MP_WEBHOOK_SECRET` — Webhook sem validação de assinatura (modo não-seguro)
 
@@ -300,6 +322,7 @@ VITE_MP_PUBLIC_KEY=    # Chave pública Mercado Pago
 ---
 
 > **Próximos passos críticos:**
+>
 > 1. Corrigir BUG #1 (eventos marketplace ativos sem pagamento)
 > 2. Corrigir BUG #2 (acesso ao album sem pagamento confirmado)  
 > 3. Configurar `MP_WEBHOOK_SECRET` no painel Vercel

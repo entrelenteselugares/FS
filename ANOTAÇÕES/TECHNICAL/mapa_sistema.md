@@ -1,4 +1,5 @@
 # MAPEAMENTO COMPLETO DE PÁGINAS — FOTO SEGUNDO
+
 **Versão:** v3.1 | **Última atualização:** 02/05/2026
 
 ---

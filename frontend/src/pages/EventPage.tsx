@@ -56,7 +56,7 @@ interface EventData {
   isComingSoon?: boolean;
   priceUnit?: number;
   pendingOrderId?: string | null;
-  type?: 'ALBUM_FULL' | 'PHOTO_MARKETPLACE' | 'FOTO_POINT';
+  type?: 'ALBUM_FULL' | 'PHOTO_MARKETPLACE' | 'FOTO_POINT' | 'FLASH_EVENT';
   pricePerPhoto?: number;
   isUnitSale?: boolean;
   recentOrders?: { id: string; contributorName: string; valor: number; createdAt: string }[];
@@ -258,7 +258,7 @@ export default function EventPage() {
         const eventData = r.data;
         setEvent(eventData);
 
-        const eventDate = eventData.dataEvento ? new Date(eventData.dataEvento) : null;
+
         const now = new Date();
         const isFuture = eventData.dataEvento ? (() => {
           try {
@@ -277,13 +277,13 @@ export default function EventPage() {
           setStep("countdown");
         } else if (eventData.isPrivate && !eventData.isPrimaryClient && !eventData.isOwner) {
           setStep("denied");
-        } else if ((eventData.paywall && !eventData.paywall.active) || eventData.isOwner || eventData.type === 'PHOTO_MARKETPLACE' || eventData.type === 'FOTO_POINT') {
+        } else if ((eventData.paywall && !eventData.paywall.active) || eventData.isOwner || eventData.type === 'PHOTO_MARKETPLACE' || eventData.type === 'FOTO_POINT' || eventData.type === 'FLASH_EVENT') {
           setStep("success"); 
         } else {
           setStep("paywall");
         }
 
-        if (eventData.type === 'PHOTO_MARKETPLACE' || eventData.type === 'FOTO_POINT') {
+        if (eventData.type === 'PHOTO_MARKETPLACE' || eventData.type === 'FOTO_POINT' || eventData.type === 'FLASH_EVENT') {
           const mOid = localStorage.getItem(`fs_order_${slug}`);
           const mParams = { ...params, ...(mOid ? { orderId: mOid } : {}) };
           api.get(`/marketplace/events/${eventData.id}/media`, { params: mParams })
@@ -358,7 +358,7 @@ export default function EventPage() {
 
   const handleUnlockClick = async () => { 
     if (!event) return;
-    const isMarketplaceWithCart = (event.type === 'PHOTO_MARKETPLACE' || event.type === 'FOTO_POINT') && cart.length > 0;
+    const isMarketplaceWithCart = (event.type === 'PHOTO_MARKETPLACE' || event.type === 'FOTO_POINT' || event.type === 'FLASH_EVENT') && cart.length > 0;
     if (!isMarketplaceWithCart && (event.isOwner || paid)) return;
 
     setLoading(true);
@@ -410,7 +410,7 @@ export default function EventPage() {
   if (!event) return null;
 
   const paid = step === "success";
-  const isMarketplace = event.type === 'PHOTO_MARKETPLACE' || event.type === 'FOTO_POINT';
+  const isMarketplace = event.type === 'PHOTO_MARKETPLACE' || event.type === 'FOTO_POINT' || event.type === 'FLASH_EVENT';
   const isEventOver = event.dataEvento ? (() => {
     try {
       const datePart = String(event.dataEvento).split('T')[0];
@@ -617,7 +617,7 @@ return (
                         <p className="text-[10px] font-black text-theme-text-muted uppercase tracking-[0.4em]">Referências Técnicas</p>
                         <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
                           {event.references.map((ref, i) => (
-                            <div key={i} className="aspect-video bg-theme-bg-muted border border-theme-border/40 overflow-hidden group">
+                            <div key={i} data-shortid={ref} data-testid={`photo-${ref}`} className="aspect-video bg-theme-bg-muted border border-theme-border/40 overflow-hidden group">
                               {ref.startsWith('http') ? (
                                 <img src={ref} className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700" alt="Referência" />
                               ) : (
@@ -744,11 +744,13 @@ return (
                               const isUnlocked = event.unlockedMediaIds?.includes(m.shortId) || event.isOwner;
 
                               return (
-                                <motion.div 
-                                  key={m.id} layout initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: (idx % 20) * 0.05 }}
-                                  onClick={() => !isUnlocked && toggleCart(m.shortId)}
-                                  className={`relative group aspect-[3/4] bg-theme-bg overflow-hidden border-2 transition-all duration-500 ${isUnlocked ? "border-brand-tactical shadow-[0_0_20px_rgba(20,184,166,0.15)]" : (isSelected ? "border-emerald-500" : "border-theme-border/40 hover:border-zinc-700")}`}
-                                >
+                                  <motion.div 
+                                    key={m.id} layout initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: (idx % 20) * 0.05 }}
+                                    data-shortid={m.shortId}
+                                    data-testid={`photo-${m.shortId}`}
+                                    onClick={() => !isUnlocked && toggleCart(m.shortId)}
+                                    className={`relative group aspect-[3/4] bg-theme-bg overflow-hidden border-2 transition-all duration-500 ${isUnlocked ? "border-brand-tactical shadow-[0_0_20px_rgba(20,184,166,0.15)]" : (isSelected ? "border-emerald-500" : "border-theme-border/40 hover:border-zinc-700")}`}
+                                  >
                                   {!isUnlocked && (
                                     <div className="absolute inset-0 z-10 flex items-center justify-center opacity-[0.05] pointer-events-none rotate-[-45deg] select-none">
                                       <span className="text-theme-text font-display text-4xl font-black tracking-[1em] uppercase">PROOF</span>

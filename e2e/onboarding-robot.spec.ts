@@ -1,11 +1,11 @@
 import { test, expect } from '@playwright/test';
 
-test.describe('Onboarding Robot: System Population', () => {
+test.describe('Onboarding Robot: System Population (@brasil.com.br)', () => {
   const adminEmail = 'contatofotosegundo@gmail.com';
   const pass = '123456'; 
 
   test('should create all user variations for system testing', async ({ page }) => {
-    test.setTimeout(400000);
+    test.setTimeout(800000); // Increased timeout for more users
 
     // 1. LOGIN ADMIN
     await page.goto('/login');
@@ -57,21 +57,25 @@ test.describe('Onboarding Robot: System Population', () => {
     };
 
     // --- PROFISSIONAIS ---
-    await createUser({ name: 'PRO Fotografo', email: 'pro-photo@test.com', role: 'PROFISSIONAL', captPct: 30, editPct: 0, equipment: 'Sony A7III, 24-70mm' });
-    await createUser({ name: 'PRO Editor', email: 'pro-editor@test.com', role: 'PROFISSIONAL', captPct: 0, editPct: 40, equipment: 'MacBook Pro M3 Max' });
-    await createUser({ name: 'PRO Hibrido', email: 'pro-hybrid@test.com', role: 'PROFISSIONAL', captPct: 30, editPct: 20, equipment: 'Nikon Z6 II' });
-    await createUser({ name: 'PRO Mobile', email: 'pro-mobile@test.com', role: 'PROFISSIONAL', workflowType: 'MOBILE', equipment: 'iPhone 15 Pro Max' });
+    await createUser({ name: 'BR PRO Fotografo', email: 'fotografo@brasil.com.br', role: 'PROFISSIONAL', captPct: 40, editPct: 0, equipment: 'Canon EOS R6' });
+    await createUser({ name: 'BR PRO Editor', email: 'editor@brasil.com.br', role: 'PROFISSIONAL', captPct: 0, editPct: 40, equipment: 'Mac Studio' });
+    await createUser({ name: 'BR PRO Hibrido', email: 'hibrido@brasil.com.br', role: 'PROFISSIONAL', captPct: 30, editPct: 20, equipment: 'Sony A7IV' });
+    await createUser({ name: 'BR PRO Mobile', email: 'mobile@brasil.com.br', role: 'PROFISSIONAL', workflowType: 'MOBILE', equipment: 'iPhone 15 Pro' });
+    await createUser({ name: 'BR PRO Mobile Hibrido', email: 'mobile-hibrido@brasil.com.br', role: 'PROFISSIONAL', captPct: 20, editPct: 20, workflowType: 'MOBILE', equipment: 'S24 Ultra' });
 
-    // --- UNIDADES ---
-    await createUser({ name: 'UNIDADE Padrao', email: 'unit-std@test.com', role: 'UNIDADE_FIXA' });
-    await createUser({ name: 'UNIDADE Tempo Fixo', email: 'unit-fixed@test.com', role: 'UNIDADE_FIXA' });
-    await createUser({ name: 'UNIDADE Oculta', email: 'unit-hidden@test.com', role: 'UNIDADE_FIXA' });
+    // --- UNIDADES FIXAS ---
+    await createUser({ name: 'BR Unidade SP', email: 'unidade-sp@brasil.com.br', role: 'CARTORIO' });
+    await createUser({ name: 'BR Unidade RJ', email: 'unidade-rj@brasil.com.br', role: 'CARTORIO' });
+    await createUser({ name: 'BR Unidade MG', email: 'unidade-mg@brasil.com.br', role: 'CARTORIO' });
 
-    // --- FRANQUEADO ---
-    await createUser({ name: 'FRAN Master', email: 'fran-master@test.com', role: 'PROFISSIONAL', isFranchise: true, printCredits: 1000 });
+    // --- FRANQUEADOS ---
+    await createUser({ name: 'BR Franqueado Bronze', email: 'franqueado-bronze@brasil.com.br', role: 'PROFISSIONAL', isFranchise: true, printCredits: 50 });
+    await createUser({ name: 'BR Franqueado Ouro', email: 'franqueado-ouro@brasil.com.br', role: 'PROFISSIONAL', isFranchise: true, printCredits: 500 });
+    await createUser({ name: 'BR Franqueado Diamante', email: 'franqueado-diamante@brasil.com.br', role: 'PROFISSIONAL', isFranchise: true, printCredits: 1000 });
 
-    // --- CLIENTE ---
-    await createUser({ name: 'CLIENTE VIP', email: 'cliente-vip@test.com', role: 'CLIENTE' });
+    // --- CLIENTES ---
+    await createUser({ name: 'BR Cliente VIP', email: 'cliente-vip@brasil.com.br', role: 'CLIENTE' });
+    await createUser({ name: 'BR Cliente Novo', email: 'cliente-novo@brasil.com.br', role: 'CLIENTE' });
 
     console.log('[ROBOT] ✅ População inicial concluída!');
   });

@@ -40,7 +40,7 @@ var require_main = __commonJS({
     var fs3 = require("fs");
     var path4 = require("path");
     var os = require("os");
-    var crypto11 = require("crypto");
+    var crypto12 = require("crypto");
     var TIPS = [
       "\u25C8 encrypted .env [www.dotenvx.com]",
       "\u25C8 secrets for agents [www.dotenvx.com]",
@@ -284,7 +284,7 @@ var require_main = __commonJS({
       const authTag = ciphertext.subarray(-16);
       ciphertext = ciphertext.subarray(12, -16);
       try {
-        const aesgcm = crypto11.createDecipheriv("aes-256-gcm", key, nonce);
+        const aesgcm = crypto12.createDecipheriv("aes-256-gcm", key, nonce);
         aesgcm.setAuthTag(authTag);
         return `${aesgcm.update(ciphertext)}${aesgcm.final()}`;
       } catch (error) {
@@ -19240,14 +19240,14 @@ var require_etag = __commonJS({
   "backend/node_modules/etag/index.js"(exports2, module2) {
     "use strict";
     module2.exports = etag;
-    var crypto11 = require("crypto");
+    var crypto12 = require("crypto");
     var Stats = require("fs").Stats;
     var toString3 = Object.prototype.toString;
     function entitytag(entity) {
       if (entity.length === 0) {
         return '"0-2jmj7l5rSw0yVb/vlWAYkK/YBwk"';
       }
-      var hash2 = crypto11.createHash("sha1").update(entity, "utf8").digest("base64").substring(0, 27);
+      var hash2 = crypto12.createHash("sha1").update(entity, "utf8").digest("base64").substring(0, 27);
       var len = typeof entity === "string" ? Buffer.byteLength(entity, "utf8") : entity.length;
       return '"' + len.toString(16) + "-" + hash2 + '"';
     }
@@ -20970,27 +20970,27 @@ var require_router = __commonJS({
     var slice = Array.prototype.slice;
     var flatten = Array.prototype.flat;
     var methods = METHODS.map((method) => method.toLowerCase());
-    module2.exports = Router4;
+    module2.exports = Router5;
     module2.exports.Route = Route;
-    function Router4(options) {
-      if (!(this instanceof Router4)) {
-        return new Router4(options);
+    function Router5(options) {
+      if (!(this instanceof Router5)) {
+        return new Router5(options);
       }
       const opts = options || {};
-      function router4(req, res, next) {
-        router4.handle(req, res, next);
+      function router5(req, res, next) {
+        router5.handle(req, res, next);
       }
-      Object.setPrototypeOf(router4, this);
-      router4.caseSensitive = opts.caseSensitive;
-      router4.mergeParams = opts.mergeParams;
-      router4.params = {};
-      router4.strict = opts.strict;
-      router4.stack = [];
-      return router4;
+      Object.setPrototypeOf(router5, this);
+      router5.caseSensitive = opts.caseSensitive;
+      router5.mergeParams = opts.mergeParams;
+      router5.params = {};
+      router5.strict = opts.strict;
+      router5.stack = [];
+      return router5;
     }
-    Router4.prototype = function() {
+    Router5.prototype = function() {
     };
-    Router4.prototype.param = function param(name2, fn) {
+    Router5.prototype.param = function param(name2, fn) {
       if (!name2) {
         throw new TypeError("argument name is required");
       }
@@ -21010,7 +21010,7 @@ var require_router = __commonJS({
       params.push(fn);
       return this;
     };
-    Router4.prototype.handle = function handle(req, res, callback) {
+    Router5.prototype.handle = function handle(req, res, callback) {
       if (!callback) {
         throw new TypeError("argument callback is required");
       }
@@ -21137,7 +21137,7 @@ var require_router = __commonJS({
         }
       }
     };
-    Router4.prototype.use = function use(handler) {
+    Router5.prototype.use = function use(handler) {
       let offset = 0;
       let path4 = "/";
       if (typeof handler !== "function") {
@@ -21170,7 +21170,7 @@ var require_router = __commonJS({
       }
       return this;
     };
-    Router4.prototype.route = function route(path4) {
+    Router5.prototype.route = function route(path4) {
       const route2 = new Route(path4);
       const layer = new Layer(path4, {
         sensitive: this.caseSensitive,
@@ -21185,7 +21185,7 @@ var require_router = __commonJS({
       return route2;
     };
     methods.concat("all").forEach(function(method) {
-      Router4.prototype[method] = function(path4) {
+      Router5.prototype[method] = function(path4) {
         const route = this.route(path4);
         route[method].apply(route, slice.call(arguments, 1));
         return this;
@@ -21368,13 +21368,13 @@ var require_application = __commonJS({
     var compileTrust = require_utils3().compileTrust;
     var resolve = require("node:path").resolve;
     var once = require_once();
-    var Router4 = require_router();
+    var Router5 = require_router();
     var slice = Array.prototype.slice;
     var flatten = Array.prototype.flat;
     var app2 = exports2 = module2.exports = {};
     var trustProxyDefaultSymbol = "@@symbol:trust_proxy_default";
     app2.init = function init2() {
-      var router4 = null;
+      var router5 = null;
       this.cache = /* @__PURE__ */ Object.create(null);
       this.engines = /* @__PURE__ */ Object.create(null);
       this.settings = /* @__PURE__ */ Object.create(null);
@@ -21383,13 +21383,13 @@ var require_application = __commonJS({
         configurable: true,
         enumerable: true,
         get: function getrouter() {
-          if (router4 === null) {
-            router4 = new Router4({
+          if (router5 === null) {
+            router5 = new Router5({
               caseSensitive: this.enabled("case sensitive routing"),
               strict: this.enabled("strict routing")
             });
           }
-          return router4;
+          return router5;
         }
       });
     };
@@ -21460,15 +21460,15 @@ var require_application = __commonJS({
       if (fns.length === 0) {
         throw new TypeError("app.use() requires a middleware function");
       }
-      var router4 = this.router;
+      var router5 = this.router;
       fns.forEach(function(fn2) {
         if (!fn2 || !fn2.handle || !fn2.set) {
-          return router4.use(path4, fn2);
+          return router5.use(path4, fn2);
         }
         debug3(".use app under %s", path4);
         fn2.mountpath = path4;
         fn2.parent = this;
-        router4.use(path4, function mounted_app(req, res, next) {
+        router5.use(path4, function mounted_app(req, res, next) {
           var orig = req.app;
           fn2.handle(req, res, function(err) {
             Object.setPrototypeOf(req, orig.request);
@@ -22722,17 +22722,17 @@ var require_content_disposition = __commonJS({
 // backend/node_modules/cookie-signature/index.js
 var require_cookie_signature = __commonJS({
   "backend/node_modules/cookie-signature/index.js"(exports2) {
-    var crypto11 = require("crypto");
+    var crypto12 = require("crypto");
     exports2.sign = function(val, secret) {
       if ("string" != typeof val) throw new TypeError("Cookie value must be provided as a string.");
       if (null == secret) throw new TypeError("Secret key must be provided.");
-      return val + "." + crypto11.createHmac("sha256", secret).update(val).digest("base64").replace(/\=+$/, "");
+      return val + "." + crypto12.createHmac("sha256", secret).update(val).digest("base64").replace(/\=+$/, "");
     };
     exports2.unsign = function(input, secret) {
       if ("string" != typeof input) throw new TypeError("Signed cookie string must be provided.");
       if (null == secret) throw new TypeError("Secret key must be provided.");
       var tentativeValue = input.slice(0, input.lastIndexOf(".")), expectedInput = exports2.sign(tentativeValue, secret), expectedBuffer = Buffer.from(expectedInput), inputBuffer = Buffer.from(input);
-      return expectedBuffer.length === inputBuffer.length && crypto11.timingSafeEqual(expectedBuffer, inputBuffer) ? tentativeValue : false;
+      return expectedBuffer.length === inputBuffer.length && crypto12.timingSafeEqual(expectedBuffer, inputBuffer) ? tentativeValue : false;
     };
   }
 });
@@ -24041,7 +24041,7 @@ var require_express = __commonJS({
     var EventEmitter2 = require("node:events").EventEmitter;
     var mixin = require_merge_descriptors();
     var proto = require_application();
-    var Router4 = require_router();
+    var Router5 = require_router();
     var req = require_request();
     var res = require_response();
     exports2 = module2.exports = createApplication;
@@ -24063,8 +24063,8 @@ var require_express = __commonJS({
     exports2.application = proto;
     exports2.request = req;
     exports2.response = res;
-    exports2.Route = Router4.Route;
-    exports2.Router = Router4;
+    exports2.Route = Router5.Route;
+    exports2.Router = Router5;
     exports2.json = bodyParser.json;
     exports2.raw = bodyParser.raw;
     exports2.static = require_serve_static();
@@ -27417,12 +27417,12 @@ var require_utils5 = __commonJS({
 var require_sasl = __commonJS({
   "backend/node_modules/pg/lib/crypto/sasl.js"(exports2, module2) {
     "use strict";
-    var crypto11 = require_utils5();
+    var crypto12 = require_utils5();
     function startSession(mechanisms) {
       if (mechanisms.indexOf("SCRAM-SHA-256") === -1) {
         throw new Error("SASL: Only mechanism SCRAM-SHA-256 is currently supported");
       }
-      const clientNonce = crypto11.randomBytes(18).toString("base64");
+      const clientNonce = crypto12.randomBytes(18).toString("base64");
       return {
         mechanism: "SCRAM-SHA-256",
         clientNonce,
@@ -27454,13 +27454,13 @@ var require_sasl = __commonJS({
       var clientFinalMessageWithoutProof = "c=biws,r=" + sv.nonce;
       var authMessage = clientFirstMessageBare + "," + serverFirstMessage + "," + clientFinalMessageWithoutProof;
       var saltBytes = Buffer.from(sv.salt, "base64");
-      var saltedPassword = await crypto11.deriveKey(password, saltBytes, sv.iteration);
-      var clientKey = await crypto11.hmacSha256(saltedPassword, "Client Key");
-      var storedKey = await crypto11.sha256(clientKey);
-      var clientSignature = await crypto11.hmacSha256(storedKey, authMessage);
+      var saltedPassword = await crypto12.deriveKey(password, saltBytes, sv.iteration);
+      var clientKey = await crypto12.hmacSha256(saltedPassword, "Client Key");
+      var storedKey = await crypto12.sha256(clientKey);
+      var clientSignature = await crypto12.hmacSha256(storedKey, authMessage);
       var clientProof = xorBuffers(Buffer.from(clientKey), Buffer.from(clientSignature)).toString("base64");
-      var serverKey = await crypto11.hmacSha256(saltedPassword, "Server Key");
-      var serverSignatureBytes = await crypto11.hmacSha256(serverKey, authMessage);
+      var serverKey = await crypto12.hmacSha256(saltedPassword, "Server Key");
+      var serverSignatureBytes = await crypto12.hmacSha256(serverKey, authMessage);
       session.message = "SASLResponse";
       session.serverSignature = Buffer.from(serverSignatureBytes).toString("base64");
       session.response = clientFinalMessageWithoutProof + ",p=" + clientProof;
@@ -29621,7 +29621,7 @@ var require_client = __commonJS({
     var Query = require_query();
     var defaults2 = require_defaults();
     var Connection = require_connection();
-    var crypto11 = require_utils5();
+    var crypto12 = require_utils5();
     var Client = class extends EventEmitter2 {
       constructor(config) {
         super();
@@ -29812,7 +29812,7 @@ var require_client = __commonJS({
       _handleAuthMD5Password(msg) {
         this._checkPgPass(async () => {
           try {
-            const hashedPassword = await crypto11.postgresMd5PasswordHash(this.user, this.password, msg.salt);
+            const hashedPassword = await crypto12.postgresMd5PasswordHash(this.user, this.password, msg.salt);
             this.connection.password(hashedPassword);
           } catch (e) {
             this.emit("error", e);
@@ -46496,7 +46496,7 @@ var require_form_data = __commonJS({
     var parseUrl2 = require("url").parse;
     var fs3 = require("fs");
     var Stream = require("stream").Stream;
-    var crypto11 = require("crypto");
+    var crypto12 = require("crypto");
     var mime = require_mime_types2();
     var asynckit = require_asynckit();
     var setToStringTag = require_es_set_tostringtag();
@@ -46702,7 +46702,7 @@ var require_form_data = __commonJS({
       return Buffer.concat([dataBuffer, Buffer.from(this._lastBoundary())]);
     };
     FormData3.prototype._generateBoundary = function() {
-      this._boundary = "--------------------------" + crypto11.randomBytes(12).toString("hex");
+      this._boundary = "--------------------------" + crypto12.randomBytes(12).toString("hex");
     };
     FormData3.prototype.getLengthSync = function() {
       var knownLength = this._overheadLength + this._valueLength;
@@ -60279,14 +60279,14 @@ var require_buffer_equal_constant_time = __commonJS({
 var require_jwa = __commonJS({
   "backend/node_modules/jwa/index.js"(exports2, module2) {
     var Buffer3 = require_safe_buffer().Buffer;
-    var crypto11 = require("crypto");
+    var crypto12 = require("crypto");
     var formatEcdsa = require_ecdsa_sig_formatter();
     var util3 = require("util");
     var MSG_INVALID_ALGORITHM = '"%s" is not a valid algorithm.\n  Supported algorithms are:\n  "HS256", "HS384", "HS512", "RS256", "RS384", "RS512", "PS256", "PS384", "PS512", "ES256", "ES384", "ES512" and "none".';
     var MSG_INVALID_SECRET = "secret must be a string or buffer";
     var MSG_INVALID_VERIFIER_KEY = "key must be a string or a buffer";
     var MSG_INVALID_SIGNER_KEY = "key must be a string, a buffer or an object";
-    var supportsKeyObjects = typeof crypto11.createPublicKey === "function";
+    var supportsKeyObjects = typeof crypto12.createPublicKey === "function";
     if (supportsKeyObjects) {
       MSG_INVALID_VERIFIER_KEY += " or a KeyObject";
       MSG_INVALID_SECRET += "or a KeyObject";
@@ -60376,17 +60376,17 @@ var require_jwa = __commonJS({
       return function sign(thing, secret) {
         checkIsSecretKey(secret);
         thing = normalizeInput(thing);
-        var hmac = crypto11.createHmac("sha" + bits, secret);
+        var hmac = crypto12.createHmac("sha" + bits, secret);
         var sig = (hmac.update(thing), hmac.digest("base64"));
         return fromBase64(sig);
       };
     }
     var bufferEqual;
-    var timingSafeEqual = "timingSafeEqual" in crypto11 ? function timingSafeEqual2(a, b) {
+    var timingSafeEqual = "timingSafeEqual" in crypto12 ? function timingSafeEqual2(a, b) {
       if (a.byteLength !== b.byteLength) {
         return false;
       }
-      return crypto11.timingSafeEqual(a, b);
+      return crypto12.timingSafeEqual(a, b);
     } : function timingSafeEqual2(a, b) {
       if (!bufferEqual) {
         bufferEqual = require_buffer_equal_constant_time();
@@ -60403,7 +60403,7 @@ var require_jwa = __commonJS({
       return function sign(thing, privateKey) {
         checkIsPrivateKey(privateKey);
         thing = normalizeInput(thing);
-        var signer = crypto11.createSign("RSA-SHA" + bits);
+        var signer = crypto12.createSign("RSA-SHA" + bits);
         var sig = (signer.update(thing), signer.sign(privateKey, "base64"));
         return fromBase64(sig);
       };
@@ -60413,7 +60413,7 @@ var require_jwa = __commonJS({
         checkIsPublicKey(publicKey);
         thing = normalizeInput(thing);
         signature = toBase64(signature);
-        var verifier = crypto11.createVerify("RSA-SHA" + bits);
+        var verifier = crypto12.createVerify("RSA-SHA" + bits);
         verifier.update(thing);
         return verifier.verify(publicKey, signature, "base64");
       };
@@ -60422,11 +60422,11 @@ var require_jwa = __commonJS({
       return function sign(thing, privateKey) {
         checkIsPrivateKey(privateKey);
         thing = normalizeInput(thing);
-        var signer = crypto11.createSign("RSA-SHA" + bits);
+        var signer = crypto12.createSign("RSA-SHA" + bits);
         var sig = (signer.update(thing), signer.sign({
           key: privateKey,
-          padding: crypto11.constants.RSA_PKCS1_PSS_PADDING,
-          saltLength: crypto11.constants.RSA_PSS_SALTLEN_DIGEST
+          padding: crypto12.constants.RSA_PKCS1_PSS_PADDING,
+          saltLength: crypto12.constants.RSA_PSS_SALTLEN_DIGEST
         }, "base64"));
         return fromBase64(sig);
       };
@@ -60436,12 +60436,12 @@ var require_jwa = __commonJS({
         checkIsPublicKey(publicKey);
         thing = normalizeInput(thing);
         signature = toBase64(signature);
-        var verifier = crypto11.createVerify("RSA-SHA" + bits);
+        var verifier = crypto12.createVerify("RSA-SHA" + bits);
         verifier.update(thing);
         return verifier.verify({
           key: publicKey,
-          padding: crypto11.constants.RSA_PKCS1_PSS_PADDING,
-          saltLength: crypto11.constants.RSA_PSS_SALTLEN_DIGEST
+          padding: crypto12.constants.RSA_PKCS1_PSS_PADDING,
+          saltLength: crypto12.constants.RSA_PSS_SALTLEN_DIGEST
         }, signature, "base64");
       };
     }
@@ -63741,7 +63741,7 @@ var import_path3 = __toESM(require("path"));
 })();
 
 // backend/src/app.ts
-var import_express5 = __toESM(require_express2());
+var import_express6 = __toESM(require_express2());
 var import_cors = __toESM(require_lib3());
 
 // backend/node_modules/express-rate-limit/dist/index.mjs
@@ -64659,7 +64659,7 @@ var rateLimit = (passedOptions) => {
 var rate_limit_default = rateLimit;
 
 // backend/src/routes/index.ts
-var import_express3 = __toESM(require_express2());
+var import_express4 = __toESM(require_express2());
 init_prisma();
 
 // backend/src/controllers/event.controller.ts
@@ -66917,7 +66917,8 @@ var EventController = class {
         include: {
           cartorioUser: { select: { cartorio: { select: { razaoSocial: true } } } },
           captacao: { select: { id: true, nome: true } },
-          edicao: { select: { id: true, nome: true } }
+          edicao: { select: { id: true, nome: true } },
+          media: true
         }
       });
       if (!event) {
@@ -67049,6 +67050,7 @@ var EventController = class {
         itinerary: event.itinerary,
         description: event.description,
         references: event.references,
+        medias: event.media || [],
         photographer: event.captacao ? { id: event.captacao.id, nome: event.captacao.nome } : null,
         isExpired,
         retentionDays,
@@ -67360,7 +67362,7 @@ Descri\xE7\xE3o do Cliente: ${description}`,
    * Cria um evento instantâneo (Flash) para franqueados/profissionais em campo.
    */
   static async createFlashEvent(req, res) {
-    const { name: name2, pricePerPhoto, isPrivate, dataEvento, captacaoId: delegatedCaptacaoId, isPublicCall } = req.body;
+    const { name: name2, pricePerPhoto, isPrivate, dataEvento, startTime, endTime, captacaoId: delegatedCaptacaoId, isPublicCall } = req.body;
     const { userId } = req.user;
     if (!name2) return res.status(400).json({ error: "Nome do evento \xE9 obrigat\xF3rio" });
     try {
@@ -67368,15 +67370,19 @@ Descri\xE7\xE3o do Cliente: ${description}`,
         where: { userId }
       });
       const slug = `${name2.toLowerCase().replace(/\s+/g, "-")}-${Math.random().toString(36).substring(2, 6)}`;
+      const finalStartTime = dataEvento && startTime ? /* @__PURE__ */ new Date(`${dataEvento}T${startTime}:00-03:00`) : dataEvento ? new Date(dataEvento) : /* @__PURE__ */ new Date();
+      const finalEndTime = dataEvento && endTime ? /* @__PURE__ */ new Date(`${dataEvento}T${endTime}:00-03:00`) : null;
+      const isNone = delegatedCaptacaoId === "NONE";
       const event = await prisma_default.event.create({
         data: {
           nomeNoivos: name2,
           slug,
-          type: "FLASH_EVENT",
+          type: "PHOTO_MARKETPLACE",
           active: !delegatedCaptacaoId && !isPublicCall,
-          captacaoId: delegatedCaptacaoId || (isPublicCall ? null : userId),
-          captacaoStatus: delegatedCaptacaoId || isPublicCall ? "PENDING" : "ACCEPTED",
-          dataEvento: dataEvento ? new Date(dataEvento) : /* @__PURE__ */ new Date(),
+          captacaoId: isNone ? null : delegatedCaptacaoId || (isPublicCall ? null : userId),
+          captacaoStatus: isNone ? "ACCEPTED" : delegatedCaptacaoId || isPublicCall ? "PENDING" : "ACCEPTED",
+          dataEvento: finalStartTime,
+          eventEndTime: finalEndTime,
           isPublicCall: !!isPublicCall,
           ownerId: userId,
           franchiseeId: profile?.id,
@@ -80926,7 +80932,7 @@ var PaymentController = class _PaymentController {
       }
       if (existingPending) {
         console.log(`[Checkout] Reutilizando pedido existente ${existingPending.id} para evitar duplicata.`);
-        const isCartUpdate = cartItems.length > 0 || !!finalPrintProductId;
+        const isCartUpdate = cartItems.length > 0 || physicalItems.length > 0;
         const finalPreco = existingPending && !passedOrderId && !isCartUpdate ? Number(existingPending.valor) : preco;
         const {
           matriz: fMatriz,
@@ -81335,6 +81341,15 @@ var PaymentController = class _PaymentController {
         });
       }
       if (req.body.method === "CASH") {
+        const authUser = req.user;
+        const canApproveCash = authUser && ["ADMIN", "PROFISSIONAL", "CARTORIO", "FRANCHISEE"].includes(authUser.role);
+        if (!canApproveCash) {
+          console.warn(`[SECURITY ALERT] Tentativa de pagamento CASH n\xE3o autorizada por usu\xE1rio: ${authUser?.email || "AN\xD4NIMO"}`);
+          return res.status(403).json({
+            error: "N\xE3o autorizado",
+            message: "Apenas profissionais autorizados podem registrar pagamentos em dinheiro."
+          });
+        }
         const updatedOrder = await prisma_default.order.update({
           where: { id: order.id },
           data: {
@@ -82004,7 +82019,7 @@ var AuthController = class {
   }
   /** POST /api/auth/register */
   static async register(req, res) {
-    const { nome, email, senha, role, whatsapp, habilidades, equipamento, outrasHabilidades, workflowType, razaoSocial, endereco, cidade, ref } = req.body;
+    const { nome, email, senha, role, whatsapp, habilidades, equipamento, outrasHabilidades, workflowType, razaoSocial, endereco, cidade, ref, claim } = req.body;
     try {
       const hash2 = await bcryptjs_default.hash(senha, 12);
       const cleanRole = role?.toUpperCase() || "CLIENTE";
@@ -82031,36 +82046,54 @@ var AuthController = class {
       if (!sbUser) throw new Error("Supabase n\xE3o retornou dados do usu\xE1rio.");
       const result = await prisma_default.$transaction(async (tx) => {
         const existingPrismaUser = await tx.user.findUnique({ where: { email: cleanEmail } });
-        if (existingPrismaUser) return existingPrismaUser;
-        const user = await tx.user.create({
-          data: {
-            id: sbUser.id,
-            email: cleanEmail,
-            senha: hash2,
-            nome: nome || "Usu\xE1rio",
-            role: cleanRole,
-            whatsapp
-          }
-        });
-        if (cleanRole === "PROFISSIONAL") {
-          await tx.profissional.create({
+        let user;
+        if (existingPrismaUser) {
+          user = existingPrismaUser;
+        } else {
+          user = await tx.user.create({
             data: {
+              id: sbUser.id,
+              email: cleanEmail,
+              senha: hash2,
+              nome: nome || "Usu\xE1rio",
+              role: cleanRole,
+              whatsapp
+            }
+          });
+        }
+        if (cleanRole === "PROFISSIONAL") {
+          await tx.profissional.upsert({
+            where: { userId: user.id },
+            create: {
               userId: user.id,
               services: habilidades || [],
               equipment: equipamento || "",
               otherHabilities: outrasHabilidades || "",
               workflowType: workflowType || ["TRADICIONAL"],
               hourlyRate: 150
-            }
+            },
+            update: {}
           });
         } else if (cleanRole === "CARTORIO") {
-          await tx.cartorio.create({
-            data: {
+          await tx.cartorio.upsert({
+            where: { userId: user.id },
+            create: {
               userId: user.id,
               razaoSocial: razaoSocial || nome,
               address: endereco || "",
               cidade: cidade || "",
               services: habilidades || []
+            },
+            update: {}
+          });
+        }
+        if (claim) {
+          console.log(`[FLASH CLAIM] Vinculando cart\xE3o ${claim} ao usu\xE1rio ${user.id}`);
+          await tx.flashCard.updateMany({
+            where: { shortId: claim },
+            data: {
+              userId: user.id,
+              status: "CLAIMED"
             }
           });
         }
@@ -83028,7 +83061,13 @@ async function adminListOrders(req, res) {
     if (payoutStatus) where.payoutStatus = String(payoutStatus);
     if (readyForPayout === "true") {
       where.status = "APROVADO";
-      where.payoutStatus = "AVAILABLE";
+      where.AND = [{
+        OR: [
+          { payoutStatus: "AVAILABLE" },
+          { payoutStatus: "PENDING", payoutReadyAt: { lte: /* @__PURE__ */ new Date() } },
+          { payoutStatus: "PENDING", payoutReadyAt: null }
+        ]
+      }];
     }
     if (q) {
       const searchString = String(q);
@@ -83365,7 +83404,9 @@ async function adminCreateManualSale(req, res) {
         buyerEmail: customerEmail,
         buyerWhatsapp: whatsapp || null,
         internalNotes: internalNotes || null,
-        hasPaid: true
+        hasPaid: true,
+        payoutStatus: "AVAILABLE",
+        payoutReadyAt: /* @__PURE__ */ new Date()
       }
     });
     const canForcePrivate = !event.clientEmail || req.user?.email === event.clientEmail;
@@ -84220,6 +84261,9 @@ async function getMeusPedidos(req, res) {
             temReels: true,
             temFotoImpressa: true
           }
+        },
+        items: {
+          include: { media: true }
         }
       },
       orderBy: { createdAt: "desc" }
@@ -84233,7 +84277,8 @@ async function getMeusPedidos(req, res) {
       hasPaid: p.status === "APROVADO",
       accessType: p.accessType,
       accessExpiresAt: p.accessExpiresAt,
-      manualType: p.manualType
+      manualType: p.manualType,
+      items: p.items
     }));
     res.json(resultado);
   } catch (err) {
@@ -84267,6 +84312,9 @@ async function getMeuPedidoDetalhe(req, res) {
             temReels: true,
             temFotoImpressa: true
           }
+        },
+        items: {
+          include: { media: true }
         }
       }
     });
@@ -84300,7 +84348,8 @@ async function getMeuPedidoDetalhe(req, res) {
         // Só expõe os links se aprovado INTEGRALMENTE e NÃO expirado/excluído
         lightroomUrl: canAccess ? pedido.event?.lightroomUrl ?? null : null,
         driveUrl: canAccess ? pedido.event?.driveUrl ?? null : null
-      }
+      },
+      items: pedido.items
     });
   } catch (err) {
     console.error("getMeuPedidoDetalhe:", err);
@@ -86359,6 +86408,46 @@ var VaultCycleService = class {
   }
 };
 
+// backend/src/services/iot.service.ts
+init_prisma();
+var IoTService = class {
+  /**
+   * Registra ou atualiza o status de um dispositivo IoT
+   */
+  static async updateHeartbeat(agentId, name2 = "Printer Agent") {
+    return await prisma.ioTDevice.upsert({
+      where: { agentId },
+      update: {
+        lastSeen: /* @__PURE__ */ new Date(),
+        status: "ONLINE"
+      },
+      create: {
+        agentId,
+        name: name2,
+        status: "ONLINE"
+      }
+    });
+  }
+  /**
+   * Monitora dispositivos offline
+   */
+  static async checkOfflineDevices() {
+    const twoMinutesAgo = new Date(Date.now() - 2 * 60 * 1e3);
+    const result = await prisma.ioTDevice.updateMany({
+      where: {
+        lastSeen: { lt: twoMinutesAgo },
+        status: "ONLINE"
+      },
+      data: {
+        status: "OFFLINE"
+      }
+    });
+    if (result.count > 0) {
+      console.warn(`[IoT MONITOR] \u26A0\uFE0F  ${result.count} dispositivos entraram em estado OFFLINE.`);
+    }
+  }
+};
+
 // backend/src/jobs/expiration.job.ts
 async function runExpirationJob(req) {
   const now = /* @__PURE__ */ new Date();
@@ -86524,6 +86613,7 @@ async function runExpirationJob(req) {
     }
   }
   await VaultCycleService.processAllDueSubscriptions();
+  await IoTService.checkOfflineDevices();
 }
 
 // backend/src/jobs/vault-cycle.job.ts
@@ -86840,6 +86930,7 @@ var MarketplaceController = class {
     const { id: eventId } = req.params;
     const authUser = req.user;
     try {
+      console.log(`[MarketplaceController.listMedia] Listando m\xEDdias para evento: ${eventId}`);
       const event = await prisma_default.event.findUnique({
         where: { id: String(eventId) },
         select: {
@@ -86873,7 +86964,26 @@ var MarketplaceController = class {
         where: { eventId: String(eventId) },
         orderBy: { shortId: "asc" }
       });
-      return res.json(media);
+      let unlockedMediaIds = [];
+      if (authUser) {
+        const paidOrders = await prisma_default.order.findMany({
+          where: {
+            eventId: event.id,
+            clienteId: authUser.userId,
+            status: { in: ["PAGO", "APROVADO"] }
+          },
+          include: { items: true }
+        });
+        paidOrders.forEach((o) => {
+          o.items.forEach((item) => {
+            if (item.mediaId) unlockedMediaIds.push(item.mediaId);
+          });
+        });
+      }
+      return res.json({
+        media,
+        unlockedMediaIds
+      });
     } catch (error) {
       console.error("[Marketplace.listMedia] Erro:", error);
       return res.status(500).json({ error: "Erro ao listar m\xEDdias." });
@@ -87548,27 +87658,63 @@ var import_path2 = __toESM(require("path"));
 var SCOPES = ["https://www.googleapis.com/auth/drive.file"];
 var GoogleDriveService = class {
   constructor() {
+    const clientId = process.env.GOOGLE_DRIVE_CLIENT_ID;
+    const clientSecret = process.env.GOOGLE_DRIVE_CLIENT_SECRET;
+    const refreshToken = process.env.GOOGLE_DRIVE_REFRESH_TOKEN;
     const clientEmail = process.env.GOOGLE_SERVICE_ACCOUNT_EMAIL;
     const privateKey = process.env.GOOGLE_SERVICE_ACCOUNT_PRIVATE_KEY?.replace(/\\n/g, "\n");
-    console.log(`[DRIVE DEBUG] ServiceAccountEmail: ${clientEmail ? "Presente" : "MISSING"}`);
-    console.log(`[DRIVE DEBUG] PrivateKey: ${privateKey ? "Presente" : "MISSING"}`);
-    if (!clientEmail || !privateKey) {
-      console.warn("\u26A0\uFE0F Google Drive Service Account n\xE3o configurado. O sistema operar\xE1 em MODO MOCK para Cofres.");
-      this.drive = null;
-      return;
+    if (clientId && clientSecret && refreshToken) {
+      try {
+        const oauth2Client = new import_googleapis.google.auth.OAuth2(clientId, clientSecret);
+        oauth2Client.setCredentials({ refresh_token: refreshToken });
+        this.drive = import_googleapis.google.drive({ version: "v3", auth: oauth2Client });
+        console.log(`[DRIVE] \u{1F680} Modo OAuth2 (Refresh Token) ativado. Usando cota de armazenamento do usu\xE1rio.`);
+        return;
+      } catch (oauthErr) {
+        console.error(`[DRIVE] Falha ao inicializar OAuth2:`, oauthErr.message);
+      }
     }
-    try {
-      const jwtClient = new import_googleapis.google.auth.JWT({
-        email: clientEmail,
-        key: privateKey,
-        scopes: SCOPES
-      });
-      this.drive = import_googleapis.google.drive({ version: "v3", auth: jwtClient });
-      console.log(`[DRIVE] Servi\xE7o JWT (Service Account) inicializado com sucesso.`);
-    } catch (err) {
-      console.error(`[DRIVE] Falha ao inicializar JWT:`, err.message);
-      this.drive = null;
+    if (clientEmail && privateKey) {
+      try {
+        const jwtClient = new import_googleapis.google.auth.JWT({
+          email: clientEmail,
+          key: privateKey,
+          scopes: SCOPES
+        });
+        this.drive = import_googleapis.google.drive({ version: "v3", auth: jwtClient });
+        console.log(`[DRIVE] \u{1F6E1}\uFE0F Modo Service Account ativado. (Aten\xE7\xE3o: Requer Shared Drive ou Quota de SA).`);
+        return;
+      } catch (err) {
+        console.error(`[DRIVE] Falha ao inicializar JWT:`, err.message);
+      }
     }
+    console.warn("\u26A0\uFE0F Google Drive n\xE3o configurado (OAuth2 ou Service Account). O sistema operar\xE1 em MODO MOCK.");
+    this.drive = null;
+  }
+  /**
+   * Helper method to retry operations with exponential backoff
+   */
+  async withRetry(operation, maxRetries = 3) {
+    let attempt = 0;
+    while (attempt < maxRetries) {
+      try {
+        return await operation();
+      } catch (error) {
+        attempt++;
+        console.warn(`
+[DRIVE RETRY] \u26A0\uFE0F Tentativa ${attempt}/${maxRetries} falhou.`);
+        console.warn(` - Mensagem: ${error.message}`);
+        if (error.response) {
+          console.warn(` - Google API Error:`, JSON.stringify(error.response.data, null, 2));
+        }
+        if (attempt >= maxRetries) {
+          console.error(`[DRIVE] \u274C Esgotadas todas as retentativas para a opera\xE7\xE3o.`);
+          throw error;
+        }
+        await new Promise((res) => setTimeout(res, 1e3 * Math.pow(2, attempt)));
+      }
+    }
+    throw new Error("Unreachable");
   }
   /**
    * Cria uma pasta para um novo Álbum compartilhado.
@@ -87585,21 +87731,21 @@ var GoogleDriveService = class {
       parents: rootFolderId ? [rootFolderId] : []
     };
     try {
-      const folder = await this.drive.files.create({
+      const folder = await this.withRetry(() => this.drive.files.create({
         requestBody: fileMetadata,
         fields: "id, name"
-      });
+      }));
       console.log(`[DRIVE] Pasta criada para \xE1lbum: ${albumName} (ID: ${folder.data.id})`);
-      await this.drive.permissions.create({
+      await this.withRetry(() => this.drive.permissions.create({
         fileId: folder.data.id,
         requestBody: {
           role: "reader",
           type: "anyone"
         }
-      });
+      }));
       return folder.data;
     } catch (error) {
-      console.error("[DRIVE] Erro ao criar pasta:", error.message);
+      console.error("[DRIVE] Erro ao criar pasta ap\xF3s retentativas:", error.message);
       throw error;
     }
   }
@@ -87630,7 +87776,7 @@ var GoogleDriveService = class {
     const tmpFilePath = import_path2.default.join(os.tmpdir(), fileName);
     import_fs2.default.writeFileSync(tmpFilePath, buffer);
     try {
-      const file = await this.drive.files.create({
+      const file = await this.withRetry(() => this.drive.files.create({
         requestBody: {
           name: fileName,
           parents: [folderId]
@@ -87640,23 +87786,26 @@ var GoogleDriveService = class {
           body: import_fs2.default.createReadStream(tmpFilePath)
         },
         fields: "id, name, webViewLink, thumbnailLink"
-      });
+      }));
       if (import_fs2.default.existsSync(tmpFilePath)) {
         import_fs2.default.unlinkSync(tmpFilePath);
       }
-      await this.drive.permissions.create({
+      await this.withRetry(() => this.drive.permissions.create({
         fileId: file.data.id,
         requestBody: {
           role: "reader",
           type: "anyone"
         }
-      });
+      }));
       return file.data;
     } catch (error) {
       if (import_fs2.default.existsSync(tmpFilePath)) {
         import_fs2.default.unlinkSync(tmpFilePath);
       }
-      console.error("[DRIVE] Erro no upload de m\xEDdia:", error.message);
+      console.error("[DRIVE] Erro CR\xCDTICO no upload de m\xEDdia ap\xF3s retentativas:", error);
+      if (error.response) {
+        console.error("[DRIVE] Detalhes da API Google (Response):", JSON.stringify(error.response.data, null, 2));
+      }
       throw error;
     }
   }
@@ -87690,7 +87839,7 @@ var VaultController = class {
   /**
    * Cria um novo cofre privado, gerando a pasta correspondente no Drive.
    */
-  static async createVault(req, res) {
+  static async createAlbum(req, res) {
     const { name: name2, nome, goalPoses, cycleEndDay } = req.body;
     const finalName = nome || name2;
     const userId = req.user?.userId;
@@ -87794,10 +87943,20 @@ var VaultController = class {
         media
       });
     } catch (error) {
-      console.error("[VAULT] Erro no upload de m\xEDdia:", error.message);
+      console.error("\n=======================================================");
+      console.error("[VAULT] \u{1F6A8} ERRO CR\xCDTICO NO UPLOAD DE M\xCDDIA (Controller)");
+      console.error("=======================================================");
+      console.error(" - Mensagem:", error.message);
+      if (error.response && error.response.data) {
+        console.error(" - Google API Response (Detalhes do Bloqueio):");
+        console.error(JSON.stringify(error.response.data, null, 2));
+      } else {
+        console.error(" - Nenhum detalhe de resposta da API (Pode ser falha local de Buffer ou Rede).");
+      }
+      console.error("=======================================================\n");
       return res.status(500).json({
         error: "Falha no upload.",
-        details: error.message
+        details: error.message || "Erro interno na comunica\xE7\xE3o com o Drive."
       });
     }
   }
@@ -87835,7 +87994,7 @@ var VaultController = class {
   /**
    * Lista os cofres onde o usuário é membro.
    */
-  static async listMyVaults(req, res) {
+  static async listAlbums(req, res) {
     const userId = req.user?.userId;
     if (!userId) return res.status(401).json({ error: "N\xE3o autenticado." });
     try {
@@ -87861,6 +88020,32 @@ var VaultController = class {
     } catch (error) {
       console.error("[VAULT] Erro ao listar cofres:", error.message);
       return res.status(500).json({ error: "Erro ao listar seus cofres.", details: error.message });
+    }
+  }
+  /**
+   * Obtém detalhes de um cofre específico.
+   */
+  static async getAlbumDetails(req, res) {
+    const albumId = req.params.albumId;
+    const userId = req.user?.userId;
+    if (!userId) return res.status(401).json({ error: "N\xE3o autenticado." });
+    try {
+      const album = await prisma.sharedAlbum.findUnique({
+        where: { id: albumId },
+        include: {
+          members: true,
+          subscription: true,
+          _count: {
+            select: { media: true, members: true }
+          }
+        }
+      });
+      if (!album) return res.status(404).json({ error: "Cofre n\xE3o encontrado." });
+      const isMember = album.members.some((m) => m.userId === userId);
+      if (!isMember) return res.status(403).json({ error: "Acesso negado." });
+      return res.json(album);
+    } catch (error) {
+      return res.status(500).json({ error: "Erro ao buscar detalhes do cofre." });
     }
   }
   /**
@@ -88077,7 +88262,7 @@ var VaultController = class {
   /**
    * Ativa a assinatura recorrente para o cofre.
    */
-  static async subscribeVault(req, res) {
+  static async subscribe(req, res) {
     const albumId = req.params.albumId;
     const userId = req.user?.userId;
     const { planLimit } = req.body;
@@ -88105,6 +88290,38 @@ var VaultController = class {
     } catch (error) {
       console.error("[PROXY MEDIA] Erro:", error.message);
       res.status(500).send("Erro ao carregar m\xEDdia");
+    }
+  }
+};
+
+// backend/src/controllers/iot.controller.ts
+init_prisma();
+var IoTController = class {
+  static async heartbeat(req, res) {
+    const { agentId, name: name2 } = req.body;
+    if (!agentId) {
+      return res.status(400).json({ error: "agentId is required" });
+    }
+    try {
+      const device = await IoTService.updateHeartbeat(agentId, name2);
+      return res.json({
+        ok: true,
+        status: device.status,
+        lastSeen: device.lastSeen
+      });
+    } catch (err) {
+      console.error("[IoT HEARTBEAT] Error:", err);
+      return res.status(500).json({ error: "Internal server error" });
+    }
+  }
+  static async listDevices(_req, res) {
+    try {
+      const devices = await prisma.ioTDevice.findMany({
+        orderBy: { lastSeen: "desc" }
+      });
+      return res.json(devices);
+    } catch (err) {
+      return res.status(500).json({ error: "Internal server error" });
     }
   }
 };
@@ -88389,13 +88606,130 @@ var calendar_routes_default = router;
 
 // backend/src/routes/index.ts
 var import_multer = __toESM(require("multer"));
-var import_express4 = __toESM(require_express2());
+var import_express5 = __toESM(require_express2());
+
+// backend/src/routes/flash.routes.ts
+var import_express2 = __toESM(require_express2());
+
+// backend/src/controllers/flash.controller.ts
+init_prisma();
+var import_crypto14 = __toESM(require("crypto"));
+var FlashController = class {
+  /**
+   * Gera um lote de cartões para um evento Flash.
+   * POST /api/flash/generate
+   */
+  static async generateCards(req, res) {
+    const { eventId, quantity } = req.body;
+    const userId = req.user?.userId;
+    if (!eventId || !quantity) {
+      return res.status(400).json({ error: "eventId e quantity s\xE3o obrigat\xF3rios." });
+    }
+    try {
+      const event = await prisma.event.findUnique({
+        where: { id: eventId }
+      });
+      if (!event) return res.status(404).json({ error: "Evento n\xE3o encontrado." });
+      const cards = [];
+      for (let i = 0; i < quantity; i++) {
+        const shortId = import_crypto14.default.randomBytes(4).toString("hex").toUpperCase();
+        const pin = Math.floor(1e5 + Math.random() * 9e5).toString();
+        cards.push({
+          shortId,
+          pin,
+          eventId,
+          status: "UNUSED"
+        });
+      }
+      await prisma.flashCard.createMany({
+        data: cards
+      });
+      return res.status(201).json({
+        message: `${quantity} cart\xF5es gerados com sucesso.`,
+        cards: cards.map((c) => ({ shortId: c.shortId, pin: c.pin }))
+      });
+    } catch (error) {
+      console.error("[FLASH] Erro ao gerar cart\xF5es:", error);
+      return res.status(500).json({ error: "Erro interno ao gerar cart\xF5es." });
+    }
+  }
+  /**
+   * Valida o PIN de um QR Code.
+   * POST /api/flash/unlock
+   */
+  static async unlock(req, res) {
+    const { shortId, pin } = req.body;
+    if (!shortId || !pin) {
+      return res.status(400).json({ error: "shortId e PIN s\xE3o obrigat\xF3rios." });
+    }
+    try {
+      const card = await prisma.flashCard.findUnique({
+        where: { shortId },
+        include: {
+          event: true,
+          media: true
+        }
+      });
+      if (!card || card.pin !== pin) {
+        return res.status(401).json({ error: "PIN ou QR Code inv\xE1lido." });
+      }
+      const token = generateToken({
+        userId: `anon-${card.id}`,
+        role: "ANONYMOUS_FLASH",
+        nome: "Cliente An\xF4nimo",
+        email: `anon-${card.shortId}@flash.fs`
+      });
+      return res.json({
+        message: "Acesso liberado!",
+        token,
+        event: {
+          id: card.event.id,
+          nome: card.event.nomeNoivos
+        },
+        media: card.media ? {
+          id: card.media.id,
+          url: card.media.url,
+          thumbnail: card.media.url
+          // Placeholder for thumbnail logic
+        } : null
+      });
+    } catch (error) {
+      console.error("[FLASH] Erro ao desbloquear PIN:", error);
+      return res.status(500).json({ error: "Erro interno no desbloqueio." });
+    }
+  }
+  /**
+   * Vincula uma mídia a um cartão existente (usado pelo fotógrafo no upload).
+   */
+  static async linkMedia(req, res) {
+    const { shortId, mediaId } = req.body;
+    try {
+      await prisma.flashCard.update({
+        where: { shortId },
+        data: {
+          mediaId,
+          status: "USED"
+        }
+      });
+      return res.json({ message: "M\xEDdia vinculada ao cart\xE3o." });
+    } catch (error) {
+      return res.status(500).json({ error: "Erro ao vincular m\xEDdia." });
+    }
+  }
+};
+
+// backend/src/routes/flash.routes.ts
+var router2 = (0, import_express2.Router)();
+router2.post("/unlock", FlashController.unlock);
+router2.post("/generate", requireAuth, FlashController.generateCards);
+router2.post("/link", requireAuth, FlashController.linkMedia);
+var flash_routes_default = router2;
 
 // backend/src/routes/driveAuth.routes.ts
-var import_express2 = __toESM(require_express2());
+var import_express3 = __toESM(require_express2());
 var import_googleapis3 = require("googleapis");
-var router2 = (0, import_express2.Router)();
-router2.get("/google/callback", async (req, res) => {
+var router3 = (0, import_express3.Router)();
+router3.get("/google/callback", async (req, res) => {
   const { code } = req.query;
   if (!code) {
     return res.status(400).send("C\xF3digo de autoriza\xE7\xE3o n\xE3o fornecido.");
@@ -88428,12 +88762,12 @@ router2.get("/google/callback", async (req, res) => {
     res.status(500).send("Erro ao processar autoriza\xE7\xE3o: " + error.message);
   }
 });
-var driveAuth_routes_default = router2;
+var driveAuth_routes_default = router3;
 
 // backend/src/routes/index.ts
 var upload = (0, import_multer.default)({ storage: import_multer.default.memoryStorage() });
-var router3 = (0, import_express3.Router)();
-router3.use("/auth", driveAuth_routes_default);
+var router4 = (0, import_express4.Router)();
+router4.use("/auth", driveAuth_routes_default);
 var requireProOrFranchise = async (req, res, next) => {
   const user = req.user;
   if (!user) return res.status(401).json({ error: "N\xE3o autenticado." });
@@ -88448,22 +88782,22 @@ var requireProOrFranchise = async (req, res, next) => {
   }
   return res.status(403).json({ error: "Acesso negado. Requer perfil profissional ou franquia ativa." });
 };
-router3.patch("/profissional/events/:id/links", requireAuth, requireProOrFranchise, updateEventLinks);
-router3.patch("/profissional/events/:id/cover", requireAuth, requireProOrFranchise, uploadEventCover);
-router3.patch("/profissional/events/:id/respond", requireAuth, requireProOrFranchise, respondToEvent);
-router3.get("/profissional/me", requireAuth, requireProOrFranchise, getProfile);
-router3.patch("/profissional/me", requireAuth, requireProOrFranchise, updateProfile);
-router3.post("/profissional/events/:id/manual-sale", requireAuth, requireProOrFranchise, registerManualSale);
-router3.get("/profissional/unidades/convites", requireAuth, requireProOrFranchise, getConvitesUnidade);
-router3.patch("/profissional/unidades/convites/:id/respond", requireAuth, requireProOrFranchise, respondConviteUnidade);
-router3.get("/profissional/network", requireAuth, requireProOrFranchise, getNetwork);
-router3.get("/profissional/network/search", requireAuth, requireProOrFranchise, searchProfessionals);
-router3.post("/profissional/network/favorite/:partnerId", requireAuth, requireProOrFranchise, toggleFavorite);
-router3.get("/profissional/finance/tax-report", requireAuth, requireProOrFranchise, getTaxReport);
-router3.post("/marketplace/express-sale", requireAuth, requireProOrFranchise, MarketplaceController.expressSale);
-router3.post("/marketplace/events/:id/media", requireAuth, requireProOrFranchise, MarketplaceController.addMedia);
-router3.get("/marketplace/events/:id/media", optionalAuth, MarketplaceController.listMedia);
-router3.get("/cron/expiration", async (req, res) => {
+router4.patch("/profissional/events/:id/links", requireAuth, requireProOrFranchise, updateEventLinks);
+router4.patch("/profissional/events/:id/cover", requireAuth, requireProOrFranchise, uploadEventCover);
+router4.patch("/profissional/events/:id/respond", requireAuth, requireProOrFranchise, respondToEvent);
+router4.get("/profissional/me", requireAuth, requireProOrFranchise, getProfile);
+router4.patch("/profissional/me", requireAuth, requireProOrFranchise, updateProfile);
+router4.post("/profissional/events/:id/manual-sale", requireAuth, requireProOrFranchise, registerManualSale);
+router4.get("/profissional/unidades/convites", requireAuth, requireProOrFranchise, getConvitesUnidade);
+router4.patch("/profissional/unidades/convites/:id/respond", requireAuth, requireProOrFranchise, respondConviteUnidade);
+router4.get("/profissional/network", requireAuth, requireProOrFranchise, getNetwork);
+router4.get("/profissional/network/search", requireAuth, requireProOrFranchise, searchProfessionals);
+router4.post("/profissional/network/favorite/:partnerId", requireAuth, requireProOrFranchise, toggleFavorite);
+router4.get("/profissional/finance/tax-report", requireAuth, requireProOrFranchise, getTaxReport);
+router4.post("/marketplace/express-sale", requireAuth, requireProOrFranchise, MarketplaceController.expressSale);
+router4.post("/marketplace/events/:id/media", requireAuth, requireProOrFranchise, MarketplaceController.addMedia);
+router4.get("/marketplace/events/:id/media", optionalAuth, MarketplaceController.listMedia);
+router4.get("/cron/expiration", async (req, res) => {
   const token = req.headers["authorization"];
   if (process.env.CRON_SECRET && token !== `Bearer ${process.env.CRON_SECRET}`) {
     console.warn("[Cron] Tentativa de acesso n\xE3o autorizada.");
@@ -88480,15 +88814,15 @@ router3.get("/cron/expiration", async (req, res) => {
     res.status(500).json({ error: errorMsg });
   }
 });
-router3.get("/cron/loyalty-bot", async (req, res) => {
+router4.get("/cron/loyalty-bot", async (req, res) => {
   const token = req.headers["authorization"];
   if (process.env.CRON_SECRET && token !== `Bearer ${process.env.CRON_SECRET}`) {
     return res.status(401).json({ error: "N\xE3o autorizado." });
   }
   return runLoyaltyBot(req, res);
 });
-router3.use("/calendar", calendar_routes_default);
-router3.get("/cron/calendar-sync", async (req, res) => {
+router4.use("/calendar", calendar_routes_default);
+router4.get("/cron/calendar-sync", async (req, res) => {
   const token = req.headers["authorization"];
   if (process.env.CRON_SECRET && token !== `Bearer ${process.env.CRON_SECRET}`) {
     return res.status(401).json({ error: "N\xE3o autorizado." });
@@ -88502,7 +88836,7 @@ router3.get("/cron/calendar-sync", async (req, res) => {
     res.status(500).json({ error: msg });
   }
 });
-router3.get("/cron/vault-cycle", async (req, res) => {
+router4.get("/cron/vault-cycle", async (req, res) => {
   const token = req.headers["authorization"];
   if (process.env.CRON_SECRET && token !== `Bearer ${process.env.CRON_SECRET}`) {
     return res.status(401).json({ error: "N\xE3o autorizado." });
@@ -88516,42 +88850,42 @@ router3.get("/cron/vault-cycle", async (req, res) => {
     res.status(500).json({ error: msg });
   }
 });
-router3.post("/auth/login", AuthController.login);
-router3.post("/auth/register", AuthController.register);
-router3.post("/auth/forgot-password", AuthController.forgotPassword);
-router3.post("/auth/reset-password", AuthController.updatePassword);
-router3.get("/auth/me", requireAuth, AuthController.me);
-router3.patch("/auth/me", requireAuth, AuthController.updateMe);
-router3.post("/auth/refresh", AuthController.refresh);
-router3.get("/public/auth/check", AuthController.checkEmail);
-router3.get("/mercadopago/connect", requireAuth, MercadoPagoController.connect);
-router3.get("/diag", diagnostics);
-router3.get("/public/events", EventController.listPublic);
-router3.get("/public/events/:slug", optionalAuth, EventController.getById);
-router3.get("/public/events/:slug/access", EventController.getAccess);
-router3.get("/profissional/events", requireAuth, requireProOrFranchise, EventController.listByProfessional);
-router3.get("/profissional/events/:slug", requireAuth, requireProOrFranchise, EventController.getById);
-router3.post("/profissional/flash-event", requireAuth, requireProOrFranchise, EventController.createFlashEvent);
-router3.post("/profissional/foto-point", requireAuth, requireProOrFranchise, EventController.createFotoPoint);
-router3.patch("/profissional/events/:id/foto-point", requireAuth, requireProOrFranchise, EventController.updateFotoPoint);
-router3.get("/public/partners", EventController.listPartners);
-router3.get("/public/unidades-fixas", EventController.listPartners);
-router3.post("/public/quotes", EventController.createQuote);
-router3.get("/public/unidade-fixa/:slug", getPartnerLandingData);
-router3.get("/public/configs/theme", getPublicThemeConfigs);
-router3.get("/public/configs/services", getPublicServices);
-router3.get("/public/service-catalog", adminListServiceCatalog);
-router3.get("/public/contests/active", getActiveContest);
-router3.get("/public/contests/hall-of-fame", getHallOfFame);
-router3.get("/events/:slug/likes", getEventLikes);
-router3.get("/share/e/:id", SEOController.getEventPreview);
-router3.post("/checkout/pending", PaymentController.createPendingOrder);
-router3.post("/checkout/payment", PaymentController.processPayment);
-router3.get("/checkout/shipping-quote", optionalAuth, PaymentController.calculateShipping);
-router3.post(
+router4.post("/auth/login", AuthController.login);
+router4.post("/auth/register", AuthController.register);
+router4.post("/auth/forgot-password", AuthController.forgotPassword);
+router4.post("/auth/reset-password", AuthController.updatePassword);
+router4.get("/auth/me", requireAuth, AuthController.me);
+router4.patch("/auth/me", requireAuth, AuthController.updateMe);
+router4.post("/auth/refresh", AuthController.refresh);
+router4.get("/public/auth/check", AuthController.checkEmail);
+router4.get("/mercadopago/connect", requireAuth, MercadoPagoController.connect);
+router4.get("/diag", diagnostics);
+router4.get("/public/events", EventController.listPublic);
+router4.get("/public/events/:slug", optionalAuth, EventController.getById);
+router4.get("/public/events/:slug/access", EventController.getAccess);
+router4.get("/profissional/events", requireAuth, requireProOrFranchise, EventController.listByProfessional);
+router4.get("/profissional/events/:slug", requireAuth, requireProOrFranchise, EventController.getById);
+router4.post("/profissional/flash-event", requireAuth, requireProOrFranchise, EventController.createFlashEvent);
+router4.post("/profissional/foto-point", requireAuth, requireProOrFranchise, EventController.createFotoPoint);
+router4.patch("/profissional/events/:id/foto-point", requireAuth, requireProOrFranchise, EventController.updateFotoPoint);
+router4.get("/public/partners", EventController.listPartners);
+router4.get("/public/unidades-fixas", EventController.listPartners);
+router4.post("/public/quotes", EventController.createQuote);
+router4.get("/public/unidade-fixa/:slug", getPartnerLandingData);
+router4.get("/public/configs/theme", getPublicThemeConfigs);
+router4.get("/public/configs/services", getPublicServices);
+router4.get("/public/service-catalog", adminListServiceCatalog);
+router4.get("/public/contests/active", getActiveContest);
+router4.get("/public/contests/hall-of-fame", getHallOfFame);
+router4.get("/events/:slug/likes", getEventLikes);
+router4.get("/share/e/:id", SEOController.getEventPreview);
+router4.post("/checkout/pending", PaymentController.createPendingOrder);
+router4.post("/checkout/payment", optionalAuth, PaymentController.processPayment);
+router4.get("/checkout/shipping-quote", optionalAuth, PaymentController.calculateShipping);
+router4.post(
   "/webhooks/mercadopago",
   // Raw body antes do JSON parser — garante integridade do HMAC
-  import_express4.default.raw({ type: "application/json" }),
+  import_express5.default.raw({ type: "application/json" }),
   (req, _res, next) => {
     if (Buffer.isBuffer(req.body)) {
       try {
@@ -88565,110 +88899,110 @@ router3.post(
   requireMercadoPagoSignature,
   PaymentController.webhook
 );
-router3.get("/public/orders/:id", PaymentController.getOrderPublic);
-router3.get("/public/orders/:id/check-payment", PaymentController.checkPaymentStatus);
-router3.post("/public/orders/:id/manual-payment", requireAuth, PaymentController.manualPayment);
-router3.get("/public/print-catalog", getPublicPrintCatalog);
-router3.get("/public/events/:eventId/print-products", getEventPrintProducts);
-router3.post("/orders/print", PaymentController.createPrintOrder);
-router3.post("/orders/:id/access-type", requireAuth, chooseAccessType);
-router3.get("/orders/:id/access-status", requireAuth, getAccessStatus);
-router3.post("/orders/:id/visibility", requireAuth, toggleVisibility);
-router3.get("/cliente/pedidos", requireAuth, getMeusPedidos);
-router3.get("/cliente/pedidos/:id", requireAuth, getMeuPedidoDetalhe);
-router3.get("/profissional/services", requireAuth, requireRole("ADMIN", "PROFISSIONAL"), listProServices);
-router3.post("/profissional/services", requireAuth, requireRole("ADMIN", "PROFISSIONAL"), addProService);
-router3.patch("/profissional/services/:id", requireAuth, requireRole("ADMIN", "PROFISSIONAL"), updateProService);
-router3.delete("/profissional/services/:id", requireAuth, requireRole("ADMIN", "PROFISSIONAL"), deleteProService);
-router3.post("/events/:slug/photos/like", requireAuth, likePhoto);
-router3.get("/me/points", requireAuth, getMyPoints);
-router3.post("/me/redeem-print", requireAuth, redeemPrint);
-router3.get("/unidade-fixa/stats", requireAuth, requireRole("ADMIN", "CARTORIO"), CartorioController.getStats);
-router3.get("/unidade-fixa/events", requireAuth, requireRole("ADMIN", "CARTORIO"), CartorioController.getEvents);
-router3.get("/unidade-fixa/orders", requireAuth, requireRole("ADMIN", "CARTORIO"), CartorioController.getOrders);
-router3.patch("/unidade-fixa/profile", requireAuth, requireRole("ADMIN", "CARTORIO"), updatePartnerProfile);
-router3.get("/unidade-fixa/team", requireAuth, requireRole("ADMIN", "CARTORIO"), getTeam);
-router3.put("/unidade-fixa/team", requireAuth, requireRole("ADMIN", "CARTORIO"), saveTeam);
-router3.get("/admin/stats", requireAuth, requireRole("ADMIN"), getDashboardStats);
-router3.get("/admin/logs", requireAuth, requireRole("ADMIN"), adminGetLogs);
-router3.post("/admin/orders/manual", requireAuth, requireRole("ADMIN"), adminCreateManualSale);
-router3.get("/admin/events", requireAuth, requireRole("ADMIN"), adminListEvents);
-router3.get("/admin/events/:id", requireAuth, requireRole("ADMIN"), adminGetEventById);
-router3.post("/admin/events", requireAuth, requireRole("ADMIN"), adminCreateEvent);
-router3.patch("/admin/events/:id", requireAuth, requireRole("ADMIN"), adminUpdateEvent);
-router3.patch("/admin/events/:id/cover", requireAuth, requireRole("ADMIN"), adminUploadCover);
-router3.patch("/admin/events/:id/preview", requireAuth, requireRole("ADMIN"), adminUploadPreview);
-router3.delete("/admin/events/:id", requireAuth, requireRole("ADMIN"), adminDeleteEvent);
-router3.get("/admin/users", requireAuth, requireRole("ADMIN"), adminListUsers);
-router3.post("/admin/users", requireAuth, requireRole("ADMIN"), adminCreateUser);
-router3.patch("/admin/users/:id", requireAuth, requireRole("ADMIN"), adminUpdateUser);
-router3.delete("/admin/users/:id", requireAuth, requireRole("ADMIN"), adminDeleteUser);
-router3.get("/admin/orders", requireAuth, requireRole("ADMIN"), adminListOrders);
-router3.patch("/admin/orders/:id/payout", requireAuth, requireRole("ADMIN"), adminMarkPayoutPaid);
-router3.patch("/admin/orders/:id/logistics", requireAuth, requireRole("ADMIN"), adminUpdateOrderLogistics);
-router3.delete("/admin/orders/:id", requireAuth, requireRole("ADMIN"), adminDeleteOrder);
-router3.post("/admin/orders/:id/delete-media", requireAuth, requireRole("ADMIN"), deleteMediaAdmin);
-router3.get("/admin/quotes", requireAuth, requireRole("ADMIN"), adminListQuotes);
-router3.patch("/admin/quotes/:id/approve", requireAuth, requireRole("ADMIN"), adminApproveQuote);
-router3.patch("/admin/quotes/:id/reject", requireAuth, requireRole("ADMIN"), adminRejectQuote);
-router3.post("/admin/payouts/generate", requireAuth, requireRole("ADMIN"), generateWeeklyPayout);
-router3.get("/admin/payouts", requireAuth, requireRole("ADMIN"), listPayouts);
-router3.get("/admin/payouts/export", requireAuth, requireRole("ADMIN"), exportPayoutCSV);
-router3.patch("/admin/payouts/:id/items/:itemId/paid", requireAuth, requireRole("ADMIN"), markItemPaid);
-router3.get("/payouts/me", requireAuth, getMeusRepasses);
-router3.get("/admin/configs", requireAuth, requireRole("ADMIN"), getConfigs);
-router3.patch("/admin/configs", requireAuth, requireRole("ADMIN"), updateConfigs);
-router3.get("/admin/suppliers", requireAuth, requireRole("ADMIN"), listSuppliers);
-router3.post("/admin/suppliers", requireAuth, requireRole("ADMIN"), createSupplier);
-router3.get("/admin/suppliers/:id/breakeven", requireAuth, requireRole("ADMIN"), getBreakeven);
-router3.get("/admin/redemptions", requireAuth, requireRole("ADMIN"), listRedemptions);
-router3.patch("/admin/redemptions/:id/status", requireAuth, requireRole("ADMIN"), updateRedemptionStatus);
-router3.get("/admin/contests", requireAuth, requireRole("ADMIN"), adminListContests);
-router3.post("/admin/contests", requireAuth, requireRole("ADMIN"), adminCreateContest);
-router3.patch("/admin/contests/:id", requireAuth, requireRole("ADMIN"), adminUpdateContest);
-router3.get("/admin/print-catalog", requireAuth, requireRole("ADMIN"), listPrintProducts);
-router3.post("/admin/print-catalog", requireAuth, requireRole("ADMIN"), createPrintProduct);
-router3.post("/admin/print-catalog/import", requireAuth, requireRole("ADMIN"), importPrintProducts);
-router3.patch("/admin/print-catalog/bulk-margin", requireAuth, requireRole("ADMIN"), bulkUpdateMargin);
-router3.patch("/admin/print-catalog/:id", requireAuth, requireRole("ADMIN"), updatePrintProduct);
-router3.post("/admin/print-catalog/seed", requireAuth, requireRole("ADMIN"), seedCkCatalog);
-router3.get("/admin/service-catalog", requireAuth, requireRole("ADMIN"), adminListServiceCatalog);
-router3.post("/admin/service-catalog", requireAuth, requireRole("ADMIN"), adminCreateService);
-router3.patch("/admin/service-catalog/:id", requireAuth, requireRole("ADMIN"), adminUpdateService);
-router3.delete("/admin/service-catalog/:id", requireAuth, requireRole("ADMIN"), adminDeleteService);
-router3.get("/admin/franchises", requireAuth, requireRole("ADMIN"), FranchiseController.listAll);
-router3.post("/admin/franchises/promote", requireAuth, requireRole("ADMIN"), FranchiseController.promote);
-router3.post("/admin/franchises/credits", requireAuth, requireRole("ADMIN"), FranchiseController.addCredits);
-router3.patch("/admin/franchises/:profileId/toggle", requireAuth, requireRole("ADMIN"), FranchiseController.toggleActive);
-router3.delete("/admin/franchises/:profileId", requireAuth, requireRole("ADMIN"), FranchiseController.remove);
-router3.get("/admin/franchises/:profileId/statement", requireAuth, requireRole("ADMIN"), FranchiseController.getStatement);
-router3.get("/franchise/inventory", requireAuth, requireRole("FRANCHISEE"), FranchiseController.getInventory);
-router3.get("/franchise/referral", requireAuth, requireRole("FRANCHISEE"), FranchiseController.getReferralCode);
-router3.get("/franchise/network", requireAuth, requireRole("FRANCHISEE"), FranchiseController.getNetwork);
-router3.get("/franchise/finance", requireAuth, requireRole("FRANCHISEE"), FranchiseController.getFinanceStats);
-router3.post("/franchise/reorder", requireAuth, requireRole("FRANCHISEE"), FranchiseController.postReorder);
-router3.get("/vaults", requireAuth, VaultController.listMyVaults);
-router3.post("/vaults", requireAuth, VaultController.createVault);
-router3.get("/vaults/invitation/:code", (req, res, next) => VaultController.getInvitationDetails(req, res, next));
-router3.post("/vaults/invitation/:code/accept", requireAuth, (req, res, next) => VaultController.acceptInvite(req, res, next));
-router3.get("/vaults/:albumId/media", requireAuth, VaultController.listMedia);
-router3.post("/vaults/:albumId/upload", requireAuth, upload.single("file"), VaultController.uploadMedia);
-router3.post("/vaults/:albumId/invite", requireAuth, VaultController.generateInvite);
-router3.post("/vaults/media/:mediaId/vote", requireAuth, (req, res, next) => VaultController.voteMedia(req, res, next));
-router3.post("/vaults/:albumId/checkout", requireAuth, VaultController.checkoutVault);
-router3.post("/vaults/:albumId/subscribe", requireAuth, VaultController.subscribeVault);
-router3.get("/vaults/media/proxy/:fileId", VaultController.proxyMedia);
-router3.post("/public/phygital/upload", upload.single("photo"), PhygitalController.upload);
-router3.get("/phygital/events/:eventId/queue", requireAuth, PhygitalController.listPending);
-router3.get("/phygital/events/:eventId/prints", requireAuth, PhygitalController.listAllByEvent);
-router3.patch("/phygital/prints/:id/status", requireAuth, PhygitalController.confirmPrint);
-router3.post("/admin/phygital/simulate", optionalAuth, PhygitalController.simulate);
-router3.get("/diag/db", checkDbStatus);
-router3.get("/health", (req, res) => res.json({ status: "ok", time: (/* @__PURE__ */ new Date()).toISOString() }));
-var routes_default = router3;
+router4.get("/public/orders/:id", PaymentController.getOrderPublic);
+router4.get("/public/orders/:id/check-payment", PaymentController.checkPaymentStatus);
+router4.post("/public/orders/:id/manual-payment", requireAuth, PaymentController.manualPayment);
+router4.get("/public/print-catalog", getPublicPrintCatalog);
+router4.get("/public/events/:eventId/print-products", getEventPrintProducts);
+router4.post("/orders/print", PaymentController.createPrintOrder);
+router4.post("/orders/:id/access-type", requireAuth, chooseAccessType);
+router4.get("/orders/:id/access-status", requireAuth, getAccessStatus);
+router4.post("/orders/:id/visibility", requireAuth, toggleVisibility);
+router4.get("/cliente/pedidos", requireAuth, getMeusPedidos);
+router4.get("/cliente/pedidos/:id", requireAuth, getMeuPedidoDetalhe);
+router4.get("/profissional/services", requireAuth, requireRole("ADMIN", "PROFISSIONAL"), listProServices);
+router4.post("/profissional/services", requireAuth, requireRole("ADMIN", "PROFISSIONAL"), addProService);
+router4.patch("/profissional/services/:id", requireAuth, requireRole("ADMIN", "PROFISSIONAL"), updateProService);
+router4.delete("/profissional/services/:id", requireAuth, requireRole("ADMIN", "PROFISSIONAL"), deleteProService);
+router4.post("/events/:slug/photos/like", requireAuth, likePhoto);
+router4.get("/me/points", requireAuth, getMyPoints);
+router4.post("/me/redeem-print", requireAuth, redeemPrint);
+router4.get("/unidade-fixa/stats", requireAuth, requireRole("ADMIN", "CARTORIO"), CartorioController.getStats);
+router4.get("/unidade-fixa/events", requireAuth, requireRole("ADMIN", "CARTORIO"), CartorioController.getEvents);
+router4.get("/unidade-fixa/orders", requireAuth, requireRole("ADMIN", "CARTORIO"), CartorioController.getOrders);
+router4.patch("/unidade-fixa/profile", requireAuth, requireRole("ADMIN", "CARTORIO"), updatePartnerProfile);
+router4.get("/unidade-fixa/team", requireAuth, requireRole("ADMIN", "CARTORIO"), getTeam);
+router4.put("/unidade-fixa/team", requireAuth, requireRole("ADMIN", "CARTORIO"), saveTeam);
+router4.get("/admin/stats", requireAuth, requireRole("ADMIN"), getDashboardStats);
+router4.get("/admin/logs", requireAuth, requireRole("ADMIN"), adminGetLogs);
+router4.post("/admin/orders/manual", requireAuth, requireRole("ADMIN"), adminCreateManualSale);
+router4.get("/admin/events", requireAuth, requireRole("ADMIN"), adminListEvents);
+router4.get("/admin/events/:id", requireAuth, requireRole("ADMIN"), adminGetEventById);
+router4.post("/admin/events", requireAuth, requireRole("ADMIN"), adminCreateEvent);
+router4.patch("/admin/events/:id", requireAuth, requireRole("ADMIN"), adminUpdateEvent);
+router4.patch("/admin/events/:id/cover", requireAuth, requireRole("ADMIN"), adminUploadCover);
+router4.patch("/admin/events/:id/preview", requireAuth, requireRole("ADMIN"), adminUploadPreview);
+router4.delete("/admin/events/:id", requireAuth, requireRole("ADMIN"), adminDeleteEvent);
+router4.get("/admin/users", requireAuth, requireRole("ADMIN"), adminListUsers);
+router4.post("/admin/users", requireAuth, requireRole("ADMIN"), adminCreateUser);
+router4.patch("/admin/users/:id", requireAuth, requireRole("ADMIN"), adminUpdateUser);
+router4.delete("/admin/users/:id", requireAuth, requireRole("ADMIN"), adminDeleteUser);
+router4.get("/admin/orders", requireAuth, requireRole("ADMIN"), adminListOrders);
+router4.patch("/admin/orders/:id/payout", requireAuth, requireRole("ADMIN"), adminMarkPayoutPaid);
+router4.patch("/admin/orders/:id/logistics", requireAuth, requireRole("ADMIN"), adminUpdateOrderLogistics);
+router4.delete("/admin/orders/:id", requireAuth, requireRole("ADMIN"), adminDeleteOrder);
+router4.post("/admin/orders/:id/delete-media", requireAuth, requireRole("ADMIN"), deleteMediaAdmin);
+router4.get("/admin/quotes", requireAuth, requireRole("ADMIN"), adminListQuotes);
+router4.patch("/admin/quotes/:id/approve", requireAuth, requireRole("ADMIN"), adminApproveQuote);
+router4.patch("/admin/quotes/:id/reject", requireAuth, requireRole("ADMIN"), adminRejectQuote);
+router4.post("/admin/payouts/generate", requireAuth, requireRole("ADMIN"), generateWeeklyPayout);
+router4.get("/admin/payouts", requireAuth, requireRole("ADMIN"), listPayouts);
+router4.get("/admin/payouts/export", requireAuth, requireRole("ADMIN"), exportPayoutCSV);
+router4.patch("/admin/payouts/:id/items/:itemId/paid", requireAuth, requireRole("ADMIN"), markItemPaid);
+router4.get("/payouts/me", requireAuth, getMeusRepasses);
+router4.get("/admin/configs", requireAuth, requireRole("ADMIN"), getConfigs);
+router4.patch("/admin/configs", requireAuth, requireRole("ADMIN"), updateConfigs);
+router4.get("/admin/suppliers", requireAuth, requireRole("ADMIN"), listSuppliers);
+router4.post("/admin/suppliers", requireAuth, requireRole("ADMIN"), createSupplier);
+router4.get("/admin/suppliers/:id/breakeven", requireAuth, requireRole("ADMIN"), getBreakeven);
+router4.get("/admin/redemptions", requireAuth, requireRole("ADMIN"), listRedemptions);
+router4.patch("/admin/redemptions/:id/status", requireAuth, requireRole("ADMIN"), updateRedemptionStatus);
+router4.get("/admin/contests", requireAuth, requireRole("ADMIN"), adminListContests);
+router4.post("/admin/contests", requireAuth, requireRole("ADMIN"), adminCreateContest);
+router4.patch("/admin/contests/:id", requireAuth, requireRole("ADMIN"), adminUpdateContest);
+router4.get("/admin/print-catalog", requireAuth, requireRole("ADMIN"), listPrintProducts);
+router4.post("/admin/print-catalog", requireAuth, requireRole("ADMIN"), createPrintProduct);
+router4.post("/admin/print-catalog/import", requireAuth, requireRole("ADMIN"), importPrintProducts);
+router4.patch("/admin/print-catalog/bulk-margin", requireAuth, requireRole("ADMIN"), bulkUpdateMargin);
+router4.patch("/admin/print-catalog/:id", requireAuth, requireRole("ADMIN"), updatePrintProduct);
+router4.post("/admin/print-catalog/seed", requireAuth, requireRole("ADMIN"), seedCkCatalog);
+router4.get("/admin/service-catalog", requireAuth, requireRole("ADMIN"), adminListServiceCatalog);
+router4.post("/admin/service-catalog", requireAuth, requireRole("ADMIN"), adminCreateService);
+router4.patch("/admin/service-catalog/:id", requireAuth, requireRole("ADMIN"), adminUpdateService);
+router4.delete("/admin/service-catalog/:id", requireAuth, requireRole("ADMIN"), adminDeleteService);
+router4.get("/admin/franchises", requireAuth, requireRole("ADMIN"), FranchiseController.listAll);
+router4.post("/admin/franchises/promote", requireAuth, requireRole("ADMIN"), FranchiseController.promote);
+router4.post("/admin/franchises/credits", requireAuth, requireRole("ADMIN"), FranchiseController.addCredits);
+router4.patch("/admin/franchises/:profileId/toggle", requireAuth, requireRole("ADMIN"), FranchiseController.toggleActive);
+router4.delete("/admin/franchises/:profileId", requireAuth, requireRole("ADMIN"), FranchiseController.remove);
+router4.get("/admin/franchises/:profileId/statement", requireAuth, requireRole("ADMIN"), FranchiseController.getStatement);
+router4.get("/franchise/inventory", requireAuth, requireRole("FRANCHISEE"), FranchiseController.getInventory);
+router4.get("/franchise/referral", requireAuth, requireRole("FRANCHISEE"), FranchiseController.getReferralCode);
+router4.get("/franchise/network", requireAuth, requireRole("FRANCHISEE"), FranchiseController.getNetwork);
+router4.get("/franchise/finance", requireAuth, requireRole("FRANCHISEE"), FranchiseController.getFinanceStats);
+router4.post("/franchise/reorder", requireAuth, requireRole("FRANCHISEE"), FranchiseController.postReorder);
+router4.get("/vaults", requireAuth, VaultController.listAlbums);
+router4.post("/vaults", requireAuth, VaultController.createAlbum);
+router4.get("/vaults/:albumId", requireAuth, VaultController.getAlbumDetails);
+router4.get("/vaults/:albumId/media", requireAuth, VaultController.listMedia);
+router4.post("/vaults/:albumId/upload", requireAuth, upload.single("file"), VaultController.uploadMedia);
+router4.post("/vaults/:albumId/vote", requireAuth, (req, res, next) => VaultController.voteMedia(req, res, next));
+router4.post("/vaults/:albumId/subscribe", requireAuth, VaultController.subscribe);
+router4.use("/flash", flash_routes_default);
+router4.get("/vaults/media/proxy/:fileId", VaultController.proxyMedia);
+router4.post("/public/phygital/upload", upload.single("photo"), PhygitalController.upload);
+router4.get("/phygital/events/:eventId/queue", requireAuth, PhygitalController.listPending);
+router4.get("/phygital/events/:eventId/prints", requireAuth, PhygitalController.listAllByEvent);
+router4.patch("/phygital/prints/:id/status", requireAuth, PhygitalController.confirmPrint);
+router4.post("/admin/phygital/simulate", optionalAuth, PhygitalController.simulate);
+router4.get("/diag/db", checkDbStatus);
+router4.get("/health", (req, res) => res.json({ status: "ok", time: (/* @__PURE__ */ new Date()).toISOString() }));
+router4.post("/iot/heartbeat", IoTController.heartbeat);
+router4.get("/admin/iot/devices", requireAuth, requireRole("ADMIN"), IoTController.listDevices);
+var routes_default = router4;
 
 // backend/src/app.ts
-var app = (0, import_express5.default)();
+var app = (0, import_express6.default)();
 app.get("/api/health", (_req, res) => {
   res.json({
     status: "ok",
@@ -88715,10 +89049,10 @@ app.use("/api/public", rate_limit_default({
   windowMs: 60 * 1e3,
   max: 60
 }));
-app.use("/api/webhooks", import_express5.default.raw({ type: "application/json" }));
-app.use(import_express5.default.urlencoded({ extended: true, limit: "50mb" }));
-app.use(import_express5.default.json({ limit: "50mb" }));
-app.use("/uploads", import_express5.default.static("uploads"));
+app.use("/api/webhooks", import_express6.default.raw({ type: "application/json" }));
+app.use(import_express6.default.urlencoded({ extended: true, limit: "50mb" }));
+app.use(import_express6.default.json({ limit: "50mb" }));
+app.use("/uploads", import_express6.default.static("uploads"));
 app.use("/api", routes_default);
 app.use((err, _req, res, _next) => {
   console.error("\u{1F525} ERRO NO SERVIDOR:", err);

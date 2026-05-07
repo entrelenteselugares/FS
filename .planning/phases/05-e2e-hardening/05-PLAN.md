@@ -3,6 +3,7 @@
 This phase implements automated E2E tests for the Professional Registration flow using Playwright.
 
 ## User Review Required
+>
 > [!IMPORTANT]
 > The tests will generate real entries in your Supabase Auth and Prisma database. We are using the `+` email trick to avoid conflicts, but you may see several `contatofotosegundo+test_...` users in your dashboard.
 
@@ -12,6 +13,7 @@ This phase implements automated E2E tests for the Professional Registration flow
 ---
 
 ## Wave 1: Infrastructure & Setup
+
 Establish the Playwright environment.
 
 - [ ] **Task 1.1: Install Dependencies**
@@ -23,6 +25,7 @@ Establish the Playwright environment.
   - Configure to start the dev server automatically if not running (optional, but recommended).
 
 ## Wave 2: Test Implementation
+
 Build the core registration test.
 
 - [ ] **Task 2.1: Create Auth Utilities**
@@ -39,6 +42,7 @@ Build the core registration test.
     5. Submit and wait for `/profissional/dashboard`.
 
 ## Wave 3: Validation & Polish
+
 Verify the suite and document usage.
 
 - [ ] **Task 3.1: Execute & Debug**
@@ -52,11 +56,13 @@ Verify the suite and document usage.
 ## Verification Plan
 
 ### Automated Verification
+
 - [ ] Run `npx playwright test e2e/auth/registration.spec.ts` and ensure it passes.
 - [ ] Check Prisma DB for the new user record.
 - [ ] Check Supabase Auth for the new user record.
 
 ### Manual Verification
+
 - [ ] Run Playwright in UI mode (`npx playwright test --ui`) and watch the execution.
 - [ ] Verify that the generated email correctly appears in the "Identificação" field.
 

@@ -243,7 +243,7 @@ export const AdminUsers: React.FC = () => {
                     </div>
                     <div className="col-span-2">
                       <span className={`px-3 py-1.5 border ${styles.bg} ${styles.border} ${styles.text} text-[8px] font-black uppercase tracking-[0.2em] inline-flex items-center gap-2`}>
-                        {u.role === 'ADMIN' && <Shield size={8} />} {u.role === 'UNIDADE_FIXA' ? 'CARTÓRIO' : u.role}
+                        {u.role === 'ADMIN' && <Shield size={8} />} {u.role === 'CARTORIO' ? 'CARTÓRIO' : u.role}
                       </span>
                       {u.isVerified && (
                         <span className="ml-2 px-2 py-1 bg-brand-tactical/10 border border-brand-tactical/30 text-brand-tactical text-[7px] font-black uppercase tracking-widest flex items-center gap-1">
@@ -330,7 +330,7 @@ export const AdminUsers: React.FC = () => {
                        >
                           <option value="ADMIN">ADMINISTRADOR</option>
                           <option value="PROFISSIONAL">PROFISSIONAL / PARCEIRO</option>
-                          <option value="UNIDADE_FIXA">UNIDADE FIXA / CARTÓRIO</option>
+                          <option value="CARTORIO">UNIDADE FIXA / CARTÓRIO</option>
                           <option value="CLIENTE">CLIENTE</option>
                        </select>
                     </div>

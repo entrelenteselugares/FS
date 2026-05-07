@@ -893,7 +893,14 @@ export async function adminListOrders(req: AuthRequest, res: Response): Promise<
       // Filtro Phase 06: Pronto para Repasse
       if (readyForPayout === "true") {
         where.status = "APROVADO";
-        where.payoutStatus = "AVAILABLE";
+        // Include orders that are AVAILABLE or PENDING (including those without payoutReadyAt)
+        where.AND = [{
+          OR: [
+            { payoutStatus: "AVAILABLE" },
+            { payoutStatus: "PENDING", payoutReadyAt: { lte: new Date() } },
+            { payoutStatus: "PENDING", payoutReadyAt: null }
+          ]
+        }];
       }
 
     if (q) {

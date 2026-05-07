@@ -3,12 +3,14 @@
 Este documento formaliza o estado da plataforma Foto Segundo no marco da versão 1.0.0, consolidando todos os testes, arquitetura e garantias técnicas.
 
 ## 🏁 Versão: 1.0.0 (Lançamento Oficial)
+
 **Data**: 24 de Abril de 2026  
 **Status**: Produção Estável (Vercel + Supabase)
 
 ---
 
 ## 🎨 Estado da Interface (UI/UX)
+
 A plataforma atingiu maturidade visual plena sob o conceito **Midnight Luxury**.
 
 - **Branding**: Estética minimalista/brutalista (`borderRadius: 0`), paleta baseada em Deep Black (`#0a0a0a`) e Teal Accent (`#85B9AC`).
@@ -19,6 +21,7 @@ A plataforma atingiu maturidade visual plena sob o conceito **Midnight Luxury**.
 ---
 
 ## 🛡️ Integridade de Dados e Funcionalidades
+
 - **Catálogo de Impressão (CK)**: Módulo administrativo completo para gestão de 71 produtos de álbuns e revelações.
 - **Motor de Precificação**: Cálculo dinâmico de orçamentos considerando horas de evento, equipe extra (escalonamento por convidados) e deslocamento.
 - **Divisão Financeira**: Lógica de repasse Matriz/Parceiro configurada com fallback de segurança de 40% (Modelo Uber).
@@ -27,6 +30,7 @@ A plataforma atingiu maturidade visual plena sob o conceito **Midnight Luxury**.
 ---
 
 ## ⚙️ Estabilidade Técnica e Infraestrutura
+
 - **TypeScript**: 100% de conformidade. O comando `npx tsc --noEmit` retorna **zero erros** no Frontend e Backend.
 - **Banco de Dados**: Sincronizado via Prisma com o PostgreSQL do Supabase. Esquema de produção validado.
 - **Build de Produção**: Deploy limpo na Vercel, sem variáveis não utilizadas ou avisos de linting críticos.
@@ -35,6 +39,7 @@ A plataforma atingiu maturidade visual plena sob o conceito **Midnight Luxury**.
 ---
 
 ## ✅ Checklist de Auditoria Final
+
 - [x] **Consistência Visual**: Nenhuma cor hardcoded (Olive Green eliminado).
 - [x] **Responsividade**: Testada em resoluções Desktop e Mobile.
 - [x] **Performance**: Carregamento sequencial em dashboards para evitar timeouts.

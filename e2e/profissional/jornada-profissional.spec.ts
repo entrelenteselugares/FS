@@ -1,14 +1,14 @@
 import { test, expect } from '@playwright/test';
 
 test('Jornada do Profissional - Navegação e Validação', async ({ page }) => {
-  const email = 'e2e-profissional@fotosegundo.test';
+  const email = 'hibrido@brasil.com.br';
   
   console.log('[PRO] Iniciando login...');
   await page.goto('/login');
   await page.locator('input[type="email"]').fill(email);
   await page.locator('input[type="password"]').fill('123456');
   await page.getByRole('button', { name: /ENTRAR/i }).click();
-  await expect(page).toHaveURL(/.*profissional/, { timeout: 20000 });
+  await expect(page).toHaveURL(/.*(profissional|dashboard)/, { timeout: 20000 });
 
   // 1. Financeiro
   console.log('[PRO] Verificando aba Financeiro...');

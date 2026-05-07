@@ -1,4 +1,5 @@
 # Guia do Sistema de Micro-Franquias de Impressão
+
 **Versão:** v1.0 | **Última atualização:** 02/05/2026
 
 ---
@@ -8,6 +9,7 @@
 O módulo de **Micro-Franquias** transforma a Foto Segundo em uma **rede B2B2C de impressão descentralizada**. Em vez de a empresa operar um único ponto de impressão, qualquer fotógrafo parceiro pode se tornar um **Ponto de Impressão Phygital** dentro da sua região.
 
 ### Modelo de Créditos (Wallet Interna)
+
 O repasse financeiro é feito via **créditos de impressão pré-pagos** — um modelo de carteira digital interna que elimina a necessidade de split de pagamentos em tempo real e burocracia de gateways. Cada crédito = 1 foto impressa.
 
 ---
@@ -15,6 +17,7 @@ O repasse financeiro é feito via **créditos de impressão pré-pagos** — um 
 ## 2. Arquitetura de Dados
 
 ### Princípio Fundamental: Role Não Muda
+>
 > [!IMPORTANT]
 > A promoção a franqueado **NÃO altera o `role` do usuário**. O fotógrafo permanece `PROFISSIONAL`. A capacidade de franquia é sinalizada pela **existência de um `FranchiseProfile` vinculado ao `userId`**.
 
@@ -27,6 +30,7 @@ User (role: PROFISSIONAL)
 ```
 
 ### Modelos Prisma Envolvidos
+
 | Model | Tabela | Descrição |
 |---|---|---|
 | `FranchiseProfile` | `FranchiseProfile` | Perfil de franquia (1:1 com User) |
@@ -49,6 +53,7 @@ User (role: PROFISSIONAL)
 | `GET` | `/admin/franchises/:profileId/statement` | `getStatement` | Extrato das últimas 50 transações |
 
 ### Multi-tenancy
+
 - **ADMIN**: vê todos os franqueados da rede
 - **Não-ADMIN**: vê apenas o próprio `FranchiseProfile` (filtrado por `userId`)
 
@@ -56,14 +61,16 @@ User (role: PROFISSIONAL)
 
 ## 4. Frontend — Painel Admin (`AdminFranchises.tsx`)
 
-### Ações disponíveis na tabela:
+### Ações disponíveis na tabela
+
 | Botão | Ícone | Cor | Função |
 |---|---|---|---|
 | Adicionar Créditos | `CreditCard` | Teal | Abre modal com seletor +100/-100 |
 | Desativar / Reativar | `PowerOff / Power` | Âmbar / Verde | Chama `/toggle` |
 | Remover Franquia | `Trash2` | Vermelho | Deleta o `FranchiseProfile` com confirmação |
 
-### Modal "Novo Franqueado":
+### Modal "Novo Franqueado"
+
 - Filtra lista de usuários: exclui `ADMIN` e quem **já tem** `franchiseProfile`
 - Chama `POST /admin/franchises/promote` → cria o `FranchiseProfile` sem alterar o `role`
 
@@ -73,7 +80,8 @@ User (role: PROFISSIONAL)
 
 A aba **"Franquia Print"** aparece automaticamente no menu lateral quando o endpoint `GET /profissional/me` retorna `user.franchiseProfile !== null`.
 
-### O que o franqueado vê:
+### O que o franqueado vê
+
 - **Saldo de créditos** (número grande, fica âmbar quando < 50)
 - **Status** do ponto (Ativo / Inativo)
 - **Banner de alerta** quando saldo < 50 fotos

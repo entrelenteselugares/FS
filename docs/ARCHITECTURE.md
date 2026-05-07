@@ -53,7 +53,57 @@ Para garantir escalabilidade e baixo custo, utilizamos uma estratégia de armaze
 
 ---
 
-## 5. Deployment
+## 3. Component Diagram
+
+```mermaid
+graph TD
+    subgraph "Cloud Infrastructure (Vercel/Supabase)"
+        A[Frontend App - React/Vite]
+        B[Backend API - Node/Express]
+        C[(PostgreSQL - Supabase)]
+        D[Google Drive - Cold Storage]
+        E[Mercado Pago - Payments]
+    end
+
+    subgraph "Edge/Local Environment"
+        F[IoT Printer Agent]
+        G[Local Printer Hardware]
+    end
+
+    A -- REST API --> B
+    B -- Prisma ORM --> C
+    B -- OAuth2 --> D
+    B -- Webhooks --> E
+    F -- Polling/Heartbeat --> B
+    F -- Download Assets --> D
+    F -- Spooler --> G
+```
+
+---
+
+## 4. Key Abstractions
+
+- **Vault Engine (`backend/src/services/vault.service.ts`):** Manages the lifecycle of "Cofres de Memórias", including subscription states and media organization in Google Drive.
+- **Order Motor (`backend/src/controllers/payment.controller.ts`):** Orchestrates transaction processing, financial splits, and fulfillment status.
+- **IoT Telemetry (`backend/src/services/iot.service.ts`):** Handles printer agent heartbeat monitoring and device health tracking.
+- **Access Controller (`backend/src/controllers/access.controller.ts`):** Manages photo visibility, like system, and QR/PIN-based anonymous access.
+
+---
+
+## 5. Directory Structure Rationale
+
+| Directory | Purpose |
+|-----------|---------|
+| `/backend` | Core business logic, database models (Prisma), and external integrations. |
+| `/frontend` | Multi-profile dashboard UI and Midnight Luxury theme implementation. |
+| `/api` | Vercel-specific deployment entry points. |
+| `/printer-agent` | Local IoT agent source code for physical fulfillment. |
+| `/docs` | Technical documentation and architectural guides. |
+| `/.planning` | GSD framework artifacts (PROJECT, ROADMAP, STATE). |
+
+---
+
+## 6. Deployment
 
 - **Hosting:** Vercel (Frontend e Serverless API).
 - **Database:** Supabase (PostgreSQL).

@@ -1,15 +1,17 @@
 DICIONÁRIO DE TEXTOS DA PLATAFORMA (PARA REVISÃO)
 ================================================
 
-Este arquivo contém os textos principais de cada página. 
-Você pode alterar os textos aqui e me enviar de volta. 
+Este arquivo contém os textos principais de cada página.
+Você pode alterar os textos aqui e me enviar de volta.
 Vou usá-los para alimentar o arquivo 'translations.json' do sistema.
 
 --------------------------------------------------------------------------------
+
 1. HOME PAGE (Vitrine Principal)
+
 --------------------------------------------------------------------------------
 [TAGLINE]  Coletivo Editorial de Imagem e Cinema
-[TITULO_1] Suas memórias, 
+[TITULO_1] Suas memórias,
 [TITULO_2] entregues agora.
 [SUBTITULO] Acesse a galeria exclusiva do seu grande dia. Fotos e vídeos com qualidade premium, disponíveis em segundos após o evento.
 [BUSCA_TXT] Buscar pelo nome dos noivos...
@@ -30,7 +32,9 @@ Vou usá-los para alimentar o arquivo 'translations.json' do sistema.
 [RODAPE] Protocolo Editorial de Imagem e Cinema. © 2026 Todos os Direitos Reservados.
 
 --------------------------------------------------------------------------------
-2. PÁGINA DE LOGIN (Acesso)
+
+1. PÁGINA DE LOGIN (Acesso)
+
 --------------------------------------------------------------------------------
 [LOGIN_TIT] Acesse sua conta para visualizar seu álbum.
 [EMAIL_LBL] E-mail
@@ -42,7 +46,9 @@ Vou usá-los para alimentar o arquivo 'translations.json' do sistema.
 [VOLTAR_VIT] ← Voltar para a vitrine
 
 --------------------------------------------------------------------------------
-3. PÁGINA DE REGISTRO (Cadastro)
+
+1. PÁGINA DE REGISTRO (Cadastro)
+
 --------------------------------------------------------------------------------
 [REG_TIT_1] SOLICITAR
 [REG_TIT_2] REGISTRO
@@ -57,7 +63,9 @@ Vou usá-los para alimentar o arquivo 'translations.json' do sistema.
 [BT_LOGIN] Fazer Login →
 
 --------------------------------------------------------------------------------
-4. PÁGINA DO EVENTO (Galeria/Checkout)
+
+1. PÁGINA DO EVENTO (Galeria/Checkout)
+
 --------------------------------------------------------------------------------
 [GAL_PROT] Galeria protegida.
 [BT_DESBLOQ] Desbloquear Arquivos
@@ -73,7 +81,9 @@ Vou usá-los para alimentar o arquivo 'translations.json' do sistema.
 [LIBERADO] Acesso Liberado
 
 --------------------------------------------------------------------------------
-5. ÁREA DO CLIENTE (Minha Conta)
+
+1. ÁREA DO CLIENTE (Minha Conta)
+
 --------------------------------------------------------------------------------
 [CLI_TIT] Minhas Memórias
 [CLI_SUB] Histórico de eventos e downloads liberados.
@@ -83,6 +93,7 @@ Vou usá-los para alimentar o arquivo 'translations.json' do sistema.
 
 --------------------------------------------------------------------------------
 COMO EDITAR:
+
 1. Copie o texto que deseja alterar.
 2. Escreva a nova versão ao lado da chave (ex: [BT_ENTRAR] Quero Acessar).
 3. Me envie as alterações e eu atualizarei o código automaticamente.

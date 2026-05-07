@@ -11,8 +11,8 @@ dotenv.config({ path: path.resolve(__dirname, '../../backend/.env') });
  */
 
 test.describe('Jornada do Cliente (Consumidor)', () => {
-  test.setTimeout(60000);
-  const clientEmail = 'membro5@fotosegundo.com.br'; // Ricardo Cliente
+  test.setTimeout(120000);
+  const clientEmail = 'cliente-vip@brasil.com.br';
   
   test.beforeAll(async () => {
     console.log('[CLEANUP] Resetting calendar for client tests...');
@@ -20,7 +20,7 @@ test.describe('Jornada do Cliente (Consumidor)', () => {
       where: { 
         OR: [
           { buyerEmail: clientEmail },
-          { event: { partnerId: { not: null } } }
+          { event: { cartorioUserId: { not: null } } }
         ]
       } 
     });
@@ -44,11 +44,11 @@ test.describe('Jornada do Cliente (Consumidor)', () => {
     await page.goto('/'); 
     
     // 1. Início
-    await page.getByRole('button', { name: 'AGENDAR' }).click();
+    await page.getByRole('button', { name: 'Agendar', exact: true }).click();
     
     // 2. Passo 1
     await page.getByRole('button', { name: 'UNIDADE FIXA' }).click();
-    await page.getByRole('combobox').selectOption({ label: 'CARTÓRIO CENTRAL - CAMPINAS' });
+    await page.getByRole('combobox').selectOption({ label: 'BR UNIDADE SP - CAMPINAS' });
     await page.getByText(/SELECIONE A DATA E HORÁRIO/i).click();
     
     // Avança para o próximo mês para garantir uma data válida no futuro
@@ -61,7 +61,7 @@ test.describe('Jornada do Cliente (Consumidor)', () => {
     // 3. Passo 2
     console.log('[CLIENT] Passo 2: Convidados e Serviço...');
     await page.getByRole('textbox').first().fill('100'); 
-    await page.getByText(/phygital|impresso|impressa/i).first().click();
+    await page.getByText('Foto Point - Sessão Agendada').first().click();
     await page.getByRole('button', { name: /CONTINUAR/i }).click();
     
     // 4. Passo 3: Seus Dados
@@ -79,14 +79,14 @@ test.describe('Jornada do Cliente (Consumidor)', () => {
 
   test('Deve gerar 2 orçamentos distintos', async ({ page }) => {
     const scenarios = [
-      { desc: 'Ensaio Gastronômico', service: 'ENSAIO GASTRONÔMICO', guests: '10' },
-      { desc: 'Retrato Corporativo', service: 'RETRATO CORPORATIVO', guests: '50' }
+      { desc: 'Cobertura Solo', service: 'Fotografia - Cobertura Solo', guests: '10' },
+      { desc: 'Reels Dinâmico', service: 'Vídeo - Reels Dinâmico', guests: '50' }
     ];
 
     for (const scenario of scenarios) {
       console.log(`[CLIENT] Gerando Orçamento: ${scenario.desc}`);
       await page.goto('/');
-      await page.getByRole('button', { name: 'AGENDAR' }).click();
+      await page.getByRole('button', { name: 'Agendar', exact: true }).click();
       await page.getByRole('button', { name: 'ORÇAMENTO' }).click();
       await page.getByPlaceholder(/CEP/i).fill('13050251');
       await page.getByPlaceholder('Nº').fill('123');

@@ -76,7 +76,8 @@ export class EventController {
         include: {
           cartorioUser: { select: { cartorio: { select: { razaoSocial: true } } } },
           captacao: { select: { id: true, nome: true } },
-          edicao: { select: { id: true, nome: true } }
+          edicao: { select: { id: true, nome: true } },
+          media: true
         }
       });
 
@@ -248,6 +249,7 @@ export class EventController {
         itinerary: event.itinerary,
         description: event.description,
         references: event.references,
+        medias: (event as any).media || [],
         photographer: event.captacao ? { id: event.captacao.id, nome: event.captacao.nome } : null,
         isExpired,
         retentionDays,

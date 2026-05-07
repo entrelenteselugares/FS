@@ -72,4 +72,3 @@ Esta fase expande as capacidades transacionais da Foto Segundo, permitindo que c
 - **Scope Clarity**: 0.10 (Requisitos bem definidos).
 - **Legacy Impact**: 0.05 (Ajustes no PaymentController).
 - **TOTAL AMBIGUITY**: 0.12 (Gate Passed: < 0.20)
-

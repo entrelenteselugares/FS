@@ -5,6 +5,7 @@ Pasta de documentação técnica, planejamento e ativos do projeto organizada po
 ---
 
 ## 🏗️ [TECHNICAL](./TECHNICAL/) — Arquitetura e Engenharia
+
 Documentação profunda sobre o motor do sistema, segurança e banco de dados.
 
 - **`master_developer_guide.md`**: Guia mestre de padrões e segurança.
@@ -14,6 +15,7 @@ Documentação profunda sobre o motor do sistema, segurança e banco de dados.
 - **`BACKEND_RESILIENCE_REPORT_*.md`**: Relatórios de estabilização e performance.
 
 ## 📋 [BACKLOG](./BACKLOG/) — Produto e Estratégia
+
 Roadmaps, planejamentos de novas features e backlog de elite.
 
 - **`ROADMAP_ELITE.md`**: Visão de futuro da plataforma.
@@ -21,6 +23,7 @@ Roadmaps, planejamentos de novas features e backlog de elite.
 - **`PLANEJAMENTO_MARKETPLACE_*.md`**: Estratégia do módulo de vendas.
 
 ## ⚙️ [OPERATIONAL](./OPERATIONAL/) — Logística e Operações
+
 Guias para franqueados, catálogos de fornecedores e manuais de campo.
 
 - **`GUIA_LOGISTICA_PHYGITAL.md`**: Manual do motor de impressão autônoma.
@@ -28,11 +31,13 @@ Guias para franqueados, catálogos de fornecedores e manuais de campo.
 - **`catalogo_ck.md`** / **`catalogo_merlin.md`**: Tabelas de preços e produtos de parceiros.
 
 ## 🎨 [ASSETS](./ASSETS/) — Ativos Visuais
+
 Logos, imagens de teste e recursos gráficos oficiais.
 
 ---
 
 ## 🗃️ [OBSOLETO](./OBSOLETO/) / [ARQUIVO_HISTORICO](./ARQUIVO_HISTORICO/)
+
 Documentos legados e históricos de versões anteriores mantidos para referência.
 
 ---

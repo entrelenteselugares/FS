@@ -299,6 +299,7 @@ export class MarketplaceController {
     const authUser = req.user;
 
     try {
+      console.log(`[MarketplaceController.listMedia] Listando mídias para evento: ${eventId}`);
       // 1. Busca o evento para verificar privacidade
       const event = await prisma.event.findUnique({
         where: { id: String(eventId) },
