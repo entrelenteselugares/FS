@@ -1,6 +1,6 @@
 import React from "react";
 import { useNavigate, useLocation } from "react-router-dom";
-import { Home, Search, ShoppingBag, User, Briefcase, Image, Menu } from "lucide-react";
+import { Home, Search, ShoppingBag, Image, Menu } from "lucide-react";
 import { useAuth } from "../hooks/useAuth";
 
 export const BottomNav: React.FC = () => {
