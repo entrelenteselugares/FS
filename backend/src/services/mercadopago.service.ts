@@ -92,7 +92,7 @@ export class MercadoPagoService {
         payer: {
           email: data.payer_email,
         },
-        external_reference: data.orderId,
+        external_reference: `${data.orderId}:${Date.now()}`,
         metadata: {
           order_id: data.orderId
         },
@@ -161,7 +161,7 @@ export class MercadoPagoService {
         payment_method_id: data.payment_method_id,
         payer: data.payer,
         notification_url: data.notification_url,
-        external_reference: data.external_reference,
+        external_reference: `${data.external_reference}:${Date.now()}`,
       };
 
       if (data.token) body.token = data.token;

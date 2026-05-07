@@ -6,7 +6,7 @@ import { test, expect } from '@playwright/test';
  */
 
 test.describe('Painel Unidade Fixa - Gestão e Configurações', () => {
-  const cartorioEmail = 'membro2@fotosegundo.com.br'; // Studio Aliança
+  const cartorioEmail = 'unidade-sp@brasil.com.br'; // Studio Aliança
 
   test.beforeEach(async ({ page }) => {
     console.log(`[UNIDADE] Login as ${cartorioEmail}`);

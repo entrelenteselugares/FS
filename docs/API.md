@@ -24,6 +24,10 @@ Most endpoints require a JSON Web Token (JWT).
 | `POST` | `/api/public/phygital/upload` | Uploads a photo for instant printing. | No |
 | `POST` | `/api/checkout/payment` | Processes a payment via Mercado Pago. | Opt |
 | `POST` | `/api/iot/heartbeat` | Telemetry endpoint for Printer Agents. | No |
+| `GET` | `/api/flash/:shortId` | Resolves a Flash Event PIN for anonymous access. | No |
+| `GET` | `/api/payouts/me` | Returns professional/unit financial summary. | Yes |
+| `GET` | `/api/unidade-fixa/stats` | Returns Unidade Fixa operational KPIs. | Unidade |
+| `GET` | `/api/unidade-fixa/events` | Lists assigned events for the unit. | Unidade |
 | `GET` | `/api/admin/stats` | High-level dashboard statistics. | Admin |
 
 ## Request/Response Formats

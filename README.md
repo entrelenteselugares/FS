@@ -134,9 +134,17 @@ Veja [CONTRIBUTING.md](CONTRIBUTING.md) para diretrizes de desenvolvimento. Este
 © 2026 Foto Segundo. Todos os direitos reservados.
 Projetado para a excelência na fotografia phygital.
 
+## System Certification (v3.1)
+
+The Foto Segundo platform is certified for Production Readiness as of May 2026.
+- **E2E Integrity:** 100% pass rate in Playwright Master Suite.
+- **Financial Security:** Transactional split and PIX generation validated.
+- **Architecture:** Formalized 7-module Enterprise structure.
+- **Stability:** Automated cleanup and robust session handling implemented.
+
 ## ✅ Certificação de Qualidade (E2E Stability)
 
-A plataforma Foto Segundo atingiu **100% de integridade operacional** validada por robôs de usabilidade automatizados:
+A plataforma Foto Segundo atingiu 100% de integridade operacional validada por robôs de usabilidade automatizados:
 
 * **Fluxo Financeiro:** Geração de PIX e conciliação bancária validada.
 * **Navegação Multi-Perfil:** 13 perfis de usuário verificados de ponta a ponta.

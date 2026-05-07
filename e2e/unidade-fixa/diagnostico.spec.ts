@@ -1,7 +1,7 @@
 import { test, expect } from '@playwright/test';
 
 test('Diagnóstico de Campos Unidade Fixa', async ({ page }) => {
-  const email = 'membro2@fotosegundo.com.br';
+  const email = 'unidade-sp@brasil.com.br';
   
   await page.goto('/login');
   await page.locator('input[type="email"]').fill(email);

@@ -370,11 +370,12 @@ export class PaymentController {
 
           // Fallback tático: Caso o checkout Pro ainda não tenha salvo o PaymentID, usamos a Referência Externa
           if (updatedOrders.length === 0 && paymentData.external_reference) {
-            console.log(`[Webhook] Pedido não achado por ID ${data.id}. Tentando por Ref: ${paymentData.external_reference}`);
+            const [realOrderId] = String(paymentData.external_reference).split(":");
+            console.log(`[Webhook] Pedido não achado por ID ${data.id}. Tentando por Ref: ${realOrderId} (Original: ${paymentData.external_reference})`);
             
             // ── VERIFICA SE É ASSINATURA (COFRE) ──
             const sub = await prisma.subscription.findUnique({
-              where: { id: paymentData.external_reference }
+              where: { id: realOrderId }
             });
             if (sub) {
               await SubscriptionService.handleSubscriptionPayment(sub.gatewaySubId || String(data.id), paymentData.status);
@@ -383,7 +384,7 @@ export class PaymentController {
             }
 
             const orderRef = await prisma.order.findUnique({
-              where: { id: paymentData.external_reference },
+              where: { id: realOrderId },
               include: { event: true, cliente: true }
             });
             if (orderRef) updatedOrders = [orderRef];
