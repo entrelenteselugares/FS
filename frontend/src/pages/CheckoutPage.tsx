@@ -331,7 +331,6 @@ export const CheckoutPage = () => {
     // Se for SHIPPING e não preencheu endereço, não renderiza brick ainda
     if (order.deliveryType === 'SHIPPING' && !shippingData.street) return;
 
-    initializationStarted.current = true;
     const mpPublicKey = "APP_USR-18f8ccc4-8ed4-4f99-bb6d-e333d026e578";
 
     const renderPaymentBrick = async () => {
@@ -344,9 +343,11 @@ export const CheckoutPage = () => {
 
       if (!(window as any).MercadoPago) {
         console.error("[Checkout] MercadoPago SDK not found.");
-        initializationStarted.current = false;
         return;
       }
+
+      if (initializationStarted.current) return;
+      initializationStarted.current = true;
 
       const container = document.getElementById("paymentBrick_container");
       if (!container) {
@@ -367,7 +368,7 @@ export const CheckoutPage = () => {
           visual: { style: { theme: "dark" } },
         },
         callbacks: {
-          onReady: () => console.log("[Payment Brick] Ready"),
+          onReady: () => {},
           onSubmit: async ({ formData }) => {
             try {
               const { data } = await API.post("/checkout/payment", {
@@ -394,13 +395,12 @@ export const CheckoutPage = () => {
                   orderId: data.orderId || order.id,
                 });
               }
-            } catch {
+            } catch (err: any) {
               alert("Erro ao processar pagamento.");
             }
           },
           onError: (error: any) => {
             console.error("[Payment Brick] Fatal Error:", error);
-            if (error?.message) console.error("[Payment Brick] Error Message:", error.message);
             initializationStarted.current = false;
           },
         },

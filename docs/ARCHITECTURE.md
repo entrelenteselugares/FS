@@ -4,15 +4,22 @@ Este documento descreve a arquitetura técnica da plataforma **Foto Segundo**, f
 
 ---
 
-## 1. Visão Geral do Sistema
+## 1. Visão Geral do Sistema (Arquitetura em 7 Módulos)
 
-O Foto Segundo é uma aplicação monorepo baseada em **Node.js/React** com uma separação clara entre as responsabilidades de backend (API REST) e frontend (Dashboards).
+A plataforma Foto Segundo é um ecossistema **Enterprise** estruturado em 7 camadas de responsabilidade clara:
 
-### 🏗️ Camadas Principais
+1. **Cloud Core (Vercel/API):** Orquestrador serverless de alta disponibilidade.
+2. **Persistence Layer (Supabase/Prisma):** Banco de dados relacional com auditoria nativa.
+3. **Hybrid Cold Storage (Google Drive):** Armazenamento de ativos de alta resolução.
+4. **Financial Engine (Mercado Pago/PIX):** Fluxo transacional blindado e splits de comissão.
+5. **IoT Edge (Printer Agent):** Fulfillment automático de impressões na ponta.
+6. **Luxury UI (Midnight Luxury Theme):** Interface premium e responsiva.
+7. **Phygital UX (QR/PIN Access):** Resgate instantâneo de fotos sem fricção.
 
-- **Core API (Backend):** Express + TypeScript, orquestrando autenticação, pagamentos (Mercado Pago) e integração com Google Drive.
-- **Client App (Frontend):** React + Vite com tema *Midnight Luxury*. Gerencia 4 tipos de perfis (Master, Profissional, Cartório, Cliente).
-- **IoT Agent (Printer):** Executável Node.js local que monitora a fila de impressão via Webhooks/Polling e controla hardware de impressão.
+### 🏗️ Componentes Técnicos
+- **Core API (Backend):** Express + TypeScript.
+- **Client App (Frontend):** React + Vite.
+- **IoT Agent (Printer):** Agente Node.js local.
 
 ---
 

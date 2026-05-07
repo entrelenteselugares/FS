@@ -13,11 +13,10 @@
     <script src="https://sdk.mercadopago.com/js/v2"></script>
     <script>
       (function() {
-        const saved = localStorage.getItem("fs_theme");
-        const theme = (saved && saved !== "light") ? saved : "dark";
-        document.documentElement.setAttribute("data-theme", theme);
-        document.documentElement.classList.add(theme);
-        if (!saved) localStorage.setItem("fs_theme", "dark");
+        // Forçamos DARK THEME para garantir a estética Midnight Luxury em todos os dispositivos/testes
+        document.documentElement.setAttribute("data-theme", "dark");
+        document.documentElement.classList.add("dark");
+        localStorage.setItem("fs_theme", "dark");
       })();
     </script>
   </head>

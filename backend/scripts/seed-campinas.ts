@@ -100,10 +100,13 @@ async function main() {
   });
 
   // 5. EVENTO FLASH (Pronto para Venda)
+  console.log('🧹 Limpando evento E2E anterior...');
+  await prisma.event.deleteMany({ where: { slug: 'flash-campinas-e2e' } });
+
   const event = await prisma.event.create({
     data: {
       nomeNoivos: 'Evento Teste Campinas',
-      slug: `flash-campinas-${Date.now()}`,
+      slug: `flash-campinas-e2e`,
       dataEvento: new Date(),
       captacao: { connect: { id: proUser.id } },
       captacaoStatus: 'ACCEPTED',

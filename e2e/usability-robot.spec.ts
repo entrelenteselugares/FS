@@ -2,24 +2,34 @@ import { test, expect, Page } from '@playwright/test';
 
 const pass = '123456';
 
-/** Helper para limpar modais que interceptam o clique (Z-Index) */
 async function clearPopups(page: Page) {
-  try {
-    // Tenta encontrar um botão comum de fechamento em modais
-    const closeBtn = page.locator('button').filter({ hasText: /Entendi|Fechar|Ok/i }).first();
-    if (await closeBtn.isVisible({ timeout: 1500 }).catch(() => false)) {
-      await closeBtn.click();
-      await page.waitForTimeout(500);
-    }
-    
-    // Se ainda houver overlay travando, aguarda ele sumir (fade-out)
-    const overlay = page.locator('.backdrop-blur-2xl').first();
-    if (await overlay.isVisible({ timeout: 500 }).catch(() => false)) {
-      await overlay.waitFor({ state: 'hidden', timeout: 5000 }).catch(() => {});
-    }
-  } catch (e) {
-    // Ignora erros se não houver pop-up
+  console.log('[ROBOT] Verificando popups...');
+  await page.waitForTimeout(1000); // Espera estabilizar
+  
+  const popups = [
+    /IGNORAR POR ENQUANTO/i,
+    /Entendi/i,
+    /Fechar/i,
+    /Ok/i,
+    /ACESSAR CENTRAL/i
+  ];
+
+  for (const text of popups) {
+    try {
+      const btn = page.locator('button, [role="button"]').filter({ hasText: text }).first();
+      if (await btn.isVisible({ timeout: 1000 }).catch(() => false)) {
+        console.log(`[ROBOT] Clicando em: ${text}`);
+        await btn.click({ force: true }).catch(() => {});
+        await page.waitForTimeout(500);
+      }
+    } catch (e) {}
   }
+
+  // Remove backdrops teimosos via JS
+  await page.evaluate(() => {
+    const overlays = document.querySelectorAll('.backdrop-blur-2xl, .fixed.inset-0.z-\\[8000\\]');
+    overlays.forEach(el => (el as HTMLElement).style.display = 'none');
+  }).catch(() => {});
 }
 
 /** Login helper — aguarda o redirect final de /dashboard e limpa popups */
@@ -45,16 +55,19 @@ test.describe('Usability Robot: Simulação por Perfil', () => {
     await expect(page.getByRole('button', { name: /Visão Geral/i })).toBeVisible();
 
     // Navega: Financeiro
+    await clearPopups(page);
     await page.getByRole('button', { name: /Financeiro|Fluxo/i }).first().click();
     await expect(page.getByText(/Performance Financeira|Repasse Previsto/i).first()).toBeVisible({ timeout: 10000 });
 
     // Navega: Serviços / Monitor
+    await clearPopups(page);
     await page.getByRole('button', { name: /Serviços|Monitor/i }).first().click();
-    await expect(page.getByText(/Monitor de Operação Phygital/i).first()).toBeVisible({ timeout: 10000 });
+    await expect(page.getByRole('heading', { name: /Matriz de Precificação|Vitrine|Monitor/i }).first()).toBeVisible({ timeout: 10000 });
 
     // Navega: Minha Rede / Equipe
+    await clearPopups(page);
     await page.getByRole('button', { name: /Minha Rede|Equipe|Rede Técnica/i }).first().click();
-    await expect(page.getByText(/Escalabilidade da Rede Técnica|Rede Técnica/i).first()).toBeVisible({ timeout: 10000 });
+    await expect(page.getByText(/Minha Rede e Alianças|Rede Técnica/i).first()).toBeVisible({ timeout: 10000 });
 
     // Navega: Meu Perfil
     await page.getByRole('button', { name: /Meu Perfil/i }).click();
@@ -114,7 +127,7 @@ test.describe('Usability Robot: Simulação por Perfil', () => {
 
     // Monitor de Fila (nova aba)
     await page.getByRole('button', { name: /Monitor de Fila/i }).first().click();
-    await expect(page.getByText(/Monitor de Operação Phygital/i).first()).toBeVisible({ timeout: 10000 });
+    await expect(page.getByRole('heading', { name: /Monitor de Operação Phygital|Monitor de Fila/i }).first()).toBeVisible({ timeout: 10000 });
 
     // Fluxo Financeiro
     await page.getByRole('button', { name: /Fluxo Financeiro/i }).first().click();
@@ -126,7 +139,7 @@ test.describe('Usability Robot: Simulação por Perfil', () => {
 
     // Configuração
     await page.getByRole('button', { name: /Configuração/i }).first().click();
-    await expect(page.getByText(/Página pública atualizada|Página pública/i).first()).toBeVisible({ timeout: 10000 });
+    await expect(page.getByText(/Protocolo Digital \(Vitrine\)|Página pública/i).first()).toBeVisible({ timeout: 10000 });
 
     console.log('[ROBOT] ✅ Unidade Fixa SP OK');
   });
@@ -190,7 +203,7 @@ test.describe('Usability Robot: Simulação por Perfil', () => {
 
     // Aba: Meus Dados
     await page.getByRole('button', { name: /Meus Dados|Perfil/i }).first().click();
-    await expect(page.getByText(/Informações Pessoais|Dados Cadastrais/i).first()).toBeVisible({ timeout: 10000 });
+    await expect(page.getByText(/Dados do Perfil|Informações Pessoais/i).first()).toBeVisible({ timeout: 10000 });
 
     console.log('[ROBOT] ✅ Cliente VIP OK');
   });

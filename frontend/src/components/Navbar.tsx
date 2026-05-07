@@ -16,30 +16,26 @@ export const Navbar: React.FC = () => {
     : "/minha-conta";
 
   return (
-    <nav className="flex items-center justify-between sticky top-0 z-[100]" style={{
-      padding: "8px 16px", borderBottom: `1px solid ${T.border}`,
+    <nav className="flex items-center justify-between md:justify-between sticky top-0 z-[100]" style={{
+      padding: "12px 16px", borderBottom: `1px solid ${T.border}`,
       background: T.bgNav, backdropFilter: "blur(20px)",
     }}>
-      <div className="flex items-center gap-8">
+      <div className="flex items-center justify-center md:justify-start w-full md:w-auto">
         <div onClick={() => navigate("/")} style={{ cursor: "pointer", display: "flex", alignItems: "center" }}>
           <img 
             src="/logo-fs.png" 
             alt="Foto Segundo" 
             style={{ 
-              height: 26, 
+              height: 24, 
               objectFit: "contain",
               filter: "var(--logo-filter)"
             }} 
           />
         </div>
-
-
       </div>
 
-      <div style={{ display: "flex", alignItems: "center", gap: "clamp(4px, 2vw, 12px)" }}>
-        <div className="mobile-hide">
-          <ThemeToggle />
-        </div>
+      <div style={{ display: "flex", alignItems: "center", gap: "clamp(4px, 2vw, 12px)" }} className="mobile-hide md:flex">
+        <ThemeToggle />
         
         {user && (
           <button 
@@ -59,7 +55,7 @@ export const Navbar: React.FC = () => {
         )}
 
         {user ? (
-          <div style={{ position: "relative" }} className="mobile-hide">
+          <div style={{ position: "relative" }}>
             <button onClick={() => setUserMenu(v => !v)} style={{ ...BtnSecondary, fontSize: 10, padding: "8px 10px" }}>
               {user.nome?.split(" ")[0] || "CONTA"} <span style={{ fontSize: 8, marginLeft: 2 }}>▾</span>
             </button>
@@ -71,15 +67,12 @@ export const Navbar: React.FC = () => {
               }}>
                 <button onClick={() => { setUserMenu(false); navigate("/cofres"); }} style={{ width: "100%", textAlign: "left", padding: "14px 16px", background: "transparent", border: "none", borderBottom: `1px solid ${T.border}`, color: T.text, fontSize: 11, fontFamily: T.fontD, fontWeight: 900, letterSpacing: "0.1em", textTransform: "uppercase", cursor: "pointer", fontStyle: 'italic' }}>🔒 Cofres de Memórias</button>
                 <button onClick={() => { setUserMenu(false); navigate(dashPath); }} style={{ width: "100%", textAlign: "left", padding: "14px 16px", background: "transparent", border: "none", borderBottom: `1px solid ${T.border}`, color: T.text, fontSize: 11, fontFamily: T.fontD, fontWeight: 900, letterSpacing: "0.1em", textTransform: "uppercase", cursor: "pointer", fontStyle: 'italic' }}>👤 Meu Painel</button>
-                <div className="mobile-only" style={{ borderBottom: `1px solid ${T.border}`, padding: "8px 16px" }}>
-                  <ThemeToggle />
-                </div>
                 <button onClick={() => { logout(); setUserMenu(false); }} style={{ width: "100%", textAlign: "left", padding: "12px 16px", background: "transparent", border: "none", color: T.text2, fontSize: 11, fontFamily: T.fontB, letterSpacing: "0.08em", textTransform: "uppercase", cursor: "pointer" }}>Sair</button>
               </div>
             )}
           </div>
         ) : (
-          <button onClick={() => navigate("/login")} className="mobile-hide" style={{ ...BtnSecondary, fontSize: 10, padding: "8px 10px" }}>
+          <button onClick={() => navigate("/login")} style={{ ...BtnSecondary, fontSize: 10, padding: "8px 10px" }}>
             LOGIN
           </button>
         )}

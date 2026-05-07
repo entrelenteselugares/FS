@@ -752,7 +752,7 @@ return (
                                     data-shortid={m.shortId}
                                     data-testid={`photo-${m.shortId}`}
                                     onClick={() => !isUnlocked && toggleCart(m.shortId)}
-                                    className={`relative group aspect-[3/4] bg-theme-bg overflow-hidden border-2 transition-all duration-500 ${isUnlocked ? "border-brand-tactical shadow-[0_0_20px_rgba(20,184,166,0.15)]" : (isSelected ? "border-emerald-500" : "border-theme-border/40 hover:border-zinc-700")}`}
+                                    className={`relative group aspect-[3/4] bg-theme-bg overflow-hidden border-2 transition-all duration-500 ${isUnlocked ? "border-brand-tactical shadow-[0_0_20px_rgba(20,184,166,0.15)]" : (isSelected ? "border-emerald-500 cursor-pointer" : "border-theme-border/40 hover:border-zinc-700 cursor-pointer")}`}
                                   >
                                   {!isUnlocked && (
                                     <div className="absolute inset-0 z-10 flex items-center justify-center opacity-[0.05] pointer-events-none rotate-[-45deg] select-none">
@@ -938,8 +938,8 @@ return (
                     <div className="absolute inset-0 bg-white translate-x-[-100%] group-hover:translate-x-0 transition-transform duration-700 opacity-20" />
                     <span className="relative z-10">
                       {searchParams.get("intent") === "upgrade" ? "Finalizar Upgrade" : 
-                       event.type === 'ALBUM_FULL' ? "Desbloquear Álbum" : 
-                       "Comprar Selecionadas"}
+                        event.type === 'ALBUM_FULL' ? "Desbloquear Álbum" : 
+                        "Finalizar Compra"}
                     </span>
                     <ChevronRight size={24} className="relative z-10 group-hover:translate-x-2 transition-transform" />
                   </button>

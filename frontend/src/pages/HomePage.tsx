@@ -48,7 +48,7 @@ function EventCard({ event, onClick }: { event: Event; onClick: () => void }) {
   return (
     <div
       onClick={onClick}
-      className="group relative overflow-hidden rounded-2xl aspect-[4/5] md:aspect-[4/3] bg-[#0a0a0a] cursor-pointer border-none transition-transform duration-300 md:hover:scale-105"
+      className="group relative overflow-hidden aspect-[4/5] md:aspect-[4/3] md:rounded-2xl bg-[#0a0a0a] cursor-pointer border-none transition-transform duration-300 md:hover:scale-105"
     >
       {/* Background Image */}
       <img
@@ -202,18 +202,25 @@ export const HomePage = () => {
            /* Compressed Hero on Mobile */
            .hp-hero-section { 
              display: flex !important; 
-             padding: 40px 20px !important;
+             padding: 24px 16px 32px !important;
              text-align: left !important;
              align-items: flex-start !important;
+             min-height: auto !important;
            }
-           .hp-hero-title { font-size: 32px !important; line-height: 1 !important; margin-bottom: 8px !important; }
-           .hp-hero-desc { font-size: 11px !important; margin-bottom: 16px !important; text-align: left !important; }
+           .hp-hero-title { font-size: 38px !important; line-height: 0.9 !important; margin-bottom: 12px !important; }
+           .hp-hero-desc { font-size: 12px !important; margin-bottom: 24px !important; text-align: left !important; opacity: 0.8; }
            .hp-stats { display: none !important; }
            .hp-hero-tagline { display: none !important; }
+           .hp-hero-search-desktop { flex-direction: column !important; width: 100% !important; gap: 8px !important; }
+           .hp-hero-search-desktop button { width: 100% !important; padding: 16px !important; }
 
            /* Vitrine Headers */
            .hp-vitrine-header-desktop { display: none !important; }
-           .hp-mobile-vitrine-header { display: flex !important; }
+           .hp-mobile-vitrine-header { display: flex !important; padding: 0 16px 20px !important; }
+           
+           /* Immersive Feed for Mobile */
+           .hp-event-grid-container { padding: 0 !important; }
+           .hp-event-grid { gap: 1px !important; grid-template-columns: 1fr !important; }
          }
         @media(min-width:769px){
           .hp-mobile-search { display: none !important; }
@@ -287,8 +294,8 @@ export const HomePage = () => {
       </section>
 
       {/* ── EVENT GRID ───────────────────────────────────────────────────── */}
-      <section id="vitrine" className="hp-event-section" style={{ padding: "0 0 80px", background: T.bg }}>
-        <div style={{ maxWidth: 1600, margin: "0 auto", padding: "0 2px" }}>
+      <section id="vitrine" className="hp-event-section" style={{ padding: "0 0 80px", background: "#0a0a0a" }}>
+        <div style={{ maxWidth: 1600, margin: "0 auto", padding: "0" }}>
           
           {/* Mobile compact vitrine header & Filters (proportional grid) */}
           <div className="hp-mobile-vitrine-header flex flex-col gap-4 p-4">
@@ -393,21 +400,21 @@ export const HomePage = () => {
               <p className="text-[10px] text-white font-black uppercase tracking-widest mt-4">Redefina os filtros ou a busca.</p>
             </div>
           ) : (
-              <div className="space-y-4 px-4 md:px-8">
+              <div className="space-y-4 hp-event-grid-container px-0 md:px-8">
                 {/* Categorias Grid (2 Colunas) */}
-                <div className="grid grid-cols-2 gap-3 mb-4 md:hidden">
+                <div className="grid grid-cols-2 gap-1 mb-1 md:hidden">
                    {["Casamentos", "Ensaios", "Eventos", "Venda Direta"].map(cat => (
-                     <div key={cat} className="relative h-24 rounded-xl overflow-hidden group">
+                     <div key={cat} className="relative h-24 overflow-hidden group">
                         <img src={`https://images.unsplash.com/photo-1511285560929-80b456fea0bc?q=80&w=400`} className="absolute inset-0 w-full h-full object-cover brightness-50 group-hover:scale-110 transition-transform" />
                         <div className="absolute inset-0 flex items-center justify-center">
-                           <span className="text-white font-black uppercase italic tracking-widest text-xs">{cat}</span>
+                           <span className="text-white font-black uppercase italic tracking-widest text-[10px]">{cat}</span>
                         </div>
                      </div>
                    ))}
                 </div>
 
                 {/* Mobile Specific Search (Repositioned) */}
-                <div className="md:hidden px-0 mb-6">
+                <div className="md:hidden px-4 mb-4">
                   <div className="relative group">
                     <Search size={16} className="absolute left-4 top-1/2 -translate-y-1/2 text-theme-text-muted group-focus-within:text-brand-tactical transition-colors" />
                     <input
@@ -421,7 +428,7 @@ export const HomePage = () => {
                 </div>
 
                 {/* Eventos Grid (Full Width on Mobile) */}
-                <div className="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-4 gap-4 md:gap-6">
+                <div className="grid hp-event-grid grid-cols-1 md:grid-cols-3 lg:grid-cols-4 gap-4 md:gap-6">
                   {events.map(ev => (
                     <EventCard key={ev.id} event={ev} onClick={() => navigate(`/e/${ev.slug || ev.id}`)} />
                   ))}

@@ -1,4 +1,19 @@
-import { test, expect } from '@playwright/test';
+import { test, expect, Page } from '@playwright/test';
+
+/** Helper para limpar modais que interceptam o clique (Z-Index) */
+async function clearPopups(page: Page) {
+  try {
+    const closeBtn = page.locator('button').filter({ hasText: /Entendi|Fechar|Ok|IGNORAR POR ENQUANTO/i }).first();
+    if (await closeBtn.isVisible({ timeout: 1500 }).catch(() => false)) {
+      await closeBtn.click();
+      await page.waitForTimeout(500);
+    }
+    const overlay = page.locator('.backdrop-blur-2xl').first();
+    if (await overlay.isVisible({ timeout: 500 }).catch(() => false)) {
+      await overlay.waitFor({ state: 'hidden', timeout: 5000 }).catch(() => {});
+    }
+  } catch (e) {}
+}
 import { generateTestEmail } from '../utils/auth-helpers';
 import * as dotenv from 'dotenv';
 import path from 'path';
@@ -27,6 +42,7 @@ test.describe('Marketplace Hybrid Flow: Unit Photo Sale (Flow D)', () => {
     await page.locator('input[type="password"]').fill('123456');
     await page.getByRole('button', { name: /ENTRAR/i }).click();
     await expect(page).toHaveURL(/.*(profissional|minha-conta)/, { timeout: 20000 });
+    await clearPopups(page);
 
     // ─── 2. Criar Evento Marketplace (via Flash Event) ──────
     console.log('[PRO] Criando novo Foto Print Live (Flash Event)...');

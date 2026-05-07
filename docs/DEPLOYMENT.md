@@ -50,7 +50,11 @@ In case of a critical failure:
 - **Error Tracking:** [Sentry](https://sentry.io) is recommended for capturing server-side exceptions.
 - **Uptime:** [StatusCake] or [UptimeRobot] monitors the `/api/health` endpoint.
 - **Logs:** Vercel Runtime Logs provide real-time visibility into serverless function execution.
-- **Database:** Supabase Dashboard provides monitoring for query performance and connection counts.
 
-<!-- VERIFY: Sentry DSN configuration in production -->
-<!-- VERIFY: Vercel project deployment URL -->
+## Post-Deployment Sanity Check
+
+1. **Health Check:** `GET /api/health` must return `200 OK`.
+2. **Auth Flow:** Login must succeed (serial execution recommended).
+3. **UI Integrity:** Verify "Bottom Navigation Bar" on mobile.
+4. **Financial:** Test PIX generation.
+5. **IoT:** Confirm Printer Agent heartbeats.

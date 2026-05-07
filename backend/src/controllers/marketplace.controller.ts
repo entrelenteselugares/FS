@@ -342,11 +342,28 @@ export class MarketplaceController {
         }
       }
 
-      // 3. Retorna as mídias
+      // 3. Retorna as mídias (Híbrido: EventMedia + PhygitalPrint)
       const media = await prisma.eventMedia.findMany({
         where: { eventId: String(eventId) },
         orderBy: { shortId: "asc" }
       });
+
+      const phygital = await prisma.phygitalPrint.findMany({
+        where: { eventId: String(eventId) }
+      });
+
+      // Mapeia Phygital para o formato de Media
+      const mappedPhygital = phygital.map(p => ({
+        id: p.id,
+        eventId: p.eventId,
+        url: p.imageUrl,
+        shortId: p.referenceCode, // Usamos referenceCode como shortId
+        price: null,
+        type: "PHOTO",
+        createdAt: p.createdAt
+      }));
+
+      const allMedia = [...media, ...mappedPhygital];
 
       // 4. Se logado, retorna IDs desbloqueados
       let unlockedMediaIds: string[] = [];
@@ -367,7 +384,7 @@ export class MarketplaceController {
       }
 
       return res.json({
-        media,
+        media: allMedia,
         unlockedMediaIds
       });
     } catch (error) {
