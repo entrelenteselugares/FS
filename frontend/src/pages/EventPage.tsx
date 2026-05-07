@@ -506,7 +506,7 @@ return (
               {showQrModal && (
                 <motion.div 
                   initial={{ opacity: 0, scale: 0.9, y: 20 }} animate={{ opacity: 1, scale: 1, y: 0 }} exit={{ opacity: 0, scale: 0.9, y: 20 }}
-                  className="bg-zinc-950 border border-brand-tactical/40 p-8 shadow-[0_0_100px_rgba(20,184,166,0.3)] mb-4 w-[320px] relative pointer-events-auto"
+                  className="bg-[var(--bg-card)] border border-brand-tactical/40 p-8 shadow-2xl mb-4 w-[320px] relative pointer-events-auto"
                 >
                     <div className="absolute top-0 left-0 w-full h-[2px] bg-brand-tactical" />
                     <div className="flex justify-between items-start mb-6">
@@ -532,7 +532,7 @@ return (
             <div className="fixed bottom-10 right-10 z-[150] flex flex-col items-end gap-4 print:hidden">
               <button 
                 onClick={() => setShowQrModal(!showQrModal)}
-                className={`w-20 h-20 rounded-full flex items-center justify-center shadow-2xl transition-all duration-500 group relative overflow-hidden ${showQrModal ? "bg-zinc-900 border border-brand-tactical text-brand-tactical" : "bg-brand-tactical text-black"}`}
+                className={`w-20 h-20 rounded-full flex items-center justify-center shadow-2xl transition-all duration-500 group relative overflow-hidden ${showQrModal ? "bg-[var(--bg-card)] border border-brand-tactical text-brand-tactical" : "bg-brand-tactical text-black"}`}
               >
                 {!showQrModal && (
                   <div className="absolute inset-0 bg-white/20 scale-0 group-hover:scale-100 transition-transform duration-700 rounded-full" />
@@ -864,7 +864,7 @@ return (
                  <div className="grid grid-cols-1 gap-2">
                     <button 
                       onClick={() => !isEventOver && setShowQrModal(true)}
-                      className={`w-full py-4 bg-zinc-950 border border-brand-tactical/30 text-brand-tactical text-[10px] font-black uppercase tracking-widest transition-all italic flex items-center justify-center gap-3 ${isEventOver ? 'opacity-30 cursor-not-allowed grayscale' : 'hover:bg-brand-tactical hover:text-black'}`}
+                      className={`w-full py-4 bg-[var(--bg-card)] border border-brand-tactical/30 text-brand-tactical text-[10px] font-black uppercase tracking-widest transition-all italic flex items-center justify-center gap-3 ${isEventOver ? 'opacity-30 cursor-not-allowed grayscale' : 'hover:bg-brand-tactical hover:text-black'}`}
                       disabled={isEventOver}
                     >
                       <QrCode size={16} /> {isEventOver ? 'CAPTURAS ENCERRADAS' : 'QR CODE DE CAPTURA'}

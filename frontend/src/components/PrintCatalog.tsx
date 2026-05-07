@@ -67,10 +67,10 @@ export function PrintCatalog({ selectedProductId, onAddToCart }: PrintCatalogPro
   };
 
   return (
-    <section className="w-full bg-[#0a0a0a] text-white py-12 px-4 sm:px-6 lg:px-8 font-sans">
+    <section className="w-full bg-[var(--bg)] text-[var(--text)] py-12 px-4 sm:px-6 lg:px-8 font-sans">
       <div className="max-w-7xl mx-auto">
         <div className="mb-10 text-center sm:text-left">
-          <h2 className="text-3xl font-bold tracking-tight text-gray-100 uppercase">
+          <h2 className="text-3xl font-bold tracking-tight text-[var(--text)] uppercase">
             Eternize no <span className="text-emerald-500">Papel</span>
           </h2>
           <p className="mt-2 text-sm text-gray-400">
@@ -96,8 +96,8 @@ export function PrintCatalog({ selectedProductId, onAddToCart }: PrintCatalogPro
                 initial={{ opacity: 0, y: 20 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ delay: index * 0.1, duration: 0.4 }}
-                className={`relative flex flex-col bg-zinc-900 border rounded-2xl overflow-hidden transition-all group ${
-                  isSelected ? "border-emerald-500 shadow-[0_0_30px_rgba(16,185,129,0.15)] scale-[1.02]" : "border-zinc-800 hover:border-zinc-700"
+                className={`relative flex flex-col bg-[var(--bg-card)] border rounded-2xl overflow-hidden transition-all group ${
+                  isSelected ? "border-emerald-500 shadow-[0_0_30px_rgba(16,185,129,0.15)] scale-[1.02]" : "border-[var(--border)] hover:border-[var(--border-2)]"
                 }`}
               >
                 {/* Imagem Imersiva do Produto */}
@@ -126,20 +126,20 @@ export function PrintCatalog({ selectedProductId, onAddToCart }: PrintCatalogPro
                 </div>
 
                 <div className="flex-1 p-6 flex flex-col">
-                  <h3 className="text-xl font-black text-white uppercase tracking-wider italic mb-2">
+                  <h3 className="text-xl font-black text-[var(--text)] uppercase tracking-wider italic mb-2">
                     {item.name}
                   </h3>
-                  <p className="text-xs text-zinc-400 leading-relaxed font-medium mb-6 flex-1">
+                  <p className="text-xs text-[var(--text-2)] leading-relaxed font-medium mb-6 flex-1">
                     {item.description}
                   </p>
 
                   <div className="flex items-center justify-between mt-auto">
                     <div className="flex flex-col">
-                      <span className="text-[10px] text-zinc-500 uppercase tracking-widest font-black italic">Investimento</span>
+                      <span className="text-[10px] text-[var(--text-3)] uppercase tracking-widest font-black italic">Investimento</span>
                       <span className="text-2xl font-black text-white italic">
-                        <span className="text-sm font-light text-zinc-400 mr-1">R$</span>
+                        <span className="text-sm font-light text-[var(--text-2)] mr-1">R$</span>
                         {Number(item.sellingPrice).toFixed(0)}
-                        <span className="text-sm text-zinc-500">,00</span>
+                        <span className="text-sm text-[var(--text-3)]">,00</span>
                       </span>
                     </div>
                     

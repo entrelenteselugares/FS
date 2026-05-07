@@ -48,7 +48,7 @@ function EventCard({ event, onClick }: { event: Event; onClick: () => void }) {
   return (
     <div
       onClick={onClick}
-      className="group relative overflow-hidden aspect-[4/5] md:aspect-[4/3] md:rounded-2xl bg-[#0a0a0a] cursor-pointer border-none transition-transform duration-300 md:hover:scale-105"
+      className="group relative overflow-hidden aspect-[4/5] md:aspect-[4/3] md:rounded-2xl bg-[var(--bg-card)] cursor-pointer border-none transition-transform duration-300 md:hover:scale-105"
     >
       {/* Background Image */}
       <img
@@ -173,7 +173,7 @@ export const HomePage = () => {
   }, [query, selectedType, selectedCity]);
 
   return (
-    <div style={{ background: "#0a0a0a", color: T.text, minHeight: "100vh", fontFamily: T.fontB }}>
+    <div style={{ background: "var(--bg)", color: "var(--text)", minHeight: "100vh", fontFamily: T.fontB }}>
       <Helmet>
         <title>Foto Segundo | {DICT.HERO_TITLE_PART1}{DICT.HERO_TITLE_PART2_ITALIC}</title>
         <meta name="description" content={DICT.HERO_DESCRIPTION} />
@@ -294,7 +294,7 @@ export const HomePage = () => {
       </section>
 
       {/* ── EVENT GRID ───────────────────────────────────────────────────── */}
-      <section id="vitrine" className="hp-event-section" style={{ padding: "0 0 80px", background: "#0a0a0a" }}>
+      <section id="vitrine" className="hp-event-section" style={{ padding: "0 0 80px", background: "var(--bg)" }}>
         <div style={{ maxWidth: 1600, margin: "0 auto", padding: "0" }}>
           
           {/* Mobile compact vitrine header & Filters (proportional grid) */}
