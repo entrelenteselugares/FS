@@ -8,7 +8,8 @@ Este documento resume as atualizações críticas, correções de segurança e n
 - **Redesign Compacto de Detalhes do Pedido**: Reformulação visual completa do `PedidoDetalhe` em `ClienteArea`. A interface foi condensada para reduzir a necessidade de zoom out, com redução de espaçamentos massivos, fontes mais controladas (10px a 24px) e informações organizadas de forma limpa e sem repetição.
 - **Padronização de Interface (Cofres)**: Refatoração da página de Cofres de Memórias (`/cofres`) para utilizar o `DashboardLayout`, mantendo o menu lateral alinhado com o restante da área logada do cliente.
 - **Roteamento de Checkout Interno**: Correção na página de Cofre (`VaultDetailPage`) para que a ação de "Materializar" redirecione para a página de checkout padrão do sistema (`/checkout?orderId=...`), em vez de enviar o usuário diretamente para o gateway externo do Mercado Pago.
-- **Armazenamento Estável no Google Drive**: Confirmado e documentado que a integração híbrida com o Google Drive para as imagens do cofre está **funcionando perfeitamente**. O mecanismo de fallback e o manuseio de diretórios garantem integridade no armazenamento e leitura (via proxy e thumbnail nativo).
+- **Armazenamento Estável no Google Drive**: Confirmado e documentado que a integração híbrida com o Google Drive para as imagens do cofre está **funcionando perfeitamente**. Otimização de performance concluída servindo o `thumbnailLink` nativo da API do Google, reduzindo drasticamente o tempo de carregamento no mobile.
+- **Implementação de Monitoramento (Sentry)**: Instalado e configurado o SDK do Sentry no Backend (Express) e Frontend (Vite/React). Agora, falhas de API, timeouts de banco de dados e erros de renderização em produção serão capturados automaticamente com stack traces completos.
 
 ## 🚀 07/05/2026 — Estabilização Final & UI Premium
 

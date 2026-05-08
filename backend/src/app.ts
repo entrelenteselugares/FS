@@ -3,6 +3,10 @@ import express from "express";
 import cors from "cors";
 import rateLimit from "express-rate-limit";
 import routes from "./routes/index";
+import { initSentry } from "./lib/sentry";
+import * as Sentry from "@sentry/node";
+
+initSentry();
 
 const app = express();
 
@@ -78,6 +82,9 @@ app.use("/uploads", express.static("uploads"));
 
 // ── ROTAS PRINCIPAIS ─────────────────────────────────────────────────────────
 app.use("/api", routes);
+
+// Sentry Error Handler (Must be after routes)
+Sentry.setupExpressErrorHandler(app);
 
 // Tratamento de erros global
 app.use((err: Error, _req: express.Request, res: express.Response, _next: express.NextFunction) => {
