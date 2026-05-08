@@ -17,7 +17,6 @@ import {
   Minus,
   Check,
   X,
-  CreditCard,
   Phone,
   Image as ImageIcon
 } from "lucide-react";
@@ -229,13 +228,13 @@ export function PrintStoreModal({ eventId, eventTitle, medias = [], unlockedMedi
     setSelectedAlbumPhotos(prev => isSelected ? prev.filter(u => u !== url) : [...prev, url]);
   };
 
-  const totalPhotoCount = selectedFiles.length + selectedAlbumPhotos.length;
   const totalPrice = selectedProduct ? selectedProduct.finalPrice * quantity : 0;
 
   const { addPhysicalItem } = useCart();
 
   const handleAddToCart = () => {
     if (!selectedProduct) return;
+    setSubmitting(true);
     addPhysicalItem({
       productId: selectedProduct.id,
       name: selectedProduct.name,
@@ -281,9 +280,9 @@ export function PrintStoreModal({ eventId, eventTitle, medias = [], unlockedMedi
                 <p className="text-[10px] font-black text-theme-text-muted uppercase tracking-[0.2em] mb-6 italic">Protocolo de Seleção</p>
                 
                 {[
-                  { id: 'catalog', label: 'Catálogo', icon: <ShoppingCart size={14} />, status: step === 'catalog' ? 'active' : 'completed' },
+                  { id: 'catalog', label: 'Catálogo', icon: <ShoppingCart size={14} />, status: step === 'catalog' ? 'active' : (step !== 'catalog' ? 'completed' : 'pending') },
                   { id: 'details', label: 'Configuração', icon: <Plus size={14} />, status: step === 'details' ? 'active' : (step === 'delivery' || step === 'processing' ? 'completed' : 'pending') },
-                  { id: 'delivery', label: 'Logística', icon: <Truck size={14} />, status: step === 'delivery' ? 'active' : 'pending' },
+                  { id: 'delivery', label: 'Logística', icon: <Truck size={14} />, status: step === 'delivery' ? 'active' : (step === 'processing' ? 'completed' : 'pending') },
                 ].map((s, idx) => (
                   <div key={s.id} className="flex items-center gap-4 group">
                      <div className={`w-8 h-8 flex items-center justify-center border transition-all ${s.status === 'active' ? 'border-brand-tactical bg-brand-tactical text-black shadow-[0_0_15px_rgba(20,184,166,0.4)]' : (s.status === 'completed' ? 'border-brand-tactical text-brand-tactical' : 'border-theme-border text-theme-text-muted')}`}>
@@ -521,7 +520,7 @@ export function PrintStoreModal({ eventId, eventTitle, medias = [], unlockedMedi
                           disabled={submitting}
                           className="w-full py-6 bg-brand-tactical text-black text-[12px] font-black uppercase tracking-[0.5em] italic shadow-[0_30px_60px_rgba(20,184,166,0.3)] hover:scale-[1.02] transition-all flex items-center justify-center gap-4"
                         >
-                           {step === 'processing' ? "Sincronizando Carrinho..." : <><ShoppingCart size={20} /> ADICIONAR AO MEU CARRINHO</>}
+                           {submitting ? "Sincronizando Carrinho..." : <><ShoppingCart size={20} /> ADICIONAR AO MEU CARRINHO</>}
                         </button>
                         <button 
                           onClick={handleWhatsAppCheckout}

@@ -7,7 +7,6 @@ import { QRCodeSVG } from "qrcode.react";
 
 import { API } from "../lib/api";
 import { AuthContext } from "../contexts/AuthContextBase";
-import { useCart } from "../hooks/useCart";
 import { useContext } from "react";
 
 interface OrderEvent {
