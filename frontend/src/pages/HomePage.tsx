@@ -284,7 +284,7 @@ export const HomePage = () => {
             <em style={{ fontStyle: "italic", color: T.brand, display: "block", whiteSpace: "nowrap" }}>{DICT.HERO_TITLE_PART2_ITALIC}</em>
           </h1>
 
-          <p className="hp-hero-desc animate-reveal" style={{ fontSize: 13, color: "var(--text-2)", fontWeight: 300, maxWidth: 460, lineHeight: 1.5, margin: "0 auto 32px", fontFamily: T.fontB }}>
+          <p className="hp-hero-desc animate-reveal" style={{ fontSize: 13, color: "var(--text-2)", fontWeight: 300, maxWidth: 650, lineHeight: 1.5, margin: "0 auto 32px", fontFamily: T.fontB }}>
             {DICT.HERO_DESCRIPTION}
           </p>
 

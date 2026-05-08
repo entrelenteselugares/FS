@@ -456,7 +456,7 @@ return (
             </AnimatePresence>
             <div className="absolute inset-0 bg-gradient-to-t from-theme-bg via-theme-bg/60 to-transparent" />
             
-            <div className="absolute inset-0 flex flex-col justify-end p-6 lg:p-12 space-y-4">
+            <div className="absolute inset-0 flex flex-col justify-end p-6 pt-24 lg:p-12 lg:pt-32 space-y-4">
               <motion.div initial={{ opacity: 0, x: -20 }} animate={{ opacity: 1, x: 0 }} className="flex items-center gap-4 mb-6">
                 <div className="h-px w-12 bg-brand-tactical" />
                 <span className="text-[10px] font-black text-brand-tactical uppercase tracking-[0.5em] italic">
