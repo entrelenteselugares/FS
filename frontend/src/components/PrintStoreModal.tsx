@@ -1,7 +1,7 @@
 import { useState, useEffect, useRef, useLayoutEffect } from "react";
 import * as reactWindow from "react-window";
-// @ts-ignore
-const FixedSizeList = (reactWindow.FixedSizeList || reactWindow.default?.FixedSizeList || reactWindow.default) as any;
+// @ts-expect-error - React Window types are complex when accessing default exports
+const FixedSizeList = reactWindow.FixedSizeList || reactWindow.default?.FixedSizeList || reactWindow.default;
 import { API } from "../lib/api";
 import { useCart } from "../hooks/useCart";
 import { useNavigate } from "react-router-dom";
