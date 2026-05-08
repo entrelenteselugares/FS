@@ -2,7 +2,7 @@ import React, { useState, useRef, useEffect } from 'react';
 import { useSearchParams, useNavigate } from 'react-router-dom';
 import { API } from '../lib/api';
 import { T } from '../lib/theme';
-import { Camera, CheckCircle2, AlertCircle, Loader2, Image as ImageIcon, User as UserIcon, LogOut, ChevronLeft } from 'lucide-react';
+import { Camera, CheckCircle2, AlertCircle, Loader2, Image as ImageIcon, User as UserIcon, LogOut } from 'lucide-react';
 import { useAuth } from '../hooks/useAuth';
 
 export default function PhygitalCapture() {

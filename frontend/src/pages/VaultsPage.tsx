@@ -1,12 +1,10 @@
 import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
-import { Navbar } from "../components/Navbar";
 import { API as api } from "../lib/api";
 import { useAuth } from "../hooks/useAuth";
 import { motion } from "framer-motion";
 import { Lock, Plus, Images, Users, ChevronRight, Loader2, Image, ShoppingBag } from "lucide-react";
 import { Helmet } from "react-helmet-async";
-import { T } from "../lib/theme";
 import { DashboardLayout } from "../components/DashboardLayout";
 
 interface Vault {
