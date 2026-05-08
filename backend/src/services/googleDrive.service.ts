@@ -91,17 +91,32 @@ export class GoogleDriveService {
 
     const rootFolderId = process.env.GOOGLE_DRIVE_ROOT_FOLDER_ID;
     
-    const fileMetadata = {
+    let fileMetadata = {
       name: `Vault: ${albumName}`,
       mimeType: 'application/vnd.google-apps.folder',
       parents: rootFolderId ? [rootFolderId] : [],
     };
 
+    let folder: any;
     try {
-      const folder = await this.withRetry(() => this.drive!.files.create({
-        requestBody: fileMetadata,
-        fields: 'id, name',
-      }));
+      try {
+        folder = await this.withRetry(() => this.drive!.files.create({
+          requestBody: fileMetadata,
+          fields: 'id, name',
+        }));
+      } catch (parentError: any) {
+        if (parentError.message && parentError.message.includes('File not found') && rootFolderId) {
+          console.warn(`[DRIVE] Pasta Root (${rootFolderId}) não encontrada. Criando na raiz da conta.`);
+          // Remove a dependência da pasta root e tenta novamente
+          fileMetadata.parents = [];
+          folder = await this.withRetry(() => this.drive!.files.create({
+            requestBody: fileMetadata,
+            fields: 'id, name',
+          }));
+        } else {
+          throw parentError;
+        }
+      }
 
       console.log(`[DRIVE] Pasta criada para álbum: ${albumName} (ID: ${folder.data.id})`);
 

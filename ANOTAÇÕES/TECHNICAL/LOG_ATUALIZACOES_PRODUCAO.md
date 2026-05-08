@@ -2,6 +2,14 @@
 
 Este documento resume as atualizações críticas, correções de segurança e novas funcionalidades implementadas na plataforma Foto Segundo.
 
+## 🚀 08/05/2026 — UI Premium & Personalização do Consumidor
+
+- **Personalização de Álbuns (Consumer)**: Implementado novo endpoint `PATCH /api/cliente/pedidos/:id/personalize` que permite ao consumidor personalizar o nome e a foto de capa do seu álbum diretamente no painel "Minha Conta".
+- **Redesign Compacto de Detalhes do Pedido**: Reformulação visual completa do `PedidoDetalhe` em `ClienteArea`. A interface foi condensada para reduzir a necessidade de zoom out, com redução de espaçamentos massivos, fontes mais controladas (10px a 24px) e informações organizadas de forma limpa e sem repetição.
+- **Padronização de Interface (Cofres)**: Refatoração da página de Cofres de Memórias (`/cofres`) para utilizar o `DashboardLayout`, mantendo o menu lateral alinhado com o restante da área logada do cliente.
+- **Roteamento de Checkout Interno**: Correção na página de Cofre (`VaultDetailPage`) para que a ação de "Materializar" redirecione para a página de checkout padrão do sistema (`/checkout?orderId=...`), em vez de enviar o usuário diretamente para o gateway externo do Mercado Pago.
+- **Armazenamento Estável no Google Drive**: Confirmado e documentado que a integração híbrida com o Google Drive para as imagens do cofre está **funcionando perfeitamente**. O mecanismo de fallback e o manuseio de diretórios garantem integridade no armazenamento e leitura (via proxy e thumbnail nativo).
+
 ## 🚀 07/05/2026 — Estabilização Final & UI Premium
 
 - **Padronização Administrativa (Midnight Luxury)**: Refatoração completa dos módulos de Eventos, Concursos e Orçamentos. Implementação de layouts de altura fixa (`h-[85vh]`) com áreas de rolagem internas, eliminando instabilidades visuais em telas menores.

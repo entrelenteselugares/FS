@@ -56,6 +56,7 @@ model User {
   mediaVotes         MediaVote[]
   subscriptions      Subscription[]
   flashCards         FlashCard[]
+  phygitalPrints     PhygitalPrint[]         @relation("UserPhygitalPrints")
 
   @@map("users")
 }
@@ -170,13 +171,16 @@ model PhygitalPrint {
   imageUrl           String
   customerName       String
   customerPhone      String
-  customerCep        String
+  customerEmail      String?           // Lead capture/Identification
+  customerCep        String?           // Opcional agora
   eventId            String
+  userId             String?           // Link to system user if logged in
   createdAt          DateTime          @default(now())
   updatedAt          DateTime          @updatedAt
   franchiseProfileId String?
   status             PrintStatus       @default(PENDING_PRINT)
   event              Event             @relation(fields: [eventId], references: [id])
+  user               User?             @relation("UserPhygitalPrints", fields: [userId], references: [id])
   franchiseProfile   FranchiseProfile? @relation(fields: [franchiseProfileId], references: [id])
 
   @@map("phygital_prints")

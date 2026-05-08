@@ -1,8 +1,9 @@
-﻿import React, { useState, useRef } from 'react';
-import { useSearchParams } from 'react-router-dom';
+import React, { useState, useRef, useEffect } from 'react';
+import { useSearchParams, useNavigate } from 'react-router-dom';
 import { API } from '../lib/api';
 import { T } from '../lib/theme';
-import { Camera, CheckCircle2, AlertCircle, Loader2, Image as ImageIcon } from 'lucide-react';
+import { Camera, CheckCircle2, AlertCircle, Loader2, Image as ImageIcon, User as UserIcon, LogOut, ChevronLeft } from 'lucide-react';
+import { useAuth } from '../hooks/useAuth';
 
 export default function PhygitalCapture() {
   const [searchParams] = useSearchParams();
@@ -11,16 +12,30 @@ export default function PhygitalCapture() {
   const cameraInputRef = useRef<HTMLInputElement>(null);
   const galleryInputRef = useRef<HTMLInputElement>(null);
 
+  const { user, logout } = useAuth();
+  const navigate = useNavigate();
+
   const [file, setFile] = useState<File | null>(null);
   const [preview, setPreview] = useState<string | null>(null);
   const [formData, setFormData] = useState({
     customerName: '',
     customerPhone: '',
-    customerCep: ''
+    customerEmail: ''
   });
   const [loading, setLoading] = useState(false);
   const [result, setResult] = useState<{ referenceCode: string } | null>(null);
   const [error, setError] = useState('');
+
+  // Sincroniza dados se estiver logado
+  useEffect(() => {
+    if (user) {
+      setFormData({
+        customerName: user.nome || '',
+        customerPhone: user.whatsapp || '',
+        customerEmail: user.email || ''
+      });
+    }
+  }, [user]);
 
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     if (e.target.files && e.target.files[0]) {
@@ -42,6 +57,25 @@ export default function PhygitalCapture() {
       return;
     }
 
+    // Se não estiver logado, obriga a ter cadastro
+    if (!user) {
+      try {
+        setLoading(true);
+        const checkRes = await API.get(`/public/auth/check?email=${formData.customerEmail}`);
+        if (!checkRes.data.exists) {
+          setError('Usuário não localizado. Direcionando para o cadastro...');
+          setTimeout(() => {
+            navigate(`/register?email=${formData.customerEmail}&nome=${formData.customerName}&role=CLIENTE`);
+          }, 2000);
+          return;
+        }
+      } catch (err) {
+        console.error("Erro ao validar usuário:", err);
+      } finally {
+        setLoading(false);
+      }
+    }
+
     setLoading(true);
     setError('');
 
@@ -49,7 +83,7 @@ export default function PhygitalCapture() {
     data.append('photo', file);
     data.append('customerName', formData.customerName);
     data.append('customerPhone', formData.customerPhone);
-    data.append('customerCep', formData.customerCep);
+    data.append('customerEmail', formData.customerEmail);
     data.append('eventId', eventId);
 
     try {
@@ -103,6 +137,26 @@ export default function PhygitalCapture() {
   return (
     <div className="min-h-screen flex flex-col items-center py-12 px-6" style={{ background: T.bg }}>
       <div className="w-full max-w-md">
+        {/* Status de Login */}
+        <div className="flex justify-center mb-8">
+          {user ? (
+            <div className="flex items-center gap-3 px-4 py-2 bg-brand-tactical/10 border border-brand-tactical/20 rounded-full">
+              <div className="w-6 h-6 rounded-full bg-brand-tactical flex items-center justify-center">
+                <UserIcon size={12} className="text-zinc-950" />
+              </div>
+              <span className="text-[10px] font-black uppercase tracking-widest text-brand-tactical">Olá, {user.nome.split(' ')[0]}</span>
+              <button onClick={logout} className="text-theme-text-muted hover:text-red-500 transition-colors">
+                <LogOut size={14} />
+              </button>
+            </div>
+          ) : (
+            <div className="flex items-center gap-3 px-4 py-2 bg-white/5 border border-white/10 rounded-full">
+               <UserIcon size={12} className="opacity-40" />
+               <span className="text-[10px] font-black uppercase tracking-widest opacity-40">Modo Identificação Pendente</span>
+            </div>
+          )}
+        </div>
+
         {/* Header */}
         <div className="text-center mb-12">
           <div className="text-[18px] font-black uppercase tracking-[0.8em] italic mb-2" style={{ color: T.text }}>FOTO SEGUNDO</div>
@@ -181,7 +235,21 @@ export default function PhygitalCapture() {
               />
             </div>
 
-            <div className="grid grid-cols-2 gap-4">
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              <div>
+                <label className="text-[10px] font-bold uppercase tracking-[0.3em] opacity-40 ml-1 mb-2 block">E-mail Cadastrado</label>
+                <input 
+                  required 
+                  type="email" 
+                  name="customerEmail" 
+                  value={formData.customerEmail} 
+                  onChange={handleInputChange} 
+                  disabled={!!user}
+                  className="w-full bg-white/[0.03] border border-theme-border p-4 rounded-xl text-sm focus:border-brand-tactical/50 transition-all outline-none disabled:opacity-50"
+                  placeholder="seu@email.com"
+                  style={{ color: T.text }}
+                />
+              </div>
               <div>
                 <label className="text-[10px] font-bold uppercase tracking-[0.3em] opacity-40 ml-1 mb-2 block">WhatsApp</label>
                 <input 
@@ -192,19 +260,6 @@ export default function PhygitalCapture() {
                   onChange={handleInputChange} 
                   className="w-full bg-white/[0.03] border border-theme-border p-4 rounded-xl text-sm focus:border-brand-tactical/50 transition-all outline-none"
                   placeholder="(00) 00000-0000"
-                  style={{ color: T.text }}
-                />
-              </div>
-              <div>
-                <label className="text-[10px] font-bold uppercase tracking-[0.3em] opacity-40 ml-1 mb-2 block">CEP</label>
-                <input 
-                  required 
-                  type="text" 
-                  name="customerCep" 
-                  value={formData.customerCep} 
-                  onChange={handleInputChange} 
-                  className="w-full bg-white/[0.03] border border-theme-border p-4 rounded-xl text-sm focus:border-brand-tactical/50 transition-all outline-none"
-                  placeholder="00000-000"
                   style={{ color: T.text }}
                 />
               </div>

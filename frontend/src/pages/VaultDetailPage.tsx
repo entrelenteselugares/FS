@@ -102,7 +102,10 @@ export default function VaultDetailPage() {
     setCheckingOut(true);
     try {
       const res = await api.post(`/vaults/${vaultId}/checkout`);
-      if (res.data.init_point) {
+      if (res.data.orderId) {
+        navigate(`/checkout?orderId=${res.data.orderId}`);
+      } else if (res.data.init_point) {
+        // Fallback
         window.location.href = res.data.init_point;
       } else {
         alert("Erro ao gerar link de pagamento.");

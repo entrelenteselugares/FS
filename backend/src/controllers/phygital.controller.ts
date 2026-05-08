@@ -14,7 +14,8 @@ export class PhygitalController {
         return res.status(400).json({ error: "Nenhuma foto enviada." });
       }
 
-      const { eventId, customerName, customerPhone, customerCep } = req.body;
+      const { eventId, customerName, customerPhone, customerEmail, customerCep } = req.body;
+      const userId = (req as any).user?.userId;
 
       if (!eventId || !customerName) {
         return res.status(400).json({ error: "Dados obrigatórios ausentes (eventId, customerName)." });
@@ -24,7 +25,9 @@ export class PhygitalController {
         eventId,
         customerName,
         customerPhone: customerPhone || "",
-        customerCep: customerCep || ""
+        customerEmail: customerEmail || "",
+        customerCep: customerCep || "",
+        userId: userId
       });
 
       res.status(201).json(result);

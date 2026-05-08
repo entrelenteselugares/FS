@@ -11,8 +11,8 @@ export const RegisterPage: React.FC = () => {
   
   const [role, setRole] = useState<"CLIENTE" | "PROFISSIONAL" | "CARTORIO">(initialRole);
   const [formData, setFormData] = useState({
-    nome: "",
-    email: "",
+    nome: searchParams.get("nome") || "",
+    email: searchParams.get("email") || "",
     senha: "",
     whatsapp: "",
     // Campos Profissional

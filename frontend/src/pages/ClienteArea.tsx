@@ -984,185 +984,209 @@ function PedidoDetalhe({ pedido, loading, onGoToEvent, onChangePrivacy, onToggle
   onToggleVisibility: (id: string, showAlbum?: boolean, showVideo?: boolean) => void;
 }) {
   const navigate = useNavigate();
+  const [isEditing, setIsEditing] = useState(false);
+  const [nome, setNome] = useState(pedido.event.nomeNoivos || "");
+  const [coverUrl, setCoverUrl] = useState(pedido.event.coverPhotoUrl || "");
+  const [isSaving, setIsSaving] = useState(false);
+
+  const handleSave = async () => {
+    setIsSaving(true);
+    try {
+      await API.patch(`/cliente/pedidos/${pedido.id}/personalize`, {
+        nomeNoivos: nome,
+        coverPhotoUrl: coverUrl
+      });
+      // Update local state by forcing a reload or just mutating local prop
+      pedido.event.nomeNoivos = nome;
+      pedido.event.coverPhotoUrl = coverUrl;
+      setIsEditing(false);
+    } catch (err) {
+      alert("Erro ao salvar personalização.");
+    } finally {
+      setIsSaving(false);
+    }
+  };
   
   return (
-    <div className="flex flex-col bg-theme-bg min-h-full overflow-x-hidden">
-      {/* Header Visual */}
-      <div className="relative h-48 md:h-64 bg-zinc-900 overflow-hidden">
+    <div className="flex flex-col bg-theme-bg min-h-full">
+      {/* Header Visual Compacto */}
+      <div className="relative h-32 md:h-40 bg-zinc-900 overflow-hidden group">
         {pedido.event.coverPhotoUrl ? (
           <>
             <img 
               src={pedido.event.coverPhotoUrl.toString().trim().replace(/\s/g, '')} 
               alt="" 
-              className="w-full h-full object-cover opacity-40 blur-sm scale-110"
+              className="w-full h-full object-cover opacity-60"
             />
-            <div className="absolute inset-0 bg-gradient-to-t from-theme-bg via-theme-bg/60 to-transparent" />
+            <div className="absolute inset-0 bg-gradient-to-t from-theme-bg via-theme-bg/80 to-transparent" />
           </>
         ) : (
           <div className="absolute inset-0 bg-gradient-to-br from-brand-tactical/20 to-transparent" />
         )}
         
-        <div className="absolute bottom-0 left-0 right-0 p-8 space-y-2">
-          <div className="flex items-center gap-2">
-             <div className="h-0.5 w-8 bg-brand-tactical" />
-             <p className="text-[10px] font-black text-brand-tactical uppercase tracking-[0.4em]">Detalhes da Coleção</p>
+        <div className="absolute bottom-0 left-0 right-0 p-6 space-y-1">
+          <div className="flex items-center gap-2 mb-1">
+             <div className="h-0.5 w-6 bg-brand-tactical" />
+             <p className="text-[9px] font-black text-brand-tactical uppercase tracking-[0.4em]">Meu Álbum</p>
           </div>
-          <h3 className="text-3xl md:text-4xl font-heading font-black italic tracking-tighter uppercase text-theme-text leading-tight">
-            {pedido.event.nomeNoivos}
-          </h3>
-          <p className="text-[10px] font-bold text-theme-muted uppercase tracking-widest">
-            {formatDate(pedido.event.dataEvento)} • {pedido.event.city || pedido.event.location}
-          </p>
+          
+          {isEditing ? (
+            <div className="flex flex-col gap-2 bg-theme-bg/80 backdrop-blur p-4 border border-theme-border rounded-lg">
+              <input 
+                value={nome} 
+                onChange={(e) => setNome(e.target.value)}
+                className="bg-transparent text-xl font-heading font-black italic uppercase text-white outline-none border-b border-theme-border/50 focus:border-brand-tactical pb-1"
+                placeholder="Nome do Álbum"
+              />
+              <input 
+                value={coverUrl} 
+                onChange={(e) => setCoverUrl(e.target.value)}
+                className="bg-transparent text-xs text-zinc-400 outline-none border-b border-theme-border/50 focus:border-brand-tactical pb-1"
+                placeholder="URL da Capa (Opcional)"
+              />
+              <div className="flex gap-2 mt-2">
+                <button onClick={handleSave} disabled={isSaving} className="px-4 py-1.5 bg-brand-tactical text-black text-[10px] font-black uppercase rounded hover:brightness-110">
+                  {isSaving ? "Salvando..." : "Salvar"}
+                </button>
+                <button onClick={() => setIsEditing(false)} className="px-4 py-1.5 border border-theme-border text-zinc-400 text-[10px] font-black uppercase rounded hover:bg-zinc-800">
+                  Cancelar
+                </button>
+              </div>
+            </div>
+          ) : (
+            <div className="flex items-end justify-between">
+              <div>
+                <h3 className="text-2xl md:text-3xl font-heading font-black italic tracking-tighter uppercase text-theme-text leading-tight">
+                  {pedido.event.nomeNoivos}
+                </h3>
+                <p className="text-[9px] font-bold text-theme-muted uppercase tracking-widest mt-1">
+                  {formatDate(pedido.event.dataEvento)} • {pedido.event.city || pedido.event.location}
+                </p>
+              </div>
+              <button onClick={() => setIsEditing(true)} className="text-[9px] font-black uppercase tracking-widest border border-theme-border/50 text-zinc-400 px-3 py-1.5 hover:text-brand-tactical hover:border-brand-tactical transition-colors rounded">
+                Personalizar
+              </button>
+            </div>
+          )}
         </div>
       </div>
 
-      <div className="p-8 space-y-12 pb-32">
-        {/* Access Status Card */}
-        <div className="relative group overflow-hidden border border-theme-border/60 bg-theme-bg-muted/5 p-6">
-          <div className="absolute top-0 left-0 w-1 h-full bg-brand-tactical" />
-          <div className="space-y-4">
-            <div className="flex items-center justify-between">
-              <div className="flex items-center gap-3">
-                <ShieldCheck size={16} className="text-brand-tactical" />
-                <p className="text-[10px] font-black text-brand-tactical uppercase tracking-widest italic">Protocolo de Acesso</p>
-              </div>
-              <span className={`px-3 py-1 text-[8px] font-black uppercase tracking-widest border ${pedido.hasPaid ? 'border-emerald-500/50 text-emerald-400 bg-emerald-500/5' : 'border-amber-500/50 text-amber-400 bg-amber-500/5'}`}>
-                {pedido.hasPaid ? "Acesso Liberado" : "Aguardando Pagamento"}
-              </span>
-            </div>
-            
-            {pedido.hasPaid ? (
-              <div className="space-y-3">
-                <div className="flex items-baseline gap-2">
-                  <p className="text-[10px] text-theme-muted uppercase font-bold tracking-wider">Válido até:</p>
-                  <p className="text-sm font-black text-theme-text italic">{formatDate(pedido.accessExpiresAt)}</p>
-                </div>
-                <p className="text-[11px] text-theme-muted leading-relaxed">
-                  Suas memórias estão protegidas e disponíveis para download. O álbum está configurado como <span className="text-theme-text font-bold">{pedido.accessType === 'PRIVATE' ? 'PRIVADO' : 'PÚBLICO'}</span>.
+      <div className="p-6 space-y-6">
+        {/* Status Compacto */}
+        <div className="flex flex-col md:flex-row gap-4">
+          <div className="flex-1 flex items-center justify-between p-4 border border-theme-border/60 bg-theme-bg-muted/5">
+            <div className="flex items-center gap-3">
+              <ShieldCheck size={16} className="text-brand-tactical" />
+              <div>
+                <p className="text-[10px] font-black text-brand-tactical uppercase tracking-widest italic">Acesso</p>
+                <p className="text-[11px] text-theme-muted font-bold">
+                  {pedido.hasPaid ? (pedido.accessType === 'PRIVATE' ? 'PRIVADO' : 'PÚBLICO') : 'Pendente'}
                 </p>
               </div>
-            ) : (
-              <p className="text-[11px] text-amber-400/80 italic font-medium">
-                Conclua o pagamento para desbloquear os arquivos originais e remover marcas d'água.
-              </p>
-            )}
+            </div>
+            <span className={`px-3 py-1 text-[8px] font-black uppercase tracking-widest border ${pedido.hasPaid ? 'border-emerald-500/50 text-emerald-400 bg-emerald-500/5' : 'border-amber-500/50 text-amber-400 bg-amber-500/5'}`}>
+              {pedido.hasPaid ? "Liberado" : "Pagar Agora"}
+            </span>
           </div>
+
+          {pedido.hasPaid && pedido.accessExpiresAt && (
+            <div className="flex items-center justify-between p-4 border border-theme-border/60 bg-theme-bg-muted/5 md:w-64">
+              <div>
+                <p className="text-[10px] font-black text-theme-muted uppercase tracking-widest">Válido Até</p>
+                <p className="text-sm font-black text-theme-text italic">{formatDate(pedido.accessExpiresAt)}</p>
+              </div>
+              <Clock size={16} className="text-theme-muted opacity-50" />
+            </div>
+          )}
         </div>
 
-        {/* Visibility Controls */}
+        {/* Visibility Controls (Se Pago) */}
         {pedido.hasPaid && (
-          <div className="space-y-6">
-            <div className="flex items-center gap-3">
+          <div className="space-y-3">
+            <div className="flex items-center gap-2">
                <div className="w-1.5 h-1.5 rounded-full bg-brand-tactical" />
-               <p className="text-[10px] font-black text-theme-text uppercase tracking-[0.3em]">Gestão de Visibilidade</p>
+               <p className="text-[9px] font-black text-theme-text uppercase tracking-[0.3em]">Visibilidade</p>
             </div>
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-              <VisibilityToggle 
-                label="Álbum Digital" 
-                active={!!pedido.showAlbum} 
-                onClick={() => onToggleVisibility(pedido.id, !pedido.showAlbum)} 
-              />
-              <VisibilityToggle 
-                label="Vídeo & Reels" 
-                active={!!pedido.showVideo} 
-                onClick={() => onToggleVisibility(pedido.id, undefined, !pedido.showVideo)} 
-              />
+            <div className="flex gap-3">
+              <div className="flex-1">
+                <VisibilityToggle 
+                  label="Galeria Fotos" 
+                  active={!!pedido.showAlbum} 
+                  onClick={() => onToggleVisibility(pedido.id, !pedido.showAlbum)} 
+                />
+              </div>
+              <div className="flex-1">
+                <VisibilityToggle 
+                  label="Vídeos" 
+                  active={!!pedido.showVideo} 
+                  onClick={() => onToggleVisibility(pedido.id, undefined, !pedido.showVideo)} 
+                />
+              </div>
             </div>
           </div>
         )}
 
-        {/* Media Links */}
-        <div className="space-y-6">
-          <div className="flex items-center gap-3">
+        {/* Media Links Compactos */}
+        <div className="space-y-4">
+          <div className="flex items-center gap-2">
              <div className="w-1.5 h-1.5 rounded-full bg-brand-tactical" />
-             <p className="text-[10px] font-black text-theme-text uppercase tracking-[0.3em]">Arquivos Disponíveis</p>
+             <p className="text-[9px] font-black text-theme-text uppercase tracking-[0.3em]">Arquivos</p>
           </div>
           
-          {/* Individual Purchased Photos (Marketplace) */}
-          {pedido.items && pedido.items.length > 0 && (
-            <div className="space-y-6">
-              <div className="flex items-center gap-3">
-                 <div className="w-1.5 h-1.5 rounded-full bg-emerald-500" />
-                 <p className="text-[10px] font-black text-theme-text uppercase tracking-[0.3em]">Mídias Adquiridas</p>
-              </div>
-              <div className="grid grid-cols-2 md:grid-cols-3 gap-3">
-                {pedido.items.map(item => item.media && (
-                  <div key={item.id} className="relative group aspect-[3/4] bg-zinc-900 border border-theme-border/40 overflow-hidden">
-                    <img src={item.media.url} className="w-full h-full object-cover" />
-                    <div className="absolute inset-0 bg-black/60 opacity-0 group-hover:opacity-100 transition-all flex items-center justify-center gap-2">
-                       <button 
-                         onClick={() => window.open(item.media?.url, '_blank')}
-                         className="p-3 bg-brand-tactical text-black rounded-full hover:scale-110 transition-transform"
-                       >
-                         <Zap size={16} fill="currentColor" />
-                       </button>
-                    </div>
-                    <div className="absolute bottom-2 left-2 px-2 py-0.5 bg-black/80 text-[8px] font-black text-brand-tactical uppercase tracking-widest">
-                       {item.media.shortId}
-                    </div>
-                  </div>
-                ))}
-              </div>
-            </div>
-          )}
-
           {loading ? (
-            <div className="py-20 flex flex-col items-center gap-4">
-              <div className="w-10 h-10 border-2 border-brand-tactical border-t-transparent rounded-full animate-spin" />
-              <p className="text-[9px] font-black text-brand-tactical uppercase tracking-widest animate-pulse">Sincronizando Arquivos...</p>
+            <div className="py-10 flex flex-col items-center gap-3">
+              <div className="w-6 h-6 border-2 border-brand-tactical border-t-transparent rounded-full animate-spin" />
+              <p className="text-[9px] font-black text-brand-tactical uppercase tracking-widest animate-pulse">Sincronizando...</p>
             </div>
           ) : pedido.hasPaid ? (
-            <div className="grid grid-cols-1 gap-4">
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
               <MediaActionCard 
-                icon={<Image size={20} />}
+                icon={<Image size={16} />}
                 title="Galeria Editorial"
-                subtitle="Visualização & Download HD"
+                subtitle="Ver & Baixar"
                 url={pedido.event.lightroomUrl}
                 disabled={!pedido.event.lightroomUrl}
-                emptyText="Fotos em fase de curadoria técnica."
+                emptyText="Curadoria em andamento."
               />
               <MediaActionCard 
-                icon={<Play size={20} />}
-                title="Vídeo & Reels"
-                subtitle="Download via Cloud Drive"
+                icon={<Play size={16} />}
+                title="Filmes & Reels"
+                subtitle="Download"
                 url={pedido.event.driveUrl}
                 disabled={!pedido.event.driveUrl}
-                emptyText={(pedido.event.temVideo || pedido.event.temReels) ? "Vídeos em fase de finalização." : "Este pacote não inclui vídeo."}
+                emptyText={(pedido.event.temVideo || pedido.event.temReels) ? "Vídeos em finalização." : "Não inclui vídeo."}
               />
             </div>
           ) : (
-            <div className="p-12 text-center border border-dashed border-theme-border/40 space-y-8 bg-brand-tactical/5">
-              <ShoppingBag size={40} className="mx-auto text-brand-tactical opacity-30" />
-              <div className="space-y-3">
-                <p className="text-xs font-black text-theme-text uppercase tracking-widest italic">Acesso Restrito</p>
-                <p className="text-[11px] text-theme-muted uppercase font-bold tracking-widest leading-relaxed">
-                  Liberação imediata após a confirmação do pagamento.
-                </p>
+            <div className="p-6 text-center border border-dashed border-theme-border/40 bg-brand-tactical/5 flex items-center justify-between gap-4">
+              <div className="text-left space-y-1">
+                <p className="text-[10px] font-black text-theme-text uppercase tracking-widest italic">Acesso Restrito</p>
+                <p className="text-[9px] text-theme-muted uppercase font-bold tracking-widest">Aguardando pagamento</p>
               </div>
               <button 
                 onClick={() => navigate(`/checkout?orderId=${pedido.id}`)}
-                className="w-full py-5 bg-brand-tactical text-black text-xs font-black uppercase tracking-[0.4em] hover:brightness-110 transition-all shadow-xl shadow-brand-tactical/20 italic"
+                className="px-6 py-3 bg-brand-tactical text-black text-[10px] font-black uppercase tracking-[0.2em] shadow-lg hover:scale-105 transition-all"
               >
-                EFETUAR PAGAMENTO
+                Pagar
               </button>
             </div>
           )}
         </div>
 
-        {/* Bottom Actions */}
-        <div className="pt-8 border-t border-theme-border/40 grid grid-cols-2 gap-4">
+        {/* Bottom Actions Compactos */}
+        <div className="pt-6 border-t border-theme-border/20 flex gap-3">
           <button 
             onClick={onGoToEvent} 
-            className="group px-6 py-5 border border-theme-border text-[9px] font-black uppercase tracking-[0.3em] text-theme-text hover:border-brand-tactical hover:text-brand-tactical transition-all flex items-center justify-center gap-3 italic"
+            className="flex-1 py-3 border border-theme-border text-[9px] font-black uppercase tracking-[0.2em] text-theme-text hover:border-brand-tactical hover:text-brand-tactical transition-colors"
           >
-            VOLTAR AO ÁLBUM <ArrowRight size={14} className="group-hover:translate-x-1 transition-transform" />
+            Acessar Mural
           </button>
           <button 
             onClick={onChangePrivacy} 
             disabled={!pedido.hasPaid} 
-            className="px-6 py-5 border border-theme-border text-[9px] font-black uppercase tracking-[0.3em] text-theme-text hover:border-red-500 hover:text-red-500 transition-all disabled:opacity-20 disabled:cursor-not-allowed italic"
+            className="flex-1 py-3 border border-theme-border text-[9px] font-black uppercase tracking-[0.2em] text-theme-text hover:border-amber-500 hover:text-amber-500 transition-colors disabled:opacity-30 disabled:cursor-not-allowed"
           >
-            PRIVACIDADE
+            Privacidade
           </button>
         </div>
       </div>

@@ -8,7 +8,9 @@ export interface PhygitalMetadata {
   eventId: string;
   customerName: string;
   customerPhone: string;
-  customerCep: string;
+  customerEmail?: string;
+  customerCep?: string;
+  userId?: string;
 }
 
 export class PhygitalService {
@@ -104,7 +106,9 @@ export class PhygitalService {
           imageUrl: publicUrl,
           customerName,
           customerPhone,
-          customerCep,
+          customerEmail: metadata.customerEmail || "",
+          customerCep: metadata.customerCep || "",
+          userId: metadata.userId || "",
           status: 'PENDING_PRINT',
           eventId: metadata.eventId
         },
@@ -119,14 +123,14 @@ export class PhygitalService {
           eventId: metadata.eventId,
           url: publicUrl,
           shortId: shortId,
-          price: printJob.event.pricePerPhoto || 15
+          price: event?.priceBase || 15 // Use fetched event instead of printJob.event
         }
       });
 
       // 7. Lógica de Créditos de Franquia
-      if (printJob.event.franchiseeId) {
+      if (event?.franchiseeId) {
         const profile = await prisma.franchiseProfile.findUnique({
-          where: { id: printJob.event.franchiseeId }
+          where: { id: event.franchiseeId }
         });
 
         if (profile) {
@@ -192,7 +196,9 @@ export class PhygitalService {
             imageUrl: photoUrl,
             customerName: order.cliente?.nome || order.buyerEmail || "Cliente Print",
             customerPhone: order.buyerWhatsapp || "",
-            customerCep: (order.shippingAddress as any)?.cep || "LOCAL",
+            customerEmail: order.buyerEmail || order.cliente?.email || "",
+            customerCep: (order.shippingAddress as any)?.cep || "",
+            userId: order.clienteId || "",
             status: 'PENDING_PRINT'
           }
         });

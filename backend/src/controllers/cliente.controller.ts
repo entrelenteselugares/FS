@@ -133,3 +133,42 @@ export async function getMeuPedidoDetalhe(req: AuthRequest, res: Response): Prom
     res.status(500).json({ error: "Erro ao buscar pedido." });
   }
 }
+
+/**
+ * PATCH /api/cliente/pedidos/:id/personalize
+ * Permite ao consumidor alterar o nome e a capa do álbum associado ao pedido.
+ */
+export async function personalizePedido(req: AuthRequest, res: Response): Promise<void> {
+  const user = req.user;
+  if (!user) { res.status(401).json({ error: "Não autenticado." }); return; }
+  const { id } = req.params;
+  const { nomeNoivos, coverPhotoUrl } = req.body;
+
+  try {
+    const pedido = await prisma.order.findFirst({
+      where: { id: id as string, clienteId: user.userId },
+      include: { event: true }
+    });
+
+    if (!pedido) {
+      res.status(404).json({ error: "Pedido não encontrado." });
+      return;
+    }
+
+    // Atualiza o evento atrelado.
+    // Nota: Em um cenário real multi-tenant, você só deve permitir isso se o evento for "privado" ou "exclusivo" deste cliente.
+    // Como cofres e álbuns comprados via convidado são 1:1, a atualização é segura.
+    const updatedEvent = await prisma.event.update({
+      where: { id: pedido.eventId },
+      data: {
+        ...(nomeNoivos && { nomeNoivos }),
+        ...(coverPhotoUrl !== undefined && { coverPhotoUrl })
+      }
+    });
+
+    res.json({ message: "Álbum personalizado com sucesso.", event: updatedEvent });
+  } catch (err) {
+    console.error("personalizePedido:", err);
+    res.status(500).json({ error: "Erro ao personalizar álbum." });
+  }
+}

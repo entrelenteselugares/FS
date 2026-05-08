@@ -4,9 +4,10 @@ import { Navbar } from "../components/Navbar";
 import { API as api } from "../lib/api";
 import { useAuth } from "../hooks/useAuth";
 import { motion } from "framer-motion";
-import { Lock, Plus, Images, Users, ChevronRight, Loader2 } from "lucide-react";
+import { Lock, Plus, Images, Users, ChevronRight, Loader2, Image, ShoppingBag } from "lucide-react";
 import { Helmet } from "react-helmet-async";
 import { T } from "../lib/theme";
+import { DashboardLayout } from "../components/DashboardLayout";
 
 interface Vault {
   id: string;
@@ -208,65 +209,79 @@ export default function VaultsPage() {
     fetchVaults();
   }, [user, navigate]);
 
+  const NAV_ITEMS = [
+    { label: "Minhas Memórias", onClick: () => navigate("/minha-conta?s=fotos"), isActive: false, icon: <Image size={18} /> },
+    { label: "Cofres de Memórias", onClick: () => {}, isActive: true, icon: <Lock size={18} /> },
+    { label: "Carrinho", onClick: () => navigate("/minha-conta?s=wallet"), isActive: false, icon: <ShoppingBag size={18} /> },
+    ...(user?.franchiseProfile ? [
+      { label: "Franquia Print", onClick: () => navigate("/minha-conta?s=franquia"), isActive: false, icon: <Lock size={18} /> }
+    ] : []),
+    { label: "Meus Dados", onClick: () => navigate("/minha-conta?s=menu"), isActive: false, icon: <Lock size={18} /> },
+  ];
+
   return (
-    <div className="min-h-screen font-sans" style={{ background: T.bg, color: T.text }}>
+    <DashboardLayout title="Cofres de Memórias" navItems={NAV_ITEMS}>
       <Helmet>
         <title>Cofres de Memórias | Foto Segundo</title>
         <meta name="description" content="Álbuns privados compartilhados para preservar e materializar suas memórias." />
       </Helmet>
-      <Navbar />
 
-      <main className="max-w-6xl mx-auto px-4 py-10 pb-28">
+      <div className="max-w-[1400px] mx-auto px-2 md:px-6 py-6 md:py-10 space-y-8 md:space-y-12 animate-in fade-in slide-in-from-bottom-4 duration-700">
         {/* Page header */}
-        <div className="flex items-end justify-between mb-10">
-          <div>
-            <p className="text-[10px] text-emerald-500 font-black uppercase tracking-[0.5em] mb-2">Fase 11</p>
-            <h1 className="text-4xl md:text-5xl font-black uppercase italic tracking-tighter leading-none" style={{ color: T.text }}>
+        <div className="flex flex-col md:flex-row md:items-end justify-between gap-6 border-b border-theme-border/60 pb-8 md:pb-12">
+          <div className="space-y-1 relative z-10">
+            <div className="flex items-center gap-3 mb-2">
+              <div className="h-0.5 w-12 bg-emerald-500" />
+              <p className="text-[10px] font-black text-emerald-500 uppercase tracking-[0.5em] italic">Fase 11</p>
+            </div>
+            <h1 className="text-4xl md:text-7xl font-heading font-black text-theme-text uppercase tracking-tighter italic leading-[0.9]">
               Cofres de<br /><span className="text-emerald-500">Memórias</span>
             </h1>
-            <p className="mt-3 text-sm text-gray-500 max-w-sm leading-relaxed">
+            <p className="mt-3 text-[11px] text-gray-500 uppercase tracking-widest max-w-sm leading-relaxed font-bold">
               Álbuns privados compartilhados. Colecione, vote e materialize suas fotos mensalmente.
             </p>
           </div>
 
           <button
             onClick={() => setShowModal(true)}
-            className="flex items-center gap-2 bg-emerald-500 hover:bg-emerald-400 text-black text-[11px] font-black uppercase tracking-widest px-5 py-3 rounded-xl transition-all active:scale-95 shadow-lg shadow-emerald-500/20"
+            className="flex items-center gap-2 bg-emerald-500 hover:bg-emerald-400 text-black text-[11px] font-black uppercase tracking-widest px-6 py-4 rounded-xl transition-all active:scale-95 shadow-lg shadow-emerald-500/20 italic"
           >
             <Plus size={16} />
-            Novo Cofre
+            NOVO COFRE
           </button>
         </div>
 
         {/* Vaults grid */}
         {loading ? (
-          <div className="flex items-center justify-center py-32 gap-3 opacity-30">
-            <Loader2 size={24} className="animate-spin text-emerald-500" />
-            <span className="text-[11px] font-black uppercase tracking-widest">Carregando seus cofres...</span>
+          <div className="flex flex-col items-center justify-center py-32 gap-4 opacity-30">
+            <Loader2 size={32} className="animate-spin text-emerald-500" />
+            <span className="text-[10px] font-black uppercase tracking-widest italic">Carregando cofres...</span>
           </div>
         ) : vaults.length === 0 ? (
           <motion.div
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
-            className="flex flex-col items-center justify-center py-32 gap-4 text-center"
+            className="flex flex-col items-center justify-center py-32 gap-5 text-center bg-[#141414] border border-[#2a2a2a] rounded-2xl"
           >
-            <div className="p-6 bg-emerald-500/5 border border-emerald-500/10 rounded-2xl mb-2">
-              <Lock size={40} className="text-emerald-500/40" />
+            <div className="p-6 bg-emerald-500/5 border border-emerald-500/10 rounded-2xl">
+              <Lock size={48} className="text-emerald-500/40" />
             </div>
-            <p className="text-lg font-black uppercase italic text-gray-400">Nenhum cofre ainda.</p>
-            <p className="text-[11px] text-gray-600 uppercase tracking-widest max-w-xs">
-              Crie seu primeiro álbum privado e convide pessoas para compartilhar memórias.
-            </p>
+            <div className="space-y-2">
+              <p className="text-2xl font-black uppercase italic text-gray-400">NENHUM COFRE AINDA</p>
+              <p className="text-[10px] text-gray-600 uppercase tracking-widest max-w-xs mx-auto font-bold">
+                Crie seu primeiro álbum privado e convide pessoas para compartilhar memórias.
+              </p>
+            </div>
             <button
               onClick={() => setShowModal(true)}
-              className="mt-4 flex items-center gap-2 border border-emerald-500/30 text-emerald-500 hover:bg-emerald-500/10 text-[11px] font-black uppercase tracking-widest px-6 py-3 rounded-xl transition-all"
+              className="mt-4 flex items-center gap-2 border border-emerald-500/30 text-emerald-500 hover:bg-emerald-500/10 text-[10px] font-black uppercase tracking-widest px-8 py-4 rounded-xl transition-all italic"
             >
               <Plus size={14} />
-              Criar primeiro cofre
+              CRIAR PRIMEIRO COFRE
             </button>
           </motion.div>
         ) : (
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+          <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-4">
             {vaults.map((vault, i) => (
               <motion.div key={vault.id} transition={{ delay: i * 0.05 }}>
                 <VaultCard vault={vault} onClick={() => navigate(`/cofres/${vault.id}`)} />
@@ -274,7 +289,7 @@ export default function VaultsPage() {
             ))}
           </div>
         )}
-      </main>
+      </div>
 
       {showModal && (
         <NewVaultModal
@@ -282,6 +297,6 @@ export default function VaultsPage() {
           onCreated={() => { setLoading(true); fetchVaults(); }}
         />
       )}
-    </div>
+    </DashboardLayout>
   );
 }
