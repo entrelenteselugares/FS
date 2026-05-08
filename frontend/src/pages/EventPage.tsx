@@ -9,6 +9,7 @@ import { Helmet } from "react-helmet-async";
 import AccessTypeModal from "../components/AccessTypeModal";
 import { AuthModal } from "../components/AuthModal";
 import { useAuth } from "../hooks/useAuth";
+import { useCart } from "../hooks/useCart";
 import { Navbar } from "../components/Navbar";
 import { PrintStoreModal } from "../components/PrintStoreModal";
 import { PrintCatalog } from "../components/PrintCatalog";
@@ -169,11 +170,16 @@ export default function EventPage() {
   const [orderId, setOrderId] = useState<string | null>(null);
   const [needsAccessChoice, setNeedsAccessChoice] = useState(false);
   
-  const [cart, setCart] = useState<string[]>([]);
-  const [cartTotal, setCartTotal] = useState(0);
+  const { digitalPhotos, physicalItems, addToCart, removeFromCart } = useCart();
   const [serviceCatalog, setServiceCatalog] = useState<ServiceData[]>([]);
   const [selectedServices] = useState<string[]>([]);
   const [includeLivePrint] = useState(false);
+
+  // Filtramos os itens do carrinho que pertencem a este evento
+  const eventCart = digitalPhotos.filter(p => p.eventId === event?.id).map(p => p.shortId);
+  const eventPhysicalItems = physicalItems.filter(p => p.eventId === event?.id);
+  const cartTotal = (eventCart.length * (event?.pricePerPhoto || 15)) + 
+                   eventPhysicalItems.reduce((acc, i) => acc + (i.price * i.quantity), 0);
 
   const [selectedPrintProductId, setSelectedPrintProductId] = useState<string | null>(null);
   const [showPrintStore, setShowPrintStore] = useState(false);
@@ -182,40 +188,6 @@ export default function EventPage() {
   const [showPhygital, setShowPhygital] = useState(true);
 
   const eventStatus = useEventStatus(event?.dataEvento, null, 2, event?.isExpired, event?.active);
-  // Carrega carrinho do localStorage
-  useEffect(() => {
-    if (event?.id) {
-      const saved = localStorage.getItem(`fs_cart_${event.id}`);
-      if (saved) {
-        try {
-          const parsed = JSON.parse(saved);
-          setCart(parsed);
-          // O total agora é calculado de forma dinâmica ou via useEffect
-        } catch (e) {
-          console.error("Erro ao carregar carrinho:", e);
-        }
-      }
-    }
-  }, [event?.id]);
-
-  // Cálculo Dinâmico do Total (Híbrido)
-  useEffect(() => {
-    if (event) {
-      const mediaCount = cart.filter(id => !id.startsWith("print:")).length;
-      const mediaTotal = mediaCount * (event.pricePerPhoto || 15);
-      
-      // Para simplificar, o total de produtos físicos seria somado aqui 
-      // se tivéssemos os preços no estado local. Por enquanto mantemos o cálculo base.
-      setCartTotal(mediaTotal);
-    }
-  }, [cart, event]);
-
-  // Salva carrinho no localStorage sempre que mudar
-  useEffect(() => {
-    if (event?.id) {
-      localStorage.setItem(`fs_cart_${event.id}`, JSON.stringify(cart));
-    }
-  }, [cart, event?.id]);
 
   const handleShare = async () => {
     if (access?.accessType === "PRIVATE") {
@@ -361,7 +333,7 @@ export default function EventPage() {
 
   const handleUnlockClick = async () => { 
     if (!event) return;
-    const isMarketplaceWithCart = (event.type === 'PHOTO_MARKETPLACE' || event.type === 'FOTO_POINT' || event.type === 'FLASH_EVENT') && cart.length > 0;
+    const isMarketplaceWithCart = (event.type === 'PHOTO_MARKETPLACE' || event.type === 'FOTO_POINT' || event.type === 'FLASH_EVENT') && (eventCart.length > 0 || eventPhysicalItems.length > 0);
     if (!isMarketplaceWithCart && (event.isOwner || paid)) return;
 
     setLoading(true);
@@ -372,9 +344,13 @@ export default function EventPage() {
         email: user?.email,
         selectedServices,
         includeLivePrint,
-        includeShipping: false,
-        cart: cart.filter(id => !id.startsWith("print:")),
-        printProductId: selectedPrintProductId
+        includeShipping: eventPhysicalItems.length > 0,
+        cart: eventCart,
+        physicalItems: eventPhysicalItems.map(i => ({ 
+          id: i.productId, 
+          quantity: i.quantity,
+          selectedPhotos: i.selectedPhotos
+        }))
       });
       navigate(`/checkout/${data.orderId}`);
     } catch (err) {
@@ -382,6 +358,16 @@ export default function EventPage() {
       alert("Não foi possível iniciar o processo de compra. Tente novamente.");
     } finally {
       setLoading(false);
+    }
+  };
+
+  const toggleCart = (shortId: string) => {
+    if (!event) return;
+    const exists = eventCart.includes(shortId);
+    if (exists) {
+      removeFromCart(event.id, shortId);
+    } else {
+      addToCart(event.id, shortId);
     }
   };
 
@@ -751,7 +737,7 @@ return (
                         ) : (
                           <div className="grid grid-cols-2 md:grid-cols-3 xl:grid-cols-4 2xl:grid-cols-5 gap-4 lg:gap-8">
                             {medias.map((m, idx) => {
-                              const isSelected = cart.includes(m.shortId);
+                              const isSelected = eventCart.includes(m.shortId);
                               const isUnlocked = event.unlockedMediaIds?.includes(m.shortId) || event.isOwner;
 
                               return (
@@ -932,7 +918,9 @@ return (
                     </div>
                     <div className="p-4 bg-brand-tactical/5 border-l-2 border-brand-tactical">
                       <p className="text-[10px] text-theme-text-muted font-black uppercase tracking-widest italic">
-                        {cart.length} {cart.length === 1 ? 'memória selecionada' : 'memórias selecionadas'}
+                        {eventCart.length > 0 && `${eventCart.length} ${eventCart.length === 1 ? 'foto digital' : 'fotos digitais'}`}
+                        {eventCart.length > 0 && eventPhysicalItems.length > 0 && ' + '}
+                        {eventPhysicalItems.length > 0 && `${eventPhysicalItems.length} ${eventPhysicalItems.length === 1 ? 'produto físico' : 'produtos físicos'}`}
                       </p>
                     </div>
                   </div>

@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { useAuth } from "../hooks/useAuth";
+import { useCart } from "../hooks/useCart";
 import { T, BtnPrimary, BtnSecondary } from "../lib/theme";
 import { ThemeToggle } from "./ThemeToggle";
 import { ShoppingBag } from "lucide-react";
@@ -8,6 +9,7 @@ import { ShoppingBag } from "lucide-react";
 export const Navbar: React.FC = () => {
   const navigate = useNavigate();
   const { user, logout } = useAuth();
+  const { totalItems } = useCart();
   const [userMenu, setUserMenu] = useState(false);
 
   const dashPath = user?.role === "ADMIN" ? "/admin"
@@ -40,19 +42,22 @@ export const Navbar: React.FC = () => {
           <span style={{ fontSize: 16 }}>🇧🇷</span>
         </div>
 
-        {user && (
-          <button 
-            onClick={() => navigate("/minha-conta")}
-            title="Meus Pedidos / Carrinho"
-            className="p-2 border rounded-md transition-all"
-            style={{ 
-              borderColor: T.border,
-              color: T.text,
-            }}
-          >
-            <ShoppingBag size={18} />
-          </button>
-        )}
+        <button 
+          onClick={() => navigate("/checkout")}
+          title="Meu Carrinho"
+          className="relative p-2 border rounded-md transition-all hover:bg-brand-tactical/10 group"
+          style={{ 
+            borderColor: T.border,
+            color: T.text,
+          }}
+        >
+          <ShoppingBag size={18} />
+          {totalItems > 0 && (
+            <span className="absolute -top-1 -right-1 w-4 h-4 bg-brand-tactical text-black text-[9px] font-black flex items-center justify-center rounded-sm animate-pulse-soft">
+              {totalItems}
+            </span>
+          )}
+        </button>
 
         {user ? (
           <div className="relative">

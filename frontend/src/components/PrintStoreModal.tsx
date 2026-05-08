@@ -3,6 +3,8 @@ import * as reactWindow from "react-window";
 // @ts-ignore
 const FixedSizeList = (reactWindow.FixedSizeList || reactWindow.default?.FixedSizeList || reactWindow.default) as any;
 import { API } from "../lib/api";
+import { useCart } from "../hooks/useCart";
+import { useNavigate } from "react-router-dom";
 import { motion, AnimatePresence } from "framer-motion";
 import { 
   Package, 
@@ -150,6 +152,7 @@ const MOCK_PRODUCTS: PrintProduct[] = [
 ];
 
 export function PrintStoreModal({ eventId, eventTitle, medias = [], unlockedMediaIds = [], isMarketplace = false, isOwner = false, onClose }: PrintStoreModalProps) {
+  const navigate = useNavigate();
   const [products, setProducts] = useState<PrintProduct[]>([]);
   const [loading, setLoading] = useState(true);
   const [selectedProduct, setSelectedProduct] = useState<PrintProduct | null>(null);
@@ -229,25 +232,24 @@ export function PrintStoreModal({ eventId, eventTitle, medias = [], unlockedMedi
   const totalPhotoCount = selectedFiles.length + selectedAlbumPhotos.length;
   const totalPrice = selectedProduct ? selectedProduct.finalPrice * quantity : 0;
 
-  const handleCheckout = async () => {
+  const { addPhysicalItem } = useCart();
+
+  const handleAddToCart = () => {
     if (!selectedProduct) return;
-    setSubmitting(true);
-    setError("");
-    try {
-      const { data } = await API.post("/orders/print", {
-        eventId,
-        productId: selectedProduct.id,
-        quantity,
-        notes,
-        fileCount: totalPhotoCount,
-        albumPhotos: selectedAlbumPhotos,
-        deliveryMethod
-      });
-      window.location.href = `/checkout?orderId=${data.orderId}`;
-    } catch {
-      setError("Erro ao processar pedido. Tente novamente.");
-      setSubmitting(false);
-    }
+    addPhysicalItem({
+      productId: selectedProduct.id,
+      name: selectedProduct.name,
+      price: selectedProduct.finalPrice,
+      quantity: quantity,
+      selectedPhotos: selectedAlbumPhotos,
+      category: selectedProduct.category,
+      eventId: eventId
+    });
+    setStep("processing");
+    setTimeout(() => {
+      onClose();
+      navigate("/checkout");
+    }, 1500);
   };
 
   const handleWhatsAppCheckout = () => {
@@ -515,11 +517,11 @@ export function PrintStoreModal({ eventId, eventTitle, medias = [], unlockedMedi
 
                       <div className="pt-10 space-y-4">
                         <button 
-                          onClick={handleCheckout}
+                          onClick={handleAddToCart}
                           disabled={submitting}
                           className="w-full py-6 bg-brand-tactical text-black text-[12px] font-black uppercase tracking-[0.5em] italic shadow-[0_30px_60px_rgba(20,184,166,0.3)] hover:scale-[1.02] transition-all flex items-center justify-center gap-4"
                         >
-                           {submitting ? "Sincronizando Gateway..." : <><CreditCard size={20} /> FINALIZAR PEDIDO NO CHECKOUT</>}
+                           {step === 'processing' ? "Sincronizando Carrinho..." : <><ShoppingCart size={20} /> ADICIONAR AO MEU CARRINHO</>}
                         </button>
                         <button 
                           onClick={handleWhatsAppCheckout}

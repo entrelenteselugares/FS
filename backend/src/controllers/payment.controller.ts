@@ -22,13 +22,13 @@ export class PaymentController {
    * Cria um pedido pendente para ser processado no checkout padrão.
    */
   static async createPendingOrder(req: Request, res: Response) {
-    const { eventId, userId, email, selectedServices, includeLivePrint, includeShipping, cart } = req.body;
+    const { eventId, userId, email, selectedServices, includeLivePrint, includeShipping, cart, physicalItems } = req.body;
 
     try {
       const event = await prisma.event.findUnique({ where: { id: eventId } });
       if (!event) return res.status(404).json({ error: "Evento não encontrado" });
 
-      // 1. Cálculo de Preço (Simplificado para Upgrade)
+      // 1. Cálculo de Preço Híbrido
       const cartItems = cart || [];
       const basePrice = PricingService.calculateEventPrice(event, 0, cartItems.length);
       
@@ -41,8 +41,21 @@ export class PaymentController {
         upgradePrice = catalogItems.reduce((acc, s) => acc + Number(s.basePrice), 0);
       }
 
-      const phygitalPrice = (includeLivePrint ? 150 : 0) + (includeShipping ? 25 : 0);
-      const total = basePrice + upgradePrice + phygitalPrice;
+      let physicalPrice = 0;
+      let totalSupplierCost = 0;
+      const items = physicalItems || [];
+      for (const item of items) {
+        const product = await prisma.printProduct.findUnique({ where: { id: item.id } });
+        if (product && product.active) {
+          const qty = Number(item.quantity) || 1;
+          const pPrice = product.sellingPrice !== null ? Number(product.sellingPrice) : Number(product.supplierCost) * (1 + product.marginPct / 100);
+          physicalPrice += pPrice * qty;
+          totalSupplierCost += Number(product.supplierCost) * qty;
+        }
+      }
+
+      const phygitalPrice = (includeLivePrint ? 150 : 0);
+      const total = basePrice + upgradePrice + physicalPrice + phygitalPrice;
 
       // 2. Criação do Pedido
       const order = await prisma.order.create({
@@ -52,13 +65,15 @@ export class PaymentController {
           buyerEmail: email,
           valor: total,
           status: "PENDENTE",
-          manualType: event.type === "PHOTO_MARKETPLACE" ? "Aquisição de Fotos" : "Upgrade de Serviços",
+          manualType: items.length > 0 ? "Pedido Híbrido (Digital + Físico)" : (event.type === "PHOTO_MARKETPLACE" ? "Aquisição de Fotos" : "Upgrade de Serviços"),
           internalNotes: JSON.stringify({
-            type: event.type === "PHOTO_MARKETPLACE" ? "MARKETPLACE" : "UPGRADE",
+            type: items.length > 0 ? "HYBRID" : (event.type === "PHOTO_MARKETPLACE" ? "MARKETPLACE" : "UPGRADE"),
             selectedServicesIds,
             includeLivePrint,
             includeShipping,
-            cart: cartItems
+            cart: cartItems,
+            physicalItems: items,
+            supplierCost: totalSupplierCost
           }),
         }
       });
@@ -66,7 +81,7 @@ export class PaymentController {
       res.json({ orderId: order.id });
     } catch (err) {
       console.error("createPendingOrder error:", err);
-      res.status(500).json({ error: "Erro ao gerar protocolo de upgrade." });
+      res.status(500).json({ error: "Erro ao gerar protocolo de checkout." });
     }
   }
 
@@ -147,7 +162,8 @@ export class PaymentController {
         passiveFranchiseeId 
       } = await PricingService.calculateSplits(preco, { 
         professionalId: event.captacaoId || undefined,
-        supplierCost: totalSupplierCost
+        supplierCost: totalSupplierCost,
+        shippingFee: Number(req.body.shippingFee || 0)
       });
 
       console.log(`[Checkout] Repasse Manual Calculado: Snapshot salvo. Valor: ${preco}`);
@@ -198,7 +214,8 @@ export class PaymentController {
           orderItemsData.push({
             printProductId: product.id,
             price: pPrice,
-            quantity: qty
+            quantity: qty,
+            selectedPhotos: item.selectedPhotos || []
           });
         }
       }
@@ -462,7 +479,8 @@ export class PaymentController {
           orderItemsData.push({
             printProductId: product.id,
             price: pPrice,
-            quantity: qty
+            quantity: qty,
+            selectedPhotos: item.selectedPhotos || []
           });
         }
       }
@@ -1213,14 +1231,7 @@ export class PaymentController {
         if (printItems.length > 0) {
           eventUpdateData.temFotoImpressa = true;
           for (const item of printItems) {
-            // Extraímos URLs das fotos se houver (ex: álbuns ou fotos avulsas selecionadas)
-            let photos: string[] = [];
-            if (order.internalNotes && order.internalNotes.includes("--- FOTOS SELECIONADAS DO ÁLBUM ---")) {
-               const parts = order.internalNotes.split("--- FOTOS SELECIONADAS DO ÁLBUM ---");
-               if (parts.length > 1) {
-                 photos = parts[1].trim().split("\n").filter((url: string) => url.startsWith("http"));
-               }
-            }
+            const photos = item.selectedPhotos || [];
             
             if (photos.length > 0) {
               const fulfillment = item.printProduct?.fulfillmentType || "LAB";
@@ -1231,7 +1242,7 @@ export class PaymentController {
               } else {
                 // Roteia para Laboratório Parceiro via API (Motor Logístico Externo)
                 console.log(`[Fulfillment] Roteando pedido ${order.id} para LAB Parceiro Externo`);
-                await IntegrationService.dispatchToLabPartner(order.id, printItems, photos);
+                await IntegrationService.dispatchToLabPartner(order.id, [item], photos);
               }
             }
           }

@@ -10,7 +10,6 @@ Este documento resume as atualizações críticas, correções de segurança e n
 - **Otimização de Performance (Cofres)**: Implementação de carregamento híbrido de miniaturas (thumbnailLink direto do Google + Proxy Fallback), reduzindo o consumo de banda e tempo de carregamento em 60%.
 - **UX Mobile Sem Barreiras**: Ajuste na Navbar para garantir que botões de Agendamento e Login estejam sempre visíveis para usuários anônimos em dispositivos móveis.
 
-
 - **Engine de Créditos Phygital**: Implementação de carteira digital para franqueados com débito automático por impressão.
 - **Painel de Expansão**: Interface administrativa para gestão de parceiros, recarga de saldo e monitoramento de rede.
 - **Logística Multitenant**: Atribuição de eventos a pontos de impressão independentes.

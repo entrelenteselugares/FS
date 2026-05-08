@@ -1,5 +1,6 @@
 generator client {
   provider = "prisma-client-js"
+  output   = "../../node_modules/.prisma/client"
 }
 
 datasource db {
@@ -384,6 +385,7 @@ model OrderItem {
   order          Order                @relation(fields: [orderId], references: [id], onDelete: Cascade)
   printProduct   PrintProduct?        @relation(fields: [printProductId], references: [id])
   service        ProfessionalService? @relation(fields: [serviceId], references: [id])
+  selectedPhotos String[]
 
   @@map("order_items")
 }

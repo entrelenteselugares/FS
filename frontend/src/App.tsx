@@ -1,6 +1,7 @@
 import { BrowserRouter as Router, Routes, Route, Navigate, useLocation } from "react-router-dom";
 import { AuthProvider } from "./contexts/AuthContext";
 import { ThemeProvider } from "./contexts/ThemeContext";
+import { CartProvider } from "./contexts/CartContext";
 import { useAuth } from "./hooks/useAuth";
 import { HelmetProvider } from "react-helmet-async";
 import { ProtectedRoute } from "./components/ProtectedRoute";
@@ -184,12 +185,14 @@ function App() {
         </div>
       ) : (
         <AuthProvider>
-          <HelmetProvider>
-            <Router>
-              <AnimatedRoutes />
-              <BottomNav />
-            </Router>
-          </HelmetProvider>
+          <CartProvider>
+            <HelmetProvider>
+              <Router>
+                <AnimatedRoutes />
+                <BottomNav />
+              </Router>
+            </HelmetProvider>
+          </CartProvider>
         </AuthProvider>
       )}
     </ThemeProvider>
