@@ -20,16 +20,13 @@ export const Navbar: React.FC = () => {
       padding: "12px 16px", borderBottom: `1px solid ${T.border}`,
       background: T.bgNav, backdropFilter: "blur(20px)",
     }}>
-      {/* Mobile Back Button Placeholder (if needed, but for now just empty div to keep balance) */}
-      <div className="md:hidden w-8" />
-
-      <div className="flex items-center justify-center md:justify-start flex-1 md:flex-none">
+      <div className="flex items-center gap-4">
         <div onClick={() => navigate("/")} style={{ cursor: "pointer", display: "flex", alignItems: "center" }}>
           <img 
             src="/logo-fs.png" 
             alt="Foto Segundo" 
             style={{ 
-              height: 24, 
+              height: 20, 
               objectFit: "contain",
               filter: "var(--logo-filter)"
             }} 
@@ -37,34 +34,29 @@ export const Navbar: React.FC = () => {
         </div>
       </div>
 
-      {/* Mobile Country Selector */}
-      <div className="md:hidden flex items-center gap-1 w-8 justify-end">
-        <span style={{ fontSize: 16 }}>🇧🇷</span>
-      </div>
+      <div className="flex items-center gap-2">
+        <div className="mobile-hide md:flex items-center gap-2">
+          <ThemeToggle />
+          <span style={{ fontSize: 16 }}>🇧🇷</span>
+        </div>
 
-      <div style={{ display: "flex", alignItems: "center", gap: "clamp(4px, 2vw, 12px)" }} className="mobile-hide md:flex">
-        <ThemeToggle />
-        
         {user && (
           <button 
             onClick={() => navigate("/minha-conta")}
             title="Meus Pedidos / Carrinho"
+            className="p-2 border rounded-md transition-all"
             style={{ 
-              background: "none", border: `1px solid ${T.border}`, 
-              padding: "8px", borderRadius: 6, color: T.text, 
-              cursor: "pointer", display: "flex", alignItems: "center",
-              transition: "all 0.2s"
+              borderColor: T.border,
+              color: T.text,
             }}
-            onMouseEnter={e => (e.currentTarget.style.borderColor = T.brand)}
-            onMouseLeave={e => (e.currentTarget.style.borderColor = T.border)}
           >
             <ShoppingBag size={18} />
           </button>
         )}
 
         {user ? (
-          <div style={{ position: "relative" }}>
-            <button onClick={() => setUserMenu(v => !v)} style={{ ...BtnSecondary, fontSize: 10, padding: "8px 10px" }}>
+          <div className="relative">
+            <button onClick={() => setUserMenu(v => !v)} style={{ ...BtnSecondary, fontSize: 9, padding: "7px 10px" }}>
               {user.nome?.split(" ")[0] || "CONTA"} <span style={{ fontSize: 8, marginLeft: 2 }}>▾</span>
             </button>
             {userMenu && (
@@ -80,12 +72,12 @@ export const Navbar: React.FC = () => {
             )}
           </div>
         ) : (
-          <button onClick={() => navigate("/login")} style={{ ...BtnSecondary, fontSize: 10, padding: "8px 10px" }}>
+          <button onClick={() => navigate("/login")} style={{ ...BtnSecondary, fontSize: 9, padding: "7px 10px" }}>
             LOGIN
           </button>
         )}
         
-        <button onClick={() => navigate("/cotacao")} style={{ ...BtnPrimary, fontSize: 10, padding: "9px 12px", whiteSpace: 'nowrap' }}>
+        <button onClick={() => navigate("/cotacao")} style={{ ...BtnPrimary, fontSize: 9, padding: "8px 12px", whiteSpace: 'nowrap' }}>
           Agendar
         </button>
       </div>
