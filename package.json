@@ -9,8 +9,8 @@
     "dev:backend": "npm run dev --prefix backend",
     "dev:frontend": "npm run dev --prefix frontend",
     "dev": "npx concurrently \"npm run dev:backend\" \"npm run dev:frontend\"",
-    "build": "npx prisma generate --schema=backend/prisma/schema.prisma && npm install --prefix frontend && npx esbuild backend/src/server.ts --bundle --platform=node --target=node20 --outfile=api/server-v2.js --external:multer --external:nodemailer --external:sharp --external:googleapis --external:pg-native --external:@prisma/client --external:.prisma/client && npm run build --prefix frontend && node -e \"const fs=require('fs'); if(fs.existsSync('public')) fs.rmSync('public', {recursive:true,force:true}); fs.renameSync('frontend/dist', 'public')\"",
-    "vercel-build": "npx prisma generate --schema=backend/prisma/schema.prisma && npm install --prefix frontend && npx esbuild backend/src/server.ts --bundle --platform=node --target=node20 --outfile=api/server-v2.js --external:multer --external:nodemailer --external:sharp --external:googleapis --external:pg-native --external:@prisma/client --external:.prisma/client && npm run build --prefix frontend && node -e \"const fs=require('fs'); if(fs.existsSync('public')) fs.rmSync('public', {recursive:true,force:true}); fs.renameSync('frontend/dist', 'public')\"",
+    "build": "npx prisma generate --schema=backend/prisma/schema.prisma && npm install --prefix frontend && npx esbuild backend/src/server.ts --bundle --platform=node --target=node20 --outfile=api/server-v2.js --external:multer --external:nodemailer --external:sharp --external:googleapis --external:pg-native --external:@prisma/client --external:.prisma/client --external:@sentry/node --external:@sentry/profiling-node && npm run build --prefix frontend && node -e \"const fs=require('fs'); if(fs.existsSync('public')) fs.rmSync('public', {recursive:true,force:true}); fs.renameSync('frontend/dist', 'public')\"",
+    "vercel-build": "npx prisma generate --schema=backend/prisma/schema.prisma && npm install --prefix frontend && npx esbuild backend/src/server.ts --bundle --platform=node --target=node20 --outfile=api/server-v2.js --external:multer --external:nodemailer --external:sharp --external:googleapis --external:pg-native --external:@prisma/client --external:.prisma/client --external:@sentry/node --external:@sentry/profiling-node && npm run build --prefix frontend && node -e \"const fs=require('fs'); if(fs.existsSync('public')) fs.rmSync('public', {recursive:true,force:true}); fs.renameSync('frontend/dist', 'public')\"",
     "start": "node api/index.js",
     "test:e2e:all": "npx playwright test",
     "test": "npm run test:e2e:all"
@@ -18,6 +18,8 @@
   "dependencies": {
     "@prisma/adapter-pg": "6.19.3",
     "@prisma/client": "6.19.3",
+    "@sentry/node": "^10.52.0",
+    "@sentry/profiling-node": "^10.52.0",
     "@supabase/supabase-js": "^2.49.1",
     "axios": "^1.15.0",
     "bcryptjs": "^3.0.3",
