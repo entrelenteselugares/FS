@@ -141,9 +141,6 @@ export const AdminEvents: React.FC<AdminEventsProps> = ({ initialEditEventId }) 
     retentionDays: 15,
   });
 
-  const [previewPreviews, setPreviewPreviews] = useState<string[]>(["", "", ""]);
-  const previewInputRef = React.useRef<HTMLInputElement>(null);
-  const [currentPreviewIdx, setCurrentPreviewIdx] = useState<number | null>(null);
 
   const compressImageToBase64 = (file: File, maxWidth = 1200): Promise<string> => {
     return new Promise((resolve, reject) => {
@@ -183,27 +180,6 @@ export const AdminEvents: React.FC<AdminEventsProps> = ({ initialEditEventId }) 
     }
   };
 
-  const handlePreviewFileChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
-    const file = e.target.files?.[0];
-    if (!file || currentPreviewIdx === null) return;
-    
-    try {
-      const compressed = await compressImageToBase64(file, 800);
-      const newPreviews = [...previewPreviews];
-      newPreviews[currentPreviewIdx] = compressed;
-      setPreviewPreviews(newPreviews);
-    } catch (err) {
-      console.error("Erro na compressão preview:", err);
-      // Fallback
-      const reader = new FileReader();
-      reader.onload = (ev) => {
-        const newPreviews = [...previewPreviews];
-        newPreviews[currentPreviewIdx] = ev.target?.result as string;
-        setPreviewPreviews(newPreviews);
-      };
-      reader.readAsDataURL(file);
-    }
-  };
 
   const handleCreate = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -225,17 +201,6 @@ export const AdminEvents: React.FC<AdminEventsProps> = ({ initialEditEventId }) 
         });
       }
 
-      // Upload Previews
-      for (let i = 0; i < previewPreviews.length; i++) {
-        const p = previewPreviews[i];
-        if (p && p.startsWith("data:image")) {
-          await API.patch(`/admin/events/${event.id}/preview`, {
-            imageBase64: p,
-            mimeType: "image/jpeg",
-            index: i
-          });
-        }
-      }
 
       const updatedEvents = await API.get("/admin/events");
       setEvents(updatedEvents.data.events || []);
@@ -263,7 +228,6 @@ export const AdminEvents: React.FC<AdminEventsProps> = ({ initialEditEventId }) 
         retentionDays: 15,
       });
       setCoverPreview(null);
-      setPreviewPreviews(["", "", ""]);
     } catch {
       showNotification("Erro ao processar evento.", 'error');
     } finally {
@@ -328,12 +292,6 @@ export const AdminEvents: React.FC<AdminEventsProps> = ({ initialEditEventId }) 
         retentionDays: data.retentionDays || 15,
       });
       setCoverPreview(data.coverPhotoUrl);
-      try {
-        const p = data.previewPhotos ? JSON.parse(data.previewPhotos) : [];
-        setPreviewPreviews([p[0]||"", p[1]||"", p[2]||""]);
-      } catch {
-        setPreviewPreviews(["", "", ""]);
-      }
       setActiveTab('info');
       setIsModalOpen(true);
     } catch {
@@ -418,7 +376,6 @@ export const AdminEvents: React.FC<AdminEventsProps> = ({ initialEditEventId }) 
               setEditingEvent(null);
               setFormData({ title: "", slug: "", date: "", location: "", city: "", description: "", priceBase: 200, priceEarly: 190, cartorioId: "", captacaoId: "", edicaoId: "", temFoto: true, temVideo: false, temReels: false, temFotoImpressa: false, coverPhotoUrl: "", eventHours: 2, isCrowdfund: false, targetAmount: 0, lightroomUrl: "", driveUrl: "", previewPhotos: ["", "", ""], isPrivate: false, isUnitSale: false, priceUnit: 10, type: 'ALBUM_FULL', pricePerPhoto: 15, clientName: "", clientEmail: "", franchiseeId: "", retentionDays: 15 });
               setCoverPreview(null);
-              setPreviewPreviews(["", "", ""]);
               setIsModalOpen(true);
             }}
             className="font-black uppercase tracking-[0.4em] px-8 py-4 hover:brightness-110 transition-all shadow-xl shadow-brand-tactical/10 rounded-none text-[9px] w-full md:w-auto bg-brand-tactical text-zinc-950"

@@ -1,6 +1,5 @@
 import React, { useState, useEffect } from "react";
 import { API } from "../../lib/api";
-import { T } from "../../lib/theme";
 
 interface Contest {
   id: string;
