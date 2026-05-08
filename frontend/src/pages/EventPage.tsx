@@ -1,6 +1,7 @@
 import { useState, useEffect, useCallback } from "react";
+import { createPortal } from "react-dom";
 import { useEventStatus } from "../hooks/useEventStatus";
-import { Check, Printer, QrCode, ShoppingCart, Share2, ChevronRight, Image as ImageIcon, Camera, MapPin, ListChecks, Clock, ShieldCheck, CheckCircle2, Lock } from "lucide-react";
+import { Check, Printer, QrCode, ShoppingCart, Share2, ChevronRight, ChevronLeft, Image as ImageIcon, Camera, MapPin, ListChecks, Clock, ShieldCheck, CheckCircle2, Lock } from "lucide-react";
 import { QRCodeCanvas } from "qrcode.react";
 import { useParams, useNavigate, useSearchParams } from "react-router-dom";
 import { API as api } from "../lib/api";
@@ -444,6 +445,13 @@ return (
       <main className="grid grid-cols-1 lg:grid-cols-[1fr_420px] min-h-[calc(100vh-64px)]">
         {/* Lado Esquerdo: Conteúdo Principal */}
         <section className="relative flex flex-col bg-theme-bg overflow-y-auto scrollbar-hide">
+          <button 
+             onClick={() => navigate(-1)} 
+             className="absolute top-6 left-6 z-50 flex items-center gap-2 px-5 py-2.5 bg-black/50 backdrop-blur-md border border-white/10 rounded-full text-white hover:bg-brand-tactical hover:text-black transition-all shadow-xl"
+          >
+             <ChevronLeft size={16} />
+             <span className="text-[10px] font-black uppercase tracking-widest">Voltar</span>
+          </button>
           {/* Header Visual Cinematográfico (Sempre Visível para Consistência) */}
           <div className="relative h-[35vh] lg:h-[45vh] shrink-0 overflow-hidden">
             <AnimatePresence mode="wait">
@@ -482,7 +490,7 @@ return (
               
               <motion.h1 
                 initial={{ opacity: 0, y: 30 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.2 }}
-                className="text-5xl md:text-6xl lg:text-7xl font-heading font-black text-theme-text uppercase tracking-tighter leading-[0.9] italic max-w-[12ch] md:max-w-[15ch]"
+                className="text-4xl md:text-5xl lg:text-6xl font-heading font-black text-theme-text uppercase tracking-tighter leading-[0.9] italic max-w-2xl md:max-w-4xl"
               >
                 {event.nomeNoivos}
               </motion.h1>
@@ -872,10 +880,10 @@ return (
                     {(user?.role === 'ADMIN' || user?.role === 'PROFISSIONAL' || user?.role === 'FRANCHISEE') && (
                       <button 
                         onClick={() => {
-                          if (user?.role === 'ADMIN') navigate('/admin');
-                          else if (user?.role === 'PROFISSIONAL' || user?.role === 'FRANCHISEE') navigate('/profissional');
+                          const route = user?.role === 'ADMIN' ? '/admin' : '/profissional';
+                          navigate(route, { state: { editEventId: event.id } });
                         }}
-                        className="w-full py-4 border border-zinc-800 text-zinc-500 text-[10px] font-black uppercase tracking-widest hover:text-white transition-all italic flex items-center justify-center gap-3"
+                        className="w-full py-4 border border-theme-border/60 text-theme-text-muted text-[10px] font-black uppercase tracking-widest hover:text-theme-text hover:border-theme-border hover:bg-theme-bg-muted transition-all italic flex items-center justify-center gap-3"
                       >
                         <Camera size={16} /> EDITAR CONFIGURAÇÕES
                       </button>
@@ -972,7 +980,7 @@ return (
                     <p className="text-[10px] text-brand-tactical font-black uppercase tracking-[0.6em] italic">
                       {event.type === 'ALBUM_FULL' ? "Antecipação" : "Galeria Ao Vivo"}
                     </p>
-                    <h3 className="text-4xl lg:text-5xl font-heading font-black uppercase tracking-tighter text-theme-text italic leading-[1.1]">
+                    <h3 className="text-2xl lg:text-3xl font-heading font-black uppercase tracking-tighter text-theme-text italic leading-[1.1]">
                       {event.type === 'ALBUM_FULL' ? "O grande dia está chegando" : 
                        event.type === 'PHOTO_MARKETPLACE' ? "Live Print em Processamento" : 
                        "Captura em Processamento"}
@@ -1044,16 +1052,16 @@ return (
       {needsAccessChoice && orderId && <AccessTypeModal orderId={orderId} eventTitle={event.nomeNoivos} isPrimaryClient={true} isMarketplace={isMarketplace} onConfirmed={() => setNeedsAccessChoice(false)} onClose={() => setNeedsAccessChoice(false)} />}
       
       <Modal isOpen={showQrModal} onClose={() => setShowQrModal(false)} title="Protocolo de Captura Phygital">
-        <div className="flex flex-col items-center gap-12 py-12">
-          <div className="space-y-4 text-center">
-            <p className="text-[11px] font-black uppercase tracking-[0.5em] text-brand-tactical italic">Captura Instantânea</p>
-            <p className="text-sm text-theme-text-muted max-w-xs mx-auto italic leading-relaxed">Escaneie para transmitir suas fotos em tempo real para a galeria exclusiva.</p>
+        <div className="flex flex-col items-center gap-4 pt-2">
+          <div className="space-y-1 text-center">
+            <p className="text-[9px] font-black uppercase tracking-[0.4em] text-brand-tactical italic">Captura Instantânea</p>
+            <p className="text-xs text-theme-text-muted max-w-[240px] mx-auto italic leading-relaxed">Escaneie para transmitir suas fotos em tempo real para a galeria exclusiva.</p>
           </div>
-          <div className="p-10 bg-white rounded-3xl shadow-[0_40px_80px_rgba(20,184,166,0.2)]">
-            <QRCodeCanvas value={`${window.location.origin}/phygital-capture?e=${event.id}`} size={260} level="H" />
+          <div className="p-4 bg-white rounded-2xl shadow-[0_10px_30px_rgba(20,184,166,0.1)]">
+            <QRCodeCanvas value={`${window.location.origin}/phygital-capture?e=${event.id}`} size={180} level="H" />
           </div>
-          <div className="px-8 py-4 bg-theme-bg border border-theme-border/60 rounded-full group">
-            <code className="text-[10px] font-black text-brand-tactical tracking-widest group-hover:text-theme-text transition-colors">{window.location.origin}/phygital-capture?e={event.id}</code>
+          <div className="px-5 py-2.5 bg-theme-bg border border-theme-border/60 rounded-full group max-w-full overflow-hidden w-full text-center">
+            <code className="text-[8px] font-black text-brand-tactical tracking-widest group-hover:text-theme-text transition-colors block truncate">{window.location.origin}/phygital-capture?e={event.id}</code>
           </div>
         </div>
       </Modal>
@@ -1062,17 +1070,18 @@ return (
 
 }
 
-const Modal = ({ isOpen, onClose, title, children }: { isOpen: boolean, onClose: () => void, title: string, children: React.ReactNode }) => (
+const Modal = ({ isOpen, onClose, title, children }: { isOpen: boolean, onClose: () => void, title: string, children: React.ReactNode }) => createPortal(
   <AnimatePresence>
     {isOpen && (
-      <div className="fixed inset-0 z-[200] flex items-center justify-center p-6">
+      <div className="fixed inset-0 z-[9999] flex items-center justify-center p-6" style={{ position: 'fixed', top: 0, left: 0, right: 0, bottom: 0 }}>
         <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} onClick={onClose} className="absolute inset-0 bg-black/90 backdrop-blur-md" />
-        <motion.div initial={{ opacity: 0, scale: 0.95, y: 20 }} animate={{ opacity: 1, scale: 1, y: 0 }} exit={{ opacity: 0, scale: 0.95, y: 20 }} className="relative w-full max-w-lg bg-theme-card border border-theme-border p-8 lg:p-12 shadow-2xl overflow-hidden">
-          <div className="absolute top-0 right-0 p-6"><button onClick={onClose} className="text-theme-subtle hover:text-white transition-colors"><Check size={24} className="rotate-45" /></button></div>
-          <h3 className="font-display text-2xl font-black uppercase tracking-tighter mb-8">{title}</h3>
+        <motion.div initial={{ opacity: 0, scale: 0.95, y: 20 }} animate={{ opacity: 1, scale: 1, y: 0 }} exit={{ opacity: 0, scale: 0.95, y: 20 }} className="relative w-full max-w-sm bg-theme-card border border-theme-border p-6 shadow-2xl flex flex-col max-h-[90vh] overflow-y-auto">
+          <div className="absolute top-0 right-0 p-4"><button onClick={onClose} className="text-theme-subtle hover:text-white transition-colors"><Check size={20} className="rotate-45" /></button></div>
+          <h3 className="font-display text-lg font-black uppercase tracking-tighter mb-2 pr-6 leading-tight">{title}</h3>
           {children}
         </motion.div>
       </div>
     )}
-  </AnimatePresence>
+  </AnimatePresence>,
+  document.body
 );

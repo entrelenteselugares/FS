@@ -531,34 +531,37 @@ export const AdminEvents: React.FC<AdminEventsProps> = ({ initialEditEventId }) 
       </div>
 
       {isModalOpen && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/95 backdrop-blur-xl overflow-y-auto">
-          <div className="w-full max-w-7xl bg-theme-bg border border-theme-border p-10 relative shadow-2xl my-10 flex flex-col min-h-[640px]">
-              <button onClick={() => setIsModalOpen(false)} className="absolute top-8 right-8 text-zinc-500 hover:text-white transition-colors">
-                <X size={24} />
-              </button>
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/95 backdrop-blur-xl overflow-hidden">
+          <div className="w-full max-w-5xl bg-theme-bg border border-theme-border relative shadow-2xl flex flex-col h-[85vh] max-h-[800px] min-h-[600px]">
+              
+              <div className="p-8 pb-0 shrink-0">
+                <button onClick={() => setIsModalOpen(false)} className="absolute top-6 right-6 text-zinc-500 hover:text-white transition-colors">
+                  <X size={20} />
+                </button>
 
-              <div className="mb-8">
-                <h2 className="text-2xl font-black text-theme-text uppercase tracking-tighter">{editingEvent ? "Ajustar Operação" : "Novo Registro"}</h2>
-                <div className="w-12 h-1 bg-brand-tactical mt-1" />
+                <div className="mb-4">
+                  <h2 className="text-xl font-black text-theme-text uppercase tracking-tighter">{editingEvent ? "Ajustar Operação" : "Novo Registro"}</h2>
+                  <div className="w-12 h-1 bg-brand-tactical mt-1" />
+                </div>
+
+                <div className="flex border-b border-theme-border mb-0 gap-8">
+                  {(['info', 'equipe', 'comercial'] as const).map(t => (
+                    <button key={t} type="button" onClick={() => setActiveTab(t)} className={`pb-3 text-[10px] font-black uppercase tracking-[0.4em] relative ${activeTab === t ? 'text-brand-tactical' : 'text-theme-muted hover:text-white'}`}>
+                      {t === 'info' ? 'Essencial' : t === 'equipe' ? 'Operação' : 'Comercial & Entrega'}
+                      {activeTab === t && <div className="absolute bottom-0 left-0 right-0 h-1 bg-brand-tactical" />}
+                    </button>
+                  ))}
+                </div>
               </div>
 
-              <div className="flex border-b border-theme-border mb-8 gap-8">
-                {(['info', 'equipe', 'comercial'] as const).map(t => (
-                  <button key={t} type="button" onClick={() => setActiveTab(t)} className={`pb-4 text-[10px] font-black uppercase tracking-[0.4em] relative ${activeTab === t ? 'text-brand-tactical' : 'text-theme-muted hover:text-white'}`}>
-                    {t === 'info' ? 'Essencial' : t === 'equipe' ? 'Operação' : 'Comercial & Entrega'}
-                    {activeTab === t && <div className="absolute bottom-0 left-0 right-0 h-1 bg-brand-tactical" />}
-                  </button>
-                ))}
-              </div>
-
-              <form onSubmit={handleCreate} className="flex-1 flex flex-col">
-                  <div className="flex-1">
+              <form onSubmit={handleCreate} className="flex-1 flex flex-col min-h-0">
+                  <div className="flex-1 overflow-y-auto scrollbar-hide p-8">
                     {activeTab === 'info' && (
-                      <div className="grid grid-cols-1 md:grid-cols-2 gap-12 animate-in fade-in duration-500">
-                        <div className="space-y-12">
-                          <div className="space-y-4">
+                      <div className="grid grid-cols-1 md:grid-cols-2 gap-8 animate-in fade-in duration-500">
+                        <div className="space-y-6">
+                          <div className="space-y-2">
                             <label className="text-[9px] font-black text-theme-muted uppercase tracking-[0.4em]">Capa da Vitrine</label>
-                            <div onClick={() => fileInputRef.current?.click()} className="w-full aspect-video bg-theme-bg-muted border border-theme-border flex flex-col items-center justify-center cursor-pointer overflow-hidden group relative shadow-inner">
+                            <div onClick={() => fileInputRef.current?.click()} className="w-full h-48 bg-theme-bg-muted border border-theme-border flex flex-col items-center justify-center cursor-pointer overflow-hidden group relative shadow-inner">
                               {coverPreview ? <img src={coverPreview} alt="Preview" className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700" /> : (
                                 <div className="text-center group-hover:text-brand-tactical transition-colors">
                                   <div className="text-3xl mb-3">📸</div>
@@ -570,34 +573,34 @@ export const AdminEvents: React.FC<AdminEventsProps> = ({ initialEditEventId }) 
                             <input type="file" ref={fileInputRef} hidden accept="image/*" onChange={handleFileChange} />
                           </div>
                         </div>
-                        <div className="space-y-12">
-                          <div className="space-y-3">
+                        <div className="space-y-6">
+                          <div className="space-y-2">
                             <label className="text-[9px] font-black text-theme-muted uppercase tracking-[0.4em]">Título do Evento</label>
-                            <input type="text" required className="fs-input" value={formData.title} onChange={e => setFormData({ ...formData, title: e.target.value })} />
+                            <input type="text" required className="fs-input py-2.5" value={formData.title} onChange={e => setFormData({ ...formData, title: e.target.value })} />
                           </div>
-                          <div className="space-y-3">
+                          <div className="space-y-2">
                             <label className="text-[9px] font-black text-theme-muted uppercase tracking-[0.4em]">Identificador URL (Slug)</label>
-                            <input type="text" className="fs-input text-theme-muted" value={formData.slug} onChange={e => setFormData({ ...formData, slug: e.target.value.toLowerCase().replace(/\s+/g, "-") })} placeholder="ex: taynan-e-felipe" />
+                            <input type="text" className="fs-input py-2.5 text-theme-muted" value={formData.slug} onChange={e => setFormData({ ...formData, slug: e.target.value.toLowerCase().replace(/\s+/g, "-") })} placeholder="ex: taynan-e-felipe" />
                           </div>
 
-                          <div className="grid grid-cols-2 gap-6 p-6 bg-brand-tactical/5 border border-brand-tactical/10">
-                            <div className="space-y-3">
+                          <div className="grid grid-cols-2 gap-4 p-4 bg-brand-tactical/5 border border-brand-tactical/10">
+                            <div className="space-y-2">
                               <label className="text-[9px] font-black text-brand-tactical uppercase tracking-[0.4em]">Nome do Cliente</label>
-                              <input type="text" className="fs-input" value={formData.clientName} onChange={e => setFormData({ ...formData, clientName: e.target.value })} placeholder="NOME DO NOIVO/CLIENTE" />
+                              <input type="text" className="fs-input py-2.5" value={formData.clientName} onChange={e => setFormData({ ...formData, clientName: e.target.value })} placeholder="NOME DO NOIVO/CLIENTE" />
                             </div>
-                            <div className="space-y-3">
+                            <div className="space-y-2">
                               <label className="text-[9px] font-black text-brand-tactical uppercase tracking-[0.4em]">E-mail de Acesso</label>
-                              <input type="email" className="fs-input" value={formData.clientEmail} onChange={e => setFormData({ ...formData, clientEmail: e.target.value })} placeholder="ex: provisorio@gmail.com" />
+                              <input type="email" className="fs-input py-2.5" value={formData.clientEmail} onChange={e => setFormData({ ...formData, clientEmail: e.target.value })} placeholder="ex: provisorio@gmail.com" />
                             </div>
                           </div>
-                          <div className="grid grid-cols-2 gap-6">
-                            <div className="space-y-3">
+                          <div className="grid grid-cols-2 gap-4">
+                            <div className="space-y-2">
                               <label className="text-[9px] font-black text-theme-muted uppercase tracking-[0.4em]">Data</label>
-                              <input type="date" required className="fs-input" value={formData.date} onChange={e => setFormData({...formData, date: e.target.value})} />
+                              <input type="date" required className="fs-input py-2.5" value={formData.date} onChange={e => setFormData({...formData, date: e.target.value})} />
                             </div>
-                            <div className="space-y-3">
+                            <div className="space-y-2">
                               <label className="text-[9px] font-black text-theme-muted uppercase tracking-[0.4em]">Local</label>
-                              <input type="text" required className="fs-input" value={formData.location} onChange={e => setFormData({...formData, location: e.target.value})} placeholder="EX: CARTÓRIO X" />
+                              <input type="text" required className="fs-input py-2.5" value={formData.location} onChange={e => setFormData({...formData, location: e.target.value})} placeholder="EX: CARTÓRIO X" />
                             </div>
                           </div>
                         </div>
@@ -605,18 +608,18 @@ export const AdminEvents: React.FC<AdminEventsProps> = ({ initialEditEventId }) 
                     )}
 
                     {activeTab === 'equipe' && (
-                      <div className="grid grid-cols-1 md:grid-cols-2 gap-12 animate-in fade-in duration-500">
-                        <div className="space-y-12">
-                          <div className="space-y-3">
+                      <div className="grid grid-cols-1 md:grid-cols-2 gap-8 animate-in fade-in duration-500">
+                        <div className="space-y-6">
+                          <div className="space-y-2">
                             <label className="text-[9px] font-black text-theme-muted uppercase tracking-[0.4em]">Unidade Fixa</label>
-                            <select value={formData.cartorioId} onChange={e => setFormData({...formData, cartorioId: e.target.value})} className="fs-input cursor-pointer appearance-none">
+                            <select value={formData.cartorioId} onChange={e => setFormData({...formData, cartorioId: e.target.value})} className="fs-input py-2.5 cursor-pointer appearance-none">
                               <option value="">SELECIONE A UNIDADE</option>
                               {users.filter(u => u.role === "UNIDADE" || u.role === "CARTORIO").map(u => <option key={u.id} value={u.id}>{u.nome.toUpperCase()}</option>)}
                             </select>
                           </div>
-                          <div className="space-y-3">
+                          <div className="space-y-2">
                             <label className="text-[9px] font-black text-brand-tactical uppercase tracking-[0.4em]">Logística (Franqueado)</label>
-                            <select value={formData.franchiseeId} onChange={e => setFormData({...formData, franchiseeId: e.target.value})} className="fs-input cursor-pointer appearance-none">
+                            <select value={formData.franchiseeId} onChange={e => setFormData({...formData, franchiseeId: e.target.value})} className="fs-input py-2.5 cursor-pointer appearance-none">
                               <option value="">FOTO SEGUNDO MATRIZ</option>
                               {users.filter(u => u.franchiseProfile).map(u => (
                                 <option key={u.franchiseProfile!.id} value={u.franchiseProfile!.id}>
@@ -625,76 +628,76 @@ export const AdminEvents: React.FC<AdminEventsProps> = ({ initialEditEventId }) 
                               ))}
                             </select>
                           </div>
-                          <div className="space-y-3">
+                          <div className="space-y-2">
                             <label className="text-[9px] font-black text-theme-muted uppercase tracking-[0.4em]">Cidade / UF</label>
-                            <input type="text" className="fs-input" value={formData.city} onChange={e => setFormData({ ...formData, city: e.target.value })} placeholder="EX: SÃO PAULO - SP" />
+                            <input type="text" className="fs-input py-2.5" value={formData.city} onChange={e => setFormData({ ...formData, city: e.target.value })} placeholder="EX: SÃO PAULO - SP" />
                           </div>
                         </div>
-                        <div className="space-y-12">
-                          <div className="grid grid-cols-2 gap-6">
-                            <div className="space-y-3">
+                        <div className="space-y-6">
+                          <div className="grid grid-cols-2 gap-4">
+                            <div className="space-y-2">
                               <label className="text-[9px] font-black text-theme-muted uppercase tracking-[0.4em]">Captação</label>
-                              <select value={formData.captacaoId} onChange={e => setFormData({...formData, captacaoId: e.target.value})} className="fs-input cursor-pointer appearance-none">
+                              <select value={formData.captacaoId} onChange={e => setFormData({...formData, captacaoId: e.target.value})} className="fs-input py-2.5 cursor-pointer appearance-none">
                                 <option value="">PROFISSIONAL</option>
                                 {users.filter(u => u.role === "PROFISSIONAL").map(u => <option key={u.id} value={u.id}>{u.nome.toUpperCase()}</option>)}
                               </select>
                             </div>
-                            <div className="space-y-3">
+                            <div className="space-y-2">
                               <label className="text-[9px] font-black text-theme-muted uppercase tracking-[0.4em]">Edição</label>
-                              <select value={formData.edicaoId} onChange={e => setFormData({...formData, edicaoId: e.target.value})} className="fs-input cursor-pointer appearance-none">
+                              <select value={formData.edicaoId} onChange={e => setFormData({...formData, edicaoId: e.target.value})} className="fs-input py-2.5 cursor-pointer appearance-none">
                                 <option value="">PROFISSIONAL</option>
                                 {users.filter(u => u.role === "PROFISSIONAL").map(u => <option key={u.id} value={u.id}>{u.nome.toUpperCase()}</option>)}
                               </select>
                             </div>
                           </div>
-                          <div className="space-y-3">
+                          <div className="space-y-2">
                             <label className="text-[9px] font-black text-theme-muted uppercase tracking-[0.4em]">Horas de Trabalho</label>
-                            <input type="number" required value={formData.eventHours} onChange={e => setFormData({...formData, eventHours: Number(e.target.value)})} className="fs-input" />
+                            <input type="number" required value={formData.eventHours} onChange={e => setFormData({...formData, eventHours: Number(e.target.value)})} className="fs-input py-2.5" />
                           </div>
                         </div>
                       </div>
                     )}
 
                     {activeTab === 'comercial' && (
-                      <div className="animate-in fade-in duration-500 space-y-5">
-                        <div className="grid grid-cols-1 md:grid-cols-2 gap-12">
-                          <div className="space-y-4">
-                            <div className="grid grid-cols-2 gap-6">
-                              <div className="space-y-1.5">
+                      <div className="animate-in fade-in duration-500 space-y-4">
+                        <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+                          <div className="space-y-3">
+                            <div className="grid grid-cols-2 gap-4">
+                              <div className="space-y-1">
                                 <label className="text-[9px] font-black text-zinc-800 uppercase tracking-[0.4em]">Preço Álbum (R$)</label>
-                                <input type="number" className="fs-input" value={formData.priceBase} onChange={e => setFormData({ ...formData, priceBase: Number(e.target.value) })} />
+                                <input type="number" className="fs-input py-2" value={formData.priceBase} onChange={e => setFormData({ ...formData, priceBase: Number(e.target.value) })} />
                               </div>
-                              <div className="space-y-1.5">
+                              <div className="space-y-1">
                                 <label className="text-[9px] font-black text-zinc-800 uppercase tracking-[0.4em]">Antecipado (R$)</label>
-                                <input type="number" className="fs-input" value={formData.priceEarly} onChange={e => setFormData({...formData, priceEarly: Number(e.target.value)})} />
+                                <input type="number" className="fs-input py-2" value={formData.priceEarly} onChange={e => setFormData({...formData, priceEarly: Number(e.target.value)})} />
                               </div>
                             </div>
-                            <div className="space-y-1.5">
+                            <div className="space-y-1">
                               <label className="text-[9px] font-black text-zinc-800 uppercase tracking-[0.4em]">Google Drive</label>
-                              <input type="text" className="fs-input text-[11px] font-bold italic" value={formData.driveUrl} onChange={e => setFormData({ ...formData, driveUrl: e.target.value })} placeholder="https://..." />
+                              <input type="text" className="fs-input py-2 text-[11px] font-bold italic" value={formData.driveUrl} onChange={e => setFormData({ ...formData, driveUrl: e.target.value })} placeholder="https://..." />
                             </div>
-                            <div className="space-y-1.5">
+                            <div className="space-y-1">
                               <label className="text-[9px] font-black text-zinc-800 uppercase tracking-[0.4em]">Lightroom / Galeria</label>
-                              <input type="text" className="fs-input text-[11px] font-bold italic" value={formData.lightroomUrl} onChange={e => setFormData({ ...formData, lightroomUrl: e.target.value })} placeholder="https://..." />
+                              <input type="text" className="fs-input py-2 text-[11px] font-bold italic" value={formData.lightroomUrl} onChange={e => setFormData({ ...formData, lightroomUrl: e.target.value })} placeholder="https://..." />
                             </div>
-                            <div className="space-y-1.5">
+                            <div className="space-y-1">
                               <label className="text-[9px] font-black text-zinc-800 uppercase tracking-[0.4em]">Retenção Galeria (Dias)</label>
-                              <input type="number" className="fs-input" value={formData.retentionDays} onChange={e => setFormData({ ...formData, retentionDays: Number(e.target.value) })} />
+                              <input type="number" className="fs-input py-2" value={formData.retentionDays} onChange={e => setFormData({ ...formData, retentionDays: Number(e.target.value) })} />
                               <p className="text-[7px] text-zinc-400 italic">Sugestão: 7 (Privado) | 15 (Público) | 90 (Shows)</p>
                             </div>
                           </div>
-                          <div className="space-y-4">
+                          <div className="space-y-3">
                             <div className="space-y-2">
                               <label className="text-[9px] font-black text-zinc-800 uppercase tracking-[0.4em]">Modelo e Serviços</label>
-                              <div className="flex gap-4">
-                                <button type="button" onClick={() => setFormData({ ...formData, type: 'ALBUM_FULL' })} className={`flex-1 p-2.5 border text-[9px] font-black uppercase tracking-widest transition-all ${formData.type === 'ALBUM_FULL' ? 'bg-brand-tactical border-brand-tactical text-zinc-950 shadow-sm' : 'bg-zinc-50 border-zinc-300 text-zinc-500'}`}>Álbum Completo</button>
-                                <button type="button" onClick={() => setFormData({ ...formData, type: 'PHOTO_MARKETPLACE' })} className={`flex-1 p-2.5 border text-[9px] font-black uppercase tracking-widest transition-all ${formData.type === 'PHOTO_MARKETPLACE' ? 'bg-brand-tactical border-brand-tactical text-zinc-950 shadow-sm' : 'bg-zinc-50 border-zinc-300 text-zinc-500'}`}>Live Print</button>
+                              <div className="flex gap-2">
+                                <button type="button" onClick={() => setFormData({ ...formData, type: 'ALBUM_FULL' })} className={`flex-1 py-2 border text-[9px] font-black uppercase tracking-widest transition-all ${formData.type === 'ALBUM_FULL' ? 'bg-brand-tactical border-brand-tactical text-zinc-950 shadow-sm' : 'bg-zinc-50 border-zinc-300 text-zinc-500'}`}>Álbum Completo</button>
+                                <button type="button" onClick={() => setFormData({ ...formData, type: 'PHOTO_MARKETPLACE' })} className={`flex-1 py-2 border text-[9px] font-black uppercase tracking-widest transition-all ${formData.type === 'PHOTO_MARKETPLACE' ? 'bg-brand-tactical border-brand-tactical text-zinc-950 shadow-sm' : 'bg-zinc-50 border-zinc-300 text-zinc-500'}`}>Live Print</button>
                               </div>
-                              <div className="grid grid-cols-2 gap-x-6 gap-y-3 pt-3 border-t border-zinc-100">
+                              <div className="grid grid-cols-2 gap-x-4 gap-y-2 pt-2 border-t border-zinc-100">
                                 {["temFoto", "temVideo", "temReels", "temFotoImpressa", "isCrowdfund", "isPrivate"].map(f => (
-                                  <label key={f} className="flex items-center gap-3 cursor-pointer">
+                                  <label key={f} className="flex items-center gap-2 cursor-pointer">
                                     <input type="checkbox" checked={formData[f as keyof EventFormData] as boolean} onChange={e => setFormData({...formData, [f]: e.target.checked})} className="w-3.5 h-3.5 border-zinc-300 appearance-none checked:bg-brand-tactical border transition-all" />
-                                    <span className={`text-[9px] font-black uppercase tracking-widest ${formData[f as keyof EventFormData] ? 'text-brand-tactical' : 'text-zinc-400'}`}>{f.replace("tem", "").replace("is", "").replace(/([A-Z])/g, ' $1').trim()}</span>
+                                    <span className={`text-[8px] font-black uppercase tracking-widest ${formData[f as keyof EventFormData] ? 'text-brand-tactical' : 'text-zinc-400'}`}>{f.replace("tem", "").replace("is", "").replace(/([A-Z])/g, ' $1').trim()}</span>
                                   </label>
                                 ))}
                               </div>
@@ -708,46 +711,17 @@ export const AdminEvents: React.FC<AdminEventsProps> = ({ initialEditEventId }) 
                             )}
                           </div>
                         </div>
-                        <div className="pt-4 border-t border-zinc-100">
-                          <div className="flex justify-between items-center mb-3">
-                            <label className="text-[9px] font-black text-zinc-800 uppercase tracking-[0.4em]">Fotos de Prévia (Vitrine - 3 slots)</label>
-                            <span className="text-[8px] text-zinc-400 font-bold uppercase italic">Clique para enviar as fotos do slideshow</span>
-                          </div>
-                          <div className="grid grid-cols-3 gap-4">
-                            {[0, 1, 2].map(i => (
-                              <div 
-                                key={i}
-                                onClick={() => { setCurrentPreviewIdx(i); previewInputRef.current?.click(); }}
-                                className="aspect-video bg-zinc-50 border border-zinc-200 flex flex-col items-center justify-center cursor-pointer overflow-hidden relative group hover:border-brand-tactical transition-all"
-                              >
-                                {previewPreviews[i] ? (
-                                  <img src={previewPreviews[i]} alt={`Preview ${i+1}`} className="w-full h-full object-cover" />
-                                ) : (
-                                  <div className="text-center opacity-40 group-hover:opacity-100 transition-opacity">
-                                    <div className="text-xl">📸</div>
-                                    <div className="text-[7px] font-black uppercase">Foto {i+1}</div>
-                                  </div>
-                                )}
-                                {previewPreviews[i] && (
-                                  <div className="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 flex items-center justify-center transition-opacity">
-                                    <span className="text-[7px] text-theme-text font-black uppercase">Trocar Foto</span>
-                                  </div>
-                                )}
-                              </div>
-                            ))}
-                          </div>
-                          <input type="file" ref={previewInputRef} hidden accept="image/*" onChange={handlePreviewFileChange} />
-                        </div>
+
                       </div>
                     )}
                   </div>
 
-                  <div className="mt-auto pt-10 border-t border-theme-border flex justify-end gap-6">
-                    <button type="button" onClick={() => setIsModalOpen(false)} className="px-10 py-4 text-[10px] font-black uppercase tracking-[0.4em] text-theme-muted hover:text-white transition-all">Cancelar</button>
+                  <div className="p-6 border-t border-theme-border bg-theme-bg flex justify-end gap-4 shrink-0">
+                    <button type="button" onClick={() => setIsModalOpen(false)} className="px-8 py-3 text-[10px] font-black uppercase tracking-[0.4em] text-theme-muted hover:text-white transition-all">Cancelar</button>
                     {activeTab !== 'comercial' ? (
-                      <button type="button" onClick={() => { const t: Array<'info' | 'equipe' | 'comercial'> = ['info','equipe','comercial']; setActiveTab(t[t.indexOf(activeTab)+1]); }} className="px-10 py-4 bg-theme-border text-theme-text text-[10px] font-black uppercase tracking-[0.4em] hover:bg-zinc-700 transition-all">Próximo Passo</button>
+                      <button type="button" onClick={() => { const t: Array<'info' | 'equipe' | 'comercial'> = ['info','equipe','comercial']; setActiveTab(t[t.indexOf(activeTab)+1]); }} className="px-8 py-3 bg-theme-border text-theme-text text-[10px] font-black uppercase tracking-[0.4em] hover:bg-zinc-700 transition-all">Próximo Passo</button>
                     ) : (
-                      <button type="submit" disabled={isUploading} className="px-12 py-4 bg-brand-tactical text-zinc-950 text-[10px] font-black uppercase tracking-[0.4em] hover:brightness-110 shadow-lg">{isUploading ? "PROCESSANDO..." : (editingEvent ? "SALVAR ALTERAÇÕES" : "CADASTRAR EVENTO")}</button>
+                      <button type="submit" disabled={isUploading} className="px-10 py-3 bg-brand-tactical text-zinc-950 text-[10px] font-black uppercase tracking-[0.4em] hover:brightness-110 shadow-lg">{isUploading ? "PROCESSANDO..." : (editingEvent ? "SALVAR" : "CADASTRAR")}</button>
                     )}
                   </div>
               </form>

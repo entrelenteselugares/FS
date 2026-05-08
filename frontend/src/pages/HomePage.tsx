@@ -1,4 +1,4 @@
-import { useState, useEffect, useCallback } from "react";
+import { useState, useEffect, useCallback, useRef } from "react";
 import { useNavigate } from "react-router-dom";
 import { API } from "../lib/api";
 import { Helmet } from "react-helmet-async";
@@ -140,14 +140,22 @@ function FooterCol({ title, links }: { title: string; links: string[] }) {
 // ── HomePage ──────────────────────────────────────────────────────────────────
 export const HomePage = () => {
   const navigate = useNavigate();
-  const [query, setQuery]       = useState("");
+  const [query, setQuery]       = useState(() => sessionStorage.getItem('hp_q') || "");
   const [events, setEvents]     = useState<Event[]>([]);
   const [loading, setLoading]   = useState(true);
-  const [page, setPage]         = useState(1);
+  const [page, setPage]         = useState(() => parseInt(sessionStorage.getItem('hp_page') || '1', 10));
   const [totalPages, setTotal]  = useState(1);
-  const [selectedType, setSelectedType] = useState("");
-  const [selectedCity, setSelectedCity] = useState("");
+  const [selectedType, setSelectedType] = useState(() => sessionStorage.getItem('hp_type') || "");
+  const [selectedCity, setSelectedCity] = useState(() => sessionStorage.getItem('hp_city') || "");
 
+  useEffect(() => {
+    sessionStorage.setItem('hp_q', query);
+    sessionStorage.setItem('hp_page', page.toString());
+    sessionStorage.setItem('hp_type', selectedType);
+    sessionStorage.setItem('hp_city', selectedCity);
+  }, [query, page, selectedType, selectedCity]);
+
+  const isFirstMount = useRef(true);
 
   const fetchEvents = useCallback(async (q: string, pg: number, type?: string, city?: string) => {
     setLoading(true);
@@ -173,8 +181,12 @@ export const HomePage = () => {
     return () => clearTimeout(handler);
   }, [query, page, selectedType, selectedCity, fetchEvents]);
 
-  // Reset page when filters change
+  // Reset page when filters change (skip initial mount)
   useEffect(() => {
+    if (isFirstMount.current) {
+      isFirstMount.current = false;
+      return;
+    }
     setPage(1);
   }, [query, selectedType, selectedCity]);
 
@@ -333,9 +345,9 @@ export const HomePage = () => {
                 <button 
                   key={cat.id}
                   onClick={() => { setSelectedType(cat.id === selectedType ? '' : cat.id); setPage(1); }}
-                  className={`flex items-center gap-2 whitespace-nowrap px-5 py-3 rounded-2xl text-[10px] font-black uppercase tracking-widest transition-all ${selectedType === cat.id ? 'bg-emerald-500 text-black shadow-lg' : 'bg-[var(--bg-card)] border border-[var(--border)] text-[var(--text-muted)]'}`}
+                  className={`flex items-center gap-1.5 whitespace-nowrap px-4 py-2.5 rounded-2xl text-[9px] font-black uppercase tracking-wider transition-all ${selectedType === cat.id ? 'bg-emerald-500 text-black shadow-lg' : 'bg-[var(--bg-card)] border border-[var(--border)] text-[var(--text-muted)]'}`}
                 >
-                  <span className="text-xs">{cat.icon}</span>
+                  <span className="text-[10px]">{cat.icon}</span>
                   {cat.label}
                 </button>
               ))}
@@ -343,12 +355,12 @@ export const HomePage = () => {
 
             <div className="h-px bg-[var(--border)] opacity-20 w-full" />
 
-            <div className="grid grid-cols-3 gap-2 w-full">
+            <div className="grid grid-cols-3 gap-1.5 w-full">
               <div className="relative">
                 <select 
                   value={selectedCity}
                   onChange={e => { setSelectedCity(e.target.value); setPage(1); }}
-                  className="w-full bg-[var(--bg-field)] border border-[var(--border)] text-[var(--text)] px-2 py-3 rounded-xl text-[8px] font-black uppercase tracking-widest outline-none appearance-none text-center"
+                  className="w-full bg-[var(--bg-field)] border border-[var(--border)] text-[var(--text)] px-1 py-2.5 rounded-xl text-[8px] font-black uppercase tracking-wider outline-none appearance-none text-center"
                 >
                   <option value="">Cidades</option>
                   <option value="Campinas">Campinas</option>
@@ -360,20 +372,20 @@ export const HomePage = () => {
                 <select 
                   value={selectedType}
                   onChange={e => { setSelectedType(e.target.value); setPage(1); }}
-                  className="w-full bg-[var(--bg-field)] border border-[var(--border)] text-[var(--text)] px-2 py-3 rounded-xl text-[8px] font-black uppercase tracking-widest outline-none appearance-none text-center"
+                  className="w-full bg-[var(--bg-field)] border border-[var(--border)] text-[var(--text)] px-1 py-2.5 rounded-xl text-[8px] font-black uppercase tracking-wider outline-none appearance-none text-center"
                 >
-                  <option value="">Categorias</option>
+                  <option value="">Categoria</option>
                   <option value="ALBUM_FULL">Álbuns</option>
                   <option value="PHOTO_MARKETPLACE">Live Print</option>
                   <option value="FOTO_POINT">Foto Point</option>
-                  <option value="FLASH_EVENT">Flash Event</option>
+                  <option value="FLASH_EVENT">Flash</option>
                 </select>
               </div>
               <div className="relative">
                 <select 
-                  className="w-full bg-[#1a1a1a] border border-[#2a2a2a] text-white px-2 py-3 rounded-xl text-[8px] font-black uppercase tracking-widest outline-none appearance-none text-center opacity-60"
+                  className="w-full bg-[#1a1a1a] border border-[#2a2a2a] text-white px-1 py-2.5 rounded-xl text-[8px] font-black uppercase tracking-wider outline-none appearance-none text-center opacity-60"
                 >
-                  <option value="">Proximidade</option>
+                  <option value="">Distância</option>
                   <option value="km">Até 10km</option>
                   <option value="km2">Até 50km</option>
                 </select>
@@ -445,17 +457,7 @@ export const HomePage = () => {
             </div>
           ) : (
               <div className="space-y-4 hp-event-grid-container px-0 md:px-8">
-                {/* Categorias Grid (2 Colunas) */}
-                <div className="grid grid-cols-2 gap-1 mb-1 md:hidden">
-                   {["Casamentos", "Ensaios", "Eventos", "Venda Direta"].map(cat => (
-                     <div key={cat} className="relative h-24 overflow-hidden group">
-                        <img src={`https://images.unsplash.com/photo-1511285560929-80b456fea0bc?q=80&w=400`} className="absolute inset-0 w-full h-full object-cover brightness-50 group-hover:scale-110 transition-transform" />
-                        <div className="absolute inset-0 flex items-center justify-center">
-                           <span className="text-white font-black uppercase italic tracking-widest text-[10px]">{cat}</span>
-                        </div>
-                     </div>
-                   ))}
-                </div>
+
 
                 {/* Mobile Specific Search (Repositioned) */}
                 <div className="md:hidden px-4 mb-4">

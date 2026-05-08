@@ -1,7 +1,7 @@
 import { useState, useEffect, useCallback, useMemo } from "react";
 import { useAuth } from "../hooks/useAuth";
 import { API } from "../lib/api";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useLocation } from "react-router-dom";
 import {
   DollarSign, MessageCircle,
   Settings, Briefcase, Users, LayoutDashboard, Play, Zap, Calendar, RefreshCw, LogOut, CheckCircle, Camera
@@ -28,6 +28,7 @@ type ViewTab = "lista" | "calendario";
 export default function ProfissionalDashboard() {
   const { user } = useAuth();
   const navigate = useNavigate();
+  const location = useLocation();
 
   // Core data state
   const [events, setEvents] = useState<EventItem[]>([]);
@@ -98,6 +99,19 @@ export default function ProfissionalDashboard() {
       .then((r) => setUnitInvites(r.data))
       .catch((err) => console.error("Erro ao buscar convites:", err));
   }, []);
+
+  // ─── Deep Link for Editing ───────────────────────────────────────────────────
+  useEffect(() => {
+    if (location.state?.editEventId && events.length > 0) {
+      const ev = events.find(e => e.id === location.state.editEventId);
+      if (ev && !selected) {
+        setSelected(ev);
+        setActiveTab("agenda");
+        // Clear state to prevent reopening on reload
+        navigate(location.pathname, { replace: true, state: {} });
+      }
+    }
+  }, [location.state?.editEventId, events, selected, navigate, location.pathname]);
 
   const fetchNetwork = useCallback(() => {
     API.get("profissional/network")

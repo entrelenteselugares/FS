@@ -1,4 +1,4 @@
-﻿import React, { useState, useEffect } from "react";
+import React, { useState, useEffect } from "react";
 import { API } from "../../lib/api";
 import { T } from "../../lib/theme";
 
@@ -81,21 +81,14 @@ export const AdminContests: React.FC = () => {
 
   return (
     <div className="space-y-8 animate-in fade-in slide-in-from-bottom-4 duration-700">
-      <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", borderBottom: `1px solid ${T.border}`, paddingBottom: 24 }}>
+      <div className="flex justify-between items-center border-b border-theme-border pb-6">
         <div>
-          <h2 style={{ fontSize: 32, fontFamily: T.fontD, fontWeight: 900, color: T.text, textTransform: "uppercase", letterSpacing: -1, lineHeight: 1 }}>Concursos e Rankings</h2>
-          <p style={{ fontSize: 9, fontWeight: 900, color: T.text3, textTransform: "uppercase", letterSpacing: 2, marginTop: 8, fontStyle: "italic" }}>Motor de Engajamento Viral</p>
+          <h2 className="text-3xl font-black text-theme-text uppercase tracking-tighter leading-none">Concursos e Rankings</h2>
+          <p className="text-[9px] font-black text-theme-muted uppercase tracking-[0.2em] mt-2 italic">Motor de Engajamento Viral</p>
         </div>
         <button 
           onClick={() => setShowModal(true)}
-          style={{ 
-            background: T.brand, color: T.brandText, padding: "12px 24px", 
-            fontSize: 9, fontWeight: 900, textTransform: "uppercase", 
-            letterSpacing: "0.2em", cursor: "pointer", border: "none",
-            transition: "all 0.2s"
-          }}
-          onMouseEnter={e => e.currentTarget.style.opacity = "0.8"}
-          onMouseLeave={e => e.currentTarget.style.opacity = "1"}
+          className="bg-brand-tactical text-zinc-950 px-6 py-3 text-[9px] font-black uppercase tracking-[0.2em] hover:brightness-110 shadow-lg transition-all"
         >
           NOVO CONCURSO
         </button>
@@ -108,35 +101,34 @@ export const AdminContests: React.FC = () => {
           <div className="py-20 text-center text-[10px] text-zinc-700 uppercase tracking-widest border border-theme-border bg-black/10 italic">Nenhum concurso programado.</div>
         ) : (
           contests.map(c => (
-            <div key={c.id} style={{ border: `1px solid ${T.border}`, padding: "20px", background: T.bgCard }} className="group hover:border-brand-tactical/30 transition-all">
-              <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
-                <div style={{ flex: 1 }}>
-                  <div style={{ display: "flex", alignItems: "center", gap: 12, marginBottom: 8 }}>
-                    <span style={{ 
-                      fontSize: 8, fontWeight: 900, padding: "2px 6px", textTransform: "uppercase", letterSpacing: 1,
-                      background: c.status === 'ACTIVE' ? `${T.brand}11` : T.bgField,
-                      color: c.status === 'ACTIVE' ? T.brand : T.text3,
-                      border: `1px solid ${c.status === 'ACTIVE' ? T.brand : T.border}44`
-                    }}>
+            <div key={c.id} className="border border-theme-border p-5 bg-theme-bg group hover:border-brand-tactical/30 transition-all shadow-sm">
+              <div className="flex justify-between items-center">
+                <div className="flex-1">
+                  <div className="flex items-center gap-3 mb-2">
+                    <span className={`text-[8px] font-black px-2 py-0.5 uppercase tracking-[0.1em] border ${
+                      c.status === 'ACTIVE' 
+                        ? 'bg-brand-tactical/10 text-brand-tactical border-brand-tactical/30' 
+                        : 'bg-theme-bg-muted text-theme-muted border-theme-border'
+                    }`}>
                       {c.status === 'ACTIVE' ? 'ATIVO' : c.status === 'FINISHED' ? 'FINALIZADO' : 'RASCUNHO'}
                     </span>
-                    <h3 style={{ fontSize: 18, fontWeight: 900, color: T.text, textTransform: "uppercase", letterSpacing: -0.5 }}>{c.title}</h3>
+                    <h3 className="text-lg font-black text-theme-text uppercase tracking-tight">{c.title}</h3>
                   </div>
-                  <div style={{ fontSize: 9, color: T.text3, fontWeight: 900, textTransform: "uppercase", letterSpacing: 1, display: "flex", gap: 16 }}>
+                  <div className="text-[9px] text-theme-muted font-black uppercase tracking-[0.1em] flex gap-4">
                     <span>DE: {new Date(c.startDate).toLocaleDateString()}</span>
                     <span>ATÉ: {new Date(c.endDate).toLocaleDateString()}</span>
                   </div>
-                  <div style={{ marginTop: 8, fontSize: 8, color: T.text2, textTransform: "uppercase", letterSpacing: 0.5 }}>
-                    🏆 Premiação: <span style={{ color: T.text, fontWeight: 900 }}>{c.prize1st} (+{c.prize1stPts} pts)</span>
+                  <div className="mt-2 text-[8px] text-theme-muted uppercase tracking-[0.05em]">
+                    🏆 Premiação: <span className="text-theme-text font-black">{c.prize1st} (+{c.prize1stPts} pts)</span>
                   </div>
                 </div>
 
                 <div className="flex gap-4 opacity-0 group-hover:opacity-100 transition-opacity">
                   {c.status === "DRAFT" && (
-                    <button onClick={() => updateStatus(c.id, "ACTIVE")} style={{ padding: "8px 16px", background: T.brand, color: T.brandText, fontSize: 8, fontWeight: 900, border: "none", cursor: "pointer" }}>ATIVAR</button>
+                    <button onClick={() => updateStatus(c.id, "ACTIVE")} className="px-4 py-2 bg-brand-tactical text-zinc-950 text-[8px] font-black border-none cursor-pointer hover:brightness-110">ATIVAR</button>
                   )}
                   {c.status === "ACTIVE" && (
-                    <button onClick={() => updateStatus(c.id, "FINISHED")} style={{ padding: "8px 16px", background: T.bgField, color: T.text, fontSize: 8, fontWeight: 900, border: `1px solid ${T.border}`, cursor: "pointer" }}>ENCERRAR</button>
+                    <button onClick={() => updateStatus(c.id, "FINISHED")} className="px-4 py-2 bg-theme-bg-muted text-theme-text text-[8px] font-black border border-theme-border cursor-pointer hover:bg-zinc-800">ENCERRAR</button>
                   )}
                 </div>
               </div>
@@ -146,45 +138,44 @@ export const AdminContests: React.FC = () => {
       </div>
 
       {showModal && (
-        <div style={{ position: "fixed", inset: 0, background: "rgba(0,0,0,0.95)", backdropFilter: "blur(20px)", zIndex: 100, display: "flex", alignItems: "center", justifyContent: "center", padding: 16 }}>
-          <div style={{ width: "100%", maxWidth: 640, background: "#080808", border: `1px solid ${T.border}`, padding: 40, position: "relative" }} className="animate-in zoom-in-95 duration-300">
-            <button onClick={() => setShowModal(false)} style={{ position: "absolute", top: 24, right: 24, background: "none", border: "none", color: T.text3, fontSize: 24, cursor: "pointer" }}>×</button>
-            <h2 style={{ fontSize: 24, fontFamily: T.fontD, fontWeight: 900, color: T.text, textTransform: "uppercase", letterSpacing: -1, marginBottom: 8 }}>Configurar Concurso</h2>
-            <div style={{ width: 40, height: 2, background: T.brand, marginBottom: 32 }} />
+        <div className="fixed inset-0 z-[100] flex items-center justify-center p-4 bg-black/95 backdrop-blur-xl">
+          <div className="w-full max-w-xl bg-theme-bg border border-theme-border p-8 relative shadow-2xl animate-in zoom-in-95 duration-300">
+            <button onClick={() => setShowModal(false)} className="absolute top-6 right-6 text-zinc-500 hover:text-white transition-colors text-2xl">×</button>
+            
+            <div className="mb-8">
+              <h2 className="text-xl font-black text-theme-text uppercase tracking-tighter">Configurar Concurso</h2>
+              <div className="w-12 h-1 bg-brand-tactical mt-1" />
+            </div>
 
             <form onSubmit={handleCreate} className="space-y-6">
               <div className="space-y-2">
-                <label style={{ fontSize: 8, fontWeight: 900, color: T.text3, textTransform: "uppercase", letterSpacing: 2 }}>Título do Concurso</label>
-                <input required style={{ width: "100%", background: T.bgField, border: `1px solid ${T.border}`, padding: 12, fontSize: 13, color: T.text, outline: "none" }} value={formData.title} onChange={e => setFormData({...formData, title: e.target.value})} />
+                <label className="text-[9px] font-black text-theme-muted uppercase tracking-[0.4em]">Título do Concurso</label>
+                <input required className="fs-input py-2.5" value={formData.title} onChange={e => setFormData({...formData, title: e.target.value})} />
               </div>
 
               <div className="grid grid-cols-2 gap-6">
                 <div className="space-y-2">
-                  <label style={{ fontSize: 8, fontWeight: 900, color: T.text3, textTransform: "uppercase", letterSpacing: 2 }}>Data Início</label>
-                  <input type="date" required style={{ width: "100%", background: T.bgField, border: `1px solid ${T.border}`, padding: 12, fontSize: 13, color: T.text, outline: "none", colorScheme: "dark" }} value={formData.startDate} onChange={e => setFormData({...formData, startDate: e.target.value})} />
+                  <label className="text-[9px] font-black text-theme-muted uppercase tracking-[0.4em]">Data Início</label>
+                  <input type="date" required className="fs-input py-2.5 [color-scheme:dark]" value={formData.startDate} onChange={e => setFormData({...formData, startDate: e.target.value})} />
                 </div>
                 <div className="space-y-2">
-                  <label style={{ fontSize: 8, fontWeight: 900, color: T.text3, textTransform: "uppercase", letterSpacing: 2 }}>Data Fim</label>
-                  <input type="date" required style={{ width: "100%", background: T.bgField, border: `1px solid ${T.border}`, padding: 12, fontSize: 13, color: T.text, outline: "none", colorScheme: "dark" }} value={formData.endDate} onChange={e => setFormData({...formData, endDate: e.target.value})} />
+                  <label className="text-[9px] font-black text-theme-muted uppercase tracking-[0.4em]">Data Fim</label>
+                  <input type="date" required className="fs-input py-2.5 [color-scheme:dark]" value={formData.endDate} onChange={e => setFormData({...formData, endDate: e.target.value})} />
                 </div>
               </div>
 
               <div className="grid grid-cols-2 gap-6">
                 <div className="space-y-2">
-                    <label style={{ fontSize: 8, fontWeight: 900, color: T.text3, textTransform: "uppercase", letterSpacing: 2 }}>Prêmio 1º Lugar</label>
-                    <input style={{ width: "100%", background: T.bgField, border: `1px solid ${T.border}`, padding: 12, fontSize: 13, color: T.text, outline: "none" }} value={formData.prize1st} onChange={e => setFormData({...formData, prize1st: e.target.value})} />
+                    <label className="text-[9px] font-black text-theme-muted uppercase tracking-[0.4em]">Prêmio 1º Lugar</label>
+                    <input className="fs-input py-2.5" value={formData.prize1st} onChange={e => setFormData({...formData, prize1st: e.target.value})} />
                 </div>
                 <div className="space-y-2">
-                    <label style={{ fontSize: 8, fontWeight: 900, color: T.text3, textTransform: "uppercase", letterSpacing: 2 }}>Pontos Bônus</label>
-                    <input type="number" style={{ width: "100%", background: T.bgField, border: `1px solid ${T.border}`, padding: 12, fontSize: 13, color: T.text, outline: "none" }} value={formData.prize1stPts} onChange={e => setFormData({...formData, prize1stPts: Number(e.target.value)})} />
+                    <label className="text-[9px] font-black text-theme-muted uppercase tracking-[0.4em]">Pontos Bônus</label>
+                    <input type="number" className="fs-input py-2.5" value={formData.prize1stPts} onChange={e => setFormData({...formData, prize1stPts: Number(e.target.value)})} />
                 </div>
               </div>
 
-              <button style={{ 
-                width: "100%", background: T.brand, color: T.brandText, padding: 16, 
-                fontSize: 9, fontWeight: 900, textTransform: "uppercase", 
-                letterSpacing: 4, border: "none", cursor: "pointer", marginTop: 16
-              }}>
+              <button className="w-full mt-4 bg-brand-tactical text-zinc-950 px-10 py-4 text-[10px] font-black uppercase tracking-[0.4em] hover:brightness-110 shadow-lg transition-all">
                 LANÇAR CONCURSO
               </button>
             </form>

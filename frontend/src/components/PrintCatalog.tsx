@@ -147,8 +147,8 @@ export function PrintCatalog({ selectedProductId, onAddToCart }: PrintCatalogPro
                       onClick={() => handleAction(item)}
                       className={`font-black text-[10px] uppercase tracking-widest px-6 py-3 transition-all active:scale-95 italic ${
                         isSelected 
-                          ? "bg-white text-black shadow-[0_0_20px_rgba(255,255,255,0.3)]" 
-                          : "bg-emerald-500 hover:bg-emerald-400 text-black shadow-[0_0_20px_rgba(16,185,129,0.2)]"
+                          ? "bg-[var(--text)] text-[var(--bg)] shadow-[0_0_20px_rgba(255,255,255,0.3)]" 
+                          : "bg-brand-tactical hover:brightness-110 text-[var(--brand-text)] shadow-[0_0_20px_var(--brand-tactical)]"
                       }`}
                     >
                       {isSelected ? `No Carrinho (${quantity})` : "Adicionar"}
