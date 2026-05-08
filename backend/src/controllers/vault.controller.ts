@@ -169,7 +169,8 @@ export class VaultController {
 
       return res.status(500).json({ 
         error: "Falha no upload.", 
-        details: error.message || "Erro interno na comunicação com o Drive."
+        details: error.message || "Erro interno na comunicação com o Drive.",
+        googleError: error.response?.data || null
       });
     }
   }

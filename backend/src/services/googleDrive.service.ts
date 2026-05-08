@@ -171,6 +171,8 @@ export class GoogleDriveService {
     fs.writeFileSync(tmpFilePath, buffer);
 
     try {
+      console.log(`[DRIVE] Iniciando upload: ${fileName} (${buffer.length} bytes)`);
+      
       const file = await this.withRetry(() => this.drive!.files.create({
         requestBody: {
           name: fileName,
@@ -178,7 +180,7 @@ export class GoogleDriveService {
         },
         media: {
           mimeType: mimeType,
-          body: fs.createReadStream(tmpFilePath),
+          body: Readable.from(buffer), // Convertendo Buffer em Stream legível conforme solicitado
         },
         fields: 'id, name, webViewLink, thumbnailLink',
       } as any));
@@ -202,10 +204,16 @@ export class GoogleDriveService {
       if (fs.existsSync(tmpFilePath)) {
         fs.unlinkSync(tmpFilePath);
       }
-      console.error('[DRIVE] Erro CRÍTICO no upload de mídia após retentativas:', error);
+      
+      console.error('=========================================');
+      console.error('[DRIVE] ❌ ERRO CRÍTICO NO UPLOAD');
+      console.error(' - Mensagem:', error.message);
+      
       if (error.response) {
-        console.error('[DRIVE] Detalhes da API Google (Response):', JSON.stringify(error.response.data, null, 2));
+        console.error(' - Google API Error:', JSON.stringify(error.response.data, null, 2));
       }
+      console.error('=========================================');
+      
       throw error;
     }
   }
