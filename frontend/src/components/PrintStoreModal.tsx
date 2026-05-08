@@ -280,8 +280,8 @@ export function PrintStoreModal({ eventId, eventTitle, medias = [], unlockedMedi
                 <p className="text-[10px] font-black text-theme-text-muted uppercase tracking-[0.2em] mb-6 italic">Protocolo de Seleção</p>
                 
                 {[
-                  { id: 'catalog', label: 'Catálogo', icon: <ShoppingCart size={14} />, status: step === 'catalog' ? 'active' : (step !== 'catalog' ? 'completed' : 'pending') },
-                  { id: 'details', label: 'Configuração', icon: <Plus size={14} />, status: step === 'details' ? 'active' : (step === 'delivery' || step === 'processing' ? 'completed' : 'pending') },
+                  { id: 'catalog', label: 'Catálogo', icon: <ShoppingCart size={14} />, status: step === 'catalog' ? 'active' : 'completed' },
+                  { id: 'details', label: 'Configuração', icon: <Plus size={14} />, status: step === 'details' ? 'active' : (['delivery', 'processing'].includes(step) ? 'completed' : 'pending') },
                   { id: 'delivery', label: 'Logística', icon: <Truck size={14} />, status: step === 'delivery' ? 'active' : (step === 'processing' ? 'completed' : 'pending') },
                 ].map((s, idx) => (
                   <div key={s.id} className="flex items-center gap-4 group">

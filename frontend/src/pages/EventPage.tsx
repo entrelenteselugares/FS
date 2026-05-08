@@ -414,16 +414,6 @@ export default function EventPage() {
     }
   })() : false;
 
-  const toggleCart = (shortId: string) => {
-    if (!event) return;
-    const exists = eventCart.includes(shortId);
-    if (exists) {
-      removeFromCart(event.id, shortId);
-    } else {
-      addToCart(event.id, shortId);
-    }
-  };
-
 return (
     <div className="min-h-screen bg-theme-bg text-theme-text font-sans selection:bg-brand-tactical/30 overflow-x-hidden selection:text-theme-text" onContextMenu={(e) => e.preventDefault()}>
       <Helmet><title>{`${event.nomeNoivos} | Foto Segundo`}</title></Helmet>
