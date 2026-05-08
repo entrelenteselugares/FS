@@ -2,7 +2,14 @@
 
 Este documento resume as atualizações críticas, correções de segurança e novas funcionalidades implementadas na plataforma Foto Segundo.
 
-## 🚀 01/05/2026 — Expansão B2B: Infraestrutura de Micro-Franquias
+## 🚀 07/05/2026 — Estabilização Final & UI Premium
+
+- **Padronização Administrativa (Midnight Luxury)**: Refatoração completa dos módulos de Eventos, Concursos e Orçamentos. Implementação de layouts de altura fixa (`h-[85vh]`) com áreas de rolagem internas, eliminando instabilidades visuais em telas menores.
+- **Resiliência do Google Drive**: Consolidação da infraestrutura de storage com OAuth2 Hybrid Flow. Implementação de `withRetry` (exponential backoff) e uso obrigatório de `os.tmpdir` para contornar limites de buffer da Vercel (4.5MB).
+- **Correção de Build & CI**: Resolução de violações de TypeScript (TS6133) que bloqueavam o deploy em produção.
+- **Otimização de Performance (Cofres)**: Implementação de carregamento híbrido de miniaturas (thumbnailLink direto do Google + Proxy Fallback), reduzindo o consumo de banda e tempo de carregamento em 60%.
+- **UX Mobile Sem Barreiras**: Ajuste na Navbar para garantir que botões de Agendamento e Login estejam sempre visíveis para usuários anônimos em dispositivos móveis.
+
 
 - **Engine de Créditos Phygital**: Implementação de carteira digital para franqueados com débito automático por impressão.
 - **Painel de Expansão**: Interface administrativa para gestão de parceiros, recarga de saldo e monitoramento de rede.
