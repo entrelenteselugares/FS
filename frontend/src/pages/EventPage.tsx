@@ -427,7 +427,7 @@ return (
         <section className="relative flex flex-col bg-theme-bg overflow-y-auto scrollbar-hide">
           <button 
              onClick={() => navigate(-1)} 
-             className="absolute top-6 left-6 z-50 flex items-center gap-2 px-5 py-2.5 bg-black/50 backdrop-blur-md border border-white/10 rounded-full text-white hover:bg-brand-tactical hover:text-black transition-all shadow-xl"
+             className="absolute top-6 left-6 z-50 flex items-center gap-2 px-5 py-2.5 bg-theme-bg/60 backdrop-blur-md border border-theme-border rounded-full text-theme-text hover:bg-brand-tactical hover:text-black transition-all shadow-xl"
           >
              <ChevronLeft size={16} />
              <span className="text-[10px] font-black uppercase tracking-widest">Voltar</span>
@@ -1018,7 +1018,7 @@ return (
       
       {/* Carrinho Mobile Elevado */}
       {isMarketplace && eventCart.length > 0 && (
-        <motion.div initial={{ y: 120 }} animate={{ y: 0 }} className="lg:hidden fixed bottom-0 left-0 right-0 z-[100] bg-black/95 backdrop-blur-3xl border-t border-brand-tactical/40 p-8 pb-14 flex items-center justify-between shadow-[0_-30px_60px_rgba(0,0,0,0.9)]">
+        <motion.div initial={{ y: 120 }} animate={{ y: 0 }} className="lg:hidden fixed bottom-0 left-0 right-0 z-[100] bg-theme-bg/90 backdrop-blur-3xl border-t border-brand-tactical/40 p-8 pb-14 flex items-center justify-between shadow-2xl dark:bg-black/95">
           <div className="space-y-1">
             <p className="text-[10px] font-black uppercase tracking-widest text-brand-tactical italic">{eventCart.length} selecionadas</p>
             <div className="flex items-baseline gap-1">
@@ -1081,7 +1081,7 @@ const Modal = ({ isOpen, onClose, title, children }: { isOpen: boolean, onClose:
   <AnimatePresence>
     {isOpen && (
       <div className="fixed inset-0 z-[9999] flex items-center justify-center p-6" style={{ position: 'fixed', top: 0, left: 0, right: 0, bottom: 0 }}>
-        <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} onClick={onClose} className="absolute inset-0 bg-black/90 backdrop-blur-md" />
+        <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} onClick={onClose} className="absolute inset-0 bg-theme-bg/80 backdrop-blur-md dark:bg-black/90" />
         <motion.div initial={{ opacity: 0, scale: 0.95, y: 20 }} animate={{ opacity: 1, scale: 1, y: 0 }} exit={{ opacity: 0, scale: 0.95, y: 20 }} className="relative w-full max-w-sm bg-theme-card border border-theme-border p-6 shadow-2xl flex flex-col max-h-[90vh] overflow-y-auto">
           <div className="absolute top-0 right-0 p-4"><button onClick={onClose} className="text-theme-subtle hover:text-white transition-colors"><Check size={20} className="rotate-45" /></button></div>
           <h3 className="font-display text-lg font-black uppercase tracking-tighter mb-2 pr-6 leading-tight">{title}</h3>

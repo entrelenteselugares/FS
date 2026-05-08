@@ -263,7 +263,7 @@ export function PrintStoreModal({ eventId, eventTitle, medias = [], unlockedMedi
         initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}
         className="fixed inset-0 z-[500] flex items-center justify-center p-4 lg:p-10"
       >
-        <div onClick={onClose} className="absolute inset-0 bg-black/95 backdrop-blur-3xl" />
+        <div onClick={onClose} className="absolute inset-0 bg-theme-bg/80 backdrop-blur-3xl dark:bg-black/95" />
 
         <motion.div 
           initial={{ y: 50, scale: 0.95 }} animate={{ y: 0, scale: 1 }} exit={{ y: 50, scale: 0.95 }}
@@ -426,7 +426,7 @@ export function PrintStoreModal({ eventId, eventTitle, medias = [], unlockedMedi
                                  selectedAlbumPhotos={selectedAlbumPhotos}
                                  toggleAlbumPhoto={toggleAlbumPhoto}
                                />
-                               <div className="absolute bottom-0 left-0 right-0 p-4 bg-black/80 backdrop-blur-md text-[9px] font-black text-brand-tactical uppercase tracking-widest text-center italic">
+                               <div className="absolute bottom-0 left-0 right-0 p-4 bg-theme-bg-muted/90 backdrop-blur-md text-[9px] font-black text-brand-tactical uppercase tracking-widest text-center italic border-t border-theme-border">
                                   {selectedAlbumPhotos.length} / {selectedProduct.maxPhotos || "∞"} selecionadas
                                </div>
                             </div>
@@ -445,7 +445,7 @@ export function PrintStoreModal({ eventId, eventTitle, medias = [], unlockedMedi
                                   {filePreviews.map((src, idx) => (
                                     <div key={idx} className="relative aspect-square border border-theme-border overflow-hidden">
                                        <img src={src} className="w-full h-full object-cover" />
-                                       <button onClick={() => removeFile(idx)} className="absolute top-1 right-1 p-1 bg-black text-white"><X size={10} /></button>
+                                        <button onClick={() => removeFile(idx)} className="absolute top-1 right-1 p-1 bg-theme-bg-field text-theme-text border border-theme-border"><X size={10} /></button>
                                     </div>
                                   ))}
                                </div>
@@ -503,7 +503,7 @@ export function PrintStoreModal({ eventId, eventTitle, medias = [], unlockedMedi
                             </button>
                          </div>
                          
-                         <div className="p-8 bg-zinc-900/50 border border-theme-border space-y-4">
+                         <div className="p-8 bg-theme-bg-muted border border-theme-border space-y-4">
                             <div className="flex items-center gap-3">
                                <Package size={16} className="text-brand-tactical" />
                                <p className="text-[10px] font-black text-theme-text uppercase tracking-widest italic">Protocolo de Produção</p>

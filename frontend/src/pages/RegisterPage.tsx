@@ -150,7 +150,7 @@ export const RegisterPage: React.FC = () => {
         <div className="flex items-center justify-between border-b border-theme-border/20 pb-6">
           <button 
             onClick={() => navigate("/")} 
-            className="flex items-center gap-2 text-[10px] font-black uppercase tracking-widest text-zinc-500 hover:text-white transition-all"
+            className="flex items-center gap-2 text-[10px] font-black uppercase tracking-widest text-theme-text-muted hover:text-theme-text transition-all"
           >
             <span className="text-base">←</span> Vitrine
           </button>
@@ -164,7 +164,7 @@ export const RegisterPage: React.FC = () => {
         {/* Content */}
         <div className="space-y-10">
           <div className="text-center">
-             <h1 className="text-3xl md:text-5xl font-heading font-black text-white uppercase italic leading-none tracking-tighter">
+             <h1 className="text-3xl md:text-5xl font-heading font-black text-theme-text uppercase italic leading-none tracking-tighter">
               SOLICITAR <span className="opacity-20">REGISTRO</span>
             </h1>
             <p className="text-[9px] font-bold text-zinc-500 uppercase tracking-[0.3em] mt-3">Protocolo de Registro de Rede</p>
@@ -184,7 +184,7 @@ export const RegisterPage: React.FC = () => {
                 type="button"
                 onClick={() => setRole(r.id as "CLIENTE" | "PROFISSIONAL" | "CARTORIO")}
                 className={`flex flex-col items-center justify-center py-6 px-4 rounded-3xl transition-all duration-500 border ${
-                  role === r.id ? "bg-brand-tactical border-brand-tactical text-black shadow-[0_15px_30px_rgba(133,185,172,0.2)]" : "bg-zinc-900/50 border-white/5 text-zinc-500 hover:border-white/10 hover:text-white"
+                  role === r.id ? "bg-brand-tactical border-brand-tactical text-black shadow-[0_15px_30px_rgba(133,185,172,0.2)]" : "bg-theme-bg-muted border-theme-border/60 text-theme-text-muted hover:border-theme-border hover:text-theme-text"
                 }`}
               >
                 <div className="mb-2">{r.icon}</div>
@@ -204,7 +204,7 @@ export const RegisterPage: React.FC = () => {
                      required
                      value={formData.nome}
                      onChange={(e) => setFormData({ ...formData, nome: e.target.value })}
-                     className="w-full bg-black border border-white/5 py-4 pl-12 pr-4 text-xs text-white rounded-2xl focus:border-brand-tactical transition-all"
+                     className="w-full bg-theme-bg-field border border-theme-border/60 py-4 pl-12 pr-4 text-xs text-theme-text rounded-2xl focus:border-brand-tactical transition-all"
                      placeholder="EX: JOÃO DA SILVA"
                    />
                  </div>
@@ -219,7 +219,7 @@ export const RegisterPage: React.FC = () => {
                      required
                      value={formData.whatsapp}
                      onChange={(e) => setFormData({ ...formData, whatsapp: e.target.value })}
-                     className="w-full bg-black border border-white/5 py-4 pl-12 pr-4 text-xs text-white rounded-2xl focus:border-brand-tactical transition-all"
+                     className="w-full bg-theme-bg-field border border-theme-border/60 py-4 pl-12 pr-4 text-xs text-theme-text rounded-2xl focus:border-brand-tactical transition-all"
                      placeholder="(00) 00000-0000"
                    />
                  </div>
@@ -234,7 +234,7 @@ export const RegisterPage: React.FC = () => {
                      required
                      value={formData.email}
                      onChange={(e) => setFormData({ ...formData, email: e.target.value })}
-                     className="w-full bg-black border border-white/5 py-4 pl-12 pr-4 text-xs text-white rounded-2xl focus:border-brand-tactical transition-all"
+                     className="w-full bg-theme-bg-field border border-theme-border/60 py-4 pl-12 pr-4 text-xs text-theme-text rounded-2xl focus:border-brand-tactical transition-all"
                      placeholder="EMAIL@DOMINIO.COM"
                    />
                  </div>
@@ -242,7 +242,7 @@ export const RegisterPage: React.FC = () => {
 
                {/* Campos Dinâmicos Profissional */}
                {role === "PROFISSIONAL" && (
-                 <div className="md:col-span-2 space-y-8 p-8 bg-zinc-900/50 border border-white/5 rounded-3xl animate-in fade-in duration-500">
+                 <div className="md:col-span-2 space-y-8 p-8 bg-theme-bg-muted border border-theme-border/60 rounded-3xl animate-in fade-in duration-500">
                     <div className="space-y-4">
                        <p className="text-[9px] font-black text-brand-tactical uppercase tracking-widest italic">Especialidades</p>
                        <div className="flex flex-wrap gap-3">

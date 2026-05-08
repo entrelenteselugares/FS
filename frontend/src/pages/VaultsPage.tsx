@@ -27,7 +27,7 @@ function VaultCard({ vault, onClick }: { vault: Vault; onClick: () => void }) {
       animate={{ opacity: 1, y: 0 }}
       whileHover={{ y: -4 }}
       onClick={onClick}
-      className="group relative flex flex-col bg-[#141414] border border-[#2a2a2a] hover:border-emerald-500/40 rounded-2xl p-6 cursor-pointer transition-all duration-500 overflow-hidden"
+      className="group relative flex flex-col bg-theme-card border border-theme-border/60 hover:border-emerald-500/40 rounded-2xl p-6 cursor-pointer transition-all duration-500 overflow-hidden"
     >
       {/* Glow on hover */}
       <div className="absolute inset-0 bg-emerald-500/0 group-hover:bg-emerald-500/[0.03] transition-colors duration-500 pointer-events-none rounded-2xl" />
@@ -54,7 +54,7 @@ function VaultCard({ vault, onClick }: { vault: Vault; onClick: () => void }) {
       </div>
 
       {/* Name */}
-      <h3 className="text-xl font-black text-white uppercase italic tracking-tight leading-tight mb-1">
+      <h3 className="text-xl font-black text-theme-text uppercase italic tracking-tight leading-tight mb-1">
         {vault.nome}
       </h3>
 
@@ -115,19 +115,19 @@ function NewVaultModal({ onClose, onCreated }: { onClose: () => void; onCreated:
   };
 
   return (
-    <div className="fixed inset-0 z-50 flex items-end sm:items-center justify-center bg-black/80 backdrop-blur-md p-4">
+    <div className="fixed inset-0 z-50 flex items-end sm:items-center justify-center bg-theme-bg/80 backdrop-blur-md p-4">
       <motion.div
         initial={{ opacity: 0, y: 40 }}
         animate={{ opacity: 1, y: 0 }}
         exit={{ opacity: 0, y: 40 }}
-        className="w-full max-w-md bg-[#141414] border border-[#2a2a2a] rounded-2xl p-8"
+        className="w-full max-w-md bg-theme-card border border-theme-border rounded-2xl p-8"
       >
         <div className="flex items-center gap-3 mb-6">
           <div className="p-2.5 bg-emerald-500/10 border border-emerald-500/20 rounded-xl">
             <Lock size={18} className="text-emerald-500" />
           </div>
           <div>
-            <h2 className="text-lg font-black text-white uppercase italic tracking-tight">Novo Cofre</h2>
+            <h2 className="text-lg font-black text-theme-text uppercase italic tracking-tight">Novo Cofre</h2>
             <p className="text-[10px] text-gray-500 uppercase tracking-widest">Memórias privadas compartilhadas</p>
           </div>
         </div>
@@ -141,7 +141,7 @@ function NewVaultModal({ onClose, onCreated }: { onClose: () => void; onCreated:
               onChange={e => setName(e.target.value)}
               onKeyDown={e => e.key === "Enter" && handleCreate()}
               placeholder="Ex: Casamento Ana & Pedro"
-              className="w-full bg-[#0a0a0a] border border-[#2a2a2a] focus:border-emerald-500/50 rounded-xl px-4 py-3 text-white text-sm outline-none transition-colors placeholder:text-gray-600"
+              className="w-full bg-theme-bg-field border border-theme-border/60 focus:border-emerald-500/50 rounded-xl px-4 py-3 text-theme-text text-sm outline-none transition-colors placeholder:text-theme-text-muted/40"
             />
           </div>
 
@@ -259,7 +259,7 @@ export default function VaultsPage() {
           <motion.div
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
-            className="flex flex-col items-center justify-center py-32 gap-5 text-center bg-[#141414] border border-[#2a2a2a] rounded-2xl"
+            className="flex flex-col items-center justify-center py-32 gap-5 text-center bg-theme-card border border-theme-border rounded-2xl"
           >
             <div className="p-6 bg-emerald-500/5 border border-emerald-500/10 rounded-2xl">
               <Lock size={48} className="text-emerald-500/40" />

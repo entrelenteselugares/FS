@@ -29,14 +29,13 @@ export const CartModal: React.FC<{ isOpen: boolean, onClose: () => void }> = ({ 
     <div className="fixed inset-0 z-[9999] flex items-center justify-center p-4">
       {/* Backdrop Imersivo - Ocupa tudo e bloqueia o fundo */}
       <div 
-        className="fixed inset-0 bg-black/95 backdrop-blur-xl animate-in fade-in duration-300" 
+        className="fixed inset-0 bg-theme-bg/80 backdrop-blur-xl animate-in fade-in duration-300 dark:bg-black/95" 
         onClick={onClose} 
       />
       
       {/* Modal Centrado - Posição Absoluta e Z-Index Máximo */}
       <div 
-        className="relative w-full max-w-2xl h-[80vh] flex flex-col border border-white/10 rounded-[40px] overflow-hidden shadow-[0_0_100px_rgba(0,0,0,1)] z-[10000]" 
-        style={{ background: '#0a0a0a' }}
+        className="relative w-full max-w-2xl h-[80vh] flex flex-col border border-theme-border/60 rounded-[40px] overflow-hidden shadow-2xl z-[10000] bg-theme-card" 
       >
         
         {/* Header - Fixo */}
@@ -77,7 +76,7 @@ export const CartModal: React.FC<{ isOpen: boolean, onClose: () => void }> = ({ 
                     {digitalPhotos.map((item) => (
                       <div key={item.shortId} className="group flex items-center justify-between p-3 bg-white/5 rounded-2xl border border-white/5 hover:border-brand-tactical/30 transition-all">
                         <div className="flex items-center gap-3">
-                          <div className="w-10 h-10 bg-zinc-900 rounded-xl flex items-center justify-center border border-white/10 group-hover:bg-brand-tactical/10 transition-colors overflow-hidden">
+                          <div className="w-10 h-10 bg-theme-bg-field rounded-xl flex items-center justify-center border border-theme-border/60 group-hover:bg-brand-tactical/10 transition-colors overflow-hidden">
                             {item.url ? (
                               <img src={item.url} alt={item.shortId} className="w-full h-full object-cover" />
                             ) : (
@@ -112,7 +111,7 @@ export const CartModal: React.FC<{ isOpen: boolean, onClose: () => void }> = ({ 
                     {physicalItems.map((item) => (
                       <div key={item.productId} className="group flex items-center justify-between p-3 bg-white/5 rounded-2xl border border-white/5 hover:border-emerald-500/30 transition-all">
                         <div className="flex items-center gap-3">
-                          <div className="w-10 h-10 bg-zinc-900 rounded-xl flex items-center justify-center border border-white/10">
+                          <div className="w-10 h-10 bg-theme-bg-field rounded-xl flex items-center justify-center border border-theme-border/60">
                             <span className="text-lg">📦</span>
                           </div>
                           <div>
@@ -139,9 +138,9 @@ export const CartModal: React.FC<{ isOpen: boolean, onClose: () => void }> = ({ 
 
         {/* Footer - Fixo no Fundo */}
         {totalItems > 0 && (
-          <div className="p-8 md:p-10 bg-black/40 border-t flex flex-col md:flex-row items-center justify-between gap-6 shrink-0" style={{ borderColor: T.border }}>
+          <div className="p-8 md:p-10 bg-theme-bg-muted/80 border-t flex flex-col md:flex-row items-center justify-between gap-6 shrink-0" style={{ borderColor: T.border }}>
             <div className="text-center md:text-left">
-              <span className="block text-[10px] font-black uppercase tracking-widest text-zinc-500 mb-1">Total da Seleção</span>
+              <span className="block text-[10px] font-black uppercase tracking-widest text-theme-text-muted mb-1">Total da Seleção</span>
               <span className="text-4xl font-black italic tracking-tighter" style={{ color: T.text }}>R$ {currentTotal.toFixed(2)}</span>
             </div>
             <button 
