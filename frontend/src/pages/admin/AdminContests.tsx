@@ -40,6 +40,26 @@ export const AdminContests: React.FC = () => {
     prize3rdPts: 250,
   });
 
+  const [dynamicType, setDynamicType] = useState('CREATE_ALBUMS');
+  const [dynamicTarget, setDynamicTarget] = useState(10);
+  const [customRule, setCustomRule] = useState('');
+
+  const getDynamicText = (desc: string) => {
+    if (!desc) return "Sem dinâmica definida";
+    try {
+      const data = JSON.parse(desc);
+      if (data.type === 'CREATE_ALBUMS') return `Criar ${data.target} Álbuns`;
+      if (data.type === 'POST_PHOTOS') return `Postar ${data.target} Fotos`;
+      if (data.type === 'INVITE_FRIENDS') return `Convidar ${data.target} Amigos`;
+      if (data.type === 'PARTICIPATE_GUEST') return `Participar de ${data.target} Eventos como Convidado`;
+      if (data.type === 'CITY_EVENT') return `Fazer Evento na Própria Cidade`;
+      if (data.type === 'CUSTOM') return `${data.customRule}`;
+      return desc;
+    } catch {
+      return desc;
+    }
+  };
+
   const fetchContests = async () => {
     setLoading(true);
     try {
@@ -59,7 +79,16 @@ export const AdminContests: React.FC = () => {
   const handleCreate = async (e: React.FormEvent) => {
     e.preventDefault();
     try {
-      await API.post("/admin/contests", formData);
+      const dynamicPayload = {
+        type: dynamicType,
+        target: dynamicTarget,
+        customRule: customRule
+      };
+      
+      await API.post("/admin/contests", {
+        ...formData,
+        description: JSON.stringify(dynamicPayload)
+      });
       setShowModal(false);
       showNotification("Concurso lançado com sucesso!");
       fetchContests();
@@ -117,8 +146,9 @@ export const AdminContests: React.FC = () => {
                     <span>DE: {new Date(c.startDate).toLocaleDateString()}</span>
                     <span>ATÉ: {new Date(c.endDate).toLocaleDateString()}</span>
                   </div>
-                  <div className="mt-2 text-[8px] text-theme-muted uppercase tracking-[0.05em]">
-                    🏆 Premiação: <span className="text-theme-text font-black">{c.prize1st} (+{c.prize1stPts} pts)</span>
+                  <div className="mt-2 text-[8px] text-theme-muted uppercase tracking-[0.05em] flex flex-col gap-1">
+                    <div>🎯 Meta / Dinâmica: <span className="text-brand-tactical font-black">{getDynamicText(c.description)}</span></div>
+                    <div>🏆 Premiação: <span className="text-theme-text font-black">{c.prize1st} (+{c.prize1stPts} pts)</span></div>
                   </div>
                 </div>
 
@@ -137,9 +167,9 @@ export const AdminContests: React.FC = () => {
       </div>
 
       {showModal && (
-        <div className="fixed inset-0 z-[100] flex items-center justify-center p-4 bg-black/95 backdrop-blur-xl">
-          <div className="w-full max-w-xl bg-theme-bg border border-theme-border p-8 relative shadow-2xl animate-in zoom-in-95 duration-300">
-            <button onClick={() => setShowModal(false)} className="absolute top-6 right-6 text-zinc-500 hover:text-white transition-colors text-2xl">×</button>
+        <div className="fixed inset-0 z-[100] flex items-center justify-center p-4 md:p-6 bg-black/95 backdrop-blur-xl animate-in fade-in duration-300">
+          <div className="w-full max-w-xl bg-theme-bg border border-brand-tactical/20 rounded-[2rem] p-8 relative shadow-2xl overflow-y-auto max-h-[90vh] custom-scrollbar">
+            <button onClick={() => setShowModal(false)} className="absolute top-6 right-6 text-zinc-500 hover:text-brand-tactical transition-colors text-2xl">×</button>
             
             <div className="mb-8">
               <h2 className="text-xl font-black text-theme-text uppercase tracking-tighter">Configurar Concurso</h2>
@@ -149,7 +179,52 @@ export const AdminContests: React.FC = () => {
             <form onSubmit={handleCreate} className="space-y-6">
               <div className="space-y-2">
                 <label className="text-[9px] font-black text-theme-muted uppercase tracking-[0.4em]">Título do Concurso</label>
-                <input required className="fs-input py-2.5" value={formData.title} onChange={e => setFormData({...formData, title: e.target.value})} />
+                <input required className="fs-input py-2.5" value={formData.title} onChange={e => setFormData({...formData, title: e.target.value})} placeholder="Ex: Corrida dos 10 Álbuns" />
+              </div>
+
+              {/* DINÂMICA / META */}
+              <div className="p-5 border border-white/5 bg-black/40 rounded-2xl space-y-4">
+                 <div className="space-y-2">
+                    <label className="text-[9px] font-black text-brand-tactical uppercase tracking-[0.4em]">Estilo da Dinâmica (Meta)</label>
+                    <select 
+                      className="fs-input py-2.5 appearance-none cursor-pointer text-[10px]"
+                      value={dynamicType}
+                      onChange={e => setDynamicType(e.target.value)}
+                    >
+                      <option value="CREATE_ALBUMS">Criar Quantidade de Álbuns</option>
+                      <option value="POST_PHOTOS">Postar Quantidade de Fotos Diárias</option>
+                      <option value="INVITE_FRIENDS">Convidar Amigos para a Rede</option>
+                      <option value="PARTICIPATE_GUEST">Participar como Convidado em Álbuns</option>
+                      <option value="CITY_EVENT">Fazer Evento na Própria Cidade</option>
+                      <option value="CUSTOM">Meta Personalizada (Texto Livre)</option>
+                    </select>
+                 </div>
+
+                 {dynamicType !== 'CITY_EVENT' && dynamicType !== 'CUSTOM' && (
+                   <div className="space-y-2">
+                      <label className="text-[9px] font-black text-theme-muted uppercase tracking-[0.4em]">Quantidade (Alvo)</label>
+                      <input 
+                        type="number" 
+                        required 
+                        className="fs-input py-2.5 text-brand-tactical text-lg font-black" 
+                        value={dynamicTarget} 
+                        onChange={e => setDynamicTarget(Number(e.target.value))} 
+                      />
+                   </div>
+                 )}
+
+                 {dynamicType === 'CUSTOM' && (
+                   <div className="space-y-2">
+                      <label className="text-[9px] font-black text-theme-muted uppercase tracking-[0.4em]">Regra da Meta</label>
+                      <textarea 
+                        required 
+                        className="fs-input py-2.5 h-20 resize-none text-[10px]" 
+                        value={customRule} 
+                        onChange={e => setCustomRule(e.target.value)} 
+                        placeholder="Ex: Fazer um álbum de aniversário com mais de 50 fotos..."
+                      />
+                   </div>
+                 )}
               </div>
 
               <div className="grid grid-cols-2 gap-6">
@@ -163,18 +238,18 @@ export const AdminContests: React.FC = () => {
                 </div>
               </div>
 
-              <div className="grid grid-cols-2 gap-6">
+              <div className="grid grid-cols-2 gap-6 pt-2 border-t border-theme-border/30">
                 <div className="space-y-2">
                     <label className="text-[9px] font-black text-theme-muted uppercase tracking-[0.4em]">Prêmio 1º Lugar</label>
                     <input className="fs-input py-2.5" value={formData.prize1st} onChange={e => setFormData({...formData, prize1st: e.target.value})} />
                 </div>
                 <div className="space-y-2">
                     <label className="text-[9px] font-black text-theme-muted uppercase tracking-[0.4em]">Pontos Bônus</label>
-                    <input type="number" className="fs-input py-2.5" value={formData.prize1stPts} onChange={e => setFormData({...formData, prize1stPts: Number(e.target.value)})} />
+                    <input type="number" className="fs-input py-2.5 text-emerald-500 font-black" value={formData.prize1stPts} onChange={e => setFormData({...formData, prize1stPts: Number(e.target.value)})} />
                 </div>
               </div>
 
-              <button className="w-full mt-4 bg-brand-tactical text-zinc-950 px-10 py-4 text-[10px] font-black uppercase tracking-[0.4em] hover:brightness-110 shadow-lg transition-all">
+              <button className="w-full mt-4 bg-brand-tactical text-zinc-950 rounded-2xl px-10 py-5 text-[10px] font-black uppercase tracking-[0.4em] hover:brightness-110 shadow-lg shadow-brand-tactical/10 transition-all">
                 LANÇAR CONCURSO
               </button>
             </form>

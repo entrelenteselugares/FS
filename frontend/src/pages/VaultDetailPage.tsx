@@ -48,7 +48,6 @@ export default function VaultDetailPage() {
   const [uploadProgress, setUploadProgress] = useState(0);
   const [checkingOut, setCheckingOut] = useState(false);
   const [doubleTapId, setDoubleTapId] = useState<string | null>(null);
-  const [subscribing, setSubscribing] = useState(false);
 
   const fetchVaultDetails = useCallback(async () => {
     try {
@@ -119,23 +118,8 @@ export default function VaultDetailPage() {
     }
   };
 
-  const handleSubscribe = async () => {
-    if (!vault) return;
-    setSubscribing(true);
-    try {
-      const res = await api.post(`/vaults/${vaultId}/subscribe`, { planLimit: 36 });
-      if (res.data.init_point) {
-        window.location.href = res.data.init_point;
-      } else {
-        alert("Erro ao iniciar assinatura.");
-      }
-    } catch (err: unknown) {
-      console.error("[Subscribe] Erro:", err);
-      const axiosError = err as { response?: { data?: { error?: string } } };
-      alert(axiosError.response?.data?.error || "Erro ao processar assinatura.");
-    } finally {
-      setSubscribing(false);
-    }
+  const handleSubscribe = () => {
+    navigate(`/clube?vaultId=${vaultId}`);
   };
 
   const handleInvite = async () => {
@@ -165,88 +149,88 @@ export default function VaultDetailPage() {
     if (!files || files.length === 0) return;
 
     setUploading(true);
-    setUploadProgress(0);
+    const fileList = Array.from(files);
+    let successCount = 0;
+    let failCount = 0;
 
-    let file = files[0];
-    
-    // Se for imagem e maior que 2MB, tenta comprimir no cliente para evitar 413 (Vercel Limit)
-    if (file.type.startsWith("image/") && file.size > 2 * 1024 * 1024) {
-      try {
-        console.log(`[Upload] Comprimindo imagem original de ${file.size} bytes...`);
-        const compressedBlob = await new Promise<Blob>((resolve, reject) => {
-          const reader = new FileReader();
-          reader.readAsDataURL(file);
-          reader.onload = (event) => {
-            const img = new Image();
-            img.src = event.target?.result as string;
-            img.onload = () => {
-              const canvas = document.createElement("canvas");
-              let width = img.width;
-              let height = img.height;
-              const MAX_SIDE = 2000;
+    for (let i = 0; i < fileList.length; i++) {
+      let file = fileList[i];
+      const progressBase = (i / fileList.length) * 100;
+      const progressStep = 100 / fileList.length;
+      
+      setUploadProgress(Math.round(progressBase));
 
-              if (width > height) {
-                if (width > MAX_SIDE) {
-                  height *= MAX_SIDE / width;
-                  width = MAX_SIDE;
+      // 1. Client-side Compression
+      if (file.type.startsWith("image/") && file.size > 1 * 1024 * 1024) {
+        try {
+          const compressedBlob = await new Promise<Blob>((resolve, reject) => {
+            const reader = new FileReader();
+            reader.readAsDataURL(file);
+            reader.onload = (event) => {
+              const img = new Image();
+              img.src = event.target?.result as string;
+              img.onload = () => {
+                const canvas = document.createElement("canvas");
+                let width = img.width;
+                let height = img.height;
+                const MAX_SIDE = 1800; // Slightly smaller for faster batch
+                if (width > height) {
+                  if (width > MAX_SIDE) { height *= MAX_SIDE / width; width = MAX_SIDE; }
+                } else {
+                  if (height > MAX_SIDE) { width *= MAX_SIDE / height; height = MAX_SIDE; }
                 }
-              } else {
-                if (height > MAX_SIDE) {
-                  width *= MAX_SIDE / height;
-                  height = MAX_SIDE;
-                }
-              }
-
-              canvas.width = width;
-              canvas.height = height;
-              const ctx = canvas.getContext("2d");
-              ctx?.drawImage(img, 0, 0, width, height);
-              canvas.toBlob((blob) => blob ? resolve(blob) : reject("Erro na compressão"), "image/jpeg", 0.8);
+                canvas.width = width; canvas.height = height;
+                const ctx = canvas.getContext("2d");
+                ctx?.drawImage(img, 0, 0, width, height);
+                canvas.toBlob((blob) => blob ? resolve(blob) : reject("Erro na compressão"), "image/jpeg", 0.75);
+              };
+              img.onerror = reject;
             };
-            img.onerror = reject;
-          };
-          reader.onerror = reject;
-        });
-        
-        file = new File([compressedBlob], file.name, { type: "image/jpeg" });
-        console.log(`[Upload] Imagem comprimida para ${file.size} bytes.`);
-      } catch (err) {
-        console.warn("[Upload] Falha na compressão client-side, tentando original:", err);
-      }
-    }
-
-    // Alerta final para limites de infraestrutura (Vercel 4.5MB)
-    if (file.size > 4.5 * 1024 * 1024) {
-      alert("A imagem ainda é muito pesada (máximo 4.5MB). Por favor, use uma imagem menor.");
-      setUploading(false);
-      return;
-    }
-
-    const formData = new FormData();
-    formData.append("file", file);
-
-    try {
-      await api.post(`/vaults/${vaultId}/upload`, formData, {
-        headers: { "Content-Type": "multipart/form-data" },
-        onUploadProgress: (progressEvent) => {
-          const percentCompleted = Math.round((progressEvent.loaded * 100) / (progressEvent.total || 1));
-          setUploadProgress(percentCompleted);
+            reader.onerror = reject;
+          });
+          file = new File([compressedBlob], file.name, { type: "image/jpeg" });
+        } catch (err) {
+          console.warn("[Upload] Compressão falhou para", file.name, err);
         }
-      });
-      fetchVaultDetails();
-    } catch (err: unknown) {
-      console.error("[Upload] Erro:", err);
-      const axiosError = err as { response?: { status?: number } };
-      const status = axiosError.response?.status;
-      if (status === 413) {
-        alert("O arquivo é muito grande para o servidor. Tente reduzir o tamanho da imagem.");
-      } else if (status === 401) {
-        alert("Sessão expirada. Por favor, faça login novamente.");
-      } else {
-        alert("Falha no upload. Verifique sua conexão ou tente novamente mais tarde.");
       }
-    } finally {
-      setUploading(false);
+
+      // 2. Size Guard (Vercel)
+      if (file.size > 4.5 * 1024 * 1024) {
+        console.warn("[Upload] Arquivo muito grande:", file.name);
+        failCount++;
+        continue;
+      }
+
+      // 3. Sequential Upload
+      const formData = new FormData();
+      formData.append("file", file);
+
+      try {
+        await api.post(`/vaults/${vaultId}/upload`, formData, {
+          headers: { "Content-Type": "multipart/form-data" },
+          onUploadProgress: (pe) => {
+            const subProgress = Math.round((pe.loaded * progressStep) / (pe.total || 1));
+            setUploadProgress(Math.round(progressBase + subProgress));
+          }
+        });
+        successCount++;
+      } catch (err: unknown) {
+        console.error("[Upload] Falha em", file.name, err);
+        failCount++;
+        const axiosError = err as { response?: { status?: number, data?: { error?: string } } };
+        if (axiosError.response?.status === 400 && axiosError.response?.data?.error?.includes("cheio")) {
+           alert("O cofre atingiu a meta! Algumas fotos não puderam ser enviadas.");
+           break; 
+        }
+      }
+    }
+
+    setUploading(false);
+    setUploadProgress(0);
+    fetchVaultDetails();
+    
+    if (failCount > 0) {
+      alert(`Upload concluído: ${successCount} enviadas, ${failCount} falhas.`);
     }
   };
 
@@ -339,9 +323,7 @@ export default function VaultDetailPage() {
             }`}>
               <Upload size={14} />
               {media.length >= vault.goalPoses ? "Meta Atingida" : "Enviar Foto"}
-              {media.length < vault.goalPoses && (
-                <input type="file" className="hidden" onChange={handleFileUpload} accept="image/*" />
-              )}
+                <input type="file" className="hidden" onChange={handleFileUpload} accept="image/*" multiple />
             </label>
           </div>
         </div>
@@ -364,10 +346,9 @@ export default function VaultDetailPage() {
                 </div>
                 <button 
                   onClick={handleSubscribe}
-                  disabled={subscribing}
-                  className="w-full md:w-auto bg-emerald-500 hover:bg-emerald-400 text-black font-black uppercase tracking-widest text-[11px] px-8 py-3.5 rounded-full transition-all shadow-xl shadow-emerald-500/20 active:scale-95 disabled:opacity-50"
+                  className="w-full md:w-auto bg-emerald-500 hover:bg-emerald-400 text-black font-black uppercase tracking-widest text-[11px] px-8 py-3.5 rounded-full transition-all shadow-xl shadow-emerald-500/20 active:scale-95"
                 >
-                  {subscribing ? <Loader2 className="animate-spin" size={16} /> : "Ativar Assinatura"}
+                  Ativar Assinatura
                 </button>
               </div>
             </div>
@@ -463,27 +444,28 @@ export default function VaultDetailPage() {
                     )}
                   </AnimatePresence>
                   
-                  {/* Overlay on hover (or active on mobile) */}
-                  <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity p-2 flex flex-col justify-end">
-                    <div className="flex items-center justify-between">
-                      <div className="flex flex-col">
-                        <span className="text-[8px] font-black uppercase text-white/50 tracking-tighter truncate">
-                          {item.uploadedBy.nome}
-                        </span>
-                        <button 
-                          onClick={(evt) => { evt.stopPropagation(); handleVote(item.id); }}
-                          className={`flex items-center gap-1 transition-colors ${ item.votedByMe ? 'text-pink-500' : 'text-emerald-500'}`}
-                        >
-                          <Heart size={12} fill={item.votedByMe ? "currentColor" : "none"} />
-                          <span className="text-[10px] font-black">{item._count.votes}</span>
-                        </button>
-                      </div>
-                      <div className="flex gap-1">
-                        <button className="p-1.5 bg-white/10 rounded-md hover:bg-emerald-500 hover:text-black transition-all">
-                          <Printer size={12} />
-                        </button>
-                      </div>
+                  {/* Bottom Action Bar (Permanent on mobile, hover on desktop) */}
+                  <div className="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-black/90 to-transparent p-2 flex items-center justify-between transition-opacity">
+                    <div className="flex items-center gap-2">
+                      <button 
+                        onClick={(evt) => { evt.stopPropagation(); handleVote(item.id); }}
+                        className={`flex items-center gap-1.5 transition-all active:scale-125 ${ item.votedByMe ? 'text-brand-tactical' : 'text-white/60'}`}
+                      >
+                        <Heart size={14} fill={item.votedByMe ? "currentColor" : "none"} />
+                        <span className="text-[10px] font-black">{item._count.votes}</span>
+                      </button>
                     </div>
+                    
+                    <button 
+                      onClick={(evt) => { 
+                        evt.stopPropagation();
+                        // Shortcut: if physical items are allowed, maybe add to cart?
+                        // For now, let's just make it a visual indicator or a direct print action
+                      }}
+                      className="p-1.5 bg-white/10 rounded-md text-white/60 hover:bg-brand-tactical hover:text-black transition-all"
+                    >
+                      <Printer size={12} />
+                    </button>
                   </div>
                 </motion.div>
               ))}
@@ -524,7 +506,7 @@ export default function VaultDetailPage() {
           <label className="flex flex-col items-center gap-1 text-zinc-400 hover:text-emerald-500 transition-colors cursor-pointer">
             <Upload size={20} />
             <span className="text-[9px] font-black uppercase tracking-widest">Enviar</span>
-            <input type="file" className="hidden" onChange={handleFileUpload} accept="image/*" />
+            <input type="file" className="hidden" onChange={handleFileUpload} accept="image/*" multiple />
           </label>
         </div>
       </div>

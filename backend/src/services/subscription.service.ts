@@ -45,27 +45,43 @@ export class SubscriptionService {
       }
     });
 
-    // 4. Cria preferência de recorrência (preapproval) no Mercado Pago
-    const backendUrl = process.env.BACKEND_URL || "http://localhost:3001";
-    
-    // NOTA: Para APIs reais de preapproval do MP seria necessário um payload diferente
-    // Aqui estamos simulando a criação de uma assinatura via preference para a Fase 11
-    const mpResponse = await MercadoPagoService.createPreference({
-      transaction_amount: price,
-      description: `Assinatura Cofre de Memórias: ${album.nome}`,
-      payer_email: album.owner.email,
-      notification_url: `${backendUrl}/api/webhooks/mercadopago`,
-      orderId: subscription.id // vinculando ID da assinatura em vez do Order
+    // 4. Garantir Evento de Sistema para cobranças de Cofre
+    let systemEvent = await prisma.event.findFirst({
+      where: { slug: "vaults-system" }
     });
 
-    await prisma.subscription.update({
-      where: { id: subscription.id },
-      data: { gatewaySubId: String(mpResponse.id) }
+    if (!systemEvent) {
+      systemEvent = await prisma.event.create({
+        data: {
+          slug: "vaults-system",
+          nomeNoivos: "System: Vaults Orders",
+          active: true,
+          dataEvento: new Date(),
+          ownerId: userId
+        }
+      });
+    }
+
+    // 5. Criar um Pedido (Order) vinculado a esta assinatura para usar o checkout transparente
+    const order = await prisma.order.create({
+      data: {
+        valor: price,
+        status: "PENDENTE",
+        eventId: systemEvent.id,
+        clienteId: userId,
+        buyerEmail: album.owner.email,
+        deliveryType: "SHIPPING",
+        fulfillmentStatus: "PENDING",
+        isManual: true,
+        manualType: "VAULT_CYCLE",
+        internalNotes: `Assinatura do cofre: ${album.nome} | SubId: ${subscription.id}`,
+      }
     });
 
     return {
       subscriptionId: subscription.id,
-      init_point: mpResponse.init_point
+      orderId: order.id,
+      amount: price
     };
   }
 

@@ -71,6 +71,8 @@ export class VaultCycleService {
         paymentModel: "PRE_PAID",
         deliveryType: "SHIPPING",
         fulfillmentStatus: "PENDING",
+        isManual: true,
+        manualType: "VAULT_CYCLE",
         internalNotes: JSON.stringify({
           type: "VAULT_CYCLE_CLOSURE",
           albumId,

@@ -488,10 +488,10 @@ export const AdminEvents: React.FC<AdminEventsProps> = ({ initialEditEventId }) 
       </div>
 
       {isModalOpen && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/95 backdrop-blur-xl overflow-hidden">
-          <div className="w-full max-w-5xl bg-theme-bg border border-theme-border relative shadow-2xl flex flex-col h-[85vh] max-h-[800px] min-h-[600px]">
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/95 backdrop-blur-xl overflow-hidden animate-in fade-in duration-300">
+          <div className="w-full max-w-5xl bg-theme-bg border border-brand-tactical/20 rounded-[2rem] relative shadow-2xl flex flex-col h-[85vh] max-h-[800px] min-h-[600px] overflow-hidden">
               
-              <div className="p-8 pb-0 shrink-0">
+              <div className="p-8 pb-0 shrink-0 bg-brand-tactical/5">
                 <button onClick={() => setIsModalOpen(false)} className="absolute top-6 right-6 text-zinc-500 hover:text-white transition-colors">
                   <X size={20} />
                 </button>

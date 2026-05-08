@@ -627,6 +627,7 @@ model FranchiseProfile {
   userId                  String              @unique
   printCredits            Int                 @default(0)
   active                  Boolean             @default(true)
+  baseCep                 String?             // Para roteamento logístico por proximidade
   createdAt               DateTime            @default(now())
   updatedAt               DateTime            @updatedAt
   inventoryAlertThreshold Int                 @default(50)

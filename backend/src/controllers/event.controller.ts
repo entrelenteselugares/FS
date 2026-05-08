@@ -267,7 +267,7 @@ export class EventController {
    */
   static async listPublic(req: AuthRequest, res: Response) {
     try {
-      const { q, page = "1", type, city } = req.query;
+      const { q, page = "1", type, city, sortBy } = req.query;
       const query = q as string;
       const take = 20;
       const skip = (Number(page) - 1) * take;
@@ -295,12 +295,19 @@ export class EventController {
         ];
       }
 
+      let orderBy: any = { dataEvento: 'desc' };
+      if (sortBy === 'AZ') orderBy = { nomeNoivos: 'asc' };
+      if (sortBy === 'ZA') orderBy = { nomeNoivos: 'desc' };
+      if (sortBy === 'PRICE_ASC') orderBy = { priceBase: 'asc' };
+      if (sortBy === 'PRICE_DESC') orderBy = { priceBase: 'desc' };
+      if (sortBy === 'OLD') orderBy = { dataEvento: 'asc' };
+
       const [events, total] = await Promise.all([
         prisma.event.findMany({
           where,
           take,
           skip,
-          orderBy: { dataEvento: 'desc' },
+          orderBy,
           select: {
             id: true,
             slug: true,

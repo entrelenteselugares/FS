@@ -147,17 +147,19 @@ export const HomePage = () => {
   const [totalPages, setTotal]  = useState(1);
   const [selectedType, setSelectedType] = useState(() => sessionStorage.getItem('hp_type') || "");
   const [selectedCity, setSelectedCity] = useState(() => sessionStorage.getItem('hp_city') || "");
+  const [sortBy, setSortBy]             = useState(() => sessionStorage.getItem('hp_sort') || "");
 
   useEffect(() => {
     sessionStorage.setItem('hp_q', query);
     sessionStorage.setItem('hp_page', page.toString());
     sessionStorage.setItem('hp_type', selectedType);
     sessionStorage.setItem('hp_city', selectedCity);
-  }, [query, page, selectedType, selectedCity]);
+    sessionStorage.setItem('hp_sort', sortBy);
+  }, [query, page, selectedType, selectedCity, sortBy]);
 
   const isFirstMount = useRef(true);
 
-  const fetchEvents = useCallback(async (q: string, pg: number, type?: string, city?: string) => {
+  const fetchEvents = useCallback(async (q: string, pg: number, type?: string, city?: string, sort?: string) => {
     setLoading(true);
     try {
       const { data } = await API.get("/public/events", { 
@@ -165,7 +167,8 @@ export const HomePage = () => {
           q: q.trim() || undefined, 
           page: pg,
           type: type || undefined,
-          city: city || undefined
+          city: city || undefined,
+          sortBy: sort || undefined
         } 
       });
       setEvents(data.events ?? []);
@@ -176,10 +179,10 @@ export const HomePage = () => {
 
   useEffect(() => {
     const handler = setTimeout(() => {
-      fetchEvents(query, page, selectedType, selectedCity);
+      fetchEvents(query, page, selectedType, selectedCity, sortBy);
     }, 300);
     return () => clearTimeout(handler);
-  }, [query, page, selectedType, selectedCity, fetchEvents]);
+  }, [query, page, selectedType, selectedCity, sortBy, fetchEvents]);
 
   // Reset page when filters change (skip initial mount)
   useEffect(() => {
@@ -188,7 +191,7 @@ export const HomePage = () => {
       return;
     }
     setPage(1);
-  }, [query, selectedType, selectedCity]);
+  }, [query, selectedType, selectedCity, sortBy]);
 
   return (
     <div style={{ background: "var(--bg)", color: "var(--text)", minHeight: "100vh", fontFamily: T.fontB }}>
@@ -383,11 +386,16 @@ export const HomePage = () => {
               </div>
               <div className="relative">
                 <select 
-                  className="w-full bg-[#1a1a1a] border border-[#2a2a2a] text-white px-1 py-2.5 rounded-xl text-[8px] font-black uppercase tracking-wider outline-none appearance-none text-center opacity-60"
+                  value={sortBy}
+                  onChange={e => { setSortBy(e.target.value); setPage(1); }}
+                  className="w-full bg-[var(--bg-field)] border border-[var(--border)] text-[var(--text)] px-1 py-2.5 rounded-xl text-[8px] font-black uppercase tracking-wider outline-none appearance-none text-center"
                 >
-                  <option value="">Distância</option>
-                  <option value="km">Até 10km</option>
-                  <option value="km2">Até 50km</option>
+                  <option value="">Data (Recentes)</option>
+                  <option value="OLD">Data (Antigos)</option>
+                  <option value="AZ">A-Z (Crescente)</option>
+                  <option value="ZA">Z-A (Decrescente)</option>
+                  <option value="PRICE_ASC">Preço (Menor)</option>
+                  <option value="PRICE_DESC">Preço (Maior)</option>
                 </select>
               </div>
             </div>
@@ -439,6 +447,19 @@ export const HomePage = () => {
                   <option value="PHOTO_MARKETPLACE" className="bg-theme-bg text-theme-text">Live Print</option>
                   <option value="FOTO_POINT" className="bg-theme-bg text-theme-text">Foto Point</option>
                   <option value="FLASH_EVENT" className="bg-theme-bg text-theme-text">Flash Event / Venda Direta</option>
+                </select>
+
+                <select 
+                  value={sortBy}
+                  onChange={e => { setSortBy(e.target.value); setPage(1); }}
+                  className="bg-theme-bg-muted border border-theme-border/40 px-4 py-4 text-[9px] font-black uppercase tracking-widest text-theme-text/40 focus:text-theme-text outline-none cursor-pointer hover:bg-theme-bg-muted/80 transition-colors italic appearance-none"
+                >
+                  <option value="">Data (Recentes)</option>
+                  <option value="OLD" className="bg-theme-bg text-theme-text">Data (Antigos)</option>
+                  <option value="AZ" className="bg-theme-bg text-theme-text">Nome (A-Z)</option>
+                  <option value="ZA" className="bg-theme-bg text-theme-text">Nome (Z-A)</option>
+                  <option value="PRICE_ASC" className="bg-theme-bg text-theme-text">Preço (Menor)</option>
+                  <option value="PRICE_DESC" className="bg-theme-bg text-theme-text">Preço (Maior)</option>
                 </select>
               </div>
             </div>

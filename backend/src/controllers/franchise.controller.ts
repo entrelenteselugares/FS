@@ -45,18 +45,40 @@ export class FranchiseController {
    */
   static async promote(req: Request, res: Response) {
     try {
-      const { userId } = req.body;
+      const { userId, baseCep } = req.body;
 
       // Só cria/ativa o FranchiseProfile, sem tocar no role
       const profile = await prisma.franchiseProfile.upsert({
         where: { userId },
-        create: { userId, printCredits: 0, active: true },
-        update: { active: true }
+        create: { userId, printCredits: 0, active: true, baseCep },
+        update: { active: true, baseCep }
       });
 
       res.json({ success: true, profile });
     } catch (error) {
       res.status(500).json({ error: "Erro ao ativar franquia." });
+    }
+  }
+
+  /**
+   * Atualiza as configurações do perfil de franquia (Ex: CEP Base)
+   */
+  static async updateProfile(req: AuthRequest, res: Response) {
+    try {
+      const { baseCep, inventoryAlertThreshold } = req.body;
+      const userId = req.user!.userId;
+
+      const profile = await prisma.franchiseProfile.update({
+        where: { userId },
+        data: { 
+          baseCep, 
+          inventoryAlertThreshold: inventoryAlertThreshold ? Number(inventoryAlertThreshold) : undefined 
+        }
+      });
+
+      res.json({ success: true, profile });
+    } catch (error) {
+      res.status(500).json({ error: "Erro ao atualizar perfil de franquia." });
     }
   }
 

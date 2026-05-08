@@ -1,4 +1,4 @@
-﻿import React, { useState, useEffect, useCallback, useMemo } from "react";
+import React, { useState, useEffect, useCallback, useMemo } from "react";
 import { 
   Plus, 
   Trash2, 
@@ -32,6 +32,10 @@ const CATEGORY_ICONS: Record<string, React.ElementType> = {
   FOTOGRAFIA: Camera,
   VIDEO: Video,
   EXTRAS: Zap,
+  EDICAO: Edit3,
+  POS_EDICAO: Layers,
+  PRE_EVENTO: Camera,
+  LOCACAO: Briefcase,
   DEFAULT: Briefcase
 };
 
@@ -183,6 +187,10 @@ export const AdminServices: React.FC = () => {
             <option value="">TODAS AS CATEGORIAS</option>
             <option value="FOTOGRAFIA">FOTOGRAFIA</option>
             <option value="VIDEO">VÍDEO</option>
+            <option value="EDICAO">EDIÇÃO</option>
+            <option value="POS_EDICAO">PÓS-EDIÇÃO</option>
+            <option value="PRE_EVENTO">PRÉ-EVENTO</option>
+            <option value="LOCACAO">LOCAÇÃO</option>
             <option value="EXTRAS">EXTRAS / ADICIONAIS</option>
          </select>
       </div>
@@ -337,6 +345,10 @@ function ServiceModal({ onClose, onSave, initialData, saving }: { onClose: () =>
                       <select className={inputClass} value={form.category} onChange={e => setForm({...form, category: e.target.value})}>
                          <option value="FOTOGRAFIA">FOTOGRAFIA</option>
                          <option value="VIDEO">VÍDEO</option>
+                         <option value="EDICAO">EDIÇÃO</option>
+                         <option value="POS_EDICAO">PÓS-EDIÇÃO</option>
+                         <option value="PRE_EVENTO">PRÉ-EVENTO</option>
+                         <option value="LOCACAO">LOCAÇÃO</option>
                          <option value="EXTRAS">EXTRAS / ADICIONAIS</option>
                       </select>
                    </div>

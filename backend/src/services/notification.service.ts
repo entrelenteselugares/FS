@@ -521,4 +521,95 @@ export class NotificationService {
       this.sendWhatsAppToClient(data.whatsapp, msg);
     }
   }
+
+  /**
+   * Notifica um franqueado sobre um novo pedido de impressão (Cofre)
+   */
+  static async sendVaultOrderToFranchisee(data: {
+    franchiseeEmail: string;
+    franchiseePhone: string;
+    franchiseeName: string;
+    orderId: string;
+    customerName: string;
+    driveLink: string;
+  }) {
+    const message = `🖨️ *NOVO PEDIDO DE IMPRESSÃO — Foto Segundo*\n\n` +
+      `Olá, *${data.franchiseeName}*! Você recebeu um novo pedido de materialização (Cofre).\n\n` +
+      `👤 Cliente: ${data.customerName}\n` +
+      `🆔 Pedido: ${data.orderId.slice(-8).toUpperCase()}\n\n` +
+      `📸 *LINK PARA IMPRESSÃO (DRIVE):*\n${data.driveLink}\n\n` +
+      `Por favor, processe o envio e atualize o status no painel.`;
+
+    this.sendWhatsAppToClient(data.franchiseePhone, message);
+
+    // E-mail para o Franqueado
+    if (process.env.SMTP_USER && process.env.SMTP_PASS) {
+      const htmlContent = `
+        <div style="font-family: sans-serif; max-width: 600px; margin: 0 auto; padding: 20px; color: #000;">
+          <h1 style="font-size: 20px; color: #111;">Novo Pedido de Impressão (Cofre) 🖨️</h1>
+          <p>Olá, <strong>${data.franchiseeName}</strong>,</p>
+          <p>Um novo pedido de materialização foi roteado para você devido à sua proximidade com o cliente.</p>
+          <div style="background: #f9f9f9; padding: 20px; border-radius: 8px; margin: 20px 0;">
+            <p><strong>Pedido:</strong> ${data.orderId}</p>
+            <p><strong>Cliente:</strong> ${data.customerName}</p>
+            <p><strong>Fotos para Impressão:</strong> Até 36 fotos</p>
+          </div>
+          <p style="text-align: center; margin: 30px 0;">
+            <a href="${data.driveLink}" style="background: #000; color: #fff; padding: 15px 30px; text-decoration: none; border-radius: 5px; font-weight: bold; display: inline-block;">
+              ACESSAR FOTOS NO DRIVE
+            </a>
+          </p>
+          <hr style="border: 0.5px solid #eee;" />
+          <p style="font-size: 10px; color: #999; text-align: center;">Foto Segundo — Unidade de Produção Tática</p>
+        </div>
+      `;
+
+      try {
+        await this.transporter.sendMail({
+          from: `"Foto Segundo" <${process.env.SMTP_USER}>`,
+          to: data.franchiseeEmail,
+          subject: `NOVO PEDIDO DE IMPRESSÃO: ${data.customerName} 🖨️`,
+          html: htmlContent,
+        });
+      } catch (e) { console.error("[Notification] Erro e-mail franqueado:", e); }
+    }
+  }
+
+  /**
+   * Notifica a Matriz sobre um novo pedido de impressão (Cofre)
+   */
+  static async sendVaultOrderToMatrix(data: {
+    orderId: string;
+    customerName: string;
+    driveLink: string;
+  }) {
+    const message = `🏢 *NOVO PEDIDO (MATRIZ) — Foto Segundo*\n\n` +
+      `Nenhum franqueado próximo encontrado. Pedido roteado para a Matriz.\n\n` +
+      `👤 Cliente: ${data.customerName}\n` +
+      `🆔 Pedido: ${data.orderId.slice(-8).toUpperCase()}\n\n` +
+      `📸 *LINK PARA IMPRESSÃO (DRIVE):*\n${data.driveLink}`;
+
+    sendWhatsApp(message); // Notificação interna para o admin/matriz
+
+    // E-mail para a Matriz
+    if (process.env.SMTP_USER && process.env.SMTP_PASS) {
+      const htmlContent = `
+        <div style="font-family: sans-serif; max-width: 600px; margin: 0 auto; padding: 20px; color: #000;">
+          <h1 style="font-size: 20px; color: #111;">Novo Pedido Matriz (Cofre) 🏢</h1>
+          <p>O pedido <strong>${data.orderId}</strong> do cliente <strong>${data.customerName}</strong> foi roteado para a Matriz.</p>
+          <p>Acesse o Drive para realizar a impressão:</p>
+          <p><a href="${data.driveLink}">${data.driveLink}</a></p>
+        </div>
+      `;
+
+      try {
+        await this.transporter.sendMail({
+          from: `"Foto Segundo" <${process.env.SMTP_USER}>`,
+          to: process.env.ADMIN_EMAIL || "contato@fotosegundo.com.br",
+          subject: `NOVO PEDIDO MATRIZ: ${data.customerName} 🏢`,
+          html: htmlContent,
+        });
+      } catch (e) { console.error("[Notification] Erro e-mail matriz:", e); }
+    }
+  }
 }

@@ -77,10 +77,14 @@ export class PricingService {
     paymentMethod?: string, 
     hasEditor?: boolean, 
     productType?: string,
-    professionalId?: string,
+    shippingMethod?: string,
     shippingFee?: number,
     supplierCost?: number
   }): Promise<SplitResult> {
+    if (isNaN(amount) || amount === null) {
+      console.warn("[PricingService] amount is NaN or null, returning default zero splits");
+      return { matriz: 0, captacao: 0, edicao: 0, cartorio: 0, franchisee: 0 };
+    }
     const keys = ["split_matriz", "split_captacao", "split_edicao", "split_cartorio", "split_franchisee"];
     const configs = await prisma.platformConfig.findMany({
       where: { key: { in: keys } },

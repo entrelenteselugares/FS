@@ -253,7 +253,6 @@ export default function ClienteArea() {
   }, [pedidos]);
 
   const aprovados = groupedEvents.filter(g => g.hasAprovado);
-  const pendentes = groupedEvents.filter(g => g.hasPendente && !g.hasAprovado);
 
   return (
     <DashboardLayout title="Minha Conta" navItems={NAV_ITEMS}>
@@ -308,9 +307,9 @@ export default function ClienteArea() {
         {!loading && pedidos.length > 0 && (
           <div className="grid grid-cols-1 md:grid-cols-4 gap-4 md:gap-6 animate-in fade-in slide-in-from-top-4 duration-1000 delay-300">
             {[
-              { label: "Total Adquiridos", value: groupedEvents.length, icon: <Image size={16} /> },
+              { label: "Total Adquiridos", value: pedidos.filter(p => p.hasPaid).length, icon: <Image size={16} /> },
               { label: "Acesso Ativo", value: aprovados.length, icon: <CheckCircle2 size={16} />, highlight: true },
-              { label: "Aguardando", value: pendentes.length, icon: <Clock size={16} /> },
+              { label: "Aguardando", value: pedidos.filter(p => !p.hasPaid).length, icon: <Clock size={16} /> },
               { label: "Créditos Reward", value: formatCurrency(user?.rewardCredits || 0), icon: <ShoppingBag size={16} />, isCash: true },
             ].map((m, idx) => (
               <div 

@@ -10,6 +10,8 @@ Este documento resume as atualizações críticas, correções de segurança e n
 - **Roteamento de Checkout Interno**: Correção na página de Cofre (`VaultDetailPage`) para que a ação de "Materializar" redirecione para a página de checkout padrão do sistema (`/checkout?orderId=...`), em vez de enviar o usuário diretamente para o gateway externo do Mercado Pago.
 - **Armazenamento Estável no Google Drive**: Confirmado e validado em produção. A integração híbrida com o Google Drive para as imagens do cofre está **operando perfeitamente**. Otimização de performance concluída (Readable Streams + `thumbnailLink` nativo), garantindo uploads rápidos e carregamento instantâneo no mobile. Permissões de Service Account configuradas e testadas com sucesso.
 - **Implementação de Monitoramento (Sentry)**: Instalado e configurado o SDK do Sentry no Backend (Express) e Frontend (Vite/React). Agora, falhas de API, timeouts de banco de dados e erros de renderização em produção serão capturados automaticamente com stack traces completos.
+- **Master Seed E2E & Robôs de Teste**: Criado o script `seed-e2e-master.ts` que centraliza todos os usuários e cenários necessários para validação automatizada. O "robô" de testes (Playwright) foi disparado para rodar a suíte completa de 49 testes, garantindo a integridade dos fluxos de Pix, Ponto Fixo e Marketplace.
+- **Validação de Fluxo Financeiro (Pix)**: Teste `pix-generation` validado com sucesso (100% pass), confirmando que a integração entre Frontend, Backend e Mercado Pago para geração de QR Codes está operacional e resiliente.
 
 ## 🚀 07/05/2026 — Estabilização Final & UI Premium
 

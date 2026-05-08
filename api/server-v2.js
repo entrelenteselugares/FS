@@ -982,7 +982,7 @@ var require_node = __commonJS({
   "backend/node_modules/debug/src/node.js"(exports2, module2) {
     var tty = require("tty");
     var util3 = require("util");
-    exports2.init = init2;
+    exports2.init = init3;
     exports2.log = log;
     exports2.formatArgs = formatArgs;
     exports2.save = save;
@@ -1131,7 +1131,7 @@ var require_node = __commonJS({
     function load() {
       return process.env.DEBUG;
     }
-    function init2(debug3) {
+    function init3(debug3) {
       debug3.inspectOpts = {};
       const keys = Object.keys(exports2.inspectOpts);
       for (let i = 0; i < keys.length; i++) {
@@ -21373,7 +21373,7 @@ var require_application = __commonJS({
     var flatten = Array.prototype.flat;
     var app2 = exports2 = module2.exports = {};
     var trustProxyDefaultSymbol = "@@symbol:trust_proxy_default";
-    app2.init = function init2() {
+    app2.init = function init3() {
       var router5 = null;
       this.cache = /* @__PURE__ */ Object.create(null);
       this.engines = /* @__PURE__ */ Object.create(null);
@@ -26660,7 +26660,7 @@ var require_textParsers = __commonJS({
       result.radius = parseFloat(radius);
       return result;
     };
-    var init2 = function(register) {
+    var init3 = function(register) {
       register(20, parseBigInteger);
       register(21, parseInteger);
       register(23, parseInteger);
@@ -26707,7 +26707,7 @@ var require_textParsers = __commonJS({
       register(1270, parseStringArray);
     };
     module2.exports = {
-      init: init2
+      init: init3
     };
   }
 });
@@ -26968,7 +26968,7 @@ var require_binaryParsers = __commonJS({
       if (value === null) return null;
       return parseBits(value, 8) > 0;
     };
-    var init2 = function(register) {
+    var init3 = function(register) {
       register(20, parseInt64);
       register(21, parseInt16);
       register(23, parseInt32);
@@ -26987,7 +26987,7 @@ var require_binaryParsers = __commonJS({
       register(25, parseText);
     };
     module2.exports = {
-      init: init2
+      init: init3
     };
   }
 });
@@ -33692,7 +33692,7 @@ var require_lib7 = __commonJS({
     var whatwgUrl = _interopDefault(require_public_api());
     var https3 = _interopDefault(require("https"));
     var zlib2 = _interopDefault(require("zlib"));
-    var Readable2 = Stream.Readable;
+    var Readable3 = Stream.Readable;
     var BUFFER = Symbol("buffer");
     var TYPE = Symbol("type");
     var Blob2 = class _Blob {
@@ -33744,7 +33744,7 @@ var require_lib7 = __commonJS({
         return Promise.resolve(ab);
       }
       stream() {
-        const readable = new Readable2();
+        const readable = new Readable3();
         readable._read = function() {
         };
         readable.push(this[BUFFER]);
@@ -34158,10 +34158,10 @@ var require_lib7 = __commonJS({
        * @return  Void
        */
       constructor() {
-        let init2 = arguments.length > 0 && arguments[0] !== void 0 ? arguments[0] : void 0;
+        let init3 = arguments.length > 0 && arguments[0] !== void 0 ? arguments[0] : void 0;
         this[MAP] = /* @__PURE__ */ Object.create(null);
-        if (init2 instanceof _Headers) {
-          const rawHeaders = init2.raw();
+        if (init3 instanceof _Headers) {
+          const rawHeaders = init3.raw();
           const headerNames = Object.keys(rawHeaders);
           for (const headerName of headerNames) {
             for (const value of rawHeaders[headerName]) {
@@ -34170,15 +34170,15 @@ var require_lib7 = __commonJS({
           }
           return;
         }
-        if (init2 == null) ;
-        else if (typeof init2 === "object") {
-          const method = init2[Symbol.iterator];
+        if (init3 == null) ;
+        else if (typeof init3 === "object") {
+          const method = init3[Symbol.iterator];
           if (method != null) {
             if (typeof method !== "function") {
               throw new TypeError("Header pairs must be iterable");
             }
             const pairs = [];
-            for (const pair of init2) {
+            for (const pair of init3) {
               if (typeof pair !== "object" || typeof pair[Symbol.iterator] !== "function") {
                 throw new TypeError("Each header pair must be iterable");
               }
@@ -34191,8 +34191,8 @@ var require_lib7 = __commonJS({
               this.append(pair[0], pair[1]);
             }
           } else {
-            for (const key of Object.keys(init2)) {
-              const value = init2[key];
+            for (const key of Object.keys(init3)) {
+              const value = init3[key];
               this.append(key, value);
             }
           }
@@ -34522,7 +34522,7 @@ var require_lib7 = __commonJS({
     }
     var Request3 = class _Request {
       constructor(input) {
-        let init2 = arguments.length > 1 && arguments[1] !== void 0 ? arguments[1] : {};
+        let init3 = arguments.length > 1 && arguments[1] !== void 0 ? arguments[1] : {};
         let parsedURL;
         if (!isRequest2(input)) {
           if (input && input.href) {
@@ -34534,17 +34534,17 @@ var require_lib7 = __commonJS({
         } else {
           parsedURL = parseURL(input.url);
         }
-        let method = init2.method || input.method || "GET";
+        let method = init3.method || input.method || "GET";
         method = method.toUpperCase();
-        if ((init2.body != null || isRequest2(input) && input.body !== null) && (method === "GET" || method === "HEAD")) {
+        if ((init3.body != null || isRequest2(input) && input.body !== null) && (method === "GET" || method === "HEAD")) {
           throw new TypeError("Request with GET/HEAD method cannot have body");
         }
-        let inputBody = init2.body != null ? init2.body : isRequest2(input) && input.body !== null ? clone(input) : null;
+        let inputBody = init3.body != null ? init3.body : isRequest2(input) && input.body !== null ? clone(input) : null;
         Body.call(this, inputBody, {
-          timeout: init2.timeout || input.timeout || 0,
-          size: init2.size || input.size || 0
+          timeout: init3.timeout || input.timeout || 0,
+          size: init3.size || input.size || 0
         });
-        const headers = new Headers2(init2.headers || input.headers || {});
+        const headers = new Headers2(init3.headers || input.headers || {});
         if (inputBody != null && !headers.has("Content-Type")) {
           const contentType = extractContentType(inputBody);
           if (contentType) {
@@ -34552,21 +34552,21 @@ var require_lib7 = __commonJS({
           }
         }
         let signal = isRequest2(input) ? input.signal : null;
-        if ("signal" in init2) signal = init2.signal;
+        if ("signal" in init3) signal = init3.signal;
         if (signal != null && !isAbortSignal(signal)) {
           throw new TypeError("Expected signal to be an instanceof AbortSignal");
         }
         this[INTERNALS$2] = {
           method,
-          redirect: init2.redirect || input.redirect || "follow",
+          redirect: init3.redirect || input.redirect || "follow",
           headers,
           parsedURL,
           signal
         };
-        this.follow = init2.follow !== void 0 ? init2.follow : input.follow !== void 0 ? input.follow : 20;
-        this.compress = init2.compress !== void 0 ? init2.compress : input.compress !== void 0 ? input.compress : true;
-        this.counter = init2.counter || input.counter || 0;
-        this.agent = init2.agent || input.agent;
+        this.follow = init3.follow !== void 0 ? init3.follow : input.follow !== void 0 ? input.follow : 20;
+        this.compress = init3.compress !== void 0 ? init3.compress : input.compress !== void 0 ? input.compress : true;
+        this.counter = init3.counter || input.counter || 0;
+        this.agent = init3.agent || input.agent;
       }
       get method() {
         return this[INTERNALS$2].method;
@@ -65131,6 +65131,89 @@ Fique atento aos novos chamados de delegacia de eventos e edi\xE7\xF5es! \u{1F4F
       this.sendWhatsAppToClient(data.whatsapp, msg);
     }
   }
+  /**
+   * Notifica um franqueado sobre um novo pedido de impressão (Cofre)
+   */
+  static async sendVaultOrderToFranchisee(data) {
+    const message = `\u{1F5A8}\uFE0F *NOVO PEDIDO DE IMPRESS\xC3O \u2014 Foto Segundo*
+
+Ol\xE1, *${data.franchiseeName}*! Voc\xEA recebeu um novo pedido de materializa\xE7\xE3o (Cofre).
+
+\u{1F464} Cliente: ${data.customerName}
+\u{1F194} Pedido: ${data.orderId.slice(-8).toUpperCase()}
+
+\u{1F4F8} *LINK PARA IMPRESS\xC3O (DRIVE):*
+${data.driveLink}
+
+Por favor, processe o envio e atualize o status no painel.`;
+    this.sendWhatsAppToClient(data.franchiseePhone, message);
+    if (process.env.SMTP_USER && process.env.SMTP_PASS) {
+      const htmlContent = `
+        <div style="font-family: sans-serif; max-width: 600px; margin: 0 auto; padding: 20px; color: #000;">
+          <h1 style="font-size: 20px; color: #111;">Novo Pedido de Impress\xE3o (Cofre) \u{1F5A8}\uFE0F</h1>
+          <p>Ol\xE1, <strong>${data.franchiseeName}</strong>,</p>
+          <p>Um novo pedido de materializa\xE7\xE3o foi roteado para voc\xEA devido \xE0 sua proximidade com o cliente.</p>
+          <div style="background: #f9f9f9; padding: 20px; border-radius: 8px; margin: 20px 0;">
+            <p><strong>Pedido:</strong> ${data.orderId}</p>
+            <p><strong>Cliente:</strong> ${data.customerName}</p>
+            <p><strong>Fotos para Impress\xE3o:</strong> At\xE9 36 fotos</p>
+          </div>
+          <p style="text-align: center; margin: 30px 0;">
+            <a href="${data.driveLink}" style="background: #000; color: #fff; padding: 15px 30px; text-decoration: none; border-radius: 5px; font-weight: bold; display: inline-block;">
+              ACESSAR FOTOS NO DRIVE
+            </a>
+          </p>
+          <hr style="border: 0.5px solid #eee;" />
+          <p style="font-size: 10px; color: #999; text-align: center;">Foto Segundo \u2014 Unidade de Produ\xE7\xE3o T\xE1tica</p>
+        </div>
+      `;
+      try {
+        await this.transporter.sendMail({
+          from: `"Foto Segundo" <${process.env.SMTP_USER}>`,
+          to: data.franchiseeEmail,
+          subject: `NOVO PEDIDO DE IMPRESS\xC3O: ${data.customerName} \u{1F5A8}\uFE0F`,
+          html: htmlContent
+        });
+      } catch (e) {
+        console.error("[Notification] Erro e-mail franqueado:", e);
+      }
+    }
+  }
+  /**
+   * Notifica a Matriz sobre um novo pedido de impressão (Cofre)
+   */
+  static async sendVaultOrderToMatrix(data) {
+    const message = `\u{1F3E2} *NOVO PEDIDO (MATRIZ) \u2014 Foto Segundo*
+
+Nenhum franqueado pr\xF3ximo encontrado. Pedido roteado para a Matriz.
+
+\u{1F464} Cliente: ${data.customerName}
+\u{1F194} Pedido: ${data.orderId.slice(-8).toUpperCase()}
+
+\u{1F4F8} *LINK PARA IMPRESS\xC3O (DRIVE):*
+${data.driveLink}`;
+    sendWhatsApp(message);
+    if (process.env.SMTP_USER && process.env.SMTP_PASS) {
+      const htmlContent = `
+        <div style="font-family: sans-serif; max-width: 600px; margin: 0 auto; padding: 20px; color: #000;">
+          <h1 style="font-size: 20px; color: #111;">Novo Pedido Matriz (Cofre) \u{1F3E2}</h1>
+          <p>O pedido <strong>${data.orderId}</strong> do cliente <strong>${data.customerName}</strong> foi roteado para a Matriz.</p>
+          <p>Acesse o Drive para realizar a impress\xE3o:</p>
+          <p><a href="${data.driveLink}">${data.driveLink}</a></p>
+        </div>
+      `;
+      try {
+        await this.transporter.sendMail({
+          from: `"Foto Segundo" <${process.env.SMTP_USER}>`,
+          to: process.env.ADMIN_EMAIL || "contato@fotosegundo.com.br",
+          subject: `NOVO PEDIDO MATRIZ: ${data.customerName} \u{1F3E2}`,
+          html: htmlContent
+        });
+      } catch (e) {
+        console.error("[Notification] Erro e-mail matriz:", e);
+      }
+    }
+  }
 };
 
 // backend/node_modules/bcryptjs/index.js
@@ -67067,7 +67150,7 @@ var EventController = class {
    */
   static async listPublic(req, res) {
     try {
-      const { q, page = "1", type, city } = req.query;
+      const { q, page = "1", type, city, sortBy } = req.query;
       const query = q;
       const take = 20;
       const skip = (Number(page) - 1) * take;
@@ -67090,12 +67173,18 @@ var EventController = class {
           { clientName: { contains: query, mode: "insensitive" } }
         ];
       }
+      let orderBy = { dataEvento: "desc" };
+      if (sortBy === "AZ") orderBy = { nomeNoivos: "asc" };
+      if (sortBy === "ZA") orderBy = { nomeNoivos: "desc" };
+      if (sortBy === "PRICE_ASC") orderBy = { priceBase: "asc" };
+      if (sortBy === "PRICE_DESC") orderBy = { priceBase: "desc" };
+      if (sortBy === "OLD") orderBy = { dataEvento: "asc" };
       const [events, total] = await Promise.all([
         prisma_default.event.findMany({
           where,
           take,
           skip,
-          orderBy: { dataEvento: "desc" },
+          orderBy,
           select: {
             id: true,
             slug: true,
@@ -71606,7 +71695,7 @@ var MercadoPagoService = class {
         payer: {
           email: data.payer_email
         },
-        external_reference: data.orderId,
+        external_reference: `${data.orderId}:${Date.now()}`,
         metadata: {
           order_id: data.orderId
         },
@@ -71656,7 +71745,7 @@ var MercadoPagoService = class {
         payment_method_id: data.payment_method_id,
         payer: data.payer,
         notification_url: data.notification_url,
-        external_reference: data.external_reference
+        external_reference: `${data.external_reference}:${Date.now()}`
       };
       if (data.token) body.token = data.token;
       if (data.installments) body.installments = data.installments;
@@ -71727,6 +71816,10 @@ var PricingService = class {
    * Suporta o novo modelo de "Venda Direta" com 10% de comissão e "Comissão Passiva B2B".
    */
   static async calculateSplits(amount, options) {
+    if (isNaN(amount) || amount === null) {
+      console.warn("[PricingService] amount is NaN or null, returning default zero splits");
+      return { matriz: 0, captacao: 0, edicao: 0, cartorio: 0, franchisee: 0 };
+    }
     const keys = ["split_matriz", "split_captacao", "split_edicao", "split_cartorio", "split_franchisee"];
     const configs = await prisma_default.platformConfig.findMany({
       where: { key: { in: keys } }
@@ -76436,26 +76529,26 @@ var PostgrestClient = class PostgrestClient2 {
     this.schemaName = schema;
     this.urlLengthLimit = urlLengthLimit;
     const originalFetch = fetch$1 !== null && fetch$1 !== void 0 ? fetch$1 : globalThis.fetch;
-    if (timeout !== void 0 && timeout > 0) this.fetch = (input, init2) => {
+    if (timeout !== void 0 && timeout > 0) this.fetch = (input, init3) => {
       const controller = new AbortController();
       const timeoutId = setTimeout(() => controller.abort(), timeout);
-      const existingSignal = init2 === null || init2 === void 0 ? void 0 : init2.signal;
+      const existingSignal = init3 === null || init3 === void 0 ? void 0 : init3.signal;
       if (existingSignal) {
         if (existingSignal.aborted) {
           clearTimeout(timeoutId);
-          return originalFetch(input, init2);
+          return originalFetch(input, init3);
         }
         const abortHandler = () => {
           clearTimeout(timeoutId);
           controller.abort();
         };
         existingSignal.addEventListener("abort", abortHandler, { once: true });
-        return originalFetch(input, _objectSpread2(_objectSpread2({}, init2), {}, { signal: controller.signal })).finally(() => {
+        return originalFetch(input, _objectSpread2(_objectSpread2({}, init3), {}, { signal: controller.signal })).finally(() => {
           clearTimeout(timeoutId);
           existingSignal.removeEventListener("abort", abortHandler);
         });
       }
-      return originalFetch(input, _objectSpread2(_objectSpread2({}, init2), {}, { signal: controller.signal })).finally(() => clearTimeout(timeoutId));
+      return originalFetch(input, _objectSpread2(_objectSpread2({}, init3), {}, { signal: controller.signal })).finally(() => clearTimeout(timeoutId));
     };
     else this.fetch = originalFetch;
     this.retry = retry;
@@ -79870,13 +79963,13 @@ var resolveHeadersConstructor = () => {
 var fetchWithAuth = (supabaseKey, getAccessToken, customFetch) => {
   const fetch$1 = resolveFetch2(customFetch);
   const HeadersConstructor = resolveHeadersConstructor();
-  return async (input, init2) => {
+  return async (input, init3) => {
     var _await$getAccessToken;
     const accessToken2 = (_await$getAccessToken = await getAccessToken()) !== null && _await$getAccessToken !== void 0 ? _await$getAccessToken : supabaseKey;
-    let headers = new HeadersConstructor(init2 === null || init2 === void 0 ? void 0 : init2.headers);
+    let headers = new HeadersConstructor(init3 === null || init3 === void 0 ? void 0 : init3.headers);
     if (!headers.has("apikey")) headers.set("apikey", supabaseKey);
     if (!headers.has("Authorization")) headers.set("Authorization", `Bearer ${accessToken2}`);
-    return fetch$1(input, _objectSpread23(_objectSpread23({}, init2), {}, { headers }));
+    return fetch$1(input, _objectSpread23(_objectSpread23({}, init3), {}, { headers }));
   };
 };
 function ensureTrailingSlash(url2) {
@@ -80463,7 +80556,9 @@ var PhygitalService = class {
           imageUrl: publicUrl,
           customerName,
           customerPhone,
-          customerCep,
+          customerEmail: metadata.customerEmail || "",
+          customerCep: metadata.customerCep || "",
+          userId: metadata.userId || "",
           status: "PENDING_PRINT",
           eventId: metadata.eventId
         },
@@ -80476,12 +80571,13 @@ var PhygitalService = class {
           eventId: metadata.eventId,
           url: publicUrl,
           shortId,
-          price: printJob.event.pricePerPhoto || 15
+          price: event?.priceBase || 15
+          // Use fetched event instead of printJob.event
         }
       });
-      if (printJob.event.franchiseeId) {
+      if (event?.franchiseeId) {
         const profile = await prisma2.franchiseProfile.findUnique({
-          where: { id: printJob.event.franchiseeId }
+          where: { id: event.franchiseeId }
         });
         if (profile) {
           await prisma2.franchiseProfile.update({
@@ -80537,7 +80633,9 @@ var PhygitalService = class {
             imageUrl: photoUrl,
             customerName: order.cliente?.nome || order.buyerEmail || "Cliente Print",
             customerPhone: order.buyerWhatsapp || "",
-            customerCep: order.shippingAddress?.cep || "LOCAL",
+            customerEmail: order.buyerEmail || order.cliente?.email || "",
+            customerCep: order.shippingAddress?.cep || "",
+            userId: order.clienteId || "",
             status: "PENDING_PRINT"
           }
         });
@@ -80621,6 +80719,93 @@ var IntegrationService = class {
   }
 };
 
+// backend/src/services/routing.service.ts
+init_prisma();
+var RoutingService = class {
+  /**
+   * Roteia um pedido de materialização para o franqueado mais próximo ou matriz.
+   */
+  static async routeVaultOrder(orderId) {
+    console.log(`[Routing] Iniciando roteamento para o pedido: ${orderId}`);
+    const order = await prisma.order.findUnique({
+      where: { id: orderId },
+      include: {
+        cliente: true,
+        event: true,
+        items: {
+          include: {
+            printProduct: true
+          }
+        }
+      }
+    });
+    if (!order) {
+      console.error("[Routing] Pedido n\xE3o encontrado.");
+      return;
+    }
+    const address = order.shippingAddress;
+    const customerCep = address?.cep || order.cliente?.whatsapp || "";
+    if (!customerCep) {
+      console.warn("[Routing] CEP do cliente n\xE3o encontrado. Usando roteamento para Matriz.");
+    }
+    const franchisees = await prisma.user.findMany({
+      where: {
+        franchiseProfile: {
+          active: true
+        }
+      },
+      include: {
+        franchiseProfile: true
+      }
+    });
+    let selectedFranchisee = null;
+    if (customerCep && franchisees.length > 0) {
+      selectedFranchisee = this.findNearestFranchisee(customerCep, franchisees);
+    }
+    if (selectedFranchisee) {
+      console.log(`[Routing] Pedido roteado para Franqueado: ${selectedFranchisee.nome}`);
+      await NotificationService.sendVaultOrderToFranchisee({
+        franchiseeEmail: selectedFranchisee.email,
+        franchiseePhone: selectedFranchisee.whatsapp || "",
+        franchiseeName: selectedFranchisee.nome,
+        orderId: order.id,
+        customerName: order.cliente?.nome || "Cliente",
+        driveLink: order.event.driveUrl || ""
+      });
+      await prisma.order.update({
+        where: { id: order.id },
+        data: { passiveFranchiseeId: selectedFranchisee.id }
+      });
+    } else {
+      console.log("[Routing] Nenhum franqueado pr\xF3ximo encontrado. Roteando para MATRIZ.");
+      await NotificationService.sendVaultOrderToMatrix({
+        orderId: order.id,
+        customerName: order.cliente?.nome || "Cliente",
+        driveLink: order.event.driveUrl || ""
+      });
+    }
+  }
+  static findNearestFranchisee(customerCep, franchisees) {
+    const cleanCustomer = customerCep.replace(/\D/g, "");
+    let bestFranchisee = null;
+    let bestScore = -1;
+    for (const f of franchisees) {
+      if (!f.franchiseProfile?.baseCep) continue;
+      const cleanBase = f.franchiseProfile.baseCep.replace(/\D/g, "");
+      let score = 0;
+      for (let i = 0; i < Math.min(cleanCustomer.length, cleanBase.length); i++) {
+        if (cleanCustomer[i] === cleanBase[i]) score++;
+        else break;
+      }
+      if (score > bestScore) {
+        bestScore = score;
+        bestFranchisee = f;
+      }
+    }
+    return bestFranchisee;
+  }
+};
+
 // backend/src/services/subscription.service.ts
 init_prisma();
 init_gamification_service();
@@ -80656,22 +80841,38 @@ var SubscriptionService = class {
         status: "PENDING"
       }
     });
-    const backendUrl = process.env.BACKEND_URL || "http://localhost:3001";
-    const mpResponse = await MercadoPagoService.createPreference({
-      transaction_amount: price,
-      description: `Assinatura Cofre de Mem\xF3rias: ${album.nome}`,
-      payer_email: album.owner.email,
-      notification_url: `${backendUrl}/api/webhooks/mercadopago`,
-      orderId: subscription.id
-      // vinculando ID da assinatura em vez do Order
+    let systemEvent = await prisma.event.findFirst({
+      where: { slug: "vaults-system" }
     });
-    await prisma.subscription.update({
-      where: { id: subscription.id },
-      data: { gatewaySubId: String(mpResponse.id) }
+    if (!systemEvent) {
+      systemEvent = await prisma.event.create({
+        data: {
+          slug: "vaults-system",
+          nomeNoivos: "System: Vaults Orders",
+          active: true,
+          dataEvento: /* @__PURE__ */ new Date(),
+          ownerId: userId
+        }
+      });
+    }
+    const order = await prisma.order.create({
+      data: {
+        valor: price,
+        status: "PENDENTE",
+        eventId: systemEvent.id,
+        clienteId: userId,
+        buyerEmail: album.owner.email,
+        deliveryType: "SHIPPING",
+        fulfillmentStatus: "PENDING",
+        isManual: true,
+        manualType: "VAULT_CYCLE",
+        internalNotes: `Assinatura do cofre: ${album.nome} | SubId: ${subscription.id}`
+      }
     });
     return {
       subscriptionId: subscription.id,
-      init_point: mpResponse.init_point
+      orderId: order.id,
+      amount: price
     };
   }
   /**
@@ -80765,7 +80966,7 @@ var PaymentController = class _PaymentController {
    * Cria um pedido pendente para ser processado no checkout padrão.
    */
   static async createPendingOrder(req, res) {
-    const { eventId, userId, email, selectedServices, includeLivePrint, includeShipping, cart } = req.body;
+    const { eventId, userId, email, selectedServices, includeLivePrint, includeShipping, cart, physicalItems } = req.body;
     try {
       const event = await prisma_default.event.findUnique({ where: { id: eventId } });
       if (!event) return res.status(404).json({ error: "Evento n\xE3o encontrado" });
@@ -80779,8 +80980,20 @@ var PaymentController = class _PaymentController {
         });
         upgradePrice = catalogItems.reduce((acc, s) => acc + Number(s.basePrice), 0);
       }
-      const phygitalPrice = (includeLivePrint ? 150 : 0) + (includeShipping ? 25 : 0);
-      const total = basePrice + upgradePrice + phygitalPrice;
+      let physicalPrice = 0;
+      let totalSupplierCost = 0;
+      const items = physicalItems || [];
+      for (const item of items) {
+        const product = await prisma_default.printProduct.findUnique({ where: { id: item.id } });
+        if (product && product.active) {
+          const qty = Number(item.quantity) || 1;
+          const pPrice = product.sellingPrice !== null ? Number(product.sellingPrice) : Number(product.supplierCost) * (1 + product.marginPct / 100);
+          physicalPrice += pPrice * qty;
+          totalSupplierCost += Number(product.supplierCost) * qty;
+        }
+      }
+      const phygitalPrice = includeLivePrint ? 150 : 0;
+      const total = basePrice + upgradePrice + physicalPrice + phygitalPrice;
       const order = await prisma_default.order.create({
         data: {
           eventId,
@@ -80788,20 +81001,22 @@ var PaymentController = class _PaymentController {
           buyerEmail: email,
           valor: total,
           status: "PENDENTE",
-          manualType: event.type === "PHOTO_MARKETPLACE" ? "Aquisi\xE7\xE3o de Fotos" : "Upgrade de Servi\xE7os",
+          manualType: items.length > 0 ? "Pedido H\xEDbrido (Digital + F\xEDsico)" : event.type === "PHOTO_MARKETPLACE" ? "Aquisi\xE7\xE3o de Fotos" : "Upgrade de Servi\xE7os",
           internalNotes: JSON.stringify({
-            type: event.type === "PHOTO_MARKETPLACE" ? "MARKETPLACE" : "UPGRADE",
+            type: items.length > 0 ? "HYBRID" : event.type === "PHOTO_MARKETPLACE" ? "MARKETPLACE" : "UPGRADE",
             selectedServicesIds,
             includeLivePrint,
             includeShipping,
-            cart: cartItems
+            cart: cartItems,
+            physicalItems: items,
+            supplierCost: totalSupplierCost
           })
         }
       });
       res.json({ orderId: order.id });
     } catch (err) {
       console.error("createPendingOrder error:", err);
-      res.status(500).json({ error: "Erro ao gerar protocolo de upgrade." });
+      res.status(500).json({ error: "Erro ao gerar protocolo de checkout." });
     }
   }
   /**
@@ -80864,7 +81079,8 @@ var PaymentController = class _PaymentController {
         passiveFranchiseeId
       } = await PricingService.calculateSplits(preco, {
         professionalId: event.captacaoId || void 0,
-        supplierCost: totalSupplierCost
+        supplierCost: totalSupplierCost,
+        shippingFee: Number(req.body.shippingFee || 0)
       });
       console.log(`[Checkout] Repasse Manual Calculado: Snapshot salvo. Valor: ${preco}`);
       let orderItemsData = [];
@@ -80906,7 +81122,8 @@ var PaymentController = class _PaymentController {
           orderItemsData.push({
             printProductId: product.id,
             price: pPrice,
-            quantity: qty
+            quantity: qty,
+            selectedPhotos: item.selectedPhotos || []
           });
         }
       }
@@ -81039,9 +81256,10 @@ var PaymentController = class _PaymentController {
             include: { event: true, cliente: true }
           });
           if (updatedOrders.length === 0 && paymentData.external_reference) {
-            console.log(`[Webhook] Pedido n\xE3o achado por ID ${data.id}. Tentando por Ref: ${paymentData.external_reference}`);
+            const [realOrderId] = String(paymentData.external_reference).split(":");
+            console.log(`[Webhook] Pedido n\xE3o achado por ID ${data.id}. Tentando por Ref: ${realOrderId} (Original: ${paymentData.external_reference})`);
             const sub = await prisma_default.subscription.findUnique({
-              where: { id: paymentData.external_reference }
+              where: { id: realOrderId }
             });
             if (sub) {
               await SubscriptionService.handleSubscriptionPayment(sub.gatewaySubId || String(data.id), paymentData.status);
@@ -81049,7 +81267,7 @@ var PaymentController = class _PaymentController {
               return res.json({ ok: true, type: "subscription" });
             }
             const orderRef = await prisma_default.order.findUnique({
-              where: { id: paymentData.external_reference },
+              where: { id: realOrderId },
               include: { event: true, cliente: true }
             });
             if (orderRef) updatedOrders = [orderRef];
@@ -81112,7 +81330,8 @@ var PaymentController = class _PaymentController {
           orderItemsData.push({
             printProductId: product.id,
             price: pPrice,
-            quantity: qty
+            quantity: qty,
+            selectedPhotos: item.selectedPhotos || []
           });
         }
       }
@@ -81145,7 +81364,8 @@ var PaymentController = class _PaymentController {
       }
       const phygitalPrice = (finalIncludeLivePrint ? 150 : 0) + (finalIncludeShipping ? 25 : 0);
       let preco = orderToUse ? Number(orderToUse.valor) : basePrice + finalPrintPrice + upgradePrice + phygitalPrice;
-      if (preco <= 0) {
+      if (isNaN(preco) || preco <= 0) {
+        console.error("[Process Payment] Valor inv\xE1lido:", { preco, cart, contributionAmount });
         return res.status(400).json({ error: "O valor do pagamento deve ser superior a zero. Verifique os itens selecionados." });
       }
       const {
@@ -81494,12 +81714,12 @@ var PaymentController = class _PaymentController {
       if (!cep) return res.status(400).json({ error: "CEP \xE9 obrigat\xF3rio." });
       let items = [];
       if (orderId) {
-        const order = await prisma_default.order.findUnique({
+        const order2 = await prisma_default.order.findUnique({
           where: { id: String(orderId) },
           include: { items: true }
         });
-        if (order) {
-          items = order.items.filter((i) => i.printProductId).map((i) => ({ id: i.printProductId, quantity: i.quantity }));
+        if (order2) {
+          items = order2.items.filter((i) => i.printProductId).map((i) => ({ id: i.printProductId, quantity: i.quantity }));
         }
       } else if (printProductId) {
         items.push({ id: String(printProductId), quantity: 1 });
@@ -81514,7 +81734,8 @@ var PaymentController = class _PaymentController {
         }
       }
       const cartItems = Array.isArray(cart) ? cart : cart ? [cart] : [];
-      if (items.length === 0 && cartItems.length > 0) {
+      const order = orderId ? await prisma_default.order.findUnique({ where: { id: String(orderId) }, include: { items: true } }) : null;
+      if (items.length === 0 && (cartItems.length > 0 || order && order.items.length > 0)) {
         return res.json({ quotes: [{ id: "free", name: "Entrega Digital (E-mail)", price: 0, currency: "BRL", deliveryTimeDays: 0 }] });
       }
       if (items.length === 0) {
@@ -81738,13 +81959,7 @@ ${albumPhotos.join("\n")}`;
         if (printItems.length > 0) {
           eventUpdateData.temFotoImpressa = true;
           for (const item of printItems) {
-            let photos = [];
-            if (order.internalNotes && order.internalNotes.includes("--- FOTOS SELECIONADAS DO \xC1LBUM ---")) {
-              const parts = order.internalNotes.split("--- FOTOS SELECIONADAS DO \xC1LBUM ---");
-              if (parts.length > 1) {
-                photos = parts[1].trim().split("\n").filter((url2) => url2.startsWith("http"));
-              }
-            }
+            const photos = item.selectedPhotos || [];
             if (photos.length > 0) {
               const fulfillment = item.printProduct?.fulfillmentType || "LAB";
               if (fulfillment === "INSTANT_PRINT") {
@@ -81752,7 +81967,7 @@ ${albumPhotos.join("\n")}`;
                 await PhygitalService.createQueueEntryFromOrder(order, photos);
               } else {
                 console.log(`[Fulfillment] Roteando pedido ${order.id} para LAB Parceiro Externo`);
-                await IntegrationService.dispatchToLabPartner(order.id, printItems, photos);
+                await IntegrationService.dispatchToLabPartner(order.id, [item], photos);
               }
             }
           }
@@ -81805,6 +82020,9 @@ ${albumPhotos.join("\n")}`;
         orderId: order.id,
         amount: Number(order.valor)
       });
+      if (order.manualType === "VAULT_ONDEMAND" || order.manualType === "VAULT_CYCLE") {
+        RoutingService.routeVaultOrder(order.id).catch((e) => console.error("[Routing] Erro ao rotear pedido de cofre:", e));
+      }
       audit(req, "ORDER_FINALIZED_TX", "Order", order.id, null, { eventId: order.eventId });
     } catch (err) {
       console.error("[finalizeApprovedOrder Error]:", err);
@@ -84188,8 +84406,15 @@ async function toggleFavorite(req, res) {
     } else {
       const [user, partner] = await Promise.all([
         prisma_default.user.findUnique({ where: { id: userId }, select: { nome: true } }),
-        prisma_default.user.findUnique({ where: { id: partnerId }, select: { nome: true, email: true, whatsapp: true } })
+        prisma_default.user.findUnique({
+          where: { id: partnerId },
+          select: { nome: true, email: true, whatsapp: true, role: true }
+        })
       ]);
+      if (!partner || !["PROFISSIONAL", "FRANCHISEE", "ADMIN"].includes(partner.role)) {
+        res.status(403).json({ error: "Apenas perfis profissionais ou franquias podem ser adicionados \xE0 rede." });
+        return;
+      }
       const created = await prisma_default.professionalNetwork.create({
         data: { userId, partnerId }
       });
@@ -84354,6 +84579,36 @@ async function getMeuPedidoDetalhe(req, res) {
   } catch (err) {
     console.error("getMeuPedidoDetalhe:", err);
     res.status(500).json({ error: "Erro ao buscar pedido." });
+  }
+}
+async function personalizePedido(req, res) {
+  const user = req.user;
+  if (!user) {
+    res.status(401).json({ error: "N\xE3o autenticado." });
+    return;
+  }
+  const { id } = req.params;
+  const { nomeNoivos, coverPhotoUrl } = req.body;
+  try {
+    const pedido = await prisma_default.order.findFirst({
+      where: { id, clienteId: user.userId },
+      include: { event: true }
+    });
+    if (!pedido) {
+      res.status(404).json({ error: "Pedido n\xE3o encontrado." });
+      return;
+    }
+    const updatedEvent = await prisma_default.event.update({
+      where: { id: pedido.eventId },
+      data: {
+        ...nomeNoivos && { nomeNoivos },
+        ...coverPhotoUrl !== void 0 && { coverPhotoUrl }
+      }
+    });
+    res.json({ message: "\xC1lbum personalizado com sucesso.", event: updatedEvent });
+  } catch (err) {
+    console.error("personalizePedido:", err);
+    res.status(500).json({ error: "Erro ao personalizar \xE1lbum." });
   }
 }
 
@@ -84691,9 +84946,10 @@ async function updateConfigs(req, res) {
   try {
     await Promise.all(
       configs.map(
-        (c) => prisma_default.platformConfig.update({
+        (c) => prisma_default.platformConfig.upsert({
           where: { key: c.key },
-          data: { value: c.value, updatedBy: userId }
+          update: { value: c.value, updatedBy: userId },
+          create: { key: c.key, value: c.value, updatedBy: userId }
         })
       )
     );
@@ -86193,6 +86449,13 @@ async function getTeam(req, res) {
       return;
     }
     const allProfissionais = await prisma_default.profissional.findMany({
+      where: {
+        user: {
+          role: {
+            in: ["PROFISSIONAL", "FRANCHISEE"]
+          }
+        }
+      },
       include: {
         user: { select: { id: true, nome: true, email: true, whatsapp: true } }
       },
@@ -86357,6 +86620,8 @@ var VaultCycleService = class {
         paymentModel: "PRE_PAID",
         deliveryType: "SHIPPING",
         fulfillmentStatus: "PENDING",
+        isManual: true,
+        manualType: "VAULT_CYCLE",
         internalNotes: JSON.stringify({
           type: "VAULT_CYCLE_CLOSURE",
           albumId,
@@ -86964,6 +87229,20 @@ var MarketplaceController = class {
         where: { eventId: String(eventId) },
         orderBy: { shortId: "asc" }
       });
+      const phygital = await prisma_default.phygitalPrint.findMany({
+        where: { eventId: String(eventId) }
+      });
+      const mappedPhygital = phygital.map((p) => ({
+        id: p.id,
+        eventId: p.eventId,
+        url: p.imageUrl,
+        shortId: p.referenceCode,
+        // Usamos referenceCode como shortId
+        price: null,
+        type: "PHOTO",
+        createdAt: p.createdAt
+      }));
+      const allMedia = [...media, ...mappedPhygital];
       let unlockedMediaIds = [];
       if (authUser) {
         const paidOrders = await prisma_default.order.findMany({
@@ -86981,7 +87260,7 @@ var MarketplaceController = class {
         });
       }
       return res.json({
-        media,
+        media: allMedia,
         unlockedMediaIds
       });
     } catch (error) {
@@ -87211,7 +87490,8 @@ var PhygitalController = class {
       if (!req.file) {
         return res.status(400).json({ error: "Nenhuma foto enviada." });
       }
-      const { eventId, customerName, customerPhone, customerCep } = req.body;
+      const { eventId, customerName, customerPhone, customerEmail, customerCep } = req.body;
+      const userId = req.user?.userId;
       if (!eventId || !customerName) {
         return res.status(400).json({ error: "Dados obrigat\xF3rios ausentes (eventId, customerName)." });
       }
@@ -87219,7 +87499,9 @@ var PhygitalController = class {
         eventId,
         customerName,
         customerPhone: customerPhone || "",
-        customerCep: customerCep || ""
+        customerEmail: customerEmail || "",
+        customerCep: customerCep || "",
+        userId
       });
       res.status(201).json(result);
     } catch (error) {
@@ -87424,15 +87706,34 @@ var FranchiseController = class {
    */
   static async promote(req, res) {
     try {
-      const { userId } = req.body;
+      const { userId, baseCep } = req.body;
       const profile = await prisma_default.franchiseProfile.upsert({
         where: { userId },
-        create: { userId, printCredits: 0, active: true },
-        update: { active: true }
+        create: { userId, printCredits: 0, active: true, baseCep },
+        update: { active: true, baseCep }
       });
       res.json({ success: true, profile });
     } catch (error) {
       res.status(500).json({ error: "Erro ao ativar franquia." });
+    }
+  }
+  /**
+   * Atualiza as configurações do perfil de franquia (Ex: CEP Base)
+   */
+  static async updateProfile(req, res) {
+    try {
+      const { baseCep, inventoryAlertThreshold } = req.body;
+      const userId = req.user.userId;
+      const profile = await prisma_default.franchiseProfile.update({
+        where: { userId },
+        data: {
+          baseCep,
+          inventoryAlertThreshold: inventoryAlertThreshold ? Number(inventoryAlertThreshold) : void 0
+        }
+      });
+      res.json({ success: true, profile });
+    } catch (error) {
+      res.status(500).json({ error: "Erro ao atualizar perfil de franquia." });
     }
   }
   /**
@@ -87653,6 +87954,7 @@ init_prisma();
 
 // backend/src/services/googleDrive.service.ts
 var import_googleapis = require("googleapis");
+var import_stream5 = require("stream");
 var import_fs2 = __toESM(require("fs"));
 var import_path2 = __toESM(require("path"));
 var SCOPES = ["https://www.googleapis.com/auth/drive.file"];
@@ -87725,16 +88027,30 @@ var GoogleDriveService = class {
       return { id: `mock-folder-${Date.now()}`, name: albumName };
     }
     const rootFolderId = process.env.GOOGLE_DRIVE_ROOT_FOLDER_ID;
-    const fileMetadata = {
+    let fileMetadata = {
       name: `Vault: ${albumName}`,
       mimeType: "application/vnd.google-apps.folder",
       parents: rootFolderId ? [rootFolderId] : []
     };
+    let folder;
     try {
-      const folder = await this.withRetry(() => this.drive.files.create({
-        requestBody: fileMetadata,
-        fields: "id, name"
-      }));
+      try {
+        folder = await this.withRetry(() => this.drive.files.create({
+          requestBody: fileMetadata,
+          fields: "id, name"
+        }));
+      } catch (parentError) {
+        if (parentError.message && parentError.message.includes("File not found") && rootFolderId) {
+          console.warn(`[DRIVE] Pasta Root (${rootFolderId}) n\xE3o encontrada. Criando na raiz da conta.`);
+          fileMetadata.parents = [];
+          folder = await this.withRetry(() => this.drive.files.create({
+            requestBody: fileMetadata,
+            fields: "id, name"
+          }));
+        } else {
+          throw parentError;
+        }
+      }
       console.log(`[DRIVE] Pasta criada para \xE1lbum: ${albumName} (ID: ${folder.data.id})`);
       await this.withRetry(() => this.drive.permissions.create({
         fileId: folder.data.id,
@@ -87776,6 +88092,7 @@ var GoogleDriveService = class {
     const tmpFilePath = import_path2.default.join(os.tmpdir(), fileName);
     import_fs2.default.writeFileSync(tmpFilePath, buffer);
     try {
+      console.log(`[DRIVE] Iniciando upload: ${fileName} (${buffer.length} bytes)`);
       const file = await this.withRetry(() => this.drive.files.create({
         requestBody: {
           name: fileName,
@@ -87783,7 +88100,8 @@ var GoogleDriveService = class {
         },
         media: {
           mimeType,
-          body: import_fs2.default.createReadStream(tmpFilePath)
+          body: import_stream5.Readable.from(buffer)
+          // Convertendo Buffer em Stream legível conforme solicitado
         },
         fields: "id, name, webViewLink, thumbnailLink"
       }));
@@ -87802,10 +88120,13 @@ var GoogleDriveService = class {
       if (import_fs2.default.existsSync(tmpFilePath)) {
         import_fs2.default.unlinkSync(tmpFilePath);
       }
-      console.error("[DRIVE] Erro CR\xCDTICO no upload de m\xEDdia ap\xF3s retentativas:", error);
+      console.error("=========================================");
+      console.error("[DRIVE] \u274C ERRO CR\xCDTICO NO UPLOAD");
+      console.error(" - Mensagem:", error.message);
       if (error.response) {
-        console.error("[DRIVE] Detalhes da API Google (Response):", JSON.stringify(error.response.data, null, 2));
+        console.error(" - Google API Error:", JSON.stringify(error.response.data, null, 2));
       }
+      console.error("=========================================");
       throw error;
     }
   }
@@ -87956,7 +88277,8 @@ var VaultController = class {
       console.error("=======================================================\n");
       return res.status(500).json({
         error: "Falha no upload.",
-        details: error.message || "Erro interno na comunica\xE7\xE3o com o Drive."
+        details: error.message || "Erro interno na comunica\xE7\xE3o com o Drive.",
+        googleError: error.response?.data || null
       });
     }
   }
@@ -88910,6 +89232,7 @@ router4.get("/orders/:id/access-status", requireAuth, getAccessStatus);
 router4.post("/orders/:id/visibility", requireAuth, toggleVisibility);
 router4.get("/cliente/pedidos", requireAuth, getMeusPedidos);
 router4.get("/cliente/pedidos/:id", requireAuth, getMeuPedidoDetalhe);
+router4.patch("/cliente/pedidos/:id/personalize", requireAuth, personalizePedido);
 router4.get("/profissional/services", requireAuth, requireRole("ADMIN", "PROFISSIONAL"), listProServices);
 router4.post("/profissional/services", requireAuth, requireRole("ADMIN", "PROFISSIONAL"), addProService);
 router4.patch("/profissional/services/:id", requireAuth, requireRole("ADMIN", "PROFISSIONAL"), updateProService);
@@ -88981,16 +89304,21 @@ router4.get("/franchise/referral", requireAuth, requireRole("FRANCHISEE"), Franc
 router4.get("/franchise/network", requireAuth, requireRole("FRANCHISEE"), FranchiseController.getNetwork);
 router4.get("/franchise/finance", requireAuth, requireRole("FRANCHISEE"), FranchiseController.getFinanceStats);
 router4.post("/franchise/reorder", requireAuth, requireRole("FRANCHISEE"), FranchiseController.postReorder);
+router4.put("/franchise/profile", requireAuth, requireRole("FRANCHISEE"), FranchiseController.updateProfile);
 router4.get("/vaults", requireAuth, VaultController.listAlbums);
 router4.post("/vaults", requireAuth, VaultController.createAlbum);
 router4.get("/vaults/:albumId", requireAuth, VaultController.getAlbumDetails);
 router4.get("/vaults/:albumId/media", requireAuth, VaultController.listMedia);
 router4.post("/vaults/:albumId/upload", requireAuth, upload.single("file"), VaultController.uploadMedia);
 router4.post("/vaults/:albumId/vote", requireAuth, (req, res, next) => VaultController.voteMedia(req, res, next));
+router4.post("/vaults/:albumId/checkout", requireAuth, VaultController.checkoutVault);
 router4.post("/vaults/:albumId/subscribe", requireAuth, VaultController.subscribe);
+router4.post("/vaults/:albumId/invite", requireAuth, VaultController.generateInvite);
+router4.get("/vaults/invitation/:code", VaultController.getInvitationDetails);
+router4.post("/vaults/invitation/:code/accept", requireAuth, VaultController.acceptInvite);
 router4.use("/flash", flash_routes_default);
 router4.get("/vaults/media/proxy/:fileId", VaultController.proxyMedia);
-router4.post("/public/phygital/upload", upload.single("photo"), PhygitalController.upload);
+router4.post("/public/phygital/upload", optionalAuth, upload.single("photo"), PhygitalController.upload);
 router4.get("/phygital/events/:eventId/queue", requireAuth, PhygitalController.listPending);
 router4.get("/phygital/events/:eventId/prints", requireAuth, PhygitalController.listAllByEvent);
 router4.patch("/phygital/prints/:id/status", requireAuth, PhygitalController.confirmPrint);
@@ -89001,7 +89329,27 @@ router4.post("/iot/heartbeat", IoTController.heartbeat);
 router4.get("/admin/iot/devices", requireAuth, requireRole("ADMIN"), IoTController.listDevices);
 var routes_default = router4;
 
+// backend/src/lib/sentry.ts
+var Sentry = __toESM(require("@sentry/node"));
+function initSentry() {
+  const dsn = process.env.SENTRY_DSN;
+  if (!dsn) {
+    console.warn("[SENTRY] SENTRY_DSN n\xE3o configurado. Monitoramento desativado.");
+    return;
+  }
+  Sentry.init({
+    dsn,
+    // Tracing
+    tracesSampleRate: 1,
+    //  Capture 100% of the transactions
+    environment: process.env.NODE_ENV || "development"
+  });
+  console.log("[SENTRY] Inicializado com sucesso.");
+}
+
 // backend/src/app.ts
+var Sentry2 = __toESM(require("@sentry/node"));
+initSentry();
 var app = (0, import_express6.default)();
 app.get("/api/health", (_req, res) => {
   res.json({
@@ -89054,6 +89402,7 @@ app.use(import_express6.default.urlencoded({ extended: true, limit: "50mb" }));
 app.use(import_express6.default.json({ limit: "50mb" }));
 app.use("/uploads", import_express6.default.static("uploads"));
 app.use("/api", routes_default);
+Sentry2.setupExpressErrorHandler(app);
 app.use((err, _req, res, _next) => {
   console.error("\u{1F525} ERRO NO SERVIDOR:", err);
   res.status(500).json({

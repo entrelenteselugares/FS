@@ -1,6 +1,7 @@
 import { useState, useEffect, useRef, useCallback } from "react";
 import { useParams, useNavigate, useSearchParams } from "react-router-dom";
-import { ShieldCheck, ArrowLeft, CheckCircle2, Clock, RefreshCw, Lock, Image as ImageIcon, Printer } from "lucide-react";
+import { ShieldCheck, ArrowLeft, CheckCircle2, Clock, RefreshCw, Lock, Image as ImageIcon, Printer, ShoppingBag } from "lucide-react";
+import { Navbar } from "../components/Navbar";
 
 
 import { QRCodeSVG } from "qrcode.react";
@@ -8,6 +9,7 @@ import { QRCodeSVG } from "qrcode.react";
 import { API } from "../lib/api";
 import { AuthContext } from "../contexts/AuthContextBase";
 import { useContext } from "react";
+import { useCart } from "../hooks/useCart";
 
 interface OrderEvent {
   id: string;
@@ -81,7 +83,7 @@ export const CheckoutPage = () => {
   const navigate = useNavigate();
   const [searchParams] = useSearchParams();
   const orderIdFromQuery = searchParams.get("orderId");
-  const effectiveOrderId = (orderId === "payment" ? null : orderId) || orderIdFromQuery;
+  const effectiveOrderId = (orderId === "payment" ? null : orderId) || orderIdFromQuery || localStorage.getItem('fs_last_order_id');
 
   const [order, setOrder] = useState<OrderDetail | null>(null);
   const [loading, setLoading] = useState(true);
@@ -91,12 +93,13 @@ export const CheckoutPage = () => {
   const [copied, setCopied] = useState(false);
   const [pixSecondsLeft, setPixSecondsLeft] = useState(30 * 60); // 30 min
   const [pollingStatus, setPollingStatus] = useState<"idle" | "polling" | "found">("idle");
-  const [redirectCountdown, setRedirectCountdown] = useState(5);
+  const [showItems, setShowItems] = useState(false);
 
   const brickController = useRef<{ unmount: () => void } | null>(null);
   const initializationStarted = useRef(false);
   const pollingRef = useRef<ReturnType<typeof setInterval> | null>(null);
   const { user: authUser, login: authLogin, register: authRegister, loading: authGlobalLoading } = useContext(AuthContext)!;
+  const { digitalPhotos, physicalItems, totalPrice, clearCart } = useCart();
   console.log("[Checkout] Component Mounting...", { orderId, orderIdFromQuery, effectiveOrderId, hasAuthUser: !!authUser, authGlobalLoading });
 
   // Estados de Autenticação Tática
@@ -116,8 +119,16 @@ export const CheckoutPage = () => {
     state: ""
   });
   const [isShippingLoading, setIsShippingLoading] = useState(false);
-  const [shippingOptions, setShippingOptions] = useState<any[]>([]);
-  const [selectedShipping, setSelectedShipping] = useState<any>(null);
+  interface ShippingOption {
+    id: string;
+    name: string;
+    price: number;
+    currency: string;
+    deliveryTimeDays: number;
+  }
+
+  const [shippingOptions, setShippingOptions] = useState<ShippingOption[]>([]);
+  const [selectedShipping, setSelectedShipping] = useState<ShippingOption | null>(null);
 
   // ── Carrega o pedido ─────────────────────────────────────────────────────────
   useEffect(() => {
@@ -138,7 +149,9 @@ export const CheckoutPage = () => {
 
   // ── Controle de Autenticação (Bypass para Guest Checkout) ────────────────────
   useEffect(() => {
+    let isMounted = true;
     console.log("[Checkout] useEffect auth check:", { loading, authGlobalLoading, hasOrder: !!order, hasUser: !!authUser });
+    
     if (loading || authGlobalLoading || !order) return;
 
     // SE FOR GUEST ORDER (Magic Link), AUTORIZA DIRETO!
@@ -159,18 +172,24 @@ export const CheckoutPage = () => {
     const verifyAuth = async () => {
       try {
         const { data } = await API.get(`/public/auth/check?email=${order.buyerEmail}`);
+        if (!isMounted) return;
         if (data.exists) {
           setAuthStep('login');
         } else {
           setAuthStep('register');
         }
       } catch (err) {
+        if (!isMounted) return;
         console.error("Erro ao verificar auth:", err);
         setAuthStep('register');
       }
     };
 
     verifyAuth();
+
+    return () => {
+      isMounted = false;
+    };
   }, [loading, order, authUser, authGlobalLoading]);
 
   const handleAuthSubmit = async (e: React.FormEvent) => {
@@ -193,9 +212,10 @@ export const CheckoutPage = () => {
       if (authStep === 'login') {
         try {
           await authLogin(targetEmail, password);
-        } catch (loginErr: any) {
+        } catch (loginErr: unknown) {
+          const axiosError = loginErr as { response?: { status: number, data?: { error?: string } } };
           // Se o erro for "usuário não encontrado", tentamos registrar automaticamente
-          if (loginErr.response?.status === 404 || loginErr.response?.data?.error?.includes("encontrado")) {
+          if (axiosError.response?.status === 404 || axiosError.response?.data?.error?.includes("encontrado")) {
             setAuthStep('register');
             await authRegister(targetEmail, password, order!.contributorName || order!.event.nomeNoivos || "Cliente");
           } else {
@@ -311,17 +331,10 @@ export const CheckoutPage = () => {
     localStorage.removeItem(`fs_order_${slug}`);
     localStorage.removeItem(`fs_cart_${order.event.id}`);
 
-    const timer = setInterval(() => {
-      setRedirectCountdown(c => {
-        if (c <= 1) {
-          clearInterval(timer);
-          navigate(`/minha-conta?orderId=${order.id}`);
-          return 0;
-        }
-        return c - 1;
-      });
-    }, 1000);
-    return () => clearInterval(timer);
+    const timer = setTimeout(() => {
+       navigate(`/minha-conta?orderId=${order.id}`);
+    }, 5000);
+    return () => clearTimeout(timer);
   }, [paymentSuccess, order, navigate]);
 
   // ── MP Bricks Initialization ────────────────────────────────────────────────
@@ -333,15 +346,25 @@ export const CheckoutPage = () => {
 
     const mpPublicKey = "APP_USR-18f8ccc4-8ed4-4f99-bb6d-e333d026e578";
 
+    let isMounted = true;
+    let controller: { unmount: () => void } | null = null;
+
     const renderPaymentBrick = async () => {
       // Polling for MercadoPago SDK (Max 15s)
       let attempts = 0;
-      while (!(window as any).MercadoPago && attempts < 30) {
+      const mpGlobal = window as unknown as { 
+        MercadoPago: new (key: string, options: Record<string, unknown>) => { 
+          bricks: () => { 
+            create: (brick: string, container: string, settings: MPBrickSettings) => Promise<{ unmount: () => void }> 
+          } 
+        } 
+      };
+      while (!mpGlobal.MercadoPago && attempts < 30) {
         await new Promise(resolve => setTimeout(resolve, 500));
         attempts++;
       }
 
-      if (!(window as any).MercadoPago) {
+      if (!mpGlobal.MercadoPago) {
         console.error("[Checkout] MercadoPago SDK not found.");
         return;
       }
@@ -355,7 +378,7 @@ export const CheckoutPage = () => {
         return;
       }
       container.innerHTML = "";
-      const mp = new (window as any).MercadoPago(mpPublicKey, { locale: "pt-BR" });
+      const mp = new mpGlobal.MercadoPago(mpPublicKey, { locale: "pt-BR" });
       const bricksBuilder = mp.bricks();
 
       const settings: MPBrickSettings = {
@@ -395,24 +418,40 @@ export const CheckoutPage = () => {
                   orderId: data.orderId || order.id,
                 });
               }
-            } catch (err: any) {
+            } catch {
               alert("Erro ao processar pagamento.");
             }
           },
-          onError: (error: any) => {
+          onError: (error: unknown) => {
             console.error("[Payment Brick] Fatal Error:", error);
             initializationStarted.current = false;
           },
         },
       };
 
-      brickController.current = await bricksBuilder.create("payment", "paymentBrick_container", settings);
+      try {
+        const createdController = await bricksBuilder.create("payment", "paymentBrick_container", settings);
+        if (!isMounted) {
+          createdController.unmount();
+        } else {
+          brickController.current = createdController;
+          controller = createdController;
+        }
+      } catch (err) {
+        console.error("[Payment Brick] Create Error:", err);
+      }
     };
 
     renderPaymentBrick();
     return () => {
-      if (brickController.current) { brickController.current.unmount(); brickController.current = null; }
+      isMounted = false;
       initializationStarted.current = false;
+      if (controller) {
+        controller.unmount();
+      } else if (brickController.current) {
+        brickController.current.unmount();
+      }
+      brickController.current = null;
     };
   }, [order, pixData, paymentSuccess, loading, authStep, shippingData, selectedShipping]);
 
@@ -423,45 +462,387 @@ export const CheckoutPage = () => {
     </div>
   );
 
+  // Empty Cart State: No protocol and no items
+  if (!effectiveOrderId && digitalPhotos.length === 0 && physicalItems.length === 0) {
+    return (
+      <div className="min-h-screen bg-theme-bg flex flex-col items-center justify-center p-8 text-center">
+        <div className="space-y-8 max-w-md animate-in fade-in slide-in-from-bottom-8 duration-700">
+          <div className="relative mx-auto w-24 h-24 flex items-center justify-center">
+            <div className="absolute inset-0 bg-white/5 blur-2xl rounded-full" />
+            <ShoppingBag size={48} className="text-theme-text-muted" strokeWidth={1} />
+          </div>
+          <div className="space-y-4">
+            <h2 className="text-3xl md:text-5xl font-heading font-black text-white uppercase italic tracking-tighter leading-none">
+              Seu Carrinho <br/> está Vazio
+            </h2>
+            <p className="text-[10px] text-theme-text-muted font-black uppercase tracking-[0.2em] leading-relaxed max-w-xs mx-auto">
+              Explore nossa vitrine e selecione as memórias que deseja eternizar.
+            </p>
+          </div>
+          <div className="pt-8">
+            <button 
+              onClick={() => navigate("/")}
+              className="w-full py-5 bg-brand-tactical text-black text-[10px] font-black uppercase tracking-[0.4em] hover:bg-white transition-all italic"
+            >
+              Voltar para a Vitrine
+            </button>
+          </div>
+        </div>
+      </div>
+    );
+  }
+
+  // Recovery Mode: No effectiveOrderId but items in cart
+  if (!effectiveOrderId && (digitalPhotos.length > 0 || physicalItems.length > 0)) {
+    const firstEventId = digitalPhotos[0]?.eventId || physicalItems[0]?.eventId;
+    
+    const handleGenerateOrder = async () => {
+      setLoading(true);
+      try {
+        const { data } = await API.post("/checkout/pending", {
+          eventId: firstEventId,
+          userId: authUser?.id,
+          email: authUser?.email || "cliente@fotosegundo.com.br",
+          cart: digitalPhotos.filter(p => p.eventId === firstEventId).map(p => p.shortId),
+          physicalItems: physicalItems.filter(p => p.eventId === firstEventId).map(i => ({
+            id: i.productId,
+            quantity: i.quantity,
+            selectedPhotos: i.selectedPhotos
+          }))
+        });
+        localStorage.setItem('fs_last_order_id', data.orderId);
+        navigate(`/checkout/${data.orderId}`);
+        window.location.reload(); // Force reload to trigger order fetch
+      } catch (err) {
+        console.error("Recovery failed:", err);
+        setError("Não foi possível processar seu carrinho. Tente voltar ao evento.");
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    return (
+      <div className="min-h-screen bg-theme-bg flex flex-col items-center justify-center p-8 text-center">
+        <div className="space-y-8 max-w-lg animate-in fade-in slide-in-from-bottom-8 duration-700">
+          <div className="relative mx-auto w-20 h-20 flex items-center justify-center">
+            <div className="absolute inset-0 bg-brand-tactical/20 blur-2xl rounded-full" />
+            <RefreshCw size={40} className="text-brand-tactical animate-spin-slow" />
+          </div>
+          <div className="space-y-4">
+            <h2 className="text-4xl md:text-5xl font-heading font-black text-white uppercase italic tracking-tighter leading-none">
+              Recuperar Carrinho
+            </h2>
+            <p className="text-[10px] text-theme-text-muted font-black uppercase tracking-[0.2em] leading-relaxed max-w-sm mx-auto">
+              Identificamos itens ativos na sua sessão. Deseja gerar um novo protocolo de pagamento para finalizar sua compra?
+            </p>
+          </div>
+          
+          <div className="bg-theme-bg-muted/30 border border-theme-border/40 p-6 space-y-4 text-left">
+             <div className="flex justify-between text-[10px] font-black uppercase tracking-widest text-theme-text-muted">
+               <span>Itens Digitais</span>
+               <span className="text-white">{digitalPhotos.length}</span>
+             </div>
+             <div className="flex justify-between text-[10px] font-black uppercase tracking-widest text-theme-text-muted">
+               <span>Itens Físicos</span>
+               <span className="text-white">{physicalItems.length}</span>
+             </div>
+             <div className="h-px bg-theme-border/40" />
+             <div className="flex justify-between items-center">
+               <span className="text-[10px] font-black uppercase tracking-[0.2em] text-brand-tactical">Estimativa Total</span>
+               <span className="text-2xl font-heading font-black text-white italic">R$ {totalPrice(15).toFixed(2)}</span>
+             </div>
+          </div>
+
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <button 
+              onClick={() => { clearCart(); navigate("/"); }}
+              className="py-5 border border-white/10 text-[10px] font-black uppercase tracking-[0.4em] hover:bg-red-500/10 hover:text-red-500 transition-all italic"
+            >
+              Limpar e Sair
+            </button>
+            <button 
+              onClick={handleGenerateOrder}
+              className="py-5 bg-brand-tactical text-black text-[10px] font-black uppercase tracking-[0.4em] hover:bg-white transition-all italic shadow-[0_20px_40px_rgba(20,184,166,0.2)]"
+            >
+              Finalizar Agora
+            </button>
+          </div>
+        </div>
+      </div>
+    );
+  }
+
   if (error || !order) return (
-    <div className="min-h-screen bg-theme-bg flex flex-col items-center justify-center p-6 text-center">
-      <h2 className="text-4xl font-black text-red-500 italic mb-4">FALHA NO PROTOCOLO</h2>
-      <p className="text-xs uppercase tracking-widest text-zinc-500 mb-8 max-w-xs">{error || "Pedido não encontrado."}</p>
-      <button onClick={() => navigate("/")} className="px-10 py-4 border border-zinc-800 text-[10px] font-black uppercase tracking-widest hover:bg-theme-card transition-all">Voltar para a home</button>
+    <div className="min-h-screen bg-theme-bg flex flex-col items-center justify-center p-8 text-center">
+      <div className="space-y-6 max-w-md animate-in fade-in slide-in-from-bottom-8 duration-700">
+        <h2 className="text-4xl md:text-5xl font-heading font-black text-red-500 uppercase italic tracking-tighter leading-none">
+          Falha no Protocolo
+        </h2>
+        <p className="text-[10px] text-theme-text-muted font-black uppercase tracking-[0.2em] leading-relaxed max-w-xs mx-auto">
+          {error || "Não conseguimos identificar seu protocolo de pagamento ativo."}
+        </p>
+        <div className="pt-8">
+          <button 
+            onClick={() => navigate("/")}
+            className="w-full py-5 bg-white/5 border border-white/10 text-[10px] font-black uppercase tracking-[0.4em] hover:bg-brand-tactical hover:text-black hover:border-brand-tactical transition-all italic shadow-2xl"
+          >
+            Voltar para a Vitrine
+          </button>
+        </div>
+      </div>
     </div>
   );
 
-  const eventTarget = order.event?.id || order.eventId;
 
   if (paymentSuccess) return (
-    <div className="min-h-screen bg-theme-bg flex items-center justify-center p-4">
-      <div className="max-w-lg w-full text-center animate-in fade-in zoom-in-95 duration-500">
-        <div className="relative mx-auto mb-10 w-32 h-32">
-          <div className="absolute inset-0 rounded-full bg-emerald-500/10 animate-ping" />
-          <div className="relative w-32 h-32 rounded-full bg-emerald-500/10 flex items-center justify-center border border-emerald-500/30">
-            <CheckCircle2 size={56} className="text-emerald-500" strokeWidth={1} />
+    <div className="min-h-screen bg-black text-white font-sans flex flex-col">
+      <Navbar />
+      <div className="flex-1 max-w-5xl mx-auto px-6 py-12 md:py-20 w-full animate-in fade-in zoom-in duration-700">
+        
+        {/* Header Tático */}
+        <div className="flex justify-between items-center mb-12">
+          <button 
+            onClick={() => navigate(-1)} 
+            className="flex items-center gap-2 text-[10px] font-black uppercase tracking-widest text-zinc-500 hover:text-white transition-all"
+          >
+            <ArrowLeft size={14} /> Voltar
+          </button>
+          
+          <div className="flex flex-col items-center">
+             <img src="/logo-fs.png" alt="Foto Segundo" className="h-4 mb-1" />
+             <span className="text-[8px] font-black tracking-[0.3em] text-zinc-600 uppercase">Ambiente Seguro</span>
+          </div>
+
+          <div className="flex items-center gap-2 text-brand-tactical text-[9px] font-black uppercase tracking-widest">
+            <ShieldCheck size={14} /> 
+            <span className="hidden md:inline">Checkout Blindado</span>
           </div>
         </div>
-        <p className="text-[10px] font-black uppercase tracking-[0.5em] text-emerald-500 mb-4">PAGAMENTO CONFIRMADO</p>
-        <h1 className="text-4xl md:text-6xl font-black text-theme-text italic tracking-tighter mb-6 uppercase">Acesso Liberado</h1>
-        <p className="text-xs text-zinc-500 mb-10">Suas memórias estão prontas. Redirecionando em {redirectCountdown}s...</p>
-        <button onClick={() => navigate(`/e/${eventTarget}`)} className="w-full py-5 bg-emerald-600 text-white text-xs font-black uppercase tracking-widest hover:brightness-110 transition-all">ACESSAR GALERIA AGORA</button>
+
+        {/* Conteúdo Centralizado */}
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-12">
+          
+          {/* Lado Esquerdo: Resumo e Logística */}
+          <div className="space-y-10">
+            <div className="text-center lg:text-left">
+              <p className="text-[10px] font-black text-brand-tactical uppercase tracking-[0.4em] mb-4">Investimento</p>
+              <h1 className="text-4xl md:text-5xl font-black italic tracking-tighter uppercase leading-none">
+                {order.event?.nomeNoivos}
+              </h1>
+              <p className="text-zinc-500 text-sm mt-4 font-medium">
+                {order.manualType === "VAULT_ONDEMAND" || order.manualType === "VAULT_CYCLE" 
+                  ? "Materialização de Memórias (Até 36 fotos)" 
+                  : "Seleção Digital de Alta Resolução"}
+              </p>
+            </div>
+
+            <div className="space-y-4">
+              <div className="flex items-center justify-between">
+                <p className="text-[9px] font-black text-zinc-500 uppercase tracking-widest italic">Minha Seleção</p>
+                <span className="text-[9px] text-zinc-600 font-bold uppercase">{order.items?.length || 0} Itens</span>
+              </div>
+              <div className="space-y-2 max-h-60 overflow-y-auto pr-2 custom-scrollbar">
+                {order.items?.map((item) => (
+                  <div key={item.id} className="flex justify-between items-center p-5 bg-white/5 border border-white/5 rounded-xl">
+                    <div className="flex items-center gap-4">
+                      <div className="w-12 h-12 bg-zinc-900 border border-white/10 flex items-center justify-center rounded-lg">
+                        {item.media ? <ImageIcon size={18} className="text-brand-tactical opacity-50" /> : <Printer size={18} className="text-brand-tactical opacity-50" />}
+                      </div>
+                      <div className="flex flex-col">
+                        <span className="text-[11px] font-black text-white uppercase italic">
+                          {item.media ? `Foto #${item.media.shortId}` : item.printProduct?.name}
+                        </span>
+                        <span className="text-[8px] text-zinc-500 font-bold uppercase tracking-widest">
+                          {item.media ? "Digital HD" : "Produto Físico"}
+                        </span>
+                      </div>
+                    </div>
+                    <span className="text-xs font-black italic text-white">R$ {Number(item.price).toFixed(2)}</span>
+                  </div>
+                ))}
+              </div>
+            </div>
+
+            {/* Logística Condicional */}
+            {order.deliveryType === 'SHIPPING' && authStep === 'authorized' && (
+              <div className="animate-in slide-in-from-top-4 duration-500 space-y-6 p-8 bg-zinc-900/50 border border-white/5 rounded-3xl">
+                 <div className="flex items-center gap-3">
+                    <div className="h-0.5 w-6 bg-brand-tactical" />
+                    <p className="text-[9px] font-black text-brand-tactical uppercase tracking-widest">Endereço de Entrega</p>
+                 </div>
+                 <div className="grid grid-cols-2 gap-4">
+                    <div className="col-span-2">
+                      <input 
+                        placeholder="CEP" 
+                        value={shippingData.cep}
+                        onBlur={handleCepBlur}
+                        onChange={e => setShippingData({...shippingData, cep: e.target.value})}
+                        className="fs-input font-mono bg-black"
+                      />
+                    </div>
+                    <div className="col-span-2">
+                      <input 
+                        placeholder="Endereço" 
+                        value={shippingData.street}
+                        disabled={isShippingLoading}
+                        onChange={e => setShippingData({...shippingData, street: e.target.value})}
+                        className="fs-input bg-black opacity-80"
+                      />
+                    </div>
+                    <input 
+                      placeholder="Número" 
+                      value={shippingData.number}
+                      onChange={e => setShippingData({...shippingData, number: e.target.value})}
+                      className="fs-input bg-black"
+                    />
+                    <input 
+                      placeholder="Cidade" 
+                      value={shippingData.city}
+                      disabled
+                      className="fs-input bg-black opacity-50"
+                    />
+                 </div>
+                 
+                 {shippingOptions.length > 0 && (
+                   <div className="space-y-3 mt-6">
+                     <p className="text-[8px] font-black text-zinc-500 uppercase tracking-widest italic">Opções de Envio</p>
+                     {shippingOptions.map(opt => (
+                       <button
+                         key={opt.id}
+                         onClick={() => setSelectedShipping(opt)}
+                         className={`w-full p-4 flex justify-between items-center border rounded-xl transition-all ${selectedShipping?.id === opt.id ? 'border-brand-tactical bg-brand-tactical/10' : 'border-zinc-800 hover:border-zinc-700'}`}
+                       >
+                         <div className="text-left">
+                           <p className="text-[10px] font-black uppercase text-white">{opt.name}</p>
+                           <p className="text-[8px] text-zinc-500 uppercase">Até {opt.deliveryTimeDays} dias úteis</p>
+                         </div>
+                         <span className="text-xs font-black italic text-brand-tactical">R$ {opt.price.toFixed(2)}</span>
+                       </button>
+                     ))}
+                   </div>
+                 )}
+              </div>
+            )}
+          </div>
+
+          {/* Lado Direito: Pagamento */}
+          <div className="space-y-8 lg:border-l lg:border-white/5 lg:pl-12">
+            <div className="text-center lg:text-left">
+              <p className="text-[10px] font-black text-zinc-500 uppercase tracking-widest mb-2">Finalizar Pagamento</p>
+              <p className="text-[9px] text-zinc-600 uppercase tracking-widest leading-relaxed max-w-xs mx-auto lg:mx-0">
+                Sua transação é processada em ambiente tático com criptografia de ponta.
+              </p>
+            </div>
+
+            {authStep === 'authorized' ? (
+              <div className="space-y-8">
+                {!pixData && (
+                  <div id="paymentBrick_container" className="lux-brick-midnight rounded-2xl overflow-hidden" />
+                )}
+
+                {pixData && (
+                  <div className="space-y-8 animate-in zoom-in-95 duration-500 text-center">
+                    <div className="bg-white p-4 inline-block rounded-3xl shadow-2xl border-8 border-zinc-900">
+                      <QRCodeSVG 
+                        value={String(pixData.qrCode || "invalid")} 
+                        size={220}
+                        level="H"
+                        includeMargin={true}
+                      />
+                    </div>
+                    
+                    <div className="space-y-4">
+                      <p className="text-[10px] font-black text-brand-tactical uppercase tracking-[0.3em] italic animate-pulse">
+                        Aguardando Pagamento...
+                      </p>
+                      <button 
+                         onClick={() => {
+                           navigator.clipboard.writeText(pixData.qrCode);
+                           setCopied(true);
+                           setTimeout(() => setCopied(false), 2000);
+                         }}
+                         className={`w-full py-5 text-[10px] font-black uppercase tracking-widest transition-all border rounded-2xl ${copied ? 'bg-emerald-500 border-emerald-500 text-white' : 'bg-zinc-900 border-white/5 text-white hover:border-brand-tactical'}`}
+                      >
+                         {copied ? "COPIADO!" : "COPIAR CÓDIGO PIX"}
+                      </button>
+                    </div>
+                  </div>
+                )}
+              </div>
+            ) : (
+              /* Auth Forms (Login/Register) */
+              <form onSubmit={handleAuthSubmit} className="space-y-6">
+                 <div className="text-center p-8 bg-zinc-900/50 border border-white/5 rounded-3xl">
+                    <p className="text-[10px] font-black text-brand-tactical uppercase tracking-widest mb-4">
+                      {authStep === 'login' ? 'Identificação Necessária' : 'Crie sua Conta'}
+                    </p>
+                    <input 
+                      type="email"
+                      value={order.buyerEmail || email}
+                      disabled={!!order.buyerEmail}
+                      className="fs-input mb-4 text-center bg-black"
+                      placeholder="seu@email.com"
+                    />
+                    <input 
+                      type="password"
+                      value={password}
+                      onChange={(e) => setPassword(e.target.value)}
+                      className="fs-input text-center bg-black"
+                      placeholder="Sua Senha"
+                      autoFocus
+                    />
+                    {localAuthError && <p className="text-[9px] text-red-500 font-black mt-4 uppercase tracking-widest">{localAuthError}</p>}
+                    <button 
+                      type="submit"
+                      className="w-full mt-8 py-5 bg-brand-tactical text-black text-[10px] font-black uppercase tracking-[0.4em] hover:bg-white transition-all rounded-2xl italic"
+                    >
+                      {authLoading ? "CONECTANDO..." : "Continuar para Pagamento"}
+                    </button>
+                 </div>
+              </form>
+            )}
+          </div>
+        </div>
+
+        {/* Footer: Totais */}
+        <div className="lux-window-footer flex flex-col md:flex-row justify-between items-center gap-6">
+          <div className="flex flex-col items-center md:items-start">
+             <span className="text-[9px] font-black text-zinc-500 uppercase tracking-widest">Total do Investimento</span>
+             <span className="text-4xl font-black italic tracking-tighter text-white">
+               R$ {(Number(order.amount || 0) - Number(order.shippingFee || 0) + Number(selectedShipping?.price || 0)).toFixed(2)}
+             </span>
+          </div>
+
+          <div className="flex gap-4">
+             <div className="flex flex-col items-end">
+                <span className="text-[8px] font-black text-zinc-600 uppercase tracking-widest">Proteção de Dados</span>
+                <span className="text-[10px] font-black text-zinc-400 uppercase tracking-[0.2em]">Criptografia SSL 256-bit</span>
+             </div>
+             <div className="w-px h-10 bg-white/5" />
+             <div className="flex items-center gap-3">
+                <Lock size={16} className="text-brand-tactical" />
+                <CheckCircle2 size={16} className="text-brand-tactical" />
+             </div>
+          </div>
+        </div>
       </div>
     </div>
   );
 
 
   return (
-    <div className="min-h-screen bg-theme-bg text-theme-text">
-      <nav className="h-20 flex items-center justify-between px-8 border-b border-zinc-900 sticky top-0 z-50 bg-theme-bg/90 backdrop-blur-xl">
-        <button onClick={() => navigate(-1)} className="text-[10px] font-black uppercase tracking-widest text-zinc-500 hover:text-white transition-all flex items-center gap-2"><ArrowLeft size={14} /> Voltar</button>
-        <img src="/logo-fs.png" alt="Foto Segundo" className="h-5" />
-        <div className="flex items-center gap-2 text-brand-tactical text-[9px] font-black uppercase tracking-widest"><ShieldCheck size={14} /> Checkout Blindado</div>
-      </nav>
+    <div className="min-h-screen bg-black text-white font-sans flex flex-col">
+      <Navbar />
+      <div className="flex-1 max-w-7xl mx-auto px-6 py-12 w-full animate-in fade-in duration-700">
+        <div className="flex justify-between items-center mb-12 border-b border-white/5 pb-8">
+          <button onClick={() => navigate(-1)} className="text-[10px] font-black uppercase tracking-widest text-zinc-500 hover:text-white transition-all flex items-center gap-2"><ArrowLeft size={14} /> Voltar</button>
+          <img src="/logo-fs.png" alt="Foto Segundo" className="h-4" />
+          <div className="flex items-center gap-2 text-brand-tactical text-[9px] font-black uppercase tracking-widest"><ShieldCheck size={14} /> Checkout Blindado</div>
+        </div>
 
-      <div className="max-w-4xl mx-auto px-6 py-12 grid grid-cols-1 lg:grid-cols-2 gap-12">
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-16 items-start">
         {/* Lado Esquerdo: Resumo e Logística */}
-        <div className="space-y-8">
+        <div className="space-y-8 p-8 md:p-12">
           <div>
             <p className="text-[10px] font-black text-brand-tactical uppercase tracking-[0.4em] mb-4">Investimento</p>
             <h1 className="text-4xl md:text-5xl font-black italic tracking-tighter uppercase leading-none">{order.event?.nomeNoivos}</h1>
@@ -469,27 +850,45 @@ export const CheckoutPage = () => {
           </div>
 
           <div className="space-y-4">
-            <p className="text-[9px] font-black text-zinc-500 uppercase tracking-widest italic">Resumo da Seleção</p>
-            <div className="space-y-2">
-              {order.items?.map((item) => (
-                <div key={item.id} className="flex justify-between items-center p-4 bg-white/5 border border-white/5">
-                  <div className="flex items-center gap-4">
-                    <div className="w-10 h-10 bg-zinc-900 border border-white/10 flex items-center justify-center">
-                      {item.media ? <ImageIcon size={14} className="text-brand-tactical" /> : <Printer size={14} className="text-brand-tactical" />}
-                    </div>
-                    <div className="flex flex-col">
-                      <span className="text-[10px] font-black text-white uppercase italic">
-                        {item.media ? `Foto #${item.media.shortId}` : item.printProduct?.name}
-                      </span>
-                      <span className="text-[8px] text-zinc-500 font-bold uppercase tracking-widest">
-                        {item.media ? "Digital HD" : "Produto Físico"}
-                      </span>
-                    </div>
-                  </div>
-                  <span className="text-xs font-black italic text-white">R$ {Number(item.price).toFixed(2)}</span>
-                </div>
-              ))}
+            <div 
+               className="flex items-center justify-between cursor-pointer group bg-white/5 border border-white/5 p-4 rounded-xl"
+               onClick={() => setShowItems(!showItems)}
+            >
+               <p className="text-[9px] font-black text-zinc-500 group-hover:text-white transition-colors uppercase tracking-widest italic">
+                 Resumo da Seleção ({order.items?.length || 0} itens)
+               </p>
+               <div className="w-6 h-6 rounded-md border border-white/10 flex items-center justify-center group-hover:border-white/30 group-hover:bg-white/5 transition-all text-white">
+                  {showItems ? "−" : "+"}
+               </div>
             </div>
+            {showItems && (
+              <div className="space-y-2 animate-in slide-in-from-top-2 fade-in duration-300">
+                {order.items?.map((item) => (
+                  <div key={item.id} className="flex justify-between items-center p-4 bg-white/5 border border-white/5 rounded-xl">
+                    <div className="flex items-center gap-4">
+                      <div className="w-10 h-10 bg-zinc-900 border border-white/10 flex items-center justify-center rounded-lg overflow-hidden">
+                        {item.media?.url ? (
+                           <img src={item.media.url} alt="Thumb" className="w-full h-full object-cover" />
+                        ) : item.media ? (
+                           <ImageIcon size={14} className="text-brand-tactical" />
+                        ) : (
+                           <Printer size={14} className="text-brand-tactical" />
+                        )}
+                      </div>
+                      <div className="flex flex-col">
+                        <span className="text-[10px] font-black text-white uppercase italic">
+                          {item.media ? `Foto #${item.media.shortId}` : item.printProduct?.name}
+                        </span>
+                        <span className="text-[8px] text-zinc-500 font-bold uppercase tracking-widest">
+                          {item.media ? "Digital HD" : "Produto Físico"}
+                        </span>
+                      </div>
+                    </div>
+                    <span className="text-xs font-black italic text-white">R$ {Number(item.price).toFixed(2)}</span>
+                  </div>
+                ))}
+              </div>
+            )}
           </div>
 
           <div className="p-8 bg-theme-bg border border-zinc-900 space-y-6 relative overflow-hidden">
@@ -501,14 +900,14 @@ export const CheckoutPage = () => {
             {order.deliveryType === 'SHIPPING' && (
               <div className="flex justify-between items-center text-[10px] font-black text-zinc-500 uppercase tracking-widest">
                 <span>Frete</span>
-                <span className={Number(order.shippingFee) === 0 ? "text-emerald-500" : "text-theme-text"}>
-                  {Number(order.shippingFee) === 0 ? "GRÁTIS" : `R$ ${Number(order.shippingFee).toFixed(2)}`}
+                <span className={(Number(order.shippingFee || 0)) === 0 ? "text-emerald-500" : "text-theme-text"}>
+                  {(Number(order.shippingFee || 0)) === 0 ? "GRÁTIS" : `R$ ${Number(order.shippingFee || 0).toFixed(2)}`}
                 </span>
               </div>
             )}
             <div className="pt-6 border-t border-zinc-900 flex justify-between items-end">
               <span className="text-[10px] font-black text-brand-tactical uppercase tracking-[0.4em]">Total</span>
-              <span className="text-4xl font-black italic tracking-tighter text-theme-text">R$ {(Number(order.amount) - Number(order.shippingFee || 0) + Number(selectedShipping?.price || 0)).toFixed(2)}</span>
+              <span className="text-4xl font-black italic tracking-tighter text-theme-text">R$ {(Number(order.amount || 0) - Number(order.shippingFee || 0) + Number(selectedShipping?.price || 0)).toFixed(2)}</span>
             </div>
           </div>
 
@@ -730,6 +1129,7 @@ export const CheckoutPage = () => {
            </div>
         </div>
       </div>
+    </div>
       
       <style>{`
         .lux-brick-midnight { min-height: 400px; }

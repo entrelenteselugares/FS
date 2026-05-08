@@ -1,7 +1,7 @@
 import { useState, useEffect, useCallback } from "react";
 import { createPortal } from "react-dom";
 import { useEventStatus } from "../hooks/useEventStatus";
-import { Check, Printer, QrCode, ShoppingCart, Share2, ChevronRight, ChevronLeft, Image as ImageIcon, Camera, MapPin, ListChecks, Clock, ShieldCheck, CheckCircle2, Lock } from "lucide-react";
+import { Check, Printer, QrCode, ShoppingCart, Share2, ChevronRight, ChevronLeft, Image as ImageIcon, Camera, MapPin, ListChecks, Clock, ShieldCheck, CheckCircle2, Lock, UserCircle } from "lucide-react";
 import { QRCodeCanvas } from "qrcode.react";
 import { useParams, useNavigate, useSearchParams } from "react-router-dom";
 import { API as api } from "../lib/api";
@@ -82,6 +82,7 @@ interface EventMedia {
   url: string;
   shortId: string;
   price?: number | null;
+  isGuest?: boolean;
 }
 
 interface AccessData {
@@ -185,6 +186,7 @@ export default function EventPage() {
   const [showQrModal, setShowQrModal] = useState(false);
   const [showLiveOps, setShowLiveOps] = useState(true);
   const [showPhygital, setShowPhygital] = useState(true);
+  const [filterMode, setFilterMode] = useState<"ALL" | "PRO" | "GUEST">("ALL");
 
   const eventStatus = useEventStatus(event?.dataEvento, null, 2, event?.isExpired, event?.active);
 
@@ -351,6 +353,7 @@ export default function EventPage() {
           selectedPhotos: i.selectedPhotos
         }))
       });
+      localStorage.setItem('fs_last_order_id', data.orderId);
       navigate(`/checkout/${data.orderId}`);
     } catch (err) {
       console.error("[Unlock Click Error]:", err);
@@ -360,13 +363,13 @@ export default function EventPage() {
     }
   };
 
-  const toggleCart = (shortId: string) => {
+  const toggleCart = (shortId: string, url?: string) => {
     if (!event) return;
     const exists = eventCart.includes(shortId);
     if (exists) {
       removeFromCart(event.id, shortId);
     } else {
-      addToCart(event.id, shortId);
+      addToCart(event.id, shortId, url);
     }
   };
 
@@ -673,7 +676,28 @@ return (
                       Curadoria instantânea • Alta Performance Phygital
                     </p>
 
-                    <div className="flex justify-end mb-8">
+                    <div className="flex flex-col sm:flex-row justify-between items-center gap-4 mb-8">
+                      <div className="flex bg-white/5 border border-white/10 rounded-xl overflow-hidden p-1">
+                        <button 
+                          onClick={() => setFilterMode("ALL")}
+                          className={`px-6 py-2 text-[10px] font-black uppercase tracking-widest transition-all rounded-lg ${filterMode === "ALL" ? "bg-brand-tactical text-black" : "text-zinc-500 hover:text-white"}`}
+                        >
+                          TODAS
+                        </button>
+                        <button 
+                          onClick={() => setFilterMode("PRO")}
+                          className={`px-6 py-2 text-[10px] font-black uppercase tracking-widest transition-all rounded-lg flex items-center gap-2 ${filterMode === "PRO" ? "bg-brand-tactical text-black" : "text-zinc-500 hover:text-white"}`}
+                        >
+                          <Camera size={12} /> PRO
+                        </button>
+                        <button 
+                          onClick={() => setFilterMode("GUEST")}
+                          className={`px-6 py-2 text-[10px] font-black uppercase tracking-widest transition-all rounded-lg flex items-center gap-2 ${filterMode === "GUEST" ? "bg-brand-tactical text-black" : "text-zinc-500 hover:text-white"}`}
+                        >
+                          <UserCircle size={12} /> CONVIDADOS
+                        </button>
+                      </div>
+
                       {event.isOwner && (
                         <button onClick={() => setShowQrModal(true)} className="flex items-center gap-3 px-8 py-5 bg-brand-tactical/10 border border-brand-tactical/40 text-[10px] font-black text-brand-tactical uppercase tracking-widest hover:bg-brand-tactical/20 transition-all italic">
                           <QrCode size={18} /> PAINEL DE CAPTURA
@@ -727,7 +751,7 @@ return (
                           </div>
                         ) : (
                           <div className="grid grid-cols-2 md:grid-cols-3 xl:grid-cols-4 2xl:grid-cols-5 gap-4 lg:gap-8">
-                            {medias.map((m, idx) => {
+                            {medias.filter(m => filterMode === "ALL" || (filterMode === "GUEST" ? m.isGuest : !m.isGuest)).map((m, idx) => {
                               const isSelected = eventCart.includes(m.shortId);
                               const isUnlocked = event.unlockedMediaIds?.includes(m.shortId) || event.isOwner;
 
@@ -736,12 +760,12 @@ return (
                                     key={m.id} layout initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: (idx % 20) * 0.05 }}
                                     data-shortid={m.shortId}
                                     data-testid={`photo-${m.shortId}`}
-                                    onClick={() => !isUnlocked && toggleCart(m.shortId)}
+                                    onClick={() => !isUnlocked && toggleCart(m.shortId, m.url)}
                                     className={`relative group aspect-[3/4] bg-theme-bg overflow-hidden border-2 transition-all duration-500 ${isUnlocked ? "border-brand-tactical shadow-[0_0_20px_rgba(20,184,166,0.15)]" : (isSelected ? "border-emerald-500 cursor-pointer" : "border-theme-border/40 hover:border-zinc-700 cursor-pointer")}`}
                                   >
                                   {!isUnlocked && (
-                                    <div className="absolute inset-0 z-10 flex items-center justify-center opacity-[0.05] pointer-events-none rotate-[-45deg] select-none">
-                                      <span className="text-theme-text font-display text-4xl font-black tracking-[1em] uppercase">PROOF</span>
+                                    <div className="absolute inset-0 z-10 flex items-center justify-center opacity-20 pointer-events-none select-none">
+                                      <img src="/logo-fs.png" alt="Watermark" className="w-3/4 opacity-50 drop-shadow-md" />
                                     </div>
                                   )}
                                   <img 

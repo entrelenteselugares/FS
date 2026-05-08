@@ -7,9 +7,19 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
   const [token, setToken] = useState<string | null>(null);
   const [loading, setLoading] = useState(true);
 
+  const logout = () => {
+    localStorage.removeItem("fs_token");
+    localStorage.removeItem("fs_refresh_token");
+    delete API.defaults.headers.common["Authorization"];
+    setToken(null);
+    setUser(null);
+  };
+
   useEffect(() => {
     const initAuth = async () => {
       const stored = localStorage.getItem("fs_token");
+      const refresh = localStorage.getItem("fs_refresh_token");
+
       if (stored) {
         API.defaults.headers.common["Authorization"] = `Bearer ${stored}`;
         try {
@@ -17,18 +27,33 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
           if (r.data && r.data.nome) {
             setUser(r.data);
             setToken(stored);
-          } else {
-            throw new Error("Dados de usuário inválidos");
           }
-        } catch {
-          localStorage.removeItem("fs_token");
-          delete API.defaults.headers.common["Authorization"];
+        } catch (err: unknown) {
+          const axiosError = err as { response?: { status: number } };
+          // Se falhou por expiração e temos refresh token, tenta renovar
+          if (axiosError.response?.status === 401 && refresh) {
+            try {
+              const { data } = await API.post("/auth/refresh", { refreshToken: refresh });
+              localStorage.setItem("fs_token", data.token);
+              localStorage.setItem("fs_refresh_token", data.refreshToken);
+              API.defaults.headers.common["Authorization"] = `Bearer ${data.token}`;
+              
+              const meResponse = await API.get("/auth/me");
+              setUser(meResponse.data);
+              setToken(data.token);
+            } catch {
+              logout();
+            }
+          } else {
+            logout();
+          }
         }
       }
       setLoading(false);
     };
     
     initAuth();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   const login = async (email: string, senha: string) => {
@@ -49,14 +74,6 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     setToken(data.token);
     setUser(data.user);
     return data.user as AuthUser;
-  };
-
-  const logout = () => {
-    localStorage.removeItem("fs_token");
-    localStorage.removeItem("fs_refresh_token");
-    delete API.defaults.headers.common["Authorization"];
-    setToken(null);
-    setUser(null);
   };
 
   return (

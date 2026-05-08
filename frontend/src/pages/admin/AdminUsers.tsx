@@ -287,9 +287,9 @@ export const AdminUsers: React.FC = () => {
 
       {/* MEMBER MODAL */}
       {isModalOpen && (
-        <div className="fixed inset-0 z-[110] flex items-center justify-center p-4 md:p-6 bg-zinc-950/60 backdrop-blur-md animate-in fade-in duration-300">
+        <div className="fixed inset-0 z-[110] flex items-center justify-center p-4 md:p-6 bg-black/95 backdrop-blur-md animate-in fade-in duration-300">
            <div className="absolute inset-0" onClick={() => setIsModalOpen(false)} />
-           <div className="relative border border-theme-border w-full max-w-xl p-6 md:p-8 space-y-8 md:space-y-10 overflow-y-auto max-h-[90vh] shadow-2xl bg-theme-bg animate-in zoom-in-95 duration-500">
+           <div className="relative border border-brand-tactical/20 rounded-[2rem] w-full max-w-xl p-6 md:p-8 space-y-8 md:space-y-10 overflow-y-auto max-h-[90vh] shadow-2xl bg-theme-bg animate-in zoom-in-95 duration-500 custom-scrollbar">
               <div className="flex justify-between items-start">
                  <div className="space-y-2">
                     <span className="text-[10px] font-black text-brand-tactical uppercase tracking-[0.5em]">Protocolo Operacional</span>

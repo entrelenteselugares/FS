@@ -3,6 +3,7 @@ import React, { createContext, useContext, useState, useEffect } from 'react';
 export interface DigitalItem {
   eventId: string;
   shortId: string;
+  url?: string;
 }
 
 export interface PhysicalItem {
@@ -18,7 +19,7 @@ export interface PhysicalItem {
 interface CartContextType {
   digitalPhotos: DigitalItem[];
   physicalItems: PhysicalItem[];
-  addToCart: (eventId: string, shortId: string) => void;
+  addToCart: (eventId: string, shortId: string, url?: string) => void;
   removeFromCart: (eventId: string, shortId: string) => void;
   addPhysicalItem: (item: PhysicalItem) => void;
   removePhysicalItem: (productId: string) => void;
@@ -48,11 +49,11 @@ export const CartProvider: React.FC<{ children: React.ReactNode }> = ({ children
     localStorage.setItem('fs_cart_physical', JSON.stringify(physicalItems));
   }, [digitalPhotos, physicalItems]);
 
-  const addToCart = (eventId: string, shortId: string) => {
+  const addToCart = (eventId: string, shortId: string, url?: string) => {
     setDigitalPhotos(prev => {
       const exists = prev.some(item => item.eventId === eventId && item.shortId === shortId);
       if (exists) return prev;
-      return [...prev, { eventId, shortId }];
+      return [...prev, { eventId, shortId, url }];
     });
   };
 

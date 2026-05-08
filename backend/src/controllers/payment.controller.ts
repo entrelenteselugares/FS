@@ -13,6 +13,7 @@ import { AuthRequest } from "../lib/auth";
 import { GamificationService } from "../services/gamification.service";
 import { PhygitalService } from "../services/phygital.service";
 import { IntegrationService } from "../services/integration.service";
+import { RoutingService } from "../services/routing.service";
 import { SubscriptionService } from "../services/subscription.service";
 import { ShippingService, ShippingItem } from "../services/shipping.service";
 
@@ -521,7 +522,8 @@ export class PaymentController {
       // 2b. Respeitar valor do pedido se já existir (Ex: Reserva 50% ou Quitação)
       let preco = orderToUse ? Number(orderToUse.valor) : (basePrice + finalPrintPrice + upgradePrice + phygitalPrice);
       
-      if (preco <= 0) {
+      if (isNaN(preco) || preco <= 0) {
+        console.error("[Process Payment] Valor inválido:", { preco, cart, contributionAmount });
         return res.status(400).json({ error: "O valor do pagamento deve ser superior a zero. Verifique os itens selecionados." });
       }
 
@@ -946,9 +948,11 @@ export class PaymentController {
         } catch (e) { console.error("Error parsing physicalItems for shipping:", e); }
       }
 
-      // Se houver cartItems (digital) mas nenhum físico, frete é zero
+      // Se houver cartItems (digital) ou o pedido já tiver itens, mas nenhum físico, frete é zero
       const cartItems = Array.isArray(cart) ? cart : (cart ? [cart] : []);
-      if (items.length === 0 && cartItems.length > 0) {
+      const order = orderId ? await prisma.order.findUnique({ where: { id: String(orderId) }, include: { items: true } }) : null;
+      
+      if (items.length === 0 && (cartItems.length > 0 || (order && order.items.length > 0))) {
         return res.json({ quotes: [{ id: 'free', name: 'Entrega Digital (E-mail)', price: 0, currency: 'BRL', deliveryTimeDays: 0 }] });
       }
 
@@ -1309,7 +1313,12 @@ export class PaymentController {
         amount: Number(order.valor)
       });
 
-      // 7. Auditoria Final
+      // 7. Roteamento Logístico para Cofres (Vaults)
+      if (order.manualType === "VAULT_ONDEMAND" || order.manualType === "VAULT_CYCLE") {
+        RoutingService.routeVaultOrder(order.id).catch(e => console.error("[Routing] Erro ao rotear pedido de cofre:", e));
+      }
+
+      // 8. Auditoria Final
       audit(req, "ORDER_FINALIZED_TX", "Order", order.id, null, { eventId: order.eventId });
 
     } catch (err) {

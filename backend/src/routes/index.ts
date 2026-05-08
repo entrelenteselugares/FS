@@ -405,6 +405,7 @@ router.get("/franchise/referral", requireAuth, requireRole("FRANCHISEE"), Franch
 router.get("/franchise/network", requireAuth, requireRole("FRANCHISEE"), FranchiseController.getNetwork);
 router.get("/franchise/finance", requireAuth, requireRole("FRANCHISEE"), FranchiseController.getFinanceStats);
 router.post("/franchise/reorder", requireAuth, requireRole("FRANCHISEE"), FranchiseController.postReorder);
+router.put("/franchise/profile", requireAuth, requireRole("FRANCHISEE"), FranchiseController.updateProfile);
 
 // ── VAULTS (Cofres de Memórias - Fase 11) ──────────────────────────────────
 router.get("/vaults", requireAuth, VaultController.listAlbums);
@@ -415,6 +416,9 @@ router.post("/vaults/:albumId/upload", requireAuth, upload.single("file"), Vault
 router.post("/vaults/:albumId/vote", requireAuth, (req: any, res: any, next: any) => VaultController.voteMedia(req, res, next));
 router.post("/vaults/:albumId/checkout", requireAuth, VaultController.checkoutVault);
 router.post("/vaults/:albumId/subscribe", requireAuth, VaultController.subscribe);
+router.post("/vaults/:albumId/invite",    requireAuth, VaultController.generateInvite);
+router.get("/vaults/invitation/:code",     VaultController.getInvitationDetails);
+router.post("/vaults/invitation/:code/accept", requireAuth, VaultController.acceptInvite);
 
 // ── Flash Event (Venda Direta com PIN) ───────────────────────────────────────
 router.use("/flash", flashRoutes);
