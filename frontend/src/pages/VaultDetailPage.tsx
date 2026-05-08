@@ -126,9 +126,10 @@ export default function VaultDetailPage() {
       } else {
         alert("Erro ao iniciar assinatura.");
       }
-    } catch (err: any) {
+    } catch (err: unknown) {
       console.error("[Subscribe] Erro:", err);
-      alert(err.response?.data?.error || "Erro ao processar assinatura.");
+      const axiosError = err as { response?: { data?: { error?: string } } };
+      alert(axiosError.response?.data?.error || "Erro ao processar assinatura.");
     } finally {
       setSubscribing(false);
     }
@@ -432,10 +433,17 @@ export default function VaultDetailPage() {
                   className="relative aspect-square bg-zinc-900 overflow-hidden group cursor-pointer"
                 >
                   <img 
-                    src={`${import.meta.env.VITE_API_URL || '/api'}/vaults/media/proxy/${item.fileId}`} 
+                    src={item.thumbnailLink || `${import.meta.env.VITE_API_URL || '/api'}/vaults/media/proxy/${item.fileId}`} 
                     alt="Memory" 
                     className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110"
                     onDoubleClick={(evt) => { evt.stopPropagation(); handleDoubleTap(item.id); }}
+                    onError={(e) => {
+                      // Se a miniatura falhar (ex: link expirado), tenta o proxy como última alternativa
+                      const target = e.target as HTMLImageElement;
+                      if (item.thumbnailLink && !target.src.includes('/proxy/')) {
+                        target.src = `${import.meta.env.VITE_API_URL || '/api'}/vaults/media/proxy/${item.fileId}`;
+                      }
+                    }}
                   />
 
                   {/* Double Tap Heart Animation */}
