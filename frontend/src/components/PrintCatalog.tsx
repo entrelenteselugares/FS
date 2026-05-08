@@ -70,8 +70,8 @@ export function PrintCatalog({ selectedProductId, onAddToCart }: PrintCatalogPro
     <section className="w-full bg-[var(--bg)] text-[var(--text)] py-12 px-4 sm:px-6 lg:px-8 font-sans">
       <div className="max-w-7xl mx-auto">
         <div className="mb-10 text-center sm:text-left">
-          <h2 className="text-3xl font-bold tracking-tight text-[var(--text)] uppercase">
-            Eternize no <span className="text-emerald-500">Papel</span>
+          <h2 className="text-3xl md:text-4xl font-black tracking-tighter text-[var(--text)] uppercase italic leading-none">
+            ETERNIZE NO <span className="text-brand-tactical">PAPEL</span>
           </h2>
           <p className="mt-2 text-sm text-gray-400">
             Adicione produtos físicos de qualidade editorial ao seu pacote digital.
@@ -96,8 +96,8 @@ export function PrintCatalog({ selectedProductId, onAddToCart }: PrintCatalogPro
                 initial={{ opacity: 0, y: 20 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ delay: index * 0.1, duration: 0.4 }}
-                className={`relative flex flex-col bg-[var(--bg-card)] border rounded-2xl overflow-hidden transition-all group ${
-                  isSelected ? "border-emerald-500 shadow-[0_0_30px_rgba(16,185,129,0.15)] scale-[1.02]" : "border-[var(--border)] hover:border-[var(--border-2)]"
+                className={`relative flex flex-col bg-[var(--bg-card)] border rounded-[32px] md:rounded-[40px] overflow-hidden transition-all duration-500 group ${
+                  isSelected ? "border-brand-tactical shadow-[0_0_50px_rgba(133,185,172,0.15)] scale-[1.02]" : "border-[var(--border)] hover:border-brand-tactical/30"
                 }`}
               >
                 {/* Imagem Imersiva do Produto */}
@@ -145,10 +145,10 @@ export function PrintCatalog({ selectedProductId, onAddToCart }: PrintCatalogPro
                     
                     <button
                       onClick={() => handleAction(item)}
-                      className={`font-black text-[10px] uppercase tracking-widest px-6 py-3 transition-all active:scale-95 italic ${
+                      className={`font-black text-[10px] uppercase tracking-widest px-8 py-4 transition-all duration-300 active:scale-95 italic rounded-sm ${
                         isSelected 
-                          ? "bg-[var(--text)] text-[var(--bg)] shadow-[0_0_20px_rgba(255,255,255,0.3)]" 
-                          : "bg-brand-tactical hover:brightness-110 text-[var(--brand-text)] shadow-[0_0_20px_var(--brand-tactical)]"
+                          ? "bg-[var(--text)] text-[var(--bg)] shadow-[0_0_30px_rgba(255,255,255,0.4)]" 
+                          : "bg-brand-tactical hover:bg-white text-black shadow-[0_10px_30px_rgba(133,185,172,0.3)] hover:shadow-[0_15px_40px_rgba(255,255,255,0.4)]"
                       }`}
                     >
                       {isSelected ? `No Carrinho (${quantity})` : "Adicionar"}

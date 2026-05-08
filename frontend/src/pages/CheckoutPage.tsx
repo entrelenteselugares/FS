@@ -1,6 +1,6 @@
 import { useState, useEffect, useRef, useCallback } from "react";
 import { useParams, useNavigate, useSearchParams } from "react-router-dom";
-import { ShieldCheck, ArrowLeft, CheckCircle2, Clock, RefreshCw, Lock, Image as ImageIcon, Printer, ShoppingBag } from "lucide-react";
+import { ShieldCheck, ArrowLeft, CheckCircle2, RefreshCw, Clock, Lock, Image as ImageIcon, Printer, ShoppingBag } from "lucide-react";
 import { Navbar } from "../components/Navbar";
 
 
@@ -265,22 +265,6 @@ export const CheckoutPage = () => {
     }
   };
 
-  // ── Baixa em Dinheiro (Admin/Franqueado) ────────────────────────────────────
-  const handleCashPayment = async () => {
-    if (!confirm("Confirmar recebimento em dinheiro e liberar acesso/impressão agora?")) return;
-    setAuthLoading(true);
-    try {
-      await API.post(`/public/orders/${order!.id}/manual-payment`, {
-        method: "CASH"
-      });
-      setPaymentSuccess(true);
-    } catch {
-      console.error("Erro ao processar pagamento manual");
-      alert("Erro ao confirmar pagamento manual.");
-    } finally {
-      setAuthLoading(false);
-    }
-  };
 
   // ── Polling de status do Pix ─────────────────────────────────────────────────
   const stopPolling = useCallback(() => {
@@ -313,7 +297,7 @@ export const CheckoutPage = () => {
     if (!pixData) return;
     startPolling(pixData.orderId);
     const timer = setInterval(() => {
-      setPixSecondsLeft(s => {
+      setPixSecondsLeft((s: number) => {
         if (s <= 1) { clearInterval(timer); return 0; }
         return s - 1;
       });
@@ -594,73 +578,97 @@ export const CheckoutPage = () => {
   );
 
 
-  if (paymentSuccess) return (
-    <div className="min-h-screen bg-black text-white font-sans flex flex-col">
-      <Navbar />
-      <div className="flex-1 max-w-5xl mx-auto px-6 py-12 md:py-20 w-full animate-in fade-in zoom-in duration-700">
-        
-        {/* Header Tático */}
-        <div className="flex justify-between items-center mb-12">
-          <button 
-            onClick={() => navigate(-1)} 
-            className="flex items-center gap-2 text-[10px] font-black uppercase tracking-widest text-zinc-500 hover:text-white transition-all"
-          >
-            <ArrowLeft size={14} /> Voltar
-          </button>
-          
-          <div className="flex flex-col items-center">
-             <img src="/logo-fs.png" alt="Foto Segundo" className="h-4 mb-1" />
-             <span className="text-[8px] font-black tracking-[0.3em] text-zinc-600 uppercase">Ambiente Seguro</span>
-          </div>
-
-          <div className="flex items-center gap-2 text-brand-tactical text-[9px] font-black uppercase tracking-widest">
-            <ShieldCheck size={14} /> 
-            <span className="hidden md:inline">Checkout Blindado</span>
+  if (paymentSuccess) {
+    return (
+      <div className="min-h-screen bg-theme-bg text-theme-text font-sans flex flex-col">
+        <Navbar />
+        <div className="flex-1 flex items-center justify-center p-6">
+          <div className="max-w-xl w-full text-center space-y-8 animate-in fade-in zoom-in duration-700">
+            <div className="relative mx-auto w-24 h-24 flex items-center justify-center">
+              <div className="absolute inset-0 bg-brand-tactical/20 blur-3xl rounded-full animate-pulse" />
+              <CheckCircle2 size={80} className="text-brand-tactical relative z-10" />
+            </div>
+            <div className="space-y-4">
+              <h2 className="text-5xl md:text-6xl font-heading font-black text-white uppercase italic tracking-tighter leading-none">
+                Missão <br/> Cumprida
+              </h2>
+              <p className="text-[10px] text-theme-text-muted font-black uppercase tracking-[0.3em] leading-relaxed max-w-xs mx-auto">
+                Seu pagamento foi processado e as memórias foram liberadas em sua conta.
+              </p>
+            </div>
+            <div className="pt-8">
+              <button 
+                onClick={() => navigate("/minha-conta")}
+                className="w-full py-5 bg-brand-tactical text-black text-[10px] font-black uppercase tracking-[0.4em] hover:bg-white transition-all italic"
+              >
+                Acessar Minha Galeria
+              </button>
+            </div>
           </div>
         </div>
+      </div>
+    );
+  }
 
-        {/* Conteúdo Centralizado */}
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-12">
-          
+  return (
+    <div className="min-h-screen bg-theme-bg text-theme-text font-sans flex flex-col">
+      <Navbar />
+      <div className="flex-1 max-w-7xl mx-auto px-6 py-12 w-full animate-in fade-in duration-700">
+        <div className="flex justify-between items-center mb-12 border-b border-theme-border/20 pb-8">
+          <button onClick={() => navigate(-1)} className="text-[10px] font-black uppercase tracking-widest text-theme-text-muted hover:text-theme-text transition-all flex items-center gap-2"><ArrowLeft size={14} /> Voltar</button>
+          <img src="/logo-fs.png" alt="Foto Segundo" className="h-4" />
+          <div className="flex items-center gap-2 text-brand-tactical text-[9px] font-black uppercase tracking-widest"><ShieldCheck size={14} /> Checkout Blindado</div>
+        </div>
+
+        <div className="grid grid-cols-1 lg:grid-cols-[1fr_330px] gap-16 items-start">
           {/* Lado Esquerdo: Resumo e Logística */}
-          <div className="space-y-10">
-            <div className="text-center lg:text-left">
+          <div className="space-y-8">
+            <div>
               <p className="text-[10px] font-black text-brand-tactical uppercase tracking-[0.4em] mb-4">Investimento</p>
-              <h1 className="text-4xl md:text-5xl font-black italic tracking-tighter uppercase leading-none">
-                {order.event?.nomeNoivos}
-              </h1>
-              <p className="text-zinc-500 text-sm mt-4 font-medium">
-                {order.manualType === "VAULT_ONDEMAND" || order.manualType === "VAULT_CYCLE" 
-                  ? "Materialização de Memórias (Até 36 fotos)" 
-                  : "Seleção Digital de Alta Resolução"}
-              </p>
+              <h1 className="text-4xl md:text-5xl font-black italic tracking-tighter uppercase leading-none">{order.event?.nomeNoivos}</h1>
+              <p className="text-zinc-500 text-sm mt-4 font-medium">{order.manualType || "Seleção Digital de Alta Resolução"}</p>
             </div>
 
             <div className="space-y-4">
-              <div className="flex items-center justify-between">
-                <p className="text-[9px] font-black text-zinc-500 uppercase tracking-widest italic">Minha Seleção</p>
-                <span className="text-[9px] text-zinc-600 font-bold uppercase">{order.items?.length || 0} Itens</span>
+              <div 
+                 className="flex items-center justify-between cursor-pointer group bg-white/5 border border-white/5 p-4 rounded-xl"
+                 onClick={() => setShowItems(!showItems)}
+              >
+                 <p className="text-[9px] font-black text-zinc-500 group-hover:text-white transition-colors uppercase tracking-widest italic">
+                   Resumo da Seleção ({order.items?.length || 0} itens)
+                 </p>
+                 <div className="w-6 h-6 rounded-md border border-white/10 flex items-center justify-center group-hover:border-white/30 group-hover:bg-white/5 transition-all text-white">
+                    {showItems ? "−" : "+"}
+                 </div>
               </div>
-              <div className="space-y-2 max-h-60 overflow-y-auto pr-2 custom-scrollbar">
-                {order.items?.map((item) => (
-                  <div key={item.id} className="flex justify-between items-center p-5 bg-white/5 border border-white/5 rounded-xl">
-                    <div className="flex items-center gap-4">
-                      <div className="w-12 h-12 bg-zinc-900 border border-white/10 flex items-center justify-center rounded-lg">
-                        {item.media ? <ImageIcon size={18} className="text-brand-tactical opacity-50" /> : <Printer size={18} className="text-brand-tactical opacity-50" />}
+              {showItems && (
+                <div className="space-y-2 animate-in slide-in-from-top-2 fade-in duration-300">
+                  {order.items?.map((item) => (
+                    <div key={item.id} className="flex justify-between items-center p-4 bg-white/5 border border-white/5 rounded-xl">
+                      <div className="flex items-center gap-4">
+                        <div className="w-10 h-10 bg-zinc-900 border border-white/10 flex items-center justify-center rounded-lg overflow-hidden">
+                          {item.media?.url ? (
+                             <img src={item.media.url} alt="Thumb" className="w-full h-full object-cover" />
+                          ) : item.media ? (
+                             <ImageIcon size={14} className="text-brand-tactical" />
+                          ) : (
+                             <Printer size={14} className="text-brand-tactical" />
+                          )}
+                        </div>
+                        <div className="flex flex-col">
+                          <span className="text-[10px] font-black text-white uppercase italic">
+                            {item.media ? `Foto #${item.media.shortId}` : item.printProduct?.name}
+                          </span>
+                          <span className="text-[8px] text-zinc-500 font-bold uppercase tracking-widest">
+                            {item.media ? "Digital HD" : "Produto Físico"}
+                          </span>
+                        </div>
                       </div>
-                      <div className="flex flex-col">
-                        <span className="text-[11px] font-black text-white uppercase italic">
-                          {item.media ? `Foto #${item.media.shortId}` : item.printProduct?.name}
-                        </span>
-                        <span className="text-[8px] text-zinc-500 font-bold uppercase tracking-widest">
-                          {item.media ? "Digital HD" : "Produto Físico"}
-                        </span>
-                      </div>
+                      <span className="text-xs font-black italic text-white">R$ {Number(item.price).toFixed(2)}</span>
                     </div>
-                    <span className="text-xs font-black italic text-white">R$ {Number(item.price).toFixed(2)}</span>
-                  </div>
-                ))}
-              </div>
+                  ))}
+                </div>
+              )}
             </div>
 
             {/* Logística Condicional */}
@@ -677,7 +685,7 @@ export const CheckoutPage = () => {
                         value={shippingData.cep}
                         onBlur={handleCepBlur}
                         onChange={e => setShippingData({...shippingData, cep: e.target.value})}
-                        className="fs-input font-mono bg-black"
+                        className="fs-input font-mono bg-theme-bg-field"
                       />
                     </div>
                     <div className="col-span-2">
@@ -686,20 +694,20 @@ export const CheckoutPage = () => {
                         value={shippingData.street}
                         disabled={isShippingLoading}
                         onChange={e => setShippingData({...shippingData, street: e.target.value})}
-                        className="fs-input bg-black opacity-80"
+                        className="fs-input bg-theme-bg-field opacity-80"
                       />
                     </div>
                     <input 
                       placeholder="Número" 
                       value={shippingData.number}
                       onChange={e => setShippingData({...shippingData, number: e.target.value})}
-                      className="fs-input bg-black"
+                      className="fs-input bg-theme-bg-field"
                     />
                     <input 
                       placeholder="Cidade" 
                       value={shippingData.city}
                       disabled
-                      className="fs-input bg-black opacity-50"
+                      className="fs-input bg-theme-bg-field opacity-50"
                     />
                  </div>
                  
@@ -723,10 +731,30 @@ export const CheckoutPage = () => {
                  )}
               </div>
             )}
+
+            {/* Totais */}
+            <div className="p-8 bg-theme-bg-muted border border-theme-border/20 rounded-3xl space-y-6">
+              <div className="flex justify-between items-center text-[10px] font-black text-theme-text-muted uppercase tracking-widest">
+                <span>Subtotal</span>
+                <span className="text-theme-text">R$ {(Number(order.amount) - Number(order.shippingFee || 0)).toFixed(2)}</span>
+              </div>
+              {order.deliveryType === 'SHIPPING' && (
+                <div className="flex justify-between items-center text-[10px] font-black text-zinc-500 uppercase tracking-widest">
+                  <span>Frete</span>
+                  <span className={(Number(order.shippingFee || 0)) === 0 ? "text-emerald-500" : "text-white"}>
+                    {(Number(order.shippingFee || 0)) === 0 ? "GRÁTIS" : `R$ ${Number(order.shippingFee || 0).toFixed(2)}`}
+                  </span>
+                </div>
+              )}
+              <div className="pt-6 border-t border-white/10 flex justify-between items-end">
+                <span className="text-[10px] font-black text-brand-tactical uppercase tracking-[0.4em]">Total</span>
+                <span className="text-4xl font-black italic tracking-tighter text-theme-text">R$ {(Number(order.amount || 0) - Number(order.shippingFee || 0) + Number(selectedShipping?.price || 0)).toFixed(2)}</span>
+              </div>
+            </div>
           </div>
 
           {/* Lado Direito: Pagamento */}
-          <div className="space-y-8 lg:border-l lg:border-white/5 lg:pl-12">
+          <div className="space-y-8 lg:border-l lg:border-white/5 lg:pl-16">
             <div className="text-center lg:text-left">
               <p className="text-[10px] font-black text-zinc-500 uppercase tracking-widest mb-2">Finalizar Pagamento</p>
               <p className="text-[9px] text-zinc-600 uppercase tracking-widest leading-relaxed max-w-xs mx-auto lg:mx-0">
@@ -742,19 +770,25 @@ export const CheckoutPage = () => {
 
                 {pixData && (
                   <div className="space-y-8 animate-in zoom-in-95 duration-500 text-center">
-                    <div className="bg-white p-4 inline-block rounded-3xl shadow-2xl border-8 border-zinc-900">
-                      <QRCodeSVG 
-                        value={String(pixData.qrCode || "invalid")} 
-                        size={220}
-                        level="H"
-                        includeMargin={true}
-                      />
+                    <div className="flex flex-col items-center gap-3">
+                       <div className="flex items-center gap-2 text-[10px] font-black text-brand-tactical uppercase tracking-[0.3em] italic animate-pulse">
+                         <RefreshCw size={12} className="animate-spin" /> {pollingStatus === "polling" ? "Aguardando Pagamento..." : "Verificando..."}
+                       </div>
+                       <div className="bg-white p-4 inline-block rounded-3xl shadow-2xl border-8 border-zinc-900">
+                         {pixData.qrCodeBase64 ? (
+                           <img src={`data:image/png;base64,${pixData.qrCodeBase64}`} alt="Pix" className="w-60 h-60" />
+                         ) : (
+                           <QRCodeSVG value={pixData.qrCode} size={240} level="H" includeMargin />
+                         )}
+                       </div>
                     </div>
                     
                     <div className="space-y-4">
-                      <p className="text-[10px] font-black text-brand-tactical uppercase tracking-[0.3em] italic animate-pulse">
-                        Aguardando Pagamento...
-                      </p>
+                      <div className="flex items-center justify-center gap-3 text-zinc-500 mb-4">
+                        <Clock size={14} />
+                        <span className="text-[10px] font-black tabular-nums uppercase tracking-widest">Expira em {Math.floor(pixSecondsLeft / 60)}:{(pixSecondsLeft % 60).toString().padStart(2, '0')}</span>
+                      </div>
+                      
                       <button 
                          onClick={() => {
                            navigator.clipboard.writeText(pixData.qrCode);
@@ -770,7 +804,6 @@ export const CheckoutPage = () => {
                 )}
               </div>
             ) : (
-              /* Auth Forms (Login/Register) */
               <form onSubmit={handleAuthSubmit} className="space-y-6">
                  <div className="text-center p-8 bg-zinc-900/50 border border-white/5 rounded-3xl">
                     <p className="text-[10px] font-black text-brand-tactical uppercase tracking-widest mb-4">
@@ -779,15 +812,16 @@ export const CheckoutPage = () => {
                     <input 
                       type="email"
                       value={order.buyerEmail || email}
+                      onChange={(e) => setEmail(e.target.value)}
                       disabled={!!order.buyerEmail}
-                      className="fs-input mb-4 text-center bg-black"
+                      className="fs-input mb-4 text-center bg-theme-bg-field"
                       placeholder="seu@email.com"
                     />
                     <input 
                       type="password"
                       value={password}
                       onChange={(e) => setPassword(e.target.value)}
-                      className="fs-input text-center bg-black"
+                      className="fs-input text-center bg-theme-bg-field"
                       placeholder="Sua Senha"
                       autoFocus
                     />
@@ -801,340 +835,33 @@ export const CheckoutPage = () => {
                  </div>
               </form>
             )}
-          </div>
-        </div>
-
-        {/* Footer: Totais */}
-        <div className="lux-window-footer flex flex-col md:flex-row justify-between items-center gap-6">
-          <div className="flex flex-col items-center md:items-start">
-             <span className="text-[9px] font-black text-zinc-500 uppercase tracking-widest">Total do Investimento</span>
-             <span className="text-4xl font-black italic tracking-tighter text-white">
-               R$ {(Number(order.amount || 0) - Number(order.shippingFee || 0) + Number(selectedShipping?.price || 0)).toFixed(2)}
-             </span>
-          </div>
-
-          <div className="flex gap-4">
-             <div className="flex flex-col items-end">
-                <span className="text-[8px] font-black text-zinc-600 uppercase tracking-widest">Proteção de Dados</span>
-                <span className="text-[10px] font-black text-zinc-400 uppercase tracking-[0.2em]">Criptografia SSL 256-bit</span>
-             </div>
-             <div className="w-px h-10 bg-white/5" />
-             <div className="flex items-center gap-3">
-                <Lock size={16} className="text-brand-tactical" />
-                <CheckCircle2 size={16} className="text-brand-tactical" />
-             </div>
+            
+            <div className="pt-8 border-t border-white/5 flex items-center justify-between opacity-30">
+               <img src="https://static.mlstatic.com/org-img/vendors/br/logo-mercado-pago.png" alt="MP" className="h-3 grayscale brightness-200" />
+               <div className="flex items-center gap-2 text-[8px] font-black uppercase tracking-widest"><Lock size={10} /> 256-bit SSL</div>
+            </div>
           </div>
         </div>
       </div>
-    </div>
-  );
 
-
-  return (
-    <div className="min-h-screen bg-black text-white font-sans flex flex-col">
-      <Navbar />
-      <div className="flex-1 max-w-7xl mx-auto px-6 py-12 w-full animate-in fade-in duration-700">
-        <div className="flex justify-between items-center mb-12 border-b border-white/5 pb-8">
-          <button onClick={() => navigate(-1)} className="text-[10px] font-black uppercase tracking-widest text-zinc-500 hover:text-white transition-all flex items-center gap-2"><ArrowLeft size={14} /> Voltar</button>
-          <img src="/logo-fs.png" alt="Foto Segundo" className="h-4" />
-          <div className="flex items-center gap-2 text-brand-tactical text-[9px] font-black uppercase tracking-widest"><ShieldCheck size={14} /> Checkout Blindado</div>
-        </div>
-
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-16 items-start">
-        {/* Lado Esquerdo: Resumo e Logística */}
-        <div className="space-y-8 p-8 md:p-12">
-          <div>
-            <p className="text-[10px] font-black text-brand-tactical uppercase tracking-[0.4em] mb-4">Investimento</p>
-            <h1 className="text-4xl md:text-5xl font-black italic tracking-tighter uppercase leading-none">{order.event?.nomeNoivos}</h1>
-            <p className="text-zinc-500 text-sm mt-4">Memórias Eternizadas no Papel · {order.manualType || "Álbum Digital Completo"}</p>
-          </div>
-
-          <div className="space-y-4">
-            <div 
-               className="flex items-center justify-between cursor-pointer group bg-white/5 border border-white/5 p-4 rounded-xl"
-               onClick={() => setShowItems(!showItems)}
-            >
-               <p className="text-[9px] font-black text-zinc-500 group-hover:text-white transition-colors uppercase tracking-widest italic">
-                 Resumo da Seleção ({order.items?.length || 0} itens)
-               </p>
-               <div className="w-6 h-6 rounded-md border border-white/10 flex items-center justify-center group-hover:border-white/30 group-hover:bg-white/5 transition-all text-white">
-                  {showItems ? "−" : "+"}
-               </div>
-            </div>
-            {showItems && (
-              <div className="space-y-2 animate-in slide-in-from-top-2 fade-in duration-300">
-                {order.items?.map((item) => (
-                  <div key={item.id} className="flex justify-between items-center p-4 bg-white/5 border border-white/5 rounded-xl">
-                    <div className="flex items-center gap-4">
-                      <div className="w-10 h-10 bg-zinc-900 border border-white/10 flex items-center justify-center rounded-lg overflow-hidden">
-                        {item.media?.url ? (
-                           <img src={item.media.url} alt="Thumb" className="w-full h-full object-cover" />
-                        ) : item.media ? (
-                           <ImageIcon size={14} className="text-brand-tactical" />
-                        ) : (
-                           <Printer size={14} className="text-brand-tactical" />
-                        )}
-                      </div>
-                      <div className="flex flex-col">
-                        <span className="text-[10px] font-black text-white uppercase italic">
-                          {item.media ? `Foto #${item.media.shortId}` : item.printProduct?.name}
-                        </span>
-                        <span className="text-[8px] text-zinc-500 font-bold uppercase tracking-widest">
-                          {item.media ? "Digital HD" : "Produto Físico"}
-                        </span>
-                      </div>
-                    </div>
-                    <span className="text-xs font-black italic text-white">R$ {Number(item.price).toFixed(2)}</span>
-                  </div>
-                ))}
-              </div>
-            )}
-          </div>
-
-          <div className="p-8 bg-theme-bg border border-zinc-900 space-y-6 relative overflow-hidden">
-            <div className="absolute top-0 left-0 w-1 h-full bg-brand-tactical/20" />
-            <div className="flex justify-between items-center text-[10px] font-black text-zinc-500 uppercase tracking-widest">
-              <span>Subtotal</span>
-              <span className="text-theme-text">R$ {(Number(order.amount) - Number(order.shippingFee || 0)).toFixed(2)}</span>
-            </div>
-            {order.deliveryType === 'SHIPPING' && (
-              <div className="flex justify-between items-center text-[10px] font-black text-zinc-500 uppercase tracking-widest">
-                <span>Frete</span>
-                <span className={(Number(order.shippingFee || 0)) === 0 ? "text-emerald-500" : "text-theme-text"}>
-                  {(Number(order.shippingFee || 0)) === 0 ? "GRÁTIS" : `R$ ${Number(order.shippingFee || 0).toFixed(2)}`}
-                </span>
-              </div>
-            )}
-            <div className="pt-6 border-t border-zinc-900 flex justify-between items-end">
-              <span className="text-[10px] font-black text-brand-tactical uppercase tracking-[0.4em]">Total</span>
-              <span className="text-4xl font-black italic tracking-tighter text-theme-text">R$ {(Number(order.amount || 0) - Number(order.shippingFee || 0) + Number(selectedShipping?.price || 0)).toFixed(2)}</span>
-            </div>
-          </div>
-
-          {/* Logística Condicional */}
-          {order.deliveryType === 'SHIPPING' && authStep === 'authorized' && (
-            <div className="animate-in slide-in-from-top-4 duration-500 space-y-6 p-8 bg-theme-bg border border-brand-tactical/20">
-               <div className="flex items-center gap-3">
-                  <div className="h-0.5 w-6 bg-brand-tactical" />
-                  <p className="text-[9px] font-black text-brand-tactical uppercase tracking-widest">Endereço de Entrega</p>
-               </div>
-               <div className="grid grid-cols-2 gap-4">
-                  <div className="col-span-2">
-                    <input 
-                      placeholder="CEP" 
-                      value={shippingData.cep}
-                      onBlur={handleCepBlur}
-                      onChange={e => setShippingData({...shippingData, cep: e.target.value})}
-                      className="fs-input font-mono"
-                    />
-                  </div>
-                  <div className="col-span-2">
-                    <input 
-                      placeholder="Endereço" 
-                      value={shippingData.street}
-                      disabled={isShippingLoading}
-                      onChange={e => setShippingData({...shippingData, street: e.target.value})}
-                      className="fs-input opacity-80"
-                    />
-                  </div>
-                  <input 
-                    placeholder="Número" 
-                    value={shippingData.number}
-                    onChange={e => setShippingData({...shippingData, number: e.target.value})}
-                    className="fs-input"
-                  />
-                  <input 
-                    placeholder="Cidade" 
-                    value={shippingData.city}
-                    disabled
-                    className="fs-input opacity-50"
-                  />
-               </div>
-               
-               {shippingOptions.length > 0 && (
-                 <div className="space-y-3 mt-6">
-                   <p className="text-[8px] font-black text-zinc-500 uppercase tracking-widest italic">Opções de Envio</p>
-                   {shippingOptions.map(opt => (
-                     <button
-                       key={opt.id}
-                       onClick={() => setSelectedShipping(opt)}
-                       className={`w-full p-4 flex justify-between items-center border transition-all ${selectedShipping?.id === opt.id ? 'border-brand-tactical bg-brand-tactical/10' : 'border-zinc-800 hover:border-zinc-700'}`}
-                     >
-                       <div className="text-left">
-                         <p className="text-[10px] font-black uppercase text-white">{opt.name}</p>
-                         <p className="text-[8px] text-zinc-500 uppercase">Entrega em até {opt.deliveryTimeDays} dias úteis</p>
-                       </div>
-                       <span className="text-xs font-black italic text-brand-tactical">R$ {opt.price.toFixed(2)}</span>
-                     </button>
-                   ))}
-                 </div>
-               )}
-
-               {isShippingLoading && <p className="text-[8px] animate-pulse text-brand-tactical uppercase font-black">Buscando opções de frete...</p>}
-            </div>
-          )}
-
-          {/* Botão de Caixa (Dinheiro) */}
-          {(authUser?.role === 'ADMIN' || authUser?.role === 'PROFISSIONAL' || authUser?.franchiseProfile) && authStep === 'authorized' && (
-            <button 
-              onClick={handleCashPayment}
-              disabled={authLoading}
-              className="w-full py-5 border-2 border-brand-tactical/30 bg-brand-tactical/5 text-brand-tactical text-[10px] font-black uppercase tracking-[0.3em] hover:bg-brand-tactical hover:text-black transition-all"
-            >
-              {authLoading ? "PROCESSANDO..." : "Confirmar Recebimento em Dinheiro"}
-            </button>
-          )}
-        </div>
-
-        {/* Lado Direito: Auth ou Payment Brick */}
-        <div className="lg:border-l lg:border-zinc-900 lg:pl-12">
-           <div className="mb-8">
-              <p className="text-[10px] font-black text-zinc-500 uppercase tracking-widest mb-2">Finalizar Pagamento</p>
-              <p className="text-[9px] text-zinc-600 uppercase tracking-widest leading-relaxed">Sua transação é processada em ambiente seguro com criptografia de ponta.</p>
-           </div>
-
-            {authStep === 'authorized' ? (
-              <div className="space-y-8 animate-in fade-in duration-700">
-                {order.deliveryType === 'SHIPPING' && !shippingData.street && (
-                  <div className="p-10 border border-dashed border-zinc-800 text-center">
-                    <p className="text-[10px] text-zinc-600 uppercase font-black italic">Preencha o endereço de entrega para liberar o pagamento.</p>
-                  </div>
-                )}
-                <div className="relative">
-                  {/* Container do Brick - Ocultado se houver PIX */}
-                  {!pixData && (
-                    <div id="paymentBrick_container" className="lux-brick-midnight animate-in fade-in duration-500" />
-                  )}
-
-                  {/* QR Code Integrado */}
-                  {pixData && (
-                    <div className="space-y-8 animate-in zoom-in-95 duration-500 bg-theme-bg relative z-10">
-                      <div className="p-6 md:p-10 bg-brand-tactical/5 border border-brand-tactical/20 text-center space-y-8 shadow-2xl">
-                        <div className="flex flex-col items-center gap-2">
-                          <div className="flex items-center gap-2 text-[10px] font-black text-brand-tactical uppercase tracking-[0.3em] italic">
-                            <RefreshCw size={12} className="animate-spin" /> {pollingStatus === "polling" ? "Aguardando Confirmação..." : "Verificando..."}
-                          </div>
-                          <p className="text-[9px] text-zinc-500 uppercase tracking-widest">Escaneie o código abaixo com o app do seu banco</p>
-                        </div>
-                        
-                        <div className="bg-white p-4 inline-block rounded-xl shadow-[0_0_50px_rgba(133,185,172,0.15)] border-4 border-white">
-                          {pixData.qrCodeBase64 ? (
-                            <img 
-                              src={`data:image/png;base64,${pixData.qrCodeBase64}`} 
-                              alt="Pix" 
-                              width="240"
-                              height="240"
-                              style={{ width: "240px", height: "240px" }}
-                              className="block" 
-                            />
-                          ) : (
-                            <QRCodeSVG 
-                              value={String(pixData.qrCode || "invalid")} 
-                              size={240}
-                              level="H"
-                              includeMargin={true}
-                            />
-                          )}
-                        </div>
-
-                        <div className="space-y-4">
-                           <div className="flex flex-col gap-3">
-                             <button 
-                               onClick={() => {
-                                 navigator.clipboard.writeText(pixData.qrCode);
-                                 setCopied(true);
-                                 setTimeout(() => setCopied(false), 2000);
-                               }}
-                               className={`w-full py-4 text-[10px] font-black uppercase tracking-widest transition-all border flex items-center justify-center gap-3 ${copied ? 'bg-emerald-500 border-emerald-500 text-white' : 'bg-theme-bg border-zinc-800 text-theme-text hover:border-brand-tactical'}`}
-                             >
-                               {copied ? <><CheckCircle2 size={14} /> COPIADO!</> : <><RefreshCw size={14} /> COPIAR CÓDIGO PIX</>}
-                             </button>
-                             
-                             <button 
-                               onClick={() => { setPixData(null); initializationStarted.current = false; }}
-                               className="w-full py-4 text-[9px] font-black uppercase tracking-[0.2em] text-zinc-500 hover:text-white transition-all"
-                             >
-                               ← ALTERAR MÉTODO DE PAGAMENTO
-                             </button>
-                           </div>
-
-                           <div className="pt-6 border-t border-zinc-900/50 flex items-center justify-center gap-4 text-zinc-500">
-                              <Clock size={14} />
-                              <span className="text-[10px] font-black tabular-nums">EXPIRA EM {Math.floor(pixSecondsLeft / 60)}:{(pixSecondsLeft % 60).toString().padStart(2, '0')}</span>
-                           </div>
-                        </div>
-                      </div>
-
-                      <div className="p-6 border border-zinc-900 bg-zinc-900/20 rounded-lg flex items-start gap-4">
-                         <Lock size={16} className="text-brand-tactical mt-0.5" />
-                         <p className="text-[10px] text-zinc-500 leading-relaxed uppercase tracking-tight">
-                           Sua segurança é nossa prioridade. Após o pagamento, o acesso será liberado instantaneamente nesta mesma tela.
-                         </p>
-                      </div>
-                    </div>
-                  )}
-                </div>
-              </div>
-            ) : (
-              <div className="space-y-8 animate-in slide-in-from-bottom-4 duration-700">
-                <div className="space-y-2">
-                  <h2 className="text-2xl font-black italic uppercase">Identificação</h2>
-                  <p className="text-xs text-zinc-500">{authStep === 'login' ? "Identificamos seu e-mail. Digite sua senha de acesso." : "Defina uma senha para acessar suas fotos após o pagamento."}</p>
-                </div>
-                <form onSubmit={handleAuthSubmit} className="space-y-4">
-                  <input 
-                    type="email" 
-                    value={order.buyerEmail || email} 
-                    onChange={(e) => setEmail(e.target.value)}
-                    disabled={!!order.buyerEmail} 
-                    placeholder="seu@email.com"
-                    className={`fs-input ${order.buyerEmail ? 'opacity-50' : ''}`} 
-                  />
-                  <div className="relative group">
-                    <div className="absolute left-4 top-1/2 -translate-y-1/2 text-zinc-600 group-focus-within:text-brand-tactical transition-colors z-10 pointer-events-none">
-                      <Lock size={16} />
-                    </div>
-                    <input 
-                      type="password"
-                      placeholder="Senha (mín. 6 dígitos)" 
-                      value={password}
-                      onChange={(e) => setPassword(e.target.value)}
-                      className="fs-input"
-                      style={{ paddingLeft: '3.5rem' }}
-                      required
-                    />
-                  </div>
-                  {localAuthError && <p className="text-[10px] font-black text-red-500 uppercase tracking-widest">{localAuthError}</p>}
-                  <button 
-                    disabled={authLoading}
-                    type="submit" 
-                    className="w-full py-5 bg-brand-tactical text-black text-xs font-black uppercase tracking-widest hover:brightness-110 transition-all shadow-xl shadow-brand-tactical/10 italic"
-                  >
-                    {authLoading ? "PROCESSANDO..." : "CONTINUAR PARA PAGAMENTO"}
-                  </button>
-                  <button 
-                    type="button"
-                    onClick={() => setAuthStep(authStep === 'login' ? 'register' : 'login')}
-                    className="w-full text-[9px] font-black text-zinc-500 uppercase tracking-widest hover:text-white transition-all"
-                  >
-                    {authStep === 'login' ? "NÃO SOU EU / CRIAR NOVA CONTA" : "JÁ TENHO CONTA / FAZER LOGIN"}
-                  </button>
-                </form>
-              </div>
-            )}
-
-           <div className="mt-12 pt-8 border-t border-zinc-900 flex items-center justify-between opacity-30">
-              <img src="https://static.mlstatic.com/org-img/vendors/br/logo-mercado-pago.png" alt="MP" className="h-3 grayscale brightness-200" />
-              <div className="flex items-center gap-2 text-[8px] font-black uppercase tracking-widest"><Lock size={10} /> 256-bit SSL</div>
-           </div>
-        </div>
-      </div>
-    </div>
-      
       <style>{`
-        .lux-brick-midnight { min-height: 400px; }
-        #paymentBrick_container { border-radius: 0 !important; }
-        #paymentBrick_container iframe { border-radius: 0 !important; }
+        .fs-input {
+          width: 100%;
+          background: rgba(255,255,255,0.03);
+          border: 1px solid rgba(255,255,255,0.05);
+          padding: 1rem 1.5rem;
+          color: white;
+          font-size: 11px;
+          text-transform: uppercase;
+          font-weight: 900;
+          letter-spacing: 0.1em;
+          transition: all 0.3s;
+        }
+        .fs-input:focus {
+          border-color: #14b8a6;
+          outline: none;
+          background: rgba(20,184,166,0.05);
+        }
       `}</style>
     </div>
   );

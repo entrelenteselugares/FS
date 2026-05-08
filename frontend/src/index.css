@@ -253,7 +253,7 @@ textarea:focus {
 .lux-window {
   width: 100%;
   max-width: 800px;
-  background: #0a0a0a;
+  background: var(--bg-card);
   border: 1px solid var(--border);
   border-radius: 40px;
   overflow: hidden;

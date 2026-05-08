@@ -422,7 +422,7 @@ return (
       <Helmet><title>{`${event.nomeNoivos} | Foto Segundo`}</title></Helmet>
       <Navbar />
 
-      <main className="grid grid-cols-1 lg:grid-cols-[1fr_420px] min-h-[calc(100vh-64px)]">
+      <main className="grid grid-cols-1 lg:grid-cols-[1fr_330px] min-h-[calc(100vh-64px)]">
         {/* Lado Esquerdo: Conteúdo Principal */}
         <section className="relative flex flex-col bg-theme-bg overflow-y-auto scrollbar-hide">
           <button 
@@ -433,7 +433,7 @@ return (
              <span className="text-[10px] font-black uppercase tracking-widest">Voltar</span>
           </button>
           {/* Header Visual Cinematográfico (Sempre Visível para Consistência) */}
-          <div className="relative h-[35vh] lg:h-[45vh] shrink-0 overflow-hidden">
+          <div className="relative h-[40vh] lg:h-[50vh] shrink-0 overflow-hidden">
             <AnimatePresence mode="wait">
               <motion.div 
                 key={currentBannerIndex}
@@ -470,7 +470,7 @@ return (
               
               <motion.h1 
                 initial={{ opacity: 0, y: 30 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.2 }}
-                className="text-4xl md:text-5xl lg:text-6xl font-heading font-black text-theme-text uppercase tracking-tighter leading-[0.9] italic max-w-2xl md:max-w-4xl"
+                className="text-4xl md:text-5xl lg:text-7xl font-heading font-black text-theme-text uppercase tracking-tighter leading-[0.85] italic max-w-2xl md:max-w-5xl"
               >
                 {event.nomeNoivos}
               </motion.h1>
@@ -536,7 +536,7 @@ return (
           )}
 
           {step === "countdown" ? (
-            <div className="flex-1 flex flex-col items-center justify-center p-8 lg:p-20 space-y-16 text-center relative">
+            <div className="flex-1 flex flex-col items-center justify-center p-8 lg:p-12 space-y-16 text-center relative">
               <div className="space-y-6 max-w-3xl">
                 <p className="text-xl md:text-2xl text-theme-text-muted font-medium italic">
                   {event.type === 'ALBUM_FULL' 
@@ -557,7 +557,7 @@ return (
               </div>
             </div>
           ) : (
-            <div className="flex-1 p-8 lg:p-20 space-y-24 pb-40">
+            <div className="flex-1 p-8 lg:p-12 space-y-16 pb-40">
               
               {/* Bloco de Informações / Roteiro (Prioridade) */}
               {(event.itinerary || event.type === 'FOTO_POINT') && (
@@ -764,8 +764,8 @@ return (
                                     className={`relative group aspect-[3/4] bg-theme-bg overflow-hidden border-2 transition-all duration-500 ${isUnlocked ? "border-brand-tactical shadow-[0_0_20px_rgba(20,184,166,0.15)]" : (isSelected ? "border-emerald-500 cursor-pointer" : "border-theme-border/40 hover:border-zinc-700 cursor-pointer")}`}
                                   >
                                   {!isUnlocked && (
-                                    <div className="absolute inset-0 z-10 flex items-center justify-center opacity-20 pointer-events-none select-none">
-                                      <img src="/logo-fs.png" alt="Watermark" className="w-3/4 opacity-50 drop-shadow-md" />
+                                    <div className="absolute inset-0 z-10 flex items-center justify-center opacity-[0.05] pointer-events-none rotate-[-45deg] select-none">
+                                      <span className="text-theme-text font-display text-4xl font-black tracking-[1em] uppercase">PROOF</span>
                                     </div>
                                   )}
                                   <img 
@@ -850,7 +850,7 @@ return (
         <aside className="relative flex flex-col bg-theme-bg-muted border-l border-theme-border/60 shadow-2xl">
           <div className="absolute inset-0 bg-[radial-gradient(circle_at_top_right,rgba(20,184,166,0.08),transparent_70%)] pointer-events-none" />
           
-          <div className="relative z-10 flex-1 overflow-y-auto p-10 lg:p-14 space-y-14 scrollbar-hide">
+          <div className="relative z-10 flex-1 overflow-y-auto p-6 lg:p-8 space-y-14 scrollbar-hide">
             <div className="flex items-center justify-between border-b border-theme-border/20 pb-12">
               <div className="space-y-1">
                 <p className="text-[10px] text-theme-text-muted uppercase font-black tracking-[0.5em] italic">Membro Exclusive</p>
@@ -927,7 +927,7 @@ return (
                     <p className="text-[10px] text-brand-tactical font-black uppercase tracking-[0.6em] italic">Investimento</p>
                     <div className="flex items-baseline gap-2">
                       <span className="text-3xl font-light text-theme-text-muted/60 tracking-tighter italic">R$</span>
-                      <h2 className="text-8xl lg:text-9xl font-black tracking-tighter font-heading italic leading-none text-theme-text">
+                      <h2 className="text-6xl lg:text-7xl font-black tracking-tighter font-heading italic leading-none text-theme-text">
                         {Number(searchParams.get("intent") === "upgrade" 
                           ? (serviceCatalog.filter(s => selectedServices.includes(s.id)).reduce((acc, s) => acc + Number(s.basePrice), 0) + (includeLivePrint ? 150 : 0))
                           : (isMarketplace ? cartTotal : event.priceBase)
@@ -987,7 +987,7 @@ return (
                     <p className="text-[10px] text-brand-tactical font-black uppercase tracking-[0.6em] italic">
                       {event.type === 'ALBUM_FULL' ? "Antecipação" : "Galeria Ao Vivo"}
                     </p>
-                    <h3 className="text-2xl lg:text-3xl font-heading font-black uppercase tracking-tighter text-theme-text italic leading-[1.1]">
+                    <h3 className="text-2xl lg:text-3xl font-heading font-black uppercase tracking-tighter text-theme-text italic leading-[1.1] text-left">
                       {event.type === 'ALBUM_FULL' ? "O grande dia está chegando" : 
                        event.type === 'PHOTO_MARKETPLACE' ? "Live Print em Processamento" : 
                        "Captura em Processamento"}
@@ -1001,7 +1001,7 @@ return (
                       <div className="p-3 bg-brand-tactical/10 text-brand-tactical">
                         <CheckCircle2 size={28} />
                       </div>
-                      <p className="text-xs font-black text-theme-text uppercase tracking-[0.2em] italic">Reserva Confirmada</p>
+                      <p className="text-xs font-black text-theme-text uppercase tracking-[0.2em] italic text-left">Reserva Confirmada</p>
                     </div>
                     <p className="text-[11px] text-theme-text-muted leading-relaxed font-bold uppercase tracking-widest">Equipe técnica em prontidão para o seu evento.</p>
                   </div>
