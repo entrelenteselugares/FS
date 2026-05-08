@@ -170,7 +170,7 @@ export default function EventPage() {
   const [orderId, setOrderId] = useState<string | null>(null);
   const [needsAccessChoice, setNeedsAccessChoice] = useState(false);
   
-  const { digitalPhotos, physicalItems, addToCart, removeFromCart } = useCart();
+  const { digitalPhotos, physicalItems, addToCart, removeFromCart, addPhysicalItem, totalPrice } = useCart();
   const [serviceCatalog, setServiceCatalog] = useState<ServiceData[]>([]);
   const [selectedServices] = useState<string[]>([]);
   const [includeLivePrint] = useState(false);
@@ -178,8 +178,7 @@ export default function EventPage() {
   // Filtramos os itens do carrinho que pertencem a este evento
   const eventCart = digitalPhotos.filter(p => p.eventId === event?.id).map(p => p.shortId);
   const eventPhysicalItems = physicalItems.filter(p => p.eventId === event?.id);
-  const cartTotal = (eventCart.length * (event?.pricePerPhoto || 15)) + 
-                   eventPhysicalItems.reduce((acc, i) => acc + (i.price * i.quantity), 0);
+  const cartTotal = totalPrice(Number(event?.pricePerPhoto || 15));
 
   const [selectedPrintProductId, setSelectedPrintProductId] = useState<string | null>(null);
   const [showPrintStore, setShowPrintStore] = useState(false);
@@ -416,11 +415,13 @@ export default function EventPage() {
   })() : false;
 
   const toggleCart = (shortId: string) => {
-    setCart(prev => {
-      const exists = prev.includes(shortId);
-      const next = exists ? prev.filter(s => s !== shortId) : [...prev, shortId];
-      return next;
-    });
+    if (!event) return;
+    const exists = eventCart.includes(shortId);
+    if (exists) {
+      removeFromCart(event.id, shortId);
+    } else {
+      addToCart(event.id, shortId);
+    }
   };
 
 return (
@@ -812,9 +813,13 @@ return (
                           selectedProductId={selectedPrintProductId}
                           onAddToCart={(product) => {
                             setSelectedPrintProductId(product.id);
-                            setCart(prev => {
-                              const filtered = prev.filter(id => !id.startsWith("print:"));
-                              return [...filtered, `print:${product.id}`];
+                            addPhysicalItem({
+                              productId: product.id,
+                              name: product.name,
+                              price: Number(product.sellingPrice || 0),
+                              quantity: 1,
+                              selectedPhotos: [], // Usuário selecionará depois ou o catálogo cuida disso
+                              eventId: event.id
                             });
                           }}
                         />
@@ -998,10 +1003,10 @@ return (
       </main>
       
       {/* Carrinho Mobile Elevado */}
-      {isMarketplace && cart.length > 0 && (
+      {isMarketplace && eventCart.length > 0 && (
         <motion.div initial={{ y: 120 }} animate={{ y: 0 }} className="lg:hidden fixed bottom-0 left-0 right-0 z-[100] bg-black/95 backdrop-blur-3xl border-t border-brand-tactical/40 p-8 pb-14 flex items-center justify-between shadow-[0_-30px_60px_rgba(0,0,0,0.9)]">
           <div className="space-y-1">
-            <p className="text-[10px] font-black uppercase tracking-widest text-brand-tactical italic">{cart.length} selecionadas</p>
+            <p className="text-[10px] font-black uppercase tracking-widest text-brand-tactical italic">{eventCart.length} selecionadas</p>
             <div className="flex items-baseline gap-1">
               <span className="text-sm font-light text-theme-text-muted/60 italic">R$</span>
               <span className="text-4xl font-black tracking-tighter text-theme-text italic">{cartTotal.toFixed(0)}</span>
