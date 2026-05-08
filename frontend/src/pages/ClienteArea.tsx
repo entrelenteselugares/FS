@@ -999,7 +999,7 @@ function PedidoDetalhe({ pedido, loading, onGoToEvent, onChangePrivacy, onToggle
       pedido.event.nomeNoivos = nome;
       pedido.event.coverPhotoUrl = coverUrl;
       setIsEditing(false);
-    } catch (err) {
+    } catch {
       alert("Erro ao salvar personalização.");
     } finally {
       setIsSaving(false);
