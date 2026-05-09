@@ -4,7 +4,7 @@ import {
   Search, ChevronDown, ChevronRight, 
   CheckCircle2, Clock, PieChart, 
   TrendingUp, CreditCard, DollarSign,
-  ArrowUpRight, Filter, Zap, Trash2
+  ArrowUpRight, Filter, Zap, Trash2, Receipt, X
 } from "lucide-react";
 
 interface Order {
@@ -27,6 +27,14 @@ interface Order {
   fulfillmentStatus?: string;
   trackingCode?: string;
   deliveryType?: string;
+  items?: {
+    id: string;
+    price: number;
+    quantity: number;
+    service?: { name: string };
+    printProduct?: { title: string };
+    mediaId?: string;
+  }[];
 }
 
 interface OrderGroup {
@@ -50,6 +58,7 @@ export const AdminOrders: React.FC = () => {
   const [search, setSearch] = useState("");
   const [expandedId, setExpandedId] = useState<string | null>(null);
   const [statusFilter, setStatusFilter] = useState<string>("ALL");
+  const [selectedOrderForDetails, setSelectedOrderForDetails] = useState<Order | null>(null);
 
   const fetchOrders = useCallback(async () => {
     setLoading(true);
@@ -345,6 +354,13 @@ export const AdminOrders: React.FC = () => {
                                 <td className="py-5 text-center">
                                    <div className="flex items-center justify-center gap-2">
                                       <button 
+                                        onClick={(e) => { e.stopPropagation(); setSelectedOrderForDetails(o); }}
+                                        className="p-2 border border-theme-border text-brand-tactical/70 hover:text-brand-tactical hover:bg-brand-tactical/10 transition-all"
+                                        title="Ver Detalhes do Pedido"
+                                      >
+                                        <Receipt size={12} />
+                                      </button>
+                                      <button 
                                         onClick={(e) => { e.stopPropagation(); handleDeleteOrder(o.id); }}
                                         className="p-2 border border-theme-border text-red-500/40 hover:text-red-500 transition-all"
                                         title="Excluir Pedido"
@@ -371,6 +387,73 @@ export const AdminOrders: React.FC = () => {
           </div>
         )}
       </div>
+
+      {/* MODAL DE DETALHES DO PEDIDO */}
+      {selectedOrderForDetails && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/80 backdrop-blur-sm" onClick={() => setSelectedOrderForDetails(null)}>
+          <div className="bg-theme-bg-muted border border-theme-border w-full max-w-2xl max-h-[85vh] overflow-y-auto" onClick={e => e.stopPropagation()}>
+            <div className="flex items-center justify-between p-6 border-b border-theme-border">
+              <div>
+                <h3 className="text-lg font-black uppercase tracking-widest text-theme-text flex items-center gap-2">
+                  <Receipt className="text-brand-tactical" size={20} />
+                  Detalhes do Pedido
+                </h3>
+                <p className="text-[10px] text-theme-muted font-mono mt-1">#{selectedOrderForDetails.id.toUpperCase()}</p>
+              </div>
+              <button onClick={() => setSelectedOrderForDetails(null)} className="p-2 text-theme-muted hover:text-theme-text transition-colors">
+                <X size={20} />
+              </button>
+            </div>
+            
+            <div className="p-6 space-y-6">
+              <div className="grid grid-cols-2 gap-4">
+                <div className="bg-theme-bg p-4 border border-theme-border/50">
+                  <span className="block text-[8px] font-black text-theme-muted uppercase tracking-widest mb-1">Cliente</span>
+                  <div className="text-xs font-bold text-theme-text">{selectedOrderForDetails.user?.nome || "CONVIDADO"}</div>
+                  <div className="text-[10px] text-theme-muted lowercase">{selectedOrderForDetails.buyerEmail || selectedOrderForDetails.user?.email}</div>
+                </div>
+                <div className="bg-theme-bg p-4 border border-theme-border/50">
+                  <span className="block text-[8px] font-black text-theme-muted uppercase tracking-widest mb-1">Status do Pagamento</span>
+                  <div className={`text-xs font-black uppercase tracking-widest ${selectedOrderForDetails.status === 'APROVADO' ? 'text-brand-tactical' : 'text-amber-500'}`}>
+                    {selectedOrderForDetails.status}
+                  </div>
+                  <div className="text-[10px] text-theme-muted">{new Date(selectedOrderForDetails.createdAt).toLocaleString("pt-BR")}</div>
+                </div>
+              </div>
+
+              <div>
+                <h4 className="text-[10px] font-black uppercase tracking-widest text-theme-muted mb-3 flex items-center gap-2 border-b border-theme-border/30 pb-2">
+                  Itens do Pedido ({selectedOrderForDetails.items?.length || 0})
+                </h4>
+                {(!selectedOrderForDetails.items || selectedOrderForDetails.items.length === 0) ? (
+                  <p className="text-[10px] text-theme-muted italic">Nenhum item detalhado disponível para este pedido antigo.</p>
+                ) : (
+                  <div className="space-y-2">
+                    {selectedOrderForDetails.items.map(item => (
+                      <div key={item.id} className="flex items-center justify-between p-3 bg-theme-bg border border-theme-border/30">
+                        <div className="flex-1">
+                          <div className="text-[11px] font-bold text-theme-text uppercase">
+                            {item.quantity}x {item.service?.name || item.printProduct?.title || (item.mediaId ? `Foto (Digital)` : "Item Genérico")}
+                          </div>
+                          {item.mediaId && <div className="text-[8px] font-mono text-theme-muted mt-1 opacity-50">Ref: {item.mediaId}</div>}
+                        </div>
+                        <div className="text-right font-mono text-xs text-brand-tactical font-bold">
+                          {formatCurrency(Number(item.price) * Number(item.quantity))}
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                )}
+              </div>
+
+              <div className="flex justify-between items-center p-4 bg-brand-tactical/5 border border-brand-tactical/20 mt-6">
+                <span className="text-[10px] font-black text-brand-tactical uppercase tracking-widest">Total do Pedido</span>
+                <span className="text-xl font-heading font-black italic text-brand-tactical">{formatCurrency(selectedOrderForDetails.amount)}</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 };

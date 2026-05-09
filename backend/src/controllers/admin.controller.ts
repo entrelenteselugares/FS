@@ -924,6 +924,13 @@ export async function adminListOrders(req: AuthRequest, res: Response): Promise<
         },
         cliente:  { select: { nome: true, email: true } },
         passiveFranchisee: { select: { nome: true } },
+        items: {
+          include: {
+            service: { select: { name: true } },
+            printProduct: { select: { title: true } },
+            media: { select: { id: true } }
+          }
+        }
       },
       orderBy: { updatedAt: "desc" },
       take,
