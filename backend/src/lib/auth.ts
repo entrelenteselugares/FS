@@ -62,10 +62,18 @@ export const requireAuth = (req: ExpressRequest, res: Response, next: NextFuncti
     (req as AuthRequest).user = verifyToken(token);
     return next();
   } catch (err: unknown) {
-    if ((err as { name?: string }).name === "TokenExpiredError") {
+    const error = err as Error;
+    if (error.name === "TokenExpiredError") {
       return res.status(401).json({ error: "Token expirado", code: "TOKEN_EXPIRED" });
     }
-    return res.status(401).json({ error: "Token inválido" });
+    return res.status(401).json({ 
+      error: "Token inválido", 
+      details: error.message,
+      debug: {
+        hasSecret: !!process.env.JWT_SECRET,
+        tokenPrefix: token.substring(0, 10) + "..."
+      }
+    });
   }
 };
 
