@@ -413,13 +413,14 @@ export default function VaultDetailPage() {
                   }`}
                 >
                   <img 
-                    src={item.thumbnailLink || `${import.meta.env.VITE_API_URL || '/api'}/vaults/media/proxy/${item.fileId}`} 
+                    src={item.thumbnailLink || `${import.meta.env.VITE_API_URL?.replace(/\/$/, '') || ''}/api/vaults/media/proxy/${item.fileId}`} 
                     alt="Memory" 
                     className={`w-full h-full object-cover transition-transform duration-700 ${item.votedByMe ? 'scale-105' : 'group-hover:scale-110'}`}
                     onError={(e) => {
                       const target = e.target as HTMLImageElement;
-                      if (item.thumbnailLink && !target.src.includes('/proxy/')) {
-                        target.src = `${import.meta.env.VITE_API_URL || '/api'}/vaults/media/proxy/${item.fileId}`;
+                      const proxyUrl = `${import.meta.env.VITE_API_URL?.replace(/\/$/, '') || ''}/api/vaults/media/proxy/${item.fileId}`;
+                      if (item.thumbnailLink && target.src !== proxyUrl) {
+                        target.src = proxyUrl;
                       }
                     }}
                   />
