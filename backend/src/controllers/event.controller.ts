@@ -348,16 +348,12 @@ export class EventController {
     try {
       const partners = await prisma.user.findMany({
         where: { 
-          role: "CARTORIO",
-          cartorio: {
-            profissionais: {
-              some: { status: "ACCEPTED" }
-            }
-          }
+          role: "CARTORIO"
         },
         include: { cartorio: true },
         orderBy: { nome: "asc" }
       });
+      console.log(`[PARTNERS] Encontrados ${partners.length} parceiros com role CARTORIO`);
       return res.json(partners.map(p => {
         const legacyPrices = {
           foto: p.cartorio?.priceFoto,
