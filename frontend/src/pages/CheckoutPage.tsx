@@ -95,6 +95,8 @@ export const CheckoutPage = () => {
   const [pixSecondsLeft, setPixSecondsLeft] = useState(30 * 60); // 30 min
   const [pollingStatus, setPollingStatus] = useState<"idle" | "polling" | "found">("idle");
   const [showItems, setShowItems] = useState(false);
+  const [couponCode, setCouponCode] = useState("");
+  const [applyingCoupon, setApplyingCoupon] = useState(false);
 
   const brickController = useRef<{ unmount: () => void } | null>(null);
   const initializationStarted = useRef(false);
@@ -321,6 +323,34 @@ export const CheckoutPage = () => {
     }, 5000);
     return () => clearTimeout(timer);
   }, [paymentSuccess, order, navigate]);
+
+  const handleManualCouponSubmit = async () => {
+    if (!couponCode || !order) return;
+    setApplyingCoupon(true);
+    try {
+      const { data } = await API.post("/checkout/payment", {
+        eventId: order.event?.id || order.eventId,
+        userId: order.clienteId || null,
+        orderId: order.id,
+        email: order.buyerEmail || "cliente@fotosegundo.com.br",
+        shippingAddress: order.deliveryType === 'SHIPPING' ? shippingData : null,
+        shippingFee: selectedShipping?.price || 0,
+        shippingMethod: selectedShipping?.name || null,
+        couponCode
+      });
+
+      if (data.hasPaid || data.method === "FREE") {
+        setPaymentSuccess(true);
+      } else {
+        alert("Cupom aplicado, mas valor ainda restante. Por favor, pague via Mercado Pago (Lógica Parcial pendente).");
+      }
+    } catch (err: any) {
+      console.error(err);
+      alert(err.response?.data?.error || "Cupom inválido ou não atingiu 100% de desconto.");
+    } finally {
+      setApplyingCoupon(false);
+    }
+  };
 
   // ── MP Bricks Initialization ────────────────────────────────────────────────
   useEffect(() => {
@@ -768,6 +798,28 @@ export const CheckoutPage = () => {
 
             {authStep === 'authorized' ? (
               <div className="space-y-8">
+                <div className="space-y-4 mb-4">
+                  <p className="text-[9px] font-black text-brand-tactical uppercase tracking-widest">Tem um Cupom Especial?</p>
+                  <div className="flex gap-2">
+                    <input 
+                      type="text"
+                      placeholder="Código do Cupom"
+                      value={couponCode}
+                      onChange={(e) => setCouponCode(e.target.value.toUpperCase())}
+                      className="fs-input bg-theme-bg-field uppercase flex-1"
+                    />
+                    {couponCode && (
+                       <button 
+                         onClick={handleManualCouponSubmit}
+                         disabled={applyingCoupon}
+                         className="px-6 bg-brand-tactical text-black text-[10px] font-black uppercase tracking-widest hover:bg-white transition-all italic disabled:opacity-50"
+                       >
+                         {applyingCoupon ? "Aplicando..." : "Aplicar"}
+                       </button>
+                    )}
+                  </div>
+                </div>
+
                 {!pixData && (
                   <div id="paymentBrick_container" className="lux-brick-midnight rounded-2xl overflow-hidden" />
                 )}

@@ -79,7 +79,8 @@ export class PricingService {
     productType?: string,
     shippingMethod?: string,
     shippingFee?: number,
-    supplierCost?: number
+    supplierCost?: number,
+    professionalId?: string
   }): Promise<SplitResult> {
     if (isNaN(amount) || amount === null) {
       console.warn("[PricingService] amount is NaN or null, returning default zero splits");

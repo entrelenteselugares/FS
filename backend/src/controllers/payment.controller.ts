@@ -439,7 +439,7 @@ export class PaymentController {
    * Processa o pagamento transparente vindo do frontend.
    */
   static async processPayment(req: Request, res: Response) {
-    const { eventId, userId, email, cpf, cardToken, installments, paymentMethodId, contributionAmount, accessType, cart, printProductId, orderId: passedOrderId, includeLivePrint, includeShipping, selectedServices } = req.body;
+    const { eventId, userId, email, cpf, cardToken, installments, paymentMethodId, contributionAmount, accessType, cart, printProductId, orderId: passedOrderId, includeLivePrint, includeShipping, selectedServices, couponCode } = req.body;
 
     try {
       // 1. Buscar evento com parceiros para cálculo de split
@@ -522,9 +522,31 @@ export class PaymentController {
       // 2b. Respeitar valor do pedido se já existir (Ex: Reserva 50% ou Quitação)
       let preco = orderToUse ? Number(orderToUse.valor) : (basePrice + finalPrintPrice + upgradePrice + phygitalPrice);
       
-      if (isNaN(preco) || preco <= 0) {
+      // 2e. Aplicação de Cupom de Desconto
+      let appliedCoupon = null;
+      if (couponCode) {
+        const coupons: any[] = await prisma.$queryRaw`SELECT * FROM "coupons" WHERE code = ${String(couponCode).trim()}`;
+        appliedCoupon = coupons.length > 0 ? coupons[0] : null;
+        if (
+          appliedCoupon && 
+          appliedCoupon.active && 
+          (!appliedCoupon.expiresAt || appliedCoupon.expiresAt > new Date()) && 
+          (!appliedCoupon.maxUses || appliedCoupon.usedCount < appliedCoupon.maxUses) && 
+          (!appliedCoupon.eventId || appliedCoupon.eventId === eventId)
+        ) {
+          if (appliedCoupon.discountPct) {
+            preco = preco * (1 - Number(appliedCoupon.discountPct) / 100);
+          } else if (appliedCoupon.discountAbs) {
+            preco = Math.max(0, preco - Number(appliedCoupon.discountAbs));
+          }
+        } else {
+          appliedCoupon = null; // Inválido ou expirado
+        }
+      }
+
+      if (isNaN(preco) || preco < 0) {
         console.error("[Process Payment] Valor inválido:", { preco, cart, contributionAmount });
-        return res.status(400).json({ error: "O valor do pagamento deve ser superior a zero. Verifique os itens selecionados." });
+        return res.status(400).json({ error: "O valor do pagamento não pode ser negativo. Verifique os itens selecionados." });
       }
 
       const { 
@@ -739,8 +761,38 @@ export class PaymentController {
             guestToken: isGuest ? crypto.randomBytes(32).toString("hex") : null,
             items: orderItemsData.length > 0 ? {
               create: orderItemsData
-            } : undefined
+            } : undefined,
+            couponId: appliedCoupon?.id || null
           }
+        });
+      }
+
+      // Se aplicou cupom válido, incrementar contador
+      if (appliedCoupon) {
+        await prisma.$executeRaw`UPDATE "coupons" SET "usedCount" = "usedCount" + 1 WHERE id = ${appliedCoupon.id}`;
+      }
+
+      // 4b. Bypass para Pedidos GRATUITOS (Cupom 100% OFF ou valor R$ 0)
+      if (preco === 0) {
+        const updatedOrder = await prisma.order.update({
+          where: { id: order.id },
+          data: {
+            status: "APROVADO",
+            hasPaid: true,
+            paymentMethod: "FREE",
+            paymentId: `FREE-${order.id}-${Date.now()}`
+          }
+        });
+
+        await PaymentController.finalizeApprovedOrder(updatedOrder, event, req);
+
+        return res.json({
+          success: true,
+          orderId: order.id,
+          status: "approved",
+          hasPaid: true,
+          method: "FREE",
+          guestToken: order.guestToken
         });
       }
 
@@ -768,7 +820,7 @@ export class PaymentController {
         });
 
         // Ativa o evento/acesso imediatamente
-        await this.finalizeApprovedOrder(updatedOrder, event, req);
+        await PaymentController.finalizeApprovedOrder(updatedOrder, event, req);
 
         return res.json({
           success: true,

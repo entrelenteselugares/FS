@@ -1,6 +1,6 @@
 generator client {
   provider = "prisma-client-js"
-  output   = "../../node_modules/.prisma/client"
+  output   = "../node_modules/.prisma/client"
 }
 
 datasource db {
@@ -161,8 +161,27 @@ model Event {
   retentionDays      Int?                @default(15)
   printProducts      EventPrintProduct[]
   flashCards         FlashCard[]
+  coupons            Coupon[]
 
   @@map("events")
+}
+
+model Coupon {
+  id          String   @id @default(cuid())
+  code        String   @unique
+  discountPct Decimal? @db.Decimal(5, 2)
+  discountAbs Decimal? @db.Decimal(10, 2)
+  maxUses     Int?
+  usedCount   Int      @default(0)
+  active      Boolean  @default(true)
+  expiresAt   DateTime?
+  eventId     String?
+  createdAt   DateTime @default(now())
+  
+  orders      Order[]
+  event       Event?   @relation(fields: [eventId], references: [id])
+
+  @@map("coupons")
 }
 
 model PhygitalPrint {
@@ -305,11 +324,13 @@ model Order {
   passiveFranchiseeId String?
   splitFranchisee     Decimal?            @db.Decimal(10, 2)
   rewardsUsed         Decimal?            @db.Decimal(10, 2)
+  couponId            String?
   items               OrderItem[]
   cliente             User?               @relation("ClienteOrders", fields: [clienteId], references: [id])
   editor              User?               @relation("EditorOrders", fields: [editorId], references: [id])
   event               Event               @relation(fields: [eventId], references: [id])
   passiveFranchisee   User?               @relation("FranchiseePassiveCommissions", fields: [passiveFranchiseeId], references: [id])
+  coupon              Coupon?             @relation(fields: [couponId], references: [id])
 
   @@map("orders")
 }
@@ -368,6 +389,12 @@ model EventMedia {
   shortId    String
   price      Decimal?    @db.Decimal(10, 2)
   type       String      @default("PHOTO")
+  
+  // AI Curation
+  aiScore          Float?
+  aiTags           String[]    @default([])
+  aiAnalysisStatus String      @default("PENDING") // PENDING, ANALYZED, FAILED, APPROVED, REJECTED
+  
   createdAt  DateTime    @default(now())
   event      Event       @relation(fields: [eventId], references: [id], onDelete: Cascade)
   orderItems OrderItem[]
@@ -803,6 +830,12 @@ model SharedAlbumMedia {
   webViewLink   String
   thumbnailLink String?
   uploadedById  String
+
+  // AI Curation
+  aiScore          Float?
+  aiTags           String[]    @default([])
+  aiAnalysisStatus String      @default("PENDING") // PENDING, ANALYZED, FAILED, APPROVED, REJECTED
+
   createdAt     DateTime @default(now())
 
   album      SharedAlbum @relation(fields: [albumId], references: [id], onDelete: Cascade)
