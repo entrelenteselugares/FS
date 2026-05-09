@@ -406,7 +406,7 @@ export default function VaultDetailPage() {
             </p>
           </div>
         ) : (
-          <div className="grid grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6 gap-0.5 md:gap-2">
+          <div className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6 gap-1 md:gap-4">
             <AnimatePresence>
               {media.map((item, i) => (
                 <motion.div
@@ -414,21 +414,33 @@ export default function VaultDetailPage() {
                   initial={{ opacity: 0, scale: 0.9 }}
                   animate={{ opacity: 1, scale: 1 }}
                   transition={{ delay: i * 0.02 }}
-                  className="relative aspect-square bg-zinc-900 overflow-hidden group cursor-pointer"
+                  onClick={() => handleVote(item.id)}
+                  className={`relative aspect-square bg-zinc-900 overflow-hidden group cursor-pointer transition-all duration-300 ${
+                    item.votedByMe ? 'ring-4 ring-emerald-500 scale-95 rounded-xl' : 'hover:opacity-90 rounded-none'
+                  }`}
                 >
                   <img 
                     src={item.thumbnailLink || `${import.meta.env.VITE_API_URL || '/api'}/vaults/media/proxy/${item.fileId}`} 
                     alt="Memory" 
-                    className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110"
-                    onDoubleClick={(evt) => { evt.stopPropagation(); handleDoubleTap(item.id); }}
+                    className={`w-full h-full object-cover transition-transform duration-700 ${item.votedByMe ? 'scale-105' : 'group-hover:scale-110'}`}
                     onError={(e) => {
-                      // Se a miniatura falhar (ex: link expirado), tenta o proxy como última alternativa
                       const target = e.target as HTMLImageElement;
                       if (item.thumbnailLink && !target.src.includes('/proxy/')) {
                         target.src = `${import.meta.env.VITE_API_URL || '/api'}/vaults/media/proxy/${item.fileId}`;
                       }
                     }}
                   />
+
+                  {/* Absolute Selection Indicator */}
+                  {item.votedByMe && (
+                    <motion.div 
+                      initial={{ scale: 0 }}
+                      animate={{ scale: 1 }}
+                      className="absolute top-2 right-2 md:top-3 md:right-3 w-8 h-8 bg-emerald-500 rounded-full flex items-center justify-center z-20 shadow-lg"
+                    >
+                      <Heart size={16} className="text-black" fill="currentColor" />
+                    </motion.div>
+                  )}
 
                   {/* Double Tap Heart Animation */}
                   <AnimatePresence>
@@ -444,28 +456,14 @@ export default function VaultDetailPage() {
                     )}
                   </AnimatePresence>
                   
-                  {/* Bottom Action Bar (Permanent on mobile, hover on desktop) */}
-                  <div className="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-black/90 to-transparent p-2 flex items-center justify-between transition-opacity">
+                  {/* Bottom Action Bar */}
+                  <div className={`absolute bottom-0 left-0 right-0 bg-gradient-to-t from-black/90 to-transparent p-3 flex items-center justify-between transition-opacity ${item.votedByMe ? 'opacity-100' : 'opacity-80 group-hover:opacity-100'}`}>
                     <div className="flex items-center gap-2">
-                      <button 
-                        onClick={(evt) => { evt.stopPropagation(); handleVote(item.id); }}
-                        className={`flex items-center gap-1.5 transition-all active:scale-125 ${ item.votedByMe ? 'text-brand-tactical' : 'text-white/60'}`}
-                      >
-                        <Heart size={14} fill={item.votedByMe ? "currentColor" : "none"} />
-                        <span className="text-[10px] font-black">{item._count.votes}</span>
-                      </button>
+                      <div className={`flex items-center gap-1.5 transition-all ${ item.votedByMe ? 'text-emerald-500' : 'text-white/80'}`}>
+                        <Heart size={16} fill={item.votedByMe ? "currentColor" : "none"} />
+                        <span className="text-[12px] font-black">{item._count.votes}</span>
+                      </div>
                     </div>
-                    
-                    <button 
-                      onClick={(evt) => { 
-                        evt.stopPropagation();
-                        // Shortcut: if physical items are allowed, maybe add to cart?
-                        // For now, let's just make it a visual indicator or a direct print action
-                      }}
-                      className="p-1.5 bg-white/10 rounded-md text-white/60 hover:bg-brand-tactical hover:text-black transition-all"
-                    >
-                      <Printer size={12} />
-                    </button>
                   </div>
                 </motion.div>
               ))}
@@ -485,19 +483,29 @@ export default function VaultDetailPage() {
           <button 
             onClick={handleCheckout}
             disabled={checkingOut}
-            className={`flex-1 max-w-[200px] mx-4 rounded-full py-3 px-4 flex items-center justify-center gap-2 shadow-xl transition-all active:scale-95 disabled:opacity-50 ${
-              media.length >= vault.goalPoses
+            className={`flex-1 max-w-[220px] mx-4 rounded-full py-3 px-4 flex items-center justify-center gap-2 shadow-xl transition-all active:scale-95 disabled:opacity-50 ${
+              media.filter(m => m.votedByMe).length > 0
                 ? "bg-emerald-500 text-black shadow-emerald-500/40"
-                : "bg-zinc-800 text-gray-400"
+                : media.length >= vault.goalPoses
+                  ? "bg-emerald-500/50 text-white"
+                  : "bg-zinc-800 text-gray-400"
             }`}
           >
             {checkingOut ? (
               <Loader2 size={18} className="animate-spin" />
             ) : (
               <>
-                <Printer size={18} />
+                {media.some(m => m.votedByMe) ? (
+                  <Heart size={18} fill="currentColor" className="text-black" />
+                ) : (
+                  <Printer size={18} />
+                )}
                 <span className="text-[10px] font-black uppercase tracking-widest whitespace-nowrap">
-                  {media.length >= vault.goalPoses ? "Materializar Agora" : "Imprimir em Breve"}
+                  {media.filter(m => m.votedByMe).length > 0 
+                    ? `${media.filter(m => m.votedByMe).length} Escolhida${media.filter(m => m.votedByMe).length > 1 ? 's' : ''}` 
+                    : media.length >= vault.goalPoses 
+                      ? "Materializar Agora" 
+                      : "Imprimir em Breve"}
                 </span>
               </>
             )}

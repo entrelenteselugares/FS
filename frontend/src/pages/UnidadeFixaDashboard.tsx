@@ -400,6 +400,26 @@ export default function UnidadeFixaDashboard() {
           </div>
         )}
 
+        {/* Alerta de Insumos Phygital */}
+        {!loading && user?.franchiseProfile && user.franchiseProfile.printCredits < 500 && (
+          <div className="bg-red-500/10 border border-red-500/30 p-6 flex flex-col md:flex-row md:items-center gap-6 shadow-2xl relative overflow-hidden group">
+             <AlertTriangle size={24} className="text-red-500 shrink-0 animate-pulse" />
+             <div className="space-y-2 relative z-10 flex-1">
+                <p className="text-[12px] font-black text-red-500 uppercase tracking-widest">Alerta Estratégico: Nível Crítico de Insumos</p>
+                <p className="text-[10px] font-bold text-theme-text/80 uppercase tracking-widest max-w-3xl leading-relaxed">
+                   Atenção Operacional: Sua unidade tem apenas <span className="text-red-400 font-black">{user.franchiseProfile.printCredits} créditos</span> restantes para impressões Phygital. 
+                   A operação será bloqueada ao chegar a zero. Solicite reposição imediata de papel fotográfico e ribbons.
+                </p>
+             </div>
+             <button onClick={() => setTab("franquia")} className="px-6 py-3 bg-red-500/10 border border-red-500/40 text-[9px] font-black text-red-500 uppercase tracking-widest hover:bg-red-500 hover:text-white transition-all whitespace-nowrap">
+                Solicitar Reposição
+             </button>
+             <div className="absolute -right-10 -top-10 opacity-5 pointer-events-none group-hover:scale-110 transition-transform duration-700">
+                <AlertTriangle size={150} />
+             </div>
+          </div>
+        )}
+
         {/* KPIs Dashboard */}
         {!loading && stats && (
           <div className="grid grid-cols-2 lg:grid-cols-4 gap-px bg-theme-border/20 border border-theme-border/20 shadow-2xl">

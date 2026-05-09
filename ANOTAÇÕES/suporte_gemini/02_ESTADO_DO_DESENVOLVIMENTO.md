@@ -9,11 +9,15 @@
 - **Loja Phygital (Eternize no Papel)**: Fluxo completo com catálogo mock (fallback) para testes imediatos e guia de jornada do cliente.
 - **Phygital Motor (Sharp)**: Backend gerando mídias para impressão com overlays SVG dinâmicos.
 - **Bugfixes Críticos**: Resolvida visibilidade de botões "fantasma" (vídeo/foto sem link) e limpeza de dados corrompidos no banco.
+- **Google Calendar API**: Implementação do OAuth2 para sincronização de agendas e deploy de credenciais na Vercel.
+- **Monitor de Impressão Remoto (IoT)**: Comunicação WebSocket (Realtime) implementada no Printer Agent via Supabase.
+- **Dashboards Financeiros (Franquias)**: Painel de Repasses finalizado e Alertas Estratégicos de nível crítico de insumos Phygital inseridos no front.
+- **Auditoria de UX no Álbum Digital**: Refinamento da galeria mobile (maior área de toque, grids responsivos) e contador inteligente de seleção injetado na Sticky Bar.
+- **Otimização de Bundle**: Implementada compressão `minify` no esbuild, reduzindo o tamanho do backend de 3.7MB para 2.0MB (~50% de ganho de Cold-start).
 
 ## 🚧 Em Andamento (Foco Atual)
 
-- **Google Calendar API**: Implementação do OAuth2 para sincronização de agendas.
-- **Otimização de Bundle**: Redução de dependências externas para melhorar o cold-start na Vercel.
+Nenhuma tarefa técnica pendente para esta Fase! A base estrutural está 100% estabilizada.
 
 ## 📋 Próximos Passos
 
