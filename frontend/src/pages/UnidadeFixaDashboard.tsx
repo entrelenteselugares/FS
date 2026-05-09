@@ -842,7 +842,7 @@ export default function UnidadeFixaDashboard() {
                       <p className="text-[11px] font-black text-theme-text uppercase italic">Monitor de Rede</p>
                     </div>
                     <button 
-                      onClick={() => navigate(`/print-monitor/${ev.id}`)}
+                      onClick={() => navigate(`/profissional/monitor/${ev.id}`)}
                       className="px-6 py-3 bg-brand-tactical text-brand-text text-[9px] font-black uppercase tracking-[0.4em] hover:brightness-110 transition-all italic flex items-center gap-2"
                     >
                       ABRIR MONITOR <ArrowRight size={12} />

@@ -108,7 +108,7 @@ const AnimatedRoutes = () => {
           </ProtectedRoute>
         } />
         <Route path="/profissional/monitor/:eventId" element={
-          <ProtectedRoute roles={["ADMIN", "PROFISSIONAL", "FRANCHISEE"]}>
+          <ProtectedRoute roles={["ADMIN", "PROFISSIONAL", "FRANCHISEE", "CARTORIO"]}>
             <PrintMonitor />
           </ProtectedRoute>
         } />
