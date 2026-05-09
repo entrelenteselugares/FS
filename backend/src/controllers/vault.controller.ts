@@ -577,7 +577,17 @@ export class VaultController {
       const buffer = Buffer.from(driveRes.data as ArrayBuffer);
       return res.send(buffer);
     } catch (error: any) {
-      console.error("[PROXY MEDIA] Erro:", error.message);
+      console.error("[PROXY MEDIA] Erro fatal:");
+      console.error(" - Mensagem:", error.message);
+      if (error.response) {
+        console.error(" - Google Data:", JSON.stringify(error.response.data, null, 2));
+        console.error(" - Status:", error.response.status);
+        return res.status(error.response.status || 500).json({ 
+          error: "Erro na API do Google Drive", 
+          details: error.message,
+          googleError: error.response.data 
+        });
+      }
       res.status(500).send("Erro ao carregar mídia");
     }
   }

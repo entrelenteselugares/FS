@@ -3,7 +3,7 @@ import { Readable } from 'stream';
 import fs from 'fs';
 import path from 'path';
 
-const SCOPES = ['https://www.googleapis.com/auth/drive.file'];
+const SCOPES = ['https://www.googleapis.com/auth/drive'];
 
 /**
  * GoogleDriveService - Infraestrutura de Cold Storage para a Fase 11.
@@ -121,6 +121,18 @@ export class GoogleDriveService {
       }
 
       console.log(`[DRIVE] Pasta criada para álbum: ${albumName} (ID: ${folder.data.id})`);
+
+      // Compartilhar explicitamente com o email de admin do Foto Segundo para garantir visibilidade
+      await this.withRetry(() => this.drive!.permissions.create({
+        fileId: folder.data.id!,
+        requestBody: {
+          role: 'writer',
+          type: 'user',
+          emailAddress: 'contatofotosegundo@gmail.com'
+        },
+        supportsAllDrives: true,
+        sendNotificationEmail: false
+      }));
 
       // Liberar acesso de leitura para a pasta (Ajuda na exibição de miniaturas)
       await this.withRetry(() => this.drive!.permissions.create({
