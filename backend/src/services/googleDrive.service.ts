@@ -102,6 +102,7 @@ export class GoogleDriveService {
       try {
         folder = await this.withRetry(() => this.drive!.files.create({
           requestBody: fileMetadata,
+          supportsAllDrives: true,
           fields: 'id, name',
         }));
       } catch (parentError: any) {
@@ -111,6 +112,7 @@ export class GoogleDriveService {
           fileMetadata.parents = [];
           folder = await this.withRetry(() => this.drive!.files.create({
             requestBody: fileMetadata,
+            supportsAllDrives: true,
             fields: 'id, name',
           }));
         } else {
@@ -182,6 +184,7 @@ export class GoogleDriveService {
           mimeType: mimeType,
           body: fs.createReadStream(tmpFilePath),
         },
+        supportsAllDrives: true,
         fields: 'id, name, webViewLink, thumbnailLink',
       } as any));
 
