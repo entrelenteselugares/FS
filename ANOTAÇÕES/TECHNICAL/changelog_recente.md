@@ -1,5 +1,20 @@
 # Changelog Recente - Foto Segundo
 
+## [3.2.0] - 2026-05-09
+
+### 🏆 Golden Stable — Resiliência de Infraestrutura & Auditoria Admin
+
+- **Hardening de Infraestrutura (Anti-Cold Start)**: 
+  - Implementação de camada de **Resiliência (Retry)** em todas as queries críticas de banco de dados para mitigar erros `EAUTHTIMEOUT` em ambientes serverless (Vercel/Supabase).
+- **Restauração Completa de Menus Admin**: 
+  - Resolvidos erros 500 nos menus **Pedidos**, **Financeiro** e **Impressão** através da correção de mapeamento de tipos no `adminListOrders`.
+- **Auditoria de Banco de Dados**: 
+  - Realizada auditoria completa em 39 tabelas; mapeamento do "Babel Linguístico" (PT/EN) concluído e documentado.
+- **Cofres de Memórias (Vaults)**:
+  - Restaurada a visualização de miniaturas através da correção da URL de Proxy de Mídia, garantindo compatibilidade total com variáveis de ambiente de produção.
+- **Sincronização de Dados**: 
+  - Registro forçado de migrações legadas para alinhar o estado do banco com o Prisma.
+
 ## [3.1.0] - 2026-05-03
 
 ### Finalização da Auditoria Global de UI/UX (Midnight Luxury v3.1)

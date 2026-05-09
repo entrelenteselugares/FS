@@ -134,20 +134,21 @@ Veja [CONTRIBUTING.md](CONTRIBUTING.md) para diretrizes de desenvolvimento. Este
 © 2026 Foto Segundo. Todos os direitos reservados.
 Projetado para a excelência na fotografia phygital.
 
-## System Certification (v3.1)
+## System Certification (v3.2 - Golden Stable)
 
-The Foto Segundo platform is certified for Production Readiness as of May 2026.
+The Foto Segundo platform is certified for Production Readiness as of May 9, 2026.
 - **E2E Integrity:** 100% pass rate in Playwright Master Suite.
 - **Financial Security:** Transactional split and PIX generation validated.
 - **Architecture:** Formalized 7-module Enterprise structure.
-- **Stability:** Automated cleanup and robust session handling implemented.
+- **Resilience:** Cross-cutting Retry Layer implemented for serverless database connection stability.
 
 ## ✅ Certificação de Qualidade (E2E Stability)
 
-A plataforma Foto Segundo atingiu 100% de integridade operacional validada por robôs de usabilidade automatizados:
+A plataforma Foto Segundo atingiu o estado **Golden Stable**, com 100% de integridade operacional validada:
 
 * **Fluxo Financeiro:** Geração de PIX e conciliação bancária validada.
-* **Navegação Multi-Perfil:** 13 perfis de usuário verificados de ponta a ponta.
+* **Navegação Multi-Perfil:** 13 perfis de usuário verificados de ponta a ponta sem falhas em Cold Start.
 * **Integração IoT:** Telemetria de impressão 100% operacional.
+* **Admin Hub:** Listagem de pedidos, financeiro e logística restaurada e auditada.
 
-[Acessar Produção Enterprise](https://foto-segundo-x1tw9dp56-fotosegundo.vercel.app)
+[Acessar Produção Enterprise](https://foto-segundo.vercel.app)
