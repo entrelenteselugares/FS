@@ -916,7 +916,7 @@ export async function adminListOrders(req: AuthRequest, res: Response): Promise<
       include: {
         event: { 
           select: { 
-            nomeNoivos: true, slug: true,
+            nomeNoivos: true, slug: true, dataEvento: true, location: true, city: true,
             captacao: { select: { id: true, nome: true, pixKey: true, profissional: { select: { captPct: true } } } },
             edicao:   { select: { id: true, nome: true, pixKey: true, profissional: { select: { editPct: true } } } },
             cartorioUser: { select: { id: true, nome: true, pixKey: true, cartorio: { select: { splitPct: true } } } }
@@ -937,9 +937,12 @@ export async function adminListOrders(req: AuthRequest, res: Response): Promise<
         ...o, 
         amount: o.valor, 
         user: o.cliente, 
-        event: { 
-          title: o.event.nomeNoivos, 
-          slug: o.event.slug,
+          event: { 
+            title: o.event.nomeNoivos, 
+            slug: o.event.slug,
+            date: o.event.dataEvento,
+            location: o.event.location,
+            city: o.event.city,
           partners: {
             captacao: o.event.captacao,
             edicao: o.event.edicao,

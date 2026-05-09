@@ -241,7 +241,7 @@ export class GoogleDriveService {
   async getMediaStream(fileId: string) {
     if (!this.drive) throw new Error("Drive service not initialized");
     return this.drive.files.get(
-      { fileId, alt: 'media' },
+      { fileId, alt: 'media', supportsAllDrives: true },
       { responseType: 'stream' }
     );
   }

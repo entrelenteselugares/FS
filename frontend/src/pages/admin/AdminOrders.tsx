@@ -15,7 +15,7 @@ interface Order {
   buyerEmail?: string;
   eventId: string;
   manualType?: string;
-  event: { title: string; slug: string };
+  event: { title: string; slug: string; date?: string; location?: string; city?: string; };
   user?: { nome: string; email: string };
   splitMatriz?: number;
   splitCaptacao?: number;
@@ -33,6 +33,9 @@ interface OrderGroup {
   eventId: string;
   eventTitle: string;
   eventSlug: string;
+  eventDate?: string;
+  eventLocation?: string;
+  eventCity?: string;
   clientName: string;
   clientEmail: string;
   totalAmount: number;
@@ -76,6 +79,9 @@ export const AdminOrders: React.FC = () => {
           eventId: eid,
           eventTitle: o.event.title,
           eventSlug: o.event.slug,
+          eventDate: o.event.date,
+          eventLocation: o.event.location,
+          eventCity: o.event.city,
           clientName: o.user?.nome || "CONVIDADO",
           clientEmail: o.buyerEmail || o.user?.email || "—",
           totalAmount: 0,
@@ -220,7 +226,24 @@ export const AdminOrders: React.FC = () => {
                         {expandedId === group.eventId ? <ChevronDown size={16} /> : <ChevronRight size={16} />}
                      </div>
                      <div className="space-y-1">
-                        <p className="text-[10px] text-theme-muted font-bold uppercase tracking-wider opacity-60 truncate max-w-[300px]">{group.clientName} · {group.clientEmail}</p>
+                        <div className="text-[12px] font-black text-theme-text uppercase tracking-widest">{group.eventTitle}</div>
+                        <p className="text-[9px] text-theme-muted font-bold uppercase tracking-wider opacity-60 flex gap-2 items-center truncate max-w-[400px]">
+                          <span>{group.clientName}</span>
+                          <span>·</span>
+                          <span className="lowercase">{group.clientEmail}</span>
+                          {group.eventDate && (
+                            <>
+                              <span>·</span>
+                              <span>{new Date(group.eventDate).toLocaleDateString('pt-BR')}</span>
+                            </>
+                          )}
+                          {group.eventLocation && (
+                            <>
+                              <span>·</span>
+                              <span>{group.eventLocation} {group.eventCity ? `(${group.eventCity})` : ''}</span>
+                            </>
+                          )}
+                        </p>
                      </div>
                   </div>
 
