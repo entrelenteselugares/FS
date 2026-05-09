@@ -8,7 +8,11 @@ import { SideDrawer } from "../components/SideDrawer";
 import { DashboardLayout, type NavItem } from "../components/DashboardLayout";
 import { ExpressSaleModal, FlashEventModal, ExpressSaleBanner, type EventItem, type Partner } from "../components/profissional";
 import { AmbassadorDashboard } from "../components/AmbassadorDashboard";
-import { Users } from "lucide-react";
+import { 
+  Users, Play, CheckCircle2, X, ArrowRight, 
+  ShoppingBag, ShieldCheck, Clock, Image as ImageIcon,
+  Zap, Printer, Lock, User, AlertTriangle
+} from "lucide-react";
 
 type ActiveTab = "files" | "profile" | "wallet" | "franquia" | "embaixador";
 
@@ -100,7 +104,7 @@ export default function ClienteArea() {
   }, []);
   
   const NAV_ITEMS: NavItem[] = [
-    { label: "Minhas Memórias", onClick: () => setActiveTab("files"), isActive: activeTab === "files", icon: <Image size={18} /> },
+    { label: "Minhas Memórias", onClick: () => setActiveTab("files"), isActive: activeTab === "files", icon: <ImageIcon size={18} /> },
     { label: "Cofres de Memórias", onClick: () => navigate("/cofres"), isActive: false, icon: <Lock size={18} /> },
     { label: "Carrinho", onClick: () => setActiveTab("wallet"), isActive: activeTab === "wallet", icon: <ShoppingBag size={18} /> },
     ...(user?.franchiseProfile ? [
@@ -309,7 +313,7 @@ export default function ClienteArea() {
         {!loading && pedidos.length > 0 && (
           <div className="grid grid-cols-1 md:grid-cols-4 gap-4 md:gap-6 animate-in fade-in slide-in-from-top-4 duration-1000 delay-300">
             {[
-              { label: "Total Adquiridos", value: pedidos.filter(p => p.hasPaid).length, icon: <Image size={16} /> },
+              { label: "Total Adquiridos", value: pedidos.filter(p => p.hasPaid).length, icon: <ImageIcon size={16} /> },
               { label: "Acesso Ativo", value: aprovados.length, icon: <CheckCircle2 size={16} />, highlight: true },
               { label: "Aguardando", value: pedidos.filter(p => !p.hasPaid).length, icon: <Clock size={16} /> },
               { label: "Créditos Reward", value: formatCurrency(user?.rewardCredits || 0), icon: <ShoppingBag size={16} />, isCash: true },
@@ -362,7 +366,7 @@ export default function ClienteArea() {
                 <div className="relative overflow-hidden border border-dashed border-theme-border/40 p-24 text-center space-y-8">
                   <div className="absolute inset-0 bg-gradient-to-br from-brand-tactical/5 to-transparent opacity-50" />
                   <div className="relative inline-block">
-                    <Image size={48} className="mx-auto text-theme-border/30" />
+                    <ImageIcon size={48} className="mx-auto text-theme-border/30" />
                     <div className="absolute -top-2 -right-2 w-4 h-4 bg-brand-tactical rounded-full" style={{ animation: "radarPulse 2s ease-out infinite" }} />
                     <div className="absolute -top-2 -right-2 w-4 h-4 bg-brand-tactical rounded-full" />
                   </div>
@@ -792,7 +796,7 @@ function EventGroupRow({ group, now, onSelectPedido }: {
               />
             ) : (
               <div className="w-full h-full flex items-center justify-center bg-zinc-900">
-                <Image size={32} className="text-zinc-800" />
+                <ImageIcon size={32} className="text-zinc-800" />
               </div>
             )}
             
@@ -1144,7 +1148,7 @@ function PedidoDetalhe({ pedido, loading, onGoToEvent, onChangePrivacy, onToggle
           ) : pedido.hasPaid ? (
             <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
               <MediaActionCard 
-                icon={<Image size={16} />}
+                icon={<ImageIcon size={16} />}
                 title="Galeria Editorial"
                 subtitle="Ver & Baixar"
                 url={pedido.event.lightroomUrl}

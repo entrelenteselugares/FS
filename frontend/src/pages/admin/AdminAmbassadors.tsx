@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { API } from "../../lib/api";
-import { Users, Plus, TrendingUp, MousePointer2, Award, Copy, Check, Search, X } from "lucide-react";
+import { Users, Plus, TrendingUp, MousePointer2, Award, Search, X } from "lucide-react";
 
 interface Campaign {
   id: string;
@@ -62,6 +62,17 @@ export const AdminAmbassadors: React.FC = () => {
     c.owner.nome.toLowerCase().includes(searchTerm.toLowerCase()) ||
     c.slug.toLowerCase().includes(searchTerm.toLowerCase())
   );
+
+  if (loading) {
+    return (
+      <div className="p-8 h-screen flex flex-col items-center justify-center space-y-4">
+        <div className="h-1 w-32 bg-zinc-800 relative overflow-hidden">
+          <div className="absolute inset-0 bg-brand-tactical animate-shimmer" style={{ width: '40%' }} />
+        </div>
+        <p className="text-[10px] font-black text-zinc-500 uppercase tracking-[0.4em] animate-pulse">Sincronizando Engine...</p>
+      </div>
+    );
+  }
 
   return (
     <div className="p-8 space-y-8 animate-in fade-in duration-700">

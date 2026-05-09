@@ -1313,14 +1313,11 @@ export class PaymentController {
           }
         }
 
-          }
-        }
-
         // 4. Lógica Phygital e Logística (Roteamento Inteligente)
         let logisticNote = "";
         const unit = await LogisticsService.routeOrderLogistics(order.id);
         if (unit) {
-          logisticNote = `[ROTEAMENTO] Pedido direcionado para Unidade: ${unit.companyName}`;
+          logisticNote = `[ROTEAMENTO] Pedido direcionado para Unidade: ${unit.user.nome}`;
         }
 
         if (order.deliveryType === "SHIPPING" || order.deliveryType === "LOCAL_PICKUP") {

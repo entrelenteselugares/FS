@@ -3,9 +3,11 @@
 Esta skill define o protocolo de validação para o perfil de Administrador Master da plataforma Foto Segundo.
 
 ## Descrição
+
 Validação completa do centro de comando, auditoria financeira e integridade do catálogo de produtos.
 
 ## Requisitos de Verificação (UAT)
+
 1. **Login & Segurança:** Acesso restrito via JWT e middleware `requireRole("ADMIN")`.
 2. **Dashboard de Pedidos:** Visualização correta de todos os pedidos da rede, incluindo filtragem por status.
 3. **Módulo Financeiro:** Capacidade de liquidar repasses para parceiros e verificar conciliação bancária.
@@ -13,6 +15,7 @@ Validação completa do centro de comando, auditoria financeira e integridade do
 5. **Gestão de Usuários:** Capacidade de visualizar e editar perfis de profissionais e unidades.
 
 ## Instruções de Execução
+
 1. Acesse `/login` e autentique-se com uma conta de nível ADMIN.
 2. Navegue até `/admin` e verifique se os KPIs de faturamento estão sendo carregados.
 3. Acesse a aba de Pedidos e tente filtrar por um pedido específico.

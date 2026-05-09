@@ -18,6 +18,7 @@ export class LogisticsService {
     const franchisees = await prisma.franchiseProfile.findMany({
       where: { active: true },
       include: {
+        user: { select: { nome: true } },
         _count: {
           select: { prints: { where: { status: "PENDING_PRINT" } } }
         }
@@ -48,7 +49,7 @@ export class LogisticsService {
     candidates.sort((a, b) => a._count.prints - b._count.prints);
 
     const selected = candidates[0];
-    console.log(`[Logistics] Unidade selecionada: ${selected.companyName} (Fila: ${selected._count.prints})`);
+    console.log(`[Logistics] Unidade selecionada: ${selected.user.nome} (Fila: ${selected._count.prints})`);
     
     return selected;
   }
