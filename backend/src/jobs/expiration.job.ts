@@ -5,6 +5,7 @@ import { FRONTEND_URL } from "../lib/config";
 import { AuthRequest } from "../lib/auth";
 import { VaultCycleService } from "../services/vaultCycle.service";
 import { IoTService } from "../services/iot.service";
+import { withRetry } from "../lib/retry";
 
 export async function runExpirationJob(req?: AuthRequest): Promise<void> {
   const now = new Date();
@@ -17,7 +18,7 @@ export async function runExpirationJob(req?: AuthRequest): Promise<void> {
   // ── 1. Envia aviso 3 dias antes da expiração ──────
   const tresDiasParaFrente = new Date(now.getTime() + 3 * 24 * 60 * 60 * 1000);
 
-  const proximosDeExpirar = await prisma.order.findMany({
+  const proximosDeExpirar = await withRetry(() => prisma.order.findMany({
     where: {
       accessType: { not: null as string | null },
       accessExpiresAt: {
@@ -30,7 +31,7 @@ export async function runExpirationJob(req?: AuthRequest): Promise<void> {
     include: {
       event: { select: { nomeNoivos: true } },
     },
-  });
+  }));
 
   for (const order of proximosDeExpirar) {
     const dias = Math.ceil(
@@ -60,7 +61,7 @@ export async function runExpirationJob(req?: AuthRequest): Promise<void> {
   }
 
   // ── 2. Marca como excluído os pedidos expirados ───
-  const expirados = await prisma.order.findMany({
+  const expirados = await withRetry(() => prisma.order.findMany({
     where: {
       accessType: { not: null as string | null },
       accessExpiresAt: { lt: now },
@@ -69,7 +70,7 @@ export async function runExpirationJob(req?: AuthRequest): Promise<void> {
     include: {
       event: { select: { nomeNoivos: true, id: true } },
     },
-  });
+  }));
 
   for (const order of expirados) {
     console.log(`[EXPIRATION JOB] Excluindo mídia do pedido ${order.id}`);
@@ -171,7 +172,7 @@ export async function runExpirationJob(req?: AuthRequest): Promise<void> {
 
   // ── 6. Encerramento Automático de Eventos baseada em Política de Retenção ──
   // Buscamos todos os eventos ativos para verificar o tempo de retenção
-  const eventosAtivos = await prisma.event.findMany({
+  const eventosAtivos = await withRetry(() => prisma.event.findMany({
     where: {
       active: true,
       isQuote: false,
@@ -181,7 +182,7 @@ export async function runExpirationJob(req?: AuthRequest): Promise<void> {
       captacao: { select: { email: true, nome: true } },
       cartorioUser: { select: { email: true, nome: true } }
     }
-  });
+  }));
 
   for (const event of eventosAtivos) {
     const dataEvento = new Date(event.dataEvento);

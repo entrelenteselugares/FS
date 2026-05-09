@@ -1,6 +1,7 @@
 import { prisma } from "../lib/prisma";
 import { GoogleDriveService } from "./googleDrive.service";
 import { GamificationService } from "./gamification.service";
+import { withRetry } from "../lib/retry";
 
 export class VaultCycleService {
   /**
@@ -11,7 +12,7 @@ export class VaultCycleService {
     console.log(`[VAULT CYCLE] Iniciando fechamento do cofre: ${albumId}`);
 
     // 1. Busca o cofre e a assinatura ativa
-    const album = await prisma.sharedAlbum.findUnique({
+    const album = await withRetry(() => prisma.sharedAlbum.findUnique({
       where: { id: albumId },
       include: {
         subscription: true,
@@ -22,7 +23,7 @@ export class VaultCycleService {
           }
         }
       }
-    });
+    }));
 
     if (!album || !album.subscription || album.subscription.status !== "ACTIVE") {
       console.error(`[VAULT CYCLE] Erro: Cofre ${albumId} não possui assinatura ativa.`);
@@ -43,12 +44,12 @@ export class VaultCycleService {
     console.log(`[VAULT CYCLE] Selecionadas ${selectedMedia.length} fotos baseadas em votos.`);
 
     // 3. Garantir Evento de Sistema para ancorar o pedido
-    let systemEvent = await prisma.event.findFirst({
+    let systemEvent = await withRetry(() => prisma.event.findFirst({
       where: { slug: "clube-recorrencia" }
-    });
+    }));
 
     if (!systemEvent) {
-      systemEvent = await prisma.event.create({
+      systemEvent = await withRetry(() => prisma.event.create({
         data: {
           slug: "clube-recorrencia",
           nomeNoivos: "Sistema: Clube de Memórias",
@@ -56,13 +57,13 @@ export class VaultCycleService {
           dataEvento: new Date(),
           ownerId: album.ownerId // Vinculado ao primeiro dono que disparou, ou um admin
         }
-      });
+      }));
     }
 
     // 4. Gerar Pedido no Order Engine (Custo Zero para o Cliente)
-    const order = await prisma.order.create({
+    const order = await withRetry(() => prisma.order.create({
       data: {
-        eventId: systemEvent.id,
+        eventId: systemEvent!.id,
         clienteId: album.ownerId,
         buyerEmail: album.owner.email,
         valor: 0, // Já pago via assinatura
@@ -76,7 +77,7 @@ export class VaultCycleService {
         internalNotes: JSON.stringify({
           type: "VAULT_CYCLE_CLOSURE",
           albumId,
-          subscriptionId: album.subscription.id,
+          subscriptionId: album.subscription!.id,
           selectedMediaIds: selectedMedia.map(m => m.id)
         }),
         items: {
@@ -86,19 +87,19 @@ export class VaultCycleService {
           }))
         }
       }
-    });
+    }));
 
     // 4. Atualizar o ciclo da assinatura
-    const nextBilling = new Date(album.subscription.nextBillingDate || new Date());
+    const nextBilling = new Date(album.subscription!.nextBillingDate || new Date());
     nextBilling.setMonth(nextBilling.getMonth() + 1);
 
-    await prisma.subscription.update({
-      where: { id: album.subscription.id },
+    await withRetry(() => prisma.subscription.update({
+      where: { id: album.subscription!.id },
       data: {
         nextBillingDate: nextBilling,
         updatedAt: new Date()
       }
-    });
+    }));
 
     console.log(`[VAULT CYCLE] Ciclo concluído. Pedido #${order.id} gerado.`);
 
@@ -113,14 +114,14 @@ export class VaultCycleService {
    */
   static async processAllDueSubscriptions() {
     const today = new Date();
-    const dueSubscriptions = await prisma.subscription.findMany({
+    const dueSubscriptions = await withRetry(() => prisma.subscription.findMany({
       where: {
         status: "ACTIVE",
         nextBillingDate: {
           lte: today
         }
       }
-    });
+    }));
 
     console.log(`[VAULT CYCLE] Processando ${dueSubscriptions.length} assinaturas vencidas.`);
 

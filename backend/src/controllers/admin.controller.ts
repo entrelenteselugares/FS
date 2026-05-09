@@ -881,27 +881,27 @@ export async function adminUpdateOrderLogistics(req: AuthRequest, res: Response)
 }
 
 export async function adminListOrders(req: AuthRequest, res: Response): Promise<void> {
-    const { status, page = "1", q, readyForPayout, payoutStatus } = req.query;
-    const take = 20;
-    const skip = (Number(page) - 1) * take;
-  
-    try {
-      const where: Prisma.OrderWhereInput = {};
-      if (status) where.status = String(status);
-      if (payoutStatus) where.payoutStatus = String(payoutStatus) as any;
-      
-      // Filtro Phase 06: Pronto para Repasse
-      if (readyForPayout === "true") {
-        where.status = "APROVADO";
-        // Include orders that are AVAILABLE or PENDING (including those without payoutReadyAt)
-        where.AND = [{
-          OR: [
-            { payoutStatus: "AVAILABLE" },
-            { payoutStatus: "PENDING", payoutReadyAt: { lte: new Date() } },
-            { payoutStatus: "PENDING", payoutReadyAt: null }
-          ]
-        }];
-      }
+  const { status, page = "1", q, readyForPayout, payoutStatus } = req.query;
+  const take = 20;
+  const skip = (Number(page) - 1) * take;
+
+  try {
+    const where: Prisma.OrderWhereInput = {};
+    if (status) where.status = String(status);
+    if (payoutStatus) where.payoutStatus = String(payoutStatus) as any;
+    
+    // Filtro Phase 06: Pronto para Repasse
+    if (readyForPayout === "true") {
+      where.status = "APROVADO";
+      // Include orders that are AVAILABLE or PENDING (including those without payoutReadyAt)
+      where.AND = [{
+        OR: [
+          { payoutStatus: "AVAILABLE" },
+          { payoutStatus: "PENDING", payoutReadyAt: { lte: new Date() } },
+          { payoutStatus: "PENDING", payoutReadyAt: null }
+        ]
+      }];
+    }
 
     if (q) {
       const searchString = String(q);
@@ -927,7 +927,7 @@ export async function adminListOrders(req: AuthRequest, res: Response): Promise<
         items: {
           include: {
             service: { select: { name: true } },
-            printProduct: { select: { title: true } },
+            printProduct: { select: { id: true, name: true, sku: true } },
             media: { select: { id: true } }
           }
         }
@@ -944,6 +944,13 @@ export async function adminListOrders(req: AuthRequest, res: Response): Promise<
         ...o, 
         amount: o.valor, 
         user: o.cliente, 
+        items: o.items.map(item => ({
+          ...item,
+          printProduct: item.printProduct ? {
+            ...item.printProduct,
+            title: item.printProduct.name // Mapeia name -> title para o frontend
+          } : null
+        })),
           event: { 
             title: o.event.nomeNoivos, 
             slug: o.event.slug,
