@@ -21,6 +21,7 @@ module.exports = (req, res) => {
 
     return app(req, res);
   } catch (err) {
+    console.error("[BOOT ERROR] Falha ao carregar o bundle server-v2:", err);
     return res.status(500).json({
       status: "BOOT_FAILURE",
       error: "Falha no carregamento do módulo do servidor.",
