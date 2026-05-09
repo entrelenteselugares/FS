@@ -180,7 +180,7 @@ export class GoogleDriveService {
         },
         media: {
           mimeType: mimeType,
-          body: Readable.from(buffer), // Convertendo Buffer em Stream legível conforme solicitado
+          body: fs.createReadStream(tmpFilePath),
         },
         fields: 'id, name, webViewLink, thumbnailLink',
       } as any));
