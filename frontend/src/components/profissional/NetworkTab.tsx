@@ -48,14 +48,14 @@ export function NetworkTab({ network, networkSearch, searchResults, residentUnit
                       <h5 className="text-base font-heading font-black text-theme-text uppercase italic leading-tight tracking-tight">
                         {u.cartorio.razaoSocial}
                       </h5>
-                      <p className="text-[9px] text-theme-muted font-bold uppercase tracking-widest">
+                      <p className="text-[10px] text-theme-muted uppercase font-bold tracking-widest">
                         {u.cartorio.endereco}
                       </p>
                     </div>
                     <div className="pt-4 border-t border-theme-border/20">
                       <div className="flex items-center gap-2">
                         <div className="w-1.5 h-1.5 rounded-full bg-cyan-400 animate-pulse" />
-                        <span className="text-[8px] font-black text-theme-muted uppercase tracking-widest">Sincronizado com Vitrine Oficial</span>
+                        <span className="text-[10px] font-black text-theme-muted uppercase tracking-widest block">Sincronizado com Vitrine Oficial</span>
                       </div>
                     </div>
                   </div>
@@ -154,7 +154,7 @@ export function NetworkTab({ network, networkSearch, searchResults, residentUnit
               <div className="space-y-2">
                 <p className="text-[11px] font-black text-theme-muted uppercase tracking-[0.4em] italic">Sua rede está vazia</p>
                 <p className="text-[9px] text-theme-muted/60 uppercase font-bold tracking-widest">
-                  Busque profissionais acima para começar sua rede de empatia
+                  Busque profissionais acima para começar sua rede tática de conexões
                 </p>
               </div>
             </div>

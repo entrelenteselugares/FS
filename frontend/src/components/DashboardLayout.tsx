@@ -263,7 +263,7 @@ export const DashboardLayout: React.FC<DashboardLayoutProps> = ({
   title,
 }) => {
   const [drawerOpen, setDrawerOpen] = useState(false);
-  const { user, logout } = useAuth();
+  const { user } = useAuth();
 
   const sidebarProps: SidebarContentProps = {
     title,
@@ -371,13 +371,6 @@ export const DashboardLayout: React.FC<DashboardLayoutProps> = ({
               {user?.nome}
             </span>
             <ThemeToggle />
-            <button
-              onClick={logout}
-              style={{ ...BtnGhost, display: "flex", alignItems: "center", gap: 6 }}
-            >
-              <LogoutIcon />
-              Sair
-            </button>
           </div>
         </nav>
 

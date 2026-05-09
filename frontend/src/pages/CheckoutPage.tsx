@@ -1,6 +1,7 @@
 import { useState, useEffect, useRef, useCallback } from "react";
 import { useParams, useNavigate, useSearchParams } from "react-router-dom";
-import { ShieldCheck, ArrowLeft, CheckCircle2, RefreshCw, Clock, Lock, Image as ImageIcon, Printer, ShoppingBag } from "lucide-react";
+import { ShieldCheck, ArrowLeft, CheckCircle2, RefreshCw, Clock, Lock, Image as ImageIcon, Printer, ShoppingBag, Copy, Check } from "lucide-react";
+import { Helmet } from "react-helmet-async";
 import { Navbar } from "../components/Navbar";
 
 
@@ -442,6 +443,9 @@ export const CheckoutPage = () => {
   // ── Render Helpers ──────────────────────────────────────────────────────────
   if (loading) return (
     <div className="min-h-screen bg-theme-bg flex items-center justify-center">
+      <Helmet>
+        <title>Checkout | Foto Segundo</title>
+      </Helmet>
       <div className="text-[10px] font-black tracking-[0.5em] text-brand-tactical animate-pulse uppercase">Protocolo Midnight Seguro...</div>
     </div>
   );
@@ -560,7 +564,7 @@ export const CheckoutPage = () => {
     <div className="min-h-screen bg-theme-bg flex flex-col items-center justify-center p-8 text-center">
       <div className="space-y-6 max-w-md animate-in fade-in slide-in-from-bottom-8 duration-700">
         <h2 className="text-4xl md:text-5xl font-heading font-black text-red-500 uppercase italic tracking-tighter leading-none">
-          Falha no Protocolo
+          Protocolo não <br/> localizado
         </h2>
         <p className="text-[10px] text-theme-text-muted font-black uppercase tracking-[0.2em] leading-relaxed max-w-xs mx-auto">
           {error || "Não conseguimos identificar seu protocolo de pagamento ativo."}
@@ -568,7 +572,7 @@ export const CheckoutPage = () => {
         <div className="pt-8">
           <button 
             onClick={() => navigate("/")}
-            className="w-full py-5 bg-white/5 border border-white/10 text-[10px] font-black uppercase tracking-[0.4em] hover:bg-brand-tactical hover:text-black hover:border-brand-tactical transition-all italic shadow-2xl"
+            className="w-full py-5 bg-zinc-800 text-white text-[10px] font-black uppercase tracking-[0.4em] hover:bg-brand-tactical hover:text-black transition-all italic shadow-2xl rounded-2xl"
           >
             Voltar para a Vitrine
           </button>
@@ -795,9 +799,10 @@ export const CheckoutPage = () => {
                            setCopied(true);
                            setTimeout(() => setCopied(false), 2000);
                          }}
-                         className={`w-full py-5 text-[10px] font-black uppercase tracking-widest transition-all border rounded-2xl ${copied ? 'bg-emerald-500 border-emerald-500 text-white' : 'bg-zinc-900 border-white/5 text-white hover:border-brand-tactical'}`}
+                         className={`w-full py-5 text-[10px] font-black uppercase tracking-widest transition-all border rounded-2xl flex items-center justify-center gap-3 ${copied ? 'bg-emerald-500 border-emerald-500 text-white' : 'bg-zinc-900 border-white/5 text-white hover:border-brand-tactical shadow-2xl'}`}
                       >
-                         {copied ? "COPIADO!" : "COPIAR CÓDIGO PIX"}
+                         {copied ? <Check size={14} /> : <Copy size={14} />}
+                         {copied ? "CÓDIGO COPIADO!" : "COPIAR CÓDIGO PIX"}
                       </button>
                     </div>
                   </div>

@@ -230,7 +230,7 @@ export default function VaultsPage() {
           <div className="space-y-1 relative z-10">
             <div className="flex items-center gap-3 mb-2">
               <div className="h-0.5 w-12 bg-emerald-500" />
-              <p className="text-[10px] font-black text-emerald-500 uppercase tracking-[0.5em] italic">Fase 11</p>
+              <p className="text-[10px] font-black text-emerald-500 uppercase tracking-[0.5em] italic">Premium</p>
             </div>
             <h1 className="text-4xl md:text-7xl font-heading font-black text-theme-text uppercase tracking-tighter italic leading-[0.9]">
               Cofres de<br /><span className="text-emerald-500">Memórias</span>

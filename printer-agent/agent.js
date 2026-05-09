@@ -2,6 +2,7 @@ import fs from 'fs';
 import { exec } from 'child_process';
 import path from 'path';
 import 'dotenv/config';
+import fetch from 'node-fetch';
 
 /**
  * PRINTER AGENT FOTO SEGUNDO v1.1 (Resilience Update)

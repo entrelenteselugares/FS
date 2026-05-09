@@ -578,17 +578,17 @@ export const QuotePage = () => {
               
               {/* 1. Onde será o registro? */}
               <div style={{ display: "flex", flexDirection: "column", gap: 12 }}>
-                <label style={{ fontSize: 9, fontWeight: 800, textTransform: "uppercase", color: THEME.text }}>01. Local do Registro</label>
+                <label style={{ fontSize: 10, fontWeight: 800, textTransform: "uppercase", color: THEME.text }}>01. Local do Registro</label>
                 <div className="mobile-stack" style={{ display: "flex", gap: 8 }}>
                   <button 
                     type="button"
                     onClick={() => setLocationType("PARTNER")}
-                    style={{ flex: 1, padding: 12, border: `1px solid ${locationType === "PARTNER" ? THEME.accent : THEME.border}`, background: locationType === "PARTNER" ? `${THEME.accent}10` : "transparent", fontSize: 9, fontWeight: 900, color: locationType === "PARTNER" ? THEME.accent : THEME.text2, cursor: "pointer" }}
+                    style={{ flex: 1, padding: 12, border: `1px solid ${locationType === "PARTNER" ? THEME.accent : THEME.border}`, background: locationType === "PARTNER" ? `${THEME.accent}10` : "transparent", fontSize: 10, fontWeight: 900, color: locationType === "PARTNER" ? THEME.accent : THEME.text2, cursor: "pointer" }}
                   >UNIDADE FIXA</button>
                   <button 
                     type="button"
                     onClick={() => setLocationType("OTHER")}
-                    style={{ flex: 1, padding: 12, border: `1px solid ${locationType === "OTHER" ? THEME.accent : THEME.border}`, background: locationType === "OTHER" ? `${THEME.accent}10` : "transparent", fontSize: 9, fontWeight: 900, color: locationType === "OTHER" ? THEME.accent : THEME.text2, cursor: "pointer" }}
+                    style={{ flex: 1, padding: 12, border: `1px solid ${locationType === "OTHER" ? THEME.accent : THEME.border}`, background: locationType === "OTHER" ? `${THEME.accent}10` : "transparent", fontSize: 10, fontWeight: 900, color: locationType === "OTHER" ? THEME.accent : THEME.text2, cursor: "pointer" }}
                   >ORÇAMENTO</button>
                 </div>
 
@@ -664,7 +664,7 @@ export const QuotePage = () => {
 
               {/* Data e Horário */}
               <div style={{ display: "flex", flexDirection: "column", gap: 12 }}>
-                <label style={{ fontSize: 9, fontWeight: 800, textTransform: "uppercase", color: THEME.text }}>02. Data e Horário do Evento</label>
+                <label style={{ fontSize: 10, fontWeight: 800, textTransform: "uppercase", color: THEME.text }}>02. Data e Horário do Evento</label>
                 <DateTimePicker 
                   value={eventDate} 
                   onChange={setEventDate} 

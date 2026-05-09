@@ -188,7 +188,7 @@ export const RegisterPage: React.FC = () => {
                 }`}
               >
                 <div className="mb-2">{r.icon}</div>
-                <span className="text-[8px] font-black uppercase tracking-[0.2em] text-center">{r.label}</span>
+                <span className="text-[10px] font-black uppercase tracking-[0.2em] text-center">{r.label}</span>
               </button>
             ))}
           </div>
@@ -196,7 +196,7 @@ export const RegisterPage: React.FC = () => {
           <form onSubmit={handleRegister} className="space-y-8">
             <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
                <div className="space-y-2 md:col-span-2">
-                 <label className="text-[9px] font-black uppercase tracking-[0.3em] text-zinc-500 ml-1">Entidade / Nome Completo</label>
+                 <label className="text-[10px] font-black uppercase tracking-[0.3em] text-zinc-500 ml-1">Entidade / Nome Completo</label>
                  <div className="relative group">
                    <UserCircle className="absolute left-4 top-1/2 -translate-y-1/2 text-zinc-600 group-focus-within:text-brand-tactical transition-colors" size={14} />
                    <input
@@ -211,7 +211,7 @@ export const RegisterPage: React.FC = () => {
                </div>
 
                <div className="space-y-2">
-                 <label className="text-[9px] font-black uppercase tracking-[0.3em] text-zinc-500 ml-1">Comunicação (WhatsApp)</label>
+                 <label className="text-[10px] font-black uppercase tracking-[0.3em] text-zinc-500 ml-1">Comunicação (WhatsApp)</label>
                  <div className="relative group">
                    <Phone className="absolute left-4 top-1/2 -translate-y-1/2 text-zinc-600 group-focus-within:text-brand-tactical transition-colors" size={14} />
                    <input
@@ -226,7 +226,7 @@ export const RegisterPage: React.FC = () => {
                </div>
 
                <div className="space-y-2">
-                 <label className="text-[9px] font-black uppercase tracking-[0.3em] text-zinc-500 ml-1">E-mail Cadastral</label>
+                 <label className="text-[10px] font-black uppercase tracking-[0.3em] text-zinc-500 ml-1">E-mail Cadastral</label>
                  <div className="relative group">
                    <Mail className="absolute left-4 top-1/2 -translate-y-1/2 text-zinc-600 group-focus-within:text-brand-tactical transition-colors" size={14} />
                    <input
@@ -244,7 +244,7 @@ export const RegisterPage: React.FC = () => {
                {role === "PROFISSIONAL" && (
                  <div className="md:col-span-2 space-y-8 p-8 bg-theme-bg-muted border border-theme-border/60 rounded-3xl animate-in fade-in duration-500">
                     <div className="space-y-4">
-                       <p className="text-[9px] font-black text-brand-tactical uppercase tracking-widest italic">Especialidades</p>
+                       <p className="text-[10px] font-black text-brand-tactical uppercase tracking-widest italic">Especialidades</p>
                        <div className="flex flex-wrap gap-3">
                          {["FOTO", "VÍDEO", "EDIÇÃO", "IMPRESSÃO"].map(skill => (
                            <button
@@ -255,7 +255,7 @@ export const RegisterPage: React.FC = () => {
                                const next = current.includes(skill) ? current.filter(s => s !== skill) : [...current, skill];
                                setFormData({ ...formData, habilidades: next });
                              }}
-                             className={`px-5 py-3 text-[9px] font-black uppercase tracking-widest border rounded-xl transition-all ${
+                             className={`px-5 py-3 text-[10px] font-black uppercase tracking-widest border rounded-xl transition-all ${
                                formData.habilidades.includes(skill) ? "bg-brand-tactical border-brand-tactical text-black" : "border-white/10 text-zinc-500 hover:border-white/20"
                              }`}
                            >
@@ -266,7 +266,7 @@ export const RegisterPage: React.FC = () => {
                     </div>
 
                     <div className="space-y-4">
-                       <p className="text-[9px] font-black text-brand-tactical uppercase tracking-widest italic">Workflow</p>
+                       <p className="text-[10px] font-black text-brand-tactical uppercase tracking-widest italic">Workflow</p>
                        <div className="grid grid-cols-2 gap-4">
                           {[
                             { id: "TRADICIONAL", label: "Tradicional", icon: <Camera size={14} /> },
@@ -335,7 +335,7 @@ export const RegisterPage: React.FC = () => {
                )}
 
                <div className="space-y-2 md:col-span-2">
-                 <label className="text-[9px] font-black uppercase tracking-[0.3em] text-zinc-500 ml-1">Senha de Acesso</label>
+                 <label className="text-[10px] font-black uppercase tracking-[0.3em] text-zinc-500 ml-1">Senha de Acesso</label>
                  <div className="relative group flex items-center">
                    <Lock className="absolute left-4 top-1/2 -translate-y-1/2 text-zinc-600 group-focus-within:text-brand-tactical transition-colors" size={14} />
                    <input

@@ -13,7 +13,7 @@ export function DashboardHeader({ activeTab, viewTab, onViewTabChange, residentU
       case "agenda": return "Meu Cockpit";
       case "convites": return "Central de Convites";
       case "financeiro": return "Fluxo de Caixa";
-      case "network": return "Rede de Empatia";
+      case "network": return "Rede Tática de Conexões";
       default: return "Gestão de Ativos";
     }
   };
