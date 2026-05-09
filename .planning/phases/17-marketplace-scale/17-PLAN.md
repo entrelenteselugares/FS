@@ -14,15 +14,15 @@
 - [x] Criar API Endpoints (`GET /api/ambassador/stats`, `GET /api/ambassador/conversions`).
 
 ## Wave 2: Smart Routing Logic & Logistics Engine
-- [ ] Implementar `LogisticsService`:
+- [x] Implementar `LogisticsService`:
     - Função `findNearestCapableUnit(cep: string, requiredCapacity: string)`:
         - Extrair prefixo (5 dígitos).
         - Filtrar por `servedZipPrefixes` e `capacityFlags`.
         - Balanceamento: Selecionar unidade com menor fila (`PENDING_PRINT` em `PhygitalPrint`).
         - Fallback: Retornar nulo (Matriz) se não houver unidade regional.
-- [ ] Integrar Roteamento no Checkout:
+- [x] Integrar Roteamento no Checkout:
     - Chamar `LogisticsService` ao criar o pedido e gravar `franchiseProfileId` no registro de impressão.
-- [ ] Adicionar indicador visual de unidade responsável no resumo do pedido (frontend).
+- [x] Adicionar indicador visual de unidade responsável no resumo do pedido (frontend).
 
 ## Wave 3: Ambassador Dashboard & Admin UI
 - [ ] Desenvolver `AmbassadorDashboard.tsx`:

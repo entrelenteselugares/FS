@@ -37,6 +37,7 @@ interface OrderDetail {
   deliveryType?: string;
   shippingAddress?: unknown;
   shippingFee?: number | string;
+  internalNotes?: string | null;
   items?: {
     id: string;
     price: number;
@@ -784,6 +785,17 @@ export const CheckoutPage = () => {
                 <span className="text-[10px] font-black text-brand-tactical uppercase tracking-[0.4em]">Total</span>
                 <span className="text-4xl font-black italic tracking-tighter text-theme-text">R$ {(Number(order.amount || 0) - Number(order.shippingFee || 0) + Number(selectedShipping?.price || 0)).toFixed(2)}</span>
               </div>
+
+              {order.internalNotes?.includes("[ROTEAMENTO]") && (
+                <div className="mt-4 p-4 bg-brand-tactical/5 border border-brand-tactical/20 rounded-xl">
+                  <div className="flex items-center gap-2 text-[8px] font-black text-brand-tactical uppercase tracking-widest italic">
+                    <ShieldCheck size={12} /> Produção Regional Ativada
+                  </div>
+                  <p className="text-[10px] text-zinc-400 mt-1 font-bold">
+                    {order.internalNotes.split("\n").find(l => l.includes("[ROTEAMENTO]"))?.replace("[ROTEAMENTO] ", "")}
+                  </p>
+                </div>
+              )}
             </div>
           </div>
 

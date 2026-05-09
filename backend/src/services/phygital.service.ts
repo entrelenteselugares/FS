@@ -186,6 +186,15 @@ export class PhygitalService {
   static async createQueueEntryFromOrder(order: any, photos: string[]) {
     try {
       const results = [];
+      
+      let franchiseProfileId = null;
+      if (order.passiveFranchiseeId) {
+        const profile = await prisma.franchiseProfile.findUnique({
+          where: { userId: order.passiveFranchiseeId }
+        });
+        franchiseProfileId = profile?.id;
+      }
+
       for (const photoUrl of photos) {
         const referenceCode = `PRT-${order.id.substring(order.id.length - 4).toUpperCase()}-${Math.floor(1000 + Math.random() * 9000)}`;
         
@@ -199,6 +208,7 @@ export class PhygitalService {
             customerEmail: order.buyerEmail || order.cliente?.email || "",
             customerCep: (order.shippingAddress as any)?.cep || "",
             userId: order.clienteId || "",
+            franchiseProfileId,
             status: 'PENDING_PRINT'
           }
         });

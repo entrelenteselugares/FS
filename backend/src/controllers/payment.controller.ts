@@ -16,6 +16,7 @@ import { IntegrationService } from "../services/integration.service";
 import { RoutingService } from "../services/routing.service";
 import { SubscriptionService } from "../services/subscription.service";
 import { ShippingService, ShippingItem } from "../services/shipping.service";
+import { LogisticsService } from "../services/logistics.service";
 
 export class PaymentController {
   /**
@@ -1312,8 +1313,16 @@ export class PaymentController {
           }
         }
 
-        // 4. Lógica Phygital e Logística
+          }
+        }
+
+        // 4. Lógica Phygital e Logística (Roteamento Inteligente)
         let logisticNote = "";
+        const unit = await LogisticsService.routeOrderLogistics(order.id);
+        if (unit) {
+          logisticNote = `[ROTEAMENTO] Pedido direcionado para Unidade: ${unit.companyName}`;
+        }
+
         if (order.deliveryType === "SHIPPING" || order.deliveryType === "LOCAL_PICKUP") {
           eventUpdateData.temFotoImpressa = true;
           if (order.shippingAddress) {
@@ -1344,7 +1353,7 @@ export class PaymentController {
           data: {
             payoutStatus: isLowRisk ? "AVAILABLE" : "PENDING",
             payoutReadyAt: isLowRisk ? new Date() : payoutReadyAt,
-            ...(logisticNote ? { internalNotes: logisticNote } : {})
+            internalNotes: logisticNote ? (order.internalNotes ? `${order.internalNotes}\n${logisticNote}` : logisticNote) : order.internalNotes
           }
         });
       });
