@@ -1,60 +1,102 @@
-import { PrismaClient } from '@prisma/client';
-import crypto from 'crypto';
-
-const prisma = new PrismaClient();
+import prisma from "../lib/prisma";
 
 export class ReferralService {
   /**
-   * Generates a unique referral code for a user
+   * Registra uma visita a uma campanha de embaixador.
    */
-  static async generateCode(userId: string): Promise<string> {
-    const user = await prisma.user.findUnique({ where: { id: userId } });
-    if (!user) throw new Error("User not found");
-
-    if (user.referralCode) return user.referralCode;
-
-    // Generate a clean, short code: FS-NAME-RANDOM
-    const namePart = user.nome.split(' ')[0].toUpperCase().replace(/[^A-Z0-0]/g, '');
-    const randomPart = crypto.randomBytes(2).toString('hex').toUpperCase();
-    const code = `FS-${namePart}-${randomPart}`;
-
-    await prisma.user.update({
-      where: { id: userId },
-      data: { referralCode: code }
+  static async registerVisit(slug: string, ip?: string, userAgent?: string) {
+    const campaign = await prisma.referralCampaign.findUnique({
+      where: { slug, active: true },
     });
 
-    return code;
+    if (!campaign) return null;
+
+    await prisma.referralVisit.create({
+      data: {
+        campaignId: campaign.id,
+        ip,
+        userAgent,
+      },
+    });
+
+    return campaign;
   }
 
   /**
-   * Links a new professional to a franchisee's network via referral code
+   * Processa uma conversão (cadastro ou compra).
    */
-  static async linkByCode(newUserId: string, referralCode: string) {
-    const referrer = await prisma.user.findUnique({
-      where: { referralCode },
-      include: { franchiseProfile: true }
+  static async processConversion(campaignId: string, data: { newUserId?: string; orderId?: string }) {
+    const campaign = await prisma.referralCampaign.findUnique({
+      where: { id: campaignId },
     });
 
-    if (!referrer || !referrer.franchiseProfile) {
-      console.warn(`[Referral] Invalid or non-franchise code: ${referralCode}`);
-      return;
+    if (!campaign || !campaign.active) return;
+
+    // Criar a conversão
+    const conversion = await prisma.referralConversion.create({
+      data: {
+        campaignId: campaign.id,
+        newUserId: data.newUserId,
+        orderId: data.orderId,
+        rewardAmount: campaign.rewardValue,
+        status: "PENDING",
+      },
+    });
+
+    // Se for crédito imediato, podemos processar aqui ou via worker
+    if (campaign.rewardType === "CREDIT" && data.newUserId) {
+      await this.applyCredit(campaign.ownerId, campaign.rewardValue, `Recompensa por indicação: ${campaign.name}`);
+      await prisma.referralConversion.update({
+        where: { id: conversion.id },
+        data: { status: "PAID" },
+      });
     }
 
-    // Link in ProfessionalNetwork
-    await prisma.professionalNetwork.upsert({
-      where: {
-        userId_partnerId: {
-          userId: newUserId,
-          partnerId: referrer.id
-        }
+    return conversion;
+  }
+
+  /**
+   * Aplica crédito ao embaixador via GamificationLedger.
+   */
+  private static async applyCredit(userId: string, amount: any, description: string) {
+    await prisma.$transaction([
+      prisma.user.update({
+        where: { id: userId },
+        data: { rewardCredits: { increment: amount } },
+      }),
+      prisma.gamificationLedger.create({
+        data: {
+          userId,
+          type: "REFERRAL_REWARD",
+          amount,
+          description,
+        },
+      }),
+    ]);
+  }
+
+  /**
+   * Retorna estatísticas de uma campanha para o dashboard.
+   */
+  static async getCampaignStats(ownerId: string) {
+    const campaigns = await prisma.referralCampaign.findMany({
+      where: { ownerId },
+      include: {
+        _count: {
+          select: { visits: true, conversions: true },
+        },
       },
-      update: {},
-      create: {
-        userId: newUserId,
-        partnerId: referrer.id
-      }
     });
 
-    console.log(`[Referral] Linked user ${newUserId} to franchisee ${referrer.id}`);
+    return campaigns.map(c => ({
+      id: c.id,
+      name: c.name,
+      slug: c.slug,
+      rewardType: c.rewardType,
+      rewardValue: c.rewardValue,
+      visits: c._count.visits,
+      conversions: c._count.conversions,
+      active: c.active,
+    }));
   }
 }

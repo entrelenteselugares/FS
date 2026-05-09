@@ -1,17 +1,17 @@
 # Fase 17: Marketplace Scale — PLAN.md
 
 ## Wave 1: Database Schema & Backend Core (Referral Engine)
-- [ ] **[BLOCKING]** Update `backend/prisma/schema.prisma`:
+- [x] **[BLOCKING]** Update `backend/prisma/schema.prisma`:
     - Adicionar modelos `ReferralCampaign`, `ReferralVisit`, `ReferralConversion`.
     - Adicionar campos `capacityFlags` (Json) e `servedZipPrefixes` (String[]) ao `FranchiseProfile`.
-- [ ] **[BLOCKING]** Executar `npx prisma db push` para aplicar alterações no banco.
-- [ ] Implementar `ReferralService`:
+- [x] **[BLOCKING]** Executar `npx prisma db push` para aplicar alterações no banco.
+- [x] Implementar `ReferralService`:
     - Lógica para criar campanhas, registrar visitas e processar conversões.
-- [ ] Criar Middleware de Rastreamento:
+- [x] Criar Middleware de Rastreamento:
     - Rota `/embaixador/:slug` para capturar cliques e setar cookie `fs_referral` (30 dias).
-- [ ] Atualizar `PricingService.calculateSplits`:
+- [x] Atualizar `PricingService.calculateSplits`:
     - Adicionar campo `ambassadorId` e lógica para split de comissão (deduzido da matriz).
-- [ ] Criar API Endpoints (`GET /api/ambassador/stats`, `GET /api/ambassador/conversions`).
+- [x] Criar API Endpoints (`GET /api/ambassador/stats`, `GET /api/ambassador/conversions`).
 
 ## Wave 2: Smart Routing Logic & Logistics Engine
 - [ ] Implementar `LogisticsService`:

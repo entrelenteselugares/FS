@@ -33,6 +33,7 @@ model User {
   verificationStatus String                  @default("PENDING")
   referralCode       String?                 @unique
   rewardCredits      Decimal                 @default(0) @db.Decimal(10, 2)
+  referralCampaigns  ReferralCampaign[]
   calendarSlots      CalendarSlot[]
   cartorio           Cartorio?
   eventsCaptacao     Event[]                 @relation("CaptacaoEvents")
@@ -325,6 +326,7 @@ model Order {
   splitFranchisee     Decimal?            @db.Decimal(10, 2)
   rewardsUsed         Decimal?            @db.Decimal(10, 2)
   couponId            String?
+  ambassadorId        String?
   items               OrderItem[]
   cliente             User?               @relation("ClienteOrders", fields: [clienteId], references: [id])
   editor              User?               @relation("EditorOrders", fields: [editorId], references: [id])
@@ -663,6 +665,8 @@ model FranchiseProfile {
   approvedSalesVolume     Int                 @default(0)
   hideFromBooking         Boolean             @default(false)
   printServices           Json?               @default("[]")
+  capacityFlags           Json?               @default("{}") // ex: {"canPrintPremium": true, "canPrintAlbum": false}
+  servedZipPrefixes       String[]            @default([])   // ex: ["010", "011"]
   transactions            CreditTransaction[]
   events                  Event[]
   user                    User                @relation(fields: [userId], references: [id])
@@ -682,6 +686,49 @@ model CreditTransaction {
   profile     FranchiseProfile @relation(fields: [profileId], references: [id])
 
   @@map("credit_transactions")
+}
+
+model ReferralCampaign {
+  id          String   @id @default(cuid())
+  ownerId     String
+  name        String
+  slug        String   @unique // ex: "campanha-natal"
+  rewardType  String   @default("CREDIT") // CREDIT, CASH
+  rewardValue Decimal  @db.Decimal(10, 2)
+  trigger     String   @default("PURCHASE") // SIGNUP, PURCHASE
+  active      Boolean  @default(true)
+  createdAt   DateTime @default(now())
+  
+  owner       User     @relation(fields: [ownerId], references: [id])
+  visits      ReferralVisit[]
+  conversions ReferralConversion[]
+
+  @@map("referral_campaigns")
+}
+
+model ReferralVisit {
+  id         String   @id @default(cuid())
+  campaignId String
+  ip         String?
+  userAgent  String?
+  createdAt  DateTime @default(now())
+  campaign   ReferralCampaign @relation(fields: [campaignId], references: [id])
+
+  @@map("referral_visits")
+}
+
+model ReferralConversion {
+  id           String   @id @default(cuid())
+  campaignId   String
+  newUserId    String?
+  orderId      String?
+  rewardAmount Decimal  @db.Decimal(10, 2)
+  status       String   @default("PENDING") // PENDING, PAID
+  createdAt    DateTime @default(now())
+  
+  campaign     ReferralCampaign @relation(fields: [campaignId], references: [id])
+
+  @@map("referral_conversions")
 }
 
 enum Role {

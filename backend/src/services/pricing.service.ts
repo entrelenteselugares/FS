@@ -9,6 +9,8 @@ export interface SplitResult {
   franchisee: number;
   lab?: number;
   passiveFranchiseeId?: string;
+  ambassador?: number;
+  ambassadorId?: string;
 }
 
 /**
@@ -80,11 +82,12 @@ export class PricingService {
     shippingMethod?: string,
     shippingFee?: number,
     supplierCost?: number,
-    professionalId?: string
+    professionalId?: string,
+    ambassadorId?: string
   }): Promise<SplitResult> {
     if (isNaN(amount) || amount === null) {
       console.warn("[PricingService] amount is NaN or null, returning default zero splits");
-      return { matriz: 0, captacao: 0, edicao: 0, cartorio: 0, franchisee: 0 };
+      return { matriz: 0, captacao: 0, edicao: 0, cartorio: 0, franchisee: 0, ambassador: 0 };
     }
     const keys = ["split_matriz", "split_captacao", "split_edicao", "split_cartorio", "split_franchisee"];
     const configs = await prisma.platformConfig.findMany({
@@ -134,6 +137,23 @@ export class PricingService {
       }
     }
 
+    // ── BUSCA COMISSÃO EMBAIXADOR ──
+    let ambassador = 0;
+    let ambassadorId = options?.ambassadorId;
+
+    if (ambassadorId) {
+      const campaign = await prisma.referralCampaign.findFirst({
+        where: { ownerId: ambassadorId, active: true }
+      });
+
+      if (campaign) {
+        // Por padrão, recompensas de venda são 5% ou valor fixo da campanha
+        // Aqui usaremos o valor fixo definido na campanha como "valor por venda"
+        ambassador = Number(campaign.rewardValue);
+        console.log(`[Pricing] Comissão Embaixador detectada: ${ambassador} para ${ambassadorId}`);
+      }
+    }
+
     // ── LÓGICA PADRÃO (MARKETPLACE) ──
     const shippingFee = options?.shippingFee || 0;
     const supplierCost = options?.supplierCost || 0;
@@ -149,8 +169,9 @@ export class PricingService {
     const cartorio = +(netAmount * getPct("split_cartorio")).toFixed(2);
     
     // Matriz fica com o resto (incluindo custos de envio e fornecedor)
-    const matriz = +(amount - (captacao + edicao + cartorio + franchisee)).toFixed(2);
+    // A comissão do embaixador é deduzida da margem da Matriz
+    const matriz = +(amount - (captacao + edicao + cartorio + franchisee + ambassador)).toFixed(2);
 
-    return { matriz, captacao, edicao, cartorio, franchisee, passiveFranchiseeId };
+    return { matriz, captacao, edicao, cartorio, franchisee, passiveFranchiseeId, ambassador, ambassadorId };
   }
 }

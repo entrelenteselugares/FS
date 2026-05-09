@@ -160,11 +160,13 @@ export class PaymentController {
         edicao: splitEdicao, 
         cartorio: splitCartorio,
         franchisee: splitFranchisee,
-        passiveFranchiseeId 
+        passiveFranchiseeId,
+        ambassadorId
       } = await PricingService.calculateSplits(preco, { 
         professionalId: event.captacaoId || undefined,
         supplierCost: totalSupplierCost,
-        shippingFee: Number(req.body.shippingFee || 0)
+        shippingFee: Number(req.body.shippingFee || 0),
+        ambassadorId: req.cookies?.fs_referral
       });
 
       console.log(`[Checkout] Repasse Manual Calculado: Snapshot salvo. Valor: ${preco}`);
@@ -277,6 +279,7 @@ export class PaymentController {
             splitCartorio: fCartorio,
             splitFranchisee: fFranchisee,
             passiveFranchiseeId: fPassiveId,
+            ambassadorId: req.cookies?.fs_referral,
             items: orderItemsData.length > 0 ? {
               deleteMany: {},
               create: orderItemsData
@@ -299,6 +302,7 @@ export class PaymentController {
             splitCartorio,
             splitFranchisee,
             passiveFranchiseeId,
+            ambassadorId: req.cookies?.fs_referral,
             items: orderItemsData.length > 0 ? {
               create: orderItemsData
             } : undefined
@@ -555,11 +559,13 @@ export class PaymentController {
         edicao: splitEdicao, 
         cartorio: splitCartorio,
         franchisee: splitFranchisee,
-        passiveFranchiseeId
+        passiveFranchiseeId,
+        ambassadorId
       } = await PricingService.calculateSplits(preco, { 
         professionalId: event.captacaoId || undefined,
         shippingFee: Number(req.body.shippingFee || 0),
-        supplierCost: totalSupplierCost
+        supplierCost: totalSupplierCost,
+        ambassadorId: req.cookies?.fs_referral
       });
 
       // 4. Identificação do Comprador (Lead -> Customer)
@@ -711,6 +717,7 @@ export class PaymentController {
             splitCartorio,
             splitFranchisee,
             passiveFranchiseeId,
+            ambassadorId: req.cookies?.fs_referral,
             tempPassword: isNewUser ? tempPassword : null,
             // Order Engine Fields
             deliveryType: req.body.deliveryType || existingPendingOrder.deliveryType || "DIGITAL_ONLY",
@@ -749,6 +756,7 @@ export class PaymentController {
             splitCartorio,
             splitFranchisee,
             passiveFranchiseeId,
+            ambassadorId: req.cookies?.fs_referral,
             tempPassword: isNewUser ? tempPassword : null,
             // Order Engine Fields
             deliveryType: req.body.deliveryType || "DIGITAL_ONLY",
@@ -1343,6 +1351,19 @@ export class PaymentController {
 
       // 5a. Processar Gamificação (Cashback)
       GamificationService.processOrderRewards(order.id).catch(e => console.error("Erro ao processar cashback:", e));
+
+      // 5b. Processar Recompensa de Embaixador
+      if (order.ambassadorId) {
+        const campaign = await prisma.referralCampaign.findFirst({
+          where: { ownerId: order.ambassadorId, active: true }
+        });
+        if (campaign) {
+          ReferralService.processConversion(campaign.id, { 
+            newUserId: order.clienteId || undefined, 
+            orderId: order.id 
+          }).catch(e => console.error("Erro ao processar recompensa embaixador:", e));
+        }
+      }
 
       // 6. Notificações (E-mail e WhatsApp) - Fora da transação para evitar rollback se falhar
       const recipientEmail = order.buyerEmail || order.cliente?.email;

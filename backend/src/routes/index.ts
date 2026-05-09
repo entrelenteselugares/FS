@@ -98,6 +98,7 @@ import { requireMercadoPagoSignature } from "../middleware/webhook-auth";
 import { getTaxReport } from "../controllers/finance.controller";
 import { AuthRequest } from "../lib/auth";
 import { runLoyaltyBot } from "../controllers/cron.controller";
+import { ReferralController } from "../controllers/referral.controller";
 import { PhygitalController } from "../controllers/phygital.controller";
 import { FranchiseController } from "../controllers/franchise.controller";
 import { VaultController } from "../controllers/vault.controller";
@@ -114,6 +115,9 @@ const upload = multer({ storage: multer.memoryStorage() });
 import driveAuthRoutes from "./driveAuth.routes";
 
 const router = Router();
+
+// --- REDIRECTS DE EMBAIXADOR ---
+router.get("/embaixador/:slug", ReferralController.handleReferral);
 
 // ... existing routes ...
 router.use("/auth", driveAuthRoutes);
@@ -359,7 +363,10 @@ router.post("/admin/payouts/generate",                requireAuth, requireRole("
 router.get("/admin/payouts",                          requireAuth, requireRole("ADMIN"), listPayouts);
 router.get("/admin/payouts/export",                requireAuth, requireRole("ADMIN"), exportPayoutCSV);
 router.patch("/admin/payouts/:id/items/:itemId/paid", requireAuth, requireRole("ADMIN"), markItemPaid);
-router.get("/payouts/me", requireAuth, getMeusRepasses);
+router.get("/me/repasses", requireAuth, getMeusRepasses);
+
+// --- AMBASSADOR ---
+router.get("/ambassador/stats", requireAuth, ReferralController.getStats);
 
 // ── Admin: Configurações ───────────────────────────────────────────────────────
 router.get("/admin/configs",   requireAuth, requireRole("ADMIN"), getConfigs);
