@@ -654,7 +654,7 @@ export const CheckoutPage = () => {
           <div className="flex items-center gap-2 text-brand-tactical text-[9px] font-black uppercase tracking-widest"><ShieldCheck size={14} /> Checkout Blindado</div>
         </div>
 
-        <div className="grid grid-cols-1 lg:grid-cols-[1fr_330px] gap-16 items-start">
+        <div className="grid grid-cols-1 lg:grid-cols-[1fr_380px] gap-16 items-start">
           {/* Lado Esquerdo: Resumo e Logística */}
           <div className="space-y-8">
             <div>
@@ -821,7 +821,7 @@ export const CheckoutPage = () => {
                 </div>
 
                 {!pixData && (
-                  <div id="paymentBrick_container" className="lux-brick-midnight rounded-2xl overflow-hidden" />
+                  <div id="paymentBrick_container" className="lux-brick-midnight min-h-[400px]" />
                 )}
 
                 {pixData && (
