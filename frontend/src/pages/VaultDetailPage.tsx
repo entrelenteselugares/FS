@@ -47,7 +47,6 @@ export default function VaultDetailPage() {
   const [uploading, setUploading] = useState(false);
   const [uploadProgress, setUploadProgress] = useState(0);
   const [checkingOut, setCheckingOut] = useState(false);
-  const [doubleTapId, setDoubleTapId] = useState<string | null>(null);
 
   const fetchVaultDetails = useCallback(async () => {
     try {
@@ -88,12 +87,6 @@ export default function VaultDetailPage() {
     } catch (err) {
       console.error("[Vote] Erro:", err);
     }
-  };
-
-  const handleDoubleTap = (mediaId: string) => {
-    setDoubleTapId(mediaId);
-    handleVote(mediaId);
-    setTimeout(() => setDoubleTapId(null), 1000);
   };
 
   const handleCheckout = async () => {
@@ -441,20 +434,6 @@ export default function VaultDetailPage() {
                       <Heart size={16} className="text-black" fill="currentColor" />
                     </motion.div>
                   )}
-
-                  {/* Double Tap Heart Animation */}
-                  <AnimatePresence>
-                    {doubleTapId === item.id && (
-                      <motion.div
-                        initial={{ opacity: 0, scale: 0.5, y: 0 }}
-                        animate={{ opacity: 1, scale: 1.5, y: -20 }}
-                        exit={{ opacity: 0, scale: 2 }}
-                        className="absolute inset-0 flex items-center justify-center pointer-events-none z-10"
-                      >
-                        <Heart size={64} className="text-emerald-500" fill="currentColor" />
-                      </motion.div>
-                    )}
-                  </AnimatePresence>
                   
                   {/* Bottom Action Bar */}
                   <div className={`absolute bottom-0 left-0 right-0 bg-gradient-to-t from-black/90 to-transparent p-3 flex items-center justify-between transition-opacity ${item.votedByMe ? 'opacity-100' : 'opacity-80 group-hover:opacity-100'}`}>
