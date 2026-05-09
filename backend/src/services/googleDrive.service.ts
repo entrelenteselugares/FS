@@ -129,6 +129,7 @@ export class GoogleDriveService {
           role: 'reader',
           type: 'anyone',
         },
+        supportsAllDrives: true,
       }));
 
       return folder.data;
@@ -200,6 +201,7 @@ export class GoogleDriveService {
           role: 'reader',
           type: 'anyone',
         },
+        supportsAllDrives: true,
       }));
 
       return file.data;
