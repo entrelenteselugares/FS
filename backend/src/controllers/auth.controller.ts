@@ -1,7 +1,7 @@
 import { Request, Response } from "express";
 import { AuthRequest } from "../lib/auth";
 import bcrypt from "bcryptjs";
-import prisma from "../lib/prisma";
+import { prisma } from "../lib/prisma";
 import { generateToken, generateRefreshToken, verifyRefreshToken } from "../lib/auth";
 import { audit } from "../lib/audit";
 import { supabaseAdmin } from "../lib/supabase";
@@ -30,6 +30,7 @@ export class AuthController {
       // 1. PRIORIDADE: BANCO LOCAL (BCRYPT)
       // Se o usuário existir localmente e a senha bater, ignoramos o Supabase por enquanto para garantir acesso.
       try {
+        console.log(`[AUTH] Tentando busca local para: ${cleanEmail}`);
         const localUser = await prisma.user.findUnique({ where: { email: cleanEmail } });
         if (localUser && localUser.senha && localUser.senha.length > 20) { // Verifica se tem um hash bcrypt válido
           const isMatch = await bcrypt.compare(senha, localUser.senha);
@@ -75,9 +76,14 @@ export class AuthController {
         include: { franchiseProfile: true }
       });
 
-      if (!fullUser) return res.status(404).json({ error: "Usuário não sincronizado." });
+      if (!fullUser) return res.status(404).json({ error: "Usuário não sincronizado no banco de dados." });
 
       const payload = { userId: fullUser.id, role: fullUser.role, nome: fullUser.nome, email: fullUser.email };
+      
+      // Validação extra de tokens
+      if (!process.env.JWT_SECRET) throw new Error("JWT_SECRET ausente no ambiente (Vercel).");
+      if (!process.env.REFRESH_SECRET) throw new Error("REFRESH_SECRET ausente no ambiente (Vercel).");
+
       const token = generateToken(payload);
       const refreshToken = generateRefreshToken(payload);
       
@@ -92,13 +98,19 @@ export class AuthController {
 
     } catch (error: unknown) {
       const msg = error instanceof Error ? error.message : String(error);
-      console.error("[AUTH FATAL]:", msg);
+      const stack = error instanceof Error ? error.stack : "No stack trace";
+      console.error("[AUTH FATAL]:", msg, stack);
       return res.status(500).json({ 
         error: "Erro crítico no portal de login.",
         details: msg,
         diagnostic: {
           has_db: !!process.env.DATABASE_URL,
-          has_sb: !!process.env.SUPABASE_URL
+          has_sb: !!process.env.SUPABASE_URL,
+          has_jwt: !!process.env.JWT_SECRET,
+          has_refresh: !!process.env.REFRESH_SECRET,
+          node_ver: process.version,
+          time: new Date().toISOString(),
+          stack_trace: stack.split("\n").slice(0, 3).join(" | ") // Pequeno snippet do stack para o frontend
         }
       });
     }

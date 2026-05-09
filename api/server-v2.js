@@ -82173,7 +82173,8 @@ var AuthController = class {
       let user = null;
       let authMethod = "NONE";
       try {
-        const localUser = await prisma_default.user.findUnique({ where: { email: cleanEmail } });
+        console.log(`[AUTH] Tentando busca local para: ${cleanEmail}`);
+        const localUser = await prisma.user.findUnique({ where: { email: cleanEmail } });
         if (localUser && localUser.senha && localUser.senha.length > 20) {
           const isMatch = await bcryptjs_default.compare(senha, localUser.senha);
           if (isMatch) {
@@ -82193,7 +82194,7 @@ var AuthController = class {
               password: senha
             });
             if (!authError && authData.user) {
-              user = await prisma_default.user.findUnique({ where: { email: cleanEmail } });
+              user = await prisma.user.findUnique({ where: { email: cleanEmail } });
               authMethod = "SUPABASE";
               console.log(`[AUTH] Sucesso via Supabase Cloud: ${cleanEmail}`);
             }
@@ -82205,12 +82206,14 @@ var AuthController = class {
       if (!user) {
         return res.status(401).json({ error: "Credenciais inv\xE1lidas ou usu\xE1rio n\xE3o encontrado." });
       }
-      const fullUser = await prisma_default.user.findUnique({
+      const fullUser = await prisma.user.findUnique({
         where: { id: user.id },
         include: { franchiseProfile: true }
       });
-      if (!fullUser) return res.status(404).json({ error: "Usu\xE1rio n\xE3o sincronizado." });
+      if (!fullUser) return res.status(404).json({ error: "Usu\xE1rio n\xE3o sincronizado no banco de dados." });
       const payload = { userId: fullUser.id, role: fullUser.role, nome: fullUser.nome, email: fullUser.email };
+      if (!process.env.JWT_SECRET) throw new Error("JWT_SECRET ausente no ambiente (Vercel).");
+      if (!process.env.REFRESH_SECRET) throw new Error("REFRESH_SECRET ausente no ambiente (Vercel).");
       const token = generateToken(payload);
       const refreshToken = generateRefreshToken(payload);
       try {
@@ -82224,13 +82227,20 @@ var AuthController = class {
       });
     } catch (error) {
       const msg = error instanceof Error ? error.message : String(error);
-      console.error("[AUTH FATAL]:", msg);
+      const stack = error instanceof Error ? error.stack : "No stack trace";
+      console.error("[AUTH FATAL]:", msg, stack);
       return res.status(500).json({
         error: "Erro cr\xEDtico no portal de login.",
         details: msg,
         diagnostic: {
           has_db: !!process.env.DATABASE_URL,
-          has_sb: !!process.env.SUPABASE_URL
+          has_sb: !!process.env.SUPABASE_URL,
+          has_jwt: !!process.env.JWT_SECRET,
+          has_refresh: !!process.env.REFRESH_SECRET,
+          node_ver: process.version,
+          time: (/* @__PURE__ */ new Date()).toISOString(),
+          stack_trace: stack.split("\n").slice(0, 3).join(" | ")
+          // Pequeno snippet do stack para o frontend
         }
       });
     }
@@ -82262,7 +82272,7 @@ var AuthController = class {
         }
       }
       if (!sbUser) throw new Error("Supabase n\xE3o retornou dados do usu\xE1rio.");
-      const result = await prisma_default.$transaction(async (tx) => {
+      const result = await prisma.$transaction(async (tx) => {
         const existingPrismaUser = await tx.user.findUnique({ where: { email: cleanEmail } });
         let user;
         if (existingPrismaUser) {
@@ -82323,7 +82333,7 @@ var AuthController = class {
       const payload = { userId: result.id, role: result.role, nome: result.nome, email: result.email };
       const token = generateToken(payload);
       const refreshToken = generateRefreshToken(payload);
-      const fullResult = await prisma_default.user.findUnique({
+      const fullResult = await prisma.user.findUnique({
         where: { id: result.id },
         include: { franchiseProfile: true }
       });
@@ -82339,7 +82349,7 @@ var AuthController = class {
   }
   static async me(req, res) {
     if (!req.user) return res.status(401).json({ error: "N\xE3o logado" });
-    const user = await prisma_default.user.findUnique({
+    const user = await prisma.user.findUnique({
       where: { id: req.user.userId },
       include: {
         franchiseProfile: {
@@ -82362,7 +82372,7 @@ var AuthController = class {
     const { refreshToken } = req.body;
     try {
       const payload = verifyRefreshToken(refreshToken);
-      const user = await prisma_default.user.findUnique({ where: { id: payload.userId } });
+      const user = await prisma.user.findUnique({ where: { id: payload.userId } });
       if (!user) throw new Error();
       const newPayload = { userId: user.id, role: user.role, nome: user.nome, email: user.email };
       return res.json({ token: generateToken(newPayload), refreshToken: generateRefreshToken(newPayload) });
@@ -82372,7 +82382,7 @@ var AuthController = class {
   }
   static async checkEmail(req, res) {
     const { email } = req.query;
-    const user = await prisma_default.user.findUnique({
+    const user = await prisma.user.findUnique({
       where: { email: String(email).toLowerCase().trim() },
       select: { nome: true, role: true, whatsapp: true }
     });
@@ -82381,20 +82391,20 @@ var AuthController = class {
   static async updateMe(req, res) {
     const userId = req.user?.userId;
     if (!userId) return res.status(401).json({ error: "N\xE3o autorizado" });
-    const updated = await prisma_default.user.update({ where: { id: userId }, data: req.body });
+    const updated = await prisma.user.update({ where: { id: userId }, data: req.body });
     return res.json(updated);
   }
   static async forgotPassword(req, res) {
     const { email } = req.body;
     if (!email) return res.status(400).json({ error: "Email \xE9 obrigat\xF3rio" });
     try {
-      const user = await prisma_default.user.findUnique({ where: { email: email.toLowerCase().trim() } });
+      const user = await prisma.user.findUnique({ where: { email: email.toLowerCase().trim() } });
       if (!user) {
         return res.json({ message: "Se o e-mail estiver cadastrado, voc\xEA receber\xE1 instru\xE7\xF5es em breve." });
       }
       const token = import_crypto9.default.randomBytes(32).toString("hex");
       const expires = new Date(Date.now() + 36e5);
-      await prisma_default.user.update({
+      await prisma.user.update({
         where: { id: user.id },
         data: {
           resetToken: token,
@@ -82420,7 +82430,7 @@ var AuthController = class {
     const { token, novaSenha } = req.body;
     if (!token || !novaSenha) return res.status(400).json({ error: "Token e nova senha s\xE3o obrigat\xF3rios" });
     try {
-      const user = await prisma_default.user.findFirst({
+      const user = await prisma.user.findFirst({
         where: {
           resetToken: token,
           resetTokenExpires: { gt: /* @__PURE__ */ new Date() }
@@ -82430,7 +82440,7 @@ var AuthController = class {
         return res.status(400).json({ error: "Token inv\xE1lido ou expirado" });
       }
       const hash2 = await bcryptjs_default.hash(novaSenha, 12);
-      await prisma_default.user.update({
+      await prisma.user.update({
         where: { id: user.id },
         data: {
           senha: hash2,
