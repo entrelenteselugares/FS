@@ -33,4 +33,4 @@
 - [x] **Phase 14: Flash Event Fulfillment (Fricção Zero)**: Implementation of physical cards with QR/PIN for anonymous photo delivery and instant account conversion. (DONE)
 - [x] **Phase 15: Financial & E2E Hardening**: Stabilization of B2B quotation workflows, Express Sale cart logic, and transaction integrity via high-load Playwright stress tests. (DONE)
 - [ ] **Phase 16: AI-Driven Auto-Curation**: Implementing computer vision to suggest the best poses for automated printing cycles.
-- [ ] **Phase 17: Marketplace Scale**: Expanding the ambassador program and global phygital distribution network.
+- [x] **Phase 17: Marketplace Scale**: Expanding the ambassador program and global phygital distribution network. (DONE)
