@@ -25,6 +25,7 @@ module.exports = (req, res) => {
       status: "BOOT_FAILURE",
       error: "Falha no carregamento do módulo do servidor.",
       message: err.message,
+      stack: err.stack?.split("\n")[0], // Apenas a primeira linha para não poluir
       diagnostic: {
         node: process.version,
         time: new Date().toISOString(),

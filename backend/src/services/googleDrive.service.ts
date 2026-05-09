@@ -13,45 +13,50 @@ export class GoogleDriveService {
   private drive;
 
   constructor() {
-    const clientId = process.env.GOOGLE_DRIVE_CLIENT_ID;
-    const clientSecret = process.env.GOOGLE_DRIVE_CLIENT_SECRET;
-    const refreshToken = process.env.GOOGLE_DRIVE_REFRESH_TOKEN;
+    try {
+      const clientId = process.env.GOOGLE_DRIVE_CLIENT_ID;
+      const clientSecret = process.env.GOOGLE_DRIVE_CLIENT_SECRET;
+      const refreshToken = process.env.GOOGLE_DRIVE_REFRESH_TOKEN;
 
-    const clientEmail = process.env.GOOGLE_SERVICE_ACCOUNT_EMAIL;
-    const privateKey = process.env.GOOGLE_SERVICE_ACCOUNT_PRIVATE_KEY?.replace(/\\n/g, '\n');
+      const clientEmail = process.env.GOOGLE_SERVICE_ACCOUNT_EMAIL;
+      const privateKey = process.env.GOOGLE_SERVICE_ACCOUNT_PRIVATE_KEY?.replace(/\\n/g, '\n');
 
-    // 1. Tentar OAuth2 (Recomendado para evitar erro de Storage Quota em contas pessoais)
-    if (clientId && clientSecret && refreshToken) {
-      try {
-        const oauth2Client = new google.auth.OAuth2(clientId, clientSecret);
-        oauth2Client.setCredentials({ refresh_token: refreshToken });
-        this.drive = google.drive({ version: 'v3', auth: oauth2Client });
-        console.log(`[DRIVE] 🚀 Modo OAuth2 (Refresh Token) ativado. Usando cota de armazenamento do usuário.`);
-        return;
-      } catch (oauthErr: any) {
-        console.error(`[DRIVE] Falha ao inicializar OAuth2:`, oauthErr.message);
+      // 1. Tentar OAuth2 (Recomendado para evitar erro de Storage Quota em contas pessoais)
+      if (clientId && clientSecret && refreshToken) {
+        try {
+          const oauth2Client = new google.auth.OAuth2(clientId, clientSecret);
+          oauth2Client.setCredentials({ refresh_token: refreshToken });
+          this.drive = google.drive({ version: 'v3', auth: oauth2Client });
+          console.log(`[DRIVE] 🚀 Modo OAuth2 (Refresh Token) ativado. Usando cota de armazenamento do usuário.`);
+          return;
+        } catch (oauthErr: any) {
+          console.error(`[DRIVE] Falha ao inicializar OAuth2:`, oauthErr.message);
+        }
       }
-    }
 
-    // 2. Fallback para Service Account
-    if (clientEmail && privateKey) {
-      try {
-        const jwtClient = new google.auth.JWT({
-          email: clientEmail,
-          key: privateKey,
-          scopes: SCOPES
-        });
+      // 2. Fallback para Service Account
+      if (clientEmail && privateKey) {
+        try {
+          const jwtClient = new google.auth.JWT({
+            email: clientEmail,
+            key: privateKey,
+            scopes: SCOPES
+          });
 
-        this.drive = google.drive({ version: 'v3', auth: jwtClient });
-        console.log(`[DRIVE] 🛡️ Modo Service Account ativado. (Atenção: Requer Shared Drive ou Quota de SA).`);
-        return;
-      } catch (err: any) {
-        console.error(`[DRIVE] Falha ao inicializar JWT:`, err.message);
+          this.drive = google.drive({ version: 'v3', auth: jwtClient });
+          console.log(`[DRIVE] 🛡️ Modo Service Account ativado. (Atenção: Requer Shared Drive ou Quota de SA).`);
+          return;
+        } catch (err: any) {
+          console.error(`[DRIVE] Falha ao inicializar JWT:`, err.message);
+        }
       }
-    }
 
-    console.warn('⚠️ Google Drive não configurado (OAuth2 ou Service Account). O sistema operará em MODO MOCK.');
-    this.drive = null;
+      console.warn('⚠️ Google Drive não configurado (OAuth2 ou Service Account). O sistema operará em MODO MOCK.');
+      this.drive = null;
+    } catch (criticalErr: any) {
+      console.error(`[DRIVE CRITICAL] Erro fatal no construtor:`, criticalErr.message);
+      this.drive = null;
+    }
   }
 
   /**
