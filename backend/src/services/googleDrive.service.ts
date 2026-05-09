@@ -242,7 +242,7 @@ export class GoogleDriveService {
     if (!this.drive) throw new Error("Drive service not initialized");
     return this.drive.files.get(
       { fileId, alt: 'media', supportsAllDrives: true },
-      { responseType: 'stream' }
+      { responseType: 'arraybuffer' }
     );
   }
 }

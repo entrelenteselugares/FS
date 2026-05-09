@@ -574,7 +574,8 @@ export class VaultController {
       res.setHeader('Content-Type', contentType);
       res.setHeader('Cache-Control', 'public, max-age=86400');
 
-      (driveRes.data as any).pipe(res);
+      const buffer = Buffer.from(driveRes.data as ArrayBuffer);
+      return res.send(buffer);
     } catch (error: any) {
       console.error("[PROXY MEDIA] Erro:", error.message);
       res.status(500).send("Erro ao carregar mídia");
