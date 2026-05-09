@@ -67,3 +67,4 @@ ANOTAÇÕES/**/*.json
 
 # build
 /api/server-v2.js
+printer-agent/node_modules/
