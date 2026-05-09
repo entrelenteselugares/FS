@@ -1,4 +1,4 @@
-﻿import React, { useState, useEffect } from "react";
+import React, { useState, useEffect } from "react";
 import { DashboardLayout, type NavItem } from "../../components/DashboardLayout";
 import { API } from "../../lib/api";
 import { useAuth } from "../../hooks/useAuth";
@@ -15,6 +15,7 @@ const AdminServices = React.lazy(() => import("./AdminServices").then(m => ({ de
 const AdminConfigs = React.lazy(() => import("./AdminConfigs").then(m => ({ default: m.AdminConfigs })));
 const AdminPrintCatalog = React.lazy(() => import("./AdminPrintCatalog").then(m => ({ default: m.AdminPrintCatalog })));
 const AdminFranchises = React.lazy(() => import("./AdminFranchises"));
+const AdminAmbassadors = React.lazy(() => import("./AdminAmbassadors").then(m => ({ default: m.AdminAmbassadors })));
 import { 
   LayoutDashboard, 
   Camera, 
@@ -46,6 +47,7 @@ const NAV_ITEMS = (activeTab: string, setActiveTab: (t: string) => void, stats: 
     { label: "Serviços",       onClick: () => setActiveTab("services"),      isActive: activeTab === "services",      icon: <Grid3X3 size={16} />, hide: role === 'FRANCHISEE' },
     { label: "Concursos",      onClick: () => setActiveTab("contests"),      isActive: activeTab === "contests",      icon: <Trophy size={16} />, hide: role === 'FRANCHISEE' },
     { label: "Configurações",  onClick: () => setActiveTab("settings"),      isActive: activeTab === "settings",      icon: <Settings size={16} />, hide: role === 'FRANCHISEE' },
+    { label: "Embaixadores",   onClick: () => setActiveTab("ambassadors"),   isActive: activeTab === "ambassadors",   icon: <Users size={16} />, hide: role === 'FRANCHISEE' },
   ];
 
   return allItems.filter(item => !item.hide);
@@ -148,6 +150,7 @@ export const AdminDashboard: React.FC = () => {
               {activeTab === "services" && <AdminServices />}
               {activeTab === "settings" && <AdminConfigs />}
               {activeTab === "franchises" && <AdminFranchises />}
+              {activeTab === "ambassadors" && <AdminAmbassadors />}
             </React.Suspense>
           </div>
         )}

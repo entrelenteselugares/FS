@@ -6,10 +6,11 @@ import { T, Card } from "../lib/theme";
 import AccessTypeModal from "../components/AccessTypeModal";
 import { SideDrawer } from "../components/SideDrawer";
 import { DashboardLayout, type NavItem } from "../components/DashboardLayout";
-import { Image, Clock, ShieldCheck, ArrowRight, AlertTriangle, User, CheckCircle2, X, ShoppingBag, Printer, Zap, Play, Lock } from "lucide-react";
 import { ExpressSaleModal, FlashEventModal, ExpressSaleBanner, type EventItem, type Partner } from "../components/profissional";
+import { AmbassadorDashboard } from "../components/AmbassadorDashboard";
+import { Users } from "lucide-react";
 
-type ActiveTab = "files" | "profile" | "wallet" | "franquia";
+type ActiveTab = "files" | "profile" | "wallet" | "franquia" | "embaixador";
 
 interface Pedido {
   id: string;
@@ -105,6 +106,7 @@ export default function ClienteArea() {
     ...(user?.franchiseProfile ? [
       { label: "Franquia Print", onClick: () => setActiveTab("franquia"), isActive: activeTab === "franquia", icon: <Printer size={18} /> }
     ] : []),
+    { label: "Programa Embaixador", onClick: () => setActiveTab("embaixador"), isActive: activeTab === "embaixador", icon: <Users size={18} /> },
     { label: "Meus Dados", onClick: () => setActiveTab("profile"), isActive: activeTab === "profile", icon: <User size={18} /> },
   ];
   
@@ -637,6 +639,8 @@ export default function ClienteArea() {
                  </div>
               </div>
             </div>
+          ) : activeTab === "embaixador" ? (
+            <AmbassadorDashboard />
           ) : null}
         </div>
 

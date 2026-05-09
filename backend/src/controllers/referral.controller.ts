@@ -48,4 +48,28 @@ export class ReferralController {
       return res.status(500).json({ error: "Internal Server Error" });
     }
   }
+
+  /**
+   * (ADMIN) Listagem global de campanhas.
+   */
+  static async listAllCampaigns(req: Request, res: Response) {
+    try {
+      const campaigns = await ReferralService.listAllCampaigns();
+      return res.json(campaigns);
+    } catch (error) {
+      return res.status(500).json({ error: "Internal Server Error" });
+    }
+  }
+
+  /**
+   * (ADMIN) Cria uma nova campanha.
+   */
+  static async createCampaign(req: Request, res: Response) {
+    try {
+      const campaign = await ReferralService.createCampaign(req.body);
+      return res.status(201).json(campaign);
+    } catch (error) {
+      return res.status(500).json({ error: "Internal Server Error" });
+    }
+  }
 }

@@ -379,7 +379,10 @@ router.get("/admin/suppliers/:id/breakeven", requireAuth, requireRole("ADMIN"), 
 router.get("/admin/redemptions",             requireAuth, requireRole("ADMIN"), listRedemptions);
 router.patch("/admin/redemptions/:id/status",requireAuth, requireRole("ADMIN"), updateRedemptionStatus);
 
-// ── Admin: Concursos ───────────────────────────────────────────────────────────
+router.get("/admin/ambassador/stats", requireAuth, requireRole("ADMIN"), ReferralController.listAllCampaigns);
+router.post("/admin/ambassador/campaigns", requireAuth, requireRole("ADMIN"), ReferralController.createCampaign);
+
+// ── Admin: Contests ──────────────────────────────────────────────────────────
 router.get("/admin/contests",       requireAuth, requireRole("ADMIN"), adminListContests);
 router.post("/admin/contests",      requireAuth, requireRole("ADMIN"), adminCreateContest);
 router.patch("/admin/contests/:id", requireAuth, requireRole("ADMIN"), adminUpdateContest);

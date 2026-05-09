@@ -25,13 +25,15 @@
 - [x] Adicionar indicador visual de unidade responsável no resumo do pedido (frontend).
 
 ## Wave 3: Ambassador Dashboard & Admin UI
-- [ ] Desenvolver `AmbassadorDashboard.tsx`:
-    - Layout *Midnight Luxury* com cards de métricas (Ganhos, Cliques, Conversões).
-    - Lista detalhada de conversões com status.
-    - Gerenciador de links com botão "Copiar".
-- [ ] Desenvolver `AdminCampaigns.tsx`:
+- [x] Desenvolver `AmbassadorDashboard.tsx`:
+    - Cards de performance (Cliques, Conversões, Ganhos).
+    - Gerador de links com cópia automática.
+    - Histórico de conversões recentes.
+- [x] Integrar Aba "Embaixador" na `ClienteArea.tsx`.
+- [x] Criar tela de gerenciamento de campanhas no Admin (`/admin/embaixadores`).
+- [x] Desenvolver `AdminCampaigns.tsx`:
     - Painel para o administrador gerenciar as campanhas globais e recompensas.
-- [ ] Atualizar Navegação:
+- [x] Atualizar Navegação:
     - Adicionar link "Embaixador" no menu do usuário e "Campanhas" no menu Admin.
 
 ## Wave 4: Integration & E2E Verification

@@ -99,4 +99,33 @@ export class ReferralService {
       active: c.active,
     }));
   }
+
+  /**
+   * (ADMIN) Listagem global de todas as campanhas.
+   */
+  static async listAllCampaigns() {
+    return prisma.referralCampaign.findMany({
+      include: {
+        owner: { select: { nome: true, email: true } },
+        _count: { select: { visits: true, conversions: true } }
+      },
+      orderBy: { createdAt: "desc" }
+    });
+  }
+
+  /**
+   * (ADMIN) Cria uma nova campanha para um usuário.
+   */
+  static async createCampaign(data: { name: string, slug: string, ownerId: string, rewardType: string, rewardValue: number }) {
+    return prisma.referralCampaign.create({
+      data: {
+        name: data.name,
+        slug: data.slug,
+        ownerId: data.ownerId,
+        rewardType: data.rewardType as any,
+        rewardValue: data.rewardValue,
+        active: true
+      }
+    });
+  }
 }
