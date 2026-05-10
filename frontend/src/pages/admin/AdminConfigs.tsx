@@ -13,7 +13,8 @@ import {
   Zap,
   Globe,
   Lock,
-  Smartphone
+  Smartphone,
+  X
 } from "lucide-react";
 import { API } from "../../lib/api";
 

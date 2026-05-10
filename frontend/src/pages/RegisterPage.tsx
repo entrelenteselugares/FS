@@ -93,7 +93,7 @@ export const RegisterPage: React.FC = () => {
       const response = await API.post("/auth/register", finalPayload);
       
       // Logar automaticamente salvando o token e dados do usuário
-      const { token, user } = response.data;
+      const { token } = response.data;
       localStorage.setItem("fs_token", token);
       
       // Notificamos o sistema que estamos logados antes de navegar

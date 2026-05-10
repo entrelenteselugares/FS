@@ -1078,7 +1078,7 @@ return (
       {isEditingEvent && event && (
         <EventEditPanel 
           event={event as any}
-          onUpdated={(u) => setEvent(prev => prev ? { ...prev, ...u } : null)}
+          onUpdated={(u) => setEvent(prev => prev ? { ...prev, ...u } as EventData : null)}
           onClose={() => setIsEditingEvent(false)}
           onNotify={(msg) => alert(msg)}
         />
