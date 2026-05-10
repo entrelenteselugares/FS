@@ -148,7 +148,7 @@ export const AdminDashboard: React.FC = () => {
              <div className="w-px h-16 bg-gradient-to-t from-transparent via-emerald-500 to-transparent" />
            </div>
         ) : (
-          <div className="pb-32">
+          <div>
             <AnimatePresence mode="wait">
               <motion.div
                 key={activeTab}

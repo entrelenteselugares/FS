@@ -2,8 +2,6 @@ import { useState, useEffect, useMemo } from 'react';
 import { API } from '../../lib/api';
 import { 
   Package, 
-  ArrowUpRight, 
-  ArrowDownLeft, 
   AlertCircle,
   Plus,
   ArrowRight,
@@ -101,8 +99,9 @@ export default function AdminInventory() {
         supplierCost: 0, stockType: 'PROPRIO', externalLink: ''
       });
       fetchInventory();
-    } catch (err: any) {
-      alert(err.response?.data?.error || 'Erro ao cadastrar produto');
+    } catch (err: unknown) {
+      const error = err as { response?: { data?: { error?: string } } };
+      alert(error.response?.data?.error || 'Erro ao cadastrar produto');
     }
   };
 
