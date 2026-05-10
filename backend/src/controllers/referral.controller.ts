@@ -11,7 +11,7 @@ export class ReferralController {
     const userAgent = req.get("user-agent");
 
     try {
-      const campaign = await ReferralService.registerVisit(slug, ip, userAgent);
+      const campaign = await ReferralService.registerVisit(slug as string, ip as string | undefined, userAgent as string | undefined);
 
       if (!campaign) {
         return res.redirect("/"); // Campanha não encontrada ou inativa

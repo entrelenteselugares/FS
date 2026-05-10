@@ -6,7 +6,7 @@ import { QRCodeSVG } from "qrcode.react";
 import { QrCode, Copy, Check, X, Download, Calendar, DollarSign, Settings, Users2, Camera, Star, ShieldCheck, ArrowRight, Share2, MapPin, Phone, UserCircle, Printer, AlertTriangle, Play } from "lucide-react";
 import { useAuth } from "../hooks/useAuth";
 import { DashboardLayout, type NavItem } from "../components/DashboardLayout";
-import { FlashEventModal } from "../components/profissional";
+import { FlashEventModal, FranchiseShopModal } from "../components/profissional";
 import { Zap } from "lucide-react";
 
 interface UnidadeStats {
@@ -140,6 +140,7 @@ export default function UnidadeFixaDashboard() {
   const [qrModalEvent, setQrModalEvent] = useState<EventoAgenda | null>(null);
   const [copied, setCopied] = useState(false);
   const [isFlashModalOpen, setIsFlashModalOpen] = useState(false);
+  const [isShopModalOpen, setIsShopModalOpen] = useState(false);
 
   // Custom Prices State
   const [globalServices, setGlobalServices] = useState<GlobalService[]>([]);
@@ -198,7 +199,7 @@ export default function UnidadeFixaDashboard() {
       const [statsRes, eventosRes, repassesRes] = await Promise.all([
         API.get("/unidade-fixa/stats"),
         API.get("/unidade-fixa/events"),
-        API.get("/payouts/me")
+        API.get("/me/repasses")
       ]);
       setStats(statsRes.data);
       setEventos(eventosRes.data.events ?? eventosRes.data);
@@ -317,6 +318,10 @@ export default function UnidadeFixaDashboard() {
     { label: "Rede Técnica", onClick: () => { setTab("equipe"); if (!teamLoaded) loadTeam(); }, isActive: tab === "equipe", icon: <Users2 size={18} /> },
     { label: "Configuração", onClick: () => setTab("configuracoes"), isActive: tab === "configuracoes", icon: <Settings size={18} /> },
   ];
+ 
+  const availableBalance = repasses
+    .filter(r => r.status !== "PAID")
+    .reduce((acc, r) => acc + Number(r.amount), 0);
 
   return (
     <DashboardLayout 
@@ -393,7 +398,7 @@ export default function UnidadeFixaDashboard() {
                     )) * 100)}%` }}
                   />
                </div>
-               <p className="text-[8px] text-theme-muted font-bold uppercase tracking-widest text-right">
+               <p className="text-[9px] text-theme-muted font-black uppercase tracking-widest text-right">
                  {stats.user.franchiseProfile.tier === "DIAMOND" ? "Tier Máximo Alcançado" : "Mantenha o volume para o próximo upgrade automático"}
                </p>
             </div>
@@ -405,7 +410,7 @@ export default function UnidadeFixaDashboard() {
           <div className="bg-red-500/10 border border-red-500/30 p-6 flex flex-col md:flex-row md:items-center gap-6 shadow-2xl relative overflow-hidden group">
              <AlertTriangle size={24} className="text-red-500 shrink-0 animate-pulse" />
              <div className="space-y-2 relative z-10 flex-1">
-                <p className="text-[12px] font-black text-red-500 uppercase tracking-widest">Alerta Estratégico: Nível Crítico de Insumos</p>
+                <p className="text-[11px] font-black text-red-500 uppercase tracking-[0.4em] italic">Alerta Estratégico: Nível Crítico de Insumos</p>
                 <p className="text-[10px] font-bold text-theme-text/80 uppercase tracking-widest max-w-3xl leading-relaxed">
                    Atenção Operacional: Sua unidade tem apenas <span className="text-red-400 font-black">{user.franchiseProfile.printCredits} créditos</span> restantes para impressões Phygital. 
                    A operação será bloqueada ao chegar a zero. Solicite reposição imediata de papel fotográfico e ribbons.
@@ -436,9 +441,9 @@ export default function UnidadeFixaDashboard() {
                   <div className={`p-1.5 md:p-2 rounded-none ${m.highlight ? 'bg-brand-tactical text-brand-text' : 'bg-theme-border/40 text-theme-muted'}`}>
                     {m.icon}
                   </div>
-                  <p className="text-[8px] md:text-[9px] font-black text-theme-muted uppercase tracking-[0.2em]">{m.label}</p>
+                  <p className="text-[9px] font-black text-theme-muted uppercase tracking-widest">{m.label}</p>
                 </div>
-                <p className={`text-xl md:text-2xl font-heading font-black italic tracking-tighter ${m.highlight ? 'text-brand-tactical' : 'text-theme-text'}`}>{m.value}</p>
+                <p className={`text-2xl md:text-3xl font-heading font-black italic tracking-tighter ${m.highlight ? 'text-brand-tactical' : 'text-theme-text'}`}>{m.value}</p>
               </div>
             ))}
           </div>
@@ -1158,15 +1163,20 @@ export default function UnidadeFixaDashboard() {
                    </div>
                    <p className="text-[9px] font-black text-theme-muted uppercase tracking-widest">Recarga de Saldo</p>
                  </div>
-                 <p className="text-[10px] font-bold text-theme-muted uppercase leading-relaxed tracking-widest">
-                   Para adquirir novos créditos de impressão, entre em contato com a central de suporte.
-                 </p>
-                 <button 
-                  onClick={() => window.open("https://wa.me/5519997843817", "_blank")}
-                  className="mt-2 text-[9px] font-black text-brand-tactical uppercase tracking-widest hover:underline"
-                 >
-                   SOLICITAR RECARGA →
-                 </button>
+                 <div className="space-y-4">
+                    <button 
+                      onClick={() => setIsShopModalOpen(true)}
+                      className="w-full py-4 bg-emerald-500 text-black font-display font-black text-[10px] uppercase tracking-widest hover:brightness-110 transition-all shadow-lg shadow-emerald-500/10"
+                    >
+                      LOJA DA FRANQUIA
+                    </button>
+                    <button 
+                      onClick={() => window.open("https://wa.me/5519984470420?text=Olá! Preciso de assistência técnica para minha unidade Foto Segundo.", "_blank")}
+                      className="mt-2 text-[9px] font-black text-theme-muted uppercase tracking-widest hover:text-emerald-500 transition-all text-left block"
+                    >
+                      ASSISTÊNCIA TÉCNICA →
+                    </button>
+                  </div>
               </div>
             </div>
 
@@ -1361,6 +1371,18 @@ export default function UnidadeFixaDashboard() {
             setError(msg);
             setTimeout(() => setError(""), 3000);
           }}
+        />
+      )}
+      {/* Loja da Franquia */}
+      {isShopModalOpen && (
+        <FranchiseShopModal 
+          onClose={() => setIsShopModalOpen(false)}
+          onSuccess={(msg) => {
+            setSuccess(msg);
+            setTimeout(() => setSuccess(""), 3000);
+          }}
+          availableBalance={availableBalance}
+          userAddress={lpAddress}
         />
       )}
     </DashboardLayout>

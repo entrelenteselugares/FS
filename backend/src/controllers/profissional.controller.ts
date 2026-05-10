@@ -172,7 +172,7 @@ export async function getProfile(req: AuthRequest, res: Response): Promise<void>
       include: { 
         user: { 
           select: { 
-            nome: true, email: true, whatsapp: true,
+            nome: true, email: true, whatsapp: true, address: true, pixKey: true,
             franchiseProfile: { select: { printCredits: true, active: true } }
           } 
         },
@@ -247,6 +247,7 @@ export async function getProfile(req: AuthRequest, res: Response): Promise<void>
 
     res.json({
       ...profile,
+      pixKey: profile.user?.pixKey,
       stats: {
         totalEarnings: totalEstimated, // Mostra o total real acumulado
         monthEarnings: monthEstimated, // Mostra o acumulado do mês
@@ -265,7 +266,7 @@ export async function updateProfile(req: AuthRequest, res: Response): Promise<vo
   const userId = req.user?.userId;
   if (!userId) { res.status(401).json({ error: "Não autenticado." }); return; }
 
-  const { services, equipmentList, otherHabilities, experienceYears, workflowType, hourlyRate } = req.body;
+  const { services, equipmentList, otherHabilities, experienceYears, workflowType, user, pixKey } = req.body;
 
   try {
     // ── LÓGICA DE EQUAÇÃO TÁTICA (AUTOMAÇÃO DE PRECIFICAÇÃO) ──
@@ -326,7 +327,23 @@ export async function updateProfile(req: AuthRequest, res: Response): Promise<vo
         ...(!isLocked && req.body.firstJobUrl !== undefined && { firstJobUrl: String(req.body.firstJobUrl) }),
         ...(workflowType !== undefined && { workflowType }),
         hourlyRate: autoHourlyRate,
-        equipmentMultiplier: finalMultiplier 
+        equipmentMultiplier: finalMultiplier,
+        user: {
+          update: {
+            ...(user?.address !== undefined && { address: user.address }),
+            ...(user?.nome !== undefined && { nome: user.nome }),
+            ...(user?.whatsapp !== undefined && { whatsapp: user.whatsapp }),
+            ...(pixKey !== undefined && { pixKey: String(pixKey) })
+          }
+        }
+      },
+      include: {
+        user: {
+          select: {
+            nome: true, email: true, whatsapp: true, address: true, pixKey: true,
+            franchiseProfile: { select: { printCredits: true, active: true } }
+          }
+        }
       }
     });
 
@@ -337,7 +354,10 @@ export async function updateProfile(req: AuthRequest, res: Response): Promise<vo
       newMultiplier: finalMultiplier
     });
 
-    res.json(updated);
+    res.json({
+      ...updated,
+      pixKey: (updated as any).user?.pixKey
+    });
   } catch (err) {
     console.error("updateProfile:", err);
     res.status(500).json({ error: "Erro ao atualizar perfil." });

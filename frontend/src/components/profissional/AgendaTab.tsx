@@ -110,7 +110,7 @@ export function AgendaTab({
                   
                   {/* DATA COL */}
                   <div className="min-w-[80px] flex flex-col items-center md:items-start border-r border-theme-border/20 pr-6">
-                    <div className="text-[8px] font-black text-theme-muted uppercase tracking-[0.2em] mb-1">DATA</div>
+                    <div className="text-[9px] font-black text-theme-muted uppercase tracking-widest mb-1">DATA</div>
                     <div className="text-2xl font-heading font-black text-theme-text italic leading-none uppercase tracking-tighter">
                       {new Date(ev.dataEvento).toLocaleDateString("pt-BR", { day: "2-digit" })}
                     </div>
@@ -123,7 +123,7 @@ export function AgendaTab({
                   <div className="flex-grow space-y-3">
                     <div className="flex items-center gap-4">
                       <h3 className="text-xl md:text-2xl font-heading font-black text-theme-text uppercase italic tracking-tight">{ev.nomeNoivos}</h3>
-                      <div className="px-2 py-0.5 text-[8px] font-black border bg-yellow-400/10 text-yellow-400 border-yellow-400/20">
+                      <div className="px-2 py-0.5 text-[9px] font-black border bg-yellow-400/10 text-yellow-400 border-yellow-400/20">
                         CHAMADA ABERTA
                       </div>
                     </div>
@@ -189,7 +189,7 @@ export function AgendaTab({
                   
                   {/* DATA COL */}
                   <div className="min-w-[80px] flex flex-col items-center md:items-start border-r border-theme-border/20 pr-6">
-                    <div className="text-[8px] font-black text-theme-muted uppercase tracking-[0.2em] mb-1">DATA</div>
+                    <div className="text-[9px] font-black text-theme-muted uppercase tracking-widest mb-1">DATA</div>
                     <div className="text-2xl font-heading font-black text-theme-text italic leading-none uppercase tracking-tighter">
                       {new Date(ev.dataEvento).toLocaleDateString("pt-BR", { day: "2-digit" })}
                     </div>
@@ -202,7 +202,7 @@ export function AgendaTab({
                   <div className="flex-grow space-y-3">
                     <div className="flex items-center gap-4">
                       <h3 className="text-xl md:text-2xl font-heading font-black text-theme-text uppercase italic tracking-tight">{ev.nomeNoivos}</h3>
-                      <div className={`px-2 py-0.5 text-[8px] font-black border ${ev.captacaoStatus === "ACCEPTED" ? "bg-brand-tactical/10 text-brand-tactical border-brand-tactical/20" : "bg-amber-500/10 text-amber-500 border-amber-500/20"}`}>
+                      <div className={`px-2 py-0.5 text-[9px] font-black border ${ev.captacaoStatus === "ACCEPTED" ? "bg-brand-tactical/10 text-brand-tactical border-brand-tactical/20" : "bg-amber-500/10 text-amber-500 border-amber-500/20"}`}>
                         {ev.captacaoStatus === "ACCEPTED" ? "CONFIRMADO" : "PENDENTE"}
                       </div>
                     </div>

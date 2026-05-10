@@ -82,7 +82,7 @@ const SidebarContent: React.FC<SidebarContentProps> = ({ navItems, onNavigate })
             display: "flex",
             alignItems: "center"
           }}>
-            <img src="/logo-fs.png" alt="Foto Segundo" style={{ height: 28, objectFit: "contain" }} />
+            <img src="/logo.png" alt="Foto Segundo" style={{ height: 28, objectFit: "contain", filter: "var(--logo-filter)" }} />
           </div>
         </Link>
       </div>
@@ -191,35 +191,40 @@ const SidebarContent: React.FC<SidebarContentProps> = ({ navItems, onNavigate })
         background:   T.bgCard,
       }}>
         {/* Info row */}
-        <div style={{ marginBottom: 16 }}>
-          <div style={{
-            fontSize:      14,
-            fontFamily:    T.fontB,
-            fontWeight:    700,
-            color:         T.text,
-            overflow:      "hidden",
-            textOverflow:  "ellipsis",
-            whiteSpace:    "nowrap",
-          }}>
-            {user?.nome}
+        <div style={{ marginBottom: 16, display: "flex", alignItems: "center", justifyContent: "space-between" }}>
+          <div style={{ flex: 1, minWidth: 0 }}>
+            <div style={{
+              fontSize:      13,
+              fontFamily:    T.fontB,
+              fontWeight:    900,
+              color:         T.text,
+              overflow:      "hidden",
+              textOverflow:  "ellipsis",
+              whiteSpace:    "nowrap",
+              textTransform: "uppercase",
+              letterSpacing: 1
+            }}>
+              {user?.nome}
+            </div>
+            <div style={{
+              display:       "inline-block",
+              fontSize:      8,
+              fontFamily:    T.fontB,
+              fontWeight:    900,
+              color:         T.brand,
+              border:        `1px solid ${T.brand}44`,
+              padding:       "2px 6px",
+              textTransform: "uppercase",
+              letterSpacing: 2,
+              marginTop:     4,
+            }}>
+              {user?.role === "ADMIN" ? "Administrador" : 
+               user?.role === "CARTORIO" || user?.role === "UNIDADE" ? "Unidade Fixa" :
+               user?.role === "PROFISSIONAL" ? "Profissional da Rede" :
+               "Cliente"}
+            </div>
           </div>
-          <div style={{
-            display:       "inline-block",
-            fontSize:      10,
-            fontFamily:    T.fontB,
-            fontWeight:    900,
-            color:         T.brand,
-            border:        `1px solid ${T.brand}44`,
-            padding:       "3px 8px",
-            textTransform: "uppercase",
-            letterSpacing: 2,
-            marginTop:     6,
-          }}>
-            {user?.role === "ADMIN" ? "Administrador" : 
-             user?.role === "CARTORIO" || user?.role === "UNIDADE" ? "Unidade Fixa" :
-             user?.role === "PROFISSIONAL" ? "Profissional da Rede" :
-             "Cliente"}
-          </div>
+          <ThemeToggle />
         </div>
         {/* Logout button */}
         <button
@@ -263,7 +268,6 @@ export const DashboardLayout: React.FC<DashboardLayoutProps> = ({
   title,
 }) => {
   const [drawerOpen, setDrawerOpen] = useState(false);
-  const { user } = useAuth();
 
   const sidebarProps: SidebarContentProps = {
     title,
@@ -348,7 +352,7 @@ export const DashboardLayout: React.FC<DashboardLayoutProps> = ({
       {/* ── Main Content ── */}
       <div style={{ flex: 1, display: "flex", flexDirection: "column", minWidth: 0, overflow: "hidden" }}>
 
-        {/* Mobile Top Bar (NAV padrão — Parte 2) */}
+        {/* Mobile Top Bar */}
         <nav style={{
           display:        "flex",
           alignItems:     "center",
@@ -357,20 +361,21 @@ export const DashboardLayout: React.FC<DashboardLayoutProps> = ({
           borderBottom:   `1px solid ${T.border}`,
           background:     T.bg,
           flexShrink:     0,
-        }} className="dashboard-topbar">
-          {/* Left: Brand Only on Desktop */}
-          <div style={{ display: "flex", alignItems: "center", gap: 14 }}>
+        }} className="dashboard-topbar lg:hidden">
+          {/* Left: Brand Only on Mobile */}
+          <div className="flex items-center gap-4">
             <Link to="/" style={{ display: "flex", alignItems: "center" }}>
-              <img src="/logo-fs.png" alt="Logo" style={{ height: 22, objectFit: "contain" }} />
+              <img src="/logo.png" alt="Logo" style={{ height: 22, objectFit: "contain", filter: "var(--logo-filter)" }} />
             </Link>
           </div>
 
-          {/* Right: user info + toggle + logout */}
           <div style={{ display: "flex", alignItems: "center", gap: 12 }}>
-            <span style={{ fontSize: 12, color: T.text3, fontFamily: T.fontB, marginRight: 8 }} className="mobile-hide">
-              {user?.nome}
-            </span>
-            <ThemeToggle />
+            <button 
+              onClick={() => setDrawerOpen(true)}
+              className="p-2 text-theme-muted hover:text-white transition-colors"
+            >
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="18" x2="21" y2="18"/></svg>
+            </button>
           </div>
         </nav>
 

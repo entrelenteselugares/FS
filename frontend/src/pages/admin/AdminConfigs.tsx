@@ -1,4 +1,4 @@
-﻿import React, { useState, useEffect, useCallback, useMemo } from "react";
+import React, { useState, useEffect, useCallback, useMemo } from "react";
 import { 
   Percent, 
   DollarSign, 
@@ -169,16 +169,23 @@ export const AdminConfigs: React.FC = () => {
   return (
     <div className="space-y-10 animate-in fade-in slide-in-from-bottom-4 duration-700 pb-20">
       {/* HEADER MASTER */}
-      <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-6 border-b border-theme-border/60 pb-10">
-        <div>
-          <h2 className="text-3xl md:text-4xl font-heading text-theme-text tracking-tighter uppercase font-black leading-none pt-2">Inteligência Financeira</h2>
-          <p className="text-[10px] text-theme-muted uppercase tracking-[0.5em] mt-3 font-black italic">Gestão de Split e Governança de Infraestrutura</p>
+      <div className="flex flex-col lg:flex-row lg:items-center justify-between border-b border-theme-border pb-10 gap-6">
+        <div className="space-y-4">
+          <h1 className="text-4xl md:text-6xl font-heading font-black text-theme-text uppercase tracking-tighter italic leading-none">
+            Inteligência <span className="text-brand-tactical">Financeira</span>
+          </h1>
+          <div className="flex items-center gap-4">
+            <div className="h-1 w-12 bg-brand-tactical" />
+            <p className="text-[11px] font-black text-brand-tactical uppercase tracking-[0.4em] italic">
+              Gestão de Split e Governança de Infraestrutura
+            </p>
+          </div>
         </div>
         
         <button 
           onClick={() => setShowGenerateConfirm(true)}
           disabled={generating}
-          className="px-8 py-4 bg-brand-tactical text-zinc-950 text-[9px] font-black uppercase tracking-[0.4em] shadow-xl hover:brightness-110 transition-all flex items-center gap-3"
+          className="px-8 py-4 bg-brand-tactical text-zinc-950 text-[9px] font-black uppercase tracking-[0.4em] shadow-xl hover:brightness-110 transition-all flex items-center gap-3 italic"
         >
           {generating ? <RefreshCw className="animate-spin" size={14} /> : <Calculator size={14} />}
           {generating ? "SINCRONIZANDO..." : "FECHAMENTO SEMANAL"}

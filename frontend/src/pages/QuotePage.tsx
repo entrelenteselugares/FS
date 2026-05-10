@@ -550,12 +550,12 @@ export const QuotePage = () => {
         <header style={{ textAlign: "center", marginBottom: 20 }}>
           <div style={{ display: "flex", justifyContent: "center", marginBottom: 15 }}>
             <img 
-              src="/logo-fs.png" 
+              src="/logo.png" 
               alt="Logo" 
               style={{ 
                 height: 32, 
                 objectFit: "contain",
-                filter: document.documentElement.getAttribute('data-theme') === 'dark' ? "brightness(0) invert(1)" : "none"
+                filter: "var(--logo-filter)"
               }} 
             />
           </div>
@@ -563,7 +563,7 @@ export const QuotePage = () => {
             className="text-[10px] font-black text-emerald-500 mb-4 uppercase tracking-[0.5em] italic" 
             style={{ opacity: 0.8 }}
           >Solicitação de Orçamento</div>
-          <h1 className="text-4xl md:text-7xl font-display font-black uppercase tracking-tighter leading-none text-theme-text">
+          <h1 className="text-4xl md:text-6xl font-display font-black uppercase tracking-tighter leading-none text-theme-text">
             ETERNIZE SEU <span className="text-theme-subtle italic">EVENTO</span>
           </h1>
         </header>

@@ -21,7 +21,7 @@ export function DashboardHeader({ activeTab, viewTab, onViewTabChange, residentU
   return (
     <div className="flex flex-col lg:flex-row lg:items-end justify-between gap-6 border-b border-theme-border/60 pb-10">
       <div className="space-y-4">
-        <h1 className="text-3xl md:text-5xl font-heading font-black text-theme-text uppercase tracking-tighter italic leading-none">
+        <h1 className="text-4xl md:text-6xl font-heading font-black text-theme-text uppercase tracking-tighter italic leading-none">
           {getTitle()}
         </h1>
         <div className="flex items-center gap-4">
@@ -29,7 +29,7 @@ export function DashboardHeader({ activeTab, viewTab, onViewTabChange, residentU
           {residentUnits.length > 0 && (
             <div className="flex items-center gap-2">
               <ShieldCheck size={14} className="text-brand-tactical" />
-              <p className="text-[10px] font-black text-brand-tactical uppercase tracking-widest italic">
+              <p className="text-[11px] font-black text-brand-tactical uppercase tracking-[0.4em] italic">
                 Residente: {residentUnits.join(", ")}
               </p>
             </div>

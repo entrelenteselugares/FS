@@ -70,9 +70,8 @@ export const ClubLandingPage = () => {
               <Star size={14} fill="currentColor" />
               <span className="text-[9px] font-black uppercase tracking-widest">Assinatura Premium</span>
             </div>
-            
-            <h1 className="text-5xl md:text-7xl font-heading font-black uppercase tracking-tighter italic leading-none text-white">
-              O Seu <span className="text-brand-tactical block">Clube de Memórias</span>
+                     <h1 className="text-5xl md:text-8xl font-heading font-black uppercase tracking-tighter italic leading-none text-white">
+              Os Seus <span className="text-brand-tactical block">Meus Álbuns</span>
             </h1>
             
             <p className="text-zinc-400 text-lg md:text-xl font-medium max-w-lg leading-relaxed">
@@ -95,7 +94,7 @@ export const ClubLandingPage = () => {
                 </div>
                 <div>
                   <h3 className="text-white font-bold uppercase tracking-wide text-sm">Votação Automática</h3>
-                  <p className="text-zinc-500 text-sm mt-1">O sistema seleciona automaticamente as fotos mais curtidas (Double Tap) nos seus cofres de memórias.</p>
+                  <p className="text-zinc-500 text-sm mt-1">O sistema seleciona automaticamente as fotos mais curtidas (Double Tap) nos seus álbuns.</p>
                 </div>
               </div>
               <div className="flex gap-4">
@@ -130,7 +129,7 @@ export const ClubLandingPage = () => {
                 <div className="space-y-4">
                   {[
                     "36 Poses Impressas (10x15cm)",
-                    "Cofres de Memórias Ilimitados",
+                    "Meus Álbuns Ilimitados",
                     "Compartilhamento via QR Code e Link",
                     "Filtros Profissionais Automáticos",
                     "Entrega em todo território nacional"
@@ -166,7 +165,7 @@ export const ClubLandingPage = () => {
       <footer className="border-t border-white/5 py-8 mt-auto">
         <div className="max-w-7xl mx-auto px-6 flex flex-col md:flex-row items-center justify-between gap-4">
           <div className="flex items-center gap-3 opacity-50">
-            <img src="/logo-fs.png" alt="FS" className="h-4 grayscale" />
+            <img src="/logo.png" alt="FS" className="h-4" style={{ filter: "var(--logo-filter)" }} />
             <span className="text-[9px] font-black uppercase tracking-[0.3em] text-white">Advanced Phygital Engine</span>
           </div>
           <div className="flex items-center gap-2 text-zinc-600 text-[9px] font-black uppercase tracking-widest">

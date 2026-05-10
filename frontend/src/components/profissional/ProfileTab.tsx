@@ -93,6 +93,109 @@ export function ProfileTab({ profile, onUpdated, onNotify }: ProfileTabProps) {
                   onChange={(e) => setFormData({ ...formData, user: { ...formData.user, whatsapp: e.target.value } })}
                 />
               </div>
+              <div className="md:col-span-2 grid grid-cols-1 md:grid-cols-6 gap-4 p-6 bg-theme-bg-muted/30 border border-theme-border/20 rounded-2xl">
+                <div className="md:col-span-6 flex items-center gap-2 mb-2">
+                  <div className="h-0.5 w-4 bg-brand-tactical" />
+                  <label className="text-[9px] font-black text-theme-muted uppercase tracking-widest italic opacity-60">Endereço de Entrega / Base Operacional</label>
+                </div>
+                
+                <div className="md:col-span-2 space-y-1">
+                  <label className="text-[7px] font-black text-theme-muted uppercase tracking-widest ml-1">CEP</label>
+                  <input
+                    className="w-full bg-theme-bg-muted border border-theme-border p-3 text-theme-text focus:border-brand-tactical/50 outline-none transition-all font-mono text-xs"
+                    value={formData.user?.address?.split('|')[0] || ""}
+                    placeholder="00000-000"
+                    onChange={(e) => {
+                      const parts = (formData.user?.address || "||||||").split('|');
+                      parts[0] = e.target.value;
+                      setFormData({ ...formData, user: { ...formData.user, address: parts.join('|') } });
+                    }}
+                    onBlur={async (e) => {
+                      const cep = e.target.value.replace(/\D/g, '');
+                      if (cep.length === 8) {
+                        try {
+                          const res = await fetch(`https://viacep.com.br/ws/${cep}/json/`);
+                          const data = await res.json();
+                          if (!data.erro) {
+                            const parts = [cep, data.logradouro, "", data.bairro, data.localidade, data.uf, ""];
+                            setFormData({ ...formData, user: { ...formData.user, address: parts.join('|') } });
+                          }
+                        } catch (err) { console.error("CEP error", err); }
+                      }
+                    }}
+                  />
+                </div>
+
+                <div className="md:col-span-3 space-y-1">
+                  <label className="text-[7px] font-black text-theme-muted uppercase tracking-widest ml-1">Logradouro</label>
+                  <input
+                    className="w-full bg-theme-bg-muted border border-theme-border p-3 text-theme-text focus:border-brand-tactical/50 outline-none transition-all text-xs"
+                    value={formData.user?.address?.split('|')[1] || ""}
+                    onChange={(e) => {
+                      const parts = (formData.user?.address || "||||||").split('|');
+                      parts[1] = e.target.value;
+                      setFormData({ ...formData, user: { ...formData.user, address: parts.join('|') } });
+                    }}
+                  />
+                </div>
+
+                <div className="md:col-span-1 space-y-1">
+                  <label className="text-[7px] font-black text-theme-muted uppercase tracking-widest ml-1">Nº</label>
+                  <input
+                    className="w-full bg-theme-bg-muted border border-theme-border p-3 text-theme-text focus:border-brand-tactical/50 outline-none transition-all text-xs"
+                    value={formData.user?.address?.split('|')[2] || ""}
+                    onChange={(e) => {
+                      const parts = (formData.user?.address || "||||||").split('|');
+                      parts[2] = e.target.value;
+                      setFormData({ ...formData, user: { ...formData.user, address: parts.join('|') } });
+                    }}
+                  />
+                </div>
+
+                <div className="md:col-span-2 space-y-1">
+                  <label className="text-[7px] font-black text-theme-muted uppercase tracking-widest ml-1">Bairro</label>
+                  <input
+                    className="w-full bg-theme-bg-muted border border-theme-border p-3 text-theme-text focus:border-brand-tactical/50 outline-none transition-all text-xs"
+                    value={formData.user?.address?.split('|')[3] || ""}
+                    onChange={(e) => {
+                      const parts = (formData.user?.address || "||||||").split('|');
+                      parts[3] = e.target.value;
+                      setFormData({ ...formData, user: { ...formData.user, address: parts.join('|') } });
+                    }}
+                  />
+                </div>
+
+                <div className="md:col-span-2 space-y-1">
+                  <label className="text-[7px] font-black text-theme-muted uppercase tracking-widest ml-1">Cidade</label>
+                  <input
+                    className="w-full bg-theme-bg-muted border border-theme-border p-3 text-theme-text focus:border-brand-tactical/50 outline-none transition-all text-xs opacity-70"
+                    value={formData.user?.address?.split('|')[4] || ""}
+                    readOnly
+                  />
+                </div>
+
+                <div className="md:col-span-1 space-y-1">
+                  <label className="text-[7px] font-black text-theme-muted uppercase tracking-widest ml-1">UF</label>
+                  <input
+                    className="w-full bg-theme-bg-muted border border-theme-border p-3 text-theme-text focus:border-brand-tactical/50 outline-none transition-all text-xs opacity-70"
+                    value={formData.user?.address?.split('|')[5] || ""}
+                    readOnly
+                  />
+                </div>
+
+                <div className="md:col-span-1 space-y-1">
+                  <label className="text-[7px] font-black text-theme-muted uppercase tracking-widest ml-1">Compl.</label>
+                  <input
+                    className="w-full bg-theme-bg-muted border border-theme-border p-3 text-theme-text focus:border-brand-tactical/50 outline-none transition-all text-xs"
+                    value={formData.user?.address?.split('|')[6] || ""}
+                    onChange={(e) => {
+                      const parts = (formData.user?.address || "||||||").split('|');
+                      parts[6] = e.target.value;
+                      setFormData({ ...formData, user: { ...formData.user, address: parts.join('|') } });
+                    }}
+                  />
+                </div>
+              </div>
               <div className="space-y-2">
                 <label className="text-[9px] font-black text-theme-muted uppercase tracking-widest italic opacity-60">Chave de Liquidação (PIX)</label>
                 <input
@@ -109,8 +212,8 @@ export function ProfileTab({ profile, onUpdated, onNotify }: ProfileTabProps) {
                     type="number"
                     disabled={!!profile.firstJobUrl && !!profile.experienceYears}
                     className={`w-full bg-theme-bg-muted border border-theme-border p-4 text-theme-text focus:border-brand-tactical/50 outline-none transition-all font-heading font-black italic text-xl ${profile.firstJobUrl ? 'opacity-50 cursor-not-allowed' : ''}`}
-                    value={formData.experienceYears}
-                    onChange={(e) => setFormData({ ...formData, experienceYears: Number(e.target.value) })}
+                    value={formData.experienceYears || ""}
+                    onChange={(e) => setFormData({ ...formData, experienceYears: e.target.value === "" ? 0 : Number(e.target.value) })}
                   />
                   <div className="absolute right-4 top-1/2 -translate-y-1/2 text-[10px] font-black text-brand-tactical/40 uppercase italic tracking-widest">Anos</div>
                 </div>
@@ -250,8 +353,8 @@ export function ProfileTab({ profile, onUpdated, onNotify }: ProfileTabProps) {
                       type="number"
                       placeholder="Valor"
                       className="w-full bg-theme-bg border border-theme-border p-4 text-[11px] text-brand-tactical font-black outline-none italic"
-                      value={eq.value}
-                      onChange={(e) => updateEquipment(i, "value", Number(e.target.value))}
+                      value={eq.value || ""}
+                      onChange={(e) => updateEquipment(i, "value", e.target.value === "" ? 0 : Number(e.target.value))}
                     />
                     <div className="absolute right-3 top-1/2 -translate-y-1/2 text-[8px] font-black text-theme-muted/40 uppercase">BRL</div>
                   </div>

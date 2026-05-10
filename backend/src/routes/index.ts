@@ -27,6 +27,8 @@ import {
   adminGetLogs,
   adminCreateManualSale,
   checkDbStatus,
+  adminListInventory,
+  adminAdjustStock
 } from "../controllers/admin.controller";
 import { MercadoPagoController } from "../controllers/mercadopago.controller";
 import {
@@ -400,6 +402,8 @@ router.get("/admin/service-catalog", requireAuth, requireRole("ADMIN"), ServiceC
 router.post("/admin/service-catalog", requireAuth, requireRole("ADMIN"), ServiceCatalogController.adminCreateService);
 router.patch("/admin/service-catalog/:id", requireAuth, requireRole("ADMIN"), ServiceCatalogController.adminUpdateService);
 router.delete("/admin/service-catalog/:id", requireAuth, requireRole("ADMIN"), ServiceCatalogController.adminDeleteService);
+router.get("/admin/inventory",                               requireAuth, requireRole("ADMIN"), adminListInventory);
+router.post("/admin/inventory/adjust",                       requireAuth, requireRole("ADMIN"), adminAdjustStock);
 
 // ── FRANCHISES (Gestão de Micro-Franquias) ──────────────────────────────────
 router.get("/admin/franchises",                              requireAuth, requireRole("ADMIN"), FranchiseController.listAll);
@@ -408,6 +412,8 @@ router.post("/admin/franchises/credits",                    requireAuth, require
 router.patch("/admin/franchises/:profileId/toggle",         requireAuth, requireRole("ADMIN"), FranchiseController.toggleActive);
 router.delete("/admin/franchises/:profileId",               requireAuth, requireRole("ADMIN"), FranchiseController.remove);
 router.get("/admin/franchises/:profileId/statement",        requireAuth, requireRole("ADMIN"), FranchiseController.getStatement);
+router.get("/admin/franchises/orders",                      requireAuth, requireRole("ADMIN"), FranchiseController.adminListSupplyOrders);
+router.patch("/admin/franchises/orders/:id/status",         requireAuth, requireRole("ADMIN"), FranchiseController.adminUpdateSupplyOrderStatus);
 
 // B2B Hub (Franchisee Dashboard)
 router.get("/franchise/inventory", requireAuth, requireRole("FRANCHISEE"), FranchiseController.getInventory);
@@ -416,6 +422,11 @@ router.get("/franchise/network", requireAuth, requireRole("FRANCHISEE"), Franchi
 router.get("/franchise/finance", requireAuth, requireRole("FRANCHISEE"), FranchiseController.getFinanceStats);
 router.post("/franchise/reorder", requireAuth, requireRole("FRANCHISEE"), FranchiseController.postReorder);
 router.put("/franchise/profile", requireAuth, requireRole("FRANCHISEE"), FranchiseController.updateProfile);
+
+// B2B Shop (Supply Orders)
+router.get("/franchise/orders", requireAuth, requireProOrFranchise, FranchiseController.listSupplyOrders);
+router.post("/franchise/orders", requireAuth, requireProOrFranchise, FranchiseController.createSupplyOrder);
+router.post("/franchise/webhook", FranchiseController.handleWebhook); // Public webhook
 
 // ── VAULTS (Cofres de Memórias - Fase 11) ──────────────────────────────────
 router.get("/vaults", requireAuth, VaultController.listAlbums);

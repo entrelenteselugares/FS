@@ -6,15 +6,15 @@ import { T, Card } from "../lib/theme";
 import AccessTypeModal from "../components/AccessTypeModal";
 import { SideDrawer } from "../components/SideDrawer";
 import { DashboardLayout, type NavItem } from "../components/DashboardLayout";
-import { ExpressSaleModal, FlashEventModal, ExpressSaleBanner, type EventItem, type Partner } from "../components/profissional";
+import { ExpressSaleModal, FlashEventModal, type Partner } from "../components/profissional";
 import { AmbassadorDashboard } from "../components/AmbassadorDashboard";
 import { 
   Users, Play, CheckCircle2, X, ArrowRight, 
   ShoppingBag, ShieldCheck, Clock, Image as ImageIcon,
-  Zap, Printer, Lock, User, AlertTriangle
+  Zap, Lock, User, AlertTriangle
 } from "lucide-react";
 
-type ActiveTab = "files" | "profile" | "wallet" | "franquia" | "embaixador";
+type ActiveTab = "files" | "profile" | "wallet" | "embaixador";
 
 interface Pedido {
   id: string;
@@ -92,7 +92,6 @@ export default function ClienteArea() {
   const [activeTab, setActiveTab] = useState<ActiveTab>("files");
   
   // Franchise States
-  const [events, setEvents] = useState<EventItem[]>([]);
   const [network, setNetwork] = useState<Partner[]>([]);
   const [isExpressModalOpen, setIsExpressModalOpen] = useState(false);
   const [isFlashModalOpen, setIsFlashModalOpen] = useState(false);
@@ -105,17 +104,31 @@ export default function ClienteArea() {
   
   const NAV_ITEMS: NavItem[] = [
     { label: "Minhas Memórias", onClick: () => setActiveTab("files"), isActive: activeTab === "files", icon: <ImageIcon size={18} /> },
-    { label: "Cofres de Memórias", onClick: () => navigate("/cofres"), isActive: false, icon: <Lock size={18} /> },
+    { label: "Meus Álbuns", onClick: () => navigate("/meus-albuns"), isActive: false, icon: <Lock size={18} /> },
     { label: "Carrinho", onClick: () => setActiveTab("wallet"), isActive: activeTab === "wallet", icon: <ShoppingBag size={18} /> },
-    ...(user?.franchiseProfile ? [
-      { label: "Franquia Print", onClick: () => setActiveTab("franquia"), isActive: activeTab === "franquia", icon: <Printer size={18} /> }
-    ] : []),
     { label: "Programa Embaixador", onClick: () => setActiveTab("embaixador"), isActive: activeTab === "embaixador", icon: <Users size={18} /> },
     { label: "Meus Dados", onClick: () => setActiveTab("profile"), isActive: activeTab === "profile", icon: <User size={18} /> },
   ];
+
+  const PAGE_TITLES: Record<ActiveTab, { title: string; subtitle: string; prefix: string }> = {
+    files: { title: "Minhas Memórias", subtitle: "Acesso vitalício às memórias que você adquiriu.", prefix: "Central de Arquivos" },
+    wallet: { title: "Carrinho", subtitle: "Créditos de Recompensa e Cashback acumulados.", prefix: "Minha Carteira" },
+    embaixador: { title: "Embaixador", subtitle: "Compartilhe e ganhe recompensas exclusivas.", prefix: "Programa de Afiliados" },
+    profile: { title: "Meus Dados", subtitle: "Gerencie suas informações e endereços.", prefix: "Configurações" }
+  };
   
   // Profile States
-  const [profileData, setProfileData] = useState({ nome: "", whatsapp: "" });
+  const [profileData, setProfileData] = useState({ 
+    nome: "", 
+    whatsapp: "",
+    cep: "",
+    endereco: "",
+    numero: "",
+    complemento: "",
+    bairro: "",
+    cidade: "",
+    estado: ""
+  });
   const [isSaving, setIsSaving] = useState(false);
   const [saveSuccess, setSaveSuccess] = useState(false);
 
@@ -182,11 +195,17 @@ export default function ClienteArea() {
     if (user) {
       setProfileData({
         nome: user.nome || "",
-        whatsapp: user.whatsapp || ""
+        whatsapp: user.whatsapp || "",
+        cep: user.cep || "",
+        endereco: user.endereco || "",
+        numero: user.numero || "",
+        complemento: user.complemento || "",
+        bairro: user.bairro || "",
+        cidade: user.cidade || "",
+        estado: user.estado || ""
       });
 
       if (user.franchiseProfile) {
-        API.get("profissional/events").then(r => setEvents(r.data)).catch(() => {});
         API.get("profissional/network").then(r => setNetwork(r.data)).catch(() => {});
       }
     }
@@ -290,14 +309,16 @@ export default function ClienteArea() {
         <div className="relative border-b border-theme-border/60 pb-8 md:pb-12 space-y-4 md:space-y-6">
           <div className="absolute -top-10 -left-10 w-40 h-40 bg-brand-tactical/5 blur-3xl rounded-full" />
           
-          <div className="space-y-1 relative z-10">
-            <div className="flex items-center gap-3 mb-2">
-              <div className="h-0.5 w-12 bg-brand-tactical" />
-              <p className="text-[10px] font-black text-brand-tactical uppercase tracking-[0.5em] italic">Central de Arquivos</p>
-            </div>
-            <h1 className="text-4xl md:text-7xl font-heading font-black text-theme-text uppercase tracking-tighter italic leading-[0.9]">
-              Minhas Memórias
+          <div className="space-y-4 relative z-10">
+            <h1 className="text-4xl md:text-6xl font-heading font-black text-theme-text uppercase tracking-tighter italic leading-none">
+              {PAGE_TITLES[activeTab].title}
             </h1>
+            <div className="flex items-center gap-4">
+              <div className="h-1 w-12 bg-brand-tactical" />
+              <p className="text-[11px] font-black text-brand-tactical uppercase tracking-[0.4em] italic">
+                {PAGE_TITLES[activeTab].prefix} • {PAGE_TITLES[activeTab].subtitle}
+              </p>
+            </div>
           </div>
           
           <div className="flex items-center gap-4 relative z-10">
@@ -331,7 +352,7 @@ export default function ClienteArea() {
                     <div className={`p-2 ${m.highlight ? 'bg-brand-tactical text-black' : 'bg-theme-bg-muted text-theme-text-muted'}`}>
                       {m.icon}
                     </div>
-                    <p className="text-[10px] font-black text-theme-text-muted uppercase tracking-widest">{m.label}</p>
+                    <p className="text-[9px] font-black text-theme-text-muted uppercase tracking-widest">{m.label}</p>
                   </div>
                   <p className={`text-3xl md:text-4xl font-heading font-black italic tracking-tighter leading-none ${
                     m.highlight || m.isCash ? 'text-brand-tactical' : 'text-theme-text'
@@ -346,7 +367,7 @@ export default function ClienteArea() {
 
           {activeTab === "files" ? (
             <>
-              <p style={{ fontSize: 14, color: "var(--theme-text-muted)", marginBottom: 32 }}>
+              <p className="text-[12px] text-theme-text-muted mb-8 italic font-bold uppercase tracking-widest">
                 Acesso vitalício às memórias que você adquiriu.
               </p>
 
@@ -372,7 +393,7 @@ export default function ClienteArea() {
                   </div>
                   <div className="relative space-y-3">
                     <p className="text-xl font-heading font-black text-theme-text uppercase italic tracking-tighter">Arquivo em Standby</p>
-                    <p className="text-[11px] font-bold text-theme-muted uppercase tracking-[0.3em] max-w-xs mx-auto leading-relaxed">Nenhuma memória adquirida ainda. Explore a vitrine ou solicite uma cobertura exclusiva.</p>
+                    <p className="text-[11px] font-black text-theme-muted uppercase tracking-[0.4em] max-w-xs mx-auto leading-relaxed italic">Nenhuma memória adquirida ainda. Explore a vitrine ou solicite uma cobertura exclusiva.</p>
                   </div>
                   <div className="relative flex items-center justify-center gap-4 flex-wrap">
                     <button onClick={() => navigate("/")} className="fs-btn bg-brand-tactical text-brand-text flex items-center gap-3">
@@ -401,23 +422,69 @@ export default function ClienteArea() {
               )}
             </>
           ) : activeTab === "profile" ? (
-            <div className="lux-card p-10 max-w-xl space-y-8 border-l-4 border-l-brand-tactical bg-theme-bg-muted/10">
+            <div className="lux-card p-10 max-w-2xl space-y-8 border-l-4 border-l-brand-tactical bg-theme-bg-muted/10">
               <div className="space-y-2">
-                <h2 className="text-xl font-heading font-black text-theme-text uppercase italic tracking-tight">Dados do Perfil</h2>
-                <p className="text-[9px] font-black text-theme-muted uppercase tracking-[0.3em]">Informações vinculadas à sua conta</p>
+                <h2 className="text-xl font-heading font-black text-theme-text uppercase italic tracking-tight">Meus Dados</h2>
+                <p className="text-[11px] font-black text-theme-muted uppercase tracking-[0.4em] italic">Gerencie suas informações de contato e entrega</p>
               </div>
               <form onSubmit={handleUpdateProfile} className="space-y-6">
                 <div className="space-y-2">
-                  <label className="text-[9px] font-black uppercase tracking-[0.3em] text-theme-muted block">E-mail (Não editável)</label>
+                  <label className="text-[9px] font-black uppercase tracking-widest text-theme-muted block italic">E-mail (Não editável)</label>
                   <input type="text" disabled value={user?.email || ""} className="fs-input opacity-60" />
                 </div>
-                <div className="space-y-2">
-                  <label className="text-[9px] font-black uppercase tracking-[0.3em] text-theme-muted block">Nome Completo</label>
-                  <input type="text" value={profileData.nome} onChange={e => setProfileData(p => ({ ...p, nome: e.target.value }))} className="fs-input" placeholder="Como quer ser chamado" />
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                  <div className="space-y-2">
+                    <label className="text-[9px] font-black uppercase tracking-widest text-theme-muted block italic">Nome Completo</label>
+                    <input type="text" value={profileData.nome} onChange={e => setProfileData(p => ({ ...p, nome: e.target.value }))} className="fs-input" placeholder="Como quer ser chamado" />
+                  </div>
+                  <div className="space-y-2">
+                    <label className="text-[9px] font-black uppercase tracking-widest text-theme-muted block italic">WhatsApp</label>
+                    <input type="text" value={profileData.whatsapp} onChange={e => setProfileData(p => ({ ...p, whatsapp: e.target.value }))} className="fs-input" placeholder="(00) 00000-0000" />
+                  </div>
                 </div>
-                <div className="space-y-2">
-                  <label className="text-[9px] font-black uppercase tracking-[0.3em] text-theme-muted block">WhatsApp</label>
-                  <input type="text" value={profileData.whatsapp} onChange={e => setProfileData(p => ({ ...p, whatsapp: e.target.value }))} className="fs-input" placeholder="(00) 00000-0000" />
+
+                <div className="pt-4 space-y-6">
+                  <div className="flex items-center gap-3">
+                    <div className="h-px w-6 bg-brand-tactical" />
+                    <p className="text-[9px] font-black text-theme-muted uppercase tracking-[0.4em]">Endereço de Entrega</p>
+                  </div>
+
+                  <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+                    <div className="space-y-2">
+                      <label className="text-[9px] font-black uppercase tracking-[0.3em] text-theme-muted block">CEP</label>
+                      <input type="text" value={profileData.cep} onChange={e => setProfileData(p => ({ ...p, cep: e.target.value }))} className="fs-input" placeholder="00000-000" />
+                    </div>
+                    <div className="md:col-span-2 space-y-2">
+                      <label className="text-[9px] font-black uppercase tracking-[0.3em] text-theme-muted block">Endereço (Rua/Av)</label>
+                      <input type="text" value={profileData.endereco} onChange={e => setProfileData(p => ({ ...p, endereco: e.target.value }))} className="fs-input" placeholder="Nome da rua" />
+                    </div>
+                  </div>
+
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    <div className="space-y-2">
+                      <label className="text-[9px] font-black uppercase tracking-[0.3em] text-theme-muted block">Número</label>
+                      <input type="text" value={profileData.numero} onChange={e => setProfileData(p => ({ ...p, numero: e.target.value }))} className="fs-input" placeholder="123" />
+                    </div>
+                    <div className="space-y-2">
+                      <label className="text-[9px] font-black uppercase tracking-[0.3em] text-theme-muted block">Complemento</label>
+                      <input type="text" value={profileData.complemento} onChange={e => setProfileData(p => ({ ...p, complemento: e.target.value }))} className="fs-input" placeholder="Apto, Bloco, etc" />
+                    </div>
+                  </div>
+
+                  <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+                    <div className="space-y-2">
+                      <label className="text-[9px] font-black uppercase tracking-[0.3em] text-theme-muted block">Bairro</label>
+                      <input type="text" value={profileData.bairro} onChange={e => setProfileData(p => ({ ...p, bairro: e.target.value }))} className="fs-input" placeholder="Nome do bairro" />
+                    </div>
+                    <div className="space-y-2">
+                      <label className="text-[9px] font-black uppercase tracking-[0.3em] text-theme-muted block">Cidade</label>
+                      <input type="text" value={profileData.cidade} onChange={e => setProfileData(p => ({ ...p, cidade: e.target.value }))} className="fs-input" placeholder="Sua cidade" />
+                    </div>
+                    <div className="space-y-2">
+                      <label className="text-[9px] font-black uppercase tracking-[0.3em] text-theme-muted block">Estado (UF)</label>
+                      <input type="text" value={profileData.estado} onChange={e => setProfileData(p => ({ ...p, estado: e.target.value }))} className="fs-input" placeholder="SP" maxLength={2} />
+                    </div>
+                  </div>
                 </div>
                 <div className="flex items-center gap-6">
                   <button type="submit" disabled={isSaving} className="fs-btn bg-brand-tactical text-brand-text disabled:opacity-50">
@@ -436,10 +503,6 @@ export default function ClienteArea() {
             </div>
           ) : activeTab === "wallet" ? (
             <div className="space-y-10 animate-in fade-in duration-500">
-              <div className="border-b border-theme-border/60 pb-6">
-                <h2 className="text-3xl font-black text-theme-text uppercase tracking-tighter italic">Carrinho</h2>
-                <p className="text-[10px] text-theme-muted uppercase tracking-[0.4em] mt-2 font-black italic">Créditos de Recompensa e Cashback</p>
-              </div>
 
               <div className="grid grid-cols-1 md:grid-cols-2 gap-px bg-theme-border/20 border border-theme-border/20">
                 <div className="bg-theme-bg-muted/30 p-10 space-y-4">
@@ -509,140 +572,6 @@ export default function ClienteArea() {
                  </div>
               </div>
             </div>
-          ) : activeTab === "franquia" && user?.franchiseProfile ? (
-            <div className="space-y-8 animate-in fade-in duration-500">
-              <div className="border-b border-theme-border/60 pb-6">
-                <h2 className="text-3xl font-black text-theme-text uppercase tracking-tighter italic">Franquia de Impressão</h2>
-                <p className="text-[10px] text-theme-muted uppercase tracking-[0.4em] mt-2 font-black italic">Seu Ponto de Impressão Phygital</p>
-              </div>
-              <div className="grid grid-cols-1 md:grid-cols-3 gap-px bg-theme-border/20 border border-theme-border/20">
-                <div className="bg-theme-bg-muted/30 p-8 space-y-3">
-                  <label className="text-[9px] font-black text-theme-muted uppercase tracking-widest block">Créditos Disponíveis</label>
-                  <div className={`text-5xl font-black italic tracking-tighter ${user.franchiseProfile.printCredits < 50 ? 'text-amber-500' : 'text-brand-tactical'}`}>
-                    {user.franchiseProfile.printCredits}
-                  </div>
-                  <p className="text-[9px] text-theme-muted font-bold uppercase tracking-widest">fotos restantes</p>
-                </div>
-                <div className="bg-theme-bg-muted/30 p-8 space-y-3">
-                  <label className="text-[9px] font-black text-theme-muted uppercase tracking-widest block">Status do Ponto</label>
-                  <div className={`text-sm font-black uppercase tracking-widest ${user.franchiseProfile.active ? 'text-emerald-500' : 'text-red-500'}`}>
-                    {user.franchiseProfile.active ? '● Operacional' : '● Inativo'}
-                  </div>
-                  <p className="text-[9px] text-theme-muted font-bold uppercase tracking-widest">modo de rede</p>
-                </div>
-                <div className="bg-theme-bg-muted/30 p-8 space-y-3">
-                  <label className="text-[9px] font-black text-theme-muted uppercase tracking-widest block">Suporte à Franquia</label>
-                  <p className="text-[10px] text-theme-muted font-bold leading-relaxed uppercase tracking-widest">
-                    Entre em contato para recarregar créditos ou suporte técnico.
-                  </p>
-                  <a href="https://wa.me/5519997843817" target="_blank" rel="noreferrer" className="inline-flex items-center gap-2 text-[9px] font-black text-brand-tactical uppercase tracking-widest hover:underline mt-2">
-                    RECARREGAR CRÉDITOS →
-                  </a>
-                </div>
-              </div>
-              {user.franchiseProfile.printCredits < 50 && (
-                <div className="border border-amber-500/30 bg-amber-500/5 p-6 flex items-start gap-4">
-                  <AlertTriangle className="text-amber-500" size={18} />
-                  <div>
-                    <p className="text-xs font-black text-amber-500 uppercase tracking-widest">Alerta de Saldo</p>
-                    <p className="text-[10px] text-theme-muted font-bold mt-1 uppercase tracking-widest">Seu saldo está baixo. Solicite recarga para evitar interrupções.</p>
-                  </div>
-                </div>
-              )}
-
-              {/* ── OPERAÇÕES EXPRESSAS (VENDA RÁPIDA) ── */}
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                <ExpressSaleBanner onOpen={() => setIsExpressModalOpen(true)} />
-                <div 
-                  onClick={() => setIsFlashModalOpen(true)}
-                  className="bg-theme-bg-muted border border-yellow-400/30 p-6 h-full flex items-center justify-between cursor-pointer hover:border-yellow-400/60 transition-all group overflow-hidden relative"
-                >
-                  <div className="absolute top-0 left-0 w-1 h-full bg-yellow-400" />
-                  <div className="space-y-1 relative z-10">
-                    <div className="flex items-center gap-2 text-yellow-400">
-                      <Zap size={14} fill="currentColor" />
-                      <span className="text-[10px] font-black uppercase tracking-[0.3em] italic">Oportunidade Agora</span>
-                    </div>
-                    <h3 className="text-xl font-heading font-black text-theme-text uppercase italic">Foto Print Live</h3>
-                    <p className="text-[10px] text-theme-muted uppercase font-bold tracking-widest">Ative um QR Code instantaneamente</p>
-                  </div>
-                  <div className="text-yellow-400/10 group-hover:text-yellow-400/30 transition-colors">
-                    <Zap size={40} strokeWidth={3} />
-                  </div>
-                </div>
-              </div>
-
-              {/* ── OPERAÇÕES EM CAMPO ── */}
-              <div className="space-y-6">
-                <div className="flex items-center gap-3">
-                  <div className="h-0.5 w-6 bg-brand-tactical" />
-                  <p className="text-[9px] font-black text-theme-muted uppercase tracking-[0.4em]">Operações em Campo</p>
-                </div>
-                
-                <div className="grid grid-cols-1 gap-4">
-                  {events.filter(ev => ev.captacaoId === user.id).length > 0 ? (
-                    events.filter(ev => ev.captacaoId === user.id).map(ev => (
-                      <div key={ev.id} className="bg-theme-bg border border-theme-border p-6 flex flex-col md:flex-row items-center justify-between gap-6 hover:border-brand-tactical/30 transition-all group">
-                          <div className="flex items-center gap-5">
-                            <div className="w-12 h-12 bg-theme-card border border-theme-border flex items-center justify-center text-brand-tactical group-hover:scale-110 transition-transform">
-                                <Printer size={20} />
-                            </div>
-                            <div>
-                                <p className="text-sm font-black text-theme-text uppercase italic tracking-tight">{ev.nomeNoivos}</p>
-                                <p className="text-[9px] text-theme-muted font-bold uppercase tracking-widest mt-1">{new Date(ev.dataEvento).toLocaleDateString('pt-BR')} · {ev.location}</p>
-                            </div>
-                          </div>
-                          <button 
-                            onClick={() => navigate(`/profissional/monitor/${ev.id}`)}
-                            className="px-8 py-3 bg-brand-tactical text-zinc-950 text-[10px] font-black uppercase tracking-widest hover:brightness-110 transition-all flex items-center gap-3 shadow-lg shadow-brand-tactical/10"
-                          >
-                            <Play size={12} /> ABRIR MONITOR
-                          </button>
-                      </div>
-                    ))
-                  ) : (
-                    <div className="p-10 border border-dashed border-theme-border/40 text-center space-y-4">
-                        <p className="text-[10px] text-theme-muted uppercase font-black italic tracking-widest">Nenhum evento designado para você neste momento.</p>
-                        <p className="text-[8px] text-theme-muted/60 uppercase font-bold max-w-xs mx-auto leading-relaxed">Fique atento à sua agenda. Quando um admin vincular sua franquia a um evento, ele aparecerá aqui para impressão.</p>
-                    </div>
-                  )}
-                </div>
-              </div>
-
-              {/* ── ATIVIDADE RECENTE ── */}
-              <div className="space-y-6">
-                 <div className="flex items-center gap-3">
-                    <div className="h-0.5 w-6 bg-brand-tactical" />
-                    <p className="text-[9px] font-black text-theme-muted uppercase tracking-[0.4em]">Histórico de Operações</p>
-                 </div>
-
-                 <div className="bg-theme-bg/20 border border-theme-border/30 overflow-hidden">
-                    {user.franchiseProfile.transactions && user.franchiseProfile.transactions.length > 0 ? (
-                      <div className="divide-y divide-theme-border/10">
-                        {user.franchiseProfile.transactions.map(tx => (
-                          <div key={tx.id} className="p-4 flex items-center justify-between hover:bg-theme-bg-muted/10 transition-all">
-                             <div className="space-y-1">
-                                <p className="text-[10px] font-black text-theme-text uppercase tracking-tight italic">
-                                  {tx.description || (tx.type === 'PRINT_CONSUMPTION' ? 'Impressão Phygital' : 'Recarga')}
-                                </p>
-                                <p className="text-[8px] text-theme-muted font-bold uppercase tracking-widest">
-                                  {new Date(tx.createdAt).toLocaleDateString('pt-BR')} {new Date(tx.createdAt).toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit' })}
-                                </p>
-                             </div>
-                             <div className={`text-[12px] font-black italic tracking-tighter ${tx.amount > 0 ? 'text-brand-tactical' : 'text-red-400'}`}>
-                                {tx.amount > 0 ? '+' : ''}{tx.amount}
-                             </div>
-                          </div>
-                        ))}
-                      </div>
-                    ) : (
-                      <div className="p-10 text-center text-[10px] text-theme-muted uppercase font-black italic tracking-widest opacity-30">
-                        Nenhuma atividade registrada.
-                      </div>
-                    )}
-                 </div>
-              </div>
-            </div>
           ) : activeTab === "embaixador" ? (
             <AmbassadorDashboard />
           ) : null}
@@ -687,7 +616,6 @@ export default function ClienteArea() {
           network={network}
           onClose={() => setIsExpressModalOpen(false)}
           onSuccess={(msg) => {
-            API.get("profissional/events").then(r => setEvents(r.data)).catch(() => {});
             showNotification(msg);
           }}
           onError={(msg) => showNotification(msg, "error")}

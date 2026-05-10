@@ -51,7 +51,7 @@ export default function InvitationPage() {
     setAccepting(true);
     try {
       const { data } = await api.post(`/vaults/invitation/${code}/accept`);
-      navigate(`/cofres/${data.albumId}`);
+      navigate(`/meus-albuns/${data.albumId}`);
     } catch (err: unknown) {
       const axiosErr = err as { response?: { data?: { error?: string } } };
       alert(axiosErr?.response?.data?.error || "Erro ao aceitar convite.");
@@ -111,7 +111,7 @@ export default function InvitationPage() {
         </div>
 
         <p className="text-sm text-gray-400 leading-relaxed mb-12 max-w-sm">
-          Este é um cofre de memórias privado. Ao aceitar, você poderá visualizar, votar e compartilhar fotos neste álbum.
+          Este é um álbum privado. Ao aceitar, você poderá visualizar, votar e compartilhar fotos neste álbum.
         </p>
 
         <button

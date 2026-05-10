@@ -1,5 +1,6 @@
 import { useState, useEffect } from "react";
-import { X } from "lucide-react";
+import { createPortal } from "react-dom";
+import { X, ShoppingBag } from "lucide-react";
 import { API } from "../../lib/api";
 import type { Partner, ExpressFormData, ProfessionalService } from "./types";
 
@@ -87,24 +88,37 @@ export function ExpressSaleModal({ network, onClose, onSuccess, onError }: Expre
 
   const stepLabel = { 1: "Identificação", 2: "Configuração", 3: "Logística", 4: "Finalização" };
 
-  return (
-    <div className="fixed inset-0 z-[7000] flex items-center justify-center p-4 backdrop-blur-xl bg-black/40 animate-in fade-in duration-300">
-      <div className="w-full max-w-lg bg-theme-bg border border-theme-border shadow-[0_0_100px_rgba(0,0,0,0.1)] relative overflow-hidden flex flex-col min-h-[540px]">
-        <div className="absolute top-0 left-0 w-full h-[2px] bg-gradient-to-r from-transparent via-brand-tactical to-transparent" />
-        <div className="absolute top-0 right-0 w-24 h-24 bg-brand-tactical/5 rounded-full blur-3xl -mr-12 -mt-12 pointer-events-none" />
+  return createPortal(
+    <div className="fixed inset-0 z-[7000] flex items-center justify-center p-4">
+      {/* Backdrop */}
+      <div 
+        className="fixed inset-0 bg-theme-bg/80 backdrop-blur-xl animate-in fade-in duration-300 dark:bg-black/95" 
+        onClick={onClose} 
+      />
 
+      {/* Modal Container */}
+      <div className="relative w-full max-w-2xl h-[80vh] flex flex-col border border-theme-border/60 rounded-[40px] overflow-hidden shadow-2xl z-[10000] bg-theme-card">
         {/* Header */}
-        <div className="p-5 md:p-8 border-b border-theme-border/60 space-y-3 relative z-10">
-          <button onClick={onClose} className="absolute top-5 right-5 text-theme-muted hover:text-brand-tactical transition-all">
-            <X size={20} />
-          </button>
-          <div className="space-y-0.5">
-            <div className="text-[8px] md:text-[9px] font-black text-brand-tactical uppercase tracking-[0.4em] italic">Unidade de Venda Direta</div>
-            <h2 className="text-xl md:text-2xl font-heading font-black text-theme-text uppercase italic leading-none">
-              {stepLabel[step]}
-            </h2>
+        <div className="p-8 md:p-10 border-b flex flex-col shrink-0 relative" style={{ borderColor: "var(--theme-border)" }}>
+          <div className="flex items-center justify-between">
+            <div className="flex items-center gap-4">
+              <div className="w-12 h-12 bg-brand-tactical/10 rounded-2xl flex items-center justify-center border border-brand-tactical/20">
+                <ShoppingBag className="text-brand-tactical" size={24} />
+              </div>
+              <div>
+                <div className="text-[9px] font-black text-brand-tactical uppercase tracking-[0.4em] italic opacity-60">Unidade de Venda Direta</div>
+                <h2 className="text-2xl font-black uppercase italic tracking-tighter text-theme-text leading-none">
+                  {stepLabel[step]}
+                </h2>
+              </div>
+            </div>
+            <button onClick={onClose} className="p-3 hover:bg-white/5 rounded-full transition-all active:scale-90 text-theme-text/40">
+              <X size={24} />
+            </button>
           </div>
-          <div className="flex gap-2 pt-1">
+
+          {/* Stepper */}
+          <div className="flex gap-2 pt-6">
             {([1, 2, 3, 4] as const).map((s) => (
               <div key={s} className="flex-1 space-y-1">
                 <div className={`h-[2px] transition-all duration-500 ${step >= s ? "bg-brand-tactical" : "bg-theme-border/20"}`} />
@@ -117,7 +131,7 @@ export function ExpressSaleModal({ network, onClose, onSuccess, onError }: Expre
         </div>
 
         {/* Body */}
-        <div className="p-5 md:p-8 flex flex-col flex-grow relative z-10 overflow-y-auto max-h-[70vh]">
+        <div className="flex-1 overflow-y-auto p-8 md:p-10 space-y-8 custom-scrollbar">
           {/* PHASE 1: Customer Data */}
           {step === 1 && (
             <div className="space-y-6 animate-in slide-in-from-right-4">
@@ -355,27 +369,27 @@ export function ExpressSaleModal({ network, onClose, onSuccess, onError }: Expre
         </div>
 
         {/* Footer Navigation */}
-        <div className="p-5 md:p-8 border-t border-theme-border/60 bg-theme-bg-muted/30 relative z-20">
+        <div className="p-8 md:p-10 border-t bg-theme-bg-muted/80 flex shrink-0" style={{ borderColor: "var(--theme-border)" }}>
           {step === 1 ? (
             <button
               disabled={!form.customerEmail}
               onClick={() => setStep(2)}
-              className="w-full py-4 bg-brand-tactical text-brand-text text-[11px] font-black uppercase tracking-[0.3em] hover:brightness-110 disabled:opacity-40 shadow-xl shadow-brand-tactical/20 italic"
+              className="w-full py-5 bg-brand-tactical text-black text-[11px] font-black uppercase tracking-[0.3em] hover:bg-white hover:scale-[1.01] active:scale-[0.98] transition-all italic flex items-center justify-center gap-4 shadow-2xl shadow-brand-tactical/20 disabled:opacity-40"
             >
               CONTINUAR OPERAÇÃO
             </button>
           ) : (
-            <div className="flex gap-3">
+            <div className="flex gap-4 w-full">
               <button
                 onClick={() => setStep((step - 1) as 1 | 2 | 3 | 4)}
-                className="flex-1 py-4 bg-theme-bg-muted border border-theme-border text-theme-muted text-[11px] font-black uppercase tracking-widest italic"
+                className="flex-1 py-5 bg-white/5 border border-white/10 rounded-2xl text-theme-text text-[10px] font-black uppercase tracking-widest italic hover:bg-white/10 transition-all"
               >
                 Voltar
               </button>
               <button
                 onClick={() => (step === 4 ? handleSubmit() : setStep((step + 1) as 1 | 2 | 3 | 4))}
                 disabled={loading}
-                className="flex-[2] py-4 bg-brand-tactical text-brand-text text-[11px] font-black uppercase tracking-[0.3em] hover:brightness-110 shadow-xl shadow-brand-tactical/20 italic"
+                className="flex-[2] py-5 bg-brand-tactical text-black text-[11px] font-black uppercase tracking-[0.3em] hover:bg-white hover:scale-[1.01] active:scale-[0.98] transition-all italic flex items-center justify-center gap-4 shadow-2xl shadow-brand-tactical/20"
               >
                 {loading
                   ? "PROCESSANDO..."
@@ -389,6 +403,7 @@ export function ExpressSaleModal({ network, onClose, onSuccess, onError }: Expre
           )}
         </div>
       </div>
-    </div>
+    </div>,
+    document.body
   );
 }

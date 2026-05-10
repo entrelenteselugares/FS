@@ -1,5 +1,6 @@
 import { useState } from "react";
-import { X, Zap, Sparkles, Calendar } from "lucide-react";
+import { createPortal } from "react-dom";
+import { X, Zap, Sparkles, Calendar, Clock } from "lucide-react";
 import { API } from "../../lib/api";
 import { TeamSelector } from "./TeamSelector";
 import type { Partner } from "./types";
@@ -13,7 +14,7 @@ interface FlashEventModalProps {
 
 export function FlashEventModal({ onClose, onSuccess, onError, network }: FlashEventModalProps) {
   const [name, setName] = useState("");
-  const [price, setPrice] = useState("30");
+  const [price, setPrice] = useState("1");
   const [loading, setLoading] = useState(false);
   const [isPrivate, setIsPrivate] = useState(false);
   const [date, setDate] = useState(new Date().toISOString().split('T')[0]);
@@ -45,26 +46,36 @@ export function FlashEventModal({ onClose, onSuccess, onError, network }: FlashE
     }
   };
 
-  return (
-    <div className="fixed inset-0 z-[8000] flex items-center justify-center p-4 backdrop-blur-xl bg-black/60 animate-in fade-in duration-300">
-      <div className="w-full max-w-md bg-theme-bg border border-theme-border shadow-2xl relative overflow-hidden">
-        <div className="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-brand-tactical via-yellow-400 to-brand-tactical animate-pulse" />
-        
-        <div className="p-8 space-y-6">
-          <div className="flex justify-between items-start">
-            <div className="space-y-1">
-              <div className="flex items-center gap-2 text-yellow-400">
-                < Zap size={14} fill="currentColor" />
-                <span className="text-[10px] font-black uppercase tracking-[0.3em] italic">Acesso Instantâneo</span>
-              </div>
-              <h2 className="text-2xl font-heading font-black text-theme-text uppercase italic leading-none">Foto Print Live</h2>
-            </div>
-            <button onClick={onClose} className="text-theme-muted hover:text-brand-tactical transition-colors">
-              <X size={20} />
-            </button>
-          </div>
+  return createPortal(
+    <div className="fixed inset-0 z-[8000] flex items-center justify-center p-4">
+      {/* Backdrop */}
+      <div 
+        className="fixed inset-0 bg-theme-bg/80 backdrop-blur-xl animate-in fade-in duration-300 dark:bg-black/95" 
+        onClick={onClose} 
+      />
 
-          <form onSubmit={handleSubmit} className="space-y-6">
+      {/* Modal Container */}
+      <div className="relative w-full max-w-xl h-[80vh] flex flex-col border border-theme-border/60 rounded-[40px] overflow-hidden shadow-2xl z-[10000] bg-theme-card">
+        
+        {/* Header */}
+        <div className="p-8 md:p-10 border-b flex items-center justify-between shrink-0" style={{ borderColor: "var(--theme-border)" }}>
+          <div className="flex items-center gap-4">
+            <div className="w-12 h-12 bg-yellow-400/10 rounded-2xl flex items-center justify-center border border-yellow-400/20">
+              < Zap className="text-yellow-400" size={24} />
+            </div>
+            <div>
+              <div className="text-[9px] font-black text-yellow-400 uppercase tracking-[0.4em] italic opacity-60">Acesso Instantâneo</div>
+              <h2 className="text-2xl font-black uppercase italic tracking-tighter text-theme-text leading-none">Foto Print Live</h2>
+            </div>
+          </div>
+          <button onClick={onClose} className="p-3 hover:bg-white/5 rounded-full transition-all active:scale-90 text-theme-text/40">
+            <X size={24} />
+          </button>
+        </div>
+
+        {/* Body */}
+        <div className="flex-1 overflow-y-auto p-8 md:p-10 space-y-8 custom-scrollbar">
+          <form onSubmit={handleSubmit} className="space-y-8">
             <div className="space-y-2">
               <label className="text-[10px] font-black text-theme-muted uppercase tracking-widest italic">Nome da Ocasião / Evento</label>
               <input
@@ -101,12 +112,14 @@ export function FlashEventModal({ onClose, onSuccess, onError, network }: FlashE
                   required
                   value={date}
                   onChange={e => setDate(e.target.value)}
-                  className="w-full bg-theme-bg-muted border border-theme-border p-4 text-theme-text outline-none focus:border-yellow-400/50 transition-all font-medium text-xs"
+                  className="w-full bg-theme-bg-muted border border-theme-border p-4 text-theme-text outline-none focus:border-yellow-400/50 transition-all font-black text-xs italic"
                 />
               </div>
 
               <div className="space-y-2">
-                <label className="text-[10px] font-black text-theme-muted uppercase tracking-widest italic">Início — Término</label>
+                <label className="text-[10px] font-black text-theme-muted uppercase tracking-widest italic flex items-center gap-2">
+                  <Clock size={12} /> Início — Término
+                </label>
                 <div className="flex items-center gap-2">
                   <input
                     type="time"
@@ -156,7 +169,7 @@ export function FlashEventModal({ onClose, onSuccess, onError, network }: FlashE
             <button
               type="submit"
               disabled={loading || !name}
-              className="w-full py-5 bg-yellow-400 text-black text-[12px] font-black uppercase tracking-[0.4em] hover:brightness-110 disabled:opacity-40 transition-all flex items-center justify-center gap-3 italic"
+              className="w-full py-5 bg-yellow-400 text-black text-[11px] font-black uppercase tracking-[0.3em] hover:bg-white hover:scale-[1.01] active:scale-[0.98] transition-all italic flex items-center justify-center gap-4 shadow-2xl shadow-yellow-400/20 disabled:opacity-40"
             >
               {loading ? (
                 "GERANDO SISTEMA..."
@@ -168,12 +181,13 @@ export function FlashEventModal({ onClose, onSuccess, onError, network }: FlashE
             </button>
           </form>
           
-          <p className="text-[9px] text-center text-theme-muted uppercase tracking-widest leading-relaxed opacity-60">
+          <p className="text-[9px] text-center text-theme-muted uppercase tracking-[0.2em] leading-relaxed opacity-40 font-black italic">
             O evento será ativado instantaneamente. <br />
             Você poderá capturar fotos e o cliente pagará para baixar/imprimir.
           </p>
         </div>
       </div>
-    </div>
+    </div>,
+    document.body
   );
 }

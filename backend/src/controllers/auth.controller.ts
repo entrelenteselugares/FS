@@ -31,7 +31,10 @@ export class AuthController {
       // Se o usuário existir localmente e a senha bater, ignoramos o Supabase por enquanto para garantir acesso.
       try {
         console.log(`[AUTH] Tentando busca local para: ${cleanEmail}`);
-        const localUser = await prisma.user.findUnique({ where: { email: cleanEmail } });
+        const localUser = await prisma.user.findUnique({ 
+          where: { email: cleanEmail },
+          select: { id: true, nome: true, email: true, role: true, senha: true }
+        });
         if (localUser && localUser.senha && localUser.senha.length > 20) { // Verifica se tem um hash bcrypt válido
           const isMatch = await bcrypt.compare(senha, localUser.senha);
           if (isMatch) {
@@ -73,7 +76,7 @@ export class AuthController {
       // 4. Busca dados extras (Franquia, etc) para o frontend
       const fullUser = await prisma.user.findUnique({
         where: { id: user.id },
-        include: { franchiseProfile: true }
+        select: { id: true, nome: true, email: true, role: true, whatsapp: true, franchiseProfile: true }
       });
 
       if (!fullUser) return res.status(404).json({ error: "Usuário não sincronizado no banco de dados." });
@@ -110,7 +113,7 @@ export class AuthController {
           has_refresh: !!process.env.REFRESH_SECRET,
           node_ver: process.version,
           time: new Date().toISOString(),
-          stack_trace: stack.split("\n").slice(0, 3).join(" | ") // Pequeno snippet do stack para o frontend
+          stack_trace: stack?.split("\n").slice(0, 3).join(" | ") || "N/A"
         }
       });
     }

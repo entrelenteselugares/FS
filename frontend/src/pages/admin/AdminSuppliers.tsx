@@ -1,4 +1,4 @@
-﻿import { useState, useEffect, useCallback, useMemo } from "react";
+import { useState, useEffect, useCallback, useMemo } from "react";
 import { API as api } from "../../lib/api";
 import { 
   Printer, 
@@ -166,28 +166,35 @@ export default function AdminSuppliers() {
       {isModalOpen && <NewSupplierModal onClose={() => setIsModalOpen(false)} onSave={handleCreateSupplier} />}
 
       {/* HEADER MASTER */}
-      <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-6 border-b border-theme-border/60 pb-10">
-        <div>
-          <h2 className="text-3xl md:text-4xl font-heading text-theme-text tracking-tighter uppercase font-black leading-none pt-2">Operação de Impressão</h2>
-          <p className="text-[10px] text-theme-muted uppercase tracking-[0.5em] mt-3 font-black italic">Logística, Amortização e Fila de Produção</p>
+      <div className="flex flex-col lg:flex-row lg:items-center justify-between border-b border-theme-border pb-10 gap-6">
+        <div className="space-y-4">
+          <h1 className="text-4xl md:text-6xl font-heading font-black text-theme-text uppercase tracking-tighter italic leading-none">
+            Operação de <span className="text-brand-tactical">Impressão</span>
+          </h1>
+          <div className="flex items-center gap-4">
+            <div className="h-1 w-12 bg-brand-tactical" />
+            <p className="text-[11px] font-black text-brand-tactical uppercase tracking-[0.4em] italic">
+              Logística, Amortização e Fila de Produção
+            </p>
+          </div>
         </div>
         
-        <div className="flex bg-theme-bg border border-theme-border/60 p-1.5 shadow-sm">
+        <div className="flex bg-theme-bg border border-theme-border/60 p-1.5 shadow-sm italic">
           <button 
             onClick={() => setView("production")} 
-            className={`px-6 py-3 text-[9px] font-black uppercase tracking-widest transition-all whitespace-nowrap ${view === "production" ? 'bg-brand-tactical text-zinc-950 shadow-md' : 'text-theme-muted hover:text-brand-text'}`}
+            className={`px-6 py-3 text-[9px] font-black uppercase tracking-widest transition-all whitespace-nowrap italic ${view === "production" ? 'bg-brand-tactical text-zinc-950 shadow-md' : 'text-theme-muted hover:text-brand-text'}`}
           >
             Fila de Produção
           </button>
           <button 
             onClick={() => setView("roi")} 
-            className={`px-6 py-3 text-[9px] font-black uppercase tracking-widest transition-all whitespace-nowrap ${view === "roi" ? 'bg-brand-tactical text-zinc-950 shadow-md' : 'text-theme-muted hover:text-brand-text'}`}
+            className={`px-6 py-3 text-[9px] font-black uppercase tracking-widest transition-all whitespace-nowrap italic ${view === "roi" ? 'bg-brand-tactical text-zinc-950 shadow-md' : 'text-theme-muted hover:text-brand-text'}`}
           >
             Engenharia de ROI
           </button>
           <button 
             onClick={() => setView("suppliers")} 
-            className={`px-6 py-3 text-[9px] font-black uppercase tracking-widest transition-all whitespace-nowrap ${view === "suppliers" ? 'bg-brand-tactical text-zinc-950 shadow-md' : 'text-theme-muted hover:text-brand-text'}`}
+            className={`px-6 py-3 text-[9px] font-black uppercase tracking-widest transition-all whitespace-nowrap italic ${view === "suppliers" ? 'bg-brand-tactical text-zinc-950 shadow-md' : 'text-theme-muted hover:text-brand-text'}`}
           >
             Ativos / Hardware
           </button>

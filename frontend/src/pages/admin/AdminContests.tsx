@@ -109,14 +109,21 @@ export const AdminContests: React.FC = () => {
 
   return (
     <div className="space-y-8 animate-in fade-in slide-in-from-bottom-4 duration-700">
-      <div className="flex justify-between items-center border-b border-theme-border pb-6">
-        <div>
-          <h2 className="text-3xl font-black text-theme-text uppercase tracking-tighter leading-none">Concursos e Rankings</h2>
-          <p className="text-[9px] font-black text-theme-muted uppercase tracking-[0.2em] mt-2 italic">Motor de Engajamento Viral</p>
+      <div className="flex flex-col md:flex-row md:items-center justify-between border-b border-theme-border pb-10 gap-6">
+        <div className="space-y-4">
+          <h1 className="text-4xl md:text-6xl font-heading font-black text-theme-text uppercase tracking-tighter italic leading-none">
+            Rankings & <span className="text-brand-tactical">Engajamento</span>
+          </h1>
+          <div className="flex items-center gap-4">
+            <div className="h-1 w-12 bg-brand-tactical" />
+            <p className="text-[11px] font-black text-brand-tactical uppercase tracking-[0.4em] italic">
+              Motor de Engajamento Viral e Gamificação
+            </p>
+          </div>
         </div>
         <button 
           onClick={() => setShowModal(true)}
-          className="bg-brand-tactical text-zinc-950 px-6 py-3 text-[9px] font-black uppercase tracking-[0.2em] hover:brightness-110 shadow-lg transition-all"
+          className="bg-brand-tactical text-zinc-950 px-8 py-4 text-[10px] font-black uppercase tracking-[0.4em] hover:brightness-110 shadow-xl transition-all italic"
         >
           NOVO CONCURSO
         </button>

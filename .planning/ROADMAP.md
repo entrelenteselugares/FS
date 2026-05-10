@@ -34,3 +34,4 @@
 - [x] **Phase 15: Financial & E2E Hardening**: Stabilization of B2B quotation workflows, Express Sale cart logic, and transaction integrity via high-load Playwright stress tests. (DONE)
 - [ ] **Phase 16: AI-Driven Auto-Curation**: Implementing computer vision to suggest the best poses for automated printing cycles.
 - [x] **Phase 17: Marketplace Scale**: Expanding the ambassador program and global phygital distribution network. (DONE)
+- [x] **Phase 18: UI/UX Modal Standardization**: Updating Express Sale, Foto Point, and Flash Event modals to match the "Minha Seleção" premium standards. (DONE)

@@ -58,7 +58,7 @@ export const MercadoPagoController = {
       console.log(`[MP Callback] Sucesso! Conta conectada para o usuário ${user?.nome} (${user?.role})`);
 
       // Redireciona para o dashboard correto baseado no papel do usuário
-      const targetDashboard = user?.role === "CARTORIO" ? "/cartorio" : "/profissional";
+      const targetDashboard = user?.role === "CARTORIO" ? "/unidade-fixa" : "/profissional";
 
       res.redirect(`${FRONTEND_URL}${targetDashboard}?mp_connected=true`);
     } catch (error: unknown) {

@@ -16,6 +16,7 @@ const AdminConfigs = React.lazy(() => import("./AdminConfigs").then(m => ({ defa
 const AdminPrintCatalog = React.lazy(() => import("./AdminPrintCatalog").then(m => ({ default: m.AdminPrintCatalog })));
 const AdminFranchises = React.lazy(() => import("./AdminFranchises"));
 const AdminAmbassadors = React.lazy(() => import("./AdminAmbassadors").then(m => ({ default: m.AdminAmbassadors })));
+const AdminInventory = React.lazy(() => import("./AdminInventory"));
 import { 
   LayoutDashboard, 
   Camera, 
@@ -28,7 +29,8 @@ import {
   Layers,
   Trophy,
   Grid3X3,
-  ShieldCheck
+  ShieldCheck,
+  Package
 } from "lucide-react";
 
 
@@ -43,6 +45,7 @@ const NAV_ITEMS = (activeTab: string, setActiveTab: (t: string) => void, stats: 
     { label: "Financeiro",     onClick: () => setActiveTab("finance"),       isActive: activeTab === "finance",       icon: <DollarSign size={16} />, hide: role === 'FRANCHISEE' },
     { label: "Impressão",      onClick: () => setActiveTab("printers"),      isActive: activeTab === "printers",      icon: <Printer size={16} />, hide: role === 'FRANCHISEE' },
     { label: "Franquias",      onClick: () => setActiveTab("franchises"),    isActive: activeTab === "franchises",     icon: <ShieldCheck size={16} /> },
+    { label: "Estoque Central",onClick: () => setActiveTab("inventory"),     isActive: activeTab === "inventory",      icon: <Package size={16} />, hide: role === 'FRANCHISEE' },
     { label: "Cat. Impressão", onClick: () => setActiveTab("print-catalog"), isActive: activeTab === "print-catalog", icon: <Layers size={16} />, hide: role === 'FRANCHISEE' },
     { label: "Serviços",       onClick: () => setActiveTab("services"),      isActive: activeTab === "services",      icon: <Grid3X3 size={16} />, hide: role === 'FRANCHISEE' },
     { label: "Concursos",      onClick: () => setActiveTab("contests"),      isActive: activeTab === "contests",      icon: <Trophy size={16} />, hide: role === 'FRANCHISEE' },
@@ -151,6 +154,7 @@ export const AdminDashboard: React.FC = () => {
               {activeTab === "settings" && <AdminConfigs />}
               {activeTab === "franchises" && <AdminFranchises />}
               {activeTab === "ambassadors" && <AdminAmbassadors />}
+              {activeTab === "inventory" && <AdminInventory />}
             </React.Suspense>
           </div>
         )}

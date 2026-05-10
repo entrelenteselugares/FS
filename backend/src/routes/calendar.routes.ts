@@ -4,6 +4,7 @@ import { generateAuthUrl, exchangeCodeAndSave } from '../lib/calendar.service';
 import { syncUserCalendar } from '../services/calendar-sync.service';
 import { prisma } from '../lib/prisma';
 import { requireAuth } from '../lib/auth';
+import { FRONTEND_URL } from '../lib/config';
 
 const router = Router();
 
@@ -41,7 +42,7 @@ router.get('/callback', async (req: Request, res: Response) => {
   // Usuário negou o acesso
   if (error) {
     console.warn('[Calendar OAuth] Usuário negou acesso:', error);
-    return res.redirect('/profissional/dashboard?calendar=denied');
+    return res.redirect(`${FRONTEND_URL}/profissional?calendar=denied`);
   }
 
   if (!code || !state || typeof state !== 'string') {
@@ -69,10 +70,10 @@ router.get('/callback', async (req: Request, res: Response) => {
       console.error('[Calendar] Erro no sync inicial:', err)
     );
 
-    res.redirect('/profissional/dashboard?calendar=connected');
+    res.redirect(`${FRONTEND_URL}/profissional?calendar=connected`);
   } catch (err) {
     console.error('[Calendar OAuth] Erro ao salvar tokens:', err);
-    res.redirect('/profissional/dashboard?calendar=error');
+    res.redirect(`${FRONTEND_URL}/profissional?calendar=error`);
   }
 });
 

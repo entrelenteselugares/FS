@@ -17,6 +17,7 @@ import { RoutingService } from "../services/routing.service";
 import { SubscriptionService } from "../services/subscription.service";
 import { ShippingService, ShippingItem } from "../services/shipping.service";
 import { LogisticsService } from "../services/logistics.service";
+import { ReferralService } from "../services/referral.service";
 
 export class PaymentController {
   /**
@@ -411,6 +412,51 @@ export class PaymentController {
               include: { event: true, cliente: true }
             });
             if (orderRef) updatedOrders = [orderRef];
+
+            // ── VERIFICA SE É PEDIDO DE SUPRIMENTOS (B2B) ──
+            if (updatedOrders.length === 0) {
+              const supplyOrder = await prisma.supplyOrder.findUnique({
+                where: { id: realOrderId },
+                include: { items: true, franchisee: { include: { franchiseProfile: true } } }
+              });
+              if (supplyOrder && supplyOrder.status !== 'PAID') {
+                // 1. Atualiza o status do pedido
+                await prisma.supplyOrder.update({
+                  where: { id: supplyOrder.id },
+                  data: { status: "PAID", paymentId: String(data.id) }
+                });
+
+                // 2. Auto-credita créditos de impressão para produtos digitais (credits_*)
+                if (supplyOrder.franchisee?.franchiseProfile) {
+                  for (const item of supplyOrder.items) {
+                    if (item.productId.startsWith('credits_')) {
+                      const amountStr = item.productId.split('_')[1];
+                      const amount = parseInt(amountStr) * item.quantity;
+                      if (!isNaN(amount) && amount > 0) {
+                        await prisma.$transaction([
+                          prisma.franchiseProfile.update({
+                            where: { id: supplyOrder.franchisee.franchiseProfile.id },
+                            data: { printCredits: { increment: amount } }
+                          }),
+                          prisma.creditTransaction.create({
+                            data: {
+                              profileId: supplyOrder.franchisee.franchiseProfile.id,
+                              amount: amount,
+                              type: 'PURCHASE',
+                              description: `Recarga automática via Pedido #${supplyOrder.id.slice(-6).toUpperCase()}`
+                            }
+                          })
+                        ]);
+                        console.log(`✅ ${amount} créditos creditados ao franqueado ${supplyOrder.franchisee.email}`);
+                      }
+                    }
+                  }
+                }
+
+                console.log(`✅ Pedido de Suprimentos ${supplyOrder.id} aprovado e créditos processados via Webhook.`);
+                return res.json({ ok: true, type: "supply_order" });
+              }
+            }
           }
 
           for (const order of updatedOrders) {
@@ -447,6 +493,51 @@ export class PaymentController {
     const { eventId, userId, email, cpf, cardToken, installments, paymentMethodId, contributionAmount, accessType, cart, printProductId, orderId: passedOrderId, includeLivePrint, includeShipping, selectedServices, couponCode } = req.body;
 
     try {
+      // 0. BYPASS para Loja da Franquia (B2B)
+      if (eventId === "FRANCHISE_SHOP") {
+        const supplyOrder = await prisma.supplyOrder.findUnique({
+          where: { id: passedOrderId },
+          include: { items: true }
+        });
+
+        if (!supplyOrder) return res.status(404).json({ error: "Pedido de suprimentos não localizado." });
+
+        const mpResponse = await MercadoPagoService.processPayment({
+          transaction_amount: Number(supplyOrder.total),
+          token: cardToken,
+          description: `Suprimentos Franquia - Pedido #${supplyOrder.id}`,
+          installments: Number(installments) || 1,
+          payment_method_id: paymentMethodId || "visa",
+          payer: {
+            email: email || "contato@fotosegundo.com",
+            identification: cpf ? { type: "CPF", number: cpf } : undefined
+          },
+          external_reference: supplyOrder.id
+        });
+
+        const isApproved = mpResponse.status === "approved";
+        
+        // Sempre salva o paymentId para permitir polling em pagamentos PENDING (ex: PIX)
+        await prisma.supplyOrder.update({
+          where: { id: supplyOrder.id },
+          data: { 
+            paymentId: String(mpResponse.id),
+            ...(isApproved && { status: "PAID" })
+          }
+        });
+
+        return res.json({
+          success: true,
+          orderId: supplyOrder.id,
+          status: mpResponse.status,
+          hasPaid: isApproved,
+          details: mpResponse?.status_detail,
+          qr_code: mpResponse?.point_of_interaction?.transaction_data?.qr_code,
+          qr_code_base64: mpResponse?.point_of_interaction?.transaction_data?.qr_code_base64,
+          ticket_url: mpResponse?.point_of_interaction?.transaction_data?.ticket_url
+        });
+      }
+
       // 1. Buscar evento com parceiros para cálculo de split
       const event = await prisma.event.findUnique({ 
         where: { id: eventId },
@@ -916,15 +1007,11 @@ export class PaymentController {
       });
     }
   }
-  /**
-   * GET /api/public/orders/:id
-   * Busca resumo do pedido para o checkout público.
-   */
   static async getOrderPublic(req: Request, res: Response) {
     const { id } = req.params;
 
     try {
-      const order = await prisma.order.findUnique({
+      let order = await prisma.order.findUnique({
         where: { id: String(id) },
         include: {
           cliente: { select: { email: true, nome: true } },
@@ -947,7 +1034,47 @@ export class PaymentController {
         }
       });
 
-      if (!order) return res.status(404).json({ error: "Pedido não localizado." });
+      if (!order) {
+        // Tenta buscar na tabela de SupplyOrder (Loja da Franquia)
+        const supplyOrder = await prisma.supplyOrder.findUnique({
+          where: { id: String(id) },
+          include: {
+            items: true,
+            franchisee: { select: { email: true, nome: true } }
+          }
+        });
+
+        if (supplyOrder) {
+          return res.json({
+            id: supplyOrder.id,
+            amount: Number(supplyOrder.total),
+            status: supplyOrder.status,
+            eventId: "FRANCHISE_SHOP",
+            clienteId: supplyOrder.franchiseeId,
+            buyerEmail: supplyOrder.franchisee?.email,
+            event: {
+              id: "FRANCHISE_SHOP",
+              nomeNoivos: "Loja da Franquia",
+              dataEvento: supplyOrder.createdAt,
+              location: "Portal do Franqueado",
+              coverPhotoUrl: "/logo-fs.png",
+              isCrowdfund: false
+            },
+            manualType: "Pedido de Suprimentos",
+            isGuestOrder: false,
+            deliveryType: supplyOrder.deliveryType || "DIGITAL_ONLY",
+            shippingAddress: supplyOrder.address,
+            items: supplyOrder.items.map(it => ({
+              id: it.id,
+              price: Number(it.price),
+              quantity: it.quantity,
+              printProduct: { name: it.name, sku: it.productId }
+            }))
+          });
+        }
+        
+        return res.status(404).json({ error: "Pedido não localizado." });
+      }
 
       // 5. Auditoria de Checkout
       audit(req, "CHECKOUT_STARTED", "Order", order.id, null, { eventId: order.eventId, valor: order.valor });
@@ -1042,14 +1169,31 @@ export class PaymentController {
   static async checkPaymentStatus(req: Request, res: Response) {
     const { id } = req.params;
     try {
-      const order = await prisma.order.findUnique({
+      let order = await prisma.order.findUnique({
         where: { id: String(id) },
         include: {
           event: { select: { id: true, nomeNoivos: true } },
           cliente: { select: { email: true, nome: true } }
         }
       });
-      if (!order) return res.status(404).json({ error: "Pedido não encontrado." });
+
+      if (!order) {
+        const supplyOrder = await prisma.supplyOrder.findUnique({
+          where: { id: String(id) }
+        });
+        if (supplyOrder) {
+          if (supplyOrder.status === "PAID") return res.json({ status: "APROVADO", eventId: "FRANCHISE_SHOP" });
+          if (!supplyOrder.paymentId) return res.json({ status: supplyOrder.status });
+          
+          const mpData = await MercadoPagoService.getPaymentStatus(supplyOrder.paymentId);
+          if (mpData.status === "approved") {
+            await prisma.supplyOrder.update({ where: { id: supplyOrder.id }, data: { status: "PAID" } });
+            return res.json({ status: "APROVADO", eventId: "FRANCHISE_SHOP" });
+          }
+          return res.json({ status: supplyOrder.status });
+        }
+        return res.status(404).json({ error: "Pedido não encontrado." });
+      }
 
       if (order.status === "APROVADO") {
         return res.json({ status: "APROVADO", eventId: order.eventId });

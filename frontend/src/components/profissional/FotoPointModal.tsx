@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { createPortal } from "react-dom";
 import { X, Camera, Sparkles, MapPin, ListChecks, Link as LinkIcon, Calendar } from "lucide-react";
 import { API } from "../../lib/api";
 import { CoverPhotoInput } from "./CoverPhotoInput";
@@ -68,29 +69,36 @@ export function FotoPointModal({ onClose, onSuccess, onError, network }: FotoPoi
     }
   };
 
-  return (
-    <div 
-      className="fixed inset-0 z-[8000] flex items-center justify-center p-4 backdrop-blur-xl bg-black/60 animate-in fade-in duration-300"
-      onClick={(e) => e.target === e.currentTarget && onClose()}
-    >
-      <div className="w-full max-w-xl bg-theme-bg border border-theme-border shadow-2xl relative overflow-hidden">
-        <div className="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-cyan-400 via-blue-500 to-cyan-400 animate-pulse" />
-        
-        <div className="p-8 space-y-6 max-h-[90vh] overflow-y-auto custom-scrollbar">
-          <div className="flex justify-between items-start">
-            <div className="space-y-1">
-              <div className="flex items-center gap-2 text-cyan-400">
-                <Camera size={14} fill="currentColor" />
-                <span className="text-[10px] font-black uppercase tracking-[0.3em] italic">Nova Categoria: Foto Point</span>
-              </div>
-              <h2 className="text-2xl font-heading font-black text-theme-text uppercase italic leading-none">Configurar Ponto de Venda</h2>
-            </div>
-            <button onClick={onClose} className="text-theme-muted hover:text-cyan-400 transition-colors">
-              <X size={20} />
-            </button>
-          </div>
+  return createPortal(
+    <div className="fixed inset-0 z-[8000] flex items-center justify-center p-4">
+      {/* Backdrop */}
+      <div 
+        className="fixed inset-0 bg-theme-bg/80 backdrop-blur-xl animate-in fade-in duration-300 dark:bg-black/95" 
+        onClick={onClose} 
+      />
 
-          <form onSubmit={handleSubmit} className="space-y-6">
+      {/* Modal Container */}
+      <div className="relative w-full max-w-2xl h-[85vh] flex flex-col border border-theme-border/60 rounded-[40px] overflow-hidden shadow-2xl z-[10000] bg-theme-card">
+        
+        {/* Header */}
+        <div className="p-8 md:p-10 border-b flex items-center justify-between shrink-0" style={{ borderColor: "var(--theme-border)" }}>
+          <div className="flex items-center gap-4">
+            <div className="w-12 h-12 bg-cyan-400/10 rounded-2xl flex items-center justify-center border border-cyan-400/20">
+              <Camera className="text-cyan-400" size={24} />
+            </div>
+            <div>
+              <div className="text-[9px] font-black text-cyan-400 uppercase tracking-[0.4em] italic opacity-60">Nova Categoria: Foto Point</div>
+              <h2 className="text-2xl font-black uppercase italic tracking-tighter text-theme-text leading-none">Configurar Ponto de Venda</h2>
+            </div>
+          </div>
+          <button onClick={onClose} className="p-3 hover:bg-white/5 rounded-full transition-all active:scale-90 text-theme-text/40">
+            <X size={24} />
+          </button>
+        </div>
+
+        {/* Body */}
+        <div className="flex-1 overflow-y-auto p-8 md:p-10 space-y-8 custom-scrollbar">
+          <form onSubmit={handleSubmit} className="space-y-8">
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                 <div className="space-y-2">
                     <label className="text-[10px] font-black text-theme-muted uppercase tracking-widest italic">Título do Ponto</label>
@@ -230,7 +238,7 @@ export function FotoPointModal({ onClose, onSuccess, onError, network }: FotoPoi
             <button
               type="submit"
               disabled={loading || !name}
-              className="w-full py-5 bg-cyan-400 text-black text-[12px] font-black uppercase tracking-[0.4em] hover:brightness-110 disabled:opacity-40 transition-all flex items-center justify-center gap-3 italic"
+              className="w-full py-5 bg-cyan-400 text-black text-[11px] font-black uppercase tracking-[0.3em] hover:bg-white hover:scale-[1.01] active:scale-[0.98] transition-all italic flex items-center justify-center gap-4 shadow-2xl shadow-cyan-400/20 disabled:opacity-40"
             >
               {loading ? (
                 "PUBLICANDO PONTO..."
@@ -243,6 +251,7 @@ export function FotoPointModal({ onClose, onSuccess, onError, network }: FotoPoi
           </form>
         </div>
       </div>
-    </div>
+    </div>,
+    document.body
   );
 }

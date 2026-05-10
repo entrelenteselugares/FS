@@ -83,6 +83,7 @@ export interface ProfileData {
     nome: string | null;
     email: string | null;
     whatsapp: string | null;
+    address: string | null;
   };
   pixKey: string | null;
   pixType: string | null;

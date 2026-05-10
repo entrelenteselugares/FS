@@ -1,4 +1,4 @@
-﻿import React, { useEffect, useState } from "react";
+import React, { useEffect, useState } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import { API } from "../lib/api";
 
@@ -101,9 +101,9 @@ export const PartnerLP: React.FC = () => {
         <div className="pointer-events-auto flex items-center gap-6">
           <ThemeToggle />
           <img
-            src="/logo-fs.png"
+            src="/logo.png"
             alt="Logo"
-            className="h-7 object-contain brightness-0 invert"
+            style={{ height: 28, objectFit: "contain", filter: "var(--logo-filter)" }}
           />
         </div>
       </nav>

@@ -164,18 +164,25 @@ export const AdminUsers: React.FC = () => {
   return (
     <>
       <div className="space-y-10 animate-in fade-in slide-in-from-bottom-4 duration-700">
-        <div className="flex flex-col md:flex-row md:items-center justify-between gap-6 border-b border-theme-border pb-10">
-          <div>
-            <h2 className="text-3xl md:text-4xl font-heading text-theme-text tracking-tighter uppercase font-black leading-none pt-2">Gestão de Membros</h2>
-            <p className="text-[10px] text-theme-muted uppercase tracking-[0.5em] mt-3 font-black italic">Operação de Times, Unidades e Parceiros</p>
+      <div className="flex flex-col md:flex-row md:items-center justify-between border-b border-theme-border pb-10 gap-6">
+        <div className="space-y-4">
+          <h1 className="text-4xl md:text-6xl font-heading font-black text-theme-text uppercase tracking-tighter italic leading-none">
+            Gestão de <span className="text-brand-tactical">Membros</span>
+          </h1>
+          <div className="flex items-center gap-4">
+            <div className="h-1 w-12 bg-brand-tactical" />
+            <p className="text-[11px] font-black text-brand-tactical uppercase tracking-[0.4em] italic">
+              Operação de Times, Unidades e Parceiros
+            </p>
           </div>
-          <button 
-            onClick={() => { setIsModalOpen(true); setEditingUser(null); setFormData({ name: "", email: "", password: "", role: "PROFISSIONAL", pixKey: "", otherHabilities: "", equipment: "", workflowType: ["TRADICIONAL"], captPct: 30, editPct: 10, isFranchise: false, printCredits: 0, isVerified: false }); }}
-            className="font-black uppercase tracking-[0.3em] px-8 py-4 bg-brand-tactical text-zinc-950 hover:brightness-110 transition-all shadow-xl shadow-brand-tactical/10 flex items-center gap-3 text-[10px]"
-          >
-            <UserPlus size={14} /> CONVOCAR MEMBRO
-          </button>
         </div>
+        <button 
+          onClick={() => { setIsModalOpen(true); setEditingUser(null); setFormData({ name: "", email: "", password: "", role: "PROFISSIONAL", pixKey: "", otherHabilities: "", equipment: "", workflowType: ["TRADICIONAL"], captPct: 30, editPct: 10, isFranchise: false, printCredits: 0, isVerified: false }); }}
+          className="font-black uppercase tracking-[0.3em] px-8 py-4 bg-brand-tactical text-zinc-950 hover:brightness-110 transition-all shadow-xl shadow-brand-tactical/10 flex items-center gap-3 text-[10px] italic"
+        >
+          <UserPlus size={14} /> CONVOCAR MEMBRO
+        </button>
+      </div>
 
         {/* SEARCH AND FILTERS */}
         <div className="flex flex-col md:flex-row gap-6 items-center">
@@ -206,8 +213,8 @@ export const AdminUsers: React.FC = () => {
           {/* HEADER TABLE */}
           <div className="hidden md:grid grid-cols-12 gap-4 px-4 py-2.5 text-[8px] md:text-[9px] font-black text-theme-muted uppercase tracking-[0.4em] border-b border-theme-border/30 bg-zinc-900/20">
             <div className="col-span-1">Status</div>
-            <div className="col-span-5">Membro / Identidade</div>
-            <div className="col-span-2">Nível de Acesso</div>
+            <div className="col-span-4">Membro / Identidade</div>
+            <div className="col-span-3">Nível de Acesso</div>
             <div className="col-span-2 text-right">Vinculação</div>
             <div className="col-span-2 text-right">Comandos</div>
           </div>
@@ -225,33 +232,33 @@ export const AdminUsers: React.FC = () => {
                     <div className="col-span-1 flex items-center justify-center md:justify-start">
                       <div className={`w-2.5 h-2.5 rounded-full ${u.active ? 'bg-brand-tactical shadow-[0_0_10px_rgba(133,185,172,0.4)]' : 'bg-red-500 shadow-[0_0_10px_rgba(239,68,68,0.4)]'} ${u.active ? 'animate-pulse' : ''}`} />
                     </div>
-                    <div className="col-span-5 flex items-center gap-5">
+                    <div className="col-span-4 flex items-center gap-5">
                       <div className="w-10 h-10 bg-theme-border border border-theme-border flex items-center justify-center text-[12px] font-black text-theme-text tracking-tighter">
                         {getInitials(u.nome)}
                       </div>
-                      <div>
-                        <div className="text-[13px] font-black text-theme-text uppercase tracking-tight leading-none">{u.nome}</div>
-                        <div className="text-[10px] text-theme-muted font-bold uppercase mt-1.5 opacity-60 tracking-wider flex items-center gap-2">
+                      <div className="min-w-0">
+                        <div className="text-[13px] font-black text-theme-text uppercase tracking-tight leading-none truncate">{u.nome}</div>
+                        <div className="text-[10px] text-theme-muted font-bold uppercase mt-1.5 opacity-60 tracking-wider flex items-center gap-2 truncate">
                           {u.email}
                           {u.role === 'PROFISSIONAL' && u.profissional?.workflowType && u.profissional.workflowType.map(wt => (
                             <span key={wt} className={`px-1.5 py-0.5 rounded-sm text-[7px] font-black tracking-tighter ${wt === 'MOBILE' ? 'bg-amber-500/20 text-amber-500 border border-amber-500/20' : 'bg-blue-500/20 text-blue-500 border border-blue-500/20'}`}>
-                              {wt === 'MOBILE' ? 'MOBILE MAKER' : 'CAMERA/PC'}
+                              {wt === 'MOBILE' ? 'MOBILE' : 'PC'}
                             </span>
                           ))}
                         </div>
                       </div>
                     </div>
-                    <div className="col-span-2">
-                      <span className={`px-3 py-1.5 border ${styles.bg} ${styles.border} ${styles.text} text-[8px] font-black uppercase tracking-[0.2em] inline-flex items-center gap-2`}>
+                    <div className="col-span-3 flex flex-wrap gap-2">
+                      <span className={`px-3 py-1.5 border ${styles.bg} ${styles.border} ${styles.text} text-[9px] font-black uppercase tracking-[0.2em] inline-flex items-center gap-2 italic`}>
                         {u.role === 'ADMIN' && <Shield size={8} />} {u.role === 'CARTORIO' ? 'CARTÓRIO' : u.role}
                       </span>
                       {u.isVerified && (
-                        <span className="ml-2 px-2 py-1 bg-brand-tactical/10 border border-brand-tactical/30 text-brand-tactical text-[7px] font-black uppercase tracking-widest flex items-center gap-1">
-                          <CheckCircle2 size={8} /> PRO VERIFICADO
+                        <span className="px-2 py-1 bg-brand-tactical/10 border border-brand-tactical/30 text-brand-tactical text-[7px] font-black uppercase tracking-widest flex items-center gap-1">
+                          <CheckCircle2 size={8} /> PRO
                         </span>
                       )}
                       {u.franchiseProfile && (
-                        <span className="ml-2 px-2 py-1 bg-emerald-500/10 border border-emerald-500/30 text-emerald-500 text-[7px] font-black uppercase tracking-widest">
+                        <span className="px-2 py-1 bg-brand-tactical/10 border border-brand-tactical/30 text-brand-tactical text-[7px] font-black uppercase tracking-widest italic">
                           FRANQUIA: {u.franchiseProfile.printCredits} CR
                         </span>
                       )}

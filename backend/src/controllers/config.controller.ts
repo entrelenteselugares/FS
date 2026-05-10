@@ -63,7 +63,7 @@ export async function updateConfigs(req: AuthRequest, res: Response): Promise<vo
         prisma.platformConfig.upsert({
           where: { key: c.key },
           update: { value: c.value, updatedBy: userId },
-          create: { key: c.key, value: c.value, updatedBy: userId },
+          create: { key: c.key, value: c.value, updatedBy: userId, label: c.key },
         })
       )
     );

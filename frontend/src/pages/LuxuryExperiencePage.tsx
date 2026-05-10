@@ -98,7 +98,7 @@ export default function LuxuryExperiencePage() {
     <div className="min-h-screen font-sans selection:bg-brand-tactical selection:text-zinc-950" style={{ background: T.bg, color: T.text }}>
       <nav className="h-20 flex items-center justify-between px-8 border-b sticky top-0 z-50 backdrop-blur-xl" style={{ borderColor: T.border, background: `${T.bg}e6` }}>
         <a href="/" className="text-[10px] font-black uppercase tracking-widest hover:opacity-80 transition-all" style={{ color: T.text2 }}>Foto Segundo</a>
-        <img src="/logo-fs.png" alt="Foto Segundo" className="h-5" />
+        <img src="/logo.png" alt="Foto Segundo" style={{ height: 20, objectFit: "contain", filter: "var(--logo-filter)" }} />
         <span className="text-[10px] font-black uppercase tracking-widest italic" style={{ color: T.text3 }}>Luxury Experience</span>
       </nav>
 

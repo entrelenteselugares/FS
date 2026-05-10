@@ -1,5 +1,5 @@
 import { useState, useEffect, useCallback, useRef } from "react";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, Link } from "react-router-dom";
 import { API } from "../lib/api";
 import { Helmet } from "react-helmet-async";
 import { T } from "../lib/theme";
@@ -555,13 +555,13 @@ export const HomePage = () => {
       <footer style={{ borderTop: `1px solid ${T.border}`, padding: "40px 28px", background: T.bgCard }}>
         <div className="hp-footer-inner" style={{ maxWidth: 1100, margin: "0 auto", display: "flex", justifyContent: "space-between", alignItems: "flex-start", gap: "4rem" }}>
           <div>
-            <div style={{ display: "flex", alignItems: "center", marginBottom: 20 }}>
-              <img src="/logo-fs.png" alt="Foto Segundo" style={{ 
-                height: 24, 
+            <Link to="/" style={{ display: "flex", alignItems: "center", marginBottom: 24 }}>
+              <img src="/logo.png" alt="Foto Segundo" style={{ 
+                height: 32, 
                 objectFit: "contain", 
                 filter: "var(--logo-filter)"
               }} />
-            </div>
+            </Link>
             <p style={{ fontSize: 11, fontFamily: T.fontB, color: T.textMuted, lineHeight: 1.8, maxWidth: 280, margin: 0, whiteSpace: "pre-line" }}>
               {DICT.FOOTER_COPYRIGHT}
             </p>

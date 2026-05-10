@@ -135,13 +135,13 @@ const AnimatedRoutes = () => {
         }
         />
 
-        {/* Cofres de Memórias (Fase 11) */}
-        <Route path="/cofres" element={
+        {/* Meus Álbuns (Fase 11) */}
+        <Route path="/meus-albuns" element={
           <ProtectedRoute>
             <VaultsPage />
           </ProtectedRoute>
         } />
-        <Route path="/cofres/:vaultId" element={
+        <Route path="/meus-albuns/:vaultId" element={
           <ProtectedRoute>
             <VaultDetailPage />
           </ProtectedRoute>

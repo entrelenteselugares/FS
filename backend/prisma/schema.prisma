@@ -16,6 +16,7 @@ model User {
   nome               String
   role               Role                    @default(CLIENTE)
   whatsapp           String?
+  address            String?
   active             Boolean                 @default(true)
   createdAt          DateTime                @default(now())
   updatedAt          DateTime                @updatedAt
@@ -58,6 +59,7 @@ model User {
   subscriptions      Subscription[]
   flashCards         FlashCard[]
   phygitalPrints     PhygitalPrint[]         @relation("UserPhygitalPrints")
+  supplyOrders       SupplyOrder[]           @relation("FranchiseeSupplyOrders")
 
   @@map("users")
 }
@@ -595,11 +597,26 @@ model PrintProduct {
   fulfillmentType  String              @default("LAB") // "INSTANT_PRINT" or "LAB"
   supplierId       String?
   
-  orderItems   OrderItem[]
-  events       EventPrintProduct[]
-  printSupplier PrintSupplier?         @relation(fields: [supplierId], references: [id])
+  stockLevel   Int                 @default(0)
+  
+  orderItems      OrderItem[]
+  events          EventPrintProduct[]
+  printSupplier   PrintSupplier?      @relation(fields: [supplierId], references: [id])
+  stockMovements  StockMovement[]
 
   @@map("print_products")
+}
+
+model StockMovement {
+  id              String       @id @default(cuid())
+  productId       String
+  quantity        Int          // Positivo para entrada, negativo para saída
+  type            String       // PURCHASE (entrada), SALE (venda franqueado), ADJUSTMENT (manual)
+  description     String?
+  createdAt       DateTime     @default(now())
+  product         PrintProduct @relation(fields: [productId], references: [id], onDelete: Cascade)
+
+  @@map("stock_movements")
 }
 
 model EventPrintProduct {
@@ -969,4 +986,38 @@ model FlashCard {
   media     EventMedia? @relation(fields: [mediaId], references: [id])
 
   @@map("flash_cards")
+}
+
+model SupplyOrder {
+  id              String             @id @default(cuid())
+  franchiseeId    String
+  total           Decimal            @db.Decimal(10, 2)
+  status          String             @default("PENDING") // PENDING, PAID, SHIPPED, CANCELLED
+  paymentMethod   String             // BALANCE, CHECKOUT
+  deliveryType    String             // MATRIZ, SHIPPING
+  address         String?
+  items           SupplyOrderItem[]
+  createdAt       DateTime           @default(now())
+  updatedAt       DateTime           @updatedAt
+  paymentId       String?            @unique // Mercado Pago ID
+  paymentLink     String?            // Mercado Pago checkout URL
+  
+  franchisee      User               @relation("FranchiseeSupplyOrders", fields: [franchiseeId], references: [id])
+
+  trackingCode    String?            // Código de rastreio do envio
+  shippingNotes   String?            // Observações do envio (transportadora, prazo, etc.)
+
+  @@map("supply_orders")
+}
+
+model SupplyOrderItem {
+  id              String      @id @default(cuid())
+  orderId         String
+  productId       String
+  name            String
+  price           Decimal     @db.Decimal(10, 2)
+  quantity        Int
+  order           SupplyOrder @relation(fields: [orderId], references: [id], onDelete: Cascade)
+
+  @@map("supply_order_items")
 }

@@ -128,4 +128,45 @@ export class ReferralService {
       }
     });
   }
+
+  /**
+   * Returns (and generates if missing) a default referral code for the user.
+   */
+  static async generateCode(userId: string) {
+    let campaign = await prisma.referralCampaign.findFirst({
+      where: { ownerId: userId, name: "Default" }
+    });
+
+    if (!campaign) {
+      const user = await prisma.user.findUnique({ where: { id: userId } });
+      const baseName = user?.nome?.split(' ')[0].toLowerCase() || 'partner';
+      const slug = `${baseName}-${Math.random().toString(36).substring(2, 7)}`;
+      
+      campaign = await prisma.referralCampaign.create({
+        data: {
+          ownerId: userId,
+          name: "Default",
+          slug: slug,
+          rewardType: "CREDIT",
+          rewardValue: 5,
+          active: true
+        }
+      });
+    }
+
+    return campaign.slug;
+  }
+
+  /**
+   * Links a new user to a referrer via code (Campaign slug)
+   */
+  static async linkByCode(userId: string, refCode: string) {
+    const campaign = await prisma.referralCampaign.findUnique({
+      where: { slug: refCode }
+    });
+
+    if (campaign && campaign.active) {
+       await this.processConversion(campaign.id, { newUserId: userId });
+    }
+  }
 }

@@ -1,6 +1,6 @@
 import { useState, useEffect, useRef, useCallback } from "react";
 import { useParams, useNavigate, useSearchParams } from "react-router-dom";
-import { ShieldCheck, ArrowLeft, CheckCircle2, RefreshCw, Clock, Lock, Image as ImageIcon, Printer, ShoppingBag, Copy, Check } from "lucide-react";
+import { ShieldCheck, ArrowLeft, CheckCircle2, RefreshCw, Clock, Lock, Image as ImageIcon, Printer, ShoppingBag, Copy, Check, MapPin } from "lucide-react";
 import { Helmet } from "react-helmet-async";
 import { Navbar } from "../components/Navbar";
 
@@ -118,9 +118,10 @@ export const CheckoutPage = () => {
     cep: "",
     street: "",
     number: "",
-    complement: "",
+    neighborhood: "",
     city: "",
-    state: ""
+    state: "",
+    complement: ""
   });
   const [isShippingLoading, setIsShippingLoading] = useState(false);
   interface ShippingOption {
@@ -146,10 +147,81 @@ export const CheckoutPage = () => {
     API.get(`/public/orders/${effectiveOrderId}`)
       .then(({ data }) => {
         setOrder(data);
+        // Pre-fill shipping if available in the order record
+        if (data.shippingAddress) {
+          try {
+            const addr = typeof data.shippingAddress === 'string' ? JSON.parse(data.shippingAddress) : data.shippingAddress;
+            if (typeof addr === 'object' && addr !== null) {
+              setShippingData(prev => ({
+                ...prev,
+                cep: addr.cep || prev.cep,
+                street: addr.street || addr.logradouro || addr.rua || prev.street,
+                number: addr.number || addr.numero || prev.number,
+                city: addr.city || addr.localidade || prev.city,
+                state: addr.state || addr.uf || prev.state,
+                complement: addr.complement || prev.complement
+              }));
+            } else if (typeof data.shippingAddress === 'string' && data.shippingAddress.length > 5) {
+               // Fallback for simple string addresses
+               setShippingData(prev => ({ ...prev, street: data.shippingAddress }));
+            }
+          } catch {
+            if (typeof data.shippingAddress === 'string' && data.shippingAddress.length > 5) {
+               setShippingData(prev => ({ ...prev, street: data.shippingAddress }));
+            }
+          }
+        }
       })
       .catch(() => setError("Não foi possível carregar os detalhes do pedido."))
       .finally(() => setLoading(false));
   }, [effectiveOrderId]);
+
+  const loadRegisteredAddress = async () => {
+    try {
+      setIsShippingLoading(true);
+      const { data } = await API.get("/profissional/me");
+      const user = data.user;
+      
+      if (user && user.address) {
+        const parts = user.address.split('|');
+        if (parts.length >= 6) {
+          setShippingData({
+            cep: parts[0] || "",
+            street: parts[1] || "",
+            number: parts[2] || "",
+            neighborhood: parts[3] || "",
+            city: parts[4] || "",
+            state: parts[5] || "",
+            complement: parts[6] || ""
+          });
+          return;
+        } else {
+          setShippingData(prev => ({ ...prev, street: user.address }));
+        }
+      }
+      
+      const lastAddr = localStorage.getItem("fs_last_shipping");
+      if (lastAddr) {
+        setShippingData(JSON.parse(lastAddr));
+      }
+    } catch (err) {
+      console.error("Erro ao carregar endereço:", err);
+      try {
+         const { data: authData } = await API.get("/auth/me");
+         if (authData?.user?.address) {
+            const parts = authData.user.address.split('|');
+            if (parts.length >= 6) {
+              setShippingData({
+                cep: parts[0] || "", street: parts[1] || "", number: parts[2] || "",
+                neighborhood: parts[3] || "", city: parts[4] || "", state: parts[5] || "", complement: parts[6] || ""
+              });
+            }
+         }
+      } catch { /* generic auth fallback failed */ }
+    } finally {
+      setIsShippingLoading(false);
+    }
+  };
 
   // ── Controle de Autenticação (Bypass para Guest Checkout) ────────────────────
   useEffect(() => {
@@ -251,6 +323,7 @@ export const CheckoutPage = () => {
         setShippingData(prev => ({
           ...prev,
           street: data.logradouro,
+          neighborhood: data.bairro,
           city: data.localidade,
           state: data.uf
         }));
@@ -320,7 +393,11 @@ export const CheckoutPage = () => {
     localStorage.removeItem(`fs_cart_${order.event.id}`);
 
     const timer = setTimeout(() => {
-       navigate(`/minha-conta?orderId=${order.id}`);
+       if (order.eventId === "FRANCHISE_SHOP") {
+         navigate("/profissional?tab=franquia");
+       } else {
+         navigate(`/minha-conta?orderId=${order.id}`);
+       }
     }, 5000);
     return () => clearTimeout(timer);
   }, [paymentSuccess, order, navigate]);
@@ -345,9 +422,9 @@ export const CheckoutPage = () => {
       } else {
         alert("Cupom aplicado, mas valor ainda restante. Por favor, pague via Mercado Pago (Lógica Parcial pendente).");
       }
-    } catch (err: any) {
+    } catch (err: unknown) {
       console.error(err);
-      alert(err.response?.data?.error || "Cupom inválido ou não atingiu 100% de desconto.");
+      alert((err as { response?: { data?: { error?: string } } }).response?.data?.error || "Cupom inválido ou não atingiu 100% de desconto.");
     } finally {
       setApplyingCoupon(false);
     }
@@ -423,6 +500,11 @@ export const CheckoutPage = () => {
                 shippingFee: selectedShipping?.price || 0,
                 shippingMethod: selectedShipping?.name || null
               });
+              
+              // Salva último endereço para conveniência futura
+              if (order.deliveryType === 'SHIPPING' && shippingData.cep) {
+                localStorage.setItem("fs_last_shipping", JSON.stringify(shippingData));
+              }
 
               if (data.hasPaid) {
                 setPaymentSuccess(true);
@@ -651,7 +733,7 @@ export const CheckoutPage = () => {
       <div className="flex-1 max-w-7xl mx-auto px-6 py-12 w-full animate-in fade-in duration-700">
         <div className="flex justify-between items-center mb-12 border-b border-theme-border/20 pb-8">
           <button onClick={() => navigate(-1)} className="text-[10px] font-black uppercase tracking-widest text-theme-text-muted hover:text-theme-text transition-all flex items-center gap-2"><ArrowLeft size={14} /> Voltar</button>
-          <img src="/logo-fs.png" alt="Foto Segundo" className="h-4" />
+          <img src="/logo.png" alt="Foto Segundo" style={{ height: 16, objectFit: "contain", filter: "var(--logo-filter)" }} />
           <div className="flex items-center gap-2 text-brand-tactical text-[9px] font-black uppercase tracking-widest"><ShieldCheck size={14} /> Checkout Blindado</div>
         </div>
 
@@ -709,12 +791,21 @@ export const CheckoutPage = () => {
             {/* Logística Condicional */}
             {order.deliveryType === 'SHIPPING' && authStep === 'authorized' && (
               <div className="animate-in slide-in-from-top-4 duration-500 space-y-6 p-8 bg-zinc-900/50 border border-white/5 rounded-3xl">
-                 <div className="flex items-center gap-3">
-                    <div className="h-0.5 w-6 bg-brand-tactical" />
-                    <p className="text-[9px] font-black text-brand-tactical uppercase tracking-widest">Endereço de Entrega</p>
+                 <div className="flex items-center justify-between mb-4">
+                    <div className="flex items-center gap-3">
+                       <div className="h-0.5 w-6 bg-brand-tactical" />
+                       <p className="text-[9px] font-black text-brand-tactical uppercase tracking-widest">Endereço de Entrega</p>
+                    </div>
+                    <button 
+                       type="button"
+                       onClick={loadRegisteredAddress}
+                       className="text-[8px] font-black text-white/40 hover:text-brand-tactical transition-colors uppercase tracking-widest flex items-center gap-1"
+                    >
+                       <MapPin size={10} /> Usar endereço de cadastro
+                    </button>
                  </div>
-                 <div className="grid grid-cols-2 gap-4">
-                    <div className="col-span-2">
+                  <div className="grid grid-cols-2 md:grid-cols-6 gap-4">
+                    <div className="col-span-2 md:col-span-2">
                       <input 
                         placeholder="CEP" 
                         value={shippingData.cep}
@@ -723,29 +814,56 @@ export const CheckoutPage = () => {
                         className="fs-input font-mono bg-theme-bg-field"
                       />
                     </div>
-                    <div className="col-span-2">
+                    <div className="col-span-2 md:col-span-3">
                       <input 
-                        placeholder="Endereço" 
+                        placeholder="Logradouro" 
                         value={shippingData.street}
                         disabled={isShippingLoading}
                         onChange={e => setShippingData({...shippingData, street: e.target.value})}
-                        className="fs-input bg-theme-bg-field opacity-80"
+                        className="fs-input bg-theme-bg-field"
                       />
                     </div>
-                    <input 
-                      placeholder="Número" 
-                      value={shippingData.number}
-                      onChange={e => setShippingData({...shippingData, number: e.target.value})}
-                      className="fs-input bg-theme-bg-field"
-                    />
-                    <input 
-                      placeholder="Cidade" 
-                      value={shippingData.city}
-                      disabled
-                      className="fs-input bg-theme-bg-field opacity-50"
-                    />
-                 </div>
-                 
+                    <div className="col-span-2 md:col-span-1">
+                      <input 
+                        placeholder="Nº" 
+                        value={shippingData.number}
+                        onChange={e => setShippingData({...shippingData, number: e.target.value})}
+                        className="fs-input bg-theme-bg-field"
+                      />
+                    </div>
+                    <div className="col-span-2 md:col-span-2">
+                      <input 
+                        placeholder="Bairro" 
+                        value={shippingData.neighborhood}
+                        onChange={e => setShippingData({...shippingData, neighborhood: e.target.value})}
+                        className="fs-input bg-theme-bg-field"
+                      />
+                    </div>
+                    <div className="col-span-1 md:col-span-2">
+                      <input 
+                        placeholder="Cidade" 
+                        value={shippingData.city}
+                        readOnly
+                        className="fs-input bg-theme-bg-field opacity-50"
+                      />
+                    </div>
+                    <div className="col-span-1 md:col-span-1">
+                      <input 
+                        placeholder="UF" 
+                        value={shippingData.state}
+                        readOnly
+                        className="fs-input bg-theme-bg-field opacity-50"
+                      />
+                    </div>
+                    <div className="col-span-2 md:col-span-1">
+                      <input 
+                        placeholder="Compl." 
+                        value={shippingData.complement}
+                        onChange={e => setShippingData({...shippingData, complement: e.target.value})}
+                        className="fs-input bg-theme-bg-field"
+                      />
+                    </div>
+                  </div>
                  {shippingOptions.length > 0 && (
                    <div className="space-y-3 mt-6">
                      <p className="text-[8px] font-black text-zinc-500 uppercase tracking-widest italic">Opções de Envio</p>

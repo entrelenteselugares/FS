@@ -21,10 +21,10 @@ export const DeliveryView: React.FC<DeliveryViewProps> = ({ event }) => {
   return (
     <div className="min-h-screen bg-[#050505] flex flex-col items-center justify-center px-6 py-20 relative overflow-hidden">
       {/* Editorial Watermark */}
-      <img src="/assets/logo.png" alt="" className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 h-[60vh] opacity-[0.02] pointer-events-none invert brightness-0" />
+      <img src="/logo.png" alt="" className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 h-[60vh] opacity-[0.02] pointer-events-none" style={{ filter: "var(--logo-filter)" }} />
       
       <div className="absolute top-0 w-full p-10 flex justify-center">
-         <img src="/assets/logo.png" alt="Foto Segundo" className="h-6 w-auto invert brightness-0 opacity-40" />
+         <img src="/logo.png" alt="Foto Segundo" className="h-6 w-auto opacity-40" style={{ filter: "var(--logo-filter)" }} />
       </div>
 
       <motion.div 

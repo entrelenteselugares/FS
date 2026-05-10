@@ -1399,3 +1399,58 @@ export async function checkDbStatus(_req: any, res: any) {
     });
   }
 }
+
+/**
+ * Admin: Lista todos os produtos com seus níveis de estoque e movimentos recentes
+ */
+export async function adminListInventory(req: AuthRequest, res: Response): Promise<void> {
+  try {
+    const products = await prisma.printProduct.findMany({
+      include: {
+        stockMovements: {
+          orderBy: { createdAt: 'desc' },
+          take: 5
+        }
+      },
+      orderBy: { name: 'asc' }
+    });
+    res.json(products);
+  } catch (err) {
+    console.error("adminListInventory Error:", err);
+    res.status(500).json({ error: "Erro ao listar estoque." });
+  }
+}
+
+/**
+ * Admin: Ajusta o nível de estoque de um produto (Entrada/Saída/Ajuste)
+ */
+export async function adminAdjustStock(req: AuthRequest, res: Response): Promise<void> {
+  const { productId, quantity, type, description } = req.body;
+  if (!productId || quantity === undefined || !type) {
+    res.status(400).json({ error: "Dados incompletos para ajuste de estoque." });
+    return;
+  }
+
+  try {
+    const [updatedProduct, movement] = await prisma.$transaction([
+      prisma.printProduct.update({
+        where: { id: productId },
+        data: { stockLevel: { increment: Number(quantity) } }
+      }),
+      prisma.stockMovement.create({
+        data: {
+          productId,
+          quantity: Number(quantity),
+          type,
+          description: description || `Ajuste manual via admin`
+        }
+      })
+    ]);
+
+    await audit(req, "STOCK_ADJUSTED", "PrintProduct", productId, null, { quantity, type, description });
+    res.json({ success: true, product: updatedProduct, movement });
+  } catch (err) {
+    console.error("adminAdjustStock Error:", err);
+    res.status(500).json({ error: "Erro ao ajustar estoque." });
+  }
+}

@@ -41,7 +41,7 @@ export const AuthSelectionPage: React.FC = () => {
         <div className="absolute top-0 right-1/4 w-[1px] h-full bg-theme-border/5" />
       </div>
       <div className="text-center mb-6 md:mb-16 relative z-10">
-        <img src="/logo-fs.png" alt="Foto Segundo" className="h-7 w-auto mb-6 mx-auto opacity-80" />
+        <img src="/logo.png" alt="Foto Segundo" style={{ height: 28, objectFit: "contain", filter: "var(--logo-filter)" }} className="mb-6 mx-auto opacity-80" />
         <h1 className="font-sans tracking-tighter text-theme-text mb-4 uppercase font-black" style={{ fontSize: 'clamp(32px, 10vw, 96px)' }}>
           GATE<span className="text-brand-tactical">KEEPER</span>
         </h1>

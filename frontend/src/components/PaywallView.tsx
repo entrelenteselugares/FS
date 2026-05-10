@@ -37,7 +37,7 @@ export const PaywallView: React.FC<PaywallViewProps> = ({ event, onCheckout, isP
       
       {/* Header / Logo */}
       <nav className="absolute top-0 w-full z-50 px-10 py-10 flex justify-between items-center pointer-events-none">
-        <img src="/assets/logo.png" alt="Foto Segundo" className="h-8 w-auto invert brightness-0 opacity-50" />
+        <img src="/logo.png" alt="Foto Segundo" className="h-8 w-auto opacity-50" style={{ filter: "var(--logo-filter)" }} />
       </nav>
 
       {/* Conteúdo Central Editorial */}

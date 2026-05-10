@@ -3,6 +3,8 @@ import prisma from "../lib/prisma";
 import { AuthRequest } from '../lib/auth';
 import { SupplyService } from '../services/supply.service';
 import { ReferralService } from '../services/referral.service';
+import { MercadoPagoService } from "../services/mercadopago.service";
+import { APP_URL } from "../lib/config";
 
 export class FranchiseController {
   /**
@@ -316,6 +318,245 @@ export class FranchiseController {
     } catch (error) {
       console.error("[Franchise Finance Error]:", error);
       return res.status(500).json({ error: "Failed to fetch financial stats" });
+    }
+  }
+
+  /**
+   * Cria um novo pedido de suprimentos/créditos (B2B Shop)
+   */
+  static async createSupplyOrder(req: AuthRequest, res: Response) {
+    try {
+      const { items, total, deliveryType, paymentMethod, address } = req.body;
+      const userId = req.user?.userId;
+
+      if (!userId) {
+        return res.status(401).json({ error: "Não autorizado" });
+      }
+
+      // 1. Cria o pedido no banco usando o novo modelo SupplyOrder
+      const order = await prisma.supplyOrder.create({
+        data: {
+          franchiseeId: userId,
+          total: Number(total),
+          paymentMethod,
+          deliveryType,
+          address,
+          status: "PENDING",
+          items: {
+            create: items.map((it: any) => ({
+              productId: it.id,
+              name: it.name,
+              price: it.price,
+              quantity: it.quantity,
+            })),
+          },
+        },
+        include: { items: true },
+      });
+
+      return res.status(201).json({ 
+        order, 
+        message: paymentMethod === "BALANCE" 
+          ? "Pedido registrado com sucesso. Aguardando abatimento no repasse."
+          : "Pedido registrado com sucesso."
+      });
+
+    } catch (error: unknown) {
+      console.error("[Franchise CreateOrder Error]:", error);
+      res.status(500).json({ error: "Erro ao processar pedido de suprimentos" });
+    }
+  }
+
+  /**
+   * Webhook para processar o status do pagamento do Mercado Pago para pedidos B2B
+   */
+  static async handleWebhook(req: any, res: Response) {
+    const { action, data, type } = req.body;
+    const paymentId = data?.id || req.query?.id;
+
+    if (paymentId && (type === "payment" || action?.includes("payment"))) {
+      try {
+        const payment = await MercadoPagoService.getPaymentStatus(paymentId);
+        
+        if (payment.status === "approved") {
+          const orderId = payment.metadata.order_id || payment.external_reference?.split(":")[0];
+          
+          if (!orderId) return res.sendStatus(200);
+
+          const order = await prisma.supplyOrder.findUnique({
+            where: { id: orderId },
+            include: { items: true }
+          });
+
+          if (order && order.status !== "PAID") {
+            await prisma.supplyOrder.update({
+              where: { id: orderId },
+              data: { status: "PAID" }
+            });
+
+            // Adicionar créditos se houver recargas no pedido
+            for (const item of order.items) {
+              if (item.productId.includes("credits")) {
+                const creditsMatch = item.productId.match(/\d+/);
+                const amountToAdd = (creditsMatch ? parseInt(creditsMatch[0]) : 0) * item.quantity;
+                
+                if (amountToAdd > 0) {
+                  const profile = await prisma.franchiseProfile.findUnique({ where: { userId: order.franchiseeId } });
+                  if (profile) {
+                    await prisma.franchiseProfile.update({
+                      where: { id: profile.id },
+                      data: { printCredits: { increment: amountToAdd } }
+                    });
+                    
+                    await prisma.creditTransaction.create({
+                      data: {
+                        profileId: profile.id,
+                        amount: amountToAdd,
+                        type: "PURCHASE",
+                        description: `Recarga via Loja - Pedido #${order.id}`,
+                        referenceId: order.id
+                      }
+                    });
+                  }
+                }
+              }
+            }
+          }
+        }
+      } catch (err) {
+        console.error("[Franchise Webhook Error]:", err);
+      }
+    }
+    res.sendStatus(200);
+  }
+
+  /**
+   * Lista pedidos de suprimentos do franqueado logado
+   */
+  static async listSupplyOrders(req: AuthRequest, res: Response) {
+    try {
+      const userId = req.user?.userId;
+      if (!userId) return res.status(401).json({ error: "Não autorizado" });
+
+      const orders = await prisma.supplyOrder.findMany({
+        where: { franchiseeId: userId },
+        include: { items: true },
+        orderBy: { createdAt: 'desc' }
+      });
+
+      res.json({ success: true, orders });
+    } catch (error) {
+      console.error("[listSupplyOrders] Error:", error);
+      res.status(500).json({ error: "Erro ao listar pedidos de suprimentos" });
+    }
+  }
+
+  /**
+   * Admin: Lista TODOS os pedidos de suprimentos da rede
+   */
+  static async adminListSupplyOrders(_req: Request, res: Response) {
+    try {
+      const orders = await prisma.supplyOrder.findMany({
+        include: { 
+          items: true,
+          franchisee: { select: { nome: true, email: true } }
+        },
+        orderBy: { createdAt: 'desc' }
+      });
+
+      res.json({ success: true, orders });
+    } catch (error) {
+      console.error("[adminListSupplyOrders] Error:", error);
+      res.status(500).json({ error: "Erro ao listar pedidos da rede" });
+    }
+  }
+
+  /**
+   * Admin: Atualiza status de um pedido de suprimentos (Ex: Marcar como enviado)
+   */
+  static async adminUpdateSupplyOrderStatus(req: Request, res: Response) {
+    try {
+      const id = req.params.id as string;
+      const status = req.body.status as string;
+
+      // 1. Busca o pedido com os itens e o franqueado
+      const currentOrder = await prisma.supplyOrder.findUnique({
+        where: { id },
+        include: { items: true, franchisee: { include: { franchiseProfile: true } } }
+      });
+
+      if (!currentOrder) return res.status(404).json({ error: "Pedido não encontrado" });
+
+      // 2. Se o status está mudando para PAID, e antes não estava, adiciona créditos se houver
+      const wasPaid = currentOrder.status === 'PAID';
+      const isNowPaid = status === 'PAID';
+
+      if (isNowPaid && !wasPaid) {
+        // Lógica de créditos (digital)
+        for (const item of currentOrder.items) {
+          if (item.productId.startsWith('credits_')) {
+            const amountStr = item.productId.split('_')[1];
+            const amount = parseInt(amountStr) * item.quantity;
+            if (currentOrder.franchisee.franchiseProfile) {
+              await prisma.$transaction([
+                prisma.franchiseProfile.update({
+                  where: { id: currentOrder.franchisee.franchiseProfile.id },
+                  data: { printCredits: { increment: amount } }
+                }),
+                prisma.creditTransaction.create({
+                  data: {
+                    profileId: currentOrder.franchisee.franchiseProfile.id,
+                    amount: amount,
+                    type: 'PURCHASE',
+                    description: `Recarga via Pedido #${currentOrder.id.slice(-6).toUpperCase()}`
+                  }
+                })
+              ]);
+            }
+          }
+        }
+      }
+
+      // 3. Se o status está mudando para SHIPPED, e antes não estava, deduz estoque da Matriz (físico)
+      const wasShipped = currentOrder.status === 'SHIPPED';
+      const isNowShipped = status === 'SHIPPED';
+
+      if (isNowShipped && !wasShipped) {
+        for (const item of currentOrder.items) {
+          // Busca o produto na tabela central (Matriz) pelo SKU
+          const product = await prisma.printProduct.findUnique({ where: { sku: item.productId } });
+          if (product) {
+            await prisma.$transaction([
+              prisma.printProduct.update({
+                where: { id: product.id },
+                data: { stockLevel: { decrement: item.quantity } }
+              }),
+              prisma.stockMovement.create({
+                data: {
+                  productId: product.id,
+                  quantity: -item.quantity,
+                  type: 'SALE',
+                  description: `Venda para franqueado: Pedido #${currentOrder.id.slice(-6).toUpperCase()}`
+                }
+              })
+            ]);
+          }
+        }
+      }
+
+      const order = await prisma.supplyOrder.update({
+        where: { id },
+        data: { 
+          status,
+          ...(isNowShipped && req.body.trackingCode ? { trackingCode: req.body.trackingCode } : {}),
+          ...(isNowShipped && req.body.shippingNotes ? { shippingNotes: req.body.shippingNotes } : {}),
+        }
+      });
+
+      res.json({ success: true, order });
+    } catch (error) {
+      console.error("[adminUpdateSupplyOrderStatus] Error:", error);
+      res.status(500).json({ error: "Erro ao atualizar status do pedido" });
     }
   }
 }

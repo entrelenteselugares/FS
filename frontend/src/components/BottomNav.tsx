@@ -45,11 +45,11 @@ export const BottomNav: React.FC = () => {
       </button>
 
       <button 
-        onClick={() => navigate("/cofres")}
-        className={`flex flex-col items-center gap-1 transition-colors ${isActive("/cofres") ? "text-emerald-500" : "text-[var(--text)]/40"}`}
+        onClick={() => navigate("/meus-albuns")}
+        className={`flex flex-col items-center gap-1 transition-colors ${isActive("/meus-albuns") ? "text-emerald-500" : "text-[var(--text)]/40"}`}
       >
         <Image size={20} />
-        <span className="text-[7.5px] font-bold uppercase tracking-tight">Suas fotos</span>
+        <span className="text-[7.5px] font-bold uppercase tracking-tight">Meus Álbuns</span>
       </button>
 
       <button 

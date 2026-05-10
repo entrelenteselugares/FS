@@ -1,4 +1,4 @@
-﻿import { useNavigate } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import { motion } from "framer-motion";
 import { ArrowLeft, Search } from "lucide-react";
 
@@ -47,7 +47,7 @@ export function NotFoundPage() {
       </motion.div>
 
       <div className="fixed bottom-12 left-0 right-0 flex justify-center opacity-10">
-        <img src="/logo-fs.png" alt="Foto Segundo" style={{ height: 20, objectFit: "contain", filter: "grayscale(1) brightness(2)" }} />
+        <img src="/logo.png" alt="Foto Segundo" style={{ height: 20, objectFit: "contain", filter: "var(--logo-filter)" }} />
       </div>
     </div>
   );

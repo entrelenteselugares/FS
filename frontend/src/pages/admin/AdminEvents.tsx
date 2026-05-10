@@ -357,17 +357,25 @@ export const AdminEvents: React.FC<AdminEventsProps> = ({ initialEditEventId }) 
 
   return (
     <div className="space-y-12 animate-in fade-in slide-in-from-bottom-4 duration-700">
-      <div className="flex flex-col md:flex-row md:items-center justify-between border-b border-theme-border pb-8 gap-6">
-        <div>
-          <p className="text-[9px] text-theme-muted uppercase tracking-[0.4em] mt-2 font-bold italic">Logística de Captação e Unidades Fixas</p>
+      <div className="flex flex-col md:flex-row md:items-center justify-between border-b border-theme-border pb-10 gap-6">
+        <div className="space-y-4">
+          <h1 className="text-4xl md:text-6xl font-heading font-black text-theme-text uppercase tracking-tighter italic leading-none">
+            Gestão de <span className="text-brand-tactical">Eventos</span>
+          </h1>
+          <div className="flex items-center gap-4">
+            <div className="h-1 w-12 bg-brand-tactical" />
+            <p className="text-[11px] font-black text-brand-tactical uppercase tracking-[0.4em] italic">
+              Operação de Coberturas, Logística e Pós-Produção
+            </p>
+          </div>
         </div>
-        <div className="flex flex-col md:flex-row gap-4">
+        <div className="flex gap-3">
           <button 
             onClick={() => {
               setExpressFormData({ customerName: "", customerEmail: "", whatsapp: "", amount: 15, location: "Taquaral / Marketplace", paymentMethod: "MONEY", services: [] });
               setIsExpressModalOpen(true);
             }}
-            className="font-black uppercase tracking-[0.4em] px-8 py-4 hover:brightness-110 transition-all shadow-xl shadow-brand-tactical/10 rounded-none text-[9px] w-full md:w-auto border border-brand-tactical text-brand-tactical bg-transparent"
+            className="font-black uppercase tracking-[0.4em] px-8 py-4 hover:brightness-110 transition-all shadow-xl shadow-brand-tactical/10 rounded-none text-[9px] w-full md:w-auto border border-brand-tactical text-brand-tactical bg-transparent italic"
           >
             VENDA RÁPIDA (LIVE PRINT)
           </button>
@@ -378,7 +386,7 @@ export const AdminEvents: React.FC<AdminEventsProps> = ({ initialEditEventId }) 
               setCoverPreview(null);
               setIsModalOpen(true);
             }}
-            className="font-black uppercase tracking-[0.4em] px-8 py-4 hover:brightness-110 transition-all shadow-xl shadow-brand-tactical/10 rounded-none text-[9px] w-full md:w-auto bg-brand-tactical text-zinc-950"
+            className="font-black uppercase tracking-[0.4em] px-8 py-4 hover:brightness-110 transition-all shadow-xl shadow-brand-tactical/10 rounded-none text-[9px] w-full md:w-auto bg-brand-tactical text-zinc-950 italic"
           >
             NOVO EVENTO
           </button>
@@ -388,7 +396,7 @@ export const AdminEvents: React.FC<AdminEventsProps> = ({ initialEditEventId }) 
       <style>{`
         .events-table { width: 100%; border-collapse: collapse; text-align: left; }
         .events-table thead { border-bottom: 1px solid ${T.border}; }
-        .events-table th { padding: 10px 16px; fontSize: 9px; fontFamily: ${T.fontB}; fontWeight: 900; textTransform: uppercase; letterSpacing: 2px; color: ${T.text3}; }
+        .events-table th { padding: 10px 16px; fontSize: 9px; fontFamily: ${T.fontB}; fontWeight: 900; textTransform: uppercase; letterSpacing: 1.5px; color: ${T.text3}; }
         .event-card-mobile { display: none; }
         @media (max-width: 1024px) {
           .events-table { display: none; }

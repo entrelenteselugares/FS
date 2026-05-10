@@ -1,4 +1,4 @@
-﻿import React from "react";
+import React from "react";
 import {
   AreaChart, Area, XAxis, CartesianGrid, Tooltip,
   ResponsiveContainer,
@@ -48,11 +48,20 @@ export const AdminOverview: React.FC<OverviewProps> = ({ stats, recentOrders = [
   return (
     <div className="space-y-12 animate-in fade-in slide-in-from-bottom-4 duration-700 relative">
       {/* Ambient Glow */}
-      <div className="absolute top-0 right-0 w-[600px] h-[600px] bg-emerald-500/5 blur-[150px] rounded-full -mr-64 -mt-64 opacity-20 pointer-events-none" />
+      <div className="absolute top-0 right-0 w-[600px] h-[600px] bg-brand-tactical/5 blur-[150px] rounded-full -mr-64 -mt-64 opacity-20 pointer-events-none" />
 
-      <div className="border-b border-theme-border pb-8">
-        <h2 className="text-4xl md:text-6xl font-display text-theme-text tracking-tighter uppercase font-black leading-none pt-2 italic">Visão Geral</h2>
-        <p className="text-[10px] text-emerald-500 uppercase tracking-[0.5em] mt-4 font-black italic">Consolidado da Operação Nacional</p>
+      <div className="flex flex-col md:flex-row md:items-center justify-between border-b border-theme-border pb-10 gap-6">
+        <div className="space-y-4">
+          <h1 className="text-4xl md:text-6xl font-heading font-black text-theme-text uppercase tracking-tighter italic leading-none">
+            Visão <span className="text-brand-tactical">Geral</span>
+          </h1>
+          <div className="flex items-center gap-4">
+            <div className="h-1 w-12 bg-brand-tactical" />
+            <p className="text-[11px] font-black text-brand-tactical uppercase tracking-[0.4em] italic">
+              Consolidado da Operação Nacional
+            </p>
+          </div>
+        </div>
       </div>
 
       {/* KPI Section */}
@@ -61,12 +70,12 @@ export const AdminOverview: React.FC<OverviewProps> = ({ stats, recentOrders = [
         {/* KPI Card Template */}
         {[
           { label: "Receita Bruta", value: `R$ ${Number(stats?.totalRevenue || 0).toLocaleString("pt-BR")}`, color: "text-theme-text" },
-          { label: "Últimos 30 Dias", value: `R$ ${Number(stats?.revenue30d || 0).toLocaleString("pt-BR")}`, color: "text-emerald-500", growth: stats?.growth },
+          { label: "Últimos 30 Dias", value: `R$ ${Number(stats?.revenue30d || 0).toLocaleString("pt-BR")}`, color: "text-brand-tactical", growth: stats?.growth },
           { label: "Pedidos Liquidados", value: stats?.totalOrders || 0, color: "text-theme-text" },
           { label: "Eventos Ativos", value: stats?.activeEvents || 0, color: "text-theme-text" },
           { label: "Convites Pendentes", value: stats?.pendingInvitesCount || 0, color: (stats?.pendingInvitesCount || 0) > 0 ? "text-red-500" : "text-theme-text" },
-          { label: "Vendas sem Entrega", value: stats?.missingLinksCount || 0, color: (stats?.missingLinksCount || 0) > 0 ? "text-emerald-500" : "text-theme-text" },
-          { label: "Novos Leads", value: stats?.pendingQuotesCount || 0, color: (stats?.pendingQuotesCount || 0) > 0 ? "text-emerald-500" : "text-theme-text" }
+          { label: "Vendas sem Entrega", value: stats?.missingLinksCount || 0, color: (stats?.missingLinksCount || 0) > 0 ? "text-brand-tactical" : "text-theme-text" },
+          { label: "Novos Leads", value: stats?.pendingQuotesCount || 0, color: (stats?.pendingQuotesCount || 0) > 0 ? "text-brand-tactical" : "text-theme-text" }
         ].map((kpi, idx) => (
           <div key={idx} className="bg-theme-card p-8 group hover:bg-white/[0.02] transition-colors relative">
             <div className="absolute top-0 left-0 w-full h-px bg-gradient-to-r from-transparent via-white/5 to-transparent opacity-0 group-hover:opacity-100 transition-opacity" />
@@ -88,21 +97,21 @@ export const AdminOverview: React.FC<OverviewProps> = ({ stats, recentOrders = [
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
         {/* Charts */}
         <div className="bg-theme-card border border-theme-border p-8 shadow-2xl relative group">
-          <div className="absolute top-0 left-0 w-1 h-full bg-emerald-500 opacity-20 group-hover:opacity-100 transition-opacity" />
-          <h3 className="text-[10px] font-black uppercase tracking-[0.5em] text-theme-muted mb-8 italic">Timeline de Conversão</h3>
+          <div className="absolute top-0 left-0 w-1 h-full bg-brand-tactical opacity-20 group-hover:opacity-100 transition-opacity" />
+          <h3 className="text-[10px] font-black uppercase tracking-[0.3em] text-theme-muted mb-8 italic">Timeline de Conversão</h3>
           <div className="h-[250px] w-full">
              <ResponsiveContainer width="100%" height="100%">
                 <AreaChart data={chartData} margin={{ top: 10, right: 10, left: -20, bottom: 0 }}>
                    <defs>
                       <linearGradient id="gradValor" x1="0" y1="0" x2="0" y2="1">
-                         <stop offset="5%" stopColor="#10b981" stopOpacity={0.2}/>
-                         <stop offset="95%" stopColor="#10b981" stopOpacity={0}/>
+                         <stop offset="5%" stopColor="var(--brand)" stopOpacity={0.2}/>
+                         <stop offset="95%" stopColor="var(--brand)" stopOpacity={0}/>
                       </linearGradient>
                    </defs>
                    <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="rgba(255,255,255,0.05)" />
                    <XAxis dataKey="name" axisLine={false} tickLine={false} tick={{fontSize: 9, fill: "rgba(255,255,255,0.2)", fontWeight: 800}} dy={10} />
                    <Tooltip contentStyle={{background: "#0a0a0a", border: "1px solid rgba(255,255,255,0.05)", fontSize: 10, borderRadius: 0, color: "#fff"}} />
-                   <Area type="monotone" dataKey="valor" stroke="#10b981" fillOpacity={1} fill="url(#gradValor)" strokeWidth={3} />
+                   <Area type="monotone" dataKey="valor" stroke="var(--brand)" fillOpacity={1} fill="url(#gradValor)" strokeWidth={3} />
                 </AreaChart>
              </ResponsiveContainer>
           </div>
@@ -110,20 +119,20 @@ export const AdminOverview: React.FC<OverviewProps> = ({ stats, recentOrders = [
 
         {/* Alertas */}
         <div className="bg-theme-card border border-theme-border p-8 shadow-2xl relative">
-          <h3 className="text-[10px] font-black uppercase tracking-[0.5em] text-theme-muted mb-8 italic">Pendências de Curadoria</h3>
+          <h3 className="text-[10px] font-black uppercase tracking-[0.3em] text-theme-muted mb-8 italic">Pendências de Curadoria</h3>
           <div className="space-y-4">
             {pendingEvents.length > 0 ? pendingEvents.map(event => (
-              <div key={event.id} className="flex items-center justify-between p-5 border border-theme-border bg-white/[0.02] hover:border-emerald-500/30 transition-all group">
+              <div key={event.id} className="flex items-center justify-between p-5 border border-theme-border bg-white/[0.02] hover:border-brand-tactical/30 transition-all group">
                 <div className="space-y-2">
                   <div className="text-sm font-display font-black text-theme-text uppercase italic tracking-widest">{event.title}</div>
                   <div className="flex gap-4">
                      {!event.coverPhotoUrl && <span className="text-[8px] font-black bg-red-500/10 text-red-500 px-2 py-0.5 uppercase tracking-widest border border-red-500/20">Sem Capa</span>}
-                     {!event.lightroomUrl && <span className="text-[8px] font-black bg-emerald-500/10 text-emerald-500 px-2 py-0.5 uppercase tracking-widest border border-emerald-500/20">Sem Fotos</span>}
+                     {!event.lightroomUrl && <span className="text-[8px] font-black bg-brand-tactical/10 text-brand-tactical px-2 py-0.5 uppercase tracking-widest border border-brand-tactical/20">Sem Fotos</span>}
                   </div>
                 </div>
                 <button 
                   onClick={() => onEditEvent(event.id)}
-                  className="px-6 py-2 border border-theme-border text-[9px] font-black uppercase tracking-widest text-theme-muted hover:text-emerald-500 hover:border-emerald-500 transition-all"
+                  className="px-6 py-2 border border-theme-border text-[9px] font-black uppercase tracking-widest text-theme-muted hover:text-brand-tactical hover:border-brand-tactical transition-all"
                 >Ajustar</button>
               </div>
             )) : (

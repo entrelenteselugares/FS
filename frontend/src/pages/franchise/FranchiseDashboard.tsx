@@ -113,8 +113,8 @@ const FranchiseDashboard: React.FC = () => {
       {/* HEADER OPERACIONAL */}
       <div className="flex flex-col md:flex-row md:items-end justify-between gap-6">
         <div className="space-y-2">
-          <span className="text-[10px] font-black text-brand-tactical uppercase tracking-[0.3em]">Gestão de Franquia</span>
-          <h1 className="text-4xl md:text-5xl font-heading font-black text-theme-text uppercase tracking-tighter leading-none italic">
+          <span className="text-[11px] font-black text-brand-tactical uppercase tracking-[0.4em] italic">Gestão de Franquia</span>
+          <h1 className="text-4xl md:text-6xl font-heading font-black text-theme-text uppercase tracking-tighter leading-none italic">
             Command <span className="text-brand-tactical">Center</span>
           </h1>
         </div>
@@ -126,7 +126,7 @@ const FranchiseDashboard: React.FC = () => {
             <div className={`absolute -top-1 -right-1 w-2.5 h-2.5 rounded-full animate-ping ${printerStatus === 'ONLINE' ? 'bg-brand-tactical' : 'bg-red-500'}`} />
           </div>
           <div className="space-y-0.5">
-            <span className="text-[10px] font-black text-theme-muted uppercase tracking-widest block opacity-60">Status Agent</span>
+            <span className="text-[9px] font-black text-theme-muted uppercase tracking-widest block opacity-60">Status Agent</span>
             <span className={`text-sm font-black uppercase italic ${printerStatus === 'ONLINE' ? 'text-brand-tactical' : 'text-red-500'}`}>
               {printerStatus}
             </span>
@@ -140,7 +140,7 @@ const FranchiseDashboard: React.FC = () => {
             <div className="absolute -top-1 -right-1 w-2.5 h-2.5 rounded-full bg-blue-500 animate-pulse" />
           </div>
           <div className="space-y-0.5">
-            <span className="text-[10px] font-black text-theme-muted uppercase tracking-widest block opacity-60">Renda Passiva</span>
+            <span className="text-[9px] font-black text-theme-muted uppercase tracking-widest block opacity-60">Renda Passiva</span>
             <span className="text-sm font-black uppercase italic text-blue-400">
               {new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL' }).format(finance.totalEarned)}
             </span>
@@ -198,7 +198,7 @@ const FranchiseDashboard: React.FC = () => {
                       style={{ width: '85%' }}
                     />
                   </div>
-                  <div className="flex justify-between text-[8px] font-black text-theme-muted uppercase tracking-tighter opacity-50">
+                  <div className="flex justify-between text-[9px] font-black text-theme-muted uppercase tracking-widest opacity-50">
                     <span>Vencimento Estimado: 4 dias</span>
                     <span>Consumo Médio: 12p/dia</span>
                   </div>

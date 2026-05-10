@@ -50,12 +50,12 @@ export default function VaultDetailPage() {
 
   const fetchVaultDetails = useCallback(async () => {
     try {
-      // Tentar buscar detalhes específicos do cofre
+      // Tentar buscar detalhes específicos do álbum
       let currentVault;
       try {
         const vRes = await api.get(`/vaults`);
         currentVault = vRes.data.find((v: Vault) => v.id === vaultId);
-      } catch { console.error("Erro ao buscar cofre"); }
+      } catch { console.error("Erro ao buscar álbum"); }
 
       const mediaRes = await api.get(`/vaults/${vaultId}/media`);
       
@@ -104,7 +104,7 @@ export default function VaultDetailPage() {
       }
     } catch (err: unknown) {
       console.error("[Checkout] Erro:", err);
-      const msg = (err as { response?: { data?: { error?: string } } }).response?.data?.error || "Erro ao processar materialização do cofre.";
+      const msg = (err as { response?: { data?: { error?: string } } }).response?.data?.error || "Erro ao processar materialização do álbum.";
       alert(msg);
     } finally {
       setCheckingOut(false);
@@ -119,7 +119,7 @@ export default function VaultDetailPage() {
     if (!vault) return;
     try {
       const { data } = await api.post(`/vaults/${vaultId}/invite`);
-      const text = `Venha compartilhar memórias comigo no cofre "${vault.nome}"!\n\nLink de acesso:\n${data.url}`;
+      const text = `Venha compartilhar memórias comigo no álbum "${vault.nome}"!\n\nLink de acesso:\n${data.url}`;
       
       if (navigator.share) {
         await navigator.share({ title: vault.nome, text, url: data.url });
@@ -212,7 +212,7 @@ export default function VaultDetailPage() {
         failCount++;
         const axiosError = err as { response?: { status?: number, data?: { error?: string } } };
         if (axiosError.response?.status === 400 && axiosError.response?.data?.error?.includes("cheio")) {
-           alert("O cofre atingiu a meta! Algumas fotos não puderam ser enviadas.");
+           alert("O álbum atingiu a meta! Algumas fotos não puderam ser enviadas.");
            break; 
         }
       }
@@ -239,9 +239,9 @@ export default function VaultDetailPage() {
     return (
       <div className="min-h-screen flex flex-col items-center justify-center p-6 text-center" style={{ background: T.bg, color: T.text }}>
         <Lock size={48} className="text-red-500/30 mb-4" />
-        <h1 className="text-2xl font-black uppercase italic">Cofre não encontrado</h1>
-        <button onClick={() => navigate("/cofres")} className="mt-6 text-emerald-500 font-bold uppercase tracking-widest text-[11px]">
-          Voltar para meus cofres
+        <h1 className="text-2xl font-black uppercase italic">Álbum não encontrado</h1>
+        <button onClick={() => navigate("/meus-albuns")} className="mt-6 text-emerald-500 font-bold uppercase tracking-widest text-[11px]">
+          Voltar para meus álbuns
         </button>
       </div>
     );
@@ -250,7 +250,7 @@ export default function VaultDetailPage() {
   return (
     <div className="min-h-screen font-sans flex flex-col" style={{ background: T.bg, color: T.text }}>
       <Helmet>
-        <title>{vault.nome || "Cofre"} | Cofre de Memórias</title>
+        <title>{vault.nome || "Álbum"} | Meus Álbuns</title>
       </Helmet>
       <div className="hidden md:block">
         <Navbar />
@@ -261,7 +261,7 @@ export default function VaultDetailPage() {
         <div className="max-w-7xl mx-auto px-4 py-4 md:py-6 flex flex-col md:flex-row md:items-center justify-between gap-4">
           <div className="flex items-center gap-4">
             <button 
-              onClick={() => navigate("/cofres")}
+              onClick={() => navigate("/meus-albuns")}
               className="p-2 hover:bg-black/5 dark:hover:bg-white/5 rounded-full transition-colors"
               style={{ color: T.text2 }}
             >
@@ -331,7 +331,7 @@ export default function VaultDetailPage() {
                     <Zap className="text-black" size={24} fill="currentColor" />
                   </div>
                   <div>
-                    <h3 className="text-lg font-black uppercase italic tracking-tight">Clube de Memórias</h3>
+                    <h3 className="text-lg font-black uppercase italic tracking-tight">Meus Álbuns</h3>
                     <p className="text-[11px] text-zinc-400 uppercase tracking-widest leading-relaxed max-w-md">
                       Assine por apenas <span className="text-white font-bold">R$ 49,90/mês</span> e tenha 36 fotos impressas e entregues automaticamente todo mês baseadas nos votos da galera.
                     </p>
@@ -393,7 +393,7 @@ export default function VaultDetailPage() {
             <div className="w-20 h-20 bg-emerald-500/5 rounded-full flex items-center justify-center mb-6 border border-emerald-500/10">
               <Camera size={32} className="text-emerald-500/20" />
             </div>
-            <h2 className="text-xl font-black uppercase italic text-gray-500">O cofre está vazio</h2>
+            <h2 className="text-xl font-black uppercase italic text-gray-500">O álbum está vazio</h2>
             <p className="text-[11px] text-gray-600 uppercase tracking-widest mt-2 max-w-[280px]">
               Seja o primeiro a eternizar um momento neste álbum.
             </p>
@@ -455,7 +455,7 @@ export default function VaultDetailPage() {
       {/* Immersive Mobile Bottom Nav */}
       <div className="fixed bottom-0 left-0 right-0 z-50 md:hidden bg-zinc-950/80 backdrop-blur-xl border-t border-white/10 pb-safe">
         <div className="flex items-center justify-between px-4 py-3">
-          <button onClick={() => navigate("/cofres")} className="flex flex-col items-center gap-1 text-zinc-400 hover:text-emerald-500 transition-colors">
+          <button onClick={() => navigate("/meus-albuns")} className="flex flex-col items-center gap-1 text-zinc-400 hover:text-emerald-500 transition-colors">
             <ChevronLeft size={20} />
             <span className="text-[9px] font-black uppercase tracking-widest">Voltar</span>
           </button>

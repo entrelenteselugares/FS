@@ -12,9 +12,31 @@ import {
   AgendaTab, FinanceTab, NetworkTab, ServicesTab, ProfileTab,
   EventEditPanel, ExpressSaleModal, ProfileModal, FlashEventModal, FotoPointModal, FotoPointEditModal,
   DashboardHeader, DashboardStats, SupportBanner,
-  OpportunitiesModal, ExpressSaleBanner,
-  type EventItem, type UnitInvite, type ServiceCatalog, type ProfileData, type Partner,
+  OpportunitiesModal, ExpressSaleBanner, FranchiseShopModal,
+  type EventItem, type UnitInvite, type ServiceCatalog, type ProfileData, type Partner
 } from "../components/profissional";
+
+interface PayoutItem {
+  id: string;
+  amount: number;
+  status: string;
+  payout: {
+    weekStart: string;
+    weekEnd: string;
+  };
+}
+
+interface SupplyOrder {
+  id: string;
+  createdAt: string;
+  total: number;
+  status: string;
+  items: Array<{
+    id: string;
+    name: string;
+    quantity: number;
+  }>;
+}
 
 // ─── Types ────────────────────────────────────────────────────────────────────
 
@@ -47,9 +69,11 @@ export default function ProfissionalDashboard() {
   const [isExpressModalOpen, setIsExpressModalOpen] = useState(false);
   const [isFlashModalOpen, setIsFlashModalOpen] = useState(false);
   const [isFotoPointModalOpen, setIsFotoPointModalOpen] = useState(false);
+  const [isShopModalOpen, setIsShopModalOpen] = useState(false);
   const [showNewServicesModal, setShowNewServicesModal] = useState(false);
   const [hasCheckedInvites, setHasCheckedInvites] = useState(false);
   const [notification, setNotification] = useState<{ message: string; type: "success" | "error" } | null>(null);
+  const [payouts, setPayouts] = useState<PayoutItem[]>([]);
   const [calendarStatus, setCalendarStatus] = useState<{ 
     connected: boolean; 
     credential: { 
@@ -58,6 +82,13 @@ export default function ProfissionalDashboard() {
     } 
   } | null>(null);
   const [isSyncing, setIsSyncing] = useState(false);
+  const [supplyOrders, setSupplyOrders] = useState<SupplyOrder[]>([]);
+
+  useEffect(() => {
+    const params = new URLSearchParams(location.search);
+    const tab = params.get("tab") as ActiveTab;
+    if (tab) setActiveTab(tab);
+  }, [location.search]);
 
   // Network search state
   const [networkSearch, setNetworkSearch] = useState("");
@@ -133,7 +164,9 @@ export default function ProfissionalDashboard() {
       API.get("profissional/unidades/convites").then(r => setUnitInvites(r.data)),
       API.get("public/configs/services").then(r => setCatalogServices(r.data.services || [])),
       API.get("profissional/network").then(r => setNetwork(r.data)),
-      API.get("calendar/status").then(r => setCalendarStatus(r.data))
+      API.get("calendar/status").then(r => setCalendarStatus(r.data)),
+      API.get("me/repasses").then(r => setPayouts(r.data)),
+      API.get("/franchise/orders").then(r => setSupplyOrders(r.data.orders || []))
     ]).finally(() => setLoading(false));
 
     // Handle calendar return notifications
@@ -305,16 +338,22 @@ export default function ProfissionalDashboard() {
     { label: "Serviços", onClick: () => setActiveTab("servicos"), isActive: activeTab === "servicos", icon: <Briefcase size={16} /> },
     { label: "Minha Rede", onClick: () => setActiveTab("network"), isActive: activeTab === "network", icon: <Users size={16} /> },
     { label: "Agenda Google", onClick: () => setActiveTab("calendar"), isActive: activeTab === "calendar", icon: <Calendar size={16} /> },
-    ...(user?.franchiseProfile && user?.franchiseProfile.active ? [{ 
-      label: "Franquia Print", 
-      onClick: () => setActiveTab("franquia"), 
-      isActive: activeTab === "franquia", 
-      icon: <Printer size={16} /> 
-    }] : []),
+      { 
+        label: "Franquia Print", 
+        onClick: () => setActiveTab("franquia"), 
+        isActive: activeTab === "franquia", 
+        icon: <Printer size={16} /> 
+      },
     { label: "Meu Perfil", onClick: () => setActiveTab("perfil"), isActive: activeTab === "perfil", icon: <Settings size={16} /> },
-  ], [activeTab, pendingEvents.length, unitInvites.length, user?.franchiseProfile]);
+  ], [activeTab, pendingEvents.length, unitInvites.length]);
 
   const residentUnits = profile?.cartorios?.map((cp) => cp.cartorio.razaoSocial) || [];
+
+  const availableBalance = useMemo(() => {
+    return payouts
+      .filter(p => p.status !== "PAID")
+      .reduce((acc, p) => acc + Number(p.amount), 0);
+  }, [payouts]);
 
   // ─── Render ───────────────────────────────────────────────────────────────────
 
@@ -538,14 +577,14 @@ export default function ProfissionalDashboard() {
                 <div className="flex flex-col md:flex-row md:items-end justify-between gap-4">
                   <div>
                     <h2 className="text-4xl md:text-6xl font-display font-black text-theme-text uppercase tracking-tighter italic leading-none">Franquia Print</h2>
-                    <p className="text-[10px] text-emerald-500 uppercase tracking-[0.4em] mt-4 font-black italic">Gestão de Créditos e Operações Phygital</p>
+                    <p className="text-[11px] text-brand-tactical uppercase tracking-[0.4em] mt-4 font-black italic">Gestão de Créditos e Operações Phygital</p>
                   </div>
                 </div>
                 <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
                   <div className="bg-theme-bg border border-theme-border p-10 relative overflow-hidden group">
-                    <div className="absolute top-0 left-0 w-full h-1 bg-emerald-500/20 group-hover:bg-emerald-500 transition-colors" />
+                    <div className="absolute top-0 left-0 w-full h-1 bg-brand-tactical/20 group-hover:bg-brand-tactical transition-colors" />
                     <label className="text-[9px] font-black text-theme-muted uppercase tracking-widest block mb-4">Saldo Disponível</label>
-                    <div className={`text-7xl font-display font-black italic tracking-tighter ${user.franchiseProfile.printCredits < 50 ? 'text-amber-500' : 'text-emerald-500'}`}>
+                    <div className={`text-7xl font-display font-black italic tracking-tighter ${user.franchiseProfile.printCredits < 50 ? 'text-amber-500' : 'text-brand-tactical'}`}>
                       {user.franchiseProfile.printCredits}
                     </div>
                     <p className="text-[10px] text-theme-muted font-black uppercase tracking-[0.2em] mt-2 italic">Fotos para Impressão</p>
@@ -553,26 +592,89 @@ export default function ProfissionalDashboard() {
                   
                   <div className="bg-theme-bg border border-theme-border p-10 relative group">
                     <label className="text-[9px] font-black text-theme-muted uppercase tracking-widest block mb-4">Status do Terminal</label>
-                    <div className={`text-xl font-display font-black uppercase italic tracking-widest ${user.franchiseProfile.active ? 'text-emerald-500' : 'text-red-500'}`}>
+                    <div className={`text-xl font-display font-black uppercase italic tracking-widest ${user.franchiseProfile.active ? 'text-brand-tactical' : 'text-red-500'}`}>
                       {user.franchiseProfile.active ? 'Terminal Ativo' : 'Terminal Inativo'}
                     </div>
                     <div className="mt-4 flex items-center gap-2">
-                      <div className={`w-2 h-2 rounded-full ${user.franchiseProfile.active ? 'bg-emerald-500 animate-pulse' : 'bg-red-500'}`} />
+                      <div className={`w-2 h-2 rounded-full ${user.franchiseProfile.active ? 'bg-brand-tactical animate-pulse' : 'bg-red-500'}`} />
                       <span className="text-[9px] text-theme-muted font-black uppercase tracking-widest">Sincronizado com a Nuvem</span>
                     </div>
                   </div>
 
                   <div className="bg-theme-bg border border-theme-border p-10 flex flex-col justify-between">
                     <div>
-                      <label className="text-[9px] font-black text-theme-muted uppercase tracking-widest block mb-2">Recarga de Créditos</label>
+                      <label className="text-[9px] font-black text-theme-muted uppercase tracking-widest block mb-2">Abastecimento & Loja</label>
                       <p className="text-[10px] text-theme-muted font-bold leading-relaxed uppercase tracking-wider">
-                        O limite de impressões é gerenciado pela administração central. Solicite uma nova carga para continuar operando.
+                        Adquira créditos de impressão ou insumos (papel/ribbon) com entrega direta ou abatimento no repasse.
                       </p>
                     </div>
-                    <button className="w-full py-4 mt-6 border border-emerald-500/30 text-emerald-500 font-display font-black text-[10px] uppercase tracking-widest hover:bg-emerald-500 hover:text-black transition-all">
-                      SOLICITAR RECARGA
-                    </button>
+                    <div className="space-y-4 mt-6">
+                      <button 
+                        onClick={() => setIsShopModalOpen(true)}
+                        className="w-full py-4 bg-brand-tactical text-black font-display font-black text-[10px] uppercase tracking-widest hover:brightness-110 transition-all shadow-lg shadow-brand-tactical/10"
+                      >
+                        LOJA DA FRANQUIA
+                      </button>
+                      <button 
+                        onClick={() => window.open("https://wa.me/5519984470420?text=Olá! Preciso de assistência técnica para minha unidade Foto Segundo.", "_blank")}
+                        className="w-full py-3 border border-theme-border text-theme-muted font-black text-[9px] uppercase tracking-widest hover:border-brand-tactical/30 hover:text-brand-tactical transition-all"
+                      >
+                        ASSISTÊNCIA TÉCNICA
+                      </button>
+                    </div>
                   </div>
+                </div>
+
+                {/* Histórico de Pedidos B2B */}
+                <div className="bg-theme-bg border border-theme-border p-8 space-y-6">
+                  <div className="flex items-center justify-between">
+                    <h3 className="text-xl font-display font-black text-white uppercase italic tracking-tight">Histórico de Pedidos</h3>
+                    <div className="h-px flex-1 bg-white/5 mx-6" />
+                  </div>
+                  
+                  {supplyOrders.length === 0 ? (
+                    <div className="py-12 text-center border border-dashed border-white/5 bg-white/[0.02]">
+                      <p className="text-[10px] text-theme-muted font-black uppercase tracking-widest">Nenhum pedido realizado</p>
+                    </div>
+                  ) : (
+                    <div className="overflow-x-auto">
+                      <table className="w-full text-left border-collapse">
+                        <thead>
+                          <tr className="border-b border-white/5 text-[9px] font-black text-theme-muted uppercase tracking-widest">
+                            <th className="py-4 px-2">Data</th>
+                            <th className="py-4 px-2">Itens</th>
+                            <th className="py-4 px-2">Total</th>
+                            <th className="py-4 px-2">Status</th>
+                          </tr>
+                        </thead>
+                        <tbody>
+                          {supplyOrders.map((order) => (
+                            <tr key={order.id} className="border-b border-white/5 hover:bg-white/[0.02] transition-colors">
+                              <td className="py-4 px-2 text-[10px] text-white font-mono">
+                                {new Date(order.createdAt).toLocaleDateString('pt-BR')}
+                              </td>
+                              <td className="py-4 px-2">
+                                <p className="text-[10px] text-white font-black uppercase italic">
+                                  {order.items?.map((it) => `${it.quantity}x ${it.name}`).join(", ") || "N/A"}
+                                </p>
+                              </td>
+                              <td className="py-4 px-2 text-[10px] text-brand-tactical font-black">
+                                R$ {Number(order.total).toFixed(2)}
+                              </td>
+                              <td className="py-4 px-2">
+                                <span className={`text-[8px] font-black px-2 py-1 rounded-sm uppercase tracking-widest ${
+                                  order.status === 'PAID' ? 'bg-brand-tactical/10 text-brand-tactical' : 
+                                  order.status === 'PENDING' ? 'bg-amber-500/10 text-amber-500' : 'bg-zinc-800 text-zinc-500'
+                                }`}>
+                                  {order.status === 'PAID' ? 'Pago' : order.status === 'PENDING' ? 'Pendente' : order.status}
+                                </span>
+                              </td>
+                            </tr>
+                          ))}
+                        </tbody>
+                      </table>
+                    </div>
+                  )}
                 </div>
                 {user.franchiseProfile.printCredits < 50 && (
                   <div className="border border-amber-500/30 bg-amber-500/5 p-6 flex items-start gap-4">
@@ -583,6 +685,40 @@ export default function ProfissionalDashboard() {
                     </div>
                   </div>
                 )}
+
+                {/* Histórico de Consumo (Insumos) */}
+                <div className="space-y-6">
+                  <div className="flex items-center justify-between">
+                    <h3 className="text-xl font-display font-black text-white uppercase italic tracking-tight">Histórico de Consumo</h3>
+                    <div className="h-px flex-1 bg-white/5 mx-6" />
+                  </div>
+                  <div className="bg-theme-bg border border-theme-border overflow-hidden">
+                    <table className="w-full text-left border-collapse">
+                      <thead>
+                        <tr className="bg-theme-bg-muted border-b border-theme-border">
+                          <th className="p-4 text-[9px] font-black text-theme-muted uppercase tracking-widest">Data</th>
+                          <th className="p-4 text-[9px] font-black text-theme-muted uppercase tracking-widest">Operação</th>
+                          <th className="p-4 text-[9px] font-black text-theme-muted uppercase tracking-widest text-right">Qtd</th>
+                        </tr>
+                      </thead>
+                      <tbody className="divide-y divide-theme-border">
+                        {user.franchiseProfile.transactions?.filter(tx => tx.amount < 0).map(tx => (
+                          <tr key={tx.id} className="hover:bg-white/[0.02] transition-colors">
+                            <td className="p-4 text-[10px] text-theme-muted font-mono">{new Date(tx.createdAt).toLocaleDateString('pt-BR')}</td>
+                            <td className="p-4">
+                              <span className="text-[10px] font-black text-theme-text uppercase">{tx.description || "Consumo Phygital"}</span>
+                            </td>
+                            <td className="p-4 text-right">
+                              <span className="text-[10px] font-black text-red-500">{tx.amount}</span>
+                            </td>
+                          </tr>
+                        )) || (
+                          <tr><td colSpan={3} className="p-10 text-center text-[9px] text-theme-muted uppercase font-black tracking-widest">Nenhum consumo registrado.</td></tr>
+                        )}
+                      </tbody>
+                    </table>
+                  </div>
+                </div>
 
                 {/* ── OPERAÇÕES DE IMPRESSÃO ── */}
                 <div className="space-y-6">
@@ -624,7 +760,7 @@ export default function ProfissionalDashboard() {
                 {/* ── ATIVIDADE RECENTE ── */}
                  <div className="space-y-6">
                     <div className="flex items-center gap-4">
-                       <div className="h-px w-8 bg-emerald-500" />
+                       <div className="h-px w-8 bg-brand-tactical" />
                        <p className="text-[10px] font-black text-theme-muted uppercase tracking-[0.5em] italic">Registro de Atividades</p>
                     </div>
  
@@ -647,7 +783,7 @@ export default function ProfissionalDashboard() {
                                      </p>
                                    </div>
                                 </div>
-                                <div className={`text-lg font-display font-black italic tracking-tighter ${tx.amount > 0 ? 'text-emerald-500' : 'text-theme-muted'}`}>
+                                <div className={`text-lg font-display font-black italic tracking-tighter ${tx.amount > 0 ? 'text-brand-tactical' : 'text-theme-muted'}`}>
                                    {tx.amount > 0 ? '+' : ''}{tx.amount}
                                 </div>
                              </div>
@@ -781,6 +917,19 @@ export default function ProfissionalDashboard() {
             navigate(`/e/${slug}`);
           }}
           onError={(msg) => showNotification(msg, "error")}
+        />
+      )}
+
+      {/* Loja da Franquia */}
+      {isShopModalOpen && (
+        <FranchiseShopModal 
+          onClose={() => setIsShopModalOpen(false)}
+          onSuccess={(msg) => {
+            showNotification(msg, "success");
+            // Atualizar balanço e créditos se necessário
+          }}
+          availableBalance={availableBalance}
+          userAddress={profile?.cartorios?.[0]?.cartorio?.endereco || ""}
         />
       )}
     </DashboardLayout>

@@ -23,6 +23,25 @@ interface Franchisee {
   } | null;
 }
 
+interface SupplyOrder {
+  id: string;
+  createdAt: string;
+  total: number;
+  status: string;
+  paymentMethod: string;
+  trackingCode?: string;
+  shippingNotes?: string;
+  franchisee: {
+    nome: string;
+    email: string;
+  };
+  items: Array<{
+    name: string;
+    quantity: number;
+    price: number;
+  }>;
+}
+
 export default function AdminFranchises() {
   const { user } = useAuth();
   const isAdmin = user?.role === 'ADMIN';
@@ -34,19 +53,54 @@ export default function AdminFranchises() {
   const [allUsers, setAllUsers] = useState<{id: string, nome: string, email: string, role: string, franchiseProfile: unknown}[]>([]);
   const [selectedUserId, setSelectedUserId] = useState('');
   const [isPromoting, setIsPromoting] = useState(false);
+  const [supplyOrders, setSupplyOrders] = useState<SupplyOrder[]>([]);
+  const [loadingOrders, setLoadingOrders] = useState(true);
+  const [fulfillingOrder, setFulfillingOrder] = useState<string | null>(null);
+  const [fulfillModal, setFulfillModal] = useState<{ orderId: string; franchisee: string } | null>(null);
+  const [trackingCode, setTrackingCode] = useState('');
+  const [shippingNotes, setShippingNotes] = useState('');
 
   const fetchFranchisees = async () => {
     try {
-      const [fRes, uRes] = await Promise.all([
+      const [fRes, uRes, oRes] = await Promise.all([
         API.get('/admin/franchises'),
-        API.get('/admin/users')
+        API.get('/admin/users'),
+        API.get('/admin/franchises/orders')
       ]);
       if (fRes.data.success) setFranchisees(fRes.data.franchisees);
       setAllUsers(uRes.data || []);
+      if (oRes.data.success) setSupplyOrders(oRes.data.orders);
     } catch (err) {
       console.error('Erro ao buscar franqueados:', err);
     } finally {
       setLoading(false);
+      setLoadingOrders(false);
+    }
+  };
+
+  const fulfillOrder = async () => {
+    if (!fulfillModal) return;
+    const { orderId } = fulfillModal;
+    setFulfillingOrder(orderId);
+    try {
+      await API.patch(`/admin/franchises/orders/${orderId}/status`, { 
+        status: 'SHIPPED', 
+        trackingCode: trackingCode.trim() || undefined,
+        shippingNotes: shippingNotes.trim() || undefined,
+      });
+      setSupplyOrders(prev => prev.map(o => o.id === orderId 
+        ? { ...o, status: 'SHIPPED', trackingCode: trackingCode.trim(), shippingNotes: shippingNotes.trim() } 
+        : o
+      ));
+      await fetchFranchisees();
+      setFulfillModal(null);
+      setTrackingCode('');
+      setShippingNotes('');
+    } catch (err) {
+      console.error('Erro ao processar fulfillment:', err);
+      alert('Erro ao processar. Verifique o console.');
+    } finally {
+      setFulfillingOrder(null);
     }
   };
 
@@ -113,43 +167,50 @@ export default function AdminFranchises() {
   return (
     <div className="space-y-10 animate-in fade-in duration-700">
       {/* Header */}
-      <div className="flex flex-col md:flex-row md:items-end justify-between gap-6 border-b border-theme-border pb-10">
-        <div>
-          <h2 className="text-4xl font-black text-theme-text uppercase tracking-tighter">Expansão Phygital</h2>
-          <p className="text-[10px] text-theme-muted uppercase tracking-[0.5em] mt-2 font-black italic">Gestão de Micro-Franquias & Créditos</p>
+      <div className="flex flex-col md:flex-row md:items-center justify-between border-b border-theme-border pb-10 gap-6">
+        <div className="space-y-4">
+          <h1 className="text-4xl md:text-6xl font-heading font-black text-theme-text uppercase tracking-tighter italic leading-none">
+            Expansão <span className="text-brand-tactical">Phygital</span>
+          </h1>
+          <div className="flex items-center gap-4">
+            <div className="h-1 w-12 bg-brand-tactical" />
+            <p className="text-[11px] font-black text-brand-tactical uppercase tracking-[0.4em] italic">
+              Gestão de Micro-Franquias & Créditos
+            </p>
+          </div>
         </div>
         {isAdmin && (
           <button 
             onClick={() => setShowAddModal(true)}
-            className="bg-brand-tactical text-zinc-950 px-8 py-4 text-[10px] font-black uppercase tracking-widest hover:brightness-110 transition-all flex items-center gap-3 shadow-xl"
+            className="bg-brand-tactical text-zinc-950 px-8 py-4 text-[10px] font-black uppercase tracking-widest hover:brightness-110 transition-all flex items-center gap-3 shadow-xl italic"
           >
-            <Plus size={16} /> Novo Franqueado
+            <Plus size={16} /> NOVO FRANQUEADO
           </button>
         )}
       </div>
 
       {/* Stats */}
-      <div className="grid grid-cols-1 md:grid-cols-4 gap-1 border border-theme-border">
-        <div className="bg-theme-bg-muted p-8 border border-theme-border">
-          <label className="text-[9px] font-black text-theme-muted uppercase tracking-widest block mb-4">Total de Franqueados</label>
-          <div className="text-3xl font-black text-theme-text">{franchisees.length}</div>
+      <div className="grid grid-cols-1 md:grid-cols-4 gap-6">
+        <div className="bg-theme-bg-muted p-6 border border-theme-border space-y-3 group hover:border-brand-tactical/50 transition-all">
+          <label className="text-[9px] font-black text-theme-muted uppercase tracking-widest block italic">Total de Franqueados</label>
+          <div className="text-3xl font-heading font-black text-theme-text italic">{franchisees.length}</div>
         </div>
-        <div className="bg-theme-bg-muted p-8 border border-theme-border">
-          <label className="text-[9px] font-black text-theme-muted uppercase tracking-widest block mb-4">Créditos em Circulação</label>
-          <div className="text-3xl font-black text-brand-tactical">
+        <div className="bg-theme-bg-muted p-6 border border-theme-border space-y-3 group hover:border-brand-tactical/50 transition-all">
+          <label className="text-[9px] font-black text-theme-muted uppercase tracking-widest block italic">Créditos em Circulação</label>
+          <div className="text-3xl font-heading font-black text-brand-tactical italic">
             {franchisees.reduce((acc, f) => acc + (f.franchiseProfile?.printCredits || 0), 0)}
           </div>
         </div>
-        <div className="bg-theme-bg-muted p-8 border border-theme-border">
-          <label className="text-[9px] font-black text-theme-muted uppercase tracking-widest block mb-4">Eventos Cobertos</label>
-          <div className="text-3xl font-black text-theme-text">
+        <div className="bg-theme-bg-muted p-6 border border-theme-border space-y-3 group hover:border-brand-tactical/50 transition-all">
+          <label className="text-[9px] font-black text-theme-muted uppercase tracking-widest block italic">Eventos Cobertos</label>
+          <div className="text-3xl font-heading font-black text-theme-text italic">
             {franchisees.reduce((acc, f) => acc + (f.franchiseProfile?.events?.length || 0), 0)}
           </div>
         </div>
-        <div className="bg-theme-bg-muted p-8 border border-theme-border">
-          <label className="text-[9px] font-black text-theme-muted uppercase tracking-widest block mb-4">Status da Rede</label>
-          <div className="flex items-center gap-2 text-emerald-500 font-black text-xs uppercase tracking-widest">
-            <Activity size={14} /> 100% Online
+        <div className="bg-theme-bg-muted p-6 border border-theme-border space-y-3 group hover:border-brand-tactical/50 transition-all">
+          <label className="text-[9px] font-black text-theme-muted uppercase tracking-widest block italic">Status da Rede</label>
+          <div className="flex items-center gap-2 text-brand-tactical font-black text-[12px] font-heading uppercase tracking-widest italic leading-none">
+            <Activity size={14} /> 100% ONLINE
           </div>
         </div>
       </div>
@@ -232,6 +293,87 @@ export default function AdminFranchises() {
         </table>
       </div>
 
+      {/* Supply Orders Section */}
+      <div className="space-y-6 pt-10 border-t border-theme-border">
+        <div>
+          <h3 className="text-2xl font-black text-theme-text uppercase tracking-tighter">Pedidos de Suprimentos</h3>
+          <p className="text-[9px] text-theme-muted uppercase tracking-[0.4em] mt-1 font-black italic">Monitoramento de Compras B2B da Rede</p>
+        </div>
+
+        <div className="border border-theme-border bg-theme-bg shadow-sm overflow-hidden">
+          <table className="w-full text-left border-collapse">
+            <thead>
+              <tr className="bg-theme-bg-muted">
+                <th className="p-4 text-[9px] font-black text-theme-muted uppercase tracking-widest">Pedido</th>
+                <th className="p-4 text-[9px] font-black text-theme-muted uppercase tracking-widest">Franqueado</th>
+                <th className="p-4 text-[9px] font-black text-theme-muted uppercase tracking-widest">Itens</th>
+                <th className="p-4 text-[9px] font-black text-theme-muted uppercase tracking-widest text-center">Total</th>
+                <th className="p-4 text-[9px] font-black text-theme-muted uppercase tracking-widest text-right">Status</th>
+                <th className="p-4 text-[9px] font-black text-theme-muted uppercase tracking-widest text-right">Ações</th>
+              </tr>
+            </thead>
+            <tbody className="divide-y divide-theme-border/50">
+              {loadingOrders ? (
+                <tr><td colSpan={5} className="p-10 text-center text-theme-muted text-[9px] font-black uppercase tracking-widest">Carregando pedidos...</td></tr>
+              ) : supplyOrders.length === 0 ? (
+                <tr><td colSpan={5} className="p-10 text-center text-theme-muted text-[9px] font-black uppercase tracking-widest">Nenhum pedido registrado.</td></tr>
+              ) : supplyOrders.map(order => (
+                <tr key={order.id} className="hover:bg-white/[0.02] transition-colors">
+                  <td className="p-4">
+                    <div className="flex flex-col">
+                      <span className="text-[10px] font-black text-theme-text font-mono">#{order.id.slice(-6).toUpperCase()}</span>
+                      <span className="text-[8px] text-theme-muted">{new Date(order.createdAt).toLocaleDateString('pt-BR')}</span>
+                    </div>
+                  </td>
+                  <td className="p-4">
+                    <div className="flex flex-col">
+                      <span className="text-[10px] font-black text-theme-text uppercase">{order.franchisee?.nome}</span>
+                      <span className="text-[8px] text-theme-muted">{order.franchisee?.email}</span>
+                    </div>
+                  </td>
+                  <td className="p-4">
+                    <p className="text-[9px] text-theme-text font-bold leading-tight max-w-[200px]">
+                      {order.items.map(it => `${it.quantity}x ${it.name}`).join(", ")}
+                    </p>
+                  </td>
+                  <td className="p-4 text-center">
+                    <span className="text-[10px] font-black text-emerald-500 italic">R$ {Number(order.total).toFixed(2)}</span>
+                  </td>
+                  <td className="p-4 text-right">
+                    <span className={`text-[8px] font-black px-2 py-1 rounded-sm uppercase tracking-tighter ${
+                      order.status === 'PAID' ? 'bg-emerald-500/10 text-emerald-500' : 
+                      order.status === 'SHIPPED' ? 'bg-blue-500/10 text-blue-400' :
+                      order.status === 'PENDING' ? 'bg-amber-500/10 text-amber-500' : 'bg-zinc-800 text-zinc-500'
+                    }`}>
+                      {order.status === 'PAID' ? 'Pago' : order.status === 'SHIPPED' ? 'Enviado' : order.status === 'PENDING' ? 'Pendente' : order.status}
+                    </span>
+                  </td>
+                  <td className="p-4 text-right">
+                    {order.status === 'PAID' && (
+                      <button
+                        onClick={() => setFulfillModal({ orderId: order.id, franchisee: order.franchisee?.nome })}
+                        disabled={fulfillingOrder === order.id}
+                        className="text-[8px] font-black uppercase tracking-widest px-3 py-1.5 bg-emerald-500 hover:bg-emerald-400 text-black rounded-sm transition-all disabled:opacity-50 disabled:cursor-not-allowed whitespace-nowrap"
+                      >
+                        {fulfillingOrder === order.id ? 'Processando...' : '✓ Enviar & Creditar'}
+                      </button>
+                    )}
+                    {order.status === 'SHIPPED' && (
+                      <div className="flex flex-col items-end gap-1">
+                        <span className="text-[8px] text-blue-400 font-black uppercase tracking-widest">✓ Enviado</span>
+                        {order.trackingCode && (
+                          <span className="text-[8px] text-theme-muted font-mono">{order.trackingCode}</span>
+                        )}
+                      </div>
+                    )}
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
+      </div>
+
       {/* Modal: Novo Franqueado */}
       {showAddModal && (
         <div className="fixed inset-0 z-[100] flex items-center justify-center p-6 bg-theme-bg/60 backdrop-blur-md">
@@ -296,6 +438,66 @@ export default function AdminFranchises() {
                 <button onClick={() => setShowCreditModal(null)} className="flex-1 py-4 border border-theme-border text-theme-muted font-black uppercase text-[10px] tracking-widest">Cancelar</button>
                 <button onClick={handleAddCredits} className="flex-1 py-4 bg-emerald-500 text-zinc-950 font-black uppercase text-[10px] tracking-widest hover:brightness-110">Confirmar</button>
               </div>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Modal: Fulfillment — Enviar Insumos */}
+      {fulfillModal && (
+        <div className="fixed inset-0 z-[200] flex items-center justify-center p-6 bg-theme-bg/70 backdrop-blur-md">
+          <div className="bg-theme-bg border border-theme-border p-10 max-w-md w-full space-y-8 shadow-2xl">
+            <div className="space-y-2">
+              <span className="text-[9px] font-black text-emerald-500 uppercase tracking-[0.4em]">Confirmar Envio</span>
+              <h3 className="text-2xl font-black text-theme-text uppercase tracking-tighter">Despachar Pedido</h3>
+              <p className="text-[10px] text-theme-muted font-bold uppercase tracking-widest">
+                Franqueado: <span className="text-theme-text">{fulfillModal.franchisee}</span>
+              </p>
+            </div>
+
+            <div className="space-y-5">
+              <div className="space-y-2">
+                <label className="text-[9px] font-black text-theme-muted uppercase tracking-widest">Código de Rastreio</label>
+                <input
+                  type="text"
+                  placeholder="Ex: BR123456789BR"
+                  value={trackingCode}
+                  onChange={e => setTrackingCode(e.target.value)}
+                  className="w-full bg-theme-bg-muted border border-theme-border p-3 text-theme-text text-sm font-mono focus:border-brand-tactical outline-none uppercase tracking-widest"
+                />
+              </div>
+              <div className="space-y-2">
+                <label className="text-[9px] font-black text-theme-muted uppercase tracking-widest">Observações do Envio <span className="text-theme-muted/50">(opcional)</span></label>
+                <textarea
+                  rows={3}
+                  placeholder="Ex: Enviado via Correios PAC — prazo estimado 5 dias úteis"
+                  value={shippingNotes}
+                  onChange={e => setShippingNotes(e.target.value)}
+                  className="w-full bg-theme-bg-muted border border-theme-border p-3 text-theme-text text-sm resize-none focus:border-brand-tactical outline-none"
+                />
+              </div>
+            </div>
+
+            <div className="bg-amber-500/10 border border-amber-500/20 p-4 rounded-sm">
+              <p className="text-[9px] font-black text-amber-400 uppercase tracking-widest">
+                ⚠ Esta ação irá deduzir o estoque da Matriz e creditar os créditos de impressão ao franqueado. Irreversível.
+              </p>
+            </div>
+
+            <div className="flex gap-4 pt-2 border-t border-theme-border">
+              <button 
+                onClick={() => { setFulfillModal(null); setTrackingCode(''); setShippingNotes(''); }}
+                className="flex-1 py-4 border border-theme-border text-theme-muted font-black uppercase text-[10px] tracking-widest hover:border-theme-text transition-colors"
+              >
+                Cancelar
+              </button>
+              <button 
+                onClick={fulfillOrder}
+                disabled={fulfillingOrder !== null}
+                className="flex-1 py-4 bg-emerald-500 hover:bg-emerald-400 text-zinc-950 font-black uppercase text-[10px] tracking-widest disabled:opacity-50 transition-colors"
+              >
+                {fulfillingOrder ? 'Processando...' : '✓ Confirmar Envio'}
+              </button>
             </div>
           </div>
         </div>

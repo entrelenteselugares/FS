@@ -53,7 +53,7 @@ export function FinanceTab({
           <div className="flex flex-col md:flex-row justify-between items-start md:items-end gap-6">
             <div className="space-y-2">
               <h3 className="text-2xl font-heading font-black text-theme-text uppercase tracking-widest italic">Performance Financeira</h3>
-              <p className="text-[10px] text-theme-muted uppercase tracking-[0.4em] italic">Extrato Tático de Repasses e Comissões</p>
+              <p className="text-[11px] text-theme-muted uppercase tracking-[0.4em] italic font-black">Extrato Tático de Repasses e Comissões</p>
             </div>
             <div className="flex items-center gap-4">
               <button
@@ -71,7 +71,7 @@ export function FinanceTab({
               </button>
               <div className="bg-brand-tactical/10 px-6 py-3 border border-brand-tactical/20 flex items-center gap-3">
                 <div className="w-2 h-2 rounded-full bg-brand-tactical animate-pulse" />
-                <span className="text-[10px] font-black text-brand-tactical uppercase tracking-widest">Ciclo de Repasse Ativo</span>
+                <span className="text-[9px] font-black text-brand-tactical uppercase tracking-widest">Ciclo de Repasse Ativo</span>
               </div>
             </div>
           </div>
@@ -113,7 +113,7 @@ export function FinanceTab({
               <div className="flex items-center justify-between mb-6">
                 <div className="space-y-1">
                   <p className="text-[10px] font-black text-brand-tactical uppercase tracking-widest italic">ROI por Ativo</p>
-                  <p className="text-[8px] text-theme-muted uppercase font-bold tracking-tighter">Distribuição de Receita</p>
+                  <p className="text-[9px] text-theme-muted uppercase font-black tracking-widest">Distribuição de Receita</p>
                 </div>
                 <DollarSign size={16} className="text-theme-muted opacity-40" />
               </div>
@@ -164,7 +164,7 @@ export function FinanceTab({
             <div className="flex justify-between items-end">
               <div className="space-y-2">
                 <h3 className="text-xl font-heading font-black text-theme-text uppercase tracking-widest italic">Inteligência de Demanda Regional</h3>
-                <p className="text-[9px] text-theme-muted uppercase tracking-[0.4em] italic font-bold">Mapa de calor baseado no seu histórico e leads locais</p>
+                <p className="text-[11px] text-theme-muted uppercase tracking-[0.4em] italic font-black">Mapa de calor baseado no seu histórico e leads locais</p>
               </div>
               <div className="flex items-center gap-4 text-[8px] font-black uppercase text-theme-muted tracking-widest">
                 <span className="flex items-center gap-2"><div className="w-2 h-2 bg-brand-tactical/10" /> Baixa</span>
@@ -198,7 +198,7 @@ export function FinanceTab({
               </div>
             </div>
             <div className="pt-6 border-t border-theme-border/30 flex justify-between items-center">
-              <p className="text-[8px] text-theme-muted uppercase font-bold tracking-widest italic">Fonte: Inteligência Foto Segundo baseada nos últimos 90 dias</p>
+              <p className="text-[9px] text-theme-muted uppercase font-black tracking-widest italic">Fonte: Inteligência Foto Segundo baseada nos últimos 90 dias</p>
               <div className="flex items-center gap-2 text-brand-tactical text-[9px] font-black uppercase italic tracking-widest">
                 Sexta e Sábado (Tarde/Noite) <TrendingUp size={12} /> Peak
               </div>
