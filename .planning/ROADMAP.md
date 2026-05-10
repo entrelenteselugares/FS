@@ -37,3 +37,4 @@
 - [x] **Phase 18: UI/UX Modal Standardization**: Updating Express Sale, Foto Point, and Flash Event modals to match the "Minha Seleção" premium standards. (DONE)
 - [x] **Phase 19: Quotes Kanban Redesign**: Refactoring the AdminQuotes page into a horizontal Kanban pipeline with slide-in drawers. (DONE)
 - [x] **Phase 20: Hybrid Storage Pipeline & Proxy Strategy**: Integration of Google Drive Cold Storage for Private Vaults with cross-origin proxy relay. (STABLE)
+- [ ] **Phase 21: In-App Notification System**: Implementation of a real-time in-app notification center for clients and admins, covering quote status updates, payment confirmations, and event milestones. Includes Prisma schema migration, REST polling endpoints, and a notification bell component in both dashboards.
