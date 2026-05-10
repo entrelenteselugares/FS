@@ -23,10 +23,10 @@ interface BudgetBreakdown { STAFF?: StaffBreakdown[]; EQUIPMENT?: EquipBreakdown
 
 const KANBAN_COLUMNS = [
   { id: "PENDING",   label: "Novos Leads",       color: "amber",   border: "border-amber-500/40",   text: "text-amber-500",   badge: "bg-amber-500/10 text-amber-500 border-amber-500/30" },
-  { id: "PRICED",    label: "Em Precificação",   color: "blue",    border: "border-blue-500/40",    text: "text-blue-500",    badge: "bg-blue-500/10 text-blue-500 border-blue-500/30" },
-  { id: "APROVADO",  label: "Proposta Enviada",  color: "emerald", border: "border-emerald-500/40", text: "text-emerald-500", badge: "bg-emerald-500/10 text-emerald-500 border-emerald-500/30" },
-  { id: "CONVERTED", label: "Convertidos",       color: "teal",    border: "border-teal-500/40",    text: "text-teal-400",    badge: "bg-teal-500/10 text-teal-400 border-teal-500/30" },
-  { id: "REJECTED",  label: "Arquivados",        color: "red",     border: "border-red-500/40",     text: "text-red-500",     badge: "bg-red-500/10 text-red-500 border-red-500/30" },
+  { id: "PRICED",    label: "Em Análise",         color: "blue",    border: "border-blue-500/40",    text: "text-blue-500",    badge: "bg-blue-500/10 text-blue-500 border-blue-500/30" },
+  { id: "APROVADO",  label: "Proposta Enviada",   color: "emerald", border: "border-emerald-500/40", text: "text-emerald-500", badge: "bg-emerald-500/10 text-emerald-500 border-emerald-500/30" },
+  { id: "CONVERTED", label: "Convertidos",        color: "teal",    border: "border-teal-500/40",    text: "text-teal-400",    badge: "bg-teal-500/10 text-teal-400 border-teal-500/30" },
+  { id: "REJECTED",  label: "Arquivados",         color: "red",     border: "border-red-500/40",     text: "text-red-500",     badge: "bg-red-500/10 text-red-500 border-red-500/30" },
 ] as const;
 
 export const AdminQuotes: React.FC = () => {
@@ -296,8 +296,17 @@ export const AdminQuotes: React.FC = () => {
                 {activeTab==="briefing"&&(
                   <div className="space-y-5 animate-in fade-in duration-300">
                     <div className="grid grid-cols-2 gap-3 bg-white/[0.02] p-4 border border-theme-border rounded-lg">
-                      <div><span className="text-[8px] font-black text-theme-subtle uppercase tracking-widest italic block mb-1">Data</span><p className="text-xs font-display font-black text-theme-text uppercase italic">{new Date(selectedQuote.dataEvento).toLocaleDateString("pt-BR")}</p></div>
-                      <div><span className="text-[8px] font-black text-theme-subtle uppercase tracking-widest italic block mb-1">Base Cliente</span><p className="text-xs font-display font-black text-brand-tactical uppercase italic">R$ {selectedQuote.priceBase?.toLocaleString()||"---"}</p></div>
+                      <div>
+                        <span className="text-[8px] font-black text-theme-subtle uppercase tracking-widest italic block mb-1">Data do Evento</span>
+                        <p className="text-xs font-display font-black text-theme-text uppercase italic">
+                          {new Date(selectedQuote.dataEvento).toLocaleDateString("pt-BR")} {new Date(selectedQuote.dataEvento).toLocaleTimeString("pt-BR", { hour: '2-digit', minute: '2-digit' })}
+                        </p>
+                      </div>
+                      <div>
+                        <span className="text-[8px] font-black text-theme-subtle uppercase tracking-widest italic block mb-1">Estimativa Auto</span>
+                        <p className="text-xs font-display font-black text-brand-tactical uppercase italic">R$ {selectedQuote.priceBase?.toLocaleString()||"---"}</p>
+                        <p className="text-[7px] text-theme-muted opacity-50 italic mt-0.5">Calculado automaticamente</p>
+                      </div>
                       <div><span className="text-[8px] font-black text-theme-subtle uppercase tracking-widest italic block mb-1">Local</span><p className="text-xs font-display font-black text-theme-text uppercase truncate italic">{selectedQuote.location||"N/A"}</p></div>
                       <div><span className="text-[8px] font-black text-theme-subtle uppercase tracking-widest italic block mb-1">Email</span><p className="text-xs font-display font-black text-theme-text lowercase truncate italic">{selectedQuote.clientEmail}</p></div>
                     </div>
@@ -438,7 +447,7 @@ export const AdminQuotes: React.FC = () => {
                 </div>
                 <div className="space-y-2">
                   <label className="text-[8px] font-black text-theme-muted uppercase tracking-widest block mb-2 opacity-60 italic">Data do Evento</label>
-                  <input required type="date" value={newQuoteData.dataEvento} onChange={e => setNewQuoteData({...newQuoteData, dataEvento: e.target.value})} className="w-full bg-theme-bg-muted border border-theme-border/60 p-4 text-[10px] text-theme-text outline-none focus:border-brand-tactical font-black rounded-xl" />
+                  <input required type="datetime-local" value={newQuoteData.dataEvento} onChange={e => setNewQuoteData({...newQuoteData, dataEvento: e.target.value})} className="w-full bg-theme-bg-muted border border-theme-border/60 p-4 text-[10px] text-theme-text outline-none focus:border-brand-tactical font-black rounded-xl" />
                 </div>
               </div>
 

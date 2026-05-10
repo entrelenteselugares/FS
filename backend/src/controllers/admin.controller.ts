@@ -110,7 +110,16 @@ export async function adminUploadPreview(req: AuthRequest, res: Response): Promi
 export async function getDashboardStats(req: AuthRequest, res: Response): Promise<void> {
   try {
     // Consultas sequenciais para evitar sobrecarga na pool de conexÃµes
-    const totalEvents = await prisma.event.count({ where: { active: true, isQuote: false } });
+    const totalEvents = await prisma.event.count({ 
+      where: { 
+        active: true, 
+        isQuote: false,
+        OR: [
+          { type: { not: "PHOTO_MARKETPLACE" } },
+          { pedidos: { some: { hasPaid: true } } }
+        ]
+      } 
+    });
     const totalOrders = await prisma.order.count({ where: { status: "APROVADO" } });
     const totalRevenueResult = await prisma.order.aggregate({
       where: { status: "APROVADO" },
@@ -150,15 +159,15 @@ export async function getDashboardStats(req: AuthRequest, res: Response): Promis
       }
     });
 
-    const missingLinksCount = await prisma.order.count({
+    const missingLinksCount = await prisma.event.count({
       where: {
-        status: "APROVADO",
-        event: {
-          OR: [
-            { lightroomUrl: null },
-            { driveUrl: null },
-          ]
-        }
+        active: true,
+        isQuote: false,
+        OR: [
+          { lightroomUrl: null },
+          { driveUrl: null },
+        ],
+        pedidos: { some: { status: "APROVADO" } }
       }
     });
 
@@ -1000,15 +1009,19 @@ export async function adminListQuotes(req: AuthRequest, res: Response): Promise<
   const skip = (Number(page) - 1) * take;
 
   try {
-    const where: Prisma.EventWhereInput = { isQuote: true };
-    if (q) {
-      const searchString = String(q);
-      where.OR = [
-        { clientEmail: { contains: searchString, mode: "insensitive" } },
-        { clientName: { contains: searchString, mode: "insensitive" } },
-        { nomeNoivos: { contains: searchString, mode: "insensitive" } },
-      ];
-    }
+    const baseFilter: Prisma.EventWhereInput = {
+      OR: [
+        { isQuote: true },
+        { quoteStatus: "CONVERTED" }
+      ]
+    };
+    const where: Prisma.EventWhereInput = q ? {
+      AND: [baseFilter, { OR: [
+        { clientEmail: { contains: String(q), mode: "insensitive" } },
+        { clientName: { contains: String(q), mode: "insensitive" } },
+        { nomeNoivos: { contains: String(q), mode: "insensitive" } },
+      ]}]
+    } : baseFilter;
 
     const quotes = await prisma.event.findMany({
       where,
@@ -1045,13 +1058,13 @@ export async function adminApproveQuote(req: AuthRequest, res: Response): Promis
       return;
     }
 
-    // 1. Atualizar o evento com o preÃ§o, status e breakdown no description (JSON)
+    // 1. Atualizar o evento com o preço, status e breakdown no description (JSON)
     const updatedQuote = await prisma.event.update({
       where: { id: String(id) },
       data: {
         priceBase: Number(finalPrice),
         priceEarly: Number(finalPrice),
-        quoteStatus: "PRICED",
+        quoteStatus: "APROVADO", // Proposta enviada ao cliente
         active: true, // Ativa para que o profissional veja o convite
         description: req.body.breakdown ? 
           `[BUDGET_BREAKDOWN] ${JSON.stringify(req.body.breakdown)}\n\nOriginal: ${quote.description}` : 

@@ -254,7 +254,11 @@ export const AdminEvents: React.FC<AdminEventsProps> = ({ initialEditEventId }) 
       setFormData({
         title: data.nomeNoivos,
         slug: data.slug || "",
-        date: data.dataEvento.split("T")[0],
+        date: (() => {
+          const d = new Date(data.dataEvento);
+          const offset = d.getTimezoneOffset() * 60000;
+          return new Date(d.getTime() - offset).toISOString().slice(0, 16);
+        })(),
         location: data.location || "",
         city: data.city || "",
         description: data.description || "",
@@ -409,18 +413,19 @@ export const AdminEvents: React.FC<AdminEventsProps> = ({ initialEditEventId }) 
         <table className="events-table">
           <thead>
             <tr>
-              {["Evento", "Data", "Produção", "Vendas", "Membros", "Ações"].map((h) => (
+              {["Código", "Evento", "Data e Hora", "Produção", "Vendas", "Membros", "Ações"].map((h) => (
                 <th key={h}>{h}</th>
               ))}
             </tr>
           </thead>
           <tbody>
             {loading ? (
-              <tr><td colSpan={6} className="py-20 text-center text-[10px] text-theme-muted uppercase tracking-[0.3em]">Indexando Eventos...</td></tr>
+              <tr><td colSpan={7} className="py-20 text-center text-[10px] text-theme-muted uppercase tracking-[0.3em]">Indexando Eventos...</td></tr>
             ) : events.length === 0 ? (
-              <tr><td colSpan={6} className="py-20 text-center text-[10px] text-theme-muted uppercase tracking-[0.3em]">Nenhum registro encontrado.</td></tr>
+              <tr><td colSpan={7} className="py-20 text-center text-[10px] text-theme-muted uppercase tracking-[0.3em]">Nenhum registro encontrado.</td></tr>
             ) : events.map((event, idx) => (
               <tr key={event.id} className={`${idx % 2 === 0 ? 'bg-theme-bg-muted/50' : 'bg-transparent'} border-b border-theme-border/30`}>
+                <td className="p-2 md:p-3 text-[10px] font-mono text-brand-tactical uppercase">#{event.id.slice(-6).toUpperCase()}</td>
                 <td className="p-2 md:p-3">
                   <div className="flex items-center gap-2 mb-1">
                     <EventStatusDot eventDate={event.date} active={event.active} size="w-1.5 h-1.5" />
@@ -428,7 +433,10 @@ export const AdminEvents: React.FC<AdminEventsProps> = ({ initialEditEventId }) 
                   </div>
                   <div className="text-[9px] text-theme-muted font-bold uppercase">{event.location}</div>
                 </td>
-                <td className="p-2 md:p-3 text-[10px] md:text-[11px] font-bold text-theme-text/80">{new Date(event.date).toLocaleDateString("pt-BR")}</td>
+                <td className="p-2 md:p-3">
+                  <div className="text-[10px] md:text-[11px] font-bold text-theme-text/80">{new Date(event.date).toLocaleDateString("pt-BR")}</div>
+                  <div className="text-[9px] text-theme-muted font-bold">{new Date(event.date).toLocaleTimeString("pt-BR", { hour: '2-digit', minute: '2-digit' })}</div>
+                </td>
                 <td className="p-2 md:p-3">
                    <div className="flex gap-2 md:gap-3">
                       <div className={`w-1.5 h-1.5 md:w-2 md:h-2 rounded-full ${event.coverPhotoUrl ? 'bg-brand-tactical' : 'bg-theme-border'}`} />
@@ -566,7 +574,7 @@ export const AdminEvents: React.FC<AdminEventsProps> = ({ initialEditEventId }) 
                     <div className="grid grid-cols-2 gap-6">
                       <div className="space-y-2">
                         <label className="text-[8px] font-black text-theme-muted uppercase tracking-widest block mb-2 opacity-60 italic">Data</label>
-                        <input type="date" required className="w-full bg-theme-bg-muted border border-theme-border/60 p-4 text-[10px] text-theme-text font-black outline-none focus:border-brand-tactical rounded-xl" value={formData.date} onChange={e => setFormData({...formData, date: e.target.value})} />
+                        <input type="datetime-local" required className="w-full bg-theme-bg-muted border border-theme-border/60 p-4 text-[10px] text-theme-text font-black outline-none focus:border-brand-tactical rounded-xl" value={formData.date} onChange={e => setFormData({...formData, date: e.target.value})} />
                       </div>
                       <div className="space-y-2">
                         <label className="text-[8px] font-black text-theme-muted uppercase tracking-widest block mb-2 opacity-60 italic">Local</label>

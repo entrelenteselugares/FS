@@ -497,6 +497,32 @@ export class EventController {
         console.log(`[Quote] Novo usuário criado para ${email}. Senha: ${tempPassForEmail}`);
       }
 
+      // ── Resolve nomes legíveis dos serviços selecionados ──
+      // selectedServices pode conter IDs dinâmicos do catálogo (CUIDs) ou IDs estáticos ("foto","video","reels","impresso")
+      const STATIC_LABELS: Record<string, string> = {
+        foto: "Fotografia Digital", video: "Vídeo Bruto",
+        reels: "Reels / Mobile", impresso: "Álbum / Impressa"
+      };
+      let serviceLabels: string[] = [];
+      const dynamicIds = selectedServices.filter(id => !STATIC_LABELS[id]);
+      if (dynamicIds.length > 0) {
+        const catalogServices = await prisma.service.findMany({
+          where: { id: { in: dynamicIds } },
+          select: { id: true, name: true }
+        }).catch(() => [] as { id: string; name: string }[]);
+        const nameMap: Record<string, string> = {};
+        catalogServices.forEach((s: { id: string; name: string }) => { nameMap[s.id] = s.name; });
+        serviceLabels = selectedServices.map(id => STATIC_LABELS[id] || nameMap[id] || id);
+      } else {
+        serviceLabels = selectedServices.map(id => STATIC_LABELS[id] || id);
+      }
+
+      // Detecta flags de serviço tanto para IDs estáticos quanto para catálogo dinâmico
+      const hasFoto = selectedServices.some(id => id === "foto" || serviceLabels.some((l, i) => selectedServices[i] === id && /foto|fotografia/i.test(l)));
+      const hasVideo = selectedServices.some(id => id === "video" || serviceLabels.some((l, i) => selectedServices[i] === id && /v[ií]deo/i.test(l)));
+      const hasReels = selectedServices.some(id => id === "reels" || serviceLabels.some((l, i) => selectedServices[i] === id && /reels|mobile/i.test(l)));
+      const hasImpresso = selectedServices.some(id => id === "impresso" || serviceLabels.some((l, i) => selectedServices[i] === id && /impresso|álbum|album/i.test(l)));
+
       const event = await prisma.event.create({
         data: {
           nomeNoivos: name,
@@ -504,23 +530,23 @@ export class EventController {
           eventHours: eventHours ? Number(eventHours) : 2,
           eventDays: eventDays ? Number(eventDays) : 1,
           location: locationType === "PARTNER" ? "Ponto Fixo" : `CEP: ${customCep}`,
-          description: `ORÇAMENTO AUTOMÁTICO\nConvidados: ${attendees}\nUso: ${usageType}\nPreferência: ${req.body.workflowPref || 'TRADICIONAL'}\nOrçamento Disponível: ${req.body.availableBudget || 'Não informado'}\nServiços: ${selectedServices.join(", ")}\nDias: ${eventDays}\n\nDescrição do Cliente: ${description}`,
+          description: `ORÇAMENTO AUTOMÁTICO\nConvidados: ${attendees}\nUso: ${usageType}\nPreferência: ${req.body.workflowPref || 'TRADICIONAL'}\nOrçamento Disponível: ${req.body.availableBudget || 'Não informado'}\nServiços: ${serviceLabels.join(", ")}\nDias: ${eventDays}\n\nDescrição do Cliente: ${description}`,
           usageType: usageType || "PESSOAL",
           isQuote: isQuote,
-          quoteStatus: isQuote ? "PENDING" : "APPROVED", // Pontos fixos já nascem aprovados, apenas aguardando pagamento
+          quoteStatus: isQuote ? "PENDING" : "APPROVED",
           priceBase: totalPrice,
           priceEarly: totalPrice,
-          active: false, // MANDATÓRIO: Inativo até confirmação de pagamento
+          active: false,
           cartorioUserId: locationType === "PARTNER" ? selectedPartnerId : null,
-          temFoto: selectedServices.includes("foto"),
-          temVideo: selectedServices.includes("video"),
-          temReels: selectedServices.includes("reels"),
-          temFotoImpressa: selectedServices.includes("impresso"),
+          temFoto: hasFoto,
+          temVideo: hasVideo,
+          temReels: hasReels,
+          temFotoImpressa: hasImpresso,
           clientEmail: email,
           clientName: name,
           captacaoId: captacaoId,
           captacaoStatus: "PENDING",
-          retentionDays: 15 // Orçamentos padrão começam com 15 dias de vitrine após aprovação
+          retentionDays: 15
         }
       });
 

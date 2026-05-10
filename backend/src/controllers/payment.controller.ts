@@ -1411,7 +1411,8 @@ export class PaymentController {
         const eventUpdateData: any = {
           active: true,
           isQuote: false,
-          isPrivate: event.isPrivate ?? true
+          isPrivate: event.isPrivate ?? true,
+          ...(event.isQuote && { quoteStatus: "CONVERTED" })
         };
 
         // 1. Atualizar Montante Arrecadado (Crowdfunding)

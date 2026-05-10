@@ -186,47 +186,53 @@ const SidebarContent: React.FC<SidebarContentProps> = ({ navItems, onNavigate })
 
       {/* ── User Footer ── */}
       <div style={{
-        padding:      "12px 16px",
+        padding:      "20px",
         borderTop:    `1px solid ${T.border}`,
-        background:   T.bgCard,
+        background:   "rgba(255,255,255,0.02)",
       }}>
-        {/* Info row */}
-        <div style={{ marginBottom: 16, display: "flex", alignItems: "center", justifyContent: "space-between" }}>
-          <div style={{ flex: 1, minWidth: 0 }}>
-            <div style={{
-              fontSize:      13,
-              fontFamily:    T.fontB,
-              fontWeight:    900,
-              color:         T.text,
-              overflow:      "hidden",
-              textOverflow:  "ellipsis",
-              whiteSpace:    "nowrap",
-              textTransform: "uppercase",
-              letterSpacing: 1
-            }}>
-              {user?.nome}
+        {/* Profile Card */}
+        <div style={{ 
+          marginBottom: 16, 
+          display: "flex", 
+          flexDirection: "column",
+          gap: 12
+        }}>
+          <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between" }}>
+            <div style={{ minWidth: 0 }}>
+              <div style={{
+                fontSize:      11,
+                fontFamily:    T.fontB,
+                fontWeight:    900,
+                color:         T.text,
+                textTransform: "uppercase",
+                letterSpacing: 2,
+                overflow: "hidden",
+                textOverflow: "ellipsis",
+                whiteSpace: "nowrap"
+              }}>
+                {user?.nome}
+              </div>
+              <div style={{
+                fontSize:      7,
+                fontFamily:    T.fontB,
+                fontWeight:    900,
+                color:         T.brand,
+                textTransform: "uppercase",
+                letterSpacing: 3,
+                marginTop: 4,
+                opacity: 0.8
+              }}>
+                {user?.role === "ADMIN" ? "ADMINISTRADOR MASTER" : 
+                 user?.role === "CARTORIO" || user?.role === "UNIDADE" ? "UNIDADE OPERACIONAL" :
+                 user?.role === "PROFISSIONAL" ? "PROFISSIONAL DA REDE" :
+                 "CLIENTE FINAL"}
+              </div>
             </div>
-            <div style={{
-              display:       "inline-block",
-              fontSize:      8,
-              fontFamily:    T.fontB,
-              fontWeight:    900,
-              color:         T.brand,
-              border:        `1px solid ${T.brand}44`,
-              padding:       "2px 6px",
-              textTransform: "uppercase",
-              letterSpacing: 2,
-              marginTop:     4,
-            }}>
-              {user?.role === "ADMIN" ? "Administrador" : 
-               user?.role === "CARTORIO" || user?.role === "UNIDADE" ? "Unidade Fixa" :
-               user?.role === "PROFISSIONAL" ? "Profissional da Rede" :
-               "Cliente"}
-            </div>
+            <ThemeToggle />
           </div>
-          <ThemeToggle />
         </div>
-        {/* Logout button */}
+
+        {/* Action Button */}
         <button
           id="btn-logout"
           onClick={logout}
@@ -234,26 +240,37 @@ const SidebarContent: React.FC<SidebarContentProps> = ({ navItems, onNavigate })
             background: "transparent",
             color:      T.text3,
             border:     `1px solid ${T.border}`,
-            padding:    "10px",
-            fontSize:   10,
+            padding:    "12px",
+            fontSize:   9,
             fontFamily: T.fontB,
-            fontWeight: 700,
+            fontWeight: 900,
             textTransform: "uppercase",
-            letterSpacing: 1.5,
+            letterSpacing: 3,
             width:      "100%",
             cursor:     "pointer",
             display:    "flex",
             alignItems: "center",
             justifyContent: "center",
-            gap:        8,
-            transition: "all 0.2s",
-            borderRadius: 0,
+            gap:        10,
+            transition: "all 0.3s cubic-bezier(0.4, 0, 0.2, 1)",
+            borderRadius: 12,
+            fontStyle: "italic"
           }}
-          onMouseEnter={(e) => { e.currentTarget.style.color = T.text; e.currentTarget.style.borderColor = T.text2; }}
-          onMouseLeave={(e) => { e.currentTarget.style.color = T.text3; e.currentTarget.style.borderColor = T.border; }}
+          onMouseEnter={(e) => { 
+            e.currentTarget.style.color = T.text; 
+            e.currentTarget.style.borderColor = T.brand;
+            e.currentTarget.style.background = `${T.brand}08`;
+            e.currentTarget.style.transform = "translateY(-1px)";
+          }}
+          onMouseLeave={(e) => { 
+            e.currentTarget.style.color = T.text3; 
+            e.currentTarget.style.borderColor = T.border;
+            e.currentTarget.style.background = "transparent";
+            e.currentTarget.style.transform = "translateY(0)";
+          }}
         >
           <LogoutIcon />
-          Encerrar
+          Encerrar Sessão
         </button>
       </div>
     </div>
