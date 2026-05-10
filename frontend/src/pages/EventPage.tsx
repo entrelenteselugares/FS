@@ -15,6 +15,7 @@ import { PrintStoreModal } from "../components/PrintStoreModal";
 import { PrintCatalog } from "../components/PrintCatalog";
 import { motion, AnimatePresence } from "framer-motion";
 import { EventEditPanel } from "../components/profissional/EventEditPanel";
+import type { EventItem } from "../components/profissional/types";
 
 const formatDate = (date: string | null | undefined) => {
   if (!date) return "Em breve";
@@ -1077,7 +1078,7 @@ return (
       </Modal>
       {isEditingEvent && event && (
         <EventEditPanel 
-          event={event as any}
+          event={event as unknown as EventItem}
           onUpdated={(u) => setEvent(prev => prev ? { ...prev, ...u } as EventData : null)}
           onClose={() => setIsEditingEvent(false)}
           onNotify={(msg) => alert(msg)}
