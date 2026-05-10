@@ -3,6 +3,7 @@ import { Link, useLocation } from "react-router-dom";
 import { useAuth } from "../hooks/useAuth";
 import { T, BtnGhost } from "../lib/theme";
 import { ThemeToggle } from "./ThemeToggle";
+import { NotificationBell } from "./notifications/NotificationBell";
 
 // ─── Types ────────────────────────────────────────────────────────────────────
 
@@ -228,7 +229,10 @@ const SidebarContent: React.FC<SidebarContentProps> = ({ navItems, onNavigate })
                  "CLIENTE FINAL"}
               </div>
             </div>
-            <ThemeToggle />
+            <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+              <NotificationBell />
+              <ThemeToggle />
+            </div>
           </div>
         </div>
 
@@ -386,6 +390,7 @@ export const DashboardLayout: React.FC<DashboardLayoutProps> = ({
           </div>
 
           <div style={{ display: "flex", alignItems: "center", gap: 12 }}>
+            <NotificationBell />
             <button 
               onClick={() => setDrawerOpen(true)}
               className="p-2 text-theme-muted hover:text-white transition-colors"

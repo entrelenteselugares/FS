@@ -60,6 +60,7 @@ model User {
   flashCards         FlashCard[]
   phygitalPrints     PhygitalPrint[]         @relation("UserPhygitalPrints")
   supplyOrders       SupplyOrder[]           @relation("FranchiseeSupplyOrders")
+  notifications      Notification[]
 
   @@map("users")
 }
@@ -570,6 +571,23 @@ model Quote {
   cartorio         Cartorio?   @relation(fields: [cartorioId], references: [id])
 
   @@map("quotes")
+}
+
+model Notification {
+  id        String   @id @default(cuid())
+  userId    String
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  type      String   // QUOTE_RECEIVED | QUOTE_PRICED | PAYMENT_CONFIRMED | GENERAL
+  title     String
+  body      String
+  refId     String?  // eventId or orderId for deep-link
+  refType   String?  // "event" | "order"
+  read      Boolean  @default(false)
+  createdAt DateTime @default(now())
+
+  @@index([userId, read])
+  @@index([userId, createdAt])
+  @@map("notifications")
 }
 
 model PrintProduct {

@@ -1537,6 +1537,17 @@ export class PaymentController {
         amount: Number(order.valor)
       });
 
+      if (order.clienteId) {
+        await NotificationService.createInApp({
+          userId: order.clienteId,
+          type: 'PAYMENT_CONFIRMED',
+          title: '✅ Pagamento confirmado!',
+          body: `Seu pagamento foi confirmado com sucesso. Em breve você receberá os detalhes.`,
+          refId: order.eventId,
+          refType: 'event'
+        });
+      }
+
       // 7. Roteamento Logístico para Cofres (Vaults)
       if (order.manualType === "VAULT_ONDEMAND" || order.manualType === "VAULT_CYCLE") {
         RoutingService.routeVaultOrder(order.id).catch(e => console.error("[Routing] Erro ao rotear pedido de cofre:", e));

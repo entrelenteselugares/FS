@@ -137,12 +137,11 @@ export class PhygitalService {
           customerPhone,
           customerEmail: metadata.customerEmail || "",
           customerCep: metadata.customerCep || "",
-          userId: metadata.userId || "",
+          userId: metadata.userId || null,
           status: 'PENDING_PRINT',
-          eventId: foundEvent ? foundEvent.id : null,
-          sharedAlbumId: foundVault ? foundVault.id : null
-        },
-        include: { event: true, sharedAlbum: true }
+          eventId: foundEvent ? foundEvent.id : (foundVault ? foundVault.id : "")
+        } as any,
+        include: { event: true }
       });
 
       // 6.1. Adicionar à Galeria Live (EventMedia ou SharedAlbumMedia)

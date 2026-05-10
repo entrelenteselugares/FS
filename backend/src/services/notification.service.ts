@@ -2,6 +2,7 @@ import nodemailer from "nodemailer";
 import dotenv from "dotenv";
 import https from "https";
 import { FRONTEND_URL, APP_URL } from "../lib/config";
+import { prisma } from "../lib/prisma";
 
 dotenv.config();
 
@@ -610,6 +611,46 @@ export class NotificationService {
           html: htmlContent,
         });
       } catch (e) { console.error("[Notification] Erro e-mail matriz:", e); }
+    }
+  }
+
+  /**
+   * Cria uma notificação in-app para um usuário específico.
+   * Deduplicação: ignora se já existe (userId + type + refId) nos últimos 5 min.
+   * Prune: mantém no máximo 200 notificações por usuário.
+   */
+  static async createInApp({
+    userId, type, title, body, refId, refType
+  }: {
+    userId: string;
+    type: string;
+    title: string;
+    body: string;
+    refId?: string;
+    refType?: string;
+  }) {
+    try {
+      if (refId) {
+        const recent = await prisma.notification.findFirst({
+          where: { userId, type, refId, createdAt: { gt: new Date(Date.now() - 5 * 60 * 1000) } }
+        });
+        if (recent) return recent;
+      }
+      const count = await prisma.notification.count({ where: { userId } });
+      if (count >= 200) {
+        const oldest = await prisma.notification.findMany({
+          where: { userId }, orderBy: { createdAt: "asc" }, take: count - 199, select: { id: true }
+        });
+        if (oldest.length > 0) {
+          await prisma.notification.deleteMany({ where: { id: { in: oldest.map(n => n.id) } } });
+        }
+      }
+      return await prisma.notification.create({
+        data: { userId, type, title, body, refId, refType, read: false }
+      });
+    } catch (err) {
+      console.error("[Notification] createInApp error:", err);
+      return null;
     }
   }
 }

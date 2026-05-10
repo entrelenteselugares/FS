@@ -15,6 +15,7 @@
     "@sentry/react": "^10.52.0",
     "@types/react-window": "^1.8.8",
     "axios": "^1.15.0",
+    "date-fns": "^4.1.0",
     "foto-segundo": "file:..",
     "framer-motion": "^12.38.0",
     "lucide-react": "^1.8.0",

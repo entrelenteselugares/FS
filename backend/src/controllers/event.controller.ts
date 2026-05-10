@@ -504,24 +504,24 @@ export class EventController {
         reels: "Reels / Mobile", impresso: "Álbum / Impressa"
       };
       let serviceLabels: string[] = [];
-      const dynamicIds = selectedServices.filter(id => !STATIC_LABELS[id]);
+      const dynamicIds = selectedServices.filter((id: string) => !STATIC_LABELS[id]);
       if (dynamicIds.length > 0) {
-        const catalogServices = await prisma.service.findMany({
+        const catalogServices = await prisma.serviceCatalog.findMany({
           where: { id: { in: dynamicIds } },
           select: { id: true, name: true }
         }).catch(() => [] as { id: string; name: string }[]);
         const nameMap: Record<string, string> = {};
         catalogServices.forEach((s: { id: string; name: string }) => { nameMap[s.id] = s.name; });
-        serviceLabels = selectedServices.map(id => STATIC_LABELS[id] || nameMap[id] || id);
+        serviceLabels = selectedServices.map((id: string) => STATIC_LABELS[id] || nameMap[id] || id);
       } else {
-        serviceLabels = selectedServices.map(id => STATIC_LABELS[id] || id);
+        serviceLabels = selectedServices.map((id: string) => STATIC_LABELS[id] || id);
       }
 
       // Detecta flags de serviço tanto para IDs estáticos quanto para catálogo dinâmico
-      const hasFoto = selectedServices.some(id => id === "foto" || serviceLabels.some((l, i) => selectedServices[i] === id && /foto|fotografia/i.test(l)));
-      const hasVideo = selectedServices.some(id => id === "video" || serviceLabels.some((l, i) => selectedServices[i] === id && /v[ií]deo/i.test(l)));
-      const hasReels = selectedServices.some(id => id === "reels" || serviceLabels.some((l, i) => selectedServices[i] === id && /reels|mobile/i.test(l)));
-      const hasImpresso = selectedServices.some(id => id === "impresso" || serviceLabels.some((l, i) => selectedServices[i] === id && /impresso|álbum|album/i.test(l)));
+      const hasFoto = selectedServices.some((id: string) => id === "foto" || serviceLabels.some((l, i) => selectedServices[i] === id && /foto|fotografia/i.test(l)));
+      const hasVideo = selectedServices.some((id: string) => id === "video" || serviceLabels.some((l, i) => selectedServices[i] === id && /v[ií]deo/i.test(l)));
+      const hasReels = selectedServices.some((id: string) => id === "reels" || serviceLabels.some((l, i) => selectedServices[i] === id && /reels|mobile/i.test(l)));
+      const hasImpresso = selectedServices.some((id: string) => id === "impresso" || serviceLabels.some((l, i) => selectedServices[i] === id && /impresso|álbum|album/i.test(l)));
 
       const event = await prisma.event.create({
         data: {
@@ -606,6 +606,18 @@ export class EventController {
 
       // Se for Orçamento (OTHER), apenas retorna sucesso. O Admin irá precificar depois.
       NotificationService.notifyNewLead({ name, email, eventDate, usageType, locationType });
+      
+      const admins = await prisma.user.findMany({ where: { role: 'ADMIN' }, select: { id: true } });
+      for (const admin of admins) {
+        await NotificationService.createInApp({
+          userId: admin.id,
+          type: 'QUOTE_RECEIVED',
+          title: '📋 Novo orçamento recebido',
+          body: `${name} solicitou um orçamento para ${eventDate}. Acesse o Kanban para precificar.`,
+          refId: event.id,
+          refType: 'event'
+        });
+      }
       
       NotificationService.sendWelcomeEmail({
         to: email,

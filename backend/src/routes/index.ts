@@ -452,6 +452,14 @@ router.get("/phygital/events/:eventId/prints", requireAuth, PhygitalController.l
 router.patch("/phygital/prints/:id/status", requireAuth, PhygitalController.confirmPrint);
 router.post("/admin/phygital/simulate", optionalAuth, PhygitalController.simulate);
 
+import * as NotificationController from "../controllers/notification.controller";
+
+// ── IN-APP NOTIFICATIONS ──────────────────────────────────────────────────────
+router.get("/notifications", requireAuth, NotificationController.listNotifications);
+router.get("/notifications/unread-count", requireAuth, NotificationController.getUnreadCount);
+router.patch("/notifications/read-all", requireAuth, NotificationController.markAllAsRead);
+router.patch("/notifications/:id/read", requireAuth, NotificationController.markAsRead);
+
 // 🔍 DIAGNÓSTICOS
 router.get("/diag/db", checkDbStatus);
 router.get("/health", (req, res) => res.json({ status: "ok", time: new Date().toISOString() }));

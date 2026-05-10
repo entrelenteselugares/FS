@@ -1064,7 +1064,7 @@ export async function adminApproveQuote(req: AuthRequest, res: Response): Promis
       data: {
         priceBase: Number(finalPrice),
         priceEarly: Number(finalPrice),
-        quoteStatus: "APROVADO", // Proposta enviada ao cliente
+        quoteStatus: "APPROVED", // Proposta enviada ao cliente
         active: true, // Ativa para que o profissional veja o convite
         description: req.body.breakdown ? 
           `[BUDGET_BREAKDOWN] ${JSON.stringify(req.body.breakdown)}\n\nOriginal: ${quote.description}` : 
@@ -1131,6 +1131,18 @@ export async function adminApproveQuote(req: AuthRequest, res: Response): Promis
       eventTitle: quote.nomeNoivos,
       checkoutUrl
     });
+
+    // 4.5. In-App Notification (Client)
+    if (targetUser) {
+      await NotificationService.createInApp({
+        userId: targetUser.id,
+        type: 'QUOTE_PRICED',
+        title: '💰 Seu orçamento chegou!',
+        body: `Preparamos uma proposta exclusiva para ${quote.nomeNoivos}. Clique para ver e confirmar.`,
+        refId: quote.id,
+        refType: 'event'
+      });
+    }
 
     // 5. Alerta WhatsApp (Admin)
     NotificationService.notifyQuotationApproved({
