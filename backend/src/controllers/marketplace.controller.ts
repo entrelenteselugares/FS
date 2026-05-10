@@ -336,7 +336,12 @@ export class MarketplaceController {
             }
           });
 
-          if (!order) {
+          // Também permite acesso se o usuário fez um upload phygital para este evento
+          const phygitalUpload = order ? null : await prisma.phygitalPrint.findFirst({
+            where: { eventId: event.id, userId: authUser.userId }
+          });
+
+          if (!order && !phygitalUpload) {
             return res.status(403).json({ error: "Você não tem permissão para visualizar este álbum privado." });
           }
         }
@@ -360,6 +365,7 @@ export class MarketplaceController {
         shortId: p.referenceCode, // Usamos referenceCode como shortId
         price: null,
         type: "PHOTO",
+        isGuest: true,          // Fotos de convidados via QR Code
         createdAt: p.createdAt
       }));
 

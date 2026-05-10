@@ -247,6 +247,8 @@ export async function getProfile(req: AuthRequest, res: Response): Promise<void>
       }
     });
 
+    if (!profile) { res.status(404).json({ error: "Perfil não encontrado." }); return; }
+
     res.json({
       ...profile,
       pixKey: profile.user?.pixKey,

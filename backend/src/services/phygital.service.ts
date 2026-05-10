@@ -22,11 +22,12 @@ export class PhygitalService {
       const { eventId, customerName, customerPhone, customerCep } = metadata;
 
       // 1. Verifica se o evento existe (Crítico para o Prisma não dar erro)
-      const event = await prisma.event.findUnique({ where: { id: eventId } });
-      if (!event) {
+      let foundEvent = await prisma.event.findUnique({ where: { id: eventId } });
+      if (!foundEvent) {
         // Se não existir, tentamos buscar pelo Slug (fallback para facilitar testes)
         const eventBySlug = await prisma.event.findUnique({ where: { slug: eventId } });
         if (!eventBySlug) throw new Error(`Evento ${eventId} não encontrado no sistema.`);
+        foundEvent = eventBySlug;
         metadata.eventId = eventBySlug.id;
       }
 
@@ -123,14 +124,14 @@ export class PhygitalService {
           eventId: metadata.eventId,
           url: publicUrl,
           shortId: shortId,
-          price: event?.priceBase || 15 // Use fetched event instead of printJob.event
+          price: foundEvent?.priceBase || 15 // Use foundEvent instead of null-risk event
         }
       });
 
       // 7. Lógica de Créditos de Franquia
-      if (event?.franchiseeId) {
+      if (foundEvent?.franchiseeId) {
         const profile = await prisma.franchiseProfile.findUnique({
-          where: { id: event.franchiseeId }
+          where: { id: foundEvent.franchiseeId }
         });
 
         if (profile) {
