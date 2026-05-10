@@ -77,8 +77,6 @@ export const RegisterPage: React.FC = () => {
     setError("");
 
     try {
-      console.log(`[REGISTERING] User Role: ${role}`);
-      
       const claim = searchParams.get("claim");
       let finalPayload = { ...formData, role, claim };
       
@@ -100,8 +98,6 @@ export const RegisterPage: React.FC = () => {
       
       // Notificamos o sistema que estamos logados antes de navegar
       API.defaults.headers.common["Authorization"] = `Bearer ${token}`;
-
-      console.log("[REGISTER & LOGIN SUCCESS]", user.nome);
 
       const target = role === "PROFISSIONAL" ? "/profissional"
         : (role === "CARTORIO") ? "/unidade-fixa"

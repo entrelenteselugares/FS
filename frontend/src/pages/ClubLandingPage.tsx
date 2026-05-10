@@ -165,7 +165,7 @@ export const ClubLandingPage = () => {
       <footer className="border-t border-white/5 py-8 mt-auto">
         <div className="max-w-7xl mx-auto px-6 flex flex-col md:flex-row items-center justify-between gap-4">
           <div className="flex items-center gap-3 opacity-50">
-            <img src="/logo.png" alt="FS" className="h-4" style={{ filter: "var(--logo-filter)" }} />
+            <img src="/logo.png" alt="Foto Segundo" style={{ height: 16, objectFit: "contain", filter: "var(--logo-filter)" }} />
             <span className="text-[9px] font-black uppercase tracking-[0.3em] text-white">Advanced Phygital Engine</span>
           </div>
           <div className="flex items-center gap-2 text-zinc-600 text-[9px] font-black uppercase tracking-widest">

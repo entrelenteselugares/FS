@@ -1,7 +1,7 @@
 import { useState, useEffect, useRef, useMemo } from "react";
 import { Users, Calendar, ArrowRight, ShieldCheck, ChevronLeft, ChevronRight, Clock, Home, Zap, Camera, Video, Printer, Smartphone, Building2, GraduationCap, Utensils } from "lucide-react";
 import { API } from "../lib/api";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, Link } from "react-router-dom";
 import { useAuth } from "../hooks/useAuth";
 import { useViaCep } from "../hooks/useViaCep";
 
@@ -549,15 +549,17 @@ export const QuotePage = () => {
       <div style={{ maxWidth: 1100, margin: "0 auto" }}>
         <header style={{ textAlign: "center", marginBottom: 20 }}>
           <div style={{ display: "flex", justifyContent: "center", marginBottom: 15 }}>
-            <img 
-              src="/logo.png" 
-              alt="Logo" 
-              style={{ 
-                height: 32, 
-                objectFit: "contain",
-                filter: "var(--logo-filter)"
-              }} 
-            />
+            <Link to="/">
+              <img 
+                src="/logo.png" 
+                alt="Foto Segundo" 
+                style={{ 
+                  height: 32, 
+                  objectFit: "contain",
+                  filter: "var(--logo-filter)"
+                }} 
+              />
+            </Link>
           </div>
           <div 
             className="text-[10px] font-black text-emerald-500 mb-4 uppercase tracking-[0.5em] italic" 

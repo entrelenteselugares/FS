@@ -31,7 +31,6 @@ export const LoginPage: React.FC = () => {
     setLoading(true);
     
     try {
-      console.log("[LOGIN ATTEMPT]", email.toLowerCase());
       const authUser = await login(email.trim().toLowerCase(), senha);
 
       const pending = localStorage.getItem("pending_purchase_event_id");

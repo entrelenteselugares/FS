@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { useParams, useNavigate } from "react-router-dom";
+import { useParams, useNavigate, Link } from "react-router-dom";
 import { API } from "../lib/api";
 
 import { motion } from "framer-motion";
@@ -100,11 +100,13 @@ export const PartnerLP: React.FC = () => {
 
         <div className="pointer-events-auto flex items-center gap-6">
           <ThemeToggle />
-          <img
-            src="/logo.png"
-            alt="Logo"
-            style={{ height: 28, objectFit: "contain", filter: "var(--logo-filter)" }}
-          />
+          <Link to="/">
+            <img
+              src="/logo.png"
+              alt="Foto Segundo"
+              style={{ height: 28, objectFit: "contain", filter: "var(--logo-filter)" }}
+            />
+          </Link>
         </div>
       </nav>
 

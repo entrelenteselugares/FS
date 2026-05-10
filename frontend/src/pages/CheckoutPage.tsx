@@ -104,7 +104,6 @@ export const CheckoutPage = () => {
   const pollingRef = useRef<ReturnType<typeof setInterval> | null>(null);
   const { user: authUser, login: authLogin, register: authRegister, loading: authGlobalLoading } = useContext(AuthContext)!;
   const { digitalPhotos, physicalItems, totalPrice, clearCart } = useCart();
-  console.log("[Checkout] Component Mounting...", { orderId, orderIdFromQuery, effectiveOrderId, hasAuthUser: !!authUser, authGlobalLoading });
 
   // Estados de Autenticação Tática
   const [authStep, setAuthStep] = useState<'loading' | 'required' | 'login' | 'register' | 'authorized'>('loading');
@@ -226,20 +225,16 @@ export const CheckoutPage = () => {
   // ── Controle de Autenticação (Bypass para Guest Checkout) ────────────────────
   useEffect(() => {
     let isMounted = true;
-    console.log("[Checkout] useEffect auth check:", { loading, authGlobalLoading, hasOrder: !!order, hasUser: !!authUser });
-    
     if (loading || authGlobalLoading || !order) return;
 
     // SE FOR GUEST ORDER (Magic Link), AUTORIZA DIRETO!
     if (order.isGuestOrder) {
-      console.log("[Checkout] Authorized via Guest Order");
       setAuthStep('authorized');
       return;
     }
 
     // Se já está logado, autoriza
     if (authUser) {
-      console.log("[Checkout] Authorized via Global AuthContext:", authUser.email);
       setAuthStep('authorized');
       return;
     }
