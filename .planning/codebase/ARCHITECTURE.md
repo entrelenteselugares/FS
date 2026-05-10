@@ -25,8 +25,11 @@ Decoupled automation for physical photo output.
 
 ### 4. Phygital State Management
 
-- **Hybrid Identity**: Uses `orderId` + `guestToken` in `localStorage` to persist purchase state for non-logged users.
 - **Real-time Unlocking**: Backend cross-references purchase history to dynamically populate `unlockedMediaIds`.
+- **Hybrid Storage Pipeline**: 
+    - **Hot Storage (Supabase)**: Real-time event media for immediate marketplace delivery.
+    - **Cold Storage (Google Drive)**: High-persistence storage for "Memory Vaults", utilizing folder-per-album hierarchy.
+    - **Proxy Relay**: Backend acts as a stream-proxy (`/vaults/media/proxy/:fileId`) to bypass Google Drive's restrictive CORS and authentication headers for frontend image rendering.
 
 ## Technology Stack
 

@@ -1,6 +1,7 @@
 import sharp from "sharp";
 import { PrismaClient } from "@prisma/client";
 import { supabaseAdmin as supabase } from "../lib/supabase";
+import { driveService } from "./googleDrive.service";
 
 const prisma = new PrismaClient();
 
@@ -21,15 +22,25 @@ export class PhygitalService {
     try {
       const { eventId, customerName, customerPhone, customerCep } = metadata;
 
-      // 1. Verifica se o evento existe (Crítico para o Prisma não dar erro)
+      // 1. Verifica se o destino existe (Pode ser Evento ou Cofre/Vault)
       let foundEvent = await prisma.event.findUnique({ where: { id: eventId } });
+      let foundVault = null;
+
       if (!foundEvent) {
-        // Se não existir, tentamos buscar pelo Slug (fallback para facilitar testes)
-        const eventBySlug = await prisma.event.findUnique({ where: { slug: eventId } });
-        if (!eventBySlug) throw new Error(`Evento ${eventId} não encontrado no sistema.`);
-        foundEvent = eventBySlug;
-        metadata.eventId = eventBySlug.id;
+        foundVault = await prisma.sharedAlbum.findUnique({ where: { id: eventId } });
+        if (!foundVault) {
+          const eventBySlug = await prisma.event.findUnique({ where: { slug: eventId } });
+          if (eventBySlug) {
+            foundEvent = eventBySlug;
+            metadata.eventId = eventBySlug.id;
+          } else {
+            const vaultBySlug = await prisma.sharedAlbum.findUnique({ where: { slug: eventId } });
+            if (vaultBySlug) foundVault = vaultBySlug;
+          }
+        }
       }
+
+      if (!foundEvent && !foundVault) throw new Error(`Destino ${eventId} não encontrado no sistema.`);
 
       // 2. Gera a Referência Única do Cliente
       const shortEventId = metadata.eventId.substring(0, 5).toUpperCase();
@@ -86,19 +97,36 @@ export class PhygitalService {
         .jpeg({ quality: 90 })
         .toBuffer();
 
-      // 5. Upload para o Supabase Storage
-      const fileName = `phygital/${metadata.eventId}/${referenceCode}.jpg`;
-      
-      const { data: uploadData, error: uploadError } = await supabase.storage
-        .from("eventos")
-        .upload(fileName, processedImageBuffer, {
-          contentType: "image/jpeg",
-          upsert: true
+      // 5. Upload para o Storage correspondente (Híbrido)
+      let publicUrl = "";
+      let fileId = "";
+      let driveFile: any = null;
+
+      if (foundVault) {
+        if (!foundVault.folderId) throw new Error("Cofre sem infraestrutura de storage (Google Drive).");
+        
+        console.log(`[PHYGITAL] Upload para Google Drive (Vault: ${foundVault.nome})`);
+        driveFile = await driveService.uploadMedia({
+          folderId: foundVault.folderId,
+          fileName: `${referenceCode}.jpg`,
+          buffer: processedImageBuffer,
+          mimeType: "image/jpeg"
         });
+        publicUrl = driveFile.webViewLink!;
+        fileId = driveFile.id!;
+      } else {
+        const fileName = `phygital/${metadata.eventId}/${referenceCode}.jpg`;
+        const { data: uploadData, error: uploadError } = await supabase.storage
+          .from("eventos")
+          .upload(fileName, processedImageBuffer, {
+            contentType: "image/jpeg",
+            upsert: true
+          });
 
-      if (uploadError) throw uploadError;
-
-      const { data: { publicUrl } } = supabase.storage.from("eventos").getPublicUrl(fileName);
+        if (uploadError) throw uploadError;
+        const { data: { publicUrl: supabaseUrl } } = supabase.storage.from("eventos").getPublicUrl(fileName);
+        publicUrl = supabaseUrl;
+      }
 
       // 6. Persistência no Prisma
       const printJob = await prisma.phygitalPrint.create({
@@ -111,22 +139,51 @@ export class PhygitalService {
           customerCep: metadata.customerCep || "",
           userId: metadata.userId || "",
           status: 'PENDING_PRINT',
-          eventId: metadata.eventId
+          eventId: foundEvent ? foundEvent.id : null,
+          sharedAlbumId: foundVault ? foundVault.id : null
         },
-        include: { event: true }
+        include: { event: true, sharedAlbum: true }
       });
 
-      // 6.1. Adicionar à Galeria Live (EventMedia) para aparecer no painel imediatamente
-      const count = await prisma.eventMedia.count({ where: { eventId: metadata.eventId } });
-      const shortId = `F${(count + 1).toString().padStart(3, '0')}`;
-      await prisma.eventMedia.create({
-        data: {
-          eventId: metadata.eventId,
-          url: publicUrl,
-          shortId: shortId,
-          price: foundEvent?.priceBase || 15 // Use foundEvent instead of null-risk event
+      // 6.1. Adicionar à Galeria Live (EventMedia ou SharedAlbumMedia)
+      if (foundVault) {
+        await prisma.sharedAlbumMedia.create({
+          data: {
+            albumId: foundVault.id,
+            fileId: fileId,
+            webViewLink: publicUrl,
+            thumbnailLink: driveFile.thumbnailLink || null, // FIX: Salvando a miniatura nativa do Drive
+            uploadedById: metadata.userId || foundVault.ownerId // Se anônimo, assume o dono como uploader
+          }
+        });
+      } else if (foundEvent) {
+        const count = await prisma.eventMedia.count({ where: { eventId: metadata.eventId } });
+        const shortId = `F${(count + 1).toString().padStart(3, '0')}`;
+        
+        // Determina se o upload foi feito por um profissional
+        let isProfessional = false;
+        if (metadata.userId) {
+          const uploader = await prisma.user.findUnique({ where: { id: metadata.userId } });
+          const isLinked = metadata.userId === foundEvent.captacaoId || 
+                           metadata.userId === foundEvent.edicaoId || 
+                           metadata.userId === foundEvent.ownerId || 
+                           metadata.userId === foundEvent.cartorioUserId;
+          
+          if (uploader?.role === 'ADMIN' || isLinked) {
+            isProfessional = true;
+          }
         }
-      });
+
+        await prisma.eventMedia.create({
+          data: {
+            eventId: metadata.eventId,
+            url: publicUrl,
+            shortId: shortId,
+            isGuest: !isProfessional,
+            price: foundEvent?.pricePerPhoto || foundEvent?.priceBase || 15
+          }
+        });
+      }
 
       // 7. Lógica de Créditos de Franquia
       if (foundEvent?.franchiseeId) {

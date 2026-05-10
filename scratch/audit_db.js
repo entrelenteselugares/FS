@@ -1,36 +1,24 @@
-const { PrismaClient } = require('./backend/node_modules/@prisma/client');
+const { PrismaClient } = require('@prisma/client');
 const prisma = new PrismaClient();
 
-async function main() {
-  console.log('--- AUDITORIA DE STATUS DE PEDIDOS (CLIENTE BACKEND) ---');
+async function auditDB() {
   try {
-    const orders = await prisma.order.findMany({
-      select: { status: true }
+    console.log('--- SHARED ALBUM MEDIA ---');
+    const media = await prisma.sharedAlbumMedia.findMany({
+      where: { albumId: 'cmp05xqtr0001l504sjo30noi' }
     });
-    
-    const counts = {};
-    orders.forEach(o => {
-      counts[o.status] = (counts[o.status] || 0) + 1;
-    });
-    
-    console.log('Distribuição de Status:', counts);
-    
-    const events = await prisma.event.findMany({
-        select: { active: true, isQuote: true }
-    });
-    const eventCounts = { active: 0, inactive: 0, quote: 0 };
-    events.forEach(e => {
-        if (e.isQuote) eventCounts.quote++;
-        else if (e.active) eventCounts.active++;
-        else eventCounts.inactive++;
-    });
-    console.log('Distribuição de Eventos:', eventCounts);
+    console.log(JSON.stringify(media, null, 2));
 
+    console.log('\n--- SHARED ALBUM ---');
+    const album = await prisma.sharedAlbum.findUnique({
+      where: { id: 'cmp05xqtr0001l504sjo30noi' }
+    });
+    console.log(JSON.stringify(album, null, 2));
   } catch (err) {
-    console.error('ERRO:', err.message);
+    console.error(err);
   } finally {
     await prisma.$disconnect();
   }
 }
 
-main();
+auditDB();

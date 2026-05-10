@@ -176,7 +176,7 @@ export default function LuxuryExperiencePage() {
             </div>
             <p className="text-xs uppercase font-medium leading-relaxed italic text-theme-muted">Acesse todas as memórias do seu dia especial. Cada clique foi processado para garantir a máxima fidelidade técnica e estética.</p>
             <a 
-              href={(event.lightroomUrl || event.driveUrl || '#').trim().replace(/\s/g, '')} 
+              href={(event.lightroomUrl || event.driveUrl || `/e/${event.slug || event.id}`).trim().replace(/\s/g, '')} 
               target="_blank" 
               rel="noopener noreferrer"
               className="inline-flex items-center gap-4 px-10 py-5 bg-emerald-500 text-white font-display font-black text-sm uppercase tracking-widest shadow-xl shadow-emerald-500/10 hover:scale-[1.02] transition-all"
@@ -274,8 +274,14 @@ export default function LuxuryExperiencePage() {
         )}
 
         {/* FOOTER */}
-        <footer className="text-center pt-12 space-y-4 pb-12">
+        <footer className="text-center pt-12 space-y-6 pb-12">
            <div className="h-px w-24 mx-auto" style={{ background: T.border }} />
+           <img 
+             src="/logo.png" 
+             alt="Foto Segundo" 
+             className="h-6 mx-auto opacity-40 grayscale hover:opacity-100 transition-all cursor-pointer" 
+             onClick={() => navigate('/')} 
+           />
            <p className="text-[9px] uppercase font-black tracking-[0.5em] italic" style={{ color: T.text3 }}>Foto Segundo · Midnight Luxury Experience</p>
         </footer>
 

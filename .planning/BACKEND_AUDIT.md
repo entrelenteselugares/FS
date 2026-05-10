@@ -32,6 +32,13 @@
 * **Middlewares:** `requireAuth` e `requireRole` no `auth.ts` estão sólidos. Não há vulnerabilidade de elevação de privilégio. O escopo `user.role` está sendo injetado no token JWT de forma imutável (assinado com `JWT_SECRET`).
 * **Isolamento:** Franqueados não conseguem invocar rotas `ADMIN`, e clientes não conseguem simular chamadas de `PROFISSIONAL`. O fluxo de autorização está blindado.
 
+## 5. Roteamento e Proxy de Mídia (Vaults)
+
+**Status:** 🟢 Corrigido & Blindado
+
+* **Colisão de Rotas:** Identificamos um bug crítico onde a rota parametrizada `/vaults/:albumId` (autenticada) estava capturando as requisições do proxy público `/vaults/media/proxy/:fileId`. Isso ocorria porque o Express interpretava "media" como um ID de álbum.
+* **Ação Corretiva:** Movi o endpoint do proxy para o topo do roteador de Cofres e removi a obrigatoriedade de autenticação para este endpoint específico (Proxy de Visualização). Isso restaurou a renderização de imagens em tags `<img>` no frontend sem comprometer a segurança dos metadados do álbum.
+
 ---
 
 ### Veredito: Lançamento Aprovado 🚀

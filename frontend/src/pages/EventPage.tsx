@@ -263,7 +263,7 @@ export default function EventPage() {
           setStep("paywall");
         }
 
-        if (eventData.type === 'PHOTO_MARKETPLACE' || eventData.type === 'FOTO_POINT' || eventData.type === 'FLASH_EVENT') {
+        if (eventData.type === 'PHOTO_MARKETPLACE' || eventData.type === 'FOTO_POINT' || eventData.type === 'FLASH_EVENT' || eventData.type === 'ALBUM_FULL') {
           const mOid = localStorage.getItem(`fs_order_${slug}`);
           const mParams = { ...params, ...(mOid ? { orderId: mOid } : {}) };
           api.get(`/marketplace/events/${eventData.id}/media`, { params: mParams })
@@ -338,8 +338,18 @@ export default function EventPage() {
 
   const handleUnlockClick = async () => { 
     if (!event) return;
-    const isMarketplaceWithCart = (event.type === 'PHOTO_MARKETPLACE' || event.type === 'FOTO_POINT' || event.type === 'FLASH_EVENT') && (eventCart.length > 0 || eventPhysicalItems.length > 0);
-    if (!isMarketplaceWithCart && (event.isOwner || paid)) return;
+    const isMarketplaceWithCart = isMarketplace && (eventCart.length > 0 || eventPhysicalItems.length > 0);
+    
+    if (!isMarketplaceWithCart && (event.isOwner || paid)) {
+      const gallery = document.getElementById('gallery-section');
+      if (gallery) {
+        gallery.scrollIntoView({ behavior: 'smooth' });
+      } else {
+        // Fallback: scroll a bit down
+        window.scrollTo({ top: window.innerHeight * 0.8, behavior: 'smooth' });
+      }
+      return;
+    }
 
     setLoading(true);
     try {
@@ -653,9 +663,9 @@ return (
                 </div>
               )}
 
-              {/* ── Galeria Principal (Marketplace / Live Stream) - PRIORIDADE ── */}
-              {isMarketplace && (
-                <div className="space-y-16 animate-in fade-in slide-in-from-bottom-8 duration-1000 delay-300">
+              {/* ── Galeria Principal (Marketplace / Live Stream / Guest Photos) ── */}
+              {(isMarketplace || (event.type === 'ALBUM_FULL' && step === 'success')) && (
+                <div id="gallery-section" className="space-y-16 animate-in fade-in slide-in-from-bottom-8 duration-1000 delay-300 scroll-mt-20">
                   <div className="pt-20">
                     <div className="flex items-center gap-4 mb-10 cursor-pointer group" onClick={() => setShowLiveOps(!showLiveOps)}>
                       <div className="h-px flex-1 bg-theme-border/20 group-hover:bg-brand-tactical/30 transition-colors" />

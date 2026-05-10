@@ -429,6 +429,7 @@ router.post("/franchise/orders", requireAuth, requireProOrFranchise, FranchiseCo
 router.post("/franchise/webhook", FranchiseController.handleWebhook); // Public webhook
 
 // ── VAULTS (Cofres de Memórias - Fase 11) ──────────────────────────────────
+router.get("/vaults/media/proxy/:fileId", VaultController.proxyMedia);
 router.get("/vaults", requireAuth, VaultController.listAlbums);
 router.post("/vaults", requireAuth, VaultController.createAlbum);
 router.get("/vaults/:albumId", requireAuth, VaultController.getAlbumDetails);
@@ -443,8 +444,6 @@ router.post("/vaults/invitation/:code/accept", requireAuth, VaultController.acce
 
 // ── Flash Event (Venda Direta com PIN) ───────────────────────────────────────
 router.use("/flash", flashRoutes);
-
-router.get("/vaults/media/proxy/:fileId", VaultController.proxyMedia);
 
 // ── PHYGITAL (Fluxo QR Code & Impressão) ──────────────────────────────────────
 router.post("/public/phygital/upload", optionalAuth, upload.single("photo"), PhygitalController.upload);

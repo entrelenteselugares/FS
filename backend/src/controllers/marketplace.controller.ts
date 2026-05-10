@@ -320,11 +320,12 @@ export class MarketplaceController {
           return res.status(401).json({ error: "Este álbum é privado. Por favor, faça login para acessar." });
         }
 
-        const isOwner = 
+        const isOwner = authUser && (
           authUser.role === "ADMIN" || 
           authUser.userId === event.captacaoId || 
           authUser.userId === event.edicaoId || 
-          authUser.userId === event.cartorioUserId;
+          authUser.userId === event.cartorioUserId
+        );
 
         if (!isOwner) {
           // Verifica se o usuário tem algum pedido para este evento
@@ -369,7 +370,16 @@ export class MarketplaceController {
         createdAt: p.createdAt
       }));
 
-      const allMedia = [...media, ...mappedPhygital];
+      // Deduplica por URL (Prioridade para EventMedia se houver duplicata)
+      const allMedia = [...media];
+      const existingUrls = new Set(media.map(m => m.url));
+      
+      mappedPhygital.forEach(p => {
+        if (!existingUrls.has(p.url)) {
+          allMedia.push(p as any);
+          existingUrls.add(p.url);
+        }
+      });
 
       // 4. Se logado, retorna IDs desbloqueados
       let unlockedMediaIds: string[] = [];

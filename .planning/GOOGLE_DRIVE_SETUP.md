@@ -30,7 +30,8 @@ GOOGLE_DRIVE_REFRESH_TOKEN="..."
 
 * **Buffer Temporário:** Arquivos são gravados no `os.tmpdir()` antes do upload para garantir que o tamanho do stream seja conhecido (necessário para estabilidade na Vercel).
 * **Exponential Backoff:** Implementamos o helper `withRetry` que realiza até 3 tentativas com atraso progressivo em caso de falhas de rede (Erro 429, 503).
-* **Permissões Automáticas:** Todo arquivo enviado recebe a permissão `reader:anyone` para que o App e o Frontend consigam exibir as miniaturas via `thumbnailLink` nativo do Google.
+* **Permissões Automáticas:** Todo arquivo enviado recebe a permissão `reader:anyone` para que o App consiga exibir as miniaturas via `thumbnailLink` nativo.
+* **Proxy de Mídia (Estratégia Cross-Origin):** Para contornar bloqueios de CORS e autenticação em navegadores (onde `thumbnailLink` pode falhar em tags `<img>`), implementamos a rota `/api/vaults/media/proxy/:fileId`. O backend atua como um relay, transmitindo o binário diretamente do Drive para o browser.
 
 ## 🛑 Troubleshooting (Lições Aprendidas)
 

@@ -26,3 +26,9 @@
 
 - GSD-based planning before implementation.
 - Commit messages should be descriptive and linked to phase/objective.
+
+## Hybrid Storage Routing
+
+- **Dynamic Destination**: Use `PhygitalService` to determine if a QR capture routes to an `Event` (Hot) or `SharedAlbum` (Cold) based on provided IDs.
+- **Proxy Relay**: Always use the `/vaults/media/proxy/:fileId` endpoint for rendering images from Cold Storage to avoid CORS and authentication header failures.
+- **Fallbacks**: UI components must implement smart fallbacks (e.g., internal gallery routes) if external storage links are not present.

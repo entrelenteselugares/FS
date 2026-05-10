@@ -15,6 +15,11 @@
   - Storage Buckets (Bucket: `eventos`) for high-res media.
   - Real-time subscriptions for UI updates (Grid unlocking).
 
+- **Google Drive (Cold Storage)**:
+  - **Memory Vaults**: Folder-per-album structure for high-persistence storage.
+  - **Proxy Relay**: Stream-proxying via backend to avoid CORS/Auth issues on frontend tags.
+  - **OAuth2 Flow**: Utilizes Refresh Tokens to bypass Service Account storage limits.
+
 ## Gamification & Loyalty
 
 - **GamificationLedger**: Integrated audit trail for all reward credits.

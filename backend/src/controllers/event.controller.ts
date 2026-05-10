@@ -159,19 +159,16 @@ export class EventController {
       const rawPreviews = event.previewPhotos;
       const jsonPreviews: string[] = rawPreviews ? (typeof rawPreviews === "string" ? JSON.parse(rawPreviews) : rawPreviews) : [];
       
-      if (event.type === 'PHOTO_MARKETPLACE') {
-        const prints = await prisma.phygitalPrint.findMany({
-          where: { eventId: event.id },
-          orderBy: { createdAt: 'desc' },
-          take: 50,
-          select: { imageUrl: true }
-        });
-        const printUrls = prints.map(p => p.imageUrl);
-        // Deduplica e unifica fontes: prints + previews manuais
-        previewPhotos = Array.from(new Set([...printUrls, ...jsonPreviews]));
-      } else {
-        previewPhotos = jsonPreviews;
-      }
+      // 4. Previews (Híbrido: Previews Manuais + Phygital)
+      const prints = await prisma.phygitalPrint.findMany({
+        where: { eventId: event.id },
+        orderBy: { createdAt: 'desc' },
+        take: 50,
+        select: { imageUrl: true }
+      });
+      const printUrls = prints.map(p => p.imageUrl);
+      // Deduplica e unifica fontes: prints + previews manuais
+      previewPhotos = Array.from(new Set([...printUrls, ...jsonPreviews]));
 
       // 4. Se for Marketplace, buscamos quais mídias específicas foram compradas
       let unlockedMediaIds: string[] = [];
