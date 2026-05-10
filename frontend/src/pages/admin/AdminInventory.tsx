@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useMemo } from 'react';
 import { API } from '../../lib/api';
 import { 
   Package, 
@@ -8,7 +8,8 @@ import {
   Plus,
   ArrowRight,
   X,
-  Target
+  Target,
+  Search
 } from 'lucide-react';
 
 interface StockMovement {
