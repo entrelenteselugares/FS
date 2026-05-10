@@ -245,6 +245,11 @@ export async function getProfile(req: AuthRequest, res: Response): Promise<void>
       }
     });
 
+    if (!profile) {
+      res.status(404).json({ error: "Perfil profissional não encontrado." });
+      return;
+    }
+
     res.json({
       ...profile,
       pixKey: profile.user?.pixKey,
@@ -252,7 +257,7 @@ export async function getProfile(req: AuthRequest, res: Response): Promise<void>
         totalEarnings: totalEstimated, // Mostra o total real acumulado
         monthEarnings: monthEstimated, // Mostra o acumulado do mês
         completedEvents,
-        agilityPoints: profile?.agilityPoints || 0
+        agilityPoints: profile.agilityPoints || 0
       }
     });
   } catch (err) {

@@ -354,14 +354,13 @@ export const DashboardLayout: React.FC<DashboardLayoutProps> = ({
 
         {/* Mobile Top Bar */}
         <nav style={{
-          display:        "flex",
           alignItems:     "center",
           justifyContent: "space-between",
           padding:        "12px 24px",
           borderBottom:   `1px solid ${T.border}`,
           background:     T.bg,
           flexShrink:     0,
-        }} className="dashboard-topbar lg:hidden">
+        }} className="dashboard-topbar flex lg:hidden">
           {/* Left: Brand Only on Mobile */}
           <div className="flex items-center gap-4">
             <Link to="/" style={{ display: "flex", alignItems: "center" }}>

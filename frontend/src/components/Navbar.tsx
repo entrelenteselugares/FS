@@ -31,7 +31,7 @@ export const Navbar: React.FC = () => {
               src="/logo.png" 
               alt="Foto Segundo" 
               style={{ 
-                height: 20, 
+                height: 28, 
                 objectFit: "contain",
                 filter: "var(--logo-filter)"
               }} 
