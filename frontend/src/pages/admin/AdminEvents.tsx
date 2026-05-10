@@ -492,7 +492,8 @@ export const AdminEvents: React.FC<AdminEventsProps> = ({ initialEditEventId }) 
               </div>
             </div>
           ))}
-        </d      {isModalOpen && (
+        </div>
+      {isModalOpen && (
         <div className="fixed inset-0 z-[500] flex items-center justify-center p-4">
           <div className="absolute inset-0 bg-theme-bg/80 backdrop-blur-xl animate-in fade-in duration-300" onClick={() => setIsModalOpen(false)} />
           

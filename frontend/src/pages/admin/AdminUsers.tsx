@@ -290,6 +290,7 @@ export const AdminUsers: React.FC = () => {
             })
           )}
         </div>
+      </div>
         {/* MEMBER MODAL */}
       {isModalOpen && (
         <div className="fixed inset-0 z-[500] flex items-center justify-center p-4">
