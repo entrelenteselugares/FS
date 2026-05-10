@@ -60,10 +60,20 @@ const AnimatedRoutes = () => {
     document.body.style.overflow = "unset";
   }, [location]);
   
+  // Evita desmontagem completa do DashboardLayout ao transitar entre rotas internas da mesma área
+  const getAnimationKey = (path: string) => {
+    if (path.startsWith("/minha-conta") || path.startsWith("/meus-albuns")) return "cliente-area";
+    if (path.startsWith("/admin")) return "admin-area";
+    if (path.startsWith("/profissional")) return "profissional-area";
+    if (path.startsWith("/unidade-fixa")) return "unidade-area";
+    if (path.startsWith("/franquia")) return "franquia-area";
+    return path;
+  };
+
   return (
     <AnimatePresence mode="wait">
       <motion.div
-        key={location.pathname}
+        key={getAnimationKey(location.pathname)}
         initial={{ opacity: 0, y: 10 }}
         animate={{ opacity: 1, y: 0 }}
         exit={{ opacity: 0, y: -10 }}
