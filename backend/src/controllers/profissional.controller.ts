@@ -34,7 +34,6 @@ export async function getMeusEventos(req: AuthRequest, res: Response): Promise<v
         lightroomUrl: true,
         driveUrl: true,
         temFotoImpressa: true,
-        coverPosition: true,
         captacaoId: true,
         captacaoStatus: true,
         edicaoId: true,
