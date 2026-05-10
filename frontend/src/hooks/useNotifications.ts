@@ -44,11 +44,22 @@ export function useNotifications() {
     }
   }, [user]);
 
-  // Polling a cada 30 segundos para contagem
+  // Polling a cada 30 segundos + Refresh ao focar na aba
   useEffect(() => {
     fetchUnreadCount();
     const interval = setInterval(fetchUnreadCount, 30000);
-    return () => clearInterval(interval);
+    
+    const handleVisibilityChange = () => {
+      if (document.visibilityState === 'visible') {
+        fetchUnreadCount();
+      }
+    };
+    
+    document.addEventListener("visibilitychange", handleVisibilityChange);
+    return () => {
+      clearInterval(interval);
+      document.removeEventListener("visibilitychange", handleVisibilityChange);
+    };
   }, [fetchUnreadCount]);
 
   const toggleFeed = () => {
@@ -85,6 +96,7 @@ export function useNotifications() {
     toggleFeed,
     markAsRead,
     markAllAsRead,
-    fetchFeed
+    fetchFeed,
+    user
   };
 }

@@ -406,7 +406,7 @@ export class EventController {
       const recentEvent = await prisma.event.findFirst({
         where: {
           clientEmail: email,
-          dataEvento: new Date(eventDate),
+          dataEvento: eventDate ? new Date(`${eventDate}T12:00:00`) : new Date(),
           createdAt: {
             gt: new Date(Date.now() - 2 * 60 * 1000) // últimos 2 minutos
           }
@@ -501,7 +501,9 @@ export class EventController {
       // selectedServices pode conter IDs dinâmicos do catálogo (CUIDs) ou IDs estáticos ("foto","video","reels","impresso")
       const STATIC_LABELS: Record<string, string> = {
         foto: "Fotografia Digital", video: "Vídeo Bruto",
-        reels: "Reels / Mobile", impresso: "Álbum / Impressa"
+        reels: "Reels / Mobile", impresso: "Álbum / Impressa",
+        album_full: "Álbum Completo", live_print: "Live Print",
+        foto_point: "Foto Point", flash_event: "Flash Event"
       };
       let serviceLabels: string[] = [];
       const dynamicIds = selectedServices.filter((id: string) => !STATIC_LABELS[id]);
@@ -526,7 +528,7 @@ export class EventController {
       const event = await prisma.event.create({
         data: {
           nomeNoivos: name,
-          dataEvento: new Date(eventDate),
+          dataEvento: eventDate ? new Date(`${eventDate}T12:00:00`) : new Date(),
           eventHours: eventHours ? Number(eventHours) : 2,
           eventDays: eventDays ? Number(eventDays) : 1,
           location: locationType === "PARTNER" ? "Ponto Fixo" : `CEP: ${customCep}`,
@@ -624,6 +626,16 @@ export class EventController {
         name: name,
         tempPassword: tempPassForEmail
       }).catch(e => console.error("Erro ao enviar boas-vindas (lead):", e));
+
+      // Notificação in-app para o CLIENTE
+      await NotificationService.createInApp({
+        userId: targetUser.id,
+        type: 'QUOTE_RECEIVED',
+        title: '✨ Recebemos seu pedido!',
+        body: `Olá ${name}, já estamos analisando seu pedido para ${eventDate}. Em breve enviaremos a proposta!`,
+        refId: event.id,
+        refType: 'event'
+      }).catch(e => console.error("Erro notif cliente lead:", e));
 
       return res.json({ success: true, eventId: event.id, message: "Sua solicitação foi enviada! Em breve entraremos em contato com o orçamento detalhado." });
 

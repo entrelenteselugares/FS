@@ -13,7 +13,8 @@ export function NotificationBell() {
     setIsOpen, 
     toggleFeed, 
     markAsRead, 
-    markAllAsRead 
+    markAllAsRead,
+    user
   } = useNotifications();
   const navigate = useNavigate();
 
@@ -23,11 +24,21 @@ export function NotificationBell() {
     }
     setIsOpen(false);
     
-    // Roteamento baseado no refType
+    // Roteamento baseado no refType e Role
     if (notif.refType === 'event' && notif.refId) {
-      navigate(`/admin/events`); // Redireciona para lista de eventos admin (Pode ser adaptado para URL específica)
+      if (user?.role === 'ADMIN') {
+        const isQuote = notif.type.includes('QUOTE');
+        const target = isQuote ? `/admin/quotes?id=${notif.refId}` : `/admin/events`;
+        navigate(target);
+      } else {
+        navigate(`/e/${notif.refId}`);
+      }
     } else if (notif.refType === 'order' && notif.refId) {
-      navigate(`/admin/orders`); 
+      if (user?.role === 'ADMIN') {
+        navigate(`/admin/orders`);
+      } else {
+        navigate(`/cliente/area`);
+      }
     }
   };
 

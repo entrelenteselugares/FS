@@ -1,4 +1,5 @@
 import React, { useState, useEffect, useCallback, useMemo } from "react";
+import { useSearchParams } from "react-router-dom";
 import { AnimatePresence, motion } from "framer-motion";
 import { API } from "../../lib/api";
 import {
@@ -12,7 +13,7 @@ interface Quote {
   id: string; nomeNoivos: string; dataEvento: string; location: string;
   description: string; clientEmail: string; clientName: string; clientPhone?: string;
   urgency?: "HIGH" | "MEDIUM" | "LOW"; priceBase: number;
-  quoteStatus: "PENDING" | "PRICED" | "APROVADO" | "REJECTED" | "CONVERTED";
+  quoteStatus: "PENDING" | "PRICED" | "APPROVED" | "REJECTED" | "CONVERTED";
   usageType: string; eventHours?: number; temFoto?: boolean; temVideo?: boolean;
   temReels?: boolean; temFotoEditada?: boolean; temVideoEditado?: boolean;
   temFotoImpressa?: boolean; temAlbumImpresso?: boolean; createdAt: string;
@@ -24,12 +25,13 @@ interface BudgetBreakdown { STAFF?: StaffBreakdown[]; EQUIPMENT?: EquipBreakdown
 const KANBAN_COLUMNS = [
   { id: "PENDING",   label: "Novos Leads",       color: "amber",   border: "border-amber-500/40",   text: "text-amber-500",   badge: "bg-amber-500/10 text-amber-500 border-amber-500/30" },
   { id: "PRICED",    label: "Em Análise",         color: "blue",    border: "border-blue-500/40",    text: "text-blue-500",    badge: "bg-blue-500/10 text-blue-500 border-blue-500/30" },
-  { id: "APROVADO",  label: "Proposta Enviada",   color: "emerald", border: "border-emerald-500/40", text: "text-emerald-500", badge: "bg-emerald-500/10 text-emerald-500 border-emerald-500/30" },
+  { id: "APPROVED",  label: "Proposta Enviada",   color: "emerald", border: "border-emerald-500/40", text: "text-emerald-500", badge: "bg-emerald-500/10 text-emerald-500 border-emerald-500/30" },
   { id: "CONVERTED", label: "Convertidos",        color: "teal",    border: "border-teal-500/40",    text: "text-teal-400",    badge: "bg-teal-500/10 text-teal-400 border-teal-500/30" },
   { id: "REJECTED",  label: "Arquivados",         color: "red",     border: "border-red-500/40",     text: "text-red-500",     badge: "bg-red-500/10 text-red-500 border-red-500/30" },
 ] as const;
 
 export const AdminQuotes: React.FC = () => {
+  const [searchParams] = useSearchParams();
   const [quotes, setQuotes] = useState<Quote[]>([]);
   const [loading, setLoading] = useState(true);
   const [search, setSearch] = useState("");
@@ -91,12 +93,17 @@ export const AdminQuotes: React.FC = () => {
   const suggestedPrice = costTotal>0?costTotal/(1-margin/100):0;
   useEffect(()=>{ if(suggestedPrice>0) setFinalPrice(Math.ceil(suggestedPrice)); },[suggestedPrice]);
 
-  const stats = useMemo(()=>({
-    total:quotes.length,
-    pending:quotes.filter(q=>q.quoteStatus==="PENDING").length,
-    highUrgency:quotes.filter(q=>q.urgency==="HIGH").length,
     totalValue:quotes.reduce((a,q)=>a+(q.priceBase||0),0)
   }),[quotes]);
+
+  // Deep-linking: seleciona orçamento via URL (?id=...)
+  useEffect(() => {
+    const id = searchParams.get('id');
+    if (id && quotes.length > 0 && !selectedQuote) {
+      const found = quotes.find(q => q.id === id);
+      if (found) setSelectedQuote(found);
+    }
+  }, [searchParams, quotes, selectedQuote]);
 
   const handleApprove = async () => {
     if (!selectedQuote||finalPrice<=0) return;
@@ -323,7 +330,24 @@ export const AdminQuotes: React.FC = () => {
                       const cleanText=selectedQuote.description.replace(/\[BUDGET_BREAKDOWN\].*?(\n\n|$)/s,"").replace(/\[REJECTED_REASON\].*?$/s,"").trim();
                       return(
                         <div className="space-y-3">
-                          {data&&<div className="bg-brand-tactical/5 p-3 border border-brand-tactical/10 rounded-lg"><span className="text-[8px] font-bold text-brand-tactical uppercase tracking-widest block mb-1 opacity-70">Simulação Prévia</span><p className="text-[9px] text-theme-text">{(data as BudgetBreakdown).STAFF?.map(s=>s.LABEL||s.label).join(", ")} | Margem: {(data as BudgetBreakdown).MARGIN||((data as BudgetBreakdown).margin)}%</p></div>}
+                          {data && (
+                            <div className="bg-brand-tactical/5 p-4 border border-brand-tactical/20 rounded-xl space-y-3">
+                              <div className="flex items-center gap-2 mb-1">
+                                <Zap size={10} className="text-brand-tactical" />
+                                <span className="text-[9px] font-black text-brand-tactical uppercase tracking-widest italic">Análise de Recursos</span>
+                              </div>
+                              <div className="grid grid-cols-1 gap-2 text-[10px]">
+                                <div className="flex justify-between border-b border-brand-tactical/10 pb-1">
+                                  <span className="text-theme-subtle italic">Equipe Sugerida</span>
+                                  <span className="text-theme-text font-bold italic">{(data as BudgetBreakdown).STAFF?.map(s => s.LABEL || s.label).join(", ") || "N/A"}</span>
+                                </div>
+                                <div className="flex justify-between border-b border-brand-tactical/10 pb-1">
+                                  <span className="text-theme-subtle italic">Margem Operacional</span>
+                                  <span className="text-theme-text font-bold italic">{(data as BudgetBreakdown).MARGIN || ((data as BudgetBreakdown).margin)}%</span>
+                                </div>
+                              </div>
+                            </div>
+                          )}
                           <div className="bg-theme-bg-muted p-4 border border-theme-border text-[11px] text-theme-text leading-relaxed font-medium italic whitespace-pre-wrap rounded-lg">{cleanText||"Nenhuma observação adicional."}</div>
                         </div>
                       );
