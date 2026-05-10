@@ -3,7 +3,7 @@ import React, { useState, useEffect, useCallback } from "react";
 import { API } from "../../lib/api";
 import { T } from "../../lib/theme";
 import { QRCodeSVG } from "qrcode.react";
-import { QrCode, X, Trash2, Radar } from "lucide-react";
+import { QrCode, X, Trash2, Radar, ArrowRight } from "lucide-react";
 import AdminPhygitalQueue from "./AdminPhygitalQueue";
 import { EventStatusDot } from "../../components/EventStatusDot";
 
@@ -492,252 +492,304 @@ export const AdminEvents: React.FC<AdminEventsProps> = ({ initialEditEventId }) 
               </div>
             </div>
           ))}
-        </div>
-      </div>
-
-      {isModalOpen && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/95 backdrop-blur-xl overflow-hidden animate-in fade-in duration-300">
-          <div className="w-full max-w-5xl bg-theme-bg border border-brand-tactical/20 rounded-[2rem] relative shadow-2xl flex flex-col h-[85vh] max-h-[800px] min-h-[600px] overflow-hidden">
-              
-              <div className="p-8 pb-0 shrink-0 bg-brand-tactical/5">
-                <button onClick={() => setIsModalOpen(false)} className="absolute top-6 right-6 text-zinc-500 hover:text-white transition-colors">
-                  <X size={20} />
-                </button>
-
-                <div className="mb-4">
-                  <h2 className="text-xl font-black text-theme-text uppercase tracking-tighter">{editingEvent ? "Ajustar Operação" : "Novo Registro"}</h2>
-                  <div className="w-12 h-1 bg-brand-tactical mt-1" />
+        </d      {isModalOpen && (
+        <div className="fixed inset-0 z-[500] flex items-center justify-center p-4">
+          <div className="absolute inset-0 bg-theme-bg/80 backdrop-blur-xl animate-in fade-in duration-300" onClick={() => setIsModalOpen(false)} />
+          
+          <div className="relative w-full max-w-5xl bg-theme-card border border-theme-border/60 rounded-[40px] overflow-hidden shadow-2xl animate-in zoom-in-95 duration-300 flex flex-col h-[90vh]">
+            {/* Header */}
+            <div className="p-8 md:p-10 border-b border-theme-border flex items-center justify-between shrink-0 bg-theme-bg-muted/30">
+              <div className="flex items-center gap-4">
+                <div className="w-12 h-12 bg-brand-tactical/10 rounded-2xl flex items-center justify-center border border-brand-tactical/20">
+                  <Radar className="text-brand-tactical" size={24} />
                 </div>
-
-                <div className="flex border-b border-theme-border mb-0 gap-8">
-                  {(['info', 'equipe', 'comercial'] as const).map(t => (
-                    <button key={t} type="button" onClick={() => setActiveTab(t)} className={`pb-3 text-[10px] font-black uppercase tracking-[0.4em] relative ${activeTab === t ? 'text-brand-tactical' : 'text-theme-muted hover:text-white'}`}>
-                      {t === 'info' ? 'Essencial' : t === 'equipe' ? 'Operação' : 'Comercial & Entrega'}
-                      {activeTab === t && <div className="absolute bottom-0 left-0 right-0 h-1 bg-brand-tactical" />}
-                    </button>
-                  ))}
+                <div>
+                  <h2 className="text-2xl font-black uppercase italic tracking-tighter text-theme-text">{editingEvent ? "Ajustar Operação" : "Novo Registro"}</h2>
+                  <p className="text-[10px] font-black uppercase tracking-[0.2em] opacity-40">Protocolo de Inteligência de Eventos</p>
                 </div>
               </div>
+              
+              <div className="flex items-center gap-8 mr-12">
+                {(['info', 'equipe', 'comercial'] as const).map(t => (
+                  <button key={t} type="button" onClick={() => setActiveTab(t)} className={`pb-2 text-[10px] font-black uppercase tracking-[0.2em] relative transition-all italic ${activeTab === t ? 'text-brand-tactical' : 'text-theme-muted hover:text-white'}`}>
+                    {t === 'info' ? '1. Essencial' : t === 'equipe' ? '2. Operação' : '3. Comercial'}
+                    {activeTab === t && <div className="absolute -bottom-2 left-0 right-0 h-0.5 bg-brand-tactical" />}
+                  </button>
+                ))}
+              </div>
 
-              <form onSubmit={handleCreate} className="flex-1 flex flex-col min-h-0">
-                  <div className="flex-1 overflow-y-auto scrollbar-hide p-8">
-                    {activeTab === 'info' && (
-                      <div className="grid grid-cols-1 md:grid-cols-2 gap-8 animate-in fade-in duration-500">
-                        <div className="space-y-6">
-                          <div className="space-y-2">
-                            <label className="text-[9px] font-black text-theme-muted uppercase tracking-[0.4em]">Capa da Vitrine</label>
-                            <div onClick={() => fileInputRef.current?.click()} className="w-full h-48 bg-theme-bg-muted border border-theme-border flex flex-col items-center justify-center cursor-pointer overflow-hidden group relative shadow-inner">
-                              {coverPreview ? <img src={coverPreview} alt="Preview" className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700" /> : (
-                                <div className="text-center group-hover:text-brand-tactical transition-colors">
-                                  <div className="text-3xl mb-3">📸</div>
-                                  <div className="text-[9px] uppercase tracking-[0.4em] text-zinc-600 font-black">Enviar Capa</div>
-                                </div>
-                              )}
-                              {isUploading && <div className="absolute inset-0 bg-black/80 flex items-center justify-center text-[9px] text-theme-text uppercase tracking-widest animate-pulse font-black">Processando...</div>}
-                            </div>
-                            <input type="file" ref={fileInputRef} hidden accept="image/*" onChange={handleFileChange} />
-                          </div>
-                        </div>
-                        <div className="space-y-6">
-                          <div className="space-y-2">
-                            <label className="text-[9px] font-black text-theme-muted uppercase tracking-[0.4em]">Título do Evento</label>
-                            <input type="text" required className="fs-input py-2.5" value={formData.title} onChange={e => setFormData({ ...formData, title: e.target.value })} />
-                          </div>
-                          <div className="space-y-2">
-                            <label className="text-[9px] font-black text-theme-muted uppercase tracking-[0.4em]">Identificador URL (Slug)</label>
-                            <input type="text" className="fs-input py-2.5 text-theme-muted" value={formData.slug} onChange={e => setFormData({ ...formData, slug: e.target.value.toLowerCase().replace(/\s+/g, "-") })} placeholder="ex: taynan-e-felipe" />
-                          </div>
+              <button onClick={() => setIsModalOpen(false)} className="p-3 hover:bg-white/5 rounded-full transition-all text-theme-muted"><X size={24} /></button>
+            </div>
 
-                          <div className="grid grid-cols-2 gap-4 p-4 bg-brand-tactical/5 border border-brand-tactical/10">
-                            <div className="space-y-2">
-                              <label className="text-[9px] font-black text-brand-tactical uppercase tracking-[0.4em]">Nome do Cliente</label>
-                              <input type="text" className="fs-input py-2.5" value={formData.clientName} onChange={e => setFormData({ ...formData, clientName: e.target.value })} placeholder="NOME DO NOIVO/CLIENTE" />
-                            </div>
-                            <div className="space-y-2">
-                              <label className="text-[9px] font-black text-brand-tactical uppercase tracking-[0.4em]">E-mail de Acesso</label>
-                              <input type="email" className="fs-input py-2.5" value={formData.clientEmail} onChange={e => setFormData({ ...formData, clientEmail: e.target.value })} placeholder="ex: provisorio@gmail.com" />
-                            </div>
+            {/* Scrollable Content */}
+            <form onSubmit={handleCreate} className="flex-1 overflow-y-auto p-8 md:p-10 space-y-8 custom-scrollbar bg-theme-card">
+              {activeTab === 'info' && (
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-10 animate-in fade-in duration-500">
+                  <div className="space-y-6">
+                    <div className="space-y-4">
+                      <label className="text-[8px] font-black text-theme-muted uppercase tracking-widest block mb-2 opacity-60 italic">Capa da Vitrine</label>
+                      <div onClick={() => fileInputRef.current?.click()} className="w-full h-64 bg-theme-bg-muted border border-theme-border/60 rounded-[30px] flex flex-col items-center justify-center cursor-pointer overflow-hidden group relative shadow-inner">
+                        {coverPreview ? <img src={coverPreview} alt="Preview" className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700" /> : (
+                          <div className="text-center group-hover:text-brand-tactical transition-colors">
+                            <div className="text-4xl mb-4">📸</div>
+                            <div className="text-[9px] uppercase tracking-[0.4em] text-theme-muted font-black">Enviar Capa</div>
                           </div>
-                          <div className="grid grid-cols-2 gap-4">
-                            <div className="space-y-2">
-                              <label className="text-[9px] font-black text-theme-muted uppercase tracking-[0.4em]">Data</label>
-                              <input type="date" required className="fs-input py-2.5" value={formData.date} onChange={e => setFormData({...formData, date: e.target.value})} />
-                            </div>
-                            <div className="space-y-2">
-                              <label className="text-[9px] font-black text-theme-muted uppercase tracking-[0.4em]">Local</label>
-                              <input type="text" required className="fs-input py-2.5" value={formData.location} onChange={e => setFormData({...formData, location: e.target.value})} placeholder="EX: CARTÓRIO X" />
-                            </div>
-                          </div>
-                        </div>
+                        )}
+                        {isUploading && <div className="absolute inset-0 bg-black/80 flex items-center justify-center text-[10px] text-theme-text uppercase tracking-widest animate-pulse font-black">Processando...</div>}
                       </div>
-                    )}
-
-                    {activeTab === 'equipe' && (
-                      <div className="grid grid-cols-1 md:grid-cols-2 gap-8 animate-in fade-in duration-500">
-                        <div className="space-y-6">
-                          <div className="space-y-2">
-                            <label className="text-[9px] font-black text-theme-muted uppercase tracking-[0.4em]">Unidade Fixa</label>
-                            <select value={formData.cartorioId} onChange={e => setFormData({...formData, cartorioId: e.target.value})} className="fs-input py-2.5 cursor-pointer appearance-none">
-                              <option value="">SELECIONE A UNIDADE</option>
-                              {users.filter(u => u.role === "UNIDADE" || u.role === "CARTORIO").map(u => <option key={u.id} value={u.id}>{u.nome.toUpperCase()}</option>)}
-                            </select>
-                          </div>
-                          <div className="space-y-2">
-                            <label className="text-[9px] font-black text-brand-tactical uppercase tracking-[0.4em]">Logística (Franqueado)</label>
-                            <select value={formData.franchiseeId} onChange={e => setFormData({...formData, franchiseeId: e.target.value})} className="fs-input py-2.5 cursor-pointer appearance-none">
-                              <option value="">FOTO SEGUNDO MATRIZ</option>
-                              {users.filter(u => u.franchiseProfile).map(u => (
-                                <option key={u.franchiseProfile!.id} value={u.franchiseProfile!.id}>
-                                  {u.nome.toUpperCase()} ({ u.franchiseProfile!.printCredits } CRÉDITOS)
-                                </option>
-                              ))}
-                            </select>
-                          </div>
-                          <div className="space-y-2">
-                            <label className="text-[9px] font-black text-theme-muted uppercase tracking-[0.4em]">Cidade / UF</label>
-                            <input type="text" className="fs-input py-2.5" value={formData.city} onChange={e => setFormData({ ...formData, city: e.target.value })} placeholder="EX: SÃO PAULO - SP" />
-                          </div>
-                        </div>
-                        <div className="space-y-6">
-                          <div className="grid grid-cols-2 gap-4">
-                            <div className="space-y-2">
-                              <label className="text-[9px] font-black text-theme-muted uppercase tracking-[0.4em]">Captação</label>
-                              <select value={formData.captacaoId} onChange={e => setFormData({...formData, captacaoId: e.target.value})} className="fs-input py-2.5 cursor-pointer appearance-none">
-                                <option value="">PROFISSIONAL</option>
-                                {users.filter(u => u.role === "PROFISSIONAL").map(u => <option key={u.id} value={u.id}>{u.nome.toUpperCase()}</option>)}
-                              </select>
-                            </div>
-                            <div className="space-y-2">
-                              <label className="text-[9px] font-black text-theme-muted uppercase tracking-[0.4em]">Edição</label>
-                              <select value={formData.edicaoId} onChange={e => setFormData({...formData, edicaoId: e.target.value})} className="fs-input py-2.5 cursor-pointer appearance-none">
-                                <option value="">PROFISSIONAL</option>
-                                {users.filter(u => u.role === "PROFISSIONAL").map(u => <option key={u.id} value={u.id}>{u.nome.toUpperCase()}</option>)}
-                              </select>
-                            </div>
-                          </div>
-                          <div className="space-y-2">
-                            <label className="text-[9px] font-black text-theme-muted uppercase tracking-[0.4em]">Horas de Trabalho</label>
-                            <input type="number" required value={formData.eventHours} onChange={e => setFormData({...formData, eventHours: Number(e.target.value)})} className="fs-input py-2.5" />
-                          </div>
-                        </div>
-                      </div>
-                    )}
-
-                    {activeTab === 'comercial' && (
-                      <div className="animate-in fade-in duration-500 space-y-4">
-                        <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
-                          <div className="space-y-3">
-                            <div className="grid grid-cols-2 gap-4">
-                              <div className="space-y-1">
-                                <label className="text-[9px] font-black text-zinc-800 uppercase tracking-[0.4em]">Preço Álbum (R$)</label>
-                                <input type="number" className="fs-input py-2" value={formData.priceBase} onChange={e => setFormData({ ...formData, priceBase: Number(e.target.value) })} />
-                              </div>
-                              <div className="space-y-1">
-                                <label className="text-[9px] font-black text-zinc-800 uppercase tracking-[0.4em]">Antecipado (R$)</label>
-                                <input type="number" className="fs-input py-2" value={formData.priceEarly} onChange={e => setFormData({...formData, priceEarly: Number(e.target.value)})} />
-                              </div>
-                            </div>
-                            <div className="space-y-1">
-                              <label className="text-[9px] font-black text-zinc-800 uppercase tracking-[0.4em]">Google Drive</label>
-                              <input type="text" className="fs-input py-2 text-[11px] font-bold italic" value={formData.driveUrl} onChange={e => setFormData({ ...formData, driveUrl: e.target.value })} placeholder="https://..." />
-                            </div>
-                            <div className="space-y-1">
-                              <label className="text-[9px] font-black text-zinc-800 uppercase tracking-[0.4em]">Lightroom / Galeria</label>
-                              <input type="text" className="fs-input py-2 text-[11px] font-bold italic" value={formData.lightroomUrl} onChange={e => setFormData({ ...formData, lightroomUrl: e.target.value })} placeholder="https://..." />
-                            </div>
-                            <div className="space-y-1">
-                              <label className="text-[9px] font-black text-zinc-800 uppercase tracking-[0.4em]">Retenção Galeria (Dias)</label>
-                              <input type="number" className="fs-input py-2" value={formData.retentionDays} onChange={e => setFormData({ ...formData, retentionDays: Number(e.target.value) })} />
-                              <p className="text-[7px] text-zinc-400 italic">Sugestão: 7 (Privado) | 15 (Público) | 90 (Shows)</p>
-                            </div>
-                          </div>
-                          <div className="space-y-3">
-                            <div className="space-y-2">
-                              <label className="text-[9px] font-black text-zinc-800 uppercase tracking-[0.4em]">Modelo e Serviços</label>
-                              <div className="flex gap-2">
-                                <button type="button" onClick={() => setFormData({ ...formData, type: 'ALBUM_FULL' })} className={`flex-1 py-2 border text-[9px] font-black uppercase tracking-widest transition-all ${formData.type === 'ALBUM_FULL' ? 'bg-brand-tactical border-brand-tactical text-zinc-950 shadow-sm' : 'bg-zinc-50 border-zinc-300 text-zinc-500'}`}>Álbum Completo</button>
-                                <button type="button" onClick={() => setFormData({ ...formData, type: 'PHOTO_MARKETPLACE' })} className={`flex-1 py-2 border text-[9px] font-black uppercase tracking-widest transition-all ${formData.type === 'PHOTO_MARKETPLACE' ? 'bg-brand-tactical border-brand-tactical text-zinc-950 shadow-sm' : 'bg-zinc-50 border-zinc-300 text-zinc-500'}`}>Live Print</button>
-                              </div>
-                              <div className="grid grid-cols-2 gap-x-4 gap-y-2 pt-2 border-t border-zinc-100">
-                                {["temFoto", "temVideo", "temReels", "temFotoImpressa", "isCrowdfund", "isPrivate"].map(f => (
-                                  <label key={f} className="flex items-center gap-2 cursor-pointer">
-                                    <input type="checkbox" checked={formData[f as keyof EventFormData] as boolean} onChange={e => setFormData({...formData, [f]: e.target.checked})} className="w-3.5 h-3.5 border-zinc-300 appearance-none checked:bg-brand-tactical border transition-all" />
-                                    <span className={`text-[8px] font-black uppercase tracking-widest ${formData[f as keyof EventFormData] ? 'text-brand-tactical' : 'text-zinc-400'}`}>{f.replace("tem", "").replace("is", "").replace(/([A-Z])/g, ' $1').trim()}</span>
-                                  </label>
-                                ))}
-                              </div>
-                            </div>
-                            {formData.isCrowdfund && (
-                              <div className="p-3 bg-brand-tactical/5 border border-brand-tactical/20 flex justify-between items-center">
-                                <div><label className="text-[8px] font-black text-brand-tactical uppercase tracking-widest">Meta</label>
-                                <input type="number" className="bg-transparent text-lg font-black text-zinc-950 outline-none w-24" value={formData.targetAmount} onChange={e => setFormData({...formData, targetAmount: Number(e.target.value)})} /></div>
-                                <div className="text-right"><span className="text-[8px] font-black text-zinc-400 uppercase tracking-widest block">Coletado</span><span className="text-md font-black text-brand-tactical">{new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL' }).format(editingEvent?.collectedAmount || 0)}</span></div>
-                              </div>
-                            )}
-                          </div>
-                        </div>
-
-                      </div>
-                    )}
+                      <input type="file" ref={fileInputRef} hidden accept="image/*" onChange={handleFileChange} />
+                    </div>
                   </div>
+                  <div className="space-y-6">
+                    <div className="space-y-2">
+                      <label className="text-[8px] font-black text-theme-muted uppercase tracking-widest block mb-2 opacity-60 italic">Título do Evento</label>
+                      <input type="text" required className="w-full bg-theme-bg-muted border border-theme-border/60 p-4 text-[10px] text-theme-text font-black outline-none focus:border-brand-tactical rounded-xl uppercase" value={formData.title} onChange={e => setFormData({ ...formData, title: e.target.value })} />
+                    </div>
+                    <div className="space-y-2">
+                      <label className="text-[8px] font-black text-theme-muted uppercase tracking-widest block mb-2 opacity-60 italic">Identificador URL (Slug)</label>
+                      <input type="text" className="w-full bg-theme-bg-muted border border-theme-border/60 p-4 text-[10px] text-theme-muted font-black outline-none focus:border-brand-tactical rounded-xl" value={formData.slug} onChange={e => setFormData({ ...formData, slug: e.target.value.toLowerCase().replace(/\s/g, "-") })} placeholder="ex: taynan-e-felipe" />
+                    </div>
 
-                  <div className="p-6 border-t border-theme-border bg-theme-bg flex justify-end gap-4 shrink-0">
-                    <button type="button" onClick={() => setIsModalOpen(false)} className="px-8 py-3 text-[10px] font-black uppercase tracking-[0.4em] text-theme-muted hover:text-white transition-all">Cancelar</button>
-                    {activeTab !== 'comercial' ? (
-                      <button type="button" onClick={() => { const t: Array<'info' | 'equipe' | 'comercial'> = ['info','equipe','comercial']; setActiveTab(t[t.indexOf(activeTab)+1]); }} className="px-8 py-3 bg-theme-border text-theme-text text-[10px] font-black uppercase tracking-[0.4em] hover:bg-zinc-700 transition-all">Próximo Passo</button>
-                    ) : (
-                      <button type="submit" disabled={isUploading} className="px-10 py-3 bg-brand-tactical text-zinc-950 text-[10px] font-black uppercase tracking-[0.4em] hover:brightness-110 shadow-lg">{isUploading ? "PROCESSANDO..." : (editingEvent ? "SALVAR" : "CADASTRAR")}</button>
-                    )}
+                    <div className="grid grid-cols-2 gap-6 p-6 bg-brand-tactical/5 border border-brand-tactical/10 rounded-[24px]">
+                      <div className="space-y-2">
+                        <label className="text-[8px] font-black text-brand-tactical uppercase tracking-widest block mb-2 opacity-60 italic">Nome do Cliente</label>
+                        <input type="text" className="w-full bg-theme-bg/50 border border-brand-tactical/20 p-4 text-[10px] text-theme-text font-black outline-none focus:border-brand-tactical rounded-xl uppercase placeholder:text-brand-tactical/30" value={formData.clientName} onChange={e => setFormData({ ...formData, clientName: e.target.value })} placeholder="NOME DO CLIENTE" />
+                      </div>
+                      <div className="space-y-2">
+                        <label className="text-[8px] font-black text-brand-tactical uppercase tracking-widest block mb-2 opacity-60 italic">E-mail de Acesso</label>
+                        <input type="email" className="w-full bg-theme-bg/50 border border-brand-tactical/20 p-4 text-[10px] text-theme-text font-black outline-none focus:border-brand-tactical rounded-xl lowercase placeholder:text-brand-tactical/30" value={formData.clientEmail} onChange={e => setFormData({ ...formData, clientEmail: e.target.value })} placeholder="provisorio@gmail.com" />
+                      </div>
+                    </div>
+                    <div className="grid grid-cols-2 gap-6">
+                      <div className="space-y-2">
+                        <label className="text-[8px] font-black text-theme-muted uppercase tracking-widest block mb-2 opacity-60 italic">Data</label>
+                        <input type="date" required className="w-full bg-theme-bg-muted border border-theme-border/60 p-4 text-[10px] text-theme-text font-black outline-none focus:border-brand-tactical rounded-xl" value={formData.date} onChange={e => setFormData({...formData, date: e.target.value})} />
+                      </div>
+                      <div className="space-y-2">
+                        <label className="text-[8px] font-black text-theme-muted uppercase tracking-widest block mb-2 opacity-60 italic">Local</label>
+                        <input type="text" required className="w-full bg-theme-bg-muted border border-theme-border/60 p-4 text-[10px] text-theme-text font-black outline-none focus:border-brand-tactical rounded-xl uppercase" value={formData.location} onChange={e => setFormData({...formData, location: e.target.value})} placeholder="EX: CARTÓRIO X" />
+                      </div>
+                    </div>
                   </div>
-              </form>
+                </div>
+              )}
+
+              {activeTab === 'equipe' && (
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-10 animate-in fade-in duration-500">
+                  <div className="space-y-6">
+                    <div className="space-y-2">
+                      <label className="text-[8px] font-black text-theme-muted uppercase tracking-widest block mb-2 opacity-60 italic">Unidade Fixa</label>
+                      <select value={formData.cartorioId} onChange={e => setFormData({...formData, cartorioId: e.target.value})} className="w-full bg-theme-bg-muted border border-theme-border/60 p-4 text-[10px] text-theme-text font-black outline-none focus:border-brand-tactical rounded-xl appearance-none cursor-pointer">
+                        <option value="">SELECIONE A UNIDADE</option>
+                        {users.filter(u => u.role === "UNIDADE" || u.role === "CARTORIO").map(u => <option key={u.id} value={u.id}>{u.nome.toUpperCase()}</option>)}
+                      </select>
+                    </div>
+                    <div className="space-y-2">
+                      <label className="text-[8px] font-black text-brand-tactical uppercase tracking-widest block mb-2 opacity-60 italic">Logística (Franqueado)</label>
+                      <select value={formData.franchiseeId} onChange={e => setFormData({...formData, franchiseeId: e.target.value})} className="w-full bg-theme-bg-muted border border-brand-tactical/30 p-4 text-[10px] text-theme-text font-black outline-none focus:border-brand-tactical rounded-xl appearance-none cursor-pointer">
+                        <option value="">FOTO SEGUNDO MATRIZ</option>
+                        {users.filter(u => u.franchiseProfile).map(u => (
+                          <option key={u.franchiseProfile!.id} value={u.franchiseProfile!.id}>
+                            {u.nome.toUpperCase()} ({ u.franchiseProfile!.printCredits } CRÉDITOS)
+                          </option>
+                        ))}
+                      </select>
+                    </div>
+                    <div className="space-y-2">
+                      <label className="text-[8px] font-black text-theme-muted uppercase tracking-widest block mb-2 opacity-60 italic">Cidade / UF</label>
+                      <input type="text" className="w-full bg-theme-bg-muted border border-theme-border/60 p-4 text-[10px] text-theme-text font-black outline-none focus:border-brand-tactical rounded-xl uppercase" value={formData.city} onChange={e => setFormData({ ...formData, city: e.target.value })} placeholder="EX: SÃO PAULO - SP" />
+                    </div>
+                  </div>
+                  <div className="space-y-6">
+                    <div className="grid grid-cols-2 gap-6">
+                      <div className="space-y-2">
+                        <label className="text-[8px] font-black text-theme-muted uppercase tracking-widest block mb-2 opacity-60 italic">Captação</label>
+                        <select value={formData.captacaoId} onChange={e => setFormData({...formData, captacaoId: e.target.value})} className="w-full bg-theme-bg-muted border border-theme-border/60 p-4 text-[10px] text-theme-text font-black outline-none focus:border-brand-tactical rounded-xl appearance-none cursor-pointer">
+                          <option value="">PROFISSIONAL</option>
+                          {users.filter(u => u.role === "PROFISSIONAL").map(u => <option key={u.id} value={u.id}>{u.nome.toUpperCase()}</option>)}
+                        </select>
+                      </div>
+                      <div className="space-y-2">
+                        <label className="text-[8px] font-black text-theme-muted uppercase tracking-widest block mb-2 opacity-60 italic">Edição</label>
+                        <select value={formData.edicaoId} onChange={e => setFormData({...formData, edicaoId: e.target.value})} className="w-full bg-theme-bg-muted border border-theme-border/60 p-4 text-[10px] text-theme-text font-black outline-none focus:border-brand-tactical rounded-xl appearance-none cursor-pointer">
+                          <option value="">PROFISSIONAL</option>
+                          {users.filter(u => u.role === "PROFISSIONAL").map(u => <option key={u.id} value={u.id}>{u.nome.toUpperCase()}</option>)}
+                        </select>
+                      </div>
+                    </div>
+                    <div className="space-y-2">
+                      <label className="text-[8px] font-black text-theme-muted uppercase tracking-widest block mb-2 opacity-60 italic">Horas de Trabalho</label>
+                      <input type="number" required value={formData.eventHours} onChange={e => setFormData({...formData, eventHours: Number(e.target.value)})} className="w-full bg-theme-bg-muted border border-theme-border/60 p-4 text-[10px] text-theme-text font-black outline-none focus:border-brand-tactical rounded-xl" />
+                    </div>
+                  </div>
+                </div>
+              )}
+
+              {activeTab === 'comercial' && (
+                <div className="animate-in fade-in duration-500 space-y-10">
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-10">
+                    <div className="space-y-6">
+                      <div className="grid grid-cols-2 gap-6">
+                        <div className="space-y-2">
+                          <label className="text-[8px] font-black text-theme-muted uppercase tracking-widest block mb-2 opacity-60 italic">Preço Álbum (R$)</label>
+                          <input type="number" className="w-full bg-theme-bg-muted border border-theme-border/60 p-4 text-[10px] text-theme-text font-black outline-none focus:border-brand-tactical rounded-xl" value={formData.priceBase} onChange={e => setFormData({ ...formData, priceBase: Number(e.target.value) })} />
+                        </div>
+                        <div className="space-y-2">
+                          <label className="text-[8px] font-black text-theme-muted uppercase tracking-widest block mb-2 opacity-60 italic">Antecipado (R$)</label>
+                          <input type="number" className="w-full bg-theme-bg-muted border border-theme-border/60 p-4 text-[10px] text-theme-text font-black outline-none focus:border-brand-tactical rounded-xl" value={formData.priceEarly} onChange={e => setFormData({...formData, priceEarly: Number(e.target.value)})} />
+                        </div>
+                      </div>
+                      <div className="space-y-2">
+                        <label className="text-[8px] font-black text-theme-muted uppercase tracking-widest block mb-2 opacity-60 italic">Google Drive</label>
+                        <input type="text" className="w-full bg-theme-bg-muted border border-theme-border/60 p-4 text-[10px] text-theme-text font-mono outline-none focus:border-brand-tactical rounded-xl" value={formData.driveUrl} onChange={e => setFormData({ ...formData, driveUrl: e.target.value })} placeholder="https://drive.google.com/..." />
+                      </div>
+                      <div className="space-y-2">
+                        <label className="text-[8px] font-black text-theme-muted uppercase tracking-widest block mb-2 opacity-60 italic">Lightroom / Galeria</label>
+                        <input type="text" className="w-full bg-theme-bg-muted border border-theme-border/60 p-4 text-[10px] text-theme-text font-mono outline-none focus:border-brand-tactical rounded-xl" value={formData.lightroomUrl} onChange={e => setFormData({ ...formData, lightroomUrl: e.target.value })} placeholder="https://gallery.lightroom.com/..." />
+                      </div>
+                      <div className="space-y-2">
+                        <label className="text-[8px] font-black text-theme-muted uppercase tracking-widest block mb-2 opacity-60 italic">Retenção Galeria (Dias)</label>
+                        <input type="number" className="w-full bg-theme-bg-muted border border-theme-border/60 p-4 text-[10px] text-theme-text font-black outline-none focus:border-brand-tactical rounded-xl" value={formData.retentionDays} onChange={e => setFormData({ ...formData, retentionDays: Number(e.target.value) })} />
+                        <p className="text-[8px] text-theme-muted italic opacity-40 uppercase tracking-widest font-black mt-2">Sugestão: 7 (Privado) | 15 (Público) | 90 (Shows)</p>
+                      </div>
+                    </div>
+                    <div className="space-y-6">
+                      <div className="space-y-4">
+                        <label className="text-[8px] font-black text-theme-muted uppercase tracking-widest block mb-2 opacity-60 italic">Modelo e Serviços</label>
+                        <div className="grid grid-cols-2 gap-4">
+                          <button type="button" onClick={() => setFormData({ ...formData, type: 'ALBUM_FULL' })} className={`py-4 border text-[9px] font-black uppercase tracking-widest transition-all rounded-xl italic ${formData.type === 'ALBUM_FULL' ? 'bg-brand-tactical border-brand-tactical text-zinc-950 shadow-lg shadow-brand-tactical/20' : 'bg-theme-bg-muted border-theme-border text-theme-muted hover:border-theme-text'}`}>Álbum Completo</button>
+                          <button type="button" onClick={() => setFormData({ ...formData, type: 'PHOTO_MARKETPLACE' })} className={`py-4 border text-[9px] font-black uppercase tracking-widest transition-all rounded-xl italic ${formData.type === 'PHOTO_MARKETPLACE' ? 'bg-brand-tactical border-brand-tactical text-zinc-950 shadow-lg shadow-brand-tactical/20' : 'bg-theme-bg-muted border-theme-border text-theme-muted hover:border-theme-text'}`}>Live Print</button>
+                        </div>
+                        <div className="grid grid-cols-2 gap-x-6 gap-y-4 pt-6 border-t border-theme-border/60">
+                          {["temFoto", "temVideo", "temReels", "temFotoImpressa", "isCrowdfund", "isPrivate"].map(f => (
+                            <label key={f} className="flex items-center gap-3 cursor-pointer group">
+                              <div className={`w-5 h-5 rounded-md border flex items-center justify-center transition-all ${formData[f as keyof EventFormData] ? 'bg-brand-tactical border-brand-tactical shadow-sm shadow-brand-tactical/20' : 'bg-theme-bg-muted border-theme-border group-hover:border-theme-text'}`}>
+                                {formData[f as keyof EventFormData] && <div className="w-2.5 h-2.5 bg-black rounded-sm" />}
+                              </div>
+                              <input type="checkbox" hidden checked={formData[f as keyof EventFormData] as boolean} onChange={e => setFormData({...formData, [f]: e.target.checked})} />
+                              <span className={`text-[9px] font-black uppercase tracking-widest transition-all italic ${formData[f as keyof EventFormData] ? 'text-brand-tactical' : 'text-theme-muted'}`}>{f.replace("tem", "").replace("is", "").replace(/([A-Z])/g, ' $1').trim()}</span>
+                            </label>
+                          ))}
+                        </div>
+                      </div>
+                      {formData.isCrowdfund && (
+                        <div className="p-8 bg-brand-tactical/5 border border-brand-tactical/20 rounded-[30px] flex justify-between items-center shadow-inner">
+                          <div className="space-y-2">
+                            <label className="text-[8px] font-black text-brand-tactical uppercase tracking-widest block opacity-60 italic">Meta de Arrecadação</label>
+                            <div className="flex items-center gap-2">
+                              <span className="text-xl font-black text-brand-tactical">R$</span>
+                              <input type="number" className="bg-transparent text-3xl font-black text-theme-text outline-none w-32 italic tracking-tighter" value={formData.targetAmount} onChange={e => setFormData({...formData, targetAmount: Number(e.target.value)})} />
+                            </div>
+                          </div>
+                          <div className="text-right space-y-1">
+                            <span className="text-[8px] font-black text-theme-muted uppercase tracking-widest block opacity-60 italic">Status Atual</span>
+                            <span className="text-xl font-black text-brand-tactical italic tracking-tighter">{new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL' }).format(editingEvent?.collectedAmount || 0)}</span>
+                          </div>
+                        </div>
+                      )}
+                    </div>
+                  </div>
+                </div>
+              )}
+            </form>
+
+            {/* Footer */}
+            <div className="p-8 md:p-10 bg-theme-bg-muted/50 border-t border-theme-border flex gap-4 shrink-0">
+              <button type="button" onClick={() => setIsModalOpen(false)} className="flex-1 py-5 border border-theme-border text-[11px] font-black uppercase tracking-[0.3em] text-theme-muted hover:text-white transition-all rounded-[20px] italic">Cancelar</button>
+              {activeTab !== 'comercial' ? (
+                <button 
+                  type="button" 
+                  onClick={() => { const t: Array<'info' | 'equipe' | 'comercial'> = ['info','equipe','comercial']; setActiveTab(t[t.indexOf(activeTab)+1]); }} 
+                  className="flex-[2] py-5 bg-theme-border text-theme-text text-[11px] font-black uppercase tracking-[0.3em] hover:bg-zinc-700 transition-all rounded-[20px] italic flex items-center justify-center gap-4"
+                >
+                  Próximo Passo
+                  <ArrowRight size={18} strokeWidth={1.5} />
+                </button>
+              ) : (
+                <button 
+                  type="submit" 
+                  onClick={handleCreate}
+                  disabled={isUploading} 
+                  className="flex-[2] py-5 bg-brand-tactical text-zinc-950 text-[11px] font-black uppercase tracking-[0.3em] shadow-2xl shadow-brand-tactical/20 hover:brightness-110 transition-all rounded-[20px] italic flex items-center justify-center gap-4"
+                >
+                  {isUploading ? "PROCESSANDO..." : (editingEvent ? "SALVAR ALTERAÇÕES" : "CADASTRAR EVENTO")}
+                  <ArrowRight size={18} strokeWidth={1.5} />
+                </button>
+              )}
+            </div>
+          </div>
+        </div>
+      )}
+
           </div>
         </div>
       )}
 
       {qrModalEvent && (
-        <div className="fixed inset-0 z-[60] flex items-center justify-center p-4 bg-black/90 backdrop-blur-2xl">
-          <div className="w-full max-w-xl bg-theme-bg border border-theme-border p-10 relative shadow-2xl">
-            <button onClick={() => setQrModalEvent(null)} className="absolute top-6 right-6 text-theme-muted hover:text-white"><X size={20} /></button>
-            
-            <div className="flex flex-col md:flex-row gap-12">
-              {/* QR Code de Venda (Álbum) */}
-              <div className="flex-1 text-center">
-                <div className="mb-6">
-                  <h3 className="text-sm font-black text-theme-text uppercase tracking-[0.3em]">Vitrine Online</h3>
-                  <p className="text-[9px] text-theme-muted uppercase tracking-widest mt-1 italic">Para os clientes comprarem</p>
+        <div className="fixed inset-0 z-[500] flex items-center justify-center p-4">
+          <div className="absolute inset-0 bg-theme-bg/80 backdrop-blur-xl animate-in fade-in duration-300" onClick={() => setQrModalEvent(null)} />
+          
+          <div className="relative w-full max-w-2xl bg-theme-card border border-theme-border/60 rounded-[40px] overflow-hidden shadow-2xl animate-in zoom-in-95 duration-300 flex flex-col">
+            {/* Header */}
+            <div className="p-8 md:p-10 border-b border-theme-border flex items-center justify-between shrink-0 bg-theme-bg-muted/30">
+              <div className="flex items-center gap-4">
+                <div className="w-12 h-12 bg-brand-tactical/10 rounded-2xl flex items-center justify-center border border-brand-tactical/20">
+                  <QrCode className="text-brand-tactical" size={24} strokeWidth={1.5} />
                 </div>
-                <div className="bg-white p-4 inline-block mb-6 rounded-xl">
-                  <QRCodeSVG value={`${window.location.origin}/e/${qrModalEvent.slug}`} size={180} level="H" />
+                <div>
+                  <h2 className="text-2xl font-black uppercase italic tracking-tighter text-theme-text">Protocolo de Captura</h2>
+                  <p className="text-[10px] font-black uppercase tracking-[0.2em] opacity-40">Ativação Phygital Instantânea</p>
                 </div>
-                <button 
-                  onClick={() => { navigator.clipboard.writeText(`${window.location.origin}/e/${qrModalEvent.slug}`); setCopied(true); setTimeout(()=>setCopied(false),2000); }} 
-                  className="w-full bg-theme-bg-muted border border-theme-border text-theme-text py-3 text-[9px] font-black uppercase tracking-widest hover:bg-white/5 transition-all"
-                >
-                  {copied ? "COPIADO!" : "COPIAR LINK ÁLBUM"}
-                </button>
+              </div>
+              <button onClick={() => setQrModalEvent(null)} className="p-3 hover:bg-white/5 rounded-full transition-all text-theme-muted"><X size={24} /></button>
+            </div>
+
+            {/* Content */}
+            <div className="p-8 md:p-10 space-y-10">
+              <div className="text-center space-y-2">
+                <h3 className="text-xl font-black text-theme-text uppercase italic tracking-tight">{qrModalEvent.title}</h3>
+                <p className="text-[9px] text-theme-muted font-bold uppercase tracking-widest italic opacity-40">Distribuição de Acesso Omnichannel</p>
               </div>
 
-              <div className="w-px bg-white/5 hidden md:block" />
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-10">
+                {/* QR Code de Venda (Álbum) */}
+                <div className="bg-theme-bg-muted/50 p-8 rounded-[30px] border border-theme-border/60 flex flex-col items-center gap-6 shadow-inner">
+                  <div className="text-center">
+                    <h4 className="text-[10px] font-black text-theme-text uppercase tracking-widest italic">Vitrine Online</h4>
+                    <p className="text-[8px] text-theme-muted uppercase tracking-widest mt-1 italic opacity-60">Para Compra de Fotos</p>
+                  </div>
+                  <div className="bg-white p-4 rounded-2xl shadow-xl">
+                    <QRCodeSVG value={`${window.location.origin}/e/${qrModalEvent.slug}`} size={160} level="H" />
+                  </div>
+                  <button 
+                    onClick={() => { navigator.clipboard.writeText(`${window.location.origin}/e/${qrModalEvent.slug}`); setCopied(true); setTimeout(()=>setCopied(false),2000); }} 
+                    className="w-full py-4 bg-theme-bg border border-theme-border text-[9px] font-black uppercase tracking-widest hover:border-theme-text transition-all rounded-xl italic"
+                  >
+                    {copied ? "COPIADO!" : "COPIAR LINK ÁLBUM"}
+                  </button>
+                </div>
 
-              {/* QR Code Phygital (Captura) */}
-              <div className="flex-1 text-center">
-                <div className="mb-6">
-                  <h3 className="text-sm font-black text-brand-tactical uppercase tracking-[0.3em]">Captura Phygital</h3>
-                  <p className="text-[9px] text-theme-muted uppercase tracking-widest mt-1 italic">Para os convidados enviarem fotos</p>
+                {/* QR Code Phygital (Captura) */}
+                <div className="bg-brand-tactical/5 p-8 rounded-[30px] border border-brand-tactical/20 flex flex-col items-center gap-6 shadow-inner">
+                  <div className="text-center">
+                    <h4 className="text-[10px] font-black text-brand-tactical uppercase tracking-widest italic">Captura Phygital</h4>
+                    <p className="text-[8px] text-brand-tactical/60 uppercase tracking-widest mt-1 italic opacity-60">Para Convidados</p>
+                  </div>
+                  <div className="bg-white p-4 rounded-2xl shadow-xl border-4 border-brand-tactical/20">
+                    <QRCodeSVG value={`${window.location.origin}/captura?e=${qrModalEvent.id}`} size={160} level="H" />
+                  </div>
+                  <button 
+                    onClick={() => { navigator.clipboard.writeText(`${window.location.origin}/captura?e=${qrModalEvent.id}`); setNotification({ message: "Link de Captura Copiado!", type: 'success' }); }} 
+                    className="w-full py-4 bg-brand-tactical text-zinc-950 text-[9px] font-black uppercase tracking-widest hover:brightness-110 transition-all shadow-lg rounded-xl italic"
+                  >
+                    COPIAR LINK CAPTURA
+                  </button>
                 </div>
-                <div className="bg-white p-4 inline-block mb-6 rounded-xl border-4 border-brand-tactical/20">
-                  <QRCodeSVG value={`${window.location.origin}/captura?e=${qrModalEvent.id}`} size={180} level="H" />
-                </div>
-                <button 
-                  onClick={() => { navigator.clipboard.writeText(`${window.location.origin}/captura?e=${qrModalEvent.id}`); setNotification({ message: "Link de Captura Copiado!", type: 'success' }); }} 
-                  className="w-full bg-brand-tactical text-zinc-950 py-3 text-[9px] font-black uppercase tracking-widest hover:brightness-110 transition-all shadow-lg"
-                >
-                  COPIAR LINK CAPTURA
-                </button>
               </div>
             </div>
 
-            <div className="mt-10 pt-8 border-t border-theme-border text-center">
+            {/* Footer */}
+            <div className="p-8 md:p-10 bg-theme-bg-muted/50 border-t border-theme-border shrink-0 text-center">
                <button 
                 onClick={() => { 
                   const url = `${window.location.origin}/captura?e=${qrModalEvent.id}`; 
@@ -761,9 +813,11 @@ export const AdminEvents: React.FC<AdminEventsProps> = ({ initialEditEventId }) 
                     w.document.close(); 
                   } 
                 }} 
-                className="text-[10px] font-black text-theme-muted uppercase tracking-[0.4em] hover:text-brand-tactical transition-all"
+                className="w-full py-5 border border-theme-border text-[11px] font-black uppercase tracking-[0.4em] text-theme-muted hover:text-white transition-all rounded-[20px] italic flex items-center justify-center gap-4 group"
                >
+                 <ArrowRight className="group-hover:translate-x-2 transition-transform" size={18} />
                  Gerar Cartaz de Mesa (Print Kit)
+                 <ArrowRight className="group-hover:translate-x-2 transition-transform" size={18} />
                </button>
             </div>
           </div>
@@ -788,18 +842,34 @@ export const AdminEvents: React.FC<AdminEventsProps> = ({ initialEditEventId }) 
       )}
 
       {isExpressModalOpen && (
-        <div className="fixed inset-0 z-[60] flex items-center justify-center p-6 bg-black/80 backdrop-blur-sm animate-in fade-in duration-300">
-          <div className="w-full max-w-5xl bg-theme-bg border border-theme-border p-10 relative shadow-2xl">
-             <button onClick={() => setIsExpressModalOpen(false)} className="absolute top-8 right-8 text-theme-muted hover:text-white"><X size={20} /></button>
-             <div className="mb-10"><h2 className="text-2xl font-black text-theme-text uppercase tracking-tighter">Venda Rápida</h2></div>
-             <form onSubmit={handleExpressSaleSubmit} className="grid grid-cols-1 md:grid-cols-2 gap-12">
-                <div className="space-y-6">
-                  <div className="space-y-2">
-                    <label className="text-[8px] font-black text-theme-muted uppercase tracking-[0.4em]">E-mail</label>
+        <div className="fixed inset-0 z-[500] flex items-center justify-center p-4">
+          <div className="absolute inset-0 bg-theme-bg/80 backdrop-blur-xl animate-in fade-in duration-300" onClick={() => setIsExpressModalOpen(false)} />
+          
+          <div className="relative w-full max-w-5xl bg-theme-card border border-theme-border/60 rounded-[40px] overflow-hidden shadow-2xl animate-in zoom-in-95 duration-300 flex flex-col h-[85vh]">
+            {/* Header */}
+            <div className="p-8 md:p-10 border-b border-theme-border flex items-center justify-between shrink-0 bg-theme-bg-muted/30">
+              <div className="flex items-center gap-4">
+                <div className="w-12 h-12 bg-brand-tactical/10 rounded-2xl flex items-center justify-center border border-brand-tactical/20">
+                  <Radar className="text-brand-tactical" size={24} />
+                </div>
+                <div>
+                  <h2 className="text-2xl font-black uppercase italic tracking-tighter text-theme-text">Venda Rápida</h2>
+                  <p className="text-[10px] font-black uppercase tracking-[0.2em] opacity-40">Operação Live Print / Marketplace</p>
+                </div>
+              </div>
+              <button onClick={() => setIsExpressModalOpen(false)} className="p-3 hover:bg-white/5 rounded-full transition-all text-theme-muted"><X size={24} /></button>
+            </div>
+
+            {/* Content */}
+            <form onSubmit={handleExpressSaleSubmit} className="flex-1 overflow-y-auto p-8 md:p-10 space-y-10 custom-scrollbar">
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-12">
+                <div className="space-y-8">
+                  <div className="space-y-4">
+                    <label className="text-[8px] font-black text-theme-muted uppercase tracking-widest block mb-2 opacity-60 italic">Identificação do Cliente</label>
                     <input 
                       type="email" 
                       required 
-                      className="w-full bg-theme-bg border border-theme-border p-4 text-[12px] text-theme-text outline-none font-bold" 
+                      className="w-full bg-theme-bg-muted border border-theme-border/60 p-4 text-[11px] text-theme-text font-black outline-none focus:border-brand-tactical rounded-xl placeholder:opacity-20" 
                       value={expressFormData.customerEmail} 
                       onChange={e => setExpressFormData({...expressFormData, customerEmail: e.target.value})} 
                       onBlur={async () => {
@@ -818,19 +888,23 @@ export const AdminEvents: React.FC<AdminEventsProps> = ({ initialEditEventId }) 
                           console.error("Erro ao checar email:", err);
                         }
                       }}
-                      placeholder="EMAIL" 
+                      placeholder="EMAIL DO CLIENTE" 
                     />
+                    <input type="text" className="w-full bg-theme-bg-muted border border-theme-border/60 p-4 text-[11px] text-theme-text font-black outline-none focus:border-brand-tactical rounded-xl uppercase placeholder:opacity-20" value={expressFormData.customerName} onChange={e => setExpressFormData({...expressFormData, customerName: e.target.value})} placeholder="NOME COMPLETO" />
+                    <input type="text" className="w-full bg-theme-bg-muted border border-theme-border/60 p-4 text-[11px] text-theme-text font-black outline-none focus:border-brand-tactical rounded-xl placeholder:opacity-20" value={expressFormData.whatsapp} onChange={e => setExpressFormData({...expressFormData, whatsapp: e.target.value})} placeholder="WHATSAPP (00) 00000-0000" />
                   </div>
-                  <div className="space-y-2"><label className="text-[8px] font-black text-theme-muted uppercase tracking-[0.4em]">Cliente</label><input type="text" className="w-full bg-theme-bg border border-theme-border p-4 text-[12px] text-theme-text outline-none font-bold" value={expressFormData.customerName} onChange={e => setExpressFormData({...expressFormData, customerName: e.target.value})} placeholder="NOME" /></div>
-                  <div className="space-y-2"><label className="text-[8px] font-black text-theme-muted uppercase tracking-[0.4em]">WhatsApp</label><input type="text" className="w-full bg-theme-bg border border-theme-border p-4 text-[12px] text-theme-text outline-none font-bold" value={expressFormData.whatsapp} onChange={e => setExpressFormData({...expressFormData, whatsapp: e.target.value})} placeholder="(00) 00000-0000" /></div>
                   
-                  <div className="pt-4 border-t border-theme-border/30">
-                    <label className="text-[8px] font-black text-theme-muted uppercase tracking-[0.4em] mb-4 block">Serviços Selecionados</label>
+                  <div className="pt-6 border-t border-theme-border/60">
+                    <label className="text-[8px] font-black text-theme-muted uppercase tracking-widest block mb-6 opacity-60 italic">Serviços Habilitados</label>
                     <div className="grid grid-cols-2 gap-4">
                       {["FOTO DIGITAL", "FOTO IMPRESSA", "VIDEO", "REELS"].map(s => (
                         <label key={s} className="flex items-center gap-3 cursor-pointer group">
+                          <div className={`w-5 h-5 rounded-md border flex items-center justify-center transition-all ${expressFormData.services.includes(s) ? 'bg-brand-tactical border-brand-tactical shadow-sm shadow-brand-tactical/20' : 'bg-theme-bg-muted border-theme-border group-hover:border-theme-text'}`}>
+                            {expressFormData.services.includes(s) && <div className="w-2.5 h-2.5 bg-black rounded-sm" />}
+                          </div>
                           <input 
                             type="checkbox" 
+                            hidden
                             checked={expressFormData.services.includes(s)}
                             onChange={e => {
                               const newServices = e.target.checked 
@@ -838,53 +912,113 @@ export const AdminEvents: React.FC<AdminEventsProps> = ({ initialEditEventId }) 
                                 : expressFormData.services.filter(x => x !== s);
                               setExpressFormData({...expressFormData, services: newServices});
                             }}
-                            className="w-4 h-4 border-theme-border appearance-none checked:bg-brand-tactical border transition-all"
                           />
-                          <span className={`text-[9px] font-black uppercase tracking-widest ${expressFormData.services.includes(s) ? 'text-brand-tactical' : 'text-theme-muted'}`}>{s}</span>
+                          <span className={`text-[10px] font-black uppercase tracking-widest transition-all italic ${expressFormData.services.includes(s) ? 'text-brand-tactical' : 'text-theme-muted'}`}>{s}</span>
                         </label>
                       ))}
                     </div>
                   </div>
                 </div>
-                <div className="space-y-6">
+
+                <div className="space-y-8">
                   <div className="grid grid-cols-2 gap-6">
-                    <div className="space-y-2"><label className="text-[8px] font-black text-theme-muted uppercase tracking-[0.4em]">Valor</label><input type="number" required className="w-full bg-theme-bg border border-theme-border p-4 text-[14px] text-brand-tactical outline-none font-black" value={expressFormData.amount} onChange={e => setExpressFormData({...expressFormData, amount: Number(e.target.value)})} /></div>
-                    <div className="space-y-2"><label className="text-[8px] font-black text-theme-muted uppercase tracking-[0.4em]">Local</label><input type="text" required className="w-full bg-theme-bg border border-theme-border p-4 text-[12px] text-theme-text outline-none font-bold" value={expressFormData.location} onChange={e => setExpressFormData({...expressFormData, location: e.target.value})} /></div>
+                    <div className="space-y-4">
+                      <label className="text-[8px] font-black text-theme-muted uppercase tracking-widest block opacity-60 italic">Valor Transação</label>
+                      <div className="relative">
+                        <span className="absolute left-4 top-1/2 -translate-y-1/2 text-brand-tactical font-black italic">R$</span>
+                        <input type="number" required className="w-full bg-theme-bg-muted border border-theme-border/60 p-4 pl-12 text-xl text-theme-text outline-none font-black rounded-xl italic tracking-tighter" value={expressFormData.amount} onChange={e => setExpressFormData({...expressFormData, amount: Number(e.target.value)})} />
+                      </div>
+                    </div>
+                    <div className="space-y-4">
+                      <label className="text-[8px] font-black text-theme-muted uppercase tracking-widest block opacity-60 italic">Local Operação</label>
+                      <input type="text" required className="w-full bg-theme-bg-muted border border-theme-border/60 p-4 text-[11px] text-theme-text outline-none font-black rounded-xl uppercase" value={expressFormData.location} onChange={e => setExpressFormData({...expressFormData, location: e.target.value})} />
+                    </div>
                   </div>
-                  <div className="flex gap-4">
-                    {(["MONEY", "PIX", "CARD"] as const).map(m => <button key={m} type="button" onClick={() => setExpressFormData({...expressFormData, paymentMethod: m})} className={`flex-1 py-4 text-[9px] font-black uppercase tracking-widest border transition-all ${expressFormData.paymentMethod === m ? 'bg-brand-tactical text-zinc-950 border-brand-tactical' : 'bg-theme-bg text-theme-muted border-theme-border'}`}>{m}</button>)}
+
+                  <div className="space-y-4">
+                    <label className="text-[8px] font-black text-theme-muted uppercase tracking-widest block opacity-60 italic">Método de Pagamento</label>
+                    <div className="flex gap-4">
+                      {(["MONEY", "PIX", "CARD"] as const).map(m => (
+                        <button 
+                          key={m} 
+                          type="button" 
+                          onClick={() => setExpressFormData({...expressFormData, paymentMethod: m})} 
+                          className={`flex-1 py-4 text-[10px] font-black uppercase tracking-widest border transition-all rounded-xl italic ${expressFormData.paymentMethod === m ? 'bg-brand-tactical text-zinc-950 border-brand-tactical shadow-lg shadow-brand-tactical/20' : 'bg-theme-bg-muted text-theme-muted border-theme-border hover:border-theme-text'}`}
+                        >
+                          {m}
+                        </button>
+                      ))}
+                    </div>
                   </div>
-                  <button type="submit" disabled={isUploading} className="w-full bg-brand-tactical text-zinc-950 font-black uppercase tracking-[0.5em] py-5 text-[11px] shadow-lg">{isUploading ? "PROCESSANDO..." : "FINALIZAR VENDA"}</button>
+
+                  <div className="bg-brand-tactical/5 border border-brand-tactical/20 p-8 rounded-[30px] shadow-inner text-center">
+                    <p className="text-[9px] font-black text-brand-tactical uppercase tracking-[0.3em] leading-relaxed italic">
+                      ⚠ ESTA OPERAÇÃO É FINALIZADA EM TEMPO REAL. SE FOR DIGITAL (CARD/PIX), UM LINK DE CHECKOUT SERÁ GERADO AUTOMATICAMENTE.
+                    </p>
+                  </div>
                 </div>
-             </form>
+              </div>
+            </form>
+
+            {/* Footer */}
+            <div className="p-8 md:p-10 bg-theme-bg-muted/50 border-t border-theme-border flex gap-4 shrink-0">
+              <button type="button" onClick={() => setIsExpressModalOpen(false)} className="flex-1 py-5 border border-theme-border text-[11px] font-black uppercase tracking-[0.3em] text-theme-muted hover:text-white transition-all rounded-[20px] italic">Cancelar</button>
+              <button 
+                type="submit" 
+                onClick={handleExpressSaleSubmit}
+                disabled={isUploading} 
+                className="flex-[2] py-5 bg-brand-tactical text-zinc-950 text-[11px] font-black uppercase tracking-[0.3em] shadow-2xl shadow-brand-tactical/20 hover:brightness-110 transition-all rounded-[20px] italic flex items-center justify-center gap-4 disabled:opacity-50"
+              >
+                {isUploading ? "PROCESSANDO..." : "FINALIZAR VENDA"}
+                <ArrowRight size={18} strokeWidth={1.5} />
+              </button>
+            </div>
           </div>
         </div>
       )}
 
       {/* CONFIRM DELETE MODAL */}
       {confirmDelete && (
-        <div className="fixed inset-0 z-[100] flex items-center justify-center p-6 bg-black/90 backdrop-blur-md">
-          <div className="bg-theme-bg border border-theme-border p-10 max-w-md w-full space-y-8 shadow-2xl">
-            <div className="space-y-2">
-              <span className="text-[10px] font-black text-red-500 uppercase tracking-[0.5em]">Protocolo de Exclusão</span>
-              <h3 className="text-xl font-black text-theme-text uppercase tracking-tight">Confirmar Remoção?</h3>
-              <p className="text-[11px] text-theme-muted leading-relaxed uppercase tracking-widest font-bold opacity-60">
-                Você está prestes a excluir o evento <span className="text-theme-text">{confirmDelete.title}</span>. 
-                Se houver pedidos aprovados, o evento será apenas desativado. Caso contrário, será removido permanentemente.
-              </p>
+        <div className="fixed inset-0 z-[600] flex items-center justify-center p-4">
+          <div className="absolute inset-0 bg-theme-bg/80 backdrop-blur-xl animate-in fade-in duration-300" onClick={() => setConfirmDelete(null)} />
+          
+          <div className="relative w-full max-w-md bg-theme-card border border-theme-border/60 rounded-[40px] overflow-hidden shadow-2xl animate-in zoom-in-95 duration-300 flex flex-col">
+            {/* Header */}
+            <div className="p-8 md:p-10 border-b border-theme-border flex items-center justify-between shrink-0">
+              <div className="flex items-center gap-4">
+                <div className="w-12 h-12 bg-red-500/10 rounded-2xl flex items-center justify-center border border-red-500/20">
+                  <Trash2 className="text-red-500" size={24} strokeWidth={1.5} />
+                </div>
+                <div>
+                  <h2 className="text-2xl font-black uppercase italic tracking-tighter text-theme-text">Eliminar Evento</h2>
+                  <p className="text-[10px] font-black uppercase tracking-[0.2em] opacity-40 text-red-500/60">Protocolo de Purga Permanente</p>
+                </div>
+              </div>
+              <button onClick={() => setConfirmDelete(null)} className="p-3 hover:bg-white/5 rounded-full transition-all text-theme-muted"><X size={24} /></button>
             </div>
-            <div className="flex gap-4">
-              <button 
-                onClick={() => setConfirmDelete(null)}
-                className="flex-1 py-4 border border-theme-border text-[10px] font-black uppercase tracking-widest text-theme-muted hover:text-white transition-colors"
-              >
-                Cancelar
-              </button>
+
+            {/* Content */}
+            <div className="p-8 md:p-10 space-y-6">
+              <p className="text-[11px] text-theme-muted leading-relaxed uppercase tracking-widest font-black italic opacity-80 text-center">
+                VOCÊ ESTÁ PRESTES A EXCLUIR O EVENTO <span className="text-theme-text font-black underline decoration-red-500/50 decoration-4 underline-offset-4">{confirmDelete.title}</span>. 
+              </p>
+              
+              <div className="bg-red-500/5 border border-red-500/20 p-6 rounded-[24px]">
+                <p className="text-[9px] text-red-500/80 font-black uppercase tracking-widest leading-relaxed italic text-center">
+                  ⚠ SE HOUVER PEDIDOS APROVADOS, O EVENTO SERÁ APENAS DESATIVADO PARA PRESERVAÇÃO DE DADOS. CASO CONTRÁRIO, SERÁ REMOVIDO PERMANENTEMENTE DO CORE.
+                </p>
+              </div>
+            </div>
+
+            {/* Footer */}
+            <div className="p-8 md:p-10 bg-theme-bg-muted/50 border-t border-theme-border flex gap-4 shrink-0">
+              <button onClick={() => setConfirmDelete(null)} className="flex-1 py-5 border border-theme-border text-[11px] font-black uppercase tracking-[0.3em] text-theme-muted hover:text-white transition-all rounded-[20px] italic">Cancelar</button>
               <button 
                 onClick={() => handleDelete(confirmDelete.id)}
-                className="flex-1 py-4 bg-red-600 text-white text-[10px] font-black uppercase tracking-widest hover:bg-red-500 transition-colors"
+                className="flex-[2] py-5 bg-red-600 text-white text-[11px] font-black uppercase tracking-[0.3em] shadow-2xl shadow-red-600/20 hover:bg-red-500 transition-all rounded-[20px] italic flex items-center justify-center gap-4"
               >
                 Confirmar Exclusão
+                <Trash2 size={18} strokeWidth={1.5} />
               </button>
             </div>
           </div>

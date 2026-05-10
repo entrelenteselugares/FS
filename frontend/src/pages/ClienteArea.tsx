@@ -13,6 +13,7 @@ import {
   ShoppingBag, ShieldCheck, Clock, Image as ImageIcon,
   Zap, Lock, User, AlertTriangle
 } from "lucide-react";
+import { motion, AnimatePresence } from "framer-motion";
 
 type ActiveTab = "files" | "profile" | "wallet" | "embaixador";
 
@@ -31,6 +32,7 @@ interface Pedido {
     location: string;
     city: string | null;
     coverPhotoUrl: string | null;
+    coverPosition?: string | null;
     lightroomUrl?: string | null;
     driveUrl?: string | null;
     temFoto: boolean;
@@ -286,7 +288,7 @@ export default function ClienteArea() {
         @media (max-width: 768px) { .mobile-stack { flex-direction:column !important; align-items:flex-start !important; } }
       `}</style>
 
-      <div className="max-w-[1400px] mx-auto px-2 md:px-6 py-6 md:py-10 space-y-8 md:space-y-12 animate-in fade-in slide-in-from-bottom-4 duration-700">
+      <div className="max-w-[1400px] mx-auto px-2 md:px-6 py-6 md:py-10 space-y-8 md:space-y-12">
 
         {/* Expiring Alert Banner */}
         {(() => {
@@ -365,7 +367,16 @@ export default function ClienteArea() {
           </div>
         )}
 
-          {activeTab === "files" ? (
+        <AnimatePresence mode="wait">
+          <motion.div
+            key={activeTab}
+            initial={{ opacity: 0, x: 10 }}
+            animate={{ opacity: 1, x: 0 }}
+            exit={{ opacity: 0, x: -10 }}
+            transition={{ duration: 0.3 }}
+            className="space-y-12"
+          >
+            {activeTab === "files" ? (
             <>
               <p className="text-[12px] text-theme-text-muted mb-8 italic font-bold uppercase tracking-widest">
                 Acesso vitalício às memórias que você adquiriu.
@@ -451,43 +462,43 @@ export default function ClienteArea() {
 
                   <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
                     <div className="space-y-2">
-                      <label className="text-[9px] font-black uppercase tracking-[0.3em] text-theme-muted block">CEP</label>
+                      <label className="text-[9px] font-black uppercase tracking-[0.3em] text-theme-muted block italic">CEP</label>
                       <input type="text" value={profileData.cep} onChange={e => setProfileData(p => ({ ...p, cep: e.target.value }))} className="fs-input" placeholder="00000-000" />
                     </div>
                     <div className="md:col-span-2 space-y-2">
-                      <label className="text-[9px] font-black uppercase tracking-[0.3em] text-theme-muted block">Endereço (Rua/Av)</label>
+                      <label className="text-[9px] font-black uppercase tracking-[0.3em] text-theme-muted block italic">Endereço (Rua/Av)</label>
                       <input type="text" value={profileData.endereco} onChange={e => setProfileData(p => ({ ...p, endereco: e.target.value }))} className="fs-input" placeholder="Nome da rua" />
                     </div>
                   </div>
 
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                     <div className="space-y-2">
-                      <label className="text-[9px] font-black uppercase tracking-[0.3em] text-theme-muted block">Número</label>
+                      <label className="text-[9px] font-black uppercase tracking-[0.3em] text-theme-muted block italic">Número</label>
                       <input type="text" value={profileData.numero} onChange={e => setProfileData(p => ({ ...p, numero: e.target.value }))} className="fs-input" placeholder="123" />
                     </div>
                     <div className="space-y-2">
-                      <label className="text-[9px] font-black uppercase tracking-[0.3em] text-theme-muted block">Complemento</label>
+                      <label className="text-[9px] font-black uppercase tracking-[0.3em] text-theme-muted block italic">Complemento</label>
                       <input type="text" value={profileData.complemento} onChange={e => setProfileData(p => ({ ...p, complemento: e.target.value }))} className="fs-input" placeholder="Apto, Bloco, etc" />
                     </div>
                   </div>
 
                   <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
                     <div className="space-y-2">
-                      <label className="text-[9px] font-black uppercase tracking-[0.3em] text-theme-muted block">Bairro</label>
+                      <label className="text-[9px] font-black uppercase tracking-[0.3em] text-theme-muted block italic">Bairro</label>
                       <input type="text" value={profileData.bairro} onChange={e => setProfileData(p => ({ ...p, bairro: e.target.value }))} className="fs-input" placeholder="Nome do bairro" />
                     </div>
                     <div className="space-y-2">
-                      <label className="text-[9px] font-black uppercase tracking-[0.3em] text-theme-muted block">Cidade</label>
+                      <label className="text-[9px] font-black uppercase tracking-[0.3em] text-theme-muted block italic">Cidade</label>
                       <input type="text" value={profileData.cidade} onChange={e => setProfileData(p => ({ ...p, cidade: e.target.value }))} className="fs-input" placeholder="Sua cidade" />
                     </div>
                     <div className="space-y-2">
-                      <label className="text-[9px] font-black uppercase tracking-[0.3em] text-theme-muted block">Estado (UF)</label>
+                      <label className="text-[9px] font-black uppercase tracking-[0.3em] text-theme-muted block italic">Estado (UF)</label>
                       <input type="text" value={profileData.estado} onChange={e => setProfileData(p => ({ ...p, estado: e.target.value }))} className="fs-input" placeholder="SP" maxLength={2} />
                     </div>
                   </div>
                 </div>
                 <div className="flex items-center gap-6">
-                  <button type="submit" disabled={isSaving} className="fs-btn bg-brand-tactical text-brand-text disabled:opacity-50">
+                  <button type="submit" disabled={isSaving} className="fs-btn bg-brand-tactical text-brand-text disabled:opacity-50 italic">
                     {isSaving ? "Salvando..." : "Salvar Alterações"}
                   </button>
                   {saveSuccess && <span className="text-brand-tactical text-[10px] font-black uppercase tracking-widest">✓ Atualizado</span>}
@@ -502,7 +513,7 @@ export default function ClienteArea() {
               </div>
             </div>
           ) : activeTab === "wallet" ? (
-            <div className="space-y-10 animate-in fade-in duration-500">
+            <div className="space-y-10">
 
               <div className="grid grid-cols-1 md:grid-cols-2 gap-px bg-theme-border/20 border border-theme-border/20">
                 <div className="bg-theme-bg-muted/30 p-10 space-y-4">
@@ -572,10 +583,12 @@ export default function ClienteArea() {
                  </div>
               </div>
             </div>
-          ) : activeTab === "embaixador" ? (
-            <AmbassadorDashboard />
-          ) : null}
-        </div>
+            ) : activeTab === "embaixador" ? (
+              <AmbassadorDashboard />
+            ) : null}
+          </motion.div>
+        </AnimatePresence>
+      </div>
 
         {/* DETALHES DO PEDIDO (DRAWER) */}
         {selected && (
@@ -721,6 +734,7 @@ function EventGroupRow({ group, now, onSelectPedido }: {
                 src={event.coverPhotoUrl.toString().trim().replace(/\s/g, '')} 
                 alt="" 
                 className={`w-full h-full object-cover transition-all duration-1000 group-hover:scale-110 ${hasAprovado ? 'grayscale-0 brightness-110' : 'grayscale brightness-40 blur-[2px]'}`} 
+                style={{ objectPosition: event.coverPosition || 'center' }}
               />
             ) : (
               <div className="w-full h-full flex items-center justify-center bg-zinc-900">
@@ -734,7 +748,7 @@ function EventGroupRow({ group, now, onSelectPedido }: {
             {!hasAprovado && (
               <div className="absolute inset-0 flex flex-col items-center justify-center gap-3 bg-theme-bg-muted/80 backdrop-blur-[1px]">
                  <div className="p-3 bg-theme-bg border border-theme-border/20 rounded-full">
-                   <Clock size={20} className="text-amber-500 animate-pulse" />
+                   <Clock size={20} className="text-amber-500" />
                  </div>
                  <p className="text-[9px] font-black text-theme-text uppercase tracking-[0.3em]">Acesso Bloqueado</p>
               </div>
@@ -840,7 +854,7 @@ function EventGroupRow({ group, now, onSelectPedido }: {
             <div className="flex items-center gap-4">
               {hasAprovado && (
                 <div className="flex items-center gap-3">
-                  <div className={`w-2 h-2 rounded-full ${isExpiringSoon ? 'bg-amber-500 animate-pulse' : 'bg-brand-tactical'}`} />
+                  <div className={`w-2 h-2 rounded-full ${isExpiringSoon ? 'bg-amber-500' : 'bg-brand-tactical'}`} />
                   <p className={`text-[10px] font-black uppercase tracking-widest ${isExpiringSoon ? 'text-amber-500' : 'text-brand-tactical'}`}>
                     {daysLeft && daysLeft <= 0 ? "Expirado" : `${daysLeft}d restantes — ${latestAprovado?.accessType === "PUBLIC" ? "Público" : "Privado"}`}
                   </p>
@@ -931,7 +945,6 @@ function PedidoDetalhe({ pedido, loading, onGoToEvent, onChangePrivacy, onToggle
         nomeNoivos: nome,
         coverPhotoUrl: coverUrl
       });
-      // Update local state by forcing a reload or just mutating local prop
       pedido.event.nomeNoivos = nome;
       pedido.event.coverPhotoUrl = coverUrl;
       setIsEditing(false);
@@ -944,7 +957,6 @@ function PedidoDetalhe({ pedido, loading, onGoToEvent, onChangePrivacy, onToggle
   
   return (
     <div className="flex flex-col bg-theme-bg min-h-full">
-      {/* Header Visual Compacto */}
       <div className="relative h-32 md:h-40 bg-zinc-900 overflow-hidden group">
         {pedido.event.coverPhotoUrl ? (
           <>
@@ -1007,7 +1019,6 @@ function PedidoDetalhe({ pedido, loading, onGoToEvent, onChangePrivacy, onToggle
       </div>
 
       <div className="p-6 space-y-6">
-        {/* Status Compacto */}
         <div className="flex flex-col md:flex-row gap-4">
           <div className="flex-1 flex items-center justify-between p-4 border border-theme-border/60 bg-theme-bg-muted/5">
             <div className="flex items-center gap-3">
@@ -1035,7 +1046,6 @@ function PedidoDetalhe({ pedido, loading, onGoToEvent, onChangePrivacy, onToggle
           )}
         </div>
 
-        {/* Visibility Controls (Se Pago) */}
         {pedido.hasPaid && (
           <div className="space-y-3">
             <div className="flex items-center gap-2">
@@ -1061,7 +1071,6 @@ function PedidoDetalhe({ pedido, loading, onGoToEvent, onChangePrivacy, onToggle
           </div>
         )}
 
-        {/* Media Links Compactos */}
         <div className="space-y-4">
           <div className="flex items-center gap-2">
              <div className="w-1.5 h-1.5 rounded-full bg-brand-tactical" />

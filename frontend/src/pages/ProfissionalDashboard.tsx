@@ -15,6 +15,7 @@ import {
   OpportunitiesModal, ExpressSaleBanner, FranchiseShopModal,
   type EventItem, type UnitInvite, type ServiceCatalog, type ProfileData, type Partner
 } from "../components/profissional";
+import { motion, AnimatePresence } from "framer-motion";
 
 interface PayoutItem {
   id: string;
@@ -377,7 +378,7 @@ export default function ProfissionalDashboard() {
       )}
 
       {/* ── Main Content ────────────────────────────────────────────────────── */}
-      <div className="max-w-[1600px] mx-auto px-4 md:px-6 py-6 md:py-10 space-y-8 md:space-y-12 animate-in fade-in slide-in-from-bottom-4 duration-700">
+      <div className="max-w-[1600px] mx-auto px-4 md:px-6 py-6 md:py-10 space-y-8 md:space-y-12">
 
         {/* Page Header */}
         <DashboardHeader 
@@ -388,9 +389,17 @@ export default function ProfissionalDashboard() {
         />
 
         {/* ── Tab Content ──────────────────────────────────────────────────── */}
-        <div className="space-y-12">
-          {activeTab === "agenda" && (
-            <div className="space-y-12 animate-in fade-in duration-500">
+        <AnimatePresence mode="wait">
+          <motion.div
+            key={activeTab}
+            initial={{ opacity: 0, x: 10 }}
+            animate={{ opacity: 1, x: 0 }}
+            exit={{ opacity: 0, x: -10 }}
+            transition={{ duration: 0.3 }}
+            className="space-y-12"
+          >
+            {activeTab === "agenda" && (
+              <div className="space-y-12">
               {/* Banner de Venda Expressa & Flash Event */}
               <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
                 <ExpressSaleBanner onOpen={() => setIsExpressModalOpen(true)} />
@@ -482,7 +491,7 @@ export default function ProfissionalDashboard() {
               />
             )}
             {activeTab === "calendar" && (
-              <div className="space-y-8 animate-in fade-in duration-500">
+              <div className="space-y-8">
                 <div>
                   <h2 className="text-3xl font-black text-theme-text uppercase tracking-tighter">Agenda Google</h2>
                   <p className="text-[10px] text-theme-muted uppercase tracking-[0.4em] mt-2 font-black italic">Sincronização com seu Calendário Pessoal</p>
@@ -573,7 +582,7 @@ export default function ProfissionalDashboard() {
               />
             )}
             {activeTab === "franquia" && user?.franchiseProfile && (
-              <div className="space-y-8 animate-in fade-in duration-500">
+              <div className="space-y-8">
                 <div className="flex flex-col md:flex-row md:items-end justify-between gap-4">
                   <div>
                     <h2 className="text-4xl md:text-6xl font-display font-black text-theme-text uppercase tracking-tighter italic leading-none">Franquia Print</h2>
@@ -819,8 +828,9 @@ export default function ProfissionalDashboard() {
               />
             )}
           </div>
-        </div>
-      </div>
+        </motion.div>
+      </AnimatePresence>
+    </div>
 
       {/* ── Overlays & Modals ──────────────────────────────────────────────── */}
 

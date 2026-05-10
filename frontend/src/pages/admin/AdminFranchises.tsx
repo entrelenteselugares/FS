@@ -7,7 +7,10 @@ import {
   Activity,
   Trash2,
   PowerOff,
-  Power
+  Power,
+  ArrowRight,
+  X,
+  ShieldCheck
 } from 'lucide-react';
 
 interface Franchisee {
@@ -210,7 +213,7 @@ export default function AdminFranchises() {
         <div className="bg-theme-bg-muted p-6 border border-theme-border space-y-3 group hover:border-brand-tactical/50 transition-all">
           <label className="text-[9px] font-black text-theme-muted uppercase tracking-widest block italic">Status da Rede</label>
           <div className="flex items-center gap-2 text-brand-tactical font-black text-[12px] font-heading uppercase tracking-widest italic leading-none">
-            <Activity size={14} /> 100% ONLINE
+            <Activity size={14} strokeWidth={1.5} /> 100% ONLINE
           </div>
         </div>
       </div>
@@ -376,22 +379,35 @@ export default function AdminFranchises() {
 
       {/* Modal: Novo Franqueado */}
       {showAddModal && (
-        <div className="fixed inset-0 z-[100] flex items-center justify-center p-6 bg-theme-bg/60 backdrop-blur-md">
-          <div className="bg-theme-bg border border-theme-border p-10 max-w-lg w-full space-y-8 shadow-2xl">
-            <div className="space-y-2">
-              <h3 className="text-2xl font-black text-theme-text uppercase tracking-tighter">Ativar Novo Franqueado</h3>
-              <p className="text-[10px] text-theme-muted font-bold uppercase tracking-widest">Selecione um usuário cadastrado no sistema</p>
+        <div className="fixed inset-0 z-[500] flex items-center justify-center p-4">
+          <div className="absolute inset-0 bg-theme-bg/80 backdrop-blur-xl animate-in fade-in duration-300" onClick={() => setShowAddModal(false)} />
+          
+          <div className="relative w-full max-w-lg bg-theme-card border border-theme-border/60 rounded-[40px] overflow-hidden shadow-2xl animate-in zoom-in-95 duration-300 flex flex-col h-[60vh]">
+            {/* Header */}
+            <div className="p-8 md:p-10 border-b border-theme-border flex items-center justify-between shrink-0">
+              <div className="flex items-center gap-4">
+                <div className="w-12 h-12 bg-brand-tactical/10 rounded-2xl flex items-center justify-center border border-brand-tactical/20">
+                  <Activity className="text-brand-tactical" size={24} strokeWidth={1.5} />
+                </div>
+                <div>
+                  <h2 className="text-2xl font-black uppercase italic tracking-tighter text-theme-text">Ativar Franqueado</h2>
+                  <p className="text-[10px] font-black uppercase tracking-[0.2em] opacity-40">Expansão de Rede Phygital</p>
+                </div>
+              </div>
+              <button onClick={() => setShowAddModal(false)} className="p-3 hover:bg-white/5 rounded-full transition-all text-theme-muted"><X size={24} /></button>
             </div>
-            <form onSubmit={handlePromote} className="space-y-6">
-              <div className="space-y-3">
-                <label className="text-[9px] font-black text-theme-muted uppercase tracking-widest">Usuário</label>
+
+            {/* Content */}
+            <form onSubmit={handlePromote} className="flex-1 overflow-y-auto p-8 md:p-10 space-y-8 custom-scrollbar">
+              <div className="space-y-4">
+                <label className="text-[8px] font-black text-theme-muted uppercase tracking-widest block mb-2 opacity-60 italic">Selecione o Usuário Alvo</label>
                 <select 
-                  className="w-full bg-theme-bg-muted border border-theme-border p-4 text-theme-text text-xs font-bold uppercase tracking-widest focus:border-brand-tactical outline-none cursor-pointer"
+                  className="w-full bg-theme-bg-muted border border-theme-border/60 p-5 text-theme-text text-xs font-black uppercase tracking-widest focus:border-brand-tactical outline-none cursor-pointer rounded-2xl appearance-none"
                   value={selectedUserId}
                   onChange={e => setSelectedUserId(e.target.value)}
                   required
                 >
-                  <option value="">SELECIONE O USUÁRIO</option>
+                  <option value="">BUSCAR NO DIRETÓRIO...</option>
                   {allUsers
                     .filter(u => u.role !== 'ADMIN' && !u.franchiseProfile)
                     .map(u => (
@@ -401,43 +417,86 @@ export default function AdminFranchises() {
                     ))
                   }
                 </select>
-              </div>
-              <div className="flex gap-4 pt-4 border-t border-theme-border">
-                <button type="button" onClick={() => setShowAddModal(false)} className="flex-1 py-4 border border-theme-border text-theme-muted font-black uppercase text-[10px] tracking-widest">Cancelar</button>
-                <button 
-                  type="submit" 
-                  disabled={isPromoting || !selectedUserId}
-                  className="flex-1 py-4 bg-brand-tactical text-zinc-950 font-black uppercase text-[10px] tracking-widest disabled:opacity-50"
-                >
-                  {isPromoting ? 'Ativando...' : 'Confirmar Ativação'}
-                </button>
+                <p className="text-[9px] text-theme-muted font-bold italic opacity-40 text-center px-6">
+                  SOMENTE USUÁRIOS COM PERFIL PROFISSIONAL ATIVO PODEM SER PROMOVIDOS A FRANQUIA.
+                </p>
               </div>
             </form>
+
+            {/* Footer */}
+            <div className="p-8 md:p-10 bg-theme-bg-muted/50 border-t border-theme-border flex gap-4 shrink-0">
+              <button type="button" onClick={() => setShowAddModal(false)} className="flex-1 py-5 border border-theme-border text-[11px] font-black uppercase tracking-[0.3em] text-theme-muted hover:text-white transition-all rounded-[20px] italic">Cancelar</button>
+              <button 
+                type="submit" 
+                onClick={handlePromote}
+                disabled={isPromoting || !selectedUserId}
+                className="flex-[2] py-5 bg-brand-tactical text-zinc-950 text-[11px] font-black uppercase tracking-[0.3em] shadow-2xl shadow-brand-tactical/20 hover:brightness-110 transition-all rounded-[20px] italic flex items-center justify-center gap-4 disabled:opacity-50"
+              >
+                {isPromoting ? 'Processando...' : 'Confirmar Ativação'}
+                <ArrowRight size={18} strokeWidth={1.5} />
+              </button>
+            </div>
           </div>
         </div>
       )}
 
       {/* Modal: Créditos */}
       {showCreditModal && (
-        <div className="fixed inset-0 z-[100] flex items-center justify-center p-6 bg-theme-bg/60 backdrop-blur-md">
-          <div className="bg-theme-bg border border-theme-border p-10 max-w-sm w-full space-y-8 shadow-2xl">
-            <div className="text-center space-y-2">
-              <span className="text-[9px] font-black text-brand-tactical uppercase tracking-widest">Recarga de Saldo</span>
-              <h3 className="text-xl font-black text-theme-text uppercase">{showCreditModal.name}</h3>
-            </div>
-            <div className="space-y-6">
-              <div className="flex items-center justify-between bg-theme-bg-muted p-6 border border-theme-border">
-                <button onClick={() => setCreditsToAdd(Math.max(0, creditsToAdd - 100))} className="text-theme-text text-2xl font-black w-10 h-10 flex items-center justify-center">-</button>
-                <div className="text-center">
-                  <div className="text-3xl font-black text-theme-text">{creditsToAdd}</div>
-                  <div className="text-[8px] text-theme-muted font-black uppercase tracking-widest">Fotos</div>
+        <div className="fixed inset-0 z-[500] flex items-center justify-center p-4">
+          <div className="absolute inset-0 bg-theme-bg/80 backdrop-blur-xl animate-in fade-in duration-300" onClick={() => setShowCreditModal(null)} />
+          
+          <div className="relative w-full max-w-sm bg-theme-card border border-theme-border/60 rounded-[40px] overflow-hidden shadow-2xl animate-in zoom-in-95 duration-300 flex flex-col">
+            {/* Header */}
+            <div className="p-8 md:p-10 border-b border-theme-border flex items-center justify-between shrink-0">
+              <div className="flex items-center gap-4">
+                <div className="w-12 h-12 bg-emerald-500/10 rounded-2xl flex items-center justify-center border border-emerald-500/20">
+                  <CreditCard className="text-emerald-500" size={24} strokeWidth={1.5} />
                 </div>
-                <button onClick={() => setCreditsToAdd(creditsToAdd + 100)} className="text-theme-text text-2xl font-black w-10 h-10 flex items-center justify-center">+</button>
+                <div>
+                  <h2 className="text-2xl font-black uppercase italic tracking-tighter text-theme-text">Recarga</h2>
+                  <p className="text-[10px] font-black uppercase tracking-[0.2em] opacity-40">Gestão de Créditos B2B</p>
+                </div>
               </div>
-              <div className="flex gap-4">
-                <button onClick={() => setShowCreditModal(null)} className="flex-1 py-4 border border-theme-border text-theme-muted font-black uppercase text-[10px] tracking-widest">Cancelar</button>
-                <button onClick={handleAddCredits} className="flex-1 py-4 bg-emerald-500 text-zinc-950 font-black uppercase text-[10px] tracking-widest hover:brightness-110">Confirmar</button>
+              <button onClick={() => setShowCreditModal(null)} className="p-3 hover:bg-white/5 rounded-full transition-all text-theme-muted"><X size={24} /></button>
+            </div>
+
+            {/* Content */}
+            <div className="p-8 md:p-10 space-y-8">
+              <div className="text-center space-y-1">
+                <h3 className="text-xl font-black text-theme-text uppercase italic tracking-tight">{showCreditModal.name}</h3>
+                <p className="text-[9px] text-theme-muted font-bold uppercase tracking-widest italic opacity-40">Protocolo de Materialização</p>
               </div>
+
+              <div className="flex items-center justify-between bg-theme-bg-muted/50 p-8 border border-theme-border/60 rounded-[30px] shadow-inner">
+                <button 
+                  onClick={() => setCreditsToAdd(Math.max(0, creditsToAdd - 100))} 
+                  className="w-12 h-12 bg-theme-bg border border-theme-border text-theme-text text-2xl font-black rounded-2xl flex items-center justify-center hover:bg-brand-tactical hover:text-black hover:border-brand-tactical transition-all"
+                >
+                  -
+                </button>
+                <div className="text-center">
+                  <div className="text-4xl font-black text-theme-text italic tracking-tighter">{creditsToAdd}</div>
+                  <div className="text-[8px] text-theme-muted font-black uppercase tracking-widest opacity-60">Unidades</div>
+                </div>
+                <button 
+                  onClick={() => setCreditsToAdd(creditsToAdd + 100)} 
+                  className="w-12 h-12 bg-theme-bg border border-theme-border text-theme-text text-2xl font-black rounded-2xl flex items-center justify-center hover:bg-brand-tactical hover:text-black hover:border-brand-tactical transition-all"
+                >
+                  +
+                </button>
+              </div>
+            </div>
+
+            {/* Footer */}
+            <div className="p-8 md:p-10 bg-theme-bg-muted/50 border-t border-theme-border flex gap-4 shrink-0">
+              <button onClick={() => setShowCreditModal(null)} className="flex-1 py-5 border border-theme-border text-[11px] font-black uppercase tracking-[0.3em] text-theme-muted hover:text-white transition-all rounded-[20px] italic">Cancelar</button>
+              <button 
+                onClick={handleAddCredits} 
+                className="flex-[2] py-5 bg-emerald-500 text-zinc-950 text-[11px] font-black uppercase tracking-[0.3em] shadow-2xl shadow-emerald-500/20 hover:brightness-110 transition-all rounded-[20px] italic flex items-center justify-center gap-4"
+              >
+                Confirmar Recarga
+                <ArrowRight size={18} strokeWidth={1.5} />
+              </button>
             </div>
           </div>
         </div>
@@ -445,58 +504,71 @@ export default function AdminFranchises() {
 
       {/* Modal: Fulfillment — Enviar Insumos */}
       {fulfillModal && (
-        <div className="fixed inset-0 z-[200] flex items-center justify-center p-6 bg-theme-bg/70 backdrop-blur-md">
-          <div className="bg-theme-bg border border-theme-border p-10 max-w-md w-full space-y-8 shadow-2xl">
-            <div className="space-y-2">
-              <span className="text-[9px] font-black text-emerald-500 uppercase tracking-[0.4em]">Confirmar Envio</span>
-              <h3 className="text-2xl font-black text-theme-text uppercase tracking-tighter">Despachar Pedido</h3>
-              <p className="text-[10px] text-theme-muted font-bold uppercase tracking-widest">
-                Franqueado: <span className="text-theme-text">{fulfillModal.franchisee}</span>
-              </p>
-            </div>
-
-            <div className="space-y-5">
-              <div className="space-y-2">
-                <label className="text-[9px] font-black text-theme-muted uppercase tracking-widest">Código de Rastreio</label>
-                <input
-                  type="text"
-                  placeholder="Ex: BR123456789BR"
-                  value={trackingCode}
-                  onChange={e => setTrackingCode(e.target.value)}
-                  className="w-full bg-theme-bg-muted border border-theme-border p-3 text-theme-text text-sm font-mono focus:border-brand-tactical outline-none uppercase tracking-widest"
-                />
+        <div className="fixed inset-0 z-[500] flex items-center justify-center p-4">
+          <div className="absolute inset-0 bg-theme-bg/80 backdrop-blur-xl animate-in fade-in duration-300" onClick={() => { setFulfillModal(null); setTrackingCode(''); setShippingNotes(''); }} />
+          
+          <div className="relative w-full max-w-lg bg-theme-card border border-theme-border/60 rounded-[40px] overflow-hidden shadow-2xl animate-in zoom-in-95 duration-300 flex flex-col h-[85vh]">
+            {/* Header */}
+            <div className="p-8 md:p-10 border-b border-theme-border flex items-center justify-between shrink-0">
+              <div className="flex items-center gap-4">
+                <div className="w-12 h-12 bg-emerald-500/10 rounded-2xl flex items-center justify-center border border-emerald-500/20">
+                  <ShieldCheck className="text-emerald-500" size={24} strokeWidth={1.5} />
+                </div>
+                <div>
+                  <h2 className="text-2xl font-black uppercase italic tracking-tighter text-theme-text">Despachar Pedido</h2>
+                  <p className="text-[10px] font-black uppercase tracking-[0.2em] opacity-40">Logística de Suprimentos Rede</p>
+                </div>
               </div>
-              <div className="space-y-2">
-                <label className="text-[9px] font-black text-theme-muted uppercase tracking-widest">Observações do Envio <span className="text-theme-muted/50">(opcional)</span></label>
-                <textarea
-                  rows={3}
-                  placeholder="Ex: Enviado via Correios PAC — prazo estimado 5 dias úteis"
-                  value={shippingNotes}
-                  onChange={e => setShippingNotes(e.target.value)}
-                  className="w-full bg-theme-bg-muted border border-theme-border p-3 text-theme-text text-sm resize-none focus:border-brand-tactical outline-none"
-                />
+              <button onClick={() => { setFulfillModal(null); setTrackingCode(''); setShippingNotes(''); }} className="p-3 hover:bg-white/5 rounded-full transition-all text-theme-muted"><X size={24} /></button>
+            </div>
+
+            {/* Content */}
+            <div className="flex-1 overflow-y-auto p-8 md:p-10 space-y-8 custom-scrollbar">
+              <div className="space-y-1">
+                <p className="text-[10px] text-theme-muted font-bold uppercase tracking-widest italic opacity-60">Franqueado Destinatário</p>
+                <h3 className="text-xl font-black text-theme-text uppercase italic tracking-tight">{fulfillModal.franchisee}</h3>
+              </div>
+
+              <div className="space-y-6">
+                <div className="space-y-2">
+                  <label className="text-[8px] font-black text-theme-muted uppercase tracking-widest block mb-2 opacity-60 italic">Código de Rastreio</label>
+                  <input
+                    type="text"
+                    placeholder="EX: BR123456789BR"
+                    value={trackingCode}
+                    onChange={e => setTrackingCode(e.target.value)}
+                    className="w-full bg-theme-bg-muted border border-theme-border/60 p-4 text-[10px] text-theme-text font-mono outline-none focus:border-brand-tactical rounded-xl uppercase tracking-widest"
+                  />
+                </div>
+                <div className="space-y-2">
+                  <label className="text-[8px] font-black text-theme-muted uppercase tracking-widest block mb-2 opacity-60 italic">Observações do Envio</label>
+                  <textarea
+                    rows={3}
+                    placeholder="EX: ENVIADO VIA CORREIOS PAC — PRAZO ESTIMADO 5 DIAS ÚTEIS"
+                    value={shippingNotes}
+                    onChange={e => setShippingNotes(e.target.value)}
+                    className="w-full bg-theme-bg-muted border border-theme-border/60 p-4 text-[10px] text-theme-text font-black outline-none focus:border-brand-tactical rounded-xl h-24 resize-none uppercase leading-relaxed"
+                  />
+                </div>
+              </div>
+
+              <div className="bg-brand-tactical/5 border border-brand-tactical/20 p-6 rounded-[24px]">
+                <p className="text-[9px] font-black text-brand-tactical uppercase tracking-widest leading-relaxed italic text-center">
+                  ⚠ ESTA AÇÃO IRÁ DEDUZIR O ESTOQUE DA MATRIZ E CREDITAR OS CRÉDITOS DE IMPRESSÃO AO FRANQUEADO. ESTA OPERAÇÃO É IRREVERSÍVEL NO LEDGER.
+                </p>
               </div>
             </div>
 
-            <div className="bg-amber-500/10 border border-amber-500/20 p-4 rounded-sm">
-              <p className="text-[9px] font-black text-amber-400 uppercase tracking-widest">
-                ⚠ Esta ação irá deduzir o estoque da Matriz e creditar os créditos de impressão ao franqueado. Irreversível.
-              </p>
-            </div>
-
-            <div className="flex gap-4 pt-2 border-t border-theme-border">
-              <button 
-                onClick={() => { setFulfillModal(null); setTrackingCode(''); setShippingNotes(''); }}
-                className="flex-1 py-4 border border-theme-border text-theme-muted font-black uppercase text-[10px] tracking-widest hover:border-theme-text transition-colors"
-              >
-                Cancelar
-              </button>
+            {/* Footer */}
+            <div className="p-8 md:p-10 bg-theme-bg-muted/50 border-t border-theme-border flex gap-4 shrink-0">
+              <button onClick={() => { setFulfillModal(null); setTrackingCode(''); setShippingNotes(''); }} className="flex-1 py-5 border border-theme-border text-[11px] font-black uppercase tracking-[0.3em] text-theme-muted hover:text-white transition-all rounded-[20px] italic">Cancelar</button>
               <button 
                 onClick={fulfillOrder}
                 disabled={fulfillingOrder !== null}
-                className="flex-1 py-4 bg-emerald-500 hover:bg-emerald-400 text-zinc-950 font-black uppercase text-[10px] tracking-widest disabled:opacity-50 transition-colors"
+                className="flex-[2] py-5 bg-emerald-500 text-zinc-950 text-[11px] font-black uppercase tracking-[0.3em] shadow-2xl shadow-emerald-500/20 hover:brightness-110 transition-all rounded-[20px] italic flex items-center justify-center gap-4 disabled:opacity-50"
               >
-                {fulfillingOrder ? 'Processando...' : '✓ Confirmar Envio'}
+                {fulfillingOrder ? 'Processando...' : 'Confirmar Envio'}
+                <ArrowRight size={18} strokeWidth={1.5} />
               </button>
             </div>
           </div>

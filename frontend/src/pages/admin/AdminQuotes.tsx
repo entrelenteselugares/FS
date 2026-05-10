@@ -1,849 +1,525 @@
 import React, { useState, useEffect, useCallback, useMemo } from "react";
+import { AnimatePresence, motion } from "framer-motion";
 import { API } from "../../lib/api";
-import { motion } from "framer-motion";
-import { 
-  Briefcase, 
-  Search, User, Plus, 
-  Zap, X, Camera, Video, Smartphone, Flame
+import {
+  Briefcase, Search, User, Plus, Zap, X,
+  Camera, Video, Smartphone, Flame, ChevronDown, ChevronRight,
+  ArrowRight
 } from "lucide-react";
 import { MERLIN_EQUIPMENT, STAFF_ROLES } from "../../data/merlin_pricing";
 
 interface Quote {
-  id: string;
-  nomeNoivos: string;
-  dataEvento: string;
-  location: string;
-  description: string;
-  clientEmail: string;
-  clientName: string;
-  clientPhone?: string;
-  urgency?: "HIGH" | "MEDIUM" | "LOW";
-  priceBase: number;
+  id: string; nomeNoivos: string; dataEvento: string; location: string;
+  description: string; clientEmail: string; clientName: string; clientPhone?: string;
+  urgency?: "HIGH" | "MEDIUM" | "LOW"; priceBase: number;
   quoteStatus: "PENDING" | "PRICED" | "APROVADO" | "REJECTED" | "CONVERTED";
-  usageType: string;
-  eventHours?: number;
-  temFoto?: boolean;
-  temVideo?: boolean;
-  temReels?: boolean;
-  temFotoEditada?: boolean;
-  temVideoEditado?: boolean;
-  temFotoImpressa?: boolean;
-  temAlbumImpresso?: boolean;
-  createdAt: string;
+  usageType: string; eventHours?: number; temFoto?: boolean; temVideo?: boolean;
+  temReels?: boolean; temFotoEditada?: boolean; temVideoEditado?: boolean;
+  temFotoImpressa?: boolean; temAlbumImpresso?: boolean; createdAt: string;
 }
+interface StaffBreakdown { ID?: string; id?: string; LABEL?: string; label?: string; COST?: number; cost?: number; USER_ID?: string; userId?: string; }
+interface EquipBreakdown { ID?: string; id?: string; QTY?: number; qty?: number; }
+interface BudgetBreakdown { STAFF?: StaffBreakdown[]; EQUIPMENT?: EquipBreakdown[]; MARGIN?: number; margin?: number; }
 
-interface StaffBreakdown {
-  ID?: string;
-  id?: string;
-  LABEL?: string;
-  label?: string;
-  COST?: number;
-  cost?: number;
-  USER_ID?: string;
-  userId?: string;
-}
-
-interface EquipBreakdown {
-  ID?: string;
-  id?: string;
-  QTY?: number;
-  qty?: number;
-}
-
-interface BudgetBreakdown {
-  STAFF?: StaffBreakdown[];
-  EQUIPMENT?: EquipBreakdown[];
-  MARGIN?: number;
-  margin?: number;
-}
+const KANBAN_COLUMNS = [
+  { id: "PENDING",   label: "Novos Leads",       color: "amber",   border: "border-amber-500/40",   text: "text-amber-500",   badge: "bg-amber-500/10 text-amber-500 border-amber-500/30" },
+  { id: "PRICED",    label: "Em Precificação",   color: "blue",    border: "border-blue-500/40",    text: "text-blue-500",    badge: "bg-blue-500/10 text-blue-500 border-blue-500/30" },
+  { id: "APROVADO",  label: "Proposta Enviada",  color: "emerald", border: "border-emerald-500/40", text: "text-emerald-500", badge: "bg-emerald-500/10 text-emerald-500 border-emerald-500/30" },
+  { id: "CONVERTED", label: "Convertidos",       color: "teal",    border: "border-teal-500/40",    text: "text-teal-400",    badge: "bg-teal-500/10 text-teal-400 border-teal-500/30" },
+  { id: "REJECTED",  label: "Arquivados",        color: "red",     border: "border-red-500/40",     text: "text-red-500",     badge: "bg-red-500/10 text-red-500 border-red-500/30" },
+] as const;
 
 export const AdminQuotes: React.FC = () => {
   const [quotes, setQuotes] = useState<Quote[]>([]);
   const [loading, setLoading] = useState(true);
   const [search, setSearch] = useState("");
-  const [statusFilter, setStatusFilter] = useState<Quote["quoteStatus"] | "ALL">("ALL");
   const [selectedQuote, setSelectedQuote] = useState<Quote | null>(null);
-  const detailsRef = React.useRef<HTMLDivElement>(null);
-
-  // Scroll to details on mobile when a quote is selected
-  useEffect(() => {
-    if (selectedQuote && window.innerWidth < 1024) {
-      detailsRef.current?.scrollIntoView({ behavior: "smooth", block: "start" });
-    }
-  }, [selectedQuote]);
-
-  const [activeTab, setActiveTab] = useState<"briefing" | "equipe" | "locacao" | "custos" | "fechamento">("briefing");
+  const [activeTab, setActiveTab] = useState<"briefing"|"equipe"|"locacao"|"custos"|"fechamento">("briefing");
   const [isNewQuoteModalOpen, setIsNewQuoteModalOpen] = useState(false);
-  const [serviceCatalog, setServiceCatalog] = useState<{id: string, name: string}[]>([]);
-
-  // Pricing States
-  const [selectedStaff, setSelectedStaff] = useState<{instanceId: string, id: string, label: string, cost: number, userId?: string}[]>([]);
-  const [selectedEquip, setSelectedEquip] = useState<{id: string, qty: number}[]>([]);
+  const [selectedStaff, setSelectedStaff] = useState<{instanceId:string,id:string,label:string,cost:number,userId?:string}[]>([]);
+  const [selectedEquip, setSelectedEquip] = useState<{id:string,qty:number}[]>([]);
   const [transportCost, setTransportCost] = useState<number>(0);
   const [lodgingCost, setLodgingCost] = useState<number>(0);
-  const [margin, setMargin] = useState(30); 
+  const [margin, setMargin] = useState(30);
   const [isSplit, setIsSplit] = useState(true);
   const [approving, setApproving] = useState(false);
-  const [notification, setNotification] = useState<{message: string, type: 'success' | 'error'} | null>(null);
+  const [notification, setNotification] = useState<{message:string,type:"success"|"error"}|null>(null);
   const [finalPrice, setFinalPrice] = useState<number>(0);
-
-  const [professionals, setProfessionals] = useState<{id: string, nome: string, profissional?: { workflowType: string[] }}[]>([]);
-
-  // Advanced New Quote Form State
+  const [professionals, setProfessionals] = useState<{id:string,nome:string,profissional?:{workflowType:string[]}}[]>([]);
+  const [archivedOpen, setArchivedOpen] = useState(false);
   const [newQuoteData, setNewQuoteData] = useState({
-    nomeNoivos: "",
-    clientName: "",
-    clientEmail: "",
-    clientPhone: "",
-    dataEvento: "",
-    location: "",
-    description: "",
-    priceBase: 0,
-    urgency: "MEDIUM" as "HIGH" | "MEDIUM" | "LOW",
-    temFoto: true,
-    temVideo: false,
-    temReels: false
+    nomeNoivos:"",clientName:"",clientEmail:"",clientPhone:"",dataEvento:"",
+    location:"",description:"",priceBase:0,urgency:"MEDIUM" as "HIGH"|"MEDIUM"|"LOW",
+    temFoto:true,temVideo:false,temReels:false
   });
 
   const parseBreakdown = useCallback((description: string) => {
     if (!description) return null;
-    // Robust parsing for budget breakdown JSON
     const match = description.match(/\[BUDGET_BREAKDOWN\]\s*(\{.*?\})/s);
     if (!match) return null;
-    try {
-      return JSON.parse(match[1]);
-    } catch {
-      return null;
-    }
+    try { return JSON.parse(match[1]); } catch { return null; }
   }, []);
 
   const fetchProfessionals = useCallback(async () => {
-    try {
-      const { data } = await API.get("/admin/users", { params: { role: "PROFISSIONAL" } });
-      setProfessionals(data || []);
-    } catch (err) {
-      console.error("Erro ao carregar profissionais:", err);
-    }
-  }, []);
-
-  const fetchServiceCatalog = useCallback(async () => {
-    try {
-      const { data } = await API.get("/public/service-catalog");
-      setServiceCatalog(data || []);
-    } catch (err) {
-      console.error("Erro ao carregar catálogo de serviços:", err);
-    }
+    try { const {data} = await API.get("/admin/users",{params:{role:"PROFISSIONAL"}}); setProfessionals(data||[]); } catch (e) { console.error(e); }
   }, []);
 
   const fetchQuotes = useCallback(async () => {
     setLoading(true);
-    try {
-      const qRes = await API.get("/admin/quotes", { params: { q: search } });
-      setQuotes(qRes.data.quotes || []);
-    } catch (err) {
-      console.error("Erro ao carregar orçamentos:", err);
-    } finally {
-      setLoading(false);
-    }
+    try { const r = await API.get("/admin/quotes",{params:{q:search}}); setQuotes(r.data.quotes||[]); }
+    catch (e) { console.error(e); } finally { setLoading(false); }
   }, [search]);
 
-  useEffect(() => {
-    fetchQuotes();
-    fetchProfessionals();
-    fetchServiceCatalog();
-  }, [fetchQuotes, fetchProfessionals, fetchServiceCatalog]);
+  useEffect(() => { fetchQuotes(); fetchProfessionals(); }, [fetchQuotes,fetchProfessionals]);
 
-  const filteredQuotes = useMemo(() => {
-    return quotes.filter(q => {
-      const matchesSearch = !search || 
-        q.nomeNoivos.toLowerCase().includes(search.toLowerCase()) || 
-        q.id.toLowerCase().includes(search.toLowerCase()) ||
-        q.clientName.toLowerCase().includes(search.toLowerCase());
-      
-      const matchesStatus = statusFilter === "ALL" || q.quoteStatus === statusFilter;
-      
-      return matchesSearch && matchesStatus;
-    });
-  }, [quotes, search, statusFilter]);
-
-  const getStatusConfig = (status: Quote["quoteStatus"]) => {
-    const configs: Record<Quote["quoteStatus"], { label: string, color: string, bg: string, border: string }> = {
-      PENDING: { label: "PENDENTE", color: "text-amber-500", bg: "bg-amber-500/5", border: "border-amber-500/20" },
-      PRICED: { label: "PRECIFICADO", color: "text-blue-500", bg: "bg-blue-500/5", border: "border-blue-500/20" },
-      APROVADO: { label: "APROVADO", color: "text-emerald-500", bg: "bg-emerald-500/5", border: "border-emerald-500/20" },
-      REJECTED: { label: "REJEITADO", color: "text-red-500", bg: "bg-red-500/5", border: "border-red-500/20" },
-      CONVERTED: { label: "CONVERTIDO", color: "text-emerald-500", bg: "bg-emerald-500/5", border: "border-emerald-500/20" }
-    };
-    return configs[status] || configs.PENDING;
-  };
-
-  // Sync pricing states with selected quote
   useEffect(() => {
     if (selectedQuote) {
       const data = parseBreakdown(selectedQuote.description);
       if (data) {
-        const breakdown = data as BudgetBreakdown;
-        if (breakdown.STAFF) setSelectedStaff(breakdown.STAFF.map((s) => ({
-          instanceId: Math.random().toString(36).substr(2, 9),
-          id: s.ID || s.id || "", 
-          label: s.LABEL || s.label || "", 
-          cost: Number(s.COST || s.cost || 0), 
-          userId: s.USER_ID || s.userId || ""
-        })));
-        if (breakdown.EQUIPMENT) setSelectedEquip(breakdown.EQUIPMENT.map((e) => ({
-          id: e.ID || e.id || "", 
-          qty: Number(e.QTY || e.qty || 0)
-        })));
-        if (breakdown.MARGIN || breakdown.margin) setMargin(Number(breakdown.MARGIN || breakdown.margin));
-      } else {
-        setSelectedStaff([]);
-        setSelectedEquip([]);
-        setMargin(30);
-      }
-      setTransportCost(0);
-      setLodgingCost(0);
-      setFinalPrice(0);
-      setActiveTab("briefing");
+        const b = data as BudgetBreakdown;
+        if (b.STAFF) setSelectedStaff(b.STAFF.map(s=>({instanceId:Math.random().toString(36).substr(2,9),id:s.ID||s.id||"",label:s.LABEL||s.label||"",cost:Number(s.COST||s.cost||0),userId:s.USER_ID||s.userId||""})));
+        if (b.EQUIPMENT) setSelectedEquip(b.EQUIPMENT.map(e=>({id:e.ID||e.id||"",qty:Number(e.QTY||e.qty||0)})));
+        if (b.MARGIN||b.margin) setMargin(Number(b.MARGIN||b.margin));
+      } else { setSelectedStaff([]); setSelectedEquip([]); setMargin(30); }
+      setTransportCost(0); setLodgingCost(0); setFinalPrice(0); setActiveTab("briefing");
     }
-  }, [selectedQuote, parseBreakdown]);
+  }, [selectedQuote,parseBreakdown]);
 
-  const staffTotal = selectedStaff.reduce((acc, s) => acc + (s.cost || 0), 0);
-  const equipTotal = selectedEquip.reduce((acc, e) => {
-    const item = MERLIN_EQUIPMENT.find(m => m.id === e.id);
-    return acc + (item ? item.price * e.qty : 0);
-  }, 0);
-  const costTotal = staffTotal + equipTotal + transportCost + lodgingCost;
-  const suggestedPrice = costTotal > 0 ? costTotal / (1 - margin / 100) : 0;
+  const staffTotal = selectedStaff.reduce((a,s)=>a+(s.cost||0),0);
+  const equipTotal = selectedEquip.reduce((a,e)=>{const i=MERLIN_EQUIPMENT.find(m=>m.id===e.id);return a+(i?i.price*e.qty:0);},0);
+  const costTotal = staffTotal+equipTotal+transportCost+lodgingCost;
+  const suggestedPrice = costTotal>0?costTotal/(1-margin/100):0;
+  useEffect(()=>{ if(suggestedPrice>0) setFinalPrice(Math.ceil(suggestedPrice)); },[suggestedPrice]);
 
-  useEffect(() => {
-    if (suggestedPrice > 0) setFinalPrice(Math.ceil(suggestedPrice));
-  }, [suggestedPrice]);
-
-  const stats = useMemo(() => {
-    const total = quotes.length;
-    const pending = quotes.filter(q => q.quoteStatus === "PENDING").length;
-    const highUrgency = quotes.filter(q => q.urgency === "HIGH").length;
-    const totalValue = quotes.reduce((acc, q) => acc + (q.priceBase || 0), 0);
-    return { total, pending, highUrgency, totalValue };
-  }, [quotes]);
+  const stats = useMemo(()=>({
+    total:quotes.length,
+    pending:quotes.filter(q=>q.quoteStatus==="PENDING").length,
+    highUrgency:quotes.filter(q=>q.urgency==="HIGH").length,
+    totalValue:quotes.reduce((a,q)=>a+(q.priceBase||0),0)
+  }),[quotes]);
 
   const handleApprove = async () => {
-    if (!selectedQuote || finalPrice <= 0) return;
+    if (!selectedQuote||finalPrice<=0) return;
     setApproving(true);
     try {
-      await API.patch(`/admin/quotes/${selectedQuote.id}/approve`, { 
-        finalPrice,
-        isSplit,
-        breakdown: { staff: selectedStaff, equipment: selectedEquip, costTotal, margin }
-      });
-      setNotification({ message: "Orçamento aprovado com sucesso!", type: 'success' });
-      setSelectedQuote(null);
-      fetchQuotes();
-      setTimeout(() => setNotification(null), 5000);
-    } catch {
-      setNotification({ message: "Erro ao processar aprovação.", type: 'error' });
-    } finally {
-      setApproving(false);
-    }
+      await API.patch(`/admin/quotes/${selectedQuote.id}/approve`,{finalPrice,isSplit,breakdown:{staff:selectedStaff,equipment:selectedEquip,costTotal,margin}});
+      setNotification({message:"Orçamento aprovado!",type:"success"});
+      setSelectedQuote(null); fetchQuotes(); setTimeout(()=>setNotification(null),5000);
+    } catch { setNotification({message:"Erro ao aprovar.",type:"error"}); }
+    finally { setApproving(false); }
   };
 
   const handleReject = async () => {
     if (!selectedQuote) return;
     const reason = prompt("MOTIVO DA REJEIÇÃO:");
     try {
-      await API.patch(`/admin/quotes/${selectedQuote.id}/reject`, { reason });
-      setNotification({ message: "Orçamento arquivado.", type: 'success' });
-      setSelectedQuote(null);
-      fetchQuotes();
-    } catch {
-      setNotification({ message: "Erro ao arquivar.", type: 'error' });
-    }
+      await API.patch(`/admin/quotes/${selectedQuote.id}/reject`,{reason});
+      setNotification({message:"Orçamento arquivado.",type:"success"});
+      setSelectedQuote(null); fetchQuotes();
+    } catch { setNotification({message:"Erro ao arquivar.",type:"error"}); }
   };
 
   const handleCreateNewQuote = async (e: React.FormEvent) => {
     e.preventDefault();
     try {
-      await API.post("/admin/quotes", {
-        ...newQuoteData,
-        usageType: "VENDA_DIRETA",
-        quoteStatus: "PENDING"
-      });
+      await API.post("/admin/quotes",{...newQuoteData,usageType:"VENDA_DIRETA",quoteStatus:"PENDING"});
       setIsNewQuoteModalOpen(false);
-      setNewQuoteData({ nomeNoivos: "", clientName: "", clientEmail: "", clientPhone: "", dataEvento: "", location: "", description: "", priceBase: 0, urgency: "MEDIUM", temFoto: true, temVideo: false, temReels: false });
-      fetchQuotes();
-      setNotification({ message: "Novo lead cadastrado!", type: 'success' });
-    } catch {
-      setNotification({ message: "Erro ao cadastrar lead.", type: 'error' });
-    }
+      setNewQuoteData({nomeNoivos:"",clientName:"",clientEmail:"",clientPhone:"",dataEvento:"",location:"",description:"",priceBase:0,urgency:"MEDIUM",temFoto:true,temVideo:false,temReels:false});
+      fetchQuotes(); setNotification({message:"Novo lead cadastrado!",type:"success"});
+    } catch { setNotification({message:"Erro ao cadastrar.",type:"error"}); }
   };
 
   const addStaffPreset = (roleId: string) => {
-    const role = STAFF_ROLES.find(r => r.id === roleId) || { id: "custom", name: "OUTROS", avgCost: 0 };
-    const existingCount = selectedStaff.filter(s => s.id === roleId).length;
-    
+    const role = STAFF_ROLES.find(r=>r.id===roleId)||{id:"custom",name:"OUTROS",avgCost:0};
+    const existingCount = selectedStaff.filter(s=>s.id===roleId).length;
     let baseName = role.name.toUpperCase();
-    if (roleId === "photographer") baseName = "FOTÓGRAFO";
-    if (roleId === "videographer") baseName = "CINEGRAFISTA";
-    
-    const label = roleId === "custom" ? "NOVA FUNÇÃO" : `${existingCount + 1}º ${baseName}`;
-
-    setSelectedStaff([...selectedStaff, { 
-      instanceId: Math.random().toString(36).substr(2, 9),
-      id: roleId, 
-      label, 
-      cost: role.avgCost || 0, 
-      userId: "" 
-    }]);
+    if (roleId==="photographer") baseName="FOTÓGRAFO";
+    if (roleId==="videographer") baseName="CINEGRAFISTA";
+    const label = roleId==="custom"?"NOVA FUNÇÃO":`${existingCount+1}º ${baseName}`;
+    setSelectedStaff([...selectedStaff,{instanceId:Math.random().toString(36).substr(2,9),id:roleId,label,cost:role.avgCost||0,userId:""}]);
+  };
+  const removeStaffInstance = (id:string) => setSelectedStaff(selectedStaff.filter(s=>s.instanceId!==id));
+  const updateStaffUser = (id:string,userId:string) => setSelectedStaff(selectedStaff.map(s=>s.instanceId===id?{...s,userId}:s));
+  const addEquip = (id:string) => {
+    const e = selectedEquip.find(e=>e.id===id);
+    if (e) setSelectedEquip(selectedEquip.map(e=>e.id===id?{...e,qty:e.qty+1}:e));
+    else setSelectedEquip([...selectedEquip,{id,qty:1}]);
   };
 
-  const removeStaffInstance = (instanceId: string) => {
-    setSelectedStaff(selectedStaff.filter(s => s.instanceId !== instanceId));
-  };
-
-  const updateStaffUser = (instanceId: string, userId: string) => {
-    setSelectedStaff(selectedStaff.map(s => s.instanceId === instanceId ? { ...s, userId } : s));
-  };
-
-  const addEquip = (id: string) => {
-    const exists = selectedEquip.find(e => e.id === id);
-    if (exists) {
-      setSelectedEquip(selectedEquip.map(e => e.id === id ? { ...e, qty: e.qty + 1 } : e));
-    } else {
-      setSelectedEquip([...selectedEquip, { id, qty: 1 }]);
-    }
+  const getColQuotes = (status: string) => quotes.filter(q=>q.quoteStatus===status&&(!search||q.nomeNoivos.toLowerCase().includes(search.toLowerCase())||q.clientName.toLowerCase().includes(search.toLowerCase())));
+  const QuoteCard = ({quote, onClick}: {quote:Quote, onClick:()=>void}) => {
+    const col = KANBAN_COLUMNS.find(c=>c.id===quote.quoteStatus)!;
+    const daysLeft = Math.ceil((new Date(quote.dataEvento).getTime()-Date.now())/(1000*60*60*24));
+    return (
+      <motion.div
+        whileHover={{scale:1.015,y:-2}} whileTap={{scale:0.99}}
+        onClick={onClick}
+        className={`p-4 border rounded-lg cursor-pointer transition-colors relative overflow-hidden ${selectedQuote?.id===quote.id?"border-brand-tactical bg-brand-tactical/5 shadow-[0_0_20px_rgba(133,185,172,0.15)]":"border-theme-border bg-theme-card/60 hover:border-theme-border-2 hover:bg-theme-card"}`}
+      >
+        {quote.urgency==="HIGH"&&<div className="absolute top-0 left-0 w-1 h-full bg-red-500"/>}
+        <div className="space-y-3 pl-1">
+          <div className="flex items-start justify-between gap-2">
+            <h4 className="text-sm font-black text-theme-text uppercase italic tracking-tight leading-tight flex-1">{quote.nomeNoivos}</h4>
+            {quote.urgency==="HIGH"&&<div className="flex items-center gap-1 bg-red-500/10 px-2 py-0.5 border border-red-500/20 rounded shrink-0"><Flame size={9} className="text-red-500"/><span className="text-[8px] font-black text-red-500 uppercase">Urgente</span></div>}
+          </div>
+          <div className="flex items-center justify-between">
+            <span className="text-[10px] text-theme-text-muted font-bold truncate max-w-[60%]">{quote.clientName||"—"}</span>
+            <span className="text-[10px] font-black text-brand-tactical italic">{quote.priceBase?`R$ ${quote.priceBase.toLocaleString()}`:"S/ VALOR"}</span>
+          </div>
+          <div className="flex items-center justify-between pt-2 border-t border-theme-border/50">
+            <div className="flex items-center gap-2">
+              {quote.temFoto&&<Camera size={11} className="text-theme-text-muted opacity-60"/>}
+              {quote.temVideo&&<Video size={11} className="text-theme-text-muted opacity-60"/>}
+              {quote.temReels&&<Smartphone size={11} className="text-theme-text-muted opacity-60"/>}
+              <span className={`text-[8px] font-black uppercase px-1.5 py-0.5 border rounded ${col.badge}`}>{quote.quoteStatus}</span>
+            </div>
+            <div className="flex items-center gap-2">
+              <span className="text-[8px] text-theme-text-muted font-bold">{daysLeft>0?`${daysLeft}d`:"Passado"}</span>
+              <span className="text-[8px] text-theme-subtle font-mono">#{quote.id.slice(-6).toUpperCase()}</span>
+            </div>
+          </div>
+        </div>
+      </motion.div>
+    );
   };
 
   return (
-    <div className="space-y-10 animate-in fade-in duration-700">
-      <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-6 border-b border-theme-border pb-10">
+    <div className="space-y-8 animate-in fade-in duration-700">
+      {/* Header */}
+      <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 border-b border-theme-border pb-8">
         <div>
           <h2 className="text-4xl md:text-6xl font-display text-theme-text uppercase font-black italic leading-none pt-2 tracking-tighter">Gestão de Orçamentos</h2>
-          <p className="text-[10px] text-emerald-500 uppercase tracking-[0.5em] mt-4 font-black italic">Controle Administrativo de Propostas</p>
+          <p className="text-[10px] text-brand-tactical uppercase tracking-[0.5em] mt-3 font-black italic">Pipeline Kanban de Propostas</p>
         </div>
-        
-        <div className="flex flex-col md:flex-row items-center gap-8 w-full lg:w-auto">
-          <div className="flex flex-col gap-2.5 w-full md:w-auto">
-            <label className="text-[10px] font-black text-theme-text-muted uppercase tracking-widest ml-1">Filtro de Status</label>
-            <div className="flex items-center gap-1.5 bg-theme-bg-muted p-1.5 border border-theme-border rounded-sm">
-              {(['ALL', 'PENDING', 'PRICED', 'APROVADO', 'REJECTED'] as const).map((s) => (
-                <button
-                  key={s}
-                  onClick={() => setStatusFilter(s)}
-                  className={`px-4 py-2 text-[10px] font-black uppercase tracking-widest transition-all rounded-sm ${statusFilter === s ? 'bg-theme-text text-theme-bg shadow-lg' : 'text-theme-text-muted hover:text-white'}`}
-                >
-                  {s === 'ALL' ? 'Todos' : s === 'APROVADO' ? 'Aprov.' : s}
-                </button>
-              ))}
-            </div>
+        <div className="flex items-center gap-4">
+          <div className="relative">
+            <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-theme-text-muted" size={14}/>
+            <input type="text" placeholder="BUSCAR..." value={search} onChange={e=>setSearch(e.target.value)}
+              className="bg-theme-bg-muted border border-theme-border pl-9 pr-4 py-3 text-[10px] text-theme-text uppercase tracking-widest outline-none focus:border-brand-tactical transition-all font-bold rounded-lg w-56"/>
           </div>
-
-          <div className="flex flex-col gap-2.5 w-full md:w-auto">
-            <label className="text-[10px] font-black text-theme-text-muted uppercase tracking-widest ml-1">Busca Rápida</label>
-            <div className="relative group">
-              <Search className="absolute left-4 top-1/2 -translate-y-1/2 text-theme-text-muted" size={16} />
-              <input
-                type="text"
-                placeholder="CLIENTE, ID..."
-                value={search}
-                onChange={(e) => setSearch(e.target.value)}
-                className="w-full md:w-72 bg-theme-bg-muted border border-theme-border p-4 pl-12 text-[11px] text-theme-text uppercase tracking-widest outline-none focus:border-brand-tactical transition-all font-bold rounded-sm shadow-sm"
-              />
-            </div>
-          </div>
-
-          <div className="flex flex-col gap-2 w-full md:w-auto self-end">
-            <button 
-              onClick={() => setIsNewQuoteModalOpen(true)}
-              className="bg-emerald-500 text-white font-display font-black uppercase tracking-[0.2em] px-10 py-5 text-[11px] flex items-center justify-center gap-3 hover:brightness-110 shadow-xl transition-all active:scale-95 italic"
-            >
-              <Plus size={18} /> NOVO ORÇAMENTO
-            </button>
-          </div>
+          <button onClick={()=>setIsNewQuoteModalOpen(true)}
+            className="bg-brand-tactical text-black font-display font-black uppercase tracking-[0.2em] px-6 py-3 text-[10px] flex items-center gap-2 hover:brightness-110 shadow-xl transition-all rounded-lg whitespace-nowrap">
+            <Plus size={16}/> Novo Orçamento
+          </button>
         </div>
       </div>
 
-      <div className="grid grid-cols-1 lg:grid-cols-12 gap-12">
-        {/* List of Quotes */}
-        <div className="lg:col-span-5 space-y-4">
-          {loading ? (
-             <div className="py-24 text-center border border-theme-border bg-theme-bg-muted/20 rounded-sm">
-                <div className="text-[10px] text-theme-text-muted animate-pulse uppercase tracking-[0.4em] font-bold">Carregando dados...</div>
-             </div>
-          ) : filteredQuotes.length > 0 ? (
-            filteredQuotes.map((quote) => {
-              const status = getStatusConfig(quote.quoteStatus);
-              return (
-                <div 
-                  key={quote.id}
-                  onClick={() => setSelectedQuote(quote)}
-                  className={`p-6 border transition-all relative overflow-hidden group ${selectedQuote?.id === quote.id ? 'border-white bg-theme-card shadow-2xl ring-1 ring-white/10' : 'border-theme-border bg-theme-card/40 hover:border-theme-border-2 hover:bg-theme-card/80'}`}
-                  style={{ cursor: "pointer" }}
-                >
-                  <div className={`absolute top-0 left-0 w-1 h-full ${quote.urgency === 'HIGH' ? 'bg-red-500' : 'bg-emerald-500 opacity-20'}`} />
-                  
-                  <div className="space-y-5">
-                    <div className="flex items-center justify-between">
-                      <div className="flex items-center gap-2">
-                         <span className={`text-[9px] font-black uppercase tracking-widest px-3 py-1.5 border ${status.border} ${status.bg} ${status.color} italic`}>
-                           {status.label}
-                         </span>
-                         {quote.urgency === 'HIGH' && (
-                           <div className="flex items-center gap-1.5 bg-red-500/10 px-2 py-1 border border-red-500/20 animate-pulse">
-                             <Flame size={10} className="text-red-500" />
-                             <span className="text-[9px] font-black text-red-500 uppercase tracking-widest">Urgente</span>
-                           </div>
-                         )}
-                      </div>
-                      <span className="text-xl text-theme-text font-display font-black italic tracking-tighter">
-                         {quote.priceBase ? `R$ ${quote.priceBase.toLocaleString()}` : "S/ VALOR"}
-                      </span>
-                    </div>
-                    
-                    <div className="flex items-center justify-between gap-4">
-                      <h3 className="text-2xl font-display font-black text-theme-text uppercase tracking-tighter italic group-hover:text-emerald-500 transition-colors">
-                        {quote.nomeNoivos}
-                      </h3>
-                    </div>
-                    
-                    <div className="flex items-center justify-between pt-4 border-t border-theme-border">
-                      <div className="flex items-center gap-2.5 text-[10px] text-theme-muted font-black uppercase tracking-widest italic truncate max-w-[65%]">
-                        {quote.clientName || "CLIENTE NÃO INFORMADO"}
-                      </div>
-                      <span className="text-[9px] font-black text-theme-subtle uppercase tracking-[0.2em] italic">
-                         #{quote.id.slice(-6).toUpperCase()}
-                      </span>
-                    </div>
-                  </div>
-                </div>
-              );
-            })
-          ) : (
-            <div className="py-32 text-center border border-dashed border-theme-border/40 bg-theme-bg-muted/10 flex flex-col items-center justify-center rounded-sm">
-              <div className="w-16 h-16 bg-theme-bg-muted border border-theme-border flex items-center justify-center rounded-full mb-6 opacity-30">
-                <Briefcase size={24} className="text-theme-text-muted" />
+      {/* Stats */}
+      <div className="grid grid-cols-3 gap-4 md:hidden">
+        {[{l:"Pendentes",v:stats.pending,c:"text-amber-500"},{l:"Alta Prior.",v:stats.highUrgency,c:"text-red-500"},{l:"Volume",v:`R${(stats.totalValue/1000).toFixed(1)}k`,c:"text-brand-tactical"}].map(s=>(
+          <div key={s.l} className="bg-theme-card border border-theme-border rounded-lg p-3 text-center">
+            <p className={`text-2xl font-heading font-black italic ${s.c}`}>{s.v}</p>
+            <p className="text-[8px] text-theme-text-muted uppercase tracking-widest mt-1">{s.l}</p>
+          </div>
+        ))}
+      </div>
+
+      {/* Kanban Board */}
+      {loading?(
+        <div className="py-24 text-center"><div className="text-[10px] text-theme-text-muted animate-pulse uppercase tracking-[0.4em] font-bold">Carregando pipeline...</div></div>
+      ):(
+        <div className="flex gap-4 overflow-x-auto pb-4 -mx-2 px-2" style={{minHeight:"60vh"}}>
+          {KANBAN_COLUMNS.map(col=>{
+            if (col.id==="REJECTED") return (
+              <div key={col.id} className="flex-shrink-0 w-10">
+                <button onClick={()=>setArchivedOpen(o=>!o)}
+                  className={`h-full w-10 flex flex-col items-center justify-center gap-3 border rounded-lg bg-theme-card/30 border-theme-border hover:border-red-500/30 transition-colors group`}>
+                  {archivedOpen?<ChevronRight size={14} className="text-red-500"/>:<ChevronDown size={14} className="text-red-500 rotate-90"/>}
+                  <span className="text-[9px] font-black text-red-500/60 uppercase tracking-widest" style={{writingMode:"vertical-rl",transform:"rotate(180deg)"}}>Arquivados</span>
+                  <span className="text-[9px] font-black text-red-500 bg-red-500/10 px-1.5 py-0.5 rounded border border-red-500/20">{getColQuotes("REJECTED").length}</span>
+                </button>
               </div>
-              <p className="text-[10px] text-theme-text-muted uppercase tracking-[0.4em] font-black max-w-[200px] leading-relaxed">Nenhum protocolo encontrado com estes filtros.</p>
-              <button onClick={() => { setStatusFilter("ALL"); setSearch(""); }} className="mt-6 text-[8px] font-black text-brand-tactical uppercase tracking-widest border-b border-brand-tactical/20 pb-1 hover:border-brand-tactical transition-all">Limpar Filtros</button>
+            );
+            const colQuotes = getColQuotes(col.id);
+            return (
+              <div key={col.id} className="flex-shrink-0 w-72 flex flex-col gap-3">
+                <div className={`border-t-2 ${col.border} pt-3 flex items-center justify-between`}>
+                  <span className={`text-[10px] font-black uppercase tracking-widest ${col.text}`}>{col.label}</span>
+                  <span className={`text-[9px] font-black px-2 py-0.5 border rounded ${col.badge}`}>{colQuotes.length}</span>
+                </div>
+                <div className="flex flex-col gap-3 overflow-y-auto" style={{maxHeight:"68vh"}}>
+                  {colQuotes.length===0?(
+                    <div className="border border-dashed border-theme-border/30 rounded-lg py-12 flex flex-col items-center justify-center gap-3 opacity-40">
+                      <Briefcase size={20} className="text-theme-text-muted"/>
+                      <p className="text-[9px] text-theme-text-muted uppercase tracking-widest font-bold text-center px-4">Nenhum protocolo</p>
+                    </div>
+                  ):colQuotes.map(q=><QuoteCard key={q.id} quote={q} onClick={()=>setSelectedQuote(q)}/>)}
+                </div>
+              </div>
+            );
+          })}
+          {/* Arquivados expanded */}
+          {archivedOpen&&(
+            <div className="flex-shrink-0 w-72 flex flex-col gap-3 animate-in slide-in-from-right-4 duration-300">
+              <div className="border-t-2 border-red-500/40 pt-3 flex items-center justify-between">
+                <span className="text-[10px] font-black uppercase tracking-widest text-red-500">Arquivados</span>
+                <span className="text-[9px] font-black px-2 py-0.5 border rounded bg-red-500/10 text-red-500 border-red-500/20">{getColQuotes("REJECTED").length}</span>
+              </div>
+              <div className="flex flex-col gap-3 overflow-y-auto" style={{maxHeight:"68vh"}}>
+                {getColQuotes("REJECTED").map(q=><QuoteCard key={q.id} quote={q} onClick={()=>setSelectedQuote(q)}/>)}
+              </div>
             </div>
           )}
         </div>
-
-        {/* Selected Details & Budgeting Studio */}
-        <div ref={detailsRef} className="lg:col-span-7 lg:sticky lg:top-10">
-          {selectedQuote ? (
-            <div className="bg-theme-bg-muted border border-theme-border animate-in slide-in-from-right-4 duration-500 shadow-2xl rounded-sm flex flex-col h-[85vh] max-h-[850px] min-h-[600px]">
-               {/* HEADER */}
-               <div className="p-6 shrink-0 border-b border-theme-border bg-theme-bg/50 backdrop-blur-sm">
-                 <div className="flex justify-between items-center mb-6">
-                   <div className="space-y-1">
-                      <h3 className="text-xl font-heading font-black text-theme-text uppercase tracking-tight leading-none">{selectedQuote.nomeNoivos}</h3>
-                      <p className="text-[9px] text-theme-text-muted font-bold uppercase tracking-widest">Protocolo: {selectedQuote.id.toUpperCase()}</p>
-                   </div>
-                   <button onClick={() => setSelectedQuote(null)} className="text-theme-text-muted hover:text-red-500 transition-colors"><X size={20}/></button>
-                 </div>
-
-                 <div className="flex gap-4 overflow-x-auto no-scrollbar scroll-smooth">
-                   {(['briefing', 'equipe', 'locacao', 'custos', 'fechamento'] as const).map(t => (
-                     <button
-                      key={t}
-                      onClick={() => setActiveTab(t)}
-                      className={`pb-2 text-[10px] font-black uppercase tracking-[0.2em] transition-all relative whitespace-nowrap px-2 italic ${activeTab === t ? 'text-emerald-500' : 'text-theme-subtle hover:text-white'}`}
-                     >
-                       {t === 'briefing' ? '1. Briefing' : t === 'equipe' ? '2. Equipe' : t === 'locacao' ? '3. Locação' : t === 'custos' ? '4. Custos' : '5. Fechamento'}
-                       {activeTab === t && <div className="absolute bottom-0 left-0 right-0 h-px bg-emerald-500 shadow-[0_0_10px_rgba(16,185,129,0.5)]" />}
-                     </button>
-                   ))}
-                 </div>
-               </div>
-
-               {/* SCROLLABLE BODY */}
-               <div className="flex-1 overflow-y-auto custom-scrollbar p-6">
-                  {activeTab === 'briefing' && (
-                    <div className="space-y-6 animate-in fade-in duration-300">
-                      <div className="grid grid-cols-2 md:grid-cols-4 gap-4 bg-white/[0.02] p-4 border border-theme-border rounded-sm">
-                         <div className="space-y-1"><span className="text-[9px] font-black text-theme-subtle uppercase tracking-widest italic">Data</span><p className="text-[12px] font-display font-black text-theme-text uppercase tracking-tight italic">{new Date(selectedQuote.dataEvento).toLocaleDateString("pt-BR")}</p></div>
-                         <div className="space-y-1"><span className="text-[9px] font-black text-theme-subtle uppercase tracking-widest italic">Base Cliente</span><p className="text-[12px] font-display font-black text-emerald-500 uppercase tracking-tight italic">R$ {selectedQuote.priceBase?.toLocaleString() || "---"}</p></div>
-                         <div className="space-y-1"><span className="text-[9px] font-black text-theme-subtle uppercase tracking-widest italic">Local</span><p className="text-[12px] font-display font-black text-theme-text uppercase truncate tracking-tight italic">{selectedQuote.location || "N/A"}</p></div>
-                         <div className="space-y-1"><span className="text-[9px] font-black text-theme-subtle uppercase tracking-widest italic">Email</span><p className="text-[12px] font-display font-black text-theme-text lowercase truncate tracking-tight italic" title={selectedQuote.clientEmail}>{selectedQuote.clientEmail}</p></div>
-                      </div>
-                      
-                      <div className="space-y-3">
-                        <h4 className="text-[9px] font-black text-emerald-500 uppercase tracking-widest border-l border-emerald-500 pl-3 italic">Serviços Solicitados</h4>
-                        <div className="flex flex-wrap gap-2">
-                          {selectedQuote.temVideo && <span className="bg-emerald-500/5 text-emerald-500 text-[8px] font-black px-3 py-1.5 border border-emerald-500/20 uppercase tracking-widest flex items-center gap-2 italic"><Video size={10}/> VÍDEO</span>}
-                          {selectedQuote.temReels && <span className="bg-emerald-500/5 text-emerald-500 text-[8px] font-black px-3 py-1.5 border border-emerald-500/20 uppercase tracking-widest flex items-center gap-2 italic"><Smartphone size={10}/> REELS</span>}
-                        </div>
-                      </div>
-
-                      <div className="space-y-3">
-                         <h4 className="text-[9px] font-black text-theme-text uppercase tracking-widest border-l-2 border-brand-tactical pl-2">Observações do Lead</h4>
-                         {(() => {
-                            const data = parseBreakdown(selectedQuote.description);
-                            const cleanText = selectedQuote.description.replace(/\[BUDGET_BREAKDOWN\].*?(\n\n|$)/s, "").replace(/\[REJECTED_REASON\].*?$/s, "").trim();
-                            
-                            return (
-                              <div className="space-y-4">
-                                {data && (
-                                  <div className="bg-brand-tactical/5 p-3 border border-brand-tactical/10 rounded-sm">
-                                     <span className="text-[8px] font-bold text-brand-tactical uppercase tracking-widest block mb-2 opacity-70">Simulação Prévia</span>
-                                     <div className="flex gap-6 text-[9px]">
-                                        <div><span className="text-theme-text-muted">Equipe:</span> <span className="text-theme-text font-black">{(data as BudgetBreakdown).STAFF?.map((s) => s.LABEL || s.label).join(", ")}</span></div>
-                                        <div><span className="text-theme-text-muted">Margem:</span> <span className="text-brand-tactical font-black">{(data as BudgetBreakdown).MARGIN || (data as BudgetBreakdown).margin}%</span></div>
-                                     </div>
-                                  </div>
-                                )}
-                                <div className="bg-theme-bg p-4 border border-theme-border text-[11px] text-theme-text leading-relaxed font-medium italic whitespace-pre-wrap rounded-sm shadow-inner">
-                                  {(() => {
-                                    let text = cleanText;
-                                    const serviceMatch = text.match(/Serviços: (.*)/);
-                                    if (serviceMatch && serviceCatalog.length > 0) {
-                                      const ids = serviceMatch[1].split(",").map(id => id.trim());
-                                      const names = ids.map(id => {
-                                        const s = serviceCatalog.find(sc => sc.id === id);
-                                        return s ? s.name : id;
-                                      });
-                                      text = text.replace(serviceMatch[0], `Serviços: ${names.join(", ")}`);
-                                    }
-                                    return text || "Nenhuma observação adicional fornecida.";
-                                  })()}
-                                </div>
-                              </div>
-                            );
-                         })()}
+      )}
+      {/* RIGHT DRAWER */}
+      <AnimatePresence>
+        {selectedQuote&&(
+          <>
+            <motion.div initial={{opacity:0}} animate={{opacity:1}} exit={{opacity:0}}
+              className="fixed inset-0 z-40 bg-black/60 backdrop-blur-sm"
+              onClick={()=>setSelectedQuote(null)}/>
+            <motion.div initial={{x:"100%"}} animate={{x:0}} exit={{x:"100%"}}
+              transition={{type:"spring",damping:30,stiffness:300}}
+              className="fixed right-0 top-0 h-full z-50 w-full md:w-[620px] bg-theme-bg border-l border-theme-border shadow-2xl flex flex-col">
+              {/* Drawer Header */}
+              <div className="p-6 border-b border-theme-border bg-theme-bg/80 backdrop-blur-sm shrink-0">
+                <div className="flex justify-between items-start mb-5">
+                  <div>
+                    <h3 className="text-lg font-heading font-black text-theme-text uppercase tracking-tight">{selectedQuote.nomeNoivos}</h3>
+                    <p className="text-[9px] text-theme-text-muted font-bold uppercase tracking-widest mt-1">Protocolo: {selectedQuote.id.toUpperCase()}</p>
+                  </div>
+                  <button onClick={()=>setSelectedQuote(null)} className="text-theme-text-muted hover:text-red-500 transition-colors p-1"><X size={20}/></button>
+                </div>
+                <div className="flex gap-1 overflow-x-auto no-scrollbar">
+                  {(["briefing","equipe","locacao","custos","fechamento"] as const).map(t=>(
+                    <button key={t} onClick={()=>setActiveTab(t)}
+                      className={`pb-2 px-3 text-[9px] font-black uppercase tracking-[0.2em] transition-all relative whitespace-nowrap italic ${activeTab===t?"text-brand-tactical":"text-theme-subtle hover:text-white"}`}>
+                      {t==="briefing"?"1. Briefing":t==="equipe"?"2. Equipe":t==="locacao"?"3. Locação":t==="custos"?"4. Custos":"5. Fechamento"}
+                      {activeTab===t&&<div className="absolute bottom-0 left-0 right-0 h-px bg-brand-tactical"/>}
+                    </button>
+                  ))}
+                </div>
+              </div>
+              {/* Drawer Body */}
+              <div className="flex-1 overflow-y-auto custom-scrollbar p-6">
+                {activeTab==="briefing"&&(
+                  <div className="space-y-5 animate-in fade-in duration-300">
+                    <div className="grid grid-cols-2 gap-3 bg-white/[0.02] p-4 border border-theme-border rounded-lg">
+                      <div><span className="text-[8px] font-black text-theme-subtle uppercase tracking-widest italic block mb-1">Data</span><p className="text-xs font-display font-black text-theme-text uppercase italic">{new Date(selectedQuote.dataEvento).toLocaleDateString("pt-BR")}</p></div>
+                      <div><span className="text-[8px] font-black text-theme-subtle uppercase tracking-widest italic block mb-1">Base Cliente</span><p className="text-xs font-display font-black text-brand-tactical uppercase italic">R$ {selectedQuote.priceBase?.toLocaleString()||"---"}</p></div>
+                      <div><span className="text-[8px] font-black text-theme-subtle uppercase tracking-widest italic block mb-1">Local</span><p className="text-xs font-display font-black text-theme-text uppercase truncate italic">{selectedQuote.location||"N/A"}</p></div>
+                      <div><span className="text-[8px] font-black text-theme-subtle uppercase tracking-widest italic block mb-1">Email</span><p className="text-xs font-display font-black text-theme-text lowercase truncate italic">{selectedQuote.clientEmail}</p></div>
+                    </div>
+                    <div>
+                      <h4 className="text-[9px] font-black text-brand-tactical uppercase tracking-widest border-l border-brand-tactical pl-3 italic mb-3">Serviços</h4>
+                      <div className="flex flex-wrap gap-2">
+                        {selectedQuote.temFoto&&<span className="bg-brand-tactical/5 text-brand-tactical text-[8px] font-black px-3 py-1 border border-brand-tactical/20 uppercase tracking-widest flex items-center gap-1 italic rounded"><Camera size={9}/> FOTO</span>}
+                        {selectedQuote.temVideo&&<span className="bg-brand-tactical/5 text-brand-tactical text-[8px] font-black px-3 py-1 border border-brand-tactical/20 uppercase tracking-widest flex items-center gap-1 italic rounded"><Video size={9}/> VÍDEO</span>}
+                        {selectedQuote.temReels&&<span className="bg-brand-tactical/5 text-brand-tactical text-[8px] font-black px-3 py-1 border border-brand-tactical/20 uppercase tracking-widest flex items-center gap-1 italic rounded"><Smartphone size={9}/> REELS</span>}
                       </div>
                     </div>
-                  )}
-
-                  {activeTab === 'equipe' && (
-                    <div className="space-y-6 animate-in fade-in duration-300">
-                      <div className="grid grid-cols-2 md:grid-cols-4 gap-2">
-                        {STAFF_ROLES.map(role => {
-                           const instances = selectedStaff.filter(s => s.id === role.id).length;
-                           return (
-                            <button 
-                              key={role.id} 
-                              onClick={() => addStaffPreset(role.id)} 
-                              className={`px-3 py-2 text-[9px] font-black uppercase tracking-widest border transition-all rounded-sm flex items-center justify-between ${instances > 0 ? 'border-brand-tactical bg-brand-tactical/10 text-brand-tactical' : 'border-theme-border bg-theme-bg text-theme-text-muted hover:border-brand-tactical/50'}`}
-                            >
-                              <span className="truncate">{role.name}</span>
-                              <div className="flex items-center gap-1">
-                                {instances > 0 && <span className="bg-brand-tactical text-brand-text px-1.5 py-0.5 rounded-sm text-[8px]">{instances}</span>}
-                                <Plus size={10} className={instances > 0 ? "opacity-100" : "opacity-30"} />
-                              </div>
-                            </button>
-                           );
-                        })}
-                        <button 
-                          onClick={() => addStaffPreset("custom")} 
-                          className="px-3 py-2 text-[9px] font-black uppercase tracking-widest border border-dashed border-theme-border bg-theme-bg/40 text-theme-text-muted hover:border-brand-tactical hover:text-brand-tactical transition-all rounded-sm flex items-center justify-between"
-                        >
-                          OUTROS <Plus size={10} />
+                    {(()=>{
+                      const data=parseBreakdown(selectedQuote.description);
+                      const cleanText=selectedQuote.description.replace(/\[BUDGET_BREAKDOWN\].*?(\n\n|$)/s,"").replace(/\[REJECTED_REASON\].*?$/s,"").trim();
+                      return(
+                        <div className="space-y-3">
+                          {data&&<div className="bg-brand-tactical/5 p-3 border border-brand-tactical/10 rounded-lg"><span className="text-[8px] font-bold text-brand-tactical uppercase tracking-widest block mb-1 opacity-70">Simulação Prévia</span><p className="text-[9px] text-theme-text">{(data as BudgetBreakdown).STAFF?.map(s=>s.LABEL||s.label).join(", ")} | Margem: {(data as BudgetBreakdown).MARGIN||((data as BudgetBreakdown).margin)}%</p></div>}
+                          <div className="bg-theme-bg-muted p-4 border border-theme-border text-[11px] text-theme-text leading-relaxed font-medium italic whitespace-pre-wrap rounded-lg">{cleanText||"Nenhuma observação adicional."}</div>
+                        </div>
+                      );
+                    })()}
+                  </div>
+                )}
+                {activeTab==="equipe"&&(
+                  <div className="space-y-5 animate-in fade-in duration-300">
+                    <div className="grid grid-cols-2 gap-2">
+                      {STAFF_ROLES.map(role=>{const n=selectedStaff.filter(s=>s.id===role.id).length;return(
+                        <button key={role.id} onClick={()=>addStaffPreset(role.id)}
+                          className={`px-3 py-2 text-[9px] font-black uppercase tracking-widest border rounded-lg flex items-center justify-between transition-all ${n>0?"border-brand-tactical bg-brand-tactical/10 text-brand-tactical":"border-theme-border text-theme-text-muted hover:border-brand-tactical/50"}`}>
+                          <span className="truncate">{role.name}</span>
+                          <div className="flex items-center gap-1">{n>0&&<span className="bg-brand-tactical text-black px-1.5 py-0.5 rounded text-[8px]">{n}</span>}<Plus size={10}/></div>
+                        </button>
+                      );})}
+                      <button onClick={()=>addStaffPreset("custom")} className="px-3 py-2 text-[9px] font-black uppercase tracking-widest border border-dashed border-theme-border text-theme-text-muted hover:border-brand-tactical hover:text-brand-tactical rounded-lg flex items-center justify-between transition-all">OUTROS <Plus size={10}/></button>
+                    </div>
+                    <div className="space-y-2 pt-4 border-t border-theme-border/20">
+                      <h4 className="text-[9px] font-black text-theme-text uppercase tracking-widest border-l-2 border-brand-tactical pl-2 mb-2">Cachês</h4>
+                      {selectedStaff.length===0?(<div className="py-8 text-center border border-dashed border-theme-border rounded-lg opacity-40"><p className="text-[9px] text-theme-text-muted uppercase tracking-widest">Selecione os papéis</p></div>):selectedStaff.map(s=>(
+                        <div key={s.instanceId} className="flex items-center gap-2 bg-theme-bg p-3 border border-theme-border rounded-lg">
+                          <div className="flex-1 min-w-0">
+                            <input type="text" value={s.label} onChange={e=>setSelectedStaff(selectedStaff.map(st=>st.instanceId===s.instanceId?{...st,label:e.target.value.toUpperCase()}:st))}
+                              className="w-full bg-transparent border-none text-[10px] font-black uppercase text-theme-text outline-none focus:text-brand-tactical"/>
+                            <span className="text-[8px] text-brand-tactical">Sug: R$ {STAFF_ROLES.find(r=>r.id===s.id)?.avgCost||s.cost}</span>
+                          </div>
+                          <div className="relative w-32">
+                            <User className="absolute left-2 top-1/2 -translate-y-1/2 text-theme-text-muted opacity-30" size={10}/>
+                            <select value={s.userId||""} onChange={e=>updateStaffUser(s.instanceId,e.target.value)}
+                              className="w-full bg-theme-bg-muted border border-theme-border p-1.5 pl-7 text-[8px] font-bold text-theme-text outline-none appearance-none uppercase rounded">
+                              <option value="">Profissional...</option>
+                              {professionals.map(p=><option key={p.id} value={p.id}>{p.nome}</option>)}
+                            </select>
+                          </div>
+                          <div className="relative w-20">
+                            <span className="absolute left-2 top-1/2 -translate-y-1/2 text-[8px] text-theme-text-muted">R$</span>
+                            <input type="number" value={s.cost} onChange={e=>setSelectedStaff(selectedStaff.map(st=>st.instanceId===s.instanceId?{...st,cost:Number(e.target.value)}:st))}
+                              className="w-full bg-theme-bg-muted border border-theme-border p-1.5 pl-6 text-[9px] font-black text-brand-tactical outline-none rounded"/>
+                          </div>
+                          <button onClick={()=>removeStaffInstance(s.instanceId)} className="p-1.5 text-theme-text-muted hover:text-red-500 hover:bg-red-500/10 rounded transition-all"><X size={12}/></button>
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+                )}
+                {activeTab==="locacao"&&(
+                  <div className="space-y-3 animate-in fade-in duration-300">
+                    <h4 className="text-[9px] font-black text-theme-text uppercase tracking-widest border-l-2 border-brand-tactical pl-2">Locação de Equipamentos</h4>
+                    <div className="grid grid-cols-1 gap-2">
+                      {MERLIN_EQUIPMENT.map(item=>(
+                        <div key={item.id} className="flex items-center justify-between p-3 bg-theme-bg border border-theme-border hover:border-brand-tactical rounded-lg transition-all">
+                          <div><p className="text-[9px] font-black uppercase text-theme-text">{item.name}</p><p className="text-[8px] text-theme-text-muted">{item.category} | R$ {item.price}</p></div>
+                          <button onClick={()=>addEquip(item.id)} className="p-1.5 text-brand-tactical hover:bg-brand-tactical hover:text-black rounded-lg transition-all"><Plus size={14}/></button>
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+                )}
+                {activeTab==="custos"&&(
+                  <div className="space-y-4 animate-in fade-in duration-300">
+                    <h4 className="text-[9px] font-black text-theme-text uppercase tracking-widest border-l-2 border-brand-tactical pl-2">Logística e Despesas</h4>
+                    <div className="grid grid-cols-2 gap-4">
+                      <div className="space-y-1.5"><label className="text-[9px] font-black text-theme-text-muted uppercase tracking-widest">Deslocamento (R$)</label><input type="number" value={transportCost} onChange={e=>setTransportCost(Number(e.target.value))} className="w-full bg-theme-bg border border-theme-border p-2.5 text-[11px] font-black text-theme-text outline-none focus:border-brand-tactical rounded-lg"/></div>
+                      <div className="space-y-1.5"><label className="text-[9px] font-black text-theme-text-muted uppercase tracking-widest">Hospedagem (R$)</label><input type="number" value={lodgingCost} onChange={e=>setLodgingCost(Number(e.target.value))} className="w-full bg-theme-bg border border-theme-border p-2.5 text-[11px] font-black text-theme-text outline-none focus:border-brand-tactical rounded-lg"/></div>
+                    </div>
+                  </div>
+                )}
+                {activeTab==="fechamento"&&(
+                  <div className="space-y-5 animate-in fade-in duration-300">
+                    <div className="bg-theme-bg p-5 border border-theme-border space-y-3 rounded-lg relative overflow-hidden">
+                      <div className="absolute top-0 left-0 w-px h-full bg-brand-tactical"/>
+                      <div className="flex justify-between items-center text-[10px] font-black uppercase tracking-widest text-theme-muted italic"><span>Custo Total</span><span className="text-theme-text text-lg font-display">R$ {costTotal.toLocaleString()}</span></div>
+                      <div className="flex items-center justify-between pt-2 border-t border-theme-border"><span className="text-[10px] font-black uppercase tracking-widest text-theme-muted italic">Margem (%)</span><input type="number" value={margin} onChange={e=>setMargin(Number(e.target.value))} className="w-20 bg-theme-card border border-theme-border p-2 text-sm font-display font-black text-brand-tactical text-center outline-none focus:border-brand-tactical italic rounded-lg"/></div>
+                      <div className="flex items-center justify-between pt-2 border-t border-theme-border"><span className="text-[10px] font-black uppercase tracking-widest text-theme-muted italic">Parcelamento 50/50</span><button onClick={()=>setIsSplit(!isSplit)} className={`px-5 py-1.5 text-[8px] font-black uppercase border rounded-lg transition-all italic ${isSplit?"border-brand-tactical text-brand-tactical bg-brand-tactical/10":"border-theme-border text-theme-subtle"}`}>{isSplit?"Ativo":"Inativo"}</button></div>
+                      <div className="pt-4 border-t border-theme-border flex justify-between items-end"><span className="text-[8px] font-black text-brand-tactical uppercase tracking-[0.4em] italic">Sugestão Técnica</span><span className="text-3xl font-display font-black text-brand-tactical italic">R$ {Math.ceil(suggestedPrice).toLocaleString()}</span></div>
+                    </div>
+                    <div className="space-y-3">
+                      <label className="text-[9px] font-black text-theme-muted uppercase tracking-[0.4em] text-center block italic">Valor Final da Proposta</label>
+                      <input type="number" value={finalPrice} onChange={e=>setFinalPrice(Number(e.target.value))} className="w-full bg-black border border-brand-tactical/30 p-5 text-4xl font-display font-black text-theme-text outline-none text-center italic shadow-[0_0_30px_rgba(133,185,172,0.1)] focus:border-brand-tactical transition-all rounded-lg"/>
+                      <div className="grid grid-cols-4 gap-3">
+                        <button onClick={handleReject} className="bg-theme-card text-red-500 border border-red-500/20 p-3.5 text-[9px] font-black uppercase tracking-[0.2em] hover:bg-red-500 hover:text-white transition-all rounded-lg italic">Arquivar</button>
+                        <button onClick={handleApprove} disabled={finalPrice<=0||approving} className="col-span-3 bg-brand-tactical text-black p-3.5 text-[10px] font-black uppercase tracking-[0.4em] hover:brightness-110 shadow-xl transition-all flex items-center justify-center gap-2 disabled:opacity-50 rounded-lg italic">
+                          {approving?"ENVIANDO...":<><Zap size={14}/> DISPARAR ORÇAMENTO OFICIAL</>}
                         </button>
                       </div>
-
-                      <div className="space-y-3 pt-4 border-t border-theme-border/20">
-                         <h4 className="text-[9px] font-black text-theme-text uppercase tracking-widest border-l-2 border-brand-tactical pl-2">Distribuição de Cachês</h4>
-                         {selectedStaff.length > 0 ? (
-                           <div className="space-y-2">
-                             {selectedStaff.map(s => (
-                                <div key={s.instanceId} className="flex flex-col md:flex-row items-center gap-2 bg-theme-bg p-3 border border-theme-border group hover:border-brand-tactical/30 transition-all rounded-sm">
-                                   <div className="w-full md:w-1/3">
-                                      <input 
-                                        type="text"
-                                        value={s.label}
-                                        onChange={(e) => setSelectedStaff(selectedStaff.map(st => st.instanceId === s.instanceId ? { ...st, label: e.target.value.toUpperCase() } : st))}
-                                        className="w-full bg-transparent border-none text-[10px] font-black uppercase tracking-tight text-theme-text outline-none focus:text-brand-tactical p-0 mb-0.5"
-                                      />
-                                      <span className="text-[8px] font-bold text-brand-tactical block">Sugerido: R$ {STAFF_ROLES.find(r => r.id === s.id)?.avgCost || s.cost}</span>
-                                   </div>
-                                   
-                                   <div className="w-full md:w-1/2 relative">
-                                      <User className="absolute left-2.5 top-1/2 -translate-y-1/2 text-theme-text-muted opacity-30" size={10} />
-                                      <select 
-                                        value={s.userId || ""} 
-                                        onChange={(e) => updateStaffUser(s.instanceId, e.target.value)}
-                                        className="w-full bg-theme-bg-muted border border-theme-border p-2 pl-8 text-[9px] font-bold text-theme-text outline-none focus:border-brand-tactical appearance-none uppercase tracking-widest rounded-sm"
-                                      >
-                                         <option value="">PROFISSIONAL...</option>
-                                         {(() => {
-                                            const eventPref = selectedQuote?.description?.includes("Preferência: MOBILE") ? "MOBILE" : 
-                                                            selectedQuote?.description?.includes("Preferência: TRADICIONAL") ? "TRADICIONAL" : null;
-                                            
-                                            const filtered = professionals.filter(p => {
-                                              if (!eventPref) return true;
-                                              const proTypes = p.profissional?.workflowType || [];
-                                              if (proTypes.length === 0) return true; 
-                                              return proTypes.includes(eventPref);
-                                            });
-
-                                            return filtered.map(p => {
-                                              const workflowStr = p.profissional?.workflowType ? p.profissional.workflowType.join(", ") : "";
-                                              return (
-                                                <option key={p.id} value={p.id}>
-                                                  {p.nome} {workflowStr ? `(${workflowStr})` : ""}
-                                                </option>
-                                              );
-                                            });
-                                          })()}
-                                      </select>
-                                   </div>
-
-                                   <div className="w-full md:w-1/4 flex items-center gap-1">
-                                      <div className="relative flex-1">
-                                         <span className="absolute left-2 top-1/2 -translate-y-1/2 text-[8px] font-black text-theme-text-muted opacity-50">R$</span>
-                                         <input 
-                                           type="number" 
-                                           value={s.cost} 
-                                           onChange={(e) => setSelectedStaff(selectedStaff.map(st => st.instanceId === s.instanceId ? {...st, cost: Number(e.target.value)} : st))}
-                                           className="w-full bg-theme-bg-muted border border-theme-border p-2 pl-6 text-[10px] font-black text-brand-tactical outline-none focus:border-brand-tactical rounded-sm"
-                                         />
-                                      </div>
-                                      <button 
-                                        onClick={() => removeStaffInstance(s.instanceId)}
-                                        className="p-2 text-theme-text-muted hover:text-red-500 hover:bg-red-500/10 transition-all rounded-sm"
-                                      >
-                                        <X size={12} />
-                                      </button>
-                                   </div>
-                                </div>
-                              ))}
-                           </div>
-                         ) : (
-                           <div className="py-8 text-center border border-dashed border-theme-border bg-theme-bg/5 rounded-sm">
-                             <p className="text-[9px] text-theme-text-muted uppercase tracking-widest font-bold opacity-50">Selecione os papéis para este evento.</p>
-                           </div>
-                         )}
-                      </div>
                     </div>
-                  )}
-
-                  {activeTab === 'locacao' && (
-                    <div className="space-y-4 animate-in fade-in duration-300">
-                      <h4 className="text-[9px] font-black text-theme-text uppercase tracking-widest border-l-2 border-brand-tactical pl-2 mb-2">Locação de Equipamentos</h4>
-                      <div className="grid grid-cols-1 md:grid-cols-2 gap-2">
-                        {MERLIN_EQUIPMENT.map(item => (
-                          <div key={item.id} className="flex items-center justify-between p-3 bg-theme-bg border border-theme-border hover:border-brand-tactical transition-all rounded-sm group">
-                            <div className="overflow-hidden">
-                               <p className="text-[9px] font-black uppercase tracking-tight text-theme-text truncate" title={item.name}>{item.name}</p>
-                               <p className="text-[8px] text-theme-text-muted font-bold uppercase tracking-widest">{item.category} | R$ {item.price}</p>
-                            </div>
-                            <button onClick={() => addEquip(item.id)} className="p-1.5 shrink-0 text-brand-tactical hover:bg-brand-tactical hover:text-brand-text transition-all rounded-sm"><Plus size={14} /></button>
-                          </div>
-                        ))}
-                      </div>
-                    </div>
-                  )}
-
-                  {activeTab === 'custos' && (
-                    <div className="space-y-6 animate-in fade-in duration-300">
-                      <h4 className="text-[9px] font-black text-theme-text uppercase tracking-widest border-l-2 border-brand-tactical pl-2 mb-2">Logística e Despesas Extras</h4>
-                      <div className="grid grid-cols-2 gap-4">
-                        <div className="space-y-1.5">
-                           <label className="text-[9px] font-black text-theme-text-muted uppercase tracking-widest">Deslocamento (R$)</label>
-                           <input type="number" value={transportCost} onChange={e => setTransportCost(Number(e.target.value))} className="w-full bg-theme-bg border border-theme-border p-2.5 text-[11px] font-black text-theme-text outline-none focus:border-brand-tactical rounded-sm" />
-                        </div>
-                        <div className="space-y-1.5">
-                           <label className="text-[9px] font-black text-theme-text-muted uppercase tracking-widest">Hospedagem (R$)</label>
-                           <input type="number" value={lodgingCost} onChange={e => setLodgingCost(Number(e.target.value))} className="w-full bg-theme-bg border border-theme-border p-2.5 text-[11px] font-black text-theme-text outline-none focus:border-brand-tactical rounded-sm" />
-                        </div>
-                      </div>
-                    </div>
-                  )}
-
-                  {activeTab === 'fechamento' && (
-                    <div className="space-y-6 animate-in fade-in duration-300">
-                      <div className="bg-theme-bg p-6 border border-theme-border space-y-4 shadow-xl relative overflow-hidden rounded-sm">
-                        <div className="absolute top-0 left-0 w-px h-full bg-emerald-500" />
-                        
-                        <div className="flex justify-between items-center text-[10px] font-black uppercase tracking-widest italic text-theme-muted">
-                           <span>Custo Total Previsto</span>
-                           <span className="text-theme-text text-lg font-display font-black italic tracking-tighter">R$ {costTotal.toLocaleString()}</span>
-                        </div>
-                        
-                        <div className="flex items-center justify-between pt-3 border-t border-theme-border">
-                           <span className="text-[10px] font-black uppercase tracking-widest text-theme-muted italic">Margem Operacional (%)</span>
-                           <input 
-                             type="number" 
-                             value={margin} 
-                             onChange={e => setMargin(Number(e.target.value))}
-                             className="w-20 bg-theme-card border border-theme-border p-2 text-sm font-display font-black text-emerald-500 text-center outline-none focus:border-emerald-500 italic rounded-sm" 
-                           />
-                        </div>
-                        
-                        <div className="flex items-center justify-between pt-3 border-t border-theme-border">
-                           <span className="text-[10px] font-black uppercase tracking-widest text-theme-muted italic">Parcelamento (50/50)</span>
-                           <button 
-                             onClick={() => setIsSplit(!isSplit)}
-                             className={`px-6 py-2 text-[8px] font-black uppercase border transition-all italic rounded-sm ${isSplit ? 'border-emerald-500 text-emerald-500 bg-emerald-500/10' : 'border-theme-border text-theme-subtle bg-white/5'}`}
-                           >
-                             {isSplit ? 'Ativo' : 'Inativo'}
-                           </button>
-                        </div>
-                        
-                        <div className="pt-6 border-t border-theme-border flex justify-between items-end">
-                           <div className="space-y-0.5">
-                              <span className="text-[8px] font-black uppercase tracking-[0.4em] text-emerald-500 block italic">Sugestão Técnica</span>
-                           </div>
-                           <span className="text-3xl font-display font-black text-emerald-500 tracking-tighter italic">
-                              R$ {Math.ceil(suggestedPrice).toLocaleString()}
-                           </span>
-                        </div>
-                      </div>
-
-                      <div className="space-y-4">
-                        <div className="space-y-2">
-                           <label className="text-[9px] font-black text-theme-muted uppercase tracking-[0.4em] text-center block italic">Valor Final da Proposta</label>
-                           <input type="number" value={finalPrice} onChange={(e) => setFinalPrice(Number(e.target.value))} className="w-full bg-black border border-emerald-500/30 p-6 text-4xl font-display font-black text-theme-text outline-none text-center tracking-tighter italic shadow-[0_0_30px_rgba(16,185,129,0.1)] focus:border-emerald-500 transition-all rounded-sm" />
-                        </div>
-                        
-                        <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
-                            <button 
-                              onClick={handleReject}
-                              className="bg-theme-card text-red-500 border border-red-500/20 p-4 text-[9px] font-black uppercase tracking-[0.2em] hover:bg-red-500 hover:text-white transition-all flex items-center justify-center gap-2 italic rounded-sm"
-                            >
-                              ARQUIVAR
-                            </button>
-                            <button 
-                              onClick={handleApprove} 
-                              disabled={finalPrice <= 0 || approving} 
-                              className="md:col-span-3 bg-emerald-500 text-white p-4 text-[10px] font-black uppercase tracking-[0.4em] hover:brightness-110 transition-all shadow-xl flex items-center justify-center gap-2 disabled:opacity-50 italic rounded-sm"
-                            >
-                              {approving ? "ENVIANDO..." : <><Zap size={16} /> DISPARAR ORÇAMENTO</>}
-                            </button>
-                         </div>
-                      </div>
-                    </div>
-                  )}
-               </div>
-            </div>
-          ) : (
-            <div className="h-full border border-theme-border bg-theme-bg-muted/10 flex flex-col items-center justify-center p-12 text-center rounded-sm min-h-[600px] relative overflow-hidden">
-               {/* Background Decorative Elements */}
-               <div className="absolute top-0 left-0 w-full h-full opacity-[0.02] pointer-events-none">
-                  <div className="absolute top-[-10%] left-[-10%] w-[40%] h-[40%] bg-brand-tactical rounded-full blur-[120px]" />
-                  <div className="absolute bottom-[-10%] right-[-10%] w-[40%] h-[40%] bg-red-500 rounded-full blur-[120px]" />
-               </div>
-
-               <div className="relative mb-16 flex items-center justify-center">
-                  <div className="w-56 h-56 border border-theme-border/40 rounded-full flex items-center justify-center bg-theme-bg/40 backdrop-blur-sm shadow-inner">
-                    <Briefcase size={80} className="text-theme-text-muted opacity-10" strokeWidth={1} />
                   </div>
-                  <motion.div 
-                    animate={{ rotate: 360 }}
-                    transition={{ duration: 20, repeat: Infinity, ease: "linear" }}
-                    className="absolute inset-0 border border-brand-tactical/5 rounded-full border-dashed" 
-                  />
-               </div>
-
-               <div className="space-y-4 mb-20 max-w-sm">
-                 <h4 className="text-[11px] font-black text-theme-text uppercase tracking-[0.6em] italic">Radar de Propostas</h4>
-                 <p className="text-[10px] text-theme-text-muted font-bold uppercase tracking-[0.2em] leading-relaxed opacity-40">Selecione um lead operacional na lista lateral para iniciar o processamento técnico e financeiro.</p>
-               </div>
-               
-               <div className="grid grid-cols-3 gap-12 pt-16 border-t border-theme-border/30 w-full max-w-md">
-                  <div className="space-y-2">
-                    <span className="text-[8px] text-theme-text-muted font-black uppercase tracking-[0.3em] block opacity-50">Pendentes</span>
-                    <p className="text-4xl font-heading font-black text-theme-text tracking-tighter italic">{stats.pending}</p>
-                  </div>
-                  <div className="space-y-2">
-                    <span className="text-[8px] text-theme-text-muted font-black uppercase tracking-[0.3em] block opacity-50">Volume Total</span>
-                    <p className="text-4xl font-heading font-black text-brand-tactical tracking-tighter italic">R$ {(stats.totalValue / 1000).toFixed(1)}k</p>
-                  </div>
-                  <div className="space-y-2">
-                    <span className="text-[8px] text-theme-text-muted font-black uppercase tracking-[0.3em] block opacity-50">Alta Prioridade</span>
-                    <p className="text-4xl font-heading font-black text-red-500 tracking-tighter italic">{stats.highUrgency}</p>
-                  </div>
-               </div>
-            </div>
-          )}
-        </div>
-      </div>
-
+                )}
+              </div>
+            </motion.div>
+          </>
+        )}
+      </AnimatePresence>
       {/* NEW QUOTE MODAL */}
       {isNewQuoteModalOpen && (
-        <div className="fixed inset-0 z-[200] flex items-center justify-center p-4 bg-overlay backdrop-blur-sm animate-in fade-in duration-300">
-           <div className="absolute inset-0" onClick={() => setIsNewQuoteModalOpen(false)} />
-           <div className="relative border border-theme-border w-full max-w-lg p-8 space-y-6 overflow-y-auto max-h-[95vh] shadow-2xl bg-theme-bg animate-in zoom-in-95 duration-500 rounded-sm">
-              <div className="flex justify-between items-start border-b border-theme-border/20 pb-4">
-                 <div className="space-y-1">
-                    <h3 className="text-xl font-heading font-black uppercase tracking-tight text-theme-text">Novo Lead Administrativo</h3>
-                    <p className="text-[9px] font-bold text-brand-tactical uppercase tracking-widest">Abertura de Protocolo Direto</p>
-                 </div>
-                 <button onClick={() => setIsNewQuoteModalOpen(false)} className="text-theme-text-muted hover:text-red-500 transition-colors"><X size={20} /></button>
+        <div className="fixed inset-0 z-[200] flex items-center justify-center p-4">
+          <div className="absolute inset-0 bg-theme-bg/80 backdrop-blur-xl animate-in fade-in duration-300" onClick={() => setIsNewQuoteModalOpen(false)} />
+          
+          <div className="relative w-full max-w-2xl bg-theme-card border border-theme-border/60 rounded-[40px] overflow-hidden shadow-2xl animate-in zoom-in-95 duration-300 flex flex-col h-[90vh]">
+            {/* Header */}
+            <div className="p-8 md:p-10 border-b border-theme-border flex items-center justify-between shrink-0">
+              <div className="flex items-center gap-4">
+                <div className="w-12 h-12 bg-brand-tactical/10 rounded-2xl flex items-center justify-center border border-brand-tactical/20">
+                  <Briefcase className="text-brand-tactical" size={24} strokeWidth={1.5} />
+                </div>
+                <div>
+                  <h2 className="text-2xl font-black uppercase italic tracking-tighter text-theme-text">Novo Lead</h2>
+                  <p className="text-[10px] font-black uppercase tracking-[0.2em] opacity-40">Abertura de Protocolo Direto</p>
+                </div>
+              </div>
+              <button onClick={() => setIsNewQuoteModalOpen(false)} className="p-3 hover:bg-white/5 rounded-full transition-all text-theme-muted"><X size={24} /></button>
+            </div>
+
+            {/* Scrollable Content */}
+            <form onSubmit={handleCreateNewQuote} className="flex-1 overflow-y-auto p-8 md:p-10 space-y-8 custom-scrollbar">
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <div className="space-y-2">
+                  <label className="text-[8px] font-black text-theme-muted uppercase tracking-widest block mb-2 opacity-60 italic">Evento (Título)</label>
+                  <input required placeholder="EX: CASAMENTO ANA & LEO" value={newQuoteData.nomeNoivos} onChange={e => setNewQuoteData({...newQuoteData, nomeNoivos: e.target.value.toUpperCase()})} className="w-full bg-theme-bg-muted border border-theme-border/60 p-4 text-[10px] text-theme-text outline-none focus:border-brand-tactical font-black rounded-xl uppercase" />
+                </div>
+                <div className="space-y-2">
+                  <label className="text-[8px] font-black text-theme-muted uppercase tracking-widest block mb-2 opacity-60 italic">Data do Evento</label>
+                  <input required type="date" value={newQuoteData.dataEvento} onChange={e => setNewQuoteData({...newQuoteData, dataEvento: e.target.value})} className="w-full bg-theme-bg-muted border border-theme-border/60 p-4 text-[10px] text-theme-text outline-none focus:border-brand-tactical font-black rounded-xl" />
+                </div>
               </div>
 
-              <form onSubmit={handleCreateNewQuote} className="space-y-5">
-                 <div className="grid grid-cols-2 gap-4">
-                    <div className="space-y-1.5">
-                       <label className="text-[9px] font-black text-theme-text-muted uppercase tracking-widest">Evento (Título)</label>
-                       <input required placeholder="EX: CASAMENTO ANA & LEO" value={newQuoteData.nomeNoivos} onChange={e => setNewQuoteData({...newQuoteData, nomeNoivos: e.target.value.toUpperCase()})} className="w-full bg-theme-bg-muted border border-theme-border p-3 text-[11px] text-theme-text outline-none focus:border-brand-tactical font-bold rounded-sm" />
-                    </div>
-                    <div className="space-y-1.5">
-                       <label className="text-[9px] font-black text-theme-text-muted uppercase tracking-widest">Data do Evento</label>
-                       <input required type="date" value={newQuoteData.dataEvento} onChange={e => setNewQuoteData({...newQuoteData, dataEvento: e.target.value})} className="w-full bg-theme-bg-muted border border-theme-border p-3 text-[11px] text-theme-text outline-none focus:border-brand-tactical font-bold rounded-sm" />
-                    </div>
-                    <div className="space-y-1.5">
-                       <label className="text-[9px] font-black text-theme-text-muted uppercase tracking-widest">Nome do Cliente</label>
-                       <input required placeholder="NOME COMPLETO" value={newQuoteData.clientName} onChange={e => setNewQuoteData({...newQuoteData, clientName: e.target.value.toUpperCase()})} className="w-full bg-theme-bg-muted border border-theme-border p-3 text-[11px] text-theme-text outline-none focus:border-brand-tactical font-bold rounded-sm" />
-                    </div>
-                    <div className="space-y-1.5">
-                       <label className="text-[9px] font-black text-theme-text-muted uppercase tracking-widest">WhatsApp / Celular</label>
-                       <input required placeholder="DDD 9XXXX-XXXX" value={newQuoteData.clientPhone} onChange={e => setNewQuoteData({...newQuoteData, clientPhone: e.target.value})} className="w-full bg-theme-bg-muted border border-theme-border p-3 text-[11px] text-brand-tactical outline-none focus:border-brand-tactical font-black rounded-sm" />
-                    </div>
-                 </div>
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <div className="space-y-2">
+                  <label className="text-[8px] font-black text-theme-muted uppercase tracking-widest block mb-2 opacity-60 italic">Nome do Cliente</label>
+                  <input required placeholder="NOME COMPLETO" value={newQuoteData.clientName} onChange={e => setNewQuoteData({...newQuoteData, clientName: e.target.value.toUpperCase()})} className="w-full bg-theme-bg-muted border border-theme-border/60 p-4 text-[10px] text-theme-text outline-none focus:border-brand-tactical font-black rounded-xl uppercase" />
+                </div>
+                <div className="space-y-2">
+                  <label className="text-[8px] font-black text-theme-muted uppercase tracking-widest block mb-2 opacity-60 italic">WhatsApp</label>
+                  <input required placeholder="DDD 9XXXX-XXXX" value={newQuoteData.clientPhone} onChange={e => setNewQuoteData({...newQuoteData, clientPhone: e.target.value})} className="w-full bg-theme-bg-muted border border-theme-border/60 p-4 text-[10px] text-brand-tactical outline-none focus:border-brand-tactical font-black rounded-xl" />
+                </div>
+              </div>
 
-                 <div className="grid grid-cols-2 gap-4">
-                    <div className="space-y-1.5">
-                       <label className="text-[9px] font-black text-theme-text-muted uppercase tracking-widest">E-mail</label>
-                       <input required type="email" placeholder="CLIENTE@EMAIL.COM" value={newQuoteData.clientEmail} onChange={e => setNewQuoteData({...newQuoteData, clientEmail: e.target.value})} className="w-full bg-theme-bg-muted border border-theme-border p-3 text-[11px] text-theme-text outline-none focus:border-brand-tactical font-bold rounded-sm" />
-                    </div>
-                    <div className="space-y-1.5">
-                       <label className="text-[9px] font-black text-theme-text-muted uppercase tracking-widest">Orçamento Estimado (R$)</label>
-                       <input type="number" placeholder="VALOR BASE" value={newQuoteData.priceBase} onChange={e => setNewQuoteData({...newQuoteData, priceBase: Number(e.target.value)})} className="w-full bg-theme-bg-muted border border-theme-border p-3 text-[11px] text-brand-tactical outline-none focus:border-brand-tactical font-black rounded-sm" />
-                    </div>
-                 </div>
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <div className="space-y-2">
+                  <label className="text-[8px] font-black text-theme-muted uppercase tracking-widest block mb-2 opacity-60 italic">E-mail</label>
+                  <input required type="email" placeholder="CLIENTE@EMAIL.COM" value={newQuoteData.clientEmail} onChange={e => setNewQuoteData({...newQuoteData, clientEmail: e.target.value})} className="w-full bg-theme-bg-muted border border-theme-border/60 p-4 text-[10px] text-theme-text outline-none focus:border-brand-tactical font-black rounded-xl uppercase" />
+                </div>
+                <div className="space-y-2">
+                  <label className="text-[8px] font-black text-theme-muted uppercase tracking-widest block mb-2 opacity-60 italic">Orçamento (R$)</label>
+                  <input type="number" placeholder="VALOR BASE" value={newQuoteData.priceBase} onChange={e => setNewQuoteData({...newQuoteData, priceBase: Number(e.target.value)})} className="w-full bg-theme-bg-muted border border-theme-border/60 p-4 text-[10px] text-brand-tactical outline-none focus:border-brand-tactical font-black rounded-xl" />
+                </div>
+              </div>
 
-                 <div className="space-y-2">
-                    <label className="text-[9px] font-black text-theme-text-muted uppercase tracking-widest">Urgência</label>
-                    <div className="grid grid-cols-3 gap-2">
-                       {(['HIGH', 'MEDIUM', 'LOW'] as const).map(u => (
-                         <button key={u} type="button" onClick={() => setNewQuoteData({...newQuoteData, urgency: u})} className={`py-2.5 border text-[8px] font-black uppercase tracking-widest transition-all rounded-sm ${newQuoteData.urgency === u ? 'border-brand-tactical bg-brand-tactical text-brand-text shadow-md' : 'border-theme-border text-brand-text-muted hover:border-theme-text'}`}>
-                           {u === 'HIGH' ? 'Urgente' : u === 'MEDIUM' ? 'Normal' : 'Baixa'}
-                         </button>
-                       ))}
-                    </div>
-                 </div>
+              <div className="space-y-2">
+                <label className="text-[8px] font-black text-theme-muted uppercase tracking-widest block mb-2 opacity-60 italic">Urgência</label>
+                <div className="grid grid-cols-3 gap-3">
+                  {(["HIGH", "MEDIUM", "LOW"] as const).map(u => (
+                    <button 
+                      key={u} 
+                      type="button" 
+                      onClick={() => setNewQuoteData({...newQuoteData, urgency: u})} 
+                      className={`py-4 border text-[9px] font-black uppercase tracking-widest rounded-xl transition-all italic ${newQuoteData.urgency === u ? "border-brand-tactical bg-brand-tactical text-black shadow-lg shadow-brand-tactical/20" : "border-theme-border text-theme-muted hover:border-theme-text"}`}
+                    >
+                      {u === "HIGH" ? "Urgente" : u === "MEDIUM" ? "Normal" : "Baixa"}
+                    </button>
+                  ))}
+                </div>
+              </div>
 
-                 <div className="space-y-2">
-                    <label className="text-[9px] font-black text-theme-text-muted uppercase tracking-widest">Serviços Base</label>
-                    <div className="flex gap-2">
-                       <button type="button" onClick={() => setNewQuoteData({...newQuoteData, temFoto: !newQuoteData.temFoto})} className={`flex-1 py-2.5 border text-[9px] font-black uppercase tracking-widest flex items-center justify-center gap-2 transition-all rounded-sm ${newQuoteData.temFoto ? 'border-brand-tactical text-brand-tactical bg-brand-tactical/5' : 'border-theme-border text-theme-text-muted'}`}><Camera size={12}/> FOTO</button>
-                       <button type="button" onClick={() => setNewQuoteData({...newQuoteData, temVideo: !newQuoteData.temVideo})} className={`flex-1 py-2.5 border text-[9px] font-black uppercase tracking-widest flex items-center justify-center gap-2 transition-all rounded-sm ${newQuoteData.temVideo ? 'border-brand-tactical text-brand-tactical bg-brand-tactical/5' : 'border-theme-border text-theme-text-muted'}`}><Video size={12}/> VÍDEO</button>
-                       <button type="button" onClick={() => setNewQuoteData({...newQuoteData, temReels: !newQuoteData.temReels})} className={`flex-1 py-2.5 border text-[9px] font-black uppercase tracking-widest flex items-center justify-center gap-2 transition-all rounded-sm ${newQuoteData.temReels ? 'border-brand-tactical text-brand-tactical bg-brand-tactical/5' : 'border-theme-border text-theme-text-muted'}`}><Smartphone size={12}/> REELS</button>
-                    </div>
-                 </div>
+              <div className="space-y-2">
+                <label className="text-[8px] font-black text-theme-muted uppercase tracking-widest block mb-2 opacity-60 italic">Serviços</label>
+                <div className="grid grid-cols-3 gap-3">
+                  <button type="button" onClick={() => setNewQuoteData({...newQuoteData, temFoto: !newQuoteData.temFoto})} className={`py-4 border text-[9px] font-black uppercase tracking-widest flex items-center justify-center gap-2 rounded-xl transition-all italic ${newQuoteData.temFoto ? "border-brand-tactical text-brand-tactical bg-brand-tactical/10 shadow-sm" : "border-theme-border text-theme-muted"}`}><Camera size={14}/>FOTO</button>
+                  <button type="button" onClick={() => setNewQuoteData({...newQuoteData, temVideo: !newQuoteData.temVideo})} className={`py-4 border text-[9px] font-black uppercase tracking-widest flex items-center justify-center gap-2 rounded-xl transition-all italic ${newQuoteData.temVideo ? "border-brand-tactical text-brand-tactical bg-brand-tactical/10 shadow-sm" : "border-theme-border text-theme-muted"}`}><Video size={14}/>VÍDEO</button>
+                  <button type="button" onClick={() => setNewQuoteData({...newQuoteData, temReels: !newQuoteData.temReels})} className={`py-4 border text-[9px] font-black uppercase tracking-widest flex items-center justify-center gap-2 rounded-xl transition-all italic ${newQuoteData.temReels ? "border-brand-tactical text-brand-tactical bg-brand-tactical/10 shadow-sm" : "border-theme-border text-theme-muted"}`}><Smartphone size={14}/>REELS</button>
+                </div>
+              </div>
 
-                 <div className="space-y-1.5">
-                    <label className="text-[9px] font-black text-theme-text-muted uppercase tracking-widest">Descrição e Localização</label>
-                    <textarea required placeholder="DETALHES ADICIONAIS..." value={newQuoteData.description} onChange={e => setNewQuoteData({...newQuoteData, description: e.target.value.toUpperCase()})} className="w-full bg-theme-bg-muted border border-theme-border p-3 text-[11px] text-theme-text outline-none focus:border-brand-tactical h-20 font-medium resize-none rounded-sm" />
-                 </div>
+              <div className="space-y-2">
+                <label className="text-[8px] font-black text-theme-muted uppercase tracking-widest block mb-2 opacity-60 italic">Descrição</label>
+                <textarea required placeholder="DETALHES ADICIONAIS..." value={newQuoteData.description} onChange={e => setNewQuoteData({...newQuoteData, description: e.target.value.toUpperCase()})} className="w-full bg-theme-bg-muted border border-theme-border/60 p-4 text-[10px] text-theme-text outline-none focus:border-brand-tactical h-24 font-bold resize-none rounded-xl uppercase leading-relaxed" />
+              </div>
+            </form>
 
-                 <button type="submit" className="w-full bg-brand-tactical text-brand-text font-black uppercase tracking-[0.4em] py-4 text-[10px] shadow-xl hover:scale-[1.01] transition-all rounded-sm mt-4">CADASTRAR ORÇAMENTO NO RADAR</button>
-              </form>
-           </div>
+            {/* Footer */}
+            <div className="p-8 md:p-10 bg-theme-bg-muted/50 border-t border-theme-border flex gap-4 shrink-0">
+              <button type="button" onClick={() => setIsNewQuoteModalOpen(false)} className="flex-1 py-5 border border-theme-border text-[11px] font-black uppercase tracking-[0.3em] text-theme-muted hover:text-white transition-all rounded-[20px] italic">Cancelar</button>
+              <button 
+                onClick={handleCreateNewQuote} 
+                className="flex-[2] py-5 bg-brand-tactical text-zinc-950 text-[11px] font-black uppercase tracking-[0.3em] shadow-2xl shadow-brand-tactical/20 hover:brightness-110 transition-all rounded-[20px] italic flex items-center justify-center gap-4"
+              >
+                Cadastrar no Radar
+                <ArrowRight size={18} strokeWidth={1.5} />
+              </button>
+            </div>
+          </div>
         </div>
       )}
 
       {/* NOTIFICATION */}
-      {notification && (
+      {notification&&(
         <div className="fixed bottom-10 right-10 z-[300] animate-in slide-in-from-right-10 duration-500">
-           <div className={`p-6 border ${notification.type === 'success' ? 'border-brand-tactical bg-theme-bg shadow-2xl' : 'border-red-900 bg-theme-bg'} min-w-[320px] relative overflow-hidden rounded-sm`}>
-              <div className="flex flex-col gap-1">
-                 <span className={`text-[8px] font-black uppercase tracking-widest ${notification.type === 'success' ? 'text-brand-tactical' : 'text-red-500'}`}>Protocolo Administrativo</span>
-                 <p className="text-[14px] font-bold text-theme-text uppercase tracking-tight mt-1">{notification.message}</p>
-              </div>
-              <div className={`absolute bottom-0 left-0 h-1 ${notification.type === 'success' ? 'bg-brand-tactical' : 'bg-red-500'} animate-out fade-out duration-[5000ms] w-full`} />
-           </div>
+          <div className={`p-5 border ${notification.type==="success"?"border-brand-tactical bg-theme-bg shadow-2xl":"border-red-900 bg-theme-bg"} min-w-[300px] relative overflow-hidden rounded-xl`}>
+            <div className="flex flex-col gap-1">
+              <span className={`text-[8px] font-black uppercase tracking-widest ${notification.type==="success"?"text-brand-tactical":"text-red-500"}`}>Protocolo Administrativo</span>
+              <p className="text-sm font-bold text-theme-text uppercase tracking-tight mt-1">{notification.message}</p>
+            </div>
+            <div className={`absolute bottom-0 left-0 h-1 ${notification.type==="success"?"bg-brand-tactical":"bg-red-500"} animate-out fade-out duration-[5000ms] w-full`}/>
+          </div>
         </div>
       )}
     </div>

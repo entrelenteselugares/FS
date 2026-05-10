@@ -44,7 +44,7 @@ export function FinanceTab({
   ];
 
   return (
-    <div className="space-y-8 animate-in fade-in duration-500">
+    <div className="space-y-8">
       <div className="lux-card p-8 md:p-16 relative overflow-hidden bg-theme-bg">
         <div className="absolute top-0 right-0 w-64 h-64 bg-brand-tactical/5 rounded-full blur-[100px] -mr-32 -mt-32 pointer-events-none" />
         <div className="relative z-10 space-y-12">

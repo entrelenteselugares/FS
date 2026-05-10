@@ -12,7 +12,7 @@ interface NetworkTabProps {
 
 export function NetworkTab({ network, networkSearch, searchResults, residentUnits, onSearch, onToggleFavorite }: NetworkTabProps) {
   return (
-    <div className="space-y-12 animate-in fade-in duration-500">
+    <div className="space-y-12">
       <div className="bg-theme-bg border border-theme-border/60 p-8 md:p-16 space-y-12">
         <div className="space-y-4">
           <h3 className="text-3xl font-heading font-black text-theme-text uppercase tracking-tighter italic leading-none">

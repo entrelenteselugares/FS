@@ -255,7 +255,7 @@ export const AdminConfigs: React.FC = () => {
                  <button
                    onClick={handleSave}
                    disabled={saving || !splitsValid}
-                   className={`w-full py-5 text-[9px] font-black uppercase tracking-[0.4em] flex items-center justify-center gap-3 shadow-xl transition-all ${
+                   className={`w-full py-5 text-[9px] font-black uppercase tracking-[0.4em] flex items-center justify-center gap-3 shadow-xl transition-all italic ${
                      saved ? "bg-green-600 text-theme-text" : splitsValid ? "bg-theme-text text-theme-bg" : "bg-theme-bg-muted text-theme-muted cursor-not-allowed opacity-50"
                    }`}
                  >
@@ -463,68 +463,105 @@ export const AdminConfigs: React.FC = () => {
 
       {/* CONFIRMATION & NOTIFICATION MODALS */}
       {showGenerateConfirm && (
-        <div className="fixed inset-0 z-[600] flex items-center justify-center p-6 animate-in fade-in duration-300">
-           <div className="absolute inset-0 bg-black/95 backdrop-blur-md" onClick={() => setShowGenerateConfirm(false)} />
-           <div className="relative bg-theme-bg border border-brand-tactical/40 w-full max-w-sm p-10 space-y-8 shadow-2xl">
-              <div className="space-y-2">
-                 <span className="text-[10px] font-black text-brand-tactical uppercase tracking-[0.4em]">Protocolo Financeiro</span>
-                 <h3 className="text-2xl font-heading text-theme-text uppercase tracking-tighter font-black">Gerar Fechamento?</h3>
+        <div className="fixed inset-0 z-[600] flex items-center justify-center p-4">
+          <div className="absolute inset-0 bg-theme-bg/80 backdrop-blur-xl animate-in fade-in duration-300" onClick={() => setShowGenerateConfirm(false)} />
+          
+          <div className="relative w-full max-w-md bg-theme-card border border-theme-border/60 rounded-[40px] overflow-hidden shadow-2xl animate-in zoom-in-95 duration-300">
+            <div className="p-10 space-y-8 text-center">
+              <div className="w-20 h-20 bg-brand-tactical/10 rounded-[30px] flex items-center justify-center border border-brand-tactical/20 mx-auto mb-6">
+                <Calculator className="text-brand-tactical" size={32} strokeWidth={1.5} />
               </div>
-              <p className="text-[11px] text-theme-muted uppercase tracking-widest leading-relaxed font-bold italic">
+              
+              <div className="space-y-2">
+                <h3 className="text-2xl font-black uppercase tracking-tighter text-theme-text italic leading-none">Gerar Fechamento?</h3>
+                <p className="text-[10px] font-black text-brand-tactical uppercase tracking-[0.4em] italic opacity-60">Protocolo de Liquidação Semanal</p>
+              </div>
+              
+              <p className="text-[11px] uppercase tracking-[0.2em] leading-relaxed text-theme-muted italic">
                 ESTA AÇÃO IRÁ CONSOLIDAR TODAS AS VENDAS DA SEMANA E GERAR AS ORDENS DE REPASSE PARA OS PARCEIROS.
               </p>
-              <div className="grid grid-cols-2 gap-4">
-                 <button onClick={() => setShowGenerateConfirm(false)} className="p-4 border border-theme-border text-theme-muted text-[9px] font-black uppercase tracking-widest hover:text-white transition-all">CANCELAR</button>
-                 <button onClick={handleGeneratePayout} className="p-4 bg-brand-tactical text-zinc-950 text-[9px] font-black uppercase tracking-widest hover:brightness-110 transition-all font-black">GERAR AGORA</button>
+
+              <div className="grid grid-cols-1 gap-4 pt-4">
+                <button 
+                  onClick={handleGeneratePayout}
+                  className="w-full py-5 bg-brand-tactical text-zinc-950 text-[11px] font-black uppercase tracking-[0.4em] shadow-2xl shadow-brand-tactical/20 hover:brightness-110 transition-all rounded-[20px] italic flex items-center justify-center gap-4"
+                >
+                  GERAR AGORA
+                  <ArrowRight size={18} strokeWidth={1.5} />
+                </button>
+                <button 
+                  onClick={() => setShowGenerateConfirm(false)}
+                  className="w-full py-5 border border-theme-border text-theme-muted text-[11px] font-black uppercase tracking-[0.4em] hover:text-white transition-all rounded-[20px] italic"
+                >
+                  CANCELAR
+                </button>
               </div>
-           </div>
+            </div>
+          </div>
         </div>
       )}
 
       {payoutModal && (
-        <div className="fixed inset-0 z-[600] flex items-center justify-center p-6 animate-in fade-in duration-300">
-           <div className="absolute inset-0 bg-black/95 backdrop-blur-md" onClick={() => setPayoutModal(null)} />
-           <div className="relative bg-theme-bg border border-brand-tactical/30 w-full max-w-md shadow-2xl p-10 space-y-10 overflow-hidden">
-              <div className="absolute top-0 right-0 w-32 h-32 bg-brand-tactical/5 -rotate-45 translate-x-16 -translate-y-16" />
-              
-              <div className="space-y-2">
-                 <span className="text-[10px] font-black text-brand-tactical uppercase tracking-[0.4em]">Protocolo de Repasse</span>
-                 <h3 className="text-3xl font-heading text-theme-text uppercase tracking-tighter font-black">Confirmar Pix</h3>
+        <div className="fixed inset-0 z-[600] flex items-center justify-center p-4">
+          <div className="absolute inset-0 bg-theme-bg/80 backdrop-blur-xl animate-in fade-in duration-300" onClick={() => setPayoutModal(null)} />
+          
+          <div className="relative w-full max-w-md bg-theme-card border border-theme-border/60 rounded-[40px] overflow-hidden shadow-2xl animate-in zoom-in-95 duration-300 flex flex-col">
+            {/* Header */}
+            <div className="p-8 md:p-10 border-b border-theme-border flex items-center justify-between shrink-0 bg-theme-bg-muted/30">
+              <div className="flex items-center gap-4">
+                <div className="w-12 h-12 bg-brand-tactical/10 rounded-2xl flex items-center justify-center border border-brand-tactical/20">
+                  <DollarSign className="text-brand-tactical" size={24} strokeWidth={1.5} />
+                </div>
+                <div>
+                  <h2 className="text-2xl font-black uppercase italic tracking-tighter text-theme-text">Liquidação</h2>
+                  <p className="text-[10px] font-black uppercase tracking-[0.2em] opacity-40">Registro de Comprovante Pix</p>
+                </div>
               </div>
+              <button onClick={() => setPayoutModal(null)} className="p-3 hover:bg-white/5 rounded-full transition-all text-theme-muted"><X size={24} /></button>
+            </div>
 
-              <div className="bg-theme-bg-muted/40 border border-theme-border/40 p-8 space-y-6">
-                 <div className="flex justify-between items-center border-b border-theme-border/20 pb-4">
-                    <span className="text-[9px] text-theme-muted uppercase tracking-widest font-black">Favorecido</span>
-                    <span className="text-[12px] text-theme-text font-black uppercase italic">{payoutModal.name}</span>
-                 </div>
-                 <div className="flex justify-between items-center">
-                    <span className="text-[9px] text-theme-muted uppercase tracking-widest font-black">Valor do Pix</span>
-                    <span className="text-3xl font-heading text-brand-tactical tracking-tighter font-black italic">{formatCurrency(payoutModal.amount)}</span>
-                 </div>
+            {/* Content */}
+            <div className="p-8 md:p-10 space-y-8">
+              <div className="bg-theme-bg-muted/40 border border-theme-border/40 p-8 rounded-[30px] space-y-6 shadow-inner">
+                <div className="flex justify-between items-center border-b border-theme-border/20 pb-4">
+                  <span className="text-[8px] font-black text-theme-muted uppercase tracking-widest italic opacity-60">Favorecido</span>
+                  <span className="text-[12px] text-theme-text font-black uppercase italic">{payoutModal.name}</span>
+                </div>
+                <div className="flex justify-between items-center">
+                  <span className="text-[8px] font-black text-theme-muted uppercase tracking-widest italic opacity-60">Valor do Repasse</span>
+                  <span className="text-3xl font-heading text-brand-tactical tracking-tighter font-black italic">{formatCurrency(payoutModal.amount)}</span>
+                </div>
               </div>
 
               <div className="space-y-4">
-                 <label className="text-[9px] font-black text-theme-muted uppercase tracking-widest">ID da Transação Pix (Auditoria)</label>
-                 <div className="relative">
-                    <ArrowRight className="absolute left-4 top-1/2 -translate-y-1/2 text-brand-tactical" size={14} />
-                    <input 
-                      autoFocus
-                      value={pixTxId}
-                      onChange={e => setPixTxId(e.target.value)}
-                      placeholder="COLE O COMPROVANTE..."
-                      className="w-full bg-theme-bg-muted border border-theme-border/60 p-5 pl-12 text-[10px] font-black text-theme-text placeholder:text-theme-muted/30 focus:border-brand-tactical outline-none transition-all uppercase"
-                    />
-                 </div>
-                 <p className="text-[8px] text-theme-muted uppercase tracking-widest leading-relaxed italic opacity-60 font-medium">
-                    O REGISTRO SERVIRÁ COMO COMPROVANTE DE AUDITORIA INTERNA NA PLATAFORMA.
-                 </p>
+                <label className="text-[8px] font-black text-theme-muted uppercase tracking-widest block mb-2 opacity-60 italic">ID da Transação Pix (Auditoria)</label>
+                <div className="relative">
+                  <ArrowRight className="absolute left-4 top-1/2 -translate-y-1/2 text-brand-tactical" size={16} strokeWidth={1.5} />
+                  <input 
+                    autoFocus
+                    value={pixTxId}
+                    onChange={e => setPixTxId(e.target.value)}
+                    placeholder="COLE O COMPROVANTE..."
+                    className="w-full bg-theme-bg-muted border border-theme-border/60 p-5 pl-12 text-[11px] font-black text-theme-text placeholder:opacity-20 focus:border-brand-tactical outline-none transition-all uppercase rounded-xl"
+                  />
+                </div>
+                <p className="text-[8px] text-theme-muted uppercase tracking-widest leading-relaxed italic opacity-40 font-black text-center">
+                  O REGISTRO SERVIRÁ COMO COMPROVANTE DE AUDITORIA INTERNA.
+                </p>
               </div>
 
-              <div className="grid grid-cols-2 gap-6 pt-4">
-                 <button onClick={() => setPayoutModal(null)} className="p-5 border border-theme-border text-theme-muted text-[9px] font-black uppercase tracking-widest hover:text-white transition-all">CANCELAR</button>
-                 <button onClick={confirmPayout} className="p-5 bg-brand-tactical text-zinc-950 text-[9px] font-black uppercase tracking-[0.4em] hover:brightness-110 transition-all shadow-xl font-black">CONFIRMAR LIQUIDAÇÃO</button>
+              <div className="flex gap-4 pt-4">
+                <button onClick={() => setPayoutModal(null)} className="flex-1 py-5 border border-theme-border text-[11px] font-black uppercase tracking-[0.3em] text-theme-muted hover:text-white transition-all rounded-[20px] italic">Cancelar</button>
+                <button 
+                  onClick={confirmPayout}
+                  className="flex-[2] py-5 bg-brand-tactical text-zinc-950 text-[11px] font-black uppercase tracking-[0.3em] shadow-2xl shadow-brand-tactical/20 hover:brightness-110 transition-all rounded-[20px] italic flex items-center justify-center gap-4"
+                >
+                  CONFIRMAR
+                  <ArrowRight size={18} strokeWidth={1.5} />
+                </button>
               </div>
-           </div>
+            </div>
+          </div>
         </div>
       )}
 

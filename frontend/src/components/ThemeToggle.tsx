@@ -15,9 +15,9 @@ export function ThemeToggle() {
     >
       <div className="relative z-10 flex items-center justify-center">
         {theme === 'dark' ? (
-          <Sun size={14} className="text-brand-tactical" />
+          <Sun size={14} className="text-brand-tactical" strokeWidth={1.5} />
         ) : (
-          <Moon size={14} className="text-slate-900" />
+          <Moon size={14} className="text-slate-900" strokeWidth={1.5} />
         )}
       </div>
       <div className="absolute inset-0 bg-brand-tactical/5 opacity-0 group-hover:opacity-100 transition-opacity" />

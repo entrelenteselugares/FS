@@ -165,6 +165,7 @@ model Event {
   printProducts      EventPrintProduct[]
   flashCards         FlashCard[]
   coupons            Coupon[]
+  coverPosition      String?             @default("center")
 
   @@map("events")
 }
@@ -597,7 +598,9 @@ model PrintProduct {
   fulfillmentType  String              @default("LAB") // "INSTANT_PRINT" or "LAB"
   supplierId       String?
   
-  stockLevel   Int                 @default(0)
+  stockLevel       Int                 @default(0)
+  stockType        String              @default("PROPRIO") // PROPRIO, FORNECEDOR, AMBOS
+  externalLink     String?             // Link para afiliado/dropshipping (ex: Mercado Livre)
   
   orderItems      OrderItem[]
   events          EventPrintProduct[]

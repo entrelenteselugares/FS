@@ -87,7 +87,7 @@ export function AgendaTab({
   const displayEvents = activeTab === "agenda" ? acceptedEvents : pendingEvents;
 
   return (
-    <div className="space-y-8 animate-in fade-in duration-500">
+    <div className="space-y-8">
       {viewTab === "lista" ? (
         <div className="space-y-4">
           {loading ? (

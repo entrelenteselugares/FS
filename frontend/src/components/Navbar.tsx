@@ -54,7 +54,7 @@ export const Navbar: React.FC = () => {
               color: T.text,
             }}
           >
-            <ShoppingBag size={18} />
+            <ShoppingBag size={18} strokeWidth={1.5} />
             {totalItems > 0 && (
               <span className="absolute -top-1 -right-1 w-4 h-4 bg-brand-tactical text-black text-[9px] font-black flex items-center justify-center rounded-sm animate-pulse-soft">
                 {totalItems}

@@ -11,7 +11,7 @@ interface ServicesTabProps {
 
 export function ServicesTab({ profile, catalogServices, onAddService, onRemoveService, onOpenProfile }: ServicesTabProps) {
   return (
-    <div className="space-y-6 animate-in fade-in duration-500">
+    <div className="space-y-6">
 
       {/* Pricing Matrix */}
       <div className="bg-theme-bg border border-theme-border/60 p-6 md:p-12 space-y-8 md:space-y-12">

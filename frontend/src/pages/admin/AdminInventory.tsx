@@ -5,7 +5,10 @@ import {
   ArrowUpRight, 
   ArrowDownLeft, 
   AlertCircle,
-  Plus
+  Plus,
+  ArrowRight,
+  X,
+  Target
 } from 'lucide-react';
 
 interface StockMovement {
@@ -22,6 +25,10 @@ interface Product {
   sku: string;
   stockLevel: number;
   category: string;
+  stockType: 'PROPRIO' | 'FORNECEDOR' | 'AMBOS';
+  externalLink?: string;
+  supplierCost: number;
+  supplier: string;
   stockMovements: StockMovement[];
 }
 
@@ -29,12 +36,35 @@ export default function AdminInventory() {
   const [products, setProducts] = useState<Product[]>([]);
   const [loading, setLoading] = useState(true);
   const [showAdjustModal, setShowAdjustModal] = useState<Product | null>(null);
+  const [showCreateModal, setShowCreateModal] = useState(false);
   const [adjustData, setAdjustData] = useState({ quantity: 1, type: 'PURCHASE', description: '' });
+  
+  const [newData, setNewData] = useState({
+    name: '', sku: '', category: 'ALBUM', supplier: 'CK', 
+    supplierCost: 0, stockType: 'PROPRIO', externalLink: ''
+  });
+  
+  const [searchTerm, setSearchTerm] = useState('OSMO');
+  const [filterCategory, setFilterCategory] = useState('ALL');
+
+  const categories = useMemo(() => {
+    const cats = new Set(products.map(p => p.category));
+    return ['ALL', ...Array.from(cats)];
+  }, [products]);
+
+  const filteredProducts = useMemo(() => {
+    return products.filter(p => {
+      const matchesSearch = p.name.toUpperCase().includes(searchTerm.toUpperCase()) || 
+                            p.sku.toUpperCase().includes(searchTerm.toUpperCase());
+      const matchesCategory = filterCategory === 'ALL' || p.category === filterCategory;
+      return matchesSearch && matchesCategory;
+    });
+  }, [products, searchTerm, filterCategory]);
 
   const fetchInventory = async () => {
     try {
       const { data } = await API.get('/admin/inventory');
-      setProducts(data);
+      setProducts(data || []);
     } catch (err) {
       console.error('Erro ao buscar estoque:', err);
     } finally {
@@ -61,19 +91,64 @@ export default function AdminInventory() {
     }
   };
 
+  const handleCreate = async () => {
+    try {
+      await API.post('/admin/print-catalog', newData);
+      setShowCreateModal(false);
+      setNewData({
+        name: '', sku: '', category: 'ALBUM', supplier: 'CK', 
+        supplierCost: 0, stockType: 'PROPRIO', externalLink: ''
+      });
+      fetchInventory();
+    } catch (err: any) {
+      alert(err.response?.data?.error || 'Erro ao cadastrar produto');
+    }
+  };
+
   return (
-    <div className="space-y-10 animate-in fade-in duration-700">
+    <div className="space-y-10 animate-in fade-in duration-700 pb-20">
       {/* Header */}
       <div className="flex flex-col md:flex-row md:items-end justify-between gap-6 border-b border-theme-border pb-10">
         <div>
           <h2 className="text-4xl font-black text-theme-text uppercase tracking-tighter italic">Estoque Central</h2>
           <p className="text-[10px] text-theme-muted uppercase tracking-[0.5em] mt-2 font-black italic text-brand-tactical">Matriz & Suprimentos da Rede</p>
         </div>
+        <button 
+          onClick={() => setShowCreateModal(true)}
+          className="px-8 py-4 bg-brand-tactical text-zinc-950 text-[10px] font-black uppercase tracking-[0.3em] hover:brightness-110 transition-all shadow-xl shadow-brand-tactical/10 flex items-center gap-3 italic"
+        >
+          <Plus size={14} /> NOVO PRODUTO
+        </button>
+      </div>
+
+      {/* Dynamic Filters */}
+      <div className="flex flex-col md:flex-row gap-6 items-center">
+         <div className="relative flex-1 group w-full">
+            <Search className="absolute left-4 top-1/2 -translate-y-1/2 text-theme-muted group-focus-within:text-brand-tactical transition-colors" size={16} />
+            <input 
+              type="text"
+              placeholder="PROCURAR NO INVENTÁRIO (NOME OU SKU)..."
+              value={searchTerm}
+              onChange={(e) => setSearchTerm(e.target.value)}
+              className="fs-input pl-12 uppercase tracking-widest"
+            />
+         </div>
+         <div className="flex gap-2 overflow-x-auto pb-2 md:pb-0 w-full md:w-auto">
+            {categories.map(cat => (
+              <button
+                key={cat}
+                onClick={() => setFilterCategory(cat)}
+                className={`fs-btn border transition-all whitespace-nowrap ${filterCategory === cat ? 'bg-theme-border border-zinc-700 text-theme-text shadow-lg' : 'bg-transparent border-theme-border text-theme-muted hover:border-zinc-700'}`}
+              >
+                {cat === 'ALL' ? 'TODOS' : cat}
+              </button>
+            ))}
+         </div>
       </div>
 
       {/* Grid de Alertas */}
       <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
-        {products.filter(p => p.stockLevel < 10).map(p => (
+        {filteredProducts.filter(p => p.stockLevel < 10 && p.stockType !== 'FORNECEDOR').map(p => (
           <div key={p.id} className="bg-red-500/5 border border-red-500/20 p-6 flex items-center gap-4 animate-pulse">
             <AlertCircle className="text-red-500" size={20} />
             <div>
@@ -82,12 +157,12 @@ export default function AdminInventory() {
             </div>
           </div>
         ))}
-        {products.length > 0 && products.filter(p => p.stockLevel < 10).length === 0 && (
+        {filteredProducts.filter(p => p.stockLevel < 10 && p.stockType !== 'FORNECEDOR').length === 0 && (
           <div className="bg-emerald-500/5 border border-emerald-500/20 p-6 col-span-4 flex items-center gap-4">
             <Package className="text-emerald-500" size={20} />
             <div>
               <p className="text-[9px] font-black text-emerald-500 uppercase tracking-widest">Status do Inventário</p>
-              <p className="text-sm font-black text-theme-text uppercase italic tracking-widest">Níveis de estoque estáveis em toda a matriz.</p>
+              <p className="text-sm font-black text-theme-text uppercase italic tracking-widest">Níveis de estoque estáveis ou sob demanda.</p>
             </div>
           </div>
         )}
@@ -99,46 +174,63 @@ export default function AdminInventory() {
           <thead>
             <tr className="bg-theme-bg-muted">
               <th className="p-6 text-[10px] font-black text-theme-muted uppercase tracking-widest">Produto / SKU</th>
-              <th className="p-6 text-[10px] font-black text-theme-muted uppercase tracking-widest text-center">Nível de Estoque</th>
-              <th className="p-6 text-[10px] font-black text-theme-muted uppercase tracking-widest text-center">Últimas Movimentações</th>
+              <th className="p-6 text-[10px] font-black text-theme-muted uppercase tracking-widest text-center">Modelo</th>
+              <th className="p-6 text-[10px] font-black text-theme-muted uppercase tracking-widest text-center">Estoque</th>
               <th className="p-6 text-[10px] font-black text-theme-muted uppercase tracking-widest text-right">Ações</th>
             </tr>
           </thead>
           <tbody className="divide-y divide-theme-border">
             {loading ? (
               <tr><td colSpan={4} className="p-20 text-center text-theme-muted text-[10px] font-black uppercase tracking-widest">Sincronizando Inventário...</td></tr>
-            ) : products.length === 0 ? (
-              <tr><td colSpan={4} className="p-20 text-center text-theme-muted text-[10px] font-black uppercase tracking-widest">Nenhum produto cadastrado.</td></tr>
-            ) : products.map(p => (
+            ) : filteredProducts.length === 0 ? (
+              <tr><td colSpan={4} className="p-20 text-center text-theme-muted text-[10px] font-black uppercase tracking-widest">Nenhum produto encontrado.</td></tr>
+            ) : filteredProducts.map(p => (
               <tr key={p.id} className="hover:bg-theme-bg-muted/50 transition-all group">
                 <td className="p-6">
                   <div className="flex flex-col">
                     <span className="text-sm font-black text-theme-text uppercase italic tracking-tight">{p.name}</span>
-                    <span className="text-[10px] text-theme-muted font-bold font-mono tracking-widest">{p.sku}</span>
+                    <div className="flex items-center gap-2 mt-1">
+                      <span className="text-[10px] text-theme-muted font-bold font-mono tracking-widest">{p.sku}</span>
+                      {p.externalLink && (
+                        <a 
+                          href={p.externalLink} 
+                          target="_blank" 
+                          rel="noopener noreferrer"
+                          className="text-[9px] text-brand-tactical font-black border border-brand-tactical/30 px-2 py-0.5 rounded hover:bg-brand-tactical hover:text-zinc-950 transition-all uppercase"
+                        >
+                          Link Afiliado
+                        </a>
+                      )}
+                    </div>
                   </div>
                 </td>
                 <td className="p-6 text-center">
-                  <div className={`text-2xl font-black italic ${p.stockLevel < 10 ? 'text-red-500' : p.stockLevel < 30 ? 'text-amber-500' : 'text-theme-text'}`}>
-                    {p.stockLevel}
-                  </div>
-                  <span className="text-[8px] text-theme-muted font-black uppercase">Unidades Disponíveis</span>
+                  <span className={`text-[9px] font-black px-3 py-1 uppercase tracking-widest ${
+                    p.stockType === 'PROPRIO' ? 'bg-theme-bg-muted text-theme-text border border-theme-border' :
+                    p.stockType === 'FORNECEDOR' ? 'bg-amber-500/10 text-amber-500 border border-amber-500/20' :
+                    'bg-emerald-500/10 text-emerald-500 border border-emerald-500/20'
+                  }`}>
+                    {p.stockType === 'PROPRIO' ? 'Próprio' : p.stockType === 'FORNECEDOR' ? 'Fornecedor (Drop)' : 'Híbrido (Ambos)'}
+                  </span>
                 </td>
-                <td className="p-6">
-                  <div className="flex flex-col gap-1">
-                    {(p.stockMovements || []).map(m => (
-                      <div key={m.id} className="flex items-center gap-2 text-[9px] font-bold">
-                        {m.quantity > 0 ? <ArrowUpRight size={10} className="text-emerald-500" /> : <ArrowDownLeft size={10} className="text-red-500" />}
-                        <span className={m.quantity > 0 ? 'text-emerald-500' : 'text-red-500'}>{m.quantity > 0 ? '+' : ''}{m.quantity}</span>
-                        <span className="text-theme-muted truncate max-w-[150px]">{m.description}</span>
+                <td className="p-6 text-center">
+                  {p.stockType === 'FORNECEDOR' ? (
+                    <div className="text-sm font-black text-theme-muted uppercase italic">Sob Demanda</div>
+                  ) : (
+                    <>
+                      <div className={`text-2xl font-black italic ${p.stockLevel < 10 ? 'text-red-500' : p.stockLevel < 30 ? 'text-amber-500' : 'text-theme-text'}`}>
+                        {p.stockLevel}
                       </div>
-                    ))}
-                  </div>
+                      <span className="text-[8px] text-theme-muted font-black uppercase">Unidades</span>
+                    </>
+                  )}
                 </td>
                 <td className="p-6 text-right">
                   <button 
                     onClick={() => setShowAdjustModal(p)}
-                    className="p-3 border border-theme-border text-brand-tactical hover:bg-brand-tactical/10 transition-all"
+                    className="p-3 border border-theme-border text-brand-tactical hover:bg-brand-tactical/10 transition-all disabled:opacity-30 disabled:cursor-not-allowed"
                     title="Ajustar Estoque"
+                    disabled={p.stockType === 'FORNECEDOR'}
                   >
                     <Plus size={16} />
                   </button>
@@ -149,48 +241,162 @@ export default function AdminInventory() {
         </table>
       </div>
 
+      {/* Modal: Cadastro de Novo Produto */}
+      {showCreateModal && (
+        <div className="fixed inset-0 z-[100] flex items-center justify-center p-4">
+          <div className="absolute inset-0 bg-theme-bg/80 backdrop-blur-xl animate-in fade-in duration-300" onClick={() => setShowCreateModal(false)} />
+          
+          <div className="relative w-full max-w-2xl bg-theme-card border border-theme-border/60 rounded-[40px] overflow-hidden shadow-2xl animate-in zoom-in-95 duration-300 flex flex-col h-[85vh]">
+            {/* Header */}
+            <div className="p-8 md:p-10 border-b border-theme-border flex items-center justify-between shrink-0">
+              <div className="flex items-center gap-4">
+                <div className="w-12 h-12 bg-brand-tactical/10 rounded-2xl flex items-center justify-center border border-brand-tactical/20">
+                  <Target className="text-brand-tactical" size={24} />
+                </div>
+                <div>
+                  <h2 className="text-2xl font-black uppercase italic tracking-tighter text-theme-text">Novo Ativo no Inventário</h2>
+                  <p className="text-[10px] font-black uppercase tracking-[0.2em] opacity-40">Gestão de Suprimentos Matriz</p>
+                </div>
+              </div>
+              <button onClick={() => setShowCreateModal(false)} className="p-3 hover:bg-white/5 rounded-full transition-all text-theme-muted"><X size={24} /></button>
+            </div>
+
+            {/* Content */}
+            <div className="flex-1 overflow-y-auto p-8 md:p-10 space-y-8 custom-scrollbar">
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <div className="space-y-2">
+                  <label className="text-[8px] font-black text-theme-muted uppercase tracking-widest block mb-2 opacity-60 italic">Nome do Produto</label>
+                  <input 
+                    type="text"
+                    className="w-full bg-theme-bg-muted border border-theme-border/60 p-4 text-[10px] font-bold text-theme-text uppercase outline-none focus:border-brand-tactical rounded-xl"
+                    placeholder="EX: ÁLBUM 20X20 PREMIUM"
+                    value={newData.name}
+                    onChange={e => setNewData({...newData, name: e.target.value.toUpperCase()})}
+                  />
+                </div>
+                <div className="space-y-2">
+                  <label className="text-[8px] font-black text-theme-muted uppercase tracking-widest block mb-2 opacity-60 italic">SKU (ID Único)</label>
+                  <input 
+                    type="text"
+                    className="w-full bg-theme-bg-muted border border-theme-border/60 p-4 text-[10px] font-bold text-theme-text uppercase outline-none focus:border-brand-tactical rounded-xl"
+                    placeholder="EX: ALB_20X20_PREM"
+                    value={newData.sku}
+                    onChange={e => setNewData({...newData, sku: e.target.value.toUpperCase()})}
+                  />
+                </div>
+              </div>
+
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <div className="space-y-2">
+                  <label className="text-[8px] font-black text-theme-muted uppercase tracking-widest block mb-2 opacity-60 italic">Categoria</label>
+                  <select 
+                    className="w-full bg-theme-bg-muted border border-theme-border/60 p-4 text-[10px] font-bold text-theme-text uppercase outline-none focus:border-brand-tactical cursor-pointer rounded-xl"
+                    value={newData.category}
+                    onChange={e => setNewData({...newData, category: e.target.value})}
+                  >
+                    <option value="ALBUM">Álbuns</option>
+                    <option value="REVELACAO">Revelação</option>
+                    <option value="QUADROS">Quadros</option>
+                    <option value="ACESSORIOS">Acessórios</option>
+                  </select>
+                </div>
+                <div className="space-y-2">
+                  <label className="text-[8px] font-black text-theme-muted uppercase tracking-widest block mb-2 opacity-60 italic">Tipo de Gestão</label>
+                  <select 
+                    className="w-full bg-theme-bg-muted border border-theme-border/60 p-4 text-[10px] font-bold text-theme-text uppercase outline-none focus:border-brand-tactical cursor-pointer rounded-xl"
+                    value={newData.stockType}
+                    onChange={e => setNewData({...newData, stockType: e.target.value})}
+                  >
+                    <option value="PROPRIO">Estoque Próprio</option>
+                    <option value="FORNECEDOR">Fornecedor (Drop/Link)</option>
+                    <option value="AMBOS">Híbrido (Ambos)</option>
+                  </select>
+                </div>
+              </div>
+
+              <div className="space-y-2">
+                <label className="text-[8px] font-black text-theme-muted uppercase tracking-widest block mb-2 opacity-60 italic">Link de Afiliado / Dropshipping (Opcional)</label>
+                <input 
+                  type="text"
+                  className="w-full bg-theme-bg-muted border border-theme-border/60 p-4 text-[10px] font-bold text-theme-text outline-none focus:border-brand-tactical rounded-xl"
+                  placeholder="https://produto.mercadolivre.com.br/..."
+                  value={newData.externalLink}
+                  onChange={e => setNewData({...newData, externalLink: e.target.value})}
+                />
+              </div>
+            </div>
+
+            {/* Footer */}
+            <div className="p-8 md:p-10 bg-theme-bg-muted/50 border-t border-theme-border flex gap-4 shrink-0">
+              <button onClick={() => setShowCreateModal(false)} className="flex-1 py-5 border border-theme-border text-[11px] font-black uppercase tracking-[0.3em] text-theme-muted hover:text-white transition-all rounded-[20px] italic">Cancelar</button>
+              <button 
+                onClick={handleCreate} 
+                className="flex-[2] py-5 bg-brand-tactical text-zinc-950 text-[11px] font-black uppercase tracking-[0.3em] shadow-2xl shadow-brand-tactical/20 hover:brightness-110 transition-all rounded-[20px] italic flex items-center justify-center gap-4"
+              >
+                Cadastrar Ativo
+                <ArrowRight size={18} strokeWidth={1.5} />
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
       {/* Modal: Ajuste de Estoque */}
       {showAdjustModal && (
-        <div className="fixed inset-0 z-[100] flex items-center justify-center p-6 bg-theme-bg/60 backdrop-blur-md">
-          <div className="bg-theme-bg border border-theme-border p-10 max-w-sm w-full space-y-8 shadow-2xl">
-            <div className="text-center space-y-2">
-              <span className="text-[9px] font-black text-brand-tactical uppercase tracking-widest italic">Ajuste de Ativos</span>
-              <h3 className="text-xl font-black text-theme-text uppercase">{showAdjustModal.name}</h3>
+        <div className="fixed inset-0 z-[100] flex items-center justify-center p-4">
+          <div className="absolute inset-0 bg-theme-bg/80 backdrop-blur-xl animate-in fade-in duration-300" onClick={() => setShowAdjustModal(null)} />
+          
+          <div className="relative w-full max-w-md bg-theme-card border border-theme-border/60 rounded-[40px] overflow-hidden shadow-2xl animate-in zoom-in-95 duration-300">
+            {/* Header */}
+            <div className="p-8 md:p-10 border-b border-theme-border flex items-center justify-between shrink-0">
+              <div className="flex items-center gap-4">
+                <div className="w-12 h-12 bg-brand-tactical/10 rounded-2xl flex items-center justify-center border border-brand-tactical/20">
+                  <Package className="text-brand-tactical" size={24} />
+                </div>
+                <div>
+                  <h2 className="text-xl font-black uppercase italic tracking-tighter text-theme-text">{showAdjustModal.name}</h2>
+                  <p className="text-[10px] font-black uppercase tracking-[0.2em] opacity-40">Movimentação de Ativos</p>
+                </div>
+              </div>
+              <button onClick={() => setShowAdjustModal(null)} className="p-3 hover:bg-white/5 rounded-full transition-all text-theme-muted"><X size={24} /></button>
             </div>
-            
-            <div className="space-y-6">
-              <div className="grid grid-cols-2 gap-2">
+
+            <div className="p-8 md:p-10 space-y-8">
+              <div className="grid grid-cols-2 gap-3">
                 {(['PURCHASE', 'ADJUSTMENT'] as const).map(t => (
                   <button 
                     key={t}
                     onClick={() => setAdjustData({...adjustData, type: t})}
-                    className={`py-3 text-[9px] font-black uppercase border transition-all ${adjustData.type === t ? 'bg-brand-tactical text-zinc-950 border-brand-tactical' : 'border-theme-border text-theme-muted hover:border-zinc-500'}`}
+                    className={`py-4 text-[9px] font-black uppercase border transition-all rounded-xl ${adjustData.type === t ? 'bg-brand-tactical text-zinc-950 border-brand-tactical' : 'border-theme-border text-theme-muted hover:border-zinc-500'}`}
                   >
                     {t === 'PURCHASE' ? 'Entrada (Compra)' : 'Ajuste Geral'}
                   </button>
                 ))}
               </div>
 
-              <div className="bg-theme-bg-muted p-6 border border-theme-border text-center space-y-3">
-                <div className="flex items-center justify-between">
-                  <button onClick={() => setAdjustData({...adjustData, quantity: adjustData.quantity - 1})} className="text-theme-text text-2xl font-black w-10 h-10">-</button>
-                  <div className="text-3xl font-black text-theme-text italic">{adjustData.quantity}</div>
-                  <button onClick={() => setAdjustData({...adjustData, quantity: adjustData.quantity + 1})} className="text-theme-text text-2xl font-black w-10 h-10">+</button>
+              <div className="bg-theme-bg-muted p-8 border border-theme-border/60 text-center space-y-4 rounded-2xl">
+                <div className="flex items-center justify-between max-w-[200px] mx-auto">
+                  <button onClick={() => setAdjustData({...adjustData, quantity: Math.max(1, adjustData.quantity - 1)})} className="text-theme-text text-3xl font-black w-12 h-12 bg-white/5 rounded-full hover:bg-white/10 transition-colors">-</button>
+                  <div className="text-4xl font-black text-theme-text italic">{adjustData.quantity}</div>
+                  <button onClick={() => setAdjustData({...adjustData, quantity: adjustData.quantity + 1})} className="text-theme-text text-3xl font-black w-12 h-12 bg-white/5 rounded-full hover:bg-white/10 transition-colors">+</button>
                 </div>
-                <p className="text-[8px] text-theme-muted font-black uppercase">Quantidade para movimentar</p>
+                <p className="text-[9px] text-theme-muted font-black uppercase tracking-widest">Unidades para movimentar</p>
               </div>
 
               <input 
                 type="text" 
                 placeholder="DESCRIÇÃO DO AJUSTE (OPCIONAL)"
-                className="w-full bg-theme-bg-muted border border-theme-border p-4 text-[10px] font-bold text-theme-text uppercase focus:border-brand-tactical outline-none"
+                className="w-full bg-theme-bg-muted border border-theme-border/60 p-4 text-[10px] font-bold text-theme-text uppercase focus:border-brand-tactical outline-none rounded-xl"
                 value={adjustData.description}
                 onChange={e => setAdjustData({...adjustData, description: e.target.value.toUpperCase()})}
               />
 
-              <div className="flex gap-4">
-                <button onClick={() => setShowAdjustModal(null)} className="flex-1 py-4 border border-theme-border text-theme-muted font-black uppercase text-[10px] tracking-widest">Cancelar</button>
-                <button onClick={handleAdjust} className="flex-1 py-4 bg-brand-tactical text-zinc-950 font-black uppercase text-[10px] tracking-widest hover:brightness-110 shadow-lg shadow-brand-tactical/20">Confirmar</button>
+              <div className="flex gap-4 pt-4">
+                <button onClick={() => setShowAdjustModal(null)} className="flex-1 py-4 border border-theme-border text-[9px] font-black uppercase tracking-widest text-theme-muted hover:text-white transition-all rounded-2xl italic">Cancelar</button>
+                <button onClick={handleAdjust} className="flex-1 py-4 bg-brand-tactical text-zinc-950 text-[9px] font-black uppercase tracking-[0.2em] shadow-xl hover:brightness-110 transition-all rounded-2xl italic flex items-center justify-center gap-2">
+                  Confirmar Movimentação
+                  <ArrowRight size={18} strokeWidth={1.5} />
+                </button>
               </div>
             </div>
           </div>

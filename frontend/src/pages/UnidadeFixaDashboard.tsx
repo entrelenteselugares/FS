@@ -8,6 +8,7 @@ import { useAuth } from "../hooks/useAuth";
 import { DashboardLayout, type NavItem } from "../components/DashboardLayout";
 import { FlashEventModal, FranchiseShopModal } from "../components/profissional";
 import { Zap } from "lucide-react";
+import { motion, AnimatePresence } from "framer-motion";
 
 interface UnidadeStats {
   totalEventos: number;
@@ -449,8 +450,18 @@ export default function UnidadeFixaDashboard() {
           </div>
         )}
 
-        {/* ── AGENDA ── */}
-        {tab === "agenda" && (
+        {/* ── Dashboard Content ── */}
+        <AnimatePresence mode="wait">
+          <motion.div
+            key={tab}
+            initial={{ opacity: 0, x: 10 }}
+            animate={{ opacity: 1, x: 0 }}
+            exit={{ opacity: 0, x: -10 }}
+            transition={{ duration: 0.3 }}
+            className="space-y-12"
+          >
+            {/* ── AGENDA ── */}
+            {tab === "agenda" && (
           <div className="space-y-10">
             {/* Tactical Summary Bar */}
             <div className="grid grid-cols-1 md:grid-cols-3 gap-px bg-theme-border/20 border border-theme-border/20 shadow-xl overflow-hidden">
@@ -1276,6 +1287,8 @@ export default function UnidadeFixaDashboard() {
              </div>
           </div>
         )}
+          </motion.div>
+        </AnimatePresence>
       </div>
 
       {/* Modal QR Code Premium */}

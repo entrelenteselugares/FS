@@ -281,21 +281,40 @@ export const AdminServices: React.FC = () => {
 
       {/* CONFIRMATION MODAL */}
       {confirmDelete && (
-        <div className="fixed inset-0 z-[600] flex items-center justify-center p-6 animate-in fade-in duration-300">
-           <div className="absolute inset-0 bg-black/95 backdrop-blur-md" onClick={() => setConfirmDelete(null)} />
-           <div className="relative bg-theme-bg border border-red-900/40 w-full max-w-sm p-10 space-y-8 shadow-2xl">
+        <div className="fixed inset-0 z-[600] flex items-center justify-center p-4">
+          <div className="absolute inset-0 bg-red-950/40 backdrop-blur-xl animate-in fade-in duration-300" onClick={() => setConfirmDelete(null)} />
+          
+          <div className="relative w-full max-w-md bg-theme-card border border-red-500/20 rounded-[40px] overflow-hidden shadow-2xl animate-in zoom-in-95 duration-300">
+            <div className="p-10 space-y-8 text-center">
+              <div className="w-20 h-20 bg-red-500/10 rounded-[30px] flex items-center justify-center border border-red-500/20 mx-auto mb-6">
+                <Trash2 className="text-red-500" size={32} />
+              </div>
+              
               <div className="space-y-2">
-                 <span className="text-[10px] font-black text-red-500 uppercase tracking-[0.4em]">Gestão de Portfólio</span>
-                 <h3 className="text-2xl font-heading text-theme-text uppercase tracking-tighter font-black">Remover Serviço?</h3>
+                <h3 className="text-2xl font-black uppercase tracking-tighter text-theme-text italic">Remover Serviço?</h3>
+                <p className="text-[10px] font-black text-red-500 uppercase tracking-[0.4em] italic opacity-60">Protocolo de Exclusão de Catálogo</p>
               </div>
-              <p className="text-[11px] text-theme-muted uppercase tracking-widest leading-relaxed font-bold italic">
-                ESTA AÇÃO IRÁ REMOVER PERMANENTEMENTE O ITEM DO GERADOR DE ORÇAMENTOS.
+              
+              <p className="text-[11px] uppercase tracking-[0.2em] leading-relaxed text-theme-muted italic">
+                ESTA AÇÃO IRÁ REMOVER PERMANENTEMENTE O ITEM DO GERADOR DE ORÇAMENTOS DA REDE.
               </p>
-              <div className="grid grid-cols-2 gap-4">
-                 <button onClick={() => setConfirmDelete(null)} className="p-4 border border-theme-border text-theme-muted text-[9px] font-black uppercase tracking-widest hover:text-white transition-all">CANCELAR</button>
-                 <button onClick={executeDelete} className="p-4 bg-red-900 text-white text-[9px] font-black uppercase tracking-widest hover:brightness-110 transition-all">REMOVER AGORA</button>
+
+              <div className="grid grid-cols-1 gap-4 pt-4">
+                <button 
+                  onClick={executeDelete}
+                  className="w-full py-5 bg-red-600 text-white text-[11px] font-black uppercase tracking-[0.4em] hover:bg-red-700 transition-all rounded-[20px] italic shadow-lg shadow-red-600/20"
+                >
+                  REMOVER AGORA
+                </button>
+                <button 
+                  onClick={() => setConfirmDelete(null)}
+                  className="w-full py-5 border border-theme-border text-theme-muted text-[11px] font-black uppercase tracking-[0.4em] hover:text-white transition-all rounded-[20px] italic"
+                >
+                  ABORTAR MISSÃO
+                </button>
               </div>
-           </div>
+            </div>
+          </div>
         </div>
       )}
 
@@ -325,75 +344,86 @@ function ServiceModal({ onClose, onSave, initialData, saving }: { onClose: () =>
     category: initialData?.category || "FOTOGRAFIA"
   });
 
-  const inputClass = "w-full bg-theme-bg border border-theme-border/60 p-4 text-[11px] text-theme-text font-black outline-none focus:border-brand-tactical transition-all uppercase placeholder:text-theme-muted/30";
-  const labelClass = "text-[8px] font-black text-theme-muted uppercase tracking-widest block mb-2 opacity-60";
+  const inputClass = "w-full bg-theme-bg-muted border border-theme-border/60 p-4 text-[10px] text-theme-text font-black outline-none focus:border-brand-tactical transition-all uppercase placeholder:text-theme-muted/30 rounded-xl";
+  const labelClass = "text-[8px] font-black text-theme-muted uppercase tracking-widest block mb-2 opacity-60 italic";
 
   return (
-    <div className="fixed inset-0 z-[500] flex items-center justify-center p-4 md:p-10">
-       <div className="absolute inset-0 bg-zinc-950/90 backdrop-blur-xl" onClick={onClose} />
-       <div className="bg-theme-bg border border-theme-border/60 w-full max-w-2xl relative animate-in zoom-in-95 duration-300 shadow-2xl overflow-hidden">
-          <div className="p-8 md:p-12 space-y-10 max-h-[90vh] overflow-y-auto no-scrollbar">
-             <div className="flex justify-between items-start">
-                <div className="space-y-1">
-                   <h2 className="text-3xl font-heading font-black text-theme-text uppercase tracking-tighter">{initialData ? "Ajustar Ativo" : "Novo Ativo de Serviço"}</h2>
-                   <p className="text-[9px] text-theme-muted uppercase tracking-[0.4em] font-black italic">Configuração de Tabela e Valor de Entrega</p>
-                </div>
-                <button onClick={onClose} className="text-theme-muted hover:text-white transition-all"><X size={24} /></button>
-             </div>
+    <div className="fixed inset-0 z-[500] flex items-center justify-center p-4">
+       <div className="absolute inset-0 bg-theme-bg/80 backdrop-blur-xl animate-in fade-in duration-300" onClick={onClose} />
+       <div className="relative w-full max-w-2xl bg-theme-card border border-theme-border/60 rounded-[40px] overflow-hidden shadow-2xl animate-in zoom-in-95 duration-300 flex flex-col h-[85vh]">
+          {/* Header */}
+          <div className="p-8 md:p-10 border-b border-theme-border flex items-center justify-between shrink-0">
+            <div className="flex items-center gap-4">
+              <div className="w-12 h-12 bg-brand-tactical/10 rounded-2xl flex items-center justify-center border border-brand-tactical/20">
+                <Briefcase className="text-brand-tactical" size={24} strokeWidth={1.5} />
+              </div>
+              <div>
+                <h2 className="text-2xl font-black uppercase italic tracking-tighter text-theme-text">{initialData ? "Ajustar Ativo" : "Novo Ativo de Serviço"}</h2>
+                <p className="text-[10px] font-black uppercase tracking-[0.2em] opacity-40">Configuração de Tabela e Valor de Entrega</p>
+              </div>
+            </div>
+            <button onClick={onClose} className="p-3 hover:bg-white/5 rounded-full transition-all text-theme-muted"><X size={24} /></button>
+          </div>
 
-             <form onSubmit={(e) => { e.preventDefault(); onSave(form); }} className="space-y-8">
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
-                   <div className="space-y-2">
-                      <label className={labelClass}>Nome do Serviço</label>
-                      <input required className={inputClass} value={form.name} onChange={e => setForm({...form, name: e.target.value})} placeholder="Ex: Fotografia de Casamento" />
-                   </div>
-                   <div className="space-y-2">
-                      <label className={labelClass}>Categoria Comercial</label>
-                      <select className={inputClass} value={form.category} onChange={e => setForm({...form, category: e.target.value})}>
-                         <option value="FOTOGRAFIA">FOTOGRAFIA</option>
-                         <option value="VIDEO">VÍDEO</option>
-                         <option value="EDICAO">EDIÇÃO</option>
-                         <option value="POS_EDICAO">PÓS-EDIÇÃO</option>
-                         <option value="PRE_EVENTO">PRÉ-EVENTO</option>
-                         <option value="LOCACAO">LOCAÇÃO</option>
-                         <option value="EXTRAS">EXTRAS / ADICIONAIS</option>
-                      </select>
-                   </div>
-                </div>
+          {/* Scrollable Content */}
+          <form onSubmit={(e) => { e.preventDefault(); onSave(form); }} className="flex-1 overflow-y-auto p-8 md:p-10 space-y-8 custom-scrollbar">
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+              <div className="space-y-2">
+                <label className={labelClass}>Nome do Serviço</label>
+                <input required className={inputClass} value={form.name} onChange={e => setForm({...form, name: e.target.value})} placeholder="Ex: Fotografia de Casamento" />
+              </div>
+              <div className="space-y-2">
+                <label className={labelClass}>Categoria Comercial</label>
+                <select className={inputClass} value={form.category} onChange={e => setForm({...form, category: e.target.value})}>
+                  <option value="FOTOGRAFIA">FOTOGRAFIA</option>
+                  <option value="VIDEO">VÍDEO</option>
+                  <option value="EDICAO">EDIÇÃO</option>
+                  <option value="POS_EDICAO">PÓS-EDIÇÃO</option>
+                  <option value="PRE_EVENTO">PRÉ-EVENTO</option>
+                  <option value="LOCACAO">LOCAÇÃO</option>
+                  <option value="EXTRAS">EXTRAS / ADICIONAIS</option>
+                </select>
+              </div>
+            </div>
 
-                <div className="space-y-2">
-                   <label className={labelClass}>Descrição da Entrega</label>
-                   <textarea 
-                     rows={3} 
-                     className={`${inputClass} normal-case`} 
-                     value={form.description} 
-                     onChange={e => setForm({...form, description: e.target.value})} 
-                     placeholder="O que o cliente recebe neste pacote?" 
-                   />
-                </div>
+            <div className="space-y-2">
+              <label className={labelClass}>Descrição da Entrega</label>
+              <textarea 
+                rows={3} 
+                className={`${inputClass} normal-case resize-none`} 
+                value={form.description} 
+                onChange={e => setForm({...form, description: e.target.value})} 
+                placeholder="O que o cliente recebe neste pacote?" 
+              />
+            </div>
 
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-8 pt-6 border-t border-theme-border/20">
-                   <div className="space-y-2">
-                      <label className={labelClass}>Preço Sugerido (R$)</label>
-                      <div className="relative">
-                         <DollarSign className="absolute left-4 top-1/2 -translate-y-1/2 text-brand-tactical" size={14} />
-                         <input required type="number" step="0.01" className={`${inputClass} pl-10`} value={form.basePrice} onChange={e => setForm({...form, basePrice: parseFloat(e.target.value)})} placeholder="0,00" />
-                      </div>
-                   </div>
-                   <div className="flex items-end">
-                      <p className="text-[9px] text-theme-muted uppercase tracking-widest font-medium italic opacity-60">
-                        Este valor será utilizado como base no gerador de orçamentos automático.
-                      </p>
-                   </div>
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-8 pt-6 border-t border-theme-border/20">
+              <div className="space-y-2">
+                <label className={labelClass}>Preço Sugerido (R$)</label>
+                <div className="relative">
+                  <DollarSign className="absolute left-4 top-1/2 -translate-y-1/2 text-brand-tactical" size={14} strokeWidth={1.5} />
+                  <input required type="number" step="0.01" className={`${inputClass} pl-10`} value={form.basePrice} onChange={e => setForm({...form, basePrice: parseFloat(e.target.value)})} placeholder="0,00" />
                 </div>
+              </div>
+              <div className="flex items-center">
+                <p className="text-[9px] text-theme-muted uppercase tracking-widest font-black italic opacity-40 leading-relaxed">
+                  Este valor será utilizado como base no gerador de orçamentos automático da rede.
+                </p>
+              </div>
+            </div>
+          </form>
 
-                <div className="flex gap-4 pt-8">
-                   <button type="button" onClick={onClose} className="flex-1 py-5 border border-theme-border text-[9px] font-black uppercase tracking-widest text-theme-muted hover:text-white transition-all">Cancelar</button>
-                   <button type="submit" disabled={saving} className="flex-1 py-5 bg-brand-tactical text-zinc-950 text-[9px] font-black uppercase tracking-[0.4em] shadow-xl hover:brightness-110 transition-all flex items-center justify-center gap-3">
-                      <Save size={14} /> {saving ? "SINCRONIZANDO..." : initialData ? "SALVAR ALTERAÇÕES" : "CONFIRMAR ATIVO"}
-                   </button>
-                </div>
-             </form>
+          {/* Footer */}
+          <div className="p-8 md:p-10 bg-theme-bg-muted/50 border-t border-theme-border flex gap-4 shrink-0">
+            <button type="button" onClick={onClose} className="flex-1 py-5 border border-theme-border text-[11px] font-black uppercase tracking-[0.3em] text-theme-muted hover:text-white transition-all rounded-[20px] italic">Cancelar</button>
+            <button 
+              type="submit" 
+              disabled={saving} 
+              className="flex-[2] py-5 bg-brand-tactical text-zinc-950 text-[11px] font-black uppercase tracking-[0.3em] shadow-2xl shadow-brand-tactical/20 hover:brightness-110 transition-all rounded-[20px] italic flex items-center justify-center gap-4"
+            >
+              {saving ? "SINCRONIZANDO..." : initialData ? "SALVAR ALTERAÇÕES" : "CONFIRMAR ATIVO"}
+              <ArrowRight size={18} strokeWidth={1.5} />
+            </button>
           </div>
        </div>
     </div>

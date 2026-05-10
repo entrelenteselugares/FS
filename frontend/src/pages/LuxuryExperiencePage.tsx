@@ -13,6 +13,7 @@ interface EventData {
   dataEvento: string;
   location: string | null;
   coverPhotoUrl: string | null;
+  coverPosition?: string | null;
   lightroomUrl: string | null;
   driveUrl: string | null;
   type: 'ALBUM_FULL' | 'PHOTO_MARKETPLACE';
@@ -108,8 +109,12 @@ export default function LuxuryExperiencePage() {
           initial={{ scale: 1.1, opacity: 0 }}
           animate={{ scale: 1, opacity: 0.6 }}
           transition={{ duration: 2 }}
-          className="absolute inset-0 bg-cover bg-center bg-no-repeat"
-          style={{ backgroundImage: `url(${(event.coverPhotoUrl || 'https://images.unsplash.com/photo-1511285560929-80b456fea0bc?q=80&w=2069&auto=format&fit=crop').trim().replace(/\s/g, '')})` }}
+          className="absolute inset-0 bg-cover bg-no-repeat"
+          style={{ 
+            backgroundImage: `url(${(event.coverPhotoUrl || 'https://images.unsplash.com/photo-1511285560929-80b456fea0bc?q=80&w=2069&auto=format&fit=crop').trim().replace(/\s/g, '')})`,
+            objectPosition: event.coverPosition || 'center',
+            backgroundPosition: event.coverPosition || 'center'
+          }}
         />
         <div className="absolute inset-0 bg-gradient-to-t from-[#0a0a0a] via-[#0a0a0a]/60 to-transparent z-[1]" />
         

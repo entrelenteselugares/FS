@@ -43,7 +43,7 @@ export const AmbassadorDashboard = () => {
   const totalEarnings = stats.reduce((acc, curr) => acc + (curr.conversions * curr.rewardValue), 0);
 
   return (
-    <div className="space-y-12 animate-in fade-in duration-700">
+    <div className="space-y-12">
       {/* Header */}
       <div className="border-b border-theme-border/60 pb-6">
         <h2 className="text-3xl font-black text-theme-text uppercase tracking-tighter italic">Painel de Embaixador</h2>

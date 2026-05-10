@@ -8,6 +8,7 @@ export interface EventItem {
   createdAt: string;
   cartorio: string | null;
   coverPhotoUrl: string | null;
+  coverPosition?: string | null;
   lightroomUrl: string | null;
   driveUrl: string | null;
   temFoto: boolean;

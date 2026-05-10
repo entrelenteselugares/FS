@@ -5,7 +5,9 @@ import {
   Zap, 
   Trash2, 
   ArrowDownCircle, ArrowUpCircle, BarChart3,
-  DollarSign
+  DollarSign,
+  ArrowRight,
+  X
 } from "lucide-react";
 
 // Types for New Operational Management
@@ -142,19 +144,19 @@ export const AdminFinance: React.FC = () => {
       {/* DASHBOARD DE LIQUIDEZ E MARGEM */}
       <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
         <div className="bg-theme-bg-muted border border-theme-border p-5 space-y-3 group hover:border-brand-tactical/50 transition-all">
-           <div className="flex justify-between items-start"><span className="text-[10px] font-black text-theme-muted uppercase tracking-widest">Receita Bruta (Matriz)</span><ArrowUpCircle className="text-brand-tactical" size={14} /></div>
+           <div className="flex justify-between items-start"><span className="text-[10px] font-black text-theme-muted uppercase tracking-widest">Receita Bruta (Matriz)</span><ArrowUpCircle className="text-brand-tactical" size={14} strokeWidth={1.5} /></div>
            <div className="text-2xl md:text-3xl font-heading font-black text-theme-text italic">{formatCurrency(financialData.grossRevenue)}</div>
         </div>
         <div className="bg-theme-bg-muted border border-theme-border p-5 space-y-3 group hover:border-red-500/50 transition-all">
-           <div className="flex justify-between items-start"><span className="text-[10px] font-black text-theme-muted uppercase tracking-widest">Custo Operacional</span><ArrowDownCircle className="text-red-500" size={14} /></div>
+           <div className="flex justify-between items-start"><span className="text-[10px] font-black text-theme-muted uppercase tracking-widest">Custo Operacional</span><ArrowDownCircle className="text-red-500" size={14} strokeWidth={1.5} /></div>
            <div className="text-2xl md:text-3xl font-heading font-black text-theme-text italic">{formatCurrency(financialData.totalExpenses)}</div>
         </div>
         <div className="bg-theme-bg-muted border border-theme-border p-5 space-y-3 group hover:border-brand-tactical transition-all">
-           <div className="flex justify-between items-start"><span className="text-[10px] font-black text-brand-tactical uppercase tracking-widest">Lucro Líquido Real</span><DollarSign className="text-brand-tactical" size={14} /></div>
+           <div className="flex justify-between items-start"><span className="text-[10px] font-black text-brand-tactical uppercase tracking-widest">Lucro Líquido Real</span><DollarSign className="text-brand-tactical" size={14} strokeWidth={1.5} /></div>
            <div className="text-2xl md:text-3xl font-heading font-black text-brand-tactical italic">{formatCurrency(financialData.netProfit)}</div>
         </div>
         <div className="bg-theme-bg-muted border border-theme-border p-5 space-y-3 group transition-all">
-           <div className="flex justify-between items-start"><span className="text-[10px] font-black text-theme-muted uppercase tracking-widest">Margem Operacional</span><BarChart3 className="text-amber-500" size={14} /></div>
+           <div className="flex justify-between items-start"><span className="text-[10px] font-black text-theme-muted uppercase tracking-widest">Margem Operacional</span><BarChart3 className="text-amber-500" size={14} strokeWidth={1.5} /></div>
            <div className="text-2xl md:text-3xl font-heading font-black text-theme-text italic">{financialData.margin.toFixed(1)}%</div>
         </div>
       </div>
@@ -172,7 +174,7 @@ export const AdminFinance: React.FC = () => {
               <div className="py-20 text-center border border-theme-border bg-theme-bg-muted/10 text-[10px] text-theme-muted animate-pulse uppercase tracking-widest font-black italic">Auditando Fluxo...</div>
             ) : orders.length === 0 ? (
               <div className="py-24 text-center border border-dashed border-theme-border bg-theme-bg-muted/5 space-y-4">
-                 <ShieldCheck size={32} className="mx-auto text-theme-muted opacity-30" />
+                 <ShieldCheck size={32} strokeWidth={1.5} className="mx-auto text-theme-muted opacity-30" />
                  <p className="text-[10px] text-theme-muted uppercase tracking-[0.4em] font-black italic">Fluxo de repasses em conformidade.</p>
               </div>
             ) : (
@@ -195,7 +197,7 @@ export const AdminFinance: React.FC = () => {
                        </div>
                        <div className="flex items-center justify-center">
                           {payoutTab === 'pending' ? (
-                            <button onClick={() => setConfirmModal(order.id)} className="bg-brand-tactical text-zinc-950 px-8 py-4 text-[10px] font-black uppercase tracking-[0.2em] shadow-xl hover:scale-[1.02] transition-all flex items-center gap-3 active:scale-95"><Zap size={14} /> LIQUIDAR REPASSE</button>
+                            <button onClick={() => setConfirmModal(order.id)} className="bg-brand-tactical text-zinc-950 px-8 py-4 text-[10px] font-black uppercase tracking-[0.2em] shadow-xl hover:scale-[1.02] transition-all flex items-center gap-3 active:scale-95"><Zap size={14} strokeWidth={1.5} /> LIQUIDAR REPASSE</button>
                           ) : (
                             <div className="text-right border-l border-theme-border pl-8"><span className="text-[10px] font-black text-theme-muted uppercase tracking-widest block mb-2">Pago em</span><span className="text-[12px] font-black text-brand-tactical uppercase tracking-tighter">{fmtDate(order.payoutPaidAt)}</span></div>
                           )}
@@ -225,7 +227,7 @@ export const AdminFinance: React.FC = () => {
                        </div>
 
                        {payoutTab === 'pending' && (
-                          <button onClick={() => setConfirmModal(order.id)} className="w-full bg-brand-tactical text-zinc-950 py-4 text-[9px] font-black uppercase tracking-[0.2em] shadow-lg active:scale-95 transition-all flex items-center justify-center gap-2"><Zap size={12} /> LIQUIDAR REPASSE</button>
+                          <button onClick={() => setConfirmModal(order.id)} className="w-full bg-brand-tactical text-zinc-950 py-4 text-[9px] font-black uppercase tracking-[0.2em] shadow-lg active:scale-95 transition-all flex items-center justify-center gap-2"><Zap size={12} strokeWidth={1.5} /> LIQUIDAR REPASSE</button>
                        )}
                     </div>
                   </React.Fragment>
@@ -378,17 +380,40 @@ export const AdminFinance: React.FC = () => {
 
       {/* MODALS & NOTIFICATIONS */}
       {confirmModal && (
-        <div className="fixed inset-0 z-[200] flex items-center justify-center p-6 bg-zinc-950/60 backdrop-blur-md animate-in fade-in duration-300">
-           <div className="absolute inset-0" onClick={() => setConfirmModal(null)} />
-           <div className="relative bg-theme-bg border border-theme-border w-full max-w-sm p-8 space-y-8 shadow-2xl animate-in zoom-in-95 duration-500">
-              <div className="space-y-2">
-                 <span className="text-[10px] font-black text-brand-tactical uppercase tracking-[0.4em]">Protocolo Financeiro</span>
-                 <h3 className="text-xl font-heading text-theme-text uppercase tracking-tighter leading-none">Confirmar Repasse?</h3>
+        <div className="fixed inset-0 z-[500] flex items-center justify-center p-4">
+           <div className="absolute inset-0 bg-theme-bg/80 backdrop-blur-xl animate-in fade-in duration-300" onClick={() => setConfirmModal(null)} />
+           <div className="relative w-full max-w-md bg-theme-card border border-theme-border/60 rounded-[40px] overflow-hidden shadow-2xl animate-in zoom-in-95 duration-300">
+              {/* Header */}
+              <div className="p-8 md:p-10 border-b border-theme-border flex items-center justify-between shrink-0">
+                <div className="flex items-center gap-4">
+                  <div className="w-12 h-12 bg-brand-tactical/10 rounded-2xl flex items-center justify-center border border-brand-tactical/20">
+                    <ShieldCheck className="text-brand-tactical" size={24} strokeWidth={1.5} />
+                  </div>
+                  <div>
+                    <h2 className="text-xl font-black uppercase italic tracking-tighter text-theme-text">Protocolo Financeiro</h2>
+                    <p className="text-[10px] font-black uppercase tracking-[0.2em] opacity-40">Confirmação de Liquidez</p>
+                  </div>
+                </div>
+                <button onClick={() => setConfirmModal(null)} className="p-3 hover:bg-white/5 rounded-full transition-all text-theme-muted"><X size={24} /></button>
               </div>
-              <p className="text-[10px] text-theme-muted font-bold uppercase tracking-wider leading-relaxed">VOCÊ CONFIRMA QUE JÁ EXECUTOU OS REPASSES PIX PARA TODOS OS PARCEIROS DESTE EVENTO?</p>
-              <div className="grid grid-cols-2 gap-4 pt-4">
-                 <button onClick={() => setConfirmModal(null)} className="p-4 border border-theme-border text-theme-muted text-[9px] font-black uppercase tracking-widest hover:bg-white/5 transition-all">CANCELAR</button>
-                 <button onClick={() => handleMarkAsPaid()} className="p-4 bg-brand-tactical text-zinc-950 text-[9px] font-black uppercase tracking-widest hover:brightness-110 transition-all shadow-lg">CONFIRMAR</button>
+
+              <div className="p-8 md:p-10 space-y-6 text-center">
+                 <h3 className="text-2xl font-black text-theme-text uppercase italic tracking-tighter leading-tight">Confirmar Repasse?</h3>
+                 <p className="text-[11px] text-theme-muted font-bold uppercase tracking-widest leading-relaxed italic border-y border-theme-border/10 py-6">
+                    VOCÊ CONFIRMA QUE JÁ EXECUTOU OS REPASSES PIX PARA TODOS OS PARCEIROS DESTE EVENTO? ESTA AÇÃO É IRREVERSÍVEL NO LEDGER.
+                 </p>
+              </div>
+
+              {/* Footer */}
+              <div className="p-8 md:p-10 bg-theme-bg-muted/50 border-t border-theme-border flex gap-4 shrink-0">
+                <button onClick={() => setConfirmModal(null)} className="flex-1 py-5 border border-theme-border text-[11px] font-black uppercase tracking-[0.3em] text-theme-muted hover:text-white transition-all rounded-[20px] italic">Cancelar</button>
+                <button 
+                  onClick={() => handleMarkAsPaid()} 
+                  className="flex-[2] py-5 bg-brand-tactical text-zinc-950 text-[11px] font-black uppercase tracking-[0.3em] shadow-2xl shadow-brand-tactical/20 hover:brightness-110 transition-all rounded-[20px] italic flex items-center justify-center gap-4"
+                >
+                  Confirmar Repasse
+                  <ArrowRight size={18} strokeWidth={1.5} />
+                </button>
               </div>
            </div>
         </div>

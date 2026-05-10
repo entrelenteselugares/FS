@@ -14,7 +14,8 @@ import {
   Package,
   Layers,
   X,
-  Target
+  Target,
+  ArrowRight
 } from "lucide-react";
 
 // --- Types ---
@@ -35,6 +36,13 @@ interface PrintProduct {
   maxPhotos: number | null;
 }
 
+interface Supplier {
+  id: string;
+  name: string;
+  type: string;
+  active: boolean;
+}
+
 const CATEGORY_LABELS: Record<string, { label: string; color: string }> = {
   ALBUM:      { label: "Álbuns Encadernados", color: "#85B9AC" },
   ALBUM_30X40:{ label: "Álbuns 30×40",        color: "#a78bfa" },
@@ -53,11 +61,17 @@ export const AdminPrintCatalog: React.FC = () => {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [expandedCategories, setExpandedCategories] = useState<string[]>(Object.keys(CATEGORY_LABELS));
 
+  const [suppliers, setSuppliers] = useState<Supplier[]>([]);
+
   const load = useCallback(async () => {
     setLoading(true);
     try {
-      const { data } = await API.get("/admin/print-catalog");
-      setProducts(data.products);
+      const [productsRes, suppliersRes] = await Promise.all([
+        API.get("/admin/print-catalog"),
+        API.get("/admin/suppliers")
+      ]);
+      setProducts(productsRes.data.products);
+      setSuppliers(suppliersRes.data);
     } catch (e) { console.error(e); }
     finally { setLoading(false); }
   }, []);
@@ -104,7 +118,9 @@ export const AdminPrintCatalog: React.FC = () => {
       {/* MODAL: NOVO PRODUTO */}
       {isModalOpen && (
         <NewProductModal 
+          suppliers={suppliers}
           onClose={() => setIsModalOpen(false)} 
+          onRefreshSuppliers={load}
           onSave={async (data: Partial<PrintProduct>) => {
             const res = await API.post("/admin/print-catalog", data);
             setProducts(ps => [...ps, res.data]);
@@ -128,7 +144,7 @@ export const AdminPrintCatalog: React.FC = () => {
         
         <div className="flex gap-3">
           <button onClick={() => setIsModalOpen(true)} className="px-8 py-4 bg-brand-tactical text-zinc-950 text-[9px] font-black uppercase tracking-[0.4em] shadow-xl hover:brightness-110 transition-all flex items-center gap-2 italic">
-            <Plus size={14} /> NOVO ITEM
+            <Plus size={14} strokeWidth={1.5} /> NOVO ITEM
           </button>
         </div>
       </div>
@@ -136,21 +152,21 @@ export const AdminPrintCatalog: React.FC = () => {
       {/* DASHBOARD DE MÉTRICAS */}
       <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
          <div className="bg-theme-bg border border-theme-border/60 p-6 space-y-3 shadow-sm group hover:border-brand-tactical/40 transition-all">
-            <div className="flex justify-between items-start"><span className="text-[8px] font-black text-theme-muted uppercase tracking-widest italic">Mix Ativo</span><Package className="text-brand-tactical" size={14} /></div>
+            <div className="flex justify-between items-start"><span className="text-[8px] font-black text-theme-muted uppercase tracking-widest italic">Mix Ativo</span><Package className="text-brand-tactical" size={14} strokeWidth={1.5} /></div>
             <div className="flex items-baseline gap-2">
                <span className="text-3xl font-heading font-black text-theme-text italic">{stats.activeCount}</span>
                <span className="text-[10px] font-bold text-theme-muted uppercase tracking-widest">/ {stats.totalCount} ITENS</span>
             </div>
          </div>
          <div className="bg-theme-bg border border-theme-border/60 p-6 space-y-3 shadow-sm group hover:border-brand-tactical/40 transition-all">
-            <div className="flex justify-between items-start"><span className="text-[8px] font-black text-theme-muted uppercase tracking-widest italic">Margem Média</span><TrendingUp className="text-brand-tactical" size={14} /></div>
+            <div className="flex justify-between items-start"><span className="text-[8px] font-black text-theme-muted uppercase tracking-widest italic">Margem Média</span><TrendingUp className="text-brand-tactical" size={14} strokeWidth={1.5} /></div>
             <div className="flex items-baseline gap-2">
                <span className="text-3xl font-heading font-black text-theme-text italic">{stats.avgMargin.toFixed(1)}%</span>
                <span className="text-[10px] font-bold text-theme-muted uppercase tracking-widest">PROPORCIONAL</span>
             </div>
          </div>
           <div className="bg-theme-bg border border-theme-border/60 p-6 space-y-3 shadow-sm group hover:border-brand-tactical/40 transition-all">
-            <div className="flex justify-between items-start"><span className="text-[8px] font-black text-theme-muted uppercase tracking-widest italic">Hub de Produção</span><Layers className="text-brand-tactical" size={14} /></div>
+            <div className="flex justify-between items-start"><span className="text-[8px] font-black text-theme-muted uppercase tracking-widest italic">Hub de Produção</span><Layers className="text-brand-tactical" size={14} strokeWidth={1.5} /></div>
             <div className="flex items-baseline gap-2">
                <span className="text-3xl font-heading font-black text-theme-text italic">OPERACIONAL</span>
                <span className="text-[10px] font-bold text-theme-muted uppercase tracking-widest">LOGÍSTICA ATIVA</span>
@@ -316,9 +332,81 @@ interface NewProductFormData {
   supplierCost: number; unit: string; marginPct: number; description: string;
 }
 
-function NewProductModal({ onClose, onSave }: { onClose: () => void; onSave: (data: NewProductFormData) => Promise<void> }) {
+function NewSupplierModal({ onClose, onSave }: { onClose: () => void, onSave: () => void }) {
   const [form, setForm] = useState({
-    supplier: "CK",
+    name: "",
+    type: "LAB",
+    costPer10x15: "0.50",
+    printerModel: ""
+  });
+  const [loading, setLoading] = useState(false);
+
+  const inputClass = "w-full bg-theme-bg-muted border border-theme-border/60 p-4 text-[10px] text-theme-text font-black outline-none focus:border-brand-tactical transition-all uppercase placeholder:text-theme-muted/30 rounded-xl";
+  const labelClass = "text-[8px] font-black text-theme-muted uppercase tracking-widest block mb-2 opacity-60 italic";
+
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setLoading(true);
+    try {
+      await API.post("/admin/suppliers", form);
+      onSave();
+      onClose();
+    } catch { alert("Erro ao criar fornecedor."); }
+    finally { setLoading(false); }
+  };
+
+  return (
+    <div className="fixed inset-0 z-[9999] flex items-center justify-center p-4">
+      <div className="absolute inset-0 bg-theme-bg/80 backdrop-blur-xl animate-in fade-in duration-300" onClick={onClose} />
+      
+      <div className="relative w-full max-w-md bg-theme-card border border-theme-border/60 rounded-[40px] overflow-hidden shadow-2xl animate-in zoom-in-95 duration-300">
+        <div className="p-8 md:p-10 border-b border-theme-border flex items-center justify-between">
+          <div className="flex items-center gap-4">
+            <div className="w-12 h-12 bg-brand-tactical/10 rounded-2xl flex items-center justify-center border border-brand-tactical/20">
+              <Plus className="text-brand-tactical" size={24} strokeWidth={1.5} />
+            </div>
+            <div>
+              <h2 className="text-xl font-black uppercase italic tracking-tighter text-theme-text">Novo Operador</h2>
+              <p className="text-[10px] font-black uppercase tracking-[0.2em] opacity-40">Gestão de Suprimentos</p>
+            </div>
+          </div>
+          <button onClick={onClose} className="p-3 hover:bg-white/5 rounded-full transition-all text-theme-muted"><X size={24} /></button>
+        </div>
+
+        <form onSubmit={handleSubmit} className="p-8 md:p-10 space-y-6">
+          <div>
+            <label className={labelClass}>Identificação do Lab / Fornecedor</label>
+            <input required className={inputClass} value={form.name} onChange={e => setForm({...form, name: e.target.value})} placeholder="Ex: LAB XPTO" />
+          </div>
+          <div>
+            <label className={labelClass}>Natureza da Operação</label>
+            <select className={inputClass} value={form.type} onChange={e => setForm({...form, type: e.target.value})}>
+              <option value="LAB">Laboratório Externo (Drop)</option>
+              <option value="LOCAL">Produção Local / Própria</option>
+            </select>
+          </div>
+          
+          <div className="pt-6 flex gap-4">
+            <button type="button" onClick={onClose} className="flex-1 py-4 border border-theme-border text-[9px] font-black uppercase tracking-widest text-theme-muted hover:text-white transition-all rounded-2xl italic">Cancelar</button>
+            <button type="submit" disabled={loading} className="flex-1 py-4 bg-brand-tactical text-zinc-950 text-[9px] font-black uppercase tracking-[0.3em] shadow-xl hover:brightness-110 transition-all rounded-2xl italic">
+              {loading ? "Sincronizando..." : "Salvar Registro"}
+            </button>
+          </div>
+        </form>
+      </div>
+    </div>
+  );
+}
+
+function NewProductModal({ onClose, onSave, suppliers, onRefreshSuppliers }: { 
+  onClose: () => void; 
+  onSave: (data: NewProductFormData) => Promise<void>;
+  suppliers: Supplier[];
+  onRefreshSuppliers: () => void;
+}) {
+  const [showNewSupplier, setShowNewSupplier] = useState(false);
+  const [form, setForm] = useState({
+    supplier: suppliers[0]?.name || "CK",
     category: "ALBUM",
     name: "",
     sku: "",
@@ -329,8 +417,8 @@ function NewProductModal({ onClose, onSave }: { onClose: () => void; onSave: (da
   });
   const [loading, setLoading] = useState(false);
 
-  const inputClass = "w-full bg-theme-bg border border-theme-border/60 p-3 text-[10px] text-theme-text font-black outline-none focus:border-brand-tactical transition-all uppercase placeholder:text-theme-muted/30";
-  const labelClass = "text-[7px] font-black text-theme-muted uppercase tracking-widest block mb-1.5 opacity-60";
+  const inputClass = "w-full bg-theme-bg-muted border border-theme-border/60 p-4 text-[10px] text-theme-text font-black outline-none focus:border-brand-tactical transition-all uppercase placeholder:text-theme-muted/30 rounded-xl";
+  const labelClass = "text-[8px] font-black text-theme-muted uppercase tracking-widest block mb-2 opacity-60 italic";
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -347,70 +435,95 @@ function NewProductModal({ onClose, onSave }: { onClose: () => void; onSave: (da
   };
 
   return (
-    <div className="fixed inset-0 z-[500] flex items-center justify-center p-4 md:p-10">
-       <div className="absolute inset-0 bg-zinc-950/90 backdrop-blur-xl" onClick={onClose} />
-       <div className="bg-theme-bg border border-theme-border/60 w-full max-w-xl relative animate-in zoom-in-95 duration-300 shadow-2xl overflow-hidden">
-          <div className="p-8 md:p-12 space-y-10 max-h-[90vh] overflow-y-auto no-scrollbar">
-             <div className="flex justify-between items-start">
-                <div className="space-y-1">
-                   <h2 className="text-2xl font-heading font-black text-theme-text uppercase tracking-tighter">Novo Ativo no Catálogo</h2>
-                   <p className="text-[9px] text-theme-muted uppercase tracking-[0.4em] font-black italic">Expansão de Mix de Produtos</p>
-                </div>
-                <button onClick={onClose} className="text-theme-muted hover:text-white transition-all"><X size={20} /></button>
-             </div>
+    <div className="fixed inset-0 z-[9998] flex items-center justify-center p-4">
+       {showNewSupplier && <NewSupplierModal onClose={() => setShowNewSupplier(false)} onSave={onRefreshSuppliers} />}
+       <div className="absolute inset-0 bg-theme-bg/80 backdrop-blur-xl animate-in fade-in duration-300" onClick={onClose} />
+       
+       <div className="relative w-full max-w-2xl bg-theme-card border border-theme-border/60 rounded-[40px] overflow-hidden shadow-2xl animate-in zoom-in-95 duration-300 flex flex-col h-[85vh]">
+          {/* Header */}
+          <div className="p-8 md:p-10 border-b border-theme-border flex items-center justify-between shrink-0">
+            <div className="flex items-center gap-4">
+              <div className="w-12 h-12 bg-brand-tactical/10 rounded-2xl flex items-center justify-center border border-brand-tactical/20">
+                <Target className="text-brand-tactical" size={24} strokeWidth={1.5} />
+              </div>
+              <div>
+                <h2 className="text-2xl font-black uppercase italic tracking-tighter text-theme-text">Novo Ativo no Catálogo</h2>
+                <p className="text-[10px] font-black uppercase tracking-[0.2em] opacity-40">Expansão de Mix de Produtos</p>
+              </div>
+            </div>
+            <button onClick={onClose} className="p-3 hover:bg-white/5 rounded-full transition-all text-theme-muted"><X size={24} /></button>
+          </div>
 
-             <form onSubmit={handleSubmit} className="space-y-8">
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                   <div className="space-y-1.5">
-                      <label className={labelClass}>Operador Logístico</label>
-                      <select className={inputClass} value={form.supplier} onChange={e => setForm({...form, supplier: e.target.value})}>
-                         <option value="CK">CK ENCADERNADORA (Padrão)</option>
-                         <option value="INTERNO">PRODUÇÃO LOCAL / PRÓPRIA</option>
-                         <option value="TERCEIRO">OUTRO FORNECEDOR TÉCNICO</option>
-                      </select>
-                   </div>
-                   <div className="space-y-1.5">
-                      <label className={labelClass}>Categoria</label>
-                      <select className={inputClass} value={form.category} onChange={e => setForm({...form, category: e.target.value})}>
-                         {Object.entries(CATEGORY_LABELS).map(([k, v]) => <option key={k} value={k}>{v.label}</option>)}
-                      </select>
-                   </div>
+          {/* Scrollable Content */}
+          <form onSubmit={handleSubmit} className="flex-1 overflow-y-auto p-8 md:p-10 space-y-8 custom-scrollbar">
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+              <div className="space-y-2">
+                <label className={labelClass}>Operador Logístico</label>
+                <div className="flex items-stretch gap-2">
+                  <select className={inputClass} value={form.supplier} onChange={e => setForm({...form, supplier: e.target.value})}>
+                    {suppliers.map(s => (
+                      <option key={s.id} value={s.name}>{s.name.toUpperCase()}</option>
+                    ))}
+                    <option value="CK">CK ENCADERNADORA (Padrão)</option>
+                    <option value="INTERNO">PRODUÇÃO LOCAL / PRÓPRIA</option>
+                  </select>
+                  <button 
+                    type="button"
+                    onClick={() => setShowNewSupplier(true)}
+                    className="px-4 bg-theme-bg-muted border border-theme-border/60 text-brand-tactical hover:bg-brand-tactical/10 transition-all rounded-xl flex items-center justify-center"
+                  >
+                    <Plus size={18} />
+                  </button>
                 </div>
+              </div>
+              <div className="space-y-2">
+                <label className={labelClass}>Categoria do Produto</label>
+                <select className={inputClass} value={form.category} onChange={e => setForm({...form, category: e.target.value})}>
+                  {Object.entries(CATEGORY_LABELS).map(([k, v]) => <option key={k} value={k}>{v.label}</option>)}
+                </select>
+              </div>
+            </div>
 
-                <div className="space-y-1.5">
-                   <label className={labelClass}>Nome Comercial do Produto</label>
-                   <input required className={inputClass} value={form.name} onChange={e => setForm({...form, name: e.target.value})} placeholder="Ex: Álbum 15x21 - Capa Linho" />
-                </div>
+            <div className="space-y-2">
+              <label className={labelClass}>Nome Comercial do Item</label>
+              <input required className={inputClass} value={form.name} onChange={e => setForm({...form, name: e.target.value})} placeholder="Ex: Álbum 15x21 - Capa Linho" />
+            </div>
 
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                   <div className="space-y-1.5">
-                      <label className={labelClass}>SKU / ID Único</label>
-                      <input required className={inputClass} value={form.sku} onChange={e => setForm({...form, sku: e.target.value})} placeholder="ALB-UNIQ-001" />
-                   </div>
-                   <div className="space-y-1.5">
-                      <label className={labelClass}>Unidade de Medida</label>
-                      <input className={inputClass} value={form.unit} onChange={e => setForm({...form, unit: e.target.value})} placeholder="un, cópia, lâmina..." />
-                   </div>
-                </div>
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+              <div className="space-y-2">
+                <label className={labelClass}>SKU / ID Interno</label>
+                <input required className={inputClass} value={form.sku} onChange={e => setForm({...form, sku: e.target.value})} placeholder="ALB-UNIQ-001" />
+              </div>
+              <div className="space-y-2">
+                <label className={labelClass}>Unidade de Medida</label>
+                <input className={inputClass} value={form.unit} onChange={e => setForm({...form, unit: e.target.value})} placeholder="un, cópia, lâmina..." />
+              </div>
+            </div>
 
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-6 pt-4 border-t border-theme-border/20">
-                   <div className="space-y-1.5">
-                      <label className={labelClass}>Custo Fornecedor (R$)</label>
-                      <input required type="number" step="0.01" className={inputClass} value={form.supplierCost} onChange={e => setForm({...form, supplierCost: e.target.value})} placeholder="0,00" />
-                   </div>
-                   <div className="space-y-1.5">
-                      <label className={labelClass}>Margem Padrão (%)</label>
-                      <input type="number" className={inputClass} value={form.marginPct} onChange={e => setForm({...form, marginPct: e.target.value})} />
-                   </div>
-                </div>
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-6 pt-6 border-t border-theme-border/20">
+              <div className="space-y-2">
+                <label className={labelClass}>Custo Fornecedor (R$)</label>
+                <input required type="number" step="0.01" className={inputClass} value={form.supplierCost} onChange={e => setForm({...form, supplierCost: e.target.value})} placeholder="0,00" />
+              </div>
+              <div className="space-y-2">
+                <label className={labelClass}>Margem Desejada (%)</label>
+                <input type="number" className={inputClass} value={form.marginPct} onChange={e => setForm({...form, marginPct: e.target.value})} />
+              </div>
+            </div>
+          </form>
 
-                <div className="flex gap-4 pt-6">
-                   <button type="button" onClick={onClose} className="flex-1 py-4 border border-theme-border text-[9px] font-black uppercase tracking-widest text-theme-muted hover:text-white transition-all">Cancelar</button>
-                   <button type="submit" disabled={loading} className="flex-1 py-4 bg-brand-tactical text-zinc-950 text-[9px] font-black uppercase tracking-[0.4em] shadow-xl hover:brightness-110 transition-all flex items-center justify-center gap-2">
-                      <Target size={12} /> {loading ? "Sincronizando..." : "Confirmar Cadastro"}
-                   </button>
-                </div>
-             </form>
+          {/* Footer */}
+          <div className="p-8 md:p-10 bg-theme-bg-muted/50 border-t border-theme-border flex gap-4 shrink-0">
+            <button type="button" onClick={onClose} className="flex-1 py-5 border border-theme-border text-[11px] font-black uppercase tracking-[0.3em] text-theme-muted hover:text-white transition-all rounded-[20px] italic">Cancelar</button>
+            <button 
+              type="button" 
+              onClick={(e) => handleSubmit(e as React.FormEvent)}
+              disabled={loading} 
+              className="flex-[2] py-5 bg-brand-tactical text-zinc-950 text-[11px] font-black uppercase tracking-[0.3em] shadow-2xl shadow-brand-tactical/20 hover:brightness-110 transition-all rounded-[20px] italic flex items-center justify-center gap-4"
+            >
+              {loading ? "Sincronizando..." : "Confirmar e Cadastrar"}
+              <ArrowRight size={18} strokeWidth={1.5} />
+            </button>
           </div>
        </div>
     </div>

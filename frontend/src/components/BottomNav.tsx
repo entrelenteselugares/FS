@@ -21,7 +21,7 @@ export const BottomNav: React.FC = () => {
         onClick={() => navigate("/")}
         className={`flex flex-col items-center gap-1 transition-colors ${isActive("/") ? "text-emerald-500" : "text-[var(--text)]/40"}`}
       >
-        <Home size={20} />
+        <Home size={20} strokeWidth={1.5} />
         <span className="text-[7.5px] font-bold uppercase tracking-tight">Home</span>
       </button>
 
@@ -32,7 +32,7 @@ export const BottomNav: React.FC = () => {
         }}
         className="flex flex-col items-center gap-1 text-[var(--text)]/40"
       >
-        <Search size={20} />
+        <Search size={20} strokeWidth={1.5} />
         <span className="text-[7.5px] font-bold uppercase tracking-tight">Buscar</span>
       </button>
 
@@ -40,7 +40,7 @@ export const BottomNav: React.FC = () => {
         onClick={() => navigate("/minha-conta")}
         className={`flex flex-col items-center gap-1 transition-colors ${isActive("/minha-conta") ? "text-emerald-500" : "text-[var(--text)]/40"}`}
       >
-        <ShoppingBag size={20} />
+        <ShoppingBag size={20} strokeWidth={1.5} />
         <span className="text-[7.5px] font-bold uppercase tracking-tight">Carrinho</span>
       </button>
 
@@ -48,7 +48,7 @@ export const BottomNav: React.FC = () => {
         onClick={() => navigate("/meus-albuns")}
         className={`flex flex-col items-center gap-1 transition-colors ${isActive("/meus-albuns") ? "text-emerald-500" : "text-[var(--text)]/40"}`}
       >
-        <Image size={20} />
+        <Image size={20} strokeWidth={1.5} />
         <span className="text-[7.5px] font-bold uppercase tracking-tight">Meus Álbuns</span>
       </button>
 
@@ -56,7 +56,7 @@ export const BottomNav: React.FC = () => {
         onClick={() => navigate(user ? dashPath : "/login")}
         className={`flex flex-col items-center gap-1 transition-colors ${isActive(dashPath) || isActive("/login") ? "text-emerald-500" : "text-[var(--text)]/40"}`}
       >
-        <Menu size={20} />
+        <Menu size={20} strokeWidth={1.5} />
         <span className="text-[7.5px] font-bold uppercase tracking-tight">Opções</span>
       </button>
     </div>

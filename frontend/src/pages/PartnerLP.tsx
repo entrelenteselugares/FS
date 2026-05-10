@@ -31,6 +31,7 @@ interface RecentEvent {
   slug: string;
   dataEvento: string;
   coverPhotoUrl: string;
+  coverPosition?: string;
 }
 
 const DAY_NAMES: Record<string, string> = {
@@ -309,6 +310,7 @@ export const PartnerLP: React.FC = () => {
                   src={evt.coverPhotoUrl || "https://images.unsplash.com/photo-1519741497674-611481863552?w=800"}
                   className="w-full h-full object-cover transition-all duration-1000 group-hover:scale-110 grayscale group-hover:grayscale-0"
                   alt={evt.nomeNoivos}
+                  style={{ objectPosition: evt.coverPosition || 'center' }}
                 />
                 <div className="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center">
                   <span className="text-theme-text text-[10px] font-black uppercase tracking-[0.5em] border border-theme-border-2 px-6 py-3 backdrop-blur-md">Ver Galeria</span>

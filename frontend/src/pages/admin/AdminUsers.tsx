@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useMemo } from "react";
 import { API } from "../../lib/api";
-import { X, UserPlus, Shield, Trash2, Edit3, Search, CheckCircle2 } from "lucide-react";
+import { X, UserPlus, Shield, Trash2, Edit3, Search, CheckCircle2, ArrowRight } from "lucide-react";
 
 interface User {
   id: string;
@@ -290,221 +290,229 @@ export const AdminUsers: React.FC = () => {
             })
           )}
         </div>
-      </div>
-
-      {/* MEMBER MODAL */}
+        {/* MEMBER MODAL */}
       {isModalOpen && (
-        <div className="fixed inset-0 z-[110] flex items-center justify-center p-4 md:p-6 bg-black/95 backdrop-blur-md animate-in fade-in duration-300">
-           <div className="absolute inset-0" onClick={() => setIsModalOpen(false)} />
-           <div className="relative border border-brand-tactical/20 rounded-[2rem] w-full max-w-xl p-6 md:p-8 space-y-8 md:space-y-10 overflow-y-auto max-h-[90vh] shadow-2xl bg-theme-bg animate-in zoom-in-95 duration-500 custom-scrollbar">
-              <div className="flex justify-between items-start">
-                 <div className="space-y-2">
-                    <span className="text-[10px] font-black text-brand-tactical uppercase tracking-[0.5em]">Protocolo Operacional</span>
-                    <h3 className="text-2xl font-heading uppercase tracking-tighter text-theme-text">{editingUser ? 'Ajustar Membro' : 'Novo Membro'}</h3>
-                 </div>
-                 <button onClick={() => setIsModalOpen(false)} className="text-zinc-500 hover:text-brand-tactical transition-colors p-2"><X size={20} /></button>
+        <div className="fixed inset-0 z-[500] flex items-center justify-center p-4">
+          <div className="absolute inset-0 bg-theme-bg/80 backdrop-blur-xl animate-in fade-in duration-300" onClick={() => setIsModalOpen(false)} />
+          
+          <div className="relative w-full max-w-2xl bg-theme-card border border-theme-border/60 rounded-[40px] overflow-hidden shadow-2xl animate-in zoom-in-95 duration-300 flex flex-col h-[90vh]">
+            {/* Header */}
+            <div className="p-8 md:p-10 border-b border-theme-border flex items-center justify-between shrink-0 bg-theme-bg-muted/30">
+              <div className="flex items-center gap-4">
+                <div className="w-12 h-12 bg-brand-tactical/10 rounded-2xl flex items-center justify-center border border-brand-tactical/20">
+                  <UserPlus className="text-brand-tactical" size={24} strokeWidth={1.5} />
+                </div>
+                <div>
+                  <h2 className="text-2xl font-black uppercase italic tracking-tighter text-theme-text">{editingUser ? 'Ajustar Membro' : 'Novo Membro'}</h2>
+                  <p className="text-[10px] font-black uppercase tracking-[0.2em] opacity-40">Protocolo Operacional de Inteligência</p>
+                </div>
               </div>
+              <button onClick={() => setIsModalOpen(false)} className="p-3 hover:bg-white/5 rounded-full transition-all text-theme-muted"><X size={24} /></button>
+            </div>
 
-              <form onSubmit={handleCreate} className="space-y-10">
-                 <div className="grid grid-cols-1 md:grid-cols-2 gap-10">
-                    <div className="space-y-2">
-                       <label className="text-[9px] font-black text-theme-muted uppercase tracking-[0.4em]">Nome de Guerra</label>
-                       <input 
-                         required value={formData.name} onChange={e => setFormData({...formData, name: e.target.value})}
-                         className="w-full bg-theme-bg-muted border border-theme-border p-4 text-[13px] text-theme-text outline-none focus:border-brand-tactical font-black transition-all"
-                       />
+            {/* Content */}
+            <form onSubmit={handleCreate} className="flex-1 overflow-y-auto p-8 md:p-10 space-y-10 custom-scrollbar bg-theme-card">
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+                <div className="space-y-6">
+                  <div className="space-y-4">
+                    <label className="text-[8px] font-black text-theme-muted uppercase tracking-widest block mb-2 opacity-60 italic">Identidade de Acesso</label>
+                    <div className="space-y-4">
+                      <div className="space-y-2">
+                        <label className="text-[7px] font-black text-theme-muted uppercase tracking-widest block mb-1 opacity-40 italic">Nome de Guerra</label>
+                        <input required className="w-full bg-theme-bg-muted border border-theme-border/60 p-4 text-[11px] text-theme-text font-black outline-none focus:border-brand-tactical rounded-xl uppercase placeholder:opacity-20" value={formData.name} onChange={e => setFormData({...formData, name: e.target.value})} placeholder="EX: JOHN DOE" />
+                      </div>
+                      <div className="space-y-2">
+                        <label className="text-[7px] font-black text-theme-muted uppercase tracking-widest block mb-1 opacity-40 italic">E-mail Corporativo</label>
+                        <input required type="email" className="w-full bg-theme-bg-muted border border-theme-border/60 p-4 text-[11px] text-theme-text font-black outline-none focus:border-brand-tactical rounded-xl placeholder:opacity-20 lowercase" value={formData.email} onChange={e => setFormData({...formData, email: e.target.value})} placeholder="email@exemplo.com" />
+                      </div>
                     </div>
-                    <div className="space-y-2">
-                       <label className="text-[9px] font-black text-theme-muted uppercase tracking-[0.4em]">E-mail de Acesso</label>
-                       <input 
-                         required type="email" value={formData.email} onChange={e => setFormData({...formData, email: e.target.value})}
-                         className="w-full bg-theme-bg-muted border border-theme-border p-4 text-[13px] text-theme-text outline-none focus:border-brand-tactical font-black transition-all"
-                       />
-                    </div>
-                    <div className="space-y-2">
-                       <label className="text-[9px] font-black text-theme-muted uppercase tracking-[0.4em]">Nova Senha {editingUser && '(Opcional)'}</label>
-                       <input 
-                         type="password" value={formData.password} onChange={e => setFormData({...formData, password: e.target.value})}
-                         className="w-full bg-theme-bg-muted border border-theme-border p-4 text-[13px] text-theme-text outline-none focus:border-brand-tactical font-black transition-all"
-                         required={!editingUser}
-                       />
-                    </div>
-                    <div className="space-y-2">
-                       <label className="text-[9px] font-black text-theme-muted uppercase tracking-[0.4em]">Função Tática</label>
-                       <select 
-                         value={formData.role} onChange={e => setFormData({...formData, role: e.target.value})}
-                         className="fs-input cursor-pointer appearance-none uppercase tracking-widest"
-                       >
+                  </div>
+                </div>
+
+                <div className="space-y-6">
+                  <div className="space-y-4">
+                    <label className="text-[8px] font-black text-theme-muted uppercase tracking-widest block mb-2 opacity-60 italic">Segurança & Função</label>
+                    <div className="space-y-4">
+                      <div className="space-y-2">
+                        <label className="text-[7px] font-black text-theme-muted uppercase tracking-widest block mb-1 opacity-40 italic">Nova Senha {editingUser && '(Opcional)'}</label>
+                        <input type="password" className="w-full bg-theme-bg-muted border border-theme-border/60 p-4 text-[11px] text-theme-text font-black outline-none focus:border-brand-tactical rounded-xl" value={formData.password} onChange={e => setFormData({...formData, password: e.target.value})} placeholder="••••••••" required={!editingUser} />
+                      </div>
+                      <div className="space-y-2">
+                        <label className="text-[7px] font-black text-theme-muted uppercase tracking-widest block mb-1 opacity-40 italic">Nível de Acesso</label>
+                        <select className="w-full bg-theme-bg-muted border border-theme-border/60 p-4 text-[11px] text-theme-text font-black outline-none focus:border-brand-tactical rounded-xl appearance-none cursor-pointer uppercase" value={formData.role} onChange={e => setFormData({...formData, role: e.target.value})}>
                           <option value="ADMIN">ADMINISTRADOR</option>
                           <option value="PROFISSIONAL">PROFISSIONAL / PARCEIRO</option>
                           <option value="CARTORIO">UNIDADE FIXA / CARTÓRIO</option>
                           <option value="CLIENTE">CLIENTE</option>
-                       </select>
+                        </select>
+                      </div>
                     </div>
-                 </div>
+                  </div>
+                </div>
+              </div>
 
-                 <div className="space-y-2">
-                    <label className="text-[9px] font-black text-theme-muted uppercase tracking-[0.4em]">Chave PIX (Financeiro)</label>
-                    <input 
-                      value={formData.pixKey} onChange={e => setFormData({...formData, pixKey: e.target.value})}
-                      className="fs-input italic"
-                      placeholder="CPF, E-mail ou Aleatória"
-                    />
-                 </div>
+              <div className="space-y-2">
+                <label className="text-[8px] font-black text-theme-muted uppercase tracking-widest block mb-2 opacity-60 italic">Chave PIX (Para Liquidações Financeiras)</label>
+                <input className="w-full bg-theme-bg-muted border border-theme-border/60 p-4 text-[11px] text-theme-text font-black outline-none focus:border-brand-tactical rounded-xl uppercase placeholder:opacity-20 italic" value={formData.pixKey} onChange={e => setFormData({...formData, pixKey: e.target.value})} placeholder="CPF, E-MAIL OU CHAVE ALEATÓRIA" />
+              </div>
 
-                 {formData.role === "PROFISSIONAL" && (
-                   <div className="space-y-10 pt-10 border-t border-theme-border/30">
-                      <div className="grid grid-cols-2 gap-10">
-                         <div className="space-y-2">
-                            <label className="text-[9px] font-black text-theme-muted uppercase tracking-[0.4em]">% Captação</label>
-                            <div className="relative">
-                               <input 
-                                 type="number" value={formData.captPct} onChange={e => setFormData({...formData, captPct: Number(e.target.value)})}
-                                 className="fs-input text-lg text-brand-tactical"
-                               />
-                               <span className="absolute right-4 top-1/2 -translate-y-1/2 text-[12px] font-black text-theme-muted opacity-40">%</span>
-                            </div>
-                         </div>
-                         <div className="space-y-2">
-                            <label className="text-[9px] font-black text-theme-muted uppercase tracking-[0.4em]">% Edição</label>
-                            <div className="relative">
-                               <input 
-                                 type="number" value={formData.editPct} onChange={e => setFormData({...formData, editPct: Number(e.target.value)})}
-                                 className="fs-input text-lg text-brand-tactical"
-                               />
-                               <span className="absolute right-4 top-1/2 -translate-y-1/2 text-[12px] font-black text-theme-muted opacity-40">%</span>
-                            </div>
-                         </div>
+              {formData.role === "PROFISSIONAL" && (
+                <div className="pt-10 border-t border-theme-border/60 space-y-10">
+                  <div className="grid grid-cols-2 gap-8">
+                    <div className="space-y-2">
+                      <label className="text-[8px] font-black text-theme-muted uppercase tracking-widest block mb-1 opacity-40 italic">% Comissão Captação</label>
+                      <div className="relative">
+                        <input type="number" className="w-full bg-theme-bg-muted border border-theme-border/60 p-4 text-xl font-black text-brand-tactical outline-none focus:border-brand-tactical rounded-xl" value={formData.captPct} onChange={e => setFormData({...formData, captPct: Number(e.target.value)})} />
+                        <span className="absolute right-4 top-1/2 -translate-y-1/2 text-xs font-black text-theme-muted opacity-40">%</span>
                       </div>
-
-                      <div className="space-y-2">
-                         <label className="text-[9px] font-black text-theme-muted uppercase tracking-[0.4em]">Equipamento Operacional</label>
-                         <textarea 
-                           value={formData.equipment} onChange={e => setFormData({...formData, equipment: e.target.value})}
-                           className="w-full bg-theme-bg-muted border border-theme-border p-4 text-[12px] text-theme-text outline-none focus:border-brand-tactical h-24 font-bold resize-none"
-                           placeholder="Câmeras, Lentes, Drones..."
-                         />
-                      </div>
-                       <div className="space-y-2">
-                          <label className="text-[9px] font-black text-theme-muted uppercase tracking-[0.4em]">Perfil de Entrega</label>
-                          <div className="grid grid-cols-2 gap-4">
-                             {['TRADICIONAL', 'MOBILE'].map(t => (
-                               <button 
-                                 key={t}
-                                 type="button"
-                                 onClick={() => {
-                                   const current = formData.workflowType;
-                                   const exists = current.includes(t);
-                                   const next = exists ? current.filter(id => id !== t) : [...current, t];
-                                   if (next.length > 0) setFormData({...formData, workflowType: next});
-                                 }}
-                                 className={`p-3 text-[9px] font-black uppercase tracking-widest border transition-all relative ${formData.workflowType.includes(t) ? 'bg-brand-tactical text-zinc-950 border-brand-tactical' : 'bg-theme-bg-muted border-theme-border text-theme-muted hover:border-brand-tactical/30'}`}
-                               >
-                                 {formData.workflowType.includes(t) && (
-                                   <div className="absolute top-1 right-1">
-                                      <CheckCircle2 size={8} />
-                                   </div>
-                                 )}
-                                 {t === 'TRADICIONAL' ? 'Câmera/PC' : 'Mobile Maker'}
-                               </button>
-                             ))}
-                          </div>
-                       </div>
                     </div>
-                 )}
-
-                  {/* ── SEÇÃO DE FRANQUIA ── */}
-                  <div className="space-y-6 pt-10 border-t border-theme-border/30">
-                    <div className="flex items-center justify-between">
-                      <div className="space-y-1">
-                        <label className="text-[9px] font-black text-theme-muted uppercase tracking-[0.4em]">Ponto de Impressão (Franquia)</label>
-                        <p className="text-[8px] text-theme-muted uppercase font-bold">Habilitar este usuário como ponto Phygital</p>
+                    <div className="space-y-2">
+                      <label className="text-[8px] font-black text-theme-muted uppercase tracking-widest block mb-1 opacity-40 italic">% Comissão Edição</label>
+                      <div className="relative">
+                        <input type="number" className="w-full bg-theme-bg-muted border border-theme-border/60 p-4 text-xl font-black text-brand-tactical outline-none focus:border-brand-tactical rounded-xl" value={formData.editPct} onChange={e => setFormData({...formData, editPct: Number(e.target.value)})} />
+                        <span className="absolute right-4 top-1/2 -translate-y-1/2 text-xs font-black text-theme-muted opacity-40">%</span>
                       </div>
-                      <button
-                        type="button"
-                        onClick={() => setFormData({...formData, isFranchise: !formData.isFranchise})}
-                        className={`w-12 h-6 rounded-full transition-all relative ${formData.isFranchise ? 'bg-brand-tactical' : 'bg-theme-border'}`}
-                      >
-                        <div className={`absolute top-1 w-4 h-4 rounded-full bg-white transition-all ${formData.isFranchise ? 'left-7' : 'left-1'}`} />
-                      </button>
                     </div>
-
-                    {formData.isFranchise && (
-                      <div className="grid grid-cols-1 md:grid-cols-2 gap-10 animate-in slide-in-from-top-2 duration-300">
-                        <div className="space-y-2">
-                           <label className="text-[9px] font-black text-theme-muted uppercase tracking-[0.4em]">Saldo de Créditos</label>
-                           <input 
-                             type="number" 
-                             value={formData.printCredits} 
-                             onChange={e => setFormData({...formData, printCredits: Number(e.target.value)})}
-                             className="fs-input text-lg text-brand-tactical"
-                           />
-                           <p className="text-[7px] text-theme-muted uppercase font-bold mt-1">Créditos de impressão disponíveis</p>
-                        </div>
-                      </div>
-                    )}
                   </div>
 
-                  {/* ── VERIFICAÇÃO PRO (FINANCEIRO) ── */}
-                  {formData.role === "PROFISSIONAL" && (
-                    <div className="space-y-6 pt-10 border-t border-theme-border/30">
-                      <div className="flex items-center justify-between">
-                        <div className="space-y-1">
-                          <label className="text-[9px] font-black text-brand-tactical uppercase tracking-[0.4em]">Status PRO (Verificado)</label>
-                          <p className="text-[8px] text-theme-muted uppercase font-bold">Habilitar repasse direto e imediato (Baixo Risco)</p>
-                        </div>
-                        <button
-                          type="button"
-                          onClick={() => setFormData({...formData, isVerified: !formData.isVerified})}
-                          className={`w-12 h-6 rounded-full transition-all relative ${formData.isVerified ? 'bg-brand-tactical' : 'bg-theme-border'}`}
-                        >
-                          <div className={`absolute top-1 w-4 h-4 rounded-full bg-white transition-all ${formData.isVerified ? 'left-7' : 'left-1'}`} />
-                        </button>
-                      </div>
-                    </div>
-                  )}
+                  <div className="space-y-2">
+                    <label className="text-[8px] font-black text-theme-muted uppercase tracking-widest block mb-2 opacity-60 italic">Ativos & Hardware de Trabalho</label>
+                    <textarea className="w-full bg-theme-bg-muted border border-theme-border/60 p-4 text-[11px] text-theme-text font-black outline-none focus:border-brand-tactical rounded-xl h-24 resize-none uppercase placeholder:opacity-20" value={formData.equipment} onChange={e => setFormData({...formData, equipment: e.target.value})} placeholder="CÂMERAS, LENTES, DRONES, ETC..." />
+                  </div>
 
-                 <div className="pt-6">
-                    <button type="submit" className="w-full bg-brand-tactical text-zinc-950 font-black uppercase tracking-[0.5em] py-5 text-[11px] shadow-lg shadow-brand-tactical/10 hover:brightness-110 transition-all">
-                       {editingUser ? 'SALVAR ALTERAÇÕES' : 'CONFIRMAR CONVOCAÇÃO'}
+                  <div className="space-y-4">
+                    <label className="text-[8px] font-black text-theme-muted uppercase tracking-widest block mb-2 opacity-60 italic">Perfil de Workflow (Entrega)</label>
+                    <div className="grid grid-cols-2 gap-4">
+                      {['TRADICIONAL', 'MOBILE'].map(t => (
+                        <button 
+                          key={t}
+                          type="button"
+                          onClick={() => {
+                            const current = formData.workflowType;
+                            const exists = current.includes(t);
+                            const next = exists ? current.filter(id => id !== t) : [...current, t];
+                            if (next.length > 0) setFormData({...formData, workflowType: next});
+                          }}
+                          className={`p-4 text-[10px] font-black uppercase tracking-[0.2em] border transition-all rounded-2xl relative italic ${formData.workflowType.includes(t) ? 'bg-brand-tactical text-zinc-950 border-brand-tactical shadow-lg shadow-brand-tactical/20' : 'bg-theme-bg-muted border-theme-border text-theme-muted hover:border-brand-tactical/30'}`}
+                        >
+                          {formData.workflowType.includes(t) && <CheckCircle2 className="absolute top-2 right-2" size={12} />}
+                          {t === 'TRADICIONAL' ? 'Câmera / Desktop' : 'Mobile Maker (App)'}
+                        </button>
+                      ))}
+                    </div>
+                  </div>
+                </div>
+              )}
+
+              {/* ── SEÇÃO DE FRANQUIA ── */}
+              <div className="pt-10 border-t border-theme-border/60 space-y-6">
+                <div className="flex items-center justify-between bg-theme-bg-muted/30 p-6 rounded-[30px] border border-theme-border/40">
+                  <div className="space-y-1">
+                    <label className="text-[10px] font-black text-theme-text uppercase tracking-widest italic">Ponto de Impressão (Phygital)</label>
+                    <p className="text-[8px] text-theme-muted uppercase font-bold opacity-40">Habilitar este usuário como franqueado phygital ativo</p>
+                  </div>
+                  <button
+                    type="button"
+                    onClick={() => setFormData({...formData, isFranchise: !formData.isFranchise})}
+                    className={`w-14 h-7 rounded-full transition-all relative ${formData.isFranchise ? 'bg-brand-tactical shadow-lg shadow-brand-tactical/30' : 'bg-theme-border'}`}
+                  >
+                    <div className={`absolute top-1 w-5 h-5 rounded-full bg-white transition-all ${formData.isFranchise ? 'left-8' : 'left-1'}`} />
+                  </button>
+                </div>
+
+                {formData.isFranchise && (
+                  <div className="p-6 bg-brand-tactical/5 border border-brand-tactical/20 rounded-[30px] animate-in slide-in-from-top-4 duration-300">
+                    <div className="flex items-center justify-between">
+                      <div className="space-y-1">
+                        <label className="text-[8px] font-black text-brand-tactical uppercase tracking-widest italic">Saldo de Créditos de Impressão</label>
+                        <p className="text-[7px] text-theme-muted uppercase font-bold opacity-40 italic">Limite operacional de revelações automáticas</p>
+                      </div>
+                      <input 
+                        type="number" 
+                        className="bg-transparent border-b border-brand-tactical/40 w-32 text-2xl font-black text-brand-tactical text-right focus:border-brand-tactical outline-none italic"
+                        value={formData.printCredits} 
+                        onChange={e => setFormData({...formData, printCredits: Number(e.target.value)})}
+                      />
+                    </div>
+                  </div>
+                )}
+              </div>
+
+              {/* ── VERIFICAÇÃO PRO ── */}
+              {formData.role === "PROFISSIONAL" && (
+                <div className="pt-6">
+                  <div className="flex items-center justify-between bg-brand-tactical/5 p-6 rounded-[30px] border border-brand-tactical/20">
+                    <div className="space-y-1">
+                      <label className="text-[10px] font-black text-brand-tactical uppercase tracking-widest italic">Verificação Elite (PRO)</label>
+                      <p className="text-[8px] text-theme-muted uppercase font-bold opacity-40 italic">Habilitar repasse financeiro imediato (F-09 Protocol)</p>
+                    </div>
+                    <button
+                      type="button"
+                      onClick={() => setFormData({...formData, isVerified: !formData.isVerified})}
+                      className={`w-14 h-7 rounded-full transition-all relative ${formData.isVerified ? 'bg-brand-tactical shadow-lg shadow-brand-tactical/30' : 'bg-theme-border'}`}
+                    >
+                      <div className={`absolute top-1 w-5 h-5 rounded-full bg-white transition-all ${formData.isVerified ? 'left-8' : 'left-1'}`} />
                     </button>
-                 </div>
-              </form>
-           </div>
+                  </div>
+                </div>
+              )}
+            </form>
+
+            {/* Footer */}
+            <div className="p-8 md:p-10 bg-theme-bg-muted/50 border-t border-theme-border flex gap-4 shrink-0">
+              <button type="button" onClick={() => setIsModalOpen(false)} className="flex-1 py-5 border border-theme-border text-[11px] font-black uppercase tracking-[0.3em] text-theme-muted hover:text-white transition-all rounded-[20px] italic">Cancelar</button>
+              <button 
+                type="submit" 
+                onClick={handleCreate}
+                className="flex-[2] py-5 bg-brand-tactical text-zinc-950 text-[11px] font-black uppercase tracking-[0.3em] shadow-2xl shadow-brand-tactical/20 hover:brightness-110 transition-all rounded-[20px] italic flex items-center justify-center gap-4"
+              >
+                {editingUser ? 'Salvar Membro' : 'Confirmar Convocação'}
+                <ArrowRight size={18} strokeWidth={1.5} />
+              </button>
+            </div>
+          </div>
         </div>
       )}
 
       {/* CONFIRM DELETE MODAL */}
       {confirmDelete && (
-        <div className="fixed inset-0 z-[120] flex items-center justify-center p-6 bg-zinc-950/60 backdrop-blur-md animate-in fade-in duration-300">
-           <div className="absolute inset-0" onClick={() => setConfirmDelete(null)} />
-           <div className="relative border border-red-900/30 w-full max-w-sm p-10 space-y-10 shadow-2xl bg-theme-bg animate-in zoom-in-95 duration-500">
-              <div className="space-y-3">
-                 <span className="text-[10px] font-black text-red-500 uppercase tracking-[0.5em]">Protocolo de Exclusão</span>
-                 <h3 className="text-2xl font-heading uppercase tracking-tighter text-theme-text">Banir Membro?</h3>
+        <div className="fixed inset-0 z-[600] flex items-center justify-center p-4">
+          <div className="absolute inset-0 bg-red-950/40 backdrop-blur-xl animate-in fade-in duration-300" onClick={() => setConfirmDelete(null)} />
+          
+          <div className="relative w-full max-w-md bg-theme-card border border-red-500/20 rounded-[40px] overflow-hidden shadow-2xl animate-in zoom-in-95 duration-300">
+            <div className="p-10 space-y-8 text-center">
+              <div className="w-20 h-20 bg-red-500/10 rounded-[30px] flex items-center justify-center border border-red-500/20 mx-auto mb-6">
+                <Trash2 className="text-red-500" size={32} strokeWidth={1.5} />
               </div>
               
-              <p className="text-[11px] uppercase tracking-widest leading-relaxed text-theme-muted">
-                ESTA AÇÃO IRÁ REVOGAR O ACESSO DE <span className="text-theme-text font-black">{confirmDelete.nome}</span> IMEDIATAMENTE.
+              <div className="space-y-2">
+                <h3 className="text-2xl font-black uppercase tracking-tighter text-theme-text italic">Banir Membro?</h3>
+                <p className="text-[10px] font-black text-red-500 uppercase tracking-[0.4em] italic opacity-60">Protocolo de Exclusão Irreversível</p>
+              </div>
+              
+              <p className="text-[11px] uppercase tracking-[0.2em] leading-relaxed text-theme-muted italic">
+                ESTA AÇÃO IRÁ REVOGAR O ACESSO DE <span className="text-theme-text font-black">{confirmDelete.nome}</span> IMEDIATAMENTE DE TODAS AS OPERAÇÕES.
               </p>
 
-              <div className="grid grid-cols-2 gap-6">
-                 <button 
-                   onClick={() => setConfirmDelete(null)}
-                   className="p-4 border border-theme-border text-theme-muted text-[10px] font-black uppercase tracking-widest hover:text-white transition-all"
-                 >
-                   CANCELAR
-                 </button>
-                 <button 
-                   onClick={() => handleDelete(confirmDelete.id)}
-                   className="p-4 bg-red-900 text-white text-[10px] font-black uppercase tracking-widest hover:brightness-110 shadow-lg shadow-red-900/20"
-                 >
-                   BANIR
-                 </button>
+              <div className="grid grid-cols-1 gap-4 pt-4">
+                <button 
+                  onClick={() => handleDelete(confirmDelete.id)}
+                  className="w-full py-5 bg-red-600 text-white text-[11px] font-black uppercase tracking-[0.4em] hover:bg-red-700 transition-all rounded-[20px] italic shadow-lg shadow-red-600/20"
+                >
+                  BANIR AGORA
+                </button>
+                <button 
+                  onClick={() => setConfirmDelete(null)}
+                  className="w-full py-5 border border-theme-border text-theme-muted text-[11px] font-black uppercase tracking-[0.4em] hover:text-white transition-all rounded-[20px] italic"
+                >
+                  ABORTAR MISSÃO
+                </button>
               </div>
-           </div>
+            </div>
+          </div>
         </div>
       )}
+
 
       {/* NOTIFICATION */}
       {notification && (

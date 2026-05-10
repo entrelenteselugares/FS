@@ -46,9 +46,9 @@ export const AdminOverview: React.FC<OverviewProps> = ({ stats, recentOrders = [
 
 
   return (
-    <div className="space-y-12 animate-in fade-in slide-in-from-bottom-4 duration-700 relative">
+    <div className="space-y-12 relative overflow-hidden">
       {/* Ambient Glow */}
-      <div className="absolute top-0 right-0 w-[600px] h-[600px] bg-brand-tactical/5 blur-[150px] rounded-full -mr-64 -mt-64 opacity-20 pointer-events-none" />
+      <div className="absolute top-0 right-0 -mr-32 -mt-32 w-96 h-96 bg-brand-tactical/5 blur-[120px] rounded-full pointer-events-none" />
 
       <div className="flex flex-col md:flex-row md:items-center justify-between border-b border-theme-border pb-10 gap-6">
         <div className="space-y-4">

@@ -34,6 +34,7 @@ export async function getMeusEventos(req: AuthRequest, res: Response): Promise<v
         lightroomUrl: true,
         driveUrl: true,
         temFotoImpressa: true,
+        coverPosition: true,
         captacaoId: true,
         captacaoStatus: true,
         edicaoId: true,
@@ -53,7 +54,7 @@ export async function getMeusEventos(req: AuthRequest, res: Response): Promise<v
 // PATCH /api/profissional/events/:id/links — atualiza lightroomUrl e driveUrl
 export async function updateEventLinks(req: AuthRequest, res: Response): Promise<void> {
   const { id } = req.params;
-  const { lightroomUrl, driveUrl, dataEvento } = req.body;
+  const { lightroomUrl, driveUrl, dataEvento, coverPosition } = req.body;
   const userId = req.user?.userId;
   if (!userId) { res.status(401).json({ error: "Não autenticado." }); return; }
 
@@ -82,6 +83,7 @@ export async function updateEventLinks(req: AuthRequest, res: Response): Promise
         ...(lightroomUrl !== undefined && { lightroomUrl: String(lightroomUrl) || null }),
         ...(driveUrl !== undefined && { driveUrl: String(driveUrl) || null }),
         ...(dataEvento !== undefined && { dataEvento: dataEvento ? new Date(dataEvento) : { set: new Date() } }),
+        ...(coverPosition !== undefined && { coverPosition: String(coverPosition) || "center" }),
       },
     });
 
@@ -245,11 +247,6 @@ export async function getProfile(req: AuthRequest, res: Response): Promise<void>
       }
     });
 
-    if (!profile) {
-      res.status(404).json({ error: "Perfil profissional não encontrado." });
-      return;
-    }
-
     res.json({
       ...profile,
       pixKey: profile.user?.pixKey,
@@ -257,7 +254,7 @@ export async function getProfile(req: AuthRequest, res: Response): Promise<void>
         totalEarnings: totalEstimated, // Mostra o total real acumulado
         monthEarnings: monthEstimated, // Mostra o acumulado do mês
         completedEvents,
-        agilityPoints: profile.agilityPoints || 0
+        agilityPoints: profile?.agilityPoints || 0
       }
     });
   } catch (err) {

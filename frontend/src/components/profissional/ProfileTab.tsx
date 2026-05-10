@@ -60,7 +60,7 @@ export function ProfileTab({ profile, onUpdated, onNotify }: ProfileTabProps) {
   const totalPatrimony = (formData.equipmentList || []).reduce((acc, curr) => acc + (curr.value || 0), 0);
 
   return (
-    <div className="space-y-12 animate-in fade-in duration-500">
+    <div className="space-y-12">
       {/* Header Section */}
       <div>
         <h2 className="text-3xl font-black text-theme-text uppercase tracking-tighter">Meu Perfil</h2>

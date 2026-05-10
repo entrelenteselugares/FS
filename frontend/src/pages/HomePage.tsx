@@ -21,6 +21,7 @@ interface Event {
   temVideo: boolean;
   temReels: boolean;
   type?: string;
+  coverPosition?: string | null;
 }
 
 function formatDate(d: string) {
@@ -55,6 +56,7 @@ function EventCard({ event, onClick }: { event: Event; onClick: () => void }) {
         src={event.coverPhotoUrl || fallback}
         alt={event.nomeNoivos}
         className="absolute inset-0 w-full h-full object-cover transition-transform duration-700 md:group-hover:scale-110"
+        style={{ objectPosition: event.coverPosition || 'center' }}
         onError={e => { e.currentTarget.src = fallback; }}
       />
 

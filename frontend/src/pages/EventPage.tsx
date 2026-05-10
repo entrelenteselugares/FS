@@ -14,6 +14,7 @@ import { Navbar } from "../components/Navbar";
 import { PrintStoreModal } from "../components/PrintStoreModal";
 import { PrintCatalog } from "../components/PrintCatalog";
 import { motion, AnimatePresence } from "framer-motion";
+import { EventEditPanel } from "../components/profissional/EventEditPanel";
 
 const formatDate = (date: string | null | undefined) => {
   if (!date) return "Em breve";
@@ -46,6 +47,7 @@ interface EventData {
   city?: string | null;
   description?: string | null;
   coverPhotoUrl: string | null;
+  coverPosition?: string | null;
   priceBase: number;
   temFoto?: boolean;
   temVideo?: boolean;
@@ -187,6 +189,7 @@ export default function EventPage() {
   const [showLiveOps, setShowLiveOps] = useState(true);
   const [showPhygital, setShowPhygital] = useState(true);
   const [filterMode, setFilterMode] = useState<"ALL" | "PRO" | "GUEST">("ALL");
+  const [isEditingEvent, setIsEditingEvent] = useState(false);
 
   const eventStatus = useEventStatus(event?.dataEvento, null, 2, event?.isExpired, event?.active);
 
@@ -448,6 +451,7 @@ return (
                     src={event.coverPhotoUrl.toString().trim().replace(/\s/g, '')} 
                     alt="" 
                     className="w-full h-full object-cover opacity-40 blur-sm scale-110"
+                    style={{ objectPosition: event.coverPosition || 'center' }}
                   />
                 ) : (
                   <div className="w-full h-full bg-gradient-to-br from-brand-tactical/20 via-theme-bg-muted to-theme-bg" />
@@ -882,11 +886,10 @@ return (
                     >
                       <QrCode size={16} /> {isEventOver ? 'CAPTURAS ENCERRADAS' : 'QR CODE DE CAPTURA'}
                     </button>
-                    {(user?.role === 'ADMIN' || user?.role === 'PROFISSIONAL' || user?.role === 'FRANCHISEE') && (
+                    {(user?.role === 'ADMIN' || user?.role === 'PROFISSIONAL' || user?.role === 'FRANCHISEE' || user?.role === 'CARTORIO' || user?.role === 'UNIDADE') && (
                       <button 
                         onClick={() => {
-                          const route = user?.role === 'ADMIN' ? '/admin' : '/profissional';
-                          navigate(route, { state: { editEventId: event.id } });
+                          setIsEditingEvent(true);
                         }}
                         className="w-full py-4 border border-theme-border/60 text-theme-text-muted text-[10px] font-black uppercase tracking-widest hover:text-theme-text hover:border-theme-border hover:bg-theme-bg-muted transition-all italic flex items-center justify-center gap-3"
                       >
@@ -1072,6 +1075,14 @@ return (
           </div>
         </div>
       </Modal>
+      {isEditingEvent && event && (
+        <EventEditPanel 
+          event={event as any}
+          onUpdated={(u) => setEvent(prev => prev ? { ...prev, ...u } : null)}
+          onClose={() => setIsEditingEvent(false)}
+          onNotify={(msg) => alert(msg)}
+        />
+      )}
     </div>
   );
 

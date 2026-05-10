@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { API } from "../../lib/api";
-import { Users, Plus, TrendingUp, MousePointer2, Award, Search, X } from "lucide-react";
+import { Users, Plus, TrendingUp, MousePointer2, Award, Search, X, ArrowRight } from "lucide-react";
 
 interface Campaign {
   id: string;
@@ -52,7 +52,7 @@ export const AdminAmbassadors: React.FC = () => {
       await API.post("/admin/ambassador/campaigns", formData);
       setIsModalOpen(false);
       fetchCampaigns();
-    } catch (err) {
+    } catch {
       alert("Erro ao criar campanha.");
     }
   };
@@ -174,44 +174,55 @@ export const AdminAmbassadors: React.FC = () => {
 
       {/* Modal */}
       {isModalOpen && (
-        <div className="fixed inset-0 z-[1000] flex items-center justify-center p-6">
-          <div className="absolute inset-0 bg-black/80 backdrop-blur-md" onClick={() => setIsModalOpen(false)} />
-          <div className="relative w-full max-w-lg bg-theme-card border border-theme-border p-10 space-y-8 animate-in zoom-in-95 duration-300">
-            <div className="flex justify-between items-center">
-              <h2 className="text-2xl font-black italic uppercase text-theme-text">Nova Campanha</h2>
-              <button onClick={() => setIsModalOpen(false)} className="text-theme-muted hover:text-theme-text"><X /></button>
+        <div className="fixed inset-0 z-[1000] flex items-center justify-center p-4">
+          <div className="absolute inset-0 bg-theme-bg/80 backdrop-blur-xl animate-in fade-in duration-300" onClick={() => setIsModalOpen(false)} />
+          
+          <div className="relative w-full max-w-lg bg-theme-card border border-theme-border/60 rounded-[40px] overflow-hidden shadow-2xl animate-in zoom-in-95 duration-300 flex flex-col h-[85vh]">
+            {/* Header */}
+            <div className="p-8 md:p-10 border-b border-theme-border flex items-center justify-between shrink-0">
+              <div className="flex items-center gap-4">
+                <div className="w-12 h-12 bg-brand-tactical/10 rounded-2xl flex items-center justify-center border border-brand-tactical/20">
+                  <Award className="text-brand-tactical" size={24} strokeWidth={1.5} />
+                </div>
+                <div>
+                  <h2 className="text-2xl font-black uppercase italic tracking-tighter text-theme-text">Nova Campanha</h2>
+                  <p className="text-[10px] font-black uppercase tracking-[0.2em] opacity-40">Engenharia de Escala e Referral</p>
+                </div>
+              </div>
+              <button onClick={() => setIsModalOpen(false)} className="p-3 hover:bg-white/5 rounded-full transition-all text-theme-muted"><X size={24} /></button>
             </div>
 
-            <form onSubmit={handleCreate} className="space-y-6">
+            {/* Content */}
+            <form onSubmit={handleCreate} className="flex-1 overflow-y-auto p-8 md:p-10 space-y-8 custom-scrollbar">
               <div className="space-y-2">
-                <label className="text-[9px] font-black uppercase tracking-widest text-theme-subtle">Nome da Campanha</label>
+                <label className="text-[8px] font-black text-theme-muted uppercase tracking-widest block mb-2 opacity-60 italic">Nome da Campanha</label>
                 <input 
                   type="text" required
                   value={formData.name}
                   onChange={e => setFormData({...formData, name: e.target.value})}
-                  className="w-full bg-theme-bg border border-theme-border text-theme-text p-4 text-sm outline-none focus:border-brand-tactical/50"
+                  className="w-full bg-theme-bg-muted border border-theme-border/60 p-4 text-[10px] text-theme-text font-black outline-none focus:border-brand-tactical rounded-xl uppercase"
                   placeholder="Ex: Verão 2026"
                 />
               </div>
 
               <div className="space-y-2">
-                <label className="text-[9px] font-black uppercase tracking-widest text-theme-subtle">Slug URL</label>
+                <label className="text-[8px] font-black text-theme-muted uppercase tracking-widest block mb-2 opacity-60 italic">Slug URL</label>
                 <input 
                   type="text" required
                   value={formData.slug}
                   onChange={e => setFormData({...formData, slug: e.target.value.toLowerCase().replace(/\s/g, '-')})}
-                  className="w-full bg-theme-bg border border-theme-border text-theme-text p-4 text-sm font-mono outline-none focus:border-brand-tactical/50"
+                  className="w-full bg-theme-bg-muted border border-theme-border/60 p-4 text-[10px] text-theme-text font-mono outline-none focus:border-brand-tactical rounded-xl"
                   placeholder="verao-26"
                 />
               </div>
 
               <div className="space-y-2">
-                <label className="text-[9px] font-black uppercase tracking-widest text-theme-subtle">Embaixador Responsável</label>
+                <label className="text-[8px] font-black text-theme-muted uppercase tracking-widest block mb-2 opacity-60 italic">Embaixador Responsável</label>
                 <select 
                   required
                   value={formData.ownerId}
                   onChange={e => setFormData({...formData, ownerId: e.target.value})}
-                  className="w-full bg-theme-bg border border-theme-border text-theme-text p-4 text-sm outline-none focus:border-brand-tactical/50"
+                  className="w-full bg-theme-bg-muted border border-theme-border/60 p-4 text-[10px] text-theme-text font-black outline-none focus:border-brand-tactical rounded-xl cursor-pointer"
                 >
                   <option value="">Selecione um usuário...</option>
                   {users.map(u => (
@@ -220,36 +231,42 @@ export const AdminAmbassadors: React.FC = () => {
                 </select>
               </div>
 
-              <div className="grid grid-cols-2 gap-4">
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                 <div className="space-y-2">
-                  <label className="text-[9px] font-black uppercase tracking-widest text-theme-subtle">Tipo de Recompensa</label>
+                  <label className="text-[8px] font-black text-theme-muted uppercase tracking-widest block mb-2 opacity-60 italic">Tipo de Recompensa</label>
                   <select 
                     value={formData.rewardType}
                     onChange={e => setFormData({...formData, rewardType: e.target.value})}
-                    className="w-full bg-theme-bg border border-theme-border text-theme-text p-4 text-sm outline-none focus:border-brand-tactical/50"
+                    className="w-full bg-theme-bg-muted border border-theme-border/60 p-4 text-[10px] text-theme-text font-black outline-none focus:border-brand-tactical rounded-xl cursor-pointer"
                   >
                     <option value="CREDIT">Crédito (Loja)</option>
                     <option value="CASH">Dinheiro (PIX)</option>
                   </select>
                 </div>
                 <div className="space-y-2">
-                  <label className="text-[9px] font-black uppercase tracking-widest text-theme-subtle">Valor (R$)</label>
+                  <label className="text-[8px] font-black text-theme-muted uppercase tracking-widest block mb-2 opacity-60 italic">Valor (R$)</label>
                   <input 
                     type="number" required
                     value={formData.rewardValue}
                     onChange={e => setFormData({...formData, rewardValue: Number(e.target.value)})}
-                    className="w-full bg-theme-bg border border-theme-border text-theme-text p-4 text-sm outline-none focus:border-brand-tactical/50"
+                    className="w-full bg-theme-bg-muted border border-theme-border/60 p-4 text-[10px] text-brand-tactical font-black outline-none focus:border-brand-tactical rounded-xl"
                   />
                 </div>
               </div>
+            </form>
 
+            {/* Footer */}
+            <div className="p-8 md:p-10 bg-theme-bg-muted/50 border-t border-theme-border flex gap-4 shrink-0">
+              <button type="button" onClick={() => setIsModalOpen(false)} className="flex-1 py-5 border border-theme-border text-[11px] font-black uppercase tracking-[0.3em] text-theme-muted hover:text-white transition-all rounded-[20px] italic">Cancelar</button>
               <button 
                 type="submit"
-                className="w-full py-5 bg-brand-tactical text-black text-[10px] font-black uppercase tracking-[0.4em] hover:bg-white transition-all italic"
+                onClick={handleCreate}
+                className="flex-[2] py-5 bg-brand-tactical text-zinc-950 text-[11px] font-black uppercase tracking-[0.3em] shadow-2xl shadow-brand-tactical/20 hover:brightness-110 transition-all rounded-[20px] italic flex items-center justify-center gap-4"
               >
                 Ativar Campanha
+                <ArrowRight size={18} strokeWidth={1.5} />
               </button>
-            </form>
+            </div>
           </div>
         </div>
       )}

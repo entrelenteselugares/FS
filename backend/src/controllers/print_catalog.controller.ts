@@ -152,6 +152,8 @@ export async function updatePrintProduct(req: AuthRequest, res: Response): Promi
         ...(req.body.maxPhotos !== undefined && {
           maxPhotos: req.body.maxPhotos === null || req.body.maxPhotos === "" ? null : Number(req.body.maxPhotos),
         }),
+        ...(req.body.stockType !== undefined && { stockType: req.body.stockType }),
+        ...(req.body.externalLink !== undefined && { externalLink: req.body.externalLink || null }),
       },
     });
 
@@ -206,6 +208,8 @@ export async function createPrintProduct(req: AuthRequest, res: Response): Promi
         minQty: minQty ? Number(minQty) : null,
         maxQty: maxQty ? Number(maxQty) : null,
         maxPhotos: maxPhotos ? Number(maxPhotos) : null,
+        stockType: req.body.stockType || "PROPRIO",
+        externalLink: req.body.externalLink || null,
       }
     });
 

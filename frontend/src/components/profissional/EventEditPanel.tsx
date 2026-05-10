@@ -1,5 +1,7 @@
-import { useState } from "react";
-import { Check, X, Award, Share2 } from "lucide-react";
+import { useState, useEffect } from "react";
+import { createPortal } from "react-dom";
+import { Check, X, Award, Share2, Settings, ArrowRight } from "lucide-react";
+import { T } from "../../lib/theme";
 import { API } from "../../lib/api";
 import type { EventItem } from "./types";
 import { CoverPhotoInput } from "./CoverPhotoInput";
@@ -15,6 +17,7 @@ export function EventEditPanel({ event, onUpdated, onClose, onNotify }: EventEdi
   const [lrUrl, setLrUrl] = useState(event.lightroomUrl ?? "");
   const [drUrl, setDrUrl] = useState(event.driveUrl ?? "");
   const [date, setDate] = useState(event.dataEvento ? new Date(event.dataEvento).toISOString().split('T')[0] : "");
+  const [coverPos, setCoverPos] = useState(event.coverPosition ?? "center");
   const [saving, setSaving] = useState(false);
   const [copied, setCopied] = useState(false);
 
@@ -33,6 +36,7 @@ export function EventEditPanel({ event, onUpdated, onClose, onNotify }: EventEdi
         lightroomUrl: lrUrl || null,
         driveUrl: drUrl || null,
         dataEvento: date,
+        coverPosition: coverPos,
       });
       onUpdated(data);
       onNotify?.("Evento atualizado com sucesso!", "success");
@@ -45,26 +49,38 @@ export function EventEditPanel({ event, onUpdated, onClose, onNotify }: EventEdi
     }
   };
 
-  return (
-    <div className="fixed inset-0 z-[7000] flex items-center justify-center p-4 backdrop-blur-xl bg-black/40 animate-in fade-in duration-300">
-      <div className="w-full max-w-xl bg-theme-bg border border-theme-border shadow-[0_0_100px_rgba(0,0,0,0.1)] relative overflow-hidden">
-        <div className="absolute top-0 left-0 w-full h-[2px] bg-gradient-to-r from-transparent via-brand-tactical/50 to-transparent" />
+  useEffect(() => {
+    document.body.style.overflow = 'hidden';
+    return () => { document.body.style.overflow = 'auto'; };
+  }, []);
 
-        <div className="p-8 md:p-12 space-y-10 relative z-10">
-          <div className="flex justify-between items-start">
-            <div className="space-y-1">
-              <div className="text-[10px] font-black text-brand-tactical uppercase tracking-[0.4em] italic mb-2">
-                Painel de Entrega Técnica
-              </div>
-              <h3 className="text-2xl font-heading font-black text-theme-text uppercase italic leading-none">
-                {event.nomeNoivos}
-              </h3>
+  return createPortal(
+    <div className="fixed inset-0 z-[9999] flex items-center justify-center p-4">
+      <div 
+        className="fixed inset-0 bg-theme-bg/80 backdrop-blur-xl animate-in fade-in duration-300 dark:bg-black/95" 
+        onClick={onClose} 
+      />
+      
+      <div className="relative w-full max-w-2xl h-[90vh] flex flex-col border border-theme-border/60 rounded-[40px] overflow-hidden shadow-2xl z-[10000] bg-theme-card">
+        
+        {/* Header */}
+        <div className="p-8 md:p-10 border-b flex items-center justify-between shrink-0" style={{ borderColor: T.border }}>
+          <div className="flex items-center gap-4">
+            <div className="w-12 h-12 bg-brand-tactical/10 rounded-2xl flex items-center justify-center border border-brand-tactical/20">
+              <Settings className="text-brand-tactical" size={24} />
             </div>
-            <button onClick={onClose} className="p-2 hover:bg-theme-bg-muted text-theme-muted hover:text-brand-tactical transition-all">
-              <X size={24} />
-            </button>
+            <div>
+              <p className="text-[10px] font-black uppercase tracking-[0.2em] opacity-40">Painel de Entrega Técnica</p>
+              <h2 className="text-2xl font-black uppercase italic tracking-tighter" style={{ color: T.text }}>{event.nomeNoivos}</h2>
+            </div>
           </div>
+          <button onClick={onClose} className="p-3 hover:bg-white/5 rounded-full transition-all active:scale-90" style={{ color: T.text2 }}>
+            <X size={24} />
+          </button>
+        </div>
 
+        {/* Content */}
+        <div className="flex-1 overflow-y-auto p-8 md:p-10 space-y-10 custom-scrollbar">
           <div className="space-y-8">
             <div className="space-y-3">
               <div className="flex justify-between items-center">
@@ -79,7 +95,7 @@ export function EventEditPanel({ event, onUpdated, onClose, onNotify }: EventEdi
                 placeholder="https://adobe.ly/..."
                 value={lrUrl}
                 onChange={(e) => setLrUrl(e.target.value)}
-                className="w-full bg-theme-bg-muted border border-theme-border p-5 text-theme-text outline-none focus:border-brand-tactical/50 transition-all text-xs font-medium"
+                className="w-full bg-theme-bg-muted border border-theme-border/40 p-5 text-theme-text outline-none focus:border-brand-tactical/50 transition-all text-xs font-black uppercase rounded-2xl"
               />
             </div>
 
@@ -91,7 +107,7 @@ export function EventEditPanel({ event, onUpdated, onClose, onNotify }: EventEdi
                 type="date"
                 value={date}
                 onChange={(e) => setDate(e.target.value)}
-                className="w-full bg-theme-bg-muted border border-theme-border p-5 text-theme-text outline-none focus:border-brand-tactical/50 transition-all text-xs font-medium"
+                className="w-full bg-theme-bg-muted border border-theme-border/40 p-5 text-theme-text outline-none focus:border-brand-tactical/50 transition-all text-xs font-black uppercase rounded-2xl"
               />
             </div>
 
@@ -103,20 +119,24 @@ export function EventEditPanel({ event, onUpdated, onClose, onNotify }: EventEdi
                 placeholder="https://drive.google.com/..."
                 value={drUrl}
                 onChange={(e) => setDrUrl(e.target.value)}
-                className="w-full bg-theme-bg-muted border border-theme-border p-5 text-theme-text outline-none focus:border-brand-tactical/50 transition-all text-xs font-medium"
+                className="w-full bg-theme-bg-muted border border-theme-border/40 p-5 text-theme-text outline-none focus:border-brand-tactical/50 transition-all text-xs font-black uppercase rounded-2xl"
               />
             </div>
 
             <CoverPhotoInput
               currentUrl={event.coverPhotoUrl}
+              currentPosition={coverPos}
               eventId={event.id}
+              onPositionChange={(pos) => setCoverPos(pos)}
               onChange={() => {/* saved directly via /cover endpoint */}}
             />
 
-            <div className="p-6 bg-brand-tactical/5 border border-brand-tactical/20 space-y-4">
+            <div className="p-8 bg-brand-tactical/5 border border-brand-tactical/20 rounded-[30px] space-y-6">
               <div className="flex justify-between items-center">
-                <div className="flex items-center gap-2">
-                  <Award size={16} className="text-brand-tactical" />
+                <div className="flex items-center gap-3">
+                  <div className="w-8 h-8 rounded-full bg-brand-tactical/20 flex items-center justify-center text-brand-tactical">
+                    <Award size={16} />
+                  </div>
                   <span className="text-[10px] font-black text-brand-tactical uppercase tracking-widest italic">
                     Luxury Experience Link
                   </span>
@@ -131,39 +151,42 @@ export function EventEditPanel({ event, onUpdated, onClose, onNotify }: EventEdi
                 <input
                   readOnly
                   value={luxuryUrl}
-                  className="flex-grow bg-theme-bg/50 border border-brand-tactical/30 p-4 text-[9px] font-medium text-theme-muted outline-none"
+                  className="flex-grow bg-black/20 border border-brand-tactical/30 p-4 text-[9px] font-black text-theme-muted outline-none rounded-xl"
                 />
                 <button
                   onClick={copyLuxuryLink}
-                  className="px-6 bg-brand-tactical text-zinc-950 text-[10px] font-black uppercase tracking-widest hover:brightness-110 transition-all flex items-center gap-2"
+                  className="px-6 bg-brand-tactical text-zinc-950 text-[10px] font-black uppercase tracking-widest hover:brightness-110 transition-all flex items-center gap-2 rounded-xl"
                 >
                   {copied ? <Check size={14} /> : <Share2 size={14} />} COPIAR
                 </button>
               </div>
-              <p className="text-[8px] text-theme-muted uppercase font-bold tracking-widest leading-relaxed italic">
+              <p className="text-[8px] text-theme-muted uppercase font-bold tracking-widest leading-relaxed italic opacity-60">
                 Este é o link que o seu cliente deve receber para acessar a galeria de luxo.
               </p>
             </div>
           </div>
+        </div>
 
-          <div className="flex gap-4 pt-4">
-            <button
-              onClick={onClose}
-              className="flex-1 py-5 bg-theme-bg-muted border border-theme-border text-theme-muted text-[11px] font-black uppercase tracking-widest hover:text-theme-text transition-all italic"
-            >
-              Cancelar
-            </button>
-            <button
-              onClick={handleSave}
-              disabled={saving}
-              className="flex-[2] py-5 bg-brand-tactical text-brand-text text-[11px] font-black uppercase tracking-[0.3em] hover:brightness-110 disabled:opacity-40 transition-all shadow-xl shadow-brand-tactical/20 italic"
-            >
-              {saving ? "PROCESSANDO..." : "EFETIVAR LINKS"}
-            </button>
-          </div>
+        {/* Footer */}
+        <div className="p-8 md:p-10 bg-theme-bg-muted/80 border-t flex items-center justify-between gap-6 shrink-0" style={{ borderColor: T.border }}>
+          <button
+            onClick={onClose}
+            className="px-8 py-5 text-theme-muted text-[11px] font-black uppercase tracking-widest hover:text-theme-text transition-all italic"
+          >
+            Cancelar
+          </button>
+          <button
+            onClick={handleSave}
+            disabled={saving}
+            className="flex-1 max-w-xs py-5 bg-brand-tactical text-black text-[11px] font-black uppercase tracking-[0.3em] hover:bg-white hover:scale-[1.02] active:scale-[0.98] transition-all italic flex items-center justify-center gap-4 shadow-2xl shadow-brand-tactical/20 rounded-xl"
+          >
+            {saving ? "PROCESSANDO..." : "EFETIVAR LINKS"}
+            {!saving && <ArrowRight size={18} />}
+          </button>
         </div>
       </div>
-    </div>
+    </div>,
+    document.body
   );
 }
 

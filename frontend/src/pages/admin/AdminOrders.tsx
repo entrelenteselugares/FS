@@ -4,7 +4,7 @@ import {
   Search, ChevronDown, ChevronRight, 
   CheckCircle2, Clock, PieChart, 
   TrendingUp, CreditCard, DollarSign,
-  ArrowUpRight, Filter, Zap, Trash2, Receipt, X
+  ArrowUpRight, Filter, Zap, Trash2, Receipt, X, ArrowRight
 } from "lucide-react";
 
 interface Order {
@@ -397,66 +397,91 @@ export const AdminOrders: React.FC = () => {
 
       {/* MODAL DE DETALHES DO PEDIDO */}
       {selectedOrderForDetails && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/80 backdrop-blur-sm" onClick={() => setSelectedOrderForDetails(null)}>
-          <div className="bg-theme-bg-muted border border-theme-border w-full max-w-2xl max-h-[85vh] overflow-y-auto" onClick={e => e.stopPropagation()}>
-            <div className="flex items-center justify-between p-6 border-b border-theme-border">
-              <div>
-                <h3 className="text-lg font-black uppercase tracking-widest text-theme-text flex items-center gap-2">
-                  <Receipt className="text-brand-tactical" size={20} />
-                  Detalhes do Pedido
-                </h3>
-                <p className="text-[10px] text-theme-muted font-mono mt-1">#{selectedOrderForDetails.id.toUpperCase()}</p>
-              </div>
-              <button onClick={() => setSelectedOrderForDetails(null)} className="p-2 text-theme-muted hover:text-theme-text transition-colors">
-                <X size={20} />
-              </button>
-            </div>
-            
-            <div className="p-6 space-y-6">
-              <div className="grid grid-cols-2 gap-4">
-                <div className="bg-theme-bg p-4 border border-theme-border/50">
-                  <span className="block text-[8px] font-black text-theme-muted uppercase tracking-widest mb-1">Cliente</span>
-                  <div className="text-xs font-bold text-theme-text">{selectedOrderForDetails.user?.nome || "CONVIDADO"}</div>
-                  <div className="text-[10px] text-theme-muted lowercase">{selectedOrderForDetails.buyerEmail || selectedOrderForDetails.user?.email}</div>
+        <div className="fixed inset-0 z-[500] flex items-center justify-center p-4">
+          <div className="absolute inset-0 bg-theme-bg/80 backdrop-blur-xl animate-in fade-in duration-300" onClick={() => setSelectedOrderForDetails(null)} />
+          
+          <div className="relative w-full max-w-2xl bg-theme-card border border-theme-border/60 rounded-[40px] overflow-hidden shadow-2xl animate-in zoom-in-95 duration-300 flex flex-col h-[85vh]">
+            {/* Header */}
+            <div className="p-8 md:p-10 border-b border-theme-border flex items-center justify-between shrink-0 bg-theme-bg-muted/30">
+              <div className="flex items-center gap-4">
+                <div className="w-12 h-12 bg-brand-tactical/10 rounded-2xl flex items-center justify-center border border-brand-tactical/20">
+                  <Receipt className="text-brand-tactical" size={24} />
                 </div>
-                <div className="bg-theme-bg p-4 border border-theme-border/50">
-                  <span className="block text-[8px] font-black text-theme-muted uppercase tracking-widest mb-1">Status do Pagamento</span>
-                  <div className={`text-xs font-black uppercase tracking-widest ${selectedOrderForDetails.status === 'APROVADO' ? 'text-brand-tactical' : 'text-amber-500'}`}>
-                    {selectedOrderForDetails.status}
+                <div>
+                  <h2 className="text-2xl font-black uppercase italic tracking-tighter text-theme-text">Extrato de Pedido</h2>
+                  <p className="text-[10px] font-black uppercase tracking-[0.2em] opacity-40">Protocolo de Auditoria #{selectedOrderForDetails.id.toUpperCase()}</p>
+                </div>
+              </div>
+              <button onClick={() => setSelectedOrderForDetails(null)} className="p-3 hover:bg-white/5 rounded-full transition-all text-theme-muted"><X size={24} /></button>
+            </div>
+
+            {/* Content */}
+            <div className="flex-1 overflow-y-auto p-8 md:p-10 space-y-10 custom-scrollbar bg-theme-card">
+              <div className="grid grid-cols-2 gap-6">
+                <div className="bg-theme-bg-muted/50 p-6 rounded-[30px] border border-theme-border/60 space-y-4 shadow-inner">
+                  <span className="block text-[8px] font-black text-theme-muted uppercase tracking-widest opacity-40 italic">Informações do Cliente</span>
+                  <div className="space-y-1">
+                    <div className="text-sm font-black text-theme-text uppercase italic tracking-tighter">{selectedOrderForDetails.user?.nome || "CONVIDADO"}</div>
+                    <div className="text-[10px] text-theme-muted font-bold lowercase opacity-60">{selectedOrderForDetails.buyerEmail || selectedOrderForDetails.user?.email}</div>
                   </div>
-                  <div className="text-[10px] text-theme-muted">{new Date(selectedOrderForDetails.createdAt).toLocaleString("pt-BR")}</div>
+                </div>
+                <div className="bg-theme-bg-muted/50 p-6 rounded-[30px] border border-theme-border/60 space-y-4 shadow-inner text-right">
+                  <span className="block text-[8px] font-black text-theme-muted uppercase tracking-widest opacity-40 italic">Temporalidade & Status</span>
+                  <div className="space-y-1">
+                    <div className={`text-xs font-black uppercase tracking-[0.2em] italic ${selectedOrderForDetails.status === 'APROVADO' ? 'text-brand-tactical' : 'text-amber-500'}`}>
+                      {selectedOrderForDetails.status}
+                    </div>
+                    <div className="text-[10px] text-theme-muted font-bold opacity-60">{new Date(selectedOrderForDetails.createdAt).toLocaleString("pt-BR")}</div>
+                  </div>
                 </div>
               </div>
 
-              <div>
-                <h4 className="text-[10px] font-black uppercase tracking-widest text-theme-muted mb-3 flex items-center gap-2 border-b border-theme-border/30 pb-2">
-                  Itens do Pedido ({selectedOrderForDetails.items?.length || 0})
-                </h4>
+              <div className="space-y-6">
+                <div className="flex items-center justify-between border-b border-theme-border/60 pb-4">
+                  <h4 className="text-[10px] font-black uppercase tracking-[0.4em] text-theme-text italic">Composição do Carrinho</h4>
+                  <span className="text-[9px] font-black text-theme-muted uppercase tracking-widest italic opacity-40">{selectedOrderForDetails.items?.length || 0} Itens Registrados</span>
+                </div>
+
                 {(!selectedOrderForDetails.items || selectedOrderForDetails.items.length === 0) ? (
-                  <p className="text-[10px] text-theme-muted italic">Nenhum item detalhado disponível para este pedido antigo.</p>
+                  <div className="p-10 text-center bg-theme-bg-muted/30 border border-dashed border-theme-border/60 rounded-[30px]">
+                    <p className="text-[10px] text-theme-muted italic uppercase tracking-widest font-black opacity-40 leading-relaxed">Nenhum item detalhado disponível para este registro legado.</p>
+                  </div>
                 ) : (
-                  <div className="space-y-2">
+                  <div className="space-y-4">
                     {selectedOrderForDetails.items.map(item => (
-                      <div key={item.id} className="flex items-center justify-between p-3 bg-theme-bg border border-theme-border/30">
-                        <div className="flex-1">
-                          <div className="text-[11px] font-bold text-theme-text uppercase">
-                            {item.quantity}x {item.service?.name || item.printProduct?.title || (item.mediaId ? `Foto (Digital)` : "Item Genérico")}
+                      <div key={item.id} className="flex items-center justify-between p-6 bg-theme-bg-muted/50 border border-theme-border/60 rounded-[24px] group hover:border-brand-tactical transition-all shadow-sm">
+                        <div className="flex-1 space-y-1">
+                          <div className="text-[11px] font-black text-theme-text uppercase tracking-widest italic">
+                            {item.quantity}x {item.service?.name || item.printProduct?.title || (item.mediaId ? `Foto (Digital)` : "Item de Inventário")}
                           </div>
-                          {item.mediaId && <div className="text-[8px] font-mono text-theme-muted mt-1 opacity-50">Ref: {item.mediaId}</div>}
+                          {item.mediaId && <div className="text-[9px] font-mono text-theme-muted opacity-40">REF_UUID: {item.mediaId}</div>}
                         </div>
-                        <div className="text-right font-mono text-xs text-brand-tactical font-bold">
-                          {formatCurrency(Number(item.price) * Number(item.quantity))}
+                        <div className="text-right">
+                          <div className="text-md font-black text-brand-tactical italic tracking-tighter">
+                            {formatCurrency(Number(item.price) * Number(item.quantity))}
+                          </div>
+                          <span className="text-[8px] text-theme-muted uppercase tracking-widest font-black opacity-30 italic">Preço Unitário: {formatCurrency(Number(item.price))}</span>
                         </div>
                       </div>
                     ))}
                   </div>
                 )}
               </div>
+            </div>
 
-              <div className="flex justify-between items-center p-4 bg-brand-tactical/5 border border-brand-tactical/20 mt-6">
-                <span className="text-[10px] font-black text-brand-tactical uppercase tracking-widest">Total do Pedido</span>
-                <span className="text-xl font-heading font-black italic text-brand-tactical">{formatCurrency(selectedOrderForDetails.amount)}</span>
-              </div>
+            {/* Footer */}
+            <div className="p-8 md:p-10 bg-theme-bg-muted/50 border-t border-theme-border flex gap-6 items-center shrink-0">
+               <div className="flex-1 space-y-1">
+                  <span className="text-[8px] font-black text-theme-muted uppercase tracking-[0.4em] italic opacity-40">Liquidado no Ledger</span>
+                  <div className="text-3xl font-black italic tracking-tighter text-brand-tactical">{formatCurrency(selectedOrderForDetails.amount)}</div>
+               </div>
+               <button 
+                onClick={() => setSelectedOrderForDetails(null)} 
+                className="px-10 py-5 bg-brand-tactical text-zinc-950 text-[11px] font-black uppercase tracking-[0.3em] shadow-2xl shadow-brand-tactical/20 hover:brightness-110 transition-all rounded-[20px] italic flex items-center gap-4"
+               >
+                 Fechar Auditoria
+                 <ArrowRight size={18} strokeWidth={1.5} />
+               </button>
             </div>
           </div>
         </div>

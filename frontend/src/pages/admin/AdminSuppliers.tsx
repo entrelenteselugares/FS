@@ -16,7 +16,8 @@ import {
   Image as ImageIcon,
   Plus,
   Trash2,
-  X
+  X,
+  ArrowRight
 } from "lucide-react";
 
 // --- Types ---
@@ -297,13 +298,13 @@ export default function AdminSuppliers() {
                                     className="w-full bg-theme-bg border border-theme-border p-2.5 pl-10 text-[9px] text-theme-text font-black outline-none focus:border-brand-tactical transition-all uppercase" 
                                  />
                               </div>
-                              <button onClick={() => updateStatus(r.id, 'SHIPPED')} className="w-full border border-brand-tactical text-brand-tactical py-3 text-[8px] font-black uppercase tracking-widest hover:bg-brand-tactical/10 transition-all">FINALIZAR & ENVIAR</button>
+                              <button onClick={() => updateStatus(r.id, 'SHIPPED')} className="w-full border border-brand-tactical text-brand-tactical py-3 text-[8px] font-black uppercase tracking-widest hover:bg-brand-tactical/10 transition-all italic">FINALIZAR & ENVIAR</button>
                            </div>
                          ) : (
                            <div className="text-center p-4 bg-zinc-950/20 border border-theme-border/30">
                               <span className="text-[8px] font-black text-theme-muted uppercase tracking-widest block mb-2">Objeto em Trânsito</span>
                               <p className="text-[10px] font-black text-brand-tactical uppercase font-mono">{r.trackingCode || "S/ RASTREIO"}</p>
-                              <button onClick={() => updateStatus(r.id, 'DELIVERED')} className="mt-4 text-[7px] font-black text-theme-muted uppercase border border-theme-border px-3 py-1.5 hover:text-white transition-all">CONFIRMAR ENTREGA</button>
+                              <button onClick={() => updateStatus(r.id, 'DELIVERED')} className="mt-4 text-[7px] font-black text-theme-muted uppercase border border-theme-border px-3 py-1.5 hover:text-white transition-all italic">CONFIRMAR ENTREGA</button>
                            </div>
                          )}
                       </div>
@@ -387,7 +388,7 @@ export default function AdminSuppliers() {
                    </>
                  ) : (
                    <div className="h-64 bg-theme-bg border border-theme-border/60 flex flex-col items-center justify-center space-y-4 shadow-sm">
-                      <Calculator size={32} strokeWidth={1} className="text-theme-muted opacity-40" />
+                      <Calculator size={32} strokeWidth={1.5} className="text-theme-muted opacity-40" />
                       <p className="text-[9px] font-black uppercase tracking-widest text-theme-muted">Carregando análise financeira...</p>
                    </div>
                  )}
@@ -403,7 +404,7 @@ export default function AdminSuppliers() {
               <h3 className="text-xl font-heading text-theme-text uppercase tracking-tighter">Ativos & Hardware</h3>
               <button 
                 onClick={() => setIsModalOpen(true)}
-                className="bg-brand-tactical text-zinc-950 px-6 py-3 text-[9px] font-black uppercase tracking-widest shadow-lg flex items-center gap-2 hover:brightness-110 transition-all"
+                className="bg-brand-tactical text-zinc-950 px-6 py-3 text-[9px] font-black uppercase tracking-widest shadow-lg flex items-center gap-2 hover:brightness-110 transition-all italic"
               >
                 <Plus size={12} /> NOVO EQUIPAMENTO
               </button>
@@ -478,78 +479,107 @@ function NewSupplierModal({ onClose, onSave }: { onClose: () => void; onSave: (d
     onSave(form);
   };
 
-  const inputClass = "w-full bg-theme-bg border border-theme-border/60 p-3 text-[10px] text-theme-text font-black outline-none focus:border-brand-tactical transition-all uppercase placeholder:text-theme-muted/30";
-  const labelClass = "text-[7px] font-black text-theme-muted uppercase tracking-widest block mb-1.5 opacity-60";
-
   return (
-    <div className="fixed inset-0 z-[500] flex items-center justify-center p-4 md:p-10">
-       <div className="absolute inset-0 bg-zinc-950/90 backdrop-blur-xl" onClick={onClose} />
-       <div className="bg-theme-bg border border-theme-border/60 w-full max-w-2xl relative animate-in zoom-in-95 duration-300 shadow-2xl overflow-hidden">
-          <div className="p-8 md:p-12 space-y-10 max-h-[90vh] overflow-y-auto no-scrollbar">
-             <div className="flex justify-between items-start">
-                <div className="space-y-1">
-                   <h2 className="text-2xl font-heading font-black text-theme-text uppercase tracking-tighter">Novo Equipamento</h2>
-                   <p className="text-[9px] text-theme-muted uppercase tracking-[0.4em] font-black italic">Cadastrar ativo fixo ou fulfillment</p>
-                </div>
-                <button onClick={onClose} className="text-theme-muted hover:text-white transition-all"><X size={20} /></button>
-             </div>
-
-             <form onSubmit={handleSubmit} className="space-y-8">
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                   <div className="space-y-1.5">
-                      <label className={labelClass}>Nome do Ativo</label>
-                      <input required className={inputClass} value={form.name} onChange={e => setForm({...form, name: e.target.value})} placeholder="Ex: Impressora Lab Central" />
-                   </div>
-                   <div className="space-y-1.5">
-                      <label className={labelClass}>Tipo de Operação</label>
-                      <select className={inputClass} value={form.type} onChange={e => setForm({...form, type: e.target.value})}>
-                         <option value="OWN_PRINTER">Impressora Própria</option>
-                         <option value="EXTERNAL_LAB">Laboratório Externo</option>
-                         <option value="HYBRID">Híbrido</option>
-                      </select>
-                   </div>
-                </div>
-
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                   <div className="space-y-1.5">
-                      <label className={labelClass}>Modelo / Hardware</label>
-                      <input className={inputClass} value={form.printerModel} onChange={e => setForm({...form, printerModel: e.target.value})} placeholder="Ex: Epson L805" />
-                   </div>
-                   <div className="space-y-1.5">
-                      <label className={labelClass}>CAPEX (Custo de Compra)</label>
-                      <input type="number" step="0.01" className={inputClass} value={form.printerCost} onChange={e => setForm({...form, printerCost: e.target.value})} placeholder="R$ 0,00" />
-                   </div>
-                </div>
-
-                <div className="pt-8 border-t border-theme-border/20">
-                   <span className="text-[8px] font-black text-brand-tactical uppercase tracking-widest block mb-6">Custos Operacionais (OPEX)</span>
-                   <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-                      <div className="space-y-1.5">
-                         <label className={labelClass}>Papel/Tinta</label>
-                         <input required type="number" step="0.0001" className={inputClass} value={form.costPer10x15} onChange={e => setForm({...form, costPer10x15: e.target.value})} placeholder="0.00" />
-                      </div>
-                      <div className="space-y-1.5">
-                         <label className={labelClass}>Caixa/Emb.</label>
-                         <input required type="number" step="0.01" className={inputClass} value={form.boxCost} onChange={e => setForm({...form, boxCost: e.target.value})} placeholder="0.00" />
-                      </div>
-                      <div className="space-y-1.5">
-                         <label className={labelClass}>Etiqueta</label>
-                         <input required type="number" step="0.01" className={inputClass} value={form.labelCost} onChange={e => setForm({...form, labelCost: e.target.value})} placeholder="0.00" />
-                      </div>
-                      <div className="space-y-1.5">
-                         <label className={labelClass}>Logística</label>
-                         <input required type="number" step="0.01" className={inputClass} value={form.uberCost} onChange={e => setForm({...form, uberCost: e.target.value})} placeholder="0.00" />
-                      </div>
-                   </div>
-                </div>
-
-                <div className="flex gap-4 pt-6">
-                   <button type="button" onClick={onClose} className="flex-1 py-4 border border-theme-border text-[9px] font-black uppercase tracking-widest text-theme-muted hover:text-white transition-all">Cancelar</button>
-                   <button type="submit" className="flex-1 py-4 bg-brand-tactical text-zinc-950 text-[9px] font-black uppercase tracking-[0.4em] shadow-xl hover:brightness-110 transition-all">Salvar Equipamento</button>
-                </div>
-             </form>
+    <div className="fixed inset-0 z-[500] flex items-center justify-center p-4">
+      <div className="absolute inset-0 bg-theme-bg/80 backdrop-blur-xl animate-in fade-in duration-300" onClick={onClose} />
+      
+      <div className="relative w-full max-w-3xl bg-theme-card border border-theme-border/60 rounded-[40px] overflow-hidden shadow-2xl animate-in zoom-in-95 duration-300 flex flex-col h-[85vh]">
+        {/* Header */}
+        <div className="p-8 md:p-10 border-b border-theme-border flex items-center justify-between shrink-0 bg-theme-bg-muted/30">
+          <div className="flex items-center gap-4">
+            <div className="w-12 h-12 bg-brand-tactical/10 rounded-2xl flex items-center justify-center border border-brand-tactical/20">
+              <Printer className="text-brand-tactical" size={24} />
+            </div>
+            <div>
+              <h2 className="text-2xl font-black uppercase italic tracking-tighter text-theme-text">Novo Equipamento</h2>
+              <p className="text-[10px] font-black uppercase tracking-[0.2em] opacity-40">Ativo de Hardware / Fulfillment</p>
+            </div>
           </div>
-       </div>
+          <button onClick={onClose} className="p-3 hover:bg-white/5 rounded-full transition-all text-theme-muted"><X size={24} /></button>
+        </div>
+
+        {/* Content */}
+        <form onSubmit={handleSubmit} className="flex-1 overflow-y-auto p-8 md:p-10 space-y-10 custom-scrollbar bg-theme-card">
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-10">
+            <div className="space-y-6">
+              <div className="space-y-4">
+                <label className="text-[8px] font-black text-theme-muted uppercase tracking-widest block mb-2 opacity-60 italic">Informações do Ativo</label>
+                <div className="space-y-4">
+                  <div className="space-y-2">
+                    <label className="text-[7px] font-black text-theme-muted uppercase tracking-widest block mb-1 opacity-40 italic">Nome do Equipamento</label>
+                    <input required className="w-full bg-theme-bg-muted border border-theme-border/60 p-4 text-[10px] text-theme-text font-black outline-none focus:border-brand-tactical rounded-xl uppercase placeholder:opacity-20" value={form.name} onChange={e => setForm({...form, name: e.target.value})} placeholder="EX: IMPRESSORA LAB CENTRAL" />
+                  </div>
+                  <div className="space-y-2">
+                    <label className="text-[7px] font-black text-theme-muted uppercase tracking-widest block mb-1 opacity-40 italic">Tipo de Operação</label>
+                    <select className="w-full bg-theme-bg-muted border border-theme-border/60 p-4 text-[10px] text-theme-text font-black outline-none focus:border-brand-tactical rounded-xl appearance-none cursor-pointer" value={form.type} onChange={e => setForm({...form, type: e.target.value})}>
+                      <option value="OWN_PRINTER">IMPRESSORA PRÓPRIA</option>
+                      <option value="EXTERNAL_LAB">LABORATÓRIO EXTERNO</option>
+                      <option value="HYBRID">HÍBRIDO</option>
+                    </select>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <div className="space-y-6">
+              <div className="space-y-4">
+                <label className="text-[8px] font-black text-theme-muted uppercase tracking-widest block mb-2 opacity-60 italic">Hardware & Capex</label>
+                <div className="space-y-4">
+                  <div className="space-y-2">
+                    <label className="text-[7px] font-black text-theme-muted uppercase tracking-widest block mb-1 opacity-40 italic">Modelo / Marca</label>
+                    <input className="w-full bg-theme-bg-muted border border-theme-border/60 p-4 text-[10px] text-theme-text font-black outline-none focus:border-brand-tactical rounded-xl uppercase placeholder:opacity-20" value={form.printerModel} onChange={e => setForm({...form, printerModel: e.target.value})} placeholder="EX: EPSON L805" />
+                  </div>
+                  <div className="space-y-2">
+                    <label className="text-[7px] font-black text-theme-muted uppercase tracking-widest block mb-1 opacity-40 italic">Custo de Aquisição (R$)</label>
+                    <input type="number" step="0.01" className="w-full bg-theme-bg-muted border border-theme-border/60 p-4 text-[10px] text-theme-text font-black outline-none focus:border-brand-tactical rounded-xl placeholder:opacity-20" value={form.printerCost} onChange={e => setForm({...form, printerCost: e.target.value})} placeholder="0.00" />
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div className="pt-10 border-t border-theme-border/60">
+            <label className="text-[8px] font-black text-brand-tactical uppercase tracking-widest block mb-8 opacity-60 italic">Custos Operacionais Unitários (OPEX)</label>
+            <div className="grid grid-cols-2 md:grid-cols-4 gap-6">
+              <div className="space-y-2">
+                <label className="text-[7px] font-black text-theme-muted uppercase tracking-widest block mb-1 opacity-40 italic">Papel/Tinta</label>
+                <input required type="number" step="0.0001" className="w-full bg-theme-bg-muted border border-theme-border/60 p-4 text-[10px] text-theme-text font-black outline-none focus:border-brand-tactical rounded-xl" value={form.costPer10x15} onChange={e => setForm({...form, costPer10x15: e.target.value})} placeholder="0.00" />
+              </div>
+              <div className="space-y-2">
+                <label className="text-[7px] font-black text-theme-muted uppercase tracking-widest block mb-1 opacity-40 italic">Caixa/Emb.</label>
+                <input required type="number" step="0.01" className="w-full bg-theme-bg-muted border border-theme-border/60 p-4 text-[10px] text-theme-text font-black outline-none focus:border-brand-tactical rounded-xl" value={form.boxCost} onChange={e => setForm({...form, boxCost: e.target.value})} placeholder="0.00" />
+              </div>
+              <div className="space-y-2">
+                <label className="text-[7px] font-black text-theme-muted uppercase tracking-widest block mb-1 opacity-40 italic">Etiqueta</label>
+                <input required type="number" step="0.01" className="w-full bg-theme-bg-muted border border-theme-border/60 p-4 text-[10px] text-theme-text font-black outline-none focus:border-brand-tactical rounded-xl" value={form.labelCost} onChange={e => setForm({...form, labelCost: e.target.value})} placeholder="0.00" />
+              </div>
+              <div className="space-y-2">
+                <label className="text-[7px] font-black text-theme-muted uppercase tracking-widest block mb-1 opacity-40 italic">Logística</label>
+                <input required type="number" step="0.01" className="w-full bg-theme-bg-muted border border-theme-border/60 p-4 text-[10px] text-theme-text font-black outline-none focus:border-brand-tactical rounded-xl" value={form.uberCost} onChange={e => setForm({...form, uberCost: e.target.value})} placeholder="0.00" />
+              </div>
+            </div>
+          </div>
+
+          <div className="p-8 bg-brand-tactical/5 border border-brand-tactical/20 rounded-[30px] shadow-inner text-center">
+            <p className="text-[9px] font-black text-brand-tactical uppercase tracking-[0.3em] leading-relaxed italic">
+              ⚠ ESTES DADOS ALIMENTAM A ENGENHARIA DE ROI E O PONTO DE EQUILÍBRIO DA OPERAÇÃO DE IMPRESSÃO.
+            </p>
+          </div>
+        </form>
+
+        {/* Footer */}
+        <div className="p-8 md:p-10 bg-theme-bg-muted/50 border-t border-theme-border flex gap-4 shrink-0">
+          <button type="button" onClick={onClose} className="flex-1 py-5 border border-theme-border text-[11px] font-black uppercase tracking-[0.3em] text-theme-muted hover:text-white transition-all rounded-[20px] italic">Cancelar</button>
+          <button 
+            type="submit" 
+            onClick={handleSubmit}
+            className="flex-[2] py-5 bg-brand-tactical text-zinc-950 text-[11px] font-black uppercase tracking-[0.3em] shadow-2xl shadow-brand-tactical/20 hover:brightness-110 transition-all rounded-[20px] italic flex items-center justify-center gap-4"
+          >
+            Salvar Equipamento
+            <ArrowRight size={18} strokeWidth={1.5} />
+          </button>
+        </div>
+      </div>
     </div>
   );
 }

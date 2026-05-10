@@ -1,4 +1,4 @@
-﻿import React, { useState, useEffect } from "react";
+import React, { useState, useEffect } from "react";
 import { Shield, Database, Save, RotateCcw, Palette, TrendingUp } from "lucide-react";
 
 import { API } from "../../lib/api";
@@ -65,9 +65,9 @@ export const AdminSettings: React.FC = () => {
         <button 
           onClick={handleSave}
           disabled={saving}
-          className="bg-brand-tactical text-brand-text text-[10px] font-bold uppercase tracking-[0.4em] px-10 py-5 hover:brightness-110 transition-all rounded-none flex items-center gap-2 disabled:opacity-50"
+          className="bg-brand-tactical text-brand-text text-[10px] font-black uppercase tracking-[0.4em] px-10 py-5 hover:brightness-110 transition-all rounded-none flex items-center gap-2 disabled:opacity-50 italic"
         >
-          {saving ? "SINCRONIZANDO..." : <><Save size={14} /> SALVAR ALTERAÇÕES</>}
+          {saving ? "SINCRONIZANDO..." : <><Save size={14} strokeWidth={1.5} /> SALVAR ALTERAÇÕES</>}
         </button>
       </div>
 
@@ -75,7 +75,7 @@ export const AdminSettings: React.FC = () => {
         {/* Branding & Identity */}
         <div className="bg-theme-bg p-10 space-y-10 border-b md:border-b-0 md:border-r border-theme-border">
           <div className="flex items-center gap-4 mb-4">
-             <Palette className="text-brand-tactical" size={18} />
+             <Palette className="text-brand-tactical" size={18} strokeWidth={1.5} />
              <h3 className="text-[11px] font-bold text-theme-text uppercase tracking-[0.4em]">Look & Feel (Identidade)</h3>
           </div>
           
@@ -131,7 +131,7 @@ export const AdminSettings: React.FC = () => {
         {/* Financeiro */}
         <div className="bg-theme-bg p-10 space-y-8 border-b md:border-b-0 border-theme-border">
           <div className="flex items-center gap-4 mb-4">
-             <Database className="text-brand-tactical" size={18} />
+             <Database className="text-brand-tactical" size={18} strokeWidth={1.5} />
              <h3 className="text-[11px] font-bold text-theme-text uppercase tracking-[0.4em]">Engenharia de Repasse</h3>
           </div>
           <div className="space-y-6">
@@ -157,7 +157,7 @@ export const AdminSettings: React.FC = () => {
         {/* Meritocracia de Valor Hora */}
         <div className="bg-theme-bg p-10 space-y-8 border-b md:border-b-0 border-theme-border">
           <div className="flex items-center gap-4 mb-4">
-             <TrendingUp className="text-brand-tactical" size={18} />
+             <TrendingUp className="text-brand-tactical" size={18} strokeWidth={1.5} />
              <h3 className="text-[11px] font-bold text-theme-text uppercase tracking-[0.4em]">Meritocracia — Valor Hora</h3>
           </div>
           <p className="text-[9px] text-zinc-600 uppercase tracking-widest leading-relaxed">
@@ -203,7 +203,7 @@ export const AdminSettings: React.FC = () => {
 
         <div className="bg-theme-bg p-10 space-y-8 md:col-span-3 border-t border-theme-border">
           <div className="flex items-center gap-4 mb-4">
-             <Shield className="text-brand-tactical" size={18} />
+             <Shield className="text-brand-tactical" size={18} strokeWidth={1.5} />
              <h3 className="text-[11px] font-bold text-theme-text uppercase tracking-[0.4em]">Protocolos de Acesso</h3>
           </div>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-20">
