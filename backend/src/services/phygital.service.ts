@@ -160,6 +160,7 @@ export class PhygitalService {
             fileId: fileId,
             webViewLink: publicUrl,
             thumbnailLink: driveFile.thumbnailLink || null, 
+            uploadedById: metadata.userId || foundVault.ownerId
           }
         });
       } else if (foundEvent) {

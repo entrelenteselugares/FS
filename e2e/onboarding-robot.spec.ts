@@ -1,91 +1,84 @@
-import { test, expect } from '@playwright/test';
 
-test.describe('Onboarding Robot: System Population (@brasil.com.br)', () => {
-  const adminEmail = 'contatofotosegundo@gmail.com';
-  const pass = '123456'; 
+import { test, expect, Page } from '@playwright/test';
 
-  test('should create all user variations for system testing', async ({ page }) => {
-    test.setTimeout(800000); // Increased timeout for more users
+/**
+ * 🤖 Super-Robot de Validação de Fluxo Real v2.0
+ * 
+ * Gera novos usuários @teste.com.br via UI e valida botões/configurações.
+ */
 
-    // 1. LOGIN ADMIN
-    await page.goto('/login');
-    await page.locator('input[type="email"]').fill(adminEmail);
-    await page.locator('input[type="password"]').fill(pass);
-    await page.getByRole('button', { name: /ENTRAR/i }).click();
-    await expect(page).toHaveURL(/.*admin/);
+const PASS = 'Senha123!';
+const DOMAIN = 'teste.com.br';
 
-    const createUser = async (data: any) => {
-      console.log(`[ROBOT] Criando ${data.role}: ${data.email}...`);
-      await page.goto('/admin');
-      await page.waitForLoadState('networkidle');
-      
-      // Clica na aba Membros
-      await page.getByRole('button', { name: /Membros/i }).click();
-      await page.waitForTimeout(1000); // Aguarda transição de aba
-      
-      const btn = page.getByRole('button', { name: /CONVOCAR MEMBRO/i });
-      await expect(btn).toBeVisible();
-      await btn.click();
+const generateEmail = (role: string) => `test_${role}_${Date.now()}@${DOMAIN}`;
 
-      // Aguarda o modal abrir
-      await expect(page.locator('h3:has-text("Novo Membro")')).toBeVisible();
-      await page.locator('label:has-text("Nome de Guerra") + input').fill(data.name);
-      await page.locator('label:has-text("E-mail de Acesso") + input').fill(data.email);
-      await page.locator('label:has-text("Nova Senha") + input').fill('123456');
-      await page.locator('select').selectOption(data.role);
+async function runOnboarding(page: Page, role: 'CLIENTE' | 'PROFISSIONAL' | 'CARTORIO') {
+  const email = generateEmail(role.toLowerCase());
+  console.log(`[ROBOT] Iniciando cadastro de ${role}: ${email}`);
 
-      if (data.role === 'PROFISSIONAL') {
-        if (data.captPct !== undefined) await page.locator('label:has-text("% Captação") + div input').fill(data.captPct.toString());
-        if (data.editPct !== undefined) await page.locator('label:has-text("% Edição") + div input').fill(data.editPct.toString());
-        if (data.equipment) await page.locator('label:has-text("Equipamento Operacional") + textarea').fill(data.equipment);
-        
-        if (data.workflowType === 'MOBILE') {
-             await page.getByRole('button', { name: /Mobile Maker/i }).click();
-             await page.getByRole('button', { name: /Câmera\/PC/i }).click(); // Desmarca tradicional
-        }
-        
-        if (data.isFranchise) {
-             const toggle = page.locator('button:has(div.bg-white)').nth(0);
-             await toggle.click();
-             await page.locator('label:has-text("Saldo de Créditos") + input').fill(data.printCredits.toString());
-        }
-      }
+  await page.goto('/registro');
+  
+  // Seleção de Perfil
+  const roleLabel = role === 'CARTORIO' ? 'Unidade Fixa' : role === 'PROFISSIONAL' ? 'Profissional' : 'Cliente';
+  await page.getByRole('button', { name: new RegExp(roleLabel, 'i') }).click();
 
-      await page.getByRole('button', { name: /CONFIRMAR CONVOCAÇÃO/i }).click();
-      await page.waitForTimeout(3000); // Aguarda animação e processamento
-      console.log(`[ROBOT] ✅ Criado: ${data.email}`);
-    };
+  // Preenchimento
+  await page.getByPlaceholder(/EX: JOÃO DA SILVA|NOME COMPLETO/i).fill(`ROBO ${role} TESTE`);
+  await page.getByPlaceholder('(00) 00000-0000').fill('11988887777');
+  await page.getByPlaceholder('EMAIL@DOMINIO.COM').fill(email);
+  await page.getByPlaceholder('••••••••').fill(PASS);
 
-    // --- PROFISSIONAIS (30) ---
-    for (let i = 1; i <= 30; i++) {
-      await createUser({ 
-        name: `IE PRO ${i}`, 
-        email: `pro${i}@dublin.com`, 
-        role: 'PROFISSIONAL', 
-        captPct: 30, 
-        editPct: 20, 
-        equipment: 'Sony A7IV / Canon R6' 
-      });
-    }
+  if (role === 'PROFISSIONAL') {
+    await page.getByRole('button', { name: 'FOTO' }).click();
+    await page.getByRole('button', { name: 'VÍDEO' }).click();
+  }
 
-    // --- PONTOS FIXOS (15) ---
-    for (let i = 1; i <= 15; i++) {
-      await createUser({ 
-        name: `IE Unidade ${i}`, 
-        email: `unidade${i}@dublin.com`, 
-        role: 'CARTORIO' 
-      });
-    }
+  if (role === 'CARTORIO') {
+    await page.getByPlaceholder('NOME OFICIAL DA UNIDADE').fill(`UNIDADE TESTE ${Date.now()}`);
+    await page.getByPlaceholder('00000-000').fill('01310-100');
+    await page.waitForTimeout(1000); // Wait for ZIP search
+    await page.getByPlaceholder('RUA / AVENIDA').fill('AVENIDA PAULISTA');
+  }
 
-    // --- CLIENTES (10) ---
-    for (let i = 1; i <= 10; i++) {
-      await createUser({ 
-        name: `IE Cliente ${i}`, 
-        email: `cliente${i}@dublin.com`, 
-        role: 'CLIENTE' 
-      });
-    }
+  // Consentimentos
+  await page.getByText(/Aceito os Termos/i).click();
+  await page.getByText(/Concordo com a Política/i).click();
 
-    console.log('[ROBOT] ✅ População inicial concluída!');
+  // Submit
+  await page.getByRole('button', { name: /Confirmar Inscrição/i }).click();
+
+  // Validação de Redirecionamento
+  const expectedPath = role === 'PROFISSIONAL' ? '/profissional' : role === 'CARTORIO' ? '/unidade-fixa' : '/minha-conta';
+  await page.waitForURL(new RegExp(expectedPath), { timeout: 80000 });
+  
+  console.log(`[ROBOT] ✅ Redirecionado para ${expectedPath}`);
+
+  // Validação de Interface Pós-Login
+  await page.waitForLoadState('networkidle');
+  if (role === 'PROFISSIONAL') {
+    await expect(page.getByRole('button', { name: /Novo Evento/i }).first()).toBeVisible();
+    await expect(page.getByText(/Financeiro|Ganhos/i).first()).toBeVisible();
+  } else if (role === 'CARTORIO') {
+    await expect(page.getByText(/Monitor de Fila/i).first()).toBeVisible();
+    await expect(page.getByText(/Printer Agent/i).first()).toBeVisible();
+  } else {
+    await expect(page.getByText(/Minhas Fotos|Memórias/i).first()).toBeVisible();
+    await expect(page.getByText(/Meus Cofres|Álbuns/i).first()).toBeVisible();
+  }
+}
+
+test.describe('🏁 Usability Verification Suite (New Users)', () => {
+
+  test('Robot: Fluxo de Cadastro - PROFISSIONAL', async ({ page }) => {
+    await runOnboarding(page, 'PROFISSIONAL');
   });
+
+  test('Robot: Fluxo de Cadastro - CLIENTE', async ({ page }) => {
+    await runOnboarding(page, 'CLIENTE');
+  });
+
+  test('Robot: Fluxo de Cadastro - UNIDADE FIXA', async ({ page }) => {
+    await runOnboarding(page, 'CARTORIO');
+  });
+
 });
