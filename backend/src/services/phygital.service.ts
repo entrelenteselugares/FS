@@ -151,21 +151,22 @@ export class PhygitalService {
       });
 
       // 6.1. Adicionar à Galeria Live (EventMedia ou SharedAlbumMedia)
+      const targetId = foundEvent ? foundEvent.id : (foundVault ? foundVault.id : "");
+
       if (foundVault) {
         await prisma.sharedAlbumMedia.create({
           data: {
-            albumId: foundVault.id,
+            albumId: targetId,
             fileId: fileId,
             webViewLink: publicUrl,
-            thumbnailLink: driveFile.thumbnailLink || null, // FIX: Salvando a miniatura nativa do Drive
-            uploadedById: metadata.userId || foundVault.ownerId // Se anônimo, assume o dono como uploader
+            thumbnailLink: driveFile.thumbnailLink || null, 
           }
         });
       } else if (foundEvent) {
-        const count = await prisma.eventMedia.count({ where: { eventId: metadata.eventId } });
+        const count = await prisma.eventMedia.count({ where: { eventId: targetId } });
         const shortId = `F${(count + 1).toString().padStart(3, '0')}`;
         
-        // Determina se o upload foi feito por um profissional
+        // Determina se o upload foi feito por um profissional (Admin ou vinculado ao evento)
         let isProfessional = false;
         if (metadata.userId) {
           const uploader = await prisma.user.findUnique({ where: { id: metadata.userId } });
@@ -181,12 +182,13 @@ export class PhygitalService {
 
         await prisma.eventMedia.create({
           data: {
-            eventId: metadata.eventId,
+            eventId: targetId,
             url: publicUrl,
             shortId: shortId,
+            type: 'PHOTO',
             isGuest: !isProfessional,
-            price: foundEvent?.pricePerPhoto || foundEvent?.priceBase || 15
-          }
+            price: foundEvent.pricePerPhoto || foundEvent.priceBase || 15
+          } as any
         });
       }
 
