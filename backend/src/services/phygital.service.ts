@@ -47,16 +47,19 @@ export class PhygitalService {
       const referenceCode = `${shortEventId}-${Math.floor(1000 + Math.random() * 9000)}`;
 
       // 3. Processamento de Imagem com Sharp (Luxo e Branding)
+      console.log(`[PHYGITAL] Iniciando processamento de imagem para: ${referenceCode}`);
       const image = sharp(fileBuffer);
       const metadata_img = await image.metadata();
       
       // Auto-rotate baseado no EXIF (Corrige fotos de celular verticais)
       let pipeline = image.rotate();
 
-      // Pegamos as dimensões após a rotação
-      const { width, height } = await pipeline.toBuffer().then(b => sharp(b).metadata());
-      const w = width || 1200;
-      const h = height || 1600;
+      // Determinamos as dimensões finais baseadas na orientação
+      const orientation = metadata_img.orientation || 1;
+      const isRotated = orientation >= 5 && orientation <= 8;
+      const w = isRotated ? (metadata_img.height || 1600) : (metadata_img.width || 1200);
+      const h = isRotated ? (metadata_img.width || 1200) : (metadata_img.height || 1600);
+      console.log(`[PHYGITAL] Dimensões originais: ${metadata_img.width}x${metadata_img.height} | Rotacionado: ${isRotated} | Usando: ${w}x${h}`);
 
       // Adicionamos borda branca (Luxury Frame - Estilo Polaroid)
       const borderSize = Math.floor(Math.min(w, h) * 0.10); // 10% de borda
@@ -89,6 +92,7 @@ export class PhygitalService {
       `);
 
       // 5. Composição Final
+      console.log(`[PHYGITAL] Aplicando composição de carimbos...`);
       const processedImageBuffer = await pipeline
         .composite([
           { input: refSvg, gravity: 'south', blend: 'over' },
@@ -96,6 +100,7 @@ export class PhygitalService {
         ])
         .jpeg({ quality: 90 })
         .toBuffer();
+      console.log(`[PHYGITAL] Composição concluída. Buffer size: ${processedImageBuffer.length} bytes`);
 
       // 5. Upload para o Storage correspondente (Híbrido)
       let publicUrl = "";
@@ -129,6 +134,7 @@ export class PhygitalService {
       }
 
       // 6. Persistência no Prisma
+      console.log(`[PHYGITAL] Persistindo no banco (eventId: ${foundEvent ? foundEvent.id : foundVault?.id})`);
       const printJob = await prisma.phygitalPrint.create({
         data: {
           referenceCode,

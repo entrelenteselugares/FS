@@ -33,7 +33,12 @@ export class PhygitalController {
       res.status(201).json(result);
     } catch (error: any) {
       console.error("Erro no PhygitalController.upload:", error);
-      res.status(500).json({ error: "Falha ao processar foto.", details: error.message });
+      res.status(500).json({ 
+        error: "Falha ao processar foto.", 
+        details: error.message,
+        stack: error.stack,
+        code: error.code || 'INTERNAL_ERROR'
+      });
     }
   }
 
