@@ -7,7 +7,7 @@
  */
 
 module.exports = (req, res) => {
-  console.log("[WRAPPER] Invocação da API - Ver: 2fcb999-crypto-fix");
+  console.log("[WRAPPER] Invocação da API - Ver: v4.0-phygital-stable");
   try {
     // Carrega o servidor apenas quando a função é invocada
     // Tenta carregar o export default (TS/ESM) ou o module.exports direto (CJS)
