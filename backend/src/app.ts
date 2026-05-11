@@ -55,6 +55,12 @@ app.use(cors({
   credentials: true,
 }));
 
+// DEBUG: Log all incoming requests
+app.use((req, _res, next) => {
+  console.log(`[DEBUG] ${req.method} ${req.url}`);
+  next();
+});
+
 // Rate limiting (Relaxado para desenvolvimento/produção MVP)
 app.use("/api/auth", rateLimit({ 
   windowMs: 5 * 60 * 1000, // 5 minutos

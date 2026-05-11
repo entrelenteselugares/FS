@@ -1,9 +1,5 @@
 import { defineConfig, devices } from '@playwright/test';
 
-/**
- * Playwright configuration for Foto Segundo
- * Port 3000 (Frontend) | Port 3002 (Backend)
- */
 export default defineConfig({
   testDir: './e2e',
   fullyParallel: true,
@@ -23,23 +19,5 @@ export default defineConfig({
       name: 'chromium',
       use: { ...devices['Desktop Chrome'] },
     },
-  ],
-
-  /* Orquestração de Servidores */
-  webServer: [
-    {
-      command: 'npm run dev:frontend',
-      url: 'http://localhost:3000',
-      reuseExistingServer: true,
-      stdout: 'pipe',
-      stderr: 'pipe',
-    },
-    {
-      command: 'npm run dev:backend',
-      url: 'http://localhost:3002/api/health',
-      reuseExistingServer: true,
-      stdout: 'pipe',
-      stderr: 'pipe',
-    }
   ],
 });

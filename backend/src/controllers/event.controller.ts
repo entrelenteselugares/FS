@@ -549,7 +549,7 @@ export class EventController {
           dataEvento: eventDateObj,
           eventHours: eventHours ? Number(eventHours) : 2,
           eventDays: eventDays ? Number(eventDays) : 1,
-          location: locationType === "PARTNER" ? "Ponto Fixo" : `CEP: ${customCep}`,
+          location: req.body.location || (locationType === "PARTNER" ? "Ponto Fixo" : `CEP: ${customCep}`),
           description: `ORÇAMENTO AUTOMÁTICO\nConvidados: ${attendees}\nUso: ${usageType}\nPreferência: ${req.body.workflowPref || 'TRADICIONAL'}\nOrçamento Disponível: ${req.body.availableBudget || 'Não informado'}\nServiços: ${serviceLabels.join(", ")}\nDias: ${eventDays}\n\nDescrição do Cliente: ${description}`,
           usageType: usageType || "PESSOAL",
           isQuote: isQuote,

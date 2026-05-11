@@ -489,7 +489,7 @@ export const QuotePage = () => {
     setSubmitting(true);
 
     const fullAddress = locationType === "PARTNER" 
-      ? "Ponto Fixo" 
+      ? `Unidade: ${currentPartner?.name || 'Ponto Fixo'} - ${currentPartner?.city || ''}`
       : `${addressData.logradouro}, ${addressNumber} - ${addressData.bairro}, ${addressData.cidade}/${addressData.uf} (CEP: ${customCep})`;
 
     const payload = {
