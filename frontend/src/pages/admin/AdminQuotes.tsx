@@ -93,6 +93,10 @@ export const AdminQuotes: React.FC = () => {
   const suggestedPrice = costTotal>0?costTotal/(1-margin/100):0;
   useEffect(()=>{ if(suggestedPrice>0) setFinalPrice(Math.ceil(suggestedPrice)); },[suggestedPrice]);
 
+  const stats = useMemo(()=>({
+    total:quotes.length,
+    pending:quotes.filter(q=>q.quoteStatus==="PENDING").length,
+    highUrgency:quotes.filter(q=>q.urgency==="HIGH").length,
     totalValue:quotes.reduce((a,q)=>a+(q.priceBase||0),0)
   }),[quotes]);
 
