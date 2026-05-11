@@ -417,11 +417,14 @@ export class EventController {
         customCep, eventDate, eventHours, eventDays, description, selectedServices, totalPrice 
       } = req.body;
       
+      // Normaliza a data do evento para objeto Date tático
+      const eventDateObj = eventDate ? (eventDate.includes("T") ? new Date(eventDate) : new Date(`${eventDate}T12:00:00`)) : new Date();
+
       // ── ANTI-FLOOD / DUPLICATE CHECK ──
       const recentEvent = await prisma.event.findFirst({
         where: {
           clientEmail: email,
-          dataEvento: eventDate ? new Date(`${eventDate}T12:00:00`) : new Date(),
+          dataEvento: eventDateObj,
           createdAt: {
             gt: new Date(Date.now() - 2 * 60 * 1000) // últimos 2 minutos
           }
@@ -458,7 +461,7 @@ export class EventController {
         
         if (cartorio?.profissionais?.length) {
           fixoProfessionals = cartorio.profissionais;
-          const start = new Date(eventDate);
+          const start = eventDateObj;
           const end = new Date(start.getTime() + (eventHours || 2) * 60 * 60 * 1000);
 
           // Tenta encontrar o primeiro profissional disponível
@@ -543,7 +546,7 @@ export class EventController {
       const event = await prisma.event.create({
         data: {
           nomeNoivos: name,
-          dataEvento: eventDate ? new Date(`${eventDate}T12:00:00`) : new Date(),
+          dataEvento: eventDateObj,
           eventHours: eventHours ? Number(eventHours) : 2,
           eventDays: eventDays ? Number(eventDays) : 1,
           location: locationType === "PARTNER" ? "Ponto Fixo" : `CEP: ${customCep}`,
@@ -570,7 +573,7 @@ export class EventController {
       // ── BLOQUEIO DE AGENDA (BOOKING) ──
       // Registra o bloqueio no calendário local para evitar overbooking
       if (captacaoId) {
-        const start = new Date(eventDate);
+        const start = eventDateObj;
         const end = new Date(start.getTime() + (eventHours || 2) * 60 * 60 * 1000);
         await prisma.calendarSlot.create({
           data: {
