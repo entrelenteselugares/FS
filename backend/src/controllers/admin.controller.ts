@@ -268,7 +268,7 @@ export async function adminListEvents(req: AuthRequest, res: Response): Promise<
     const events = await prisma.event.findMany({
       where,
       include: {
-        cartorioUser: { select: { nome: true, cartorio: { select: { razaoSocial: true } } } },
+        cartorioUser: { select: { nome: true, cartorio: { select: { razaoSocial: true, cidade: true } } } },
         captacao: { select: { nome: true } },
         edicao:   { select: { nome: true } },
         _count:   { select: { pedidos: true } },
@@ -283,6 +283,7 @@ export async function adminListEvents(req: AuthRequest, res: Response): Promise<
     res.json({ 
       events: events.map(e => ({ 
         ...e, 
+        city: e.city || (e as any).cartorioUser?.cartorio?.cidade || null,
         title: e.nomeNoivos, 
         date: e.dataEvento, 
         isCrowdfund: e.isCrowdfund,

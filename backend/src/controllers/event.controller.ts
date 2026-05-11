@@ -317,7 +317,17 @@ export class EventController {
             type: true,
             temFoto: true,
             temVideo: true,
-            temReels: true
+            temReels: true,
+            city: true,
+            cartorioUser: {
+              select: {
+                cartorio: {
+                  select: {
+                    cidade: true
+                  }
+                }
+              }
+            }
           }
         }),
         prisma.event.count({ where })
@@ -325,8 +335,13 @@ export class EventController {
 
       const pages = Math.ceil(total / take);
 
+      const mapped = events.map(e => ({
+        ...e,
+        city: e.city || (e as any).cartorioUser?.cartorio?.cidade || null
+      }));
+
       return res.json({
-        events,
+        events: mapped,
         total,
         page: Number(page),
         pages
@@ -788,12 +803,13 @@ export class EventController {
             select: { valor: true }
           },
           _count: { select: { pedidos: true } },
-          cartorioUser: { include: { cartorio: { select: { razaoSocial: true } } } }
+          cartorioUser: { include: { cartorio: { select: { razaoSocial: true, cidade: true } } } }
         }
       });
 
       const mapped = events.map(e => ({
         ...e,
+        city: e.city || (e as any).cartorioUser?.cartorio?.cidade || null,
         cartorio: e.cartorioUser?.cartorio?.razaoSocial || null,
         collected: e.pedidos.reduce((acc: number, o: any) => acc + Number(o.valor), 0)
       }));

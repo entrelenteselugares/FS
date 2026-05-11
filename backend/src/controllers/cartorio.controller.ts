@@ -100,7 +100,8 @@ export class CartorioController {
           id: ev.id,
           title: ev.nomeNoivos,
           date: ev.dataEvento,
-          location: ev.city || ev.location,
+          city: ev.city || ev.cartorioUser?.cartorio?.cidade || null,
+          location: ev.location,
           receita: receitaEvento,
           repasse: repasseEvento,
           _count: { orders: ev.pedidos.length },
@@ -193,6 +194,7 @@ export class CartorioController {
 
           const result = events.map(ev => ({
             ...ev,
+            city: ev.city || (ev as any).cartorioUser?.cartorio?.cidade || null,
             title: ev.nomeNoivos,
             date: ev.dataEvento,
             captacao: ev.captacao || (ev.cartorioUser?.cartorio?.profissionais?.length
