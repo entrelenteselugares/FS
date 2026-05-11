@@ -150,46 +150,29 @@ export class PhygitalService {
         include: { event: true }
       });
 
-      // 6.1. Adicionar à Galeria Live (EventMedia ou SharedAlbumMedia)
-      const targetId = foundEvent ? foundEvent.id : (foundVault ? foundVault.id : "");
-
-      if (foundVault) {
-        await prisma.sharedAlbumMedia.create({
-          data: {
-            albumId: targetId,
-            fileId: fileId,
-            webViewLink: publicUrl,
-            thumbnailLink: driveFile.thumbnailLink || null, 
-            uploadedById: metadata.userId || foundVault.ownerId
-          }
-        });
-      } else if (foundEvent) {
-        const count = await prisma.eventMedia.count({ where: { eventId: targetId } });
+      // 6.1. Adicionar à Galeria Live (EventMedia)
+      if (foundEvent) {
+        const count = await prisma.eventMedia.count({ where: { eventId: foundEvent.id } });
         const shortId = `F${(count + 1).toString().padStart(3, '0')}`;
         
-        // Determina se o upload foi feito por um profissional (Admin ou vinculado ao evento)
-        let isProfessional = false;
-        if (metadata.userId) {
-          const uploader = await prisma.user.findUnique({ where: { id: metadata.userId } });
-          const isLinked = metadata.userId === foundEvent.captacaoId || 
-                           metadata.userId === foundEvent.edicaoId || 
-                           metadata.userId === foundEvent.ownerId || 
-                           metadata.userId === foundEvent.cartorioUserId;
-          
-          if (uploader?.role === 'ADMIN' || isLinked) {
-            isProfessional = true;
-          }
-        }
-
         await prisma.eventMedia.create({
           data: {
-            eventId: targetId,
+            eventId: foundEvent.id,
             url: publicUrl,
             shortId: shortId,
             type: 'PHOTO',
-            isGuest: !isProfessional,
             price: foundEvent.pricePerPhoto || foundEvent.priceBase || 15
           } as any
+        });
+      } else if (foundVault) {
+        await prisma.sharedAlbumMedia.create({
+          data: {
+            albumId: foundVault.id,
+            fileId: fileId,
+            webViewLink: publicUrl,
+            thumbnailLink: driveFile?.thumbnailLink || null, 
+            uploadedById: metadata.userId || foundVault.ownerId
+          }
         });
       }
 
