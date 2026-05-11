@@ -48,6 +48,7 @@ interface EventoAgenda {
   title: string;
   date: string;
   location: string;
+  city?: string;
   status: string;
   clientName: string;
   clientEmail: string;
@@ -549,7 +550,7 @@ export default function UnidadeFixaDashboard() {
                                     <h3 className="text-lg md:text-xl font-heading font-black text-theme-text uppercase italic tracking-tight group-hover:text-brand-tactical transition-colors">{ev.title}</h3>
                                  </div>
                                  <div className="flex flex-wrap items-center gap-4 md:gap-6">
-                                    <span className="flex items-center gap-2 text-[9px] font-black text-theme-muted uppercase tracking-widest"><MapPin size={10} className="text-brand-tactical" /> {ev.location}</span>
+                                     <span className="flex items-center gap-2 text-[9px] font-black text-theme-muted uppercase tracking-widest"><MapPin size={10} className="text-brand-tactical" /> {ev.city || (ev.location?.startsWith("CEP:") ? null : ev.location) || "—"}</span>
                                     <span className="flex items-center gap-2 text-[9px] font-black text-theme-muted uppercase tracking-widest"><Calendar size={10} className="text-brand-tactical" /> {formatDateTime(ev.date)}</span>
                                  </div>
                               </div>

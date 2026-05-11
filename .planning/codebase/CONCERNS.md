@@ -1,21 +1,20 @@
-# Technical Concerns: Foto Segundo
+# Technical Concerns & Risks - Foto Segundo
 
-## Technical Debt
+Critical areas requiring ongoing monitoring and defensive engineering.
 
-- **MarketplaceController**: Growing complexity; consider refactoring into vertical-specific handlers.
-- **Frontend Prop Drilling**: Some dashboard components are becoming deeply nested; explore more Context or Jotai usage.
+## 🔴 High Priority
 
-## Performance & Scalability
+- **Printer Agent Connectivity**: Potential for stale connections in local IoT agents affecting Phygital fulfillment.
+- **Production 500 Errors**: Fragility in Vercel serverless function timeouts during heavy image processing (Sharp).
+- **Onboarding Friction**: Automated registration flows sometimes fail due to async race conditions in the local dev environment.
 
-- **Supabase Connection Limits**: High-concurrency events may hit the 60-connection pool limit; monitoring required.
-- **Image Processing**: High-resolution gallery uploads may cause Vercel timeout; consider background workers if volume increases.
+## 🟡 Medium Priority
 
-## Security
+- **Location Data Quality**: Inconsistent CEP-based location strings in legacy event records (Mitigated by current sanitization filters).
+- **Financial Reconciliation**: Complexity in multi-split payments (Master/Franchise/Profissional) requiring manual audits.
+- **Media Asset Storage Cost**: Growth of high-res photos on S3 requiring lifecycle policies (e.g., transition to Glacier).
 
-- **OAuth Tokens**: Ensure encryption at rest for Mercado Pago credentials.
-- **Access Links**: Magic links are convenient but vulnerable to social engineering; monitor for abnormal access patterns.
+## 🟢 Monitoring Gaps
 
-## Business Continuity
-
-- **Printer Agent Stability**: Dependencies on local OS drivers (CUPS/Windows Spooler) introduce local-environment risk.
-- **Exchange Rate Dependency**: pricing multiplier relies on AwesomeAPI; ensure fallback rates are robust.
+- **Real-time UX Observability**: Need for better session replay (e.g., LogRocket or PostHog) to debug specific user failures in the vitrine.
+- **Phygital Queue Latency**: Better telemetry for the time elapsed between "Buyer Clicks" and "Printer Starts".

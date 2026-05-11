@@ -146,7 +146,7 @@ export const LoginPage: React.FC = () => {
         {/* Footer */}
         <div className="pt-8 flex flex-col items-center gap-6 text-center border-t border-theme-border/20">
            <p className="text-zinc-500 text-[8px] font-black uppercase tracking-[0.3em]">
-            Novo por aqui? <Link to="/register" className="text-theme-text hover:text-brand-tactical ml-2 transition-all underline underline-offset-4 decoration-theme-text/10">Solicitar Cadastro</Link>
+            Novo por aqui? <Link to="/registro" className="text-theme-text hover:text-brand-tactical ml-2 transition-all underline underline-offset-4 decoration-theme-text/10">Solicitar Cadastro</Link>
           </p>
           <Link to="/" className="text-zinc-600 hover:text-white text-[8px] font-black uppercase tracking-[0.5em] transition-all italic">
             ← Voltar para a Vitrine

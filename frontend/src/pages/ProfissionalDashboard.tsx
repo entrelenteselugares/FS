@@ -746,7 +746,7 @@ export default function ProfissionalDashboard() {
                                 </div>
                                 <div>
                                    <p className="text-sm font-black text-theme-text uppercase italic tracking-tight">{ev.nomeNoivos}</p>
-                                   <p className="text-[9px] text-theme-muted font-bold uppercase tracking-widest mt-1">{new Date(ev.dataEvento).toLocaleDateString('pt-BR')} · {ev.location}</p>
+                                   <p className="text-[9px] text-theme-muted font-bold uppercase tracking-widest mt-1">{new Date(ev.dataEvento).toLocaleDateString('pt-BR')} · {ev.city || (ev.location?.startsWith("CEP:") ? null : ev.location) || "—"}</p>
                                 </div>
                              </div>
                              <button 

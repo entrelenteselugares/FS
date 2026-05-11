@@ -1,40 +1,24 @@
-# System Integrations: Foto Segundo
+# External Integrations - Foto Segundo
 
-## Financial Integrations (Unified Order Engine)
+External services and APIs integrated into the platform's ecosystem.
 
-- **Mercado Pago**:
-  - **Checkout Pro**: Hosted redirect for high-security transactions.
-  - **Transparent API**: In-app credit card and PIX processing.
-  - **Webhooks**: Automated order status synchronization via HMAC-signed notifications.
-  - **Passive Split (B2B)**: Automated commission distribution for franchisees/partners using `PricingService`.
+## 💳 Financial & Payments
+- **MercadoPago**: Primary payment gateway for PIX and Card transactions. Handles splitting and recurring subscriptions for franchisees.
+- **Vindi**: (Legacy/Potential) Recurring billing engine.
 
-## Database & Infrastructure
+## ☁️ Infrastructure & Storage
+- **AWS S3**: Scalable object storage for high-resolution event photography.
+- **Supabase**: PostgreSQL database management and potential Edge Function offloading.
+- **Vercel**: Deployment platform for frontend (React) and backend (Express/Serverless).
 
-- **Supabase**:
-  - Managed PostgreSQL with Prisma ORM.
-  - Storage Buckets (Bucket: `eventos`) for high-res media.
-  - Real-time subscriptions for UI updates (Grid unlocking).
+## 📂 Cloud Data
+- **Google Drive**: Integration for bulk media transfers and long-term storage sync (via `googleDrive.service.ts`).
+- **Google Photos**: (Potential) API for direct media retrieval.
 
-- **Google Drive (Cold Storage)**:
-  - **Memory Vaults**: Folder-per-album structure for high-persistence storage.
-  - **Proxy Relay**: Stream-proxying via backend to avoid CORS/Auth issues on frontend tags.
-  - **OAuth2 Flow**: Utilizes Refresh Tokens to bypass Service Account storage limits.
+## 📧 Communication
+- **Nodemailer**: Transactional emails for order confirmation and user onboarding.
+- **WhatsApp**: (Conceptual/WAPI) Direct professional-to-client communication.
 
-## Gamification & Loyalty
-
-- **GamificationLedger**: Integrated audit trail for all reward credits.
-- **Ambassador Program**: Automated point conversion for referred sales.
-
-## Communication
-
-- **WhatsApp (CallMeBot)**: Notification service for real-time sales, leads, and payment alerts.
-- **Email (Nodemailer)**: Access link and receipt delivery.
-
-## IoT / Phygital (Hardware Automation)
-
-- **Printer Agent**: Node.js local spooler (Raspberry Pi/PC) for instant hardware print workflow.
-- **Poll & Confirm Protocol**: Local agent polls backend queue, downloads media, and confirms physical output status.
-
-## External Data
-
-- **AwesomeAPI**: Real-time currency exchange for international meritocracy pricing.
+## 📡 Monitoring & Analytics
+- **Sentry**: Real-time error tracking and performance monitoring for both Frontend and Backend.
+- **Google Search Console**: SEO monitoring for public event pages.

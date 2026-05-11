@@ -101,7 +101,7 @@ function EventCard({ event, onClick }: { event: Event; onClick: () => void }) {
         <div className="hidden md:flex flex-col gap-1 text-white/70 text-[9px] font-black uppercase tracking-widest italic">
           <div className="flex items-center gap-1.5">
             <MapPin size={10} className="text-emerald-500" />
-            <span className="truncate">{event.location || event.city || "PONTO DESIGNADO"}</span>
+            <span className="truncate">{event.city || (event.location?.startsWith("CEP:") ? null : event.location) || "PONTO DESIGNADO"}</span>
           </div>
           <div className="flex items-center gap-1.5">
             <Calendar size={10} className="text-emerald-500" />

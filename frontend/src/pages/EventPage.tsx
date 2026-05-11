@@ -497,7 +497,7 @@ return (
                  </div>
                  <div className="flex items-center gap-2">
                    <MapPin size={16} className="text-brand-tactical" />
-                   <span className="text-xs font-black uppercase tracking-[0.2em] text-theme-text-muted italic">{event.city || event.location || "Ponto Designado"}</span>
+                   <span className="text-xs font-black uppercase tracking-[0.2em] text-theme-text-muted italic">{event.city || (event.location?.startsWith("CEP:") ? null : event.location) || "Ponto Designado"}</span>
                  </div>
               </div>
             </div>

@@ -1,30 +1,26 @@
-# Project Structure: Foto Segundo
+# Codebase Structure - Foto Segundo
 
-## Root Directory
+Physical organization of the repository.
 
-- `backend/`: Express server and core logic.
-- `frontend/`: Vite + React application.
-- `printer-agent/`: Local IoT printing service.
-- `docs/`: Master documentation and technical guides.
-- `.planning/`: GSD project state and codebase maps.
+## 📂 Root
+- `backend/`: Server-side logic.
+- `frontend/`: Client-side React application.
+- `infrastructure/`: Database migrations, shared scripts, and test helpers.
+- `e2e/`: Playwright E2E test suite.
+- `printer-agent/`: Local service for printer communication.
+- `.planning/`: GSD documentation and architectural records.
 
-## Backend Layout (`backend/src/`)
+## 📂 Backend (`backend/src/`)
+- `controllers/`: Request handling and response mapping.
+- `services/`: Business logic and external API orchestrations.
+- `middleware/`: Authentication, authorization, and sanitization.
+- `routes/`: Express route definitions.
+- `prisma/`: DB Schema and migrations.
+- `tests/`: Integration and resilience test suites.
 
-- `controllers/`: Request handling and flow orchestration.
-- `services/`: Business logic (Pricing, Gamification, Notifications).
-- `lib/`: Shared utilities (Audit, Auth, Prisma, Supabase).
-- `middleware/`: Security and validation filters.
-- `routes/`: API endpoint definitions.
-
-## Frontend Layout (`frontend/src/`)
-
-- `pages/`: Primary route components (Admin, Cliente, Profissional, Unidade).
-- `components/`: Modular UI elements (Common, Specific Dashboards).
-- `contexts/`: Global state (Auth, Theme).
-- `lib/`: API client and shared helpers.
-- `styles/`: Global CSS and design system tokens.
-
-## Data Schema (`backend/prisma/`)
-
-- `schema.prisma`: Single source of truth for the database model.
-- `seed.ts`: Initial data for development environments.
+## 📂 Frontend (`frontend/src/`)
+- `components/`: Modular UI elements categorized by role (Admin, Profissional, etc.).
+- `pages/`: Page-level components and routing targets.
+- `hooks/`: Custom React hooks for auth and global state.
+- `lib/`: API clients (Axios) and design system tokens.
+- `assets/`: Static media and global styles.

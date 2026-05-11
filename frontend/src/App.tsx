@@ -84,7 +84,7 @@ const AnimatedRoutes = () => {
         {/* Público */}
         <Route path="/" element={<HomePage />} />
         <Route path="/login" element={<LoginPage />} />
-        <Route path="/register" element={<RegisterPage />} />
+        <Route path="/registro" element={<RegisterPage />} />
         <Route path="/e/:slug" element={<EventPage />} />
         <Route path="/auth" element={<AuthSelectionPage />} />
         <Route path="/reset-password" element={<ResetPasswordPage />} />

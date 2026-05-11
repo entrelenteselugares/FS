@@ -1,28 +1,28 @@
-# Testing Strategy: Foto Segundo
+# Testing Strategy - Foto Segundo
 
-## Automated E2E (Playwright)
+Comprehensive validation pipeline for high-stakes photography operations.
 
-- **Master Suite**: 22 parallel tests covering 100% of the core user journey.
-- **Coverage**:
-  - Registration & Auth.
-  - Event Creation & Professional Assignment.
-  - B2C Checkout (Credit Card/PIX).
-  - B2B Supply Reordering.
-  - Ponto Fixo "One-Click" Sales.
-  - Phygital Print Spooling.
+## 🧪 Testing Layers
 
-## Manual UAT
+1. **E2E (End-to-End)**:
+   - Framework: **Playwright**.
+   - Focus: Critical paths like Onboarding Robot and Marketplace Checkout.
+   - Path: `/e2e/`.
+2. **Integration (Backend)**:
+   - Framework: **Jest**.
+   - Focus: API responses, DB persistence, and service orchestrations.
+   - Path: `backend/src/tests/integration.test.ts`.
+3. **Resilience**:
+   - Framework: **Jest**.
+   - Focus: Handling of timeout, failed printer communication, and 500 restoration.
+   - Path: `backend/src/tests/resilience.test.ts`.
 
-- Verified by Kurio in production-like environments.
-- Stress testing via multi-browser parallel execution.
+## 🤖 Automated Robots
 
-## Quality Gates
+- **Onboarding Robot**: Simulates full user registration to detect friction in the production environment.
+- **Fulfillment Robot**: (Planned) Simulates print queue processing to ensure Phygital integrity.
 
-- All major phases (Milestones) require a full regression pass of the Master Suite.
-- Zero-tolerance policy for financial logic errors (Split, Payout, Cashback).
+## 🚦 Quality Gates
 
-## Testing Tools
-
-- **Playwright**: Browser-based automation.
-- **Prisma Studio**: Direct database state verification.
-- **Audit Logs**: Traceability for transaction failures.
+- **UAT (User Acceptance Testing)**: Mandatory verification before merging changes to `main`.
+- **Telemetry Monitoring**: Use of console logs in E2E scripts to trace execution in non-interactive environments.

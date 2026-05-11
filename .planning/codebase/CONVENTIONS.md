@@ -1,34 +1,25 @@
-# Coding Conventions: Foto Segundo
+# Coding & UI Conventions - Foto Segundo
 
-## General Rules
+Standard patterns ensuring maintainability and visual excellence.
 
-- **Type Safety**: TypeScript is mandatory. Use interfaces for all data structures. Avoid `any`.
-- **Naming**: camelCase for variables/functions, PascalCase for components/interfaces, snake_case for database maps.
+## 🛠️ Code Conventions (Backend)
 
-## Design Patterns
+- **Service Layer First**: Avoid logic in controllers. All business rules must reside in `src/services`.
+- **Response Consistency**: Always return JSON with structured error messages for frontend toast mapping.
+- **Prisma Transactions**: Use `$transaction` for operations involving financial records (pedidos, repasses).
+- **Environment Parity**: Always use `dotenv` for configuration, never hardcode endpoints.
 
-- **Controllers**: Should be thin, delegating complex logic to Services.
-- **Services**: Pure business logic, independent of request/response objects.
-- **Auditing**: Every critical business mutation (Sale, Payout, Profile Update) MUST call the `audit()` utility.
+## 🎨 UI/UX Conventions (Frontend)
 
-## Styling (Midnight Luxury)
+- **Rich Aesthetics Policy**:
+  - No plain browser defaults.
+  - Use gradients, micro-animations (Framer Motion), and glassmorphism.
+- **Location Sanitization**: Never show "CEP:" strings to the user. Prioritize `city` name or descriptive location strings.
+- **Responsive Stacking**: Layouts must be built mobile-first, ensuring touch targets are at least 44px.
+- **Typography**: Strictly use Design System tokens from `T` (Theme) library.
 
-- Use CSS Variables defined in `index.css`.
-- Colors: `theme-bg`, `theme-text`, `brand-tactical` (Gold).
-- Font: Heading (Playfair Display/Outfit), Body (Inter).
+## 🔒 Security Conventions
 
-## Data Integrity
-
-- **Transactions**: Use `prisma.$transaction` for multi-table writes.
-- **Ledger**: Never modify reward credits without an accompanying `GamificationLedger` entry.
-
-## Git & Workflow
-
-- GSD-based planning before implementation.
-- Commit messages should be descriptive and linked to phase/objective.
-
-## Hybrid Storage Routing
-
-- **Dynamic Destination**: Use `PhygitalService` to determine if a QR capture routes to an `Event` (Hot) or `SharedAlbum` (Cold) based on provided IDs.
-- **Proxy Relay**: Always use the `/vaults/media/proxy/:fileId` endpoint for rendering images from Cold Storage to avoid CORS and authentication header failures.
-- **Fallbacks**: UI components must implement smart fallbacks (e.g., internal gallery routes) if external storage links are not present.
+- **RBAC**: Middleware-based role verification for all sensitive routes (`ADMIN`, `FRANCHISE`, `PROFISSIONAL`).
+- **Data Privacy**: Mask sensitive customer data (phones, emails) in public-facing views.
+- **JWT Lifespan**: Use short-lived access tokens with secure refresh cycles.

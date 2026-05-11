@@ -1,35 +1,35 @@
-# Technical Stack: Foto Segundo
+# Technology Stack - Foto Segundo
 
-## Core Technologies
+Comprehensive breakdown of the technologies powering the Phygital Photography & Marketplace platform.
 
-- **Frontend**: React (Vite) with TypeScript.
-- **Backend**: Node.js (Express) with TypeScript.
-- **Database**: PostgreSQL (Supabase) via Prisma ORM.
-- **Deployment**: Vercel (Frontend & Backend).
+## 🟢 Frontend
+- **Framework**: React 19 (Vite 8)
+- **Styling**: TailwindCSS 3 (Vanilla CSS for premium custom components)
+- **Animations**: Framer Motion 12
+- **State/Routing**: React Router 7
+- **Data Fetching**: Axios 1.15
+- **Visualization**: Recharts 3.8
+- **Utilities**: Lucide React, date-fns, qrcode.react
+- **Monitoring**: Sentry Browser/React 10.52
 
-## Design System
+## 🔵 Backend
+- **Runtime**: Node.js 24+
+- **Framework**: Express 5.2 (Latest stable/experimental)
+- **ORM**: Prisma 6.19
+- **Database**: PostgreSQL (via Supabase)
+- **Authentication**: JWT + BcryptJS
+- **Image Processing**: Sharp 0.34 (Server-side optimization)
+- **File Uploads**: Multer 2.1
+- **Communication**: Nodemailer 8.0
+- **Monitoring**: Sentry Node 10.52
 
-- **Theme**: Midnight Luxury (Dark mode, gold/brand-tactical accents).
-- **Icons**: Lucide React.
-- **Components**: Custom luxury-themed components with CSS Modules/Vanilla CSS.
+## 🟡 DevOps & Infrastructure
+- **Hosting**: Vercel (Frontend & Serverless Functions)
+- **Database**: Supabase (PostgreSQL)
+- **Storage**: AWS S3 (Media assets)
+- **CI/CD**: GitHub Actions (Implied)
+- **E2E Testing**: Playwright 1.50+
 
-## Data & ORM
-
-- **ORM**: Prisma (client-side generation).
-- **Storage**: Supabase Storage for event photos and profile assets.
-- **Ledger**: GamificationLedger for immutable transaction history.
-
-## Payments & Finance
-
-- **Gateway**: Mercado Pago (Credit Card & PIX).
-- **Engine**: PricingService for automated commission splits.
-
-## Automation & IoT
-
-- **Printer Agent**: Node.js local agent for phygital operations.
-- **WebSocket/Polling**: For real-time print spooling.
-
-## Testing
-
-- **E2E**: Playwright (Full Regression Suite).
-- **Unit**: Vitest (planned for core logic).
+## 🟠 Phygital Agent (IoT)
+- **Agent**: Node.js based printer agent
+- **Local Comm**: IoT Service layer for direct printer communication
