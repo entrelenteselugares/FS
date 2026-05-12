@@ -365,8 +365,9 @@ function ServiceModal({ onClose, onSave, initialData, saving }: { onClose: () =>
             <button onClick={onClose} className="p-3 hover:bg-white/5 rounded-full transition-all text-theme-muted"><X size={24} /></button>
           </div>
 
-          {/* Scrollable Content */}
-          <form onSubmit={(e) => { e.preventDefault(); onSave(form); }} className="flex-1 overflow-y-auto p-8 md:p-10 space-y-8 custom-scrollbar">
+          {/* Scrollable Content e Footer */}
+          <form onSubmit={(e) => { e.preventDefault(); onSave(form); }} className="flex flex-col flex-1 overflow-hidden">
+            <div className="flex-1 overflow-y-auto p-8 md:p-10 space-y-8 custom-scrollbar">
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
               <div className="space-y-2">
                 <label className={labelClass}>Nome do Serviço</label>
@@ -411,20 +412,19 @@ function ServiceModal({ onClose, onSave, initialData, saving }: { onClose: () =>
                 </p>
               </div>
             </div>
+            {/* Footer */}
+            <div className="p-8 md:p-10 bg-theme-bg-muted/50 border-t border-theme-border flex gap-4 shrink-0">
+              <button type="button" onClick={onClose} className="flex-1 py-5 border border-theme-border text-[11px] font-black uppercase tracking-[0.3em] text-theme-muted hover:text-white transition-all rounded-[20px] italic">Cancelar</button>
+              <button 
+                type="submit" 
+                disabled={saving} 
+                className="flex-[2] py-5 bg-brand-tactical text-zinc-950 text-[11px] font-black uppercase tracking-[0.3em] shadow-2xl shadow-brand-tactical/20 hover:brightness-110 transition-all rounded-[20px] italic flex items-center justify-center gap-4"
+              >
+                {saving ? "SINCRONIZANDO..." : initialData ? "SALVAR ALTERAÇÕES" : "CONFIRMAR ATIVO"}
+                <ArrowRight size={18} strokeWidth={1.5} />
+              </button>
+            </div>
           </form>
-
-          {/* Footer */}
-          <div className="p-8 md:p-10 bg-theme-bg-muted/50 border-t border-theme-border flex gap-4 shrink-0">
-            <button type="button" onClick={onClose} className="flex-1 py-5 border border-theme-border text-[11px] font-black uppercase tracking-[0.3em] text-theme-muted hover:text-white transition-all rounded-[20px] italic">Cancelar</button>
-            <button 
-              type="submit" 
-              disabled={saving} 
-              className="flex-[2] py-5 bg-brand-tactical text-zinc-950 text-[11px] font-black uppercase tracking-[0.3em] shadow-2xl shadow-brand-tactical/20 hover:brightness-110 transition-all rounded-[20px] italic flex items-center justify-center gap-4"
-            >
-              {saving ? "SINCRONIZANDO..." : initialData ? "SALVAR ALTERAÇÕES" : "CONFIRMAR ATIVO"}
-              <ArrowRight size={18} strokeWidth={1.5} />
-            </button>
-          </div>
        </div>
     </div>
   );
