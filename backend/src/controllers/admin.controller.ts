@@ -1040,22 +1040,48 @@ export async function adminListQuotes(req: AuthRequest, res: Response): Promise<
   }
 }
 
-export async function adminApproveQuote(req: AuthRequest, res: Response): Promise<void> {
-  const { id } = req.params;
-  const { finalPrice } = req.body;
+export async function adminCreateQuote(req: AuthRequest, res: Response): Promise<void> {
+  const {
+    nomeNoivos, clientName, clientEmail, clientPhone,
+    dataEvento, location, description, priceBase,
+    urgency, temFoto, temVideo, temReels, usageType
+  } = req.body;
 
-  if (!finalPrice || Number(finalPrice) <= 0) {
-    res.status(400).json({ error: "O preÃ§o final deve ser maior que zero." });
+  if (!nomeNoivos || !dataEvento) {
+    res.status(400).json({ error: "Título do evento e data são obrigatórios." });
     return;
   }
 
   try {
+    // Gera slug único para o lead
+    let slug = slugify(`quote-${nomeNoivos}-${new Date(dataEvento).getFullYear()}`);
+    const exists = await prisma.event.findUnique({ where: { slug } });
+    if (exists) slug = `${slug}-${Date.now().toString(36)}`;
+
+    const quote = await prisma.event.create({
+      data: {
+        nomeNoivos,
+        slug,
+        dataEvento: new Date(dataEvento),
+        location: location || "",
+        description: description || null,
+        clientName: clientName || null,
+        clientEmail: clientEmail || null,
+        priceBase: priceBase ? Number(priceBase) : 0,
+        isQuote: true,
+        quoteStatus: "PENDING",
     const quote = await prisma.event.findUnique({
       where: { id: String(id) }
     });
 
     if (!quote || !quote.isQuote) {
-      res.status(404).json({ error: "OrÃ§amento nÃ£o encontrado." });
+      res.status(404).json({ error: "Orçamento não encontrado." });
+      return;
+    }
+
+    // [P1] Guard: clientEmail obrigatório para emitir proposta
+    if (!quote.clientEmail) {
+      res.status(400).json({ error: "Este lead não possui e-mail. Adicione o e-mail do cliente antes de disparar a proposta." });
       return;
     }
 
@@ -1151,6 +1177,18 @@ export async function adminApproveQuote(req: AuthRequest, res: Response): Promis
       eventTitle: quote.nomeNoivos,
       finalPrice: Number(finalPrice)
     });
+
+    // [P2] Notificação in-app para o profissional atribuído (captacaoId)
+    if (updatedQuote.captacaoId) {
+      await NotificationService.createInApp({
+        userId: updatedQuote.captacaoId,
+        type: 'EVENT_INVITE',
+        title: '📸 Novo evento confirmado!',
+        body: `Uma proposta foi aprovada para "${quote.nomeNoivos}". Verifique sua agenda e os detalhes do evento.`,
+        refId: quote.id,
+        refType: 'event'
+      });
+    }
 
     await audit(req, "QUOTE_APPROVED", "Event", String(id), null, { finalPrice });
 

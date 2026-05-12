@@ -60,7 +60,7 @@ Para garantir escalabilidade e baixo custo, utilizamos uma estratégia de armaze
 
 ---
 
-## 3. Component Diagram
+## 4. Component Diagram
 
 ```mermaid
 graph TD
@@ -88,16 +88,17 @@ graph TD
 
 ---
 
-## 4. Key Abstractions
+## 5. Key Abstractions
 
 - **Vault Engine (`backend/src/services/vault.service.ts`):** Manages the lifecycle of "Cofres de Memórias", including subscription states and media organization in Google Drive.
 - **Order Motor (`backend/src/controllers/payment.controller.ts`):** Orchestrates transaction processing, financial splits, and fulfillment status.
 - **IoT Telemetry (`backend/src/services/iot.service.ts`):** Handles printer agent heartbeat monitoring and device health tracking.
 - **Access Controller (`backend/src/controllers/access.controller.ts`):** Manages photo visibility, like system, and QR/PIN-based anonymous access.
+- **Admin Controller (`backend/src/controllers/admin.controller.ts`):** Orchestrates administrative event management, including operational briefings, staffing, and system-wide configurations.
 
 ---
 
-## 5. Directory Structure Rationale
+## 6. Directory Structure Rationale
 
 | Directory | Purpose |
 |-----------|---------|
@@ -110,7 +111,7 @@ graph TD
 
 ---
 
-## 6. Deployment
+## 7. Deployment
 
 - **Hosting:** Vercel (Frontend e Serverless API).
 - **Database:** Supabase (PostgreSQL).

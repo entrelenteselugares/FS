@@ -18,6 +18,10 @@ Entrega de fotos anônima via QR Code e PIN de 6 dígitos. O cliente visualiza s
 
 Infraestrutura de armazenamento em nuvem (Google Drive Cold Storage) integrada para preservação de ativos digitais de longo prazo, permitindo que clientes mantenham suas memórias seguras e acessíveis para sempre.
 
+### 📝 Briefing & Observações (Gestão Operacional)
+
+Sistema de captura de observações customizadas durante o orçamento, totalmente integrado ao Dashboard Admin. Permite visibilidade operacional total sobre as solicitações específicas do cliente desde o primeiro contato até a execução.
+
 ### 🖨️ IoT Print Engine
 
 Agente de impressão local em tempo real que monitora a fila de pedidos e realiza o fulfillment físico automático, garantindo que o "unboxing" da memória aconteça ainda durante o evento.

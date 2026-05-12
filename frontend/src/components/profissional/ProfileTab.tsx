@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { Briefcase, Camera, Phone, CheckCircle2, Check, Save, X } from "lucide-react";
+import { Briefcase, Camera, Phone, CheckCircle2, Check, Save, X, ShieldCheck } from "lucide-react";
 import { API } from "../../lib/api";
 import type { ProfileData, EquipmentItem } from "./types";
 
@@ -63,7 +63,15 @@ export function ProfileTab({ profile, onUpdated, onNotify }: ProfileTabProps) {
     <div className="space-y-12">
       {/* Header Section */}
       <div>
-        <h2 className="text-3xl font-black text-theme-text uppercase tracking-tighter">Meu Perfil</h2>
+        <div className="flex items-center gap-4">
+          <h2 className="text-3xl font-black text-theme-text uppercase tracking-tighter">Meu Perfil</h2>
+          {profile.user?.isVerified && (
+            <div className="px-3 py-1 bg-brand-tactical/10 border border-brand-tactical/30 rounded-full flex items-center gap-2 animate-pulse">
+              <ShieldCheck size={12} className="text-brand-tactical" />
+              <span className="text-[9px] font-black text-brand-tactical uppercase tracking-widest italic">PRO VERIFICADO</span>
+            </div>
+          )}
+        </div>
         <p className="text-[10px] text-theme-muted uppercase tracking-[0.4em] mt-2 font-black italic">Gerenciamento de Identidade e Ativos Técnicos</p>
       </div>
 

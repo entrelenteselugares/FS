@@ -20,6 +20,7 @@ Most endpoints require a JSON Web Token (JWT).
 | `GET` | `/api/auth/me` | Returns current user profile. | Yes |
 | `GET` | `/api/public/events` | Lists all public events. | No |
 | `GET` | `/api/public/events/:slug` | Gets detailed info for a specific event. | No |
+| `POST` | `/api/public/quotes` | Submits a new event booking request/quote. | No |
 | `POST` | `/api/profissional/flash-event` | Creates a new Flash Event. | Pro |
 | `POST` | `/api/public/phygital/upload` | Uploads a photo for instant printing. | No |
 | `POST` | `/api/checkout/payment` | Processes a payment via Mercado Pago. | Opt |
@@ -29,6 +30,10 @@ Most endpoints require a JSON Web Token (JWT).
 | `GET` | `/api/unidade-fixa/stats` | Returns Unidade Fixa operational KPIs. | Unidade |
 | `GET` | `/api/unidade-fixa/events` | Lists assigned events for the unit. | Unidade |
 | `GET` | `/api/admin/stats` | High-level dashboard statistics. | Admin |
+| `GET` | `/api/admin/events` | Lists all events for administration. | Admin |
+| `GET` | `/api/admin/events/:id` | Gets full operational details of an event. | Admin |
+| `PATCH` | `/api/admin/events/:id` | Updates event briefing, staff, and logistics. | Admin |
+| `GET` | `/api/admin/quotes` | Lists all submitted booking requests. | Admin |
 
 ## Request/Response Formats
 

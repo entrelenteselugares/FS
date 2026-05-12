@@ -193,17 +193,24 @@ export const AdminUsers: React.FC = () => {
                 placeholder="PROCURAR MEMBRO POR NOME OU E-MAIL..."
                 value={searchTerm}
                 onChange={(e) => setSearchTerm(e.target.value)}
-                className="fs-input pl-12 uppercase tracking-widest"
+                className="fs-input uppercase tracking-widest"
+                style={{ paddingLeft: '3rem' }}
               />
            </div>
            <div className="flex gap-2 overflow-x-auto pb-2 md:pb-0 w-full md:w-auto">
-              {['ALL', 'ADMIN', 'PROFISSIONAL', 'CARTORIO'].map(r => (
+              {[
+                { value: 'ALL', label: 'Todos' },
+                { value: 'ADMIN', label: 'Admin' },
+                { value: 'PROFISSIONAL', label: 'Profissional' },
+                { value: 'CLIENTE', label: 'Cliente' },
+                { value: 'CARTORIO', label: 'Unidades' },
+              ].map(({ value, label }) => (
                 <button
-                  key={r}
-                  onClick={() => setFilterRole(r)}
-                  className={`fs-btn border transition-all whitespace-nowrap ${filterRole === r ? 'bg-theme-border border-zinc-700 text-theme-text shadow-lg' : 'bg-transparent border-theme-border text-theme-muted hover:border-zinc-700'}`}
+                  key={value}
+                  onClick={() => setFilterRole(value)}
+                  className={`fs-btn border transition-all whitespace-nowrap ${filterRole === value ? 'bg-theme-border border-zinc-700 text-theme-text shadow-lg' : 'bg-transparent border-theme-border text-theme-muted hover:border-zinc-700'}`}
                 >
-                  {r === 'ALL' ? 'Todos' : r === 'CARTORIO' ? 'Unidades' : r}
+                  {label}
                 </button>
               ))}
            </div>

@@ -5,9 +5,10 @@ interface DashboardHeaderProps {
   viewTab: "lista" | "calendario";
   onViewTabChange: (tab: "lista" | "calendario") => void;
   residentUnits?: string[];
+  isVerified?: boolean;
 }
 
-export function DashboardHeader({ activeTab, viewTab, onViewTabChange, residentUnits = [] }: DashboardHeaderProps) {
+export function DashboardHeader({ activeTab, viewTab, onViewTabChange, residentUnits = [], isVerified = false }: DashboardHeaderProps) {
   const getTitle = () => {
     switch (activeTab) {
       case "agenda": return "Meu Cockpit";
@@ -31,6 +32,14 @@ export function DashboardHeader({ activeTab, viewTab, onViewTabChange, residentU
               <ShieldCheck size={14} className="text-brand-tactical" />
               <p className="text-[11px] font-black text-brand-tactical uppercase tracking-[0.4em] italic">
                 Residente: {residentUnits.join(", ")}
+              </p>
+            </div>
+          )}
+          {isVerified && (
+            <div className="flex items-center gap-2 px-3 py-1 bg-brand-tactical/10 border border-brand-tactical/30 rounded-full animate-pulse">
+              <ShieldCheck size={12} className="text-brand-tactical" />
+              <p className="text-[9px] font-black text-brand-tactical uppercase tracking-widest italic">
+                PRO VERIFICADO
               </p>
             </div>
           )}

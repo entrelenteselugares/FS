@@ -86,6 +86,8 @@ export interface ProfileData {
     email: string | null;
     whatsapp: string | null;
     address: string | null;
+    isVerified?: boolean;
+    verificationStatus?: string;
   };
   pixKey: string | null;
   pixType: string | null;

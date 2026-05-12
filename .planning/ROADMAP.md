@@ -32,7 +32,7 @@
 
 - [x] **Phase 14: Flash Event Fulfillment (Fricção Zero)**: Implementation of physical cards with QR/PIN for anonymous photo delivery and instant account conversion. (DONE)
 - [x] **Phase 15: Financial & E2E Hardening**: Stabilization of B2B quotation workflows, Express Sale cart logic, and transaction integrity via high-load Playwright stress tests. (DONE)
-- [x] **Phase 16: AI-Driven Auto-Curation**: [DEFERRED] Infrastructure prioritised; Hybrid Storage Pipeline implemented to support automated cycles.
+- [x] **Phase 16: Operational Refinement**: [REPLACED] AI components removed per strategic decision; focus shifted to manual operational control and briefing visibility. (DONE)
 - [x] **Phase 17: Marketplace Scale**: Expanding the ambassador program and global phygital distribution network. (DONE)
 - [x] **Phase 18: UI/UX Modal Standardization**: Updating Express Sale, Foto Point, and Flash Event modals to match the "Minha Seleção" premium standards. (DONE)
 - [x] **Phase 19: Quotes Kanban Redesign**: Refactoring the AdminQuotes page into a horizontal Kanban pipeline with slide-in drawers. (DONE)

@@ -633,6 +633,16 @@ export const AdminEvents: React.FC<AdminEventsProps> = ({ initialEditEventId }) 
                       <input type="number" required value={formData.eventHours} onChange={e => setFormData({...formData, eventHours: Number(e.target.value)})} className="w-full bg-theme-bg-muted border border-theme-border/60 p-4 text-[10px] text-theme-text font-black outline-none focus:border-brand-tactical rounded-xl" />
                     </div>
                   </div>
+
+                  <div className="md:col-span-2 space-y-2">
+                    <label className="text-[8px] font-black text-brand-tactical uppercase tracking-widest block mb-2 opacity-60 italic">Briefing / Observações (Briefing do Cliente)</label>
+                    <textarea 
+                      className="w-full bg-theme-bg-muted border border-theme-border/60 p-4 text-[10px] text-theme-text font-black outline-none focus:border-brand-tactical rounded-xl h-32 resize-none" 
+                      value={formData.description} 
+                      onChange={e => setFormData({ ...formData, description: e.target.value })} 
+                      placeholder="Sem observações adicionais..."
+                    />
+                  </div>
                 </div>
               )}
 

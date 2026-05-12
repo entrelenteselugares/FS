@@ -120,6 +120,20 @@ export const AdminQuotes: React.FC = () => {
     finally { setApproving(false); }
   };
 
+  const handleSaveDraft = async () => {
+    if (!selectedQuote) return;
+    try {
+      await API.patch(`/admin/quotes/${selectedQuote.id}/approve`, {
+        finalPrice: finalPrice > 0 ? finalPrice : Math.ceil(suggestedPrice),
+        isSplit,
+        breakdown: { staff: selectedStaff, equipment: selectedEquip, costTotal, margin },
+        draftOnly: true // Sinaliza para o backend: apenas salvar breakdown, status PRICED
+      });
+      setNotification({message:"Rascunho salvo! Lead movido para \"Em Análise\".", type:"success"});
+      setSelectedQuote(null); fetchQuotes(); setTimeout(()=>setNotification(null),5000);
+    } catch { setNotification({message:"Erro ao salvar rascunho.",type:"error"}); }
+  };
+
   const handleReject = async () => {
     if (!selectedQuote) return;
     const reason = prompt("MOTIVO DA REJEIÇÃO:");
@@ -432,6 +446,9 @@ export const AdminQuotes: React.FC = () => {
                     <div className="space-y-3">
                       <label className="text-[9px] font-black text-theme-muted uppercase tracking-[0.4em] text-center block italic">Valor Final da Proposta</label>
                       <input type="number" value={finalPrice} onChange={e=>setFinalPrice(Number(e.target.value))} className="w-full bg-black border border-brand-tactical/30 p-5 text-4xl font-display font-black text-theme-text outline-none text-center italic shadow-[0_0_30px_rgba(133,185,172,0.1)] focus:border-brand-tactical transition-all rounded-lg"/>
+                      <button onClick={handleSaveDraft} className="w-full border border-theme-border text-theme-muted p-2.5 text-[8px] font-black uppercase tracking-[0.2em] hover:border-brand-tactical hover:text-brand-tactical transition-all rounded-lg italic flex items-center justify-center gap-2">
+                        Salvar Rascunho (Em Análise)
+                      </button>
                       <div className="grid grid-cols-4 gap-3">
                         <button onClick={handleReject} className="bg-theme-card text-red-500 border border-red-500/20 p-3.5 text-[9px] font-black uppercase tracking-[0.2em] hover:bg-red-500 hover:text-white transition-all rounded-lg italic">Arquivar</button>
                         <button onClick={handleApprove} disabled={finalPrice<=0||approving} className="col-span-3 bg-brand-tactical text-black p-3.5 text-[10px] font-black uppercase tracking-[0.4em] hover:brightness-110 shadow-xl transition-all flex items-center justify-center gap-2 disabled:opacity-50 rounded-lg italic">

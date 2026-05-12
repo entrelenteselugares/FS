@@ -174,6 +174,7 @@ export async function getProfile(req: AuthRequest, res: Response): Promise<void>
         user: { 
           select: { 
             nome: true, email: true, whatsapp: true, address: true, pixKey: true,
+            isVerified: true, verificationStatus: true,
             franchiseProfile: { select: { printCredits: true, active: true } }
           } 
         },
@@ -344,6 +345,7 @@ export async function updateProfile(req: AuthRequest, res: Response): Promise<vo
         user: {
           select: {
             nome: true, email: true, whatsapp: true, address: true, pixKey: true,
+            isVerified: true, verificationStatus: true,
             franchiseProfile: { select: { printCredits: true, active: true } }
           }
         }
