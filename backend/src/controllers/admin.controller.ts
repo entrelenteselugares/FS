@@ -1070,6 +1070,21 @@ export async function adminCreateQuote(req: AuthRequest, res: Response): Promise
         priceBase: priceBase ? Number(priceBase) : 0,
         isQuote: true,
         quoteStatus: "PENDING",
+      }
+    });
+
+    res.status(201).json(quote);
+  } catch (err) {
+    console.error("adminCreateQuote:", err);
+    res.status(500).json({ error: "Erro ao criar orçamento." });
+  }
+}
+
+export async function adminApproveQuote(req: AuthRequest, res: Response): Promise<void> {
+  const { id } = req.params;
+  const { finalPrice } = req.body;
+
+  try {
     const quote = await prisma.event.findUnique({
       where: { id: String(id) }
     });
