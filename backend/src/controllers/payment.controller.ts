@@ -509,7 +509,7 @@ export class PaymentController {
           installments: Number(installments) || 1,
           payment_method_id: paymentMethodId || "visa",
           payer: {
-            email: email || "matheuskurio@gmail.com",
+            email: email || "contatofotosegundo@gmail.com",
             identification: cpf ? { type: "CPF", number: cpf } : undefined
           },
           external_reference: supplyOrder.id

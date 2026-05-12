@@ -17,7 +17,7 @@ async function main() {
     { key: "split_edicao",   value: "20", label: "% Editor" },
     { key: "split_cartorio", value: "10", label: "% Cartório parceiro" },
     { key: "payout_day",     value: "1",  label: "Dia do repasse (1=Segunda)" },
-    { key: "pix_matriz",     value: "matheuskurio@gmail.com", label: "Chave Pix da plataforma" },
+    { key: "pix_matriz",     value: "contatofotosegundo@gmail.com", label: "Chave Pix da plataforma" },
   ];
 
   for (const c of configs) {
