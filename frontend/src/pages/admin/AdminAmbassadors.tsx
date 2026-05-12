@@ -282,7 +282,6 @@ export const AdminAmbassadors: React.FC = () => {
                 ).map(([category, items]) => {
                   const isCategorySelected = formData.targetCategories.includes(category);
                   const selectedItemsInCategory = items.filter(i => formData.targetServices.includes(i.id));
-                  const isAllItemsSelected = selectedItemsInCategory.length === items.length;
 
                   const toggleCategory = () => {
                     if (isCategorySelected) {
