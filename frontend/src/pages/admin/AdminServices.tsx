@@ -412,6 +412,7 @@ function ServiceModal({ onClose, onSave, initialData, saving }: { onClose: () =>
                 </p>
               </div>
             </div>
+            </div>
             {/* Footer */}
             <div className="p-8 md:p-10 bg-theme-bg-muted/50 border-t border-theme-border flex gap-4 shrink-0">
               <button type="button" onClick={onClose} className="flex-1 py-5 border border-theme-border text-[11px] font-black uppercase tracking-[0.3em] text-theme-muted hover:text-white transition-all rounded-[20px] italic">Cancelar</button>
