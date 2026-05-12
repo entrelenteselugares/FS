@@ -116,7 +116,15 @@ export class ReferralService {
   /**
    * (ADMIN) Cria uma nova campanha para um usuário.
    */
-  static async createCampaign(data: { name: string, slug: string, ownerId: string, rewardType: string, rewardValue: number }) {
+  static async createCampaign(data: { 
+    name: string, 
+    slug: string, 
+    ownerId: string, 
+    rewardType: string, 
+    rewardValue: number,
+    targetCategories?: string[],
+    targetServices?: string[]
+  }) {
     return prisma.referralCampaign.create({
       data: {
         name: data.name,
@@ -124,6 +132,8 @@ export class ReferralService {
         ownerId: data.ownerId,
         rewardType: data.rewardType as any,
         rewardValue: data.rewardValue,
+        targetCategories: data.targetCategories || [],
+        targetServices: data.targetServices || [],
         active: true
       }
     });

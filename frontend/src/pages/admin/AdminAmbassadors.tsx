@@ -19,19 +19,31 @@ export const AdminAmbassadors: React.FC = () => {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [searchTerm, setSearchTerm] = useState("");
   
-  const [formData, setFormData] = useState({
+  const [formData, setFormData] = useState<{
+    name: string,
+    slug: string,
+    ownerId: string,
+    rewardType: string,
+    rewardValue: number,
+    targetCategories: string[],
+    targetServices: string[]
+  }>({
     name: "",
     slug: "",
     ownerId: "",
     rewardType: "CREDIT",
-    rewardValue: 10
+    rewardValue: 10,
+    targetCategories: [],
+    targetServices: []
   });
 
   const [users, setUsers] = useState<{id: string, nome: string}[]>([]);
+  const [catalog, setCatalog] = useState<{id: string, name: string, category: string}[]>([]);
 
   useEffect(() => {
     fetchCampaigns();
     API.get("/admin/users").then(r => setUsers(r.data)).catch(() => {});
+    API.get("/admin/service-catalog").then(r => setCatalog(r.data)).catch(() => {});
   }, []);
 
   const fetchCampaigns = async () => {
@@ -252,6 +264,109 @@ export const AdminAmbassadors: React.FC = () => {
                     className="w-full bg-theme-bg-muted border border-theme-border/60 p-4 text-[10px] text-brand-tactical font-black outline-none focus:border-brand-tactical rounded-xl"
                   />
                 </div>
+              </div>
+
+              {/* Seleção de Categorias/Serviços */}
+              <div className="space-y-6 pt-4 border-t border-theme-border/20">
+                <div>
+                  <h3 className="text-[10px] font-black uppercase tracking-[0.2em] text-theme-text mb-4">Escopo da Campanha</h3>
+                  <p className="text-[9px] text-theme-muted uppercase tracking-wider mb-6 opacity-60">Selecione as categorias ou serviços que ativam a recompensa</p>
+                </div>
+
+                {Object.entries(
+                  catalog.reduce((acc, item) => {
+                    if (!acc[item.category]) acc[item.category] = [];
+                    acc[item.category].push(item);
+                    return acc;
+                  }, {} as Record<string, typeof catalog>)
+                ).map(([category, items]) => {
+                  const isCategorySelected = formData.targetCategories.includes(category);
+                  const selectedItemsInCategory = items.filter(i => formData.targetServices.includes(i.id));
+                  const isAllItemsSelected = selectedItemsInCategory.length === items.length;
+
+                  const toggleCategory = () => {
+                    if (isCategorySelected) {
+                      setFormData({
+                        ...formData,
+                        targetCategories: formData.targetCategories.filter(c => c !== category),
+                        targetServices: formData.targetServices.filter(id => !items.find(i => i.id === id))
+                      });
+                    } else {
+                      const otherServices = formData.targetServices.filter(id => !items.find(i => i.id === id));
+                      setFormData({
+                        ...formData,
+                        targetCategories: [...formData.targetCategories, category],
+                        targetServices: [...otherServices, ...items.map(i => i.id)]
+                      });
+                    }
+                  };
+
+                  return (
+                    <div key={category} className="space-y-4 bg-theme-bg-muted/30 p-6 rounded-3xl border border-theme-border/40">
+                      <div className="flex items-center justify-between">
+                        <div className="flex items-center gap-3">
+                          <div className={`w-2 h-2 rounded-full ${isCategorySelected ? 'bg-brand-tactical' : 'bg-zinc-800'}`} />
+                          <span className="text-[10px] font-black uppercase tracking-widest text-theme-text italic">{category}</span>
+                        </div>
+                        <button 
+                          type="button"
+                          onClick={toggleCategory}
+                          className={`px-4 py-2 rounded-xl text-[8px] font-black uppercase tracking-widest transition-all ${
+                            isCategorySelected 
+                              ? 'bg-brand-tactical text-zinc-950' 
+                              : 'border border-theme-border text-theme-muted hover:text-white'
+                          }`}
+                        >
+                          {isCategorySelected ? 'CATEGORIA SELECIONADA' : 'SELECIONAR CATEGORIA'}
+                        </button>
+                      </div>
+
+                      <div className="grid grid-cols-1 md:grid-cols-2 gap-3 pl-5">
+                        {items.map(item => {
+                          const isSelected = formData.targetServices.includes(item.id);
+                          const toggleService = () => {
+                            if (isSelected) {
+                              setFormData({
+                                ...formData,
+                                targetServices: formData.targetServices.filter(id => id !== item.id),
+                                targetCategories: formData.targetCategories.filter(c => c !== category) // Desmarca a categoria se desmarcar um item
+                              });
+                            } else {
+                              const newServices = [...formData.targetServices, item.id];
+                              const allInCategorySelected = items.every(i => i.id === item.id || formData.targetServices.includes(i.id));
+                              setFormData({
+                                ...formData,
+                                targetServices: newServices,
+                                targetCategories: allInCategorySelected 
+                                  ? [...formData.targetCategories, category] 
+                                  : formData.targetCategories
+                              });
+                            }
+                          };
+
+                          return (
+                            <label key={item.id} className="flex items-center gap-3 cursor-pointer group">
+                              <input 
+                                type="checkbox"
+                                checked={isSelected}
+                                onChange={toggleService}
+                                className="hidden"
+                              />
+                              <div className={`w-5 h-5 rounded-lg border flex items-center justify-center transition-all ${
+                                isSelected ? 'bg-brand-tactical border-brand-tactical shadow-lg shadow-brand-tactical/20' : 'border-theme-border bg-theme-bg group-hover:border-theme-muted'
+                              }`}>
+                                {isSelected && <ArrowRight size={10} className="text-zinc-950" />}
+                              </div>
+                              <span className={`text-[9px] font-bold uppercase tracking-wider transition-all ${isSelected ? 'text-white' : 'text-theme-subtle group-hover:text-theme-muted'}`}>
+                                {item.name}
+                              </span>
+                            </label>
+                          );
+                        })}
+                      </div>
+                    </div>
+                  );
+                })}
               </div>
             </form>
 
