@@ -12,7 +12,7 @@ import { test, expect, type Page } from '@playwright/test';
 
 test.use({ actionTimeout: 20000 });
 
-const UNIT_EMAIL = 'fixa1@campinas.com.br';
+const UNIT_EMAIL = 'unidade@saopaulo.com.br';
 const UNIT_SENHA = '123456';
 
 // ── Helper ──────────────────────────────────────────────────────────────────

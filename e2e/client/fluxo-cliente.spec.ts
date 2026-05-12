@@ -12,7 +12,7 @@ dotenv.config({ path: path.resolve(__dirname, '../../backend/.env') });
 
 test.describe('Jornada do Cliente (Consumidor)', () => {
   test.setTimeout(120000);
-  const clientEmail = 'cliente-vip@brasil.com.br';
+  const clientEmail = 'cliente@saopaulo.com.br';
   
   test.beforeAll(async () => {
     console.log('[CLEANUP] Resetting calendar for client tests...');
@@ -48,7 +48,7 @@ test.describe('Jornada do Cliente (Consumidor)', () => {
     
     // 2. Passo 1
     await page.getByRole('button', { name: 'UNIDADE FIXA' }).click();
-    await page.getByRole('combobox').selectOption({ label: 'BR UNIDADE SP - CAMPINAS' });
+    await page.getByRole('combobox').selectOption({ index: 1 });
     await page.getByText(/SELECIONE A DATA E HORÁRIO/i).click();
     
     // Avança para o próximo mês para garantir uma data válida no futuro

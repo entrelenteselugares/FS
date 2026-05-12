@@ -15,8 +15,8 @@ import { test, expect } from '@playwright/test';
 
 test.use({ actionTimeout: 15000 });
 
-const EMAIL = 'simulacao_pro@fotosegundo.com';
-const SENHA = 'password123';
+const EMAIL = 'profissional@saopaulo.com.br';
+const SENHA = '123456';
 const ts    = Math.floor(Date.now() / 1000);
 
 // ── Helper: login e fecha o overlay automático ──────────────────────────────
