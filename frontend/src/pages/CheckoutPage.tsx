@@ -405,7 +405,7 @@ export const CheckoutPage = () => {
         eventId: order.event?.id || order.eventId,
         userId: order.clienteId || null,
         orderId: order.id,
-        email: order.buyerEmail || "cliente@fotosegundo.com.br",
+        email: order.buyerEmail || "matheuskurio@gmail.com",
         shippingAddress: order.deliveryType === 'SHIPPING' ? shippingData : null,
         shippingFee: selectedShipping?.price || 0,
         shippingMethod: selectedShipping?.name || null,
@@ -472,7 +472,7 @@ export const CheckoutPage = () => {
       const settings: MPBrickSettings = {
         initialization: {
           amount: Number(order.amount) - Number(order.shippingFee || 0) + Number(selectedShipping?.price || 0),
-          payer: { email: order.buyerEmail || "cliente@fotosegundo.com.br", entityType: "individual" },
+          payer: { email: order.buyerEmail || "matheuskurio@gmail.com", entityType: "individual" },
         },
         customization: {
           paymentMethods: { creditCard: "all", bankTransfer: ["pix"], maxInstallments: 12 },
@@ -598,7 +598,7 @@ export const CheckoutPage = () => {
         const { data } = await API.post("/checkout/pending", {
           eventId: firstEventId,
           userId: authUser?.id,
-          email: authUser?.email || "cliente@fotosegundo.com.br",
+          email: authUser?.email || "matheuskurio@gmail.com",
           cart: digitalPhotos.filter(p => p.eventId === firstEventId).map(p => p.shortId),
           physicalItems: physicalItems.filter(p => p.eventId === firstEventId).map(i => ({
             id: i.productId,

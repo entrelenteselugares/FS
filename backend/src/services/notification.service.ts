@@ -45,7 +45,7 @@ export class NotificationService {
     port: Number(process.env.SMTP_PORT) || 465,
     secure: true, // true para port 465
     auth: {
-      user: process.env.SMTP_USER, // Seu e-mail (ex: contato@fotosegundo.com.br)
+      user: process.env.SMTP_USER, // Seu e-mail (ex: matheuskurio@gmail.com)
       pass: process.env.SMTP_PASS, // Sua Senha de App do Google
     },
   });
@@ -606,7 +606,7 @@ export class NotificationService {
       try {
         await this.transporter.sendMail({
           from: `"Foto Segundo" <${process.env.SMTP_USER}>`,
-          to: process.env.ADMIN_EMAIL || "contato@fotosegundo.com.br",
+          to: process.env.ADMIN_EMAIL || "matheuskurio@gmail.com",
           subject: `NOVO PEDIDO MATRIZ: ${data.customerName} 🏢`,
           html: htmlContent,
         });
