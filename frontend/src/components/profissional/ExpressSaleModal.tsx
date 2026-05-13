@@ -424,6 +424,7 @@ export function ExpressSaleModal({ network, onClose, onSuccess, onError }: Expre
                 </div>
               </div>
             </div>
+          )}
           {/* PHASE 5: Success & Share */}
           {step === 5 && successData && (
             <div className="space-y-8 animate-in zoom-in-95 duration-500 text-center py-10">
