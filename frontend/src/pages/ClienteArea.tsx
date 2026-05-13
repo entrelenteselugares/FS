@@ -1039,8 +1039,9 @@ function PedidoDetalhe({ pedido, loading, onGoToEvent, onChangePrivacy, onToggle
                 <h3 className="text-2xl md:text-3xl font-heading font-black italic tracking-tighter uppercase text-theme-text leading-tight truncate">
                   {pedido.event.nomeNoivos}
                 </h3>
-                <p className="text-[9px] font-bold text-theme-muted uppercase tracking-widest mt-1">
-                  {formatDate(pedido.event.dataEvento)} • {pedido.event.city || pedido.event.location}
+                <p className="text-[9px] font-bold text-theme-muted uppercase tracking-widest mt-1 whitespace-pre-line">
+                  {formatDate(pedido.event.dataEvento)} {pedido.event.city && `• ${pedido.event.city}`}
+                  {pedido.event.location && `\n${pedido.event.location}`}
                 </p>
               </div>
               <button onClick={() => setIsEditing(true)} className="flex-shrink-0 ml-4 text-[9px] font-black uppercase tracking-widest border border-theme-border/50 text-zinc-400 px-3 py-1.5 hover:text-brand-tactical hover:border-brand-tactical transition-colors rounded">
