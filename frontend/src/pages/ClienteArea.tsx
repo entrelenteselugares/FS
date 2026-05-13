@@ -1033,8 +1033,35 @@ function PedidoDetalhe({ pedido, loading, onGoToEvent, onChangePrivacy, onToggle
              <p className="text-[9px] font-black text-brand-tactical uppercase tracking-[0.4em]">Meu Álbum</p>
           </div>
           
-          {isEditing ? (
-            <div className="flex flex-col gap-5 bg-theme-bg/90 backdrop-blur-xl p-6 border border-theme-border/80 rounded-xl shadow-2xl">
+          {!isEditing && (
+            <div className="flex items-end justify-between">
+              <div className="min-w-0 flex-1">
+                <h3 className="text-2xl md:text-3xl font-heading font-black italic tracking-tighter uppercase text-theme-text leading-tight truncate">
+                  {pedido.event.nomeNoivos}
+                </h3>
+                <p className="text-[9px] font-bold text-theme-muted uppercase tracking-widest mt-1">
+                  {formatDate(pedido.event.dataEvento)} • {pedido.event.city || pedido.event.location}
+                </p>
+              </div>
+              <button onClick={() => setIsEditing(true)} className="flex-shrink-0 ml-4 text-[9px] font-black uppercase tracking-widest border border-theme-border/50 text-zinc-400 px-3 py-1.5 hover:text-brand-tactical hover:border-brand-tactical transition-colors rounded">
+                Personalizar
+              </button>
+            </div>
+          )}
+
+          {isEditing && (
+             <div className="flex items-center gap-2">
+                <Zap size={12} className="text-brand-tactical animate-pulse" />
+                <p className="text-[9px] font-black text-white uppercase tracking-widest italic">Modo de Edição Ativo</p>
+             </div>
+          )}
+        </div>
+      </div>
+
+      <div className="p-6 space-y-8">
+        {isEditing && (
+          <div className="space-y-6 animate-in fade-in slide-in-from-top-4 duration-500">
+            <div className="flex flex-col gap-5 bg-theme-bg-muted/10 p-6 border border-theme-border/40 rounded-lg">
               <div className="space-y-1.5">
                 <label className="text-[8px] font-black text-brand-tactical uppercase tracking-[0.2em]">Identidade do Álbum</label>
                 <input 
@@ -1128,25 +1155,8 @@ function PedidoDetalhe({ pedido, loading, onGoToEvent, onChangePrivacy, onToggle
                 </button>
               </div>
             </div>
-          ) : (
-            <div className="flex items-end justify-between">
-              <div>
-                <h3 className="text-2xl md:text-3xl font-heading font-black italic tracking-tighter uppercase text-theme-text leading-tight">
-                  {pedido.event.nomeNoivos}
-                </h3>
-                <p className="text-[9px] font-bold text-theme-muted uppercase tracking-widest mt-1">
-                  {formatDate(pedido.event.dataEvento)} • {pedido.event.city || pedido.event.location}
-                </p>
-              </div>
-              <button onClick={() => setIsEditing(true)} className="text-[9px] font-black uppercase tracking-widest border border-theme-border/50 text-zinc-400 px-3 py-1.5 hover:text-brand-tactical hover:border-brand-tactical transition-colors rounded">
-                Personalizar
-              </button>
-            </div>
-          )}
-        </div>
-      </div>
-
-      <div className="p-6 space-y-6">
+          </div>
+        )}
         <div className="flex flex-col md:flex-row gap-4">
           <div className="flex-1 flex items-center justify-between p-4 border border-theme-border/60 bg-theme-bg-muted/5">
             <div className="flex items-center gap-3">
