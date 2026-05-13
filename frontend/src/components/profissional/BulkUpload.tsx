@@ -1,5 +1,5 @@
 import React, { useState, useCallback, useRef } from "react";
-import { Upload, X, CheckCircle2, AlertCircle, Loader2, Image as ImageIcon, ShieldCheck } from "lucide-react";
+import { Upload, X, CheckCircle2, AlertCircle, Loader2, ShieldCheck } from "lucide-react";
 import { API } from "../../lib/api";
 import { motion, AnimatePresence } from "framer-motion";
 

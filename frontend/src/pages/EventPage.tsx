@@ -282,11 +282,9 @@ export default function EventPage() {
             .then(res => {
               const data = res.data;
               const mediaList = Array.isArray(data) ? data : (data.media || []);
-              const mUnlocked = data.unlockedMediaIds || [];
+              const mUnlocked = Array.isArray(data.unlockedMediaIds) ? data.unlockedMediaIds : (data.unlockedMediaIds || []);
               
               setMedias(mediaList);
-              
-              const mUnlocked = Array.isArray(data.unlockedMediaIds) ? data.unlockedMediaIds : [];
               
               if (mUnlocked.length > 0) {
                 setEvent(prev => prev ? { 

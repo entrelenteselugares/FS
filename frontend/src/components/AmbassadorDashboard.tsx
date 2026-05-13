@@ -2,7 +2,7 @@ import { useState, useEffect, useCallback } from "react";
 import { API } from "../lib/api";
 import {
   Users, MousePointer2, TrendingUp, Copy, Check, ExternalLink,
-  Award, BarChart3, Clock, CheckCircle2, XCircle, RefreshCw,
+  Award, BarChart3, Clock, CheckCircle2,
   Zap, ChevronRight, ChevronLeft, ToggleLeft, ToggleRight, Sparkles
 } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
