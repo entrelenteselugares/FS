@@ -60,15 +60,20 @@ export class MarketplaceController {
 
           if (authError) {
             if (authError.message.includes("already registered")) {
-              const { data: { users: sbUsers } } = await supabaseAdmin.auth.admin.listUsers();
-              const sbUser = (sbUsers as { id: string, email?: string }[]).find(u => u.email === finalEmail);
-              if (sbUser) {
-                await supabaseAdmin.auth.admin.updateUserById(sbUser.id, { password: tempPassword });
-                user = await prisma.user.upsert({
-                  where: { email: finalEmail },
-                  create: { id: sbUser.id, email: finalEmail, nome: finalName, senha: hash, whatsapp: whatsapp || null, role: "CLIENTE" },
-                  update: { id: sbUser.id, senha: hash }
-                });
+              const existingUser = await prisma.user.findFirst({ where: { email: finalEmail } });
+              if (existingUser) {
+                user = existingUser;
+                tempPassword = ""; // Clear tempPassword so the email template shows the "habitual" message
+              } else {
+                // User exists in Supabase but not in Prisma (edge case)
+                const { data: { users: sbUsers } } = await supabaseAdmin.auth.admin.listUsers();
+                const sbUser = (sbUsers as { id: string, email?: string }[]).find(u => u.email === finalEmail);
+                if (sbUser) {
+                  user = await prisma.user.create({
+                    data: { id: sbUser.id, email: finalEmail, nome: finalName, senha: "", whatsapp: whatsapp || null, role: "CLIENTE" }
+                  });
+                  tempPassword = "";
+                }
               }
             } else { throw authError; }
           } else if (authData?.user) {

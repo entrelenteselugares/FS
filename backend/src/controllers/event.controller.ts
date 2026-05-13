@@ -134,7 +134,8 @@ export class EventController {
         isGloballyPaid = !!anyPaidOrder;
       }
 
-      const hasAccess = isPaid || isOwner || isGloballyPaid;
+      // hasAccess is true if paid, owner, globally paid, or if a valid guestToken/orderId is provided
+      const hasAccess = isPaid || isOwner || isGloballyPaid || (!!order && (!!guestToken || !!orderId));
 
       // 3.1 Guard específico para PHOTO_MARKETPLACE
       // Removido o bloqueio agressivo de 404 que impedia o primeiro acesso para compra.

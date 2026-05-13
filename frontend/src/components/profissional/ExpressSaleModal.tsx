@@ -470,36 +470,38 @@ export function ExpressSaleModal({ network, onClose, onSuccess, onError }: Expre
 
         {/* Footer Navigation */}
         <div className="p-8 md:p-10 border-t bg-theme-bg-muted/80 flex shrink-0" style={{ borderColor: "var(--theme-border)" }}>
-          {step === 1 ? (
-            <button
-              disabled={!form.customerEmail}
-              onClick={() => setStep(2)}
-              className="w-full py-5 bg-brand-tactical text-black text-[11px] font-black uppercase tracking-[0.3em] hover:bg-white hover:scale-[1.01] active:scale-[0.98] transition-all italic flex items-center justify-center gap-4 shadow-2xl shadow-brand-tactical/20 disabled:opacity-40"
-            >
-              CONTINUAR OPERAÇÃO
-            </button>
-          ) : (
-            <div className="flex gap-4 w-full">
+          {step === 5 ? null : (
+            step === 1 ? (
               <button
-                onClick={() => setStep((step - 1) as 1 | 2 | 3 | 4)}
-                className="flex-1 py-5 bg-white/5 border border-white/10 rounded-2xl text-theme-text text-[10px] font-black uppercase tracking-widest italic hover:bg-white/10 transition-all"
+                disabled={!form.customerEmail}
+                onClick={() => setStep(2)}
+                className="w-full py-5 bg-brand-tactical text-black text-[11px] font-black uppercase tracking-[0.3em] hover:bg-white hover:scale-[1.01] active:scale-[0.98] transition-all italic flex items-center justify-center gap-4 shadow-2xl shadow-brand-tactical/20 disabled:opacity-40"
               >
-                Voltar
+                CONTINUAR OPERAÇÃO
               </button>
-              <button
-                onClick={() => (step === 4 ? handleSubmit() : setStep((step + 1) as 1 | 2 | 3 | 4))}
-                disabled={loading}
-                className="flex-[2] py-5 bg-brand-tactical text-black text-[11px] font-black uppercase tracking-[0.3em] hover:bg-white hover:scale-[1.01] active:scale-[0.98] transition-all italic flex items-center justify-center gap-4 shadow-2xl shadow-brand-tactical/20"
-              >
-                {loading
-                  ? "PROCESSANDO..."
-                  : step === 4
-                  ? form.paymentMethod === "MONEY"
-                    ? "FINALIZAR VENDA"
-                    : "GERAR COBRANÇA"
-                  : "PRÓXIMA FASE"}
-              </button>
-            </div>
+            ) : (
+              <div className="flex gap-4 w-full">
+                <button
+                  onClick={() => setStep((step - 1) as 1 | 2 | 3 | 4 | 5)}
+                  className="flex-1 py-5 bg-white/5 border border-white/10 rounded-2xl text-theme-text text-[10px] font-black uppercase tracking-widest italic hover:bg-white/10 transition-all"
+                >
+                  Voltar
+                </button>
+                <button
+                  onClick={() => (step === 4 ? handleSubmit() : setStep((step + 1) as 1 | 2 | 3 | 4 | 5))}
+                  disabled={loading}
+                  className="flex-[2] py-5 bg-brand-tactical text-black text-[11px] font-black uppercase tracking-[0.3em] hover:bg-white hover:scale-[1.01] active:scale-[0.98] transition-all italic flex items-center justify-center gap-4 shadow-2xl shadow-brand-tactical/20"
+                >
+                  {loading
+                    ? "PROCESSANDO..."
+                    : step === 4
+                    ? form.paymentMethod === "MONEY"
+                      ? "FINALIZAR E ENVIAR ACESSO"
+                      : "GERAR COBRANÇA"
+                    : "PRÓXIMA FASE"}
+                </button>
+              </div>
+            )
           )}
         </div>
       </div>
