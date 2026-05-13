@@ -938,9 +938,21 @@ function PedidoDetalhe({ pedido, loading, onGoToEvent, onChangePrivacy, onToggle
   const [isEditing, setIsEditing] = useState(false);
   const [nome, setNome] = useState(pedido.event.nomeNoivos || "");
   const [coverUrl, setCoverUrl] = useState(pedido.event.coverPhotoUrl || "");
+  const [coverPos, setCoverPos] = useState(pedido.event.coverPosition || "center");
+  const [loc, setLoc] = useState(pedido.event.location || "");
+  const [city, setCity] = useState(pedido.event.city || "");
   const [isSaving, setIsSaving] = useState(false);
   const fileInputRef = useRef<HTMLInputElement>(null);
   const [isUploading, setIsUploading] = useState(false);
+
+  // Sync state with props when pedido changes (e.g. after a refresh)
+  useEffect(() => {
+    setNome(pedido.event.nomeNoivos || "");
+    setCoverUrl(pedido.event.coverPhotoUrl || "");
+    setCoverPos(pedido.event.coverPosition || "center");
+    setLoc(pedido.event.location || "");
+    setCity(pedido.event.city || "");
+  }, [pedido]);
 
   const handleFileChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
@@ -980,11 +992,18 @@ function PedidoDetalhe({ pedido, loading, onGoToEvent, onChangePrivacy, onToggle
     try {
       await API.patch(`/cliente/pedidos/${pedido.id}/personalize`, {
         nomeNoivos: nome,
-        coverPhotoUrl: coverUrl
+        coverPhotoUrl: coverUrl,
+        coverPosition: coverPos,
+        location: loc,
+        city: city
       });
       pedido.event.nomeNoivos = nome;
       pedido.event.coverPhotoUrl = coverUrl;
+      pedido.event.coverPosition = coverPos;
+      pedido.event.location = loc;
+      pedido.event.city = city;
       setIsEditing(false);
+      onRefresh();
     } catch {
       alert("Erro ao salvar personalização.");
     } finally {
@@ -1045,7 +1064,44 @@ function PedidoDetalhe({ pedido, loading, onGoToEvent, onChangePrivacy, onToggle
                   {isUploading ? "..." : "UPLOAD"}
                 </button>
               </div>
-              <div className="flex gap-2 mt-2">
+
+              <div className="grid grid-cols-2 gap-2 mt-1">
+                <div className="space-y-1">
+                  <label className="text-[8px] font-black text-theme-muted uppercase tracking-widest">Enquadramento</label>
+                  <select 
+                    value={coverPos} 
+                    onChange={(e) => setCoverPos(e.target.value)}
+                    className="w-full bg-zinc-900 text-[10px] text-zinc-400 border border-theme-border/50 focus:border-brand-tactical p-1.5 outline-none font-bold uppercase"
+                  >
+                    <option value="center">Centro</option>
+                    <option value="top">Topo</option>
+                    <option value="bottom">Base</option>
+                    <option value="left">Esquerda</option>
+                    <option value="right">Direita</option>
+                  </select>
+                </div>
+                <div className="space-y-1">
+                  <label className="text-[8px] font-black text-theme-muted uppercase tracking-widest">Cidade</label>
+                  <input 
+                    value={city} 
+                    onChange={(e) => setCity(e.target.value)}
+                    className="w-full bg-zinc-900 text-[10px] text-zinc-400 border border-theme-border/50 focus:border-brand-tactical p-1.5 outline-none font-bold uppercase"
+                    placeholder="Cidade"
+                  />
+                </div>
+              </div>
+              
+              <div className="space-y-1 mt-1">
+                <label className="text-[8px] font-black text-theme-muted uppercase tracking-widest">Localização/Espaço</label>
+                <input 
+                  value={loc} 
+                  onChange={(e) => setLoc(e.target.value)}
+                  className="w-full bg-zinc-900 text-[10px] text-zinc-400 border border-theme-border/50 focus:border-brand-tactical p-1.5 outline-none font-bold uppercase"
+                  placeholder="Ex: Mansão das Palmeiras"
+                />
+              </div>
+
+              <div className="flex gap-2 mt-4">
                 <button onClick={handleSave} disabled={isSaving} className="px-4 py-1.5 bg-brand-tactical text-black text-[10px] font-black uppercase rounded hover:brightness-110">
                   {isSaving ? "Salvando..." : "Salvar"}
                 </button>

@@ -24,6 +24,9 @@ export async function getMeusPedidos(req: AuthRequest, res: Response): Promise<v
             location: true,
             city: true,
             coverPhotoUrl: true,
+            coverPosition: true,
+            location: true,
+            city: true,
             temFoto: true,
             temVideo: true,
             temReels: true,
@@ -78,8 +81,11 @@ export async function getMeuPedidoDetalhe(req: AuthRequest, res: Response): Prom
             location: true,
             city: true,
             coverPhotoUrl: true,
+            coverPosition: true,
             lightroomUrl: true,
             driveUrl: true,
+            location: true,
+            city: true,
             temFoto: true,
             temVideo: true,
             temReels: true,
@@ -143,7 +149,7 @@ export async function personalizePedido(req: AuthRequest, res: Response): Promis
   const user = req.user;
   if (!user) { res.status(401).json({ error: "Não autenticado." }); return; }
   const { id } = req.params;
-  const { nomeNoivos, coverPhotoUrl } = req.body;
+  const { nomeNoivos, coverPhotoUrl, coverPosition, location, city } = req.body;
 
   try {
     const pedido = await prisma.order.findFirst({
@@ -162,8 +168,11 @@ export async function personalizePedido(req: AuthRequest, res: Response): Promis
     const updatedEvent = await prisma.event.update({
       where: { id: pedido.eventId },
       data: {
-        ...(nomeNoivos && { nomeNoivos }),
-        ...(coverPhotoUrl !== undefined && { coverPhotoUrl })
+        ...(nomeNoivos !== undefined && { nomeNoivos: String(nomeNoivos) }),
+        ...(coverPhotoUrl !== undefined && { coverPhotoUrl: String(coverPhotoUrl) || null }),
+        ...(coverPosition !== undefined && { coverPosition: String(coverPosition) || "center" }),
+        ...(location !== undefined && { location: String(location) || "" }),
+        ...(city !== undefined && { city: String(city) || "" })
       }
     });
 
