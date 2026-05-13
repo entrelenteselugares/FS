@@ -2,6 +2,7 @@ import { Response } from "express";
 import { AuthRequest } from "../lib/auth";
 import prisma from "../lib/prisma";
 import { audit } from "../lib/audit";
+import { supabaseAdmin as supabase } from "../lib/supabase";
 
 /**
  * GET /api/cliente/pedidos
@@ -170,5 +171,71 @@ export async function personalizePedido(req: AuthRequest, res: Response): Promis
   } catch (err) {
     console.error("personalizePedido:", err);
     res.status(500).json({ error: "Erro ao personalizar álbum." });
+  }
+}
+
+/**
+ * PATCH /api/cliente/pedidos/:id/cover
+ * Upload da foto de capa (BASE64) pelo consumidor.
+ */
+export async function uploadClientCover(req: AuthRequest, res: Response): Promise<void> {
+  const { id } = req.params;
+  const user = req.user;
+  if (!user) { res.status(401).json({ error: "Não autenticado." }); return; }
+
+  const { imageBase64, mimeType } = req.body;
+  if (!imageBase64 || !mimeType) {
+    res.status(400).json({ error: "Imagem e MimeType são obrigatórios." });
+    return;
+  }
+
+  try {
+    const pedido = await prisma.order.findFirst({
+      where: { id: id as string, clienteId: user.userId },
+      include: { event: true }
+    });
+
+    if (!pedido) {
+      res.status(404).json({ error: "Pedido não encontrado ou acesso negado." });
+      return;
+    }
+
+    // Converte base64 para buffer
+    const base64Data = String(imageBase64).replace(/^data:image\/\w+;base64,/, "");
+    const buffer = Buffer.from(base64Data, "base64");
+    const ext = String(mimeType).split("/")[1] || "jpg";
+    const fileName = `covers/client-${pedido.eventId}-${Date.now()}.${ext}`;
+
+    // Upload para o Supabase Storage (Bucket: eventos)
+    const { error: uploadError } = await supabase.storage
+      .from("eventos")
+      .upload(fileName, buffer, {
+        contentType: String(mimeType),
+        upsert: true,
+      });
+
+    if (uploadError) throw uploadError;
+
+    // Obtém a URL pública final
+    const { data: { publicUrl } } = supabase.storage
+      .from("eventos")
+      .getPublicUrl(fileName);
+
+    const updated = await prisma.event.update({
+      where: { id: pedido.eventId },
+      data: { coverPhotoUrl: publicUrl },
+      select: { id: true, coverPhotoUrl: true },
+    });
+
+    await audit(req, "CLIENT_COVER_UPLOADED", "Event", pedido.eventId, null, {
+      uploadedBy: user.userId,
+      orderId: pedido.id,
+      coverPhotoUrl: publicUrl,
+    });
+
+    res.json(updated);
+  } catch (err) {
+    console.error("uploadClientCover:", err);
+    res.status(500).json({ error: "Erro ao sincronizar capa no Cloud Storage." });
   }
 }

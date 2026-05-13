@@ -50,7 +50,7 @@ import {
   searchProfessionals,
   toggleFavorite,
 } from "../controllers/profissional.controller";
-import { getMeusPedidos, getMeuPedidoDetalhe, personalizePedido } from "../controllers/cliente.controller";
+import { getMeusPedidos, getMeuPedidoDetalhe, personalizePedido, uploadClientCover } from "../controllers/cliente.controller";
 import { CartorioController } from "../controllers/cartorio.controller";
 import { SEOController } from "../controllers/seo.controller";
 import { getConfigs, updateConfigs, getPublicThemeConfigs, getPublicServices } from "../controllers/config.controller";
@@ -309,6 +309,7 @@ router.post("/orders/:id/visibility",    requireAuth, toggleVisibility);
 router.get("/cliente/pedidos",     requireAuth, getMeusPedidos);
 router.get("/cliente/pedidos/:id", requireAuth, getMeuPedidoDetalhe);
 router.patch("/cliente/pedidos/:id/personalize", requireAuth, personalizePedido);
+router.patch("/cliente/pedidos/:id/cover",       requireAuth, uploadClientCover);
 
 // ── Gestão de Serviços (Vitrine do Profissional) ──────────────────────────────
 router.get("/profissional/services", requireAuth, requireRole("ADMIN", "PROFISSIONAL"), listProServices);

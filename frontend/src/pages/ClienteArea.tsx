@@ -1,4 +1,4 @@
-import { useState, useEffect, useCallback, useMemo } from "react";
+import { useState, useEffect, useCallback, useMemo, useRef } from "react";
 import { useNavigate, useSearchParams } from "react-router-dom";
 import { useAuth } from "../hooks/useAuth";
 import { API } from "../lib/api";
@@ -604,6 +604,7 @@ export default function ClienteArea() {
               onGoToEvent={() => navigate(`/e/${selected.event?.id || selected.id}`)}
               onChangePrivacy={() => setIsPrivacyModalOpen(true)}
               onToggleVisibility={handleToggleVisibility}
+              onRefresh={fetchPedidos}
             />
           </SideDrawer>
         )}
@@ -925,18 +926,54 @@ function Tag({ label, color = "#444" }: { label: string; color?: string }) {
   );
 }
 
-function PedidoDetalhe({ pedido, loading, onGoToEvent, onChangePrivacy, onToggleVisibility }: {
+function PedidoDetalhe({ pedido, loading, onGoToEvent, onChangePrivacy, onToggleVisibility, onRefresh }: {
   pedido: Pedido;
   loading: boolean;
   onGoToEvent: () => void;
   onChangePrivacy: () => void;
   onToggleVisibility: (id: string, showAlbum?: boolean, showVideo?: boolean) => void;
+  onRefresh: () => void;
 }) {
   const navigate = useNavigate();
   const [isEditing, setIsEditing] = useState(false);
   const [nome, setNome] = useState(pedido.event.nomeNoivos || "");
   const [coverUrl, setCoverUrl] = useState(pedido.event.coverPhotoUrl || "");
   const [isSaving, setIsSaving] = useState(false);
+  const fileInputRef = useRef<HTMLInputElement>(null);
+  const [isUploading, setIsUploading] = useState(false);
+
+  const handleFileChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+
+    // Valida tamanho (max 5MB)
+    if (file.size > 5 * 1024 * 1024) {
+      alert("A imagem deve ter no máximo 5MB.");
+      return;
+    }
+
+    setIsUploading(true);
+    const reader = new FileReader();
+    reader.readAsDataURL(file);
+    reader.onload = async () => {
+      try {
+        const base64 = reader.result as string;
+        const { data } = await API.patch(`/cliente/pedidos/${pedido.id}/cover`, {
+          imageBase64: base64,
+          mimeType: file.type
+        });
+        
+        setCoverUrl(data.coverPhotoUrl);
+        pedido.event.coverPhotoUrl = data.coverPhotoUrl;
+        onRefresh();
+      } catch (err) {
+        console.error("Erro no upload:", err);
+        alert("Erro ao enviar imagem.");
+      } finally {
+        setIsUploading(false);
+      }
+    };
+  };
 
   const handleSave = async () => {
     setIsSaving(true);
@@ -985,12 +1022,29 @@ function PedidoDetalhe({ pedido, loading, onGoToEvent, onChangePrivacy, onToggle
                 className="bg-transparent text-xl font-heading font-black italic uppercase text-white outline-none border-b border-theme-border/50 focus:border-brand-tactical pb-1"
                 placeholder="Nome do Álbum"
               />
-              <input 
-                value={coverUrl} 
-                onChange={(e) => setCoverUrl(e.target.value)}
-                className="bg-transparent text-xs text-zinc-400 outline-none border-b border-theme-border/50 focus:border-brand-tactical pb-1"
-                placeholder="URL da Capa (Opcional)"
-              />
+              <div className="flex items-center gap-2">
+                <input 
+                  value={coverUrl} 
+                  onChange={(e) => setCoverUrl(e.target.value)}
+                  className="flex-1 bg-transparent text-xs text-zinc-400 outline-none border-b border-theme-border/50 focus:border-brand-tactical pb-1"
+                  placeholder="URL da Capa ou faça upload"
+                />
+                <input 
+                  type="file" 
+                  ref={fileInputRef} 
+                  onChange={handleFileChange} 
+                  className="hidden" 
+                  accept="image/*" 
+                />
+                <button 
+                  type="button"
+                  onClick={() => fileInputRef.current?.click()}
+                  disabled={isUploading}
+                  className="px-3 py-1 border border-theme-border text-[9px] font-black uppercase tracking-widest text-zinc-400 hover:text-brand-tactical hover:border-brand-tactical transition-colors"
+                >
+                  {isUploading ? "..." : "UPLOAD"}
+                </button>
+              </div>
               <div className="flex gap-2 mt-2">
                 <button onClick={handleSave} disabled={isSaving} className="px-4 py-1.5 bg-brand-tactical text-black text-[10px] font-black uppercase rounded hover:brightness-110">
                   {isSaving ? "Salvando..." : "Salvar"}
