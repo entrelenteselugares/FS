@@ -58,8 +58,8 @@ npm run dev
 
 The application will be available at:
 
-- **Frontend:** `http://localhost:5173` (Vite default)
-- **Backend:** `http://localhost:3001`
+- **Frontend:** `http://localhost:3000` (Vite configured)
+- **Backend:** `http://localhost:3002`
 
 ## Common Setup Issues
 

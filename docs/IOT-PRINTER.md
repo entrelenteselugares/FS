@@ -18,12 +18,12 @@ The system uses a **Pull-Based (Polling)** model to ensure maximum resilience ag
 
 1. **Trigger**: An order is approved or a professional manually triggers a print.
 2. **Queue**: The backend adds a record to the `PhygitalPrint` table with status `PENDING`.
-3. **Poll**: The Local Agent polls `/api/admin/phygital/queue` every 5 seconds.
+3. **Poll**: The Local Agent polls `/api/phygital/events/:eventId/queue` (or passes `eventId` as query param).
 4. **Download**: Agent downloads the high-res file to a local `temp/` folder.
 5. **Print**: Agent executes the system print command:
    - **Linux**: `lp -d PRINTER_NAME`
    - **Windows**: `powershell Start-Process -Verb Print`
-6. **Confirm**: Agent sends a `POST` to `/api/admin/phygital/confirm` with status `PRINTED`.
+6. **Confirm**: Agent sends a `PATCH` to `/api/phygital/prints/:id/status` with status `PRINTED`.
 7. **Cleanup**: Local file is deleted after successful spooling.
 
 ## Key Features

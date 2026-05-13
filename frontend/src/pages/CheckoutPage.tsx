@@ -806,7 +806,7 @@ export const CheckoutPage = () => {
                         value={shippingData.cep}
                         onBlur={handleCepBlur}
                         onChange={e => setShippingData({...shippingData, cep: e.target.value})}
-                        className="fs-input font-mono bg-theme-bg-field"
+                        className="fs-input font-mono"
                       />
                     </div>
                     <div className="col-span-2 md:col-span-3">
@@ -815,7 +815,7 @@ export const CheckoutPage = () => {
                         value={shippingData.street}
                         disabled={isShippingLoading}
                         onChange={e => setShippingData({...shippingData, street: e.target.value})}
-                        className="fs-input bg-theme-bg-field"
+                        className="fs-input"
                       />
                     </div>
                     <div className="col-span-2 md:col-span-1">
@@ -823,7 +823,7 @@ export const CheckoutPage = () => {
                         placeholder="Nº" 
                         value={shippingData.number}
                         onChange={e => setShippingData({...shippingData, number: e.target.value})}
-                        className="fs-input bg-theme-bg-field"
+                        className="fs-input"
                       />
                     </div>
                     <div className="col-span-2 md:col-span-2">
@@ -831,7 +831,7 @@ export const CheckoutPage = () => {
                         placeholder="Bairro" 
                         value={shippingData.neighborhood}
                         onChange={e => setShippingData({...shippingData, neighborhood: e.target.value})}
-                        className="fs-input bg-theme-bg-field"
+                        className="fs-input"
                       />
                     </div>
                     <div className="col-span-1 md:col-span-2">
@@ -839,7 +839,7 @@ export const CheckoutPage = () => {
                         placeholder="Cidade" 
                         value={shippingData.city}
                         readOnly
-                        className="fs-input bg-theme-bg-field opacity-50"
+                        className="fs-input opacity-50"
                       />
                     </div>
                     <div className="col-span-1 md:col-span-1">
@@ -847,7 +847,7 @@ export const CheckoutPage = () => {
                         placeholder="UF" 
                         value={shippingData.state}
                         readOnly
-                        className="fs-input bg-theme-bg-field opacity-50"
+                        className="fs-input opacity-50"
                       />
                     </div>
                     <div className="col-span-2 md:col-span-1">
@@ -855,7 +855,7 @@ export const CheckoutPage = () => {
                         placeholder="Compl." 
                         value={shippingData.complement}
                         onChange={e => setShippingData({...shippingData, complement: e.target.value})}
-                        className="fs-input bg-theme-bg-field"
+                        className="fs-input"
                       />
                     </div>
                   </div>
@@ -931,7 +931,7 @@ export const CheckoutPage = () => {
                       placeholder="Código do Cupom"
                       value={couponCode}
                       onChange={(e) => setCouponCode(e.target.value.toUpperCase())}
-                      className="fs-input bg-theme-bg-field uppercase flex-1"
+                      className="fs-input uppercase flex-1"
                     />
                     {couponCode && (
                        <button 
@@ -996,14 +996,14 @@ export const CheckoutPage = () => {
                       value={order.buyerEmail || email}
                       onChange={(e) => setEmail(e.target.value)}
                       disabled={!!order.buyerEmail}
-                      className="fs-input mb-4 text-center bg-theme-bg-field"
+                      className="fs-input mb-4 text-center"
                       placeholder="seu@email.com"
                     />
                     <input 
                       type="password"
                       value={password}
                       onChange={(e) => setPassword(e.target.value)}
-                      className="fs-input text-center bg-theme-bg-field"
+                      className="fs-input text-center"
                       placeholder="Sua Senha"
                       autoFocus
                     />
@@ -1026,25 +1026,6 @@ export const CheckoutPage = () => {
         </div>
       </div>
 
-      <style>{`
-        .fs-input {
-          width: 100%;
-          background: rgba(255,255,255,0.03);
-          border: 1px solid rgba(255,255,255,0.05);
-          padding: 1rem 1.5rem;
-          color: white;
-          font-size: 11px;
-          text-transform: uppercase;
-          font-weight: 900;
-          letter-spacing: 0.1em;
-          transition: all 0.3s;
-        }
-        .fs-input:focus {
-          border-color: #14b8a6;
-          outline: none;
-          background: rgba(20,184,166,0.05);
-        }
-      `}</style>
     </div>
   );
 };

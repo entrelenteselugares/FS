@@ -8,11 +8,12 @@ Foto Segundo implements an automated transaction splitting engine to ensure fair
 
 When an order is approved, the total amount is split based on platform configurations:
 
-- **Matriz (10%)**: Platform maintenance and growth fee.
-- **Captação**: Revenue for the photographer who performed the shoot.
-- **Edição**: Revenue for the editor (if applicable).
-- **Cartório/Partner**: Revenue for the location host (e.g., Hotel, Academy).
-- **Franchisee (Passive Income)**: 5% commission for the franchisee who referred the professional photographer.
+- **Matriz (40%)**: Platform maintenance and growth fee (Marketplace standard).
+- **Captação (30%)**: Revenue for the photographer who performed the shoot.
+- **Edição (20%)**: Revenue for the editor (if applicable).
+- **Cartório/Partner (10%)**: Revenue for the location host (e.g., Hotel, Academy).
+- **Franchisee (Passive Income)**: 5% commission for the franchisee who referred the professional photographer (Deducted from Matriz margin).
+- **Express Sale Mode**: 10% Flat Matriz fee, remainder stays with the professional.
 
 ## 2. Passive Income Model
 

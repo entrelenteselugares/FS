@@ -27,11 +27,11 @@ Pricing is dynamic and depends on the event's lifecycle:
 
 Every successful payment is automatically divided among participants to eliminate manual reconciliation:
 
-- **Matriz (Platform)**: Base operational fee (Default: 10%).
-- **Captação (Photographer)**: Revenue for the professional who captured the content.
-- **Edição (Editor)**: Revenue for the professional responsible for post-processing.
-- **Cartório (Host)**: Revenue for the physical location partner (e.g., Hotel, Academy).
-- **Franchisee (Passive)**: 5% split for the franchisee who referred the professional.
+- **Matriz (Platform)**: Dynamic (Default: 40% for Marketplace, 10% for Express).
+- **Captação (Photographer)**: Revenue for the professional who captured the content (Default: 30%).
+- **Edição (Editor)**: Revenue for the professional responsible for post-processing (Default: 20%).
+- **Cartório (Host)**: Revenue for the physical location partner (Default: 10%).
+- **Franchisee (Passive)**: Referral commission (Default: 5%).
 
 ### Transaction Atomicity
 

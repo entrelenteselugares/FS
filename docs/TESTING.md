@@ -5,8 +5,9 @@ Quality assurance in Foto Segundo is driven by end-to-end (E2E) testing to ensur
 
 ## Test Framework and Setup
 
-- **Primary Framework:** [Playwright](https://playwright.dev/)
-- **Configuration:** `playwright.config.ts`
+- **E2E Testing:** [Playwright](https://playwright.dev/)
+- **Backend Testing:** [Jest](https://jestjs.io/)
+- **Configuration:** `playwright.config.ts` (E2E), `backend/jest.config.js` (Backend)
 - **Identity Variations:** We test across 13 distinct identity variations including Master Admin, Photographer, Franchisee, and End Client.
 
 To set up the test environment:
@@ -19,9 +20,11 @@ npx playwright install --with-deps
 
 | Command | Description |
 |---------|-------------|
-| `npm run test:e2e:all` | Runs the full E2E suite in headless mode. |
+| `npm test` | Runs the main E2E suite (Playwright). |
+| `npm run test:certify` | Executes the launch certification robot (E2E). |
+| `npm run test --prefix backend` | Runs backend resilience tests (Jest). |
+| `npm run test:all --prefix backend` | Runs all backend unit and integration tests. |
 | `npx playwright test --ui` | Opens the Playwright UI for interactive debugging. |
-| `npx playwright test e2e/auth.spec.ts` | Runs a specific test file. |
 | `npx playwright show-report` | Views the HTML report of the last test run. |
 
 ## Writing New Tests

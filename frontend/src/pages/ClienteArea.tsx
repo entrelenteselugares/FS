@@ -1054,7 +1054,7 @@ function PedidoDetalhe({ pedido, loading, onGoToEvent, onChangePrivacy, onRefres
                 <input 
                   value={nome} 
                   onChange={(e) => setNome(e.target.value)}
-                  className="w-full bg-transparent text-xl font-heading font-black italic uppercase text-white outline-none border-b border-theme-border/50 focus:border-brand-tactical pb-2 transition-all"
+                  className="fs-input !text-xl !font-heading !italic !border-b-2"
                   placeholder="Ex: Casamento de Maria & João"
                 />
               </div>
@@ -1066,7 +1066,7 @@ function PedidoDetalhe({ pedido, loading, onGoToEvent, onChangePrivacy, onRefres
                     <input 
                       value={coverUrl} 
                       onChange={(e) => setCoverUrl(e.target.value)}
-                      className="w-full bg-zinc-900/50 text-[11px] text-zinc-300 outline-none border border-theme-border/50 focus:border-brand-tactical px-3 py-2.5 rounded font-medium transition-all"
+                      className="fs-input"
                       placeholder="Cole a URL ou use o upload ao lado →"
                     />
                   </div>
@@ -1081,7 +1081,7 @@ function PedidoDetalhe({ pedido, loading, onGoToEvent, onChangePrivacy, onRefres
                     type="button"
                     onClick={() => fileInputRef.current?.click()}
                     disabled={isUploading}
-                    className="h-[38px] px-4 bg-brand-tactical text-black text-[10px] font-black uppercase tracking-widest hover:brightness-110 active:scale-95 transition-all flex items-center justify-center min-w-[90px]"
+                    className="fs-btn bg-brand-tactical text-black min-w-[90px] !py-3"
                   >
                     {isUploading ? (
                       <div className="w-4 h-4 border-2 border-black/30 border-t-black rounded-full animate-spin" />
@@ -1096,7 +1096,7 @@ function PedidoDetalhe({ pedido, loading, onGoToEvent, onChangePrivacy, onRefres
                   <select 
                     value={coverPos} 
                     onChange={(e) => setCoverPos(e.target.value)}
-                    className="w-full bg-zinc-900/50 text-[10px] text-zinc-300 border border-theme-border/50 focus:border-brand-tactical px-3 py-2.5 outline-none font-bold uppercase rounded cursor-pointer transition-all"
+                    className="fs-input !py-2.5 cursor-pointer"
                   >
                     <option value="center">Centro</option>
                     <option value="top">Topo</option>
@@ -1110,7 +1110,7 @@ function PedidoDetalhe({ pedido, loading, onGoToEvent, onChangePrivacy, onRefres
                   <input 
                     value={city} 
                     onChange={(e) => setCity(e.target.value)}
-                    className="w-full bg-zinc-900/50 text-[10px] text-zinc-300 border border-theme-border/50 focus:border-brand-tactical px-3 py-2.5 outline-none font-bold uppercase rounded transition-all"
+                    className="fs-input !py-2.5"
                     placeholder="Cidade"
                   />
                 </div>
@@ -1121,7 +1121,7 @@ function PedidoDetalhe({ pedido, loading, onGoToEvent, onChangePrivacy, onRefres
                 <textarea 
                   value={loc} 
                   onChange={(e) => setLoc(e.target.value)}
-                  className="w-full bg-zinc-900/50 text-[10px] text-zinc-300 border border-theme-border/50 focus:border-brand-tactical px-3 py-2.5 outline-none font-bold uppercase rounded transition-all min-h-[80px] resize-none"
+                  className="fs-input min-h-[80px] resize-none"
                   placeholder="Rua, Número, Bairro..."
                 />
               </div>
@@ -1130,13 +1130,13 @@ function PedidoDetalhe({ pedido, loading, onGoToEvent, onChangePrivacy, onRefres
                 <button 
                   onClick={handleSave} 
                   disabled={isSaving} 
-                  className="flex-1 py-3 bg-brand-tactical text-black text-[11px] font-black uppercase tracking-[0.1em] rounded shadow-lg shadow-brand-tactical/20 hover:brightness-110 disabled:opacity-50 transition-all"
+                  className="fs-btn bg-brand-tactical text-black flex-1 shadow-lg shadow-brand-tactical/20"
                 >
                   {isSaving ? "Salvando..." : "Salvar Alterações"}
                 </button>
                 <button 
                   onClick={() => setIsEditing(false)} 
-                  className="flex-1 py-3 border border-theme-border text-zinc-400 text-[11px] font-black uppercase tracking-[0.1em] rounded hover:bg-zinc-800 transition-all"
+                  className="fs-btn border border-theme-border text-zinc-400 flex-1 hover:bg-zinc-800"
                 >
                   Cancelar
                 </button>

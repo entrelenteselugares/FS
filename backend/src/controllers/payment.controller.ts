@@ -1483,11 +1483,16 @@ export class PaymentController {
           data: eventUpdateData
         });
 
-        // 5. Lógica de Payout & Escrow
+        // 5. Lógica de Payout & Escrow (F-02, F-03)
         const captacaoUser = event.captacaoId ? await tx.user.findUnique({ where: { id: event.captacaoId } }) : null;
-        const isLowRisk = !!(captacaoUser?.isVerified && Number(order.valor) < MAX_LOW_RISK_PAYOUT);
         
-        const payoutReadyAt = new Date(event.dataEvento);
+        // Immediate release if: Verified Professional OR Franchisee OR Low Value (< 5000) for Verified members
+        const isProOrFranchise = !!(captacaoUser?.isVerified || captacaoUser?.role === "FRANCHISEE" || captacaoUser?.role === "ADMIN");
+        const isLowRisk = isProOrFranchise && Number(order.valor) < MAX_LOW_RISK_PAYOUT;
+        
+        // Standard Escrow: 7 days from sale (now) or event date (whichever is later)
+        const escrowDate = new Date(Math.max(new Date().getTime(), new Date(event.dataEvento).getTime()));
+        const payoutReadyAt = new Date(escrowDate);
         payoutReadyAt.setDate(payoutReadyAt.getDate() + ESCROW_DAYS);
 
         await tx.order.update({

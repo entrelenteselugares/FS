@@ -14,12 +14,12 @@ The agent follows a **Poll-based architecture** to bypass firewall/NAT issues of
 
 ## 2. Operation Lifecycle
 
-1. **Queue Fetch**: The agent requests `PENDING_PRINT` jobs from `/api/admin/phygital/queue`.
+1. **Queue Fetch**: The agent requests `PENDING_PRINT` jobs from `/api/phygital/events/:eventId/queue`.
 2. **Sequential Download**: Photos are downloaded to a local `temp/` folder using the unique `referenceCode` as the filename.
 3. **Print Execution**:
-   - **Linux (Raspberry Pi)**: Uses the `lp` command (CUPS) with the `-d` (destination) flag.
-   - **Windows**: Uses PowerShell's `Start-Process -Verb Print` command.
-4. **Server Confirmation**: Upon successful spooling, the agent notifies the backend via `/api/admin/phygital/confirm`.
+    - **Linux (Raspberry Pi)**: Uses the `lp` command (CUPS) with the `-d` (destination) flag.
+    - **Windows**: Uses PowerShell's `Start-Process -Verb Print`.
+4. **Server Confirmation**: Upon successful spooling, the agent notifies the backend via `/api/phygital/prints/:id/status`.
 5. **Auto-Cleanup**: Local files are deleted after 10 seconds to save disk space and maintain privacy.
 
 ## 3. Resilience Features

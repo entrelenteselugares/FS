@@ -12,15 +12,17 @@ export interface PhygitalMetadata {
   customerEmail?: string;
   customerCep?: string;
   userId?: string;
+  isBulk?: boolean;
+  applyWatermark?: boolean;
 }
 
 export class PhygitalService {
   /**
-   * Processa o upload de uma foto via QR Code, aplica o carimbo de referência e salva no Supabase Storage.
+   * Processa o upload de uma foto, aplica o carimbo de referência ou marca d'água e salva no storage.
    */
   static async processUpload(fileBuffer: Buffer, metadata: PhygitalMetadata) {
     try {
-      const { eventId, customerName, customerPhone, customerCep } = metadata;
+      const { eventId, customerName, customerPhone, customerCep, isBulk, applyWatermark } = metadata;
 
       // 1. Verifica se o destino existe (Pode ser Evento ou Cofre/Vault)
       let foundEvent = await prisma.event.findUnique({ where: { id: eventId } });
@@ -59,52 +61,69 @@ export class PhygitalService {
       const isRotated = orientation >= 5 && orientation <= 8;
       const w = isRotated ? (metadata_img.height || 1600) : (metadata_img.width || 1200);
       const h = isRotated ? (metadata_img.width || 1200) : (metadata_img.height || 1600);
-      console.log(`[PHYGITAL] Dimensões originais: ${metadata_img.width}x${metadata_img.height} | Rotacionado: ${isRotated} | Usando: ${w}x${h}`);
-
-      // Adicionamos borda branca (Luxury Frame - Estilo Polaroid)
-      const borderSize = Math.floor(Math.min(w, h) * 0.10); // 10% de borda
-      const finalWidth = w + (borderSize * 2);
       
-      pipeline = pipeline.extend({
-        top: borderSize,
-        bottom: borderSize * 3, // Margem Polaroid clássica
-        left: borderSize,
-        right: borderSize,
-        background: { r: 255, g: 255, b: 255, alpha: 1 }
-      });
+      const compositeLayers: any[] = [];
+      let finalWidth = w;
+      let finalHeight = h;
 
-      // 4. Criação dos Carimbos SVG (Com ViewBox para garantir escala)
-      // Garantimos que as dimensões sejam números válidos para evitar erro de atributo no frontend/payment
-      const safeWidth = Number.isFinite(finalWidth) && finalWidth > 0 ? finalWidth : 1200;
-      const safeBorderSize = Number.isFinite(borderSize) && borderSize > 0 ? borderSize : 120;
+      // 4. Lógica de Enquadramento vs Upload Direto (Lote)
+      if (isBulk) {
+        console.log(`[PHYGITAL] Upload em lote: Mantendo dimensões originais ${w}x${h}`);
+        // No upload em lote, não adicionamos borda polaroid por padrão
+      } else {
+        // Adicionamos borda branca (Luxury Frame - Estilo Polaroid)
+        const borderSize = Math.floor(Math.min(w, h) * 0.10); // 10% de borda
+        finalWidth = w + (borderSize * 2);
+        finalHeight = h + (borderSize * 4); // Polaroid clássico tem base maior
 
-      const refSvg = Buffer.from(`
-        <svg width="${safeWidth}" height="${safeBorderSize * 3}" viewBox="0 0 ${safeWidth} ${safeBorderSize * 3}">
-          <text x="50%" y="50%" font-family="sans-serif" font-size="${Math.floor(safeBorderSize * 1.5)}" font-weight="900" fill="#000000" text-anchor="middle" dominant-baseline="middle" style="text-transform: uppercase;">
-            ${referenceCode}
-          </text>
-        </svg>
-      `);
+        pipeline = pipeline.extend({
+          top: borderSize,
+          bottom: borderSize * 3,
+          left: borderSize,
+          right: borderSize,
+          background: { r: 255, g: 255, b: 255, alpha: 1 }
+        });
 
-      const logoFontSize = Math.floor(safeBorderSize * 0.4);
-      const logoSvg = Buffer.from(`
-        <svg width="${safeWidth}" height="${safeBorderSize * 2}" viewBox="0 0 ${safeWidth} ${safeBorderSize * 2}">
-          <text x="${safeWidth - safeBorderSize}" y="70%" font-family="sans-serif" font-size="${logoFontSize}" font-weight="900" fill="#000000" text-anchor="end" dominant-baseline="middle" style="text-transform: uppercase; letter-spacing: 5px; opacity: 0.6;">
-            FOTO SEGUNDO
-          </text>
-        </svg>
-      `);
+        // Adicionamos os carimbos de referência e logo (Polaroid Style)
+        const refSvg = Buffer.from(`
+          <svg width="${finalWidth}" height="${borderSize * 3}" viewBox="0 0 ${finalWidth} ${borderSize * 3}">
+            <text x="50%" y="50%" font-family="sans-serif" font-size="${Math.floor(borderSize * 1.5)}" font-weight="900" fill="#000000" text-anchor="middle" dominant-baseline="middle">
+              ${referenceCode}
+            </text>
+          </svg>
+        `);
+        compositeLayers.push({ input: refSvg, gravity: 'south', blend: 'over' });
 
-      // 5. Composição Final
-      console.log(`[PHYGITAL] Aplicando composição de carimbos...`);
+        const logoSvg = Buffer.from(`
+          <svg width="${finalWidth}" height="${borderSize * 2}" viewBox="0 0 ${finalWidth} ${borderSize * 2}">
+            <text x="${finalWidth - borderSize}" y="70%" font-family="sans-serif" font-size="${Math.floor(borderSize * 0.4)}" font-weight="900" fill="#000000" text-anchor="end" dominant-baseline="middle" style="opacity: 0.6; letter-spacing: 5px;">
+              FOTO SEGUNDO
+            </text>
+          </svg>
+        `);
+        compositeLayers.push({ input: logoSvg, gravity: 'southeast', blend: 'over' });
+      }
+
+      // 5. Marca d'água de Proteção (Anti-Theft - Phase 23)
+      if (applyWatermark) {
+        console.log(`[PHYGITAL] Aplicando marca d'água de proteção...`);
+        const watermarkSvg = Buffer.from(`
+          <svg width="${w}" height="${h}" viewBox="0 0 ${w} ${h}">
+            <style>
+              .wm { font-family: sans-serif; font-weight: 900; fill: rgba(255,255,255,0.3); text-transform: uppercase; font-size: ${Math.floor(w * 0.1)}px; }
+            </style>
+            <text x="50%" y="50%" class="wm" text-anchor="middle" transform="rotate(-45 ${w/2} ${h/2})">FOTO SEGUNDO</text>
+          </svg>
+        `);
+        compositeLayers.push({ input: watermarkSvg, gravity: 'center', blend: 'over' });
+      }
+
+      // 6. Composição Final
       const processedImageBuffer = await pipeline
-        .composite([
-          { input: refSvg, gravity: 'south', blend: 'over' },
-          { input: logoSvg, gravity: 'southeast', blend: 'over' }
-        ])
+        .composite(compositeLayers)
         .jpeg({ quality: 90 })
         .toBuffer();
-      console.log(`[PHYGITAL] Composição concluída. Buffer size: ${processedImageBuffer.length} bytes`);
+      console.log(`[PHYGITAL] Processamento concluído. Dimensões: ${finalWidth}x${finalHeight}`);
 
       // 5. Upload para o Storage correspondente (Híbrido)
       let publicUrl = "";
@@ -139,20 +158,27 @@ export class PhygitalService {
 
       // 6. Persistência no Prisma
       console.log(`[PHYGITAL] Persistindo no banco (eventId: ${foundEvent ? foundEvent.id : foundVault?.id})`);
-      const printJob = await prisma.phygitalPrint.create({
-        data: {
-          referenceCode,
-          imageUrl: publicUrl,
-          customerName,
-          customerPhone,
-          customerEmail: metadata.customerEmail || "",
-          customerCep: metadata.customerCep || "",
-          userId: metadata.userId || null,
-          status: 'PENDING_PRINT',
-          eventId: foundEvent ? foundEvent.id : (foundVault ? foundVault.id : "")
-        } as any,
-        include: { event: true }
-      });
+      
+      // Se for um Vault, não criamos registro na PhygitalPrint por enquanto para evitar erro de FK no Event,
+      // a menos que queiramos vincular a um evento fantasma ou refatorar o esquema.
+      // Por enquanto, focamos no registro da mídia no Vault.
+      let printJob = null;
+      if (foundEvent) {
+        printJob = await prisma.phygitalPrint.create({
+          data: {
+            referenceCode,
+            imageUrl: publicUrl,
+            customerName,
+            customerPhone,
+            customerEmail: metadata.customerEmail || "",
+            customerCep: metadata.customerCep || "",
+            userId: metadata.userId || null,
+            status: 'PENDING_PRINT',
+            eventId: foundEvent.id
+          } as any,
+          include: { event: true }
+        });
+      }
 
       // 6.1. Adicionar à Galeria Live (EventMedia) ou Vault (SharedAlbumMedia)
       if (foundEvent) {
@@ -169,24 +195,25 @@ export class PhygitalService {
           } as any
         });
       } else if (foundVault) {
-        // Fallback para thumbnailLink caso o Google demore a processar
-        const thumbFallback = driveFile?.thumbnailLink || driveFile?.webViewLink || null;
+        // Fallback robusto para thumbnailLink: se o Drive não retornou, usamos o webViewLink
+        // Mas o driveService.uploadMedia já tenta retornar o thumbnailLink.
+        const thumbnailLink = driveFile?.thumbnailLink || driveFile?.webViewLink || publicUrl;
         
         await prisma.sharedAlbumMedia.create({
           data: {
             albumId: foundVault.id,
             fileId: fileId,
             webViewLink: publicUrl,
-            thumbnailLink: thumbFallback,
+            thumbnailLink: thumbnailLink,
             uploadedById: metadata.userId || foundVault.ownerId,
             aiAnalysisStatus: 'PENDING'
           }
         });
-        console.log(`[PHYGITAL] Registrado no Vault: ${foundVault.id} | Thumb: ${thumbFallback ? 'OK' : 'MISSING'}`);
+        console.log(`[PHYGITAL] Registrado no Vault: ${foundVault.id} | Thumb: ${thumbnailLink ? 'OK' : 'MISSING'}`);
       }
 
-      // 7. Lógica de Créditos de Franquia
-      if (foundEvent?.franchiseeId) {
+      // 7. Lógica de Créditos de Franquia (Apenas para Eventos com Franqueado)
+      if (foundEvent?.franchiseeId && printJob) {
         const profile = await prisma.franchiseProfile.findUnique({
           where: { id: foundEvent.franchiseeId }
         });

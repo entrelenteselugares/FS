@@ -43,6 +43,45 @@ export class PhygitalController {
   }
 
   /**
+   * POST /api/phygital/upload-bulk
+   * Processa upload em lote (geralmente por profissionais)
+   */
+  static async uploadBulk(req: Request, res: Response) {
+    try {
+      if (!req.file) {
+        return res.status(400).json({ error: "Nenhum arquivo enviado." });
+      }
+
+      const { eventId, watermark } = req.body;
+      const userId = (req as any).user?.userId;
+
+      if (!eventId) {
+        return res.status(400).json({ error: "eventId obrigatório para upload em lote." });
+      }
+
+      // No upload em lote, o nome do cliente é omitido ou fixado como "Upload Profissional"
+      const result = await PhygitalService.processUpload(req.file.buffer, {
+        eventId,
+        customerName: "Upload Lote",
+        customerPhone: "BATCH",
+        customerEmail: "BATCH",
+        customerCep: "BATCH",
+        userId: userId,
+        isBulk: true,
+        applyWatermark: watermark === "true"
+      });
+
+      res.status(201).json(result);
+    } catch (error: any) {
+      console.error("Erro no PhygitalController.uploadBulk:", error);
+      res.status(500).json({ 
+        error: "Falha no upload em lote.", 
+        details: error.message 
+      });
+    }
+  }
+
+  /**
    * Endpoint para o Agente IoT buscar fila de impressão
    */
   static async listPending(req: Request, res: Response) {

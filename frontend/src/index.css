@@ -127,52 +127,60 @@ textarea:focus {
 }
 
 .fs-btn {
-    padding: 12px 24px;
+    padding: 14px 28px;
     font-size: 10px;
     font-weight: 900;
     text-transform: uppercase;
-    letter-spacing: 0.2em;
+    letter-spacing: 0.35em;
     cursor: pointer;
-    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
     border: none;
     display: inline-flex;
     align-items: center;
     justify-content: center;
-    gap: 8px;
+    gap: 10px;
     box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+    position: relative;
+    overflow: hidden;
 }
 
 .fs-btn:hover {
     transform: translateY(-2px);
-    box-shadow: 0 12px 24px -8px rgba(0,0,0,0.3);
+    box-shadow: 0 20px 40px -10px rgba(0,0,0,0.3);
+    letter-spacing: 0.45em;
 }
 
 .fs-btn:active {
-    transform: translateY(0);
+    transform: translateY(0) scale(0.98);
 }
 
 .fs-input {
     width: 100%;
     background-color: var(--bg-field);
     border: 1px solid var(--border);
-    padding: 1rem 1.25rem;
-    font-size: 13px;
+    padding: 1.15rem 1.5rem;
+    font-size: 11px;
     font-family: var(--font-b);
+    font-weight: 900;
+    text-transform: uppercase;
+    letter-spacing: 0.15em;
     color: var(--text);
     outline: none;
-    border-radius: 4px;
-    transition: all 0.2s ease;
+    border-radius: 0;
+    transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
 }
 
 .fs-input:focus {
     border-color: var(--brand);
     background-color: var(--bg);
-    box-shadow: 0 0 0 4px var(--brand-border);
+    box-shadow: 0 0 0 1px var(--brand);
+    padding-left: 1.75rem;
 }
 
 .fs-input::placeholder {
     color: var(--text-3);
-    opacity: 0.5;
+    opacity: 0.4;
+    font-weight: 700;
 }
 
 .text-proportional {
@@ -503,4 +511,36 @@ textarea:focus {
 @media (min-width: 1024px) {
   .admin-action-btns { opacity: 0.25; }
   .group:hover .admin-action-btns { opacity: 1; }
+}
+
+/* ── Anti-Theft Shield (Phase 23) ── */
+@media print {
+  body * {
+    visibility: hidden !important;
+  }
+  body::after {
+    content: "CONTEÚDO PROTEGIDO - FOTO SEGUNDO. Impressão não autorizada.";
+    visibility: visible !important;
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    font-family: 'Barlow Condensed', sans-serif;
+    font-size: 24px;
+    font-weight: 900;
+    text-transform: uppercase;
+    color: #000;
+    text-align: center;
+  }
+}
+
+.fs-protected-media {
+  user-select: none !important;
+  -webkit-user-drag: none !important;
+  pointer-events: auto !important;
+}
+
+.fs-protected-media:active {
+  filter: blur(4px);
+  transition: filter 0.2s;
 }

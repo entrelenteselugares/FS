@@ -15,11 +15,12 @@ Development requires a hybrid setup where the backend acts as an API server and 
 
 | Command | Description |
 |---------|-------------|
-| `npm run dev` | Starts backend and frontend in parallel using `concurrently`. |
-| `npm run build` | Bundles backend with `esbuild` and builds frontend for production. |
-| `npm run test:e2e:all` | Executes the full Playwright test suite. |
-| `npx prisma generate` | Regenerates the Prisma client based on the schema. |
-| `npx prisma db push` | Syncs the database schema (use with caution in shared environments). |
+| `npm run dev` | Starts backend (3002) and frontend (3000) in parallel using `concurrently`. |
+| `npm run build` | Bundles backend and builds frontend for production. |
+| `npm run test` | Executes the main test suite (mapped to `test:e2e:all`). |
+| `npm run test:certify` | Runs the high-integrity launch certification robot. |
+| `npx prisma generate` | Regenerates the Prisma client for backend models. |
+| `npm run lint` | (Frontend) Runs ESLint across the UI codebase. |
 
 ## Code Style
 

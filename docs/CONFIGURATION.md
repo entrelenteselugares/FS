@@ -28,10 +28,12 @@ The system uses a `.env` file for local development. In production, these should
 | `GOOGLE_DRIVE_REDIRECT_URI` | **Yes** | — | Callback URI for Google Drive authentication. |
 | `GOOGLE_DRIVE_REFRESH_TOKEN` | **Yes** | — | Persistent refresh token for the Master Drive account. |
 | `GOOGLE_DRIVE_ROOT_FOLDER_ID` | **Yes** | — | ID of the root folder in Google Drive for photo storage. |
+| `MASTER_EMAIL` | No | — | Administrative email for system-wide notifications. |
+| `VITE_SENTRY_DSN` | No | — | Sentry DSN for frontend error monitoring. |
 | `CALLMEBOT_PHONE` | No | — | Phone number for WhatsApp notifications via CallMeBot. |
 | `CALLMEBOT_APIKEY` | No | — | API key for CallMeBot WhatsApp service. |
-| `PORT` | No | `3001` | Port number for the backend Express server. |
-| `BACKEND_URL` | No | `http://localhost:3001` | Base URL of the backend API. |
+| `PORT` | No | `3002` | Port number for the backend Express server. |
+| `BACKEND_URL` | No | `http://localhost:3002` | Base URL of the backend API. |
 | `CRON_SECRET` | **Yes** | — | Secret token to secure internal cron/maintenance endpoints. |
 
 ## Required vs Optional Settings
@@ -47,7 +49,7 @@ The application will fail to initialize or perform core functions if the followi
 
 ### ⚙️ Optional Defaults
 
-- **Port:** Defaults to `3001` if not specified.
+- **Port:** Defaults to `3002` if not specified.
 - **JWT Expiry:** Defaults to `7d` (7 days).
 - **Notifications:** WhatsApp alerts will be skipped if `CALLMEBOT` variables are absent.
 

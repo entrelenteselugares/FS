@@ -226,7 +226,18 @@ export default function EventPage() {
 
   useEffect(() => {
     if (!slug) return;
-    const token = searchParams.get("token") || localStorage.getItem(`fs_token_${slug}`);
+    
+    // 1. Identificar o token (URL tem prioridade sobre LocalStorage)
+    const urlToken = searchParams.get("token");
+    const storedToken = localStorage.getItem(`fs_token_${slug}`);
+    const token = urlToken || storedToken;
+
+    // 2. Persistir o token se ele veio da URL (Magic Link Persistence - Phase 22)
+    if (urlToken && urlToken !== storedToken) {
+      localStorage.setItem(`fs_token_${slug}`, urlToken);
+      console.log(`[Phase 22] Guest Token persistido para o evento: ${slug}`);
+    }
+
     const savedOid = localStorage.getItem(`fs_order_${slug}`);
     const params = {
       ...(user?.id ? { userId: user.id } : {}),
@@ -274,6 +285,8 @@ export default function EventPage() {
               const mUnlocked = data.unlockedMediaIds || [];
               
               setMedias(mediaList);
+              
+              const mUnlocked = Array.isArray(data.unlockedMediaIds) ? data.unlockedMediaIds : [];
               
               if (mUnlocked.length > 0) {
                 setEvent(prev => prev ? { 
@@ -787,7 +800,8 @@ return (
                                   <img 
                                     src={m.url} 
                                     alt={m.shortId} 
-                                    className={`w-full h-full object-cover transition-transform duration-1000 ${!isUnlocked && "group-hover:scale-110 blur-[1px] group-hover:blur-0"} ${isSelected ? "opacity-30 scale-95" : "opacity-100"}`} 
+                                    className={`w-full h-full object-cover transition-transform duration-1000 fs-protected-media ${!isUnlocked && "group-hover:scale-110 blur-[1px] group-hover:blur-0"} ${isSelected ? "opacity-30 scale-95" : "opacity-100"}`} 
+                                    onContextMenu={(e) => e.preventDefault()}
                                   />
                                   
                                   <div className={`absolute bottom-0 left-0 right-0 p-5 z-20 flex justify-between items-end transition-all duration-500 translate-y-2 opacity-0 group-hover:translate-y-0 group-hover:opacity-100 ${isUnlocked ? "bg-brand-tactical text-black font-black" : (isSelected ? "bg-emerald-500 text-theme-text" : "bg-theme-bg-muted/90 backdrop-blur-md")}`}>

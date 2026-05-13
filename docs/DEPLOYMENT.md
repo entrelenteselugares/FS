@@ -16,14 +16,15 @@ The platform is designed for cloud-native deployment with a focus on serverless 
 
 ## Build Pipeline
 
-Our CI/CD pipeline is managed via GitHub Actions.
+Our CI/CD pipeline is managed via GitHub Actions and Vercel's native build engine.
 
 1. **Trigger:** Push to `main` (Production) or `dev` (Staging).
-2. **Lint & Test:** Runs `npm run lint` and `npm run test:e2e:all`.
-3. **Build:**
-    - Backend: Bundled via `esbuild` into `api/server-v2.js`.
-    - Frontend: Built via Vite into `public/`.
-4. **Deploy:** Automatic deployment to Vercel upon successful build and test pass.
+2. **Pre-build:** Runs `npx prisma generate` to ensure type safety.
+3. **Build Script:**
+    - **Backend:** Bundled via `esbuild` into `api/server-v2.js` for serverless execution.
+    - **Frontend:** Built via Vite into `frontend/dist`.
+    - **Asset Sync:** The `public/` directory at the root is replaced with the fresh frontend build.
+4. **Deploy:** Automatic deployment to Vercel. CI runs `npm test` before or during deployment.
 
 ## Environment Setup
 

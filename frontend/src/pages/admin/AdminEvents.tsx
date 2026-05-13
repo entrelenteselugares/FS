@@ -379,7 +379,7 @@ export const AdminEvents: React.FC<AdminEventsProps> = ({ initialEditEventId }) 
               setExpressFormData({ customerName: "", customerEmail: "", whatsapp: "", amount: 15, location: "Taquaral / Marketplace", paymentMethod: "MONEY", services: [] });
               setIsExpressModalOpen(true);
             }}
-            className="font-black uppercase tracking-[0.4em] px-8 py-4 hover:brightness-110 transition-all shadow-xl shadow-brand-tactical/10 rounded-none text-[9px] w-full md:w-auto border border-brand-tactical text-brand-tactical bg-transparent italic"
+            className="fs-btn border border-brand-tactical text-brand-tactical bg-transparent italic w-full md:w-auto"
           >
             VENDA RÁPIDA (LIVE PRINT)
           </button>
@@ -390,7 +390,7 @@ export const AdminEvents: React.FC<AdminEventsProps> = ({ initialEditEventId }) 
               setCoverPreview(null);
               setIsModalOpen(true);
             }}
-            className="font-black uppercase tracking-[0.4em] px-8 py-4 hover:brightness-110 transition-all shadow-xl shadow-brand-tactical/10 rounded-none text-[9px] w-full md:w-auto bg-brand-tactical text-zinc-950 italic"
+            className="fs-btn bg-brand-tactical text-zinc-950 italic w-full md:w-auto"
           >
             NOVO EVENTO
           </button>
@@ -554,11 +554,11 @@ export const AdminEvents: React.FC<AdminEventsProps> = ({ initialEditEventId }) 
                   <div className="space-y-6">
                     <div className="space-y-2">
                       <label className="text-[8px] font-black text-theme-muted uppercase tracking-widest block mb-2 opacity-60 italic">Título do Evento</label>
-                      <input type="text" required className="w-full bg-theme-bg-muted border border-theme-border/60 p-4 text-[10px] text-theme-text font-black outline-none focus:border-brand-tactical rounded-xl uppercase" value={formData.title} onChange={e => setFormData({ ...formData, title: e.target.value })} />
+                      <input type="text" required className="fs-input font-black uppercase" value={formData.title} onChange={e => setFormData({ ...formData, title: e.target.value })} />
                     </div>
                     <div className="space-y-2">
                       <label className="text-[8px] font-black text-theme-muted uppercase tracking-widest block mb-2 opacity-60 italic">Identificador URL (Slug)</label>
-                      <input type="text" className="w-full bg-theme-bg-muted border border-theme-border/60 p-4 text-[10px] text-theme-muted font-black outline-none focus:border-brand-tactical rounded-xl" value={formData.slug} onChange={e => setFormData({ ...formData, slug: e.target.value.toLowerCase().replace(/\s/g, "-") })} placeholder="ex: taynan-e-felipe" />
+                      <input type="text" className="fs-input font-black" value={formData.slug} onChange={e => setFormData({ ...formData, slug: e.target.value.toLowerCase().replace(/\s/g, "-") })} placeholder="ex: taynan-e-felipe" />
                     </div>
 
                     <div className="grid grid-cols-2 gap-6 p-6 bg-brand-tactical/5 border border-brand-tactical/10 rounded-[24px]">
@@ -716,25 +716,25 @@ export const AdminEvents: React.FC<AdminEventsProps> = ({ initialEditEventId }) 
 
             {/* Footer */}
             <div className="p-8 md:p-10 bg-theme-bg-muted/50 border-t border-theme-border flex gap-4 shrink-0">
-              <button type="button" onClick={() => setIsModalOpen(false)} className="flex-1 py-5 border border-theme-border text-[11px] font-black uppercase tracking-[0.3em] text-theme-muted hover:text-white transition-all rounded-[20px] italic">Cancelar</button>
+              <button type="button" onClick={() => setIsModalOpen(false)} className="fs-btn flex-1 border border-theme-border text-theme-muted hover:text-white transition-all italic">Cancelar</button>
               {activeTab !== 'comercial' ? (
                 <button 
                   type="button" 
                   onClick={() => { const t: Array<'info' | 'equipe' | 'comercial'> = ['info','equipe','comercial']; setActiveTab(t[t.indexOf(activeTab)+1]); }} 
-                  className="flex-[2] py-5 bg-theme-border text-theme-text text-[11px] font-black uppercase tracking-[0.3em] hover:bg-zinc-700 transition-all rounded-[20px] italic flex items-center justify-center gap-4"
+                  className="fs-btn flex-[2] bg-theme-border text-theme-text hover:bg-zinc-700 transition-all italic flex items-center justify-center gap-4"
                 >
                   Próximo Passo
-                  <ArrowRight size={18} strokeWidth={1.5} />
+                  <ArrowRight size={14} />
                 </button>
               ) : (
                 <button 
                   type="submit" 
                   onClick={handleCreate}
                   disabled={isUploading} 
-                  className="flex-[2] py-5 bg-brand-tactical text-zinc-950 text-[11px] font-black uppercase tracking-[0.3em] shadow-2xl shadow-brand-tactical/20 hover:brightness-110 transition-all rounded-[20px] italic flex items-center justify-center gap-4"
+                  className="fs-btn flex-[2] bg-brand-tactical text-zinc-950 shadow-2xl shadow-brand-tactical/20 hover:brightness-110 transition-all italic flex items-center justify-center gap-4"
                 >
                   {isUploading ? "PROCESSANDO..." : (editingEvent ? "SALVAR ALTERAÇÕES" : "CADASTRAR EVENTO")}
-                  <ArrowRight size={18} strokeWidth={1.5} />
+                  <ArrowRight size={14} />
                 </button>
               )}
             </div>

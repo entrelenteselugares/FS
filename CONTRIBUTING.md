@@ -21,7 +21,7 @@ Before making your first contribution, please review our setup guides:
 
 1. **Branching:** Branch off `dev` for all features (`feat/name`) and fixes (`fix/name`).
 2. **Commits:** Use [Conventional Commits](https://www.conventionalcommits.org/) (e.g., `feat: add new gallery filter`).
-3. **Tests:** Ensure all tests pass locally using `npm run test:e2e:all`.
+3. **Tests:** Ensure all tests pass locally using `npm test`.
 4. **Documentation:** Update relevant `.md` files in `docs/` if your changes affect the public API or configuration.
 5. **Review:** All PRs require at least one approval from a maintainer.
 

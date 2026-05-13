@@ -178,7 +178,7 @@ export const AdminUsers: React.FC = () => {
         </div>
         <button 
           onClick={() => { setIsModalOpen(true); setEditingUser(null); setFormData({ name: "", email: "", password: "", role: "PROFISSIONAL", pixKey: "", otherHabilities: "", equipment: "", workflowType: ["TRADICIONAL"], captPct: 30, editPct: 10, isFranchise: false, printCredits: 0, isVerified: false }); }}
-          className="font-black uppercase tracking-[0.3em] px-8 py-4 bg-brand-tactical text-zinc-950 hover:brightness-110 transition-all shadow-xl shadow-brand-tactical/10 flex items-center gap-3 text-[10px] italic"
+          className="fs-btn bg-brand-tactical text-zinc-950 italic"
         >
           <UserPlus size={14} /> CONVOCAR MEMBRO
         </button>
@@ -327,11 +327,11 @@ export const AdminUsers: React.FC = () => {
                     <div className="space-y-4">
                       <div className="space-y-2">
                         <label className="text-[7px] font-black text-theme-muted uppercase tracking-widest block mb-1 opacity-40 italic">Nome de Guerra</label>
-                        <input required className="w-full bg-theme-bg-muted border border-theme-border/60 p-4 text-[11px] text-theme-text font-black outline-none focus:border-brand-tactical rounded-xl uppercase placeholder:opacity-20" value={formData.name} onChange={e => setFormData({...formData, name: e.target.value})} placeholder="EX: JOHN DOE" />
+                        <input required className="fs-input font-black uppercase" value={formData.name} onChange={e => setFormData({...formData, name: e.target.value})} placeholder="EX: JOHN DOE" />
                       </div>
                       <div className="space-y-2">
                         <label className="text-[7px] font-black text-theme-muted uppercase tracking-widest block mb-1 opacity-40 italic">E-mail Corporativo</label>
-                        <input required type="email" className="w-full bg-theme-bg-muted border border-theme-border/60 p-4 text-[11px] text-theme-text font-black outline-none focus:border-brand-tactical rounded-xl placeholder:opacity-20 lowercase" value={formData.email} onChange={e => setFormData({...formData, email: e.target.value})} placeholder="email@exemplo.com" />
+                        <input required type="email" className="fs-input font-black lowercase" value={formData.email} onChange={e => setFormData({...formData, email: e.target.value})} placeholder="email@exemplo.com" />
                       </div>
                     </div>
                   </div>
@@ -343,11 +343,11 @@ export const AdminUsers: React.FC = () => {
                     <div className="space-y-4">
                       <div className="space-y-2">
                         <label className="text-[7px] font-black text-theme-muted uppercase tracking-widest block mb-1 opacity-40 italic">Nova Senha {editingUser && '(Opcional)'}</label>
-                        <input type="password" className="w-full bg-theme-bg-muted border border-theme-border/60 p-4 text-[11px] text-theme-text font-black outline-none focus:border-brand-tactical rounded-xl" value={formData.password} onChange={e => setFormData({...formData, password: e.target.value})} placeholder="••••••••" required={!editingUser} />
+                        <input type="password" className="fs-input font-black" value={formData.password} onChange={e => setFormData({...formData, password: e.target.value})} placeholder="••••••••" required={!editingUser} />
                       </div>
                       <div className="space-y-2">
                         <label className="text-[7px] font-black text-theme-muted uppercase tracking-widest block mb-1 opacity-40 italic">Nível de Acesso</label>
-                        <select className="w-full bg-theme-bg-muted border border-theme-border/60 p-4 text-[11px] text-theme-text font-black outline-none focus:border-brand-tactical rounded-xl appearance-none cursor-pointer uppercase" value={formData.role} onChange={e => setFormData({...formData, role: e.target.value})}>
+                        <select className="fs-input font-black uppercase appearance-none cursor-pointer" value={formData.role} onChange={e => setFormData({...formData, role: e.target.value})}>
                           <option value="ADMIN">ADMINISTRADOR</option>
                           <option value="PROFISSIONAL">PROFISSIONAL / PARCEIRO</option>
                           <option value="CARTORIO">UNIDADE FIXA / CARTÓRIO</option>
@@ -468,14 +468,14 @@ export const AdminUsers: React.FC = () => {
 
             {/* Footer */}
             <div className="p-8 md:p-10 bg-theme-bg-muted/50 border-t border-theme-border flex gap-4 shrink-0">
-              <button type="button" onClick={() => setIsModalOpen(false)} className="flex-1 py-5 border border-theme-border text-[11px] font-black uppercase tracking-[0.3em] text-theme-muted hover:text-white transition-all rounded-[20px] italic">Cancelar</button>
+              <button type="button" onClick={() => setIsModalOpen(false)} className="fs-btn flex-1 border border-theme-border text-theme-muted hover:text-white transition-all italic">Cancelar</button>
               <button 
                 type="submit" 
                 onClick={handleCreate}
-                className="flex-[2] py-5 bg-brand-tactical text-zinc-950 text-[11px] font-black uppercase tracking-[0.3em] shadow-2xl shadow-brand-tactical/20 hover:brightness-110 transition-all rounded-[20px] italic flex items-center justify-center gap-4"
+                className="fs-btn flex-[2] bg-brand-tactical text-zinc-950 shadow-2xl shadow-brand-tactical/20 hover:brightness-110 transition-all italic flex items-center justify-center gap-4"
               >
                 {editingUser ? 'Salvar Membro' : 'Confirmar Convocação'}
-                <ArrowRight size={18} strokeWidth={1.5} />
+                <ArrowRight size={14} />
               </button>
             </div>
           </div>
