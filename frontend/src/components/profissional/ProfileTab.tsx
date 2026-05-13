@@ -18,7 +18,7 @@ export function ProfileTab({ profile, onUpdated, onNotify }: ProfileTabProps) {
   const [saving, setSaving] = useState(false);
 
   const handleSave = async () => {
-    if (formData.experienceYears > 0 && !formData.firstJobUrl?.trim()) {
+    if ((formData.experienceYears ?? 0) > 0 && !formData.firstJobUrl?.trim()) {
       if (onNotify) onNotify("É obrigatório informar o link do primeiro trabalho para validar seus anos de experiência.", "error");
       return;
     }
