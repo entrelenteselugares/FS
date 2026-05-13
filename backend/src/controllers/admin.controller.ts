@@ -1011,7 +1011,8 @@ export async function adminListQuotes(req: AuthRequest, res: Response): Promise<
 
   try {
     const baseFilter: Prisma.EventWhereInput = {
-      NOT: { quoteStatus: null }
+      NOT: { quoteStatus: null },
+      type: { notIn: ['PHOTO_MARKETPLACE', 'FOTO_POINT', 'FLASH_EVENT'] }
     };
     const where: Prisma.EventWhereInput = q ? {
       AND: [baseFilter, { OR: [
@@ -1023,6 +1024,11 @@ export async function adminListQuotes(req: AuthRequest, res: Response): Promise<
 
     const quotes = await prisma.event.findMany({
       where,
+      include: {
+        pedidos: {
+          where: { status: "APROVADO" }
+        }
+      },
       orderBy: { createdAt: "desc" },
       take,
       skip,

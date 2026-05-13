@@ -18,7 +18,7 @@ export { OpportunitiesModal } from "./OpportunitiesModal";
 export { FranchiseShopModal } from "./FranchiseShopModal";
 export * from "./FranquiaLanding";
 export * from "./TeamSelector";
-export { ExpressSaleBanner } from "./ExpressSaleBanner";
+export { DashboardActionButton } from "./DashboardActionButton";
 export { CoverPhotoInput } from "./CoverPhotoInput";
 
 export type {

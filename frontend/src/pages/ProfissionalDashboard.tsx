@@ -4,7 +4,7 @@ import { API } from "../lib/api";
 import { useNavigate, useLocation } from "react-router-dom";
 import {
   DollarSign, MessageCircle,
-  Settings, Briefcase, Users, LayoutDashboard, Play, Zap, Calendar, RefreshCw, LogOut, CheckCircle, Camera, Printer
+  Settings, Briefcase, Users, LayoutDashboard, Play, Calendar, RefreshCw, LogOut, CheckCircle, Camera, Printer
 } from "lucide-react";
 import { DashboardLayout, type NavItem } from "../components/DashboardLayout";
 import { T } from "../lib/theme";
@@ -12,7 +12,7 @@ import {
   AgendaTab, FinanceTab, NetworkTab, ServicesTab, ProfileTab, FranquiaLanding,
   EventEditPanel, ExpressSaleModal, ProfileModal, FlashEventModal, FotoPointModal, FotoPointEditModal,
   DashboardHeader, DashboardStats, SupportBanner,
-  OpportunitiesModal, ExpressSaleBanner, FranchiseShopModal,
+  OpportunitiesModal, DashboardActionButton, FranchiseShopModal,
   type EventItem, type UnitInvite, type ServiceCatalog, type ProfileData, type Partner
 } from "../components/profissional";
 import { motion, AnimatePresence } from "framer-motion";
@@ -400,44 +400,42 @@ export default function ProfissionalDashboard() {
             {activeTab === "agenda" && (
               <div className="space-y-12">
               {/* Banner de Venda Expressa & Flash Event */}
-              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-                <ExpressSaleBanner onOpen={() => setIsExpressModalOpen(true)} />
+              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                {/* Venda Rápida */}
+                <DashboardActionButton 
+                  title="Venda Rápida"
+                  subtitle="Registre recebimento e libere acesso na hora"
+                  icon={DollarSign}
+                  color="emerald"
+                  tag="Operação Tática"
+                  onClick={() => setIsExpressModalOpen(true)}
+                />
                 
-                {/* Foto Point (Novo) */}
-                <div 
+                {/* Foto Point */}
+                <DashboardActionButton 
+                  title="Foto Point"
+                  subtitle="Crie um ponto de venda local instantâneo"
+                  icon={Camera}
+                  color="cyan"
+                  tag="Nova Categoria"
                   onClick={() => setIsFotoPointModalOpen(true)}
-                  className="bg-theme-bg-muted border border-cyan-400/30 p-6 h-full flex items-center justify-between cursor-pointer hover:border-cyan-400/60 transition-all group overflow-hidden relative"
-                >
-                  <div className="absolute top-0 left-0 w-1 h-full bg-cyan-400" />
-                  <div className="space-y-1 relative z-10">
-                    <div className="flex items-center gap-2 text-cyan-400">
-                      <Camera size={14} fill="currentColor" />
-                      <span className="text-[10px] font-black uppercase tracking-[0.3em] italic">Nova Categoria</span>
-                    </div>
-                    <h3 className="text-xl font-heading font-black text-theme-text uppercase italic leading-tight">Foto Point</h3>
-                    <p className="text-[10px] text-theme-muted uppercase font-bold tracking-widest">Crie um ponto de venda local</p>
-                  </div>
-                  <div className="text-cyan-400/10 group-hover:text-cyan-400/30 transition-colors">
-                    <Camera size={40} strokeWidth={3} />
-                  </div>
-                </div>
+                />
 
-                {user?.franchiseProfile && user?.franchiseProfile.active && (
-                  <div 
+                {/* Live Print (Somente para franqueados ativos) */}
+                {user?.franchiseProfile?.active ? (
+                  <DashboardActionButton 
+                    title="Live Print"
+                    subtitle="Ative o monitor de impressão em tempo real"
+                    icon={Printer}
+                    color="amber"
+                    tag="Franquia Ativa"
                     onClick={() => setIsFlashModalOpen(true)}
-                    className="bg-theme-bg-muted border border-yellow-400/30 p-6 h-full flex items-center justify-between cursor-pointer hover:border-yellow-400/60 transition-all group overflow-hidden relative"
-                  >
-                    <div className="absolute top-0 left-0 w-1 h-full bg-yellow-400" />
-                    <div className="space-y-1 relative z-10">
-                      <div className="flex items-center gap-2 text-yellow-400">
-                        <Zap size={14} fill="currentColor" />
-                        <span className="text-[10px] font-black uppercase tracking-[0.3em] italic">Oportunidade Agora</span>
-                      </div>
-                      <h3 className="text-xl font-heading font-black text-theme-text uppercase italic leading-tight">Foto Print Live</h3>
-                      <p className="text-[10px] text-theme-muted uppercase font-bold tracking-widest">Ative um QR Code instantaneamente</p>
-                    </div>
-                    <div className="text-yellow-400/10 group-hover:text-yellow-400/30 transition-colors">
-                      <Zap size={40} strokeWidth={3} />
+                  />
+                ) : (
+                  <div className="bg-theme-bg-muted/30 border border-theme-border/40 p-6 flex items-center justify-center text-center opacity-40 grayscale group hover:grayscale-0 transition-all">
+                    <div className="space-y-2">
+                       <Printer size={24} className="mx-auto mb-2 opacity-20 group-hover:opacity-100 transition-opacity" />
+                       <p className="text-[9px] font-black uppercase tracking-widest leading-relaxed max-w-[140px] mx-auto italic">Recurso exclusivo para franqueados ativos</p>
                     </div>
                   </div>
                 )}

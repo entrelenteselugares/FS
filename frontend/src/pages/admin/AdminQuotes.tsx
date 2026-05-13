@@ -17,6 +17,7 @@ interface Quote {
   usageType: string; eventHours?: number; temFoto?: boolean; temVideo?: boolean;
   temReels?: boolean; temFotoEditada?: boolean; temVideoEditado?: boolean;
   temFotoImpressa?: boolean; temAlbumImpresso?: boolean; createdAt: string;
+  pedidos?: { id: string; status: string }[];
 }
 interface StaffBreakdown { ID?: string; id?: string; LABEL?: string; label?: string; COST?: number; cost?: number; USER_ID?: string; userId?: string; }
 interface EquipBreakdown { ID?: string; id?: string; QTY?: number; qty?: number; }
@@ -180,9 +181,27 @@ export const AdminQuotes: React.FC = () => {
     else setSelectedEquip([...selectedEquip,{id,qty:1}]);
   };
 
-  const getColQuotes = (status: string) => quotes.filter(q=>q.quoteStatus===status&&(!search||q.nomeNoivos.toLowerCase().includes(search.toLowerCase())||q.clientName.toLowerCase().includes(search.toLowerCase())));
+  const getColQuotes = (status: string) => quotes.filter(q => {
+    const hasApprovedOrder = q.pedidos && q.pedidos.length > 0;
+    let effectiveStatus = q.quoteStatus;
+
+    // Se tiver pedido pago e estiver em APPROVED, tratamos como CONVERTED no Kanban
+    if (q.quoteStatus === "APPROVED" && hasApprovedOrder) {
+      effectiveStatus = "CONVERTED";
+    }
+
+    const matchesStatus = effectiveStatus === status;
+    const matchesSearch = !search || 
+      q.nomeNoivos.toLowerCase().includes(search.toLowerCase()) || 
+      (q.clientName && q.clientName.toLowerCase().includes(search.toLowerCase())) ||
+      (q.clientEmail && q.clientEmail.toLowerCase().includes(search.toLowerCase()));
+
+    return matchesStatus && matchesSearch;
+  });
   const QuoteCard = ({quote, onClick}: {quote:Quote, onClick:()=>void}) => {
-    const col = KANBAN_COLUMNS.find(c=>c.id===quote.quoteStatus)!;
+    const hasApprovedOrder = quote.pedidos && quote.pedidos.length > 0;
+    const effectiveStatus = (quote.quoteStatus === "APPROVED" && hasApprovedOrder) ? "CONVERTED" : quote.quoteStatus;
+    const col = KANBAN_COLUMNS.find(c=>c.id===effectiveStatus)!;
     const daysLeft = Math.ceil((new Date(quote.dataEvento).getTime()-Date.now())/(1000*60*60*24));
     return (
       <motion.div
@@ -205,7 +224,10 @@ export const AdminQuotes: React.FC = () => {
               {quote.temFoto&&<Camera size={11} className="text-theme-text-muted opacity-60"/>}
               {quote.temVideo&&<Video size={11} className="text-theme-text-muted opacity-60"/>}
               {quote.temReels&&<Smartphone size={11} className="text-theme-text-muted opacity-60"/>}
-              <span className={`text-[8px] font-black uppercase px-1.5 py-0.5 border rounded ${col.badge}`}>{quote.quoteStatus}</span>
+              <span className={`text-[8px] font-black uppercase px-1.5 py-0.5 border rounded ${col.badge}`}>{effectiveStatus}</span>
+              {quote.pedidos && quote.pedidos.length > 0 && (
+                <span className="text-[8px] font-black uppercase px-1.5 py-0.5 bg-emerald-500 text-black rounded animate-pulse font-black italic">PAGO</span>
+              )}
             </div>
             <div className="flex items-center gap-2">
               <span className="text-[8px] text-theme-text-muted font-bold">{daysLeft>0?`${daysLeft}d`:"Passado"}</span>

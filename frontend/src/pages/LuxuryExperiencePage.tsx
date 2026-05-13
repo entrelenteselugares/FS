@@ -97,10 +97,14 @@ export default function LuxuryExperiencePage() {
 
   return (
     <div className="min-h-screen font-sans selection:bg-brand-tactical selection:text-zinc-950" style={{ background: T.bg, color: T.text }}>
-      <nav className="h-20 flex items-center justify-between px-8 border-b sticky top-0 z-50 backdrop-blur-xl" style={{ borderColor: T.border, background: `${T.bg}e6` }}>
-        <a href="/" className="text-[10px] font-black uppercase tracking-widest hover:opacity-80 transition-all" style={{ color: T.text2 }}>Foto Segundo</a>
-        <img src="/logo.png" alt="Foto Segundo" style={{ height: 20, objectFit: "contain", filter: "var(--logo-filter)" }} />
-        <span className="text-[10px] font-black uppercase tracking-widest italic" style={{ color: T.text3 }}>Luxury Experience</span>
+      <nav className="h-20 flex items-center justify-center px-8 border-b sticky top-0 z-50 backdrop-blur-xl" style={{ borderColor: T.border, background: `${T.bg}e6` }}>
+        <img 
+          src="/logo.png" 
+          alt="Foto Segundo" 
+          className="cursor-pointer hover:opacity-80 transition-all" 
+          style={{ height: 20, objectFit: "contain", filter: "var(--logo-filter)" }} 
+          onClick={() => navigate('/')} 
+        />
       </nav>
 
       {/* HERO SECTION */}
@@ -282,7 +286,6 @@ export default function LuxuryExperiencePage() {
              className="h-6 mx-auto opacity-40 grayscale hover:opacity-100 transition-all cursor-pointer" 
              onClick={() => navigate('/')} 
            />
-           <p className="text-[9px] uppercase font-black tracking-[0.5em] italic" style={{ color: T.text3 }}>Foto Segundo · Midnight Luxury Experience</p>
         </footer>
 
       </section>
