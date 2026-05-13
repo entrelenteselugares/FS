@@ -31,6 +31,7 @@ Most endpoints require a JSON Web Token (JWT).
 | `POST` | `/api/profissional/flash-event` | Creates a new Flash Event. | Pro |
 | `POST` | `/api/profissional/foto-point` | Creates a new Foto Point event. | Pro |
 | `GET` | `/api/flash/:shortId` | Resolves a Flash Event PIN for anonymous access. | No |
+| `GET` | `/api/flash/:eventId/stats` | Aggregated live metrics for a Flash Event (funnel, print queue). | Pro/Admin |
 
 ### 🛒 Marketplace & Checkout
 | Method | Path | Description | Auth |

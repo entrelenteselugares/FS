@@ -23,6 +23,7 @@ npx playwright install --with-deps
 | `npm test` | Runs the main E2E suite (Playwright). |
 | `npm run test:certify` | Executes the launch certification robot (E2E). |
 | `npm run test --prefix backend` | Runs backend resilience tests (Jest). |
+| `npx ts-node e2e/flash-scale.test.ts` | Runs the high-concurrency Flash Event stress test. |
 | `npm run test:all --prefix backend` | Runs all backend unit and integration tests. |
 | `npx playwright test --ui` | Opens the Playwright UI for interactive debugging. |
 | `npx playwright show-report` | Views the HTML report of the last test run. |
