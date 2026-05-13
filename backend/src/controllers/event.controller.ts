@@ -414,8 +414,12 @@ export class EventController {
     try {
       const { 
         name, email, whatsapp, attendees, locationType, usageType, selectedPartnerId, 
-        customCep, eventDate, eventHours, eventDays, description, selectedServices, totalPrice 
+        customCep, eventDate, eventHours, eventDays, description, selectedServices = [], totalPrice 
       } = req.body;
+
+      if (!Array.isArray(selectedServices)) {
+        return res.status(400).json({ error: "selectedServices deve ser um array" });
+      }
       
       // Normaliza a data do evento para objeto Date tático
       const eventDateObj = eventDate ? (eventDate.includes("T") ? new Date(eventDate) : new Date(`${eventDate}T12:00:00`)) : new Date();
@@ -483,7 +487,7 @@ export class EventController {
           }
 
           if (!captacaoId) {
-            console.warn(`[Quote] Bloqueio por Indisponibilidade: ${eventDate}`);
+            console.warn(`[Quote] Bloqueio por Indisponibilidade: ${eventDate} para o parceiro ${selectedPartnerId}. Candidatos: ${fixoProfessionals.length}`);
             return res.status(422).json({ 
               error: "Indisponível", 
               message: "Desculpe, todos os nossos fotógrafos já possuem compromissos agendados para este horário. Por favor, escolha outra data." 

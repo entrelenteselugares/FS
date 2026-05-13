@@ -249,23 +249,30 @@ export class AuthController {
   static async me(req: AuthRequest, res: Response) {
     try {
       if (!req.user) return res.status(401).json({ error: "Não logado" });
-      const user = await prisma.user.findUnique({ 
-        where: { id: req.user.userId },
-        include: {
-          franchiseProfile: {
-            include: {
-              transactions: {
-                orderBy: { createdAt: 'desc' },
-                take: 10
+      let user;
+      try {
+        user = await prisma.user.findUnique({ 
+          where: { id: req.user.userId },
+          include: {
+            franchiseProfile: {
+              include: {
+                transactions: {
+                  orderBy: { createdAt: 'desc' },
+                  take: 10
+                }
               }
+            },
+            gamificationLogs: {
+              orderBy: { createdAt: 'desc' },
+              take: 20
             }
-          },
-          gamificationLogs: {
-            orderBy: { createdAt: 'desc' },
-            take: 20
           }
-        }
-      });
+        });
+      } catch (prismaErr: any) {
+        console.error("[AUTH ME PRISMA ERROR]:", prismaErr.message, prismaErr.code);
+        // Fallback: tenta buscar sem os includes pesados se falhar
+        user = await prisma.user.findUnique({ where: { id: req.user.userId } });
+      }
       if (!user) {
         console.warn(`[AUTH ME] Usuário não encontrado no banco: ${req.user.userId}`);
         return res.status(404).json({ error: "Usuário não encontrado" });

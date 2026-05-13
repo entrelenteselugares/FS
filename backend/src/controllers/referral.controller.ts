@@ -37,7 +37,7 @@ export class ReferralController {
    * Retorna estatísticas para o dashboard do embaixador.
    */
   static async getStats(req: any, res: Response) {
-    const userId = req.user?.id;
+    const userId = req.user?.userId;
     if (!userId) return res.status(401).json({ error: "Unauthorized" });
 
     try {

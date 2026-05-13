@@ -515,8 +515,9 @@ export const QuotePage = () => {
         setStep(4); 
         window.scrollTo(0, 0);
       }
-    } catch {
-      alert("Erro ao processar orçamento. Tente novamente.");
+    } catch (err: any) {
+      const msg = err.response?.data?.message || err.response?.data?.error || "Erro ao processar orçamento. Tente novamente.";
+      alert(msg);
     } finally {
       setSubmitting(false);
     }
