@@ -1,4 +1,4 @@
-﻿import { useState, useEffect, useCallback } from "react";
+import { useState, useEffect, useCallback } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import { API } from "../lib/api";
 import { useAuth } from "../hooks/useAuth";
@@ -8,6 +8,7 @@ import {
 } from "lucide-react";
 import { QRCodeSVG } from "qrcode.react";
 import { T } from "../lib/theme";
+import { FlashEventMonitor } from "../components/profissional/FlashEventMonitor";
 
 interface PhygitalPrint {
   id: string;
@@ -183,6 +184,13 @@ export default function PrintMonitor() {
              <p className="text-[8px] text-zinc-500 uppercase font-bold">impressora padrão</p>
           </div>
         </div>
+
+        {/* Monitoramento do Funil Flash Event */}
+        {eventId && (
+          <div className="mb-10 bg-theme-bg-muted/10 p-6 border border-theme-border/30">
+            <FlashEventMonitor eventId={eventId} />
+          </div>
+        )}
 
         {/* Fila de Impressão */}
         <div className="space-y-6">
