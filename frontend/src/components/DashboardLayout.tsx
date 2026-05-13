@@ -296,11 +296,12 @@ export const DashboardLayout: React.FC<DashboardLayoutProps> = ({
     onNavigate: () => setDrawerOpen(false),
   };
 
-  // Force close drawer on resize to desktop
+  // Force close drawer on desktop
   React.useEffect(() => {
     const handleResize = () => {
       if (window.innerWidth >= 1024) setDrawerOpen(false);
     };
+    handleResize(); // Check on mount
     window.addEventListener("resize", handleResize);
     return () => window.removeEventListener("resize", handleResize);
   }, []);
@@ -326,7 +327,7 @@ export const DashboardLayout: React.FC<DashboardLayoutProps> = ({
       {drawerOpen && (
         <div
           onClick={() => setDrawerOpen(false)}
-          className="dashboard-drawer-backdrop"
+          className="dashboard-drawer-backdrop lg:hidden"
           style={{
             position:   "fixed",
             inset:      0,
@@ -341,7 +342,7 @@ export const DashboardLayout: React.FC<DashboardLayoutProps> = ({
         >
           <div className="flex flex-col items-center gap-4 text-white/40 animate-pulse md:hidden">
             <div className="p-4 rounded-full border border-white/20">
-              <LogoutIcon /> {/* Usando LogoutIcon como X ou CloseIcon se disponível */}
+              <LogoutIcon /> 
             </div>
             <span className="text-[10px] font-black uppercase tracking-[0.5em]">Tocar para fechar</span>
           </div>
