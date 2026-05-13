@@ -65,8 +65,11 @@ export async function chooseAccessType(req: AuthRequest, res: Response): Promise
     // Se PUBLIC, o evento fica visível na Home
     // Se PRIVATE, ocultamos da vitrine
     // ── SEGURANÇA ────────────────────────────────────
-    // Apenas o cliente primário do evento pode alterar a visibilidade GLOBAL.
-    if (order.event.clientEmail && user.email === order.event.clientEmail) {
+    // Apenas o ADMIN ou o CLIENTE CONTRATANTE podem tornar o álbum público globalmente.
+    const isPrimaryClient = order.event.clientEmail && user.email === order.event.clientEmail;
+    const isAdmin = user.role === "ADMIN";
+
+    if (isPrimaryClient || isAdmin) {
       await prisma.event.update({
         where: { id: order.eventId },
         data: { isPrivate: accessType === "PRIVATE" },

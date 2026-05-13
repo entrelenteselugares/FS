@@ -547,9 +547,13 @@ export class EventController {
       const hasReels = selectedServices.some((id: string) => id === "reels" || serviceLabels.some((l, i) => selectedServices[i] === id && /reels|mobile/i.test(l)));
       const hasImpresso = selectedServices.some((id: string) => id === "impresso" || serviceLabels.some((l, i) => selectedServices[i] === id && /impresso|álbum|album/i.test(l)));
 
+      // Gera slug único
+      const slug = `event-${name.toLowerCase().replace(/\s+/g, "-")}-${Math.random().toString(36).substring(2, 6)}`;
+
       const event = await prisma.event.create({
         data: {
           nomeNoivos: name,
+          slug,
           dataEvento: eventDateObj,
           eventHours: eventHours ? Number(eventHours) : 2,
           eventDays: eventDays ? Number(eventDays) : 1,

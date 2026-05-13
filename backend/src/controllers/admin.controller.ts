@@ -1232,7 +1232,7 @@ export async function adminApproveQuote(req: AuthRequest, res: Response): Promis
     // 3. Gerar link de checkout
     const checkoutUrl = `${FRONTEND_URL}/checkout?orderId=${order.id}`;
 
-    // 4. Enviar E-mail AutomÃ¡tico
+    // 4. Enviar E-mail Automático
     await NotificationService.sendQuotationPricedEmail({
       to: quote.clientEmail!,
       clientName: quote.clientName || "Cliente",
