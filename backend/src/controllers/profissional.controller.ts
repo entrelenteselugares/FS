@@ -270,9 +270,23 @@ export async function updateProfile(req: AuthRequest, res: Response): Promise<vo
   const userId = req.user?.userId;
   if (!userId) { res.status(401).json({ error: "Não autenticado." }); return; }
 
-  const { services, equipmentList, otherHabilities, experienceYears, workflowType, user, pixKey } = req.body;
+  const { services, equipmentList, otherHabilities, experienceYears, workflowType, user, pixKey, firstJobUrl } = req.body;
 
   try {
+    const existingProfile = await prisma.profissional.findUnique({
+      where: { userId },
+      select: { experienceYears: true, firstJobUrl: true }
+    });
+
+    // Validation: if experienceYears > 0, firstJobUrl is mandatory
+    const yearsToSave = experienceYears !== undefined ? Number(experienceYears) : (existingProfile?.experienceYears || 0);
+    const linkToSave = firstJobUrl !== undefined ? String(firstJobUrl) : (existingProfile?.firstJobUrl || "");
+
+    if (yearsToSave > 0 && (!linkToSave || linkToSave.trim() === "" || linkToSave === "null")) {
+      res.status(400).json({ error: "É obrigatório informar o link do primeiro trabalho para validar seus anos de experiência." });
+      return;
+    }
+
     // ── LÓGICA DE EQUAÇÃO TÁTICA (AUTOMAÇÃO DE PRECIFICAÇÃO) ──
     let calculatedMultiplier = 1.0;
     
@@ -313,11 +327,6 @@ export async function updateProfile(req: AuthRequest, res: Response): Promise<vo
     // Valor Hora automático: interpolação linear entre piso e teto via multiplicador
     const autoHourlyRate = floorRate + (ceilingRate - floorRate) * (finalMultiplier - 1) / (5 - 1);
 
-
-    const existingProfile = await prisma.profissional.findUnique({
-      where: { userId },
-      select: { experienceYears: true, firstJobUrl: true }
-    });
 
     const isLocked = !!(existingProfile?.experienceYears && existingProfile?.firstJobUrl);
 
