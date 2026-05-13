@@ -1034,44 +1034,55 @@ function PedidoDetalhe({ pedido, loading, onGoToEvent, onChangePrivacy, onToggle
           </div>
           
           {isEditing ? (
-            <div className="flex flex-col gap-2 bg-theme-bg/80 backdrop-blur p-4 border border-theme-border rounded-lg">
-              <input 
-                value={nome} 
-                onChange={(e) => setNome(e.target.value)}
-                className="bg-transparent text-xl font-heading font-black italic uppercase text-white outline-none border-b border-theme-border/50 focus:border-brand-tactical pb-1"
-                placeholder="Nome do Álbum"
-              />
-              <div className="flex items-center gap-2">
+            <div className="flex flex-col gap-5 bg-theme-bg/90 backdrop-blur-xl p-6 border border-theme-border/80 rounded-xl shadow-2xl">
+              <div className="space-y-1.5">
+                <label className="text-[8px] font-black text-brand-tactical uppercase tracking-[0.2em]">Identidade do Álbum</label>
                 <input 
-                  value={coverUrl} 
-                  onChange={(e) => setCoverUrl(e.target.value)}
-                  className="flex-1 bg-transparent text-xs text-zinc-400 outline-none border-b border-theme-border/50 focus:border-brand-tactical pb-1"
-                  placeholder="URL da Capa ou faça upload"
+                  value={nome} 
+                  onChange={(e) => setNome(e.target.value)}
+                  className="w-full bg-transparent text-xl font-heading font-black italic uppercase text-white outline-none border-b border-theme-border/50 focus:border-brand-tactical pb-2 transition-all"
+                  placeholder="Ex: Casamento de Maria & João"
                 />
-                <input 
-                  type="file" 
-                  ref={fileInputRef} 
-                  onChange={handleFileChange} 
-                  className="hidden" 
-                  accept="image/*" 
-                />
-                <button 
-                  type="button"
-                  onClick={() => fileInputRef.current?.click()}
-                  disabled={isUploading}
-                  className="px-3 py-1 border border-theme-border text-[9px] font-black uppercase tracking-widest text-zinc-400 hover:text-brand-tactical hover:border-brand-tactical transition-colors"
-                >
-                  {isUploading ? "..." : "UPLOAD"}
-                </button>
               </div>
 
-              <div className="grid grid-cols-2 gap-2 mt-1">
-                <div className="space-y-1">
-                  <label className="text-[8px] font-black text-theme-muted uppercase tracking-widest">Enquadramento</label>
+              <div className="space-y-2">
+                <label className="text-[8px] font-black text-brand-tactical uppercase tracking-[0.2em]">Capa do Álbum</label>
+                <div className="flex items-center gap-3">
+                  <div className="flex-1 relative">
+                    <input 
+                      value={coverUrl} 
+                      onChange={(e) => setCoverUrl(e.target.value)}
+                      className="w-full bg-zinc-900/50 text-[11px] text-zinc-300 outline-none border border-theme-border/50 focus:border-brand-tactical px-3 py-2.5 rounded font-medium transition-all"
+                      placeholder="Cole a URL ou use o upload ao lado →"
+                    />
+                  </div>
+                  <input 
+                    type="file" 
+                    ref={fileInputRef} 
+                    onChange={handleFileChange} 
+                    className="hidden" 
+                    accept="image/*" 
+                  />
+                  <button 
+                    type="button"
+                    onClick={() => fileInputRef.current?.click()}
+                    disabled={isUploading}
+                    className="h-[38px] px-4 bg-brand-tactical text-black text-[10px] font-black uppercase tracking-widest hover:brightness-110 active:scale-95 transition-all flex items-center justify-center min-w-[90px]"
+                  >
+                    {isUploading ? (
+                      <div className="w-4 h-4 border-2 border-black/30 border-t-black rounded-full animate-spin" />
+                    ) : "UPLOAD"}
+                  </button>
+                </div>
+              </div>
+
+              <div className="grid grid-cols-2 gap-4">
+                <div className="space-y-1.5">
+                  <label className="text-[8px] font-black text-theme-muted uppercase tracking-[0.2em]">Enquadramento</label>
                   <select 
                     value={coverPos} 
                     onChange={(e) => setCoverPos(e.target.value)}
-                    className="w-full bg-zinc-900 text-[10px] text-zinc-400 border border-theme-border/50 focus:border-brand-tactical p-1.5 outline-none font-bold uppercase"
+                    className="w-full bg-zinc-900/50 text-[10px] text-zinc-300 border border-theme-border/50 focus:border-brand-tactical px-3 py-2.5 outline-none font-bold uppercase rounded cursor-pointer transition-all"
                   >
                     <option value="center">Centro</option>
                     <option value="top">Topo</option>
@@ -1080,32 +1091,39 @@ function PedidoDetalhe({ pedido, loading, onGoToEvent, onChangePrivacy, onToggle
                     <option value="right">Direita</option>
                   </select>
                 </div>
-                <div className="space-y-1">
-                  <label className="text-[8px] font-black text-theme-muted uppercase tracking-widest">Cidade</label>
+                <div className="space-y-1.5">
+                  <label className="text-[8px] font-black text-theme-muted uppercase tracking-[0.2em]">Cidade</label>
                   <input 
                     value={city} 
                     onChange={(e) => setCity(e.target.value)}
-                    className="w-full bg-zinc-900 text-[10px] text-zinc-400 border border-theme-border/50 focus:border-brand-tactical p-1.5 outline-none font-bold uppercase"
+                    className="w-full bg-zinc-900/50 text-[10px] text-zinc-300 border border-theme-border/50 focus:border-brand-tactical px-3 py-2.5 outline-none font-bold uppercase rounded transition-all"
                     placeholder="Cidade"
                   />
                 </div>
               </div>
               
-              <div className="space-y-1 mt-1">
-                <label className="text-[8px] font-black text-theme-muted uppercase tracking-widest">Localização/Espaço</label>
+              <div className="space-y-1.5">
+                <label className="text-[8px] font-black text-theme-muted uppercase tracking-[0.2em]">Localização / Espaço</label>
                 <input 
                   value={loc} 
                   onChange={(e) => setLoc(e.target.value)}
-                  className="w-full bg-zinc-900 text-[10px] text-zinc-400 border border-theme-border/50 focus:border-brand-tactical p-1.5 outline-none font-bold uppercase"
+                  className="w-full bg-zinc-900/50 text-[10px] text-zinc-300 border border-theme-border/50 focus:border-brand-tactical px-3 py-2.5 outline-none font-bold uppercase rounded transition-all"
                   placeholder="Ex: Mansão das Palmeiras"
                 />
               </div>
 
-              <div className="flex gap-2 mt-4">
-                <button onClick={handleSave} disabled={isSaving} className="px-4 py-1.5 bg-brand-tactical text-black text-[10px] font-black uppercase rounded hover:brightness-110">
-                  {isSaving ? "Salvando..." : "Salvar"}
+              <div className="flex gap-3 mt-2 pt-4 border-t border-theme-border/30">
+                <button 
+                  onClick={handleSave} 
+                  disabled={isSaving} 
+                  className="flex-1 py-3 bg-brand-tactical text-black text-[11px] font-black uppercase tracking-[0.1em] rounded shadow-lg shadow-brand-tactical/20 hover:brightness-110 disabled:opacity-50 transition-all"
+                >
+                  {isSaving ? "Salvando..." : "Salvar Alterações"}
                 </button>
-                <button onClick={() => setIsEditing(false)} className="px-4 py-1.5 border border-theme-border text-zinc-400 text-[10px] font-black uppercase rounded hover:bg-zinc-800">
+                <button 
+                  onClick={() => setIsEditing(false)} 
+                  className="flex-1 py-3 border border-theme-border text-zinc-400 text-[11px] font-black uppercase tracking-[0.1em] rounded hover:bg-zinc-800 transition-all"
+                >
                   Cancelar
                 </button>
               </div>
