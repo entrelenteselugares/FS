@@ -20,6 +20,7 @@ import {
   adminUpdateOrderLogistics,
   adminListQuotes,
   adminApproveQuote,
+  adminPriceQuote,
   adminRejectQuote,
   adminCreateQuote,
   AdminEventController,
@@ -361,6 +362,7 @@ router.post("/admin/orders/:id/delete-media", requireAuth, requireRole("ADMIN"),
 router.get("/admin/quotes",               requireAuth, requireRole("ADMIN"), adminListQuotes);
 router.post("/admin/quotes",              requireAuth, requireRole("ADMIN"), adminCreateQuote);
 router.patch("/admin/quotes/:id/approve", requireAuth, requireRole("ADMIN"), adminApproveQuote);
+router.patch("/admin/quotes/:id/price",   requireAuth, requireRole("ADMIN"), adminPriceQuote);
 router.patch("/admin/quotes/:id/reject",  requireAuth, requireRole("ADMIN"), adminRejectQuote);
 
 // ── Admin: Repasses ────────────────────────────────────────────────────────────

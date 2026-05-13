@@ -16,6 +16,7 @@ export { DashboardStats } from "./DashboardStats";
 export { SupportBanner } from "./SupportBanner";
 export { OpportunitiesModal } from "./OpportunitiesModal";
 export { FranchiseShopModal } from "./FranchiseShopModal";
+export * from "./FranquiaLanding";
 export * from "./TeamSelector";
 export { ExpressSaleBanner } from "./ExpressSaleBanner";
 export { CoverPhotoInput } from "./CoverPhotoInput";

@@ -4,12 +4,12 @@ import { API } from "../lib/api";
 import { useNavigate, useLocation } from "react-router-dom";
 import {
   DollarSign, MessageCircle,
-  Settings, Briefcase, Users, LayoutDashboard, Play, Zap, Calendar, RefreshCw, LogOut, CheckCircle, Camera
+  Settings, Briefcase, Users, LayoutDashboard, Play, Zap, Calendar, RefreshCw, LogOut, CheckCircle, Camera, Printer
 } from "lucide-react";
 import { DashboardLayout, type NavItem } from "../components/DashboardLayout";
 import { T } from "../lib/theme";
 import {
-  AgendaTab, FinanceTab, NetworkTab, ServicesTab, ProfileTab,
+  AgendaTab, FinanceTab, NetworkTab, ServicesTab, ProfileTab, FranquiaLanding,
   EventEditPanel, ExpressSaleModal, ProfileModal, FlashEventModal, FotoPointModal, FotoPointEditModal,
   DashboardHeader, DashboardStats, SupportBanner,
   OpportunitiesModal, ExpressSaleBanner, FranchiseShopModal,
@@ -40,8 +40,6 @@ interface SupplyOrder {
 }
 
 // ─── Types ────────────────────────────────────────────────────────────────────
-
-import { Printer } from "lucide-react";
 
 type ActiveTab = "agenda" | "convites" | "financeiro" | "servicos" | "network" | "franquia" | "calendar" | "perfil";
 type ViewTab = "lista" | "calendario";
@@ -167,7 +165,7 @@ export default function ProfissionalDashboard() {
       API.get("profissional/network").then(r => setNetwork(r.data)),
       API.get("calendar/status").then(r => setCalendarStatus(r.data)),
       API.get("me/repasses").then(r => setPayouts(r.data)),
-      API.get("/franchise/orders").then(r => setSupplyOrders(r.data.orders || []))
+      API.get("franchise/orders").then(r => setSupplyOrders(r.data.orders || []))
     ]).finally(() => setLoading(false));
 
     // Handle calendar return notifications
@@ -582,231 +580,236 @@ export default function ProfissionalDashboard() {
                 onNotify={showNotification}
               />
             )}
-            {activeTab === "franquia" && user?.franchiseProfile && (
-              <div className="space-y-8">
-                <div className="flex flex-col md:flex-row md:items-end justify-between gap-4">
-                  <div>
-                    <h2 className="text-4xl md:text-6xl font-display font-black text-theme-text uppercase tracking-tighter italic leading-none">Franquia Print</h2>
-                    <p className="text-[11px] text-brand-tactical uppercase tracking-[0.4em] mt-4 font-black italic">Gestão de Créditos e Operações Phygital</p>
-                  </div>
-                </div>
-                <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-                  <div className="bg-theme-bg border border-theme-border p-10 relative overflow-hidden group">
-                    <div className="absolute top-0 left-0 w-full h-1 bg-brand-tactical/20 group-hover:bg-brand-tactical transition-colors" />
-                    <label className="text-[9px] font-black text-theme-muted uppercase tracking-widest block mb-4">Saldo Disponível</label>
-                    <div className={`text-7xl font-display font-black italic tracking-tighter ${user.franchiseProfile.printCredits < 50 ? 'text-amber-500' : 'text-brand-tactical'}`}>
-                      {user.franchiseProfile.printCredits}
-                    </div>
-                    <p className="text-[10px] text-theme-muted font-black uppercase tracking-[0.2em] mt-2 italic">Fotos para Impressão</p>
-                  </div>
-                  
-                  <div className="bg-theme-bg border border-theme-border p-10 relative group">
-                    <label className="text-[9px] font-black text-theme-muted uppercase tracking-widest block mb-4">Status do Terminal</label>
-                    <div className={`text-xl font-display font-black uppercase italic tracking-widest ${user.franchiseProfile.active ? 'text-brand-tactical' : 'text-red-500'}`}>
-                      {user.franchiseProfile.active ? 'Terminal Ativo' : 'Terminal Inativo'}
-                    </div>
-                    <div className="mt-4 flex items-center gap-2">
-                      <div className={`w-2 h-2 rounded-full ${user.franchiseProfile.active ? 'bg-brand-tactical animate-pulse' : 'bg-red-500'}`} />
-                      <span className="text-[9px] text-theme-muted font-black uppercase tracking-widest">Sincronizado com a Nuvem</span>
-                    </div>
-                  </div>
 
-                  <div className="bg-theme-bg border border-theme-border p-10 flex flex-col justify-between">
+            {activeTab === "franquia" && (
+              user?.franchiseProfile ? (
+                <div className="space-y-8 animate-in fade-in duration-500">
+                  <div className="flex flex-col md:flex-row md:items-end justify-between gap-4">
                     <div>
-                      <label className="text-[9px] font-black text-theme-muted uppercase tracking-widest block mb-2">Abastecimento & Loja</label>
-                      <p className="text-[10px] text-theme-muted font-bold leading-relaxed uppercase tracking-wider">
-                        Adquira créditos de impressão ou insumos (papel/ribbon) com entrega direta ou abatimento no repasse.
-                      </p>
-                    </div>
-                    <div className="space-y-4 mt-6">
-                      <button 
-                        onClick={() => setIsShopModalOpen(true)}
-                        className="w-full py-4 bg-brand-tactical text-black font-display font-black text-[10px] uppercase tracking-widest hover:brightness-110 transition-all shadow-lg shadow-brand-tactical/10"
-                      >
-                        LOJA DA FRANQUIA
-                      </button>
-                      <button 
-                        onClick={() => window.open("https://wa.me/5519984470420?text=Olá! Preciso de assistência técnica para minha unidade Foto Segundo.", "_blank")}
-                        className="w-full py-3 border border-theme-border text-theme-muted font-black text-[9px] uppercase tracking-widest hover:border-brand-tactical/30 hover:text-brand-tactical transition-all"
-                      >
-                        ASSISTÊNCIA TÉCNICA
-                      </button>
+                      <h2 className="text-4xl md:text-6xl font-display font-black text-theme-text uppercase tracking-tighter italic leading-none">Franquia Print</h2>
+                      <p className="text-[11px] text-brand-tactical uppercase tracking-[0.4em] mt-4 font-black italic">Gestão de Créditos e Operações Phygital</p>
                     </div>
                   </div>
-                </div>
+                  <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+                    <div className="bg-theme-bg border border-theme-border p-10 relative overflow-hidden group">
+                      <div className="absolute top-0 left-0 w-full h-1 bg-brand-tactical/20 group-hover:bg-brand-tactical transition-colors" />
+                      <label className="text-[9px] font-black text-theme-muted uppercase tracking-widest block mb-4">Saldo Disponível</label>
+                      <div className={`text-7xl font-display font-black italic tracking-tighter ${user.franchiseProfile.printCredits < 50 ? 'text-amber-500' : 'text-brand-tactical'}`}>
+                        {user.franchiseProfile.printCredits}
+                      </div>
+                      <p className="text-[10px] text-theme-muted font-black uppercase tracking-[0.2em] mt-2 italic">Fotos para Impressão</p>
+                    </div>
+                    
+                    <div className="bg-theme-bg border border-theme-border p-10 relative group">
+                      <label className="text-[9px] font-black text-theme-muted uppercase tracking-widest block mb-4">Status do Terminal</label>
+                      <div className={`text-xl font-display font-black uppercase italic tracking-widest ${user.franchiseProfile.active ? 'text-brand-tactical' : 'text-red-500'}`}>
+                        {user.franchiseProfile.active ? 'Terminal Ativo' : 'Terminal Inativo'}
+                      </div>
+                      <div className="mt-4 flex items-center gap-2">
+                        <div className={`w-2 h-2 rounded-full ${user.franchiseProfile.active ? 'bg-brand-tactical animate-pulse' : 'bg-red-500'}`} />
+                        <span className="text-[9px] text-theme-muted font-black uppercase tracking-widest">Sincronizado com a Nuvem</span>
+                      </div>
+                    </div>
 
-                {/* Histórico de Pedidos B2B */}
-                <div className="bg-theme-bg border border-theme-border p-8 space-y-6">
-                  <div className="flex items-center justify-between">
-                    <h3 className="text-xl font-display font-black text-white uppercase italic tracking-tight">Histórico de Pedidos</h3>
-                    <div className="h-px flex-1 bg-white/5 mx-6" />
-                  </div>
-                  
-                  {supplyOrders.length === 0 ? (
-                    <div className="py-12 text-center border border-dashed border-white/5 bg-white/[0.02]">
-                      <p className="text-[10px] text-theme-muted font-black uppercase tracking-widest">Nenhum pedido realizado</p>
+                    <div className="bg-theme-bg border border-theme-border p-10 flex flex-col justify-between">
+                      <div>
+                        <label className="text-[9px] font-black text-theme-muted uppercase tracking-widest block mb-2">Abastecimento & Loja</label>
+                        <p className="text-[10px] text-theme-muted font-bold leading-relaxed uppercase tracking-wider">
+                          Adquira créditos de impressão ou insumos (papel/ribbon) com entrega direta ou abatimento no repasse.
+                        </p>
+                      </div>
+                      <div className="space-y-4 mt-6">
+                        <button 
+                          onClick={() => setIsShopModalOpen(true)}
+                          className="w-full py-4 bg-brand-tactical text-black font-display font-black text-[10px] uppercase tracking-widest hover:brightness-110 transition-all shadow-lg shadow-brand-tactical/10"
+                        >
+                          LOJA DA FRANQUIA
+                        </button>
+                        <button 
+                          onClick={() => { const w = window.open("https://wa.me/5519984470420?text=Olá! Preciso de assistência técnica para minha unidade Foto Segundo.", "_blank"); if (w) w.opener = null; }}
+                          className="w-full py-3 border border-theme-border text-theme-muted font-black text-[9px] uppercase tracking-widest hover:border-brand-tactical/30 hover:text-brand-tactical transition-all"
+                        >
+                          ASSISTÊNCIA TÉCNICA
+                        </button>
+                      </div>
                     </div>
-                  ) : (
-                    <div className="overflow-x-auto">
+                  </div>
+
+                  {/* Histórico de Pedidos B2B */}
+                  <div className="bg-theme-bg border border-theme-border p-8 space-y-6">
+                    <div className="flex items-center justify-between">
+                      <h3 className="text-xl font-display font-black text-white uppercase italic tracking-tight">Histórico de Pedidos</h3>
+                      <div className="h-px flex-1 bg-white/5 mx-6" />
+                    </div>
+                    
+                    {supplyOrders.length === 0 ? (
+                      <div className="py-12 text-center border border-dashed border-white/5 bg-white/[0.02]">
+                        <p className="text-[10px] text-theme-muted font-black uppercase tracking-widest">Nenhum pedido realizado</p>
+                      </div>
+                    ) : (
+                      <div className="overflow-x-auto">
+                        <table className="w-full text-left border-collapse">
+                          <thead>
+                            <tr className="border-b border-white/5 text-[9px] font-black text-theme-muted uppercase tracking-widest">
+                              <th className="py-4 px-2">Data</th>
+                              <th className="py-4 px-2">Itens</th>
+                              <th className="py-4 px-2">Total</th>
+                              <th className="py-4 px-2">Status</th>
+                            </tr>
+                          </thead>
+                          <tbody>
+                            {supplyOrders.map((order) => (
+                              <tr key={order.id} className="border-b border-white/5 hover:bg-white/[0.02] transition-colors">
+                                <td className="py-4 px-2 text-[10px] text-white font-mono">
+                                  {new Date(order.createdAt).toLocaleDateString('pt-BR')}
+                                </td>
+                                <td className="py-4 px-2">
+                                  <p className="text-[10px] text-white font-black uppercase italic">
+                                    {order.items?.map((it) => `${it.quantity}x ${it.name}`).join(", ") || "N/A"}
+                                  </p>
+                                </td>
+                                <td className="py-4 px-2 text-[10px] text-brand-tactical font-black">
+                                  R$ {Number(order.total).toFixed(2)}
+                                </td>
+                                <td className="py-4 px-2">
+                                  <span className={`text-[8px] font-black px-2 py-1 rounded-sm uppercase tracking-widest ${
+                                    order.status === 'PAID' ? 'bg-brand-tactical/10 text-brand-tactical' : 
+                                    order.status === 'PENDING' ? 'bg-amber-500/10 text-amber-500' : 'bg-zinc-800 text-zinc-500'
+                                  }`}>
+                                    {order.status === 'PAID' ? 'Pago' : order.status === 'PENDING' ? 'Pendente' : order.status}
+                                  </span>
+                                </td>
+                              </tr>
+                            ))}
+                          </tbody>
+                        </table>
+                      </div>
+                    )}
+                  </div>
+                  {user.franchiseProfile.printCredits < 50 && (
+                    <div className="border border-amber-500/30 bg-amber-500/5 p-6 flex items-start gap-4">
+                      <div className="text-amber-500 text-2xl">⚠</div>
+                      <div>
+                        <p className="text-xs font-black text-amber-500 uppercase tracking-widest">Saldo Baixo</p>
+                        <p className="text-[10px] text-theme-muted font-bold mt-1">Seu saldo está abaixo de 50 fotos. Solicite recarga ao administrador para não interromper a operação.</p>
+                      </div>
+                    </div>
+                  )}
+
+                  {/* Histórico de Consumo (Insumos) */}
+                  <div className="space-y-6">
+                    <div className="flex items-center justify-between">
+                      <h3 className="text-xl font-display font-black text-white uppercase italic tracking-tight">Histórico de Consumo</h3>
+                      <div className="h-px flex-1 bg-white/5 mx-6" />
+                    </div>
+                    <div className="bg-theme-bg border border-theme-border overflow-hidden">
                       <table className="w-full text-left border-collapse">
                         <thead>
-                          <tr className="border-b border-white/5 text-[9px] font-black text-theme-muted uppercase tracking-widest">
-                            <th className="py-4 px-2">Data</th>
-                            <th className="py-4 px-2">Itens</th>
-                            <th className="py-4 px-2">Total</th>
-                            <th className="py-4 px-2">Status</th>
+                          <tr className="bg-theme-bg-muted border-b border-theme-border">
+                            <th className="p-4 text-[9px] font-black text-theme-muted uppercase tracking-widest">Data</th>
+                            <th className="p-4 text-[9px] font-black text-theme-muted uppercase tracking-widest">Operação</th>
+                            <th className="p-4 text-[9px] font-black text-theme-muted uppercase tracking-widest text-right">Qtd</th>
                           </tr>
                         </thead>
-                        <tbody>
-                          {supplyOrders.map((order) => (
-                            <tr key={order.id} className="border-b border-white/5 hover:bg-white/[0.02] transition-colors">
-                              <td className="py-4 px-2 text-[10px] text-white font-mono">
-                                {new Date(order.createdAt).toLocaleDateString('pt-BR')}
+                        <tbody className="divide-y divide-theme-border">
+                          {user.franchiseProfile.transactions?.filter(tx => tx.amount < 0).map(tx => (
+                            <tr key={tx.id} className="hover:bg-white/[0.02] transition-colors">
+                              <td className="p-4 text-[10px] text-theme-muted font-mono">{new Date(tx.createdAt).toLocaleDateString('pt-BR')}</td>
+                              <td className="p-4">
+                                <span className="text-[10px] font-black text-theme-text uppercase">{tx.description || "Consumo Phygital"}</span>
                               </td>
-                              <td className="py-4 px-2">
-                                <p className="text-[10px] text-white font-black uppercase italic">
-                                  {order.items?.map((it) => `${it.quantity}x ${it.name}`).join(", ") || "N/A"}
-                                </p>
-                              </td>
-                              <td className="py-4 px-2 text-[10px] text-brand-tactical font-black">
-                                R$ {Number(order.total).toFixed(2)}
-                              </td>
-                              <td className="py-4 px-2">
-                                <span className={`text-[8px] font-black px-2 py-1 rounded-sm uppercase tracking-widest ${
-                                  order.status === 'PAID' ? 'bg-brand-tactical/10 text-brand-tactical' : 
-                                  order.status === 'PENDING' ? 'bg-amber-500/10 text-amber-500' : 'bg-zinc-800 text-zinc-500'
-                                }`}>
-                                  {order.status === 'PAID' ? 'Pago' : order.status === 'PENDING' ? 'Pendente' : order.status}
-                                </span>
+                              <td className="p-4 text-right">
+                                <span className="text-[10px] font-black text-red-500">{tx.amount}</span>
                               </td>
                             </tr>
-                          ))}
+                          )) || (
+                            <tr><td colSpan={3} className="p-10 text-center text-[9px] text-theme-muted uppercase font-black tracking-widest">Nenhum consumo registrado.</td></tr>
+                          )}
                         </tbody>
                       </table>
                     </div>
-                  )}
-                </div>
-                {user.franchiseProfile.printCredits < 50 && (
-                  <div className="border border-amber-500/30 bg-amber-500/5 p-6 flex items-start gap-4">
-                    <div className="text-amber-500 text-2xl">⚠</div>
-                    <div>
-                      <p className="text-xs font-black text-amber-500 uppercase tracking-widest">Saldo Baixo</p>
-                      <p className="text-[10px] text-theme-muted font-bold mt-1">Seu saldo está abaixo de 50 fotos. Solicite recarga ao administrador para não interromper a operação.</p>
+                  </div>
+
+                  {/* ── OPERAÇÕES DE IMPRESSÃO ── */}
+                  <div className="space-y-6">
+                    <div className="flex items-center gap-3">
+                        <div className="h-0.5 w-6 bg-brand-tactical" />
+                        <p className="text-[9px] font-black text-theme-muted uppercase tracking-[0.4em]">Operações em Campo</p>
                     </div>
-                  </div>
-                )}
-
-                {/* Histórico de Consumo (Insumos) */}
-                <div className="space-y-6">
-                  <div className="flex items-center justify-between">
-                    <h3 className="text-xl font-display font-black text-white uppercase italic tracking-tight">Histórico de Consumo</h3>
-                    <div className="h-px flex-1 bg-white/5 mx-6" />
-                  </div>
-                  <div className="bg-theme-bg border border-theme-border overflow-hidden">
-                    <table className="w-full text-left border-collapse">
-                      <thead>
-                        <tr className="bg-theme-bg-muted border-b border-theme-border">
-                          <th className="p-4 text-[9px] font-black text-theme-muted uppercase tracking-widest">Data</th>
-                          <th className="p-4 text-[9px] font-black text-theme-muted uppercase tracking-widest">Operação</th>
-                          <th className="p-4 text-[9px] font-black text-theme-muted uppercase tracking-widest text-right">Qtd</th>
-                        </tr>
-                      </thead>
-                      <tbody className="divide-y divide-theme-border">
-                        {user.franchiseProfile.transactions?.filter(tx => tx.amount < 0).map(tx => (
-                          <tr key={tx.id} className="hover:bg-white/[0.02] transition-colors">
-                            <td className="p-4 text-[10px] text-theme-muted font-mono">{new Date(tx.createdAt).toLocaleDateString('pt-BR')}</td>
-                            <td className="p-4">
-                              <span className="text-[10px] font-black text-theme-text uppercase">{tx.description || "Consumo Phygital"}</span>
-                            </td>
-                            <td className="p-4 text-right">
-                              <span className="text-[10px] font-black text-red-500">{tx.amount}</span>
-                            </td>
-                          </tr>
-                        )) || (
-                          <tr><td colSpan={3} className="p-10 text-center text-[9px] text-theme-muted uppercase font-black tracking-widest">Nenhum consumo registrado.</td></tr>
-                        )}
-                      </tbody>
-                    </table>
-                  </div>
-                </div>
-
-                {/* ── OPERAÇÕES DE IMPRESSÃO ── */}
-                <div className="space-y-6">
-                   <div className="flex items-center gap-3">
-                      <div className="h-0.5 w-6 bg-brand-tactical" />
-                      <p className="text-[9px] font-black text-theme-muted uppercase tracking-[0.4em]">Operações em Campo</p>
-                   </div>
-                   
-                   <div className="grid grid-cols-1 gap-4">
-                      {events.filter(ev => ev.captacaoId === user.id).length > 0 ? (
-                        events.filter(ev => ev.captacaoId === user.id).map(ev => (
-                          <div key={ev.id} className="bg-theme-bg border border-theme-border p-6 flex flex-col md:flex-row items-center justify-between gap-6 hover:border-brand-tactical/30 transition-all group">
-                             <div className="flex items-center gap-5">
-                                <div className="w-12 h-12 bg-theme-card border border-theme-border flex items-center justify-center text-brand-tactical group-hover:scale-110 transition-transform">
-                                   <Printer size={20} />
+                    
+                    <div className="grid grid-cols-1 gap-4">
+                        {(() => { const myEvents = events.filter(ev => ev.captacaoId === user.id); return myEvents.length > 0 ? (
+                          myEvents.map(ev => (
+                            <div key={ev.id} className="bg-theme-bg border border-theme-border p-6 flex flex-col md:flex-row items-center justify-between gap-6 hover:border-brand-tactical/30 transition-all group">
+                                <div className="flex items-center gap-5">
+                                  <div className="w-12 h-12 bg-theme-card border border-theme-border flex items-center justify-center text-brand-tactical group-hover:scale-110 transition-transform">
+                                      <Printer size={20} />
+                                  </div>
+                                  <div>
+                                      <p className="text-sm font-black text-theme-text uppercase italic tracking-tight">{ev.nomeNoivos}</p>
+                                      <p className="text-[9px] text-theme-muted font-bold uppercase tracking-widest mt-1">{new Date(ev.dataEvento).toLocaleDateString('pt-BR')} · {ev.city || (ev.location?.startsWith("CEP:") ? null : ev.location) || "—"}</p>
+                                  </div>
                                 </div>
-                                <div>
-                                   <p className="text-sm font-black text-theme-text uppercase italic tracking-tight">{ev.nomeNoivos}</p>
-                                   <p className="text-[9px] text-theme-muted font-bold uppercase tracking-widest mt-1">{new Date(ev.dataEvento).toLocaleDateString('pt-BR')} · {ev.city || (ev.location?.startsWith("CEP:") ? null : ev.location) || "—"}</p>
-                                </div>
-                             </div>
-                             <button 
-                               onClick={() => navigate(`/profissional/monitor/${ev.id}`)}
-                               className="px-8 py-3 bg-brand-tactical text-zinc-950 text-[10px] font-black uppercase tracking-widest hover:brightness-110 transition-all flex items-center gap-3 shadow-lg shadow-brand-tactical/10"
-                             >
-                               <Play size={12} /> ABRIR MONITOR
-                             </button>
+                                <button 
+                                  onClick={() => navigate(`/profissional/monitor/${ev.id}`)}
+                                  className="px-8 py-3 bg-brand-tactical text-zinc-950 text-[10px] font-black uppercase tracking-widest hover:brightness-110 transition-all flex items-center gap-3 shadow-lg shadow-brand-tactical/10"
+                                >
+                                  <Play size={12} /> ABRIR MONITOR
+                                </button>
+                            </div>
+                          ))
+                        ) : (
+                          <div className="p-10 border border-dashed border-theme-border/40 text-center space-y-4">
+                              <p className="text-[10px] text-theme-muted uppercase font-black italic tracking-widest">Nenhum evento designado para você neste momento.</p>
+                              <p className="text-[8px] text-theme-muted/60 uppercase font-bold max-w-xs mx-auto leading-relaxed">Fique atento à sua agenda. Quando um admin vincular sua franquia a um evento, ele aparecerá aqui para impressão.</p>
                           </div>
-                        ))
-                      ) : (
-                        <div className="p-10 border border-dashed border-theme-border/40 text-center space-y-4">
-                           <p className="text-[10px] text-theme-muted uppercase font-black italic tracking-widest">Nenhum evento designado para você neste momento.</p>
-                           <p className="text-[8px] text-theme-muted/60 uppercase font-bold max-w-xs mx-auto leading-relaxed">Fique atento à sua agenda. Quando um admin vincular sua franquia a um evento, ele aparecerá aqui para impressão.</p>
-                        </div>
-                      )}
-                   </div>
-                </div>
+                        ); })()}
+                    </div>
+                  </div>
 
-                {/* ── ATIVIDADE RECENTE ── */}
-                 <div className="space-y-6">
-                    <div className="flex items-center gap-4">
-                       <div className="h-px w-8 bg-brand-tactical" />
-                       <p className="text-[10px] font-black text-theme-muted uppercase tracking-[0.5em] italic">Registro de Atividades</p>
-                    </div>
- 
-                    <div className="bg-theme-bg border border-theme-border overflow-hidden">
-                       {user.franchiseProfile.transactions && user.franchiseProfile.transactions.length > 0 ? (
-                         <div className="divide-y divide-theme-border">
-                           {user.franchiseProfile.transactions.map(tx => (
-                             <div key={tx.id} className="p-6 flex items-center justify-between hover:bg-white/[0.02] transition-all group">
-                                <div className="space-y-1">
-                                   <p className="text-[11px] font-black text-theme-text uppercase tracking-widest italic">
-                                     {tx.description || (tx.type === 'PRINT_CONSUMPTION' ? 'Impressão Phygital' : 'Recarga de Créditos')}
-                                   </p>
-                                   <div className="flex items-center gap-3">
-                                     <p className="text-[8px] text-theme-subtle font-black uppercase tracking-widest">
-                                       {new Date(tx.createdAt).toLocaleString('pt-BR')}
-                                     </p>
-                                     <div className="w-1 h-1 rounded-full bg-white/10" />
-                                     <p className="text-[8px] text-theme-subtle font-black uppercase tracking-widest">
-                                       Hash: {tx.id.slice(-8).toUpperCase()}
-                                     </p>
-                                   </div>
-                                </div>
-                                <div className={`text-lg font-display font-black italic tracking-tighter ${tx.amount > 0 ? 'text-brand-tactical' : 'text-theme-muted'}`}>
-                                   {tx.amount > 0 ? '+' : ''}{tx.amount}
-                                </div>
-                             </div>
-                           ))}
-                         </div>
-                       ) : (
-                         <div className="p-20 text-center text-[10px] text-theme-muted uppercase font-black italic tracking-widest">
-                           Nenhuma atividade registrada no ledger.
-                         </div>
-                       )}
-                    </div>
-                 </div>
-              </div>
+                  {/* ── ATIVIDADE RECENTE ── */}
+                  <div className="space-y-6">
+                      <div className="flex items-center gap-4">
+                        <div className="h-px w-8 bg-brand-tactical" />
+                        <p className="text-[10px] font-black text-theme-muted uppercase tracking-[0.5em] italic">Registro de Atividades</p>
+                      </div>
+  
+                      <div className="bg-theme-bg border border-theme-border overflow-hidden">
+                        {user.franchiseProfile.transactions && user.franchiseProfile.transactions.length > 0 ? (
+                          <div className="divide-y divide-theme-border">
+                            {user.franchiseProfile.transactions.map(tx => (
+                              <div key={tx.id} className="p-6 flex items-center justify-between hover:bg-white/[0.02] transition-all group">
+                                  <div className="space-y-1">
+                                    <p className="text-[11px] font-black text-theme-text uppercase tracking-widest italic">
+                                      {tx.description || (tx.type === 'PRINT_CONSUMPTION' ? 'Impressão Phygital' : 'Recarga de Créditos')}
+                                    </p>
+                                    <div className="flex items-center gap-3">
+                                      <p className="text-[8px] text-theme-subtle font-black uppercase tracking-widest">
+                                        {new Date(tx.createdAt).toLocaleString('pt-BR')}
+                                      </p>
+                                      <div className="w-1 h-1 rounded-full bg-white/10" />
+                                      <p className="text-[8px] text-theme-subtle font-black uppercase tracking-widest">
+                                        Hash: {tx.id.slice(-8).toUpperCase()}
+                                      </p>
+                                    </div>
+                                  </div>
+                                  <div className={`text-lg font-display font-black italic tracking-tighter ${tx.amount > 0 ? 'text-brand-tactical' : 'text-theme-muted'}`}>
+                                    {tx.amount > 0 ? '+' : ''}{tx.amount}
+                                  </div>
+                              </div>
+                            ))}
+                          </div>
+                        ) : (
+                          <div className="p-20 text-center text-[10px] text-theme-muted uppercase font-black italic tracking-widest">
+                            Nenhuma atividade registrada no ledger.
+                          </div>
+                        )}
+                      </div>
+                  </div>
+                </div>
+              ) : (
+                <FranquiaLanding />
+              )
             )}
             {(activeTab === "agenda" || activeTab === "convites") && (
               <AgendaTab

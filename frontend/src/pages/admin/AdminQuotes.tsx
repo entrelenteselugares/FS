@@ -123,15 +123,13 @@ export const AdminQuotes: React.FC = () => {
   const handleSaveDraft = async () => {
     if (!selectedQuote) return;
     try {
-      await API.patch(`/admin/quotes/${selectedQuote.id}/approve`, {
+      await API.patch(`/admin/quotes/${selectedQuote.id}/price`, {
         finalPrice: finalPrice > 0 ? finalPrice : Math.ceil(suggestedPrice),
-        isSplit,
         breakdown: { staff: selectedStaff, equipment: selectedEquip, costTotal, margin },
-        draftOnly: true // Sinaliza para o backend: apenas salvar breakdown, status PRICED
       });
-      setNotification({message:"Rascunho salvo! Lead movido para \"Em Análise\".", type:"success"});
-      setSelectedQuote(null); fetchQuotes(); setTimeout(()=>setNotification(null),5000);
-    } catch { setNotification({message:"Erro ao salvar rascunho.",type:"error"}); }
+      setNotification({ message: "Análise salva! Lead movido para \"Em Análise\".", type: "success" });
+      setSelectedQuote(null); fetchQuotes(); setTimeout(() => setNotification(null), 5000);
+    } catch { setNotification({ message: "Erro ao salvar análise.", type: "error" }); }
   };
 
   const handleReject = async () => {
@@ -287,37 +285,44 @@ export const AdminQuotes: React.FC = () => {
           )}
         </div>
       )}
-      {/* RIGHT DRAWER */}
+      {/* QUOTE DETAIL MODAL */}
       <AnimatePresence>
         {selectedQuote&&(
-          <>
-            <motion.div initial={{opacity:0}} animate={{opacity:1}} exit={{opacity:0}}
-              className="fixed inset-0 z-40 bg-black/60 backdrop-blur-sm"
-              onClick={()=>setSelectedQuote(null)}/>
-            <motion.div initial={{x:"100%"}} animate={{x:0}} exit={{x:"100%"}}
+          <motion.div
+            initial={{opacity:0}} animate={{opacity:1}} exit={{opacity:0}}
+            className="fixed inset-0 z-[200] flex items-center justify-center p-4"
+          >
+            <div className="absolute inset-0 bg-theme-bg/80 backdrop-blur-xl" onClick={()=>setSelectedQuote(null)}/>
+            <motion.div
+              initial={{scale:0.95,opacity:0}} animate={{scale:1,opacity:1}} exit={{scale:0.95,opacity:0}}
               transition={{type:"spring",damping:30,stiffness:300}}
-              className="fixed right-0 top-0 h-full z-50 w-full md:w-[620px] bg-theme-bg border-l border-theme-border shadow-2xl flex flex-col">
-              {/* Drawer Header */}
-              <div className="p-6 border-b border-theme-border bg-theme-bg/80 backdrop-blur-sm shrink-0">
-                <div className="flex justify-between items-start mb-5">
-                  <div>
-                    <h3 className="text-lg font-heading font-black text-theme-text uppercase tracking-tight">{selectedQuote.nomeNoivos}</h3>
-                    <p className="text-[9px] text-theme-text-muted font-bold uppercase tracking-widest mt-1">Protocolo: {selectedQuote.id.toUpperCase()}</p>
+              className="relative w-full max-w-3xl bg-theme-card border border-theme-border/60 rounded-[40px] overflow-hidden shadow-2xl flex flex-col" style={{maxHeight:"90vh"}}
+            >
+              {/* Modal Header */}
+              <div className="p-8 md:p-10 border-b border-theme-border flex items-start justify-between shrink-0">
+                <div className="flex items-center gap-4">
+                  <div className="w-12 h-12 bg-brand-tactical/10 rounded-2xl flex items-center justify-center border border-brand-tactical/20">
+                    <Briefcase className="text-brand-tactical" size={24} strokeWidth={1.5}/>
                   </div>
-                  <button onClick={()=>setSelectedQuote(null)} className="text-theme-text-muted hover:text-red-500 transition-colors p-1"><X size={20}/></button>
+                  <div>
+                    <h3 className="text-2xl font-black uppercase italic tracking-tighter text-theme-text">{selectedQuote.nomeNoivos}</h3>
+                    <p className="text-[9px] font-black uppercase tracking-[0.2em] opacity-40 mt-1">Protocolo: {selectedQuote.id.toUpperCase()}</p>
+                  </div>
                 </div>
-                <div className="flex gap-1 overflow-x-auto no-scrollbar">
-                  {(["briefing","equipe","locacao","custos","fechamento"] as const).map(t=>(
-                    <button key={t} onClick={()=>setActiveTab(t)}
-                      className={`pb-2 px-3 text-[9px] font-black uppercase tracking-[0.2em] transition-all relative whitespace-nowrap italic ${activeTab===t?"text-brand-tactical":"text-theme-subtle hover:text-white"}`}>
-                      {t==="briefing"?"1. Briefing":t==="equipe"?"2. Equipe":t==="locacao"?"3. Locação":t==="custos"?"4. Custos":"5. Fechamento"}
-                      {activeTab===t&&<div className="absolute bottom-0 left-0 right-0 h-px bg-brand-tactical"/>}
-                    </button>
-                  ))}
-                </div>
+                <button onClick={()=>setSelectedQuote(null)} className="p-3 hover:bg-white/5 rounded-full transition-all text-theme-muted"><X size={24}/></button>
               </div>
-              {/* Drawer Body */}
-              <div className="flex-1 overflow-y-auto custom-scrollbar p-6">
+              {/* Tab Nav */}
+              <div className="px-8 md:px-10 pt-4 flex gap-1 border-b border-theme-border shrink-0 overflow-x-auto no-scrollbar">
+                {(["briefing","equipe","locacao","custos","fechamento"] as const).map(t=>(
+                  <button key={t} onClick={()=>setActiveTab(t)}
+                    className={`pb-3 px-4 text-[9px] font-black uppercase tracking-[0.2em] transition-all relative whitespace-nowrap italic ${activeTab===t?"text-brand-tactical":"text-theme-subtle hover:text-white"}`}>
+                    {t==="briefing"?"1. Briefing":t==="equipe"?"2. Equipe":t==="locacao"?"3. Locação":t==="custos"?"4. Custos":"5. Fechamento"}
+                    {activeTab===t&&<div className="absolute bottom-0 left-0 right-0 h-px bg-brand-tactical"/>}
+                  </button>
+                ))}
+              </div>
+              {/* Scrollable Body */}
+              <div className="flex-1 overflow-y-auto custom-scrollbar p-8 md:p-10">
                 {activeTab==="briefing"&&(
                   <div className="space-y-5 animate-in fade-in duration-300">
                     <div className="grid grid-cols-2 gap-3 bg-white/[0.02] p-4 border border-theme-border rounded-lg">
@@ -416,68 +421,28 @@ export const AdminQuotes: React.FC = () => {
                   <div className="space-y-4 animate-in fade-in duration-300">
                     <div className="flex items-center justify-between border-l-2 border-brand-tactical pl-2">
                       <h4 className="text-[9px] font-black text-theme-text uppercase tracking-widest">Locação de Equipamentos</h4>
-                      <span className="text-[9px] font-black text-brand-tactical uppercase tracking-widest bg-brand-tactical/10 px-2 py-0.5 rounded">
-                        Total: R$ {equipTotal.toLocaleString()}
-                      </span>
+                      <span className="text-[9px] font-black text-brand-tactical uppercase tracking-widest bg-brand-tactical/10 px-2 py-0.5 rounded">Total: R$ {equipTotal.toLocaleString()}</span>
                     </div>
-
                     <div className="grid grid-cols-1 gap-2">
                       {MERLIN_EQUIPMENT.map(item=>{
                         const selection = selectedEquip.find(e => e.id === item.id);
                         const isSelected = !!selection;
-                        
                         return (
-                          <div 
-                            key={item.id} 
-                            className={`flex items-center justify-between p-3 border rounded-lg transition-all ${
-                              isSelected 
-                                ? "bg-brand-tactical/10 border-brand-tactical shadow-[0_0_15px_rgba(133,185,172,0.1)]" 
-                                : "bg-theme-bg border-theme-border hover:border-theme-border-2"
-                            }`}
-                          >
+                          <div key={item.id} className={`flex items-center justify-between p-3 border rounded-lg transition-all ${isSelected?"bg-brand-tactical/10 border-brand-tactical shadow-[0_0_15px_rgba(133,185,172,0.1)]":"bg-theme-bg border-theme-border hover:border-theme-border-2"}`}>
                             <div className="flex-1 min-w-0">
-                              <p className={`text-[10px] font-black uppercase ${isSelected ? "text-brand-tactical" : "text-theme-text"}`}>
-                                {item.name}
-                              </p>
-                              <p className="text-[8px] text-theme-text-muted font-bold">
-                                {item.category} • R$ {item.price.toLocaleString()} / UN
-                              </p>
+                              <p className={`text-[10px] font-black uppercase ${isSelected?"text-brand-tactical":"text-theme-text"}`}>{item.name}</p>
+                              <p className="text-[8px] text-theme-text-muted font-bold">{item.category} • R$ {item.price.toLocaleString()} / UN</p>
                             </div>
-
                             <div className="flex items-center gap-2">
-                              {isSelected && (
+                              {isSelected&&(
                                 <div className="flex items-center bg-black/20 rounded-lg p-0.5 border border-brand-tactical/20">
-                                  <button 
-                                    onClick={() => {
-                                      if (selection.qty > 1) {
-                                        setSelectedEquip(selectedEquip.map(e => e.id === item.id ? { ...e, qty: e.qty - 1 } : e));
-                                      } else {
-                                        setSelectedEquip(selectedEquip.filter(e => e.id !== item.id));
-                                      }
-                                    }}
-                                    className="w-6 h-6 flex items-center justify-center text-brand-tactical hover:bg-brand-tactical hover:text-black rounded transition-all"
-                                  >
-                                    <X size={10} />
-                                  </button>
-                                  <span className="w-8 text-center text-[10px] font-black text-brand-tactical italic">
-                                    {selection.qty}
-                                  </span>
-                                  <button 
-                                    onClick={() => addEquip(item.id)}
-                                    className="w-6 h-6 flex items-center justify-center text-brand-tactical hover:bg-brand-tactical hover:text-black rounded transition-all"
-                                  >
-                                    <Plus size={10} />
-                                  </button>
+                                  <button onClick={()=>{if(selection.qty>1){setSelectedEquip(prev=>prev.map(e=>e.id===item.id?{...e,qty:e.qty-1}:e));}else{setSelectedEquip(prev=>prev.filter(e=>e.id!==item.id));}}} className="w-6 h-6 flex items-center justify-center text-brand-tactical hover:bg-brand-tactical hover:text-black rounded transition-all"><X size={10}/></button>
+                                  <span className="w-8 text-center text-[10px] font-black text-brand-tactical italic">{selection.qty}</span>
+                                  <button onClick={()=>addEquip(item.id)} className="w-6 h-6 flex items-center justify-center text-brand-tactical hover:bg-brand-tactical hover:text-black rounded transition-all"><Plus size={10}/></button>
                                 </div>
                               )}
-                              
-                              {!isSelected && (
-                                <button 
-                                  onClick={() => addEquip(item.id)} 
-                                  className="p-2 border border-theme-border text-theme-text-muted hover:border-brand-tactical hover:text-brand-tactical rounded-lg transition-all"
-                                >
-                                  <Plus size={14} />
-                                </button>
+                              {!isSelected&&(
+                                <button onClick={()=>addEquip(item.id)} className="p-2 border border-theme-border text-theme-text-muted hover:border-brand-tactical hover:text-brand-tactical rounded-lg transition-all"><Plus size={14}/></button>
                               )}
                             </div>
                           </div>
@@ -510,20 +475,23 @@ export const AdminQuotes: React.FC = () => {
                       <button onClick={handleSaveDraft} className="w-full border border-theme-border text-theme-muted p-2.5 text-[8px] font-black uppercase tracking-[0.2em] hover:border-brand-tactical hover:text-brand-tactical transition-all rounded-lg italic flex items-center justify-center gap-2">
                         Salvar Rascunho (Em Análise)
                       </button>
-                      <div className="grid grid-cols-4 gap-3">
-                        <button onClick={handleReject} className="bg-theme-card text-red-500 border border-red-500/20 p-3.5 text-[9px] font-black uppercase tracking-[0.2em] hover:bg-red-500 hover:text-white transition-all rounded-lg italic">Arquivar</button>
-                        <button onClick={handleApprove} disabled={finalPrice<=0||approving} className="col-span-3 bg-brand-tactical text-black p-3.5 text-[10px] font-black uppercase tracking-[0.4em] hover:brightness-110 shadow-xl transition-all flex items-center justify-center gap-2 disabled:opacity-50 rounded-lg italic">
-                          {approving?"ENVIANDO...":<><Zap size={14}/> DISPARAR ORÇAMENTO OFICIAL</>}
-                        </button>
-                      </div>
                     </div>
                   </div>
                 )}
               </div>
+              {/* Modal Footer */}
+              <div className="p-8 md:p-10 bg-theme-bg-muted/50 border-t border-theme-border flex gap-4 shrink-0">
+                <button onClick={handleReject} className="py-5 px-6 border border-red-500/20 text-red-500 text-[9px] font-black uppercase tracking-[0.2em] hover:bg-red-500 hover:text-white transition-all rounded-[20px] italic">Arquivar</button>
+                <button onClick={handleApprove} disabled={finalPrice<=0||approving} className="flex-1 py-5 bg-brand-tactical text-zinc-950 text-[11px] font-black uppercase tracking-[0.3em] shadow-2xl shadow-brand-tactical/20 hover:brightness-110 transition-all rounded-[20px] italic flex items-center justify-center gap-4 disabled:opacity-50">
+                  {approving?"ENVIANDO...":<><Zap size={16}/> DISPARAR ORÇAMENTO OFICIAL</>}
+                </button>
+              </div>
             </motion.div>
-          </>
+          </motion.div>
         )}
       </AnimatePresence>
+
+
       {/* NEW QUOTE MODAL */}
       {isNewQuoteModalOpen && (
         <div className="fixed inset-0 z-[200] flex items-center justify-center p-4">

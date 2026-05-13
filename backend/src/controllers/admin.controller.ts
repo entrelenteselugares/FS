@@ -1080,6 +1080,40 @@ export async function adminCreateQuote(req: AuthRequest, res: Response): Promise
   }
 }
 
+
+export async function adminPriceQuote(req: AuthRequest, res: Response): Promise<void> {
+  const { id } = req.params;
+  const { finalPrice, breakdown } = req.body;
+
+  try {
+    const quote = await prisma.event.findUnique({ where: { id: String(id) } });
+
+    if (!quote || !quote.isQuote) {
+      res.status(404).json({ error: "Orçamento não encontrado." });
+      return;
+    }
+
+    // Salva o breakdown e move para "Em Análise" (PRICED) sem disparar e-mail/pedido
+    const updatedQuote = await prisma.event.update({
+      where: { id: String(id) },
+      data: {
+        ...(finalPrice > 0 && { priceBase: Number(finalPrice) }),
+        quoteStatus: "PRICED",
+        description: breakdown
+          ? `[BUDGET_BREAKDOWN] ${JSON.stringify(breakdown)}\n\nOriginal: ${quote.description}`
+          : quote.description,
+      },
+    });
+
+    await audit(req, "QUOTE_PRICED", "Event", String(id), null, { finalPrice });
+
+    res.json({ success: true, updatedQuote });
+  } catch (err) {
+    console.error("adminPriceQuote:", err);
+    res.status(500).json({ error: "Erro ao salvar análise do orçamento." });
+  }
+}
+
 export async function adminApproveQuote(req: AuthRequest, res: Response): Promise<void> {
   const { id } = req.params;
   const { finalPrice } = req.body;
