@@ -1,4 +1,4 @@
-﻿import React, { useState } from "react";
+import React, { useState } from "react";
 import { useNavigate, Link, useSearchParams } from "react-router-dom";
 
 import { Camera, Mail, Lock, UserCircle, Phone, Eye, EyeOff, ShieldCheck } from "lucide-react";
@@ -80,21 +80,24 @@ export const RegisterPage: React.FC = () => {
       const claim = searchParams.get("claim");
       let finalPayload = { ...formData, role, claim };
       
-      // Se for Unidade, consolidamos o endereÃ§o
+      // Se for Unidade, consolidamos o endereço
       if (role === "CARTORIO") {
         const fullAddress = `${formData.logradouro}, ${formData.numero}${formData.referencia ? ` - ${formData.referencia}` : ""} | ${formData.bairro} | ${formData.cidade}-${formData.uf}`;
         finalPayload = { 
           ...finalPayload, 
           endereco: fullAddress,
-          cidade: formData.cidade // TambÃ©m envia cidade separada se o backend permitir
+          cidade: formData.cidade // Também envia cidade separada se o backend permitir
         };
       }
 
       const response = await API.post("/auth/register", finalPayload);
       
-      // Logar automaticamente salvando o token e dados do usuÃ¡rio
-      const { token } = response.data;
+      // Logar automaticamente salvando o token e dados do usuário
+      const { token, refreshToken } = response.data;
       localStorage.setItem("fs_token", token);
+      if (refreshToken) {
+        localStorage.setItem("fs_refresh_token", refreshToken);
+      }
       
       // Notificamos o sistema que estamos logados antes de navegar
       API.defaults.headers.common["Authorization"] = `Bearer ${token}`;
@@ -105,7 +108,7 @@ export const RegisterPage: React.FC = () => {
 
       const hasPending = localStorage.getItem("pending_purchase_event_id");
       
-      // NavegaÃ§Ã£o imediata
+      // Navegação imediata
       if (claim) {
         window.location.href = "/minha-conta?claimed=true";
       } else if (hasPending) {
@@ -121,7 +124,7 @@ export const RegisterPage: React.FC = () => {
       const apiError = error.response?.data;
       const displayMsg = typeof apiError?.error === 'string' 
         ? `${apiError.error}${apiError.details ? ` (${apiError.details})` : ""}`
-        : "NÃ£o foi possÃ­vel processar o registro. Verifique sua conexÃ£o e tente novamente.";
+        : "Não foi possível processar o registro. Verifique sua conexão e tente novamente.";
         
       setError(displayMsg);
     } finally {
@@ -138,7 +141,7 @@ export const RegisterPage: React.FC = () => {
   return (
     <div className="min-h-screen bg-theme-bg flex items-center justify-center p-6 py-12">
       <Helmet>
-        <title>Registro â€” Foto Segundo</title>
+        <title>Registro — Foto Segundo</title>
       </Helmet>
 
       <div className="w-full max-w-2xl space-y-12">
@@ -148,11 +151,11 @@ export const RegisterPage: React.FC = () => {
             onClick={() => navigate("/")} 
             className="flex items-center gap-2 text-[10px] font-black uppercase tracking-widest text-theme-text-muted hover:text-theme-text transition-all"
           >
-            <span className="text-base">â†</span> Vitrine
+            <span className="text-base">← </span> Vitrine
           </button>
           <div className="flex flex-col items-center">
             <Link to="/"><img src="/logo.png" alt="Foto Segundo" style={{ height: 28, objectFit: "contain", filter: "var(--logo-filter)" }} /></Link>
-            <span className="text-[8px] font-black tracking-[0.3em] text-zinc-600 uppercase italic">Solicitar AdesÃ£o</span>
+            <span className="text-[8px] font-black tracking-[0.3em] text-zinc-600 uppercase italic">Solicitar Adesão</span>
           </div>
           <div className="w-10" /> {/* Spacer */}
         </div>
@@ -201,13 +204,13 @@ export const RegisterPage: React.FC = () => {
                      value={formData.nome}
                      onChange={(e) => setFormData({ ...formData, nome: e.target.value })}
                      className="w-full bg-theme-bg-field border border-theme-border/60 py-4 pl-12 pr-4 text-xs text-theme-text rounded-2xl focus:border-brand-tactical transition-all"
-                     placeholder="EX: JOÃƒO DA SILVA"
+                     placeholder="EX: JOÃO DA SILVA"
                    />
                  </div>
                </div>
 
                <div className="space-y-2">
-                 <label className="text-[10px] font-black uppercase tracking-[0.3em] text-zinc-500 ml-1">ComunicaÃ§Ã£o (WhatsApp)</label>
+                 <label className="text-[10px] font-black uppercase tracking-[0.3em] text-zinc-500 ml-1">Comunicação (WhatsApp)</label>
                  <div className="relative group">
                    <Phone className="absolute left-4 top-1/2 -translate-y-1/2 text-zinc-600 group-focus-within:text-brand-tactical transition-colors" size={14} />
                    <input
@@ -236,13 +239,13 @@ export const RegisterPage: React.FC = () => {
                  </div>
                </div>
 
-               {/* Campos DinÃ¢micos Profissional */}
+               {/* Campos Dinâmicos Profissional */}
                {role === "PROFISSIONAL" && (
                  <div className="md:col-span-2 space-y-8 p-8 bg-theme-bg-muted border border-theme-border/60 rounded-3xl animate-in fade-in duration-500">
                     <div className="space-y-4">
-                       <p className="text-[10px] font-black text-brand-tactical uppercase tracking-widest italic">Especialidades</p>
+                        <p className="text-[10px] font-black text-brand-tactical uppercase tracking-widest italic">Especialidades</p>
                        <div className="flex flex-wrap gap-3">
-                         {["FOTO", "VÃDEO", "EDIÃ‡ÃƒO", "IMPRESSÃƒO"].map(skill => (
+                         {["FOTO", "VÍDEO", "EDIÇÃO", "IMPRESSÃO"].map(skill => (
                            <button
                              key={skill}
                              type="button"
@@ -289,12 +292,12 @@ export const RegisterPage: React.FC = () => {
                  </div>
                )}
 
-               {/* Campos DinÃ¢micos Unidade */}
+               {/* Campos Dinâmicos Unidade */}
                {role === "CARTORIO" && (
                  <div className="md:col-span-2 space-y-8 p-8 bg-theme-bg-muted border border-theme-border/60 rounded-3xl animate-in fade-in duration-500">
                     <div className="grid grid-cols-2 gap-6">
                        <div className="space-y-2 md:col-span-2">
-                          <label className="text-[9px] font-black uppercase tracking-[0.3em] text-zinc-500">RazÃ£o Social / Nome Unidade</label>
+                          <label className="text-[9px] font-black uppercase tracking-[0.3em] text-zinc-500">Razão Social / Nome Unidade</label>
                           <input
                             type="text"
                             required
@@ -360,7 +363,7 @@ export const RegisterPage: React.FC = () => {
                      value={formData.senha}
                      onChange={(e) => setFormData({ ...formData, senha: e.target.value })}
                      className="w-full bg-theme-bg-field border border-theme-border/60 py-4 pl-12 pr-12 text-xs text-theme-text rounded-2xl focus:border-brand-tactical transition-all"
-                     placeholder="â€¢â€¢â€¢â€¢â€¢â€¢â€¢â€¢"
+                     placeholder="••••••••"
                    />
                    <button
                      type="button"
@@ -376,7 +379,7 @@ export const RegisterPage: React.FC = () => {
             <div className="space-y-4">
               {[
                 { key: "acceptedTerms", label: "Aceito os Termos de Uso" },
-                { key: "acceptedPrivacy", label: "Concordo com a PolÃ­tica de Privacidade" }
+                { key: "acceptedPrivacy", label: "Concordo com a Política de Privacidade" }
               ].map(item => (
                 <label key={item.key} className="flex items-center gap-4 cursor-pointer group py-3">
                    <input type="checkbox" className="hidden" checked={formData[item.key as keyof typeof formData] as boolean} onChange={() => setFormData({ ...formData, [item.key]: !formData[item.key as keyof typeof formData] })} />
@@ -395,7 +398,7 @@ export const RegisterPage: React.FC = () => {
               disabled={loading || !formData.acceptedTerms || !formData.acceptedPrivacy}
               className="w-full bg-brand-tactical text-black hover:bg-white font-black uppercase tracking-[0.5em] text-[10px] py-5 transition-all flex items-center justify-center gap-4 group disabled:opacity-30 rounded-2xl italic"
             >
-              {loading ? "PROCESSANDO..." : "Confirmar InscriÃ§Ã£o"}
+              {loading ? "PROCESSANDO..." : "Confirmar Inscrição"}
             </button>
           </form>
         </div>
@@ -403,11 +406,11 @@ export const RegisterPage: React.FC = () => {
         {/* Footer */}
         <div className="pt-8 flex flex-col md:flex-row justify-between items-center gap-6 border-t border-theme-border/20">
            <p className="text-zinc-600 text-[9px] font-black uppercase tracking-[0.3em]">
-            JÃ¡ possui acesso? <Link to="/login" className="text-white hover:text-brand-tactical ml-2 transition-all">Fazer Login</Link>
+            Já possui acesso? <Link to="/login" className="text-white hover:text-brand-tactical ml-2 transition-all">Fazer Login</Link>
           </p>
           <div className="flex items-center gap-4">
              <ShieldCheck size={16} className="text-brand-tactical opacity-50" />
-             <span className="text-[9px] font-black text-zinc-600 uppercase tracking-widest italic">InscriÃ§Ã£o Criptografada</span>
+             <span className="text-[9px] font-black text-zinc-600 uppercase tracking-widest italic">Inscrição Criptografada</span>
           </div>
         </div>
       </div>

@@ -1,4 +1,5 @@
 import { useState, useEffect, useCallback, useRef } from "react";
+import { parseDateSafe } from "../lib/utils/formatters";
 import { useNavigate, Link } from "react-router-dom";
 import { API } from "../lib/api";
 import { Helmet } from "react-helmet-async";
@@ -24,14 +25,23 @@ interface Event {
   coverPosition?: string | null;
 }
 
-function formatDate(d: string) {
-  try { return new Intl.DateTimeFormat("pt-BR", { day: "2-digit", month: "short", year: "numeric" }).format(new Date(d)); }
-  catch { return "—"; }
+function formatDate(d: string | null | undefined) {
+  if (!d) return "";
+  const date = parseDateSafe(d);
+  return new Intl.DateTimeFormat("pt-BR", {
+    day: "2-digit",
+    month: "long",
+  }).format(date);
 }
 
 function isToday(d: string) {
-  const ev = new Date(d); const now = new Date();
-  return ev.getDate() === now.getDate() && ev.getMonth() === now.getMonth() && ev.getFullYear() === now.getFullYear();
+  const ev = parseDateSafe(d);
+  const now = new Date();
+  return (
+    ev.getDate() === now.getDate() &&
+    ev.getMonth() === now.getMonth() &&
+    ev.getFullYear() === now.getFullYear()
+  );
 }
 
 function isRecent(d: string) {

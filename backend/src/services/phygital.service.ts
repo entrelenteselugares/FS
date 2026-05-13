@@ -74,18 +74,22 @@ export class PhygitalService {
       });
 
       // 4. Criação dos Carimbos SVG (Com ViewBox para garantir escala)
+      // Garantimos que as dimensões sejam números válidos para evitar erro de atributo no frontend/payment
+      const safeWidth = Number.isFinite(finalWidth) && finalWidth > 0 ? finalWidth : 1200;
+      const safeBorderSize = Number.isFinite(borderSize) && borderSize > 0 ? borderSize : 120;
+
       const refSvg = Buffer.from(`
-        <svg width="${finalWidth}" height="${borderSize * 3}" viewBox="0 0 ${finalWidth} ${borderSize * 3}">
-          <text x="50%" y="50%" font-family="sans-serif" font-size="${Math.floor(borderSize * 1.5)}" font-weight="900" fill="#000000" text-anchor="middle" dominant-baseline="middle" style="text-transform: uppercase;">
+        <svg width="${safeWidth}" height="${safeBorderSize * 3}" viewBox="0 0 ${safeWidth} ${safeBorderSize * 3}">
+          <text x="50%" y="50%" font-family="sans-serif" font-size="${Math.floor(safeBorderSize * 1.5)}" font-weight="900" fill="#000000" text-anchor="middle" dominant-baseline="middle" style="text-transform: uppercase;">
             ${referenceCode}
           </text>
         </svg>
       `);
 
-      const logoFontSize = Math.floor(borderSize * 0.4);
+      const logoFontSize = Math.floor(safeBorderSize * 0.4);
       const logoSvg = Buffer.from(`
-        <svg width="${finalWidth}" height="${borderSize * 2}" viewBox="0 0 ${finalWidth} ${borderSize * 2}">
-          <text x="${finalWidth - borderSize}" y="70%" font-family="sans-serif" font-size="${logoFontSize}" font-weight="900" fill="#000000" text-anchor="end" dominant-baseline="middle" style="text-transform: uppercase; letter-spacing: 5px; opacity: 0.6;">
+        <svg width="${safeWidth}" height="${safeBorderSize * 2}" viewBox="0 0 ${safeWidth} ${safeBorderSize * 2}">
+          <text x="${safeWidth - safeBorderSize}" y="70%" font-family="sans-serif" font-size="${logoFontSize}" font-weight="900" fill="#000000" text-anchor="end" dominant-baseline="middle" style="text-transform: uppercase; letter-spacing: 5px; opacity: 0.6;">
             FOTO SEGUNDO
           </text>
         </svg>
@@ -150,7 +154,7 @@ export class PhygitalService {
         include: { event: true }
       });
 
-      // 6.1. Adicionar à Galeria Live (EventMedia)
+      // 6.1. Adicionar à Galeria Live (EventMedia) ou Vault (SharedAlbumMedia)
       if (foundEvent) {
         const count = await prisma.eventMedia.count({ where: { eventId: foundEvent.id } });
         const shortId = `F${(count + 1).toString().padStart(3, '0')}`;
@@ -165,15 +169,20 @@ export class PhygitalService {
           } as any
         });
       } else if (foundVault) {
+        // Fallback para thumbnailLink caso o Google demore a processar
+        const thumbFallback = driveFile?.thumbnailLink || driveFile?.webViewLink || null;
+        
         await prisma.sharedAlbumMedia.create({
           data: {
             albumId: foundVault.id,
             fileId: fileId,
             webViewLink: publicUrl,
-            thumbnailLink: driveFile?.thumbnailLink || null, 
-            uploadedById: metadata.userId || foundVault.ownerId
+            thumbnailLink: thumbFallback,
+            uploadedById: metadata.userId || foundVault.ownerId,
+            aiAnalysisStatus: 'PENDING'
           }
         });
+        console.log(`[PHYGITAL] Registrado no Vault: ${foundVault.id} | Thumb: ${thumbFallback ? 'OK' : 'MISSING'}`);
       }
 
       // 7. Lógica de Créditos de Franquia

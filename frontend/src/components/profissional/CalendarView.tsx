@@ -1,3 +1,4 @@
+import { parseDateSafe } from "../../lib/utils/formatters";
 import { ChevronLeft, ChevronRight } from "lucide-react";
 import type { EventItem } from "./types";
 
@@ -20,7 +21,7 @@ export function CalendarView({ events, currentMonth, setCurrentMonth, onSelect }
 
   const getEventsOnDay = (d: number) =>
     events.filter((ev) => {
-      const date = new Date(ev.dataEvento);
+      const date = parseDateSafe(ev.dataEvento);
       return date.getDate() === d && date.getMonth() === month && date.getFullYear() === year;
     });
 

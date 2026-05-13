@@ -93,6 +93,8 @@ export class AuthController {
       // Audit opcional (não bloqueia o login se falhar)
       try { await audit(req, "LOGIN", "User", fullUser.id, null, { method: authMethod }); } catch (e) {}
 
+      console.log(`[AUTH] Login bem-sucedido para: ${cleanEmail}`);
+
       return res.json({ 
         token, 
         refreshToken,
@@ -169,7 +171,8 @@ export class AuthController {
               senha: hash, 
               nome: nome || "Usuário", 
               role: cleanRole, 
-              whatsapp 
+              whatsapp,
+              address: endereco || null // Garante que o endereço vá para o modelo User também
             }
           });
         }
@@ -244,25 +247,34 @@ export class AuthController {
   }
 
   static async me(req: AuthRequest, res: Response) {
-    if (!req.user) return res.status(401).json({ error: "Não logado" });
-    const user = await prisma.user.findUnique({ 
-      where: { id: req.user.userId },
-      include: {
-        franchiseProfile: {
-          include: {
-            transactions: {
-              orderBy: { createdAt: 'desc' },
-              take: 10
+    try {
+      if (!req.user) return res.status(401).json({ error: "Não logado" });
+      const user = await prisma.user.findUnique({ 
+        where: { id: req.user.userId },
+        include: {
+          franchiseProfile: {
+            include: {
+              transactions: {
+                orderBy: { createdAt: 'desc' },
+                take: 10
+              }
             }
+          },
+          gamificationLogs: {
+            orderBy: { createdAt: 'desc' },
+            take: 20
           }
-        },
-        gamificationLogs: {
-          orderBy: { createdAt: 'desc' },
-          take: 20
         }
+      });
+      if (!user) {
+        console.warn(`[AUTH ME] Usuário não encontrado no banco: ${req.user.userId}`);
+        return res.status(404).json({ error: "Usuário não encontrado" });
       }
-    });
-    return res.json(user);
+      return res.json(user);
+    } catch (error) {
+      console.error("[AUTH ME ERROR]:", error);
+      return res.status(500).json({ error: "Erro ao buscar dados do usuário" });
+    }
   }
 
   static async refresh(req: Request, res: Response) {
@@ -288,10 +300,46 @@ export class AuthController {
   }
 
   static async updateMe(req: AuthRequest, res: Response) {
-    const userId = req.user?.userId;
-    if (!userId) return res.status(401).json({ error: "Não autorizado" });
-    const updated = await prisma.user.update({ where: { id: userId }, data: req.body });
-    return res.json(updated);
+    try {
+      const userId = req.user?.userId;
+      if (!userId) return res.status(401).json({ error: "Não autorizado" });
+
+      const data = { ...req.body };
+      
+      // Consolidação de endereço se vierem campos detalhados
+      if (data.cep || data.endereco || data.logradouro) {
+        const parts = [];
+        if (data.logradouro || data.endereco) parts.push(data.logradouro || data.endereco);
+        if (data.numero) parts.push(data.numero);
+        if (data.complemento) parts.push(`- ${data.complemento}`);
+        if (data.bairro) parts.push(`| ${data.bairro}`);
+        if (data.cidade) parts.push(`| ${data.cidade}`);
+        if (data.estado) parts.push(`- ${data.estado}`);
+        if (data.cep) parts.push(`(CEP: ${data.cep})`);
+        
+        if (parts.length > 0) {
+          data.address = parts.join(" ");
+        }
+      }
+
+      // Filtra apenas campos válidos para o modelo User para evitar erro do Prisma
+      const validFields = ["nome", "whatsapp", "address", "active", "pixKey"];
+      const filteredData: any = {};
+      for (const field of validFields) {
+        if (data[field] !== undefined) {
+          filteredData[field] = data[field];
+        }
+      }
+
+      const updated = await prisma.user.update({ 
+        where: { id: userId }, 
+        data: filteredData 
+      });
+      return res.json(updated);
+    } catch (error) {
+      console.error("[UPDATE ME ERROR]:", error);
+      return res.status(500).json({ error: "Erro ao atualizar perfil" });
+    }
   }
 
   static async forgotPassword(req: Request, res: Response) {

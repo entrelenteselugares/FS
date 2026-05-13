@@ -42,7 +42,7 @@ router.get('/callback', async (req: Request, res: Response) => {
   // Usuário negou o acesso
   if (error) {
     console.warn('[Calendar OAuth] Usuário negou acesso:', error);
-    return res.redirect(`${FRONTEND_URL}/profissional?calendar=denied`);
+    return res.redirect(`${FRONTEND_URL}/minha-conta?calendar=denied`);
   }
 
   if (!code || !state || typeof state !== 'string') {
@@ -70,10 +70,10 @@ router.get('/callback', async (req: Request, res: Response) => {
       console.error('[Calendar] Erro no sync inicial:', err)
     );
 
-    res.redirect(`${FRONTEND_URL}/profissional?calendar=connected`);
+    res.redirect(`${FRONTEND_URL}/minha-conta?calendar=connected`);
   } catch (err) {
     console.error('[Calendar OAuth] Erro ao salvar tokens:', err);
-    res.redirect(`${FRONTEND_URL}/profissional?calendar=error`);
+    res.redirect(`${FRONTEND_URL}/minha-conta?calendar=error`);
   }
 });
 

@@ -2,6 +2,7 @@ import { useState, useEffect } from "react";
 import { Check, X, ShieldCheck, MapPin, Briefcase, Users, ChevronRight, Camera, Video, Smartphone, Clock } from "lucide-react";
 import type { EventItem, UnitInvite } from "./types";
 import { CalendarView } from "./CalendarView";
+import { parseDateSafe } from "../../lib/utils/formatters";
 
 // Delivery timer sub-component
 function DeadlineTimer({ event, type }: { event: EventItem; type: "FOTO" | "VIDEO" }) {
@@ -12,7 +13,7 @@ function DeadlineTimer({ event, type }: { event: EventItem; type: "FOTO" | "VIDE
   useEffect(() => {
     if (isDelivered) return;
     const timer = setInterval(() => {
-      const start = new Date(event.dataEvento).getTime();
+      const start = parseDateSafe(event.dataEvento).getTime();
       const target = start + targetMinutes * 60 * 1000;
       setTimeLeft(target - Date.now());
     }, 1000);
@@ -112,10 +113,10 @@ export function AgendaTab({
                   <div className="min-w-[80px] flex flex-col items-center md:items-start border-r border-theme-border/20 pr-6">
                     <div className="text-[9px] font-black text-theme-muted uppercase tracking-widest mb-1">DATA</div>
                     <div className="text-2xl font-heading font-black text-theme-text italic leading-none uppercase tracking-tighter">
-                      {new Date(ev.dataEvento).toLocaleDateString("pt-BR", { day: "2-digit" })}
+                      {parseDateSafe(ev.dataEvento).toLocaleDateString("pt-BR", { day: "2-digit" })}
                     </div>
                     <div className="text-[10px] font-bold text-yellow-400 uppercase tracking-widest mt-1">
-                      {new Date(ev.dataEvento).toLocaleDateString("pt-BR", { month: "short" }).replace(".", "")}
+                      {parseDateSafe(ev.dataEvento).toLocaleDateString("pt-BR", { month: "short" }).replace(".", "")}
                     </div>
                   </div>
 
@@ -191,10 +192,10 @@ export function AgendaTab({
                   <div className="min-w-[80px] flex flex-col items-center md:items-start border-r border-theme-border/20 pr-6">
                     <div className="text-[9px] font-black text-theme-muted uppercase tracking-widest mb-1">DATA</div>
                     <div className="text-2xl font-heading font-black text-theme-text italic leading-none uppercase tracking-tighter">
-                      {new Date(ev.dataEvento).toLocaleDateString("pt-BR", { day: "2-digit" })}
+                      {parseDateSafe(ev.dataEvento).toLocaleDateString("pt-BR", { day: "2-digit" })}
                     </div>
                     <div className="text-[10px] font-bold text-brand-tactical uppercase tracking-widest mt-1">
-                      {new Date(ev.dataEvento).toLocaleDateString("pt-BR", { month: "short" }).replace(".", "")}
+                      {parseDateSafe(ev.dataEvento).toLocaleDateString("pt-BR", { month: "short" }).replace(".", "")}
                     </div>
                   </div>
 

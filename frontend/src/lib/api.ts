@@ -66,7 +66,11 @@ API.interceptors.response.use(
         return API(originalRequest);
       } catch (refreshError) {
         isRefreshing = false;
-        // Se falhar o refresh, desloga o usuário (limpa tokens)
+        // Se falhar o refresh, rejeita todas as requisições pendentes na fila
+        refreshSubscribers.forEach((callback: any) => callback(null));
+        refreshSubscribers = [];
+        
+        // Desloga o usuário (limpa tokens)
         localStorage.removeItem("fs_token");
         localStorage.removeItem("fs_refresh_token");
         window.location.href = "/login?session=expired";
