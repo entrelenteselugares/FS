@@ -3,7 +3,7 @@ import { useAuth } from "../hooks/useAuth";
 import { API } from "../lib/api";
 import { useNavigate, useLocation } from "react-router-dom";
 import {
-  DollarSign, MessageCircle,
+  DollarSign,
   Settings, Briefcase, Users, LayoutDashboard, Play, Calendar, RefreshCw, LogOut, CheckCircle, Camera, Printer
 } from "lucide-react";
 import { DashboardLayout, type NavItem } from "../components/DashboardLayout";
@@ -325,13 +325,12 @@ export default function ProfissionalDashboard() {
   // ─── Nav ──────────────────────────────────────────────────────────────────────
 
   const navItems: NavItem[] = useMemo(() => [
-    { label: "Visão Geral", onClick: () => setActiveTab("agenda"), isActive: activeTab === "agenda", icon: <LayoutDashboard size={16} /> },
-    {
-      label: "Convites Pendentes",
-      onClick: () => setActiveTab("convites"),
-      isActive: activeTab === "convites",
-      icon: <MessageCircle size={16} />,
-      badge: pendingEvents.length + unitInvites.length,
+    { 
+      label: "Minha Agenda", 
+      onClick: () => setActiveTab("agenda"), 
+      isActive: activeTab === "agenda", 
+      icon: <LayoutDashboard size={16} />,
+      badge: pendingEvents.length + unitInvites.length + opportunities.length
     },
     { label: "Financeiro", onClick: () => setActiveTab("financeiro"), isActive: activeTab === "financeiro", icon: <DollarSign size={16} /> },
     { label: "Serviços", onClick: () => setActiveTab("servicos"), isActive: activeTab === "servicos", icon: <Briefcase size={16} /> },
@@ -813,7 +812,6 @@ export default function ProfissionalDashboard() {
               <AgendaTab
                 events={events}
                 unitInvites={unitInvites}
-                activeTab={activeTab}
                 viewTab={viewTab}
                 currentMonth={currentMonth}
                 loading={loading}
