@@ -72,4 +72,63 @@ export class ReferralController {
       return res.status(500).json({ error: "Internal Server Error" });
     }
   }
+
+  /**
+   * (Phase 24) Retorna histórico paginado de conversões para o embaixador.
+   */
+  static async getConversionHistory(req: any, res: Response) {
+    const userId = req.user?.userId;
+    if (!userId) return res.status(401).json({ error: "Unauthorized" });
+    const page = parseInt(req.query.page as string) || 1;
+    try {
+      const data = await ReferralService.getConversionHistory(userId, page);
+      return res.json(data);
+    } catch (error) {
+      return res.status(500).json({ error: "Internal Server Error" });
+    }
+  }
+
+  /**
+   * (Phase 24) Retorna sumário da rede (funil + ganhos por campanha).
+   */
+  static async getNetworkSummary(req: any, res: Response) {
+    const userId = req.user?.userId;
+    if (!userId) return res.status(401).json({ error: "Unauthorized" });
+    try {
+      const data = await ReferralService.getNetworkSummary(userId);
+      return res.json(data);
+    } catch (error) {
+      return res.status(500).json({ error: "Internal Server Error" });
+    }
+  }
+
+  /**
+   * (Phase 24) Alterna status ativo/inativo de uma campanha.
+   */
+  static async toggleCampaign(req: any, res: Response) {
+    const userId = req.user?.userId;
+    const { campaignId } = req.params;
+    if (!userId) return res.status(401).json({ error: "Unauthorized" });
+    try {
+      const updated = await ReferralService.toggleCampaign(campaignId, userId);
+      return res.json(updated);
+    } catch (error: any) {
+      return res.status(404).json({ error: error.message || "Não encontrado" });
+    }
+  }
+
+  /**
+   * (Phase 24) Gera ou retorna a campanha padrão do usuário.
+   */
+  static async generateDefaultCode(req: any, res: Response) {
+    const userId = req.user?.userId;
+    if (!userId) return res.status(401).json({ error: "Unauthorized" });
+    try {
+      const slug = await ReferralService.generateCode(userId);
+      const url = `${req.protocol}://${req.get('host')}/embaixador/${slug}`;
+      return res.json({ slug, url });
+    } catch (error) {
+      return res.status(500).json({ error: "Internal Server Error" });
+    }
+  }
 }

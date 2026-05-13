@@ -179,4 +179,105 @@ export class ReferralService {
        await this.processConversion(campaign.id, { newUserId: userId });
     }
   }
+
+  /**
+   * (Phase 24) Paginated conversion history for the ambassador dashboard timeline.
+   */
+  static async getConversionHistory(ownerId: string, page = 1, limit = 20) {
+    const campaigns = await prisma.referralCampaign.findMany({
+      where: { ownerId },
+      select: { id: true, name: true, slug: true }
+    });
+    const campaignIds = campaigns.map(c => c.id);
+
+    const [conversions, total] = await Promise.all([
+      prisma.referralConversion.findMany({
+        where: { campaignId: { in: campaignIds } },
+        orderBy: { createdAt: "desc" },
+        skip: (page - 1) * limit,
+        take: limit,
+        include: {
+          campaign: { select: { name: true, slug: true, rewardType: true } }
+        }
+      }),
+      prisma.referralConversion.count({
+        where: { campaignId: { in: campaignIds } }
+      })
+    ]);
+
+    return {
+      conversions: conversions.map(c => ({
+        id: c.id,
+        campaignName: c.campaign.name,
+        campaignSlug: c.campaign.slug,
+        rewardType: c.campaign.rewardType,
+        rewardAmount: Number(c.rewardAmount),
+        status: c.status,
+        createdAt: c.createdAt,
+        hasOrder: !!c.orderId,
+        hasNewUser: !!c.newUserId,
+      })),
+      total,
+      page,
+      totalPages: Math.ceil(total / limit)
+    };
+  }
+
+  /**
+   * (Phase 24) Network summary: total earnings breakdown per campaign and overall funnel.
+   */
+  static async getNetworkSummary(ownerId: string) {
+    const campaigns = await prisma.referralCampaign.findMany({
+      where: { ownerId },
+      include: {
+        _count: { select: { visits: true, conversions: true } },
+        conversions: { select: { rewardAmount: true, status: true } }
+      }
+    });
+
+    const summary = campaigns.map(c => {
+      const paid   = c.conversions.filter(cv => cv.status === "PAID");
+      const pending = c.conversions.filter(cv => cv.status === "PENDING");
+      return {
+        id: c.id,
+        name: c.name,
+        slug: c.slug,
+        rewardType: c.rewardType,
+        rewardValue: Number(c.rewardValue),
+        active: c.active,
+        visits: c._count.visits,
+        conversions: c._count.conversions,
+        conversionRate: c._count.visits > 0
+          ? ((c._count.conversions / c._count.visits) * 100).toFixed(1)
+          : "0.0",
+        earnedPaid: paid.reduce((s, cv) => s + Number(cv.rewardAmount), 0),
+        earnedPending: pending.reduce((s, cv) => s + Number(cv.rewardAmount), 0),
+      };
+    });
+
+    const totals = {
+      visits:       summary.reduce((s, c) => s + c.visits, 0),
+      conversions:  summary.reduce((s, c) => s + c.conversions, 0),
+      earnedPaid:   summary.reduce((s, c) => s + c.earnedPaid, 0),
+      earnedPending:summary.reduce((s, c) => s + c.earnedPending, 0),
+      campaigns:    summary.length,
+    };
+
+    return { campaigns: summary, totals };
+  }
+
+  /**
+   * (Phase 24) Toggle campaign active/inactive.
+   */
+  static async toggleCampaign(campaignId: string, ownerId: string) {
+    const campaign = await prisma.referralCampaign.findFirst({
+      where: { id: campaignId, ownerId }
+    });
+    if (!campaign) throw new Error("Campanha não encontrada ou sem permissão.");
+
+    return prisma.referralCampaign.update({
+      where: { id: campaignId },
+      data: { active: !campaign.active }
+    });
+  }
 }

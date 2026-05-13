@@ -374,8 +374,12 @@ router.get("/admin/payouts/export",                requireAuth, requireRole("ADM
 router.patch("/admin/payouts/:id/items/:itemId/paid", requireAuth, requireRole("ADMIN"), markItemPaid);
 router.get("/me/repasses", requireAuth, getMeusRepasses);
 
-// --- AMBASSADOR ---
-router.get("/ambassador/stats", requireAuth, ReferralController.getStats);
+// --- AMBASSADOR (Phase 24) ---
+router.get("/ambassador/stats",                  requireAuth, ReferralController.getStats);
+router.get("/ambassador/network",                requireAuth, ReferralController.getNetworkSummary);
+router.get("/ambassador/conversions",            requireAuth, ReferralController.getConversionHistory);
+router.post("/ambassador/generate-code",         requireAuth, ReferralController.generateDefaultCode);
+router.patch("/ambassador/campaigns/:campaignId/toggle", requireAuth, ReferralController.toggleCampaign);
 
 // ── Admin: Configurações ───────────────────────────────────────────────────────
 router.get("/admin/configs",   requireAuth, requireRole("ADMIN"), getConfigs);
