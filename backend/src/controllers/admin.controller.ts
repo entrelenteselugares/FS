@@ -1011,10 +1011,7 @@ export async function adminListQuotes(req: AuthRequest, res: Response): Promise<
 
   try {
     const baseFilter: Prisma.EventWhereInput = {
-      OR: [
-        { isQuote: true },
-        { quoteStatus: "CONVERTED" }
-      ]
+      NOT: { quoteStatus: null }
     };
     const where: Prisma.EventWhereInput = q ? {
       AND: [baseFilter, { OR: [
@@ -1286,8 +1283,8 @@ export async function adminRejectQuote(req: AuthRequest, res: Response): Promise
 
   try {
     const quote = await prisma.event.findUnique({ where: { id: String(id) } });
-    if (!quote || !quote.isQuote) {
-      res.status(404).json({ error: "OrÃ§amento nÃ£o encontrado." });
+    if (!quote) {
+      res.status(404).json({ error: "Orçamento não encontrado." });
       return;
     }
 
@@ -1305,7 +1302,34 @@ export async function adminRejectQuote(req: AuthRequest, res: Response): Promise
     res.json({ success: true });
   } catch (err) {
     console.error("adminRejectQuote:", err);
-    res.status(500).json({ error: "Erro ao rejeitar orÃ§amento." });
+    res.status(500).json({ error: "Erro ao rejeitar orçamento." });
+  }
+}
+
+export async function adminArchiveQuote(req: AuthRequest, res: Response): Promise<void> {
+  const { id } = req.params;
+
+  try {
+    const quote = await prisma.event.findUnique({ where: { id: String(id) } });
+    if (!quote) {
+      res.status(404).json({ error: "Orçamento não encontrado." });
+      return;
+    }
+
+    await prisma.event.update({
+      where: { id: String(id) },
+      data: { 
+        quoteStatus: "ARCHIVED",
+        active: false,
+      }
+    });
+
+    await audit(req, "QUOTE_ARCHIVED", "Event", String(id), null, {});
+
+    res.json({ success: true });
+  } catch (err) {
+    console.error("adminArchiveQuote:", err);
+    res.status(500).json({ error: "Erro ao arquivar orçamento." });
   }
 }
 

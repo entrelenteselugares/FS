@@ -13,7 +13,7 @@ interface Quote {
   id: string; nomeNoivos: string; dataEvento: string; location: string;
   description: string; clientEmail: string; clientName: string; clientPhone?: string;
   urgency?: "HIGH" | "MEDIUM" | "LOW"; priceBase: number;
-  quoteStatus: "PENDING" | "PRICED" | "APPROVED" | "REJECTED" | "CONVERTED";
+  quoteStatus: "PENDING" | "PRICED" | "APPROVED" | "REJECTED" | "CONVERTED" | "ARCHIVED";
   usageType: string; eventHours?: number; temFoto?: boolean; temVideo?: boolean;
   temReels?: boolean; temFotoEditada?: boolean; temVideoEditado?: boolean;
   temFotoImpressa?: boolean; temAlbumImpresso?: boolean; createdAt: string;
@@ -27,7 +27,8 @@ const KANBAN_COLUMNS = [
   { id: "PRICED",    label: "Em Análise",         color: "blue",    border: "border-blue-500/40",    text: "text-blue-500",    badge: "bg-blue-500/10 text-blue-500 border-blue-500/30" },
   { id: "APPROVED",  label: "Proposta Enviada",   color: "emerald", border: "border-emerald-500/40", text: "text-emerald-500", badge: "bg-emerald-500/10 text-emerald-500 border-emerald-500/30" },
   { id: "CONVERTED", label: "Convertidos",        color: "teal",    border: "border-teal-500/40",    text: "text-teal-400",    badge: "bg-teal-500/10 text-teal-400 border-teal-500/30" },
-  { id: "REJECTED",  label: "Arquivados",         color: "red",     border: "border-red-500/40",     text: "text-red-500",     badge: "bg-red-500/10 text-red-500 border-red-500/30" },
+  { id: "ARCHIVED",  label: "Arquivados",         color: "zinc",    border: "border-zinc-500/40",    text: "text-zinc-500",    badge: "bg-zinc-500/10 text-zinc-500 border-zinc-500/30" },
+  { id: "REJECTED",  label: "Recusados",          color: "red",     border: "border-red-500/40",     text: "text-red-500",     badge: "bg-red-500/10 text-red-500 border-red-500/30" },
 ] as const;
 
 export const AdminQuotes: React.FC = () => {
@@ -137,9 +138,19 @@ export const AdminQuotes: React.FC = () => {
     const reason = prompt("MOTIVO DA REJEIÇÃO:");
     try {
       await API.patch(`/admin/quotes/${selectedQuote.id}/reject`,{reason});
-      setNotification({message:"Orçamento arquivado.",type:"success"});
+      setNotification({message:"Orçamento recusado.",type:"success"});
       setSelectedQuote(null); fetchQuotes();
-    } catch { setNotification({message:"Erro ao arquivar.",type:"error"}); }
+    } catch { setNotification({message:"Erro ao recusar.",type:"error"}); }
+  };
+
+  const handleArchive = async () => {
+    if (!selectedQuote) return;
+    if (!confirm("Deseja finalizar e arquivar este protocolo? Isso indica que todo material foi entregue.")) return;
+    try {
+      await API.patch(`/admin/quotes/${selectedQuote.id}/archive`);
+      setNotification({message:"Protocolo arquivado com sucesso!",type:"success"});
+      setSelectedQuote(null); fetchQuotes();
+    } catch { setNotification({message:"Erro ao arquivar protocolo.",type:"error"}); }
   };
 
   const handleCreateNewQuote = async (e: React.FormEvent) => {
@@ -481,10 +492,19 @@ export const AdminQuotes: React.FC = () => {
               </div>
               {/* Modal Footer */}
               <div className="p-8 md:p-10 bg-theme-bg-muted/50 border-t border-theme-border flex gap-4 shrink-0">
-                <button onClick={handleReject} className="py-5 px-6 border border-red-500/20 text-red-500 text-[9px] font-black uppercase tracking-[0.2em] hover:bg-red-500 hover:text-white transition-all rounded-[20px] italic">Arquivar</button>
-                <button onClick={handleApprove} disabled={finalPrice<=0||approving} className="flex-1 py-5 bg-brand-tactical text-zinc-950 text-[11px] font-black uppercase tracking-[0.3em] shadow-2xl shadow-brand-tactical/20 hover:brightness-110 transition-all rounded-[20px] italic flex items-center justify-center gap-4 disabled:opacity-50">
-                  {approving?"ENVIANDO...":<><Zap size={16}/> DISPARAR ORÇAMENTO OFICIAL</>}
-                </button>
+                <button onClick={handleReject} className="py-5 px-6 border border-red-500/20 text-red-500 text-[9px] font-black uppercase tracking-[0.2em] hover:bg-red-500 hover:text-white transition-all rounded-[20px] italic">Recusar</button>
+                
+                {selectedQuote.quoteStatus === "CONVERTED" && (
+                  <button onClick={handleArchive} className="flex-1 py-5 bg-zinc-800 text-white text-[11px] font-black uppercase tracking-[0.3em] hover:bg-zinc-700 transition-all rounded-[20px] italic flex items-center justify-center gap-4">
+                    Finalizar Entrega & Arquivar
+                  </button>
+                )}
+
+                {selectedQuote.quoteStatus !== "CONVERTED" && selectedQuote.quoteStatus !== "ARCHIVED" && (
+                  <button onClick={handleApprove} disabled={finalPrice<=0||approving} className="flex-1 py-5 bg-brand-tactical text-zinc-950 text-[11px] font-black uppercase tracking-[0.3em] shadow-2xl shadow-brand-tactical/20 hover:brightness-110 transition-all rounded-[20px] italic flex items-center justify-center gap-4 disabled:opacity-50">
+                    {approving?"ENVIANDO...":<><Zap size={16}/> DISPARAR ORÇAMENTO OFICIAL</>}
+                  </button>
+                )}
               </div>
             </motion.div>
           </motion.div>

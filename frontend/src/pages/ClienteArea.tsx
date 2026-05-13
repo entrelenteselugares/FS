@@ -9,7 +9,7 @@ import { DashboardLayout, type NavItem } from "../components/DashboardLayout";
 import { ExpressSaleModal, FlashEventModal, type Partner } from "../components/profissional";
 import { AmbassadorDashboard } from "../components/AmbassadorDashboard";
 import { 
-  Users, Play, CheckCircle2, X, ArrowRight, 
+  Users, Play, CheckCircle2, ArrowRight, 
   ShoppingBag, ShieldCheck, Clock, Image as ImageIcon,
   Zap, Lock, User, AlertTriangle
 } from "lucide-react";
@@ -162,18 +162,6 @@ export default function ClienteArea() {
     }
   }, []);
 
-  const handleToggleVisibility = async (orderId: string, showAlbum?: boolean, showVideo?: boolean) => {
-    try {
-      await API.post(`/orders/${orderId}/visibility`, { showAlbum, showVideo });
-      const { data } = await API.get("/cliente/pedidos"); // Atualiza a lista completa
-      setPedidos(data);
-      const updated = data.find((p: Pedido) => p.id === orderId);
-      if (updated) setSelected(updated);
-    } catch (err: unknown) {
-      const error = err as { response?: { data?: { error?: string } } };
-      alert(error.response?.data?.error || "Erro ao atualizar visibilidade.");
-    }
-  };
 
   useEffect(() => {
     fetchPedidos().then(data => {
@@ -603,7 +591,6 @@ export default function ClienteArea() {
               loading={loadingDetalhe}
               onGoToEvent={() => navigate(`/e/${selected.event?.id || selected.id}`)}
               onChangePrivacy={() => setIsPrivacyModalOpen(true)}
-              onToggleVisibility={handleToggleVisibility}
               onRefresh={fetchPedidos}
             />
           </SideDrawer>
@@ -926,12 +913,11 @@ function Tag({ label, color = "#444" }: { label: string; color?: string }) {
   );
 }
 
-function PedidoDetalhe({ pedido, loading, onGoToEvent, onChangePrivacy, onToggleVisibility, onRefresh }: {
+function PedidoDetalhe({ pedido, loading, onGoToEvent, onChangePrivacy, onRefresh }: {
   pedido: Pedido;
   loading: boolean;
   onGoToEvent: () => void;
   onChangePrivacy: () => void;
-  onToggleVisibility: (id: string, showAlbum?: boolean, showVideo?: boolean) => void;
   onRefresh: () => void;
 }) {
   const navigate = useNavigate();
@@ -1185,35 +1171,10 @@ function PedidoDetalhe({ pedido, loading, onGoToEvent, onChangePrivacy, onToggle
           )}
         </div>
 
-        {pedido.hasPaid && (
-          <div className="space-y-3">
-            <div className="flex items-center gap-2">
-               <div className="w-1.5 h-1.5 rounded-full bg-brand-tactical" />
-               <p className="text-[9px] font-black text-theme-text uppercase tracking-[0.3em]">Visibilidade</p>
-            </div>
-            <div className="flex gap-3">
-              <div className="flex-1">
-                <VisibilityToggle 
-                  label="Galeria Fotos" 
-                  active={!!pedido.showAlbum} 
-                  onClick={() => onToggleVisibility(pedido.id, !pedido.showAlbum)} 
-                />
-              </div>
-              <div className="flex-1">
-                <VisibilityToggle 
-                  label="Vídeos" 
-                  active={!!pedido.showVideo} 
-                  onClick={() => onToggleVisibility(pedido.id, undefined, !pedido.showVideo)} 
-                />
-              </div>
-            </div>
-          </div>
-        )}
-
         <div className="space-y-4">
           <div className="flex items-center gap-2">
              <div className="w-1.5 h-1.5 rounded-full bg-brand-tactical" />
-             <p className="text-[9px] font-black text-theme-text uppercase tracking-[0.3em]">Arquivos</p>
+             <p className="text-[9px] font-black text-theme-text uppercase tracking-[0.3em]">Serviços Contratados</p>
           </div>
           
           {loading ? (
@@ -1277,22 +1238,6 @@ function PedidoDetalhe({ pedido, loading, onGoToEvent, onChangePrivacy, onToggle
   );
 }
 
-function VisibilityToggle({ label, active, onClick }: { label: string; active: boolean; onClick: () => void }) {
-  return (
-    <button 
-      onClick={onClick}
-      className={`group relative p-5 border transition-all flex items-center justify-between overflow-hidden ${
-        active 
-          ? 'border-brand-tactical/40 bg-brand-tactical/5 text-brand-tactical shadow-lg shadow-brand-tactical/5' 
-          : 'border-theme-border/40 bg-theme-bg-muted/30 text-theme-muted grayscale'
-      }`}
-    >
-      {active && <div className="absolute top-0 right-0 w-8 h-8 bg-brand-tactical/10 rotate-45 translate-x-4 -translate-y-4" />}
-      <span className="text-[10px] font-black uppercase tracking-widest italic">{label}</span>
-      {active ? <CheckCircle2 size={16} strokeWidth={3} /> : <X size={16} strokeWidth={3} className="opacity-40" />}
-    </button>
-  );
-}
 
 function MediaActionCard({ icon, title, subtitle, url, disabled, emptyText }: { 
   icon: React.ReactNode; 

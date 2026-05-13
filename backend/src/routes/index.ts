@@ -22,6 +22,7 @@ import {
   adminApproveQuote,
   adminPriceQuote,
   adminRejectQuote,
+  adminArchiveQuote,
   adminCreateQuote,
   AdminEventController,
   adminUploadCover,
@@ -364,6 +365,7 @@ router.post("/admin/quotes",              requireAuth, requireRole("ADMIN"), adm
 router.patch("/admin/quotes/:id/approve", requireAuth, requireRole("ADMIN"), adminApproveQuote);
 router.patch("/admin/quotes/:id/price",   requireAuth, requireRole("ADMIN"), adminPriceQuote);
 router.patch("/admin/quotes/:id/reject",  requireAuth, requireRole("ADMIN"), adminRejectQuote);
+router.patch("/admin/quotes/:id/archive", requireAuth, requireRole("ADMIN"), adminArchiveQuote);
 
 // ── Admin: Repasses ────────────────────────────────────────────────────────────
 router.post("/admin/payouts/generate",                requireAuth, requireRole("ADMIN"), generateWeeklyPayout);
