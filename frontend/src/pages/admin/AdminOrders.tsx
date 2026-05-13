@@ -317,11 +317,29 @@ export const AdminOrders: React.FC = () => {
                                    </div>
                                 </td>
                                 <td className="py-5 text-center">
-                                   <div className="flex flex-wrap justify-center gap-1.5 max-w-[200px] mx-auto">
-                                      {o.splitMatriz && <span className="px-2 py-0.5 bg-zinc-800 text-[8px] text-theme-text font-black rounded-sm border border-theme-border">MT: {formatCurrency(Number(o.splitMatriz))}</span>}
-                                      {o.splitCaptacao && <span className="px-2 py-0.5 bg-brand-tactical/10 text-[8px] text-brand-tactical font-black rounded-sm border border-brand-tactical/20">CP: {formatCurrency(Number(o.splitCaptacao))}</span>}
+                                   <div className="flex flex-wrap justify-center gap-1.5 max-w-[240px] mx-auto">
+                                      {o.splitMatriz && (
+                                        <span className="px-2 py-0.5 bg-slate-900 text-[8px] text-slate-300 font-black rounded-sm border border-slate-700" title="Matriz (Plataforma)">
+                                          MT: {formatCurrency(Number(o.splitMatriz))}
+                                        </span>
+                                      )}
+                                      {o.splitCaptacao && (
+                                        <span className="px-2 py-0.5 bg-emerald-500/10 text-[8px] text-emerald-500 font-black rounded-sm border border-emerald-500/20" title="Captação">
+                                          CP: {formatCurrency(Number(o.splitCaptacao))}
+                                        </span>
+                                      )}
+                                      {o.splitEdicao && (
+                                        <span className="px-2 py-0.5 bg-amber-500/10 text-[8px] text-amber-500 font-black rounded-sm border border-amber-500/20" title="Edição">
+                                          ED: {formatCurrency(Number(o.splitEdicao))}
+                                        </span>
+                                      )}
+                                      {o.splitCartorio && (
+                                        <span className="px-2 py-0.5 bg-indigo-500/10 text-[8px] text-indigo-400 font-black rounded-sm border border-indigo-500/20" title="Unidade Fixa">
+                                          UF: {formatCurrency(Number(o.splitCartorio))}
+                                        </span>
+                                      )}
                                       {o.splitFranchisee && o.splitFranchisee > 0 && (
-                                        <span className="px-2 py-0.5 bg-blue-500/10 text-[8px] text-blue-400 font-black rounded-sm border border-blue-500/20" title={`Franqueado: ${o.passiveFranchisee}`}>
+                                        <span className="px-2 py-0.5 bg-cyan-500/10 text-[8px] text-cyan-400 font-black rounded-sm border border-cyan-500/20" title={`Franqueado: ${o.passiveFranchisee || 'N/A'}`}>
                                           FR: {formatCurrency(Number(o.splitFranchisee))}
                                         </span>
                                       )}
