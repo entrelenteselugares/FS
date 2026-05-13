@@ -38,3 +38,5 @@
 - [x] **Phase 19: Quotes Kanban Redesign**: Refactoring the AdminQuotes page into a horizontal Kanban pipeline with slide-in drawers. (DONE)
 - [x] **Phase 20: Hybrid Storage Pipeline & Proxy Strategy**: Integration of Google Drive Cold Storage for Private Vaults with cross-origin proxy relay. (STABLE)
 - [x] **Phase 21: In-App Notification System**: Implementation of a real-time in-app notification center for clients and admins, covering quote status updates, payment confirmations, and event milestones. Includes Prisma schema migration, REST polling endpoints, and a notification bell component in both dashboards. (DONE)
+- [ ] **Phase 22: Express Sale Access Refinement**: Resolve blank screen issues for quick-sale customers, implement Magic Link access via guest tokens, and optimize the Express Sale POS UI for mobile field operation.
+

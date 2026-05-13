@@ -190,8 +190,8 @@ export const AdminFinance: React.FC = () => {
                           </div>
                           <div className="grid grid-cols-4 gap-6 pt-5 border-t border-theme-border/10">
                              <div className="space-y-1.5"><span className="text-[10px] font-black text-theme-muted uppercase tracking-widest opacity-60">Matriz</span><p className="text-base font-black text-theme-text italic">{formatCurrency(Number(order.splitMatriz) || 0)}</p></div>
-                             {order.event.partners.captacao && <div className="space-y-1.5"><span className="text-[10px] font-black text-brand-tactical uppercase tracking-widest opacity-60">Captação</span><p className="text-base font-black text-theme-text italic">{formatCurrency(Number(order.splitCaptacao) || 0)}</p></div>}
-                             {order.event.partners.edicao && <div className="space-y-1.5"><span className="text-[10px] font-black text-brand-tactical uppercase tracking-widest opacity-60">Edição</span><p className="text-base font-black text-theme-text italic">{formatCurrency(Number(order.splitEdicao) || 0)}</p></div>}
+                             {order.event.partners.captacao && <div className="space-y-1.5"><span className="text-[10px] font-black text-brand-tactical uppercase tracking-widest opacity-60">Captação</span><p className="text-base font-black text-brand-tactical italic">{formatCurrency(Number(order.splitCaptacao) || 0)}</p></div>}
+                             {order.event.partners.edicao && <div className="space-y-1.5"><span className="text-[10px] font-black text-brand-tactical uppercase tracking-widest opacity-60">Edição</span><p className="text-base font-black text-brand-tactical italic">{formatCurrency(Number(order.splitEdicao) || 0)}</p></div>}
                              {order.event.partners.cartorio && <div className="space-y-1.5"><span className="text-[10px] font-black text-theme-muted uppercase tracking-widest opacity-60">Unidade</span><p className="text-base font-black text-theme-text italic">{formatCurrency(Number(order.splitCartorio) || 0)}</p></div>}
                           </div>
                        </div>

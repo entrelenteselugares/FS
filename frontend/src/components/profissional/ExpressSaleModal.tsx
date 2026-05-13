@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
 import { createPortal } from "react-dom";
-import { X, ShoppingBag } from "lucide-react";
+import { X, ShoppingBag, Plus, Search } from "lucide-react";
 import { API } from "../../lib/api";
 import type { Partner, ExpressFormData, ProfessionalService } from "./types";
 
@@ -30,7 +30,8 @@ const INITIAL_FORM: ExpressFormData = {
 };
 
 export function ExpressSaleModal({ network, onClose, onSuccess, onError }: ExpressSaleModalProps) {
-  const [step, setStep] = useState<1 | 2 | 3 | 4>(1);
+  const [step, setStep] = useState<1 | 2 | 3 | 4 | 5>(1);
+  const [successData, setSuccessData] = useState<{ msg: string; magicLink?: string } | null>(null);
   const [form, setForm] = useState<ExpressFormData>(INITIAL_FORM);
   const [loading, setLoading] = useState(false);
   const [cartItems, setCartItems] = useState<CartItem[]>([]);
@@ -38,6 +39,7 @@ export function ExpressSaleModal({ network, onClose, onSuccess, onError }: Expre
   const [showCustomForm, setShowCustomForm] = useState(false);
   const [customProductName, setCustomProductName] = useState("");
   const [customPrice, setCustomPrice] = useState(30);
+  const [serviceSearch, setServiceSearch] = useState("");
 
   useEffect(() => {
     API.get("profissional/me").then(r => {
@@ -68,16 +70,11 @@ export function ExpressSaleModal({ network, onClose, onSuccess, onError }: Expre
       };
       const { data } = await API.post("marketplace/express-sale", payload);
 
-      if (data.isDigital && data.orderId) {
-        onSuccess("Venda registrada! Abrindo portal de pagamento...");
-        setTimeout(() => {
-          window.location.href = `/checkout/${data.orderId}`;
-          onClose();
-        }, 1500);
-        return;
-      }
-      onSuccess("Venda e Operação Live Print registradas com sucesso!");
-      onClose();
+      setSuccessData({ 
+        msg: data.isDigital ? "Venda registrada! Aguardando pagamento." : "Venda e Operação Live Print registradas!", 
+        magicLink: data.magicLink 
+      });
+      setStep(5);
     } catch (err: unknown) {
       const msg = err instanceof Error ? err.message : "Erro na venda expressa.";
       onError(msg);
@@ -86,7 +83,7 @@ export function ExpressSaleModal({ network, onClose, onSuccess, onError }: Expre
     }
   };
 
-  const stepLabel = { 1: "Identificação", 2: "Configuração", 3: "Logística", 4: "Finalização" };
+  const stepLabel = { 1: "Identificação", 2: "Configuração", 3: "Logística", 4: "Finalização", 5: "Sucesso" };
 
   return createPortal(
     <div className="fixed inset-0 z-[7000] flex items-center justify-center p-4">
@@ -206,45 +203,107 @@ export function ExpressSaleModal({ network, onClose, onSuccess, onError }: Expre
                         );
                       })}
                     
-                    {/* Botão Outros */}
+                    
+                    {/* Botão + Adicionar (Compacto) */}
                     <button
                       onClick={() => setShowCustomForm(!showCustomForm)}
-                      className="p-3 text-center border border-dashed border-theme-border/60 hover:border-brand-tactical transition-all"
+                      className={`flex flex-col items-center justify-center border-2 border-dashed transition-all rounded-xl h-full min-h-[70px] ${showCustomForm ? 'border-brand-tactical bg-brand-tactical/10' : 'border-theme-border/40 hover:border-brand-tactical/60 hover:bg-white/5'}`}
                     >
-                      <div className="text-[10px] font-black text-theme-muted uppercase mb-1">✨ OUTROS</div>
-                      <div className="text-[11px] font-black text-theme-muted italic">PERSONALIZADO</div>
+                      <Plus className={showCustomForm ? 'text-brand-tactical' : 'text-theme-muted'} size={24} />
+                      <span className={`text-[8px] font-black uppercase tracking-widest mt-1 ${showCustomForm ? 'text-brand-tactical' : 'text-theme-muted'}`}>
+                        {showCustomForm ? 'Fechar' : 'Novo Item'}
+                      </span>
                     </button>
                   </div>
 
                   {showCustomForm && (
-                    <div className="p-4 bg-brand-tactical/5 border border-brand-tactical/20 space-y-3 animate-in slide-in-from-top-2">
-                      <div className="grid grid-cols-2 gap-2">
+                    <div className="p-6 bg-theme-bg-muted border border-brand-tactical/30 space-y-5 animate-in slide-in-from-top-2 rounded-2xl shadow-xl">
+                      <div className="relative">
+                        <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-theme-muted" size={14} />
                         <input 
                           autoFocus
-                          placeholder="NOME DO ITEM"
-                          value={customProductName}
-                          onChange={(e) => setCustomProductName(e.target.value.toUpperCase())}
-                          className="bg-theme-bg border border-theme-border p-2 text-[10px] font-black text-theme-text outline-none"
-                        />
-                        <input 
-                          type="number"
-                          placeholder="PREÇO (R$)"
-                          value={customPrice}
-                          onChange={(e) => setCustomPrice(Number(e.target.value))}
-                          className="bg-theme-bg border border-theme-border p-2 text-[10px] font-black text-brand-tactical outline-none"
+                          placeholder="BUSCAR SERVIÇO OU CRIAR NOVO..."
+                          value={serviceSearch}
+                          onChange={(e) => {
+                            setServiceSearch(e.target.value.toUpperCase());
+                            setCustomProductName(e.target.value.toUpperCase());
+                          }}
+                          className="w-full bg-theme-bg border border-theme-border p-3 pl-10 text-[11px] font-black text-theme-text outline-none focus:border-brand-tactical rounded-xl uppercase transition-all"
                         />
                       </div>
-                      <button 
-                        onClick={() => {
-                          if (!customProductName) return;
-                          addToCart(customProductName, customPrice);
-                          setCustomProductName("");
-                          setShowCustomForm(false);
-                        }}
-                        className="w-full py-2 bg-brand-tactical text-zinc-950 text-[9px] font-black uppercase tracking-widest"
-                      >
-                        ADICIONAR AO CUPOM
-                      </button>
+
+                      {/* Lista de Sugestões / Serviços Disponíveis */}
+                      <div className="max-h-[150px] overflow-y-auto space-y-1 pr-1 custom-scrollbar">
+                        {(serviceSearch 
+                          ? professionalServices.filter(s => {
+                              const name = s.name || s.catalogService?.name || s.catalog?.name || "";
+                              return name.toUpperCase().includes(serviceSearch);
+                            })
+                          : professionalServices
+                        ).map(s => {
+                          const name = s.name || s.catalogService?.name || s.catalog?.name || "Serviço";
+                          const price = s.price || s.catalogService?.basePrice || s.catalog?.basePrice || 0;
+                          return (
+                            <button
+                              key={s.id}
+                              onClick={() => {
+                                addToCart(name, price);
+                                setServiceSearch("");
+                                setCustomProductName("");
+                                setShowCustomForm(false);
+                              }}
+                              className="w-full p-3 text-left border border-theme-border/40 bg-theme-bg hover:border-brand-tactical/50 hover:bg-brand-tactical/5 transition-all flex justify-between items-center group rounded-lg"
+                            >
+                              <span className="text-[10px] font-black text-theme-text uppercase tracking-tight group-hover:text-brand-tactical">{name}</span>
+                              <span className="text-[10px] font-black text-brand-tactical italic">R$ {price}</span>
+                            </button>
+                          );
+                        })}
+                        {professionalServices.length === 0 && !serviceSearch && (
+                          <p className="text-[9px] text-center text-theme-muted uppercase tracking-widest py-4">Nenhum serviço pré-cadastrado.</p>
+                        )}
+                      </div>
+
+                      <div className="pt-2 border-t border-theme-border/20 space-y-4">
+                        <div className="flex items-center justify-between">
+                          <span className="text-[9px] font-black text-theme-muted uppercase tracking-widest italic opacity-60">Item Personalizado</span>
+                          <span className="h-px flex-1 bg-theme-border/10 mx-4" />
+                        </div>
+                        
+                        <div className="grid grid-cols-2 gap-4">
+                          <div className="space-y-1.5">
+                            <label className="text-[8px] font-black text-theme-muted uppercase tracking-widest block opacity-40">Nome do Produto</label>
+                            <input 
+                              placeholder="EX: QUADRO LUXO"
+                              value={customProductName}
+                              onChange={(e) => setCustomProductName(e.target.value.toUpperCase())}
+                              className="w-full bg-theme-bg border border-theme-border p-3 text-[10px] font-black text-theme-text outline-none focus:border-brand-tactical rounded-lg uppercase"
+                            />
+                          </div>
+                          <div className="space-y-1.5">
+                            <label className="text-[8px] font-black text-theme-muted uppercase tracking-widest block opacity-40">Valor (R$)</label>
+                            <input 
+                              type="number"
+                              placeholder="0,00"
+                              value={customPrice}
+                              onChange={(e) => setCustomPrice(Number(e.target.value))}
+                              className="w-full bg-theme-bg border border-theme-border p-3 text-[10px] font-black text-brand-tactical outline-none focus:border-brand-tactical rounded-lg"
+                            />
+                          </div>
+                        </div>
+                        <button 
+                          onClick={() => {
+                            if (!customProductName) return;
+                            addToCart(customProductName, customPrice);
+                            setCustomProductName("");
+                            setServiceSearch("");
+                            setShowCustomForm(false);
+                          }}
+                          className="w-full py-4 bg-brand-tactical text-zinc-950 text-[10px] font-black uppercase tracking-[0.3em] shadow-lg hover:brightness-110 active:scale-[0.98] transition-all italic rounded-xl"
+                        >
+                          ADICIONAR AO CUPOM
+                        </button>
+                      </div>
                     </div>
                   )}
                 </div>
@@ -364,6 +423,46 @@ export function ExpressSaleModal({ network, onClose, onSuccess, onError }: Expre
                   </div>
                 </div>
               </div>
+            </div>
+          {/* PHASE 5: Success & Share */}
+          {step === 5 && successData && (
+            <div className="space-y-8 animate-in zoom-in-95 duration-500 text-center py-10">
+              <div className="w-20 h-20 bg-emerald-500/10 rounded-full flex items-center justify-center mx-auto border border-emerald-500/20">
+                <ShoppingBag className="text-emerald-500" size={32} />
+              </div>
+              <div className="space-y-2">
+                <h3 className="text-2xl font-black uppercase italic tracking-tighter text-theme-text">{successData.msg}</h3>
+                <p className="text-[10px] font-black text-theme-muted uppercase tracking-widest opacity-60">O cliente recebeu as instruções por e-mail.</p>
+              </div>
+
+              {successData.magicLink && (
+                <div className="p-6 bg-theme-bg-muted border border-theme-border/60 rounded-[20px] space-y-4">
+                  <label className="text-[9px] font-black text-brand-tactical uppercase tracking-widest italic block">Link de Acesso Rápido</label>
+                  <div className="flex gap-2">
+                    <input 
+                      readOnly
+                      value={successData.magicLink}
+                      className="flex-1 bg-theme-bg border border-theme-border p-3 text-[10px] font-mono text-theme-text/60 truncate rounded-xl outline-none"
+                    />
+                    <button 
+                      onClick={() => {
+                        navigator.clipboard.writeText(successData.magicLink || "");
+                        onSuccess("Link copiado para a área de transferência!");
+                      }}
+                      className="px-6 bg-brand-tactical text-zinc-950 text-[10px] font-black uppercase tracking-widest rounded-xl hover:brightness-110 active:scale-95 transition-all"
+                    >
+                      Copiar
+                    </button>
+                  </div>
+                </div>
+              )}
+
+              <button 
+                onClick={onClose}
+                className="w-full py-5 bg-white/5 border border-white/10 text-theme-text text-[11px] font-black uppercase tracking-[0.3em] hover:bg-white/10 transition-all italic rounded-xl"
+              >
+                FECHAR UNIDADE DE VENDA
+              </button>
             </div>
           )}
         </div>

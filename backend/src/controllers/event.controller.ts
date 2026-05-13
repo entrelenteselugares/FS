@@ -140,26 +140,20 @@ export class EventController {
       // Removido o bloqueio agressivo de 404 que impedia o primeiro acesso para compra.
       // A segurança agora é tratada pela lógica de paywall e hasAccess abaixo.
       // 3.1 Acesso granular tratado na lógica de unlockedMediaIds abaixo.
+      // 3.1 Guard específico para PHOTO_MARKETPLACE
+      const isRestrictedPrivate = event.isPrivate && !hasAccess && !(authUser && event.clientEmail && authUser.email === event.clientEmail);
+
       // 3.2 Lógica de Expiração de Galeria (Downloads) 🛡️⌛
-      // Álbuns privados: 7 dias | Públicos: 15 dias | Customizado via DB
       const retentionDays = event.retentionDays || (event.isPrivate ? 7 : 15);
       const expirationDate = new Date(new Date(event.dataEvento).getTime() + retentionDays * 24 * 60 * 60 * 1000);
       const isExpired = !isOwner && new Date() > expirationDate;
-
-      if (event.isPrivate && !hasAccess && !(authUser && event.clientEmail && authUser.email === event.clientEmail)) {
-        return res.status(403).json({ 
-          error: "Este álbum é privado e não está vinculado à sua conta.",
-          isPrivate: true 
-        });
-      }
-
 
       // 4. Links sensíveis e Previews
       let previewPhotos: string[] = [];
       const rawPreviews = event.previewPhotos;
       const jsonPreviews: string[] = rawPreviews ? (typeof rawPreviews === "string" ? JSON.parse(rawPreviews) : rawPreviews) : [];
       
-      // 4. Previews (Híbrido: Previews Manuais + Phygital)
+      // Previews são visíveis mesmo se restrito (vitrine)
       const prints = await prisma.phygitalPrint.findMany({
         where: { eventId: event.id },
         orderBy: { createdAt: 'desc' },
@@ -167,13 +161,12 @@ export class EventController {
         select: { imageUrl: true }
       });
       const printUrls = prints.map(p => p.imageUrl);
-      // Deduplica e unifica fontes: prints + previews manuais
       previewPhotos = Array.from(new Set([...printUrls, ...jsonPreviews]));
 
       // 4. Se for Marketplace, buscamos quais mídias específicas foram compradas
       let unlockedMediaIds: string[] = [];
 
-      if (event.type === 'PHOTO_MARKETPLACE' && (currentUserId || guestToken || orderId)) {
+      if (!isRestrictedPrivate && event.type === 'PHOTO_MARKETPLACE' && (currentUserId || guestToken || orderId)) {
         const paidOrders = await prisma.order.findMany({
           where: { 
             eventId: event.id, 
@@ -204,7 +197,7 @@ export class EventController {
         });
       }
 
-      return res.json({
+      const responseData = {
         id: event.id,
         nomeNoivos: event.nomeNoivos,
         dataEvento: event.dataEvento,
@@ -222,7 +215,6 @@ export class EventController {
         pendingOrderId: (order && order.status === "PENDENTE") ? order.id : null,
         isOwner: isOwner,
         hasAccess: hasAccess,
-        // Links sensíveis só aparecem se aprovado e visível
         lightroomUrl: (hasAccess && !isExpired && (!order || order.showAlbum)) ? event.lightroomUrl : null,
         driveUrl: (hasAccess && !isExpired && (!order || order.showVideo)) ? event.driveUrl : null,
         paywall: {
@@ -251,7 +243,27 @@ export class EventController {
         isExpired,
         retentionDays,
         expirationDate
-      });
+      };
+
+      // Se o acesso for restrito, limpamos campos sensíveis para evitar vazamento
+      if (isRestrictedPrivate) {
+        return res.json({
+          id: responseData.id,
+          nomeNoivos: responseData.nomeNoivos,
+          dataEvento: responseData.dataEvento,
+          location: responseData.location,
+          type: responseData.type,
+          slug: responseData.slug,
+          coverPhotoUrl: responseData.coverPhotoUrl,
+          isPrivate: true,
+          hasAccess: false,
+          isLocked: true,
+          previewPhotos: responseData.previewPhotos,
+          message: "Este álbum é privado. Faça login ou use um link de acesso para visualizar todas as fotos."
+        });
+      }
+
+      return res.json(responseData);
     } catch (error) {
       console.error("Erro ao buscar evento:", error);
       return res.status(500).json({ error: "Erro interno do servidor" });

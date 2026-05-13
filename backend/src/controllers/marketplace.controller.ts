@@ -135,6 +135,8 @@ export class MarketplaceController {
         productType: finalProduct
       });
 
+      const guestToken = "GT-" + Math.random().toString(36).slice(-12).toUpperCase();
+
       const order = await prisma.order.create({
         data: {
           eventId: event.id,
@@ -153,6 +155,8 @@ export class MarketplaceController {
           splitCaptacao: captacao,
           splitEdicao: edicao,
           splitCartorio: cartorio,
+          guestToken: guestToken,
+          isGuestOrder: true,
           items: {
             create: orderItems
           }
@@ -189,14 +193,15 @@ export class MarketplaceController {
         hasCheckout: !!checkoutUrl
       });
 
-      // ENVIO DE E-MAIL (Apenas se for novo usuário)
-      if (user && tempPassword) {
-        NotificationService.sendWelcomeEmail({
-          to: finalEmail,
-          name: finalName,
-          tempPassword: tempPassword
-        }).catch(e => console.error("[ExpressSale Email Error]:", e));
-      }
+      // ENVIO DE E-MAIL (Sempre enviamos para garantir o link de acesso)
+      const magicLink = `${process.env.FRONTEND_URL}/e/${event.slug || event.id}?token=${guestToken}`;
+      
+      NotificationService.sendWelcomeEmail({
+        to: finalEmail,
+        name: finalName,
+        tempPassword: tempPassword || undefined,
+        magicLink: magicLink
+      }).catch(e => console.error("[ExpressSale Email Error]:", e));
 
       return res.json({ 
         success: true, 

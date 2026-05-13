@@ -132,6 +132,7 @@ export class NotificationService {
     to: string;
     name: string;
     tempPassword?: string;
+    magicLink?: string;
   }) {
     if (!process.env.SMTP_USER || !process.env.SMTP_PASS) {
        console.error("[Notification] ERRO: SMTP_USER ou SMTP_PASS não configurados para Boas-vindas.");
@@ -162,8 +163,12 @@ export class NotificationService {
         </div>
         `}
         
-        <div style="text-align: center; margin: 40px 0;">
-          <a href="${APP_URL}/login" style="background: #111; color: #fff; padding: 18px 35px; text-decoration: none; border-radius: 2px; font-size: 12px; font-weight: 900; text-transform: uppercase; letter-spacing: 3px; display: inline-block;">Acessar Portal do Cliente</a>
+        <div style="text-align: center; margin: 40px 0; display: flex; flex-direction: column; gap: 15px; align-items: center;">
+          ${data.magicLink ? `
+            <a href="${data.magicLink}" style="background: #85B9AC; color: #fff; padding: 18px 35px; text-decoration: none; border-radius: 2px; font-size: 13px; font-weight: 900; text-transform: uppercase; letter-spacing: 3px; display: inline-block; width: 280px; box-shadow: 0 10px 20px rgba(133,185,172,0.2);">Acessar Galeria Agora</a>
+          ` : ""}
+          <a href="${APP_URL}/login" style="background: #111; color: #fff; padding: 18px 35px; text-decoration: none; border-radius: 2px; font-size: 12px; font-weight: 900; text-transform: uppercase; letter-spacing: 3px; display: inline-block; width: 280px;">Acessar Portal do Cliente</a>
+        </div>
         </div>
 
         <div style="font-size: 11px; color: #999; line-height: 1.6; text-align: center; margin-top: 50px;">

@@ -250,14 +250,15 @@ export default function EventPage() {
         })() : false;
         
         const intent = searchParams.get("intent");
+        const hasAccess = eventData.hasAccess || eventData.isOwner || (eventData.isPrimaryClient);
 
         if (intent === "upgrade") {
           setStep("paywall");
         } else if (isFuture) {
           setStep("countdown");
-        } else if (eventData.isPrivate && !eventData.isPrimaryClient && !eventData.isOwner) {
+        } else if (eventData.isPrivate && !hasAccess) {
           setStep("denied");
-        } else if ((eventData.paywall && !eventData.paywall.active) || eventData.isOwner || eventData.type === 'PHOTO_MARKETPLACE' || eventData.type === 'FOTO_POINT' || eventData.type === 'FLASH_EVENT') {
+        } else if ((eventData.paywall && !eventData.paywall.active) || hasAccess || eventData.type === 'PHOTO_MARKETPLACE' || eventData.type === 'FOTO_POINT' || eventData.type === 'FLASH_EVENT') {
           setStep("success"); 
         } else {
           setStep("paywall");
