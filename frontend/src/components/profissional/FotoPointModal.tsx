@@ -21,7 +21,7 @@ export function FotoPointModal({ onClose, onSuccess, onError, network }: FotoPoi
   const [itinerary, setItinerary] = useState("");
   const [references, setReferences] = useState("");
   const [loading, setLoading] = useState(false);
-  const [isPrivate, setIsPrivate] = useState(false);
+  const [isPrivate, setIsPrivate] = useState(true);
   const [date, setDate] = useState(new Date().toISOString().split('T')[0]);
   const [startTime, setStartTime] = useState("09:00");
   const [endTime, setEndTime] = useState("18:00");

@@ -16,7 +16,7 @@ export function FlashEventModal({ onClose, onSuccess, onError, network }: FlashE
   const [name, setName] = useState("");
   const [price, setPrice] = useState("1");
   const [loading, setLoading] = useState(false);
-  const [isPrivate, setIsPrivate] = useState(false);
+  const [isPrivate, setIsPrivate] = useState(true);
   const [date, setDate] = useState(new Date().toISOString().split('T')[0]);
   const [startTime, setStartTime] = useState("19:00");
   const [endTime, setEndTime] = useState("23:00");

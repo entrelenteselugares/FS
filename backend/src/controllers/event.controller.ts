@@ -570,7 +570,8 @@ export class EventController {
           clientName: name,
           captacaoId: captacaoId,
           captacaoStatus: "PENDING",
-          retentionDays: 15
+          retentionDays: 15,
+          isPrivate: true
         }
       });
 
@@ -710,8 +711,8 @@ export class EventController {
           temFotoImpressa: true,
           quoteStatus: "APPROVED",
           isQuote: false,
-          isPrivate: !!isPrivate,
-          retentionDays: isPrivate ? 7 : 15
+          isPrivate: isPrivate ?? true,
+          retentionDays: (isPrivate ?? true) ? 7 : 15
         }
       });
 
@@ -769,13 +770,13 @@ export class EventController {
           location,
           itinerary,
           references: references || [],
-          isPrivate: !!isPrivate,
+          isPrivate: isPrivate ?? true,
           isUnitSale: true,
           temFoto: true,
           quoteStatus: "APPROVED",
           isQuote: false,
           coverPhotoUrl: normalizeCoverUrl(coverPhotoUrl),
-          retentionDays: isPrivate ? 7 : 15
+          retentionDays: (isPrivate ?? true) ? 7 : 15
         }
       });
 
