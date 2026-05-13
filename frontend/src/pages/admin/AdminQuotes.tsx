@@ -413,15 +413,76 @@ export const AdminQuotes: React.FC = () => {
                   </div>
                 )}
                 {activeTab==="locacao"&&(
-                  <div className="space-y-3 animate-in fade-in duration-300">
-                    <h4 className="text-[9px] font-black text-theme-text uppercase tracking-widest border-l-2 border-brand-tactical pl-2">Locação de Equipamentos</h4>
+                  <div className="space-y-4 animate-in fade-in duration-300">
+                    <div className="flex items-center justify-between border-l-2 border-brand-tactical pl-2">
+                      <h4 className="text-[9px] font-black text-theme-text uppercase tracking-widest">Locação de Equipamentos</h4>
+                      <span className="text-[9px] font-black text-brand-tactical uppercase tracking-widest bg-brand-tactical/10 px-2 py-0.5 rounded">
+                        Total: R$ {equipTotal.toLocaleString()}
+                      </span>
+                    </div>
+
                     <div className="grid grid-cols-1 gap-2">
-                      {MERLIN_EQUIPMENT.map(item=>(
-                        <div key={item.id} className="flex items-center justify-between p-3 bg-theme-bg border border-theme-border hover:border-brand-tactical rounded-lg transition-all">
-                          <div><p className="text-[9px] font-black uppercase text-theme-text">{item.name}</p><p className="text-[8px] text-theme-text-muted">{item.category} | R$ {item.price}</p></div>
-                          <button onClick={()=>addEquip(item.id)} className="p-1.5 text-brand-tactical hover:bg-brand-tactical hover:text-black rounded-lg transition-all"><Plus size={14}/></button>
-                        </div>
-                      ))}
+                      {MERLIN_EQUIPMENT.map(item=>{
+                        const selection = selectedEquip.find(e => e.id === item.id);
+                        const isSelected = !!selection;
+                        
+                        return (
+                          <div 
+                            key={item.id} 
+                            className={`flex items-center justify-between p-3 border rounded-lg transition-all ${
+                              isSelected 
+                                ? "bg-brand-tactical/10 border-brand-tactical shadow-[0_0_15px_rgba(133,185,172,0.1)]" 
+                                : "bg-theme-bg border-theme-border hover:border-theme-border-2"
+                            }`}
+                          >
+                            <div className="flex-1 min-w-0">
+                              <p className={`text-[10px] font-black uppercase ${isSelected ? "text-brand-tactical" : "text-theme-text"}`}>
+                                {item.name}
+                              </p>
+                              <p className="text-[8px] text-theme-text-muted font-bold">
+                                {item.category} • R$ {item.price.toLocaleString()} / UN
+                              </p>
+                            </div>
+
+                            <div className="flex items-center gap-2">
+                              {isSelected && (
+                                <div className="flex items-center bg-black/20 rounded-lg p-0.5 border border-brand-tactical/20">
+                                  <button 
+                                    onClick={() => {
+                                      if (selection.qty > 1) {
+                                        setSelectedEquip(selectedEquip.map(e => e.id === item.id ? { ...e, qty: e.qty - 1 } : e));
+                                      } else {
+                                        setSelectedEquip(selectedEquip.filter(e => e.id !== item.id));
+                                      }
+                                    }}
+                                    className="w-6 h-6 flex items-center justify-center text-brand-tactical hover:bg-brand-tactical hover:text-black rounded transition-all"
+                                  >
+                                    <X size={10} />
+                                  </button>
+                                  <span className="w-8 text-center text-[10px] font-black text-brand-tactical italic">
+                                    {selection.qty}
+                                  </span>
+                                  <button 
+                                    onClick={() => addEquip(item.id)}
+                                    className="w-6 h-6 flex items-center justify-center text-brand-tactical hover:bg-brand-tactical hover:text-black rounded transition-all"
+                                  >
+                                    <Plus size={10} />
+                                  </button>
+                                </div>
+                              )}
+                              
+                              {!isSelected && (
+                                <button 
+                                  onClick={() => addEquip(item.id)} 
+                                  className="p-2 border border-theme-border text-theme-text-muted hover:border-brand-tactical hover:text-brand-tactical rounded-lg transition-all"
+                                >
+                                  <Plus size={14} />
+                                </button>
+                              )}
+                            </div>
+                          </div>
+                        );
+                      })}
                     </div>
                   </div>
                 )}
@@ -445,7 +506,7 @@ export const AdminQuotes: React.FC = () => {
                     </div>
                     <div className="space-y-3">
                       <label className="text-[9px] font-black text-theme-muted uppercase tracking-[0.4em] text-center block italic">Valor Final da Proposta</label>
-                      <input type="number" value={finalPrice} onChange={e=>setFinalPrice(Number(e.target.value))} className="w-full bg-black border border-brand-tactical/30 p-5 text-4xl font-display font-black text-theme-text outline-none text-center italic shadow-[0_0_30px_rgba(133,185,172,0.1)] focus:border-brand-tactical transition-all rounded-lg"/>
+                      <input type="number" value={finalPrice} onChange={e=>setFinalPrice(Number(e.target.value))} className="w-full bg-theme-bg-muted border border-brand-tactical/30 p-5 text-4xl font-display font-black text-theme-text outline-none text-center italic shadow-[0_0_30px_rgba(133,185,172,0.1)] focus:border-brand-tactical transition-all rounded-lg"/>
                       <button onClick={handleSaveDraft} className="w-full border border-theme-border text-theme-muted p-2.5 text-[8px] font-black uppercase tracking-[0.2em] hover:border-brand-tactical hover:text-brand-tactical transition-all rounded-lg italic flex items-center justify-center gap-2">
                         Salvar Rascunho (Em Análise)
                       </button>
