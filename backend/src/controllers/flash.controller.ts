@@ -114,14 +114,67 @@ export class FlashController {
     try {
       await prisma.flashCard.update({
         where: { shortId },
-        data: { 
-          mediaId,
-          status: "USED"
-        }
+        data: { mediaId, status: "USED" }
       });
       return res.json({ message: "Mídia vinculada ao cartão." });
     } catch (error) {
       return res.status(500).json({ error: "Erro ao vincular mídia." });
+    }
+  }
+
+  /**
+   * (Phase 25) Monitoramento ao vivo de um Flash Event.
+   * GET /api/flash/:eventId/stats
+   */
+  static async getEventStats(req: AuthRequest, res: Response) {
+    const { eventId } = req.params;
+    try {
+      const [event, cards, prints] = await Promise.all([
+        prisma.event.findUnique({
+          where: { id: eventId },
+          select: { id: true, nomeNoivos: true, slug: true, type: true, dataEvento: true }
+        }),
+        prisma.flashCard.groupBy({
+          by: ["status"],
+          where: { eventId },
+          _count: { status: true }
+        }),
+        prisma.phygitalPrint.groupBy({
+          by: ["status"],
+          where: { eventId },
+          _count: { status: true }
+        })
+      ]);
+
+      if (!event) return res.status(404).json({ error: "Evento não encontrado." });
+
+      const cardMap = Object.fromEntries(cards.map(c => [c.status, c._count.status]));
+      const printMap = Object.fromEntries(prints.map(p => [p.status, p._count.status]));
+      const totalCards = Object.values(cardMap).reduce((a, b) => a + b, 0);
+      const usedCards  = cardMap["USED"] ?? 0;
+
+      return res.json({
+        event,
+        cards: {
+          total:   totalCards,
+          unused:  cardMap["UNUSED"]  ?? 0,
+          used:    usedCards,
+          claimed: cardMap["CLAIMED"] ?? 0,
+          conversionRate: totalCards > 0
+            ? ((usedCards / totalCards) * 100).toFixed(1) + "%"
+            : "0.0%"
+        },
+        prints: {
+          pending:  printMap["PENDING"]   ?? 0,
+          printing: printMap["PRINTING"]  ?? 0,
+          done:     printMap["DONE"]      ?? 0,
+          error:    printMap["ERROR"]     ?? 0,
+        },
+        checkedAt: new Date().toISOString()
+      });
+    } catch (error) {
+      console.error("[FLASH] Erro ao buscar stats do evento:", error);
+      return res.status(500).json({ error: "Erro interno." });
     }
   }
 }

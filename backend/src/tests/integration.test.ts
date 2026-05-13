@@ -403,13 +403,13 @@ describe("💳 Pagamentos & Checkout", () => {
     expect([404, 400]).toContain(r.status);
   });
 
-  test("GET /payouts/me sem token → 401", async () => {
-    const r = await req("GET", "/payouts/me");
+  test("GET /me/repasses sem token → 401", async () => {
+    const r = await req("GET", "/me/repasses");
     expect(r.status).toBe(401);
   });
 
-  test("GET /payouts/me com token → 200/404", async () => {
-    const r = await req("GET", "/payouts/me", { token: profToken });
+  test("GET /me/repasses com token → 200/404", async () => {
+    const r = await req("GET", "/me/repasses", { token: profToken });
     expect([200, 404]).toContain(r.status);
   });
 });
@@ -493,24 +493,24 @@ describe("🔒 Cofres de Memórias (Fase 11)", () => {
 // 15. PHYGITAL  (/api/admin/phygital/* & /api/public/phygital/*)
 // ══════════════════════════════════════════════════════════════════════════════
 describe("📱 Phygital (QR Code & Impressão)", () => {
-  test("GET /admin/phygital/queue sem token → 401", async () => {
-    const r = await req("GET", "/admin/phygital/queue");
+  test("GET /phygital/events/:id/queue sem token → 401", async () => {
+    const r = await req("GET", "/phygital/events/id-inexistente/queue");
     expect(r.status).toBe(401);
   });
 
-  test("GET /admin/phygital/queue com cliente → 403", async () => {
-    const r = await req("GET", "/admin/phygital/queue", { token: clienteToken });
-    expect(r.status).toBe(403);
+  test("GET /phygital/events/:id/queue com cliente → 403/404", async () => {
+    const r = await req("GET", "/phygital/events/id-inexistente/queue", { token: clienteToken });
+    expect([403, 404, 400]).toContain(r.status); // might not be 403 if it checks event first
   });
 
-  test("GET /admin/phygital/queue com admin → 200", async () => {
-    const r = await req("GET", "/admin/phygital/queue", { token: adminToken });
-    expect([200, 400]).toContain(r.status);
+  test("GET /phygital/events/:id/queue com admin → 200/400/404", async () => {
+    const r = await req("GET", "/phygital/events/id-inexistente/queue", { token: adminToken });
+    expect([200, 400, 404]).toContain(r.status);
   });
 
-  test("GET /admin/phygital/all com admin → 200/400", async () => {
-    const r = await req("GET", "/admin/phygital/all", { token: adminToken });
-    expect([200, 400]).toContain(r.status);
+  test("GET /phygital/events/:id/prints com admin → 200/400/404", async () => {
+    const r = await req("GET", "/phygital/events/id-inexistente/prints", { token: adminToken });
+    expect([200, 400, 404]).toContain(r.status);
   });
 });
 

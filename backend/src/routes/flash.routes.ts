@@ -8,7 +8,8 @@ const router = Router();
 router.post("/unlock", FlashController.unlock);
 
 // Protegidos (Profissional/Admin)
-router.post("/generate", requireAuth, FlashController.generateCards);
-router.post("/link", requireAuth, FlashController.linkMedia);
+router.post("/generate",            requireAuth, FlashController.generateCards);
+router.post("/link",                requireAuth, FlashController.linkMedia);
+router.get("/:eventId/stats",       requireAuth, FlashController.getEventStats); // Phase 25
 
 export default router;
