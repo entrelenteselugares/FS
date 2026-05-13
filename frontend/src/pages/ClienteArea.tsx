@@ -1119,7 +1119,7 @@ function PedidoDetalhe({ pedido, loading, onGoToEvent, onChangePrivacy, onToggle
                   </select>
                 </div>
                 <div className="space-y-1.5">
-                  <label className="text-[8px] font-black text-theme-muted uppercase tracking-[0.2em]">Cidade</label>
+                  <label className="text-[8px] font-black text-theme-muted uppercase tracking-[0.2em]">Cidade <span className="opacity-40">(Opcional)</span></label>
                   <input 
                     value={city} 
                     onChange={(e) => setCity(e.target.value)}
@@ -1130,12 +1130,12 @@ function PedidoDetalhe({ pedido, loading, onGoToEvent, onChangePrivacy, onToggle
               </div>
               
               <div className="space-y-1.5">
-                <label className="text-[8px] font-black text-theme-muted uppercase tracking-[0.2em]">Localização / Espaço</label>
-                <input 
+                <label className="text-[8px] font-black text-theme-muted uppercase tracking-[0.2em]">Endereço Completo / Localização</label>
+                <textarea 
                   value={loc} 
                   onChange={(e) => setLoc(e.target.value)}
-                  className="w-full bg-zinc-900/50 text-[10px] text-zinc-300 border border-theme-border/50 focus:border-brand-tactical px-3 py-2.5 outline-none font-bold uppercase rounded transition-all"
-                  placeholder="Ex: Mansão das Palmeiras"
+                  className="w-full bg-zinc-900/50 text-[10px] text-zinc-300 border border-theme-border/50 focus:border-brand-tactical px-3 py-2.5 outline-none font-bold uppercase rounded transition-all min-h-[80px] resize-none"
+                  placeholder="Rua, Número, Bairro..."
                 />
               </div>
 
