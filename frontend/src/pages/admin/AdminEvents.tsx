@@ -130,7 +130,7 @@ export const AdminEvents: React.FC<AdminEventsProps> = ({ initialEditEventId }) 
     lightroomUrl: "",
     driveUrl: "",
     previewPhotos: ["", "", ""],
-    isPrivate: false,
+    isPrivate: true,
     isUnitSale: false,
     priceUnit: 10,
     type: 'ALBUM_FULL',
@@ -217,7 +217,7 @@ export const AdminEvents: React.FC<AdminEventsProps> = ({ initialEditEventId }) 
         lightroomUrl: "",
         driveUrl: "",
         previewPhotos: ["", "", ""],
-        isPrivate: false,
+        isPrivate: true,
         isUnitSale: false,
         priceUnit: 10,
         type: 'ALBUM_FULL',
@@ -386,7 +386,7 @@ export const AdminEvents: React.FC<AdminEventsProps> = ({ initialEditEventId }) 
           <button 
             onClick={() => {
               setEditingEvent(null);
-              setFormData({ title: "", slug: "", date: "", location: "", city: "", description: "", priceBase: 200, priceEarly: 190, cartorioId: "", captacaoId: "", edicaoId: "", temFoto: true, temVideo: false, temReels: false, temFotoImpressa: false, coverPhotoUrl: "", eventHours: 2, isCrowdfund: false, targetAmount: 0, lightroomUrl: "", driveUrl: "", previewPhotos: ["", "", ""], isPrivate: false, isUnitSale: false, priceUnit: 10, type: 'ALBUM_FULL', pricePerPhoto: 15, clientName: "", clientEmail: "", franchiseeId: "", retentionDays: 15 });
+              setFormData({ title: "", slug: "", date: "", location: "", city: "", description: "", priceBase: 200, priceEarly: 190, cartorioId: "", captacaoId: "", edicaoId: "", temFoto: true, temVideo: false, temReels: false, temFotoImpressa: false, coverPhotoUrl: "", eventHours: 2, isCrowdfund: false, targetAmount: 0, lightroomUrl: "", driveUrl: "", previewPhotos: ["", "", ""], isPrivate: true, isUnitSale: false, priceUnit: 10, type: 'ALBUM_FULL', pricePerPhoto: 15, clientName: "", clientEmail: "", franchiseeId: "", retentionDays: 15 });
               setCoverPreview(null);
               setIsModalOpen(true);
             }}
