@@ -2,7 +2,7 @@ import React from 'react';
 import { Navbar } from '../components/Navbar';
 import SEO from '../components/SEO';
 import { motion } from 'framer-motion';
-import { CheckCircle2, ShieldCheck, Clock, CreditCard, Truck, HelpCircle } from 'lucide-react';
+import { ShieldCheck, Clock, CreditCard, Truck, HelpCircle } from 'lucide-react';
 
 const HelpPage: React.FC = () => {
   const faqItems = [

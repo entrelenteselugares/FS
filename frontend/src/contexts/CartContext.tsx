@@ -4,6 +4,7 @@ export interface DigitalItem {
   eventId: string;
   shortId: string;
   url?: string;
+  buyAlbum?: boolean;
 }
 
 export interface PhysicalItem {
@@ -27,7 +28,7 @@ interface CartContextType {
   updatePhysicalQuantity: (productId: string, quantity: number) => void;
   clearCart: () => void;
   totalItems: number;
-  totalPrice: (eventPricePerPhoto: number) => number;
+  totalPrice: (eventPricePerPhoto: number, eventPriceAlbum?: number) => number;
 }
 
 const CartContext = createContext<CartContextType | undefined>(undefined);

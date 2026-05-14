@@ -13,7 +13,7 @@ interface OverviewStats {
   totalOrders: number;
   totalUsers: number;
   pendingQuotesCount: number;
-  pendingQuotesCount: number;
+
   pendingInvitesCount: number;
   missingLinksCount: number;
   mrr?: number;

@@ -1,6 +1,6 @@
 import React, { useState, useRef } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { Check, ShoppingCart, Image as ImageIcon, X, ChevronLeft, ChevronRight, ZoomIn } from "lucide-react";
+import { Check, X, ChevronLeft, ChevronRight } from "lucide-react";
 import { getProxyUrl } from "../lib/utils/media";
 
 interface Media {
@@ -27,7 +27,7 @@ export const TouchSelectionGallery: React.FC<TouchSelectionGalleryProps> = ({
 }) => {
   const [fullscreenIndex, setFullscreenIndex] = useState<number | null>(null);
   const [isSelectMode, setIsSelectMode] = useState(false);
-  const longPressTimer = useRef<NodeJS.Timeout | null>(null);
+  const longPressTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
 
   const handleTouchStart = (shortId: string, url: string) => {
     longPressTimer.current = setTimeout(() => {

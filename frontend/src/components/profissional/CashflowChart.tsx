@@ -106,7 +106,7 @@ export function CashflowChart() {
                 fontWeight: "700",
                 fontStyle: "italic"
               }}
-              formatter={(value: number) => [`R$ ${value.toLocaleString("pt-BR", { minimumFractionDigits: 2 })}`, "Montante"]}
+              formatter={(value: any) => [`R$ ${Number(value).toLocaleString("pt-BR", { minimumFractionDigits: 2 })}`, "Montante"]}
             />
             <Bar dataKey="amount" radius={[2, 2, 0, 0]}>
               {data.map((_, index) => (

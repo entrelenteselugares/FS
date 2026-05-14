@@ -5,7 +5,6 @@ import {
   ShoppingBag, 
   TrendingDown, 
   Mail, 
-  ExternalLink, 
   MessageCircle, 
   Clock,
   ArrowRight,
@@ -68,7 +67,6 @@ export const AdminLeadsPage: React.FC = () => {
     fetchData();
   }, []);
 
-  const totalLostValue = abandoned.reduce((acc, curr) => acc + Number(curr.valor), 0);
 
   if (loading) {
     return (

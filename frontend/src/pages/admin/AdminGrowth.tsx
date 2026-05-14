@@ -1,12 +1,12 @@
 import { useState, useEffect } from "react";
-import { Plus, Tag, Share2, Phone, Copy, Check, QrCode, ExternalLink, Activity } from "lucide-react";
+import { Plus, Tag, Share2, Phone, Copy, Check, Activity } from "lucide-react";
 import { API } from "../../lib/api";
 import { T } from "../../lib/theme";
 import { useAuth } from "../../hooks/useAuth";
 import { QRCodeSVG } from "qrcode.react";
 
 export function AdminGrowth() {
-  const { user } = useAuth();
+  const {  } = useAuth();
   const [activeTab, setActiveTab] = useState<"COUPONS" | "LINKS" | "WHATSAPP">("COUPONS");
 
   // State

@@ -4,7 +4,7 @@ import { NetworkFirst, StaleWhileRevalidate } from 'workbox-strategies';
 import { CacheableResponsePlugin } from 'workbox-cacheable-response';
 import { ExpirationPlugin } from 'workbox-expiration';
 
-declare let self: ServiceWorkerGlobalScope;
+declare let self: any;
 
 cleanupOutdatedCaches();
 precacheAndRoute(self.__WB_MANIFEST);
@@ -39,7 +39,7 @@ registerRoute(
   })
 );
 
-self.addEventListener('push', (event) => {
+self.addEventListener('push', (event: any) => {
   const data = event.data?.json() ?? { title: 'Nova Notificação', body: 'Você tem uma atualização na Foto Segundo.' };
 
   const options = {
@@ -57,7 +57,7 @@ self.addEventListener('push', (event) => {
   );
 });
 
-self.addEventListener('notificationclick', (event) => {
+self.addEventListener('notificationclick', (event: any) => {
   event.notification.close();
   event.waitUntil(
     self.clients.openWindow(event.notification.data.url)

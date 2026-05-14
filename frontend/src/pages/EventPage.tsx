@@ -5,7 +5,7 @@ import { Check, Printer, QrCode, ShoppingCart, Share2, ChevronRight, ChevronLeft
 import { QRCodeCanvas } from "qrcode.react";
 import { useParams, useNavigate, useSearchParams } from "react-router-dom";
 import { API as api } from "../lib/api";
-import { Helmet } from "react-helmet-async";
+
 import AccessTypeModal from "../components/AccessTypeModal";
 import { AuthModal } from "../components/AuthModal";
 import { useAuth } from "../hooks/useAuth";
@@ -85,7 +85,7 @@ interface EventData {
   photographer?: { id: string; nome: string } | null;
   expirationDate?: string | null;
   isExpired?: boolean;
-  isExpired?: boolean;
+
   retentionDays?: number;
   tenantBrandColor?: string | null;
   tenantLogoUrl?: string | null;
@@ -187,7 +187,7 @@ export default function EventPage() {
   const [needsAccessChoice, setNeedsAccessChoice] = useState(false);
   const [authenticatedStudent, setAuthenticatedStudent] = useState<string | null>(null);
   
-  const { digitalPhotos, physicalItems, addToCart, removeFromCart, removeAlbumFromCart, addPhysicalItem, totalPrice } = useCart();
+  const { digitalPhotos, physicalItems, addToCart, removeFromCart, addPhysicalItem, totalPrice } = useCart();
   const [serviceCatalog, setServiceCatalog] = useState<ServiceData[]>([]);
   const [selectedServices] = useState<string[]>([]);
   const [includeLivePrint] = useState(false);
@@ -530,7 +530,7 @@ return (
                     alt="" 
                     className="w-full h-full object-cover opacity-40 blur-sm scale-110"
                     style={{ objectPosition: event.coverPosition || 'center' }}
-                    fetchpriority="high"
+                    fetchPriority="high"
                   />
                 ) : (
                   <div className="w-full h-full bg-gradient-to-br from-brand-tactical/20 via-theme-bg-muted to-theme-bg" />
