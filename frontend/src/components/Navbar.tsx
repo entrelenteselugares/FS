@@ -42,6 +42,13 @@ export const Navbar: React.FC = () => {
         <div className="flex items-center gap-2">
           <div className="mobile-hide md:flex items-center gap-2">
             <ThemeToggle />
+            <button 
+              onClick={() => navigate("/ajuda")}
+              className="text-[10px] font-black text-theme-text-muted hover:text-brand-tactical transition-colors px-2"
+              title="Central de Ajuda"
+            >
+              AJUDA
+            </button>
             <span style={{ fontSize: 16 }}>🇧🇷</span>
           </div>
 
@@ -75,6 +82,7 @@ export const Navbar: React.FC = () => {
                 }}>
                   <button onClick={() => { setUserMenu(false); navigate("/meus-albuns"); }} style={{ width: "100%", textAlign: "left", padding: "14px 16px", background: "transparent", border: "none", borderBottom: `1px solid ${T.border}`, color: T.text, fontSize: 11, fontFamily: T.fontD, fontWeight: 900, letterSpacing: "0.1em", textTransform: "uppercase", cursor: "pointer", fontStyle: 'italic' }}>🖼️ Meus Álbuns</button>
                   <button onClick={() => { setUserMenu(false); navigate(dashPath); }} style={{ width: "100%", textAlign: "left", padding: "14px 16px", background: "transparent", border: "none", borderBottom: `1px solid ${T.border}`, color: T.text, fontSize: 11, fontFamily: T.fontD, fontWeight: 900, letterSpacing: "0.1em", textTransform: "uppercase", cursor: "pointer", fontStyle: 'italic' }}>👤 Meu Painel</button>
+                  <button onClick={() => { setUserMenu(false); navigate("/ajuda"); }} style={{ width: "100%", textAlign: "left", padding: "14px 16px", background: "transparent", border: "none", borderBottom: `1px solid ${T.border}`, color: T.text, fontSize: 11, fontFamily: T.fontD, fontWeight: 900, letterSpacing: "0.1em", textTransform: "uppercase", cursor: "pointer", fontStyle: 'italic' }}>❓ Central de Ajuda</button>
                   <button onClick={() => { logout(); setUserMenu(false); }} style={{ width: "100%", textAlign: "left", padding: "12px 16px", background: "transparent", border: "none", color: T.text2, fontSize: 11, fontFamily: T.fontB, letterSpacing: "0.08em", textTransform: "uppercase", cursor: "pointer" }}>Sair</button>
                 </div>
               )}

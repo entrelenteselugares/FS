@@ -11,6 +11,8 @@ import { AuthModal } from "../components/AuthModal";
 import { useAuth } from "../hooks/useAuth";
 import { useCart } from "../hooks/useCart";
 import { Navbar } from "../components/Navbar";
+import SEO from "../components/SEO";
+import { getProxyUrl } from "../lib/utils/media";
 import { PrintStoreModal } from "../components/PrintStoreModal";
 import { PrintCatalog } from "../components/PrintCatalog";
 import { motion, AnimatePresence } from "framer-motion";
@@ -445,7 +447,11 @@ export default function EventPage() {
 
 return (
     <div className="min-h-screen bg-theme-bg text-theme-text font-sans selection:bg-brand-tactical/30 overflow-x-hidden selection:text-theme-text" onContextMenu={(e) => e.preventDefault()}>
-      <Helmet><title>{`${event.nomeNoivos} | Foto Segundo`}</title></Helmet>
+      <SEO 
+        title={event.nomeNoivos} 
+        image={getProxyUrl(event.coverPhotoUrl)}
+        description={`Confira as fotos de ${event.nomeNoivos} no Foto Segundo - Memórias Premium.`}
+      />
       <Navbar />
 
       <main className="grid grid-cols-1 lg:grid-cols-[1fr_330px] min-h-[calc(100vh-64px)]">
@@ -471,10 +477,11 @@ return (
               >
                 {event.coverPhotoUrl ? (
                   <img 
-                    src={event.coverPhotoUrl.toString().trim().replace(/\s/g, '')} 
+                    src={getProxyUrl(event.coverPhotoUrl.toString().trim().replace(/\s/g, ''))} 
                     alt="" 
                     className="w-full h-full object-cover opacity-40 blur-sm scale-110"
                     style={{ objectPosition: event.coverPosition || 'center' }}
+                    fetchpriority="high"
                   />
                 ) : (
                   <div className="w-full h-full bg-gradient-to-br from-brand-tactical/20 via-theme-bg-muted to-theme-bg" />
@@ -800,6 +807,8 @@ return (
                                     alt={m.shortId} 
                                     className={`w-full h-full object-cover transition-transform duration-1000 fs-protected-media ${!isUnlocked && "group-hover:scale-110 blur-[1px] group-hover:blur-0"} ${isSelected ? "opacity-30 scale-95" : "opacity-100"}`} 
                                     onContextMenu={(e) => e.preventDefault()}
+                                    loading="lazy"
+                                    decoding="async"
                                   />
                                   
                                   <div className={`absolute bottom-0 left-0 right-0 p-5 z-20 flex justify-between items-end transition-all duration-500 translate-y-2 opacity-0 group-hover:translate-y-0 group-hover:opacity-100 ${isUnlocked ? "bg-brand-tactical text-black font-black" : (isSelected ? "bg-emerald-500 text-theme-text" : "bg-theme-bg-muted/90 backdrop-blur-md")}`}>
