@@ -23,8 +23,38 @@ To be the national standard for phygital (physical + digital) photography experi
 - [x] Visual consistency across all 4 dashboard types (Master, Partner, Consumer, Ambassador). (DONE)
 - [x] Zero-friction professional onboarding with experience validation. (DONE)
 - [x] Robust financial auditability for franchises and payouts. (DONE)
-- [x] **Real-time In-App Notification System** for integrated communication. (DONE)
+- [x] Real-time In-App Notification System for integrated communication. (DONE)
+- [ ] **Production Monitoring & SLOs**: Analytics and error tracking active for production go-live.
+- [ ] **Full PWA Experience**: Native mobile interaction patterns and installability for field photographers.
+- [ ] **Multi-Vertical Agility**: Support for School, Sports, and Event photography variations.
+- [ ] **Growth & Retention Engine**: Dynamic coupons and advanced ambassador/referral programs.
 
-## Current State (v4.0)
+## Current Milestone: v7.0 Expansão Total e Go-Live
 
-The system is now in "Launch Ready" status. Milestone 4 stabilized the hybrid storage pipeline and introduced the Kanban-based lead management system. Communication between users and admins is now handled in real-time via in-app notifications.
+**Goal:** Transform the platform into a high-scale PWA with diverse revenue streams and advanced growth tools.
+
+**Target features:**
+- **Go-Live Ops**: Sentry, Google Analytics, and CI/CD hardening.
+- **PWA Implementation**: Service Workers, Push Notifications, and installability.
+- **Vertical Diversification**: Schema and flow adaptations for School and Sports photography.
+- **Growth Engine**: Advanced Coupon system and Affiliate Hub (Ambassadors).
+
+## Evolution
+
+This document evolves at phase transitions and milestone boundaries.
+
+**After each phase transition** (via `/gsd-transition`):
+1. Requirements invalidated? → Move to Out of Scope with reason
+2. Requirements validated? → Move to Validated with phase reference
+3. New requirements emerged? → Add to Active
+4. Decisions to log? → Add to Key Decisions
+5. "What This Is" still accurate? → Update if drifted
+
+**After each milestone** (via `/gsd-complete-milestone`):
+1. Full review of all sections
+2. Core Value check — still the right priority?
+3. Audit Out of Scope — reasons still valid?
+4. Update Context with current state
+
+---
+*Last updated: 2026-05-14*
