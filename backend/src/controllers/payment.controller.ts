@@ -863,8 +863,7 @@ export class PaymentController {
             guestToken: isGuest ? crypto.randomBytes(32).toString("hex") : null,
             items: orderItemsData.length > 0 ? {
               create: orderItemsData
-            } : undefined,
-            couponId: appliedCoupon?.id || null
+            } : undefined
           }
         });
       }
