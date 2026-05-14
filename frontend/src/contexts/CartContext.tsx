@@ -19,8 +19,9 @@ export interface PhysicalItem {
 interface CartContextType {
   digitalPhotos: DigitalItem[];
   physicalItems: PhysicalItem[];
-  addToCart: (eventId: string, shortId: string, url?: string) => void;
+  addToCart: (eventId: string, shortId: string, url?: string, buyAlbum?: boolean) => void;
   removeFromCart: (eventId: string, shortId: string) => void;
+  removeAlbumFromCart: (eventId: string) => void;
   addPhysicalItem: (item: PhysicalItem) => void;
   removePhysicalItem: (productId: string) => void;
   updatePhysicalQuantity: (productId: string, quantity: number) => void;
@@ -49,16 +50,20 @@ export const CartProvider: React.FC<{ children: React.ReactNode }> = ({ children
     localStorage.setItem('fs_cart_physical', JSON.stringify(physicalItems));
   }, [digitalPhotos, physicalItems]);
 
-  const addToCart = (eventId: string, shortId: string, url?: string) => {
+  const addToCart = (eventId: string, shortId: string, url?: string, buyAlbum?: boolean) => {
     setDigitalPhotos(prev => {
-      const exists = prev.some(item => item.eventId === eventId && item.shortId === shortId);
+      const exists = prev.some(item => item.eventId === eventId && (buyAlbum ? item.buyAlbum : item.shortId === shortId));
       if (exists) return prev;
-      return [...prev, { eventId, shortId, url }];
+      return [...prev, { eventId, shortId, url, buyAlbum }];
     });
   };
 
   const removeFromCart = (eventId: string, shortId: string) => {
     setDigitalPhotos(prev => prev.filter(item => !(item.eventId === eventId && item.shortId === shortId)));
+  };
+
+  const removeAlbumFromCart = (eventId: string) => {
+    setDigitalPhotos(prev => prev.filter(item => !(item.eventId === eventId && item.buyAlbum)));
   };
 
   const addPhysicalItem = (item: PhysicalItem) => {
@@ -91,10 +96,11 @@ export const CartProvider: React.FC<{ children: React.ReactNode }> = ({ children
 
   const totalItems = digitalPhotos.length + physicalItems.reduce((acc, i) => acc + i.quantity, 0);
 
-  const totalPrice = (eventPricePerPhoto: number) => {
-    // Nota: simplificação aqui assume que todas as fotos digitais têm o mesmo preço do evento atual
-    // Em um cenário multi-evento, precisaríamos do preço de cada evento.
-    const digitalTotal = digitalPhotos.length * eventPricePerPhoto;
+  const totalPrice = (eventPricePerPhoto: number, eventPriceAlbum?: number) => {
+    const digitalTotal = digitalPhotos.reduce((acc, item) => {
+      if (item.buyAlbum) return acc + (eventPriceAlbum || 0);
+      return acc + eventPricePerPhoto;
+    }, 0);
     const physicalTotal = physicalItems.reduce((acc, i) => acc + (i.price * i.quantity), 0);
     return digitalTotal + physicalTotal;
   };
@@ -105,6 +111,7 @@ export const CartProvider: React.FC<{ children: React.ReactNode }> = ({ children
       physicalItems,
       addToCart,
       removeFromCart,
+      removeAlbumFromCart,
       addPhysicalItem,
       removePhysicalItem,
       updatePhysicalQuantity,

@@ -1,4 +1,4 @@
-<!-- generated-by: gsd-doc-writer -->
+<!-- GSD:CONFIGURATION -->
 # Configuration Guide: Foto Segundo
 
 This document details the environment variables and configuration settings required to run the Foto Segundo platform in development and production environments.
@@ -34,7 +34,15 @@ The system uses a `.env` file for local development. In production, these should
 | `CALLMEBOT_APIKEY` | No | — | API key for CallMeBot WhatsApp service. |
 | `PORT` | No | `3002` | Port number for the backend Express server. |
 | `BACKEND_URL` | No | `http://localhost:3002` | Base URL of the backend API. |
-| `CRON_SECRET` | **Yes** | — | Secret token to secure internal cron/maintenance endpoints. |
+| `CRON_SECRET` | **Yes** | — | Secret token to secure `/cron/*` endpoints (abandoned-carts, etc). |
+| `SMTP_HOST` | No | — | Hostname for the transactional email server (ex: smtp.resend.com). |
+| `SMTP_PORT` | No | `587` | Port for SMTP connection. |
+| `SMTP_USER` | No | — | Username/Email for the SMTP account. |
+| `SMTP_PASS` | No | — | Password/API Key for the SMTP account. |
+| `SMTP_SECURE` | No | `false` | Set to 'true' to use SSL/TLS. |
+| `FRONTEND_URL` | No | `http://localhost:3000` | Base URL of the client app for email links. |
+| `WHATSAPP_SESSION_PATH` | No | `./wa-session` | Directory path where WhatsApp (Baileys) session credentials are stored. |
+| `AMBASSADOR_COOKIE_TTL_DAYS` | No | `30` | Cookie TTL in days for `fs_referral` affiliate attribution. |
 
 ## Required vs Optional Settings
 

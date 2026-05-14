@@ -30,59 +30,102 @@ export class SubscriptionService {
 
     const price = 49.90; // Exemplo de preço da assinatura mensal
 
-    // 3. Cria (ou atualiza) registro local PENDING
+    // 3. Integração com Mercado Pago (Preapproval)
+    const frontendUrl = process.env.FRONTEND_URL || "http://localhost:3000";
+    const backendUrl = process.env.BACKEND_URL || "http://localhost:3001";
+    
+    const mpResponse = await MercadoPagoService.createPreapproval({
+      reason: `Cofre Mensal: ${album.nome}`,
+      auto_recurring: {
+        frequency: 1,
+        frequency_type: "months",
+        transaction_amount: price,
+        currency_id: "BRL",
+      },
+      payer_email: album.owner.email,
+      back_url: `${frontendUrl}/vaults/${albumId}?subscribed=true`,
+      notification_url: `${backendUrl}/api/webhooks/mp-subscription`,
+    });
+
+    // 4. Cria (ou atualiza) registro local PENDING com preapprovalId
     const subscription = await prisma.subscription.upsert({
       where: { albumId },
       update: {
         status: "PENDING",
-        planLimit
+        planLimit,
+        preapprovalId: mpResponse.id,
+        planPrice: price
       },
       create: {
         userId,
         albumId,
         planLimit,
-        status: "PENDING"
-      }
-    });
-
-    // 4. Garantir Evento de Sistema para cobranças de Cofre
-    let systemEvent = await prisma.event.findFirst({
-      where: { slug: "vaults-system" }
-    });
-
-    if (!systemEvent) {
-      systemEvent = await prisma.event.create({
-        data: {
-          slug: "vaults-system",
-          nomeNoivos: "System: Vaults Orders",
-          active: true,
-          dataEvento: new Date(),
-          ownerId: userId
-        }
-      });
-    }
-
-    // 5. Criar um Pedido (Order) vinculado a esta assinatura para usar o checkout transparente
-    const order = await prisma.order.create({
-      data: {
-        valor: price,
-        status: "PENDENTE",
-        eventId: systemEvent.id,
-        clienteId: userId,
-        buyerEmail: album.owner.email,
-        deliveryType: "SHIPPING",
-        fulfillmentStatus: "PENDING",
-        isManual: true,
-        manualType: "VAULT_CYCLE",
-        internalNotes: `Assinatura do cofre: ${album.nome} | SubId: ${subscription.id}`,
+        status: "PENDING",
+        preapprovalId: mpResponse.id,
+        planPrice: price
       }
     });
 
     return {
       subscriptionId: subscription.id,
-      orderId: order.id,
+      initPoint: mpResponse.init_point,
+      preapprovalId: mpResponse.id,
       amount: price
     };
+  }
+
+  /**
+   * Processa webhook de Preapproval (Assinaturas)
+   */
+  static async handlePreapprovalWebhook(preapprovalId: string) {
+    try {
+      const mpData = await MercadoPagoService.getPreapproval(preapprovalId);
+      
+      const statusMap: Record<string, SubscriptionStatus> = {
+        authorized: "ACTIVE",
+        paused: "PAST_DUE",
+        cancelled: "CANCELED",
+        pending: "PENDING",
+      };
+      
+      const newStatus = statusMap[mpData.status] ?? "PENDING";
+      
+      const sub = await prisma.subscription.findFirst({ where: { preapprovalId } });
+      if (!sub) {
+        console.warn(`[MP Webhook] Subscription not found for preapprovalId: ${preapprovalId}`);
+        return;
+      }
+      
+      const nextBillingDate = newStatus === "ACTIVE" && mpData.next_payment_date
+        ? new Date(mpData.next_payment_date)
+        : undefined;
+
+      await prisma.subscription.update({
+        where: { id: sub.id },
+        data: {
+          status: newStatus,
+          nextBillingDate
+        },
+      });
+
+      if (newStatus === "ACTIVE") {
+        await prisma.sharedAlbum.update({
+          where: { id: sub.albumId },
+          data: { subscriptionStatus: "ACTIVE" },
+        });
+        await GamificationService.processSubscriptionRewards(sub.userId, sub.id);
+      } else if (newStatus === "CANCELED" || newStatus === "PAST_DUE") {
+        await prisma.sharedAlbum.update({
+          where: { id: sub.albumId },
+          data: { subscriptionStatus: newStatus === "CANCELED" ? "EXPIRED" : "BLOCKED" },
+        });
+      }
+      
+      console.log(`[MP Webhook] Processed preapproval ${preapprovalId} - New status: ${newStatus}`);
+    } catch (error) {
+      console.error(`[MP Webhook] Error processing preapproval ${preapprovalId}:`, error);
+      throw error;
+    }
   }
 
   /**

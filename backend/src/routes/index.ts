@@ -56,7 +56,7 @@ import { getMeusPedidos, getMeuPedidoDetalhe, personalizePedido, uploadClientCov
 import { CartorioController } from "../controllers/cartorio.controller";
 import { SEOController } from "../controllers/seo.controller";
 import { getConfigs, updateConfigs, getPublicThemeConfigs, getPublicServices } from "../controllers/config.controller";
-import { generateWeeklyPayout, listPayouts, markItemPaid, exportPayoutCSV, getMeusRepasses } from "../controllers/payout.controller";
+import { generateWeeklyPayout, listPayouts, markItemPaid, exportPayoutCSV, getMeusRepasses, getMeuSaldoSummary } from "../controllers/payout.controller";
 import {
   chooseAccessType,
   getAccessStatus,
@@ -64,6 +64,7 @@ import {
   toggleVisibility,
 } from "../controllers/access.controller";
 import { requireAuth, requireRole, optionalAuth } from "../lib/auth";
+import { SubscriptionService } from "../services/subscription.service";
 import {
   likePhoto,
   getEventLikes,
@@ -94,13 +95,14 @@ import { getTeam, saveTeam } from "../controllers/team.controller";
 import { adminGetEventById } from "../controllers/admin_event_detail.controller";
 import { runExpirationJob } from "../jobs/expiration.job";
 import { runVaultCycleJob } from "../jobs/vault-cycle.job";
+import { processAbandonedCarts } from "../jobs/abandonedCart.job";
 import {
   bulkUpdateMargin,
   seedCkCatalog,
 } from "../controllers/print_catalog.controller";
 import { MarketplaceController } from "../controllers/marketplace.controller";
 import { requireMercadoPagoSignature } from "../middleware/webhook-auth";
-import { getTaxReport } from "../controllers/finance.controller";
+// import { getTaxReport } from "../controllers/finance.controller"; // Removido em favor do ReportController
 import { AuthRequest } from "../lib/auth";
 import { runLoyaltyBot } from "../controllers/cron.controller";
 import { ReferralController } from "../controllers/referral.controller";
@@ -110,16 +112,27 @@ import { VaultController } from "../controllers/vault.controller";
 import { IoTController } from "../controllers/iot.controller";
 import calendarRoutes from "./calendar.routes";
 import { VaultCycleService } from "../services/vaultCycle.service";
+import { VaultBlockingService } from "../services/vaultBlocking.service";
 import { syncAllCalendars } from "../services/calendar-sync.service";
 import multer from "multer";
 import express from "express";
 import flashRoutes from "./flash.routes";
+import { CRMController } from "../controllers/crm.controller";
+import { GrowthController } from "../controllers/growth.controller";
+import * as FinanceHub from "../controllers/finance_hub.controller";
+import * as ReportController from "../controllers/report.controller";
 
 const upload = multer({ storage: multer.memoryStorage() });
 
 import driveAuthRoutes from "./driveAuth.routes";
+import * as PushController from "../controllers/push.controller";
 
 const router = Router();
+
+// ── PUSH NOTIFICATIONS ───────────────────────────────────────────────────────
+router.post("/push/subscribe",   requireAuth, PushController.subscribe);
+router.post("/push/unsubscribe", requireAuth, PushController.unsubscribe);
+router.post("/push/test",        requireAuth, PushController.sendTestPush);
 
 // --- REDIRECTS DE EMBAIXADOR ---
 router.get("/embaixador/:slug", ReferralController.handleReferral);
@@ -161,11 +174,17 @@ router.patch("/profissional/unidades/convites/:id/respond", requireAuth, require
 router.get("/profissional/network", requireAuth, requireProOrFranchise, getNetwork);
 router.get("/profissional/network/search", requireAuth, requireProOrFranchise, searchProfessionals);
 router.post("/profissional/network/favorite/:partnerId", requireAuth, requireProOrFranchise, toggleFavorite);
-router.get("/profissional/finance/tax-report", requireAuth, requireProOrFranchise, getTaxReport);
+
+// ─── Relatórios & Inteligência Financeira ────────────────────────────────────
+router.get("/profissional/finance/tax-report", requireAuth, requireProOrFranchise, ReportController.getTaxReport);
+router.get("/profissional/finance/receipt/:id", requireAuth, requireProOrFranchise, ReportController.getPayoutReceipt);
+router.get("/profissional/finance/cashflow", requireAuth, requireProOrFranchise, ReportController.getCashflowProjection);
 
 // ── MARKETPLACE (Fotos Individuais & Venda Expressa) ──────────────────────────
 router.post("/marketplace/express-sale",      requireAuth, requireProOrFranchise, MarketplaceController.expressSale);
 router.post("/marketplace/events/:id/media",  requireAuth, requireProOrFranchise, MarketplaceController.addMedia);
+router.post("/marketplace/events/:id/sync-drive", requireAuth, requireProOrFranchise, MarketplaceController.syncEventMedia);
+router.patch("/marketplace/media/:mediaId/metadata", requireAuth, requireRole("ADMIN"), MarketplaceController.patchMediaMetadata);
 router.get("/marketplace/events/:id/media",   optionalAuth, MarketplaceController.listMedia);
 
 
@@ -232,6 +251,38 @@ router.get("/cron/vault-cycle", async (req, res) => {
   }
 });
 
+// ── Cron: Vault Expiry (Processamento de Testes Gratuitos) ────────────────
+router.get("/cron/vault-expiry", async (req, res) => {
+  const token = req.headers["authorization"];
+  if (process.env.CRON_SECRET && token !== `Bearer ${process.env.CRON_SECRET}`) {
+    return res.status(401).json({ error: "Não autorizado." });
+  }
+  try {
+    await VaultBlockingService.processExpiringVaults();
+    res.json({ ok: true, ran: new Date().toISOString() });
+  } catch (err: unknown) {
+    const msg = err instanceof Error ? err.message : String(err);
+    console.error("[Cron/VaultExpiry] Erro:", msg);
+    res.status(500).json({ error: msg });
+  }
+});
+
+// ── Cron: Growth Engine (Carrinhos Abandonados) ──────────────────────────────
+router.get("/cron/abandoned-carts", async (req, res) => {
+  const token = req.headers["authorization"];
+  if (process.env.CRON_SECRET && token !== `Bearer ${process.env.CRON_SECRET}`) {
+    return res.status(401).json({ error: "Não autorizado." });
+  }
+  try {
+    await processAbandonedCarts();
+    res.json({ ok: true, ran: new Date().toISOString() });
+  } catch (err: unknown) {
+    const msg = err instanceof Error ? err.message : String(err);
+    console.error("[Cron/AbandonedCarts] Erro:", msg);
+    res.status(500).json({ error: msg });
+  }
+});
+
 // ── Autenticação ─────────────────────────────────────────────────────────────
 router.post("/auth/login",           AuthController.login);
 router.post("/auth/register",        AuthController.register);
@@ -275,6 +326,13 @@ router.get("/events/:slug/likes",          getEventLikes);
 // ── SEO / Share ────────────────────────────────────────────────────────────────
 router.get("/share/e/:id", SEOController.getEventPreview);
 
+// ── CRM & LEADS (Phase 27) ──────────────────────────────────────────────────
+router.post("/public/crm/leads",               CRMController.captureLead);
+router.get("/admin/crm/leads",                 requireAuth, requireRole("ADMIN"), CRMController.getLeads);
+router.get("/admin/crm/stats",                 requireAuth, requireRole("ADMIN"), CRMController.getStats);
+router.get("/admin/crm/abandoned-carts",       requireAuth, requireRole("ADMIN"), CRMController.getAbandonedCarts);
+router.get("/cron/crm-recovery",              CRMController.runRecoveryCron);
+
 // ── Checkout & Webhook ─────────────────────────────────────────────────────────
 router.post("/checkout/pending",     PaymentController.createPendingOrder);
 router.post("/checkout/payment",     optionalAuth, PaymentController.processPayment);
@@ -291,6 +349,22 @@ router.post(
   },
   requireMercadoPagoSignature,
   PaymentController.webhook
+);
+
+router.post(
+  "/webhooks/mp-subscription",
+  async (req: express.Request, res: express.Response) => {
+    try {
+      const { type, data } = req.body;
+      if (type === "subscription_preapproval" && data?.id) {
+        await SubscriptionService.handlePreapprovalWebhook(data.id);
+      }
+      return res.sendStatus(200);
+    } catch (error) {
+      console.error("[Webhook MP Subscription] Erro:", error);
+      return res.sendStatus(500);
+    }
+  }
 );
 
 // ── Pedido e Catálogo Público ────────────────────────────────────────────────
@@ -372,7 +446,14 @@ router.post("/admin/payouts/generate",                requireAuth, requireRole("
 router.get("/admin/payouts",                          requireAuth, requireRole("ADMIN"), listPayouts);
 router.get("/admin/payouts/export",                requireAuth, requireRole("ADMIN"), exportPayoutCSV);
 router.patch("/admin/payouts/:id/items/:itemId/paid", requireAuth, requireRole("ADMIN"), markItemPaid);
+
+// ── Admin: Finance Hub ─────────────────────────────────────────────────────────
+router.get("/admin/finance/balances", requireAuth, requireRole("ADMIN"), FinanceHub.getProfessionalBalances);
+router.post("/admin/finance/settle", requireAuth, requireRole("ADMIN"), FinanceHub.settleProfessional);
+router.get("/admin/finance/subscriptions-mrr", requireAuth, requireRole("ADMIN"), FinanceHub.getSubscriptionStats);
+
 router.get("/me/repasses", requireAuth, getMeusRepasses);
+router.get("/me/payout-summary", requireAuth, getMeuSaldoSummary);
 
 // --- AMBASSADOR (Phase 24) ---
 router.get("/ambassador/stats",                  requireAuth, ReferralController.getStats);
@@ -431,8 +512,10 @@ router.get("/franchise/inventory", requireAuth, requireRole("FRANCHISEE"), Franc
 router.get("/franchise/referral", requireAuth, requireRole("FRANCHISEE"), FranchiseController.getReferralCode);
 router.get("/franchise/network", requireAuth, requireRole("FRANCHISEE"), FranchiseController.getNetwork);
 router.get("/franchise/finance", requireAuth, requireRole("FRANCHISEE"), FranchiseController.getFinanceStats);
+router.get("/franchise/finance/export", requireAuth, requireRole("FRANCHISEE"), FranchiseController.exportFinance);
 router.post("/franchise/reorder", requireAuth, requireRole("FRANCHISEE"), FranchiseController.postReorder);
 router.put("/franchise/profile", requireAuth, requireRole("FRANCHISEE"), FranchiseController.updateProfile);
+router.patch("/franchise/branding", requireAuth, requireRole("FRANCHISEE"), FranchiseController.updateBranding);
 
 // B2B Shop (Supply Orders)
 router.get("/franchise/orders", requireAuth, requireProOrFranchise, FranchiseController.listSupplyOrders);
@@ -462,6 +545,12 @@ router.get("/phygital/events/:eventId/queue", requireAuth, PhygitalController.li
 router.get("/phygital/events/:eventId/prints", requireAuth, PhygitalController.listAllByEvent);
 router.patch("/phygital/prints/:id/status", requireAuth, PhygitalController.confirmPrint);
 router.post("/admin/phygital/simulate", optionalAuth, PhygitalController.simulate);
+
+// ── GROWTH ENGINE (Coupons, Affiliates, WhatsApp) ─────────────────────────
+router.get("/marketplace/coupons/:code/validate", GrowthController.validateCoupon);
+router.get("/marketplace/affiliates/:id/validate", GrowthController.validateAffiliate);
+router.get("/admin/whatsapp/status", requireAuth, requireRole("ADMIN"), GrowthController.getWhatsappStatus);
+router.get("/admin/whatsapp/qr", requireAuth, requireRole("ADMIN"), GrowthController.getWhatsappQr);
 
 import * as NotificationController from "../controllers/notification.controller";
 

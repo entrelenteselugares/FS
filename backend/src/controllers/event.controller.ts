@@ -74,7 +74,11 @@ export class EventController {
           ]
         },
         include: {
-          cartorioUser: { select: { cartorio: { select: { razaoSocial: true } } } },
+          cartorioUser: { select: { 
+            cartorio: { select: { razaoSocial: true } },
+            tenantLogoUrl: true,
+            tenantBrandColor: true
+          } },
           captacao: { select: { id: true, nome: true } },
           edicao: { select: { id: true, nome: true } },
           media: true
@@ -203,6 +207,8 @@ export class EventController {
         nomeNoivos: event.nomeNoivos,
         dataEvento: event.dataEvento,
         cartorio: event.cartorioUser?.cartorio?.razaoSocial || event.location,
+        tenantBrandColor: event.customBrandColor || event.cartorioUser?.tenantBrandColor || null,
+        tenantLogoUrl: event.customLogoUrl || event.cartorioUser?.tenantLogoUrl || null,
         coverPhotoUrl: event.coverPhotoUrl,
         priceBase: event.priceBase,
         priceEarly: event.priceEarly,
@@ -243,7 +249,12 @@ export class EventController {
         photographer: event.captacao ? { id: event.captacao.id, nome: event.captacao.nome } : null,
         isExpired,
         retentionDays,
-        expirationDate
+        expirationDate,
+        slug: event.slug,
+        active: event.active,
+        verticalConfigs: (event as any).verticalConfigs || {},
+        preSaleEnabled: (event as any).preSaleEnabled ?? false,
+        postSaleEnabled: (event as any).postSaleEnabled ?? true,
       };
 
       // Se o acesso for restrito, limpamos campos sensíveis para evitar vazamento

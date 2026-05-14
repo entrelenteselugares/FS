@@ -1,25 +1,29 @@
+<!-- GSD:ARCHITECTURE -->
 # Project Architecture: Foto Segundo
 
-Este documento descreve a arquitetura técnica da plataforma **Foto Segundo**, focando nos fluxos de dados, infraestrutura de storage e o motor de automação phygital.
+Este documento descreve a arquitetura técnica da plataforma **Foto Segundo**, focando nos fluxos de dados, infraestrutura de storage, motor de automação phygital, suporte multi-vertical e o Growth Engine de retenção de clientes.
 
 ---
 
-## 1. Visão Geral do Sistema (Arquitetura em 7 Módulos)
+## 1. Visão Geral do Sistema (Arquitetura em 9 Módulos)
 
-A plataforma Foto Segundo é um ecossistema **Enterprise** estruturado em 7 camadas de responsabilidade clara:
+A plataforma Foto Segundo é um ecossistema **Enterprise** estruturado em 9 camadas de responsabilidade clara:
 
 1. **Cloud Core (Vercel/API):** Orquestrador serverless de alta disponibilidade.
 2. **Persistence Layer (Supabase/Prisma):** Banco de dados relacional com auditoria nativa.
 3. **Hybrid Cold Storage (Google Drive):** Armazenamento de ativos de alta resolução.
 4. **Financial Engine (Mercado Pago/PIX):** Fluxo transacional blindado e splits de comissão.
 5. **IoT Edge (Printer Agent):** Fulfillment automático de impressões na ponta.
-6. **Luxury UI (Midnight Luxury Theme):** Interface premium e responsiva.
+6. **Luxury UI (Midnight Luxury Theme):** Interface premium e responsiva (PWA habilitada).
 7. **Phygital UX (QR/PIN Access):** Resgate instantâneo de fotos sem fricção.
+8. **Retention Engine (CRM & Leads):** Automação de marketing e recuperação de vendas.
+9. **Growth Engine (Coupons, Affiliates, WhatsApp):** Aquisição e retenção via programas de indicação e automação de recuperação.
 
 ### 🏗️ Componentes Técnicos
 - **Core API (Backend):** Express + TypeScript.
-- **Client App (Frontend):** React + Vite.
+- **Client App (Frontend):** React + Vite (PWA com Service Worker).
 - **IoT Agent (Printer):** Agente Node.js local.
+- **Notification Engine:** WhatsApp (Baileys), E-mail (SMTP/Resend).
 
 ---
 
@@ -34,7 +38,21 @@ Para garantir escalabilidade e baixo custo, utilizamos uma estratégia de armaze
 
 ---
 
-## 3. Fluxos de Eventos Críticos
+## 3. Multi-Vertical Business Logic
+
+A plataforma suporta três verticais de fotografia com configuração por evento:
+
+| Vertical | Schema | Feature Única | Autenticação |
+|----------|--------|---------------|--------------|
+| `FASHION` / `EVENT` | Padrão | Galeria pública / Flash Event | Opt-in |
+| `SCHOOL` (Escolar) | `StudentList` | Seleção de aluno antes do acesso | Forçada por turma |
+| `SPORTS` (Esportes) | `BibNumber` | Busca por número de dorsal | Opt-in |
+
+Configuração via `event.vertical` (campo no banco) e controlada no `AdminEvents` com toggles por evento.
+
+---
+
+## 4. Fluxos de Eventos Críticos
 
 ### ⚡ Flash Event (Venda de Alto Volume)
 
@@ -50,26 +68,45 @@ Para garantir escalabilidade e baixo custo, utilizamos uma estratégia de armaze
 3. **Heartbeat:** O agente de impressão local envia telemetria constante para o backend.
 4. **Pull/Print:** O agente detecta o pedido, baixa o ativo do Google Drive e envia para o spooler da impressora local.
 
+### 💰 Growth Engine — Cupom & Afiliado
+
+1. **Rastreamento:** Usuário acessa via `?ref=<ambassadorId>` — cookie `fs_referral` criado com TTL de 30 dias.
+2. **Checkout:** Frontend chama `GET /marketplace/coupons/:code/validate` para validar e aplicar desconto.
+3. **Bypass FREE:** Se preço == 0 (cupom 100%), fluxo Mercado Pago é ignorado e ordem é criada com `method: FREE`.
+4. **Atribuição:** No webhook de pagamento, `ambassadorId` é lido do cookie e persistido na `Order`.
+5. **Recuperação:** Cron job externo chama `POST /cron/abandoned-carts` para disparar e-mails de recuperação após 24h.
+
+### 📱 PWA Lifecycle
+
+1. **Instalação:** Service Worker registrado, Web Manifest configurado com ícones e splash screens.
+2. **Cache:** Assets estáticos em cache via estratégia Cache-First.
+3. **Push:** Subscrição via `PushManager`, notificações enviadas pelo backend via Web Push Protocol.
+
 ---
 
-## 4. Segurança e Integridade
+## 5. Segurança e Integridade
 
 - **Auth:** JWT para sessões curtas e Refresh Tokens para persistência.
+- **Cron Security:** Endpoints `/cron/*` protegidos por `CRON_SECRET` via Bearer token.
+- **Coupon Security:** Validação server-side de usos máximos, data de expiração e eventId restrito.
+- **Cash Payment Security:** Apenas usuários com role `ADMIN | PROFISSIONAL | FRANCHISEE` podem aprovar pagamentos em dinheiro.
 - **Audit:** Todas as operações críticas (Logins, Pagamentos, Uploads) são registradas no `GamificationLedger` ou logs de auditoria.
-- **Validation:** Regras de negócio como a "Meta da Folha A4" (múltiplos de 4) são validadas no backend para evitar desperdício de insumos físicos.
 
 ---
 
-## 4. Component Diagram
+## 6. Component Diagram
 
 ```mermaid
 graph TD
     subgraph "Cloud Infrastructure (Vercel/Supabase)"
-        A[Frontend App - React/Vite]
+        A[Frontend App - React/Vite PWA]
         B[Backend API - Node/Express]
         C[(PostgreSQL - Supabase)]
         D[Google Drive - Cold Storage]
         E[Mercado Pago - Payments]
+        H[CRM & Email Service]
+        I[WhatsApp - Baileys]
+        J[Growth Engine - Coupons/Affiliates]
     end
 
     subgraph "Edge/Local Environment"
@@ -77,42 +114,58 @@ graph TD
         G[Local Printer Hardware]
     end
 
+    subgraph "Cron Jobs"
+        K[Abandoned Cart Job - 24h]
+    end
+
     A -- REST API --> B
     B -- Prisma ORM --> C
     B -- OAuth2 --> D
     B -- Webhooks --> E
+    B -- Automation --> H
+    B -- WA Notifications --> I
+    B -- Coupon/Affiliate Tracking --> J
     F -- Polling/Heartbeat --> B
     F -- Download Assets --> D
     F -- Spooler --> G
+    K -- POST /cron/abandoned-carts --> B
 ```
 
 ---
 
-## 5. Key Abstractions
+## 7. Key Abstractions
 
-- **Vault Engine (`backend/src/services/vault.service.ts`):** Manages the lifecycle of "Cofres de Memórias", including subscription states and media organization in Google Drive.
-- **Order Motor (`backend/src/controllers/payment.controller.ts`):** Orchestrates transaction processing, financial splits, and fulfillment status.
+- **Drive Sync Engine (`backend/src/controllers/marketplace.controller.ts`):** Bulk media ingestion from Google Drive with automated Regex-based metadata extraction for school and sports photography verticals.
+- **Vault Engine (`backend/src/services/vault.service.ts`):** Manages "Cofres de Memórias" lifecycle, including subscription states and media organization.
+- **Order Motor (`backend/src/controllers/payment.controller.ts`):** Orchestrates transaction processing, financial splits, coupon application, ambassador attribution, and fulfillment status.
+- **Growth Controller (`backend/src/controllers/growth.controller.ts`):** Handles coupon validation/listing, affiliate management, and WhatsApp session QR.
 - **IoT Telemetry (`backend/src/services/iot.service.ts`):** Handles printer agent heartbeat monitoring and device health tracking.
 - **Access Controller (`backend/src/controllers/access.controller.ts`):** Manages photo visibility, like system, and QR/PIN-based anonymous access.
-- **Admin Controller (`backend/src/controllers/admin.controller.ts`):** Orchestrates administrative event management, including operational briefings, staffing, and system-wide configurations.
+- **Admin Controller (`backend/src/controllers/admin.controller.ts`):** Orchestrates administrative event management, multi-vertical configuration, staffing, and system-wide configurations.
+- **CRM Engine (`backend/src/services/crm.service.ts`):** Handles automated sales recovery, lead nurturing triggers, and conversion tracking.
+- **Abandoned Cart Job (`backend/src/jobs/abandonedCart.job.ts`):** Identifies orders >24h without payment and triggers recovery sequences.
+- **WhatsApp Service (`backend/src/services/whatsapp.service.ts`):** Manages Baileys session for automated "Foto Pronta" and cart recovery messages.
 
 ---
 
-## 6. Directory Structure Rationale
+## 8. Directory Structure Rationale
 
 | Directory | Purpose |
 |-----------|---------|
 | `/backend` | Core business logic, database models (Prisma), and external integrations. |
 | `/frontend` | Multi-profile dashboard UI and Midnight Luxury theme implementation. |
+| `/frontend/src/pages/admin/AdminGrowth.tsx` | Admin panel for Coupons, Ambassadors, and WhatsApp QR. |
 | `/api` | Vercel-specific deployment entry points. |
 | `/printer-agent` | Local IoT agent source code for physical fulfillment. |
+| `/e2e` | Playwright E2E test suite. |
 | `/docs` | Technical documentation and architectural guides. |
 | `/.planning` | GSD framework artifacts (PROJECT, ROADMAP, STATE). |
 
 ---
 
-## 7. Deployment
+## 9. Deployment
 
 - **Hosting:** Vercel (Frontend e Serverless API).
 - **Database:** Supabase (PostgreSQL).
 - **ORM:** Prisma Client (conectado via Direct URL para migrações e Connection Pooling para runtime).
+- **Cron:** Supabase Cron Jobs ou Vercel Cron chamando `/cron/abandoned-carts`.

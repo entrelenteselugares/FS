@@ -11,6 +11,7 @@ interface Vault {
   id: string;
   nome: string;
   status: string;
+  subscriptionStatus: string;
   goalPoses: number;
   cycleEndDay: number | null;
   myRole: string;
@@ -44,11 +45,13 @@ function VaultCard({ vault, onClick }: { vault: Vault; onClick: () => void }) {
             </span>
           )}
           <span className={`text-[9px] font-black uppercase tracking-widest px-2 py-0.5 rounded-full ${
-            vault.status === "OPEN"
-              ? "text-brand-tactical bg-brand-tactical/10 border border-brand-tactical/20"
-              : "text-gray-500 bg-white/5 border border-white/10"
+            vault.subscriptionStatus === "ACTIVE"
+              ? "text-emerald-500 bg-emerald-500/10 border border-emerald-500/20"
+              : vault.subscriptionStatus === "TRIAL"
+              ? "text-yellow-500 bg-yellow-500/10 border border-yellow-500/20"
+              : "text-red-500 bg-red-500/10 border border-red-500/20"
           }`}>
-            {vault.status === "OPEN" ? "Ativo" : "Fechado"}
+            {vault.subscriptionStatus === "ACTIVE" ? "Premium" : vault.subscriptionStatus === "TRIAL" ? "Teste Grátis" : "Bloqueado"}
           </span>
         </div>
       </div>

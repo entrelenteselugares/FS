@@ -13,8 +13,11 @@ interface OverviewStats {
   totalOrders: number;
   totalUsers: number;
   pendingQuotesCount: number;
+  pendingQuotesCount: number;
   pendingInvitesCount: number;
   missingLinksCount: number;
+  mrr?: number;
+  totalActiveSubscriptions?: number;
 }
 
 interface RecentOrder {
@@ -70,10 +73,11 @@ export const AdminOverview: React.FC<OverviewProps> = ({ stats, recentOrders = [
         {/* KPI Card Template */}
         {[
           { label: "Receita Bruta", value: `R$ ${Number(stats?.totalRevenue || 0).toLocaleString("pt-BR")}`, color: "text-theme-text" },
+          { label: "MRR (Assinaturas)", value: `R$ ${Number(stats?.mrr || 0).toLocaleString("pt-BR")}`, color: "text-emerald-500", growth: stats?.mrr ? stats.mrr > 0 ? 100 : 0 : undefined },
+          { label: "Assinaturas Ativas", value: stats?.totalActiveSubscriptions || 0, color: "text-emerald-500" },
           { label: "Últimos 30 Dias", value: `R$ ${Number(stats?.revenue30d || 0).toLocaleString("pt-BR")}`, color: "text-brand-tactical", growth: stats?.growth },
           { label: "Pedidos Liquidados", value: stats?.totalOrders || 0, color: "text-theme-text" },
           { label: "Eventos Ativos", value: stats?.activeEvents || 0, color: "text-theme-text" },
-          { label: "Convites Pendentes", value: stats?.pendingInvitesCount || 0, color: (stats?.pendingInvitesCount || 0) > 0 ? "text-red-500" : "text-theme-text" },
           { label: "Vendas sem Entrega", value: stats?.missingLinksCount || 0, color: (stats?.missingLinksCount || 0) > 0 ? "text-brand-tactical" : "text-theme-text" },
           { label: "Novos Leads", value: stats?.pendingQuotesCount || 0, color: (stats?.pendingQuotesCount || 0) > 0 ? "text-brand-tactical" : "text-theme-text" }
         ].map((kpi, idx) => (

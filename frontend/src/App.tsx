@@ -6,6 +6,7 @@ import { useAuth } from "./hooks/useAuth";
 import { HelmetProvider } from "react-helmet-async";
 import { ProtectedRoute } from "./components/ProtectedRoute";
 import { BottomNav } from "./components/BottomNav";
+import { PushNotificationManager } from "./components/PushNotificationManager";
 
 import EventPage from "./pages/EventPage";
 import { LoginPage } from "./pages/LoginPage";
@@ -32,6 +33,7 @@ import InvitationPage from "./pages/InvitationPage";
 import { BusinessLanding } from "./pages/BusinessLanding";
 import FlashUnlockPage from "./pages/FlashUnlockPage";
 import { ClubLandingPage } from "./pages/ClubLandingPage";
+import HelpPage from "./pages/HelpPage";
 import { useState, useEffect } from "react";
 import { API as api } from "./lib/api";
 import { T } from "./lib/theme";
@@ -58,6 +60,11 @@ const AnimatedRoutes = () => {
   // Safety: Clear body overflow on every route change to prevent stuck overlays
   useEffect(() => {
     document.body.style.overflow = "unset";
+    
+    // GA4: Track Page View
+    import("./lib/analytics").then(({ trackPageView }) => {
+      trackPageView(location.pathname);
+    });
   }, [location]);
   
   // Evita desmontagem completa do DashboardLayout ao transitar entre rotas internas da mesma área
@@ -103,6 +110,7 @@ const AnimatedRoutes = () => {
         <Route path="/negocios" element={<BusinessLanding />} />
         <Route path="/clube" element={<ClubLandingPage />} />
         <Route path="/flash/:shortId" element={<FlashUnlockPage />} />
+        <Route path="/ajuda" element={<HelpPage />} />
 
         {/* Redireciona para o painel correto */}
         <Route path="/dashboard" element={
@@ -110,12 +118,11 @@ const AnimatedRoutes = () => {
         } />
 
         {/* Painel do Admin */}
-        <Route path="/admin" element={
+        <Route path="/admin/*" element={
           <ProtectedRoute roles={["ADMIN"]}>
             <AdminDashboard />
           </ProtectedRoute>
         } />
-        <Route path="/admin/*" element={<Navigate to="/admin" replace />} />
 
         {/* Painel do Profissional (PROFISSIONAIS) */}
         <Route path="/profissional" element={
@@ -209,6 +216,7 @@ function App() {
               <Router>
                 <AnimatedRoutes />
                 <BottomNav />
+                <PushNotificationManager />
               </Router>
             </HelmetProvider>
           </CartProvider>

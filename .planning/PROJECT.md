@@ -23,8 +23,57 @@ To be the national standard for phygital (physical + digital) photography experi
 - [x] Visual consistency across all 4 dashboard types (Master, Partner, Consumer, Ambassador). (DONE)
 - [x] Zero-friction professional onboarding with experience validation. (DONE)
 - [x] Robust financial auditability for franchises and payouts. (DONE)
-- [x] **Real-time In-App Notification System** for integrated communication. (DONE)
+- [x] Real-time In-App Notification System for integrated communication. (DONE)
+- [x] **Production Monitoring & SLOs**: Analytics and error tracking active for production go-live. (DONE)
+- [x] **Full PWA Experience**: Native mobile interaction patterns and installability for field photographers. (DONE)
+- [x] **Multi-Vertical Agility**: Support for School, Sports, and Event photography variations.
+- [x] **Growth & Retention Engine**: Dynamic coupons and advanced ambassador/referral programs.
 
-## Current State (v4.0)
+## Current State
 
-The system is now in "Launch Ready" status. Milestone 4 stabilized the hybrid storage pipeline and introduced the Kanban-based lead management system. Communication between users and admins is now handled in real-time via in-app notifications.
+Shipped **v8.0 (MRR Engine)**. The platform now includes an automated recurring revenue system that gates Vault access, processing recurring subscriptions directly via Mercado Pago Preapprovals, and enforcing trial periods via automated chron jobs.
+
+## Current Milestone: v9.0 B2B & White-Label Expansion
+
+**Goal:** Empower franchisees and major partners with custom branding and advanced financial reporting to drive B2B growth.
+
+**Target features:**
+- **Tenant White-Labeling:** Allow franchisees to upload custom logos and set primary theme colors for their events and galleries.
+- **Custom Branding Renderer:** Dynamically adjust the `EventPage` and `Checkout` UI based on the event's owner (Tenant/Franchisee) branding.
+- **Advanced Financial Export:** PDF and CSV generation for payouts, unit performance, and period-based accounting.
+- **Franchise Dashboard Upgrades:** Deep-dive cohort analytics and unit-level health metrics.
+
+<details>
+<summary>Archived Milestones</summary>
+
+**v8.0 MRR Engine**
+*Goal:* Enable recurring monthly revenue through Vault subscriptions.
+*Outcome:* Delivered hybrid free-to-pay vaults, Mercado Pago recurring billing webhook integration, auto-blocking cron jobs, and admin MRR reporting.
+
+**v7.0 Expansão Total e Go-Live**
+- **Go-Live Ops**: Sentry, Google Analytics, and CI/CD hardening.
+- **PWA Implementation**: Service Workers, Push Notifications, and installability.
+- **Vertical Diversification**: Schema and flow adaptations for School and Sports photography.
+- **Growth Engine**: Advanced Coupon system and Affiliate Hub (Ambassadors).
+
+</details>
+
+## Evolution
+
+This document evolves at phase transitions and milestone boundaries.
+
+**After each phase transition** (via `/gsd-transition`):
+1. Requirements invalidated? → Move to Out of Scope with reason
+2. Requirements validated? → Move to Validated with phase reference
+3. New requirements emerged? → Add to Active
+4. Decisions to log? → Add to Key Decisions
+5. "What This Is" still accurate? → Update if drifted
+
+**After each milestone** (via `/gsd-complete-milestone`):
+1. Full review of all sections
+2. Core Value check — still the right priority?
+3. Audit Out of Scope — reasons still valid?
+4. Update Context with current state
+
+---
+*Last updated: 2026-05-14*

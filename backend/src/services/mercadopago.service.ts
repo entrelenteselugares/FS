@@ -189,4 +189,52 @@ export class MercadoPagoService {
       throw error;
     }
   }
+
+  /**
+   * Cria um plano de assinatura recorrente (Preapproval)
+   */
+  static async createPreapproval(data: {
+    reason: string;
+    auto_recurring: { frequency: number; frequency_type: string; transaction_amount: number; currency_id: string };
+    payer_email: string;
+    back_url: string;
+    notification_url: string;
+  }) {
+    try {
+      const response = await axios.post(
+        "https://api.mercadopago.com/preapproval",
+        data,
+        {
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${accessToken}`,
+          },
+        }
+      );
+      return response.data;
+    } catch (error: unknown) {
+      const axiosErr = error as { response?: { data?: unknown }; message: string };
+      console.error("[MP Error CreatePreapproval]:", axiosErr.response?.data || axiosErr.message);
+      throw error;
+    }
+  }
+
+  /**
+   * Consulta o status de um Preapproval
+   */
+  static async getPreapproval(preapprovalId: string) {
+    try {
+      const response = await axios.get(
+        `https://api.mercadopago.com/preapproval/${preapprovalId}`,
+        {
+          headers: { Authorization: `Bearer ${accessToken}` },
+        }
+      );
+      return response.data;
+    } catch (error: unknown) {
+      const axiosErr = error as { response?: { data?: unknown }; message: string };
+      console.error("[MP Error GetPreapproval]:", axiosErr.response?.data || axiosErr.message);
+      throw error;
+    }
+  }
 }

@@ -11,9 +11,22 @@ initSentry();
 const app = express();
 
 // ── ROTA DE SAÚDE ULTRA-PRECOCE (Blindada) ───────────────────────────
-app.get("/api/health", (_req, res) => {
+import { prisma } from "./lib/prisma";
+
+// ── ROTA DE SAÚDE AVANÇADA (Monitoramento de Produção) ───────────────────────────
+app.get("/api/health", async (_req, res) => {
+  let dbStatus = "unknown";
+  try {
+    await prisma.$queryRaw`SELECT 1`;
+    dbStatus = "connected";
+  } catch (err) {
+    dbStatus = "disconnected";
+    console.error("[HEALTH CHECK] Database error:", err);
+  }
+
   res.json({ 
-    status: "ok", 
+    status: dbStatus === "connected" ? "ok" : "degraded", 
+    database: dbStatus,
     boot: true, 
     version: "v2.1.0-golden-stable",
     time: new Date().toISOString(),

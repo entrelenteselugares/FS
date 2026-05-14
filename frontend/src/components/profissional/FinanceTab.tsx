@@ -1,5 +1,9 @@
-import { TrendingUp, DollarSign, Zap, Check, Download } from "lucide-react";
+import { TrendingUp, DollarSign, Zap, Check, Download, Wallet, Clock, FileText, Table } from "lucide-react";
 import type { ProfileData } from "./types";
+import { useState, useEffect } from "react";
+import { API } from "../../lib/api";
+import { formatCurrency } from "../../lib/utils/formatters";
+import { CashflowChart } from "./CashflowChart";
 
 function formatDate(d: string) {
   try {
@@ -43,6 +47,12 @@ export function FinanceTab({
     { t: "Noite (18h-22h)", d: [0, 1, 1, 2, 6, 9, 3] },
   ];
 
+  const [summary, setSummary] = useState<{available: number, pending: number, totalCount: number} | null>(null);
+
+  useEffect(() => {
+    API.get("/me/payout-summary").then(({ data }) => setSummary(data)).catch(console.error);
+  }, []);
+
   return (
     <div className="space-y-8">
       <div className="lux-card p-8 md:p-16 relative overflow-hidden bg-theme-bg">
@@ -62,18 +72,63 @@ export function FinanceTab({
               >
                 Ajustar Meta
               </button>
-              <button
-                onClick={onDownloadTaxReport}
-                className="px-4 py-2 bg-brand-tactical/10 border border-brand-tactical/30 text-[9px] font-black text-brand-tactical uppercase tracking-widest hover:bg-brand-tactical hover:text-zinc-950 transition-all italic flex items-center gap-2"
-              >
-                <Download size={12} />
-                Relatório Tributário
-              </button>
+              <div className="flex items-center gap-2 group relative">
+                <button
+                  onClick={() => onDownloadTaxReport()}
+                  className="px-4 py-2 bg-brand-tactical/10 border border-brand-tactical/30 text-[9px] font-black text-brand-tactical uppercase tracking-widest hover:bg-brand-tactical hover:text-zinc-950 transition-all italic flex items-center gap-2"
+                >
+                  <Download size={12} />
+                  Relatório Tributário
+                </button>
+                <div className="absolute top-full right-0 mt-1 hidden group-hover:flex flex-col bg-theme-bg border border-theme-border shadow-xl z-50">
+                   <button onClick={() => window.open(`${API.defaults.baseURL}/profissional/finance/tax-report?format=pdf`, '_blank')} className="px-4 py-3 text-[8px] font-black uppercase text-theme-text hover:bg-brand-tactical/10 flex items-center gap-2 border-b border-theme-border/30">
+                      <FileText size={10} className="text-brand-tactical" /> PDF (MEI)
+                   </button>
+                   <button onClick={() => window.open(`${API.defaults.baseURL}/profissional/finance/tax-report?format=csv`, '_blank')} className="px-4 py-3 text-[8px] font-black uppercase text-theme-text hover:bg-brand-tactical/10 flex items-center gap-2">
+                      <Table size={10} className="text-brand-tactical" /> CSV Excel
+                   </button>
+                </div>
+              </div>
               <div className="bg-brand-tactical/10 px-6 py-3 border border-brand-tactical/20 flex items-center gap-3">
                 <div className="w-2 h-2 rounded-full bg-brand-tactical animate-pulse" />
                 <span className="text-[9px] font-black text-brand-tactical uppercase tracking-widest">Ciclo de Repasse Ativo</span>
               </div>
             </div>
+          </div>
+
+          {/* REAL-TIME LIQUIDITY SUMMARY */}
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+             <div className="bg-theme-bg-muted border border-theme-border/60 p-6 flex items-center justify-between group hover:border-brand-tactical/40 transition-all">
+                <div className="flex items-center gap-5">
+                   <div className="w-14 h-14 bg-brand-tactical/10 border border-brand-tactical/20 flex items-center justify-center text-brand-tactical">
+                      <Wallet size={24} strokeWidth={1.5} />
+                   </div>
+                   <div className="space-y-0.5">
+                      <span className="text-[10px] font-black text-brand-tactical uppercase tracking-widest italic opacity-80">Saldo Disponível</span>
+                      <p className="text-2xl font-heading font-black text-theme-text italic">{summary ? formatCurrency(summary.available) : "---"}</p>
+                   </div>
+                </div>
+                <div className="text-right">
+                   <span className="text-[8px] font-black text-theme-muted uppercase tracking-[0.2em] block">Liquidação</span>
+                   <span className="text-[10px] font-black text-brand-tactical uppercase italic">IMEDIATA</span>
+                </div>
+             </div>
+             
+             <div className="bg-theme-bg-muted border border-theme-border/60 p-6 flex items-center justify-between group hover:border-amber-500/40 transition-all">
+                <div className="flex items-center gap-5">
+                   <div className="w-14 h-14 bg-amber-500/10 border border-amber-500/20 flex items-center justify-center text-amber-500">
+                      <Clock size={24} strokeWidth={1.5} />
+                   </div>
+                   <div className="space-y-0.5">
+                      <span className="text-[10px] font-black text-amber-500 uppercase tracking-widest italic opacity-80">Garantia (Escrow)</span>
+                      <p className="text-2xl font-heading font-black text-theme-text italic">{summary ? formatCurrency(summary.pending) : "---"}</p>
+                   </div>
+                </div>
+                <div className="text-right">
+                   <span className="text-[8px] font-black text-theme-muted uppercase tracking-[0.2em] block">Liberação em</span>
+                   <span className="text-[10px] font-black text-amber-500 uppercase italic">7 DIAS</span>
+                </div>
+             </div>
           </div>
 
           {/* Projection & ROI Grid */}
@@ -159,6 +214,12 @@ export function FinanceTab({
             </div>
           </div>
 
+          {/* CASHFLOW PROJECTION (Phase 30) */}
+          <div className="bg-theme-bg-muted/20 border border-theme-border/40 p-8 md:p-12 relative">
+             <div className="absolute top-0 right-0 p-4 opacity-5 pointer-events-none"><TrendingUp size={120} /></div>
+             <CashflowChart />
+          </div>
+
           {/* Demand Heatmap */}
           <div className="bg-theme-bg border border-theme-border/60 p-8 md:p-12 space-y-8">
             <div className="flex justify-between items-end">
@@ -229,12 +290,23 @@ export function FinanceTab({
                     </div>
                   </div>
                 </div>
-                <div className="text-left md:text-right border-t md:border-t-0 border-theme-border/40 pt-4 md:pt-0">
-                  <p className="text-[9px] font-black text-theme-muted uppercase tracking-widest mb-1 italic opacity-60">Montante Líquido</p>
-                  <p className="text-3xl font-heading font-black text-brand-tactical italic leading-none">
-                    <span className="text-sm mr-1 font-sans not-italic">R$</span>
-                    {Number(p.amount).toLocaleString("pt-BR", { minimumFractionDigits: 2 })}
-                  </p>
+                <div className="flex flex-col md:flex-row items-end md:items-center gap-6 border-t md:border-t-0 border-theme-border/40 pt-4 md:pt-0">
+                  <div className="text-left md:text-right">
+                    <p className="text-[9px] font-black text-theme-muted uppercase tracking-widest mb-1 italic opacity-60">Montante Líquido</p>
+                    <p className="text-3xl font-heading font-black text-brand-tactical italic leading-none">
+                      <span className="text-sm mr-1 font-sans not-italic">R$</span>
+                      {Number(p.amount).toLocaleString("pt-BR", { minimumFractionDigits: 2 })}
+                    </p>
+                  </div>
+                  {p.status === "PAID" && (
+                    <button 
+                      onClick={() => window.open(`${API.defaults.baseURL}/profissional/finance/receipt/${p.id}`, '_blank')}
+                      className="p-3 bg-theme-bg-muted border border-theme-border text-theme-muted hover:text-brand-tactical hover:border-brand-tactical/50 transition-all shadow-lg"
+                      title="Baixar Recibo"
+                    >
+                      <Download size={14} />
+                    </button>
+                  )}
                 </div>
               </div>
             ))}

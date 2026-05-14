@@ -1,4 +1,4 @@
-<!-- generated-by: gsd-doc-writer -->
+<!-- GSD:DEVELOPMENT -->
 # Development Guide: Foto Segundo
 
 This document outlines the development workflow, coding standards, and build processes for the Foto Segundo platform.

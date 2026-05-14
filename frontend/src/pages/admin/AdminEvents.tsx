@@ -3,7 +3,7 @@ import React, { useState, useEffect, useCallback } from "react";
 import { API } from "../../lib/api";
 import { T } from "../../lib/theme";
 import { QRCodeSVG } from "qrcode.react";
-import { QrCode, X, Trash2, Radar, ArrowRight } from "lucide-react";
+import { QrCode, X, Trash2, Radar, ArrowRight, RefreshCw, Image } from "lucide-react";
 import AdminPhygitalQueue from "./AdminPhygitalQueue";
 import { EventStatusDot } from "../../components/EventStatusDot";
 
@@ -36,7 +36,9 @@ interface Event {
   captacao?: { nome: string } | null;
   edicao?: { nome: string } | null;
   isPrivate: boolean;
-  type: 'ALBUM_FULL' | 'PHOTO_MARKETPLACE';
+  type: 'ALBUM_FULL' | 'PHOTO_MARKETPLACE' | 'SCHOOL' | 'SPORTS';
+  preSaleEnabled?: boolean;
+  postSaleEnabled?: boolean;
   pricePerPhoto?: number;
   _count: { pedidos: number };
   collectedAmount?: number;
@@ -58,11 +60,13 @@ export const AdminEvents: React.FC<AdminEventsProps> = ({ initialEditEventId }) 
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [editingEvent, setEditingEvent] = useState<Event | null>(null);
   const [isUploading, setIsUploading] = useState(false);
+  const [isSyncing, setIsSyncing] = useState(false);
   const [coverPreview, setCoverPreview] = useState<string | null>(null);
   const [qrModalEvent, setQrModalEvent] = useState<Event | null>(null);
   const [copied, setCopied] = useState(false);
   const [notification, setNotification] = useState<{message: string, type: 'success' | 'error'} | null>(null);
-  const [activeTab, setActiveTab] = useState<'info' | 'equipe' | 'comercial'>('info');
+  const [activeTab, setActiveTab] = useState<'info' | 'equipe' | 'comercial' | 'galeria'>('info');
+  const [eventMedia, setEventMedia] = useState<any[]>([]); // TODO: Definir interface Media
   const [confirmDelete, setConfirmDelete] = useState<Event | null>(null);
   const [phygitalQueueEvent, setPhygitalQueueEvent] = useState<Event | null>(null);
 
@@ -110,12 +114,15 @@ export const AdminEvents: React.FC<AdminEventsProps> = ({ initialEditEventId }) 
     isPrivate: boolean;
     isUnitSale: boolean;
     priceUnit: number;
-    type: 'ALBUM_FULL' | 'PHOTO_MARKETPLACE';
+    type: 'ALBUM_FULL' | 'PHOTO_MARKETPLACE' | 'SCHOOL' | 'SPORTS';
+    preSaleEnabled: boolean;
+    postSaleEnabled: boolean;
     pricePerPhoto: number;
     clientName: string;
     clientEmail: string;
     franchiseeId: string;
     retentionDays: number;
+    verticalConfigs: Record<string, any>;
   }
 
   const [formData, setFormData] = useState<EventFormData>({
@@ -139,6 +146,9 @@ export const AdminEvents: React.FC<AdminEventsProps> = ({ initialEditEventId }) 
     clientEmail: "",
     franchiseeId: "",
     retentionDays: 15,
+    preSaleEnabled: false,
+    postSaleEnabled: true,
+    verticalConfigs: {},
   });
 
 
@@ -226,6 +236,9 @@ export const AdminEvents: React.FC<AdminEventsProps> = ({ initialEditEventId }) 
         clientEmail: "",
         franchiseeId: "",
         retentionDays: 15,
+        preSaleEnabled: false,
+        postSaleEnabled: true,
+        verticalConfigs: {},
       });
       setCoverPreview(null);
     } catch {
@@ -234,6 +247,48 @@ export const AdminEvents: React.FC<AdminEventsProps> = ({ initialEditEventId }) 
       setIsUploading(false);
     }
   };
+
+  const handleSyncDrive = async () => {
+    if (!editingEvent) return;
+    setIsSyncing(true);
+    try {
+      const { data } = await API.post(`/marketplace/events/${editingEvent.id}/sync-drive`);
+      showNotification(data.message);
+      const updatedEvents = await API.get("/admin/events");
+      setEvents(updatedEvents.data.events || []);
+    } catch (err: unknown) {
+      const error = err as { response?: { data?: { error?: string } } };
+      console.error(error);
+      showNotification(error.response?.data?.error || "Erro ao sincronizar Drive.", 'error');
+    } finally {
+      setIsSyncing(false);
+    }
+  };
+
+  const loadEventMedia = async (eventId: string) => {
+    try {
+      const { data } = await API.get(`/marketplace/events/${eventId}/media`);
+      setEventMedia(data.media || []);
+    } catch (err) {
+      console.error("Erro ao carregar mídias:", err);
+    }
+  };
+
+  const handleUpdateMediaMetadata = async (mediaId: string, metadata: Record<string, any>) => {
+    try {
+      await API.patch(`/marketplace/media/${mediaId}/metadata`, { metadata });
+      showNotification("Metadados atualizados!");
+    } catch (err) {
+      console.error(err);
+      showNotification("Erro ao atualizar metadados.", 'error');
+    }
+  };
+
+  useEffect(() => {
+    if (activeTab === 'galeria' && editingEvent) {
+      loadEventMedia(editingEvent.id);
+    }
+  }, [activeTab, editingEvent]);
 
   const handleDelete = async (id: string) => {
     try {
@@ -294,6 +349,9 @@ export const AdminEvents: React.FC<AdminEventsProps> = ({ initialEditEventId }) 
         clientEmail: data.clientEmail || "",
         franchiseeId: data.franchiseeId || "",
         retentionDays: data.retentionDays || 15,
+        preSaleEnabled: data.preSaleEnabled || false,
+        postSaleEnabled: data.postSaleEnabled || false,
+        verticalConfigs: data.verticalConfigs ? (typeof data.verticalConfigs === 'string' ? JSON.parse(data.verticalConfigs) : data.verticalConfigs) : {},
       });
       setCoverPreview(data.coverPhotoUrl);
       setActiveTab('info');
@@ -386,7 +444,16 @@ export const AdminEvents: React.FC<AdminEventsProps> = ({ initialEditEventId }) 
           <button 
             onClick={() => {
               setEditingEvent(null);
-              setFormData({ title: "", slug: "", date: "", location: "", city: "", description: "", priceBase: 200, priceEarly: 190, cartorioId: "", captacaoId: "", edicaoId: "", temFoto: true, temVideo: false, temReels: false, temFotoImpressa: false, coverPhotoUrl: "", eventHours: 2, isCrowdfund: false, targetAmount: 0, lightroomUrl: "", driveUrl: "", previewPhotos: ["", "", ""], isPrivate: true, isUnitSale: false, priceUnit: 10, type: 'ALBUM_FULL', pricePerPhoto: 15, clientName: "", clientEmail: "", franchiseeId: "", retentionDays: 15 });
+              setFormData({ 
+                title: "", slug: "", date: "", location: "", city: "", description: "", 
+                priceBase: 200, priceEarly: 190, cartorioId: "", captacaoId: "", edicaoId: "", 
+                temFoto: true, temVideo: false, temReels: false, temFotoImpressa: false, 
+                coverPhotoUrl: "", eventHours: 2, isCrowdfund: false, targetAmount: 0, 
+                lightroomUrl: "", driveUrl: "", previewPhotos: ["", "", ""], isPrivate: true, 
+                isUnitSale: false, priceUnit: 10, type: 'ALBUM_FULL', pricePerPhoto: 15, 
+                clientName: "", clientEmail: "", franchiseeId: "", retentionDays: 15,
+                preSaleEnabled: false, postSaleEnabled: true, verticalConfigs: {}
+              });
               setCoverPreview(null);
               setIsModalOpen(true);
             }}
@@ -521,9 +588,9 @@ export const AdminEvents: React.FC<AdminEventsProps> = ({ initialEditEventId }) 
               </div>
               
               <div className="flex items-center gap-8 mr-12">
-                {(['info', 'equipe', 'comercial'] as const).map(t => (
+                {(['info', 'equipe', 'comercial', 'galeria'] as const).map(t => (
                   <button key={t} type="button" onClick={() => setActiveTab(t)} className={`pb-2 text-[10px] font-black uppercase tracking-[0.2em] relative transition-all italic ${activeTab === t ? 'text-brand-tactical' : 'text-theme-muted hover:text-white'}`}>
-                    {t === 'info' ? '1. Essencial' : t === 'equipe' ? '2. Operação' : '3. Comercial'}
+                    {t === 'info' ? '1. Essencial' : t === 'equipe' ? '2. Operação' : t === 'comercial' ? '3. Comercial' : '4. Galeria'}
                     {activeTab === t && <div className="absolute -bottom-2 left-0 right-0 h-0.5 bg-brand-tactical" />}
                   </button>
                 ))}
@@ -662,7 +729,20 @@ export const AdminEvents: React.FC<AdminEventsProps> = ({ initialEditEventId }) 
                       </div>
                       <div className="space-y-2">
                         <label className="text-[8px] font-black text-theme-muted uppercase tracking-widest block mb-2 opacity-60 italic">Google Drive</label>
-                        <input type="text" className="w-full bg-theme-bg-muted border border-theme-border/60 p-4 text-[10px] text-theme-text font-mono outline-none focus:border-brand-tactical rounded-xl" value={formData.driveUrl} onChange={e => setFormData({ ...formData, driveUrl: e.target.value })} placeholder="https://drive.google.com/..." />
+                        <div className="flex gap-2">
+                          <input type="text" className="flex-1 bg-theme-bg-muted border border-theme-border/60 p-4 text-[10px] text-theme-text font-mono outline-none focus:border-brand-tactical rounded-xl" value={formData.driveUrl} onChange={e => setFormData({ ...formData, driveUrl: e.target.value })} placeholder="https://drive.google.com/..." />
+                          {editingEvent && (
+                            <button 
+                              type="button"
+                              onClick={handleSyncDrive}
+                              disabled={isSyncing || !formData.driveUrl}
+                              className="px-6 bg-brand-tactical text-zinc-950 text-[9px] font-black uppercase tracking-widest rounded-xl hover:brightness-110 transition-all flex items-center gap-2 disabled:opacity-50"
+                            >
+                              <RefreshCw size={14} className={isSyncing ? "animate-spin" : ""} />
+                              {isSyncing ? "SYNC..." : "SINCRO DRIVE"}
+                            </button>
+                          )}
+                        </div>
                       </div>
                       <div className="space-y-2">
                         <label className="text-[8px] font-black text-theme-muted uppercase tracking-widest block mb-2 opacity-60 italic">Lightroom / Galeria</label>
@@ -677,18 +757,42 @@ export const AdminEvents: React.FC<AdminEventsProps> = ({ initialEditEventId }) 
                     <div className="space-y-6">
                       <div className="space-y-4">
                         <label className="text-[8px] font-black text-theme-muted uppercase tracking-widest block mb-2 opacity-60 italic">Modelo e Serviços</label>
-                        <div className="grid grid-cols-2 gap-4">
-                          <button type="button" onClick={() => setFormData({ ...formData, type: 'ALBUM_FULL' })} className={`py-4 border text-[9px] font-black uppercase tracking-widest transition-all rounded-xl italic ${formData.type === 'ALBUM_FULL' ? 'bg-brand-tactical border-brand-tactical text-zinc-950 shadow-lg shadow-brand-tactical/20' : 'bg-theme-bg-muted border-theme-border text-theme-muted hover:border-theme-text'}`}>Álbum Completo</button>
-                          <button type="button" onClick={() => setFormData({ ...formData, type: 'PHOTO_MARKETPLACE' })} className={`py-4 border text-[9px] font-black uppercase tracking-widest transition-all rounded-xl italic ${formData.type === 'PHOTO_MARKETPLACE' ? 'bg-brand-tactical border-brand-tactical text-zinc-950 shadow-lg shadow-brand-tactical/20' : 'bg-theme-bg-muted border-theme-border text-theme-muted hover:border-theme-text'}`}>Live Print</button>
+                        <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
+                          <button type="button" onClick={() => setFormData({ ...formData, type: 'ALBUM_FULL' })} className={`py-4 border text-[9px] font-black uppercase tracking-widest transition-all rounded-xl italic ${formData.type === 'ALBUM_FULL' ? 'bg-brand-tactical border-brand-tactical text-zinc-950 shadow-lg shadow-brand-tactical/20' : 'bg-theme-bg-muted border-theme-border text-theme-muted hover:border-theme-text'}`}>Social</button>
+                          <button type="button" onClick={() => setFormData({ ...formData, type: 'PHOTO_MARKETPLACE' })} className={`py-4 border text-[9px] font-black uppercase tracking-widest transition-all rounded-xl italic ${formData.type === 'PHOTO_MARKETPLACE' ? 'bg-brand-tactical border-brand-tactical text-zinc-950 shadow-lg shadow-brand-tactical/20' : 'bg-theme-bg-muted border-theme-border text-theme-muted hover:border-theme-text'}`}>Marketplace</button>
+                          <button type="button" onClick={() => setFormData({ ...formData, type: 'SCHOOL' })} className={`py-4 border text-[9px] font-black uppercase tracking-widest transition-all rounded-xl italic ${formData.type === 'SCHOOL' ? 'bg-brand-tactical border-brand-tactical text-zinc-950 shadow-lg shadow-brand-tactical/20' : 'bg-theme-bg-muted border-theme-border text-theme-muted hover:border-theme-text'}`}>Escolar</button>
+                          <button type="button" onClick={() => setFormData({ ...formData, type: 'SPORTS' })} className={`py-4 border text-[9px] font-black uppercase tracking-widest transition-all rounded-xl italic ${formData.type === 'SPORTS' ? 'bg-brand-tactical border-brand-tactical text-zinc-950 shadow-lg shadow-brand-tactical/20' : 'bg-theme-bg-muted border-theme-border text-theme-muted hover:border-theme-text'}`}>Esportes</button>
                         </div>
+                        {formData.type === 'SCHOOL' && (
+                          <div className="p-6 bg-brand-tactical/5 border border-brand-tactical/20 rounded-[20px] space-y-4">
+                            <label className="text-[8px] font-black text-brand-tactical uppercase tracking-widest block opacity-60 italic">Lista de Alunos (Nomes separados por vírgula ou linha)</label>
+                            <textarea 
+                              className="w-full bg-theme-bg-muted border border-brand-tactical/20 p-4 text-[10px] text-theme-text font-black outline-none focus:border-brand-tactical rounded-xl h-24 resize-none placeholder:text-brand-tactical/30" 
+                              value={formData.verticalConfigs?.studentList || ""}
+                              onChange={e => setFormData({ ...formData, verticalConfigs: { ...formData.verticalConfigs, studentList: e.target.value }})}
+                              placeholder="Ex: João Silva, Maria Souza, Pedro Santos..."
+                            />
+                          </div>
+                        )}
+                        {formData.type === 'SPORTS' && (
+                          <div className="p-6 bg-brand-tactical/5 border border-brand-tactical/20 rounded-[20px] space-y-4 flex items-center justify-between">
+                            <label className="text-[8px] font-black text-brand-tactical uppercase tracking-widest block opacity-60 italic">Habilitar Busca por Número de Peito (Bib)</label>
+                            <label className="flex items-center gap-3 cursor-pointer group">
+                              <div className={`w-5 h-5 rounded-md border flex items-center justify-center transition-all ${formData.verticalConfigs?.enableBibSearch !== false ? 'bg-brand-tactical border-brand-tactical' : 'bg-theme-bg-muted border-theme-border'}`}>
+                                {formData.verticalConfigs?.enableBibSearch !== false && <div className="w-2.5 h-2.5 bg-black rounded-sm" />}
+                              </div>
+                              <input type="checkbox" hidden checked={formData.verticalConfigs?.enableBibSearch !== false} onChange={e => setFormData({ ...formData, verticalConfigs: { ...formData.verticalConfigs, enableBibSearch: e.target.checked }})} />
+                            </label>
+                          </div>
+                        )}
                         <div className="grid grid-cols-2 gap-x-6 gap-y-4 pt-6 border-t border-theme-border/60">
-                          {["temFoto", "temVideo", "temReels", "temFotoImpressa", "isCrowdfund", "isPrivate"].map(f => (
+                          {["temFoto", "temVideo", "temReels", "temFotoImpressa", "isCrowdfund", "isPrivate", "preSaleEnabled", "postSaleEnabled"].map(f => (
                             <label key={f} className="flex items-center gap-3 cursor-pointer group">
                               <div className={`w-5 h-5 rounded-md border flex items-center justify-center transition-all ${formData[f as keyof EventFormData] ? 'bg-brand-tactical border-brand-tactical shadow-sm shadow-brand-tactical/20' : 'bg-theme-bg-muted border-theme-border group-hover:border-theme-text'}`}>
                                 {formData[f as keyof EventFormData] && <div className="w-2.5 h-2.5 bg-black rounded-sm" />}
                               </div>
                               <input type="checkbox" hidden checked={formData[f as keyof EventFormData] as boolean} onChange={e => setFormData({...formData, [f]: e.target.checked})} />
-                              <span className={`text-[9px] font-black uppercase tracking-widest transition-all italic ${formData[f as keyof EventFormData] ? 'text-brand-tactical' : 'text-theme-muted'}`}>{f.replace("tem", "").replace("is", "").replace(/([A-Z])/g, ' $1').trim()}</span>
+                              <span className={`text-[9px] font-black uppercase tracking-widest transition-all italic ${formData[f as keyof EventFormData] ? 'text-brand-tactical' : 'text-theme-muted'}`}>{f.replace("tem", "").replace("is", "").replace("Enabled", "").replace(/([A-Z])/g, ' $1').trim()}</span>
                             </label>
                           ))}
                         </div>
@@ -712,6 +816,72 @@ export const AdminEvents: React.FC<AdminEventsProps> = ({ initialEditEventId }) 
                   </div>
                 </div>
               )}
+
+              {activeTab === 'galeria' && (
+                <div className="animate-in fade-in duration-500 space-y-8">
+                  <div className="flex items-center justify-between border-b border-theme-border pb-4">
+                    <div className="flex items-center gap-6">
+                      <h3 className="text-sm font-black uppercase tracking-widest text-theme-text italic">Fotos do Marketplace</h3>
+                      {editingEvent && (
+                        <button 
+                          type="button"
+                          onClick={handleSyncDrive}
+                          disabled={isSyncing || !formData.driveUrl}
+                          className="px-4 py-2 bg-brand-tactical/10 border border-brand-tactical/30 text-brand-tactical text-[9px] font-black uppercase tracking-widest rounded-lg hover:bg-brand-tactical hover:text-zinc-950 transition-all flex items-center gap-2 disabled:opacity-50"
+                        >
+                          <RefreshCw size={12} className={isSyncing ? "animate-spin" : ""} />
+                          {isSyncing ? "SYNC..." : "SINCRO DRIVE"}
+                        </button>
+                      )}
+                    </div>
+                    <p className="text-[10px] text-theme-muted font-bold uppercase">{eventMedia.length} Itens</p>
+                  </div>
+
+                  <div className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-5 gap-6">
+                    {eventMedia.map((m) => (
+                      <div key={m.id} className="bg-theme-bg-muted/50 border border-theme-border/60 rounded-2xl overflow-hidden flex flex-col group shadow-sm">
+                        <div className="aspect-square relative overflow-hidden bg-black">
+                          <img 
+                            src={m.url.length > 50 ? m.url : `${API.defaults.baseURL}/vaults/media/proxy/${m.url}`} 
+                            alt={m.shortId} 
+                            className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500 opacity-80 group-hover:opacity-100" 
+                          />
+                          <div className="absolute top-2 left-2 px-2 py-1 bg-black/60 backdrop-blur-md rounded text-[8px] font-mono text-white border border-white/10 uppercase">{m.shortId}</div>
+                        </div>
+                        <div className="p-3 space-y-3 bg-theme-card">
+                          <div className="space-y-1">
+                            <label className="text-[7px] font-black text-theme-muted uppercase tracking-widest block opacity-60">ID Aluno / Bib</label>
+                            <input 
+                              type="text" 
+                              className="w-full bg-theme-bg border border-theme-border/40 p-2 text-[10px] text-theme-text font-black outline-none focus:border-brand-tactical rounded-lg uppercase transition-all"
+                              defaultValue={m.metadata?.studentId || m.metadata?.bibNumber || m.metadata?.identifier || ""}
+                              onBlur={(e) => {
+                                const val = e.target.value.trim();
+                                if (val !== (m.metadata?.studentId || m.metadata?.bibNumber || m.metadata?.identifier)) {
+                                  const newMeta = { ...m.metadata };
+                                  if (formData.type === 'SCHOOL') newMeta.studentId = val;
+                                  else if (formData.type === 'SPORTS') newMeta.bibNumber = val;
+                                  else newMeta.identifier = val;
+                                  handleUpdateMediaMetadata(m.id, newMeta);
+                                }
+                              }}
+                              placeholder="EDITAR ID"
+                            />
+                          </div>
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+
+                  {eventMedia.length === 0 && (
+                    <div className="py-20 text-center border-2 border-dashed border-theme-border/40 rounded-[30px] bg-theme-bg-muted/30">
+                      <Image size={40} className="mx-auto text-theme-muted/30 mb-4" strokeWidth={1} />
+                      <p className="text-[11px] font-black text-theme-muted uppercase tracking-[0.3em] italic">Nenhuma mídia encontrada nesta galeria.</p>
+                      <p className="text-[8px] text-theme-muted/60 uppercase tracking-widest mt-2 font-black italic">Use o Sincro Drive para importar fotos em massa.</p>
+                    </div>
+                  )}
+                </div>
+              )}
             </form>
 
             {/* Footer */}
@@ -720,7 +890,11 @@ export const AdminEvents: React.FC<AdminEventsProps> = ({ initialEditEventId }) 
               {activeTab !== 'comercial' ? (
                 <button 
                   type="button" 
-                  onClick={() => { const t: Array<'info' | 'equipe' | 'comercial'> = ['info','equipe','comercial']; setActiveTab(t[t.indexOf(activeTab)+1]); }} 
+                  onClick={() => { 
+                    const t: Array<'info' | 'equipe' | 'comercial' | 'galeria'> = ['info','equipe','comercial','galeria']; 
+                    const currentIndex = t.indexOf(activeTab as any);
+                    if (currentIndex < t.length - 1) setActiveTab(t[currentIndex + 1]);
+                  }} 
                   className="fs-btn flex-[2] bg-theme-border text-theme-text hover:bg-zinc-700 transition-all italic flex items-center justify-center gap-4"
                 >
                   Próximo Passo

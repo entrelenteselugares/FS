@@ -9,6 +9,7 @@ import { MercadoPagoService } from "../services/mercadopago.service";
 import { audit } from "../lib/audit";
 import { applyWatermark } from "../lib/image-processor";
 import bcrypt from "bcryptjs";
+import { driveService } from "../services/googleDrive.service";
 
 export class MarketplaceController {
   /**
@@ -231,7 +232,7 @@ export class MarketplaceController {
    */
   static async addMedia(req: AuthRequest, res: Response) {
     const { id: eventId } = req.params;
-    const { imageBase64, mimeType, price } = req.body;
+    const { imageBase64, mimeType, price, metadata } = req.body;
     const userId = req.user?.userId;
 
     if (!imageBase64 || !mimeType) {
@@ -280,7 +281,8 @@ export class MarketplaceController {
           eventId: String(eventId),
           url: publicUrl,
           shortId,
-          price: price ? Number(price) : null
+          price: price ? Number(price) : null,
+          metadata: metadata || {}
         }
       });
 
@@ -358,9 +360,32 @@ export class MarketplaceController {
         }
       }
 
-      // 3. Retorna as mídias (Híbrido: EventMedia + PhygitalPrint)
+      // 3. Filtro de busca (Escolar/Esportivo)
+      const { search } = req.query;
+      const whereClause: any = { eventId: String(eventId) };
+
+      if (search) {
+        const searchStr = String(search);
+        whereClause.OR = [
+          { shortId: { contains: searchStr, mode: 'insensitive' } },
+          {
+            metadata: {
+              path: ['studentId'],
+              string_contains: searchStr
+            }
+          },
+          {
+            metadata: {
+              path: ['bibNumber'],
+              string_contains: searchStr
+            }
+          }
+        ];
+      }
+
+      // 4. Retorna as mídias (Híbrido: EventMedia + PhygitalPrint)
       const media = await prisma.eventMedia.findMany({
-        where: { eventId: String(eventId) },
+        where: whereClause,
         orderBy: { shortId: "asc" }
       });
 
@@ -416,6 +441,131 @@ export class MarketplaceController {
     } catch (error) {
       console.error("[Marketplace.listMedia] Erro:", error);
       return res.status(500).json({ error: "Erro ao listar mídias." });
+    }
+  }
+
+  /**
+   * POST /api/marketplace/events/:id/sync-drive
+   * Sincroniza fotos de uma pasta do Google Drive com o marketplace.
+   * Extrai metadados (studentId/bibNumber) automaticamente do nome do arquivo.
+   */
+  static async syncEventMedia(req: AuthRequest, res: Response) {
+    const { id: eventId } = req.params;
+    const userId = req.user?.userId;
+
+    try {
+      // 1. Validar propriedade e obter o driveUrl
+      const event = await prisma.event.findFirst({
+        where: {
+          id: String(eventId),
+          OR: [{ captacaoId: userId }, { edicaoId: userId }, { cartorioUserId: userId }, { franchiseeId: userId }]
+        }
+      });
+
+      if (!event) return res.status(403).json({ error: "Acesso negado ou evento não encontrado." });
+      if (!event.driveUrl) return res.status(400).json({ error: "Este evento não possui um Drive URL configurado." });
+
+      // Extrair ID da pasta do Drive URL
+      const folderIdMatch = event.driveUrl.match(/[\w-]{25,}/);
+      if (!folderIdMatch) return res.status(400).json({ error: "Drive URL inválido (ID da pasta não encontrado)." });
+      const folderId = folderIdMatch[0];
+
+      // 2. Listar arquivos no Drive
+      console.log(`[SYNC] Iniciando sincronização para evento ${event.nomeNoivos} (ID: ${eventId})`);
+      const files = await driveService.listFiles(folderId);
+      console.log(`[SYNC] ${files.length} arquivos encontrados no Drive.`);
+
+      let createdCount = 0;
+      let updatedCount = 0;
+
+      // 3. Processar cada arquivo
+      for (const file of files) {
+        if (!file.id || !file.name) continue;
+
+        // Regex para extrair identificador (sequência de 3 a 10 dígitos)
+        // Exemplos: 12345.jpg, ALUNO_12345.jpg, BIB_123.jpg
+        const idMatch = file.name.match(/(\d{3,10})/);
+        const extractedId = idMatch ? idMatch[1] : null;
+
+        const metadata: any = {};
+        if (extractedId) {
+          if (event.type === 'SCHOOL') metadata.studentId = extractedId;
+          else if (event.type === 'SPORTS') metadata.bibNumber = extractedId;
+          else metadata.identifier = extractedId;
+        }
+
+        // Verificar se já existe (usamos o fileId do drive como referência única no campo 'url' ou via metadata)
+        // Aqui usaremos a URL (ou o ID do drive se preferir) como chave.
+        // Para simplificar e evitar duplicatas, checamos se já existe EventMedia com essa URL.
+        const existingMedia = await prisma.eventMedia.findFirst({
+          where: { eventId: event.id, url: file.id } // Usamos o ID do Drive como URL para o proxy
+        });
+
+        if (existingMedia) {
+          await prisma.eventMedia.update({
+            where: { id: existingMedia.id },
+            data: { 
+              metadata: { ...(existingMedia.metadata as object || {}), ...metadata },
+              price: event.pricePerPhoto || 15
+            }
+          });
+          updatedCount++;
+        } else {
+          // Gerar ShortID sequencial
+          const count = await prisma.eventMedia.count({ where: { eventId: event.id } });
+          const shortId = `F${(count + 1 + createdCount).toString().padStart(4, '0')}`;
+
+          await prisma.eventMedia.create({
+            data: {
+              eventId: event.id,
+              url: file.id, // Armazenamos o ID do Drive. O frontend usará o proxy para exibir.
+              shortId,
+              price: event.pricePerPhoto || 15,
+              metadata: metadata
+            }
+          });
+          createdCount++;
+        }
+      }
+
+      await audit(req, "DRIVE_SYNC_COMPLETED", "Event", event.id, null, {
+        filesFound: files.length,
+        created: createdCount,
+        updated: updatedCount
+      });
+
+      return res.json({
+        success: true,
+        message: `Sincronização concluída: ${createdCount} novas, ${updatedCount} atualizadas.`,
+        details: { total: files.length, created: createdCount, updated: updatedCount }
+      });
+
+    } catch (error: any) {
+      console.error("[SyncDrive Error]:", error);
+      return res.status(500).json({ error: "Erro durante a sincronização com o Google Drive.", details: error.message });
+    }
+  }
+
+  /**
+   * PATCH /api/marketplace/media/:mediaId/metadata
+   * Permite que o Admin corrija metadados manualmente (studentId, bibNumber, etc).
+   */
+  static async patchMediaMetadata(req: AuthRequest, res: Response) {
+    const { mediaId } = req.params;
+    const { metadata } = req.body;
+
+    try {
+      const updated = await prisma.eventMedia.update({
+        where: { id: mediaId },
+        data: { metadata: metadata || {} }
+      });
+
+      await audit(req, "MEDIA_METADATA_UPDATED", "EventMedia", mediaId, null, { metadata });
+
+      return res.json(updated);
+    } catch (error: any) {
+      console.error("[PatchMediaMetadata Error]:", error);
+      return res.status(500).json({ error: "Falha ao atualizar metadados da mídia." });
     }
   }
 }

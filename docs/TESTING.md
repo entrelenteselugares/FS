@@ -1,4 +1,4 @@
-<!-- generated-by: gsd-doc-writer -->
+<!-- GSD:TESTING -->
 # Testing Guide: Foto Segundo
 
 Quality assurance in Foto Segundo is driven by end-to-end (E2E) testing to ensure transaction integrity across all phygital verticals.
@@ -23,6 +23,7 @@ npx playwright install --with-deps
 | `npm test` | Runs the main E2E suite (Playwright). |
 | `npm run test:certify` | Executes the launch certification robot (E2E). |
 | `npm run test --prefix backend` | Runs backend resilience tests (Jest). |
+| `npx ts-node e2e/flash-scale.test.ts` | Runs the high-concurrency Flash Event stress test. |
 | `npm run test:all --prefix backend` | Runs all backend unit and integration tests. |
 | `npx playwright test --ui` | Opens the Playwright UI for interactive debugging. |
 | `npx playwright show-report` | Views the HTML report of the last test run. |
@@ -53,6 +54,8 @@ We prioritize functional coverage over line coverage. Current benchmarks:
 - **Financial Transactions:** 100%
 - **Flash Event Resgate:** 100%
 - **Admin Management:** > 80%
+- **Multi-Vertical (School/Sports):** > 80%
+- **Growth Engine (Coupons/Affiliates):** > 70%
 
 ## CI Integration
 

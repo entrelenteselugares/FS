@@ -10,9 +10,11 @@ import {
   ExternalLink,
   Activity,
   History,
-  DollarSign
+  DollarSign,
+  Palette
 } from 'lucide-react';
 import { API as api } from '../../lib/api';
+import { useAuth } from '../../hooks/useAuth';
 
 interface InventoryData {
   available: number;
@@ -40,11 +42,22 @@ interface FinanceStats {
     eventTitle: string;
     date: string;
   }[];
+  intel?: {
+    networkEvents: number;
+    networkOrders: number;
+    avgOrdersPerEvent: string;
+  };
 }
 
 const FranchiseDashboard: React.FC = () => {
+  const { user } = useAuth();
   const [loading, setLoading] = useState(true);
+  const [savingBranding, setSavingBranding] = useState(false);
   const [printerStatus] = useState<'ONLINE' | 'OFFLINE' | 'ERROR'>('ONLINE');
+  const [branding, setBranding] = useState({
+    logoUrl: user?.tenantLogoUrl || "",
+    brandColor: user?.tenantBrandColor || "#14b8a6"
+  });
   const [inventory, setInventory] = useState<InventoryData>({
     available: 0,
     threshold: 50,
@@ -95,6 +108,39 @@ const FranchiseDashboard: React.FC = () => {
       // In a real scenario, we'd redirect to the checkout page of the new order
     } catch {
       alert("Erro ao gerar pedido.");
+    }
+  };
+
+  const handleSaveBranding = async () => {
+    setSavingBranding(true);
+    try {
+      await api.patch('/franchise/branding', {
+        tenantLogoUrl: branding.logoUrl,
+        tenantBrandColor: branding.brandColor
+      });
+      alert("Configurações de marca atualizadas com sucesso!");
+    } catch (err) {
+      console.error(err);
+      alert("Erro ao atualizar configurações de marca.");
+    } finally {
+      setSavingBranding(false);
+    }
+  };
+
+  const handleExportCSV = async () => {
+    try {
+      // Create a hidden anchor element to download the CSV blob
+      const response = await api.get('/franchise/finance/export', { responseType: 'blob' });
+      const url = window.URL.createObjectURL(new Blob([response.data]));
+      const link = document.createElement('a');
+      link.href = url;
+      link.setAttribute('download', `fechamento_franquia_${new Date().toISOString().split('T')[0]}.csv`);
+      document.body.appendChild(link);
+      link.click();
+      link.parentNode?.removeChild(link);
+    } catch (err) {
+      console.error(err);
+      alert("Erro ao exportar fechamento. Verifique se existem vendas no período.");
     }
   };
 
@@ -301,17 +347,80 @@ const FranchiseDashboard: React.FC = () => {
               </div>
             </div>
 
-            <button className="w-full py-4 text-[9px] font-black text-theme-muted uppercase tracking-[0.3em] border border-dashed border-theme-border hover:border-theme-text transition-all">
-              Configurar Comissões B2B
-            </button>
+            {/* B2B WHITE-LABEL SETTINGS */}
+            <div className="space-y-4 pt-4 border-t border-theme-border/20">
+              <div className="flex items-center gap-2 mb-4">
+                <Palette size={16} className="text-brand-tactical" />
+                <span className="text-[10px] font-black text-theme-muted uppercase tracking-widest opacity-80">White-Label (B2B)</span>
+              </div>
+              <div className="space-y-3">
+                <div>
+                  <label className="text-[9px] font-black uppercase tracking-widest text-theme-muted block mb-2">URL da Logo</label>
+                  <input 
+                    type="url" 
+                    value={branding.logoUrl}
+                    onChange={(e) => setBranding(prev => ({...prev, logoUrl: e.target.value}))}
+                    placeholder="https://sua-logo.com/img.png"
+                    className="w-full bg-black/40 border border-theme-border p-3 text-[10px] font-black text-theme-text focus:border-brand-tactical transition-colors outline-none"
+                  />
+                </div>
+                <div>
+                  <label className="text-[9px] font-black uppercase tracking-widest text-theme-muted block mb-2">Cor da Marca (Hex)</label>
+                  <div className="flex gap-2">
+                    <input 
+                      type="color" 
+                      value={branding.brandColor}
+                      onChange={(e) => setBranding(prev => ({...prev, brandColor: e.target.value}))}
+                      className="w-10 h-10 bg-transparent border-0 cursor-pointer"
+                    />
+                    <input 
+                      type="text" 
+                      value={branding.brandColor}
+                      onChange={(e) => setBranding(prev => ({...prev, brandColor: e.target.value}))}
+                      className="flex-1 bg-black/40 border border-theme-border p-3 text-[10px] font-black text-theme-text focus:border-brand-tactical transition-colors outline-none"
+                    />
+                  </div>
+                </div>
+                <button 
+                  onClick={handleSaveBranding}
+                  disabled={savingBranding}
+                  className="w-full py-4 bg-brand-tactical/10 text-brand-tactical hover:bg-brand-tactical hover:text-zinc-950 transition-all text-[9px] font-black uppercase tracking-[0.3em] disabled:opacity-50"
+                >
+                  {savingBranding ? 'Salvando...' : 'Salvar Customização'}
+                </button>
+              </div>
+            </div>
           </div>
 
-          {/* PASSIVE INCOME LIST */}
-          <div className="bg-theme-bg-muted border border-theme-border p-8 space-y-6">
+          {/* PASSIVE INCOME LIST & COHORT INTEL */}
+          <div className="bg-theme-bg-muted border border-theme-border p-8 space-y-8">
             <div className="flex items-center justify-between">
-              <h3 className="text-sm font-black text-theme-text uppercase tracking-widest italic">Comissões Recentes</h3>
-              <Activity size={14} className="text-blue-400 opacity-50" />
+              <h3 className="text-sm font-black text-theme-text uppercase tracking-widest italic">Comissões & Fechamento</h3>
+              <button 
+                onClick={handleExportCSV}
+                className="text-[9px] font-black text-brand-tactical border border-brand-tactical/30 px-3 py-1.5 uppercase tracking-widest hover:bg-brand-tactical hover:text-black transition-colors"
+              >
+                Exportar CSV
+              </button>
             </div>
+
+            {/* COHORT INTEL METRICS */}
+            {finance.intel && (
+              <div className="grid grid-cols-3 gap-4 pb-6 border-b border-theme-border/20">
+                <div>
+                  <span className="block text-[8px] font-black text-theme-muted uppercase tracking-widest">Eventos da Rede</span>
+                  <span className="text-lg font-black text-white">{finance.intel.networkEvents}</span>
+                </div>
+                <div>
+                  <span className="block text-[8px] font-black text-theme-muted uppercase tracking-widest">Pedidos (Vendas)</span>
+                  <span className="text-lg font-black text-white">{finance.intel.networkOrders}</span>
+                </div>
+                <div>
+                  <span className="block text-[8px] font-black text-theme-muted uppercase tracking-widest">Conv. (Orders/Event)</span>
+                  <span className="text-lg font-black text-brand-tactical">{finance.intel.avgOrdersPerEvent}</span>
+                </div>
+              </div>
+            )}
 
             <div className="space-y-4">
               {finance.recentCommissions.length === 0 ? (

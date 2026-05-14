@@ -37,6 +37,8 @@ export interface AuthUser {
   bairro?: string | null;
   cidade?: string | null;
   estado?: string | null;
+  tenantLogoUrl?: string | null;
+  tenantBrandColor?: string | null;
 }
 
 export interface AuthContextType {

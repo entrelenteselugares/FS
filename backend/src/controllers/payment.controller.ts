@@ -810,6 +810,7 @@ export class PaymentController {
             splitFranchisee,
             passiveFranchiseeId,
             ambassadorId: req.cookies?.fs_referral,
+            couponId: appliedCoupon ? appliedCoupon.id : null,
             tempPassword: isNewUser ? tempPassword : null,
             // Order Engine Fields
             deliveryType: req.body.deliveryType || existingPendingOrder.deliveryType || "DIGITAL_ONLY",
@@ -849,6 +850,7 @@ export class PaymentController {
             splitFranchisee,
             passiveFranchiseeId,
             ambassadorId: req.cookies?.fs_referral,
+            couponId: appliedCoupon ? appliedCoupon.id : null,
             tempPassword: isNewUser ? tempPassword : null,
             // Order Engine Fields
             deliveryType: req.body.deliveryType || "DIGITAL_ONLY",
@@ -1028,7 +1030,10 @@ export class PaymentController {
               dataEvento: true,
               location: true,
               coverPhotoUrl: true,
-              isCrowdfund: true
+              isCrowdfund: true,
+              customBrandColor: true,
+              customLogoUrl: true,
+              cartorioUser: { select: { tenantBrandColor: true, tenantLogoUrl: true } }
             }
           }
         }
@@ -1086,7 +1091,11 @@ export class PaymentController {
         eventId: order.eventId,
         clienteId: order.clienteId,
         buyerEmail: order.buyerEmail || order.cliente?.email,
-        event: order.event,
+        event: order.event ? {
+          ...order.event,
+          tenantBrandColor: order.event.customBrandColor || (order.event as any).cartorioUser?.tenantBrandColor || null,
+          tenantLogoUrl: order.event.customLogoUrl || (order.event as any).cartorioUser?.tenantLogoUrl || null
+        } : null,
         contributorName: order.contributorName,
         manualType: order.manualType,
         isGuestOrder: order.isGuestOrder,
@@ -1418,6 +1427,14 @@ export class PaymentController {
         // 1. Atualizar Montante Arrecadado (Crowdfunding)
         if (order.isContribution && order.eventId) {
           eventUpdateData.collectedAmount = { increment: order.valor };
+        }
+
+        // 1.5. Increment Coupon Usage
+        if (order.couponId) {
+          await tx.coupon.update({
+            where: { id: order.couponId },
+            data: { usedCount: { increment: 1 } }
+          });
         }
 
         // 2. Lógica de Upgrades (Service Catalog) e Print Catalog

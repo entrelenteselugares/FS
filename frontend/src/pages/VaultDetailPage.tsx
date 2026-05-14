@@ -28,6 +28,8 @@ interface Vault {
   nome: string;
   goalPoses: number;
   status: string;
+  subscriptionStatus: string;
+  trialEndsAt: string | null;
   myRole: string;
   subscription?: {
     id: string;
@@ -111,8 +113,23 @@ export default function VaultDetailPage() {
     }
   };
 
-  const handleSubscribe = () => {
-    navigate(`/clube?vaultId=${vaultId}`);
+  const handleSubscribe = async () => {
+    if (!vault) return;
+    setCheckingOut(true);
+    try {
+      const res = await api.post(`/vaults/${vaultId}/subscribe`);
+      if (res.data.initPoint) {
+        window.location.href = res.data.initPoint;
+      } else {
+        alert("Erro ao gerar link de assinatura.");
+      }
+    } catch (err: unknown) {
+      console.error("[Subscribe] Erro:", err);
+      const msg = (err as { response?: { data?: { error?: string } } }).response?.data?.error || "Erro ao processar assinatura do cofre.";
+      alert(msg);
+    } finally {
+      setCheckingOut(false);
+    }
   };
 
   const handleInvite = async () => {
@@ -135,6 +152,15 @@ export default function VaultDetailPage() {
   useEffect(() => {
     if (!user) { navigate("/login"); return; }
     fetchVaultDetails();
+    
+    // Check for success redirect from MP
+    const params = new URLSearchParams(window.location.search);
+    if (params.get("subscribed") === "true") {
+      // In a real app, we'd use a toast component
+      alert("Assinatura ativada com sucesso! Seu cofre está salvo.");
+      // Remove query param to avoid repeated alerts
+      window.history.replaceState({}, document.title, window.location.pathname);
+    }
   }, [user, navigate, fetchVaultDetails]);
 
   const handleFileUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -246,6 +272,11 @@ export default function VaultDetailPage() {
       </div>
     );
   }
+
+  const now = new Date();
+  const trialEnds = vault.trialEndsAt ? new Date(vault.trialEndsAt) : null;
+  const daysLeft = trialEnds ? Math.ceil((trialEnds.getTime() - now.getTime()) / (1000 * 3600 * 24)) : null;
+  const isBlocked = vault.subscriptionStatus === "BLOCKED" || vault.subscriptionStatus === "EXPIRED";
 
   return (
     <div className="min-h-screen font-sans flex flex-col" style={{ background: T.bg, color: T.text }}>
@@ -371,9 +402,37 @@ export default function VaultDetailPage() {
         )}
       </div>
 
-      {/* Main Content */}
-      <main className="max-w-7xl mx-auto px-1 py-1 md:px-4 md:py-6 pb-32">
-        {uploading && (
+      {/* Warning Banner se faltam poucos dias */}
+      {!isBlocked && vault.subscriptionStatus === "TRIAL" && daysLeft !== null && daysLeft <= 5 && (
+        <div className="bg-yellow-500/20 border-b border-yellow-500/30 px-4 py-3 text-center">
+          <p className="text-yellow-500 text-[11px] font-black uppercase tracking-widest">
+            Atenção: O período gratuito deste cofre acaba em {daysLeft} dia{daysLeft !== 1 ? 's' : ''}. <button onClick={handleSubscribe} className="underline ml-1">Assine agora</button> para não perder o acesso.
+          </p>
+        </div>
+      )}
+
+      {/* Blocked Screen */}
+      {isBlocked ? (
+        <main className="flex-1 flex flex-col items-center justify-center p-6 text-center">
+          <div className="w-24 h-24 bg-red-500/10 rounded-full flex items-center justify-center mb-6 border border-red-500/20">
+            <Lock size={40} className="text-red-500" />
+          </div>
+          <h2 className="text-3xl font-black uppercase italic text-red-500 mb-4">Cofre Bloqueado</h2>
+          <p className="text-zinc-400 max-w-md mx-auto mb-8 text-[14px]">
+            O período gratuito de 30 dias para o cofre <strong>{vault.nome}</strong> expirou. Suas fotos estão seguras, mas o acesso está suspenso. Para reativar o cofre imediatamente, inicie uma assinatura.
+          </p>
+          <button 
+            onClick={handleSubscribe}
+            disabled={checkingOut}
+            className="bg-emerald-500 hover:bg-emerald-400 text-black font-black uppercase tracking-widest text-[13px] px-10 py-4 rounded-full transition-all shadow-xl shadow-emerald-500/20 active:scale-95 flex items-center gap-2"
+          >
+            {checkingOut ? <Loader2 size={18} className="animate-spin" /> : <Zap size={18} fill="currentColor" />}
+            Reativar Cofre Agora
+          </button>
+        </main>
+      ) : (
+        <main className="max-w-7xl mx-auto px-1 py-1 md:px-4 md:py-6 pb-32 w-full">
+          {uploading && (
           <div className="mb-6 p-4 bg-emerald-500/10 border border-emerald-500/20 rounded-xl flex items-center gap-4 animate-pulse">
             <Loader2 className="animate-spin text-emerald-500" size={18} />
             <div className="flex-1">
@@ -451,6 +510,7 @@ export default function VaultDetailPage() {
           </div>
         )}
       </main>
+      )}
 
       {/* Immersive Mobile Bottom Nav */}
       <div className="fixed bottom-0 left-0 right-0 z-50 md:hidden bg-zinc-950/80 backdrop-blur-xl border-t border-white/10 pb-safe">

@@ -48,9 +48,34 @@ In case of a critical failure:
 
 ## Monitoring
 
-- **Error Tracking:** [Sentry](https://sentry.io) is recommended for capturing server-side exceptions.
-- **Uptime:** [StatusCake] or [UptimeRobot] monitors the `/api/health` endpoint.
+- **Error Tracking:** Sentry is configured for capturing server-side exceptions (DSN via `VITE_SENTRY_DSN`).
+- **Uptime:** UptimeRobot or StatusCake monitors the `/api/health` endpoint.
 - **Logs:** Vercel Runtime Logs provide real-time visibility into serverless function execution.
+
+## Cron Job Setup
+
+The Growth Engine relies on external cron triggers for automation:
+
+| Endpoint | Method | Frequency | Purpose |
+|----------|--------|-----------|---------|
+| `/api/cron/abandoned-carts` | `POST` | Every hour | Sends recovery emails/WhatsApp to users who abandoned checkout after 24h. |
+| `/api/cron/crm-recovery` | `GET` | Daily | Full CRM lead recovery pass. |
+
+**Configure via Supabase Cron or Vercel Cron:**
+
+```json
+// vercel.json
+{
+  "crons": [
+    {
+      "path": "/api/cron/abandoned-carts",
+      "schedule": "0 * * * *"
+    }
+  ]
+}
+```
+
+All cron endpoints require `Authorization: Bearer <CRON_SECRET>` header.
 
 ## Post-Deployment Sanity Check
 

@@ -262,6 +262,31 @@ export class GoogleDriveService {
       { responseType: 'stream' }
     );
   }
+
+  /**
+   * Lista arquivos de uma pasta do Drive.
+   * Utilizado para sincronização de galerias em massa.
+   */
+  async listFiles(folderId: string) {
+    if (!this.drive) {
+      console.warn(`[DRIVE MOCK] Listando arquivos mock para pasta: ${folderId}`);
+      return [];
+    }
+
+    try {
+      const response = await this.withRetry(() => this.drive!.files.list({
+        q: `'${folderId}' in parents and trashed = false and mimeType contains 'image/'`,
+        fields: 'files(id, name, mimeType, webViewLink, thumbnailLink)',
+        supportsAllDrives: true,
+        includeItemsFromAllDrives: true,
+      }));
+
+      return response.data.files || [];
+    } catch (error: any) {
+      console.error('[DRIVE] Erro ao listar arquivos:', error.message);
+      throw error;
+    }
+  }
 }
 
 export const driveService = new GoogleDriveService();

@@ -1,8 +1,8 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useCallback } from "react";
 import { DashboardLayout, type NavItem } from "../../components/DashboardLayout";
 import { API } from "../../lib/api";
 import { useAuth } from "../../hooks/useAuth";
-import { useNavigate, useLocation } from "react-router-dom";
+import { useNavigate, useLocation, useSearchParams } from "react-router-dom";
 
 const AdminOverview = React.lazy(() => import("./AdminOverview").then(m => ({ default: m.AdminOverview })));
 const AdminEvents = React.lazy(() => import("./AdminEvents").then(m => ({ default: m.AdminEvents })));
@@ -18,6 +18,8 @@ const AdminPrintCatalog = React.lazy(() => import("./AdminPrintCatalog").then(m 
 const AdminFranchises = React.lazy(() => import("./AdminFranchises"));
 const AdminAmbassadors = React.lazy(() => import("./AdminAmbassadors").then(m => ({ default: m.AdminAmbassadors })));
 const AdminInventory = React.lazy(() => import("./AdminInventory"));
+const AdminLeads = React.lazy(() => import("./AdminLeadsPage").then(m => ({ default: m.AdminLeadsPage })));
+const AdminGrowth = React.lazy(() => import("./AdminGrowth").then(m => ({ default: m.AdminGrowth })));
 import { 
   LayoutDashboard, 
   Camera, 
@@ -31,7 +33,8 @@ import {
   Trophy,
   Grid3X3,
   ShieldCheck,
-  Package
+  Package,
+  TrendingUp
 } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 
@@ -43,6 +46,7 @@ const NAV_ITEMS = (activeTab: string, setActiveTab: (t: string) => void, stats: 
     { label: "Eventos",        onClick: () => setActiveTab("events"),        isActive: activeTab === "events",        icon: <Camera size={16} />,         badge: stats?.missingLinksCount },
     { label: "Membros",        onClick: () => setActiveTab("users"),         isActive: activeTab === "users",         icon: <Users size={16} />,          badge: stats?.pendingInvitesCount, hide: role === 'FRANCHISEE' },
     { label: "Orçamentos",     onClick: () => setActiveTab("quotes"),        isActive: activeTab === "quotes",        icon: <Briefcase size={16} />,      badge: stats?.pendingQuotesCount, hide: role === 'FRANCHISEE' },
+    { label: "CRM & Leads",    onClick: () => setActiveTab("crm"),           isActive: activeTab === "crm",           icon: <Users size={16} />, hide: role === 'FRANCHISEE' },
     { label: "Pedidos",        onClick: () => setActiveTab("orders"),        isActive: activeTab === "orders",        icon: <FileText size={16} />, hide: role === 'FRANCHISEE' },
     { label: "Financeiro",     onClick: () => setActiveTab("finance"),       isActive: activeTab === "finance",       icon: <DollarSign size={16} />, hide: role === 'FRANCHISEE' },
     { label: "Impressão",      onClick: () => setActiveTab("printers"),      isActive: activeTab === "printers",      icon: <Printer size={16} />, hide: role === 'FRANCHISEE' },
@@ -50,6 +54,7 @@ const NAV_ITEMS = (activeTab: string, setActiveTab: (t: string) => void, stats: 
     { label: "Estoque Central",onClick: () => setActiveTab("inventory"),     isActive: activeTab === "inventory",      icon: <Package size={16} />, hide: role === 'FRANCHISEE' },
     { label: "Catálogo",        onClick: () => setActiveTab("print-catalog"), isActive: activeTab === "print-catalog", icon: <Layers size={16} />, hide: role === 'FRANCHISEE' },
     { label: "Serviços",       onClick: () => setActiveTab("services"),      isActive: activeTab === "services",      icon: <Grid3X3 size={16} />, hide: role === 'FRANCHISEE' },
+    { label: "Growth",         onClick: () => setActiveTab("growth"),        isActive: activeTab === "growth",        icon: <TrendingUp size={16} />, hide: role === 'FRANCHISEE' },
     { label: "Concursos",      onClick: () => setActiveTab("contests"),      isActive: activeTab === "contests",      icon: <Trophy size={16} />, hide: role === 'FRANCHISEE' },
     { label: "Configurações",  onClick: () => setActiveTab("settings"),      isActive: activeTab === "settings",      icon: <Settings size={16} />, hide: role === 'FRANCHISEE' },
     { label: "Embaixadores",   onClick: () => setActiveTab("ambassadors"),   isActive: activeTab === "ambassadors",   icon: <Users size={16} />, hide: role === 'FRANCHISEE' },
@@ -86,43 +91,95 @@ interface AdminEvent {
   _count: { orders: number };
 }
 
+// Mapa de alias de URL → tab key (para deep-link via ?tab=X ou path antigo)
+const TAB_ALIASES: Record<string, string> = {
+  payouts:      "finance",
+  financeiro:   "finance",
+  finance:      "finance",
+  users:        "users",
+  membros:      "users",
+  events:       "events",
+  eventos:      "events",
+  configs:      "settings",
+  configuracoes: "settings",
+  settings:     "settings",
+  leads:        "crm",
+  crm:          "crm",
+  orders:       "orders",
+  pedidos:      "orders",
+  quotes:       "quotes",
+  orcamentos:   "quotes",
+  franchises:   "franchises",
+  franquias:    "franchises",
+  ambassadors:  "ambassadors",
+  embaixadores: "ambassadors",
+  inventory:    "inventory",
+  estoque:      "inventory",
+  printers:     "printers",
+  impressao:    "printers",
+  services:     "services",
+  servicos:     "services",
+  contests:     "contests",
+  concursos:    "contests",
+  catalog:      "print-catalog",
+  catalogo:     "print-catalog",
+  growth:       "growth",
+};
+
 export const AdminDashboard: React.FC = () => {
   const { user } = useAuth();
-  const [activeTab, setActiveTab] = useState("overview");
   const [stats, setStats] = useState<AdminStats | null>(null);
   const [recentOrders, setRecentOrders] = useState<AdminOrder[]>([]);
   const [pendingEvents, setPendingEvents] = useState<AdminEvent[]>([]);
   const [loading, setLoading] = useState(true);
   const [editingEventId, setEditingEventId] = useState<string | null>(null);
 
+  const location = useLocation();
+  const navigate = useNavigate();
+  const [searchParams] = useSearchParams();
+
+  // A-01: Resolve o tab ativo da URL (path `/admin/financeiro` ou param `?tab=finance`), com fallback para "overview"
+  const pathSegment = location.pathname.replace('/admin/', '').replace('/admin', '').split('/')[0];
+  const rawTab = pathSegment || searchParams.get("tab") || "overview";
+  const activeTab = TAB_ALIASES[rawTab] ?? rawTab;
+
+  const setActiveTab = useCallback((tab: string) => {
+    // Ao clicar na tab, atualizamos apenas a URL para o subpath limpo (deep-link moderno)
+    navigate(`/admin/${tab}`);
+  }, [navigate]);
+
   const handleEditEvent = (id: string) => {
     setEditingEventId(id);
     setActiveTab("events");
   };
 
-  const location = useLocation();
-  const navigate = useNavigate();
-
   useEffect(() => {
     if (location.state?.editEventId) {
       setEditingEventId(location.state.editEventId);
       setActiveTab("events");
-      // Clear state to prevent reopening on reload
       navigate(location.pathname, { replace: true, state: {} });
     }
-  }, [location.state?.editEventId, navigate, location.pathname]);
+  }, [location.state?.editEventId, navigate, location.pathname, setActiveTab]);
 
   useEffect(() => {
     if (user?.role === 'FRANCHISEE' && activeTab === 'overview') {
       setActiveTab('franchises');
     }
-  }, [user, activeTab]);
+  }, [user, activeTab, setActiveTab]);
 
   useEffect(() => {
     const fetchGlobalStats = async () => {
       setLoading(true);
       try {
         const { data } = await API.get("/admin/stats");
+        
+        // Fetch MRR
+        try {
+          const { data: mrrData } = await API.get("/admin/finance/subscriptions-mrr");
+          data.stats.mrr = mrrData.mrr;
+          data.stats.totalActiveSubscriptions = mrrData.totalActive;
+        } catch (e) { console.error("Erro MRR:", e); }
+
         setStats(data.stats);
         setRecentOrders(data.recentOrders);
         setPendingEvents(data.pendingEvents);
@@ -174,8 +231,10 @@ export const AdminDashboard: React.FC = () => {
                   {activeTab === "contests" && <AdminContests />}
                   {activeTab === "services" && <AdminServices />}
                   {activeTab === "settings" && <AdminConfigs />}
+                  {activeTab === "crm"      && <AdminLeads />}
                   {activeTab === "franchises" && <AdminFranchises />}
                   {activeTab === "ambassadors" && <AdminAmbassadors />}
+                  {activeTab === "growth"   && <AdminGrowth />}
                   {activeTab === "inventory" && <AdminInventory />}
                 </React.Suspense>
               </motion.div>

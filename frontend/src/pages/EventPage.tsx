@@ -1,7 +1,7 @@
 import { useState, useEffect, useCallback } from "react";
 import { createPortal } from "react-dom";
 import { useEventStatus } from "../hooks/useEventStatus";
-import { Check, Printer, QrCode, ShoppingCart, Share2, ChevronRight, ChevronLeft, Image as ImageIcon, Camera, MapPin, ListChecks, Clock, ShieldCheck, CheckCircle2, Lock, UserCircle } from "lucide-react";
+import { Check, Printer, QrCode, ShoppingCart, Share2, ChevronRight, ChevronLeft, Image as ImageIcon, Camera, MapPin, ListChecks, Clock, ShieldCheck, CheckCircle2, Lock, UserCircle, Search, X } from "lucide-react";
 import { QRCodeCanvas } from "qrcode.react";
 import { useParams, useNavigate, useSearchParams } from "react-router-dom";
 import { API as api } from "../lib/api";
@@ -11,11 +11,16 @@ import { AuthModal } from "../components/AuthModal";
 import { useAuth } from "../hooks/useAuth";
 import { useCart } from "../hooks/useCart";
 import { Navbar } from "../components/Navbar";
+import SEO from "../components/SEO";
+import { getProxyUrl } from "../lib/utils/media";
+import LeadCapture from "../components/LeadCapture";
 import { PrintStoreModal } from "../components/PrintStoreModal";
 import { PrintCatalog } from "../components/PrintCatalog";
 import { motion, AnimatePresence } from "framer-motion";
 import { EventEditPanel } from "../components/profissional/EventEditPanel";
 import type { EventItem } from "../components/profissional/types";
+import { TouchSelectionGallery } from "../components/TouchSelectionGallery";
+import { SchoolAuthenticationGate } from "../components/SchoolAuthenticationGate";
 
 const formatDate = (date: string | null | undefined) => {
   if (!date) return "Em breve";
@@ -62,9 +67,12 @@ interface EventData {
   isComingSoon?: boolean;
   priceUnit?: number;
   pendingOrderId?: string | null;
-  type?: 'ALBUM_FULL' | 'PHOTO_MARKETPLACE' | 'FOTO_POINT' | 'FLASH_EVENT';
+  type?: 'ALBUM_FULL' | 'PHOTO_MARKETPLACE' | 'FOTO_POINT' | 'FLASH_EVENT' | 'SCHOOL' | 'SPORTS';
   pricePerPhoto?: number;
   isUnitSale?: boolean;
+  preSaleEnabled?: boolean;
+  postSaleEnabled?: boolean;
+  verticalConfigs?: any;
   recentOrders?: { id: string; contributorName: string; valor: number; createdAt: string }[];
   clientEmail?: string | null;
   isPrimaryClient?: boolean;
@@ -77,7 +85,10 @@ interface EventData {
   photographer?: { id: string; nome: string } | null;
   expirationDate?: string | null;
   isExpired?: boolean;
+  isExpired?: boolean;
   retentionDays?: number;
+  tenantBrandColor?: string | null;
+  tenantLogoUrl?: string | null;
 }
 
 interface EventMedia {
@@ -86,6 +97,7 @@ interface EventMedia {
   shortId: string;
   price?: number | null;
   isGuest?: boolean;
+  metadata?: any;
 }
 
 interface AccessData {
@@ -173,16 +185,19 @@ export default function EventPage() {
   const [currentBannerIndex, setCurrentBannerIndex] = useState(0);
   const [orderId, setOrderId] = useState<string | null>(null);
   const [needsAccessChoice, setNeedsAccessChoice] = useState(false);
+  const [authenticatedStudent, setAuthenticatedStudent] = useState<string | null>(null);
   
-  const { digitalPhotos, physicalItems, addToCart, removeFromCart, addPhysicalItem, totalPrice } = useCart();
+  const { digitalPhotos, physicalItems, addToCart, removeFromCart, removeAlbumFromCart, addPhysicalItem, totalPrice } = useCart();
   const [serviceCatalog, setServiceCatalog] = useState<ServiceData[]>([]);
   const [selectedServices] = useState<string[]>([]);
   const [includeLivePrint] = useState(false);
 
+  const isAlbumInCart = digitalPhotos.some(p => p.eventId === event?.id && p.buyAlbum);
+
   // Filtramos os itens do carrinho que pertencem a este evento
-  const eventCart = digitalPhotos.filter(p => p.eventId === event?.id).map(p => p.shortId);
+  const eventCart = digitalPhotos.filter(p => p.eventId === event?.id && !p.buyAlbum).map(p => p.shortId);
   const eventPhysicalItems = physicalItems.filter(p => p.eventId === event?.id);
-  const cartTotal = totalPrice(Number(event?.pricePerPhoto || 15));
+  const cartTotal = totalPrice(Number(event?.pricePerPhoto || 15), Number(event?.priceBase || 190));
 
   const [selectedPrintProductId, setSelectedPrintProductId] = useState<string | null>(null);
   const [showPrintStore, setShowPrintStore] = useState(false);
@@ -190,6 +205,25 @@ export default function EventPage() {
   const [showLiveOps, setShowLiveOps] = useState(true);
   const [showPhygital, setShowPhygital] = useState(true);
   const [filterMode, setFilterMode] = useState<"ALL" | "PRO" | "GUEST">("ALL");
+  const [searchQuery, setSearchQuery] = useState("");
+
+  const filteredMedias = medias.filter(m => {
+    // 1. Filtro de Origem
+    if (filterMode === "PRO" && m.isGuest) return false;
+    if (filterMode === "GUEST" && !m.isGuest) return false;
+
+    // 2. Filtro de Busca (Escolar/Esportivo)
+    if (searchQuery) {
+      const meta = m.metadata || {};
+      const searchLower = searchQuery.toLowerCase();
+      const matchStudent = meta.studentId?.toLowerCase().includes(searchLower);
+      const matchBib = meta.bibNumber?.toLowerCase().includes(searchLower);
+      const matchShortId = m.shortId.toLowerCase().includes(searchLower);
+      return matchStudent || matchBib || matchShortId;
+    }
+
+    return true;
+  });
   const [isEditingEvent, setIsEditingEvent] = useState(false);
 
   const eventStatus = useEventStatus(event?.dataEvento, null, 2, event?.isExpired, event?.active);
@@ -227,6 +261,13 @@ export default function EventPage() {
   useEffect(() => {
     if (!slug) return;
     
+    // 0. Persistir rastreamento de afiliado/embaixador (Fase 35)
+    const ref = searchParams.get("ref");
+    if (ref) {
+      document.cookie = `fs_referral=${ref}; max-age=${30 * 24 * 60 * 60}; path=/;`;
+      console.log("[Growth Engine] Afiliado rastreado:", ref);
+    }
+
     // 1. Identificar o token (URL tem prioridade sobre LocalStorage)
     const urlToken = searchParams.get("token");
     const storedToken = localStorage.getItem(`fs_token_${slug}`);
@@ -348,6 +389,16 @@ export default function EventPage() {
     if (oid) { setOrderId(oid); checkAccessStatus(oid); }
   }, [slug, searchParams, event, handleAutoConfirmChoice]);
 
+  // Phase 40: Inject Tenant Branding CSS
+  useEffect(() => {
+    if (event?.tenantBrandColor) {
+      document.documentElement.style.setProperty('--brand', event.tenantBrandColor);
+    }
+    return () => {
+      document.documentElement.style.removeProperty('--brand');
+    };
+  }, [event?.tenantBrandColor]);
+
   const handleUnlockClick = async () => { 
     if (!event) return;
     const isMarketplaceWithCart = isMarketplace && (eventCart.length > 0 || eventPhysicalItems.length > 0);
@@ -445,8 +496,12 @@ export default function EventPage() {
 
 return (
     <div className="min-h-screen bg-theme-bg text-theme-text font-sans selection:bg-brand-tactical/30 overflow-x-hidden selection:text-theme-text" onContextMenu={(e) => e.preventDefault()}>
-      <Helmet><title>{`${event.nomeNoivos} | Foto Segundo`}</title></Helmet>
-      <Navbar />
+      <SEO 
+        title={event.nomeNoivos} 
+        image={getProxyUrl(event.coverPhotoUrl)}
+        description={`Confira as fotos de ${event.nomeNoivos} no Foto Segundo - Memórias Premium.`}
+      />
+      <Navbar tenantLogoUrl={event.tenantLogoUrl} />
 
       <main className="grid grid-cols-1 lg:grid-cols-[1fr_330px] min-h-[calc(100vh-64px)]">
         {/* Lado Esquerdo: Conteúdo Principal */}
@@ -471,10 +526,11 @@ return (
               >
                 {event.coverPhotoUrl ? (
                   <img 
-                    src={event.coverPhotoUrl.toString().trim().replace(/\s/g, '')} 
+                    src={getProxyUrl(event.coverPhotoUrl.toString().trim().replace(/\s/g, ''))} 
                     alt="" 
                     className="w-full h-full object-cover opacity-40 blur-sm scale-110"
                     style={{ objectPosition: event.coverPosition || 'center' }}
+                    fetchpriority="high"
                   />
                 ) : (
                   <div className="w-full h-full bg-gradient-to-br from-brand-tactical/20 via-theme-bg-muted to-theme-bg" />
@@ -732,7 +788,6 @@ return (
                       )}
                     </div>
                   </div>
-
                   <AnimatePresence>
                     {showLiveOps && (
                       <motion.div 
@@ -774,52 +829,80 @@ return (
                                   <QrCode size={18} /> TRANSMITIR MINHAS FOTOS
                                 </button>
                               )}
+                              {event.preSaleEnabled && !isAlbumInCart && (
+                                <button 
+                                  onClick={() => {
+                                    if (event.id) {
+                                      addToCart(event.id, "ALL", "", true);
+                                      setStep("checkout");
+                                    }
+                                  }}
+                                  className="px-8 py-4 bg-white text-black font-black uppercase tracking-widest text-[10px] italic flex items-center gap-3 hover:bg-brand-tactical transition-colors"
+                                >
+                                  <ShoppingCart size={18} /> COMPRAR PRÉ-VENDA (ALBUM COMPLETO)
+                                </button>
+                              )}
                             </div>
                           </div>
+                        ) : event.type === 'SCHOOL' && !authenticatedStudent && !event.isOwner ? (
+                          <SchoolAuthenticationGate 
+                            studentListRaw={event.verticalConfigs?.studentList}
+                            eventTitle={event.nomeNoivos}
+                            onAuthenticate={(name) => {
+                              setAuthenticatedStudent(name);
+                              setSearchQuery(name); // Enforce the filter
+                            }}
+                          />
                         ) : (
-                          <div className="grid grid-cols-2 md:grid-cols-3 xl:grid-cols-4 2xl:grid-cols-5 gap-4 lg:gap-8">
-                            {medias.filter(m => filterMode === "ALL" || (filterMode === "GUEST" ? m.isGuest : !m.isGuest)).map((m, idx) => {
-                              const isSelected = eventCart.includes(m.shortId);
-                              const isUnlocked = event.unlockedMediaIds?.includes(m.shortId) || event.isOwner;
-
-                              return (
-                                  <motion.div 
-                                    key={m.id} layout initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: (idx % 20) * 0.05 }}
-                                    data-shortid={m.shortId}
-                                    data-testid={`photo-${m.shortId}`}
-                                    onClick={() => !isUnlocked && toggleCart(m.shortId, m.url)}
-                                    className={`relative group aspect-[3/4] bg-theme-bg overflow-hidden border-2 transition-all duration-500 ${isUnlocked ? "border-brand-tactical shadow-[0_0_20px_rgba(20,184,166,0.15)]" : (isSelected ? "border-emerald-500 cursor-pointer" : "border-theme-border/40 hover:border-zinc-700 cursor-pointer")}`}
+                          <div className="space-y-6">
+                            {/* Barra de Busca Tática (Apenas Esportes ou Escolar para Admin) */}
+                            {(event.type === 'SPORTS' || (event.type === 'SCHOOL' && event.isOwner)) && (
+                              <div className="relative group max-w-xl mx-auto mb-10">
+                                <div className="absolute inset-y-0 left-4 flex items-center pointer-events-none text-theme-text-muted group-focus-within:text-brand-tactical transition-colors">
+                                  <Search size={18} />
+                                </div>
+                                <input 
+                                  type="text" 
+                                  placeholder={event.type === 'SCHOOL' ? "BUSCAR POR RA OU ALUNO..." : "BUSCAR POR NÚMERO DE PEITO..."}
+                                  value={searchQuery}
+                                  onChange={(e) => setSearchQuery(e.target.value)}
+                                  className="w-full bg-theme-bg-muted/50 border border-theme-border/40 py-5 pl-12 pr-4 text-[10px] font-black uppercase tracking-[0.2em] text-theme-text focus:outline-none focus:border-brand-tactical focus:ring-1 focus:ring-brand-tactical/20 transition-all placeholder:text-theme-text-muted/40 italic"
+                                />
+                                {searchQuery && (
+                                  <button 
+                                    onClick={() => setSearchQuery("")}
+                                    className="absolute inset-y-0 right-4 flex items-center text-theme-text-muted hover:text-white transition-colors"
                                   >
-                                  {!isUnlocked && (
-                                    <div className="absolute inset-0 z-10 flex items-center justify-center opacity-[0.05] pointer-events-none rotate-[-45deg] select-none">
-                                      <span className="text-theme-text font-display text-4xl font-black tracking-[1em] uppercase">PROOF</span>
-                                    </div>
-                                  )}
-                                  <img 
-                                    src={m.url} 
-                                    alt={m.shortId} 
-                                    className={`w-full h-full object-cover transition-transform duration-1000 fs-protected-media ${!isUnlocked && "group-hover:scale-110 blur-[1px] group-hover:blur-0"} ${isSelected ? "opacity-30 scale-95" : "opacity-100"}`} 
-                                    onContextMenu={(e) => e.preventDefault()}
-                                  />
-                                  
-                                  <div className={`absolute bottom-0 left-0 right-0 p-5 z-20 flex justify-between items-end transition-all duration-500 translate-y-2 opacity-0 group-hover:translate-y-0 group-hover:opacity-100 ${isUnlocked ? "bg-brand-tactical text-black font-black" : (isSelected ? "bg-emerald-500 text-theme-text" : "bg-theme-bg-muted/90 backdrop-blur-md")}`}>
-                                    <div className="flex flex-col">
-                                      <span className="text-[8px] font-black uppercase tracking-widest opacity-60 italic">Ref.</span>
-                                      <span className="text-xl font-black tracking-tighter italic">#{m.shortId}</span>
-                                    </div>
-                                    {isUnlocked ? (
-                                      <button onClick={(e) => { e.stopPropagation(); window.open(m.url, '_blank'); }} className="p-2.5 bg-white text-black hover:bg-zinc-200 transition-colors">
-                                        <ImageIcon size={18} />
-                                      </button>
-                                    ) : (
-                                      <div className={`w-12 h-12 rounded-full flex items-center justify-center transition-all ${isSelected ? "bg-black text-emerald-500" : "bg-white/10 group-hover:bg-emerald-500 group-hover:text-black"}`}>
-                                        {isSelected ? <Check size={24} strokeWidth={4} /> : <ShoppingCart size={22} />}
-                                      </div>
-                                    )}
-                                  </div>
-                                </motion.div>
-                              );
-                            })}
+                                    <X size={16} />
+                                  </button>
+                                )}
+                              </div>
+                            )}
+
+                            {event.type === 'SCHOOL' && authenticatedStudent && (
+                              <div className="flex justify-between items-center mb-6 bg-theme-bg-muted/30 p-4 border border-theme-border/30 rounded-xl">
+                                <span className="text-[10px] text-theme-muted uppercase tracking-widest font-black italic">
+                                  Visualizando álbum de: <span className="text-white">{authenticatedStudent}</span>
+                                </span>
+                                <button 
+                                  onClick={() => {
+                                    setAuthenticatedStudent(null);
+                                    setSearchQuery("");
+                                  }}
+                                  className="text-[10px] text-brand-tactical uppercase tracking-widest font-black hover:text-white transition-colors"
+                                >
+                                  Trocar Aluno
+                                </button>
+                              </div>
+                            )}
+
+                            <TouchSelectionGallery
+                              medias={filteredMedias}
+                              selectedIds={eventCart}
+                              unlockedIds={event.unlockedMediaIds || []}
+                              isOwner={!!event.isOwner}
+                              onToggleCart={toggleCart}
+                            />
                           </div>
                         )}
                       </motion.div>
@@ -988,6 +1071,10 @@ return (
                   <button onClick={handleShare} className="w-full h-16 border border-theme-border/40 text-theme-text-muted font-black uppercase tracking-widest text-[10px] flex items-center justify-center gap-4 hover:bg-theme-border/60 hover:text-theme-text transition-all italic">
                     <Share2 size={18} /> Compartilhar Galeria
                   </button>
+                </div>
+
+                <div className="pt-6">
+                  <LeadCapture eventId={event.id} />
                 </div>
 
                 <div className="space-y-6 pt-10">

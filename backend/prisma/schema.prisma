@@ -34,6 +34,11 @@ model User {
   verificationStatus String                  @default("PENDING")
   referralCode       String?                 @unique
   rewardCredits      Decimal                 @default(0) @db.Decimal(10, 2)
+  
+  // B2B White-Label / Tenant Settings
+  tenantLogoUrl      String?
+  tenantBrandColor   String?
+
   referralCampaigns  ReferralCampaign[]
   calendarSlots      CalendarSlot[]
   cartorio           Cartorio?
@@ -61,8 +66,23 @@ model User {
   phygitalPrints     PhygitalPrint[]         @relation("UserPhygitalPrints")
   supplyOrders       SupplyOrder[]           @relation("FranchiseeSupplyOrders")
   notifications      Notification[]
+  pushSubscriptions  PushSubscription[]
+  ambassadorOrders   Order[]                 @relation("AmbassadorOrders")
+  affiliatePayoutType String                 @default("CREDIT")
 
   @@map("users")
+}
+
+model PushSubscription {
+  id        String   @id @default(cuid())
+  userId    String
+  endpoint  String   @unique
+  p256dh    String
+  auth      String
+  createdAt DateTime @default(now())
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@map("push_subscriptions")
 }
 
 model GamificationLedger {
@@ -111,6 +131,11 @@ model Event {
   description        String?
   location           String?
   slug               String?             @unique
+
+  // Custom Branding Override (B2B)
+  customLogoUrl     String?
+  customBrandColor  String?
+
   temFoto            Boolean             @default(true)
   temFotoImpressa    Boolean             @default(false)
   temReels           Boolean             @default(false)
@@ -153,6 +178,9 @@ model Event {
   galleryUploadTime  DateTime?
   itinerary          String?
   references         Json?               @default("[]")
+  verticalConfigs    Json?               @default("{}") // Vertical specific settings (ex: {studentList: [...]})
+  preSaleEnabled     Boolean             @default(false)
+  postSaleEnabled    Boolean             @default(true)
   calendarSlots      CalendarSlot[]
   media              EventMedia[]
   captacao           User?               @relation("CaptacaoEvents", fields: [captacaoId], references: [id])
@@ -336,7 +364,9 @@ model Order {
   editor              User?               @relation("EditorOrders", fields: [editorId], references: [id])
   event               Event               @relation(fields: [eventId], references: [id])
   passiveFranchisee   User?               @relation("FranchiseePassiveCommissions", fields: [passiveFranchiseeId], references: [id])
+  ambassador          User?               @relation("AmbassadorOrders", fields: [ambassadorId], references: [id])
   coupon              Coupon?             @relation(fields: [couponId], references: [id])
+  abandonedEmailSentAt DateTime?
 
   @@map("orders")
 }
@@ -400,6 +430,7 @@ model EventMedia {
   aiScore          Float?
   aiTags           String[]    @default([])
   aiAnalysisStatus String      @default("PENDING") // PENDING, ANALYZED, FAILED, APPROVED, REJECTED
+  metadata         Json?       @default("{}") // Store vertical data like {studentId: "123", bib: "500"}
   
   createdAt  DateTime    @default(now())
   event      Event       @relation(fields: [eventId], references: [id], onDelete: Cascade)
@@ -828,6 +859,8 @@ enum EventType {
   PHOTO_MARKETPLACE
   FOTO_POINT
   FLASH_EVENT
+  SCHOOL
+  SPORTS
 }
 
 enum SlotStatus {
@@ -881,10 +914,12 @@ model SharedAlbum {
   nome        String
   slug        String   @unique
   folderId    String?  @unique // Google Drive Folder ID
-  goalPoses   Int      @default(36)
-  status      String   @default("OPEN")
-  cycleEndDay Int?     @default(30)
-  ownerId     String
+  goalPoses          Int      @default(36)
+  status             String   @default("OPEN")
+  cycleEndDay        Int?     @default(30)
+  trialEndsAt        DateTime?
+  subscriptionStatus String   @default("TRIAL") // TRIAL, ACTIVE, BLOCKED, EXPIRED
+  ownerId            String
   createdAt   DateTime @default(now())
   updatedAt   DateTime @updatedAt
 
@@ -963,6 +998,7 @@ enum SubscriptionStatus {
   CANCELED
   PAST_DUE
   PENDING
+  BLOCKED
 }
 
 model Subscription {
@@ -972,6 +1008,8 @@ model Subscription {
   status          SubscriptionStatus @default(PENDING)
   planLimit       Int                @default(36)
   gatewaySubId    String?
+  preapprovalId   String?
+  planPrice       Decimal            @default(19.90)
   nextBillingDate DateTime?
   createdAt       DateTime           @default(now())
   updatedAt       DateTime           @updatedAt

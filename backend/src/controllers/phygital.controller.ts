@@ -52,7 +52,7 @@ export class PhygitalController {
         return res.status(400).json({ error: "Nenhum arquivo enviado." });
       }
 
-      const { eventId, watermark } = req.body;
+      const { eventId, watermark, globalTag } = req.body;
       const userId = (req as any).user?.userId;
 
       if (!eventId) {
@@ -68,7 +68,8 @@ export class PhygitalController {
         customerCep: "BATCH",
         userId: userId,
         isBulk: true,
-        applyWatermark: watermark === "true"
+        applyWatermark: watermark === "true",
+        globalTag
       });
 
       res.status(201).json(result);

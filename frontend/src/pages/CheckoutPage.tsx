@@ -3,11 +3,13 @@ import { useParams, useNavigate, useSearchParams } from "react-router-dom";
 import { ShieldCheck, ArrowLeft, CheckCircle2, RefreshCw, Clock, Lock, Image as ImageIcon, Printer, ShoppingBag, Copy, Check, MapPin } from "lucide-react";
 import { Helmet } from "react-helmet-async";
 import { Navbar } from "../components/Navbar";
+import WhatsAppSupport from "../components/WhatsAppSupport";
 
 
 import { QRCodeSVG } from "qrcode.react";
 
 import { API } from "../lib/api";
+import { trackPurchase } from "../lib/analytics";
 import { AuthContext } from "../contexts/AuthContextBase";
 import { useContext } from "react";
 import { useCart } from "../hooks/useCart";
@@ -20,6 +22,8 @@ interface OrderEvent {
   location?: string;
   coverPhotoUrl?: string;
   isCrowdfund: boolean;
+  tenantBrandColor?: string | null;
+  tenantLogoUrl?: string | null;
 }
 
 interface OrderDetail {
@@ -98,6 +102,7 @@ export const CheckoutPage = () => {
   const [showItems, setShowItems] = useState(false);
   const [couponCode, setCouponCode] = useState("");
   const [applyingCoupon, setApplyingCoupon] = useState(false);
+  const [validatedCoupon, setValidatedCoupon] = useState<{ discountPct: number; discountAbs: number } | null>(null);
 
   const brickController = useRef<{ unmount: () => void } | null>(null);
   const initializationStarted = useRef(false);
@@ -221,6 +226,16 @@ export const CheckoutPage = () => {
       setIsShippingLoading(false);
     }
   };
+
+  // Phase 40: Inject Tenant Branding CSS
+  useEffect(() => {
+    if (order?.event?.tenantBrandColor) {
+      document.documentElement.style.setProperty('--brand', order.event.tenantBrandColor);
+    }
+    return () => {
+      document.documentElement.style.removeProperty('--brand');
+    };
+  }, [order?.event?.tenantBrandColor]);
 
   // ── Controle de Autenticação (Bypass para Guest Checkout) ────────────────────
   useEffect(() => {
@@ -357,6 +372,8 @@ export const CheckoutPage = () => {
           stopPolling();
           setPollingStatus("found");
           setPaymentSuccess(true);
+          // OPS-02: GA4 purchase conversion
+          trackPurchase({ orderId: pOrderId, value: 1 });
         }
       } catch {
         // Continue trying
@@ -401,36 +418,43 @@ export const CheckoutPage = () => {
     if (!couponCode || !order) return;
     setApplyingCoupon(true);
     try {
-      const { data } = await API.post("/checkout/payment", {
-        eventId: order.event?.id || order.eventId,
-        userId: order.clienteId || null,
-        orderId: order.id,
-        email: order.buyerEmail || "contatofotosegundo@gmail.com",
-        shippingAddress: order.deliveryType === 'SHIPPING' ? shippingData : null,
-        shippingFee: selectedShipping?.price || 0,
-        shippingMethod: selectedShipping?.name || null,
-        couponCode
+      const { data } = await API.get(`/marketplace/coupons/${couponCode}/validate?eventId=${order.eventId}`);
+      setValidatedCoupon({
+        discountPct: data.coupon.discountPct ? Number(data.coupon.discountPct) : 0,
+        discountAbs: data.coupon.discountAbs ? Number(data.coupon.discountAbs) : 0,
       });
-
-      if (data.hasPaid || data.method === "FREE") {
-        setPaymentSuccess(true);
-      } else {
-        alert("Cupom aplicado, mas valor ainda restante. Por favor, pague via Mercado Pago (Lógica Parcial pendente).");
+      // Destruir brick para forçar recriação com novo valor
+      if (brickController.current) {
+        brickController.current.unmount();
+        brickController.current = null;
+        initializationStarted.current = false;
       }
+      alert(`Cupom aplicado com sucesso! Desconto ativado.`);
     } catch (err: unknown) {
       console.error(err);
-      alert((err as { response?: { data?: { error?: string } } }).response?.data?.error || "Cupom inválido ou não atingiu 100% de desconto.");
+      alert((err as { response?: { data?: { error?: string } } }).response?.data?.error || "Cupom inválido ou expirado.");
+      setValidatedCoupon(null);
     } finally {
       setApplyingCoupon(false);
     }
   };
 
   // ── MP Bricks Initialization ────────────────────────────────────────────────
+  const baseAmountRaw = Number(order?.amount || 0) - Number(order?.shippingFee || 0) + Number(selectedShipping?.price || 0);
+  let finalAmount = baseAmountRaw;
+  if (validatedCoupon) {
+    if (validatedCoupon.discountPct) finalAmount = finalAmount * (1 - validatedCoupon.discountPct / 100);
+    else if (validatedCoupon.discountAbs) finalAmount = Math.max(0, finalAmount - validatedCoupon.discountAbs);
+  }
+
   useEffect(() => {
     if (!order || pixData || paymentSuccess || loading || authStep !== 'authorized' || initializationStarted.current) return;
     
     // Se for SHIPPING e não preencheu endereço, não renderiza brick ainda
     if (order.deliveryType === 'SHIPPING' && !shippingData.street) return;
+
+    // Se o valor final for zero (Cupom 100%), não precisamos do MP Brick
+    if (finalAmount <= 0) return;
 
     const mpPublicKey = "APP_USR-18f8ccc4-8ed4-4f99-bb6d-e333d026e578";
 
@@ -471,7 +495,7 @@ export const CheckoutPage = () => {
 
       const settings: MPBrickSettings = {
         initialization: {
-          amount: Number(order.amount) - Number(order.shippingFee || 0) + Number(selectedShipping?.price || 0),
+          amount: finalAmount,
           payer: { email: order.buyerEmail || "contatofotosegundo@gmail.com", entityType: "individual" },
         },
         customization: {
@@ -493,7 +517,8 @@ export const CheckoutPage = () => {
                 paymentMethodId: formData.payment_method_id,
                 shippingAddress: order.deliveryType === 'SHIPPING' ? shippingData : null,
                 shippingFee: selectedShipping?.price || 0,
-                shippingMethod: selectedShipping?.name || null
+                shippingMethod: selectedShipping?.name || null,
+                couponCode: validatedCoupon ? couponCode : undefined
               });
               
               // Salva último endereço para conveniência futura
@@ -693,7 +718,7 @@ export const CheckoutPage = () => {
   if (paymentSuccess) {
     return (
       <div className="min-h-screen bg-theme-bg text-theme-text font-sans flex flex-col">
-        <Navbar />
+        <Navbar tenantLogoUrl={order?.event?.tenantLogoUrl} />
         <div className="flex-1 flex items-center justify-center p-6">
           <div className="max-w-xl w-full text-center space-y-8 animate-in fade-in zoom-in duration-700">
             <div className="relative mx-auto w-24 h-24 flex items-center justify-center">
@@ -724,11 +749,12 @@ export const CheckoutPage = () => {
 
   return (
     <div className="min-h-screen bg-theme-bg text-theme-text font-sans flex flex-col">
-      <Navbar />
+      <Navbar tenantLogoUrl={order?.event?.tenantLogoUrl} />
+      <WhatsAppSupport message={`Olá! Estou no checkout do pedido ${effectiveOrderId} e preciso de ajuda com o pagamento.`} />
       <div className="flex-1 max-w-7xl mx-auto px-6 py-12 w-full animate-in fade-in duration-700">
         <div className="flex justify-between items-center mb-12 border-b border-theme-border/20 pb-8">
           <button onClick={() => navigate(-1)} className="text-[10px] font-black uppercase tracking-widest text-theme-text-muted hover:text-theme-text transition-all flex items-center gap-2"><ArrowLeft size={14} /> Voltar</button>
-          <img src="/logo.png" alt="Foto Segundo" style={{ height: 16, objectFit: "contain", filter: "var(--logo-filter)" }} />
+          <img src={order?.event?.tenantLogoUrl || "/logo.png"} alt="Foto Segundo" style={{ height: order?.event?.tenantLogoUrl ? 28 : 16, objectFit: "contain", filter: order?.event?.tenantLogoUrl ? "none" : "var(--logo-filter)" }} />
           <div className="flex items-center gap-2 text-brand-tactical text-[9px] font-black uppercase tracking-widest"><ShieldCheck size={14} /> Checkout Blindado</div>
         </div>
 
@@ -896,7 +922,12 @@ export const CheckoutPage = () => {
               )}
               <div className="pt-6 border-t border-white/10 flex justify-between items-end">
                 <span className="text-[10px] font-black text-brand-tactical uppercase tracking-[0.4em]">Total</span>
-                <span className="text-4xl font-black italic tracking-tighter text-theme-text">R$ {(Number(order.amount || 0) - Number(order.shippingFee || 0) + Number(selectedShipping?.price || 0)).toFixed(2)}</span>
+                <div className="text-right">
+                  {validatedCoupon && (
+                    <p className="text-[10px] text-zinc-500 line-through">R$ {baseAmountRaw.toFixed(2)}</p>
+                  )}
+                  <span className="text-4xl font-black italic tracking-tighter text-theme-text">R$ {finalAmount.toFixed(2)}</span>
+                </div>
               </div>
 
               {order.internalNotes?.includes("[ROTEAMENTO]") && (
@@ -945,8 +976,33 @@ export const CheckoutPage = () => {
                   </div>
                 </div>
 
-                {!pixData && (
+                {!pixData && finalAmount > 0 && (
                   <div id="paymentBrick_container" className="lux-brick-midnight min-h-[400px]" />
+                )}
+
+                {!pixData && finalAmount <= 0 && (
+                   <button 
+                     onClick={async () => {
+                       try {
+                         const { data } = await API.post("/checkout/payment", {
+                           eventId: order.event?.id || order.eventId,
+                           userId: order.clienteId || null,
+                           orderId: order.id,
+                           email: order.buyerEmail || "contatofotosegundo@gmail.com",
+                           shippingAddress: order.deliveryType === 'SHIPPING' ? shippingData : null,
+                           shippingFee: selectedShipping?.price || 0,
+                           shippingMethod: selectedShipping?.name || null,
+                           couponCode
+                         });
+                         if (data.hasPaid || data.method === "FREE") setPaymentSuccess(true);
+                       } catch (err: unknown) {
+                         alert((err as { response?: { data?: { error?: string } } }).response?.data?.error || "Erro ao processar cupom.");
+                       }
+                     }}
+                     className="w-full py-5 bg-brand-tactical text-black text-[12px] font-black uppercase tracking-[0.4em] hover:bg-white transition-all italic shadow-2xl rounded-2xl"
+                   >
+                     Resgatar Gratuitamente
+                   </button>
                 )}
 
                 {pixData && (

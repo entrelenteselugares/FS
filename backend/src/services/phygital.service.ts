@@ -14,6 +14,7 @@ export interface PhygitalMetadata {
   userId?: string;
   isBulk?: boolean;
   applyWatermark?: boolean;
+  globalTag?: string;
 }
 
 export class PhygitalService {
@@ -185,13 +186,18 @@ export class PhygitalService {
         const count = await prisma.eventMedia.count({ where: { eventId: foundEvent.id } });
         const shortId = `F${(count + 1).toString().padStart(3, '0')}`;
         
+        const payloadMetadata = metadata.globalTag 
+          ? { bibNumber: metadata.globalTag, studentId: metadata.globalTag, aiTags: [metadata.globalTag] }
+          : {};
+
         await prisma.eventMedia.create({
           data: {
             eventId: foundEvent.id,
             url: publicUrl,
             shortId: shortId,
             type: 'PHOTO',
-            price: foundEvent.pricePerPhoto || foundEvent.priceBase || 15
+            price: foundEvent.pricePerPhoto || foundEvent.priceBase || 15,
+            metadata: payloadMetadata
           } as any
         });
       } else if (foundVault) {

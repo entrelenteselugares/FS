@@ -44,6 +44,9 @@ export class VaultController {
       const driveFolder = await driveService.createAlbumFolder(finalName);
 
       // 3. Persistir metadados e hierarquia no Prisma
+      const trialEndsAt = new Date();
+      trialEndsAt.setDate(trialEndsAt.getDate() + 30);
+
       const album = await prisma.sharedAlbum.create({
         data: {
           nome: finalName,
@@ -52,6 +55,8 @@ export class VaultController {
           folderId: driveFolder.id,
           status: "OPEN",
           cycleEndDay: Number(cycleEndDay) || 30,
+          trialEndsAt,
+          subscriptionStatus: "TRIAL",
           ownerId: userId,
           members: {
             create: {
@@ -189,10 +194,18 @@ export class VaultController {
       const membership = await prisma.albumMember.findUnique({
         where: {
           albumId_userId: { albumId, userId }
-        }
+        },
+        include: { album: true }
       });
 
       if (!membership) return res.status(403).json({ error: "Acesso negado a este cofre." });
+
+      if (membership.album.subscriptionStatus === "BLOCKED" || membership.album.subscriptionStatus === "EXPIRED") {
+        return res.status(402).json({ 
+          error: "SUBSCRIPTION_REQUIRED", 
+          message: "O período gratuito deste cofre expirou. Assine para continuar acessando." 
+        });
+      }
 
       const media = await prisma.sharedAlbumMedia.findMany({
         where: { albumId: albumId as string },
@@ -568,6 +581,15 @@ export class VaultController {
     if (!fileId) return res.status(400).send("File ID missing");
 
     try {
+      const media = await prisma.sharedAlbumMedia.findUnique({
+        where: { fileId },
+        include: { album: true }
+      });
+
+      if (media && (media.album.subscriptionStatus === "BLOCKED" || media.album.subscriptionStatus === "EXPIRED")) {
+        return res.status(402).send("SUBSCRIPTION_REQUIRED");
+      }
+
       const driveRes = await driveService.getMediaStream(fileId);
       
       const contentType = driveRes.headers['content-type'] || 'image/jpeg';

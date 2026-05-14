@@ -1,10 +1,11 @@
+<!-- GSD:README -->
 # 📸 Foto Segundo | Midnight Luxury Experience
 
 [![Vercel Deployment](https://img.shields.io/badge/Deploy-Vercel-black?style=for-the-badge&logo=vercel)](https://vercel.com)
 [![Prisma](https://img.shields.io/badge/Prisma-ORM-2D3748?style=for-the-badge&logo=prisma)](https://prisma.io)
 [![Supabase](https://img.shields.io/badge/Supabase-Database-3ECF8E?style=for-the-badge&logo=supabase)](https://supabase.com)
 
-**Foto Segundo** é uma plataforma phygital de elite que redefine a entrega de fotografia profissional. Unindo a estética *Midnight Luxury* com automação industrial de impressão, transformamos pixels em memórias físicas tangíveis em segundos.
+**Foto Segundo** é uma plataforma phygital de elite que redefine a entrega de fotografia profissional. Unindo a estética *Midnight Luxury* com automação industrial de impressão e um motor completo de Growth & Retention, transformamos pixels em memórias físicas tangíveis — e conversões em receita recorrente.
 
 ---
 
@@ -18,13 +19,28 @@ Entrega de fotos anônima via QR Code e PIN de 6 dígitos. O cliente visualiza s
 
 Infraestrutura de armazenamento em nuvem (Google Drive Cold Storage) integrada para preservação de ativos digitais de longo prazo, permitindo que clientes mantenham suas memórias seguras e acessíveis para sempre.
 
-### 📝 Briefing & Observações (Gestão Operacional)
+### 🔄 Multi-Vertical Drive Sync
 
-Sistema de captura de observações customizadas durante o orçamento, totalmente integrado ao Dashboard Admin. Permite visibilidade operacional total sobre as solicitações específicas do cliente desde o primeiro contato até a execução.
+Sincronização inteligente com Google Drive que extrai metadados (Student ID/Bib Number) automaticamente dos nomes dos arquivos através de um motor Regex de alta precisão, eliminando o trabalho manual de indexação em eventos escolares e esportivos.
+
+### 🎓 Multi-Vertical Business Logic
+
+Suporte nativo para três verticais de fotografia profissional:
+- **Fashion/Eventos** — Galeria padrão com marketplace de alta conversão.
+- **Escolar** — Autenticação por turma/aluno, galeria filtrada por estudante.
+- **Esportes** — Busca por número de dorsal (Bib Number) com motor de galeria dedicado.
 
 ### 🖨️ IoT Print Engine
 
 Agente de impressão local em tempo real que monitora a fila de pedidos e realiza o fulfillment físico automático, garantindo que o "unboxing" da memória aconteça ainda durante o evento.
+
+### 📈 Growth & Retention Engine
+
+Motor completo de crescimento e retenção de clientes:
+- **Cupons Dinâmicos** — Descontos percentuais e absolutos com limite de usos e validade.
+- **Programa de Embaixadores** — Rastreamento de afiliados via cookie `fs_referral` de 30 dias, com painel de comissões.
+- **Recuperação de Carrinho** — Job automatizado de e-mail e WhatsApp para carrinhos abandonados após 24h.
+- **WhatsApp API** — Motor de notificações automáticas para "Foto Pronta" e eventos de conversão.
 
 ---
 
@@ -34,7 +50,9 @@ Agente de impressão local em tempo real que monitora a fila de pedidos e realiz
 * **Backend:** Node.js, Express, TypeScript.
 * **Banco de Dados:** PostgreSQL (Supabase) via Prisma ORM.
 * **Storage:** Google Drive API (OAuth2 Hybrid Flow).
-* **Infra:** Vercel (Serverless Functions).
+* **Payments:** Mercado Pago (Checkout Pro + PIX).
+* **Infra:** Vercel (Serverless Functions), Supabase Cron Jobs.
+* **Notifications:** WhatsApp (Baileys/Evolution API).
 
 ---
 
@@ -45,6 +63,7 @@ Agente de impressão local em tempo real que monitora a fila de pedidos e realiz
 * Node.js 20.x
 * Instância PostgreSQL (Supabase recomendado)
 * Credenciais Google Cloud (Drive API)
+* Conta Mercado Pago (MP_ACCESS_TOKEN)
 
 ### Instalação
 
@@ -58,6 +77,10 @@ npm install --prefix frontend
 
 # Configurar variáveis de ambiente
 cp .env.example .env
+# Editar .env com suas credenciais (veja docs/CONFIGURATION.md)
+
+# Sincronizar o banco de dados
+cd backend && npx prisma migrate deploy
 ```
 
 ### Desenvolvimento
@@ -71,9 +94,11 @@ npm run dev
 
 ## 📂 Estrutura do Projeto
 
-* **/backend**: API REST, Serviços Google Drive, Integração Mercado Pago.
-* **/frontend**: Interface do usuário, Dashboards (Master, Partner, Cliente).
+* **/backend**: API REST, Serviços Google Drive, Integração Mercado Pago, Growth Engine.
+* **/frontend**: Interface do usuário, Dashboards (Master, Partner, Cliente, Admin Growth).
 * **/api**: Entrypoint para deploy na Vercel.
+* **/printer-agent**: Agente IoT local para fulfillment de impressões.
+* **/e2e**: Suite de testes Playwright E2E.
 * **/docs**: Documentação técnica detalhada.
 * **/.planning**: Roadmaps, especificações GSD e histórico de decisões.
 
@@ -82,8 +107,6 @@ npm run dev
 ## 📖 Exemplos de Uso
 
 ### 1. Criar um Flash Event (Dashboard Profissional)
-
-Profissionais podem criar eventos de alta conversão onde fotos são resgatadas via PIN:
 
 ```bash
 POST /api/profissional/flash-event
@@ -97,22 +120,24 @@ Content-Type: application/json
 }
 ```
 
-### 2. Upload de Foto via Phygital Flow
-
-Para fluxos de impressão instantânea (QR Code no evento):
+### 2. Aplicar Cupom de Desconto no Checkout
 
 ```bash
-POST /api/public/phygital/upload
-Content-Type: multipart/form-data
-
-file: <buffer_da_imagem>
-eventId: <id_do_evento>
-shortId: "FS-123"
+GET /api/marketplace/coupons/PROMO20/validate?eventId=<eventId>
 ```
 
-### 3. Telemetria do Printer Agent
+Resposta com `discountPct` ou `discountAbs`. O frontend aplica o desconto em tempo real e reconstrói o Brick do Mercado Pago.
 
-O agente de impressão local deve enviar heartbeats para manter a conexão ativa:
+### 3. Sincronizar Galeria Escolar (Google Drive)
+
+Sincroniza fotos de uma pasta do Drive e extrai StudentID automaticamente dos nomes:
+
+```bash
+POST /api/marketplace/events/:eventId/sync-drive
+Authorization: Bearer <token>
+```
+
+### 4. Telemetria do Printer Agent
 
 ```bash
 POST /api/iot/heartbeat
@@ -123,6 +148,13 @@ Content-Type: application/json
   "status": "online",
   "queueCount": 5
 }
+```
+
+### 5. Trigger de Recuperação de Carrinho (Cron)
+
+```bash
+POST /api/cron/abandoned-carts
+Authorization: Bearer <CRON_SECRET>
 ```
 
 ---
@@ -138,21 +170,12 @@ Veja [CONTRIBUTING.md](CONTRIBUTING.md) para diretrizes de desenvolvimento. Este
 © 2026 Foto Segundo. Todos os direitos reservados.
 Projetado para a excelência na fotografia phygital.
 
-## System Certification (v3.2 - Golden Stable)
+## System Certification (v7.0 - Expansão Total e Go-Live)
 
-The Foto Segundo platform is certified for Production Readiness as of May 9, 2026.
+The Foto Segundo platform is certified for Production Readiness as of May 14, 2026.
+- **Multi-Vertical:** School, Sports, and Fashion/Event photography fully supported.
+- **Growth Engine:** Coupons, Affiliate tracking, Abandoned Cart automation active.
+- **PWA:** Service Worker, Web Manifest, and Push Notifications configured.
 - **E2E Integrity:** 100% pass rate in Playwright Master Suite.
-- **Financial Security:** Transactional split and PIX generation validated.
-- **Architecture:** Formalized 7-module Enterprise structure.
-- **Resilience:** Cross-cutting Retry Layer implemented for serverless database connection stability.
-
-## ✅ Certificação de Qualidade (E2E Stability)
-
-A plataforma Foto Segundo atingiu o estado **Golden Stable**, com 100% de integridade operacional validada:
-
-* **Fluxo Financeiro:** Geração de PIX e conciliação bancária validada.
-* **Navegação Multi-Perfil:** 13 perfis de usuário verificados de ponta a ponta sem falhas em Cold Start.
-* **Integração IoT:** Telemetria de impressão 100% operacional.
-* **Admin Hub:** Listagem de pedidos, financeiro e logística restaurada e auditada.
-
-[Acessar Produção Enterprise](https://foto-segundo.vercel.app)
+- **Financial Security:** Transactional split, PIX, and FREE-coupon bypass validated.
+- **Architecture:** 9-module Enterprise structure (Growth Engine added).

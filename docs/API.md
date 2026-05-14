@@ -1,4 +1,4 @@
-<!-- generated-by: gsd-doc-writer -->
+<!-- GSD:API -->
 # API Reference: Foto Segundo
 
 This document describes the REST API for the Foto Segundo platform.
@@ -31,11 +31,14 @@ Most endpoints require a JSON Web Token (JWT).
 | `POST` | `/api/profissional/flash-event` | Creates a new Flash Event. | Pro |
 | `POST` | `/api/profissional/foto-point` | Creates a new Foto Point event. | Pro |
 | `GET` | `/api/flash/:shortId` | Resolves a Flash Event PIN for anonymous access. | No |
+| `GET` | `/api/flash/:eventId/stats` | Aggregated live metrics for a Flash Event (funnel, print queue). | Pro/Admin |
 
 ### 🛒 Marketplace & Checkout
 | Method | Path | Description | Auth |
 |--------|------|-------------|------|
 | `POST` | `/api/marketplace/events/:id/media` | Uploads media for unit sale. | Pro |
+| `POST` | `/api/marketplace/events/:id/sync-drive` | Triggers bulk media sync from Google Drive with automated metadata extraction. | Pro |
+| `PATCH` | `/api/marketplace/media/:mediaId/metadata` | Manually updates media metadata (studentId/bibNumber). | Admin |
 | `GET` | `/api/marketplace/events/:id/media` | Lists media for purchase. | Opt |
 | `POST` | `/api/checkout/payment` | Processes a payment via Mercado Pago. | Opt |
 | `GET` | `/api/checkout/shipping-quote` | Calculates shipping for physical orders. | Opt |
@@ -57,6 +60,28 @@ Most endpoints require a JSON Web Token (JWT).
 | `GET` | `/api/admin/users` | Lists all users for management. | Admin |
 | `GET` | `/api/admin/payouts` | Lists financial repasses. | Admin |
 | `GET` | `/api/health` | System health check (Ultra-early). | No |
+
+### 📈 CRM & Leads
+| Method | Path | Description | Auth |
+|--------|------|-------------|------|
+| `POST` | `/api/public/crm/leads` | Captures a new interest lead from gallery. | No |
+| `GET` | `/api/admin/crm/leads` | Lists all captured leads with metadata. | Admin |
+| `GET` | `/api/admin/crm/abandoned-carts` | Lists pending orders older than 1h. | Admin |
+| `GET` | `/api/admin/crm/stats` | Real-time recovery metrics (revenue, conversion). | Admin |
+| `GET` | `/api/cron/crm-recovery` | Triggers automated recovery emails (Cron). | No* |
+| `POST` | `/api/cron/abandoned-carts` | Triggers abandoned cart recovery job (24h threshold). | Cron* |
+
+*Note: `/cron/*` routes require `CRON_SECRET` Bearer token.
+
+### 📈 Growth Engine
+| Method | Path | Description | Auth |
+|--------|------|-------------|------|
+| `GET` | `/api/marketplace/coupons/:code/validate` | Validates a coupon code, returning discount details. | No |
+| `GET` | `/api/admin/coupons` | Lists all coupons with usage stats. | Admin |
+| `POST` | `/api/admin/coupons` | Creates a new coupon. | Admin |
+| `GET` | `/api/admin/ambassadors` | Lists all users with Ambassador/Affiliate role. | Admin |
+| `GET` | `/api/admin/whatsapp/status` | Returns WhatsApp session status (connected/disconnected + QR code). | Admin |
+| `GET` | `/api/admin/whatsapp/qr` | Returns the current QR code for WhatsApp session pairing. | Admin |
 
 ## Request/Response Formats
 

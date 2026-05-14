@@ -907,10 +907,11 @@ export default function ProfissionalDashboard() {
         <FotoPointModal 
           network={network}
           onClose={() => setIsFotoPointModalOpen(false)}
-          onSuccess={() => {
+          onSuccess={(slug) => {
             showNotification("Foto Point Ativado com Sucesso!", "success");
             setIsFotoPointModalOpen(false);
             fetchEvents();
+            navigate(`/e/${slug}`);
           }}
           onError={(msg) => showNotification(msg, "error")}
         />

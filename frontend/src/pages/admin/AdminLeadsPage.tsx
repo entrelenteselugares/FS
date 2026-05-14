@@ -1,0 +1,265 @@
+import React, { useState, useEffect } from 'react';
+import { API } from '../../lib/api';
+import { 
+  Users, 
+  ShoppingBag, 
+  TrendingDown, 
+  Mail, 
+  ExternalLink, 
+  MessageCircle, 
+  Clock,
+  ArrowRight,
+  UserPlus
+} from 'lucide-react';
+import { motion } from 'framer-motion';
+
+interface Lead {
+  id: string;
+  email: string;
+  source: string;
+  createdAt: string;
+  event?: {
+    nomeNoivos: string;
+  };
+}
+
+interface AbandonedCart {
+  id: string;
+  valor: number;
+  createdAt: string;
+  event: {
+    nomeNoivos: string;
+  };
+  cliente?: {
+    nome: string;
+    email: string;
+    whatsapp: string;
+  };
+  buyerEmail?: string;
+  buyerWhatsapp?: string;
+  recoverySentAt?: string;
+}
+
+export const AdminLeadsPage: React.FC = () => {
+  const [leads, setLeads] = useState<Lead[]>([]);
+  const [abandoned, setAbandoned] = useState<AbandonedCart[]>([]);
+  const [stats, setStats] = useState({ totalSent: 0, recoveredCount: 0, recoveredRevenue: 0 });
+  const [loading, setLoading] = useState(true);
+  const [activeSubTab, setActiveSubTab] = useState<'leads' | 'abandoned'>('abandoned');
+
+  useEffect(() => {
+    const fetchData = async () => {
+      setLoading(true);
+      try {
+        const [leadsRes, abandonedRes, statsRes] = await Promise.all([
+          API.get('/admin/crm/leads'),
+          API.get('/admin/crm/abandoned-carts'),
+          API.get('/admin/crm/stats')
+        ]);
+        setLeads(leadsRes.data);
+        setAbandoned(abandonedRes.data);
+        setStats(statsRes.data);
+      } catch (err) {
+        console.error('[AdminLeads] Error fetching CRM data:', err);
+      } finally {
+        setLoading(false);
+      }
+    };
+    fetchData();
+  }, []);
+
+  const totalLostValue = abandoned.reduce((acc, curr) => acc + Number(curr.valor), 0);
+
+  if (loading) {
+    return (
+      <div className="py-20 flex flex-col items-center gap-6">
+        <div className="w-px h-8 bg-gradient-to-b from-transparent via-brand-tactical to-transparent" />
+        <div className="text-[10px] font-display font-black uppercase tracking-[0.3em] text-brand-tactical/40 animate-pulse">Sincronizando Leads...</div>
+      </div>
+    );
+  }
+
+  return (
+    <div className="space-y-12">
+      {/* Stats Header */}
+      <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+        <div className="bg-zinc-900/50 border border-white/5 p-8 space-y-4">
+          <div className="flex items-center gap-3 text-zinc-500">
+            <Users size={16} />
+            <span className="text-[10px] font-black uppercase tracking-widest">Total Leads</span>
+          </div>
+          <div className="text-4xl font-heading font-black italic text-white">{leads.length}</div>
+          <p className="text-[9px] text-zinc-600 uppercase font-bold tracking-widest leading-relaxed">Capturados via formulário na galeria.</p>
+        </div>
+
+        <div className="bg-zinc-900/50 border border-white/5 p-8 space-y-4">
+          <div className="flex items-center gap-3 text-orange-500">
+            <ShoppingBag size={16} />
+            <span className="text-[10px] font-black uppercase tracking-widest">Abandono de Checkout</span>
+          </div>
+          <div className="text-4xl font-heading font-black italic text-white">{abandoned.length}</div>
+          <p className="text-[9px] text-zinc-600 uppercase font-bold tracking-widest leading-relaxed">Pedidos pendentes há mais de 1 hora.</p>
+        </div>
+
+        <div className="bg-brand-tactical/5 border border-brand-tactical/20 p-8 space-y-4">
+          <div className="flex items-center gap-3 text-brand-tactical">
+            <TrendingDown size={16} />
+            <span className="text-[10px] font-black uppercase tracking-widest">Receita Recuperada</span>
+          </div>
+          <div className="text-4xl font-heading font-black italic text-brand-tactical">R$ {stats.recoveredRevenue.toFixed(2)}</div>
+          <p className="text-[9px] text-brand-tactical/60 uppercase font-bold tracking-widest leading-relaxed">Impacto real das automações de CRM.</p>
+        </div>
+
+        <div className="bg-zinc-900/50 border border-white/5 p-8 space-y-4">
+          <div className="flex items-center gap-3 text-zinc-500">
+            <TrendingDown size={16} />
+            <span className="text-[10px] font-black uppercase tracking-widest">Taxa de Conversão</span>
+          </div>
+          <div className="text-4xl font-heading font-black italic text-white">
+            {stats.totalSent > 0 ? ((stats.recoveredCount / stats.totalSent) * 100).toFixed(1) : 0}%
+          </div>
+          <p className="text-[9px] text-zinc-600 uppercase font-bold tracking-widest leading-relaxed">Eficiência dos disparos automáticos.</p>
+        </div>
+      </div>
+
+      {/* Tabs */}
+      <div className="flex gap-8 border-b border-white/5">
+        <button 
+          onClick={() => setActiveSubTab('abandoned')}
+          className={`pb-4 text-[10px] font-black uppercase tracking-[0.2em] transition-all relative ${activeSubTab === 'abandoned' ? 'text-brand-tactical' : 'text-zinc-500'}`}
+        >
+          Carrinhos Abandonados
+          {activeSubTab === 'abandoned' && <motion.div layoutId="subtab" className="absolute bottom-0 left-0 right-0 h-0.5 bg-brand-tactical" />}
+        </button>
+        <button 
+          onClick={() => setActiveSubTab('leads')}
+          className={`pb-4 text-[10px] font-black uppercase tracking-[0.2em] transition-all relative ${activeSubTab === 'leads' ? 'text-brand-tactical' : 'text-zinc-500'}`}
+        >
+          Leads Capturados
+          {activeSubTab === 'leads' && <motion.div layoutId="subtab" className="absolute bottom-0 left-0 right-0 h-0.5 bg-brand-tactical" />}
+        </button>
+      </div>
+
+      {/* Content */}
+      <div className="bg-zinc-900/30 border border-white/5 overflow-hidden">
+        {activeSubTab === 'abandoned' ? (
+          <table className="w-full text-left border-collapse">
+            <thead>
+              <tr className="border-b border-white/5">
+                <th className="p-6 text-[9px] font-black uppercase tracking-widest text-zinc-500">Cliente / Contato</th>
+                <th className="p-6 text-[9px] font-black uppercase tracking-widest text-zinc-500">Evento</th>
+                <th className="p-6 text-[9px] font-black uppercase tracking-widest text-zinc-500">Valor</th>
+                <th className="p-6 text-[9px] font-black uppercase tracking-widest text-zinc-500">Início</th>
+                <th className="p-6 text-[9px] font-black uppercase tracking-widest text-zinc-500 text-right">Ações de Recuperação</th>
+              </tr>
+            </thead>
+            <tbody className="divide-y divide-white/5">
+              {abandoned.map((item) => (
+                <tr key={item.id} className="hover:bg-white/5 transition-colors group">
+                  <td className="p-6">
+                    <div className="space-y-1">
+                      <div className="text-[10px] font-black text-white uppercase italic">{item.cliente?.nome || 'Cliente não identificado'}</div>
+                      <div className="text-[9px] font-bold text-zinc-500 lowercase flex items-center gap-2">
+                        {item.cliente?.email || item.buyerEmail}
+                        {item.recoverySentAt && (
+                          <span className="px-2 py-0.5 bg-brand-tactical/10 text-brand-tactical border border-brand-tactical/20 rounded-full text-[7px] font-black uppercase">
+                            Lembrete Enviado
+                          </span>
+                        )}
+                      </div>
+                    </div>
+                  </td>
+                  <td className="p-6">
+                    <span className="text-[9px] font-black uppercase tracking-widest text-zinc-400">{item.event.nomeNoivos}</span>
+                  </td>
+                  <td className="p-6">
+                    <span className="text-xs font-heading font-black italic text-white">R$ {Number(item.valor).toFixed(2)}</span>
+                  </td>
+                  <td className="p-6">
+                    <div className="flex items-center gap-2 text-zinc-500">
+                      <Clock size={12} />
+                      <span className="text-[9px] font-bold">{new Date(item.createdAt).toLocaleString('pt-BR')}</span>
+                    </div>
+                  </td>
+                  <td className="p-6">
+                    <div className="flex items-center justify-end gap-3">
+                      {(item.cliente?.whatsapp || item.buyerWhatsapp) && (
+                        <button 
+                          onClick={() => window.open(`https://wa.me/${(item.cliente?.whatsapp || item.buyerWhatsapp)?.replace(/\D/g, '')}?text=${encodeURIComponent('Olá! Vimos que você iniciou um pedido no Foto Segundo para o evento ' + item.event.nomeNoivos + '. Ficou com alguma dúvida?')}`, '_blank')}
+                          className="p-2 bg-[#25D366]/10 text-[#25D366] hover:bg-[#25D366] hover:text-white transition-all rounded-lg"
+                        >
+                          <MessageCircle size={14} />
+                        </button>
+                      )}
+                      <button 
+                        onClick={() => window.open(`mailto:${item.cliente?.email || item.buyerEmail}?subject=${encodeURIComponent('Seu pedido no Foto Segundo')}`, '_blank')}
+                        className="p-2 bg-brand-tactical/10 text-brand-tactical hover:bg-brand-tactical hover:text-black transition-all rounded-lg"
+                      >
+                        <Mail size={14} />
+                      </button>
+                    </div>
+                  </td>
+                </tr>
+              ))}
+              {abandoned.length === 0 && (
+                <tr>
+                  <td colSpan={5} className="p-20 text-center text-[10px] font-black text-zinc-600 uppercase tracking-widest">Nenhum abandono detectado na última hora.</td>
+                </tr>
+              )}
+            </tbody>
+          </table>
+        ) : (
+          <table className="w-full text-left border-collapse">
+            <thead>
+              <tr className="border-b border-white/5">
+                <th className="p-6 text-[9px] font-black uppercase tracking-widest text-zinc-500">Email do Lead</th>
+                <th className="p-6 text-[9px] font-black uppercase tracking-widest text-zinc-500">Evento de Origem</th>
+                <th className="p-6 text-[9px] font-black uppercase tracking-widest text-zinc-500">Data de Captura</th>
+                <th className="p-6 text-[9px] font-black uppercase tracking-widest text-zinc-500">Fonte</th>
+                <th className="p-6 text-[9px] font-black uppercase tracking-widest text-zinc-500 text-right">Ações</th>
+              </tr>
+            </thead>
+            <tbody className="divide-y divide-white/5">
+              {leads.map((lead) => (
+                <tr key={lead.id} className="hover:bg-white/5 transition-colors">
+                  <td className="p-6">
+                    <div className="flex items-center gap-3">
+                      <div className="w-8 h-8 bg-brand-tactical/10 flex items-center justify-center rounded-full text-brand-tactical">
+                        <UserPlus size={14} />
+                      </div>
+                      <span className="text-[10px] font-black text-white lowercase">{lead.email}</span>
+                    </div>
+                  </td>
+                  <td className="p-6 text-[9px] font-black uppercase tracking-widest text-zinc-400">
+                    {lead.event?.nomeNoivos || 'Captação Geral'}
+                  </td>
+                  <td className="p-6 text-[9px] font-bold text-zinc-500">
+                    {new Date(lead.createdAt).toLocaleDateString('pt-BR')}
+                  </td>
+                  <td className="p-6">
+                    <span className="px-2 py-1 bg-white/5 border border-white/10 rounded text-[8px] font-black text-zinc-500 uppercase tracking-widest">{lead.source}</span>
+                  </td>
+                  <td className="p-6 text-right">
+                    <button 
+                      onClick={() => window.open(`mailto:${lead.email}`, '_blank')}
+                      className="text-brand-tactical hover:text-white transition-colors"
+                    >
+                      <ArrowRight size={16} />
+                    </button>
+                  </td>
+                </tr>
+              ))}
+              {leads.length === 0 && (
+                <tr>
+                  <td colSpan={5} className="p-20 text-center text-[10px] font-black text-zinc-600 uppercase tracking-widest">Nenhum lead capturado ainda.</td>
+                </tr>
+              )}
+            </tbody>
+          </table>
+        )}
+      </div>
+    </div>
+  );
+};
+
+export default AdminLeadsPage;

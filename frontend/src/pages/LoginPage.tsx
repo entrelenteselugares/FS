@@ -33,6 +33,14 @@ export const LoginPage: React.FC = () => {
     try {
       const authUser = await login(email.trim().toLowerCase(), senha);
 
+      // GA4: Track Login
+      import("../lib/analytics").then(({ trackEvent, GA_EVENTS }) => {
+        trackEvent(GA_EVENTS.LOGIN, { 
+          role: authUser.role,
+          user_id: authUser.id 
+        });
+      });
+
       const pending = localStorage.getItem("pending_purchase_event_id");
       if (pending) {
         localStorage.removeItem("pending_purchase_event_id");

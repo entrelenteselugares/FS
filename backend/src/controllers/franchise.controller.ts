@@ -85,6 +85,29 @@ export class FranchiseController {
   }
 
   /**
+   * Atualiza as configurações de marca (White-Label) do Franqueado no modelo User
+   */
+  static async updateBranding(req: AuthRequest, res: Response) {
+    try {
+      const { tenantLogoUrl, tenantBrandColor } = req.body;
+      const userId = req.user!.userId;
+
+      const user = await prisma.user.update({
+        where: { id: userId },
+        data: { 
+          tenantLogoUrl: tenantLogoUrl || null,
+          tenantBrandColor: tenantBrandColor || null
+        }
+      });
+
+      res.json({ success: true, user: { tenantLogoUrl: user.tenantLogoUrl, tenantBrandColor: user.tenantBrandColor } });
+    } catch (error) {
+      console.error("[updateBranding] Error:", error);
+      res.status(500).json({ error: "Erro ao atualizar configurações de marca." });
+    }
+  }
+
+  /**
    * Alterna o status ativo/inativo de um FranchiseProfile
    */
   static async toggleActive(req: Request, res: Response) {
@@ -305,6 +328,34 @@ export class FranchiseController {
         take: 5
       });
 
+      // Phase 41: Cohort Metrics
+      const networkIds = await prisma.professionalNetwork.findMany({
+        where: { partnerId: req.user!.userId },
+        select: { userId: true }
+      }).then(res => res.map(r => r.userId));
+
+      let networkEventsCount = 0;
+      let networkOrdersCount = 0;
+      let conversionRate = 0;
+
+      if (networkIds.length > 0) {
+        networkEventsCount = await prisma.event.count({
+          where: { captacaoId: { in: networkIds } }
+        });
+
+        networkOrdersCount = await prisma.order.count({
+          where: { 
+            event: { captacaoId: { in: networkIds } },
+            status: "APROVADO"
+          }
+        });
+
+        if (networkEventsCount > 0) {
+          // Average orders per event across the network
+          conversionRate = networkOrdersCount / networkEventsCount;
+        }
+      }
+
       return res.json({
         totalEarned: Number(stats._sum.splitFranchisee || 0),
         totalOrders: stats._count.id,
@@ -313,11 +364,72 @@ export class FranchiseController {
           amount: Number(c.splitFranchisee || 0),
           eventTitle: c.event.nomeNoivos,
           date: c.updatedAt
-        }))
+        })),
+        intel: {
+          networkEvents: networkEventsCount,
+          networkOrders: networkOrdersCount,
+          avgOrdersPerEvent: conversionRate.toFixed(2)
+        }
       });
     } catch (error) {
       console.error("[Franchise Finance Error]:", error);
       return res.status(500).json({ error: "Failed to fetch financial stats" });
+    }
+  }
+
+  /**
+   * Phase 41: Export Financial Data as CSV
+   */
+  static async exportFinance(req: AuthRequest, res: Response) {
+    try {
+      const { start, end } = req.query;
+      
+      const whereClause: any = {
+        passiveFranchiseeId: req.user!.userId,
+        status: "APROVADO",
+      };
+
+      if (start && end) {
+        whereClause.updatedAt = {
+          gte: new Date(start as string),
+          lte: new Date(end as string)
+        };
+      }
+
+      const orders = await prisma.order.findMany({
+        where: whereClause,
+        include: {
+          event: { select: { nomeNoivos: true } },
+          cliente: { select: { nome: true, email: true } }
+        },
+        orderBy: { updatedAt: 'desc' }
+      });
+
+      if (orders.length === 0) {
+        return res.status(404).json({ error: "Nenhum dado financeiro encontrado no período." });
+      }
+
+      // Generate CSV
+      let csv = "ID do Pedido,Data,Evento,Cliente,Email do Cliente,Valor Total (R$),Comissao Franquia (R$)\n";
+      
+      orders.forEach(o => {
+        const dateStr = o.updatedAt.toISOString().split('T')[0];
+        const eventName = o.event?.nomeNoivos ? `"${o.event.nomeNoivos}"` : "N/A";
+        const clientName = o.cliente?.nome ? `"${o.cliente.nome}"` : "N/A";
+        const clientEmail = o.cliente?.email ? `"${o.cliente.email}"` : "N/A";
+        const total = Number(o.valor).toFixed(2);
+        const commission = Number(o.splitFranchisee || 0).toFixed(2);
+
+        csv += `${o.id},${dateStr},${eventName},${clientName},${clientEmail},${total},${commission}\n`;
+      });
+
+      res.setHeader('Content-Type', 'text/csv; charset=utf-8');
+      res.setHeader('Content-Disposition', 'attachment; filename="fechamento_franquia.csv"');
+      
+      return res.send(csv);
+    } catch (error) {
+      console.error("[Franchise Export Error]:", error);
+      return res.status(500).json({ error: "Failed to export financial data" });
     }
   }
 

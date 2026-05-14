@@ -23,6 +23,7 @@ export const BulkUpload: React.FC<BulkUploadProps> = ({ eventId, onComplete, onC
   const [files, setFiles] = useState<FileWithStatus[]>([]);
   const [isDragging, setIsDragging] = useState(false);
   const [isUploading, setIsUploading] = useState(false);
+  const [globalTag, setGlobalTag] = useState("");
   const inputRef = useRef<HTMLInputElement>(null);
 
   const onDragOver = useCallback((e: React.DragEvent) => {
@@ -77,6 +78,9 @@ export const BulkUpload: React.FC<BulkUploadProps> = ({ eventId, onComplete, onC
       formData.append('file', f.file);
       formData.append('eventId', eventId);
       formData.append('watermark', String(f.watermark));
+      if (globalTag.trim()) {
+        formData.append('globalTag', globalTag.trim());
+      }
 
       try {
         await API.post(`/phygital/upload-bulk`, formData, {
@@ -129,6 +133,19 @@ export const BulkUpload: React.FC<BulkUploadProps> = ({ eventId, onComplete, onC
           <div className="flex items-center justify-between mb-4 px-2">
             <span className="text-[10px] font-black text-brand-tactical uppercase tracking-widest italic">{files.length} arquivos selecionados</span>
             <button onClick={() => setFiles([])} className="text-[9px] font-black text-red-500 uppercase tracking-widest hover:underline italic">Limpar tudo</button>
+          </div>
+
+          <div className="mb-6 px-2">
+            <label className="text-[10px] font-black uppercase tracking-widest text-theme-text-muted italic mb-2 block">
+              Tag / Identificador Global (Número de Peito ou Aluno)
+            </label>
+            <input 
+              type="text" 
+              value={globalTag}
+              onChange={(e) => setGlobalTag(e.target.value)}
+              placeholder="Opcional: Ex. 104, João Silva"
+              className="w-full bg-theme-bg/50 border border-theme-border/60 p-4 text-[10px] font-black uppercase text-theme-text outline-none focus:border-brand-tactical rounded-xl placeholder:text-theme-text-muted/40"
+            />
           </div>
           
           <div className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-5 gap-4 max-h-[300px] overflow-y-auto pr-2 custom-scrollbar">

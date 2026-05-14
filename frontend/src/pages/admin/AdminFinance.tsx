@@ -45,10 +45,12 @@ export const AdminFinance: React.FC = () => {
   const [orders, setOrders] = useState<PayoutOrder[]>([]);
   const [expenses, setExpenses] = useState<Expense[]>([]); 
   const [loading, setLoading] = useState(true);
-  const [view, setView] = useState<"payouts" | "expenses" | "dre">("payouts");
+  const [view, setView] = useState<"payouts" | "balances" | "expenses" | "dre">("payouts");
   const [payoutTab, setPayoutTab] = useState<"pending" | "history">("pending");
   const [confirmModal, setConfirmModal] = useState<string | null>(null);
   const [notification, setNotification] = useState<{message: string, type: 'success' | 'error'} | null>(null);
+  const [balances, setBalances] = useState<any[]>([]);
+  const [settleLoading, setSettleLoading] = useState<string | null>(null);
 
   // New Expense Form State
   const [newExpense, setNewExpense] = useState<Omit<Expense, 'id'>>({
@@ -73,9 +75,19 @@ export const AdminFinance: React.FC = () => {
     }
   }, [payoutTab]);
 
+  const fetchBalances = useCallback(async () => {
+    try {
+      const { data } = await API.get("/admin/finance/balances");
+      setBalances(data);
+    } catch (err) {
+      console.error("Erro ao carregar saldos:", err);
+    }
+  }, []);
+
   useEffect(() => {
-    fetchPayouts();
-  }, [fetchPayouts]);
+    if (view === "payouts") fetchPayouts();
+    if (view === "balances") fetchBalances();
+  }, [view, fetchPayouts, fetchBalances]);
 
   // Financial Stats Calculation
   const financialData = useMemo(() => {
@@ -102,6 +114,20 @@ export const AdminFinance: React.FC = () => {
       setNotification({ message: "Erro ao liquidar repasse.", type: 'error' });
     }
     setTimeout(() => setNotification(null), 5000);
+  };
+
+  const handleSettle = async (userId: string) => {
+    setSettleLoading(userId);
+    try {
+      await API.post("/admin/finance/settle", { userId });
+      setNotification({ message: "Repasse consolidado gerado com sucesso! 💎", type: 'success' });
+      fetchBalances();
+    } catch (err) {
+      setNotification({ message: "Erro ao liquidar saldo.", type: 'error' });
+    } finally {
+      setSettleLoading(null);
+      setTimeout(() => setNotification(null), 5000);
+    }
   };
 
   const handleAddExpense = (e: React.FormEvent) => {
@@ -135,7 +161,8 @@ export const AdminFinance: React.FC = () => {
         </div>
         
         <div className="flex bg-theme-bg-muted p-1.5 border border-theme-border overflow-x-auto no-scrollbar rounded-sm">
-          <button onClick={() => setView("payouts")} className={`px-8 py-3.5 text-[11px] font-black uppercase tracking-widest transition-all whitespace-nowrap rounded-sm italic ${view === "payouts" ? 'bg-brand-tactical text-zinc-950 shadow-lg' : 'text-theme-muted hover:text-white'}`}>Repasses</button>
+          <button onClick={() => setView("payouts")} className={`px-8 py-3.5 text-[11px] font-black uppercase tracking-widest transition-all whitespace-nowrap rounded-sm italic ${view === "payouts" ? 'bg-brand-tactical text-zinc-950 shadow-lg' : 'text-theme-muted hover:text-white'}`}>Pedidos</button>
+          <button onClick={() => setView("balances")} className={`px-8 py-3.5 text-[11px] font-black uppercase tracking-widest transition-all whitespace-nowrap rounded-sm italic ${view === "balances" ? 'bg-brand-tactical text-zinc-950 shadow-lg' : 'text-theme-muted hover:text-white'}`}>Saldos Pros</button>
           <button onClick={() => setView("expenses")} className={`px-8 py-3.5 text-[11px] font-black uppercase tracking-widest transition-all whitespace-nowrap rounded-sm italic ${view === "expenses" ? 'bg-brand-tactical text-zinc-950 shadow-lg' : 'text-theme-muted hover:text-white'}`}>Lançamentos</button>
           <button onClick={() => setView("dre")} className={`px-8 py-3.5 text-[11px] font-black uppercase tracking-widest transition-all whitespace-nowrap rounded-sm italic ${view === "dre" ? 'bg-brand-tactical text-zinc-950 shadow-lg' : 'text-theme-muted hover:text-white'}`}>DRE / Dashboard</button>
         </div>
@@ -234,6 +261,57 @@ export const AdminFinance: React.FC = () => {
                 ))}
               </div>
             )}
+          </div>
+        </div>
+      )}
+
+      {/* VIEW: SALDOS PROS */}
+      {view === "balances" && (
+        <div className="space-y-6 animate-in fade-in duration-500">
+          <div className="bg-theme-bg-muted border border-theme-border overflow-hidden">
+             <table className="w-full text-left border-collapse">
+                <thead>
+                   <tr className="border-b border-theme-border/30 bg-black/10">
+                      <th className="p-4 text-[10px] font-black text-theme-muted uppercase tracking-widest">Profissional</th>
+                      <th className="p-4 text-[10px] font-black text-theme-muted uppercase tracking-widest text-center">Pedidos</th>
+                      <th className="p-4 text-[10px] font-black text-theme-muted uppercase tracking-widest text-right">Pendente</th>
+                      <th className="p-4 text-[10px] font-black text-brand-tactical uppercase tracking-widest text-right">Disponível</th>
+                      <th className="p-4 w-40"></th>
+                   </tr>
+                </thead>
+                <tbody className="divide-y divide-theme-border/10">
+                   {balances.length === 0 ? (
+                     <tr>
+                       <td colSpan={5} className="py-24 text-center text-[11px] text-theme-muted uppercase tracking-[0.4em] italic font-black">Nenhum saldo pendente na rede.</td>
+                     </tr>
+                   ) : balances.map(b => (
+                     <tr key={b.userId} className="group hover:bg-white/5 transition-all">
+                        <td className="p-4">
+                           <div className="flex flex-col">
+                              <span className="text-[12px] font-black text-theme-text uppercase italic">{b.nome}</span>
+                              <span className="text-[9px] font-bold text-theme-muted uppercase tracking-tight">{b.email}</span>
+                           </div>
+                        </td>
+                        <td className="p-4 text-center text-[11px] font-black text-theme-muted italic">{b.orderCount} vds</td>
+                        <td className="p-4 text-right text-[12px] font-black text-theme-muted italic">{formatCurrency(b.pendingBalance)}</td>
+                        <td className="p-4 text-right text-[14px] font-black text-brand-tactical italic">{formatCurrency(b.availableBalance)}</td>
+                        <td className="p-4 text-right">
+                           {b.availableBalance > 0 ? (
+                              <button 
+                                onClick={() => handleSettle(b.userId)}
+                                disabled={settleLoading === b.userId}
+                                className={`px-4 py-2 text-[9px] font-black uppercase tracking-widest border border-brand-tactical text-brand-tactical hover:bg-brand-tactical hover:text-zinc-950 transition-all italic ${settleLoading === b.userId ? 'opacity-50 animate-pulse' : ''}`}
+                              >
+                                {settleLoading === b.userId ? "LIQUIDANDO..." : "GERAR REPASSE"}
+                              </button>
+                           ) : (
+                              <span className="text-[9px] font-black text-theme-muted uppercase italic opacity-40">AGUARDANDO ESCROW</span>
+                           )}
+                        </td>
+                     </tr>
+                   ))}
+                </tbody>
+             </table>
           </div>
         </div>
       )}

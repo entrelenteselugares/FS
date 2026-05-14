@@ -309,8 +309,9 @@ export async function adminCreateEvent(req: AuthRequest, res: Response): Promise
     temFoto, temVideo, temReels, temFotoImpressa,
     eventHours,
     isCrowdfund, targetAmount,
-    type, pricePerPhoto, marketplaceConfigs,
-    clientEmail, clientName
+    type, pricePerPhoto, marketplaceConfigs, verticalConfigs,
+    clientEmail, clientName,
+    preSaleEnabled, postSaleEnabled
   } = req.body;
 
   if (!title || !date || !location) {
@@ -371,8 +372,11 @@ export async function adminCreateEvent(req: AuthRequest, res: Response): Promise
         type: type || "ALBUM_FULL",
         pricePerPhoto: pricePerPhoto ? Number(pricePerPhoto) : null,
         marketplaceConfigs: marketplaceConfigs || {},
+        verticalConfigs: verticalConfigs || {},
         clientEmail: clientEmail || null,
         clientName: clientName || null,
+        preSaleEnabled: preSaleEnabled ?? false,
+        postSaleEnabled: postSaleEnabled ?? true,
         // @ts-ignore
         retentionDays: req.body.retentionDays ? Number(req.body.retentionDays) : (req.body.isPrivate ? 7 : 15),
       },
@@ -449,7 +453,10 @@ export async function adminUpdateEvent(req: AuthRequest, res: Response): Promise
     if (req.body.clientName !== undefined) data.clientName = req.body.clientName || null;
     // @ts-ignore
     if (req.body.retentionDays !== undefined) data.retentionDays = Number(req.body.retentionDays);
+    if (req.body.preSaleEnabled !== undefined) (data as any).preSaleEnabled = req.body.preSaleEnabled;
+    if (req.body.postSaleEnabled !== undefined) (data as any).postSaleEnabled = req.body.postSaleEnabled;
     if (req.body.eventEndTime !== undefined) data.eventEndTime = req.body.eventEndTime ? new Date(req.body.eventEndTime) : null;
+    if (req.body.verticalConfigs !== undefined) (data as any).verticalConfigs = req.body.verticalConfigs || {};
 
     const wasEmpty = !currentEvent.lightroomUrl && !currentEvent.driveUrl;
     const isAddingLinks = (data.lightroomUrl || data.driveUrl) && wasEmpty;
