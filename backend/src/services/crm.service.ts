@@ -21,7 +21,7 @@ export const CRMService = {
         where: {
           status: 'PENDENTE',
           hasPaid: false,
-          recoverySentAt: null,
+          abandonedEmailSentAt: null,
           createdAt: {
             lt: twoHoursAgo,
             gt: twentyFourHoursAgo
@@ -63,7 +63,7 @@ export const CRMService = {
           // Marca como enviado para não repetir
           await prisma.order.update({
             where: { id: order.id },
-            data: { recoverySentAt: new Date() }
+            data: { abandonedEmailSentAt: new Date() }
           });
 
           console.log(`[CRMService] E-mail de recuperação enviado para ${targetEmail} (Pedido: ${order.id})`);

@@ -102,7 +102,7 @@ export class PhygitalController {
    */
   static async listAllByEvent(req: Request, res: Response) {
     try {
-      const eventId = req.params.eventId as string;
+      const eventId = (req.query.eventId || req.params.eventId) as string;
       if (!eventId) return res.status(400).json({ error: "eventId é obrigatório." });
 
       const prints = await prisma.phygitalPrint.findMany({

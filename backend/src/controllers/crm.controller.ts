@@ -141,13 +141,13 @@ export const CRMController = {
     try {
       // 1. Total de e-mails de recuperação enviados
       const totalSent = await prisma.order.count({
-        where: { recoverySentAt: { not: null } }
+        where: { abandonedEmailSentAt: { not: null } }
       });
 
       // 2. Total recuperado (Pedidos que receberam e-mail e foram PAGOS)
       const recoveredOrders = await prisma.order.findMany({
         where: {
-          recoverySentAt: { not: null },
+          abandonedEmailSentAt: { not: null },
           hasPaid: true
         },
         select: { valor: true }

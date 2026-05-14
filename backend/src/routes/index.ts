@@ -476,6 +476,10 @@ router.patch("/admin/redemptions/:id/status",requireAuth, requireRole("ADMIN"), 
 router.get("/admin/ambassador/stats", requireAuth, requireRole("ADMIN"), ReferralController.listAllCampaigns);
 router.post("/admin/ambassador/campaigns", requireAuth, requireRole("ADMIN"), ReferralController.createCampaign);
 
+router.get("/admin/coupons", requireAuth, requireRole("ADMIN"), GrowthController.listCoupons);
+router.get("/admin/ambassadors", requireAuth, requireRole("ADMIN"), GrowthController.listAmbassadors);
+router.get("/admin/phygital/all", requireAuth, requireRole("ADMIN"), PhygitalController.listAllByEvent);
+
 // ── Admin: Contests ──────────────────────────────────────────────────────────
 router.get("/admin/contests",       requireAuth, requireRole("ADMIN"), adminListContests);
 router.post("/admin/contests",      requireAuth, requireRole("ADMIN"), adminCreateContest);

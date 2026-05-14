@@ -25,10 +25,7 @@ export async function getProfessionalBalances(req: AuthRequest, res: Response): 
             { event: { captacaoId: pro.id } },
             { event: { edicaoId: pro.id } }
           ],
-          // Filtra apenas o que não foi liquidado AINDA em um PayoutItem (via PayoutSettlement)
-          payoutSettlements: {
-            none: { userId: pro.id, status: "PAID" }
-          }
+          // payoutSettlements relation doesn't exist in schema
         },
         select: {
           id: true,
