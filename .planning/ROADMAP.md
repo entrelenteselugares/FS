@@ -1,55 +1,83 @@
-# ROADMAP: Foto Segundo
+# ROADMAP: Expansão Total e Go-Live
 
-## Milestone 1: Midnight Luxury v3.1 & Data Integrity (DONE)
+## Milestone v7.0 Summary
+**Goal:** Transform the platform into a high-scale PWA with diverse revenue streams and advanced growth tools.
+**Phases:** 4
+**Requirements Coverage:** 100% (16/16 mapped)
 
-- [x] Global UI/UX audit for "Midnight Luxury" consistency.
-- [x] Full operational data reset for fresh testing.
-- [x] Definition of Supabase cleanup SQL scripts.
-- [x] Technical codebase mapping via GSD-MAP.
-- [x] Configure CI/CD automation with Playwright Master Suite.
-- [x] Implement IoT telemetry (Heartbeat) for Printer Agents.
-- [x] Finalize administrative and technical documentation.
+---
 
-## Milestone 2: Production Hardening & Scalability (DONE)
+## Phase 32: Production Hardening & Operations (OPS)
+**Goal:** Prepare the infrastructure for real-world traffic with robust monitoring and automation.
+- [ ] **OPS-01**: Integrate Sentry for error tracking.
+- [ ] **OPS-02**: Implement GA4 conversion tracking.
+- [ ] **OPS-03**: Harden CI/CD with automated regression tests.
+- [ ] **OPS-04**: Build admin health monitoring dashboard.
 
-- [x] **Phase 1: Stress Testing**: Execute high-load simulations on production endpoints.
-- [x] **Phase 2: IoT Resilience**: Refactor printer agent with sequential queue and error handling.
-- [x] **Phase 3: Security Review**: Audit OAuth token encryption and API key access.
-- [x] **Phase 4: UI Standardization**: Align Admin and Client dashboards with Midnight Luxury tokens.
-- [x] **Phase 5: E2E Hardening**: Implement Playwright automated tests for the registration flow.
-- [x] **Phase 6: Financial Security**: Implement PRO verification flow, escrow logic, and admin payout management.
+**Success Criteria:**
+- Dashboard shows live server metrics.
+- Sentry captures a test error in staging.
+- Purchase event visible in GA4 DebugView.
 
-## Milestone 3: Ecosystem Expansion (DONE)
+---
 
-- [x] **Phase 08: B2B Hub (Automação de Insumos e Networking)**: Supply monitoring, referral links, and operational dashboard. (DONE)
-- [x] **Phase 09: Split de Comissões & Marketplace (Passive Income)**: Automated transaction splitting between platform, photographer, and referring franchisee. (DONE)
-- [x] **Phase 10: Gamification v2**: Enhance user points and redemption incentives. (DONE)
-- [x] **Phase 11: Cofres de Memórias (Private Photo Vaults & SaaS B2C)**: Implementation of private analog-style sharing, Google Drive storage integration, and subscription-based automated printing. (DONE)
-- [x] **Phase 12: Print-Shop Integration (Physical Product Expansion)**: Hybrid cart logic, shipping engine integration, and fulfillment routing for instant and premium products. (DONE)
-- [x] **Phase 13: Recurring Billing & Gamification V3**: Automation of monthly cycles and loyalty incentives based on subscription activity. (DONE)
+## Phase 33: Mobile-First & PWA implementation (PWA)
+**Goal:** Enable "app-like" behavior for field users and photographers.
+- [ ] **PWA-01**: Implement Service Worker caching.
+- [ ] **PWA-02**: Configure Web Manifest and Splash Screens.
+- [ ] **PWA-03**: Set up Push Notification infrastructure.
+- [ ] **PWA-04**: Refactor selection gallery for touch performance.
 
-## Milestone 4: Frictionless Growth & AI Integration (DONE)
+**Success Criteria:**
+- "Add to Home Screen" prompt appears on mobile.
+- App loads offline assets successfully.
+- Push notification received on order event.
 
-- [x] **Phase 14: Flash Event Fulfillment (Fricção Zero)**: Implementation of physical cards with QR/PIN for anonymous photo delivery and instant account conversion. (DONE)
-- [x] **Phase 15: Financial & E2E Hardening**: Stabilization of B2B quotation workflows, Express Sale cart logic, and transaction integrity via high-load Playwright stress tests. (DONE)
-- [x] **Phase 16: Operational Refinement**: [REPLACED] AI components removed per strategic decision; focus shifted to manual operational control and briefing visibility. (DONE)
-- [x] **Phase 17: Marketplace Scale**: Expanding the ambassador program and global phygital distribution network. (DONE)
-- [x] **Phase 18: UI/UX Modal Standardization**: Updating Express Sale, Foto Point, and Flash Event modals to match the "Minha Seleção" premium standards. (DONE)
-- [x] **Phase 19: Quotes Kanban Redesign**: Refactoring the AdminQuotes page into a horizontal Kanban pipeline with slide-in drawers. (DONE)
-- [x] **Phase 20: Hybrid Storage Pipeline & Proxy Strategy**: Integration of Google Drive Cold Storage for Private Vaults with cross-origin proxy relay. (STABLE)
-- [x] **Phase 21: In-App Notification System**: Implementation of a real-time in-app notification center for clients and admins, covering quote status updates, payment confirmations, and event milestones. Includes Prisma schema migration, REST polling endpoints, and a notification bell component in both dashboards. (DONE)
-- [x] **Phase 22: Express Sale Access Refinement**: Resolve blank screen issues for quick-sale customers, implement Magic Link access via guest tokens, and optimize the Express Sale POS UI for mobile field operation. (DONE)
-- [x] **Phase 23: Unit Sale & Content Protection**: Implemented bulk upload component with drag-and-drop, automatic diagonal watermarking, Anti-Theft Shield (CSS print-block + right-click disable), guest token persistence via localStorage, and 7-day escrow logic for financial security. (DONE)
-- [x] **Phase 24: Ambassador Network Expansion**: Implemented paginated conversion history, visual funnel metrics, and one-click unique referral link generation within the Ambassador Dashboard. (DONE)
-- [x] **Phase 25: Flash Event Scale Preparation**: Implemented high-concurrency stress testing for the `/flash/unlock` endpoint, built real-time `/stats` API, and integrated the `FlashEventMonitor` visual funnel dashboard into the operational Print Monitor. (DONE)
-- [x] **Phase 26: Performance & SEO Refinement**: Optimized LCP (Largest Contentful Paint), implemented dynamic Open Graph tags for social sharing via a reusable SEO component, and launched the centralized Help & FAQ page. (DONE)
-- [x] **Phase 27: CRM & Leads Management**: Implement an internal abandoned cart dashboard for Admins, create a Leads capture system in Supabase, and integrate a WhatsApp support widget for the checkout flow. (DONE)
-- [x] **Phase 28: Retention Automation**: Automate abandoned cart emails via Cron Jobs, implement lead nurturing triggers, and add recovery conversion metrics to the Admin CRM dashboard. (DONE)
-- [x] **Phase 29: Payouts Hub**: Implement a financial settlement system for professionals, including a liquidation dashboard for Admins and a revenue statement for photographers. (DONE)
+---
 
-## Milestone 5: Enterprise Excellence & Scaling (DONE)
+## Phase 34: Multi-Vertical Business Logic (VERT)
+**Goal:** Expand market reach by supporting School and Sports photography.
+- [ ] **VERT-01**: Implement Student/Classroom schema and UI.
+- [ ] **VERT-02**: Implement Athlete/Bib-number search engine.
+- [ ] **VERT-03**: Support Pre-sale and Post-sale checkout modes.
+- [ ] **VERT-04**: Add Admin controls for per-event vertical toggles.
 
-- [x] **Phase 30: Financial Intelligence & Fiscal Hardening**: Complete the financial lifecycle with tax reporting (Carnê-Leão/MEI), digital settlement receipts, and 30-day cashflow projections for professionals. (DONE)
-## Milestone 6: Global Quality & UX Audit (DONE)
+**Success Criteria:**
+- Event can be configured as "Escolar" with specific data fields.
+- User can search photos by Bib number in "Esportes" events.
+- Successful checkout in both Pre-sale and Post-sale modes.
 
-- [x] **Phase 31: End-to-End Visual Audit & Process Verification**: Complete walkthrough of all user profiles (Admin, Pro, Client) with automated screenshot capturing for final UX/UI validation. (DONE)
+---
+
+## Phase 35: Growth & Retention Hub (GROW)
+**Goal:** Drive sales through automated marketing and referral systems.
+- [ ] **GROW-01**: Deploy dynamic Coupon system.
+- [ ] **GROW-02**: Build Ambassador/Affiliate dashboard.
+- [ ] **GROW-03**: Implement "Abandoned Cart" email automations.
+- [ ] **GROW-04**: Integrate WhatsApp API for ready-notifications.
+
+**Success Criteria:**
+- Coupon applied correctly at checkout.
+- Affiliate link generates tracked commission in dashboard.
+- Automatic email sent after 2 hours of cart inactivity.
+
+---
+## Traceability Matrix
+| REQ-ID | Phase |
+|--------|-------|
+| OPS-01 | 32 |
+| OPS-02 | 32 |
+| OPS-03 | 32 |
+| OPS-04 | 32 |
+| PWA-01 | 33 |
+| PWA-02 | 33 |
+| PWA-03 | 33 |
+| PWA-04 | 33 |
+| VERT-01 | 34 |
+| VERT-02 | 34 |
+| VERT-03 | 34 |
+| VERT-04 | 34 |
+| GROW-01 | 35 |
+| GROW-02 | 35 |
+| GROW-03 | 35 |
+| GROW-04 | 35 |
