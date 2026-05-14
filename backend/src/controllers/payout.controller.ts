@@ -118,22 +118,26 @@ export async function generateWeeklyPayout(req: AuthRequest, res: Response): Pro
       if (cartorioUser) addSplit("CARTORIO", cartorioUser.id, cartorioUser.nome, amount, Number(order.splitCartorio || 0), isMoney);
     }
 
-    // Busca chaves Pix dos usuários e remove quem tem saldo zero ou negativo (dívida acumulada para próxima semana)
+    // Busca chaves Pix dos usuários em lote (evita N+1 query)
+    const recipientIds = Object.values(beneficiarios)
+      .filter(b => b.amount > 0)
+      .map(b => b.recipientId);
+
+    const users = await prisma.user.findMany({
+      where: { id: { in: recipientIds } },
+      select: { id: true, pixKey: true, whatsapp: true },
+    });
+    const userMap: Record<string, { pixKey: string | null; whatsapp: string | null }> = {};
+    for (const u of users) userMap[u.id] = { pixKey: u.pixKey, whatsapp: u.whatsapp };
+
     const items = [];
     for (const key of Object.keys(beneficiarios)) {
       const b = beneficiarios[key];
-      
-      // Se o saldo for negativo, não geramos item de repasse (a dívida fica registrada nos logs ou ordens)
-      // Idealmente, poderíamos criar um item com valor negativo se o sistema permitir, 
-      // mas para o Pix, só processamos valores positivos.
       if (b.amount <= 0) continue;
 
-      const user = await prisma.user.findUnique({
-        where: { id: b.recipientId },
-        select: { pixKey: true, whatsapp: true },
-      });
-      b.pixKey = user?.pixKey ?? user?.whatsapp ?? null;
-      
+      const u = userMap[b.recipientId];
+      b.pixKey = u?.pixKey ?? u?.whatsapp ?? null;
+
       items.push({
         ...b,
         splitPct: Number(((b.amount / b.grossRevenue) * 100).toFixed(2)) || 0
@@ -229,7 +233,7 @@ export async function exportPayoutCSV(req: AuthRequest, res: Response): Promise<
       orderBy: { payout: { weekStart: "desc" } }
     });
 
-    let csv = "ID_Repasse,Semana,Beneficiario,Tipo,Valor,Pix,Status,Data_Pagamento,ID_Transacao\n";
+    let csv = "\uFEFF" + "ID_Repasse,Semana,Beneficiario,Tipo,Valor,Pix,Status,Data_Pagamento,ID_Transacao\n";
     
     for (const i of items) {
       const week = `${i.payout.weekStart.toLocaleDateString()} - ${i.payout.weekEnd.toLocaleDateString()}`;
@@ -259,5 +263,52 @@ export async function getMeusRepasses(req: AuthRequest, res: Response): Promise<
     res.json(items);
   } catch {
     res.status(500).json({ error: "Erro ao listar meus repasses." });
+  }
+}
+
+/**
+ * GET /api/me/payout-summary
+ * Resumo de saldo para o profissional logado
+ */
+export async function getMeuSaldoSummary(req: AuthRequest, res: Response): Promise<void> {
+  const userId = req.user?.userId;
+  if (!userId) { res.status(401).json({ error: "Não autenticado." }); return; }
+
+  try {
+    const orders = await prisma.order.findMany({
+      where: {
+        status: "APROVADO",
+        OR: [
+          { event: { captacaoId: userId } },
+          { event: { edicaoId: userId } }
+        ],
+        payoutSettlements: {
+          none: { userId: userId, status: "PAID" }
+        }
+      },
+      select: {
+        splitCaptacao: true,
+        splitEdicao: true,
+        payoutStatus: true,
+        event: { select: { captacaoId: true, edicaoId: true } }
+      }
+    });
+
+    let available = 0;
+    let pending = 0;
+
+    orders.forEach(o => {
+      let amount = 0;
+      if (o.event.captacaoId === userId) amount += Number(o.splitCaptacao || 0);
+      if (o.event.edicaoId === userId) amount += Number(o.splitEdicao || 0);
+
+      if (o.payoutStatus === "AVAILABLE") available += amount;
+      else if (o.payoutStatus === "PENDING") pending += amount;
+    });
+
+    res.json({ available, pending, totalCount: orders.length });
+  } catch (err) {
+    console.error("getMeuSaldoSummary:", err);
+    res.status(500).json({ error: "Erro ao calcular saldo." });
   }
 }
