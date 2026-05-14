@@ -112,12 +112,11 @@ const AnimatedRoutes = () => {
         } />
 
         {/* Painel do Admin */}
-        <Route path="/admin" element={
+        <Route path="/admin/*" element={
           <ProtectedRoute roles={["ADMIN"]}>
             <AdminDashboard />
           </ProtectedRoute>
         } />
-        <Route path="/admin/*" element={<Navigate to="/admin" replace />} />
 
         {/* Painel do Profissional (PROFISSIONAIS) */}
         <Route path="/profissional" element={
