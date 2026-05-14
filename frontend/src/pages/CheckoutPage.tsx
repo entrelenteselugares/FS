@@ -3,11 +3,13 @@ import { useParams, useNavigate, useSearchParams } from "react-router-dom";
 import { ShieldCheck, ArrowLeft, CheckCircle2, RefreshCw, Clock, Lock, Image as ImageIcon, Printer, ShoppingBag, Copy, Check, MapPin } from "lucide-react";
 import { Helmet } from "react-helmet-async";
 import { Navbar } from "../components/Navbar";
+import WhatsAppSupport from "../components/WhatsAppSupport";
 
 
 import { QRCodeSVG } from "qrcode.react";
 
 import { API } from "../lib/api";
+import { trackPurchase } from "../lib/analytics";
 import { AuthContext } from "../contexts/AuthContextBase";
 import { useContext } from "react";
 import { useCart } from "../hooks/useCart";
@@ -357,6 +359,8 @@ export const CheckoutPage = () => {
           stopPolling();
           setPollingStatus("found");
           setPaymentSuccess(true);
+          // OPS-02: GA4 purchase conversion
+          trackPurchase({ orderId: pOrderId, value: 1 });
         }
       } catch {
         // Continue trying
@@ -725,6 +729,7 @@ export const CheckoutPage = () => {
   return (
     <div className="min-h-screen bg-theme-bg text-theme-text font-sans flex flex-col">
       <Navbar />
+      <WhatsAppSupport message={`Olá! Estou no checkout do pedido ${effectiveOrderId} e preciso de ajuda com o pagamento.`} />
       <div className="flex-1 max-w-7xl mx-auto px-6 py-12 w-full animate-in fade-in duration-700">
         <div className="flex justify-between items-center mb-12 border-b border-theme-border/20 pb-8">
           <button onClick={() => navigate(-1)} className="text-[10px] font-black uppercase tracking-widest text-theme-text-muted hover:text-theme-text transition-all flex items-center gap-2"><ArrowLeft size={14} /> Voltar</button>
