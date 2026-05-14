@@ -1,83 +1,10 @@
-# ROADMAP: Expansão Total e Go-Live
+# ROADMAP
 
-## Milestone v7.0 Summary
-**Goal:** Transform the platform into a high-scale PWA with diverse revenue streams and advanced growth tools.
-**Phases:** 4
-**Requirements Coverage:** 100% (16/16 mapped)
+<details>
+<summary><b>v7.0: Expansão Total e Go-Live</b> (Archived)</summary>
 
----
+[View v7.0 Roadmap](milestones/v7.0-ROADMAP.md) | [View v7.0 Requirements](milestones/v7.0-REQUIREMENTS.md)
+</details>
 
-## Phase 32: Production Hardening & Operations (OPS)
-**Goal:** Prepare the infrastructure for real-world traffic with robust monitoring and automation.
-- [ ] **OPS-01**: Integrate Sentry for error tracking.
-- [ ] **OPS-02**: Implement GA4 conversion tracking.
-- [ ] **OPS-03**: Harden CI/CD with automated regression tests.
-- [ ] **OPS-04**: Build admin health monitoring dashboard.
-
-**Success Criteria:**
-- Dashboard shows live server metrics.
-- Sentry captures a test error in staging.
-- Purchase event visible in GA4 DebugView.
-
----
-
-## Phase 33: Mobile-First & PWA implementation (PWA)
-**Goal:** Enable "app-like" behavior for field users and photographers.
-- [ ] **PWA-01**: Implement Service Worker caching.
-- [ ] **PWA-02**: Configure Web Manifest and Splash Screens.
-- [ ] **PWA-03**: Set up Push Notification infrastructure.
-- [ ] **PWA-04**: Refactor selection gallery for touch performance.
-
-**Success Criteria:**
-- "Add to Home Screen" prompt appears on mobile.
-- App loads offline assets successfully.
-- Push notification received on order event.
-
----
-
-## Phase 34: Multi-Vertical Business Logic (VERT)
-**Goal:** Expand market reach by supporting School and Sports photography.
-- [ ] **VERT-01**: Implement Student/Classroom schema and UI.
-- [ ] **VERT-02**: Implement Athlete/Bib-number search engine.
-- [ ] **VERT-03**: Support Pre-sale and Post-sale checkout modes.
-- [ ] **VERT-04**: Add Admin controls for per-event vertical toggles.
-
-**Success Criteria:**
-- Event can be configured as "Escolar" with specific data fields.
-- User can search photos by Bib number in "Esportes" events.
-- Successful checkout in both Pre-sale and Post-sale modes.
-
----
-
-## Phase 35: Growth & Retention Hub (GROW)
-**Goal:** Drive sales through automated marketing and referral systems.
-- [ ] **GROW-01**: Deploy dynamic Coupon system.
-- [ ] **GROW-02**: Build Ambassador/Affiliate dashboard.
-- [ ] **GROW-03**: Implement "Abandoned Cart" email automations.
-- [ ] **GROW-04**: Integrate WhatsApp API for ready-notifications.
-
-**Success Criteria:**
-- Coupon applied correctly at checkout.
-- Affiliate link generates tracked commission in dashboard.
-- Automatic email sent after 2 hours of cart inactivity.
-
----
-## Traceability Matrix
-| REQ-ID | Phase |
-|--------|-------|
-| OPS-01 | 32 |
-| OPS-02 | 32 |
-| OPS-03 | 32 |
-| OPS-04 | 32 |
-| PWA-01 | 33 |
-| PWA-02 | 33 |
-| PWA-03 | 33 |
-| PWA-04 | 33 |
-| VERT-01 | 34 |
-| VERT-02 | 34 |
-| VERT-03 | 34 |
-| VERT-04 | 34 |
-| GROW-01 | 35 |
-| GROW-02 | 35 |
-| GROW-03 | 35 |
-| GROW-04 | 35 |
+## Next Milestone: TBA
+- Run `/gsd-new-milestone` to start the next iteration.

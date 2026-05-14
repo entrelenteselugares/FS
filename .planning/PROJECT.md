@@ -26,18 +26,27 @@ To be the national standard for phygital (physical + digital) photography experi
 - [x] Real-time In-App Notification System for integrated communication. (DONE)
 - [x] **Production Monitoring & SLOs**: Analytics and error tracking active for production go-live. (DONE)
 - [x] **Full PWA Experience**: Native mobile interaction patterns and installability for field photographers. (DONE)
-- [ ] **Multi-Vertical Agility**: Support for School, Sports, and Event photography variations.
-- [ ] **Growth & Retention Engine**: Dynamic coupons and advanced ambassador/referral programs.
+- [x] **Multi-Vertical Agility**: Support for School, Sports, and Event photography variations.
+- [x] **Growth & Retention Engine**: Dynamic coupons and advanced ambassador/referral programs.
 
-## Current Milestone: v7.0 Expansão Total e Go-Live
+## Current State
 
-**Goal:** Transform the platform into a high-scale PWA with diverse revenue streams and advanced growth tools.
+Shipped **v7.0 (Expansão Total e Go-Live)**. The platform now includes robust PWA support, multi-vertical business logic (School, Sports), and a comprehensive Growth Engine (Coupons, Affiliates, WhatsApp automations).
 
-**Target features:**
+## Next Milestone Goals
+
+*To be defined via `/gsd-new-milestone`.*
+
+<details>
+<summary>Archived Milestones</summary>
+
+**v7.0 Expansão Total e Go-Live**
 - **Go-Live Ops**: Sentry, Google Analytics, and CI/CD hardening.
 - **PWA Implementation**: Service Workers, Push Notifications, and installability.
 - **Vertical Diversification**: Schema and flow adaptations for School and Sports photography.
 - **Growth Engine**: Advanced Coupon system and Affiliate Hub (Ambassadors).
+
+</details>
 
 ## Evolution
 
