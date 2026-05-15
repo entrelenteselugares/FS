@@ -8,7 +8,9 @@ const VAPID_PUBLIC_KEY = import.meta.env.VITE_VAPID_PUBLIC_KEY;
 export const PushNotificationManager: React.FC = () => {
   const { user } = useAuth();
   const [isSubscribed, setIsSubscribed] = useState(false);
-  const [permission, setPermission] = useState<NotificationPermission>("default");
+  const [permission, setPermission] = useState<NotificationPermission>(() => 
+    (typeof window !== 'undefined' && "Notification" in window) ? Notification.permission : "default"
+  );
   const [showPrompt, setShowPrompt] = useState(false);
 
   const checkSubscription = useCallback(async () => {
@@ -36,7 +38,6 @@ export const PushNotificationManager: React.FC = () => {
   useEffect(() => {
     console.log("[PUSH] Manager Mounted. VAPID Key length:", VAPID_PUBLIC_KEY?.length || 0);
     if ("Notification" in window) {
-      setPermission(Notification.permission);
       checkSubscription();
     } else {
       console.warn("[PUSH] Notifications not supported in this browser");
