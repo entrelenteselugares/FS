@@ -152,30 +152,34 @@ export const AdminOrders: React.FC = () => {
 
   return (
     <div className="space-y-10 animate-in fade-in slide-in-from-bottom-4 duration-700">
-      {/* HEADER TÁTICO */}
-      <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-6 border-b border-theme-border pb-10">
-        <div className="space-y-4">
-          <h1 className="text-4xl md:text-6xl font-heading font-black text-theme-text uppercase tracking-tighter italic leading-none">
-            Auditoria de <span className="text-brand-tactical">Projetos</span>
-          </h1>
-          <div className="flex items-center gap-4">
-            <div className="h-1 w-12 bg-brand-tactical" />
-            <p className="text-[11px] font-black text-brand-tactical uppercase tracking-[0.4em] italic">
-              Monitoramento de Fluxo e Transações
-            </p>
-          </div>
-        </div>
+      {/* Header Padronizado */}
+      <div className="relative border-b border-theme-border/60 pb-8 md:pb-12 space-y-4 md:space-y-6">
+        <div className="absolute -top-10 -left-10 w-40 h-40 bg-brand-tactical/5 blur-3xl rounded-full" />
         
-        <div className="flex flex-col md:flex-row items-center gap-4 w-full lg:w-auto">
-          <div className="relative flex-1 lg:w-80 group">
-            <Search className="absolute left-4 top-1/2 -translate-y-1/2 text-theme-muted group-focus-within:text-brand-tactical transition-colors" size={14} />
-            <input
-              type="text"
-              placeholder="BUSCAR EVENTO OU E-MAIL..."
-              value={search}
-              onChange={(e) => setSearch(e.target.value)}
-              className="w-full bg-theme-bg-muted border border-theme-border p-3.5 pl-10 text-[10px] text-theme-text uppercase tracking-widest outline-none focus:border-brand-tactical transition-all font-black"
-            />
+        <div className="flex flex-col xl:flex-row justify-between items-start xl:items-end gap-6 relative z-10">
+          <div className="space-y-4">
+            <h1 className="text-4xl md:text-5xl xl:text-6xl font-heading font-black text-theme-text uppercase tracking-tighter italic leading-none whitespace-nowrap">
+              Auditoria de <span className="text-brand-tactical">Projetos</span>
+            </h1>
+            <div className="flex items-center gap-4">
+              <div className="h-1 w-12 bg-brand-tactical" />
+              <p className="text-[11px] font-black text-brand-tactical uppercase tracking-[0.4em] italic">
+                Monitoramento de Fluxo e Transações
+              </p>
+            </div>
+          </div>
+          
+          <div className="flex flex-wrap items-center gap-4 w-full xl:w-auto">
+            <div className="relative flex-1 xl:w-80 group">
+              <Search className="absolute left-4 top-1/2 -translate-y-1/2 text-theme-muted group-focus-within:text-brand-tactical transition-colors" size={14} />
+              <input
+                type="text"
+                placeholder="BUSCAR EVENTO OU E-MAIL..."
+                value={search}
+                onChange={(e) => setSearch(e.target.value)}
+                className="w-full bg-theme-bg-muted border border-theme-border p-3.5 pl-10 text-[10px] text-theme-text uppercase tracking-widest outline-none focus:border-brand-tactical transition-all font-black rounded-lg"
+              />
+            </div>
           </div>
         </div>
       </div>

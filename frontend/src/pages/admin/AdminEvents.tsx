@@ -419,48 +419,53 @@ export const AdminEvents: React.FC<AdminEventsProps> = ({ initialEditEventId }) 
 
   return (
     <div className="space-y-12 animate-in fade-in slide-in-from-bottom-4 duration-700">
-      <div className="flex flex-col md:flex-row md:items-center justify-between border-b border-theme-border pb-10 gap-6">
-        <div className="space-y-4">
-          <h1 className="text-4xl md:text-6xl font-heading font-black text-theme-text uppercase tracking-tighter italic leading-none">
-            Gestão de <span className="text-brand-tactical">Eventos</span>
-          </h1>
-          <div className="flex items-center gap-4">
-            <div className="h-1 w-12 bg-brand-tactical" />
-            <p className="text-[11px] font-black text-brand-tactical uppercase tracking-[0.4em] italic">
-              Operação de Coberturas, Logística e Pós-Produção
-            </p>
+      {/* Header Padronizado */}
+      <div className="relative border-b border-theme-border/60 pb-8 md:pb-12 space-y-4 md:space-y-6">
+        <div className="absolute -top-10 -left-10 w-40 h-40 bg-brand-tactical/5 blur-3xl rounded-full" />
+        
+        <div className="flex flex-col xl:flex-row justify-between items-start xl:items-end gap-6 relative z-10">
+          <div className="space-y-4">
+            <h1 className="text-4xl md:text-5xl xl:text-6xl font-heading font-black text-theme-text uppercase tracking-tighter italic leading-none whitespace-nowrap">
+              Gestão de <span className="text-brand-tactical">Eventos</span>
+            </h1>
+            <div className="flex items-center gap-4">
+              <div className="h-1 w-12 bg-brand-tactical" />
+              <p className="text-[11px] font-black text-brand-tactical uppercase tracking-[0.4em] italic">
+                Operação de Coberturas, Logística e Pós-Produção
+              </p>
+            </div>
           </div>
-        </div>
-        <div className="flex gap-3">
-          <button 
-            onClick={() => {
-              setExpressFormData({ customerName: "", customerEmail: "", whatsapp: "", amount: 15, location: "Taquaral / Marketplace", paymentMethod: "MONEY", services: [] });
-              setIsExpressModalOpen(true);
-            }}
-            className="fs-btn border border-brand-tactical text-brand-tactical bg-transparent italic w-full md:w-auto"
-          >
-            VENDA RÁPIDA (LIVE PRINT)
-          </button>
-          <button 
-            onClick={() => {
-              setEditingEvent(null);
-              setFormData({ 
-                title: "", slug: "", date: "", location: "", city: "", description: "", 
-                priceBase: 200, priceEarly: 190, cartorioId: "", captacaoId: "", edicaoId: "", 
-                temFoto: true, temVideo: false, temReels: false, temFotoImpressa: false, 
-                coverPhotoUrl: "", eventHours: 2, isCrowdfund: false, targetAmount: 0, 
-                lightroomUrl: "", driveUrl: "", previewPhotos: ["", "", ""], isPrivate: true, 
-                isUnitSale: false, priceUnit: 10, type: 'ALBUM_FULL', pricePerPhoto: 15, 
-                clientName: "", clientEmail: "", franchiseeId: "", retentionDays: 15,
-                preSaleEnabled: false, postSaleEnabled: true, verticalConfigs: {}
-              });
-              setCoverPreview(null);
-              setIsModalOpen(true);
-            }}
-            className="fs-btn bg-brand-tactical text-zinc-950 italic w-full md:w-auto"
-          >
-            NOVO EVENTO
-          </button>
+          <div className="flex flex-wrap items-center gap-3 w-full xl:w-auto">
+            <button 
+              onClick={() => {
+                setExpressFormData({ customerName: "", customerEmail: "", whatsapp: "", amount: 15, location: "Taquaral / Marketplace", paymentMethod: "MONEY", services: [] });
+                setIsExpressModalOpen(true);
+              }}
+              className="fs-btn border border-brand-tactical text-brand-tactical bg-transparent italic flex-1 md:flex-none whitespace-nowrap"
+            >
+              VENDA RÁPIDA (LIVE PRINT)
+            </button>
+            <button 
+              onClick={() => {
+                setEditingEvent(null);
+                setFormData({ 
+                  title: "", slug: "", date: "", location: "", city: "", description: "", 
+                  priceBase: 200, priceEarly: 190, cartorioId: "", captacaoId: "", edicaoId: "", 
+                  temFoto: true, temVideo: false, temReels: false, temFotoImpressa: false, 
+                  coverPhotoUrl: "", eventHours: 2, isCrowdfund: false, targetAmount: 0, 
+                  lightroomUrl: "", driveUrl: "", previewPhotos: ["", "", ""], isPrivate: true, 
+                  isUnitSale: false, priceUnit: 10, type: 'ALBUM_FULL', pricePerPhoto: 15, 
+                  clientName: "", clientEmail: "", franchiseeId: "", retentionDays: 15,
+                  preSaleEnabled: false, postSaleEnabled: true, verticalConfigs: {}
+                });
+                setCoverPreview(null);
+                setIsModalOpen(true);
+              }}
+              className="fs-btn bg-brand-tactical text-zinc-950 italic flex-1 md:flex-none whitespace-nowrap"
+            >
+              NOVO EVENTO
+            </button>
+          </div>
         </div>
       </div>
 
