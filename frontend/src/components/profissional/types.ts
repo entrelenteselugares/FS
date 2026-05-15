@@ -82,12 +82,15 @@ export interface ResidentUnit {
 
 export interface ProfileData {
   user: {
+    id: string;
     nome: string | null;
     email: string | null;
+    role: "ADMIN" | "CARTORIO" | "UNIDADE" | "PROFISSIONAL" | "CLIENTE" | "FRANCHISEE";
     whatsapp: string | null;
     address: string | null;
     isVerified?: boolean;
     verificationStatus?: string;
+    profileComplete: boolean;
   };
   pixKey: string | null;
   pixType: string | null;

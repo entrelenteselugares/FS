@@ -39,11 +39,13 @@ export interface AuthUser {
   estado?: string | null;
   tenantLogoUrl?: string | null;
   tenantBrandColor?: string | null;
-  profileComplete: boolean;
   profileImageUrl?: string | null;
   isVerified?: boolean;
   verificationStatus?: string;
   discoverySource?: string | null;
+  address?: string | null;
+  profileComplete: boolean;
+  isExperienceValidated?: boolean;
 }
 
 export interface AuthContextType {

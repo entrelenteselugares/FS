@@ -2,12 +2,12 @@ import React, { useMemo } from "react";
 import { motion } from "framer-motion";
 import { Trophy, Star, AlertCircle } from "lucide-react";
 
-import { AuthUser } from "../contexts/AuthContextBase";
+import type { AuthUser } from "../contexts/AuthContextBase";
 
 interface ProfissionalProfile {
-  pixKey?: string;
+  pixKey?: string | null;
   experienceYears?: number;
-  firstJobUrl?: string;
+  firstJobUrl?: string | null;
   services?: string[];
   equipmentList?: string[];
 }
@@ -23,7 +23,7 @@ export const ProfileStepper: React.FC<ProfileStepperProps> = ({ user, profile })
       { id: "photo", label: "Foto de Perfil", weight: 20, done: !!user?.profileImageUrl },
       { id: "name", label: "Identidade", weight: 10, done: !!user?.nome },
       { id: "contact", label: "WhatsApp", weight: 10, done: !!user?.whatsapp },
-      { id: "address", label: "Endereço Operacional", weight: 10, done: !!user?.address && user.address.split('|').filter(Boolean).length > 3 },
+      { id: "address", label: "Endereço Operacional", weight: 10, done: !!user?.address && (user.address || "").split('|').filter(Boolean).length > 3 },
       { id: "pix", label: "Chave PIX", weight: 10, done: !!profile?.pixKey },
       { id: "exp", label: "Experiência", weight: 10, done: (profile?.experienceYears ?? 0) > 0 },
       { id: "proof", label: "Primeiro Trabalho", weight: 10, done: !!profile?.firstJobUrl },

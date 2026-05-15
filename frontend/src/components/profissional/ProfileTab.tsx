@@ -81,7 +81,7 @@ export function ProfileTab({ profile, onUpdated, onNotify }: ProfileTabProps) {
         <p className="text-[10px] text-theme-muted uppercase tracking-[0.4em] mt-2 font-black italic">Gerenciamento de Identidade e Ativos Técnicos</p>
       </div>
 
-      <ProfileStepper user={profile.user} profile={profile} />
+      <ProfileStepper user={profile.user as any} profile={profile as any} />
 
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-16">
         {/* Left Column: Data & Specialties */}
