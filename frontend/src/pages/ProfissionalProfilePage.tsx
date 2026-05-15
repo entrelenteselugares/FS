@@ -50,7 +50,7 @@ function BookingModal({
   prof: ProfProfile;
   state: BookingState;
   onClose: () => void;
-  onChange: (k: keyof BookingState, v: any) => void;
+  onChange: (k: keyof BookingState, v: string | boolean | ProService | null) => void;
   onSubmit: () => void;
 }) {
   if (!state.open || !state.service) return null;

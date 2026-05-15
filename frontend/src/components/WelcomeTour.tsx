@@ -30,14 +30,10 @@ export const WelcomeTour: React.FC<WelcomeTourProps> = ({ role, onComplete }) =>
   const [currentStep, setCurrentStep] = useState(0);
   const steps = TOUR_DATA[role] || [];
   
-  const [isVisible, setIsVisible] = useState(false);
-
-  useEffect(() => {
+  const [isVisible, setIsVisible] = useState(() => {
     const hasSeen = localStorage.getItem(`fs_tour_${role}`);
-    if (!hasSeen && steps.length > 0) {
-      setIsVisible(true);
-    }
-  }, [role, steps.length]);
+    return !hasSeen && (TOUR_DATA[role] || []).length > 0;
+  });
 
   const handleNext = () => {
     if (currentStep < steps.length - 1) {

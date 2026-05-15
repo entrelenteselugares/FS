@@ -42,8 +42,9 @@ export const ProfilePhotoUpload: React.FC = () => {
           
           await updateMe({ profileImageUrl: data.profileImageUrl });
           toast.success("Foto de perfil atualizada!");
-        } catch (err: any) {
-          toast.error("Erro ao enviar foto: " + (err.response?.data?.error || err.message));
+        } catch (err: unknown) {
+          const axiosErr = err as { response?: { data?: { error?: string } } };
+          toast.error("Erro ao enviar foto: " + (axiosErr.response?.data?.error || (err instanceof Error ? err.message : "Erro desconhecido")));
         } finally {
           setUploading(false);
         }

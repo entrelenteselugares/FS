@@ -2,9 +2,19 @@ import React, { useMemo } from "react";
 import { motion } from "framer-motion";
 import { Trophy, Star, AlertCircle } from "lucide-react";
 
+import { AuthUser } from "../contexts/AuthContextBase";
+
+interface ProfissionalProfile {
+  pixKey?: string;
+  experienceYears?: number;
+  firstJobUrl?: string;
+  services?: string[];
+  equipmentList?: string[];
+}
+
 interface ProfileStepperProps {
-  user: any;
-  profile: any;
+  user: AuthUser | null;
+  profile: ProfissionalProfile | null;
 }
 
 export const ProfileStepper: React.FC<ProfileStepperProps> = ({ user, profile }) => {

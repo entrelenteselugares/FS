@@ -548,7 +548,7 @@ export default function ClienteArea() {
                             try {
                               await applyRole({ role: "PROFISSIONAL" });
                               toast.success("Solicitação enviada!");
-                            } catch (err) {
+                            } catch (_) {
                               toast.error("Erro ao solicitar.");
                             } finally {
                               setIsApplying(false);
@@ -570,7 +570,7 @@ export default function ClienteArea() {
                             try {
                               await applyRole({ role: "CARTORIO" });
                               toast.success("Solicitação enviada!");
-                            } catch (err) {
+                            } catch (_) {
                               toast.error("Erro ao solicitar.");
                             } finally {
                               setIsApplying(false);

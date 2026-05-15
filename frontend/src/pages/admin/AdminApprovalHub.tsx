@@ -4,12 +4,12 @@ import { Check, X, FileText, User as UserIcon, Building2 } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 
 interface Application {
-  id: true;
+  id: string;
   nome: string;
   email: string;
   role: string;
   createdAt: string;
-  verificationDocs: any;
+  verificationDocs: unknown;
   profissional?: {
     services: string[];
     otherHabilities: string;
@@ -46,7 +46,7 @@ export const AdminApprovalHub: React.FC = () => {
     setProcessingId(id);
     try {
       await API.patch(`/admin/applications/${id}/${action}`);
-      setApplications(prev => prev.filter(a => (a as any).id !== id));
+      setApplications(prev => prev.filter(a => a.id !== id));
     } catch (err) {
       console.error(`Erro ao ${action} aplicação:`, err);
     } finally {
@@ -81,7 +81,7 @@ export const AdminApprovalHub: React.FC = () => {
           <AnimatePresence>
             {applications.map((app) => (
               <motion.div
-                key={(app as any).id}
+                key={app.id}
                 layout
                 initial={{ opacity: 0, scale: 0.95 }}
                 animate={{ opacity: 1, scale: 1 }}
@@ -142,15 +142,15 @@ export const AdminApprovalHub: React.FC = () => {
 
                   <div className="flex items-center gap-2">
                     <button
-                      onClick={() => handleAction((app as any).id, 'approve')}
-                      disabled={processingId === (app as any).id}
+                      onClick={() => handleAction(app.id, 'approve')}
+                      disabled={processingId === app.id}
                       className="flex-1 h-9 bg-emerald-500 hover:bg-emerald-400 disabled:opacity-50 text-black text-[10px] font-black uppercase tracking-widest rounded-lg flex items-center justify-center gap-2 transition-all"
                     >
-                      {processingId === (app as any).id ? "Processando..." : <><Check size={14} /> Aprovar</>}
+                      {processingId === app.id ? "Processando..." : <><Check size={14} /> Aprovar</>}
                     </button>
                     <button
-                      onClick={() => handleAction((app as any).id, 'reject')}
-                      disabled={processingId === (app as any).id}
+                      onClick={() => handleAction(app.id, 'reject')}
+                      disabled={processingId === app.id}
                       className="w-9 h-9 bg-red-500/10 hover:bg-red-500/20 text-red-500 rounded-lg flex items-center justify-center transition-all"
                     >
                       <X size={16} />

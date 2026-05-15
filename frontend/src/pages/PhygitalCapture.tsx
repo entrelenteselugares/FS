@@ -1,5 +1,5 @@
 import React, { useState, useRef, useEffect } from 'react';
-import { useSearchParams, useNavigate } from 'react-router-dom';
+import { useSearchParams } from 'react-router-dom';
 import { API } from '../lib/api';
 import { T } from '../lib/theme';
 import { Camera, CheckCircle2, AlertCircle, Loader2, Image as ImageIcon, User as UserIcon, LogOut } from 'lucide-react';
@@ -98,14 +98,15 @@ export default function PhygitalCapture() {
         } else {
           try {
             await authLogin(formData.customerEmail, password);
-          } catch (loginErr) {
+          } catch (_) {
             setError('Senha incorreta para este e-mail. Tente novamente.');
             setLoading(false);
             return;
           }
         }
-      } catch (err: any) {
-        setError(err.response?.data?.error || 'Erro na autenticação.');
+      } catch (err: unknown) {
+        const axiosErr = err as { response?: { data?: { error?: string } } };
+        setError(axiosErr.response?.data?.error || 'Erro na autenticação.');
         setLoading(false);
         return;
       }
