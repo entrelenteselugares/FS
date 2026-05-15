@@ -995,7 +995,7 @@ export const QuotePage = () => {
                     <input required type="email" value={email} onChange={e => setEmail(e.target.value)} placeholder="EX: CONTATO@DOMINIO.COM" className="fs-input" style={{ width: "100%", padding: "15px" }} />
                   </div>
                 </div>
-
+                <div style={{ display: "flex", flexDirection: "column", gap: 10 }}>
                   <label style={{ fontSize: 10, fontWeight: 800, textTransform: "uppercase", color: THEME.text2 }}>WhatsApp (com DDD)</label>
                   <input required value={whatsapp} onChange={e => setWhatsapp(e.target.value.replace(/\D/g, ""))} placeholder="11999999999" className="fs-input" style={{ width: "100%", padding: "15px" }} />
                 </div>
