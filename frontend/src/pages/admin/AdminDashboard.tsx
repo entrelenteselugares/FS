@@ -20,6 +20,7 @@ const AdminAmbassadors = React.lazy(() => import("./AdminAmbassadors").then(m =>
 const AdminInventory = React.lazy(() => import("./AdminInventory"));
 const AdminLeads = React.lazy(() => import("./AdminLeadsPage").then(m => ({ default: m.AdminLeadsPage })));
 const AdminGrowth = React.lazy(() => import("./AdminGrowth").then(m => ({ default: m.AdminGrowth })));
+const AdminApprovalHub = React.lazy(() => import("./AdminApprovalHub").then(m => ({ default: m.AdminApprovalHub })));
 import { 
   LayoutDashboard, 
   Camera, 
@@ -34,7 +35,8 @@ import {
   Grid3X3,
   ShieldCheck,
   Package,
-  TrendingUp
+  TrendingUp,
+  UserCheck
 } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 
@@ -55,6 +57,7 @@ const NAV_ITEMS = (activeTab: string, setActiveTab: (t: string) => void, stats: 
     { label: "Catálogo",        onClick: () => setActiveTab("print-catalog"), isActive: activeTab === "print-catalog", icon: <Layers size={16} />, hide: role === 'FRANCHISEE' },
     { label: "Serviços",       onClick: () => setActiveTab("services"),      isActive: activeTab === "services",      icon: <Grid3X3 size={16} />, hide: role === 'FRANCHISEE' },
     { label: "Growth",         onClick: () => setActiveTab("growth"),        isActive: activeTab === "growth",        icon: <TrendingUp size={16} />, hide: role === 'FRANCHISEE' },
+    { label: "Aprovações",     onClick: () => setActiveTab("approvals"),     isActive: activeTab === "approvals",     icon: <UserCheck size={16} />, hide: role === 'FRANCHISEE' },
     { label: "Concursos",      onClick: () => setActiveTab("contests"),      isActive: activeTab === "contests",      icon: <Trophy size={16} />, hide: role === 'FRANCHISEE' },
     { label: "Configurações",  onClick: () => setActiveTab("settings"),      isActive: activeTab === "settings",      icon: <Settings size={16} />, hide: role === 'FRANCHISEE' },
     { label: "Embaixadores",   onClick: () => setActiveTab("ambassadors"),   isActive: activeTab === "ambassadors",   icon: <Users size={16} />, hide: role === 'FRANCHISEE' },
@@ -124,6 +127,8 @@ const TAB_ALIASES: Record<string, string> = {
   catalog:      "print-catalog",
   catalogo:     "print-catalog",
   growth:       "growth",
+  approvals:    "approvals",
+  aprovacoes:   "approvals",
 };
 
 export const AdminDashboard: React.FC = () => {
@@ -235,6 +240,7 @@ export const AdminDashboard: React.FC = () => {
                   {activeTab === "franchises" && <AdminFranchises />}
                   {activeTab === "ambassadors" && <AdminAmbassadors />}
                   {activeTab === "growth"   && <AdminGrowth />}
+                  {activeTab === "approvals" && <AdminApprovalHub />}
                   {activeTab === "inventory" && <AdminInventory />}
                 </React.Suspense>
               </motion.div>

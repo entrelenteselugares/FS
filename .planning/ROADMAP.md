@@ -38,10 +38,10 @@
 ## Phase 42: Express Registration via QR Code (EXPRESS)
 **Goal:** Create a frictionless onboarding flow for phygital capture users using email + password only.
 
-- [ ] **EXPRESS-01**: Integrated express registration form in `PhygitalCapture.tsx`.
-- [ ] **EXPRESS-02**: Backend support for email-only registration with auto-generated name.
-- [ ] **EXPRESS-03**: `profileComplete` tracking and global "Incomplete Profile" banner.
-- [ ] **EXPRESS-04**: Coupon reward system for profile completion.
+- [x] **EXPRESS-01**: Integrated express registration form in `PhygitalCapture.tsx`.
+- [x] **EXPRESS-02**: Backend support for email-only registration with auto-generated name.
+- [x] **EXPRESS-03**: `profileComplete` tracking and global "Incomplete Profile" banner.
+- [x] **EXPRESS-04**: Coupon reward system for profile completion.
 
 ---
 
@@ -57,3 +57,55 @@
 | INTEL-01 | 41 |
 | INTEL-02 | 41 |
 | INTEL-03 | 41 |
+| PROFILE-01 | 43 |
+| PROFILE-02 | 43 |
+| GAME-01 | 44 |
+| GAME-02 | 44 |
+
+---
+
+## Milestone v10.0: Professional Network & Engagement
+**Goal:** Transform the user profile into a growth engine by allowing role transitions and gamifying data completion.
+**Phases:** 2
+
+---
+
+### [x] Phase 43: Multi-Profile Transition Network (DONE)
+**Goal:** Enable users to apply for or switch between roles (Cliente, Profissional, Unidade) from a single account.
+
+- [x] **PROFILE-01**: Backend: Multi-role session support & role-application endpoints.
+- [x] **PROFILE-02**: UI: "Role Switcher" dropdown & "Welcome Tour" onboarding.
+- [x] **PROFILE-03**: Identity: Mandatory profile photo upload & verification status.
+- [x] **PROFILE-04**: Refactor: AuthContext for seamless role switching and state persistence.
+
+---
+
+### [x] Phase 44: Gamified Profile Completion (DONE)
+**Goal:** Implement a high-conversion, stepper-based profile UI with real-time reward feedback.
+
+- [x] **GAME-01**: Create `ProfileStepper.tsx` with progress bar and "Reward Unlocked" animations.
+- [x] **GAME-02**: Integrate the "Novo Profissional" discovery survey during the client onboarding.
+
+---
+
+## Milestone v11.0: Professional Governance & Marketplace Alpha (DONE)
+**Goal:** Enable administrative control over partner applications and provide public visibility for subscribed professionals.
+**Phases:** 2
+
+---
+
+### [x] Phase 45: Admin Approval Hub (DONE)
+**Goal:** UI for Master Admin to review/approve/reject Role Applications.
+
+- [x] **GOV-01**: Admin dashboard tab for reviewing pending professional/unit applications.
+- [x] **GOV-02**: Approve/Reject actions with automated status updates.
+- [x] **GOV-03**: Audit log of administrative approvals.
+
+---
+
+### [x] Phase 46: Professional Showcase (DONE)
+**Goal:** Public profile pages and directory for subscribed professionals.
+
+- [x] **SHOW-01**: Public portfolio page for verified professionals.
+- [x] **SHOW-02**: Gate public profiles behind active MRR subscription.
+- [x] **SHOW-03**: Budget request flow with "preferred professional" selection prioritizing subscribed users.

@@ -40,6 +40,9 @@ export interface AuthUser {
   tenantLogoUrl?: string | null;
   tenantBrandColor?: string | null;
   profileComplete: boolean;
+  profileImageUrl?: string | null;
+  isVerified?: boolean;
+  verificationStatus?: string;
 }
 
 export interface AuthContextType {
@@ -48,8 +51,12 @@ export interface AuthContextType {
   login: (email: string, senha: string) => Promise<AuthUser>;
   register: (email: string, senha: string, nome: string) => Promise<AuthUser>;
   registerExpress: (email: string, senha: string, nome?: string, whatsapp?: string) => Promise<AuthUser>;
+  updateMe: (data: Partial<AuthUser>) => Promise<AuthUser>;
+  applyRole: (data: { role: string; equipment?: string; razaoSocial?: string; cnpj?: string }) => Promise<{ message: string }>;
+  switchRole: (role: string) => void;
   logout: () => void;
   loading: boolean;
+  activeRole: string | null;
 }
 
 export const AuthContext = createContext<AuthContextType | null>(null);

@@ -31,6 +31,7 @@ model User {
   resetTokenExpires  DateTime?
   isVerified         Boolean                 @default(false)
   profileComplete    Boolean                 @default(false)
+  profileImageUrl    String?
   verificationDocs   Json?
   verificationStatus String                  @default("PENDING")
   referralCode       String?                 @unique
@@ -39,6 +40,7 @@ model User {
   // B2B White-Label / Tenant Settings
   tenantLogoUrl      String?
   tenantBrandColor   String?
+  discoverySource    String?
 
   referralCampaigns  ReferralCampaign[]
   calendarSlots      CalendarSlot[]
@@ -263,6 +265,7 @@ model Profissional {
   cartorios             CartorioProfissional[]
   proServices           ProfessionalService[]
   user                  User                   @relation(fields: [userId], references: [id])
+  serviceBookings       ServiceBooking[]
 
   @@map("profissionais")
 }
@@ -1002,10 +1005,16 @@ enum SubscriptionStatus {
   BLOCKED
 }
 
+enum SubscriptionType {
+  VAULT
+  PRO
+}
+
 model Subscription {
   id              String             @id @default(cuid())
   userId          String
-  albumId         String             @unique
+  albumId         String?            @unique
+  type            SubscriptionType   @default(VAULT)
   status          SubscriptionStatus @default(PENDING)
   planLimit       Int                @default(36)
   gatewaySubId    String?
@@ -1016,10 +1025,28 @@ model Subscription {
   updatedAt       DateTime           @updatedAt
 
   user  User        @relation(fields: [userId], references: [id])
-  album SharedAlbum @relation(fields: [albumId], references: [id])
+  album SharedAlbum? @relation(fields: [albumId], references: [id])
 
   @@map("subscriptions")
 }
+
+model ServiceBooking {
+  id             String       @id @default(cuid())
+  clienteName    String
+  clienteEmail   String
+  clientePhone   String
+  profissionalId String
+  status         String       @default("PENDING") // PENDING, PAID, CANCELLED
+  bookingFee     Decimal      @db.Decimal(10, 2)
+  packageDesc    String
+  createdAt      DateTime     @default(now())
+  updatedAt      DateTime     @updatedAt
+
+  profissional   Profissional @relation(fields: [profissionalId], references: [id])
+
+  @@map("service_bookings")
+}
+
 model IoTDevice {
   id        String   @id @default(cuid())
   name      String

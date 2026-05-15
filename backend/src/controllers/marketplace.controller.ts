@@ -548,7 +548,7 @@ export class MarketplaceController {
 
   /**
    * PATCH /api/marketplace/media/:mediaId/metadata
-   * Permite que o Admin corrija metadados manualmente (studentId, bibNumber, etc).
+   * Allows Admin to fix metadata manually (studentId, bibNumber, etc).
    */
   static async patchMediaMetadata(req: AuthRequest, res: Response) {
     const { mediaId } = req.params;
@@ -566,6 +566,186 @@ export class MarketplaceController {
     } catch (error: any) {
       console.error("[PatchMediaMetadata Error]:", error);
       return res.status(500).json({ error: "Falha ao atualizar metadados da mídia." });
+    }
+  }
+
+  /**
+   * GET /api/marketplace/profissionais
+   * Public directory of subscribed professionals.
+   * Only returns users with an ACTIVE PRO subscription.
+   */
+  static async listProfissionais(req: AuthRequest, res: Response) {
+    const { search, city, service } = req.query;
+    try {
+      // Find users with active PRO subscriptions
+      const activeSubs = await prisma.subscription.findMany({
+        where: { type: "PRO", status: "ACTIVE" },
+        select: { userId: true }
+      });
+      const subscribedUserIds = activeSubs.map(s => s.userId);
+
+      if (subscribedUserIds.length === 0) {
+        return res.json({ profissionais: [] });
+      }
+
+      const where: any = {
+        userId: { in: subscribedUserIds },
+        user: {
+          isVerified: true,
+          active: true,
+          ...(city ? { address: { contains: String(city), mode: "insensitive" } } : {}),
+          ...(search ? { nome: { contains: String(search), mode: "insensitive" } } : {}),
+        },
+        ...(service ? { services: { has: String(service).toUpperCase() } } : {}),
+      };
+
+      const profissionais = await prisma.profissional.findMany({
+        where,
+        include: {
+          user: {
+            select: {
+              id: true,
+              nome: true,
+              profileImageUrl: true,
+              address: true,
+              isVerified: true,
+            }
+          }
+        },
+        orderBy: { agilityPoints: "desc" },
+        take: 60,
+      });
+
+      return res.json({ profissionais });
+    } catch (error: any) {
+      console.error("[listProfissionais Error]:", error);
+      return res.status(500).json({ error: "Erro ao listar profissionais." });
+    }
+  }
+
+  /**
+   * GET /api/marketplace/profissionais/:id
+   * Returns public profile for a professional.
+   * Contact (WhatsApp) is always hidden — only revealed after booking fee payment.
+   */
+  static async getProfissionalProfile(req: AuthRequest, res: Response) {
+    const { id } = req.params;
+    try {
+      const prof = await prisma.profissional.findUnique({
+        where: { id },
+        include: {
+          user: {
+            select: {
+              id: true,
+              nome: true,
+              profileImageUrl: true,
+              address: true,
+              isVerified: true,
+              verificationStatus: true,
+              createdAt: true,
+            }
+          },
+          proServices: true,
+        }
+      });
+
+      if (!prof) return res.status(404).json({ error: "Profissional não encontrado." });
+
+      // Check if this professional has an active PRO subscription
+      const sub = await prisma.subscription.findFirst({
+        where: { userId: prof.userId, type: "PRO", status: "ACTIVE" }
+      });
+
+      // Return public-safe data (no WhatsApp!)
+      return res.json({
+        id: prof.id,
+        userId: prof.userId,
+        nome: prof.user.nome,
+        profileImageUrl: prof.user.profileImageUrl,
+        address: prof.user.address,
+        isVerified: prof.user.isVerified,
+        services: prof.services,
+        otherHabilities: prof.otherHabilities,
+        experienceYears: prof.experienceYears,
+        workflowType: prof.workflowType,
+        avgDeliveryHours: prof.avgDeliveryHours,
+        totalMissions: prof.totalMissions,
+        agilityPoints: prof.agilityPoints,
+        proServices: prof.proServices,
+        isSubscriber: !!sub,
+        memberSince: prof.user.createdAt,
+      });
+    } catch (error: any) {
+      console.error("[getProfissionalProfile Error]:", error);
+      return res.status(500).json({ error: "Erro ao buscar perfil." });
+    }
+  }
+
+  /**
+   * POST /api/marketplace/profissionais/book
+   * Client initiates a booking fee payment to unlock professional contact.
+   * Creates a ServiceBooking + MercadoPago preference for the fee.
+   */
+  static async bookProfissional(req: AuthRequest, res: Response) {
+    const { profissionalId, packageDesc, bookingFee, clientePhone } = req.body;
+    const userId = req.user?.userId;
+    const clienteEmail = req.user?.email || req.body.clienteEmail;
+    const clienteName = req.body.clienteName || req.user?.nome || "Cliente";
+
+    if (!profissionalId || !packageDesc || !bookingFee) {
+      return res.status(400).json({ error: "profissionalId, packageDesc e bookingFee são obrigatórios." });
+    }
+
+    try {
+      const prof = await prisma.profissional.findUnique({
+        where: { id: profissionalId },
+        include: { user: { select: { nome: true, isVerified: true } } }
+      });
+      if (!prof) return res.status(404).json({ error: "Profissional não encontrado." });
+
+      // Create the booking record
+      const booking = await prisma.serviceBooking.create({
+        data: {
+          clienteName,
+          clienteEmail,
+          clientePhone: clientePhone || "",
+          profissionalId,
+          packageDesc,
+          bookingFee: Number(bookingFee),
+          status: "PENDING",
+        }
+      });
+
+      // Create MP preference for the booking fee
+      let checkoutUrl: string | null = null;
+      try {
+        const preference = await MercadoPagoService.createPreference({
+          transaction_amount: Number(bookingFee),
+          description: `Taxa de Reserva — ${prof.user.nome} | ${packageDesc}`,
+          payer_email: clienteEmail,
+          notification_url: `${process.env.BACKEND_URL}/api/webhooks/mercadopago`,
+          orderId: `booking-${booking.id}`,
+        });
+        checkoutUrl = preference.init_point;
+      } catch (mpErr) {
+        console.error("[bookProfissional MP Error]:", mpErr);
+      }
+
+      await audit(req, "SERVICE_BOOKING_CREATED", "ServiceBooking", booking.id, null, {
+        profissionalId,
+        packageDesc,
+        bookingFee,
+        checkoutUrl: !!checkoutUrl,
+      });
+
+      return res.json({
+        bookingId: booking.id,
+        checkoutUrl,
+        message: "Reserva iniciada. Complete o pagamento para receber o contato do profissional."
+      });
+    } catch (error: any) {
+      console.error("[bookProfissional Error]:", error);
+      return res.status(500).json({ error: "Erro ao iniciar reserva." });
     }
   }
 }

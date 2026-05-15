@@ -16,6 +16,8 @@ import {
   type EventItem, type UnitInvite, type ServiceCatalog, type ProfileData, type Partner
 } from "../components/profissional";
 import { motion, AnimatePresence } from "framer-motion";
+import { WelcomeTour } from "../components/WelcomeTour";
+import { DiscoverySurvey } from "../components/DiscoverySurvey";
 
 interface PayoutItem {
   id: string;
@@ -362,6 +364,9 @@ export default function ProfissionalDashboard() {
         .lux-card { transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1); }
         .lux-card:hover { border-color: ${T.brand} !important; transform: translateY(-2px); }
       `}</style>
+
+      <WelcomeTour role="PROFISSIONAL" onComplete={() => {}} />
+      <DiscoverySurvey />
 
       {/* ── Opportunities Modal ─────────────────────────────────────────────── */}
       {showNewServicesModal && (

@@ -31,20 +31,25 @@ To be the national standard for phygital (physical + digital) photography experi
 
 ## Current State
 
-Shipped **v8.0 (MRR Engine)**. The platform now includes an automated recurring revenue system that gates Vault access, processing recurring subscriptions directly via Mercado Pago Preapprovals, and enforcing trial periods via automated chron jobs.
+Shipped **v11.0 (Professional Governance & Marketplace Alpha)**. The platform now features a robust Admin Approval Hub for role transitions and a public Professional Marketplace where verified, subscribed photographers can showcase their work and receive direct budget requests.
 
-## Current Milestone: v9.0 B2B & White-Label Expansion
-
-**Goal:** Empower franchisees and major partners with custom branding and advanced financial reporting to drive B2B growth.
-
-**Target features:**
-- **Tenant White-Labeling:** Allow franchisees to upload custom logos and set primary theme colors for their events and galleries.
-- **Custom Branding Renderer:** Dynamically adjust the `EventPage` and `Checkout` UI based on the event's owner (Tenant/Franchisee) branding.
-- **Advanced Financial Export:** PDF and CSV generation for payouts, unit performance, and period-based accounting.
-- **Franchise Dashboard Upgrades:** Deep-dive cohort analytics and unit-level health metrics.
+## Current Milestone: v12.0 Unified Marketplace & Portfolio
+**Goal:** Scale the marketplace with advanced portfolio galleries, automated booking payments, and proximity-based search.
 
 <details>
 <summary>Archived Milestones</summary>
+
+**v11.0 Professional Governance & Marketplace Alpha**
+*Goal:* Enable administrative control over partner applications and provide public visibility for subscribed professionals.
+*Outcome:* Delivered Admin Approval Hub and the initial public Professional Directory with budget request integration.
+
+**v10.0 Professional Network & Engagement**
+*Goal:* Transform the user profile into a growth engine by allowing role transitions and gamifying data completion.
+*Outcome:* Delivered Multi-Profile transitions, Role Switcher, and Gamified Profile Stepper.
+
+**v9.0 B2B & White-Label Expansion**
+*Goal:* Empower franchisees and major partners with custom branding and advanced financial reporting.
+*Outcome:* Delivered Tenant White-Labeling, Custom Branding Renderer, and Advanced Financial Exports for v9.0. Added Express Registration (Phase 42) for frictionless QR onboarding.
 
 **v8.0 MRR Engine**
 *Goal:* Enable recurring monthly revenue through Vault subscriptions.

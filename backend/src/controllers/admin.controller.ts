@@ -1636,3 +1636,77 @@ export async function adminAdjustStock(req: AuthRequest, res: Response): Promise
     res.status(500).json({ error: "Erro ao ajustar estoque." });
   }
 }
+
+// ─── ADMIN APPROVAL HUB (PHASE 45) ──────────────────────────────────────────
+
+export async function adminGetApplications(req: AuthRequest, res: Response): Promise<void> {
+  try {
+    const applications = await prisma.user.findMany({
+      where: {
+        isVerified: false,
+        verificationStatus: "PENDING",
+        role: { in: ["PROFISSIONAL", "CARTORIO"] }
+      },
+      select: {
+        id: true,
+        nome: true,
+        email: true,
+        role: true,
+        createdAt: true,
+        verificationDocs: true,
+        profissional: {
+          select: { services: true, otherHabilities: true, captPct: true, editPct: true }
+        },
+        cartorio: {
+          select: { razaoSocial: true, cidade: true, cnpj: true }
+        }
+      },
+      orderBy: { createdAt: "desc" }
+    });
+    res.json(applications);
+  } catch (err) {
+    console.error("adminGetApplications Error:", err);
+    res.status(500).json({ error: "Erro ao carregar aplicaÃ§Ãµes." });
+  }
+}
+
+export async function adminApproveApplication(req: AuthRequest, res: Response): Promise<void> {
+  const { id } = req.params;
+  try {
+    const user = await prisma.user.findUnique({ where: { id: String(id) } });
+    if (!user) { res.status(404).json({ error: "UsuÃ¡rio nÃ£o encontrado." }); return; }
+
+    const updated = await prisma.user.update({
+      where: { id: String(id) },
+      data: { isVerified: true, verificationStatus: "APPROVED" }
+    });
+
+    await audit(req, "APPLICATION_APPROVED", "User", id, null, { role: updated.role });
+
+    res.json({ success: true, user: updated });
+  } catch (err) {
+    console.error("adminApproveApplication Error:", err);
+    res.status(500).json({ error: "Erro ao aprovar aplicaÃ§Ã£o." });
+  }
+}
+
+export async function adminRejectApplication(req: AuthRequest, res: Response): Promise<void> {
+  const { id } = req.params;
+  try {
+    const user = await prisma.user.findUnique({ where: { id: String(id) } });
+    if (!user) { res.status(404).json({ error: "UsuÃ¡rio nÃ£o encontrado." }); return; }
+
+    const updated = await prisma.user.update({
+      where: { id: String(id) },
+      data: { isVerified: false, verificationStatus: "REJECTED" }
+    });
+
+    await audit(req, "APPLICATION_REJECTED", "User", id, null, { role: updated.role });
+
+    res.json({ success: true, user: updated });
+  } catch (err) {
+    console.error("adminRejectApplication Error:", err);
+    res.status(500).json({ error: "Erro ao rejeitar aplicaÃ§Ã£o." });
+  }
+}
+

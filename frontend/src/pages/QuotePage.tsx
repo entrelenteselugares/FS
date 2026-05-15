@@ -295,9 +295,12 @@ function DateTimePicker({ value, onChange, workingHours }: { value: string; onCh
 
 export const QuotePage = () => {
   const navigate = useNavigate();
+  const [searchParams] = useSearchParams();
   const [step, setStep] = useState(1);
   const [loading, setLoading] = useState(true);
   const [partners, setPartners] = useState<Partner[]>([]);
+  const [pros, setPros] = useState<any[]>([]);
+  const [preferredProfessionalId, setPreferredProfessionalId] = useState("");
   
   // Form State
   const [selectedServices, setSelectedServices] = useState<string[]>([]);
@@ -307,13 +310,19 @@ export const QuotePage = () => {
   useEffect(() => {
     Promise.all([
       API.get("/public/configs/services"),
-      API.get("/public/unidades-fixas")
+      API.get("/public/unidades-fixas"),
+      API.get("/marketplace/profissionais")
     ])
-      .then(([catalogRes, partnersRes]) => {
+      .then(([catalogRes, partnersRes, prosRes]) => {
         if (catalogRes.data?.services?.length > 0) {
           setCatalog(catalogRes.data.services);
         }
         setPartners(partnersRes.data || []);
+        setPros(prosRes.data?.profissionais || []);
+
+        // Pre-fill from query param
+        const profId = searchParams.get("profId");
+        if (profId) setPreferredProfessionalId(profId);
       })
       .catch(err => console.error("Erro ao carregar dados:", err))
       .finally(() => setLoading(false));
@@ -498,6 +507,7 @@ export const QuotePage = () => {
       location: fullAddress,
       eventDate, eventHours, eventDays, description, selectedServices, totalPrice, 
       availableBudget,
+      preferredProfessionalId,
       workflowPref: workflowPref.join(" + "),
       status: "PENDING"
     };
@@ -986,9 +996,26 @@ export const QuotePage = () => {
                   </div>
                 </div>
 
-                <div style={{ display: "flex", flexDirection: "column", gap: 10 }}>
                   <label style={{ fontSize: 10, fontWeight: 800, textTransform: "uppercase", color: THEME.text2 }}>WhatsApp (com DDD)</label>
                   <input required value={whatsapp} onChange={e => setWhatsapp(e.target.value.replace(/\D/g, ""))} placeholder="11999999999" className="fs-input" style={{ width: "100%", padding: "15px" }} />
+                </div>
+
+                <div style={{ display: "flex", flexDirection: "column", gap: 10 }}>
+                  <label style={{ fontSize: 10, fontWeight: 800, textTransform: "uppercase", color: THEME.text2 }}>Profissional Preferencial (Opcional)</label>
+                  <select 
+                    value={preferredProfessionalId} 
+                    onChange={e => setPreferredProfessionalId(e.target.value)} 
+                    className="fs-input" 
+                    style={{ width: "100%", padding: "15px" }}
+                  >
+                    <option value="">NENHUM (DEIXAR PARA CURADORIA)</option>
+                    {pros.map(p => (
+                      <option key={p.id} value={p.id}>
+                        {p.user.nome.toUpperCase()} - {p.user.address?.toUpperCase() || "GLOBAL"}
+                      </option>
+                    ))}
+                  </select>
+                  <p className="text-[9px] text-white/20 italic">Selecione um profissional específico para priorizar seu atendimento.</p>
                 </div>
 
                 <div style={{ display: "flex", flexDirection: "column", gap: 10 }}>

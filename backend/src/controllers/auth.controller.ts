@@ -331,7 +331,7 @@ export class AuthController {
       }
 
       // Filtra apenas campos válidos para o modelo User para evitar erro do Prisma
-      const validFields = ["nome", "whatsapp", "address", "active", "pixKey"];
+      const validFields = ["nome", "whatsapp", "address", "active", "pixKey", "profileImageUrl", "discoverySource"];
       const filteredData: any = {};
       for (const field of validFields) {
         if (data[field] !== undefined) {
@@ -489,6 +489,83 @@ export class AuthController {
     } catch (error) {
       console.error("[RESET PASSWORD ERROR]:", error);
       return res.status(500).json({ error: "Erro ao atualizar senha" });
+    }
+  }
+
+  static async applyRole(req: AuthRequest, res: Response) {
+    const userId = req.user?.userId;
+    const { role, equipment, razaoSocial, cnpj } = req.body;
+
+    if (!userId) return res.status(401).json({ error: "Não autorizado" });
+    if (!["PROFISSIONAL", "CARTORIO"].includes(role)) {
+      return res.status(400).json({ error: "Papel inválido para aplicação" });
+    }
+
+    try {
+      if (role === "PROFISSIONAL") {
+        await prisma.profissional.upsert({
+          where: { userId },
+          create: { userId, equipment, services: [], cameras: [], lenses: [], lighting: [] },
+          update: { equipment }
+        });
+      } else if (role === "CARTORIO") {
+        await prisma.cartorio.upsert({
+          where: { userId },
+          create: { userId, razaoSocial: razaoSocial || "Nova Unidade", cnpj },
+          update: { razaoSocial, cnpj }
+        });
+      }
+
+      await prisma.user.update({
+        where: { id: userId },
+        data: { verificationStatus: "PENDING", isVerified: false }
+      });
+
+      return res.json({ message: "Solicitação enviada com sucesso. Aguarde a validação da equipe Foto Segundo." });
+    } catch (error) {
+      console.error("[APPLY ROLE ERROR]:", error);
+      return res.status(500).json({ error: "Erro ao processar solicitação de papel" });
+    }
+  }
+
+  static async uploadProfilePhoto(req: AuthRequest, res: Response) {
+    const userId = req.user?.userId;
+    if (!userId) return res.status(401).json({ error: "Não autorizado" });
+
+    const { imageBase64, mimeType } = req.body;
+    if (!imageBase64 || !mimeType) {
+      return res.status(400).json({ error: "Imagem e MimeType são obrigatórios" });
+    }
+
+    try {
+      const base64Data = String(imageBase64).replace(/^data:image\/\w+;base64,/, "");
+      const buffer = Buffer.from(base64Data, "base64");
+      const ext = String(mimeType).split("/")[1] || "jpg";
+      const fileName = `${userId}-${Date.now()}.${ext}`;
+
+      const { error: uploadError } = await supabaseAdmin.storage
+        .from("profiles")
+        .upload(fileName, buffer, {
+          contentType: String(mimeType),
+          upsert: true,
+        });
+
+      if (uploadError) throw uploadError;
+
+      const { data: { publicUrl } } = supabaseAdmin.storage
+        .from("profiles")
+        .getPublicUrl(fileName);
+
+      const updated = await prisma.user.update({
+        where: { id: userId },
+        data: { profileImageUrl: publicUrl },
+        select: { id: true, profileImageUrl: true }
+      });
+
+      return res.json(updated);
+    } catch (error) {
+      console.error("[UPLOAD PROFILE PHOTO ERROR]:", error);
+      return res.status(500).json({ error: "Erro ao fazer upload da foto de perfil" });
     }
   }
 }

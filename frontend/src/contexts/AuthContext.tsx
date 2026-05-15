@@ -6,13 +6,16 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
   const [user, setUser] = useState<AuthUser | null>(null);
   const [token, setToken] = useState<string | null>(null);
   const [loading, setLoading] = useState(true);
+  const [activeRole, setActiveRole] = useState<string | null>(null);
 
   const logout = () => {
     localStorage.removeItem("fs_token");
     localStorage.removeItem("fs_refresh_token");
+    localStorage.removeItem("fs_active_role");
     delete API.defaults.headers.common["Authorization"];
     setToken(null);
     setUser(null);
+    setActiveRole(null);
   };
 
   useEffect(() => {
@@ -56,6 +59,23 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
+  useEffect(() => {
+    if (user && !activeRole) {
+      const savedRole = localStorage.getItem("fs_active_role");
+      setActiveRole(savedRole || user.role);
+    }
+  }, [user, activeRole]);
+
+  const switchRole = (role: string) => {
+    setActiveRole(role);
+    localStorage.setItem("fs_active_role", role);
+    // Redirecionamento baseado no papel
+    if (role === "ADMIN") window.location.href = "/admin";
+    else if (role === "PROFISSIONAL") window.location.href = "/profissional";
+    else if (role === "CARTORIO" || role === "UNIDADE") window.location.href = "/cartorio";
+    else window.location.href = "/";
+  };
+
   const login = async (email: string, senha: string) => {
     const { data } = await API.post("/auth/login", { email, senha });
     localStorage.setItem("fs_token", data.token);
@@ -86,8 +106,21 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     return data.user as AuthUser;
   };
 
+  const updateMe = async (data: Partial<AuthUser>) => {
+    const r = await API.patch("/auth/me", data);
+    setUser(r.data);
+    return r.data;
+  };
+
+  const applyRole = async (payload: { role: string; equipment?: string; razaoSocial?: string; cnpj?: string }) => {
+    const r = await API.post("/auth/apply-role", payload);
+    const me = await API.get("/auth/me");
+    setUser(me.data);
+    return r.data;
+  };
+
   return (
-    <AuthContext.Provider value={{ user, token, login, register, registerExpress, logout, loading }}>
+    <AuthContext.Provider value={{ user, token, login, register, registerExpress, updateMe, applyRole, switchRole, logout, loading, activeRole }}>
       {children}
     </AuthContext.Provider>
   );

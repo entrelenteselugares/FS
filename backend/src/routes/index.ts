@@ -31,7 +31,10 @@ import {
   adminCreateManualSale,
   checkDbStatus,
   adminListInventory,
-  adminAdjustStock
+  adminAdjustStock,
+  adminGetApplications,
+  adminApproveApplication,
+  adminRejectApplication
 } from "../controllers/admin.controller";
 import { MercadoPagoController } from "../controllers/mercadopago.controller";
 import {
@@ -187,6 +190,11 @@ router.post("/marketplace/events/:id/sync-drive", requireAuth, requireProOrFranc
 router.patch("/marketplace/media/:mediaId/metadata", requireAuth, requireRole("ADMIN"), MarketplaceController.patchMediaMetadata);
 router.get("/marketplace/events/:id/media",   optionalAuth, MarketplaceController.listMedia);
 
+// ── PROFESSIONAL SHOWCASE (Diretório Público) ──────────────────────────────
+router.get("/marketplace/profissionais",                    MarketplaceController.listProfissionais);
+router.get("/marketplace/profissionais/:id",                MarketplaceController.getProfissionalProfile);
+router.post("/marketplace/profissionais/book",  requireAuth, MarketplaceController.bookProfissional);
+
 
 // Cron — protegido por CRON_SECRET (chamado pela Vercel diariamente às 06:00)
 router.get("/cron/expiration", async (req, res) => {
@@ -287,6 +295,8 @@ router.get("/cron/abandoned-carts", async (req, res) => {
 router.post("/auth/login",           AuthController.login);
 router.post("/auth/register",        AuthController.register);
 router.post("/auth/register-express", AuthController.registerExpress);
+router.post("/auth/apply-role", requireAuth, AuthController.applyRole);
+router.post("/auth/profile-photo", requireAuth, AuthController.uploadProfilePhoto);
 router.post("/auth/forgot-password", AuthController.forgotPassword);
 router.post("/auth/reset-password",  AuthController.updatePassword);
 router.get("/auth/me",               requireAuth, AuthController.me);
@@ -426,6 +436,11 @@ router.get("/admin/users",       requireAuth, requireRole("ADMIN"), adminListUse
 router.post("/admin/users",      requireAuth, requireRole("ADMIN"), adminCreateUser);
 router.patch("/admin/users/:id", requireAuth, requireRole("ADMIN"), adminUpdateUser);
 router.delete("/admin/users/:id", requireAuth, requireRole("ADMIN"), adminDeleteUser);
+
+// ─── ADMIN APPROVAL HUB (Phase 45) ──────────────────────────────────────────
+router.get("/admin/applications",                            requireAuth, requireRole("ADMIN"), adminGetApplications);
+router.patch("/admin/applications/:id/approve",              requireAuth, requireRole("ADMIN"), adminApproveApplication);
+router.patch("/admin/applications/:id/reject",               requireAuth, requireRole("ADMIN"), adminRejectApplication);
 
 // ── Admin: Gestão de Pedidos ───────────────────────────────────────────────────
 router.get("/admin/orders",                   requireAuth, requireRole("ADMIN"), adminListOrders);

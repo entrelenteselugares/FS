@@ -11,8 +11,10 @@ import { AmbassadorDashboard } from "../components/AmbassadorDashboard";
 import { 
   Users, Play, CheckCircle2, ArrowRight, 
   ShoppingBag, ShieldCheck, Clock, Image as ImageIcon,
-  Zap, Lock, User, AlertTriangle
+  Zap, Lock, User, AlertTriangle, Briefcase, Building2, Check
 } from "lucide-react";
+import { ProfilePhotoUpload } from "../components/ProfilePhotoUpload";
+import { toast } from "sonner";
 import { motion, AnimatePresence } from "framer-motion";
 
 type ActiveTab = "files" | "profile" | "wallet" | "embaixador";
@@ -133,6 +135,8 @@ export default function ClienteArea() {
   });
   const [isSaving, setIsSaving] = useState(false);
   const [saveSuccess, setSaveSuccess] = useState(false);
+  const [isApplying, setIsApplying] = useState(false);
+  const { applyRole } = useAuth();
 
   const fetchPedidos = useCallback(async () => {
     try {
@@ -421,10 +425,14 @@ export default function ClienteArea() {
               )}
             </>
           ) : activeTab === "profile" ? (
-            <div className="lux-card p-10 max-w-2xl space-y-8 border-l-4 border-l-brand-tactical bg-theme-bg-muted/10">
-              <div className="space-y-2">
-                <h2 className="text-xl font-heading font-black text-theme-text uppercase italic tracking-tight">Meus Dados</h2>
-                <p className="text-[11px] font-black text-theme-muted uppercase tracking-[0.4em] italic">Gerencie suas informações de contato e entrega</p>
+            <div className="space-y-8">
+            <div className="lux-card p-10 max-w-2xl border-l-4 border-l-brand-tactical bg-theme-bg-muted/10">
+              <div className="flex flex-col md:flex-row gap-8 items-center md:items-start mb-8 pb-8 border-b border-theme-border/20">
+                <ProfilePhotoUpload />
+                <div className="space-y-2 text-center md:text-left">
+                  <h2 className="text-xl font-heading font-black text-theme-text uppercase italic tracking-tight">Meus Dados</h2>
+                  <p className="text-[11px] font-black text-theme-muted uppercase tracking-[0.4em] italic">Gerencie suas informações de contato e entrega</p>
+                </div>
               </div>
               <form onSubmit={handleUpdateProfile} className="space-y-6">
                 <div className="space-y-2">
@@ -499,6 +507,89 @@ export default function ClienteArea() {
                   Falar com Suporte <ArrowRight size={12} />
                 </a>
               </div>
+            </div>
+
+            {/* Role Application Section */}
+            {(user?.role === "CLIENTE" || user?.verificationStatus === "PENDING") && (
+              <div className="lux-card p-10 max-w-2xl border-l-4 border-l-emerald-500 bg-theme-bg-muted/10">
+                <div className="space-y-6">
+                  <div className="flex items-center gap-4">
+                    <div className="p-3 bg-emerald-500/10 text-emerald-500 border border-emerald-500/20">
+                      <Briefcase size={24} />
+                    </div>
+                    <div className="space-y-1">
+                      <h3 className="text-xl font-heading font-black text-theme-text uppercase italic tracking-tight">Seja um Parceiro</h3>
+                      <p className="text-[10px] font-black text-emerald-500 uppercase tracking-[0.4em] italic">Transforme sua paixão em faturamento</p>
+                    </div>
+                  </div>
+
+                  {user?.verificationStatus === "PENDING" ? (
+                    <div className="p-6 bg-amber-500/10 border border-amber-500/20 space-y-3">
+                      <div className="flex items-center gap-3 text-amber-500">
+                        <Clock size={16} className="animate-pulse" />
+                        <p className="text-[10px] font-black uppercase tracking-widest">Perfil em Análise Técnica</p>
+                      </div>
+                      <p className="text-xs text-theme-text-muted leading-relaxed">
+                        Recebemos sua solicitação! Nossa equipe está validando seu perfil e portfólio. 
+                        Você receberá um e-mail assim que seu acesso ao painel profissional for liberado.
+                      </p>
+                    </div>
+                  ) : (
+                    <div className="space-y-6">
+                      <p className="text-xs text-theme-text-muted leading-relaxed">
+                        Junte-se à maior rede de fotografia phygital do Brasil. Como parceiro, você terá acesso a ferramentas exclusivas de venda, monitoramento de pedidos e repasses automatizados.
+                      </p>
+                      
+                      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                        <button 
+                          disabled={isApplying}
+                          onClick={async () => {
+                            setIsApplying(true);
+                            try {
+                              await applyRole({ role: "PROFISSIONAL" });
+                              toast.success("Solicitação enviada!");
+                            } catch (err) {
+                              toast.error("Erro ao solicitar.");
+                            } finally {
+                              setIsApplying(false);
+                            }
+                          }}
+                          className="p-6 border border-theme-border/40 hover:border-emerald-500/60 transition-all text-left space-y-3 group bg-theme-bg/20"
+                        >
+                          <Camera size={20} className="text-theme-muted group-hover:text-emerald-500 transition-colors" />
+                          <div className="space-y-1">
+                            <p className="text-[11px] font-black text-theme-text uppercase tracking-widest italic">Fotógrafo Freelancer</p>
+                            <p className="text-[9px] text-theme-muted uppercase leading-tight tracking-widest">Atue em eventos e receba por diária + splits de vendas.</p>
+                          </div>
+                        </button>
+
+                        <button 
+                          disabled={isApplying}
+                          onClick={async () => {
+                            setIsApplying(true);
+                            try {
+                              await applyRole({ role: "CARTORIO" });
+                              toast.success("Solicitação enviada!");
+                            } catch (err) {
+                              toast.error("Erro ao solicitar.");
+                            } finally {
+                              setIsApplying(false);
+                            }
+                          }}
+                          className="p-6 border border-theme-border/40 hover:border-emerald-500/60 transition-all text-left space-y-3 group bg-theme-bg/20"
+                        >
+                          <Building2 size={20} className="text-theme-muted group-hover:text-emerald-500 transition-colors" />
+                          <div className="space-y-1">
+                            <p className="text-[11px] font-black text-theme-text uppercase tracking-widest italic">Unidade Fixa (Local)</p>
+                            <p className="text-[9px] text-theme-muted uppercase leading-tight tracking-widest">Transforme seu estabelecimento em um ponto Foto Segundo.</p>
+                          </div>
+                        </button>
+                      </div>
+                    </div>
+                  )}
+                </div>
+              </div>
+            )}
             </div>
           ) : activeTab === "wallet" ? (
             <div className="space-y-10">

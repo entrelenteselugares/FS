@@ -2,6 +2,7 @@ import { useState } from "react";
 import { Briefcase, Camera, Phone, CheckCircle2, Check, Save, X, ShieldCheck } from "lucide-react";
 import { API } from "../../lib/api";
 import type { ProfileData, EquipmentItem } from "./types";
+import { ProfileStepper } from "../ProfileStepper";
 
 interface ProfileTabProps {
   profile: ProfileData;
@@ -79,6 +80,8 @@ export function ProfileTab({ profile, onUpdated, onNotify }: ProfileTabProps) {
         </div>
         <p className="text-[10px] text-theme-muted uppercase tracking-[0.4em] mt-2 font-black italic">Gerenciamento de Identidade e Ativos Técnicos</p>
       </div>
+
+      <ProfileStepper user={profile.user} profile={profile} />
 
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-16">
         {/* Left Column: Data & Specialties */}

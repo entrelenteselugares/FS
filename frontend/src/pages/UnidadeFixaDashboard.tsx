@@ -9,6 +9,7 @@ import { DashboardLayout, type NavItem } from "../components/DashboardLayout";
 import { FlashEventModal, FranchiseShopModal } from "../components/profissional";
 import { Zap } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
+import { WelcomeTour } from "../components/WelcomeTour";
 
 interface UnidadeStats {
   totalEventos: number;
@@ -393,6 +394,7 @@ export default function UnidadeFixaDashboard() {
       title="Painel de Unidade" 
       navItems={NAV_ITEMS(tab, setTab)}
     >
+      <WelcomeTour role="CARTORIO" onComplete={() => {}} />
       <div className="max-w-[1600px] mx-auto px-4 md:px-6 py-4 md:py-8 space-y-6 md:space-y-10 animate-in fade-in slide-in-from-bottom-4 duration-700">
 
         {/* Alertas Premium */}

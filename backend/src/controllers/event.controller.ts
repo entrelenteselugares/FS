@@ -438,7 +438,8 @@ export class EventController {
     try {
       const { 
         name, email, whatsapp, attendees, locationType, usageType, selectedPartnerId, 
-        customCep, eventDate, eventHours, eventDays, description, selectedServices = [], totalPrice 
+        customCep, eventDate, eventHours, eventDays, description, selectedServices = [], totalPrice,
+        preferredProfessionalId 
       } = req.body;
 
       if (!Array.isArray(selectedServices)) {
@@ -468,15 +469,15 @@ export class EventController {
       const isQuote = locationType === "OTHER";
       
       // ── LOGICA DE CONVOCAÇÃO TÁTICA (PROXIMIDADE) ──
-      // Se for ponto fixo, buscamos os profissionais titulares (FIXO)
-      let captacaoId: string | null = null;
+      // Se houver profissional preferencial (indicado pelo cliente), ele é o titular
+      let captacaoId: string | null = preferredProfessionalId || null;
       let fixoProfessionals: Array<{
         profissional: {
           user: { id: string; email: string; nome: string; };
         };
       }> = [];
 
-      if (locationType === "PARTNER" && selectedPartnerId) {
+      if (!captacaoId && locationType === "PARTNER" && selectedPartnerId) {
         const cartorio = await prisma.cartorio.findUnique({
           where: { userId: selectedPartnerId },
           include: { 
