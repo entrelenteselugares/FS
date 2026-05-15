@@ -1,52 +1,33 @@
-# Milestone v8.0 Requirements: MRR Engine — Monetização Recorrente
+# Milestone v12.0 Requirements: Unified Marketplace & Portfolio
 
-## 1. Subscription Data Layer (SUB)
-- [ ] **SUB-01**: System creates a `Subscription` record linked to a Vault when a user initiates a recurring payment via Mercado Pago Preapproval API.
-- [ ] **SUB-02**: System handles Mercado Pago subscription webhooks (authorized, paused, cancelled, charged_back) and updates subscription status accordingly.
-- [ ] **SUB-03**: Vault has a `trialEndsAt` date set to 30 days after the event date, after which a valid subscription is required for access.
-- [ ] **SUB-04**: System stores `preapprovalId`, `status`, `nextBillingDate`, and `planPrice` on the Subscription entity.
+## 1. Advanced Portfolio Galleries (PORT)
+- [ ] **PORT-01**: User (Professional) can upload and manage high-quality image albums visible on their public profile.
+- [ ] **PORT-02**: System automatically generates compressed thumbnails and watermarked previews for portfolio images.
+- [ ] **PORT-03**: User (Client) can view professional portfolios in a seamless masonry gallery layout.
+- [ ] **PORT-04**: User (Professional) can organize portfolio items into named categories/albums (e.g., "Casamentos", "Ensaios").
 
-## 2. Vault Blocking Engine (BLOCK)
-- [ ] **BLOCK-01**: Cron job identifies vaults with expired trials and no active subscription, and sets vault status to `BLOCKED`.
-- [ ] **BLOCK-02**: Photo access is denied for vaults in `BLOCKED` status — API returns a structured error with subscription CTA.
-- [ ] **BLOCK-03**: System sends email notification to vault owner at D-5 and D-1 before trial expiry.
-- [ ] **BLOCK-04**: Vault is automatically reactivated (status → `ACTIVE`) within 1 hour of a successful subscription payment being confirmed.
+## 2. Automated Booking Escrow (ESCROW)
+- [ ] **ESCROW-01**: User (Client) must pay a "Booking Fee" (Taxa de Reserva) via MercadoPago to unlock direct WhatsApp contact with a professional.
+- [ ] **ESCROW-02**: System holds the booking fee in escrow and reflects it as "Pending" in the professional's balance.
+- [ ] **ESCROW-03**: System automatically releases the booking fee to the professional's available balance upon service completion or after 7 days.
+- [ ] **ESCROW-04**: System updates the budget request status (e.g., "Aguardando Pagamento", "Contato Liberado") in real-time via webhooks.
 
-## 3. Subscription UI (UI)
-- [ ] **UI-01**: User sees a subscription CTA inside their vault when trial is within 5 days of expiry or already expired.
-- [ ] **UI-02**: User can initiate a monthly subscription from the vault page, which redirects to Mercado Pago Preapproval checkout.
-- [ ] **UI-03**: User can view their active subscriptions and billing date in their dashboard profile.
-- [ ] **UI-04**: User can cancel an active vault subscription from their dashboard.
-
-## 4. Admin & Metrics (ADMIN)
-- [ ] **ADMIN-01**: Admin can view total active subscriptions count and estimated MRR in the financial dashboard.
-- [ ] **ADMIN-02**: Admin can view a list of all subscriptions with status, vault, subscriber, and next billing date.
+## 3. Proximity Search & Directory (SEARCH)
+- [ ] **SEARCH-01**: User (Client) can search for professionals within a specific radius of their location using geolocation APIs.
+- [ ] **SEARCH-02**: System filters professional search results based on geographic proximity, rating, and subscription status (verified PROs first).
+- [ ] **SEARCH-03**: User (Professional) can update their service radius (in km) and base location in their profile settings.
+- [ ] **SEARCH-04**: System provides a map-based or distance-based UI view for the professional directory.
 
 ---
 ## Out of Scope (This Milestone)
-- Multiple subscription tiers or pricing plans.
-- Annual billing option.
-- Stripe or any other payment gateway.
-- Performance optimization, B2B franchisee portal, mobile camera features.
+- In-app chat or messaging system (communication remains via WhatsApp after booking fee).
+- Complex dispute resolution module for escrow (will handle via admin support).
+- Video portfolio support.
 
 ---
 ## Traceability Matrix
 | REQ-ID | Phase |
 |--------|-------|
-| SUB-01 | 36 |
-| SUB-02 | 36 |
-| SUB-03 | 36 |
-| SUB-04 | 36 |
-| BLOCK-01 | 37 |
-| BLOCK-02 | 37 |
-| BLOCK-03 | 37 |
-| BLOCK-04 | 37 |
-| UI-01 | 38 |
-| UI-02 | 38 |
-| UI-03 | 38 |
-| UI-04 | 38 |
-| ADMIN-01 | 38 |
-| ADMIN-02 | 38 |
 
 ---
-*Created: 2026-05-14 | Milestone v8.0*
+*Created: 2026-05-15 | Milestone v12.0*
