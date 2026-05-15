@@ -92,9 +92,9 @@ export const AdminAmbassadors: React.FC = () => {
       <div className="relative border-b border-theme-border/60 pb-8 md:pb-12 space-y-4 md:space-y-6">
         <div className="absolute -top-10 -left-10 w-40 h-40 bg-brand-tactical/5 blur-3xl rounded-full" />
         
-        <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 relative z-10">
+        <div className="flex flex-col xl:flex-row justify-between items-start xl:items-end gap-6 relative z-10">
           <div className="space-y-4">
-            <h1 className="text-4xl md:text-6xl font-heading font-black text-theme-text uppercase tracking-tighter italic leading-none">
+            <h1 className="text-4xl md:text-5xl xl:text-6xl font-heading font-black text-theme-text uppercase tracking-tighter italic leading-none whitespace-nowrap">
               Programa Embaixador
             </h1>
             <div className="flex items-center gap-4">
@@ -106,7 +106,7 @@ export const AdminAmbassadors: React.FC = () => {
           </div>
           <button 
             onClick={() => setIsModalOpen(true)}
-            className="px-8 py-4 bg-brand-tactical text-black text-[10px] font-black uppercase tracking-widest flex items-center gap-3 hover:bg-white transition-all italic shadow-2xl"
+            className="px-8 py-4 bg-brand-tactical text-black text-[10px] font-black uppercase tracking-widest flex items-center gap-3 hover:bg-white transition-all italic shadow-2xl whitespace-nowrap"
           >
             <Plus size={16} /> Nova Campanha
           </button>
