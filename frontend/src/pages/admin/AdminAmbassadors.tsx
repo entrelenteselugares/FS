@@ -88,20 +88,29 @@ export const AdminAmbassadors: React.FC = () => {
 
   return (
     <div className="p-8 space-y-8 animate-in fade-in duration-700">
-      <div className="flex justify-between items-end border-b border-white/5 pb-8">
-        <div>
-          <div className="flex items-center gap-3 mb-2">
-            <div className="h-0.5 w-8 bg-brand-tactical" />
-            <p className="text-[10px] font-black text-brand-tactical uppercase tracking-[0.4em]">Engine de Escala</p>
+      {/* Header Padronizado */}
+      <div className="relative border-b border-theme-border/60 pb-8 md:pb-12 space-y-4 md:space-y-6">
+        <div className="absolute -top-10 -left-10 w-40 h-40 bg-brand-tactical/5 blur-3xl rounded-full" />
+        
+        <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 relative z-10">
+          <div className="space-y-4">
+            <h1 className="text-4xl md:text-6xl font-heading font-black text-theme-text uppercase tracking-tighter italic leading-none">
+              Programa Embaixador
+            </h1>
+            <div className="flex items-center gap-4">
+              <div className="h-1 w-12 bg-brand-tactical" />
+              <p className="text-[11px] font-black text-brand-tactical uppercase tracking-[0.4em] italic">
+                Engine de Escala • Gestão de Afiliados
+              </p>
+            </div>
           </div>
-          <h1 className="text-5xl font-black italic tracking-tighter uppercase text-theme-text">Programa Embaixador</h1>
+          <button 
+            onClick={() => setIsModalOpen(true)}
+            className="px-8 py-4 bg-brand-tactical text-black text-[10px] font-black uppercase tracking-widest flex items-center gap-3 hover:bg-white transition-all italic shadow-2xl"
+          >
+            <Plus size={16} /> Nova Campanha
+          </button>
         </div>
-        <button 
-          onClick={() => setIsModalOpen(true)}
-          className="px-8 py-4 bg-brand-tactical text-black text-[10px] font-black uppercase tracking-widest flex items-center gap-3 hover:bg-white transition-all italic shadow-2xl"
-        >
-          <Plus size={16} /> Nova Campanha
-        </button>
       </div>
 
       {/* Stats Summary */}

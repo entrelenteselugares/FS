@@ -241,22 +241,33 @@ export const AdminQuotes: React.FC = () => {
 
   return (
     <div className="space-y-8 animate-in fade-in duration-700">
-      {/* Header */}
-      <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 border-b border-theme-border pb-8">
-        <div>
-          <h2 className="text-4xl md:text-6xl font-display text-theme-text uppercase font-black italic leading-none pt-2 tracking-tighter">Gestão de Orçamentos</h2>
-          <p className="text-[10px] text-brand-tactical uppercase tracking-[0.5em] mt-3 font-black italic">Pipeline Kanban de Propostas</p>
-        </div>
-        <div className="flex items-center gap-4">
-          <div className="relative">
-            <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-theme-text-muted" size={14}/>
-            <input type="text" placeholder="BUSCAR..." value={search} onChange={e=>setSearch(e.target.value)}
-              className="bg-theme-bg-muted border border-theme-border pl-9 pr-4 py-3 text-[10px] text-theme-text uppercase tracking-widest outline-none focus:border-brand-tactical transition-all font-bold rounded-lg w-56"/>
+      {/* Header Padronizado */}
+      <div className="relative border-b border-theme-border/60 pb-8 md:pb-12 space-y-4 md:space-y-6">
+        <div className="absolute -top-10 -left-10 w-40 h-40 bg-brand-tactical/5 blur-3xl rounded-full" />
+        
+        <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 relative z-10">
+          <div className="space-y-4">
+            <h1 className="text-4xl md:text-6xl font-heading font-black text-theme-text uppercase tracking-tighter italic leading-none">
+              Gestão de Orçamentos
+            </h1>
+            <div className="flex items-center gap-4">
+              <div className="h-1 w-12 bg-brand-tactical" />
+              <p className="text-[11px] font-black text-brand-tactical uppercase tracking-[0.4em] italic">
+                Operações • Pipeline Kanban de Propostas
+              </p>
+            </div>
           </div>
-          <button onClick={()=>setIsNewQuoteModalOpen(true)}
-            className="bg-brand-tactical text-black font-display font-black uppercase tracking-[0.2em] px-6 py-3 text-[10px] flex items-center gap-2 hover:brightness-110 shadow-xl transition-all rounded-lg whitespace-nowrap">
-            <Plus size={16}/> Novo Orçamento
-          </button>
+          <div className="flex flex-wrap items-center gap-4">
+            <div className="relative">
+              <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-theme-text-muted" size={14}/>
+              <input type="text" placeholder="BUSCAR..." value={search} onChange={e=>setSearch(e.target.value)}
+                className="bg-theme-bg-muted border border-theme-border pl-9 pr-4 py-3 text-[10px] text-theme-text uppercase tracking-widest outline-none focus:border-brand-tactical transition-all font-bold rounded-lg w-56"/>
+            </div>
+            <button onClick={()=>setIsNewQuoteModalOpen(true)}
+              className="bg-brand-tactical text-black font-display font-black uppercase tracking-[0.2em] px-6 py-3 text-[10px] flex items-center gap-2 hover:brightness-110 shadow-xl transition-all rounded-lg whitespace-nowrap">
+              <Plus size={16}/> Novo Orçamento
+            </button>
+          </div>
         </div>
       </div>
 

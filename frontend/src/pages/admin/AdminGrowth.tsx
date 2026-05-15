@@ -48,10 +48,20 @@ export function AdminGrowth() {
 
   return (
     <div className="space-y-8 animate-in fade-in duration-500">
-      <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
-        <div>
-          <h2 className="text-3xl font-heading font-black italic uppercase tracking-tighter" style={{ color: T.text }}>Growth & Engine</h2>
-          <p className="text-[10px] font-black uppercase tracking-[0.2em] text-theme-text-muted mt-1">Acquisição, Retenção e Afiliados</p>
+      {/* Header Padronizado */}
+      <div className="relative border-b border-theme-border/60 pb-8 md:pb-12 space-y-4 md:space-y-6">
+        <div className="absolute -top-10 -left-10 w-40 h-40 bg-brand-tactical/5 blur-3xl rounded-full" />
+        
+        <div className="space-y-4 relative z-10">
+          <h1 className="text-4xl md:text-6xl font-heading font-black text-theme-text uppercase tracking-tighter italic leading-none">
+            Growth & Engine
+          </h1>
+          <div className="flex items-center gap-4">
+            <div className="h-1 w-12 bg-brand-tactical" />
+            <p className="text-[11px] font-black text-brand-tactical uppercase tracking-[0.4em] italic">
+              Escala • Aquisição, Retenção e Afiliados
+            </p>
+          </div>
         </div>
       </div>
 

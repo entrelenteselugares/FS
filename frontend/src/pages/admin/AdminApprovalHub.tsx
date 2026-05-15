@@ -64,9 +64,21 @@ export const AdminApprovalHub: React.FC = () => {
 
   return (
     <div className="space-y-6">
-      <div className="flex flex-col gap-1">
-        <h2 className="text-xl font-bold text-white uppercase tracking-wider">Hub de Aprovações</h2>
-        <p className="text-white/40 text-xs font-medium">Gerencie novas solicitações de profissionais e unidades fixas.</p>
+      {/* Header Padronizado */}
+      <div className="relative border-b border-theme-border/60 pb-8 md:pb-12 space-y-4 md:space-y-6">
+        <div className="absolute -top-10 -left-10 w-40 h-40 bg-brand-tactical/5 blur-3xl rounded-full" />
+        
+        <div className="space-y-4 relative z-10">
+          <h1 className="text-4xl md:text-6xl font-heading font-black text-theme-text uppercase tracking-tighter italic leading-none">
+            Hub de Aprovações
+          </h1>
+          <div className="flex items-center gap-4">
+            <div className="h-1 w-12 bg-brand-tactical" />
+            <p className="text-[11px] font-black text-brand-tactical uppercase tracking-[0.4em] italic">
+              Compliance • Solicitações de Profissionais e Unidades
+            </p>
+          </div>
+        </div>
       </div>
 
       {applications.length === 0 ? (
