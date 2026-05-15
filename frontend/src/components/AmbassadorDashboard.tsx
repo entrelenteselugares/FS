@@ -164,18 +164,11 @@ export const AmbassadorDashboard = () => {
 
   return (
     <div className="space-y-10">
-      {/* ── Header ── */}
-      <div className="flex flex-col md:flex-row md:items-end md:justify-between gap-6 border-b border-theme-border/40 pb-6">
-        <div className="space-y-2">
-          <div className="flex items-center gap-3">
-            <div className="h-px w-6 bg-brand-tactical" />
-            <p className="text-[9px] font-black text-brand-tactical uppercase tracking-[0.4em]">Rede de Embaixadores</p>
-          </div>
-          <h2 className="text-3xl font-heading font-black text-theme-text uppercase tracking-tighter italic">
-            Painel de Rede
-          </h2>
+      {/* ── Action Bar ── */}
+      <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-6 pb-2">
+        <div className="space-y-1">
           <p className="text-[10px] text-theme-muted uppercase tracking-widest font-bold">
-            {t?.campaigns ?? 0} campanha{(t?.campaigns ?? 0) !== 1 ? "s" : ""} • {t?.conversions ?? 0} conversão{(t?.conversions ?? 0) !== 1 ? "ões" : ""}
+            Monitoramento de Performance em Tempo Real
           </p>
         </div>
 
@@ -196,7 +189,7 @@ export const AmbassadorDashboard = () => {
               className="fs-btn bg-brand-tactical text-black flex items-center gap-2"
             >
               {generating ? <div className="w-3 h-3 border-2 border-black/30 border-t-black rounded-full animate-spin" /> : <Sparkles size={14} />}
-              Gerar Meu Link
+              Gerar Link de Embaixador
             </button>
           )}
         </div>

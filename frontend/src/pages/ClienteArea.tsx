@@ -310,7 +310,7 @@ export default function ClienteArea() {
             <div className="flex items-center gap-4">
               <div className="h-1 w-12 bg-brand-tactical" />
               <p className="text-[11px] font-black text-brand-tactical uppercase tracking-[0.4em] italic">
-                {PAGE_TITLES[activeTab].prefix} • {PAGE_TITLES[activeTab].subtitle}
+                {PAGE_TITLES[activeTab].prefix}
               </p>
             </div>
           </div>
@@ -370,9 +370,8 @@ export default function ClienteArea() {
           >
             {activeTab === "files" ? (
             <>
-              <p className="text-[12px] text-theme-text-muted mb-8 italic font-bold uppercase tracking-widest">
-                Acesso vitalício às memórias que você adquiriu.
-              </p>
+              {/* Espaçamento tático para as memórias */}
+              <div className="h-4" />
 
               {loading ? (
                 <div style={{ display: "flex", flexDirection: "column", gap: 12 }}>

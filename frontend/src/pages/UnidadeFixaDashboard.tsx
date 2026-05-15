@@ -113,6 +113,16 @@ interface CalendarStatus {
   };
 }
 
+const PAGE_TITLES: Record<Tab, { title: string; subtitle: string; prefix: string }> = {
+  franquia: { title: "Franquia Print", subtitle: "Gestão de insumos e créditos phygital.", prefix: "Operações" },
+  monitor: { title: "Monitor de Fila", subtitle: "Acompanhamento em tempo real da produção.", prefix: "Logística" },
+  agenda: { title: "Agenda Tática", subtitle: "Próximas missões e eventos agendados.", prefix: "Estratégia" },
+  financas: { title: "Fluxo Financeiro", subtitle: "Consolidação de repasses e faturamento.", prefix: "Performance" },
+  equipe: { title: "Rede Técnica", subtitle: "Gestão de profissionais e portfólios.", prefix: "Recursos" },
+  calendar: { title: "Agenda Google", subtitle: "Sincronização de disponibilidade externa.", prefix: "Conectividade" },
+  configuracoes: { title: "Configuração", subtitle: "Ajustes de perfil e página pública.", prefix: "Painel" }
+};
+
 export default function UnidadeFixaDashboard() {
   const { user } = useAuth();
   const [searchParams] = useSearchParams();
@@ -417,7 +427,30 @@ export default function UnidadeFixaDashboard() {
           </div>
         )}
 
-        {/* Header Seção */}
+        {/* Header Seção Editorial */}
+        <div className="relative border-b border-theme-border/60 pb-8 md:pb-12 space-y-4 md:space-y-6">
+          <div className="absolute -top-10 -left-10 w-40 h-40 bg-brand-tactical/5 blur-3xl rounded-full" />
+          
+          <div className="space-y-4 relative z-10">
+            <h1 className="text-4xl md:text-6xl font-heading font-black text-theme-text uppercase tracking-tighter italic leading-none">
+              {PAGE_TITLES[tab].title}
+            </h1>
+            <div className="flex items-center gap-4">
+              <div className="h-1 w-12 bg-brand-tactical" />
+              <p className="text-[11px] font-black text-brand-tactical uppercase tracking-[0.4em] italic">
+                {PAGE_TITLES[tab].prefix} • {PAGE_TITLES[tab].subtitle}
+              </p>
+            </div>
+          </div>
+          
+          <div className="flex items-center gap-4 relative z-10">
+            <div className="flex items-center gap-2 px-3 py-1.5 bg-brand-tactical/10 border border-brand-tactical/30">
+              <ShieldCheck size={12} className="text-brand-tactical" />
+              <p className="text-[10px] font-black text-brand-tactical uppercase tracking-widest italic">{stats?.razaoSocial || "Unidade Operacional"}</p>
+            </div>
+            <div className="h-px flex-1 bg-gradient-to-r from-theme-border/60 to-transparent" />
+          </div>
+        </div>
         {/* Tier & Growth Section */}
         {!loading && stats?.user?.franchiseProfile && (
           <div className="bg-theme-bg border-l-4 border-l-brand-tactical border border-theme-border/60 p-6 md:p-10 flex flex-col md:flex-row items-center justify-between gap-10 group overflow-hidden relative">
