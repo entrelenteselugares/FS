@@ -18,11 +18,13 @@ export const PushNotificationManager: React.FC = () => {
       console.warn("[PUSH] Service Worker not supported");
       return;
     }
+    
+    const dismissed = localStorage.getItem("fs_push_prompt_dismissed");
+    if (dismissed === "true") return;
+
     console.log("[PUSH] Checking subscription...");
     const registration = await navigator.serviceWorker.ready;
-    console.log("[PUSH] Service Worker Ready");
     const subscription = await registration.pushManager.getSubscription();
-    console.log("[PUSH] Current Subscription:", subscription ? "Exists" : "None");
     setIsSubscribed(!!subscription);
     
     if (!subscription && user && Notification.permission === "default") {
@@ -31,21 +33,20 @@ export const PushNotificationManager: React.FC = () => {
         console.warn("[PUSH] VITE_VAPID_PUBLIC_KEY not set — prompt suppressed");
         return;
       }
-      setTimeout(() => setShowPrompt(true), 5000);
+      const timer = setTimeout(() => setShowPrompt(true), 5000);
+      return () => clearTimeout(timer);
     }
   }, [user]);
 
   useEffect(() => {
-    console.log("[PUSH] Manager Mounted. VAPID Key length:", VAPID_PUBLIC_KEY?.length || 0);
-    if ("Notification" in window) {
-      checkSubscription();
-    } else {
-      console.warn("[PUSH] Notifications not supported in this browser");
-    }
+    const cleanup = checkSubscription();
+    return () => {
+      if (typeof cleanup === 'function') cleanup();
+    };
   }, [checkSubscription]);
 
   const subscribe = async () => {
-    // Close the prompt immediately (optimistic UX)
+    localStorage.setItem("fs_push_prompt_dismissed", "true");
     setShowPrompt(false);
     if (!VAPID_PUBLIC_KEY) {
       console.error("[PUSH] VITE_VAPID_PUBLIC_KEY is not configured.");
@@ -73,6 +74,11 @@ export const PushNotificationManager: React.FC = () => {
     }
   };
 
+  const handleClose = () => {
+    localStorage.setItem("fs_push_prompt_dismissed", "true");
+    setShowPrompt(false);
+  };
+
   if (!user || permission === "denied" || (isSubscribed && !showPrompt)) return null;
 
   return (
@@ -80,7 +86,7 @@ export const PushNotificationManager: React.FC = () => {
       {showPrompt && (
         <div className="fixed bottom-20 left-4 right-4 md:left-auto md:right-8 md:w-80 bg-zinc-900 border border-brand-tactical/30 p-6 rounded-2xl shadow-2xl z-[100] animate-in fade-in slide-in-from-bottom-4 duration-500">
           <button 
-            onClick={() => setShowPrompt(false)}
+            onClick={handleClose}
             className="absolute top-4 right-4 text-zinc-500 hover:text-white transition-colors"
           >
             <X size={16} />
