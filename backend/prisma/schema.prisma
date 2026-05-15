@@ -1040,6 +1040,7 @@ model ServiceBooking {
   status         String   @default("PENDING") // PENDING, PAID, CANCELLED
   bookingFee     Decimal  @db.Decimal(10, 2)
   packageDesc    String
+  paymentId      String?
   createdAt      DateTime @default(now())
   updatedAt      DateTime @updatedAt
 

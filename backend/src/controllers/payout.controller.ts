@@ -306,7 +306,16 @@ export async function getMeuSaldoSummary(req: AuthRequest, res: Response): Promi
       else if (o.payoutStatus === "PENDING") pending += amount;
     });
 
-    res.json({ available, pending, totalCount: orders.length });
+    const bookings = await prisma.serviceBooking.findMany({
+      where: { profissionalId: userId, status: { in: ["PAID", "RELEASED"] } }
+    });
+
+    bookings.forEach(b => {
+      if (b.status === "PAID") pending += Number(b.bookingFee);
+      if (b.status === "RELEASED") available += Number(b.bookingFee);
+    });
+
+    res.json({ available, pending, totalCount: orders.length + bookings.length });
   } catch (err) {
     console.error("getMeuSaldoSummary:", err);
     res.status(500).json({ error: "Erro ao calcular saldo." });

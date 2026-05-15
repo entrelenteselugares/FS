@@ -107,7 +107,7 @@ import { MarketplaceController } from "../controllers/marketplace.controller";
 import { requireMercadoPagoSignature } from "../middleware/webhook-auth";
 // import { getTaxReport } from "../controllers/finance.controller"; // Removido em favor do ReportController
 import { AuthRequest } from "../lib/auth";
-import { runLoyaltyBot } from "../controllers/cron.controller";
+import { runLoyaltyBot, runEscrowRelease } from "../controllers/cron.controller";
 import { ReferralController } from "../controllers/referral.controller";
 import { PhygitalController } from "../controllers/phygital.controller";
 import { FranchiseController } from "../controllers/franchise.controller";
@@ -225,6 +225,14 @@ router.get("/cron/loyalty-bot", async (req, res) => {
     return res.status(401).json({ error: "Não autorizado." });
   }
   return runLoyaltyBot(req, res);
+});
+
+router.get("/cron/escrow-release", async (req, res) => {
+  const token = req.headers["authorization"];
+  if (process.env.CRON_SECRET && token !== `Bearer ${process.env.CRON_SECRET}`) {
+    return res.status(401).json({ error: "Não autorizado." });
+  }
+  return runEscrowRelease(req, res);
 });
 
 // ── Google Calendar (OAuth2 + Disponibilidade) ──────────────────────────────

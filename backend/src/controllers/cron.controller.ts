@@ -1,6 +1,7 @@
 import { Request, Response } from "express";
 import prisma from "../lib/prisma";
 import { NotificationService } from "../services/notification.service";
+import { runEscrowReleaseJob } from "../jobs/escrow-release.job";
 
 /**
  * GET /api/cron/loyalty-bot
@@ -82,5 +83,20 @@ export async function runLoyaltyBot(req: Request, res: Response): Promise<void> 
   } catch (err) {
     console.error("[LoyaltyBot] Erro na execução:", err);
     res.status(500).json({ error: "Erro interno" });
+  }
+}
+
+export async function runEscrowRelease(req: Request, res: Response): Promise<void> {
+  const secret = req.headers["x-cron-secret"];
+  if (process.env.NODE_ENV === "production" && secret !== process.env.CRON_SECRET) {
+    res.status(401).json({ error: "Não autorizado" });
+    return;
+  }
+
+  try {
+    const releasedCount = await runEscrowReleaseJob();
+    res.json({ success: true, releasedCount });
+  } catch (err) {
+    res.status(500).json({ error: "Erro interno ao rodar escrow release" });
   }
 }

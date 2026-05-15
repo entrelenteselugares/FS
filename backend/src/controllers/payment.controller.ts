@@ -396,7 +396,20 @@ export class PaymentController {
           if (updatedOrders.length === 0 && paymentData.external_reference) {
             const [realOrderId] = String(paymentData.external_reference).split(":");
             console.log(`[Webhook] Pedido não achado por ID ${data.id}. Tentando por Ref: ${realOrderId} (Original: ${paymentData.external_reference})`);
-            
+            // ── VERIFICA SE É BOOKING ESCROW ──
+            if (realOrderId.startsWith("booking-")) {
+              const bookingId = realOrderId.replace("booking-", "");
+              const booking = await prisma.serviceBooking.findUnique({ where: { id: bookingId } });
+              if (booking && booking.status !== "PAID") {
+                await prisma.serviceBooking.update({
+                  where: { id: bookingId },
+                  data: { status: "PAID", paymentId: String(data.id) }
+                });
+                console.log(`✅ Booking Escrow ${booking.id} aprovado via Webhook.`);
+                return res.json({ ok: true, type: "booking" });
+              }
+            }
+
             // ── VERIFICA SE É ASSINATURA (COFRE) ──
             const sub = await prisma.subscription.findUnique({
               where: { id: realOrderId }
