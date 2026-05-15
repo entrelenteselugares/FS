@@ -1,25 +1,40 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useCallback } from "react";
 import { Plus, Tag, Share2, Phone, Copy, Check, Activity } from "lucide-react";
 import { API } from "../../lib/api";
-import { useAuth } from "../../hooks/useAuth";
 import { QRCodeSVG } from "qrcode.react";
 
+interface Coupon {
+  id: string;
+  code: string;
+  discountPct?: number;
+  discountAbs?: number;
+  usedCount: number;
+  active: boolean;
+}
+
+interface Ambassador {
+  id: string;
+  nome: string;
+  email: string;
+  affiliatePayoutType: string;
+}
+
+interface WhatsAppStatus {
+  connected?: boolean;
+  qrCode?: string;
+}
+
 export function AdminGrowth() {
-  const {  } = useAuth();
   const [activeTab, setActiveTab] = useState<"COUPONS" | "LINKS" | "WHATSAPP">("COUPONS");
 
   // State
-  const [coupons, setCoupons] = useState<any[]>([]);
-  const [links, setLinks] = useState<any[]>([]);
-  const [waStatus, setWaStatus] = useState<any>(null);
+  const [coupons, setCoupons] = useState<{id: string, code: string, discountPct?: number, discountAbs?: number, usedCount: number, active: boolean}[]>([]);
+  const [links, setLinks] = useState<{id: string, nome: string, email: string, affiliatePayoutType: string}[]>([]);
+  const [waStatus, setWaStatus] = useState<{connected?: boolean, qrCode?: string} | null>(null);
   const [loading, setLoading] = useState(true);
   const [copied, setCopied] = useState<string | null>(null);
 
-  useEffect(() => {
-    fetchData();
-  }, [activeTab]);
-
-  const fetchData = async () => {
+  const fetchData = useCallback(async () => {
     setLoading(true);
     try {
       if (activeTab === "COUPONS") {
@@ -37,7 +52,12 @@ export function AdminGrowth() {
     } finally {
       setLoading(false);
     }
-  };
+  }, [activeTab]);
+
+  useEffect(() => {
+    fetchData();
+  }, [fetchData]);
+
 
   const copyToClipboard = (text: string, id: string) => {
     navigator.clipboard.writeText(text);
@@ -73,7 +93,7 @@ export function AdminGrowth() {
         ].map((tab) => (
           <button
             key={tab.id}
-            onClick={() => setActiveTab(tab.id as any)}
+            onClick={() => setActiveTab(tab.id as "COUPONS" | "LINKS" | "WHATSAPP")}
             className={`flex items-center gap-2 px-6 py-4 text-[10px] font-black uppercase tracking-widest whitespace-nowrap transition-colors border-b-2 ${
               activeTab === tab.id ? "border-brand-tactical text-brand-tactical" : "border-transparent text-theme-text-muted hover:text-theme-text"
             }`}
