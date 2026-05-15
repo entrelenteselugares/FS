@@ -1,9 +1,17 @@
 import { useState, useEffect, useRef, useMemo } from "react";
 import { Users, Calendar, ArrowRight, ShieldCheck, ChevronLeft, ChevronRight, Clock, Home, Zap, Camera, Video, Printer, Smartphone, Building2, GraduationCap, Utensils } from "lucide-react";
 import { API } from "../lib/api";
-import { useNavigate, Link } from "react-router-dom";
+import { useNavigate, Link, useSearchParams } from "react-router-dom";
 import { useAuth } from "../hooks/useAuth";
 import { useViaCep } from "../hooks/useViaCep";
+
+interface Professional {
+  id: string;
+  user: {
+    nome: string;
+    address?: string;
+  };
+}
 
 // ── Configurações de Precificação (Tactical Engine) 🛡️⚙️ ───────────
 const P = {
@@ -299,7 +307,7 @@ export const QuotePage = () => {
   const [step, setStep] = useState(1);
   const [loading, setLoading] = useState(true);
   const [partners, setPartners] = useState<Partner[]>([]);
-  const [pros, setPros] = useState<any[]>([]);
+  const [pros, setPros] = useState<Professional[]>([]);
   const [preferredProfessionalId, setPreferredProfessionalId] = useState("");
   
   // Form State
@@ -326,7 +334,7 @@ export const QuotePage = () => {
       })
       .catch(err => console.error("Erro ao carregar dados:", err))
       .finally(() => setLoading(false));
-  }, []);
+  }, [searchParams]);
 
   const [attendees, setAttendees] = useState<string>("0");
   const [locationType, setLocationType] = useState<"PARTNER" | "OTHER">("PARTNER");
@@ -525,8 +533,9 @@ export const QuotePage = () => {
         setStep(4); 
         window.scrollTo(0, 0);
       }
-    } catch (err: any) {
-      const msg = err.response?.data?.message || err.response?.data?.error || "Erro ao processar orçamento. Tente novamente.";
+    } catch (err: unknown) {
+      const error = err as any;
+      const msg = error.response?.data?.message || error.response?.data?.error || "Erro ao processar orçamento. Tente novamente.";
       alert(msg);
     } finally {
       setSubmitting(false);

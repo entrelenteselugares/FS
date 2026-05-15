@@ -2,6 +2,7 @@
 
 ## Milestone v9.0 Summary
 **Goal:** Empower franchisees and major partners with custom branding and advanced financial reporting to drive B2B growth.
+
 **Phases:** 3
 **Requirements Coverage:** 0% (0/0 mapped)
 
@@ -46,6 +47,7 @@
 ---
 
 ## Traceability Matrix
+
 | REQ-ID | Phase |
 |--------|-------|
 | B2B-01 | 39 |
@@ -66,6 +68,7 @@
 
 ## Milestone v10.0: Professional Network & Engagement
 **Goal:** Transform the user profile into a growth engine by allowing role transitions and gamifying data completion.
+
 **Phases:** 2
 
 ---
@@ -90,6 +93,7 @@
 
 ## Milestone v11.0: Professional Governance & Marketplace Alpha (DONE)
 **Goal:** Enable administrative control over partner applications and provide public visibility for subscribed professionals.
+
 **Phases:** 2
 
 ---
