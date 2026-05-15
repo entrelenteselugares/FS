@@ -11,7 +11,7 @@ import { AmbassadorDashboard } from "../components/AmbassadorDashboard";
 import { 
   Users, Play, CheckCircle2, ArrowRight, 
   ShoppingBag, ShieldCheck, Clock, Image as ImageIcon,
-  Zap, Lock, User, AlertTriangle, Briefcase, Building2, Check
+  Zap, Lock, User, AlertTriangle, Briefcase, Building2, Camera
 } from "lucide-react";
 import { ProfilePhotoUpload } from "../components/ProfilePhotoUpload";
 import { toast } from "sonner";

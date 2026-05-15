@@ -43,6 +43,7 @@ export interface AuthUser {
   profileImageUrl?: string | null;
   isVerified?: boolean;
   verificationStatus?: string;
+  discoverySource?: string | null;
 }
 
 export interface AuthContextType {

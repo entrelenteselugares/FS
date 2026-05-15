@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { API } from "../../lib/api";
-import { Check, X, FileText, User as UserIcon, Building2, ExternalLink } from "lucide-react";
+import { Check, X, FileText, User as UserIcon, Building2 } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 
 interface Application {

@@ -13,7 +13,6 @@ export default function PhygitalCapture() {
   const galleryInputRef = useRef<HTMLInputElement>(null);
 
   const { user, logout } = useAuth();
-  const navigate = useNavigate();
 
   const [file, setFile] = useState<File | null>(null);
   const [preview, setPreview] = useState<string | null>(null);

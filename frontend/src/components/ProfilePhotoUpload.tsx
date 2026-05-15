@@ -1,5 +1,5 @@
 import React, { useState, useRef } from "react";
-import { Camera, Upload, Check, Loader2, X } from "lucide-react";
+import { Camera, Upload, Loader2 } from "lucide-react";
 import { API } from "../lib/api";
 import { useAuth } from "../hooks/useAuth";
 import { toast } from "sonner";

@@ -1,6 +1,7 @@
 # ROADMAP: B2B & White-Label Expansion
 
 ## Milestone v9.0 Summary
+
 **Goal:** Empower franchisees and major partners with custom branding and advanced financial reporting to drive B2B growth.
 
 **Phases:** 3
@@ -9,6 +10,7 @@
 ---
 
 ## Phase 39: B2B Tenant Data Layer & Settings (B2B)
+
 **Goal:** Extend the user and event schemas to support tenant branding (logos, theme colors) and build the configuration UI for franchisees.
 
 - [x] **B2B-01**: Database schema supports `tenantLogoUrl` and `tenantBrandColor` for `User` (Franchisee) and optionally overrides per `Event`.
@@ -18,6 +20,7 @@
 ---
 
 ## Phase 40: White-Label Gallery Rendering (RENDER)
+
 **Goal:** Ensure the end-client experience (Event, Checkout, Vault) dynamically respects the photographer/franchisee's branding.
 
 - [x] **RENDER-01**: `EventPage.tsx` and `VaultDetailPage.tsx` dynamically consume `event.tenantBrandColor` and apply it to the CSS variable `--brand`.
@@ -28,6 +31,7 @@
 ---
 
 ## Phase 41: Advanced Financial Export & Franchise Intel (INTEL)
+
 **Goal:** Deliver enterprise-grade reporting for franchisees to close their monthly books and monitor unit health.
 
 - [x] **INTEL-01**: Create backend PDF and CSV generators for deep payout ledgers (detailing taxes, splits, and net volume per professional).
@@ -37,6 +41,7 @@
 ---
 
 ## Phase 42: Express Registration via QR Code (EXPRESS)
+
 **Goal:** Create a frictionless onboarding flow for phygital capture users using email + password only.
 
 - [x] **EXPRESS-01**: Integrated express registration form in `PhygitalCapture.tsx`.
@@ -67,6 +72,7 @@
 ---
 
 ## Milestone v10.0: Professional Network & Engagement
+
 **Goal:** Transform the user profile into a growth engine by allowing role transitions and gamifying data completion.
 
 **Phases:** 2
@@ -74,6 +80,7 @@
 ---
 
 ### [x] Phase 43: Multi-Profile Transition Network (DONE)
+
 **Goal:** Enable users to apply for or switch between roles (Cliente, Profissional, Unidade) from a single account.
 
 - [x] **PROFILE-01**: Backend: Multi-role session support & role-application endpoints.
@@ -84,6 +91,7 @@
 ---
 
 ### [x] Phase 44: Gamified Profile Completion (DONE)
+
 **Goal:** Implement a high-conversion, stepper-based profile UI with real-time reward feedback.
 
 - [x] **GAME-01**: Create `ProfileStepper.tsx` with progress bar and "Reward Unlocked" animations.
@@ -92,6 +100,7 @@
 ---
 
 ## Milestone v11.0: Professional Governance & Marketplace Alpha (DONE)
+
 **Goal:** Enable administrative control over partner applications and provide public visibility for subscribed professionals.
 
 **Phases:** 2
@@ -99,6 +108,7 @@
 ---
 
 ### [x] Phase 45: Admin Approval Hub (DONE)
+
 **Goal:** UI for Master Admin to review/approve/reject Role Applications.
 
 - [x] **GOV-01**: Admin dashboard tab for reviewing pending professional/unit applications.
@@ -108,6 +118,7 @@
 ---
 
 ### [x] Phase 46: Professional Showcase (DONE)
+
 **Goal:** Public profile pages and directory for subscribed professionals.
 
 - [x] **SHOW-01**: Public portfolio page for verified professionals.

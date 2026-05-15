@@ -534,7 +534,7 @@ export const QuotePage = () => {
         window.scrollTo(0, 0);
       }
     } catch (err: unknown) {
-      const error = err as any;
+      const error = err as { response?: { data?: { message?: string; error?: string } } };
       const msg = error.response?.data?.message || error.response?.data?.error || "Erro ao processar orçamento. Tente novamente.";
       alert(msg);
     } finally {

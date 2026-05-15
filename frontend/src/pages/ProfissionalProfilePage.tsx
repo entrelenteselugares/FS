@@ -2,7 +2,7 @@ import { useState, useEffect } from "react";
 import { useParams, Link } from "react-router-dom";
 import { motion } from "framer-motion";
 import {
-  ShieldCheck, MapPin, Camera, Clock, Award, Star,
+  ShieldCheck, MapPin, Camera, Clock, Star,
   ChevronLeft, Lock, CheckCircle2, Zap
 } from "lucide-react";
 import { API } from "../lib/api";

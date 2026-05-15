@@ -1,7 +1,6 @@
 import React, { useMemo } from "react";
 import { motion } from "framer-motion";
-import { Check, Trophy, Star, AlertCircle } from "lucide-react";
-import { T } from "../lib/theme";
+import { Trophy, Star, AlertCircle } from "lucide-react";
 
 interface ProfileStepperProps {
   user: any;
