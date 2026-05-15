@@ -34,6 +34,7 @@ import { BusinessLanding } from "./pages/BusinessLanding";
 import FlashUnlockPage from "./pages/FlashUnlockPage";
 import { ClubLandingPage } from "./pages/ClubLandingPage";
 import HelpPage from "./pages/HelpPage";
+import AmbassadorPage from "./pages/AmbassadorPage";
 import { useState, useEffect } from "react";
 import { API as api } from "./lib/api";
 import { T } from "./lib/theme";
@@ -111,6 +112,7 @@ const AnimatedRoutes = () => {
         <Route path="/clube" element={<ClubLandingPage />} />
         <Route path="/flash/:shortId" element={<FlashUnlockPage />} />
         <Route path="/ajuda" element={<HelpPage />} />
+        <Route path="/embaixador/:slug" element={<AmbassadorPage />} />
 
         {/* Redireciona para o painel correto */}
         <Route path="/dashboard" element={
