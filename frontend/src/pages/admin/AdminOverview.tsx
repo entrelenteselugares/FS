@@ -50,9 +50,6 @@ export const AdminOverview: React.FC<OverviewProps> = ({ stats, recentOrders = [
 
   return (
     <div className="space-y-12 relative overflow-hidden">
-      {/* Ambient Glow */}
-      <div className="absolute top-0 right-0 -mr-32 -mt-32 w-96 h-96 bg-brand-tactical/5 blur-[120px] rounded-full pointer-events-none" />
-
       <div className="flex flex-col md:flex-row md:items-center justify-between border-b border-theme-border pb-10 gap-6">
         <div className="space-y-4">
           <h1 className="text-4xl md:text-6xl font-heading font-black text-theme-text uppercase tracking-tighter italic leading-none">
@@ -147,6 +144,9 @@ export const AdminOverview: React.FC<OverviewProps> = ({ stats, recentOrders = [
           </div>
         </div>
       </div>
+
+      {/* Ambient Glow */}
+      <div className="absolute top-0 right-0 -mr-32 -mt-32 w-96 h-96 bg-brand-tactical/5 blur-[120px] rounded-full pointer-events-none" />
     </div>
   );
 };

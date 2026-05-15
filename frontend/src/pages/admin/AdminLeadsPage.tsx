@@ -81,25 +81,25 @@ export const AdminLeadsPage: React.FC = () => {
     <div className="space-y-12">
       {/* Stats Header */}
       <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-        <div className="bg-zinc-900/50 border border-white/5 p-8 space-y-4">
-          <div className="flex items-center gap-3 text-zinc-500">
+        <div className="bg-theme-bg-muted border border-theme-border p-8 space-y-4 shadow-sm">
+          <div className="flex items-center gap-3 text-theme-text-muted">
             <Users size={16} />
             <span className="text-[10px] font-black uppercase tracking-widest">Total Leads</span>
           </div>
-          <div className="text-4xl font-heading font-black italic text-white">{leads.length}</div>
-          <p className="text-[9px] text-zinc-600 uppercase font-bold tracking-widest leading-relaxed">Capturados via formulário na galeria.</p>
+          <div className="text-4xl font-heading font-black italic text-theme-text">{leads.length}</div>
+          <p className="text-[9px] text-theme-text-muted uppercase font-bold tracking-widest leading-relaxed">Capturados via formulário na galeria.</p>
         </div>
 
-        <div className="bg-zinc-900/50 border border-white/5 p-8 space-y-4">
+        <div className="bg-theme-bg-muted border border-theme-border p-8 space-y-4 shadow-sm">
           <div className="flex items-center gap-3 text-orange-500">
             <ShoppingBag size={16} />
             <span className="text-[10px] font-black uppercase tracking-widest">Abandono de Checkout</span>
           </div>
-          <div className="text-4xl font-heading font-black italic text-white">{abandoned.length}</div>
-          <p className="text-[9px] text-zinc-600 uppercase font-bold tracking-widest leading-relaxed">Pedidos pendentes há mais de 1 hora.</p>
+          <div className="text-4xl font-heading font-black italic text-theme-text">{abandoned.length}</div>
+          <p className="text-[9px] text-theme-text-muted uppercase font-bold tracking-widest leading-relaxed">Pedidos pendentes há mais de 1 hora.</p>
         </div>
 
-        <div className="bg-brand-tactical/5 border border-brand-tactical/20 p-8 space-y-4">
+        <div className="bg-brand-tactical/10 border border-brand-tactical/30 p-8 space-y-4 shadow-sm">
           <div className="flex items-center gap-3 text-brand-tactical">
             <TrendingDown size={16} />
             <span className="text-[10px] font-black uppercase tracking-widest">Receita Recuperada</span>
@@ -108,30 +108,30 @@ export const AdminLeadsPage: React.FC = () => {
           <p className="text-[9px] text-brand-tactical/60 uppercase font-bold tracking-widest leading-relaxed">Impacto real das automações de CRM.</p>
         </div>
 
-        <div className="bg-zinc-900/50 border border-white/5 p-8 space-y-4">
-          <div className="flex items-center gap-3 text-zinc-500">
+        <div className="bg-theme-bg-muted border border-theme-border p-8 space-y-4 shadow-sm">
+          <div className="flex items-center gap-3 text-theme-text-muted">
             <TrendingDown size={16} />
             <span className="text-[10px] font-black uppercase tracking-widest">Taxa de Conversão</span>
           </div>
-          <div className="text-4xl font-heading font-black italic text-white">
+          <div className="text-4xl font-heading font-black italic text-theme-text">
             {stats.totalSent > 0 ? ((stats.recoveredCount / stats.totalSent) * 100).toFixed(1) : 0}%
           </div>
-          <p className="text-[9px] text-zinc-600 uppercase font-bold tracking-widest leading-relaxed">Eficiência dos disparos automáticos.</p>
+          <p className="text-[9px] text-theme-text-muted uppercase font-bold tracking-widest leading-relaxed">Eficiência dos disparos automáticos.</p>
         </div>
       </div>
 
       {/* Tabs */}
-      <div className="flex gap-8 border-b border-white/5">
+      <div className="flex gap-8 border-b border-theme-border">
         <button 
           onClick={() => setActiveSubTab('abandoned')}
-          className={`pb-4 text-[10px] font-black uppercase tracking-[0.2em] transition-all relative ${activeSubTab === 'abandoned' ? 'text-brand-tactical' : 'text-zinc-500'}`}
+          className={`pb-4 text-[10px] font-black uppercase tracking-[0.2em] transition-all relative ${activeSubTab === 'abandoned' ? 'text-brand-tactical' : 'text-theme-text-muted'}`}
         >
           Carrinhos Abandonados
           {activeSubTab === 'abandoned' && <motion.div layoutId="subtab" className="absolute bottom-0 left-0 right-0 h-0.5 bg-brand-tactical" />}
         </button>
         <button 
           onClick={() => setActiveSubTab('leads')}
-          className={`pb-4 text-[10px] font-black uppercase tracking-[0.2em] transition-all relative ${activeSubTab === 'leads' ? 'text-brand-tactical' : 'text-zinc-500'}`}
+          className={`pb-4 text-[10px] font-black uppercase tracking-[0.2em] transition-all relative ${activeSubTab === 'leads' ? 'text-brand-tactical' : 'text-theme-text-muted'}`}
         >
           Leads Capturados
           {activeSubTab === 'leads' && <motion.div layoutId="subtab" className="absolute bottom-0 left-0 right-0 h-0.5 bg-brand-tactical" />}
@@ -139,25 +139,25 @@ export const AdminLeadsPage: React.FC = () => {
       </div>
 
       {/* Content */}
-      <div className="bg-zinc-900/30 border border-white/5 overflow-hidden">
+      <div className="bg-theme-bg-muted/30 border border-theme-border overflow-hidden">
         {activeSubTab === 'abandoned' ? (
           <table className="w-full text-left border-collapse">
             <thead>
-              <tr className="border-b border-white/5">
-                <th className="p-6 text-[9px] font-black uppercase tracking-widest text-zinc-500">Cliente / Contato</th>
-                <th className="p-6 text-[9px] font-black uppercase tracking-widest text-zinc-500">Evento</th>
-                <th className="p-6 text-[9px] font-black uppercase tracking-widest text-zinc-500">Valor</th>
-                <th className="p-6 text-[9px] font-black uppercase tracking-widest text-zinc-500">Início</th>
-                <th className="p-6 text-[9px] font-black uppercase tracking-widest text-zinc-500 text-right">Ações de Recuperação</th>
+              <tr className="border-b border-theme-border">
+                <th className="p-6 text-[9px] font-black uppercase tracking-widest text-theme-text-muted">Cliente / Contato</th>
+                <th className="p-6 text-[9px] font-black uppercase tracking-widest text-theme-text-muted">Evento</th>
+                <th className="p-6 text-[9px] font-black uppercase tracking-widest text-theme-text-muted">Valor</th>
+                <th className="p-6 text-[9px] font-black uppercase tracking-widest text-theme-text-muted">Início</th>
+                <th className="p-6 text-[9px] font-black uppercase tracking-widest text-theme-text-muted text-right">Ações de Recuperação</th>
               </tr>
             </thead>
-            <tbody className="divide-y divide-white/5">
+            <tbody className="divide-y divide-theme-border">
               {abandoned.map((item) => (
-                <tr key={item.id} className="hover:bg-white/5 transition-colors group">
+                <tr key={item.id} className="hover:bg-brand-tactical/5 transition-colors group">
                   <td className="p-6">
                     <div className="space-y-1">
-                      <div className="text-[10px] font-black text-white uppercase italic">{item.cliente?.nome || 'Cliente não identificado'}</div>
-                      <div className="text-[9px] font-bold text-zinc-500 lowercase flex items-center gap-2">
+                      <div className="text-[10px] font-black text-theme-text uppercase italic">{item.cliente?.nome || 'Cliente não identificado'}</div>
+                      <div className="text-[9px] font-bold text-theme-text-muted lowercase flex items-center gap-2">
                         {item.cliente?.email || item.buyerEmail}
                         {item.recoverySentAt && (
                           <span className="px-2 py-0.5 bg-brand-tactical/10 text-brand-tactical border border-brand-tactical/20 rounded-full text-[7px] font-black uppercase">
@@ -168,13 +168,13 @@ export const AdminLeadsPage: React.FC = () => {
                     </div>
                   </td>
                   <td className="p-6">
-                    <span className="text-[9px] font-black uppercase tracking-widest text-zinc-400">{item.event.nomeNoivos}</span>
+                    <span className="text-[9px] font-black uppercase tracking-widest text-theme-text-muted">{item.event.nomeNoivos}</span>
                   </td>
                   <td className="p-6">
-                    <span className="text-xs font-heading font-black italic text-white">R$ {Number(item.valor).toFixed(2)}</span>
+                    <span className="text-xs font-heading font-black italic text-theme-text">R$ {Number(item.valor).toFixed(2)}</span>
                   </td>
                   <td className="p-6">
-                    <div className="flex items-center gap-2 text-zinc-500">
+                    <div className="flex items-center gap-2 text-theme-text-muted">
                       <Clock size={12} />
                       <span className="text-[9px] font-bold">{new Date(item.createdAt).toLocaleString('pt-BR')}</span>
                     </div>
@@ -209,33 +209,33 @@ export const AdminLeadsPage: React.FC = () => {
         ) : (
           <table className="w-full text-left border-collapse">
             <thead>
-              <tr className="border-b border-white/5">
-                <th className="p-6 text-[9px] font-black uppercase tracking-widest text-zinc-500">Email do Lead</th>
-                <th className="p-6 text-[9px] font-black uppercase tracking-widest text-zinc-500">Evento de Origem</th>
-                <th className="p-6 text-[9px] font-black uppercase tracking-widest text-zinc-500">Data de Captura</th>
-                <th className="p-6 text-[9px] font-black uppercase tracking-widest text-zinc-500">Fonte</th>
-                <th className="p-6 text-[9px] font-black uppercase tracking-widest text-zinc-500 text-right">Ações</th>
+              <tr className="border-b border-theme-border">
+                <th className="p-6 text-[9px] font-black uppercase tracking-widest text-theme-text-muted">Email do Lead</th>
+                <th className="p-6 text-[9px] font-black uppercase tracking-widest text-theme-text-muted">Evento de Origem</th>
+                <th className="p-6 text-[9px] font-black uppercase tracking-widest text-theme-text-muted">Data de Captura</th>
+                <th className="p-6 text-[9px] font-black uppercase tracking-widest text-theme-text-muted">Fonte</th>
+                <th className="p-6 text-[9px] font-black uppercase tracking-widest text-theme-text-muted text-right">Ações</th>
               </tr>
             </thead>
-            <tbody className="divide-y divide-white/5">
+            <tbody className="divide-y divide-theme-border">
               {leads.map((lead) => (
-                <tr key={lead.id} className="hover:bg-white/5 transition-colors">
+                <tr key={lead.id} className="hover:bg-brand-tactical/5 transition-colors">
                   <td className="p-6">
                     <div className="flex items-center gap-3">
                       <div className="w-8 h-8 bg-brand-tactical/10 flex items-center justify-center rounded-full text-brand-tactical">
                         <UserPlus size={14} />
                       </div>
-                      <span className="text-[10px] font-black text-white lowercase">{lead.email}</span>
+                      <span className="text-[10px] font-black text-theme-text lowercase">{lead.email}</span>
                     </div>
                   </td>
-                  <td className="p-6 text-[9px] font-black uppercase tracking-widest text-zinc-400">
+                  <td className="p-6 text-[9px] font-black uppercase tracking-widest text-theme-text-muted">
                     {lead.event?.nomeNoivos || 'Captação Geral'}
                   </td>
-                  <td className="p-6 text-[9px] font-bold text-zinc-500">
+                  <td className="p-6 text-[9px] font-bold text-theme-text-muted">
                     {new Date(lead.createdAt).toLocaleDateString('pt-BR')}
                   </td>
                   <td className="p-6">
-                    <span className="px-2 py-1 bg-white/5 border border-white/10 rounded text-[8px] font-black text-zinc-500 uppercase tracking-widest">{lead.source}</span>
+                    <span className="px-2 py-1 bg-theme-bg border border-theme-border rounded text-[8px] font-black text-theme-text-muted uppercase tracking-widest">{lead.source}</span>
                   </td>
                   <td className="p-6 text-right">
                     <button 

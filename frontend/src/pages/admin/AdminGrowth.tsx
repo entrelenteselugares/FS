@@ -66,7 +66,7 @@ export function AdminGrowth() {
             key={tab.id}
             onClick={() => setActiveTab(tab.id as any)}
             className={`flex items-center gap-2 px-6 py-4 text-[10px] font-black uppercase tracking-widest whitespace-nowrap transition-colors border-b-2 ${
-              activeTab === tab.id ? "border-brand-tactical text-brand-tactical" : "border-transparent text-zinc-500 hover:text-white"
+              activeTab === tab.id ? "border-brand-tactical text-brand-tactical" : "border-transparent text-theme-text-muted hover:text-theme-text"
             }`}
           >
             <tab.icon size={14} />
@@ -87,16 +87,16 @@ export function AdminGrowth() {
                </button>
             </div>
             {coupons.length === 0 ? (
-              <div className="p-12 text-center border border-dashed border-theme-border/40 rounded-xl">
-                 <p className="text-[10px] font-black text-zinc-500 uppercase tracking-widest">Nenhum cupom ativo</p>
+              <div className="p-12 text-center border border-dashed border-theme-border rounded-xl">
+                 <p className="text-[10px] font-black text-theme-text-muted uppercase tracking-widest">Nenhum cupom ativo</p>
               </div>
             ) : (
               <div className="grid md:grid-cols-2 gap-4">
                  {coupons.map(c => (
-                   <div key={c.id} className="p-6 bg-white/5 border border-white/5 rounded-2xl flex justify-between items-center">
+                   <div key={c.id} className="p-6 bg-theme-bg-muted border border-theme-border rounded-2xl flex justify-between items-center shadow-sm">
                       <div>
                         <h4 className="text-xl font-black italic text-brand-tactical uppercase tracking-widest">{c.code}</h4>
-                        <p className="text-[10px] font-bold text-zinc-400 mt-1">
+                        <p className="text-[10px] font-bold text-theme-text-muted mt-1">
                            {c.discountPct ? `${c.discountPct}% OFF` : `R$ ${c.discountAbs} OFF`} • {c.usedCount} usos
                         </p>
                       </div>
@@ -114,11 +114,11 @@ export function AdminGrowth() {
           <div className="space-y-4">
              <div className="grid md:grid-cols-2 gap-4">
                  {links.map(l => (
-                   <div key={l.id} className="p-6 bg-white/5 border border-white/5 rounded-2xl space-y-4">
+                   <div key={l.id} className="p-6 bg-theme-bg-muted border border-theme-border rounded-2xl space-y-4 shadow-sm">
                       <div className="flex justify-between items-start">
                          <div>
-                           <h4 className="text-sm font-black text-white uppercase">{l.nome}</h4>
-                           <p className="text-[10px] font-bold text-zinc-400 mt-1">{l.email}</p>
+                           <h4 className="text-sm font-black text-theme-text uppercase">{l.nome}</h4>
+                           <p className="text-[10px] font-bold text-theme-text-muted mt-1">{l.email}</p>
                          </div>
                          <span className="px-2 py-1 text-[8px] font-black uppercase rounded bg-brand-tactical/20 text-brand-tactical">
                            {l.affiliatePayoutType}
@@ -132,9 +132,9 @@ export function AdminGrowth() {
                          />
                          <button 
                            onClick={() => copyToClipboard(`${window.location.origin}?ref=${l.id}`, l.id)}
-                           className="p-3 bg-white/10 hover:bg-white/20 rounded-xl transition-colors"
+                           className="p-3 bg-theme-text/5 hover:bg-theme-text/10 rounded-xl transition-colors"
                          >
-                           {copied === l.id ? <Check size={14} className="text-emerald-500" /> : <Copy size={14} className="text-white" />}
+                           {copied === l.id ? <Check size={14} className="text-emerald-500" /> : <Copy size={14} className="text-theme-text" />}
                          </button>
                       </div>
                    </div>
@@ -142,22 +142,22 @@ export function AdminGrowth() {
               </div>
           </div>
         ) : (
-          <div className="p-8 border border-white/5 bg-white/5 rounded-3xl flex flex-col md:flex-row gap-8 items-center justify-center min-h-[400px]">
+          <div className="p-8 border border-theme-border bg-theme-bg-muted/50 rounded-3xl flex flex-col md:flex-row gap-8 items-center justify-center min-h-[400px]">
              {waStatus?.connected ? (
                <div className="text-center space-y-6">
                  <div className="w-24 h-24 bg-emerald-500/10 rounded-full flex items-center justify-center mx-auto">
                     <Phone size={40} className="text-emerald-500" />
                  </div>
                  <div>
-                    <h3 className="text-2xl font-black italic text-white uppercase">WhatsApp Conectado</h3>
+                    <h3 className="text-2xl font-black italic text-theme-text uppercase">WhatsApp Conectado</h3>
                     <p className="text-[10px] font-black text-emerald-500 tracking-widest uppercase mt-2">Motor de notificações ativo</p>
                  </div>
                </div>
              ) : waStatus?.qrCode ? (
                <div className="text-center space-y-6">
                  <div>
-                    <h3 className="text-2xl font-black italic text-white uppercase">Conectar Aparelho</h3>
-                    <p className="text-[10px] font-black text-zinc-400 tracking-widest uppercase mt-2">Leia o QR Code com seu WhatsApp para ativar as automações de carrinho</p>
+                    <h3 className="text-2xl font-black italic text-theme-text uppercase">Conectar Aparelho</h3>
+                    <p className="text-[10px] font-black text-theme-text-muted tracking-widest uppercase mt-2">Leia o QR Code com seu WhatsApp para ativar as automações de carrinho</p>
                  </div>
                  <div className="p-4 bg-white inline-block rounded-2xl mx-auto shadow-2xl">
                     <QRCodeSVG value={waStatus.qrCode} size={256} />
@@ -166,8 +166,8 @@ export function AdminGrowth() {
                </div>
              ) : (
                <div className="text-center space-y-4">
-                  <p className="text-[10px] font-black text-zinc-500 uppercase tracking-widest">Motor de WhatsApp Offline</p>
-                  <button onClick={fetchData} className="px-6 py-3 bg-brand-tactical text-black text-[10px] font-black uppercase tracking-widest">Tentar Iniciar Sessão</button>
+                  <p className="text-[10px] font-black text-theme-text-muted uppercase tracking-widest">Motor de WhatsApp Offline</p>
+                  <button onClick={fetchData} className="px-6 py-3 bg-brand-tactical text-brand-text text-[10px] font-black uppercase tracking-widest">Tentar Iniciar Sessão</button>
                </div>
              )}
           </div>
