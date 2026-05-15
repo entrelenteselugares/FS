@@ -107,11 +107,18 @@ export default function AdminInventory() {
 
   return (
     <div className="space-y-10 animate-in fade-in duration-700 pb-20">
-      {/* Header */}
-      <div className="flex flex-col md:flex-row md:items-end justify-between gap-6 border-b border-theme-border pb-10">
-        <div>
-          <h2 className="text-4xl font-black text-theme-text uppercase tracking-tighter italic">Estoque Central</h2>
-          <p className="text-[10px] text-theme-muted uppercase tracking-[0.5em] mt-2 font-black italic text-brand-tactical">Matriz & Suprimentos da Rede</p>
+      {/* Header Padronizado */}
+      <div className="flex flex-col md:flex-row md:items-center justify-between border-b border-theme-border pb-10 gap-6">
+        <div className="space-y-4">
+          <h1 className="text-4xl md:text-6xl font-heading font-black text-theme-text uppercase tracking-tighter italic leading-none">
+            Estoque <span className="text-brand-tactical">Central</span>
+          </h1>
+          <div className="flex items-center gap-4">
+            <div className="h-1 w-12 bg-brand-tactical" />
+            <p className="text-[11px] font-black text-brand-tactical uppercase tracking-[0.4em] italic">
+              Matriz & Suprimentos da Rede
+            </p>
+          </div>
         </div>
         <button 
           onClick={() => setShowCreateModal(true)}
