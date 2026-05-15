@@ -13,7 +13,7 @@ export const PushNotificationManager: React.FC = () => {
   );
   const [showPrompt, setShowPrompt] = useState(false);
 
-  const timerRef = React.useRef<NodeJS.Timeout | null>(null);
+  const timerRef = React.useRef<any>(null);
 
   const checkSubscription = useCallback(async () => {
     if (!("serviceWorker" in navigator)) {
@@ -25,24 +25,30 @@ export const PushNotificationManager: React.FC = () => {
     if (dismissed === "true") return;
 
     console.log("[PUSH] Checking subscription...");
-    const registration = await navigator.serviceWorker.ready;
-    const subscription = await registration.pushManager.getSubscription();
-    setIsSubscribed(!!subscription);
-    
-    if (!subscription && user && Notification.permission === "default") {
-      console.log("[PUSH] Showing prompt in 5s...");
-      if (!VAPID_PUBLIC_KEY) {
-        console.warn("[PUSH] VITE_VAPID_PUBLIC_KEY not set — prompt suppressed");
-        return;
-      }
+    try {
+      const registration = await navigator.serviceWorker.ready;
+      const subscription = await registration.pushManager.getSubscription();
+      setIsSubscribed(!!subscription);
       
-      if (timerRef.current) clearTimeout(timerRef.current);
-      timerRef.current = setTimeout(() => setShowPrompt(true), 5000);
+      if (!subscription && user && Notification.permission === "default") {
+        console.log("[PUSH] Showing prompt in 5s...");
+        if (!VAPID_PUBLIC_KEY) {
+          console.warn("[PUSH] VITE_VAPID_PUBLIC_KEY not set — prompt suppressed");
+          return;
+        }
+        
+        if (timerRef.current) clearTimeout(timerRef.current);
+        timerRef.current = setTimeout(() => setShowPrompt(true), 5000);
+      }
+    } catch (err) {
+      console.error("[PUSH] Error checking subscription", err);
     }
   }, [user]);
 
   useEffect(() => {
-    checkSubscription();
+    if ("Notification" in window) {
+      checkSubscription();
+    }
     return () => {
       if (timerRef.current) clearTimeout(timerRef.current);
     };

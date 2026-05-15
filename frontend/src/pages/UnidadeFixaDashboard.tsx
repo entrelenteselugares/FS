@@ -987,7 +987,7 @@ export default function UnidadeFixaDashboard() {
               <div className="relative z-10 space-y-6">
                 <h3 className="text-2xl font-heading font-black text-theme-text uppercase italic tracking-tight">Monitor de Operação Phygital</h3>
                 <p className="text-[11px] font-bold text-theme-muted uppercase tracking-[0.2em] leading-relaxed max-w-3xl">
-                  Acompanhe em tempo real a fila de impressão de cada evento. Gerencie capturas pendentes e garanta a entrega instantÃƒÂ¢nea das memórias físicas.
+                  Acompanhe em tempo real a fila de impressão de cada evento. Gerencie capturas pendentes e garanta a entrega instantânea das memórias físicas.
                 </p>
               </div>
             </div>
@@ -1029,7 +1029,7 @@ export default function UnidadeFixaDashboard() {
           </div>
         )}
 
-        {/* Ã¢â€â‚¬Ã¢â€â‚¬ CONFIGURAÃƒâ€¡Ãƒâ€¢ES Ã¢â€â‚¬Ã¢â€â‚¬ */}
+        {/* ── CONFIGURAÇÕES ── */}
         {tab === "configuracoes" && (
           <div className="space-y-12">
             {/* Header / Intro */}
@@ -1038,7 +1038,7 @@ export default function UnidadeFixaDashboard() {
                 <Settings size={120} />
               </div>
               <div className="relative z-10 space-y-4">
-                <h3 className="text-2xl font-heading font-black text-theme-text uppercase italic tracking-tight">Diretrizes e ParÃƒÂ¢metros</h3>
+                <h3 className="text-2xl font-heading font-black text-theme-text uppercase italic tracking-tight">Diretrizes e Parâmetros</h3>
                 <p className="text-[11px] font-bold text-theme-muted uppercase tracking-[0.2em] leading-relaxed max-w-3xl">
                   Configure os vetores estratégicos da sua unidade, desde a liquidação financeira (PIX) até o catálogo técnico de Serviços e presença digital.
                 </p>
@@ -1075,7 +1075,7 @@ export default function UnidadeFixaDashboard() {
               </div>
             </div>
 
-            {/* PREÃƒâ€¡OS LOCAIS - TABELA TÃƒâ€°CNICA */}
+            {/* PREÇOS LOCAIS - TABELA TÉCNICA */}
             <div className="space-y-10">
               <div className="flex items-center gap-6">
                 <h4 className="text-[11px] font-black text-theme-text uppercase tracking-[0.6em] italic whitespace-nowrap">Catálogo Técnico</h4>
@@ -1138,7 +1138,7 @@ export default function UnidadeFixaDashboard() {
               </div>
             </div>
 
-            {/* SEO & LANDING - PRESENÃƒâ€¡A DIGITAL */}
+            {/* SEO & LANDING - PRESENÇA DIGITAL */}
             <div className="lux-card p-10 space-y-12 bg-theme-bg-muted/10 border-l-4 border-l-theme-text">
                <div className="flex flex-col md:flex-row justify-between items-end gap-6 border-b border-theme-border/40 pb-10">
                   <div className="space-y-3">
@@ -1187,8 +1187,8 @@ export default function UnidadeFixaDashboard() {
                   <div className="md:col-span-2 bg-theme-bg-muted/30 p-8 border border-theme-border/40 space-y-8">
                      <div className="flex flex-col sm:flex-row items-center justify-between gap-8">
                         <div className="space-y-1">
-                          <p className="text-[10px] font-black text-theme-text uppercase italic">ParÃƒÂ¢metros de Cobertura</p>
-                          <p className="text-[8px] font-bold text-theme-muted uppercase tracking-widest">Configuração padrão de tempo e visibilidade do cronÃƒÂ´metro.</p>
+                          <p className="text-[10px] font-black text-theme-text uppercase italic">Parâmetros de Cobertura</p>
+                          <p className="text-[8px] font-bold text-theme-muted uppercase tracking-widest">Configuração padrão de tempo e visibilidade do cronômetro.</p>
                         </div>
                         <div className="flex items-center gap-6">
                            <div className="flex items-center gap-4 bg-theme-bg px-5 py-2 border border-theme-border shadow-inner">
