@@ -1,0 +1,1 @@
+var e=(e=0)=>new Intl.NumberFormat(`pt-BR`,{style:`currency`,currency:`BRL`}).format(e),t=e=>e?e.includes(`T`)?new Date(e):new Date(e.replace(/-/g,`/`)):new Date(NaN),n=e=>{if(!e)return`—`;let n=t(e);return isNaN(n.getTime())?`—`:new Intl.DateTimeFormat(`pt-BR`,{day:`2-digit`,month:`short`,year:`numeric`}).format(n).toUpperCase()};export{n,t as r,e as t};

@@ -10,16 +10,16 @@ datasource db {
 }
 
 model User {
-  id                 String                  @id @default(cuid())
-  email              String                  @unique
+  id                 String    @id @default(cuid())
+  email              String    @unique
   senha              String
   nome               String
-  role               Role                    @default(CLIENTE)
+  role               Role      @default(CLIENTE)
   whatsapp           String?
   address            String?
-  active             Boolean                 @default(true)
-  createdAt          DateTime                @default(now())
-  updatedAt          DateTime                @updatedAt
+  active             Boolean   @default(true)
+  createdAt          DateTime  @default(now())
+  updatedAt          DateTime  @updatedAt
   mpUserId           String?
   mpAccessToken      String?
   mpPublicKey        String?
@@ -29,49 +29,49 @@ model User {
   acceptedTermsAt    DateTime?
   resetToken         String?
   resetTokenExpires  DateTime?
-  isVerified         Boolean                 @default(false)
-  profileComplete    Boolean                 @default(false)
+  isVerified         Boolean   @default(false)
+  profileComplete    Boolean   @default(false)
   profileImageUrl    String?
   verificationDocs   Json?
-  verificationStatus String                  @default("PENDING")
-  referralCode       String?                 @unique
-  rewardCredits      Decimal                 @default(0) @db.Decimal(10, 2)
-  
-  // B2B White-Label / Tenant Settings
-  tenantLogoUrl      String?
-  tenantBrandColor   String?
-  discoverySource    String?
+  verificationStatus String    @default("PENDING")
+  referralCode       String?   @unique
+  rewardCredits      Decimal   @default(0) @db.Decimal(10, 2)
 
-  referralCampaigns  ReferralCampaign[]
-  calendarSlots      CalendarSlot[]
-  cartorio           Cartorio?
-  eventsCaptacao     Event[]                 @relation("CaptacaoEvents")
-  eventsCartorio     Event[]                 @relation("CartorioUserEvents")
-  eventsEdicao       Event[]                 @relation("EdicaoEvents")
-  franchiseProfile   FranchiseProfile?
-  gamificationLogs   GamificationLedger[]
-  pedidos            Order[]                 @relation("ClienteOrders")
-  ordersToEdit       Order[]                 @relation("EditorOrders")
-  passiveCommissions Order[]                 @relation("FranchiseePassiveCommissions")
-  likes              PhotoLike[]
-  redemptions        PrintRedemption[]
-  favoritedBy        ProfessionalNetwork[]   @relation("FavoritedBy")
-  favorites          ProfessionalNetwork[]   @relation("UserFavorites")
-  profissional       Profissional?
-  calendarCredential UserCalendarCredential?
-  points             UserPoints?
-  ownedAlbums        SharedAlbum[]           @relation("OwnedAlbums")
-  albumMemberships   AlbumMember[]
-  sharedAlbumMedia   SharedAlbumMedia[]
-  mediaVotes         MediaVote[]
-  subscriptions      Subscription[]
-  flashCards         FlashCard[]
-  phygitalPrints     PhygitalPrint[]         @relation("UserPhygitalPrints")
-  supplyOrders       SupplyOrder[]           @relation("FranchiseeSupplyOrders")
-  notifications      Notification[]
-  pushSubscriptions  PushSubscription[]
-  ambassadorOrders   Order[]                 @relation("AmbassadorOrders")
-  affiliatePayoutType String                 @default("CREDIT")
+  // B2B White-Label / Tenant Settings
+  tenantLogoUrl    String?
+  tenantBrandColor String?
+  discoverySource  String?
+
+  referralCampaigns   ReferralCampaign[]
+  calendarSlots       CalendarSlot[]
+  cartorio            Cartorio?
+  eventsCaptacao      Event[]                 @relation("CaptacaoEvents")
+  eventsCartorio      Event[]                 @relation("CartorioUserEvents")
+  eventsEdicao        Event[]                 @relation("EdicaoEvents")
+  franchiseProfile    FranchiseProfile?
+  gamificationLogs    GamificationLedger[]
+  pedidos             Order[]                 @relation("ClienteOrders")
+  ordersToEdit        Order[]                 @relation("EditorOrders")
+  passiveCommissions  Order[]                 @relation("FranchiseePassiveCommissions")
+  likes               PhotoLike[]
+  redemptions         PrintRedemption[]
+  favoritedBy         ProfessionalNetwork[]   @relation("FavoritedBy")
+  favorites           ProfessionalNetwork[]   @relation("UserFavorites")
+  profissional        Profissional?
+  calendarCredential  UserCalendarCredential?
+  points              UserPoints?
+  ownedAlbums         SharedAlbum[]           @relation("OwnedAlbums")
+  albumMemberships    AlbumMember[]
+  sharedAlbumMedia    SharedAlbumMedia[]
+  mediaVotes          MediaVote[]
+  subscriptions       Subscription[]
+  flashCards          FlashCard[]
+  phygitalPrints      PhygitalPrint[]         @relation("UserPhygitalPrints")
+  supplyOrders        SupplyOrder[]           @relation("FranchiseeSupplyOrders")
+  notifications       Notification[]
+  pushSubscriptions   PushSubscription[]
+  ambassadorOrders    Order[]                 @relation("AmbassadorOrders")
+  affiliatePayoutType String                  @default("CREDIT")
 
   @@map("users")
 }
@@ -115,29 +115,29 @@ model ProfessionalNetwork {
 }
 
 model Event {
-  id                 String              @id @default(cuid())
-  nomeNoivos         String
-  dataEvento         DateTime
-  cartorio           String?
-  coverPhotoUrl      String?
-  lightroomUrl       String?
-  driveUrl           String?
-  createdAt          DateTime            @default(now())
-  updatedAt          DateTime            @updatedAt
-  cartorioUserId     String?
-  priceBase          Decimal             @default(190) @db.Decimal(10, 2)
-  priceEarly         Decimal             @default(190) @db.Decimal(10, 2)
-  captacaoId         String?
-  edicaoId           String?
-  active             Boolean             @default(false)
-  city               String?
-  description        String?
-  location           String?
-  slug               String?             @unique
+  id             String   @id @default(cuid())
+  nomeNoivos     String
+  dataEvento     DateTime
+  cartorio       String?
+  coverPhotoUrl  String?
+  lightroomUrl   String?
+  driveUrl       String?
+  createdAt      DateTime @default(now())
+  updatedAt      DateTime @updatedAt
+  cartorioUserId String?
+  priceBase      Decimal  @default(190) @db.Decimal(10, 2)
+  priceEarly     Decimal  @default(190) @db.Decimal(10, 2)
+  captacaoId     String?
+  edicaoId       String?
+  active         Boolean  @default(false)
+  city           String?
+  description    String?
+  location       String?
+  slug           String?  @unique
 
   // Custom Branding Override (B2B)
-  customLogoUrl     String?
-  customBrandColor  String?
+  customLogoUrl    String?
+  customBrandColor String?
 
   temFoto            Boolean             @default(true)
   temFotoImpressa    Boolean             @default(false)
@@ -203,19 +203,19 @@ model Event {
 }
 
 model Coupon {
-  id          String   @id @default(cuid())
-  code        String   @unique
-  discountPct Decimal? @db.Decimal(5, 2)
-  discountAbs Decimal? @db.Decimal(10, 2)
+  id          String    @id @default(cuid())
+  code        String    @unique
+  discountPct Decimal?  @db.Decimal(5, 2)
+  discountAbs Decimal?  @db.Decimal(10, 2)
   maxUses     Int?
-  usedCount   Int      @default(0)
-  active      Boolean  @default(true)
+  usedCount   Int       @default(0)
+  active      Boolean   @default(true)
   expiresAt   DateTime?
   eventId     String?
-  createdAt   DateTime @default(now())
-  
-  orders      Order[]
-  event       Event?   @relation(fields: [eventId], references: [id])
+  createdAt   DateTime  @default(now())
+
+  orders Order[]
+  event  Event?  @relation(fields: [eventId], references: [id])
 
   @@map("coupons")
 }
@@ -226,10 +226,10 @@ model PhygitalPrint {
   imageUrl           String
   customerName       String
   customerPhone      String
-  customerEmail      String?           // Lead capture/Identification
-  customerCep        String?           // Opcional agora
+  customerEmail      String? // Lead capture/Identification
+  customerCep        String? // Opcional agora
   eventId            String
-  userId             String?           // Link to system user if logged in
+  userId             String? // Link to system user if logged in
   createdAt          DateTime          @default(now())
   updatedAt          DateTime          @updatedAt
   franchiseProfileId String?
@@ -266,6 +266,7 @@ model Profissional {
   proServices           ProfessionalService[]
   user                  User                   @relation(fields: [userId], references: [id])
   serviceBookings       ServiceBooking[]
+  albums                PortfolioAlbum[]
 
   @@map("profissionais")
 }
@@ -315,61 +316,61 @@ model CartorioProfissional {
 }
 
 model Order {
-  id                  String              @id @default(cuid())
-  valor               Decimal             @db.Decimal(10, 2)
-  status              String              @default("PENDENTE")
-  paymentId           String?             @unique
-  createdAt           DateTime            @default(now())
-  updatedAt           DateTime            @updatedAt
-  clienteId           String?
-  eventId             String
-  buyerEmail          String?
-  splitCaptacao       Decimal?            @db.Decimal(10, 2)
-  splitCartorio       Decimal?            @db.Decimal(10, 2)
-  splitEdicao         Decimal?            @db.Decimal(10, 2)
-  splitMatriz         Decimal?            @db.Decimal(10, 2)
-  accessChosenAt      DateTime?
-  accessExpiresAt     DateTime?
-  accessType          String?
-  deletedAt           DateTime?
-  warningsSent        Int                 @default(0)
-  contributorName     String?
-  isContribution      Boolean             @default(false)
-  hasPaid             Boolean             @default(false)
-  tempPassword        String?
-  showAlbum           Boolean             @default(true)
-  showVideo           Boolean             @default(true)
-  isManual            Boolean             @default(false)
-  manualType          String?
-  buyerWhatsapp       String?
-  internalNotes       String?
-  editorId            String?
-  deliveryType        DeliveryType        @default(DIGITAL_ONLY)
-  guestEmail          String?
-  guestPhone          String?
-  guestToken          String?             @unique
-  isGuestOrder        Boolean             @default(false)
-  paymentMethod       OrderPaymentMethod?
-  paymentModel        PaymentModel        @default(PRE_PAID)
-  shippingAddress     Json?
-  shippingFee         Decimal?            @db.Decimal(10, 2)
-  payoutPaidAt        DateTime?
-  payoutReadyAt       DateTime?
-  payoutStatus        PayoutStatus        @default(PENDING)
-  fulfillmentStatus   FulfillmentStatus   @default(PENDING)
-  trackingCode        String?
-  passiveFranchiseeId String?
-  splitFranchisee     Decimal?            @db.Decimal(10, 2)
-  rewardsUsed         Decimal?            @db.Decimal(10, 2)
-  couponId            String?
-  ambassadorId        String?
-  items               OrderItem[]
-  cliente             User?               @relation("ClienteOrders", fields: [clienteId], references: [id])
-  editor              User?               @relation("EditorOrders", fields: [editorId], references: [id])
-  event               Event               @relation(fields: [eventId], references: [id])
-  passiveFranchisee   User?               @relation("FranchiseePassiveCommissions", fields: [passiveFranchiseeId], references: [id])
-  ambassador          User?               @relation("AmbassadorOrders", fields: [ambassadorId], references: [id])
-  coupon              Coupon?             @relation(fields: [couponId], references: [id])
+  id                   String              @id @default(cuid())
+  valor                Decimal             @db.Decimal(10, 2)
+  status               String              @default("PENDENTE")
+  paymentId            String?             @unique
+  createdAt            DateTime            @default(now())
+  updatedAt            DateTime            @updatedAt
+  clienteId            String?
+  eventId              String
+  buyerEmail           String?
+  splitCaptacao        Decimal?            @db.Decimal(10, 2)
+  splitCartorio        Decimal?            @db.Decimal(10, 2)
+  splitEdicao          Decimal?            @db.Decimal(10, 2)
+  splitMatriz          Decimal?            @db.Decimal(10, 2)
+  accessChosenAt       DateTime?
+  accessExpiresAt      DateTime?
+  accessType           String?
+  deletedAt            DateTime?
+  warningsSent         Int                 @default(0)
+  contributorName      String?
+  isContribution       Boolean             @default(false)
+  hasPaid              Boolean             @default(false)
+  tempPassword         String?
+  showAlbum            Boolean             @default(true)
+  showVideo            Boolean             @default(true)
+  isManual             Boolean             @default(false)
+  manualType           String?
+  buyerWhatsapp        String?
+  internalNotes        String?
+  editorId             String?
+  deliveryType         DeliveryType        @default(DIGITAL_ONLY)
+  guestEmail           String?
+  guestPhone           String?
+  guestToken           String?             @unique
+  isGuestOrder         Boolean             @default(false)
+  paymentMethod        OrderPaymentMethod?
+  paymentModel         PaymentModel        @default(PRE_PAID)
+  shippingAddress      Json?
+  shippingFee          Decimal?            @db.Decimal(10, 2)
+  payoutPaidAt         DateTime?
+  payoutReadyAt        DateTime?
+  payoutStatus         PayoutStatus        @default(PENDING)
+  fulfillmentStatus    FulfillmentStatus   @default(PENDING)
+  trackingCode         String?
+  passiveFranchiseeId  String?
+  splitFranchisee      Decimal?            @db.Decimal(10, 2)
+  rewardsUsed          Decimal?            @db.Decimal(10, 2)
+  couponId             String?
+  ambassadorId         String?
+  items                OrderItem[]
+  cliente              User?               @relation("ClienteOrders", fields: [clienteId], references: [id])
+  editor               User?               @relation("EditorOrders", fields: [editorId], references: [id])
+  event                Event               @relation(fields: [eventId], references: [id])
+  passiveFranchisee    User?               @relation("FranchiseePassiveCommissions", fields: [passiveFranchiseeId], references: [id])
+  ambassador           User?               @relation("AmbassadorOrders", fields: [ambassadorId], references: [id])
+  coupon               Coupon?             @relation(fields: [couponId], references: [id])
   abandonedEmailSentAt DateTime?
 
   @@map("orders")
@@ -423,19 +424,19 @@ model ProfessionalService {
 }
 
 model EventMedia {
-  id         String      @id @default(cuid())
-  eventId    String
-  url        String
-  shortId    String
-  price      Decimal?    @db.Decimal(10, 2)
-  type       String      @default("PHOTO")
-  
+  id      String   @id @default(cuid())
+  eventId String
+  url     String
+  shortId String
+  price   Decimal? @db.Decimal(10, 2)
+  type    String   @default("PHOTO")
+
   // AI Curation
   aiScore          Float?
-  aiTags           String[]    @default([])
-  aiAnalysisStatus String      @default("PENDING") // PENDING, ANALYZED, FAILED, APPROVED, REJECTED
-  metadata         Json?       @default("{}") // Store vertical data like {studentId: "123", bib: "500"}
-  
+  aiTags           String[] @default([])
+  aiAnalysisStatus String   @default("PENDING") // PENDING, ANALYZED, FAILED, APPROVED, REJECTED
+  metadata         Json?    @default("{}") // Store vertical data like {studentId: "123", bib: "500"}
+
   createdAt  DateTime    @default(now())
   event      Event       @relation(fields: [eventId], references: [id], onDelete: Cascade)
   orderItems OrderItem[]
@@ -612,11 +613,11 @@ model Notification {
   id        String   @id @default(cuid())
   userId    String
   user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
-  type      String   // QUOTE_RECEIVED | QUOTE_PRICED | PAYMENT_CONFIRMED | GENERAL
+  type      String // QUOTE_RECEIVED | QUOTE_PRICED | PAYMENT_CONFIRMED | GENERAL
   title     String
   body      String
-  refId     String?  // eventId or orderId for deep-link
-  refType   String?  // "event" | "order"
+  refId     String? // eventId or orderId for deep-link
+  refType   String? // "event" | "order"
   read      Boolean  @default(false)
   createdAt DateTime @default(now())
 
@@ -626,51 +627,51 @@ model Notification {
 }
 
 model PrintProduct {
-  id           String              @id @default(cuid())
+  id           String   @id @default(cuid())
   category     String
   name         String
-  sku          String              @unique
-  supplierCost Decimal             @db.Decimal(10, 2)
-  supplier     String              @default("CK")
-  active       Boolean             @default(true)
-  marginPct    Float               @default(30)
-  sellingPrice Decimal?            @db.Decimal(10, 2)
+  sku          String   @unique
+  supplierCost Decimal  @db.Decimal(10, 2)
+  supplier     String   @default("CK")
+  active       Boolean  @default(true)
+  marginPct    Float    @default(30)
+  sellingPrice Decimal? @db.Decimal(10, 2)
   description  String?
-  unit         String              @default("un")
+  unit         String   @default("un")
   minQty       Int?
   maxQty       Int?
-  createdAt    DateTime            @default(now())
-  updatedAt    DateTime            @updatedAt
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
   maxPhotos    Int?
-  
+
   // Logistics & Routing Flags
-  weightKg         Decimal?            @db.Decimal(10, 3)
-  widthCm          Decimal?            @db.Decimal(10, 2)
-  heightCm         Decimal?            @db.Decimal(10, 2)
-  lengthCm         Decimal?            @db.Decimal(10, 2)
-  fulfillmentType  String              @default("LAB") // "INSTANT_PRINT" or "LAB"
-  supplierId       String?
-  
-  stockLevel       Int                 @default(0)
-  stockType        String              @default("PROPRIO") // PROPRIO, FORNECEDOR, AMBOS
-  externalLink     String?             // Link para afiliado/dropshipping (ex: Mercado Livre)
-  
-  orderItems      OrderItem[]
-  events          EventPrintProduct[]
-  printSupplier   PrintSupplier?      @relation(fields: [supplierId], references: [id])
-  stockMovements  StockMovement[]
+  weightKg        Decimal? @db.Decimal(10, 3)
+  widthCm         Decimal? @db.Decimal(10, 2)
+  heightCm        Decimal? @db.Decimal(10, 2)
+  lengthCm        Decimal? @db.Decimal(10, 2)
+  fulfillmentType String   @default("LAB") // "INSTANT_PRINT" or "LAB"
+  supplierId      String?
+
+  stockLevel   Int     @default(0)
+  stockType    String  @default("PROPRIO") // PROPRIO, FORNECEDOR, AMBOS
+  externalLink String? // Link para afiliado/dropshipping (ex: Mercado Livre)
+
+  orderItems     OrderItem[]
+  events         EventPrintProduct[]
+  printSupplier  PrintSupplier?      @relation(fields: [supplierId], references: [id])
+  stockMovements StockMovement[]
 
   @@map("print_products")
 }
 
 model StockMovement {
-  id              String       @id @default(cuid())
-  productId       String
-  quantity        Int          // Positivo para entrada, negativo para saída
-  type            String       // PURCHASE (entrada), SALE (venda franqueado), ADJUSTMENT (manual)
-  description     String?
-  createdAt       DateTime     @default(now())
-  product         PrintProduct @relation(fields: [productId], references: [id], onDelete: Cascade)
+  id          String       @id @default(cuid())
+  productId   String
+  quantity    Int // Positivo para entrada, negativo para saída
+  type        String // PURCHASE (entrada), SALE (venda franqueado), ADJUSTMENT (manual)
+  description String?
+  createdAt   DateTime     @default(now())
+  product     PrintProduct @relation(fields: [productId], references: [id], onDelete: Cascade)
 
   @@map("stock_movements")
 }
@@ -729,7 +730,7 @@ model FranchiseProfile {
   userId                  String              @unique
   printCredits            Int                 @default(0)
   active                  Boolean             @default(true)
-  baseCep                 String?             // Para roteamento logístico por proximidade
+  baseCep                 String? // Para roteamento logístico por proximidade
   createdAt               DateTime            @default(now())
   updatedAt               DateTime            @updatedAt
   inventoryAlertThreshold Int                 @default(50)
@@ -739,7 +740,7 @@ model FranchiseProfile {
   hideFromBooking         Boolean             @default(false)
   printServices           Json?               @default("[]")
   capacityFlags           Json?               @default("{}") // ex: {"canPrintPremium": true, "canPrintAlbum": false}
-  servedZipPrefixes       String[]            @default([])   // ex: ["010", "011"]
+  servedZipPrefixes       String[]            @default([]) // ex: ["010", "011"]
   transactions            CreditTransaction[]
   events                  Event[]
   user                    User                @relation(fields: [userId], references: [id])
@@ -762,19 +763,19 @@ model CreditTransaction {
 }
 
 model ReferralCampaign {
-  id          String   @id @default(cuid())
-  ownerId     String
-  name        String
-  slug        String   @unique // ex: "campanha-natal"
-  rewardType  String   @default("CREDIT") // CREDIT, CASH
-  rewardValue Decimal  @db.Decimal(10, 2)
-  trigger     String   @default("PURCHASE") // SIGNUP, PURCHASE
+  id               String   @id @default(cuid())
+  ownerId          String
+  name             String
+  slug             String   @unique // ex: "campanha-natal"
+  rewardType       String   @default("CREDIT") // CREDIT, CASH
+  rewardValue      Decimal  @db.Decimal(10, 2)
+  trigger          String   @default("PURCHASE") // SIGNUP, PURCHASE
   targetCategories String[] @default([]) // Categorias elegíveis
   targetServices   String[] @default([]) // Serviços específicos elegíveis
-  active      Boolean  @default(true)
-  createdAt   DateTime @default(now())
-  
-  owner       User     @relation(fields: [ownerId], references: [id])
+  active           Boolean  @default(true)
+  createdAt        DateTime @default(now())
+
+  owner       User                 @relation(fields: [ownerId], references: [id])
   visits      ReferralVisit[]
   conversions ReferralConversion[]
 
@@ -782,11 +783,11 @@ model ReferralCampaign {
 }
 
 model ReferralVisit {
-  id         String   @id @default(cuid())
+  id         String           @id @default(cuid())
   campaignId String
   ip         String?
   userAgent  String?
-  createdAt  DateTime @default(now())
+  createdAt  DateTime         @default(now())
   campaign   ReferralCampaign @relation(fields: [campaignId], references: [id])
 
   @@map("referral_visits")
@@ -800,8 +801,8 @@ model ReferralConversion {
   rewardAmount Decimal  @db.Decimal(10, 2)
   status       String   @default("PENDING") // PENDING, PAID
   createdAt    DateTime @default(now())
-  
-  campaign     ReferralCampaign @relation(fields: [campaignId], references: [id])
+
+  campaign ReferralCampaign @relation(fields: [campaignId], references: [id])
 
   @@map("referral_conversions")
 }
@@ -914,18 +915,18 @@ enum FulfillmentStatus {
 }
 
 model SharedAlbum {
-  id          String   @id @default(cuid())
-  nome        String
-  slug        String   @unique
-  folderId    String?  @unique // Google Drive Folder ID
-  goalPoses          Int      @default(36)
-  status             String   @default("OPEN")
-  cycleEndDay        Int?     @default(30)
+  id                 String    @id @default(cuid())
+  nome               String
+  slug               String    @unique
+  folderId           String?   @unique // Google Drive Folder ID
+  goalPoses          Int       @default(36)
+  status             String    @default("OPEN")
+  cycleEndDay        Int?      @default(30)
   trialEndsAt        DateTime?
-  subscriptionStatus String   @default("TRIAL") // TRIAL, ACTIVE, BLOCKED, EXPIRED
+  subscriptionStatus String    @default("TRIAL") // TRIAL, ACTIVE, BLOCKED, EXPIRED
   ownerId            String
-  createdAt   DateTime @default(now())
-  updatedAt   DateTime @updatedAt
+  createdAt          DateTime  @default(now())
+  updatedAt          DateTime  @updatedAt
 
   owner        User               @relation("OwnedAlbums", fields: [ownerId], references: [id])
   members      AlbumMember[]
@@ -951,19 +952,19 @@ model AlbumMember {
 }
 
 model SharedAlbumMedia {
-  id            String   @id @default(cuid())
+  id            String  @id @default(cuid())
   albumId       String
-  fileId        String   @unique // Google Drive File ID
+  fileId        String  @unique // Google Drive File ID
   webViewLink   String
   thumbnailLink String?
   uploadedById  String
 
   // AI Curation
   aiScore          Float?
-  aiTags           String[]    @default([])
-  aiAnalysisStatus String      @default("PENDING") // PENDING, ANALYZED, FAILED, APPROVED, REJECTED
+  aiTags           String[] @default([])
+  aiAnalysisStatus String   @default("PENDING") // PENDING, ANALYZED, FAILED, APPROVED, REJECTED
 
-  createdAt     DateTime @default(now())
+  createdAt DateTime @default(now())
 
   album      SharedAlbum @relation(fields: [albumId], references: [id], onDelete: Cascade)
   uploadedBy User        @relation(fields: [uploadedById], references: [id])
@@ -1024,25 +1025,25 @@ model Subscription {
   createdAt       DateTime           @default(now())
   updatedAt       DateTime           @updatedAt
 
-  user  User        @relation(fields: [userId], references: [id])
+  user  User         @relation(fields: [userId], references: [id])
   album SharedAlbum? @relation(fields: [albumId], references: [id])
 
   @@map("subscriptions")
 }
 
 model ServiceBooking {
-  id             String       @id @default(cuid())
+  id             String   @id @default(cuid())
   clienteName    String
   clienteEmail   String
   clientePhone   String
   profissionalId String
-  status         String       @default("PENDING") // PENDING, PAID, CANCELLED
-  bookingFee     Decimal      @db.Decimal(10, 2)
+  status         String   @default("PENDING") // PENDING, PAID, CANCELLED
+  bookingFee     Decimal  @db.Decimal(10, 2)
   packageDesc    String
-  createdAt      DateTime     @default(now())
-  updatedAt      DateTime     @updatedAt
+  createdAt      DateTime @default(now())
+  updatedAt      DateTime @updatedAt
 
-  profissional   Profissional @relation(fields: [profissionalId], references: [id])
+  profissional Profissional @relation(fields: [profissionalId], references: [id])
 
   @@map("service_bookings")
 }
@@ -1063,51 +1064,79 @@ model IoTDevice {
 model FlashCard {
   id        String   @id @default(cuid())
   shortId   String   @unique
-  pin       String   // 6 dígitos
+  pin       String // 6 dígitos
   eventId   String
   mediaId   String?  @unique
   status    String   @default("UNUSED") // UNUSED, USED, CLAIMED
-  userId    String?  // Usuário que resgatou
+  userId    String? // Usuário que resgatou
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
-  
-  event     Event       @relation(fields: [eventId], references: [id], onDelete: Cascade)
-  user      User?       @relation(fields: [userId], references: [id])
-  media     EventMedia? @relation(fields: [mediaId], references: [id])
+
+  event Event       @relation(fields: [eventId], references: [id], onDelete: Cascade)
+  user  User?       @relation(fields: [userId], references: [id])
+  media EventMedia? @relation(fields: [mediaId], references: [id])
 
   @@map("flash_cards")
 }
 
 model SupplyOrder {
-  id              String             @id @default(cuid())
-  franchiseeId    String
-  total           Decimal            @db.Decimal(10, 2)
-  status          String             @default("PENDING") // PENDING, PAID, SHIPPED, CANCELLED
-  paymentMethod   String             // BALANCE, CHECKOUT
-  deliveryType    String             // MATRIZ, SHIPPING
-  address         String?
-  items           SupplyOrderItem[]
-  createdAt       DateTime           @default(now())
-  updatedAt       DateTime           @updatedAt
-  paymentId       String?            @unique // Mercado Pago ID
-  paymentLink     String?            // Mercado Pago checkout URL
-  
-  franchisee      User               @relation("FranchiseeSupplyOrders", fields: [franchiseeId], references: [id])
+  id            String            @id @default(cuid())
+  franchiseeId  String
+  total         Decimal           @db.Decimal(10, 2)
+  status        String            @default("PENDING") // PENDING, PAID, SHIPPED, CANCELLED
+  paymentMethod String // BALANCE, CHECKOUT
+  deliveryType  String // MATRIZ, SHIPPING
+  address       String?
+  items         SupplyOrderItem[]
+  createdAt     DateTime          @default(now())
+  updatedAt     DateTime          @updatedAt
+  paymentId     String?           @unique // Mercado Pago ID
+  paymentLink   String? // Mercado Pago checkout URL
 
-  trackingCode    String?            // Código de rastreio do envio
-  shippingNotes   String?            // Observações do envio (transportadora, prazo, etc.)
+  franchisee User @relation("FranchiseeSupplyOrders", fields: [franchiseeId], references: [id])
+
+  trackingCode  String? // Código de rastreio do envio
+  shippingNotes String? // Observações do envio (transportadora, prazo, etc.)
 
   @@map("supply_orders")
 }
 
 model SupplyOrderItem {
-  id              String      @id @default(cuid())
-  orderId         String
-  productId       String
-  name            String
-  price           Decimal     @db.Decimal(10, 2)
-  quantity        Int
-  order           SupplyOrder @relation(fields: [orderId], references: [id], onDelete: Cascade)
+  id        String      @id @default(cuid())
+  orderId   String
+  productId String
+  name      String
+  price     Decimal     @db.Decimal(10, 2)
+  quantity  Int
+  order     SupplyOrder @relation(fields: [orderId], references: [id], onDelete: Cascade)
 
   @@map("supply_order_items")
+}
+
+model PortfolioAlbum {
+  id             String           @id @default(cuid())
+  profissionalId String
+  title          String
+  description    String?
+  coverUrl       String?
+  category       String?
+  createdAt      DateTime         @default(now())
+  updatedAt      DateTime         @updatedAt
+  profissional   Profissional     @relation(fields: [profissionalId], references: [id], onDelete: Cascade)
+  images         PortfolioImage[]
+
+  @@map("portfolio_albums")
+}
+
+model PortfolioImage {
+  id             String         @id @default(cuid())
+  albumId        String
+  url            String
+  thumbnailUrl   String?
+  watermarkedUrl String?
+  aiTags         String[]       @default([])
+  createdAt      DateTime       @default(now())
+  album          PortfolioAlbum @relation(fields: [albumId], references: [id], onDelete: Cascade)
+
+  @@map("portfolio_images")
 }

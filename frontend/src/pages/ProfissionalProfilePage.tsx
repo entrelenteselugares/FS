@@ -133,6 +133,7 @@ export default function ProfissionalProfilePage() {
   const { id } = useParams<{ id: string }>();
   const { user } = useAuth();
   const [prof, setProf] = useState<ProfProfile | null>(null);
+  const [albums, setAlbums] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
   const [booking, setBooking] = useState<BookingState>({
     open: false, service: null, phone: "", loading: false, checkoutUrl: null
@@ -140,8 +141,14 @@ export default function ProfissionalProfilePage() {
 
   useEffect(() => {
     if (!id) return;
-    API.get(`/marketplace/profissionais/${id}`)
-      .then(r => setProf(r.data))
+    Promise.all([
+      API.get(`/marketplace/profissionais/${id}`),
+      API.get(`/portfolio/${id}/albums`).catch(() => ({ data: [] }))
+    ])
+      .then(([profRes, albumsRes]) => {
+        setProf(profRes.data);
+        setAlbums(albumsRes.data);
+      })
       .catch(console.error)
       .finally(() => setLoading(false));
   }, [id]);
@@ -370,6 +377,26 @@ export default function ProfissionalProfilePage() {
                 </motion.div>
               );
             })}
+          </div>
+        )}
+
+        {/* Portfolio Masonry */}
+        {albums.length > 0 && (
+          <div className="pt-8 space-y-8">
+            <div className="flex items-center gap-4">
+              <h2 className="text-2xl font-heading font-black text-white uppercase italic">Portfólio</h2>
+              <div className="flex-1 h-px bg-zinc-800" />
+            </div>
+            <div className="columns-1 sm:columns-2 md:columns-3 gap-4 space-y-4">
+              {albums.flatMap(album => (album.images || []).map((img: any) => (
+                <div key={img.id} className="break-inside-avoid relative group overflow-hidden bg-zinc-900 border border-zinc-800">
+                  <img src={img.watermarkedUrl || img.url} alt="Portfolio" className="w-full object-cover" />
+                  <div className="absolute bottom-0 left-0 right-0 p-4 bg-gradient-to-t from-black/80 to-transparent opacity-0 group-hover:opacity-100 transition-opacity">
+                    <p className="text-[10px] font-black text-white uppercase tracking-widest">{album.title}</p>
+                  </div>
+                </div>
+              )))}
+            </div>
           </div>
         )}
 

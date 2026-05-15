@@ -12,6 +12,7 @@ import EventPage from "./pages/EventPage";
 import { LoginPage } from "./pages/LoginPage";
 import { HomePage } from "./pages/HomePage";
 import ProfissionalDashboard from "./pages/ProfissionalDashboard";
+import PortfolioManage from "./pages/profissional/PortfolioManage";
 import { AdminDashboard } from "./pages/admin/AdminDashboard";
 import UnidadeFixaDashboard from "./pages/UnidadeFixaDashboard";
 import { AuthSelectionPage } from "./pages/AuthSelectionPage";
@@ -130,6 +131,11 @@ const AnimatedRoutes = () => {
         <Route path="/profissional" element={
           <ProtectedRoute roles={["ADMIN", "PROFISSIONAL", "FRANCHISEE"]}>
             <ProfissionalDashboard />
+          </ProtectedRoute>
+        } />
+        <Route path="/profissional/portfolio" element={
+          <ProtectedRoute roles={["ADMIN", "PROFISSIONAL", "FRANCHISEE"]}>
+            <PortfolioManage />
           </ProtectedRoute>
         } />
         <Route path="/profissional/monitor/:eventId" element={

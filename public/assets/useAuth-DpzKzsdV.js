@@ -1,0 +1,1 @@
+import{a as e}from"./rolldown-runtime-COnpUsM8.js";import{f as t}from"./charts-B3gr6jwZ.js";var n=e(t(),1),r=(0,n.createContext)(null),i=()=>{let e=(0,n.useContext)(r);if(!e)throw Error(`useAuth deve ser usado dentro de AuthProvider`);return e};export{r as n,i as t};

@@ -129,8 +129,12 @@ const upload = multer({ storage: multer.memoryStorage() });
 
 import driveAuthRoutes from "./driveAuth.routes";
 import * as PushController from "../controllers/push.controller";
+import portfolioRoutes from "./portfolioRoutes";
 
 const router = Router();
+
+// ── PORTFOLIO ───────────────────────────────────────────────────────────────
+router.use("/portfolio", portfolioRoutes);
 
 // ── PUSH NOTIFICATIONS ───────────────────────────────────────────────────────
 router.post("/push/subscribe",   requireAuth, PushController.subscribe);
