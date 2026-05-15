@@ -22,6 +22,9 @@ export default function PhygitalCapture() {
     customerPhone: '',
     customerEmail: ''
   });
+  const [password, setPassword] = useState('');
+  const [isNewUser, setIsNewUser] = useState(false);
+  const [checkingEmail, setCheckingEmail] = useState(false);
   const [loading, setLoading] = useState(false);
   const [result, setResult] = useState<{ referenceCode: string } | null>(null);
   const [error, setError] = useState('');
@@ -34,8 +37,33 @@ export default function PhygitalCapture() {
         customerPhone: user.whatsapp || '',
         customerEmail: user.email || ''
       });
+      setIsNewUser(false);
     }
   }, [user]);
+
+  const { registerExpress, login: authLogin } = useAuth();
+
+  // Debounced email check
+  useEffect(() => {
+    if (user || !formData.customerEmail || !formData.customerEmail.includes('@') || formData.customerEmail.length < 5) {
+      if (!user) setIsNewUser(false);
+      return;
+    }
+    
+    const timeout = setTimeout(async () => {
+      setCheckingEmail(true);
+      try {
+        const res = await API.get(`/public/auth/check?email=${formData.customerEmail}`);
+        setIsNewUser(!res.data.exists);
+      } catch (err) {
+        console.error("Erro ao checar email:", err);
+      } finally {
+        setCheckingEmail(false);
+      }
+    }, 800);
+
+    return () => clearTimeout(timeout);
+  }, [formData.customerEmail, user]);
 
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     if (e.target.files && e.target.files[0]) {
@@ -57,22 +85,30 @@ export default function PhygitalCapture() {
       return;
     }
 
-    // Se não estiver logado, obriga a ter cadastro
+    // Se não estiver logado, realiza cadastro ou login inline
     if (!user) {
+      if (!password) {
+        setError('Por favor, defina uma senha para proteger sua galeria.');
+        return;
+      }
+      
+      setLoading(true);
       try {
-        setLoading(true);
-        const checkRes = await API.get(`/public/auth/check?email=${formData.customerEmail}`);
-        if (!checkRes.data.exists) {
-          setError('Usuário não localizado. Direcionando para o cadastro...');
-          setTimeout(() => {
-            navigate(`/register?email=${formData.customerEmail}&nome=${formData.customerName}&role=CLIENTE`);
-          }, 2000);
-          return;
+        if (isNewUser) {
+          await registerExpress(formData.customerEmail, password, formData.customerName, formData.customerPhone);
+        } else {
+          try {
+            await authLogin(formData.customerEmail, password);
+          } catch (loginErr) {
+            setError('Senha incorreta para este e-mail. Tente novamente.');
+            setLoading(false);
+            return;
+          }
         }
-      } catch (err) {
-        console.error("Erro ao validar usuário:", err);
-      } finally {
+      } catch (err: any) {
+        setError(err.response?.data?.error || 'Erro na autenticação.');
         setLoading(false);
+        return;
       }
     }
 
@@ -234,9 +270,8 @@ export default function PhygitalCapture() {
                 style={{ color: T.text }}
               />
             </div>
-
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-              <div>
+              <div className="relative">
                 <label className="text-[10px] font-bold uppercase tracking-[0.3em] opacity-40 ml-1 mb-2 block">E-mail Cadastrado</label>
                 <input 
                   required 
@@ -249,6 +284,11 @@ export default function PhygitalCapture() {
                   placeholder="seu@email.com"
                   style={{ color: T.text }}
                 />
+                {checkingEmail && (
+                  <div className="absolute right-4 top-[38px]">
+                    <Loader2 size={14} className="animate-spin opacity-40" />
+                  </div>
+                )}
               </div>
               <div>
                 <label className="text-[10px] font-bold uppercase tracking-[0.3em] opacity-40 ml-1 mb-2 block">WhatsApp</label>
@@ -264,6 +304,29 @@ export default function PhygitalCapture() {
                 />
               </div>
             </div>
+
+            {/* Inline Password Field for Guest/New User */}
+            {!user && (formData.customerEmail.includes('@') && formData.customerEmail.length > 5) && (
+              <div className="animate-reveal">
+                <label className="text-[10px] font-bold uppercase tracking-[0.3em] opacity-40 ml-1 mb-2 block">
+                  {isNewUser ? "Defina sua Senha (Novo Cadastro)" : "Senha de Acesso"}
+                </label>
+                <input 
+                  required 
+                  type="password" 
+                  value={password} 
+                  onChange={(e) => setPassword(e.target.value)}
+                  className="w-full bg-brand-tactical/5 border border-brand-tactical/20 p-4 rounded-xl text-sm focus:border-brand-tactical transition-all outline-none"
+                  placeholder="********"
+                  style={{ color: T.text }}
+                />
+                {isNewUser && (
+                  <p className="text-[9px] text-brand-tactical font-black uppercase tracking-widest mt-2 ml-1">
+                    ✨ Identificamos que você é novo! Sua conta será criada automaticamente.
+                  </p>
+                )}
+              </div>
+            )}
           </div>
 
           {error && (

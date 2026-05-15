@@ -76,8 +76,18 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     return data.user as AuthUser;
   };
 
+  const registerExpress = async (email: string, senha: string, nome?: string, whatsapp?: string) => {
+    const { data } = await API.post("/auth/register-express", { email, senha, nome, whatsapp });
+    localStorage.setItem("fs_token", data.token);
+    localStorage.setItem("fs_refresh_token", data.refreshToken);
+    API.defaults.headers.common["Authorization"] = `Bearer ${data.token}`;
+    setToken(data.token);
+    setUser(data.user);
+    return data.user as AuthUser;
+  };
+
   return (
-    <AuthContext.Provider value={{ user, token, login, register, logout, loading }}>
+    <AuthContext.Provider value={{ user, token, login, register, registerExpress, logout, loading }}>
       {children}
     </AuthContext.Provider>
   );

@@ -39,6 +39,7 @@ export interface AuthUser {
   estado?: string | null;
   tenantLogoUrl?: string | null;
   tenantBrandColor?: string | null;
+  profileComplete: boolean;
 }
 
 export interface AuthContextType {
@@ -46,6 +47,7 @@ export interface AuthContextType {
   token: string | null;
   login: (email: string, senha: string) => Promise<AuthUser>;
   register: (email: string, senha: string, nome: string) => Promise<AuthUser>;
+  registerExpress: (email: string, senha: string, nome?: string, whatsapp?: string) => Promise<AuthUser>;
   logout: () => void;
   loading: boolean;
 }

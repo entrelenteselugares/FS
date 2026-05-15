@@ -1,0 +1,92 @@
+name: FS Verify Pipeline
+
+on:
+  push:
+    branches: [ main ]
+  pull_request:
+    branches: [ main ]
+
+jobs:
+  verify:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Setup Node.js 20
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+
+      # ── Frontend ────────────────────────────────────────────────
+      - name: Cache frontend node_modules
+        uses: actions/cache@v4
+        with:
+          path: frontend/node_modules
+          key: frontend-${{ hashFiles('frontend/package-lock.json') }}
+          restore-keys: frontend-
+
+      - name: Install frontend deps
+        run: npm ci
+        working-directory: frontend
+
+      - name: Frontend — Type-check
+        run: npx tsc --noEmit
+        working-directory: frontend
+
+      - name: Frontend — Lint
+        run: npm run lint
+        working-directory: frontend
+
+      # ── Backend ─────────────────────────────────────────────────
+      - name: Cache backend node_modules
+        uses: actions/cache@v4
+        with:
+          path: backend/node_modules
+          key: backend-${{ hashFiles('backend/package-lock.json') }}
+          restore-keys: backend-
+
+      - name: Install backend deps
+        run: npm ci
+        working-directory: backend
+
+      - name: Backend — Generate Prisma client
+        run: npx prisma generate
+        working-directory: backend
+        env:
+          DATABASE_URL: ${{ secrets.DATABASE_URL }}
+
+      - name: Backend — Type-check
+        run: npx tsc --noEmit
+        working-directory: backend
+
+      # ── E2E (Marketplace Pipeline) ───────────────────────────────
+      - name: Cache Playwright browsers
+        uses: actions/cache@v4
+        with:
+          path: ~/.cache/ms-playwright
+          key: playwright-${{ hashFiles('package-lock.json') }}
+          restore-keys: playwright-
+
+      - name: Install Playwright browsers
+        run: npx playwright install --with-deps chromium
+
+      - name: E2E — Marketplace Unit Sale
+        run: npx playwright test e2e/marketplace/venda-unitaria.spec.ts --reporter=github
+        env:
+          DATABASE_URL:                ${{ secrets.DATABASE_URL }}
+          DIRECT_URL:                  ${{ secrets.DIRECT_URL }}
+          SUPABASE_URL:                ${{ secrets.SUPABASE_URL }}
+          SUPABASE_SERVICE_ROLE_KEY:   ${{ secrets.SUPABASE_SERVICE_ROLE_KEY }}
+          JWT_SECRET:                  ${{ secrets.JWT_SECRET }}
+          VITE_API_URL:                ${{ secrets.VITE_API_URL }}
+          MERCADO_PAGO_ACCESS_TOKEN:   ${{ secrets.MERCADO_PAGO_ACCESS_TOKEN }}
+
+      - name: Upload Playwright report on failure
+        if: failure()
+        uses: actions/upload-artifact@v4
+        with:
+          name: playwright-report
+          path: playwright-report/
+          retention-days: 7

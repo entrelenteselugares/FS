@@ -35,6 +35,16 @@
 
 ---
 
+## Phase 42: Express Registration via QR Code (EXPRESS)
+**Goal:** Create a frictionless onboarding flow for phygital capture users using email + password only.
+
+- [ ] **EXPRESS-01**: Integrated express registration form in `PhygitalCapture.tsx`.
+- [ ] **EXPRESS-02**: Backend support for email-only registration with auto-generated name.
+- [ ] **EXPRESS-03**: `profileComplete` tracking and global "Incomplete Profile" banner.
+- [ ] **EXPRESS-04**: Coupon reward system for profile completion.
+
+---
+
 ## Traceability Matrix
 | REQ-ID | Phase |
 |--------|-------|

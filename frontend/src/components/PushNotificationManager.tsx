@@ -25,6 +25,10 @@ export const PushNotificationManager: React.FC = () => {
     
     if (!subscription && user && Notification.permission === "default") {
       console.log("[PUSH] Showing prompt in 5s...");
+      if (!VAPID_PUBLIC_KEY) {
+        console.warn("[PUSH] VITE_VAPID_PUBLIC_KEY not set — prompt suppressed");
+        return;
+      }
       setTimeout(() => setShowPrompt(true), 5000);
     }
   }, [user]);
@@ -40,9 +44,14 @@ export const PushNotificationManager: React.FC = () => {
   }, [checkSubscription]);
 
   const subscribe = async () => {
+    // Close the prompt immediately (optimistic UX)
+    setShowPrompt(false);
+    if (!VAPID_PUBLIC_KEY) {
+      console.error("[PUSH] VITE_VAPID_PUBLIC_KEY is not configured.");
+      return;
+    }
     try {
       const registration = await navigator.serviceWorker.ready;
-      
       const convertedVapidKey = urlBase64ToUint8Array(VAPID_PUBLIC_KEY);
 
       const subscription = await registration.pushManager.subscribe({
@@ -57,7 +66,6 @@ export const PushNotificationManager: React.FC = () => {
 
       setIsSubscribed(true);
       setPermission("granted");
-      setShowPrompt(false);
       console.log("[PUSH] Subscribed successfully");
     } catch (err) {
       console.error("[PUSH] Subscription failed", err);

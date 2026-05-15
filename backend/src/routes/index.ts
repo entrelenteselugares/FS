@@ -286,6 +286,7 @@ router.get("/cron/abandoned-carts", async (req, res) => {
 // ── Autenticação ─────────────────────────────────────────────────────────────
 router.post("/auth/login",           AuthController.login);
 router.post("/auth/register",        AuthController.register);
+router.post("/auth/register-express", AuthController.registerExpress);
 router.post("/auth/forgot-password", AuthController.forgotPassword);
 router.post("/auth/reset-password",  AuthController.updatePassword);
 router.get("/auth/me",               requireAuth, AuthController.me);

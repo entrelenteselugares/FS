@@ -7,6 +7,7 @@ import { audit } from "../lib/audit";
 import { supabaseAdmin } from "../lib/supabase";
 import { NotificationService } from "../services/notification.service";
 import { ReferralService } from "../services/referral.service";
+import { RewardService } from "../services/reward.service";
 import crypto from "crypto";
 import { APP_URL } from "../lib/config";
 
@@ -342,10 +343,79 @@ export class AuthController {
         where: { id: userId }, 
         data: filteredData 
       });
+
+      // Gatilho de Recompensa: Se completou Nome, WhatsApp e Endereço
+      if (updated.nome && updated.whatsapp && updated.address && !updated.profileComplete) {
+        console.log(`[REWARD] Triggering profile completion reward for ${userId}`);
+        await RewardService.grantProfileCompletionReward(userId);
+        const refreshed = await prisma.user.findUnique({ where: { id: userId } });
+        return res.json(refreshed);
+      }
+
       return res.json(updated);
     } catch (error) {
       console.error("[UPDATE ME ERROR]:", error);
       return res.status(500).json({ error: "Erro ao atualizar perfil" });
+    }
+  }
+
+  static async registerExpress(req: Request, res: Response) {
+    const { email, senha, nome, whatsapp } = req.body;
+
+    if (!email || !senha) {
+      return res.status(400).json({ error: "Email e senha são obrigatórios" });
+    }
+
+    try {
+      const cleanEmail = email.toLowerCase().trim();
+      const defaultNome = nome || cleanEmail.split('@')[0];
+      const hash = await bcrypt.hash(senha, 12);
+
+      // 1. Criar no Supabase
+      const { data: authData, error: authError } = await supabaseAdmin.auth.admin.createUser({
+        email: cleanEmail,
+        password: senha,
+        email_confirm: true,
+        user_metadata: { nome: defaultNome, role: "CLIENTE" }
+      });
+
+      let sbUser = authData.user;
+
+      if (authError) {
+        if (authError.message.includes("already registered")) {
+           return res.status(409).json({ error: "Este email já possui cadastro. Faça login para continuar." });
+        }
+        throw new Error(`Erro na autenticação externa: ${authError.message}`);
+      }
+
+      if (!sbUser) throw new Error("Supabase não retornou dados do usuário.");
+
+      // 2. Criar no Prisma
+      const user = await prisma.user.create({
+        data: {
+          id: sbUser.id,
+          email: cleanEmail,
+          senha: hash,
+          nome: defaultNome,
+          role: "CLIENTE",
+          whatsapp: whatsapp || null,
+          profileComplete: false
+        }
+      });
+
+      // 3. Gerar Tokens para login imediato
+      const payload = { userId: user.id, role: user.role, nome: user.nome, email: user.email };
+      const token = generateToken(payload);
+      const refreshToken = generateRefreshToken(payload);
+
+      return res.status(201).json({
+        token,
+        refreshToken,
+        user
+      });
+    } catch (e: unknown) {
+      console.error("[REGISTER EXPRESS ERROR]:", e);
+      return res.status(500).json({ error: "Erro no registro express", details: e instanceof Error ? e.message : String(e) });
     }
   }
 
