@@ -78,7 +78,22 @@ export const AdminLeadsPage: React.FC = () => {
   }
 
   return (
-    <div className="space-y-12">
+    <div className="space-y-12 animate-in fade-in duration-500">
+      {/* Header Padronizado */}
+      <div className="flex flex-col md:flex-row md:items-center justify-between border-b border-theme-border pb-10 gap-6">
+        <div className="space-y-4">
+          <h1 className="text-4xl md:text-6xl font-heading font-black text-theme-text uppercase tracking-tighter italic leading-none">
+            CRM & <span className="text-brand-tactical">Leads</span>
+          </h1>
+          <div className="flex items-center gap-4">
+            <div className="h-1 w-12 bg-brand-tactical" />
+            <p className="text-[11px] font-black text-brand-tactical uppercase tracking-[0.4em] italic">
+              Gestão de Conversão e Automação de Vendas
+            </p>
+          </div>
+        </div>
+      </div>
+
       {/* Stats Header */}
       <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
         <div className="bg-theme-bg-muted border border-theme-border p-8 space-y-4 shadow-sm">
