@@ -49,6 +49,7 @@ export default function VaultDetailPage() {
   const [uploading, setUploading] = useState(false);
   const [uploadProgress, setUploadProgress] = useState(0);
   const [checkingOut, setCheckingOut] = useState(false);
+  const [selectedPhoto, setSelectedPhoto] = useState<Media | null>(null);
 
   const fetchVaultDetails = useCallback(async () => {
     try {
@@ -352,54 +353,6 @@ export default function VaultDetailPage() {
           </div>
         </div>
 
-        {/* Subscription / Membership Banner (Phase 13 Integration) */}
-        {(!vault.subscription || vault.subscription.status !== 'ACTIVE') ? (
-          vault.myRole === 'OWNER' && (
-            <div className="max-w-7xl mx-auto px-4 mt-4">
-              <div className="bg-gradient-to-r from-emerald-600/20 to-teal-600/20 border border-emerald-500/30 rounded-2xl p-6 flex flex-col md:flex-row items-center justify-between gap-6 backdrop-blur-md">
-                <div className="flex items-center gap-4">
-                  <div className="w-12 h-12 bg-emerald-500 rounded-full flex items-center justify-center shadow-[0_0_20px_rgba(16,185,129,0.4)]">
-                    <Zap className="text-black" size={24} fill="currentColor" />
-                  </div>
-                  <div>
-                    <h3 className="text-lg font-black uppercase italic tracking-tight">Meus Álbuns</h3>
-                    <p className="text-[11px] text-zinc-400 uppercase tracking-widest leading-relaxed max-w-md">
-                      Assine por apenas <span className="text-white font-bold">R$ 49,90/mês</span> e tenha 36 fotos impressas e entregues automaticamente todo mês baseadas nos votos da galera.
-                    </p>
-                  </div>
-                </div>
-                <button 
-                  onClick={handleSubscribe}
-                  className="w-full md:w-auto bg-emerald-500 hover:bg-emerald-400 text-black font-black uppercase tracking-widest text-[11px] px-8 py-3.5 rounded-full transition-all shadow-xl shadow-emerald-500/20 active:scale-95"
-                >
-                  Ativar Assinatura
-                </button>
-              </div>
-            </div>
-          )
-        ) : (
-          <div className="max-w-7xl mx-auto px-4 mt-4">
-            <div className="bg-zinc-900/50 border border-emerald-500/10 rounded-2xl p-4 flex items-center justify-between gap-4">
-              <div className="flex items-center gap-3">
-                <div className="w-8 h-8 bg-emerald-500/10 rounded-full flex items-center justify-center">
-                  <Star className="text-emerald-500" size={16} fill="currentColor" />
-                </div>
-                <div>
-                  <div className="flex items-center gap-2">
-                    <span className="text-[10px] font-black uppercase tracking-tight">Assinatura Ativa</span>
-                    <span className="px-2 py-0.5 bg-emerald-500 text-black text-[8px] font-black rounded-full uppercase">Premium</span>
-                  </div>
-                  <p className="text-[9px] text-zinc-500 uppercase tracking-widest">
-                    Próximo ciclo: {vault.subscription.nextBillingDate ? new Date(vault.subscription.nextBillingDate).toLocaleDateString() : '—'}
-                  </p>
-                </div>
-              </div>
-              <div className="text-right">
-                <span className="block text-[10px] font-black text-emerald-500 uppercase">36 POSES / MÊS</span>
-              </div>
-            </div>
-          </div>
-        )}
       </div>
 
       {/* Warning Banner se faltam poucos dias */}
@@ -432,6 +385,54 @@ export default function VaultDetailPage() {
         </main>
       ) : (
         <main className="max-w-7xl mx-auto px-1 py-1 md:px-4 md:py-6 pb-32 w-full">
+          {/* Subscription / Membership Banner (Phase 13 Integration) */}
+          {(!vault.subscription || vault.subscription.status !== 'ACTIVE') ? (
+            vault.myRole === 'OWNER' && (
+              <div className="mb-8">
+                <div className="bg-gradient-to-r from-emerald-600/20 to-teal-600/20 border border-emerald-500/30 rounded-2xl p-6 flex flex-col md:flex-row items-center justify-between gap-6 backdrop-blur-md">
+                  <div className="flex items-center gap-4">
+                    <div className="w-12 h-12 bg-emerald-500 rounded-full flex items-center justify-center shadow-[0_0_20px_rgba(16,185,129,0.4)]">
+                      <Zap className="text-black" size={24} fill="currentColor" />
+                    </div>
+                    <div>
+                      <h3 className="text-lg font-black uppercase italic tracking-tight">Meus Álbuns</h3>
+                      <p className="text-[11px] text-zinc-400 uppercase tracking-widest leading-relaxed max-w-md">
+                        Assine por apenas <span className="text-white font-bold">R$ 49,90/mês</span> e tenha 36 fotos impressas e entregues automaticamente todo mês baseadas nos votos da galera.
+                      </p>
+                    </div>
+                  </div>
+                  <button 
+                    onClick={handleSubscribe}
+                    className="w-full md:w-auto bg-emerald-500 hover:bg-emerald-400 text-black font-black uppercase tracking-widest text-[11px] px-8 py-3.5 rounded-full transition-all shadow-xl shadow-emerald-500/20 active:scale-95"
+                  >
+                    Ativar Assinatura
+                  </button>
+                </div>
+              </div>
+            )
+          ) : (
+            <div className="mb-8">
+              <div className="bg-zinc-900/50 border border-emerald-500/10 rounded-2xl p-4 flex items-center justify-between gap-4">
+                <div className="flex items-center gap-3">
+                  <div className="w-8 h-8 bg-emerald-500/10 rounded-full flex items-center justify-center">
+                    <Star className="text-emerald-500" size={16} fill="currentColor" />
+                  </div>
+                  <div>
+                    <div className="flex items-center gap-2">
+                      <span className="text-[10px] font-black uppercase tracking-tight">Assinatura Ativa</span>
+                      <span className="px-2 py-0.5 bg-emerald-500 text-black text-[8px] font-black rounded-full uppercase">Premium</span>
+                    </div>
+                    <p className="text-[9px] text-zinc-500 uppercase tracking-widest">
+                      Próximo ciclo: {vault.subscription.nextBillingDate ? new Date(vault.subscription.nextBillingDate).toLocaleDateString() : '—'}
+                    </p>
+                  </div>
+                </div>
+                <div className="text-right">
+                  <span className="block text-[10px] font-black text-emerald-500 uppercase">36 POSES / MÊS</span>
+                </div>
+              </div>
+            </div>
+          )}
           {uploading && (
           <div className="mb-6 p-4 bg-emerald-500/10 border border-emerald-500/20 rounded-xl flex items-center gap-4 animate-pulse">
             <Loader2 className="animate-spin text-emerald-500" size={18} />
@@ -466,7 +467,7 @@ export default function VaultDetailPage() {
                   initial={{ opacity: 0, scale: 0.9 }}
                   animate={{ opacity: 1, scale: 1 }}
                   transition={{ delay: i * 0.02 }}
-                  onClick={() => handleVote(item.id)}
+                  onClick={() => setSelectedPhoto(item)}
                   className={`relative aspect-square bg-zinc-900 overflow-hidden group cursor-pointer transition-all duration-300 ${
                     item.votedByMe ? 'ring-4 ring-emerald-500 scale-95 rounded-xl' : 'hover:opacity-90 rounded-none'
                   }`}
@@ -558,6 +559,59 @@ export default function VaultDetailPage() {
           </label>
         </div>
       </div>
+      {/* Lightbox Modal */}
+      <AnimatePresence>
+        {selectedPhoto && (
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            className="fixed inset-0 z-[200] flex items-center justify-center bg-black/95 p-4 md:p-10 backdrop-blur-sm"
+            onClick={() => setSelectedPhoto(null)}
+          >
+            <motion.div
+              initial={{ scale: 0.9, y: 20 }}
+              animate={{ scale: 1, y: 0 }}
+              exit={{ scale: 0.9, y: 20 }}
+              className="relative max-w-5xl w-full max-h-full flex flex-col items-center gap-6"
+              onClick={(e) => e.stopPropagation()}
+            >
+              <button 
+                onClick={() => setSelectedPhoto(null)}
+                className="absolute -top-12 right-0 text-white/60 hover:text-white transition-colors"
+              >
+                <Share2 size={24} className="rotate-45" /> {/* Close icon via Share2 rotation hack if X is missing */}
+                <span className="text-[10px] font-black uppercase tracking-widest ml-2">Fechar</span>
+              </button>
+
+              <div className="relative group w-full flex items-center justify-center">
+                <img 
+                  src={selectedPhoto.webViewLink || selectedPhoto.thumbnailLink} 
+                  alt="Full view" 
+                  className="max-w-full max-h-[70vh] object-contain rounded-lg shadow-2xl"
+                />
+                
+                <div className="absolute bottom-4 left-1/2 -translate-x-1/2 flex items-center gap-4">
+                   <button 
+                     onClick={() => { handleVote(selectedPhoto.id); setSelectedPhoto(prev => prev ? { ...prev, votedByMe: !prev.votedByMe, _count: { votes: prev.votedByMe ? prev._count.votes - 1 : prev._count.votes + 1 } } : null); }}
+                     className={`flex items-center gap-3 px-8 py-4 rounded-full font-black uppercase tracking-widest text-[12px] transition-all ${
+                       selectedPhoto.votedByMe ? 'bg-emerald-500 text-black' : 'bg-white/10 text-white backdrop-blur-md'
+                     }`}
+                   >
+                     <Heart size={20} fill={selectedPhoto.votedByMe ? "currentColor" : "none"} />
+                     {selectedPhoto.votedByMe ? "Votado" : "Votar nesta Pose"}
+                   </button>
+                </div>
+              </div>
+
+              <div className="text-center">
+                <p className="text-white/40 text-[10px] font-black uppercase tracking-[0.2em]">Enviada por {selectedPhoto.uploadedBy.nome}</p>
+                <p className="text-white/20 text-[9px] uppercase mt-1">{new Date(selectedPhoto.createdAt).toLocaleDateString()}</p>
+              </div>
+            </motion.div>
+          </motion.div>
+        )}
+      </AnimatePresence>
     </div>
   );
 }
