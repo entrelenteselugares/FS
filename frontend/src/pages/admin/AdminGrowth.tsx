@@ -3,26 +3,7 @@ import { Plus, Tag, Share2, Phone, Copy, Check, Activity } from "lucide-react";
 import { API } from "../../lib/api";
 import { QRCodeSVG } from "qrcode.react";
 
-interface Coupon {
-  id: string;
-  code: string;
-  discountPct?: number;
-  discountAbs?: number;
-  usedCount: number;
-  active: boolean;
-}
 
-interface Ambassador {
-  id: string;
-  nome: string;
-  email: string;
-  affiliatePayoutType: string;
-}
-
-interface WhatsAppStatus {
-  connected?: boolean;
-  qrCode?: string;
-}
 
 export function AdminGrowth() {
   const [activeTab, setActiveTab] = useState<"COUPONS" | "LINKS" | "WHATSAPP">("COUPONS");
