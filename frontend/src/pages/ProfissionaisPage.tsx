@@ -26,6 +26,7 @@ export default function ProfissionaisPage() {
   const [search, setSearch] = useState("");
   const [city, setCity] = useState("");
   const [service, setService] = useState("");
+  const [nearby, setNearby] = useState<{ lat: number; lng: number } | null>(null);
   const [debouncedSearch, setDebouncedSearch] = useState("");
 
   // Debounce search
@@ -41,6 +42,10 @@ export default function ProfissionaisPage() {
       if (debouncedSearch) params.set("search", debouncedSearch);
       if (city) params.set("city", city);
       if (service) params.set("service", service);
+      if (nearby) {
+        params.set("lat", nearby.lat.toString());
+        params.set("lng", nearby.lng.toString());
+      }
       const { data } = await API.get(`/marketplace/profissionais?${params.toString()}`);
       setProfs(data.profissionais || []);
     } catch {
@@ -51,6 +56,21 @@ export default function ProfissionaisPage() {
   }, [debouncedSearch, city, service]);
 
   useEffect(() => { fetchProfs(); }, [fetchProfs]);
+
+  const toggleNearby = () => {
+    if (nearby) {
+      setNearby(null);
+    } else {
+      if ("geolocation" in navigator) {
+        navigator.geolocation.getCurrentPosition((pos) => {
+          setNearby({ lat: pos.coords.latitude, lng: pos.coords.longitude });
+        }, (err) => {
+          console.error("GPS Error", err);
+          alert("Não foi possível obter sua localização.");
+        });
+      }
+    }
+  };
 
   const cityFromAddress = (addr: string | null) => {
     if (!addr) return null;
@@ -112,6 +132,15 @@ export default function ProfissionaisPage() {
               onChange={e => setCity(e.target.value)}
             />
           </div>
+          <button
+            onClick={toggleNearby}
+            className={`px-4 py-3 text-[10px] font-black uppercase tracking-widest transition-all border flex items-center gap-2 ${
+              nearby ? "bg-brand-tactical text-black border-brand-tactical" : "bg-zinc-900 text-zinc-400 border-zinc-800 hover:border-brand-tactical/30"
+            }`}
+          >
+            <MapPin size={14} />
+            {nearby ? "Perto de Mim: On" : "Perto de Mim"}
+          </button>
           <div className="relative">
             <Filter size={14} className="absolute left-4 top-1/2 -translate-y-1/2 text-zinc-500" />
             <select

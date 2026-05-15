@@ -34,6 +34,8 @@ interface ProfProfile {
   proServices: ProService[];
   isSubscriber: boolean;
   memberSince: string;
+  city?: string | null;
+  serviceRadiusKm?: number;
 }
 
 interface BookingState {
@@ -154,6 +156,7 @@ export default function ProfissionalProfilePage() {
   }, [id]);
 
   const cityFromAddress = (addr: string | null) => {
+    if (prof?.city) return prof.city;
     if (!addr) return null;
     const p = addr.split("|");
     return p[4] ? `${p[4]}${p[5] ? `, ${p[5]}` : ""}` : null;
@@ -254,9 +257,16 @@ export default function ProfissionalProfilePage() {
                 )}
               </div>
               {city && (
-                <p className="flex items-center gap-1.5 text-sm text-zinc-500 font-bold mt-2">
-                  <MapPin size={14} /> {city}
-                </p>
+                <div className="flex items-center gap-4">
+                  <p className="flex items-center gap-1.5 text-sm text-zinc-500 font-bold mt-2">
+                    <MapPin size={14} /> {city}
+                  </p>
+                  {prof.serviceRadiusKm && (
+                    <p className="text-[10px] text-zinc-600 font-black uppercase tracking-widest mt-2 bg-zinc-900 px-2 py-0.5 border border-zinc-800">
+                      Raio: {prof.serviceRadiusKm}km
+                    </p>
+                  )}
+                </div>
               )}
             </div>
 

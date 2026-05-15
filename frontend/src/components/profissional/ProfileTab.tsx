@@ -303,6 +303,61 @@ export function ProfileTab({ profile, onUpdated, onNotify }: ProfileTabProps) {
           <div className="space-y-8">
             <div className="flex items-center gap-4 text-brand-tactical">
               <div className="w-8 h-[1px] bg-brand-tactical/30" />
+              <span className="text-[11px] font-black uppercase tracking-[0.3em] italic">Raio de Atuação & Localização</span>
+            </div>
+            
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+              <div className="space-y-2">
+                <label className="text-[9px] font-black text-theme-muted uppercase tracking-widest italic opacity-60">Cidade Base</label>
+                <input
+                  className="w-full bg-theme-bg-muted border border-theme-border p-4 text-theme-text focus:border-brand-tactical/50 outline-none transition-all font-medium"
+                  value={formData.city || ""}
+                  placeholder="Ex: São Paulo, SP"
+                  onChange={(e) => setFormData({ ...formData, city: e.target.value })}
+                />
+              </div>
+              <div className="space-y-2">
+                <label className="text-[9px] font-black text-theme-muted uppercase tracking-widest italic opacity-60">Raio Máximo de Deslocamento (Km)</label>
+                <div className="relative">
+                  <input
+                    type="number"
+                    className="w-full bg-theme-bg-muted border border-theme-border p-4 text-theme-text focus:border-brand-tactical/50 outline-none transition-all font-heading font-black italic text-xl"
+                    value={formData.serviceRadiusKm || ""}
+                    onChange={(e) => setFormData({ ...formData, serviceRadiusKm: Number(e.target.value) })}
+                  />
+                  <div className="absolute right-4 top-1/2 -translate-y-1/2 text-[10px] font-black text-brand-tactical/40 uppercase italic tracking-widest">Km</div>
+                </div>
+              </div>
+              
+              <div className="md:col-span-2">
+                <button
+                   type="button"
+                   onClick={() => {
+                     if ("geolocation" in navigator) {
+                       navigator.geolocation.getCurrentPosition((pos) => {
+                         setFormData({
+                           ...formData,
+                           baseLocationLat: pos.coords.latitude,
+                           baseLocationLng: pos.coords.longitude
+                         });
+                         if (onNotify) onNotify("Coordenadas GPS capturadas!", "success");
+                       });
+                     } else {
+                       if (onNotify) onNotify("Geolocalização não disponível.", "error");
+                     }
+                   }}
+                   className="w-full p-4 border border-dashed border-brand-tactical/30 text-brand-tactical text-[10px] font-black uppercase tracking-widest hover:bg-brand-tactical/5 transition-all flex items-center justify-center gap-3"
+                >
+                  {formData.baseLocationLat ? `GPS: ${formData.baseLocationLat.toFixed(4)}, ${formData.baseLocationLng?.toFixed(4)} (Atualizar)` : "CALIBRAR MINHA LOCALIZAÇÃO GPS ATUAL"}
+                </button>
+                <p className="text-[8px] text-theme-muted/50 uppercase tracking-widest font-bold mt-2 text-center">Isso ajuda clientes a te encontrarem por proximidade.</p>
+              </div>
+            </div>
+          </div>
+
+          <div className="space-y-8">
+            <div className="flex items-center gap-4 text-brand-tactical">
+              <div className="w-8 h-[1px] bg-brand-tactical/30" />
               <span className="text-[11px] font-black uppercase tracking-[0.3em] italic">Matriz de Especialidades</span>
             </div>
             <div className="flex flex-wrap gap-4">

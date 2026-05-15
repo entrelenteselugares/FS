@@ -105,6 +105,10 @@ export interface ProfileData {
   workflowType?: string[];
   firstJobUrl?: string | null;
   isExperienceValidated?: boolean;
+  baseLocationLat?: number | null;
+  baseLocationLng?: number | null;
+  serviceRadiusKm?: number;
+  city?: string | null;
   stats?: {
     totalEarnings: number;
     monthEarnings: number;

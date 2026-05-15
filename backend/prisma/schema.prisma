@@ -262,6 +262,10 @@ model Profissional {
   agilityPoints         Int                    @default(0)
   avgDeliveryHours      Float                  @default(0)
   totalMissions         Int                    @default(0)
+  baseLocationLat       Float?
+  baseLocationLng       Float?
+  serviceRadiusKm       Int                    @default(50)
+  city                  String?
   cartorios             CartorioProfissional[]
   proServices           ProfessionalService[]
   user                  User                   @relation(fields: [userId], references: [id])

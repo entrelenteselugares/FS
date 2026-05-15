@@ -270,7 +270,10 @@ export async function updateProfile(req: AuthRequest, res: Response): Promise<vo
   const userId = req.user?.userId;
   if (!userId) { res.status(401).json({ error: "Não autenticado." }); return; }
 
-  const { services, equipmentList, otherHabilities, experienceYears, workflowType, user, pixKey, firstJobUrl } = req.body;
+  const { 
+    services, equipmentList, otherHabilities, experienceYears, workflowType, 
+    user, pixKey, firstJobUrl, city, serviceRadiusKm, baseLocationLat, baseLocationLng 
+  } = req.body;
 
   try {
     const existingProfile = await prisma.profissional.findUnique({
@@ -339,6 +342,10 @@ export async function updateProfile(req: AuthRequest, res: Response): Promise<vo
         ...(!isLocked && experienceYears !== undefined && { experienceYears: Number(experienceYears) }),
         ...(!isLocked && req.body.firstJobUrl !== undefined && { firstJobUrl: String(req.body.firstJobUrl) }),
         ...(workflowType !== undefined && { workflowType }),
+        ...(city !== undefined && { city: String(city) || null }),
+        ...(serviceRadiusKm !== undefined && { serviceRadiusKm: Number(serviceRadiusKm) || 50 }),
+        ...(baseLocationLat !== undefined && { baseLocationLat: Number(baseLocationLat) || null }),
+        ...(baseLocationLng !== undefined && { baseLocationLng: Number(baseLocationLng) || null }),
         hourlyRate: autoHourlyRate,
         equipmentMultiplier: finalMultiplier,
         user: {

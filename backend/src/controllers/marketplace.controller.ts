@@ -575,7 +575,7 @@ export class MarketplaceController {
    * Only returns users with an ACTIVE PRO subscription.
    */
   static async listProfissionais(req: AuthRequest, res: Response) {
-    const { search, city, service } = req.query;
+    const { search, city, service, lat, lng } = req.query;
     try {
       // Find users with active PRO subscriptions
       const activeSubs = await prisma.subscription.findMany({
@@ -593,13 +593,20 @@ export class MarketplaceController {
         user: {
           isVerified: true,
           active: true,
-          ...(city ? { address: { contains: String(city), mode: "insensitive" } } : {}),
           ...(search ? { nome: { contains: String(search), mode: "insensitive" } } : {}),
         },
         ...(service ? { services: { has: String(service).toUpperCase() } } : {}),
       };
 
-      const profissionais = await prisma.profissional.findMany({
+      // Se passou city, filtra tanto no user.address quanto no profissional.city
+      if (city) {
+        where.OR = [
+          { city: { contains: String(city), mode: "insensitive" } },
+          { user: { address: { contains: String(city), mode: "insensitive" } } }
+        ];
+      }
+
+      let profissionais = await prisma.profissional.findMany({
         where,
         include: {
           user: {
@@ -612,9 +619,54 @@ export class MarketplaceController {
             }
           }
         },
-        orderBy: { agilityPoints: "desc" },
-        take: 60,
+        take: 100, // We take more if filtering by distance
       });
+
+      // Se passou lat/lng, aplica filtro de raio e ordena por distância
+      if (lat && lng) {
+        const clientLat = Number(lat);
+        const clientLng = Number(lng);
+        
+        if (!isNaN(clientLat) && !isNaN(clientLng)) {
+          const R = 6371; // Radius in km
+          const deg2rad = (deg: number) => deg * (Math.PI / 180);
+
+          profissionais = profissionais.filter((p) => {
+            // Se o profissional não tem localização base configurada, ele não é retornado no filtro "Near Me"
+            // ou podemos assumir que ele atende o país todo se o raio for gigante, mas melhor remover.
+            if (!p.baseLocationLat || !p.baseLocationLng) return false;
+
+            const dLat = deg2rad(p.baseLocationLat - clientLat);
+            const dLon = deg2rad(p.baseLocationLng - clientLng);
+            const a =
+              Math.sin(dLat / 2) * Math.sin(dLat / 2) +
+              Math.cos(deg2rad(clientLat)) * Math.cos(deg2rad(p.baseLocationLat)) *
+              Math.sin(dLon / 2) * Math.sin(dLon / 2);
+            const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
+            const distance = R * c;
+
+            // Salva a distância para ordenar depois
+            (p as any).distanceToClient = distance;
+
+            // Filtra pelo raio do profissional (default 50)
+            return distance <= (p.serviceRadiusKm || 50);
+          });
+
+          // Sort by distance (closest first), then agility points
+          profissionais.sort((a, b) => {
+            const distA = (a as any).distanceToClient || 0;
+            const distB = (b as any).distanceToClient || 0;
+            if (distA !== distB) return distA - distB;
+            return b.agilityPoints - a.agilityPoints;
+          });
+        }
+      } else {
+        // Se não tem localização, ordena por Agility Points
+        profissionais.sort((a, b) => b.agilityPoints - a.agilityPoints);
+      }
+
+      // Limita a 60 após o sort/filter
+      profissionais = profissionais.slice(0, 60);
 
       return res.json({ profissionais });
     } catch (error: any) {
@@ -656,24 +708,25 @@ export class MarketplaceController {
         where: { userId: prof.userId, type: "PRO", status: "ACTIVE" }
       });
 
+      const p: any = prof;
       // Return public-safe data (no WhatsApp!)
       return res.json({
-        id: prof.id,
-        userId: prof.userId,
-        nome: prof.user.nome,
-        profileImageUrl: prof.user.profileImageUrl,
-        address: prof.user.address,
-        isVerified: prof.user.isVerified,
-        services: prof.services,
-        otherHabilities: prof.otherHabilities,
-        experienceYears: prof.experienceYears,
-        workflowType: prof.workflowType,
-        avgDeliveryHours: prof.avgDeliveryHours,
-        totalMissions: prof.totalMissions,
-        agilityPoints: prof.agilityPoints,
-        proServices: prof.proServices,
+        id: p.id,
+        userId: p.userId,
+        nome: p.user.nome,
+        profileImageUrl: p.user.profileImageUrl,
+        address: p.user.address,
+        isVerified: p.user.isVerified,
+        services: p.services,
+        otherHabilities: p.otherHabilities,
+        experienceYears: p.experienceYears,
+        workflowType: p.workflowType,
+        avgDeliveryHours: p.avgDeliveryHours,
+        totalMissions: p.totalMissions,
+        agilityPoints: p.agilityPoints,
+        proServices: p.proServices,
         isSubscriber: !!sub,
-        memberSince: prof.user.createdAt,
+        memberSince: p.user.createdAt,
       });
     } catch (error: any) {
       console.error("[getProfissionalProfile Error]:", error);
@@ -713,7 +766,7 @@ export class MarketplaceController {
           packageDesc,
           bookingFee: Number(bookingFee),
           status: "PENDING",
-        }
+        } as any
       });
 
       // Create MP preference for the booking fee
