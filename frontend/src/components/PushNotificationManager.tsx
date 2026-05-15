@@ -13,6 +13,8 @@ export const PushNotificationManager: React.FC = () => {
   );
   const [showPrompt, setShowPrompt] = useState(false);
 
+  const timerRef = React.useRef<NodeJS.Timeout | null>(null);
+
   const checkSubscription = useCallback(async () => {
     if (!("serviceWorker" in navigator)) {
       console.warn("[PUSH] Service Worker not supported");
@@ -33,15 +35,16 @@ export const PushNotificationManager: React.FC = () => {
         console.warn("[PUSH] VITE_VAPID_PUBLIC_KEY not set — prompt suppressed");
         return;
       }
-      const timer = setTimeout(() => setShowPrompt(true), 5000);
-      return () => clearTimeout(timer);
+      
+      if (timerRef.current) clearTimeout(timerRef.current);
+      timerRef.current = setTimeout(() => setShowPrompt(true), 5000);
     }
   }, [user]);
 
   useEffect(() => {
-    const cleanup = checkSubscription();
+    checkSubscription();
     return () => {
-      if (typeof cleanup === 'function') cleanup();
+      if (timerRef.current) clearTimeout(timerRef.current);
     };
   }, [checkSubscription]);
 
