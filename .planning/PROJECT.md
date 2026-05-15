@@ -34,7 +34,13 @@ To be the national standard for phygital (physical + digital) photography experi
 Shipped **v11.0 (Professional Governance & Marketplace Alpha)**. The platform now features a robust Admin Approval Hub for role transitions and a public Professional Marketplace where verified, subscribed photographers can showcase their work and receive direct budget requests.
 
 ## Current Milestone: v12.0 Unified Marketplace & Portfolio
+
 **Goal:** Scale the marketplace with advanced portfolio galleries, automated booking payments, and proximity-based search.
+
+**Target features:**
+- Advanced portfolio galleries for professionals (public albums).
+- Automated booking payments for professional hiring (booking fee escrow).
+- Proximity-based search and filtering in the professional directory.
 
 <details>
 <summary>Archived Milestones</summary>

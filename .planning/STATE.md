@@ -1,14 +1,14 @@
 ---
 gsd_state_version: 1.0
-milestone: v7.0
-milestone_name: milestone
-status: completed
-last_updated: "2026-05-15T10:41:26.823Z"
-last_activity: 2026-05-14 — Phase 34 completed
+milestone: v12.0
+milestone_name: Unified Marketplace & Portfolio
+status: planning
+last_updated: "2026-05-15T20:44:00.000Z"
+last_activity: 2026-05-15 — Milestone v12.0 started
 progress:
-  total_phases: 4
+  total_phases: 0
   completed_phases: 0
-  total_plans: 3
+  total_plans: 0
   completed_plans: 0
   percent: 0
 ---
@@ -68,7 +68,7 @@ Phase 22 and 23 have been completed, hardening the Phygital checkout pipeline wi
 
 ## Current Position
 
-Phase: Phase 46 (Professional Showcase)
-Plan: 46-PLAN.md
-Status: Planning (Ready)
-Last activity: 2026-05-15 — Phase 46 plan ready for execution.
+Phase: Not started (defining requirements)
+Plan: —
+Status: Defining requirements
+Last activity: 2026-05-15 — Milestone v12.0 started
