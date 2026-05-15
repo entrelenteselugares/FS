@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import { useParams, useNavigate } from "react-router-dom";
-import { motion, AnimatePresence } from "framer-motion";
-import { Sparkles, ArrowRight, ShieldCheck, Zap, Camera, Star, Users } from "lucide-react";
+import { motion } from "framer-motion";
+import { ArrowRight, ShieldCheck, Zap, Star, Users } from "lucide-react";
 import { API as api } from "../lib/api";
 
 interface AmbassadorInfo {
