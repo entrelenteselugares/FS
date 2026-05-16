@@ -346,7 +346,7 @@ export function ProfileTab({ profile, onUpdated, onNotify }: ProfileTabProps) {
                        if (onNotify) onNotify("Geolocalização não disponível.", "error");
                      }
                    }}
-                   className="w-full p-4 border border-dashed border-brand-tactical/30 text-brand-tactical text-[10px] font-black uppercase tracking-widest hover:bg-brand-tactical/5 transition-all flex items-center justify-center gap-3"
+                   className="w-full p-4 border border-dashed border-brand-tactical/30 text-brand-tactical text-[8px] md:text-[10px] font-black uppercase tracking-wider md:tracking-widest hover:bg-brand-tactical/5 transition-all flex flex-col md:flex-row items-center justify-center gap-2 md:gap-3 text-center"
                 >
                   {formData.baseLocationLat ? `GPS: ${formData.baseLocationLat.toFixed(4)}, ${formData.baseLocationLng?.toFixed(4)} (Atualizar)` : "CALIBRAR MINHA LOCALIZAÇÃO GPS ATUAL"}
                 </button>
@@ -454,7 +454,7 @@ export function ProfileTab({ profile, onUpdated, onNotify }: ProfileTabProps) {
             <button
               onClick={handleSave}
               disabled={saving}
-              className="w-full md:w-auto px-20 py-5 bg-brand-tactical text-brand-text text-[11px] font-black uppercase tracking-[0.4em] hover:brightness-110 disabled:opacity-40 transition-all shadow-2xl shadow-brand-tactical/20 italic flex items-center justify-center gap-4"
+              className="w-full md:w-auto px-4 md:px-20 py-5 bg-brand-tactical text-brand-text text-[10px] md:text-[11px] font-black uppercase tracking-widest md:tracking-[0.4em] hover:brightness-110 disabled:opacity-40 transition-all shadow-2xl shadow-brand-tactical/20 italic flex flex-col md:flex-row items-center justify-center gap-2 md:gap-4"
             >
               {saving ? "SINCRONIZANDO..." : <><Save size={20} /> SALVAR ALTERAÇÕES</>}
             </button>

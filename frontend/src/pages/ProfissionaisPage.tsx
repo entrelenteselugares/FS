@@ -134,7 +134,7 @@ export default function ProfissionaisPage() {
           </div>
           <button
             onClick={toggleNearby}
-            className={`px-4 py-3 text-[10px] font-black uppercase tracking-widest transition-all border flex items-center gap-2 ${
+            className={`w-full md:w-auto justify-center md:justify-start px-4 py-3 text-[10px] font-black uppercase tracking-widest transition-all border flex items-center gap-2 ${
               nearby ? "bg-brand-tactical text-black border-brand-tactical" : "bg-zinc-900 text-zinc-400 border-zinc-800 hover:border-brand-tactical/30"
             }`}
           >

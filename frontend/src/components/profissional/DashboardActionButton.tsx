@@ -51,9 +51,9 @@ export function DashboardActionButton({
       <div className={`absolute inset-0 ${styles.bg} blur-2xl opacity-0 group-hover:opacity-100 transition-all duration-700`} />
       <button
         onClick={onClick}
-        className={`relative w-full h-full bg-theme-bg-muted border ${styles.border} p-6 flex items-center justify-between gap-6 ${styles.hoverBorder} transition-all overflow-hidden shadow-2xl group`}
+        className={`relative w-full h-full bg-theme-bg-muted border ${styles.border} p-6 flex flex-col md:flex-row items-start md:items-center justify-between gap-4 md:gap-6 ${styles.hoverBorder} transition-all overflow-hidden shadow-2xl group`}
       >
-        <div className="flex items-center gap-6 text-left">
+        <div className="flex items-center gap-4 md:gap-6 text-left">
           <div className={`p-4 ${styles.bg} border ${styles.border} ${styles.text} shrink-0`}>
             <Icon size={24} />
           </div>
@@ -71,7 +71,7 @@ export function DashboardActionButton({
             </p>
           </div>
         </div>
-        <div className={`flex items-center gap-3 text-[10px] font-black ${styles.text} uppercase tracking-[0.3em] group-hover:translate-x-2 transition-all shrink-0`}>
+        <div className={`w-full md:w-auto flex items-center justify-end md:justify-start gap-3 text-[10px] font-black ${styles.text} uppercase tracking-[0.3em] group-hover:translate-x-2 transition-all shrink-0 mt-2 md:mt-0`}>
           INICIAR <ArrowRight size={14} />
         </div>
       </button>

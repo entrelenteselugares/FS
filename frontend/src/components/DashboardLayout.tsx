@@ -412,7 +412,7 @@ export const DashboardLayout: React.FC<DashboardLayoutProps> = ({
           style={{ paddingBottom: "env(safe-area-inset-bottom, 12px)" }}
         >
           <div className="flex items-center justify-around px-2">
-            {navItems.filter(item => !item.hide).map((item, idx) => {
+            {navItems.filter(item => !item.hide).slice(0, 4).map((item, idx) => {
               const active = item.isActive;
               return (
                 <button
@@ -432,6 +432,19 @@ export const DashboardLayout: React.FC<DashboardLayoutProps> = ({
                 </button>
               );
             })}
+            {navItems.filter(item => !item.hide).length > 4 && (
+              <button
+                onClick={() => setDrawerOpen(true)}
+                className={`flex flex-col items-center gap-1.5 py-4 flex-1 transition-all active:scale-90`}
+              >
+                <div className="text-white/30">
+                  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5"><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="18" x2="21" y2="18"/></svg>
+                </div>
+                <span className="text-[8px] font-black uppercase tracking-widest text-white/30">
+                  Menu
+                </span>
+              </button>
+            )}
           </div>
         </nav>
       </div>
