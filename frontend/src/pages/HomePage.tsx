@@ -308,7 +308,7 @@ export const HomePage = () => {
                 value={query}
                 onChange={e => setQuery(e.target.value)}
                 onKeyDown={e => e.key === "Enter" && fetchEvents(query, 1)}
-                placeholder="Pesquise seus fotos...."
+                placeholder="Pesquise suas fotos..."
                 className="w-full bg-white text-black pl-14 pr-6 py-5 rounded-2xl text-sm font-bold shadow-2xl outline-none"
               />
             </div>
@@ -368,47 +368,52 @@ export const HomePage = () => {
               ))}
             </div>
 
-            <div className="h-px bg-[var(--border)] opacity-20 w-full" />
+            <div className="h-px bg-[var(--border)] opacity-10 w-full" />
 
-            <div className="grid grid-cols-3 gap-1.5 w-full">
-              <div className="relative">
+            <div className="flex gap-2 overflow-x-auto scrollbar-hide -mx-4 px-4 pb-1">
+              <div className="relative shrink-0">
                 <select 
                   value={selectedCity}
                   onChange={e => { setSelectedCity(e.target.value); setPage(1); }}
-                  className="w-full bg-[var(--bg-field)] border border-[var(--border)] text-[var(--text)] px-1 py-2.5 rounded-xl text-[8px] font-black uppercase tracking-wider outline-none appearance-none text-center"
+                  className="bg-[var(--bg-card)] border border-[var(--border)] text-[var(--text)] pl-4 pr-7 py-2.5 rounded-full text-[9px] font-black uppercase tracking-widest outline-none appearance-none shadow-sm cursor-pointer hover:border-brand-tactical/50 transition-colors"
                 >
-                  <option value="">Cidades</option>
+                  <option value="">🗺️ Todas as Cidades</option>
                   <option value="Campinas">Campinas</option>
                   <option value="São Paulo">São Paulo</option>
                   <option value="Valinhos">Valinhos</option>
                 </select>
+                <div className="absolute right-3 top-1/2 -translate-y-1/2 pointer-events-none text-[8px] opacity-40">▼</div>
               </div>
-              <div className="relative">
+
+              <div className="relative shrink-0">
                 <select 
                   value={selectedType}
                   onChange={e => { setSelectedType(e.target.value); setPage(1); }}
-                  className="w-full bg-[var(--bg-field)] border border-[var(--border)] text-[var(--text)] px-1 py-2.5 rounded-xl text-[8px] font-black uppercase tracking-wider outline-none appearance-none text-center"
+                  className="bg-[var(--bg-card)] border border-[var(--border)] text-[var(--text)] pl-4 pr-7 py-2.5 rounded-full text-[9px] font-black uppercase tracking-widest outline-none appearance-none shadow-sm cursor-pointer hover:border-brand-tactical/50 transition-colors"
                 >
-                  <option value="">Categoria</option>
+                  <option value="">🏷️ Categorias</option>
                   <option value="ALBUM_FULL">Álbuns</option>
                   <option value="PHOTO_MARKETPLACE">Live Print</option>
                   <option value="FOTO_POINT">Foto Point</option>
                   <option value="FLASH_EVENT">Flash</option>
                 </select>
+                <div className="absolute right-3 top-1/2 -translate-y-1/2 pointer-events-none text-[8px] opacity-40">▼</div>
               </div>
-              <div className="relative">
+
+              <div className="relative shrink-0">
                 <select 
                   value={sortBy}
                   onChange={e => { setSortBy(e.target.value); setPage(1); }}
-                  className="w-full bg-[var(--bg-field)] border border-[var(--border)] text-[var(--text)] px-1 py-2.5 rounded-xl text-[8px] font-black uppercase tracking-wider outline-none appearance-none text-center"
+                  className="bg-[var(--bg-card)] border border-[var(--border)] text-[var(--text)] pl-4 pr-7 py-2.5 rounded-full text-[9px] font-black uppercase tracking-widest outline-none appearance-none shadow-sm cursor-pointer hover:border-brand-tactical/50 transition-colors"
                 >
-                  <option value="">Data (Recentes)</option>
-                  <option value="OLD">Data (Antigos)</option>
+                  <option value="">⏱️ Mais Recentes</option>
+                  <option value="OLD">Mais Antigos</option>
                   <option value="AZ">A-Z (Crescente)</option>
                   <option value="ZA">Z-A (Decrescente)</option>
-                  <option value="PRICE_ASC">Preço (Menor)</option>
-                  <option value="PRICE_DESC">Preço (Maior)</option>
+                  <option value="PRICE_ASC">Menor Preço</option>
+                  <option value="PRICE_DESC">Maior Preço</option>
                 </select>
+                <div className="absolute right-3 top-1/2 -translate-y-1/2 pointer-events-none text-[8px] opacity-40">▼</div>
               </div>
             </div>
           </div>
