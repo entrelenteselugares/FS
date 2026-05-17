@@ -616,13 +616,18 @@ export async function adminDeleteOrder(req: AuthRequest, res: Response): Promise
 export async function adminListUsers(req: AuthRequest, res: Response): Promise<void> {
   const { role, q } = req.query;
   try {
-    const where: Prisma.UserWhereInput = {};
+    const where: Prisma.UserWhereInput = { active: true };
     if (role) where.role = String(role) as Role;
     if (q) {
       const searchString = String(q);
-      where.OR = [
-        { nome: { contains: searchString, mode: "insensitive" } },
-        { email: { contains: searchString, mode: "insensitive" } },
+      where.AND = [
+        { active: true },
+        {
+          OR: [
+            { nome: { contains: searchString, mode: "insensitive" } },
+            { email: { contains: searchString, mode: "insensitive" } },
+          ]
+        }
       ];
     }
 
@@ -834,45 +839,74 @@ export async function adminDeleteUser(req: AuthRequest, res: Response): Promise<
       where: { id: String(id) },
       include: {
         profissional: true,
-        cartorio: true
+        cartorio: true,
+        franchiseProfile: true
       }
     });
 
     if (!user) {
-      res.status(404).json({ error: "UsuÃ¡rio nÃ£o encontrado." });
+      res.status(404).json({ error: "Usuário não encontrado." });
       return;
     }
 
-    // 1. Remover do Supabase Auth
+    // 1. Remover ou suspender do Supabase Auth para revogar o acesso imediatamente
     try {
       const { error: sbError } = await supabase.auth.admin.deleteUser(user.id);
       if (sbError) {
-        console.warn(`[Supabase] Erro ao remover usuÃ¡rio auth: ${sbError.message}`);
-        // Prosseguimos mesmo com erro no Supabase (ex: usuÃ¡rio jÃ¡ removido lÃ¡)
+        console.warn(`[Supabase] Erro ao remover usuário auth: ${sbError.message}`);
+        // Tenta suspender para impedir login
+        await supabase.auth.admin.updateUserById(user.id, { ban_duration: "none" }).catch(() => {});
       }
     } catch (err) {
-      console.warn(`[Supabase] ExceÃ§Ã£o ao remover usuÃ¡rio auth`, err);
+      console.warn(`[Supabase] Exceção ao remover/suspender usuário auth`, err);
     }
 
-    // 2. Remover perfis associados (Opcional se houver cascade, mas vamos garantir)
-    if (user.profissional) {
-      await prisma.profissional.delete({ where: { id: user.profissional.id } });
+    // 2. Tentar HARD DELETE limpando tabelas associadas com cascade manual
+    try {
+      await prisma.$transaction([
+        prisma.pushSubscription.deleteMany({ where: { userId: user.id } }),
+        prisma.notification.deleteMany({ where: { userId: user.id } }),
+        prisma.userPoints.deleteMany({ where: { userId: user.id } }),
+        prisma.photoLike.deleteMany({ where: { userId: user.id } }),
+        prisma.professionalNetwork.deleteMany({
+          where: { OR: [{ userId: user.id }, { partnerId: user.id }] }
+        }),
+        prisma.calendarSlot.deleteMany({ where: { userId: user.id } }),
+        prisma.franchiseProfile.deleteMany({ where: { userId: user.id } }),
+        
+        // Deletar perfis específicos
+        prisma.profissional.deleteMany({ where: { userId: user.id } }),
+        prisma.cartorio.deleteMany({ where: { userId: user.id } }),
+        
+        // Deletar o usuário físico
+        prisma.user.delete({ where: { id: user.id } })
+      ]);
+
+      await audit(req, "USER_DELETED", "User", String(id), null, { email: user.email, type: "HARD_DELETE" });
+      res.json({ ok: true, type: "HARD_DELETE" });
+      return;
+    } catch (dbErr) {
+      // 3. Fallback: SOFT DELETE / BANIMENTO (caso possua histórico financeiro/pedidos que não podem ser apagados)
+      console.log(`[AdminDeleteUser] Hard delete falhou devido a dependências ativas. Executando SOFT DELETE para o usuário ${user.id}`);
+      
+      await prisma.user.update({
+        where: { id: user.id },
+        data: { active: false }
+      });
+
+      if (user.franchiseProfile) {
+        await prisma.franchiseProfile.updateMany({
+          where: { userId: user.id },
+          data: { active: false }
+        });
+      }
+
+      await audit(req, "USER_DELETED", "User", String(id), null, { email: user.email, type: "SOFT_DELETE" });
+      res.json({ ok: true, type: "SOFT_DELETE" });
     }
-    if (user.cartorio) {
-      await prisma.cartorio.delete({ where: { id: user.cartorio.id } });
-    }
-
-    // 3. Remover do Prisma
-    await prisma.user.delete({
-      where: { id: user.id }
-    });
-
-    await audit(req, "USER_DELETED", "User", String(id), null, { email: user.email });
-
-    res.json({ ok: true });
-  } catch (err) {
-    console.error("adminDeleteUser:", err);
-    res.status(500).json({ error: "Erro ao excluir usuÃ¡rio. Verifique se existem dependÃªncias (eventos/pedidos)." });
+  } catch (err: any) {
+    console.error("adminDeleteUser General Error:", err);
+    res.status(500).json({ error: "Erro ao excluir usuário.", details: err.message || String(err) });
   }
 }
 
