@@ -181,3 +181,23 @@
 2. Search results correctly prioritize subscribed (MRR) and verified professionals.
 3. Professionals can define a maximum travel radius in their config tab.
 
+---
+
+### [x] Phase 50: Multi-Tier Affiliate System (DONE)
+
+**Goal:** Implement a multi-level affiliate marketing structure (L1/L2 networks) and consolidate user navigation tabs.
+
+- [x] **AFF-01**: Support standard and VIP affiliate tiers with tiered percentages for direct (L1) and indirect (L2) checkouts.
+- [x] **AFF-02**: Consolidated UX: merge "Campanhas Embaixador" under a unified "Indique e Ganhe" dashboard.
+- [x] **AFF-03**: Safe rendering architecture avoiding toLocaleString crashes.
+
+---
+
+### [x] Phase 51: Mobile UI/UX & E2E Validation (DONE)
+
+**Goal:** Hardening mobile layouts, resolving route integrity, and complete end-to-end launch verification.
+
+- [x] **VAL-01**: Mobile first: verify bottom nav layout stacking and fix responsive overlaps.
+- [x] **VAL-02**: Route integrity: resolved API server 404 deployment errors on Vercel by structuring standard Root-level deploy.
+- [x] **VAL-03**: Full browser visual validation and test coverage confirming complete zero-error logs.
+
