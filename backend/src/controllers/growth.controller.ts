@@ -51,6 +51,29 @@ export class GrowthController {
     }
   }
 
+  static async createCoupon(req: Request, res: Response) {
+    try {
+      const { code, discountPct, discountAbs, maxUses, expiresAt } = req.body;
+      if (!code) return res.status(400).json({ error: "Código do cupom é obrigatório" });
+      if (!discountPct && !discountAbs) return res.status(400).json({ error: "Informe desconto em % ou R$" });
+
+      const coupon = await prisma.coupon.create({
+        data: {
+          code: code.toUpperCase().trim(),
+          discountPct: discountPct ? Number(discountPct) : null,
+          discountAbs: discountAbs ? Number(discountAbs) : null,
+          maxUses: maxUses ? Number(maxUses) : null,
+          expiresAt: expiresAt ? new Date(expiresAt) : null,
+          active: true,
+        }
+      });
+      return res.status(201).json(coupon);
+    } catch (error: any) {
+      if (error?.code === 'P2002') return res.status(409).json({ error: "Já existe um cupom com esse código." });
+      return res.status(500).json({ error: "Erro ao criar cupom" });
+    }
+  }
+
   static async listAmbassadors(req: Request, res: Response) {
     try {
       // isAffiliate não existe, vamos buscar usuários com campanhas de indicação

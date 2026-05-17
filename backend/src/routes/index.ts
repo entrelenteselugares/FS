@@ -510,6 +510,7 @@ router.patch("/admin/ambassador/campaigns/:campaignId/toggle", requireAuth, requ
 router.delete("/admin/ambassador/campaigns/:campaignId", requireAuth, requireRole("ADMIN"), ReferralController.adminDeleteCampaign);
 
 router.get("/admin/coupons", requireAuth, requireRole("ADMIN"), GrowthController.listCoupons);
+router.post("/admin/coupons", requireAuth, requireRole("ADMIN"), GrowthController.createCoupon);
 router.get("/admin/ambassadors", requireAuth, requireRole("ADMIN"), GrowthController.listAmbassadors);
 router.get("/admin/phygital/all", requireAuth, requireRole("ADMIN"), PhygitalController.listAllByEvent);
 
