@@ -118,14 +118,14 @@ function NewVaultModal({ onClose, onCreated }: { onClose: () => void; onCreated:
   };
 
   return (
-    <div className="fixed inset-0 z-50 flex items-end sm:items-center justify-center bg-theme-bg/80 backdrop-blur-md p-4">
+    <div className="fixed inset-0 z-50 flex items-center justify-center bg-theme-bg/80 backdrop-blur-md p-0 sm:p-4">
       <motion.div
         initial={{ opacity: 0, y: 40 }}
         animate={{ opacity: 1, y: 0 }}
         exit={{ opacity: 0, y: 40 }}
-        className="w-full max-w-md bg-theme-card border border-theme-border rounded-2xl p-8"
+        className="w-full h-full sm:h-auto sm:max-h-[90vh] max-w-md bg-theme-card border-none sm:border border-theme-border rounded-none sm:rounded-2xl p-6 sm:p-8 flex flex-col overflow-y-auto custom-scrollbar"
       >
-        <div className="flex items-center gap-3 mb-6">
+        <div className="flex items-center gap-3 mb-6 shrink-0">
           <div className="p-2.5 bg-brand-tactical/10 border border-brand-tactical/20 rounded-xl">
             <Lock size={18} className="text-brand-tactical" />
           </div>
@@ -135,7 +135,7 @@ function NewVaultModal({ onClose, onCreated }: { onClose: () => void; onCreated:
           </div>
         </div>
 
-        <div className="space-y-4">
+        <div className="space-y-6 flex-1">
           <div>
             <label className="block text-[10px] font-black uppercase tracking-widest text-gray-500 mb-2">Nome do Álbum</label>
             <input
@@ -165,7 +165,7 @@ function NewVaultModal({ onClose, onCreated }: { onClose: () => void; onCreated:
 
           {error && <p className="text-red-400 text-[11px] font-bold">{error}</p>}
 
-          <div className="flex gap-3 pt-2">
+          <div className="flex gap-3 pt-4 border-t border-theme-border/20 mt-auto shrink-0">
             <button
               onClick={onClose}
               className="flex-1 py-3 border border-[#2a2a2a] text-gray-400 text-[11px] font-black uppercase tracking-widest rounded-xl hover:border-gray-600 transition-colors"

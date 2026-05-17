@@ -39,6 +39,7 @@ Shipped **v12.0 Unified Marketplace & Production Go-Live**. The platform has und
 **Goal:** Scale the marketplace with advanced portfolio galleries, automated booking payments, and proximity-based search.
 
 **Target features:**
+
 - Advanced portfolio galleries for professionals (public albums).
 - Automated booking payments for professional hiring (booking fee escrow).
 - Proximity-based search and filtering in the professional directory.
@@ -63,6 +64,7 @@ Shipped **v12.0 Unified Marketplace & Production Go-Live**. The platform has und
 *Outcome:* Delivered hybrid free-to-pay vaults, Mercado Pago recurring billing webhook integration, auto-blocking cron jobs, and admin MRR reporting.
 
 **v7.0 Expansão Total e Go-Live**
+
 - **Go-Live Ops**: Sentry, Google Analytics, and CI/CD hardening.
 - **PWA Implementation**: Service Workers, Push Notifications, and installability.
 - **Vertical Diversification**: Schema and flow adaptations for School and Sports photography.
@@ -75,6 +77,7 @@ Shipped **v12.0 Unified Marketplace & Production Go-Live**. The platform has und
 This document evolves at phase transitions and milestone boundaries.
 
 **After each phase transition** (via `/gsd-transition`):
+
 1. Requirements invalidated? → Move to Out of Scope with reason
 2. Requirements validated? → Move to Validated with phase reference
 3. New requirements emerged? → Add to Active
@@ -82,6 +85,7 @@ This document evolves at phase transitions and milestone boundaries.
 5. "What This Is" still accurate? → Update if drifted
 
 **After each milestone** (via `/gsd-complete-milestone`):
+
 1. Full review of all sections
 2. Core Value check — still the right priority?
 3. Audit Out of Scope — reasons still valid?

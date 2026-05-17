@@ -47,7 +47,7 @@ export function FlashEventModal({ onClose, onSuccess, onError, network }: FlashE
   };
 
   return createPortal(
-    <div className="fixed inset-0 z-[8000] flex items-center justify-center p-4">
+    <div className="fixed inset-0 z-[8000] flex items-center justify-center p-0 sm:p-4">
       {/* Backdrop */}
       <div 
         className="fixed inset-0 bg-theme-bg/80 backdrop-blur-xl animate-in fade-in duration-300 dark:bg-black/95" 
@@ -55,7 +55,7 @@ export function FlashEventModal({ onClose, onSuccess, onError, network }: FlashE
       />
 
       {/* Modal Container */}
-      <div className="relative w-full max-w-xl h-[80vh] flex flex-col border border-theme-border/60 rounded-[40px] overflow-hidden shadow-2xl z-[10000] bg-theme-card">
+      <div className="relative w-full h-full sm:h-[80vh] max-w-xl flex flex-col border-none sm:border border-theme-border/60 rounded-none sm:rounded-[40px] overflow-hidden shadow-2xl z-[10000] bg-theme-card">
         
         {/* Header */}
         <div className="p-8 md:p-10 border-b flex items-center justify-between shrink-0" style={{ borderColor: "var(--theme-border)" }}>
