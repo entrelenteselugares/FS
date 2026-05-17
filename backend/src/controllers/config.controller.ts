@@ -11,7 +11,7 @@ export async function getConfigs(req: AuthRequest, res: Response): Promise<void>
     });
 
     // Valida que os splits somam 100%
-    const splits = ["split_matriz", "split_captacao", "split_edicao", "split_cartorio"];
+    const splits = ["split_matriz", "split_captacao", "split_edicao", "split_cartorio", "split_franchisee", "split_affiliate_l1", "split_affiliate_l2"];
     const total = splits.reduce((acc, key) => {
       const c = configs.find((c) => c.key === key);
       return acc + Number(c?.value ?? 0);
@@ -35,7 +35,7 @@ export async function updateConfigs(req: AuthRequest, res: Response): Promise<vo
   }
 
   // Valida que splits somam 100
-  const splitKeys = ["split_matriz", "split_captacao", "split_edicao", "split_cartorio"];
+  const splitKeys = ["split_matriz", "split_captacao", "split_edicao", "split_cartorio", "split_franchisee", "split_affiliate_l1", "split_affiliate_l2"];
   const newSplits = configs.filter((c) => splitKeys.includes(c.key));
   if (newSplits.length > 0) {
     const total = newSplits.reduce((acc, c) => acc + Number(c.value), 0);

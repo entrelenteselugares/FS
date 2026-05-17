@@ -55,12 +55,14 @@ const safeDate = (d: string | null | undefined) => {
   return isNaN(dt.getTime()) ? "—" : dt.toLocaleDateString("pt-BR");
 };
 
-// Constante fora do componente para evitar recriação a cada render
 const REQUIRED_SPLITS: Array<{key: string; label: string; value: string}> = [
-  { key: "split_matriz",    label: "Matriz (Plataforma)",       value: "0" },
+  { key: "split_affiliate_l1", label: "Afiliado Direto — Nível 1 (%)", value: "0" },
+  { key: "split_affiliate_l2", label: "Afiliado Passivo VIP — Nível 2 (%)", value: "0" },
   { key: "split_captacao", label: "Captação (Fotógrafo)",      value: "0" },
+  { key: "split_cartorio", label: "Unidade Fixa (Logística)",  value: "0" },
   { key: "split_edicao",   label: "Edição (Curadoria)",        value: "0" },
-  { key: "split_cartorio", label: "Unidade Fixa (Logística)",  value: "0" }
+  { key: "split_franchisee", label: "Comissão Passiva B2B (%)", value: "0" },
+  { key: "split_matriz",    label: "Matriz (Plataforma)",       value: "0" }
 ];
 
 export const AdminConfigs: React.FC = () => {
