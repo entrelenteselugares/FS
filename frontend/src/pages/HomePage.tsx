@@ -343,77 +343,52 @@ export const HomePage = () => {
       <section id="vitrine" className="hp-event-section" style={{ padding: "0 0 80px", background: "var(--bg)" }}>
         <div style={{ maxWidth: 1600, margin: "0 auto", padding: "0" }}>
           
-          {/* Mobile compact vitrine header & Filters (proportional grid) */}
-          <div className="hp-mobile-vitrine-header flex flex-col gap-5 p-4 pb-6">
-            <div className="flex items-center justify-between px-1">
-              <h3 className="text-base font-black text-[var(--text)] uppercase tracking-tighter italic">Categorias</h3>
-              <button className="text-[10px] font-bold text-emerald-500 uppercase tracking-widest">Ver tudo</button>
-            </div>
-            
-            <div className="flex gap-2 overflow-x-auto scrollbar-hide -mx-4 px-4">
-              {[
-                { id: 'ALBUM_FULL', label: 'Álbuns', icon: '📖' },
-                { id: 'PHOTO_MARKETPLACE', label: 'Live Print', icon: '🖨️' },
-                { id: 'FOTO_POINT', label: 'Foto Point', icon: '📸' },
-                { id: 'FLASH_EVENT', label: 'Flash', icon: '⚡' }
-              ].map(cat => (
-                <button 
-                  key={cat.id}
-                  onClick={() => { setSelectedType(cat.id === selectedType ? '' : cat.id); setPage(1); }}
-                  className={`flex items-center gap-1.5 whitespace-nowrap px-4 py-2.5 rounded-2xl text-[9px] font-black uppercase tracking-wider transition-all ${selectedType === cat.id ? 'bg-emerald-500 text-black shadow-lg' : 'bg-[var(--bg-card)] border border-[var(--border)] text-[var(--text-muted)]'}`}
-                >
-                  <span className="text-[10px]">{cat.icon}</span>
-                  {cat.label}
-                </button>
-              ))}
-            </div>
-
-            <div className="h-px bg-[var(--border)] opacity-10 w-full" />
-
-            <div className="flex gap-2 overflow-x-auto scrollbar-hide -mx-4 px-4 pb-1">
+          {/* Mobile compact vitrine Filters (Sleek dropdown layout — kept exclusively) */}
+          <div className="hp-mobile-vitrine-header flex flex-col gap-4 p-4 pb-2">
+            <div className="flex gap-2 overflow-x-auto scrollbar-hide py-1">
               <div className="relative shrink-0">
                 <select 
                   value={selectedCity}
                   onChange={e => { setSelectedCity(e.target.value); setPage(1); }}
-                  className="bg-[var(--bg-card)] border border-[var(--border)] text-[var(--text)] pl-4 pr-7 py-2.5 rounded-full text-[9px] font-black uppercase tracking-widest outline-none appearance-none shadow-sm cursor-pointer hover:border-brand-tactical/50 transition-colors"
+                  className="bg-zinc-950/80 border border-zinc-800/80 text-white pl-3.5 pr-6 py-1.5 rounded-full text-[9px] font-black uppercase tracking-[0.12em] outline-none appearance-none shadow-sm cursor-pointer hover:border-brand-tactical/50 transition-colors"
                 >
-                  <option value="">🗺️ Todas as Cidades</option>
-                  <option value="Campinas">Campinas</option>
-                  <option value="São Paulo">São Paulo</option>
-                  <option value="Valinhos">Valinhos</option>
+                  <option value="" className="bg-zinc-950 text-white">🗺️ Todas as Cidades</option>
+                  <option value="Campinas" className="bg-zinc-950 text-white">Campinas</option>
+                  <option value="São Paulo" className="bg-zinc-950 text-white">São Paulo</option>
+                  <option value="Valinhos" className="bg-zinc-950 text-white">Valinhos</option>
                 </select>
-                <div className="absolute right-3 top-1/2 -translate-y-1/2 pointer-events-none text-[8px] opacity-40">▼</div>
+                <div className="absolute right-2.5 top-1/2 -translate-y-1/2 pointer-events-none text-[6px] text-zinc-400">▼</div>
               </div>
 
               <div className="relative shrink-0">
                 <select 
                   value={selectedType}
                   onChange={e => { setSelectedType(e.target.value); setPage(1); }}
-                  className="bg-[var(--bg-card)] border border-[var(--border)] text-[var(--text)] pl-4 pr-7 py-2.5 rounded-full text-[9px] font-black uppercase tracking-widest outline-none appearance-none shadow-sm cursor-pointer hover:border-brand-tactical/50 transition-colors"
+                  className="bg-zinc-950/80 border border-zinc-800/80 text-white pl-3.5 pr-6 py-1.5 rounded-full text-[9px] font-black uppercase tracking-[0.12em] outline-none appearance-none shadow-sm cursor-pointer hover:border-brand-tactical/50 transition-colors"
                 >
-                  <option value="">🏷️ Categorias</option>
-                  <option value="ALBUM_FULL">Álbuns</option>
-                  <option value="PHOTO_MARKETPLACE">Live Print</option>
-                  <option value="FOTO_POINT">Foto Point</option>
-                  <option value="FLASH_EVENT">Flash</option>
+                  <option value="" className="bg-zinc-950 text-white">🏷️ Categorias</option>
+                  <option value="ALBUM_FULL" className="bg-zinc-950 text-white">Álbuns</option>
+                  <option value="PHOTO_MARKETPLACE" className="bg-zinc-950 text-white">Live Print</option>
+                  <option value="FOTO_POINT" className="bg-zinc-950 text-white">Foto Point</option>
+                  <option value="FLASH_EVENT" className="bg-zinc-950 text-white">Flash</option>
                 </select>
-                <div className="absolute right-3 top-1/2 -translate-y-1/2 pointer-events-none text-[8px] opacity-40">▼</div>
+                <div className="absolute right-2.5 top-1/2 -translate-y-1/2 pointer-events-none text-[6px] text-zinc-400">▼</div>
               </div>
 
               <div className="relative shrink-0">
                 <select 
                   value={sortBy}
                   onChange={e => { setSortBy(e.target.value); setPage(1); }}
-                  className="bg-[var(--bg-card)] border border-[var(--border)] text-[var(--text)] pl-4 pr-7 py-2.5 rounded-full text-[9px] font-black uppercase tracking-widest outline-none appearance-none shadow-sm cursor-pointer hover:border-brand-tactical/50 transition-colors"
+                  className="bg-zinc-950/80 border border-zinc-800/80 text-white pl-3.5 pr-6 py-1.5 rounded-full text-[9px] font-black uppercase tracking-[0.12em] outline-none appearance-none shadow-sm cursor-pointer hover:border-brand-tactical/50 transition-colors"
                 >
-                  <option value="">⏱️ Mais Recentes</option>
-                  <option value="OLD">Mais Antigos</option>
-                  <option value="AZ">A-Z (Crescente)</option>
-                  <option value="ZA">Z-A (Decrescente)</option>
-                  <option value="PRICE_ASC">Menor Preço</option>
-                  <option value="PRICE_DESC">Maior Preço</option>
+                  <option value="" className="bg-zinc-950 text-white">⏱️ Mais Recentes</option>
+                  <option value="OLD" className="bg-zinc-950 text-white">Mais Antigos</option>
+                  <option value="AZ" className="bg-zinc-950 text-white">A-Z (Crescente)</option>
+                  <option value="ZA" className="bg-zinc-950 text-white">Z-A (Decrescente)</option>
+                  <option value="PRICE_ASC" className="bg-zinc-950 text-white">Menor Preço</option>
+                  <option value="PRICE_DESC" className="bg-zinc-950 text-white">Maior Preço</option>
                 </select>
-                <div className="absolute right-3 top-1/2 -translate-y-1/2 pointer-events-none text-[8px] opacity-40">▼</div>
+                <div className="absolute right-2.5 top-1/2 -translate-y-1/2 pointer-events-none text-[6px] text-zinc-400">▼</div>
               </div>
             </div>
           </div>
