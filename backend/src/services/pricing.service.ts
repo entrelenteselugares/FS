@@ -122,6 +122,7 @@ export class PricingService {
 
     // ── BUSCA COMISSÃO PASSIVA (FRANQUIA) ──
     let franchisee = 0;
+    let franchiseePct = 0;
     let passiveFranchiseeId: string | undefined = undefined;
 
     if (options?.professionalId) {
@@ -130,10 +131,8 @@ export class PricingService {
       });
 
       if (network) {
-        const franchiseePct = getPct("split_franchisee");
-        franchisee = +(amount * franchiseePct).toFixed(2);
+        franchiseePct = getPct("split_franchisee");
         passiveFranchiseeId = network.partnerId;
-        console.log(`[Pricing] Comissão Passiva detectada (${(franchiseePct * 100).toFixed(1)}%): ${franchisee} para ${passiveFranchiseeId}`);
       }
     }
 
@@ -168,6 +167,11 @@ export class PricingService {
     const edicao   = +(netAmount * getPct("split_edicao")).toFixed(2);
     const cartorio = +(netAmount * getPct("split_cartorio")).toFixed(2);
     
+    if (passiveFranchiseeId) {
+      franchisee = +(netAmount * franchiseePct).toFixed(2);
+      console.log(`[Pricing] Comissão Passiva detectada (${(franchiseePct * 100).toFixed(1)}% do Líquido): ${franchisee} para ${passiveFranchiseeId}`);
+    }
+
     // Matriz fica com o resto (incluindo custos de envio e fornecedor)
     // A comissão do embaixador é deduzida da margem da Matriz
     const matriz = +(amount - (captacao + edicao + cartorio + franchisee + ambassador)).toFixed(2);
