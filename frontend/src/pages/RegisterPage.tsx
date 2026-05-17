@@ -79,7 +79,7 @@ export const RegisterPage: React.FC = () => {
     try {
       const claim = searchParams.get("claim");
       const refCode = searchParams.get("ref") || localStorage.getItem("fs_referral");
-      let finalPayload = { ...formData, role, claim, referralCode: refCode };
+      let finalPayload = { ...formData, role, claim, ref: refCode };
       
       // Se for Unidade, consolidamos o endereço
       if (role === "CARTORIO") {

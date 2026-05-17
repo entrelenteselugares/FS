@@ -232,8 +232,8 @@ export class AuthController {
         return user;
       });
 
-      // 4. Lógica de Referral (B2B Hub)
-      if (result.role === "PROFISSIONAL" && ref) {
+      // 4. Lógica de Referral (B2B Hub e Geral)
+      if (ref) {
         ReferralService.linkByCode(result.id, ref).catch((e: unknown) => console.error("[Referral Error]:", e));
       }
 

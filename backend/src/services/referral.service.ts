@@ -168,12 +168,32 @@ export class ReferralService {
   }
 
   /**
-   * Links a new user to a referrer via code (Campaign slug)
+   * Links a new user to a referrer via code (Campaign slug or User Referral Code)
    */
   static async linkByCode(userId: string, refCode: string) {
-    const campaign = await prisma.referralCampaign.findUnique({
+    // 1. Tenta encontrar diretamente pelo slug da campanha
+    let campaign = await prisma.referralCampaign.findUnique({
       where: { slug: refCode }
     });
+
+    // 2. Se não encontrou por slug, pode ser o referralCode legacy do usuário (ex: 07QRXD9Z)
+    if (!campaign) {
+      const referrer = await prisma.user.findUnique({
+        where: { referralCode: refCode },
+        include: {
+          referralCampaigns: {
+            where: { active: true },
+            orderBy: { createdAt: 'asc' },
+            take: 1
+          }
+        }
+      });
+      
+      // Se encontrou o usuário e ele tem uma campanha ativa (ex: "Default"), usamos ela
+      if (referrer && referrer.referralCampaigns.length > 0) {
+        campaign = referrer.referralCampaigns[0];
+      }
+    }
 
     if (campaign && campaign.active) {
        await this.processConversion(campaign.id, { newUserId: userId });
