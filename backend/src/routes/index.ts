@@ -87,6 +87,7 @@ import {
   adminCreateContest,
   adminListContests,
   adminUpdateContest,
+  adminDeleteContest,
   getActiveContest,
   getHallOfFame,
 } from "../controllers/contest.controller";
@@ -518,6 +519,7 @@ router.get("/admin/phygital/all", requireAuth, requireRole("ADMIN"), PhygitalCon
 router.get("/admin/contests",       requireAuth, requireRole("ADMIN"), adminListContests);
 router.post("/admin/contests",      requireAuth, requireRole("ADMIN"), adminCreateContest);
 router.patch("/admin/contests/:id", requireAuth, requireRole("ADMIN"), adminUpdateContest);
+router.delete("/admin/contests/:id", requireAuth, requireRole("ADMIN"), adminDeleteContest);
 
 // ── Admin: Catálogo de Impressão (CK) ──────────────────────────────────────────
 router.get("/admin/print-catalog", requireAuth, requireRole("ADMIN"), AdminPrintCatalog.listPrintProducts);

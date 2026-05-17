@@ -65,6 +65,19 @@ export async function adminUpdateContest(req: Request, res: Response): Promise<v
   }
 }
 
+export async function adminDeleteContest(req: Request, res: Response): Promise<void> {
+  const { id } = req.params;
+  try {
+    await prisma.contest.delete({
+      where: { id: String(id) }
+    });
+    res.json({ ok: true });
+  } catch (err) {
+    console.error("adminDeleteContest:", err);
+    res.status(500).json({ error: "Erro ao excluir concurso." });
+  }
+}
+
 // ── Rankings & Hall da Fama ────────────────────────────
 
 // GET /api/public/contests/active

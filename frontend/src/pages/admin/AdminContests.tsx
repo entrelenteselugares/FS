@@ -22,6 +22,7 @@ export const AdminContests: React.FC = () => {
   const [loading, setLoading] = useState(true);
   const [showModal, setShowModal] = useState(false);
   const [notification, setNotification] = useState<{message: string, type: 'success' | 'error'} | null>(null);
+  const [editingContest, setEditingContest] = useState<Contest | null>(null);
 
   const showNotification = (message: string, type: 'success' | 'error' = 'success') => {
     setNotification({ message, type });
@@ -77,6 +78,60 @@ export const AdminContests: React.FC = () => {
     fetchContests();
   }, []);
 
+  const handleCreateClick = () => {
+    setEditingContest(null);
+    setFormData({
+      title: "",
+      description: "",
+      startDate: "",
+      endDate: "",
+      prize1st: "3 fotos impressas",
+      prize2nd: "",
+      prize3rd: "",
+      prize1stPts: 1000,
+      prize2ndPts: 500,
+      prize3rdPts: 250,
+    });
+    setDynamicType('CREATE_ALBUMS');
+    setDynamicTarget(10);
+    setCustomRule('');
+    setShowModal(true);
+  };
+
+  const handleEditClick = (contest: Contest) => {
+    setEditingContest(contest);
+    let dynamicType = 'CREATE_ALBUMS';
+    let dynamicTarget = 10;
+    let customRule = '';
+    if (contest.description) {
+      try {
+        const data = JSON.parse(contest.description);
+        dynamicType = data.type || 'CREATE_ALBUMS';
+        dynamicTarget = data.target || 10;
+        customRule = data.customRule || '';
+      } catch {
+        customRule = contest.description;
+        dynamicType = 'CUSTOM';
+      }
+    }
+    setFormData({
+      title: contest.title,
+      description: contest.description || "",
+      startDate: contest.startDate ? contest.startDate.substring(0, 10) : "",
+      endDate: contest.endDate ? contest.endDate.substring(0, 10) : "",
+      prize1st: contest.prize1st,
+      prize2nd: contest.prize2nd || "",
+      prize3rd: contest.prize3rd || "",
+      prize1stPts: contest.prize1stPts,
+      prize2ndPts: contest.prize2ndPts || 500,
+      prize3rdPts: contest.prize3rdPts || 250,
+    });
+    setDynamicType(dynamicType);
+    setDynamicTarget(dynamicTarget);
+    setCustomRule(customRule);
+    setShowModal(true);
+  };
+
   const handleCreate = async (e: React.FormEvent) => {
     e.preventDefault();
     try {
@@ -86,15 +141,22 @@ export const AdminContests: React.FC = () => {
         customRule: customRule
       };
       
-      await API.post("/admin/contests", {
+      const payload = {
         ...formData,
         description: JSON.stringify(dynamicPayload)
-      });
+      };
+
+      if (editingContest) {
+        await API.patch(`/admin/contests/${editingContest.id}`, payload);
+        showNotification("Concurso atualizado com sucesso!");
+      } else {
+        await API.post("/admin/contests", payload);
+        showNotification("Concurso lançado com sucesso!");
+      }
       setShowModal(false);
-      showNotification("Concurso lançado com sucesso!");
       fetchContests();
     } catch {
-      showNotification("Erro ao criar concurso.", "error");
+      showNotification(editingContest ? "Erro ao atualizar concurso." : "Erro ao criar concurso.", "error");
     }
   };
 
@@ -105,6 +167,17 @@ export const AdminContests: React.FC = () => {
       fetchContests();
     } catch {
       showNotification("Erro ao atualizar status.", "error");
+    }
+  };
+
+  const handleDelete = async (id: string) => {
+    if (!confirm("Tem certeza que deseja excluir permanentemente este concurso?")) return;
+    try {
+      await API.delete(`/admin/contests/${id}`);
+      showNotification("Concurso excluído com sucesso!");
+      fetchContests();
+    } catch {
+      showNotification("Erro ao excluir concurso.", "error");
     }
   };
 
@@ -128,7 +201,7 @@ export const AdminContests: React.FC = () => {
           </div>
           <div className="flex flex-wrap items-center gap-4 w-full xl:w-auto">
             <button 
-              onClick={() => setShowModal(true)}
+              onClick={handleCreateClick}
               className="flex-1 md:flex-none px-8 py-4 bg-brand-tactical text-zinc-950 text-[10px] font-black uppercase tracking-[0.4em] hover:brightness-110 shadow-xl transition-all italic whitespace-nowrap"
             >
               NOVO CONCURSO
@@ -167,13 +240,47 @@ export const AdminContests: React.FC = () => {
                   </div>
                 </div>
 
-                <div className="flex gap-4 opacity-0 group-hover:opacity-100 transition-opacity">
+                <div className="flex flex-wrap gap-2 items-center opacity-0 group-hover:opacity-100 transition-opacity">
+                  {c.status !== "FINISHED" && (
+                    <button 
+                      onClick={() => handleEditClick(c)} 
+                      className="px-3 py-1.5 bg-theme-bg-muted border border-theme-border/60 hover:border-brand-tactical text-theme-text text-[8px] font-black cursor-pointer hover:text-brand-tactical transition-all rounded"
+                    >
+                      EDITAR
+                    </button>
+                  )}
+
                   {c.status === "DRAFT" && (
-                    <button onClick={() => updateStatus(c.id, "ACTIVE")} className="px-4 py-2 bg-brand-tactical text-zinc-950 text-[8px] font-black border-none cursor-pointer hover:brightness-110">ATIVAR</button>
+                    <button 
+                      onClick={() => updateStatus(c.id, "ACTIVE")} 
+                      className="px-3 py-1.5 bg-brand-tactical text-zinc-950 text-[8px] font-black border-none cursor-pointer hover:brightness-110 transition-all rounded"
+                    >
+                      ATIVAR
+                    </button>
                   )}
                   {c.status === "ACTIVE" && (
-                    <button onClick={() => updateStatus(c.id, "FINISHED")} className="px-4 py-2 bg-theme-bg-muted text-theme-text text-[8px] font-black border border-theme-border cursor-pointer hover:bg-zinc-800">ENCERRAR</button>
+                    <>
+                      <button 
+                        onClick={() => updateStatus(c.id, "DRAFT")} 
+                        className="px-3 py-1.5 bg-amber-500/20 border border-amber-500/40 text-amber-400 hover:bg-amber-500/30 text-[8px] font-black cursor-pointer transition-all rounded"
+                      >
+                        PAUSAR
+                      </button>
+                      <button 
+                        onClick={() => updateStatus(c.id, "FINISHED")} 
+                        className="px-3 py-1.5 bg-red-500/20 border border-red-500/40 text-red-400 hover:bg-red-500/30 text-[8px] font-black cursor-pointer transition-all rounded"
+                      >
+                        ENCERRAR
+                      </button>
+                    </>
                   )}
+
+                  <button 
+                    onClick={() => handleDelete(c.id)} 
+                    className="px-3 py-1.5 bg-red-500/10 border border-red-500/20 text-red-500 hover:bg-red-500/20 text-[8px] font-black cursor-pointer transition-all rounded"
+                  >
+                    EXCLUIR
+                  </button>
                 </div>
               </div>
             </div>
@@ -193,8 +300,8 @@ export const AdminContests: React.FC = () => {
                   <TrendingUp className="text-brand-tactical" size={24} strokeWidth={1.5} />
                 </div>
                 <div>
-                  <h2 className="text-2xl font-black uppercase italic tracking-tighter text-theme-text">Engenharia de Concurso</h2>
-                  <p className="text-[10px] font-black uppercase tracking-[0.2em] opacity-40">Motor de Gamificação e Engajamento Viral</p>
+                  <h2 className="text-2xl font-black uppercase italic tracking-tighter text-theme-text">{editingContest ? "Ajustar Campanha" : "Engenharia de Concurso"}</h2>
+                  <p className="text-[10px] font-black uppercase tracking-[0.2em] opacity-40">{editingContest ? "Atualização de Regras e Premiações" : "Motor de Gamificação e Engajamento Viral"}</p>
                 </div>
               </div>
               <button onClick={() => setShowModal(false)} className="p-3 hover:bg-white/5 rounded-full transition-all text-theme-muted"><X size={24} /></button>
@@ -282,7 +389,7 @@ export const AdminContests: React.FC = () => {
                 onClick={handleCreate} 
                 className="flex-[2] py-5 bg-brand-tactical text-zinc-950 text-[11px] font-black uppercase tracking-[0.3em] shadow-2xl shadow-brand-tactical/20 hover:brightness-110 transition-all rounded-[20px] italic flex items-center justify-center gap-4"
               >
-                Lançar Concurso
+                {editingContest ? "Salvar Alterações" : "Lançar Concurso"}
                 <ArrowRight size={18} strokeWidth={1.5} />
               </button>
             </div>
