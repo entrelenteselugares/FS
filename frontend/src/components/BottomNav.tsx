@@ -15,6 +15,22 @@ export const BottomNav: React.FC = () => {
     : (user?.role === "CARTORIO" || user?.role === "UNIDADE") ? "/unidade-fixa"
     : "/minha-conta";
 
+  const hiddenPaths = [
+    "/admin",
+    "/profissional",
+    "/unidade-fixa",
+    "/franquia",
+    "/checkout",
+    "/delivery",
+    "/flash",
+    "/invitation",
+  ];
+
+  const shouldHide = hiddenPaths.some(p => location.pathname.startsWith(p)) || 
+                     (location.pathname.startsWith("/meus-albuns/") && location.pathname !== "/meus-albuns");
+
+  if (shouldHide) return null;
+
   return (
     <div className="md:hidden fixed bottom-0 left-0 right-0 bg-[var(--bg)]/80 backdrop-blur-xl border-t border-theme-border/10 z-[100] px-6 py-3 flex items-center justify-between pb-safe">
       <button 

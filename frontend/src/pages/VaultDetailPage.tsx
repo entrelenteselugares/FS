@@ -289,7 +289,7 @@ export default function VaultDetailPage() {
       </div>
 
       {/* Header Sticky / Hero Area */}
-      <div className="sticky top-[64px] z-30 backdrop-blur-xl border-b" style={{ background: `color-mix(in srgb, ${T.bgCard} 80%, transparent)`, borderColor: T.border }}>
+      <div className="sticky top-0 md:top-[64px] z-30 backdrop-blur-xl border-b" style={{ background: `color-mix(in srgb, ${T.bgCard} 80%, transparent)`, borderColor: T.border }}>
         <div className="max-w-7xl mx-auto px-4 py-4 md:py-6 flex flex-col md:flex-row md:items-center justify-between gap-4">
           <div className="flex items-center gap-4">
             <button 
