@@ -85,6 +85,25 @@ export function AdminGrowth() {
     }
   };
 
+    const handleToggleActive = async (id: string, active: boolean) => {
+    try {
+      await API.patch(`/admin/coupons/${id}`, { active });
+      fetchData();
+    } catch (err) {
+      console.error("Erro ao alterar status do cupom:", err);
+    }
+  };
+
+  const handleDeleteCoupon = async (id: string) => {
+    if (!confirm("Tem certeza que deseja excluir permanentemente este cupom?")) return;
+    try {
+      await API.delete(`/admin/coupons/${id}`);
+      fetchData();
+    } catch (err) {
+      console.error("Erro ao excluir cupom:", err);
+    }
+  };
+
   return (
     <div className="space-y-8 animate-in fade-in duration-500">
       {/* Header */}
@@ -144,7 +163,7 @@ export function AdminGrowth() {
             ) : (
               <div className="grid md:grid-cols-2 gap-4">
                 {coupons.map(c => (
-                  <div key={c.id} className="p-6 bg-theme-bg-muted border border-theme-border rounded-2xl flex justify-between items-center shadow-sm">
+                  <div key={c.id} className="p-6 bg-theme-bg-muted border border-theme-border rounded-2xl flex flex-col md:flex-row justify-between items-start md:items-center gap-4 shadow-sm group hover:border-brand-tactical/30 transition-all">
                     <div>
                       <h4 className="text-xl font-black italic text-brand-tactical uppercase tracking-widest">{c.code}</h4>
                       <p className="text-[10px] font-bold text-theme-text-muted mt-1">
@@ -153,10 +172,30 @@ export function AdminGrowth() {
                         {c.maxUses ? ` / ${c.maxUses} máx` : ""}
                       </p>
                     </div>
-                    <div className="text-right">
+                    <div className="flex items-center gap-3 w-full md:w-auto justify-between md:justify-end">
                       <span className={`px-2 py-1 text-[8px] font-black uppercase rounded ${c.active ? 'bg-emerald-500/20 text-emerald-400' : 'bg-red-500/20 text-red-400'}`}>
                         {c.active ? 'Ativo' : 'Inativo'}
                       </span>
+                      <div className="flex gap-2 opacity-0 group-hover:opacity-100 transition-opacity">
+                        <button
+                          type="button"
+                          onClick={() => handleToggleActive(c.id, !c.active)}
+                          className={`px-3 py-1.5 text-[8px] font-black uppercase tracking-widest rounded border transition-colors cursor-pointer ${
+                            c.active
+                              ? 'bg-amber-500/10 border-amber-500/30 text-amber-400 hover:bg-amber-500/20'
+                              : 'bg-emerald-500/10 border-emerald-500/30 text-emerald-400 hover:bg-emerald-500/20'
+                          }`}
+                        >
+                          {c.active ? 'Pausar' : 'Ativar'}
+                        </button>
+                        <button
+                          type="button"
+                          onClick={() => handleDeleteCoupon(c.id)}
+                          className="px-3 py-1.5 bg-red-500/10 border border-red-500/30 text-red-400 hover:bg-red-500/20 text-[8px] font-black uppercase tracking-widest rounded transition-colors cursor-pointer"
+                        >
+                          Excluir
+                        </button>
+                      </div>
                     </div>
                   </div>
                 ))}

@@ -99,4 +99,30 @@ export class GrowthController {
       return res.status(500).json({ error: "Erro ao buscar embaixadores" });
     }
   }
+
+  static async toggleCoupon(req: Request, res: Response) {
+    try {
+      const { id } = req.params;
+      const { active } = req.body;
+      const coupon = await prisma.coupon.update({
+        where: { id },
+        data: { active: !!active }
+      });
+      return res.json(coupon);
+    } catch (error: any) {
+      return res.status(500).json({ error: "Erro ao alterar status do cupom" });
+    }
+  }
+
+  static async deleteCoupon(req: Request, res: Response) {
+    try {
+      const { id } = req.params;
+      await prisma.coupon.delete({
+        where: { id }
+      });
+      return res.json({ success: true });
+    } catch (error: any) {
+      return res.status(500).json({ error: "Erro ao excluir cupom" });
+    }
+  }
 }

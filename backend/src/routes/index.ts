@@ -512,6 +512,8 @@ router.delete("/admin/ambassador/campaigns/:campaignId", requireAuth, requireRol
 
 router.get("/admin/coupons", requireAuth, requireRole("ADMIN"), GrowthController.listCoupons);
 router.post("/admin/coupons", requireAuth, requireRole("ADMIN"), GrowthController.createCoupon);
+router.patch("/admin/coupons/:id", requireAuth, requireRole("ADMIN"), GrowthController.toggleCoupon);
+router.delete("/admin/coupons/:id", requireAuth, requireRole("ADMIN"), GrowthController.deleteCoupon);
 router.get("/admin/ambassadors", requireAuth, requireRole("ADMIN"), GrowthController.listAmbassadors);
 router.get("/admin/phygital/all", requireAuth, requireRole("ADMIN"), PhygitalController.listAllByEvent);
 
