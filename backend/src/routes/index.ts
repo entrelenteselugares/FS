@@ -506,6 +506,8 @@ router.patch("/admin/redemptions/:id/status",requireAuth, requireRole("ADMIN"), 
 
 router.get("/admin/ambassador/stats", requireAuth, requireRole("ADMIN"), ReferralController.listAllCampaigns);
 router.post("/admin/ambassador/campaigns", requireAuth, requireRole("ADMIN"), ReferralController.createCampaign);
+router.patch("/admin/ambassador/campaigns/:campaignId/toggle", requireAuth, requireRole("ADMIN"), ReferralController.adminToggleCampaign);
+router.delete("/admin/ambassador/campaigns/:campaignId", requireAuth, requireRole("ADMIN"), ReferralController.adminDeleteCampaign);
 
 router.get("/admin/coupons", requireAuth, requireRole("ADMIN"), GrowthController.listCoupons);
 router.get("/admin/ambassadors", requireAuth, requireRole("ADMIN"), GrowthController.listAmbassadors);

@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { API } from "../../lib/api";
-import { Users, Plus, TrendingUp, MousePointer2, Award, Search, X, ArrowRight } from "lucide-react";
+import { Users, Plus, TrendingUp, MousePointer2, Award, Search, X, ArrowRight, Trash2, Power } from "lucide-react";
 
 interface Campaign {
   id: string;
@@ -66,6 +66,25 @@ export const AdminAmbassadors: React.FC = () => {
       fetchCampaigns();
     } catch {
       alert("Erro ao criar campanha.");
+    }
+  };
+
+  const handleToggle = async (id: string) => {
+    try {
+      await API.patch(`/admin/ambassador/campaigns/${id}/toggle`);
+      fetchCampaigns();
+    } catch {
+      alert("Erro ao alterar status da campanha.");
+    }
+  };
+
+  const handleDelete = async (id: string, name: string) => {
+    if (!window.confirm(`Tem certeza que deseja EXCLUIR permanentemente a campanha "${name}"?\n\nEsta ação não pode ser desfeita.`)) return;
+    try {
+      await API.delete(`/admin/ambassador/campaigns/${id}`);
+      fetchCampaigns();
+    } catch {
+      alert("Erro ao excluir campanha.");
     }
   };
 
@@ -154,6 +173,7 @@ export const AdminAmbassadors: React.FC = () => {
               <th className="p-6 text-center">Cliques</th>
               <th className="p-6 text-center">Conversões</th>
               <th className="p-6">Status</th>
+              <th className="p-6 text-center">Ações</th>
             </tr>
           </thead>
           <tbody className="divide-y divide-theme-border">
@@ -186,6 +206,28 @@ export const AdminAmbassadors: React.FC = () => {
                   <span className={`px-2 py-1 text-[8px] font-black uppercase tracking-widest ${c.active ? 'bg-emerald-500/10 text-emerald-500' : 'bg-red-500/10 text-red-500'}`}>
                     {c.active ? 'Ativa' : 'Inativa'}
                   </span>
+                </td>
+                <td className="p-6">
+                  <div className="flex items-center justify-center gap-2">
+                    <button
+                      onClick={() => handleToggle(c.id)}
+                      title={c.active ? 'Desativar campanha' : 'Ativar campanha'}
+                      className={`p-2 rounded-lg transition-all ${
+                        c.active
+                          ? 'text-emerald-500 hover:bg-emerald-500/10'
+                          : 'text-zinc-500 hover:bg-white/5'
+                      }`}
+                    >
+                      <Power size={14} />
+                    </button>
+                    <button
+                      onClick={() => handleDelete(c.id, c.name)}
+                      title="Excluir campanha permanentemente"
+                      className="p-2 rounded-lg text-red-500 hover:bg-red-500/10 transition-all"
+                    >
+                      <Trash2 size={14} />
+                    </button>
+                  </div>
                 </td>
               </tr>
             ))}

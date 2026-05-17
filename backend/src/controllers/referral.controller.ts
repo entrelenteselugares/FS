@@ -131,4 +131,44 @@ export class ReferralController {
       return res.status(500).json({ error: "Internal Server Error" });
     }
   }
+
+  /**
+   * (ADMIN) Alterna o status ativo/inativo de uma campanha globalmente.
+   */
+  static async adminToggleCampaign(req: Request, res: Response) {
+    const { campaignId } = req.params;
+    try {
+      const campaign = await require("../lib/prisma").prisma.referralCampaign.findUnique({
+        where: { id: campaignId }
+      });
+      if (!campaign) {
+        return res.status(404).json({ error: "Campanha não encontrada" });
+      }
+      const updated = await require("../lib/prisma").prisma.referralCampaign.update({
+        where: { id: campaignId },
+        data: { active: !campaign.active }
+      });
+      return res.json(updated);
+    } catch (error: any) {
+      return res.status(500).json({ error: "Erro interno" });
+    }
+  }
+
+  /**
+   * (ADMIN) Exclui uma campanha globalmente.
+   */
+  static async adminDeleteCampaign(req: Request, res: Response) {
+    const { campaignId } = req.params;
+    try {
+      // Deleta primeiro as dependências (visitas e conversões pendentes) se necessário,
+      // ou se o Prisma estiver configurado com onDelete: Cascade, apenas deleta.
+      await require("../lib/prisma").prisma.referralVisit.deleteMany({ where: { campaignId } });
+      await require("../lib/prisma").prisma.referralConversion.deleteMany({ where: { campaignId } });
+      
+      await require("../lib/prisma").prisma.referralCampaign.delete({ where: { id: campaignId } });
+      return res.json({ success: true });
+    } catch (error: any) {
+      return res.status(400).json({ error: "Erro ao excluir campanha. Verifique se há restrições." });
+    }
+  }
 }
