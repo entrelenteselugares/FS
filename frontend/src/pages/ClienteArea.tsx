@@ -183,6 +183,8 @@ export default function ClienteArea() {
         setActiveTab("files");
       } else if (section === "menu") {
         setActiveTab("profile");
+      } else if (section === "affiliate") {
+        setActiveTab("affiliate");
       }
     });
 
