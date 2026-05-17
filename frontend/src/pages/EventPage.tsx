@@ -78,6 +78,7 @@ interface EventData {
   isPrimaryClient?: boolean;
   isPrivate?: boolean;
   isOwner?: boolean;
+  hasAccess?: boolean;
   active?: boolean;
   unlockedMediaIds?: string[];
   itinerary?: string | null;
@@ -1032,46 +1033,93 @@ return (
 
             {step === "paywall" || step === "success" ? (
               <div className="space-y-14 animate-in fade-in slide-in-from-right-8 duration-1000">
-                {isMarketplace && (
-                  <div className="space-y-4">
-                    <p className="text-[10px] text-brand-tactical font-black uppercase tracking-[0.6em] italic">Investimento</p>
-                    <div className="flex items-baseline gap-2">
-                      <span className="text-3xl font-light text-theme-text-muted/60 tracking-tighter italic">R$</span>
-                      <h2 className="text-6xl lg:text-7xl font-black tracking-tighter font-heading italic leading-none text-theme-text">
-                        {Number(searchParams.get("intent") === "upgrade" 
-                          ? (serviceCatalog.filter(s => selectedServices.includes(s.id)).reduce((acc, s) => acc + Number(s.basePrice), 0) + (includeLivePrint ? 150 : 0))
-                          : (isMarketplace ? cartTotal : event.priceBase)
-                        ).toFixed(0)}
-                      </h2>
-                      <span className="text-3xl font-black text-theme-text-muted/60 italic">,00</span>
+                {event.type === 'ALBUM_FULL' && !event.isPrimaryClient && !event.isOwner && !event.hasAccess ? (
+                  <div className="space-y-8 bg-zinc-950/80 border border-zinc-800/80 p-8 rounded-2xl relative overflow-hidden backdrop-blur-md shadow-2xl">
+                    <div className="absolute top-0 left-0 w-full h-[2px] bg-gradient-to-r from-red-500 via-amber-500 to-red-500" />
+                    <div className="flex items-center gap-3">
+                      <Lock size={18} className="text-amber-500 animate-pulse" />
+                      <span className="text-[10px] font-black text-amber-500 uppercase tracking-widest italic">Álbum Privado</span>
                     </div>
-                    <div className="p-4 bg-brand-tactical/5 border-l-2 border-brand-tactical">
-                      <p className="text-[10px] text-theme-text-muted font-black uppercase tracking-widest italic">
-                        {eventCart.length > 0 && `${eventCart.length} ${eventCart.length === 1 ? 'foto digital' : 'fotos digitais'}`}
-                        {eventCart.length > 0 && eventPhysicalItems.length > 0 && ' + '}
-                        {eventPhysicalItems.length > 0 && `${eventPhysicalItems.length} ${eventPhysicalItems.length === 1 ? 'produto físico' : 'produtos físicos'}`}
+                    <div className="space-y-4">
+                      <h4 className="text-md font-heading font-black text-white uppercase italic tracking-tight">Aguardando Liberação</h4>
+                      <p className="text-[11px] text-zinc-400 uppercase font-bold tracking-widest leading-relaxed">
+                        Esta galeria premium está aguardando o pagamento do saldo residual ou a liberação oficial de acesso pelo contratante.
                       </p>
                     </div>
+                    <div className="pt-6 border-t border-zinc-800/80 space-y-6">
+                      <p className="text-[9px] text-zinc-500 font-medium leading-relaxed">
+                        Se você é o contratante oficial do evento, faça login com seu e-mail cadastrado ({event.clientEmail || 'e-mail do cliente'}) para quitar o saldo e liberar o acesso.
+                      </p>
+                      <button 
+                        onClick={() => navigate("/login")}
+                        className="w-full h-16 bg-brand-tactical text-black text-[10px] font-black uppercase tracking-widest text-center italic hover:brightness-110 transition-all flex items-center justify-center gap-3"
+                      >
+                        FAZER LOGIN DO CONTRATANTE
+                      </button>
+                    </div>
                   </div>
-                )}
+                ) : (
+                  <>
+                    {isMarketplace && (
+                      <div className="space-y-4">
+                        <p className="text-[10px] text-brand-tactical font-black uppercase tracking-[0.6em] italic">Investimento</p>
+                        <div className="flex items-baseline gap-2">
+                          <span className="text-3xl font-light text-theme-text-muted/60 tracking-tighter italic">R$</span>
+                          <h2 className="text-6xl lg:text-7xl font-black tracking-tighter font-heading italic leading-none text-theme-text">
+                            {Number(searchParams.get("intent") === "upgrade" 
+                              ? (serviceCatalog.filter(s => selectedServices.includes(s.id)).reduce((acc, s) => acc + Number(s.basePrice), 0) + (includeLivePrint ? 150 : 0))
+                              : (isMarketplace ? cartTotal : event.priceBase)
+                            ).toFixed(0)}
+                          </h2>
+                          <span className="text-3xl font-black text-theme-text-muted/60 italic">,00</span>
+                        </div>
+                        <div className="p-4 bg-brand-tactical/5 border-l-2 border-brand-tactical">
+                          <p className="text-[10px] text-theme-text-muted font-black uppercase tracking-widest italic">
+                            {eventCart.length > 0 && `${eventCart.length} ${eventCart.length === 1 ? 'foto digital' : 'fotos digitais'}`}
+                            {eventCart.length > 0 && eventPhysicalItems.length > 0 && ' + '}
+                            {eventPhysicalItems.length > 0 && `${eventPhysicalItems.length} ${eventPhysicalItems.length === 1 ? 'produto físico' : 'produtos físicos'}`}
+                          </p>
+                        </div>
+                      </div>
+                    )}
 
-                <div className="flex flex-col gap-4">
-                  <button 
-                    onClick={handleUnlockClick} 
-                    className="group relative w-full h-28 bg-brand-tactical text-black font-black uppercase tracking-[0.4em] text-xs flex items-center justify-center gap-5 overflow-hidden transition-all hover:scale-[1.02] shadow-2xl shadow-brand-tactical/30 italic"
-                  >
-                    <div className="absolute inset-0 bg-white translate-x-[-100%] group-hover:translate-x-0 transition-transform duration-700 opacity-20" />
-                    <span className="relative z-10">
-                      {searchParams.get("intent") === "upgrade" ? "Finalizar Upgrade" : 
-                        event.type === 'ALBUM_FULL' ? "Desbloquear Álbum" : 
-                        "Finalizar Compra"}
-                    </span>
-                    <ChevronRight size={24} className="relative z-10 group-hover:translate-x-2 transition-transform" />
-                  </button>
-                  <button onClick={handleShare} className="w-full h-16 border border-theme-border/40 text-theme-text-muted font-black uppercase tracking-widest text-[10px] flex items-center justify-center gap-4 hover:bg-theme-border/60 hover:text-theme-text transition-all italic">
-                    <Share2 size={18} /> Compartilhar Galeria
-                  </button>
-                </div>
+                    {!isMarketplace && !event.hasAccess && (
+                      <div className="space-y-4">
+                        <p className="text-[10px] text-brand-tactical font-black uppercase tracking-[0.6em] italic">Investimento do Álbum</p>
+                        <div className="flex items-baseline gap-2">
+                          <span className="text-3xl font-light text-theme-text-muted/60 tracking-tighter italic">R$</span>
+                          <h2 className="text-6xl lg:text-7xl font-black tracking-tighter font-heading italic leading-none text-theme-text">
+                            {Number(event.priceBase || 0).toFixed(0)}
+                          </h2>
+                          <span className="text-3xl font-black text-theme-text-muted/60 italic">,00</span>
+                        </div>
+                        <div className="p-4 bg-brand-tactical/5 border-l-2 border-brand-tactical">
+                          <p className="text-[10px] text-theme-text-muted font-black uppercase tracking-widest italic">
+                            Liberação de todo o conteúdo da galeria digital.
+                          </p>
+                        </div>
+                      </div>
+                    )}
+
+                    <div className="flex flex-col gap-4">
+                      <button 
+                        onClick={handleUnlockClick} 
+                        className="group relative w-full h-28 bg-brand-tactical text-black font-black uppercase tracking-[0.4em] text-xs flex items-center justify-center gap-5 overflow-hidden transition-all hover:scale-[1.02] shadow-2xl shadow-brand-tactical/30 italic"
+                      >
+                        <div className="absolute inset-0 bg-white translate-x-[-100%] group-hover:translate-x-0 transition-transform duration-700 opacity-20" />
+                        <span className="relative z-10">
+                          {searchParams.get("intent") === "upgrade" ? "Finalizar Upgrade" : 
+                            event.type === 'ALBUM_FULL' ? "Desbloquear Álbum" : 
+                            "Finalizar Compra"}
+                        </span>
+                        <ChevronRight size={24} className="relative z-10 group-hover:translate-x-2 transition-transform" />
+                      </button>
+                      <button onClick={handleShare} className="w-full h-16 border border-theme-border/40 text-theme-text-muted font-black uppercase tracking-widest text-[10px] flex items-center justify-center gap-4 hover:bg-theme-border/60 hover:text-theme-text transition-all italic">
+                        <Share2 size={18} /> Compartilhar Galeria
+                      </button>
+                    </div>
+                  </>
+                )}
 
                 <div className="pt-6">
                   <LeadCapture eventId={event.id} />

@@ -299,6 +299,15 @@ export class EventController {
         isQuote: false,
         type: type ? String(type) : {
           in: ['ALBUM_FULL', 'PHOTO_MARKETPLACE', 'FOTO_POINT', 'FLASH_EVENT']
+        },
+        // Filtro Tático: Eventos contratados (ALBUM_FULL) não pagos não aparecem na vitrine
+        NOT: {
+          type: 'ALBUM_FULL',
+          orders: {
+            some: {
+              status: 'PENDENTE'
+            }
+          }
         }
       };
 
