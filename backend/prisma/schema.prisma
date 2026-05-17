@@ -70,8 +70,15 @@ model User {
   supplyOrders        SupplyOrder[]           @relation("FranchiseeSupplyOrders")
   notifications       Notification[]
   pushSubscriptions   PushSubscription[]
-  ambassadorOrders    Order[]                 @relation("AmbassadorOrders")
-  affiliatePayoutType String                  @default("CREDIT")
+  ambassadorOrders     Order[]                 @relation("AmbassadorOrders")
+  affiliatePayoutType  String                  @default("CREDIT")
+
+  // Affiliate Network (Multi-Tier Referral System)
+  referredById         String?                 // Self-ref: quem indicou este usuário
+  affiliateTier        String                  @default("STANDARD") // "STANDARD" | "VIP"
+  referredBy           User?                   @relation("UserReferrals", fields: [referredById], references: [id], onDelete: SetNull)
+  referrals            User[]                  @relation("UserReferrals")
+  affiliateCommissions AffiliateCommission[]
 
   @@map("users")
 }
@@ -368,6 +375,11 @@ model Order {
   rewardsUsed          Decimal?            @db.Decimal(10, 2)
   couponId             String?
   ambassadorId         String?
+  // Affiliate Network Splits
+  affiliateL1Id        String?             // userId do indicador direto do comprador
+  affiliateL2Id        String?             // userId do padrinho do L1 (somente VIP)
+  splitAffiliateL1     Decimal?            @db.Decimal(10, 2) // 5% do líquido para L1
+  splitAffiliateL2     Decimal?            @db.Decimal(10, 2) // 2% do líquido para L2 (VIP)
   items                OrderItem[]
   cliente              User?               @relation("ClienteOrders", fields: [clienteId], references: [id])
   editor               User?               @relation("EditorOrders", fields: [editorId], references: [id])
@@ -376,6 +388,7 @@ model Order {
   ambassador           User?               @relation("AmbassadorOrders", fields: [ambassadorId], references: [id])
   coupon               Coupon?             @relation(fields: [couponId], references: [id])
   abandonedEmailSentAt DateTime?
+  affiliateCommissions AffiliateCommission[]
 
   @@map("orders")
 }
@@ -1144,4 +1157,22 @@ model PortfolioImage {
   album          PortfolioAlbum @relation(fields: [albumId], references: [id], onDelete: Cascade)
 
   @@map("portfolio_images")
+}
+
+// ─────────────────────────────────────────────────────────
+// Affiliate Network — Multi-Tier Commission Ledger
+// ─────────────────────────────────────────────────────────
+model AffiliateCommission {
+  id        String   @id @default(cuid())
+  userId    String   // Quem recebe a comissão
+  orderId   String   // Pedido gerador da comissão
+  level     Int      // 1 = Indicação Direta (5%) | 2 = Passiva VIP (2%)
+  amount    Decimal  @db.Decimal(10, 2)
+  status    String   @default("PENDING") // PENDING | PAID
+  createdAt DateTime @default(now())
+
+  user  User  @relation(fields: [userId], references: [id])
+  order Order @relation(fields: [orderId], references: [id])
+
+  @@map("affiliate_commissions")
 }
