@@ -102,7 +102,7 @@ export const CheckoutPage = () => {
   const [showItems, setShowItems] = useState(false);
   const [couponCode, setCouponCode] = useState("");
   const [applyingCoupon, setApplyingCoupon] = useState(false);
-  const [validatedCoupon, setValidatedCoupon] = useState<{ discountPct: number; discountAbs: number } | null>(null);
+  const [validatedCoupon, setValidatedCoupon] = useState<{ discountPct: number; discountAbs: number; isFreeShipping: boolean } | null>(null);
 
   const brickController = useRef<{ unmount: () => void } | null>(null);
   const initializationStarted = useRef(false);
@@ -419,9 +419,11 @@ export const CheckoutPage = () => {
     setApplyingCoupon(true);
     try {
       const { data } = await API.get(`/marketplace/coupons/${couponCode}/validate?eventId=${order.eventId}`);
+      const couponData = data.coupon || data.discount || {};
       setValidatedCoupon({
-        discountPct: data.coupon.discountPct ? Number(data.coupon.discountPct) : 0,
-        discountAbs: data.coupon.discountAbs ? Number(data.coupon.discountAbs) : 0,
+        discountPct: couponData.discountPct ? Number(couponData.discountPct) : 0,
+        discountAbs: couponData.discountAbs ? Number(couponData.discountAbs) : 0,
+        isFreeShipping: !!couponData.isFreeShipping,
       });
       // Destruir brick para forçar recriação com novo valor
       if (brickController.current) {
@@ -440,7 +442,9 @@ export const CheckoutPage = () => {
   };
 
   // ── MP Bricks Initialization ────────────────────────────────────────────────
-  const baseAmountRaw = Number(order?.amount || 0) - Number(order?.shippingFee || 0) + Number(selectedShipping?.price || 0);
+  const isFreeShippingApplied = !!(validatedCoupon && validatedCoupon.isFreeShipping);
+  const shippingPrice = isFreeShippingApplied ? 0 : Number(selectedShipping?.price || 0);
+  const baseAmountRaw = Number(order?.amount || 0) - Number(order?.shippingFee || 0) + shippingPrice;
   let finalAmount = baseAmountRaw;
   if (validatedCoupon) {
     if (validatedCoupon.discountPct) finalAmount = finalAmount * (1 - validatedCoupon.discountPct / 100);
@@ -915,8 +919,8 @@ export const CheckoutPage = () => {
               {order.deliveryType === 'SHIPPING' && (
                 <div className="flex justify-between items-center text-[10px] font-black text-zinc-500 uppercase tracking-widest">
                   <span>Frete</span>
-                  <span className={(Number(order.shippingFee || 0)) === 0 ? "text-emerald-500" : "text-white"}>
-                    {(Number(order.shippingFee || 0)) === 0 ? "GRÁTIS" : `R$ ${Number(order.shippingFee || 0).toFixed(2)}`}
+                  <span className={shippingPrice === 0 ? "text-emerald-500 font-bold animate-pulse" : "text-white"}>
+                    {shippingPrice === 0 ? "GRÁTIS" : `R$ ${shippingPrice.toFixed(2)}`}
                   </span>
                 </div>
               )}

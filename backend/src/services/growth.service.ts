@@ -28,7 +28,8 @@ export class GrowthService {
 
     return {
       discountPct: coupon.discountPct ? Number(coupon.discountPct) : 0,
-      discountAbs: coupon.discountAbs ? Number(coupon.discountAbs) : 0
+      discountAbs: coupon.discountAbs ? Number(coupon.discountAbs) : 0,
+      isFreeShipping: !!coupon.isFreeShipping
     };
   }
 

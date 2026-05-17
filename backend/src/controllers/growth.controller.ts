@@ -53,15 +53,18 @@ export class GrowthController {
 
   static async createCoupon(req: Request, res: Response) {
     try {
-      const { code, discountPct, discountAbs, maxUses, expiresAt } = req.body;
+      const { code, discountPct, discountAbs, isFreeShipping, maxUses, expiresAt } = req.body;
       if (!code) return res.status(400).json({ error: "Código do cupom é obrigatório" });
-      if (!discountPct && !discountAbs) return res.status(400).json({ error: "Informe desconto em % ou R$" });
+      if (!discountPct && !discountAbs && !isFreeShipping) {
+        return res.status(400).json({ error: "Informe desconto em %, R$ ou selecione Frete Grátis" });
+      }
 
       const coupon = await prisma.coupon.create({
         data: {
           code: code.toUpperCase().trim(),
           discountPct: discountPct ? Number(discountPct) : null,
           discountAbs: discountAbs ? Number(discountAbs) : null,
+          isFreeShipping: !!isFreeShipping,
           maxUses: maxUses ? Number(maxUses) : null,
           expiresAt: expiresAt ? new Date(expiresAt) : null,
           active: true,

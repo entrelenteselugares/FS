@@ -3,9 +3,13 @@ import { AuthRequest } from "../lib/auth";
 import prisma from "../lib/prisma";
 import { Prisma } from "@prisma/client";
 
-const serializeService = (s: Prisma.ServiceCatalogGetPayload<{}>) => ({
+const serializeService = (s: any) => ({
   ...s,
   basePrice: Number(s.basePrice),
+  priceProfessional: Number(s.priceProfessional || 0),
+  priceMobile: Number(s.priceMobile || 0),
+  allowProfessional: Boolean(s.allowProfessional),
+  allowMobile: Boolean(s.allowMobile),
 });
 
 export async function listServiceCatalog(req: Request, res: Response): Promise<void> {
@@ -35,7 +39,7 @@ export async function adminListServiceCatalog(req: AuthRequest, res: Response): 
 
 export async function adminCreateService(req: AuthRequest, res: Response): Promise<void> {
   try {
-    const { name, description, category, basePrice, estimatedMinutes } = req.body;
+    const { name, description, category, basePrice, priceProfessional, priceMobile, allowProfessional, allowMobile, estimatedMinutes } = req.body;
     if (!name || basePrice === undefined) {
       res.status(400).json({ error: "Nome e Preço Base são obrigatórios." });
       return;
@@ -46,6 +50,10 @@ export async function adminCreateService(req: AuthRequest, res: Response): Promi
         description,
         category: category || "FOTOGRAFIA",
         basePrice: Number(basePrice),
+        priceProfessional: Number(priceProfessional || 0),
+        priceMobile: Number(priceMobile || 0),
+        allowProfessional: allowProfessional !== undefined ? Boolean(allowProfessional) : true,
+        allowMobile: allowMobile !== undefined ? Boolean(allowMobile) : false,
         estimatedMinutes: Number(estimatedMinutes || 60),
       }
     });
@@ -59,7 +67,7 @@ export async function adminCreateService(req: AuthRequest, res: Response): Promi
 export async function adminUpdateService(req: AuthRequest, res: Response): Promise<void> {
   try {
     const { id } = req.params;
-    const { name, description, category, basePrice, estimatedMinutes, active } = req.body;
+    const { name, description, category, basePrice, priceProfessional, priceMobile, allowProfessional, allowMobile, estimatedMinutes, active } = req.body;
     const service = await prisma.serviceCatalog.update({
       where: { id: String(id) },
       data: {
@@ -67,6 +75,10 @@ export async function adminUpdateService(req: AuthRequest, res: Response): Promi
         ...(description !== undefined && { description }),
         ...(category !== undefined && { category }),
         ...(basePrice !== undefined && { basePrice: Number(basePrice) }),
+        ...(priceProfessional !== undefined && { priceProfessional: Number(priceProfessional) }),
+        ...(priceMobile !== undefined && { priceMobile: Number(priceMobile) }),
+        ...(allowProfessional !== undefined && { allowProfessional: Boolean(allowProfessional) }),
+        ...(allowMobile !== undefined && { allowMobile: Boolean(allowMobile) }),
         ...(estimatedMinutes !== undefined && { estimatedMinutes: Number(estimatedMinutes) }),
         ...(active !== undefined && { active }),
       }

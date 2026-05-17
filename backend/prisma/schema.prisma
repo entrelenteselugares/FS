@@ -214,6 +214,7 @@ model Coupon {
   code        String    @unique
   discountPct Decimal?  @db.Decimal(5, 2)
   discountAbs Decimal?  @db.Decimal(10, 2)
+  isFreeShipping Boolean @default(false)
   maxUses     Int?
   usedCount   Int       @default(0)
   active      Boolean   @default(true)
@@ -408,16 +409,20 @@ model PhotoLike {
 }
 
 model ServiceCatalog {
-  id               String                @id @default(cuid())
-  name             String
-  description      String?
-  basePrice        Decimal               @db.Decimal(10, 2)
-  estimatedMinutes Int                   @default(60)
-  active           Boolean               @default(true)
-  createdAt        DateTime              @default(now())
-  updatedAt        DateTime              @updatedAt
-  category         String                @default("FOTOGRAFIA")
-  proServices      ProfessionalService[]
+  id                String                @id @default(cuid())
+  name              String
+  description       String?
+  basePrice         Decimal               @db.Decimal(10, 2)
+  priceProfessional Decimal               @default(0) @db.Decimal(10, 2)
+  priceMobile       Decimal               @default(0) @db.Decimal(10, 2)
+  allowProfessional Boolean               @default(true)
+  allowMobile       Boolean               @default(false)
+  estimatedMinutes  Int                   @default(60)
+  active            Boolean               @default(true)
+  createdAt         DateTime              @default(now())
+  updatedAt         DateTime              @updatedAt
+  category          String                @default("FOTOGRAFIA")
+  proServices       ProfessionalService[]
 
   @@map("service_catalog")
 }

@@ -8,6 +8,7 @@ interface Coupon {
   code: string;
   discountPct?: number | null;
   discountAbs?: number | null;
+  isFreeShipping?: boolean;
   usedCount: number;
   maxUses?: number | null;
   active: boolean;
@@ -25,7 +26,7 @@ export function AdminGrowth() {
 
   const [form, setForm] = useState({
     code: "",
-    discountType: "PCT" as "PCT" | "ABS",
+    discountType: "PCT" as "PCT" | "ABS" | "FREE_SHIPPING",
     discountValue: "",
     maxUses: "",
     expiresAt: "",
@@ -60,7 +61,10 @@ export function AdminGrowth() {
     e.preventDefault();
     setFormError("");
     if (!form.code.trim()) { setFormError("Informe o código do cupom."); return; }
-    if (!form.discountValue || Number(form.discountValue) <= 0) { setFormError("Informe um valor de desconto válido."); return; }
+    if (form.discountType !== "FREE_SHIPPING" && (!form.discountValue || Number(form.discountValue) <= 0)) {
+      setFormError("Informe um valor de desconto válido.");
+      return;
+    }
 
     setCreating(true);
     try {
@@ -68,6 +72,7 @@ export function AdminGrowth() {
         code: form.code.trim(),
         discountPct:  form.discountType === "PCT" ? Number(form.discountValue) : undefined,
         discountAbs:  form.discountType === "ABS" ? Number(form.discountValue) : undefined,
+        isFreeShipping: form.discountType === "FREE_SHIPPING",
         maxUses:      form.maxUses ? Number(form.maxUses) : undefined,
         expiresAt:    form.expiresAt || undefined,
       });
@@ -143,7 +148,7 @@ export function AdminGrowth() {
                     <div>
                       <h4 className="text-xl font-black italic text-brand-tactical uppercase tracking-widest">{c.code}</h4>
                       <p className="text-[10px] font-bold text-theme-text-muted mt-1">
-                        {c.discountPct ? `${c.discountPct}% OFF` : `R$ ${Number(c.discountAbs).toFixed(2)} OFF`}
+                        {c.isFreeShipping ? "FRETE GRÁTIS" : c.discountPct ? `${c.discountPct}% OFF` : `R$ ${Number(c.discountAbs).toFixed(2)} OFF`}
                         {" • "}{c.usedCount} usos
                         {c.maxUses ? ` / ${c.maxUses} máx` : ""}
                       </p>
@@ -233,26 +238,28 @@ export function AdminGrowth() {
                   <label className="text-[8px] font-black text-theme-muted uppercase tracking-widest block opacity-60">Tipo</label>
                   <select
                     value={form.discountType}
-                    onChange={e => setForm({ ...form, discountType: e.target.value as "PCT" | "ABS" })}
+                    onChange={e => setForm({ ...form, discountType: e.target.value as "PCT" | "ABS" | "FREE_SHIPPING" })}
                     className="w-full bg-theme-bg border border-theme-border p-4 text-[10px] text-theme-text font-black outline-none focus:border-brand-tactical rounded-xl cursor-pointer"
                   >
                     <option value="PCT">Percentual (%)</option>
                     <option value="ABS">Valor fixo (R$)</option>
+                    <option value="FREE_SHIPPING">Frete Grátis</option>
                   </select>
                 </div>
                 <div className="space-y-2">
                   <label className="text-[8px] font-black text-theme-muted uppercase tracking-widest block opacity-60">
-                    {form.discountType === "PCT" ? "Desconto (%)" : "Desconto (R$)"}
+                    {form.discountType === "FREE_SHIPPING" ? "Desconto" : form.discountType === "PCT" ? "Desconto (%)" : "Desconto (R$)"}
                   </label>
                   <input
                     type="number"
-                    required
+                    required={form.discountType !== "FREE_SHIPPING"}
+                    disabled={form.discountType === "FREE_SHIPPING"}
                     min="0.01"
                     step="0.01"
-                    value={form.discountValue}
+                    value={form.discountType === "FREE_SHIPPING" ? "" : form.discountValue}
                     onChange={e => setForm({ ...form, discountValue: e.target.value })}
-                    placeholder={form.discountType === "PCT" ? "10" : "15.00"}
-                    className="w-full bg-theme-bg border border-theme-border p-4 text-sm text-brand-tactical font-black outline-none focus:border-brand-tactical rounded-xl"
+                    placeholder={form.discountType === "FREE_SHIPPING" ? "Grátis" : form.discountType === "PCT" ? "10" : "15.00"}
+                    className="w-full bg-theme-bg border border-theme-border p-4 text-sm text-brand-tactical font-black outline-none focus:border-brand-tactical rounded-xl disabled:opacity-50 disabled:cursor-not-allowed"
                   />
                 </div>
               </div>

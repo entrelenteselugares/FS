@@ -679,6 +679,11 @@ export class PaymentController {
         return res.status(400).json({ error: "O valor do pagamento não pode ser negativo. Verifique os itens selecionados." });
       }
 
+      let finalShippingFee = Number(req.body.shippingFee || 0);
+      if (appliedCoupon && appliedCoupon.isFreeShipping) {
+        finalShippingFee = 0;
+      }
+
       const { 
         matriz: splitMatriz, 
         captacao: splitCaptacao, 
@@ -689,7 +694,7 @@ export class PaymentController {
         ambassadorId
       } = await PricingService.calculateSplits(preco, { 
         professionalId: event.captacaoId || undefined,
-        shippingFee: Number(req.body.shippingFee || 0),
+        shippingFee: finalShippingFee,
         supplierCost: totalSupplierCost,
         ambassadorId: req.cookies?.fs_referral
       });
@@ -849,7 +854,7 @@ export class PaymentController {
             // Order Engine Fields
             deliveryType: req.body.deliveryType || existingPendingOrder.deliveryType || "DIGITAL_ONLY",
             paymentModel: event.paymentModel,
-            shippingFee: req.body.shippingFee ? new Prisma.Decimal(req.body.shippingFee) : existingPendingOrder.shippingFee,
+            shippingFee: new Prisma.Decimal(finalShippingFee),
             shippingAddress: req.body.shippingAddress || existingPendingOrder.shippingAddress,
             isGuestOrder: !finalUserId,
             guestEmail: !finalUserId ? email : null,
@@ -889,7 +894,7 @@ export class PaymentController {
             // Order Engine Fields
             deliveryType: req.body.deliveryType || "DIGITAL_ONLY",
             paymentModel: event.paymentModel,
-            shippingFee: req.body.shippingFee ? new Prisma.Decimal(req.body.shippingFee) : null,
+            shippingFee: new Prisma.Decimal(finalShippingFee),
             shippingAddress: req.body.shippingAddress || null,
             isGuestOrder: isGuest,
             guestEmail: isGuest ? email : null,

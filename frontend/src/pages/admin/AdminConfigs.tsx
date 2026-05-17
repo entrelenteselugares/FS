@@ -65,6 +65,13 @@ const REQUIRED_SPLITS: Array<{key: string; label: string; value: string}> = [
   { key: "split_matriz",    label: "Matriz (Plataforma)",       value: "0" }
 ];
 
+const REQUIRED_INFRA: Array<{key: string; label: string; value: string}> = [
+  { key: "brand_primary", label: "Cor Primária", value: "#0a0a0a" },
+  { key: "brand_tactical", label: "Cor Tática", value: "#85B9AC" },
+  { key: "maintenance_mode", label: "Modo Manutenção", value: "false" },
+  { key: "public_access", label: "Vitrine Global", value: "true" }
+];
+
 export const AdminConfigs: React.FC = () => {
   const [configs, setConfigs] = useState<Config[]>([]);
   const [splitsTotal, setSplitsTotal] = useState(0);
@@ -91,6 +98,12 @@ export const AdminConfigs: React.FC = () => {
       const mergedConfigs = [...dbConfigs];
       
       REQUIRED_SPLITS.forEach(req => {
+        if (!mergedConfigs.find(c => c.key === req.key)) {
+          mergedConfigs.push(req);
+        }
+      });
+
+      REQUIRED_INFRA.forEach(req => {
         if (!mergedConfigs.find(c => c.key === req.key)) {
           mergedConfigs.push(req);
         }

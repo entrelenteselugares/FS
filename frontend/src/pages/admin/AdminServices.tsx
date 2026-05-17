@@ -24,6 +24,10 @@ interface Service {
   name: string;
   description: string;
   basePrice: number;
+  priceProfessional: number;
+  priceMobile: number;
+  allowProfessional: boolean;
+  allowMobile: boolean;
   category: string;
 }
 
@@ -232,7 +236,19 @@ export const AdminServices: React.FC = () => {
                             <span className="px-2 py-0.5 border border-theme-border/60 text-[7px] font-black uppercase tracking-widest text-theme-muted">{s.category}</span>
                             <h4 className="text-lg font-heading font-black text-theme-text uppercase tracking-tighter italic leading-none">{s.name}</h4>
                          </div>
-                         <p className="text-[10px] text-theme-muted uppercase tracking-widest font-medium max-w-xl leading-relaxed italic opacity-80">{s.description}</p>
+                         <div className="flex flex-wrap gap-2 mt-1">
+                            {s.allowProfessional && (
+                              <span className="px-2 py-0.5 bg-brand-tactical/15 border border-brand-tactical/25 text-[7px] font-black uppercase tracking-widest text-brand-tactical rounded">
+                                PROFISSIONAL: {formatCurrency(s.priceProfessional || 0)}
+                              </span>
+                            )}
+                            {s.allowMobile && (
+                              <span className="px-2 py-0.5 bg-amber-500/15 border border-amber-500/25 text-[7px] font-black uppercase tracking-widest text-amber-400 rounded">
+                                MOBILE: {formatCurrency(s.priceMobile || 0)}
+                              </span>
+                            )}
+                         </div>
+                         <p className="text-[10px] text-theme-muted uppercase tracking-widest font-medium max-w-xl leading-relaxed italic opacity-80 mt-1">{s.description}</p>
                       </div>
                    </div>
 
@@ -341,6 +357,10 @@ function ServiceModal({ onClose, onSave, initialData, saving }: { onClose: () =>
     name: initialData?.name || "",
     description: initialData?.description || "",
     basePrice: initialData?.basePrice || 0,
+    priceProfessional: initialData?.priceProfessional || 0,
+    priceMobile: initialData?.priceMobile || 0,
+    allowProfessional: initialData?.allowProfessional ?? true,
+    allowMobile: initialData?.allowMobile ?? false,
     category: initialData?.category || "FOTOGRAFIA"
   });
 
@@ -403,13 +423,82 @@ function ServiceModal({ onClose, onSave, initialData, saving }: { onClose: () =>
                 <label className={labelClass}>Preço Sugerido (R$)</label>
                 <div className="relative">
                   <DollarSign className="absolute left-4 top-1/2 -translate-y-1/2 text-brand-tactical" size={14} strokeWidth={1.5} />
-                  <input required type="number" step="0.01" className={`${inputClass} pl-10`} value={form.basePrice} onChange={e => setForm({...form, basePrice: parseFloat(e.target.value)})} placeholder="0,00" />
+                  <input required type="number" step="0.01" className={`${inputClass} pl-10`} value={form.basePrice} onChange={e => setForm({...form, basePrice: parseFloat(e.target.value) || 0})} placeholder="0,00" />
                 </div>
               </div>
               <div className="flex items-center">
                 <p className="text-[9px] text-theme-muted uppercase tracking-widest font-black italic opacity-40 leading-relaxed">
-                  Este valor será utilizado como base no gerador de orçamentos automático da rede.
+                  Este valor será utilizado como base fallback no gerador de orçamentos automático da rede.
                 </p>
+              </div>
+            </div>
+
+            {/* Perfis Elegíveis e Valores */}
+            <div className="space-y-4 pt-6 border-t border-theme-border/20">
+              <label className={labelClass}>Tipo de Serviço &amp; Precificação Individual</label>
+              
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                {/* Profissional Card */}
+                <div className={`p-6 border rounded-2xl transition-all ${form.allowProfessional ? 'border-brand-tactical/40 bg-brand-tactical/5' : 'border-theme-border/60 bg-theme-bg-muted/10'}`}>
+                  <label className="flex items-center gap-3 cursor-pointer select-none mb-4">
+                    <input 
+                      type="checkbox" 
+                      checked={form.allowProfessional} 
+                      onChange={e => setForm({...form, allowProfessional: e.target.checked})} 
+                      className="w-4 h-4 rounded text-brand-tactical focus:ring-brand-tactical border-theme-border/60 bg-theme-bg-muted"
+                    />
+                    <span className="text-[10px] font-black uppercase tracking-widest text-theme-text">Profissional</span>
+                  </label>
+                  
+                  {form.allowProfessional && (
+                    <div className="space-y-2 animate-in fade-in slide-in-from-top-2 duration-300">
+                      <span className="text-[8px] font-black text-theme-muted uppercase tracking-widest block opacity-60">Preço Profissional (R$)</span>
+                      <div className="relative">
+                        <DollarSign className="absolute left-4 top-1/2 -translate-y-1/2 text-brand-tactical" size={14} strokeWidth={1.5} />
+                        <input 
+                          required={form.allowProfessional} 
+                          type="number" 
+                          step="0.01" 
+                          className={`${inputClass} pl-10`} 
+                          value={form.priceProfessional} 
+                          onChange={e => setForm({...form, priceProfessional: parseFloat(e.target.value) || 0})} 
+                          placeholder="0,00" 
+                        />
+                      </div>
+                    </div>
+                  )}
+                </div>
+
+                {/* Mobile Card */}
+                <div className={`p-6 border rounded-2xl transition-all ${form.allowMobile ? 'border-amber-500/40 bg-amber-500/5' : 'border-theme-border/60 bg-theme-bg-muted/10'}`}>
+                  <label className="flex items-center gap-3 cursor-pointer select-none mb-4">
+                    <input 
+                      type="checkbox" 
+                      checked={form.allowMobile} 
+                      onChange={e => setForm({...form, allowMobile: e.target.checked})} 
+                      className="w-4 h-4 rounded text-amber-500 focus:ring-amber-500 border-theme-border/60 bg-theme-bg-muted"
+                    />
+                    <span className="text-[10px] font-black uppercase tracking-widest text-theme-text">Mobile</span>
+                  </label>
+                  
+                  {form.allowMobile && (
+                    <div className="space-y-2 animate-in fade-in slide-in-from-top-2 duration-300">
+                      <span className="text-[8px] font-black text-theme-muted uppercase tracking-widest block opacity-60">Preço Mobile (R$)</span>
+                      <div className="relative">
+                        <DollarSign className="absolute left-4 top-1/2 -translate-y-1/2 text-amber-500" size={14} strokeWidth={1.5} />
+                        <input 
+                          required={form.allowMobile} 
+                          type="number" 
+                          step="0.01" 
+                          className={`${inputClass} pl-10`} 
+                          value={form.priceMobile} 
+                          onChange={e => setForm({...form, priceMobile: parseFloat(e.target.value) || 0})} 
+                          placeholder="0,00" 
+                        />
+                      </div>
+                    </div>
+                  )}
+                </div>
               </div>
             </div>
             </div>
