@@ -1,19 +1,17 @@
 import { useState, useEffect, useCallback } from "react";
-import { Plus, Tag, Share2, Phone, Copy, Check, Activity } from "lucide-react";
+import { Plus, Tag, Phone, Activity } from "lucide-react";
 import { API } from "../../lib/api";
 import { QRCodeSVG } from "qrcode.react";
 
 
 
 export function AdminGrowth() {
-  const [activeTab, setActiveTab] = useState<"COUPONS" | "LINKS" | "WHATSAPP">("COUPONS");
+  const [activeTab, setActiveTab] = useState<"COUPONS" | "WHATSAPP">("COUPONS");
 
   // State
   const [coupons, setCoupons] = useState<{id: string, code: string, discountPct?: number, discountAbs?: number, usedCount: number, active: boolean}[]>([]);
-  const [links, setLinks] = useState<{id: string, nome: string, email: string, affiliatePayoutType: string}[]>([]);
   const [waStatus, setWaStatus] = useState<{connected?: boolean, qrCode?: string} | null>(null);
   const [loading, setLoading] = useState(true);
-  const [copied, setCopied] = useState<string | null>(null);
 
   const fetchData = useCallback(async () => {
     setLoading(true);
@@ -21,9 +19,6 @@ export function AdminGrowth() {
       if (activeTab === "COUPONS") {
         const { data } = await API.get("/admin/coupons");
         setCoupons(data.coupons || []);
-      } else if (activeTab === "LINKS") {
-        const { data } = await API.get("/admin/ambassadors");
-        setLinks(data.ambassadors || []);
       } else if (activeTab === "WHATSAPP") {
         const { data } = await API.get("/admin/whatsapp/status");
         setWaStatus(data);
@@ -39,12 +34,6 @@ export function AdminGrowth() {
     fetchData();
   }, [fetchData]);
 
-
-  const copyToClipboard = (text: string, id: string) => {
-    navigator.clipboard.writeText(text);
-    setCopied(id);
-    setTimeout(() => setCopied(null), 2000);
-  };
 
   return (
     <div className="space-y-8 animate-in fade-in duration-500">
@@ -69,12 +58,11 @@ export function AdminGrowth() {
       <div className="flex border-b border-theme-border/40 overflow-x-auto hide-scrollbar">
         {[
           { id: "COUPONS", icon: Tag, label: "Cupons Genéricos" },
-          { id: "LINKS", icon: Share2, label: "Links de Embaixador" },
           { id: "WHATSAPP", icon: Phone, label: "Motor WhatsApp" },
         ].map((tab) => (
           <button
             key={tab.id}
-            onClick={() => setActiveTab(tab.id as "COUPONS" | "LINKS" | "WHATSAPP")}
+            onClick={() => setActiveTab(tab.id as "COUPONS" | "WHATSAPP")}
             className={`flex items-center gap-2 px-6 py-4 text-[10px] font-black uppercase tracking-widest whitespace-nowrap transition-colors border-b-2 ${
               activeTab === tab.id ? "border-brand-tactical text-brand-tactical" : "border-transparent text-theme-text-muted hover:text-theme-text"
             }`}
@@ -119,37 +107,6 @@ export function AdminGrowth() {
                  ))}
               </div>
             )}
-          </div>
-        ) : activeTab === "LINKS" ? (
-          <div className="space-y-4">
-             <div className="grid md:grid-cols-2 gap-4">
-                 {links.map(l => (
-                   <div key={l.id} className="p-6 bg-theme-bg-muted border border-theme-border rounded-2xl space-y-4 shadow-sm">
-                      <div className="flex justify-between items-start">
-                         <div>
-                           <h4 className="text-sm font-black text-theme-text uppercase">{l.nome}</h4>
-                           <p className="text-[10px] font-bold text-theme-text-muted mt-1">{l.email}</p>
-                         </div>
-                         <span className="px-2 py-1 text-[8px] font-black uppercase rounded bg-brand-tactical/20 text-brand-tactical">
-                           {l.affiliatePayoutType}
-                         </span>
-                      </div>
-                      <div className="flex gap-2">
-                         <input 
-                           readOnly 
-                           value={`${window.location.origin}?ref=${l.id}`} 
-                           className="fs-input flex-1 text-[10px] opacity-70"
-                         />
-                         <button 
-                           onClick={() => copyToClipboard(`${window.location.origin}?ref=${l.id}`, l.id)}
-                           className="p-3 bg-theme-text/5 hover:bg-theme-text/10 rounded-xl transition-colors"
-                         >
-                           {copied === l.id ? <Check size={14} className="text-emerald-500" /> : <Copy size={14} className="text-theme-text" />}
-                         </button>
-                      </div>
-                   </div>
-                 ))}
-              </div>
           </div>
         ) : (
           <div className="p-8 border border-theme-border bg-theme-bg-muted/50 rounded-3xl flex flex-col md:flex-row gap-8 items-center justify-center min-h-[400px]">

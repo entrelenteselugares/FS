@@ -201,3 +201,21 @@
 - [x] **VAL-02**: Route integrity: resolved API server 404 deployment errors on Vercel by structuring standard Root-level deploy.
 - [x] **VAL-03**: Full browser visual validation and test coverage confirming complete zero-error logs.
 
+---
+
+## BACKLOG / Milestone v13.0: AI WhatsApp Attendant (Evolution API)
+
+**Goal:** Transform the current one-way WhatsApp notification system (CallMeBot) into a fully automated, bidirectional AI attendant that answers customers, negotiates, and closes budgets.
+
+**Phases:** 1
+
+---
+
+### [ ] Phase 52: Advanced Conversational AI Integration
+
+**Goal:** Connect an official WhatsApp line to an LLM (like OpenAI GPT-4o) using Evolution API and Typebot/n8n.
+
+- [ ] **WPP-01**: Replace CallMeBot with a robust connection engine (Evolution API / Z-API) allowing bidirectional reading of incoming messages.
+- [ ] **WPP-02**: Implement a Webhook listener that routes incoming WhatsApp messages to a workflow engine (n8n or Typebot).
+- [ ] **WPP-03**: Integrate OpenAI to read the database context (budget status, professional availability) and answer questions automatically in natural language.
+- [ ] **WPP-04**: Automatically trigger quote generation and send checkout links directly via the AI chat flow.
