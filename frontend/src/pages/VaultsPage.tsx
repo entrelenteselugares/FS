@@ -214,7 +214,7 @@ export default function VaultsPage() {
     { label: "Minhas Memórias", onClick: () => navigate("/minha-conta?s=fotos"), isActive: false, icon: <ImageIcon size={18} /> },
     { label: "Meus Álbuns", onClick: () => {}, isActive: true, icon: <Lock size={18} /> },
     { label: "Carrinho", onClick: () => navigate("/minha-conta?s=wallet"), isActive: false, icon: <ShoppingBag size={18} /> },
-    { label: "Programa Embaixador", onClick: () => navigate("/minha-conta?s=embaixador"), isActive: false, icon: <Users size={18} /> },
+    { label: "Indique e Ganhe", onClick: () => navigate("/minha-conta?s=affiliate"), isActive: false, icon: <Users size={18} /> },
     { label: "Meus Dados", onClick: () => navigate("/minha-conta?s=menu"), isActive: false, icon: <User size={18} /> },
   ];
 

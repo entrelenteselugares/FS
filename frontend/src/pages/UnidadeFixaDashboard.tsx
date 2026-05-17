@@ -3,7 +3,7 @@ import { useSearchParams, useNavigate } from "react-router-dom";
 
 import { API } from "../lib/api";
 import { QRCodeSVG } from "qrcode.react";
-import { QrCode, Copy, Check, X, Download, Calendar, DollarSign, Settings, Users2, Camera, Star, ShieldCheck, ArrowRight, Share2, MapPin, Phone, UserCircle, Printer, AlertTriangle, Play, RefreshCw } from "lucide-react";
+import { QrCode, Copy, Check, X, Download, Calendar, DollarSign, Settings, Users2, Camera, Star, ShieldCheck, ArrowRight, Share2, MapPin, Phone, UserCircle, Printer, AlertTriangle, Play, RefreshCw, Activity } from "lucide-react";
 import { useAuth } from "../hooks/useAuth";
 import { DashboardLayout, type NavItem } from "../components/DashboardLayout";
 import { FlashEventModal, FranchiseShopModal } from "../components/profissional";
@@ -386,7 +386,7 @@ export default function UnidadeFixaDashboard() {
   const NAV_ITEMS = (tab: Tab, setTab: (t: Tab) => void): NavItem[] => [
     ...(user?.franchiseProfile ? [
       { label: "Franquia Print", onClick: () => setTab("franquia"), isActive: tab === "franquia", icon: <Printer size={18} /> },
-      { label: "Monitor de Fila", onClick: () => setTab("monitor"), isActive: tab === "monitor", icon: <Printer size={18} /> }
+      { label: "Monitor de Fila", onClick: () => setTab("monitor"), isActive: tab === "monitor", icon: <Activity size={18} /> }
     ] : []),
     { label: "Agenda Tática", onClick: () => setTab("agenda"), isActive: tab === "agenda", icon: <Calendar size={18} /> },
     { label: "Fluxo Financeiro", onClick: () => setTab("financas"), isActive: tab === "financas", icon: <DollarSign size={18} />, badge: repasses.filter(r => r.status !== "PAID").length || undefined },

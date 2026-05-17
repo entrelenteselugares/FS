@@ -7,7 +7,7 @@ import AccessTypeModal from "../components/AccessTypeModal";
 import { SideDrawer } from "../components/SideDrawer";
 import { DashboardLayout, type NavItem } from "../components/DashboardLayout";
 import { ExpressSaleModal, FlashEventModal, type Partner } from "../components/profissional";
-import { AmbassadorDashboard } from "../components/AmbassadorDashboard";
+import { AffiliateDashboard } from "../components/AffiliateDashboard";
 import { 
   Users, Play, CheckCircle2, ArrowRight, 
   ShoppingBag, ShieldCheck, Clock, Image as ImageIcon,
@@ -17,7 +17,7 @@ import { ProfilePhotoUpload } from "../components/ProfilePhotoUpload";
 import { toast } from "sonner";
 import { motion, AnimatePresence } from "framer-motion";
 
-type ActiveTab = "files" | "profile" | "wallet" | "embaixador";
+type ActiveTab = "files" | "profile" | "wallet" | "affiliate";
 
 interface Pedido {
   id: string;
@@ -110,14 +110,14 @@ export default function ClienteArea() {
     { label: "Minhas Memórias", onClick: () => setActiveTab("files"), isActive: activeTab === "files", icon: <ImageIcon size={18} /> },
     { label: "Meus Álbuns", onClick: () => navigate("/meus-albuns"), isActive: false, icon: <Lock size={18} /> },
     { label: "Carrinho", onClick: () => setActiveTab("wallet"), isActive: activeTab === "wallet", icon: <ShoppingBag size={18} /> },
-    { label: "Programa Embaixador", onClick: () => setActiveTab("embaixador"), isActive: activeTab === "embaixador", icon: <Users size={18} /> },
+    { label: "Indique e Ganhe", onClick: () => setActiveTab("affiliate"), isActive: activeTab === "affiliate", icon: <Users size={18} /> },
     { label: "Meus Dados", onClick: () => setActiveTab("profile"), isActive: activeTab === "profile", icon: <User size={18} /> },
   ];
 
   const PAGE_TITLES: Record<ActiveTab, { title: string; subtitle: string; prefix: string }> = {
     files: { title: "Minhas Memórias", subtitle: "Acesso vitalício às memórias que você adquiriu.", prefix: "Central de Arquivos" },
     wallet: { title: "Carrinho", subtitle: "Créditos de Recompensa e Cashback acumulados.", prefix: "Minha Carteira" },
-    embaixador: { title: "Embaixador", subtitle: "Compartilhe e ganhe recompensas exclusivas.", prefix: "Programa de Afiliados" },
+    affiliate: { title: "Indique e Ganhe", subtitle: "Ganhe recompensas indicando a Foto Segundo.", prefix: "Programa de Afiliados" },
     profile: { title: "Meus Dados", subtitle: "Gerencie suas informações e endereços.", prefix: "Configurações" }
   };
   
@@ -662,8 +662,8 @@ export default function ClienteArea() {
                  </div>
               </div>
             </div>
-            ) : activeTab === "embaixador" ? (
-              <AmbassadorDashboard />
+            ) : activeTab === "affiliate" ? (
+              <AffiliateDashboard />
             ) : null}
           </motion.div>
         </AnimatePresence>

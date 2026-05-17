@@ -1,5 +1,6 @@
 import prisma from "../lib/prisma";
 import { Event } from "@prisma/client";
+import { AffiliateService } from "./affiliate.service";
 
 export interface SplitResult {
   matriz: number;
@@ -11,6 +12,11 @@ export interface SplitResult {
   passiveFranchiseeId?: string;
   ambassador?: number;
   ambassadorId?: string;
+  // Affiliate Network
+  affiliateL1Id?: string;
+  affiliateL2Id?: string;
+  affiliateL1Amount?: number;
+  affiliateL2Amount?: number;
 }
 
 /**
@@ -83,7 +89,8 @@ export class PricingService {
     shippingFee?: number,
     supplierCost?: number,
     professionalId?: string,
-    ambassadorId?: string
+    ambassadorId?: string,
+    buyerUserId?: string // Afiliado: resolve cadeia a partir do comprador
   }): Promise<SplitResult> {
     if (isNaN(amount) || amount === null) {
       console.warn("[PricingService] amount is NaN or null, returning default zero splits");
@@ -172,10 +179,32 @@ export class PricingService {
       console.log(`[Pricing] Comissão Passiva detectada (${(franchiseePct * 100).toFixed(1)}% do Líquido): ${franchisee} para ${passiveFranchiseeId}`);
     }
 
-    // Matriz fica com o resto (incluindo custos de envio e fornecedor)
-    // A comissão do embaixador é deduzida da margem da Matriz
-    const matriz = +(amount - (captacao + edicao + cartorio + franchisee + ambassador)).toFixed(2);
+    // ── BUSCA COMISSÃO AFILIADO (REDE DE INDICAÇÃO) ──
+    let affiliateL1Id: string | undefined;
+    let affiliateL2Id: string | undefined;
+    let affiliateL1Amount = 0;
+    let affiliateL2Amount = 0;
 
-    return { matriz, captacao, edicao, cartorio, franchisee, passiveFranchiseeId, ambassador, ambassadorId };
+    if (options?.buyerUserId) {
+      const { l1Id, l2Id } = await AffiliateService.resolveChain(options.buyerUserId);
+      if (l1Id) {
+        affiliateL1Id = l1Id;
+        affiliateL2Id = l2Id || undefined;
+        const commissions = await AffiliateService.calculateCommissions(netAmount, l1Id, l2Id);
+        affiliateL1Amount = commissions.l1Amount;
+        affiliateL2Amount = commissions.l2Amount;
+        console.log(`[Pricing] Comissão Afiliado L1: R$ ${affiliateL1Amount} → ${affiliateL1Id}`);
+        if (affiliateL2Id) console.log(`[Pricing] Comissão Afiliado L2: R$ ${affiliateL2Amount} → ${affiliateL2Id}`);
+      }
+    }
+
+    // Matriz fica com o resto — afiliado é deduzido da margem da Matriz
+    const matriz = +(amount - (captacao + edicao + cartorio + franchisee + ambassador + affiliateL1Amount + affiliateL2Amount)).toFixed(2);
+
+    return { 
+      matriz, captacao, edicao, cartorio, franchisee, passiveFranchiseeId, 
+      ambassador, ambassadorId,
+      affiliateL1Id, affiliateL2Id, affiliateL1Amount, affiliateL2Amount,
+    };
   }
 }

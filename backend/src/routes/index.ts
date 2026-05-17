@@ -113,6 +113,7 @@ import { PhygitalController } from "../controllers/phygital.controller";
 import { FranchiseController } from "../controllers/franchise.controller";
 import { VaultController } from "../controllers/vault.controller";
 import { IoTController } from "../controllers/iot.controller";
+import { AffiliateController } from "../controllers/affiliate.controller";
 import calendarRoutes from "./calendar.routes";
 import { VaultCycleService } from "../services/vaultCycle.service";
 import { VaultBlockingService } from "../services/vaultBlocking.service";
@@ -404,11 +405,12 @@ router.post("/orders/:id/access-type",  requireAuth, chooseAccessType);
 router.get("/orders/:id/access-status", requireAuth, getAccessStatus);
 router.post("/orders/:id/visibility",    requireAuth, toggleVisibility);
 
-// ── Cliente: Meus Pedidos ──────────────────────────────────────────────────────
+// ── Cliente: Meus Pedidos & Afiliados ──────────────────────────────────────────────
 router.get("/cliente/pedidos",     requireAuth, getMeusPedidos);
 router.get("/cliente/pedidos/:id", requireAuth, getMeuPedidoDetalhe);
 router.patch("/cliente/pedidos/:id/personalize", requireAuth, personalizePedido);
 router.patch("/cliente/pedidos/:id/cover",       requireAuth, uploadClientCover);
+router.get("/affiliate/dashboard", requireAuth, AffiliateController.getDashboard);
 
 // ── Gestão de Serviços (Vitrine do Profissional) ──────────────────────────────
 router.get("/profissional/services", requireAuth, requireRole("ADMIN", "PROFISSIONAL"), listProServices);
@@ -448,6 +450,7 @@ router.get("/admin/users",       requireAuth, requireRole("ADMIN"), adminListUse
 router.post("/admin/users",      requireAuth, requireRole("ADMIN"), adminCreateUser);
 router.patch("/admin/users/:id", requireAuth, requireRole("ADMIN"), adminUpdateUser);
 router.delete("/admin/users/:id", requireAuth, requireRole("ADMIN"), adminDeleteUser);
+router.patch("/admin/users/:id/tier", requireAuth, requireRole("ADMIN"), AffiliateController.updateTier);
 
 // ─── ADMIN APPROVAL HUB (Phase 45) ──────────────────────────────────────────
 router.get("/admin/applications",                            requireAuth, requireRole("ADMIN"), adminGetApplications);

@@ -18,6 +18,7 @@ import { SubscriptionService } from "../services/subscription.service";
 import { ShippingService, ShippingItem } from "../services/shipping.service";
 import { LogisticsService } from "../services/logistics.service";
 import { ReferralService } from "../services/referral.service";
+import { AffiliateService } from "../services/affiliate.service";
 
 export class PaymentController {
   /**
@@ -156,6 +157,13 @@ export class PaymentController {
         }
       }
 
+      // Resolve email → userId para evitar pedido como "Convidado" quando usuário já existe e permitir cálculo de afiliado
+      let resolvedClienteId = userId || null;
+      if (!resolvedClienteId && email) {
+        const existingUser = await prisma.user.findUnique({ where: { email: email.toLowerCase().trim() } });
+        if (existingUser) resolvedClienteId = existingUser.id;
+      }
+
       const { 
         matriz: splitMatriz, 
         captacao: splitCaptacao, 
@@ -163,12 +171,17 @@ export class PaymentController {
         cartorio: splitCartorio,
         franchisee: splitFranchisee,
         passiveFranchiseeId,
-        ambassadorId
+        ambassadorId,
+        affiliateL1Id,
+        affiliateL2Id,
+        affiliateL1Amount: splitAffiliateL1,
+        affiliateL2Amount: splitAffiliateL2
       } = await PricingService.calculateSplits(preco, { 
         professionalId: event.captacaoId || undefined,
         supplierCost: totalSupplierCost,
         shippingFee: Number(req.body.shippingFee || 0),
-        ambassadorId: req.cookies?.fs_referral
+        ambassadorId: req.cookies?.fs_referral,
+        buyerUserId: resolvedClienteId || undefined
       });
 
       console.log(`[Checkout] Repasse Manual Calculado: Snapshot salvo. Valor: ${preco}`);
@@ -229,13 +242,6 @@ export class PaymentController {
       let order;
       let existingPending = orderToUse;
 
-      // Resolve email → userId para evitar pedido como "Convidado" quando usuário já existe
-      let resolvedClienteId = userId || null;
-      if (!resolvedClienteId && email) {
-        const existingUser = await prisma.user.findUnique({ where: { email: email.toLowerCase().trim() } });
-        if (existingUser) resolvedClienteId = existingUser.id;
-      }
-
       if (!existingPending && email) {
         // Anti-duplicação: verifica pedido PENDENTE já existente para esse evento+email
         existingPending = await prisma.order.findFirst({
@@ -267,8 +273,15 @@ export class PaymentController {
           edicao: fEdicao, 
           cartorio: fCartorio,
           franchisee: fFranchisee,
-          passiveFranchiseeId: fPassiveId
-        } = await PricingService.calculateSplits(finalPreco, { professionalId: event.captacaoId || undefined });
+          passiveFranchiseeId: fPassiveId,
+          affiliateL1Id: fAffiliateL1Id,
+          affiliateL2Id: fAffiliateL2Id,
+          affiliateL1Amount: fSplitAffiliateL1,
+          affiliateL2Amount: fSplitAffiliateL2
+        } = await PricingService.calculateSplits(finalPreco, { 
+          professionalId: event.captacaoId || undefined,
+          buyerUserId: resolvedClienteId || undefined
+        });
 
         order = await prisma.order.update({
           where: { id: existingPending.id },
@@ -282,6 +295,10 @@ export class PaymentController {
             splitFranchisee: fFranchisee,
             passiveFranchiseeId: fPassiveId,
             ambassadorId: req.cookies?.fs_referral,
+            affiliateL1Id: fAffiliateL1Id,
+            affiliateL2Id: fAffiliateL2Id,
+            splitAffiliateL1: fSplitAffiliateL1,
+            splitAffiliateL2: fSplitAffiliateL2,
             items: orderItemsData.length > 0 ? {
               deleteMany: {},
               create: orderItemsData
@@ -305,6 +322,10 @@ export class PaymentController {
             splitFranchisee,
             passiveFranchiseeId,
             ambassadorId: req.cookies?.fs_referral,
+            affiliateL1Id,
+            affiliateL2Id,
+            splitAffiliateL1,
+            splitAffiliateL2,
             items: orderItemsData.length > 0 ? {
               create: orderItemsData
             } : undefined
@@ -1548,6 +1569,17 @@ export class PaymentController {
             orderId: order.id 
           }).catch(e => console.error("Erro ao processar recompensa embaixador:", e));
         }
+      }
+
+      // 5c. Processar Comissão de Afiliados Multinível
+      if (order.affiliateL1Id) {
+        AffiliateService.recordCommissions(
+          order.id,
+          order.affiliateL1Id,
+          Number(order.splitAffiliateL1 || 0),
+          order.affiliateL2Id,
+          Number(order.splitAffiliateL2 || 0)
+        ).catch(e => console.error("Erro ao registrar comissão de afiliado:", e));
       }
 
       // 6. Notificações (E-mail e WhatsApp) - Fora da transação para evitar rollback se falhar

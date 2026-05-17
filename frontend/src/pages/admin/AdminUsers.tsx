@@ -9,6 +9,7 @@ interface User {
   role: string;
   active: boolean;
   isVerified: boolean;
+  affiliateTier?: "STANDARD" | "VIP";
     profissional?: {
       captPct: number;
       editPct: number;
@@ -40,7 +41,8 @@ export const AdminUsers: React.FC = () => {
     otherHabilities: "", equipment: "", workflowType: ["TRADICIONAL"] as string[],
     captPct: 30, editPct: 10,
     isFranchise: false, printCredits: 0,
-    isVerified: false
+    isVerified: false,
+    affiliateTier: "STANDARD"
   });
   const [confirmDelete, setConfirmDelete] = useState<User | null>(null);
   const [notification, setNotification] = useState<{message: string, type: 'success' | 'error'} | null>(null);
@@ -103,6 +105,11 @@ export const AdminUsers: React.FC = () => {
           isVerified: formData.isVerified,
           ...(formData.password ? { senha: formData.password } : {})
         });
+
+        // Atualiza o tier de afiliado separadamente
+        if (editingUser.affiliateTier !== formData.affiliateTier) {
+          await API.patch(`/admin/users/${editingUser.id}/tier`, { tier: formData.affiliateTier });
+        }
       } else {
         await API.post("/admin/users", formData);
       }
@@ -122,7 +129,7 @@ export const AdminUsers: React.FC = () => {
 
       setIsModalOpen(false);
       setEditingUser(null);
-      setFormData({ name: "", email: "", password: "", role: "PROFISSIONAL", pixKey: "", otherHabilities: "", equipment: "", workflowType: ["TRADICIONAL"], captPct: 30, editPct: 10, isFranchise: false, printCredits: 0, isVerified: false });
+      setFormData({ name: "", email: "", password: "", role: "PROFISSIONAL", pixKey: "", otherHabilities: "", equipment: "", workflowType: ["TRADICIONAL"], captPct: 30, editPct: 10, isFranchise: false, printCredits: 0, isVerified: false, affiliateTier: "STANDARD" });
       fetchUsers();
       showNotification(editingUser ? "Membro atualizado com sucesso!" : "Membro convocado com sucesso!");
     } catch {
@@ -145,7 +152,8 @@ export const AdminUsers: React.FC = () => {
       editPct: user.profissional?.editPct || 10,
       isFranchise: !!user.franchiseProfile,
       printCredits: user.franchiseProfile?.printCredits || 0,
-      isVerified: user.isVerified
+      isVerified: user.isVerified,
+      affiliateTier: user.affiliateTier || "STANDARD"
     });
     setIsModalOpen(true);
   };
@@ -182,7 +190,7 @@ export const AdminUsers: React.FC = () => {
           </div>
           <div className="flex flex-wrap items-center gap-4 w-full xl:w-auto">
             <button 
-              onClick={() => { setIsModalOpen(true); setEditingUser(null); setFormData({ name: "", email: "", password: "", role: "PROFISSIONAL", pixKey: "", otherHabilities: "", equipment: "", workflowType: ["TRADICIONAL"], captPct: 30, editPct: 10, isFranchise: false, printCredits: 0, isVerified: false }); }}
+              onClick={() => { setIsModalOpen(true); setEditingUser(null); setFormData({ name: "", email: "", password: "", role: "PROFISSIONAL", pixKey: "", otherHabilities: "", equipment: "", workflowType: ["TRADICIONAL"], captPct: 30, editPct: 10, isFranchise: false, printCredits: 0, isVerified: false, affiliateTier: "STANDARD" }); }}
               className="fs-btn bg-brand-tactical text-zinc-950 italic flex-1 md:flex-none whitespace-nowrap"
             >
               <UserPlus size={14} className="inline mr-2" /> CONVOCAR MEMBRO
@@ -274,6 +282,11 @@ export const AdminUsers: React.FC = () => {
                       {u.franchiseProfile && (
                         <span className="px-2 py-1 bg-brand-tactical/10 border border-brand-tactical/30 text-brand-tactical text-[7px] font-black uppercase tracking-widest italic">
                           FRANQUIA: {u.franchiseProfile.printCredits} CR
+                        </span>
+                      )}
+                      {u.affiliateTier === 'VIP' && (
+                        <span className="px-2 py-1 bg-yellow-500/10 border border-yellow-500/30 text-yellow-500 text-[7px] font-black uppercase tracking-widest flex items-center gap-1 italic">
+                          AFILIADO VIP
                         </span>
                       )}
                     </div>
@@ -453,9 +466,9 @@ export const AdminUsers: React.FC = () => {
                 )}
               </div>
 
-              {/* ── VERIFICAÇÃO PRO ── */}
-              {formData.role === "PROFISSIONAL" && (
-                <div className="pt-6">
+              {/* ── VERIFICAÇÃO PRO E AFILIADO VIP ── */}
+              <div className="pt-6 space-y-4">
+                {formData.role === "PROFISSIONAL" && (
                   <div className="flex items-center justify-between bg-brand-tactical/5 p-6 rounded-[30px] border border-brand-tactical/20">
                     <div className="space-y-1">
                       <label className="text-[10px] font-black text-brand-tactical uppercase tracking-widest italic">Verificação Elite (PRO)</label>
@@ -469,8 +482,22 @@ export const AdminUsers: React.FC = () => {
                       <div className={`absolute top-1 w-5 h-5 rounded-full bg-white transition-all ${formData.isVerified ? 'left-8' : 'left-1'}`} />
                     </button>
                   </div>
+                )}
+
+                <div className="flex items-center justify-between bg-yellow-500/5 p-6 rounded-[30px] border border-yellow-500/20">
+                  <div className="space-y-1">
+                    <label className="text-[10px] font-black text-yellow-500 uppercase tracking-widest italic">Afiliado VIP (L2)</label>
+                    <p className="text-[8px] text-theme-muted uppercase font-bold opacity-40 italic">Ativa ganhos de comissão passiva sobre indicados (Regra dos 50)</p>
+                  </div>
+                  <button
+                    type="button"
+                    onClick={() => setFormData({...formData, affiliateTier: formData.affiliateTier === 'VIP' ? 'STANDARD' : 'VIP'})}
+                    className={`w-14 h-7 rounded-full transition-all relative ${formData.affiliateTier === 'VIP' ? 'bg-yellow-500 shadow-lg shadow-yellow-500/30' : 'bg-theme-border'}`}
+                  >
+                    <div className={`absolute top-1 w-5 h-5 rounded-full bg-white transition-all ${formData.affiliateTier === 'VIP' ? 'left-8' : 'left-1'}`} />
+                  </button>
                 </div>
-              )}
+              </div>
             </form>
 
             {/* Footer */}

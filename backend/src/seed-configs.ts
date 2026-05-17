@@ -8,6 +8,8 @@ async function main() {
     { key: "split_edicao", value: "10", label: "Repasse Edição (%)" },
     { key: "split_cartorio", value: "10", label: "Comissão Cartório (%)" },
     { key: "split_franchisee", value: "10", label: "Comissão Passiva B2B (%)" },
+    { key: "split_affiliate_l1", value: "5", label: "Afiliado Direto — Nível 1 (%)" },
+    { key: "split_affiliate_l2", value: "2", label: "Afiliado Passivo VIP — Nível 2 (%)" },
   ];
 
   for (const c of configs) {

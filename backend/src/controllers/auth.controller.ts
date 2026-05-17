@@ -165,6 +165,15 @@ export class AuthController {
         if (existingPrismaUser) {
           user = existingPrismaUser;
         } else {
+          let referredById: string | null = null;
+          if (ref) {
+            const referrer = await tx.user.findUnique({ where: { referralCode: ref } });
+            if (referrer) referredById = referrer.id;
+          }
+          
+          // Gera um código de indicação único para o novo usuário
+          const newReferralCode = Array.from({length: 8}, () => 'ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789'[Math.floor(Math.random()*36)]).join('');
+
           user = await tx.user.create({
             data: { 
               id: sbUser!.id,
@@ -173,7 +182,9 @@ export class AuthController {
               nome: nome || "Usuário", 
               role: cleanRole, 
               whatsapp,
-              address: endereco || null // Garante que o endereço vá para o modelo User também
+              address: endereco || null,
+              referredById,
+              referralCode: newReferralCode
             }
           });
         }
@@ -360,7 +371,7 @@ export class AuthController {
   }
 
   static async registerExpress(req: Request, res: Response) {
-    const { email, senha, nome, whatsapp } = req.body;
+    const { email, senha, nome, whatsapp, ref } = req.body;
 
     if (!email || !senha) {
       return res.status(400).json({ error: "Email e senha são obrigatórios" });
@@ -391,6 +402,14 @@ export class AuthController {
       if (!sbUser) throw new Error("Supabase não retornou dados do usuário.");
 
       // 2. Criar no Prisma
+      let referredById: string | null = null;
+      if (ref) {
+        const referrer = await prisma.user.findUnique({ where: { referralCode: ref } });
+        if (referrer) referredById = referrer.id;
+      }
+      
+      const newReferralCode = Array.from({length: 8}, () => 'ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789'[Math.floor(Math.random()*36)]).join('');
+
       const user = await prisma.user.create({
         data: {
           id: sbUser.id,
@@ -399,7 +418,9 @@ export class AuthController {
           nome: defaultNome,
           role: "CLIENTE",
           whatsapp: whatsapp || null,
-          profileComplete: false
+          profileComplete: false,
+          referredById,
+          referralCode: newReferralCode
         }
       });
 
