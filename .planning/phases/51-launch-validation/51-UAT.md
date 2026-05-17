@@ -32,12 +32,18 @@ result: passed (Automated mobile layout verification completed. No overlaps, cle
 expected: Logar com <cartorio@feijoada.com>. Acessar a aba "Franquia Print". O saldo de fotos e terminal devem aparecer sem cortes na tela de celular.
 result: passed (Automated mobile layout verification completed. Components adapt to 375px width seamlessly.)
 
+### 5. Painel Indique e Ganhe (Afiliados L1/L2)
+
+expected: Acessar a Área do Cliente, navegar para a aba "Indique e Ganhe". O sistema deve carregar o link de convite e exibir os contadores de recompensa L1/L2 sem travar a renderização (erro de toLocaleString).
+result: passed (Visual integrity verified E2E via browser subagent. Redundant menu merged and crash fixed.)
+
 ## Summary
 
-total: 4
-passed: 4
+total: 5
+passed: 5
 issues: 0
 pending: 0
 skipped: 0
 
 ## Gaps
+
