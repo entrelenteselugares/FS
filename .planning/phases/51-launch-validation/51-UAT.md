@@ -1,17 +1,14 @@
 ---
-status: testing
+status: complete
 phase: 51-launch-validation
 source: [Manual UAT definition]
 started: 2026-05-16T11:53:00-03:00
-updated: 2026-05-16T11:53:00-03:00
+updated: 2026-05-17T11:57:00-03:00
 ---
 
 ## Current Test
 
-number: 5
-name: Conclusão do Lançamento
-expected: UAT 100% concluído.
-awaiting: user response
+[testing complete]
 
 ## Tests
 
