@@ -135,48 +135,51 @@
 
 ---
 
-### [ ] Phase 47: Advanced Portfolio Galleries
+### [x] Phase 47: Advanced Portfolio Galleries
 
 **Goal:** Enable professionals to upload, categorize, and showcase high-quality image albums on their public profiles.
 
-- [ ] **PORT-01**: User (Professional) can upload and manage high-quality image albums visible on their public profile.
-- [ ] **PORT-02**: System automatically generates compressed thumbnails and watermarked previews for portfolio images.
-- [ ] **PORT-03**: User (Client) can view professional portfolios in a seamless masonry gallery layout.
-- [ ] **PORT-04**: User (Professional) can organize portfolio items into named categories/albums.
+- [x] **PORT-01**: User (Professional) can upload and manage high-quality image albums visible on their public profile.
+- [x] **PORT-02**: System automatically generates compressed thumbnails and watermarked previews for portfolio images.
+- [x] **PORT-03**: User (Client) can view professional portfolios in a seamless masonry gallery layout.
+- [x] **PORT-04**: User (Professional) can organize portfolio items into named categories/albums.
 
 **Success Criteria:**
+
 1. Professional can create an album and upload 10+ photos without errors.
 2. Client viewing the public profile sees a fast-loading masonry grid of the albums.
 3. High-res images are protected/watermarked while thumbnails are optimized.
 
 ---
 
-### [ ] Phase 48: Automated Booking Escrow
+### [x] Phase 48: Automated Booking Escrow
 
 **Goal:** Implement a secure booking flow requiring clients to pay a reservation fee (via MercadoPago) to access the professional's direct contact.
 
-- [ ] **ESCROW-01**: User (Client) must pay a "Booking Fee" (Taxa de Reserva) via MercadoPago to unlock direct WhatsApp contact with a professional.
-- [ ] **ESCROW-02**: System holds the booking fee in escrow and reflects it as "Pending" in the professional's balance.
-- [ ] **ESCROW-03**: System automatically releases the booking fee to the professional's available balance upon service completion or after 7 days.
-- [ ] **ESCROW-04**: System updates the budget request status in real-time via webhooks.
+- [x] **ESCROW-01**: User (Client) must pay a "Booking Fee" (Taxa de Reserva) via MercadoPago to unlock direct WhatsApp contact with a professional.
+- [x] **ESCROW-02**: System holds the booking fee in escrow and reflects it as "Pending" in the professional's balance.
+- [x] **ESCROW-03**: System automatically releases the booking fee to the professional's available balance upon service completion or after 7 days.
+- [x] **ESCROW-04**: System updates the budget request status in real-time via webhooks.
 
 **Success Criteria:**
+
 1. Client is prompted to pay via PIX/Card to unlock the professional's WhatsApp.
 2. Webhook confirms payment and updates budget request status to "Contato Liberado".
 3. The professional's financial dashboard shows the escrowed amount as "Pending".
 
 ---
 
-### [ ] Phase 49: Proximity Search & Directory
+### [x] Phase 49: Proximity Search & Directory
 
 **Goal:** Enhance the public directory to allow clients to find professionals based on geographical proximity and subscription tier.
 
-- [ ] **SEARCH-01**: User (Client) can search for professionals within a specific radius of their location using geolocation APIs.
-- [ ] **SEARCH-02**: System filters professional search results based on geographic proximity, rating, and subscription status (verified PROs first).
-- [ ] **SEARCH-03**: User (Professional) can update their service radius (in km) and base location in their profile settings.
-- [ ] **SEARCH-04**: System provides a map-based or distance-based UI view for the professional directory.
+- [x] **SEARCH-01**: User (Client) can search for professionals within a specific radius of their location using geolocation APIs.
+- [x] **SEARCH-02**: System filters professional search results based on geographic proximity, rating, and subscription status (verified PROs first).
+- [x] **SEARCH-03**: User (Professional) can update their service radius (in km) and base location in their profile settings.
+- [x] **SEARCH-04**: System provides a map-based or distance-based UI view for the professional directory.
 
 **Success Criteria:**
+
 1. Clients can filter the directory by "City" or "Near Me".
 2. Search results correctly prioritize subscribed (MRR) and verified professionals.
 3. Professionals can define a maximum travel radius in their config tab.

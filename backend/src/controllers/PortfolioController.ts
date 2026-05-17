@@ -97,18 +97,35 @@ export const PortfolioController = {
         return res.status(404).json({ error: "Album not found or unauthorized" });
       }
 
-      // Stub generation
+      const { supabaseAdmin } = require("../lib/supabase");
       const uploadedImages = [];
+
       for (const file of files) {
-        // Here we would upload the file to S3/Supabase and generate watermarks/thumbnails
-        const mockUrl = `https://example.com/mock-upload/${Date.now()}-${file.originalname}`;
+        const ext = file.mimetype.split("/")[1] || "jpg";
+        const fileName = `albums/${albumId}/${Date.now()}-${Math.random().toString(36).substring(7)}.${ext}`;
+
+        const { error: uploadError } = await supabaseAdmin.storage
+          .from("portfolio")
+          .upload(fileName, file.buffer, {
+            contentType: file.mimetype,
+            upsert: true,
+          });
+
+        if (uploadError) {
+          console.error("[Portfolio] Error uploading to Supabase:", uploadError);
+          continue;
+        }
+
+        const { data: { publicUrl } } = supabaseAdmin.storage
+          .from("portfolio")
+          .getPublicUrl(fileName);
         
         const image = await prisma.portfolioImage.create({
           data: {
             albumId,
-            url: mockUrl,
-            thumbnailUrl: mockUrl, // stub
-            watermarkedUrl: mockUrl, // stub
+            url: publicUrl,
+            thumbnailUrl: publicUrl, // To do: Generate real thumbnail via Edge function or CDN
+            watermarkedUrl: publicUrl, // To do: Generate watermarked version
           },
         });
         
@@ -116,9 +133,9 @@ export const PortfolioController = {
         if (!album.coverUrl) {
           await prisma.portfolioAlbum.update({
             where: { id: albumId },
-            data: { coverUrl: mockUrl },
+            data: { coverUrl: publicUrl },
           });
-          album.coverUrl = mockUrl;
+          album.coverUrl = publicUrl;
         }
 
         uploadedImages.push(image);
