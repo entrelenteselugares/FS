@@ -134,21 +134,31 @@ export class AffiliateService {
       }),
     ]);
 
-    const l2Count =
+    const totalL1 = user?.referrals.length ?? 0;
+    const totalL2 =
       user?.referrals.reduce((acc, r) => acc + r.referrals.length, 0) ?? 0;
 
-    const totalEarned = commissions.reduce(
-      (acc, c) => acc + Number(c.amount),
-      0
-    );
+    const commissionsL1 = commissions
+      .filter((c: any) => c.level === 1)
+      .reduce((acc, c) => acc + Number(c.amount), 0);
+
+    const commissionsL2 = commissions
+      .filter((c: any) => c.level === 2)
+      .reduce((acc, c) => acc + Number(c.amount), 0);
 
     return {
+      tier: user?.affiliateTier ?? "STANDARD",
       referralCode: user?.referralCode,
-      affiliateTier: user?.affiliateTier ?? "STANDARD",
-      rewardCredits: user?.rewardCredits ?? 0,
-      l1Count: user?.referrals.length ?? 0,
-      l2Count,
-      totalEarned,
+      totalL1,
+      totalL2,
+      commissionsL1,
+      commissionsL2,
+      pendingPayout: 0, // Placeholder, can be tied to actual withdrawal requests later
+      availablePayout: Number(user?.rewardCredits ?? 0),
+      // keep original ones just in case
+      l1Count: totalL1,
+      l2Count: totalL2,
+      totalEarned: commissionsL1 + commissionsL2,
       referrals: user?.referrals ?? [],
       commissions,
     };
