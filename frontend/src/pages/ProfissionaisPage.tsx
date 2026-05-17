@@ -107,55 +107,80 @@ export default function ProfissionaisPage() {
       </div>
 
       {/* Filters */}
-      <div className="sticky top-0 z-30 bg-zinc-950/95 backdrop-blur-xl border-b border-theme-border/20">
-        <div className="max-w-6xl mx-auto px-6 py-4 flex flex-col md:flex-row gap-4">
-          <div className="flex-1 relative">
-            <Search size={16} className="absolute left-4 top-1/2 -translate-y-1/2 text-zinc-500" />
-            <input
-              className="w-full bg-zinc-900 border border-zinc-800 pl-10 pr-4 py-3 text-sm text-white placeholder-zinc-500 focus:border-brand-tactical/50 outline-none transition-all"
-              placeholder="Buscar por nome..."
-              value={search}
-              onChange={e => setSearch(e.target.value)}
-            />
-            {search && (
-              <button onClick={() => setSearch("")} className="absolute right-4 top-1/2 -translate-y-1/2 text-zinc-500 hover:text-white">
-                <X size={14} />
+      {/* Filters */}
+      <div className="sticky top-0 z-30 bg-zinc-950/80 backdrop-blur-xl border-b border-zinc-900/50 py-3.5">
+        <div className="max-w-4xl mx-auto px-4">
+          <div className="bg-zinc-900/60 border border-zinc-800/80 p-1.5 rounded-2xl md:rounded-full flex flex-col md:flex-row items-center gap-2 md:gap-3 shadow-xl backdrop-blur-md">
+            {/* Search Input */}
+            <div className="w-full md:flex-1 relative flex items-center">
+              <Search size={14} className="absolute left-4 text-zinc-500" />
+              <input
+                className="w-full bg-transparent pl-10 pr-8 py-2 text-xs text-white placeholder-zinc-500 focus:outline-none"
+                placeholder="Buscar profissional por nome..."
+                value={search}
+                onChange={e => setSearch(e.target.value)}
+              />
+              {search && (
+                <button onClick={() => setSearch("")} className="absolute right-3 text-zinc-500 hover:text-white transition-colors">
+                  <X size={12} />
+                </button>
+              )}
+            </div>
+
+            {/* Vertical Divider (Desktop only) */}
+            <div className="hidden md:block h-6 w-px bg-zinc-800/60" />
+
+            {/* City Input (Sleeker and smaller width) */}
+            <div className="w-full md:w-32 relative flex items-center">
+              <MapPin size={13} className="absolute left-3 text-zinc-500" />
+              <input
+                className="w-full bg-transparent pl-8 pr-3 py-2 text-xs text-white placeholder-zinc-500 focus:outline-none"
+                placeholder="Cidade..."
+                value={city}
+                onChange={e => setCity(e.target.value)}
+              />
+            </div>
+
+            {/* Vertical Divider (Desktop only) */}
+            <div className="hidden md:block h-6 w-px bg-zinc-800/60" />
+
+            {/* Perto de Mim (Luxury Badge Button) */}
+            <div className="w-full md:w-auto flex justify-start md:justify-center">
+              <button
+                onClick={toggleNearby}
+                className={`w-full md:w-auto px-3.5 py-2 rounded-xl md:rounded-full text-[9px] font-black uppercase tracking-wider transition-all flex items-center justify-center gap-1.5 border ${
+                  nearby
+                    ? "bg-brand-tactical text-black border-brand-tactical shadow-md shadow-brand-tactical/25"
+                    : "bg-zinc-800/30 text-zinc-400 border-zinc-800 hover:border-brand-tactical/35 hover:text-white"
+                }`}
+              >
+                <MapPin size={11} className={nearby ? "animate-pulse" : ""} />
+                {nearby ? "Perto de Mim: Sim" : "Perto de Mim"}
               </button>
-            )}
-          </div>
-          <div className="relative">
-            <MapPin size={14} className="absolute left-4 top-1/2 -translate-y-1/2 text-zinc-500" />
-            <input
-              className="w-full md:w-48 bg-zinc-900 border border-zinc-800 pl-10 pr-4 py-3 text-sm text-white placeholder-zinc-500 focus:border-brand-tactical/50 outline-none"
-              placeholder="Cidade..."
-              value={city}
-              onChange={e => setCity(e.target.value)}
-            />
-          </div>
-          <button
-            onClick={toggleNearby}
-            className={`w-full md:w-auto justify-center md:justify-start px-4 py-3 text-[10px] font-black uppercase tracking-widest transition-all border flex items-center gap-2 ${
-              nearby ? "bg-brand-tactical text-black border-brand-tactical" : "bg-zinc-900 text-zinc-400 border-zinc-800 hover:border-brand-tactical/30"
-            }`}
-          >
-            <MapPin size={14} />
-            {nearby ? "Perto de Mim: On" : "Perto de Mim"}
-          </button>
-          <div className="relative">
-            <Filter size={14} className="absolute left-4 top-1/2 -translate-y-1/2 text-zinc-500" />
-            <select
-              className="w-full md:w-44 bg-zinc-900 border border-zinc-800 pl-10 pr-4 py-3 text-sm text-white focus:border-brand-tactical/50 outline-none appearance-none cursor-pointer"
-              value={service}
-              onChange={e => setService(e.target.value)}
-            >
-              <option value="">Todas as áreas</option>
-              {SERVICE_OPTIONS.map(s => (
-                <option key={s} value={s}>{s}</option>
-              ))}
-            </select>
+            </div>
+
+            {/* Vertical Divider (Desktop only) */}
+            <div className="hidden md:block h-6 w-px bg-zinc-800/60" />
+
+            {/* Specialty Select */}
+            <div className="w-full md:w-36 relative flex items-center">
+              <Filter size={12} className="absolute left-3 text-zinc-500 pointer-events-none" />
+              <select
+                className="w-full bg-transparent pl-8 pr-8 py-2 text-xs text-white focus:outline-none appearance-none cursor-pointer font-bold"
+                value={service}
+                onChange={e => setService(e.target.value)}
+              >
+                <option value="" className="bg-zinc-950">Todas as áreas</option>
+                {SERVICE_OPTIONS.map(s => (
+                  <option key={s} value={s} className="bg-zinc-950">{s}</option>
+                ))}
+              </select>
+              <div className="absolute right-3 pointer-events-none text-zinc-500 text-[10px]">▼</div>
+            </div>
           </div>
         </div>
       </div>
+
 
       {/* Grid */}
       <div className="max-w-6xl mx-auto px-6 py-12">
