@@ -15,7 +15,6 @@ import SEO from "../components/SEO";
 import { getProxyUrl } from "../lib/utils/media";
 import LeadCapture from "../components/LeadCapture";
 import { PrintStoreModal } from "../components/PrintStoreModal";
-import { PrintCatalog } from "../components/PrintCatalog";
 import { motion, AnimatePresence } from "framer-motion";
 import { EventEditPanel } from "../components/profissional/EventEditPanel";
 import type { EventItem } from "../components/profissional/types";
@@ -187,8 +186,7 @@ export default function EventPage() {
   const [orderId, setOrderId] = useState<string | null>(null);
   const [needsAccessChoice, setNeedsAccessChoice] = useState(false);
   const [authenticatedStudent, setAuthenticatedStudent] = useState<string | null>(null);
-  
-  const { digitalPhotos, physicalItems, addToCart, removeFromCart, addPhysicalItem, removePhysicalItem, totalPrice } = useCart();
+  const { digitalPhotos, physicalItems, addToCart, removeFromCart, removePhysicalItem, totalPrice } = useCart();
   const [serviceCatalog, setServiceCatalog] = useState<ServiceData[]>([]);
   const [selectedServices] = useState<string[]>([]);
   const [includeLivePrint] = useState(false);
@@ -200,11 +198,9 @@ export default function EventPage() {
   const eventPhysicalItems = physicalItems.filter(p => p.eventId === event?.id);
   const cartTotal = totalPrice(Number(event?.pricePerPhoto || 15), Number(event?.priceBase || 190));
 
-  const [selectedPrintProductId, setSelectedPrintProductId] = useState<string | null>(null);
   const [showPrintStore, setShowPrintStore] = useState(false);
   const [showQrModal, setShowQrModal] = useState(false);
   const [showLiveOps, setShowLiveOps] = useState(true);
-  const [showPhygital, setShowPhygital] = useState(true);
   const [filterMode, setFilterMode] = useState<"ALL" | "PRO" | "GUEST">("ALL");
   const [searchQuery, setSearchQuery] = useState("");
 
