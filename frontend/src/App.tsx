@@ -47,10 +47,10 @@ const DashboardRedirect = () => {
   if (!user) return <Navigate to="/login" replace />;
   const map: Record<string, string> = {
     ADMIN:        "/admin",
-    PROFISSIONAL: "/profissional",
-    CARTORIO:     "/unidade-fixa",
-    UNIDADE:      "/unidade-fixa",
-    FRANCHISEE:   "/franquia",
+    PROFISSIONAL: "/minha-conta",
+    CARTORIO:     "/minha-conta",
+    UNIDADE:      "/minha-conta",
+    FRANCHISEE:   "/minha-conta",
     CLIENTE:      "/minha-conta",
   };
   return <Navigate to={map[user.role] || "/"} replace />;
@@ -71,11 +71,8 @@ const AnimatedRoutes = () => {
   
   // Evita desmontagem completa do DashboardLayout ao transitar entre rotas internas da mesma área
   const getAnimationKey = (path: string) => {
-    if (path.startsWith("/minha-conta") || path.startsWith("/meus-albuns")) return "cliente-area";
+    if (path.startsWith("/minha-conta") || path.startsWith("/meus-albuns") || path.startsWith("/profissional") || path.startsWith("/unidade-fixa") || path.startsWith("/franquia")) return "cliente-area";
     if (path.startsWith("/admin")) return "admin-area";
-    if (path.startsWith("/profissional")) return "profissional-area";
-    if (path.startsWith("/unidade-fixa")) return "unidade-area";
-    if (path.startsWith("/franquia")) return "franquia-area";
     return path;
   };
 

@@ -103,9 +103,7 @@ export const RegisterPage: React.FC = () => {
       // Notificamos o sistema que estamos logados antes de navegar
       API.defaults.headers.common["Authorization"] = `Bearer ${token}`;
 
-      const target = role === "PROFISSIONAL" ? "/profissional"
-        : (role === "CARTORIO") ? "/unidade-fixa"
-        : "/minha-conta";
+      const target = "/minha-conta";
 
       const hasPending = localStorage.getItem("pending_purchase_event_id");
       

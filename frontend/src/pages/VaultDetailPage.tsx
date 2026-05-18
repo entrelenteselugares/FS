@@ -119,7 +119,10 @@ export default function VaultDetailPage() {
     setCheckingOut(true);
     try {
       const res = await api.post(`/vaults/${vaultId}/subscribe`);
-      if (res.data.initPoint) {
+      if (res.data.subscriptionId) {
+        // Redireciona para o checkout transparente padrão do sistema
+        navigate(`/checkout?orderId=${res.data.subscriptionId}`);
+      } else if (res.data.initPoint) {
         window.location.href = res.data.initPoint;
       } else {
         alert("Erro ao gerar link de assinatura.");
@@ -359,7 +362,12 @@ export default function VaultDetailPage() {
       {!isBlocked && vault.subscriptionStatus === "TRIAL" && daysLeft !== null && daysLeft <= 5 && (
         <div className="bg-yellow-500/20 border-b border-yellow-500/30 px-4 py-3 text-center">
           <p className="text-yellow-500 text-[11px] font-black uppercase tracking-widest">
-            Atenção: O período gratuito deste cofre acaba em {daysLeft} dia{daysLeft !== 1 ? 's' : ''}. <button onClick={handleSubscribe} className="underline ml-1">Assine agora</button> para não perder o acesso.
+            Atenção: O período gratuito deste cofre acaba em {daysLeft} dia{daysLeft !== 1 ? 's' : ''}.{' '}
+            {vault.myRole === 'OWNER' ? (
+              <button onClick={handleSubscribe} className="underline ml-1">Assine agora</button>
+            ) : (
+              <span className="ml-1">Fale com o proprietário para ativar a assinatura.</span>
+            )}
           </p>
         </div>
       )}
@@ -372,16 +380,22 @@ export default function VaultDetailPage() {
           </div>
           <h2 className="text-3xl font-black uppercase italic text-red-500 mb-4">Cofre Bloqueado</h2>
           <p className="text-zinc-400 max-w-md mx-auto mb-8 text-[14px]">
-            O período gratuito de 30 dias para o cofre <strong>{vault.nome}</strong> expirou. Suas fotos estão seguras, mas o acesso está suspenso. Para reativar o cofre imediatamente, inicie uma assinatura.
+            O período gratuito de 30 dias para o cofre <strong>{vault.nome}</strong> expirou. Suas fotos estão seguras, mas o acesso está suspenso. {vault.myRole === 'OWNER' ? 'Para reativar o cofre imediatamente, inicie uma assinatura.' : 'Fale com o proprietário do cofre para reativar o acesso.'}
           </p>
-          <button 
-            onClick={handleSubscribe}
-            disabled={checkingOut}
-            className="bg-emerald-500 hover:bg-emerald-400 text-black font-black uppercase tracking-widest text-[13px] px-10 py-4 rounded-full transition-all shadow-xl shadow-emerald-500/20 active:scale-95 flex items-center gap-2"
-          >
-            {checkingOut ? <Loader2 size={18} className="animate-spin" /> : <Zap size={18} fill="currentColor" />}
-            Reativar Cofre Agora
-          </button>
+          {vault.myRole === 'OWNER' ? (
+            <button 
+              onClick={handleSubscribe}
+              disabled={checkingOut}
+              className="bg-emerald-500 hover:bg-emerald-400 text-black font-black uppercase tracking-widest text-[13px] px-10 py-4 rounded-full transition-all shadow-xl shadow-emerald-500/20 active:scale-95 flex items-center gap-2"
+            >
+              {checkingOut ? <Loader2 size={18} className="animate-spin" /> : <Zap size={18} fill="currentColor" />}
+              Reativar Cofre Agora
+            </button>
+          ) : (
+            <div className="px-6 py-3 bg-red-500/10 border border-red-500/20 text-red-500 text-[11px] font-black uppercase tracking-widest">
+              Apenas o proprietário pode reativar o cofre.
+            </div>
+          )}
         </main>
       ) : (
         <main className="max-w-7xl mx-auto px-1 py-1 md:px-4 md:py-6 pb-32 w-full">

@@ -43,12 +43,22 @@ interface SupplyOrder {
 
 // ─── Types ────────────────────────────────────────────────────────────────────
 
-type ActiveTab = "agenda" | "convites" | "financeiro" | "servicos" | "network" | "franquia" | "calendar" | "perfil";
+export type ActiveTab = "agenda" | "convites" | "financeiro" | "servicos" | "network" | "franquia" | "calendar" | "perfil";
 type ViewTab = "lista" | "calendario";
 
 // ─── Main Component ────────────────────────────────────────────────────────────
 
-export default function ProfissionalDashboard() {
+interface ProfissionalDashboardProps {
+  noLayout?: boolean;
+  activeTab?: ActiveTab;
+  setActiveTab?: (tab: ActiveTab) => void;
+}
+
+export default function ProfissionalDashboard({
+  noLayout = false,
+  activeTab: propActiveTab,
+  setActiveTab: propSetActiveTab,
+}: ProfissionalDashboardProps = {}) {
   const { user } = useAuth();
   const navigate = useNavigate();
   const location = useLocation();
@@ -62,7 +72,9 @@ export default function ProfissionalDashboard() {
   const [loading, setLoading] = useState(true);
 
   // UI state
-  const [activeTab, setActiveTab] = useState<ActiveTab>("agenda");
+  const [localActiveTab, setLocalActiveTab] = useState<ActiveTab>("agenda");
+  const activeTab = propActiveTab || localActiveTab;
+  const setActiveTab = propSetActiveTab || setLocalActiveTab;
   const [viewTab, setViewTab] = useState<ViewTab>("lista");
   const [currentMonth, setCurrentMonth] = useState(new Date());
   const [selected, setSelected] = useState<EventItem | null>(null);
@@ -357,8 +369,8 @@ export default function ProfissionalDashboard() {
 
   // ─── Render ───────────────────────────────────────────────────────────────────
 
-  return (
-    <DashboardLayout title="Painel do Profissional" navItems={navItems}>
+  const content = (
+    <>
       <style>{`
         @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
         .lux-card { transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1); }
@@ -948,6 +960,16 @@ export default function ProfissionalDashboard() {
           userAddress={profile?.cartorios?.[0]?.cartorio?.endereco || ""}
         />
       )}
+    </>
+  );
+
+  if (noLayout) {
+    return content;
+  }
+
+  return (
+    <DashboardLayout title="Painel do Profissional" navItems={navItems}>
+      {content}
     </DashboardLayout>
   );
 }

@@ -11,13 +11,28 @@ import { AffiliateDashboard } from "../components/AffiliateDashboard";
 import { 
   Users, Play, CheckCircle2, ArrowRight, 
   ShoppingBag, ShieldCheck, Clock, Image as ImageIcon,
-  Zap, Lock, User, AlertTriangle, Briefcase, Building2, Camera
+  Zap, Lock, User, AlertTriangle, Briefcase, Building2, Camera,
+  DollarSign, Calendar, Printer, Settings
 } from "lucide-react";
 import { ProfilePhotoUpload } from "../components/ProfilePhotoUpload";
 import { toast } from "sonner";
 import { motion, AnimatePresence } from "framer-motion";
+import ProfissionalDashboard from "./ProfissionalDashboard";
+import UnidadeFixaDashboard from "./UnidadeFixaDashboard";
 
-type ActiveTab = "files" | "profile" | "wallet" | "affiliate";
+type ActiveTab = 
+  | "files" 
+  | "profile" 
+  | "wallet" 
+  | "affiliate"
+  | "agenda" 
+  | "financeiro" 
+  | "servicos" 
+  | "calendar" 
+  | "franquia"
+  | "equipe" 
+  | "configuracoes" 
+  | "monitor";
 
 interface Pedido {
   id: string;
@@ -106,19 +121,59 @@ export default function ClienteArea() {
     setTimeout(() => setNotification(null), 5000);
   }, []);
   
-  const NAV_ITEMS: NavItem[] = [
-    { label: "Minhas Memórias", onClick: () => setActiveTab("files"), isActive: activeTab === "files", icon: <ImageIcon size={18} /> },
-    { label: "Meus Álbuns", onClick: () => navigate("/meus-albuns"), isActive: false, icon: <Lock size={18} /> },
-    { label: "Carrinho", onClick: () => setActiveTab("wallet"), isActive: activeTab === "wallet", icon: <ShoppingBag size={18} /> },
-    { label: "Indique e Ganhe", onClick: () => setActiveTab("affiliate"), isActive: activeTab === "affiliate", icon: <Users size={18} /> },
-    { label: "Meus Dados", onClick: () => setActiveTab("profile"), isActive: activeTab === "profile", icon: <User size={18} /> },
-  ];
+  const NAV_ITEMS = useMemo<NavItem[]>(() => {
+    const items: NavItem[] = [
+      { label: "Minhas Memórias", onClick: () => setActiveTab("files"), isActive: activeTab === "files", icon: <ImageIcon size={18} /> },
+      { label: "Meus Álbuns", onClick: () => navigate("/meus-albuns"), isActive: false, icon: <Lock size={18} /> },
+      { label: "Carrinho", onClick: () => setActiveTab("wallet"), isActive: activeTab === "wallet", icon: <ShoppingBag size={18} /> },
+      { label: "Indique e Ganhe", onClick: () => setActiveTab("affiliate"), isActive: activeTab === "affiliate", icon: <Users size={18} /> },
+      { label: "Meus Dados", onClick: () => setActiveTab("profile"), isActive: activeTab === "profile", icon: <User size={18} /> },
+    ];
+
+    if (user?.role === "PROFISSIONAL" || user?.role === "FRANCHISEE") {
+      items.push(
+        { label: "ÁREA PROFISSIONAL", isHeader: true },
+        { label: "Minha Agenda", onClick: () => setActiveTab("agenda"), isActive: activeTab === "agenda", icon: <Play size={18} /> },
+        { label: "Portfólio & Serviços", onClick: () => setActiveTab("servicos"), isActive: activeTab === "servicos", icon: <Briefcase size={18} /> },
+        { label: "Minhas Vendas & Ganhos", onClick: () => setActiveTab("financeiro"), isActive: activeTab === "financeiro", icon: <DollarSign size={18} /> },
+        { label: "Agenda Google", onClick: () => setActiveTab("calendar"), isActive: activeTab === "calendar", icon: <Calendar size={18} /> }
+      );
+
+      if (user?.franchiseProfile) {
+        items.push(
+          { label: "Franquia Print", onClick: () => setActiveTab("franquia"), isActive: activeTab === "franquia", icon: <Printer size={18} /> }
+        );
+      }
+    }
+
+    if (user?.role === "CARTORIO" || user?.role === "UNIDADE") {
+      items.push(
+        { label: "ÁREA DA UNIDADE", isHeader: true },
+        { label: "Agenda Unidade", onClick: () => setActiveTab("agenda"), isActive: activeTab === "agenda", icon: <Play size={18} /> },
+        { label: "Fluxo Financeiro", onClick: () => setActiveTab("financeiro"), isActive: activeTab === "financeiro", icon: <DollarSign size={18} /> },
+        { label: "Rede Técnica", onClick: () => setActiveTab("equipe"), isActive: activeTab === "equipe", icon: <Users size={18} /> },
+        { label: "Google Calendar", onClick: () => setActiveTab("calendar"), isActive: activeTab === "calendar", icon: <Calendar size={18} /> },
+        { label: "Franquia Print", onClick: () => setActiveTab("franquia"), isActive: activeTab === "franquia", icon: <Printer size={18} /> },
+        { label: "Configuração Pública", onClick: () => setActiveTab("configuracoes"), isActive: activeTab === "configuracoes", icon: <Settings size={18} /> }
+      );
+    }
+
+    return items;
+  }, [user, activeTab, navigate]);
 
   const PAGE_TITLES: Record<ActiveTab, { title: string; subtitle: string; prefix: string }> = {
     files: { title: "Minhas Memórias", subtitle: "Acesso vitalício às memórias que você adquiriu.", prefix: "Central de Arquivos" },
     wallet: { title: "Carrinho", subtitle: "Créditos de Recompensa e Cashback acumulados.", prefix: "Minha Carteira" },
     affiliate: { title: "Indique e Ganhe", subtitle: "Ganhe recompensas indicando a Foto Segundo.", prefix: "Programa de Afiliados" },
-    profile: { title: "Meus Dados", subtitle: "Gerencie suas informações e endereços.", prefix: "Configurações" }
+    profile: { title: "Meus Dados", subtitle: "Gerencie suas informações e endereços.", prefix: "Configurações" },
+    agenda: { title: "Minha Agenda", subtitle: "", prefix: "" },
+    financeiro: { title: "Minhas Vendas & Ganhos", subtitle: "", prefix: "" },
+    servicos: { title: "Portfólio & Serviços", subtitle: "", prefix: "" },
+    calendar: { title: "Agenda Google", subtitle: "", prefix: "" },
+    franquia: { title: "Franquia Print", subtitle: "", prefix: "" },
+    equipe: { title: "Rede Técnica", subtitle: "", prefix: "" },
+    configuracoes: { title: "Configuração", subtitle: "", prefix: "" },
+    monitor: { title: "Monitor", subtitle: "", prefix: "" }
   };
   
   // Profile States
@@ -168,23 +223,24 @@ export default function ClienteArea() {
 
 
   useEffect(() => {
+    // 1. Atualização instantânea da aba (não bloqueia UX)
+    const section = searchParams.get("s");
+    if (section === "pedidos" || section === "wallet") {
+      setActiveTab("wallet");
+    } else if (section === "fotos" || section === "files") {
+      setActiveTab("files");
+    } else if (section === "menu") {
+      setActiveTab("profile");
+    } else if (section === "affiliate") {
+      setActiveTab("affiliate");
+    }
+
+    // 2. Fetch em background de pedidos
     fetchPedidos().then(data => {
       const urlOrderId = searchParams.get("orderId");
       if (urlOrderId) {
         const found = data.find((p: Pedido) => p.id === urlOrderId);
         if (found) handleSelect(found);
-      }
-
-      // Handle section param from BottomNav
-      const section = searchParams.get("s");
-      if (section === "pedidos" || section === "wallet") {
-        setActiveTab("wallet");
-      } else if (section === "fotos" || section === "files") {
-        setActiveTab("files");
-      } else if (section === "menu") {
-        setActiveTab("profile");
-      } else if (section === "affiliate") {
-        setActiveTab("affiliate");
       }
     });
 
@@ -275,9 +331,29 @@ export default function ClienteArea() {
 
   const aprovados = groupedEvents.filter(g => g.hasAprovado);
 
+  const isProfessionalTab = ["agenda", "financeiro", "servicos", "calendar", "franquia"].includes(activeTab) && 
+    (user?.role === "PROFISSIONAL" || user?.role === "FRANCHISEE");
+
+  const isUnitTab = ["agenda", "financeiro", "equipe", "calendar", "franquia", "configuracoes", "monitor"].includes(activeTab) && 
+    (user?.role === "CARTORIO" || user?.role === "UNIDADE");
+
   return (
     <DashboardLayout title="Minha Conta" navItems={NAV_ITEMS}>
-      <style>{`
+      {isProfessionalTab ? (
+        <ProfissionalDashboard 
+          noLayout={true} 
+          activeTab={activeTab as React.ComponentProps<typeof ProfissionalDashboard>["activeTab"]} 
+          setActiveTab={setActiveTab as unknown as React.ComponentProps<typeof ProfissionalDashboard>["setActiveTab"]} 
+        />
+      ) : isUnitTab ? (
+        <UnidadeFixaDashboard 
+          noLayout={true} 
+          activeTab={(activeTab === "financeiro" ? "financas" : activeTab) as React.ComponentProps<typeof UnidadeFixaDashboard>["activeTab"]} 
+          setActiveTab={setActiveTab as unknown as React.ComponentProps<typeof UnidadeFixaDashboard>["setActiveTab"]} 
+        />
+      ) : (
+        <>
+          <style>{`
         @keyframes radarPulse { 0%,100% { transform:scale(1); opacity:.6; } 50% { transform:scale(1.4); opacity:0; } }
         @media (max-width: 768px) { .mobile-stack { flex-direction:column !important; align-items:flex-start !important; } }
       `}</style>
@@ -307,7 +383,7 @@ export default function ClienteArea() {
           
           <div className="flex flex-col xl:flex-row justify-between items-start xl:items-end gap-6 relative z-10">
             <div className="space-y-4">
-              <h1 className="text-4xl md:text-5xl xl:text-6xl font-heading font-black text-theme-text uppercase tracking-tighter italic leading-none whitespace-nowrap">
+              <h1 className="text-3xl sm:text-4xl md:text-5xl xl:text-6xl font-heading font-black text-theme-text uppercase tracking-tighter italic leading-none whitespace-normal xl:whitespace-nowrap pr-4">
                 {PAGE_TITLES[activeTab].title}
               </h1>
               <div className="flex items-center gap-4">
@@ -744,6 +820,8 @@ export default function ClienteArea() {
         >
           {notification.message}
         </div>
+      )}
+        </>
       )}
     </DashboardLayout>
   );

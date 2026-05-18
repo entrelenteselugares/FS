@@ -13,12 +13,12 @@ interface NetworkTabProps {
 export function NetworkTab({ network, networkSearch, searchResults, residentUnits, onSearch, onToggleFavorite }: NetworkTabProps) {
   return (
     <div className="space-y-12">
-      <div className="bg-theme-bg border border-theme-border/60 p-8 md:p-16 space-y-12">
+      <div className="bg-theme-bg border border-theme-border/60 p-4 sm:p-8 md:p-16 space-y-8 md:space-y-12">
         <div className="space-y-4">
-          <h3 className="text-3xl font-heading font-black text-theme-text uppercase tracking-tighter italic leading-none">
+          <h3 className="text-2xl sm:text-3xl font-heading font-black text-theme-text uppercase tracking-tighter italic leading-none">
             Minha Rede e Alianças
           </h3>
-          <p className="text-[10px] text-theme-muted uppercase tracking-[0.4em] italic font-bold">
+          <p className="text-[9px] sm:text-[10px] text-theme-muted uppercase tracking-[0.15em] sm:tracking-[0.4em] italic font-bold leading-relaxed">
             Gestão de parcerias oficiais com unidades e conexões com outros profissionais
           </p>
         </div>
@@ -33,7 +33,7 @@ export function NetworkTab({ network, networkSearch, searchResults, residentUnit
             
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
               {residentUnits.map((u) => (
-                <div key={u.id} className="bg-theme-bg-muted border border-cyan-400/20 p-8 relative group hover:border-cyan-400/50 transition-all">
+                <div key={u.id} className="bg-theme-bg-muted border border-cyan-400/20 p-4 sm:p-8 relative group hover:border-cyan-400/50 transition-all">
                   <div className="absolute top-0 left-0 w-full h-[1px] bg-cyan-400/30" />
                   <div className="space-y-4">
                     <div className="flex justify-between items-start">
@@ -108,7 +108,7 @@ export function NetworkTab({ network, networkSearch, searchResults, residentUnit
         <div className="space-y-8 pt-12 border-t border-theme-border/30">
           <div className="flex items-center gap-4">
             <div className="h-1 w-12 bg-brand-tactical" />
-            <h4 className="text-xl font-heading font-black text-theme-text uppercase italic tracking-tighter">
+            <h4 className="text-lg sm:text-xl font-heading font-black text-theme-text uppercase italic tracking-tighter">
               Meus Parceiros Favoritos
             </h4>
           </div>
@@ -118,7 +118,7 @@ export function NetworkTab({ network, networkSearch, searchResults, residentUnit
               {network.map((p) => (
                 <div
                   key={p.id}
-                  className="group relative p-8 bg-theme-bg-muted border border-theme-border/40 hover:border-brand-tactical/40 transition-all"
+                  className="group relative p-4 sm:p-8 bg-theme-bg-muted border border-theme-border/40 hover:border-brand-tactical/40 transition-all"
                 >
                   <div className="flex justify-between items-start">
                     <div className="space-y-2">

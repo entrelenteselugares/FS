@@ -302,15 +302,15 @@ export const HomePage = () => {
 
           <div className="hp-hero-search-desktop animate-reveal" style={{ display: "flex", gap: 12, justifyContent: "center" }}>
             {/* Mobile-only Search Bar inside Hero */}
-            <div className="md:hidden w-full relative mb-0">
-              <Search size={16} className="absolute left-4 top-1/2 -translate-y-1/2 text-theme-text-muted" />
+            <div className="md:hidden w-full relative mb-0 group">
+              <Search size={16} className="absolute left-4 top-1/2 -translate-y-1/2 text-zinc-400 group-focus-within:text-emerald-500 group-focus-within:scale-110 transition-all duration-300" />
               <input
                 id="mobile-search-input"
                 value={query}
                 onChange={e => setQuery(e.target.value)}
                 onKeyDown={e => e.key === "Enter" && fetchEvents(query, 1)}
-                placeholder="Pesquise suas fotos..."
-                className="w-full bg-white text-black pl-12 pr-4 py-3 rounded-xl text-xs font-bold shadow-xl outline-none"
+                placeholder="Pesquise por evento, noivos..."
+                className="w-full bg-zinc-900/90 border border-zinc-800 focus:border-emerald-500 focus:ring-2 focus:ring-emerald-500/20 text-white pl-12 pr-4 py-3.5 rounded-xl text-xs font-black uppercase tracking-wider outline-none shadow-xl transition-all duration-300 focus:scale-[1.02] placeholder:text-zinc-500"
               />
             </div>
 

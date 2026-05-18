@@ -4,8 +4,17 @@ import { T } from "../../lib/theme";
 import { Camera, Plus, Image as ImageIcon } from "lucide-react";
 import { motion } from "framer-motion";
 
+interface Album {
+  id: string;
+  title: string;
+  description?: string | null;
+  category?: string | null;
+  coverUrl?: string | null;
+  images?: any[];
+}
+
 export default function PortfolioManage() {
-  const [albums, setAlbums] = useState<any[]>([]);
+  const [albums, setAlbums] = useState<Album[]>([]);
   const [loading, setLoading] = useState(true);
   const [isCreating, setIsCreating] = useState(false);
   const [newAlbum, setNewAlbum] = useState({ title: "", description: "", category: "" });
@@ -66,7 +75,7 @@ export default function PortfolioManage() {
         <div className="max-w-[1600px] mx-auto px-4 md:px-6 relative z-10 flex flex-col md:flex-row md:items-end justify-between gap-6">
           <div>
             <div className="w-12 h-1 bg-brand-tactical mb-6" />
-            <h1 className="text-4xl md:text-5xl font-black text-theme-text uppercase tracking-tighter whitespace-nowrap italic pr-6">
+            <h1 className="text-3xl sm:text-4xl md:text-5xl font-black text-theme-text uppercase tracking-tighter whitespace-normal md:whitespace-nowrap italic pr-6">
               Gerenciar Portfólio
             </h1>
             <p className="text-[10px] text-theme-muted uppercase tracking-[0.4em] mt-4 font-black">

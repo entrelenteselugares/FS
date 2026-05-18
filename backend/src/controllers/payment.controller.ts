@@ -572,6 +572,58 @@ export class PaymentController {
         });
       }
 
+      // 0b. BYPASS para Assinatura de Cofre (Clube)
+      if (eventId === "VAULT_SUBSCRIPTION") {
+        const subscription = await prisma.subscription.findUnique({
+          where: { id: passedOrderId },
+          include: { album: true, user: true }
+        });
+
+        if (!subscription) return res.status(404).json({ error: "Assinatura não localizada." });
+
+        const mpResponse = await MercadoPagoService.processPayment({
+          transaction_amount: Number(subscription.planPrice || 49.90),
+          token: cardToken,
+          description: `Assinatura Mensal Cofre: ${subscription.album?.nome || "Cofre de Memórias"}`,
+          installments: Number(installments) || 1,
+          payment_method_id: paymentMethodId || "visa",
+          payer: {
+            email: email || subscription.user?.email || "contatofotosegundo@gmail.com",
+            identification: cpf ? { type: "CPF", number: cpf } : undefined
+          },
+          external_reference: subscription.id
+        });
+
+        const isApproved = mpResponse.status === "approved";
+        
+        await prisma.subscription.update({
+          where: { id: subscription.id },
+          data: { 
+            gatewaySubId: String(mpResponse.id),
+            ...(isApproved && { status: "ACTIVE" })
+          }
+        });
+
+        if (isApproved) {
+          try {
+            await SubscriptionService.handleSubscriptionPayment(String(mpResponse.id), "approved");
+          } catch (e) {
+            console.error("Erro ao rodar pós-aprovação da assinatura no bypass:", e);
+          }
+        }
+
+        return res.json({
+          success: true,
+          orderId: subscription.id,
+          status: mpResponse.status,
+          hasPaid: isApproved,
+          details: mpResponse?.status_detail,
+          qr_code: mpResponse?.point_of_interaction?.transaction_data?.qr_code,
+          qr_code_base64: mpResponse?.point_of_interaction?.transaction_data?.qr_code_base64,
+          ticket_url: mpResponse?.point_of_interaction?.transaction_data?.ticket_url
+        });
+      }
+
       // 1. Buscar evento com parceiros para cálculo de split
       const event = await prisma.event.findUnique({ 
         where: { id: eventId },
@@ -1115,6 +1167,43 @@ export class PaymentController {
             }))
           });
         }
+
+        // Tenta buscar na tabela de Subscription (Assinatura do Clube)
+        const subscription = await prisma.subscription.findUnique({
+          where: { id: String(id) },
+          include: {
+            user: { select: { email: true, nome: true } },
+            album: { select: { nome: true } }
+          }
+        });
+
+        if (subscription) {
+          return res.json({
+            id: subscription.id,
+            amount: Number(subscription.planPrice || 49.90),
+            status: subscription.status === "ACTIVE" ? "APROVADO" : "PENDENTE",
+            eventId: "VAULT_SUBSCRIPTION",
+            clienteId: subscription.userId,
+            buyerEmail: subscription.user?.email,
+            event: {
+              id: "VAULT_SUBSCRIPTION",
+              nomeNoivos: `Assinatura: ${subscription.album?.nome || "Cofre de Memórias"}`,
+              dataEvento: subscription.createdAt,
+              location: "Plataforma Foto Segundo",
+              coverPhotoUrl: "/logo-fs.png",
+              isCrowdfund: false
+            },
+            manualType: "Assinatura do Clube",
+            isGuestOrder: false,
+            deliveryType: "DIGITAL_ONLY",
+            items: [{
+              id: subscription.id,
+              price: Number(subscription.planPrice || 49.90),
+              quantity: 1,
+              printProduct: { name: `Plano Mensal - Limite ${subscription.planLimit || 36} Fotos`, sku: "VAULT_SUB" }
+            }]
+          });
+        }
         
         return res.status(404).json({ error: "Pedido não localizado." });
       }
@@ -1239,6 +1328,27 @@ export class PaymentController {
           }
           return res.json({ status: supplyOrder.status });
         }
+
+        const subscription = await prisma.subscription.findUnique({
+          where: { id: String(id) }
+        });
+        if (subscription) {
+          if (subscription.status === "ACTIVE") return res.json({ status: "APROVADO", eventId: "VAULT_SUBSCRIPTION" });
+          if (!subscription.gatewaySubId) return res.json({ status: subscription.status });
+          
+          const mpData = await MercadoPagoService.getPaymentStatus(subscription.gatewaySubId);
+          if (mpData.status === "approved") {
+            await prisma.subscription.update({ where: { id: subscription.id }, data: { status: "ACTIVE" } });
+            try {
+              await SubscriptionService.handleSubscriptionPayment(subscription.gatewaySubId, "approved");
+            } catch (e) {
+              console.error("Erro no pós-aprovação do polling da assinatura:", e);
+            }
+            return res.json({ status: "APROVADO", eventId: "VAULT_SUBSCRIPTION" });
+          }
+          return res.json({ status: subscription.status });
+        }
+
         return res.status(404).json({ error: "Pedido não encontrado." });
       }
 

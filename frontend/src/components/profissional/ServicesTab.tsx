@@ -14,23 +14,23 @@ export function ServicesTab({ profile, catalogServices, onAddService, onRemoveSe
     <div className="space-y-6">
 
       {/* Pricing Matrix */}
-      <div className="bg-theme-bg border border-theme-border/60 p-6 md:p-12 space-y-8 md:space-y-12">
+      <div className="bg-theme-bg border border-theme-border/60 p-4 sm:p-6 md:p-12 space-y-8 md:space-y-12">
         <div className="space-y-2">
-          <h3 className="text-2xl font-heading font-black text-theme-text uppercase tracking-widest italic leading-none">
+          <h3 className="text-xl sm:text-2xl font-heading font-black text-theme-text uppercase tracking-widest italic leading-none">
             Matriz de Precificação
           </h3>
-          <p className="text-[10px] text-theme-muted uppercase tracking-[0.4em] italic">
+          <p className="text-[9px] sm:text-[10px] text-theme-muted uppercase tracking-[0.2em] sm:tracking-[0.4em] italic">
             Configuração base para cálculo de orçamentos dinâmicos
           </p>
         </div>
 
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-8 md:gap-12">
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-6 md:gap-12">
           <div className="space-y-4">
             <div className="flex items-center gap-3">
               <div className="p-2 bg-theme-bg-muted border border-theme-border/60 text-brand-tactical"><Clock size={16} /></div>
               <label className="text-[11px] font-black text-theme-text uppercase tracking-widest italic">Valor Hora Automático (R$)</label>
             </div>
-            <div className="w-full bg-theme-bg-muted/30 border border-theme-border/40 p-5 text-xl font-heading font-black text-theme-text/40 italic flex justify-between items-center">
+            <div className="w-full bg-theme-bg-muted/30 border border-theme-border/40 p-4 sm:p-5 text-lg sm:text-xl font-heading font-black text-theme-text/40 italic flex justify-between items-center">
               <span>{Number(profile?.hourlyRate || 0).toLocaleString("pt-BR", { minimumFractionDigits: 2 })}</span>
               <ShieldCheck size={16} className="text-brand-tactical animate-pulse" />
             </div>
@@ -44,7 +44,7 @@ export function ServicesTab({ profile, catalogServices, onAddService, onRemoveSe
               <div className="p-2 bg-theme-bg-muted border border-theme-border/60 text-brand-tactical"><Zap size={16} /></div>
               <label className="text-[11px] font-black text-theme-text uppercase tracking-widest italic">Multiplicador Técnico</label>
             </div>
-            <div className="w-full bg-theme-bg-muted/50 border border-theme-border/60 p-5 text-xl font-heading font-black text-brand-tactical italic flex justify-between items-center">
+            <div className="w-full bg-theme-bg-muted/50 border border-theme-border/60 p-4 sm:p-5 text-lg sm:text-xl font-heading font-black text-brand-tactical italic flex justify-between items-center">
               <span>{profile?.equipmentMultiplier || "1.0"}</span>
               <span className="text-[8px] font-black uppercase text-theme-muted tracking-tighter">Nível de Ativos</span>
             </div>
@@ -59,13 +59,13 @@ export function ServicesTab({ profile, catalogServices, onAddService, onRemoveSe
       </div>
 
       {/* My Services Vitrine */}
-      <div className="bg-theme-bg border border-theme-border/60 p-6 md:p-12 space-y-8 md:space-y-10">
+      <div className="bg-theme-bg border border-theme-border/60 p-4 sm:p-6 md:p-12 space-y-8 md:space-y-10">
         <div className="flex justify-between items-end">
           <div className="space-y-2">
-            <h3 className="text-2xl font-heading font-black text-theme-text uppercase tracking-widest italic leading-none">
+            <h3 className="text-xl sm:text-2xl font-heading font-black text-theme-text uppercase tracking-widest italic leading-none">
               Vitrine de Ativos
             </h3>
-            <p className="text-[10px] text-theme-muted uppercase tracking-[0.4em] italic">
+            <p className="text-[9px] sm:text-[10px] text-theme-muted uppercase tracking-[0.2em] sm:tracking-[0.4em] italic">
               Serviços ativos e disponíveis para contratação
             </p>
           </div>
@@ -80,7 +80,7 @@ export function ServicesTab({ profile, catalogServices, onAddService, onRemoveSe
             {profile.proServices.map((svc) => (
               <div
                 key={svc.id}
-                className="group flex flex-col sm:flex-row justify-between items-start sm:items-center p-6 bg-theme-bg-muted/30 border border-theme-border/40 hover:border-brand-tactical/40 transition-all relative overflow-hidden gap-6"
+                className="group flex flex-col sm:flex-row justify-between items-start sm:items-center p-4 sm:p-6 bg-theme-bg-muted/30 border border-theme-border/40 hover:border-brand-tactical/40 transition-all relative overflow-hidden gap-6"
               >
                 <div className="absolute left-0 top-0 h-full w-1 bg-brand-tactical opacity-20 group-hover:opacity-100 transition-all" />
                 <div className="space-y-2">
@@ -92,16 +92,16 @@ export function ServicesTab({ profile, catalogServices, onAddService, onRemoveSe
                     <div className="text-[9px] text-theme-muted uppercase tracking-[0.2em] italic font-bold max-w-xl">{svc.description}</div>
                   )}
                 </div>
-                <div className="flex items-center gap-12">
+                <div className="flex items-center justify-between sm:justify-end gap-6 sm:gap-12 w-full sm:w-auto">
                   <div className="text-left md:text-right">
                     <p className="text-[8px] font-black text-theme-muted uppercase tracking-widest mb-1 italic opacity-60">Preço Ativo</p>
-                    <p className="text-2xl font-heading font-black text-theme-text italic leading-none">
+                    <p className="text-xl sm:text-2xl font-heading font-black text-theme-text italic leading-none">
                       R$ {Number(svc.price).toLocaleString("pt-BR", { minimumFractionDigits: 2 })}
                     </p>
                   </div>
                   <button
                     onClick={() => onRemoveService(svc.id)}
-                    className="p-4 bg-red-500/10 text-red-500 hover:bg-red-500 hover:text-brand-text transition-all border border-red-500/20"
+                    className="p-3 sm:p-4 bg-red-500/10 text-red-500 hover:bg-red-500 hover:text-brand-text transition-all border border-red-500/20"
                   >
                     <X size={18} />
                   </button>
@@ -117,12 +117,12 @@ export function ServicesTab({ profile, catalogServices, onAddService, onRemoveSe
       </div>
 
       {/* Global Catalog */}
-      <div className="bg-theme-bg border border-theme-border/60 p-6 md:p-12 space-y-8 md:space-y-12">
+      <div className="bg-theme-bg border border-theme-border/60 p-4 sm:p-6 md:p-12 space-y-8 md:space-y-12">
         <div className="space-y-2">
-          <h3 className="text-2xl font-heading font-black text-theme-text uppercase tracking-widest italic leading-none">
+          <h3 className="text-xl sm:text-2xl font-heading font-black text-theme-text uppercase tracking-widest italic leading-none">
             Catálogo Geral da Rede
           </h3>
-          <p className="text-[10px] text-theme-muted uppercase tracking-[0.4em] italic">
+          <p className="text-[9px] sm:text-[10px] text-theme-muted uppercase tracking-[0.2em] sm:tracking-[0.4em] italic">
             Benchmark de serviços e precificação sugerida por IA
           </p>
         </div>
@@ -136,38 +136,38 @@ export function ServicesTab({ profile, catalogServices, onAddService, onRemoveSe
             return (
               <div
                 key={cat.id}
-                className="flex flex-col md:flex-row justify-between md:items-center p-6 bg-theme-bg-muted border border-theme-border/40 group hover:border-brand-tactical/30 transition-all gap-8 relative overflow-hidden"
+                className="flex flex-col md:flex-row justify-between md:items-center p-4 sm:p-6 bg-theme-bg-muted border border-theme-border/40 group hover:border-brand-tactical/30 transition-all gap-4 sm:gap-8 relative overflow-hidden"
               >
-                <div className="space-y-3">
+                <div className="space-y-2 md:space-y-3">
                   <div className="text-base font-black text-theme-text uppercase tracking-tight italic">{cat.name}</div>
-                  <div className="flex items-center gap-4">
-                    <div className="flex items-center gap-2 text-[9px] font-bold text-theme-muted uppercase tracking-widest italic">
+                  <div className="flex flex-wrap items-center gap-2 sm:gap-4">
+                    <div className="flex items-center gap-1.5 text-[9px] font-bold text-theme-muted uppercase tracking-widest italic">
                       <Clock size={12} className="text-brand-tactical" /> {cat.estimatedMinutes} MINUTOS
                     </div>
-                    <div className="w-1 h-1 rounded-full bg-theme-border" />
+                    <div className="hidden sm:block w-1 h-1 rounded-full bg-theme-border" />
                     <div className="text-[9px] font-bold text-theme-muted uppercase tracking-widest italic">
                       PREÇO MÍNIMO: R$ {Number(cat.basePrice).toFixed(2)}
                     </div>
                   </div>
                 </div>
-                <div className="flex items-center justify-between md:justify-end gap-12">
-                  <div className="text-left md:text-right space-y-1">
-                    <div className="flex items-center md:justify-end gap-2 text-[8px] font-black text-brand-tactical uppercase tracking-widest italic">
+                <div className="flex items-center justify-between md:justify-end gap-4 sm:gap-12 w-full md:w-auto border-t border-theme-border/20 pt-4 md:pt-0 md:border-t-0">
+                  <div className="text-left md:text-right space-y-0.5">
+                    <div className="flex items-center md:justify-end gap-1.5 text-[8px] font-black text-brand-tactical uppercase tracking-widest italic">
                       <TrendingUp size={10} /> Valor Sugerido p/ Você
                     </div>
-                    <div className="text-3xl font-heading font-black text-brand-tactical italic leading-none">
-                      <span className="text-sm mr-1 font-sans not-italic">R$</span>
+                    <div className="text-2xl sm:text-3xl font-heading font-black text-brand-tactical italic leading-none">
+                      <span className="text-xs mr-0.5 font-sans not-italic">R$</span>
                       {suggested.toLocaleString("pt-BR", { minimumFractionDigits: 2 })}
                     </div>
                   </div>
                   {alreadyAdded ? (
-                    <div className="px-6 py-3 bg-brand-tactical/10 border border-brand-tactical/30 text-brand-tactical text-[10px] font-black uppercase tracking-widest italic flex items-center gap-3">
-                      <Check size={18} /> EM VITRINE
+                    <div className="px-4 sm:px-6 py-2 sm:py-3 bg-brand-tactical/10 border border-brand-tactical/30 text-brand-tactical text-[9px] sm:text-[10px] font-black uppercase tracking-widest italic flex items-center gap-2">
+                      <Check size={16} /> EM VITRINE
                     </div>
                   ) : (
                     <button
                       onClick={() => onAddService(cat)}
-                      className="px-10 py-4 bg-brand-tactical text-brand-text text-[11px] font-black uppercase tracking-[0.2em] hover:brightness-110 shadow-lg shadow-brand-tactical/10 italic"
+                      className="px-6 sm:px-10 py-3 sm:py-4 bg-brand-tactical text-brand-text text-[10px] sm:text-[11px] font-black uppercase tracking-[0.2em] hover:brightness-110 shadow-lg shadow-brand-tactical/10 italic"
                     >
                       IMPORTAR
                     </button>

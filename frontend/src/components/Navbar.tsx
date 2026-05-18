@@ -31,11 +31,7 @@ export const Navbar: React.FC<NavbarProps> = ({ tenantLogoUrl }) => {
     return () => document.removeEventListener("mousedown", handleClickOutside);
   }, [userMenu]);
 
-  const dashPath = user?.role === "ADMIN" ? "/admin"
-    : user?.role === "PROFISSIONAL" ? "/profissional"
-    : (user?.role === "CARTORIO" || user?.role === "UNIDADE") ? "/unidade-fixa"
-    : user?.role === "FRANCHISEE" ? "/franquia"
-    : "/minha-conta";
+  const dashPath = user?.role === "ADMIN" ? "/admin" : "/minha-conta";
 
   return (
     <>
@@ -103,7 +99,6 @@ export const Navbar: React.FC<NavbarProps> = ({ tenantLogoUrl }) => {
                   background: T.bgCard, border: `1px solid ${T.border}`, 
                   minWidth: 180, zIndex: 200, boxShadow: '0 20px 50px rgba(0,0,0,0.3)' 
                 }}>
-                  <button onClick={() => { setUserMenu(false); navigate("/meus-albuns"); }} style={{ width: "100%", textAlign: "left", padding: "14px 16px", background: "transparent", border: "none", borderBottom: `1px solid ${T.border}`, color: T.text, fontSize: 11, fontFamily: T.fontD, fontWeight: 900, letterSpacing: "0.1em", textTransform: "uppercase", cursor: "pointer", fontStyle: 'italic' }}>🖼️ Meus Álbuns</button>
                   <button onClick={() => { setUserMenu(false); navigate(dashPath); }} style={{ width: "100%", textAlign: "left", padding: "14px 16px", background: "transparent", border: "none", borderBottom: `1px solid ${T.border}`, color: T.text, fontSize: 11, fontFamily: T.fontD, fontWeight: 900, letterSpacing: "0.1em", textTransform: "uppercase", cursor: "pointer", fontStyle: 'italic' }}>👤 Meu Painel</button>
                   <button onClick={() => { setUserMenu(false); navigate("/ajuda"); }} style={{ width: "100%", textAlign: "left", padding: "14px 16px", background: "transparent", border: "none", borderBottom: `1px solid ${T.border}`, color: T.text, fontSize: 11, fontFamily: T.fontD, fontWeight: 900, letterSpacing: "0.1em", textTransform: "uppercase", cursor: "pointer", fontStyle: 'italic' }}>❓ Central de Ajuda</button>
                   <button onClick={() => { logout(); setUserMenu(false); }} style={{ width: "100%", textAlign: "left", padding: "12px 16px", background: "transparent", border: "none", color: T.text2, fontSize: 11, fontFamily: T.fontB, letterSpacing: "0.08em", textTransform: "uppercase", cursor: "pointer" }}>Sair</button>

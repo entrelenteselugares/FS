@@ -559,7 +559,7 @@ export class VaultController {
   static async subscribe(req: AuthRequest, res: Response) {
     const albumId = req.params.albumId as string;
     const userId = req.user?.userId;
-    const { planLimit } = req.body;
+    const { planLimit } = req.body || {};
 
     if (!userId) return res.status(401).json({ error: "Não autenticado." });
 
@@ -569,7 +569,17 @@ export class VaultController {
       return res.json(result);
     } catch (error: any) {
       console.error("[VAULT SUBSCRIBE] Erro:", error.message);
-      return res.status(500).json({ error: error.message || "Erro ao processar assinatura do cofre." });
+      
+      const message = error.message || "";
+      let status = 500;
+      
+      if (message.includes("Apenas o proprietário")) {
+        status = 403; // Forbidden
+      } else if (message.includes("já possui uma assinatura") || message.includes("não encontrado")) {
+        status = 400; // Bad Request
+      }
+      
+      return res.status(status).json({ error: message || "Erro ao processar assinatura do cofre." });
     }
   }
 

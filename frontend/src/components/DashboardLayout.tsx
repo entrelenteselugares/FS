@@ -1,9 +1,10 @@
 import React, { useState } from "react";
-import { Link, useLocation } from "react-router-dom";
+import { Link, useLocation, useNavigate, useSearchParams } from "react-router-dom";
 import { useAuth } from "../hooks/useAuth";
 import { T, BtnGhost } from "../lib/theme";
 import { ThemeToggle } from "./ThemeToggle";
 import { NotificationBell } from "./notifications/NotificationBell";
+import { Home, Search, ShoppingBag, Image, Menu } from "lucide-react";
 
 // ─── Types ────────────────────────────────────────────────────────────────────
 
@@ -12,10 +13,11 @@ export interface NavItem {
   to?: string;
   onClick?: () => void;
   exact?: boolean;
-  icon: React.ReactNode;
+  icon?: React.ReactNode;
   isActive?: boolean;
   badge?: string | number;
   hide?: boolean;
+  isHeader?: boolean;
 }
 
 interface DashboardLayoutProps {
@@ -91,7 +93,31 @@ const SidebarContent: React.FC<SidebarContentProps> = ({ navItems, onNavigate })
 
       {/* ── Navigation ── */}
       <nav style={{ flex: 1, padding: "12px 0", overflowY: "auto" }}>
-        {navItems.map((item) => {
+        {navItems.map((item, idx) => {
+          if (item.hide) return null;
+
+          if (item.isHeader) {
+            return (
+              <div
+                key={`header-${idx}`}
+                style={{
+                  padding: "16px 20px 6px",
+                  fontSize: 9,
+                  fontFamily: T.fontB,
+                  fontWeight: 900,
+                  color: T.brand,
+                  textTransform: "uppercase",
+                  letterSpacing: "0.2em",
+                  opacity: 0.6,
+                  borderTop: idx > 0 ? `1px solid ${T.border}33` : "none",
+                  marginTop: idx > 0 ? 8 : 0,
+                }}
+              >
+                {item.label}
+              </div>
+            );
+          }
+
           const active = isActive(item);
           const itemStyle: React.CSSProperties = {
             display:       "flex",
@@ -121,9 +147,11 @@ const SidebarContent: React.FC<SidebarContentProps> = ({ navItems, onNavigate })
           if (item.to) {
             return (
               <Link key={item.label} to={item.to} style={itemStyle} onClick={handleClick}>
-                <span style={{ color: active ? T.brand : T.text3, flexShrink: 0 }}>
-                  {item.icon}
-                </span>
+                {item.icon && (
+                  <span style={{ color: active ? T.brand : T.text3, flexShrink: 0 }}>
+                    {item.icon}
+                  </span>
+                )}
                 <span style={{ flex: 1 }}>{item.label}</span>
                 {item.badge !== undefined && item.badge !== 0 && (
                   <span style={{
@@ -146,9 +174,11 @@ const SidebarContent: React.FC<SidebarContentProps> = ({ navItems, onNavigate })
 
           return (
             <button key={item.label} style={itemStyle} onClick={handleClick}>
-              <span style={{ color: active ? T.brand : T.text3, flexShrink: 0 }}>
-                {item.icon}
-              </span>
+              {item.icon && (
+                <span style={{ color: active ? T.brand : T.text3, flexShrink: 0 }}>
+                  {item.icon}
+                </span>
+              )}
               <span style={{ flex: 1 }}>{item.label}</span>
               {item.badge !== undefined && item.badge !== 0 && (
                 <span style={{
@@ -288,6 +318,10 @@ export const DashboardLayout: React.FC<DashboardLayoutProps> = ({
   navItems,
   title,
 }) => {
+  const navigate = useNavigate();
+  const location = useLocation();
+  const [searchParams] = useSearchParams();
+  const s = searchParams.get("s");
   const [drawerOpen, setDrawerOpen] = useState(false);
 
   const sidebarProps: SidebarContentProps = {
@@ -392,12 +426,6 @@ export const DashboardLayout: React.FC<DashboardLayoutProps> = ({
 
           <div style={{ display: "flex", alignItems: "center", gap: 12 }}>
             <NotificationBell />
-            <button 
-              onClick={() => setDrawerOpen(true)}
-              className="p-2 text-theme-muted hover:text-white transition-colors"
-            >
-              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5"><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="18" x2="21" y2="18"/></svg>
-            </button>
           </div>
         </nav>
 
@@ -408,44 +436,61 @@ export const DashboardLayout: React.FC<DashboardLayoutProps> = ({
 
         {/* ── Dashboard Bottom Nav (Mobile Only) ── */}
         <nav 
-          className="fixed bottom-0 w-full z-50 bg-[#0a0a0a]/90 backdrop-blur-2xl border-t border-white/5 lg:hidden"
-          style={{ paddingBottom: "env(safe-area-inset-bottom, 12px)" }}
+          className="md:hidden fixed bottom-0 left-1/2 -translate-x-1/2 w-full max-w-md bg-[var(--bg)]/80 backdrop-blur-xl border-t border-theme-border/10 z-[100] px-3 py-3 flex items-center justify-around pb-safe lg:hidden"
         >
-          <div className="flex items-center justify-around px-2">
-            {navItems.filter(item => !item.hide).slice(0, 4).map((item, idx) => {
-              const active = item.isActive;
-              return (
-                <button
-                  key={idx}
-                  onClick={item.onClick}
-                  className={`flex flex-col items-center gap-1.5 py-4 flex-1 transition-all active:scale-90`}
-                >
-                  <div className={`transition-colors duration-300 ${active ? 'text-brand-tactical' : 'text-white/30'}`}>
-                    {item.icon}
-                  </div>
-                  <span className={`text-[8px] font-black uppercase tracking-widest transition-colors duration-300 ${active ? 'text-brand-tactical' : 'text-white/30'}`}>
-                    {item.label.split(' ')[0]}
-                  </span>
-                  {active && (
-                    <div className="absolute top-0 w-8 h-0.5 bg-brand-tactical shadow-[0_0_10px_rgba(133,185,172,0.5)]" />
-                  )}
-                </button>
-              );
-            })}
-            {navItems.filter(item => !item.hide).length > 4 && (
-              <button
-                onClick={() => setDrawerOpen(true)}
-                className={`flex flex-col items-center gap-1.5 py-4 flex-1 transition-all active:scale-90`}
-              >
-                <div className="text-white/30">
-                  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5"><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="18" x2="21" y2="18"/></svg>
-                </div>
-                <span className="text-[8px] font-black uppercase tracking-widest text-white/30">
-                  Menu
-                </span>
-              </button>
-            )}
-          </div>
+          <button 
+            onClick={() => navigate("/")}
+            className={`flex flex-col items-center gap-1 transition-colors ${location.pathname === "/" ? "text-emerald-500" : "text-[var(--text)]/40"}`}
+          >
+            <Home size={20} strokeWidth={1.5} />
+            <span className="text-[7.5px] font-bold uppercase tracking-tight">Home</span>
+          </button>
+
+          <button 
+            onClick={() => {
+              navigate("/");
+              setTimeout(() => {
+                window.scrollTo({ top: 0, behavior: "smooth" });
+                document.getElementById("mobile-search-input")?.focus();
+              }, 100);
+            }}
+            className="flex flex-col items-center gap-1 text-[var(--text)]/40"
+          >
+            <Search size={20} strokeWidth={1.5} />
+            <span className="text-[7.5px] font-bold uppercase tracking-tight">Buscar</span>
+          </button>
+
+          <button 
+            onClick={() => navigate("/minha-conta?s=wallet")}
+            className={`flex flex-col items-center gap-1 transition-colors ${location.pathname === "/minha-conta" && (s === "wallet" || s === "pedidos") ? "text-emerald-500" : "text-[var(--text)]/40"}`}
+          >
+            <ShoppingBag size={20} strokeWidth={1.5} />
+            <span className="text-[7.5px] font-bold uppercase tracking-tight">Carrinho</span>
+          </button>
+
+          <button 
+            onClick={() => navigate("/meus-albuns")}
+            className={`flex flex-col items-center gap-1 transition-colors ${location.pathname.startsWith("/meus-albuns") ? "text-emerald-500" : "text-[var(--text)]/40"}`}
+          >
+            <Image size={20} strokeWidth={1.5} />
+            <span className="text-[7.5px] font-bold uppercase tracking-tight">Meus Álbuns</span>
+          </button>
+
+          <button 
+            onClick={() => setDrawerOpen(true)}
+            className={`flex flex-col items-center gap-1 transition-colors ${
+              drawerOpen ||
+              location.pathname.startsWith("/profissional") || 
+              location.pathname.startsWith("/unidade-fixa") || 
+              location.pathname.startsWith("/admin") || 
+              (location.pathname === "/minha-conta" && s !== "wallet" && s !== "pedidos")
+                ? "text-emerald-500" 
+                : "text-[var(--text)]/40"
+            }`}
+          >
+            <Menu size={20} strokeWidth={1.5} />
+            <span className="text-[7.5px] font-bold uppercase tracking-tight">Opções</span>
+          </button>
         </nav>
       </div>
 

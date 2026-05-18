@@ -26,12 +26,13 @@ export const ClubLandingPage = () => {
       const endpoint = vaultId ? `/vaults/${vaultId}/subscribe` : `/checkout/subscribe`;
       const res = await API.post(endpoint, { planLimit: 36 });
       
-      if (res.data.orderId) {
+      const orderId = res.data.orderId || res.data.subscriptionId;
+      if (orderId) {
         // Redireciona para o checkout transparente padrão do sistema
-        navigate(`/checkout/${res.data.orderId}`);
-      } else if (res.data.init_point) {
-        // Fallback para checkout externo se não houver orderId
-        window.location.href = res.data.init_point;
+        navigate(`/checkout?orderId=${orderId}`);
+      } else if (res.data.initPoint || res.data.init_point) {
+        // Fallback para checkout externo se não houver orderId/subscriptionId
+        window.location.href = res.data.initPoint || res.data.init_point;
       } else {
         alert("Erro ao iniciar assinatura. Contate o suporte.");
       }

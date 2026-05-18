@@ -71,8 +71,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     localStorage.setItem("fs_active_role", role);
     // Redirecionamento baseado no papel
     if (role === "ADMIN") window.location.href = "/admin";
-    else if (role === "PROFISSIONAL") window.location.href = "/profissional";
-    else if (role === "CARTORIO" || role === "UNIDADE") window.location.href = "/cartorio";
+    else if (role === "PROFISSIONAL" || role === "CARTORIO" || role === "UNIDADE") window.location.href = "/minha-conta";
     else window.location.href = "/";
   };
 

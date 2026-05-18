@@ -1,9 +1,9 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useMemo } from "react";
 import { useNavigate } from "react-router-dom";
 import { API as api } from "../lib/api";
 import { useAuth } from "../hooks/useAuth";
 import { motion } from "framer-motion";
-import { Lock, Plus, Images, Users, ChevronRight, Loader2, Image as ImageIcon, ShoppingBag, User } from "lucide-react";
+import { Lock, Plus, Images, Users, ChevronRight, Loader2, Image as ImageIcon, ShoppingBag, User, Play, Briefcase, DollarSign, Calendar, Printer, Settings } from "lucide-react";
 import { Helmet } from "react-helmet-async";
 import { DashboardLayout } from "../components/DashboardLayout";
 
@@ -210,13 +210,45 @@ export default function VaultsPage() {
     fetchVaults();
   }, [user, navigate]);
 
-  const NAV_ITEMS = [
-    { label: "Minhas Memórias", onClick: () => navigate("/minha-conta?s=fotos"), isActive: false, icon: <ImageIcon size={18} /> },
-    { label: "Meus Álbuns", onClick: () => {}, isActive: true, icon: <Lock size={18} /> },
-    { label: "Carrinho", onClick: () => navigate("/minha-conta?s=wallet"), isActive: false, icon: <ShoppingBag size={18} /> },
-    { label: "Indique e Ganhe", onClick: () => navigate("/minha-conta?s=affiliate"), isActive: false, icon: <Users size={18} /> },
-    { label: "Meus Dados", onClick: () => navigate("/minha-conta?s=menu"), isActive: false, icon: <User size={18} /> },
-  ];
+  const NAV_ITEMS = useMemo(() => {
+    const items = [
+      { label: "Minhas Memórias", onClick: () => navigate("/minha-conta?s=fotos"), isActive: false, icon: <ImageIcon size={18} /> },
+      { label: "Meus Álbuns", onClick: () => {}, isActive: true, icon: <Lock size={18} /> },
+      { label: "Carrinho", onClick: () => navigate("/minha-conta?s=wallet"), isActive: false, icon: <ShoppingBag size={18} /> },
+      { label: "Indique e Ganhe", onClick: () => navigate("/minha-conta?s=affiliate"), isActive: false, icon: <Users size={18} /> },
+      { label: "Meus Dados", onClick: () => navigate("/minha-conta?s=menu"), isActive: false, icon: <User size={18} /> },
+    ];
+
+    if (user?.role === "PROFISSIONAL" || user?.role === "FRANCHISEE") {
+      items.push(
+        { label: "ÁREA PROFISSIONAL", isHeader: true },
+        { label: "Minha Agenda", onClick: () => navigate("/minha-conta?s=agenda"), isActive: false, icon: <Play size={18} /> },
+        { label: "Portfólio & Serviços", onClick: () => navigate("/minha-conta?s=servicos"), isActive: false, icon: <Briefcase size={18} /> },
+        { label: "Minhas Vendas & Ganhos", onClick: () => navigate("/minha-conta?s=financeiro"), isActive: false, icon: <DollarSign size={18} /> },
+        { label: "Agenda Google", onClick: () => navigate("/minha-conta?s=calendar"), isActive: false, icon: <Calendar size={18} /> }
+      );
+
+      if (user?.franchiseProfile) {
+        items.push(
+          { label: "Franquia Print", onClick: () => navigate("/minha-conta?s=franquia"), isActive: false, icon: <Printer size={18} /> }
+        );
+      }
+    }
+
+    if (user?.role === "CARTORIO" || user?.role === "UNIDADE") {
+      items.push(
+        { label: "ÁREA DA UNIDADE", isHeader: true },
+        { label: "Agenda Unidade", onClick: () => navigate("/minha-conta?s=agenda"), isActive: false, icon: <Play size={18} /> },
+        { label: "Fluxo Financeiro", onClick: () => navigate("/minha-conta?s=financeiro"), isActive: false, icon: <DollarSign size={18} /> },
+        { label: "Rede Técnica", onClick: () => navigate("/minha-conta?s=equipe"), isActive: false, icon: <Users size={18} /> },
+        { label: "Google Calendar", onClick: () => navigate("/minha-conta?s=calendar"), isActive: false, icon: <Calendar size={18} /> },
+        { label: "Franquia Print", onClick: () => navigate("/minha-conta?s=franquia"), isActive: false, icon: <Printer size={18} /> },
+        { label: "Configuração Pública", onClick: () => navigate("/minha-conta?s=configuracoes"), isActive: false, icon: <Settings size={18} /> }
+      );
+    }
+
+    return items;
+  }, [user, navigate]);
 
   return (
     <DashboardLayout title="Meus Álbuns" navItems={NAV_ITEMS}>

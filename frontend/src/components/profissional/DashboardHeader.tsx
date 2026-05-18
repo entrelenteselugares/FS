@@ -25,7 +25,7 @@ export function DashboardHeader({ activeTab, viewTab, onViewTabChange, residentU
       
       <div className="flex flex-col xl:flex-row justify-between items-start xl:items-end gap-6 relative z-10">
         <div className="space-y-4">
-          <h1 className="text-4xl md:text-5xl xl:text-6xl font-heading font-black text-theme-text uppercase tracking-tighter italic leading-none whitespace-nowrap">
+          <h1 className="text-3xl md:text-5xl xl:text-6xl font-heading font-black text-theme-text uppercase tracking-tighter italic leading-none whitespace-normal sm:whitespace-nowrap">
             {getTitle()}
           </h1>
           <div className="flex items-center gap-4">

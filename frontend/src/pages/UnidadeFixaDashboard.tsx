@@ -123,12 +123,24 @@ const PAGE_TITLES: Record<Tab, { title: string; subtitle: string; prefix: string
   configuracoes: { title: "Configuração", subtitle: "Ajustes de perfil e página pública.", prefix: "Painel" }
 };
 
-export default function UnidadeFixaDashboard() {
+interface UnidadeFixaDashboardProps {
+  noLayout?: boolean;
+  activeTab?: Tab;
+  setActiveTab?: (tab: Tab) => void;
+}
+
+export default function UnidadeFixaDashboard({
+  noLayout = false,
+  activeTab: propActiveTab,
+  setActiveTab: propSetActiveTab,
+}: UnidadeFixaDashboardProps = {}) {
   const { user } = useAuth();
   const [searchParams] = useSearchParams();
   const navigate = useNavigate();
 
-  const [tab, setTab] = useState<Tab>((searchParams.get("tab") as Tab) || (user?.franchiseProfile ? "franquia" : "agenda"));
+  const [localTab, setLocalTab] = useState<Tab>((searchParams.get("tab") as Tab) || (user?.franchiseProfile ? "franquia" : "agenda"));
+  const tab = propActiveTab || localTab;
+  const setTab = propSetActiveTab || setLocalTab;
   const [stats, setStats] = useState<UnidadeStats | null>(null);
   const [eventos, setEventos] = useState<EventoAgenda[]>([]);
   const [loading, setLoading] = useState(true);
@@ -399,11 +411,8 @@ export default function UnidadeFixaDashboard() {
     .filter(r => r.status !== "PAID")
     .reduce((acc, r) => acc + Number(r.amount), 0);
 
-  return (
-    <DashboardLayout 
-      title="Painel de Unidade" 
-      navItems={NAV_ITEMS(tab, setTab)}
-    >
+  const content = (
+    <>
       <WelcomeTour role="CARTORIO" onComplete={() => {}} />
       <div className="max-w-[1600px] mx-auto px-4 md:px-6 py-4 md:py-8 space-y-6 md:space-y-10 animate-in fade-in slide-in-from-bottom-4 duration-700">
 
@@ -433,7 +442,7 @@ export default function UnidadeFixaDashboard() {
           
           <div className="flex flex-col xl:flex-row justify-between items-start xl:items-end gap-6 relative z-10">
             <div className="space-y-4">
-              <h1 className="text-4xl md:text-5xl xl:text-6xl font-heading font-black text-theme-text uppercase tracking-tighter italic leading-none whitespace-nowrap">
+              <h1 className="text-3xl sm:text-4xl md:text-5xl xl:text-6xl font-heading font-black text-theme-text uppercase tracking-tighter italic leading-none whitespace-normal xl:whitespace-nowrap pr-4">
                 {PAGE_TITLES[tab].title}
               </h1>
               <div className="flex items-center gap-4">
@@ -1672,6 +1681,19 @@ export default function UnidadeFixaDashboard() {
           userAddress={lpAddress}
         />
       )}
+    </>
+  );
+
+  if (noLayout) {
+    return content;
+  }
+
+  return (
+    <DashboardLayout 
+      title="Painel de Unidade" 
+      navItems={NAV_ITEMS(tab, setTab)}
+    >
+      {content}
     </DashboardLayout>
   );
 }

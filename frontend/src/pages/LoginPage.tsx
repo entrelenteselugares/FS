@@ -7,10 +7,10 @@ import { Mail, Lock, Eye, EyeOff, ArrowRight } from "lucide-react";
 
 const ROLE_DESTINATIONS: Record<string, string> = {
   ADMIN:        "/admin",
-  PROFISSIONAL: "/profissional",
-  CARTORIO:     "/unidade-fixa",
-  UNIDADE:      "/unidade-fixa",
-  FRANCHISEE:   "/franquia",
+  PROFISSIONAL: "/minha-conta",
+  CARTORIO:     "/minha-conta",
+  UNIDADE:      "/minha-conta",
+  FRANCHISEE:   "/minha-conta",
   CLIENTE:      "/minha-conta",
 };
 
