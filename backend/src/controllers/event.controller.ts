@@ -776,6 +776,12 @@ export class EventController {
 
     if (!name) return res.status(400).json({ error: "Nome do ponto é obrigatório" });
 
+    // Validate professional approval status
+    const dbUser = await prisma.user.findUnique({ where: { id: userId } });
+    if (!dbUser || (!dbUser.isVerified && dbUser.verificationStatus !== "APPROVED")) {
+      return res.status(403).json({ error: "Sua conta de profissional ainda não foi aprovada pelo administrador. Aguarde a aprovação para criar pontos de venda." });
+    }
+
     // Converte link de compartilhamento do Google Drive para URL de thumbnail direto
     const normalizeCoverUrl = (url?: string): string | null => {
       if (!url) return null;

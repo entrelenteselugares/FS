@@ -42,6 +42,13 @@ export class MarketplaceController {
       return res.status(400).json({ error: "E-mail e Valor são obrigatórios." });
     }
 
+    if (req.user?.userId) {
+      const dbUser = await prisma.user.findUnique({ where: { id: req.user.userId } });
+      if (!dbUser || (!dbUser.isVerified && dbUser.verificationStatus !== "APPROVED")) {
+        return res.status(403).json({ error: "Sua conta de profissional ainda não foi aprovada pelo administrador. Aguarde a aprovação para criar vendas expressas." });
+      }
+    }
+
     let tempPassword: string | null = null;
 
     try {

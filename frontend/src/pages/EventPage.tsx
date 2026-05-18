@@ -651,7 +651,7 @@ return (
               
               {/* Bloco de Informações / Roteiro (Prioridade) */}
               {(event.itinerary || event.type === 'FOTO_POINT') && (
-                <div className="grid grid-cols-1 xl:grid-cols-[1fr_400px] gap-16 animate-in fade-in slide-in-from-bottom-8 duration-1000">
+                <div className="max-w-4xl animate-in fade-in slide-in-from-bottom-8 duration-1000">
                   <div className="space-y-10">
                     <div className="space-y-4">
                       <div className="flex items-center gap-3">
@@ -712,28 +712,6 @@ return (
                         </div>
                       </div>
                     )}
-                  </div>
-
-                  <div className="space-y-10">
-                     <div className="space-y-4">
-                      <h2 className="text-2xl font-heading font-black italic uppercase text-theme-text tracking-tight">Previews</h2>
-                      <div className="h-1 w-20 bg-theme-border/60" />
-                    </div>
-                    
-                    <div className="grid grid-cols-2 gap-4">
-                      {event.previewPhotos && event.previewPhotos.length > 0 ? (
-                        event.previewPhotos.slice(0, 4).map((url, idx) => (
-                          <div key={idx} className="aspect-[3/4] bg-theme-bg-muted border border-theme-border/40 overflow-hidden group shadow-2xl">
-                            <img src={url} alt="" className="w-full h-full object-cover grayscale brightness-75 group-hover:grayscale-0 group-hover:brightness-100 transition-all duration-700" />
-                          </div>
-                        ))
-                      ) : (
-                        <div className="col-span-2 aspect-video bg-theme-bg-muted/50 border border-dashed border-theme-border/40 flex flex-col items-center justify-center p-8 text-center gap-4">
-                          <Camera size={32} className="text-zinc-800" />
-                          <p className="text-[10px] text-theme-text-muted/60 font-black uppercase tracking-[0.3em] italic">Aguardando capturas ao vivo...</p>
-                        </div>
-                      )}
-                    </div>
                   </div>
                 </div>
               )}
