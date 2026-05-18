@@ -225,7 +225,7 @@ export default function EventPage() {
       const searchLower = searchQuery.toLowerCase();
       const matchStudent = meta.studentId?.toLowerCase().includes(searchLower);
       const matchBib = meta.bibNumber?.toLowerCase().includes(searchLower);
-      const matchShortId = m.shortId.toLowerCase().includes(searchLower);
+      const matchShortId = m.shortId?.toLowerCase().includes(searchLower) || false;
       return matchStudent || matchBib || matchShortId;
     }
 

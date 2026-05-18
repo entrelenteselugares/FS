@@ -153,19 +153,20 @@ export const TouchSelectionGallery: React.FC<TouchSelectionGalleryProps> = ({
       </div>
 
       {/* Fullscreen Modal with Swipe */}
-      <AnimatePresence>
-        {fullscreenIndex !== null && createPortal(
-          <motion.div
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            exit={{ opacity: 0 }}
-            className="fixed inset-0 z-[99999] bg-black/95 flex flex-col"
-          >
+      {createPortal(
+        <AnimatePresence>
+          {fullscreenIndex !== null && (
+            <motion.div
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              exit={{ opacity: 0 }}
+              className="fixed inset-0 z-[99999] bg-black/95 flex flex-col"
+            >
             {/* Header */}
             <div className="p-6 flex items-center justify-between relative z-10">
               <div className="flex flex-col">
                 <span className="text-[10px] font-black text-brand-tactical uppercase tracking-widest italic">Visualização Tactical</span>
-                <span className="text-xl font-black text-white italic tracking-tighter">#{medias[fullscreenIndex].shortId}</span>
+                <span className="text-xl font-black text-white italic tracking-tighter">#{medias[fullscreenIndex]?.shortId}</span>
               </div>
               <button 
                 onClick={() => setFullscreenIndex(null)}
@@ -178,8 +179,8 @@ export const TouchSelectionGallery: React.FC<TouchSelectionGalleryProps> = ({
             {/* Image Viewer */}
             <div className="flex-1 relative flex items-center justify-center overflow-hidden">
               <motion.img
-                key={medias[fullscreenIndex].id}
-                src={getProxyUrl(medias[fullscreenIndex].url)}
+                key={medias[fullscreenIndex]?.id}
+                src={getProxyUrl(medias[fullscreenIndex]?.url || '')}
                 initial={{ x: 300, opacity: 0 }}
                 animate={{ x: 0, opacity: 1 }}
                 exit={{ x: -300, opacity: 0 }}
@@ -222,22 +223,23 @@ export const TouchSelectionGallery: React.FC<TouchSelectionGalleryProps> = ({
                 <button
                   onClick={() => {
                     const m = medias[fullscreenIndex];
-                    onToggleCart(m.shortId, m.url);
+                    if (m) onToggleCart(m.shortId, m.url);
                   }}
                   className={`px-8 py-4 rounded-xl font-black uppercase tracking-widest text-[10px] italic transition-all ${
-                    selectedIds.includes(medias[fullscreenIndex].shortId)
+                    medias[fullscreenIndex] && selectedIds.includes(medias[fullscreenIndex].shortId)
                       ? "bg-emerald-500 text-black"
                       : "bg-white text-black hover:bg-brand-tactical"
                   }`}
                 >
-                  {selectedIds.includes(medias[fullscreenIndex].shortId) ? "Selecionada" : "Selecionar"}
+                  {medias[fullscreenIndex] && selectedIds.includes(medias[fullscreenIndex].shortId) ? "Selecionada" : "Selecionar"}
                 </button>
               </div>
             </div>
-          </motion.div>,
-          document.body
-        )}
-      </AnimatePresence>
+            </motion.div>
+          )}
+        </AnimatePresence>,
+        document.body
+      )}
     </div>
   );
 };
