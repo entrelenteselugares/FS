@@ -26,7 +26,7 @@ export const IncompleteProfileBanner: React.FC = () => {
         </div>
         
         <button 
-          onClick={() => navigate('/profile')}
+          onClick={() => navigate('/minha-conta?s=menu')}
           className="bg-zinc-950 text-brand-tactical px-3 py-1 rounded-full text-[9px] font-black uppercase tracking-tighter flex items-center gap-1 hover:scale-105 transition-transform"
         >
           COMPLETAR <ArrowRight size={12} />
