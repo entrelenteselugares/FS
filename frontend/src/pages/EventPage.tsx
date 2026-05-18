@@ -71,7 +71,7 @@ interface EventData {
   isUnitSale?: boolean;
   preSaleEnabled?: boolean;
   postSaleEnabled?: boolean;
-  verticalConfigs?: any;
+  verticalConfigs?: Record<string, unknown>;
   recentOrders?: { id: string; contributorName: string; valor: number; createdAt: string }[];
   clientEmail?: string | null;
   isPrimaryClient?: boolean;
@@ -97,7 +97,7 @@ interface EventMedia {
   shortId: string;
   price?: number | null;
   isGuest?: boolean;
-  metadata?: any;
+  metadata?: { studentId?: string; bibNumber?: string; [key: string]: unknown };
 }
 
 interface AccessData {
@@ -831,7 +831,7 @@ return (
                           </div>
                         ) : event.type === 'SCHOOL' && !authenticatedStudent && !event.isOwner ? (
                           <SchoolAuthenticationGate 
-                            studentListRaw={event.verticalConfigs?.studentList}
+                            studentListRaw={event.verticalConfigs?.studentList as string | string[] | undefined}
                             eventTitle={event.nomeNoivos}
                             onAuthenticate={(name) => {
                               setAuthenticatedStudent(name);
