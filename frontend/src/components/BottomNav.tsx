@@ -2,7 +2,7 @@ import React, { useState, useMemo } from "react";
 import { useNavigate, useLocation, useSearchParams, Link } from "react-router-dom";
 import { Home, Search, ShoppingBag, Image, Menu, X, Play, Briefcase, DollarSign, Calendar, Printer, Settings, Lock, Users, User, Image as ImageIcon } from "lucide-react";
 import { useAuth } from "../hooks/useAuth";
-import { NavItem } from "./DashboardLayout";
+import type { NavItem } from "./DashboardLayout";
 
 export const BottomNav: React.FC = () => {
   const navigate = useNavigate();

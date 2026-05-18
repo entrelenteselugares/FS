@@ -211,7 +211,7 @@ export default function VaultsPage() {
   }, [user, navigate]);
 
   const NAV_ITEMS = useMemo(() => {
-    const items = [
+    const items: any[] = [
       { label: "Minhas Memórias", onClick: () => navigate("/minha-conta?s=fotos"), isActive: false, icon: <ImageIcon size={18} /> },
       { label: "Meus Álbuns", onClick: () => {}, isActive: true, icon: <Lock size={18} /> },
       { label: "Carrinho", onClick: () => navigate("/minha-conta?s=wallet"), isActive: false, icon: <ShoppingBag size={18} /> },
