@@ -30,52 +30,23 @@ export class SubscriptionService {
 
     const price = 49.90;
 
-    // 3. Garantir Evento de Sistema para assinaturas
-    let systemEvent = await prisma.event.findFirst({ where: { slug: "vaults-system" } });
-    if (!systemEvent) {
-      systemEvent = await prisma.event.create({
-        data: {
-          slug: "vaults-system",
-          nomeNoivos: "System: Vaults Subscriptions",
-          active: true,
-          dataEvento: new Date(),
-          ownerId: userId
-        }
-      });
-    }
-
-    // 4. Criar pedido local PENDING
-    const order = await prisma.order.create({
-      data: {
-        valor: price,
-        status: "PENDENTE",
-        eventId: systemEvent.id,
-        clienteId: userId,
-        buyerEmail: album.owner.email,
-        isManual: true,
-        manualType: "VAULT_SUBSCRIPTION",
-        internalNotes: `Assinatura Mensal: ${album.nome} | albumId:${albumId}`,
-        items: { create: [{ price, quantity: 1 }] }
-      }
+    // 3. Registrar subscription PENDING (ou reutilizar existente)
+    const subscription = await prisma.subscription.upsert({
+      where: { albumId },
+      update: { status: "PENDING", planLimit, planPrice: price },
+      create: { userId, albumId, planLimit, status: "PENDING", planPrice: price }
     });
 
-    // 5. Gerar preferência MP normal (funciona em qualquer conta/token)
+    // 4. Gerar preferência MP (Checkout Pro — funciona em qualquer conta/token)
     const backendUrl = process.env.BACKEND_URL || "http://localhost:3001";
-    const frontendUrl = process.env.FRONTEND_URL || "http://localhost:3000";
+    const syntheticOrderId = `vault-sub-${subscription.id}`;
 
     const mpResponse = await MercadoPagoService.createPreference({
       transaction_amount: price,
       description: `Assinatura Mensal Cofre: ${album.nome}`,
       payer_email: album.owner.email,
       notification_url: `${backendUrl}/api/webhooks/mercadopago`,
-      orderId: order.id,
-    });
-
-    // 6. Registrar subscription PENDING
-    const subscription = await prisma.subscription.upsert({
-      where: { albumId },
-      update: { status: "PENDING", planLimit, planPrice: price },
-      create: { userId, albumId, planLimit, status: "PENDING", planPrice: price }
+      orderId: syntheticOrderId,
     });
 
     return {
