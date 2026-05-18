@@ -311,19 +311,38 @@ export class EventController {
         }
       };
 
+      const andConditions: any[] = [];
+
       if (city) {
-        where.city = { contains: String(city), mode: 'insensitive' };
+        andConditions.push({
+          OR: [
+            { city: { equals: String(city), mode: 'insensitive' } },
+            {
+              cartorioUser: {
+                cartorio: {
+                  cidade: { equals: String(city), mode: 'insensitive' }
+                }
+              }
+            }
+          ]
+        });
+      }
+
+      if (query) {
+        andConditions.push({
+          OR: [
+            { nomeNoivos: { contains: query, mode: 'insensitive' } },
+            { location: { contains: query, mode: 'insensitive' } },
+            { clientName: { contains: query, mode: 'insensitive' } }
+          ]
+        });
+      }
+
+      if (andConditions.length > 0) {
+        where.AND = andConditions;
       }
 
       console.log("[DEBUG] listPublic where:", JSON.stringify(where, null, 2));
-
-      if (query) {
-        where.OR = [
-          { nomeNoivos: { contains: query, mode: 'insensitive' } },
-          { location: { contains: query, mode: 'insensitive' } },
-          { clientName: { contains: query, mode: 'insensitive' } }
-        ];
-      }
 
       let orderBy: any = { dataEvento: 'desc' };
       if (sortBy === 'AZ') orderBy = { nomeNoivos: 'asc' };
