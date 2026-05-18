@@ -512,7 +512,7 @@ export default function ProfissionalDashboard() {
                       </div>
                       <button 
                         onClick={handleConnectCalendar}
-                        className="px-10 py-4 bg-white text-theme-text text-[11px] font-black uppercase tracking-[0.2em] hover:bg-brand-tactical transition-all shadow-xl"
+                        className="px-10 py-4 bg-brand-tactical text-zinc-950 text-[11px] font-black uppercase tracking-[0.2em] hover:brightness-110 transition-all shadow-xl shadow-brand-tactical/10"
                       >
                         CONECTAR GOOGLE CALENDAR
                       </button>

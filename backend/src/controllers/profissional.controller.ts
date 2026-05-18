@@ -174,7 +174,7 @@ export async function getProfile(req: AuthRequest, res: Response): Promise<void>
         user: { 
           select: { 
             nome: true, email: true, whatsapp: true, address: true, pixKey: true,
-            isVerified: true, verificationStatus: true,
+            isVerified: true, verificationStatus: true, profileImageUrl: true,
             franchiseProfile: { select: { printCredits: true, active: true } }
           } 
         },
@@ -353,6 +353,7 @@ export async function updateProfile(req: AuthRequest, res: Response): Promise<vo
             ...(user?.address !== undefined && { address: user.address }),
             ...(user?.nome !== undefined && { nome: user.nome }),
             ...(user?.whatsapp !== undefined && { whatsapp: user.whatsapp }),
+            ...(user?.profileImageUrl !== undefined && { profileImageUrl: user.profileImageUrl }),
             ...(pixKey !== undefined && { pixKey: String(pixKey) })
           }
         }
@@ -361,7 +362,7 @@ export async function updateProfile(req: AuthRequest, res: Response): Promise<vo
         user: {
           select: {
             nome: true, email: true, whatsapp: true, address: true, pixKey: true,
-            isVerified: true, verificationStatus: true,
+            isVerified: true, verificationStatus: true, profileImageUrl: true,
             franchiseProfile: { select: { printCredits: true, active: true } }
           }
         }

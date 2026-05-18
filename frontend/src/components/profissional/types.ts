@@ -91,6 +91,7 @@ export interface ProfileData {
     isVerified?: boolean;
     verificationStatus?: string;
     profileComplete: boolean;
+    profileImageUrl?: string | null;
   };
   pixKey: string | null;
   pixType: string | null;

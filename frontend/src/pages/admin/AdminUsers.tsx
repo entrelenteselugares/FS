@@ -103,6 +103,7 @@ export const AdminUsers: React.FC = () => {
           isFranchise: formData.isFranchise,
           printCredits: formData.printCredits,
           isVerified: formData.isVerified,
+          affiliateTier: formData.affiliateTier,
           ...(formData.password ? { senha: formData.password } : {})
         });
 

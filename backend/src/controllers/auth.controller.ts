@@ -77,7 +77,16 @@ export class AuthController {
       // 4. Busca dados extras (Franquia, etc) para o frontend
       const fullUser = await prisma.user.findUnique({
         where: { id: user.id },
-        select: { id: true, nome: true, email: true, role: true, whatsapp: true, franchiseProfile: true }
+        select: { 
+          id: true, 
+          nome: true, 
+          email: true, 
+          role: true, 
+          whatsapp: true, 
+          franchiseProfile: true,
+          discoverySource: true,
+          profileImageUrl: true
+        }
       });
 
       if (!fullUser) return res.status(404).json({ error: "Usuário não sincronizado no banco de dados." });
@@ -564,6 +573,17 @@ export class AuthController {
       const ext = String(mimeType).split("/")[1] || "jpg";
       const fileName = `${userId}-${Date.now()}.${ext}`;
 
+      // Garantir de forma resiliente que o bucket 'profiles' existe e é público
+      try {
+        await supabaseAdmin.storage.createBucket("profiles", {
+          public: true,
+          allowedMimeTypes: ["image/jpeg", "image/png", "image/gif", "image/webp"],
+        });
+      } catch (bucketErr: any) {
+        // Ignora erro se o bucket já existir
+        console.log("[STORAGE] Tentativa de criação de bucket profiles (ignorado se já existir):", bucketErr.message || bucketErr);
+      }
+
       const { error: uploadError } = await supabaseAdmin.storage
         .from("profiles")
         .upload(fileName, buffer, {
@@ -584,9 +604,12 @@ export class AuthController {
       });
 
       return res.json(updated);
-    } catch (error) {
+    } catch (error: any) {
       console.error("[UPLOAD PROFILE PHOTO ERROR]:", error);
-      return res.status(500).json({ error: "Erro ao fazer upload da foto de perfil" });
+      return res.status(500).json({ 
+        error: "Erro ao fazer upload da foto de perfil", 
+        details: error.message || String(error) 
+      });
     }
   }
 }

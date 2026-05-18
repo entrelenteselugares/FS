@@ -641,6 +641,7 @@ export async function adminListUsers(req: AuthRequest, res: Response): Promise<v
         cartorio: { select: { id: true, razaoSocial: true } },
         franchiseProfile: { select: { id: true, printCredits: true, active: true } },
         pixKey: true,
+        affiliateTier: true,
       },
       orderBy: { createdAt: "desc" },
     });
@@ -753,6 +754,7 @@ export async function adminUpdateUser(req: AuthRequest, res: Response): Promise<
         ...(pixKey !== undefined && { pixKey }),
         ...(req.body.isVerified !== undefined && { isVerified: req.body.isVerified }),
         ...(req.body.verificationStatus && { verificationStatus: req.body.verificationStatus }),
+        ...(req.body.affiliateTier !== undefined && { affiliateTier: req.body.affiliateTier }),
       },
     });
 
@@ -861,48 +863,104 @@ export async function adminDeleteUser(req: AuthRequest, res: Response): Promise<
       console.warn(`[Supabase] Exceção ao remover/suspender usuário auth`, err);
     }
 
-    // 2. Tentar HARD DELETE limpando tabelas associadas com cascade manual
+    // 2. Executar HARD DELETE completo e seguro desassociando tabelas compartilhadas/financeiras
     try {
-      await prisma.$transaction([
-        prisma.pushSubscription.deleteMany({ where: { userId: user.id } }),
-        prisma.notification.deleteMany({ where: { userId: user.id } }),
-        prisma.userPoints.deleteMany({ where: { userId: user.id } }),
-        prisma.photoLike.deleteMany({ where: { userId: user.id } }),
-        prisma.professionalNetwork.deleteMany({
-          where: { OR: [{ userId: user.id }, { partnerId: user.id }] }
-        }),
-        prisma.calendarSlot.deleteMany({ where: { userId: user.id } }),
-        prisma.franchiseProfile.deleteMany({ where: { userId: user.id } }),
-        
-        // Deletar perfis específicos
-        prisma.profissional.deleteMany({ where: { userId: user.id } }),
-        prisma.cartorio.deleteMany({ where: { userId: user.id } }),
-        
-        // Deletar o usuário físico
-        prisma.user.delete({ where: { id: user.id } })
-      ]);
+      await prisma.$transaction(async (tx) => {
+        // A. Desassociar chaves estrangeiras em tabelas históricas/compartilhadas para evitar violação de FK
+        await tx.order.updateMany({
+          where: { clienteId: user.id },
+          data: { clienteId: null }
+        });
+        await tx.order.updateMany({
+          where: { editorId: user.id },
+          data: { editorId: null }
+        });
+        await tx.order.updateMany({
+          where: { passiveFranchiseeId: user.id },
+          data: { passiveFranchiseeId: null }
+        });
+        await tx.order.updateMany({
+          where: { ambassadorId: user.id },
+          data: { ambassadorId: null }
+        });
+        await tx.order.updateMany({
+          where: { affiliateL1Id: user.id },
+          data: { affiliateL1Id: null }
+        });
+        await tx.order.updateMany({
+          where: { affiliateL2Id: user.id },
+          data: { affiliateL2Id: null }
+        });
 
-      await audit(req, "USER_DELETED", "User", String(id), null, { email: user.email, type: "HARD_DELETE" });
-      res.json({ ok: true, type: "HARD_DELETE" });
-      return;
-    } catch (dbErr) {
-      // 3. Fallback: SOFT DELETE / BANIMENTO (caso possua histórico financeiro/pedidos que não podem ser apagados)
-      console.log(`[AdminDeleteUser] Hard delete falhou devido a dependências ativas. Executando SOFT DELETE para o usuário ${user.id}`);
-      
-      await prisma.user.update({
-        where: { id: user.id },
-        data: { active: false }
+        await tx.event.updateMany({
+          where: { captacaoId: user.id },
+          data: { captacaoId: null }
+        });
+        await tx.event.updateMany({
+          where: { edicaoId: user.id },
+          data: { edicaoId: null }
+        });
+        await tx.event.updateMany({
+          where: { cartorioUserId: user.id },
+          data: { cartorioUserId: null }
+        });
+
+        await tx.user.updateMany({
+          where: { referredById: user.id },
+          data: { referredById: null }
+        });
+
+        // B. Deletar registros exclusivos vinculados ao usuário
+        await tx.pushSubscription.deleteMany({ where: { userId: user.id } });
+        await tx.notification.deleteMany({ where: { userId: user.id } });
+        await tx.userPoints.deleteMany({ where: { userId: user.id } });
+        await tx.photoLike.deleteMany({ where: { userId: user.id } });
+        await tx.professionalNetwork.deleteMany({
+          where: { OR: [{ userId: user.id }, { partnerId: user.id }] }
+        });
+        await tx.calendarSlot.deleteMany({ where: { userId: user.id } });
+        await tx.gamificationLedger.deleteMany({ where: { userId: user.id } });
+        await tx.printRedemption.deleteMany({ where: { userId: user.id } });
+        await tx.affiliateCommission.deleteMany({ where: { userId: user.id } });
+        await tx.userCalendarCredential.deleteMany({ where: { userId: user.id } });
+        await tx.flashCard.deleteMany({ where: { userId: user.id } });
+        await tx.phygitalPrint.deleteMany({ where: { userId: user.id } });
+        await tx.referralCampaign.deleteMany({ where: { ownerId: user.id } });
+        await tx.sharedAlbum.deleteMany({ where: { ownerId: user.id } });
+        await tx.albumMember.deleteMany({ where: { userId: user.id } });
+        await tx.mediaVote.deleteMany({ where: { userId: user.id } });
+        await tx.subscription.deleteMany({ where: { userId: user.id } });
+
+        // Deletar perfis e intermediários
+        if (user.profissional) {
+          await tx.cartorioProfissional.deleteMany({ where: { profissionalId: user.profissional.id } });
+          await tx.professionalService.deleteMany({ where: { profissionalId: user.profissional.id } });
+          await tx.portfolioAlbum.deleteMany({ where: { profissionalId: user.profissional.id } });
+          await tx.profissional.delete({ where: { id: user.profissional.id } });
+        }
+        if (user.cartorio) {
+          await tx.cartorioProfissional.deleteMany({ where: { cartorioId: user.cartorio.id } });
+          await tx.cartorio.delete({ where: { id: user.cartorio.id } });
+        }
+        if (user.franchiseProfile) {
+          await tx.supplyOrder.updateMany({
+            where: { franchiseeId: user.franchiseProfile.id },
+            data: { franchiseeId: null }
+          });
+          await tx.creditTransaction.deleteMany({ where: { profileId: user.franchiseProfile.id } });
+          await tx.franchiseProfile.delete({ where: { id: user.franchiseProfile.id } });
+        }
+
+        // C. Finalmente, deletar o próprio usuário físico
+        await tx.user.delete({ where: { id: user.id } });
       });
 
-      if (user.franchiseProfile) {
-        await prisma.franchiseProfile.updateMany({
-          where: { userId: user.id },
-          data: { active: false }
-        });
-      }
-
-      await audit(req, "USER_DELETED", "User", String(id), null, { email: user.email, type: "SOFT_DELETE" });
-      res.json({ ok: true, type: "SOFT_DELETE" });
+      await audit(req, "USER_DELETED", "User", String(id), null, { email: user.email, type: "HARD_DELETE_COMPLETE" });
+      res.json({ ok: true, type: "HARD_DELETE" });
+      return;
+    } catch (dbErr: any) {
+      console.error("[AdminDeleteUser] Hard delete completo falhou:", dbErr);
+      res.status(500).json({ error: "Erro ao excluir permanentemente o usuário do banco.", details: dbErr.message || String(dbErr) });
     }
   } catch (err: any) {
     console.error("adminDeleteUser General Error:", err);
