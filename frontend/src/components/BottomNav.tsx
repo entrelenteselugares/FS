@@ -43,8 +43,16 @@ export const BottomNav: React.FC = () => {
 
       <button 
         onClick={() => {
-          if (location.pathname !== "/") navigate("/");
-          setTimeout(() => document.getElementById("vitrine")?.scrollIntoView({ behavior: 'smooth' }), 100);
+          if (location.pathname !== "/") {
+            navigate("/");
+            setTimeout(() => {
+              window.scrollTo({ top: 0, behavior: "smooth" });
+              document.getElementById("mobile-search-input")?.focus();
+            }, 100);
+          } else {
+            window.scrollTo({ top: 0, behavior: "smooth" });
+            document.getElementById("mobile-search-input")?.focus();
+          }
         }}
         className="flex flex-col items-center gap-1 text-[var(--text)]/40"
       >

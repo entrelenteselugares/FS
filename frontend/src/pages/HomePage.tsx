@@ -235,25 +235,25 @@ export const HomePage = () => {
            /* Compressed Hero on Mobile */
            .hp-hero-section { 
              display: flex !important; 
-             padding: 40px 20px 48px !important;
+             padding: 32px 16px 16px !important;
              text-align: center !important;
              align-items: center !important;
              min-height: auto !important;
              background: linear-gradient(to bottom, var(--bg-card), var(--bg)) !important;
            }
-           .hp-hero-title { font-size: 42px !important; line-height: 0.85 !important; margin-bottom: 16px !important; text-align: center !important; letter-spacing: -0.04em !important; font-weight: 900 !important; }
-           .hp-hero-desc { font-size: 14px !important; margin-bottom: 32px !important; text-align: center !important; opacity: 0.7; max-width: 280px !important; margin-left: auto !important; margin-right: auto !important; }
+           .hp-hero-title { font-size: 38px !important; line-height: 0.85 !important; margin-bottom: 12px !important; text-align: center !important; letter-spacing: -0.04em !important; font-weight: 900 !important; }
+           .hp-hero-desc { font-size: 11px !important; line-height: 1.4 !important; margin-bottom: 20px !important; text-align: center !important; opacity: 0.7; max-width: 95% !important; margin-left: auto !important; margin-right: auto !important; }
            .hp-stats { display: none !important; }
            .hp-hero-tagline { display: none !important; }
            .hp-hero-search-desktop { flex-direction: column !important; width: 100% !important; gap: 8px !important; }
-           .hp-hero-search-desktop button { width: 100% !important; padding: 16px !important; }
+           .hp-hero-search-desktop button { width: 100% !important; padding: 12px !important; }
 
            /* Vitrine Headers */
            .hp-vitrine-header-desktop { display: none !important; }
-           .hp-mobile-vitrine-header { display: flex !important; padding: 0 16px 20px !important; }
+           .hp-mobile-vitrine-header { display: flex !important; padding: 8px 12px 12px !important; }
            
            /* Immersive Feed for Mobile */
-           .hp-event-grid-container { padding: 8px !important; }
+           .hp-event-grid-container { padding: 4px !important; }
            .hp-event-grid { gap: 8px !important; grid-template-columns: repeat(2, 1fr) !important; }
          }
         @media(min-width:769px){
@@ -302,14 +302,15 @@ export const HomePage = () => {
 
           <div className="hp-hero-search-desktop animate-reveal" style={{ display: "flex", gap: 12, justifyContent: "center" }}>
             {/* Mobile-only Search Bar inside Hero */}
-            <div className="md:hidden w-full relative mb-4">
-              <Search size={18} className="absolute left-5 top-1/2 -translate-y-1/2 text-theme-text-muted" />
+            <div className="md:hidden w-full relative mb-0">
+              <Search size={16} className="absolute left-4 top-1/2 -translate-y-1/2 text-theme-text-muted" />
               <input
+                id="mobile-search-input"
                 value={query}
                 onChange={e => setQuery(e.target.value)}
                 onKeyDown={e => e.key === "Enter" && fetchEvents(query, 1)}
                 placeholder="Pesquise suas fotos..."
-                className="w-full bg-white text-black pl-14 pr-6 py-5 rounded-2xl text-sm font-bold shadow-2xl outline-none"
+                className="w-full bg-white text-black pl-12 pr-4 py-3 rounded-xl text-xs font-bold shadow-xl outline-none"
               />
             </div>
 
@@ -344,27 +345,27 @@ export const HomePage = () => {
         <div style={{ maxWidth: 1600, margin: "0 auto", padding: "0" }}>
           
           {/* Mobile compact vitrine Filters (Sleek dropdown layout — kept exclusively) */}
-          <div className="hp-mobile-vitrine-header flex flex-col gap-4 p-4 pb-2">
+          <div className="hp-mobile-vitrine-header flex flex-col gap-2 p-3 pb-2">
             <div className="flex gap-2 overflow-x-auto scrollbar-hide py-1">
               <div className="relative shrink-0">
                 <select 
                   value={selectedCity}
                   onChange={e => { setSelectedCity(e.target.value); setPage(1); }}
-                  className="bg-zinc-950/80 border border-zinc-800/80 text-white pl-3.5 pr-6 py-1.5 rounded-full text-[9px] font-black uppercase tracking-[0.12em] outline-none appearance-none shadow-sm cursor-pointer hover:border-brand-tactical/50 transition-colors"
+                  className="bg-zinc-950/80 border border-zinc-800/80 text-white pl-3 pr-5 py-1 rounded-full text-[8px] font-black uppercase tracking-widest outline-none appearance-none shadow-sm cursor-pointer hover:border-brand-tactical/50 transition-colors"
                 >
-                  <option value="" className="bg-zinc-950 text-white">🗺️ Todas as Cidades</option>
+                  <option value="" className="bg-zinc-950 text-white">🗺️ Cidades</option>
                   <option value="Campinas" className="bg-zinc-950 text-white">Campinas</option>
                   <option value="São Paulo" className="bg-zinc-950 text-white">São Paulo</option>
                   <option value="Valinhos" className="bg-zinc-950 text-white">Valinhos</option>
                 </select>
-                <div className="absolute right-2.5 top-1/2 -translate-y-1/2 pointer-events-none text-[6px] text-zinc-400">▼</div>
+                <div className="absolute right-2 top-1/2 -translate-y-1/2 pointer-events-none text-[5px] text-zinc-400">▼</div>
               </div>
 
               <div className="relative shrink-0">
                 <select 
                   value={selectedType}
                   onChange={e => { setSelectedType(e.target.value); setPage(1); }}
-                  className="bg-zinc-950/80 border border-zinc-800/80 text-white pl-3.5 pr-6 py-1.5 rounded-full text-[9px] font-black uppercase tracking-[0.12em] outline-none appearance-none shadow-sm cursor-pointer hover:border-brand-tactical/50 transition-colors"
+                  className="bg-zinc-950/80 border border-zinc-800/80 text-white pl-3 pr-5 py-1 rounded-full text-[8px] font-black uppercase tracking-widest outline-none appearance-none shadow-sm cursor-pointer hover:border-brand-tactical/50 transition-colors"
                 >
                   <option value="" className="bg-zinc-950 text-white">🏷️ Categorias</option>
                   <option value="ALBUM_FULL" className="bg-zinc-950 text-white">Álbuns</option>
@@ -372,23 +373,23 @@ export const HomePage = () => {
                   <option value="FOTO_POINT" className="bg-zinc-950 text-white">Foto Point</option>
                   <option value="FLASH_EVENT" className="bg-zinc-950 text-white">Flash</option>
                 </select>
-                <div className="absolute right-2.5 top-1/2 -translate-y-1/2 pointer-events-none text-[6px] text-zinc-400">▼</div>
+                <div className="absolute right-2 top-1/2 -translate-y-1/2 pointer-events-none text-[5px] text-zinc-400">▼</div>
               </div>
 
               <div className="relative shrink-0">
                 <select 
                   value={sortBy}
                   onChange={e => { setSortBy(e.target.value); setPage(1); }}
-                  className="bg-zinc-950/80 border border-zinc-800/80 text-white pl-3.5 pr-6 py-1.5 rounded-full text-[9px] font-black uppercase tracking-[0.12em] outline-none appearance-none shadow-sm cursor-pointer hover:border-brand-tactical/50 transition-colors"
+                  className="bg-zinc-950/80 border border-zinc-800/80 text-white pl-3 pr-5 py-1 rounded-full text-[8px] font-black uppercase tracking-widest outline-none appearance-none shadow-sm cursor-pointer hover:border-brand-tactical/50 transition-colors"
                 >
-                  <option value="" className="bg-zinc-950 text-white">⏱️ Mais Recentes</option>
-                  <option value="OLD" className="bg-zinc-950 text-white">Mais Antigos</option>
-                  <option value="AZ" className="bg-zinc-950 text-white">A-Z (Crescente)</option>
-                  <option value="ZA" className="bg-zinc-950 text-white">Z-A (Decrescente)</option>
-                  <option value="PRICE_ASC" className="bg-zinc-950 text-white">Menor Preço</option>
-                  <option value="PRICE_DESC" className="bg-zinc-950 text-white">Maior Preço</option>
+                  <option value="" className="bg-zinc-950 text-white">⏱️ Recentes</option>
+                  <option value="OLD" className="bg-zinc-950 text-white">Antigos</option>
+                  <option value="AZ" className="bg-zinc-950 text-white">A-Z</option>
+                  <option value="ZA" className="bg-zinc-950 text-white">Z-A</option>
+                  <option value="PRICE_ASC" className="bg-zinc-950 text-white">Menor R$</option>
+                  <option value="PRICE_DESC" className="bg-zinc-950 text-white">Maior R$</option>
                 </select>
-                <div className="absolute right-2.5 top-1/2 -translate-y-1/2 pointer-events-none text-[6px] text-zinc-400">▼</div>
+                <div className="absolute right-2 top-1/2 -translate-y-1/2 pointer-events-none text-[5px] text-zinc-400">▼</div>
               </div>
             </div>
           </div>
@@ -472,19 +473,7 @@ export const HomePage = () => {
               <div className="space-y-4 hp-event-grid-container px-0 md:px-8">
 
 
-                {/* Mobile Specific Search (Repositioned) */}
-                <div className="md:hidden px-4 mb-4">
-                  <div className="relative group">
-                    <Search size={16} className="absolute left-4 top-1/2 -translate-y-1/2 text-theme-text-muted group-focus-within:text-brand-tactical transition-colors" />
-                    <input
-                      value={query}
-                      onChange={e => setQuery(e.target.value)}
-                      onKeyDown={e => e.key === "Enter" && fetchEvents(query, 1)}
-                      placeholder="Pesquisar evento ou fotógrafo..."
-                      className="w-full bg-[var(--bg-field)] border border-[var(--border)] pl-12 pr-4 py-4 rounded-xl text-[11px] font-black uppercase tracking-widest text-[var(--text)] outline-none focus:border-brand-tactical/50 transition-all italic"
-                    />
-                  </div>
-                </div>
+                {/* Mobile Specific Search - Removed because it was duplicated */}
 
                 {/* Eventos Grid (Full Width on Mobile) */}
                 <div className="grid hp-event-grid grid-cols-1 md:grid-cols-3 lg:grid-cols-4 gap-4 md:gap-6">
