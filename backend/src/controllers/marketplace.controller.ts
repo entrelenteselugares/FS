@@ -393,20 +393,28 @@ export class MarketplaceController {
       });
 
       const phygital = await prisma.phygitalPrint.findMany({
-        where: { eventId: String(eventId) }
+        where: { eventId: String(eventId) },
+        include: { user: true }
       });
 
       // Mapeia Phygital para o formato de Media
-      const mappedPhygital = phygital.map(p => ({
-        id: p.id,
-        eventId: p.eventId,
-        url: p.imageUrl,
-        shortId: p.referenceCode, // Usamos referenceCode como shortId
-        price: null,
-        type: "PHOTO",
-        isGuest: true,          // Fotos de convidados via QR Code
-        createdAt: p.createdAt
-      }));
+      const mappedPhygital = phygital.map(p => {
+        const isProfessional = p.userId && (
+          p.userId === event.captacaoId ||
+          p.userId === event.edicaoId ||
+          p.user?.role === "PROFISSIONAL"
+        );
+        return {
+          id: p.id,
+          eventId: p.eventId,
+          url: p.imageUrl,
+          shortId: p.referenceCode, // Usamos referenceCode como shortId
+          price: null,
+          type: "PHOTO",
+          isGuest: !isProfessional,          // Fotos de convidados via QR Code se não for profissional
+          createdAt: p.createdAt
+        };
+      });
 
       // Deduplica por URL (Prioridade para EventMedia se houver duplicata)
       const allMedia = [...media];

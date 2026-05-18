@@ -188,7 +188,7 @@ export default function EventPage() {
   const [needsAccessChoice, setNeedsAccessChoice] = useState(false);
   const [authenticatedStudent, setAuthenticatedStudent] = useState<string | null>(null);
   
-  const { digitalPhotos, physicalItems, addToCart, removeFromCart, addPhysicalItem, totalPrice } = useCart();
+  const { digitalPhotos, physicalItems, addToCart, removeFromCart, addPhysicalItem, removePhysicalItem, totalPrice } = useCart();
   const [serviceCatalog, setServiceCatalog] = useState<ServiceData[]>([]);
   const [selectedServices] = useState<string[]>([]);
   const [includeLivePrint] = useState(false);
@@ -912,48 +912,7 @@ return (
                 </div>
               )}
 
-              {/* ── Print Catalog (Phygital Shop) - SEGUNDO ── */}
-              {event.id && (
-                <div className="pt-20">
-                  <div className="flex items-center gap-4 mb-10 cursor-pointer group" onClick={() => setShowPhygital(!showPhygital)}>
-                    <div className="h-px flex-1 bg-theme-border/20 group-hover:bg-brand-tactical/30 transition-colors" />
-                    <h3 className="font-heading font-black text-2xl lg:text-4xl text-theme-text uppercase italic tracking-widest flex items-center gap-4 group-hover:text-brand-tactical transition-colors">
-                      Upgrade Phygital
-                      <motion.span animate={{ rotate: showPhygital ? 90 : 0 }}>
-                        <ChevronRight size={24} className="text-theme-text-muted group-hover:text-brand-tactical" />
-                      </motion.span>
-                    </h3>
-                    <div className="h-px flex-1 bg-theme-border/20 group-hover:bg-brand-tactical/30 transition-colors" />
-                  </div>
-
-                  <AnimatePresence>
-                    {showPhygital && (
-                      <motion.div
-                        initial={{ height: 0, opacity: 0 }}
-                        animate={{ height: "auto", opacity: 1 }}
-                        exit={{ height: 0, opacity: 0 }}
-                        className="overflow-hidden"
-                      >
-                        <PrintCatalog 
-                          eventId={event.id} 
-                          selectedProductId={selectedPrintProductId}
-                          onAddToCart={(product) => {
-                            setSelectedPrintProductId(product.id);
-                            addPhysicalItem({
-                              productId: product.id,
-                              name: product.name,
-                              price: Number(product.sellingPrice || 0),
-                              quantity: 1,
-                              selectedPhotos: [], // Usuário selecionará depois ou o catálogo cuida disso
-                              eventId: event.id
-                            });
-                          }}
-                        />
-                      </motion.div>
-                    )}
-                  </AnimatePresence>
-                </div>
-              )}
+              {/* Removido o PrintCatalog gigante do meio do álbum para despoluir a UI. Agora integrado no Sidebar de forma premium. */}
             </div>
           )}
         </section>
@@ -1096,6 +1055,45 @@ return (
                         <div className="p-4 bg-brand-tactical/5 border-l-2 border-brand-tactical">
                           <p className="text-[10px] text-theme-text-muted font-black uppercase tracking-widest italic">
                             Liberação de todo o conteúdo da galeria digital.
+                          </p>
+                        </div>
+                      </div>
+                    )}
+
+                    {/* Order Bump - Upgrade Phygital */}
+                    {isMarketplace && eventCart.length > 0 && event.temFotoImpressa && (
+                      <div className="p-6 border border-brand-tactical/30 bg-brand-tactical/5 rounded-[24px] space-y-4 shadow-lg shadow-brand-tactical/5">
+                        <div className="flex items-center justify-between">
+                          <div className="flex items-center gap-2">
+                            <Printer size={16} className="text-brand-tactical animate-pulse" />
+                            <span className="text-[10px] font-black text-brand-tactical uppercase tracking-widest italic">Upgrade Phygital</span>
+                          </div>
+                          {!eventPhysicalItems.length ? (
+                            <button 
+                              onClick={() => setShowPrintStore(true)} 
+                              className="text-[9px] font-black uppercase text-zinc-950 bg-brand-tactical px-3 py-1.5 hover:bg-white transition-all rounded-md"
+                            >
+                              Adicionar
+                            </button>
+                          ) : (
+                            <button 
+                              onClick={() => {
+                                eventPhysicalItems.forEach(item => removePhysicalItem(item.productId));
+                              }} 
+                              className="text-[9px] font-black uppercase text-red-500 hover:text-white transition-all"
+                            >
+                              Remover
+                            </button>
+                          )}
+                        </div>
+                        <div className="space-y-1">
+                          <h4 className="text-xs font-black text-theme-text uppercase italic tracking-tight">
+                            {!eventPhysicalItems.length ? "Fotos Reveladas Premium" : "Produto Físico Selecionado"}
+                          </h4>
+                          <p className="text-[9px] text-theme-text-muted leading-relaxed uppercase tracking-wider italic">
+                            {!eventPhysicalItems.length 
+                              ? "Eternize suas memórias! Receba suas fotos impressas em papel fotográfico profissional premium."
+                              : `${eventPhysicalItems[0]?.name || "Produto Impresso"} (x${eventPhysicalItems[0]?.quantity || 1}) - R$ ${((eventPhysicalItems[0]?.price || 0) * (eventPhysicalItems[0]?.quantity || 1)).toFixed(0)}`}
                           </p>
                         </div>
                       </div>
