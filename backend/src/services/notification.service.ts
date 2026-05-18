@@ -133,6 +133,7 @@ export class NotificationService {
     name: string;
     tempPassword?: string;
     magicLink?: string;
+    checkoutUrl?: string;
   }) {
     if (!process.env.SMTP_USER || !process.env.SMTP_PASS) {
        console.error("[Notification] ERRO: SMTP_USER ou SMTP_PASS não configurados para Boas-vindas.");
@@ -148,27 +149,36 @@ export class NotificationService {
         </div>
         
         <p style="font-size: 16px; line-height: 1.6;">Olá, <strong>${data.name}</strong>,</p>
-        <p style="font-size: 14px; line-height: 1.6; color: #444;">É um prazer ter você conosco. Recebemos sua solicitação de reserva e nossa equipe técnica já está analisando todos os detalhes para garantir uma entrega impecável.</p>
-        
-        ${data.tempPassword ? `
-        <div style="background: #f8fcfb; border: 1px solid #e8f2f0; padding: 30px; border-radius: 4px; margin: 35px 0;">
-          <p style="font-size: 12px; font-weight: 900; text-transform: uppercase; letter-spacing: 2px; color: #85B9AC; margin-bottom: 20px;">Sua Conta Exclusiva</p>
-          <p style="font-size: 14px; margin: 8px 0; color: #222;">Acesso: <strong>${data.to}</strong></p>
-          <p style="font-size: 14px; margin: 8px 0; color: #222;">Chave Temporária: <span style="background: #eee; padding: 4px 8px; font-family: monospace;">${data.tempPassword}</span></p>
-          <p style="font-size: 11px; color: #777; margin-top: 20px; line-height: 1.5;">Através do seu painel, você poderá acompanhar o status do seu orçamento, gerenciar pagamentos e, em breve, acessar sua galeria de fotos e vídeos em alta resolução.</p>
-        </div>
-        ` : `
-        <div style="padding: 20px 0; border-bottom: 1px solid #eee; margin-bottom: 30px;">
-          <p style="font-size: 14px; color: #444;">Você já possui um cadastro ativo. Utilize suas credenciais habituais para acessar o portal.</p>
-        </div>
-        `}
-        
-        <div style="text-align: center; margin: 40px 0; display: flex; flex-direction: column; gap: 15px; align-items: center;">
-          ${data.magicLink ? `
-            <a href="${data.magicLink}" style="background: #85B9AC; color: #fff; padding: 18px 35px; text-decoration: none; border-radius: 2px; font-size: 13px; font-weight: 900; text-transform: uppercase; letter-spacing: 3px; display: inline-block; width: 280px; box-shadow: 0 10px 20px rgba(133,185,172,0.2);">Acessar Galeria Agora</a>
-          ` : ""}
-          <a href="${APP_URL}/login" style="background: #111; color: #fff; padding: 18px 35px; text-decoration: none; border-radius: 2px; font-size: 12px; font-weight: 900; text-transform: uppercase; letter-spacing: 3px; display: inline-block; width: 280px;">Acessar Portal do Cliente</a>
-        </div>
+        <p style="font-size: 14px; line-height: 1.6; color: #444;">É um prazer ter você conosco! ${data.checkoutUrl ? 'Sua compra foi registrada. Para liberar o acesso à sua galeria, efetue o pagamento pelo link abaixo.' : 'Recebemos sua solicitação e nossa equipe já está trabalhando para garantir uma entrega impecável.'}</p>
+         
+         ${data.checkoutUrl ? `
+         <div style="background: #f0faf8; border: 2px solid #85B9AC; padding: 30px; border-radius: 8px; margin: 35px 0; text-align: center;">
+           <p style="font-size: 12px; font-weight: 900; text-transform: uppercase; letter-spacing: 2px; color: #85B9AC; margin-bottom: 15px;">⚡ Pagamento Pendente</p>
+           <p style="font-size: 14px; color: #333; margin-bottom: 25px; line-height: 1.5;">Clique no botão abaixo para pagar via <strong>Pix, Cartão ou Boleto</strong>. Após a confirmação, seu acesso à galeria será liberado automaticamente.</p>
+           <a href="${data.checkoutUrl}" style="background: #85B9AC; color: #fff; padding: 20px 40px; text-decoration: none; border-radius: 4px; font-size: 14px; font-weight: 900; text-transform: uppercase; letter-spacing: 3px; display: inline-block; box-shadow: 0 10px 30px rgba(133,185,172,0.4);">PAGAR AGORA →</a>
+           <p style="font-size: 11px; color: #888; margin-top: 20px;">Pagamento 100% seguro via Mercado Pago. Acesso liberado em instantes após confirmação.</p>
+         </div>
+         ` : ''}
+
+         ${data.tempPassword ? `
+         <div style="background: #f8fcfb; border: 1px solid #e8f2f0; padding: 30px; border-radius: 4px; margin: 35px 0;">
+           <p style="font-size: 12px; font-weight: 900; text-transform: uppercase; letter-spacing: 2px; color: #85B9AC; margin-bottom: 20px;">Sua Conta Exclusiva</p>
+           <p style="font-size: 14px; margin: 8px 0; color: #222;">E-mail: <strong>${data.to}</strong></p>
+           <p style="font-size: 14px; margin: 8px 0; color: #222;">Senha Provisória: <span style="background: #eee; padding: 4px 12px; font-family: monospace; font-size: 16px; font-weight: bold; border-radius: 4px;">${data.tempPassword}</span></p>
+           <p style="font-size: 11px; color: #777; margin-top: 20px; line-height: 1.5;">⚠️ Altere sua senha após o primeiro acesso. Através do seu painel, você acompanhará o status do pedido e acessará sua galeria após o pagamento.</p>
+         </div>
+         ` : `
+         <div style="padding: 20px 0; border-bottom: 1px solid #eee; margin-bottom: 30px;">
+           <p style="font-size: 14px; color: #444;">Você já possui um cadastro ativo. Utilize suas credenciais habituais para acessar o portal.</p>
+         </div>
+         `}
+         
+         <div style="text-align: center; margin: 40px 0; display: flex; flex-direction: column; gap: 15px; align-items: center;">
+           ${data.magicLink ? `
+             <a href="${data.magicLink}" style="background: #85B9AC; color: #fff; padding: 18px 35px; text-decoration: none; border-radius: 2px; font-size: 13px; font-weight: 900; text-transform: uppercase; letter-spacing: 3px; display: inline-block; width: 280px; box-shadow: 0 10px 20px rgba(133,185,172,0.2);">Acessar Galeria</a>
+           ` : ""}
+           <a href="${APP_URL}/login" style="background: #111; color: #fff; padding: 18px 35px; text-decoration: none; border-radius: 2px; font-size: 12px; font-weight: 900; text-transform: uppercase; letter-spacing: 3px; display: inline-block; width: 280px;">Acessar Portal do Cliente</a>
+         </div>
         </div>
 
         <div style="font-size: 11px; color: #999; line-height: 1.6; text-align: center; margin-top: 50px;">
@@ -179,14 +189,18 @@ export class NotificationService {
       </div>
     `;
 
+    const subject = data.checkoutUrl
+      ? `Sua compra na Foto Segundo — Clique para pagar 🛒`
+      : `Bem-vindo(a) à Foto Segundo! ✨`;
+
     try {
       await this.transporter.sendMail({
         from: `"Foto Segundo" <${process.env.SMTP_USER}>`,
         to: data.to,
-        subject: `Bem-vindo(a) à Foto Segundo! ✨`,
+        subject,
         html: htmlContent,
       });
-      console.log(`[Notification] E-mail de boas-vindas enviado para ${data.to}`);
+      console.log(`[Notification] E-mail de boas-vindas enviado para ${data.to} | Checkout: ${!!data.checkoutUrl}`);
     } catch (error) {
       console.error("[Notification] Erro ao enviar e-mail de boas-vindas:", error);
     }

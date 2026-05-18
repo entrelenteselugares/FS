@@ -303,7 +303,7 @@ export class EventController {
         // Filtro Tático: Eventos contratados (ALBUM_FULL) não pagos não aparecem na vitrine
         NOT: {
           type: 'ALBUM_FULL',
-          orders: {
+          pedidos: {
             some: {
               status: 'PENDENTE'
             }
@@ -886,7 +886,7 @@ export class EventController {
       const isOwner = req.user && (req.user.role === "ADMIN" || req.user.userId === event.captacaoId || req.user.userId === event.ownerId);
       if (!isOwner) return res.status(403).json({ error: "Acesso negado." });
 
-      // Converte Google Drive share links para thumbnail direto
+      // Converte Google Drive share links to thumbnail direto
       const normalizeCoverUrl = (url?: string | null): string | null | undefined => {
         if (url === null) return null;
         if (!url) return undefined;
@@ -894,6 +894,29 @@ export class EventController {
         if (driveMatch) return `https://drive.google.com/thumbnail?id=${driveMatch[1]}&sz=w1200`;
         return url;
       };
+
+      // Tratamento inteligente de captacaoId
+      let finalCaptacaoId: string | null | undefined = undefined;
+      let finalCaptacaoStatus: string | undefined = undefined;
+
+      if (captacaoId !== undefined) {
+        if (captacaoId === null || captacaoId === "null" || captacaoId === "NONE" || captacaoId === "") {
+          finalCaptacaoId = null;
+          finalCaptacaoStatus = "ACCEPTED";
+        } else {
+          finalCaptacaoId = String(captacaoId);
+          // Se for o próprio criador do evento ou o usuário que está editando
+          const isMyself = finalCaptacaoId === event.ownerId || finalCaptacaoId === req.user?.userId;
+          finalCaptacaoStatus = isMyself ? "ACCEPTED" : "PENDING";
+        }
+      }
+
+      if (isPublicCall !== undefined) {
+        if (isPublicCall) {
+          finalCaptacaoStatus = "PENDING";
+          finalCaptacaoId = null;
+        }
+      }
 
       const updated = await prisma.event.update({
         where: { id },
@@ -909,9 +932,9 @@ export class EventController {
           coverPhotoUrl: normalizeCoverUrl(coverPhotoUrl),
           dataEvento: dataEvento && startTime ? new Date(`${dataEvento}T${startTime}:00-03:00`) : (dataEvento ? new Date(dataEvento) : undefined),
           eventEndTime: dataEvento && endTime ? new Date(`${dataEvento}T${endTime}:00-03:00`) : undefined,
-          captacaoId: captacaoId !== undefined ? String(captacaoId) : undefined,
+          captacaoId: finalCaptacaoId,
           isPublicCall: isPublicCall !== undefined ? !!isPublicCall : undefined,
-          captacaoStatus: (captacaoId || isPublicCall) ? "PENDING" : undefined
+          captacaoStatus: finalCaptacaoStatus
         }
       });
       return res.json(updated);

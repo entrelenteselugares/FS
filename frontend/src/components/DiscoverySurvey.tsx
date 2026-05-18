@@ -1,11 +1,19 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { useAuth } from "../hooks/useAuth";
 
 export const DiscoverySurvey: React.FC = () => {
-  const { user, updateMe } = useAuth();
-  const [isOpen, setIsOpen] = useState(!user?.discoverySource);
-  const [loading, setLoading] = useState(false);
+  const { user, loading: authLoading, updateMe } = useAuth();
+  const [isOpen, setIsOpen] = useState(false);
+  const [submitting, setSubmitting] = useState(false);
+
+  // Aguarda o carregamento da autenticação antes de decidir se exibe o modal.
+  // Sem isso, o modal abre toda vez que o usuário faz login porque `user`
+  // ainda é null no momento da montagem e o useState inicial fica travado em true.
+  useEffect(() => {
+    if (authLoading) return;
+    setIsOpen(!!user && !user.discoverySource);
+  }, [authLoading, user]);
 
   const options = [
     { id: "instagram", label: "📸 Instagram", desc: "Vi um post ou anúncio" },
@@ -16,18 +24,18 @@ export const DiscoverySurvey: React.FC = () => {
   ];
 
   const handleSelect = async (source: string) => {
-    setLoading(true);
+    setSubmitting(true);
     try {
       await updateMe({ discoverySource: source });
       setIsOpen(false);
     } catch (err) {
       console.error(err);
     } finally {
-      setLoading(false);
+      setSubmitting(false);
     }
   };
 
-  if (!isOpen || user?.discoverySource) return null;
+  if (!isOpen) return null;
 
   return (
     <AnimatePresence>
@@ -51,7 +59,7 @@ export const DiscoverySurvey: React.FC = () => {
               <button
                 key={opt.id}
                 onClick={() => handleSelect(opt.id)}
-                disabled={loading}
+                disabled={submitting}
                 className="p-6 border border-zinc-800 bg-zinc-900/50 text-left hover:border-brand-tactical transition-all group flex flex-col gap-2 disabled:opacity-50"
               >
                 <p className="text-[11px] font-black text-white uppercase tracking-widest group-hover:text-brand-tactical transition-colors italic">{opt.label}</p>

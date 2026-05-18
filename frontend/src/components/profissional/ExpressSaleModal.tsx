@@ -31,7 +31,7 @@ const INITIAL_FORM: ExpressFormData = {
 
 export function ExpressSaleModal({ network, onClose, onSuccess, onError }: ExpressSaleModalProps) {
   const [step, setStep] = useState<1 | 2 | 3 | 4 | 5>(1);
-  const [successData, setSuccessData] = useState<{ msg: string; magicLink?: string } | null>(null);
+  const [successData, setSuccessData] = useState<{ msg: string; magicLink?: string; checkoutUrl?: string } | null>(null);
   const [form, setForm] = useState<ExpressFormData>(INITIAL_FORM);
   const [loading, setLoading] = useState(false);
   const [cartItems, setCartItems] = useState<CartItem[]>([]);
@@ -72,7 +72,8 @@ export function ExpressSaleModal({ network, onClose, onSuccess, onError }: Expre
 
       setSuccessData({ 
         msg: data.isDigital ? "Venda registrada! Aguardando pagamento." : "Venda e Operação Live Print registradas!", 
-        magicLink: data.magicLink 
+        magicLink: data.magicLink,
+        checkoutUrl: data.checkoutUrl
       });
       setStep(5);
     } catch (err: unknown) {
@@ -433,12 +434,45 @@ export function ExpressSaleModal({ network, onClose, onSuccess, onError }: Expre
               </div>
               <div className="space-y-2">
                 <h3 className="text-2xl font-black uppercase italic tracking-tighter text-theme-text">{successData.msg}</h3>
-                <p className="text-[10px] font-black text-theme-muted uppercase tracking-widest opacity-60">O cliente recebeu as instruções por e-mail.</p>
+                <p className="text-[10px] font-black text-theme-muted uppercase tracking-widest opacity-60 font-bold">
+                  {successData.checkoutUrl ? "Apresente o link de cobrança abaixo para o cliente pagar." : "O cliente recebeu as instruções de acesso por e-mail."}
+                </p>
               </div>
 
+              {successData.checkoutUrl && (
+                <div className="p-6 bg-brand-tactical/10 border border-brand-tactical/30 rounded-[20px] space-y-4 text-left">
+                  <label className="text-[9px] font-black text-brand-tactical uppercase tracking-widest italic block">Link de Pagamento (Pix / Cartão)</label>
+                  <div className="flex gap-2">
+                    <input 
+                      readOnly
+                      value={successData.checkoutUrl}
+                      className="flex-1 bg-theme-bg border border-theme-border p-3 text-[10px] font-mono text-theme-text/60 truncate rounded-xl outline-none"
+                    />
+                    <button 
+                      onClick={() => {
+                        window.open(successData.checkoutUrl, "_blank");
+                      }}
+                      className="px-6 bg-brand-tactical text-zinc-950 text-[10px] font-black uppercase tracking-widest rounded-xl hover:brightness-110 active:scale-95 transition-all"
+                    >
+                      PAGAR
+                    </button>
+                  </div>
+                  <button 
+                    type="button"
+                    onClick={() => {
+                      navigator.clipboard.writeText(successData.checkoutUrl || "");
+                      onSuccess("Link de pagamento copiado com sucesso!");
+                    }}
+                    className="w-full py-3 bg-white/5 border border-white/10 text-theme-text text-[9px] font-black uppercase tracking-widest rounded-xl hover:bg-white/10 transition-all text-center font-bold"
+                  >
+                    COPIAR LINK DE PAGAMENTO
+                  </button>
+                </div>
+              )}
+
               {successData.magicLink && (
-                <div className="p-6 bg-theme-bg-muted border border-theme-border/60 rounded-[20px] space-y-4">
-                  <label className="text-[9px] font-black text-brand-tactical uppercase tracking-widest italic block">Link de Acesso Rápido</label>
+                <div className="p-6 bg-theme-bg-muted border border-theme-border/60 rounded-[20px] space-y-4 text-left">
+                  <label className="text-[9px] font-black text-brand-tactical uppercase tracking-widest italic block">Link de Acesso Rápido do Cliente</label>
                   <div className="flex gap-2">
                     <input 
                       readOnly

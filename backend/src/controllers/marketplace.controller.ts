@@ -181,9 +181,10 @@ export class MarketplaceController {
             orderId: order.id
           });
           checkoutUrl = preference.init_point;
+          console.log(`[MP] checkout URL gerada: ${checkoutUrl}`);
         } catch (mpError) {
-          console.error("[MP Preference Error]:", mpError);
-          // Não trava a criação do pedido, mas avisa o erro
+          console.error("[MP Preference CRITICAL Error] - Falha ao gerar link de pagamento:", mpError);
+          // Pedido foi criado mas sem link de pagamento - continua mas avisa
         }
       }
 
@@ -206,7 +207,8 @@ export class MarketplaceController {
         to: finalEmail,
         name: finalName,
         tempPassword: tempPassword || undefined,
-        magicLink: magicLink
+        magicLink: magicLink,
+        checkoutUrl: checkoutUrl || undefined
       }).catch(e => console.error("[ExpressSale Email Error]:", e));
 
       return res.json({ 
@@ -215,6 +217,7 @@ export class MarketplaceController {
         orderId: order.id,
         isDigital,
         checkoutUrl, // Enviando o link real para o frontend
+        magicLink,   // Enviando o link de acesso direto do cliente
         message: isDigital 
           ? "Venda registrada. Gerando link de pagamento..." 
           : "Venda registrada e liquidada com sucesso!"
