@@ -23,7 +23,9 @@ export const CartModal: React.FC<{ isOpen: boolean, onClose: () => void }> = ({ 
 
   if (!isOpen) return null;
 
-  const currentTotal = totalPrice(1); 
+  const savedPrice = localStorage.getItem('fs_current_event_price_unit');
+  const eventPricePerPhoto = savedPrice ? Number(savedPrice) : 15;
+  const currentTotal = totalPrice(eventPricePerPhoto);
 
   return createPortal(
     <div className="fixed inset-0 z-[9999] flex items-center justify-center p-4">

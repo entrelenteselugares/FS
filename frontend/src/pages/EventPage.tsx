@@ -201,6 +201,13 @@ export default function EventPage() {
     : Number(event?.pricePerPhoto || 15);
   const cartTotal = totalPrice(eventPricePerPhoto, Number(event?.priceBase || 190));
 
+  // Sincroniza o preço por foto do evento corrente para ser consumido no modal do carrinho global
+  useEffect(() => {
+    if (event) {
+      localStorage.setItem('fs_current_event_price_unit', String(eventPricePerPhoto));
+    }
+  }, [event, eventPricePerPhoto]);
+
   const [showPrintStore, setShowPrintStore] = useState(false);
   const [showQrModal, setShowQrModal] = useState(false);
   const [showLiveOps, setShowLiveOps] = useState(true);
