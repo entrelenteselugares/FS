@@ -493,8 +493,8 @@ export default function EventPage() {
       const datePart = String(event.dataEvento).split('T')[0];
       const [year, month, day] = datePart.split('-').map(Number);
       const endOfDay = new Date(year, month - 1, day, 23, 59, 59, 999);
-      // Give 12 hours grace period into the next day
-      const endOfEvent = new Date(endOfDay.getTime() + (12 * 60 * 60 * 1000));
+      // Give 24 hours grace period into the next day
+      const endOfEvent = new Date(endOfDay.getTime() + (24 * 60 * 60 * 1000));
       return endOfEvent.getTime() < new Date().getTime();
     } catch {
       return false;
@@ -1083,19 +1083,30 @@ return (
                       </div>
                     )}
 
+                    {/* Botões de Ação Final */}
                     <div className="flex flex-col gap-4">
-                      <button 
-                        onClick={handleUnlockClick} 
-                        className="group relative w-full h-28 bg-brand-tactical text-black font-black uppercase tracking-[0.4em] text-xs flex items-center justify-center gap-5 overflow-hidden transition-all hover:scale-[1.02] shadow-2xl shadow-brand-tactical/30 italic"
-                      >
-                        <div className="absolute inset-0 bg-white translate-x-[-100%] group-hover:translate-x-0 transition-transform duration-700 opacity-20" />
-                        <span className="relative z-10">
-                          {searchParams.get("intent") === "upgrade" ? "Finalizar Upgrade" : 
-                            event.type === 'ALBUM_FULL' ? "Desbloquear Álbum" : 
-                            "Finalizar Compra"}
-                        </span>
-                        <ChevronRight size={24} className="relative z-10 group-hover:translate-x-2 transition-transform" />
-                      </button>
+                      {(isMarketplace || (!event.hasAccess && (event.isPrimaryClient || event.isOwner))) && (
+                        <button 
+                          onClick={handleUnlockClick} 
+                          className="group relative w-full h-28 bg-brand-tactical text-black font-black uppercase tracking-[0.4em] text-xs flex items-center justify-center gap-5 overflow-hidden transition-all hover:scale-[1.02] shadow-2xl shadow-brand-tactical/30 italic"
+                        >
+                          <div className="absolute inset-0 bg-white translate-x-[-100%] group-hover:translate-x-0 transition-transform duration-700 opacity-20" />
+                          <span className="relative z-10">
+                            {searchParams.get("intent") === "upgrade" ? "Finalizar Upgrade" : 
+                              event.type === 'ALBUM_FULL' ? "Desbloquear Álbum" : 
+                              "Finalizar Compra"}
+                          </span>
+                          <ChevronRight size={24} className="relative z-10 group-hover:translate-x-2 transition-transform" />
+                        </button>
+                      )}
+                      
+                      {(!isMarketplace && event.hasAccess) && (
+                        <div className="w-full p-4 mb-4 bg-brand-tactical/10 border border-brand-tactical/30 rounded-xl flex items-center justify-center gap-3">
+                           <CheckCircle2 size={18} className="text-brand-tactical" />
+                           <span className="text-[10px] font-black text-brand-tactical uppercase tracking-widest italic">Álbum Desbloqueado</span>
+                        </div>
+                      )}
+
                       <button onClick={handleShare} className="w-full h-16 border border-theme-border/40 text-theme-text-muted font-black uppercase tracking-widest text-[10px] flex items-center justify-center gap-4 hover:bg-theme-border/60 hover:text-theme-text transition-all italic">
                         <Share2 size={18} /> Compartilhar Galeria
                       </button>
