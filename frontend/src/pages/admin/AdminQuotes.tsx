@@ -53,7 +53,7 @@ export const AdminQuotes: React.FC = () => {
   const [archivedOpen, setArchivedOpen] = useState(false);
   const [newQuoteData, setNewQuoteData] = useState({
     nomeNoivos:"",clientName:"",clientEmail:"",clientPhone:"",dataEvento:"",
-    location:"",description:"",priceBase:0,urgency:"MEDIUM" as "HIGH"|"MEDIUM"|"LOW",
+    location:"",description:"",priceBase:190,urgency:"MEDIUM" as "HIGH"|"MEDIUM"|"LOW",
     temFoto:true,temVideo:false,temReels:false
   });
 
@@ -92,8 +92,8 @@ export const AdminQuotes: React.FC = () => {
   const staffTotal = selectedStaff.reduce((a,s)=>a+(s.cost||0),0);
   const equipTotal = selectedEquip.reduce((a,e)=>{const i=MERLIN_EQUIPMENT.find(m=>m.id===e.id);return a+(i?i.price*e.qty:0);},0);
   const costTotal = staffTotal+equipTotal+transportCost+lodgingCost;
-  const suggestedPrice = costTotal>0?costTotal/(1-margin/100):0;
-  useEffect(()=>{ if(suggestedPrice>0) setFinalPrice(Math.ceil(suggestedPrice)); },[suggestedPrice]);
+  const suggestedPrice = Math.max(selectedQuote?.priceBase || 0, costTotal > 0 ? costTotal / (1 - margin / 100) : 0);
+  useEffect(()=>{ if(suggestedPrice>0) setFinalPrice(Math.ceil(suggestedPrice)); },[suggestedPrice, selectedQuote?.id]);
 
   const stats = useMemo(()=>({
     total:quotes.length,
@@ -159,9 +159,20 @@ export const AdminQuotes: React.FC = () => {
     try {
       await API.post("/admin/quotes",{...newQuoteData,usageType:"VENDA_DIRETA",quoteStatus:"PENDING"});
       setIsNewQuoteModalOpen(false);
-      setNewQuoteData({nomeNoivos:"",clientName:"",clientEmail:"",clientPhone:"",dataEvento:"",location:"",description:"",priceBase:0,urgency:"MEDIUM",temFoto:true,temVideo:false,temReels:false});
+      setNewQuoteData({nomeNoivos:"",clientName:"",clientEmail:"",clientPhone:"",dataEvento:"",location:"",description:"",priceBase:190,urgency:"MEDIUM",temFoto:true,temVideo:false,temReels:false});
       fetchQuotes(); setNotification({message:"Novo lead cadastrado!",type:"success"});
     } catch { setNotification({message:"Erro ao cadastrar.",type:"error"}); }
+  };
+
+  const toggleService = (service: 'temFoto' | 'temVideo' | 'temReels', price: number) => {
+    setNewQuoteData(prev => {
+      const isAdding = !prev[service];
+      return {
+        ...prev,
+        [service]: isAdding,
+        priceBase: Math.max(0, (prev.priceBase || 0) + (isAdding ? price : -price))
+      };
+    });
   };
 
   const addStaffPreset = (roleId: string) => {
@@ -619,9 +630,9 @@ export const AdminQuotes: React.FC = () => {
               <div className="space-y-2">
                 <label className="text-[8px] font-black text-theme-muted uppercase tracking-widest block mb-2 opacity-60 italic">Serviços</label>
                 <div className="grid grid-cols-3 gap-3">
-                  <button type="button" onClick={() => setNewQuoteData({...newQuoteData, temFoto: !newQuoteData.temFoto})} className={`py-4 border text-[9px] font-black uppercase tracking-widest flex items-center justify-center gap-2 rounded-xl transition-all italic ${newQuoteData.temFoto ? "border-brand-tactical text-brand-tactical bg-brand-tactical/10 shadow-sm" : "border-theme-border text-theme-muted"}`}><Camera size={14}/>FOTO</button>
-                  <button type="button" onClick={() => setNewQuoteData({...newQuoteData, temVideo: !newQuoteData.temVideo})} className={`py-4 border text-[9px] font-black uppercase tracking-widest flex items-center justify-center gap-2 rounded-xl transition-all italic ${newQuoteData.temVideo ? "border-brand-tactical text-brand-tactical bg-brand-tactical/10 shadow-sm" : "border-theme-border text-theme-muted"}`}><Video size={14}/>VÍDEO</button>
-                  <button type="button" onClick={() => setNewQuoteData({...newQuoteData, temReels: !newQuoteData.temReels})} className={`py-4 border text-[9px] font-black uppercase tracking-widest flex items-center justify-center gap-2 rounded-xl transition-all italic ${newQuoteData.temReels ? "border-brand-tactical text-brand-tactical bg-brand-tactical/10 shadow-sm" : "border-theme-border text-theme-muted"}`}><Smartphone size={14}/>REELS</button>
+                  <button type="button" onClick={() => toggleService('temFoto', 190)} className={`py-4 border text-[9px] font-black uppercase tracking-widest flex items-center justify-center gap-2 rounded-xl transition-all italic ${newQuoteData.temFoto ? "border-brand-tactical text-brand-tactical bg-brand-tactical/10 shadow-sm" : "border-theme-border text-theme-muted"}`}><Camera size={14}/>FOTO</button>
+                  <button type="button" onClick={() => toggleService('temVideo', 190)} className={`py-4 border text-[9px] font-black uppercase tracking-widest flex items-center justify-center gap-2 rounded-xl transition-all italic ${newQuoteData.temVideo ? "border-brand-tactical text-brand-tactical bg-brand-tactical/10 shadow-sm" : "border-theme-border text-theme-muted"}`}><Video size={14}/>VÍDEO</button>
+                  <button type="button" onClick={() => toggleService('temReels', 120)} className={`py-4 border text-[9px] font-black uppercase tracking-widest flex items-center justify-center gap-2 rounded-xl transition-all italic ${newQuoteData.temReels ? "border-brand-tactical text-brand-tactical bg-brand-tactical/10 shadow-sm" : "border-theme-border text-theme-muted"}`}><Smartphone size={14}/>REELS</button>
                 </div>
               </div>
 

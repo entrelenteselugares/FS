@@ -452,6 +452,7 @@ model EventMedia {
   shortId String
   price   Decimal? @db.Decimal(10, 2)
   type    String   @default("PHOTO")
+  isGuest Boolean  @default(false)
 
   // AI Curation
   aiScore          Float?

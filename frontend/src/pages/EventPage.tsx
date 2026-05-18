@@ -951,8 +951,8 @@ return (
               </div>
             )}
 
-            {/* Hub de Participação (Para Convidados em Marketplace) */}
-            {(!event.isOwner && isMarketplace) && (
+            {/* Hub de Participação (Para Convidados) */}
+            {(!event.isOwner) && (
               <div className="p-6 bg-theme-bg-muted border border-theme-border/40 space-y-4">
                  <div className="flex items-center gap-2">
                     <QrCode size={16} className={isEventOver ? "text-zinc-600" : "text-brand-tactical"} />

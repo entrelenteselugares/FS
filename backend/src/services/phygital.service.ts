@@ -190,6 +190,8 @@ export class PhygitalService {
           ? { bibNumber: metadata.globalTag, studentId: metadata.globalTag, aiTags: [metadata.globalTag] }
           : {};
 
+        const isProfessionalUpload = metadata.userId && (metadata.userId === foundEvent.captacaoId || metadata.userId === foundEvent.edicaoId);
+
         await prisma.eventMedia.create({
           data: {
             eventId: foundEvent.id,
@@ -197,7 +199,8 @@ export class PhygitalService {
             shortId: shortId,
             type: 'PHOTO',
             price: foundEvent.pricePerPhoto || foundEvent.priceBase || 15,
-            metadata: payloadMetadata
+            metadata: payloadMetadata,
+            isGuest: !isProfessionalUpload
           } as any
         });
       } else if (foundVault) {
