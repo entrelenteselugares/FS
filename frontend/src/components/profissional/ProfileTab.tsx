@@ -39,10 +39,13 @@ export function ProfileTab({ profile, onUpdated, onNotify }: ProfileTabProps) {
           mimeType,
         });
 
-        setFormData((prev) => ({
-          ...prev,
-          user: prev.user ? { ...prev.user, profileImageUrl: data.profileImageUrl } : undefined
-        }));
+        setFormData((prev) => {
+          if (!prev.user) return prev;
+          return {
+            ...prev,
+            user: { ...prev.user, profileImageUrl: data.profileImageUrl }
+          };
+        });
 
         if (onNotify) onNotify("Foto de perfil atualizada com sucesso!", "success");
       } catch (err: any) {
@@ -135,7 +138,7 @@ export function ProfileTab({ profile, onUpdated, onNotify }: ProfileTabProps) {
               <div className="relative group shrink-0">
                 <div className="w-24 h-24 rounded-full border-2 border-brand-tactical overflow-hidden bg-theme-bg flex items-center justify-center text-3xl font-black text-theme-text tracking-tighter">
                   {formData.user?.profileImageUrl ? (
-                    <img src={formData.user.profileImageUrl} alt={formData.user.nome} className="w-full h-full object-cover" />
+                    <img src={formData.user.profileImageUrl || undefined} alt={formData.user.nome || "Foto de Perfil"} className="w-full h-full object-cover" />
                   ) : (
                     formData.user?.nome ? formData.user.nome.split(' ').map(n => n[0]).join('').toUpperCase().substring(0, 2) : "FS"
                   )}
