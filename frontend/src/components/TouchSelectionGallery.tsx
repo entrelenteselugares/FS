@@ -1,4 +1,5 @@
 import React, { useState, useRef } from "react";
+import { createPortal } from "react-dom";
 import { motion, AnimatePresence } from "framer-motion";
 import { Check, X, ChevronLeft, ChevronRight } from "lucide-react";
 import { getProxyUrl } from "../lib/utils/media";
@@ -136,12 +137,12 @@ export const TouchSelectionGallery: React.FC<TouchSelectionGalleryProps> = ({
 
       {/* Fullscreen Modal with Swipe */}
       <AnimatePresence>
-        {fullscreenIndex !== null && (
+        {fullscreenIndex !== null && createPortal(
           <motion.div
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
-            className="fixed inset-0 z-[200] bg-black/95 flex flex-col"
+            className="fixed inset-0 z-[99999] bg-black/95 flex flex-col"
           >
             {/* Header */}
             <div className="p-6 flex items-center justify-between relative z-10">
@@ -216,7 +217,8 @@ export const TouchSelectionGallery: React.FC<TouchSelectionGalleryProps> = ({
                 </button>
               </div>
             </div>
-          </motion.div>
+          </motion.div>,
+          document.body
         )}
       </AnimatePresence>
     </div>

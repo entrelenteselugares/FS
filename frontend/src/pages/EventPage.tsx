@@ -196,7 +196,10 @@ export default function EventPage() {
   // Filtramos os itens do carrinho que pertencem a este evento
   const eventCart = digitalPhotos.filter(p => p.eventId === event?.id && !p.buyAlbum).map(p => p.shortId);
   const eventPhysicalItems = physicalItems.filter(p => p.eventId === event?.id);
-  const cartTotal = totalPrice(Number(event?.pricePerPhoto || 15), Number(event?.priceBase || 190));
+  const eventPricePerPhoto = event?.type === "FOTO_POINT" || event?.isUnitSale 
+    ? Number(event?.priceUnit || 10) 
+    : Number(event?.pricePerPhoto || 15);
+  const cartTotal = totalPrice(eventPricePerPhoto, Number(event?.priceBase || 190));
 
   const [showPrintStore, setShowPrintStore] = useState(false);
   const [showQrModal, setShowQrModal] = useState(false);

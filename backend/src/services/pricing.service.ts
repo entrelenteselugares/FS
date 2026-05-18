@@ -35,7 +35,7 @@ export class PricingService {
 
     // 1. Se for Venda por Unidade (Clique Único / Venda Rápida Fixa)
     if (event.isUnitSale) {
-      return Number(event.priceUnit || event.priceBase || 10);
+      return (cartCount ?? 0) * Number(event.priceUnit || event.priceBase || 10);
     }
 
     // 2. Se for Marketplace (Venda por Foto Individual no Carrinho)
