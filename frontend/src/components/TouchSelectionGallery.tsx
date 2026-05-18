@@ -117,6 +117,23 @@ export const TouchSelectionGallery: React.FC<TouchSelectionGalleryProps> = ({
                 loading="lazy"
               />
 
+              {/* Botão de Seleção Rápida (Shortcut Selection Button) */}
+              {!isUnlocked && (
+                <button
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    onToggleCart(m.shortId, m.url);
+                  }}
+                  className={`absolute top-3 right-3 w-7 h-7 rounded-full flex items-center justify-center border backdrop-blur-md transition-all active:scale-90 z-20 ${
+                    isSelected
+                      ? "bg-emerald-500 border-emerald-400 text-black shadow-lg shadow-emerald-500/30"
+                      : "bg-black/40 border-white/30 text-white/70 hover:bg-white hover:text-black hover:border-white"
+                  }`}
+                >
+                  <Check size={14} strokeWidth={isSelected ? 4 : 2} className={isSelected ? "opacity-100" : "opacity-100"} />
+                </button>
+              )}
+
               {/* Selection Badge */}
               {isSelected && (
                 <div className="absolute inset-0 flex items-center justify-center pointer-events-none">
