@@ -120,16 +120,20 @@ export class SubscriptionService {
       });
 
       if (newStatus === "ACTIVE") {
-        await prisma.sharedAlbum.update({
-          where: { id: sub.albumId },
-          data: { subscriptionStatus: "ACTIVE" },
-        });
+        if (sub.albumId) {
+          await prisma.sharedAlbum.update({
+            where: { id: sub.albumId },
+            data: { subscriptionStatus: "ACTIVE" },
+          });
+        }
         await GamificationService.processSubscriptionRewards(sub.userId, sub.id);
       } else if (newStatus === "CANCELED" || newStatus === "PAST_DUE") {
-        await prisma.sharedAlbum.update({
-          where: { id: sub.albumId },
-          data: { subscriptionStatus: newStatus === "CANCELED" ? "EXPIRED" : "BLOCKED" },
-        });
+        if (sub.albumId) {
+          await prisma.sharedAlbum.update({
+            where: { id: sub.albumId },
+            data: { subscriptionStatus: newStatus === "CANCELED" ? "EXPIRED" : "BLOCKED" },
+          });
+        }
       }
       
       console.log(`[MP Webhook] Processed preapproval ${preapprovalId} - New status: ${newStatus}`);
