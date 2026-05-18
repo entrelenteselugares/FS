@@ -831,7 +831,7 @@ return (
                           </div>
                         ) : event.type === 'SCHOOL' && !authenticatedStudent && !event.isOwner ? (
                           <SchoolAuthenticationGate 
-                            studentListRaw={event.verticalConfigs?.studentList as string | string[] | undefined}
+                            studentListRaw={(event.verticalConfigs?.studentList as string | string[] | undefined) ?? ""}
                             eventTitle={event.nomeNoivos}
                             onAuthenticate={(name) => {
                               setAuthenticatedStudent(name);
