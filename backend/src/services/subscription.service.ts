@@ -28,48 +28,59 @@ export class SubscriptionService {
     if (!album) throw new Error("Cofre não encontrado.");
     if (album.ownerId !== userId) throw new Error("Apenas o proprietário pode assinar este cofre.");
 
-    const price = 49.90; // Exemplo de preço da assinatura mensal
+    const price = 49.90;
 
-    // 3. Integração com Mercado Pago (Preapproval)
-    const frontendUrl = process.env.FRONTEND_URL || "http://localhost:3000";
-    const backendUrl = process.env.BACKEND_URL || "http://localhost:3001";
-    
-    const mpResponse = await MercadoPagoService.createPreapproval({
-      reason: `Cofre Mensal: ${album.nome}`,
-      auto_recurring: {
-        frequency: 1,
-        frequency_type: "months",
-        transaction_amount: price,
-        currency_id: "BRL",
-      },
-      payer_email: album.owner.email,
-      back_url: `${frontendUrl}/vaults/${albumId}?subscribed=true`,
-      notification_url: `${backendUrl}/api/webhooks/mp-subscription`,
+    // 3. Garantir Evento de Sistema para assinaturas
+    let systemEvent = await prisma.event.findFirst({ where: { slug: "vaults-system" } });
+    if (!systemEvent) {
+      systemEvent = await prisma.event.create({
+        data: {
+          slug: "vaults-system",
+          nomeNoivos: "System: Vaults Subscriptions",
+          active: true,
+          dataEvento: new Date(),
+          ownerId: userId
+        }
+      });
+    }
+
+    // 4. Criar pedido local PENDING
+    const order = await prisma.order.create({
+      data: {
+        valor: price,
+        status: "PENDENTE",
+        eventId: systemEvent.id,
+        clienteId: userId,
+        buyerEmail: album.owner.email,
+        isManual: true,
+        manualType: "VAULT_SUBSCRIPTION",
+        internalNotes: `Assinatura Mensal: ${album.nome} | albumId:${albumId}`,
+        items: { create: [{ price, quantity: 1 }] }
+      }
     });
 
-    // 4. Cria (ou atualiza) registro local PENDING com preapprovalId
+    // 5. Gerar preferência MP normal (funciona em qualquer conta/token)
+    const backendUrl = process.env.BACKEND_URL || "http://localhost:3001";
+    const frontendUrl = process.env.FRONTEND_URL || "http://localhost:3000";
+
+    const mpResponse = await MercadoPagoService.createPreference({
+      transaction_amount: price,
+      description: `Assinatura Mensal Cofre: ${album.nome}`,
+      payer_email: album.owner.email,
+      notification_url: `${backendUrl}/api/webhooks/mercadopago`,
+      orderId: order.id,
+    });
+
+    // 6. Registrar subscription PENDING
     const subscription = await prisma.subscription.upsert({
       where: { albumId },
-      update: {
-        status: "PENDING",
-        planLimit,
-        preapprovalId: mpResponse.id,
-        planPrice: price
-      },
-      create: {
-        userId,
-        albumId,
-        planLimit,
-        status: "PENDING",
-        preapprovalId: mpResponse.id,
-        planPrice: price
-      }
+      update: { status: "PENDING", planLimit, planPrice: price },
+      create: { userId, albumId, planLimit, status: "PENDING", planPrice: price }
     });
 
     return {
       subscriptionId: subscription.id,
       initPoint: mpResponse.init_point,
-      preapprovalId: mpResponse.id,
       amount: price
     };
   }
