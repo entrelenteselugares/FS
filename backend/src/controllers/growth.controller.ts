@@ -24,18 +24,18 @@ export class GrowthController {
     }
   }
 
-  static getWhatsappStatus(req: Request, res: Response) {
+  static async getWhatsappStatus(req: Request, res: Response) {
     try {
-      const status = WhatsAppService.getStatus();
+      const status = await WhatsAppService.getStatus();
       return res.json(status);
     } catch (error: any) {
       return res.status(500).json({ error: "Erro ao obter status do WhatsApp" });
     }
   }
 
-  static getWhatsappQr(req: Request, res: Response) {
+  static async getWhatsappQr(req: Request, res: Response) {
     try {
-      const qrData = WhatsAppService.getQrCode();
+      const qrData = await WhatsAppService.getQrCode();
       return res.json(qrData);
     } catch (error: any) {
       return res.status(500).json({ error: "Erro ao obter QR code do WhatsApp" });

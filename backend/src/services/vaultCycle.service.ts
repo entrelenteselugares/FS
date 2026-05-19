@@ -2,6 +2,7 @@ import { prisma } from "../lib/prisma";
 import { GoogleDriveService } from "./googleDrive.service";
 import { GamificationService } from "./gamification.service";
 import { withRetry } from "../lib/retry";
+import { WhatsAppService } from "./whatsapp.service";
 
 export class VaultCycleService {
   /**
@@ -130,6 +131,49 @@ export class VaultCycleService {
         await this.closeVaultCycle(sub.albumId);
       } catch (err) {
         console.error(`[VAULT CYCLE] Erro ao processar album ${sub.albumId}:`, err);
+      }
+    }
+  }
+
+  /**
+   * Envia aviso 48h antes do fechamento do ciclo.
+   */
+  static async sendCycleWarnings() {
+    const targetDate = new Date();
+    targetDate.setDate(targetDate.getDate() + 2); // 48h no futuro
+
+    const startOfTarget = new Date(targetDate.setHours(0, 0, 0, 0));
+    const endOfTarget = new Date(targetDate.setHours(23, 59, 59, 999));
+
+    const warningSubs = await withRetry(() => prisma.subscription.findMany({
+      where: {
+        status: "ACTIVE",
+        nextBillingDate: {
+          gte: startOfTarget,
+          lte: endOfTarget
+        }
+      },
+      include: {
+        album: {
+          include: {
+            owner: true
+          }
+        }
+      }
+    }));
+
+    console.log(`[VAULT CYCLE] Enviando avisos de 48h para ${warningSubs.length} assinaturas.`);
+
+    for (const sub of warningSubs) {
+      try {
+        if (sub.album && sub.album.owner && sub.album.owner.whatsapp) {
+          const owner = sub.album.owner;
+          const phone = owner.whatsapp;
+          const message = `Em 2 dias as top ${sub.planLimit || 36} fotos do seu álbum *${sub.album.nome}* vão para a gráfica. Ainda dá tempo de votar: ${process.env.FRONTEND_URL || 'http://localhost:3000'}/vaults/${sub.album.id}`;
+          await WhatsAppService.sendMessage(phone, message);
+        }
+      } catch (err) {
+        console.error(`[VAULT CYCLE] Erro ao enviar aviso de 48h para o cofre ${sub.albumId}:`, err);
       }
     }
   }

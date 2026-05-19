@@ -10,6 +10,7 @@ export async function runVaultCycleJob() {
   console.log(`[JOB: vault-cycle] Iniciando execução em ${now.toISOString()}`);
   
   try {
+    await VaultCycleService.sendCycleWarnings();
     await VaultCycleService.processAllDueSubscriptions();
     console.log(`[JOB: vault-cycle] Execução concluída com sucesso.`);
   } catch (err) {

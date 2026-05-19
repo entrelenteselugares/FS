@@ -1,31 +1,53 @@
+import axios from "axios";
+
 export class WhatsAppService {
-  private static isConnected = false;
-  private static currentQrCode: string | null = null;
+  private static get baseUrl() {
+    return process.env.WA_WORKER_URL || "http://localhost:3000";
+  }
 
-  // Em uma implementação real com baileys ou evolution-api, 
-  // aqui ficaria a configuração da conexão, socket, listeners de eventos, etc.
-
-  static getQrCode() {
-    // Retorna um QR code placeholder ou a string real gerada pela biblioteca
+  private static get headers() {
     return {
-      connected: this.isConnected,
-      qr: this.currentQrCode || "https://api.qrserver.com/v1/create-qr-code/?size=250x250&data=FOTOSEGUNDO_WA_STUB"
+      "x-api-key": process.env.WA_SECRET_KEY || "dev-secret-key"
     };
   }
 
-  static getStatus() {
-    return { connected: this.isConnected };
+  static async getQrCode() {
+    try {
+      const { data } = await axios.get(`${this.baseUrl}/status`);
+      return {
+        connected: data.connected,
+        qr: data.qrCode || "https://api.qrserver.com/v1/create-qr-code/?size=250x250&data=FOTOSEGUNDO_WA_STUB"
+      };
+    } catch (error) {
+      console.warn("[WhatsAppService] Erro ao buscar status do motor:", error);
+      return {
+        connected: false,
+        qr: "https://api.qrserver.com/v1/create-qr-code/?size=250x250&data=MOTOR_OFFLINE"
+      };
+    }
+  }
+
+  static async getStatus() {
+    try {
+      const { data } = await axios.get(`${this.baseUrl}/status`);
+      return { connected: data.connected };
+    } catch (error) {
+      return { connected: false };
+    }
   }
 
   static async sendMessage(phone: string, message: string) {
-    if (!this.isConnected) {
-      console.warn("[WhatsAppService] Tentativa de envio com sessão offline:", phone);
-      // Aqui poderíamos disparar uma notificação interna de fallback
+    try {
+      console.log(`[WhatsAppService] Solicitando envio para ${phone}`);
+      await axios.post(
+        `${this.baseUrl}/send`,
+        { phone, message },
+        { headers: this.headers }
+      );
+      return true;
+    } catch (error) {
+      console.warn("[WhatsAppService] Falha ao enviar mensagem:", error);
       return false;
     }
-
-    console.log(`[WhatsAppService] Enviando para ${phone}: ${message}`);
-    // await socket.sendMessage(phone + "@s.whatsapp.net", { text: message })
-    return true;
   }
 }

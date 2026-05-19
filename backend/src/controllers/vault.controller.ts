@@ -5,6 +5,7 @@ import { driveService } from "../services/googleDrive.service";
 import { MercadoPagoService } from "../services/mercadopago.service";
 import { SubscriptionService } from "../services/subscription.service";
 import sharp from "sharp";
+import { WhatsAppService } from "../services/whatsapp.service";
 
 /**
  * VaultController - Orquestrador da Fase 11 (Cofres de Memórias).
@@ -154,6 +155,15 @@ export class VaultController {
           uploadedById: userId
         }
       });
+
+      // WA Gatilho 2 - Upload concluído
+      const user = await prisma.user.findUnique({ where: { id: userId } });
+      if (user && user.whatsapp) {
+        WhatsAppService.sendMessage(
+          user.whatsapp,
+          `Suas fotos chegaram no álbum *${album.nome}*! Vote nas favoritas: ${process.env.FRONTEND_URL || 'http://localhost:3000'}/vaults/${album.id}`
+        ).catch(console.error);
+      }
 
       return res.status(201).json({
         message: "Upload concluído com sucesso.",
@@ -413,7 +423,8 @@ export class VaultController {
 
     try {
       const link = await prisma.accessLink.findUnique({
-        where: { code }
+        where: { code },
+        include: { album: true }
       });
 
       if (!link) return res.status(404).json({ error: "Convite não encontrado." });
@@ -436,6 +447,15 @@ export class VaultController {
           role: "GUEST"
         }
       });
+
+      // WA Gatilho 1 - Convidado aceita o convite
+      const user = await prisma.user.findUnique({ where: { id: userId } });
+      if (user && user.whatsapp && link.album) {
+        WhatsAppService.sendMessage(
+          user.whatsapp,
+          `Oi ${user.nome}! Você foi adicionado ao álbum *${link.album.nome}*. Manda suas fotos aqui: ${process.env.FRONTEND_URL || 'http://localhost:3000'}/vaults/${link.album.id}`
+        ).catch(console.error);
+      }
 
       return res.status(201).json({
         message: "Convite aceito com sucesso!",
@@ -538,6 +558,14 @@ export class VaultController {
         where: { id: order.id },
         data: { paymentId: String(mpResponse.id) }
       });
+
+      // WA Gatilho 3 - Owner materializa
+      if (album.owner.whatsapp) {
+        WhatsAppService.sendMessage(
+          album.owner.whatsapp,
+          `As fotos mais votadas do *${album.nome}* estão sendo preparadas para impressão! Acompanhe: ${process.env.FRONTEND_URL || 'http://localhost:3000'}/vaults/${album.id}`
+        ).catch(console.error);
+      }
 
       return res.json({
         orderId: order.id,
