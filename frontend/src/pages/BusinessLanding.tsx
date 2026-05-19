@@ -1,168 +1,196 @@
-import { useNavigate } from "react-router-dom";
-import { Helmet } from "react-helmet-async";
-import { T } from "../lib/theme";
-import { DICT } from "../lib/dictionary";
+import { Link } from "react-router-dom";
+import { ArrowLeft, Camera, Edit3, Video, Briefcase, CheckCircle2, DollarSign, Target, ShieldCheck } from "lucide-react";
 import { Navbar } from "../components/Navbar";
-import { Building2, Cpu, Globe, ArrowRight, Star } from "lucide-react";
+import SEO from "../components/SEO";
 
-export const BusinessLanding = () => {
-  const navigate = useNavigate();
-
-  const categories = [
-    {
-      id: "A",
-      title: DICT.CAT_A_TITLE,
-      desc: DICT.CAT_A_DESC,
-      icon: <Globe size={32} color={T.brand} />,
-      cta: "Seja um Franqueado",
-      color: "#D4AF37", // Gold
-      link: "/register?role=FRANCHISEE"
-    },
-    {
-      id: "B",
-      title: DICT.CAT_B_TITLE,
-      desc: DICT.CAT_B_DESC,
-      icon: <Cpu size={32} color={T.brand} />,
-      cta: "Contratar Phygital",
-      color: "#8E8E8E", // Silver
-      link: "/cotacao?type=PHYGITAL"
-    },
-    {
-      id: "C",
-      title: DICT.CAT_C_TITLE,
-      desc: DICT.CAT_C_DESC,
-      icon: <Building2 size={32} color={T.brand} />,
-      cta: "Soluções Corporativas",
-      color: "#CD7F32", // Bronze/Tactical
-      link: "/cotacao?type=CORPORATE"
-    }
-  ];
-
+export function BusinessLanding() {
   return (
-    <div style={{ background: T.bg, color: T.text, minHeight: "100vh", fontFamily: T.fontB }}>
-      <Helmet>
-        <title>Negócios & Parcerias | Foto Segundo</title>
-        <meta name="description" content={DICT.BIZ_DESC} />
-      </Helmet>
-
+    <div className="min-h-screen bg-theme-bg text-theme-text font-sans selection:bg-brand-tactical/30">
+      <SEO title="Negócios | Foto Segundo" description="Faça parte da maior rede de audiovisual do Brasil como fotógrafo ou videomaker." />
       <Navbar />
+      
+      {/* Header Minimalista */}
+      <header className="fixed top-0 left-0 right-0 h-16 bg-theme-bg/80 backdrop-blur-lg border-b border-theme-border/40 z-50 flex items-center px-4 md:px-8">
+        <Link to="/" className="text-brand-tactical hover:brightness-110 transition-all flex items-center gap-2 text-xs font-black tracking-widest uppercase italic">
+          <ArrowLeft size={16} /> Voltar para o início
+        </Link>
+      </header>
 
-      {/* Hero Section */}
-      <section style={{ padding: "80px 28px 60px", maxWidth: 1100, margin: "0 auto", textAlign: "center" }}>
-        <p style={{ fontSize: 10, fontFamily: T.fontB, fontWeight: 500, letterSpacing: "0.4em", textTransform: "uppercase", color: T.brand, marginBottom: 24 }}>
-          {DICT.BIZ_TAGLINE}
-        </p>
-        <h1 style={{ 
-          fontFamily: T.fontD, fontWeight: 900, fontSize: "clamp(42px, 8vw, 72px)", 
-          lineHeight: 1, textTransform: "uppercase", marginBottom: 32 
-        }}>
-          {DICT.BIZ_TITLE}
-          <span style={{ fontStyle: "italic", color: T.brand }}>{DICT.BIZ_TITLE_ITALIC}</span>
-        </h1>
-        <p style={{ fontSize: 16, color: T.text2, maxWidth: 600, margin: "0 auto 48px", lineHeight: 1.6, fontWeight: 300 }}>
-          {DICT.BIZ_DESC}
-        </p>
-      </section>
+      <main className="pt-32 pb-24 px-6 md:px-8 max-w-5xl mx-auto">
+        <div className="mb-16 md:mb-24 text-center max-w-4xl mx-auto">
+          <div className="flex items-center justify-center gap-4 mb-6">
+            <div className="h-px w-12 bg-brand-tactical" />
+            <span className="text-[10px] font-black text-brand-tactical uppercase tracking-[0.5em] italic">Rede Profissional</span>
+            <div className="h-px w-12 bg-brand-tactical" />
+          </div>
+          <h1 className="text-5xl md:text-7xl font-heading font-black text-theme-text uppercase tracking-tighter mb-6 italic leading-none">
+            A maior rede de <br /><span className="text-brand-tactical">Audiovisual</span> do Brasil
+          </h1>
+          <p className="text-theme-text-muted font-light text-base md:text-lg leading-relaxed max-w-2xl mx-auto">
+            A Foto Segundo está construindo a infraestrutura que o mercado de fotografia e audiovisual sempre precisou — e você pode fazer parte disso.
+          </p>
+        </div>
 
-      {/* Categories Grid */}
-      <section style={{ padding: "0 28px 100px", maxWidth: 1200, margin: "0 auto" }}>
-        <div style={{ 
-          display: "grid", 
-          gridTemplateColumns: "repeat(auto-fit, minmax(320px, 1fr))", 
-          gap: 24 
-        }}>
-          {categories.map((cat) => (
-            <div 
-              key={cat.id}
-              onClick={() => navigate(cat.link)}
-              style={{ 
-                background: T.bgCard, 
-                border: `1px solid ${T.border}`, 
-                padding: 48,
-                display: "flex",
-                flexDirection: "column",
-                gap: 24,
-                cursor: "pointer",
-                transition: "all 0.3s ease",
-                position: "relative",
-                overflow: "hidden"
-              }}
-              onMouseEnter={(e) => {
-                e.currentTarget.style.borderColor = T.brand;
-                e.currentTarget.style.transform = "translateY(-4px)";
-              }}
-              onMouseLeave={(e) => {
-                e.currentTarget.style.borderColor = T.border;
-                e.currentTarget.style.transform = "translateY(0)";
-              }}
-            >
-              <div style={{ 
-                position: "absolute", top: -20, right: -20, opacity: 0.05,
-                transform: "rotate(45deg)"
-              }}>
-                <Star size={120} color={T.brand} />
+        {/* Intro */}
+        <section className="mb-20">
+          <div className="bg-brand-tactical/5 border border-brand-tactical/20 p-8 md:p-12 rounded-3xl text-center">
+            <Camera className="text-brand-tactical mx-auto mb-6" size={48} />
+            <p className="text-lg md:text-xl font-light leading-relaxed max-w-3xl mx-auto">
+              Se você é fotógrafo, videomaker, editor, drone operator ou qualquer profissional do universo audiovisual, a plataforma é a sua central de negócios: <strong className="text-brand-tactical font-black">mais clientes, menos burocracia, pagamento garantido.</strong>
+            </p>
+          </div>
+        </section>
+
+        {/* Problema vs Solução */}
+        <section className="mb-24">
+          <div className="grid lg:grid-cols-2 gap-8">
+            {/* Problema */}
+            <div className="border border-red-500/30 bg-red-500/5 p-8 md:p-10 rounded-3xl">
+              <h2 className="text-xl font-black text-red-500 uppercase italic tracking-tight mb-6">
+                O problema que resolvemos
+              </h2>
+              <ul className="space-y-4">
+                {[
+                  "Depender do Instagram para conseguir clientes é instável e trabalhoso",
+                  "Negociar preço no WhatsApp consome tempo e desvaloriza seu trabalho",
+                  "Receber após o evento gera insegurança financeira",
+                  "Gerenciar agenda, contratos e entregas em ferramentas separadas é caótico"
+                ].map((item, i) => (
+                  <li key={i} className="flex items-start gap-3 text-theme-text-muted font-light text-sm md:text-base leading-relaxed">
+                    <span className="text-red-500 mt-1">✗</span> {item}
+                  </li>
+                ))}
+              </ul>
+            </div>
+
+            {/* Solução */}
+            <div className="border border-brand-tactical/30 bg-brand-tactical/5 p-8 md:p-10 rounded-3xl">
+              <h2 className="text-xl font-black text-brand-tactical uppercase italic tracking-tight mb-6 flex items-center gap-2">
+                <ShieldCheck size={24} /> O que oferecemos
+              </h2>
+              <ul className="space-y-4">
+                {[
+                  { t: "Leads qualificados", d: "entregues direto no seu painel — clientes que já querem contratar" },
+                  { t: "Agenda integrada", d: "com bloqueio automático de horários para evitar overbooking" },
+                  { t: "Pagamento garantido", d: "o cliente paga antes do evento, você recebe após a entrega" },
+                  { t: "Wallet própria", d: "acompanhe seus ganhos em tempo real dentro da plataforma" },
+                  { t: "Zero taxa de adesão", d: "você só ganha quando vende" }
+                ].map((item, i) => (
+                  <li key={i} className="flex items-start gap-3 text-theme-text-muted font-light text-sm md:text-base leading-relaxed">
+                    <CheckCircle2 size={18} className="text-brand-tactical shrink-0 mt-0.5" />
+                    <span><strong className="text-theme-text">{item.t}</strong> — {item.d}</span>
+                  </li>
+                ))}
+              </ul>
+            </div>
+          </div>
+        </section>
+
+        {/* Modalidades */}
+        <section className="mb-24">
+          <h2 className="text-3xl font-black uppercase italic tracking-tight mb-12 text-center">
+            Modalidades de <span className="text-brand-tactical">Atuação</span>
+          </h2>
+          <div className="grid md:grid-cols-3 gap-6">
+            {[
+              { i: <Camera size={28} />, t: "Fotógrafo / Captador", d: "Atende eventos agendados (casamentos, corporativos) e Flash Events. Recebe jobs do sistema e entrega via painel." },
+              { i: <Edit3 size={28} />, t: "Editor", d: "Recebe material bruto de captações da rede e realiza a edição dentro dos padrões editoriais. Remunerado por job." },
+              { i: <Video size={28} />, t: "Ponto Fixo (Flash Event)", d: "Atua em locais de alto fluxo (praias, pontos turísticos) criando eventos instantâneos e vendendo fotos avulsas na hora." }
+            ].map((m, idx) => (
+              <div key={idx} className="bg-theme-bg-muted border border-theme-border/40 p-8 rounded-2xl hover:border-brand-tactical/50 transition-colors">
+                <div className="w-14 h-14 bg-brand-tactical/10 text-brand-tactical rounded-xl flex items-center justify-center mb-6">
+                  {m.i}
+                </div>
+                <h3 className="text-lg font-black uppercase tracking-widest mb-3 italic">{m.t}</h3>
+                <p className="text-theme-text-muted text-sm font-light leading-relaxed">{m.d}</p>
               </div>
+            ))}
+          </div>
+        </section>
 
-              <div style={{ display: "flex", alignItems: "center", gap: 16 }}>
-                {cat.icon}
-                <span style={{ 
-                  fontFamily: T.fontD, fontWeight: 900, fontSize: 14, 
-                  color: T.brand, letterSpacing: 3 
-                }}>PILAR {cat.id}</span>
-              </div>
+        {/* Como funciona o credenciamento e Remuneração */}
+        <section className="mb-24 grid lg:grid-cols-2 gap-12">
+          <div>
+            <h2 className="text-2xl font-black uppercase italic tracking-tight mb-8">
+              Como funciona o <span className="text-brand-tactical">Credenciamento</span>
+            </h2>
+            <div className="space-y-6">
+              {[
+                { n: "1", t: "Interesse", d: "Preencha o formulário com seus dados e portfólio" },
+                { n: "2", t: "Avaliação", d: "Nossa equipe analisa seu perfil em até 5 dias úteis" },
+                { n: "3", t: "Onboarding", d: "Acesso ao painel profissional e treinamento da plataforma" },
+                { n: "4", t: "Primeiro job", d: "Você começa a receber leads e oportunidades da rede" }
+              ].map((step, idx) => (
+                <div key={idx} className="flex items-start gap-4">
+                  <div className="w-8 h-8 rounded-full bg-brand-tactical/20 border border-brand-tactical text-brand-tactical flex items-center justify-center font-black text-sm shrink-0">
+                    {step.n}
+                  </div>
+                  <div>
+                    <h3 className="font-bold text-theme-text text-sm uppercase tracking-widest">{step.t}</h3>
+                    <p className="text-theme-text-muted text-sm font-light mt-1">{step.d}</p>
+                  </div>
+                </div>
+              ))}
+            </div>
+          </div>
 
-              <h3 style={{ 
-                fontFamily: T.fontD, fontWeight: 900, fontSize: 32, 
-                textTransform: "uppercase", margin: 0, lineHeight: 1 
-              }}>
-                {cat.title}
-              </h3>
-
-              <p style={{ 
-                fontSize: 14, color: T.text3, lineHeight: 1.6, 
-                fontWeight: 300, minHeight: 80 
-              }}>
-                {cat.desc}
+          <div className="bg-brand-tactical text-black rounded-3xl p-8 md:p-10 relative overflow-hidden">
+            <DollarSign className="absolute -right-8 -top-8 text-black/5" size={200} />
+            <div className="relative z-10">
+              <h2 className="text-2xl font-black uppercase italic tracking-tight mb-6">
+                Remuneração
+              </h2>
+              <p className="font-medium text-sm md:text-base leading-relaxed mb-4">
+                Calculada automaticamente pelo sistema de <strong className="font-black">Split Dinâmico</strong> a cada pedido aprovado. 
               </p>
-
-              <div style={{ 
-                marginTop: "auto", display: "flex", alignItems: "center", 
-                gap: 12, color: T.text, fontSize: 12, fontWeight: 500, 
-                textTransform: "uppercase", letterSpacing: 2 
-              }}>
-                {cat.cta} <ArrowRight size={16} color={T.brand} />
+              <p className="font-medium text-sm md:text-base leading-relaxed mb-6">
+                Os valores são definidos no momento do credenciamento e ficam travados por pedido — alterações futuras de tabela não afetam jobs já realizados.
+              </p>
+              <div className="bg-black/10 p-4 rounded-xl font-bold uppercase tracking-widest text-xs flex items-center gap-3">
+                <Briefcase size={16} /> Acompanhe em tempo real na sua Wallet
               </div>
             </div>
-          ))}
-        </div>
-      </section>
+          </div>
+        </section>
 
-      {/* Footer Shortcut / CTA */}
-      <section style={{ padding: "80px 28px", background: T.bgCard, borderTop: `1px solid ${T.border}`, textAlign: "center" }}>
-        <h2 style={{ fontFamily: T.fontD, fontWeight: 900, fontSize: 32, textTransform: "uppercase", marginBottom: 16 }}>
-          Pronto para escalar seu negócio?
-        </h2>
-        <p style={{ color: T.text3, marginBottom: 40, maxWidth: 500, margin: "0 auto 40px" }}>
-          Junte-se ao ecossistema que está redefinindo o padrão da fotografia editorial no Brasil.
-        </p>
-        <button 
-          onClick={() => navigate("/contato")}
-          style={{ 
-            background: T.brand, color: T.brandText, border: "none", 
-            padding: "16px 40px", fontFamily: T.fontD, fontWeight: 900, 
-            letterSpacing: 2, textTransform: "uppercase", cursor: "pointer" 
-          }}
-        >
-          Falar com um Consultor
-        </button>
-      </section>
+        {/* Requisitos */}
+        <section className="mb-24 border-t border-theme-border/40 pt-16">
+          <h2 className="text-2xl font-black uppercase italic tracking-tight mb-8 text-center">
+            Requisitos <span className="text-brand-tactical">Mínimos</span>
+          </h2>
+          <div className="grid sm:grid-cols-2 md:grid-cols-4 gap-4">
+            {[
+              "Equipamento profissional compatível",
+              "Experiência comprovada (portfólio)",
+              "Disponibilidade de prazos",
+              "Conta bancária para repasses"
+            ].map((req, idx) => (
+              <div key={idx} className="bg-theme-bg-muted border border-theme-border/40 p-5 rounded-xl text-center">
+                <Target className="text-brand-tactical mx-auto mb-3" size={20} />
+                <p className="text-sm text-theme-text-muted font-light">{req}</p>
+              </div>
+            ))}
+          </div>
+        </section>
 
-      {/* Basic Footer */}
-      <footer style={{ padding: "40px 28px", textAlign: "center", borderTop: `1px solid ${T.border}` }}>
-        <p style={{ fontSize: 10, color: T.text3, letterSpacing: 1 }}>
-          {DICT.FOOTER_COPYRIGHT}
-        </p>
+        {/* CTA */}
+        <section className="text-center">
+          <h2 className="text-4xl font-heading font-black uppercase italic tracking-tighter mb-6">
+            Quero fazer <span className="text-brand-tactical">Parte</span>
+          </h2>
+          <p className="text-theme-text-muted font-light mb-10 max-w-lg mx-auto">
+            Entre em contato com nossa equipe com o assunto <strong className="text-theme-text">"Quero ser profissional da rede"</strong> e não se esqueça de incluir o link do seu portfólio.
+          </p>
+          <Link to="/contato" className="inline-block px-12 py-5 bg-brand-tactical text-black font-black uppercase tracking-[0.3em] text-[10px] italic hover:brightness-110 transition-all shadow-2xl shadow-brand-tactical/20">
+            Acessar Contato
+          </Link>
+        </section>
+      </main>
+
+      <footer className="py-8 text-center border-t border-theme-border/40">
+        <p className="text-theme-text-muted text-xs font-bold uppercase tracking-widest mb-1">© 2026 Foto Segundo. Todos os direitos reservados.</p>
+        <p className="text-brand-tactical/50 text-[10px] font-black italic uppercase tracking-[0.3em]">Protocolo Editorial de Imagem e Cinema</p>
       </footer>
     </div>
   );
-};
+}

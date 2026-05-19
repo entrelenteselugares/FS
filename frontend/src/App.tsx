@@ -31,6 +31,12 @@ import FranchiseDashboard from "./pages/franchise/FranchiseDashboard";
 import VaultsPage from "./pages/VaultsPage";
 import VaultDetailPage from "./pages/VaultDetailPage";
 import InvitationPage from "./pages/InvitationPage";
+import { AboutPage } from "./pages/AboutPage";
+import { PrivacyPage } from "./pages/PrivacyPage";
+import { TermsPage } from "./pages/TermsPage";
+import { PartnershipsPage } from "./pages/PartnershipsPage";
+import { ContactPage } from "./pages/ContactPage";
+import { StatusPage } from "./pages/StatusPage";
 import { BusinessLanding } from "./pages/BusinessLanding";
 import FlashUnlockPage from "./pages/FlashUnlockPage";
 import { ClubLandingPage } from "./pages/ClubLandingPage";
@@ -87,8 +93,15 @@ const AnimatedRoutes = () => {
         className="w-full h-full pb-20 md:pb-0"
       >
         <Routes location={location}>
-        {/* Público */}
+        {/* Rotas Públicas */}
         <Route path="/" element={<HomePage />} />
+        <Route path="/sobre" element={<AboutPage />} />
+        <Route path="/parcerias" element={<PartnershipsPage />} />
+        <Route path="/termos" element={<TermsPage />} />
+        <Route path="/privacidade" element={<PrivacyPage />} />
+        <Route path="/lgpd" element={<PrivacyPage />} />
+        <Route path="/contato" element={<ContactPage />} />
+        <Route path="/status" element={<StatusPage />} />
         <Route path="/login" element={<LoginPage />} />
         <Route path="/registro" element={<RegisterPage />} />
         <Route path="/register" element={<RegisterPage />} />
@@ -110,7 +123,7 @@ const AnimatedRoutes = () => {
         <Route path="/negocios" element={<BusinessLanding />} />
         <Route path="/clube" element={<ClubLandingPage />} />
         <Route path="/flash/:shortId" element={<FlashUnlockPage />} />
-        <Route path="/ajuda" element={<HelpPage />} />
+        <Route path="/suporte" element={<HelpPage />} />
         <Route path="/embaixador/:slug" element={<AmbassadorPage />} />
 
         {/* Redireciona para o painel correto */}

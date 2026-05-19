@@ -131,18 +131,18 @@ const STEPS = [
 ];
 
 // ── FOOTER NAV ────────────────────────────────────────────────────────────────
-function FooterCol({ title, links }: { title: string; links: string[] }) {
+function FooterCol({ title, links }: { title: string; links: {label: string, href: string}[] }) {
   const navigate = useNavigate();
   return (
     <div style={{ display: "flex", flexDirection: "column", gap: 14 }}>
       <span style={{ fontSize: 10, fontFamily: T.fontD, fontWeight: 900, letterSpacing: "0.4em", textTransform: "uppercase", color: T.text, fontStyle: 'italic' }}>{title}</span>
       {links.map(l => (
         <span 
-          key={l} 
-          onClick={() => l === "Negócios" && navigate("/negocios")}
+          key={l.label} 
+          onClick={() => l.href.startsWith('http') ? window.open(l.href, '_blank') : navigate(l.href)}
           style={{ fontSize: 11, fontFamily: T.fontD, fontWeight: 900, color: T.text3, cursor: "pointer", textTransform: "uppercase", letterSpacing: "0.2em", fontStyle: 'italic' }}
           onMouseOver={e => (e.currentTarget.style.color = T.text)} onMouseOut={e => (e.currentTarget.style.color = T.text3)}>
-          {l}
+          {l.label}
         </span>
       ))}
     </div>
@@ -548,9 +548,21 @@ export const HomePage = () => {
             </p>
           </div>
           <div className="hp-footer-cols" style={{ display: "flex", gap: "4rem", flexWrap: "wrap" }}>
-            <FooterCol title="Plataforma" links={["Sobre", "Parcerias", "Negócios"]} />
-            <FooterCol title="Jurídico" links={["Termos de Uso", "Privacidade", "LGPD"]} />
-            <FooterCol title="Suporte" links={["Central de Ajuda", "Contato", "Status"]} />
+            <FooterCol title="Plataforma" links={[
+              {label: "Sobre", href: "/sobre"}, 
+              {label: "Parcerias", href: "/parcerias"}, 
+              {label: "Negócios", href: "/negocios"}
+            ]} />
+            <FooterCol title="Jurídico" links={[
+              {label: "Termos de Uso", href: "/termos"}, 
+              {label: "Privacidade", href: "/privacidade"}, 
+              {label: "LGPD", href: "/lgpd"}
+            ]} />
+            <FooterCol title="Suporte" links={[
+              {label: "Central de Ajuda", href: "/suporte"}, 
+              {label: "Contato", href: "/contato"}, 
+              {label: "Status", href: "/status"}
+            ]} />
           </div>
         </div>
       </footer>

@@ -14,6 +14,7 @@ Most endpoints require a JSON Web Token (JWT).
 ## Endpoints Overview
 
 ### 🔐 Authentication
+
 | Method | Path | Description | Auth |
 |--------|------|-------------|------|
 | `POST` | `/api/auth/login` | Authenticates a user and returns a JWT. | No |
@@ -22,6 +23,7 @@ Most endpoints require a JSON Web Token (JWT).
 | `GET` | `/api/auth/me` | Returns current user profile. | Yes |
 
 ### 📸 Events & Phygital
+
 | Method | Path | Description | Auth |
 |--------|------|-------------|------|
 | `GET` | `/api/public/events` | Lists all public events. | No |
@@ -34,6 +36,7 @@ Most endpoints require a JSON Web Token (JWT).
 | `GET` | `/api/flash/:eventId/stats` | Aggregated live metrics for a Flash Event (funnel, print queue). | Pro/Admin |
 
 ### 🛒 Marketplace & Checkout
+
 | Method | Path | Description | Auth |
 |--------|------|-------------|------|
 | `POST` | `/api/marketplace/events/:id/media` | Uploads media for unit sale. | Pro |
@@ -44,6 +47,7 @@ Most endpoints require a JSON Web Token (JWT).
 | `GET` | `/api/checkout/shipping-quote` | Calculates shipping for physical orders. | Opt |
 
 ### 🏛️ Memory Vaults (Cofres)
+
 | Method | Path | Description | Auth |
 |--------|------|-------------|------|
 | `GET` | `/api/vaults` | Lists user's memory albums. | Yes |
@@ -52,6 +56,7 @@ Most endpoints require a JSON Web Token (JWT).
 | `POST` | `/api/vaults/:albumId/subscribe` | Subscribes to a recurring vault plan. | Yes |
 
 ### 📡 IoT & Administration
+
 | Method | Path | Description | Auth |
 |--------|------|-------------|------|
 | `POST` | `/api/iot/heartbeat` | Telemetry endpoint for Printer Agents. | No |
@@ -62,6 +67,7 @@ Most endpoints require a JSON Web Token (JWT).
 | `GET` | `/api/health` | System health check (Ultra-early). | No |
 
 ### 📈 CRM & Leads
+
 | Method | Path | Description | Auth |
 |--------|------|-------------|------|
 | `POST` | `/api/public/crm/leads` | Captures a new interest lead from gallery. | No |
@@ -74,6 +80,7 @@ Most endpoints require a JSON Web Token (JWT).
 *Note: `/cron/*` routes require `CRON_SECRET` Bearer token.
 
 ### 📈 Growth Engine
+
 | Method | Path | Description | Auth |
 |--------|------|-------------|------|
 | `GET` | `/api/marketplace/coupons/:code/validate` | Validates a coupon code, returning discount details. | No |

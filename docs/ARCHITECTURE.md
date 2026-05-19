@@ -20,6 +20,7 @@ A plataforma Foto Segundo é um ecossistema **Enterprise** estruturado em 9 cama
 9. **Growth Engine (Coupons, Affiliates, WhatsApp):** Aquisição e retenção via programas de indicação e automação de recuperação.
 
 ### 🏗️ Componentes Técnicos
+
 - **Core API (Backend):** Express + TypeScript.
 - **Client App (Frontend):** React + Vite (PWA com Service Worker).
 - **IoT Agent (Printer):** Agente Node.js local.

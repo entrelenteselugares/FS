@@ -13,6 +13,7 @@ Este guia detalha o fluxo de trabalho local para o desenvolvimento e manutençã
 O repositório é configurado com o frontend (`/frontend`) em Vite/React e o backend (`/backend`) em Node.js com Prisma.
 
 1. **Clone o repositório e instale as dependências raiz**:
+
    ```bash
    git clone https://github.com/fotosegundo/platform.git
    cd platform
@@ -20,6 +21,7 @@ O repositório é configurado com o frontend (`/frontend`) em Vite/React e o bac
    ```
 
 2. **Instale as dependências do Frontend e Backend**:
+
    ```bash
    cd frontend && npm install
    cd ../backend && npm install
@@ -30,29 +32,34 @@ O repositório é configurado com o frontend (`/frontend`) em Vite/React e o bac
    Crie o `.env` na raiz conforme especificado em [CONFIGURATION.md](./CONFIGURATION.md).
 
 4. **Gerar o Prisma Client e Sincronizar o Banco**:
+
    ```bash
    cd backend
    npx prisma generate
-   npx prisma db push # ou npx prisma migrate dev para rodar migrações estruturais
+   npx prisma db push
    cd ..
    ```
 
 5. **Inicie o Ambiente de Desenvolvimento Local**:
    Na raiz do projeto:
+
    ```bash
    npm run dev
    ```
+
    *Este comando geralmente inicia o servidor Vite na porta 5173 e o backend na porta correspondente configurada (ex: 3000).*
 
 ## Padrões de Código
 
 ### Frontend
+
 - **Framework:** React + Vite.
 - **Estilização:** TailwindCSS. Todas as cores principais devem utilizar os tokens configurados em `tailwind.config.js` (`bg-theme-bg`, `text-brand-tactical`, etc.) para suporte automático a Dark Mode e expansões futuras.
 - **Roteamento:** React Router Dom. Novas páginas institucionais devem ser registradas em `App.tsx` e acessíveis via `Navbar` e `Footer`.
 - **Estado:** Evite complexidade global excessiva se o React Context for suficiente, mantendo componentes o mais puros e "dumb" possível.
 
 ### Backend
+
 - **Framework:** Express / Node.js nativo (servido em arquitetura serverless via Vercel na produção).
 - **ORM:** Prisma. Sempre que houver uma mudança no `schema.prisma`, execute `npx prisma generate` antes de commitar.
 - **Tratamento de Erros:** Todas as chamadas de banco e requisições devem estar envelopadas em blocos `try/catch` para evitar crash global.
@@ -60,12 +67,16 @@ O repositório é configurado com o frontend (`/frontend`) em Vite/React e o bac
 ## Testes e Quality Assurance (UAT)
 
 Antes de abrir um Pull Request:
+
 1. Certifique-se de que não existem avisos de lint (variáveis não usadas, imports soltos).
 2. O sistema possui scripts de teste E2E usando Playwright (ex: `test:certify`). Para rodar:
+
    ```bash
    npm run test
    ```
+
 3. Teste o build de produção localmente se estiver tocando em pacotes ou rotas cruciais:
+
    ```bash
    npm run vercel-build
    ```
