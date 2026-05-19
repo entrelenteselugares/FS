@@ -503,7 +503,9 @@ export default function ClienteArea() {
                   </div>
                   <div className="relative space-y-3">
                     <p className="text-xl font-heading font-black text-theme-text uppercase italic tracking-tighter">Arquivo em Standby</p>
-                    <p className="text-[11px] font-black text-theme-muted uppercase tracking-[0.4em] max-w-xs mx-auto leading-relaxed italic">Nenhuma memória adquirida ainda. Explore a vitrine ou solicite uma cobertura exclusiva.</p>
+                    <p className="text-[10px] font-black text-theme-muted uppercase tracking-[0.15em] max-w-md mx-auto leading-relaxed italic px-4">
+                      Nenhuma memória adquirida ainda.<br className="hidden sm:inline" /> Explore a vitrine ou solicite uma cobertura exclusiva.
+                    </p>
                   </div>
                   <div className="relative flex items-center justify-center gap-4 flex-wrap">
                     <button onClick={() => navigate("/")} className="fs-btn bg-brand-tactical text-brand-text flex items-center gap-3">

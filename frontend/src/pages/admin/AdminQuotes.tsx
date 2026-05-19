@@ -445,26 +445,33 @@ export const AdminQuotes: React.FC = () => {
                     <div className="space-y-2 pt-4 border-t border-theme-border/20">
                       <h4 className="text-[9px] font-black text-theme-text uppercase tracking-widest border-l-2 border-brand-tactical pl-2 mb-2">Cachês</h4>
                       {selectedStaff.length===0?(<div className="py-8 text-center border border-dashed border-theme-border rounded-lg opacity-40"><p className="text-[9px] text-theme-text-muted uppercase tracking-widest">Selecione os papéis</p></div>):selectedStaff.map(s=>(
-                        <div key={s.instanceId} className="flex items-center gap-2 bg-theme-bg p-3 border border-theme-border rounded-lg">
-                          <div className="flex-1 min-w-0">
+                        <div key={s.instanceId} className="grid grid-cols-1 sm:grid-cols-[1fr_auto_auto_auto] gap-3 items-center bg-theme-bg p-4 border border-theme-border rounded-xl">
+                          <div className="min-w-0 space-y-1">
                             <input type="text" value={s.label} onChange={e=>setSelectedStaff(selectedStaff.map(st=>st.instanceId===s.instanceId?{...st,label:e.target.value.toUpperCase()}:st))}
-                              className="w-full bg-transparent border-none text-[10px] font-black uppercase text-theme-text outline-none focus:text-brand-tactical"/>
-                            <span className="text-[8px] text-brand-tactical">Sug: R$ {STAFF_ROLES.find(r=>r.id===s.id)?.avgCost||s.cost}</span>
+                              className="w-full bg-transparent border-none text-[10px] font-black uppercase text-theme-text outline-none focus:text-brand-tactical p-0"/>
+                            <span className="text-[8px] text-brand-tactical block">Sug: R$ {STAFF_ROLES.find(r=>r.id===s.id)?.avgCost||s.cost}</span>
                           </div>
-                          <div className="relative w-32">
-                            <User className="absolute left-2 top-1/2 -translate-y-1/2 text-theme-text-muted opacity-30" size={10}/>
-                            <select value={s.userId||""} onChange={e=>updateStaffUser(s.instanceId,e.target.value)}
-                              className="w-full bg-theme-bg-muted border border-theme-border p-1.5 pl-7 text-[8px] font-bold text-theme-text outline-none appearance-none uppercase rounded">
-                              <option value="">Profissional...</option>
-                              {professionals.map(p=><option key={p.id} value={p.id}>{p.nome}</option>)}
-                            </select>
+                          
+                          <div className="flex gap-2 w-full sm:w-auto">
+                            <div className="relative flex-1 sm:w-32">
+                              <User className="absolute left-2.5 top-1/2 -translate-y-1/2 text-theme-text-muted opacity-30" size={10}/>
+                              <select value={s.userId||""} onChange={e=>updateStaffUser(s.instanceId,e.target.value)}
+                                className="w-full bg-theme-bg-muted border border-theme-border p-1.5 pl-8 text-[8px] font-bold text-theme-text outline-none appearance-none uppercase rounded-lg">
+                                <option value="">Profissional...</option>
+                                {professionals.map(p=><option key={p.id} value={p.id}>{p.nome}</option>)}
+                              </select>
+                            </div>
+                            
+                            <div className="relative w-24">
+                              <span className="absolute left-2.5 top-1/2 -translate-y-1/2 text-[8px] text-theme-text-muted">R$</span>
+                              <input type="number" value={s.cost} onChange={e=>setSelectedStaff(selectedStaff.map(st=>st.instanceId===s.instanceId?{...st,cost:Number(e.target.value)}:st))}
+                                className="w-full bg-theme-bg-muted border border-theme-border p-1.5 pl-6 text-[9px] font-black text-brand-tactical outline-none rounded-lg"/>
+                            </div>
+
+                            <button onClick={()=>removeStaffInstance(s.instanceId)} className="p-2 text-theme-text-muted hover:text-red-500 hover:bg-red-500/10 rounded-lg transition-all flex items-center justify-center shrink-0">
+                              <X size={12}/>
+                            </button>
                           </div>
-                          <div className="relative w-20">
-                            <span className="absolute left-2 top-1/2 -translate-y-1/2 text-[8px] text-theme-text-muted">R$</span>
-                            <input type="number" value={s.cost} onChange={e=>setSelectedStaff(selectedStaff.map(st=>st.instanceId===s.instanceId?{...st,cost:Number(e.target.value)}:st))}
-                              className="w-full bg-theme-bg-muted border border-theme-border p-1.5 pl-6 text-[9px] font-black text-brand-tactical outline-none rounded"/>
-                          </div>
-                          <button onClick={()=>removeStaffInstance(s.instanceId)} className="p-1.5 text-theme-text-muted hover:text-red-500 hover:bg-red-500/10 rounded transition-all"><X size={12}/></button>
                         </div>
                       ))}
                     </div>
