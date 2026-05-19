@@ -188,6 +188,35 @@ export default function ClienteArea() {
     cidade: "",
     estado: ""
   });
+
+  const handleCepChange = async (val: string) => {
+    const cleanCep = val.replace(/\D/g, "").slice(0, 8);
+    let formattedCep = cleanCep;
+    if (cleanCep.length > 5) {
+      formattedCep = `${cleanCep.slice(0, 5)}-${cleanCep.slice(5, 8)}`;
+    }
+    
+    setProfileData(p => ({ ...p, cep: formattedCep }));
+
+    if (cleanCep.length === 8) {
+      try {
+        const response = await fetch(`https://viacep.com.br/ws/${cleanCep}/json/`);
+        const data = await response.json();
+        if (!data.erro) {
+          setProfileData(p => ({
+            ...p,
+            endereco: data.logradouro || "",
+            bairro: data.bairro || "",
+            cidade: data.localidade || "",
+            estado: data.uf || "",
+          }));
+        }
+      } catch (err) {
+        console.error("Erro ao buscar CEP:", err);
+      }
+    }
+  };
+
   const [isSaving, setIsSaving] = useState(false);
   const [saveSuccess, setSaveSuccess] = useState(false);
   const [isApplying, setIsApplying] = useState(false);
@@ -540,7 +569,7 @@ export default function ClienteArea() {
                   <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
                     <div className="space-y-2">
                       <label className="text-[9px] font-black uppercase tracking-[0.3em] text-theme-muted block italic">CEP</label>
-                      <input type="text" value={profileData.cep} onChange={e => setProfileData(p => ({ ...p, cep: e.target.value }))} className="fs-input" placeholder="00000-000" />
+                      <input type="text" value={profileData.cep} onChange={e => handleCepChange(e.target.value)} className="fs-input" placeholder="00000-000" />
                     </div>
                     <div className="md:col-span-2 space-y-2">
                       <label className="text-[9px] font-black uppercase tracking-[0.3em] text-theme-muted block italic">Endereço (Rua/Av)</label>
