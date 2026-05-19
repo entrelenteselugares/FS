@@ -1,10 +1,11 @@
 import React, { useState } from "react";
-import { Link, useLocation, useNavigate } from "react-router-dom";
+import { Link, useLocation } from "react-router-dom";
 import { useAuth } from "../hooks/useAuth";
 import { T, BtnGhost } from "../lib/theme";
 import { ThemeToggle } from "./ThemeToggle";
 import { NotificationBell } from "./notifications/NotificationBell";
 import { Menu } from "lucide-react";
+import '../styles/mobile-fix.css';
 
 // ─── Types ────────────────────────────────────────────────────────────────────
 
