@@ -23,9 +23,11 @@ A infraestrutura de IA foi preparada no banco (campos adormecidos), mas a implem
 ## 🚧 Em Andamento (Foco Atual)
 
 - **Auditoria de Estabilidade (E2E)**: Validação profunda dos fluxos existentes (Upload, Checkout, IoT, Autenticação) para garantir que a versão atual está pronta e blindada para produção.
+- **Motor de Notificações WhatsApp**: Implementação do microserviço `wa-worker` (Baileys) concluído, integrado aos gatilhos do Vault (convite aceito, upload feito, materialização solicitada e lembretes de ciclo 48h).
 
 ## 📋 Próximos Passos
 
+- **Deploy Local do Motor WA (PC Antigo)**: Montar o computador reserva para rodar o `wa-worker` 24h, expondo-o via túnel (Ngrok ou Cloudflare Tunnel) e conectando à Vercel.
 - **Monitor de Impressão Remoto**: Estabilizar a comunicação WebSocket entre o Print Agent e o Servidor Cloud.
 - **Métricas de Franquia**: Dashboard de lucratividade e consumo de insumos Phygital.
 - **Auditoria de UX**: Refinar o modal de seleção de fotos no Álbum Digital para dispositivos móveis.

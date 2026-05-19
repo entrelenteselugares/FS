@@ -22,6 +22,10 @@
   - Infraestrutura do Google Drive 100% mapeada no `.env` e testada (Backend).
   - CronJob diário (`vault-cycle.job.ts`) configurado para avaliar cofres abertos e gerar pedidos pendentes (`Order Engine`) para materialização automática.
   - Endpoint de Checkout Avulso / On-Demand integrado com Mercado Pago.
+- **Integração de Notificações WhatsApp**:
+  - Novo microserviço `wa-worker` (Baileys) criado e protegido por `x-api-key`.
+  - Conexão do `whatsapp.service.ts` refatorada para fazer chamadas HTTP para o worker.
+  - 4 gatilhos de WhatsApp injetados: Aceite de convite, Upload concluído, Ativação de materialização e Lembrete do ciclo (48h).
 - **UI/UX App-Like (Midnight Luxury)**:
   - Navegação do usuário em cofres repaginada com remoção da `Navbar` no mobile em favor de um **BottomNav Imersivo**.
   - Interação gamificada: **Double-Tap to Vote** com animação Framer Motion nas fotos.

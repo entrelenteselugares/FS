@@ -1,0 +1,18 @@
+=== BACKLOG: DEPLOY DO MOTOR WHATSAPP NO PC LOCAL ===
+
+Objetivo: Utilizar um computador físico reserva como servidor contínuo para o microserviço wa-worker (Baileys), evitando custos de hospedagem na nuvem.
+
+Passos para Execução:
+1. Preparar o PC Servidor:
+   - Instalar o Node.js v18+.
+   - Clonar o repositório do projeto no computador.
+   - Navegar até a pasta 'wa-worker' e executar 'npm install'.
+   - Iniciar o processo usando um gerenciador de processos como o PM2 para resiliência (ex: 'pm2 start dist/index.js --name wa-worker').
+
+2. Expor a Porta 3000 para a Internet (Túnel Reverso):
+   - Opção A (Rápida): Baixar o Ngrok e rodar 'ngrok http 3000' para obter um endereço público HTTPS dinâmico.
+   - Opção B (Produção/Estável): Configurar um Cloudflare Tunnel gratuito apontando para a porta 3000 local, gerando um subdomínio fixo sem expiração.
+
+3. Configuração de Variáveis de Ambiente:
+   - No PC Local (wa-worker): configurar arquivo .env com a porta (PORT=3000) e a chave secreta (WA_SECRET_KEY=sua_chave_aqui).
+   - No painel da Vercel (API principal): configurar 'WA_WORKER_URL' com a URL fornecida pelo túnel do Ngrok/Cloudflare, e 'WA_SECRET_KEY' com o mesmo token de segurança configurado no PC local.
