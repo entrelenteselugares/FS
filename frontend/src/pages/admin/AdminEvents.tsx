@@ -564,7 +564,7 @@ export const AdminEvents: React.FC<AdminEventsProps> = ({ initialEditEventId }) 
                 <div className="flex gap-2">
                   <button onClick={() => { setQrModalEvent(event); setCopied(false); }} className="p-3 border border-theme-border text-theme-muted"><QrCode size={16} /></button>
                   <button onClick={() => setPhygitalQueueEvent(event)} className="p-3 border border-theme-border text-brand-tactical"><Radar size={16} /></button>
-                  <button onClick={() => handleEditOpen(event)} className="px-5 py-3 border border-theme-border text-[9px] font-black uppercase tracking-widest text-theme-text">Editar</button>
+                  <button onClick={() => handleEditOpen(event)} className="px-5 py-3 border border-theme-border text-[8px] md:text-[9px] font-black uppercase tracking-wider md:tracking-widest text-theme-text">Editar</button>
                   <button onClick={() => setConfirmDelete(event)} className="p-3 border border-theme-border text-red-500/40"><Trash2 size={16} /></button>
                 </div>
               </div>
@@ -590,7 +590,7 @@ export const AdminEvents: React.FC<AdminEventsProps> = ({ initialEditEventId }) 
                 </div>
               </div>
               
-              <div className="flex items-center gap-8 mr-12">
+              <div className="grid grid-cols-2 md:flex items-center gap-4 md:gap-8 mr-0 md:mr-12">
                 {(['info', 'equipe', 'comercial', 'galeria'] as const).map(t => (
                   <button key={t} type="button" onClick={() => setActiveTab(t)} className={`pb-2 text-[10px] font-black uppercase tracking-[0.2em] relative transition-all italic ${activeTab === t ? 'text-brand-tactical' : 'text-theme-muted hover:text-white'}`}>
                     {t === 'info' ? '1. Essencial' : t === 'equipe' ? '2. Operação' : t === 'comercial' ? '3. Comercial' : '4. Galeria'}
@@ -739,7 +739,7 @@ export const AdminEvents: React.FC<AdminEventsProps> = ({ initialEditEventId }) 
                               type="button"
                               onClick={handleSyncDrive}
                               disabled={isSyncing || !formData.driveUrl}
-                              className="px-6 bg-brand-tactical text-zinc-950 text-[9px] font-black uppercase tracking-widest rounded-xl hover:brightness-110 transition-all flex items-center gap-2 disabled:opacity-50"
+                              className="px-6 bg-brand-tactical text-zinc-950 text-[8px] md:text-[9px] font-black uppercase tracking-wider md:tracking-widest rounded-xl hover:brightness-110 transition-all flex items-center gap-2 disabled:opacity-50"
                             >
                               <RefreshCw size={14} className={isSyncing ? "animate-spin" : ""} />
                               {isSyncing ? "SYNC..." : "SINCRO DRIVE"}
@@ -761,10 +761,10 @@ export const AdminEvents: React.FC<AdminEventsProps> = ({ initialEditEventId }) 
                       <div className="space-y-4">
                         <label className="text-[8px] font-black text-theme-muted uppercase tracking-widest block mb-2 opacity-60 italic">Modelo e Serviços</label>
                         <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
-                          <button type="button" onClick={() => setFormData({ ...formData, type: 'ALBUM_FULL' })} className={`py-4 border text-[9px] font-black uppercase tracking-widest transition-all rounded-xl italic ${formData.type === 'ALBUM_FULL' ? 'bg-brand-tactical border-brand-tactical text-zinc-950 shadow-lg shadow-brand-tactical/20' : 'bg-theme-bg-muted border-theme-border text-theme-muted hover:border-theme-text'}`}>Social</button>
-                          <button type="button" onClick={() => setFormData({ ...formData, type: 'PHOTO_MARKETPLACE' })} className={`py-4 border text-[9px] font-black uppercase tracking-widest transition-all rounded-xl italic ${formData.type === 'PHOTO_MARKETPLACE' ? 'bg-brand-tactical border-brand-tactical text-zinc-950 shadow-lg shadow-brand-tactical/20' : 'bg-theme-bg-muted border-theme-border text-theme-muted hover:border-theme-text'}`}>Marketplace</button>
-                          <button type="button" onClick={() => setFormData({ ...formData, type: 'SCHOOL' })} className={`py-4 border text-[9px] font-black uppercase tracking-widest transition-all rounded-xl italic ${formData.type === 'SCHOOL' ? 'bg-brand-tactical border-brand-tactical text-zinc-950 shadow-lg shadow-brand-tactical/20' : 'bg-theme-bg-muted border-theme-border text-theme-muted hover:border-theme-text'}`}>Escolar</button>
-                          <button type="button" onClick={() => setFormData({ ...formData, type: 'SPORTS' })} className={`py-4 border text-[9px] font-black uppercase tracking-widest transition-all rounded-xl italic ${formData.type === 'SPORTS' ? 'bg-brand-tactical border-brand-tactical text-zinc-950 shadow-lg shadow-brand-tactical/20' : 'bg-theme-bg-muted border-theme-border text-theme-muted hover:border-theme-text'}`}>Esportes</button>
+                          <button type="button" onClick={() => setFormData({ ...formData, type: 'ALBUM_FULL' })} className={`py-4 border text-[8px] md:text-[9px] font-black uppercase tracking-wider md:tracking-widest transition-all rounded-xl italic ${formData.type === 'ALBUM_FULL' ? 'bg-brand-tactical border-brand-tactical text-zinc-950 shadow-lg shadow-brand-tactical/20' : 'bg-theme-bg-muted border-theme-border text-theme-muted hover:border-theme-text'}`}>Social</button>
+                          <button type="button" onClick={() => setFormData({ ...formData, type: 'PHOTO_MARKETPLACE' })} className={`py-4 border text-[8px] md:text-[9px] font-black uppercase tracking-wider md:tracking-widest transition-all rounded-xl italic ${formData.type === 'PHOTO_MARKETPLACE' ? 'bg-brand-tactical border-brand-tactical text-zinc-950 shadow-lg shadow-brand-tactical/20' : 'bg-theme-bg-muted border-theme-border text-theme-muted hover:border-theme-text'}`}>Marketplace</button>
+                          <button type="button" onClick={() => setFormData({ ...formData, type: 'SCHOOL' })} className={`py-4 border text-[8px] md:text-[9px] font-black uppercase tracking-wider md:tracking-widest transition-all rounded-xl italic ${formData.type === 'SCHOOL' ? 'bg-brand-tactical border-brand-tactical text-zinc-950 shadow-lg shadow-brand-tactical/20' : 'bg-theme-bg-muted border-theme-border text-theme-muted hover:border-theme-text'}`}>Escolar</button>
+                          <button type="button" onClick={() => setFormData({ ...formData, type: 'SPORTS' })} className={`py-4 border text-[8px] md:text-[9px] font-black uppercase tracking-wider md:tracking-widest transition-all rounded-xl italic ${formData.type === 'SPORTS' ? 'bg-brand-tactical border-brand-tactical text-zinc-950 shadow-lg shadow-brand-tactical/20' : 'bg-theme-bg-muted border-theme-border text-theme-muted hover:border-theme-text'}`}>Esportes</button>
                         </div>
                         {formData.type === 'SCHOOL' && (
                           <div className="p-6 bg-brand-tactical/5 border border-brand-tactical/20 rounded-[20px] space-y-4">
@@ -795,7 +795,7 @@ export const AdminEvents: React.FC<AdminEventsProps> = ({ initialEditEventId }) 
                                 {formData[f as keyof EventFormData] && <div className="w-2.5 h-2.5 bg-black rounded-sm" />}
                               </div>
                               <input type="checkbox" hidden checked={formData[f as keyof EventFormData] as boolean} onChange={e => setFormData({...formData, [f]: e.target.checked})} />
-                              <span className={`text-[9px] font-black uppercase tracking-widest transition-all italic ${formData[f as keyof EventFormData] ? 'text-brand-tactical' : 'text-theme-muted'}`}>{f.replace("tem", "").replace("is", "").replace("Enabled", "").replace(/([A-Z])/g, ' $1').trim()}</span>
+                              <span className={`text-[8px] md:text-[9px] font-black uppercase tracking-wider md:tracking-widest transition-all italic ${formData[f as keyof EventFormData] ? 'text-brand-tactical' : 'text-theme-muted'}`}>{f.replace("tem", "").replace("is", "").replace("Enabled", "").replace(/([A-Z])/g, ' $1').trim()}</span>
                             </label>
                           ))}
                         </div>
@@ -830,7 +830,7 @@ export const AdminEvents: React.FC<AdminEventsProps> = ({ initialEditEventId }) 
                           type="button"
                           onClick={handleSyncDrive}
                           disabled={isSyncing || !formData.driveUrl}
-                          className="px-4 py-2 bg-brand-tactical/10 border border-brand-tactical/30 text-brand-tactical text-[9px] font-black uppercase tracking-widest rounded-lg hover:bg-brand-tactical hover:text-zinc-950 transition-all flex items-center gap-2 disabled:opacity-50"
+                          className="px-4 py-2 bg-brand-tactical/10 border border-brand-tactical/30 text-brand-tactical text-[8px] md:text-[9px] font-black uppercase tracking-wider md:tracking-widest rounded-lg hover:bg-brand-tactical hover:text-zinc-950 transition-all flex items-center gap-2 disabled:opacity-50"
                         >
                           <RefreshCw size={12} className={isSyncing ? "animate-spin" : ""} />
                           {isSyncing ? "SYNC..." : "SINCRO DRIVE"}
@@ -957,7 +957,7 @@ export const AdminEvents: React.FC<AdminEventsProps> = ({ initialEditEventId }) 
                   </div>
                   <button 
                     onClick={() => { navigator.clipboard.writeText(`${window.location.origin}/e/${qrModalEvent.slug}`); setCopied(true); setTimeout(()=>setCopied(false),2000); }} 
-                    className="w-full py-4 bg-theme-bg border border-theme-border text-[9px] font-black uppercase tracking-widest hover:border-theme-text transition-all rounded-xl italic"
+                    className="w-full py-4 bg-theme-bg border border-theme-border text-[8px] md:text-[9px] font-black uppercase tracking-wider md:tracking-widest hover:border-theme-text transition-all rounded-xl italic"
                   >
                     {copied ? "COPIADO!" : "COPIAR LINK ÁLBUM"}
                   </button>
@@ -974,7 +974,7 @@ export const AdminEvents: React.FC<AdminEventsProps> = ({ initialEditEventId }) 
                   </div>
                   <button 
                     onClick={() => { navigator.clipboard.writeText(`${window.location.origin}/captura?e=${qrModalEvent.id}`); setNotification({ message: "Link de Captura Copiado!", type: 'success' }); }} 
-                    className="w-full py-4 bg-brand-tactical text-zinc-950 text-[9px] font-black uppercase tracking-widest hover:brightness-110 transition-all shadow-lg rounded-xl italic"
+                    className="w-full py-4 bg-brand-tactical text-zinc-950 text-[8px] md:text-[9px] font-black uppercase tracking-wider md:tracking-widest hover:brightness-110 transition-all shadow-lg rounded-xl italic"
                   >
                     COPIAR LINK CAPTURA
                   </button>

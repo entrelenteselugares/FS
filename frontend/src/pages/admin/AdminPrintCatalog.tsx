@@ -186,14 +186,14 @@ export const AdminPrintCatalog: React.FC = () => {
          <select 
             value={filterCategory}
             onChange={e => setFilterCategory(e.target.value)}
-            className="px-6 py-4 bg-theme-bg border border-theme-border/60 text-[9px] font-black uppercase tracking-widest text-theme-text outline-none focus:border-brand-tactical transition-all cursor-pointer"
+            className="px-6 py-4 bg-theme-bg border border-theme-border/60 text-[8px] md:text-[9px] font-black uppercase tracking-wider md:tracking-widest text-theme-text outline-none focus:border-brand-tactical transition-all cursor-pointer"
          >
             <option value="">TODAS AS CATEGORIAS</option>
             {Object.entries(CATEGORY_LABELS).map(([k, v]) => <option key={k} value={k}>{v.label}</option>)}
          </select>
          <button 
             onClick={() => setShowInactive(!showInactive)}
-            className="px-8 py-4 bg-theme-bg border border-theme-border/60 text-[9px] font-black uppercase tracking-widest text-theme-muted hover:text-white flex items-center gap-3 transition-all"
+            className="px-8 py-4 bg-theme-bg border border-theme-border/60 text-[8px] md:text-[9px] font-black uppercase tracking-wider md:tracking-widest text-theme-muted hover:text-white flex items-center gap-3 transition-all"
          >
             {showInactive ? <Eye size={14} /> : <EyeOff size={14} />} {showInactive ? 'OCULTAR INATIVOS' : 'EXIBIR TODOS'}
          </button>
@@ -385,7 +385,7 @@ function NewSupplierModal({ onClose, onSave }: { onClose: () => void, onSave: ()
           </div>
           
           <div className="pt-6 flex gap-4">
-            <button type="button" onClick={onClose} className="flex-1 py-4 border border-theme-border text-[9px] font-black uppercase tracking-widest text-theme-muted hover:text-white transition-all rounded-2xl italic">Cancelar</button>
+            <button type="button" onClick={onClose} className="flex-1 py-4 border border-theme-border text-[8px] md:text-[9px] font-black uppercase tracking-wider md:tracking-widest text-theme-muted hover:text-white transition-all rounded-2xl italic">Cancelar</button>
             <button type="submit" disabled={loading} className="flex-1 py-4 bg-brand-tactical text-zinc-950 text-[9px] font-black uppercase tracking-[0.3em] shadow-xl hover:brightness-110 transition-all rounded-2xl italic">
               {loading ? "Sincronizando..." : "Salvar Registro"}
             </button>

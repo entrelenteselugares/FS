@@ -302,7 +302,7 @@ export const AdminFinance: React.FC = () => {
                               <button 
                                 onClick={() => handleSettle(b.userId)}
                                 disabled={settleLoading === b.userId}
-                                className={`px-4 py-2 text-[9px] font-black uppercase tracking-widest border border-brand-tactical text-brand-tactical hover:bg-brand-tactical hover:text-zinc-950 transition-all italic ${settleLoading === b.userId ? 'opacity-50 animate-pulse' : ''}`}
+                                className={`px-4 py-2 text-[8px] md:text-[9px] font-black uppercase tracking-wider md:tracking-widest border border-brand-tactical text-brand-tactical hover:bg-brand-tactical hover:text-zinc-950 transition-all italic ${settleLoading === b.userId ? 'opacity-50 animate-pulse' : ''}`}
                               >
                                 {settleLoading === b.userId ? "LIQUIDANDO..." : "GERAR REPASSE"}
                               </button>

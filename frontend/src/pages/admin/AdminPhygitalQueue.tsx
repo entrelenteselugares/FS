@@ -101,12 +101,12 @@ export default function AdminPhygitalQueue({ eventId, eventTitle, onClose }: Pro
                       {job.status === 'PRINTED' ? (
                         <div className="flex items-center gap-1.5 text-brand-tactical">
                           <CheckCircle size={12} />
-                          <span className="text-[9px] font-black uppercase tracking-widest">Impresso</span>
+                          <span className="text-[8px] md:text-[9px] font-black uppercase tracking-wider md:tracking-widest">Impresso</span>
                         </div>
                       ) : (
                         <div className="flex items-center gap-1.5 text-amber-500">
                           <Clock size={12} className="animate-pulse" />
-                          <span className="text-[9px] font-black uppercase tracking-widest">Na Fila</span>
+                          <span className="text-[8px] md:text-[9px] font-black uppercase tracking-wider md:tracking-widest">Na Fila</span>
                         </div>
                       )}
                     </div>

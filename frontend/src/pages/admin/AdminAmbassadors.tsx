@@ -141,7 +141,7 @@ export const AdminAmbassadors: React.FC = () => {
           <div key={i} className="bg-theme-card border border-theme-border p-6 space-y-2">
             <div className="flex items-center gap-2 text-theme-subtle">
               {s.icon}
-              <span className="text-[9px] font-black uppercase tracking-widest">{s.label}</span>
+              <span className="text-[8px] md:text-[9px] font-black uppercase tracking-wider md:tracking-widest">{s.label}</span>
             </div>
             <p className="text-3xl font-black italic tracking-tighter text-theme-text">{s.value}</p>
           </div>
@@ -164,7 +164,7 @@ export const AdminAmbassadors: React.FC = () => {
       <div className="bg-theme-card border border-theme-border overflow-hidden">
         <table className="w-full text-left">
           <thead>
-            <tr className="border-b border-theme-border text-[9px] font-black uppercase tracking-widest text-theme-subtle">
+            <tr className="border-b border-theme-border text-[8px] md:text-[9px] font-black uppercase tracking-wider md:tracking-widest text-theme-subtle">
               <th className="p-6">Campanha / Slug</th>
               <th className="p-6">Embaixador</th>
               <th className="p-6">Recompensa</th>

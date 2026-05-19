@@ -144,7 +144,7 @@ export default function AdminInventory() {
               className="fs-input pl-12 uppercase tracking-widest"
             />
          </div>
-         <div className="flex gap-2 overflow-x-auto pb-2 md:pb-0 w-full md:w-auto">
+         <div className="grid grid-cols-2 md:flex md:gap-2 pb-2 md:pb-0 w-full md:w-auto gap-2">
             {categories.map(cat => (
               <button
                 key={cat}
@@ -403,7 +403,7 @@ export default function AdminInventory() {
               />
 
               <div className="flex gap-4 pt-4">
-                <button onClick={() => setShowAdjustModal(null)} className="flex-1 py-4 border border-theme-border text-[9px] font-black uppercase tracking-widest text-theme-muted hover:text-white transition-all rounded-2xl italic">Cancelar</button>
+                <button onClick={() => setShowAdjustModal(null)} className="flex-1 py-4 border border-theme-border text-[8px] md:text-[9px] font-black uppercase tracking-wider md:tracking-widest text-theme-muted hover:text-white transition-all rounded-2xl italic">Cancelar</button>
                 <button onClick={handleAdjust} className="flex-1 py-4 bg-brand-tactical text-zinc-950 text-[9px] font-black uppercase tracking-[0.2em] shadow-xl hover:brightness-110 transition-all rounded-2xl italic flex items-center justify-center gap-2">
                   Confirmar Movimentação
                   <ArrowRight size={18} strokeWidth={1.5} />

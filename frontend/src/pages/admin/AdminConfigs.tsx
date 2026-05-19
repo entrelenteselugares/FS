@@ -207,10 +207,10 @@ export const AdminConfigs: React.FC = () => {
       </div>
 
       {/* NAVIGATION TACTICAL */}
-      <div className="flex bg-theme-bg border border-theme-border/60 p-1.5 shadow-sm max-w-fit">
-        <button onClick={() => setTab("splits")} className={`px-8 py-3 text-[9px] font-black uppercase tracking-widest transition-all ${tab === "splits" ? 'bg-brand-tactical text-zinc-950 shadow-md' : 'text-theme-muted hover:text-brand-text'}`}>Divisão de Split</button>
-        <button onClick={() => setTab("payouts")} className={`px-8 py-3 text-[9px] font-black uppercase tracking-widest transition-all ${tab === "payouts" ? 'bg-brand-tactical text-zinc-950 shadow-md' : 'text-theme-muted hover:text-brand-text'}`}>Repasses ({payouts.length})</button>
-        <button onClick={() => setTab("infra")} className={`px-8 py-3 text-[9px] font-black uppercase tracking-widest transition-all ${tab === "infra" ? 'bg-brand-tactical text-zinc-950 shadow-md' : 'text-theme-muted hover:text-brand-text'}`}>Infraestrutura</button>
+      <div className="grid grid-cols-2 sm:grid-cols-3 md:flex bg-theme-bg border border-theme-border/60 p-1.5 shadow-sm w-full md:w-auto md:max-w-fit gap-1">
+        <button onClick={() => setTab("splits")} className={`px-8 py-3 text-[8px] md:text-[9px] font-black uppercase tracking-wider md:tracking-widest transition-all ${tab === "splits" ? 'bg-brand-tactical text-zinc-950 shadow-md' : 'text-theme-muted hover:text-brand-text'}`}>Divisão de Split</button>
+        <button onClick={() => setTab("payouts")} className={`px-8 py-3 text-[8px] md:text-[9px] font-black uppercase tracking-wider md:tracking-widest transition-all ${tab === "payouts" ? 'bg-brand-tactical text-zinc-950 shadow-md' : 'text-theme-muted hover:text-brand-text'}`}>Repasses ({payouts.length})</button>
+        <button onClick={() => setTab("infra")} className={`px-8 py-3 text-[8px] md:text-[9px] font-black uppercase tracking-wider md:tracking-widest transition-all ${tab === "infra" ? 'bg-brand-tactical text-zinc-950 shadow-md' : 'text-theme-muted hover:text-brand-text'}`}>Infraestrutura</button>
       </div>
 
       {/* VIEW: SPLIT DISTRIBUTION */}

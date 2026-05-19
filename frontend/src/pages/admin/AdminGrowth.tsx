@@ -121,7 +121,7 @@ export function AdminGrowth() {
       </div>
 
       {/* Tabs */}
-      <div className="flex border-b border-theme-border/40 overflow-x-auto hide-scrollbar">
+      <div className="grid grid-cols-2 md:flex border-b border-theme-border/40 gap-1">
         {[
           { id: "COUPONS", icon: Tag, label: "Cupons Genéricos" },
           { id: "WHATSAPP", icon: Phone, label: "Motor WhatsApp" },
@@ -250,7 +250,7 @@ export function AdminGrowth() {
                 </div>
                 <div>
                   <h2 className="text-xl font-black uppercase italic tracking-tighter text-theme-text">Novo Cupom</h2>
-                  <p className="text-[9px] font-black uppercase tracking-widest opacity-40">Criar cupom de desconto</p>
+                  <p className="text-[8px] md:text-[9px] font-black uppercase tracking-wider md:tracking-widest opacity-40">Criar cupom de desconto</p>
                 </div>
               </div>
               <button onClick={() => setIsModalOpen(false)} className="p-2 hover:bg-white/5 rounded-full transition-all text-theme-muted">

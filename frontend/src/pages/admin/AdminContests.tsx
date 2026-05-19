@@ -200,7 +200,7 @@ export const AdminContests: React.FC = () => {
           <div className="flex flex-wrap items-center gap-4 w-full xl:w-auto">
             <button 
               onClick={handleCreateClick}
-              className="flex-1 md:flex-none px-8 py-4 bg-brand-tactical text-zinc-950 text-[10px] font-black uppercase tracking-[0.4em] hover:brightness-110 shadow-xl transition-all italic whitespace-nowrap"
+              className="flex-1 md:flex-none px-8 py-4 bg-brand-tactical text-zinc-950 text-[10px] font-black uppercase tracking-[0.4em] hover:brightness-110 shadow-xl transition-all italic text-center w-full break-words leading-tight"
             >
               NOVO CONCURSO
             </button>

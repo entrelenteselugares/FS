@@ -178,22 +178,22 @@ export default function AdminSuppliers() {
           </div>
         </div>
         
-        <div className="flex bg-theme-bg border border-theme-border/60 p-1.5 shadow-sm italic">
+        <div className="grid grid-cols-3 md:flex bg-theme-bg border border-theme-border/60 p-1.5 shadow-sm italic gap-1">
           <button 
             onClick={() => setView("production")} 
-            className={`px-6 py-3 text-[9px] font-black uppercase tracking-widest transition-all whitespace-nowrap italic ${view === "production" ? 'bg-brand-tactical text-zinc-950 shadow-md' : 'text-theme-muted hover:text-brand-text'}`}
+            className={`px-6 py-3 text-[8px] md:text-[9px] font-black uppercase tracking-wider md:tracking-widest transition-all whitespace-nowrap italic ${view === "production" ? 'bg-brand-tactical text-zinc-950 shadow-md' : 'text-theme-muted hover:text-brand-text'}`}
           >
             Fila de Produção
           </button>
           <button 
             onClick={() => setView("roi")} 
-            className={`px-6 py-3 text-[9px] font-black uppercase tracking-widest transition-all whitespace-nowrap italic ${view === "roi" ? 'bg-brand-tactical text-zinc-950 shadow-md' : 'text-theme-muted hover:text-brand-text'}`}
+            className={`px-6 py-3 text-[8px] md:text-[9px] font-black uppercase tracking-wider md:tracking-widest transition-all whitespace-nowrap italic ${view === "roi" ? 'bg-brand-tactical text-zinc-950 shadow-md' : 'text-theme-muted hover:text-brand-text'}`}
           >
             Engenharia de ROI
           </button>
           <button 
             onClick={() => setView("suppliers")} 
-            className={`px-6 py-3 text-[9px] font-black uppercase tracking-widest transition-all whitespace-nowrap italic ${view === "suppliers" ? 'bg-brand-tactical text-zinc-950 shadow-md' : 'text-theme-muted hover:text-brand-text'}`}
+            className={`px-6 py-3 text-[8px] md:text-[9px] font-black uppercase tracking-wider md:tracking-widest transition-all whitespace-nowrap italic ${view === "suppliers" ? 'bg-brand-tactical text-zinc-950 shadow-md' : 'text-theme-muted hover:text-brand-text'}`}
           >
             Ativos / Hardware
           </button>
@@ -230,7 +230,7 @@ export default function AdminSuppliers() {
                     className="w-full bg-theme-bg border border-theme-border/60 p-4 pl-12 text-[10px] text-theme-text font-black outline-none focus:border-brand-tactical transition-all uppercase tracking-widest placeholder:text-theme-muted/50" 
                  />
               </div>
-              <button className="px-8 py-4 bg-theme-bg border border-theme-border/60 text-[9px] font-black uppercase tracking-widest text-theme-muted hover:text-theme-text flex items-center gap-3 transition-all">
+              <button className="px-8 py-4 bg-theme-bg border border-theme-border/60 text-[8px] md:text-[9px] font-black uppercase tracking-wider md:tracking-widest text-theme-muted hover:text-theme-text flex items-center gap-3 transition-all">
                  <Filter size={12} /> Filtros Táticos
               </button>
            </div>
@@ -363,7 +363,7 @@ export default function AdminSuppliers() {
                          <div className="overflow-x-auto">
                             <table className="w-full text-left border-collapse">
                                <thead>
-                                  <tr className="border-b border-theme-border/30 bg-black/5 text-[9px] font-black uppercase tracking-widest text-theme-muted">
+                                  <tr className="border-b border-theme-border/30 bg-black/5 text-[8px] md:text-[9px] font-black uppercase tracking-wider md:tracking-widest text-theme-muted">
                                      <th className="p-4">Investimento</th>
                                      <th className="p-4 text-center">Volume ROI</th>
                                      <th className="p-4 text-right">Tempo Est.</th>
@@ -387,7 +387,7 @@ export default function AdminSuppliers() {
                  ) : (
                    <div className="h-64 bg-theme-bg border border-theme-border/60 flex flex-col items-center justify-center space-y-4 shadow-sm">
                       <Calculator size={32} strokeWidth={1.5} className="text-theme-muted opacity-40" />
-                      <p className="text-[9px] font-black uppercase tracking-widest text-theme-muted">Carregando análise financeira...</p>
+                      <p className="text-[8px] md:text-[9px] font-black uppercase tracking-wider md:tracking-widest text-theme-muted">Carregando análise financeira...</p>
                    </div>
                  )}
               </div>
@@ -402,7 +402,7 @@ export default function AdminSuppliers() {
               <h3 className="text-xl font-heading text-theme-text uppercase tracking-tighter">Ativos & Hardware</h3>
               <button 
                 onClick={() => setIsModalOpen(true)}
-                className="bg-brand-tactical text-zinc-950 px-6 py-3 text-[9px] font-black uppercase tracking-widest shadow-lg flex items-center gap-2 hover:brightness-110 transition-all italic"
+                className="bg-brand-tactical text-zinc-950 px-6 py-3 text-[8px] md:text-[9px] font-black uppercase tracking-wider md:tracking-widest shadow-lg flex items-center gap-2 hover:brightness-110 transition-all italic"
               >
                 <Plus size={12} /> NOVO EQUIPAMENTO
               </button>

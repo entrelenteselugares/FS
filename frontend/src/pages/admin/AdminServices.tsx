@@ -191,7 +191,7 @@ export const AdminServices: React.FC = () => {
          <select 
             value={filterCategory}
             onChange={e => setFilterCategory(e.target.value)}
-            className="px-6 py-4 bg-theme-bg border border-theme-border/60 text-[9px] font-black uppercase tracking-widest text-theme-text outline-none focus:border-brand-tactical transition-all cursor-pointer"
+            className="px-6 py-4 bg-theme-bg border border-theme-border/60 text-[8px] md:text-[9px] font-black uppercase tracking-wider md:tracking-widest text-theme-text outline-none focus:border-brand-tactical transition-all cursor-pointer"
          >
             <option value="">TODAS AS CATEGORIAS</option>
             <option value="FOTOGRAFIA">FOTOGRAFIA</option>

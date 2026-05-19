@@ -83,7 +83,7 @@ export const AdminOverview: React.FC<OverviewProps> = ({ stats, recentOrders = [
         ].map((kpi, idx) => (
           <div key={idx} className="bg-theme-card p-8 group hover:bg-white/[0.02] transition-colors relative">
             <div className="absolute top-0 left-0 w-full h-px bg-gradient-to-r from-transparent via-white/5 to-transparent opacity-0 group-hover:opacity-100 transition-opacity" />
-            <label className="text-[9px] font-black uppercase tracking-widest text-theme-subtle block mb-4 italic">{kpi.label}</label>
+            <label className="text-[8px] md:text-[9px] font-black uppercase tracking-wider md:tracking-widest text-theme-subtle block mb-4 italic">{kpi.label}</label>
             <div className="flex items-baseline justify-between">
               <div className={`text-2xl md:text-3xl font-display font-black italic tracking-tighter ${kpi.color}`}>
                 {kpi.value}
@@ -136,7 +136,7 @@ export const AdminOverview: React.FC<OverviewProps> = ({ stats, recentOrders = [
                 </div>
                 <button 
                   onClick={() => onEditEvent(event.id)}
-                  className="px-6 py-2 border border-theme-border text-[9px] font-black uppercase tracking-widest text-theme-muted hover:text-brand-tactical hover:border-brand-tactical transition-all"
+                  className="px-6 py-2 border border-theme-border text-[8px] md:text-[9px] font-black uppercase tracking-wider md:tracking-widest text-theme-muted hover:text-brand-tactical hover:border-brand-tactical transition-all"
                 >Ajustar</button>
               </div>
             )) : (

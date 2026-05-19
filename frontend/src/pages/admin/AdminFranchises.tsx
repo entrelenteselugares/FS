@@ -321,9 +321,9 @@ export default function AdminFranchises() {
             </thead>
             <tbody className="divide-y divide-theme-border/50">
               {loadingOrders ? (
-                <tr><td colSpan={5} className="p-10 text-center text-theme-muted text-[9px] font-black uppercase tracking-widest">Carregando pedidos...</td></tr>
+                <tr><td colSpan={5} className="p-10 text-center text-theme-muted text-[8px] md:text-[9px] font-black uppercase tracking-wider md:tracking-widest">Carregando pedidos...</td></tr>
               ) : supplyOrders.length === 0 ? (
-                <tr><td colSpan={5} className="p-10 text-center text-theme-muted text-[9px] font-black uppercase tracking-widest">Nenhum pedido registrado.</td></tr>
+                <tr><td colSpan={5} className="p-10 text-center text-theme-muted text-[8px] md:text-[9px] font-black uppercase tracking-wider md:tracking-widest">Nenhum pedido registrado.</td></tr>
               ) : supplyOrders.map(order => (
                 <tr key={order.id} className="hover:bg-white/[0.02] transition-colors">
                   <td className="p-4">

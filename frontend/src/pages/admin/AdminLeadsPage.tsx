@@ -161,11 +161,11 @@ export const AdminLeadsPage: React.FC = () => {
           <table className="w-full text-left border-collapse">
             <thead>
               <tr className="border-b border-theme-border">
-                <th className="p-6 text-[9px] font-black uppercase tracking-widest text-theme-text-muted">Cliente / Contato</th>
-                <th className="p-6 text-[9px] font-black uppercase tracking-widest text-theme-text-muted">Evento</th>
-                <th className="p-6 text-[9px] font-black uppercase tracking-widest text-theme-text-muted">Valor</th>
-                <th className="p-6 text-[9px] font-black uppercase tracking-widest text-theme-text-muted">Início</th>
-                <th className="p-6 text-[9px] font-black uppercase tracking-widest text-theme-text-muted text-right">Ações de Recuperação</th>
+                <th className="p-6 text-[8px] md:text-[9px] font-black uppercase tracking-wider md:tracking-widest text-theme-text-muted">Cliente / Contato</th>
+                <th className="p-6 text-[8px] md:text-[9px] font-black uppercase tracking-wider md:tracking-widest text-theme-text-muted">Evento</th>
+                <th className="p-6 text-[8px] md:text-[9px] font-black uppercase tracking-wider md:tracking-widest text-theme-text-muted">Valor</th>
+                <th className="p-6 text-[8px] md:text-[9px] font-black uppercase tracking-wider md:tracking-widest text-theme-text-muted">Início</th>
+                <th className="p-6 text-[8px] md:text-[9px] font-black uppercase tracking-wider md:tracking-widest text-theme-text-muted text-right">Ações de Recuperação</th>
               </tr>
             </thead>
             <tbody className="divide-y divide-theme-border">
@@ -185,7 +185,7 @@ export const AdminLeadsPage: React.FC = () => {
                     </div>
                   </td>
                   <td className="p-6">
-                    <span className="text-[9px] font-black uppercase tracking-widest text-theme-text-muted">{item.event.nomeNoivos}</span>
+                    <span className="text-[8px] md:text-[9px] font-black uppercase tracking-wider md:tracking-widest text-theme-text-muted">{item.event.nomeNoivos}</span>
                   </td>
                   <td className="p-6">
                     <span className="text-xs font-heading font-black italic text-theme-text">R$ {Number(item.valor).toFixed(2)}</span>
@@ -227,11 +227,11 @@ export const AdminLeadsPage: React.FC = () => {
           <table className="w-full text-left border-collapse">
             <thead>
               <tr className="border-b border-theme-border">
-                <th className="p-6 text-[9px] font-black uppercase tracking-widest text-theme-text-muted">Email do Lead</th>
-                <th className="p-6 text-[9px] font-black uppercase tracking-widest text-theme-text-muted">Evento de Origem</th>
-                <th className="p-6 text-[9px] font-black uppercase tracking-widest text-theme-text-muted">Data de Captura</th>
-                <th className="p-6 text-[9px] font-black uppercase tracking-widest text-theme-text-muted">Fonte</th>
-                <th className="p-6 text-[9px] font-black uppercase tracking-widest text-theme-text-muted text-right">Ações</th>
+                <th className="p-6 text-[8px] md:text-[9px] font-black uppercase tracking-wider md:tracking-widest text-theme-text-muted">Email do Lead</th>
+                <th className="p-6 text-[8px] md:text-[9px] font-black uppercase tracking-wider md:tracking-widest text-theme-text-muted">Evento de Origem</th>
+                <th className="p-6 text-[8px] md:text-[9px] font-black uppercase tracking-wider md:tracking-widest text-theme-text-muted">Data de Captura</th>
+                <th className="p-6 text-[8px] md:text-[9px] font-black uppercase tracking-wider md:tracking-widest text-theme-text-muted">Fonte</th>
+                <th className="p-6 text-[8px] md:text-[9px] font-black uppercase tracking-wider md:tracking-widest text-theme-text-muted text-right">Ações</th>
               </tr>
             </thead>
             <tbody className="divide-y divide-theme-border">
@@ -245,7 +245,7 @@ export const AdminLeadsPage: React.FC = () => {
                       <span className="text-[10px] font-black text-theme-text lowercase">{lead.email}</span>
                     </div>
                   </td>
-                  <td className="p-6 text-[9px] font-black uppercase tracking-widest text-theme-text-muted">
+                  <td className="p-6 text-[8px] md:text-[9px] font-black uppercase tracking-wider md:tracking-widest text-theme-text-muted">
                     {lead.event?.nomeNoivos || 'Captação Geral'}
                   </td>
                   <td className="p-6 text-[9px] font-bold text-theme-text-muted">

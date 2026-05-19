@@ -213,13 +213,13 @@ export const AdminOrders: React.FC = () => {
       </div>
 
       {/* FILTROS DE STATUS */}
-      <div className="flex items-center gap-3 border-b border-theme-border/30 pb-6 overflow-x-auto no-scrollbar">
+      <div className="grid grid-cols-2 md:flex items-center gap-2 md:gap-3 border-b border-theme-border/30 pb-6">
          <Filter size={14} className="text-theme-muted mr-2" />
          {(['ALL', 'QUITADO', 'PARCIAL', 'PENDENTE'] as const).map(f => (
            <button
              key={f}
              onClick={() => setStatusFilter(f)}
-             className={`px-6 py-2.5 text-[9px] font-black uppercase tracking-widest border transition-all ${statusFilter === f ? 'border-brand-tactical bg-brand-tactical text-zinc-950' : 'border-theme-border text-theme-muted hover:border-zinc-500'}`}
+             className={`px-6 py-2.5 text-[8px] md:text-[9px] font-black uppercase tracking-wider md:tracking-widest border transition-all ${statusFilter === f ? 'border-brand-tactical bg-brand-tactical text-zinc-950' : 'border-theme-border text-theme-muted hover:border-zinc-500'}`}
            >
              {f === 'ALL' ? 'TODOS' : f}
            </button>
@@ -273,17 +273,17 @@ export const AdminOrders: React.FC = () => {
                      
                      <div className="text-center min-w-[120px]">
                         {group.status === "QUITADO" && (
-                          <div className="flex items-center justify-center gap-2 px-4 py-2 border border-brand-tactical text-brand-tactical bg-brand-tactical/10 text-[9px] font-black uppercase tracking-widest">
+                          <div className="flex items-center justify-center gap-2 px-4 py-2 border border-brand-tactical text-brand-tactical bg-brand-tactical/10 text-[8px] md:text-[9px] font-black uppercase tracking-wider md:tracking-widest">
                              <CheckCircle2 size={12} /> {group.status}
                           </div>
                         )}
                         {group.status === "PARCIAL" && (
-                          <div className="flex items-center justify-center gap-2 px-4 py-2 border border-amber-500 text-amber-500 bg-amber-500/10 text-[9px] font-black uppercase tracking-widest">
+                          <div className="flex items-center justify-center gap-2 px-4 py-2 border border-amber-500 text-amber-500 bg-amber-500/10 text-[8px] md:text-[9px] font-black uppercase tracking-wider md:tracking-widest">
                              <PieChart size={12} /> {group.status}
                           </div>
                         )}
                         {group.status === "PENDENTE" && (
-                          <div className="flex items-center justify-center gap-2 px-4 py-2 border border-theme-border text-theme-muted bg-theme-bg/30 text-[9px] font-black uppercase tracking-widest">
+                          <div className="flex items-center justify-center gap-2 px-4 py-2 border border-theme-border text-theme-muted bg-theme-bg/30 text-[8px] md:text-[9px] font-black uppercase tracking-wider md:tracking-widest">
                              <Clock size={12} /> {group.status}
                           </div>
                         )}

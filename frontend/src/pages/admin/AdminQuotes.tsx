@@ -435,12 +435,12 @@ export const AdminQuotes: React.FC = () => {
                     <div className="grid grid-cols-2 gap-2">
                       {STAFF_ROLES.map(role=>{const n=selectedStaff.filter(s=>s.id===role.id).length;return(
                         <button key={role.id} onClick={()=>addStaffPreset(role.id)}
-                          className={`px-3 py-2 text-[9px] font-black uppercase tracking-widest border rounded-lg flex items-center justify-between transition-all ${n>0?"border-brand-tactical bg-brand-tactical/10 text-brand-tactical":"border-theme-border text-theme-text-muted hover:border-brand-tactical/50"}`}>
+                          className={`px-3 py-2 text-[8px] md:text-[9px] font-black uppercase tracking-wider md:tracking-widest border rounded-lg flex items-center justify-between transition-all ${n>0?"border-brand-tactical bg-brand-tactical/10 text-brand-tactical":"border-theme-border text-theme-text-muted hover:border-brand-tactical/50"}`}>
                           <span className="truncate">{role.name}</span>
                           <div className="flex items-center gap-1">{n>0&&<span className="bg-brand-tactical text-black px-1.5 py-0.5 rounded text-[8px]">{n}</span>}<Plus size={10}/></div>
                         </button>
                       );})}
-                      <button onClick={()=>addStaffPreset("custom")} className="px-3 py-2 text-[9px] font-black uppercase tracking-widest border border-dashed border-theme-border text-theme-text-muted hover:border-brand-tactical hover:text-brand-tactical rounded-lg flex items-center justify-between transition-all">OUTROS <Plus size={10}/></button>
+                      <button onClick={()=>addStaffPreset("custom")} className="px-3 py-2 text-[8px] md:text-[9px] font-black uppercase tracking-wider md:tracking-widest border border-dashed border-theme-border text-theme-text-muted hover:border-brand-tactical hover:text-brand-tactical rounded-lg flex items-center justify-between transition-all">OUTROS <Plus size={10}/></button>
                     </div>
                     <div className="space-y-2 pt-4 border-t border-theme-border/20">
                       <h4 className="text-[9px] font-black text-theme-text uppercase tracking-widest border-l-2 border-brand-tactical pl-2 mb-2">Cachês</h4>
@@ -617,7 +617,7 @@ export const AdminQuotes: React.FC = () => {
                       key={u} 
                       type="button" 
                       onClick={() => setNewQuoteData({...newQuoteData, urgency: u})} 
-                      className={`py-4 border text-[9px] font-black uppercase tracking-widest rounded-xl transition-all italic ${newQuoteData.urgency === u ? "border-brand-tactical bg-brand-tactical text-black shadow-lg shadow-brand-tactical/20" : "border-theme-border text-theme-muted hover:border-theme-text"}`}
+                      className={`py-4 border text-[8px] md:text-[9px] font-black uppercase tracking-wider md:tracking-widest rounded-xl transition-all italic ${newQuoteData.urgency === u ? "border-brand-tactical bg-brand-tactical text-black shadow-lg shadow-brand-tactical/20" : "border-theme-border text-theme-muted hover:border-theme-text"}`}
                     >
                       {u === "HIGH" ? "Urgente" : u === "MEDIUM" ? "Normal" : "Baixa"}
                     </button>
@@ -628,9 +628,9 @@ export const AdminQuotes: React.FC = () => {
               <div className="space-y-2">
                 <label className="text-[8px] font-black text-theme-muted uppercase tracking-widest block mb-2 opacity-60 italic">Serviços</label>
                 <div className="grid grid-cols-3 gap-3">
-                  <button type="button" onClick={() => toggleService('temFoto', 190)} className={`py-4 border text-[9px] font-black uppercase tracking-widest flex items-center justify-center gap-2 rounded-xl transition-all italic ${newQuoteData.temFoto ? "border-brand-tactical text-brand-tactical bg-brand-tactical/10 shadow-sm" : "border-theme-border text-theme-muted"}`}><Camera size={14}/>FOTO</button>
-                  <button type="button" onClick={() => toggleService('temVideo', 190)} className={`py-4 border text-[9px] font-black uppercase tracking-widest flex items-center justify-center gap-2 rounded-xl transition-all italic ${newQuoteData.temVideo ? "border-brand-tactical text-brand-tactical bg-brand-tactical/10 shadow-sm" : "border-theme-border text-theme-muted"}`}><Video size={14}/>VÍDEO</button>
-                  <button type="button" onClick={() => toggleService('temReels', 120)} className={`py-4 border text-[9px] font-black uppercase tracking-widest flex items-center justify-center gap-2 rounded-xl transition-all italic ${newQuoteData.temReels ? "border-brand-tactical text-brand-tactical bg-brand-tactical/10 shadow-sm" : "border-theme-border text-theme-muted"}`}><Smartphone size={14}/>REELS</button>
+                  <button type="button" onClick={() => toggleService('temFoto', 190)} className={`py-4 border text-[8px] md:text-[9px] font-black uppercase tracking-wider md:tracking-widest flex items-center justify-center gap-2 rounded-xl transition-all italic ${newQuoteData.temFoto ? "border-brand-tactical text-brand-tactical bg-brand-tactical/10 shadow-sm" : "border-theme-border text-theme-muted"}`}><Camera size={14}/>FOTO</button>
+                  <button type="button" onClick={() => toggleService('temVideo', 190)} className={`py-4 border text-[8px] md:text-[9px] font-black uppercase tracking-wider md:tracking-widest flex items-center justify-center gap-2 rounded-xl transition-all italic ${newQuoteData.temVideo ? "border-brand-tactical text-brand-tactical bg-brand-tactical/10 shadow-sm" : "border-theme-border text-theme-muted"}`}><Video size={14}/>VÍDEO</button>
+                  <button type="button" onClick={() => toggleService('temReels', 120)} className={`py-4 border text-[8px] md:text-[9px] font-black uppercase tracking-wider md:tracking-widest flex items-center justify-center gap-2 rounded-xl transition-all italic ${newQuoteData.temReels ? "border-brand-tactical text-brand-tactical bg-brand-tactical/10 shadow-sm" : "border-theme-border text-theme-muted"}`}><Smartphone size={14}/>REELS</button>
                 </div>
               </div>
 
