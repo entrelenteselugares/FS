@@ -223,7 +223,7 @@ export default function AdminFranchises() {
       </div>
 
       {/* Table */}
-      <div className="border border-theme-border bg-theme-bg shadow-sm">
+      <div className="border border-theme-border bg-theme-bg shadow-sm overflow-x-auto w-full rounded-2xl">
         <table className="w-full text-left border-collapse">
           <thead>
             <tr className="bg-theme-bg-muted">
@@ -307,7 +307,7 @@ export default function AdminFranchises() {
           <p className="text-[9px] sm:text-[11px] font-black text-brand-tactical uppercase tracking-[0.2em] sm:tracking-[0.4em] italic truncate max-w-[80vw]">Controle de Licenças e Royalties</p>
         </div>
 
-        <div className="border border-theme-border bg-theme-bg shadow-sm overflow-hidden">
+        <div className="border border-theme-border bg-theme-bg shadow-sm overflow-x-auto w-full rounded-2xl">
           <table className="w-full text-left border-collapse">
             <thead>
               <tr className="bg-theme-bg-muted">

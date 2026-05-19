@@ -48,6 +48,13 @@ interface Event {
   retentionDays?: number;
 }
 
+interface EventMediaItem {
+  id: string;
+  url: string;
+  shortId: string;
+  metadata?: Record<string, string>;
+}
+
 interface AdminEventsProps {
   initialEditEventId?: string | null;
   onClose?: () => void;
@@ -66,7 +73,7 @@ export const AdminEvents: React.FC<AdminEventsProps> = ({ initialEditEventId }) 
   const [copied, setCopied] = useState(false);
   const [notification, setNotification] = useState<{message: string, type: 'success' | 'error'} | null>(null);
   const [activeTab, setActiveTab] = useState<'info' | 'equipe' | 'comercial' | 'galeria'>('info');
-  const [eventMedia, setEventMedia] = useState<any[]>([]); // TODO: Definir interface Media
+  const [eventMedia, setEventMedia] = useState<EventMediaItem[]>([]); // TODO: Definir interface Media
   const [confirmDelete, setConfirmDelete] = useState<Event | null>(null);
   const [phygitalQueueEvent, setPhygitalQueueEvent] = useState<Event | null>(null);
 
@@ -122,7 +129,8 @@ export const AdminEvents: React.FC<AdminEventsProps> = ({ initialEditEventId }) 
     clientEmail: string;
     franchiseeId: string;
     retentionDays: number;
-    verticalConfigs: Record<string, any>;
+    verticalConfigs: Record<string, unknown>;
+    coverPosition: string;
   }
 
   const [formData, setFormData] = useState<EventFormData>({
@@ -149,6 +157,7 @@ export const AdminEvents: React.FC<AdminEventsProps> = ({ initialEditEventId }) 
     preSaleEnabled: false,
     postSaleEnabled: true,
     verticalConfigs: {},
+    coverPosition: "center",
   });
 
 
@@ -239,6 +248,7 @@ export const AdminEvents: React.FC<AdminEventsProps> = ({ initialEditEventId }) 
         preSaleEnabled: false,
         postSaleEnabled: true,
         verticalConfigs: {},
+        coverPosition: "center",
       });
       setCoverPreview(null);
     } catch {
@@ -274,7 +284,7 @@ export const AdminEvents: React.FC<AdminEventsProps> = ({ initialEditEventId }) 
     }
   };
 
-  const handleUpdateMediaMetadata = async (mediaId: string, metadata: Record<string, any>) => {
+  const handleUpdateMediaMetadata = async (mediaId: string, metadata: Record<string, unknown>) => {
     try {
       await API.patch(`/marketplace/media/${mediaId}/metadata`, { metadata });
       showNotification("Metadados atualizados!");
@@ -352,6 +362,7 @@ export const AdminEvents: React.FC<AdminEventsProps> = ({ initialEditEventId }) 
         preSaleEnabled: data.preSaleEnabled || false,
         postSaleEnabled: data.postSaleEnabled || false,
         verticalConfigs: data.verticalConfigs ? (typeof data.verticalConfigs === 'string' ? JSON.parse(data.verticalConfigs) : data.verticalConfigs) : {},
+        coverPosition: data.coverPosition || "center",
       });
       setCoverPreview(data.coverPhotoUrl);
       setActiveTab('info');
@@ -454,7 +465,7 @@ export const AdminEvents: React.FC<AdminEventsProps> = ({ initialEditEventId }) 
                   lightroomUrl: "", driveUrl: "", previewPhotos: ["", "", ""], isPrivate: true, 
                   isUnitSale: false, priceUnit: 10, type: 'ALBUM_FULL', pricePerPhoto: 15, 
                   clientName: "", clientEmail: "", franchiseeId: "", retentionDays: 15,
-                  preSaleEnabled: false, postSaleEnabled: true, verticalConfigs: {}
+                  preSaleEnabled: false, postSaleEnabled: true, verticalConfigs: {}, coverPosition: "center"
                 });
                 setCoverPreview(null);
                 setIsModalOpen(true);
@@ -610,7 +621,27 @@ export const AdminEvents: React.FC<AdminEventsProps> = ({ initialEditEventId }) 
                     <div className="space-y-4">
                       <label className="text-[8px] font-black text-theme-muted uppercase tracking-widest block mb-2 opacity-60 italic">Capa da Vitrine</label>
                       <div onClick={() => fileInputRef.current?.click()} className="w-full h-64 bg-theme-bg-muted border border-theme-border/60 rounded-[30px] flex flex-col items-center justify-center cursor-pointer overflow-hidden group relative shadow-inner">
-                        {coverPreview ? <img src={coverPreview} alt="Preview" className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700" /> : (
+                        {coverPreview ? (
+                          <>
+                            <img src={coverPreview} alt="Preview" className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700" style={{ objectPosition: formData.coverPosition || 'center' }} />
+                            <div className="absolute bottom-4 left-1/2 -translate-x-1/2 flex items-center gap-2 bg-black/60 backdrop-blur-md p-2 rounded-full border border-white/10 opacity-0 group-hover:opacity-100 transition-all z-10" onClick={(e) => e.stopPropagation()}>
+                              {[
+                                { id: 'top', label: 'Superior' },
+                                { id: 'center', label: 'Centro' },
+                                { id: 'bottom', label: 'Inferior' }
+                              ].map(pos => (
+                                <button
+                                  key={pos.id}
+                                  type="button"
+                                  onClick={() => setFormData({ ...formData, coverPosition: pos.id })}
+                                  className={`px-4 py-1.5 text-[8px] font-black uppercase tracking-widest rounded-full transition-all ${formData.coverPosition === pos.id || (!formData.coverPosition && pos.id === 'center') ? "bg-brand-tactical text-black" : "text-white hover:bg-white/10"}`}
+                                >
+                                  {pos.label}
+                                </button>
+                              ))}
+                            </div>
+                          </>
+                        ) : (
                           <div className="text-center group-hover:text-brand-tactical transition-colors">
                             <div className="text-4xl mb-4">📸</div>
                             <div className="text-[9px] uppercase tracking-[0.4em] text-theme-muted font-black">Enviar Capa</div>
@@ -771,7 +802,7 @@ export const AdminEvents: React.FC<AdminEventsProps> = ({ initialEditEventId }) 
                             <label className="text-[8px] font-black text-brand-tactical uppercase tracking-widest block opacity-60 italic">Lista de Alunos (Nomes separados por vírgula ou linha)</label>
                             <textarea 
                               className="w-full bg-theme-bg-muted border border-brand-tactical/20 p-4 text-[10px] text-theme-text font-black outline-none focus:border-brand-tactical rounded-xl h-24 resize-none placeholder:text-brand-tactical/30" 
-                              value={formData.verticalConfigs?.studentList || ""}
+                              value={(formData.verticalConfigs?.studentList as string) || ""}
                               onChange={e => setFormData({ ...formData, verticalConfigs: { ...formData.verticalConfigs, studentList: e.target.value }})}
                               placeholder="Ex: João Silva, Maria Souza, Pedro Santos..."
                             />
@@ -895,7 +926,7 @@ export const AdminEvents: React.FC<AdminEventsProps> = ({ initialEditEventId }) 
                   type="button" 
                   onClick={() => { 
                     const t: Array<'info' | 'equipe' | 'comercial' | 'galeria'> = ['info','equipe','comercial','galeria']; 
-                    const currentIndex = t.indexOf(activeTab as any);
+                    const currentIndex = t.indexOf(activeTab);
                     if (currentIndex < t.length - 1) setActiveTab(t[currentIndex + 1]);
                   }} 
                   className="fs-btn flex-[2] bg-theme-border text-theme-text hover:bg-zinc-700 transition-all italic flex items-center justify-center gap-4"

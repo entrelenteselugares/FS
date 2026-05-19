@@ -270,7 +270,7 @@ export const AdminFinance: React.FC = () => {
       {/* VIEW: SALDOS PROS */}
       {view === "balances" && (
         <div className="space-y-6 animate-in fade-in duration-500">
-          <div className="bg-theme-bg-muted border border-theme-border overflow-hidden">
+          <div className="bg-theme-bg-muted border border-theme-border overflow-x-auto w-full rounded-2xl">
              <table className="w-full text-left border-collapse">
                 <thead>
                    <tr className="border-b border-theme-border/30 bg-black/10">
@@ -372,7 +372,7 @@ export const AdminFinance: React.FC = () => {
 
            {/* Ledger de Custos */}
            <div className="lg:col-span-8 space-y-4">
-              <div className="bg-theme-bg-muted border border-theme-border overflow-hidden">
+              <div className="bg-theme-bg-muted border border-theme-border overflow-x-auto w-full rounded-2xl">
                  <table className="w-full text-left border-collapse">
                     <thead>
                        <tr className="border-b border-theme-border/30 bg-black/10">

@@ -97,7 +97,7 @@ export const AdminLeadsPage: React.FC = () => {
       </div>
 
       {/* Stats Header */}
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+      <div className="max-w-6xl mx-auto w-full grid grid-cols-2 lg:grid-cols-4 gap-4 md:gap-6">
         <div className="bg-theme-bg-muted border border-theme-border p-8 space-y-4 shadow-sm">
           <div className="flex items-center gap-3 text-theme-text-muted">
             <Users size={16} />
@@ -156,16 +156,16 @@ export const AdminLeadsPage: React.FC = () => {
       </div>
 
       {/* Content */}
-      <div className="bg-theme-bg-muted/30 border border-theme-border overflow-hidden">
+      <div className="bg-theme-bg-muted/30 border border-theme-border overflow-x-auto w-full rounded-2xl">
         {activeSubTab === 'abandoned' ? (
           <table className="w-full text-left border-collapse">
             <thead>
               <tr className="border-b border-theme-border">
-                <th className="p-6 text-[8px] md:text-[9px] font-black uppercase tracking-wider md:tracking-widest text-theme-text-muted">Cliente / Contato</th>
-                <th className="p-6 text-[8px] md:text-[9px] font-black uppercase tracking-wider md:tracking-widest text-theme-text-muted">Evento</th>
-                <th className="p-6 text-[8px] md:text-[9px] font-black uppercase tracking-wider md:tracking-widest text-theme-text-muted">Valor</th>
-                <th className="p-6 text-[8px] md:text-[9px] font-black uppercase tracking-wider md:tracking-widest text-theme-text-muted">Início</th>
-                <th className="p-6 text-[8px] md:text-[9px] font-black uppercase tracking-wider md:tracking-widest text-theme-text-muted text-right">Ações de Recuperação</th>
+                <th className="p-6 text-[10px] font-bold uppercase tracking-wider text-theme-text-muted">Cliente / Contato</th>
+                <th className="p-6 text-[10px] font-bold uppercase tracking-wider text-theme-text-muted">Evento</th>
+                <th className="p-6 text-[10px] font-bold uppercase tracking-wider text-theme-text-muted">Valor</th>
+                <th className="p-6 text-[10px] font-bold uppercase tracking-wider text-theme-text-muted">Início</th>
+                <th className="p-6 text-[10px] font-bold uppercase tracking-wider text-theme-text-muted text-right">Ações de Recuperação</th>
               </tr>
             </thead>
             <tbody className="divide-y divide-theme-border">
@@ -227,11 +227,11 @@ export const AdminLeadsPage: React.FC = () => {
           <table className="w-full text-left border-collapse">
             <thead>
               <tr className="border-b border-theme-border">
-                <th className="p-6 text-[8px] md:text-[9px] font-black uppercase tracking-wider md:tracking-widest text-theme-text-muted">Email do Lead</th>
-                <th className="p-6 text-[8px] md:text-[9px] font-black uppercase tracking-wider md:tracking-widest text-theme-text-muted">Evento de Origem</th>
-                <th className="p-6 text-[8px] md:text-[9px] font-black uppercase tracking-wider md:tracking-widest text-theme-text-muted">Data de Captura</th>
-                <th className="p-6 text-[8px] md:text-[9px] font-black uppercase tracking-wider md:tracking-widest text-theme-text-muted">Fonte</th>
-                <th className="p-6 text-[8px] md:text-[9px] font-black uppercase tracking-wider md:tracking-widest text-theme-text-muted text-right">Ações</th>
+                <th className="p-6 text-[10px] font-bold uppercase tracking-wider text-theme-text-muted">Email do Lead</th>
+                <th className="p-6 text-[10px] font-bold uppercase tracking-wider text-theme-text-muted">Evento de Origem</th>
+                <th className="p-6 text-[10px] font-bold uppercase tracking-wider text-theme-text-muted">Data de Captura</th>
+                <th className="p-6 text-[10px] font-bold uppercase tracking-wider text-theme-text-muted">Fonte</th>
+                <th className="p-6 text-[10px] font-bold uppercase tracking-wider text-theme-text-muted text-right">Ações</th>
               </tr>
             </thead>
             <tbody className="divide-y divide-theme-border">

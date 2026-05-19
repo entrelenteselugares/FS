@@ -229,7 +229,7 @@ export const AdminConfigs: React.FC = () => {
            </div>
 
            <div className="grid grid-cols-1 lg:grid-cols-[1fr_400px] gap-10 items-start">
-              <div className="bg-theme-bg border border-theme-border/60 p-10 space-y-12 shadow-sm">
+              <div className="bg-theme-bg border border-theme-border/60 p-6 md:p-10 space-y-12 shadow-sm">
                  <div className="flex items-center justify-between border-b border-theme-border/30 pb-6">
                     <h3 className="text-[11px] font-black text-theme-text uppercase tracking-[0.4em] flex items-center gap-3">
                        <Percent size={14} className="text-brand-tactical" /> Distribuição por Venda

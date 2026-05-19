@@ -311,7 +311,8 @@ export async function adminCreateEvent(req: AuthRequest, res: Response): Promise
     isCrowdfund, targetAmount,
     type, pricePerPhoto, marketplaceConfigs, verticalConfigs,
     clientEmail, clientName,
-    preSaleEnabled, postSaleEnabled
+    preSaleEnabled, postSaleEnabled,
+    coverPosition
   } = req.body;
 
   if (!title || !date || !location) {
@@ -377,6 +378,7 @@ export async function adminCreateEvent(req: AuthRequest, res: Response): Promise
         clientName: clientName || null,
         preSaleEnabled: preSaleEnabled ?? false,
         postSaleEnabled: postSaleEnabled ?? true,
+        coverPosition: coverPosition || "center",
         // @ts-ignore
         retentionDays: req.body.retentionDays ? Number(req.body.retentionDays) : (req.body.isPrivate ? 7 : 15),
       },
@@ -431,6 +433,7 @@ export async function adminUpdateEvent(req: AuthRequest, res: Response): Promise
     if (req.body.temReels !== undefined) data.temReels = req.body.temReels;
     if (req.body.temFotoImpressa !== undefined) data.temFotoImpressa = req.body.temFotoImpressa;
     if (req.body.coverPhotoUrl !== undefined) data.coverPhotoUrl = req.body.coverPhotoUrl || null;
+    if (req.body.coverPosition !== undefined) data.coverPosition = req.body.coverPosition || "center";
     if (req.body.eventHours !== undefined) data.eventHours = Number(req.body.eventHours);
     if (req.body.isCrowdfund !== undefined) data.isCrowdfund = req.body.isCrowdfund;
     if (req.body.targetAmount !== undefined) data.targetAmount = req.body.targetAmount ? Number(req.body.targetAmount) : null;

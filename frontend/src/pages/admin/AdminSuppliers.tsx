@@ -204,7 +204,7 @@ export default function AdminSuppliers() {
       {view === "production" && (
         <div className="space-y-8 animate-in fade-in duration-500">
            {/* STATS DE FÁBRICA */}
-           <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+           <div className="max-w-6xl mx-auto w-full grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 md:gap-6">
               <div className="bg-theme-bg border border-theme-border/60 p-6 space-y-3 group hover:border-brand-tactical/50 transition-all shadow-sm">
                  <div className="flex justify-between items-start"><span className="text-[8px] font-black text-theme-muted uppercase tracking-widest">Aguardando Início</span><Clock className="text-amber-600" size={14} /></div>
                  <div className="text-3xl font-heading font-black text-theme-text italic">{productionStats.pending}</div>

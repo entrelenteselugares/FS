@@ -183,7 +183,7 @@ export const AdminOrders: React.FC = () => {
       </div>
 
       {/* DASHBOARD DE PERFORMANCE */}
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+      <div className="max-w-6xl mx-auto w-full grid grid-cols-1 md:grid-cols-3 gap-6">
         <div className="bg-theme-bg-muted border border-theme-border p-4 md:p-5 space-y-3 group hover:border-brand-tactical/50 transition-all">
            <div className="flex justify-between items-start">
               <span className="text-[9px] font-black text-theme-muted uppercase tracking-[0.3em]">Volume Bruto (Liquidado)</span>
@@ -297,12 +297,12 @@ export const AdminOrders: React.FC = () => {
                     <table className="w-full text-left border-collapse min-w-[600px]">
                        <thead>
                           <tr className="border-b border-theme-border/20">
-                             <th className="py-4 text-[9px] font-black text-theme-muted uppercase tracking-[0.3em] opacity-70">ID Ledger</th>
-                             <th className="py-4 text-[9px] font-black text-theme-muted uppercase tracking-[0.3em] opacity-70">Método / Data</th>
-                             <th className="py-4 text-center text-[9px] font-black text-theme-muted uppercase tracking-[0.3em] opacity-70">Divisão (Splits)</th>
-                             <th className="py-4 text-right text-[9px] font-black text-theme-muted uppercase tracking-[0.3em] opacity-70">Montante</th>
-                             <th className="py-4 text-center text-[9px] font-black text-theme-muted uppercase tracking-[0.3em] opacity-70">Status MP</th>
-                             <th className="py-4 text-center text-[9px] font-black text-theme-muted uppercase tracking-[0.3em] opacity-70">Ações</th>
+                             <th className="py-4 text-[10px] font-bold text-theme-muted uppercase tracking-wider opacity-90">ID Ledger</th>
+                             <th className="py-4 text-[10px] font-bold text-theme-muted uppercase tracking-wider opacity-90">Método / Data</th>
+                             <th className="py-4 text-center text-[10px] font-bold text-theme-muted uppercase tracking-wider opacity-90">Divisão (Splits)</th>
+                             <th className="py-4 text-right text-[10px] font-bold text-theme-muted uppercase tracking-wider opacity-90">Montante</th>
+                             <th className="py-4 text-center text-[10px] font-bold text-theme-muted uppercase tracking-wider opacity-90">Status MP</th>
+                             <th className="py-4 text-center text-[10px] font-bold text-theme-muted uppercase tracking-wider opacity-90">Ações</th>
                           </tr>
                        </thead>
                        <tbody className="divide-y divide-theme-border/20">
