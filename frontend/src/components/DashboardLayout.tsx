@@ -417,8 +417,16 @@ export const DashboardLayout: React.FC<DashboardLayoutProps> = ({
           background:     T.bg,
           flexShrink:     0,
         }} className="dashboard-topbar flex lg:hidden">
-          {/* Left: Brand Only on Mobile */}
+          {/* Left: Hamburger + Brand */}
           <div className="flex items-center gap-4">
+            {(!location.pathname.startsWith('/minha-conta') && !location.pathname.startsWith('/meus-albuns')) && (
+              <button 
+                onClick={() => setDrawerOpen(true)}
+                className="p-1.5 -ml-2 text-zinc-400 hover:text-white rounded-lg transition-colors dashboard-menu-btn"
+              >
+                <Menu size={22} strokeWidth={1.5} />
+              </button>
+            )}
             <Link to="/" style={{ display: "flex", alignItems: "center" }}>
               <img src="/logo.png" alt="Logo" style={{ height: 22, objectFit: "contain", filter: "var(--logo-filter)" }} />
             </Link>
@@ -433,65 +441,6 @@ export const DashboardLayout: React.FC<DashboardLayoutProps> = ({
         <main style={{ flex: 1, overflowY: "auto", background: T.bg }} className="pb-24 md:pb-0">
           {children}
         </main>
-
-        {/* ── Dashboard Bottom Nav (Mobile Only) ── */}
-        <nav 
-          className="md:hidden fixed bottom-0 left-1/2 -translate-x-1/2 w-full max-w-md bg-[var(--bg)]/80 backdrop-blur-xl border-t border-theme-border/10 z-[100] px-3 py-3 flex items-center justify-around pb-safe lg:hidden"
-        >
-          <button 
-            onClick={() => navigate("/")}
-            className={`flex flex-col items-center gap-1 transition-colors ${location.pathname === "/" ? "text-emerald-500" : "text-[var(--text)]/40"}`}
-          >
-            <Home size={20} strokeWidth={1.5} />
-            <span className="text-[7.5px] font-bold uppercase tracking-tight">Home</span>
-          </button>
-
-          <button 
-            onClick={() => {
-              navigate("/");
-              setTimeout(() => {
-                window.scrollTo({ top: 0, behavior: "smooth" });
-                document.getElementById("mobile-search-input")?.focus();
-              }, 100);
-            }}
-            className="flex flex-col items-center gap-1 text-[var(--text)]/40"
-          >
-            <Search size={20} strokeWidth={1.5} />
-            <span className="text-[7.5px] font-bold uppercase tracking-tight">Buscar</span>
-          </button>
-
-          <button 
-            onClick={() => navigate("/minha-conta?s=wallet")}
-            className={`flex flex-col items-center gap-1 transition-colors ${location.pathname === "/minha-conta" && (s === "wallet" || s === "pedidos") ? "text-emerald-500" : "text-[var(--text)]/40"}`}
-          >
-            <ShoppingBag size={20} strokeWidth={1.5} />
-            <span className="text-[7.5px] font-bold uppercase tracking-tight">Carrinho</span>
-          </button>
-
-          <button 
-            onClick={() => navigate("/meus-albuns")}
-            className={`flex flex-col items-center gap-1 transition-colors ${location.pathname.startsWith("/meus-albuns") ? "text-emerald-500" : "text-[var(--text)]/40"}`}
-          >
-            <Image size={20} strokeWidth={1.5} />
-            <span className="text-[7.5px] font-bold uppercase tracking-tight">Meus Álbuns</span>
-          </button>
-
-          <button 
-            onClick={() => setDrawerOpen(true)}
-            className={`flex flex-col items-center gap-1 transition-colors ${
-              drawerOpen ||
-              location.pathname.startsWith("/profissional") || 
-              location.pathname.startsWith("/unidade-fixa") || 
-              location.pathname.startsWith("/admin") || 
-              (location.pathname === "/minha-conta" && s !== "wallet" && s !== "pedidos")
-                ? "text-emerald-500" 
-                : "text-[var(--text)]/40"
-            }`}
-          >
-            <Menu size={20} strokeWidth={1.5} />
-            <span className="text-[7.5px] font-bold uppercase tracking-tight">Opções</span>
-          </button>
-        </nav>
       </div>
 
       {/* ── Responsive CSS via <style> ── */}

@@ -21,8 +21,8 @@ export const BottomNav: React.FC = () => {
     "/delivery",
     "/flash",
     "/invitation",
-    "/meus-albuns",
-    "/minha-conta",
+    // "/meus-albuns",
+    // "/minha-conta",
   ];
 
   const shouldHide = hiddenPaths.some(p => location.pathname.startsWith(p));
@@ -61,6 +61,13 @@ export const BottomNav: React.FC = () => {
         { label: "Google Calendar", onClick: () => { navigate("/minha-conta?s=calendar"); setDrawerOpen(false); }, isActive: location.pathname === "/minha-conta" && s === "calendar", icon: <Calendar size={18} /> },
         { label: "Franquia Print", onClick: () => { navigate("/minha-conta?s=franquia"); setDrawerOpen(false); }, isActive: location.pathname === "/minha-conta" && s === "franquia", icon: <Printer size={18} /> },
         { label: "Configuração Pública", onClick: () => { navigate("/minha-conta?s=configuracoes"); setDrawerOpen(false); }, isActive: location.pathname === "/minha-conta" && s === "configuracoes", icon: <Settings size={18} /> }
+      );
+    }
+
+    if (user?.role === "ADMIN") {
+      items.push(
+        { label: "ADMINISTRAÇÃO", isHeader: true },
+        { label: "Painel Central", onClick: () => { navigate("/admin"); setDrawerOpen(false); }, isActive: location.pathname.startsWith("/admin"), icon: <Settings size={18} /> }
       );
     }
 
