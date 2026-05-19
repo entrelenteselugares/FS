@@ -221,7 +221,11 @@ export function AdminGrowth() {
                   <p className="text-[10px] font-black text-theme-text-muted tracking-widest uppercase mt-2">Leia o QR Code com seu WhatsApp</p>
                 </div>
                 <div className="p-4 bg-white inline-block rounded-2xl mx-auto shadow-2xl">
-                  <QRCodeSVG value={waStatus.qrCode} size={256} />
+                  {waStatus.qrCode.startsWith("data:") || waStatus.qrCode.startsWith("http") ? (
+                    <img src={waStatus.qrCode} alt="WhatsApp QR Code" className="w-[256px] h-[256px] object-contain" />
+                  ) : (
+                    <QRCodeSVG value={waStatus.qrCode} size={256} />
+                  )}
                 </div>
                 <button onClick={fetchData} className="text-[10px] font-black uppercase text-brand-tactical hover:underline">Atualizar QR Code</button>
               </div>

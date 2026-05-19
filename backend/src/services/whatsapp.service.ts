@@ -30,9 +30,12 @@ export class WhatsAppService {
   static async getStatus() {
     try {
       const { data } = await axios.get(`${this.baseUrl}/status`);
-      return { connected: data.connected };
+      return { 
+        connected: data.connected,
+        qrCode: data.qrCode || null
+      };
     } catch (error) {
-      return { connected: false };
+      return { connected: false, qrCode: null };
     }
   }
 
