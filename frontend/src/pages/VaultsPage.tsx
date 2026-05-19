@@ -311,7 +311,7 @@ export default function VaultsPage() {
             </button>
           </motion.div>
         ) : (
-          <div className="grid grid-cols-2 md:grid-cols-2 xl:grid-cols-3 gap-4">
+          <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-4">
             {vaults.map((vault, i) => (
               <motion.div key={vault.id} transition={{ delay: i * 0.05 }}>
                 <VaultCard vault={vault} onClick={() => navigate(`/meus-albuns/${vault.id}`)} />

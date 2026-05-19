@@ -111,7 +111,7 @@ export default function AmbassadorPage() {
         </div>
 
         {/* Features Grid */}
-        <div className="grid grid-cols-2 md:grid-cols-3 gap-6 w-full mb-20">
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-6 w-full mb-20">
           {[
             { icon: <Zap />, title: "Live Sync", desc: "Suas fotos transmitidas em tempo real." },
             { icon: <Star />, title: "Premium", desc: "Qualidade de museu em cada impressão." },

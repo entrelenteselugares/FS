@@ -71,7 +71,7 @@ export const AdminSettings: React.FC = () => {
         </button>
       </div>
 
-      <div className="grid grid-cols-2 md:grid-cols-3 gap-px bg-white/5 border border-theme-border">
+      <div className="grid grid-cols-1 md:grid-cols-3 gap-px bg-white/5 border border-theme-border">
         {/* Branding & Identity */}
         <div className="bg-theme-bg p-10 space-y-10 border-b md:border-b-0 md:border-r border-theme-border">
           <div className="flex items-center gap-4 mb-4">
@@ -206,7 +206,7 @@ export const AdminSettings: React.FC = () => {
              <Shield className="text-brand-tactical" size={18} strokeWidth={1.5} />
              <h3 className="text-[11px] font-bold text-theme-text uppercase tracking-[0.4em]">Protocolos de Acesso</h3>
           </div>
-          <div className="grid grid-cols-2 md:grid-cols-2 gap-20">
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-20">
             <div className="flex items-center justify-between p-6 border border-theme-border">
                <div>
                   <div className="text-[10px] font-bold text-theme-text uppercase tracking-widest">Modo Manutenção</div>

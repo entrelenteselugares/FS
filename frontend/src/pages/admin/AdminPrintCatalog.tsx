@@ -150,7 +150,7 @@ export const AdminPrintCatalog: React.FC = () => {
       </div>
 
       {/* DASHBOARD DE MÉTRICAS */}
-      <div className="grid grid-cols-2 md:grid-cols-3 gap-6">
+      <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
          <div className="bg-theme-bg border border-theme-border/60 p-6 space-y-3 shadow-sm group hover:border-brand-tactical/40 transition-all">
             <div className="flex justify-between items-start"><span className="text-[8px] font-black text-theme-muted uppercase tracking-widest italic">Mix Ativo</span><Package className="text-brand-tactical" size={14} strokeWidth={1.5} /></div>
             <div className="flex items-baseline gap-2">
@@ -456,7 +456,7 @@ function NewProductModal({ onClose, onSave, suppliers, onRefreshSuppliers }: {
 
           {/* Scrollable Content */}
           <form onSubmit={handleSubmit} className="flex-1 overflow-y-auto p-8 md:p-10 space-y-8 custom-scrollbar">
-            <div className="grid grid-cols-2 md:grid-cols-2 gap-6">
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
               <div className="space-y-2">
                 <label className={labelClass}>Operador Logístico</label>
                 <div className="flex items-stretch gap-2">
@@ -489,7 +489,7 @@ function NewProductModal({ onClose, onSave, suppliers, onRefreshSuppliers }: {
               <input required className={inputClass} value={form.name} onChange={e => setForm({...form, name: e.target.value})} placeholder="Ex: Álbum 15x21 - Capa Linho" />
             </div>
 
-            <div className="grid grid-cols-2 md:grid-cols-2 gap-6">
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
               <div className="space-y-2">
                 <label className={labelClass}>SKU / ID Interno</label>
                 <input required className={inputClass} value={form.sku} onChange={e => setForm({...form, sku: e.target.value})} placeholder="ALB-UNIQ-001" />
@@ -500,7 +500,7 @@ function NewProductModal({ onClose, onSave, suppliers, onRefreshSuppliers }: {
               </div>
             </div>
 
-            <div className="grid grid-cols-2 md:grid-cols-2 gap-6 pt-6 border-t border-theme-border/20">
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-6 pt-6 border-t border-theme-border/20">
               <div className="space-y-2">
                 <label className={labelClass}>Custo Fornecedor (R$)</label>
                 <input required type="number" step="0.01" className={inputClass} value={form.supplierCost} onChange={e => setForm({...form, supplierCost: e.target.value})} placeholder="0,00" />

@@ -386,7 +386,7 @@ export const AdminConfigs: React.FC = () => {
       {/* VIEW: INFRASTRUCTURE & GOVERNANCE */}
       {tab === "infra" && (
         <div className="space-y-12 animate-in fade-in duration-500">
-           <div className="grid grid-cols-2 md:grid-cols-2 gap-10">
+           <div className="grid grid-cols-1 md:grid-cols-2 gap-10">
               {/* Branding Section */}
               <div className="bg-theme-bg border border-theme-border/60 p-10 space-y-10 shadow-sm">
                  <div className="flex items-center gap-4 border-b border-theme-border/30 pb-6">

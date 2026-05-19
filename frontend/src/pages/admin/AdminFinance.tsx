@@ -147,17 +147,23 @@ export const AdminFinance: React.FC = () => {
   return (
     <div className="space-y-10 animate-in fade-in slide-in-from-bottom-4 duration-700">
       {/* Header Padronizado */}
-      <div className="relative pb-8 pt-4 md:pt-8 text-center animate-in fade-in slide-in-from-top-4 duration-700">
-        <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-64 h-64 bg-brand-tactical/5 blur-[80px] rounded-full pointer-events-none" />
-        <div className="relative z-10 flex flex-col items-center space-y-2">
-          <h1 className="text-3xl md:text-5xl font-heading font-black text-theme-text uppercase tracking-tighter leading-none">
-            Gestão <span className="text-brand-tactical">Financeira</span>
-          </h1>
-          <p className="text-[12px] md:text-[14px] font-black text-brand-tactical uppercase tracking-[0.2em] italic">
-            Engenharia de Custos, Repasses e DRE Operacional
-          </p>
+      <div className="relative border-b border-theme-border/60 pb-8 md:pb-12 space-y-4 md:space-y-6">
+        <div className="absolute -top-10 -left-10 w-40 h-40 bg-brand-tactical/5 blur-3xl rounded-full" />
+        
+        <div className="flex flex-col xl:flex-row justify-between items-start xl:items-end gap-6 relative z-10">
+          <div className="space-y-4">
+            <h1 className="text-4xl md:text-5xl xl:text-6xl font-heading font-black text-theme-text uppercase tracking-tighter italic leading-none whitespace-nowrap">
+              Gestão <span className="text-brand-tactical">Financeira</span>
+            </h1>
+            <div className="flex items-center gap-4">
+              <div className="h-1 w-12 bg-brand-tactical" />
+              <p className="text-[11px] font-black text-brand-tactical uppercase tracking-[0.4em] italic">
+                Engenharia de Custos, Repasses e DRE Operacional
+              </p>
+            </div>
+          </div>
           
-          <div className="flex flex-wrap bg-theme-bg-muted p-1.5 border border-theme-border rounded-sm w-full xl:w-auto mt-4">
+          <div className="flex flex-wrap bg-theme-bg-muted p-1.5 border border-theme-border rounded-sm w-full xl:w-auto">
             <button onClick={() => setView("payouts")} className={`flex-1 md:flex-none px-6 py-3.5 text-[10px] md:text-[11px] font-black uppercase tracking-widest transition-all whitespace-nowrap rounded-sm italic ${view === "payouts" ? 'bg-brand-tactical text-zinc-950 shadow-lg' : 'text-theme-muted hover:text-white'}`}>Pedidos</button>
             <button onClick={() => setView("balances")} className={`flex-1 md:flex-none px-6 py-3.5 text-[10px] md:text-[11px] font-black uppercase tracking-widest transition-all whitespace-nowrap rounded-sm italic ${view === "balances" ? 'bg-brand-tactical text-zinc-950 shadow-lg' : 'text-theme-muted hover:text-white'}`}>Saldos Pros</button>
             <button onClick={() => setView("expenses")} className={`flex-1 md:flex-none px-6 py-3.5 text-[10px] md:text-[11px] font-black uppercase tracking-widest transition-all whitespace-nowrap rounded-sm italic ${view === "expenses" ? 'bg-brand-tactical text-zinc-950 shadow-lg' : 'text-theme-muted hover:text-white'}`}>Lançamentos</button>
@@ -406,7 +412,7 @@ export const AdminFinance: React.FC = () => {
 
       {/* VIEW: DRE / DASHBOARD */}
       {view === "dre" && (
-        <div className="grid grid-cols-2 lg:grid-cols-2 gap-6 md:gap-10 animate-in fade-in duration-500">
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 md:gap-10 animate-in fade-in duration-500">
            <div className="bg-theme-bg-muted border border-theme-border p-6 md:p-10 space-y-8 md:space-y-10">
               <div className="space-y-1">
                  <span className="text-[10px] font-black text-brand-tactical uppercase tracking-[0.5em]">Análise de Performance</span>

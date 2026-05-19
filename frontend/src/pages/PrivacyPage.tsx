@@ -156,7 +156,7 @@ export function PrivacyPage() {
               <span className="text-brand-tactical">6.</span> Seus Direitos (LGPD)
             </h2>
             <p className="text-theme-text-muted text-sm md:text-base font-light mb-6">Como titular dos dados, você tem direito a:</p>
-            <div className="grid grid-cols-2 md:grid-cols-2 lg:grid-cols-3 gap-4 mb-6">
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 mb-6">
               {[
                 { t: "Acesso", d: "saber quais dados temos sobre você" },
                 { t: "Correção", d: "atualizar dados incorretos ou desatualizados" },

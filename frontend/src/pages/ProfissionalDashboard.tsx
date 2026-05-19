@@ -416,7 +416,7 @@ export default function ProfissionalDashboard({
             {activeTab === "agenda" && (
               <div className="space-y-12">
               {/* Banner de Venda Expressa & Flash Event */}
-              <div className="grid grid-cols-2 md:grid-cols-2 lg:grid-cols-3 gap-6">
+              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
                 {/* Venda Rápida */}
                 <DashboardActionButton 
                   title="Venda Rápida"
@@ -552,7 +552,7 @@ export default function ProfissionalDashboard({
                         </button>
                       </div>
 
-                      <div className="grid grid-cols-2 md:grid-cols-2 gap-4">
+                      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                         <div className="bg-theme-bg border border-theme-border p-8 space-y-4">
                           <label className="text-[9px] font-black text-theme-muted uppercase tracking-widest block">Última Sincronização</label>
                           <p className="text-sm font-black text-theme-text uppercase italic tracking-tight">
@@ -604,7 +604,7 @@ export default function ProfissionalDashboard({
                       <p className="text-[11px] text-brand-tactical uppercase tracking-[0.4em] mt-4 font-black italic">Gestão de Créditos e Operações Phygital</p>
                     </div>
                   </div>
-                  <div className="grid grid-cols-2 md:grid-cols-3 gap-6">
+                  <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
                     <div className="bg-theme-bg border border-theme-border p-10 relative overflow-hidden group">
                       <div className="absolute top-0 left-0 w-full h-1 bg-brand-tactical/20 group-hover:bg-brand-tactical transition-colors" />
                       <label className="text-[9px] font-black text-theme-muted uppercase tracking-widest block mb-4">Saldo Disponível</label>

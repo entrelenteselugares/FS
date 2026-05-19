@@ -158,7 +158,7 @@ export default function PrintMonitor() {
 
       <div className="max-w-6xl mx-auto p-6 space-y-10">
         {/* Status Bar */}
-        <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+        <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
           <div className="bg-theme-card/60 border border-theme-border p-6 space-y-2">
             <p className="text-[9px] font-black text-zinc-500 uppercase tracking-widest">Fila de Espera</p>
             <p className="text-4xl font-black italic tracking-tighter text-brand-tactical">{pendingCount}</p>
@@ -207,7 +207,7 @@ export default function PrintMonitor() {
               <p className="text-[10px] font-black text-zinc-600 uppercase tracking-[0.3em]">Aguardando Capturas Phygital...</p>
             </div>
           ) : (
-            <div className="grid grid-cols-2 md:grid-cols-2 lg:grid-cols-3 gap-6">
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
               {prints.map((print) => (
                 <div key={print.id} className={`group relative bg-theme-card border transition-all duration-500 overflow-hidden ${print.status === 'PENDING_PRINT' ? 'border-brand-tactical/30' : 'border-theme-border opacity-60'}`}>
                   {/* Thumbnail */}

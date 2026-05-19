@@ -52,7 +52,7 @@ export const AuthSelectionPage: React.FC = () => {
         </div>
       </div>
 
-      <div className="grid grid-cols-2 md:grid-cols-3 gap-8 max-w-7xl w-full relative z-10 px-4">
+      <div className="grid grid-cols-1 md:grid-cols-3 gap-8 max-w-7xl w-full relative z-10 px-4">
         {options.map((opt) => (
           <div
             key={opt.id}

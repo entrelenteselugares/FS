@@ -175,7 +175,7 @@ export const RegisterPage: React.FC = () => {
           )}
 
           {/* Role Selector */}
-          <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
             {roles.map((r) => (
               <button
                 key={r.id}
@@ -192,7 +192,7 @@ export const RegisterPage: React.FC = () => {
           </div>
 
           <form onSubmit={handleRegister} className="space-y-8">
-            <div className="grid grid-cols-2 md:grid-cols-2 gap-8">
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
                <div className="space-y-2 md:col-span-2">
                  <label className="text-[10px] font-black uppercase tracking-[0.3em] text-zinc-500 ml-1">Entidade / Nome Completo</label>
                  <div className="relative group">

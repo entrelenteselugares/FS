@@ -194,7 +194,7 @@ const FranchiseDashboard: React.FC = () => {
         </div>
       </div>
 
-      <div className="grid grid-cols-2 lg:grid-cols-3 gap-8">
+      <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
         
         {/* COLUNA 1: INVENTÁRIO PREDITIVO */}
         <div className="lg:col-span-2 space-y-8">
@@ -209,7 +209,7 @@ const FranchiseDashboard: React.FC = () => {
                 <ShieldCheck size={20} className="text-brand-tactical opacity-50" />
               </div>
 
-              <div className="grid grid-cols-2 md:grid-cols-2 gap-10">
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-10">
                 {/* CRÉDITOS DE IMPRESSÃO */}
                 <div className="space-y-4">
                   <div className="flex justify-between items-end">

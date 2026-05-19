@@ -171,7 +171,7 @@ export default function LuxuryExperiencePage() {
         </div>
 
         {/* ACCESS BOX & PHYGITAL CAPTURE */}
-        <div className="grid grid-cols-2 md:grid-cols-2 gap-6">
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
           <div className="space-y-6 p-8 relative overflow-hidden group hover:border-brand-tactical/40 transition-all border" style={{ background: T.bgCard, borderColor: T.border }}>
             <div className="absolute top-0 right-0 p-8 opacity-5 group-hover:opacity-10 transition-opacity" style={{ color: T.text }}><Download size={120} /></div>
             <div className="space-y-2 relative z-10">
@@ -224,7 +224,7 @@ export default function LuxuryExperiencePage() {
               <p className="text-xs uppercase font-bold tracking-[0.2em] max-w-xl mx-auto text-theme-muted">Transforme suas memórias digitais em obras de arte físicas com acabamento de alta costura.</p>
             </div>
             
-            <div className="grid grid-cols-2 md:grid-cols-3 gap-12">
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-12">
               {products.map((p, idx) => (
                 <motion.div 
                   key={p.id}

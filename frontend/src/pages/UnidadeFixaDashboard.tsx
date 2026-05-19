@@ -437,22 +437,29 @@ export default function UnidadeFixaDashboard({
         )}
 
         {/* Header Seção Editorial */}
-        <div className="relative pb-8 pt-4 md:pt-8 text-center animate-in fade-in slide-in-from-top-4 duration-700">
-        <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-64 h-64 bg-brand-tactical/5 blur-[80px] rounded-full pointer-events-none" />
-        <div className="relative z-10 flex flex-col items-center space-y-2">
-          <h1 className="text-3xl md:text-5xl font-heading font-black text-theme-text uppercase tracking-tighter leading-none">
-            {PAGE_TITLES[tab].title}
-          </h1>
-          <p className="text-[12px] md:text-[14px] font-black text-brand-tactical uppercase tracking-[0.2em] italic">
-            {PAGE_TITLES[tab].prefix} • {PAGE_TITLES[tab].subtitle}
-          </p>
-          <div className="mt-4 flex justify-center w-full"><div className="flex flex-wrap items-center gap-4 w-full xl:w-auto">
+        <div className="relative border-b border-theme-border/60 pb-8 md:pb-12 space-y-4 md:space-y-6">
+          <div className="absolute -top-10 -left-10 w-40 h-40 bg-brand-tactical/5 blur-3xl rounded-full" />
+          
+          <div className="flex flex-col xl:flex-row justify-between items-start xl:items-end gap-6 relative z-10">
+            <div className="space-y-4">
+              <h1 className="text-3xl sm:text-4xl md:text-5xl xl:text-6xl font-heading font-black text-theme-text uppercase tracking-tighter italic leading-none whitespace-normal xl:whitespace-nowrap pr-4">
+                {PAGE_TITLES[tab].title}
+              </h1>
+              <div className="flex items-center gap-4">
+                <div className="h-1 w-12 bg-brand-tactical" />
+                <p className="text-[11px] font-black text-brand-tactical uppercase tracking-[0.4em] italic">
+                  {PAGE_TITLES[tab].prefix} • {PAGE_TITLES[tab].subtitle}
+                </p>
+              </div>
+            </div>
+            
+            <div className="flex flex-wrap items-center gap-4 w-full xl:w-auto">
               <div className="flex items-center gap-2 px-3 py-1.5 bg-brand-tactical/10 border border-brand-tactical/30">
                 <ShieldCheck size={12} className="text-brand-tactical" />
                 <p className="text-[10px] font-black text-brand-tactical uppercase tracking-widest italic">{stats?.razaoSocial || "Unidade Operacional"}</p>
-              </div></div>
-        </div>
-      </div>
+              </div>
+            </div>
+          </div>
         </div>
         {/* Tier & Growth Section */}
         {!loading && stats?.user?.franchiseProfile && (
@@ -559,7 +566,7 @@ export default function UnidadeFixaDashboard({
             {tab === "agenda" && (
           <div className="space-y-10">
             {/* Tactical Summary Bar */}
-            <div className="grid grid-cols-2 md:grid-cols-3 gap-px bg-theme-border/20 border border-theme-border/20 shadow-xl overflow-hidden">
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-px bg-theme-border/20 border border-theme-border/20 shadow-xl overflow-hidden">
                <div className="bg-theme-bg-muted/30 p-6 flex items-center gap-5">
                   <div className="w-10 h-10 rounded-full bg-brand-tactical/10 flex items-center justify-center text-brand-tactical border border-brand-tactical/20">
                     <Calendar size={18} />
@@ -699,7 +706,7 @@ export default function UnidadeFixaDashboard({
         {/* ── FINANÇAS ── */}
         {tab === "financas" && (
           <div className="space-y-10">
-            <div className="grid grid-cols-2 lg:grid-cols-3 gap-8">
+            <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
               {/* Consolidation Info */}
               <div className="lg:col-span-2 lux-card p-6 md:p-8 border-l-4 border-l-brand-tactical bg-gradient-to-br from-brand-tactical/[0.03] to-transparent relative overflow-hidden">
                 <div className="absolute top-0 right-0 p-8 opacity-[0.03] pointer-events-none">
@@ -977,7 +984,7 @@ export default function UnidadeFixaDashboard({
                     </button>
                   </div>
 
-                  <div className="grid grid-cols-2 md:grid-cols-2 gap-4">
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                     <div className="bg-theme-bg border border-theme-border p-8 space-y-4">
                       <label className="text-[9px] font-black text-theme-muted uppercase tracking-widest block">Última Sincronização</label>
                       <p className="text-sm font-black text-theme-text uppercase italic tracking-tight">
@@ -1028,7 +1035,7 @@ export default function UnidadeFixaDashboard({
               </div>
             </div>
 
-            <div className="grid grid-cols-2 md:grid-cols-2 lg:grid-cols-3 gap-6">
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
               {eventos.map(ev => (
                 <div key={ev.id} className="lux-card p-6 space-y-6 group hover:border-brand-tactical/40 transition-all duration-500">
                   <div className="space-y-2">
@@ -1118,7 +1125,7 @@ export default function UnidadeFixaDashboard({
                 <div className="h-px w-full bg-gradient-to-r from-theme-border/60 to-transparent" />
               </div>
 
-              <div className="grid grid-cols-2 md:grid-cols-2 gap-px bg-theme-border/20 border border-theme-border/20 shadow-2xl overflow-hidden">
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-px bg-theme-border/20 border border-theme-border/20 shadow-2xl overflow-hidden">
                 {globalServices.map(svc => {
                   const isDisabled = disabledServices.includes(svc.id);
                   return (
@@ -1191,7 +1198,7 @@ export default function UnidadeFixaDashboard({
                   )}
                </div>
 
-               <div className="grid grid-cols-2 md:grid-cols-2 gap-x-12 gap-y-10">
+               <div className="grid grid-cols-1 md:grid-cols-2 gap-x-12 gap-y-10">
                   <div className="space-y-3">
                     <label className="text-[9px] font-black text-theme-muted uppercase tracking-[0.4em] ml-1 opacity-60">Slug Identificador (URL)</label>
                     <div className="flex items-center gap-2 text-theme-muted/40 font-black text-[10px] mb-1">{window.location.host.toLowerCase()}/p/</div>
@@ -1253,7 +1260,7 @@ export default function UnidadeFixaDashboard({
                        <p className="text-[10px] font-black text-theme-text uppercase tracking-[0.4em] italic">Grade de Disponibilidade Semanal</p>
                      </div>
 
-                     <div className="grid grid-cols-2 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+                     <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
                        {Object.entries(workingHours).map(([day, config]: [string, DayConfig]) => {
                          const dayNames: Record<string, string> = { 
                            mon: "Segunda", tue: "Terça", wed: "Quarta", 
@@ -1335,7 +1342,7 @@ export default function UnidadeFixaDashboard({
                </div>
             </div>
 
-            <div className="grid grid-cols-2 md:grid-cols-3 gap-px bg-theme-border/20 border border-theme-border/20 shadow-2xl">
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-px bg-theme-border/20 border border-theme-border/20 shadow-2xl">
               <div className="bg-theme-bg-muted/40 p-8 space-y-4">
                  <div className="flex items-center gap-3">
                    <div className="p-2 bg-brand-tactical/10 text-brand-tactical">
@@ -1498,7 +1505,7 @@ export default function UnidadeFixaDashboard({
                </div>
             </div>
 
-            <div className="grid grid-cols-2 md:grid-cols-2 gap-px bg-theme-border/20 border border-theme-border/20 shadow-2xl">
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-px bg-theme-border/20 border border-theme-border/20 shadow-2xl">
                <div className="bg-theme-bg-muted/40 p-10 space-y-8">
                   <div className="space-y-2">
                     <p className="text-[10px] font-black text-brand-tactical uppercase tracking-widest">Status da Conexão</p>

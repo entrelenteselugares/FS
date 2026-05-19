@@ -153,16 +153,23 @@ export const AdminOrders: React.FC = () => {
   return (
     <div className="space-y-10 animate-in fade-in slide-in-from-bottom-4 duration-700">
       {/* Header Padronizado */}
-      <div className="relative pb-8 pt-4 md:pt-8 text-center animate-in fade-in slide-in-from-top-4 duration-700">
-        <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-64 h-64 bg-brand-tactical/5 blur-[80px] rounded-full pointer-events-none" />
-        <div className="relative z-10 flex flex-col items-center space-y-2">
-          <h1 className="text-3xl md:text-5xl font-heading font-black text-theme-text uppercase tracking-tighter leading-none">
-            Auditoria de <span className="text-brand-tactical">Projetos</span>
-          </h1>
-          <p className="text-[12px] md:text-[14px] font-black text-brand-tactical uppercase tracking-[0.2em] italic">
-            Monitoramento de Fluxo e Transações
-          </p>
-          <div className="mt-4 flex justify-center w-full"><div className="flex flex-wrap items-center gap-4 w-full xl:w-auto">
+      <div className="relative border-b border-theme-border/60 pb-8 md:pb-12 space-y-4 md:space-y-6">
+        <div className="absolute -top-10 -left-10 w-40 h-40 bg-brand-tactical/5 blur-3xl rounded-full" />
+        
+        <div className="flex flex-col xl:flex-row justify-between items-start xl:items-end gap-6 relative z-10">
+          <div className="space-y-4">
+            <h1 className="text-4xl md:text-5xl xl:text-6xl font-heading font-black text-theme-text uppercase tracking-tighter italic leading-none whitespace-nowrap">
+              Auditoria de <span className="text-brand-tactical">Projetos</span>
+            </h1>
+            <div className="flex items-center gap-4">
+              <div className="h-1 w-12 bg-brand-tactical" />
+              <p className="text-[11px] font-black text-brand-tactical uppercase tracking-[0.4em] italic">
+                Monitoramento de Fluxo e Transações
+              </p>
+            </div>
+          </div>
+          
+          <div className="flex flex-wrap items-center gap-4 w-full xl:w-auto">
             <div className="relative flex-1 xl:w-80 group">
               <Search className="absolute left-4 top-1/2 -translate-y-1/2 text-theme-muted group-focus-within:text-brand-tactical transition-colors" size={14} />
               <input
@@ -172,13 +179,13 @@ export const AdminOrders: React.FC = () => {
                 onChange={(e) => setSearch(e.target.value)}
                 className="w-full bg-theme-bg-muted border border-theme-border p-3.5 pl-10 text-[10px] text-theme-text uppercase tracking-widest outline-none focus:border-brand-tactical transition-all font-black rounded-lg"
               />
-            </div></div>
+            </div>
+          </div>
         </div>
-      </div>
       </div>
 
       {/* DASHBOARD DE PERFORMANCE */}
-      <div className="grid grid-cols-2 md:grid-cols-3 gap-6">
+      <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
         <div className="bg-theme-bg-muted border border-theme-border p-4 md:p-5 space-y-3 group hover:border-brand-tactical/50 transition-all">
            <div className="flex justify-between items-start">
               <span className="text-[9px] font-black text-theme-muted uppercase tracking-[0.3em]">Volume Bruto (Liquidado)</span>

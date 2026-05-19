@@ -108,24 +108,27 @@ export const AdminAmbassadors: React.FC = () => {
   return (
     <div className="p-8 space-y-8 animate-in fade-in duration-700">
       {/* Header Padronizado */}
-      <div className="relative pb-8 pt-4 md:pt-8 text-center animate-in fade-in slide-in-from-top-4 duration-700">
-        <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-64 h-64 bg-brand-tactical/5 blur-[80px] rounded-full pointer-events-none" />
+      <div className="relative border-b border-theme-border/60 pb-8 md:pb-12 space-y-4 md:space-y-6">
+        <div className="absolute -top-10 -left-10 w-40 h-40 bg-brand-tactical/5 blur-3xl rounded-full" />
         
-        <div className="relative z-10 flex flex-col items-center space-y-2">
-          <h1 className="text-3xl md:text-5xl font-heading font-black text-theme-text uppercase tracking-tighter leading-none">
-            Programa Embaixador
-          </h1>
-          <p className="text-[12px] md:text-[14px] font-black text-brand-tactical uppercase tracking-[0.2em] italic">
-            Engine de Escala • Gestão de Afiliados
-          </p>
-          <div className="mt-4 flex justify-center w-full">
-            <button 
-              onClick={() => setIsModalOpen(true)}
-              className="px-8 py-4 bg-brand-tactical text-zinc-950 text-[10px] font-black uppercase tracking-widest hover:brightness-110 transition-all flex items-center justify-center gap-3 shadow-xl italic whitespace-nowrap"
-            >
-              <Plus size={16} /> Nova Campanha
-            </button>
+        <div className="flex flex-col xl:flex-row justify-between items-start xl:items-end gap-6 relative z-10">
+          <div className="space-y-4">
+            <h1 className="text-4xl md:text-5xl xl:text-6xl font-heading font-black text-theme-text uppercase tracking-tighter italic leading-none whitespace-nowrap">
+              Programa Embaixador
+            </h1>
+            <div className="flex items-center gap-4">
+              <div className="h-1 w-12 bg-brand-tactical" />
+              <p className="text-[11px] font-black text-brand-tactical uppercase tracking-[0.4em] italic">
+                Engine de Escala • Gestão de Afiliados
+              </p>
+            </div>
           </div>
+          <button 
+            onClick={() => setIsModalOpen(true)}
+            className="px-8 py-4 bg-brand-tactical text-black text-[10px] font-black uppercase tracking-widest flex items-center gap-3 hover:bg-white transition-all italic shadow-2xl whitespace-nowrap"
+          >
+            <Plus size={16} /> Nova Campanha
+          </button>
         </div>
       </div>
 
@@ -291,7 +294,7 @@ export const AdminAmbassadors: React.FC = () => {
                 </select>
               </div>
 
-              <div className="grid grid-cols-2 md:grid-cols-2 gap-6">
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                 <div className="space-y-2">
                   <label className="text-[8px] font-black text-theme-muted uppercase tracking-widest block mb-2 opacity-60 italic">Tipo de Recompensa</label>
                   <select 
@@ -367,7 +370,7 @@ export const AdminAmbassadors: React.FC = () => {
                         </button>
                       </div>
 
-                      <div className="grid grid-cols-2 md:grid-cols-2 gap-3 pl-5">
+                      <div className="grid grid-cols-1 md:grid-cols-2 gap-3 pl-5">
                         {items.map(item => {
                           const isSelected = formData.targetServices.includes(item.id);
                           const toggleService = () => {

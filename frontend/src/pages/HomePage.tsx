@@ -459,7 +459,7 @@ export const HomePage = () => {
           </div>
 
           {loading ? (
-            <div className="grid grid-cols-2 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-1">
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-1">
               {[...Array(8)].map((_, i) => (
                 <div key={i} className="bg-white/5 aspect-[4/3] animate-pulse" />
               ))}
@@ -476,7 +476,7 @@ export const HomePage = () => {
                 {/* Mobile Specific Search - Removed because it was duplicated */}
 
                 {/* Eventos Grid (Full Width on Mobile) */}
-                <div className="grid hp-event-grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 md:gap-6">
+                <div className="grid hp-event-grid grid-cols-1 md:grid-cols-3 lg:grid-cols-4 gap-4 md:gap-6">
                   {events.map(ev => (
                     <EventCard key={ev.id} event={ev} onClick={() => navigate(`/e/${ev.slug || ev.id}`)} />
                   ))}
