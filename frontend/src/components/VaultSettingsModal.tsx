@@ -1,8 +1,7 @@
 import { useState, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { X, Settings, Trash2, Users, SlidersHorizontal, Info, Loader2 } from "lucide-react";
+import { X, Settings, Trash2, Info, Loader2 } from "lucide-react";
 import { API as api } from "../lib/api";
-import { T } from "../lib/theme";
 
 export interface VaultSettingsModalProps {
   isOpen: boolean;
