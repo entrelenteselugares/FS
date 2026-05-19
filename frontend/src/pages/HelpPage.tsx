@@ -176,7 +176,7 @@ const HelpPage: React.FC = () => {
                 className="space-y-3"
               >
                 {currentFaqs.map((faq, idx) => {
-                  const isOpen = openItem === \`\${activeCategory}-\${idx}\`;
+                  const isOpen = openItem === `${activeCategory}-${idx}`;
                   
                   return (
                     <div 
@@ -186,7 +186,7 @@ const HelpPage: React.FC = () => {
                       }`}
                     >
                       <button 
-                        onClick={() => setOpenItem(isOpen ? null : \`\${activeCategory}-\${idx}\`)}
+                        onClick={() => setOpenItem(isOpen ? null : `${activeCategory}-${idx}`)}
                         className="w-full flex items-center justify-between p-6 text-left"
                       >
                         <h3 className="text-lg md:text-xl font-black uppercase italic tracking-tight pr-8">

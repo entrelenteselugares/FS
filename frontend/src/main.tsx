@@ -7,6 +7,14 @@ import { initSentry } from './lib/sentry'
 import { registerSW } from 'virtual:pwa-register'
 
 initSentry();
+
+// In dev mode, unregister any stale service workers to prevent HMR conflicts
+if (import.meta.env.DEV && 'serviceWorker' in navigator) {
+  navigator.serviceWorker.getRegistrations().then(registrations => {
+    registrations.forEach(r => r.unregister());
+  });
+}
+
 registerSW({ immediate: true })
 
 createRoot(document.getElementById('root')!).render(
