@@ -1,12 +1,12 @@
-/* Mobile overflow fix – prevents horizontal bouncing on touch drag */
+/* Mobile overflow fix – enables horizontal scrolling and swiping on mobile viewports */
 @media (max-width: 640px) {
-  /* Containers that previously used overflow-x-auto */
   .overflow-x-auto {
-    overflow-x: hidden !important;
-    touch-action: pan-y;
+    overflow-x: auto !important;
+    -webkit-overflow-scrolling: touch;
+    touch-action: auto;
   }
-  /* Ensure child elements don’t force width overflow */
+  /* Ensure child elements can scroll horizontally without shrinking */
   .overflow-x-auto > * {
-    min-width: 0;
+    min-width: max-content;
   }
 }
