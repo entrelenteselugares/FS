@@ -600,9 +600,15 @@ export default function VaultDetailPage() {
 
               <div className="relative group w-full flex items-center justify-center">
                 <img 
-                  src={selectedPhoto.webViewLink || selectedPhoto.thumbnailLink} 
+                  src={import.meta.env.VITE_API_URL ? `${import.meta.env.VITE_API_URL.replace(/\/$/, '')}/vaults/media/proxy/${selectedPhoto.fileId}` : `/api/vaults/media/proxy/${selectedPhoto.fileId}`} 
                   alt="Full view" 
                   className="max-w-full max-h-[70vh] object-contain rounded-lg shadow-2xl"
+                  onError={(e) => {
+                    const target = e.target as HTMLImageElement;
+                    if (target.src !== selectedPhoto.thumbnailLink) {
+                      target.src = selectedPhoto.thumbnailLink;
+                    }
+                  }}
                 />
                 
                 <div className="absolute bottom-4 left-1/2 -translate-x-1/2 flex items-center gap-4">
