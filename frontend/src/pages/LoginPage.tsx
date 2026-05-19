@@ -70,7 +70,7 @@ export const LoginPage: React.FC = () => {
         {/* Header */}
         <div className="text-center space-y-4">
           <Link to="/" className="inline-block">
-            <img src="/logo.png" alt="Foto Segundo" style={{ height: 28, objectFit: "contain", filter: "var(--logo-filter)" }} />
+            <img src="/logo.png" alt="Foto Segundo" style={{ height: 38, objectFit: "contain", filter: "var(--logo-filter)" }} />
           </Link>
           <div className="text-[10px] font-black text-brand-tactical uppercase tracking-[0.5em] italic">Portal de Acesso</div>
         </div>

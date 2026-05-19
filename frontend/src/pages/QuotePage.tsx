@@ -574,7 +574,7 @@ export const QuotePage = () => {
                 src="/logo.png" 
                 alt="Foto Segundo" 
                 style={{ 
-                  height: 32, 
+                  height: 54, 
                   objectFit: "contain",
                   filter: "var(--logo-filter)"
                 }} 
