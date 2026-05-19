@@ -103,7 +103,7 @@ function formatDateTime(d: string | null | undefined) {
   }).format(date);
 }
 
-type Tab = "agenda" | "financas" | "equipe" | "configuracoes" | "franquia" | "monitor" | "calendar";
+export type Tab = "agenda" | "financas" | "equipe" | "configuracoes" | "franquia" | "monitor" | "calendar";
 
 interface CalendarStatus {
   connected: boolean;

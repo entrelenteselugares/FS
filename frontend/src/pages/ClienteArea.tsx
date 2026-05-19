@@ -17,8 +17,8 @@ import {
 import { ProfilePhotoUpload } from "../components/ProfilePhotoUpload";
 import { toast } from "sonner";
 import { motion, AnimatePresence } from "framer-motion";
-import ProfissionalDashboard from "./ProfissionalDashboard";
-import UnidadeFixaDashboard from "./UnidadeFixaDashboard";
+import ProfissionalDashboard, { type ActiveTab as ProfissionalTab } from "./ProfissionalDashboard";
+import UnidadeFixaDashboard, { type Tab as UnidadeTab } from "./UnidadeFixaDashboard";
 
 type ActiveTab = 
   | "files" 
@@ -370,18 +370,16 @@ export default function ClienteArea() {
   return (
     <DashboardLayout title="Minha Conta" navItems={NAV_ITEMS}>
       {isProfessionalTab ? (
-        // @ts-ignore
         <ProfissionalDashboard 
           noLayout={true} 
-          activeTab={activeTab as any} 
-          setActiveTab={setActiveTab as any} 
+          activeTab={activeTab as ProfissionalTab} 
+          setActiveTab={setActiveTab as unknown as (tab: ProfissionalTab) => void} 
         />
       ) : isUnitTab ? (
-        // @ts-ignore
         <UnidadeFixaDashboard 
           noLayout={true} 
-          activeTab={(activeTab === "financeiro" ? "financas" : activeTab) as any} 
-          setActiveTab={setActiveTab as any} 
+          activeTab={(activeTab === "financeiro" ? "financas" : activeTab) as UnidadeTab} 
+          setActiveTab={setActiveTab as unknown as (tab: UnidadeTab) => void} 
         />
       ) : (
         <>
