@@ -19,7 +19,13 @@ export class RewardService {
         where: { code: `WELCOME-${userId.slice(0, 5).toUpperCase()}` }
       });
 
-      if (existingCoupon) return existingCoupon;
+      if (existingCoupon) {
+        await prisma.user.update({
+          where: { id: userId },
+          data: { profileComplete: true }
+        });
+        return existingCoupon;
+      }
 
       const code = `WELCOME-${userId.slice(0, 5).toUpperCase()}`;
       

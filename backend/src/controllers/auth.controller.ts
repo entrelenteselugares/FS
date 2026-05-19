@@ -335,19 +335,17 @@ export class AuthController {
       const data = { ...req.body };
       
       // Consolidação de endereço se vierem campos detalhados
-      if (data.cep || data.endereco || data.logradouro) {
-        const parts = [];
-        if (data.logradouro || data.endereco) parts.push(data.logradouro || data.endereco);
-        if (data.numero) parts.push(data.numero);
-        if (data.complemento) parts.push(`- ${data.complemento}`);
-        if (data.bairro) parts.push(`| ${data.bairro}`);
-        if (data.cidade) parts.push(`| ${data.cidade}`);
-        if (data.estado) parts.push(`- ${data.estado}`);
-        if (data.cep) parts.push(`(CEP: ${data.cep})`);
-        
-        if (parts.length > 0) {
-          data.address = parts.join(" ");
-        }
+      if (data.cep !== undefined || data.endereco !== undefined || data.logradouro !== undefined) {
+        const addressParts = [
+          data.cep || "",
+          data.logradouro || data.endereco || "",
+          data.numero || "",
+          data.complemento || "",
+          data.bairro || "",
+          data.cidade || "",
+          data.estado || ""
+        ];
+        data.address = addressParts.join("|");
       }
 
       // Filtra apenas campos válidos para o modelo User para evitar erro do Prisma

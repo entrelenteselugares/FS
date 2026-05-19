@@ -100,7 +100,7 @@ const S = {
 };
 
 export default function ClienteArea() {
-  const { user } = useAuth();
+  const { user, updateMe } = useAuth();
   const navigate = useNavigate();
   const [searchParams] = useSearchParams();
   const [pedidos, setPedidos] = useState<Pedido[]>([]);
@@ -245,16 +245,17 @@ export default function ClienteArea() {
     });
 
     if (user) {
+      const parts = (user.address || "").split('|');
       setProfileData({
         nome: user.nome || "",
         whatsapp: user.whatsapp || "",
-        cep: user.cep || "",
-        endereco: user.endereco || "",
-        numero: user.numero || "",
-        complemento: user.complemento || "",
-        bairro: user.bairro || "",
-        cidade: user.cidade || "",
-        estado: user.estado || ""
+        cep: parts[0] || "",
+        endereco: parts[1] || "",
+        numero: parts[2] || "",
+        complemento: parts[3] || "",
+        bairro: parts[4] || "",
+        cidade: parts[5] || "",
+        estado: parts[6] || ""
       });
 
       if (user.franchiseProfile) {
@@ -268,7 +269,7 @@ export default function ClienteArea() {
     setIsSaving(true);
     setSaveSuccess(false);
     try {
-      await API.patch("/auth/me", profileData);
+      await updateMe(profileData);
       setSaveSuccess(true);
       setTimeout(() => setSaveSuccess(false), 3000);
     } catch {
