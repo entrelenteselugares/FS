@@ -155,11 +155,9 @@ export const AdminFinance: React.FC = () => {
           </h1>
           <p className="text-[12px] md:text-[14px] font-black text-brand-tactical uppercase tracking-[0.2em] italic">
             Engenharia de Custos, Repasses e DRE Operacional
-              </p>
-            </div>
-          </div>
+          </p>
           
-          <div className="flex flex-wrap bg-theme-bg-muted p-1.5 border border-theme-border rounded-sm w-full xl:w-auto">
+          <div className="flex flex-wrap bg-theme-bg-muted p-1.5 border border-theme-border rounded-sm w-full xl:w-auto mt-4">
             <button onClick={() => setView("payouts")} className={`flex-1 md:flex-none px-6 py-3.5 text-[10px] md:text-[11px] font-black uppercase tracking-widest transition-all whitespace-nowrap rounded-sm italic ${view === "payouts" ? 'bg-brand-tactical text-zinc-950 shadow-lg' : 'text-theme-muted hover:text-white'}`}>Pedidos</button>
             <button onClick={() => setView("balances")} className={`flex-1 md:flex-none px-6 py-3.5 text-[10px] md:text-[11px] font-black uppercase tracking-widest transition-all whitespace-nowrap rounded-sm italic ${view === "balances" ? 'bg-brand-tactical text-zinc-950 shadow-lg' : 'text-theme-muted hover:text-white'}`}>Saldos Pros</button>
             <button onClick={() => setView("expenses")} className={`flex-1 md:flex-none px-6 py-3.5 text-[10px] md:text-[11px] font-black uppercase tracking-widest transition-all whitespace-nowrap rounded-sm italic ${view === "expenses" ? 'bg-brand-tactical text-zinc-950 shadow-lg' : 'text-theme-muted hover:text-white'}`}>Lançamentos</button>
@@ -449,11 +447,11 @@ export const AdminFinance: React.FC = () => {
                  </div>
                  <div className="text-center space-y-2">
                     <span className="text-[9px] font-black text-theme-muted uppercase tracking-widest">Saúde de Caixa</span>
-                    <p className="text-lg font-heading font-black text-brand-tactical italic">ESTÁVEL
-          </p>
-          
+                    <p className="text-lg font-heading font-black text-brand-tactical italic">ESTÁVEL</p>
+                 </div>
+              </div>
+           </div>
         </div>
-      </div>
       )}
 
       {/* MODALS & NOTIFICATIONS */}
