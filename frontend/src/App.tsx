@@ -99,27 +99,20 @@ const AnimatedRoutes = () => {
         <Route path="/parcerias" element={<PartnershipsPage />} />
         <Route path="/termos" element={<TermsPage />} />
         <Route path="/privacidade" element={<PrivacyPage />} />
-        <Route path="/lgpd" element={<PrivacyPage />} />
         <Route path="/contato" element={<ContactPage />} />
         <Route path="/status" element={<StatusPage />} />
         <Route path="/login" element={<LoginPage />} />
         <Route path="/registro" element={<RegisterPage />} />
-        <Route path="/register" element={<RegisterPage />} />
         <Route path="/e/:slug" element={<EventPage />} />
         <Route path="/auth" element={<AuthSelectionPage />} />
         <Route path="/reset-password" element={<ResetPasswordPage />} />
         <Route path="/forgot-password" element={<ForgotPasswordPage />} />
         <Route path="/cotacao" element={<QuotePage />} />
-        {/* 
-        <Route path="/hall-da-fama" element={<HallOfFame />} />
-        <Route path="/concursos" element={<HallOfFame />} /> 
-        */}
         <Route path="/p/:slug" element={<PartnerLP />} />
         <Route path="/checkout" element={<CheckoutPage />} />
         <Route path="/checkout/:orderId" element={<CheckoutPage />} />
         <Route path="/delivery/:id" element={<LuxuryExperiencePage />} />
         <Route path="/captura" element={<PhygitalCapture />} />
-        <Route path="/phygital-capture" element={<PhygitalCapture />} />
         <Route path="/negocios" element={<BusinessLanding />} />
         <Route path="/clube" element={<ClubLandingPage />} />
         <Route path="/flash/:shortId" element={<FlashUnlockPage />} />
