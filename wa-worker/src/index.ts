@@ -100,6 +100,24 @@ async function initWhatsApp() {
       
       // Processa a IA de forma assíncrona para não bloquear o event loop do Baileys
       (async () => {
+        // Valida se o número pertence a um usuário cadastrado
+        try {
+          const phone = fromJid.split('@')[0];
+          const apiUrl = process.env.API_URL || 'http://localhost:3000/api';
+          const response = await fetch(`${apiUrl}/public/auth/check-phone?phone=${phone}`);
+          const data = await response.json();
+          
+          if (!data.exists) {
+            console.log(`[WhatsApp] Ignorando mensagem de número não cadastrado: ${phone}`);
+            if (sock && fromJid) {
+               await sock.sendMessage(fromJid, { text: "Olá! Notei que você ainda não possui cadastro na plataforma Foto Segundo. Para que eu possa te ajudar como assistente de IA, por favor acesse nosso site e cadastre-se: https://fotosegundo.com" });
+            }
+            return;
+          }
+        } catch (err) {
+          console.error('[WhatsApp] Erro ao validar número no backend:', err);
+        }
+
         let replyText = '';
         if (process.env.GEMINI_API_KEY) {
           try {

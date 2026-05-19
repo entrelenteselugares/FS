@@ -327,6 +327,24 @@ export class AuthController {
     return res.json({ exists: !!user, name: user?.nome, role: user?.role, whatsapp: user?.whatsapp });
   }
 
+  static async checkPhone(req: Request, res: Response) {
+    const { phone } = req.query;
+    if (!phone) return res.json({ exists: false });
+    
+    // Clean phone string to numbers only
+    const cleanPhone = String(phone).replace(/\D/g, '');
+    
+    // Search for a user with this whatsapp number (can be exact or ending with it)
+    const user = await prisma.user.findFirst({
+      where: {
+        whatsapp: { contains: cleanPhone.substring(cleanPhone.length - 8) } // Check at least last 8 digits
+      },
+      select: { nome: true }
+    });
+    
+    return res.json({ exists: !!user, name: user?.nome });
+  }
+
   static async updateMe(req: AuthRequest, res: Response) {
     try {
       const userId = req.user?.userId;

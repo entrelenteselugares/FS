@@ -317,6 +317,7 @@ router.get("/auth/me",               requireAuth, AuthController.me);
 router.patch("/auth/me",             requireAuth, AuthController.updateMe);
 router.post("/auth/refresh",          AuthController.refresh);
 router.get("/public/auth/check",     AuthController.checkEmail);
+router.get("/public/auth/check-phone", AuthController.checkPhone);
 
 // ── Mercado Pago OAuth ────────────────────────────────────────────────────────
 router.get("/mercadopago/connect",  requireAuth, MercadoPagoController.connect);
