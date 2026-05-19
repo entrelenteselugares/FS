@@ -399,27 +399,29 @@ export default function VaultDetailPage() {
         </main>
       ) : (
         <main className="max-w-7xl mx-auto px-1 py-1 md:px-4 md:py-6 pb-32 w-full">
-          {/* Subscription / Membership Banner (Phase 13 Integration) */}
+          {/* Materialization Banner (Replaces immediate subscription upsell) */}
           {(!vault.subscription || vault.subscription.status !== 'ACTIVE') ? (
             vault.myRole === 'OWNER' && (
               <div className="mb-8">
                 <div className="bg-gradient-to-r from-emerald-600/20 to-teal-600/20 border border-emerald-500/30 rounded-2xl p-6 flex flex-col md:flex-row items-center justify-between gap-6 backdrop-blur-md">
                   <div className="flex items-center gap-4">
                     <div className="w-12 h-12 bg-emerald-500 rounded-full flex items-center justify-center shadow-[0_0_20px_rgba(16,185,129,0.4)]">
-                      <Zap className="text-black" size={24} fill="currentColor" />
+                      <Printer className="text-black" size={24} />
                     </div>
                     <div>
-                      <h3 className="text-lg font-black uppercase italic tracking-tight">Meus Álbuns</h3>
+                      <h3 className="text-lg font-black uppercase italic tracking-tight">Imprimir Álbum</h3>
                       <p className="text-[11px] text-zinc-400 uppercase tracking-widest leading-relaxed max-w-md">
-                        Assine por apenas <span className="text-white font-bold">R$ 49,90/mês</span> e tenha 36 fotos impressas e entregues automaticamente todo mês baseadas nos votos da galera.
+                        Materialize este álbum com as <span className="text-white font-bold">{vault.goalPoses} poses</span> selecionadas. Garanta a impressão em alta qualidade.
                       </p>
                     </div>
                   </div>
                   <button 
-                    onClick={handleSubscribe}
-                    className="w-full md:w-auto bg-emerald-500 hover:bg-emerald-400 text-black font-black uppercase tracking-widest text-[11px] px-8 py-3.5 rounded-full transition-all shadow-xl shadow-emerald-500/20 active:scale-95"
+                    onClick={handleCheckout}
+                    disabled={checkingOut}
+                    className="w-full md:w-auto bg-emerald-500 hover:bg-emerald-400 text-black font-black uppercase tracking-widest text-[11px] px-8 py-3.5 rounded-full transition-all shadow-xl shadow-emerald-500/20 active:scale-95 flex items-center justify-center gap-2"
                   >
-                    Ativar Assinatura
+                    {checkingOut ? <Loader2 size={16} className="animate-spin" /> : null}
+                    Materializar Álbum
                   </button>
                 </div>
               </div>
