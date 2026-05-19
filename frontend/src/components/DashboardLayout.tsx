@@ -1,10 +1,10 @@
 import React, { useState } from "react";
-import { Link, useLocation, useNavigate, useSearchParams } from "react-router-dom";
+import { Link, useLocation, useNavigate } from "react-router-dom";
 import { useAuth } from "../hooks/useAuth";
 import { T, BtnGhost } from "../lib/theme";
 import { ThemeToggle } from "./ThemeToggle";
 import { NotificationBell } from "./notifications/NotificationBell";
-import { Home, Search, ShoppingBag, Image, Menu } from "lucide-react";
+import { Menu } from "lucide-react";
 
 // ─── Types ────────────────────────────────────────────────────────────────────
 
@@ -318,10 +318,7 @@ export const DashboardLayout: React.FC<DashboardLayoutProps> = ({
   navItems,
   title,
 }) => {
-  const navigate = useNavigate();
   const location = useLocation();
-  const [searchParams] = useSearchParams();
-  const s = searchParams.get("s");
   const [drawerOpen, setDrawerOpen] = useState(false);
 
   const sidebarProps: SidebarContentProps = {
