@@ -46,7 +46,7 @@ export const Navbar: React.FC<NavbarProps> = ({ tenantLogoUrl }) => {
               src={tenantLogoUrl || "/logo.png"} 
               alt="Foto Segundo" 
               style={{ 
-                height: 28, 
+                height: 32, 
                 objectFit: "contain",
                 filter: tenantLogoUrl ? "none" : "var(--logo-filter)"
               }} 

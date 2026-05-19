@@ -86,7 +86,7 @@ const SidebarContent: React.FC<SidebarContentProps> = ({ navItems, onNavigate })
             display: "flex",
             alignItems: "center"
           }}>
-            <img src="/logo.png" alt="Foto Segundo" style={{ height: 28, objectFit: "contain", filter: "var(--logo-filter)" }} />
+            <img src="/logo.png" alt="Foto Segundo" style={{ height: 32, objectFit: "contain", filter: "var(--logo-filter)" }} />
           </div>
         </Link>
       </div>
@@ -426,7 +426,7 @@ export const DashboardLayout: React.FC<DashboardLayoutProps> = ({
               </button>
             )}
             <Link to="/" style={{ display: "flex", alignItems: "center" }}>
-              <img src="/logo.png" alt="Logo" style={{ height: 22, objectFit: "contain", filter: "var(--logo-filter)" }} />
+              <img src="/logo.png" alt="Logo" style={{ height: 25, objectFit: "contain", filter: "var(--logo-filter)" }} />
             </Link>
           </div>
 
