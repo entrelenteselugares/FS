@@ -569,6 +569,7 @@ router.post("/franchise/webhook", FranchiseController.handleWebhook); // Public 
 router.get("/vaults/media/proxy/:fileId", VaultController.proxyMedia);
 router.get("/vaults", requireAuth, VaultController.listAlbums);
 router.post("/vaults", requireAuth, VaultController.createAlbum);
+router.patch("/vaults/:albumId", requireAuth, VaultController.renameAlbum);
 router.get("/vaults/:albumId", requireAuth, VaultController.getAlbumDetails);
 router.get("/vaults/:albumId/media", requireAuth, VaultController.listMedia);
 router.post("/vaults/:albumId/upload", requireAuth, upload.single("file"), VaultController.uploadMedia);
@@ -578,6 +579,7 @@ router.post("/vaults/:albumId/subscribe", requireAuth, VaultController.subscribe
 router.post("/vaults/:albumId/invite",    requireAuth, VaultController.generateInvite);
 router.get("/vaults/invitation/:code",     VaultController.getInvitationDetails);
 router.post("/vaults/invitation/:code/accept", requireAuth, VaultController.acceptInvite);
+router.delete("/vaults/:albumId/members/:userId", requireAuth, VaultController.removeMember);
 
 // ── Flash Event (Venda Direta com PIN) ───────────────────────────────────────
 router.use("/flash", flashRoutes);

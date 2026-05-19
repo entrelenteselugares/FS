@@ -222,3 +222,13 @@
 - [ ] **WPP-02**: Implement a Webhook listener that routes incoming WhatsApp messages to a workflow engine (n8n or Typebot).
 - [ ] **WPP-03**: Integrate OpenAI to read the database context (budget status, professional availability) and answer questions automatically in natural language.
 - [ ] **WPP-04**: Automatically trigger quote generation and send checkout links directly via the AI chat flow.
+
+---
+
+### [x] Phase 53: Vault Configuration & Administration
+
+**Goal:** Provide the vault owner with a dedicated settings modal/page to manage album metadata, media organization, and access control.
+
+- [x] **VCONF-01**: Allow the owner to rename the vault/album after creation.
+- [x] **VCONF-02**: Implement a sorting mechanism for media (sort by name, upload date/time, creation date/time, file size, horizontal/vertical orientation).
+- [x] **VCONF-03**: Provide an access control panel to administer album participants (view members, remove guests).

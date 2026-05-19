@@ -7,10 +7,11 @@ import { motion, AnimatePresence } from "framer-motion";
 import { 
   Lock, Upload, Heart, Share2, 
   ChevronLeft, Loader2, Camera,
-  Printer, Zap, Star
+  Printer, Zap, Star, Settings
 } from "lucide-react";
 import { Helmet } from "react-helmet-async";
 import { T } from "../lib/theme";
+import { VaultSettingsModal } from "../components/VaultSettingsModal";
 
 interface Media {
   id: string;
@@ -21,6 +22,10 @@ interface Media {
   createdAt: string;
   _count: { votes: number };
   votedByMe?: boolean;
+  fileSize?: number;
+  width?: number;
+  height?: number;
+  originalDate?: string;
 }
 
 interface Vault {
@@ -50,6 +55,8 @@ export default function VaultDetailPage() {
   const [uploadProgress, setUploadProgress] = useState(0);
   const [checkingOut, setCheckingOut] = useState(false);
   const [selectedPhoto, setSelectedPhoto] = useState<Media | null>(null);
+  const [isSettingsOpen, setIsSettingsOpen] = useState(false);
+  const [sortConfig, setSortConfig] = useState("UPLOAD_DESC");
 
   const fetchVaultDetails = useCallback(async () => {
     try {
@@ -282,6 +289,20 @@ export default function VaultDetailPage() {
   const daysLeft = trialEnds ? Math.ceil((trialEnds.getTime() - now.getTime()) / (1000 * 3600 * 24)) : null;
   const isBlocked = vault.subscriptionStatus === "BLOCKED" || vault.subscriptionStatus === "EXPIRED";
 
+  const sortedMedia = [...media].sort((a, b) => {
+    switch (sortConfig) {
+      case "UPLOAD_ASC": return new Date(a.createdAt).getTime() - new Date(b.createdAt).getTime();
+      case "EXIF_ASC": {
+        const da = a.originalDate ? new Date(a.originalDate).getTime() : new Date(a.createdAt).getTime();
+        const db = b.originalDate ? new Date(b.originalDate).getTime() : new Date(b.createdAt).getTime();
+        return da - db;
+      }
+      case "SIZE_DESC": return (b.fileSize || 0) - (a.fileSize || 0);
+      case "UPLOAD_DESC":
+      default: return new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime();
+    }
+  });
+
   return (
     <div className="min-h-screen font-sans flex flex-col" style={{ background: T.bg, color: T.text }}>
       <Helmet>
@@ -321,6 +342,15 @@ export default function VaultDetailPage() {
           </div>
 
           <div className="flex items-center gap-2">
+            {vault.myRole === "OWNER" && (
+              <button 
+                onClick={() => setIsSettingsOpen(true)}
+                className="hidden md:flex p-2 text-zinc-400 hover:text-white hover:bg-white/5 rounded-full transition-colors"
+                title="Configurações do Álbum"
+              >
+                <Settings size={20} />
+              </button>
+            )}
             {vault.myRole === "OWNER" && (
               <button 
                 onClick={handleCheckout}
@@ -477,7 +507,7 @@ export default function VaultDetailPage() {
         ) : (
           <div className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6 gap-1 md:gap-4">
             <AnimatePresence>
-              {media.map((item, i) => (
+              {sortedMedia.map((item, i) => (
                 <motion.div
                   key={item.id}
                   initial={{ opacity: 0, scale: 0.9 }}
@@ -575,6 +605,16 @@ export default function VaultDetailPage() {
           </label>
         </div>
       </div>
+      
+      <VaultSettingsModal 
+        isOpen={isSettingsOpen}
+        onClose={() => setIsSettingsOpen(false)}
+        vault={vault as any}
+        onUpdate={() => { fetchVaultDetails(); setIsSettingsOpen(false); }}
+        sortConfig={sortConfig}
+        setSortConfig={setSortConfig}
+      />
+
       {/* Lightbox Modal */}
       <AnimatePresence>
         {selectedPhoto && (

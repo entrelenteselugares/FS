@@ -5,8 +5,8 @@ import { driveService } from "../services/googleDrive.service";
 import { MercadoPagoService } from "../services/mercadopago.service";
 import { SubscriptionService } from "../services/subscription.service";
 import sharp from "sharp";
+import exifr from "exifr";
 import { WhatsAppService } from "../services/whatsapp.service";
-
 /**
  * VaultController - Orquestrador da Fase 11 (Cofres de Memórias).
  * Gerencia a lógica de negócio unindo Prisma e Google Drive Cold Storage.
@@ -123,9 +123,28 @@ export class VaultController {
       let uploadBuffer = file.buffer;
       let finalMimeType = file.mimetype;
       let finalFileName = fileName;
+      
+      let imageWidth: number | null = null;
+      let imageHeight: number | null = null;
+      let originalDate: Date | null = null;
+      const fileSize = file.size;
 
       if (file.mimetype.startsWith('image/')) {
         try {
+          // Extração de Metadados via Sharp & EXIFR
+          const metadata = await sharp(file.buffer).metadata();
+          imageWidth = metadata.width || null;
+          imageHeight = metadata.height || null;
+          
+          try {
+            const exifData = await exifr.parse(file.buffer);
+            if (exifData && exifData.DateTimeOriginal) {
+              originalDate = new Date(exifData.DateTimeOriginal);
+            }
+          } catch (exifErr) {
+            console.warn("[VAULT] Falha ao extrair EXIF via exifr:", (exifErr as Error).message);
+          }
+
           uploadBuffer = await sharp(file.buffer)
             .resize(2000, 2000, { fit: 'inside', withoutEnlargement: true })
             .jpeg({ quality: 80 })
@@ -152,7 +171,11 @@ export class VaultController {
           fileId: driveFile.id!,
           webViewLink: driveFile.webViewLink!,
           thumbnailLink: driveFile.thumbnailLink!,
-          uploadedById: userId
+          uploadedById: userId,
+          fileSize: fileSize,
+          width: imageWidth,
+          height: imageHeight,
+          originalDate: originalDate
         }
       });
 
@@ -649,6 +672,58 @@ export class VaultController {
         });
       }
       res.status(500).send("Erro ao carregar mídia");
+    }
+  }
+
+  /**
+   * Renomeia o cofre (Apenas Proprietário)
+   */
+  static async renameAlbum(req: AuthRequest, res: Response) {
+    const albumId = req.params.albumId as string;
+    const userId = req.user?.userId;
+    const { nome } = req.body;
+
+    if (!userId) return res.status(401).json({ error: "Não autenticado." });
+    if (!nome) return res.status(400).json({ error: "Nome não fornecido." });
+
+    try {
+      const album = await prisma.sharedAlbum.findUnique({ where: { id: albumId } });
+      if (!album) return res.status(404).json({ error: "Cofre não encontrado." });
+      if (album.ownerId !== userId) return res.status(403).json({ error: "Apenas o proprietário pode renomear o cofre." });
+
+      const updated = await prisma.sharedAlbum.update({
+        where: { id: albumId },
+        data: { nome }
+      });
+      return res.json(updated);
+    } catch (e: any) {
+      return res.status(500).json({ error: "Erro ao renomear cofre.", details: e.message });
+    }
+  }
+
+  /**
+   * Remove um membro (Convidado) do cofre (Apenas Proprietário)
+   */
+  static async removeMember(req: AuthRequest, res: Response) {
+    const albumId = req.params.albumId as string;
+    const targetUserId = req.params.userId as string;
+    const ownerId = req.user?.userId;
+
+    if (!ownerId) return res.status(401).json({ error: "Não autenticado." });
+
+    try {
+      const album = await prisma.sharedAlbum.findUnique({ where: { id: albumId } });
+      if (!album) return res.status(404).json({ error: "Cofre não encontrado." });
+      if (album.ownerId !== ownerId) return res.status(403).json({ error: "Apenas o proprietário pode remover membros." });
+      if (targetUserId === ownerId) return res.status(400).json({ error: "Não é possível remover o proprietário." });
+
+      await prisma.albumMember.delete({
+        where: { albumId_userId: { albumId, userId: targetUserId } }
+      });
+
+      return res.json({ success: true });
+    } catch (e: any) {
+      return res.status(500).json({ error: "Erro ao remover membro.", details: e.message });
     }
   }
 }

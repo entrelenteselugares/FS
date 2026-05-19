@@ -983,6 +983,12 @@ model SharedAlbumMedia {
   thumbnailLink String?
   uploadedById  String
 
+  // EXIF & Metadata
+  fileSize      Int?
+  width         Int?
+  height        Int?
+  originalDate  DateTime?
+
   // AI Curation
   aiScore          Float?
   aiTags           String[] @default([])
