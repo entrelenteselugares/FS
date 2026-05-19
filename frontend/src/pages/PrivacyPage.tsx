@@ -1,7 +1,5 @@
-import React from "react";
 import { Link } from "react-router-dom";
-import { ArrowLeft, Shield, Lock, Eye, CheckCircle2 } from "lucide-react";
-import { Navbar } from "../components/Navbar";
+import { ArrowLeft, Shield, Eye, CheckCircle2 } from "lucide-react";
 import SEO from "../components/SEO";
 
 export function PrivacyPage() {

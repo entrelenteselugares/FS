@@ -1,7 +1,5 @@
-import React from "react";
 import { Link } from "react-router-dom";
 import { ArrowLeft, FileText, Check, X, ShieldAlert } from "lucide-react";
-import { Navbar } from "../components/Navbar";
 import SEO from "../components/SEO";
 
 export function TermsPage() {

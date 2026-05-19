@@ -1,9 +1,9 @@
 import React, { useState } from 'react';
+import { Link } from 'react-router-dom';
 import { Navbar } from '../components/Navbar';
 import SEO from '../components/SEO';
 import { motion, AnimatePresence } from 'framer-motion';
-import { ShieldCheck, Clock, CreditCard, Truck, HelpCircle, Camera, Calendar, User, Briefcase, Wrench, ChevronDown } from 'lucide-react';
-
+import { HelpCircle, Camera, Calendar, User, Briefcase, Wrench, ChevronDown, CreditCard } from 'lucide-react';
 
 const HelpPage: React.FC = () => {
   const [activeCategory, setActiveCategory] = useState<string>("vaults");

@@ -1,7 +1,5 @@
-import React from "react";
 import { Link } from "react-router-dom";
 import { ArrowLeft, Handshake, Store, QrCode, Wallet, LayoutDashboard, BadgeCheck, Zap, Users } from "lucide-react";
-import { Navbar } from "../components/Navbar";
 import SEO from "../components/SEO";
 
 export function PartnershipsPage() {
