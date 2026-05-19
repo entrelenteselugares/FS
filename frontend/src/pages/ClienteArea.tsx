@@ -434,7 +434,7 @@ export default function ClienteArea() {
 
         {/* KPI Bar */}
         {!loading && pedidos.length > 0 && (
-          <div className="grid grid-cols-1 md:grid-cols-4 gap-4 md:gap-6 animate-in fade-in slide-in-from-top-4 duration-1000 delay-300">
+          <div className="grid grid-cols-2 md:grid-cols-4 gap-4 md:gap-6 animate-in fade-in slide-in-from-top-4 duration-1000 delay-300">
             {[
               { label: "Total Adquiridos", value: pedidos.filter(p => p.hasPaid).length, icon: <ImageIcon size={16} /> },
               { label: "Acesso Ativo", value: aprovados.length, icon: <CheckCircle2 size={16} />, highlight: true },
@@ -546,7 +546,7 @@ export default function ClienteArea() {
                   <label className="text-[9px] font-black uppercase tracking-widest text-theme-muted block italic">E-mail (Não editável)</label>
                   <input type="text" disabled value={user?.email || ""} className="fs-input opacity-60" />
                 </div>
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <div className="grid grid-cols-2 md:grid-cols-2 gap-6">
                   <div className="space-y-2">
                     <label className="text-[9px] font-black uppercase tracking-widest text-theme-muted block italic">Nome Completo</label>
                     <input type="text" value={profileData.nome} onChange={e => setProfileData(p => ({ ...p, nome: e.target.value }))} className="fs-input" placeholder="Como quer ser chamado" />
@@ -563,7 +563,7 @@ export default function ClienteArea() {
                     <p className="text-[9px] font-black text-theme-muted uppercase tracking-[0.4em]">Endereço de Entrega</p>
                   </div>
 
-                  <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+                  <div className="grid grid-cols-2 md:grid-cols-3 gap-6">
                     <div className="space-y-2">
                       <label className="text-[9px] font-black uppercase tracking-[0.3em] text-theme-muted block italic">CEP</label>
                       <input type="text" value={profileData.cep} onChange={e => handleCepChange(e.target.value)} className="fs-input" placeholder="00000-000" />
@@ -574,7 +574,7 @@ export default function ClienteArea() {
                     </div>
                   </div>
 
-                  <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                  <div className="grid grid-cols-2 md:grid-cols-2 gap-6">
                     <div className="space-y-2">
                       <label className="text-[9px] font-black uppercase tracking-[0.3em] text-theme-muted block italic">Número</label>
                       <input type="text" value={profileData.numero} onChange={e => setProfileData(p => ({ ...p, numero: e.target.value }))} className="fs-input" placeholder="123" />
@@ -585,7 +585,7 @@ export default function ClienteArea() {
                     </div>
                   </div>
 
-                  <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+                  <div className="grid grid-cols-2 md:grid-cols-3 gap-6">
                     <div className="space-y-2">
                       <label className="text-[9px] font-black uppercase tracking-[0.3em] text-theme-muted block italic">Bairro</label>
                       <input type="text" value={profileData.bairro} onChange={e => setProfileData(p => ({ ...p, bairro: e.target.value }))} className="fs-input" placeholder="Nome do bairro" />
@@ -647,7 +647,7 @@ export default function ClienteArea() {
                         Junte-se à maior rede de fotografia phygital do Brasil. Como parceiro, você terá acesso a ferramentas exclusivas de venda, monitoramento de pedidos e repasses automatizados.
                       </p>
                       
-                      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                      <div className="grid grid-cols-2 md:grid-cols-2 gap-4">
                         <button 
                           disabled={isApplying}
                           onClick={async () => {
@@ -701,7 +701,7 @@ export default function ClienteArea() {
           ) : activeTab === "wallet" ? (
             <div className="space-y-10">
 
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-px bg-theme-border/20 border border-theme-border/20">
+              <div className="grid grid-cols-2 md:grid-cols-2 gap-px bg-theme-border/20 border border-theme-border/20">
                 <div className="bg-theme-bg-muted/30 p-10 space-y-4">
                   <label className="text-[9px] font-black text-theme-muted uppercase tracking-widest block">Saldo Disponível</label>
                   <div className="text-6xl font-black italic tracking-tighter text-brand-tactical">
@@ -1007,7 +1007,7 @@ function EventGroupRow({ group, now, onSelectPedido }: {
                  <div className="h-px w-6 bg-theme-border/40" />
                  <p className="text-[9px] font-black text-theme-text-muted uppercase tracking-[0.3em]">Histórico de Aquisições</p>
               </div>
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
+              <div className="grid grid-cols-2 md:grid-cols-2 gap-3">
                 {pedidos.map((p: Pedido) => (
                   <button 
                     key={p.id} 
@@ -1383,7 +1383,7 @@ function PedidoDetalhe({ pedido, loading, onGoToEvent, onChangePrivacy, onRefres
               <p className="text-[9px] font-black text-brand-tactical uppercase tracking-widest animate-pulse">Sincronizando...</p>
             </div>
           ) : pedido.hasPaid ? (
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
+            <div className="grid grid-cols-2 md:grid-cols-2 gap-3">
               <MediaActionCard 
                 icon={<ImageIcon size={16} />}
                 title="Galeria Editorial"

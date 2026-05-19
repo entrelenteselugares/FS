@@ -174,29 +174,23 @@ export const AdminUsers: React.FC = () => {
     <>
       <div className="space-y-10 animate-in fade-in slide-in-from-bottom-4 duration-700">
       {/* Header Padronizado */}
-      <div className="relative border-b border-theme-border/60 pb-8 md:pb-12 space-y-4 md:space-y-6">
-        <div className="absolute -top-10 -left-10 w-40 h-40 bg-brand-tactical/5 blur-3xl rounded-full" />
-        
-        <div className="flex flex-col xl:flex-row justify-between items-start xl:items-end gap-6 relative z-10">
-          <div className="space-y-4">
-            <h1 className="text-4xl md:text-5xl xl:text-6xl font-heading font-black text-theme-text uppercase tracking-tighter italic leading-none whitespace-nowrap">
-              Gestão de <span className="text-brand-tactical">Membros</span>
-            </h1>
-            <div className="flex items-center gap-4">
-              <div className="h-1 w-12 bg-brand-tactical" />
-              <p className="text-[11px] font-black text-brand-tactical uppercase tracking-[0.4em] italic">
-                Operação de Times, Unidades e Parceiros
-              </p>
-            </div>
-          </div>
-          <div className="flex flex-wrap items-center gap-4 w-full xl:w-auto">
+      <div className="relative pb-8 pt-4 md:pt-8 text-center animate-in fade-in slide-in-from-top-4 duration-700">
+        <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-64 h-64 bg-brand-tactical/5 blur-[80px] rounded-full pointer-events-none" />
+        <div className="relative z-10 flex flex-col items-center space-y-2">
+          <h1 className="text-3xl md:text-5xl font-heading font-black text-theme-text uppercase tracking-tighter leading-none">
+            Gestão de <span className="text-brand-tactical">Membros</span>
+          </h1>
+          <p className="text-[12px] md:text-[14px] font-black text-brand-tactical uppercase tracking-[0.2em] italic">
+            Operação de Times, Unidades e Parceiros
+          </p>
+          <div className="mt-4 flex justify-center w-full"><div className="flex flex-wrap items-center gap-4 w-full xl:w-auto">
             <button 
               onClick={() => { setIsModalOpen(true); setEditingUser(null); setFormData({ name: "", email: "", password: "", role: "PROFISSIONAL", pixKey: "", otherHabilities: "", equipment: "", workflowType: ["TRADICIONAL"], captPct: 30, editPct: 10, isFranchise: false, printCredits: 0, isVerified: false, affiliateTier: "STANDARD" }); }}
               className="fs-btn bg-brand-tactical text-zinc-950 italic flex-1 md:flex-none whitespace-nowrap"
             >
               <UserPlus size={14} className="inline mr-2" /> CONVOCAR MEMBRO
             </button>
-          </div>
+          </div></div>
         </div>
       </div>
 
@@ -341,7 +335,7 @@ export const AdminUsers: React.FC = () => {
 
             {/* Content */}
             <form onSubmit={handleCreate} className="flex-1 overflow-y-auto p-8 md:p-10 space-y-10 custom-scrollbar bg-theme-card">
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+              <div className="grid grid-cols-2 md:grid-cols-2 gap-8">
                 <div className="space-y-6">
                   <div className="space-y-4">
                     <label className="text-[8px] font-black text-theme-muted uppercase tracking-widest block mb-2 opacity-60 italic">Identidade de Acesso</label>

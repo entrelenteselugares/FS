@@ -102,7 +102,7 @@ export const HallOfFame: React.FC = () => {
             <h2 className="text-[10px] font-black uppercase tracking-[0.6em] text-theme-muted">Em Disputa: {activeContest.contest.title}</h2>
           </div>
 
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+          <div className="grid grid-cols-2 md:grid-cols-2 lg:grid-cols-3 gap-8">
             {activeContest.ranking.map((item: RankingItem, idx: number) => (
               <motion.div 
                 key={item.event.id}
@@ -151,7 +151,7 @@ export const HallOfFame: React.FC = () => {
                     <div className="text-[9px] text-theme-muted uppercase tracking-[0.3em] font-bold">Encerrado em {new Date(res.contest.endDate).toLocaleDateString()}</div>
                 </div>
 
-                <div className="grid grid-cols-1 md:grid-cols-3 gap-12">
+                <div className="grid grid-cols-2 md:grid-cols-3 gap-12">
                    {res.winners.map((winner, widx) => (
                       <div key={winner.event.id} className="text-center">
                         <div className="relative w-40 h-40 mx-auto mb-8">

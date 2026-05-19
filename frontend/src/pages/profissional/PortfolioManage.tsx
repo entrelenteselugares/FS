@@ -95,7 +95,7 @@ export default function PortfolioManage() {
         {isCreating && (
           <form onSubmit={handleCreateAlbum} className="bg-theme-bg border border-theme-border p-6 mb-12 space-y-4">
             <h2 className="text-sm font-black text-white uppercase tracking-widest">Criar Álbum</h2>
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <div className="grid grid-cols-2 md:grid-cols-2 gap-4">
               <input
                 required
                 type="text"
@@ -129,7 +129,7 @@ export default function PortfolioManage() {
           </form>
         )}
 
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+        <div className="grid grid-cols-2 md:grid-cols-2 lg:grid-cols-3 gap-6">
           {albums.map((album) => (
             <motion.div key={album.id} initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="bg-theme-card border border-theme-border flex flex-col">
               <div className="aspect-video bg-black/50 relative overflow-hidden group">

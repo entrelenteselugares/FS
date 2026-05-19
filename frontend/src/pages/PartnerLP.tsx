@@ -137,7 +137,7 @@ export const PartnerLP: React.FC = () => {
       </section>
 
       {/* Info + CTA */}
-      <section className="max-w-7xl mx-auto px-6 grid grid-cols-1 lg:grid-cols-2 gap-12 lg:gap-20 py-12 md:py-24 border-b border-theme-border">
+      <section className="max-w-7xl mx-auto px-6 grid grid-cols-2 lg:grid-cols-2 gap-12 lg:gap-20 py-12 md:py-24 border-b border-theme-border">
         <div>
           <h2 className="text-2xl sm:text-3xl md:text-5xl font-display font-black tracking-tighter mb-10 uppercase leading-none text-theme-text">Sobre a Unidade</h2>
           <p className="text-theme-muted leading-relaxed tracking-widest text-[12px] font-bold mb-12 uppercase">
@@ -195,7 +195,7 @@ export const PartnerLP: React.FC = () => {
             </p>
           </div>
 
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-px bg-white/5 border border-theme-border shadow-2xl overflow-hidden">
+          <div className="grid grid-cols-2 md:grid-cols-2 gap-px bg-white/5 border border-theme-border shadow-2xl overflow-hidden">
             {activeServices.map((svc) => {
               const localPrice = (partner.servicePrices as Record<string, number> | null)?.[svc.id];
               const displayPrice = localPrice ?? svc.basePrice;
@@ -293,7 +293,7 @@ export const PartnerLP: React.FC = () => {
           </div>
         </div>
 
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 sm:gap-12 mobile-gap">
+        <div className="grid grid-cols-2 md:grid-cols-2 lg:grid-cols-3 gap-6 sm:gap-12 mobile-gap">
           {recentEvents.length === 0 ? (
             <div className="col-span-full py-20 text-center border border-dashed border-theme-border text-[10px] text-theme-muted uppercase tracking-widest">
               Aguardando primeiros registros oficiais.

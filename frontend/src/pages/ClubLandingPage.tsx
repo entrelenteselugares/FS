@@ -63,7 +63,7 @@ export const ClubLandingPage = () => {
           <ArrowLeft size={14} /> Voltar
         </button>
 
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-16 lg:gap-24 items-center">
+        <div className="grid grid-cols-2 lg:grid-cols-2 gap-16 lg:gap-24 items-center">
           
           {/* Lado Esquerdo - Copy e Hero */}
           <div className="space-y-8 animate-in fade-in slide-in-from-left-8 duration-700">

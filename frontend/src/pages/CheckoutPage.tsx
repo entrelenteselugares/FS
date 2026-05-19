@@ -678,7 +678,7 @@ export const CheckoutPage = () => {
              </div>
           </div>
 
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+          <div className="grid grid-cols-2 md:grid-cols-2 gap-4">
             <button 
               onClick={() => { clearCart(); navigate("/"); }}
               className="py-5 border border-white/10 text-[10px] font-black uppercase tracking-[0.4em] hover:bg-red-500/10 hover:text-red-500 transition-all italic"

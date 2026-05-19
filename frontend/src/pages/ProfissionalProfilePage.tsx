@@ -328,7 +328,7 @@ export default function ProfissionalProfilePage() {
             </p>
           </div>
         ) : (
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+          <div className="grid grid-cols-2 md:grid-cols-2 gap-6">
             {prof.proServices.map(svc => {
               const fee = (svc.basePrice * 0.2).toFixed(2);
               return (

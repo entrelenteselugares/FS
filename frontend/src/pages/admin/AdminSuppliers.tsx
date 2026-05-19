@@ -206,7 +206,7 @@ export default function AdminSuppliers() {
       {view === "production" && (
         <div className="space-y-8 animate-in fade-in duration-500">
            {/* STATS DE FÁBRICA */}
-           <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+           <div className="grid grid-cols-2 md:grid-cols-3 gap-6">
               <div className="bg-theme-bg border border-theme-border/60 p-6 space-y-3 group hover:border-brand-tactical/50 transition-all shadow-sm">
                  <div className="flex justify-between items-start"><span className="text-[8px] font-black text-theme-muted uppercase tracking-widest">Aguardando Início</span><Clock className="text-amber-600" size={14} /></div>
                  <div className="text-3xl font-heading font-black text-theme-text italic">{productionStats.pending}</div>
@@ -263,7 +263,7 @@ export default function AdminSuppliers() {
                             <span className="text-[10px] text-theme-muted font-bold uppercase tracking-widest opacity-60">• {r.packageType} ({r.quantity} un)</span>
                          </div>
 
-                         <div className="grid grid-cols-1 md:grid-cols-2 gap-8 pt-6 border-t border-theme-border/20">
+                         <div className="grid grid-cols-2 md:grid-cols-2 gap-8 pt-6 border-t border-theme-border/20">
                             <div className="space-y-3">
                                <div className="flex items-center gap-2 text-[8px] font-black text-theme-muted uppercase tracking-widest"><MapPin size={10} /> Destino de Entrega</div>
                                <p className="text-[10px] text-theme-text font-black uppercase leading-relaxed max-w-sm italic opacity-80">
@@ -339,7 +339,7 @@ export default function AdminSuppliers() {
               <div className="space-y-10">
                  {breakeven ? (
                    <>
-                      <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+                      <div className="grid grid-cols-2 md:grid-cols-3 gap-6">
                          <div className="bg-theme-bg border border-theme-border/60 p-6 space-y-4 shadow-sm">
                             <span className="text-[8px] font-black text-theme-muted uppercase tracking-widest block">Unitário Operacional</span>
                             <p className="text-2xl font-heading font-black text-theme-text italic">{formatCurrency(breakeven.costPerPhoto)}</p>
@@ -410,7 +410,7 @@ export default function AdminSuppliers() {
               </button>
            </div>
            
-           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+           <div className="grid grid-cols-2 md:grid-cols-2 lg:grid-cols-3 gap-6">
               {suppliers.map(s => (
                 <div key={s.id} className="bg-theme-bg-muted border border-theme-border p-8 space-y-6 group hover:border-brand-tactical transition-all relative">
                    <div className="space-y-1">
@@ -500,7 +500,7 @@ function NewSupplierModal({ onClose, onSave }: { onClose: () => void; onSave: (d
 
         {/* Content */}
         <form onSubmit={handleSubmit} className="flex-1 overflow-y-auto p-8 md:p-10 space-y-10 custom-scrollbar bg-theme-card">
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-10">
+          <div className="grid grid-cols-2 md:grid-cols-2 gap-10">
             <div className="space-y-6">
               <div className="space-y-4">
                 <label className="text-[8px] font-black text-theme-muted uppercase tracking-widest block mb-2 opacity-60 italic">Informações do Ativo</label>

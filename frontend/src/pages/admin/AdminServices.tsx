@@ -155,7 +155,7 @@ export const AdminServices: React.FC = () => {
       </div>
 
       {/* DASHBOARD DE MÉTRICAS */}
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+      <div className="grid grid-cols-2 md:grid-cols-3 gap-6">
          <div className="bg-theme-bg border border-theme-border/60 p-6 space-y-3 shadow-sm group hover:border-brand-tactical/40 transition-all">
             <div className="flex justify-between items-start"><span className="text-[8px] font-black text-theme-muted uppercase tracking-widest italic">Portfólio Ativo</span><Layers className="text-brand-tactical" size={14} /></div>
             <div className="flex items-baseline gap-2">
@@ -388,7 +388,7 @@ function ServiceModal({ onClose, onSave, initialData, saving }: { onClose: () =>
           {/* Scrollable Content e Footer */}
           <form onSubmit={(e) => { e.preventDefault(); onSave(form); }} className="flex flex-col flex-1 overflow-hidden">
             <div className="flex-1 overflow-y-auto p-8 md:p-10 space-y-8 custom-scrollbar">
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+            <div className="grid grid-cols-2 md:grid-cols-2 gap-6">
               <div className="space-y-2">
                 <label className={labelClass}>Nome do Serviço</label>
                 <input required className={inputClass} value={form.name} onChange={e => setForm({...form, name: e.target.value})} placeholder="Ex: Fotografia de Casamento" />
@@ -418,7 +418,7 @@ function ServiceModal({ onClose, onSave, initialData, saving }: { onClose: () =>
               />
             </div>
 
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-8 pt-6 border-t border-theme-border/20">
+            <div className="grid grid-cols-2 md:grid-cols-2 gap-8 pt-6 border-t border-theme-border/20">
               <div className="space-y-2">
                 <label className={labelClass}>Preço Sugerido (R$)</label>
                 <div className="relative">
@@ -437,7 +437,7 @@ function ServiceModal({ onClose, onSave, initialData, saving }: { onClose: () =>
             <div className="space-y-4 pt-6 border-t border-theme-border/20">
               <label className={labelClass}>Tipo de Serviço &amp; Precificação Individual</label>
               
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+              <div className="grid grid-cols-2 md:grid-cols-2 gap-6">
                 {/* Profissional Card */}
                 <div className={`p-6 border rounded-2xl transition-all ${form.allowProfessional ? 'border-brand-tactical/40 bg-brand-tactical/5' : 'border-theme-border/60 bg-theme-bg-muted/10'}`}>
                   <label className="flex items-center gap-3 cursor-pointer select-none mb-4">

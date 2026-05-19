@@ -185,7 +185,7 @@ export default function ProfissionaisPage() {
       {/* Grid */}
       <div className="max-w-6xl mx-auto px-6 py-12">
         {loading ? (
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+          <div className="grid grid-cols-2 md:grid-cols-2 lg:grid-cols-3 gap-6">
             {[...Array(6)].map((_, i) => (
               <div key={i} className="h-72 bg-zinc-900/50 border border-zinc-800 animate-pulse" />
             ))}
@@ -212,7 +212,7 @@ export default function ProfissionaisPage() {
               <p className="text-[10px] text-brand-tactical uppercase tracking-widest font-black italic">Ordenados por Pontuação</p>
             </div>
 
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+            <div className="grid grid-cols-2 md:grid-cols-2 lg:grid-cols-3 gap-6">
               {profs.map((prof, i) => {
                 const location = cityFromAddress(prof.address);
                 return (
