@@ -161,7 +161,7 @@ export const AdminAmbassadors: React.FC = () => {
       </div>
 
       {/* Table */}
-      <div className="bg-theme-card border border-theme-border overflow-x-auto w-full rounded-2xl">
+      <div className="bg-theme-bg-muted/30 border border-theme-border overflow-x-auto w-full rounded-2xl">
         <table className="w-full text-left">
           <thead>
             <tr className="border-b border-theme-border text-[8px] md:text-[9px] font-black uppercase tracking-wider md:tracking-widest text-theme-subtle">

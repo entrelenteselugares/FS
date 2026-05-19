@@ -214,7 +214,7 @@ export const AdminPrintCatalog: React.FC = () => {
             const isExpanded = expandedCategories.includes(catId);
 
             return (
-               <div key={catId} className="bg-theme-bg border border-theme-border/60 overflow-hidden shadow-sm">
+               <div key={catId} className="bg-theme-bg-muted border border-theme-border rounded-2xl overflow-hidden shadow-sm">
                   {/* CATEGORY HEADER */}
                   <div 
                     onClick={() => toggleCategory(catId)}

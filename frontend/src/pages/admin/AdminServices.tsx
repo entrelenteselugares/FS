@@ -223,7 +223,7 @@ export const AdminServices: React.FC = () => {
           filteredServices.map(s => {
             const Icon = CATEGORY_ICONS[s.category] || CATEGORY_ICONS.DEFAULT;
             return (
-              <div key={s.id} className="bg-theme-bg border border-theme-border/60 group hover:border-brand-tactical transition-all overflow-hidden shadow-sm">
+              <div key={s.id} className="bg-theme-bg-muted border border-theme-border rounded-2xl group hover:border-brand-tactical/50 transition-all overflow-hidden shadow-sm">
                 <div className="p-6 md:p-8 flex flex-col lg:flex-row lg:items-center justify-between gap-8">
                    <div className="flex-1 flex items-start gap-6">
                       <div className="p-4 bg-theme-bg-muted border border-theme-border/40 text-brand-tactical">

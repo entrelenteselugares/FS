@@ -180,7 +180,7 @@ export default function AdminInventory() {
       </div>
 
       {/* Tabela de Produtos */}
-      <div className="border border-theme-border bg-theme-bg shadow-sm overflow-x-auto w-full rounded-2xl">
+      <div className="border border-theme-border bg-theme-bg-muted/30 shadow-sm overflow-x-auto w-full rounded-2xl">
         <table className="w-full text-left border-collapse">
           <thead>
             <tr className="bg-theme-bg-muted">
