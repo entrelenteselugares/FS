@@ -23,17 +23,32 @@ async function main() {
   ];
 
   for (const u of users) {
-    await prisma.user.upsert({
+    const user = await prisma.user.upsert({
       where: { email: u.email },
-      update: { role: u.role as any, senha: u.senha },
+      update: { role: u.role as any, senha: u.senha, discoverySource: "referral" },
       create: {
         email: u.email,
         nome: u.nome,
         role: u.role as any,
         senha: u.senha,
-        whatsapp: "11999999999"
+        whatsapp: "11999999999",
+        discoverySource: "referral"
       }
     });
+    
+    if (u.role === "CARTORIO") {
+      await prisma.cartorio.upsert({
+        where: { userId: user.id },
+        update: {},
+        create: { userId: user.id, razaoSocial: u.nome }
+      });
+      await prisma.franchiseProfile.upsert({
+        where: { userId: user.id },
+        update: { printCredits: 1000 },
+        create: { userId: user.id, printCredits: 1000, tier: "GOLD" }
+      });
+    }
+    
     console.log(`✅ Usuário: ${u.email}`);
   }
 
@@ -81,7 +96,7 @@ async function main() {
   // 4. COFRE DE MEMÓRIAS (VAULT)
   const clientVip = await prisma.user.findUnique({ where: { email: "cliente-vip@brasil.com.br" } });
   if (clientVip) {
-    await prisma.sharedAlbum.upsert({
+    const album = await prisma.sharedAlbum.upsert({
       where: { slug: "vault-e2e-test" },
       update: { status: "OPEN" },
       create: {
@@ -94,6 +109,30 @@ async function main() {
       }
     });
     console.log(`✅ Cofre: vault-e2e-test`);
+
+    await prisma.albumMember.upsert({
+      where: { albumId_userId: { albumId: album.id, userId: clientVip.id } },
+      update: { role: "OWNER" },
+      create: {
+        albumId: album.id,
+        userId: clientVip.id,
+        role: "OWNER"
+      }
+    });
+    console.log(`✅ Membro do Cofre: ${clientVip.email}`);
+
+    await prisma.sharedAlbumMedia.upsert({
+      where: { fileId: "mock-file-e2e-1" },
+      update: {},
+      create: {
+        albumId: album.id,
+        fileId: "mock-file-e2e-1",
+        webViewLink: "https://images.unsplash.com/photo-1511285560929-80b456fea0bc",
+        thumbnailLink: "https://images.unsplash.com/photo-1511285560929-80b456fea0bc",
+        uploadedById: clientVip.id
+      }
+    });
+    console.log(`✅ Mídia do Cofre injetada.`);
   }
 
   console.log("\n🚀 Master Seed concluído! Os robôs estão prontos.");

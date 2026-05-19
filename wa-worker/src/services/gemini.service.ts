@@ -2,42 +2,79 @@ import { GoogleGenAI } from '@google/genai';
 
 let ai: GoogleGenAI | null = null;
 
-if (process.env.GEMINI_API_KEY) {
-  ai = new GoogleGenAI({
-    apiKey: process.env.GEMINI_API_KEY,
-  });
+function getAiClient(): GoogleGenAI | null {
+  if (!ai && process.env.GEMINI_API_KEY) {
+    ai = new GoogleGenAI({
+      apiKey: process.env.GEMINI_API_KEY,
+    });
+  }
+  return ai;
 }
 
-const SYSTEM_INSTRUCTION = `
-Você é a assistente virtual inteligente da plataforma Foto Segundo (entrelenteselugares/FS).
-Seu objetivo é atender clientes, fotógrafos e parceiros de forma educada, prestativa e concisa pelo WhatsApp.
+import fs from 'fs';
+import path from 'path';
 
-Sobre o Foto Segundo:
-- É uma plataforma de venda de fotos de eventos (formaturas, casamentos, eventos esportivos e escolares).
-- Os clientes recebem um link de convite (ex: https://foto-segundo.vercel.app/invitation/...) para acessar o álbum de fotos, visualizar e comprar.
-- Se perguntarem sobre cupons, diga que cupons especiais e descontos progressivos são aplicados diretamente na finalização da compra no link do evento ou enviados por e-mail/notificação.
-- Mantenha as respostas breves (máximo de 3 parágrafos curtos), pois o canal é o WhatsApp. Use emojis de forma moderada para deixar a conversa amigável.
-- Se não souber responder algo muito específico sobre um pedido ou pagamento, oriente a pessoa a solicitar atendimento humano ou enviar o comprovante.
-`;
+// Carrega as instruções do sistema a partir do arquivo de documentação Markdown
+let SYSTEM_INSTRUCTION = '';
+try {
+  const instructionsPath = path.join(__dirname, 'BOT_INSTRUCTIONS.md');
+  SYSTEM_INSTRUCTION = fs.readFileSync(instructionsPath, 'utf8');
+} catch (error) {
+  console.error('[GeminiService] Erro ao carregar BOT_INSTRUCTIONS.md. Usando fallback.', error);
+  SYSTEM_INSTRUCTION = 'Você é a assistente virtual inteligente da plataforma Foto Segundo.';
+}
+
+async function delay(ms: number): Promise<void> {
+  return new Promise((resolve) => setTimeout(resolve, ms));
+}
 
 export async function getGeminiResponse(messageText: string): Promise<string> {
-  if (!ai) {
+  const client = getAiClient();
+  if (!client) {
     throw new Error('Gemini API client not initialized. Check your GEMINI_API_KEY.');
   }
 
-  try {
-    const response = await ai.models.generateContent({
-      model: 'gemini-1.5-flash',
-      contents: messageText,
-      config: {
-        systemInstruction: SYSTEM_INSTRUCTION,
-        temperature: 0.7,
-      }
-    });
+  const models = ['gemini-2.5-flash-lite', 'gemini-3.1-flash-lite', 'gemini-2.5-flash'];
+  let lastError: any = null;
 
-    return response.text || 'Desculpe, não consegui processar a resposta.';
-  } catch (error) {
-    console.error('[GeminiService] Erro ao gerar conteúdo:', error);
-    throw error;
+  for (const model of models) {
+    for (let attempt = 1; attempt <= 2; attempt++) {
+      try {
+        console.log(`[GeminiService] Tentando modelo ${model} (Tentativa ${attempt}/2)...`);
+        const response = await client.models.generateContent({
+          model: model,
+          contents: messageText,
+          config: {
+            systemInstruction: SYSTEM_INSTRUCTION,
+            temperature: 0.7,
+          }
+        });
+
+        if (response.text) {
+          console.log(`[GeminiService] Sucesso com o modelo ${model}`);
+          return response.text;
+        }
+      } catch (error: any) {
+        lastError = error;
+        const status = error.status || error.statusCode || (error.error && error.error.code);
+        console.warn(
+          `[GeminiService] Falha no modelo ${model} (Tentativa ${attempt}/2) com status ${status}:`,
+          error.message || error
+        );
+
+        if (status === 404) {
+          // Se o modelo não for encontrado, passa para o próximo modelo da lista
+          break;
+        }
+
+        if (attempt < 2) {
+          // Pequena pausa antes de re-tentar
+          await delay(attempt * 1000);
+        }
+      }
+    }
   }
+
+  console.error('[GeminiService] Todos os modelos e tentativas falharam.');
+  throw lastError || new Error('Falha ao gerar resposta do Gemini após várias tentativas.');
 }

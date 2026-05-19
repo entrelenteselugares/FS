@@ -19,6 +19,7 @@ app.use(express.json());
 let sock: ReturnType<typeof makeWASocket> | null = null;
 let qrCodeBase64: string | null = null;
 let isConnected = false;
+const processedMessageIds = new Set<string>();
 
 async function initWhatsApp() {
   const { state, saveCreds } = await useMultiFileAuthState('./whatsapp-session');
@@ -67,39 +68,64 @@ async function initWhatsApp() {
   });
 
   sock.ev.on('messages.upsert', async (m) => {
+    console.log(`[WhatsApp] Evento messages.upsert recebido. Tipo: ${m.type}, Quantidade: ${m.messages?.length}`);
     if (m.type !== 'notify') return;
     
     for (const msg of m.messages) {
       if (msg.key.fromMe) continue;
+
+      const messageId = msg.key.id;
+      if (messageId) {
+        if (processedMessageIds.has(messageId)) {
+          console.log(`[WhatsApp] Ignorando mensagem duplicada com ID: ${messageId}`);
+          continue;
+        }
+        processedMessageIds.add(messageId);
+        // Limita o cache a 1000 mensagens para evitar vazamento de memória
+        if (processedMessageIds.size > 1000) {
+          const firstItem = processedMessageIds.values().next().value;
+          if (firstItem) processedMessageIds.delete(firstItem);
+        }
+      }
       
       const fromJid = msg.key.remoteJid;
       // Responder apenas para chats individuais (ignorar grupos e outros canais)
-      if (!fromJid || !fromJid.endsWith('@s.whatsapp.net')) continue;
+      const isValidJid = fromJid && (fromJid.endsWith('@s.whatsapp.net') || fromJid.endsWith('@lid'));
+      if (!isValidJid) continue;
       
       const text = msg.message?.conversation || msg.message?.extendedTextMessage?.text;
       if (!text) continue;
       
       console.log(`[WhatsApp] Mensagem recebida de ${fromJid}: ${text}`);
       
-      let replyText = '';
-      if (process.env.GEMINI_API_KEY) {
+      // Processa a IA de forma assíncrona para não bloquear o event loop do Baileys
+      (async () => {
+        let replyText = '';
+        if (process.env.GEMINI_API_KEY) {
+          try {
+            replyText = await getGeminiResponse(text);
+          } catch (error) {
+            console.error('[WhatsApp] Erro ao chamar o Gemini:', error);
+            replyText = 'Desculpe, não consegui processar sua mensagem agora. Pode repetir?';
+          }
+        } else {
+          replyText = 'Olá! Sou a assistente virtual da plataforma Foto Segundo. Obrigado por entrar em contato! Para ativar minhas respostas inteligentes com IA, configure a GEMINI_API_KEY no arquivo .env.';
+        }
+        
         try {
-          replyText = await getGeminiResponse(text);
+          if (sock && fromJid) {
+            // Opcional: Mostra "Digitando..." para tornar a interação mais humana
+            await sock.presenceSubscribe(fromJid);
+            await sock.sendPresenceUpdate('composing', fromJid);
+            await new Promise(resolve => setTimeout(resolve, 1500));
+            await sock.sendPresenceUpdate('paused', fromJid);
+
+            await sock.sendMessage(fromJid, { text: replyText });
+          }
         } catch (error) {
-          console.error('[WhatsApp] Erro ao chamar o Gemini:', error);
-          replyText = 'Desculpe, não consegui processar sua mensagem agora. Pode repetir?';
+          console.error('[WhatsApp] Erro ao enviar resposta automática:', error);
         }
-      } else {
-        replyText = 'Olá! Sou a assistente virtual da plataforma Foto Segundo. Obrigado por entrar em contato! Para ativar minhas respostas inteligentes com IA, configure a GEMINI_API_KEY no arquivo .env.';
-      }
-      
-      try {
-        if (sock) {
-          await sock.sendMessage(fromJid, { text: replyText });
-        }
-      } catch (error) {
-        console.error('[WhatsApp] Erro ao enviar resposta automática:', error);
-      }
+      })();
     }
   });
 }

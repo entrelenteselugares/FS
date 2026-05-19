@@ -4,6 +4,7 @@ import bcrypt from 'bcryptjs';
 const prisma = new PrismaClient();
 
 const USERS = [
+  { nome: 'Matheus Kurio', email: 'matheuskurio@gmail.com', role: 'ADMIN' },
   { nome: 'BR PRO Fotografo', email: 'fotografo@brasil.com.br', role: 'PROFISSIONAL' },
   { nome: 'BR PRO Editor', email: 'editor@brasil.com.br', role: 'PROFISSIONAL' },
   { nome: 'BR PRO Hibrido', email: 'hibrido@brasil.com.br', role: 'PROFISSIONAL' },
@@ -26,13 +27,14 @@ async function main() {
   for (const u of USERS) {
     const user = await prisma.user.upsert({
       where: { email: u.email },
-      update: { role: u.role as any, senha: hash, active: true },
+      update: { role: u.role as any, senha: hash, active: true, discoverySource: 'referral' },
       create: {
         nome: u.nome,
         email: u.email,
         senha: hash,
         role: u.role as any,
         active: true,
+        discoverySource: 'referral',
       }
     });
     
@@ -47,6 +49,11 @@ async function main() {
         where: { userId: user.id },
         update: {},
         create: { userId: user.id, razaoSocial: u.nome }
+      });
+      await prisma.franchiseProfile.upsert({
+        where: { userId: user.id },
+        update: { printCredits: 1000 },
+        create: { userId: user.id, printCredits: 1000, tier: 'GOLD' }
       });
     }
     

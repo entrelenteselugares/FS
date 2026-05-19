@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { createPortal } from "react-dom";
 import { X, Camera, Sparkles, MapPin, ListChecks, Link as LinkIcon, Calendar } from "lucide-react";
 import { API } from "../../lib/api";
@@ -28,6 +28,15 @@ export function FotoPointModal({ onClose, onSuccess, onError, network }: FotoPoi
   const [coverPhotoUrl, setCoverPhotoUrl] = useState<string | null>(null);
   const [delegatedUserId, setDelegatedUserId] = useState<string | null>(null);
   const [isPublicCall, setIsPublicCall] = useState(false);
+
+  useEffect(() => {
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if (e.key === "Escape") onClose();
+    };
+    window.addEventListener("keydown", handleKeyDown);
+    return () => window.removeEventListener("keydown", handleKeyDown);
+  }, [onClose]);
+
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
