@@ -112,15 +112,13 @@ export default function AdminInventory() {
         <div className="absolute -top-10 -left-10 w-40 h-40 bg-brand-tactical/5 blur-3xl rounded-full" />
         
         <div className="flex flex-col xl:flex-row justify-between items-start xl:items-end gap-6 relative z-10">
-          <div className="space-y-4">
-            <h1 className="text-4xl md:text-5xl xl:text-6xl font-heading font-black text-theme-text uppercase tracking-tighter italic leading-none whitespace-nowrap">
-              Estoque <span className="text-brand-tactical">Central</span>
-            </h1>
+          <div className="space-y-4 min-w-0">
+          <h1 className="text-2xl sm:text-4xl md:text-5xl xl:text-6xl font-heading font-black text-theme-text uppercase tracking-tighter italic leading-none truncate whitespace-nowrap">
+            Estoque <span className="text-brand-tactical">Central</span>
+          </h1>
             <div className="flex items-center gap-4">
               <div className="h-1 w-12 bg-brand-tactical" />
-              <p className="text-[11px] font-black text-brand-tactical uppercase tracking-[0.4em] italic">
-                Matriz & Suprimentos da Rede
-              </p>
+              <p className="text-[9px] sm:text-[11px] font-black text-brand-tactical uppercase tracking-[0.2em] sm:tracking-[0.4em] italic truncate max-w-[80vw]">Gestão de Ativos e Logística</p>
             </div>
           </div>
           <div className="flex flex-wrap items-center gap-4 w-full xl:w-auto">
@@ -175,7 +173,7 @@ export default function AdminInventory() {
             <Package className="text-emerald-500" size={20} />
             <div>
               <p className="text-[9px] font-black text-emerald-500 uppercase tracking-widest">Status do Inventário</p>
-              <p className="text-sm font-black text-theme-text uppercase italic tracking-widest">Níveis de estoque estáveis ou sob demanda.</p>
+              <p className="text-[9px] sm:text-[11px] font-black text-brand-tactical uppercase tracking-[0.2em] sm:tracking-[0.4em] italic truncate max-w-[80vw]">Gestão de Ativos e Logística</p>
             </div>
           </div>
         )}

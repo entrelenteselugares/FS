@@ -134,15 +134,13 @@ export const AdminServices: React.FC = () => {
 
       {/* HEADER MASTER */}
       <div className="flex flex-col lg:flex-row lg:items-center justify-between border-b border-theme-border pb-10 gap-6">
-        <div className="space-y-4">
-          <h1 className="text-4xl md:text-6xl font-heading font-black text-theme-text uppercase tracking-tighter italic leading-none">
-            Catálogo de <span className="text-brand-tactical">Serviços</span>
+        <div className="space-y-4 min-w-0">
+          <h1 className="text-2xl sm:text-4xl md:text-5xl xl:text-6xl font-heading font-black text-theme-text uppercase tracking-tighter italic leading-none truncate whitespace-nowrap">
+            Gestão de <span className="text-brand-tactical">Serviços</span>
           </h1>
           <div className="flex items-center gap-4">
             <div className="h-1 w-12 bg-brand-tactical" />
-            <p className="text-[11px] font-black text-brand-tactical uppercase tracking-[0.4em] italic">
-              Engenharia Comercial e Tabelas de Preço
-            </p>
+            <p className="text-[9px] sm:text-[11px] font-black text-brand-tactical uppercase tracking-[0.2em] sm:tracking-[0.4em] italic truncate max-w-[80vw]">Tabela de Preços e Serviços Fotográficos</p>
           </div>
         </div>
         
@@ -211,13 +209,13 @@ export const AdminServices: React.FC = () => {
         {loading ? (
           <div className="py-32 text-center border border-dashed border-theme-border bg-theme-bg-muted/5 space-y-4 animate-pulse">
              <Zap size={32} className="mx-auto text-theme-muted opacity-30" />
-             <p className="text-[10px] text-theme-muted uppercase tracking-[0.4em] font-black italic">Escaneando Ativos de Serviço...</p>
+             <p className="text-[9px] sm:text-[11px] font-black text-brand-tactical uppercase tracking-[0.2em] sm:tracking-[0.4em] italic truncate max-w-[80vw]">Tabela de Preços e Serviços Fotográficos</p>
           </div>
         ) : filteredServices.length === 0 ? (
           <div className="py-32 text-center border border-dashed border-theme-border bg-theme-bg-muted/5 space-y-6">
              <Briefcase size={40} className="mx-auto text-theme-muted opacity-20" />
              <div className="space-y-2">
-                <p className="text-[10px] text-theme-muted uppercase tracking-[0.4em] font-black italic">Nenhum serviço configurado no momento.</p>
+                <p className="text-[9px] sm:text-[11px] font-black text-brand-tactical uppercase tracking-[0.2em] sm:tracking-[0.4em] italic truncate max-w-[80vw]">Tabela de Preços e Serviços Fotográficos</p>
                 <p className="text-[8px] text-theme-muted/60 uppercase tracking-widest">Inicie o seu catálogo para habilitar o gerador de orçamentos.</p>
              </div>
           </div>
@@ -308,7 +306,7 @@ export const AdminServices: React.FC = () => {
               
               <div className="space-y-2">
                 <h3 className="text-2xl font-black uppercase tracking-tighter text-theme-text italic">Remover Serviço?</h3>
-                <p className="text-[10px] font-black text-red-500 uppercase tracking-[0.4em] italic opacity-60">Protocolo de Exclusão de Catálogo</p>
+                <p className="text-[9px] sm:text-[11px] font-black text-brand-tactical uppercase tracking-[0.2em] sm:tracking-[0.4em] italic truncate max-w-[80vw]">Tabela de Preços e Serviços Fotográficos</p>
               </div>
               
               <p className="text-[11px] uppercase tracking-[0.2em] leading-relaxed text-theme-muted italic">
@@ -427,9 +425,7 @@ function ServiceModal({ onClose, onSave, initialData, saving }: { onClose: () =>
                 </div>
               </div>
               <div className="flex items-center">
-                <p className="text-[9px] text-theme-muted uppercase tracking-widest font-black italic opacity-40 leading-relaxed">
-                  Este valor será utilizado como base fallback no gerador de orçamentos automático da rede.
-                </p>
+                <p className="text-[9px] sm:text-[11px] font-black text-brand-tactical uppercase tracking-[0.2em] sm:tracking-[0.4em] italic truncate max-w-[80vw]">Este valor será utilizado como base fallback no gerador de orçamentos automático da rede.</p>
               </div>
             </div>
 

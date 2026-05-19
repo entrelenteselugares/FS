@@ -168,15 +168,13 @@ export default function AdminSuppliers() {
 
       {/* HEADER MASTER */}
       <div className="flex flex-col lg:flex-row lg:items-center justify-between border-b border-theme-border pb-10 gap-6">
-        <div className="space-y-4">
-          <h1 className="text-4xl md:text-6xl font-heading font-black text-theme-text uppercase tracking-tighter italic leading-none">
+        <div className="space-y-4 min-w-0">
+          <h1 className="text-2xl sm:text-4xl md:text-5xl xl:text-6xl font-heading font-black text-theme-text uppercase tracking-tighter italic leading-none truncate whitespace-nowrap">
             Operação de <span className="text-brand-tactical">Impressão</span>
           </h1>
           <div className="flex items-center gap-4">
             <div className="h-1 w-12 bg-brand-tactical" />
-            <p className="text-[11px] font-black text-brand-tactical uppercase tracking-[0.4em] italic">
-              Logística, Amortização e Fila de Produção
-            </p>
+            <p className="text-[9px] sm:text-[11px] font-black text-brand-tactical uppercase tracking-[0.2em] sm:tracking-[0.4em] italic truncate max-w-[80vw]">Logística, Amortização e Fila</p>
           </div>
         </div>
         
@@ -244,7 +242,7 @@ export default function AdminSuppliers() {
               ) : filteredRedemptions.length === 0 ? (
                 <div className="py-32 text-center border border-dashed border-theme-border bg-theme-bg-muted/5 space-y-4">
                    <Package size={32} className="mx-auto text-theme-muted opacity-30" />
-                   <p className="text-[10px] text-theme-muted uppercase tracking-[0.4em] font-black italic">Linha de montagem vazia.</p>
+                   <p className="text-[9px] sm:text-[11px] font-black text-brand-tactical uppercase tracking-[0.2em] sm:tracking-[0.4em] italic truncate max-w-[80vw]">Logística, Amortização e Fila</p>
                 </div>
               ) : filteredRedemptions.map(r => (
                 <div key={r.id} className="bg-theme-bg-muted border border-theme-border group hover:border-brand-tactical/40 transition-all overflow-hidden">
@@ -561,9 +559,7 @@ function NewSupplierModal({ onClose, onSave }: { onClose: () => void; onSave: (d
           </div>
 
           <div className="p-8 bg-brand-tactical/5 border border-brand-tactical/20 rounded-[30px] shadow-inner text-center">
-            <p className="text-[9px] font-black text-brand-tactical uppercase tracking-[0.3em] leading-relaxed italic">
-              ⚠ ESTES DADOS ALIMENTAM A ENGENHARIA DE ROI E O PONTO DE EQUILÍBRIO DA OPERAÇÃO DE IMPRESSÃO.
-            </p>
+            <p className="text-[9px] sm:text-[11px] font-black text-brand-tactical uppercase tracking-[0.2em] sm:tracking-[0.4em] italic truncate max-w-[80vw]">⚠ ESTES DADOS ALIMENTAM A ENGENHARIA DE ROI E O PONTO DE EQUILÍBRIO DA OPERAÇÃO DE IMPRESSÃO.</p>
           </div>
         </form>
 

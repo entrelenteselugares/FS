@@ -424,15 +424,13 @@ export const AdminEvents: React.FC<AdminEventsProps> = ({ initialEditEventId }) 
         <div className="absolute -top-10 -left-10 w-40 h-40 bg-brand-tactical/5 blur-3xl rounded-full" />
         
         <div className="flex flex-col xl:flex-row justify-between items-start xl:items-end gap-6 relative z-10">
-          <div className="space-y-4">
-            <h1 className="text-4xl md:text-5xl xl:text-6xl font-heading font-black text-theme-text uppercase tracking-tighter italic leading-none whitespace-nowrap">
-              Gestão de <span className="text-brand-tactical">Eventos</span>
-            </h1>
+          <div className="space-y-4 min-w-0">
+          <h1 className="text-2xl sm:text-4xl md:text-5xl xl:text-6xl font-heading font-black text-theme-text uppercase tracking-tighter italic leading-none truncate whitespace-nowrap">
+            Gestão de <span className="text-brand-tactical">Eventos</span>
+          </h1>
             <div className="flex items-center gap-4">
               <div className="h-1 w-12 bg-brand-tactical" />
-              <p className="text-[11px] font-black text-brand-tactical uppercase tracking-[0.4em] italic">
-                Operação de Coberturas, Logística e Pós-Produção
-              </p>
+              <p className="text-[9px] sm:text-[11px] font-black text-brand-tactical uppercase tracking-[0.2em] sm:tracking-[0.4em] italic truncate max-w-[80vw]">Administração de Coberturas Fotográficas</p>
             </div>
           </div>
           <div className="flex flex-wrap items-center gap-3 w-full xl:w-auto">
@@ -756,7 +754,7 @@ export const AdminEvents: React.FC<AdminEventsProps> = ({ initialEditEventId }) 
                       <div className="space-y-2">
                         <label className="text-[8px] font-black text-theme-muted uppercase tracking-widest block mb-2 opacity-60 italic">Retenção Galeria (Dias)</label>
                         <input type="number" className="w-full bg-theme-bg-muted border border-theme-border/60 p-4 text-[10px] text-theme-text font-black outline-none focus:border-brand-tactical rounded-xl" value={formData.retentionDays} onChange={e => setFormData({ ...formData, retentionDays: Number(e.target.value) })} />
-                        <p className="text-[8px] text-theme-muted italic opacity-40 uppercase tracking-widest font-black mt-2">Sugestão: 7 (Privado) | 15 (Público) | 90 (Shows)</p>
+                        <p className="text-[9px] sm:text-[11px] font-black text-brand-tactical uppercase tracking-[0.2em] sm:tracking-[0.4em] italic truncate max-w-[80vw]">Administração de Coberturas Fotográficas</p>
                       </div>
                     </div>
                     <div className="space-y-6">
@@ -881,8 +879,8 @@ export const AdminEvents: React.FC<AdminEventsProps> = ({ initialEditEventId }) 
                   {eventMedia.length === 0 && (
                     <div className="py-20 text-center border-2 border-dashed border-theme-border/40 rounded-[30px] bg-theme-bg-muted/30">
                       <Image size={40} className="mx-auto text-theme-muted/30 mb-4" strokeWidth={1} />
-                      <p className="text-[11px] font-black text-theme-muted uppercase tracking-[0.3em] italic">Nenhuma mídia encontrada nesta galeria.</p>
-                      <p className="text-[8px] text-theme-muted/60 uppercase tracking-widest mt-2 font-black italic">Use o Sincro Drive para importar fotos em massa.</p>
+                      <p className="text-[9px] sm:text-[11px] font-black text-brand-tactical uppercase tracking-[0.2em] sm:tracking-[0.4em] italic truncate max-w-[80vw]">Administração de Coberturas Fotográficas</p>
+                      <p className="text-[9px] sm:text-[11px] font-black text-brand-tactical uppercase tracking-[0.2em] sm:tracking-[0.4em] italic truncate max-w-[80vw]">Administração de Coberturas Fotográficas</p>
                     </div>
                   )}
                 </div>
@@ -1148,9 +1146,7 @@ export const AdminEvents: React.FC<AdminEventsProps> = ({ initialEditEventId }) 
                   </div>
 
                   <div className="bg-brand-tactical/5 border border-brand-tactical/20 p-8 rounded-[30px] shadow-inner text-center">
-                    <p className="text-[9px] font-black text-brand-tactical uppercase tracking-[0.3em] leading-relaxed italic">
-                      ⚠ ESTA OPERAÇÃO É FINALIZADA EM TEMPO REAL. SE FOR DIGITAL (CARD/PIX), UM LINK DE CHECKOUT SERÁ GERADO AUTOMATICAMENTE.
-                    </p>
+                    <p className="text-[9px] sm:text-[11px] font-black text-brand-tactical uppercase tracking-[0.2em] sm:tracking-[0.4em] italic truncate max-w-[80vw]">⚠ ESTA OPERAÇÃO É FINALIZADA EM TEMPO REAL. SE FOR DIGITAL (CARD/PIX), UM LINK DE CHECKOUT SERÁ GERADO AUTOMATICAMENTE.</p>
                   </div>
                 </div>
               </div>
@@ -1195,14 +1191,10 @@ export const AdminEvents: React.FC<AdminEventsProps> = ({ initialEditEventId }) 
 
             {/* Content */}
             <div className="p-8 md:p-10 space-y-6">
-              <p className="text-[11px] text-theme-muted leading-relaxed uppercase tracking-widest font-black italic opacity-80 text-center">
-                VOCÊ ESTÁ PRESTES A EXCLUIR O EVENTO <span className="text-theme-text font-black underline decoration-red-500/50 decoration-4 underline-offset-4">{confirmDelete.title}</span>. 
-              </p>
+              <p className="text-[9px] sm:text-[11px] font-black text-brand-tactical uppercase tracking-[0.2em] sm:tracking-[0.4em] italic truncate max-w-[80vw]">VOCÊ ESTÁ PRESTES A EXCLUIR O EVENTO <span className="text-theme-text font-black underline decoration-red-500/50 decoration-4 underline-offset-4">{confirmDelete.title}</span>.</p>
               
               <div className="bg-red-500/5 border border-red-500/20 p-6 rounded-[24px]">
-                <p className="text-[9px] text-red-500/80 font-black uppercase tracking-widest leading-relaxed italic text-center">
-                  ⚠ SE HOUVER PEDIDOS APROVADOS, O EVENTO SERÁ APENAS DESATIVADO PARA PRESERVAÇÃO DE DADOS. CASO CONTRÁRIO, SERÁ REMOVIDO PERMANENTEMENTE DO CORE.
-                </p>
+                <p className="text-[9px] sm:text-[11px] font-black text-brand-tactical uppercase tracking-[0.2em] sm:tracking-[0.4em] italic truncate max-w-[80vw]">⚠ SE HOUVER PEDIDOS APROVADOS, O EVENTO SERÁ APENAS DESATIVADO PARA PRESERVAÇÃO DE DADOS. CASO CONTRÁRIO, SERÁ REMOVIDO PERMANENTEMENTE DO CORE.</p>
               </div>
             </div>
 

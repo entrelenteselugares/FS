@@ -130,15 +130,13 @@ export const AdminPrintCatalog: React.FC = () => {
 
       {/* HEADER MASTER */}
       <div className="flex flex-col lg:flex-row lg:items-center justify-between border-b border-theme-border pb-10 gap-6">
-        <div className="space-y-4">
-          <h1 className="text-4xl md:text-6xl font-heading font-black text-theme-text uppercase tracking-tighter italic leading-none">
+        <div className="space-y-4 min-w-0">
+          <h1 className="text-2xl sm:text-4xl md:text-5xl xl:text-6xl font-heading font-black text-theme-text uppercase tracking-tighter italic leading-none truncate whitespace-nowrap">
             Catálogo de <span className="text-brand-tactical">Impressão</span>
           </h1>
           <div className="flex items-center gap-4">
             <div className="h-1 w-12 bg-brand-tactical" />
-            <p className="text-[11px] font-black text-brand-tactical uppercase tracking-[0.4em] italic">
-              Engenharia de Portfólio e Margens de Lucro
-            </p>
+            <p className="text-[9px] sm:text-[11px] font-black text-brand-tactical uppercase tracking-[0.2em] sm:tracking-[0.4em] italic truncate max-w-[80vw]">Precificação e Portfólio de Impressão</p>
           </div>
         </div>
         
@@ -204,7 +202,7 @@ export const AdminPrintCatalog: React.FC = () => {
       {loading ? (
         <div className="py-32 text-center border border-dashed border-theme-border bg-theme-bg-muted/5 space-y-4 animate-pulse">
            <Layers size={32} className="mx-auto text-theme-muted opacity-30" />
-           <p className="text-[10px] text-theme-muted uppercase tracking-[0.4em] font-black italic">Sincronizando Ativos do Catálogo...</p>
+           <p className="text-[9px] sm:text-[11px] font-black text-brand-tactical uppercase tracking-[0.2em] sm:tracking-[0.4em] italic truncate max-w-[80vw]">Precificação e Portfólio de Impressão</p>
         </div>
       ) : (
         <div className="space-y-6">

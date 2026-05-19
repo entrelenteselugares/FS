@@ -174,15 +174,13 @@ export default function AdminFranchises() {
         <div className="absolute -top-10 -left-10 w-40 h-40 bg-brand-tactical/5 blur-3xl rounded-full" />
         
         <div className="flex flex-col xl:flex-row justify-between items-start xl:items-end gap-6 relative z-10">
-          <div className="space-y-4">
-            <h1 className="text-4xl md:text-5xl xl:text-6xl font-heading font-black text-theme-text uppercase tracking-tighter italic leading-none whitespace-nowrap">
-              Expansão <span className="text-brand-tactical">Phygital</span>
-            </h1>
+          <div className="space-y-4 min-w-0">
+          <h1 className="text-2xl sm:text-4xl md:text-5xl xl:text-6xl font-heading font-black text-theme-text uppercase tracking-tighter italic leading-none truncate whitespace-nowrap">
+            Rede de <span className="text-brand-tactical">Franquias</span>
+          </h1>
             <div className="flex items-center gap-4">
               <div className="h-1 w-12 bg-brand-tactical" />
-              <p className="text-[11px] font-black text-brand-tactical uppercase tracking-[0.4em] italic">
-                Gestão de Micro-Franquias & Créditos
-              </p>
+              <p className="text-[9px] sm:text-[11px] font-black text-brand-tactical uppercase tracking-[0.2em] sm:tracking-[0.4em] italic truncate max-w-[80vw]">Controle de Licenças e Royalties</p>
             </div>
           </div>
           {isAdmin && (
@@ -306,7 +304,7 @@ export default function AdminFranchises() {
       <div className="space-y-6 pt-10 border-t border-theme-border">
         <div>
           <h3 className="text-2xl font-black text-theme-text uppercase tracking-tighter">Pedidos de Suprimentos</h3>
-          <p className="text-[9px] text-theme-muted uppercase tracking-[0.4em] mt-1 font-black italic">Monitoramento de Compras B2B da Rede</p>
+          <p className="text-[9px] sm:text-[11px] font-black text-brand-tactical uppercase tracking-[0.2em] sm:tracking-[0.4em] italic truncate max-w-[80vw]">Controle de Licenças e Royalties</p>
         </div>
 
         <div className="border border-theme-border bg-theme-bg shadow-sm overflow-hidden">
@@ -559,9 +557,7 @@ export default function AdminFranchises() {
               </div>
 
               <div className="bg-brand-tactical/5 border border-brand-tactical/20 p-6 rounded-[24px]">
-                <p className="text-[9px] font-black text-brand-tactical uppercase tracking-widest leading-relaxed italic text-center">
-                  ⚠ ESTA AÇÃO IRÁ DEDUZIR O ESTOQUE DA MATRIZ E CREDITAR OS CRÉDITOS DE IMPRESSÃO AO FRANQUEADO. ESTA OPERAÇÃO É IRREVERSÍVEL NO LEDGER.
-                </p>
+                <p className="text-[9px] sm:text-[11px] font-black text-brand-tactical uppercase tracking-[0.2em] sm:tracking-[0.4em] italic truncate max-w-[80vw]">⚠ ESTA AÇÃO IRÁ DEDUZIR O ESTOQUE DA MATRIZ E CREDITAR OS CRÉDITOS DE IMPRESSÃO AO FRANQUEADO. ESTA OPERAÇÃO É IRREVERSÍVEL NO LEDGER.</p>
               </div>
             </div>
 

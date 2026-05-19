@@ -157,15 +157,13 @@ export const AdminOrders: React.FC = () => {
         <div className="absolute -top-10 -left-10 w-40 h-40 bg-brand-tactical/5 blur-3xl rounded-full" />
         
         <div className="flex flex-col xl:flex-row justify-between items-start xl:items-end gap-6 relative z-10">
-          <div className="space-y-4">
-            <h1 className="text-4xl md:text-5xl xl:text-6xl font-heading font-black text-theme-text uppercase tracking-tighter italic leading-none whitespace-nowrap">
-              Auditoria de <span className="text-brand-tactical">Projetos</span>
-            </h1>
+          <div className="space-y-4 min-w-0">
+          <h1 className="text-2xl sm:text-4xl md:text-5xl xl:text-6xl font-heading font-black text-theme-text uppercase tracking-tighter italic leading-none truncate whitespace-nowrap">
+            Gestão de <span className="text-brand-tactical">Pedidos</span>
+          </h1>
             <div className="flex items-center gap-4">
               <div className="h-1 w-12 bg-brand-tactical" />
-              <p className="text-[11px] font-black text-brand-tactical uppercase tracking-[0.4em] italic">
-                Monitoramento de Fluxo e Transações
-              </p>
+              <p className="text-[9px] sm:text-[11px] font-black text-brand-tactical uppercase tracking-[0.2em] sm:tracking-[0.4em] italic truncate max-w-[80vw]">Controle de Vendas e Faturamento</p>
             </div>
           </div>
           
@@ -412,7 +410,7 @@ export const AdminOrders: React.FC = () => {
                 <div className="absolute inset-0 bg-theme-border/20 rounded-full animate-ping" />
                 <ArrowUpRight size={48} className="text-theme-muted relative z-10" />
              </div>
-             <p className="text-[12px] text-theme-muted uppercase tracking-[0.6em] font-black italic">Nenhum registro de auditoria encontrado.</p>
+             <p className="text-[9px] sm:text-[11px] font-black text-brand-tactical uppercase tracking-[0.2em] sm:tracking-[0.4em] italic truncate max-w-[80vw]">Controle de Vendas e Faturamento</p>
           </div>
         )}
       </div>
@@ -466,7 +464,7 @@ export const AdminOrders: React.FC = () => {
 
                 {(!selectedOrderForDetails.items || selectedOrderForDetails.items.length === 0) ? (
                   <div className="p-10 text-center bg-theme-bg-muted/30 border border-dashed border-theme-border/60 rounded-[30px]">
-                    <p className="text-[10px] text-theme-muted italic uppercase tracking-widest font-black opacity-40 leading-relaxed">Nenhum item detalhado disponível para este registro legado.</p>
+                    <p className="text-[9px] sm:text-[11px] font-black text-brand-tactical uppercase tracking-[0.2em] sm:tracking-[0.4em] italic truncate max-w-[80vw]">Controle de Vendas e Faturamento</p>
                   </div>
                 ) : (
                   <div className="space-y-4">

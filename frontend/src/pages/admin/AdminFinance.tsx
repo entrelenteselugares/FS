@@ -151,15 +151,13 @@ export const AdminFinance: React.FC = () => {
         <div className="absolute -top-10 -left-10 w-40 h-40 bg-brand-tactical/5 blur-3xl rounded-full" />
         
         <div className="flex flex-col xl:flex-row justify-between items-start xl:items-end gap-6 relative z-10">
-          <div className="space-y-4">
-            <h1 className="text-4xl md:text-5xl xl:text-6xl font-heading font-black text-theme-text uppercase tracking-tighter italic leading-none whitespace-nowrap">
-              Gestão <span className="text-brand-tactical">Financeira</span>
-            </h1>
+          <div className="space-y-4 min-w-0">
+          <h1 className="text-2xl sm:text-4xl md:text-5xl xl:text-6xl font-heading font-black text-theme-text uppercase tracking-tighter italic leading-none truncate whitespace-nowrap">
+            Painel <span className="text-brand-tactical">Financeiro</span>
+          </h1>
             <div className="flex items-center gap-4">
               <div className="h-1 w-12 bg-brand-tactical" />
-              <p className="text-[11px] font-black text-brand-tactical uppercase tracking-[0.4em] italic">
-                Engenharia de Custos, Repasses e DRE Operacional
-              </p>
+              <p className="text-[9px] sm:text-[11px] font-black text-brand-tactical uppercase tracking-[0.2em] sm:tracking-[0.4em] italic truncate max-w-[80vw]">Fluxo de Caixa e Liquidações</p>
             </div>
           </div>
           
@@ -206,7 +204,7 @@ export const AdminFinance: React.FC = () => {
             ) : orders.length === 0 ? (
               <div className="py-24 text-center border border-dashed border-theme-border bg-theme-bg-muted/5 space-y-4">
                  <ShieldCheck size={32} strokeWidth={1.5} className="mx-auto text-theme-muted opacity-30" />
-                 <p className="text-[10px] text-theme-muted uppercase tracking-[0.4em] font-black italic">Fluxo de repasses em conformidade.</p>
+                 <p className="text-[9px] sm:text-[11px] font-black text-brand-tactical uppercase tracking-[0.2em] sm:tracking-[0.4em] italic truncate max-w-[80vw]">Fluxo de Caixa e Liquidações</p>
               </div>
             ) : (
               <div className="grid grid-cols-1 gap-4">

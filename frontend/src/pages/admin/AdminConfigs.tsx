@@ -186,15 +186,13 @@ export const AdminConfigs: React.FC = () => {
     <div className="space-y-10 animate-in fade-in slide-in-from-bottom-4 duration-700 pb-20">
       {/* HEADER MASTER */}
       <div className="flex flex-col lg:flex-row lg:items-center justify-between border-b border-theme-border pb-10 gap-6">
-        <div className="space-y-4">
-          <h1 className="text-4xl md:text-6xl font-heading font-black text-theme-text uppercase tracking-tighter italic leading-none">
-            Inteligência <span className="text-brand-tactical">Financeira</span>
+        <div className="space-y-4 min-w-0">
+          <h1 className="text-2xl sm:text-4xl md:text-5xl xl:text-6xl font-heading font-black text-theme-text uppercase tracking-tighter italic leading-none truncate whitespace-nowrap">
+            Ajustes & <span className="text-brand-tactical">Configurações</span>
           </h1>
           <div className="flex items-center gap-4">
             <div className="h-1 w-12 bg-brand-tactical" />
-            <p className="text-[11px] font-black text-brand-tactical uppercase tracking-[0.4em] italic">
-              Gestão de Split e Governança de Infraestrutura
-            </p>
+            <p className="text-[9px] sm:text-[11px] font-black text-brand-tactical uppercase tracking-[0.2em] sm:tracking-[0.4em] italic truncate max-w-[80vw]">Parâmetros Globais do Sistema</p>
           </div>
         </div>
         
@@ -308,7 +306,7 @@ export const AdminConfigs: React.FC = () => {
             <div className="py-40 text-center border border-dashed border-theme-border bg-theme-bg-muted/5 space-y-6">
               <AlertTriangle className="mx-auto text-theme-muted opacity-20" size={48} />
               <div className="space-y-2">
-                <p className="text-[10px] text-theme-muted uppercase tracking-[0.5em] font-black italic">Nenhum relatório de repasse gerado no sistema.</p>
+                <p className="text-[9px] sm:text-[11px] font-black text-brand-tactical uppercase tracking-[0.2em] sm:tracking-[0.4em] italic truncate max-w-[80vw]">Parâmetros Globais do Sistema</p>
                 <p className="text-[8px] text-theme-muted/60 uppercase tracking-widest">Inicie um fechamento semanal para consolidar as provisões.</p>
               </div>
             </div>
@@ -490,7 +488,7 @@ export const AdminConfigs: React.FC = () => {
               
               <div className="space-y-2">
                 <h3 className="text-2xl font-black uppercase tracking-tighter text-theme-text italic leading-none">Gerar Fechamento?</h3>
-                <p className="text-[10px] font-black text-brand-tactical uppercase tracking-[0.4em] italic opacity-60">Protocolo de Liquidação Semanal</p>
+                <p className="text-[9px] sm:text-[11px] font-black text-brand-tactical uppercase tracking-[0.2em] sm:tracking-[0.4em] italic truncate max-w-[80vw]">Parâmetros Globais do Sistema</p>
               </div>
               
               <p className="text-[11px] uppercase tracking-[0.2em] leading-relaxed text-theme-muted italic">
@@ -561,9 +559,7 @@ export const AdminConfigs: React.FC = () => {
                     className="w-full bg-theme-bg-muted border border-theme-border/60 p-5 pl-12 text-[11px] font-black text-theme-text placeholder:opacity-20 focus:border-brand-tactical outline-none transition-all uppercase rounded-xl"
                   />
                 </div>
-                <p className="text-[8px] text-theme-muted uppercase tracking-widest leading-relaxed italic opacity-40 font-black text-center">
-                  O REGISTRO SERVIRÁ COMO COMPROVANTE DE AUDITORIA INTERNA.
-                </p>
+                <p className="text-[9px] sm:text-[11px] font-black text-brand-tactical uppercase tracking-[0.2em] sm:tracking-[0.4em] italic truncate max-w-[80vw]">Parâmetros Globais do Sistema</p>
               </div>
 
               <div className="flex gap-4 pt-4">
