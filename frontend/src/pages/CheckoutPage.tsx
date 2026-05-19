@@ -758,7 +758,6 @@ export const CheckoutPage = () => {
       <div className="flex-1 max-w-7xl mx-auto px-6 py-12 w-full animate-in fade-in duration-700">
         <div className="flex justify-between items-center mb-12 border-b border-theme-border/20 pb-8">
           <button onClick={() => navigate(-1)} className="text-[10px] font-black uppercase tracking-widest text-theme-text-muted hover:text-theme-text transition-all flex items-center gap-2"><ArrowLeft size={14} /> Voltar</button>
-          <img src={order?.event?.tenantLogoUrl || "/logo.png"} alt="Foto Segundo" style={{ height: order?.event?.tenantLogoUrl ? 28 : 16, objectFit: "contain", filter: order?.event?.tenantLogoUrl ? "none" : "var(--logo-filter)" }} />
           <div className="flex items-center gap-2 text-brand-tactical text-[9px] font-black uppercase tracking-widest"><ShieldCheck size={14} /> Checkout Blindado</div>
         </div>
 
