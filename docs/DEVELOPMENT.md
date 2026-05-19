@@ -1,50 +1,77 @@
-<!-- GSD:DEVELOPMENT -->
-# Development Guide: Foto Segundo
+# Development Guide
 
-This document outlines the development workflow, coding standards, and build processes for the Foto Segundo platform.
+Este guia detalha o fluxo de trabalho local para o desenvolvimento e manutenção da plataforma Foto Segundo.
 
-## Local Setup
+## Pré-requisitos
 
-Development requires a hybrid setup where the backend acts as an API server and the frontend is a Vite-powered SPA.
+- **Node.js** (v20+ recomendado)
+- **NPM** ou **Yarn**
+- Acesso à conta de desenvolvimento do **Supabase** (para provisionar banco de dados de teste)
 
-1. Follow the [Getting Started](GETTING-STARTED.md) guide for installation.
-2. Ensure your `.env` file is fully populated, especially `JWT_SECRET` and `SUPABASE_*` keys.
-3. Run `npm run dev` to start the development environment with HMR (Hot Module Replacement).
+## Instalação e Inicialização
 
-## Build Commands
+O repositório é configurado com o frontend (`/frontend`) em Vite/React e o backend (`/backend`) em Node.js com Prisma.
 
-| Command | Description |
-|---------|-------------|
-| `npm run dev` | Starts backend (3002) and frontend (3000) in parallel using `concurrently`. |
-| `npm run build` | Bundles backend and builds frontend for production. |
-| `npm run test` | Executes the main test suite (mapped to `test:e2e:all`). |
-| `npm run test:certify` | Runs the high-integrity launch certification robot. |
-| `npx prisma generate` | Regenerates the Prisma client for backend models. |
-| `npm run lint` | (Frontend) Runs ESLint across the UI codebase. |
+1. **Clone o repositório e instale as dependências raiz**:
+   ```bash
+   git clone https://github.com/fotosegundo/platform.git
+   cd platform
+   npm install
+   ```
 
-## Code Style
+2. **Instale as dependências do Frontend e Backend**:
+   ```bash
+   cd frontend && npm install
+   cd ../backend && npm install
+   cd ..
+   ```
 
-- **TypeScript:** The project is strictly typed. Avoid `any` where possible.
-- **Linting:** We use standard TypeScript/JavaScript linting. Run `npm run lint` (if configured) before committing.
-- **Theme (Midnight Luxury):** All frontend components must adhere to the design tokens defined in `frontend/src/index.css`.
-- **Naming:**
-  - Backend: `camelCase` for variables/functions, `PascalCase` for classes/controllers.
-  - Frontend: `kebab-case` for file names, `PascalCase` for React components.
+3. **Configure as Variáveis de Ambiente**:
+   Crie o `.env` na raiz conforme especificado em [CONFIGURATION.md](./CONFIGURATION.md).
 
-## Branch Conventions
+4. **Gerar o Prisma Client e Sincronizar o Banco**:
+   ```bash
+   cd backend
+   npx prisma generate
+   npx prisma db push # ou npx prisma migrate dev para rodar migrações estruturais
+   cd ..
+   ```
 
-We follow a feature-branch workflow:
+5. **Inicie o Ambiente de Desenvolvimento Local**:
+   Na raiz do projeto:
+   ```bash
+   npm run dev
+   ```
+   *Este comando geralmente inicia o servidor Vite na porta 5173 e o backend na porta correspondente configurada (ex: 3000).*
 
-- `main` — Production-ready code.
-- `dev` — Integration branch for new features.
-- `feat/*` — New features.
-- `fix/*` — Bug fixes.
-- `docs/*` — Documentation updates.
+## Padrões de Código
 
-## Pull Request Process
+### Frontend
+- **Framework:** React + Vite.
+- **Estilização:** TailwindCSS. Todas as cores principais devem utilizar os tokens configurados em `tailwind.config.js` (`bg-theme-bg`, `text-brand-tactical`, etc.) para suporte automático a Dark Mode e expansões futuras.
+- **Roteamento:** React Router Dom. Novas páginas institucionais devem ser registradas em `App.tsx` e acessíveis via `Navbar` e `Footer`.
+- **Estado:** Evite complexidade global excessiva se o React Context for suficiente, mantendo componentes o mais puros e "dumb" possível.
 
-1. Create a branch from `dev`.
-2. Implement your changes and ensure `npm run build` passes locally.
-3. Run existing E2E tests to ensure no regressions: `npm run test:e2e:all`.
-4. Submit a PR to the `dev` branch.
-5. All PRs require at least one approval and a passing CI build (if applicable).
+### Backend
+- **Framework:** Express / Node.js nativo (servido em arquitetura serverless via Vercel na produção).
+- **ORM:** Prisma. Sempre que houver uma mudança no `schema.prisma`, execute `npx prisma generate` antes de commitar.
+- **Tratamento de Erros:** Todas as chamadas de banco e requisições devem estar envelopadas em blocos `try/catch` para evitar crash global.
+
+## Testes e Quality Assurance (UAT)
+
+Antes de abrir um Pull Request:
+1. Certifique-se de que não existem avisos de lint (variáveis não usadas, imports soltos).
+2. O sistema possui scripts de teste E2E usando Playwright (ex: `test:certify`). Para rodar:
+   ```bash
+   npm run test
+   ```
+3. Teste o build de produção localmente se estiver tocando em pacotes ou rotas cruciais:
+   ```bash
+   npm run vercel-build
+   ```
+
+## Fluxo do Git
+
+- Trabalhe em branches de feature: `feature/nome-da-feature` ou `fix/nome-do-bug`.
+- Use mensagens de commit convencionais (`feat: ...`, `fix: ...`, `docs: ...`).
+- Sincronize com a branch `main` com frequência para evitar conflitos no motor financeiro ou no esquema Prisma.

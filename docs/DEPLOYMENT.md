@@ -1,86 +1,46 @@
-<!-- generated-by: gsd-doc-writer -->
-# Deployment Guide: Foto Segundo
+# Deployment Guide
 
-This guide details the process of deploying the Foto Segundo platform to production and staging environments.
+O deploy da Foto Segundo é contínuo e integrado ao repositório GitHub através da **Vercel**, configurada para operar como ambiente Serverless unificado.
 
-## Deployment Targets
+## Arquitetura de Produção
 
-The platform is designed for cloud-native deployment with a focus on serverless architecture for the API and static hosting for the frontend.
+A Foto Segundo opera de maneira híbrida num único domínio (Monólito na borda):
+1. O Front-end (Vite/React) é compilado para arquivos estáticos e servido na raiz global do domínio pela CDN da Vercel.
+2. O Backend (Express/Node.js) é agrupado (bundled) usando o `esbuild` em um único arquivo Javascript Serverless. Ele responde a todas as chamadas prefixadas em `/api/*`.
 
-| Target | platform | Config File |
-|--------|----------|-------------|
-| **Frontend** | Vercel (Static) | `frontend/package.json` |
-| **Backend API** | Vercel (Serverless) | `vercel.json`, `api/server-v2.js` |
-| **Database** | Supabase (Managed) | N/A (Cloud Managed) |
-| **Storage** | Google Drive | N/A (OAuth2 Integration) |
+## Fluxo de Deploy Contínuo (CI/CD)
 
-## Build Pipeline
+Qualquer código consolidado na branch `main` disparará automaticamente o processo de Build na Vercel.
+Você pode acompanhar os logs no painel Vercel da organização.
 
-Our CI/CD pipeline is managed via GitHub Actions and Vercel's native build engine.
-
-1. **Trigger:** Push to `main` (Production) or `dev` (Staging).
-2. **Pre-build:** Runs `npx prisma generate` to ensure type safety.
-3. **Build Script:**
-    - **Backend:** Bundled via `esbuild` into `api/server-v2.js` for serverless execution.
-    - **Frontend:** Built via Vite into `frontend/dist`.
-    - **Asset Sync:** The `public/` directory at the root is replaced with the fresh frontend build.
-4. **Deploy:** Automatic deployment to Vercel. CI runs `npm test` before or during deployment.
-
-## Environment Setup
-
-Production deployment requires several critical secrets to be configured in the Vercel Dashboard:
-
-- `DATABASE_URL` (Direct Supabase URL)
-- `JWT_SECRET` (Production-grade secret)
-- `MP_ACCESS_TOKEN` (Live credentials)
-- `CALENDAR_ENCRYPTION_KEY` (64-char hex)
-- `GOOGLE_DRIVE_REFRESH_TOKEN` (Persistent)
-
-Refer to [CONFIGURATION.md](CONFIGURATION.md) for the full list of required variables.
-
-## Rollback Procedure
-
-In case of a critical failure:
-
-1. **Vercel:** Use the Vercel Dashboard to "Redeploy" a previous successful deployment.
-2. **Database:** If the schema was changed, a manual rollback via Prisma Migrations may be necessary (use with extreme caution).
-3. **Hotfix:** Push a targeted fix to the `main` branch to trigger a new deployment.
-
-## Monitoring
-
-- **Error Tracking:** Sentry is configured for capturing server-side exceptions (DSN via `VITE_SENTRY_DSN`).
-- **Uptime:** UptimeRobot or StatusCake monitors the `/api/health` endpoint.
-- **Logs:** Vercel Runtime Logs provide real-time visibility into serverless function execution.
-
-## Cron Job Setup
-
-The Growth Engine relies on external cron triggers for automation:
-
-| Endpoint | Method | Frequency | Purpose |
-|----------|--------|-----------|---------|
-| `/api/cron/abandoned-carts` | `POST` | Every hour | Sends recovery emails/WhatsApp to users who abandoned checkout after 24h. |
-| `/api/cron/crm-recovery` | `GET` | Daily | Full CRM lead recovery pass. |
-
-**Configure via Supabase Cron or Vercel Cron:**
+### O Comando de Build Customizado
+O pipeline de build é governado pelo script `vercel-build` definido no `package.json` raiz:
 
 ```json
-// vercel.json
-{
-  "crons": [
-    {
-      "path": "/api/cron/abandoned-carts",
-      "schedule": "0 * * * *"
-    }
-  ]
-}
+"vercel-build": "npx prisma generate --schema=backend/prisma/schema.prisma && npm install --prefix frontend && npx esbuild backend/src/server.ts --bundle --minify --platform=node --target=node20 --outfile=api/server-v2.js --external:multer ... && npm run build --prefix frontend && node -e \"const fs=require('fs'); if(fs.existsSync('public')) fs.rmSync('public', {recursive:true,force:true}); fs.renameSync('frontend/dist', 'public')\""
 ```
 
-All cron endpoints require `Authorization: Bearer <CRON_SECRET>` header.
+**Este comando executa:**
+1. Geração do Cliente Prisma (tipagens e bindings com o banco).
+2. Instalação das dependências e build otimizado do React (Vite).
+3. Agrupamento e minificação da API em um `server-v2.js` para carregamento imediato em Edge Functions.
+4. Mapeamento das pastas estáticas do frontend para `public` a fim de serem interceptadas de forma transparente pelo engine da Vercel (`vercel.json`).
 
-## Post-Deployment Sanity Check
+## Configurando Variáveis de Produção
 
-1. **Health Check:** `GET /api/health` must return `200 OK`.
-2. **Auth Flow:** Login must succeed (serial execution recommended).
-3. **UI Integrity:** Verify "Bottom Navigation Bar" on mobile.
-4. **Financial:** Test PIX generation.
-5. **IoT:** Confirm Printer Agent heartbeats.
+A Vercel precisa ter acesso a todas as chaves críticas do sistema.
+No dashboard da Vercel > **Settings** > **Environment Variables**, garanta que todas as chaves mapeadas no `CONFIGURATION.md` estão presentes, com destaque para:
+
+- `DATABASE_URL`: Com pgbouncer ativo para pooling Serverless (termina em `?pgbouncer=true`).
+- `DIRECT_URL`: Sem pgbouncer (termina na porta 5432).
+- `JWT_SECRET`: Chave simétrica forte (exclusiva de produção).
+- `MP_ACCESS_TOKEN` / `MP_WEBHOOK_SECRET`: Credenciais do Mercado Pago Produtivo.
+
+## Deploy Manual
+
+Se for necessário forçar o build manualmente a partir da sua máquina local:
+```bash
+npx vercel --prod --yes
+```
+
+Esse comando usará a CLI da Vercel para subir o estado atual do repositório, ignorando branches e empurrando um release imediato de produção. Mantenha cautela ao executar esse comando para evitar dessincronia com o estado real do GitHub.

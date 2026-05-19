@@ -1,86 +1,65 @@
-<!-- GSD:CONFIGURATION -->
-# Configuration Guide: Foto Segundo
+# Configuration Guide
 
-This document details the environment variables and configuration settings required to run the Foto Segundo platform in development and production environments.
+A configuração da plataforma Foto Segundo é gerenciada através de variáveis de ambiente. Siga este guia para configurar corretamente a aplicação em ambientes de desenvolvimento e produção.
 
-## Environment Variables
+## Variáveis de Ambiente
 
-The system uses a `.env` file for local development. In production, these should be configured in your hosting platform's (e.g., Vercel) environment settings.
+O arquivo `.env` na raiz do projeto é responsável por armazenar as credenciais sensíveis e as URLs de integração. 
 
-| Variable | Required | Default | Description |
-|----------|----------|---------|-------------|
-| `SUPABASE_URL` | **Yes** | — | The URL of your Supabase project. |
-| `SUPABASE_ANON_KEY` | **Yes** | — | Supabase anonymous API key for public access. |
-| `SUPABASE_SERVICE_ROLE_KEY` | **Yes** | — | Supabase service role key for administrative bypass. |
-| `DATABASE_URL` | **Yes** | — | Prisma connection string for Supabase PostgreSQL (use with PGBouncer). |
-| `DIRECT_URL` | **Yes** | — | Direct Prisma connection string for Supabase PostgreSQL (use for migrations). |
-| `JWT_SECRET` | **Yes** | — | Secret key used to sign and verify JSON Web Tokens. |
-| `JWT_EXPIRES_IN` | No | `7d` | Expiration time for JWT sessions. |
-| `MP_PUBLIC_KEY` | **Yes** | — | Mercado Pago public key for frontend integration. |
-| `MP_ACCESS_TOKEN` | **Yes** | — | Mercado Pago private access token for server-side payments. |
-| `MP_CLIENT_ID` | **Yes** | — | Mercado Pago application Client ID. |
-| `MP_CLIENT_SECRET` | **Yes** | — | Mercado Pago application Client Secret. |
-| `MP_REDIRECT_URI` | **Yes** | — | Webhook callback URL for payment notifications. |
-| `GOOGLE_CLIENT_ID` | **Yes** | — | Google Cloud OAuth2 Client ID for Calendar/Drive. |
-| `GOOGLE_CLIENT_SECRET` | **Yes** | — | Google Cloud OAuth2 Client Secret. |
-| `GOOGLE_CALENDAR_REDIRECT_URI` | **Yes** | — | Callback URI for Google Calendar authentication. |
-| `CALENDAR_ENCRYPTION_KEY` | **Yes** | — | 32-byte hex key for encrypting OAuth tokens in the database. |
-| `GOOGLE_DRIVE_REDIRECT_URI` | **Yes** | — | Callback URI for Google Drive authentication. |
-| `GOOGLE_DRIVE_REFRESH_TOKEN` | **Yes** | — | Persistent refresh token for the Master Drive account. |
-| `GOOGLE_DRIVE_ROOT_FOLDER_ID` | **Yes** | — | ID of the root folder in Google Drive for photo storage. |
-| `MASTER_EMAIL` | No | — | Administrative email for system-wide notifications. |
-| `VITE_SENTRY_DSN` | No | — | Sentry DSN for frontend error monitoring. |
-| `CALLMEBOT_PHONE` | No | — | Phone number for WhatsApp notifications via CallMeBot. |
-| `CALLMEBOT_APIKEY` | No | — | API key for CallMeBot WhatsApp service. |
-| `PORT` | No | `3002` | Port number for the backend Express server. |
-| `BACKEND_URL` | No | `http://localhost:3002` | Base URL of the backend API. |
-| `CRON_SECRET` | **Yes** | — | Secret token to secure `/cron/*` endpoints (abandoned-carts, etc). |
-| `SMTP_HOST` | No | — | Hostname for the transactional email server (ex: smtp.resend.com). |
-| `SMTP_PORT` | No | `587` | Port for SMTP connection. |
-| `SMTP_USER` | No | — | Username/Email for the SMTP account. |
-| `SMTP_PASS` | No | — | Password/API Key for the SMTP account. |
-| `SMTP_SECURE` | No | `false` | Set to 'true' to use SSL/TLS. |
-| `FRONTEND_URL` | No | `http://localhost:3000` | Base URL of the client app for email links. |
-| `WHATSAPP_SESSION_PATH` | No | `./wa-session` | Directory path where WhatsApp (Baileys) session credentials are stored. |
-| `AMBASSADOR_COOKIE_TTL_DAYS` | No | `30` | Cookie TTL in days for `fs_referral` affiliate attribution. |
+### Banco de Dados (Supabase/PostgreSQL)
+A plataforma utiliza o Prisma com a extensão pg-adapter para conectar ao banco de dados no Supabase.
 
-## Required vs Optional Settings
+```env
+# URL de conexão com pool de conexões (usada pelo Prisma Client no runtime)
+DATABASE_URL="postgresql://user:password@aws-0-us-east-1.pooler.supabase.com:6543/postgres?pgbouncer=true"
 
-### 🛑 Startup Blockers
+# URL direta de conexão (usada para rodar as migrations via CLI)
+DIRECT_URL="postgresql://user:password@aws-0-us-east-1.pooler.supabase.com:5432/postgres"
+```
 
-The application will fail to initialize or perform core functions if the following are missing:
+### Mercado Pago (Pagamentos)
+Utilizado para o motor financeiro e splits dinâmicos.
 
-- **Database:** `DATABASE_URL` and `DIRECT_URL` must be valid for Prisma to connect.
-- **Auth:** `JWT_SECRET` must be set to issue session tokens.
-- **Financials:** `MP_ACCESS_TOKEN` is required for processing any sales.
-- **Storage:** `GOOGLE_DRIVE_REFRESH_TOKEN` is required for the Memory Vaults and photo fulfillment.
+```env
+# Access Token da conta Mercado Pago associada à plataforma
+MP_ACCESS_TOKEN="APP_USR-..."
 
-### ⚙️ Optional Defaults
+# Token de segurança para o Webhook de recebimento de notificações IPN
+MP_WEBHOOK_SECRET="v1-..."
+```
 
-- **Port:** Defaults to `3002` if not specified.
-- **JWT Expiry:** Defaults to `7d` (7 days).
-- **Notifications:** WhatsApp alerts will be skipped if `CALLMEBOT` variables are absent.
+### Autenticação JWT
+Chave simétrica usada para assinar e validar os tokens de sessão dos usuários, convidados e profissionais.
 
-## Financial Split Configuration
+```env
+# Mínimo de 32 caracteres gerados aleatoriamente
+JWT_SECRET="sua-chave-secreta-muito-segura"
+```
 
-The system uses internal constants (or environment overrides if implemented) for transaction splits:
+### Serviços de E-mail
+Serviço SMTP para envio de notificações, links de redefinição de senha e alertas transacionais.
 
-| Variable | Value | Description |
-|----------|-------|-------------|
-| `TAXA_CARTORIO` | `0.10` | Percentage for the local franchise. |
-| `TAXA_MATRIZ` | `0.40` | Percentage for the platform headquarters. |
-| `TAXA_FOTOGRAFO` | `0.30` | Percentage for the capturing professional. |
-| `TAXA_EDITOR` | `0.20` | Percentage for the post-production editor. |
+```env
+SMTP_HOST="smtp.provedor.com"
+SMTP_PORT="587"
+SMTP_USER="suporte@fotosegundo.com.br"
+SMTP_PASS="senha-do-email"
+FRONTEND_URL="http://localhost:5173" # URL base para links nos e-mails
+```
 
-## Per-Environment Overrides
+### Infraestrutura de Nuvem e Paywall
+Chaves para upload e armazenamento de mídia (caso utilize Google Drive ou S3 no ambiente em questão).
 
-### Local Development
+```env
+# (Variáveis dependentes do driver de storage configurado)
+STORAGE_PROVIDER="local" # ou "s3", "gdrive"
+```
 
-- Uses `.env` or `.env.local`.
-- `MP_REDIRECT_URI` and `GOOGLE_*_REDIRECT_URI` usually point to `localhost`.
+## Como configurar localmente
 
-### Production (Vercel)
+1. Crie um arquivo `.env` na raiz do repositório baseado nas chaves de homologação.
+2. Não comite o arquivo `.env` no Git (ele já está ignorado no `.gitignore`).
+3. Ao executar `npm run dev`, as variáveis serão automaticamente injetadas nos processos Node.js e no build do Vite (para as que iniciam com `VITE_`, caso existam no frontend).
 
-- Environment variables must be set in the Vercel Dashboard.
-- **CRITICAL:** Ensure `CALENDAR_ENCRYPTION_KEY` is a 64-character hex string (32 bytes).
-- Set `NODE_ENV=production`.
+## Tabela de Splits (Configuração em Banco)
+A configuração financeira (comissões da plataforma, impostos, taxas) não fica no `.env`, mas sim na tabela `PlatformConfig` no banco de dados. Isso permite atualizar a matriz de Split sem precisar de redeploy.
