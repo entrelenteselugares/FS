@@ -766,8 +766,12 @@ export const CheckoutPage = () => {
           <div className="space-y-8">
             <div>
               <p className="text-[10px] font-black text-brand-tactical uppercase tracking-[0.4em] mb-4">Investimento</p>
-              <h1 className="text-4xl md:text-5xl font-black italic tracking-tighter uppercase leading-none">{order.event?.nomeNoivos}</h1>
-              <p className="text-zinc-500 text-sm mt-4 font-medium">{order.manualType || "Seleção Digital de Alta Resolução"}</p>
+              <h1 className="text-4xl md:text-5xl font-black italic tracking-tighter uppercase leading-none">
+                {order.event?.slug === "vaults-system" ? "Finalizar Pedido" : order.event?.nomeNoivos}
+              </h1>
+              <p className="text-zinc-500 text-sm mt-4 font-medium">
+                {order.manualType === "VAULT_ONDEMAND" ? "Checkout do Álbum" : (order.manualType || "Seleção Digital de Alta Resolução")}
+              </p>
             </div>
 
             <div className="space-y-4">
@@ -776,7 +780,7 @@ export const CheckoutPage = () => {
                  onClick={() => setShowItems(!showItems)}
               >
                  <p className="text-[9px] font-black text-zinc-500 group-hover:text-white transition-colors uppercase tracking-widest italic">
-                   Resumo da Seleção ({order.items?.length || 0} itens)
+                   Resumo da Seleção ({order.items?.length || 0} {(order.items?.length || 0) === 1 ? 'item' : 'itens'})
                  </p>
                  <div className="w-6 h-6 rounded-md border border-white/10 flex items-center justify-center group-hover:border-white/30 group-hover:bg-white/5 transition-all text-white">
                     {showItems ? "−" : "+"}
@@ -828,14 +832,14 @@ export const CheckoutPage = () => {
                        <MapPin size={10} /> Usar endereço de cadastro
                     </button>
                  </div>
-                  <div className="grid grid-cols-2 md:grid-cols-6 gap-4">
+                  <div className="grid grid-cols-2 md:grid-cols-6 gap-5">
                     <div className="col-span-2 md:col-span-2">
                       <input 
                         placeholder="CEP" 
                         value={shippingData.cep}
                         onBlur={handleCepBlur}
                         onChange={e => setShippingData({...shippingData, cep: e.target.value})}
-                        className="fs-input font-mono"
+                        className="fs-input font-mono h-14 px-5 text-xs font-bold uppercase tracking-wider"
                       />
                     </div>
                     <div className="col-span-2 md:col-span-3">
@@ -844,7 +848,7 @@ export const CheckoutPage = () => {
                         value={shippingData.street}
                         disabled={isShippingLoading}
                         onChange={e => setShippingData({...shippingData, street: e.target.value})}
-                        className="fs-input"
+                        className="fs-input h-14 px-5 text-xs font-bold uppercase tracking-wider"
                       />
                     </div>
                     <div className="col-span-2 md:col-span-1">
@@ -852,7 +856,7 @@ export const CheckoutPage = () => {
                         placeholder="Nº" 
                         value={shippingData.number}
                         onChange={e => setShippingData({...shippingData, number: e.target.value})}
-                        className="fs-input"
+                        className="fs-input h-14 px-5 text-xs font-bold uppercase tracking-wider"
                       />
                     </div>
                     <div className="col-span-2 md:col-span-2">
@@ -860,7 +864,7 @@ export const CheckoutPage = () => {
                         placeholder="Bairro" 
                         value={shippingData.neighborhood}
                         onChange={e => setShippingData({...shippingData, neighborhood: e.target.value})}
-                        className="fs-input"
+                        className="fs-input h-14 px-5 text-xs font-bold uppercase tracking-wider"
                       />
                     </div>
                     <div className="col-span-1 md:col-span-2">
@@ -868,7 +872,7 @@ export const CheckoutPage = () => {
                         placeholder="Cidade" 
                         value={shippingData.city}
                         readOnly
-                        className="fs-input opacity-50"
+                        className="fs-input opacity-50 h-14 px-5 text-xs font-bold uppercase tracking-wider"
                       />
                     </div>
                     <div className="col-span-1 md:col-span-1">
@@ -876,7 +880,7 @@ export const CheckoutPage = () => {
                         placeholder="UF" 
                         value={shippingData.state}
                         readOnly
-                        className="fs-input opacity-50"
+                        className="fs-input opacity-50 h-14 px-5 text-xs font-bold uppercase tracking-wider"
                       />
                     </div>
                     <div className="col-span-2 md:col-span-1">
@@ -884,7 +888,7 @@ export const CheckoutPage = () => {
                         placeholder="Compl." 
                         value={shippingData.complement}
                         onChange={e => setShippingData({...shippingData, complement: e.target.value})}
-                        className="fs-input"
+                        className="fs-input h-14 px-5 text-xs font-bold uppercase tracking-wider"
                       />
                     </div>
                   </div>
