@@ -2,7 +2,7 @@ import axios from "axios";
 
 export class WhatsAppService {
   private static get baseUrl() {
-    return process.env.WA_WORKER_URL || "http://localhost:3000";
+    return process.env.WA_WORKER_URL || "http://localhost:3005";
   }
 
   private static get headers() {

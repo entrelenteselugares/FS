@@ -137,7 +137,7 @@ graph TD
 ## 7. Key Abstractions
 
 - **Drive Sync Engine (`backend/src/controllers/marketplace.controller.ts`):** Bulk media ingestion from Google Drive with automated Regex-based metadata extraction for school and sports photography verticals.
-- **Vault Engine (`backend/src/services/vault.service.ts`):** Manages "Cofres de Memórias" lifecycle, including subscription states and media organization.
+- **Vault Engine (`backend/src/controllers/vault.controller.ts`):** Manages "Cofres de Memórias" lifecycle, including subscription states and media organization.
 - **Order Motor (`backend/src/controllers/payment.controller.ts`):** Orchestrates transaction processing, financial splits, coupon application, ambassador attribution, and fulfillment status.
 - **Growth Controller (`backend/src/controllers/growth.controller.ts`):** Handles coupon validation/listing, affiliate management, and WhatsApp session QR.
 - **IoT Telemetry (`backend/src/services/iot.service.ts`):** Handles printer agent heartbeat monitoring and device health tracking.

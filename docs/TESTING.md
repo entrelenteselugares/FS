@@ -23,7 +23,7 @@ npx playwright install --with-deps
 | `npm test` | Runs the main E2E suite (Playwright). |
 | `npm run test:certify` | Executes the launch certification robot (E2E). |
 | `npm run test --prefix backend` | Runs backend resilience tests (Jest). |
-| `npx ts-node e2e/flash-scale.test.ts` | Runs the high-concurrency Flash Event stress test. |
+| `npx tsx backend/src/tests/flash-scale.test.ts` | Runs the high-concurrency Flash Event stress test. |
 | `npm run test:all --prefix backend` | Runs all backend unit and integration tests. |
 | `npx playwright test --ui` | Opens the Playwright UI for interactive debugging. |
 | `npx playwright show-report` | Views the HTML report of the last test run. |
@@ -31,7 +31,7 @@ npx playwright install --with-deps
 ## Writing New Tests
 
 1. **Location:** Place new tests in the `/e2e` directory using the `*.spec.ts` extension.
-2. **Naming Convention:** Describe the feature being tested (e.g., `marketplace-checkout.spec.ts`).
+2. **Naming Convention:** Describe the feature being tested (e.g., `e2e/launch-certification-robot.spec.ts`).
 3. **Fixtures:** Use existing authentication fixtures to bypass login screens.
 4. **Cleanup:** Ensure tests clean up created database records to maintain environment stability.
 

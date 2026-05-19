@@ -127,7 +127,7 @@ Para fins de transparência técnica, listamos três fragilidades arquiteturais 
 
 ### Próximos Passos (Roadmap de Escala)
 
-* Finalizar e validar as etapas de auditoria descritas no plano `AUDIT-PLAN.md` focado no lançamento prático.
+* Finalizar e validar as etapas de auditoria descritas no plano `AUDIT_GLOBAL_REPORT.md` focado no lançamento prático.
 * Automatizar conciliações e integrações diretas do Financeiro com o gateway.
 * Escalabilidade de busca facial (IA biométrica) integrada diretamente ao Marketplace para substituir a dependência manual.
 * Finalizar as integrações do `Printer Agent` (Impressão IOT local em eventos Flash).
