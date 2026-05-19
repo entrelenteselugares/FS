@@ -204,6 +204,7 @@ model Event {
   printProducts      EventPrintProduct[]
   flashCards         FlashCard[]
   coupons            Coupon[]
+  leads              Lead[]
   coverPosition      String?             @default("center")
 
   @@map("events")
@@ -1181,4 +1182,18 @@ model AffiliateCommission {
   order Order @relation(fields: [orderId], references: [id])
 
   @@map("affiliate_commissions")
+}
+
+model Lead {
+  id        String   @id @default(cuid())
+  email     String
+  eventId   String?
+  source    String   @default("EVENT_GALLERY")
+  metadata  Json     @default("{}")
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  event     Event?   @relation(fields: [eventId], references: [id])
+
+  @@map("leads")
 }
