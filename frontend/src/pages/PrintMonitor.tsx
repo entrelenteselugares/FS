@@ -9,19 +9,15 @@ import {
 import { QRCodeSVG } from "qrcode.react";
 import { T } from "../lib/theme";
 import { FlashEventMonitor } from "../components/profissional/FlashEventMonitor";
+import { PrintSettingsPanel } from "../components/PrintSettingsPanel";
+import type { PhygitalPrint as PrintItem } from "../components/PrintSettingsPanel";
 
-interface PhygitalPrint {
-  id: string;
-  referenceCode: string;
-  imageUrl: string;
-  customerName: string;
-  status: 'PENDING_PRINT' | 'PRINTED' | 'DISPATCHED_MAIL';
-  createdAt: string;
-}
+// PhygitalPrint type is imported from PrintSettingsPanel
 
 interface EventInfo {
   id: string;
   nomeNoivos: string;
+  tenantLogoUrl?: string;
 }
 
 export default function PrintMonitor() {
@@ -29,12 +25,13 @@ export default function PrintMonitor() {
   const { user } = useAuth();
   const navigate = useNavigate();
   
-  const [prints, setPrints] = useState<PhygitalPrint[]>([]);
+  const [prints, setPrints] = useState<PrintItem[]>([]);
   const [event, setEvent] = useState<EventInfo | null>(null);
   const [loading, setLoading] = useState(true);
   const [autoPrint, setAutoPrint] = useState(false);
   const [lastSync, setLastSync] = useState(new Date());
   const [showQR, setShowQR] = useState(false);
+  const [printTarget, setPrintTarget] = useState<PrintItem | null>(null);
 
   const captureUrl = `${window.location.origin}/captura?eventId=${eventId}`;
 
@@ -58,20 +55,17 @@ export default function PrintMonitor() {
     return () => clearInterval(interval);
   }, [eventId, fetchPrints]);
 
-  const handlePrint = (print: PhygitalPrint) => {
-    // Abre a imagem em uma nova aba e dispara o print
-    const printWindow = window.open(print.imageUrl, '_blank');
-    if (printWindow) {
-      printWindow.onload = () => {
-        printWindow.print();
-        // Opcional: fechar a janela após imprimir (alguns browsers bloqueiam)
-        // setTimeout(() => printWindow.close(), 1000);
-      };
-      
-      // Marca como impresso no banco
-      API.patch(`/phygital/prints/${print.id}/status`, { status: 'PRINTED' })
-        .then(() => fetchPrints());
-    }
+  const handlePrint = (print: PrintItem) => {
+    // Open the full-featured print settings panel instead of raw window.open
+    setPrintTarget(print);
+  };
+
+  const handlePrinted = (print: PrintItem) => {
+    // Mark as printed in backend and close panel
+    API.patch(`/phygital/prints/${print.id}/status`, { status: 'PRINTED' })
+      .then(() => fetchPrints())
+      .catch(err => console.error('Erro ao marcar impressão:', err));
+    setPrintTarget(null);
   };
 
   const pendingCount = prints.filter(p => p.status === 'PENDING_PRINT').length;
@@ -287,6 +281,17 @@ export default function PrintMonitor() {
             </div>
           </div>
         </div>
+      )}
+
+      {/* Print Settings Panel */}
+      {printTarget && (
+        <PrintSettingsPanel
+          print={printTarget}
+          eventId={eventId!}
+          tenantLogoUrl={event?.tenantLogoUrl}
+          onClose={() => setPrintTarget(null)}
+          onPrinted={() => handlePrinted(printTarget)}
+        />
       )}
     </div>
   );

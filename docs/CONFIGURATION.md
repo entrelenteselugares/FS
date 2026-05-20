@@ -63,3 +63,44 @@ STORAGE_PROVIDER="local" # ou "s3", "gdrive"
 
 ## Tabela de Splits (Configuração em Banco)
 A configuração financeira (comissões da plataforma, impostos, taxas) não fica no `.env`, mas sim na tabela `PlatformConfig` no banco de dados. Isso permite atualizar a matriz de Split sem precisar de redeploy.
+
+---
+
+## Configurações de Impressão (Client-Side / LocalStorage)
+
+O motor de impressão de fotos e geração de banners físicos (`PrintMonitor` e `PrintKitModal`) utiliza o `localStorage` do navegador para persistência de preferências de impressão por evento. Isso permite que monitores definam as margens, marcas d'água e formatos padrão uma vez e reutilizem-nas em todas as impressões sequenciais.
+
+As chaves persistidas no navegador seguem o padrão:
+
+```typescript
+// Configurações do painel profissional de impressão de fotos
+`fs_print_settings_${eventId}`
+```
+
+### Estrutura do Objeto de Configuração
+```json
+{
+  "borderEnabled": false,
+  "borderWidth": 5,
+  "borderColor": "#ffffff",
+  "borderStyle": "solid",
+  "logoEnabled": true,
+  "logoUrl": "",
+  "logoPosition": "bot-right",
+  "logoOpacity": 70,
+  "logoSize": "sm",
+  "dateEnabled": true,
+  "dateFormat": "datetime",
+  "datePosition": "bot-left",
+  "dateColor": "#ffffff",
+  "dateBg": true,
+  "codeEnabled": true,
+  "codePosition": "top-right",
+  "codeColor": "#14b8a6",
+  "photoSize": "10x15",
+  "copies": 1,
+  "orientation": "portrait"
+}
+```
+
+Para redefinir as configurações para os padrões de fábrica do evento, basta o usuário pressionar o botão de fechar sem salvar, ou limpar o `localStorage` via console de desenvolvedor.

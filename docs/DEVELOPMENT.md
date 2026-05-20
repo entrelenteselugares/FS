@@ -58,6 +58,13 @@ O repositório é configurado com o frontend (`/frontend`) em Vite/React e o bac
 - **Roteamento:** React Router Dom. Novas páginas institucionais devem ser registradas em `App.tsx` e acessíveis via `Navbar` e `Footer`.
 - **Estado:** Evite complexidade global excessiva se o React Context for suficiente, mantendo componentes o mais puros e "dumb" possível.
 
+### 🖨️ Componentes e Motores de Impressão (A4 & Fotos)
+
+Se você estiver desenvolvendo ou estendendo as capacidades de impressão (ex: `PrintKitModal.tsx` ou `PrintSettingsPanel.tsx`), siga estas diretrizes:
+- **Estilos CSS @page e Mídias:** Sempre encapsule estilos de formatação física (medidas em milímetros, remoção de cabeçalhos/rodapés do browser) dentro de blocos dedicados para `@media print` ou folhas injetadas em iframes.
+- **Cross-Origin Images:** Imagens externas ou de CDNs devem possuir o atributo `crossOrigin="anonymous"` nas tags `<img>` para que o browser não barre a renderização ou manipulação das fotos pelo motor de composição.
+- **Carregamento Assíncrono:** Sempre aguarde o evento `onload` de todas as tags de imagens no documento de impressão (iframe) antes de disparar o `iframe.contentWindow.print()`. Caso contrário, a impressora imprimirá páginas em branco.
+
 ### Backend
 
 - **Framework:** Express / Node.js nativo (servido em arquitetura serverless via Vercel na produção).

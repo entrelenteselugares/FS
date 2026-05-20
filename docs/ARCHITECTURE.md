@@ -69,6 +69,17 @@ Configuração via `event.vertical` (campo no banco) e controlada no `AdminEvent
 3. **Heartbeat:** O agente de impressão local envia telemetria constante para o backend.
 4. **Pull/Print:** O agente detecta o pedido, baixa o ativo do Google Drive e envia para o spooler da impressora local.
 
+### 📸 Client-Side Photo Compositing & Printing Engine
+
+Para permitir o fulfillment imediato de fotos físicas pelo fotógrafo ou monitor no evento (ex: impressora Epson L5290), implementamos um motor de composição vetorial e rasterizado diretamente no navegador:
+1. **Composição em A4:** O painel dinâmico calcula o aproveitamento ideal de papel para tamanhos como `9x13cm`, `10x15cm`, `13x18cm` ou `A4 Inteiro`, calculando automaticamente fotos por folha e orientações de página.
+2. **Camadas de Overlays Personalizados:**
+   - **Borda Estilizada:** Renderiza bordas com largura (mm) e cores customizadas via Color Picker.
+   - **Logo/Marca D'água:** Posicionamento em grid 3x3 com controle de opacidade e tamanho.
+   - **Data/Hora e Identificador:** Estampagem dinâmica de códigos de referência e data/hora.
+3. **Composição em Iframe Silencioso:** Em vez de abrir novas abas e esticar fotos raw, o motor renderiza um documento HTML encapsulado em um iframe invisível com estilos `@page { size: A4; margin: 0; }` e dispara o `window.print()` nativo do browser de forma síncrona após o pré-carregamento dos assets.
+4. **Persistência de Padrão:** As configurações de impressão personalizadas de cada evento são salvas localmente via `localStorage` no dispositivo do monitor para garantir agilidade operacional em impressões subsequentes.
+
 ### 💰 Growth Engine — Cupom & Afiliado
 
 1. **Rastreamento:** Usuário acessa via `?ref=<ambassadorId>` — cookie `fs_referral` criado com TTL de 30 dias.
