@@ -611,15 +611,13 @@ return (
           {(user?.role === 'PROFISSIONAL' || user?.role === 'FRANCHISEE' || user?.role === 'ADMIN') && (
             <div className="fixed bottom-10 right-10 z-[150] flex flex-col items-end gap-4 print:hidden">
               <button 
-                onClick={() => setShowQrModal(!showQrModal)}
-                className={`w-20 h-20 rounded-full flex items-center justify-center shadow-2xl transition-all duration-500 group relative overflow-hidden ${showQrModal ? "bg-[var(--bg-card)] border border-brand-tactical text-brand-tactical" : "bg-brand-tactical text-black"}`}
+                onClick={() => window.open(`${window.location.origin}/phygital-capture?e=${event.id}&auto=1`, '_blank')}
+                title="Abrir câmera — enviar foto agora"
+                className="w-20 h-20 rounded-full flex items-center justify-center shadow-2xl shadow-brand-tactical/30 transition-all duration-300 hover:scale-110 active:scale-95 group relative overflow-hidden bg-brand-tactical text-black"
               >
-                {!showQrModal && (
-                  <div className="absolute inset-0 bg-white/20 scale-0 group-hover:scale-100 transition-transform duration-700 rounded-full" />
-                )}
-                {showQrModal ? <Check size={32} className="rotate-45" /> : <QrCode size={32} />}
-                
-                {/* Badge de Alerta */}
+                <div className="absolute inset-0 bg-white/20 scale-0 group-hover:scale-100 transition-transform duration-700 rounded-full" />
+                <Camera size={32} />
+                {/* Badge PRO */}
                 <div className="absolute -top-1 -right-1 w-6 h-6 bg-red-500 border-2 border-zinc-950 rounded-full flex items-center justify-center">
                   <span className="text-[10px] font-black text-white italic">PRO</span>
                 </div>

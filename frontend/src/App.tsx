@@ -27,13 +27,14 @@ import ForgotPasswordPage from "./pages/ForgotPasswordPage";
 import LuxuryExperiencePage from "./pages/LuxuryExperiencePage";
 import PhygitalCapture from "./pages/PhygitalCapture";
 import PrintMonitor from "./pages/PrintMonitor";
+import FullMonitor from "./pages/FullMonitor";
+import { TermsPage } from "./pages/TermsPage";
 import FranchiseDashboard from "./pages/franchise/FranchiseDashboard";
 import VaultsPage from "./pages/VaultsPage";
 import VaultDetailPage from "./pages/VaultDetailPage";
 import InvitationPage from "./pages/InvitationPage";
 import { AboutPage } from "./pages/AboutPage";
 import { PrivacyPage } from "./pages/PrivacyPage";
-import { TermsPage } from "./pages/TermsPage";
 import { PartnershipsPage } from "./pages/PartnershipsPage";
 import { ContactPage } from "./pages/ContactPage";
 import { StatusPage } from "./pages/StatusPage";
@@ -148,6 +149,8 @@ const AnimatedRoutes = () => {
             <PrintMonitor />
           </ProtectedRoute>
         } />
+        <Route path="/profissional/monitor/:eventId/full" element={<ProtectedRoute roles={["ADMIN", "PROFISSIONAL", "FRANCHISEE", "CARTORIO"]}><FullMonitor /></ProtectedRoute>} />
+        <Route path="/profissional/monitor/:eventId/fullscreen" element={<ProtectedRoute roles={["ADMIN", "PROFISSIONAL", "FRANCHISEE", "CARTORIO"]}><FullMonitor /></ProtectedRoute>} />
 
         {/* Painel Unidades Fixas */}
         <Route path="/unidade-fixa" element={

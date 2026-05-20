@@ -2,13 +2,14 @@ import React, { useState, useRef, useEffect } from 'react';
 import { useSearchParams } from 'react-router-dom';
 import { API } from '../lib/api';
 import { T } from '../lib/theme';
-import { Camera, CheckCircle2, AlertCircle, Loader2, Image as ImageIcon, User as UserIcon, LogOut } from 'lucide-react';
+import { Camera, CheckCircle2, AlertCircle, Loader2, Image as ImageIcon, User as UserIcon, LogOut, ArrowLeft } from 'lucide-react';
 import { useAuth } from '../hooks/useAuth';
 
 export default function PhygitalCapture() {
   const [searchParams] = useSearchParams();
   const eventId = searchParams.get('eventId') || searchParams.get('e') || 'EVENT_TESTE';
-  
+  const autoCamera = searchParams.get('auto') === '1';
+
   const cameraInputRef = useRef<HTMLInputElement>(null);
   const galleryInputRef = useRef<HTMLInputElement>(null);
 
@@ -39,6 +40,22 @@ export default function PhygitalCapture() {
       setIsNewUser(false);
     }
   }, [user]);
+
+  // Auto-abre câmera se vier do botão flutuante (?auto=1)
+  useEffect(() => {
+    if (!autoCamera) return;
+    const timer = setTimeout(() => {
+      cameraInputRef.current?.click();
+    }, 300);
+    return () => clearTimeout(timer);
+  }, [autoCamera]);
+
+  // Auto-abre câmera ao fazer login se o parâmetro auto estiver presente
+  useEffect(() => {
+    if (user && autoCamera) {
+      cameraInputRef.current?.click();
+    }
+  }, [user, autoCamera]);
 
   const { registerExpress, login: authLogin } = useAuth();
 
@@ -147,6 +164,15 @@ export default function PhygitalCapture() {
   if (result) {
     return (
       <div className="min-h-screen flex flex-col items-center justify-center p-6 text-center animate-reveal" style={{ background: T.bg }}>
+        {/* Botão Voltar */}
+        <button
+          onClick={() => window.close()}
+          className="fixed top-6 left-6 flex items-center gap-2 text-[10px] font-black uppercase tracking-widest opacity-40 hover:opacity-100 transition-opacity"
+          style={{ color: T.text }}
+        >
+          <ArrowLeft size={16} /> Fechar
+        </button>
+
         <div className="w-20 h-20 bg-brand-tactical/20 rounded-full flex items-center justify-center mb-8 border border-brand-tactical/30">
           <CheckCircle2 size={40} className="text-brand-tactical" />
         </div>
@@ -173,6 +199,17 @@ export default function PhygitalCapture() {
   return (
     <div className="min-h-screen flex flex-col items-center py-12 px-6" style={{ background: T.bg }}>
       <div className="w-full max-w-md">
+
+        {/* Botão Voltar */}
+        <button
+          type="button"
+          onClick={() => window.history.length > 1 ? window.history.back() : window.close()}
+          className="flex items-center gap-2 text-[10px] font-black uppercase tracking-widest opacity-40 hover:opacity-100 transition-opacity mb-8"
+          style={{ color: T.text }}
+        >
+          <ArrowLeft size={16} /> Voltar
+        </button>
+
         {/* Status de Login */}
         <div className="flex justify-center mb-8">
           {user ? (
@@ -257,19 +294,21 @@ export default function PhygitalCapture() {
 
           {/* Form Fields */}
           <div className="space-y-4">
-            <div>
-              <label className="text-[10px] font-bold uppercase tracking-[0.3em] opacity-40 ml-1 mb-2 block">Nome Completo</label>
-              <input 
-                required 
-                type="text" 
-                name="customerName" 
-                value={formData.customerName} 
-                onChange={handleInputChange} 
-                className="w-full bg-white/[0.03] border border-theme-border p-4 rounded-xl text-sm focus:border-brand-tactical/50 transition-all outline-none"
-                placeholder="Ex: João Silva"
-                style={{ color: T.text }}
-              />
-            </div>
+              {!user && (
+                <div>
+                  <label className="text-[10px] font-bold uppercase tracking-[0.3em] opacity-40 ml-1 mb-2 block">Nome Completo</label>
+                  <input 
+                    required 
+                    type="text" 
+                    name="customerName" 
+                    value={formData.customerName} 
+                    onChange={handleInputChange} 
+                    className="w-full bg-white/[0.03] border border-theme-border p-4 rounded-xl text-sm focus:border-brand-tactical/50 transition-all outline-none"
+                    placeholder="Ex: João Silva"
+                    style={{ color: T.text }}
+                  />
+                </div>
+              )}
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               <div className="relative">
                 <label className="text-[10px] font-bold uppercase tracking-[0.3em] opacity-40 ml-1 mb-2 block">E-mail Cadastrado</label>
@@ -290,19 +329,21 @@ export default function PhygitalCapture() {
                   </div>
                 )}
               </div>
-              <div>
-                <label className="text-[10px] font-bold uppercase tracking-[0.3em] opacity-40 ml-1 mb-2 block">WhatsApp</label>
-                <input 
-                  required 
-                  type="tel" 
-                  name="customerPhone" 
-                  value={formData.customerPhone} 
-                  onChange={handleInputChange} 
-                  className="w-full bg-white/[0.03] border border-theme-border p-4 rounded-xl text-sm focus:border-brand-tactical/50 transition-all outline-none"
-                  placeholder="(00) 00000-0000"
-                  style={{ color: T.text }}
-                />
-              </div>
+                {!user && (
+                  <div>
+                    <label className="text-[10px] font-bold uppercase tracking-[0.3em] opacity-40 ml-1 mb-2 block">WhatsApp</label>
+                    <input 
+                      required 
+                      type="tel" 
+                      name="customerPhone" 
+                      value={formData.customerPhone} 
+                      onChange={handleInputChange} 
+                      className="w-full bg-white/[0.03] border border-theme-border p-4 rounded-xl text-sm focus:border-brand-tactical/50 transition-all outline-none"
+                      placeholder="(00) 00000-0000"
+                      style={{ color: T.text }}
+                    />
+                  </div>
+                )}
             </div>
 
             {/* Inline Password Field for Guest/New User */}

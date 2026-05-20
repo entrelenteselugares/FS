@@ -218,7 +218,7 @@ export function PrivacyPage() {
         </div>
       </main>
 
-      <footer className="py-8 text-center border-t border-theme-border/40">
+      <footer className="py-8 text-center border-t border-theme-border/20">
         <p className="text-theme-text-muted text-xs font-bold uppercase tracking-widest mb-1">© 2026 Foto Segundo. Todos os direitos reservados.</p>
         <p className="text-brand-tactical/50 text-[10px] font-black italic uppercase tracking-[0.3em]">Protocolo Editorial de Imagem e Cinema</p>
       </footer>

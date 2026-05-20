@@ -43,7 +43,7 @@ export default function AdminInventory() {
     supplierCost: 0, stockType: 'PROPRIO', externalLink: ''
   });
   
-  const [searchTerm, setSearchTerm] = useState('OSMO');
+  const [searchTerm, setSearchTerm] = useState('');
   const [filterCategory, setFilterCategory] = useState('ALL');
 
   const categories = useMemo(() => {

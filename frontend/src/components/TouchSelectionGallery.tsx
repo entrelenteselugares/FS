@@ -217,8 +217,8 @@ export const TouchSelectionGallery: React.FC<TouchSelectionGalleryProps> = ({
             <div className="p-8 border-t border-white/10 bg-zinc-950/50 backdrop-blur-xl">
               <div className="flex items-center justify-between max-w-lg mx-auto">
                 <div className="space-y-1">
-                  <p className="text-[10px] font-black text-zinc-500 uppercase tracking-widest italic">Memória Premium</p>
-                  <p className="text-xs text-white/60 font-medium">Fotos entregues em alta resolução 300DPI.</p>
+                  <p className="text-[10px] font-black text-white uppercase tracking-widest italic">Memória Premium</p>
+                  <p className="text-xs text-white font-medium">Fotos entregues em alta resolução 300DPI.</p>
                 </div>
                 <button
                   onClick={() => {

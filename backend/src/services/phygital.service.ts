@@ -88,7 +88,7 @@ export class PhygitalService {
         // Adicionamos os carimbos de referência e logo (Polaroid Style)
         const refSvg = Buffer.from(`
           <svg width="${finalWidth}" height="${borderSize * 3}" viewBox="0 0 ${finalWidth} ${borderSize * 3}">
-            <text x="50%" y="50%" font-family="sans-serif" font-size="${Math.floor(borderSize * 1.5)}" font-weight="900" fill="#000000" text-anchor="middle" dominant-baseline="middle">
+            <text x="50%" y="60%" font-family="sans-serif" font-size="${Math.floor(borderSize * 0.8)}px" font-weight="900" fill="#000000" text-anchor="middle">
               ${referenceCode}
             </text>
           </svg>
@@ -97,7 +97,7 @@ export class PhygitalService {
 
         const logoSvg = Buffer.from(`
           <svg width="${finalWidth}" height="${borderSize * 2}" viewBox="0 0 ${finalWidth} ${borderSize * 2}">
-            <text x="${finalWidth - borderSize}" y="70%" font-family="sans-serif" font-size="${Math.floor(borderSize * 0.4)}" font-weight="900" fill="#000000" text-anchor="end" dominant-baseline="middle" style="opacity: 0.6; letter-spacing: 5px;">
+            <text x="${finalWidth - Math.floor(borderSize * 0.5)}" y="70%" font-family="sans-serif" font-size="${Math.floor(borderSize * 0.4)}px" font-weight="900" fill="#000000" text-anchor="end" style="opacity: 0.6; letter-spacing: 5px;">
               FOTO SEGUNDO
             </text>
           </svg>

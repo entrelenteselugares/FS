@@ -4,7 +4,8 @@ import { API } from "../lib/api";
 import { useAuth } from "../hooks/useAuth";
 import { 
   Printer, ArrowLeft, RefreshCw, CheckCircle2, 
-  Clock, ExternalLink, Play, Pause, QrCode, X
+  Clock, ExternalLink, Play, Pause, QrCode, X,
+  Expand
 } from "lucide-react";
 import { QRCodeSVG } from "qrcode.react";
 import { T } from "../lib/theme";
@@ -124,7 +125,7 @@ export default function PrintMonitor() {
           />
           <button 
             onClick={() => document.getElementById('manual-upload')?.click()}
-            className="hidden md:flex items-center gap-2 px-6 py-2.5 rounded-full text-[9px] font-black uppercase tracking-widest bg-theme-border text-zinc-300 border border-theme-border hover:bg-zinc-700 transition-all"
+            className="hidden md:flex items-center gap-2 px-6 py-2.5 rounded-full text-[9px] font-black uppercase tracking-widest bg-brand-tactical text-white border border-brand-tactical hover:brightness-110 transition-all"
           >
             <ExternalLink size={12} /> Enviar Fotos
           </button>
@@ -139,7 +140,12 @@ export default function PrintMonitor() {
           >
             <QrCode size={12} /> Mostrar QR Code
           </button>
-
+          <button
+            onClick={() => navigate(`/profissional/monitor/${eventId}/full`)}
+            className="flex items-center gap-2 px-6 py-2.5 rounded-full text-[9px] font-black uppercase tracking-widest bg-brand-tactical text-white hover:brightness-110 transition-all"
+          >
+            <Expand size={12} /> Full Screen
+          </button>
           <button 
             onClick={() => setAutoPrint(!autoPrint)}
             className={`flex items-center gap-2 px-6 py-2.5 rounded-full text-[9px] font-black uppercase tracking-widest transition-all ${autoPrint ? 'bg-red-500/10 text-red-500 border border-red-500/20' : 'bg-brand-tactical text-zinc-950 shadow-lg shadow-brand-tactical/20'}`}
