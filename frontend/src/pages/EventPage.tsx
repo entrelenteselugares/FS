@@ -15,6 +15,7 @@ import SEO from "../components/SEO";
 import { getProxyUrl } from "../lib/utils/media";
 import LeadCapture from "../components/LeadCapture";
 import { PrintStoreModal } from "../components/PrintStoreModal";
+import { PrintKitModal } from "../components/PrintKitModal";
 import { motion, AnimatePresence } from "framer-motion";
 import { EventEditPanel } from "../components/profissional/EventEditPanel";
 import type { EventItem } from "../components/profissional/types";
@@ -209,6 +210,7 @@ export default function EventPage() {
   }, [event, eventPricePerPhoto]);
 
   const [showPrintStore, setShowPrintStore] = useState(false);
+  const [showPrintKit, setShowPrintKit] = useState(false);
   const [showQrModal, setShowQrModal] = useState(false);
   const [showLiveOps, setShowLiveOps] = useState(true);
   const [filterMode, setFilterMode] = useState<"ALL" | "PRO" | "GUEST">("ALL");
@@ -937,6 +939,12 @@ return (
                     >
                       <QrCode size={16} /> {isEventOver ? 'CAPTURAS ENCERRADAS' : 'QR CODE DE CAPTURA'}
                     </button>
+                    <button 
+                      onClick={() => setShowPrintKit(true)}
+                      className="w-full py-4 bg-brand-tactical text-black text-[10px] font-black uppercase tracking-widest hover:brightness-110 transition-all italic flex items-center justify-center gap-3"
+                    >
+                      <Printer size={16} /> GERAR KIT DE IMPRESSÃO
+                    </button>
                     {(user?.role === 'ADMIN' || user?.role === 'PROFISSIONAL' || user?.role === 'FRANCHISEE' || user?.role === 'CARTORIO' || user?.role === 'UNIDADE') && (
                       <button 
                         onClick={() => {
@@ -1211,6 +1219,16 @@ return (
         )
       )}
       {showPrintStore && <PrintStoreModal eventId={event.id} eventTitle={event.nomeNoivos} medias={medias} unlockedMediaIds={event.unlockedMediaIds} isMarketplace={isMarketplace} isOwner={event.isOwner} onClose={() => setShowPrintStore(false)} />}
+      {showPrintKit && (
+        <PrintKitModal
+          eventId={event.id}
+          eventSlug={event.slug || undefined}
+          eventTitle={event.nomeNoivos}
+          eventDate={event.dataEvento || undefined}
+          tenantLogoUrl={event.tenantLogoUrl || undefined}
+          onClose={() => setShowPrintKit(false)}
+        />
+      )}
       {needsAccessChoice && orderId && <AccessTypeModal orderId={orderId} eventTitle={event.nomeNoivos} isPrimaryClient={true} isMarketplace={isMarketplace} onConfirmed={() => setNeedsAccessChoice(false)} onClose={() => setNeedsAccessChoice(false)} />}
       
       <Modal isOpen={showQrModal} onClose={() => setShowQrModal(false)} title="Protocolo de Captura Phygital">
